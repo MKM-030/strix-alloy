@@ -3,8 +3,7 @@
 # usage: expA-arm.sh <tag> <envs-string> [llama-bench flags...]
 # Pre-flight: drop page caches (previous arm + download cache), abort if RAM too low.
 source /mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work/env.sh
-export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1
-
+export HSA_ENABLE_DXG_DETECTION=1 
 TAG="$1"; ENVS="$2"; shift 2
 BIN=/home/revn/strix-llama/build-hip/bin/llama-bench
 M="${BENCH_MODEL:-/home/revn/models/flash-next-unsloth/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf}"

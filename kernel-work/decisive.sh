@@ -17,7 +17,7 @@ run(){
   stop_srv
   sync; sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches' 2>/dev/null; sleep 2
   source "$BASE/env.sh"
-  export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1
+  export HSA_ENABLE_DXG_DETECTION=1
   unset LLAMA_MMB LLAMA_MMB_MIN_T LLAMA_MMB_GLU LLAMA_MMB_SHADOW LLAMA_MMB_BF16W 2>/dev/null || true
   [ -n "$envs" ] && export $envs
   "$PW" -m "$PF" -ngl 99 -fa on -fit off --load-mode none --lazy-mode on-direct \

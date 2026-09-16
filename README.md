@@ -6,10 +6,22 @@ Qwen3.8-Flash-Next on an AMD Ryzen AI Max+ 395 mini-PC. No Linux, no WSL, no CUD
 
 | | |
 | --- | --- |
-| **prefill** | **1,031 t/s** @16k · 993 @65k · 925 @131k · **812 @251k** |
-| **decode** | **34 t/s** @16k with speculative decoding (MTP n-max 2, 56–73% acceptance) |
-| **serial decode** | 28.3 t/s @16k (no drafter) |
+| **`llama-bench`** | **pp512 761.3 t/s** · **tg128 31.5 t/s** — the standard tool, comparable to every other Strix Halo number |
+| `llama-bench`, 16k prompt | pp16384 892.6 t/s · tg128 30.2 t/s |
+| prefill, served | 1,031 @16k · 993 @65k · 925 @131k · **812 @251k** |
+| decode, served | **31–47 t/s** with MTP (depends how predictable the output is) · 28.3 serial |
 | **context** | **251,904 tokens**, works end to end, no OOM |
+
+**Why `llama-bench` is the headline.** It defaults to `-p 512 -n 128` and is the tool upstream, ilintar,
+olliehm and the Strix Halo threads all report, so it needs no translation. It also **cannot drive a drafter**,
+which makes `tg128` plain serial decode — the engine's own speed, free of the content-dependent acceptance
+rate that makes bare MTP figures hard to compare. Against ilintar's published Linux numbers on the same tool:
+**26% behind on prefill** (893 vs 1204) and **15% ahead on serial decode** (30.2 vs 26.3).
+
+> The served figures below run ~15% higher than `llama-bench` for the same shape, and we do not have a full
+> explanation — it is not warm-up (`-r 8` does not climb). We quote the `llama-bench` number as the headline
+> because a third party can reproduce it in one command. Details in
+> [`docs/benchmarks/canonical-llama-bench-20260916.md`](docs/benchmarks/canonical-llama-bench-20260916.md).
 
 The transformer is ~125B (121B routed experts + ~4B attention/embeddings). The checkpoint also carries a
 separate 51B PLE n-gram table living in host memory — model + table ≈ 176B, sometimes quoted as "177B".
@@ -53,7 +65,8 @@ Also tried and rejected: UD-IQ4_XS, Q4_K_M, and an FR-Spec 65k-vocab draft head 
 
 ## Benchmarks
 
-Native Windows, WSL shut down, page cache warm (rep ≥ 3), single instance, `-c 262144`.
+Everything below is **served** (`llama-server`), not `llama-bench` — that is why it sits ~15% above the
+headline. Native Windows, WSL shut down, page cache warm (rep ≥ 3), single instance, `-c 262144`.
 
 **Prefill** — max-prefill shape (`-ub 16384`, no drafter):
 
@@ -74,8 +87,26 @@ A shallow arc, not a cliff: ~985 t/s through the 32k–65k band, declining gentl
 
 Decode is essentially depth-independent across a 15× context span, and acceptance *rises* with depth.
 
-**Draft acceptance is not perfectly reproducible run-to-run** — the same config has measured 47% and 65%
-(29.3 vs 33.5 t/s). Treat a single MTP run with suspicion and average at least three.
+**Acceptance is deterministic per content class — it is the *content*, not the engine, that varies.** We
+previously reported this as run-to-run instability (47% vs 65% on the same config). That was wrong: three
+consecutive repeats of the *same prompt* give the same ratio to the token (53/134 three times at `n-max 2`),
+while different text gives very different ratios at identical settings — 40% on doc-continuation, 92% on an
+instructed answer. So **always state the content class with an acceptance figure**; a bare "MTP acceptance"
+is meaningless.
+
+That also sets the right draft depth, which is content-dependent:
+
+| content | acceptance @n-max 2 | best depth | gain vs `n-max 2` |
+| --- | ---: | --- | ---: |
+| instructed answers (structured, predictable) | 92% | `n-max 4` | **+10%** |
+| doc-continuation, 1k | 53% | `n-max 2` | — |
+| doc-continuation, 8k | 40% | `n-max 2` | — (n-max 4 is −6%) |
+
+We publish `n-max 2` because it is near-optimal on both and never collapses; a chat-heavy deployment should
+use 4, and a low-acceptance one should use 1. An adaptive controller that sized drafts from a measured
+acceptance EMA was ported and tested — it works, but loses to the better fixed value on every content class
+(−4.7% to −9.6%), because its "full accept → draft deeper" rule assumes depth always pays, which is not true
+here. Kept behind `--spec-draft-adaptive`, off by default.
 
 ## Quickstart
 
@@ -125,13 +156,18 @@ Neither is a fork of the other — we share an upstream ancestor and diverge aft
 | --- | --- | --- |
 | engine | upstream llama.cpp + **`stew675/llama-cpp-rdna-boosts`** patches, via **Lemonade** | **`pwilkin` `strix-halo`** fork, `llama-server` directly |
 | prefill | ~660 t/s @8k–17k | **1,031 @16k · 993 @65k** |
-| decode, no MTP | 20.3 @8k | **28.8 @8k** |
-| decode, MTP | **38 t/s** *(no depth published)* | 34 @16k · 32.6 @65k |
-| acceptance | **85–100%** (`n-max 4`, `p-min 0.75`) | 56–73% (`n-max 2`, `p-min 0.0`) |
+| decode, no MTP | 20.3 @8k | **28.8 @8k · 31.5 `llama-bench tg128`** |
+| decode, MTP | **38 t/s** *(no depth published)* | 31–47 t/s *(content-dependent)* |
+| acceptance | **85–100%** (`n-max 4`, `p-min 0.75`) | 40–92% (`n-max 2`, `p-min 0.0`) — content-dependent |
 | context | 262,144 | 251,904 verified |
 | quant | UD-IQ4_XS — for **fit margin** | IQ4_NL PROJFIX — for **speed** |
 | drafter | full Q8_0 head (~3.2 GB) | **shared** Q8_0 head (2.6 GB) |
 | footprint | 74.0 GB in carve | ~74 GB |
+
+Read the decode/acceptance rows with care: acceptance is content-dependent on **both** engines, so two single
+figures taken on different prompts do not rank them. His `n-max 4` at 85–100% is a better operating point than
+our published `n-max 2` for chat-like text — which is why we now report the depth table above instead of one
+number.
 
 Different kernels, different lineage: our tree carries the fork's backend work (MMB large-batch kernels,
 fused F32 PLE, sparse QSA decode, hyper-connection kernels) while his carries RDNA tuning — which is why
@@ -164,6 +200,16 @@ RDNA3.0 parameter table (**−21%**), MMVF prefetch (−0.9%), `rpb` 1→2 (+0.3
 (wrong lever — the cost is per-op, not per-block), q8_0 KV (the sparse path asserts f16), lowering
 `mmb_min_t`, PLE host staging (0.054% of decode wall).
 
+Two more from the sibling forks, ported and measured rather than assumed:
+
+- **`halo-box`'s `MMID_512`** (512-expert/10-active MoE routing in one block instead of 512 warp blocks):
+  **−0.2% decode**. Our HIP graph already removes the launch overhead it targets — if 48 calls × 512 launches
+  were exposed it would cost ~123 ms/token, and we measured zero. Coverage was probe-verified first, so the
+  negative is real and not a guard mismatch.
+- **The rest of `halo-box`'s HIP set cannot apply**: `MMV_GROUP` and the fused matvec prologues are gated to
+  **Q8_0/Q6_K**, and a GGUF census confirms our model is **IQ4_NL for every expert and attention tensor**
+  (only two HC projections and `ple_key` are Q8_0). `WEIGHTED_DOWN` is IQ4_NL but has a ~0.2% ceiling.
+
 One published claim we retracted: a "uniform 37% bandwidth shortfall" attributed to ALU limits was the
 *benchmark's own* contended `atomicAdd` epilogue. With a fair epilogue the same kernel reaches ~100% of
 bandwidth.
@@ -176,10 +222,14 @@ Full trail — 110+ dated reports including the retractions — in **[`docs/benc
    block. We have a hidden-state dump harness producing `(h_nextn, next-token)` pairs from real traffic.
    Adapt the input/fusion projections against the quantized target, freeze the target and shared output
    projection, screen adapter rank 8 vs 16. Success metric is held-out emitted tokens/second, not loss.
-2. **Find the MTP acceptance instability** before further tuning — it is correctness-adjacent.
+2. **~~Find the MTP acceptance instability~~** — resolved: acceptance is deterministic per content class
+   (see Benchmarks). The rule is to report the content alongside the figure.
 3. **Audit `stew675/rdna-boosts`** against our tree and A/B each portable piece.
 4. **Grouped GEMV** for the small-R projections (bounded at ~6% of decode).
 5. **Remove dead epilogue work** at `nwarps == 1` (unconditional `__syncthreads` + shared machinery).
+6. **A depth controller that measures whether depth pays.** The ported EMA controller assumes depth always
+   helps and loses to the better fixed value on every content class (−4.7% to −9.6%). The missing signal is
+   the *marginal* cost of another draft token on this engine, not the acceptance EMA.
 
 Out of scope: general split-K, whole-model persistent execution, a q8 QSA kernel, retained-PM4.
 
@@ -226,6 +276,8 @@ If we have used your work and not credited it, that is our omission — please o
 5. **Log which kernel specialisations actually ran** before trusting an A/B.
 6. **Check the harness's own epilogue** — see the retracted claim above.
 7. **Average ≥3 MTP runs**, and always report acceptance alongside the t/s figure.
+8. **Quote `llama-bench` for any cross-engine claim** — `pp512` / `tg128`, one command, no drafter in the
+   harness. Served numbers are higher and not directly comparable to published figures.
 
 ## License & status
 
@@ -235,4 +287,4 @@ reproducible evidence, not a vendor benchmark, and re-run the harnesses before t
 
 ---
 
-*strix-alloy — one consumer Windows PC. A 125B MoE. 34 t/s.*
+*strix-alloy — one consumer Windows PC. A 125B MoE. 31.5 t/s (`llama-bench tg128`).*

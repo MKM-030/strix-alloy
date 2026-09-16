@@ -7,6 +7,16 @@ param(
   [string]$Mtp = "", [int]$Port = 8270, [string]$ExtraArgs = ""
 )
 $ErrorActionPreference = 'Continue'
+# `powershell -File script.ps1 -Arg 'value'` passes the argument LITERALLY: unlike -Command, -File
+# does not strip quotes. Anything quoted on the command line arrives with the quotes still attached,
+# which shows up as a model-path load failure (''...gguf''), a python int() error on -Sizes ('8192),
+# or a stray quote in a tag. Strip both quote styles from every string parameter.
+function Unquote([string]$s) { if ($null -eq $s) { return $s } return $s.Trim().Trim("'").Trim('"') }
+$Tag   = Unquote $Tag
+$Model = Unquote $Model
+$Sizes = Unquote $Sizes
+$Mtp   = Unquote $Mtp
+$ExtraArgs = Unquote $ExtraArgs
 $bin  = 'C:\AI\build\strix-llama-win\build-therock\bin\llama-server.exe'
 $sdk  = 'C:\AI\sdk\therock1151'
 $root = 'C:\Projects\REV-N-ornith-eval-20260911\kernel-work'
@@ -18,7 +28,6 @@ Start-Sleep -Seconds 3
 $env:PATH = "$sdk\bin;$sdk\lib\llvm\bin;$env:PATH"
 $env:ROCM_PATH = $sdk; $env:HIP_PATH = $sdk
 $env:HIP_DEVICE_LIB_PATH = "$sdk\lib\llvm\amdgcn\bitcode"
-$env:GGML_HIP_ENABLE_UNIFIED_MEMORY = '1'
 $env:HSA_OVERRIDE_GFX_VERSION = '11.5.1'
 
 $a = @('-m',$Model,'-dev','ROCm0','-ngl','999','-fa','on','-fit','off','--load-mode','none',
@@ -40,7 +49,13 @@ while (((Get-Date)-$t0).TotalSeconds -lt 1800) {
 }
 if (-not $ok) { Note "NOT READY"; Stop-Process -Id $p.Id -Force; exit 1 }
 Note ("ready after " + [int]((Get-Date)-$t0).TotalSeconds + "s")
+# -c must cover the largest prompt AND its generated tokens, or the server rejects the request with
+# "request (N tokens) exceeds the available context size". Passing --context-limit lets fnbench skip
+# sizes that cannot fit instead of recording them as HTTP 400s.
+$ctxLimit = $Ctx - $Gen - 64
+if ($ctxLimit -le 0) { $ctxLimit = $Ctx }
 python "$root\fnbench.py" --port $Port --label $Tag --sizes $Sizes --gen $Gen --repeats $Repeats `
+  --context-limit $ctxLimit `
   --out (Join-Path $res "$Tag.json") 2>&1 | Tee-Object -FilePath $blog -Append
 Note "stopping"
 Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue

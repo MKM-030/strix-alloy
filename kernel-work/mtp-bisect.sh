@@ -38,7 +38,7 @@ test_family(){
   # subshell: env vars scoped per family
   (
     source "$BASE/env.sh"
-    export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
+    export HSA_ENABLE_DXG_DETECTION=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
     set_family "$fam"
     exec timeout -k 5 900 "$BIN" -m "$UD" -ngl 999 -fa on -fit off --load-mode none \
       -ctk f16 -ctv f16 -c 8192 -b 2048 -ub 2048 --parallel 1 --jinja \

@@ -13,8 +13,7 @@ LOG="$OUT/gf-$TAG.log"
 for p in $(pgrep -x llama-server); do kill -9 "$p" 2>/dev/null; done
 sleep 4
 source "$BASE/env.sh"
-export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1
-
+export HSA_ENABLE_DXG_DETECTION=1 
 set_family() {
   case "$1" in
     mmb)   export LLAMA_MMB=1 LLAMA_MMB_GLU=1 LLAMA_MMB_TALL=1 LLAMA_MMB_DOWN16=1 LLAMA_MMB_MIN_T=512 ;;

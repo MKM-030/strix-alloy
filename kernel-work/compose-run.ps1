@@ -25,7 +25,6 @@ $line = 'set "PATH=' + $sdk + '\bin;' + $sdk + '\lib\llvm\bin;%PATH%"' +
         ' && set "ROCM_PATH=' + $sdk + '"' +
         ' && set "HIP_PATH=' + $sdk + '"' +
         ' && set "HIP_DEVICE_LIB_PATH=' + $sdk + '\lib\llvm\amdgcn\bitcode"' +
-        ' && set "GGML_HIP_ENABLE_UNIFIED_MEMORY=1"' +
         ' && set "HSA_OVERRIDE_GFX_VERSION=11.5.1"' +
         ' && set "LLAMA_OP_TIMING=1"' +
         ' && set "GGML_CUDA_DISABLE_GRAPHS=1"' +

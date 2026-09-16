@@ -19,8 +19,7 @@ run(){
   stop_srv
   sync; sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches' 2>/dev/null; sleep 2
   source "$BASE/env.sh"
-  export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1
-  unset LLAMA_MMB 2>/dev/null || true
+  export HSA_ENABLE_DXG_DETECTION=1   unset LLAMA_MMB 2>/dev/null || true
   [ -n "$envs" ] && export $envs
   local -a a=(-m "$model" -ngl 99 -fa on -fit off --load-mode none -ctk f16 -ctv f16
     -c "$ctx" -b "$b" -ub "$ub" --parallel 1 -t 8 --host 127.0.0.1 --port $PORT --no-webui)

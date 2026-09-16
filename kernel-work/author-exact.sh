@@ -14,7 +14,7 @@ LOG="$OUT/ax-$TAG.log"
 for p in $(pgrep -x llama-server); do kill -9 "$p" 2>/dev/null; done
 sleep 4
 source "$BASE/env.sh"
-export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
+export HSA_ENABLE_DXG_DETECTION=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
 
 # ---- the author's exact gate block (verbatim values from install.sh) ----
 export LLAMA_MMB=1 LLAMA_MMB_MIN_T=512 \

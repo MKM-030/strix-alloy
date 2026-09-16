@@ -3,8 +3,7 @@
 # usage: correctness-server.sh <on|off> <model.gguf> [extra server args...]
 set -u
 source /mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work/env.sh
-export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1
-MODE="$1"; MODEL="$2"; shift 2
+export HSA_ENABLE_DXG_DETECTION=1 MODE="$1"; MODEL="$2"; shift 2
 TAG="corr-$MODE-$(basename "$MODEL" | cut -c1-24)"
 BIN=/home/revn/strix-llama/build-hip/bin/llama-server
 OUT=/mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work/expA

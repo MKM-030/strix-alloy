@@ -26,7 +26,6 @@ Start-Sleep -Seconds 2
 $env:PATH = "$rocm\bin;$rocm\lib\llvm\bin;$env:PATH"
 $env:ROCM_PATH = $rocm
 $env:HIP_PATH = $rocm
-$env:GGML_HIP_ENABLE_UNIFIED_MEMORY = "1"
 $env:HSA_OVERRIDE_GFX_VERSION = "11.5.1"
 
 $argv = @(

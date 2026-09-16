@@ -18,7 +18,6 @@ Start-Sleep -Seconds 3
 $env:PATH = "$sdk\bin;$sdk\lib\llvm\bin;$env:PATH"
 $env:ROCM_PATH = $sdk; $env:HIP_PATH = $sdk
 $env:HIP_DEVICE_LIB_PATH = "$sdk\lib\llvm\amdgcn\bitcode"
-$env:GGML_HIP_ENABLE_UNIFIED_MEMORY = '1'
 $env:HSA_OVERRIDE_GFX_VERSION = '11.5.1'
 
 function Run($tag, $mtp, $nmax) {

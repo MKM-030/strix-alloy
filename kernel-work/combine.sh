@@ -13,7 +13,7 @@ stop_srv(){ for p in $(pgrep -x llama-server); do kill -9 "$p" 2>/dev/null; done
 
 stop_srv
 source "$BASE/env.sh"
-export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1 LLAMA_MMB=1
+export HSA_ENABLE_DXG_DETECTION=1 LLAMA_MMB=1
 say "==== combined: PROJFIX + MMB + FR-Spec MTP (d2t patched) ===="
 "$PW" -m "$PF" -ngl 99 -fa on -fit off --load-mode none --lazy-mode on-direct \
   -ctk f16 -ctv f16 -c 49152 -b 8192 -ub 8192 --parallel 1 -t 8 \

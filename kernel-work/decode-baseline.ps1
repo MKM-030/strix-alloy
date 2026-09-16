@@ -25,7 +25,6 @@ $model = 'C:\AI\models\qwen38-flash\projfix\Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00
 $env:PATH = "$sdk\bin;$sdk\lib\llvm\bin;$env:PATH"
 $env:ROCM_PATH = $sdk; $env:HIP_PATH = $sdk
 $env:HIP_DEVICE_LIB_PATH = "$sdk\lib\llvm\amdgcn\bitcode"
-$env:GGML_HIP_ENABLE_UNIFIED_MEMORY = '1'
 $env:HSA_OVERRIDE_GFX_VERSION = '11.5.1'
 # arm switch: enable the RDNA3.5 small-K MMVQ path (patch in mmvq.cu) for this run
 if ($SmallK) { $env:GGML_MMVQ_RDNA35_SMALLK = '1'; Write-Output "[$Label] SMALLK enabled" }

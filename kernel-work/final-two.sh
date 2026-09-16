@@ -30,7 +30,7 @@ run(){
   stop_srv
   sync; sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches' 2>/dev/null; sleep 2
   source "$BASE/env.sh"
-  export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
+  export HSA_ENABLE_DXG_DETECTION=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
   gates_all
   local -a a=(-m "$model" -ngl 999 -fa on -fit off --load-mode none -ctk f16 -ctv f16
     -c "$ctx" -b "$b" -ub "$ub" --parallel 1 --jinja --host 127.0.0.1 --port $PORT --no-webui)

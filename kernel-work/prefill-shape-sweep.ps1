@@ -15,7 +15,6 @@ $model = 'C:\AI\models\qwen38-flash\projfix\Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00
 $env:PATH = "$sdk\bin;$sdk\lib\llvm\bin;$env:PATH"
 $env:ROCM_PATH = $sdk; $env:HIP_PATH = $sdk
 $env:HIP_DEVICE_LIB_PATH = "$sdk\lib\llvm\amdgcn\bitcode"
-$env:GGML_HIP_ENABLE_UNIFIED_MEMORY = '1'
 $env:HSA_OVERRIDE_GFX_VERSION = '11.5.1'
 if ($MinT -gt 0) { $env:GGML_MMB_MIN_T = "$MinT"; Write-Output "[$Label] GGML_MMB_MIN_T=$MinT" }
 else { Remove-Item Env:GGML_MMB_MIN_T -ErrorAction SilentlyContinue; Write-Output "[$Label] GGML_MMB_MIN_T unset (512)" }

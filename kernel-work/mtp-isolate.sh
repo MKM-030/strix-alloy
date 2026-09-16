@@ -15,7 +15,7 @@ for p in $(pgrep -x llama-server); do kill -9 "$p" 2>/dev/null; done
 sleep 4
 source "$BASE/env.sh"
 export HSA_ENABLE_DXG_ETECTION=1 2>/dev/null || true
-export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
+export HSA_ENABLE_DXG_DETECTION=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
 
 case "$MODE" in
   none) : ;;

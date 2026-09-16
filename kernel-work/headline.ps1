@@ -8,7 +8,6 @@ $proj = '\\wsl.localhost\Ubuntu-24.04\home\revn\models\flash-next-strix\Qwen3.8-
 $ud   = 'C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf'
 $head = 'C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\MTP\mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf'
 $env:PATH = "$rocm\bin;$rocm\lib\llvm\bin;$env:PATH"
-$env:GGML_HIP_ENABLE_UNIFIED_MEMORY = '1'
 $env:HSA_OVERRIDE_GFX_VERSION = '11.5.1'
 
 Get-Process llama-server -ErrorAction SilentlyContinue | Stop-Process -Force

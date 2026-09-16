@@ -12,8 +12,7 @@ LOG="$OUT/st-$TAG.log"
 for p in $(pgrep -x llama-server); do kill -9 "$p" 2>/dev/null; done
 sleep 4
 source "$BASE/env.sh"
-export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1
-unset LLAMA_MMB 2>/dev/null || true
+export HSA_ENABLE_DXG_DETECTION=1 unset LLAMA_MMB 2>/dev/null || true
 [ -n "$ENVS" ] && [ "$ENVS" != "-" ] && export $ENVS
 
 ARGS=(-m "$MODEL" -ngl 99 -fa on -fit off --load-mode none -ctk f16 -ctv f16

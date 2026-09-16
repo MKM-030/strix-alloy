@@ -16,8 +16,7 @@ echo "=== $TAG start $(date +%T) avail=${AVAIL}G bin=$BIN ===" | tee "$LOG"
 [ "$AVAIL" -ge 55 ] || { echo "ABORT: <55G available"; exit 2; }
 
 source "$BASE/env.sh"
-export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1
-
+export HSA_ENABLE_DXG_DETECTION=1 
 "$BIN" -m "$MODEL" -ngl 99 -fa on --parallel 1 -t 8 \
   --host 127.0.0.1 --port $PORT --no-webui "$@" >> "$LOG" 2>&1 &
 SRV=$!

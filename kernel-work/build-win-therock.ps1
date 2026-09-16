@@ -13,13 +13,29 @@ Log ("hipcc: " + (Test-Path "$sdk\bin\hipcc.exe"))
 Log ("device libs: " + (Test-Path "$sdk\lib\llvm\amdgcn\bitcode"))
 
 # sync the patched sources from WSL
+#
+# This used to copy exactly three files (llama-lazy-reader.h, qwen4exp.cpp, server-context.cpp).
+# That silently skipped ggml/src/ggml-cuda, so a HIP kernel change compiled from a stale tree and the
+# "measured" result described a build that did not contain the patch. Sync the whole trees the fork
+# actually modifies instead of a hand-kept list.
 $wsl = '\\wsl.localhost\Ubuntu-24.04\home\revn\strix-llama'
+$syncDirs = @('src', 'common', 'tools', 'ggml')
+foreach ($d in $syncDirs) {
+    $from = Join-Path $wsl $d
+    $to   = Join-Path $Src $d
+    if (-not (Test-Path $from)) { Log "  sync SKIP (absent): $d"; continue }
+    # robocopy: /E all subdirs, /NFL /NDL quiet, /NJH /NJS no headers; exit codes 0-7 are success
+    & robocopy $from $to /E /NFL /NDL /NJH /NJS /R:1 /W:1 /XD build build-* .git | Out-Null
+    Log ("  synced $d (robocopy exit $LASTEXITCODE)")
+}
 Copy-Item (Join-Path $wsl 'src\llama-lazy-reader.h') (Join-Path $Src 'src\llama-lazy-reader.h') -Force
 Copy-Item (Join-Path $wsl 'src\models\qwen4exp.cpp') (Join-Path $Src 'src\models\qwen4exp.cpp') -Force
 Copy-Item (Join-Path $wsl 'tools\server\server-context.cpp') (Join-Path $Src 'tools\server\server-context.cpp') -Force
 Log ("stub present: " + (Select-String -Path (Join-Path $Src 'src\llama-lazy-reader.h') -Pattern 'prefetch\(const int32_t \*, int64_t\) const \{\}' -Quiet))
 Log ("ON_DEVICE ckpt sites: " + (Select-String -Path (Join-Path $Src 'tools\server\server-context.cpp') -Pattern 'ON_DEVICE' | Measure-Object).Count)
 Log ("d2t refs in staged qwen4exp: " + (Select-String -Path (Join-Path $Src 'src\models\qwen4exp.cpp') -Pattern 'd2t' | Measure-Object).Count)
+# prove the HIP patch actually landed in the build tree, not just in WSL
+Log ("MMID_512 in staged mmid.cu: " + (Select-String -Path (Join-Path $Src 'ggml\src\ggml-cuda\mmid.cu') -Pattern 'mm_ids_helper_512_10' -Quiet))
 
 $cmds = @"
 call "$vc"
