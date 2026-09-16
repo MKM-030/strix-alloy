@@ -1,0 +1,50 @@
+From 891a923a44068eb8f892043ae1d0f753c3fad9fe Mon Sep 17 00:00:00 2001
+From: kernel-work <kernel@local>
+Date: Tue, 15 Sep 2026 23:25:55 +0200
+Subject: [PATCH 5/8] server: add round / width / yield accounting to the
+ timing block
+
+Separates 'round cost grew with depth' from 'yield per round fell', which is the
+distinction needed to decide where a decode optimisation would pay. All from counters
+that already exist, printed at INFO level so no trace build is required:
+rounds, width(proposed/round), yield(emitted/round), target_ms/round,
+target_ms/emitted_token, and per-position prefix survival.
+---
+ tools/server/server-context.cpp | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/tools/server/server-context.cpp b/tools/server/server-context.cpp
+index f16329e3..2a0d9048 100644
+--- a/tools/server/server-context.cpp
++++ b/tools/server/server-context.cpp
+@@ -687,6 +687,30 @@ struct server_slot {
+                         (double) d_catchup / 1000.0 / (double) (n_catchup ? n_catchup : 1), (int) n_catchup,
+                         100.0 * (double) d_catchup / 1000.0 / t_gen_total);
+             }
++
++            // round / width / yield accounting: separates "round cost grew" from "yield fell".
++            const int32_t rnd = (int32_t) stats.n_draft_verif_steps;
++            if (rnd > 0) {
++                const int32_t prop = (int32_t) stats.n_draft_tokens;
++                const int32_t gen  = (int32_t) stats.n_gen;
++                SLT_INF(*this,
++                        "rounds: %5d | width(proposed/round) = %5.2f | yield(emitted/round) = %5.2f | "
++                        "target_ms/round = %7.2f | target_ms/emitted_token = %7.3f\n",
++                        (int) rnd,
++                        (double) prop / (double) rnd,
++                        (double) gen  / (double) rnd,
++                        (double) d_decode / 1000.0 / (double) rnd,
++                        (double) d_decode / 1000.0 / (double) (gen > 0 ? gen : 1));
++
++                std::string surv;
++                for (size_t i = 0; i < n_accepted_per_pos.size(); ++i) {
++                    if (i > 0) { surv += ", "; }
++                    surv += string_format("%.3f", (double) n_accepted_per_pos[i] / (double) rnd);
++                }
++                if (!surv.empty()) {
++                    SLT_INF(*this, "prefix survival per draft position: (%s)\n", surv.c_str());
++                }
++            }
+         }
+ 
+         const int32_t n_draft_total       = stats.n_draft_tokens;

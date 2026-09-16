@@ -1,0 +1,28 @@
+From 93c36d903bcef0ae97434f44e3c10943353ce12f Mon Sep 17 00:00:00 2001
+From: revn <revn@local>
+Date: Tue, 15 Sep 2026 07:28:48 +0200
+Subject: [PATCH 1/8] win: restore the _WIN32 lazy-reader prefetch() no-op stub
+
+On Windows the lazy direct reader is stubbed out and the mmap fallback is used,
+where prefetch() is a page-cache hint. qwen4exp calls prefetch() unconditionally,
+so the absent no-op aborted model load on _WIN32. Behaviour-correct on the
+fallback; reported as pwilkin/llama.cpp issue #24.
+---
+ src/llama-lazy-reader.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/llama-lazy-reader.h b/src/llama-lazy-reader.h
+index f626d9b2..e534d247 100644
+--- a/src/llama-lazy-reader.h
++++ b/src/llama-lazy-reader.h
+@@ -26,6 +26,10 @@ struct llama_lazy_reader {
+     void gather(const int32_t *, int64_t, float *) const {
+         GGML_ABORT("lazy direct reads are not supported on this platform");
+     }
++
++    // --lazy-mode on-direct falls back to lazy mmap reads on Windows; prefetch() is a
++    // page-cache hint there, so a no-op is behaviour-correct (see issue #24).
++    void prefetch(const int32_t *, int64_t) const {}
+ #else
+     llama_lazy_reader(int fd, size_t base, size_t row_size, int64_t n_rows, int n_threads,
+                       enum ggml_type type, int64_t head_dim)

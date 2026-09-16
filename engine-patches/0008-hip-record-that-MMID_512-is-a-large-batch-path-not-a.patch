@@ -1,0 +1,45 @@
+From d638e2ed6387f1f150e8e1a6d14f27cd7a1ace16 Mon Sep 17 00:00:00 2001
+From: kernel-work <kernel@local>
+Date: Wed, 16 Sep 2026 23:40:36 +0200
+Subject: [PATCH 8/8] hip: record that MMID_512 is a large-batch path, not a
+ decode path
+
+Measurement, not a code change: a probe counting calls to
+ggml_cuda_launch_mm_ids_helper by token width, run against a 200-token decode, recorded
+exactly one call -- decode(n_tokens==1)=0, prefill(n_tokens>=128)=1.
+
+The callers confirm why: the helper is reached only from the large-batch paths
+(mmb.cu at T>=512, mmq.cu, mmf.cu). Serial decode takes MMVF/MMVQ instead
+(ggml_cuda_should_use_mmvf, dst->ne[2]==1).
+
+So the fast path cannot affect serial decode on this model, and the earlier "-0.2% decode"
+measurement described a path decode never executes. The comment now says so, and the
+earlier "HIP graphs absorb the launch overhead" rationale is removed -- a 512-block grid is
+one launch, not 512 launches.
+
+The kernel stays behind GGML_CUDA_DISABLE_MMID_512 (unset = enabled) so the prefill-side
+result remains reproducible, but it is not a decode lever and should not be evaluated as one.
+---
+ ggml/src/ggml-cuda/mmid.cu | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/ggml/src/ggml-cuda/mmid.cu b/ggml/src/ggml-cuda/mmid.cu
+index 327d4050..378c9ce0 100644
+--- a/ggml/src/ggml-cuda/mmid.cu
++++ b/ggml/src/ggml-cuda/mmid.cu
+@@ -204,9 +204,12 @@ void ggml_cuda_launch_mm_ids_helper(
+         const int32_t * __restrict__ ids, int32_t * __restrict__ ids_src1, int32_t * __restrict__ ids_dst, int32_t * __restrict__ expert_bounds,
+         const int n_experts, const int n_tokens, const int n_expert_used, const int nchannels_y, const int si1, const int sis1, const bool write_inverse, cudaStream_t stream) {
+     // RDNA3.5 Qwen4exp (512 experts, top-10): block-wide histogram instead of one warp per expert.
+-    // Coverage was verified with a temporary probe: the fast path does fire on this model's real
+-    // shape (cc=RDNA3_5, n_experts=512, n_expert_used=10), so the measured A/B is a true negative,
+-    // not a guard mismatch. Result: -0.2% decode / +0.1% prefill (within noise), output identical.
++    // MEASURED COVERAGE (2026-09-16): this helper is reached only from the LARGE-BATCH paths
++    // (mmb.cu for T >= 512, mmq.cu and mmf.cu fallbacks). A phase probe counting calls by token width,
++    // run against a 200-token decode, recorded exactly ONE call: decode(n_tokens==1)=0,
++    // prefill(n_tokens>=128)=1. So MMID_512 CANNOT affect serial decode -- decode takes MMVF/MMVQ
++    // (ggml-cuda.cu: ggml_cuda_should_use_mmvf, dst->ne[2]==1). The "no decode gain" result is
++    // therefore not a property of this kernel; it measured a path decode never executes.
+     const int cc = ggml_cuda_info().devices[ggml_cuda_get_device()].cc;
+     if (GGML_CUDA_CC_IS_RDNA3_5(cc) && n_experts == 512 && n_expert_used == 10 && getenv("GGML_CUDA_DISABLE_MMID_512") == nullptr) {
+         mm_ids_helper_512_10<<<1, 1024, 0, stream>>>(

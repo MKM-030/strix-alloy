@@ -1,0 +1,125 @@
+From d9667824eab738ac8171d227bab70c18eb7b6f1c Mon Sep 17 00:00:00 2001
+From: kernel-work <kernel@local>
+Date: Tue, 15 Sep 2026 18:40:10 +0200
+Subject: [PATCH 4/8] server: add generation-gated decode phase timing
+
+Measures two wall-clock phases around boundaries that already synchronize, so no
+new GPU sync is introduced:
+  tgt_decode   = llama_decode(ctx_tgt) + llama_synchronize at the sampling boundary
+  spec_catchup = common_speculative_process
+
+Both are gated on slot state == SLOT_STATE_GENERATING so the once-per-request
+prefill decode does not pollute the per-request decode ledger. Printed alongside
+the existing timings.
+
+Measured result (PROJFIX, ub 2048, 8k, n-max 2): target verify ~80% of the
+decode wall, draft ~16%, accept ~0.01%. Verification amortizes 45% across 3 rows
+vs independent passes, but the marginal extra row costs 36.3 ms/token versus a
+35.0 ms serial token -- which is why wider MTP does not pay here.
+---
+ tools/server/server-context.cpp | 70 +++++++++++++++++++++++++++++----
+ 1 file changed, 62 insertions(+), 8 deletions(-)
+
+diff --git a/tools/server/server-context.cpp b/tools/server/server-context.cpp
+index 4a954fef..f16329e3 100644
+--- a/tools/server/server-context.cpp
++++ b/tools/server/server-context.cpp
+@@ -38,6 +38,20 @@
+ 
+ constexpr int HTTP_POLLING_SECONDS = 1;
+ 
++// ---- phase timing (measurement-only, no added synchronization) ------------------------------
++// The target decode already calls llama_synchronize() when the batch carries outputs, and the
++// spec catch-up block blocks on its own context. Timing around those existing boundaries
++// decomposes the spec round wall without inserting any new sync.
++static int64_t g_t_tgt_decode_us    = 0;
++static int64_t g_t_spec_catchup_us  = 0;
++static int64_t g_n_tgt_decode       = 0;
++static int64_t g_n_spec_catchup     = 0;
++// last-printed snapshots, so each request reports its own deltas rather than a running total
++static int64_t g_p_tgt_decode_us    = 0;
++static int64_t g_p_spec_catchup_us  = 0;
++static int64_t g_p_n_tgt_decode     = 0;
++static int64_t g_p_n_spec_catchup   = 0;
++
+ static common_speculative_output_limits server_output_limits(const common_params & params) {
+     if (params.embedding ||
+             (params.pooling_type != LLAMA_POOLING_TYPE_UNSPECIFIED && params.pooling_type != LLAMA_POOLING_TYPE_NONE)) {
+@@ -655,6 +669,26 @@ struct server_slot {
+                 "   graphs reused = %10d\n",
+                 llama_perf_context(ctx_tgt).n_reused);
+ 
++        {
++            const int64_t d_decode  = g_t_tgt_decode_us   - g_p_tgt_decode_us;
++            const int64_t d_catchup = g_t_spec_catchup_us - g_p_spec_catchup_us;
++            const int64_t n_decode  = g_n_tgt_decode      - g_p_n_tgt_decode;
++            const int64_t n_catchup = g_n_spec_catchup    - g_p_n_spec_catchup;
++            g_p_tgt_decode_us   = g_t_tgt_decode_us;
++            g_p_spec_catchup_us = g_t_spec_catchup_us;
++            g_p_n_tgt_decode    = g_n_tgt_decode;
++            g_p_n_spec_catchup  = g_n_spec_catchup;
++
++            if (n_decode > 0) {
++                SLT_INF(*this,
++                        "phase: tgt_decode = %8.2f ms x%5d (%.1f%% of gen) | spec_catchup = %8.2f ms x%5d (%.1f%%)\n",
++                        (double) d_decode / 1000.0 / (double) n_decode, (int) n_decode,
++                        100.0 * (double) d_decode / 1000.0 / t_gen_total,
++                        (double) d_catchup / 1000.0 / (double) (n_catchup ? n_catchup : 1), (int) n_catchup,
++                        100.0 * (double) d_catchup / 1000.0 / t_gen_total);
++            }
++        }
++
+         const int32_t n_draft_total       = stats.n_draft_tokens;
+         const int32_t n_draft_accepted    = stats.n_draft_accepted;
+         const int32_t n_draft_verif_steps = stats.n_draft_verif_steps;
+@@ -3686,12 +3720,22 @@ private:
+         // yield to the queue, so we can still handle metrics tasks while decoding
+         // note: the sync is done here too, so that the wait is also covered by the yield
+         int ret = 0;
+-        queue_tasks.yield_to_queue([&]() {
+-            ret = llama_decode(ctx_tgt, batch_view);
+-            if (ret == 0 && has_output) {
+-                llama_synchronize(ctx_tgt);
++        {
++            // only attribute time to the generation phase; prompt processing shares this path and
++            // must not be folded into the per-request decode ledger
++            const bool gen_phase = (!slots.empty()) && (slots[0].state == SLOT_STATE_GENERATING);
++            const int64_t t_ph = ggml_time_us();
++            queue_tasks.yield_to_queue([&]() {
++                ret = llama_decode(ctx_tgt, batch_view);
++                if (ret == 0 && has_output) {
++                    llama_synchronize(ctx_tgt);
++                }
++            });
++            if (gen_phase) {
++                g_t_tgt_decode_us += ggml_time_us() - t_ph;
++                g_n_tgt_decode    += 1;
+             }
+-        });
++        }
+ 
+         if (ret != 0) {
+             {
+@@ -3751,9 +3795,19 @@ private:
+         //       ref: https://github.com/ggml-org/llama.cpp/pull/22728#issuecomment-4400925384
+         if (spec) {
+             bool ok = true;
+-            queue_tasks.yield_to_queue([&]() {
+-                ok = common_speculative_process(spec.get(), batch_view);
+-            });
++            {
++                // gate on generation as well: the same call runs once over the whole prefill
++                // batch, which would otherwise swamp the per-request decode ledger
++                const bool gen_phase = (!slots.empty()) && (slots[0].state == SLOT_STATE_GENERATING);
++                const int64_t t_ph = ggml_time_us();
++                queue_tasks.yield_to_queue([&]() {
++                    ok = common_speculative_process(spec.get(), batch_view);
++                });
++                if (gen_phase) {
++                    g_t_spec_catchup_us += ggml_time_us() - t_ph;
++                    g_n_spec_catchup    += 1;
++                }
++            }
+ 
+             if (!ok) {
+                 SRV_ERR("%s", "failed to process speculative batch\n");
