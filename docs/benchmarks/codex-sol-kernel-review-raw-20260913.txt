@@ -1,0 +1,80 @@
+
+Best immediate throughput return because the path already exists and acceptance was reportedly 100%.
+
+With depth d and perfect acceptance, the ceiling is d+1 output tokens per verification. After verification and drafter overhead, a realistic initial target is roughly 1.5–3×, not the theoretical maximum. The existing 22.1 t/s result versus 6.97 t/s suggests substantial potential, although those measurements are not controlled enough to attribute the difference to MTP alone.
+
+2) A — HIP graph capture on DXG
+
+Very cheap and directly tests the launch-overhead thesis. HIP graphs are intended to reduce repeated short-kernel submission overhead, but enabling `GGML_HIP_GRAPHS` does not prove that capture succeeded or that DXG executes it as retained work. [HIP’s graph documentation](https://rocm.docs.amd.com/projects/HIP/en/latest/how-to/hip_runtime_api/hipgraph.html)
+
+For 200–500 launches/token:
+
+- 10 µs avoided per launch saves 2–5 ms.
+- 50 µs saves 10–25 ms.
+- At 7 t/s, one token is 143 ms, so that predicts roughly 1.02–1.21× unless graphs also remove expensive synchronizations or DXG submissions.
+
+Large value-to-effort, but a 2× gain from launch replay alone needs unusually high per-launch overhead.
+
+3) G — Q8 KV cache, specifically at long context
+
+Likely nearly free to test if the engine already supports it. Q8 roughly halves KV bytes versus FP16/BF16. Every 1 GB/token eliminated saves approximately 4–5 ms at 200–240 GB/s. That is minor at short context but potentially material at 55k–164k, even with only a subset of layers using full attention.
+
+It will not fix short-context MoE decode and should be benchmarked separately at short, 55k, and 164k context.
+
+4) F — PLE/ngram hot-row cache and prefetch
+
+Potentially high but extremely bimodal. The 26.8 GB table divided by 2.5M rows is about 10.7 KB/row. Even 100 fetched rows/token is only about 1 MB of payload, so bandwidth is not the concern; random disk faults and mapping latency are.
+
+A small hot-row cache could remove tens of milliseconds if faults occur during decode. If the working set is already warm in the page cache, it will do almost nothing. Pinning host memory does not solve cold disk faults, and fully placing the table in VRAM may crowd out weights and long-context KV.
+
+5) D — Fused/grouped MoE decode kernel
+
+Probably the largest true kernel opportunity, but much more work.
+
+Six billion active Q4 parameters imply about 3.0 GB of raw weights, perhaps 3.2–3.8 GB including quantization metadata. At 7 t/s that is only around 22–27 GB/s. The absolute 220 GB/s memory floor is around 15–17 ms for those weights, versus 143 ms measured per token, so substantial headroom exists.
+
+However, “gate → top-k → all GEMVs → activation → scatter in one kernel” is too ambitious. Cross-CTA synchronization, dynamic expert selection, large partial reductions and the down-projection dependency make a single conventional kernel awkward. A realistic target is two or three grouped/persistent phases, not literally one kernel. End-to-end gain might be 1.2–1.8× if expert GEMVs dominate, but only profiling can establish that.
+
+6) C — FP4 weights
+
+The stated 2× byte reduction is wrong for the current baseline: IQ4_XS and IQ4_NL are already approximately four-bit weight formats. ROCmFP4 may offer a better layout or faster unpack/dequant path, but it does not halve bytes relative to the measured Q4 models.
+
+On gfx1151, assume weight-only FP4 still requires unpacking/conversion or packed integer dot products; do not assume native FP4 matrix throughput. Plausible gain over a good IQ4 kernel is more like 1.05–1.35×, with accuracy, conversion and fork-locking costs.
+
+7) H — Own fork
+
+This has no direct performance gain, so it is not really comparable. It is nevertheless the right implementation vehicle if the project proceeds: branch from the already-working `strix-halo` fork, isolate each optimization, and retain mainline as the control.
+
+8) B — Reimplement PM4/ROCr replay without `/dev/kfd`
+
+Poor expected return. Directly reproducing a KFD queue/PM4 mechanism over `/dev/dxg` is not an ordinary application-level kernel project; it likely requires work in ROCDXG and/or the Windows driver interface.
+
+The cheap capability probe belongs under A. AMD’s current WSL path is a user-mode ROCDXG translation layer, so lack of `/dev/kfd` proves that the author’s KFD-specific mechanism cannot run; it does not prove that every retained graph mechanism is impossible. [AMD ROCDXG WSL description](https://rocm.docs.amd.com/projects/radeon-ryzen/en/latest/docs/install/installrad/wsl/howto_wsl.html)
+
+2. Highest-value first experiment
+
+Run a controlled HIP-graphs ON/OFF decode A/B on the same Flash-Next quant, prompt, context, MTP disabled, and fully warmed files.
+
+Require evidence that capture, instantiation and repeated `hipGraphLaunch` actually occur; a build flag is insufficient. Record token latency, graph-launch count, ordinary HIP launch count, and output equality. If application capture is unclear, precede it with a tiny DXG benchmark replaying roughly 256 short kernels.
+
+This experiment is the best first kernel-runtime test because it takes little work and either delivers an immediate gain or invalidates the premise that retained submission should guide the kernel architecture. Note that AMD documents stream-capture limitations on native Windows; WSL/ROCDXG behavior must therefore be measured rather than inferred. [HIP graph tutorial](https://rocm.docs.amd.com/projects/HIP/en/latest/tutorial/graph_api.html)
+
+For user-visible throughput, the next experiment should be a controlled MTP off/on/depth sweep.
+
+3. Technically wrong or over-optimistic claims
+
+- FP4 does not halve traffic relative to the existing Q4 baseline.
+- “MoE uses only 40% bandwidth, therefore launch-bound” is not proven. Small irregular GEMVs can be memory-latency-, occupancy-, dequant-, or cache-miss-bound while reporting low aggregate bandwidth.
+- The 26 t/s native result versus “our 12 t/s” does not isolate PM4. It mixes model architecture, quant format, runtime, OS and possibly engine changes; Flash-Next’s measured local figure is 6.97 t/s, while 12 t/s belongs to the dense 27B test.
+- A fully fused one-kernel MoE is unlikely to be the best RDNA design. It risks global synchronization problems, excessive VGPR/LDS use and poor occupancy.
+- “100% acceptance” is not yet a general quality or speed result. It needs diverse prompts, exact target verification, acceptance by depth, and MTP-off throughput controls.
+- Pinned PLE memory does not remove disk faults. Whole-table VRAM residency also needs a complete weights + KV + allocator-headroom calculation.
+- Physical LPDDR bandwidth is shared with the CPU and display. The dense 184 GB/s estimate is strong evidence of saturation, but 200–240 GB/s should not be treated as wholly available GPU bandwidth.
+
+4. Additional kernel techniques worth testing
+
+- Wave32-native expert weight packing: pretranspose and pack Q4 blocks in lane-consumption order, colocate scales, and interleave gate/up projections. This improves 128/256-byte coalescing and lets one activation load feed both projections.
+
+- Persistent grouped-expert execution: launch resident CTAs that consume a device-side queue of `(expert, output-tile)` work after top-k selection. Use wave reductions and only a small number of global synchronization boundaries. This avoids per-expert launches without requiring an impossible monolithic kernel.
+
+- Q4×Q8 packed-dot GEMV: quantize the activation vector per block and compare packed integer dot instructions against BF16 WMMA. Batch-1 has M=1, so a nominal 16×16 WMMA tile can waste most of its M dimension unless outputs or active experts are packed together. Also watch VGPR spilling: staging reusable activation/scales in LDS can help, while staging single-use weight streams in LDS usually only adds traffic.

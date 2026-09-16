@@ -1,0 +1,56 @@
+[
+    "[fitoff-ub2048] fit=off ub=2048 b=2048 -\u003e ready=True exit= t=69s fitWarn=False oomMarker=False",
+    "      | 1.06.696.011 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 32768, kv_unified = \u0027false\u0027",
+    {
+        "tag":  "fitoff-ub2048",
+        "fit":  "off",
+        "ub":  2048,
+        "b":  2048,
+        "ready":  true,
+        "exit":  null,
+        "fit_warn":  false,
+        "oom_marker":  false
+    },
+    "[fiton-ub2048] fit=on ub=2048 b=2048 -\u003e ready=True exit= t=69s fitWarn=True oomMarker=False",
+    "      | 0.01.254.077 E llama_init_from_model: failed to initialize the context: qwen4exp requires ctx_other to be set (this warning is normal during memory fitting)",
+    "      | 0.01.332.740 W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model",
+    "      | 1.07.874.655 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 32768, kv_unified = \u0027false\u0027",
+    {
+        "tag":  "fiton-ub2048",
+        "fit":  "on",
+        "ub":  2048,
+        "b":  2048,
+        "ready":  true,
+        "exit":  null,
+        "fit_warn":  true,
+        "oom_marker":  false
+    },
+    "[fiton-ub8192] fit=on ub=8192 b=8192 -\u003e ready=True exit= t=73s fitWarn=True oomMarker=False",
+    "      | 0.01.459.048 E llama_init_from_model: failed to initialize the context: qwen4exp requires ctx_other to be set (this warning is normal during memory fitting)",
+    "      | 0.01.540.563 W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model",
+    "      | 1.09.958.068 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 32768, kv_unified = \u0027false\u0027",
+    {
+        "tag":  "fiton-ub8192",
+        "fit":  "on",
+        "ub":  8192,
+        "b":  8192,
+        "ready":  true,
+        "exit":  null,
+        "fit_warn":  true,
+        "oom_marker":  false
+    },
+    "[fiton-ub16384] fit=on ub=16384 b=16384 -\u003e ready=True exit= t=81s fitWarn=True oomMarker=False",
+    "      | 0.02.208.195 E llama_init_from_model: failed to initialize the context: qwen4exp requires ctx_other to be set (this warning is normal during memory fitting)",
+    "      | 0.02.294.708 W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model",
+    "      | 1.18.757.882 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 32768, kv_unified = \u0027false\u0027",
+    {
+        "tag":  "fiton-ub16384",
+        "fit":  "on",
+        "ub":  16384,
+        "b":  16384,
+        "ready":  true,
+        "exit":  null,
+        "fit_warn":  true,
+        "oom_marker":  false
+    }
+]

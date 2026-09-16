@@ -1,0 +1,28 @@
+# Large regenerable benchmark byproduct. Patterns are relative to this directory.
+# Keeps: scripts (.ps1/.sh/.py/.bat/.hip/.cu/.cpp), small JSON evidence, docs.
+# Drops: multi-hundred-MB logs, hidden-state dumps, tokenised corpora, GGUF inventories.
+
+# logs / dumps produced by runs
+results/*.log
+results/*.err
+results/*.out
+results/cr.err
+results/*-hd.h
+results/hd-*.h
+results/projfix-hd*.h
+results/verify-hd*.h
+results/*.bin
+results/*.gguf
+
+# regenerable corpora and inventories (rebuildable from the model)
+bench-tokens.json
+bench-corpus.txt
+gguf-inventory-*
+
+# python cache
+__pycache__/
+
+# compiled helpers (sources are kept)
+*.exe
+*.dll
+*.lib

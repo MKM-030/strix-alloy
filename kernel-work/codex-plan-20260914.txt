@@ -1,0 +1,3023 @@
+Reading additional input from stdin...
+OpenAI Codex v0.154.0
+--------
+workdir: C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 01a0a01e-571d-7a41-b3f5-0e9caf0c9516
+--------
+user
+You are reviewing a performance program and must produce the PLAN + STRATEGY that gets the best prefill and decode on ONE machine. Be concrete, numeric, and decisive. Where my reasoning is weak, say so and correct it.
+
+## Machine (fixed)
+Bosgame/Corsair Strix Halo: Ryzen AI Max+ 395, Radeon 8060S gfx1151 (RDNA3.5, wave32, 40 CU, 2 MiB L2, 32 MiB MALL), 128 GB LPDDR5X (256 GB/s theoretical, ~221-234 GB/s practical), Windows 11 + WSL2 (HIP over /dev/dxg only; no /dev/kfd; UMA so weights live in host RAM). Current carve 32 GB -> device pool 79.82 GiB. WSL cap 86 GB.
+
+## Model
+Qwen3.8-Flash-Next (qwen4exp MoE, 177B total / ~6B active, 512 experts top-k 10 + shared, 48 layers, 36 GatedDeltaNet + 12 full-attn, hyper-connections, 26.82 GiB n-gram PLE table paged from disk, vocab 248320).
+
+## THE AUTHORITATIVE RESULT (this changes everything)
+The fork author (ilintar/pwilkin) just published on r/StrixHalo: **1204 t/s prefill @0 depth, ~1100 @40k, ~850 @150k; ~30 t/s decode**, on his strix-halo llama.cpp branch + custom IQ4_NL "PROJFIX" quant + custom MIT/HIP build using retained PM4 replay. Separately, olliehm ported the SAME branch to Windows/TheRock ROCm 10.1/Clang 23 and measured **964-1045 t/s prefill with the STOCK unsloth UD-IQ4_XS quant** (not even PROJFIX), 262144 ctx, `-b/-ub 8192`, `--load-mode none`, NO custom runtime, NO lazy-direct -- with ALL 35 launcher env gates ON except ONE: `LLAMA_MMB_HC16=0` (that gate alone corrupts output on Windows; its ablation value is only 1.08x). All gates OFF gives only ~418 t/s. So the gates are what buy ~2.3x, and they work on Windows.
+
+Also from issue #24 + PR #28118: MTP without on-device speculative recurrent-state checkpoints is a net LOSS (77-79% acceptance but only ~24 t/s decode, vs ~34-38 t/s with device checkpoints, vs 6.2 t/s when host checkpoints dominate an ~825 ms round). PR #28118 is 8 lines: OR LLAMA_STATE_SEQ_FLAGS_ON_DEVICE into the speculative ckpt update/load for target+draft.
+
+Reference: hipEngine RDNA3 tuning guide (shisa-ai) says llama.cpp HIP leaves most threads idle in its GEMV loops (e.g. Q4_K ncols=512 uses 32 of 256 threads), recommends wave32 coalesced packed loads + multiple accumulators, K-dependent workgroup sizing (K=512->64 threads, K=2048->128), vec4->vec8 unroll (+42%/+8%), LDS only when it earns barriers, and notes MoE grid reshape to (packs, experts) measured 59% SLOWER; also grid.sync ~1us, and speculative decode on a 35B-A3B measured eta=0.736 running 0.7-0.85x its own AR baseline.
+
+## What I measured on this box (32 GB carve, token-exact prompts)
+- pwilkin HIP + PROJFIX, ub 8192, ctx 49152, MMB=1: prefill 364@1k / 460-525@8k / 381@32k; decode 21.7@1k / 17-19@8k / 10.0@32k
+- same, MMB off: 324 / 325-364 / 316; decode 20.6 / 13-19 / 11.5
+- pwilkin HIP + UD-IQ4_XS + MMB=1: prefill 155-380 (unstable), 206@32k
+- Vulkan (drluoto ba5354d) + UD + FR-Spec MTP d3: prefill 288-314@1k/360-366@8k/271@32k; decode 29.3-30.6@1k/17.8@8k/20.0@32k. No-spec decode 18.5-19.2. So MTP=1.6x there.
+- drluoto HIP + UD + plain MTP: decode 6.8 t/s (this matches the "host checkpoint" 6.2 t/s case exactly -> the fork lacks PR#28118)
+- Memory: pool 79.82 - PROJFIX resident 66.34 = 13.48 GiB for KV+compute; ub16384 needs 14.05 -> fails. So at 32 GB carve the author's ub 16384 cannot run; ub 8192 fits.
+- Also: the fork's 35 gates are real and I now have the complete list from the source. MMB kernels exist but I could not confirm from logs that they fire (their markers never appeared) -- possibly they only print under LLAMA_MMB_CVT_LOG, or the gate combination matters.
+
+## What I have already built this session
+- Ported FR-Spec `d2t`/`t2d` draft-vocab trim into the pwilkin fork's `src/models/qwen4exp.cpp` (loader + MTP graph builder), so the HIP fork can load the 65k-vocab FR-Spec head that previously only Vulkan accepted. Builds clean.
+- Ported PR #28118 (speculative checkpoints -> ON_DEVICE) into the same fork's server (`tools/server/server-context.cpp`), 6 call sites. Builds clean.
+- Full token-exact benchmark harness (fnbench.py) and a gate-launcher script.
+
+## QUESTIONS -- answer each with numbers and a decision
+
+1. **Prefill strategy.** Given the 964-1045 t/s Windows result with stock quant + gates, what is the highest-probability path to the best prefill on THIS box: (a) run the 35 gates at the 32 GB carve and accept ub 8192, (b) raise the carve to 96 GB (like the author and olliehm both did) so ub 16384 fits, or (c) something else? Quantify the expected gain from each. Note the carve is a founder/BIOS action.
+
+2. **Decode strategy.** The best decode I have is 30 t/s (Vulkan+FR-Spec). The author gets ~30 t/s, and with device-checkpoint MTP ~35-41, and 56 t/s on code at n-max 6. Given I have BOTH the FR-Spec port and the PR#28118 port in the HIP fork (but they are untested together, and PROJFIX+FR-Spec may not fit memory at 32 GB carve), what decode plan do you recommend and in what order? Is Vulkan+FR-Spec the better decode, or HIP + FR-Spec + MMB + PR#28118 once the carve is raised?
+
+3. **Can all three coexist?** PROJFIX (best prefill layout) + FR-Spec (best decode draft) + the 35 gates/MMB (best prefill kernels) + PR#28118 (best decode checkpoints) on the pwilkin HIP fork. What will break, what must be verified, and what is the memory arithmetic at 96 GB carve? Give the expected combined numbers.
+
+4. **The 512-expert MoE + speculation.** With top-k=10 of 512 and depth-d drafting, E[union] = 512(1-(1-10/512)^d): d=1 ->10, d=2 ->19.8, d=4 ->38.8, d=6 ->57.7. Per accepted token, expert bytes scale as union/d: 1.00, 0.99, 0.97, 0.96. Is there a strong reason to prefer depth 4 (author's default) vs 6 (56.6 t/s on code in PR#28118) here? What is the real limiter for decode -- expert-union bytes, GDN recurrence serialization, or acceptance rate?
+
+5. **What am I still missing?** In particular: (i) is my "MMB kernels never fired" observation a real failure or a logging artifact, and how do I check definitively? (ii) The QSA-lightning-indexer for decode is the author's stated next goal ("Next goal: QSA for decode") -- what does that imply for us? (iii) Any high-value kernel work (per hipEngine: GEMV workgroup sizing, vec8 unroll, L2/MALL policy, avoiding the 59%-slower MoE grid reshape) that beats just using the gates?
+
+6. **The cheapest 80/20 plan.** If you had 6 more hours on this box and one founder action available (a carve reboot), write the exact ordered checklist: what to run, in what order, with which gates/flags/quant/head, and the expected t/s at each step, plus the abort condition for each step.
+
+Be specific about env vars, flags, and file paths. Prefer measured numbers over speculation, and flag clearly which of your numbers are estimates.
+warning: Skill descriptions were shortened to fit the skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest.
+codex
+I’ll check the local fork, launcher and benchmark files, then verify the upstream reports. I’ll distinguish measured results from estimates and use the actual gate names and flags in the checklist.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:/Users/Marcel/.codex/plugins/cache/claude-cowork/superpowers/6.1.1/skills/using-superpowers/SKILL.md'; Get-Location; rg --files -g '*fnbench*' -g '*gate*' -g '*takeover*' -g '*28118*' -g '*qwen4exp*' -g 'AGENTS.md'" in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ succeeded in 451ms:
+---
+name: using-superpowers
+description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
+---
+
+<SUBAGENT-STOP>
+If you were dispatched as a subagent to execute a specific task, ignore this skill.
+</SUBAGENT-STOP>
+
+<EXTREMELY-IMPORTANT>
+If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+
+IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+
+This is not negotiable. You cannot rationalize your way out of this.
+
+
+## Skill Priority
+
+When multiple skills apply, process skills come first �?" they set the approach, then implementation skills (frontend-design, etc.) carry it out. Brainstorming and systematic-debugging are Superpowers' most common process skills, but the rule holds for any of them.
+
+- "Let's build X" �+' superpowers:brainstorming first, then implementation skills.
+- "Fix this bug" �+' superpowers:systematic-debugging first, then domain skills.
+
+## Red Flags
+
+These thoughts mean STOP�?"you're rationalizing:
+
+| Thought | Reality |
+|---------|---------|
+| "This is just a simple question" | Questions are tasks. Check for skills. |
+| "I need more context first" | Skill check comes BEFORE clarifying questions. |
+| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
+| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
+| "Let me gather information first" | Skills tell you HOW to gather information. |
+| "This doesn't need a formal skill" | If a skill exists, use it. |
+| "I remember this skill" | Skills evolve. Read current version. |
+| "This doesn't count as a task" | Action = task. Check for skills. |
+| "The skill is overkill" | Simple things become complex. Use it. |
+| "I'll just do this one thing first" | Check BEFORE doing anything. |
+| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
+| "I know what that means" | Knowing the concept �%� using the skill. Invoke it. |
+
+## Platform Adaptation
+
+If your harness appears here, read its reference file for special instructions:
+
+- Codex: `references/codex-tools.md`
+- Pi: `references/pi-tools.md`
+- Antigravity: `references/antigravity-tools.md`
+
+## User Instructions
+
+User instructions (CLAUDE.md, AGENTS.md, GEMINI.md, etc, direct requests) take precedence over skills, which in turn override default behavior. Only skip skill workflows or instructions when your human partner has explicitly told you to.
+
+fnbench.py
+allgates.sh
+getgates.sh
+gates-test.sh
+port-pr28118.py
+results\gt-gates-ud.log
+Path                                              
+----                                              
+C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+I’m using the systematic-debugging skill to separate configuration problems from kernel limits. The first key distinction is native Windows versus WSL: the Windows gate result does not yet prove that the same setup will reach 1,000 t/s through `/dev/dxg`.
+hook: PreToolUse
+web search: 
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:/Users/Marcel/.codex/plugins/cache/claude-cowork/superpowers/6.1.1/skills/systematic-debugging/SKILL.md'; Get-Content allgates.sh; Get-Content gates-test.sh; Get-Content getgates.sh; Get-Content port-pr28118.py; Get-Content fnbench.py; rg --files" in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ succeeded in 188ms:
+---
+name: systematic-debugging
+description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
+---
+
+# Systematic Debugging
+
+## Overview
+
+Random fixes waste time and create new bugs. Quick patches mask underlying issues.
+
+**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
+
+**Violating the letter of this process is violating the spirit of debugging.**
+
+## The Iron Law
+
+```
+NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
+```
+
+If you haven't completed Phase 1, you cannot propose fixes.
+
+## When to Use
+
+Use for ANY technical issue:
+- Test failures
+- Bugs in production
+- Unexpected behavior
+- Performance problems
+- Build failures
+- Integration issues
+
+**Use this ESPECIALLY when:**
+- Under time pressure (emergencies make guessing tempting)
+- "Just one quick fix" seems obvious
+- You've already tried multiple fixes
+- Previous fix didn't work
+- You don't fully understand the issue
+
+**Don't skip when:**
+- Issue seems simple (simple bugs have root causes too)
+- You're in a hurry (rushing guarantees rework)
+- Manager wants it fixed NOW (systematic is faster than thrashing)
+
+## The Four Phases
+
+You MUST complete each phase before proceeding to the next.
+
+### Phase 1: Root Cause Investigation
+
+**BEFORE attempting ANY fix:**
+
+1. **Read Error Messages Carefully**
+   - Don't skip past errors or warnings
+   - They often contain the exact solution
+   - Read stack traces completely
+   - Note line numbers, file paths, error codes
+
+2. **Reproduce Consistently**
+   - Can you trigger it reliably?
+   - What are the exact steps?
+   - Does it happen every time?
+   - If not reproducible �+' gather more data, don't guess
+
+3. **Check Recent Changes**
+   - What changed that could cause this?
+   - Git diff, recent commits
+   - New dependencies, config changes
+   - Environmental differences
+
+4. **Gather Evidence in Multi-Component Systems**
+
+   **WHEN system has multiple components (CI �+' build �+' signing, API �+' service �+' database):**
+
+   **BEFORE proposing fixes, add diagnostic instrumentation:**
+   ```
+   For EACH component boundary:
+     - Log what data enters component
+     - Log what data exits component
+     - Verify environment/config propagation
+     - Check state at each layer
+
+   Run once to gather evidence showing WHERE it breaks
+   THEN analyze evidence to identify failing component
+   THEN investigate that specific component
+   ```
+
+   **Example (multi-layer system):**
+   ```bash
+   # Layer 1: Workflow
+   echo "=== Secrets available in workflow: ==="
+   echo "IDENTITY: ${IDENTITY:+SET}${IDENTITY:-UNSET}"
+
+   # Layer 2: Build script
+   echo "=== Env vars in build script: ==="
+   env | grep IDENTITY || echo "IDENTITY not in environment"
+
+   # Layer 3: Signing script
+   echo "=== Keychain state: ==="
+   security list-keychains
+   security find-identity -v
+
+   # Layer 4: Actual signing
+   codesign --sign "$IDENTITY" --verbose=4 "$APP"
+   ```
+
+   **This reveals:** Which layer fails (secrets �+' workflow �o", workflow �+' build �o-)
+
+5. **Trace Data Flow**
+
+   **WHEN error is deep in call stack:**
+
+   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.
+
+   **Quick version:**
+   - Where does bad value originate?
+   - What called this with bad value?
+   - Keep tracing up until you find the source
+   - Fix at source, not at symptom
+
+### Phase 2: Pattern Analysis
+
+**Find the pattern before fixing:**
+
+1. **Find Working Examples**
+   - Locate similar working code in same codebase
+   - What works that's similar to what's broken?
+
+2. **Compare Against References**
+   - If implementing pattern, read reference implementation COMPLETELY
+   - Don't skim - read every line
+   - Understand the pattern fully before applying
+
+3. **Identify Differences**
+   - What's different between working and broken?
+   - List every difference, however small
+   - Don't assume "that can't matter"
+
+4. **Understand Dependencies**
+   - What other components does this need?
+   - What settings, config, environment?
+   - What assumptions does it make?
+
+### Phase 3: Hypothesis and Testing
+
+**Scientific method:**
+
+1. **Form Single Hypothesis**
+   - State clearly: "I think X is the root cause because Y"
+   - Write it down
+   - Be specific, not vague
+
+2. **Test Minimally**
+   - Make the SMALLEST possible change to test hypothesis
+   - One variable at a time
+   - Don't fix multiple things at once
+
+3. **Verify Before Continuing**
+   - Did it work? Yes �+' Phase 4
+   - Didn't work? Form NEW hypothesis
+   - DON'T add more fixes on top
+
+4. **When You Don't Know**
+   - Say "I don't understand X"
+   - Don't pretend to know
+   - Ask for help
+   - Research more
+
+### Phase 4: Implementation
+
+**Fix the root cause, not the symptom:**
+
+1. **Create Failing Test Case**
+   - Simplest possible reproduction
+   - Automated test if possible
+   - One-off test script if no framework
+   - MUST have before fixing
+   - Use the `superpowers:test-driven-development` skill for writing proper failing tests
+
+2. **Implement Single Fix**
+   - Address the root cause identified
+   - ONE change at a time
+   - No "while I'm here" improvements
+   - No bundled refactoring
+
+3. **Verify Fix**
+   - Test passes now?
+   - No other tests broken?
+   - Issue actually resolved?
+
+4. **If Fix Doesn't Work**
+   - STOP
+   - Count: How many fixes have you tried?
+   - If < 3: Return to Phase 1, re-analyze with new information
+   - **If �%� 3: STOP and question the architecture (step 5 below)**
+   - DON'T attempt Fix #4 without architectural discussion
+
+5. **If 3+ Fixes Failed: Question Architecture**
+
+   **Pattern indicating architectural problem:**
+   - Each fix reveals new shared state/coupling/problem in different place
+   - Fixes require "massive refactoring" to implement
+   - Each fix creates new symptoms elsewhere
+
+   **STOP and question fundamentals:**
+   - Is this pattern fundamentally sound?
+   - Are we "sticking with it through sheer inertia"?
+   - Should we refactor architecture vs. continue fixing symptoms?
+
+   **Discuss with your human partner before attempting more fixes**
+
+   This is NOT a failed hypothesis - this is a wrong architecture.
+
+## Red Flags - STOP and Follow Process
+
+If you catch yourself thinking:
+- "Quick fix for now, investigate later"
+- "Just try changing X and see if it works"
+- "Add multiple changes, run tests"
+- "Skip the test, I'll manually verify"
+- "It's probably X, let me fix that"
+- "I don't fully understand but this might work"
+- "Pattern says X but I'll adapt it differently"
+- "Here are the main problems: [lists fixes without investigation]"
+- Proposing solutions before tracing data flow
+- **"One more fix attempt" (when already tried 2+)**
+- **Each fix reveals new problem in different place**
+
+**ALL of these mean: STOP. Return to Phase 1.**
+
+**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+
+## your human partner's Signals You're Doing It Wrong
+
+**Watch for these redirections:**
+- "Is that not happening?" - You assumed without verifying
+- "Will it show us...?" - You should have added evidence gathering
+- "Stop guessing" - You're proposing fixes without understanding
+- "Ultra-think this" - Question fundamentals, not just symptoms
+- "We're stuck?" (frustrated) - Your approach isn't working
+
+**When you see these:** STOP. Return to Phase 1.
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Issue is simple, don't need process" | Simple issues have root causes too. Process is fast for simple bugs. |
+| "Emergency, no time for process" | Systematic debugging is FASTER than guess-and-check thrashing. |
+| "Just try this first, then investigate" | First fix sets the pattern. Do it right from the start. |
+| "I'll write test after confirming fix works" | Untested fixes don't stick. Test first proves it. |
+| "Multiple fixes at once saves time" | Can't isolate what worked. Causes new bugs. |
+| "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs. Read it completely. |
+| "I see the problem, let me fix it" | Seeing symptoms �%� understanding root cause. |
+| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
+
+## Quick Reference
+
+| Phase | Key Activities | Success Criteria |
+|-------|---------------|------------------|
+| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |
+| **2. Pattern** | Find working examples, compare | Identify differences |
+| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
+| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
+
+## When Process Reveals "No Root Cause"
+
+If systematic investigation reveals issue is truly environmental, timing-dependent, or external:
+
+1. You've completed the process
+2. Document what you investigated
+3. Implement appropriate handling (retry, timeout, error message)
+4. Add monitoring/logging for future investigation
+
+**But:** 95% of "no root cause" cases are incomplete investigation.
+
+## Supporting Techniques
+
+These techniques are part of systematic debugging and available in this directory:
+
+- **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger
+- **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause
+- **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
+
+**Related skills:**
+- **superpowers:test-driven-development** - For creating failing test case (Phase 4, Step 1)
+- **superpowers:verification-before-completion** - Verify fix worked before claiming success
+
+## Real-World Impact
+
+From debugging sessions:
+- Systematic approach: 15-30 minutes to fix
+- Random fixes approach: 2-3 hours of thrashing
+- First-time fix rate: 95% vs 40%
+- New bugs introduced: Near zero vs common
+#!/usr/bin/env bash
+# allgates.sh �?" list every LLAMA_* env gate the fork reads.
+cd /home/revn/strix-llama || exit 1
+grep -rhoE 'getenv\("LLAMA_[A-Z0-9_]+"\)' ggml/src/ggml-cuda/ src/ common/ tools/ 2>/dev/null \
+  | sed 's/getenv("//; s/")//' | sort -u
+echo "--- count ---"
+grep -rhoE 'getenv\("LLAMA_[A-Z0-9_]+"\)' ggml/src/ggml-cuda/ src/ common/ tools/ 2>/dev/null \
+  | sed 's/getenv("//; s/")//' | sort -u | wc -l
+#!/usr/bin/env bash
+# gates-test.sh �?" replicate olliehm's 964-1045 t/s recipe: ALL 35 fork gates ON,
+# with the single known-bad gate LLAMA_MMB_HC16=0. Stock UD-IQ4_XS, ub 8192.
+# Run as the background command itself so it owns process lifetime.
+# usage: gates-test.sh <tag> <model> <ctx> <b> <ub> <sizes> <gen> [mtp-head|none]
+set -u
+BASE=/mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work
+OUT="$BASE/results"; mkdir -p "$OUT"
+TAG="$1"; MODEL="$2"; CTX="$3"; B="$4"; UB="$5"; SIZES="$6"; GEN="$7"; MTP="${8:-none}"
+BIN=/home/revn/strix-llama/build-hip/bin/llama-server
+PORT=8150
+LOG="$OUT/gt-$TAG.log"
+
+for p in $(pgrep -x llama-server); do kill -9 "$p" 2>/dev/null; done
+sleep 4
+source "$BASE/env.sh"
+export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1 HSA_OVERRIDE_GFX_VERSION=11.5.1
+
+# ---- the 35 launcher gates: all ON except the one proven-bad (MMB_HC16) ----
+export LLAMA_GDN_CHUNKED=1
+export LLAMA_GDN_CONV=1
+export LLAMA_HC_BLK16=1
+export LLAMA_HC_CN_SHAPE=1
+export LLAMA_HC_GATEMIX=1
+export LLAMA_HC_MIX_FUSE=1
+export LLAMA_HC_PACK_DI=1
+export LLAMA_HC_RES16=1
+export LLAMA_IDX_RELU_SUM=1
+export LLAMA_MMB=1
+export LLAMA_MMB_BF16W=1
+export LLAMA_MMB_CACHE=1
+export LLAMA_MMB_DOWN16=1
+export LLAMA_MMB_F32SPLIT=1
+export LLAMA_MMB_GLU=1
+export LLAMA_MMB_HC16=0          # <-- the single fix from issue #24
+export LLAMA_MMB_MIN_T=512
+export LLAMA_MMB_SHADOW=1
+export LLAMA_MMB_TALL=1
+export LLAMA_MOE_RED_SCALAR=1
+export LLAMA_MTP_EH_FLATTEN=1
+export LLAMA_MTP_QSA=1
+export LLAMA_NORM_GATED=1
+export LLAMA_NORM_ROWS=1
+export LLAMA_PLE_CONV=1
+export LLAMA_PLE_PREFETCH=1
+export LLAMA_QSA_BLOCK_SELECTION=1
+export LLAMA_QSA_DENSE_SHORTCUT=1
+export LLAMA_QSA_DIRECT_INDICES=1
+export LLAMA_QSA_FUSE_EXPAND=1
+export LLAMA_QSA_PACK_KEYS=1
+export LLAMA_QSA_PACK_VALUES=1
+export LLAMA_QSA_QUERY_STRIP=1
+export LLAMA_QSA_SCORE_WMMA=1
+export LLAMA_QSA_SPARSE=1
+export LLAMA_QSA_TOKEN_EMBD=1
+export LLAMA_QSA_WHOLE_ATTN=1
+
+ARGS=(-m "$MODEL" -ngl 99 -fa on -fit off --load-mode none -ctk f16 -ctv f16
+      -c "$CTX" -b "$B" -ub "$UB" --parallel 1 -t 8 --host 127.0.0.1 --port $PORT --no-webui)
+case "$MODEL" in *PROJFIX*) ARGS+=(--lazy-mode on-direct);; esac
+[ "$MTP" != "none" ] && ARGS+=(-md "$MTP" --spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-p-min 0.75)
+
+echo "[$TAG] launch $(date +%T) gates=35 (HC16=0)" | tee "$LOG"
+"$BIN" "${ARGS[@]}" >> "$LOG" 2>&1 &
+SRV=$!
+UP=0
+for i in $(seq 1 480); do
+  curl -s http://127.0.0.1:$PORT/health 2>/dev/null | grep -q ok && { UP=1; break; }
+  kill -0 $SRV 2>/dev/null || { echo "[$TAG] died $(date +%T)"; break; }
+  sleep 5
+done
+if [ "$UP" != 1 ]; then
+  echo "[$TAG] LOAD-FAILED"; grep -aiE 'error|failed|ABORT|assert|out of memory|d2t|wrong' "$LOG" | tail -6
+  exit 1
+fi
+echo "[$TAG] UP $(date +%T)"
+python3 "$BASE/fnbench.py" --port $PORT --label "$TAG" --sizes "$SIZES" --gen "$GEN" \
+  --repeats 3 --out "$OUT/gt-$TAG.json" 2>&1 | grep -E 'n= |CHAT|wrote'
+echo "[$TAG] done $(date +%T)"
+kill -9 $SRV 2>/dev/null
+#!/usr/bin/env bash
+# getgates.sh �?" download pwilkin's installer and list every env gate it sets.
+cd /tmp || exit 1
+curl -fsSL -o inst.sh https://raw.githubusercontent.com/pwilkin/strix-halo/main/install.sh
+echo "size: $(wc -c < inst.sh)"
+echo "=== LLAMA_ / export lines ==="
+grep -nE 'LLAMA_|^ *export |STRIX_.*GATE' inst.sh | head -80
+#!/usr/bin/env python3
+"""Port ggml-org/llama.cpp PR #28118 to the strix-halo fork:
+keep SPECULATIVE recurrent-state checkpoints on-device (target+draft, update+load).
+The prompt-history checkpoint (cur.update_*) stays host-backed, per the PR.
+Idempotent."""
+import re, sys
+
+F = "tools/server/server-context.cpp"
+src = open(F).read()
+if "LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE" in src:
+    print("already patched"); sys.exit(0)
+
+# The 6 speculative sites: receivers are slot.spec_ckpt / ckpt (bound to slot.spec_ckpt)
+#   slot.spec_ckpt.update_dft, ckpt.load_dft, ckpt.update_tgt, ckpt.update_dft,
+#   ckpt.load_tgt, ckpt.load_dft
+# NOTE: lines 2363/2364 (cur.update_tgt/update_dft = prompt-history checkpoint) must NOT change.
+targets = [
+    ("slot.spec_ckpt.update_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);",
+     "slot.spec_ckpt.update_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+    ("ckpt.load_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);",
+     "ckpt.load_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+    ("ckpt.update_tgt(ctx_tgt, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);",
+     "ckpt.update_tgt(ctx_tgt, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+    ("ckpt.update_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);",
+     "ckpt.update_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+    ("ckpt.load_tgt(slot.ctx_tgt, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);",
+     "ckpt.load_tgt(slot.ctx_tgt, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+    ("ckpt.load_dft(slot.ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);",
+     "ckpt.load_dft(slot.ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+]
+n_applied = 0
+for old, new in targets:
+    c = src.count(old)
+    if c == 0:
+        print(f"  MISS: {old[:60]}")
+        continue
+    src = src.replace(old, new)
+    n_applied += c
+    print(f"  patched x{c}: {old[:60]}")
+
+# safety: prompt-history sites must be untouched
+assert "cur.update_tgt(ctx_tgt, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);" in src, "prompt ckpt tgt altered!"
+assert "cur.update_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);" in src, "prompt ckpt dft altered!"
+
+open(F, "w").write(src)
+print(f"applied {n_applied} replacements; prompt-history sites preserved")
+#!/usr/bin/env python3
+"""Token-exact Flash-Next benchmark client for llama-server (Windows or WSL).
+
+Measures PREFILL and DECODE at exact prompt token counts using /tokenize sizing and
+/completion with cache_prompt=false, reading llama.cpp's `timings` block.
+
+Usage:
+  python fnbench.py --port 8113 --label vulkan-frspec --sizes 1024,8192,32768,65536,131072 \
+      --gen 128 --repeats 3 --out results/vulkan-frspec.json
+
+Notes:
+  * Prompt cache is disabled per request so prompt_n is a true fresh prefill.
+  * Server must be started with -c >= max(size)+gen+margin.
+  * MTP acceptance (draft_n_accepted) is captured when present.
+"""
+import argparse
+import glob
+import json
+import os
+import sys
+import time
+import urllib.request
+import urllib.error
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+CORPUS = os.path.join(HERE, "bench-corpus.txt")
+TOKENS = os.path.join(HERE, "bench-tokens.json")
+
+
+def http_json(url, payload=None, timeout=7200):
+    data = None
+    if payload is not None:
+        data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(url, data=data,
+                                 headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def build_corpus(min_tokens_hint=300000):
+    """Concatenate repo docs into a natural-language corpus large enough for 128k+ prompts."""
+    if os.path.exists(CORPUS) and os.path.getsize(CORPUS) > 2_000_000:
+        print(f"corpus exists: {os.path.getsize(CORPUS)/1e6:.1f} MB")
+        return
+    roots = [
+        r"C:\Projects\REV-N-ornith-eval-20260911\docs",
+        r"C:\Projects\REV-N\docs",
+    ]
+    chunks = []
+    for root in roots:
+        for ext in ("*.md", "*.txt"):
+            for p in glob.glob(os.path.join(root, "**", ext), recursive=True):
+                try:
+                    with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                        t = f.read()
+                    if len(t) > 500:
+                        chunks.append(f"\n\n=== {os.path.basename(p)} ===\n\n{t}")
+                except Exception:
+                    pass
+    text = "".join(chunks)
+    # augment with varied synthetic prose so decode is not degenerate and length is sufficient
+    para = ("The system processes each request in order, recording the measured latency and the "
+            "aggregate throughput for every stage of the pipeline. Operators review the resulting "
+            "tables, compare them against the published reference figures, and adjust the batch "
+            "sizes until the observed numbers converge on a stable plateau. ")
+    i = 0
+    while len(text) < min_tokens_hint * 4:  # ~4 chars/token
+        text += f"\n[section {i}] " + para
+        i += 1
+    with open(CORPUS, "w", encoding="utf-8") as f:
+        f.write(text)
+    print(f"corpus built: {len(text)/1e6:.1f} MB -> {CORPUS}")
+
+
+def tokenize(port, text):
+    r = http_json(f"http://127.0.0.1:{port}/tokenize", {"content": text})
+    return r["tokens"]
+
+
+def get_token_pool(port, need):
+    """Tokenize the corpus once; cache token ids. Return list of >= need tokens."""
+    if os.path.exists(TOKENS):
+        try:
+            pool = json.load(open(TOKENS))
+            if len(pool) >= need:
+                print(f"token pool cached: {len(pool)} tokens")
+                return pool
+        except Exception:
+            pass
+    build_corpus()
+    with open(CORPUS, "r", encoding="utf-8", errors="ignore") as f:
+        text = f.read()
+    print(f"tokenizing corpus ({len(text)/1e6:.1f} MB)...", flush=True)
+    pool = tokenize(port, text)
+    print(f"tokenized -> {len(pool)} tokens")
+    json.dump(pool, open(TOKENS, "w"))
+    return pool
+
+
+def wait_ready(port, timeout=1800):
+    t0 = time.time()
+    while time.time() - t0 < timeout:
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=5) as r:
+                if r.status == 200:
+                    return True
+        except Exception:
+            time.sleep(3)
+    return False
+
+
+def run_one(port, tokens, gen, timeout=7200):
+    payload = {
+        "prompt": tokens,
+        "n_predict": gen,
+        "cache_prompt": False,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "stream": False,
+    }
+    r = http_json(f"http://127.0.0.1:{port}/completion", payload, timeout=timeout)
+    t = r.get("timings", {})
+    return {
+        "prompt_n": t.get("prompt_n"),
+        "prompt_ms": t.get("prompt_ms"),
+        "prefill_tps": t.get("prompt_per_second"),
+        "predicted_n": t.get("predicted_n"),
+        "predicted_ms": t.get("predicted_ms"),
+        "decode_tps": t.get("predicted_per_second"),
+        "draft_n": t.get("draft_n"),
+        "draft_n_accepted": t.get("draft_n_accepted"),
+    }
+
+
+# A realistic assistant-style prompt used for the "chat" mode: the acceptance rate on natural
+# prose/code is what the official benchmarks report, so we measure both corpus-continuation and this.
+CHAT_SYSTEM = (
+    "You are a senior systems engineer. Answer precisely and at length, with concrete numbers, "
+    "worked examples, and code where useful. Never pad with filler."
+)
+CHAT_USER = (
+    "Explain how a modern MoE transformer with gated linear attention processes a single decode "
+    "step end to end. Cover: token embedding lookup, the layer norm and projection GEMVs, the "
+    "routing of the token to its top-k experts, the expert FFN compute, the shared expert, the "
+    "attention recurrence for the linear-attention layers, the KV read for the full-attention "
+    "layers, the final norm and the output projection over the vocabulary, and sampling. For each "
+    "stage give the dominant memory traffic and whether it is bandwidth- or latency-bound. Then "
+    "compare the cost profile of prefill (long batch) against decode (batch one), and list the "
+    "five optimizations with the largest expected effect on decode throughput, with a rough "
+    "percentage for each. Finally write a short worked example computing bytes-per-token for a "
+    "6B-active MoE at 4.25 bits per weight."
+)
+
+
+def run_chat(port, max_tokens, timeout=7200, system=None, user=None):
+    payload = {
+        "messages": [
+            {"role": "system", "content": system or CHAT_SYSTEM},
+            {"role": "user", "content": user or CHAT_USER},
+        ],
+        "n_predict": max_tokens,
+        "cache_prompt": False,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "stream": False,
+    }
+    r = http_json(f"http://127.0.0.1:{port}/v1/chat/completions", payload, timeout=timeout)
+    # /v1/chat/completions returns usage + timings (llama.cpp extensions)
+    t = r.get("timings", {})
+    return {
+        "prompt_n": t.get("prompt_n"),
+        "prompt_ms": t.get("prompt_ms"),
+        "prefill_tps": t.get("prompt_per_second"),
+        "predicted_n": t.get("predicted_n"),
+        "predicted_ms": t.get("predicted_ms"),
+        "decode_tps": t.get("predicted_per_second"),
+        "draft_n": t.get("draft_n"),
+        "draft_n_accepted": t.get("draft_n_accepted"),
+        "text_chars": len(r.get("choices", [{}])[0].get("message", {}).get("content", "")),
+    }
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--port", type=int, required=True)
+    ap.add_argument("--label", required=True)
+    ap.add_argument("--sizes", default="1024,8192,32768,65536,131072")
+    ap.add_argument("--mode", default="corpus", choices=["corpus", "chat", "both"],
+                    help="corpus = continuation of the doc pool; chat = realistic assistant prompt; both")
+    ap.add_argument("--gen", type=int, default=128)
+    ap.add_argument("--repeats", type=int, default=3)
+    ap.add_argument("--repeats-big", type=int, default=0,
+                    help="repeats for sizes >= --big-threshold (0 = same as --repeats)")
+    ap.add_argument("--big-threshold", type=int, default=32768)
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--context-limit", type=int, default=0,
+                    help="skip sizes where size+gen+headroom exceeds this (server -c)")
+    args = ap.parse_args()
+
+    sizes = [int(s) for s in args.sizes.split(",") if s]
+    if args.context_limit:
+        # llama.cpp needs the full prompt + n_predict to fit in -c; keep a safety margin
+        sizes = [s for s in sizes if s + args.gen + 64 <= args.context_limit]
+    print(f"label={args.label} port={args.port} sizes={sizes} gen={args.gen} repeats={args.repeats}")
+
+    if not wait_ready(args.port):
+        print("SERVER NOT READY", file=sys.stderr)
+        sys.exit(2)
+    print("server ready", flush=True)
+
+    pool = get_token_pool(args.port, max(sizes) + 16)
+    print(f"token pool: {len(pool)}")
+
+    results = {"label": args.label, "port": args.port, "gen": args.gen, "rows": []}
+
+    if args.mode in ("chat", "both"):
+        # realistic prompt: measures the acceptance rate class the official numbers use
+        for rep in range(args.repeats):
+            try:
+                r = run_chat(args.port, args.gen)
+            except Exception as e:
+                r = {"error": str(e)}
+            r["kind"] = "chat"
+            r["rep"] = rep
+            results["rows"].append(r)
+            pf, dc = r.get("prefill_tps"), r.get("decode_tps")
+            print(f"  CHAT rep={rep} prompt_n={r.get('prompt_n')} prefill={pf and round(pf,1)} t/s "
+                  f"decode={dc and round(dc,2)} t/s acc={r.get('draft_n_accepted')}/{r.get('draft_n')}",
+                  flush=True)
+
+    if args.mode == "chat":
+        os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+        json.dump(results, open(args.out, "w"), indent=1)
+        print(f"wrote {args.out}")
+        return
+
+    for n in sizes:
+        if n > len(pool):
+            print(f"skip {n}: pool too small ({len(pool)})")
+            continue
+        prompt = pool[:n]
+        reps = args.repeats
+        if args.repeats_big and n >= args.big_threshold:
+            reps = args.repeats_big
+        for rep in range(reps):
+            try:
+                r = run_one(args.port, prompt, args.gen)
+            except Exception as e:
+                r = {"error": str(e)}
+            r["target_n"] = n
+            r["rep"] = rep
+            results["rows"].append(r)
+            pf = r.get("prefill_tps")
+            dc = r.get("decode_tps")
+            acc = r.get("draft_n_accepted")
+            dn = r.get("draft_n")
+            extra = f" acc={acc}/{dn}" if dn else ""
+            print(f"  n={n:>6} rep={rep} prompt_n={r.get('prompt_n')} "
+                  f"prefill={pf and round(pf,1)} t/s  decode={dc and round(dc,2)} t/s{extra}",
+                  flush=True)
+    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+    json.dump(results, open(args.out, "w"), indent=1)
+    print(f"wrote {args.out}")
+
+
+if __name__ == "__main__":
+    main()
+way3.sh
+vulkan-bench.ps1
+ub16-suite.sh
+sweep-ub.sh
+stop-all.sh
+spec-sites.sh
+sites.sh
+serve-test.sh
+runbook-tonight.sh
+run-codex.sh
+run-codex-plan.sh
+run-codex-plan.ps1
+rss.sh
+getgates.sh
+gates-test.sh
+fnbench.py
+final-suite.sh
+expA-bench.sh
+expA-arm.sh
+results\W3-ud-mtp.json
+results\W2-ud-ub8k-mmb.json
+results\W2-pf-ub8k.json
+results\W2-pf-ub8k-mmb.json
+results\v1-nospec.json
+results\v1-frspec-d3.json
+results\ud-mmb-full.json
+results\U1-ud-ub16k-nommb.json
+results\server-v1-projfix.out
+results\server-v1-projfix.err
+results\server-v1-nospec.out
+results\server-v1-nospec.err
+results\server-v1-frspec-d3.out
+results\server-v1-frspec-d3.err
+results\pf-pw-ub8k.json
+results\pf-mmb1.json
+reset-port.sh
+projfix-opt.sh
+probe-env.sh
+port-pr28118.py
+pool-budget.py
+patch-microtest2.py
+op-microbench.cpp
+nuke.sh
+mmbcheck.sh
+main-run.sh
+lever-test.sh
+layer_detail.py
+layer-detail.json
+killjobs.sh
+kernelmarkers.sh
+iq4nl-parse.err
+hipgraph-microtest2.cu
+hipgraph-microtest.cu
+hip-bench2.sh
+hip-bench.sh
+HANDOFF-FROM-RUNTIME-SESSION-20260914.md
+gt_stats.py
+gguf_summary.py
+gguf_inventory.py
+gguf-inventory-udiq4xs.txt
+gguf-inventory-udiq4xs.json
+gguf-inventory-udiq4xs.err
+gguf-inventory-iq4nl.json
+codex-review-2-20260914.txt
+codex-prompt.md
+codex-prompt-3.md
+codex-prompt-2.md
+codex-plan-20260914.txt
+check-frspec.py
+chat_template.jinja
+bench-tokens.json
+bench-corpus.txt
+apply-op-timing-patch.py
+apply-op-timing-ig-patch.py
+analyze_expA.py
+allgates.sh
+correctness-server.sh
+correctness-prompt.json
+compare-quants.py
+combine.sh
+codex-review-raw-20260913.txt
+codex-review-3.txt
+diag.sh
+decisive.sh
+debug_anchor.py
+DRAFT-notes.md
+diff_correctness.py
+env.sh
+expA\expA-summary.json
+
+hook: PostToolUse
+web search: site.reddit.com/r/StrixHalo ilintar 1204 Qwen ...
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command 'rg --files; Get-Content env.sh; Get-Content fnbench.py | Select-Object -Skip 100; Get-Content results/gt-gates-ud.log -Tail 70; Get-ChildItem -Force .. | Select-Object Name,Mode' in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ succeeded in 458ms:
+way3.sh
+vulkan-bench.ps1
+ub16-suite.sh
+sweep-ub.sh
+stop-all.sh
+spec-sites.sh
+sites.sh
+serve-test.sh
+runbook-tonight.sh
+run-codex.sh
+run-codex-plan.sh
+run-codex-plan.ps1
+rss.sh
+results\W3-ud-mtp.json
+results\W2-ud-ub8k-mmb.json
+results\W2-pf-ub8k.json
+results\W2-pf-ub8k-mmb.json
+results\v1-nospec.json
+results\v1-frspec-d3.json
+results\ud-mmb-full.json
+results\U1-ud-ub16k-nommb.json
+results\server-v1-projfix.out
+results\server-v1-projfix.err
+results\server-v1-nospec.out
+results\server-v1-nospec.err
+results\server-v1-frspec-d3.out
+results\server-v1-frspec-d3.err
+results\pf-pw-ub8k.json
+results\pf-mmb1.json
+reset-port.sh
+projfix-opt.sh
+probe-env.sh
+port-pr28118.py
+pool-budget.py
+patch-microtest2.py
+op-microbench.cpp
+nuke.sh
+mmbcheck.sh
+main-run.sh
+lever-test.sh
+layer_detail.py
+layer-detail.json
+killjobs.sh
+kernelmarkers.sh
+iq4nl-parse.err
+hipgraph-microtest2.cu
+hipgraph-microtest.cu
+hip-bench2.sh
+hip-bench.sh
+HANDOFF-FROM-RUNTIME-SESSION-20260914.md
+gt_stats.py
+gguf_summary.py
+gguf_inventory.py
+gguf-inventory-udiq4xs.txt
+gguf-inventory-udiq4xs.json
+gguf-inventory-udiq4xs.err
+gguf-inventory-iq4nl.json
+getgates.sh
+gates-test.sh
+fnbench.py
+final-suite.sh
+expA-bench.sh
+expA-arm.sh
+analyze_expA.py
+apply-op-timing-patch.py
+allgates.sh
+apply-op-timing-ig-patch.py
+codex-review-raw-20260913.txt
+debug_anchor.py
+correctness-server.sh
+correctness-prompt.json
+compare-quants.py
+combine.sh
+diff_correctness.py
+decisive.sh
+diag.sh
+DRAFT-notes.md
+env.sh
+codex-plan-20260914.txt
+check-frspec.py
+chat_template.jinja
+codex-prompt.md
+bench-tokens.json
+codex-prompt-3.md
+codex-prompt-2.md
+codex-review-2-20260914.txt
+codex-review-3.txt
+bench-corpus.txt
+expA\expA-summary.json
+#!/usr/bin/env bash
+# Env wrapper for strix-llama over DXG. Source this, never execute.
+export VLLM_SOURCE=/home/revn/ciru-runtime/sources/vllm-glm53-strix
+export VLLM_VENV=/home/revn/ciru-runtime/venv
+export AITER_SOURCE=/home/revn/ciru-runtime/sources/aiter-gfx1151
+source /home/revn/ciru-runtime/runtime-env.sh
+export HSA_ENABLE_DXG_DETECTION=1
+export GGML_HIP_ENABLE_UNIFIED_MEMORY=1
+    t0 = time.time()
+    while time.time() - t0 < timeout:
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=5) as r:
+                if r.status == 200:
+                    return True
+        except Exception:
+            time.sleep(3)
+    return False
+
+
+def run_one(port, tokens, gen, timeout=7200):
+    payload = {
+        "prompt": tokens,
+        "n_predict": gen,
+        "cache_prompt": False,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "stream": False,
+    }
+    r = http_json(f"http://127.0.0.1:{port}/completion", payload, timeout=timeout)
+    t = r.get("timings", {})
+    return {
+        "prompt_n": t.get("prompt_n"),
+        "prompt_ms": t.get("prompt_ms"),
+        "prefill_tps": t.get("prompt_per_second"),
+        "predicted_n": t.get("predicted_n"),
+        "predicted_ms": t.get("predicted_ms"),
+        "decode_tps": t.get("predicted_per_second"),
+        "draft_n": t.get("draft_n"),
+        "draft_n_accepted": t.get("draft_n_accepted"),
+    }
+
+
+# A realistic assistant-style prompt used for the "chat" mode: the acceptance rate on natural
+# prose/code is what the official benchmarks report, so we measure both corpus-continuation and this.
+CHAT_SYSTEM = (
+    "You are a senior systems engineer. Answer precisely and at length, with concrete numbers, "
+    "worked examples, and code where useful. Never pad with filler."
+)
+CHAT_USER = (
+    "Explain how a modern MoE transformer with gated linear attention processes a single decode "
+    "step end to end. Cover: token embedding lookup, the layer norm and projection GEMVs, the "
+    "routing of the token to its top-k experts, the expert FFN compute, the shared expert, the "
+    "attention recurrence for the linear-attention layers, the KV read for the full-attention "
+    "layers, the final norm and the output projection over the vocabulary, and sampling. For each "
+    "stage give the dominant memory traffic and whether it is bandwidth- or latency-bound. Then "
+    "compare the cost profile of prefill (long batch) against decode (batch one), and list the "
+    "five optimizations with the largest expected effect on decode throughput, with a rough "
+    "percentage for each. Finally write a short worked example computing bytes-per-token for a "
+    "6B-active MoE at 4.25 bits per weight."
+)
+
+
+def run_chat(port, max_tokens, timeout=7200, system=None, user=None):
+    payload = {
+        "messages": [
+            {"role": "system", "content": system or CHAT_SYSTEM},
+            {"role": "user", "content": user or CHAT_USER},
+        ],
+        "n_predict": max_tokens,
+        "cache_prompt": False,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "stream": False,
+    }
+    r = http_json(f"http://127.0.0.1:{port}/v1/chat/completions", payload, timeout=timeout)
+    # /v1/chat/completions returns usage + timings (llama.cpp extensions)
+    t = r.get("timings", {})
+    return {
+        "prompt_n": t.get("prompt_n"),
+        "prompt_ms": t.get("prompt_ms"),
+        "prefill_tps": t.get("prompt_per_second"),
+        "predicted_n": t.get("predicted_n"),
+        "predicted_ms": t.get("predicted_ms"),
+        "decode_tps": t.get("predicted_per_second"),
+        "draft_n": t.get("draft_n"),
+        "draft_n_accepted": t.get("draft_n_accepted"),
+        "text_chars": len(r.get("choices", [{}])[0].get("message", {}).get("content", "")),
+    }
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--port", type=int, required=True)
+    ap.add_argument("--label", required=True)
+    ap.add_argument("--sizes", default="1024,8192,32768,65536,131072")
+    ap.add_argument("--mode", default="corpus", choices=["corpus", "chat", "both"],
+                    help="corpus = continuation of the doc pool; chat = realistic assistant prompt; both")
+    ap.add_argument("--gen", type=int, default=128)
+    ap.add_argument("--repeats", type=int, default=3)
+    ap.add_argument("--repeats-big", type=int, default=0,
+                    help="repeats for sizes >= --big-threshold (0 = same as --repeats)")
+    ap.add_argument("--big-threshold", type=int, default=32768)
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--context-limit", type=int, default=0,
+                    help="skip sizes where size+gen+headroom exceeds this (server -c)")
+    args = ap.parse_args()
+
+    sizes = [int(s) for s in args.sizes.split(",") if s]
+    if args.context_limit:
+        # llama.cpp needs the full prompt + n_predict to fit in -c; keep a safety margin
+        sizes = [s for s in sizes if s + args.gen + 64 <= args.context_limit]
+    print(f"label={args.label} port={args.port} sizes={sizes} gen={args.gen} repeats={args.repeats}")
+
+    if not wait_ready(args.port):
+        print("SERVER NOT READY", file=sys.stderr)
+        sys.exit(2)
+    print("server ready", flush=True)
+
+    pool = get_token_pool(args.port, max(sizes) + 16)
+    print(f"token pool: {len(pool)}")
+
+    results = {"label": args.label, "port": args.port, "gen": args.gen, "rows": []}
+
+    if args.mode in ("chat", "both"):
+        # realistic prompt: measures the acceptance rate class the official numbers use
+        for rep in range(args.repeats):
+            try:
+                r = run_chat(args.port, args.gen)
+            except Exception as e:
+                r = {"error": str(e)}
+            r["kind"] = "chat"
+            r["rep"] = rep
+            results["rows"].append(r)
+            pf, dc = r.get("prefill_tps"), r.get("decode_tps")
+            print(f"  CHAT rep={rep} prompt_n={r.get('prompt_n')} prefill={pf and round(pf,1)} t/s "
+                  f"decode={dc and round(dc,2)} t/s acc={r.get('draft_n_accepted')}/{r.get('draft_n')}",
+                  flush=True)
+
+    if args.mode == "chat":
+        os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+        json.dump(results, open(args.out, "w"), indent=1)
+        print(f"wrote {args.out}")
+        return
+
+    for n in sizes:
+        if n > len(pool):
+            print(f"skip {n}: pool too small ({len(pool)})")
+            continue
+        prompt = pool[:n]
+        reps = args.repeats
+        if args.repeats_big and n >= args.big_threshold:
+            reps = args.repeats_big
+        for rep in range(reps):
+            try:
+                r = run_one(args.port, prompt, args.gen)
+            except Exception as e:
+                r = {"error": str(e)}
+            r["target_n"] = n
+            r["rep"] = rep
+            results["rows"].append(r)
+            pf = r.get("prefill_tps")
+            dc = r.get("decode_tps")
+            acc = r.get("draft_n_accepted")
+            dn = r.get("draft_n")
+            extra = f" acc={acc}/{dn}" if dn else ""
+            print(f"  n={n:>6} rep={rep} prompt_n={r.get('prompt_n')} "
+                  f"prefill={pf and round(pf,1)} t/s  decode={dc and round(dc,2)} t/s{extra}",
+                  flush=True)
+    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+    json.dump(results, open(args.out, "w"), indent=1)
+    print(f"wrote {args.out}")
+
+
+if __name__ == "__main__":
+    main()
+[gates-ud] launch 15:19:44 gates=35 (HC16=0)
+0.00.285.686 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.286.284 I srv          init: The UI is disabled
+0.00.286.285 I srv          init: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.286.872 W srv  llama_server: -----------------
+0.00.286.872 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set
+0.00.286.873 W srv  llama_server: this can be a security risk (cross-origin attacks)
+0.00.286.873 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655
+0.00.286.873 W srv  llama_server: -----------------
+0.00.290.737 I srv    load_model: loading model '/home/revn/models/flash-next-unsloth/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf'
+
+Name                    Mode  
+----                    ----  
+.codex                  d-----
+.github                 d-----
+apps                    d-----
+artifacts               d-----
+content                 d-----
+docs                    d-----
+infrastructure          d-----
+kernel-work             d-----
+packages                d-----
+scripts                 d-----
+services                d-----
+test-fixtures           d-----
+tests                   d-----
+tools                   d-----
+.dependency-cruiser.cjs -a----
+.editorconfig           -a----
+.env.example            -a----
+.git                    -a-h--
+.gitattributes          -a----
+.gitignore              -a----
+.gitleaks.toml          -a----
+.npmrc                  -a----
+.prettierignore         -a----
+.prettierrc.json        -a----
+AGENTS.md               -a----
+eslint.config.js        -a----
+model-assessment.md     -a----
+model-inventory.json    -a----
+package.json            -a----
+pnpm-lock.yaml          -a----
+pnpm-workspace.yaml     -a----
+README.md               -a----
+run-cloud.cmd           -a----
+tsconfig.base.json      -a----
+tsconfig.json           -a----
+turbo.json              -a----
+ZCODE-CLI-RESULTS.md    -a----
+ZCODE-CLI-SETUP.md      -a----
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: https://github.com/pwilkin/strix-halo/issues/24
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: site.reddit.com/r/StrixHalo "1204" ...
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command 'Get-Content HANDOFF-FROM-RUNTIME-SESSION-20260914.md; Get-Content mmbcheck.sh; Get-Content check-frspec.py; Get-Content combine.sh; Get-Content pool-budget.py; Get-Content vulkan-bench.ps1 | Select-Object -First 100; Get-Content ../docs/operators/codex-takeover-current.md -TotalCount 50; wsl.exe --list --quiet' in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ exited 1 in 460ms:
+# HANDOFF �+' Kernel/Fork/Quantization session �?" Windows-Vulkan/FR-Spec breakthrough (2026-09-14)
+
+**From:** the Windows/Flash-Next runtime session.
+**To:** the kernel-work session (`C:\Projects\REV-N-ornith-eval-20260911\kernel-work\`).
+**Founder note:** "Das wirkt langsamer als der andere Fork." �?" I checked that before handing over; the
+honest comparison is below. Short version: **decode is clearly faster, prefill is comparable, and the
+one config that beats everything uses a build the founder already had on disk.**
+
+---
+
+## 1. The finding you need first: a working Windows/Vulkan stack at 25�?"38 t/s decode
+
+**Engine:** `C:\AI\runtimes\strix-vulkan-ba5354d\llama-server.exe` �?" the **same commit `ba5354d46`** the
+`vincentkelleher/qwen3.8-flash-next-halo` repo pins (drluoto `strix-halo-vulkan`, Vulkan/RADV).
+
+**Weights:** unsloth UD-IQ4_XS (3 shards, the file you inventoried).
+**Draft:** `mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf` (**FR-Spec**, 3.64 GiB).
+**Template:** `froggeric/Qwen-Fixed-Chat-Templates/chat_template.jinja`.
+
+**Measured on this box, Windows, native (no WSL, no `/dev/kfd`, current 32 GB carve):**
+
+| Prompt | Prefill | Decode |
+| --- | ---: | ---: |
+| short (A-3) | 23�?"37 t/s | **32.0�?"38.1 t/s** |
+| 8,106 tok | 331.3 t/s | **31.98 t/s** |
+| 26,557 tok | 250.5 t/s | **27.23 t/s** |
+| 32,605 tok (@c=131072) | 262.2 t/s | **26.59 t/s** |
+| 58,202 tok (@c=131072) | 157.5 t/s | **25.48 t/s** |
+
+Reference (vincentkelleher, same box, Vulkan): 35.8 / 36.7 / 33.5 / 25.7 t/s �+' **we match it.**
+
+## 2. Your numbers vs mine �?" the honest comparison (this is the "feels slower" question)
+
+| | pwilkin `strix-halo` (HIP, your session) | **drluoto `strix-halo-vulkan` + FR-Spec** |
+| --- | --- | --- |
+| Decode | 13.8�?"22 t/s (`fn-ramp`/`fn-boundary`) | **25.5�?"38.1 t/s** |
+| Prefill 8k | 308 t/s | 331 t/s |
+| Prefill ~26k | 269 t/s @31.8k | 250 t/s @26.6k |
+| Prefill ~58k | not measured | 157 t/s |
+
+**Decode: clearly faster (roughly doubled). Prefill: comparable at 8k, modestly lower in my 26k/58k
+rows �?" but those rows also had a bigger KV pool and `dio` loading, so this is not a clean A/B.**
+Your `531 t/s @25291` row was from a run where I later proved the prompt was mis-sized (word counts,
+not tokens) �?" do not treat 531 as the pwilkin baseline for that depth. **A clean, token-exact
+prefill A/B at 8k/32k/64k/128k is exactly what this handoff asks you to produce.**
+
+**Your weight-only ceiling calc is the target: ~28�?"34 ms/token �%^ 29�?"35 t/s.** We are already inside it
+at short context and just under it at depth �?" so the remaining headroom is **at depth** and in **prefill**,
+not in the base decode rate.
+
+## 3. Three axes to work (the founder wants all three benchmarked)
+
+The founder's instruction names three ways. My reading of what they are:
+
+- **Way 1 �?" the new one (Vulkan/FR-Spec).** `strix-vulkan-ba5354d` + FR-Spec head + Froggeric template +
+  `--spec-draft-p-min 0.0`, `-ngc`, etc. **This is the one currently at 25�?"38 t/s.**
+- **Way 2 �?" your pwilkin `strix-halo` HIP build** (`/home/revn/strix-llama`, `f5daaa3c`), the one you
+  have instrumented (expA, graph A/B, op microbench).
+- **Way 3 �?" the drluoto **HIP** branch** `strix-halo-flash-next` @ `590ac45`. **I cloned and built it**
+  at `/home/revn/drluoto-llama/build-hip/` (ROCm/gfx1151, builds clean). **Caveat found:** it **rejects
+  the FR-Spec head** �?" `check_tensor_dims: tensor 'output.weight' has wrong shape; expected 2560,248320,
+  got 2560,65536`. FR-Spec is a vocabulary-trimmed head (`t2d`/`d2t`) that **only the Vulkan branch
+  maps**. So on way 3 you must use the **plain** `mtp-Qwen3.8-Flash-Next-Q8_0.gguf` (4.14 GB), or port
+  the vocab-mapping. **This is a concrete, checkable lead.**
+
+## 4. What I already established (don't redo)
+
+1. **`--spec-draft-p-min 0.0` is correct.** The FR-Spec draft logits are uncalibrated; any threshold
+   throws away acceptance for nothing (vincentkelleher's compose says this explicitly).
+2. **`-md` must be passed** �?" sidecar auto-discovery does not search the `MTP/` subfolder.
+3. **`--load-mode dio`** (O_DIRECT) is what the validated config uses.
+4. **`GGML_VK_DISABLE_GDN_CACHE_FUSION=1`** �?" vincentkelleher's compose sets this because the branch's
+   fused GDN state-cache path **corrupts output on the 8060S**. I ran with it at 131k and it was clean.
+5. **Froggeric's template fixes a reported "80 % inference throughput drop on llama.cpp"** (flattened
+   Jinja AST) and preserves think-blocks for KV-cache hits. It also defaults reasoning to **medium**
+   instead of `xhigh`.
+6. **The 0 %-acceptance rows we both saw were a prompt-cache artifact**, not a depth property �?" and my
+   first two explanations (depth, first-request) were both wrong. Do not build on them.
+7. **The `per_layer_token_embd` / PLE table is paged, not resident** �?" your inventory: 26.82 GiB,
+   IQ4_NL, 320M rows. This is why RAM does not grow with context on the Vulkan path.
+
+## 5. Concrete targets and ideas for the 10-hour run
+
+**Prefill:**
+- Clean token-exact A/B at **8k / 32k / 64k / 128k** for all three ways, same prompts, same box, one
+  engine at a time. Use `/tokenize` to size prompts (my "~8k" bug is what made earlier tables wrong).
+- Test **`-b/-ub` sweep** (the validated config uses 2048/2048; the Dimaginar post uses 2048/1024;
+  pwilkin used 4096/4096). Prefill is usually batch-sensitive �?" this is cheap and likely real.
+- **Graphs**: your expA (graphs on/off) is directly relevant �?" if graphs engage on the Vulkan path too,
+  that is a shared win.
+
+**Decode:**
+- **MTP depth sweep** (`--spec-draft-n-max` 2/3/4/5) and **acceptance logging** at each depth.
+- **Draft head variants**: FR-Spec-65k (vocab-trimmed), plain Q8_0, bf16, and **Q4_K_M** (smaller, faster
+  to read). Available/known:
+  - `C:\AI\models\qwen38-flash\drluoto-frspec\mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf` �?" present, 3.64 GB
+  - `C:\AI\models\qwen38-flash\drluoto-frspec\mtp-Qwen3.8-Flash-Next-Q8_0.gguf` �?" present, 4.14 GB
+  - `C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\MTP\mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf` �?" present, 2.60 GB
+  - `mtp-Qwen3.8-Flash-Next-Q4_K_M.gguf` �?" **�s��,? only a 15-byte LFS pointer on disk; download from
+    `drluoto/Qwen3.8-Flash-Next-MTP-GGUF` on HF before using it.**
+- **Train/produce your own MTP head** if the off-the-shelf ones plateau �?" the founder explicitly
+  authorizes this. `drluoto/Qwen3.8-Flash-Next-MTP-GGUF` on HF is the reference recipe; the head is
+  small (3�?"4 GB) so it is tractable.
+- **The ~2A- gap to the ceiling at depth** is where the real work is: check whether acceptance falls at
+  depth, whether the PLE paging stalls, and whether graphs amortize launch overhead.
+
+**Quantization:**
+- The custom IQ4_NL "PROJFIX" set (`/home/revn/models/flash-next-strix`, 95.8 GiB) **does not fit** the
+  32 GB carve (needs ~79 GiB resident + compute). Note it, don't sink time into it at this carve.
+- Compare **UD-IQ4_XS vs UD-Q3_K_XL vs Q4_K_XL** on the Vulkan path for prefill/decode/quality tradeoffs.
+
+## 6. Exact reproduction of the breakthrough
+
+```
+C:\AI\runtimes\strix-vulkan-ba5354d\llama-server.exe ^
+  -m  C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf ^
+  -md C:\AI\models\qwen38-flash\drluoto-frspec\mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf ^
+  -ngl 999 -fa on --host 127.0.0.1 --port 8113 ^
+  -c 32768 --parallel 1 -ctk f16 -ctv f16 -b 2048 -ub 2048 ^
+  --jinja --chat-template-file C:\AI\models\qwen38-flash\froggeric\chat_template.jinja ^
+  --reasoning-format deepseek --reasoning-preserve ^
+  --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-p-min 0.0 ^
+  --temp 1.0 --top-k 20 --top-p 0.95 --min-p 0.0 --presence-penalty 0.0 ^
+  --alias qwen3.8-flash-next-mtp
+```
+
+Scripts (mine): `.revn-data/orchestrator/vulkan-ba-test.ps1`, `vulkan-bench.ps1`, `vulkan-bigctx.ps1`.
+My documents: `docs/benchmarks/flash-next-windows-breakthrough-38tps-20260914.md`,
+`new-sources-synthesis-20260914.md`.
+
+## 7. Guardrails (both sessions share one box)
+
+- **One Flash-Next instance per box, ever** (your own runbook rule �?" it caught me twice).
+- **WSL cap 88 GB max**, one heavy job at a time; a 90 GB cap + parallel jobs hard-restarted the PC.
+- **Load models from `/mnt/c`, not WSL ext4** (ext4 ballooning starves Windows; Windows fell to 86 MB).
+- Vulkan runs **natively on Windows** �?" it does not need WSL, so it can run **while WSL is doing other
+  work**, but memory is shared; check `Available MBytes` before starting.
+- Crash-dump cleanup is automated (`REVN-WSL-CrashDump-Cleanup`, daily 12:30).
+
+---
+
+## 8. THE PROMPT TO RUN (verbatim from the founder)
+
+```
+continues working on the prefill and tok/s no matter what you Need to do to get closer to the ceiling. work Not only on this proposed model / way but your two other alternative ways and Benchmark all of then incl tok/s and prefill on multiple Context Sizes. Continue Autononously the Next 10 hours until you have good results. Leverage Parameter Tuning, Research and Download MTPs or Sidecars or even create your own MTP to increase the tok/s. your goal is to have better results than the Official benchmarks we already know
+```
+
+Deliverable expected: for each of the three ways, a token-exact table of **prefill and decode at
+multiple context sizes**, the MTP/parameter configuration that produced the best numbers, and a clear
+statement of how each compares to the official published benchmarks (vincentkelleher 25.7�?"36.7 t/s;
+Halogen 25.4 t/s serial; peonist prefill figures).
+#!/usr/bin/env bash
+# mmbcheck.sh �?" did the MMB (bf16-WMMA dequant GEMM) kernels actually fire?
+D=/mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work/results
+for f in server-pf-mmb1.log server-pf-pw-ub8k.log server-W2-pf-ub8k-mmb.log server-ud-mmb-full.log server-W2-ud-ub8k-mmb.log; do
+  p="$D/$f"
+  printf '=== %s : ' "$f"
+  if [ ! -f "$p" ]; then echo "MISSING"; continue; fi
+  echo "$(wc -l < "$p") lines"
+  grep -aE 'MMB_TALL|MMB_GLU|MMB_BLK16|MMB_DOWN16|HC_GATEMIX|MMB_SHADOW|MMB_CVT|FORK_COMPACT|FORK_GDN' "$p" | head -8
+done
+#!/usr/bin/env python3
+"""Validate the FR-Spec MTP head GGUF: metadata + tensor list."""
+import sys
+sys.path.insert(0, '.')
+from gguf_inventory import parse_shard, GT, NAME2TYPE
+
+s = parse_shard('/home/revn/models/mtp-heads/mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf')
+m = s['meta']
+print('arch:', m.get('general.architecture'), '| name:', m.get('general.name'))
+for k in sorted(m):
+    if any(x in k for x in ('expert', 'block_count', 'embedding_length', 'ssm', 'head_count',
+                            'context_length', 'mtp', 'draft')):
+        v = m[k]
+        if isinstance(v, list) and len(v) > 10:
+            v = v[:10] + ['...']
+        print(' ', k, '=', v)
+tlist = s['tensors']
+print('tensors:', len(tlist))
+tot = 0
+for t in tlist:
+    bb, bl = GT[t['type']]
+    n = 1
+    for d_ in t['ne']:
+        n *= d_
+    tot += (n + bl - 1) // bl * bb
+for t in tlist[:8] + tlist[-6:]:
+    bb, bl = GT[t['type']]
+    n = 1
+    for d_ in t['ne']:
+        n *= d_
+    b = (n + bl - 1) // bl * bb
+    print('  %-56s %-6s ne=%-24s %8.1f MiB' % (t['name'], NAME2TYPE.get(t['type'], t['type']),
+                                               str(t['ne']), b / 2**20))
+print('total head size: %.2f GiB' % (tot / 2**30))
+#!/usr/bin/env bash
+# combine.sh �?" the combined config: pwilkin HIP + PROJFIX + MMB=1 + FR-Spec MTP (patched fork).
+set -u
+BASE=/mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work
+OUT="$BASE/results"; mkdir -p "$OUT"
+PW=/home/revn/strix-llama/build-hip/bin/llama-server
+PF=/home/revn/models/flash-next-strix/Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00001-of-00009.gguf
+FR=/home/revn/models/mtp-heads/mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf
+PORT=8126
+L="$OUT/combine.log"
+say(){ echo "[$(date +%T)] $*" | tee -a "$L"; }
+stop_srv(){ for p in $(pgrep -x llama-server); do kill -9 "$p" 2>/dev/null; done; sleep 5; }
+
+stop_srv
+source "$BASE/env.sh"
+export HSA_ENABLE_DXG_DETECTION=1 GGML_HIP_ENABLE_UNIFIED_MEMORY=1 LLAMA_MMB=1
+say "==== combined: PROJFIX + MMB + FR-Spec MTP (d2t patched) ===="
+"$PW" -m "$PF" -ngl 99 -fa on -fit off --load-mode none --lazy-mode on-direct \
+  -ctk f16 -ctv f16 -c 49152 -b 8192 -ub 8192 --parallel 1 -t 8 \
+  -md "$FR" --spec-type draft-mtp --spec-draft-n-max 3 \
+  --host 127.0.0.1 --port $PORT --no-webui > "$OUT/server-combine.log" 2>&1 &
+SRV=$!
+UP=0
+for i in $(seq 1 420); do
+  curl -s http://127.0.0.1:$PORT/health 2>/dev/null | grep -q ok && { UP=1; break; }
+  kill -0 $SRV 2>/dev/null || break
+  sleep 5
+done
+if [ "$UP" != 1 ]; then
+  say "LOAD-FAILED. key lines:"
+  grep -aE 'd2t|t2d|wrong shape|out of memory|failed|error|n_vocab_out' "$OUT/server-combine.log" | tail -8 | tee -a "$L"
+  exit 1
+fi
+say "LOADED OK �?" FR-Spec accepted by the HIP fork!"
+grep -aE 'd2t|t2d|n_vocab_out|MTP using' "$OUT/server-combine.log" | tail -4 | tee -a "$L"
+python3 "$BASE/fnbench.py" --port $PORT --label combine-frspec-mmb --sizes 1024,8192,32768 --gen 128 \
+  --repeats 3 --out "$OUT/combine-frspec-mmb.json" 2>&1 | grep -E 'n= |wrote' | tee -a "$L"
+say "MMB markers: $(grep -acE 'MMB_TALL|MMB_GLU|MMB_BLK16|MMB_DOWN16|HC_GATEMIX|MMB_SHADOW' "$OUT/server-combine.log")"
+stop_srv
+say "######## combine done ########"
+#!/usr/bin/env python3
+"""Device-pool budget model for PROJFIX on the current 32 GB carve."""
+POOL = 81739 / 1024.0          # MiB -> GiB visible pool
+WEIGHTS = 93.16 - 26.82        # PROJFIX minus non-resident PLE table
+print(f"pool          {POOL:8.2f} GiB")
+print(f"weights(res)  {WEIGHTS:8.2f} GiB")
+print(f"left for KV+compute+buffers: {POOL - WEIGHTS:8.2f} GiB\n")
+
+def kv_gib(ctx):
+    # 12 full-attn layers, 2 KV heads, head_dim 256, f16, k+v
+    return 12 * 2 * 256 * 2 * 2 * ctx / 2**30
+
+def gdn_gib():
+    # 36 layers, state 128 x inner 6144 f32 + conv cache
+    return (36 * 6144 * 128 * 4) / 2**30
+
+for ctx in (32768, 49152, 65536, 131072):
+    rem = POOL - WEIGHTS - kv_gib(ctx) - gdn_gib()
+    print(f"ctx={ctx:>7}: KV {kv_gib(ctx):5.2f} + GDN {gdn_gib():4.2f} -> compute budget {rem:6.2f} GiB")
+    # measured: ub16384 needed 14.05 GiB
+    for ub in (4096, 8192, 12288, 16384):
+        need = 14.05 * ub / 16384
+        print(f"     ub={ub:>6}: ~{need:5.2f} GiB  {'OK' if need < rem else 'FAIL'}")
+# vulkan-bench.ps1 �?" start the Way-1 Windows/Vulkan server, benchmark, stop. One instance, ever.
+# Usage example:
+#   powershell -NoProfile -File vulkan-bench.ps1 -Tag v1-frspec-d3 -Sizes 1024,8192,32768,65536,131072
+param(
+  [string]$Tag = "v1-base",
+  [string]$Model = "C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf",
+  [string]$Draft = "C:\AI\models\qwen38-flash\drluoto-frspec\mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf",
+  [int]$Ctx = 196608,
+  [int]$Batch = 2048,
+  [int]$Ubatch = 2048,
+  [int]$DraftNMax = 3,
+  [double]$DraftPMin = 0.0,
+  [int]$Parallel = 1,
+  [string]$Sizes = "1024,8192,32768,65536,131072",
+  [int]$Gen = 128,
+  [int]$Repeats = 3,
+  [int]$RepeatsBig = 0,
+  [int]$BigThreshold = 32768,
+  [switch]$NoSpec,
+  [string]$ExtraArgs = "",
+  [int]$Port = 8113,
+  [int]$LoadTimeoutSec = 1800
+)
+$ErrorActionPreference = "Continue"
+$root = "C:\Projects\REV-N-ornith-eval-20260911\kernel-work"
+$res  = Join-Path $root "results"
+New-Item -ItemType Directory -Force -Path $res | Out-Null
+$bin  = "C:\AI\runtimes\strix-vulkan-ba5354d\llama-server.exe"
+$tpl  = "C:\AI\models\qwen38-flash\froggeric\chat_template.jinja"
+$sout = Join-Path $res "server-$Tag.out"
+$serr = Join-Path $res "server-$Tag.err"
+$blog = Join-Path $res "bench-$Tag.log"
+
+function Note($m) { $m | Tee-Object -FilePath $blog -Append }
+
+# one-instance rule
+Get-Process llama-server -ErrorAction SilentlyContinue | ForEach-Object { Note "killing stale llama-server pid $($_.Id)"; Stop-Process -Id $_.Id -Force }
+Start-Sleep -Seconds 2
+
+$argv = @(
+  "-m", $Model,
+  "-ngl", "999", "-fa", "on",
+  "--host", "127.0.0.1", "--port", "$Port",
+  "-c", "$Ctx", "--parallel", "$Parallel",
+  "-ctk", "f16", "-ctv", "f16",
+  "-b", "$Batch", "-ub", "$Ubatch",
+  "--jinja", "--chat-template-file", $tpl,
+  "--reasoning-format", "deepseek", "--reasoning-preserve",
+  "--temp", "1.0", "--top-k", "20", "--top-p", "0.95", "--min-p", "0.0", "--presence-penalty", "0.0",
+  "--alias", "qwen3.8-flash-next-mtp"
+)
+if (-not $NoSpec -and $Draft -ne "") {
+  $argv += @("-md", $Draft, "--spec-type", "draft-mtp", "--spec-draft-n-max", "$DraftNMax", "--spec-draft-p-min", "$DraftPMin")
+}
+if ($ExtraArgs -ne "") { $argv += ($ExtraArgs -split '\s+') }
+
+$env:GGML_VK_DISABLE_GDN_CACHE_FUSION = "1"
+Note "=== starting $Tag $(Get-Date -Format o) ==="
+Note "argv: $($argv -join ' ')"
+$p = Start-Process -FilePath $bin -ArgumentList $argv -PassThru -RedirectStandardOutput $sout -RedirectStandardError $serr -NoNewWindow
+Note "pid=$($p.Id) sout=$sout serr=$serr"
+
+$ok = $false
+$t0 = Get-Date
+while (((Get-Date) - $t0).TotalSeconds -lt $LoadTimeoutSec) {
+  if ($p.HasExited) { Note "SERVER EXITED code=$($p.ExitCode)"; Get-Content $serr -Tail 30; exit 1 }
+  try {
+    $r = Invoke-WebRequest -Uri "http://127.0.0.1:$Port/health" -TimeoutSec 5 -UseBasicParsing
+    if ($r.StatusCode -eq 200) { $ok = $true; break }
+  } catch { Start-Sleep -Seconds 5 }
+}
+if (-not $ok) { Note "SERVER NOT READY in $LoadTimeoutSec s"; Stop-Process -Id $p.Id -Force; exit 1 }
+Note "server ready after $([int]((Get-Date)-$t0).TotalSeconds)s"
+
+$out = Join-Path $res "$Tag.json"
+python "$root\fnbench.py" --port $Port --label $Tag --sizes $Sizes --gen $Gen --repeats $Repeats --repeats-big $RepeatsBig --big-threshold $BigThreshold --out $out --context-limit $Ctx 2>&1 | Tee-Object -FilePath $blog -Append
+
+Note "=== stopping $Tag $(Get-Date -Format o) ==="
+Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+Start-Sleep -Seconds 3
+Get-Process llama-server -ErrorAction SilentlyContinue | Stop-Process -Force
+Note "done: $out"
+# REV:N current operational truth
+
+**Specific Founder vendor amendment2026-09-11:** Additional DeepSeek repository-worker preparation is explicitly authorized under docs/history/backlog-refinement/deepseek-v41-additional-worker-intake-2026-09-11.md. A real metered pilot requires the Founder cumulative USD cap and protected secret, then exact per-run admission; initial concurrency1, up to2 only after accepted pilot. This is a narrow repository-vendor exception to older generic paid-API wording. Other paid routes, product lifecycle, purchases, reset, overage and push remain unauthorized. No cap or secret has yet been provided. Exact source inventory: docs/history/backlog-refinement/founder-additional-worker-and-acceptance-intakes-raw-2026-09-11.json.
+
+**Current governing authority �?" Founder 2026-09-11:** The [autonomous repository throughput amendment](token-efficiency-contract.md#founder-amendment-2026-09-11-autonomous-repository-throughput) takes precedence over historical budget and percentage-stop language below. Continue full ALL_OPEN delivery and concurrent Refinement in these persistent tasks. Direct native Codex subagents are the active work route; target 10�?"20 useful workers within observed runtime and ownership capacity, refill slots, and autonomously add bounded author/review planning allowances from available included quota. Preserve all historical measured/UNKNOWN usage. Do not wait for old supplementary approvals, a provider reset, or an adapter in the separate paused standby controller. Sole canonical integration, real platform limits, fake-only provider tests and all product/external-action boundaries remain binding.
+
+The following 2026-09-10 paragraph is retained historical evidence; its budget-renewal and percentage-stop clauses are superseded by the governing authority above.
+
+Audit decision delegated by the founder, 2026-09-10: Default to supported in-place context compaction and continuation in the same persistent Delivery and Refinement tasks. At approximately 80% context, refresh a concise durable work checkpoint and quota; context percentage, wave count or an ordinary task boundary alone does not require preparation, creation or retirement of a successor. This supersedes older mandatory rotation and no-compaction wording in AGENTS.md, orchestration contracts and entry/successor prompts. Preserve objectives, accepted/pending evidence, ownership, exact dirty paths, cumulative Task consumption and UNKNOWN reservations through compaction. Reload only evidence needed for the next action and verify critical state against the checkpoint. A real ownership/role transfer, unrecoverable session fault, demonstrated post-compaction context defect or explicit founder request can justify a new task; retain sole-writer CAS/ACK for actual ownership transfer and predecessor responsibility until acceptance. Technical worker failure or quota scarcity alone does not justify replacing the main task. The two persistent operating roles, fresh quota checks and 15/10/5% safeguards remain; no budget renewal, product/provider lifecycle, reset, overage or push is authorized. Handoff is administrative work, not portfolio completion. This decision is based on the latest20-package audit; it makes no claim of measured net monetary or quota savings.
+
+## Latest accepted delivery �?" 2026-09-11
+
+Main base 8a812f237fbda2add5870c2de13c943bfebdbb08: POSTGRES-GENERIC-JOBQUEUE-ADAPTER-T1 PARTIAL after independent ACCEPT_PHASE and focused Main verification. 63READY/818open,registry116; other native work continues. Evidence/inventory: docs/history/delivery/generic-dead-letter-registry-bootstrap-phase-2026-09-11.md.
+
+
+Main base 087d479ced2104eee0873844f0bec0e3095f4dff: VOICE-RESULT-RECORD-SCHEMA-ASSERTION PARTIAL after independent ACCEPT_PHASE and focused Main verification. 64READY/818open,registry115; other native work continues. Evidence/inventory: docs/history/delivery/c058-runtime-provenance-settlement-phase-2026-09-11.md.
+
+
+Main base 45bc018c37896d14f5ea5298560382b38d0fe5e8: NEW-E-01.4-CANARY-TEXT-TAP DONE after independent ACCEPT_FULL_TASK and focused Main verification. 64READY/818open,registry114; other native work continues. Evidence/inventory: docs/history/delivery/canary-room-first-complete-closure-2026-09-11.md.
+
+
+Main base dde317bf28d38a7a2a8b7208953df631d1e72a98: VOICE-DONATION-EMBEDDING-EXTRACTION DONE after independent ACCEPT_PHASE and focused Main verification. 64READY/819open,registry113; other native work continues. Evidence/inventory: docs/history/delivery/donation-embedding-composed-closure-2026-09-11.md.
+
+
+Main base 285587118394f6026be35162110afb2da11bf1bf: FOUNDER-FEATURE-ACCEPTANCE-PLAN-T1 DONE after independent ACCEPT and focused Main verification. 65READY/820open,registry112; other native work continues. Evidence/inventory: docs/history/delivery/founder-feature-plan-tracked-routing-repair-2026-09-11.md.
+
+
+Main base dde317bf28d38a7a2a8b7208953df631d1e72a98: Keep the catalog count consistent with both signed snapshot messages; one exact verification owner added, full Task acceptance and status preserved. 65 READY / 820 open, registry 110. Evidence/inventory: docs/history/delivery/c058-envelope-catalog-count-owner-2026-09-11.md.
+
+
+P0 FOUNDER-FEATURE-ACCEPTANCE-PLAN-T1 DONE: complete German feature plan delivered by direct file link; optional panel opening queued, all8criteria documented, ten cards and existing heartbeat invitation/dedup workflow verified. No new game-ready or live-acceptance claim. 65READY/820open,registry109. Evidence/inventory: docs/history/delivery/founder-feature-acceptance-plan-completion-2026-09-11.md.
+
+
+Complete C5 supplier child POSTGRES-OFFLINE-STATE-ADAPTER-T1 admitted READY with44owners,021migrationreservation and matching DONEtransaction dependency; source-only, originalfullacceptance and serializedwriter boundaries retained. 65READY/821open,registry108. Evidence/inventory: docs/history/delivery/c5-complete-child-admission-2026-09-11.md.
+
+
+Explicit Founder DeepSeek repository-worker request admitted as one separate Story and implementation Task, both REFINEMENT_NEEDED; preparation authorized, metered pilot awaits protected secret and cumulative cap. 64READY/820open,registry107. Evidence/inventory: docs/history/delivery/deepseek-repository-worker-intake-2026-09-11.md.
+
+
+P0 FOUNDER-FEATURE-ACCEPTANCE-PLAN-T1 admitted as REFINEMENT_NEEDED for the requested playable feature plan and personal acceptance workflow; full eight criteria, all ten player experiences and existing product gates preserved. 64READY/818open, registry106. Evidence/inventory: docs/history/delivery/founder-feature-acceptance-plan-admission-2026-09-11.md.
+
+
+Main base ff501d49b5ba09e134148a00582f9d6a1c285355: NEW-E-01.4-CANARY-TEXT-TAP PARTIAL after independent ACCEPT_PHASE and focused Main verification. 64READY/817open,registry105; other native work continues. Evidence/inventory: docs/history/delivery/canary-provider-cloud-composed-phase-2026-09-11.md.
+
+
+Main base cc533fcb2daf2e18e9562f5c43c49e3d1c6dc307: VOICE-RESULT-RECORD-SCHEMA-ASSERTION PARTIAL after independent ACCEPT_PHASE and focused Main verification. 64READY/817open,registry104; other native work continues. Evidence/inventory: docs/history/delivery/c058-cli-mapper-emission-phase-2026-09-11.md.
+
+
+Main base 77a1566d860a7ab1770e4844d290005ac23a882a: Qualify the generic queue catalog in migration validation; one exact verification owner added, full Task acceptance and status preserved. 64 READY / 817 open, registry 103. Evidence/inventory: docs/history/delivery/generic-registry-global-catalog-lint-owner-2026-09-11.md.
+
+A c c e s s   i s   d e n i e d .    
+ E r r o r   c o d e :   W s l / E n u m e r a t e D i s t r o s / S e r v i c e / E _ A C C E S S D E N I E D  
+ 
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+PR #28118 adds two important corrections: its 41.5/56.6 t/s results used **Vulkan + RADV**, and the thread reports native recurrent rollback reaching 44 t/s versus 41 with device checkpoints. It also documents checkpoint restore crashes on later requests. I’ll make rollback support and repeated-request correctness part of the decode decision.
+web search: 
+web search: https://github.com/pwilkin/llama.cpp/issues/24
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: https://raw.githubusercontent.com/pwilkin/llama.cpp/strix-halo/ggml/src/ggml-cuda/mm-bf16.cu
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content codex-prompt-3.md -TotalCount 50; Get-Content gguf-inventory-iq4nl.json -TotalCount 35; Get-Content gguf-inventory-udiq4xs.json -TotalCount 20; rg -n 'GiB|mtp|draft|buffer size|model size|PLE' results/server-v1-frspec-d3.err | Select-Object -Last 35; Get-Content fnbench.py | Select-Object -Skip 65 -First 35; Get-ChildItem -LiteralPath 'C:/AI/runtimes' -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem -LiteralPath 'C:/AI/models/qwen38-flash' -ErrorAction SilentlyContinue | Select-Object Name" in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ succeeded in 254ms:
+You are reviewing a performance program and must produce the PLAN + STRATEGY that gets the best prefill and decode on ONE machine. Be concrete, numeric, and decisive. Where my reasoning is weak, say so and correct it.
+
+## Machine (fixed)
+Bosgame/Corsair Strix Halo: Ryzen AI Max+ 395, Radeon 8060S gfx1151 (RDNA3.5, wave32, 40 CU, 2 MiB L2, 32 MiB MALL), 128 GB LPDDR5X (256 GB/s theoretical, ~221-234 GB/s practical), Windows 11 + WSL2 (HIP over /dev/dxg only; no /dev/kfd; UMA so weights live in host RAM). Current carve 32 GB -> device pool 79.82 GiB. WSL cap 86 GB.
+
+## Model
+Qwen3.8-Flash-Next (qwen4exp MoE, 177B total / ~6B active, 512 experts top-k 10 + shared, 48 layers, 36 GatedDeltaNet + 12 full-attn, hyper-connections, 26.82 GiB n-gram PLE table paged from disk, vocab 248320).
+
+## THE AUTHORITATIVE RESULT (this changes everything)
+The fork author (ilintar/pwilkin) just published on r/StrixHalo: **1204 t/s prefill @0 depth, ~1100 @40k, ~850 @150k; ~30 t/s decode**, on his strix-halo llama.cpp branch + custom IQ4_NL "PROJFIX" quant + custom MIT/HIP build using retained PM4 replay. Separately, olliehm ported the SAME branch to Windows/TheRock ROCm 10.1/Clang 23 and measured **964-1045 t/s prefill with the STOCK unsloth UD-IQ4_XS quant** (not even PROJFIX), 262144 ctx, `-b/-ub 8192`, `--load-mode none`, NO custom runtime, NO lazy-direct -- with ALL 35 launcher env gates ON except ONE: `LLAMA_MMB_HC16=0` (that gate alone corrupts output on Windows; its ablation value is only 1.08x). All gates OFF gives only ~418 t/s. So the gates are what buy ~2.3x, and they work on Windows.
+
+Also from issue #24 + PR #28118: MTP without on-device speculative recurrent-state checkpoints is a net LOSS (77-79% acceptance but only ~24 t/s decode, vs ~34-38 t/s with device checkpoints, vs 6.2 t/s when host checkpoints dominate an ~825 ms round). PR #28118 is 8 lines: OR LLAMA_STATE_SEQ_FLAGS_ON_DEVICE into the speculative ckpt update/load for target+draft.
+
+Reference: hipEngine RDNA3 tuning guide (shisa-ai) says llama.cpp HIP leaves most threads idle in its GEMV loops (e.g. Q4_K ncols=512 uses 32 of 256 threads), recommends wave32 coalesced packed loads + multiple accumulators, K-dependent workgroup sizing (K=512->64 threads, K=2048->128), vec4->vec8 unroll (+42%/+8%), LDS only when it earns barriers, and notes MoE grid reshape to (packs, experts) measured 59% SLOWER; also grid.sync ~1us, and speculative decode on a 35B-A3B measured eta=0.736 running 0.7-0.85x its own AR baseline.
+
+## What I measured on this box (32 GB carve, token-exact prompts)
+- pwilkin HIP + PROJFIX, ub 8192, ctx 49152, MMB=1: prefill 364@1k / 460-525@8k / 381@32k; decode 21.7@1k / 17-19@8k / 10.0@32k
+- same, MMB off: 324 / 325-364 / 316; decode 20.6 / 13-19 / 11.5
+- pwilkin HIP + UD-IQ4_XS + MMB=1: prefill 155-380 (unstable), 206@32k
+- Vulkan (drluoto ba5354d) + UD + FR-Spec MTP d3: prefill 288-314@1k/360-366@8k/271@32k; decode 29.3-30.6@1k/17.8@8k/20.0@32k. No-spec decode 18.5-19.2. So MTP=1.6x there.
+- drluoto HIP + UD + plain MTP: decode 6.8 t/s (this matches the "host checkpoint" 6.2 t/s case exactly -> the fork lacks PR#28118)
+- Memory: pool 79.82 - PROJFIX resident 66.34 = 13.48 GiB for KV+compute; ub16384 needs 14.05 -> fails. So at 32 GB carve the author's ub 16384 cannot run; ub 8192 fits.
+- Also: the fork's 35 gates are real and I now have the complete list from the source. MMB kernels exist but I could not confirm from logs that they fire (their markers never appeared) -- possibly they only print under LLAMA_MMB_CVT_LOG, or the gate combination matters.
+
+## What I have already built this session
+- Ported FR-Spec `d2t`/`t2d` draft-vocab trim into the pwilkin fork's `src/models/qwen4exp.cpp` (loader + MTP graph builder), so the HIP fork can load the 65k-vocab FR-Spec head that previously only Vulkan accepted. Builds clean.
+- Ported PR #28118 (speculative checkpoints -> ON_DEVICE) into the same fork's server (`tools/server/server-context.cpp`), 6 call sites. Builds clean.
+- Full token-exact benchmark harness (fnbench.py) and a gate-launcher script.
+
+## QUESTIONS -- answer each with numbers and a decision
+
+1. **Prefill strategy.** Given the 964-1045 t/s Windows result with stock quant + gates, what is the highest-probability path to the best prefill on THIS box: (a) run the 35 gates at the 32 GB carve and accept ub 8192, (b) raise the carve to 96 GB (like the author and olliehm both did) so ub 16384 fits, or (c) something else? Quantify the expected gain from each. Note the carve is a founder/BIOS action.
+
+2. **Decode strategy.** The best decode I have is 30 t/s (Vulkan+FR-Spec). The author gets ~30 t/s, and with device-checkpoint MTP ~35-41, and 56 t/s on code at n-max 6. Given I have BOTH the FR-Spec port and the PR#28118 port in the HIP fork (but they are untested together, and PROJFIX+FR-Spec may not fit memory at 32 GB carve), what decode plan do you recommend and in what order? Is Vulkan+FR-Spec the better decode, or HIP + FR-Spec + MMB + PR#28118 once the carve is raised?
+
+3. **Can all three coexist?** PROJFIX (best prefill layout) + FR-Spec (best decode draft) + the 35 gates/MMB (best prefill kernels) + PR#28118 (best decode checkpoints) on the pwilkin HIP fork. What will break, what must be verified, and what is the memory arithmetic at 96 GB carve? Give the expected combined numbers.
+
+4. **The 512-expert MoE + speculation.** With top-k=10 of 512 and depth-d drafting, E[union] = 512(1-(1-10/512)^d): d=1 ->10, d=2 ->19.8, d=4 ->38.8, d=6 ->57.7. Per accepted token, expert bytes scale as union/d: 1.00, 0.99, 0.97, 0.96. Is there a strong reason to prefer depth 4 (author's default) vs 6 (56.6 t/s on code in PR#28118) here? What is the real limiter for decode -- expert-union bytes, GDN recurrence serialization, or acceptance rate?
+
+5. **What am I still missing?** In particular: (i) is my "MMB kernels never fired" observation a real failure or a logging artifact, and how do I check definitively? (ii) The QSA-lightning-indexer for decode is the author's stated next goal ("Next goal: QSA for decode") -- what does that imply for us? (iii) Any high-value kernel work (per hipEngine: GEMV workgroup sizing, vec8 unroll, L2/MALL policy, avoiding the 59%-slower MoE grid reshape) that beats just using the gates?
+
+6. **The cheapest 80/20 plan.** If you had 6 more hours on this box and one founder action available (a carve reboot), write the exact ordered checklist: what to run, in what order, with which gates/flags/quant/head, and the expected t/s at each step, plus the abort condition for each step.
+
+Be specific about env vars, flags, and file paths. Prefer measured numbers over speculation, and flag clearly which of your numbers are estimates.
+{
+ "meta": {
+  "general.architecture": "qwen4exp",
+  "general.type": "model",
+  "general.sampling.top_k": 20,
+  "general.sampling.top_p": 0.949999988079071,
+  "general.sampling.temp": 1.0,
+  "general.name": "Qwen3.8 Flash Next",
+  "general.size_label": "512x56B",
+  "general.license": "other",
+  "general.license.name": "qwen-community-1.0",
+  "general.license.link": "LICENSE",
+  "general.tags": [
+   "image-text-to-text"
+  ],
+  "qwen4exp.block_count": 48,
+  "qwen4exp.context_length": 262144,
+  "qwen4exp.embedding_length": 2560,
+  "qwen4exp.attention.head_count": 24,
+  "qwen4exp.attention.head_count_kv": 2,
+  "qwen4exp.rope.dimension_sections": [
+   11,
+   11,
+   10,
+   0
+  ],
+  "qwen4exp.rope.freq_base": 10000000.0,
+  "qwen4exp.attention.layer_norm_rms_epsilon": 9.999999974752427e-07,
+  "qwen4exp.expert_count": 512,
+  "qwen4exp.expert_used_count": 10,
+  "qwen4exp.attention.key_length": 256,
+  "qwen4exp.attention.value_length": 256,
+  "qwen4exp.expert_feed_forward_length": 640,
+  "qwen4exp.expert_shared_feed_forward_length": 640,
+  "qwen4exp.ssm.conv_kernel": 4,
+{
+ "meta": {
+  "general.architecture": "qwen4exp",
+  "general.type": "model",
+  "general.sampling.top_k": 20,
+  "general.sampling.top_p": 0.949999988079071,
+  "general.sampling.temp": 1.0,
+  "general.name": "Qwen3.8 Flash Next",
+  "general.description": "A Preview of the Qwen4 Architecture",
+  "general.size_label": "512x56B",
+  "qwen4exp.block_count": 48,
+  "qwen4exp.context_length": 262144,
+  "qwen4exp.embedding_length": 2560,
+  "qwen4exp.attention.head_count": 24,
+  "qwen4exp.attention.head_count_kv": 2,
+  "qwen4exp.rope.dimension_sections": [
+   11,
+   11,
+   10,
+   0
+9:1.29.318.087 I common_speculative_init_result: loading draft model 'C:\AI\models\qwen38-flash\drluoto-frspec\mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf'
+20:2.23.617.295 I slot print_timing: id  0 | task 0 | draft acceptance = 0.73109 (   87 accepted /   119 generated), mean len =  3.17
+29:2.31.368.268 I slot print_timing: id  0 | task 43 | draft acceptance = 0.73109 (   87 accepted /   119 generated), mean len =  3.17
+38:2.39.075.352 I slot print_timing: id  0 | task 86 | draft acceptance = 0.73109 (   87 accepted /   119 generated), mean len =  3.17
+49:3.02.042.597 I slot print_timing: id  0 | task 129 | draft acceptance = 0.33333 (    3 accepted /     9 generated), mean len =  2.00
+60:3.24.766.873 I slot print_timing: id  0 | task 138 | draft acceptance = 0.33333 (    3 accepted /     9 generated), mean len =  2.00
+71:3.47.879.011 I slot print_timing: id  0 | task 147 | draft acceptance = 0.33333 (    3 accepted /     9 generated), mean len =  2.00
+95:5.55.013.126 I slot print_timing: id  0 | task 156 | draft acceptance = 0.54167 (   78 accepted /   144 generated), mean len =  2.62
+    i = 0
+    while len(text) < min_tokens_hint * 4:  # ~4 chars/token
+        text += f"\n[section {i}] " + para
+        i += 1
+    with open(CORPUS, "w", encoding="utf-8") as f:
+        f.write(text)
+    print(f"corpus built: {len(text)/1e6:.1f} MB -> {CORPUS}")
+
+
+def tokenize(port, text):
+    r = http_json(f"http://127.0.0.1:{port}/tokenize", {"content": text})
+    return r["tokens"]
+
+
+def get_token_pool(port, need):
+    """Tokenize the corpus once; cache token ids. Return list of >= need tokens."""
+    if os.path.exists(TOKENS):
+        try:
+            pool = json.load(open(TOKENS))
+            if len(pool) >= need:
+                print(f"token pool cached: {len(pool)} tokens")
+                return pool
+        except Exception:
+            pass
+    build_corpus()
+    with open(CORPUS, "r", encoding="utf-8", errors="ignore") as f:
+        text = f.read()
+    print(f"tokenizing corpus ({len(text)/1e6:.1f} MB)...", flush=True)
+    pool = tokenize(port, text)
+    print(f"tokenized -> {len(pool)} tokens")
+    json.dump(pool, open(TOKENS, "w"))
+    return pool
+
+
+def wait_ready(port, timeout=1800):
+
+Name                              
+----                              
+llamacpp                          
+llamacpp-b10690-vulkan            
+llamacpp-new                      
+model-download                    
+myhacsint-2dff859                 
+other-provider-runtimes           
+qwen3-asr                         
+qwen3-omni-native                 
+qwen3-omni-rocm                   
+qwen3-tts                         
+strix-vulkan-ba5354d              
+unsloth-b10715-mtp-vulkan         
+windows-ple-c6a9e5c               
+windows-ple-mtp-c6a9e5c           
+drluoto-frspec                    
+froggeric                         
+unsloth-UD-IQ4_XS                 
+mtp-Qwen3.8-Flash-Next-Q8_0.gguf  
+Qwen3.8-Flash-Next-MTP-Q4_K_M.gguf
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: https://github.com/pwilkin/llama.cpp/tree/strix-halo/ggml/src/ggml-cuda
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content probe-env.sh; Get-Content diag.sh -TotalCount 60; Get-Item -LiteralPath 'C:/AI/models/qwen38-flash/drluoto-frspec/mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf' | Select-Object FullName,Length; Get-Content results/v1-frspec-d3.json; Get-Content results/W2-pf-ub8k-mmb.json" in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ succeeded in 309ms:
+#!/usr/bin/env bash
+# Probe the WSL/HIP environment for the decode-kernel work. Read-only.
+set -x
+source /home/revn/ciru-runtime/sources/vllm-glm53-strix/runtime-env.sh 2>&1 | tail -5
+export HSA_ENABLE_DXG_DETECTION=1
+echo "=== ROCM_PATH=${ROCM_PATH} ==="
+echo "=== devices ==="
+/home/revn/strix-llama/build-hip/bin/llama-bench --list-devices 2>&1 | tail -8
+echo "=== dev nodes ==="
+ls -la /dev/dxg 2>/dev/null
+ls /dev/kfd 2>/dev/null || echo "no /dev/kfd (expected)"
+echo "=== WSL mem ==="
+free -g | head -2
+echo "=== hipshim / runtime libs in env ==="
+echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+#!/usr/bin/env bash
+# diag.sh �?" inspect the no-draft test log and process state.
+echo "=== no-draft log (grep) ==="
+grep -aiE 'listening|d2t|t2d|vocab_out|ABORT|assert|error|failed' /tmp/nodraft.log 2>/dev/null | tail -8
+echo "=== log lines: $(wc -l < /tmp/nodraft.log 2>/dev/null) ==="
+echo "=== tail ==="
+tail -4 /tmp/nodraft.log 2>/dev/null
+echo "=== servers: $(pgrep -x llama-server | wc -l) ==="
+
+FullName                                                                                 Length
+--------                                                                                 ------
+C:\AI\models\qwen38-flash\drluoto-frspec\mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf 3639245152
+{
+ "label": "v1-frspec-d3",
+ "port": 8113,
+ "gen": 128,
+ "rows": [
+  {
+   "prompt_n": 1024,
+   "prompt_ms": 3261.191,
+   "prefill_tps": 313.9957150623806,
+   "predicted_n": 128,
+   "predicted_ms": 9150.28,
+   "decode_tps": 13.879356697281393,
+   "draft_n": 119,
+   "draft_n_accepted": 87,
+   "target_n": 1024,
+   "rep": 0
+  },
+  {
+   "prompt_n": 1024,
+   "prompt_ms": 3395.034,
+   "prefill_tps": 301.6170088429158,
+   "predicted_n": 128,
+   "predicted_ms": 4340.216,
+   "decode_tps": 29.261216492451066,
+   "draft_n": 119,
+   "draft_n_accepted": 87,
+   "target_n": 1024,
+   "rep": 1
+  },
+  {
+   "prompt_n": 1024,
+   "prompt_ms": 3549.119,
+   "prefill_tps": 288.522306521703,
+   "predicted_n": 128,
+   "predicted_ms": 4151.067,
+   "decode_tps": 30.594543523388083,
+   "draft_n": 119,
+   "draft_n_accepted": 87,
+   "target_n": 1024,
+   "rep": 2
+  },
+  {
+   "prompt_n": 8192,
+   "prompt_ms": 22616.057,
+   "prefill_tps": 362.2205232326749,
+   "predicted_n": 7,
+   "predicted_ms": 337.212,
+   "decode_tps": 17.79296110458703,
+   "draft_n": 9,
+   "draft_n_accepted": 3,
+   "target_n": 8192,
+   "rep": 0
+  },
+  {
+   "prompt_n": 8192,
+   "prompt_ms": 22375.389,
+   "prefill_tps": 366.1165399180323,
+   "predicted_n": 7,
+   "predicted_ms": 338.181,
+   "decode_tps": 17.74197840801228,
+   "draft_n": 9,
+   "draft_n_accepted": 3,
+   "target_n": 8192,
+   "rep": 1
+  },
+  {
+   "prompt_n": 8192,
+   "prompt_ms": 22727.514,
+   "prefill_tps": 360.4441735246539,
+   "predicted_n": 7,
+   "predicted_ms": 365.694,
+   "decode_tps": 16.407160084660944,
+   "draft_n": 9,
+   "draft_n_accepted": 3,
+   "target_n": 8192,
+   "rep": 2
+  },
+  {
+   "prompt_n": 32768,
+   "prompt_ms": 120768.341,
+   "prefill_tps": 271.3293875586152,
+   "predicted_n": 128,
+   "predicted_ms": 6350.256,
+   "decode_tps": 19.99919373329201,
+   "draft_n": 144,
+   "draft_n_accepted": 78,
+   "target_n": 32768,
+   "rep": 0
+  },
+  {
+   "error": "[WinError 10054] An existing connection was forcibly closed by the remote host",
+   "target_n": 65536,
+   "rep": 0
+  },
+  {
+   "error": "<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>",
+   "target_n": 131072,
+   "rep": 0
+  }
+ ]
+}
+{
+ "label": "W2-pf-ub8k-mmb",
+ "port": 8120,
+ "gen": 64,
+ "rows": [
+  {
+   "prompt_n": 1024,
+   "prompt_ms": 6142.377,
+   "prefill_tps": 166.71070499254603,
+   "predicted_n": 64,
+   "predicted_ms": 3370.318,
+   "decode_tps": 18.692598146525043,
+   "draft_n": null,
+   "draft_n_accepted": null,
+   "target_n": 1024,
+   "rep": 0
+  },
+  {
+   "prompt_n": 1024,
+   "prompt_ms": 3185.518,
+   "prefill_tps": 321.4547838059619,
+   "predicted_n": 64,
+   "predicted_ms": 2948.861,
+   "decode_tps": 21.36418094986505,
+   "draft_n": null,
+   "draft_n_accepted": null,
+   "target_n": 1024,
+   "rep": 1
+  },
+  {
+   "prompt_n": 1024,
+   "prompt_ms": 2808.617,
+   "prefill_tps": 364.59225305550734,
+   "predicted_n": 64,
+   "predicted_ms": 2903.326,
+   "decode_tps": 21.69925113473306,
+   "draft_n": null,
+   "draft_n_accepted": null,
+   "target_n": 1024,
+   "rep": 2
+  },
+  {
+   "prompt_n": 8192,
+   "prompt_ms": 23583.715,
+   "prefill_tps": 347.35833603823653,
+   "predicted_n": 64,
+   "predicted_ms": 4357.914,
+   "decode_tps": 14.456457837396517,
+   "draft_n": null,
+   "draft_n_accepted": null,
+   "target_n": 8192,
+   "rep": 0
+  },
+  {
+   "prompt_n": 8192,
+   "prompt_ms": 17779.191,
+   "prefill_tps": 460.76337219168187,
+   "predicted_n": 64,
+   "predicted_ms": 3298.12,
+   "decode_tps": 19.1017913235419,
+   "draft_n": null,
+   "draft_n_accepted": null,
+   "target_n": 8192,
+   "rep": 1
+  },
+  {
+   "prompt_n": 8192,
+   "prompt_ms": 15602.004,
+   "prefill_tps": 525.06075501583,
+   "predicted_n": 64,
+   "predicted_ms": 3676.101,
+   "decode_tps": 17.13772282099975,
+   "draft_n": null,
+   "draft_n_accepted": null,
+   "target_n": 8192,
+   "rep": 2
+  },
+  {
+   "prompt_n": 32768,
+   "prompt_ms": 85949.292,
+   "prefill_tps": 381.24805030389314,
+   "predicted_n": 64,
+   "predicted_ms": 6328.238,
+   "decode_tps": 9.955377784463858,
+   "draft_n": null,
+   "draft_n_accepted": null,
+   "target_n": 32768,
+   "rep": 0
+  },
+  {
+   "error": "HTTP Error 400: Bad Request",
+   "target_n": 49152,
+   "rep": 0
+  }
+ ]
+}
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content kernelmarkers.sh; Get-Content gguf_inventory.py -TotalCount 90; rg -n 'MMB_CVT|mm-bf16|MMB_MIN|LLAMA_QSA|PROJFIX|rollback|ON_DEVICE' *.txt *.md *.sh -g '"'!codex-prompt*'"'" in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ exited 1 in 70ms:
+#!/usr/bin/env bash
+# kernelmarkers.sh �?" list which fork kernels fired, per log.
+for f in "$@"; do
+  echo "=== $(basename "$f")"
+  if [ ! -f "$f" ]; then echo "  (missing)"; continue; fi
+  grep -oE 'FORK_[A-Z0-9_]+|MMB[A-Z0-9_]*|QSA_[A-Z0-9_]+|mmb_[a-z0-9_]+' "$f" 2>/dev/null | sort | uniq -c | sort -rn | head -15
+  echo "  -- WMMA/gemm hints --"
+  grep -icE 'wmma|bf16.*gemm|dequant.*gemm' "$f" 2>/dev/null
+done
+#!/usr/bin/env python3
+"""Minimal GGUF header parser: metadata + tensor inventory with exact byte counts.
+No external deps. Usage: python3 gguf_inventory.py <shard1.gguf> [shard2 ...] [--out out.json]
+"""
+import json
+import re
+import struct
+import sys
+from collections import defaultdict
+
+TYPE_SIZES = {  # (bytes_per_block, elems_per_block) from ggml-common.h
+    0: (4, 1), 1: (1, 1), 2: (2, 1), 3: (2, 1),      # F32 I8 U8? -> 0:F32 1:F16 actually
+    4: (2, 1), 5: (2, 1),                              # Q4_0 handled below
+}
+# authoritative table: ggml type enum -> (block_bytes, block_len), per ggml.h + ggml-common.h
+GT = {
+    0: (4, 1),      # F32
+    1: (2, 1),      # F16
+    2: (18, 32),    # Q4_0
+    3: (20, 32),    # Q4_1
+    6: (22, 32),    # Q5_0
+    7: (24, 32),    # Q5_1
+    8: (34, 32),    # Q8_0
+    9: (36, 32),    # Q8_1
+    10: (84, 256),  # Q2_K
+    11: (110, 256), # Q3_K
+    12: (144, 256), # Q4_K
+    13: (176, 256), # Q5_K
+    14: (210, 256), # Q6_K
+    15: (292, 256), # Q8_K
+    16: (66, 256),  # IQ2_XXS
+    17: (100, 256), # IQ2_XS
+    18: (66, 256),  # IQ3_XXS
+    19: (50, 256),  # IQ1_S
+    20: (18, 32),   # IQ4_NL
+    21: (110, 256), # IQ3_S
+    22: (110, 256), # IQ2_S
+    23: (136, 256), # IQ4_XS
+    24: (1, 1),     # I8
+    25: (2, 1),     # I16
+    26: (4, 1),     # I32
+    27: (8, 1),     # I64
+    28: (8, 1),     # F64
+    29: (56, 256),  # IQ1_M
+    30: (2, 1),     # BF16
+    34: (17, 256),  # TQ1_0? not used here
+    35: (33, 256),  # TQ2_0? not used here
+    39: (17, 32),   # MXFP4 (2+16? actually 1+32=33?) unused here
+}
+GT[31] = (2, 1)   # BF16
+
+VTYPE_NAMES = {0: "u8", 1: "i8", 2: "u16", 3: "i16", 4: "u32", 5: "i32", 6: "f32",
+               7: "bool", 8: "str", 9: "arr", 10: "u64", 11: "i64", 12: "f64"}
+
+class R:
+    def __init__(self, f):
+        self.f = f
+    def u32(self):
+        return struct.unpack("<I", self.f.read(4))[0]
+    def u64(self):
+        return struct.unpack("<Q", self.f.read(8))[0]
+    def i64(self):
+        return struct.unpack("<q", self.f.read(8))[0]
+    def f32(self):
+        return struct.unpack("<f", self.f.read(4))[0]
+    def f64(self):
+        return struct.unpack("<d", self.f.read(8))[0]
+    def b(self):
+        return self.f.read(1)[0] != 0
+    def raw(self, n):
+        return self.f.read(n)
+    def s(self):
+        n = self.u64()
+        return self.f.read(n).decode("utf-8", "replace")
+
+def read_val(r, t):
+    if t == 0: return r.u32() if False else r.f.read(1)[0]
+    if t == 1: return struct.unpack("<b", r.f.read(1))[0]
+    if t == 2: return struct.unpack("<H", r.f.read(2))[0]
+    if t == 3: return struct.unpack("<h", r.f.read(2))[0]
+    if t == 4: return r.u32()
+    if t == 5: return struct.unpack("<i", r.f.read(4))[0]
+    if t == 6: return r.f32()
+    if t == 7: return r.b()
+    if t == 8: return r.s()
+    if t == 9:
+        et = r.u32(); n = r.u64()
+        return [read_val(r, et) for _ in range(n)]
+    if t == 10: return r.u64()
+    if t == 11: return r.i64()
+rg: *.txt: The filename, directory name, or volume label syntax is incorrect. (os error 123)
+rg: *.md: The filename, directory name, or volume label syntax is incorrect. (os error 123)
+rg: *.sh: The filename, directory name, or volume label syntax is incorrect. (os error 123)
+
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: "hipEngine" "vec8" ...
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+The local benchmark files reveal a measurement issue: the Vulkan “17.8 t/s at 8K” run generated only **7 tokens**, and the first 1K decode ran at **13.9 t/s** before later runs reached 29–31. I’ll treat 30 t/s as a warm, short-context result and require longer generations for the depth comparison. The FR-Spec file is **3.389 GiB**, so we can use a measured file size in the memory budget.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content gguf_inventory.py -Tail 35; rg -n 'MMB_CVT|mm-bf16|MMB_MIN|rollback|ON_DEVICE|96 GB|96GB' . -g '*.txt' -g '*.md' -g '*.sh' -g '"'!codex-prompt*'"' -g '"'!bench-corpus*'"' | Select-Object -First 65; Get-Content layer-detail.json -TotalCount 35" in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ succeeded in 701ms:
+        agg[c]["n"] += 1
+        tn = NAME2TYPE.get(t["type"], str(t["type"]))
+        types_agg[tn]["bytes"] += nbytes
+        types_agg[tn]["params"] += n
+        types_agg[tn]["n"] += 1
+        m = re.search(r"blk\.(\d+)\.", t["name"])
+        if m:
+            layers[int(m.group(1))][c] += nbytes
+        if nbytes > 0.5e9:
+            big.append({"name": t["name"], "bytes": nbytes, "type": tn, "ne": t["ne"]})
+    total_bytes = sum(a["bytes"] for a in agg.values())
+    total_params = sum(a["params"] for a in agg.values())
+    report = {
+        "meta": meta,
+        "total_bytes": total_bytes,
+        "total_params": total_params,
+        "bits_per_weight_all": total_bytes * 8 / total_params,
+        "by_class": {k: dict(v) for k, v in agg.items()},
+        "by_type": {k: dict(v) for k, v in types_agg.items()},
+        "big_tensors_gt_500MB": sorted(big, key=lambda x: -x["bytes"])[:30],
+    }
+    # per-layer summary for a representative layer
+    if layers:
+        l0 = max(layers.keys())
+        report["layer_n"] = len(layers)
+        report["layer_bytes_example"] = {str(k): v for k, v in layers[l0].items()}
+        moe_by_layer = {str(k): v.get("moe_routed", 0) for k, v in sorted(layers.items())}
+        report["moe_bytes_per_layer"] = moe_by_layer
+    print(json.dumps(report, indent=1, default=str))
+    if outfile:
+        with open(outfile, "w") as f:
+            json.dump(report, f, indent=1, default=str)
+
+if __name__ == "__main__":
+    main()
+.\codex-plan-20260914.txt:25:Also from issue #24 + PR #28118: MTP without on-device speculative recurrent-state checkpoints is a net LOSS (77-79% acceptance but only ~24 t/s decode, vs ~34-38 t/s with device checkpoints, vs 6.2 t/s when host checkpoints dominate an ~825 ms round). PR #28118 is 8 lines: OR LLAMA_STATE_SEQ_FLAGS_ON_DEVICE into the speculative ckpt update/load for target+draft.
+.\codex-plan-20260914.txt:36:- Also: the fork's 35 gates are real and I now have the complete list from the source. MMB kernels exist but I could not confirm from logs that they fire (their markers never appeared) -- possibly they only print under LLAMA_MMB_CVT_LOG, or the gate combination matters.
+.\codex-plan-20260914.txt:40:- Ported PR #28118 (speculative checkpoints -> ON_DEVICE) into the same fork's server (`tools/server/server-context.cpp`), 6 call sites. Builds clean.
+.\codex-plan-20260914.txt:45:1. **Prefill strategy.** Given the 964-1045 t/s Windows result with stock quant + gates, what is the highest-probability path to the best prefill on THIS box: (a) run the 35 gates at the 32 GB carve and accept ub 8192, (b) raise the carve to 96 GB (like the author and olliehm both did) so ub 16384 fits, or (c) something else? Quantify the expected gain from each. Note the carve is a founder/BIOS action.
+.\codex-plan-20260914.txt:49:3. **Can all three coexist?** PROJFIX (best prefill layout) + FR-Spec (best decode draft) + the 35 gates/MMB (best prefill kernels) + PR#28118 (best decode checkpoints) on the pwilkin HIP fork. What will break, what must be verified, and what is the memory arithmetic at 96 GB carve? Give the expected combined numbers.
+.\codex-plan-20260914.txt:482:export LLAMA_MMB_MIN_T=512
+.\codex-plan-20260914.txt:543:if "LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE" in src:
+.\codex-plan-20260914.txt:552:     "slot.spec_ckpt.update_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+.\codex-plan-20260914.txt:554:     "ckpt.load_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+.\codex-plan-20260914.txt:556:     "ckpt.update_tgt(ctx_tgt, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+.\codex-plan-20260914.txt:558:     "ckpt.update_dft(ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+.\codex-plan-20260914.txt:560:     "ckpt.load_tgt(slot.ctx_tgt, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+.\codex-plan-20260914.txt:562:     "ckpt.load_dft(slot.ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE);"),
+.\codex-plan-20260914.txt:1447:  grep -aE 'MMB_TALL|MMB_GLU|MMB_BLK16|MMB_DOWN16|HC_GATEMIX|MMB_SHADOW|MMB_CVT|FORK_COMPACT|FORK_GDN' "$p" | head -8
+.\codex-plan-20260914.txt: WARNING: stopped searching binary file after match (found "\0" byte around offset 80037)
+.\codex-review-raw-20260913.txt:68:    ~3.9x. Must verify exact sampling + state rollback, not just acceptance.
+.\decisive.sh:21:  unset LLAMA_MMB LLAMA_MMB_MIN_T LLAMA_MMB_GLU LLAMA_MMB_SHADOW LLAMA_MMB_BF16W 2>/dev/null || true
+.\decisive.sh:38:  markers=$(grep -acE 'MMB_TALL|MMB_GLU|MMB_BLK16|MMB_DOWN16|HC_GATEMIX|MMB_SHADOW|MMB_CVT' "$OUT/server-$tag.log" || true)
+.\decisive.sh:42:  markers=$(grep -acE 'MMB_TALL|MMB_GLU|MMB_BLK16|MMB_DOWN16|HC_GATEMIX|MMB_SHADOW|MMB_CVT' "$OUT/server-$tag.log" || true)
+.\decisive.sh:51:run D3-mmb-cvtlog   98304 8192 8192 "LLAMA_MMB=1 LLAMA_MMB_CVT_LOG=1" "16384" 32
+.\gates-test.sh:36:export LLAMA_MMB_MIN_T=512
+.\mmbcheck.sh:9:  grep -aE 'MMB_TALL|MMB_GLU|MMB_BLK16|MMB_DOWN16|HC_GATEMIX|MMB_SHADOW|MMB_CVT|FORK_COMPACT|FORK_GDN' "$p" | head -8
+.\gguf-inventory-udiq4xs.txt:32591:   "rollback",
+.\gguf-inventory-udiq4xs.txt:56208:   ".rollback",
+.\gguf-inventory-udiq4xs.txt:58521:   "\u0120rollback",
+.\gguf-inventory-udiq4xs.txt:552596:   ". rollback",
+{
+ "per_layer": {
+  "0": {
+   "expert_bytes_per_layer": 1192755200,
+   "expert_params": 2516582400,
+   "experts": 512,
+   "per_expert_bytes": 2329600.0,
+   "attention_gdn_bytes": 76759936,
+   "shared_bytes": 5222400,
+   "router_bytes": 5253120,
+   "other_bytes": 0,
+   "is_full_attn": false,
+   "detail": [
+    [
+     "attn_gate.weight",
+     "Q8_0",
+     [
+      2560,
+      6144
+     ],
+     16711680
+    ],
+    [
+     "attn_qkv.weight",
+     "Q8_0",
+     [
+      2560,
+      10240
+     ],
+     27852800
+    ],
+    [
+     "ffn_down_exps.weight",
+     "IQ4_NL",
+     [
+
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: https://raw.githubusercontent.com/pwilkin/llama.cpp/d67d58836b4987fa9dbc03b3d87c95eae6ceaddf/ggml/src/ggml-cuda/ggml-cuda.cu
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "@'
+import json
+from gguf_inventory import parse_shard,GT,NAME2TYPE
+s=parse_shard('C:/AI/models/qwen38-flash/drluoto-frspec/mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf')
+print({k:v for k,v in s['meta'].items() if any(x in k for x in ['embedding_length','draft','mtp','block_count']) and not isinstance(v,list)})
+for t in s['tensors']:
+ if any(x in t['name'] for x in ['d2t','t2d','token_embd','output.weight']): print(t)
+for f in ['gguf-inventory-iq4nl.json','gguf-inventory-udiq4xs.json']:
+ v=json.load(open(f)); print(f, 'total GiB',v['total_bytes']/2**30, 'classes',v['by_class'])
+v=json.load(open('layer-detail.json')); print('keys',list(v)); print({k:x for k,x in v.items() if k"'!='"'per_layer'})
+'@ | python -B -" in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ succeeded in 652ms:
+{'qwen4exp.block_count': 49, 'qwen4exp.embedding_length': 2560}
+{'name': 'blk.48.attn_output.weight', 'ne': [6144, 2560], 'type': 8, 'off': 2707186688}
+{'name': 'token_embd.weight', 'ne': [2560, 248320], 'type': 8, 'off': 2774085632}
+{'name': 'output.weight', 'ne': [2560, 65536], 'type': 8, 'off': 3449516032}
+{'name': 'd2t', 'ne': [65536], 'type': 27, 'off': 3627773952}
+gguf-inventory-iq4nl.json total GiB 93.16256761550903 classes {'core': {'bytes': 29688192000, 'params': 52478707200, 'n': 114}, 'attention': {'bytes': 1429979136, 'params': 2424674304, 'n': 336}, 'other': {'bytes': 540870144, 'params': 911281536, 'n': 348}, 'gdn': {'bytes': 6021120, 'params': 1525760, 'n': 38}, 'moe_routed': {'bytes': 67947724800, 'params': 120795955200, 'n': 144}, 'moe_router': {'bytes': 252149760, 'params': 63037440, 'n': 96}, 'moe_shared': {'bytes': 132710400, 'params': 235929600, 'n': 144}, 'ple_ngram': {'bytes': 34897920, 'params': 32788480, 'n': 4}}
+gguf-inventory-udiq4xs.json total GiB 87.23843812942505 classes {'core': {'bytes': 30006041600, 'params': 52478707200, 'n': 114}, 'attention': {'bytes': 2583453696, 'params': 2424674304, 'n': 336}, 'moe_routed': {'bytes': 59519795200, 'params': 120795955200, 'n': 144}, 'moe_shared': {'bytes': 250675200, 'params': 235929600, 'n': 144}, 'moe_router': {'bytes': 252149760, 'params': 63037440, 'n': 96}, 'other': {'bytes': 1018443264, 'params': 911281536, 'n': 348}, 'gdn': {'bytes': 6103040, 'params': 1525760, 'n': 38}, 'ple_ngram': {'bytes': 34897920, 'params': 32788480, 'n': 4}}
+keys ['per_layer', 'active_bytes_per_token', 'total_active']
+{'active_bytes_per_token': {'experts': 1162496000.0, 'attention_gdn': 3644894720, 'shared': 250675200, 'router': 252149760, 'other': 0, 'core': 1203906560}, 'total_active': 6514122240.0}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: https://pwilkin.github.io/strix-halo/
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: 'L2'
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\Marcel\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "@'
+import math,re,json
+from pathlib import Path
+s=Path('gates-test.sh').read_text()
+g=re.findall(r'"'^export (LLAMA_'"\\w+)=(\\S+)',s,re.M)
+print('launcher LLAMA assignments:',len(g),'bool ones:',sum(v=='1' for _,v in g))
+for d in [1,2,3,4,6]:
+ u=512*(1-(1-10/512)**d)
+ print('d',d,'union',round(u,4),'fraction',round(u/(10*d),5))
+for p in [.78,.91]:
+ vals={d:sum(p**i for i in range(d+1)) for d in [3,4,6]}
+ print('p',p,'emitted',vals,'max cycle ratio d6/d4',vals[6]/vals[4])
+for c in [49152,131072,262144]:
+ kv=24576*c/2**30
+ print(c,'KV',kv,'base',66.34+3639245152/2**30+14.05+kv+36*6144*128*4/2**30)
+'@ | python -B -" in C:\Projects\REV-N-ornith-eval-20260911\kernel-work
+ succeeded in 116ms:
+launcher LLAMA assignments: 37 bool ones: 35
+d 1 union 10.0 fraction 1.0
+d 2 union 19.8047 fraction 0.99023
+d 3 union 29.4179 fraction 0.9806
+d 4 union 38.8433 fraction 0.97108
+d 6 union 57.1455 fraction 0.95242
+p 0.78 emitted {3: 2.862952, 4: 3.2331025600000003, 6: 3.7470195975040004} max cycle ratio d6/d4 1.158954758770164
+p 0.91 emitted {3: 3.491671, 4: 4.17742061, 6: 5.369322007141001} max cycle ratio d6/d4 1.2853199398422561
+49152 KV 1.125 base 85.00977991461754
+131072 KV 3.0 base 86.88477991461754
+262144 KV 6.0 base 89.88477991461754
+
+hook: PostToolUse
+hook: PostToolUse Completed
+web search: 
+web search: 'MMB'
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+The author’s current write-up points to tiled GDN as the largest prefill gain: about **500 → 1,182 t/s** in that sequence. It explicitly says retained PM4 does not contribute to those prefill runs. It also reports decode falling from **26.3 t/s at depth 0 to 16.6 at 40K**. That supports gates and runtime parity first; a larger carve buys capacity, not a guaranteed speedup.
+web search: 
+web search: site.learn.microsoft.com WSL memory setting maximum amount memory assigned virtual machine ...
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+**My decision: reproduce the full gate configuration first, then use the founder reboot for a 96 GB carve with native Windows HIP. Keep `-b 8192 -ub 8192` initially. Qualify FR-Spec with correct recurrent-state handling before trying PROJFIX and `ub16384`.**
+
+The highest-probability destination is **approximately 900–1,100 t/s prefill and 33–40 t/s short-context decode**. Those are **planning estimates for this box**, not a measured combined result. Keep Vulkan+FR-Spec as the established decode fallback.
+
+I inspected your launcher, harness, results and FR-Spec GGUF. WSL access was denied in this review, so I could not verify the compiled HIP binary or its actual dispatches.
+
+**1. Prefill: gates and runtime parity first; carve and batch size second.**
+
+| Change | Expected effect on this box | Decision |
+|---|---|---|
+| Full gates, existing WSL HIP, 32 GB carve, `ub8192` | **Estimate:** 600–950 t/s on sufficiently large warm prefills, roughly **1.2–1.9×** a 500 t/s baseline, provided the additional buffers fit | Run this first as the cheapest diagnostic |
+| Raise carve, retain identical runtime/gates/`ub8192` | **Approximately 0% intrinsic speed gain** if residency was already stable; potentially substantial improvement if it eliminates paging | Capacity change, not a bandwidth upgrade |
+| Native Windows/TheRock, full gates except HC16, `ub8192` | External measurement **964–1045 t/s**; local planning range **900–1050 t/s** | Highest-confidence replication target |
+| `ub8192 → ub16384`, otherwise identical | **Estimate: 0–15%** on prompts exceeding 8K; no useful batch-width gain for a single ≤8K prompt | Retain only if measured gain ≥5% |
+| Stock UD → PROJFIX, with gates already working | **Unmeasured matched comparison.** Budget **0–15% potential prefill gain**, with regression possible | Challenger, not prerequisite |
+
+The Windows report already achieved its result at **8192**, without retained PM4 or lazy-direct. It validates that specific native Windows configuration; it does not establish WSL `/dev/dxg` parity. [Windows issue #24](https://github.com/pwilkin/llama.cpp/issues/24)
+
+There is stronger evidence about where your missing performance could be: the author’s sequence jumps from **499.5 to 1181.8 t/s** when tiled GDN lands. MMB alone is not the whole optimization package. [Author’s optimization measurements](https://pwilkin.github.io/strix-halo/journey.html)
+
+Also, the author explicitly says retained PM4 **does not engage in those prefill measurements**. Do not spend these six hours porting retained replay to DXG. [Author’s runtime explanation](https://pwilkin.github.io/strix-halo/)
+
+**The carve caveat matters:** a 96 GB reservation does not give WSL another 64 GB of ordinary RAM. WSL’s 86 GB setting limits its VM allocation; it does not guarantee backing memory after a BIOS reservation. That is why I recommend pairing the reboot with **native Windows inference**, rather than assuming the current WSL managed-memory route will improve. [Microsoft WSL configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config)
+
+**2. Decode: qualify state handling, then compare heads, then depth.**
+
+Use this order:
+
+1. **UD + full gates + no draft:** establish the same-build AR baseline.
+2. **UD + ordinary standalone MTP + corrected state handling:** isolate the checkpoint/rollback improvement.
+3. **UD + FR-Spec + identical state handling:** isolate the trimmed-head improvement.
+4. **FR-Spec depth sweep:** `3 → 4 → 6`.
+5. **PROJFIX + winning head/depth:** determine whether its prefill benefit survives its decode and memory costs.
+
+Budget **24–30 t/s AR**, **30–38 t/s ordinary MTP**, and **33–40 t/s FR-Spec** at short context on a successfully replicated native HIP stack. All are estimates. Treat **45–56 t/s on code** as a high-acceptance stretch result, not the general target.
+
+Three corrections to your reasoning:
+
+- **6.8 versus 6.2 t/s is a matching symptom, not proof that a PR is absent.** Inspect the source and measure checkpoint time.
+- The PR’s **41.5/56.6 t/s measurements used Vulkan + RADV**, Q4_K_M and Q8 KV—not your HIP/PROJFIX configuration.
+- Correct recurrent rollback can remove checkpoints entirely. The PR discussion reports **44 t/s rollback versus 41 t/s device checkpoints**. [PR #28118](https://github.com/ggml-org/llama.cpp/pull/28118)
+
+Audit **merged PR #28123** before treating your six-site port as the final solution. Crucially, merely enabling the architecture in `llm_arch_supports_rs_rollback()` is insufficient: the **GDN and PLE convolution histories also need rollback snapshots**. [PR #28123](https://github.com/ggml-org/llama.cpp/pull/28123)
+
+**Winner rule:** HIP earns the “better decode” claim when it beats Vulkan by **≥10% on the same prompt suite**, approximately **≥33 t/s** against a verified 30 t/s baseline. Otherwise Vulkan remains the decode winner. HIP can still win overall request latency because prefill is much faster.
+
+Do not attempt HIP-prefill/Vulkan-decode state transfer within this program.
+
+**3. Coexistence: technically plausible, but not automatically compatible or additive.**
+
+PROJFIX, FR-Spec, the kernel gates and correct speculative state handling address different costs. They can coexist in principle. Verify these particular boundaries:
+
+| Boundary | Required verification |
+|---|---|
+| FR-Spec vocabulary | Target logits remain **248320-wide**; draft logits are **65536-wide**; `d2t` maps valid, unique target IDs; inverse handling works for tokens outside the draft vocabulary |
+| Shared embeddings/output | Do **not** add `--mtp-shared-embd` blindly: the author’s sharing mode includes the LM head, whereas FR-Spec needs its trimmed output head |
+| Quant pairing | Match architecture, tokenizer, hidden-state interface and tensor shapes; measure acceptance after changing target quant |
+| HC/MMB | Keep `LLAMA_MMB_HC16=0`; verify logits/output under the complete gate combination |
+| Speculative state | Check target and draft save/restore paths, rejected suffixes, repeated requests, cached prefixes and truncation |
+| Allocations | Measure warmed peak memory, including MMB conversions/shadows and draft buffers |
+
+Your FR-Spec file actually contains a **full input embedding** `[2560,248320]`, a **trimmed output matrix** `[2560,65536]`, and an **I64 `d2t` tensor**. Its file size is **3.389 GiB**.
+
+That gives a **3.79× smaller draft output matrix**, not a 3.79× faster draft model. The target output matrix is unaffected.
+
+For memory, first distinguish the BIOS carve from the usable allocation budget. Windows reports dedicated and shared components; their sum is not an independent physical-memory supply. Your current approximately 80 GiB is consistent with `32 + (128−32)/2`; the analogous accounting at 96 is approximately **112 GiB**, but that is an **estimate, not a measured HIP allocation guarantee**. [Microsoft graphics-memory accounting](https://learn.microsoft.com/en-us/windows-hardware/drivers/display/calculating-graphics-memory))
+
+Use **96 GiB as a conservative provisional device budget**, then replace it with measured post-reboot limits.
+
+Your F16 full-attention KV calculation is:
+
+\[
+12 \times 2_{\mathrm{K,V}}\times 2_{\mathrm{heads}}
+\times256\times2_{\mathrm{bytes}}
+=24{,}576\ \mathrm{bytes/context\ token}.
+\]
+
+| Allocation, GiB | 49,152 context | 131,072 context | 262,144 context |
+|---|---:|---:|---:|
+| PROJFIX resident, supplied measurement | 66.340 | 66.340 | 66.340 |
+| FR-Spec file-size proxy | 3.389 | 3.389 | 3.389 |
+| F16 KV, calculated | 1.125 | 3.000 | 6.000 |
+| Base GDN state, approximate | 0.106 | 0.106 | 0.106 |
+| `ub16384` compute allocation, supplied measurement | 14.050 | 14.050 | 14.050 |
+| **Subtotal** | **85.010** | **86.885** | **89.885** |
+| **Remaining within provisional 96 GiB** | **10.990** | **9.115** | **6.115** |
+
+These subtotals **exclude unmeasured** draft scratch, extra rollback/checkpoint planes, QSA metadata, conversion caches, allocator overhead and any resident PLE pages. Confirm whether the 14.05 GiB measurement already includes any of them before adding twice.
+
+Allow **2–6 GiB provisionally** for additional backend allocations and retain **≥3 GiB device headroom**. That makes:
+
+- **49K:** sensible first combined configuration.
+- **128K:** plausible after peak-memory verification.
+- **262K + ub16384:** too tight to select by arithmetic alone.
+
+At the current 79.82 GiB pool, even estimating `ub8192` scratch as half of 14.05 gives a combined 49K subtotal of **77.985 GiB**, leaving only **1.835 GiB** before those extras. That explains why the combination is precarious. Scratch scaling itself remains an estimate.
+
+Keep the **26.82 GiB PLE table demand-paged**. Adding its entire residency would push the 49K subtotal to **111.83 GiB before the omitted allocations**.
+
+My combined performance budget is:
+
+| Workload | Estimated qualified HIP combination |
+|---|---:|
+| Warm 8–16K prefill | **900–1100 t/s** |
+| Fresh 32K prefill | **800–1050 t/s** |
+| Short-context general decode | **33–40 t/s** |
+| Decode around 32–40K | **20–30 t/s**, lower confidence |
+| High-acceptance code | **45–56 t/s**, stretch |
+
+Do not extrapolate short-context decode to 150K. The author’s published controlled table reports **26.28 t/s at depth 0 and 16.63 at depth 40K**. It also measures a **16K append at existing depth**, which differs from your fresh-prefill timing. [Published protocol and table](https://pwilkin.github.io/strix-halo/)
+
+**4. Speculation depth: default 4 after testing 3; promote 6 only on cycle economics.**
+
+Your union model is useful, but its denominator is wrong for “per accepted token.”
+
+First, the corrected independent-routing values are:
+
+| Draft count \(d\) | Expected union | Union / \(10d\) |
+|---:|---:|---:|
+| 1 | 10.000 | 1.0000 |
+| 2 | 19.805 | 0.9902 |
+| 4 | 38.843 | 0.9711 |
+| 6 | **57.146** | **0.9524** |
+
+Thus routed-expert reuse is weak under this model. But `union/d` assumes every proposal contributes a useful token. Rejected proposals still consume verification work. Also, verification commonly evaluates an additional row; use the **actual verifier row count**, not blindly `n-max`.
+
+The metric to optimize is:
+
+\[
+\mathrm{tokens/s}
+=\frac{\mathrm{emitted\ tokens}}
+{T_\mathrm{draft}+T_\mathrm{verify}+T_\mathrm{state}+T_\mathrm{sampling/host}}.
+\]
+
+As an **illustration only**, with constant conditional acceptance \(p\):
+
+\[
+E[\mathrm{emitted}]=1+p+\dots+p^d.
+\]
+
+| Conditional acceptance assumption | Depth 4 emitted/round | Depth 6 emitted/round | Maximum extra cycle time before depth 6 loses |
+|---|---:|---:|---:|
+| 0.78 | 3.233 | 3.747 | **15.9%** |
+| 0.91 | 4.177 | 5.369 | **28.5%** |
+
+Reported aggregate acceptance is not necessarily this conditional \(p\); measure acceptance survival by position.
+
+**The limiter is not solely expert traffic.** Shared/dense projections and launch overhead can amortize across verification rows even when routed experts barely overlap. GDN dependencies, draft execution, state management and long-context attention can then dominate.
+
+Your own quant inventories imply routed-expert payload per target forward of approximately:
+
+- **UD: 1.162 GB**
+- **PROJFIX: 1.327 GB**
+
+PROJFIX therefore carries **14.2% more routed-expert bytes**. It is not automatically the better decode quant.
+
+Choose depth 6 only if it delivers **≥5% more emitted tokens/s**, with no material regression on the general-text suite. Otherwise retain depth 4—or 3 if it wins.
+
+**5. What you are still missing.**
+
+**MMB evidence:** absent markers are inconclusive. The author documented a similar case where four missing diagnostics merely required a debug flag. Your observed MMB-on improvement is suggestive, but does not prove which kernels executed. [Author’s diagnostic account](https://pwilkin.github.io/strix-halo/journey.html)
+
+A definitive check is:
+
+1. Inspect the dispatch predicates and logging guards:
+   ```bash
+   cd /home/revn/strix-llama
+   rg -n 'LLAMA_MMB_CVT_LOG|LLAMA_MMB_MIN_T|MMB_TALL|MMB_GLU|MMB_DOWN16|LLAMA_GDN_CHUNKED' \
+     ggml/src/ggml-cuda src
+   ```
+2. Run a diagnostic with `LLAMA_MMB_CVT_LOG=1`, capturing stdout **and** stderr.
+3. Verify the running process inherited the gates.
+4. Count **successful dispatches**, tensor types/shapes and fallback reasons in the host selectors. A supported GPU trace proves execution; otherwise use diagnostic launch counters plus completion checks.
+5. Remove instrumentation for final timings.
+
+Do not prescribe `rocprofv3` as guaranteed available through DXG. Do not interpret “no trace” as “no execution.”
+
+Check **GDN dispatch alongside MMB**. Keep `LLAMA_MMB_MIN_T=512`; forcing prefill GEMMs onto tiny decode batches is not a sensible first experiment.
+
+**QSA decode:** treat it as unfinished optimization, not a promised multiplier. Measure attention/indexer/top-k time and CPU fallbacks at 1K, 32K and 128K. If that family is 40% of decode time and becomes twice as fast, total throughput improves only **1.25×**. Prefill QSA gains do not establish decode gains; the author even reports approximately neutral total prefill performance when removing the complete sparse path in a matched experiment. [QSA measurements](https://pwilkin.github.io/strix-halo/journey.html)
+
+**Kernel work:** none currently has a better six-hour expected return than gates, state handling and head qualification. Later:
+
+- Profile the actual **IQ4_NL/IQ4_XS/Q8_0** hot kernels.
+- Test workgroup sizes against actual dimensions such as **640, 2560 and 6144**, not just the guide’s 512/2048 examples.
+- Test packed loads, multiple accumulators and vec8 while watching register pressure.
+- Leave MoE grid reshaping and speculative cache-policy changes alone without a profile.
+- A kernel accelerated **42%** but accounting for **30%** of runtime yields only **9.7% end-to-end**.
+
+hipEngine’s own gfx1151 guidance explicitly requires same-device evidence before promoting gfx1100 tuning. [gfx1151 tuning guide](https://github.com/shisa-ai/hipEngine/blob/main/docs/TUNING-gfx1151.md)
+
+**Your harness needs correction before ranking decode.** [The saved Vulkan results](C:/Projects/REV-N-ornith-eval-20260911/kernel-work/results/v1-frspec-d3.json) contain only **7 generated tokens at 8K**, and a cold 1K decode of **13.88 t/s** before warm results reach 29–31. [fnbench.py](C:/Projects/REV-N-ornith-eval-20260911/kernel-work/fnbench.py) also does not retain output IDs/text or client wall time.
+
+Require one separately reported warmup, three measured runs, **256 actual output tokens** for throughput tests, and saved correctness outputs. Use `ignore_eos` only for explicitly synthetic fixed-length throughput; retain normal EOS behavior for quality tests.
+
+**6. Exact six-hour order.**
+
+Use the existing [gate list](C:/Projects/REV-N-ornith-eval-20260911/kernel-work/gates-test.sh), but **do not execute that launcher unchanged**: it kills every `llama-server`, fixes draft depth at 4, and mixes setup with benchmarking. Stop only the process owned by this benchmark.
+
+It contains **37 `LLAMA_*` assignments: 35 set to 1, HC16 set to 0, and MIN_T set to 512**.
+
+For native Windows, import precisely those assignments:
+
+```powershell
+$Work = 'C:\Projects\REV-N-ornith-eval-20260911\kernel-work'
+
+Get-Content "$Work\gates-test.sh" | ForEach-Object {
+    if ($_ -match '^\s*export\s+(LLAMA_\w+)=(\d+)') {
+        Set-Item -Path "Env:$($Matches[1])" -Value $Matches[2]
+    }
+}
+$env:LLAMA_MMB_HC16 = '0'
+$env:LLAMA_MMB_MIN_T = '512'
+```
+
+The imported enabled names are:
+
+```text
+LLAMA_GDN_CHUNKED LLAMA_GDN_CONV
+LLAMA_HC_BLK16 LLAMA_HC_CN_SHAPE LLAMA_HC_GATEMIX
+LLAMA_HC_MIX_FUSE LLAMA_HC_PACK_DI LLAMA_HC_RES16
+LLAMA_IDX_RELU_SUM
+LLAMA_MMB LLAMA_MMB_BF16W LLAMA_MMB_CACHE LLAMA_MMB_DOWN16
+LLAMA_MMB_F32SPLIT LLAMA_MMB_GLU LLAMA_MMB_SHADOW LLAMA_MMB_TALL
+LLAMA_MOE_RED_SCALAR LLAMA_MTP_EH_FLATTEN LLAMA_MTP_QSA
+LLAMA_NORM_GATED LLAMA_NORM_ROWS LLAMA_PLE_CONV LLAMA_PLE_PREFETCH
+LLAMA_QSA_BLOCK_SELECTION LLAMA_QSA_DENSE_SHORTCUT
+LLAMA_QSA_DIRECT_INDICES LLAMA_QSA_FUSE_EXPAND
+LLAMA_QSA_PACK_KEYS LLAMA_QSA_PACK_VALUES LLAMA_QSA_QUERY_STRIP
+LLAMA_QSA_SCORE_WMMA LLAMA_QSA_SPARSE LLAMA_QSA_TOKEN_EMBD
+LLAMA_QSA_WHOLE_ATTN
+```
+
+For the preliminary WSL test, retain your existing environment:
+
+```bash
+BASE=/mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work
+source "$BASE/env.sh"
+source <(rg '^export LLAMA_' "$BASE/gates-test.sh")
+export HSA_ENABLE_DXG_DETECTION=1
+export GGML_HIP_ENABLE_UNIFIED_MEMORY=1
+export HSA_OVERRIDE_GFX_VERSION=11.5.1
+```
+
+Use these paths:
+
+| Item | Path |
+|---|---|
+| Existing WSL HIP server | `/home/revn/strix-llama/build-hip/bin/llama-server` |
+| Existing WSL PROJFIX entry shard | `/home/revn/models/flash-next-strix/Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00001-of-00009.gguf` |
+| Windows UD | `C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf` |
+| Windows FR-Spec | `C:\AI\models\qwen38-flash\drluoto-frspec\mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf` |
+| Existing Vulkan server | `C:\AI\runtimes\strix-vulkan-ba5354d\llama-server.exe` |
+| **Proposed new native HIP build output** | `C:\AI\runtimes\pwilkin-hip-therock\llama-server.exe` |
+
+The final path is a **build destination, not a binary I verified exists**.
+
+Native HIP baseline arguments:
+
+```text
+-m <UD-path>
+-ngl 99 -fa on -fit off --load-mode none
+-ctk f16 -ctv f16
+-c 49152 -b 8192 -ub 8192
+--parallel 1 -t 8
+--host 127.0.0.1 --port 8150 --no-webui
+```
+
+Add for speculation:
+
+```text
+-md <head-path>
+--spec-type draft-mtp
+--spec-draft-n-max 3
+--spec-draft-p-min 0.75
+```
+
+For FR-Spec, test `p-min 0.75` versus `0.0` at depth 3, then keep the winner fixed during the depth sweep. Your Vulkan baseline used `0.0`; silently changing it would confound the comparison.
+
+Use `--lazy-mode on-direct` for the existing **WSL PROJFIX** route. Omit it on native Windows; use the verified mmap-fallback behavior. Apply the Windows `prefetch()` no-op stub described in issue #24 when building. Keep HC16 off. [Windows build and launch qualification](https://github.com/pwilkin/llama.cpp/issues/24)
+
+| Time | Exact experiment | Expected result | Abort / retention condition |
+|---|---|---|---|
+| **0:00–0:25** | Fix benchmark accounting; audit speculative sites and rollback support; run 32 GB WSL UD, full gates, no draft, `c49152/b8192/ub8192` | **Estimated 600–950 pp** on large warm prompts | Any corruption/OOM stops this configuration. Below **600 pp** triggers dispatch/runtime investigation, not a batch increase |
+| **0:25–1:10** | Prepare native TheRock build from the patched fork; apply Windows stub; verify gate configuration and small correctness probes | Load and correctness qualification | Time-box build trouble to **45 minutes**; preserve WSL as fallback |
+| **1:10–1:30** | Founder changes carve to **96 GB**, reboots; measure device budget and host availability | More allocation headroom; no promised speedup | Do not assume WSL retains its former usable memory. Require ≥3 GiB device headroom and ≥4 GiB host available memory during trials |
+| **1:30–2:05** | Native UD, full gates, no draft, same 49K/8192 flags; 1K/8K/32K; math and needle probes | **900–1050 pp**, **24–30 tg**, estimates | If large-prompt pp stays below **800**, investigate build/GDN/MMB/residency before adding features |
+| **2:05–2:40** | Ordinary MTP head, depth 3, corrected state path; same target/configuration | **30–38 tg**, estimate | Stop on state-restore error, correctness failure or regression versus AR; verify where checkpoint time went |
+| **2:40–3:25** | FR-Spec depth 3; test p-min 0.75/0.0; repeated cached and uncached requests; then depth 4 | **33–40 tg**, estimate | Reject on mapping/state errors. Retain FR-Spec only if faster than ordinary head without quality loss |
+| **3:25–4:00** | Depth 6 versus winning 3/4 on code and prose, 256 actual output tokens, three repeats | General **33–40**, code stretch **45–56** | Keep depth 6 only for ≥5% improvement; reject broad regressions |
+| **4:00–4:45** | PROJFIX with identical gates/head/depth; then `b16384/ub16384` at 49K | **900–1100 pp**, estimate; decode must be measured | Reject if memory margin fails. Keep ub16384 only for ≥5% large-prefill gain; select quant by total request time |
+| **4:45–5:25** | Winner at `c131072`, then optional `c262144`; probe 64K/120K and long-context retrieval | Capacity and correctness qualification | Stop on paging collapse, allocation pressure, failed retrieval or state errors; no full-context speed promise |
+| **5:25–6:00** | Matched HIP/Vulkan final bracket, one server at a time, 1K/8K/32K, same sampling/output length | Defensible per-context winners | Publish medians, spread, actual token counts, acceptance and failures; no cherry-picked maximum |
+
+Example harness call after the accounting fixes:
+
+```powershell
+python "$Work\fnbench.py" `
+  --port 8150 --label hip-ud-gates-frspec-d4 `
+  --sizes 1024,8192,32768 --gen 256 --repeats 3 `
+  --context-limit 49152 `
+  --out "$Work\results\hip-ud-gates-frspec-d4.json"
+```
+
+Spend the reboot on **native HIP capacity**, and spend the engineering time on **dispatch proof, recurrent-state correctness and measured speculation economics**. PROJFIX and `ub16384` earn their place only after that baseline works.
+hook: Stop
+hook: Stop Completed
+tokens used**My decision: reproduce the full gate configuration first, then use the founder reboot for a 96 GB carve with native Windows HIP. Keep `-b 8192 -ub 8192` initially. Qualify FR-Spec with correct recurrent-state handling before trying PROJFIX and `ub16384`.**
+
+The highest-probability destination is **approximately 900–1,100 t/s prefill and 33–40 t/s short-context decode**. Those are **planning estimates for this box**, not a measured combined result. Keep Vulkan+FR-Spec as the established decode fallback.
+
+I inspected your launcher, harness, results and FR-Spec GGUF. WSL access was denied in this review, so I could not verify the compiled HIP binary or its actual dispatches.
+
+**1. Prefill: gates and runtime parity first; carve and batch size second.**
+
+| Change | Expected effect on this box | Decision |
+|---|---|---|
+| Full gates, existing WSL HIP, 32 GB carve, `ub8192` | **Estimate:** 600–950 t/s on sufficiently large warm prefills, roughly **1.2–1.9×** a 500 t/s baseline, provided the additional buffers fit | Run this first as the cheapest diagnostic |
+| Raise carve, retain identical runtime/gates/`ub8192` | **Approximately 0% intrinsic speed gain** if residency was already stable; potentially substantial improvement if it eliminates paging | Capacity change, not a bandwidth upgrade |
+| Native Windows/TheRock, full gates except HC16, `ub8192` | External measurement **964–1045 t/s**; local planning range **900–1050 t/s** | Highest-confidence replication target |
+| `ub8192 → ub16384`, otherwise identical | **Estimate: 0–15%** on prompts exceeding 8K; no useful batch-width gain for a single ≤8K prompt | Retain only if measured gain ≥5% |
+| Stock UD → PROJFIX, with gates already working | **Unmeasured matched comparison.** Budget **0–15% potential prefill gain**, with regression possible | Challenger, not prerequisite |
+
+The Windows report already achieved its result at **8192**, without retained PM4 or lazy-direct. It validates that specific native Windows configuration; it does not establish WSL `/dev/dxg` parity. [Windows issue #24](https://github.com/pwilkin/llama.cpp/issues/24)
+
+There is stronger evidence about where your missing performance could be: the author’s sequence jumps from **499.5 to 1181.8 t/s** when tiled GDN lands. MMB alone is not the whole optimization package. [Author’s optimization measurements](https://pwilkin.github.io/strix-halo/journey.html)
+
+Also, the author explicitly says retained PM4 **does not engage in those prefill measurements**. Do not spend these six hours porting retained replay to DXG. [Author’s runtime explanation](https://pwilkin.github.io/strix-halo/)
+
+**The carve caveat matters:** a 96 GB reservation does not give WSL another 64 GB of ordinary RAM. WSL’s 86 GB setting limits its VM allocation; it does not guarantee backing memory after a BIOS reservation. That is why I recommend pairing the reboot with **native Windows inference**, rather than assuming the current WSL managed-memory route will improve. [Microsoft WSL configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config)
+
+**2. Decode: qualify state handling, then compare heads, then depth.**
+
+Use this order:
+
+1. **UD + full gates + no draft:** establish the same-build AR baseline.
+2. **UD + ordinary standalone MTP + corrected state handling:** isolate the checkpoint/rollback improvement.
+3. **UD + FR-Spec + identical state handling:** isolate the trimmed-head improvement.
+4. **FR-Spec depth sweep:** `3 → 4 → 6`.
+5. **PROJFIX + winning head/depth:** determine whether its prefill benefit survives its decode and memory costs.
+
+Budget **24–30 t/s AR**, **30–38 t/s ordinary MTP**, and **33–40 t/s FR-Spec** at short context on a successfully replicated native HIP stack. All are estimates. Treat **45–56 t/s on code** as a high-acceptance stretch result, not the general target.
+
+Three corrections to your reasoning:
+
+- **6.8 versus 6.2 t/s is a matching symptom, not proof that a PR is absent.** Inspect the source and measure checkpoint time.
+- The PR’s **41.5/56.6 t/s measurem
+121,916
+ents used Vulkan + RADV**, Q4_K_M and Q8 KV—not your HIP/PROJFIX configuration.
+- Correct recurrent rollback can remove checkpoints entirely. The PR discussion reports **44 t/s rollback versus 41 t/s device checkpoints**. [PR #28118](https://github.com/ggml-org/llama.cpp/pull/28118)
+
+Audit **merged PR #28123** before treating your six-site port as the final solution. Crucially, merely enabling the architecture in `llm_arch_supports_rs_rollback()` is insufficient: the **GDN and PLE convolution histories also need rollback snapshots**. [PR #28123](https://github.com/ggml-org/llama.cpp/pull/28123)
+
+**Winner rule:** HIP earns the “better decode” claim when it beats Vulkan by **≥10% on the same prompt suite**, approximately **≥33 t/s** against a verified 30 t/s baseline. Otherwise Vulkan remains the decode winner. HIP can still win overall request latency because prefill is much faster.
+
+Do not attempt HIP-prefill/Vulkan-decode state transfer within this program.
+
+**3. Coexistence: technically plausible, but not automatically compatible or additive.**
+
+PROJFIX, FR-Spec, the kernel gates and correct speculative state handling address different costs. They can coexist in principle. Verify these particular boundaries:
+
+| Boundary | Required verification |
+|---|---|
+| FR-Spec vocabulary | Target logits remain **248320-wide**; draft logits are **65536-wide**; `d2t` maps valid, unique target IDs; inverse handling works for tokens outside the draft vocabulary |
+| Shared embeddings/output | Do **not** add `--mtp-shared-embd` blindly: the author’s sharing mode includes the LM head, whereas FR-Spec needs its trimmed output head |
+| Quant pairing | Match architecture, tokenizer, hidden-state interface and tensor shapes; measure acceptance after changing target quant |
+| HC/MMB | Keep `LLAMA_MMB_HC16=0`; verify logits/output under the complete gate combination |
+| Speculative state | Check target and draft save/restore paths, rejected suffixes, repeated requests, cached prefixes and truncation |
+| Allocations | Measure warmed peak memory, including MMB conversions/shadows and draft buffers |
+
+Your FR-Spec file actually contains a **full input embedding** `[2560,248320]`, a **trimmed output matrix** `[2560,65536]`, and an **I64 `d2t` tensor**. Its file size is **3.389 GiB**.
+
+That gives a **3.79× smaller draft output matrix**, not a 3.79× faster draft model. The target output matrix is unaffected.
+
+For memory, first distinguish the BIOS carve from the usable allocation budget. Windows reports dedicated and shared components; their sum is not an independent physical-memory supply. Your current approximately 80 GiB is consistent with `32 + (128−32)/2`; the analogous accounting at 96 is approximately **112 GiB**, but that is an **estimate, not a measured HIP allocation guarantee**. [Microsoft graphics-memory accounting](https://learn.microsoft.com/en-us/windows-hardware/drivers/display/calculating-graphics-memory))
+
+Use **96 GiB as a conservative provisional device budget**, then replace it with measured post-reboot limits.
+
+Your F16 full-attention KV calculation is:
+
+\[
+12 \times 2_{\mathrm{K,V}}\times 2_{\mathrm{heads}}
+\times256\times2_{\mathrm{bytes}}
+=24{,}576\ \mathrm{bytes/context\ token}.
+\]
+
+| Allocation, GiB | 49,152 context | 131,072 context | 262,144 context |
+|---|---:|---:|---:|
+| PROJFIX resident, supplied measurement | 66.340 | 66.340 | 66.340 |
+| FR-Spec file-size proxy | 3.389 | 3.389 | 3.389 |
+| F16 KV, calculated | 1.125 | 3.000 | 6.000 |
+| Base GDN state, approximate | 0.106 | 0.106 | 0.106 |
+| `ub16384` compute allocation, supplied measurement | 14.050 | 14.050 | 14.050 |
+| **Subtotal** | **85.010** | **86.885** | **89.885** |
+| **Remaining within provisional 96 GiB** | **10.990** | **9.115** | **6.115** |
+
+These subtotals **exclude unmeasured** draft scratch, extra rollback/checkpoint planes, QSA metadata, conversion caches, allocator overhead and any resident PLE pages. Confirm whether the 14.05 GiB measurement already includes any of them before adding twice.
+
+Allow **2–6 GiB provisionally** for additional backend allocations and retain **≥3 GiB device headroom**. That makes:
+
+- **49K:** sensible first combined configuration.
+- **128K:** plausible after peak-memory verification.
+- **262K + ub16384:** too tight to select by arithmetic alone.
+
+At the current 79.82 GiB pool, even estimating `ub8192` scratch as half of 14.05 gives a combined 49K subtotal of **77.985 GiB**, leaving only **1.835 GiB** before those extras. That explains why the combination is precarious. Scratch scaling itself remains an estimate.
+
+Keep the **26.82 GiB PLE table demand-paged**. Adding its entire residency would push the 49K subtotal to **111.83 GiB before the omitted allocations**.
+
+My combined performance budget is:
+
+| Workload | Estimated qualified HIP combination |
+|---|---:|
+| Warm 8–16K prefill | **900–1100 t/s** |
+| Fresh 32K prefill | **800–1050 t/s** |
+| Short-context general decode | **33–40 t/s** |
+| Decode around 32–40K | **20–30 t/s**, lower confidence |
+| High-acceptance code | **45–56 t/s**, stretch |
+
+Do not extrapolate short-context decode to 150K. The author’s published controlled table reports **26.28 t/s at depth 0 and 16.63 at depth 40K**. It also measures a **16K append at existing depth**, which differs from your fresh-prefill timing. [Published protocol and table](https://pwilkin.github.io/strix-halo/)
+
+**4. Speculation depth: default 4 after testing 3; promote 6 only on cycle economics.**
+
+Your union model is useful, but its denominator is wrong for “per accepted token.”
+
+First, the corrected independent-routing values are:
+
+| Draft count \(d\) | Expected union | Union / \(10d\) |
+|---:|---:|---:|
+| 1 | 10.000 | 1.0000 |
+| 2 | 19.805 | 0.9902 |
+| 4 | 38.843 | 0.9711 |
+| 6 | **57.146** | **0.9524** |
+
+Thus routed-expert reuse is weak under this model. But `union/d` assumes every proposal contributes a useful token. Rejected proposals still consume verification work. Also, verification commonly evaluates an additional row; use the **actual verifier row count**, not blindly `n-max`.
+
+The metric to optimize is:
+
+\[
+\mathrm{tokens/s}
+=\frac{\mathrm{emitted\ tokens}}
+{T_\mathrm{draft}+T_\mathrm{verify}+T_\mathrm{state}+T_\mathrm{sampling/host}}.
+\]
+
+As an **illustration only**, with constant conditional acceptance \(p\):
+
+\[
+E[\mathrm{emitted}]=1+p+\dots+p^d.
+\]
+
+| Conditional acceptance assumption | Depth 4 emitted/round | Depth 6 emitted/round | Maximum extra cycle time before depth 6 loses |
+|---|---:|---:|---:|
+| 0.78 | 3.233 | 3.747 | **15.9%** |
+| 0.91 | 4.177 | 5.369 | **28.5%** |
+
+Reported aggregate acceptance is not necessarily this conditional \(p\); measure acceptance survival by position.
+
+**The limiter is not solely expert traffic.** Shared/dense projections and launch overhead can amortize across verification rows even when routed experts barely overlap. GDN dependencies, draft execution, state management and long-context attention can then dominate.
+
+Your own quant inventories imply routed-expert payload per target forward of approximately:
+
+- **UD: 1.162 GB**
+- **PROJFIX: 1.327 GB**
+
+PROJFIX therefore carries **14.2% more routed-expert bytes**. It is not automatically the better decode quant.
+
+Choose depth 6 only if it delivers **≥5% more emitted tokens/s**, with no material regression on the general-text suite. Otherwise retain depth 4—or 3 if it wins.
+
+**5. What you are still missing.**
+
+**MMB evidence:** absent markers are inconclusive. The author documented a similar case where four missing diagnostics merely required a debug flag. Your observed MMB-on improvement is suggestive, but does not prove which kernels executed. [Author’s diagnostic account](https://pwilkin.github.io/strix-halo/journey.html)
+
+A definitive check is:
+
+1. Inspect the dispatch predicates and logging guards:
+   ```bash
+   cd /home/revn/strix-llama
+   rg -n 'LLAMA_MMB_CVT_LOG|LLAMA_MMB_MIN_T|MMB_TALL|MMB_GLU|MMB_DOWN16|LLAMA_GDN_CHUNKED' \
+     ggml/src/ggml-cuda src
+   ```
+2. Run a diagnostic with `LLAMA_MMB_CVT_LOG=1`, capturing stdout **and** stderr.
+3. Verify the running process inherited the gates.
+4. Count **successful dispatches**, tensor types/shapes and fallback reasons in the host selectors. A supported GPU trace proves execution; otherwise use diagnostic launch counters plus completion checks.
+5. Remove instrumentation for final timings.
+
+Do not prescribe `rocprofv3` as guaranteed available through DXG. Do not interpret “no trace” as “no execution.”
+
+Check **GDN dispatch alongside MMB**. Keep `LLAMA_MMB_MIN_T=512`; forcing prefill GEMMs onto tiny decode batches is not a sensible first experiment.
+
+**QSA decode:** treat it as unfinished optimization, not a promised multiplier. Measure attention/indexer/top-k time and CPU fallbacks at 1K, 32K and 128K. If that family is 40% of decode time and becomes twice as fast, total throughput improves only **1.25×**. Prefill QSA gains do not establish decode gains; the author even reports approximately neutral total prefill performance when removing the complete sparse path in a matched experiment. [QSA measurements](https://pwilkin.github.io/strix-halo/journey.html)
+
+**Kernel work:** none currently has a better six-hour expected return than gates, state handling and head qualification. Later:
+
+- Profile the actual **IQ4_NL/IQ4_XS/Q8_0** hot kernels.
+- Test workgroup sizes against actual dimensions such as **640, 2560 and 6144**, not just the guide’s 512/2048 examples.
+- Test packed loads, multiple accumulators and vec8 while watching register pressure.
+- Leave MoE grid reshaping and speculative cache-policy changes alone without a profile.
+- A kernel accelerated **42%** but accounting for **30%** of runtime yields only **9.7% end-to-end**.
+
+hipEngine’s own gfx1151 guidance explicitly requires same-device evidence before promoting gfx1100 tuning. [gfx1151 tuning guide](https://github.com/shisa-ai/hipEngine/blob/main/docs/TUNING-gfx1151.md)
+
+**Your harness needs correction before ranking decode.** [The saved Vulkan results](C:/Projects/REV-N-ornith-eval-20260911/kernel-work/results/v1-frspec-d3.json) contain only **7 generated tokens at 8K**, and a cold 1K decode of **13.88 t/s** before warm results reach 29–31. [fnbench.py](C:/Projects/REV-N-ornith-eval-20260911/kernel-work/fnbench.py) also does not retain output IDs/text or client wall time.
+
+Require one separately reported warmup, three measured runs, **256 actual output tokens** for throughput tests, and saved correctness outputs. Use `ignore_eos` only for explicitly synthetic fixed-length throughput; retain normal EOS behavior for quality tests.
+
+**6. Exact six-hour order.**
+
+Use the existing [gate list](C:/Projects/REV-N-ornith-eval-20260911/kernel-work/gates-test.sh), but **do not execute that launcher unchanged**: it kills every `llama-server`, fixes draft depth at 4, and mixes setup with benchmarking. Stop only the process owned by this benchmark.
+
+It contains **37 `LLAMA_*` assignments: 35 set to 1, HC16 set to 0, and MIN_T set to 512**.
+
+For native Windows, import precisely those assignments:
+
+```powershell
+$Work = 'C:\Projects\REV-N-ornith-eval-20260911\kernel-work'
+
+Get-Content "$Work\gates-test.sh" | ForEach-Object {
+    if ($_ -match '^\s*export\s+(LLAMA_\w+)=(\d+)') {
+        Set-Item -Path "Env:$($Matches[1])" -Value $Matches[2]
+    }
+}
+$env:LLAMA_MMB_HC16 = '0'
+$env:LLAMA_MMB_MIN_T = '512'
+```
+
+The imported enabled names are:
+
+```text
+LLAMA_GDN_CHUNKED LLAMA_GDN_CONV
+LLAMA_HC_BLK16 LLAMA_HC_CN_SHAPE LLAMA_HC_GATEMIX
+LLAMA_HC_MIX_FUSE LLAMA_HC_PACK_DI LLAMA_HC_RES16
+LLAMA_IDX_RELU_SUM
+LLAMA_MMB LLAMA_MMB_BF16W LLAMA_MMB_CACHE LLAMA_MMB_DOWN16
+LLAMA_MMB_F32SPLIT LLAMA_MMB_GLU LLAMA_MMB_SHADOW LLAMA_MMB_TALL
+LLAMA_MOE_RED_SCALAR LLAMA_MTP_EH_FLATTEN LLAMA_MTP_QSA
+LLAMA_NORM_GATED LLAMA_NORM_ROWS LLAMA_PLE_CONV LLAMA_PLE_PREFETCH
+LLAMA_QSA_BLOCK_SELECTION LLAMA_QSA_DENSE_SHORTCUT
+LLAMA_QSA_DIRECT_INDICES LLAMA_QSA_FUSE_EXPAND
+LLAMA_QSA_PACK_KEYS LLAMA_QSA_PACK_VALUES LLAMA_QSA_QUERY_STRIP
+LLAMA_QSA_SCORE_WMMA LLAMA_QSA_SPARSE LLAMA_QSA_TOKEN_EMBD
+LLAMA_QSA_WHOLE_ATTN
+```
+
+For the preliminary WSL test, retain your existing environment:
+
+```bash
+BASE=/mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work
+source "$BASE/env.sh"
+source <(rg '^export LLAMA_' "$BASE/gates-test.sh")
+export HSA_ENABLE_DXG_DETECTION=1
+export GGML_HIP_ENABLE_UNIFIED_MEMORY=1
+export HSA_OVERRIDE_GFX_VERSION=11.5.1
+```
+
+Use these paths:
+
+| Item | Path |
+|---|---|
+| Existing WSL HIP server | `/home/revn/strix-llama/build-hip/bin/llama-server` |
+| Existing WSL PROJFIX entry shard | `/home/revn/models/flash-next-strix/Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00001-of-00009.gguf` |
+| Windows UD | `C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf` |
+| Windows FR-Spec | `C:\AI\models\qwen38-flash\drluoto-frspec\mtp-Qwen3.8-Flash-Next-Q8_0-frspec-65k.gguf` |
+| Existing Vulkan server | `C:\AI\runtimes\strix-vulkan-ba5354d\llama-server.exe` |
+| **Proposed new native HIP build output** | `C:\AI\runtimes\pwilkin-hip-therock\llama-server.exe` |
+
+The final path is a **build destination, not a binary I verified exists**.
+
+Native HIP baseline arguments:
+
+```text
+-m <UD-path>
+-ngl 99 -fa on -fit off --load-mode none
+-ctk f16 -ctv f16
+-c 49152 -b 8192 -ub 8192
+--parallel 1 -t 8
+--host 127.0.0.1 --port 8150 --no-webui
+```
+
+Add for speculation:
+
+```text
+-md <head-path>
+--spec-type draft-mtp
+--spec-draft-n-max 3
+--spec-draft-p-min 0.75
+```
+
+For FR-Spec, test `p-min 0.75` versus `0.0` at depth 3, then keep the winner fixed during the depth sweep. Your Vulkan baseline used `0.0`; silently changing it would confound the comparison.
+
+Use `--lazy-mode on-direct` for the existing **WSL PROJFIX** route. Omit it on native Windows; use the verified mmap-fallback behavior. Apply the Windows `prefetch()` no-op stub described in issue #24 when building. Keep HC16 off. [Windows build and launch qualification](https://github.com/pwilkin/llama.cpp/issues/24)
+
+| Time | Exact experiment | Expected result | Abort / retention condition |
+|---|---|---|---|
+| **0:00–0:25** | Fix benchmark accounting; audit speculative sites and rollback support; run 32 GB WSL UD, full gates, no draft, `c49152/b8192/ub8192` | **Estimated 600–950 pp** on large warm prompts | Any corruption/OOM stops this configuration. Below **600 pp** triggers dispatch/runtime investigation, not a batch increase |
+| **0:25–1:10** | Prepare native TheRock build from the patched fork; apply Windows stub; verify gate configuration and small correctness probes | Load and correctness qualification | Time-box build trouble to **45 minutes**; preserve WSL as fallback |
+| **1:10–1:30** | Founder changes carve to **96 GB**, reboots; measure device budget and host availability | More allocation headroom; no promised speedup | Do not assume WSL retains its former usable memory. Require ≥3 GiB device headroom and ≥4 GiB host available memory during trials |
+| **1:30–2:05** | Native UD, full gates, no draft, same 49K/8192 flags; 1K/8K/32K; math and needle probes | **900–1050 pp**, **24–30 tg**, estimates | If large-prompt pp stays below **800**, investigate build/GDN/MMB/residency before adding features |
+| **2:05–2:40** | Ordinary MTP head, depth 3, corrected state path; same target/configuration | **30–38 tg**, estimate | Stop on state-restore error, correctness failure or regression versus AR; verify where checkpoint time went |
+| **2:40–3:25** | FR-Spec depth 3; test p-min 0.75/0.0; repeated cached and uncached requests; then depth 4 | **33–40 tg**, estimate | Reject on mapping/state errors. Retain FR-Spec only if faster than ordinary head without quality loss |
+| **3:25–4:00** | Depth 6 versus winning 3/4 on code and prose, 256 actual output tokens, three repeats | General **33–40**, code stretch **45–56** | Keep depth 6 only for ≥5% improvement; reject broad regressions |
+| **4:00–4:45** | PROJFIX with identical gates/head/depth; then `b16384/ub16384` at 49K | **900–1100 pp**, estimate; decode must be measured | Reject if memory margin fails. Keep ub16384 only for ≥5% large-prefill gain; select quant by total request time |
+| **4:45–5:25** | Winner at `c131072`, then optional `c262144`; probe 64K/120K and long-context retrieval | Capacity and correctness qualification | Stop on paging collapse, allocation pressure, failed retrieval or state errors; no full-context speed promise |
+| **5:25–6:00** | Matched HIP/Vulkan final bracket, one server at a time, 1K/8K/32K, same sampling/output length | Defensible per-context winners | Publish medians, spread, actual token counts, acceptance and failures; no cherry-picked maximum |
+
+Example harness call after the accounting fixes:
+
+```powershell
+python "$Work\fnbench.py" `
+  --port 8150 --label hip-ud-gates-frspec-d4 `
+  --sizes 1024,8192,32768 --gen 256 --repeats 3 `
+  --context-limit 49152 `
+  --out "$Work\results\hip-ud-gates-frspec-d4.json"
+```
+
+Spend the reboot on **native HIP capacity**, and spend the engineering time on **dispatch proof, recurrent-state correctness and measured speculation economics**. PROJFIX and `ub16384` earn their place only after that baseline works.
+EXIT=0

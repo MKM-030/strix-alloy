@@ -1,0 +1,48 @@
+[
+    "[a-ctx49152-ub2048-draft] ctx=49152 ub=2048 draft=True fit=off -\u003e ready=True exit=",
+    {
+        "tag":  "a-ctx49152-ub2048-draft",
+        "ctx":  49152,
+        "ub":  2048,
+        "draft":  true,
+        "fit":  "off",
+        "ready":  true,
+        "exit":  null,
+        "fatal":  ""
+    },
+    "[a-ctx49152-ub8192-draft] ctx=49152 ub=8192 draft=True fit=off -\u003e ready=True exit=",
+    {
+        "tag":  "a-ctx49152-ub8192-draft",
+        "ctx":  49152,
+        "ub":  8192,
+        "draft":  true,
+        "fit":  "off",
+        "ready":  true,
+        "exit":  null,
+        "fatal":  ""
+    },
+    "[a-ctx49152-ub8192-nodraft] ctx=49152 ub=8192 draft=False fit=off -\u003e ready=True exit=",
+    {
+        "tag":  "a-ctx49152-ub8192-nodraft",
+        "ctx":  49152,
+        "ub":  8192,
+        "draft":  false,
+        "fit":  "off",
+        "ready":  true,
+        "exit":  null,
+        "fatal":  ""
+    },
+    "[fit-ctx32768-ub2048-draft] ctx=32768 ub=2048 draft=True fit=on -\u003e ready=False exit=",
+    "      | 0.01.426.999 E llama_init_from_model: failed to initialize the context: qwen4exp requires ctx_other to be set (this warning is normal during memory fitting)",
+    "      | 0.01.505.244 W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model",
+    {
+        "tag":  "fit-ctx32768-ub2048-draft",
+        "ctx":  32768,
+        "ub":  2048,
+        "draft":  true,
+        "fit":  "on",
+        "ready":  false,
+        "exit":  null,
+        "fatal":  "0.01.426.999 E llama_init_from_model: failed to initialize the context: qwen4exp requires ctx_other to be set (this warning is normal during memory fitting)\r | 0.01.505.244 W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model\r"
+    }
+]

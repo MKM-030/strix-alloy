@@ -1,0 +1,55 @@
+{
+  "_doc": "virtualization-audit.json — handover v2 artifact for Priority 3 (verified reversible virtualization-off A/B). Read-only audit result; NO boot parameter was changed by this audit. Sources: docs/benchmarks/iommu-decision-20260915.md, boot-arms-result-D-blocked-C-breaks-gpu-20260915.md.",
+  "question": "Can we measure a decode/prefill gain from turning off virtualization / IOMMU, reversibly, on this box?",
+  "answer": "NO — the lever is closed on this machine. Blocked by security posture on the intended arm and destructive to HIP device access on the other. This is a real negative result, not an untested option.",
+  "runtime_state_baseline": {
+    "HypervisorPresent": true,
+    "VBS_status": 2,
+    "VBS_status_meaning": "running",
+    "SecurityServicesRunning": [2],
+    "SecurityServicesRunning_meaning": ["HVCI"],
+    "EnableVirtualizationBasedSecurity": 1,
+    "RequiredSecurityProperties": [1, 2, 3],
+    "RequiredSecurityProperties_meaning": "base virtualization is REQUIRED — VBS cannot run without the hypervisor",
+    "NPU_device_problem_code": "CM_PROB_NONE (healthy on every arm)",
+    "host_iommu_device": "none exposed (Get-PnpDevice for IOMMU|SMMU|DMA Remap returns nothing; only HVCI/bit2 running)"
+  },
+  "arms": {
+    "A_baseline": { "bcd_applied": false, "hypervisor": true, "vbs": true, "hvci": true, "usable": true,
+      "note": "the machine's normal state; every number in measured-baseline.json was taken here" },
+    "D_no_hypervisor": { "bcd_applied": true, "bcd_settings": ["hypervisorlaunchtype Off", "vsmlaunchtype Off"],
+      "hypervisor_runtime": true, "usable_but_wrong_arm": true,
+      "why_override": "EnableVirtualizationBasedSecurity=1 + RequiredSecurityProperties include base virtualization; VBS cannot run without the hypervisor so the boot flag is overridden. WSL2 still worked on this boot, independently confirming the hypervisor ran.",
+      "status": "UNREACHABLE without disabling VBS" },
+    "C_no_vsm_no_hv_iommu_policy": { "bcd_applied": true, "bcd_settings": ["vsmlaunchtype Off", "hypervisoriommupolicy Disable"],
+      "usable": false,
+      "symptom": "ROCm/HIP cannot query the GPU: stdout device enumeration empty (0 bytes), cudaMemGetInfo failed (invalid argument) at 0.30s, never reaches threadpool init or listening",
+      "reproduced": "two independent runs (19:04:56, 19:05:06) plus gpu-probe.ps1",
+      "caveat": "did not isolate which of the two settings (vsmlaunchtype vs hypervisoriommupolicy) breaks it; practical answer is the same either way",
+      "reversible": "yes — boot-entry setting, not damage; rebooting the normal entry restores the GPU",
+      "status": "INCOMPATIBLE with our inference stack" },
+    "B_vsm_off_hypervisor_on": { "bcd_applied": false, "reason_not_run": "shares vsmlaunchtype Off with the arm-C breakage and VBS ignored the same flag on arm D; expected to break the GPU or be overridden — not worth a reboot each way" }
+  },
+  "why_transfer_is_impossible_here": {
+    "source_finding": "r/StrixHalo/1wdrkrc (baldlawyer): amd_iommu=off raised prefill +1.8%..+31.6% depending on model on bare-metal Linux; decode unaffected (+-1%); not a power/clock effect",
+    "our_fast_path_is_not_bare_metal_linux": "native Windows HIP (clang 24 / TheRock) — amd_iommu=off does not exist; Windows uses Device Guard/Kernel DMA Protection",
+    "wsl_path_is_paravirtual": "WSL2 boots paravirtualized on Hyper-V with a VIRTUAL IOMMU (Default domain type: Translated), not AMD-Vi; no /sys/class/iommu; .wslconfig sets no kernelCommandLine",
+    "conclusion": "a WSL amd_iommu=off test would toggle a virtual guest IOMMU and prove nothing about the host effect"
+  },
+  "consequences_if_it_did_apply_bare_metal": [
+    "disables the NPU (same parameter removes the NPU device path) — founder wants the NPU used",
+    "turns off DMA translation machine-wide (security/isolation change)",
+    "even then: source's ROCm/MoE rows were only +1.8%..+6.0%, i.e. ~+19..+63 t/s on our 1057 t/s prefill — still short of ilintar 1204, at the cost of the NPU"
+  ],
+  "gate_status": {
+    "requires_owner_maintenance_approval": true,
+    "owner_approval_obtained": false,
+    "idle_window_obtained": false,
+    "actions_taken_by_this_audit": "NONE — read-only; no boot parameter changed, no reboot performed",
+    "recommendation": "DO NOT change boot parameters. Keep the machine's security posture intact. The prefill gap is better attacked with real RDNA3.5 kernel work (source-manifest.md S9/S10), not via a bare-metal-only boot flag we cannot reach."
+  },
+  "cleanup_todo": {
+    "test_boot_entries": ["{f26c7218-...} Strix bench - no hypervisor", "{f26c7219-...} Strix bench - no VSM + no hv IOMMU policy"],
+    "note": "windows-boot-ab.ps1 -Restore armed the normal entry; -RemoveAll should be run to delete the two test entries. Deleting a BCD entry is a maintenance action — confirm owner approval before running."
+  }
+}

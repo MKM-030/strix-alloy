@@ -1,0 +1,316 @@
+diff --git a/ggml/src/ggml-cuda/ggml-cuda.cu b/ggml/src/ggml-cuda/ggml-cuda.cu
+index 114baa6a..b9c21d33 100644
+--- a/ggml/src/ggml-cuda/ggml-cuda.cu
++++ b/ggml/src/ggml-cuda/ggml-cuda.cu
+@@ -1,4 +1,5 @@
+ #include "hc-mix.cuh"
++#include <cctype>
+ #include "idx-relu-sum.cuh"
+ #include "mmb.cuh"
+ #include "gdn-conv.cuh"
+@@ -4611,6 +4612,255 @@ static int ggml_cuda_try_fuse(ggml_backend_cuda_context * cuda_ctx, ggml_cgraph
+     return 0;
+ }
+ 
++
++// [OP_TIMING] per-op attribution with event pairs. Requires GGML_CUDA_DISABLE_GRAPHS=1
++// (event pairs around each op would perturb capture otherwise). Aggregates by
++// (op name, layer parsed from the tensor name) over graph evaluations and prints
++// a summary every LLAMA_OP_TIMING_EVERY evals (default 16).
++namespace op_timing {
++struct Agg { double us = 0; long long n = 0; double bytes = 0; };
++struct Pending {
++    cudaEvent_t a, b;
++    std::string op;
++    int64_t layer;
++    size_t bytes;
++};
++static inline bool enabled() {
++    static const bool e = getenv("LLAMA_OP_TIMING") && atoi(getenv("LLAMA_OP_TIMING"));
++    return e;
++}
++static std::unordered_map<std::string, Agg> agg;
++static std::vector<Pending> pending;
++static std::vector<cudaEvent_t> ev;
++static int64_t ev_i = 0;
++
++static void ev_ensure(int64_t n) {
++    while ((int64_t) ev.size() < 2 * n + 2) {
++        cudaEvent_t e;
++        CUDA_CHECK(hipEventCreate(&e));
++        ev.push_back(e);
++    }
++}
++static int64_t layer_of(const ggml_tensor * t) {
++    for (const ggml_tensor * x = t; x; x = x->src[0]) {
++        const char * c = strstr(x->name, "blk.");
++        if (c) {
++            return atoll(c + 4);
++        }
++    }
++    return -1;
++}
++static void record(cudaStream_t stream, const ggml_tensor * node) {
++    ev_ensure(ev_i + 1);
++    cudaEvent_t a = ev[ev_i++];
++    cudaEvent_t b = ev[ev_i++];
++    CUDA_CHECK(cudaEventRecord(a, stream));
++    pending.push_back({a, b, ggml_op_name(node->op), layer_of(node), ggml_nbytes(node)});
++    CUDA_CHECK(cudaEventRecord(b, stream));
++}
++static void flush(cudaStream_t stream) {
++    if (pending.empty()) {
++        return;
++    }
++    CUDA_CHECK(cudaStreamSynchronize(stream));
++    for (auto & p : pending) {
++        float ms = 0;
++        CUDA_CHECK(hipEventElapsedTime(&ms, p.a, p.b));
++        auto & a = agg[p.op + "|" + (p.layer < 0 ? std::string("none") : std::to_string(p.layer))];
++        a.us += ms * 1000.0;
++        a.n += 1;
++        a.bytes += p.bytes;
++    }
++    pending.clear();
++    ev_i = 0;
++    static int64_t ot_evals = 0;
++    ++ot_evals;
++    const int64_t every = getenv("LLAMA_OP_TIMING_EVERY") ? atoll(getenv("LLAMA_OP_TIMING_EVERY")) : 16;
++    if (ot_evals % every == 0) {
++        fprintf(stderr, "OP_TIMING aggregate after %lld evals (op|layer count total_ms avg_us):\n",
++                (long long) ot_evals);
++        std::vector<std::pair<std::string, Agg *>> rows;
++        for (auto & kv : agg) {
++            rows.push_back({kv.first, &kv.second});
++        }
++        std::sort(rows.begin(), rows.end(), [](auto & x, auto & y) { return x.second->us > y.second->us; });
++        for (size_t r = 0; r < rows.size() && r < 40; r++) {
++            fprintf(stderr, "  %-24s n=%-7lld total=%10.1fms avg=%8.1fus\n",
++                    rows[r].first.c_str(), rows[r].second->n,
++                    rows[r].second->us / 1000.0, rows[r].second->us / rows[r].second->n);
++        }
++        fflush(stderr);
++    }
++}
++} // namespace op_timing
++
++
++// [OP_TIMING_IG] in-graph per-op event timing (LLAMA_OP_TIMING=2, graphs ON).
++// During capture, event pairs are recorded around selected ops; the events become
++// graph nodes, so every replay re-emits them and post-sync queries yield the
++// per-op GPU time of that replay. Events are kept alive for the process lifetime:
++// the instantiated graph references them.
++namespace op_timing_ig {
++struct Seg { std::string op; int64_t layer; cudaEvent_t a, b; };
++static inline bool enabled() {
++    static const bool e = getenv("LLAMA_OP_TIMING") && atoi(getenv("LLAMA_OP_TIMING")) == 2;
++    return e;
++}
++static bool op_selected(const ggml_tensor * node) {
++    const char * f = getenv("LLAMA_OP_TIMING_OPS");
++    // NOTE: ggml_op_name() returns UPPERCASE names ("MUL_MAT_ID") while the default
++    // filter tokens are lowercase. Compare case-insensitively, or nothing ever matches
++    // and the timer silently reports 0.0 ms/replay.
++    std::string filters = f ? f : "mul_mat_id,ssm,gated_delta,flash_attn,get_rows,top_k,moe,softmax,rope";
++    std::string nm = std::string(ggml_op_name(node->op)) + " " + node->name;
++    auto lower = [](std::string & s) {
++        std::transform(s.begin(), s.end(), s.begin(),
++                       [](unsigned char c) { return (char) std::tolower(c); });
++    };
++    lower(nm);
++    lower(filters);
++    size_t start = 0;
++    while (start <= filters.size()) {
++        size_t comma = filters.find(',', start);
++        std::string tok = filters.substr(start, comma == std::string::npos ? std::string::npos : comma - start);
++        if (!tok.empty() && nm.find(tok) != std::string::npos) {
++            return true;
++        }
++        if (comma == std::string::npos) {
++            break;
++        }
++        start = comma + 1;
++    }
++    return false;
++}
++static int64_t layer_of(const ggml_tensor * t) {
++    for (const ggml_tensor * x = t; x; x = x->src[0]) {
++        const char * c = strstr(x->name, "blk.");
++        if (c) {
++            return atoll(c + 4);
++        }
++    }
++    return -1;
++}
++struct Agg { double us = 0; long long n = 0; };
++static std::unordered_map<std::string, Agg> agg;
++static std::vector<Seg> segs;
++
++// Events are allocated ONCE from a pool grown OUTSIDE capture. Creating an event while a stream
++// capture is active yields a handle that hipEventElapsedTime() later rejects with
++// hipErrorInvalidResourceHandle (400). Reused across replays.
++static std::vector<cudaEvent_t> ev_pool;
++static size_t ev_used = 0;
++
++static long long rec_calls = 0;          // diagnostics: how many record() calls happened
++static long long collect_calls = 0;      // diagnostics: how many collect() calls happened
++static long long cap_loop_calls = 0;     // diagnostics: node loop ran with update_required
++static long long cap_nodes_seen = 0;     // diagnostics: nodes examined during capture
++static long long cap_matches = 0;        // diagnostics: op_selected() returned true
++static std::string cap_sample;           // diagnostics: first few op names seen
++
++static void begin_capture_hook() { segs.clear(); ev_used = 0; }  // fresh capture: reuse pooled events
++
++static cudaEvent_t pool_event() {
++    if (ev_used + 2 > ev_pool.size()) {
++        for (int k = 0; k < 512; k++) {   // grow in blocks
++            cudaEvent_t e;
++            CUDA_CHECK(hipEventCreate(&e));
++            ev_pool.push_back(e);
++        }
++    }
++    cudaEvent_t e = ev_pool[ev_used];
++    ev_used += 2;                          // consume a pair
++    return e;
++}
++
++static void record(cudaStream_t stream, const ggml_tensor * node) {
++    if (ev_used + 2 > ev_pool.size()) {
++        // pool exhausted mid-capture: fall back to creating (may query-fail, but keeps counts honest)
++        for (int k = 0; k < 512; k++) {
++            cudaEvent_t e;
++            CUDA_CHECK(hipEventCreate(&e));
++            ev_pool.push_back(e);
++        }
++    }
++    cudaEvent_t a = ev_pool[ev_used];
++    cudaEvent_t b = ev_pool[ev_used + 1];
++    ev_used += 2;
++    CUDA_CHECK(cudaEventRecord(a, stream));
++    segs.push_back({ggml_op_name(node->op), layer_of(node), a, b});
++    CUDA_CHECK(cudaEventRecord(b, stream));
++    ++rec_calls;
++}
++
++// call after each pure-replay graph launch + stream sync
++static void collect() {
++    // Proven on this build (2026-09-15): capture + recording work (record_calls=96,
++    // cap_nodes=3490, matches=96), but hipEventElapsedTime() returns 400
++    // (hipErrorInvalidResourceHandle) for captured events EVEN when the events are created
++    // outside the capture region. So event records that become graph nodes have no queryable
++    // timing state after replay on ROCm/DXG, and in-graph event timing cannot work here.
++    // Say that once, loudly, instead of silently printing "tracked total 0.0 ms/replay".
++    static bool warned = false;
++    ++collect_calls;
++    long long failed = 0;
++    for (auto & s : segs) {
++            float ms = 0.0f;
++            (void) cudaGetLastError();
++            cudaError_t e = hipEventElapsedTime(&ms, s.a, s.b);
++            fprintf(stderr,
++                "OP_TIMING_IG DIAG seg: op=%-16s a=%p b=%p err=%d (%s) ms=%.4f\n",
++                s.op.c_str(), (void *) s.a, (void *) s.b, (int) e, cudaGetErrorString(e), (double) ms);
++            if (++shown >= 5) {
++                break;
++            }
++        }
++        fflush(stderr);
++    }
++
++    for (auto & s : segs) {
++        float ms = 0;
++        if (hipEventElapsedTime(&ms, s.a, s.b) != hipSuccess) {
++            ++failed;
++            continue;
++        }
++        auto & a = agg[s.op + "|" + (s.layer < 0 ? std::string("none") : std::to_string(s.layer))];
++        a.us += ms * 1000.0;
++        a.n += 1;
++    }
++    if (!warned && !segs.empty() && failed == (long long) segs.size()) {
++        warned = true;
++        fprintf(stderr,
++            "OP_TIMING_IG: hipEventElapsedTime() failed for all %lld captured events "
++            "(hipErrorInvalidResourceHandle). In-graph event timing is NOT supported on this "
++            "ROCm/DXG build. For per-op shares use LLAMA_OP_TIMING=1 with "
++            "GGML_CUDA_DISABLE_GRAPHS=1.\n",
++            failed);
++        fflush(stderr);
++    }
++
++    static int64_t evals = 0;
++    if (++evals % 8 == 0 && !warned) {
++        double total = 0;
++        for (auto & kv : agg) {
++            total += kv.second.us;
++        }
++        fprintf(stderr, "OP_TIMING_IG after %lld replays: tracked total %.1f ms/replay\n",
++                (long long) evals, total / 8.0);
++        std::vector<std::pair<std::string, Agg *>> rows;
++        for (auto & kv : agg) {
++            rows.push_back({kv.first, &kv.second});
++        }
++        std::sort(rows.begin(), rows.end(), [](auto & x, auto & y) { return x.second->us > y.second->us; });
++        for (size_t r = 0; r < rows.size() && r < 36; r++) {
++            fprintf(stderr, "  %-28s n=%-7lld total=%10.1fms avg=%8.1fus\n", rows[r].first.c_str(),
++                    rows[r].second->n, rows[r].second->us / 1000.0, rows[r].second->us / rows[r].second->n);
++        }
++        fflush(stderr);
++        agg.clear();
++    }
++}
++} // namespace op_timing_ig
++
+ static void ggml_cuda_graph_evaluate_and_capture(ggml_backend_cuda_context * cuda_ctx, ggml_cgraph * cgraph, const bool use_cuda_graph, const bool cuda_graph_update_required, const void * graph_key) {
+     bool graph_evaluated_or_captured = false;
+ 
+@@ -4780,6 +5030,19 @@ static void ggml_cuda_graph_evaluate_and_capture(ggml_backend_cuda_context * cud
+                 GGML_UNUSED(integrated);
+ #endif  // NDEBUG
+ 
++                if (op_timing::enabled() && !use_cuda_graph) {
++                    op_timing::record(cuda_ctx->stream(), node);
++                }
++                if (use_cuda_graph && cuda_graph_update_required) {
++                    ++op_timing_ig::cap_nodes_seen;
++                    if (op_timing_ig::cap_sample.size() < 200) {
++                        op_timing_ig::cap_sample += std::string(ggml_op_name(node->op)) + ",";
++                    }
++                    if (op_timing_ig::enabled() && op_timing_ig::op_selected(node)) {
++                        ++op_timing_ig::cap_matches;
++                        op_timing_ig::record(cuda_ctx->stream(), node);
++                    }
++                }
+                 bool ok = ggml_cuda_compute_forward(*cuda_ctx, node);
+                 if (!ok) {
+                     GGML_LOG_ERROR("%s: op not supported %s (%s)\n", __func__, node->name, ggml_op_name(node->op));
+@@ -4809,6 +5072,9 @@ static void ggml_cuda_graph_evaluate_and_capture(ggml_backend_cuda_context * cud
+             }
+         } else {
+             graph_evaluated_or_captured = true; // ggml graph has been directly evaluated
++            if (op_timing::enabled()) {
++                op_timing::flush(cuda_ctx->stream());
++            }
+         }
+     }
+ 
+@@ -4822,6 +5088,10 @@ static void ggml_cuda_graph_evaluate_and_capture(ggml_backend_cuda_context * cud
+         }
+         // Launch graph
+         CUDA_CHECK(cudaGraphLaunch(graph->instance, cuda_ctx->stream()));
++        if (op_timing_ig::enabled() && !cuda_graph_update_required) {
++            CUDA_CHECK(cudaStreamSynchronize(cuda_ctx->stream()));
++            op_timing_ig::collect();
++        }
+ #else
+         GGML_UNUSED(graph_key);
+         graph_evaluated_or_captured = true;
+@@ -4902,6 +5172,8 @@ static enum ggml_status ggml_backend_cuda_graph_compute(ggml_backend_t backend,
+             ggml_cuda_lock_counter.fetch_add(1, std::memory_order_relaxed);
+         }
+ 
++        op_timing_ig::begin_capture_hook();
++        ++op_timing_ig::cap_loop_calls;
+         CUDA_CHECK(cudaStreamBeginCapture(cuda_ctx->stream(), cudaStreamCaptureModeRelaxed));
+     }
+ 

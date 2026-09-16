@@ -1,0 +1,149 @@
+﻿
+Firmware Boot Manager
+---------------------
+identifier              {a5a30fa2-3d06-4e9f-b5f4-a01df9d1fcba}
+displayorder            {9dea862c-5cdd-4e70-acc1-f32b344d4795}
+                        {c1d44de9-9e49-11f1-a6e0-806e6f6e6963}
+                        {c1d44dea-9e49-11f1-a6e0-806e6f6e6963}
+                        {c1d44deb-9e49-11f1-a6e0-806e6f6e6963}
+timeout                 1
+
+Windows Boot Manager
+--------------------
+identifier              {9dea862c-5cdd-4e70-acc1-f32b344d4795}
+device                  partition=\Device\HarddiskVolume1
+path                    \EFI\Microsoft\Boot\bootmgfw.efi
+description             Windows Boot Manager
+locale                  en-US
+inherit                 {7ea2e1ac-2e61-4728-aaa3-896d9d0a9f0e}
+default                 {f26c7213-4419-11f1-aa61-e2c00339da35}
+resumeobject            {f26c7212-4419-11f1-aa61-e2c00339da35}
+displayorder            {f26c7213-4419-11f1-aa61-e2c00339da35}
+toolsdisplayorder       {b2721d73-1db4-4c62-bf78-c548a880142d}
+timeout                 30
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {c1d44de9-9e49-11f1-a6e0-806e6f6e6963}
+description             UEFI:CD/DVD Drive
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {c1d44dea-9e49-11f1-a6e0-806e6f6e6963}
+description             UEFI:Removable Device
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {c1d44deb-9e49-11f1-a6e0-806e6f6e6963}
+description             UEFI:Network Device
+
+Windows Boot Loader
+-------------------
+identifier              {f26c7213-4419-11f1-aa61-e2c00339da35}
+device                  partition=C:
+path                    \windows\system32\winload.efi
+description             Windows 11
+locale                  en-US
+inherit                 {6efb52bf-1766-41db-a6b3-0ee5eff72bd7}
+recoverysequence        {f26c7215-4419-11f1-aa61-e2c00339da35}
+displaymessageoverride  Recovery
+recoveryenabled         Yes
+isolatedcontext         Yes
+allowedinmemorysettings 0x15000075
+osdevice                partition=C:
+systemroot              \windows
+resumeobject            {f26c7212-4419-11f1-aa61-e2c00339da35}
+nx                      OptIn
+bootmenupolicy          Standard
+hypervisorlaunchtype    Auto
+
+Windows Boot Loader
+-------------------
+identifier              {f26c7215-4419-11f1-aa61-e2c00339da35}
+device                  ramdisk=[\Device\HarddiskVolume4]\Recovery\WindowsRE\Winre.wim,{f26c7216-4419-11f1-aa61-e2c00339da35}
+path                    \windows\system32\winload.efi
+description             Windows Recovery Environment
+locale                  en-us
+inherit                 {6efb52bf-1766-41db-a6b3-0ee5eff72bd7}
+displaymessage          Recovery
+osdevice                ramdisk=[\Device\HarddiskVolume4]\Recovery\WindowsRE\Winre.wim,{f26c7216-4419-11f1-aa61-e2c00339da35}
+systemroot              \windows
+nx                      OptIn
+bootmenupolicy          Standard
+winpe                   Yes
+custom:46000010         Yes
+
+Resume from Hibernate
+---------------------
+identifier              {f26c7212-4419-11f1-aa61-e2c00339da35}
+device                  partition=C:
+path                    \windows\system32\winresume.efi
+description             Windows Resume Application
+locale                  en-US
+inherit                 {1afa9c49-16ab-4a5c-901b-212802da9460}
+recoverysequence        {f26c7215-4419-11f1-aa61-e2c00339da35}
+recoveryenabled         Yes
+isolatedcontext         Yes
+allowedinmemorysettings 0x15000075
+filedevice              partition=C:
+custom:21000026         partition=C:
+filepath                \hiberfil.sys
+bootmenupolicy          Standard
+debugoptionenabled      No
+
+Windows Memory Tester
+---------------------
+identifier              {b2721d73-1db4-4c62-bf78-c548a880142d}
+device                  partition=\Device\HarddiskVolume1
+path                    \EFI\Microsoft\Boot\memtest.efi
+description             Windows Memory Diagnostic
+locale                  en-US
+inherit                 {7ea2e1ac-2e61-4728-aaa3-896d9d0a9f0e}
+badmemoryaccess         Yes
+
+EMS Settings
+------------
+identifier              {0ce4991b-e6b3-4b16-b23c-5e0d9250e5d9}
+bootems                 No
+
+Debugger Settings
+-----------------
+identifier              {4636856e-540f-4170-a130-a84776f4c654}
+debugtype               Local
+
+RAM Defects
+-----------
+identifier              {5189b25c-5558-4bf2-bca4-289b11bd29e2}
+
+Global Settings
+---------------
+identifier              {7ea2e1ac-2e61-4728-aaa3-896d9d0a9f0e}
+inherit                 {4636856e-540f-4170-a130-a84776f4c654}
+                        {0ce4991b-e6b3-4b16-b23c-5e0d9250e5d9}
+                        {5189b25c-5558-4bf2-bca4-289b11bd29e2}
+
+Boot Loader Settings
+--------------------
+identifier              {6efb52bf-1766-41db-a6b3-0ee5eff72bd7}
+inherit                 {7ea2e1ac-2e61-4728-aaa3-896d9d0a9f0e}
+                        {7ff607e0-4395-11db-b0de-0800200c9a66}
+
+Hypervisor Settings
+-------------------
+identifier              {7ff607e0-4395-11db-b0de-0800200c9a66}
+hypervisordebugtype     Serial
+hypervisordebugport     1
+hypervisorbaudrate      115200
+
+Resume Loader Settings
+----------------------
+identifier              {1afa9c49-16ab-4a5c-901b-212802da9460}
+inherit                 {7ea2e1ac-2e61-4728-aaa3-896d9d0a9f0e}
+
+Device options
+--------------
+identifier              {f26c7216-4419-11f1-aa61-e2c00339da35}
+description             Windows Recovery
+ramdisksdidevice        partition=\Device\HarddiskVolume4
+ramdisksdipath          \Recovery\WindowsRE\boot.sdi
+

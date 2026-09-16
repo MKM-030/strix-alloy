@@ -1,0 +1,130 @@
+{
+  "_doc": "measured-baseline.json — handover v2 artifact. Every figure is measured on this box unless marked 'reference'. Supersedes prose sheets for machine consumption; see docs/benchmarks/current-numbers-20260915.md for commentary.",
+  "box": {
+    "soc": "AMD Ryzen AI Max+ 395",
+    "gpu": "Radeon 8060S",
+    "arch": "gfx1151 / RDNA3.5 / wave32",
+    "cu": 40,
+    "memory": "128 GB LPDDR5X, 96 GB dedicated carve",
+    "runtime": "Windows 11 native + WSL2 over /dev/dxg (no /dev/kfd, no PM4 replay)",
+    "sdk": "TheRock 10.2.0a20260915",
+    "compiler": "clang 24.0.0git",
+    "build": "GGML_HIP=ON"
+  },
+  "model": {
+    "target": "Qwen3.8-Flash-Next (qwen4exp) IQ4_NL PROJFIX, 9 shards",
+    "mtp_head": "mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf",
+    "active_params_b": 6,
+    "layers": 48,
+    "routed_experts": 512,
+    "top_k_experts": 10,
+    "shared_experts": 1,
+    "indexer_top_k": 2048,
+    "indexer_ratio": 4,
+    "indexer_head_count": 4
+  },
+  "launch": {
+    "prefill_shape": "-b/-ub 16384, no drafter",
+    "decode_shape": "-b/-ub 2048, -md <head> --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-p-min 0.0",
+    "common": "--fit off --load-mode none -ngl 999 -fa on -ctk f16 -ctv f16 --parallel 1",
+    "why_fit_off": "shared-MTP --fit on preflight fails with 'qwen4exp requires ctx_other to be set' so the draft is unaccounted; see shared-mtp-fit-report.md"
+  },
+  "measured_throughput": {
+    "_units": "tokens/s, rep-1 (warm page cache)",
+    "prefill": {
+      "PROJFIX_ub16384_no_drafter": { "1k": 710, "8k": 1021, "16k": 1057, "32k": 1035 },
+      "PROJFIX_ub2048_mtp_nmax2":   { "1k": 653, "8k": 799,  "16k": 782 },
+      "PROJFIX_ub2048_mtp_nmax1":   { "1k": 658, "8k": 797,  "16k": 786 }
+    },
+    "decode": {
+      "PROJFIX_ub16384_no_drafter": { "1k": 30.1, "8k": 28.9, "16k": 29.2, "32k": 28.8 },
+      "PROJFIX_ub2048_mtp_nmax2":   { "1k": 35.5, "8k": 30.2, "16k": 32.8 },
+      "PROJFIX_ub2048_mtp_nmax1":   { "1k": 34.9, "8k": 30.3, "16k": 31.4 },
+      "PROJFIX_no_mtp_baseline":    { "1k": 29.9, "8k": 28.6 }
+    },
+    "acceptance_mtp_nmax2": { "1k": 0.625, "8k": 0.545, "16k": 0.488,
+      "_note": "position-0 survival = P(first draft token == target argmax); see acceptance-metric-frozen-20260915.md" }
+  },
+  "long_context_251k": {
+    "_doc": "docs/benchmarks/longctx-251k-20260915.md. -c 262144, WSL down. NOTE: this -c costs ~15% shallow prefill vs the -c 32768 tables above (862 vs 1021 t/s @16k) -- do not mix.",
+    "_warm_warning": "rep0 is COLD. At >=131k cold under-reports prefill by 20-55%. Only rep>=1 is trustworthy at depth; the original single-rep table below is superseded by long_context_251k_warm.",
+    "prefill_shape_ub16384_no_drafter": {
+      "16384":  { "prefill": 862,  "serial_decode": 29.6 },
+      "65536":  { "prefill": 984,  "serial_decode": 28.5 },
+      "131072": { "prefill": 688,  "serial_decode": 26.9, "_cold_superseded": true },
+      "196608": { "prefill": 689,  "serial_decode": 22.2, "_cold_superseded": true },
+      "251904": { "prefill": 648,  "serial_decode": 23.4, "_cold_superseded": true }
+    },
+    "mtp_shape_ub8192_nmax2": {
+      "16384":  { "prefill": 869, "mtp_decode": 29.3, "acceptance": 0.50 },
+      "65536":  { "prefill": 903, "mtp_decode": 35.0, "acceptance": 0.74 },
+      "131072": { "prefill": 550, "mtp_decode": 28.8, "acceptance": 0.61, "_cold": true },
+      "196608": { "prefill": 631, "mtp_decode": 27.1, "acceptance": 0.61, "_cold": true },
+      "251904": { "prefill": 637, "mtp_decode": 28.7, "acceptance": 0.67, "_cold": true }
+    },
+    "verdict": "251k context works end to end: warm ~310 s prefill (~810 t/s), then ~26-29 t/s with MTP, no memory failure."
+  },
+  "long_context_251k_warm": {
+    "_doc": "Warm (rep 1) re-measure at depth. results/lc-lcwarm-prefill.json. These SUPERSEDE the cold rows above; the deep prefill decline is gentle (~1.5-2%/inch), not a cliff.",
+    "prefill_shape_ub16384_no_drafter": {
+      "131072": { "cold_rep0": 583.6, "warm_rep1": 907.3, "warm_over_cold": 1.55 },
+      "196608": { "cold_rep0": 686.2, "warm_rep1": 856.3, "warm_over_cold": 1.25 },
+      "251904": { "cold_rep0": 673.4, "warm_rep1": 809.1, "warm_over_cold": 1.20, "warm_prefill_seconds": 311 }
+    },
+    "corrected_prefill_curve": { "16384": 862, "65536": 984, "131072": 907, "196608": 856, "251904": 809 },
+    "mtp_shape_ub8192_nmax2_gen256": {
+      "_doc": "results/lc-lc-mtp-g256.json. gen 256 (~230 draft rounds/row) gives a stable acceptance; rep 1 reported. Replaces the noisy gen-64 MTP rows.",
+      "16384":  { "prefill": 929.9, "mtp_decode": 31.58, "acceptance": 0.561 },
+      "65536":  { "prefill": 901.0, "mtp_decode": 32.70, "acceptance": 0.649 },
+      "131072": { "prefill": 844.1, "mtp_decode": 32.79, "acceptance": 0.698 },
+      "196608": { "prefill": 786.3, "mtp_decode": 30.22, "acceptance": 0.641 },
+      "251904": { "prefill": 743.3, "mtp_decode": 31.33, "acceptance": 0.729 },
+      "verdict": "MTP decode is essentially depth-independent at ~30-33 t/s (a +-4% band); acceptance rises from 56% at 16k to 73% at 251k."
+    },
+    "rule": "Never report a single rep at depth on this box; the first rep pays disk reads the OS page cache has not warmed. And use gen>=256 for acceptance (gen 64 = ~30 draft rounds = noisy)."
+  },
+  "decode_root_cause_20260916": {
+    "_doc": "docs/benchmarks/decode-alu-bound-dp4a-20260916.md. Standalone HIP bench (shapebench.hip), 12 GB cache-proof, 150 realistic buffers, identical loads/launches/grid, only the inner loop varies.",
+    "in_vitro_pct_of_contiguous_bandwidth": {
+      "A_contiguous": 1.00,
+      "G_loads_only_1_fma_per_block": 1.010,
+      "I_dp4a_int8_8_dots": 0.804,
+      "K_dp4a_plus_real_vperm_lut": 0.808,
+      "F_32_float_fma": 0.493,
+      "H_32_float_fma_8_accumulators": 0.533,
+      "E_32_float_fma_plus_lut": 0.459
+    },
+    "ruled_out": ["memory/addresses", "launch count", "grid shape", "dequant LUT", "18-byte block alignment", "dependency chains", "multi-row verify"],
+    "production_serial_pct_of_peak": { "8192_dense": 0.526, "shallow_depth": 0.535, "warm_251k": 0.464 },
+    "gap": "production 52-53% vs the real algorithm's in-vitro 80.8% -> ~1.5x decode available",
+    "estimate": "4.219 GB / 236.4 GB/s / 0.808 = 22.1 ms/token -> ~45 t/s serial, vs 29.9 measured (upper bound; only the IQ4_NL majority behaves like K)",
+    "remaining_suspect": "multi-warp K-reduction (real mmvq uses tmp_shared + buf_iw spin-locks; the 80.8% replica used one warp per buffer, no cross-warp reduction) on ~150 small kernels/step"
+  },
+  "measured_components": {
+    "graphs_ab": { "on_tps": 35.0, "off_tps": 10.7, "delta_ms_per_token": 65,
+      "_note": "production decode is dispatch-free" },
+    "phase_budget": { "target_verify_pct": 80, "draft_pct": 16, "accept_pct": 0.01 },
+    "bandwidth_ceiling_gbs": { "sequential_read": 235.7, "copy_combined": 208.2, "copy_each_way": 104.1 },
+    "byte_efficiency_pct": { "flat_across_widths": true, "range": [53, 59] },
+    "expert_ablation": { "model": "target_ms/round = 35.4 + 3.56 * expert_GB", "experts_share_max": 0.28,
+      "k_independent_ms_per_round": 23 },
+    "round_cost_vs_depth": { "flat_ms_range": [54, 59], "context_span": "16x", "verdict": "indexer/attention depth line CLOSED" },
+    "ple_host_staging_pct_of_decode_wall": 0.054,
+    "draft_share_pct": 16
+  },
+  "references_external": {
+    "ilintar_strix_halo": { "prefill_0": 1204, "prefill_40k": 1086, "decode_0": 26.3, "decode_40k": 16.6,
+      "_note": "ub 16384 one batch, no MTP, retained-PM4 runtime" },
+    "olliehm_windows_port": { "prefill": [964, 1045], "decode": 35, "_note": "device-ckpt MTP" },
+    "halogen_0_9_1_linux": { "prefill": [1250, 1400], "decode_serial": 25.4, "decode_drafted": [42, 45],
+      "_note": "native Linux; not runnable here" }
+  },
+  "retracted_or_superseded": [
+    "fit r~0.47 per-step decode cost model (direct phase timing gives draft=16%, verify=84%)",
+    "op-timing composition results (captured events have no queryable timing on ROCm/DXG)",
+    "@16k decode 30.2 (correct value 32.8; 30.2 was the 8k figure)",
+    "Bug A '-b/-ub 8192 breaks draft load' (does NOT reproduce on current binary; see shared-mtp-fit-report.md)",
+    "long-context prefill >=131k as 'settles to ~650 t/s' (cold single-rep artifact; warm is 907/856/809 t/s at 131k/196k/251k - see long_context_251k_warm)",
+    "MTP gen-64 'decode 27-35 t/s with a 65k peak and 50-74% acceptance' (small-sample; gen 256 gives 30-33 t/s flat and 56-73% acceptance)"
+  ]
+}

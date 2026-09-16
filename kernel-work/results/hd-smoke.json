@@ -1,0 +1,8 @@
+{
+  "n_tokens": 512,
+  "n_embd_out": 2048,
+  "dtype": "fp16",
+  "window": 256,
+  "corpus": "/mnt/c/Projects/REV-N-ornith-eval-20260911/kernel-work/bench-corpus.txt",
+  "contract": "input=(h[k-1], tokens[k]) -> target=tokens[k+1]; h[-1]=0 per window"
+}

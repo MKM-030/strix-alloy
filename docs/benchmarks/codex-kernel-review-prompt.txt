@@ -1,0 +1,13 @@
+Read the context brief at docs/benchmarks/KERNEL-CONCEPT-CONTEXT-BRIEF-20260913.md in this workspace. You are a GPU-kernel and LLM-inference engineer reviewing a plan to speed up DECODE for Qwen3.8-Flash-Next (a qwen4exp MoE, ~6B active, 512 experts) on a Bosgame M5 (Ryzen AI Max+ 395, Radeon 8060S, gfx1151/RDNA3.5 wave32, 128GB LPDDR5X, ~200-240 GB/s) running under Windows 11 + WSL2 over /dev/dxg (no /dev/kfd, so no PM4/replay runtime).
+
+Produce a concise technical review:
+
+1. Rank the candidate strategies in section 6 (A..H) by expected decode gain per unit effort for THIS hardware. Justify each rank with rough arithmetic (bytes/token vs bandwidth, launch counts, etc.).
+
+2. Identify the single highest-value FIRST experiment and why.
+
+3. Call out anything in the brief that is technically wrong or over-optimistic.
+
+4. Name 2-3 kernel-level techniques we did NOT list that could matter for a 512-expert MoE at batch-1 decode on RDNA3.5 (e.g. expert-parallel handling, weight-layout/pre-transposition, persistent kernels, DP4A/WMMA packing, register pressure, LDS staging, async copies).
+
+Do not modify files. Output analysis as plain text.

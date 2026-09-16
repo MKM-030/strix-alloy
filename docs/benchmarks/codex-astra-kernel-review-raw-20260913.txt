@@ -1,0 +1,126 @@
+web search: https://www.amd.com/content/dam/amd/en/documents/radeon-tech-docs/instruction-set-architectures/rdna35_inst
+ruction_set_architecture.pdf
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+My ranking is A > E > F > G > D > C > H > B, with G moving above F if long-context KV reads dominate. These are 
+engineering priorities, not measured speedup predictions.
+Using the brief’s approximate 6B active parameters, 4.25-bit weights imply 3.19 GB/token, or 13–16 ms at 200–240 
+GB/s: a weight-only ceiling of roughly 63–75 tokens/s. Attention, recurrent state, dequantization, routing and PLE 
+add costs. The measured 6.97 tokens/s is 143 ms/token, so substantial time remains unexplained.
+1. A — Verify HIP graphs. Highest value per effort: a small capability test followed by a controlled model A/B. 
+Illustratively, 500 launches with 5–20 µs of exposed overhead cost 2.5–10 ms/token. Removing that saves 
+approximately 2–8% at 143 ms/token, or 7–35% at 38 ms/token. Larger gains require larger measured gaps. Missing 
+/dev/kfd rules out the custom replay path, but does not establish that ordinary HIP graphs fail over DXG. AMD 
+documents capture, instantiation and replay as separate runtime operations. [HIP 
+graphs](https://rocm.docs.amd.com/projects/HIP/en/latest/how-to/hip_runtime_api/hipgraph.html)
+2. E — Speculative decoding. Potentially the largest practical gain, with relatively little effort if MTP already 
+works. Speedup is accepted output tokens × serial-token latency / complete draft-and-verification latency. Four 
+outputs in twice the serial-token time give 2×. However, 512 experts weaken weight reuse: with illustrative top-k=8 
+and four independently routed tokens, the expected union is 512×[1−(1−8/512)^4] ≈31.3 experts, versus eight for 
+one token. Expert traffic can nearly quadruple. Measure drafting, verification and recurrent-state checkpoint costs; 
+acceptance alone is insufficient.
+3. F — PLE caching and prefetch. Moderate effort, potentially valuable for latency spikes. Random-read latency 
+matters more than total table size: 100 serialized misses at an illustrative 100 µs each cost 10 ms, whereas 
+transferring 1 MB from resident memory takes only about 5 µs at 200 GB/s. Measure actual misses first. Use a bounded 
+cache and overlap known row fetches with earlier computation; loading the whole 27–48 GiB table risks displacing 
+weights or exhausting memory.
+4. G — Q8 KV cache. Cheap if the exact attention kernels support it. Starting from FP16, approximately halving KV 
+traffic gives overall speedup 1/(1−f/2), where f is the fraction of time attributable to reducible KV traffic: 
+1.11× at f=20%, 1.33× at f=50%, before dequantization overhead. Hybrid recurrent layers and sparse attention reduce 
+the applicable fraction. Context capacity is not the same as bytes actually scanned.
+5. D — Fused MoE decode. Worth doing after profiling, but substantially more engineering than A–G. The companion 
+tensor inventory gives 2560×1280 gate/up plus 640×2560 down weights: 4.92M parameters, approximately 2.61 MB per 
+selected expert at IQ4_XS density. Eight selected experts would read about 20.9 MB/layer, taking 95 µs at 220 GB/s. 
+Saving ten exposed 10-µs launches could therefore matter considerably. Target a few fused stages; a single giant 
+kernel creates synchronization and occupancy problems.
+6. C — FP4 weights. The claimed 2× bandwidth gain is incorrect against IQ4_XS. Standard IQ4_XS is 4.25 bits/weight; 
+even hypothetical scale-free 4-bit storage saves only 5.9% of bytes. IQ4_NL is actually 4.5 bits/weight. Gains must 
+come from cheaper decoding, better layout or better kernel selection, with quantization-quality validation. Porting 
+aiter kernels also requires checking gfx1151 instruction and layout assumptions. [GGML block 
+definitions](https://github.com/ggml-org/llama.cpp/blob/master/ggml/src/ggml-common.h)
+7. H — Own fork. An implementation vehicle, not an independent speedup: zero bytes or launches saved by itself. Use 
+the existing fork for narrowly scoped experiments; do not count its gains separately from A/C/D.
+8. B — Recreate PM4 replay. Lowest expected return under the fixed DXG constraint. Checking standard retained 
+execution belongs in A. Recreating a Linux queue-submission mechanism across Windows GPU scheduling is a 
+runtime/driver project with no established achievable gain. Even success only removes the submission fraction of 
+latency.
+The single first experiment should be A: a graph-enabled versus graph-disabled, non-speculative decode comparison on 
+the same Flash-Next binary, quant, actual context length and warm PLE state.
+First establish that a tiny preallocated HIP graph can capture, instantiate, replay and produce correct results on 
+this runtime. Then verify that model execution actually reuses graphs across changing expert IDs and positions, rather 
+than falling back or recapturing each token. Record wall-clock ms/token, graph rebuild count, GPU execution gaps and 
+PLE wait time. Use supported tracing or lightweight timing; do not assume Linux hardware profiling works through DXG. 
+This experiment is inexpensive and distinguishes submission overhead from kernel execution and host stalls.
+Other corrections to the brief:
+- 92 GB/s of inferred MoE traffic does not prove launch limitation. Small scattered reads, poor occupancy, 
+dequantization and synchronization can all lower effective bandwidth.
+- “26 versus our 12” is not a PM4 A/B: the listed 12-token/s result is another model. Quant, context, speculation 
+and OS also differ elsewhere.
+- The supplied comparisons do not establish that prefill is generally fusion-bound.
+- D omits the down projection. A complete routed MLP needs gate/up, activation, down and weighted expert reduction. 
+Cross-workgroup dependencies prevent casually fusing everything into one ordinary kernel.
+- Target verification preserves the target distribution only with correct speculative sampling and state rollback. 
+MTP/DFlash2 labels and 100% observed acceptance do not prove either. [Exact speculative 
+decoding](https://arxiv.org/abs/2211.17192)
+- Pinned host memory need not be physically contiguous. The allocation failure alone does not establish physical 
+fragmentation as its cause.
+- The missing selected-expert count, layer breakdown and actual quantized tensor sizes prevent a precise bandwidth 
+model.
+Three additional kernel techniques deserve attention:
+1. Selected-expert × output-tile scheduling. Launch one grid over the selected experts and their output tiles, 
+keeping routing indices on-device. Avoid CPU dispatch per expert and unnecessary token sorting at batch-1. 
+Partitioning only by expert may leave most of the 40 CUs idle; partition within each expert too.
+2. Decode-specific weight packing. Prepack quant blocks, scales and gate/up rows for contiguous wave32 loads, with a 
+separate down-projection layout. Fuse unpacking into accumulation and avoid materializing dequantized weights. Compare 
+packed integer-dot paths against FP16/BF16 paths; nonlinear IQ codebooks require correct decoding.
+3. Register/occupancy-aware GEMV tiling. Tune waves per workgroup, accumulator count and optional split-K. Stage 
+reusable activation vectors in LDS where beneficial; weights generally have little batch-1 reuse. A 16-column WMMA 
+mapping with only one useful token column can waste 15/16 of its work, so WMMA needs a demonstrated packing advantage. 
+Check VGPR spills and LDS bank conflicts before adding persistence or deeper prefetching. [AMD WMMA 
+guidance](https://gpuopen.com/learn/wmma_on_rdna3/)
+hook: Stop
+hook: Stop Completed
+tokens used
+48,863
+My ranking is A > E > F > G > D > C > H > B, with G moving above F if long-context KV reads dominate. These are engineering priorities, not measured speedup predictions.
+
+Using the brief’s approximate 6B active parameters, 4.25-bit weights imply 3.19 GB/token, or 13–16 ms at 200–240 GB/s: a weight-only ceiling of roughly 63–75 tokens/s. Attention, recurrent state, dequantization, routing and PLE add costs. The measured 6.97 tokens/s is 143 ms/token, so substantial time remains unexplained.
+
+1. A — Verify HIP graphs. Highest value per effort: a small capability test followed by a controlled model A/B. Illustratively, 500 launches with 5–20 µs of exposed overhead cost 2.5–10 ms/token. Removing that saves approximately 2–8% at 143 ms/token, or 7–35% at 38 ms/token. Larger gains require larger measured gaps. Missing /dev/kfd rules out the custom replay path, but does not establish that ordinary HIP graphs fail over DXG. AMD documents capture, instantiation and replay as separate runtime operations. [HIP graphs](https://rocm.docs.amd.com/projects/HIP/en/latest/how-to/hip_runtime_api/hipgraph.html)
+
+2. E — Speculative decoding. Potentially the largest practical gain, with relatively little effort if MTP already works. Speedup is accepted output tokens × serial-token latency / complete draft-and-verification latency. Four outputs in twice the serial-token time give 2×. However, 512 experts weaken weight reuse: with illustrative top-k=8 and four independently routed tokens, the expected union is 512×[1−(1−8/512)^4] ≈31.3 experts, versus eight for one token. Expert traffic can nearly quadruple. Measure drafting, verification and recurrent-state checkpoint costs; acceptance alone is insufficient.
+
+3. F — PLE caching and prefetch. Moderate effort, potentially valuable for latency spikes. Random-read latency matters more than total table size: 100 serialized misses at an illustrative 100 µs each cost 10 ms, whereas transferring 1 MB from resident memory takes only about 5 µs at 200 GB/s. Measure actual misses first. Use a bounded cache and overlap known row fetches with earlier computation; loading the whole 27–48 GiB table risks displacing weights or exhausting memory.
+
+4. G — Q8 KV cache. Cheap if the exact attention kernels support it. Starting from FP16, approximately halving KV traffic gives overall speedup 1/(1−f/2), where f is the fraction of time attributable to reducible KV traffic: 1.11× at f=20%, 1.33× at f=50%, before dequantization overhead. Hybrid recurrent layers and sparse attention reduce the applicable fraction. Context capacity is not the same as bytes actually scanned.
+
+5. D — Fused MoE decode. Worth doing after profiling, but substantially more engineering than A–G. The companion tensor inventory gives 2560×1280 gate/up plus 640×2560 down weights: 4.92M parameters, approximately 2.61 MB per selected expert at IQ4_XS density. Eight selected experts would read about 20.9 MB/layer, taking 95 µs at 220 GB/s. Saving ten exposed 10-µs launches could therefore matter considerably. Target a few fused stages; a single giant kernel creates synchronization and occupancy problems.
+
+6. C — FP4 weights. The claimed 2× bandwidth gain is incorrect against IQ4_XS. Standard IQ4_XS is 4.25 bits/weight; even hypothetical scale-free 4-bit storage saves only 5.9% of bytes. IQ4_NL is actually 4.5 bits/weight. Gains must come from cheaper decoding, better layout or better kernel selection, with quantization-quality validation. Porting aiter kernels also requires checking gfx1151 instruction and layout assumptions. [GGML block definitions](https://github.com/ggml-org/llama.cpp/blob/master/ggml/src/ggml-common.h)
+
+7. H — Own fork. An implementation vehicle, not an independent speedup: zero bytes or launches saved by itself. Use the existing fork for narrowly scoped experiments; do not count its gains separately from A/C/D.
+
+8. B — Recreate PM4 replay. Lowest expected return under the fixed DXG constraint. Checking standard retained execution belongs in A. Recreating a Linux queue-submission mechanism across Windows GPU scheduling is a runtime/driver project with no established achievable gain. Even success only removes the submission fraction of latency.
+
+The single first experiment should be A: a graph-enabled versus graph-disabled, non-speculative decode comparison on the same Flash-Next binary, quant, actual context length and warm PLE state.
+
+First establish that a tiny preallocated HIP graph can capture, instantiate, replay and produce correct results on this runtime. Then verify that model execution actually reuses graphs across changing expert IDs and positions, rather than falling back or recapturing each token. Record wall-clock ms/token, graph rebuild count, GPU execution gaps and PLE wait time. Use supported tracing or lightweight timing; do not assume Linux hardware profiling works through DXG. This experiment is inexpensive and distinguishes submission overhead from kernel execution and host stalls.
+
+Other corrections to the brief:
+
+- 92 GB/s of inferred MoE traffic does not prove launch limitation. Small scattered reads, poor occupancy, dequantization and synchronization can all lower effective bandwidth.
+- “26 versus our 12” is not a PM4 A/B: the listed 12-token/s result is another model. Quant, context, speculation and OS also differ elsewhere.
+- The supplied comparisons do not establish that prefill is generally fusion-bound.
+- D omits the down projection. A complete routed MLP needs gate/up, activation, down and weighted expert reduction. Cross-workgroup dependencies prevent casually fusing everything into one ordinary kernel.
+- Target verification preserves the target distribution only with correct speculative sampling and state rollback. MTP/DFlash2 labels and 100% observed acceptance do not prove either. [Exact speculative decoding](https://arxiv.org/abs/2211.17192)
+- Pinned host memory need not be physically contiguous. The allocation failure alone does not establish physical fragmentation as its cause.
+- The missing selected-expert count, layer breakdown and actual quantized tensor sizes prevent a precise bandwidth model.
+
+Three additional kernel techniques deserve attention:
+
+1. Selected-expert × output-tile scheduling. Launch one grid over the selected experts and their output tiles, keeping routing indices on-device. Avoid CPU dispatch per expert and unnecessary token sorting at batch-1. Partitioning only by expert may leave most of the 40 CUs idle; partition within each expert too.
+
+2. Decode-specific weight packing. Prepack quant blocks, scales and gate/up rows for contiguous wave32 loads, with a separate down-projection layout. Fuse unpacking into accumulation and avoid materializing dequantized weights. Compare packed integer-dot paths against FP16/BF16 paths; nonlinear IQ codebooks require correct decoding.
+
+3. Register/occupancy-aware GEMV tiling. Tune waves per workgroup, accumulator count and optional split-K. Stage reusable activation vectors in LDS where beneficial; weights generally have little batch-1 reuse. A 16-column WMMA mapping with only one useful token column can waste 15/16 of its work, so WMMA needs a demonstrated packing advantage. Check VGPR spills and LDS bank conflicts before adding persistence or deeper prefetching. [AMD WMMA guidance](https://gpuopen.com/learn/wmma_on_rdna3/)

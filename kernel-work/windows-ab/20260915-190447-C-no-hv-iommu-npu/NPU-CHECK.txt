@@ -1,0 +1,14 @@
+﻿NPU preservation check -- label C-no-hv-iommu at 2026-09-15T19:04:49.5150304+02:00
+HypervisorPresent = True
+
+Devices found: 3
+  [OK] USB Input Device  (problem=CM_PROB_NONE)
+  [OK] USB Input Device  (problem=CM_PROB_NONE)
+  [OK] NPU Compute Accelerator Device  (problem=CM_PROB_NONE)
+
+
+SCOPE LIMIT: this proves device/driver presence and health, NOT NPU execution.
+No NPU inference runtime (FLM/FastFlowLM) is installed on this box, so execution
+cannot be demonstrated here. A healthy device is a NECESSARY but not SUFFICIENT gate.
+
+Compare against the pre-change baseline before accepting a boot arm.

@@ -1,0 +1,11 @@
+﻿Interpretation:
+- HypervisorPresent=False is the necessary runtime check for the no-hypervisor arm.
+- VBS status: 0=not enabled, 1=configured but not running, 2=running.
+- SecurityServicesRunning contains 2 when HVCI is running; it is an array, not a scalar status.
+- AvailableSecurityProperties contains 3 when DMA protection capability is reported, not necessarily active.
+- Kernel DMA Protection Off does not establish that every device is unremapped.
+- BCD values show configuration, not proof of the 8060S's effective DMA domain.
+- Registry/security policy is shared across boot entries; do not change it for a supposedly boot-local A/B.
+- Check DeviceGuard Locked/Mandatory and applicable management policies before any boot experiment.
+- Prove NPU preservation with a known-good native NPU workload and provider/device evidence; PnP presence alone is insufficient.
+- Do not collect this snapshot inside a timed inference interval.

@@ -1,0 +1,78 @@
+[
+    "[ub2048] n=8192 rep=0 prefill=363.6 t/s decode=22.21 t/s acc=53/134",
+    "[ub2048] n=8192 rep=1 prefill=597.2 t/s decode=27.13 t/s acc=53/134",
+    "[ub2048] n=8192 rep=2 prefill=779.1 t/s decode=27.34 t/s acc=53/134",
+    "[ub2048] n=8192 rep=3 prefill=784.5 t/s decode=27.07 t/s acc=53/134",
+    {
+        "ub":  2048,
+        "loads":  true,
+        "gen_ok":  true,
+        "note":  null,
+        "rows":  [
+                     {
+                         "prompt_n":  8192,
+                         "prompt_ms":  22527.213,
+                         "prefill_tps":  363.64906746342746,
+                         "predicted_n":  121,
+                         "predicted_ms":  5402.849,
+                         "decode_tps":  22.210504124768246,
+                         "draft_n":  134,
+                         "draft_n_accepted":  53,
+                         "target_n":  8192,
+                         "rep":  0
+                     },
+                     {
+                         "prompt_n":  8192,
+                         "prompt_ms":  13716.21,
+                         "prefill_tps":  597.2495317584085,
+                         "predicted_n":  121,
+                         "predicted_ms":  4423.95,
+                         "decode_tps":  27.125080527582817,
+                         "draft_n":  134,
+                         "draft_n_accepted":  53,
+                         "target_n":  8192,
+                         "rep":  1
+                     },
+                     {
+                         "prompt_n":  8192,
+                         "prompt_ms":  10514.901,
+                         "prefill_tps":  779.0848434997154,
+                         "predicted_n":  121,
+                         "predicted_ms":  4389.253,
+                         "decode_tps":  27.339504011274812,
+                         "draft_n":  134,
+                         "draft_n_accepted":  53,
+                         "target_n":  8192,
+                         "rep":  2
+                     },
+                     {
+                         "prompt_n":  8192,
+                         "prompt_ms":  10441.947,
+                         "prefill_tps":  784.5280195350541,
+                         "predicted_n":  121,
+                         "predicted_ms":  4433.365,
+                         "decode_tps":  27.067475833819234,
+                         "draft_n":  134,
+                         "draft_n_accepted":  53,
+                         "target_n":  8192,
+                         "rep":  3
+                     }
+                 ]
+    },
+    "[ub8192] LOAD FAILED exit=",
+    {
+        "ub":  8192,
+        "loads":  false,
+        "gen_ok":  false,
+        "note":  ""
+    },
+    "[ub16384] LOAD FAILED exit=",
+    "      | 0.11.383.611 E ggml_backend_cuda_buffer_type_alloc_buffer: allocating 67591.54 MiB on device 0: cudaMalloc failed: out of memory",
+    "      | 0.11.384.390 E alloc_tensor_range: failed to allocate ROCm0 buffer of size 70874867968",
+    {
+        "ub":  16384,
+        "loads":  false,
+        "gen_ok":  false,
+        "note":  "0.11.383.611 E ggml_backend_cuda_buffer_type_alloc_buffer: allocating 67591.54 MiB on device 0: cudaMalloc failed: out of memory\r | 0.11.384.390 E alloc_tensor_range: failed to allocate ROCm0 buffer of size 70874867968\r"
+    }
+]
