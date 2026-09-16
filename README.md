@@ -66,20 +66,15 @@ comes from a different operating point.** We tested his exact flags on our engin
 | ours: `n-max 2, p-min 0.0` | **33.1 t/s** | 65% |
 | his: `n-max 4, p-min 0.75` | 26.4 t/s | **96%** |
 
-His acceptance reproduces here; **his throughput does not** — the higher `n-max` costs a 5-row verify
-every round for drafts the `p-min` gate usually discards. Full audit and the
-what-we-should-learn section: `docs/benchmarks/engine-comparison-vs-olliehm-20260916.md`.
-
-Negatives on our side (see the investigation section): our **177B claim was wrong** (it is ~125B plus a
-51B table) and our **"only Windows-native stack" claim was wrong** (his came first on decode).
+Full audit and the what-we-should-learn section: `docs/benchmarks/engine-comparison-vs-olliehm-20260916.md`.
 
 Two things in his repo matter more than any single number, and we say so plainly:
 
-- **His correctness gates.** He gates on *sequence-level* validation — single-turn, multi-turn, depth
+- **olliehm correctness gates.** He gates on *sequence-level* validation — single-turn, multi-turn, depth
   bands, needle retrieval — and warns that **MTP on HIP can show 2× tok/s while emitting collapsed
   text**. We hit variants of exactly this from the other direction. Speed-only benchmarking on this
   stack is not trustworthy, in either repo.
-- **His deployment work.** A Lemonade recipe and an admission shim letting several instances share one
+- **olliehm deployment work.** A Lemonade recipe and an admission shim letting several instances share one
   carve — infrastructure we do not have.
 
 ---
