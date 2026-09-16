@@ -27,7 +27,8 @@ context      251,904 tokens    works end to end, no OOM
 
 The Strix Halo local-inference scene is Linux-first. The fastest published stacks — **Halogen** and
 **Chlorine** — require a native Linux host, and the reference HIP fork is built for Linux. Windows users
-have been told, correctly, that they give up throughput.
+have been told, correctly, that they give up throughput. While I was able to build a bridge and make the halogen engine usable under WSL, 
+only the qwen 3.8 27b model was fitting into the 96 gb. I will continue this development in a different project and eventually release with a different flash-next quant.
 
 Two stacks now run this model natively on Windows: **olliehm's** (published first) and `strix-alloy`.
 Neither is a fork of the other — we share an upstream ancestor and diverge after that. Our case is
