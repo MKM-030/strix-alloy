@@ -211,10 +211,13 @@ RDNA3.0 parameter table (**−21%**), MMVF prefetch (−0.9%), `rpb` 1→2 (+0.3
 
 Two more from the sibling forks, ported and measured rather than assumed:
 
-- **`halo-box`'s `MMID_512`** (512-expert/10-active MoE routing in one block instead of 512 warp blocks):
-  **−0.2% decode**. Our HIP graph already removes the launch overhead it targets — if 48 calls × 512 launches
-  were exposed it would cost ~123 ms/token, and we measured zero. Coverage was probe-verified first, so the
-  negative is real and not a guard mismatch.
+- **`halo-box`'s `MMID_512`** (MoE expert routing placed by a block-wide histogram instead of one warp per
+  expert): ported and built, but **it cannot affect decode on this engine**. A probe counting calls by token
+  width, run against a 200-token decode, recorded **one call total — prefill, zero at `n_tokens==1`**. The
+  helper is reached only from the large-batch paths (`mmb.cu` at `T ≥ 512`, `mmq.cu`, `mmf.cu`); serial decode
+  takes MMVF/MMVQ. So "−0.2% decode" measured a path decode never executes; the honest status is *neutral and
+  unexercised in decode*, and the earlier "HIP graphs absorb the launch overhead" explanation was wrong too
+  (a 512-block grid is one launch, not 512).
 - **The rest of `halo-box`'s HIP set is deprioritised, not disproved**: `MMV_GROUP` is Q8_0-only as implemented,
   and a GGUF census shows this model is IQ4_NL for every expert and attention tensor (only two HC projections and
   `ple_key` are Q8_0) — but the fused matvec prologues **do** contain an IQ4_NL path behind a default-off gate
@@ -303,10 +306,10 @@ Consequently these are **UNVERIFIED from this repository alone**:
 | Item | Status |
 | --- | --- |
 | The exact engine source behind the headline binary | **BLOCKED** — not published; no engine hash here lets you rebuild it |
-| Whether `MMID_512` executes in the timed decode phase | **UNVERIFIED** — startup shape coverage was shown; per-phase/graph coverage was not |
+| Whether `MMID_512` executes in the timed decode phase | **RESOLVED — it does not.** Probe: 1 call total in a 200-token decode, all prefill; decode takes MMVF/MMVQ |
 | Whether the allocation probe reflects *resident* GPU capacity | **UNVERIFIED** — it shows an allocation-acceptance boundary for one process state, not residency or usable bandwidth |
-| The token stream `llama-bench` feeds on Windows | **UNVERIFIED** — `std::rand() % n_vocab` with the MS CRT's `RAND_MAX = 32767` selects only the first ~13% of a 248k vocab; not confirmed on our binary |
-| Why `llama-bench` and the server differ (~4–17%) | **UNRESOLVED** — not a controlled comparison; see `docs/benchmarks/canonical-llama-bench-20260916.md` |
+| The token stream `llama-bench` feeds on Windows | **CONFIRMED** — with UCRT `RAND_MAX = 32767`, `rand() % n_vocab` reaches only 13.2% of a 248k vocab (`rand-check.c`). Workload-identity defect; throughput impact measured at 0–1.4% |
+| Why `llama-bench` and the server differ (~4–17%) | **UNRESOLVED, not separable from server spread** — the same construction measured 876 and 952 t/s in two sessions; needs the same stored token array through both entry points |
 | Cause of the prefill gap vs ilintar | **UNRESOLVED** — and **not** retained-PM4, which their own page says does not engage on prefill |
 | Whole-buffer demotion in the small-carve experiment | **UNRESOLVED** — the slowdown is real and reproduced; the mechanism is inferred, not observed |
 | Multi-turn / depth-band / retrieval correctness | **NOT DONE** — see the future plan; drive-level validation is olliehm's, not ours |

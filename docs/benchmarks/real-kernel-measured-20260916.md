@@ -100,11 +100,22 @@ closed.**
 > **(b) The cost is per-OP, not per-block.** Holding total bytes AND total blocks fixed at 3.32 MB /
 > 4096 blocks:
 >
-> | decomposition | total ms | GB/s |
-> | --- | ---: | ---: |
-> | 1 op, R=4096 | **0.034** | **172.5** |
-> | 8 ops, R=512 | 0.064 | 51.9 |
-> | 16 ops, R=256 | 0.112 | 29.6 |
+> | decomposition | total ms | GB/s | recomputed from 3.32 MB |
+> | --- | ---: | ---: | ---: |
+> | 1 op, R=4096 | **0.034** | **172.5** | **97.6** |
+> | 8 ops, R=512 | 0.064 | 51.9 | 51.9 ✓ |
+> | 16 ops, R=256 | 0.112 | 29.6 | 29.6 ✓ |
+>
+> **Arithmetic correction, flagged by external review.** Rows 2 and 3 are exactly consistent with a fixed
+> 3.32 MB total (3.32e6/0.064e-3 = 51.9 GB/s; /0.112e-3 = 29.6 GB/s). Row 1 is not: 3.32 MB over 0.034 ms is
+> **97.6 GB/s, not 172.5**. Either that row's byte count, its time, or the printed rate is wrong, and I no
+> longer hold the raw output to tell which — 172.5 GB/s over 0.034 ms implies 5.86 MB, and the harness computes
+> `w_bytes = K*R*18/32` per op, so a per-op-vs-total mix-up in that single row is the likely cause. **Treat
+> row 1's rate as unverified.**
+>
+> The conclusion is robust to the correction: even at 97.6 GB/s, one op of R=4096 still beats 8 ops of R=512
+> (51.9) and 16 ops of R=256 (29.6), and that ordering is what the argument rests on — and rows 2 and 3, which
+> carry the ordering, are internally consistent.
 >
 > Identical block count, 1.8× and 3.3× slowdown purely from splitting into more kernels. So each
 > `MUL_MAT` pays a **~5 µs GPU-side ramp that amortizes only within its own kernel** — a linear fit over

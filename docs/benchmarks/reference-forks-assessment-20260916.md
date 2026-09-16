@@ -221,50 +221,51 @@ tree.
 **All four sit in one commit: `6130b7262` "hip: optimize RDNA3.5 MoE inference paths"** (Gaetan Puleo,
 2026-09-04) — 26 files, +3141/−214. The bulk is `mmvq.cu` (+1456) and `ggml-cuda.cu` (+649).
 
-### Result: ported and measured — MMID_512 is a true negative, and the HIP set is mostly gate-blocked
+### Result: MMID_512 was ported and measured — and it turns out decode never runs it
 
-**`MMID_512` ported (58 lines) and measured: −0.2% decode, +0.1% prefill, output byte-identical.** Committed as
-`135ade1f`. The shape is real: for decode `n_tokens=1`, so the generic path has to place 10 expert slots across a
-grid sized by `n_experts`=512, with one warp per block, 48 times per token; the fast path does the same placement
-in one 1024-thread block using a histogram plus a 512-entry prefix sum.
+**MMID_512 ported (58 lines), built, and A/B'd: −0.2% "decode", +0.1% prefill, output byte-identical.**
+Committed as `135ade1f`. The shape is real: for a MoE batch the generic path has to place `n_expert_used`=10
+expert slots across a grid sized by `n_experts`=512 with one warp per block, while the fast path does the same
+placement in one 1024-thread block via a histogram plus a 512-entry prefix sum.
 
-**Correction — the launch-cost explanation I first published was wrong, and the reviewer caught it.** I wrote
-that the generic path issues "512 kernel launches" per call and that HIP graphs absorb them. It does not: a
-`dim3 num_blocks(n_experts, 1, 1)` kernel is **one kernel launch with a 512-block grid**. Thread blocks are not
-kernel launches. So my `48 × 512 × 5 µs ≈ 123 ms/token` figure was invalid, and "the graph already removes that
-overhead" was explaining the wrong thing.
+**Correction 1 — I published two wrong explanations for it, both caught by external review.**
 
-What the measurement actually licenses is narrower, and it is still a negative:
+First I wrote that the generic path issues "512 kernel launches" per call and that HIP graphs absorb them. It
+does not: `dim3 num_blocks(n_experts, 1, 1)` is **one kernel launch with a 512-block grid**. Thread blocks are
+not launches, so the `48 × 512 × 5 µs ≈ 123 ms/token` figure was invented, and "the graph removed that
+overhead" explained nothing.
 
-> **MMID_512 showed no gain in this tested configuration** (−0.2% decode, within noise), with byte-identical
-> output so the maps it builds are correct.
+**Correction 2 — and this is the substantive one: the kernel does not execute during decode at all.**
+My coverage evidence was a single startup print showing a matching *shape*. A reviewer pointed out that this
+says nothing about which phase ran it. So I built a probe that counts calls by token width and ran it against a
+**200-token decode**:
 
-The reason it does not help is the same reason all the fuse-and-group work measures flat here, but stated
-correctly: **a 512-block grid of 1-warp blocks is already cheap to schedule on this GPU** — that is a grid-size
-question, not a dispatch question — and the fast path trades it for a serial 512-iteration prefix sum in thread 0
-plus a block-wide histogram. Both are plausible wins; neither showed up.
+```
+MMID512-PHASE calls=1  decode(n_tokens==1)=0  prefill(n_tokens>=128)=1  other=0  shape_ok=1 enabled=1
+```
 
-**Coverage is also weaker than I claimed.** The probe proved a matching shape reached the helper *somewhere*
-during startup, not that serial decode exercised it in the timed phase. The parent backend has direct small-width
-MMVQ paths for quantized `MUL_MAT_ID` that could take decode instead. So the honest status is: **the negative
-applies to the configurations tested, and decode-phase coverage is unverified.** Establishing it needs
-per-phase, per-graph coverage, not a startup print.
+**One call in the entire run, and it was prefill.** The callers confirm it: `ggml_cuda_launch_mm_ids_helper`
+is reached only from `mmb.cu` (their large-batch kernels, `T ≥ 512`), `mmq.cu` and `mmf.cu` — the large-batch
+paths. Serial decode takes `MMVF`/`MMVQ` instead (`ggml_cuda_should_use_mmvf`, `dst->ne[2] == 1`).
 
-**The applicability gates, checked against the model.** This part holds, but "cannot apply" was too strong —
-these are *implemented but disabled*, which is a weaker statement than *absent*:
+**Therefore the "−0.2% decode" figure measured a code path that decode never executes.** The honest statement
+is narrower and different in kind:
 
-| lever | gate | status for us |
-| --- | --- | --- |
-| `MMV_GROUP` | `ggml_cuda_mmv_group_seg_ok` returns true **only for `GGML_TYPE_Q8_0`** (`mmvq.cu:2212-2215`) | unsupported **as implemented**; would need IQ4_NL support written |
-| `GDN_GATE`, `fq_prologue` | `mmvq_fq_type_ok` accepts Q8_0/Q6_K; IQ4_NL returns `MMVQ_FQ_IQ_TYPES`, **defaulting to `false`** (`mmvq.cu:1553`) | **IQ4_NL is implemented in the code path**, gated off and unvalidated — a candidate, not a closed door |
-| `WEIGHTED_DOWN` | accepts IQ4_NL explicitly (`mmvq.cu:3171`) | applicable; low expected value (below) |
+> MMID_512 **cannot affect serial decode** on this engine — it is a prefill/large-batch path. The measured
+> prefill result (+0.1%) is within noise, so on this engine the port is **neutral and unexercised in decode**,
+> not "a decode negative".
 
-The dtype census is still the reason to deprioritise: a GGUF census of our 9 PROJFIX shards shows **every expert
-and attention tensor is IQ4_NL** (`ffn_gate_exps`, `ffn_up_exps`, `ffn_down_exps`, `attn_qkv`, `attn_gate`,
-`ssm_out`, every HC projection); only two HC projections and `ple_key` are Q8_0. That rules out the *Q8_0-only*
-levers on the target, but it does **not** rule out the IQ-gated fused paths, and it says nothing about the
-**draft side**, which is a separate dtype population (the MTP head is Q8_0). Both corrections are owed to the
-reviewer.
+This also invalidates the generalisation I drew from it — that fuse-and-group work "keeps measuring
+neutral-to-negative here". One of the data points for that claim was measuring the wrong phase. The claim may
+still hold, but it now rests on fewer, and unrelated, experiments.
+
+**The applicability gates, checked against the model.** `MMV_GROUP` is Q8_0-only *as implemented*; the fused
+matvec prologues contain an IQ4_NL path behind a default-off gate (`MMVQ_FQ_IQ_TYPES`), so they are an untested
+candidate rather than a closed door. The dtype census still deprioritises the Q8_0-only levers on the target: a
+GGUF census of our 9 PROJFIX shards shows **every expert and attention tensor is IQ4_NL**
+(`ffn_gate_exps`, `ffn_up_exps`, `ffn_down_exps`, `attn_qkv`, `attn_gate`, `ssm_out`, every HC projection); only
+two HC projections and `ple_key` are Q8_0. That says nothing about the **draft side**, which is a separate dtype
+population (the MTP head is Q8_0).
 
 **`WEIGHTED_DOWN` is applicable, and I overstated its dismissal.** It fuses the IQ4_NL routed down projection
 with the 10-expert weighted sum, removing a `[n_embd, n_used]` f32 intermediate (2560 × 10 × 4 B = 100 KB/layer,
