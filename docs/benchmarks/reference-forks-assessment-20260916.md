@@ -221,52 +221,75 @@ tree.
 **All four sit in one commit: `6130b7262` "hip: optimize RDNA3.5 MoE inference paths"** (Gaetan Puleo,
 2026-09-04) — 26 files, +3141/−214. The bulk is `mmvq.cu` (+1456) and `ggml-cuda.cu` (+649).
 
-### Result: ported and measured — MMID_512 is a true negative, and the rest cannot apply
+### Result: ported and measured — MMID_512 is a true negative, and the HIP set is mostly gate-blocked
 
 **`MMID_512` ported (58 lines) and measured: −0.2% decode, +0.1% prefill, output byte-identical.** Committed as
-`135ade1f`. For decode `n_tokens=1`, so the generic path launches `n_experts`=512 single-warp blocks to place 10
-expert slots, 48 times per token; the fast path does it in one 1024-thread block. That sounds like an obvious
-win, so before trusting the negative I proved the fast path **actually fires** with a temporary coverage probe:
-`MMID512-COVERAGE hit: cc=16781649 n_experts=512 n_expert_used=10` — the RDNA3.5 ID, our exact shape. A guard
-mismatch would have made this a false negative (the mistake I made earlier with the `rpb` patch).
+`135ade1f`. The shape is real: for decode `n_tokens=1`, so the generic path has to place 10 expert slots across a
+grid sized by `n_experts`=512, with one warp per block, 48 times per token; the fast path does the same placement
+in one 1024-thread block using a histogram plus a 512-entry prefix sum.
 
-**Why it cannot win here: HIP graphs already remove the launch overhead this kernel targets.** If 48 calls × 512
-launches were exposed, at 5 µs each they would cost ~123 ms/token — we measured *zero*. Our HIP-graph build
-(worth ~65 ms/token) has already amortized them. The kernel also adds a serial 512-iteration prefix sum in
-thread 0. Kept behind `GGML_CUDA_DISABLE_MMID_512` so the negative stays reproducible.
+**Correction — the launch-cost explanation I first published was wrong, and the reviewer caught it.** I wrote
+that the generic path issues "512 kernel launches" per call and that HIP graphs absorb them. It does not: a
+`dim3 num_blocks(n_experts, 1, 1)` kernel is **one kernel launch with a 512-block grid**. Thread blocks are not
+kernel launches. So my `48 × 512 × 5 µs ≈ 123 ms/token` figure was invalid, and "the graph already removes that
+overhead" was explaining the wrong thing.
 
-**The other three levers are Q8_0/Q6_K-only, and our model is IQ4_NL.** This is not a preference, it is a hard
-gate in their code:
+What the measurement actually licenses is narrower, and it is still a negative:
 
-| lever | gate | applies? |
+> **MMID_512 showed no gain in this tested configuration** (−0.2% decode, within noise), with byte-identical
+> output so the maps it builds are correct.
+
+The reason it does not help is the same reason all the fuse-and-group work measures flat here, but stated
+correctly: **a 512-block grid of 1-warp blocks is already cheap to schedule on this GPU** — that is a grid-size
+question, not a dispatch question — and the fast path trades it for a serial 512-iteration prefix sum in thread 0
+plus a block-wide histogram. Both are plausible wins; neither showed up.
+
+**Coverage is also weaker than I claimed.** The probe proved a matching shape reached the helper *somewhere*
+during startup, not that serial decode exercised it in the timed phase. The parent backend has direct small-width
+MMVQ paths for quantized `MUL_MAT_ID` that could take decode instead. So the honest status is: **the negative
+applies to the configurations tested, and decode-phase coverage is unverified.** Establishing it needs
+per-phase, per-graph coverage, not a startup print.
+
+**The applicability gates, checked against the model.** This part holds, but "cannot apply" was too strong —
+these are *implemented but disabled*, which is a weaker statement than *absent*:
+
+| lever | gate | status for us |
 | --- | --- | --- |
-| `MMV_GROUP` | `ggml_cuda_mmv_group_seg_ok` returns true **only for `GGML_TYPE_Q8_0`** (`mmvq.cu:2212-2215`) | **no** |
-| `GDN_GATE`, `fq_prologue` | `mmvq_fq_type_ok` accepts Q8_0/Q6_K; IQ4_NL returns `MMVQ_FQ_IQ_TYPES`, which **defaults to `false`** (`mmvq.cu:1553`) | **no** |
-| `WEIGHTED_DOWN` | `experts->src[0]->type != IQ4_NL && != Q8_0` → rejects; **IQ4_NL explicitly supported** (`mmvq.cu:3171`) | yes |
+| `MMV_GROUP` | `ggml_cuda_mmv_group_seg_ok` returns true **only for `GGML_TYPE_Q8_0`** (`mmvq.cu:2212-2215`) | unsupported **as implemented**; would need IQ4_NL support written |
+| `GDN_GATE`, `fq_prologue` | `mmvq_fq_type_ok` accepts Q8_0/Q6_K; IQ4_NL returns `MMVQ_FQ_IQ_TYPES`, **defaulting to `false`** (`mmvq.cu:1553`) | **IQ4_NL is implemented in the code path**, gated off and unvalidated — a candidate, not a closed door |
+| `WEIGHTED_DOWN` | accepts IQ4_NL explicitly (`mmvq.cu:3171`) | applicable; low expected value (below) |
 
-I verified the gate against the model itself rather than assuming: a GGUF census of our 9 PROJFIX shards shows
-**every expert and attention tensor is IQ4_NL** (`ffn_gate_exps`, `ffn_up_exps`, `ffn_down_exps`, `attn_qkv`,
-`attn_gate`, `ssm_out`, all HC projections). Only two HC projections and `ple_key` are Q8_0. So the Q8_0-gated
-levers would fire on a tiny fraction of tensors, not on the 32% expert share.
+The dtype census is still the reason to deprioritise: a GGUF census of our 9 PROJFIX shards shows **every expert
+and attention tensor is IQ4_NL** (`ffn_gate_exps`, `ffn_up_exps`, `ffn_down_exps`, `attn_qkv`, `attn_gate`,
+`ssm_out`, every HC projection); only two HC projections and `ple_key` are Q8_0. That rules out the *Q8_0-only*
+levers on the target, but it does **not** rule out the IQ-gated fused paths, and it says nothing about the
+**draft side**, which is a separate dtype population (the MTP head is Q8_0). Both corrections are owed to the
+reviewer.
 
-**`WEIGHTED_DOWN` is the one remaining applicable lever, and its ceiling is small.** It fuses the IQ4_NL routed
-down projection with the 10-expert weighted sum, removing a `[n_embd, n_used]` f32 intermediate
-(2560 × 10 × 4 B = 100 KB/layer, 200 KB written+read). Over 48 layers that is ~9.8 MB/token ≈ **0.23% of the
-4.219 GB/token decode budget**, or ~0.07 ms of 33 ms. It also needs two device helpers absent from our tree
-(`mmvq_hc_mul_rn`/`mmvq_hc_add_rn`), and the fusion matcher in `ggml-cuda.cu` is ~100 lines of graph-pattern
-matching. Given a ~0.2% ceiling, it is a poor use of the next cycle.
+**`WEIGHTED_DOWN` is applicable, and I overstated its dismissal.** It fuses the IQ4_NL routed down projection
+with the 10-expert weighted sum, removing a `[n_embd, n_used]` f32 intermediate (2560 × 10 × 4 B = 100 KB/layer,
+200 KB written+read). Over 48 layers that is ~9.8 MB/token ≈ **0.23% of the 4.219 GB/token decode estimate**,
+about 0.07 ms of 33 ms.
 
-**Conclusion: the halo-box HIP set does not transfer by porting.** Its kernel does not help (launch overhead
-already gone), and its other three levers target weight formats we do not use. That is a negative about
-*applicability*, not about the work's quality — on a Q8_0-family quant (which is what their own reference
-deployment used, `UD-IQ4_XS` for the target with **Q8_0 experts** in the MTP head) it presumably does help.
+**But 0.23% is the avoided *bytes*, not a hard runtime ceiling.** A fusion can also remove elementwise work,
+reductions, materialisation and execution dependencies, while the intermediate may in fact be cache-resident, or
+the fused kernel may hurt occupancy. Correct framing: **a low-priority candidate with a likely small but
+unmeasured effect.** It needs two device helpers absent from our tree (`mmvq_hc_mul_rn`/`mmvq_hc_add_rn`) plus
+~100 lines of graph-pattern matching in `ggml-cuda.cu`, so it should be tried only after the harness is
+trustworthy and with exact graph-pattern coverage and a numerical check — not dismissed as "disproved", and not
+prioritised on a 0.2% model either.
 
-**Broader lesson:** our closed-negative list and theirs were both attacking *launch and fusion* overhead. Our
-engine already pays almost none of that, because the HIP graph absorbs it. The remaining decode cost is the
-4.219 GB/token of *actual bytes moved*, which no amount of fusion removes. That is why fuse-and-group kernels
-keep measuring neutral-to-negative here, and why the productive levers are quant choice and bandwidth, not
-dispatch.
+**Conclusion, restated correctly: the halo-box HIP set did not transfer in the configurations tested.** The one
+kernel ported shows no gain; the others are either Q8_0-only on the target or implemented-but-gated for IQ4_NL
+and therefore untested. That is a statement about *our measurement coverage*, not proof about their work — on a
+Q8_0-family quant it may well help.
 
+**Broader lesson, corrected.** My earlier version of this paragraph said the graph "absorbs launch overhead" and
+that only bytes remain. The first half was wrong (thread blocks are not launches) and the second half was too
+tidy: fusion can remove real work that is *not* weight traffic. What the evidence supports is narrower — our
+fuse-and-group attempts have measured neutral-to-negative, our byte estimate is a model rather than a bus
+measurement (§ decoder notes), and the levers with a *demonstrated* effect here have been quant choice and
+weight bandwidth, not dispatch.
 
 ---
 
@@ -280,27 +303,39 @@ two items map directly onto open problems:
 | **shared-MTP fit fix** | `common/fit.h:17-28` adds `common_fit_extra_model` with `shares_model` and **`path_model_shared`**; during the no-alloc probe the compact sidecar receives a **metadata-only view of its target** so omitted shared tensors resolve without counting target weights twice | **Directly fixes our B1 blocker.** We hit `qwen4exp requires ctx_other to be set` and had to fall back to `--fit off`; `--fit off` disables auto-fitting. This is the missing upstream guard (upstream PR 27941 / commit `2fb989b9e7`) |
 | **`--spec-draft-adaptive`** | per-sequence **acceptance EMA** (`acc_ema_alpha 0.25`, `acc_ema_init 2.0`, `acc_ema_probe 1.0`) sizes each draft just above the measured acceptance; clean drafts are treated as **censored** and probed upward | **Ported and measured — a negative on this engine** (below) |
 
-### `--spec-draft-adaptive`: ported and measured — a true negative, and it explains our MTP "instability"
+### `--spec-draft-adaptive`: ported and measured — a regression in this test, with two honest caveats
 
 **Ported (71 lines) behind an off-by-default flag, committed as `cbb48a7d`.** The controller provably works:
 draft counts scale as designed (n_max=2 → 402/555/398 drafts across chat/corpus-1024/corpus-8192; n_max=4 →
 533/880/980; adaptive → 504/621/631, always landing between the two fixed values).
 
-It still loses to the better fixed value on **every** content class (shared MTP head, `p-min 0.0`, gen 192, best
-of 3):
+**Caveat 1 — the numbers below were originally reported as *best of 3*, and the summary had a bug.**
+`fnbench.py` tagged chat rows `kind="chat"` but **not** corpus rows, so the adaptive script's
+`kind -eq 'corpus'` filter dropped every corpus row; and the script took `$d[-1]` (the largest) rather than a
+median. Both are fixed in `adaptive-draft-ab.ps1` and `fnbench.py` now tags corpus rows. **The figures below have
+not been re-measured with the fixed script**, so treat them as directional, and treat a re-run as the way to
+confirm them.
 
-| content | n_max=2 | n_max=4 | adaptive | adaptive vs best fixed |
-| --- | ---: | ---: | ---: | ---: |
-| chat (prose) | 46.53 | **51.21** | 48.81 | **−4.7%** |
-| corpus 1024 | **33.98** | 30.13 | 30.71 | **−9.6%** |
-| corpus 8192 | **27.39** | 25.74 | 25.09 | **−8.4%** |
+**Caveat 2 — "best fixed" was a per-content oracle, which is not deployable.** The right comparison depends on the
+question: an oracle that knows the winning depth in advance is an upper bound no deployment can reach, while the
+*deployable* baseline is one fixed setting for all content. The measured picture:
 
-**Why, and this is the interesting part: the optimum draft depth is content-dependent here, which is exactly
-the problem the controller was built for — but its control law assumes deeper always pays.** Chat prefers
-n_max=4, corpus prefers n_max=2. The "full accept → probe deeper" rule walks the length up whenever drafts are
-clean; on corpus that is precisely when deeper drafting is *most* wasteful (58–67% of drafted tokens are
-discarded at n4), so the probe marches into a strictly slower region. A controller that **measured whether depth
-pays**, rather than assuming it, would be needed. Left off by default.
+| content | n_max=2 | n_max=4 | adaptive | adaptive vs oracle | adaptive vs n_max 2 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| chat (prose) | 46.53 | **51.21** | 48.81 | −4.7% | **+4.9%** |
+| corpus 1024 | **33.98** | 30.13 | 30.71 | −9.6% | −9.6% |
+| corpus 8192 | **27.39** | 25.74 | 25.09 | −8.4% | −8.4% |
+
+So adaptive beats the shipped default on chat and loses to it on corpus: **which baseline you choose flips the
+verdict per content class.** This is not a general verdict on the controller — it used a few hand-written
+workloads, one fixed arm order, and no held-out set.
+
+**Why it plausibly loses, and this part is a design point rather than a measurement: the control law is
+acceptance-aware but not cost-aware.** It sizes the next draft from accepted length, and probes upward whenever a
+draft is fully accepted. That is a sensible treatment of a censored observation — but it never measures what a
+*wider verification* costs. On this engine the optimum is not monotone in acceptance (chat prefers depth 4 at 82%
+acceptance; corpus prefers depth 2 at 53%), so "fully accepted → go deeper" can walk into a slower region. The
+objective the controller should optimise is emitted tokens per round divided by round time, not accepted length.
 
 **Reconciliation with our own earlier n-max sweep** (`decode-levers-nmax-and-negative-results-20260915.md`,
 corpus prompts, ub 2048): it found n-max 4 strictly worse (28.0 vs 34.1 t/s @1k, acceptance 42% vs 64%) and
@@ -311,18 +346,32 @@ variable that decides it is the acceptance rate the content supports:
 | --- | ---: | ---: | --- |
 | chat (instructed, structured answer) | 91.8% | 82.4% | **n_max 4** (+10%) |
 | corpus continuation @1k | 53% | 40.1% | **n_max 2** (+13%) |
+
 | corpus continuation @8k | 40.5% | 33.2% | **n_max 2** (+6%) |
 
 Deeper drafting only pays when the extra depth is still converted into accepted tokens. At 92% there is room;
 at 40% there is not. **Our published n-max 2 default remains the right choice for a mixed workload**, because
 it is near-optimal on both and never collapses; n_max 4 is a content-specific win, not a global one.
 
-**This also resolves the MTP "instability" we could not reproduce earlier.** Acceptance is not noisy within a
-content class — it is *perfectly* deterministic: three consecutive corpus/8192 reps gave 55/130, 53/134, 53/134
-at n2 and 109/324, 108/328, 108/328 at n4. The spread we measured before (47% vs 65%, and the 632-draft
-outlier) was a difference in **content mix between runs**, not run-to-run variance. That is a real finding: it
-means any MTP acceptance figure must state the content class, and it removes "unstable MTP" from our problem
-list — the engine is stable, our probe was not controlled.
+**What this says about the MTP "instability" we could not reproduce earlier.** Warm repeats of a *fixed*
+workload were repeatable within the observed sample: three consecutive corpus/8192 reps gave 55/130, 53/134,
+53/134 at n2 (42.3%, 39.6%, 39.6%) and 109/324, 108/328, 108/328 at n4 (33.6%, 32.9%, 32.9%). **I previously
+called this "perfectly deterministic", which overstates it** — those are not three identical repeats, and
+identical *aggregate ratios* would not prove identical accepted positions or token streams. The defensible
+statement is the weaker one:
+
+> Warm repeats of these fixed workloads were repeatable within the observed sample (within ~3%); different
+> workloads produced materially different acceptance (40% vs 92%).
+
+The earlier 47%-vs-65% spread was therefore most likely content mix between runs rather than engine instability —
+but that is an inference from a small sample, not a proof, and it should be presented that way. The useful
+consequence stands: **any MTP acceptance figure must state the workload**, and per-position acceptance plus
+emitted tokens per round are better metrics than the single aggregate ratio.
+
+Also note the two acceptance numbers in the table below belong to *different* configurations: 91.8% is the n_max 2
+acceptance, 82.4% is the n_max 4 acceptance. Saying "depth 4 wins at ~92% acceptance" would conflate them; the
+correct statement is that **on content where shallow drafting already achieves ~92%, going deeper still gained
+~10%**, which is a different and weaker claim.
 
 Their `QWEN38-FLASH-NEXT-MTP.md` also confirms our MTP packaging finding independently: the three-shard target
 GGUFs carry **no integrated MTP block**, the head ships as a separate shared Q8_0 sidecar, and

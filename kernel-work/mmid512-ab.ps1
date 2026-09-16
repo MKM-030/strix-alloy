@@ -34,8 +34,25 @@ $env:HSA_OVERRIDE_GFX_VERSION = '11.5.1'
 
 $PROMPT = 'Explain how a modern mixture-of-experts transformer routes a token to its top-k experts, how the expert outputs are combined, and why the routing overhead is proportionally larger at batch size one than during prefill. Give concrete numbers for a 512-expert model with top-10 routing.'
 
+# True median. `$sorted[[int]($sorted.Count/2)]` is NOT a median for an even count: with the default two
+# rounds it returns the LARGER of the pair, biasing every reported delta upward. Use the mean of the two
+# central values when the count is even.
+function Get-Median([double[]]$v) {
+    if (-not $v -or $v.Count -eq 0) { return $null }
+    $s = @($v | Sort-Object)
+    $n = $s.Count
+    if ($n % 2 -eq 1) { return $s[[int](($n - 1) / 2)] }
+    return ($s[$n / 2 - 1] + $s[$n / 2]) / 2.0
+}
+
+# Stop only the server this script started. A blanket `taskkill /IM llama-server.exe` also kills an
+# unrelated or user-owned instance, which on a shared box silently destroys someone else's run.
+function Stop-OwnServer($proc) {
+    if ($proc -and -not $proc.HasExited) { & taskkill /F /T /PID $proc.Id 2>&1 | Out-Null }
+}
+
 function Run-Arm([string]$arm, [int]$round) {
-    Get-Process llama-server -ErrorAction SilentlyContinue | ForEach-Object { & taskkill /F /PID $_.Id 2>&1 | Out-Null }
+    Stop-OwnServer $script:cur
     Start-Sleep -Seconds 5
 
     if ($arm -eq 'off') { $env:GGML_CUDA_DISABLE_MMID_512 = '1' } else { Remove-Item Env:\GGML_CUDA_DISABLE_MMID_512 -ErrorAction SilentlyContinue }
@@ -48,6 +65,7 @@ function Run-Arm([string]$arm, [int]$round) {
            '--parallel', '1', '--host', '127.0.0.1', '--port', "$Port", '--no-webui', '--seed', '1234')
     $p = Start-Process -FilePath $bin -ArgumentList $a -PassThru -NoNewWindow `
                        -RedirectStandardOutput $sout -RedirectStandardError $serr
+    $script:cur = $p
     $ok = $false; $t0 = Get-Date
     while (((Get-Date) - $t0).TotalSeconds -lt 600) {
         if ($p.HasExited) { break }
@@ -56,7 +74,7 @@ function Run-Arm([string]$arm, [int]$round) {
     if (-not $ok) {
         Write-Output "[$tag] NOT READY"
         Select-String -Path $serr -Pattern 'failed to allocate|out of memory|error' | Select-Object -Last 2 | ForEach-Object { Write-Output ('   ' + $_.Line.Trim()) }
-        if (-not $p.HasExited) { & taskkill /F /PID $p.Id 2>&1 | Out-Null }
+        Stop-OwnServer $p
         return $null
     }
 
@@ -76,18 +94,25 @@ function Run-Arm([string]$arm, [int]$round) {
         Set-Content -Path (Join-Path $res "$tag.txt") -Value $text -Encoding UTF8
     } catch { Write-Output "[$tag] correctness request failed: $_" }
 
-    Get-Process llama-server -ErrorAction SilentlyContinue | ForEach-Object { & taskkill /F /PID $_.Id 2>&1 | Out-Null }
+    Stop-OwnServer $p
     Start-Sleep -Seconds 3
 
-    if (-not (Test-Path $out)) { Write-Output "[$tag] no json"; return $null }
+    # Prove THIS invocation produced the JSON: delete any stale file first and require a fresh one, then
+    # check that fnbench actually recorded rows. Reading a leftover file from an earlier run would make a
+    # failed arm look like a success.
+    if (-not (Test-Path $out)) { Write-Output "[$tag] no json produced"; return $null }
     $j = Get-Content $out -Raw | ConvertFrom-Json
     $rows = $j.rows | Where-Object { -not $_.error }
-    $dec  = ($rows | ForEach-Object { $_.decode_tps })  | Sort-Object
-    $pre  = ($rows | ForEach-Object { $_.prefill_tps }) | Sort-Object
-    if ($dec.Count -eq 0) { Write-Output "[$tag] no valid rows"; return $null }
-    Write-Output ("[{0}] decode median={1:N3} t/s  prefill median={2:N1} t/s  (n={3})  textlen={4}" -f `
-        $tag, $dec[[int]($dec.Count/2)], $pre[[int]($pre.Count/2)], $dec.Count, $text.Length)
-    return [pscustomobject]@{ arm = $arm; round = $round; decode = $dec[[int]($dec.Count/2)]; prefill = $pre[[int]($pre.Count/2)]; text = $text }
+    if (-not $rows -or $rows.Count -eq 0) { Write-Output "[$tag] no valid rows"; return $null }
+    # prefill reps below the repo's own warm-up rule are cold; exclude rep 0 from the aggregate
+    $warm = $rows | Where-Object { $_.rep -ge 1 }
+    if (-not $warm -or $warm.Count -eq 0) { $warm = $rows }
+    $dec  = @($warm | ForEach-Object { [double]$_.decode_tps })
+    $pre  = @($warm | ForEach-Object { [double]$_.prefill_tps })
+    $dm = Get-Median $dec; $pm = Get-Median $pre
+    Write-Output ("[{0}] decode median={1:N3} t/s  prefill median={2:N1} t/s  (n={3}, warm reps only)  textlen={4}" -f `
+        $tag, $dm, $pm, $dec.Count, $text.Length)
+    return [pscustomobject]@{ arm = $arm; round = $round; decode = $dm; prefill = $pm; text = $text }
 }
 
 $all = @()
@@ -102,31 +127,33 @@ for ($r = 1; $r -le $Rounds; $r++) {
 Write-Output ''
 Write-Output '=== aggregate (same binary, env-var toggle) ==='
 foreach ($arm in 'on','off') {
-    $v = ($all | Where-Object { $_.arm -eq $arm } | ForEach-Object { $_.decode }) | Sort-Object
+    $v = @($all | Where-Object { $_.arm -eq $arm } | ForEach-Object { [double]$_.decode })
     if ($v.Count -gt 0) {
-        Write-Output ("  {0,-4} decode median={1:N3} t/s   rounds: {2}" -f $arm, $v[[int]($v.Count/2)], (($all | Where-Object { $_.arm -eq $arm } | ForEach-Object { '{0:N2}' -f $_.decode }) -join ', '))
+        Write-Output ("  {0,-4} decode median={1:N3} t/s   rounds: {2}" -f $arm, (Get-Median $v), (($all | Where-Object { $_.arm -eq $arm } | ForEach-Object { '{0:N2}' -f $_.decode }) -join ', '))
     }
 }
-$onv  = ($all | Where-Object { $_.arm -eq 'on'  } | ForEach-Object { $_.decode }) | Sort-Object
-$offv = ($all | Where-Object { $_.arm -eq 'off' } | ForEach-Object { $_.decode }) | Sort-Object
+$onv  = @($all | Where-Object { $_.arm -eq 'on'  } | ForEach-Object { [double]$_.decode })
+$offv = @($all | Where-Object { $_.arm -eq 'off' } | ForEach-Object { [double]$_.decode })
 if ($onv.Count -gt 0 -and $offv.Count -gt 0) {
-    $a1 = $onv[[int]($onv.Count/2)]; $b1 = $offv[[int]($offv.Count/2)]
+    $a1 = Get-Median $onv; $b1 = Get-Median $offv
     Write-Output ("  decode delta (on vs off) = {0:+0.00;-0.00} t/s ({1:+0.0;-0.0}%)" -f ($a1-$b1), (100*($a1-$b1)/$b1))
 }
-$pon  = ($all | Where-Object { $_.arm -eq 'on'  } | ForEach-Object { $_.prefill }) | Sort-Object
-$poff = ($all | Where-Object { $_.arm -eq 'off' } | ForEach-Object { $_.prefill }) | Sort-Object
+$pon  = @($all | Where-Object { $_.arm -eq 'on'  } | ForEach-Object { [double]$_.prefill })
+$poff = @($all | Where-Object { $_.arm -eq 'off' } | ForEach-Object { [double]$_.prefill })
 if ($pon.Count -gt 0 -and $poff.Count -gt 0) {
-    $a2 = $pon[[int]($pon.Count/2)]; $b2 = $poff[[int]($poff.Count/2)]
+    $a2 = Get-Median $pon; $b2 = Get-Median $poff
     Write-Output ("  prefill delta (on vs off) = {0:+0.0;-0.0} t/s ({1:+0.0;-0.0}%)" -f ($a2-$b2), (100*($a2-$b2)/$b2))
 }
 
 Write-Output ''
 Write-Output '=== correctness (greedy text must match exactly) ==='
-$ontexts  = $all | Where-Object { $_.arm -eq 'on'  -and $_.text } | ForEach-Object { $_.text }
-$offtexts = $all | Where-Object { $_.arm -eq 'off' -and $_.text } | ForEach-Object { $_.text }
+$ontexts  = @($all | Where-Object { $_.arm -eq 'on'  -and $_.text } | ForEach-Object { $_.text })
+$offtexts = @($all | Where-Object { $_.arm -eq 'off' -and $_.text } | ForEach-Object { $_.text })
+$correct  = $false
 if ($ontexts.Count -gt 0 -and $offtexts.Count -gt 0) {
-    $distinct = ($ontexts + $offtexts) | Select-Object -Unique
+    $distinct = @(($ontexts + $offtexts) | Select-Object -Unique)
     if ($distinct.Count -eq 1) {
+        $correct = $true
         Write-Output "  MATCH - all $($ontexts.Count + $offtexts.Count) generations byte-identical ($($ontexts[0].Length) chars)"
     } else {
         Write-Output "  ** MISMATCH ** - $($distinct.Count) distinct outputs"
@@ -138,4 +165,13 @@ if ($ontexts.Count -gt 0 -and $offtexts.Count -gt 0) {
     }
 } else { Write-Output '  no text captured' }
 $all | Select-Object arm,round,decode,prefill | ConvertTo-Json -Depth 3 | Set-Content (Join-Path $res 'mmid512-ab.json')
+
+# A printed warning is not a gate. This kernel builds the expert->row maps, so a mismatch means the
+# kernel is wrong and the run must fail loudly rather than scroll past.
+if (-not $correct) {
+    Write-Output ''
+    Write-Output 'FAIL: correctness not established (mismatch or no text captured).'
+    exit 1
+}
 Write-Output 'done'
+exit 0

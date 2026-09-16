@@ -253,6 +253,10 @@ def main():
                 r = {"error": str(e)}
             r["target_n"] = n
             r["rep"] = rep
+            # Tag corpus rows too. Chat rows already carry kind="chat"; without this, any consumer that
+            # groups on `kind` (the adaptive A/B summary did) silently drops every corpus row, because
+            # they had no kind field at all rather than a corpus one.
+            r.setdefault("kind", "corpus")
             results["rows"].append(r)
             pf = r.get("prefill_tps")
             dc = r.get("decode_tps")

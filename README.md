@@ -87,12 +87,13 @@ A shallow arc, not a cliff: ~985 t/s through the 32k–65k band, declining gentl
 
 Decode is essentially depth-independent across a 15× context span, and acceptance *rises* with depth.
 
-**Acceptance is deterministic per content class — it is the *content*, not the engine, that varies.** We
-previously reported this as run-to-run instability (47% vs 65% on the same config). That was wrong: three
-consecutive repeats of the *same prompt* give the same ratio to the token (53/134 three times at `n-max 2`),
-while different text gives very different ratios at identical settings — 40% on doc-continuation, 92% on an
-instructed answer. So **always state the content class with an acceptance figure**; a bare "MTP acceptance"
-is meaningless.
+**Acceptance tracks the *content*, not the engine.** We previously reported it as run-to-run instability
+(47% vs 65% on the same config); that was most likely content mix between runs, because warm repeats of a
+*fixed* workload were repeatable within the sample (three consecutive doc-continuation runs: 42.3%, 39.6%,
+39.6% at `n-max 2`), while different text gives very different ratios at identical settings — 40% on
+doc-continuation, 92% on an instructed answer. That is a small sample, so treat it as the working
+explanation rather than a proof. The practical rule holds either way: **always state the workload with an
+acceptance figure**, because a bare "MTP acceptance" is not comparable to anything.
 
 That also sets the right draft depth, which is content-dependent:
 
@@ -188,12 +189,20 @@ Full audit: [`docs/benchmarks/engine-comparison-vs-olliehm-20260916.md`](docs/be
 
 ## What we found investigating performance
 
-A decode token reads **4.219 GB** of weights: routed experts 32%, attention 30%, output head 12%,
-hyper-connections 9%, GDN 8%, norms 6%, shared expert 3%. Ideal at 236 GB/s is 17.9 ms; we run ~33 ms.
+A decode token reads a **nominal ~4.2 GB** of active weights in our census model: routed experts 32%,
+attention 30%, output head 12%, hyper-connections 9%, GDN 8%, norms 6%, shared expert 3%. Ideal at
+236 GB/s is ~17.9 ms; we run ~33 ms.
 
-A standalone harness driving the **real** production `MUL_MAT` gives **≈5.4 µs fixed + ~133 GB/s marginal
-per op**, so efficiency is set by *output rows*: `lm_head` (R=248k) reaches **100% of bandwidth**,
-`attn_q` 85%, the router (R=512) only **41%**.
+> **Provenance caveat.** This is a *model* (tensor types × sizes × a selected-expert fraction from
+> `kernel-work/byte-accounting.py`), not a bus measurement, and older reports in this repo used a different
+> dtype mix (a Q6_K head, F32 routers) and total ~4.25 GB. Treat it as **nominal active weight payload**,
+> not as DRAM traffic. Activation quantisation, state traffic, attention reads, repeated weight reads and
+> cache reuse are accounted separately, if at all.
+
+A standalone harness driving the **real** production `MUL_MAT` fits **≈5.4 µs + bytes/133 GB/s** across the
+operator family it tested, so efficiency is set by *output rows*: `lm_head` (R=248k) reaches **100% of
+bandwidth**, `attn_q` 85%, the router (R=512) only **41%**. Those are fitted parameters of that operator
+family — the intercept is not proven to be host launch overhead, nor the slope proven to be DRAM bandwidth.
 
 Measured negatives (each via an interleaved A/B): small-K MMVQ rows-per-block (inert on RDNA3.5), the
 RDNA3.0 parameter table (**−21%**), MMVF prefetch (−0.9%), `rpb` 1→2 (+0.3%), K-splitting the small-R ops
@@ -206,9 +215,11 @@ Two more from the sibling forks, ported and measured rather than assumed:
   **−0.2% decode**. Our HIP graph already removes the launch overhead it targets — if 48 calls × 512 launches
   were exposed it would cost ~123 ms/token, and we measured zero. Coverage was probe-verified first, so the
   negative is real and not a guard mismatch.
-- **The rest of `halo-box`'s HIP set cannot apply**: `MMV_GROUP` and the fused matvec prologues are gated to
-  **Q8_0/Q6_K**, and a GGUF census confirms our model is **IQ4_NL for every expert and attention tensor**
-  (only two HC projections and `ple_key` are Q8_0). `WEIGHTED_DOWN` is IQ4_NL but has a ~0.2% ceiling.
+- **The rest of `halo-box`'s HIP set is deprioritised, not disproved**: `MMV_GROUP` is Q8_0-only as implemented,
+  and a GGUF census shows this model is IQ4_NL for every expert and attention tensor (only two HC projections and
+  `ple_key` are Q8_0) — but the fused matvec prologues **do** contain an IQ4_NL path behind a default-off gate
+  (`MMVQ_FQ_IQ_TYPES`), so that is an untested candidate rather than a closed door. `WEIGHTED_DOWN` is IQ4_NL and
+  applicable, with a likely-small but **unmeasured** effect.
 
 One published claim we retracted: a "uniform 37% bandwidth shortfall" attributed to ALU limits was the
 *benchmark's own* contended `atomicAdd` epilogue. With a fair epilogue the same kernel reaches ~100% of
@@ -222,8 +233,9 @@ Full trail — 110+ dated reports including the retractions — in **[`docs/benc
    block. We have a hidden-state dump harness producing `(h_nextn, next-token)` pairs from real traffic.
    Adapt the input/fusion projections against the quantized target, freeze the target and shared output
    projection, screen adapter rank 8 vs 16. Success metric is held-out emitted tokens/second, not loss.
-2. **~~Find the MTP acceptance instability~~** — resolved: acceptance is deterministic per content class
-   (see Benchmarks). The rule is to report the content alongside the figure.
+2. **~~Find the MTP acceptance instability~~** — working explanation: acceptance tracks the workload, and warm
+   repeats of a fixed workload were repeatable within the sample. Report the workload alongside the figure and
+   prefer per-position acceptance over the single aggregate ratio.
 3. **Audit `stew675/rdna-boosts`** against our tree and A/B each portable piece.
 4. **Grouped GEMV** for the small-R projections (bounded at ~6% of decode).
 5. **Remove dead epilogue work** at `nwarps == 1` (unconditional `__syncthreads` + shared machinery).
@@ -278,6 +290,31 @@ If we have used your work and not credited it, that is our omission — please o
 7. **Average ≥3 MTP runs**, and always report acceptance alongside the t/s figure.
 8. **Quote `llama-bench` for any cross-engine claim** — `pp512` / `tg128`, one command, no drafter in the
    harness. Served numbers are higher and not directly comparable to published figures.
+
+## Scope, and what is NOT verified
+
+This repository is a **measurement and Windows-integration repository around a locally modified engine**, not
+a fully published engine fork. The engine source (`src/`, `ggml/`, the patch series) is **not** in this tree:
+`setup/build-windows.ps1` takes a separate `$Src` checkout and builds that. That is the single biggest limit on
+what a reader can check, and it is stated here rather than buried.
+
+Consequently these are **UNVERIFIED from this repository alone**:
+
+| Item | Status |
+| --- | --- |
+| The exact engine source behind the headline binary | **BLOCKED** — not published; no engine hash here lets you rebuild it |
+| Whether `MMID_512` executes in the timed decode phase | **UNVERIFIED** — startup shape coverage was shown; per-phase/graph coverage was not |
+| Whether the allocation probe reflects *resident* GPU capacity | **UNVERIFIED** — it shows an allocation-acceptance boundary for one process state, not residency or usable bandwidth |
+| The token stream `llama-bench` feeds on Windows | **UNVERIFIED** — `std::rand() % n_vocab` with the MS CRT's `RAND_MAX = 32767` selects only the first ~13% of a 248k vocab; not confirmed on our binary |
+| Why `llama-bench` and the server differ (~4–17%) | **UNRESOLVED** — not a controlled comparison; see `docs/benchmarks/canonical-llama-bench-20260916.md` |
+| Cause of the prefill gap vs ilintar | **UNRESOLVED** — and **not** retained-PM4, which their own page says does not engage on prefill |
+| Whole-buffer demotion in the small-carve experiment | **UNRESOLVED** — the slowdown is real and reproduced; the mechanism is inferred, not observed |
+| Multi-turn / depth-band / retrieval correctness | **NOT DONE** — see the future plan; drive-level validation is olliehm's, not ours |
+| Weight byte-accounting as *DRAM traffic* | **MODEL ONLY** — nominal active payload from tensor metadata, not a bus measurement |
+
+Corrections from external review are welcome and have been applied before — including several where the
+first published explanation was wrong (see `docs/benchmarks/`). If you find a number that does not replicate,
+please open an issue with the harness, the engine revision and the settings.
 
 ## License & status
 

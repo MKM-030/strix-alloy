@@ -28,6 +28,25 @@ $env:ROCM_PATH = $sdk; $env:HIP_PATH = $sdk
 $env:HIP_DEVICE_LIB_PATH = "$sdk\lib\llvm\amdgcn\bitcode"
 $env:HSA_OVERRIDE_GFX_VERSION = '11.5.1'
 
+# Median over repetitions. `$sorted[[int]($sorted.Count/2)]` is not a median for an even count -- it
+# returns the larger of the two central values. The original script reported `best of reps` ($d[-1]),
+# which biases every gain upward; this reports a median and keeps the best separately.
+# Stop only the server this script started. A blanket `taskkill /IM llama-server.exe` also kills an
+# unrelated or user-owned instance, silently destroying someone else's run on a shared box.
+$script:cur = $null
+function Stop-Own($proc) {
+    if ($proc -and -not $proc.HasExited) { & taskkill /F /T /PID $proc.Id 2>&1 | Out-Null }
+}
+
+function Get-Median([double[]]$v) {
+    if (-not $v -or $v.Count -eq 0) { return $null }
+    $s = @($v | Sort-Object)
+    $n = $s.Count
+    if ($n % 2 -eq 1) { return $s[[int](($n - 1) / 2)] }
+    return ($s[$n / 2 - 1] + $s[$n / 2]) / 2.0
+}
+
+
 $arms = @(
     @{ name = 'n2';    extra = @('--spec-draft-n-max','2') },
     @{ name = 'n4';    extra = @('--spec-draft-n-max','4') },
@@ -36,7 +55,7 @@ $arms = @(
 
 $rows = @()
 foreach ($arm in $arms) {
-    Get-Process llama-server -ErrorAction SilentlyContinue | ForEach-Object { & taskkill /F /PID $_.Id 2>&1 | Out-Null }
+    Stop-Own $script:cur
     Start-Sleep -Seconds 6
     $tag = "ada-$($arm.name)"
     $o = Join-Path $res "$tag.out"; $e = Join-Path $res "$tag.err"
@@ -48,6 +67,7 @@ foreach ($arm in $arms) {
     Write-Output "=== $($arm.name) : $($arm.extra -join ' ') ==="
     $p = Start-Process -FilePath $bin -ArgumentList $a -PassThru -NoNewWindow `
                        -RedirectStandardOutput $o -RedirectStandardError $e
+    $script:cur = $p
     $ok = $false; $t0 = Get-Date
     while (((Get-Date) - $t0).TotalSeconds -lt 600) {
         if ($p.HasExited) { break }
@@ -56,7 +76,7 @@ foreach ($arm in $arms) {
     if (-not $ok) {
         Write-Output "  NOT READY"
         Select-String -Path $e -Pattern 'failed to allocate|error|invalid' | Select-Object -Last 3 | ForEach-Object { Write-Output ('   ' + $_.Line.Trim()) }
-        if (-not $p.HasExited) { & taskkill /F /PID $p.Id 2>&1 | Out-Null }
+        Stop-Own $p
         $rows += [pscustomobject]@{ arm = $arm.name; mode = '-'; decode = $null; accept_pct = $null; prefill = $null }
         continue
     }
@@ -64,38 +84,60 @@ foreach ($arm in $arms) {
     $out = Join-Path $res "$tag.json"
     python "$root\fnbench.py" --port $Port --label $tag --sizes '1024,8192' --gen $Gen --repeats 3 --mode both `
         --context-limit ($Ctx - $Gen - 64) --out $out 2>&1 | ForEach-Object { Write-Output ('  ' + $_) }
-    if (-not $p.HasExited) { & taskkill /F /PID $p.Id 2>&1 | Out-Null }
+    Stop-Own $p
     Start-Sleep -Seconds 3
 
     if (Test-Path $out) {
         $j = Get-Content $out -Raw | ConvertFrom-Json
         foreach ($kind in 'corpus','chat') {
-            $rr = $j.rows | Where-Object { $_.kind -eq $kind -and -not $_.error }
+            # fnbench tags chat rows kind="chat" and corpus rows kind="corpus"; if an older fnbench
+            # produced rows with no kind at all, fall back on absence so corpus is not silently dropped.
+            $rr = @($j.rows | Where-Object { (($_.kind -eq $kind) -or ($kind -eq 'corpus' -and -not $_.kind)) -and -not $_.error })
             if ($rr.Count -eq 0) { continue }
-            $d = ($rr | ForEach-Object { $_.decode_tps }) | Sort-Object
+            # median, not best-of-reps: best-of biases every reported gain upward
+            $d   = @($rr | ForEach-Object { [double]$_.decode_tps })
+            $dmed = Get-Median $d
+            $dbest = (@($d | Sort-Object))[-1]
             $accN = ($rr | ForEach-Object { [double]$_.draft_n_accepted }) | Measure-Object -Sum
             $accD = ($rr | ForEach-Object { [double]$_.draft_n }) | Measure-Object -Sum
             $pct = if ($accD.Sum -gt 0) { [math]::Round(100.0*$accN.Sum/$accD.Sum, 1) } else { $null }
-            $rows += [pscustomobject]@{ arm = $arm.name; mode = $kind; decode = [math]::Round($d[-1],2); accept_pct = $pct; prefill = $null }
+            $rows += [pscustomobject]@{ arm = $arm.name; mode = $kind; decode = [math]::Round($dmed,2); best = [math]::Round($dbest,2); accept_pct = $pct; prefill = $null }
         }
     }
 }
 
 Write-Output ''
-Write-Output '=== MTP decode (best of reps) by arm x content ==='
+Write-Output '=== MTP decode by arm x content (median of reps; best shown separately) ==='
 $rows | Where-Object { $_.mode -ne '-' } | Format-Table -AutoSize | Out-String | Write-Output
 $rows | ConvertTo-Json -Depth 3 | Set-Content (Join-Path $res 'adaptive-draft-ab.json')
 
 Write-Output '=== interpretation ==='
+# Two baselines matter and they are NOT the same question:
+#   - "best fixed per content" is an ORACLE: it needs to know the winning arm in advance, which no
+#     deployment can do. It is the upper bound on what a perfect depth chooser could win.
+#   - "best single fixed across ALL content" is the DEPLOYABLE policy: one setting for every prompt.
+# Reporting only the oracle makes adaptive look worse than it is; reporting only the deployable baseline
+# makes it look better. Print both.
+$deployable = @()
+foreach ($a in 'n2','n4') {
+    $vals = @($rows | Where-Object { $_.arm -eq $a } | ForEach-Object { [double]$_.decode })
+    if ($vals.Count -gt 0) { $deployable += [pscustomobject]@{ arm = $a; mean = ($vals | Measure-Object -Average).Average } }
+}
+$depBest = ($deployable | Sort-Object -Property mean -Descending | Select-Object -First 1)
+if ($depBest) {
+    Write-Output ("  deployable baseline: best single fixed across all content = {0} ({1:N2} t/s mean)" -f $depBest.arm, $depBest.mean)
+}
 foreach ($kind in 'corpus','chat') {
     $a2 = ($rows | Where-Object { $_.arm -eq 'n2'    -and $_.mode -eq $kind }).decode
     $a4 = ($rows | Where-Object { $_.arm -eq 'n4'    -and $_.mode -eq $kind }).decode
     $ad = ($rows | Where-Object { $_.arm -eq 'adapt' -and $_.mode -eq $kind }).decode
     if ($a2 -and $a4 -and $ad) {
-        $best = [Math]::Max($a2, $a4)
-        Write-Output ("  {0,-7} n2={1,6:N2}  n4={2,6:N2}  adaptive={3,6:N2}   best fixed={4,6:N2}  adaptive vs best={5:+0.0;-0.0}%" -f `
-            $kind, $a2, $a4, $ad, $best, (100*($ad-$best)/$best))
+        $oracle = [Math]::Max($a2, $a4)
+        Write-Output ("  {0,-7} n2={1,6:N2}  n4={2,6:N2}  adaptive={3,6:N2}  | vs oracle {4,6:N2} ({5:+0.0;-0.0}%)  vs n2 ({6:+0.0;-0.0}%)" -f `
+            $kind, $a2, $a4, $ad, $oracle, (100*($ad-$oracle)/$oracle), (100*($ad-$a2)/$a2))
     }
 }
-Get-Process llama-server -ErrorAction SilentlyContinue | ForEach-Object { & taskkill /F /PID $_.Id 2>&1 | Out-Null }
+Write-Output '  (oracle = per-content best, not deployable; n2 = the shipped default)'
+Stop-Own $script:cur
 Write-Output 'done'
+exit 0
