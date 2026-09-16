@@ -2,15 +2,17 @@
 
 Assessment of four sources the founder surfaced, plus the carve question they were asked alongside.
 
-**Outcome: both forks were ported, built and measured. Neither is a win on our engine, and the reasons are
-measurable — but one actionable result came out of it: MTP draft depth is content-dependent (~92% acceptance
-content wants `n-max 4`, +10%), and the MTP "instability" we could not reproduce was a content-mix artifact,
-not noise.**
+**Outcome: both forks were ported, built and measured. Neither helped, and three of the original explanations
+were wrong and are withdrawn — including one that measured a code path decode never runs.**
 
-- **`MMID_512`** (halo-box's flagship kernel, our exact model shape): **−0.2%**. Ported and committed
-  `135ade1f`, coverage-proven so the negative is real.
-- **`--spec-draft-adaptive`** (myhacsint): **−4.7% to −9.6%** vs the better fixed depth. Ported and committed
-  `cbb48a7d`.
+- **`MMID_512`** (halo-box's flagship kernel): **cannot affect decode at all.** A phase probe recorded one call
+  in a 200-token decode, all prefill; the helper is a large-batch path. The earlier "−0.2% decode" measured the
+  wrong phase. Committed `135ade1f`, comment corrected in `d638e2ed`.
+- **`--spec-draft-adaptive`** (myhacsint): **worse than the shipped default on every cell** (−3.2% to −11.4%
+  vs `n-max 2`) once measured with medians per size instead of best-of-three pooled. Committed `cbb48a7d`.
+- **The `llama-bench` `rand()` defect is real** (13.2% of the vocabulary reachable on the Windows CRT) but costs
+  only 0–1.4% throughput, and the PLE n-gram locality theory for it is refuted.
+
 - **`MMV_GROUP`, `GDN_GATE`, fused prologues**: **cannot apply** — gated to Q8_0/Q6_K, and our model is IQ4_NL
   for every expert and attention tensor.
 - **The carve**: a smaller carve "works" only by silently running 5× slower — measured, not inferred.
@@ -304,39 +306,51 @@ two items map directly onto open problems:
 | **shared-MTP fit fix** | `common/fit.h:17-28` adds `common_fit_extra_model` with `shares_model` and **`path_model_shared`**; during the no-alloc probe the compact sidecar receives a **metadata-only view of its target** so omitted shared tensors resolve without counting target weights twice | **Directly fixes our B1 blocker.** We hit `qwen4exp requires ctx_other to be set` and had to fall back to `--fit off`; `--fit off` disables auto-fitting. This is the missing upstream guard (upstream PR 27941 / commit `2fb989b9e7`) |
 | **`--spec-draft-adaptive`** | per-sequence **acceptance EMA** (`acc_ema_alpha 0.25`, `acc_ema_init 2.0`, `acc_ema_probe 1.0`) sizes each draft just above the measured acceptance; clean drafts are treated as **censored** and probed upward | **Ported and measured — a negative on this engine** (below) |
 
-### `--spec-draft-adaptive`: ported and measured — a regression in this test, with two honest caveats
+### `--spec-draft-adaptive`: ported and measured — a regression against the shipped default
 
 **Ported (71 lines) behind an off-by-default flag, committed as `cbb48a7d`.** The controller provably works:
-draft counts scale as designed (n_max=2 → 402/555/398 drafts across chat/corpus-1024/corpus-8192; n_max=4 →
-533/880/980; adaptive → 504/621/631, always landing between the two fixed values).
+draft counts scale as designed, always landing between the two fixed arms.
 
-**Caveat 1 — the numbers below were originally reported as *best of 3*, and the summary had a bug.**
-`fnbench.py` tagged chat rows `kind="chat"` but **not** corpus rows, so the adaptive script's
-`kind -eq 'corpus'` filter dropped every corpus row; and the script took `$d[-1]` (the largest) rather than a
-median. Both are fixed in `adaptive-draft-ab.ps1` and `fnbench.py` now tags corpus rows. **The figures below have
-not been re-measured with the fixed script**, so treat them as directional, and treat a re-run as the way to
-confirm them.
+**Re-measured with the repaired harness** (medians, corpus rows now tagged, no best-of-reps, per-size cells
+rather than pooled). This replaces the earlier table, and it changes the conclusion:
 
-**Caveat 2 — "best fixed" was a per-content oracle, which is not deployable.** The right comparison depends on the
-question: an oracle that knows the winning depth in advance is an upper bound no deployment can reach, while the
-*deployable* baseline is one fixed setting for all content. The measured picture:
+| content | size | n_max=2 | n_max=4 | adaptive | n4 vs n2 | adaptive vs n2 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| chat | 259 | **45.31** | 45.45 | 41.96 | +0.3% | **−7.4%** |
+| corpus | 1024 | **33.07** | 27.66 | 29.29 | −16.3% | **−11.4%** |
+| corpus | 8192 | **26.97** | 24.61 | 26.12 | −8.8% | **−3.2%** |
 
-| content | n_max=2 | n_max=4 | adaptive | adaptive vs oracle | adaptive vs n_max 2 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| chat (prose) | 46.53 | **51.21** | 48.81 | −4.7% | **+4.9%** |
-| corpus 1024 | **33.98** | 30.13 | 30.71 | −9.6% | −9.6% |
-| corpus 8192 | **27.39** | 25.74 | 25.09 | −8.4% | −8.4% |
+**Withdrawn claim: "`n-max 4` is +10% on chat".** That came from taking the *best of three* repetitions. On
+medians, `n-max 4` is a **tie** on chat (+0.3%) and clearly worse on corpus. The earlier +10% was an artifact
+of the aggregation, not a content effect.
 
-So adaptive beats the shipped default on chat and loses to it on corpus: **which baseline you choose flips the
-verdict per content class.** This is not a general verdict on the controller — it used a few hand-written
-workloads, one fixed arm order, and no held-out set.
+**The pooled table also hid a real size dependence**, which is the defect the reviewer flagged: pooling corpus
+1024 (53% acceptance) with corpus 8192 (40%) gave "−9.6%", while the true per-size figures are −16.3% and
+−8.8%. Aggregating across prompt lengths was masking the effect it was supposed to measure.
 
-**Why it plausibly loses, and this part is a design point rather than a measurement: the control law is
-acceptance-aware but not cost-aware.** It sizes the next draft from accepted length, and probes upward whenever a
-draft is fully accepted. That is a sensible treatment of a censored observation — but it never measures what a
-*wider verification* costs. On this engine the optimum is not monotone in acceptance (chat prefers depth 4 at 82%
-acceptance; corpus prefers depth 2 at 53%), so "fully accepted → go deeper" can walk into a slower region. The
-objective the controller should optimise is emitted tokens per round divided by round time, not accepted length.
+**Corrected conclusion:** **`n-max 2` is the best single setting across all three cells** — it ties n-max 4 on
+chat and wins on both corpus sizes, and it beats adaptive everywhere. The adaptive controller loses to the
+shipped default on every cell, so as a deployment choice it is simply worse here. Its design point stands as a
+design point: it optimises accepted length, and never measures what a wider verification costs, so its notion
+of optimum is not the throughput optimum.
+
+**Acceptance reproducibility, now directly evidenced.** Per-rep accepted/proposed counts from this run:
+
+| arm | content | size | counts |
+| --- | --- | ---: | --- |
+| n2 | chat | 259 | 123/134, 123/134, 123/134 |
+| n2 | corpus | 1024 | 98/185, 98/185, 98/185 |
+| n2 | corpus | 8192 | 55/130, 53/134, 53/134 |
+| n4 | chat | 259 | 147/175, 146/179, 146/179 |
+| n4 | corpus | 8192 | 109/324, 108/328, 108/328 |
+
+Two of the three n2 cells are **identical across all three reps**, and the third differs only in rep 0 (the
+cold rep). So the defensible statement is: *within a fixed workload, acceptance was repeatable to within one
+or two tokens per rep, and the cold rep can differ.* Not "perfectly deterministic" — but strong enough that the
+earlier 47%-vs-65% spread is much more likely content mix than engine noise. The cross-run comparison is
+separately notable: the corpus-8192 counts (55/130, 53/134, 53/134) reproduce **exactly** across two
+independent server sessions started at different times.
+
 
 **Reconciliation with our own earlier n-max sweep** (`decode-levers-nmax-and-negative-results-20260915.md`,
 corpus prompts, ub 2048): it found n-max 4 strictly worse (28.0 vs 34.1 t/s @1k, acceptance 42% vs 64%) and
@@ -345,7 +359,7 @@ variable that decides it is the acceptance rate the content supports:
 
 | content | n2 acceptance | n4 acceptance | depth that wins |
 | --- | ---: | ---: | --- |
-| chat (instructed, structured answer) | 91.8% | 82.4% | **n_max 4** (+10%) |
+| chat (instructed, structured answer) | 91.8% | 82.4% | **n_max 2** (n_max 4 ties) |
 | corpus continuation @1k | 53% | 40.1% | **n_max 2** (+13%) |
 
 | corpus continuation @8k | 40.5% | 33.2% | **n_max 2** (+6%) |
@@ -395,22 +409,30 @@ dissenting measurements, which is where the real information is — they need a 
 Both forks have now been ported, built and measured. Here is what that leaves, in priority order.
 
 **Done this session:**
-- `MMID_512` — ported, coverage-proven, **−0.2%** → committed `135ade1f`.
-- `--spec-draft-adaptive` — ported, functional, **−4.7% to −9.6%** → committed `cbb48a7d`.
-- `MMV_GROUP` / `GDN_GATE` / fused prologues — **closed by a gate check**, not a port: Q8_0/Q6_K-only, and our
-  model is IQ4_NL throughout (verified against the GGUF).
-- The 5× carve penalty and the MTP "instability" — both explained and measured (§1, §3).
+- `MMID_512` — ported, then found to be **a large-batch path that decode never executes** (phase probe: 1
+  call in a 200-token decode, all prefill). The "−0.2% decode" figure measured the wrong phase. Committed
+  `135ade1f`; corrected in `d638e2ed`.
+- `--spec-draft-adaptive` — ported and functional, but **worse than the shipped default on every cell**
+  (−3.2% to −11.4% vs `n-max 2`), once measured with medians per size instead of best-of-three pooled.
+  Committed `cbb48a7d`.
+- `MMV_GROUP` / `GDN_GATE` / fused prologues — `MMV_GROUP` is Q8_0-only *as implemented*; the fused
+  prologues contain an IQ4_NL path behind a default-off gate, so they are **untested candidates, not closed**.
+  The dtype census (every expert/attention tensor IQ4_NL) is why they are deprioritised, not why they are ruled
+  out.
+- The 5× carve penalty, the `llama-bench` `rand()` defect, the refuted PLE-locality theory and the MTP
+  acceptance repeatability — all measured (§1, §3, and
+  `llama-bench-workload-identity-20260916.md`).
 
 **Next, in order:**
 
 1. **Keep the 96 GB carve.** It is the validated configuration; the carve must hold the resident set inside the
    pool, and a small carve silently costs 5×.
-2. **Keep the MTP draft depth at `n-max 2` for mixed workloads, and make it configurable per deployment.** The
-   adaptive study's actionable result is that the optimum tracks the acceptance rate the content supports: at
-   ~92% acceptance (instructed, structured answers) `n-max 4` measures **+10%** (46.5 → 51.2 t/s); at ~40–53%
-   (corpus continuation) `n-max 2` wins by 6–13%. Our published `n-max 2` default stays correct because it is
-   near-optimal on both and never collapses — but a chat-heavy deployment should use 4. Both are already flags
-   (`--spec-draft-n-max`), so this is configuration, not code.
+2. **Keep the MTP draft depth at `n-max 2`.** The re-measurement makes this unambiguous: `n-max 2` ties
+   `n-max 4` where acceptance is ~92% (+0.3%) and beats it where acceptance is lower (−8.8% to −16.3%), and it
+   beats the adaptive controller on every cell. The earlier "a chat-heavy deployment should use 4" advice was
+   based on a best-of-three artifact and is **withdrawn**. Both remain flags (`--spec-draft-n-max`), so a
+   deployment with a known, high-acceptance workload can still experiment — but there is no measured reason to
+   deviate from the default.
 3. **Port the shared-MTP fit fix** (`common_fit_extra_model::path_model_shared`) — the one remaining item with a
    concrete, already-solved target (our `--fit off` workaround). Low risk, no speed claim.
 4. **Do not port `WEIGHTED_DOWN`** on current evidence: applicable, but a ~0.2% ceiling for ~200 lines and two

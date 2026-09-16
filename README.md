@@ -88,26 +88,33 @@ A shallow arc, not a cliff: ~985 t/s through the 32k–65k band, declining gentl
 Decode is essentially depth-independent across a 15× context span, and acceptance *rises* with depth.
 
 **Acceptance tracks the *content*, not the engine.** We previously reported it as run-to-run instability
-(47% vs 65% on the same config); that was most likely content mix between runs, because warm repeats of a
-*fixed* workload were repeatable within the sample (three consecutive doc-continuation runs: 42.3%, 39.6%,
-39.6% at `n-max 2`), while different text gives very different ratios at identical settings — 40% on
-doc-continuation, 92% on an instructed answer. That is a small sample, so treat it as the working
-explanation rather than a proof. The practical rule holds either way: **always state the workload with an
-acceptance figure**, because a bare "MTP acceptance" is not comparable to anything.
+(47% vs 65% on the same config); that was almost certainly content mix between runs. Within a fixed workload
+it is repeatable: per-rep accepted/proposed counts, warm reps only, across two independent server sessions —
 
-That also sets the right draft depth, which is content-dependent:
+| arm | content | size | counts |
+| --- | --- | ---: | --- |
+| `n-max 2` | instructed answer | 259 | 123/134, **123/134, 123/134** |
+| `n-max 2` | doc-continuation | 1024 | 98/185, **98/185, 98/185** |
+| `n-max 2` | doc-continuation | 8192 | 55/130, 53/134, 53/134 — *same three values in both sessions* |
 
-| content | acceptance @n-max 2 | best depth | gain vs `n-max 2` |
-| --- | ---: | --- | ---: |
-| instructed answers (structured, predictable) | 92% | `n-max 4` | **+10%** |
-| doc-continuation, 1k | 53% | `n-max 2` | — |
-| doc-continuation, 8k | 40% | `n-max 2` | — (n-max 4 is −6%) |
+while different text gives very different ratios at identical settings — 40% on doc-continuation, 92% on an
+instructed answer. (The counts above are from one run each; the 8192 row reproduced exactly in a second run.)
+The practical rule: **always state the workload with an acceptance figure**, because a bare "MTP acceptance"
+is not comparable to anything.
 
-We publish `n-max 2` because it is near-optimal on both and never collapses; a chat-heavy deployment should
-use 4, and a low-acceptance one should use 1. An adaptive controller that sized drafts from a measured
-acceptance EMA was ported and tested — it works, but loses to the better fixed value on every content class
-(−4.7% to −9.6%), because its "full accept → draft deeper" rule assumes depth always pays, which is not true
-here. Kept behind `--spec-draft-adaptive`, off by default.
+**The depth that wins is content-dependent, and `n-max 2` is the best single choice.** Re-measured with a
+repaired harness (medians, per-size cells, warm reps only):
+
+| content | size | `n-max 2` | `n-max 4` | `--spec-draft-adaptive` |
+| --- | ---: | ---: | ---: | ---: |
+| instructed answer | 259 | **45.31** | 45.45 (+0.3%) | 41.96 (−7.4%) |
+| doc-continuation | 1024 | **33.07** | 27.66 (−16.3%) | 29.29 (−11.4%) |
+| doc-continuation | 8192 | **26.97** | 24.61 (−8.8%) | 26.12 (−3.2%) |
+
+`n-max 4` only ties `n-max 2` where acceptance is already ~92%, and loses where it is not. Adaptive loses to
+`n-max 2` on every cell. So the shipped default is the right one for a mixed workload — and an earlier "+10% for
+`n-max 4` on chat" figure we published is **withdrawn**: it came from taking the best of three reps. On medians
+it is a tie.
 
 ## Quickstart
 
