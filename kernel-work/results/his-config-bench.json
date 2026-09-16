@@ -1,0 +1,34 @@
+[
+    {
+        "tag":  "A-ours",
+        "note":  "baseline: n-max 2, p-min 0.0, ub 8192, ckpt default",
+        "ub":  "8192",
+        "prefill_tps":  897.8,
+        "decode_tps":  29.25,
+        "acceptance":  0.472
+    },
+    {
+        "tag":  "B-his-mtp",
+        "note":  "his MTP point: n-max 4, p-min 0.75, ub 2048",
+        "ub":  "2048",
+        "prefill_tps":  733.0,
+        "decode_tps":  27.14,
+        "acceptance":  0.88
+    },
+    {
+        "tag":  "C-his-mtp+ckpt",
+        "note":  "his MTP point + ctx-checkpoints (his documented requirement)",
+        "ub":  "2048",
+        "prefill_tps":  732.4,
+        "decode_tps":  27.22,
+        "acceptance":  0.88
+    },
+    {
+        "tag":  "D-ours+ckpt",
+        "note":  "our MTP point + checkpoints (isolates the checkpoint effect)",
+        "ub":  "8192",
+        "prefill_tps":  903.6,
+        "decode_tps":  33.01,
+        "acceptance":  0.649
+    }
+]
