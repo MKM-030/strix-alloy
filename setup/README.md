@@ -1,4 +1,4 @@
-# alloy setup
+# strix-alloy setup
 
 Everything needed to reproduce the numbers in the top-level README on a Strix Halo box, natively on
 Windows.
@@ -78,11 +78,8 @@ llama-server.exe ^
 
 ### Measurement hygiene (matters on this box)
 
-1. **`wsl --shutdown` before benchmarking.** WSL keeps host RAM; on a UMA machine this distorts prefill
-   and produced a fake "cliff" twice.
-2. **Warm 3–4 reps.** Prefill ramps: `646 → 817 → 870 → 1033` t/s over four passes. A single rep
-   understates deep prefill by 20–55%.
-3. **Interleave A/B arms** for anything under ~5%. A single 5-rep run has ±1% spread.
+See the top-level README's *Reproducing measurements* — the rules are the same. The two that bite
+hardest here: `wsl --shutdown` before every run, and prefill needs 3–4 warm reps.
 
 ## 6. Verify
 
