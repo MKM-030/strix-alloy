@@ -180,8 +180,9 @@ $ids = [ordered]@{
         @{ name = $_.Name; sha256 = (Get-FileHash $_.FullName -Algorithm SHA256).Hash }
     })
     runtime = @((Get-ChildItem $runtimeDir -File | Sort-Object Name) | ForEach-Object {
-        $p = Join-Path $runtimeDir $_
-        @{ name = $_; bytes = (Get-Item $p).Length; sha256 = (Get-FileHash $p -Algorithm SHA256).Hash }
+        # $_.Name, not $_: assigning the FileInfo object itself serializes every property,
+        # path and timestamp into the manifest (a 70 KB file instead of a small one).
+        @{ name = $_.Name; bytes = $_.Length; sha256 = (Get-FileHash $_.FullName -Algorithm SHA256).Hash }
     })
     models = 'not bundled - see config/model-manifest.example.json'
 }
