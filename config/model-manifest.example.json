@@ -1,0 +1,35 @@
+{
+  "_comment": "Model manifest schema for strix-alloy. Describes a target+optional-draft selection so a package can be validated without downloading anything. Models are NEVER bundled - they stay on the user's disk.",
+  "schemaVersion": "1",
+  "selected": {
+    "target": "Qwen3.8-Flash-Next-IQ4_NL-PROJFIX",
+    "quantization": "IQ4_NL (PROJFIX)",
+    "distinctive": "All tensors IQ4_NL, ~4.52 bpw. Measured fastest for this engine's IQ4_NL kernel paths; see docs/benchmarks/engine-comparison.md.",
+    "shards": {
+      "count": 9,
+      "pattern": "Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-{n:00000}-of-00009.gguf",
+      "directory": "user-supplied",
+      "totalBytes": 100032000000
+    },
+    "draft": {
+      "present": true,
+      "file": "mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf",
+      "bytes": 2786568256,
+      "sha256": "5ff54097406a905cf3a724c709124ceb0e3e10235ee862298969e91c96fa96e6",
+      "note": "Official shared MTP sidecar; borrows the trunk's embedding and output head. Verified byte-identical and size-identical to the publisher artifact."
+    }
+  },
+  "alternativesConsidered": [
+    {
+      "name": "UD-IQ4_XS (unsloth)",
+      "bitsPerWeight": 4.24,
+      "verdict": "rejected for speed on this engine; 4.52 bpw PROJFIX measured faster despite being larger"
+    }
+  ],
+  "validation": {
+    "shardSetComplete": "required - the launcher checks the -of-NNNNN total",
+    "draftOptional": true,
+    "serialFallback": "permitted and logged; the launcher never silently changes inference mode",
+    "neverDownload": true
+  }
+}
