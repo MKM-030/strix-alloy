@@ -4,24 +4,34 @@
 
 Qwen3.8-Flash-Next on an AMD Ryzen AI Max+ 395 mini-PC. No Linux, no WSL, no CUDA, no datacenter GPU.
 
-| | |
-| --- | --- |
-| **`llama-bench`** | **pp512 761.3 t/s** · **tg128 31.5 t/s** — the standard tool, comparable to every other Strix Halo number |
-| `llama-bench`, 16k prompt | pp16384 892.6 t/s · tg128 30.2 t/s |
-| prefill, served | 1,031 @16k · 993 @65k · 925 @131k · **812 @251k** |
-| decode, served | **31–47 t/s** with MTP (depends how predictable the output is) · 28.3 serial |
-| **context** | **251,904 tokens**, works end to end, no OOM |
+## Performance at a glance — different measurement modes
 
-**Why `llama-bench` is the headline.** It defaults to `-p 512 -n 128` and is the tool upstream, ilintar,
-olliehm and the Strix Halo threads all report, so it needs no translation. It also **cannot drive a drafter**,
-which makes `tg128` plain serial decode — the engine's own speed, free of the content-dependent acceptance
-rate that makes bare MTP figures hard to compare. Against ilintar's published Linux numbers on the same tool:
-**26% behind on prefill** (893 vs 1204) and **15% ahead on serial decode** (30.2 vs 26.3).
+| Measurement | Result | What it means |
+|---|---|---|
+| Synthetic prefill, `llama-bench pp512` | 761.30 ± 38.24 t/s | tool defaults, batch 2048 / ubatch 512 — not chat-serving prefill |
+| Synthetic serial evaluation, `tg128` | 31.49 ± 0.17 t/s | no drafter; pseudorandom token inputs, not a generated answer |
+| Large-batch synthetic, `pp16384` / `tg128` | 892.59 ± 22.50 / 30.16 ± 1.00 t/s | `-b/-ub 16384`; the generation test starts from an empty cache, **not** from that 16k prompt |
+| Served MTP, one 259-token instructed prompt | **45.31 t/s** | repaired warm median, `n-max 2`; one prompt cell |
+| Served MTP, separate long-context ladder | 31.0–32.8 t/s | at 16,384–251,904 occupied tokens; a different experiment, not poolable with the row above |
+| Maximum-prefill serving setup | 1,031 @16k · 812 @251,904 t/s | warm, **no drafter**, `-ub 16384`, server-reported prompt timing |
 
-> The served figures below run ~15% higher than `llama-bench` for the same shape, and we do not have a full
-> explanation — it is not warm-up (`-r 8` does not climb). We quote the `llama-bench` number as the headline
-> because a third party can reproduce it in one command. Details in
-> [`docs/benchmarks/canonical-llama-bench-20260916.md`](docs/benchmarks/canonical-llama-bench-20260916.md).
+`±` is a sample standard deviation. **These are separate configurations and workloads, not one combined
+performance promise**, and synthetic serial, served serial, speculative decode and prefill must not be ranked in
+one column. The former *51.21 t/s chat / "`n-max 4` adds 10% on chat"* claim is **withdrawn** — the corrected
+`n-max 4` median is 45.45 t/s, effectively tied with `n-max 2` in that prompt cell.
+
+**Why `llama-bench` leads.** It defaults to `-p 512 -n 128` and is the tool upstream, ilintar and the Strix Halo
+threads report. It also **cannot drive a drafter**, which makes `tg128` plain serial decode — free of the
+content-dependent acceptance rate that makes bare MTP figures hard to compare. Against ilintar's published
+Linux numbers, paired row-for-row: **25.9% behind on prefill** (892.59 vs 1204.31) and **14.8% ahead on serial
+evaluation** (30.16 vs 26.28). Those are ratios of separately published measurements, **not** an isolated
+Windows-versus-Linux gain, and the cause of the prefill difference is **unresolved** — it is *not* retained
+PM4, which ilintar's own page says does not engage on prefill.
+
+> Served figures run ~13% above `llama-bench` for the same shape. That gap is now **localised to the harness,
+> with the token stream excluded** (server fed `llama-bench`'s own token distribution: 1010.5 vs 892.59 t/s;
+> random vs prose only −1.0%). Which part of the harness is still unmeasured.
+> [`bench-gap-resolved-20260917.md`](docs/benchmarks/bench-gap-resolved-20260917.md)
 
 The transformer is ~125B (121B routed experts + ~4B attention/embeddings). The checkpoint also carries a
 separate 51B PLE n-gram table living in host memory — model + table ≈ 176B, sometimes quoted as "177B".
@@ -65,8 +75,9 @@ Also tried and rejected: UD-IQ4_XS, Q4_K_M, and an FR-Spec 65k-vocab draft head 
 
 ## Benchmarks
 
-Everything below is **served** (`llama-server`), not `llama-bench` — that is why it sits ~15% above the
-headline. Native Windows, WSL shut down, page cache warm (rep ≥ 3), single instance, `-c 262144`.
+Everything below is **served** (`llama-server`), not `llama-bench` — that is why it sits above the synthetic
+rows, a **harness difference of ~13% with the token stream excluded** (see the note at the top). Native
+Windows, WSL shut down, page cache warm (rep ≥ 3), single instance, `-c 262144`.
 
 **Prefill** — max-prefill shape (`-ub 16384`, no drafter):
 
@@ -160,39 +171,51 @@ that development in a different project and eventually release it with a differe
 Two stacks now run this model natively on Windows: **olliehm's** (published first) and `strix-alloy`.
 Neither is a fork of the other — we share an upstream ancestor and diverge after that.
 
-| | **olliehm** | **strix-alloy** |
-| --- | --- | --- |
-| engine | upstream llama.cpp + **`stew675/llama-cpp-rdna-boosts`** patches, via **Lemonade** | **`pwilkin` `strix-halo`** fork, `llama-server` directly |
-| prefill | ~660 t/s @8k–17k | **1,031 @16k · 993 @65k** |
-| decode, no MTP | 20.3 @8k | **28.8 @8k · 31.5 `llama-bench tg128`** |
-| decode, MTP | **38 t/s** *(no depth published)* | 31–47 t/s *(content-dependent)* |
-| acceptance | **85–100%** (`n-max 4`, `p-min 0.75`) | 40–92% (`n-max 2`, `p-min 0.0`) — content-dependent |
-| context | 262,144 | 251,904 verified |
-| quant | UD-IQ4_XS — for **fit margin** | IQ4_NL PROJFIX — for **speed** |
-| drafter | full Q8_0 head (~3.2 GB) | **shared** Q8_0 head (2.6 GB) |
-| footprint | 74.0 GB in carve | ~74 GB |
+## Comparison with other engines
 
-Read the decode/acceptance rows with care: acceptance is content-dependent on **both** engines, so two single
-figures taken on different prompts do not rank them. His `n-max 4` at 85–100% is a better operating point than
-our published `n-max 2` for chat-like text — which is why we now report the depth table above instead of one
-number.
+These are **separately published observations, not a matched benchmark.** All throughput below is decode
+unless labelled otherwise, and each row carries its own mode, workload and statistic.
 
-Different kernels, different lineage: our tree carries the fork's backend work (MMB large-batch kernels,
-fused F32 PLE, sparse QSA decode, hyper-connection kernels) while his carries RDNA tuning — which is why
-prefill differs by ~1.5×. We tested his exact MTP flags on our engine at 65k: his **acceptance reproduces
-(96%)** but his **throughput does not** (26.4 vs our 33.1 t/s), because the higher `n-max` costs a 5-row
-verify per round for drafts the `p-min` gate usually discards.
+| Project | Result | Mode, workload and statistic |
+|---|---:|---|
+| strix-alloy | **31.49 t/s** | synthetic serial `llama-bench tg128`, no drafter |
+| ilintar / pwilkin, Linux | 26.28 t/s | published synthetic `tg128`, initial depth 0; different runtime and batch settings |
+| strix-alloy | **45.31 t/s** | served MTP `n-max 2`; one 259-token instructed prompt; warm median |
+| **Halogen** | **45.3 t/s** | speculative serving **mean over ten prompt shapes**, 0.6.0 |
+| Halogen @32k | 41.7 t/s | speculative served mean over ten prompts |
+| **olliehm**, Windows/Lemonade | **38 t/s** | MTP `n-max 4`, `p-min 0.75`; occupied depth and aggregation not specified for the headline |
+| **CIRU IU4 v4.4** | 44.53 t/s | MTP3, 12,960-token incident replay; one controlled block (control 37.79) |
+| CIRU IU4 v4.4 | 60.351 t/s | MTP3, short HumanEval 0–9 speed panel; one panel per setting, not general chat |
+| **Halogen**, prefill | **~1,424 t/s @32k** | engine's own internal prefill bench (1,246 @8k, 1,358 @131k) |
+| strix-alloy, prefill | 1,031 t/s @16k · 812 @251k | server-reported, warm, no drafter |
 
-Two things in his repo matter beyond any single number:
+**Halogen is ahead on prefill by a wide margin** (~1,424 vs our 1,031 at 32k) and its **published serial decode
+also exceeds our served serial ladder** (37.6/36.1/34.1 vs our 28.3 @16k). Those are the honest headlines of
+this table. Its measurement instrument differs from ours (engine bench vs server timing), its machine is
+differently configured (~85 W sustained, IOMMU off, versus our VBS/HVCI-active default), and no matched
+head-to-head exists — but the gaps are far too large to be instrument noise, and we do not claim a win.
 
-- **olliehm correctness gates.** He gates on *sequence-level* validation — single-turn, multi-turn, depth
-  bands, needle retrieval — and warns that MTP on HIP can show 2× t/s while emitting collapsed text. We
-  hit variants of this from the numerical side. Speed-only benchmarking on this stack is not trustworthy,
-  in either repo.
-- **olliehm deployment work.** A Lemonade recipe and an admission shim letting several instances share
-  one carve — infrastructure we do not have.
+Our 45.31 and Halogen's 45.3 sit in the same broad category, but **a one-prompt median and a ten-prompt mean are
+not evidence of a tie**. CIRU's 60.351 belongs to a short-code panel, not this comparison. Our withdrawn
+51.21 is not a current comparison point.
 
-Full audit: [`docs/benchmarks/engine-comparison-vs-olliehm-20260916.md`](docs/benchmarks/engine-comparison-vs-olliehm-20260916.md).
+**The `n-max 2` choice is supported for the tested cells, not proven universal** — it rests on three prompt
+cells from one corpus family.
+
+Two things in olliehm's repo matter beyond any single number:
+
+- **His correctness gates.** He gates on *sequence-level* validation — single-turn, multi-turn, depth bands,
+  needle retrieval — and warns that MTP on HIP can show 2× t/s while emitting collapsed text. We hit variants
+  of this from the numerical side. Speed-only benchmarking on this stack is not trustworthy, in either repo.
+- **His deployment work.** A Lemonade recipe and an admission shim letting several instances share one carve —
+  infrastructure we do not have.
+
+Our implementation choices — pwilkin's kernel lineage, the PROJFIX pairing, native TheRock HIP integration, the
+shared MTP sidecar, tested batch and draft settings — explain **what is configured differently**, not a
+measured percentage from each component. The kernel authors retain credit for inherited work.
+
+Full mode-separated comparison with pinned sources and verification notes:
+[`docs/benchmarks/engine-comparison.md`](docs/benchmarks/engine-comparison.md).
 
 ## What we found investigating performance
 

@@ -72,17 +72,34 @@ through generic kernels. Conversely his `rdna-boosts` set is tuned work we do no
 
 ## 3. Direct benchmark comparison
 
-Only rows that are honestly comparable. Both are Windows-native, same box class, same model family.
+> ### CORRECTION (2026-09-17): the decode rows below were unfair, and the "ours, +42%" claim is withdrawn
+>
+> External review checked olliehm's pinned benchmark file. Its **20.3 t/s @8k is explicitly labelled
+> "Stock `llamacpp-rocm b1326`, no MTP (baseline)"** — a stock upstream baseline, **not the serial performance
+> of his final patched engine**. His final stack is the 38 t/s MTP row.
+>
+> The table below paired our final engine against his *baseline* and declared "+42%", which compares two
+> different things: ours-as-shipped against his un-optimised control. **Withdrawn.** A defensible serial
+> comparison would need his final engine's serial number, measured without the drafter — he does not publish
+> one, so we have no serial win to claim here.
+>
+> Also withdrawn from this document's framing: any **"winner" column**. Every row is a separately published
+> observation on unmatched workloads, and the "~1.5×" prefill figure pairs our server-reported, no-drafter
+> timing against his timing with the drafter attached. Both remain interesting operating points; neither
+> settles a ranking.
+>
+> Halogen — absent from this document entirely — publishes a **higher** prefill (~1,424 t/s @32k internal
+> bench) and **higher** serial decode (37.6/36.1/34.1) than ours. The corrected, mode-separated comparison
+> with pinned revisions is `engine-comparison.md`.
 
-| metric | olliehm | strix-alloy | winner |
+| metric | olliehm | strix-alloy | note |
 | --- | ---: | ---: | --- |
-| **prefill @8k–17k** | ~660 t/s | **993 t/s @65k, 1031 @16k** | **ours, ~1.5×** |
-| **decode, no MTP @8k** | 20.3 t/s | **28.8 t/s** | **ours, +42%** |
-| decode, no MTP @500 | 21.7 t/s | **28.3 @16k** | ours |
-| **decode, MTP** | **38 t/s** (depth not published) | 34 t/s @16k, 32.8 @131k | his (with a caveat) |
-| draft acceptance | **85–100%** | 56–73% | his |
-| context | 262,144 | 251,904 verified | tie (he claims the trained max) |
-| footprint in carve | 74.0 GB | ~74 GB (same weights + KV) | tie |
+| **prefill** | ~660 t/s @8k–17k (**drafter attached**) | 993 @65k, 1031 @16k (**no drafter**) | different instruments and drafter state — not a ratio |
+| ~~decode, no MTP @8k~~ | ~~20.3~~ **stock baseline** | 28.8 | **withdrawn** — his row is a stock control, not his engine |
+| decode, MTP | **38 t/s** (depth not published) | 31–47 t/s (content-dependent) | his headline; different depth and aggregation |
+| draft acceptance | **85–100%** | 40–92% | content-dependent on both — not comparable as single figures |
+| context | 262,144 | 251,904 verified | he claims the trained max |
+| footprint in carve | 74.0 GB | ~74 GB (same weights + KV) | equivalent |
 
 ### The MTP row needs a caveat, and we tested it
 

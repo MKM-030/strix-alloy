@@ -50,8 +50,29 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 | "**retained-PM4 explains the prefill gap**" | Contradicts ilintar's own page: PM4 does not engage on prefill | Cause **unresolved** |
 | "**a 16 GB carve would fit**" | Extrapolated from weights only, omitted the compute buffer | See the carve table |
 | "**`rpb` 1→2 is negative**" (first version) | Invalid test: used `ncols_dst=1`, which the patch cannot touch | Re-tested at covered widths; still negative (+0.3%), correctly closed |
+| "**ours, +42% serial decode vs olliehm**" | Compared our engine against olliehm's *stock* `llamacpp-rocm b1326` baseline, not his final patched engine | withdrawn; no serial win claimed (`engine-comparison.md`) |
 | "**serial vs wide-verify divergence is benign**" | Near-tie magnitude bounds size, not cause | Deterministic and sub-0.2-nat; **cause unproven**, gates 3–4 open |
 | "**decode loss is uniform**" | Superseded by the per-operator fixed-cost result | See `decode-byte-accounting-20260915.md` header |
+
+## 3b. External comparisons — all publisher-reported, none matched
+
+Every figure below was re-fetched from a pinned revision on 2026-09-17 rather than taken from a prior summary.
+**None of these establishes a ranking**: prompts, depths, statistics, weights, instruments and machine
+configurations differ. Full tables and verification notes: `engine-comparison.md`.
+
+| Claim | Status | Evidence / condition |
+| --- | --- | --- |
+| Halogen prefill ~1,424 t/s @32k (internal bench) vs our 1,031 @16k (server timing) | **Accepted as published; Halogen ahead** | different instruments; their box is ~85 W / IOMMU-off vs our VBS/HVCI default. `halogen@501dbcdd` |
+| Halogen serial decode 37.6 / 36.1 / 34.1 t/s | **Accepted; exceeds our served serial ladder** | their 0.2.0 figures, decode kernels unchanged since; not boundary-matched to our 28.3 @16k |
+| Halogen speculative 45.3 t/s | **Accepted; same broad band as our 45.31** | their mean over **ten** prompt shapes vs our median over **one** — not a tie |
+| olliehm 38 t/s MTP `n-max 4 p-min 0.75` | **Accepted** | occupied depth/aggregation unspecified for the headline |
+| olliehm 20.3 t/s @8k | **stock baseline, NOT his engine** | his file labels it "Stock `llamacpp-rocm b1326`, no MTP (baseline)" |
+| CIRU 44.53 t/s (12,960-token replay), 60.351 (HE0–9), 64.067 (Boost), 21.14 (240k cold) | **Accepted with workload attached** | from `IU4-RESULTS.json@111a6638`; 0–9 panel is one speed panel per setting, not chat; two prefill cells flagged `prompt_work_comparable: false` |
+| ilintar 1204.31 prefill / 26.28 `tg128` | **Accepted** | initial depth 0, batch/ubatch 16384, retained-PM4; graphs do not engage on prefill |
+
+**Our honest position in this field:** ahead of ilintar on synthetic serial evaluation by ~15%; behind Halogen
+on prefill and on serial decode; in the same broad band as Halogen on short-prompt speculative decode; with no
+matched head-to-head against any of them.
 
 ## 4. Open / unverified
 
