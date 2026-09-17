@@ -1,5 +1,24 @@
 # final-results.md — handover v2 progress (2026-09-15)
 
+> ## STATUS (2026-09-17): correctness claims in this document are SUPERSEDED
+>
+> This is a dated session record, kept for its measurements. Its **correctness verdicts are not endorsed**:
+> read `acceptance-width-report.md` (which now carries the current correction) and
+> `CLAIM-LEDGER.md` instead.
+>
+> Specifically superseded here:
+> - "the cause is the dense decode regime" — that is a **hypothesis**, not an established cause; no
+>   sequence-level or state-correctness gate was run. The near-tie magnitude does not establish that the
+>   divergence is benign.
+> - Any "uniform efficiency loss" or ALU-bound framing — see the RETRACTED header in
+>   `decode-alu-bound-dp4a-20260916.md` (the measured bottleneck was the benchmark's own contended
+>   `atomicAdd` epilogue) and the per-operator fixed-cost result in
+>   `real-kernel-measured-20260916.md`.
+> - Headline throughput figures in this file predate the 96 GB carve restoration and the canonical
+>   `llama-bench` protocol. Quote the README's `llama-bench` numbers, not these.
+
+# final-results.md — handover v2 progress (2026-09-15)
+
 Scope: this session executed the v2 handover's **Priority 1 (A0–A2)** and **Priority 2 (B1–B2)**, plus
 the cheap read-only Triage (D/KVA) and the required artifact set. It did **not** start the product
 Cloud/FiveM, did not push, did not change boot/firmware, and did not run two 177B instances at once.

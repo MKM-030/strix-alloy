@@ -1,5 +1,28 @@
 # The real `mul_mat_vec_q`, measured: per-call overhead is a harness artifact; small-R ops are the real inefficiency (2026-09-16)
 
+> ## SCOPE LIMITS (external review, §12) — read before quoting any number here
+>
+> This is an **operator experiment**, not a model of the whole decode path. The measurements are real and the
+> harness drives the real backend, but the following bound what may be concluded:
+>
+> 1. **It hardcodes `IQ4_NL` `MUL_MAT`.** It does not reproduce the model's full dtype mixture, and it does not
+>    exercise `MUL_MAT_ID` routing/fusion, MoE expert selection, or the state/preparation work that a
+>    whole-model conclusion needs.
+> 2. **32 replicas do not guarantee a cache-proof working set.** A `512×2560` IQ4_NL matrix is ≈0.737 MB, so 32
+>    replicas total ≈**23.6 MB** — comfortably cacheable on a part with a large Infinity Cache. "Rotating
+>    replicas enlarge the working set" is therefore weaker than it sounds at large R.
+> 3. **Finiteness checks are not a numerical reference.** `y[0..3]` printing and a non-finite count do not
+>    compare against a reference computation.
+> 4. **A printed error is not a failing exit code.** The harness should exit non-zero on a failed check.
+> 5. **One row's printed rate is unverified** — see the arithmetic note in the K-split correction below
+>    (3.32 MB / 0.034 ms is 97.6 GB/s, not 172.5).
+>
+> Consequently the fitted `t ≈ 5.4 µs + bytes/133 GB/s` describes **the tested operator family**, not a proven
+> memory-system limit: the intercept is not proven to be host launch overhead and the slope is not proven to be
+> DRAM bandwidth. Do **not** promote it to "the entire decode path is proven bandwidth-bound". What survives is
+> the ordering it establishes (fewer/bigger ops beat more/smaller ones at fixed bytes) and the per-op vs
+> per-block distinction.
+
 Codex's instruction was explicit: *"Benchmark the actual production operator unchanged, then locate the
 difference before changing its decomposition."* Done — and it produced the first measurement of this
 session that is **not** a surrogate.

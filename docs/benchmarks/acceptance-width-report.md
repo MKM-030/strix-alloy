@@ -1,5 +1,49 @@
 # acceptance-width-report.md — handover v2, Priority 1 / A0
 
+> ## CORRECTION (2026-09-17): "benign" was too strong, and two correctness gates are still open
+>
+> External review objected that this document **dismisses token divergence as harmless on insufficient
+> grounds**, and it is right. The measurements below stand and are good work; three claims built on them do
+> not, and are corrected here.
+>
+> **What is established:** serial and wide-verify differ in the dense regime; the difference is
+> *deterministic* (repeatable, graphs-off identical), *bounded* (sub-0.2-nat top-1/top-2 margins), and the
+> speculative arm emits serial's **#2** token at every observed site. That is real and useful.
+>
+> **What is NOT established:**
+> - **That the divergence is harmless.** "The verifier sampled its own logits correctly" is not a
+>   correctness argument — a verifier can sample its logits correctly while those logits came from a wrong
+>   mask, wrong state, or a wrong batched computation. Near-tie magnitude and emitted-token rank bound the
+>   *size* of the difference; they do not show its *cause* is benign.
+> - **That the cause is reduction order.** The mechanism section says so itself ("a plausible reading, not
+>   a kernel-audited proof"). It remains a hypothesis. Note the reviewer's point that a global max-logit-
+>   difference threshold cannot substitute: the first meaningful divergence must be localised and compared
+>   against a reference computation.
+> - **Anything about sequence-level quality.** No multi-turn, depth-band, retrieval or tool-output testing
+>   was done here. olliehm documents exactly the failure modes single-turn speed tests miss (multi-turn
+>   slash flooding, depth-dependent incoherence) despite improved throughput.
+>
+> **The four correctness gates, as separate questions** (only the first two are answered anywhere in this
+> repository):
+>
+> | # | Gate | Status |
+> | --- | --- | --- |
+> | 1 | Same-build repeatability | **DONE** — `same` arm IDENTICAL; harness deterministic |
+> | 2 | Width-1 vs width-2/3 numerical consistency | **DONE (this doc)** — diverges in dense, matches in sparse |
+> | 3 | Correct state after accepting 0, 1 or N draft tokens | **NOT DONE** |
+> | 4 | Sequence-level quality: multi-turn, context boundaries, retrieval, tool output | **NOT DONE** |
+>
+> **Also owed:** `stew675`'s patch set carries width-invariance and masked/freed-cell fixes *and* documents
+> patches that intentionally alter reduction order. Those distinctions are the reference to import — not an
+> unqualified "same output" promise. The audit is still listed as future work.
+>
+> Downstream consequence: the "no fixable verify bug exists" conclusion below is **withdrawn**. What holds is
+> narrower — the observed divergence is deterministic and sub-0.2-nat, so chasing those particular near-ties
+> is unlikely to pay; it does not follow that the verify path is proven correct. Gates 3 and 4 are the
+> remaining work.
+
+# acceptance-width-report.md — handover v2, Priority 1 / A0
+
 **Question (handover):** does the target, evaluated in a wide verification pass, produce the same
 token as one-row-at-a-time serial decode on the *same prefix*? Speculative decoding is defined to be
 output-equivalent to serial greedy; if it is not, the divergence must be classified before spending

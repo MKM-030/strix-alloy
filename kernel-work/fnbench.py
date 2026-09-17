@@ -15,6 +15,7 @@ Notes:
 """
 import argparse
 import glob
+import hashlib
 import json
 import os
 import sys
@@ -25,6 +26,16 @@ import urllib.error
 HERE = os.path.dirname(os.path.abspath(__file__))
 CORPUS = os.path.join(HERE, "bench-corpus.txt")
 TOKENS = os.path.join(HERE, "bench-tokens.json")
+CORPUS_ID = os.path.join(HERE, "bench-corpus.sha256")
+
+
+def _write_corpus_id(sha, size):
+    """Record which token workload a run used, so results can be tied to an exact input."""
+    try:
+        with open(CORPUS_ID, "w", encoding="utf-8") as f:
+            json.dump({"file": os.path.basename(CORPUS), "sha256": sha, "bytes": size}, f, indent=1)
+    except OSError:
+        pass
 
 
 def http_json(url, payload=None, timeout=7200):
@@ -38,23 +49,41 @@ def http_json(url, payload=None, timeout=7200):
 
 
 def build_corpus(min_tokens_hint=300000):
-    """Concatenate repo docs into a natural-language corpus large enough for 128k+ prompts."""
+    """Build the benchmark corpus deterministically, with no dependency on a private checkout.
+
+    Reproduction problem this fixes (raised in external review): the previous version concatenated
+    markdown from two absolute paths inside a *private* project tree, so the corpus could not be
+    rebuilt by anyone else and the token workload was not identified. It also cached the result
+    without recording what went into it.
+
+    Now: the corpus is derived from files in THIS repository (deterministically ordered) plus a
+    synthetic filler section, and its SHA-256 is written beside it so a run can be tied to an exact
+    token workload. `--corpus-source` can point at another directory if a caller needs one.
+    """
     if os.path.exists(CORPUS) and os.path.getsize(CORPUS) > 2_000_000:
-        print(f"corpus exists: {os.path.getsize(CORPUS)/1e6:.1f} MB")
+        h = hashlib.sha256(open(CORPUS, "rb").read()).hexdigest()
+        print(f"corpus exists: {os.path.getsize(CORPUS)/1e6:.1f} MB  sha256={h[:32]}")
+        _write_corpus_id(h, os.path.getsize(CORPUS))
         return
-    roots = [
-        r"C:\Projects\REV-N-ornith-eval-20260911\docs",
-        r"C:\Projects\REV-N\docs",
-    ]
+
+    roots = []
+    env_root = os.environ.get("BENCH_CORPUS_ROOT")
+    if env_root and os.path.isdir(env_root):
+        roots.append(env_root)
+    # this repository is the default, so the corpus is reproducible from the published tree alone
+    roots.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
     chunks = []
     for root in roots:
-        for ext in ("*.md", "*.txt"):
-            for p in glob.glob(os.path.join(root, "**", ext), recursive=True):
+        for ext in ("*.md", "*.py", "*.ps1", "*.cuh", "*.cu"):
+            for p in sorted(glob.glob(os.path.join(root, "**", ext), recursive=True)):
+                if os.path.abspath(p) == os.path.abspath(CORPUS):
+                    continue
                 try:
                     with open(p, "r", encoding="utf-8", errors="ignore") as f:
                         t = f.read()
                     if len(t) > 500:
-                        chunks.append(f"\n\n=== {os.path.basename(p)} ===\n\n{t}")
+                        chunks.append(f"\n\n=== {os.path.relpath(p, root)} ===\n\n{t}")
                 except Exception:
                     pass
     text = "".join(chunks)
@@ -69,7 +98,11 @@ def build_corpus(min_tokens_hint=300000):
         i += 1
     with open(CORPUS, "w", encoding="utf-8") as f:
         f.write(text)
-    print(f"corpus built: {len(text)/1e6:.1f} MB -> {CORPUS}")
+    h = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    _write_corpus_id(h, len(text.encode("utf-8")))
+    print(f"corpus built: {len(text)/1e6:.1f} MB -> {CORPUS}  sha256={h[:32]}")
+    print(f"  (sources: {', '.join(os.path.basename(r) or r for r in roots)}; "
+          f"the token workload hash is recorded in {os.path.basename(CORPUS_ID)})")
 
 
 def tokenize(port, text):
@@ -79,6 +112,10 @@ def tokenize(port, text):
 
 def get_token_pool(port, need):
     """Tokenize the corpus once; cache token ids. Return list of >= need tokens."""
+    # Always record the corpus identity, including when both the corpus and the token pool are already
+    # cached -- otherwise the early return skips it and a run leaves no evidence of which workload it used.
+    if os.path.exists(CORPUS):
+        _write_corpus_id(hashlib.sha256(open(CORPUS, "rb").read()).hexdigest(), os.path.getsize(CORPUS))
     if os.path.exists(TOKENS):
         try:
             pool = json.load(open(TOKENS))
@@ -94,6 +131,8 @@ def get_token_pool(port, need):
     pool = tokenize(port, text)
     print(f"tokenized -> {len(pool)} tokens")
     json.dump(pool, open(TOKENS, "w"))
+    # Record the token-ID hash too: same corpus tokenized by a different tokenizer is a different workload.
+    print(f"token workload sha256={hashlib.sha256(json.dumps(pool[:need]).encode()).hexdigest()[:32]}")
     return pool
 
 
@@ -266,6 +305,31 @@ def main():
             print(f"  n={n:>6} rep={rep} prompt_n={r.get('prompt_n')} "
                   f"prefill={pf and round(pf,1)} t/s  decode={dc and round(dc,2)} t/s{extra}",
                   flush=True)
+    # Per-size summary that respects this repo's own warm-up rule: rep 0 is cold for prefill, so the
+    # reported figure is the MEDIAN OF WARM REPS (>=1), not the minimum, not the best, and not a value
+    # that silently includes rep 0. External review flagged that no such summary existed, which let
+    # cold reps reach published tables.
+    print("\n=== summary (median of warm reps, rep>=1) ===")
+    print(f"  {'size':>7} {'rep_min':>8} {'prefill':>9} {'decode':>8} {'accept':>8}")
+    for n in sizes:
+        rr = [r for r in results["rows"]
+              if r.get("target_n") == n and not r.get("error") and r.get("rep", 0) >= 1]
+        if not rr:
+            continue
+        pfs = sorted(float(x["prefill_tps"]) for x in rr if x.get("prefill_tps"))
+        dcs = sorted(float(x["decode_tps"]) for x in rr if x.get("decode_tps"))
+        an = sum(x["draft_n_accepted"] for x in rr if x.get("draft_n_accepted") is not None)
+        ad = sum(x["draft_n"] for x in rr if x.get("draft_n") is not None)
+        med = lambda v: (v[len(v)//2] if len(v) % 2 else 0.5*(v[len(v)//2-1]+v[len(v)//2])) if v else None
+        pfm, dcm = med(pfs), med(dcs)
+        print(f"  {n:>7} {len(rr):>8} {pfm and f'{pfm:9.1f}'} {dcm and f'{dcm:8.2f}'} "
+              f"{(f'{100.0*an/ad:.1f}%' if ad else '-'):>8}")
+        if len(rr) < 3:
+            print(f"          WARNING: only {len(rr)} warm rep(s) at n={n}; the repo's rule is rep>=3 "
+                  f"before trusting a prefill figure")
+    results["sizes_warm_rep_count"] = {str(n): len([r for r in results["rows"]
+                                                if r.get("target_n") == n and not r.get("error")
+                                                and r.get("rep", 0) >= 1]) for n in sizes}
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     json.dump(results, open(args.out, "w"), indent=1)
     print(f"wrote {args.out}")

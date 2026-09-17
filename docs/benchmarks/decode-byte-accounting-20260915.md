@@ -1,5 +1,28 @@
 # Where a decode step's bytes actually go — and why the loss is uniform (2026-09-15)
 
+> ## STATUS (2026-09-17): the census is useful; the "uniform loss" conclusion is WITHDRAWN
+>
+> The per-tensor census below is a legitimate **nominal active weight payload** model and is still used.
+> Two things built on it are not endorsed:
+>
+> 1. **"The loss is uniform / a uniform quantized-matvec efficiency loss"** — superseded. The follow-up
+>    measurement (`real-kernel-measured-20260916.md`) found the cost is **per-operator, not per-block**:
+>    a fitted ≈5.4 µs fixed + bytes/133 GB/s across the tested operator family. "Uniform loss" is the wrong
+>    shape and the wrong explanation.
+> 2. **The ALU-bound reading it led to** — **RETRACTED** in `decode-alu-bound-dp4a-20260916.md`: the
+>    apparent bandwidth shortfall was the benchmark's own contended `atomicAdd` epilogue. With a fair
+>    epilogue the same kernel reached ~100% of bandwidth.
+>
+> **Provenance caveats a reader must carry** (raised by external review): the dtype mix here (a **Q6_K**
+> head, **F32** routers) is *not* the mix the README's summary prose describes, and `pf-census.json` totals
+> ≈**4.254 GB**, not the 4.219 GB quoted elsewhere. This is version drift, not necessarily a faulty census,
+> but it means the number's physical interpretation is not settled. It is a tensor-metadata estimate, not a
+> bus measurement: activation quantisation, state traffic, attention reads, repeated weight reads and cache
+> reuse are accounted separately, if at all. Regenerate it from the exact benchmarked GGUF hashes before
+> citing it as traffic.
+
+# Where a decode step's bytes actually go — and why the loss is uniform (2026-09-15)
+
 This is the build-out of the "explain the ~23 ms/round not covered by expert bytes" item. It replaces
 the earlier rough payload estimate with an exact GGUF byte census, and it **redirects kernel work**:
 the shortfall is not in experts, attention or hyper-connections — it is a uniform quantized-matvec

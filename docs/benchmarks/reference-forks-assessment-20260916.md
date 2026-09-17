@@ -20,16 +20,20 @@ were wrong and are withdrawn — including one that measured a code path decode 
 
 ---
 
-## 1. The carve: host RAM is *not* the same speed, and a small carve silently costs 5×
+## 1. The carve: a small carve loads but decodes ≈4.5× slower, for a mechanism that is unresolved
 
 The hypothesis was: the memory is unified LPDDR5X, so a layer resident in host RAM should be read at the
 same speed as one in the device pool; freeing the carve to 0.5 GB should therefore be free.
 
-**Measured: the premise is false, for a reason that only shows up under load.** The device pool and the
-system-memory path are the same physical LPDDR5X, but the GPU reads them at very different speeds — roughly
-**133 GB/s through the carve versus ~26 GB/s through the system-memory path**. This is not visible from any
-allocation API; it only appears when the weights are actually read every token. §"Retested at a 16 GB carve"
-below is the experiment that shows it.
+**Measured, on this stack: it is not free.** A carve small enough that the resident set spills out of the pool
+does not fail — it **loads and then decodes ≈4.5× more slowly** (§"Retested at a 16 GB carve"). That is the
+direct answer to the question, and it is the part I stand behind.
+
+**What I no longer claim is the mechanism.** An earlier version of this document asserted that weights are read
+at "~133 GB/s through the carve versus ~26 GB/s through the system-memory path", and used that to conclude the
+whole buffer was demoted. Deriving a bandwidth from the observed latency and then using it to explain that same
+latency is circular, and external review correctly rejected it. The 26 GB/s figure is **withdrawn**; the
+effective-bandwidth and whole-buffer-demotion claims are recorded as **unresolved** in `CLAIM-LEDGER.md` §4.
 
 Two measurements frame the problem. The advertised pool, and the largest single allocation that *succeeds*:
 
@@ -39,9 +43,23 @@ Two measurements frame the problem. The advertised pool, and the largest single 
 | 16 GB | 67.82 GB (63.16 GiB) | (weights load — see below) |
 | 96 GB (validated) | 107.87 GB (100.4 GiB) | — |
 
-**All three allocation paths — `hipMalloc`, `hipMallocManaged`, `hipHostMalloc` — return the same ceiling**,
-which sits ~13% above the reported pool. There is no second memory route: managed memory is quota'd against the
-same cap, and pinning is not an escape hatch. Supporting code facts:
+**All three allocation paths — `hipMalloc`, `hipMallocManaged`, `hipHostMalloc` — returned the same
+allocation-acceptance boundary** in that probe, ~13% above the reported pool.
+
+**What that probe does and does not show (external review, §13).** It reports an **allocation-acceptance
+boundary for one process state**. It does **not** establish:
+- that tens of GiB are physically *resident* (it writes only `c[0]` and `c[mid-4096]`, two bytes, then frees);
+- that the memory is GPU-accessible at useful bandwidth, or usable *simultaneously* with the model's other
+  allocations (weights + KV + scratch + draft + host staging + desktop pressure);
+- that equal successful sizes imply equal placement, residency or performance semantics — and in fact they
+  clearly do **not**, since a 63.31 GiB success behaved 4.5× worse in practice at a 16 GB carve;
+- any ceiling **above 96 GiB** (the search bound), and it dereferences the pointer on the CPU for every
+  allocation type, which is not a portable verification of a device allocation.
+
+Treat the "113% of reported pool" ratio as an **observation about this box and build**, not a Windows HIP
+allocation law. A resident-working-set claim would need bounded GPU touches across the full range with
+synchronisation, plus the simultaneous-allocation pattern inference actually uses. Supporting code facts,
+which are independent of the probe:
 
 - **`ggml-cuda.cu:156`** — the allocator only honours **`GGML_CUDA_ENABLE_UNIFIED_MEMORY`**; `grep` finds no
   other name. *Every launch script we had written set `GGML_HIP_ENABLE_UNIFIED_MEMORY`, which is inert.*
@@ -102,48 +120,57 @@ confirmed at full speed, and on a UMA box the carve is the model's home, not was
 also work by the model above, but that is an interpolation and would need its own measurement before any number
 taken at it is quoted.
 
-### Retested at a 16 GB carve: it *loads*, but runs 5× slower — so the large carve is required for speed, not just fit
+### Retested at a 16 GB carve: it *loads*, but decodes much more slowly
 
 After the above was written the carve was changed to ~16 GB (pool 67.82 GB = 63.16 GiB, host RAM 111.65 GB) and
-the load retested. This is the most informative experiment in the whole investigation, because it **succeeds**
-and is still useless:
+the load retested. It **succeeds** and is still useless:
 
 | | 96 GB carve (production) | **16 GB carve (measured)** |
 | --- | ---: | ---: |
 | weight buffer allocates? | yes | **yes** — under the ~71 GiB ceiling, but **over** the 63.16 GiB pool |
 | server reaches `listening on` | yes (~68 s) | **yes** (~59 s — load is disk-bound either way, so not a diagnostic) |
-| prefill | **1,031 t/s** | **85.5 t/s** (66-token prompt) |
-| decode | 34 t/s (MTP) / 28.3 serial | **6.25 t/s** |
+| prefill | 1,031 t/s @16k (long prompt) | **85.5 t/s @66-token prompt** — *not comparable, see below* |
+| decode, serial (no drafter) | 28.3 t/s | **6.25 t/s** → **≈4.5× slower** |
 | per-token decode | ~33 ms | **159.9 ms** |
 | MTP head | works | **crashed the GPU** (`ROCm error: unspecified launch failure`) |
 
-**The slowdown is structural, not a cold-cache artifact.** Four identical requests in one server session:
-rep 1 = 6.26 t/s, rep 2 = 6.20 t/s — dead flat, and within rep 1 the running average held at 6.26/6.33/6.23.
-A cache-warming explanation requires convergence toward ~30 t/s; there is none.
+**Corrections to this comparison, forced by external review.** Two of my three ratios were wrong:
 
-**How much memory is on the slow path — measured by inference, and it is not just the overflow.** Only 4.3% of
-the weight buffer (66.01 vs 63.16 GiB) exceeds the pool, so if only that excess were slow the cost would be
-~4 ms/token. The observed penalty is ~127 ms/token — **30× larger**:
+- **The prefill row is not a ratio.** 85.5 t/s is a **66-token** prompt; 1,031 t/s is long production prefill.
+  Different shapes cannot be divided. What the row licenses is "short-prompt prefill was also much slower."
+- **The decode multiple is 4.53×, not 5.44×.** Against this document's own serial reference (28.3 t/s):
+  28.3 / 6.25 = **4.53**. My 5.44 compared against a *different* mode (34 t/s, MTP) — mixing modes to make a
+  ratio. Use 4.5×, and say which reference it uses.
 
-| model | extra ms/token | observed |
-| --- | ---: | ---: |
-| only the 4.3% excess served slowly | 4.15 ms | **126.9 ms** |
-| the **entire** 66.01 GiB served at system-memory speed | 127.8 ms | **126.9 ms** |
+**The slowdown itself is solid.** Four identical requests in one server session: rep 1 = 6.26 t/s, rep 2 =
+6.20 t/s — dead flat, and within rep 1 the running average held at 6.26/6.33/6.23. A cache-warming explanation
+would require convergence toward ~30 t/s; there is none. So:
 
-Working backwards, decode runs at an effective **26.4 GB/s** against the production **~133 GB/s** marginal
-bandwidth — the observed 5× exactly. So the *whole* weight buffer is being served slowly, not the 4.3 % that
-overflows. *Mechanism (hypothesis, not measured):* a single large allocation that cannot be placed
-contiguously inside the pool is likely placed entirely in system memory, rather than being split with only the
-excess spilling. I did not verify that directly — what is measured is the effect and its size.
+> **This small-carve configuration loaded but decoded ≈4.5× more slowly, reproducibly.**
 
-**This is the direct answer to "it is the same unified RAM, so it should be the same speed": it is not.**
-Weights inside the carve are read by the GPU at ~133 GB/s; the same weights served from the system-memory path
-are read at ~26 GB/s. Same physical LPDDR5X, ~5× apart, because of how the GPU's aperture and caching treat the
-two. The carve is not a bookkeeping partition that could be left implicit — it is the fast path.
+**What I do NOT claim: the mechanism.** My earlier version of this section concluded that "the *whole* weight
+buffer is served at system-memory speed" and derived a ~26 GB/s effective bandwidth to prove it. That reasoning
+is **circular**, as the reviewer pointed out: dividing the same observed latency by an assumed byte count to get
+a bandwidth, then using that bandwidth to conclude which bytes moved, assumes its own conclusion. The extra
+~127 ms/token of latency establishes that **something expensive happened**; it does not establish what fraction
+of the buffer changed residency.
 
-**Conclusion: a carve below the model's footprint does not fail gracefully — it silently becomes 5× slower.**
-It still loads, so nothing warns you; the MTP head then crashes the GPU outright. **The carve must hold the whole
-resident set inside the pool; 96 GB does, 16 GB does not.**
+Residency explanations that remain **unresolved, with no direct evidence for any of them**:
+
+| candidate | status |
+| --- | --- |
+| whole buffer placed in system memory (contiguity/allocation-granularity effect) | plausible; not observed |
+| only the ~4.3% overflow migrated | arithmetic argues against (it would cost ~4 ms, not ~127), but that arithmetic rests on the same assumed bytes |
+| repeated paging / fault-driven thrash per step | possible; consistent with the flat, non-converging rate, but untested |
+| driver-side demotion of the allocation after the fact | untested |
+
+Distinguishing them needs direct evidence — residency counters, or a GPU-side full-range touch test with
+synchronisation — not another latency sample. The `hip-ceiling.cpp` probe cannot settle it either: see the
+correction in `CLAIM-LEDGER.md` §4 and §13 of this document.
+
+**Conclusion, narrowed to what is measured: a carve below the model's footprint does not fail loudly — it
+loads and then decodes ≈4.5× more slowly. The mechanism is unresolved. Size the carve so the resident set fits
+inside the pool (96 GB is validated); 16 GB does not, and 0.5 GB does not even load.**
 
 | carve | pool | ceiling ≈ 1.13×pool | weights 66.01 GiB | verdict |
 | ---: | ---: | ---: | --- | --- |
@@ -266,8 +293,24 @@ matvec prologues contain an IQ4_NL path behind a default-off gate (`MMVQ_FQ_IQ_T
 candidate rather than a closed door. The dtype census still deprioritises the Q8_0-only levers on the target: a
 GGUF census of our 9 PROJFIX shards shows **every expert and attention tensor is IQ4_NL**
 (`ffn_gate_exps`, `ffn_up_exps`, `ffn_down_exps`, `attn_qkv`, `attn_gate`, `ssm_out`, every HC projection); only
-two HC projections and `ple_key` are Q8_0. That says nothing about the **draft side**, which is a separate dtype
-population (the MTP head is Q8_0).
+two HC projections and `ple_key` are Q8_0.
+
+**Per-function applicability ledger** (external review §6 asked for this instead of a blanket "cannot apply",
+because a false gate default is *implemented-but-disabled*, not absent):
+
+| candidate | dtype it needs | dims / graph pattern | gate & default | deps present here | correctness coverage | measured effect |
+| --- | --- | --- | --- | --- | --- | --- |
+| `MMV_GROUP` | **Q8_0 only** (`mmvq.cu:2212`) | single-col matvecs sharing one F32 activation; gate/up pairs | `GGML_CUDA_DISABLE_MMV_GROUP` (unset = on) | kernel absent | none | **not measured** |
+| `fq_prologue` (silu/sigmoid fused into activation quant) | Q8_0/Q6_K; **IQ4_NL present** behind `MMVQ_FQ_IQ_TYPES` (**default false**) | `MUL_MAT`, single-col dst, F32 act | compile-time macro, not env | kernel absent | none | **not measured** |
+| `fq_gdn_gate` | same `mmvq_fq_type_ok` path | GDN out-proj + gated per-head norm | same macro | kernel absent | none | **not measured** |
+| `WEIGHTED_DOWN` | **IQ4_NL or Q8_0** (`mmvq.cu:3171`) | `MUL_MAT_ID[ne 640,2560,512]` + `MUL` + 9 VIEW + 9 ADD; `n_used==10` | `GGML_CUDA_DISABLE_WEIGHTED_DOWN` (unset = on) | kernel absent; needs `mmvq_hc_mul_rn`/`_add_rn` | none | byte model only (**~0.23%**) |
+| `hyperconn.cu` | — | HC projections (9% of bytes) | n/a | file absent | none | **not measured** |
+| Quantisation-independent activation fusion | any | assess by graph pattern, not weight dtype | — | — | — | **not measured** |
+| Draft-side (MTP head is **Q8_0**) | Q8_0 | MTP draft graph | — | — | — | **not measured**; a target-only census cannot rule this out |
+
+Read the ledger honestly: **only `MMID_512` was measured**, and it turned out not to be a decode path. Every
+other row is an assessment, not a negative — including the Q8_0-only ones, which are simply inapplicable *as
+written* rather than disproved. The last two rows are open questions the dtype census cannot answer.
 
 **`WEIGHTED_DOWN` is applicable, and I overstated its dismissal.** It fuses the IQ4_NL routed down projection
 with the 10-expert weighted sum, removing a `[n_embd, n_used]` f32 intermediate (2560 × 10 × 4 B = 100 KB/layer,

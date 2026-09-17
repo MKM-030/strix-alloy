@@ -173,17 +173,20 @@ int main(int argc, char ** argv) {
         ggml_free(gctx);
     }
 
-    // numeric sanity: compare GPU y against CPU reference for replica 0 (T columns)
+    // numeric sanity: finiteness + scale on the real output. This is deliberately NOT a numerical
+    // reference (the CPU "reference" below is a proxy, not bit-exactness) -- so it is a gate, not proof:
+    // non-finite output means the kernel is broken, and that must fail the process rather than print.
+    int  nf        = 0;
+    double meanabs = 0.0;
     {
         std::vector<float> y_gpu((size_t)R * (size_t)T);
         ggml_backend_tensor_get(reps[0].y, y_gpu.data(), 0, y_gpu.size() * sizeof(float));
-        // CPU reference: dequantize (linear IQ4_NL proxied by nibble*16-127 scaled) — this is only a
-        // finiteness/scale check, not bit-exactness.
-        double sum = 0; int nf = 0;
+        double sum = 0;
         for (float v : y_gpu) { if (!std::isfinite(v)) nf++; sum += std::fabs(v); }
+        meanabs = sum / (double)std::max<size_t>(1, y_gpu.size());
         printf("  y[0..3] = %.4f %.4f %.4f %.4f | non-finite=%d | mean|y|=%.4f\n",
                y_gpu[0], y_gpu.size()>1?y_gpu[1]:0.f, y_gpu.size()>2?y_gpu[2]:0.f, y_gpu.size()>3?y_gpu[3]:0.f,
-               nf, sum / (double)std::max<size_t>(1, y_gpu.size()));
+               nf, meanabs);
     }
 
     for (auto & r : reps) {
@@ -191,5 +194,16 @@ int main(int argc, char ** argv) {
         if (r.ctx) ggml_free(r.ctx);
     }
     ggml_backend_free(backend);
+
+    // A printed warning is not a correctness gate: exit non-zero so a broken kernel cannot look like a
+    // successful run inside a script. All-zero output is also suspicious (wrong weights or a dead kernel).
+    if (nf > 0) {
+        fprintf(stderr, "FAIL: %d non-finite output values\n", nf);
+        return 2;
+    }
+    if (!(meanabs > 0.0)) {
+        fprintf(stderr, "FAIL: mean|y| == 0 (kernel produced no signal)\n");
+        return 3;
+    }
     return 0;
 }

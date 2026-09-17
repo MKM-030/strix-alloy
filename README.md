@@ -297,34 +297,52 @@ If we have used your work and not credited it, that is our omission — please o
 4. **~1–2% effects need an interleaved A/B** — a single 5-rep run has the same spread as the effect.
 5. **Log which kernel specialisations actually ran** before trusting an A/B.
 6. **Check the harness's own epilogue** — see the retracted claim above.
-7. **Average ≥3 MTP runs**, and always report acceptance alongside the t/s figure.
+7. **Average ≥3 MTP runs**, and always report acceptance alongside the t/s figure. Use a **median**, not the
+   best of the reps — best-of-three biased a published figure here by ~10% (see the withdrawn claim in
+   `CLAIM-LEDGER.md`).
 8. **Quote `llama-bench` for any cross-engine claim** — `pp512` / `tg128`, one command, no drafter in the
-   harness. Served numbers are higher and not directly comparable to published figures.
+   harness. Served numbers are higher and not directly comparable to published figures. Note it feeds
+   **pseudorandom** tokens (`rand() % n_vocab`), so it is synthetic evaluation throughput, not a serving
+   benchmark, and on the Windows CRT it reaches only 13.2% of the vocabulary
+   (`llama-bench-workload-identity-20260916.md`).
+9. **Report a median of warm reps, per size.** `fnbench.py` now prints exactly that, warns when a cell has
+   fewer than 3 warm reps, and records `sizes_warm_rep_count` in its JSON so a summary cannot silently use
+   the cold rep.
+10. **Record the token workload.** `fnbench.py` writes `bench-corpus.sha256` and prints a token-ID hash; the
+    corpus is built from this repository (or `$BENCH_CORPUS_ROOT`), not from a private checkout.
+11. **State the phase a kernel actually runs in.** A shape-match at startup is not coverage: `MMID_512`
+    looked like a decode kernel and turned out to be a large-batch path (see `CLAIM-LEDGER.md`).
+
+`docs/benchmarks/CLAIM-LEDGER.md` maps every current figure to its evidence and its conditions, and lists what
+has been withdrawn.
 
 ## Scope, and what is NOT verified
 
-This repository is a **measurement and Windows-integration repository around a locally modified engine**, not
-a fully published engine fork. The engine source (`src/`, `ggml/`, the patch series) is **not** in this tree:
-`setup/build-windows.ps1` takes a separate `$Src` checkout and builds that. That is the single biggest limit on
-what a reader can check, and it is stated here rather than buried.
+This repository is a **measurement and Windows-integration repository around a locally modified engine**. The
+engine delta **is** published here — `engine-patches/` is an ordered 8-patch series against the public
+`pwilkin/llama.cpp` `strix-halo` tip, with every artifact hash, so the binary behind the headline numbers is
+reconstructible. What is *not* here is the upstream tree itself (`src/`, `ggml/`); `setup/build-windows.ps1`
+takes a separate `$Src` checkout of that and applies the patches. See
+[`docs/benchmarks/engine-provenance-20260916.md`](docs/benchmarks/engine-provenance-20260916.md).
 
 Consequently these are **UNVERIFIED from this repository alone**:
 
 | Item | Status |
 | --- | --- |
-| The exact engine source behind the headline binary | **BLOCKED** — not published; no engine hash here lets you rebuild it |
+| The engine behind the headline binary | **PUBLISHED, NOT INDEPENDENTLY REBUILT.** Delta is 8 patches over `40a9f4d0` with hashes; nobody else has compiled and re-measured it yet |
 | Whether `MMID_512` executes in the timed decode phase | **RESOLVED — it does not.** Probe: 1 call total in a 200-token decode, all prefill; decode takes MMVF/MMVQ |
 | Whether the allocation probe reflects *resident* GPU capacity | **UNVERIFIED** — it shows an allocation-acceptance boundary for one process state, not residency or usable bandwidth |
 | The token stream `llama-bench` feeds on Windows | **CONFIRMED** — with UCRT `RAND_MAX = 32767`, `rand() % n_vocab` reaches only 13.2% of a 248k vocab (`rand-check.c`). Workload-identity defect; throughput impact measured at 0–1.4% |
-| Why `llama-bench` and the server differ (~4–17%) | **UNRESOLVED, not separable from server spread** — the same construction measured 876 and 952 t/s in two sessions; needs the same stored token array through both entry points |
+| Why `llama-bench` and the server differ | **UNRESOLVED, not separable from server spread** — the same construction measured 876 and 952 t/s in two sessions; needs the same stored token array through both entry points |
 | Cause of the prefill gap vs ilintar | **UNRESOLVED** — and **not** retained-PM4, which their own page says does not engage on prefill |
 | Whole-buffer demotion in the small-carve experiment | **UNRESOLVED** — the slowdown is real and reproduced; the mechanism is inferred, not observed |
+| Numerical divergence at verification widths | **PARTLY UNRESOLVED** — see `docs/benchmarks/acceptance-width-report.md`; same-build repeatability and width-1-vs-2/3 consistency are not the same question as sequence-level quality |
 | Multi-turn / depth-band / retrieval correctness | **NOT DONE** — see the future plan; drive-level validation is olliehm's, not ours |
 | Weight byte-accounting as *DRAM traffic* | **MODEL ONLY** — nominal active payload from tensor metadata, not a bus measurement |
 
 Corrections from external review are welcome and have been applied before — including several where the
-first published explanation was wrong (see `docs/benchmarks/`). If you find a number that does not replicate,
-please open an issue with the harness, the engine revision and the settings.
+first published explanation was wrong. **`docs/benchmarks/CLAIM-LEDGER.md`** tracks each current claim against
+its evidence and its retractions, so a reader can see what is endorsed versus archived.
 
 ## License & status
 
