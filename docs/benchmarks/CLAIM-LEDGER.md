@@ -86,6 +86,12 @@ matched head-to-head against any of them.
 | `WEIGHTED_DOWN`; IQ-gated fused prologues | **Unmeasured** — gate/type assessment plus a byte model, not a measured negative |
 | Weight byte-accounting as *DRAM traffic* | **Model only** — nominal active payload; dtype drift noted (a Q6_K head, F32 routers; `pf-census.json` ≈4.254 GB) |
 | Windows stability: device-loss recovery, long-session growth, concurrent clients, cancellation, stripped-env deployment | **Not tested** |
+| **Roadmap items that lived only in the top-level README** | moved here so the plan is not lost with the prose |
+| - Fine-tune the MTP draft head | **Planned, the main lever.** Acceptance is workload-dependent (40–92%); the head is one trained MTP block. A hidden-state dump harness (`tools/hidden-dump/`, patch 0003) produces `(h_nextn, next-token)` pairs from real traffic. Plan: adapt the input/fusion projections against the quantized target, freeze the target and the shared output projection, screen adapter rank 8 vs 16. Success metric is held-out **emitted tokens/second**, not loss |
+| - `stew675/rdna-boosts` audit | **Not started.** Its set carries width-invariance and masked/freed-cell fixes *and* patches that intentionally change reduction order; import the distinctions, not the whole series |
+| - Grouped GEMV for small-R projections | **Not started.** Bounded at ~6% of decode by our own per-operator measurement |
+| - Remove dead epilogue work at `nwarps == 1` | **Not started.** Unconditional `__syncthreads()` plus shared machinery that cannot fire at one warp |
+| - A depth controller that measures whether depth pays | **Not started.** The ported EMA controller optimises accepted length, not tokens/second, and lost to the fixed default on every cell |
 
 ---
 

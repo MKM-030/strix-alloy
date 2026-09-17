@@ -78,8 +78,12 @@ llama-server.exe ^
 
 ### Measurement hygiene (matters on this box)
 
-See the top-level README's *Reproducing measurements* — the rules are the same. The two that bite
-hardest here: `wsl --shutdown` before every run, and prefill needs 3–4 warm reps.
+The rules were previously listed in the top-level README and now live in the
+[benchmark guide](../docs/benchmarks/engine-comparison.md) and the
+[claim ledger](../docs/benchmarks/CLAIM-LEDGER.md). The two that bite hardest here:
+`wsl --shutdown` before every run, and prefill needs **3–4 warm reps** (rep 0 is cold; a single rep
+understated deep prefill by 20–55% in our own early reports). Two more, from the ledger: ~1–2% effects need an
+**interleaved A/B**, and MTP figures should be a **median of ≥3 runs**, never the best of them.
 
 ## 6. Verify
 
