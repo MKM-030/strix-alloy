@@ -57,8 +57,8 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 | Item | Status |
 | --- | --- |
-| Engine independently rebuilt from `engine-patches/` by a third party | **Open** — delta published with hashes, nobody else has compiled and re-measured |
-| Why `llama-bench` and the server differ | **Open, not separable from server spread** (same construction: 876 vs 952 t/s in two sessions) |
+| Engine rebuildable from `engine-patches/` | **VERIFIED in-house** — applies to `40a9f4d0` and all 8 files match the built tree byte-for-byte (`verify-patch-series.sh`). No third party has compiled it yet |
+| Why `llama-bench` and the server differ | **RESOLVED as harness-side (~13%), tokens excluded.** Server fed llama-bench's own token distribution: 1010.5 vs 892.59 t/s. Random vs prose = -1.0%. `bench-gap-resolved-20260917.md` |
 | Cause of the 26% prefill gap vs ilintar | **Open** — and not PM4 |
 | Whole-buffer demotion mechanism in the small-carve case | **Open** — slowdown real and reproduced; mechanism inferred, not observed |
 | Correctness gates 3 (state after 0/1/N accepts) and 4 (multi-turn, depth, retrieval, tool output) | **Not done** |

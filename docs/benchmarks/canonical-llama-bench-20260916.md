@@ -68,11 +68,11 @@ I also cannot claim "warm-up is ruled out because eight reps do not climb": the 
 individual reps warmed, slowed, or varied with input. The `±` printed by `llama-bench` is a **sample standard
 deviation**, not a confidence interval.
 
-**Later measurement makes this gap less separable still.** Running the same random-token construction in two
-different server sessions gave 8k prefill medians of 876 and 952 t/s — a ~9% spread for what should be the same
-experiment. So the 4–17% range here **cannot be separated from server-side spread** with the data collected.
-See `llama-bench-workload-identity-20260916.md`, which also shows the UCRT `rand()` cap costs only 0–1.4%
-throughput and that PLE n-gram locality is *not* the mechanism.
+**RESOLVED (2026-09-17): the gap is harness-side, and the token stream is excluded as a cause.** Feeding the
+server llama-bench's own token distribution gives **1010.5 t/s** against llama-bench's **892.59** — still
++13.2% — while random vs prose tokens differ by only **−1.0%**. So the difference is not the workload; it
+is ~13% of harness-side difference (timing boundaries and per-chunk synchronisation are the untested
+candidates). Full data: `bench-gap-resolved-20260917.md`.
 
 **Neither number is "the honest one" — they measure different things.** The defensible move is to publish both,
 labelled, and to stop treating them as interchangeable. To actually locate the difference, feed the **same stored

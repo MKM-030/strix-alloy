@@ -333,7 +333,7 @@ Consequently these are **UNVERIFIED from this repository alone**:
 | Whether `MMID_512` executes in the timed decode phase | **RESOLVED — it does not.** Probe: 1 call total in a 200-token decode, all prefill; decode takes MMVF/MMVQ |
 | Whether the allocation probe reflects *resident* GPU capacity | **UNVERIFIED** — it shows an allocation-acceptance boundary for one process state, not residency or usable bandwidth |
 | The token stream `llama-bench` feeds on Windows | **CONFIRMED** — with UCRT `RAND_MAX = 32767`, `rand() % n_vocab` reaches only 13.2% of a 248k vocab (`rand-check.c`). Workload-identity defect; throughput impact measured at 0–1.4% |
-| Why `llama-bench` and the server differ | **UNRESOLVED, not separable from server spread** — the same construction measured 876 and 952 t/s in two sessions; needs the same stored token array through both entry points |
+| Why `llama-bench` and the server differ | **RESOLVED as harness-side (~13%), tokens excluded** — server fed llama-bench's own token distribution: 1010.5 vs 892.59 t/s; random vs prose −1.0%. `bench-gap-resolved-20260917.md` |
 | Cause of the prefill gap vs ilintar | **UNRESOLVED** — and **not** retained-PM4, which their own page says does not engage on prefill |
 | Whole-buffer demotion in the small-carve experiment | **UNRESOLVED** — the slowdown is real and reproduced; the mechanism is inferred, not observed |
 | Numerical divergence at verification widths | **PARTLY UNRESOLVED** — see `docs/benchmarks/acceptance-width-report.md`; same-build repeatability and width-1-vs-2/3 consistency are not the same question as sequence-level quality |

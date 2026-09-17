@@ -68,11 +68,10 @@ explanation for the harness difference.
    workload-identity defect, and label `llama-bench` figures as synthetic.
 2. **It is not the throughput explanation.** Restricting the range costs ≈0–1.4%; n-gram locality moves the
    wrong way. So the 26% prefill gap to ilintar is *not* explained by the token stream.
-3. **A caveat I now have to take seriously: the server's own numbers move between runs.** The same
-   `unif-full` 8k shape measured a 876.1 median in one server session and 952.1 in another (fresh-random,
-   same construction) — a ~9% spread for what should be the same experiment. Combined with the
-   sequence-to-sequence spread seen here, the server's prefill figures are only good to roughly ±5–10% for
-   random-token prompts.
+3. **The residual gap was later localized to the harness, not the tokens** (2026-09-17): server +
+   llama-bench's distribution = 1010.5 t/s vs llama-bench 892.59 (+13.2%), and random vs prose = −1.0%.
+   See `bench-gap-resolved-20260917.md`. The earlier 876-vs-952 observation was inter-session drift and is
+   superseded by that controlled single-session comparison.
 
 Point 3 means the "4–17% harness gap" against `llama-bench` **cannot be separated from server-side spread
 with the data collected so far.** The reviewer's §3 objection was right: the two are not a controlled
