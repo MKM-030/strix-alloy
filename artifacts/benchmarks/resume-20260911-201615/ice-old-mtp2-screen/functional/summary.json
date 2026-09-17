@@ -1,0 +1,52 @@
+{
+  "mode": "functional",
+  "status": "FINISHED",
+  "checks": [
+    {
+      "test": "basic",
+      "pass": true
+    },
+    {
+      "test": "structured",
+      "pass": true
+    },
+    {
+      "test": "multiturn",
+      "pass": true
+    },
+    {
+      "test": "tool-call",
+      "pass": true,
+      "name": "inspect_room",
+      "arguments": "{\"roomId\":\"room-7\"}"
+    },
+    {
+      "test": "A-small-implementation",
+      "pass": true,
+      "qualification": "structure only; executable checks remain separate"
+    },
+    {
+      "test": "B-repository-bugfix",
+      "pass": true,
+      "qualification": "structure only; executable checks remain separate"
+    },
+    {
+      "test": "C-multifile-feature",
+      "pass": true,
+      "qualification": "structure only; executable checks remain separate"
+    },
+    {
+      "test": "retrieval-8k",
+      "pass": true,
+      "tokenizer_tokens": 8123
+    },
+    {
+      "test": "concurrent-isolation",
+      "pass": true,
+      "note": "Client concurrency 2; actual server slots recorded in props"
+    }
+  ],
+  "functional_structure_passed": true,
+  "request_count": 11,
+  "not_full_evaluation": true
+}

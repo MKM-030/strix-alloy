@@ -1,0 +1,236 @@
+{
+  "source": "C:\\Projects\\REV-N-ornith-eval-20260911\\artifacts\\benchmarks\\resume-20260911-201615\\rocmfp4-no-spec-screen-v2\\workers\\requests-final.json",
+  "generated_code_environment": "Node permission model; no filesystem/network/subprocess capabilities granted; additional VM code-generation ban and 1s per-test timeout",
+  "results": [
+    {
+      "task": "A-small-implementation",
+      "label": "A-small-implementation-r0",
+      "transport_ok": true,
+      "wall_s": 4.251202099956572,
+      "ttft_s": 0.2825917999725789,
+      "usage": {
+        "completion_tokens": 295,
+        "prompt_tokens": 83,
+        "total_tokens": 378,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 83,
+        "prompt_ms": 248.612,
+        "prompt_per_token_ms": 2.995325301204819,
+        "prompt_per_second": 333.8535549370103,
+        "predicted_n": 295,
+        "predicted_ms": 3968.356,
+        "predicted_per_token_ms": 13.497809523809524,
+        "predicted_per_second": 74.08609509832283
+      },
+      "grading": {
+        "executed": true,
+        "passed": 7,
+        "total": 7,
+        "tests": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "semantic_pass": true,
+      "checks": [
+        "dedupe([]).length===0",
+        "dedupe([{a:1},{a:1}]).length===1",
+        "dedupe([{a:1,b:2},{b:2,a:1},{a:2}]).length===2",
+        "(()=>{const x={a:1};return dedupe([x,{a:1}])[0]===x})()",
+        "dedupe([{a:1},{a:'1'},{}]).length===3",
+        "(()=>{const a=Object.freeze({x:1,y:2}),b=Object.freeze({y:2,x:1});const xs=Object.freeze([a,b]);return dedupe(xs).length===1&&dedupe(xs)[0]===a})()",
+        "dedupe([{a:1},{a:'1'},{a:null},{a:false}]).length===4"
+      ],
+      "code_sha256": "30ab273bc4cfbb4b03719ebc0f2d4012c16959b29d8cf83977448b84119fc903"
+    },
+    {
+      "task": "B-repository-bugfix",
+      "label": "B-repository-bugfix-r0",
+      "transport_ok": true,
+      "wall_s": 11.28170739999041,
+      "ttft_s": 1.0211864999728277,
+      "usage": {
+        "completion_tokens": 738,
+        "prompt_tokens": 913,
+        "total_tokens": 1651,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 913,
+        "prompt_ms": 917.174,
+        "prompt_per_token_ms": 1.0045717415115005,
+        "prompt_per_second": 995.4490641906551,
+        "predicted_n": 738,
+        "predicted_ms": 10259.907,
+        "predicted_per_token_ms": 13.921176390773404,
+        "predicted_per_second": 71.83300979238896
+      },
+      "grading": {
+        "executed": false,
+        "error": "SyntaxError: Unexpected token ':'"
+      },
+      "semantic_pass": false,
+      "checks": [
+        "nextAttemptDelayMs({maxAttempts:5,baseDelayMs:10,maxDelayMs:100},1)===10",
+        "nextAttemptDelayMs({maxAttempts:5,baseDelayMs:10,maxDelayMs:100},5)===100",
+        "nextAttemptDelayMs({maxAttempts:5000,baseDelayMs:0,maxDelayMs:100},2000)===0",
+        "nextAttemptDelayMs({maxAttempts:5000,baseDelayMs:1,maxDelayMs:100},2000)===100",
+        "(()=>{try{nextAttemptDelayMs({maxAttempts:1,baseDelayMs:1,maxDelayMs:2},0);return false}catch(e){return e instanceof RangeError}})()",
+        "(()=>{try{nextAttemptDelayMs({maxAttempts:0,baseDelayMs:1,maxDelayMs:2},1);return false}catch(e){return e instanceof RangeError}})()",
+        "nextAttemptDelayMs({maxAttempts:5000,baseDelayMs:0,maxDelayMs:0},2000)===0",
+        "nextAttemptDelayMs({maxAttempts:4,baseDelayMs:0.5,maxDelayMs:10},4)===4",
+        "(()=>{try{nextAttemptDelayMs({maxAttempts:1,baseDelayMs:Infinity,maxDelayMs:Infinity},1);return false}catch(e){return e instanceof RangeError}})()"
+      ],
+      "code_sha256": "1bf834e7f0ea420178d97e94713244acc48b487c74be439489c1728a3db797a9"
+    },
+    {
+      "task": "C-multifile-feature",
+      "label": "C-multifile-feature-r0",
+      "transport_ok": true,
+      "wall_s": 6.624870200001169,
+      "ttft_s": 0.37176190002355725,
+      "usage": {
+        "completion_tokens": 447,
+        "prompt_tokens": 150,
+        "total_tokens": 597,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 150,
+        "prompt_ms": 301.339,
+        "prompt_per_token_ms": 2.0089266666666665,
+        "prompt_per_second": 497.77824974530347,
+        "predicted_n": 447,
+        "predicted_ms": 6253.119,
+        "predicted_per_token_ms": 14.020446188340806,
+        "predicted_per_second": 71.32440626829587
+      },
+      "grading": {
+        "executed": true,
+        "passed": 5,
+        "total": 10,
+        "tests": [
+          true,
+          true,
+          false,
+          false,
+          true,
+          false,
+          true,
+          false,
+          false,
+          true
+        ]
+      },
+      "semantic_pass": false,
+      "checks": [
+        "hasCapacity(0,1)===true",
+        "hasCapacity(1,1)===false",
+        "chooseRoute({complexity:'low',failures:0},0,4)==='FAST_LOCAL_WORKER'",
+        "chooseRoute({complexity:'high',failures:0},0,4)==='DEEP_LOCAL_WORKER'",
+        "chooseRoute({complexity:'low',failures:2},0,4)==='DEEP_LOCAL_WORKER'",
+        "chooseRoute({complexity:'low',failures:0},4,4)==='QUEUE'",
+        "(()=>{try{hasCapacity(-1,2);return false}catch(e){return e instanceof RangeError}})()",
+        "chooseRoute({complexity:'high',failures:0},4,4)==='DEEP_LOCAL_WORKER'",
+        "chooseRoute({complexity:'low',failures:3},4,4)==='DEEP_LOCAL_WORKER'",
+        "(()=>{try{hasCapacity(0,0);return false}catch(e){return e instanceof RangeError}})()"
+      ],
+      "code_sha256": "0860759041e1bbf40d47923eb382599c7298b8115f02b5e4435f36158c5ed34d"
+    },
+    {
+      "task": "D-repository-reasoning",
+      "label": "D-repository-reasoning-r0",
+      "transport_ok": true,
+      "wall_s": 10.294566199998371,
+      "ttft_s": 3.4447802000213414,
+      "usage": {
+        "completion_tokens": 438,
+        "prompt_tokens": 3771,
+        "total_tokens": 4209,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 3771,
+        "prompt_ms": 3366.155,
+        "prompt_per_token_ms": 0.8926425351365685,
+        "prompt_per_second": 1120.2692686462744,
+        "predicted_n": 438,
+        "predicted_ms": 6849.723,
+        "predicted_per_token_ms": 15.674423340961098,
+        "predicted_per_second": 63.79820030678612
+      },
+      "semantic_pass": null,
+      "qualification": "Requires rubric-based inspection; keywords alone are not a quality score.",
+      "response": {
+        "tests": [
+          "same-key concurrent opening: fire N concurrent getOrCreate(options) calls with the SAME sessionKey and an async (function) seed; assert the provider's openSession was invoked exactly once (call count === 1) and that every returned promise resolves to the SAME session instance (Object.is equality), i",
+          "same-key concurrent opening: fire N concurrent getOrCreate(options) calls with the SAME sessionKey and an async (function) seed; assert the provider's openSession was invoked exactly once (call count === 1) and that every returned promise resolves to the SAME session instance (Object.is equality), i",
+          "same-key concurrent opening: fire N concurrent getOrCreate(options) calls with the SAME sessionKey and an async (function) seed; assert the provider's openSession was invoked exactly once (call count === 1) and that every returned promise resolves to the SAME session instance (Object.is equality), i"
+        ],
+        "invariants": [
+          "at most one provider openSession per key: the provider's openSession call count for a given sessionKey never exceeds the number of distinct keys ever passed to getOrCreate for that key; a concurrent burst for one key yields exactly one openSession invocation.",
+          "single live session per key: at any observable moment, at most one session instance per sessionKey is reachable through the registry (keys() and status().activeOrOpening never report more than one live session for the same key).",
+          "failed-open retry: after a failed openSession rejects, the key is evicted from the registry (keys() no longer contains it and status().activeOrOpening does not count it), and a subsequent getOrCreate for the same key invokes provider.openSession again rather than replaying the cached rejection.",
+          "cancellation during opening: calling close(sessionKey) while an open is in-flight rejects the outstanding getOrCreate promise(s) with a cancellation error and causes the in-flight provider session to be closed with reason 'opening_cancelled'; a subsequent getOrCreate for that key opens a fresh, non-"
+        ]
+      }
+    },
+    {
+      "task": "E-patch-review",
+      "label": "E-patch-review-r0",
+      "transport_ok": true,
+      "wall_s": 2.716211100050714,
+      "ttft_s": 0.35268220002762973,
+      "usage": {
+        "completion_tokens": 171,
+        "prompt_tokens": 116,
+        "total_tokens": 287,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 116,
+        "prompt_ms": 280.507,
+        "prompt_per_token_ms": 2.4181637931034485,
+        "prompt_per_second": 413.53691708228314,
+        "predicted_n": 171,
+        "predicted_ms": 2363.528,
+        "predicted_per_token_ms": 13.90310588235294,
+        "predicted_per_second": 71.9263744707065
+      },
+      "semantic_pass": null,
+      "qualification": "Requires rubric-based inspection; keywords alone are not a quality score.",
+      "response": {
+        "tests": [
+          "route(task, used, limit) with used <= limit and task.failures >= 2 must return 'DEEP_LOCAL_WORKER' (escalation takes precedence over capacity)",
+          "route(task, used, limit) with used > limit and task.failures < 2 must return 'PREMIUM_ESCALATION' (full pool escalates, no automatic premium denial)",
+          "route(task, used, limit) with used > limit and task.failures >= 2 must return 'PREMIUM_ESCALATION' (escalation before capacity, premium fallback not auto-authorized)",
+          "route(task, used, limit) with used <= limit and task.failures < 2 must return 'FAST_LOCAL_WORKER' (normal local path)"
+        ]
+      }
+    }
+  ],
+  "executable_tasks_passed": 1,
+  "executable_tasks_total": 3
+}

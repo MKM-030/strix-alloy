@@ -1,0 +1,520 @@
+[
+  {
+    "run": "ice-old-mtp2-screen",
+    "mode": "workers",
+    "label": "A-small-implementation-r0",
+    "task_id": "A-small-implementation",
+    "transport_ok": true,
+    "wall_s": 5.692809900036082,
+    "ttft_s": 0.3189909000066109,
+    "usage": {
+      "completion_tokens": 324,
+      "prompt_tokens": 83,
+      "total_tokens": 407,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "81837654fed8bdfd8c88499aa8cf709d24b197fd0966aa0e71c32ee657077eb2",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 7,
+      "total": 7,
+      "tests": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "passed": true
+  },
+  {
+    "run": "ice-old-mtp2-screen",
+    "mode": "workers",
+    "label": "B-repository-bugfix-r0",
+    "task_id": "B-repository-bugfix",
+    "transport_ok": true,
+    "wall_s": 20.170824100030586,
+    "ttft_s": 1.0143385999836028,
+    "usage": {
+      "completion_tokens": 1146,
+      "prompt_tokens": 913,
+      "total_tokens": 2059,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "1b5fc68e82274eae7ffd086b691f08076a8fd62eab08b4df42e88e2c288f5739",
+    "strict_json": true,
+    "executable": {
+      "executed": false,
+      "error": "SyntaxError: Unexpected token 'export'"
+    },
+    "passed": false
+  },
+  {
+    "run": "ice-old-mtp2-screen",
+    "mode": "workers",
+    "label": "C-multifile-feature-r0",
+    "task_id": "C-multifile-feature",
+    "transport_ok": true,
+    "wall_s": 7.794071800017264,
+    "ttft_s": 0.4042011999990791,
+    "usage": {
+      "completion_tokens": 455,
+      "prompt_tokens": 150,
+      "total_tokens": 605,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "40359a99bca59088dcfff687a1dbfaa36cbce02fcef895b99bb70b922d8ee389",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 10,
+      "total": 10,
+      "tests": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "passed": true
+  },
+  {
+    "run": "ice-old-mtp2-screen",
+    "mode": "workers",
+    "label": "D-repository-reasoning-r0",
+    "task_id": "D-repository-reasoning",
+    "transport_ok": true,
+    "wall_s": 12.494357399991713,
+    "ttft_s": 3.810699099965859,
+    "usage": {
+      "completion_tokens": 424,
+      "prompt_tokens": 3771,
+      "total_tokens": 4195,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "c5a46e17a3707d0730f7a7fd6b3b583cc776de11665dd743b90946bc77649e8f",
+    "strict_json": true,
+    "review_fields_present": true,
+    "passed": null,
+    "review": {
+      "tests": [
+        "Test: same-key concurrent opening collapses to one provider call. Arrange a provider whose openSession returns a session object with a controllable `goingAway` flag and a `close()` spy. Fire N `getOrCreate` calls for the SAME `sessionKey` with a string seed, all before the underlying `provider.open`",
+        "resolve. Assert: (a) `provider.openSession` was invoked exactly once; (b) all N returned promises resolve to the same session instance (identity check via `===`); (c) `keys()` returns exactly `[sessionKey]`; (d) `status().activeOrOpening === 1`. This verifies the 'never a second openSession racing'.",
+        "Test: concurrent opening for the same key shares the in-flight promise identity. Using the same setup, capture the promise returned by the first `getOrCreate` and compare identity (`===`) with the promises returned by the second and third concurrent callers. Assert all are identical. This verifies '"
+      ],
+      "invariants": [
+        "Invariant: For a single `sessionKey`, at most one `provider.openSession` call is in flight at any time. Check: count provider `openSession` invocations equals the number of distinct keys ever mapped minus keys currently evicted; never exceeds 1 per key.",
+        "Invariant: All concurrent `getOrCreate` calls for the same key resolve to the same session instance. Check: returned promises are all `===` equal to the first caller's resolved session.",
+        "Invariant: `keys()` reflects exactly the set of keys with an in-flight or open attempt, with no duplicates. Check: `keys().length === sessions.size` and no key appears twice.",
+        "Invariant: A failed open is never cached. Check: after an `openSession` rejection, `sessions.has(key)` is false and a subsequent `getOrCreate` for that key invokes `provider.openSession` again (retry, not replay)."
+      ]
+    }
+  },
+  {
+    "run": "ice-old-mtp2-screen",
+    "mode": "workers",
+    "label": "E-patch-review-r0",
+    "task_id": "E-patch-review",
+    "transport_ok": true,
+    "wall_s": 4.646499500027858,
+    "ttft_s": 0.40204740001354367,
+    "usage": {
+      "completion_tokens": 253,
+      "prompt_tokens": 116,
+      "total_tokens": 369,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "622082b3684f2a0d475cad537b274b0fedd4df33970f4ba09e75dba44a64540d",
+    "strict_json": true,
+    "review_fields_present": false,
+    "passed": null,
+    "review": {
+      "tests": [
+        "route(task={failures:0}, used=5, limit=10) must return 'FAST_LOCAL_WORKER' (used<=limit, no failures)",
+        "route(task={failures:0}, used=10, limit=10) must return 'DEEP_LOCAL_WORKER' (used<=limit true, but failures<2 so should queue)",
+        "route(task={failures:2}, used=5, limit=10) must return 'DEEP_LOCAL_WORKER' (repeated failure escalates before capacity)",
+        "route(task={failures:3}, used=5, limit=10) must return 'DEEP_LOCAL_WORKER' (repeated failure escalates before capacity)",
+        "route(task={failures:0}, used=15, limit=10) must return 'PREMIUM_ESCALATION' (pool full, no failures, premium fallback)",
+        "route(task={failures:1}, used=15, limit=10) must return 'PREMIUM_ESCALATION' (pool full, single failure not repeated, premium fallback)"
+      ]
+    }
+  },
+  {
+    "run": "rocmfp4-mtp2-correctness",
+    "mode": "workers",
+    "label": "A-small-implementation-r0",
+    "task_id": "A-small-implementation",
+    "transport_ok": true,
+    "wall_s": 3.7087044999934733,
+    "ttft_s": 0.2889623999944888,
+    "usage": {
+      "completion_tokens": 295,
+      "prompt_tokens": 83,
+      "total_tokens": 378,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "9dc109dc6e743ca60088b54ca8110fb4a665751e9878c4af47131a92634cdc10",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 7,
+      "total": 7,
+      "tests": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "passed": true
+  },
+  {
+    "run": "rocmfp4-mtp2-correctness",
+    "mode": "workers",
+    "label": "B-repository-bugfix-r0",
+    "task_id": "B-repository-bugfix",
+    "transport_ok": true,
+    "wall_s": 13.007521499996074,
+    "ttft_s": 0.9784077000222169,
+    "usage": {
+      "completion_tokens": 988,
+      "prompt_tokens": 913,
+      "total_tokens": 1901,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "31766a5b01365f53d2f82bca79d369b17cfe422938ac19dd3dc218a48c9b441b",
+    "strict_json": true,
+    "executable": {
+      "executed": false,
+      "error": "SyntaxError: Unexpected token ':'"
+    },
+    "passed": false
+  },
+  {
+    "run": "rocmfp4-mtp2-correctness",
+    "mode": "workers",
+    "label": "C-multifile-feature-r0",
+    "task_id": "C-multifile-feature",
+    "transport_ok": true,
+    "wall_s": 5.952109900012147,
+    "ttft_s": 0.42991629999596626,
+    "usage": {
+      "completion_tokens": 449,
+      "prompt_tokens": 150,
+      "total_tokens": 599,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "86a19d56db7d6f2231230e78cbca774b0b278e83aaf3a860c5bc99cd079a8e71",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 7,
+      "total": 10,
+      "tests": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        false,
+        false,
+        true
+      ]
+    },
+    "passed": false
+  },
+  {
+    "run": "rocmfp4-mtp2-correctness",
+    "mode": "workers",
+    "label": "D-repository-reasoning-r0",
+    "task_id": "D-repository-reasoning",
+    "transport_ok": true,
+    "wall_s": 9.423745699983556,
+    "ttft_s": 3.672317299991846,
+    "usage": {
+      "completion_tokens": 312,
+      "prompt_tokens": 3771,
+      "total_tokens": 4083,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "a690a131de30a99aaa810d2163f246a248edbb5b12fe6bbc5f27b83e5aedce23",
+    "strict_json": true,
+    "review_fields_present": false,
+    "passed": null,
+    "review": {
+      "tests": [
+        "same-key concurrent opening: fire N concurrent getOrCreate(options) calls with the SAME sessionKey and an async (function) seed; assert provider.openSession was invoked exactly once and all N promises resolve to the identical session instance (Object.is identity).",
+        "same-key concurrent opening (string seed): fire N concurrent getOrCreate calls with the SAME sessionKey and a synchronous string seed; assert provider.openSession invoked exactly once and all resolve to the same instance.",
+        "same-key concurrent opening (mixed): fire concurrent getOrCreate calls with the same sessionKey where some use string seeds and some use function seeds; assert exactly one provider.openSession invocation and a single shared resolved session.",
+        "different keys do not collapse: fire concurrent getOrCreate calls with distinct sessionKeys; assert provider.openSession invoked once per distinct key and each resolves to its own instance.",
+        "failed-open retry: use a provider whose openSession rejects on the first call and resolves on the second; assert the first getOrCreate rejects, the key is absent from keys() and status().activeOrOpening === 0, and a subsequent getOrCreate for the same key succeeds (invokes provider.openSession again",
+        "failed-open retry (evicted before join): assert that after a failed open, a later getOrCreate does not replay the cached rejection but performs a fresh provider.openSession attempt and succeeds when the provider recovers; assert the failed attempt never appears in keys()."
+      ]
+    }
+  },
+  {
+    "run": "rocmfp4-mtp2-correctness",
+    "mode": "workers",
+    "label": "E-patch-review-r0",
+    "task_id": "E-patch-review",
+    "transport_ok": true,
+    "wall_s": 3.123033000039868,
+    "ttft_s": 0.3757124000112526,
+    "usage": {
+      "completion_tokens": 205,
+      "prompt_tokens": 116,
+      "total_tokens": 321,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "54923f3dcc6fb35273c26ba3d09922056b4487b506030f9e09fbc46f3cf3c071",
+    "strict_json": true,
+    "review_fields_present": false,
+    "passed": null,
+    "review": {
+      "tests": [
+        "route(task={failures:0}, used=0, limit=10) should return 'FAST_LOCAL_WORKER'",
+        "route(task={failures:0}, used=10, limit=10) should return 'PREMIUM_ESCALATION' (full pool must queue via escalation)",
+        "route(task={failures:2}, used=0, limit=10) should return 'DEEP_LOCAL_WORKER' (repeated failure escalates before capacity)",
+        "route(task={failures:2}, used=10, limit=10) should return 'DEEP_LOCAL_WORKER' (failure check precedes capacity check)",
+        "route(task={failures:1}, used=10, limit=10) should return 'PREMIUM_ESCALATION' (premium is the only full-pool outcome, never auto-authorized beyond escalation path)"
+      ]
+    }
+  },
+  {
+    "run": "ice-old-mtp2-screen",
+    "mode": "functional",
+    "label": "A-small-implementation",
+    "task_id": "A-small-implementation",
+    "transport_ok": true,
+    "wall_s": 5.343922599975485,
+    "ttft_s": 0.33281769999302924,
+    "usage": {
+      "completion_tokens": 309,
+      "prompt_tokens": 83,
+      "total_tokens": 392,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "ddfcd7c5fc4b496f6995a8cd96e326b8ef4b666ec6f3357db3c4747c93b691d7",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 7,
+      "total": 7,
+      "tests": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "passed": true
+  },
+  {
+    "run": "ice-old-mtp2-screen",
+    "mode": "functional",
+    "label": "B-repository-bugfix",
+    "task_id": "B-repository-bugfix",
+    "transport_ok": true,
+    "wall_s": 12.828353300050367,
+    "ttft_s": 1.0141658000065945,
+    "usage": {
+      "completion_tokens": 704,
+      "prompt_tokens": 913,
+      "total_tokens": 1617,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "dd9a9932d1a4c3841efe2247cbd72fe744d704871f37794cbf4883224990c8bf",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 9,
+      "total": 9,
+      "tests": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "passed": true
+  },
+  {
+    "run": "ice-old-mtp2-screen",
+    "mode": "functional",
+    "label": "C-multifile-feature",
+    "task_id": "C-multifile-feature",
+    "transport_ok": true,
+    "wall_s": 8.094332300010137,
+    "ttft_s": 0.3957420000224374,
+    "usage": {
+      "completion_tokens": 460,
+      "prompt_tokens": 150,
+      "total_tokens": 610,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "3fd9d7c86a2f0e943697e956c4fcce39d5ba83f0aa3cb658a479cc7fb070731d",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 10,
+      "total": 10,
+      "tests": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "passed": true
+  },
+  {
+    "run": "rocmfp4-mtp2-correctness",
+    "mode": "functional",
+    "label": "A-small-implementation",
+    "task_id": "A-small-implementation",
+    "transport_ok": true,
+    "wall_s": 4.358489900012501,
+    "ttft_s": 0.3472172999754548,
+    "usage": {
+      "completion_tokens": 340,
+      "prompt_tokens": 83,
+      "total_tokens": 423,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "044276cce4f6e6fc8b651a592504f30008306dca1f65bd44fdbc3d768860c01c",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 7,
+      "total": 7,
+      "tests": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "passed": true
+  },
+  {
+    "run": "rocmfp4-mtp2-correctness",
+    "mode": "functional",
+    "label": "B-repository-bugfix",
+    "task_id": "B-repository-bugfix",
+    "transport_ok": true,
+    "wall_s": 9.945251099998131,
+    "ttft_s": 0.9752519999747165,
+    "usage": {
+      "completion_tokens": 718,
+      "prompt_tokens": 913,
+      "total_tokens": 1631,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "b62211584ce858ecde04738873e775cfe3850898be119aeb8d373332b2e47da9",
+    "strict_json": true,
+    "executable": {
+      "executed": false,
+      "error": "SyntaxError: Unexpected token ':'"
+    },
+    "passed": false
+  },
+  {
+    "run": "rocmfp4-mtp2-correctness",
+    "mode": "functional",
+    "label": "C-multifile-feature",
+    "task_id": "C-multifile-feature",
+    "transport_ok": true,
+    "wall_s": 5.848192300007213,
+    "ttft_s": 0.38621829997282475,
+    "usage": {
+      "completion_tokens": 447,
+      "prompt_tokens": 150,
+      "total_tokens": 597,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "output_sha256": "426a91f810bc921b3c0d1800da57de6f08c169734aa051f654fc94621993970d",
+    "strict_json": true,
+    "executable": {
+      "executed": true,
+      "passed": 5,
+      "total": 10,
+      "tests": [
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false,
+        true
+      ]
+    },
+    "passed": false
+  }
+]

@@ -1,0 +1,235 @@
+[
+  {
+    "label": "A-small-implementation-r0",
+    "output": "{\n  \"code\": \"function dedupe(arr) {\\n  if (!Array.isArray(arr)) {\\n    throw new TypeError('Input must be an array');\\n  }\\n\\n  const result = [];\\n  const seen = new Set();\\n\\n  for (const obj of arr) {\\n    if (obj === null || typeof obj !== 'object') {\\n      continue;\\n    }\\n\\n    const keys = Object.keys(obj).sort();\\n    const canonical = keys\\n      .map((key) => JSON.stringify(key) + ':' + JSON.stringify(obj[key]))\\n      .join(',');\\n\\n    if (!seen.has(canonical)) {\\n      seen.add(canonical);\\n      result.push(obj);\\n    }\\n  }\\n\\n  return result;\\n}\",\n  \"explanation\": \"Time complexity is O(n * k log k) where n is the number of elements in the input array and k is the number of enumerable keys per object. Each object is visited once (O(n)), and for each object we sort its keys (O(k log k)) and build a canonical JSON string (O(k)). The Set membership check is O(1) on average. Space complexity is O(n * k) to store the canonical strings in the Set and the deduplicated result array. Objects are compared by their own enumerable keys in sorted order with JSON stringified values, first occurrences are preserved, input order is maintained, original references are returned unchanged, and the input array is never mutated.\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 324,
+      "prompt_tokens": 83,
+      "total_tokens": 407,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 83,
+      "prompt_ms": 259.601,
+      "prompt_per_token_ms": 3.127722891566265,
+      "prompt_per_second": 319.7214186386031,
+      "predicted_n": 324,
+      "predicted_ms": 5373.566,
+      "predicted_per_token_ms": 16.63642724458204,
+      "predicted_per_second": 60.109059793812904,
+      "draft_n": 173,
+      "draft_n_accepted": 146
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "421936d80e1ca581a593a8fcd77ea3340dc0dd66430f00ca00a8a462c37f09a2",
+    "stream_done": true,
+    "wall_s": 5.692809900036082,
+    "ttft_s": 0.3189909000066109,
+    "first_visible_s": 0.3189917000127025,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "A-small-implementation",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function dedupe(arr) {\n  if (!Array.isArray(arr)) {\n    throw new TypeError('Input must be an array');\n  }\n\n  const result = [];\n  const seen = new Set();\n\n  for (const obj of arr) {\n    if (obj === null || typeof obj !== 'object') {\n      continue;\n    }\n\n    const keys = Object.keys(obj).sort();\n    const canonical = keys\n      .map((key) => JSON.stringify(key) + ':' + JSON.stringify(obj[key]))\n      .join(',');\n\n    if (!seen.has(canonical)) {\n      seen.add(canonical);\n      result.push(obj);\n    }\n  }\n\n  return result;\n}",
+      "explanation": "Time complexity is O(n * k log k) where n is the number of elements in the input array and k is the number of enumerable keys per object. Each object is visited once (O(n)), and for each object we sort its keys (O(k log k)) and build a canonical JSON string (O(k)). The Set membership check is O(1) on average. Space complexity is O(n * k) to store the canonical strings in the Set and the deduplicated result array. Objects are compared by their own enumerable keys in sorted order with JSON stringified values, first occurrences are preserved, input order is maintained, original references are returned unchanged, and the input array is never mutated."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "B-repository-bugfix-r0",
+    "output": "{\n  \"code\": \"export interface RetryPolicy {\\n  /** Total attempts allowed, including the first. `1` means no retry — any `retryable: true` failure still dead-letters immediately. */\\n  readonly maxAttempts: number;\\n  /** Delay before the SECOND attempt (i.e. after attempt 1 fails). */\\n  readonly baseDelayMs: number;\\n  /** Ceiling on the computed delay, however high `attempt` climbs. */\\n  readonly maxDelayMs: number;\\n}\\n\\n/** A conservative default: 5 attempts, 1-minute base backoff doubling up to a 1-hour ceiling. */\\nexport const DEFAULT_RETRY_POLICY: RetryPolicy = {\\n  maxAttempts: 5,\\n  baseDelayMs: 60_000,\\n  maxDelayMs: 3_600_000,\\n};\\n\\nfunction assertValidPolicy(policy: RetryPolicy): void {\\n  if (!Number.isInteger(policy.maxAttempts) || policy.maxAttempts < 1) {\\n    throw new RangeError(\\n      `retry.ts: maxAttempts must be a positive integer, got ${String(policy.maxAttempts)}`,\\n    );\\n  }\\n  if (!Number.isFinite(policy.baseDelayMs) || policy.baseDelayMs < 0) {\\n    throw new RangeError(`retry.ts: baseDelayMs must be >= 0, got ${String(policy.baseDelayMs)}`);\\n  }\\n  if (!Number.isFinite(policy.maxDelayMs) || policy.maxDelayMs < policy.baseDelayMs) {\\n    throw new RangeError(\\n      `retry.ts: maxDelayMs (${String(policy.maxDelayMs)}) must be >= baseDelayMs (${String(policy.baseDelayMs)})`,\\n    );\\n  }\\n}\\n\\n/**\\n * True once `attempt` has exhausted the policy's budget — the engine's\\n * signal to write `DEAD_LETTER` instead of `PENDING_RETRY` even for a\\n * `retryable: true` failure.\\n */\\nexport function isRetryExhausted(policy: RetryPolicy, attempt: number): boolean {\\n  assertValidPolicy(policy);\\n  return attempt >= policy.maxAttempts;\\n}\\n\\n/**\\n * Exponential backoff, base * 2^(attempt-1), capped at `maxDelayMs`.\\n * `attempt` is the attempt number that JUST FAILED (1-indexed) — the\\n * returned delay is how long to wait before the NEXT one.\\n */\\nexport function nextAttemptDelayMs(policy: RetryPolicy, attempt: number): number {\\n  assertValidPolicy(policy);\\n  if (!Number.isInteger(attempt) || attempt < 1) {\\n    throw new RangeError(`retry.ts: attempt must be a positive integer, got ${String(attempt)}`);\\n  }\\n  return cappedBackoffMs(policy.baseDelayMs, attempt - 1, policy.maxDelayMs);\\n}\\n\\n/**\\n * Computes `base * 2^exponent`, clamped to `[0, maxMs]`.\\n *\\n * Handles the two degenerate inputs the raw `base * 2 ** exponent` form\\n * cannot:\\n *   - `base === 0` yields exactly `0` (never `NaN`), regardless of exponent.\\n *   - a huge `exponent` would overflow `2 ** exponent` to `Infinity` and\\n *     `base * Infinity` to `NaN` when `base` is itself `Infinity`.\\n *\\n * The doubling loop short-circuits the instant the running product reaches\\n * the ceiling, so it never multiplies past `maxMs` and never touches the\\n * overflow region. For `exponent === 0` the result is simply `base` (clamped\\n * to the ceiling), which matches `base * 2 ** 0` for every valid policy.\\n */\\nfunction cappedBackoffMs(base: number, exponent: number, maxMs: number): number {\\n  if (base === 0) {\\n    return 0;\\n  }\\n  let scaled = base;\\n  for (let i = 0; i < exponent; i++) {\\n    scaled *= 2;\\n    if (scaled >= maxMs) {\\n      return maxMs;\\n    }\\n  }\\n  return scaled < maxMs ? scaled : maxMs;\\n}\",\n  \"explanation\": \"Root cause: `nextAttemptDelayMs` computed `baseDelayMs * 2 ** (attempt - 1)` directly. When `baseDelayMs === 0`, the exponent term overflows to `Infinity` for large `attempt`, and `0 * Infinity` is `NaN`. When `attempt` is large under a huge `maxAttempts`, `2 ** (attempt - 1)` overflows to `Infinity`, and `Infinity * Infinity` (base itself unbounded) is also `NaN`; the `Math.min` guard only catches the finite-base case.\\n\\nFix: route through a `cappedBackoffMs(base, exponent, maxMs)` helper that doubles `base` `exponent` times, returning `maxMs` the moment the running product reaches the ceiling. This short-circuits before the overflow region is ever entered, so no `Infinity` multiplication is\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 1146,
+      "prompt_tokens": 913,
+      "total_tokens": 2059,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 913,
+      "prompt_ms": 956.006,
+      "prompt_per_token_ms": 1.0471040525739321,
+      "prompt_per_second": 955.0149266845606,
+      "predicted_n": 1146,
+      "predicted_ms": 19156.243,
+      "predicted_per_token_ms": 16.730343231441047,
+      "predicted_per_second": 59.77163684966828,
+      "draft_n": 620,
+      "draft_n_accepted": 536
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "5cd42a981fba03f0549262dbf34cd0043d14c5e59f50fac3b7e94f6f34be495c",
+    "stream_done": true,
+    "wall_s": 20.170824100030586,
+    "ttft_s": 1.0143385999836028,
+    "first_visible_s": 1.014339299988933,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "B-repository-bugfix",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "export interface RetryPolicy {\n  /** Total attempts allowed, including the first. `1` means no retry — any `retryable: true` failure still dead-letters immediately. */\n  readonly maxAttempts: number;\n  /** Delay before the SECOND attempt (i.e. after attempt 1 fails). */\n  readonly baseDelayMs: number;\n  /** Ceiling on the computed delay, however high `attempt` climbs. */\n  readonly maxDelayMs: number;\n}\n\n/** A conservative default: 5 attempts, 1-minute base backoff doubling up to a 1-hour ceiling. */\nexport const DEFAULT_RETRY_POLICY: RetryPolicy = {\n  maxAttempts: 5,\n  baseDelayMs: 60_000,\n  maxDelayMs: 3_600_000,\n};\n\nfunction assertValidPolicy(policy: RetryPolicy): void {\n  if (!Number.isInteger(policy.maxAttempts) || policy.maxAttempts < 1) {\n    throw new RangeError(\n      `retry.ts: maxAttempts must be a positive integer, got ${String(policy.maxAttempts)}`,\n    );\n  }\n  if (!Number.isFinite(policy.baseDelayMs) || policy.baseDelayMs < 0) {\n    throw new RangeError(`retry.ts: baseDelayMs must be >= 0, got ${String(policy.baseDelayMs)}`);\n  }\n  if (!Number.isFinite(policy.maxDelayMs) || policy.maxDelayMs < policy.baseDelayMs) {\n    throw new RangeError(\n      `retry.ts: maxDelayMs (${String(policy.maxDelayMs)}) must be >= baseDelayMs (${String(policy.baseDelayMs)})`,\n    );\n  }\n}\n\n/**\n * True once `attempt` has exhausted the policy's budget — the engine's\n * signal to write `DEAD_LETTER` instead of `PENDING_RETRY` even for a\n * `retryable: true` failure.\n */\nexport function isRetryExhausted(policy: RetryPolicy, attempt: number): boolean {\n  assertValidPolicy(policy);\n  return attempt >= policy.maxAttempts;\n}\n\n/**\n * Exponential backoff, base * 2^(attempt-1), capped at `maxDelayMs`.\n * `attempt` is the attempt number that JUST FAILED (1-indexed) — the\n * returned delay is how long to wait before the NEXT one.\n */\nexport function nextAttemptDelayMs(policy: RetryPolicy, attempt: number): number {\n  assertValidPolicy(policy);\n  if (!Number.isInteger(attempt) || attempt < 1) {\n    throw new RangeError(`retry.ts: attempt must be a positive integer, got ${String(attempt)}`);\n  }\n  return cappedBackoffMs(policy.baseDelayMs, attempt - 1, policy.maxDelayMs);\n}\n\n/**\n * Computes `base * 2^exponent`, clamped to `[0, maxMs]`.\n *\n * Handles the two degenerate inputs the raw `base * 2 ** exponent` form\n * cannot:\n *   - `base === 0` yields exactly `0` (never `NaN`), regardless of exponent.\n *   - a huge `exponent` would overflow `2 ** exponent` to `Infinity` and\n *     `base * Infinity` to `NaN` when `base` is itself `Infinity`.\n *\n * The doubling loop short-circuits the instant the running product reaches\n * the ceiling, so it never multiplies past `maxMs` and never touches the\n * overflow region. For `exponent === 0` the result is simply `base` (clamped\n * to the ceiling), which matches `base * 2 ** 0` for every valid policy.\n */\nfunction cappedBackoffMs(base: number, exponent: number, maxMs: number): number {\n  if (base === 0) {\n    return 0;\n  }\n  let scaled = base;\n  for (let i = 0; i < exponent; i++) {\n    scaled *= 2;\n    if (scaled >= maxMs) {\n      return maxMs;\n    }\n  }\n  return scaled < maxMs ? scaled : maxMs;\n}",
+      "explanation": "Root cause: `nextAttemptDelayMs` computed `baseDelayMs * 2 ** (attempt - 1)` directly. When `baseDelayMs === 0`, the exponent term overflows to `Infinity` for large `attempt`, and `0 * Infinity` is `NaN`. When `attempt` is large under a huge `maxAttempts`, `2 ** (attempt - 1)` overflows to `Infinity`, and `Infinity * Infinity` (base itself unbounded) is also `NaN`; the `Math.min` guard only catches the finite-base case.\n\nFix: route through a `cappedBackoffMs(base, exponent, maxMs)` helper that doubles `base` `exponent` times, returning `maxMs` the moment the running product reaches the ceiling. This short-circuits before the overflow region is ever entered, so no `Infinity` multiplication is"
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "C-multifile-feature-r0",
+    "output": "{\n  \"files\": {\n    \"capacity.js\": \"function hasCapacity(active, limit) {\\n  if (!Number.isInteger(active) || active < 0) {\\n    throw new RangeError('active must be a nonnegative integer');\\n  }\\n  if (!Number.isInteger(limit) || limit <= 0) {\\n    throw new RangeError('limit must be a positive integer');\\n  }\\n  return active < limit;\\n}\",\n    \"route.js\": \"function chooseRoute(task, active, limit) {\\n  if (task.complexity !== 'low' && task.complexity !== 'high') {\\n    throw new RangeError('task.complexity must be \\\"low\\\" or \\\"high\\\"');\\n  }\\n  if (!Number.isInteger(task.failures) || task.failures < 0) {\\n    throw new RangeError('task.failures must be a nonnegative integer');\\n  }\\n\\n  if (task.complexity === 'high' || task.failures >= 2) {\\n    return 'DEEP_LOCAL_WORKER';\\n  }\\n\\n  if (hasCapacity(active, limit)) {\\n    return 'FAST_LOCAL_WORKER';\\n  }\\n\\n  return 'QUEUE';\\n}\"\n  },\n  \"explanation\": \"The two files are concatenated into a single scope, so capacity.js's hasCapacity declaration is visible to route.js. No imports or exports are used; both are plain function declarations.\\n\\ncapacity.js — hasCapacity(active, limit):\\n- Throws RangeError if active is not a nonnegative integer (must be an integer and >= 0).\\n- Throws RangeError if limit is not a positive integer (must be an integer and > 0).\\n- Otherwise returns active < limit, meaning there is spare capacity when active is strictly below limit.\\n\\nroute.js — chooseRoute(task, active, limit):\\n- Validates task.complexity is 'low' or 'high' and task.failures is a nonnegative integer.\\n- Routes to DEEP_LOCAL_WORKER when complexity is high\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 455,
+      "prompt_tokens": 150,
+      "total_tokens": 605,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 150,
+      "prompt_ms": 337.47,
+      "prompt_per_token_ms": 2.2498,
+      "prompt_per_second": 444.4839541292559,
+      "predicted_n": 455,
+      "predicted_ms": 7333.244,
+      "predicted_per_token_ms": 16.152519823788545,
+      "predicted_per_second": 61.90984508356738,
+      "draft_n": 250,
+      "draft_n_accepted": 223
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "d1313906e6d333c1087102f23994dba4a7dbd2828119c00ccce3d0a673546d9c",
+    "stream_done": true,
+    "wall_s": 7.794071800017264,
+    "ttft_s": 0.4042011999990791,
+    "first_visible_s": 0.40420170000288635,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "C-multifile-feature",
+    "task_kind": "files",
+    "parsed_json": {
+      "files": {
+        "capacity.js": "function hasCapacity(active, limit) {\n  if (!Number.isInteger(active) || active < 0) {\n    throw new RangeError('active must be a nonnegative integer');\n  }\n  if (!Number.isInteger(limit) || limit <= 0) {\n    throw new RangeError('limit must be a positive integer');\n  }\n  return active < limit;\n}",
+        "route.js": "function chooseRoute(task, active, limit) {\n  if (task.complexity !== 'low' && task.complexity !== 'high') {\n    throw new RangeError('task.complexity must be \"low\" or \"high\"');\n  }\n  if (!Number.isInteger(task.failures) || task.failures < 0) {\n    throw new RangeError('task.failures must be a nonnegative integer');\n  }\n\n  if (task.complexity === 'high' || task.failures >= 2) {\n    return 'DEEP_LOCAL_WORKER';\n  }\n\n  if (hasCapacity(active, limit)) {\n    return 'FAST_LOCAL_WORKER';\n  }\n\n  return 'QUEUE';\n}"
+      },
+      "explanation": "The two files are concatenated into a single scope, so capacity.js's hasCapacity declaration is visible to route.js. No imports or exports are used; both are plain function declarations.\n\ncapacity.js — hasCapacity(active, limit):\n- Throws RangeError if active is not a nonnegative integer (must be an integer and >= 0).\n- Throws RangeError if limit is not a positive integer (must be an integer and > 0).\n- Otherwise returns active < limit, meaning there is spare capacity when active is strictly below limit.\n\nroute.js — chooseRoute(task, active, limit):\n- Validates task.complexity is 'low' or 'high' and task.failures is a nonnegative integer.\n- Routes to DEEP_LOCAL_WORKER when complexity is high"
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "D-repository-reasoning-r0",
+    "output": "{\n  \"tests\": [\n    \"Test: same-key concurrent opening collapses to one provider call. Arrange a provider whose openSession returns a session object with a controllable `goingAway` flag and a `close()` spy. Fire N `getOrCreate` calls for the SAME `sessionKey` with a string seed, all before the underlying `provider.open`\",\"resolve. Assert: (a) `provider.openSession` was invoked exactly once; (b) all N returned promises resolve to the same session instance (identity check via `===`); (c) `keys()` returns exactly `[sessionKey]`; (d) `status().activeOrOpening === 1`. This verifies the 'never a second openSession racing'.\",\"Test: concurrent opening for the same key shares the in-flight promise identity. Using the same setup, capture the promise returned by the first `getOrCreate` and compare identity (`===`) with the promises returned by the second and third concurrent callers. Assert all are identical. This verifies '\"\n    ],\n    \"invariants\": [\n      \"Invariant: For a single `sessionKey`, at most one `provider.openSession` call is in flight at any time. Check: count provider `openSession` invocations equals the number of distinct keys ever mapped minus keys currently evicted; never exceeds 1 per key.\",\n      \"Invariant: All concurrent `getOrCreate` calls for the same key resolve to the same session instance. Check: returned promises are all `===` equal to the first caller's resolved session.\",\n      \"Invariant: `keys()` reflects exactly the set of keys with an in-flight or open attempt, with no duplicates. Check: `keys().length === sessions.size` and no key appears twice.\",\n      \"Invariant: A failed open is never cached. Check: after an `openSession` rejection, `sessions.has(key)` is false and a subsequent `getOrCreate` for that key invokes `provider.openSession` again (retry, not replay).\"\n    ]\n  }",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 424,
+      "prompt_tokens": 3771,
+      "total_tokens": 4195,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 3771,
+      "prompt_ms": 3714.011,
+      "prompt_per_token_ms": 0.9848875629806417,
+      "prompt_per_second": 1015.3443271977385,
+      "predicted_n": 424,
+      "predicted_ms": 8628.905,
+      "predicted_per_token_ms": 20.399302600472815,
+      "predicted_per_second": 49.02128369706237,
+      "draft_n": 193,
+      "draft_n_accepted": 144
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "2373182193e3f4929ec79afea6ae96dbd473aab5f3fc9fb0088d0185c4419622",
+    "stream_done": true,
+    "wall_s": 12.494357399991713,
+    "ttft_s": 3.810699099965859,
+    "first_visible_s": 3.810699499968905,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "D-repository-reasoning",
+    "task_kind": "review",
+    "parsed_json": {
+      "tests": [
+        "Test: same-key concurrent opening collapses to one provider call. Arrange a provider whose openSession returns a session object with a controllable `goingAway` flag and a `close()` spy. Fire N `getOrCreate` calls for the SAME `sessionKey` with a string seed, all before the underlying `provider.open`",
+        "resolve. Assert: (a) `provider.openSession` was invoked exactly once; (b) all N returned promises resolve to the same session instance (identity check via `===`); (c) `keys()` returns exactly `[sessionKey]`; (d) `status().activeOrOpening === 1`. This verifies the 'never a second openSession racing'.",
+        "Test: concurrent opening for the same key shares the in-flight promise identity. Using the same setup, capture the promise returned by the first `getOrCreate` and compare identity (`===`) with the promises returned by the second and third concurrent callers. Assert all are identical. This verifies '"
+      ],
+      "invariants": [
+        "Invariant: For a single `sessionKey`, at most one `provider.openSession` call is in flight at any time. Check: count provider `openSession` invocations equals the number of distinct keys ever mapped minus keys currently evicted; never exceeds 1 per key.",
+        "Invariant: All concurrent `getOrCreate` calls for the same key resolve to the same session instance. Check: returned promises are all `===` equal to the first caller's resolved session.",
+        "Invariant: `keys()` reflects exactly the set of keys with an in-flight or open attempt, with no duplicates. Check: `keys().length === sessions.size` and no key appears twice.",
+        "Invariant: A failed open is never cached. Check: after an `openSession` rejection, `sessions.has(key)` is false and a subsequent `getOrCreate` for that key invokes `provider.openSession` again (retry, not replay)."
+      ]
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "E-patch-review-r0",
+    "output": "{\n  \"tests\": [\n    \"route(task={failures:0}, used=5, limit=10) must return 'FAST_LOCAL_WORKER' (used<=limit, no failures)\",\n    \"route(task={failures:0}, used=10, limit=10) must return 'DEEP_LOCAL_WORKER' (used<=limit true, but failures<2 so should queue)\",\n    \"route(task={failures:2}, used=5, limit=10) must return 'DEEP_LOCAL_WORKER' (repeated failure escalates before capacity)\",\n    \"route(task={failures:3}, used=5, limit=10) must return 'DEEP_LOCAL_WORKER' (repeated failure escalates before capacity)\",\n    \"route(task={failures:0}, used=15, limit=10) must return 'PREMIUM_ESCALATION' (pool full, no failures, premium fallback)\",\n    \"route(task={failures:1}, used=15, limit=10) must return 'PREMIUM_ESCALATION' (pool full, single failure not repeated, premium fallback)\"\n  ]\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 253,
+      "prompt_tokens": 116,
+      "total_tokens": 369,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 116,
+      "prompt_ms": 298.9,
+      "prompt_per_token_ms": 2.576724137931034,
+      "prompt_per_second": 388.08966209434595,
+      "predicted_n": 253,
+      "predicted_ms": 4244.421,
+      "predicted_per_token_ms": 16.842940476190478,
+      "predicted_per_second": 59.372055693815476,
+      "draft_n": 126,
+      "draft_n_accepted": 110
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "77049de3f27aecc20dff6c4150e2c0545839a62bc045d9433aebb132abcca692",
+    "stream_done": true,
+    "wall_s": 4.646499500027858,
+    "ttft_s": 0.40204740001354367,
+    "first_visible_s": 0.402047700015828,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "E-patch-review",
+    "task_kind": "review",
+    "parsed_json": {
+      "tests": [
+        "route(task={failures:0}, used=5, limit=10) must return 'FAST_LOCAL_WORKER' (used<=limit, no failures)",
+        "route(task={failures:0}, used=10, limit=10) must return 'DEEP_LOCAL_WORKER' (used<=limit true, but failures<2 so should queue)",
+        "route(task={failures:2}, used=5, limit=10) must return 'DEEP_LOCAL_WORKER' (repeated failure escalates before capacity)",
+        "route(task={failures:3}, used=5, limit=10) must return 'DEEP_LOCAL_WORKER' (repeated failure escalates before capacity)",
+        "route(task={failures:0}, used=15, limit=10) must return 'PREMIUM_ESCALATION' (pool full, no failures, premium fallback)",
+        "route(task={failures:1}, used=15, limit=10) must return 'PREMIUM_ESCALATION' (pool full, single failure not repeated, premium fallback)"
+      ]
+    },
+    "structured_correct": true
+  }
+]

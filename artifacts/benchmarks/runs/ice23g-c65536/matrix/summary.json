@@ -1,0 +1,95 @@
+{
+  "mode": "matrix",
+  "status": "FINISHED",
+  "checks": [],
+  "matrix": [
+    {
+      "concurrency": 1,
+      "server_slots": 1,
+      "requests": 4,
+      "transport_pass": 3,
+      "json_structure_pass": 3,
+      "batch_wall_s": 37.900869700009935,
+      "output_tokens": 178,
+      "aggregate_tps": 4.69646215004806,
+      "mean_request_decode_tps": 31.186595992992558,
+      "median_request_decode_tps": 28.857211968953038,
+      "p50_ttft_s": 0.6655432000407018,
+      "p95_ttft_s": null,
+      "decode_tps_per_request": [
+        43.311597044232634,
+        21.390978965792005,
+        28.857211968953038
+      ]
+    },
+    {
+      "concurrency": 2,
+      "server_slots": 1,
+      "requests": 4,
+      "transport_pass": 3,
+      "json_structure_pass": 3,
+      "batch_wall_s": 41.23592020000797,
+      "output_tokens": 467,
+      "aggregate_tps": 11.325077692819615,
+      "mean_request_decode_tps": 43.78833782559267,
+      "median_request_decode_tps": 45.116422827031805,
+      "p50_ttft_s": 5.414367799996398,
+      "p95_ttft_s": null,
+      "decode_tps_per_request": [
+        34.12873981179551,
+        52.11985083795069,
+        45.116422827031805
+      ]
+    },
+    {
+      "concurrency": 4,
+      "server_slots": 1,
+      "requests": 8,
+      "transport_pass": 4,
+      "json_structure_pass": 4,
+      "batch_wall_s": 152.59584250004264,
+      "output_tokens": 784,
+      "aggregate_tps": 5.1377546540940715,
+      "mean_request_decode_tps": 44.16009182676315,
+      "median_request_decode_tps": 42.720063058446115,
+      "p50_ttft_s": 56.24941974997637,
+      "p95_ttft_s": null,
+      "decode_tps_per_request": [
+        28.36300722056711,
+        62.83723396959324,
+        44.34550001398995,
+        41.09462610290229
+      ]
+    },
+    {
+      "concurrency": 8,
+      "server_slots": 1,
+      "requests": 16,
+      "transport_pass": 12,
+      "json_structure_pass": 12,
+      "batch_wall_s": 173.43273870000849,
+      "output_tokens": 1616,
+      "aggregate_tps": 9.317733272927443,
+      "mean_request_decode_tps": 39.69969685985828,
+      "median_request_decode_tps": 35.981172853356625,
+      "p50_ttft_s": 58.803781100024935,
+      "p95_ttft_s": null,
+      "decode_tps_per_request": [
+        34.04109440917075,
+        56.41466292870408,
+        45.30122727496291,
+        34.439212601631354,
+        32.21324409633087,
+        35.65436557576026,
+        36.307980130952984,
+        45.04770103421031,
+        50.425225489410764,
+        42.76504002217883,
+        34.14485646818769,
+        29.641752286798564
+      ]
+    }
+  ],
+  "request_count": 33,
+  "not_full_evaluation": true
+}

@@ -1,0 +1,229 @@
+[
+  {
+    "label": "A-small-implementation-r0",
+    "output": "{\"code\":\"function dedupe(arr) {\\n  const seen = new Set();\\n  const result = [];\\n  for (const obj of arr) {\\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\\n      result.push(obj);\\n      continue;\\n    }\\n    const keys = Object.keys(obj).sort();\\n    let json = '{';\\n    for (let i = 0; i < keys.length; i++) {\\n      const k = keys[i];\\n      if (i > 0) json += ',';\\n      json += JSON.stringify(k) + ':' + JSON.stringify(obj[k]);\\n    }\\n    json += '}';\\n    if (!seen.has(json)) {\\n      seen.add(json);\\n      result.push(obj);\\n    }\\n  }\\n  return result;\\n}\",\"explanation\":\"Time: O(n · k log k) where n is the number of elements and k is the average number of enumerable keys per object; sorting the keys dominates per-object work and JSON.stringify is O(k). Space: O(n · k) for the Set storing one canonical JSON string per unique object. Objects that are not plain objects (null, arrays, primitives) are always preserved without deduplication since they have no comparable key/value structure.\"}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 285,
+      "prompt_tokens": 237,
+      "total_tokens": 522,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 237,
+      "prompt_ms": 480.957,
+      "prompt_per_token_ms": 2.0293544303797466,
+      "prompt_per_second": 492.7675447077389,
+      "predicted_n": 285,
+      "predicted_ms": 4125.5,
+      "predicted_per_token_ms": 14.526408450704226,
+      "predicted_per_second": 68.84014058901951,
+      "draft_n": 177,
+      "draft_n_accepted": 157
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "421936d80e1ca581a593a8fcd77ea3340dc0dd66430f00ca00a8a462c37f09a2",
+    "stream_done": true,
+    "wall_s": 4.716779200010933,
+    "ttft_s": 0.5913019999861717,
+    "first_visible_s": 0.5913032999960706,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "A-small-implementation",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function dedupe(arr) {\n  const seen = new Set();\n  const result = [];\n  for (const obj of arr) {\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\n      result.push(obj);\n      continue;\n    }\n    const keys = Object.keys(obj).sort();\n    let json = '{';\n    for (let i = 0; i < keys.length; i++) {\n      const k = keys[i];\n      if (i > 0) json += ',';\n      json += JSON.stringify(k) + ':' + JSON.stringify(obj[k]);\n    }\n    json += '}';\n    if (!seen.has(json)) {\n      seen.add(json);\n      result.push(obj);\n    }\n  }\n  return result;\n}",
+      "explanation": "Time: O(n · k log k) where n is the number of elements and k is the average number of enumerable keys per object; sorting the keys dominates per-object work and JSON.stringify is O(k). Space: O(n · k) for the Set storing one canonical JSON string per unique object. Objects that are not plain objects (null, arrays, primitives) are always preserved without deduplication since they have no comparable key/value structure."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "B-repository-bugfix-r0",
+    "output": "{\n  \"code\": \"function assertValidPolicy(policy) {\\n  if (!Number.isInteger(policy.maxAttempts) || policy.maxAttempts < 1) {\\n    throw new RangeError(\\n      `retry.ts: maxAttempts must be a positive integer, got ${String(policy.maxAttempts)}`,\\n    );\\n  }\\n  if (!Number.isFinite(policy.baseDelayMs) || policy.baseDelayMs < 0) {\\n    throw new RangeError(`retry.ts: baseDelayMs must be >= 0, got ${String(policy.baseDelayMs)}`);\\n  }\\n  if (!Number.isFinite(policy.maxDelayMs) || policy.maxDelayMs < policy.baseDelayMs) {\\n    throw new RangeError(\\n      `retry.ts: maxDelayMs (${String(policy.maxDelayMs)}) must be >= baseDelayMs (${String(policy.baseDelayMs)})`,\\n    );\\n  }\\n}\\n\\nfunction cappedBackoff(baseDelayMs, maxDelayMs, exponent) {\\n  if (baseDelayMs === 0) {\\n    return 0;\\n  }\\n  if (exponent >= 1024) {\\n    return maxDelayMs;\\n  }\\n  const scaled = baseDelayMs * 2 ** exponent;\\n  return Math.min(scaled, maxDelayMs);\\n}\\n\\nfunction isRetryExhausted(policy, attempt) {\\n  assertValidPolicy(policy);\\n  return attempt >= policy.maxAttempts;\\n}\\n\\nfunction nextAttemptDelayMs(policy, attempt) {\\n  assertValidPolicy(policy);\\n  if (!Number.isInteger(attempt) || attempt < 1) {\\n    throw new RangeError(`retry.ts: attempt must be a positive integer, got ${String(attempt)}`);\\n  }\\n  return cappedBackoff(policy.baseDelayMs, policy.maxDelayMs, attempt - 1);\\n}\",\n  \"explanation\": \"The bug: with baseDelayMs === 0, `0 * 2 ** huge` evaluates to `0 * Infinity`, which is NaN; `Math.min(NaN, maxDelayMs)` is NaN, so the policy returns NaN instead of 0. With a huge attempt, `2 ** (attempt - 1)` overflows to Infinity, and `baseDelayMs * Infinity` is Infinity (not NaN), but the intent was for the cap to win. Fix: add a `cappedBackoff` helper that returns 0 immediately when baseDelayMs is 0 (so 0 * anything stays 0, never NaN), and returns maxDelayMs directly when the exponent is >= 1024 (where 2**exponent overflows to Infinity), so the cap wins without ever producing Infinity or NaN. For all finite exponents (< 1024) it computes `baseDelayMs * 2 ** exponent` and takes `Math.min\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 615,
+      "prompt_tokens": 1067,
+      "total_tokens": 1682,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 1067,
+      "prompt_ms": 1058.213,
+      "prompt_per_token_ms": 0.9917647610121837,
+      "prompt_per_second": 1008.3036212936338,
+      "predicted_n": 615,
+      "predicted_ms": 8581.699,
+      "predicted_per_token_ms": 13.976708469055376,
+      "predicted_per_second": 71.54760380199771,
+      "draft_n": 396,
+      "draft_n_accepted": 365
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "5cd42a981fba03f0549262dbf34cd0043d14c5e59f50fac3b7e94f6f34be495c",
+    "stream_done": true,
+    "wall_s": 9.697949199995492,
+    "ttft_s": 1.116015499981586,
+    "first_visible_s": 1.1160160999861546,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "B-repository-bugfix",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function assertValidPolicy(policy) {\n  if (!Number.isInteger(policy.maxAttempts) || policy.maxAttempts < 1) {\n    throw new RangeError(\n      `retry.ts: maxAttempts must be a positive integer, got ${String(policy.maxAttempts)}`,\n    );\n  }\n  if (!Number.isFinite(policy.baseDelayMs) || policy.baseDelayMs < 0) {\n    throw new RangeError(`retry.ts: baseDelayMs must be >= 0, got ${String(policy.baseDelayMs)}`);\n  }\n  if (!Number.isFinite(policy.maxDelayMs) || policy.maxDelayMs < policy.baseDelayMs) {\n    throw new RangeError(\n      `retry.ts: maxDelayMs (${String(policy.maxDelayMs)}) must be >= baseDelayMs (${String(policy.baseDelayMs)})`,\n    );\n  }\n}\n\nfunction cappedBackoff(baseDelayMs, maxDelayMs, exponent) {\n  if (baseDelayMs === 0) {\n    return 0;\n  }\n  if (exponent >= 1024) {\n    return maxDelayMs;\n  }\n  const scaled = baseDelayMs * 2 ** exponent;\n  return Math.min(scaled, maxDelayMs);\n}\n\nfunction isRetryExhausted(policy, attempt) {\n  assertValidPolicy(policy);\n  return attempt >= policy.maxAttempts;\n}\n\nfunction nextAttemptDelayMs(policy, attempt) {\n  assertValidPolicy(policy);\n  if (!Number.isInteger(attempt) || attempt < 1) {\n    throw new RangeError(`retry.ts: attempt must be a positive integer, got ${String(attempt)}`);\n  }\n  return cappedBackoff(policy.baseDelayMs, policy.maxDelayMs, attempt - 1);\n}",
+      "explanation": "The bug: with baseDelayMs === 0, `0 * 2 ** huge` evaluates to `0 * Infinity`, which is NaN; `Math.min(NaN, maxDelayMs)` is NaN, so the policy returns NaN instead of 0. With a huge attempt, `2 ** (attempt - 1)` overflows to Infinity, and `baseDelayMs * Infinity` is Infinity (not NaN), but the intent was for the cap to win. Fix: add a `cappedBackoff` helper that returns 0 immediately when baseDelayMs is 0 (so 0 * anything stays 0, never NaN), and returns maxDelayMs directly when the exponent is >= 1024 (where 2**exponent overflows to Infinity), so the cap wins without ever producing Infinity or NaN. For all finite exponents (< 1024) it computes `baseDelayMs * 2 ** exponent` and takes `Math.min"
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "C-multifile-feature-r0",
+    "output": "{\n  \"files\": {\n    \"capacity.js\": \"function hasCapacity(active, limit) {\\n  if (!Number.isInteger(active) || active < 0) {\\n    throw new RangeError('active must be a nonnegative integer');\\n  }\\n  if (!Number.isInteger(limit) || limit <= 0) {\\n    throw new RangeError('limit must be a positive integer');\\n  }\\n  return active < limit;\\n}\",\n    \"route.js\": \"function chooseRoute(task, active, limit) {\\n  const capacity = hasCapacity(active, limit);\\n  if (task.complexity === 'high' || task.failures >= 2) {\\n    return 'DEEP_LOCAL_WORKER';\\n  }\\n  return capacity ? 'FAST_LOCAL_WORKER' : 'QUEUE';\\n}\"\n  },\n  \"explanation\": \"Both files are concatenated into one scope, so chooseRoute can call hasCapacity directly; function declarations are hoisted, so call order does not matter. capacity.js validates inputs strictly: active must be a nonnegative integer and limit a positive integer, throwing RangeError otherwise, and returns active < limit. route.js reuses that validation, then routes high-complexity tasks or those with two or more failures to DEEP_LOCAL_WORKER. Otherwise it returns FAST_LOCAL_WORKER when capacity is available and QUEUE when saturated. No cloud fallback is implemented, per the constraint.\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 309,
+      "prompt_tokens": 304,
+      "total_tokens": 613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 304,
+      "prompt_ms": 603.712,
+      "prompt_per_token_ms": 1.9858947368421052,
+      "prompt_per_second": 503.55136223894834,
+      "predicted_n": 309,
+      "predicted_ms": 4457.208,
+      "predicted_per_token_ms": 14.471454545454545,
+      "predicted_per_second": 69.1015541567726,
+      "draft_n": 192,
+      "draft_n_accepted": 177
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "d1313906e6d333c1087102f23994dba4a7dbd2828119c00ccce3d0a673546d9c",
+    "stream_done": true,
+    "wall_s": 5.140290500014089,
+    "ttft_s": 0.682801799965091,
+    "first_visible_s": 0.6828020999673754,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "C-multifile-feature",
+    "task_kind": "files",
+    "parsed_json": {
+      "files": {
+        "capacity.js": "function hasCapacity(active, limit) {\n  if (!Number.isInteger(active) || active < 0) {\n    throw new RangeError('active must be a nonnegative integer');\n  }\n  if (!Number.isInteger(limit) || limit <= 0) {\n    throw new RangeError('limit must be a positive integer');\n  }\n  return active < limit;\n}",
+        "route.js": "function chooseRoute(task, active, limit) {\n  const capacity = hasCapacity(active, limit);\n  if (task.complexity === 'high' || task.failures >= 2) {\n    return 'DEEP_LOCAL_WORKER';\n  }\n  return capacity ? 'FAST_LOCAL_WORKER' : 'QUEUE';\n}"
+      },
+      "explanation": "Both files are concatenated into one scope, so chooseRoute can call hasCapacity directly; function declarations are hoisted, so call order does not matter. capacity.js validates inputs strictly: active must be a nonnegative integer and limit a positive integer, throwing RangeError otherwise, and returns active < limit. route.js reuses that validation, then routes high-complexity tasks or those with two or more failures to DEEP_LOCAL_WORKER. Otherwise it returns FAST_LOCAL_WORKER when capacity is available and QUEUE when saturated. No cloud fallback is implemented, per the constraint."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "D-repository-reasoning-r0",
+    "output": "{\n  \"tests\": [\n    \"same-key concurrent opening: create registry with a provider whose openSession returns a deferred session (controllable resolve/reject). Fire N getOrCreate(options) with the SAME sessionKey concurrently, capturing each provider.openSession call. Await all. Invariant: exactly one provider.openSession\",\"failed-open retry: provider.openSession rejects on first call, resolves on second. Call getOrCreate once (expect rejection), then again (expect resolution). Invariant: second call succeeds and returns the resolved session; provider.openSession called exactly twice; keys() empty between attempts.\",\"cancellation during opening: provider.openSession returns a deferred session. Call getOrCreate (do not await) then close(sessionKey) before resolving. Invariant: the call rejects with 'Realtime session opening cancelled'; provider session.close called with 'opening_cancelled'; keys() empty after.\",\"full-capacity goAway replacement: maxSessions=1. Call getOrCreate (await) to occupy the single slot. On the returned session, set goingAway to a truthy value. Call getOrCreate again (await). Invariant: provider.openSession called exactly twice; the first session.close called with 'going_away'; the (\"\n]\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 255,
+      "prompt_tokens": 3925,
+      "total_tokens": 4180,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 3925,
+      "prompt_ms": 2651.213,
+      "prompt_per_token_ms": 0.6754682802547771,
+      "prompt_per_second": 1480.4544184114968,
+      "predicted_n": 255,
+      "predicted_ms": 5108.177,
+      "predicted_per_token_ms": 20.11093307086614,
+      "predicted_per_second": 49.72419710593427,
+      "draft_n": 131,
+      "draft_n_accepted": 103
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "2373182193e3f4929ec79afea6ae96dbd473aab5f3fc9fb0088d0185c4419622",
+    "stream_done": true,
+    "wall_s": 7.829513199976645,
+    "ttft_s": 2.720979299978353,
+    "first_visible_s": 2.7209795999806374,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "D-repository-reasoning",
+    "task_kind": "review",
+    "parsed_json": {
+      "tests": [
+        "same-key concurrent opening: create registry with a provider whose openSession returns a deferred session (controllable resolve/reject). Fire N getOrCreate(options) with the SAME sessionKey concurrently, capturing each provider.openSession call. Await all. Invariant: exactly one provider.openSession",
+        "failed-open retry: provider.openSession rejects on first call, resolves on second. Call getOrCreate once (expect rejection), then again (expect resolution). Invariant: second call succeeds and returns the resolved session; provider.openSession called exactly twice; keys() empty between attempts.",
+        "cancellation during opening: provider.openSession returns a deferred session. Call getOrCreate (do not await) then close(sessionKey) before resolving. Invariant: the call rejects with 'Realtime session opening cancelled'; provider session.close called with 'opening_cancelled'; keys() empty after.",
+        "full-capacity goAway replacement: maxSessions=1. Call getOrCreate (await) to occupy the single slot. On the returned session, set goingAway to a truthy value. Call getOrCreate again (await). Invariant: provider.openSession called exactly twice; the first session.close called with 'going_away'; the ("
+      ]
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "E-patch-review-r0",
+    "output": "{\n  \"tests\": [\n    \"route(task={failures:0}, used=5, limit=10) === 'FAST_LOCAL_WORKER'\",\n    \"route(task={failures:3}, used=5, limit=10) === 'PREMIUM_ESCALATION'\",\n    \"route(task={failures:0}, used=15, limit=10) === 'DEEP_LOCAL_WORKER'\",\n    \"route(task={failures:2}, used=15, limit=10) === 'DEEP_LOCAL_WORKER'\",\n    \"route(task={failures:0}, used=10, limit=10) === 'FAST_LOCAL_WORKER'\"\n  ]\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 155,
+      "prompt_tokens": 270,
+      "total_tokens": 425,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 270,
+      "prompt_ms": 584.151,
+      "prompt_per_token_ms": 2.163522222222222,
+      "prompt_per_second": 462.2092575378627,
+      "predicted_n": 155,
+      "predicted_ms": 2139.695,
+      "predicted_per_token_ms": 13.894123376623378,
+      "predicted_per_second": 71.97287463867514,
+      "draft_n": 99,
+      "draft_n_accepted": 94
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "77049de3f27aecc20dff6c4150e2c0545839a62bc045d9433aebb132abcca692",
+    "stream_done": true,
+    "wall_s": 2.794705000007525,
+    "ttft_s": 0.6548094000318088,
+    "first_visible_s": 0.6548097000340931,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "E-patch-review",
+    "task_kind": "review",
+    "parsed_json": {
+      "tests": [
+        "route(task={failures:0}, used=5, limit=10) === 'FAST_LOCAL_WORKER'",
+        "route(task={failures:3}, used=5, limit=10) === 'PREMIUM_ESCALATION'",
+        "route(task={failures:0}, used=15, limit=10) === 'DEEP_LOCAL_WORKER'",
+        "route(task={failures:2}, used=15, limit=10) === 'DEEP_LOCAL_WORKER'",
+        "route(task={failures:0}, used=10, limit=10) === 'FAST_LOCAL_WORKER'"
+      ]
+    },
+    "structured_correct": true
+  }
+]

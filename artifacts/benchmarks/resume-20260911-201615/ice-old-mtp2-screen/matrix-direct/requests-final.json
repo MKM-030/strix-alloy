@@ -1,0 +1,217 @@
+[
+  {
+    "label": "excluded-warmup",
+    "output": "{\n  \"code\": \"function dedupe(arr) {\\n  if (!Array.isArray(arr)) {\\n    throw new TypeError('Input must be an array');\\n  }\\n\\n  const result = [];\\n  const seen = new Set();\\n\\n  for (const obj of arr) {\\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\\n      throw new TypeError('All elements must be plain objects');\\n    }\\n\\n    const keys = Object.keys(obj).sort();\\n    const canonical = JSON.stringify(\\n      keys.reduce((acc, key) => {\\n        acc[key] = obj[key];\\n        return acc;\\n      }, {})\\n    );\\n\\n    if (!seen.has(canonical)) {\\n      seen.add(canonical);\\n      result.push(obj);\\n    }\\n  }\\n\\n  return result;\\n}\",\n  \"explanation\": \"Time complexity is O(n * k log k) where n is the number of elements and k is the number of enumerable keys per object. Each element requires sorting its keys (O(k log k)) and serializing to JSON (O(k)), and Set membership checks are O(1) on average. Space complexity is O(n * k) to store the canonical JSON strings in the Set and the deduplicated result array. The input array and its objects are never mutated; only the first occurrence of each unique object (by sorted keys and JSON value) is preserved along with its original reference and position.\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 328,
+      "prompt_tokens": 83,
+      "total_tokens": 411,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 83,
+      "prompt_ms": 1190.025,
+      "prompt_per_token_ms": 14.33765060240964,
+      "prompt_per_second": 69.7464338984475,
+      "predicted_n": 328,
+      "predicted_ms": 6049.924,
+      "predicted_per_token_ms": 18.501296636085627,
+      "predicted_per_second": 54.05026575540453,
+      "draft_n": 172,
+      "draft_n_accepted": 148
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "421936d80e1ca581a593a8fcd77ea3340dc0dd66430f00ca00a8a462c37f09a2",
+    "stream_done": true,
+    "wall_s": 7.338840100041125,
+    "ttft_s": 1.2592027999926358,
+    "first_visible_s": 1.259203499997966,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "A-small-implementation",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function dedupe(arr) {\n  if (!Array.isArray(arr)) {\n    throw new TypeError('Input must be an array');\n  }\n\n  const result = [];\n  const seen = new Set();\n\n  for (const obj of arr) {\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\n      throw new TypeError('All elements must be plain objects');\n    }\n\n    const keys = Object.keys(obj).sort();\n    const canonical = JSON.stringify(\n      keys.reduce((acc, key) => {\n        acc[key] = obj[key];\n        return acc;\n      }, {})\n    );\n\n    if (!seen.has(canonical)) {\n      seen.add(canonical);\n      result.push(obj);\n    }\n  }\n\n  return result;\n}",
+      "explanation": "Time complexity is O(n * k log k) where n is the number of elements and k is the number of enumerable keys per object. Each element requires sorting its keys (O(k log k)) and serializing to JSON (O(k)), and Set membership checks are O(1) on average. Space complexity is O(n * k) to store the canonical JSON strings in the Set and the deduplicated result array. The input array and its objects are never mutated; only the first occurrence of each unique object (by sorted keys and JSON value) is preserved along with its original reference and position."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "C1-r0",
+    "output": "{\"code\":\"function dedupe(arr) {\\n  const seen = new Set();\\n  const result = [];\\n  for (let i = 0; i < arr.length; i++) {\\n    const obj = arr[i];\\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\\n      result.push(obj);\\n      continue;\\n    }\\n    const keys = Object.keys(obj).sort();\\n    const parts = [];\\n    for (let j = 0; j < keys.length; j++) {\\n      const key = keys[j];\\n      if (!Object.prototype.hasOwnProperty.call(obj, key)) {\\n        continue;\\n      }\\n      const value = obj[key];\\n      parts.push(JSON.stringify(key) + ':' + JSON.stringify(value));\\n    }\\n    const signature = '{' + parts.join(',') + '}';\\n    if (seen.has(signature)) {\\n      continue;\\n    }\\n    seen.add(signature);\\n    result.push(obj);\\n  }\\n  return result;\\n}\",\"explanation\":\"Time complexity is O(n * k log k) where n is the number of elements in the array and k is the number of own enumerable keys per object. Sorting the keys costs O(k log k) per object, and JSON serialization of values is O(m) where m reflects the total size of the serialized values. The Set lookups are O(1) on average, giving overall O(n * (k log k + m)) average-case behavior. Space complexity is O(n * m) to store the signatures of the kept objects. No input is mutated: keys are sorted into a new array, and only references to the original objects are pushed into the result, preserving first occurrence and original order.\"}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 380,
+      "prompt_tokens": 91,
+      "total_tokens": 471,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 91,
+      "prompt_ms": 307.943,
+      "prompt_per_token_ms": 3.3839890109890107,
+      "prompt_per_second": 295.50923385171933,
+      "predicted_n": 380,
+      "predicted_ms": 6240.8,
+      "predicted_per_token_ms": 16.466490765171503,
+      "predicted_per_second": 60.729393667478526,
+      "draft_n": 216,
+      "draft_n_accepted": 176
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "78985fdecb30a5f3ba9f2722ae831384e0a6aca5a4f0cce0212494e72486ed41",
+    "stream_done": true,
+    "wall_s": 6.608051900053397,
+    "ttft_s": 0.366948000038974,
+    "first_visible_s": 0.3669484000420198,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "A-small-implementation",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function dedupe(arr) {\n  const seen = new Set();\n  const result = [];\n  for (let i = 0; i < arr.length; i++) {\n    const obj = arr[i];\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\n      result.push(obj);\n      continue;\n    }\n    const keys = Object.keys(obj).sort();\n    const parts = [];\n    for (let j = 0; j < keys.length; j++) {\n      const key = keys[j];\n      if (!Object.prototype.hasOwnProperty.call(obj, key)) {\n        continue;\n      }\n      const value = obj[key];\n      parts.push(JSON.stringify(key) + ':' + JSON.stringify(value));\n    }\n    const signature = '{' + parts.join(',') + '}';\n    if (seen.has(signature)) {\n      continue;\n    }\n    seen.add(signature);\n    result.push(obj);\n  }\n  return result;\n}",
+      "explanation": "Time complexity is O(n * k log k) where n is the number of elements in the array and k is the number of own enumerable keys per object. Sorting the keys costs O(k log k) per object, and JSON serialization of values is O(m) where m reflects the total size of the serialized values. The Set lookups are O(1) on average, giving overall O(n * (k log k + m)) average-case behavior. Space complexity is O(n * m) to store the signatures of the kept objects. No input is mutated: keys are sorted into a new array, and only references to the original objects are pushed into the result, preserving first occurrence and original order."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "C1-r1",
+    "output": "{\n  \"code\": \"function dedupe(arr) {\\n  const seen = new Set();\\n  const result = [];\\n  for (let i = 0; i < arr.length; i++) {\\n    const obj = arr[i];\\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\\n      result.push(obj);\\n      continue;\\n    }\\n    const keys = Object.keys(obj).sort();\\n    const canonical = JSON.stringify(keys.map(function (k) { return [k, obj[k]]; }));\\n    if (!seen.has(canonical)) {\\n      seen.add(canonical);\\n      result.push(obj);\\n    }\\n  }\\n  return result;\\n}\",\n  \"explanation\": \"Time complexity is O(n * k log k) where n is the number of elements in the array and k is the number of own enumerable keys per object. Each object is visited once (O(n) total), and for each object we sort its keys in O(k log k) and build a canonical JSON string in O(k). Set membership checks are O(1) on average. Space complexity is O(n * k) to store the canonical strings in the Set. Object references are preserved (first occurrence kept), input arrays and objects are never mutated, and only own enumerable keys are considered via Object.keys.\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 294,
+      "prompt_tokens": 91,
+      "total_tokens": 385,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 91,
+      "prompt_ms": 266.914,
+      "prompt_per_token_ms": 2.933120879120879,
+      "prompt_per_second": 340.9337839154185,
+      "predicted_n": 294,
+      "predicted_ms": 4799.653,
+      "predicted_per_token_ms": 16.381068259385668,
+      "predicted_per_second": 61.04607978951812,
+      "draft_n": 156,
+      "draft_n_accepted": 130
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "822459a352b04f34a8a9eff81916162bdcd78f8aea1344d9026bb29d64f6ab1d",
+    "stream_done": true,
+    "wall_s": 5.120805000013206,
+    "ttft_s": 0.32136639999225736,
+    "first_visible_s": 0.32136719999834895,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "A-small-implementation",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function dedupe(arr) {\n  const seen = new Set();\n  const result = [];\n  for (let i = 0; i < arr.length; i++) {\n    const obj = arr[i];\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\n      result.push(obj);\n      continue;\n    }\n    const keys = Object.keys(obj).sort();\n    const canonical = JSON.stringify(keys.map(function (k) { return [k, obj[k]]; }));\n    if (!seen.has(canonical)) {\n      seen.add(canonical);\n      result.push(obj);\n    }\n  }\n  return result;\n}",
+      "explanation": "Time complexity is O(n * k log k) where n is the number of elements in the array and k is the number of own enumerable keys per object. Each object is visited once (O(n) total), and for each object we sort its keys in O(k log k) and build a canonical JSON string in O(k). Set membership checks are O(1) on average. Space complexity is O(n * k) to store the canonical strings in the Set. Object references are preserved (first occurrence kept), input arrays and objects are never mutated, and only own enumerable keys are considered via Object.keys."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "C1-r2",
+    "output": "{\n  \"code\": \"function dedupe(arr) {\\n  const seen = new Set();\\n  const result = [];\\n  for (let i = 0; i < arr.length; i++) {\\n    const obj = arr[i];\\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\\n      result.push(obj);\\n      continue;\\n    }\\n    const keys = Object.keys(obj).sort();\\n    const canonical = JSON.stringify(keys.map(function (k) { return [k, obj[k]]; }));\\n    if (!seen.has(canonical)) {\\n      seen.add(canonical);\\n      result.push(obj);\\n    }\\n  }\\n  return result;\\n}\",\n  \"explanation\": \"Time complexity is O(n * k log k) where n is the number of elements in the array and k is the number of enumerable own keys per object. Each object is visited once (O(n) total), and for each object we collect its keys (O(k)), sort them (O(k log k)), and build a canonical JSON string (O(k)). Set membership checks are O(k) on average for the string length. Sorting keys ensures that objects with the same key-value pairs in different key orders are treated as duplicates. Space complexity is O(n * k) to store the canonical strings in the Set. Object references are preserved (no mutation), and the first occurrence of each unique object is kept while input order is maintained.\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 319,
+      "prompt_tokens": 91,
+      "total_tokens": 410,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 91,
+      "prompt_ms": 261.8,
+      "prompt_per_token_ms": 2.876923076923077,
+      "prompt_per_second": 347.5935828877005,
+      "predicted_n": 319,
+      "predicted_ms": 5251.357,
+      "predicted_per_token_ms": 16.513701257861634,
+      "predicted_per_second": 60.555776345047576,
+      "draft_n": 176,
+      "draft_n_accepted": 142
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "ac380fe9c8f3bfb95c20a1fbf48d729fd34a1b9eb5fe1d47c99f338652b9c13a",
+    "stream_done": true,
+    "wall_s": 5.576657700003125,
+    "ttft_s": 0.32509790000040084,
+    "first_visible_s": 0.3250982000026852,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "A-small-implementation",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function dedupe(arr) {\n  const seen = new Set();\n  const result = [];\n  for (let i = 0; i < arr.length; i++) {\n    const obj = arr[i];\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\n      result.push(obj);\n      continue;\n    }\n    const keys = Object.keys(obj).sort();\n    const canonical = JSON.stringify(keys.map(function (k) { return [k, obj[k]]; }));\n    if (!seen.has(canonical)) {\n      seen.add(canonical);\n      result.push(obj);\n    }\n  }\n  return result;\n}",
+      "explanation": "Time complexity is O(n * k log k) where n is the number of elements in the array and k is the number of enumerable own keys per object. Each object is visited once (O(n) total), and for each object we collect its keys (O(k)), sort them (O(k log k)), and build a canonical JSON string (O(k)). Set membership checks are O(k) on average for the string length. Sorting keys ensures that objects with the same key-value pairs in different key orders are treated as duplicates. Space complexity is O(n * k) to store the canonical strings in the Set. Object references are preserved (no mutation), and the first occurrence of each unique object is kept while input order is maintained."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "C1-r3",
+    "output": "{\n  \"code\": \"function dedupe(arr) {\\n  const seen = new Set();\\n  const result = [];\\n  for (let i = 0; i < arr.length; i++) {\\n    const obj = arr[i];\\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\\n      result.push(obj);\\n      continue;\\n    }\\n    const keys = Object.keys(obj).sort();\\n    const canonical = JSON.stringify(keys.map(function (k) {\\n      return [k, obj[k]];\\n    }));\\n    if (!seen.has(canonical)) {\\n      seen.add(canonical);\\n      result.push(obj);\\n    }\\n  }\\n  return result;\\n}\",\n  \"explanation\": \"Time complexity is O(n * k log k) where n is the number of elements in the array and k is the number of enumerable own keys per object. Each object is visited once (O(n) total), and for each object we sort its keys in O(k log k) time and build a canonical JSON string in O(k) time. Set membership checks are O(1) on average given the string hash. Space complexity is O(n * k) to store the canonical string representations in the Set, which in the worst case (all unique objects) scales with the total number of keys across all kept objects. Object references are preserved (no copies made), input arrays and objects are never mutated, and the first occurrence of each distinct object is retained in a\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 331,
+      "prompt_tokens": 91,
+      "total_tokens": 422,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 91,
+      "prompt_ms": 268.557,
+      "prompt_per_token_ms": 2.951175824175824,
+      "prompt_per_second": 338.84799130166033,
+      "predicted_n": 331,
+      "predicted_ms": 5733.792,
+      "predicted_per_token_ms": 17.375127272727273,
+      "predicted_per_second": 57.553535252063554,
+      "draft_n": 175,
+      "draft_n_accepted": 144
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "6a748a77018f3dc09a598cabc7f9f3bad0a6eabfc691dc6a1c618d938d3cac46",
+    "stream_done": true,
+    "wall_s": 6.049623500031885,
+    "ttft_s": 0.3153763000154868,
+    "first_visible_s": 0.3153766000177711,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "A-small-implementation",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function dedupe(arr) {\n  const seen = new Set();\n  const result = [];\n  for (let i = 0; i < arr.length; i++) {\n    const obj = arr[i];\n    if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {\n      result.push(obj);\n      continue;\n    }\n    const keys = Object.keys(obj).sort();\n    const canonical = JSON.stringify(keys.map(function (k) {\n      return [k, obj[k]];\n    }));\n    if (!seen.has(canonical)) {\n      seen.add(canonical);\n      result.push(obj);\n    }\n  }\n  return result;\n}",
+      "explanation": "Time complexity is O(n * k log k) where n is the number of elements in the array and k is the number of enumerable own keys per object. Each object is visited once (O(n) total), and for each object we sort its keys in O(k log k) time and build a canonical JSON string in O(k) time. Set membership checks are O(1) on average given the string hash. Space complexity is O(n * k) to store the canonical string representations in the Set, which in the worst case (all unique objects) scales with the total number of keys across all kept objects. Object references are preserved (no copies made), input arrays and objects are never mutated, and the first occurrence of each distinct object is retained in a"
+    },
+    "structured_correct": true
+  }
+]

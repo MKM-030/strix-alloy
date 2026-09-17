@@ -1,0 +1,237 @@
+[
+  {
+    "label": "A-small-implementation-r0",
+    "output": "{\n  \"code\": \"function dedupe(arr) {\\n  if (!Array.isArray(arr)) {\\n    return [];\\n  }\\n  const seen = new Set();\\n  const result = [];\\n  for (let i = 0; i < arr.length; i++) {\\n    const item = arr[i];\\n    if (item === null || typeof item !== 'object' || Array.isArray(item)) {\\n      result.push(item);\\n      continue;\\n    }\\n    const keys = Object.keys(item).sort();\\n    const normalized = {};\\n    for (let j = 0; j < keys.length; j++) {\\n      normalized[keys[j]] = item[keys[j]];\\n    }\\n    const key = JSON.stringify(normalized);\\n    if (!seen.has(key)) {\\n      seen.add(key);\\n      result.push(item);\\n    }\\n  }\\n  return result;\\n}\",\n  \"explanation\": \"Time complexity is O(N * K log K + N * V), where N is the number of elements in the input array, K is the average number of keys per object, and V is the average size of the JSON string representation. Sorting keys takes O(K log K) per object, and JSON.stringify takes O(V). Space complexity is O(N * V) to store the set of unique JSON string keys and the result array.\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 300,
+      "prompt_tokens": 83,
+      "total_tokens": 383,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 83,
+      "prompt_ms": 552.18,
+      "prompt_per_token_ms": 6.652771084337349,
+      "prompt_per_second": 150.31330363287336,
+      "predicted_n": 300,
+      "predicted_ms": 6984.077,
+      "predicted_per_token_ms": 23.358117056856187,
+      "predicted_per_second": 42.811670031702114,
+      "draft_n": 273,
+      "draft_n_accepted": 208
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "421936d80e1ca581a593a8fcd77ea3340dc0dd66430f00ca00a8a462c37f09a2",
+    "stream_done": true,
+    "wall_s": 7.609657699998934,
+    "ttft_s": 0.6251790000242181,
+    "first_visible_s": 0.625180100032594,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "A-small-implementation",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "function dedupe(arr) {\n  if (!Array.isArray(arr)) {\n    return [];\n  }\n  const seen = new Set();\n  const result = [];\n  for (let i = 0; i < arr.length; i++) {\n    const item = arr[i];\n    if (item === null || typeof item !== 'object' || Array.isArray(item)) {\n      result.push(item);\n      continue;\n    }\n    const keys = Object.keys(item).sort();\n    const normalized = {};\n    for (let j = 0; j < keys.length; j++) {\n      normalized[keys[j]] = item[keys[j]];\n    }\n    const key = JSON.stringify(normalized);\n    if (!seen.has(key)) {\n      seen.add(key);\n      result.push(item);\n    }\n  }\n  return result;\n}",
+      "explanation": "Time complexity is O(N * K log K + N * V), where N is the number of elements in the input array, K is the average number of keys per object, and V is the average size of the JSON string representation. Sorting keys takes O(K log K) per object, and JSON.stringify takes O(V). Space complexity is O(N * V) to store the set of unique JSON string keys and the result array."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "B-repository-bugfix-r0",
+    "output": "{\n  \"code\": \"```javascript\\n/**\\n * @revise/consolidation-processor — 有界重试退避策略。\\n *\\n * “Paced 退避”（worker-contract 合约，必需项 1）：\\n * 失败的条目不会在下一次 `run` 中立即重试——它会等待一段指数增长、\\n * 并设有上限的延迟；当达到 `maxAttempts` 后，则彻底停止重试。\\n *\\n * 本模块提供纯函数 `(policy, attempt)`；引擎是唯一的调用方，\\n * 并且是时钟的唯一所有者。\\n */\\n\\n/**\\n * 重试策略配置。\\n */\\nexport const DEFAULT_RETRY_POLICY = {\\n  /** 允许的最大尝试次数（含首次）。`1` 表示不重试——即使 `retryable: true` 的失败也会立即进入死信队列。 */\\n  maxAttempts: 5,\\n  /** 第二次尝试前的延迟（即第一次尝试失败后）。 */\\n  baseDelayMs: 60_000,\\n  /** 计算出的延迟上限，无论 `attempt` 增长到多高。 */\\n  maxDelayMs: 3_600_000,\\n};\\n\\n/**\\n * 验证策略配置的有效性。\\n * @param {Object} policy - 重试策略对象。\\n * @throws {RangeError} 如果配置无效。\\n */\\nfunction assertValidPolicy(policy) {\\n  if (!Number.isInteger(policy.maxAttempts) || policy.maxAttempts < 1) {\\n    throw new RangeError(\\n      `retry.ts: maxAttempts 必须是正整数，得到 ${String(policy.maxAttempts)}`,\\n    );\\n  }\\n  if (!Number.isFinite(policy.baseDelayMs) || policy.baseDelayMs < 0) {\\n    throw new RangeError(\\n      `retry.ts: baseDelayMs 必须 >= 0，得到 ${String(policy.baseDelayMs)}`,\\n    );\\n  }\\n  if (!Number.isFinite(policy.maxDelayMs) || policy.maxDelayMs < policy.baseDelayMs) {\\n    throw new RangeError(\\n      `retry.ts: maxDelayMs (${String(policy.maxDelayMs)}) 必须 >= baseDelayMs (${String(policy.baseDelayMs)})`,\\n    );\\n  }\\n}\\n\\n/**\\n * 判断重试是否已耗尽。\\n * @param {Object} policy - 重试策略对象。\\n * @param {number} attempt - 当前尝试次数（1-indexed）。\\n * @returns {boolean} 如果已耗尽则返回 true。\\n */\\nexport function isRetryExhausted(policy, attempt) {\\n  assertValidPolicy(policy);\\n  return attempt >= policy.maxAttempts;\\n}\\n\\n/**\\n * 计算下一次尝试前的延迟毫秒数。\\n * 公式：baseDelayMs * 2^(attempt-1)，并受 maxDelayMs 限制。\\n * @param {Object} policy - 重试策略对象。\\n * @param {number} attempt - 刚刚失败的尝试次数（1-indexed）。\\n * @returns {number} 下一次尝试前的延迟毫秒数。\\n */\\nexport function nextAttemptDelayMs(policy, attempt) {\\n  assertValidPolicy(policy);\\n  if (!Number.isInteger(attempt) || attempt < 1) {\\n    throw new RangeError(\\n      `retry.ts: attempt 必须是正整数，得到 ${String(attempt)}`,\\n    );\\n  }\\n\\n  // 计算指数退避延迟\\n  // 使用 Math.min 确保即使指数溢出为 Infinity，结果也会被 maxDelayMs 限制\\n  const scaled = policy.baseDelayMs * Math.pow(2, attempt - 1);\\n  \\n  // 如果 scaled 是 Infinity，Math.min 会返回 maxDelayMs\\n  // 如果 baseDelayMs 是 0，scaled 是 0，Math.min 返回 0\\n  return Math.min(scaled, policy.maxDelayMs);\\n}\\n```\",\n  \"explanation\": \"修复了 `nextAttemptDelayMs` 函数中当 `baseDelayMs` 为 0 且 `attempt` 很大时可能产生 `NaN` 的问题。原代码中 `2 ** (attempt - 1)` 在 `attempt` 极大时可能溢出为 `Infinity`，而 `0 * Infinity` 在 JavaScript 中结果为 `NaN`。修复方法是使用 `Math.pow(2, attempt - 1)` 并依赖 `Math.min(scaled, policy.maxDelayMs)` 来处理溢出情况：当 `scaled` 为 `Infinity` 时，`Math.min` 会返回 `maxDelayMs`；当 `baseDelayMs` 为 0 时，`scaled` 为 0，结果正确为 0。同时保留了所有有效的有限结果，并确保了策略验证逻辑（正整数 maxAttempts、有限非负 baseDelayMs、有限 maxDelayMs >= baseDelayMs）和尝试次数验证（正整数）不变。\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 1109,
+      "prompt_tokens": 913,
+      "total_tokens": 2022,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 913,
+      "prompt_ms": 2068.184,
+      "prompt_per_token_ms": 2.265261774370208,
+      "prompt_per_second": 441.45008374496655,
+      "predicted_n": 1109,
+      "predicted_ms": 43254.421,
+      "predicted_per_token_ms": 39.03828610108303,
+      "predicted_per_second": 25.615878663593715,
+      "draft_n": 1425,
+      "draft_n_accepted": 634
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "5cd42a981fba03f0549262dbf34cd0043d14c5e59f50fac3b7e94f6f34be495c",
+    "stream_done": true,
+    "wall_s": 45.384421000024304,
+    "ttft_s": 2.129500699986238,
+    "first_visible_s": 2.1295018999953754,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "B-repository-bugfix",
+    "task_kind": "code",
+    "parsed_json": {
+      "code": "```javascript\n/**\n * @revise/consolidation-processor — 有界重试退避策略。\n *\n * “Paced 退避”（worker-contract 合约，必需项 1）：\n * 失败的条目不会在下一次 `run` 中立即重试——它会等待一段指数增长、\n * 并设有上限的延迟；当达到 `maxAttempts` 后，则彻底停止重试。\n *\n * 本模块提供纯函数 `(policy, attempt)`；引擎是唯一的调用方，\n * 并且是时钟的唯一所有者。\n */\n\n/**\n * 重试策略配置。\n */\nexport const DEFAULT_RETRY_POLICY = {\n  /** 允许的最大尝试次数（含首次）。`1` 表示不重试——即使 `retryable: true` 的失败也会立即进入死信队列。 */\n  maxAttempts: 5,\n  /** 第二次尝试前的延迟（即第一次尝试失败后）。 */\n  baseDelayMs: 60_000,\n  /** 计算出的延迟上限，无论 `attempt` 增长到多高。 */\n  maxDelayMs: 3_600_000,\n};\n\n/**\n * 验证策略配置的有效性。\n * @param {Object} policy - 重试策略对象。\n * @throws {RangeError} 如果配置无效。\n */\nfunction assertValidPolicy(policy) {\n  if (!Number.isInteger(policy.maxAttempts) || policy.maxAttempts < 1) {\n    throw new RangeError(\n      `retry.ts: maxAttempts 必须是正整数，得到 ${String(policy.maxAttempts)}`,\n    );\n  }\n  if (!Number.isFinite(policy.baseDelayMs) || policy.baseDelayMs < 0) {\n    throw new RangeError(\n      `retry.ts: baseDelayMs 必须 >= 0，得到 ${String(policy.baseDelayMs)}`,\n    );\n  }\n  if (!Number.isFinite(policy.maxDelayMs) || policy.maxDelayMs < policy.baseDelayMs) {\n    throw new RangeError(\n      `retry.ts: maxDelayMs (${String(policy.maxDelayMs)}) 必须 >= baseDelayMs (${String(policy.baseDelayMs)})`,\n    );\n  }\n}\n\n/**\n * 判断重试是否已耗尽。\n * @param {Object} policy - 重试策略对象。\n * @param {number} attempt - 当前尝试次数（1-indexed）。\n * @returns {boolean} 如果已耗尽则返回 true。\n */\nexport function isRetryExhausted(policy, attempt) {\n  assertValidPolicy(policy);\n  return attempt >= policy.maxAttempts;\n}\n\n/**\n * 计算下一次尝试前的延迟毫秒数。\n * 公式：baseDelayMs * 2^(attempt-1)，并受 maxDelayMs 限制。\n * @param {Object} policy - 重试策略对象。\n * @param {number} attempt - 刚刚失败的尝试次数（1-indexed）。\n * @returns {number} 下一次尝试前的延迟毫秒数。\n */\nexport function nextAttemptDelayMs(policy, attempt) {\n  assertValidPolicy(policy);\n  if (!Number.isInteger(attempt) || attempt < 1) {\n    throw new RangeError(\n      `retry.ts: attempt 必须是正整数，得到 ${String(attempt)}`,\n    );\n  }\n\n  // 计算指数退避延迟\n  // 使用 Math.min 确保即使指数溢出为 Infinity，结果也会被 maxDelayMs 限制\n  const scaled = policy.baseDelayMs * Math.pow(2, attempt - 1);\n  \n  // 如果 scaled 是 Infinity，Math.min 会返回 maxDelayMs\n  // 如果 baseDelayMs 是 0，scaled 是 0，Math.min 返回 0\n  return Math.min(scaled, policy.maxDelayMs);\n}\n```",
+      "explanation": "修复了 `nextAttemptDelayMs` 函数中当 `baseDelayMs` 为 0 且 `attempt` 很大时可能产生 `NaN` 的问题。原代码中 `2 ** (attempt - 1)` 在 `attempt` 极大时可能溢出为 `Infinity`，而 `0 * Infinity` 在 JavaScript 中结果为 `NaN`。修复方法是使用 `Math.pow(2, attempt - 1)` 并依赖 `Math.min(scaled, policy.maxDelayMs)` 来处理溢出情况：当 `scaled` 为 `Infinity` 时，`Math.min` 会返回 `maxDelayMs`；当 `baseDelayMs` 为 0 时，`scaled` 为 0，结果正确为 0。同时保留了所有有效的有限结果，并确保了策略验证逻辑（正整数 maxAttempts、有限非负 baseDelayMs、有限 maxDelayMs >= baseDelayMs）和尝试次数验证（正整数）不变。"
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "C-multifile-feature-r0",
+    "output": "{\n  \"files\": {\n    \"capacity.js\": \"function hasCapacity(active, limit) {\\n  if (!Number.isInteger(active) || active < 0) {\\n    throw new RangeError('active must be a nonnegative integer');\\n  }\\n  if (!Number.isInteger(limit) || limit <= 0) {\\n    throw new RangeError('limit must be a positive integer');\\n  }\\n  return active < limit;\\n}\",\n    \"route.js\": \"function chooseRoute(task, active, limit) {\\n  if (!task || typeof task !== 'object') {\\n    throw new RangeError('task must be an object');\\n  }\\n  if (task.complexity !== 'low' && task.complexity !== 'high') {\\n    throw new RangeError('task.complexity must be \\\"low\\\" or \\\"high\\\"');\\n  }\\n  if (!Number.isInteger(task.failures) || task.failures < 0) {\\n    throw new RangeError('task.failures must be a nonnegative integer');\\n  }\\n\\n  const capacity = hasCapacity(active, limit);\\n\\n  if (task.complexity === 'high' || task.failures >= 2) {\\n    return 'DEEP_LOCAL_WORKER';\\n  }\\n\\n  if (capacity) {\\n    return 'FAST_LOCAL_WORKER';\\n  }\\n\\n  return 'QUEUE';\\n}\"\n  },\n  \"explanation\": \"capacity.js defines hasCapacity(active, limit) which validates that active is a nonnegative integer and limit is a positive integer, throwing RangeError for invalid inputs, and returns true if active < limit. route.js defines chooseRoute(task, active, limit) which first validates the task object (complexity must be 'low' or 'high', failures must be a nonnegative integer), then calls hasCapacity to determine available capacity. If complexity is 'high' or failures >= 2, it returns 'DEEP_LOCAL_WORKER'. Otherwise, if capacity is available (active < limit), it returns 'FAST_LOCAL_WORKER'; if saturated (active >= limit), it returns 'QUEUE'. No cloud fallback is ever returned.\"\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 472,
+      "prompt_tokens": 150,
+      "total_tokens": 622,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 150,
+      "prompt_ms": 768.155,
+      "prompt_per_token_ms": 5.121033333333333,
+      "prompt_per_second": 195.27308941554767,
+      "predicted_n": 472,
+      "predicted_ms": 10935.242,
+      "predicted_per_token_ms": 23.21707430997877,
+      "predicted_per_second": 43.07174912086994,
+      "draft_n": 387,
+      "draft_n_accepted": 343
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "d1313906e6d333c1087102f23994dba4a7dbd2828119c00ccce3d0a673546d9c",
+    "stream_done": true,
+    "wall_s": 11.779574099986348,
+    "ttft_s": 0.844171600008849,
+    "first_visible_s": 0.8441724000149406,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "C-multifile-feature",
+    "task_kind": "files",
+    "parsed_json": {
+      "files": {
+        "capacity.js": "function hasCapacity(active, limit) {\n  if (!Number.isInteger(active) || active < 0) {\n    throw new RangeError('active must be a nonnegative integer');\n  }\n  if (!Number.isInteger(limit) || limit <= 0) {\n    throw new RangeError('limit must be a positive integer');\n  }\n  return active < limit;\n}",
+        "route.js": "function chooseRoute(task, active, limit) {\n  if (!task || typeof task !== 'object') {\n    throw new RangeError('task must be an object');\n  }\n  if (task.complexity !== 'low' && task.complexity !== 'high') {\n    throw new RangeError('task.complexity must be \"low\" or \"high\"');\n  }\n  if (!Number.isInteger(task.failures) || task.failures < 0) {\n    throw new RangeError('task.failures must be a nonnegative integer');\n  }\n\n  const capacity = hasCapacity(active, limit);\n\n  if (task.complexity === 'high' || task.failures >= 2) {\n    return 'DEEP_LOCAL_WORKER';\n  }\n\n  if (capacity) {\n    return 'FAST_LOCAL_WORKER';\n  }\n\n  return 'QUEUE';\n}"
+      },
+      "explanation": "capacity.js defines hasCapacity(active, limit) which validates that active is a nonnegative integer and limit is a positive integer, throwing RangeError for invalid inputs, and returns true if active < limit. route.js defines chooseRoute(task, active, limit) which first validates the task object (complexity must be 'low' or 'high', failures must be a nonnegative integer), then calls hasCapacity to determine available capacity. If complexity is 'high' or failures >= 2, it returns 'DEEP_LOCAL_WORKER'. Otherwise, if capacity is available (active < limit), it returns 'FAST_LOCAL_WORKER'; if saturated (active >= limit), it returns 'QUEUE'. No cloud fallback is ever returned."
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "D-repository-reasoning-r0",
+    "output": "{\n  \"tests\": [\n    \"test_concurrent_open_same_key_shares_promise\",\n    \"test_failed_open_evicts_immediately\",\n    \"test_cancellation_during_opening_prevents_resolution\",\n    \"test_goaway_replacement_atomicity\"\n  ],\n  \"invariants\": [\n    \"Invariant: Concurrent calls to getOrCreate with the same sessionKey must return the exact same Promise instance (identity check) and trigger only one underlying provider.openSession call.\",\n    \"Invariant: If provider.openSession rejects, the sessionKey must be immediately removed from the internal registry Map (identity check: sessions.get(key) === undefined) so subsequent calls do not replay the cached rejection.\",\n    \"Invariant: If close() is called while a session is opening, the opening attempt must be marked cancelled, and the resulting session (if it eventually opens) must be closed immediately with reason 'opening_cancelled' (state check: attempt.cancelled === true).\",\n    \"Invariant: When a session is marked goingAway, the retirement and replacement installation must occur atomically within the synchronous continuation of the check, ensuring no concurrent caller can observe the old 'goingAway' session in the Map after the replacement promise is installed (identity/Map\"\n  ]\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 266,
+      "prompt_tokens": 3771,
+      "total_tokens": 4037,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 3771,
+      "prompt_ms": 18218.452,
+      "prompt_per_token_ms": 4.831199151418722,
+      "prompt_per_second": 206.98794826256366,
+      "predicted_n": 266,
+      "predicted_ms": 9500.254,
+      "predicted_per_token_ms": 35.850015094339625,
+      "predicted_per_second": 27.893991044871008,
+      "draft_n": 297,
+      "draft_n_accepted": 167
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "2373182193e3f4929ec79afea6ae96dbd473aab5f3fc9fb0088d0185c4419622",
+    "stream_done": true,
+    "wall_s": 27.814963300013915,
+    "ttft_s": 18.309670399990864,
+    "first_visible_s": 18.30967069999315,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "D-repository-reasoning",
+    "task_kind": "review",
+    "parsed_json": {
+      "tests": [
+        "test_concurrent_open_same_key_shares_promise",
+        "test_failed_open_evicts_immediately",
+        "test_cancellation_during_opening_prevents_resolution",
+        "test_goaway_replacement_atomicity"
+      ],
+      "invariants": [
+        "Invariant: Concurrent calls to getOrCreate with the same sessionKey must return the exact same Promise instance (identity check) and trigger only one underlying provider.openSession call.",
+        "Invariant: If provider.openSession rejects, the sessionKey must be immediately removed from the internal registry Map (identity check: sessions.get(key) === undefined) so subsequent calls do not replay the cached rejection.",
+        "Invariant: If close() is called while a session is opening, the opening attempt must be marked cancelled, and the resulting session (if it eventually opens) must be closed immediately with reason 'opening_cancelled' (state check: attempt.cancelled === true).",
+        "Invariant: When a session is marked goingAway, the retirement and replacement installation must occur atomically within the synchronous continuation of the check, ensuring no concurrent caller can observe the old 'goingAway' session in the Map after the replacement promise is installed (identity/Map"
+      ]
+    },
+    "structured_correct": true
+  },
+  {
+    "label": "E-patch-review-r0",
+    "output": "{\n  \"tests\": [\n    \"route({failures: 0}, 10, 5) should return 'QUEUE' (or equivalent blocking state), not 'FAST_LOCAL_WORKER'\",\n    \"route({failures: 2}, 10, 5) should return 'ESCALATE' (or equivalent escalation state), not 'DEEP_LOCAL_WORKER'\",\n    \"route({failures: 0}, 10, 5) must never return 'PREMIUM_ESCALATION'\",\n    \"route({failures: 1}, 10, 5) should return 'QUEUE' (or equivalent blocking state), not 'FAST_LOCAL_WORKER'\"\n  ],\n  \"defects\": [\n    \"Violation: 'full pool must queue'. Defect: The function returns 'FAST_LOCAL_WORKER' when used <= limit, ignoring the requirement that the full pool must queue. Correction: Change the first condition to return a queueing state (e.g., 'QUEUE') when used <= limit, or remove the fast path entirely if 'f\"\n  ]\n}",
+    "reasoning": "",
+    "tool_deltas": [],
+    "usage": {
+      "completion_tokens": 235,
+      "prompt_tokens": 116,
+      "total_tokens": 351,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 116,
+      "prompt_ms": 1046.837,
+      "prompt_per_token_ms": 9.024456896551724,
+      "prompt_per_second": 110.80999238658931,
+      "predicted_n": 235,
+      "predicted_ms": 7606.115,
+      "predicted_per_token_ms": 32.50476495726495,
+      "predicted_per_second": 30.76472022839518,
+      "draft_n": 231,
+      "draft_n_accepted": 158
+    },
+    "finish": "stop",
+    "error": null,
+    "prompt_sha256": "77049de3f27aecc20dff6c4150e2c0545839a62bc045d9433aebb132abcca692",
+    "stream_done": true,
+    "wall_s": 8.775754600006621,
+    "ttft_s": 1.1681718999752775,
+    "first_visible_s": 1.1681722999783233,
+    "cached_tokens": 0,
+    "transport_ok": true,
+    "task_id": "E-patch-review",
+    "task_kind": "review",
+    "parsed_json": {
+      "tests": [
+        "route({failures: 0}, 10, 5) should return 'QUEUE' (or equivalent blocking state), not 'FAST_LOCAL_WORKER'",
+        "route({failures: 2}, 10, 5) should return 'ESCALATE' (or equivalent escalation state), not 'DEEP_LOCAL_WORKER'",
+        "route({failures: 0}, 10, 5) must never return 'PREMIUM_ESCALATION'",
+        "route({failures: 1}, 10, 5) should return 'QUEUE' (or equivalent blocking state), not 'FAST_LOCAL_WORKER'"
+      ],
+      "defects": [
+        "Violation: 'full pool must queue'. Defect: The function returns 'FAST_LOCAL_WORKER' when used <= limit, ignoring the requirement that the full pool must queue. Correction: Change the first condition to return a queueing state (e.g., 'QUEUE') when used <= limit, or remove the fast path entirely if 'f"
+      ]
+    },
+    "structured_correct": true
+  }
+]

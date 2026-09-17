@@ -1,0 +1,16 @@
+{
+  "A-small-implementation": [
+    "(()=>{const a=Object.freeze({x:1,y:2}),b=Object.freeze({y:2,x:1});const xs=Object.freeze([a,b]);return dedupe(xs).length===1&&dedupe(xs)[0]===a})()",
+    "dedupe([{a:1},{a:'1'},{a:null},{a:false}]).length===4"
+  ],
+  "B-repository-bugfix": [
+    "nextAttemptDelayMs({maxAttempts:5000,baseDelayMs:0,maxDelayMs:0},2000)===0",
+    "nextAttemptDelayMs({maxAttempts:4,baseDelayMs:0.5,maxDelayMs:10},4)===4",
+    "(()=>{try{nextAttemptDelayMs({maxAttempts:1,baseDelayMs:Infinity,maxDelayMs:Infinity},1);return false}catch(e){return e instanceof RangeError}})()"
+  ],
+  "C-multifile-feature": [
+    "chooseRoute({complexity:'high',failures:0},4,4)==='DEEP_LOCAL_WORKER'",
+    "chooseRoute({complexity:'low',failures:3},4,4)==='DEEP_LOCAL_WORKER'",
+    "(()=>{try{hasCapacity(0,0);return false}catch(e){return e instanceof RangeError}})()"
+  ]
+}

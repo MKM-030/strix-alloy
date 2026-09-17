@@ -1,0 +1,77 @@
+{
+  "owner": "ChatGPT-Ornith-Evaluation",
+  "pid": 32032,
+  "started": 1789152731.196033,
+  "args": [
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\bin\\Release\\llama-server.exe",
+    "-m",
+    "C:/AI/models/Ornith-1.5-35B/Ornith-1.5-35B-A3B-ROCmFP4.gguf",
+    "--alias",
+    "ornith-eval",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "9815",
+    "-ngl",
+    "all",
+    "--device",
+    "Vulkan0",
+    "-c",
+    "32768",
+    "--parallel",
+    "1",
+    "-fa",
+    "on",
+    "-ctk",
+    "q8_0",
+    "-ctv",
+    "q8_0",
+    "--jinja",
+    "--reasoning",
+    "off",
+    "--metrics",
+    "--no-webui",
+    "--fit",
+    "off",
+    "--threads",
+    "16",
+    "--threads-batch",
+    "32",
+    "-b",
+    "2048",
+    "-ub",
+    "512",
+    "--ctx-checkpoints",
+    "8",
+    "--cache-ram",
+    "1024",
+    "--no-mmap",
+    "--spec-type",
+    "none"
+  ],
+  "environment_overrides": {
+    "GGML_VK_DISABLE_GDN_CACHE_FUSION": "1"
+  },
+  "model_bytes": 19052438944,
+  "slots": 1,
+  "context": 32768,
+  "spec": 0,
+  "name": "rocmfp4",
+  "tag": "rocmfp4-no-spec-screen-v2",
+  "download_activity_at_start": [
+    [
+      "ice-mtpv2",
+      "DOWNLOADING"
+    ],
+    [
+      "q4xl-mtp",
+      "SELECTED_FOR_MEASUREMENT"
+    ],
+    [
+      "ornith-dflash2",
+      "SELECTED_FOR_MEASUREMENT"
+    ]
+  ],
+  "status": "COMPLETED",
+  "finished": 1789152856.7545934
+}

@@ -1,0 +1,259 @@
+{
+  "source": "C:\\Projects\\REV-N-ornith-eval-20260911\\artifacts\\benchmarks\\resume-20260911-201615\\flash-current-iq4-frspec\\high-6144\\workers\\requests-final.json",
+  "generated_code_environment": "Node permission model; no filesystem/network/subprocess capabilities granted; additional VM code-generation ban and 1s per-test timeout",
+  "results": [
+    {
+      "task": "A-small-implementation",
+      "label": "A-small-implementation-r0",
+      "transport_ok": true,
+      "wall_s": 64.00803840003209,
+      "ttft_s": 1.6992616000352427,
+      "usage": {
+        "completion_tokens": 2429,
+        "prompt_tokens": 123,
+        "total_tokens": 2552,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 123,
+        "prompt_ms": 1408.023,
+        "prompt_per_token_ms": 11.447341463414633,
+        "prompt_per_second": 87.35652755672317,
+        "predicted_n": 2429,
+        "predicted_ms": 62307.328,
+        "predicted_per_token_ms": 25.661996705107086,
+        "predicted_per_second": 38.968129077851,
+        "draft_n": 2187,
+        "draft_n_accepted": 1700
+      },
+      "grading": {
+        "executed": true,
+        "passed": 7,
+        "total": 7,
+        "tests": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "semantic_pass": true,
+      "checks": [
+        "dedupe([]).length===0",
+        "dedupe([{a:1},{a:1}]).length===1",
+        "dedupe([{a:1,b:2},{b:2,a:1},{a:2}]).length===2",
+        "(()=>{const x={a:1};return dedupe([x,{a:1}])[0]===x})()",
+        "dedupe([{a:1},{a:'1'},{}]).length===3",
+        "(()=>{const a=Object.freeze({x:1,y:2}),b=Object.freeze({y:2,x:1});const xs=Object.freeze([a,b]);return dedupe(xs).length===1&&dedupe(xs)[0]===a})()",
+        "dedupe([{a:1},{a:'1'},{a:null},{a:false}]).length===4"
+      ],
+      "code_sha256": "27d81f31bdd0b3675ec0c9c660a981e55f8a6b3b28910f6f9162591fbee714dc"
+    },
+    {
+      "task": "B-repository-bugfix",
+      "label": "B-repository-bugfix-r0",
+      "transport_ok": true,
+      "wall_s": 72.49679980002111,
+      "ttft_s": 4.8580163000151515,
+      "usage": {
+        "completion_tokens": 2624,
+        "prompt_tokens": 953,
+        "total_tokens": 3577,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 953,
+        "prompt_ms": 4646.525,
+        "prompt_per_token_ms": 4.875682056663169,
+        "prompt_per_second": 205.09950984875795,
+        "predicted_n": 2624,
+        "predicted_ms": 67637.889,
+        "predicted_per_token_ms": 25.786461685093403,
+        "predicted_per_second": 38.7800393947836,
+        "draft_n": 2349,
+        "draft_n_accepted": 1841
+      },
+      "grading": {
+        "executed": true,
+        "passed": 9,
+        "total": 9,
+        "tests": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "semantic_pass": true,
+      "checks": [
+        "nextAttemptDelayMs({maxAttempts:5,baseDelayMs:10,maxDelayMs:100},1)===10",
+        "nextAttemptDelayMs({maxAttempts:5,baseDelayMs:10,maxDelayMs:100},5)===100",
+        "nextAttemptDelayMs({maxAttempts:5000,baseDelayMs:0,maxDelayMs:100},2000)===0",
+        "nextAttemptDelayMs({maxAttempts:5000,baseDelayMs:1,maxDelayMs:100},2000)===100",
+        "(()=>{try{nextAttemptDelayMs({maxAttempts:1,baseDelayMs:1,maxDelayMs:2},0);return false}catch(e){return e instanceof RangeError}})()",
+        "(()=>{try{nextAttemptDelayMs({maxAttempts:0,baseDelayMs:1,maxDelayMs:2},1);return false}catch(e){return e instanceof RangeError}})()",
+        "nextAttemptDelayMs({maxAttempts:5000,baseDelayMs:0,maxDelayMs:0},2000)===0",
+        "nextAttemptDelayMs({maxAttempts:4,baseDelayMs:0.5,maxDelayMs:10},4)===4",
+        "(()=>{try{nextAttemptDelayMs({maxAttempts:1,baseDelayMs:Infinity,maxDelayMs:Infinity},1);return false}catch(e){return e instanceof RangeError}})()"
+      ],
+      "code_sha256": "ecba4f3e031f4d02cdd23c163795ae858c15b3e28bc881c470b3a301f37a928e"
+    },
+    {
+      "task": "C-multifile-feature",
+      "label": "C-multifile-feature-r0",
+      "transport_ok": true,
+      "wall_s": 66.08590939996066,
+      "ttft_s": 1.6922231999924406,
+      "usage": {
+        "completion_tokens": 2530,
+        "prompt_tokens": 190,
+        "total_tokens": 2720,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 190,
+        "prompt_ms": 1533.497,
+        "prompt_per_token_ms": 8.071036842105263,
+        "prompt_per_second": 123.89981851937107,
+        "predicted_n": 2530,
+        "predicted_ms": 64393.157,
+        "predicted_per_token_ms": 25.46190470541716,
+        "predicted_per_second": 39.274359541030115,
+        "draft_n": 2115,
+        "draft_n_accepted": 1824
+      },
+      "grading": {
+        "executed": true,
+        "passed": 10,
+        "total": 10,
+        "tests": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "semantic_pass": true,
+      "checks": [
+        "hasCapacity(0,1)===true",
+        "hasCapacity(1,1)===false",
+        "chooseRoute({complexity:'low',failures:0},0,4)==='FAST_LOCAL_WORKER'",
+        "chooseRoute({complexity:'high',failures:0},0,4)==='DEEP_LOCAL_WORKER'",
+        "chooseRoute({complexity:'low',failures:2},0,4)==='DEEP_LOCAL_WORKER'",
+        "chooseRoute({complexity:'low',failures:0},4,4)==='QUEUE'",
+        "(()=>{try{hasCapacity(-1,2);return false}catch(e){return e instanceof RangeError}})()",
+        "chooseRoute({complexity:'high',failures:0},4,4)==='DEEP_LOCAL_WORKER'",
+        "chooseRoute({complexity:'low',failures:3},4,4)==='DEEP_LOCAL_WORKER'",
+        "(()=>{try{hasCapacity(0,0);return false}catch(e){return e instanceof RangeError}})()"
+      ],
+      "code_sha256": "7ab90c2870fc0f04ba6cbd0af3dad1b654ca5ecd24728f1befe9855042a5d91e"
+    },
+    {
+      "task": "D-repository-reasoning",
+      "label": "D-repository-reasoning-r0",
+      "transport_ok": true,
+      "wall_s": 111.85545039997669,
+      "ttft_s": 21.12693709996529,
+      "usage": {
+        "completion_tokens": 2407,
+        "prompt_tokens": 3811,
+        "total_tokens": 6218,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 3811,
+        "prompt_ms": 20411.868,
+        "prompt_per_token_ms": 5.356039884544739,
+        "prompt_per_second": 186.7051070485073,
+        "predicted_n": 2407,
+        "predicted_ms": 90715.356,
+        "predicted_per_token_ms": 37.70380548628429,
+        "predicted_per_second": 26.52252172168073,
+        "draft_n": 2940,
+        "draft_n_accepted": 1426
+      },
+      "semantic_pass": null,
+      "qualification": "Requires rubric-based inspection; keywords alone are not a quality score.",
+      "response": {
+        "tests": [
+          "Proposed only; no tests were executed and no edits or cloud calls were made.",
+          "invariants",
+          "tests"
+        ],
+        "invariants": [
+          "Same-key concurrent opening must preserve one opening identity: the first getOrCreate synchronously installs an OpeningAttempt for the key, and every concurrent getOrCreate for that same key must await the same attempt.promise rather than creating a second provider.openSession call.",
+          "Same-key concurrent opening must preserve one resolved session identity: all concurrent getOrCreate callers for the same key must resolve to the exact same RealtimeConversationSession object, and sessions.get(key) must remain the same attempt identity until that attempt resolves or fails.",
+          "Failed-open retry must preserve no-cached-rejection identity: when provider.openSession rejects, the registry must delete the map entry only if sessions.get(key) is still the failed attempt, so a later getOrCreate for the same key creates a new attempt identity and calls provider.openSession again.",
+          "Failed-open retry must preserve joiner failure sharing: concurrent callers that joined the same failed opening attempt must all reject with that attempt's failure, while a later explicit getOrCreate must be allowed to retry and may succeed.",
+          "Cancellation during opening must preserve cancellation-before-provider-resolution order: close(sessionKey) must delete the map entry and mark the existing attempt cancelled before any later provider.openSession resolution can be accepted.",
+          "Cancellation during opening must preserve orphan-close identity: if provider.openSession resolves after cancellation, accept must see attempt.cancelled or sessions.get(key) !== attempt, close the newly created session with reason 'opening_cancelled', and reject the original getOrCreate promise with "
+        ]
+      }
+    },
+    {
+      "task": "E-patch-review",
+      "label": "E-patch-review-r0",
+      "transport_ok": true,
+      "wall_s": 53.36182439996628,
+      "ttft_s": 1.5735829999903217,
+      "usage": {
+        "completion_tokens": 2187,
+        "prompt_tokens": 156,
+        "total_tokens": 2343,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 156,
+        "prompt_ms": 1393.622,
+        "prompt_per_token_ms": 8.93347435897436,
+        "prompt_per_second": 111.93853139517027,
+        "predicted_n": 2187,
+        "predicted_ms": 51787.539,
+        "predicted_per_token_ms": 23.69054849039341,
+        "predicted_per_second": 42.21092645472109,
+        "draft_n": 1902,
+        "draft_n_accepted": 1553
+      },
+      "semantic_pass": null,
+      "qualification": "Requires rubric-based inspection; keywords alone are not a quality score.",
+      "response": {
+        "tests": [
+          "function route(task,used,limit){ if(task.failures>=2)return 'DEEP_LOCAL_WORKER'; if(used>limit)return 'QUEUE'; return 'FAST_LOCAL_WORKER'; }",
+          "function route(task,used,limit){ if(task.failures>=2)return 'DEEP_LOCAL_WORKER'; if(used>limit)return 'QUEUE'; return 'FAST_LOCAL_WORKER'; }",
+          "function route(task,used,limit){ if(task.failures>=2)return 'DEEP_LOCAL_WORKER'; if(used>limit)return 'QUEUE'; return 'FAST_LOCAL_WORKER'; }"
+        ]
+      }
+    }
+  ],
+  "executable_tasks_passed": 3,
+  "executable_tasks_total": 3
+}
