@@ -10,7 +10,7 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$Version = '0.1.0',
+    [string]$Version = '0.1.1',
     [string]$OutDir = (Join-Path $env:LOCALAPPDATA 'strix-alloy-release'),
     [string]$BinSource = 'C:\AI\build\strix-llama-win\build-therock\bin',
     [switch]$SkipScan

@@ -25,8 +25,8 @@ strix-alloy documents and distributes the tested llama.cpp configuration and Win
 | Item | Required? | Source | Use |
 | --- | --- | --- | --- |
 | Qwen3.8-Flash-Next PROJFIX GGUF shards (9 files, ~100 GB) | Yes | [ilintar/qwen3.8-flash-next-gguf-strix-halo](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo) - `Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00001-of-00009.gguf` … `-00009-of-00009.gguf` | Start shard 1 with the compatible server |
-| Matching shared MTP sidecar (2.6 GiB) | Optional | Same repo: [`mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf`](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo/resolve/main/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf) | Enables the tested MTP flags at roughly +16 t/s decode |
-| Windows llama.cpp runtime (HIP/ROCm) | Only if your existing runtime lacks the model or shared-MTP support | The [v0.1.0 release](../../releases/tag/v0.1.0) archive, or build from source with [`setup/`](setup/) | The same normal `llama-server` workflow |
+| Matching shared MTP sidecar (2.6 GiB) | Optional | Same repo: [`mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf`](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo/resolve/main/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf) | Enables the tested MTP flags. The gain is **workload-dependent** - it is largest on short-context instructed decoding and shrinks as context grows; the measured figures are in [Current numbers](#current-numbers) below |
+| Windows llama.cpp runtime (HIP/ROCm) | Only if your existing runtime lacks the model or shared-MTP support | The [v0.1.1 release](../../releases/tag/v0.1.1) archive (v0.1.0 is superseded), or build from source with [`setup/`](setup/) | The same normal `llama-server` workflow |
 
 Weights stay on your disk and are never bundled or auto-downloaded; the upstream repo is Apache-2.0 and the files are unchanged from the publisher (verified by size and SHA-256, see [`config/model-manifest.example.json`](config/model-manifest.example.json)). No separate tokenizer or PLE file is needed.
 

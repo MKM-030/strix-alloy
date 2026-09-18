@@ -5,8 +5,11 @@ How the end-user ZIP is assembled, and the one failure mode that cost a release 
 ## Build
 
 ```
-packaging\build-release.ps1 -Version 0.1.0
+packaging\build-release.ps1 -Version 0.1.1
 ```
+
+Bump `-Version` for each release: it names the ZIP and the checksum file. The script's default is
+the most recent published version.
 
 Outputs, by default into `%LOCALAPPDATA%\strix-alloy-release` (override with `-OutDir`):
 
