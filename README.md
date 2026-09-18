@@ -20,7 +20,7 @@ I am also building **REV:N**, an AI-driven GTA V / FiveM project, and it needs l
 
 ## Install and start
 
-1. **Download** `strix-alloy-0.1.0-windows-x64.zip` from the [latest release](../../releases/latest) and extract it somewhere permanent, e.g. `%LOCALAPPDATA%\Programs\strix-alloy`.
+1. **Download** `strix-alloy-0.1.0-windows-x64.zip` from the [v0.1.0 release](../../releases/tag/v0.1.0) and extract it somewhere permanent, e.g. `%LOCALAPPDATA%\Programs\strix-alloy`. (This is an experimental prerelease, so it is not what GitHub lists as the "latest release" at the top of the releases page.)
 2. **Set your GPU carve.** In BIOS/UEFI, reserve **96 GB** as dedicated graphics memory. The model needs about 72 GB of device memory. A small carve loads but runs several times slower; a 0.5 GB carve will not load. The carve is a reservation of system RAM, **not** a separate memory bank and **not** isolation.
 3. **Double-click `app\Start Strix Alloy.cmd`.** On first run it asks where your model files are (models are not bundled and are never downloaded for you), then opens the chat page at `http://127.0.0.1:8899`. Every start after that is one double-click.
 
