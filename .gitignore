@@ -12,9 +12,7 @@ build/
 .turbo/
 coverage/
 .vitest/
-# REPO-010's markdown report. Regenerated on every run and uploaded as a CI
 # artifact — never committed (a committed report would rot silently).
-.backlog-check/
 
 # --- environment & secrets --------------------------------------------------
 .env
@@ -33,50 +31,7 @@ Thumbs.db
 *.swp
 
 # --- local runtime data -----------------------------------------------------
-# `pnpm cloud`'s default REVN_MEMORY_DIR. It holds a tenant's episodic memory
-# and relationship edges as JSONL — real player-derived data, never committed.
-.revn-data/
-
-# Offline Character Factory staging metadata and reports. Canonical source
-# content is reviewed separately; large voice media never enters Git.
-infrastructure/character-factory/
-
-# NOTE (12 §1 principle 5, 12 §8.5): generated artifacts are COMMITTED, never
-# ignored. `gen/`, `schemas/*.json` and `resources/**/shared/gen_*.lua` are
-# reviewable diffs guarded by the CI drift check
-# (`corepack pnpm codegen && git diff --exit-code`). Do not add them here.
-# The negations below make that explicit and survive a careless `dist/`-style
-# blanket rule being added above.
-!**/gen/
-!**/gen/**
-
-# The `dist/` rule six lines from the top of this file was doing exactly the
-# damage the note above warns about: `revn_bridge/dist/bridge.js` is the
-# esbuild bundle that SHIPS to a customer FiveM server, and its own
-# `fxmanifest.lua` calls it "a GENERATED, COMMITTED artifact". Ignored, a fresh
-# clone would produce a `revn_bridge` with no server script — the resource
-# would fail to start and nothing in CI would notice, because the drift check
-# only compares a file that exists.
-# Rebuild:     corepack pnpm -F @revn/fivem-resource build
-# Drift check: corepack pnpm -F @revn/fivem-resource build:check
-!apps/fivem-resource/resources/revn_bridge/dist/
-!apps/fivem-resource/resources/revn_bridge/dist/**
-
-# Voice recordings of a real person. NEVER committed.
-#
-# The real-voice benchmark reads WAVs of the founder speaking German
-# (docs/operators/voice-recording.md). They are biometric-adjacent personal
-# data and they are not ours to distribute; only the DERIVED numbers in
-# packages/voice-providers/bench/results/*.json are shareable.
-#
-# `.revn-data/` above already covers the default location. These patterns are
-# deliberate belt-and-braces so that recording into some other folder cannot
-# quietly make them committable.
-*.wav
-*.flac
-*.m4a
-!packages/voice-providers/src/__fixtures__/*.wav
-.gstack/
+# Local runtime data. Never committed.
 
 # Python service syntax checks emit bytecode beside the checked script.
 __pycache__/

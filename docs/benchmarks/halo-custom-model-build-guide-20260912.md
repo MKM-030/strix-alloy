@@ -229,9 +229,7 @@ If a single model is still wanted, `Jab1718/Moe-slices` shows activation-profile
 - **Carve is shared:** every resident model draws on the same device pool (`pool ≈ 64 + carve/2`).
   Splitting helps only if the pieces are individually small — which is the point.
 - **Quality must be re-measured:** a custom quant is a new model; run the German-quality bake-off
-  (`docs/operators/voice-lane-retest-protocol.md` §7) before it replaces anything.
-- **No product decision here:** which NPC roles exist and what they may do is a `DECISION_REQUIRED`
-  backlog item, not something this document decides.
+  under the project's own quality protocol before it replaces anything.
 
 ---
 

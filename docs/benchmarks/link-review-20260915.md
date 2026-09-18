@@ -30,8 +30,8 @@ PROJFIX — expect decode around **15–18 t/s**, i.e. worse, not better.
 
 **Does it make sense?** For *speed*, no. For *content*, it is a different model (abliterated, and built
 from a different base — `base_model:windowsxp811203/Qwen3.8-Flash-Next-Abliterated`), so it is a
-**product/model-selection question**, not a performance one, and per the REV:N rules that is a
-`DECISION_REQUIRED` rather than something to pick here. Note the *name* "Windows" refers to the uploader,
+**product/model-selection question**, not a performance one - a choice for the project owner,
+not something this benchmark decides. Note the *name* "Windows" refers to the uploader,
 not to a Windows-optimized build — there is no such thing in that repo.
 
 **If the founder wants it:** the only loadable variant is **Q8_0**, at ~2× bytes/token, so it would be

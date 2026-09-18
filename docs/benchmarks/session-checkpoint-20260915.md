@@ -79,7 +79,7 @@ drafters on their own trunk.
 
 - `ilintar/qwen3.8-flash-next-gguf-strix-halo` = **the PROJFIX quant we already run** (nothing to download).
 - `windowsxp811203/...-Abliterated-GGUF` — only **Q8_0** loads on this fork (K-quants are refused); at 8.25 bpw
-  it is ~2× bytes/token, so slower. A content/`DECISION_REQUIRED` question, not a speed source.
+  it is ~2× bytes/token, so slower. A content-selection question for the project owner, not a speed source.
 - `MakazhanAlpamys/Soup` — a fine-tuning CLI (SFT/DPO/GRPO/LoRA/QLoRA, layer streaming). **Not an inference
   accelerator.** Its real relevance: training a **better MTP draft head** (our acceptance is the decode
   limiter), which is the most promising remaining decode lever.
