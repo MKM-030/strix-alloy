@@ -8,17 +8,18 @@ How the end-user ZIP is assembled, and the one failure mode that cost a release 
 packaging\build-release.ps1 -Version 0.1.0
 ```
 
-Outputs, by default into `C:\revn-recovery\strix-alloy-release\`:
+Outputs, by default into `%LOCALAPPDATA%\strix-alloy-release` (override with `-OutDir`):
 
 | file | what |
 | --- | --- |
-| `strix-alloy-<version>-windows-x64.zip` | the end-user package |
+| `strix-alloy-<version>-windows-x64.zip` | the runtime archive |
 | `strix-alloy-<version>-SHA256SUMS.txt` | checksums for the release assets |
 
 The script uses an **explicit allowlist**. It never blanket-copies, never follows reparse points,
 and never lets the research tree (`kernel-work/`, `artifacts/`, `docs/benchmarks/`) into the ZIP.
-Models are never bundled. A secret/private-content scan runs on the staged payload and **fails the
-build** if it finds credentials or REV:N internal markers.
+The engine binaries come from `-BinSource` (default: the frozen Windows HIP build). Models are never
+bundled. A secret/personal-path scan runs on the staged payload and **fails the build** if it finds
+credentials or internal markers.
 
 ## The DLL closure — derived, not guessed
 

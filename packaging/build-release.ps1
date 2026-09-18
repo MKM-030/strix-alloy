@@ -11,14 +11,14 @@
 [CmdletBinding()]
 param(
     [string]$Version = '0.1.0',
-    [string]$OutDir = 'C:\revn-recovery\strix-alloy-release',
+    [string]$OutDir = (Join-Path $env:LOCALAPPDATA 'strix-alloy-release'),
+    [string]$BinSource = 'C:\AI\build\strix-llama-win\build-therock\bin',
     [switch]$SkipScan
 )
 $ErrorActionPreference = 'Stop'
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $StageRoot = Join-Path $env:TEMP "strix-alloy-stage-$Version"
-$BinSource = 'C:\AI\build\strix-llama-win\build-therock\bin'
 
 Write-Host ("strix-alloy release build {0}" -f $Version)
 Write-Host ("repo  : {0}" -f $RepoRoot)
@@ -118,22 +118,27 @@ if ($archKernels.Count -eq 0) { throw "no gfx1151 Tensile kernels in $archDir" }
 Write-Host ("    rocBLAS: {0} gfx1151 kernel files present" -f $archKernels.Count)
 
 # ---------------------------------------------------------------------------
-# 2. APP â€” launcher
+# 2. APP - the llama-server launcher
+#
+# A command template, not an application: it validates the model files and then invokes
+# llama-server.exe directly. No config store, no wizard, no service - so the package stays a
+# runtime plus one script instead of a product with a lifecycle of its own.
 # ---------------------------------------------------------------------------
 $appStage = Join-Path $StageRoot 'app'
 New-Item -ItemType Directory -Path $appStage -Force | Out-Null
-foreach ($f in 'start-strix-alloy.ps1', 'Start Strix Alloy.cmd', 'Stop Strix Alloy.cmd') {
+foreach ($f in 'launch-flash-next.ps1', 'Launch Flash Next.cmd') {
     Copy-Item -LiteralPath (Join-Path $RepoRoot "app\$f") -Destination $appStage -Force
 }
-Write-Host '  app: launcher + cmd wrappers'
+Write-Host '  app: llama-server launcher'
 
 # ---------------------------------------------------------------------------
-# 3. CONFIG examples
+# 3. CONFIG examples (model manifest only - the launcher is configured by its arguments, so
+#    there is no config file to seed)
 # ---------------------------------------------------------------------------
 $cfgStage = Join-Path $StageRoot 'config'
 New-Item -ItemType Directory -Path $cfgStage -Force | Out-Null
-Copy-Item -Path (Join-Path $RepoRoot 'config\*.json') -Destination $cfgStage -Force
-Write-Host '  config: examples'
+Copy-Item -Path (Join-Path $RepoRoot 'config\model-manifest.example.json') -Destination $cfgStage -Force
+Write-Host '  config: model manifest example'
 
 # ---------------------------------------------------------------------------
 # 4. DOCS â€” user docs only

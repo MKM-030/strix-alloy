@@ -18,15 +18,48 @@ I am also building **REV:N**, an AI-driven GTA V / FiveM project, and it needs l
 
 **The plan I am working toward** is the M5's 8060S handling inference and the RTX 2070 SUPER acting as an eGPU for games, with Windows available throughout. **That is a goal, not a validated result.** Nothing in this release uses a second GPU, and simultaneous gaming plus inference has not been tested. The numbers below are inference-only.
 
-## Install and start
+## Download and run
 
-1. **Download** `strix-alloy-0.1.0-windows-x64.zip` from the [v0.1.0 release](../../releases/tag/v0.1.0) and extract it somewhere permanent, e.g. `%LOCALAPPDATA%\Programs\strix-alloy`. (This is an experimental prerelease, so it is not what GitHub lists as the "latest release" at the top of the releases page.)
-2. **Set your GPU carve.** In BIOS/UEFI, reserve **96 GB** as dedicated graphics memory. The model needs about 72 GB of device memory. A small carve loads but runs several times slower; a 0.5 GB carve will not load. The carve is a reservation of system RAM, **not** a separate memory bank and **not** isolation.
-3. **Double-click `app\Start Strix Alloy.cmd`.** On first run it asks where your model files are (models are not bundled and are never downloaded for you), then opens the chat page at `http://127.0.0.1:8899`. Every start after that is one double-click.
+strix-alloy documents and distributes the tested llama.cpp configuration and Windows HIP changes used to run Qwen3.8-Flash-Next on Strix Halo. Download the external GGUF files, optionally add the matching MTP sidecar, and load them with a compatible llama-server using your normal model-launch workflow. Use the server's existing web UI or your preferred client. **No separate strix-alloy application is required** - the package is a llama.cpp runtime plus one launch script.
 
-Full details, troubleshooting and uninstall: **[docs/user/README.md](docs/user/README.md)**.
+| Item | Required? | Source | Use |
+| --- | --- | --- | --- |
+| Qwen3.8-Flash-Next PROJFIX GGUF shards (9 files, ~100 GB) | Yes | [ilintar/qwen3.8-flash-next-gguf-strix-halo](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo) - `Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00001-of-00009.gguf` … `-00009-of-00009.gguf` | Start shard 1 with the compatible server |
+| Matching shared MTP sidecar (2.6 GiB) | Optional | Same repo: [`mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf`](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo/resolve/main/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf) | Enables the tested MTP flags at roughly +16 t/s decode |
+| Windows llama.cpp runtime (HIP/ROCm) | Only if your existing runtime lacks the model or shared-MTP support | The [v0.1.0 release](../../releases/tag/v0.1.0) archive, or build from source with [`setup/`](setup/) | The same normal `llama-server` workflow |
 
-You do **not** need a compiler, the ROCm SDK, Git or Python to run it.
+Weights stay on your disk and are never bundled or auto-downloaded; the upstream repo is Apache-2.0 and the files are unchanged from the publisher (verified by size and SHA-256, see [`config/model-manifest.example.json`](config/model-manifest.example.json)). No separate tokenizer or PLE file is needed.
+
+```powershell
+# 1. fetch the weights (native -hf loading is not used; download first, then point -m at shard 1)
+hf download ilintar/qwen3.8-flash-next-gguf-strix-halo `
+  --include "Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-*.gguf" `
+  --local-dir C:\AI\models\qwen38-flash\projfix
+
+# 2. start the server - this is the whole command, no wrapper and no config file
+& .\runtime\llama-server.exe `
+  -m C:\AI\models\qwen38-flash\projfix\Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00001-of-00009.gguf `
+  --alias Qwen3.8-Flash-Next -dev ROCm0 -ngl 99 -fa on -fit off --load-mode none `
+  -ctk f16 -ctv f16 -c 32768 -b 2048 -ub 2048 --parallel 1 `
+  --host 127.0.0.1 --port 8826 --seed 1234 --jinja
+#    append for the MTP profile:
+#      -md <path>\mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf
+#      --spec-type draft-mtp --spec-draft-device ROCm0 --spec-draft-ngl 99 --spec-draft-n-max 2
+```
+
+`app/launch-flash-next.ps1` is a thin template around that command - it checks the shard set is complete, refuses to start a second copy on an occupied port, and prints the command it runs. Use it or ignore it; it is an ordinary server window that stops when closed.
+
+```powershell
+.\app\launch-flash-next.ps1 -ModelDir <dir> [-DraftPath <sidecar.gguf>]
+.\app\launch-flash-next.ps1 -PrintOnly -ModelDir <same>   # show the command, start nothing
+.\app\launch-flash-next.ps1 -Stop                         # stop it again
+```
+
+Once ready, the server's own chat page is at `http://127.0.0.1:8826` and the OpenAI-compatible API is `http://127.0.0.1:8826/v1`, model id `Qwen3.8-Flash-Next` - point LM Studio, Z Code or a `curl` at it. Note that importing the GGUF into another runtime (LM Studio, Ollama, a stock llama.cpp build) does **not** bring these kernels or this flag set with it; the same weights on a different runtime are a different measurement.
+
+**Set your GPU carve first.** In BIOS/UEFI, reserve **96 GB** as dedicated graphics memory. The model needs about 72 GB of device memory. A small carve loads but runs several times slower; a 0.5 GB carve will not load. The carve is a reservation of system RAM, **not** a separate memory bank and **not** isolation.
+
+Full details, troubleshooting and uninstall: **[docs/user/README.md](docs/user/README.md)**. You do **not** need a compiler, the ROCm SDK, Git or Python to run the runtime - those are only needed to build it from source.
 
 ## Current numbers
 
@@ -62,7 +95,7 @@ Most of the kernel work is theirs. My contribution is the Windows integration, l
 ## Developers and researchers
 
 - **Build from source:** [`setup/README.md`](setup/README.md) creates a fresh engine checkout at the pinned base revision, applies the ordered [patch series](engine-patches/) and builds with checked exit codes.
-- **Benchmark evidence and kernel experiments:** [`docs/benchmarks/`](docs/benchmarks/) — including negative results and retractions.
-- **Reproduce the package:** [`packaging/build-release.ps1`](packaging/build-release.ps1).
+- **Benchmark evidence and kernel experiments:** [`docs/benchmarks/`](docs/benchmarks/) - including negative results and retractions.
+- **Reproduce the runtime archive:** [`packaging/build-release.ps1`](packaging/build-release.ps1).
 
 **Maintenance status:** release and packaging complete. New performance research is paused — this is a stabilisation release, not an ongoing optimisation programme.
