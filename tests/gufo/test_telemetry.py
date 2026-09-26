@@ -70,6 +70,38 @@ class TelemetryTests(unittest.TestCase):
             raw["counters"].append(row)
         self.assertEqual(self.normalize(raw)["adapter_dedicated_bytes"], G)
 
+    def test_other_adapter_rows_must_be_healthy_complete_and_fresh(self):
+        for change in (
+            lambda row: row.pop("raw_value"),
+            lambda row: row.update(raw_value=-1, cooked_value=-1),
+            lambda row: row.update(cooked_value=float("nan")),
+            lambda row: row.update(status=0xc0000bc6),
+            lambda row: row.pop("timestamp_utc"),
+            lambda row: row.update(timestamp_utc="2026-09-26T11:59:55Z"),
+        ):
+            raw = fixture()
+            row = copy.deepcopy(raw["counters"][3])
+            row["path"] = row["path"].replace("0x000111c1", "0x00014fe1")
+            row["instance"] = row["instance"].replace("0x000111c1", "0x00014fe1")
+            change(row)
+            raw["counters"].append(row)
+            with self.subTest(change=change), self.assertRaises(TelemetryError):
+                self.normalize(raw)
+
+    def test_duplicate_luid_across_distinct_adapter_descriptors_rejected(self):
+        raw = fixture()
+        other = copy.deepcopy(raw["adapters"][0])
+        other.update(vendor_id=0x1234, device_id=0x5678, description="Other GPU")
+        other["luid"] = other["luid"].upper().replace("0X", "0x")
+        raw["adapters"].append(other)
+        with self.assertRaises(TelemetryError):
+            self.normalize(raw)
+
+    def test_valid_radeon_with_alternate_subsystem_and_description(self):
+        raw = fixture()
+        raw["adapters"][0].update(subsystem_id=0x12345678, description="OEM Radeon 8060S")
+        self.assertEqual(self.normalize(raw)["adapter_luid"], LUID)
+
     def test_adapter_identity_rejections(self):
         for edit in (
             lambda r: r["adapters"].append(copy.deepcopy(r["adapters"][0])),
@@ -77,9 +109,8 @@ class TelemetryTests(unittest.TestCase):
             lambda r: r["adapters"][0].update(vendor_id=True),
             lambda r: r["adapters"][0].update(flags=2),
             lambda r: r["adapters"][0].update(description=" "),
-            lambda r: r["adapters"][0].update(description="Another Radeon"),
             lambda r: r["adapters"][0].update(subsystem_id=-1),
-            lambda r: r["adapters"][0].update(subsystem_id=0),
+            lambda r: r["adapters"][0].update(subsystem_id=True),
             lambda r: r["adapters"].append(None),
             lambda r: r["adapters"][0].update(luid="bad"),
         ):
@@ -111,8 +142,8 @@ class TelemetryTests(unittest.TestCase):
             lambda r: r["counters"][0].update(timestamp_utc="2026-09-26T11:59:55Z"),
             lambda r: r["counters"][0].update(timestamp_utc="2026-09-26T12:00:02Z"),
             lambda r: r["counters"][0].update(timestamp_utc="bad"),
-            lambda r: r["counters"][1].update(raw_value=225 * G),
-            lambda r: r["counters"][3].update(raw_value=65 * G),
+            lambda r: r["counters"][1].update(raw_value=225 * G, cooked_value=225 * G),
+            lambda r: r["counters"][3].update(raw_value=65 * G, cooked_value=65 * G),
         ):
             with self.subTest(edit=edit): self.rejects(edit)
 

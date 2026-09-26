@@ -83,12 +83,17 @@ def normalize_snapshot(raw: dict, *, captured_monotonic: float, now_monotonic: f
     if not raw['adapters'] or not raw['counters']:
         raise TelemetryError('empty adapter or counter collection')
     matches = []
+    seen_luids = set()
     for adapter in raw['adapters']:
         if not isinstance(adapter, dict):
             raise TelemetryError('malformed adapter')
         luid = adapter.get('luid')
         if not isinstance(luid, str) or not LUID.fullmatch(luid.lower()):
             raise TelemetryError('invalid adapter LUID')
+        normalized_luid = luid.lower()
+        if normalized_luid in seen_luids:
+            raise TelemetryError('duplicate adapter LUID')
+        seen_luids.add(normalized_luid)
         for field, limit in (('vendor_id', 0xffff), ('device_id', 0xffff),
                              ('subsystem_id', 0xffffffff), ('flags', 0xffffffff)):
             integer(adapter.get(field), field, limit)
@@ -96,8 +101,7 @@ def normalize_snapshot(raw: dict, *, captured_monotonic: float, now_monotonic: f
         if not isinstance(adapter.get('description'), str) or not adapter['description'].strip():
             raise TelemetryError('invalid adapter description')
         if (adapter['vendor_id'] == 0x1002 and adapter['device_id'] == 0x1586 and
-                adapter['subsystem_id'] == 0x801d2014 and adapter['flags'] == 0 and
-                adapter['description'] == 'AMD Radeon(TM) 8060S Graphics'):
+                adapter['flags'] == 0):
             matches.append(adapter)
     if len(matches) != 1:
         raise TelemetryError('expected exactly one Radeon8060S adapter')
@@ -133,11 +137,11 @@ def normalize_snapshot(raw: dict, *, captured_monotonic: float, now_monotonic: f
                 key = GPU[gpu[2]]
         else:
             raise TelemetryError('unsupported counter namespace')
+        value, stamp = counter_value(row, key or path, now_utc)
         if key is None:
             continue
         if key in result:
             raise TelemetryError('duplicate counter: ' + key)
-        value, stamp = counter_value(row, key, now_utc)
         result[key] = value
         stamps.append(stamp)
     if any(key not in result for key in (*HOST.values(), *GPU.values())):
