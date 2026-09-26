@@ -180,8 +180,10 @@ def _exchange(method, path, body, key, deadline, cancel):
     wire = ("\r\n".join(headers) + "\r\n\r\n").encode("ascii") + (body or b"")
     submitted = time.monotonic()
     reader = None
+    connected = False
     try:
         with socket.create_connection((HOST, PORT), timeout=SOCKET_SLICE) as sock:
+            connected = True
             sock.settimeout(SOCKET_SLICE)
             _check(deadline, cancel)
             sock.sendall(wire)
@@ -222,7 +224,9 @@ def _exchange(method, path, body, key, deadline, cancel):
             exc.raw_response = bytes(reader.raw)
         raise
     except (OSError, UnicodeError) as exc:
-        raise SmokeError(f"transport_{type(exc).__name__}",
+        code = ("connect_timeout" if not connected and isinstance(exc, TimeoutError)
+                else f"transport_{type(exc).__name__}")
+        raise SmokeError(code,
                          bytes(reader.raw) if reader is not None else b"") from None
 
 
@@ -441,7 +445,8 @@ def start_smoke(*, api_key: str, startup_deadline: float,
     def work():
         result = {"success": False, "error": None, "post_attempted": False,
                   "request": json.loads(json.dumps(REQUEST)), "responses": [], "metrics": {},
-                  "ready_polls": 0, "timestamps": {"worker_started_monotonic": time.monotonic()}}
+                  "ready_polls": 0, "ready_connect_timeouts": 0,
+                  "timestamps": {"worker_started_monotonic": time.monotonic()}}
         path = None
         try:
             ready_deadline = min(startup_deadline, lifetime_deadline,
@@ -455,7 +460,9 @@ def start_smoke(*, api_key: str, startup_deadline: float,
                     status, _, body, _, _, _ = _exchange("GET", path, None, api_key,
                                                           ready_deadline, task.cancel)
                 except SmokeError as exc:
-                    if exc.code == "transport_ConnectionRefusedError":
+                    if exc.code in ("transport_ConnectionRefusedError", "connect_timeout"):
+                        if exc.code == "connect_timeout":
+                            result["ready_connect_timeouts"] += 1
                         task.cancel.wait(min(2, max(0, ready_deadline-time.monotonic())))
                         continue
                     raise

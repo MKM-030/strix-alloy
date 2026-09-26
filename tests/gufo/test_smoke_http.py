@@ -191,6 +191,11 @@ class QuietThreadingHTTPServer(ThreadingHTTPServer):
         pass
 
 
+class FastWaitEvent(threading.Event):
+    def wait(self, timeout=None):
+        return self.is_set()
+
+
 class SmokeHttpTests(unittest.TestCase):
     def setUp(self):
         Handler.calls, Handler.ready_polls, Handler.config = [], 0, {}
@@ -243,6 +248,106 @@ class SmokeHttpTests(unittest.TestCase):
                             result["metrics"]["first_visible_content_ms"])
         self.assertEqual(result["metrics"]["engine_ttft_ms"], 12.5)
         self.assertIs(task.cancel, task.cancel)
+
+    def test_connect_timeouts_wait_for_real_ready_then_single_models_and_post(self):
+        actual_connect = socket.create_connection
+        for timeouts in (1, 2):
+            with self.subTest(timeouts=timeouts):
+                Handler.calls, Handler.ready_polls = [], 0
+                connects = []
+
+                def connect(*args, **kwargs):
+                    connects.append(args[0])
+                    if len(connects) <= timeouts:
+                        raise TimeoutError("listener still starting")
+                    return actual_connect(*args, **kwargs)
+
+                with patch.object(smoke_http.socket, "create_connection", side_effect=connect):
+                    _, result, posts = self.run_smoke(cancel=FastWaitEvent())
+                self.assertTrue(result["success"], result)
+                self.assertEqual(result["ready_connect_timeouts"], timeouts)
+                self.assertEqual(result["ready_polls"], timeouts + 1)
+                self.assertEqual([call[1] for call in Handler.calls],
+                                 ["/ready", "/v1/models", "/v1/chat/completions"])
+                self.assertEqual(len(posts), 1)
+
+    def test_repeated_ready_connect_timeouts_obey_deadline_and_poll_cap(self):
+        connects = []
+
+        def connect(*args, **kwargs):
+            connects.append(args[0])
+            raise TimeoutError("listener still starting")
+
+        with patch.object(smoke_http.socket, "create_connection", side_effect=connect):
+            _, expired, posts = self.run_smoke(startup=0.05, lifetime=1)
+        self.assertEqual(expired["error"], "deadline_exceeded")
+        self.assertEqual(expired["ready_connect_timeouts"], expired["ready_polls"])
+        self.assertEqual(posts, [])
+        self.assertEqual(Handler.calls, [])
+
+        connects.clear()
+        with patch.object(smoke_http, "MAX_READY_POLLS", 2), patch.object(
+                smoke_http.socket, "create_connection", side_effect=connect):
+            _, capped, posts = self.run_smoke(startup=1, lifetime=2,
+                                              cancel=FastWaitEvent())
+        self.assertEqual(capped["error"], "ready_poll_limit")
+        self.assertEqual(capped["ready_polls"], 2)
+        self.assertEqual(capped["ready_connect_timeouts"], 2)
+        self.assertEqual(posts, [])
+        self.assertEqual(len(connects), 2)
+
+    def test_ready_connect_timeout_cancellation_stops_before_post(self):
+        class CancelOnWait(FastWaitEvent):
+            def wait(self, timeout=None):
+                self.set()
+                return True
+
+        with patch.object(smoke_http.socket, "create_connection",
+                          side_effect=TimeoutError("listener still starting")) as connect:
+            _, result, posts = self.run_smoke(cancel=CancelOnWait())
+        self.assertEqual(result["error"], "cancelled")
+        self.assertEqual(result["ready_connect_timeouts"], 1)
+        self.assertEqual(result["ready_polls"], 1)
+        self.assertEqual(connect.call_count, 1)
+        self.assertEqual(posts, [])
+
+    def test_models_connect_timeout_is_fatal_without_post(self):
+        actual_connect = socket.create_connection
+        connects = []
+
+        def connect(*args, **kwargs):
+            connects.append(args[0])
+            if len(connects) == 2:
+                raise TimeoutError("models connect timeout")
+            return actual_connect(*args, **kwargs)
+
+        with patch.object(smoke_http.socket, "create_connection", side_effect=connect):
+            _, result, posts = self.run_smoke()
+        self.assertEqual(result["error"], "connect_timeout")
+        self.assertEqual(result["ready_connect_timeouts"], 0)
+        self.assertFalse(result["post_attempted"])
+        self.assertEqual(len(connects), 2)
+        self.assertEqual([call[1] for call in Handler.calls], ["/ready"])
+        self.assertEqual(posts, [])
+
+    def test_post_connect_timeout_consumes_one_attempt_without_retry(self):
+        actual_connect = socket.create_connection
+        connects = []
+
+        def connect(*args, **kwargs):
+            connects.append(args[0])
+            if len(connects) == 3:
+                raise TimeoutError("post connect timeout")
+            return actual_connect(*args, **kwargs)
+
+        with patch.object(smoke_http.socket, "create_connection", side_effect=connect):
+            _, result, posts = self.run_smoke()
+        self.assertEqual(result["error"], "connect_timeout")
+        self.assertTrue(result["post_attempted"])
+        self.assertEqual(result["ready_connect_timeouts"], 0)
+        self.assertEqual(len(connects), 3)
+        self.assertEqual([call[1] for call in Handler.calls], ["/ready", "/v1/models"])
+        self.assertEqual(posts, [])
 
     def test_wrong_ready_model_stops_before_model_list_or_post(self):
         _, result, posts = self.run_smoke(config={"ready_wrong_model": True})
@@ -604,6 +709,7 @@ class SmokeHttpTests(unittest.TestCase):
         with patch.object(smoke_http.socket, "create_connection", side_effect=connect):
             _, result, posts = self.run_smoke()
         self.assertFalse(result["success"])
+        self.assertEqual(result["error"], "transport_TimeoutError")
         self.assertTrue(result["post_attempted"])
         self.assertEqual(len(connects), 3)
         self.assertEqual(len(sends), 1)
