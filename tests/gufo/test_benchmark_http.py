@@ -247,6 +247,16 @@ class BenchmarkTests(unittest.TestCase):
             with patch.object(smoke_http, "_exchange", side_effect=error), self.assertRaises(error):
                 self.call()
 
+    def test_sanitized_base64_is_not_text_redacted_again(self):
+        # This key coincides with the encoding of unrelated bytes; those bytes
+        # must remain decodable. Actual key occurrences are removed pre-encoding.
+        with patch.object(smoke_http, "_exchange", return_value=(401, {}, b"abc", 1, 2, [(b"abc", 1.5)])):
+            result = self.client.request_once(port=self.server.server_port, api_key="YWJj",
+                path="/v1/completions", request={"model": "local", "prompt": "x", "max_tokens": 1, "stream": False},
+                limits=self.client.RequestLimits(2048, 256), deadline=time.monotonic()+1)
+        self.assertEqual(base64.b64decode(result["raw_response_base64"]), b"abc")
+        self.assertEqual(base64.b64decode(result["body_parts"][0]["base64"]), b"abc")
+
     def test_duplicate_json_keys_and_bad_cache_flags_are_failures(self):
         for body in (response().replace(b'"finish_reason": "stop"', b'"finish_reason": "length", "finish_reason": "stop"'),
                      response(counters=usage() | {"gufo": {"prefill_tokens": 2048, "cache_hit": "false"}})):

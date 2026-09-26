@@ -140,6 +140,7 @@ def request_once(*, port: int, api_key: str, path: str, request: dict,
               "validation_errors": [], "unavailable_metrics": [],
               "metrics": {"http_duration_ms": None, "first_visible_content_ms": None,
                           "first_tool_call_ms": None, "first_useful_output_ms": None}}
+    evidence_raw, evidence_parts, evidence_wire = b"", [], False
     _rates(result["metrics"], [], pp1=False)
     try:
         if type(port) is not int or not 1 <= port <= 65535:
@@ -183,7 +184,7 @@ def request_once(*, port: int, api_key: str, path: str, request: dict,
         result.update(status=status, response_headers=headers,
                       submitted_monotonic=submitted, completed_monotonic=completed)
         result["metrics"]["http_duration_ms"] = (completed-submitted)*1000
-        _record_evidence(result, raw, parts, api_key)
+        evidence_raw, evidence_parts = raw, parts
         if status != 200:
             raise smoke_http.SmokeError(f"completion_http_{status}")
         content_type = headers.get("content-type", "").split(";", 1)[0].strip().lower()
@@ -229,7 +230,9 @@ def request_once(*, port: int, api_key: str, path: str, request: dict,
         result["error"] = exc.code
         if exc.raw_response:
             result.update(status=getattr(exc, "status", None), response_headers=getattr(exc, "headers", {}))
-            _record_evidence(result, exc.raw_response, getattr(exc, "body_parts", []), api_key, wire=True)
+            evidence_raw = exc.raw_response
+            evidence_parts = getattr(exc, "body_parts", [])
+            evidence_wire = True
         if hasattr(exc, "submitted"):
             result["submitted_monotonic"] = exc.submitted
     except (ValueError, TypeError, UnicodeError, OverflowError) as exc:
@@ -246,4 +249,7 @@ def request_once(*, port: int, api_key: str, path: str, request: dict,
         if sanitized != result:
             sanitized["evidence_redacted"] = True
         result = sanitized
+    # Encodings are evidence, not plaintext: redact source bytes exactly once,
+    # after metadata redaction, so incidental base64 text cannot be corrupted.
+    _record_evidence(result, evidence_raw, evidence_parts, api_key, wire=evidence_wire)
     return result
