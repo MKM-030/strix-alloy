@@ -502,7 +502,7 @@ if __name__ == '__main__':
     unittest.main()
 ```
 
-- [ ] From integration root set `$env:PYTHONPATH='scripts'` in the child shell and run `python -m unittest discover -s tests/gufo -p test_operator_policy.py -v`. Expect all9 test methods passing. Fix any concrete discrepancy, preserving the stated contract; do not launch a GPU to validate pure arithmetic.
+- [ ] From integration root set `$env:PYTHONPATH=Join-Path $PWD 'scripts'` in the child shell and run `python -m unittest discover -s tests/gufo -p test_operator_policy.py -v`. Use the absolute path because the full suite launches guardian fixtures with a temporary working directory. Expect all9 test methods passing. Fix any concrete discrepancy, preserving the stated contract; do not launch a GPU to validate pure arithmetic.
 - [ ] Run `python -m unittest discover -s tests/gufo -v` once. Expect all existing/new tests passing, platform skips only where already declared. This suite uses existing harmless owned-child checks, not model/GPU binaries. Preserve unrelated changes and inspect diff limited to the two owned files.
 - [ ] Future authorized implementer commits only these two files with `git add scripts/gufo_control/operator_policy.py tests/gufo/test_operator_policy.py` then `git commit -m "feat: add pure GUFO operator bootstrap policy"`. This instruction applies to the future authorized implementation, not this report-writing task. Report tests and commit ID to the parent for independent review before runner integration.
 
