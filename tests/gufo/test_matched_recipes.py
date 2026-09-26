@@ -77,6 +77,36 @@ class MatchedRecipeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'matched_fixture_changed'):
                 matched.validate_fixture()
 
+    def test_reference_schedule_kind_is_pinned(self):
+        matched = self.matched
+        original_recipe_definition = base.recipe_definition
+
+        def changed_recipe_definition(profile_id):
+            definition = original_recipe_definition(profile_id)
+            definition['schedule'][0]['kind'] = 'changed-kind'
+            return definition
+
+        with patch.object(base, 'recipe_definition', side_effect=changed_recipe_definition):
+            with self.assertRaisesRegex(ValueError, 'matched_fixture_changed'):
+                matched.validate_fixture()
+            with self.assertRaisesRegex(ValueError, 'matched_fixture_changed'):
+                matched.recipe_definition(matched.PROFILE_AR)
+
+    def test_reference_sampled_metadata_is_pinned(self):
+        matched = self.matched
+        original_recipe_definition = base.recipe_definition
+
+        def changed_recipe_definition(profile_id):
+            definition = original_recipe_definition(profile_id)
+            definition['sampled'] = not definition['sampled']
+            return definition
+
+        with patch.object(base, 'recipe_definition', side_effect=changed_recipe_definition):
+            with self.assertRaisesRegex(ValueError, 'matched_fixture_changed'):
+                matched.validate_fixture()
+            with self.assertRaisesRegex(ValueError, 'matched_fixture_changed'):
+                matched.recipe_definition(matched.PROFILE_AR)
+
     def test_rows_require_exact_identity_but_allow_runtime_results(self):
         matched = self.matched
         rows = matched.recipe_definition(matched.PROFILE_AR)['schedule']

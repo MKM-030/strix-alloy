@@ -7,6 +7,7 @@ from . import benchmark_recipes as base
 PROFILE_AR = 'matched4k-iq4xs-ar-v1'
 PROFILE_MTP = 'matched4k-iq4xs-mtp-length-d1-v1'
 REFERENCE_PROFILE = 'ar4k-iq4xs-correctness-pp1-v2'
+REFERENCE_RECIPE_SHA256 = '9C7665685B8F2FCAD983DCFBC65AF205B60B3E2146EA0A73BA4184F99E4909D1'
 REFERENCE_RESULT_SHA256 = '692149EEB38F89E662D9428A725533F14793680F5C70E8477A3B53E2DE8B04F3'
 REQUESTS_SHA256 = 'EF677B664873CC42C07E4A22DA69723D6743AB57BF7944A0163A8E4799F394AB'
 CALIBRATION = (13, 373)
@@ -21,6 +22,9 @@ def validate_fixture() -> list[dict]:
     """Rebuild and verify the complete ordered corpus without historical I/O."""
     try:
         definition = base.recipe_definition(REFERENCE_PROFILE)
+        definition_digest = sha256(base.canonical(definition).encode('utf-8')).hexdigest().upper()
+        if definition_digest != REFERENCE_RECIPE_SHA256:
+            raise ValueError('matched_fixture_changed')
         rows = definition['schedule']
         if len(rows) != len(PROMPT_COUNTS) or any(
             type(row['ordinal']) is not int or row['ordinal'] != index
