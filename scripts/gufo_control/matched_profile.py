@@ -9,6 +9,7 @@ from .model_identity import MTP_SIDECAR
 MARGIN_SHA256 = '49433BB54E71F7F27418FEC63E71DA98F4C372F31E19E6A95292E21148874344'
 PROFILE_FILES = {
     matched_recipes.PROFILE_AR: ('gufo-matched-ar4k-v1-runs', 'gufo-matched-ar4k-v1-qualification.json'),
+    matched_recipes.PROFILE_AR_V2: ('gufo-matched-ar4k-v2-runs', 'gufo-matched-ar4k-v2-qualification.json'),
     matched_recipes.PROFILE_MTP: ('gufo-matched-mtp4k-v1-runs', 'gufo-matched-mtp4k-v1-qualification.json'),
 }
 

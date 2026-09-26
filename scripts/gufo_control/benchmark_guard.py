@@ -15,7 +15,7 @@ MARGIN_SHA256='75BDFDFFFB46D6BB88529FA12D76EE29910064AE03334906ABB46B8A38861620'
 
 
 def profile_pins(profile_id):
-    if profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_MTP):
+    if profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_AR_V2, matched_recipes.PROFILE_MTP):
         from . import matched_profile
         return matched_profile.profile_pins(profile_id)
     definition=recipes.recipe_definition(profile_id)
@@ -64,7 +64,7 @@ def profile_pins(profile_id):
 
 
 def make_guardian(profile_id):
-    matched=profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_MTP)
+    matched=profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_AR_V2, matched_recipes.PROFILE_MTP)
     if matched:
         from . import matched_profile, matched_validation
     pins=profile_pins(profile_id)
@@ -83,7 +83,7 @@ def make_guardian(profile_id):
 
 
 def status(profile_id, *, print_only=False):
-    matched=profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_MTP)
+    matched=profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_AR_V2, matched_recipes.PROFILE_MTP)
     if matched:
         from . import matched_profile
     result=dict(profile=profile_id,admitted=False,admission='requires_fresh_run_baseline',
@@ -115,7 +115,7 @@ def main(argv=None):
     parser=argparse.ArgumentParser(description='Fixed finite native GUFO research suite')
     parser.add_argument('command',choices=('status','print-only','run'))
     parser.add_argument('--profile',choices=(recipes.PROFILE_4K,recipes.PROFILE_16K,
-        matched_recipes.PROFILE_AR,matched_recipes.PROFILE_MTP),required=True)
+        matched_recipes.PROFILE_AR,matched_recipes.PROFILE_AR_V2,matched_recipes.PROFILE_MTP),required=True)
     args=parser.parse_args(argv)
     if args.command!='run':
         result=status(args.profile,print_only=args.command=='print-only')

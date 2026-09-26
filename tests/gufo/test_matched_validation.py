@@ -108,3 +108,17 @@ class MatchedValidationTests(unittest.TestCase):
                 _,errors=self.assess(value)
                 self.assertIn('native_counters_missing',errors)
                 self.assertEqual(value['matched_evidence']['fatal_kind'],'native')
+
+    def test_repeated_sse_model_aliases_from_ar_warmup(self):
+        # The saved AR v1 warmup has one matching model ID on each of four SSE events.
+        ar=matched_recipes.recipe_definition(matched_recipes.PROFILE_AR)
+        row=ar['schedule'][0]
+        value=observation(row)
+        value['observed_models']=['gufo-flash-next']*4
+        self.assertEqual(matched_validation.assess(row,value,ar)[1],[])
+        for aliases in ([], ['gufo-flash-next','other'], ['other']):
+            with self.subTest(aliases=aliases):
+                value=observation(row)
+                value['observed_models']=aliases
+                self.assertIn('identity_or_reasoning_invalid',
+                    matched_validation.assess(row,value,ar)[1])

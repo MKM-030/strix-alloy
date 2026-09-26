@@ -56,8 +56,9 @@ class MatchedProfileTests(unittest.TestCase):
         for profile,charge in ((matched_recipes.PROFILE_AR,72),(matched_recipes.PROFILE_MTP,76)):
             pins=matched_profile.profile_pins(profile)
             with self.subTest(profile=profile):
-                with self.assertRaisesRegex(ValueError,'guard_review_missing'):
-                    smoke_store._qualification(pins)
+                with patch.object(smoke_store,'_json_artifact',side_effect=OSError('synthetic missing')):
+                    with self.assertRaisesRegex(ValueError,'guard_review_missing'):
+                        smoke_store._qualification(pins)
                 manifest=dict(profile=pins.profile_id,source=pins.source_commit,
                     executable=str(pins.build/pins.executable_name),sdk=str(pins.sdk),
                     bounds=dict(pins.bounds),model=dict(revision=pins.model_revision,
@@ -92,3 +93,25 @@ class MatchedProfileTests(unittest.TestCase):
             (sibling/'incomplete.json').touch()
             with self.assertRaisesRegex(ValueError,'prior_smoke_incomplete'):
                 smoke_store._incomplete_latches(pins)
+
+    def test_ar_v2_is_distinct_fixed_identity_with_same_requests(self):
+        old=matched_profile.profile_pins(matched_recipes.PROFILE_AR)
+        new=matched_profile.profile_pins(matched_recipes.PROFILE_AR_V2)
+        self.assertEqual(old.evidence.name,'gufo-matched-ar4k-v1-runs')
+        self.assertEqual(new.evidence.name,'gufo-matched-ar4k-v2-runs')
+        self.assertEqual(new.qualification.name,'gufo-matched-ar4k-v2-qualification.json')
+        self.assertEqual(new.bounds,old.bounds)
+        self.assertEqual(new.predecessors,old.predecessors)
+        self.assertEqual(new.acceptance_sha256,old.acceptance_sha256)
+        self.assertEqual(new.margin_sha256,old.margin_sha256)
+        self.assertIsNone(new.sidecar)
+        self.assertEqual(smoke_store._binding(new)['experiment'],matched_profile.experiment_definition(matched_recipes.PROFILE_AR_V2))
+        v1=matched_recipes.recipe_definition(matched_recipes.PROFILE_AR)
+        v2=matched_recipes.recipe_definition(matched_recipes.PROFILE_AR_V2)
+        self.assertEqual(v1['schedule'],v2['schedule'])
+        self.assertEqual([matched_recipes.request_for(r,matched_recipes.CALIBRATION) for r in v1['schedule']],
+            [matched_recipes.request_for(r,matched_recipes.CALIBRATION) for r in v2['schedule']])
+        self.assertEqual(matched_profile.build_argv(matched_recipes.PROFILE_AR_V2,'secret'),
+            matched_profile.build_argv(matched_recipes.PROFILE_AR,'secret'))
+        guardian=benchmark_guard.make_guardian(matched_recipes.PROFILE_AR_V2)
+        self.assertEqual(guardian.profile_id,matched_recipes.PROFILE_AR_V2)

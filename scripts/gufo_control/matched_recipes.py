@@ -5,6 +5,7 @@ from . import benchmark_recipes as base
 
 
 PROFILE_AR = 'matched4k-iq4xs-ar-v1'
+PROFILE_AR_V2 = 'matched4k-iq4xs-ar-v2'
 PROFILE_MTP = 'matched4k-iq4xs-mtp-length-d1-v1'
 REFERENCE_PROFILE = 'ar4k-iq4xs-correctness-pp1-v2'
 REFERENCE_RECIPE_SHA256 = '9C7665685B8F2FCAD983DCFBC65AF205B60B3E2146EA0A73BA4184F99E4909D1'
@@ -41,7 +42,7 @@ def validate_fixture() -> list[dict]:
 
 
 def recipe_definition(profile_id: str) -> dict:
-    if profile_id not in (PROFILE_AR, PROFILE_MTP):
+    if profile_id not in (PROFILE_AR, PROFILE_AR_V2, PROFILE_MTP):
         raise ValueError('unknown_profile')
     validate_fixture()
     definition = base.recipe_definition(REFERENCE_PROFILE)

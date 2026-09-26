@@ -116,7 +116,10 @@ def assess(row, observation, definition):
     for name in ('physical_execution_width','requested_logical_concurrency','resident_requests_at_admission'):
         if integer(gufo,name,minimum=1) != 1:
             errors.append('concurrency_'+name)
-    if observation.get('observed_models') != [smoke_http.MODEL] or observation.get('reasoning_content') != '':
+    models = observation.get('observed_models')
+    if (not isinstance(models, list) or not models or any(
+            type(model) is not str or model != smoke_http.MODEL for model in models)
+            or observation.get('reasoning_content') != ''):
         errors.append('identity_or_reasoning_invalid')
     if row['case'] != 'TOOL' and observation.get('tool_calls') != []:
         errors.append('unexpected_tools')
