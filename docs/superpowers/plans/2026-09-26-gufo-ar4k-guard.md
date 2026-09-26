@@ -63,6 +63,8 @@ Recheck integration clarification: `recheck_static(manifest, *, current_run=None
 
 ## Task 3: One foreground guardian and durable result
 
+Query-tracking implementation seam: add an optional `query_factory` to existing `operator_probe.collect_one` and `collect_baseline`, retaining the existing `Query` default and operator behavior. The guardian registers each Query synchronously at construction so preflight failures cannot lose an unstarted or in-flight collector. Task 3 may modify `operator_probe.py` and focused `test_operator_probe.py` for this additive seam; test the default regression and injected registry/error path. Do not monkeypatch global Query or clone the module.
+
 Task 3 may make a narrowly tested extraction in `smoke_policy.py` / `test_smoke_policy.py` to expose shared pure frame/numeric validation for live, pending-after-exit and recovery decisions. Preserve all existing thresholds and APIs. Pending historical ownership must be explicitly labelled from the retained query-start proof, never manufactured as a fresh live-handle result; recovery never excludes a PID. Reuse one arithmetic implementation instead of copying it into the guardian.
 
 **Files:** Create `smoke_guard.py`, `test_smoke_guard.py`; consume the independent `smoke_http.py` interface. Keep the existing `operator_probe.py` lifecycle intact unless a tiny shared helper extraction has an independently tested reason.
