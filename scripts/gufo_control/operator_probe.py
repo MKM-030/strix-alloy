@@ -74,18 +74,19 @@ def finish_query(query, log_path, phase):
         time.sleep(POLL_SECONDS)
 
 
-def collect_one(collect, log_path, phase, previous_start=None):
+def collect_one(collect, log_path, phase, previous_start=None, *, query_factory=None):
     if previous_start is not None:
         time.sleep(max(0, previous_start+QUERY_INTERVAL-time.monotonic()))
-    return finish_query(Query(collect), log_path, phase)
+    return finish_query((Query if query_factory is None else query_factory)(collect), log_path, phase)
 
 
-def collect_baseline(collect, log_path):
+def collect_baseline(collect, log_path, *, query_factory=None):
     frames = []
     deadline = time.monotonic()+30
     while time.monotonic() < deadline:
         frame = collect_one(collect, log_path, 'baseline',
-                            frames[-1].query_start if frames else None)
+                            frames[-1].query_start if frames else None,
+                            query_factory=query_factory)
         frames.append(frame)
         if len(frames) >= 5 and frame.query_end-frames[0].query_start >= 10:
             return baseline(frames), frames[-1]

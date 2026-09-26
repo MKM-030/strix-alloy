@@ -162,11 +162,22 @@ def runtime_decision(profile, original_baseline, frame, owned, *, now, now_utc) 
     except ValueError:
         return dict(allowed=False, reasons=['owned_identity_unverified'],
                     owned_inventory_proof=dict(status='unverified', excluded_pid=None))
-    reasons = _common(profile, original_baseline, scoped, now, now_utc, MAX_SAMPLE_AGE_SECONDS)
+    reasons = frame_numeric_reasons(profile, original_baseline, scoped, now=now, now_utc=now_utc)
     proof = scoped.snapshot['owned_inventory_proof']
+    return dict(allowed=not reasons, reasons=reasons, owned_inventory_proof=proof)
+
+
+def frame_numeric_reasons(profile, original_baseline, frame, *, now, now_utc) -> list[str]:
+    """Shared frame/freshness/threshold checks; never applies a PID exclusion.
+
+    Live callers must first obtain retained-handle proof; pending-after-exit
+    callers may explicitly scope a copy with historical query-start proof.
+    Recovery passes raw frames, so every listed inference/guest PID refuses.
+    """
+    reasons = _common(profile, original_baseline, frame, now, now_utc, MAX_SAMPLE_AGE_SECONDS)
     if reasons:
-        return dict(allowed=False, reasons=reasons, owned_inventory_proof=proof)
-    s, base = scoped.snapshot, original_baseline
+        return reasons
+    s, base = frame.snapshot, original_baseline
     if s['available_physical_bytes'] < RUNTIME_FLOOR:
         reasons.append('runtime_physical_floor')
     if s['commit_headroom_bytes'] < COMMIT_RESERVE:
@@ -178,7 +189,7 @@ def runtime_decision(profile, original_baseline, frame, owned, *, now, now_utc) 
     for key, maximum, allowance in zip(GPU_FIELDS, base.gpu_max, (68*GIB, 20*GIB, 68*GIB)):
         if s[key] - maximum > allowance:
             reasons.append('gpu_envelope:' + key)
-    return dict(allowed=not reasons, reasons=reasons, owned_inventory_proof=proof)
+    return reasons
 
 
 def runtime_reasons(profile, original_baseline, frame, owned, *, now, now_utc) -> list[str]:

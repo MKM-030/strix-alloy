@@ -52,6 +52,22 @@ def valid_snapshot(at=None, at_utc=None):
 
 
 class RunnerTests(unittest.TestCase):
+    def test_baseline_query_factory_retains_stuck_collector(self):
+        captured = []
+        class StuckQuery:
+            def __init__(self, collect):
+                self.started = time.monotonic()
+                self.done = threading.Event()
+                captured.append(self)
+            def poll(self):
+                raise TimeoutError('active_query_timeout')
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaisesRegex(TimeoutError, 'active_query_timeout'):
+                runner.collect_baseline(snapshot, Path(folder)/'frames.jsonl',
+                                        query_factory=StuckQuery)
+        self.assertEqual(len(captured), 1)
+        self.assertFalse(captured[0].done.is_set())
+
     def invoke(self, folder, child, collect=snapshot, probe=None, **patches):
         now = time.monotonic()
         final = Frame(snapshot(), now, now, datetime.now(timezone.utc))

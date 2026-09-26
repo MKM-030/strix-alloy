@@ -31,6 +31,17 @@ class Owner:
 
 
 class SmokePolicyTests(unittest.TestCase):
+    def test_shared_numeric_validation_never_excludes_inventory(self):
+        p = policy.profile_from_manifest(manifest())
+        b = baseline(series())
+        for changes, reason in ((dict(available_physical_bytes=23*GIB), 'runtime_physical_floor'),
+                (dict(adapter_shared_bytes=b.gpu_max[1]+20*GIB+1),
+                 'gpu_envelope:adapter_shared_bytes'),
+                (dict(other_inference_pids=[42]), 'other_inference_active')):
+            f = frame(12, **changes)
+            self.assertIn(reason, policy.frame_numeric_reasons(p, b, f,
+                now=f.query_end, now_utc=f.validated_utc))
+
     def setUp(self):
         self.profile = policy.profile_from_manifest(manifest())
         self.base = baseline(series())
