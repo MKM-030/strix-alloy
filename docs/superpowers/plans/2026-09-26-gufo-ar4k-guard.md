@@ -2,6 +2,33 @@
 
 ## Approved recovery amendment, 26 September 2026
 
+### Observed HTTP-worker admission race and v3 configuration
+
+The reviewed v2 native run loaded successfully in35.715s, then returned503
+`connection limit reached` on its sole POST after /ready200 and /v1/models200.
+Result B04BC9E700741AEAB15EE24BB46A871D77E4608574634CF450769E9BC7CC225E
+confirms owned exit, terminal workers and five recovered samples. Its permanent
+attempt remains immutable. Independent source diagnosis identified a completed
+response worker still counted during logging/close/done publication.
+
+For the distinct next configuration `ar4k-iq4xs-http-slots-smoke-v3`, change
+only `--max-connections` from1 to3, retaining sessions1 and all queue, model,
+request, memory, telemetry and lifetime limits. This supersedes max-connections1
+below for v3 only. Evidence/qualification use the separate `gufo-ar4k-http-slots`
+names. No automatic repeat, second POST or persistent server. Same source,
+binary, model and SDK pins; no system change. A timed-out connect is not proof
+that no worker was accepted, so this configuration is not a guarantee of
+admission on every schedule; any remaining failure still aborts.
+
+This is a transport configuration correction under the user's bounded native
+test authorization, not additional model concurrency or memory-envelope growth.
+The two extra transient worker slots add nominal16MiB thread-stack reservation
+(`/STACK:8388608`), not16MiB measured commit/RSS; GET routes create no model/KV
+sessions. Review this incremental host overhead within the unchanged4GiB host
+allowance, the exact config diff and tests before qualifying one manual attempt.
+Preserve the original margin report and all prior raw results. Details and TDD
+requirements are in `.superpowers/sdd/http-slots-brief.md`.
+
 ### Observed startup-connection correction and next fixed qualification
 
 After recovery amendment review and231passingtests, native GUFO was actually
