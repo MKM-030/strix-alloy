@@ -10,7 +10,7 @@ from gufo_control import operator_store, smoke_store as store
 from test_smoke_store import StoreFixture, digest
 
 
-FOUR = 'ar4k-iq4xs-correctness-pp1-v1'
+FOUR = 'ar4k-iq4xs-correctness-pp1-v2'
 SIXTEEN = 'ar16k-iq4xs-pp1-cache-v1'
 
 
@@ -32,7 +32,7 @@ class BenchmarkFixture(StoreFixture):
     def bind(self, profile=FOUR):
         predecessor_id = store.PROFILE_ID if profile == FOUR else FOUR
         root = self.root / ('gufo-ar4k-http-slots-smoke-runs' if profile == FOUR
-                            else 'gufo-ar4k-benchmark-runs')
+                            else 'gufo-ar4k-benchmark-v2-runs')
         run = root / (store.FIRST_PREDECESSOR_RUN if profile == FOUR else 'reviewed-run')
         run.mkdir(parents=True)
         result = dict(profile=predecessor_id, success=True, owned_exit_confirmed=True,
@@ -53,7 +53,7 @@ class BenchmarkFixture(StoreFixture):
         result_sha = digest((run/'result.json').read_bytes())
         operator_store.atomic_json(root/'attempt.json', dict(run=str(run), profile=predecessor_id))
         self.predecessor_run = run
-        self.evidence = self.root / ('gufo-ar4k-benchmark-runs' if profile == FOUR
+        self.evidence = self.root / ('gufo-ar4k-benchmark-v2-runs' if profile == FOUR
                                      else 'gufo-ar16k-benchmark-runs')
         self.evidence.mkdir(exist_ok=True)
         acceptance_sha = None
@@ -71,6 +71,24 @@ class BenchmarkFixture(StoreFixture):
 
 
 class BenchmarkRuntimeTests(unittest.TestCase):
+    def test_old_v1_latch_blocks_v2_but_clean_attempt_is_preserved(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = BenchmarkFixture(temp)
+            sha = f.bind(FOUR)
+            old = f.root/'gufo-ar4k-benchmark-runs'
+            old.mkdir()
+            operator_store.atomic_json(old/'attempt.json', {'run': str(old/'old-clean-run')})
+            with patch.object(store, 'FIRST_PREDECESSOR_SHA256', sha):
+                manifest = f.verify()
+                f.recheck(manifest)
+                operator_store.atomic_json(old/'incomplete.json', {'run': str(old/'old-failed-run')})
+                run = f.evidence/'current-run'; run.mkdir()
+                for action in (f.verify, lambda: f.recheck(manifest),
+                               lambda: store._begin_run(run, manifest, f.base, f.pins)):
+                    with self.assertRaisesRegex(ValueError, 'prior_smoke_incomplete'):
+                        action()
+                self.assertFalse((f.evidence/'attempt.json').exists())
+
     def test_recheck_is_stamp_only_and_bound_begin_checks_changed_evidence(self):
         from gufo_control.benchmark_runtime import BoundStore
         with tempfile.TemporaryDirectory() as temp:

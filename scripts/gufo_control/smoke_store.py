@@ -56,10 +56,10 @@ TREES = {
 }
 BOUNDS = {'gpu_gib': 68, 'host_gib': 4, 'shared_gib': 20,
           'prelaunch_gib': 49, 'runtime_gib': 24, 'commit_reserve_gib': 12}
-BENCHMARK_4K = 'ar4k-iq4xs-correctness-pp1-v1'
+BENCHMARK_4K = 'ar4k-iq4xs-correctness-pp1-v2'
 BENCHMARK_16K = 'ar16k-iq4xs-pp1-cache-v1'
 PROFILE_ROOTS = {PROFILE_ID: 'gufo-ar4k-http-slots-smoke-runs',
-                 BENCHMARK_4K: 'gufo-ar4k-benchmark-runs',
+                 BENCHMARK_4K: 'gufo-ar4k-benchmark-v2-runs',
                  BENCHMARK_16K: 'gufo-ar16k-benchmark-runs'}
 FIRST_PREDECESSOR_RUN = '20260926T164942Z-a4d64a8f565248bdb508895b6f3ec931'
 FIRST_PREDECESSOR_SHA256 = '58B222AA96BE4A84F4349697A9914B20E1953ECC7464085A4BE9984819121FBF'
@@ -319,6 +319,7 @@ def _incomplete_latches(pins, *, manifest=None, current_run=None):
         raise ValueError('operator_incomplete')
     roots = {pins.evidence, *(pins.evidence.parent / name for name in (
         'gufo-ar4k-smoke-runs', 'gufo-ar4k-connect-wait-smoke-runs',
+        'gufo-ar4k-benchmark-runs',
         *PROFILE_ROOTS.values()))}
     for root in roots:
         if (root / 'incomplete.json').exists():

@@ -10,7 +10,7 @@ import operator
 
 from . import smoke_http, smoke_guard
 
-PROFILE_4K = 'ar4k-iq4xs-correctness-pp1-v1'
+PROFILE_4K = 'ar4k-iq4xs-correctness-pp1-v2'
 PROFILE_16K = 'ar16k-iq4xs-pp1-cache-v1'
 FILLER = 'The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. '
 CACHE_INSTRUCTION = '\nGive a concise summary of the passage above.'
@@ -72,7 +72,7 @@ def recipe_definition(profile_id: str) -> dict:
             rounding='Python round', tolerance_tokens=32, endpoint='/v1/chat/completions',stream=False,
             source_commit='c8270bb31cd824a0bf53fe9ecf80059c13e7a5bf',
             source_file='tools/halogen-bench.py',source_sha256='0587690C50CFA6769B54D67C7553BA8AA3EC861E677082590D322B0B2F0F846F'),
-        cache_instruction=CACHE_INSTRUCTION, validator_version=1,
+        cache_instruction=CACHE_INSTRUCTION, validator_version=2,
         fixture_source='gufo-benchmark-recipes-20260926.md',
         gufo_source_commit='cff564964e8506c0abb3e530cecb55332187ac6c',
         request_seconds=60,startup_seconds=480,lifetime_seconds=600,
@@ -212,6 +212,23 @@ def _check_code(text):
     return 'passed'
 
 
+def _code_assessment(text):
+    lines = text.strip().splitlines()
+    fenced = (len(lines) >= 3 and lines[0] == '```python'
+              and lines[-1] == '```'
+              and all('```' not in line for line in lines[1:-1]))
+    source = '\n'.join(lines[1:-1]) if fenced else text
+    functional = _check_code(source)
+    assessment = dict(
+        state='needs_review' if fenced and functional == 'passed' else functional,
+        format_compliant=not fenced and functional != 'failed',
+        functional_state=functional,
+        evaluation_source='single_python_fence' if fenced else 'raw_python')
+    if fenced:
+        assessment['format_violation'] = 'markdown_fence'
+    return assessment
+
+
 def validate_answer(case_id: str, result: dict) -> dict:
     text = result.get('visible_answer','')
     reason = result.get('finish_reason')
@@ -236,7 +253,7 @@ def validate_answer(case_id: str, result: dict) -> dict:
         except (ValueError,TypeError,RecursionError): valid=False
         outcome['state']='semantic_review_pending' if valid else 'failed'
     elif case_id=='CODE':
-        outcome['state']=_check_code(text)
+        outcome.update(_code_assessment(text))
     elif case_id=='TOOL':
         try:
             calls=result['tool_calls']; call=calls[0]

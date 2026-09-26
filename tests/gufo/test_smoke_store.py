@@ -161,6 +161,7 @@ class SmokeStoreTests(unittest.TestCase):
     def test_sibling_incomplete_blocks_verify_recheck_and_begin(self):
         for name in ('gufo-ar4k-smoke-runs', 'gufo-ar4k-connect-wait-smoke-runs',
                      'gufo-ar4k-http-slots-smoke-runs', 'gufo-ar4k-benchmark-runs',
+                     'gufo-ar4k-benchmark-v2-runs',
                      'gufo-ar16k-benchmark-runs'):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
                 f = StoreFixture(temp)

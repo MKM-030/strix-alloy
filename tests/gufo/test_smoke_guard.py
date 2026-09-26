@@ -201,9 +201,9 @@ class Harness:
 
 class GuardianTests(unittest.TestCase):
     def test_injected_profile_mismatch_refuses_before_child_or_collection(self):
-        result = self.h.run(profile_id='ar4k-iq4xs-correctness-pp1-v1')
+        result = self.h.run(profile_id='ar4k-iq4xs-correctness-pp1-v2')
         self.assertFalse(result['success'])
-        self.assertEqual(result['profile'], 'ar4k-iq4xs-correctness-pp1-v1')
+        self.assertEqual(result['profile'], 'ar4k-iq4xs-correctness-pp1-v2')
         self.assertEqual(self.h.children, [])
         self.assertEqual(self.h.queries, [])
 

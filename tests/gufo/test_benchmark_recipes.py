@@ -30,10 +30,19 @@ class RecipeTests(unittest.TestCase):
 
     def test_requests_sampler_tool_and_argv(self):
         r = self.r
+        self.assertEqual(r.PROFILE_4K, 'ar4k-iq4xs-correctness-pp1-v2')
+        with self.assertRaisesRegex(ValueError, 'unknown_profile'):
+            r.recipe_definition('ar4k-iq4xs-correctness-pp1-v1')
+        self.assertEqual(r.recipe_definition(r.PROFILE_4K)['validator_version'], 2)
+        self.assertEqual(r.recipe_definition(r.PROFILE_16K)['validator_version'], 2)
         for profile, context in [(r.PROFILE_4K, '4096'), (r.PROFILE_16K, '16384')]:
             argv = r.build_argv(profile, 'SECRET')
             for flag, value in [('--context',context),('--max-tokens','256'),('--max-connections','16'),('--max-request-bytes','262144')]:
                 self.assertEqual(argv[argv.index(flag)+1], value)
+            expected = r.smoke_guard.fixed_argv('SECRET')
+            for flag, value in [('--context',context),('--max-tokens','256'),('--max-request-bytes','262144'),('--max-connections','16')]:
+                expected[expected.index(flag)+1] = value
+            self.assertEqual(argv, expected)
         definition = r.recipe_definition(r.PROFILE_4K)
         for row in definition['schedule'][1:31]:
             request = r.request_for(row)
@@ -70,6 +79,46 @@ class RecipeTests(unittest.TestCase):
         for bad in ['import os\ndef clamp(x, lo, hi): return x','def clamp(x, lo, hi):\n return __import__("os").system("evil")','@evil\ndef clamp(x, lo, hi): return x']:
             self.assertEqual(check(bad),'failed')
         self.assertEqual(check('def clamp(x, lo, hi):\n y = x\n return y'),'needs_review')
+
+    def test_code_fence_preserves_format_failure_and_checks_behavior(self):
+        r = self.r
+        observed = '''```python
+def clamp(x, lo, hi):
+    if lo > hi:
+        raise ValueError("lo must be less than or equal to hi")
+    if x < lo:
+        return lo
+    if x > hi:
+        return hi
+    return x
+```'''
+        self.assertEqual(r._check_code(observed), 'failed')
+        answer = lambda code: r.validate_answer('CODE', {'visible_answer':code,'finish_reason':'stop'})
+        self.assertEqual(answer(observed), dict(state='needs_review',budget_exhausted=False,
+            functional_state='passed',format_compliant=False,
+            evaluation_source='single_python_fence',format_violation='markdown_fence'))
+        plain = observed.split('\n',1)[1].rsplit('\n',1)[0]
+        self.assertEqual(answer(plain), dict(state='passed',budget_exhausted=False,
+            functional_state='passed',format_compliant=True,evaluation_source='raw_python'))
+        for code in ('def clamp(x, lo, hi):\n return x',
+                     'def clamp(x, lo, hi):\n return __import__("os").system("evil")',
+                     'import os\ndef clamp(x, lo, hi): return x',
+                     'def clamp(x, lo, hi):\n return x.real'):
+            with self.subTest(code=code):
+                result = answer('```python\n'+code+'\n```')
+                self.assertEqual(result['state'], 'failed')
+                self.assertEqual(result['functional_state'], 'failed')
+                self.assertFalse(result['format_compliant'])
+        for text in ('prose\n'+observed, observed+'\nprose', observed+'\n'+observed,
+                     observed[:-3], '```python\n'+plain+'\n```\n```'):
+            with self.subTest(text=text):
+                result = answer(text)
+                self.assertEqual(result['state'], 'failed')
+                self.assertEqual(result['evaluation_source'], 'raw_python')
+        review = answer('```python\ndef clamp(x, lo, hi):\n y = x\n return y\n```')
+        self.assertEqual(review['functional_state'], 'needs_review')
+        self.assertEqual(review['state'], 'needs_review')
+        self.assertFalse(review['format_compliant'])
 
     def test_tool_arguments_and_prose_no_execution(self):
         r = self.r

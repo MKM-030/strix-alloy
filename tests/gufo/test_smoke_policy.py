@@ -35,7 +35,7 @@ class SmokePolicyTests(unittest.TestCase):
         from gufo_control.benchmark_runtime import BoundPolicy
         from test_benchmark_runtime import experiment, canonical, FOUR
         pins = replace(smoke_store.PINS, profile_id=FOUR,
-            evidence=smoke_store.EVIDENCE.parent/'gufo-ar4k-benchmark-runs',
+            evidence=smoke_store.EVIDENCE.parent/'gufo-ar4k-benchmark-v2-runs',
             experiment_json=canonical(experiment()),
             predecessors=(smoke_store.PredecessorPin(smoke_store.PROFILE_ID,
                 smoke_store.EVIDENCE/smoke_store.FIRST_PREDECESSOR_RUN,

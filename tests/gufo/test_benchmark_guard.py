@@ -16,7 +16,8 @@ class GuardTests(unittest.TestCase):
 
     def test_immutable_binding_exact_experiment_and_no_launch_status(self):
         g=self.g; pins=g.profile_pins(g.recipes.PROFILE_4K)
-        self.assertEqual(pins.evidence.name,'gufo-ar4k-benchmark-runs')
+        self.assertEqual(pins.evidence.name,'gufo-ar4k-benchmark-v2-runs')
+        self.assertEqual(pins.qualification.name,'gufo-ar4k-benchmark-v2-qualification.json')
         self.assertEqual(pins.predecessors[0].run.name,g.smoke_store.FIRST_PREDECESSOR_RUN)
         experiment=json.loads(pins.experiment_json)
         self.assertEqual(experiment['max_requests'],36)
@@ -41,6 +42,8 @@ class GuardTests(unittest.TestCase):
 
     def test_unknown_profile_and_overrides_refused(self):
         with self.assertRaises(ValueError): self.g.profile_pins('unknown')
+        with self.assertRaisesRegex(ValueError, 'unknown_profile'):
+            self.g.profile_pins('ar4k-iq4xs-correctness-pp1-v1')
         with redirect_stdout(io.StringIO()),patch('sys.stderr',io.StringIO()),self.assertRaises(SystemExit):
             self.g.main(['run','--profile',self.g.recipes.PROFILE_4K,'--context','8192'])
 
@@ -48,7 +51,7 @@ class GuardTests(unittest.TestCase):
         g=self.g
         with tempfile.TemporaryDirectory() as temp,patch.object(g.smoke_store,'ROOT',Path(temp)):
             reports=Path(temp)/'reports'
-            run=reports/'gufo-ar4k-benchmark-runs'/'reviewed-run'; run.mkdir(parents=True)
+            run=reports/'gufo-ar4k-benchmark-v2-runs'/'reviewed-run'; run.mkdir(parents=True)
             g.operator_store.atomic_json(run/'result.json',{'synthetic':'result'})
             digest=g.operator_store.artifact_record(run/'result.json')['sha256']
             accepted=dict(profile_id=g.recipes.PROFILE_4K,run=str(run),result_sha256=digest,semantic_status='passed',review_id='independent')
@@ -56,7 +59,14 @@ class GuardTests(unittest.TestCase):
             g.operator_store.atomic_json(path,accepted)
             pins=g.profile_pins(g.recipes.PROFILE_16K)
             self.assertEqual(pins.predecessors[0].run,run)
+            self.assertEqual(pins.evidence.name,'gufo-ar16k-benchmark-runs')
+            self.assertEqual(pins.qualification.name,'gufo-ar16k-benchmark-qualification.json')
             self.assertEqual(pins.acceptance_sha256,g.operator_store.artifact_record(path)['sha256'])
+            for old in (dict(profile_id='ar4k-iq4xs-correctness-pp1-v1'),
+                        dict(run=str(reports/'gufo-ar4k-benchmark-runs'/'reviewed-run'))):
+                g.operator_store.atomic_json(path,dict(accepted,**old))
+                with self.assertRaises(ValueError): g.profile_pins(g.recipes.PROFILE_16K)
+            g.operator_store.atomic_json(path,accepted)
             for changes in [dict(review_id=''),dict(semantic_status='pending'),dict(extra=True),dict(result_sha256='A'*64),dict(run=str(reports))]:
                 g.operator_store.atomic_json(path,dict(accepted,**changes))
                 with self.assertRaises(ValueError): g.profile_pins(g.recipes.PROFILE_16K)
@@ -67,7 +77,7 @@ class GuardTests(unittest.TestCase):
         g=self.g
         for variant in ['success','latch','wrong_profile','deadline','recovery']:
             with self.subTest(variant=variant),tempfile.TemporaryDirectory() as temp:
-                root=Path(temp)/'gufo-ar4k-benchmark-runs'; root.mkdir()
+                root=Path(temp)/'gufo-ar4k-benchmark-v2-runs'; root.mkdir()
                 h=Harness(root)
                 pins=replace(g.profile_pins(g.recipes.PROFILE_4K),evidence=root)
                 h.pins=pins
