@@ -1,7 +1,6 @@
 """Windows owned-process output and native exit-status behavior."""
 
 import ctypes as C
-import msvcrt
 import os
 from pathlib import Path
 import subprocess
@@ -97,6 +96,8 @@ class OwnedOutputTests(unittest.TestCase):
             self.assertFalse(marker.exists())
 
     def test_explicit_handle_list_excludes_inheritable_sentinel(self):
+        import msvcrt
+
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             sentinel = root / "sentinel"
