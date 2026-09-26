@@ -2,6 +2,7 @@
 
 import ctypes as C
 from ctypes import wintypes as W
+import contextlib
 import os
 from pathlib import Path
 import subprocess
@@ -37,6 +38,10 @@ class _Startup(C.Structure):
                 ("hStdOutput", W.HANDLE), ("hStdError", W.HANDLE)]
 
 
+class _StartupEx(C.Structure):
+    _fields_ = [("StartupInfo", _Startup), ("lpAttributeList", C.c_void_p)]
+
+
 class _ProcessInfo(C.Structure):
     _fields_ = [("hProcess", W.HANDLE), ("hThread", W.HANDLE),
                 ("dwProcessId", W.DWORD), ("dwThreadId", W.DWORD)]
@@ -53,6 +58,12 @@ def _api():
         "CreateProcessW": ([W.LPCWSTR, W.LPWSTR, C.c_void_p, C.c_void_p, W.BOOL,
                             W.DWORD, C.c_void_p, W.LPCWSTR, C.POINTER(_Startup),
                             C.POINTER(_ProcessInfo)], W.BOOL),
+        "InitializeProcThreadAttributeList": ([C.c_void_p, W.DWORD, W.DWORD,
+                                                C.POINTER(C.c_size_t)], W.BOOL),
+        "UpdateProcThreadAttribute": ([C.c_void_p, W.DWORD, C.c_size_t, C.c_void_p,
+                                       C.c_size_t, C.c_void_p, C.c_void_p], W.BOOL),
+        "DeleteProcThreadAttributeList": ([C.c_void_p], None),
+        "GetExitCodeProcess": ([W.HANDLE, C.POINTER(W.DWORD)], W.BOOL),
         "ResumeThread": ([W.HANDLE], W.DWORD),
         "TerminateProcess": ([W.HANDLE, W.UINT], W.BOOL),
         "WaitForSingleObject": ([W.HANDLE, W.DWORD], W.DWORD),
@@ -78,8 +89,51 @@ def _timeout(value):
     return value
 
 
+@contextlib.contextmanager
+def _startup_info(api, stdout_path, stderr_path):
+    if stdout_path is None and stderr_path is None:
+        startup = _Startup()
+        startup.cb = C.sizeof(startup)
+        yield C.byref(startup), False, 0
+        return
+    if stdout_path is None or stderr_path is None:
+        raise ValueError("both stdout_path and stderr_path are required")
+    out = Path(stdout_path).resolve()
+    err = Path(stderr_path).resolve()
+    if os.path.normcase(str(out)) == os.path.normcase(str(err)):
+        raise ValueError("stdout and stderr must be distinct files")
+    import msvcrt
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(os.devnull, "rb", buffering=0)),
+                 stack.enter_context(open(out, "xb", buffering=0)),
+                 stack.enter_context(open(err, "xb", buffering=0))]
+        handles = (W.HANDLE * 3)(*(msvcrt.get_osfhandle(f.fileno()) for f in files))
+        for handle in handles:
+            os.set_handle_inheritable(handle, True)
+        required = C.c_size_t()
+        ok = api.InitializeProcThreadAttributeList(None, 1, 0, C.byref(required))
+        if ok or C.get_last_error() != 122 or not 0 < required.value <= 65536:
+            raise OSError("unexpected process attribute sizing result")
+        storage = C.create_string_buffer(required.value)
+        _check(api.InitializeProcThreadAttributeList(storage, 1, 0, C.byref(required)))
+        try:
+            _check(api.UpdateProcThreadAttribute(storage, 0, 0x20002, handles,
+                                                C.sizeof(handles), None, None))
+            startup = _StartupEx()
+            startup.StartupInfo.cb = C.sizeof(startup)
+            startup.StartupInfo.dwFlags = 0x100  # STARTF_USESTDHANDLES
+            startup.StartupInfo.hStdInput = handles[0]
+            startup.StartupInfo.hStdOutput = handles[1]
+            startup.StartupInfo.hStdError = handles[2]
+            startup.lpAttributeList = C.cast(storage, C.c_void_p)
+            yield C.byref(startup.StartupInfo), True, 0x80000
+        finally:
+            api.DeleteProcThreadAttributeList(storage)
+
+
 class OwnedProcess:
-    def __init__(self, argv: list[str], *, cwd: str | Path, env: dict[str, str]):
+    def __init__(self, argv: list[str], *, cwd: str | Path, env: dict[str, str],
+                 stdout_path: str | Path | None = None, stderr_path: str | Path | None = None):
         if os.name != "nt":
             raise OSError("Windows process ownership requires Windows")
         if not isinstance(argv, list) or not argv or any(
@@ -97,22 +151,22 @@ class OwnedProcess:
         self._job = self._process = self._thread = None
         self._resumed = self._closed = False
         self._recovery_only = True
+        self._exit_code = None
         self.identity = None
         try:
             self._job = _check(api.CreateJobObjectW(None, None))
             limits = _ExtendedLimit()
             limits.BasicLimitInformation.LimitFlags = 0x2000  # KILL_ON_JOB_CLOSE
             _check(api.SetInformationJobObject(self._job, 9, C.byref(limits), C.sizeof(limits)))
-            startup = _Startup()
-            startup.cb = C.sizeof(startup)
             info = _ProcessInfo()
             command = C.create_unicode_buffer(subprocess.list2cmdline([executable, *argv[1:]]))
             entries = [k + "=" + env[k] for k in sorted(env, key=str.casefold)]
             environment = C.create_unicode_buffer("\0".join(entries) + "\0\0")
-            _check(api.CreateProcessW(executable, command, None, None, False,
-                                     0x4 | 0x400 | 0x08000000, environment, directory,
-                                     C.byref(startup), C.byref(info)))
-            self._process, self._thread = info.hProcess, info.hThread
+            with _startup_info(api, stdout_path, stderr_path) as (startup, inherit, extra_flags):
+                _check(api.CreateProcessW(executable, command, None, None, inherit,
+                                         0x4 | 0x400 | 0x08000000 | extra_flags,
+                                         environment, directory, startup, C.byref(info)))
+                self._process, self._thread = info.hProcess, info.hThread
             _check(api.AssignProcessToJobObject(self._job, self._process))
             times = [W.FILETIME() for _ in range(4)]
             _check(api.GetProcessTimes(self._process, *(C.byref(t) for t in times)))
@@ -180,6 +234,16 @@ class OwnedProcess:
             return False
         raise C.WinError(C.get_last_error())
 
+    def exit_code(self) -> int | None:
+        if self._closed:
+            return self._exit_code
+        if not self.wait(0):
+            return None
+        code = W.DWORD()
+        _check(self._api.GetExitCodeProcess(self._process, C.byref(code)))
+        self._exit_code = int(code.value)
+        return self._exit_code
+
     def close(self, timeout_ms: int = 5000) -> None:
         timeout_ms = _timeout(timeout_ms)
         if self._closed:
@@ -195,6 +259,8 @@ class OwnedProcess:
             self._job = None
         if self._process and not self.wait(timeout_ms):
             raise TimeoutError("owned-process exit not confirmed; retain handles for retry")
+        if self._process:
+            self.exit_code()
         for name in ("_thread", "_process"):
             handle = getattr(self, name)
             if handle:
