@@ -1,5 +1,84 @@
 # First guarded native GUFO AR4k smoke implementation plan
 
+## Approved recovery amendment, 26 September 2026
+
+The user explicitly approved fresh per-run recovery with unchanged runtime
+ceilings and a reviewed retry ("Fuck yes start it"). This section supersedes
+the historical-baseline prelaunch/recovery requirements below, not any absolute
+floor, envelope, telemetry, ownership or single-attempt requirement.
+
+Preserve original operator evidence. Construct a fresh stable current baseline;
+do not require its committed use to return to the old operator recovery band.
+Validate its frames against the original live ceilings before admission. Use
+the stricter original/current numeric baseline for every subsequent admission,
+runtime, pending and recovery numeric decision; recover against the fresh
+current baseline using five distinct later frames and the existing tolerances.
+Retain the current no-rising-residual, deadline, worker and evidence checks.
+The original historical drift remains unexplained and is not called reclaimed.
+
+### Amendment task: scoped baseline selection and regression tests
+
+Files: smoke_policy.py, smoke_guard.py, smoke_store.py and their three existing
+test files under tests/gufo. No operator-policy, HTTP, WinJob, source/runtime,
+model, global setting or public launcher change.
+
+- [ ] Add failing policy tests for higher/lower/mixed current baselines, invalid
+  identity/ordering, and byte-level original/current ceiling boundaries. Add
+  guardian tests for stable background commit above historical recovery band
+  now admitted; physical49/24 and commit12 remain; original ceilings still
+  abort; lower current ceilings tighten; fresh post-run recovery succeeds only
+  after five later valid frames; original evidence remains identical. Existing
+  timeout, cleanup, singleattempt and wrong-identity cases remain regression gates.
+- [ ] Add the pure helper with this arithmetic, validating both Baselines,
+  equal identity and non-overlapping temporal order before constructing it:
+
+```python
+def stricter_runtime_baseline(original, current):
+    if not _base_valid(original) or not _base_valid(current):
+        raise ValueError('invalid_baseline')
+    if original.identity != current.identity:
+        raise ValueError('adapter_changed')
+    if current.first_start < original.last_end:
+        raise ValueError('sample_before_baseline')
+    return replace(current,
+        available_min=max(original.available_min, current.available_min),
+        committed_max=min(original.committed_max, current.committed_max),
+        gpu_max=tuple(min(a,b) for a,b in zip(original.gpu_max,current.gpu_max)))
+```
+
+- [ ] Guardian stores self.runtime_baseline after current collection. Replace
+  prelaunch original recovery-band comparison with original numeric validation
+  of the collected frames (their own captured validation times), plus the
+  existing rising-residual check. Keep the real-time final freshness decisions.
+  Route admission and runtime decisions, pending-after-exit numeric checks and
+  recovery numeric checks through the stricter baseline; before it exists,
+  the original remains the conservative fallback. Do not scope already-read
+  baseline frames against their own future last_end. Recover using
+  policy.recovery_reasons(self.current or self.original, recovery_frames).
+  Persist original/current/effective baselines separately; label existing
+  sampled peak deltas as relative to the original operator baseline.
+- [ ] Bind the changed recovery semantics in expected_qualification with
+  `recovery_policy: 'per-run-recovery-stricter-runtime-v1'`. Old qualification
+  JSON must fail until parent binds independent review. Profile ID/envelopes
+  and permanent attempt semantics stay unchanged. Add exact-record regression.
+- [ ] Run focused smoke_policy, smoke_guard and smoke_store tests with absolute
+  PYTHONPATH, plus operator_policy regression. Record RED/GREEN, self-review,
+  commit the six files. Parent runs whole suite and independent review.
+
+### Parent disposition and retry
+
+The existing refusal created no model child. Preserve its immutable result,
+counter series and original baseline. Independently review a one-time,
+exact-result/latch-hash-bound disposition under operator-then-smoke locks:
+require exact no-child failure, null identity/resume/HTTP, zero runtime samples,
+terminal collectors/workers, successful evidence writes, absent attempt and
+absent owned/argv/stdout/stderr artifacts. Retain latch bytes by moving them
+to a new refusal-run archive filename (never overwrite/delete). Record the
+user-approved policy correction and no-model-start rationale separately.
+Only then bind the newly reviewed qualification, run print-only and initiate
+one new guarded foreground attempt. The new run still takes its own fresh
+baseline and cannot bypass missing/stale/ambiguous telemetry or any ceiling.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement this plan task by task. Steps use checkbox (`- [ ]`) syntax for tracking. This document plans code and offline verification; it does not authorize a model load.
 
 **Goal:** Build one fixed, parent-owned, guarded native Windows GUFO AR4k smoke that can make one small authenticated completion, stop its owned server, and prove or explicitly fail cleanup.
