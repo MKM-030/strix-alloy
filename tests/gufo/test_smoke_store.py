@@ -158,6 +158,38 @@ class StoreFixture:
 
 
 class SmokeStoreTests(unittest.TestCase):
+    def test_sibling_incomplete_blocks_verify_recheck_and_begin(self):
+        for name in ('gufo-ar4k-smoke-runs', 'gufo-ar4k-connect-wait-smoke-runs',
+                     'gufo-ar4k-http-slots-smoke-runs', 'gufo-ar4k-benchmark-runs',
+                     'gufo-ar16k-benchmark-runs'):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
+                f = StoreFixture(temp)
+                manifest = f.verify()
+                sibling = f.root/name
+                sibling.mkdir()
+                operator_store.atomic_json(sibling/'attempt.json', {'run': 'old-clean-run'})
+                f.verify()  # A clean consumed sibling does not consume this profile.
+                f.recheck(manifest)
+                operator_store.atomic_json(sibling/'incomplete.json', {})
+                run = f.evidence/'new-run'; run.mkdir()
+                for action in (f.verify, lambda: f.recheck(manifest),
+                               lambda: store._begin_run(run, manifest, f.base, f.pins)):
+                    with self.assertRaisesRegex(ValueError, 'incomplete'): action()
+                self.assertFalse((f.evidence/'attempt.json').exists())
+
+    def test_only_exact_current_latch_is_exempt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp); manifest = f.verify()
+            run = f.evidence/'new-run'; run.mkdir()
+            store._begin_run(run, manifest, f.base, f.pins)
+            f.recheck(manifest, current_run=run)
+            other = f.evidence/'other-run'; other.mkdir()
+            with self.assertRaises(ValueError): f.recheck(manifest, current_run=other)
+            sibling = f.root/'gufo-ar16k-benchmark-runs'; sibling.mkdir()
+            operator_store.atomic_json(sibling/'incomplete.json', {'run': str(run)})
+            with self.assertRaisesRegex(ValueError, 'incomplete'):
+                f.recheck(manifest, current_run=run)
+
     def test_next_profile_uses_distinct_exact_evidence_and_qualification(self):
         self.assertEqual(store.PROFILE_ID, 'ar4k-iq4xs-http-slots-smoke-v3')
         self.assertEqual(store.EVIDENCE, store.ROOT / 'reports/gufo-ar4k-http-slots-smoke-runs')

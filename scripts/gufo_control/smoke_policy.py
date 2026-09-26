@@ -61,7 +61,7 @@ class SmokeProfile:
             'shared_memory_policy', 'qualified', 'review_id', 'shared_allowance_review_id')})
 
 
-def profile_from_manifest(manifest: dict) -> SmokeProfile:
+def profile_from_manifest(manifest: dict, *, pins=PINS) -> SmokeProfile:
     """Bind only the fixed profile in the authenticated verify_static() result.
 
     No qualification file is created/read here. Missing reviews fail closed.
@@ -72,33 +72,38 @@ def profile_from_manifest(manifest: dict) -> SmokeProfile:
         review = q['guard_review_id']
         if not isinstance(review, str) or not review.strip():
             raise ValueError('guard_review_missing')
-        expected = expected_qualification(PINS, review)
+        expected = expected_qualification(pins, review)
         if (_canonical(q) != _canonical(expected)
-                or manifest['profile'] != PROFILE_ID
-                or manifest['source'] != PINS.source_commit
-                or manifest['executable'] != str(PINS.build / PINS.executable_name)
-                or manifest['sdk'] != str(PINS.sdk)
+                or manifest['profile'] != pins.profile_id
+                or manifest['source'] != pins.source_commit
+                or manifest['executable'] != str(pins.build / pins.executable_name)
+                or manifest['sdk'] != str(pins.sdk)
                 or _canonical(manifest['bounds']) != _canonical(BOUNDS)
-                or manifest['model']['revision'] != PINS.model_revision
-                or manifest['model']['first_shard'] != str(PINS.first_shard)
-                or manifest['margin_report']['sha256'] != PINS.margin_sha256):
+                or manifest['model']['revision'] != pins.model_revision
+                or manifest['model']['first_shard'] != str(pins.first_shard)
+                or manifest['margin_report']['sha256'] != pins.margin_sha256):
             raise ValueError('qualification_mismatch')
-        return SmokeProfile(qualified=True, review_id=review,
-            shared_allowance_review_id=PINS.margin_sha256,
+        return SmokeProfile(profile_id=pins.profile_id, source_commit=pins.source_commit,
+            model_revision=pins.model_revision, qualified=True, review_id=review,
+            shared_allowance_review_id=pins.margin_sha256,
             qualification_json=_canonical(q))
     except (KeyError, TypeError, AttributeError, OverflowError) as error:
         raise ValueError('invalid_profile_manifest') from error
 
 
-def _profile_valid(profile):
+def _profile_valid(profile, *, pins=PINS):
     if not isinstance(profile, SmokeProfile):
         return False
     review = profile.review_id
     if not isinstance(review, str) or not review.strip():
         return False
-    expected = SmokeProfile(qualified=True, review_id=review,
-        shared_allowance_review_id=PINS.margin_sha256,
-        qualification_json=_canonical(expected_qualification(PINS, review)))
+    try:
+        expected = SmokeProfile(profile_id=pins.profile_id, source_commit=pins.source_commit,
+            model_revision=pins.model_revision, qualified=True, review_id=review,
+            shared_allowance_review_id=pins.margin_sha256,
+            qualification_json=_canonical(expected_qualification(pins, review)))
+    except (ValueError, TypeError):
+        return False
     # Canonical JSON preserves bool/int distinctions that dataclass == does not.
     return (profile == expected and profile.qualified is True
         and all(type(getattr(profile, k)) is int for k in (
@@ -138,8 +143,8 @@ def owned_inventory_frame(frame: Frame, owned) -> Frame:
         raise ValueError('owned_identity_unverified') from error
 
 
-def _common(profile, base, frame, now, now_utc, max_age):
-    if not _profile_valid(profile):
+def _common(profile, base, frame, now, now_utc, max_age, *, pins=PINS):
+    if not _profile_valid(profile, pins=pins):
         return ['unqualified_profile']
     if not _base_valid(base):
         return ['invalid_baseline']
@@ -153,10 +158,10 @@ def _common(profile, base, frame, now, now_utc, max_age):
     return []
 
 
-def admission_decision(profile, original_baseline, frame, *, now, now_utc) -> dict:
+def admission_decision(profile, original_baseline, frame, *, now, now_utc, pins=PINS) -> dict:
     """JSON-safe decision including the conditional spill minimum for evidence."""
     reasons = _common(profile, original_baseline, frame, now, now_utc,
-                      MAX_PRELAUNCH_AGE_SECONDS)
+                      MAX_PRELAUNCH_AGE_SECONDS, pins=pins)
     if reasons:
         result = dict(allowed=False, reasons=reasons, minimum_shared_spill_bytes=None,
             shared_physical_allowance_bytes=None, predicted_available_bytes=None,
@@ -164,7 +169,7 @@ def admission_decision(profile, original_baseline, frame, *, now, now_utc) -> di
     else:
         result = evaluate_admission(frame.snapshot, dict(profile.envelope), now=now)
         numeric = frame_numeric_reasons(profile, original_baseline, frame,
-                                        now=now, now_utc=now_utc)
+                                        now=now, now_utc=now_utc, pins=pins)
         result['reasons'] = list(dict.fromkeys([*result['reasons'], *numeric]))
         result['allowed'] = not result['reasons']
     result['owned_inventory_proof'] = deepcopy(frame.snapshot.get('owned_inventory_proof',
@@ -173,30 +178,30 @@ def admission_decision(profile, original_baseline, frame, *, now, now_utc) -> di
     return result
 
 
-def admission_reasons(profile, original_baseline, frame, *, now, now_utc) -> list[str]:
-    return admission_decision(profile, original_baseline, frame, now=now, now_utc=now_utc)['reasons']
+def admission_reasons(profile, original_baseline, frame, *, now, now_utc, pins=PINS) -> list[str]:
+    return admission_decision(profile, original_baseline, frame, now=now, now_utc=now_utc, pins=pins)['reasons']
 
 
-def runtime_decision(profile, original_baseline, frame, owned, *, now, now_utc) -> dict:
+def runtime_decision(profile, original_baseline, frame, owned, *, now, now_utc, pins=PINS) -> dict:
     """Evaluate once and retain exactly the ownership proof used for that decision."""
     try:
         scoped = owned_inventory_frame(frame, owned)
     except ValueError:
         return dict(allowed=False, reasons=['owned_identity_unverified'],
                     owned_inventory_proof=dict(status='unverified', excluded_pid=None))
-    reasons = frame_numeric_reasons(profile, original_baseline, scoped, now=now, now_utc=now_utc)
+    reasons = frame_numeric_reasons(profile, original_baseline, scoped, now=now, now_utc=now_utc, pins=pins)
     proof = scoped.snapshot['owned_inventory_proof']
     return dict(allowed=not reasons, reasons=reasons, owned_inventory_proof=proof)
 
 
-def frame_numeric_reasons(profile, original_baseline, frame, *, now, now_utc) -> list[str]:
+def frame_numeric_reasons(profile, original_baseline, frame, *, now, now_utc, pins=PINS) -> list[str]:
     """Shared frame/freshness/threshold checks; never applies a PID exclusion.
 
     Live callers must first obtain retained-handle proof; pending-after-exit
     callers may explicitly scope a copy with historical query-start proof.
     Recovery passes raw frames, so every listed inference/guest PID refuses.
     """
-    reasons = _common(profile, original_baseline, frame, now, now_utc, MAX_SAMPLE_AGE_SECONDS)
+    reasons = _common(profile, original_baseline, frame, now, now_utc, MAX_SAMPLE_AGE_SECONDS, pins=pins)
     if reasons:
         return reasons
     s, base = frame.snapshot, original_baseline
@@ -214,6 +219,6 @@ def frame_numeric_reasons(profile, original_baseline, frame, *, now, now_utc) ->
     return reasons
 
 
-def runtime_reasons(profile, original_baseline, frame, owned, *, now, now_utc) -> list[str]:
+def runtime_reasons(profile, original_baseline, frame, owned, *, now, now_utc, pins=PINS) -> list[str]:
     return runtime_decision(profile, original_baseline, frame, owned,
-                            now=now, now_utc=now_utc)['reasons']
+                            now=now, now_utc=now_utc, pins=pins)['reasons']

@@ -10,7 +10,7 @@ import tempfile
 import threading
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from gufo_control import smoke_guard as guard
 from gufo_control import operator_probe, operator_store, smoke_store
@@ -187,7 +187,7 @@ class Harness:
         h.http_tasks.append(task)
         return task
 
-    def run(self):
+    def run(self, **bindings):
         with ExitStack() as stack:
             stack.enter_context(patch.object(guard, 'time', self.clock))
             stack.enter_context(patch.object(operator_probe, 'time', self.clock))
@@ -195,11 +195,34 @@ class Harness:
             stack.enter_context(patch.object(operator_store, 'exclusive', self.lock))
             self.guard = guard._Guardian(store=self.store, owned_factory=self.owned,
                 query_factory=self.query, http_start=self.http, collect=lambda: None,
-                port_check=self.port)
+                port_check=self.port, **bindings)
             return self.guard.run()
 
 
 class GuardianTests(unittest.TestCase):
+    def test_injected_profile_mismatch_refuses_before_child_or_collection(self):
+        result = self.h.run(profile_id='ar4k-iq4xs-correctness-pp1-v1')
+        self.assertFalse(result['success'])
+        self.assertEqual(result['profile'], 'ar4k-iq4xs-correctness-pp1-v1')
+        self.assertEqual(self.h.children, [])
+        self.assertEqual(self.h.queries, [])
+
+    def test_injected_policy_and_argv_keep_deadlines_and_cleanup(self):
+        injected = Mock(wraps=guard.policy)
+        argv = Mock(side_effect=lambda key: guard.fixed_argv(key)+['test-binding'])
+        result = self.h.run(policy_module=injected, argv_builder=argv)
+        self.assertTrue(result['success'], result)
+        self.assertEqual(argv.call_count, 2)
+        self.assertTrue(injected.profile_from_manifest.called)
+        self.assertTrue(injected.admission_reasons.called)
+        self.assertTrue(injected.runtime_decision.called)
+        self.assertTrue(injected.recovery_reasons.called)
+        args = self.h.http_tasks[0].args
+        self.assertEqual(args['lifetime_deadline']-args['startup_deadline'], 120)
+        self.assertTrue(result['cleanup_confirmed'])
+        self.assertEqual(result['recovery_samples'], 5)
+        self.assertTrue(self.h.children[0].closed)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

@@ -8,6 +8,7 @@ from dataclasses import asdict, dataclass
 from hashlib import sha256
 import json
 from pathlib import Path
+import re
 
 from . import operator_store
 from .model_identity import AR4K_PINS, ValidatedModel, validate_ar4k_model
@@ -55,6 +56,20 @@ TREES = {
 }
 BOUNDS = {'gpu_gib': 68, 'host_gib': 4, 'shared_gib': 20,
           'prelaunch_gib': 49, 'runtime_gib': 24, 'commit_reserve_gib': 12}
+BENCHMARK_4K = 'ar4k-iq4xs-correctness-pp1-v1'
+BENCHMARK_16K = 'ar16k-iq4xs-pp1-cache-v1'
+PROFILE_ROOTS = {PROFILE_ID: 'gufo-ar4k-http-slots-smoke-runs',
+                 BENCHMARK_4K: 'gufo-ar4k-benchmark-runs',
+                 BENCHMARK_16K: 'gufo-ar16k-benchmark-runs'}
+FIRST_PREDECESSOR_RUN = '20260926T164942Z-a4d64a8f565248bdb508895b6f3ec931'
+FIRST_PREDECESSOR_SHA256 = '58B222AA96BE4A84F4349697A9914B20E1953ECC7464085A4BE9984819121FBF'
+
+
+@dataclass(frozen=True)
+class PredecessorPin:
+    profile_id: str
+    run: Path
+    result_sha256: str
 
 
 @dataclass(frozen=True)
@@ -87,6 +102,9 @@ class StorePins:
     margin_sha256: str
     qualification: Path
     bounds: dict[str, int]
+    experiment_json: str | None = None
+    predecessors: tuple[PredecessorPin, ...] = ()
+    acceptance_sha256: str | None = None
 
 
 PINS = StorePins(
@@ -233,6 +251,214 @@ def _operator_sequence(pins: StorePins):
     return gdn, [failed_record, gdn_record, iq_record, sequence_record]
 
 
+def _digest_valid(value):
+    return isinstance(value, str) and re.fullmatch('[0-9A-F]{64}', value) is not None
+
+
+def _experiment(value, profile_id):
+    if not isinstance(value, str) or len(value) > 4096:
+        raise ValueError('experiment_invalid')
+    try:
+        parsed = json.loads(value)
+        canonical = json.dumps(parsed, sort_keys=True, separators=(',', ':'), allow_nan=False)
+    except (ValueError, TypeError) as error:
+        raise ValueError('experiment_invalid') from error
+    four = profile_id == BENCHMARK_4K
+    expected = dict(profile_id=profile_id,
+        recipe_sha256=parsed.get('recipe_sha256') if isinstance(parsed, dict) else None,
+        context_tokens=4096 if four else 16384,
+        max_prompt_tokens=3072 if four else 16383, max_output_tokens=256,
+        max_requests=36 if four else 13, sessions=1, max_connections=16,
+        max_request_bytes=262144, max_response_bytes=1048576,
+        request_seconds=60, startup_seconds=480, lifetime_seconds=600,
+        speculative=False, disk_cache=False)
+    if (profile_id not in (BENCHMARK_4K, BENCHMARK_16K)
+            or not isinstance(parsed, dict) or parsed.keys() != expected.keys()
+            or canonical != value or not _digest_valid(expected['recipe_sha256'])
+            or any(type(parsed[k]) is not type(v) or parsed[k] != v for k, v in expected.items())):
+        raise ValueError('experiment_invalid')
+    return parsed
+
+
+def _binding(pins):
+    if pins.profile_id not in PROFILE_ROOTS:
+        raise ValueError('unknown_profile')
+    if (not isinstance(pins.bounds, dict) or pins.bounds != BOUNDS
+            or any(type(v) is not int for v in pins.bounds.values())):
+        raise ValueError('unsafe_bounds')
+    if pins.profile_id == PROFILE_ID:
+        if pins.experiment_json is not None or pins.predecessors != () or pins.acceptance_sha256 is not None:
+            raise ValueError('legacy_benchmark_binding')
+        return {}
+    experiment = _experiment(pins.experiment_json, pins.profile_id)
+    if not pins.evidence.is_absolute() or pins.evidence.name != PROFILE_ROOTS[pins.profile_id]:
+        raise ValueError('benchmark_root_invalid')
+    if type(pins.predecessors) is not tuple or len(pins.predecessors) != 1:
+        raise ValueError('predecessor_missing')
+    predecessor = pins.predecessors[0]
+    expected_id = PROFILE_ID if pins.profile_id == BENCHMARK_4K else BENCHMARK_4K
+    if (not isinstance(predecessor, PredecessorPin) or predecessor.profile_id != expected_id
+            or not isinstance(predecessor.run, Path) or not predecessor.run.is_absolute()
+            or not _digest_valid(predecessor.result_sha256)):
+        raise ValueError('predecessor_identity_invalid')
+    if pins.profile_id == BENCHMARK_16K:
+        if not _digest_valid(pins.acceptance_sha256):
+            raise ValueError('acceptance_digest_missing')
+    elif pins.acceptance_sha256 is not None:
+        raise ValueError('unexpected_acceptance')
+    result = dict(experiment=experiment, predecessors=[dict(
+        profile_id=predecessor.profile_id, run=str(predecessor.run),
+        result_sha256=predecessor.result_sha256)])
+    if pins.profile_id == BENCHMARK_16K:
+        result['acceptance_sha256'] = pins.acceptance_sha256
+    return result
+
+
+def _incomplete_latches(pins, *, manifest=None, current_run=None):
+    if (pins.operator_evidence / 'incomplete.json').exists():
+        raise ValueError('operator_incomplete')
+    roots = {pins.evidence, *(pins.evidence.parent / name for name in (
+        'gufo-ar4k-smoke-runs', 'gufo-ar4k-connect-wait-smoke-runs',
+        *PROFILE_ROOTS.values()))}
+    for root in roots:
+        if (root / 'incomplete.json').exists():
+            if current_run is not None and root.resolve() == pins.evidence.resolve():
+                _current_run_markers(manifest, pins, current_run)
+            else:
+                raise ValueError('prior_smoke_incomplete')
+
+
+def _predecessor_records(pins):
+    records = []
+    for pin in pins.predecessors:
+        root = pins.evidence.parent / PROFILE_ROOTS[pin.profile_id]
+        run = pin.run
+        if (not run.is_absolute() or not run.is_dir() or run.resolve(strict=True) != run
+                or run.parent != root or run.resolve(strict=True).parent != root.resolve(strict=True)):
+            raise ValueError('predecessor_run_invalid')
+        if pins.profile_id == BENCHMARK_4K and (
+                run.name != FIRST_PREDECESSOR_RUN or pin.result_sha256 != FIRST_PREDECESSOR_SHA256):
+            raise ValueError('predecessor_identity_invalid')
+        if (root / 'incomplete.json').exists():
+            raise ValueError('predecessor_incomplete')
+        if any(path.is_symlink() or path.resolve(strict=True).parent != path.parent
+               for path in (run/'result.json', root/'attempt.json')):
+            raise ValueError('predecessor_artifact_path')
+        result, stamp = _json_artifact(run/'result.json', pin.result_sha256, 'predecessor_result')
+        marker, marker_stamp = _json_artifact(root/'attempt.json', None, 'predecessor_attempt')
+        flags = ('success', 'owned_exit_confirmed', 'collector_terminal',
+                 'collector_cleanup_confirmed', 'http_terminal', 'inspection_terminal',
+                 'inspection_duplicate_closed', 'evidence_write_confirmed', 'cleanup_confirmed')
+        if (not isinstance(result, dict) or result.get('profile') != pin.profile_id
+                or any(result.get(key) is not True for key in flags)
+                or type(result.get('recovery_samples')) is not int or result['recovery_samples'] != 5
+                or not isinstance(marker, dict) or marker.get('run') != str(run)
+                or marker.get('profile') != pin.profile_id):
+            raise ValueError('predecessor_result_invalid')
+        artifacts = []
+        if pin.profile_id == BENCHMARK_4K:
+            try:
+                experiment = result['manifest']['experiment']
+                _experiment(json.dumps(experiment, sort_keys=True, separators=(',', ':')), pin.profile_id)
+                rows = result['http']['rows']
+                if (result['http']['success'] is not True or not isinstance(rows, list)
+                        or len(rows) != experiment['max_requests']):
+                    raise ValueError('predecessor_rows_invalid')
+                for ordinal, row in enumerate(rows):
+                    artifact = row['artifact']
+                    if (row['status'] != 'completed' or not isinstance(artifact, dict)
+                            or set(artifact) != {'name', 'size_bytes', 'sha256'}
+                            or artifact['name'] != f'request-{ordinal:03d}.json'
+                            or type(artifact['size_bytes']) is not int
+                            or not 0 < artifact['size_bytes'] <= 16*1024*1024
+                            or not _digest_valid(artifact['sha256'])):
+                        raise ValueError('predecessor_artifact_invalid')
+                    path = run / artifact['name']
+                    if path.is_symlink() or path.resolve(strict=True).parent != run.resolve(strict=True):
+                        raise ValueError('predecessor_artifact_path')
+                    if path.stat().st_size != artifact['size_bytes']:
+                        raise ValueError('predecessor_artifact_size')
+                    artifacts.append(_checked_artifact(path,
+                        (artifact['size_bytes'], artifact['sha256']), 'predecessor_request'))
+            except (KeyError, TypeError, OSError) as error:
+                raise ValueError('predecessor_rows_invalid') from error
+        records.append(dict(identity=dict(profile_id=pin.profile_id, run=str(run),
+            result_sha256=pin.result_sha256), result=stamp, attempt=marker_stamp,
+            artifacts=artifacts))
+    return records
+
+
+def _benchmark_records(pins):
+    binding = _binding(pins)
+    if not binding:
+        return {}
+    result = dict(experiment=binding['experiment'], predecessors=_predecessor_records(pins))
+    if pins.profile_id == BENCHMARK_16K:
+        path = pins.evidence.parent/'gufo-ar4k-benchmark-acceptance.json'
+        if path.is_symlink() or path.resolve(strict=True).parent != path.parent:
+            raise ValueError('acceptance_path_invalid')
+        acceptance, stamp = _json_artifact(path, pins.acceptance_sha256, 'acceptance')
+        identity = binding['predecessors'][0]
+        if (not isinstance(acceptance, dict) or set(acceptance) !=
+                {'profile_id', 'run', 'result_sha256', 'semantic_status', 'review_id'}
+                or any(acceptance.get(k) != v for k, v in identity.items())
+                or acceptance['semantic_status'] != 'passed'
+                or not isinstance(acceptance['review_id'], str) or not acceptance['review_id'].strip()):
+            raise ValueError('acceptance_invalid')
+        result['acceptance'] = dict(record=acceptance, artifact=stamp)
+    return result
+
+
+def _recheck_benchmark(manifest, pins):
+    """Cheap stamped recheck of the already hashed bounded predecessor evidence."""
+    binding = _binding(pins)
+    if not binding:
+        if any(key in manifest for key in ('experiment', 'predecessors', 'acceptance')):
+            raise ValueError('legacy_benchmark_binding')
+        return
+    if manifest.get('experiment') != binding['experiment']:
+        raise ValueError('benchmark_binding_changed')
+    records = manifest['predecessors']
+    if not isinstance(records, list) or len(records) != len(pins.predecessors):
+        raise ValueError('predecessor_binding_changed')
+    for pin, record, identity in zip(pins.predecessors, records, binding['predecessors']):
+        if record['identity'] != identity:
+            raise ValueError('predecessor_binding_changed')
+        root = pins.evidence.parent / PROFILE_ROOTS[pin.profile_id]
+        if (pin.run.parent != root or pin.run.is_symlink()
+                or pin.run.resolve(strict=True).parent != root.resolve(strict=True)):
+            raise ValueError('predecessor_run_invalid')
+        expected = [(record['result'], pin.run/'result.json'),
+                    (record['attempt'], root/'attempt.json')]
+        if record['result']['sha256'] != pin.result_sha256:
+            raise ValueError('predecessor_binding_changed')
+        artifacts = record['artifacts']
+        count = 36 if pin.profile_id == BENCHMARK_4K else 0
+        if not isinstance(artifacts, list) or len(artifacts) != count:
+            raise ValueError('predecessor_artifact_invalid')
+        expected.extend((artifact, pin.run/f'request-{ordinal:03d}.json')
+                        for ordinal, artifact in enumerate(artifacts))
+        for artifact, path in expected:
+            if (path.is_symlink() or artifact['stamp'][0] != str(path.resolve(strict=True))
+                    or operator_store.stamp(path) != artifact['stamp']):
+                raise ValueError('predecessor_artifact_changed')
+    if pins.profile_id == BENCHMARK_16K:
+        acceptance = manifest['acceptance']
+        path = pins.evidence.parent/'gufo-ar4k-benchmark-acceptance.json'
+        artifact = acceptance['artifact']
+        record = acceptance['record']
+        if (set(record) != {'profile_id', 'run', 'result_sha256', 'semantic_status', 'review_id'}
+                or any(record.get(k) != v for k, v in binding['predecessors'][0].items())
+                or record['semantic_status'] != 'passed'
+                or not isinstance(record['review_id'], str) or not record['review_id'].strip()
+                or artifact['sha256'] != pins.acceptance_sha256
+                or artifact['stamp'][0] != str(path.resolve(strict=True))
+                or operator_store.stamp(path) != artifact['stamp']):
+            raise ValueError('acceptance_changed')
+    elif 'acceptance' in manifest:
+        raise ValueError('unexpected_acceptance')
+
+
 def expected_qualification(pins: StorePins, guard_review_id: str) -> dict:
     """Exact record shape for an independent review to sign off later."""
     return {
@@ -248,6 +474,7 @@ def expected_qualification(pins: StorePins, guard_review_id: str) -> dict:
         'margin_report_sha256': pins.margin_sha256,
         'recovery_policy': 'per-run-recovery-stricter-runtime-v1',
         'guard_review_id': guard_review_id,
+        **_binding(pins),
     }
 
 
@@ -275,8 +502,9 @@ def _projector_absent(first_shard: Path):
 
 
 def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dict:
-    if pins.profile_id != PROFILE_ID:
-        raise ValueError('unknown_profile')
+    _binding(pins)
+    _incomplete_latches(pins)
+    benchmark = _benchmark_records(pins)
     source_validator()
     artifacts = [_checked_artifact(pins.build / pins.executable_name,
                                    pins.executable, 'server_executable')]
@@ -309,7 +537,7 @@ def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dic
     if (pins.evidence / 'attempt.json').exists():
         raise ValueError('prior_smoke_attempt')
     return {
-        'profile': PROFILE_ID,
+        'profile': pins.profile_id,
         'source': pins.source_commit,
         'executable': str((pins.build / pins.executable_name).resolve()),
         'sdk': str(pins.sdk),
@@ -323,6 +551,7 @@ def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dic
         'margin_report': margin,
         'qualification': qualification,
         'qualification_stamp': qualification_stamp,
+        **benchmark,
     }
 
 
@@ -360,7 +589,7 @@ def _current_run_markers(manifest: dict, pins: StorePins, current_run: Path) -> 
     persisted = operator_store.read_json(run_dir / 'manifest.json')
     expected = json.loads(json.dumps(manifest, allow_nan=False))
     if (not isinstance(attempt, dict) or attempt.get('run') != run
-            or attempt.get('profile') != PROFILE_ID
+            or attempt.get('profile') != pins.profile_id
             or not isinstance(latch, dict) or latch.get('run') != run
             or latch.get('original_baseline') != expected['operator']['original_baseline']
             or persisted != expected):
@@ -369,9 +598,12 @@ def _current_run_markers(manifest: dict, pins: StorePins, current_run: Path) -> 
 
 def _recheck_static(manifest: dict, pins: StorePins, *, source_validator,
                     current_run=None) -> None:
+    _binding(pins)
     source_validator()
     try:
-        if (manifest['profile'] != PROFILE_ID
+        _incomplete_latches(pins, manifest=manifest, current_run=current_run)
+        _recheck_benchmark(manifest, pins)
+        if (manifest['profile'] != pins.profile_id
                 or manifest['source'] != pins.source_commit
                 or manifest['executable'] != str((pins.build / pins.executable_name).resolve())
                 or manifest['sdk'] != str(pins.sdk)
@@ -443,17 +675,20 @@ def load_original_operator_baseline() -> Baseline:
 
 def _begin_run(run_dir: Path, manifest: dict, baseline: Baseline, pins: StorePins) -> None:
     run_dir = Path(run_dir)
+    _binding(pins)
+    _incomplete_latches(pins)
+    _recheck_benchmark(manifest, pins)
     if (pins.evidence / 'incomplete.json').exists():
         raise ValueError('prior_smoke_incomplete')
     if (pins.evidence / 'attempt.json').exists():
         raise ValueError('prior_smoke_attempt')
     if run_dir.parent.resolve() != pins.evidence.resolve() or not run_dir.is_dir():
         raise ValueError('invalid_smoke_run_directory')
-    if manifest['profile'] != PROFILE_ID or asdict(baseline) != manifest['operator']['original_baseline']:
+    if manifest['profile'] != pins.profile_id or asdict(baseline) != manifest['operator']['original_baseline']:
         raise ValueError('smoke_manifest_baseline_mismatch')
     # Write the permanent marker first. Any later write failure consumes the attempt.
     operator_store.atomic_json(pins.evidence / 'attempt.json',
-                               {'run': str(run_dir), 'profile': PROFILE_ID})
+                               {'run': str(run_dir), 'profile': pins.profile_id})
     operator_store.atomic_json(pins.evidence / 'incomplete.json',
                                {'run': str(run_dir), 'phase': 'before_create',
                                 'original_baseline': asdict(baseline)})

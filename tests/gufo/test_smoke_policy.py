@@ -31,6 +31,30 @@ class Owner:
 
 
 class SmokePolicyTests(unittest.TestCase):
+    def test_keyword_pins_bind_every_policy_path_without_changing_limits(self):
+        from gufo_control.benchmark_runtime import BoundPolicy
+        from test_benchmark_runtime import experiment, canonical, FOUR
+        pins = replace(smoke_store.PINS, profile_id=FOUR,
+            evidence=smoke_store.EVIDENCE.parent/'gufo-ar4k-benchmark-runs',
+            experiment_json=canonical(experiment()),
+            predecessors=(smoke_store.PredecessorPin(smoke_store.PROFILE_ID,
+                smoke_store.EVIDENCE/smoke_store.FIRST_PREDECESSOR_RUN,
+                smoke_store.FIRST_PREDECESSOR_SHA256),))
+        m = manifest(); m['profile'] = FOUR
+        m['qualification'] = smoke_store.expected_qualification(pins, 'review')
+        bound = BoundPolicy(pins)
+        p = bound.profile_from_manifest(m)
+        b = baseline(series()); f = frame(12)
+        kw = dict(now=f.query_end, now_utc=f.validated_utc)
+        self.assertEqual(bound.admission_reasons(p, b, f, **kw), [])
+        self.assertEqual(bound.runtime_reasons(p, b, f, Owner(), **kw), [])
+        self.assertEqual(bound.frame_numeric_reasons(p, b, f, **kw), [])
+        self.assertEqual(policy.admission_reasons(p, b, f, **kw), ['unqualified_profile'])
+        self.assertEqual(bound.runtime_reasons(replace(p, gpu_peak_bytes=69*GIB),
+                         b, f, Owner(), **kw), ['unqualified_profile'])
+        with self.assertRaisesRegex(ValueError, 'unsafe_bounds'):
+            BoundPolicy(replace(pins, bounds=dict(pins.bounds, host_gib=5)))
+
     def test_stricter_baseline_selects_each_limit_without_mutating_evidence(self):
         self.assertTrue(callable(getattr(policy, 'stricter_runtime_baseline', None)))
         original = baseline(series())

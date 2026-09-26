@@ -132,8 +132,11 @@ def _rising_residual(frames):
 
 class _Guardian:
     def __init__(self, *, store=smoke_store, owned_factory=None, query_factory=None,
-                 http_start=None, collect=collect_snapshot, port_check=check_port):
+                 http_start=None, collect=collect_snapshot, port_check=check_port,
+                 policy_module=policy, argv_builder=fixed_argv,
+                 profile_id=smoke_store.PROFILE_ID):
         self.store = store
+        self.policy, self.argv_builder, self.profile_id = policy_module, argv_builder, profile_id
         self.owned_factory = OwnedProcess if owned_factory is None else owned_factory
         self.query_factory = probe.Query if query_factory is None else query_factory
         self.http_start = smoke_http.start_smoke if http_start is None else http_start
@@ -199,7 +202,7 @@ class _Guardian:
         return entry
 
     def _proof(self, frame):
-        proof = policy.owned_inventory_frame(frame, self.child).snapshot['owned_inventory_proof']
+        proof = self.policy.owned_inventory_frame(frame, self.child).snapshot['owned_inventory_proof']
         proof['verified_monotonic'] = time.monotonic()
         return proof
 
@@ -238,14 +241,16 @@ class _Guardian:
             raise
 
     def _admit(self, frame, *, owned=False):
-        scoped = policy.owned_inventory_frame(frame, self.child) if owned else frame
-        result = policy.admission_decision(self.profile, self.runtime_baseline or self.original, scoped,
+        scoped = self.policy.owned_inventory_frame(frame, self.child) if owned else frame
+        result = self.policy.admission_decision(self.profile, self.runtime_baseline or self.original, scoped,
                                           now=time.monotonic(), now_utc=utcnow())
         self._decision(self.phase, frame, result)
 
     def _prelaunch(self):
         self.manifest = self.store.verify_static()
-        self.profile = policy.profile_from_manifest(self.manifest)
+        if self.manifest.get('profile') != self.profile_id:
+            raise ValueError('guardian_profile_mismatch')
+        self.profile = self.policy.profile_from_manifest(self.manifest)
         self.original = self.store.load_original_operator_baseline()
         env = operator_store.child_environment(dict(os.environ))
         self.port_check()
@@ -262,11 +267,11 @@ class _Guardian:
             entry.logged = True
             self._measure(entry)
         frames = [e.frame for e in self.entries if e.phase == 'baseline']
-        self.runtime_baseline = policy.stricter_runtime_baseline(self.original, self.current)
+        self.runtime_baseline = self.policy.stricter_runtime_baseline(self.original, self.current)
         # Collected frames precede current.last_end: validate them against the
         # original numeric limits at their own captured validation times.
         reasons = list(dict.fromkeys(reason for frame in frames
-            for reason in policy.frame_numeric_reasons(self.profile, self.original, frame,
+            for reason in self.policy.frame_numeric_reasons(self.profile, self.original, frame,
                 now=frame.query_end, now_utc=frame.validated_utc)))
         if _rising_residual(frames[-5:]): reasons.append('rising_residual')
         if reasons: raise ValueError('original_baseline:'+','.join(reasons))
@@ -286,21 +291,21 @@ class _Guardian:
             raise
         self.attempt_started = True
         self.secret = secrets.token_urlsafe(32)
-        self._write('argv.json', fixed_argv(self.secret))
+        self._write('argv.json', self.argv_builder(self.secret))
         self.port_check()
         self.store.recheck_static(self.manifest, current_run=self.run_dir)
         self._admit(final)  # Account for begin, stamps and evidence I/O before create.
-        reasons = policy.admission_reasons(self.profile, self.runtime_baseline or self.original, final,
+        reasons = self.policy.admission_reasons(self.profile, self.runtime_baseline or self.original, final,
                                            now=time.monotonic(), now_utc=utcnow())
         if reasons: raise ValueError('pre_create:'+','.join(reasons))
         try:
-            self.child = self.owned_factory(fixed_argv(self.secret), cwd=self.store.BUILD,
+            self.child = self.owned_factory(self.argv_builder(self.secret), cwd=self.store.BUILD,
                 env=env, stdout_path=self.run_dir/'stdout.log', stderr_path=self.run_dir/'stderr.log')
         except BaseException as error:
             self.child = getattr(error, 'owner', None)
             raise
         self.identity = deepcopy(self.child.identity)
-        policy.owned_inventory_frame(final, self.child)
+        self.policy.owned_inventory_frame(final, self.child)
         self._write('owned.json', self.identity)
         final = self._collect_one('final_preresume', owned=True)
         self._admit(final, owned=True)
@@ -309,8 +314,8 @@ class _Guardian:
         self._phase('resuming')
         self._admit(final, owned=True)
         # Decision writes themselves can age a sample; final check performs no I/O.
-        scoped = policy.owned_inventory_frame(final, self.child)
-        reasons = policy.admission_reasons(self.profile, self.runtime_baseline or self.original, scoped,
+        scoped = self.policy.owned_inventory_frame(final, self.child)
+        reasons = self.policy.admission_reasons(self.profile, self.runtime_baseline or self.original, scoped,
                                            now=time.monotonic(), now_utc=utcnow())
         if reasons: raise ValueError('pre_resume:'+','.join(reasons))
         self.resumed_at = time.monotonic()
@@ -323,7 +328,7 @@ class _Guardian:
         return final
 
     def _runtime(self, frame):
-        return policy.runtime_decision(self.profile, self.runtime_baseline or self.original, frame, self.child,
+        return self.policy.runtime_decision(self.profile, self.runtime_baseline or self.original, frame, self.child,
                                        now=time.monotonic(), now_utc=utcnow())
 
     def _peak(self, frame):
@@ -406,7 +411,7 @@ class _Guardian:
                 if entry.frame is not None and not entry.logged:
                     self._log(entry, 'pending_after_exit')
                     scoped = _historical_frame(entry.frame, entry.proof, self.identity, entry.started)
-                    reasons = policy.frame_numeric_reasons(self.profile, self.runtime_baseline or self.original, scoped,
+                    reasons = self.policy.frame_numeric_reasons(self.profile, self.runtime_baseline or self.original, scoped,
                         now=entry.frame.query_end, now_utc=entry.frame.validated_utc)
                     self._decision('pending_after_exit', entry.frame, dict(allowed=not reasons,
                         reasons=reasons, owned_inventory_proof=scoped.snapshot['owned_inventory_proof']))
@@ -480,13 +485,13 @@ class _Guardian:
             try:
                 value = self._collect_one('recovery')
                 if time.monotonic() > deadline: break
-                reasons = policy.frame_numeric_reasons(self.profile, self.runtime_baseline or self.original, value,
+                reasons = self.policy.frame_numeric_reasons(self.profile, self.runtime_baseline or self.original, value,
                     now=time.monotonic(), now_utc=utcnow())
                 if reasons:
                     self.recovery_samples = []
                     continue
                 self.recovery_samples = (self.recovery_samples+[value])[-5:]
-                reasons = policy.recovery_reasons(self.current or self.original, self.recovery_samples)
+                reasons = self.policy.recovery_reasons(self.current or self.original, self.recovery_samples)
                 if _rising_residual(self.recovery_samples): reasons.append('rising_residual')
                 if not reasons:
                     self.recovered = True
@@ -500,7 +505,7 @@ class _Guardian:
         collector_terminal = all(e.done.is_set() for e in self.entries)
         clean = (self.exited and collector_terminal and self.collector_deadline_confirmed
                  and self._workers_terminal() and self.recovered and self.evidence_ok)
-        return _redact(dict(profile=smoke_store.PROFILE_ID,
+        return _redact(dict(profile=self.profile_id,
             success=not self.failures and clean and self.http_result is not None
                     and self.http_result.get('success') is True,
             failure=';'.join(self.failures) or None,
