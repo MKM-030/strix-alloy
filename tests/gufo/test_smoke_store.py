@@ -1,0 +1,349 @@
+"""CPU-only checks for the one-attempt AR4k provenance store."""
+
+from dataclasses import asdict, replace
+from copy import deepcopy
+from hashlib import sha256
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from gufo_control import operator_store
+from gufo_control.operator_policy import Baseline
+from gufo_control import smoke_store as store
+
+
+def digest(data):
+    return sha256(data).hexdigest().upper()
+
+
+def tree_digest(contents):
+    lines = [f'library/gfx1151/{name}|{len(data)}|{sha256(data).hexdigest()}\n'
+             for name, data in sorted(contents.items())]
+    return digest(''.join(lines).encode())
+
+
+class StoreFixture:
+    def __init__(self, root):
+        self.root = Path(root)
+        self.source = self.root / 'source'
+        self.source.mkdir()
+        self.sdk = self.root / 'sdk'
+        self.build = self.root / 'build'
+        self.model = self.root / 'model'
+        self.host = self.root / 'system32'
+        self.evidence = self.root / 'smoke'
+        self.operators = self.root / 'operators'
+        for path in (self.sdk / 'bin', self.build, self.model, self.host,
+                     self.evidence, self.operators):
+            path.mkdir(parents=True, exist_ok=True)
+        self.base = Baseline(('adapter', 1, 2, 3, 4, 'name', 5),
+                             100, 200, (3, 4, 5), 0, 15)
+        self.exe = self.build / 'gufo.exe'
+        self.exe.write_bytes(b'exe')
+        self.dlls = {'sdk-a.dll': (b'sdk-a',), 'sdk-b.dll': (b'sdk-b',)}
+        self.vcpkg = {'vcpkg-a.dll': (b'vcpkg-a',)}
+        self.host_dll = self.host / 'libomp140.x86_64.dll'
+        self.host_dll.write_bytes(b'host-openmp')
+        for name, (content,) in self.dlls.items():
+            (self.sdk / 'bin' / name).write_bytes(content)
+            (self.build / name).write_bytes(content)
+        for name, (content,) in self.vcpkg.items():
+            (self.build / name).write_bytes(content)
+        self.trees = {}
+        for name in ('hipblaslt', 'rocblas'):
+            contents = {'a.bin': b'a', 'B.bin': b'B'}
+            self.trees[name] = contents
+            for base in (self.sdk / 'bin', self.build):
+                path = base / name / 'library' / 'gfx1151'
+                path.mkdir(parents=True)
+                for filename, content in contents.items():
+                    (path / filename).write_bytes(content)
+        self.shards = []
+        for n in range(3):
+            path = self.model / f'shard-{n}.gguf'
+            path.write_bytes(f'shard-{n}'.encode())
+            self.shards.append(path)
+        self.failed, self.gdn, self.iq = self._operator_results()
+        self.margin = self.root / 'margin.md'
+        self.margin.write_bytes(b'accepted margin')
+        self.qualification = self.root / 'qualification.json'
+        self.pins = store.StorePins(
+            profile_id='ar4k-iq4xs-single-smoke-v1', source=self.source,
+            source_commit='source-commit', sdk=self.sdk, build=self.build,
+            executable_name='gufo.exe', executable=(3, digest(b'exe')),
+            sdk_dlls={n: (len(c[0]), digest(c[0])) for n, c in self.dlls.items()},
+            vcpkg_dlls={n: (len(c[0]), digest(c[0])) for n, c in self.vcpkg.items()},
+            host_openmp=self.host_dll,
+            host_openmp_pin=(len(b'host-openmp'), digest(b'host-openmp')),
+            trees={n: (2, 2, tree_digest(c))
+                   for n, c in self.trees.items()},
+            first_shard=self.shards[0], model_revision='model-revision',
+            shard_names=tuple(p.name for p in self.shards),
+            model_descriptors=tuple({'name': p.name,
+                                     'size_bytes': p.stat().st_size,
+                                     'descriptor_sha256': digest(p.read_bytes())}
+                                    for p in self.shards),
+            evidence=self.evidence, operator_evidence=self.operators,
+            failed_run=self.failed.parent, gdn_run=self.gdn.parent,
+            iq_run=self.iq.parent,
+            failed_result_sha256=digest(self.failed.read_bytes()),
+            gdn_result_sha256=digest(self.gdn.read_bytes()),
+            iq_result_sha256=digest(self.iq.read_bytes()),
+            margin_report=self.margin, margin_sha256=digest(self.margin.read_bytes()),
+            qualification=self.qualification,
+            bounds={'gpu_gib': 68, 'host_gib': 4, 'shared_gib': 20,
+                    'prelaunch_gib': 49, 'runtime_gib': 24,
+                    'commit_reserve_gib': 12},
+        )
+        self._write_qualification()
+
+    def _operator_results(self):
+        base = json.loads(json.dumps(asdict(self.base)))
+        failed_run = self.operators / 'failed-gdn'
+        failed_run.mkdir()
+        operator_store.atomic_json(failed_run / 'result.json', {
+            'success': False, 'cleanup_confirmed': True,
+            'owned_exit_confirmed': True, 'collector_terminal': True,
+            'recovery_samples': 5, 'original_baseline': base,
+        })
+        for probe in ('gdn', 'iq-experts'):
+            run = self.operators / probe
+            run.mkdir()
+            result = {
+                'success': True, 'cleanup_confirmed': True,
+                'owned_exit_confirmed': True, 'collector_terminal': True,
+                'recovery_samples': 5, 'original_baseline': base,
+                'manifest': {'policy': operator_store.POLICY_ID,
+                             'source': 'source-commit', 'probe': probe,
+                             'executable': str(operator_store.BUILD /
+                                               operator_store.PROBES[probe].filename),
+                             'sdk': str(self.sdk),
+                             'runtime_policy': operator_store.RUNTIME_POLICY,
+                             'artifacts': [
+                                 {'sha256': operator_store.PROBES[probe].sha256},
+                                 *({'sha256': operator_store.DLL_SHA256[name]}
+                                   for name in operator_store.DLLS),
+                                 *({'sha256': operator_store.DLL_SHA256[name]}
+                                   for name in operator_store.DLLS)],
+                             },
+            }
+            operator_store.atomic_json(run / 'result.json', result)
+        operator_store.atomic_json(self.operators / 'sequence.json', {
+            'stage': 'iq-experts', 'success': True,
+            'policy': operator_store.POLICY_ID, 'source': 'source-commit',
+            'binary': operator_store.PROBES['iq-experts'].sha256,
+            'baseline': base, 'run': str(self.operators / 'iq-experts'),
+        })
+        return (failed_run / 'result.json', self.operators / 'gdn' / 'result.json',
+                self.operators / 'iq-experts' / 'result.json')
+
+    def _write_qualification(self):
+        operator_store.atomic_json(self.qualification,
+                                   store.expected_qualification(self.pins, 'review-123'))
+
+    def verify(self):
+        return store._verify_static(
+            self.pins,
+            source_validator=lambda: None,
+            model_validator=lambda first: store.ValidatedModel(
+                first, self.pins.model_revision),
+        )
+
+    def recheck(self, manifest):
+        return store._recheck_static(manifest, self.pins,
+                                     source_validator=lambda: None)
+
+
+class SmokeStoreTests(unittest.TestCase):
+    def test_valid_manifest_and_recheck(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            self.assertEqual(manifest['profile'], 'ar4k-iq4xs-single-smoke-v1')
+            self.assertEqual(manifest['model']['revision'], 'model-revision')
+            self.assertEqual(len(manifest['model']['shards']), 3)
+            self.assertEqual(manifest['qualification']['model_descriptors'][0],
+                             f.pins.model_descriptors[0])
+            self.assertEqual(manifest['qualification']['guard_review_id'], 'review-123')
+            self.assertEqual(len(manifest['artifacts']), 15)
+            f.recheck(manifest)
+            self.assertEqual(store._load_original_operator_baseline(f.pins), f.base)
+
+    def test_profile_and_source_are_fixed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            with self.assertRaisesRegex(ValueError, 'source_identity_changed'):
+                store._verify_static(f.pins,
+                    source_validator=lambda: (_ for _ in ()).throw(
+                        ValueError('source_identity_changed')),
+                    model_validator=lambda first: None)
+            changed = replace(f.pins, profile_id='second-profile')
+            with self.assertRaisesRegex(ValueError, 'profile'):
+                store._verify_static(changed, source_validator=lambda: None,
+                                     model_validator=lambda first: None)
+
+    def test_binary_and_runtime_fail_before_model_validator(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            targets = [f.exe, *(f.sdk / 'bin' / n for n in f.dlls),
+                       *(f.build / n for n in f.dlls),
+                       *(f.build / n for n in f.vcpkg), f.host_dll]
+            for target in targets:
+                original = target.read_bytes()
+                for mode in ('wrong', 'missing'):
+                    with self.subTest(target=target, mode=mode):
+                        if mode == 'wrong':
+                            target.write_bytes(b'bad')
+                        else:
+                            target.unlink()
+                        with self.assertRaisesRegex((ValueError, OSError),
+                                                    'artifact|missing'):
+                            f.verify()
+                        target.write_bytes(original)
+
+    def test_tree_checks_path_content_and_ordinal_sort(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            self.assertNotEqual(tree_digest(
+                {'a.bin': b'a', 'B.bin': b'B'}), tree_digest(
+                {'A.bin': b'a', 'b.bin': b'B'}))
+            for base in (f.sdk / 'bin', f.build):
+                target = base / 'hipblaslt/library/gfx1151/B.bin'
+                original = target.read_bytes()
+                target.write_bytes(b'changed')
+                with self.assertRaisesRegex(ValueError, 'tree'):
+                    f.verify()
+                target.write_bytes(original)
+                target.rename(target.with_name('C.bin'))
+                with self.assertRaisesRegex(ValueError, 'tree'):
+                    f.verify()
+                target.with_name('C.bin').rename(target)
+
+    def test_operator_results_and_sequence_are_authenticated(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            for target in (f.failed, f.gdn, f.iq):
+                original = target.read_bytes()
+                target.write_bytes(original + b' ')
+                with self.assertRaisesRegex(ValueError, 'operator_result_hash'):
+                    f.verify()
+                target.write_bytes(original)
+            result = operator_store.read_json(f.gdn)
+            result['cleanup_confirmed'] = False
+            operator_store.atomic_json(f.gdn, result)
+            f.pins = replace(f.pins, gdn_result_sha256=digest(f.gdn.read_bytes()))
+            with self.assertRaisesRegex(ValueError, 'operator_result_invalid'):
+                f.verify()
+
+    def test_sequence_stage_baseline_and_latch(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            sequence = f.operators / 'sequence.json'
+            state = operator_store.read_json(sequence)
+            state['stage'] = 'gdn'
+            operator_store.atomic_json(sequence, state)
+            with self.assertRaisesRegex(ValueError, 'operator_sequence'):
+                f.verify()
+            state['stage'] = 'iq-experts'
+            state['baseline']['available_min'] += 1
+            operator_store.atomic_json(sequence, state)
+            with self.assertRaisesRegex(ValueError, 'operator_baseline'):
+                f.verify()
+            state['baseline']['available_min'] -= 1
+            operator_store.atomic_json(sequence, state)
+            operator_store.atomic_json(f.operators / 'incomplete.json', {})
+            with self.assertRaisesRegex(ValueError, 'operator_incomplete'):
+                f.verify()
+
+    def test_failed_gdn_baseline_is_original(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            failed = operator_store.read_json(f.failed)
+            failed['original_baseline']['available_min'] += 1
+            operator_store.atomic_json(f.failed, failed)
+            f.pins = replace(f.pins, failed_result_sha256=digest(f.failed.read_bytes()))
+            with self.assertRaisesRegex(ValueError, 'operator_baseline'):
+                f.verify()
+
+    def test_qualification_is_fail_closed_and_stamped(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            record = operator_store.read_json(f.qualification)
+            record['guard_review_id'] = ''
+            operator_store.atomic_json(f.qualification, record)
+            with self.assertRaisesRegex(ValueError, 'guard_review'):
+                f.verify()
+            with self.assertRaisesRegex(ValueError, 'qualification_changed'):
+                f.recheck(manifest)
+
+    def test_recheck_detects_all_artifact_model_and_state_stamps(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            for target in [f.exe, f.sdk / 'bin/sdk-a.dll',
+                           f.build / 'rocblas/library/gfx1151/B.bin',
+                           *f.shards, f.failed, f.gdn, f.iq,
+                           f.operators / 'sequence.json', f.margin,
+                           f.qualification]:
+                with self.subTest(target=target):
+                    manifest = f.verify()
+                    original = target.read_bytes()
+                    target.write_bytes(original + b'changed')
+                    with self.assertRaises(ValueError):
+                        f.recheck(manifest)
+                    target.write_bytes(original)
+            manifest = f.verify()
+            (f.model / 'mmproj-BF16.gguf').write_bytes(b'projector')
+            with self.assertRaisesRegex(ValueError, 'projector'):
+                f.recheck(manifest)
+
+    def test_recheck_rejects_manifest_omission_and_new_tree_file(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            changed = deepcopy(manifest)
+            changed['artifacts'].pop()
+            with self.assertRaisesRegex(ValueError, 'manifest'):
+                f.recheck(changed)
+            changed = deepcopy(manifest)
+            changed['artifacts'][0]['stamp'][0] = str(f.margin)
+            with self.assertRaisesRegex(ValueError, 'manifest'):
+                f.recheck(changed)
+            target = f.build / 'hipblaslt/library/gfx1151/new.bin'
+            target.write_bytes(b'new')
+            with self.assertRaisesRegex(ValueError, 'manifest'):
+                f.recheck(manifest)
+
+    def test_one_attempt_marker_survives_confirmed_cleanup(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            run = f.evidence / 'run-one'
+            run.mkdir()
+            store._begin_run(run, manifest, f.base, f.pins)
+            with self.assertRaisesRegex(ValueError, 'incomplete'):
+                store._begin_run(f.evidence / 'run-two', manifest, f.base, f.pins)
+            store._finish_run(run, {'cleanup_confirmed': True, 'success': True}, f.pins)
+            self.assertFalse((f.evidence / 'incomplete.json').exists())
+            self.assertTrue((f.evidence / 'attempt.json').exists())
+            with self.assertRaisesRegex(ValueError, 'attempt'):
+                store._begin_run(f.evidence / 'run-two', manifest, f.base, f.pins)
+
+    def test_public_begin_rechecks_before_consuming_attempt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            run = f.evidence / 'run-one'
+            run.mkdir()
+            f.shards[0].write_bytes(b'changed')
+            with patch.object(store, 'PINS', f.pins), patch.object(
+                    operator_store, 'source_identity', return_value=None):
+                with self.assertRaisesRegex(ValueError, 'model_shard_changed'):
+                    store.begin_run(run, manifest, f.base)
+            self.assertFalse((f.evidence / 'attempt.json').exists())
+
+
+if __name__ == '__main__':
+    unittest.main()
