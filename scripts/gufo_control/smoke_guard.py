@@ -225,6 +225,8 @@ class _Guardian:
         end = getattr(entry.query, 'ended', None)
         duration = (end if entry.done.is_set() and end is not None else time.monotonic())-entry.started
         self.largest_query = max(self.largest_query, duration)
+        if duration > MAX_QUERY_SECONDS:
+            self.collector_deadline_confirmed = False
 
     def _log(self, entry, phase):
         try:

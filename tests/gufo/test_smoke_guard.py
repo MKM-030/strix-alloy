@@ -49,6 +49,7 @@ class Harness:
         self.create_error = None
         self.identity_error = False
         self.close_error = False
+        self.close_delay = 0
         self.child_exit = float('inf')
         self.http_delay = 3.0
         self.http_stuck = False
@@ -144,6 +145,7 @@ class Harness:
                 self.closed_at = h.clock.monotonic()
                 if h.close_error: raise TimeoutError('owned_exit_timeout')
                 self.closed = True
+                if h.close_delay: h.clock.sleep(h.close_delay)
             def inspect_modules(self, *, app_local_dir):
                 h.events.append('inspect')
                 start = h.clock.monotonic()
@@ -362,6 +364,52 @@ class GuardianTests(unittest.TestCase):
         self.h.http_delay = 1000
         self.h.http_cancel_delay = 9
         result = self.h.run()
+        self.assertFalse(result['cleanup_confirmed'])
+        self.assertTrue((self.h.root/'incomplete.json').exists())
+        logs = [json.loads(line) for line in (Path(result['run'])/'telemetry.jsonl').read_text().splitlines()]
+        self.assertTrue(any(v['phase'] == 'pending_after_exit' for v in logs))
+
+    def test_overdue_query_completing_during_owned_close_keeps_latch(self):
+        self.h.query_delay = lambda p, i: 3 if p == 'serving_attempt' else .1
+        self.h.http_delay = 1000
+        self.h.close_delay = 1.5
+        result = self.h.run()
+        self.assertIn('active_query_timeout', result['failure'])
+        self.assertTrue(result['collector_terminal'])
+        self.assertFalse(result['collector_cleanup_confirmed'])
+        self.assertFalse(result['cleanup_confirmed'])
+        self.assertTrue((self.h.root/'incomplete.json').exists())
+        query = next(q for q in self.h.queries if q.phase == 'serving_attempt')
+        self.assertLess(self.h.children[0].closed_at, query.ended)
+        self.assertLess(query.ended, self.h.children[0].closed_at+self.h.close_delay)
+        logs = [json.loads(line) for line in (Path(result['run'])/'telemetry.jsonl').read_text().splitlines()]
+        self.assertTrue(any(v['phase'] == 'pending_after_exit' for v in logs))
+
+    def test_on_time_query_first_observed_after_close_remains_clean(self):
+        self.h.query_delay = lambda p, i: 1.5 if p == 'serving_attempt' else .1
+        self.h.http_delay = 1.2
+        self.h.http_result = dict(success=False, error='synthetic_http_failure', post_attempted=True)
+        self.h.close_delay = 2.5
+        result = self.h.run()
+        self.assertTrue(result['collector_terminal'])
+        self.assertTrue(result['collector_cleanup_confirmed'])
+        self.assertTrue(result['cleanup_confirmed'], result)
+        self.assertFalse((self.h.root/'incomplete.json').exists())
+        query = next(q for q in self.h.queries if q.phase == 'serving_attempt')
+        self.assertLess(query.ended-query.started, 2)
+        self.assertGreater(self.h.children[0].closed_at+self.h.close_delay-query.started, 2)
+        logs = [json.loads(line) for line in (Path(result['run'])/'telemetry.jsonl').read_text().splitlines()]
+        self.assertTrue(any(v['phase'] == 'pending_after_exit' for v in logs))
+
+    def test_overdue_terminal_query_first_encountered_in_drain_keeps_latch(self):
+        self.h.query_delay = lambda p, i: 3 if p == 'serving_attempt' else .1
+        self.h.http_delay = 1.2
+        self.h.http_result = dict(success=False, error='synthetic_http_failure', post_attempted=True)
+        self.h.close_delay = 3.1
+        result = self.h.run()
+        self.assertIn('query_timeout', result['failure'])
+        self.assertTrue(result['collector_terminal'])
+        self.assertFalse(result['collector_cleanup_confirmed'])
         self.assertFalse(result['cleanup_confirmed'])
         self.assertTrue((self.h.root/'incomplete.json').exists())
         logs = [json.loads(line) for line in (Path(result['run'])/'telemetry.jsonl').read_text().splitlines()]
