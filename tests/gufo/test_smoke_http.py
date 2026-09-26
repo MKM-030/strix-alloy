@@ -1,4 +1,5 @@
 import json
+import inspect
 import socket
 import threading
 import time
@@ -714,6 +715,58 @@ class SmokeHttpTests(unittest.TestCase):
         self.assertEqual(len(connects), 3)
         self.assertEqual(len(sends), 1)
         self.assertEqual(len(posts), 0)
+
+
+class ReusableHelpersTests(unittest.TestCase):
+    def test_exchange_explicit_bounds_are_validated_before_connect(self):
+        self.assertIn("port", inspect.signature(smoke_http._exchange).parameters)
+        for kwargs in ({"host": "example.com"}, {"port": True}, {"port": 65536},
+                       {"request_limit": 262145}, {"request_limit": False}):
+            with self.subTest(kwargs=kwargs), patch.object(smoke_http.socket, "create_connection") as connect:
+                with self.assertRaises(smoke_http.SmokeError):
+                    smoke_http._exchange("POST", "/v1/completions", b"{}", API_KEY,
+                                         time.monotonic() + 1, threading.Event(), **kwargs)
+                connect.assert_not_called()
+
+    def test_custom_usage_limits_and_cache_policy(self):
+        self.assertIn("cache_policy", inspect.signature(smoke_http._validate_usage).parameters)
+        usage = {"prompt_tokens": 2048, "completion_tokens": 256,
+                 "gufo": {"prefill_tokens": 2000, "cache_hit": True}, "cached_tokens": 48}
+        metrics, errors, _ = smoke_http._validate_usage(usage, {}, max_prompt_tokens=8192,
+                                                       max_completion_tokens=256, cache_policy="allow")
+        self.assertEqual(errors, [])
+        self.assertEqual(metrics["cached_prompt_tokens"], 48)
+        _, errors, _ = smoke_http._validate_usage(usage, {}, max_prompt_tokens=2047,
+                                                  max_completion_tokens=255)
+        self.assertIn("cache_hit", errors)
+        self.assertIn("prompt_exceeds_2047", errors)
+        self.assertIn("completion_exceeds_255", errors)
+        for value in (0, True, 1.5, float("inf")):
+            with self.assertRaises(ValueError):
+                smoke_http._validate_usage({}, {}, max_prompt_tokens=value)
+
+    def test_rich_sse_retains_reasoning_tools_and_separate_arrival_times(self):
+        self.assertTrue(hasattr(smoke_http, "parse_sse_response"))
+        events = [
+            {"model": "local", "choices": [{"delta": {"reasoning_content": "denke"}}]},
+            {"model": "local", "choices": [{"delta": {"tool_calls": [
+                {"index": 0, "id": "call1", "type": "function", "function": {"name": "look", "arguments": "{\"x\":"}}]}}]},
+            {"choices": [{"delta": {"content": "ü", "tool_calls": [
+                {"index": 0, "function": {"name": "up", "arguments": "1}"}}]}}]},
+            {"choices": [{"delta": {}, "finish_reason": "tool_calls"}], "usage": {"prompt_tokens": 1}}]
+        parts = []
+        for i, event in enumerate(events):
+            raw = (b"data: " + json.dumps(event, ensure_ascii=False).encode() + b"\r\n\r\n")
+            parts.extend((bytes([byte]), 10 + i) for byte in raw)
+        parts.append((b"data: [DONE]\r\n\r\n", 14))
+        result = smoke_http.parse_sse_response(parts, 10)
+        self.assertEqual(result["reasoning_content"], "denke")
+        self.assertEqual(result["visible_answer"], "ü")
+        self.assertEqual(result["first_tool_call_ms"], 1000)
+        self.assertEqual(result["first_useful_output_ms"], 1000)
+        self.assertEqual(result["first_visible_content_ms"], 2000)
+        self.assertEqual(result["tool_calls"][0]["function"], {"name": "lookup", "arguments": '{"x":1}'})
+        self.assertEqual(len(smoke_http._parse_sse(parts, 10)), 5)
 
 
 if __name__ == "__main__":

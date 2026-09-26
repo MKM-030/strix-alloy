@@ -166,13 +166,23 @@ def _body_chunks(reader, headers):
             yield part, arrived
 
 
-def _exchange(method, path, body, key, deadline, cancel):
+def _exchange(method, path, body, key, deadline, cancel, *,
+              host=None, port=None, request_limit=None):
+    if host is not None and host != "127.0.0.1":
+        raise SmokeError("invalid_host")
+    if port is not None and (type(port) is not int or not 1 <= port <= 65535):
+        raise SmokeError("invalid_port")
+    if request_limit is not None and (type(request_limit) is not int or not 1 <= request_limit <= 262144):
+        raise SmokeError("invalid_request_limit")
+    host = HOST if host is None else host
+    port = PORT if port is None else port
+    request_limit = MAX_REQUEST if request_limit is None else request_limit
     if not key or any(ch.isspace() for ch in key) or "\r" in key or "\n" in key:
         raise SmokeError("invalid_private_key")
-    if body is not None and len(body) > MAX_REQUEST:
+    if body is not None and len(body) > request_limit:
         raise SmokeError("request_body_limit")
     _check(deadline, cancel)
-    headers = [f"{method} {path} HTTP/1.1", f"Host: {HOST}:{PORT}",
+    headers = [f"{method} {path} HTTP/1.1", f"Host: {host}:{port}",
                f"Authorization: Bearer {key}", "Connection: close",
                "Accept: application/json, text/event-stream"]
     if body is not None:
@@ -181,8 +191,9 @@ def _exchange(method, path, body, key, deadline, cancel):
     submitted = time.monotonic()
     reader = None
     connected = False
+    parts, status, response_headers = [], None, {}
     try:
-        with socket.create_connection((HOST, PORT), timeout=SOCKET_SLICE) as sock:
+        with socket.create_connection((host, port), timeout=SOCKET_SLICE) as sock:
             connected = True
             sock.settimeout(SOCKET_SLICE)
             _check(deadline, cancel)
@@ -222,12 +233,16 @@ def _exchange(method, path, body, key, deadline, cancel):
     except SmokeError as exc:
         if reader is not None:
             exc.raw_response = bytes(reader.raw)
+        exc.body_parts, exc.status, exc.headers = parts, status, response_headers
+        exc.submitted = submitted
         raise
     except (OSError, UnicodeError) as exc:
         code = ("connect_timeout" if not connected and isinstance(exc, TimeoutError)
                 else f"transport_{type(exc).__name__}")
-        raise SmokeError(code,
-                         bytes(reader.raw) if reader is not None else b"") from None
+        failure = SmokeError(code, bytes(reader.raw) if reader is not None else b"")
+        failure.body_parts, failure.status, failure.headers = parts, status, response_headers
+        failure.submitted = submitted
+        raise failure from None
 
 
 def _int_or_none(value):
@@ -248,7 +263,12 @@ def _redact(value, key):
     return value
 
 
-def _validate_usage(usage, timings):
+def _validate_usage(usage, timings, *, max_prompt_tokens=512,
+                    max_completion_tokens=64, cache_policy="cold"):
+    if (type(max_prompt_tokens) is not int or max_prompt_tokens <= 0
+            or type(max_completion_tokens) is not int or max_completion_tokens <= 0
+            or cache_policy not in ("cold", "allow")):
+        raise ValueError("invalid_usage_limits")
     problems = []
     unavailable = []
     if not isinstance(usage, dict) or not isinstance(timings, dict):
@@ -288,13 +308,13 @@ def _validate_usage(usage, timings):
         cached = legacy_cached if legacy_cached is not None else timing_cached
     if prompt is None or completion is None or prefill is None or cached is None:
         problems.append("required_token_count_unknown")
-    if prompt is not None and prompt > 512:
-        problems.append("prompt_exceeds_512")
-    if completion is not None and completion > 64:
-        problems.append("completion_exceeds_64")
-    if cached is not None and cached != 0:
+    if prompt is not None and prompt > max_prompt_tokens:
+        problems.append(f"prompt_exceeds_{max_prompt_tokens}")
+    if completion is not None and completion > max_completion_tokens:
+        problems.append(f"completion_exceeds_{max_completion_tokens}")
+    if cache_policy == "cold" and cached is not None and cached != 0:
         problems.append("cache_hit")
-    if gufo.get("cache_hit") is True or gufo.get("cache_disk_hit") is True:
+    if cache_policy == "cold" and (gufo.get("cache_hit") is True or gufo.get("cache_disk_hit") is True):
         problems.append("cache_hit")
     for name, a, b in (("prefill_disagrees", prefill, timing_prefill),
                        ("cached_disagrees", cached, legacy_cached),
@@ -325,6 +345,14 @@ def _validate_usage(usage, timings):
 
 
 def _strict_json(text):
+    def unique_object(pairs):
+        result = {}
+        for name, value in pairs:
+            if name in result:
+                raise ValueError("duplicate_json_key")
+            result[name] = value
+        return result
+
     def finite_float(number):
         value = float(number)
         if not math.isfinite(value):
@@ -334,7 +362,8 @@ def _strict_json(text):
     def reject_constant(_):
         raise ValueError("nonfinite_json_number")
 
-    return json.loads(text, parse_float=finite_float, parse_constant=reject_constant)
+    return json.loads(text, parse_float=finite_float, parse_constant=reject_constant,
+                      object_pairs_hook=unique_object)
 
 
 def _json_object(body):
@@ -352,10 +381,41 @@ def _capture(result, path, status, body):
                                 "raw_response": body.decode("utf-8", "replace")})
 
 
-def _parse_sse(parts, submitted):
+def _merge_tool_calls(calls, tools, *, streaming=True):
+    """Accumulate protocol fragments without interpreting or executing arguments."""
+    if not isinstance(calls, list):
+        raise SmokeError("malformed_tool_calls")
+    for position, call in enumerate(calls):
+        if not isinstance(call, dict):
+            raise SmokeError("malformed_tool_calls")
+        index = call.get("index") if streaming else position
+        if type(index) is not int or index < 0:
+            raise SmokeError("malformed_tool_index")
+        tool = tools.setdefault(index, {"index": index, "function": {"name": "", "arguments": ""}})
+        for field in ("id", "type"):
+            if field in call:
+                value = call[field]
+                if (not isinstance(value, str) or not value
+                        or (field == "type" and value != "function")
+                        or (field in tool and tool[field] != value)):
+                    raise SmokeError("conflicting_or_bad_tool_" + field)
+                tool[field] = value
+        if "function" in call:
+            function = call["function"]
+            if not isinstance(function, dict) or any(key not in ("name", "arguments") for key in function):
+                raise SmokeError("malformed_tool_function")
+            for field, value in function.items():
+                if not isinstance(value, str):
+                    raise SmokeError("malformed_tool_function")
+                tool["function"][field] += value
+
+
+def parse_sse_response(parts, submitted):
     pending = bytearray()
     content = []
+    reasoning, tools, models = [], {}, []
     first_visible = None
+    first_tool = None
     terminal = None
     usage = None
     timings = None
@@ -387,6 +447,10 @@ def _parse_sse(parts, submitted):
                 raise SmokeError("malformed_sse_json")
             if "error" in event:
                 raise SmokeError("sse_server_error")
+            if "model" in event:
+                if not isinstance(event["model"], str) or not event["model"]:
+                    raise SmokeError("malformed_response_model")
+                models.append(event["model"])
             choices = event.get("choices")
             if not isinstance(choices, list):
                 raise SmokeError("malformed_sse_choices")
@@ -394,6 +458,10 @@ def _parse_sse(parts, submitted):
                 if len(choices) != 1 or not isinstance(choices[0], dict):
                     raise SmokeError("malformed_sse_choices")
                 choice = choices[0]
+                if "index" in choice and (type(choice["index"]) is not int or choice["index"] != 0):
+                    raise SmokeError("malformed_sse_choices")
+                if terminal is not None:
+                    raise SmokeError("duplicate_or_bad_terminal")
                 delta = choice.get("delta", {})
                 if not isinstance(delta, dict):
                     raise SmokeError("malformed_sse_delta")
@@ -404,6 +472,15 @@ def _parse_sse(parts, submitted):
                     if visible and first_visible is None:
                         first_visible = 1000 * (arrived - submitted)
                     content.append(visible)
+                thought = delta.get("reasoning_content")
+                if thought is not None:
+                    if not isinstance(thought, str):
+                        raise SmokeError("malformed_sse_delta")
+                    reasoning.append(thought)
+                if "tool_calls" in delta:
+                    _merge_tool_calls(delta["tool_calls"], tools)
+                    if delta["tool_calls"] and first_tool is None:
+                        first_tool = 1000 * (arrived - submitted)
                 reason = choice.get("finish_reason")
                 if reason is not None:
                     if terminal is not None or not isinstance(reason, str):
@@ -420,7 +497,19 @@ def _parse_sse(parts, submitted):
                 timings = incoming
     if bytes(pending).strip() or not done or terminal is None or usage is None:
         raise SmokeError("incomplete_sse")
-    return "".join(content), first_visible, terminal, usage, {} if timings is None else timings
+    useful = [value for value in (first_visible, first_tool) if value is not None]
+    return {"visible_answer": "".join(content), "reasoning_content": "".join(reasoning),
+            "first_visible_content_ms": first_visible, "first_tool_call_ms": first_tool,
+            "first_useful_output_ms": min(useful) if useful else None,
+            "finish_reason": terminal, "tool_calls": [tools[i] for i in sorted(tools)],
+            "usage": usage, "timings": {} if timings is None else timings,
+            "observed_models": models}
+
+
+def _parse_sse(parts, submitted):
+    result = parse_sse_response(parts, submitted)
+    return tuple(result[name] for name in ("visible_answer", "first_visible_content_ms",
+                                           "finish_reason", "usage", "timings"))
 
 
 class SmokeTask:
