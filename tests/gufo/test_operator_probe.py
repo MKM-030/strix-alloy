@@ -97,6 +97,31 @@ class RunnerTests(unittest.TestCase):
                 self.assertFalse(result['cleanup_confirmed'])
         finally: release.set()
 
+    def test_blocked_recovery_reports_collector_nonterminal(self):
+        release = threading.Event()
+        finished = threading.Event()
+        def blocked():
+            try:
+                release.wait(3)
+                return snapshot()
+            finally:
+                finished.set()
+        try:
+            with tempfile.TemporaryDirectory() as folder:
+                child = FakeChild(finished=True)
+                result = self.invoke(folder, child, blocked, MAX_QUERY_SECONDS=0.05)
+                self.assertTrue(child.closed)
+                self.assertTrue(result['owned_exit_confirmed'])
+                self.assertFalse(finished.is_set())
+                self.assertFalse(result['collector_terminal'])
+                self.assertFalse(result['cleanup_confirmed'])
+                self.assertFalse(result['success'])
+                self.assertIn('active_query_timeout', result['failure'])
+                self.assertIn('collector_still_active', result['failure'])
+        finally:
+            release.set()
+            self.assertTrue(finished.wait(1))
+
     def test_runtime_rejection_and_recovery_residual(self):
         with tempfile.TemporaryDirectory() as folder:
             child = FakeChild(finished=False)

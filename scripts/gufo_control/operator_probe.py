@@ -65,16 +65,19 @@ def log_frame(path, frame, phase):
         stream.flush()
 
 
-def collect_one(collect, log_path, phase, previous_start=None):
-    if previous_start is not None:
-        time.sleep(max(0, previous_start+QUERY_INTERVAL-time.monotonic()))
-    query = Query(collect)
+def finish_query(query, log_path, phase):
     while True:
         value = query.poll()
         if value is not None:
             log_frame(log_path, value, phase)
             return value
         time.sleep(POLL_SECONDS)
+
+
+def collect_one(collect, log_path, phase, previous_start=None):
+    if previous_start is not None:
+        time.sleep(max(0, previous_start+QUERY_INTERVAL-time.monotonic()))
+    return finish_query(Query(collect), log_path, phase)
 
 
 def collect_baseline(collect, log_path):
@@ -193,7 +196,14 @@ def _run_owned(probe, base, final, run_dir, manifest, env, *,
         end = time.monotonic()+RECOVERY_SECONDS
         try:
             while time.monotonic() < end:
-                frame = collect_one(collect, evidence, 'recovery', last_query_start)
+                time.sleep(max(0, last_query_start+QUERY_INTERVAL-time.monotonic()))
+                query = Query(collect)
+                try:
+                    frame = finish_query(query, evidence, 'recovery')
+                finally:
+                    collector_terminal = query.done.is_set()
+                    if not collector_terminal:
+                        failure = (failure or '')+';collector_still_active'
                 last_query_start = frame.query_start
                 recovery_samples = (recovery_samples+[frame])[-5:]
                 if time.monotonic() > end:
