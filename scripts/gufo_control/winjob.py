@@ -3,9 +3,12 @@
 import ctypes as C
 from ctypes import wintypes as W
 import contextlib
+import ntpath
 import os
 from pathlib import Path
 import subprocess
+import threading
+import time
 
 
 class _BasicLimit(C.Structure):
@@ -68,6 +71,10 @@ def _api():
         "TerminateProcess": ([W.HANDLE, W.UINT], W.BOOL),
         "WaitForSingleObject": ([W.HANDLE, W.DWORD], W.DWORD),
         "CloseHandle": ([W.HANDLE], W.BOOL),
+        "GetCurrentProcess": ([], W.HANDLE),
+        "GetProcessId": ([W.HANDLE], W.DWORD),
+        "DuplicateHandle": ([W.HANDLE, W.HANDLE, W.HANDLE, C.POINTER(W.HANDLE),
+                              W.DWORD, W.BOOL, W.DWORD], W.BOOL),
         "GetProcessTimes": ([W.HANDLE] + [C.POINTER(W.FILETIME)] * 4, W.BOOL),
         "QueryFullProcessImageNameW": ([W.HANDLE, W.DWORD, W.LPWSTR, C.POINTER(W.DWORD)], W.BOOL),
     }
@@ -87,6 +94,121 @@ def _timeout(value):
     if type(value) is not int or not 0 <= value <= 60000:
         raise ValueError("timeout must be an integer from 0 through 60000 ms")
     return value
+
+
+def _normalized_path(value):
+    return ntpath.normcase(ntpath.normpath(value))
+
+
+def _module_api():
+    api = C.WinDLL('psapi', use_last_error=True)
+    api.EnumProcessModulesEx.argtypes = [W.HANDLE, C.POINTER(W.HMODULE), W.DWORD,
+                                       C.POINTER(W.DWORD), W.DWORD]
+    api.EnumProcessModulesEx.restype = W.BOOL
+    api.GetModuleFileNameExW.argtypes = [W.HANDLE, W.HMODULE, W.LPWSTR, W.DWORD]
+    api.GetModuleFileNameExW.restype = W.DWORD
+    return api
+
+
+def _module_paths(api, process, deadline) -> dict[str, str]:
+    """Bounded best-effort snapshot using only the independent process handle."""
+    psapi = _module_api()
+    handles = (W.HMODULE * 4096)()
+    needed = W.DWORD()
+    if time.monotonic() > deadline:
+        raise TimeoutError('inspection_timeout')
+    _check(psapi.EnumProcessModulesEx(process, handles, C.sizeof(handles), C.byref(needed), 3))
+    if not 0 < needed.value <= C.sizeof(handles) or needed.value % C.sizeof(W.HMODULE):
+        raise ValueError('module_count_unknown')
+    paths = {}
+    try:
+        for index in range(needed.value // C.sizeof(W.HMODULE)):
+            if time.monotonic() > deadline:
+                raise TimeoutError('inspection_timeout')
+            path = C.create_unicode_buffer(32768)
+            length = _check(psapi.GetModuleFileNameExW(process, handles[index], path, len(path)))
+            if length >= len(path)-1 or not ntpath.isabs(path.value):
+                raise ValueError('module_path_unknown')
+            name = ntpath.basename(path.value).lower()
+            if name in paths and _normalized_path(paths[name]) != _normalized_path(path.value):
+                # Preserve BOTH paths as evidence before failing inconclusive.
+                # The classifier must still fail any observed external HIP DLL.
+                paths[name + '#duplicate'] = path.value
+                raise ValueError('ambiguous_module_name')
+            paths[name] = path.value
+    except BaseException as error:
+        error.modules = paths
+        raise
+    return paths
+
+
+def _external_hip(paths, app_local_dir):
+    return any(ntpath.basename(path).lower() == 'amdhip64_7.dll'
+               and _normalized_path(ntpath.dirname(path)) != app_local_dir
+               for path in paths.values())
+
+
+class ModuleInspectionTask:
+    """Daemon result plus independent terminal and duplicate-close evidence.
+
+    done does not imply duplicate_closed: CloseHandle itself can fail. Native API
+    calls cannot be forcibly interrupted; the guardian must enforce deadline,
+    stop its job immediately, and keep its latch if this task remains unfinished.
+    """
+    def __init__(self):
+        self.done = threading.Event()
+        self.duplicate_closed = threading.Event()
+        self.duplicate_closed.set()  # No handle exists before duplication.
+        self.deadline = time.monotonic() + 2.0
+        self.result = None
+
+    def snapshot(self, *, now=None) -> dict:
+        terminal = self.done.is_set()
+        if terminal:
+            result = dict(self.result)
+            result['modules'] = dict(result['modules'])
+        else:
+            expired = (time.monotonic() if now is None else now) > self.deadline
+            result = dict(status='unknown' if expired else 'pending',
+                reason='inspection_timeout' if expired else 'inspection_pending', modules={})
+        return dict(result, terminal=terminal,
+                    duplicate_handle_closed=self.duplicate_closed.is_set())
+
+
+def _inspect_modules(task, api, duplicate, app_local_dir):
+    # This worker has no OwnedProcess reference and never touches the original
+    # process handle or job. Its duplicate is non-inheritable and read-only.
+    result = dict(status='unknown', reason='inspection_unavailable', modules={})
+    try:
+        paths = _module_paths(api, duplicate, task.deadline)
+        result['modules'] = paths
+        hip = paths.get('amdhip64_7.dll')
+        if _external_hip(paths, app_local_dir):
+            result.update(status='failed', reason='hip_module_outside_app_local')
+        elif time.monotonic() > task.deadline:
+            result.update(reason='inspection_timeout')
+        elif api.WaitForSingleObject(duplicate, 0) != 258:
+            result.update(reason='process_not_live')
+        elif hip is None:
+            result.update(reason='hip_module_not_observed')
+        else:
+            result.update(status='verified', reason='app_local_hip_observed')
+    except BaseException as error:
+        result['modules'] = dict(getattr(error, 'modules', {}))
+        result.update(reason='inspection_timeout' if isinstance(error, TimeoutError)
+                      else 'inspection_unavailable', error=type(error).__name__)
+        if _external_hip(result['modules'], app_local_dir):
+            result.update(status='failed', reason='hip_module_outside_app_local')
+    finally:
+        try:
+            _check(api.CloseHandle(duplicate))
+            task.duplicate_closed.set()
+        except BaseException as error:
+            result['duplicate_close_error'] = type(error).__name__
+            if result['status'] != 'failed':
+                result.update(status='unknown', reason='duplicate_close_unconfirmed')
+        task.result = result
+        task.done.set()
 
 
 @contextlib.contextmanager
@@ -222,6 +344,68 @@ class OwnedProcess:
                 raise RuntimeError(f"unexpected suspend count {count}; cleanup unconfirmed") from cleanup
             raise OSError(f"unexpected primary-thread suspend count: {count}")
         self._resumed = True
+
+    def verify_live_identity(self) -> dict:
+        """Prove recorded identity against the retained handle, never a PID open."""
+        if self._closed or not self._process or self._recovery_only:
+            raise RuntimeError('owned process handle unavailable')
+        api, process = self._api, self._process
+        if api.WaitForSingleObject(process, 0) != 258:
+            raise ValueError('owned_process_not_live')
+        pid = int(_check(api.GetProcessId(process)))
+        times = [W.FILETIME() for _ in range(4)]
+        _check(api.GetProcessTimes(process, *(C.byref(t) for t in times)))
+        image = C.create_unicode_buffer(32768)
+        length = W.DWORD(len(image))
+        _check(api.QueryFullProcessImageNameW(process, 0, image, C.byref(length)))
+        live = dict(pid=pid, creation_time_100ns=(times[0].dwHighDateTime << 32) |
+                    times[0].dwLowDateTime, executable=image.value)
+        recorded = self.identity
+        if (not isinstance(recorded, dict)
+                or any(type(recorded.get(k)) is not int or recorded[k] != live[k]
+                       for k in ('pid', 'creation_time_100ns'))
+                or not isinstance(recorded.get('executable'), str)
+                or _normalized_path(recorded['executable']) != _normalized_path(live['executable'])
+                or api.WaitForSingleObject(process, 0) != 258):
+            raise ValueError('owned_identity_mismatch')
+        return live
+
+    def inspect_modules(self, *, app_local_dir: str | Path) -> ModuleInspectionTask:
+        """Duplicate only the process handle synchronously, then inspect off-thread.
+
+        Call from the guardian thread after its first accepted live frame. All
+        owner methods (including close) remain guardian-thread operations.
+        """
+        self.verify_live_identity()
+        directory = _normalized_path(str(app_local_dir))
+        if not ntpath.isabs(directory):
+            raise ValueError('app-local directory must be absolute')
+        task = ModuleInspectionTask()
+        api = self._api
+        duplicate = W.HANDLE()
+        try:
+            current = api.GetCurrentProcess()
+            # SYNCHRONIZE | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ.
+            # No Job duplicate, inheritance, terminate access or CLOSE_SOURCE.
+            _check(api.DuplicateHandle(current, self._process, current,
+                                       C.byref(duplicate), 0x100410, False, 0))
+            task.duplicate_closed.clear()
+            worker = threading.Thread(target=_inspect_modules,
+                args=(task, api, duplicate.value, directory), daemon=True,
+                name='owned-module-inspection')
+            worker.start()
+        except BaseException as error:
+            result = dict(status='unknown', reason='inspection_start_failed',
+                          modules={}, error=type(error).__name__)
+            if duplicate.value:
+                try:
+                    _check(api.CloseHandle(duplicate))
+                    task.duplicate_closed.set()
+                except BaseException:
+                    result['reason'] = 'duplicate_close_unconfirmed'
+            task.result = result
+            task.done.set()
+        return task
 
     def wait(self, timeout_ms: int = 0) -> bool:
         timeout_ms = _timeout(timeout_ms)
