@@ -61,12 +61,28 @@ BENCHMARK_4K = 'ar4k-iq4xs-correctness-pp1-v2'
 BENCHMARK_16K = 'ar16k-iq4xs-pp1-cache-v3'
 MTP_4K = 'mtp4k-iq4xs-draft1-bilingual-v1'
 MTP_BOUNDS = dict(BOUNDS, gpu_gib=71)
+MATCHED_AR = 'matched4k-iq4xs-ar-v1'
+MATCHED_MTP = 'matched4k-iq4xs-mtp-length-d1-v1'
+MATCHED_MTP_BOUNDS = dict(BOUNDS, gpu_gib=72)
+MATCHED_MARGIN_SHA256 = '49433BB54E71F7F27418FEC63E71DA98F4C372F31E19E6A95292E21148874344'
 MTP_MARGIN_SHA256 = '7EC8175FFFC356058A0CA8F07B02F3A20AE3E8B88F44F9357D2E13C39F2E8AF6'
 MTP_PREDECESSOR_SHA256 = '692149EEB38F89E662D9428A725533F14793680F5C70E8477A3B53E2DE8B04F3'
 PROFILE_ROOTS = {PROFILE_ID: 'gufo-ar4k-http-slots-smoke-runs',
                  BENCHMARK_4K: 'gufo-ar4k-benchmark-v2-runs',
                  BENCHMARK_16K: 'gufo-ar16k-benchmark-v3-runs',
-                 MTP_4K: 'gufo-mtp4k-stage-v1-runs'}
+                 MTP_4K: 'gufo-mtp4k-stage-v1-runs',
+                 MATCHED_AR: 'gufo-matched-ar4k-v1-runs',
+                 MATCHED_MTP: 'gufo-matched-mtp4k-v1-runs'}
+
+
+def profile_bounds(profile_id):
+    if profile_id == MTP_4K:
+        return MTP_BOUNDS
+    if profile_id == MATCHED_MTP:
+        return MATCHED_MTP_BOUNDS
+    if profile_id in (PROFILE_ID, BENCHMARK_4K, BENCHMARK_16K, MATCHED_AR):
+        return BOUNDS
+    raise ValueError('unknown_profile')
 FIRST_PREDECESSOR_RUN = '20260926T164942Z-a4d64a8f565248bdb508895b6f3ec931'
 FIRST_PREDECESSOR_SHA256 = '58B222AA96BE4A84F4349697A9914B20E1953ECC7464085A4BE9984819121FBF'
 
@@ -271,9 +287,13 @@ def _experiment(value, profile_id):
         canonical = json.dumps(parsed, sort_keys=True, separators=(',', ':'), allow_nan=False)
     except (ValueError, TypeError) as error:
         raise ValueError('experiment_invalid') from error
-    if profile_id == MTP_4K:
-        from . import mtp_stage
-        expected = mtp_stage.experiment_definition()
+    if profile_id in (MTP_4K, MATCHED_AR, MATCHED_MTP):
+        if profile_id == MTP_4K:
+            from . import mtp_stage
+            expected = mtp_stage.experiment_definition()
+        else:
+            from . import matched_profile
+            expected = matched_profile.experiment_definition(profile_id)
         if (not isinstance(parsed, dict) or parsed.keys() != expected.keys()
                 or canonical != value or any(type(parsed[k]) is not type(v) or parsed[k] != v
                                               for k, v in expected.items())):
@@ -299,20 +319,23 @@ def _experiment(value, profile_id):
 def _binding(pins):
     if pins.profile_id not in PROFILE_ROOTS:
         raise ValueError('unknown_profile')
-    bounds = MTP_BOUNDS if pins.profile_id == MTP_4K else BOUNDS
+    bounds = profile_bounds(pins.profile_id)
     if (not isinstance(pins.bounds, dict) or pins.bounds.keys() != bounds.keys()
             or any(type(pins.bounds[k]) is not int or pins.bounds[k] != v
                    for k, v in bounds.items())):
         raise ValueError('unsafe_bounds')
-    if pins.profile_id == MTP_4K:
+    if pins.profile_id in (MTP_4K, MATCHED_MTP):
+        margin_sha = MTP_MARGIN_SHA256 if pins.profile_id == MTP_4K else MATCHED_MARGIN_SHA256
+        margin_path = (ROOT/'reports/gufo-mtp4k-staged-envelope-review-20260926.md'
+            if pins.profile_id == MTP_4K else ROOT/'reports/gufo-matched-mtp-envelope-review-20260926.md')
         if (not isinstance(pins.sidecar, SidecarPin) or pins.sidecar.path != MTP_SIDECAR.path
                 or any(type(getattr(pins.sidecar, key)) is not int or
                        getattr(pins.sidecar, key) != getattr(MTP_SIDECAR, key)
                        for key in ('size_bytes', 'descriptor_end', 'tensor_count'))
                 or pins.sidecar.descriptor_sha256 != MTP_SIDECAR.descriptor_sha256
                 or pins.model_revision != AR4K_PINS.revision
-                or pins.margin_sha256 != MTP_MARGIN_SHA256
-                or pins.margin_report != ROOT/'reports/gufo-mtp4k-staged-envelope-review-20260926.md'):
+                or pins.margin_sha256 != margin_sha
+                or pins.margin_report != margin_path):
             raise ValueError('mtp_identity_invalid')
         stamp = pins.sidecar_stamp
         if (type(stamp) is not tuple or len(stamp) != 3
@@ -322,6 +345,9 @@ def _binding(pins):
             raise ValueError('model_sidecar_stamp_invalid')
     elif pins.sidecar is not None or pins.sidecar_stamp is not None:
         raise ValueError('unexpected_sidecar')
+    if pins.profile_id == MATCHED_AR and (pins.margin_sha256 != MATCHED_MARGIN_SHA256
+            or pins.margin_report != ROOT/'reports/gufo-matched-mtp-envelope-review-20260926.md'):
+        raise ValueError('matched_margin_invalid')
     if pins.profile_id == PROFILE_ID:
         if pins.experiment_json is not None or pins.predecessors != () or pins.acceptance_sha256 is not None:
             raise ValueError('legacy_benchmark_binding')
@@ -329,6 +355,12 @@ def _binding(pins):
     experiment = _experiment(pins.experiment_json, pins.profile_id)
     if not pins.evidence.is_absolute() or pins.evidence.name != PROFILE_ROOTS[pins.profile_id]:
         raise ValueError('benchmark_root_invalid')
+    if pins.profile_id in (MATCHED_AR, MATCHED_MTP) and (
+            pins.evidence != ROOT/'reports'/PROFILE_ROOTS[pins.profile_id]
+            or pins.qualification != ROOT/'reports'/(
+                'gufo-matched-ar4k-v1-qualification.json' if pins.profile_id == MATCHED_AR
+                else 'gufo-matched-mtp4k-v1-qualification.json')):
+        raise ValueError('matched_paths_invalid')
     if type(pins.predecessors) is not tuple or len(pins.predecessors) != 1:
         raise ValueError('predecessor_missing')
     predecessor = pins.predecessors[0]
@@ -337,17 +369,17 @@ def _binding(pins):
             or not isinstance(predecessor.run, Path) or not predecessor.run.is_absolute()
             or not _digest_valid(predecessor.result_sha256)):
         raise ValueError('predecessor_identity_invalid')
-    if pins.profile_id in (BENCHMARK_16K, MTP_4K):
+    if pins.profile_id in (BENCHMARK_16K, MTP_4K, MATCHED_AR, MATCHED_MTP):
         if not _digest_valid(pins.acceptance_sha256):
             raise ValueError('acceptance_digest_missing')
-        if pins.profile_id == MTP_4K and predecessor.result_sha256 != MTP_PREDECESSOR_SHA256:
+        if pins.profile_id in (MTP_4K, MATCHED_AR, MATCHED_MTP) and predecessor.result_sha256 != MTP_PREDECESSOR_SHA256:
             raise ValueError('mtp_predecessor_identity_invalid')
     elif pins.acceptance_sha256 is not None:
         raise ValueError('unexpected_acceptance')
     result = dict(experiment=experiment, predecessors=[dict(
         profile_id=predecessor.profile_id, run=str(predecessor.run),
         result_sha256=predecessor.result_sha256)])
-    if pins.profile_id in (BENCHMARK_16K, MTP_4K):
+    if pins.profile_id in (BENCHMARK_16K, MTP_4K, MATCHED_AR, MATCHED_MTP):
         result['acceptance_sha256'] = pins.acceptance_sha256
     return result
 
@@ -437,7 +469,7 @@ def _benchmark_records(pins):
     if not binding:
         return {}
     result = dict(experiment=binding['experiment'], predecessors=_predecessor_records(pins))
-    if pins.profile_id in (BENCHMARK_16K, MTP_4K):
+    if pins.profile_id in (BENCHMARK_16K, MTP_4K, MATCHED_AR, MATCHED_MTP):
         path = pins.evidence.parent/'gufo-ar4k-benchmark-acceptance.json'
         if path.is_symlink() or path.resolve(strict=True).parent != path.parent:
             raise ValueError('acceptance_path_invalid')
@@ -486,7 +518,7 @@ def _recheck_benchmark(manifest, pins):
             if (path.is_symlink() or artifact['stamp'][0] != str(path.resolve(strict=True))
                     or operator_store.stamp(path) != artifact['stamp']):
                 raise ValueError('predecessor_artifact_changed')
-    if pins.profile_id in (BENCHMARK_16K, MTP_4K):
+    if pins.profile_id in (BENCHMARK_16K, MTP_4K, MATCHED_AR, MATCHED_MTP):
         acceptance = manifest['acceptance']
         path = pins.evidence.parent/'gufo-ar4k-benchmark-acceptance.json'
         artifact = acceptance['artifact']

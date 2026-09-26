@@ -81,7 +81,7 @@ def _assess(row, observation, definition):
     return correctness, errors
 
 
-def _summarize(rows):
+def _summarize(rows, *, matched=False):
     groups={}
     for row in rows:
         key=(row['kind'],row['case'],row['mode'],row['target_prompt_tokens'],row['cache_prompt'])
@@ -91,21 +91,32 @@ def _summarize(rows):
         metric_names=sorted({k for row in members for k in row.get('metrics',{})})
         metrics={}
         for name in metric_names:
-            values=[row.get('metrics',{}).get(name) for row in members if row['status']=='completed']
+            values=[row.get('metrics',{}).get(name) for row in members if row['status']=='completed'
+                and (not matched or row.get('matched_evidence',{}).get('quality_failed') is False)]
             values=[v for v in values if type(v) in (int,float) and math.isfinite(v)]
             metrics[name]=dict(n=len(values),mean=statistics.mean(values) if values else None,
                 sample_sd=statistics.stdev(values) if len(values)>=2 else None)
-        result.append(dict(kind=key[0],case=key[1],mode=key[2],target_prompt_tokens=key[3],
+        group=dict(kind=key[0],case=key[1],mode=key[2],target_prompt_tokens=key[3],
             cache_prompt=key[4],ordinals=[r['ordinal'] for r in members],
             valid=sum(r['status']=='completed' for r in members),failed=sum(r['status']=='failed' for r in members),
-            not_run=sum(r['status']=='not_run' for r in members),metrics=metrics))
+            not_run=sum(r['status']=='not_run' for r in members),metrics=metrics)
+        if matched:
+            group['metrics_basis']='quality_eligible_completed_rows'
+            group['quality_failed']=sum(r.get('matched_evidence',{}).get('quality_failed') is True for r in members)
+            group['quality_eligible']=sum(r['status']=='completed' and
+                r.get('matched_evidence',{}).get('quality_failed') is False for r in members)
+        result.append(group)
     return result
 
 
 def start_suite(*, profile_id: str, evidence_dir: Path, api_key: str,
                 startup_deadline: float, lifetime_deadline: float,
-                cancel: threading.Event | None = None):
+                cancel: threading.Event | None = None, recipe_provider=None,
+                request_validator=None, response_assessor=None):
     task=smoke_http.SmokeTask(cancel if cancel is not None else threading.Event())
+    provider=recipe_provider if recipe_provider is not None else recipes
+    assessor=response_assessor if response_assessor is not None else _assess
+    matched=response_assessor is not None
 
     def work():
         result=dict(success=False,error=None,profile_id=profile_id,post_attempted=False,rows=[],readiness={},
@@ -113,9 +124,9 @@ def start_suite(*, profile_id: str, evidence_dir: Path, api_key: str,
             common_window_decode_reason='native_window_counters_unavailable',
             timestamps=dict(worker_started_monotonic=time.monotonic()))
         try:
-            definition=recipes.recipe_definition(profile_id)
+            definition=provider.recipe_definition(profile_id)
             result['recipe']=definition
-            result['recipe_sha256']=sha256(recipes.recipe_json(profile_id).encode()).hexdigest().upper()
+            result['recipe_sha256']=sha256(provider.recipe_json(profile_id).encode()).hexdigest().upper()
             result['rows']=[dict(row,status='not_run') for row in definition['schedule']]
             if (not isinstance(api_key,str) or not api_key or len(api_key)>256 or not api_key.isascii()
                     or any(c.isspace() or ord(c)<33 or ord(c)==127 for c in api_key)):
@@ -132,19 +143,21 @@ def start_suite(*, profile_id: str, evidence_dir: Path, api_key: str,
             for row in result['rows']:
                 deadline=min(time.monotonic()+60,lifetime)
                 smoke_http._check(deadline,task.cancel)
-                request=recipes.request_for(row,calibration)
+                request=provider.request_for(row,calibration)
                 request_bytes=json.dumps(request,ensure_ascii=False,allow_nan=False,separators=(',',':')).encode('utf-8')
                 if len(request_bytes)>262144: raise ValueError('request_body_limit')
                 prompt=request['messages'][0]['content'].encode('utf-8')
                 metadata=dict(prompt_bytes=len(prompt),prompt_sha256=sha256(prompt).hexdigest().upper(),
                     request_bytes=len(request_bytes),request_sha256=sha256(request_bytes).hexdigest().upper())
+                if request_validator is not None:
+                    request_validator(row,request)
                 observation=benchmark_http.request_once(port=smoke_http.PORT,api_key=api_key,
                     path='/v1/chat/completions',request=request,
                     limits=benchmark_http.RequestLimits(max_prompt_tokens=min(definition['max_prompt_tokens'],definition['context_tokens']-row['output_budget']),
                         max_completion_tokens=row['output_budget'],cache_policy='allow' if row['cache_prompt'] else 'cold'),
                     deadline=deadline,cancel=task.cancel)
                 result['post_attempted'] |= observation.get('post_attempted') is True
-                correctness,errors=_assess(row,observation,definition)
+                correctness,errors=assessor(row,observation,definition)
                 if row['case']=='CALIBRATION' and not errors:
                     count=observation['metrics']['logical_prompt_tokens']
                     if calibration and count<=calibration[0]:
@@ -162,6 +175,8 @@ def start_suite(*, profile_id: str, evidence_dir: Path, api_key: str,
                     metrics=observation.get('metrics',{}),finish_reason=observation.get('finish_reason'),
                     unavailable_metrics=observation.get('unavailable_metrics',[]),validation_errors=observation.get('validation_errors',[]),
                     errors=errors,**metadata)
+                if matched:
+                    row['matched_evidence']=observation.get('matched_evidence')
                 text=observation.get('visible_answer','').encode('utf-8')
                 row.update(output_bytes=len(text),output_sha256=sha256(text).hexdigest().upper())
                 if row['case']=='CACHE':
@@ -178,8 +193,21 @@ def start_suite(*, profile_id: str, evidence_dir: Path, api_key: str,
             rows=result['rows']
             result['counts']=dict(valid=sum(r['status']=='completed' for r in rows),
                 failed=sum(r['status']=='failed' for r in rows),not_run=sum(r['status']=='not_run' for r in rows))
+            if matched:
+                result['counts'].update(completed=result['counts']['valid'],
+                    quality_failed=sum(r.get('matched_evidence',{}).get('quality_failed') is True for r in rows),
+                    invalid_metric=sum(r.get('matched_evidence',{}).get('fatal_kind') == 'native' for r in rows),
+                    transport_failed=sum(r.get('matched_evidence',{}).get('fatal_kind') == 'transport' for r in rows))
+                valid_long=[r for r in rows if r['status']=='completed' and r['case']=='LONG']
+                correct_long=[r for r in valid_long if r.get('matched_evidence',{}).get('quality_failed') is False]
+                draft_active=any(r['matched_evidence']['proposed'] > 0 for r in valid_long)
+                result['claims']=dict(mtp_draft_path_exercised=draft_active if result.get('recipe',{}).get('speculative') is True else None,
+                    useful_accepted_speculation_observed=(any(r['matched_evidence']['accepted'] > 0 for r in valid_long)
+                        if result.get('recipe',{}).get('speculative') is True else None),
+                    sustained_256_rows=[r['ordinal'] for r in valid_long if r['matched_evidence']['sustained_256_eligible']],
+                    correct_sustained_256_rows=[r['ordinal'] for r in correct_long if r['matched_evidence']['sustained_256_eligible']])
             try:
-                result['groups']=_summarize(rows)
+                result['groups']=_summarize(rows,matched=matched)
             except BaseException as exc:
                 result.update(success=False,error='summary_'+type(exc).__name__,groups=[])
             result['semantic_status']='semantic_review_pending' if result['success'] else 'incomplete'

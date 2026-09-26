@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 
-from . import benchmark_recipes as recipes, operator_store, smoke_store
+from . import benchmark_recipes as recipes, matched_recipes, operator_store, smoke_store
 from .benchmark_runtime import BoundPolicy, BoundStore
 from .benchmark_suite import start_suite
 from .smoke_guard import _Guardian, check_port
@@ -15,6 +15,9 @@ MARGIN_SHA256='75BDFDFFFB46D6BB88529FA12D76EE29910064AE03334906ABB46B8A38861620'
 
 
 def profile_pins(profile_id):
+    if profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_MTP):
+        from . import matched_profile
+        return matched_profile.profile_pins(profile_id)
     definition=recipes.recipe_definition(profile_id)
     four=profile_id==recipes.PROFILE_4K
     reports=smoke_store.ROOT/'reports'
@@ -61,21 +64,31 @@ def profile_pins(profile_id):
 
 
 def make_guardian(profile_id):
+    matched=profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_MTP)
+    if matched:
+        from . import matched_profile, matched_validation
     pins=profile_pins(profile_id)
     guardian=_Guardian(store=BoundStore(pins),policy_module=BoundPolicy(pins),
-        profile_id=profile_id,argv_builder=lambda secret: recipes.build_argv(profile_id,secret))
+        profile_id=profile_id,argv_builder=lambda secret: (
+            matched_profile.build_argv(profile_id,secret) if matched else recipes.build_argv(profile_id,secret)))
 
     def http_start(**kwargs):
         if guardian.run_dir is None: raise ValueError('guardian_run_dir_missing')
-        return start_suite(profile_id=profile_id,evidence_dir=guardian.run_dir,**kwargs)
+        hooks=(dict(recipe_provider=matched_recipes,request_validator=matched_recipes.validate_request,
+                    response_assessor=matched_validation.assess) if matched else {})
+        return start_suite(profile_id=profile_id,evidence_dir=guardian.run_dir,**hooks,**kwargs)
 
     guardian.http_start=http_start
     return guardian
 
 
 def status(profile_id, *, print_only=False):
+    matched=profile_id in (matched_recipes.PROFILE_AR, matched_recipes.PROFILE_MTP)
+    if matched:
+        from . import matched_profile
     result=dict(profile=profile_id,admitted=False,admission='requires_fresh_run_baseline',
-        argv=recipes.build_argv(profile_id,'[REDACTED]'),bounds=dict(smoke_store.BOUNDS))
+        argv=matched_profile.build_argv(profile_id,'[REDACTED]') if matched else recipes.build_argv(profile_id,'[REDACTED]'),
+        bounds=dict(smoke_store.profile_bounds(profile_id)))
     try:
         pins=profile_pins(profile_id)
         result['experiment']=json.loads(pins.experiment_json)
@@ -101,7 +114,8 @@ def status(profile_id, *, print_only=False):
 def main(argv=None):
     parser=argparse.ArgumentParser(description='Fixed finite native GUFO research suite')
     parser.add_argument('command',choices=('status','print-only','run'))
-    parser.add_argument('--profile',choices=(recipes.PROFILE_4K,recipes.PROFILE_16K),required=True)
+    parser.add_argument('--profile',choices=(recipes.PROFILE_4K,recipes.PROFILE_16K,
+        matched_recipes.PROFILE_AR,matched_recipes.PROFILE_MTP),required=True)
     args=parser.parse_args(argv)
     if args.command!='run':
         result=status(args.profile,print_only=args.command=='print-only')

@@ -13,11 +13,11 @@ from .admission import evaluate_admission, GIB, RUNTIME_FLOOR, COMMIT_RESERVE
 from .operator_policy import (Frame, Baseline, baseline, recovery_reasons,
     _base_valid, _frame_reasons, _identity, MAX_PRELAUNCH_AGE_SECONDS,
     MAX_SAMPLE_AGE_SECONDS, GPU_FIELDS)
-from .smoke_store import PROFILE_ID, BOUNDS, MTP_4K, MTP_BOUNDS, PINS, expected_qualification
+from .smoke_store import PROFILE_ID, BOUNDS, PINS, expected_qualification, profile_bounds
 
 
 def _demand(pins):
-    bounds = MTP_BOUNDS if pins.profile_id == MTP_4K else BOUNDS
+    bounds = profile_bounds(pins.profile_id)
     if (pins.bounds.keys() != bounds.keys() or any(type(pins.bounds[k]) is not int
             or pins.bounds[k] != value for k, value in bounds.items())):
         raise ValueError('unsafe_bounds')
