@@ -59,22 +59,28 @@ class WinJobTests(unittest.TestCase):
     def test_close_kills_running_child_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as folder:
             child = self.launch("import time; time.sleep(60)", cwd=folder)
-            child.resume()
-            self.assertFalse(child.wait(50))
-            child.close(5000)
-            child.close()
-            with self.assertRaises(RuntimeError):
-                child.wait()
-            with self.assertRaises(RuntimeError):
+            try:
                 child.resume()
+                self.assertFalse(child.wait(50))
+                child.close(5000)
+                child.close()
+                with self.assertRaises(RuntimeError):
+                    child.wait()
+                with self.assertRaises(RuntimeError):
+                    child.resume()
+            finally:
+                child.close(5000)
 
     def test_unresumed_close(self):
         with tempfile.TemporaryDirectory() as folder:
             marker = Path(folder) / "ran.txt"
             child = self.launch("from pathlib import Path; import sys; Path(sys.argv[1]).touch()",
                                 marker, cwd=folder)
-            child.close()
-            self.assertFalse(marker.exists())
+            try:
+                child.close()
+                self.assertFalse(marker.exists())
+            finally:
+                child.close(5000)
 
     def test_quoting_and_environment(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -146,16 +152,18 @@ class WinJobTests(unittest.TestCase):
     def test_failed_exit_confirmation_retains_handle_for_retry(self):
         with tempfile.TemporaryDirectory() as folder:
             child = self.launch("import time; time.sleep(60)", cwd=folder)
-            child.resume()
-            real_wait = child._api.WaitForSingleObject
-            child._api.WaitForSingleObject = lambda handle, timeout: 258
             try:
-                with self.assertRaises(TimeoutError):
-                    child.close(100)
-                self.assertIsNotNone(child._process)
-                self.assertFalse(child._closed)
+                child.resume()
+                real_wait = child._api.WaitForSingleObject
+                child._api.WaitForSingleObject = lambda handle, timeout: 258
+                try:
+                    with self.assertRaises(TimeoutError):
+                        child.close(100)
+                    self.assertIsNotNone(child._process)
+                    self.assertFalse(child._closed)
+                finally:
+                    child._api.WaitForSingleObject = real_wait
             finally:
-                child._api.WaitForSingleObject = real_wait
                 child.close(5000)
 
     def test_setup_cleanup_uncertainty_chains_error_and_retains_retry_owner(self):
@@ -170,14 +178,71 @@ class WinJobTests(unittest.TestCase):
                     return 0
                 def WaitForSingleObject(self, process, timeout):
                     return 258
-            with patch.object(winjob, "_api", return_value=Api()):
-                with self.assertRaisesRegex(RuntimeError, "cleanup unconfirmed") as caught:
-                    self.launch("import time; time.sleep(60)", cwd=folder)
-            owner = caught.exception.owner
-            self.assertIsInstance(caught.exception.__cause__, OSError)
-            self.assertIsNotNone(owner._process)
-            owner._api = real_api
-            owner.close(5000)
+            owner = None
+            try:
+                with patch.object(winjob, "_api", return_value=Api()):
+                    with self.assertRaisesRegex(RuntimeError, "cleanup unconfirmed") as caught:
+                        self.launch("import time; time.sleep(60)", cwd=folder)
+                owner = caught.exception.owner
+                self.assertIsInstance(caught.exception.__cause__, OSError)
+                self.assertIsNotNone(owner._process)
+            finally:
+                if owner is not None:
+                    owner._api = real_api
+                    owner.close(5000)
+
+    def test_failed_assignment_and_transient_termination_retries_on_close(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / "ran.txt"
+            real_api = winjob._api()
+            observer = None
+            class Api:
+                termination_attempts = 0
+                def __getattr__(self, name):
+                    return getattr(real_api, name)
+                def AssignProcessToJobObject(self, job, process):
+                    nonlocal observer
+                    get_pid = C.WinDLL("kernel32", use_last_error=True).GetProcessId
+                    get_pid.argtypes = [C.c_void_p]
+                    get_pid.restype = C.c_ulong
+                    observer = _observer(get_pid(process))
+                    C.set_last_error(5)
+                    return 0
+                def TerminateProcess(self, process, exit_code):
+                    self.termination_attempts += 1
+                    if self.termination_attempts == 1:
+                        C.set_last_error(5)
+                        return 0
+                    return real_api.TerminateProcess(process, exit_code)
+                def WaitForSingleObject(self, process, timeout):
+                    if self.termination_attempts == 1:
+                        return 258
+                    return real_api.WaitForSingleObject(process, timeout)
+            injected = Api()
+            owner = None
+            try:
+                with patch.object(winjob, "_api", return_value=injected):
+                    with self.assertRaisesRegex(RuntimeError, "cleanup unconfirmed") as caught:
+                        self.launch("from pathlib import Path; import sys; Path(sys.argv[1]).touch()",
+                                    marker, cwd=folder)
+                owner = caught.exception.owner
+                with self.assertRaises(RuntimeError):
+                    owner.resume()
+                owner.close(5000)
+                self.assertEqual(injected.termination_attempts, 2)
+                self.assertTrue(owner._closed)
+                self.assertEqual(observer[0].WaitForSingleObject(observer[1], 0), 0)
+                self.assertFalse(marker.exists())
+            finally:
+                try:
+                    if owner is not None and not owner._closed:
+                        real_api.TerminateProcess(owner._process, 1)
+                        owner._api = real_api
+                        owner.close(5000)
+                finally:
+                    if observer:
+                        observer[0].CloseHandle(observer[1])
 
     def test_guardian_death_kills_its_child(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -186,7 +251,8 @@ class WinJobTests(unittest.TestCase):
                     "from gufo_control.winjob import OwnedProcess; "
                     "p=OwnedProcess([sys.executable,'-c','import time; time.sleep(60)'],"
                     "cwd=sys.argv[2],env=dict(os.environ)); p.resume(); "
-                    "Path(sys.argv[1]).write_text(json.dumps(p.identity)); time.sleep(60)")
+                    "m=Path(sys.argv[1]); t=m.with_suffix('.tmp'); "
+                    "t.write_text(json.dumps(p.identity)); t.replace(m); time.sleep(60)")
             guardian = subprocess.Popen([sys.executable, "-c", code, str(marker), folder],
                                         cwd=folder, env=dict(os.environ),
                                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -199,18 +265,21 @@ class WinJobTests(unittest.TestCase):
                 guardian.wait(timeout=5)
                 self.assertEqual(observer[0].WaitForSingleObject(observer[1], 5000), 0)
             finally:
-                if guardian.poll() is None:
-                    guardian.terminate()
-                    guardian.wait(timeout=5)
-                if observer:
-                    observer[0].CloseHandle(observer[1])
+                try:
+                    if guardian.poll() is None:
+                        guardian.terminate()
+                        guardian.wait(timeout=5)
+                finally:
+                    if observer:
+                        observer[0].CloseHandle(observer[1])
 
     def test_close_kills_descendant_in_same_job(self):
         with tempfile.TemporaryDirectory() as folder:
             marker = Path(folder) / "descendant.txt"
             code = ("import subprocess,sys,time; from pathlib import Path; "
                     "p=subprocess.Popen([sys.executable,'-c','import time; time.sleep(60)']); "
-                    "Path(sys.argv[1]).write_text(str(p.pid)); time.sleep(60)")
+                    "m=Path(sys.argv[1]); t=m.with_suffix('.tmp'); "
+                    "t.write_text(str(p.pid)); t.replace(m); time.sleep(60)")
             child = self.launch(code, marker, cwd=folder)
             observer = None
             try:
@@ -219,10 +288,12 @@ class WinJobTests(unittest.TestCase):
                 child.close(5000)
                 self.assertEqual(observer[0].WaitForSingleObject(observer[1], 5000), 0)
             finally:
-                if not child._closed:
-                    child.close(5000)
-                if observer:
-                    observer[0].CloseHandle(observer[1])
+                try:
+                    if not child._closed:
+                        child.close(5000)
+                finally:
+                    if observer:
+                        observer[0].CloseHandle(observer[1])
 
     def test_identity_matches_owned_handle(self):
         from gufo_control import winjob

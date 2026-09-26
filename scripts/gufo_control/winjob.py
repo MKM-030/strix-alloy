@@ -96,6 +96,7 @@ class OwnedProcess:
         self._api = api = _api()
         self._job = self._process = self._thread = None
         self._resumed = self._closed = False
+        self._recovery_only = True
         self.identity = None
         try:
             self._job = _check(api.CreateJobObjectW(None, None))
@@ -121,6 +122,7 @@ class OwnedProcess:
             self.identity = {"pid": int(info.dwProcessId),
                              "creation_time_100ns": (times[0].dwHighDateTime << 32) |
                              times[0].dwLowDateTime, "executable": image.value}
+            self._recovery_only = False
         except BaseException as original:
             try:
                 self._abort_setup()
@@ -156,8 +158,8 @@ class OwnedProcess:
         self._closed = True
 
     def resume(self) -> None:
-        if self._closed or self._resumed:
-            raise RuntimeError("process is closed or already resumed")
+        if self._closed or self._resumed or self._recovery_only:
+            raise RuntimeError("process is closed, already resumed, or setup did not complete")
         count = self._api.ResumeThread(self._thread)
         if count != 1:
             try:
@@ -182,6 +184,12 @@ class OwnedProcess:
         timeout_ms = _timeout(timeout_ms)
         if self._closed:
             return
+        if self._recovery_only and self._process:
+            # Assignment may have failed, so closing the job alone cannot kill it.
+            if not self._api.TerminateProcess(self._process, 1):
+                error = C.WinError(C.get_last_error())
+                if not self.wait(timeout_ms):
+                    raise error
         if self._job:
             _check(self._api.CloseHandle(self._job))
             self._job = None
