@@ -58,7 +58,7 @@ class Draft3Tests(unittest.TestCase):
         self.assertEqual(argv[argv.index('--draft-tokens') + 1], '3')
 ```
 
-Run with PYTHONPATH=scripts;tests/gufo: `python -m unittest discover -s tests/gufo -p test_mtp_draft3_profile.py -v`; expect absent PROFILE_MTP_D3 failure before production edits.
+Run with absolute `PYTHONPATH=C:\Projects\strix-alloy-research\integration\scripts;C:\Projects\strix-alloy-research\integration\tests\gufo`: `python -m unittest discover -s tests/gufo -p test_mtp_draft3_profile.py -v`; expect absent PROFILE_MTP_D3 failure before production edits. Absolute paths are required because ownership tests launch harmless child interpreters with a temporary working directory.
 
 - [ ] **Step 2: Wire the exact profile with shared fixed membership.**
 
