@@ -50,6 +50,23 @@ Use small focused files and the repository's PowerShell-oriented packaging conve
 
 ## Memory admission and stop behavior
 
+### Approved measured-margin amendment, 26 September 2026
+
+After reviewing the allocation audit, the user explicitly approved bounded
+staged native GPU tests using measured safety margins once the build and guards
+pass review. Keep the49GiB prelaunch floor,24GiB Windows physical stop floor,
+explicit commit reserve and no concurrent inference model for qualification.
+Start with limited probes, then one4k AR session; record model/build/profile
+identity, audited application allocations and empirical runtime allowance.
+Unknown components must be investigated and assigned justified margins, not
+silently counted as zero. A reviewed measured policy may acknowledge unresolved
+future WDDM placement rather than require a mathematical placement guarantee.
+The dedicated-free subtraction is only a conditional/minimum-spill estimate,
+not a maximum shared-memory bound. Monitoring and cleanup cannot eliminate
+driver-freeze risk. This amendment governs any stricter placement-proof wording
+below; it does not itself qualify a profile or bypass remaining implementation
+and review gates.
+
 The last three-full-260k Halogen attempt froze the computer and required a hard power-off. Its observer did not stop allocation in time. A kill threshold, pagefile, Windows process limit or sum of GPU budgets is not a physical memory reservation.
 
 GUFO's source loads weights and shared scratch before its session-capacity check. The integration must therefore complete an independent check **before process creation**:
