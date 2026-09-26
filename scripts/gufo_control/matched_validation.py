@@ -11,10 +11,17 @@ def assess(row, observation, definition):
     correctness, base_errors = benchmark_suite._assess(row, observation, definition)
     errors = [error for error in base_errors if error != 'known_correctness_failure']
     metrics = observation.get('metrics') or {}
-    usage = observation.get('usage') or {}
-    timings = observation.get('timings') or {}
-    gufo = usage.get('gufo') or {}
-    details = usage.get('prompt_tokens_details') or {}
+    raw_usage = observation.get('usage')
+    raw_timings = observation.get('timings')
+    raw_gufo = raw_usage.get('gufo') if isinstance(raw_usage, dict) else None
+    raw_details = raw_usage.get('prompt_tokens_details') if isinstance(raw_usage, dict) else None
+    if not all(isinstance(section, dict) for section in (
+            raw_usage, raw_timings, raw_gufo, raw_details)):
+        errors.append('native_counters_missing')
+    usage = raw_usage if isinstance(raw_usage, dict) else {}
+    timings = raw_timings if isinstance(raw_timings, dict) else {}
+    gufo = raw_gufo if isinstance(raw_gufo, dict) else {}
+    details = raw_details if isinstance(raw_details, dict) else {}
     mtp = definition['profile_id'] == matched_recipes.PROFILE_MTP
     evidence = dict(mode='mtp' if mtp else 'ar', proposed=None, accepted=None,
         acceptance_ratio=None, acceptance_reason='unavailable', lookup_provenance=None,
@@ -34,8 +41,6 @@ def assess(row, observation, definition):
         errors.append(observation.get('error') or 'request_failed')
     if observation.get('validation_errors'):
         errors.append('transport_validation_failed')
-    if not isinstance(usage, dict) or not isinstance(timings, dict) or not isinstance(gufo, dict) or not isinstance(details, dict):
-        errors.append('native_counters_missing')
     proposed = integer(usage, 'draft_tokens')
     accepted = integer(usage, 'draft_tokens_accepted')
     timing_proposed = integer(timings, 'draft_n')

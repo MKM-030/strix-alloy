@@ -93,3 +93,18 @@ class MatchedValidationTests(unittest.TestCase):
         value=observation(self.row,mtp=True)
         value['usage']['gufo']['cache_snapshot_bytes']=True
         self.assertIn('invalid_cache_snapshot_bytes',self.assess(value)[1])
+
+    def test_non_dict_native_sections_return_fatal_errors(self):
+        for section, bad in (('gufo',['bad']),('gufo','bad'),
+                             ('prompt_tokens_details',['bad']),('usage',['bad']),
+                             ('timings',['bad'])):
+            with self.subTest(section=section,bad=bad):
+                value=observation(self.row,mtp=True)
+                if section in ('gufo','prompt_tokens_details'):
+                    value['usage'][section]=bad
+                else:
+                    value[section]=bad
+                value.update(success=False,error='validation_failed')
+                _,errors=self.assess(value)
+                self.assertIn('native_counters_missing',errors)
+                self.assertEqual(value['matched_evidence']['fatal_kind'],'native')

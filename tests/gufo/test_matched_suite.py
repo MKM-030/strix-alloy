@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import tempfile
 import threading
@@ -136,3 +137,21 @@ class MatchedSuiteTests(unittest.TestCase):
         self.assertTrue(result['claims']['mtp_draft_path_exercised'])
         self.assertIn(long_index,result['claims']['sustained_256_rows'])
         self.assertNotIn(long_index,result['claims']['correct_sustained_256_rows'])
+
+    def test_malformed_gufo_is_persisted_then_stops(self):
+        for bad in (['malformed'], 'malformed'):
+            with self.subTest(bad=bad):
+                for item in self.root.iterdir(): item.unlink()
+                def malformed(index,value):
+                    if index==0:
+                        value['usage']['gufo']=bad
+                        value.update(success=False,error='validation_failed',raw_response_base64='UkFX')
+                result,calls=self.run_suite(matched_recipes.PROFILE_MTP,mutate=malformed)
+                self.assertEqual(len(calls),1)
+                self.assertFalse(result['success'])
+                self.assertEqual(result['rows'][0]['status'],'failed')
+                self.assertEqual(result['counts']['not_run'],35)
+                artifact=result['rows'][0]['artifact']['name']
+                raw=json.loads((self.root/artifact).read_text())
+                self.assertEqual(raw['usage']['gufo'],bad)
+                self.assertEqual(raw['raw_response_base64'],'UkFX')

@@ -32,3 +32,12 @@ Environment for commands: `PYTHONPATH=C:\Projects\strix-alloy-research\integrati
 ## Review notes
 
 The full offline suite proves the local control flow and regressions, not live throughput or safe placement on this machine. An independent diff review is still required before the parent creates exact qualifications or starts either GPU run. The suite does not derive aggregate common-window decode throughput. A correct-useful throughput comparison must use quality-eligible matching rows and the raw HTTP/engine timing fields; draft-path coverage alone does not establish speedup.
+
+## Independent review follow-up: malformed nested native shape
+
+The reviewer found that a nonempty list or string in `usage.gufo` could reach `matched_validation.assess` after transport validation failed. The validator's `.get` raised before `_persist`, leaving the attempted row `not_run` and omitting the raw artifact. Direct inspection confirmed the same access pattern for non-dict `usage`; adjacent `prompt_tokens_details` and `timings` were checked in the focused regression.
+
+- RED: `python -m unittest test_matched_validation.MatchedValidationTests.test_non_dict_native_sections_return_fatal_errors test_matched_suite.MatchedSuiteTests.test_malformed_gufo_is_persisted_then_stops -v` failed: list/string `usage.gufo` raised `AttributeError` at `matched_validation.py:96`; non-dict `usage` raised at line 16; suite assertions found attempted row `not_run` with no artifact.
+- Fix: record `native_counters_missing` from the raw section shapes, then read fields through local safe dict views. `observation` and its raw nested values remain unchanged for persistence.
+- GREEN: `python -m unittest test_matched_validation test_matched_suite -v` ran 16 tests in 0.963 seconds, `OK`. The suite regression verifies one attempted failed row, the exact raw malformed `usage.gufo` in its artifact, and 35 later rows `not_run`.
+- This follow-up ran only the two affected focused test files. The prior 355-test offline run remains the baseline for the original commit; it was not repeated for this narrow fix.
