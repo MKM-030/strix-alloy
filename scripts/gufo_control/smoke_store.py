@@ -112,6 +112,7 @@ class StorePins:
     predecessors: tuple[PredecessorPin, ...] = ()
     acceptance_sha256: str | None = None
     sidecar: SidecarPin | None = None
+    sidecar_stamp: tuple[str, int, int] | None = None
 
 
 PINS = StorePins(
@@ -313,7 +314,13 @@ def _binding(pins):
                 or pins.margin_sha256 != MTP_MARGIN_SHA256
                 or pins.margin_report != ROOT/'reports/gufo-mtp4k-staged-envelope-review-20260926.md'):
             raise ValueError('mtp_identity_invalid')
-    elif pins.sidecar is not None:
+        stamp = pins.sidecar_stamp
+        if (type(stamp) is not tuple or len(stamp) != 3
+                or type(stamp[0]) is not str or stamp[0] != str(pins.sidecar.path)
+                or type(stamp[1]) is not int or stamp[1] != pins.sidecar.size_bytes
+                or type(stamp[2]) is not int or stamp[2] <= 0):
+            raise ValueError('model_sidecar_stamp_invalid')
+    elif pins.sidecar is not None or pins.sidecar_stamp is not None:
         raise ValueError('unexpected_sidecar')
     if pins.profile_id == PROFILE_ID:
         if pins.experiment_json is not None or pins.predecessors != () or pins.acceptance_sha256 is not None:
@@ -498,6 +505,7 @@ def _recheck_benchmark(manifest, pins):
 
 def expected_qualification(pins: StorePins, guard_review_id: str) -> dict:
     """Exact record shape for an independent review to sign off later."""
+    binding = _binding(pins)
     mtp_recipe = {}
     if pins.profile_id == MTP_4K:
         from . import mtp_stage
@@ -520,8 +528,8 @@ def expected_qualification(pins: StorePins, guard_review_id: str) -> dict:
                          'descriptor_end': pins.sidecar.descriptor_end,
                          'descriptor_sha256': pins.sidecar.descriptor_sha256,
                          'tensor_count': pins.sidecar.tensor_count,
-                         'stamp': operator_store.stamp(pins.sidecar.path)}} if pins.sidecar else {}),
-        **_binding(pins),
+                         'stamp': list(pins.sidecar_stamp)}} if pins.sidecar else {}),
+        **binding,
     }
 
 
@@ -574,6 +582,9 @@ def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dic
     model_stamps = [operator_store.stamp(pins.first_shard.parent / name)
                     for name in pins.shard_names]
     sidecar = validate_mtp_sidecar(pins.first_shard, pins.sidecar) if pins.sidecar else None
+    if pins.sidecar and (not isinstance(sidecar, dict)
+                        or sidecar.get('stamp') != list(pins.sidecar_stamp)):
+        raise ValueError('model_sidecar_changed')
     _projector_absent(pins.first_shard)
     baseline, state = _operator_sequence(pins)
     margin = _checked_artifact(pins.margin_report,
@@ -681,7 +692,8 @@ def _recheck_static(manifest: dict, pins: StorePins, *, source_validator,
                             'descriptor_end': pins.sidecar.descriptor_end,
                             'tensor_count': pins.sidecar.tensor_count,
                             'descriptor_sha256': pins.sidecar.descriptor_sha256,
-                            'stamp': operator_store.stamp(pins.sidecar.path)}
+                            'stamp': list(pins.sidecar_stamp)}
+                    or operator_store.stamp(pins.sidecar.path) != list(pins.sidecar_stamp)
                     or pins.sidecar.path.is_symlink() or pins.sidecar.path.parent.is_symlink()
                     or pins.sidecar.path.resolve(strict=True) != pins.sidecar.path):
                 raise ValueError('model_sidecar_changed')

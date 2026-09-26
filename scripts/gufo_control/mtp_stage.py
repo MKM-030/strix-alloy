@@ -97,6 +97,7 @@ def profile_pins():
         margin_report=reports/'gufo-mtp4k-staged-envelope-review-20260926.md',
         margin_sha256=smoke_store.MTP_MARGIN_SHA256,
         bounds=dict(smoke_store.MTP_BOUNDS), sidecar=MTP_SIDECAR,
+        sidecar_stamp=tuple(operator_store.stamp(SIDECAR)),
         experiment_json=_canonical(experiment_definition()))
 
 

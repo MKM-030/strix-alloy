@@ -39,6 +39,22 @@ class ResponseTests(unittest.TestCase):
         self.assertEqual(value['draft_tokens'], 12)
         self.assertEqual(value['draft_tokens_accepted'], 8)
 
+    def test_rejects_visible_control_tags(self):
+        for first_line in ('<think>A backup lets you restore a saved copy.</think>',
+                           '<analysis>A backup lets you restore a saved copy.</analysis>'):
+            with self.subTest(first_line=first_line):
+                value = response()
+                value['visible_answer'] = first_line + '\n' + value['visible_answer'].split('\n')[1]
+                self.assertEqual(validate_response(value)['state'], 'failed')
+
+    def test_rejects_single_underscore_emphasis(self):
+        for first_line in ('_A backup lets you restore a saved copy._',
+                           'A backup restores a _saved_copy_.'):
+            with self.subTest(first_line=first_line):
+                value = response()
+                value['visible_answer'] = first_line + '\n' + value['visible_answer'].split('\n')[1]
+                self.assertEqual(validate_response(value)['state'], 'failed')
+
     def test_rejects_counter_cache_model_and_output_failures(self):
         changes = {
             'missing_draft': lambda r: r['usage'].pop('draft_tokens'),

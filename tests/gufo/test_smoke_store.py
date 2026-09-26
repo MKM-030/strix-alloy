@@ -193,7 +193,8 @@ class SmokeStoreTests(unittest.TestCase):
             sidecar.parent.mkdir()
             sidecar.write_bytes(b'fake-descriptor')
             pin = SidecarPin(sidecar, sidecar.stat().st_size, 4, 'A'*64, 1)
-            f.pins = replace(f.pins, sidecar=pin)
+            f.pins = replace(f.pins, sidecar=pin,
+                             sidecar_stamp=tuple(operator_store.stamp(sidecar)))
             manifest['model']['sidecar'] = dict(path=str(sidecar), size_bytes=pin.size_bytes,
                 descriptor_end=pin.descriptor_end, tensor_count=pin.tensor_count,
                 descriptor_sha256=pin.descriptor_sha256, stamp=operator_store.stamp(sidecar))
@@ -201,6 +202,33 @@ class SmokeStoreTests(unittest.TestCase):
                     store, 'expected_qualification', return_value=manifest['qualification']):
                 f.recheck(manifest)
                 sidecar.write_bytes(b'changed-descriptor')
+                with self.assertRaisesRegex(ValueError, 'model_sidecar_changed'):
+                    f.recheck(manifest)
+
+    def test_recorded_sidecar_stamp_binds_static_verify_and_recheck(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            sidecar = f.model/'MTP'/'mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf'
+            sidecar.parent.mkdir()
+            sidecar.write_bytes(b'fake-descriptor')
+            pin = SidecarPin(sidecar, sidecar.stat().st_size, 4, 'A'*64, 1)
+            f.pins = replace(f.pins, sidecar=pin,
+                             sidecar_stamp=tuple(operator_store.stamp(sidecar)))
+
+            def inspect_sidecar(first, selected):
+                return dict(path=str(sidecar), size_bytes=pin.size_bytes,
+                    descriptor_end=pin.descriptor_end, tensor_count=pin.tensor_count,
+                    descriptor_sha256=pin.descriptor_sha256,
+                    stamp=operator_store.stamp(sidecar))
+
+            with patch.object(store, '_binding', return_value={}), patch.object(
+                    store, 'validate_mtp_sidecar', side_effect=inspect_sidecar):
+                f._write_qualification()
+                manifest = f.verify()
+                f.recheck(manifest)
+                sidecar.write_bytes(b'changed-descriptor')
+                with self.assertRaisesRegex(ValueError, 'model_sidecar_changed'):
+                    f.verify()
                 with self.assertRaisesRegex(ValueError, 'model_sidecar_changed'):
                     f.recheck(manifest)
 

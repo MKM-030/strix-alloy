@@ -2,6 +2,8 @@
 from copy import deepcopy
 from dataclasses import replace
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 from gufo_control import smoke_store, smoke_http, mtp_stage
 from gufo_control import smoke_policy
@@ -61,6 +63,37 @@ class MtpStageTests(unittest.TestCase):
             changed = deepcopy(qualification)
             changed[key] = None
             self.assertNotEqual(changed, smoke_store.expected_qualification(pins, 'independent-review'))
+
+    def test_recorded_sidecar_stamp_keeps_policy_validation_and_admission_pure(self):
+        pins = mtp_stage.profile_pins()
+        m = dict(profile=pins.profile_id, source=pins.source_commit,
+                 executable=str(pins.build/pins.executable_name), sdk=str(pins.sdk),
+                 bounds=dict(pins.bounds), model=dict(revision=pins.model_revision,
+                 first_shard=str(pins.first_shard)), margin_report=dict(sha256=pins.margin_sha256),
+                 qualification=smoke_store.expected_qualification(pins, 'review'))
+        b = baseline(series())
+        f = frame(12, host_commit_limit_bytes=103*GIB)
+        with patch.object(smoke_store.operator_store, 'stamp', side_effect=AssertionError('stamp I/O')), \
+             patch.object(Path, 'stat', side_effect=AssertionError('stat I/O')):
+            profile = smoke_policy.profile_from_manifest(m, pins=pins)
+            self.assertTrue(smoke_policy._profile_valid(profile, pins=pins))
+            self.assertTrue(smoke_policy.admission_decision(profile, b, f,
+                now=f.query_end, now_utc=f.validated_utc, pins=pins)['allowed'])
+            self.assertEqual(smoke_policy.frame_numeric_reasons(profile, b, f,
+                now=f.query_end, now_utc=f.validated_utc, pins=pins), [])
+
+    def test_recorded_sidecar_stamp_rejects_bad_types_path_and_size(self):
+        pins = mtp_stage.profile_pins()
+        self.assertTrue(hasattr(pins, 'sidecar_stamp'))
+        for stamp in (None,
+                      [str(pins.sidecar.path), pins.sidecar.size_bytes, 1],
+                      (str(pins.sidecar.path), True, 1),
+                      ('wrong-path', pins.sidecar.size_bytes, 1),
+                      (str(pins.sidecar.path), pins.sidecar.size_bytes+1, 1),
+                      (str(pins.sidecar.path), pins.sidecar.size_bytes, 0),
+                      (str(pins.sidecar.path), pins.sidecar.size_bytes, 1.0)):
+            with self.subTest(stamp=stamp), self.assertRaises(ValueError):
+                smoke_store.expected_qualification(replace(pins, sidecar_stamp=stamp), 'review')
 
     def test_selected_policy_has_mtp_75_gib_charge_and_ar_72_unchanged(self):
         pins = mtp_stage.profile_pins()

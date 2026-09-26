@@ -111,7 +111,9 @@ def validate_response(observation):
                 or any(ord(char) < 32 and char != '\n' for char in text)
                 or any(re.match(r'^(?:[-*+#>]\s|\d+[.)]\s|#{1,6}\s)', line) for line in lines)
                 or any(token in text for token in ('**', '__', '`'))
+                or any(re.search(r'</?[A-Za-z][^<>]*>', line) for line in lines)
                 or any(re.search(r'(?<!\w)\*\S.*?\*', line) for line in lines)
+                or any(re.search(r'(?<!\w)_(?=\S).*?_(?!\w)', line) for line in lines)
                 or lines[0].startswith('DE:') or lines[1].startswith('EN:')):
             errors.append('bilingual_structure_invalid')
     if not errors:
