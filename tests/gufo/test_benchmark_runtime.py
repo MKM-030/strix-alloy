@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from gufo_control import operator_store, smoke_store as store
+from gufo_control import benchmark_recipes as recipes, operator_store, smoke_store as store
 from test_smoke_store import StoreFixture, digest
 
 
@@ -15,7 +15,7 @@ SIXTEEN = 'ar16k-iq4xs-pp1-cache-v1'
 
 
 def experiment(profile=FOUR):
-    return dict(profile_id=profile, recipe_sha256='A'*64,
+    return dict(profile_id=profile, recipe_sha256=digest(recipes.recipe_json(profile).encode()),
         context_tokens=4096 if profile == FOUR else 16384,
         max_prompt_tokens=3072 if profile == FOUR else 16383,
         max_output_tokens=256, max_requests=36 if profile == FOUR else 13,
@@ -71,6 +71,29 @@ class BenchmarkFixture(StoreFixture):
 
 
 class BenchmarkRuntimeTests(unittest.TestCase):
+    def test_16k_predecessor_requires_current_4k_recipe_digest(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = BenchmarkFixture(temp); f.bind(SIXTEEN)
+            old_recipe = recipes.recipe_definition(FOUR)
+            old_recipe.update(profile_id='ar4k-iq4xs-correctness-pp1-v1', validator_version=1)
+            old_digest = digest(recipes.canonical(old_recipe).encode())
+            current_digest = digest(recipes.recipe_json(FOUR).encode())
+            self.assertNotEqual(old_digest, current_digest)
+
+            for recipe_digest in ('A'*64, old_digest, current_digest):
+                with self.subTest(recipe_digest=recipe_digest):
+                    result_path = f.predecessor_run/'result.json'
+                    result = operator_store.read_json(result_path)
+                    result['manifest']['experiment']['recipe_sha256'] = recipe_digest
+                    operator_store.atomic_json(result_path, result)
+                    pin = replace(f.pins.predecessors[0], result_sha256=digest(result_path.read_bytes()))
+                    f.pins = replace(f.pins, predecessors=(pin,))
+                    if recipe_digest == current_digest:
+                        self.assertEqual(len(store._predecessor_records(f.pins)), 1)
+                    else:
+                        with self.assertRaisesRegex(ValueError, 'predecessor_recipe_invalid'):
+                            store._predecessor_records(f.pins)
+
     def test_old_v1_latch_blocks_v2_but_clean_attempt_is_preserved(self):
         with tempfile.TemporaryDirectory() as temp:
             f = BenchmarkFixture(temp)

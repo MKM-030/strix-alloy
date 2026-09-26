@@ -110,7 +110,8 @@ def clamp(x, lo, hi):
                 self.assertEqual(result['functional_state'], 'failed')
                 self.assertFalse(result['format_compliant'])
         for text in ('prose\n'+observed, observed+'\nprose', observed+'\n'+observed,
-                     observed[:-3], '```python\n'+plain+'\n```\n```'):
+                     observed[:-3], '```python\n'+plain+'\n```\n```',
+                     '```python\n```python\n'+plain+'\n```\n```'):
             with self.subTest(text=text):
                 result = answer(text)
                 self.assertEqual(result['state'], 'failed')

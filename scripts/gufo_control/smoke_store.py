@@ -361,6 +361,10 @@ def _predecessor_records(pins):
             try:
                 experiment = result['manifest']['experiment']
                 _experiment(json.dumps(experiment, sort_keys=True, separators=(',', ':')), pin.profile_id)
+                from . import benchmark_recipes
+                expected_recipe = sha256(benchmark_recipes.recipe_json(BENCHMARK_4K).encode()).hexdigest().upper()
+                if experiment['recipe_sha256'] != expected_recipe:
+                    raise ValueError('predecessor_recipe_invalid')
                 rows = result['http']['rows']
                 if (result['http']['success'] is not True or not isinstance(rows, list)
                         or len(rows) != experiment['max_requests']):
