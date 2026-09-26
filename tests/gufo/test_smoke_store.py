@@ -12,6 +12,7 @@ from unittest.mock import patch
 from gufo_control import operator_store
 from gufo_control.operator_policy import Baseline
 from gufo_control import smoke_store as store
+from gufo_control.model_identity import SidecarPin
 
 
 def digest(data):
@@ -163,7 +164,7 @@ class SmokeStoreTests(unittest.TestCase):
                      'gufo-ar4k-http-slots-smoke-runs', 'gufo-ar4k-benchmark-runs',
                      'gufo-ar4k-benchmark-v2-runs',
                      'gufo-ar16k-benchmark-runs', 'gufo-ar16k-benchmark-v2-runs',
-                     'gufo-ar16k-benchmark-v3-runs'):
+                     'gufo-ar16k-benchmark-v3-runs', 'gufo-mtp4k-stage-v1-runs'):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
                 f = StoreFixture(temp)
                 manifest = f.verify()
@@ -183,6 +184,25 @@ class SmokeStoreTests(unittest.TestCase):
                         self.assertEqual((sibling/'attempt.json').read_bytes(), old_attempt)
                         self.assertEqual((sibling/'incomplete.json').read_bytes(), old_latch)
                 self.assertFalse((f.evidence/'attempt.json').exists())
+
+    def test_sidecar_stamp_change_refuses_static_recheck(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            sidecar = f.model/'MTP'/'mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf'
+            sidecar.parent.mkdir()
+            sidecar.write_bytes(b'fake-descriptor')
+            pin = SidecarPin(sidecar, sidecar.stat().st_size, 4, 'A'*64, 1)
+            f.pins = replace(f.pins, sidecar=pin)
+            manifest['model']['sidecar'] = dict(path=str(sidecar), size_bytes=pin.size_bytes,
+                descriptor_end=pin.descriptor_end, tensor_count=pin.tensor_count,
+                descriptor_sha256=pin.descriptor_sha256, stamp=operator_store.stamp(sidecar))
+            with patch.object(store, '_binding', return_value={}), patch.object(
+                    store, 'expected_qualification', return_value=manifest['qualification']):
+                f.recheck(manifest)
+                sidecar.write_bytes(b'changed-descriptor')
+                with self.assertRaisesRegex(ValueError, 'model_sidecar_changed'):
+                    f.recheck(manifest)
 
     def test_current_16k_mapping_is_v3(self):
         self.assertEqual(store.BENCHMARK_16K, 'ar16k-iq4xs-pp1-cache-v3')

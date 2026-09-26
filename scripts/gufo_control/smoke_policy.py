@@ -13,7 +13,18 @@ from .admission import evaluate_admission, GIB, RUNTIME_FLOOR, COMMIT_RESERVE
 from .operator_policy import (Frame, Baseline, baseline, recovery_reasons,
     _base_valid, _frame_reasons, _identity, MAX_PRELAUNCH_AGE_SECONDS,
     MAX_SAMPLE_AGE_SECONDS, GPU_FIELDS)
-from .smoke_store import PROFILE_ID, BOUNDS, PINS, expected_qualification
+from .smoke_store import PROFILE_ID, BOUNDS, MTP_4K, MTP_BOUNDS, PINS, expected_qualification
+
+
+def _demand(pins):
+    bounds = MTP_BOUNDS if pins.profile_id == MTP_4K else BOUNDS
+    if (pins.bounds.keys() != bounds.keys() or any(type(pins.bounds[k]) is not int
+            or pins.bounds[k] != value for k, value in bounds.items())):
+        raise ValueError('unsafe_bounds')
+    return dict(gpu_peak_bytes=bounds['gpu_gib']*GIB,
+        host_peak_bytes=bounds['host_gib']*GIB,
+        shared_physical_allowance_bytes=bounds['shared_gib']*GIB,
+        commit_peak_bytes=(bounds['gpu_gib']+bounds['host_gib'])*GIB)
 
 
 def _canonical(value):
@@ -78,12 +89,12 @@ def profile_from_manifest(manifest: dict, *, pins=PINS) -> SmokeProfile:
                 or manifest['source'] != pins.source_commit
                 or manifest['executable'] != str(pins.build / pins.executable_name)
                 or manifest['sdk'] != str(pins.sdk)
-                or _canonical(manifest['bounds']) != _canonical(BOUNDS)
+                or _canonical(manifest['bounds']) != _canonical(pins.bounds)
                 or manifest['model']['revision'] != pins.model_revision
                 or manifest['model']['first_shard'] != str(pins.first_shard)
                 or manifest['margin_report']['sha256'] != pins.margin_sha256):
             raise ValueError('qualification_mismatch')
-        return SmokeProfile(profile_id=pins.profile_id, source_commit=pins.source_commit,
+        return SmokeProfile(**_demand(pins), profile_id=pins.profile_id, source_commit=pins.source_commit,
             model_revision=pins.model_revision, qualified=True, review_id=review,
             shared_allowance_review_id=pins.margin_sha256,
             qualification_json=_canonical(q))
@@ -98,7 +109,7 @@ def _profile_valid(profile, *, pins=PINS):
     if not isinstance(review, str) or not review.strip():
         return False
     try:
-        expected = SmokeProfile(profile_id=pins.profile_id, source_commit=pins.source_commit,
+        expected = SmokeProfile(**_demand(pins), profile_id=pins.profile_id, source_commit=pins.source_commit,
             model_revision=pins.model_revision, qualified=True, review_id=review,
             shared_allowance_review_id=pins.margin_sha256,
             qualification_json=_canonical(expected_qualification(pins, review)))
@@ -209,11 +220,16 @@ def frame_numeric_reasons(profile, original_baseline, frame, *, now, now_utc, pi
         reasons.append('runtime_physical_floor')
     if s['commit_headroom_bytes'] < COMMIT_RESERVE:
         reasons.append('commit_floor')
-    if base.available_min - s['available_physical_bytes'] > 24*GIB:
+    physical_charge = profile.host_peak_bytes + profile.shared_physical_allowance_bytes
+    commit_charge = profile.commit_peak_bytes
+    gpu_allowances = (profile.gpu_peak_bytes,
+                      profile.shared_physical_allowance_bytes,
+                      profile.gpu_peak_bytes)
+    if base.available_min - s['available_physical_bytes'] > physical_charge:
         reasons.append('physical_envelope')
-    if s['host_committed_bytes'] - base.committed_max > 72*GIB:
+    if s['host_committed_bytes'] - base.committed_max > commit_charge:
         reasons.append('commit_envelope')
-    for key, maximum, allowance in zip(GPU_FIELDS, base.gpu_max, (68*GIB, 20*GIB, 68*GIB)):
+    for key, maximum, allowance in zip(GPU_FIELDS, base.gpu_max, gpu_allowances):
         if s[key] - maximum > allowance:
             reasons.append('gpu_envelope:' + key)
     return reasons

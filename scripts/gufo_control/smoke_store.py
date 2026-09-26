@@ -11,7 +11,8 @@ from pathlib import Path
 import re
 
 from . import operator_store
-from .model_identity import AR4K_PINS, ValidatedModel, validate_ar4k_model
+from .model_identity import (AR4K_PINS, MTP_SIDECAR, SidecarPin, ValidatedModel,
+                             validate_ar4k_model, validate_mtp_sidecar)
 from .operator_policy import Baseline, PROBES
 
 
@@ -58,9 +59,14 @@ BOUNDS = {'gpu_gib': 68, 'host_gib': 4, 'shared_gib': 20,
           'prelaunch_gib': 49, 'runtime_gib': 24, 'commit_reserve_gib': 12}
 BENCHMARK_4K = 'ar4k-iq4xs-correctness-pp1-v2'
 BENCHMARK_16K = 'ar16k-iq4xs-pp1-cache-v3'
+MTP_4K = 'mtp4k-iq4xs-draft1-bilingual-v1'
+MTP_BOUNDS = dict(BOUNDS, gpu_gib=71)
+MTP_MARGIN_SHA256 = '7EC8175FFFC356058A0CA8F07B02F3A20AE3E8B88F44F9357D2E13C39F2E8AF6'
+MTP_PREDECESSOR_SHA256 = '692149EEB38F89E662D9428A725533F14793680F5C70E8477A3B53E2DE8B04F3'
 PROFILE_ROOTS = {PROFILE_ID: 'gufo-ar4k-http-slots-smoke-runs',
                  BENCHMARK_4K: 'gufo-ar4k-benchmark-v2-runs',
-                 BENCHMARK_16K: 'gufo-ar16k-benchmark-v3-runs'}
+                 BENCHMARK_16K: 'gufo-ar16k-benchmark-v3-runs',
+                 MTP_4K: 'gufo-mtp4k-stage-v1-runs'}
 FIRST_PREDECESSOR_RUN = '20260926T164942Z-a4d64a8f565248bdb508895b6f3ec931'
 FIRST_PREDECESSOR_SHA256 = '58B222AA96BE4A84F4349697A9914B20E1953ECC7464085A4BE9984819121FBF'
 
@@ -105,6 +111,7 @@ class StorePins:
     experiment_json: str | None = None
     predecessors: tuple[PredecessorPin, ...] = ()
     acceptance_sha256: str | None = None
+    sidecar: SidecarPin | None = None
 
 
 PINS = StorePins(
@@ -263,6 +270,14 @@ def _experiment(value, profile_id):
         canonical = json.dumps(parsed, sort_keys=True, separators=(',', ':'), allow_nan=False)
     except (ValueError, TypeError) as error:
         raise ValueError('experiment_invalid') from error
+    if profile_id == MTP_4K:
+        from . import mtp_stage
+        expected = mtp_stage.experiment_definition()
+        if (not isinstance(parsed, dict) or parsed.keys() != expected.keys()
+                or canonical != value or any(type(parsed[k]) is not type(v) or parsed[k] != v
+                                              for k, v in expected.items())):
+            raise ValueError('experiment_invalid')
+        return parsed
     four = profile_id == BENCHMARK_4K
     expected = dict(profile_id=profile_id,
         recipe_sha256=parsed.get('recipe_sha256') if isinstance(parsed, dict) else None,
@@ -283,9 +298,23 @@ def _experiment(value, profile_id):
 def _binding(pins):
     if pins.profile_id not in PROFILE_ROOTS:
         raise ValueError('unknown_profile')
-    if (not isinstance(pins.bounds, dict) or pins.bounds != BOUNDS
-            or any(type(v) is not int for v in pins.bounds.values())):
+    bounds = MTP_BOUNDS if pins.profile_id == MTP_4K else BOUNDS
+    if (not isinstance(pins.bounds, dict) or pins.bounds.keys() != bounds.keys()
+            or any(type(pins.bounds[k]) is not int or pins.bounds[k] != v
+                   for k, v in bounds.items())):
         raise ValueError('unsafe_bounds')
+    if pins.profile_id == MTP_4K:
+        if (not isinstance(pins.sidecar, SidecarPin) or pins.sidecar.path != MTP_SIDECAR.path
+                or any(type(getattr(pins.sidecar, key)) is not int or
+                       getattr(pins.sidecar, key) != getattr(MTP_SIDECAR, key)
+                       for key in ('size_bytes', 'descriptor_end', 'tensor_count'))
+                or pins.sidecar.descriptor_sha256 != MTP_SIDECAR.descriptor_sha256
+                or pins.model_revision != AR4K_PINS.revision
+                or pins.margin_sha256 != MTP_MARGIN_SHA256
+                or pins.margin_report != ROOT/'reports/gufo-mtp4k-staged-envelope-review-20260926.md'):
+            raise ValueError('mtp_identity_invalid')
+    elif pins.sidecar is not None:
+        raise ValueError('unexpected_sidecar')
     if pins.profile_id == PROFILE_ID:
         if pins.experiment_json is not None or pins.predecessors != () or pins.acceptance_sha256 is not None:
             raise ValueError('legacy_benchmark_binding')
@@ -301,15 +330,17 @@ def _binding(pins):
             or not isinstance(predecessor.run, Path) or not predecessor.run.is_absolute()
             or not _digest_valid(predecessor.result_sha256)):
         raise ValueError('predecessor_identity_invalid')
-    if pins.profile_id == BENCHMARK_16K:
+    if pins.profile_id in (BENCHMARK_16K, MTP_4K):
         if not _digest_valid(pins.acceptance_sha256):
             raise ValueError('acceptance_digest_missing')
+        if pins.profile_id == MTP_4K and predecessor.result_sha256 != MTP_PREDECESSOR_SHA256:
+            raise ValueError('mtp_predecessor_identity_invalid')
     elif pins.acceptance_sha256 is not None:
         raise ValueError('unexpected_acceptance')
     result = dict(experiment=experiment, predecessors=[dict(
         profile_id=predecessor.profile_id, run=str(predecessor.run),
         result_sha256=predecessor.result_sha256)])
-    if pins.profile_id == BENCHMARK_16K:
+    if pins.profile_id in (BENCHMARK_16K, MTP_4K):
         result['acceptance_sha256'] = pins.acceptance_sha256
     return result
 
@@ -399,7 +430,7 @@ def _benchmark_records(pins):
     if not binding:
         return {}
     result = dict(experiment=binding['experiment'], predecessors=_predecessor_records(pins))
-    if pins.profile_id == BENCHMARK_16K:
+    if pins.profile_id in (BENCHMARK_16K, MTP_4K):
         path = pins.evidence.parent/'gufo-ar4k-benchmark-acceptance.json'
         if path.is_symlink() or path.resolve(strict=True).parent != path.parent:
             raise ValueError('acceptance_path_invalid')
@@ -448,7 +479,7 @@ def _recheck_benchmark(manifest, pins):
             if (path.is_symlink() or artifact['stamp'][0] != str(path.resolve(strict=True))
                     or operator_store.stamp(path) != artifact['stamp']):
                 raise ValueError('predecessor_artifact_changed')
-    if pins.profile_id == BENCHMARK_16K:
+    if pins.profile_id in (BENCHMARK_16K, MTP_4K):
         acceptance = manifest['acceptance']
         path = pins.evidence.parent/'gufo-ar4k-benchmark-acceptance.json'
         artifact = acceptance['artifact']
@@ -467,6 +498,10 @@ def _recheck_benchmark(manifest, pins):
 
 def expected_qualification(pins: StorePins, guard_review_id: str) -> dict:
     """Exact record shape for an independent review to sign off later."""
+    mtp_recipe = {}
+    if pins.profile_id == MTP_4K:
+        from . import mtp_stage
+        mtp_recipe = {'mtp_recipe': mtp_stage.recipe_definition()}
     return {
         'profile': pins.profile_id,
         'source': pins.source_commit,
@@ -480,6 +515,12 @@ def expected_qualification(pins: StorePins, guard_review_id: str) -> dict:
         'margin_report_sha256': pins.margin_sha256,
         'recovery_policy': 'per-run-recovery-stricter-runtime-v1',
         'guard_review_id': guard_review_id,
+        **mtp_recipe,
+        **({'sidecar': {'path': str(pins.sidecar.path), 'size_bytes': pins.sidecar.size_bytes,
+                         'descriptor_end': pins.sidecar.descriptor_end,
+                         'descriptor_sha256': pins.sidecar.descriptor_sha256,
+                         'tensor_count': pins.sidecar.tensor_count,
+                         'stamp': operator_store.stamp(pins.sidecar.path)}} if pins.sidecar else {}),
         **_binding(pins),
     }
 
@@ -532,6 +573,7 @@ def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dic
         raise ValueError('model_identity_mismatch')
     model_stamps = [operator_store.stamp(pins.first_shard.parent / name)
                     for name in pins.shard_names]
+    sidecar = validate_mtp_sidecar(pins.first_shard, pins.sidecar) if pins.sidecar else None
     _projector_absent(pins.first_shard)
     baseline, state = _operator_sequence(pins)
     margin = _checked_artifact(pins.margin_report,
@@ -550,7 +592,8 @@ def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dic
         'bounds': dict(pins.bounds),
         'model': {'first_shard': str(model.first_shard),
                   'revision': model.revision, 'shards': model_stamps,
-                  'payload_hash_limit': 'bounded GGUF metadata only'},
+                  'payload_hash_limit': 'bounded GGUF metadata only',
+                  **({'sidecar': sidecar} if sidecar else {})},
         'artifacts': artifacts,
         'operator': {'original_baseline': asdict(baseline),
                      'state': state},
@@ -614,6 +657,7 @@ def _recheck_static(manifest: dict, pins: StorePins, *, source_validator,
                 or manifest['executable'] != str((pins.build / pins.executable_name).resolve())
                 or manifest['sdk'] != str(pins.sdk)
                 or manifest['bounds'] != pins.bounds
+                or any(type(manifest['bounds'].get(k)) is not int for k in pins.bounds)
                 or manifest['model']['first_shard'] != str(pins.first_shard.resolve(strict=True))
                 or manifest['model']['revision'] != pins.model_revision
                 or len(manifest['model']['shards']) != 3):
@@ -630,6 +674,19 @@ def _recheck_static(manifest: dict, pins: StorePins, *, source_validator,
                 raise ValueError('manifest_model_mismatch')
             if operator_store.stamp(stamped[0]) != stamped:
                 raise ValueError('model_shard_changed')
+        if pins.sidecar:
+            sidecar = manifest['model']['sidecar']
+            if (sidecar != {'path': str(pins.sidecar.path),
+                            'size_bytes': pins.sidecar.size_bytes,
+                            'descriptor_end': pins.sidecar.descriptor_end,
+                            'tensor_count': pins.sidecar.tensor_count,
+                            'descriptor_sha256': pins.sidecar.descriptor_sha256,
+                            'stamp': operator_store.stamp(pins.sidecar.path)}
+                    or pins.sidecar.path.is_symlink() or pins.sidecar.path.parent.is_symlink()
+                    or pins.sidecar.path.resolve(strict=True) != pins.sidecar.path):
+                raise ValueError('model_sidecar_changed')
+        elif 'sidecar' in manifest['model']:
+            raise ValueError('unexpected_sidecar')
         _projector_absent(pins.first_shard)
         state_paths = [pins.failed_run / 'result.json', pins.gdn_run / 'result.json',
                        pins.iq_run / 'result.json',

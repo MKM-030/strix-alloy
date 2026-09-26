@@ -39,6 +39,21 @@ class ValidatedModel:
     mtp_enabled: bool = False
 
 
+@dataclass(frozen=True)
+class SidecarPin:
+    path: Path
+    size_bytes: int
+    descriptor_end: int
+    descriptor_sha256: str
+    tensor_count: int
+
+
+MTP_SIDECAR = SidecarPin(
+    Path(r'C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\MTP\mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf'),
+    2786568256, 10946608,
+    '5e9f7cc77b478fdd57cbbd2d5678d7c3d55a43c6f1428f78bae1f219385ed5d3', 32)
+
+
 AR4K_PINS = ProfilePins(
     revision='38bb39ee97821de2c9009abb7e93950eec396e66',
     shards=(
@@ -205,3 +220,29 @@ def validate_ar4k_model(first_shard: str | Path, *, pins: ProfilePins = AR4K_PIN
         return ValidatedModel(first, pins.revision)
     except (GgufError, OSError) as error:
         raise ModelIdentityError(f'model identity inspection failed: {error}') from error
+
+
+def validate_mtp_sidecar(first_shard: str | Path, pin: SidecarPin = MTP_SIDECAR) -> dict:
+    """Authenticate only the bounded GGUF descriptor and its file stamp."""
+    try:
+        first = Path(first_shard)
+        candidate = pin.path
+        if (candidate != first.parent / 'MTP' / MTP_SIDECAR.path.name
+                or candidate.name != MTP_SIDECAR.path.name
+                or first.resolve(strict=True) != first
+                or candidate.parent.is_symlink() or candidate.is_symlink()
+                or candidate.resolve(strict=True) != candidate):
+            raise ModelIdentityError('sidecar_path_invalid')
+        report = inspect_gguf(candidate)
+        if (report['size_bytes'], report['descriptor_end'], len(report['tensors'])) != (
+                pin.size_bytes, pin.descriptor_end, pin.tensor_count):
+            raise ModelIdentityError('sidecar_size_or_directory_mismatch')
+        if _descriptor_digest(candidate, pin.descriptor_end, report['size_bytes'],
+                              report['mtime_ns']) != pin.descriptor_sha256:
+            raise ModelIdentityError('sidecar_descriptor_mismatch')
+        return {'path': str(candidate), 'size_bytes': pin.size_bytes,
+                'descriptor_end': pin.descriptor_end, 'tensor_count': pin.tensor_count,
+                'descriptor_sha256': pin.descriptor_sha256,
+                'stamp': [str(candidate), report['size_bytes'], report['mtime_ns']]}
+    except (GgufError, OSError) as error:
+        raise ModelIdentityError(f'sidecar_identity_inspection_failed:{error}') from error

@@ -6,7 +6,8 @@ from dataclasses import replace
 from pathlib import Path
 
 from gufo_control.model_identity import (
-    ModelIdentityError, ProfilePins, ShardPin, validate_ar4k_model,
+    ModelIdentityError, ProfilePins, ShardPin, SidecarPin, validate_ar4k_model,
+    validate_mtp_sidecar,
 )
 
 
@@ -67,6 +68,34 @@ class ModelIdentityTests(unittest.TestCase):
 
     def validate(self, pins=None):
         return validate_ar4k_model(self.first, pins=pins or self.pins)
+
+    def test_mtp_sidecar_bounded_descriptor_and_path(self):
+        mtp = self.root/'MTP'
+        mtp.mkdir()
+        name = 'mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf'
+        data, end = gguf([], 1)
+        sidecar = mtp/name
+        sidecar.write_bytes(data)
+        pin = SidecarPin(sidecar, len(data), end,
+            hashlib.sha256(data[:end]).hexdigest(), 1)
+        record = validate_mtp_sidecar(self.first, pin)
+        self.assertEqual(record['stamp'][1], len(data))
+        for changed in (replace(pin, size_bytes=len(data)+1),
+                        replace(pin, descriptor_sha256='0'*64),
+                        replace(pin, tensor_count=2),
+                        replace(pin, path=mtp/'wrong.gguf')):
+            with self.subTest(changed=changed), self.assertRaises(ModelIdentityError):
+                validate_mtp_sidecar(self.first, changed)
+        outside = self.root.parent/name
+        outside.write_bytes(data)
+        sidecar.unlink()
+        try:
+            sidecar.symlink_to(outside)
+        except OSError:
+            pass  # Symlink privilege may be unavailable on Windows.
+        else:
+            with self.assertRaises(ModelIdentityError):
+                validate_mtp_sidecar(self.first, pin)
 
     def rewrite_shard(self, index, metadata, tensor_count):
         data, end = gguf(metadata, tensor_count)
