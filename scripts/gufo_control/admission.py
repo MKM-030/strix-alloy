@@ -1,4 +1,4 @@
-"""Pure pre-start accounting, not a reservation or runtime safety guarantee."""
+"""Pure pre-start accounting under a reviewed measured margin, not a reservation."""
 import math
 import re
 
@@ -12,7 +12,8 @@ SOURCE_COMMIT = "cff564964e8506c0abb3e530cecb55332187ac6c"
 SAMPLE_BYTES = ("available_physical_bytes", "commit_headroom_bytes",
                 "dedicated_capacity_bytes", "adapter_dedicated_bytes",
                 "adapter_shared_bytes")
-ENVELOPE_BYTES = ("gpu_peak_bytes", "host_peak_bytes", "commit_peak_bytes")
+ENVELOPE_BYTES = ("gpu_peak_bytes", "host_peak_bytes", "commit_peak_bytes",
+                  "shared_physical_allowance_bytes")
 
 
 def _bytes(value):
@@ -33,13 +34,16 @@ def _text(value):
 def evaluate_admission(sample: dict, envelope: dict, *, now: float) -> dict:
     """Evaluate trusted profile bounds against a fresh, scoped telemetry sample.
 
-    The caller is responsible for binding qualified bounds to its exact model,
-    build and request profile, and for proving the telemetry provider's scope.
-    No model has been qualified merely because a synthetic fixture passes here.
+    A future trusted loader must bind qualification and allowance review IDs to
+    the exact model, build and request profile. The reviewed measured allowance
+    does not prove future WDDM placement. Synthetic fixtures authorize no real
+    profile; the caller must also establish the telemetry provider's scope.
     """
     reasons = []
     result = {"allowed": False, "reasons": reasons,
-              "shared_spill_bytes": None, "predicted_available_bytes": None}
+              "minimum_shared_spill_bytes": None,
+              "shared_physical_allowance_bytes": None,
+              "predicted_available_bytes": None, "accounting_basis": None}
     if not isinstance(sample, dict) or not isinstance(envelope, dict):
         reasons.append("invalid_input")
         return result
@@ -70,9 +74,17 @@ def evaluate_admission(sample: dict, envelope: dict, *, now: float) -> dict:
     revision = envelope.get("model_revision")
     if envelope.get("source_commit") != SOURCE_COMMIT or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
         reasons.append("invalid_profile_identity")
+    if envelope.get("shared_memory_policy") != "measured_margin":
+        reasons.append("invalid_shared_memory_policy")
+    if not _text(envelope.get("shared_allowance_review_id")):
+        reasons.append("unreviewed_shared_allowance")
     if reasons:
         return result
-    gpu, host, commit = (envelope[k] for k in ENVELOPE_BYTES)
+    gpu, host, commit = (envelope[k] for k in
+                         ("gpu_peak_bytes", "host_peak_bytes", "commit_peak_bytes"))
+    allowance = envelope["shared_physical_allowance_bytes"]
+    if allowance == 0 or host + allowance > MAX_BYTES:
+        reasons.append("invalid_shared_allowance")
     if gpu == 0 or commit < gpu + host or gpu + host + COMMIT_RESERVE > MAX_BYTES:
         reasons.append("inconsistent_commit_bound")
     capacity = sample["dedicated_capacity_bytes"]
@@ -81,10 +93,14 @@ def evaluate_admission(sample: dict, envelope: dict, *, now: float) -> dict:
         reasons.append("inconsistent_dedicated_counter")
     if reasons:
         return result
-    spill = max(0, gpu - (capacity - local_used))
-    predicted = sample["available_physical_bytes"] - host - spill
-    result["shared_spill_bytes"] = spill
+    minimum_spill = max(0, gpu - (capacity - local_used))
+    predicted = sample["available_physical_bytes"] - host - allowance
+    result["minimum_shared_spill_bytes"] = minimum_spill
+    result["shared_physical_allowance_bytes"] = allowance
     result["predicted_available_bytes"] = predicted
+    result["accounting_basis"] = "reviewed_measured_margin"
+    if allowance < minimum_spill:
+        reasons.append("shared_allowance_below_minimum_spill")
     if sample["available_physical_bytes"] < PRELAUNCH_FLOOR:
         reasons.append("prelaunch_physical_floor")
     if predicted < RUNTIME_FLOOR:

@@ -22,23 +22,94 @@ class AdmissionTests(unittest.TestCase):
             "review_id": "unit-fixture-not-a-runtime-qualification",
             "source_commit": "cff564964e8506c0abb3e530cecb55332187ac6c",
             "model_revision": "38bb39ee97821de2c9009abb7e93950eec396e66",
+            "shared_physical_allowance_bytes": 12 * G,
+            "shared_memory_policy": "measured_margin",
+            "shared_allowance_review_id": "synthetic-test-policy-not-runtime-approval",
         }
 
     def decide(self):
         return evaluate_admission(self.sample, self.envelope, now=101.0)
 
-    def test_additional_spill_not_existing_shared_is_subtracted(self):
+    def test_minimum_spill_and_reviewed_allowance_are_distinct(self):
         result = self.decide()
         self.assertTrue(result["allowed"])
-        self.assertEqual(result["shared_spill_bytes"], 12 * G)
+        self.assertEqual(result["minimum_shared_spill_bytes"], 12 * G)
+        self.assertEqual(result["shared_physical_allowance_bytes"], 12 * G)
         self.assertEqual(result["predicted_available_bytes"], 37 * G)
+        self.assertEqual(result["accounting_basis"], "reviewed_measured_margin")
+        self.assertNotIn("shared_spill_bytes", result)
 
-    def test_no_spill_when_dedicated_fits(self):
+    def test_dedicated_fit_does_not_erase_reviewed_shared_allowance(self):
         self.envelope["gpu_peak_bytes"] = 50 * G
         result = self.decide()
         self.assertTrue(result["allowed"])
-        self.assertEqual(result["shared_spill_bytes"], 0)
-        self.assertEqual(result["predicted_available_bytes"], 49 * G)
+        self.assertEqual(result["minimum_shared_spill_bytes"], 0)
+        self.assertEqual(result["shared_physical_allowance_bytes"], 12 * G)
+        self.assertEqual(result["predicted_available_bytes"], 37 * G)
+        self.assertEqual(result["accounting_basis"], "reviewed_measured_margin")
+        self.assertNotIn("shared_spill_bytes", result)
+
+    def test_allowance_below_current_minimum_is_rejected(self):
+        self.envelope["shared_physical_allowance_bytes"] = 12 * G - 1
+        result = self.decide()
+        self.assertFalse(result["allowed"])
+        self.assertIn("shared_allowance_below_minimum_spill", result["reasons"])
+
+    def test_reviewed_allowance_not_minimum_controls_physical_floor(self):
+        self.envelope["shared_physical_allowance_bytes"] = 25 * G
+        self.assertTrue(self.decide()["allowed"])
+        self.envelope["shared_physical_allowance_bytes"] += 1
+        self.assertIn("predicted_physical_floor", self.decide()["reasons"])
+
+    def test_missing_or_invalid_shared_policy_rejected(self):
+        for key, values in {
+            "shared_physical_allowance_bytes": [None, 0, -1, True, 1.0, 1 << 63],
+            "shared_memory_policy": [None, "", "dedicated_first", True],
+            "shared_allowance_review_id": [None, "", "  ", True],
+        }.items():
+            saved = self.envelope[key]
+            for value in values:
+                with self.subTest(key=key, value=value):
+                    self.envelope[key] = value
+                    self.assertFalse(self.decide()["allowed"])
+            del self.envelope[key]
+            self.assertFalse(self.decide()["allowed"])
+            self.envelope[key] = saved
+
+    def test_shared_policy_and_review_reasons_are_explicit(self):
+        self.envelope["shared_memory_policy"] = "dedicated_first"
+        self.envelope["shared_allowance_review_id"] = "  "
+        result = self.decide()
+        self.assertIn("invalid_shared_memory_policy", result["reasons"])
+        self.assertIn("unreviewed_shared_allowance", result["reasons"])
+        self.assertIsNone(result["accounting_basis"])
+
+    def test_host_plus_allowance_overflow_is_rejected(self):
+        self.envelope["host_peak_bytes"] = (1 << 63) - 1
+        self.assertIn("invalid_shared_allowance", self.decide()["reasons"])
+
+    def test_existing_shared_occupancy_is_not_subtracted_twice(self):
+        first = self.decide()
+        self.sample["adapter_shared_bytes"] = 20 * G
+        second = self.decide()
+        self.assertEqual(second["predicted_available_bytes"],
+                         first["predicted_available_bytes"])
+
+    def test_allowance_change_does_not_change_commit_accounting(self):
+        self.sample["commit_headroom_bytes"] = 88 * G
+        first = self.decide()
+        self.envelope["shared_physical_allowance_bytes"] = 13 * G
+        second = self.decide()
+        self.assertTrue(first["allowed"])
+        self.assertTrue(second["allowed"])
+        self.assertNotIn("commit_floor", second["reasons"])
+
+    def test_missing_allowance_key_rejects_without_exception(self):
+        del self.envelope["shared_physical_allowance_bytes"]
+        result = self.decide()
+        self.assertIn("invalid_envelope:shared_physical_allowance_bytes",
+                      result["reasons"])
+        self.assertIsNone(result["accounting_basis"])
 
     def test_unqualified_bound_is_rejected(self):
         self.envelope["qualified"] = False
@@ -69,7 +140,8 @@ class AdmissionTests(unittest.TestCase):
                 self.assertFalse(self.decide()["allowed"])
 
     def test_all_envelope_byte_fields_are_validated(self):
-        for key in ("gpu_peak_bytes", "host_peak_bytes", "commit_peak_bytes"):
+        for key in ("gpu_peak_bytes", "host_peak_bytes", "commit_peak_bytes",
+                    "shared_physical_allowance_bytes"):
             saved = self.envelope[key]
             for bad in (-1, True, 1 << 63):
                 with self.subTest(key=key, bad=bad):
