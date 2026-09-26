@@ -28,6 +28,18 @@
 
 Public interface: `start_smoke(*, api_key: str, startup_deadline: float, lifetime_deadline: float, cancel: threading.Event | None = None) -> SmokeTask`. `SmokeTask.done` is a `threading.Event`, `SmokeTask.cancel` is the supplied/shared event, and `SmokeTask.result` is `None` until done, then a JSON-serializable dictionary. Guardian calls this once after resuming its owned child, polls `done.is_set()` while monitoring memory, and sets `cancel` on an abort. It must never `join()` this worker on its monitoring or stop path. The client returns `post_attempted: true` immediately after committing to the only POST; the guardian must treat any POST failure as consumed and stop the owned run rather than call `start_smoke` again. This is an integration contract, not an implementation of the guardian.
 
+## Approved review amendment (2026-09-26)
+
+The user explicitly approved the review fixes and continuation. This amendment supersedes conflicting example implementation and test prose below; remaining endpoint, authentication, count, deadline and size constraints are unchanged.
+
+- Preserve original socket receive boundaries and monotonic arrival times through header stripping and HTTP body decoding. First visible SSE content is timed at the receive that completes its event, not a later buffered read. Cover delayed multi-read Content-Length and chunked bodies, multiple events within a chunk, and co-received headers/body.
+- Validate Content-Length as ASCII decimal digits and chunk-size as ASCII hexadecimal digits before conversion (before any chunk extension). Reject signed, underscored and other malformed syntax; preserve bounded framing checks.
+- Distinguish absent counters from present-invalid values. Every supplied malformed counter or timing metric is a fatal validation error naming its source, even when a valid fallback exists. Required logical prompt, completion, newly processed prefill and cached-token counts remain mandatory; valid duplicate sources must agree.
+- Genuinely absent optional metrics remain null and are listed in nonfatal `unavailable_metrics` diagnostics. This includes optional timing/draft metrics and optional total/predicted counters; no fabricated zero or throughput. Malformed supplied optional values still fail. Output must remain finite JSON.
+- Fix the response-close POST failure test to record the received attempt inside its replacement handler and assert exactly one. Label response-side close accurately. Test ambiguous send failure separately if claiming that coverage; no generation retry in either case.
+
+Use focused regression-first tests in `tests/gufo/test_smoke_http.py`; implementation stays in the two named files. No real model, GPU or production endpoint is exercised by this task.
+
 ## Task 1: Complete fixed, bounded HTTP smoke worker
 
 **Files:** Create `scripts/gufo_control/smoke_http.py`; test in `tests/gufo/test_smoke_http.py`.
