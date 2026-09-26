@@ -294,6 +294,10 @@ class _Guardian:
         self._write('argv.json', self.argv_builder(self.secret))
         self.port_check()
         self.store.recheck_static(self.manifest, current_run=self.run_dir)
+        # Setup and evidence writes must not consume the final frame's age budget.
+        final = self._collect_one('final_precreate')
+        # Catch static identity/marker changes during the replacement collection.
+        self.store.recheck_static(self.manifest, current_run=self.run_dir)
         self._admit(final)  # Account for begin, stamps and evidence I/O before create.
         reasons = self.policy.admission_reasons(self.profile, self.runtime_baseline or self.original, final,
                                            now=time.monotonic(), now_utc=utcnow())

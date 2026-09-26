@@ -162,7 +162,7 @@ class SmokeStoreTests(unittest.TestCase):
         for name in ('gufo-ar4k-smoke-runs', 'gufo-ar4k-connect-wait-smoke-runs',
                      'gufo-ar4k-http-slots-smoke-runs', 'gufo-ar4k-benchmark-runs',
                      'gufo-ar4k-benchmark-v2-runs',
-                     'gufo-ar16k-benchmark-runs'):
+                     'gufo-ar16k-benchmark-runs', 'gufo-ar16k-benchmark-v2-runs'):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
                 f = StoreFixture(temp)
                 manifest = f.verify()

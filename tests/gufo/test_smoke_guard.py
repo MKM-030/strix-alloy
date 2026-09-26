@@ -393,6 +393,81 @@ class GuardianTests(unittest.TestCase):
         self.assertIn('stale_or_future_sample', result['failure'])
         self.assertEqual(self.h.children, [])
 
+    def test_setup_delay_refreshes_final_precreate_before_owned_create(self):
+        h = self.h
+        begin = h.store.begin_run
+        def slow_begin(*args):
+            begin(*args)
+            h.clock.sleep(.7)
+        h.store.begin_run = slow_begin
+        h.query_delay = lambda p, i: 1.45 if p == 'final_precreate' else .1
+        create_at = []
+        owned = h.owned
+        def record_create(*args, **kwargs):
+            create_at.append(h.clock.monotonic())
+            return owned(*args, **kwargs)
+        h.owned = record_create
+        result = h.run()
+        self.assertTrue(result['success'], result)
+        final = [q for q in h.queries if q.phase == 'final_precreate']
+        self.assertEqual(len(final), 2)
+        self.assertEqual(len(create_at), 1)
+        self.assertGreater(create_at[0] - final[0].started, 2)
+        self.assertLessEqual(create_at[0] - final[1].started, 2)
+        self.assertGreaterEqual(final[1].started - final[0].started, 1)
+        self.assertTrue(result['cleanup_confirmed'])
+        self.assertEqual(result['recovery_samples'], 5)
+
+    def test_slow_replacement_precreate_refuses_before_owned_create(self):
+        self.h.query_delay = lambda p, i: 2.1 if p == 'final_precreate' and i == 1 else .1
+        result = self.h.run()
+        self.assertFalse(result['success'])
+        self.assertEqual(self.h.children, [])
+        self.assertEqual(len([q for q in self.h.queries if q.phase == 'final_precreate']), 2)
+        self.assertTrue((self.h.root/'attempt.json').exists())
+        self.assertTrue((self.h.root/'incomplete.json').exists())
+        self.assertFalse(result['cleanup_confirmed'])
+        self.assertEqual(result['recovery_samples'], 0)
+
+    def test_replacement_precreate_below_floor_refuses_before_owned_create(self):
+        self.h.query_changes = lambda p, i: dict(available_physical_bytes=49*GIB-1) if p == 'final_precreate' and i == 1 else {}
+        result = self.h.run()
+        self.assertFalse(result['success'])
+        self.assertIn('prelaunch_physical_floor', result['failure'])
+        self.assertEqual(self.h.children, [])
+        self.assertTrue((self.h.root/'attempt.json').exists())
+        self.assertFalse((self.h.root/'incomplete.json').exists())
+        self.assertTrue(result['cleanup_confirmed'])
+        self.assertEqual(result['recovery_samples'], 5)
+
+    def test_static_change_after_replacement_precreate_refuses_before_owned_create(self):
+        def recheck(current):
+            if current is not None and len([q for q in self.h.queries if q.phase == 'final_precreate']) == 2:
+                raise ValueError('artifact_changed')
+        self.h.recheck_hook = recheck
+        result = self.h.run()
+        self.assertFalse(result['success'])
+        self.assertIn('artifact_changed', result['failure'])
+        self.assertEqual(self.h.children, [])
+        self.assertTrue((self.h.root/'attempt.json').exists())
+        self.assertFalse((self.h.root/'incomplete.json').exists())
+        self.assertTrue(result['cleanup_confirmed'])
+        self.assertEqual(result['recovery_samples'], 5)
+
+    def test_recheck_ages_replacement_precreate_and_refuses_before_owned_create(self):
+        def recheck(current):
+            if current is not None and len([q for q in self.h.queries if q.phase == 'final_precreate']) == 2:
+                self.h.clock.sleep(2.1)
+        self.h.recheck_hook = recheck
+        result = self.h.run()
+        self.assertFalse(result['success'])
+        self.assertIn('stale_or_future_sample', result['failure'])
+        self.assertEqual(self.h.children, [])
+        self.assertTrue((self.h.root/'attempt.json').exists())
+        self.assertFalse((self.h.root/'incomplete.json').exists())
+        self.assertTrue(result['cleanup_confirmed'])
+        self.assertEqual(result['recovery_samples'], 5)
+
     def test_precreate_decision_io_cannot_expire_admission(self):
         decide = guard._Guardian._decision
         def slow(g, phase, frame, decision):

@@ -31,8 +31,11 @@ class RecipeTests(unittest.TestCase):
     def test_requests_sampler_tool_and_argv(self):
         r = self.r
         self.assertEqual(r.PROFILE_4K, 'ar4k-iq4xs-correctness-pp1-v2')
+        self.assertEqual(r.PROFILE_16K, 'ar16k-iq4xs-pp1-cache-v2')
         with self.assertRaisesRegex(ValueError, 'unknown_profile'):
             r.recipe_definition('ar4k-iq4xs-correctness-pp1-v1')
+        with self.assertRaisesRegex(ValueError, 'unknown_profile'):
+            r.recipe_definition('ar16k-iq4xs-pp1-cache-v1')
         self.assertEqual(r.recipe_definition(r.PROFILE_4K)['validator_version'], 2)
         self.assertEqual(r.recipe_definition(r.PROFILE_16K)['validator_version'], 2)
         for profile, context in [(r.PROFILE_4K, '4096'), (r.PROFILE_16K, '16384')]:

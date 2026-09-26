@@ -11,7 +11,7 @@ from test_smoke_store import StoreFixture, digest
 
 
 FOUR = 'ar4k-iq4xs-correctness-pp1-v2'
-SIXTEEN = 'ar16k-iq4xs-pp1-cache-v1'
+SIXTEEN = 'ar16k-iq4xs-pp1-cache-v2'
 
 
 def experiment(profile=FOUR):
@@ -54,7 +54,7 @@ class BenchmarkFixture(StoreFixture):
         operator_store.atomic_json(root/'attempt.json', dict(run=str(run), profile=predecessor_id))
         self.predecessor_run = run
         self.evidence = self.root / ('gufo-ar4k-benchmark-v2-runs' if profile == FOUR
-                                     else 'gufo-ar16k-benchmark-runs')
+                                     else 'gufo-ar16k-benchmark-v2-runs')
         self.evidence.mkdir(exist_ok=True)
         acceptance_sha = None
         if profile == SIXTEEN:
@@ -71,6 +71,25 @@ class BenchmarkFixture(StoreFixture):
 
 
 class BenchmarkRuntimeTests(unittest.TestCase):
+    def test_16k_v1_incomplete_latch_blocks_v2_but_clean_attempt_is_preserved(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = BenchmarkFixture(temp); f.bind(SIXTEEN)
+            old = f.root/'gufo-ar16k-benchmark-runs'
+            old.mkdir()
+            operator_store.atomic_json(old/'attempt.json', {'run': str(old/'old-clean-run')})
+            old_attempt = (old/'attempt.json').read_bytes()
+            manifest = f.verify()
+            f.recheck(manifest)
+            self.assertEqual((old/'attempt.json').read_bytes(), old_attempt)
+            operator_store.atomic_json(old/'incomplete.json', {'run': str(old/'old-failed-run')})
+            run = f.evidence/'current-run'; run.mkdir()
+            for action in (f.verify, lambda: f.recheck(manifest),
+                           lambda: store._begin_run(run, manifest, f.base, f.pins)):
+                with self.assertRaisesRegex(ValueError, 'prior_smoke_incomplete'):
+                    action()
+            self.assertFalse((f.evidence/'attempt.json').exists())
+            self.assertEqual((old/'attempt.json').read_bytes(), old_attempt)
+
     def test_16k_predecessor_requires_current_4k_recipe_digest(self):
         with tempfile.TemporaryDirectory() as temp:
             f = BenchmarkFixture(temp); f.bind(SIXTEEN)
