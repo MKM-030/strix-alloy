@@ -11,7 +11,7 @@ import operator
 from . import smoke_http, smoke_guard
 
 PROFILE_4K = 'ar4k-iq4xs-correctness-pp1-v2'
-PROFILE_16K = 'ar16k-iq4xs-pp1-cache-v2'
+PROFILE_16K = 'ar16k-iq4xs-pp1-cache-v3'
 FILLER = 'The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. '
 CACHE_INSTRUCTION = '\nGive a concise summary of the passage above.'
 FIXTURES = {

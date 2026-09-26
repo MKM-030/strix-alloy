@@ -46,6 +46,8 @@ class GuardTests(unittest.TestCase):
             self.g.profile_pins('ar4k-iq4xs-correctness-pp1-v1')
         with self.assertRaisesRegex(ValueError, 'unknown_profile'):
             self.g.profile_pins('ar16k-iq4xs-pp1-cache-v1')
+        with self.assertRaisesRegex(ValueError, 'unknown_profile'):
+            self.g.profile_pins('ar16k-iq4xs-pp1-cache-v2')
         with redirect_stdout(io.StringIO()),patch('sys.stderr',io.StringIO()),self.assertRaises(SystemExit):
             self.g.main(['run','--profile',self.g.recipes.PROFILE_4K,'--context','8192'])
 
@@ -61,9 +63,9 @@ class GuardTests(unittest.TestCase):
             g.operator_store.atomic_json(path,accepted)
             pins=g.profile_pins(g.recipes.PROFILE_16K)
             self.assertEqual(pins.predecessors[0].run,run)
-            self.assertEqual(pins.profile_id,'ar16k-iq4xs-pp1-cache-v2')
-            self.assertEqual(pins.evidence.name,'gufo-ar16k-benchmark-v2-runs')
-            self.assertEqual(pins.qualification.name,'gufo-ar16k-benchmark-v2-qualification.json')
+            self.assertEqual(pins.profile_id,'ar16k-iq4xs-pp1-cache-v3')
+            self.assertEqual(pins.evidence.name,'gufo-ar16k-benchmark-v3-runs')
+            self.assertEqual(pins.qualification.name,'gufo-ar16k-benchmark-v3-qualification.json')
             self.assertEqual(json.loads(pins.experiment_json)['max_requests'],13)
             self.assertEqual(pins.acceptance_sha256,g.operator_store.artifact_record(path)['sha256'])
             for old in (dict(profile_id='ar4k-iq4xs-correctness-pp1-v1'),

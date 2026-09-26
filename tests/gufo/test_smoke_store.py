@@ -162,7 +162,8 @@ class SmokeStoreTests(unittest.TestCase):
         for name in ('gufo-ar4k-smoke-runs', 'gufo-ar4k-connect-wait-smoke-runs',
                      'gufo-ar4k-http-slots-smoke-runs', 'gufo-ar4k-benchmark-runs',
                      'gufo-ar4k-benchmark-v2-runs',
-                     'gufo-ar16k-benchmark-runs', 'gufo-ar16k-benchmark-v2-runs'):
+                     'gufo-ar16k-benchmark-runs', 'gufo-ar16k-benchmark-v2-runs',
+                     'gufo-ar16k-benchmark-v3-runs'):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
                 f = StoreFixture(temp)
                 manifest = f.verify()
@@ -172,11 +173,21 @@ class SmokeStoreTests(unittest.TestCase):
                 f.verify()  # A clean consumed sibling does not consume this profile.
                 f.recheck(manifest)
                 operator_store.atomic_json(sibling/'incomplete.json', {})
+                old_attempt = (sibling/'attempt.json').read_bytes()
+                old_latch = (sibling/'incomplete.json').read_bytes()
                 run = f.evidence/'new-run'; run.mkdir()
                 for action in (f.verify, lambda: f.recheck(manifest),
                                lambda: store._begin_run(run, manifest, f.base, f.pins)):
                     with self.assertRaisesRegex(ValueError, 'incomplete'): action()
+                    if name == 'gufo-ar16k-benchmark-v2-runs':
+                        self.assertEqual((sibling/'attempt.json').read_bytes(), old_attempt)
+                        self.assertEqual((sibling/'incomplete.json').read_bytes(), old_latch)
                 self.assertFalse((f.evidence/'attempt.json').exists())
+
+    def test_current_16k_mapping_is_v3(self):
+        self.assertEqual(store.BENCHMARK_16K, 'ar16k-iq4xs-pp1-cache-v3')
+        self.assertEqual(store.PROFILE_ROOTS[store.BENCHMARK_16K],
+                         'gufo-ar16k-benchmark-v3-runs')
 
     def test_only_exact_current_latch_is_exempt(self):
         with tempfile.TemporaryDirectory() as temp:

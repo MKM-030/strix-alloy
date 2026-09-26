@@ -11,7 +11,7 @@ from test_smoke_store import StoreFixture, digest
 
 
 FOUR = 'ar4k-iq4xs-correctness-pp1-v2'
-SIXTEEN = 'ar16k-iq4xs-pp1-cache-v2'
+SIXTEEN = 'ar16k-iq4xs-pp1-cache-v3'
 
 
 def experiment(profile=FOUR):
@@ -54,7 +54,7 @@ class BenchmarkFixture(StoreFixture):
         operator_store.atomic_json(root/'attempt.json', dict(run=str(run), profile=predecessor_id))
         self.predecessor_run = run
         self.evidence = self.root / ('gufo-ar4k-benchmark-v2-runs' if profile == FOUR
-                                     else 'gufo-ar16k-benchmark-v2-runs')
+                                     else 'gufo-ar16k-benchmark-v3-runs')
         self.evidence.mkdir(exist_ok=True)
         acceptance_sha = None
         if profile == SIXTEEN:
@@ -71,7 +71,7 @@ class BenchmarkFixture(StoreFixture):
 
 
 class BenchmarkRuntimeTests(unittest.TestCase):
-    def test_16k_v1_incomplete_latch_blocks_v2_but_clean_attempt_is_preserved(self):
+    def test_16k_v1_incomplete_latch_blocks_v3_but_clean_attempt_is_preserved(self):
         with tempfile.TemporaryDirectory() as temp:
             f = BenchmarkFixture(temp); f.bind(SIXTEEN)
             old = f.root/'gufo-ar16k-benchmark-runs'

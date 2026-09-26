@@ -52,8 +52,8 @@ def profile_pins(profile_id):
         max_output_tokens=256,max_requests=definition['max_requests'],sessions=1,max_connections=16,
         max_request_bytes=262144,max_response_bytes=1048576,request_seconds=60,startup_seconds=480,lifetime_seconds=600,
         speculative=False,disk_cache=False)
-    evidence_name='gufo-ar4k-benchmark-v2-runs' if four else 'gufo-ar16k-benchmark-v2-runs'
-    qualification_name='gufo-ar4k-benchmark-v2-qualification.json' if four else 'gufo-ar16k-benchmark-v2-qualification.json'
+    evidence_name='gufo-ar4k-benchmark-v2-runs' if four else 'gufo-ar16k-benchmark-v3-runs'
+    qualification_name='gufo-ar4k-benchmark-v2-qualification.json' if four else 'gufo-ar16k-benchmark-v3-qualification.json'
     return replace(smoke_store.PINS,profile_id=profile_id,evidence=reports/evidence_name,
         qualification=reports/qualification_name,
         margin_report=reports/'gufo-ar-benchmark-fit-20260926.md',margin_sha256=MARGIN_SHA256,
