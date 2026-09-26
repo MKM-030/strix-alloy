@@ -19,6 +19,11 @@
 
 **Own:** scripts/gufo_control/benchmark_recipes.py, benchmark_guard.py, smoke_store.py and tests/gufo/test_benchmark_recipes.py, test_benchmark_guard.py, test_smoke_store.py.
 
+Fixture dependency correction discovered by the focused run: also own
+tests/gufo/test_benchmark_runtime.py and test_benchmark_suite.py solely to
+update their current16k fixture identity fromv2 tov3. Preserve historical
+and rejection cases. No additional production or recipe change.
+
 - [ ] RED: change exact expected current profile to`ar16k-iq4xs-pp1-cache-v3`, evidence root`gufo-ar16k-benchmark-v3-runs`, qualification`gufo-ar16k-benchmark-v3-qualification.json`. Assert old16k-v2 andv1 are not launchable,4k-v2 unchanged. Extend sibling incomplete-latch refusal tests to all three16k roots; snapshot oldv2 attempt/latch bytes and assert refusal/recheck leave them untouched. Run these three modules and retain expected assertion failures before implementation.
 - [ ] Implement the exact identity replacements:
 
