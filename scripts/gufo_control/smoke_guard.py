@@ -38,7 +38,7 @@ def utcnow():
 def fixed_argv(secret):
     p = smoke_store.PINS
     return [str(p.build/p.executable_name), 'serve', '--host', '127.0.0.1',
-        '--port', '8836', '--sessions', '1', '--max-connections', '1',
+        '--port', '8836', '--sessions', '1', '--max-connections', '3',
         '--max-request-bytes', '16384', '--api-key', secret, 'llm', '--model',
         str(p.first_shard), '--served-model-name', 'gufo-flash-next', '--context',
         '4096', '--max-tokens', '64', '--think', 'off', '--speculative', 'off',

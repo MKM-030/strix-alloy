@@ -70,7 +70,7 @@ class StoreFixture:
         self.margin.write_bytes(b'accepted margin')
         self.qualification = self.root / 'qualification.json'
         self.pins = store.StorePins(
-            profile_id='ar4k-iq4xs-connect-wait-smoke-v2', source=self.source,
+            profile_id='ar4k-iq4xs-http-slots-smoke-v3', source=self.source,
             source_commit='source-commit', sdk=self.sdk, build=self.build,
             executable_name='gufo.exe', executable=(3, digest(b'exe')),
             sdk_dlls={n: (len(c[0]), digest(c[0])) for n, c in self.dlls.items()},
@@ -159,16 +159,23 @@ class StoreFixture:
 
 class SmokeStoreTests(unittest.TestCase):
     def test_next_profile_uses_distinct_exact_evidence_and_qualification(self):
-        self.assertEqual(store.PROFILE_ID, 'ar4k-iq4xs-connect-wait-smoke-v2')
-        self.assertEqual(store.EVIDENCE, store.ROOT / 'reports/gufo-ar4k-connect-wait-smoke-runs')
+        self.assertEqual(store.PROFILE_ID, 'ar4k-iq4xs-http-slots-smoke-v3')
+        self.assertEqual(store.EVIDENCE, store.ROOT / 'reports/gufo-ar4k-http-slots-smoke-runs')
         self.assertEqual(store.QUALIFICATION, store.ROOT /
-                         'reports/gufo-ar4k-connect-wait-smoke-qualification.json')
+                         'reports/gufo-ar4k-http-slots-smoke-qualification.json')
         self.assertEqual(store.PINS.profile_id, store.PROFILE_ID)
         self.assertEqual(store.PINS.evidence, store.EVIDENCE)
         self.assertEqual(store.PINS.qualification, store.QUALIFICATION)
         self.assertNotEqual(store.EVIDENCE, store.ROOT / 'reports/gufo-ar4k-smoke-runs')
         self.assertNotEqual(store.QUALIFICATION, store.ROOT /
                             'reports/gufo-ar4k-smoke-qualification.json')
+        self.assertNotEqual(store.EVIDENCE, store.ROOT /
+                            'reports/gufo-ar4k-connect-wait-smoke-runs')
+        self.assertNotEqual(store.QUALIFICATION, store.ROOT /
+                            'reports/gufo-ar4k-connect-wait-smoke-qualification.json')
+        self.assertEqual(store.BOUNDS, {'gpu_gib': 68, 'host_gib': 4, 'shared_gib': 20,
+                                        'prelaunch_gib': 49, 'runtime_gib': 24,
+                                        'commit_reserve_gib': 12})
 
     def test_qualification_binds_exact_per_run_recovery_policy(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -195,7 +202,7 @@ class SmokeStoreTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             f = StoreFixture(temp)
             manifest = f.verify()
-            self.assertEqual(manifest['profile'], 'ar4k-iq4xs-connect-wait-smoke-v2')
+            self.assertEqual(manifest['profile'], 'ar4k-iq4xs-http-slots-smoke-v3')
             self.assertEqual(manifest['model']['revision'], 'model-revision')
             self.assertEqual(len(manifest['model']['shards']), 3)
             self.assertEqual(manifest['qualification']['model_descriptors'][0],

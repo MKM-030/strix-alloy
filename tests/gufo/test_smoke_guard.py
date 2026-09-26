@@ -212,7 +212,7 @@ class GuardianTests(unittest.TestCase):
     def test_exact_fixed_argv_and_redaction(self):
         p = smoke_store.PINS
         expected = [str(p.build/p.executable_name), 'serve', '--host','127.0.0.1',
-            '--port','8836','--sessions','1','--max-connections','1','--max-request-bytes',
+            '--port','8836','--sessions','1','--max-connections','3','--max-request-bytes',
             '16384','--api-key','private','llm','--model',str(p.first_shard),
             '--served-model-name','gufo-flash-next','--context','4096','--max-tokens','64',
             '--think','off','--speculative','off','--max-pending','1',

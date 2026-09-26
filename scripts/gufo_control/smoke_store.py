@@ -14,13 +14,13 @@ from .model_identity import AR4K_PINS, ValidatedModel, validate_ar4k_model
 from .operator_policy import Baseline, PROBES
 
 
-PROFILE_ID = 'ar4k-iq4xs-connect-wait-smoke-v2'
+PROFILE_ID = 'ar4k-iq4xs-http-slots-smoke-v3'
 ROOT = Path(r'C:\Projects\strix-alloy-research')
 SOURCE = ROOT / 'sources/gufo-windows'
 SDK = Path(r'C:\AI\sdk\therock1151')
 BUILD = ROOT / 'build/gufo-hip-10.2'
-EVIDENCE = ROOT / 'reports/gufo-ar4k-connect-wait-smoke-runs'
-QUALIFICATION = ROOT / 'reports/gufo-ar4k-connect-wait-smoke-qualification.json'
+EVIDENCE = ROOT / 'reports/gufo-ar4k-http-slots-smoke-runs'
+QUALIFICATION = ROOT / 'reports/gufo-ar4k-http-slots-smoke-qualification.json'
 MARGIN_REPORT = ROOT / 'reports/gufo-ar4k-measured-margin-review-20260926.md'
 FIRST_SHARD = Path(r'C:\AI\models\qwen38-flash\unsloth-UD-IQ4_XS\Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf')
 MARGIN_SHA256 = 'CD55B870D7301398BB55665D57338BE1EA55668A52C5FCE50438A86EC583CD20'
