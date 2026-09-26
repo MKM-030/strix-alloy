@@ -2,6 +2,26 @@
 
 ## Approved recovery amendment, 26 September 2026
 
+### Observed startup-connection correction and next fixed qualification
+
+After recovery amendment review and231passingtests, native GUFO was actually
+started in v1 run20260926T162410Z-d2385fc0a7fc4a968dff872e57e155e4. It began
+loading but the HTTP worker failed after0.25s before any POST: a Windows connect
+timeout was treated as fatal rather than bounded readiness waiting. Parent
+reproduced the same connect exception on the unlistened local port. Owned exit,
+terminal workers and five recovered samples are confirmed in result SHA
+C477CE2E4886B694EE1285FD5FAC6BCB70C87F955CB13FA9DCD44E3935F87E51.
+
+That v1 attempt is finished and its permanent marker remains. Correct only
+connection-stage timeout classification and bounded /ready retry; send/POST
+timeouts remain fatal with no retry. Preserve all240poll/480startup/600lifetime/
+60POST deadlines, cancellation and memory checks. Distinct next fixed profile
+ar4k-iq4xs-connect-wait-smoke-v2 uses its own evidence and qualification files.
+It may be bound only after independent code review, full tests, and parent
+verification of the exact clean prior outcome. This is a separately reviewed
+manual next qualification under the user's staged-test goal, not automatic
+retry, erasure of a prior attempt, or relaxed memory allowance.
+
 The user explicitly approved fresh per-run recovery with unchanged runtime
 ceilings and a reviewed retry ("Fuck yes start it"). This section supersedes
 the historical-baseline prelaunch/recovery requirements below, not any absolute
