@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from gufo_control.telemetry import TelemetryError, collect_snapshot, normalize_snapshot
+from gufo_control.operator_policy import Frame, _frame_reasons
 
 G = 1 << 30
 NOW = datetime(2026, 9, 26, 12, 0, 1, tzinfo=timezone.utc)
@@ -32,6 +33,37 @@ def fixture():
 
 
 class TelemetryTests(unittest.TestCase):
+    def test_native_provider_normalizes_without_relabeling(self):
+        raw = fixture()
+        raw["provider"] = "PDH/native-gauges;DXGI/EnumAdapters1"
+        normalized = self.normalize(raw)
+        self.assertEqual(normalized["provider"], raw["provider"])
+        self.assertEqual(normalized["raw"]["provider"], raw["provider"])
+
+    def test_policy_accepts_explicit_historical_and_native_providers(self):
+        for provider in ("PDH/Get-Counter;DXGI/EnumAdapters1",
+                         "PDH/native-gauges;DXGI/EnumAdapters1"):
+            with self.subTest(provider=provider):
+                raw = fixture()
+                raw["provider"] = provider
+                snapshot = self.normalize(raw)
+                self.assertEqual(_frame_reasons(Frame(snapshot, 100., 101., NOW)), [])
+        raw["provider"] = "other"
+        with self.assertRaises(TelemetryError):
+            self.normalize(raw)
+
+    @patch("gufo_control.telemetry.os.name", "nt")
+    @patch("gufo_control.telemetry.subprocess.run")
+    def test_collect_rejects_historical_subprocess_provider(self, run):
+        run.return_value = subprocess.CompletedProcess([], 0, json.dumps(fixture()).encode(), b"")
+        class FrozenDatetime(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return cls.fromtimestamp(NOW.timestamp(), tz)
+        with patch("gufo_control.telemetry.datetime", FrozenDatetime):
+            with self.assertRaisesRegex(TelemetryError, "provider"):
+                collect_snapshot()
+
     def normalize(self, raw, **kw):
         args = dict(captured_monotonic=100., now_monotonic=101., now_utc=NOW)
         args.update(kw)
@@ -151,6 +183,7 @@ class TelemetryTests(unittest.TestCase):
         for edit in (
             lambda r: r.update(schema=True),
             lambda r: r.update(provider="other"),
+            lambda r: r.update(provider=[]),
             lambda r: r.update(counters=[]),
             lambda r: r.update(processes=None),
             lambda r: r.update(adapters="bad"),
@@ -190,7 +223,9 @@ class TelemetryTests(unittest.TestCase):
             @classmethod
             def now(cls, tz=None):
                 return cls.fromtimestamp(NOW.timestamp(), tz)
-        run.return_value = subprocess.CompletedProcess([], 0, json.dumps(fixture()).encode(), b"")
+        raw = fixture()
+        raw["provider"] = "PDH/native-gauges;DXGI/EnumAdapters1"
+        run.return_value = subprocess.CompletedProcess([], 0, json.dumps(raw).encode(), b"")
         with patch("gufo_control.telemetry.datetime", FrozenDatetime):
             self.assertEqual(collect_snapshot()["adapter_luid"], LUID)
         self.assertEqual(run.call_args.kwargs["timeout"], 5)

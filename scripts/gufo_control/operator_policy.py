@@ -17,7 +17,8 @@ GPU_FIELDS = ('adapter_dedicated_bytes', 'adapter_shared_bytes',
 BYTE_FIELDS = ('available_physical_bytes', 'host_committed_bytes',
                'host_commit_limit_bytes', 'commit_headroom_bytes',
                'dedicated_capacity_bytes', *GPU_FIELDS)
-PROVIDER = 'PDH/Get-Counter;DXGI/EnumAdapters1'
+PROVIDERS = frozenset(('PDH/Get-Counter;DXGI/EnumAdapters1',
+                       'PDH/native-gauges;DXGI/EnumAdapters1'))
 
 
 @dataclass(frozen=True)
@@ -113,7 +114,8 @@ def _frame_reasons(f, *, now=None, now_utc=None, max_age=MAX_SAMPLE_AGE_SECONDS)
                 or s['adapter_dedicated_bytes'] > s['dedicated_capacity_bytes']):
             return ['inconsistent_counter']
         _identity(s)
-        if (s.get('telemetry_ok') is not True or s.get('provider') != PROVIDER
+        if (s.get('telemetry_ok') is not True or not isinstance(s.get('provider'), str)
+                or s['provider'] not in PROVIDERS
                 or s.get('gpu_scope') != 'adapter_aggregate'
                 or s.get('host_scope') != 'host_global'
                 or s.get('inventory_scope') != 'known_engine_and_guest_names'):

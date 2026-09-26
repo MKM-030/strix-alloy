@@ -48,15 +48,10 @@ public static class GufoDxgiProbe {
 '@
 Add-Type -TypeDefinition $source
 $adapters = @([GufoDxgiProbe]::Enumerate())
-$paths = @('\Memory\Available Bytes','\Memory\Committed Bytes','\Memory\Commit Limit',
-  '\GPU Adapter Memory(*)\Dedicated Usage','\GPU Adapter Memory(*)\Shared Usage','\GPU Adapter Memory(*)\Total Committed')
-$samples = Get-Counter -Counter $paths -MaxSamples 1 -ErrorAction Stop
-$rows = @($samples.CounterSamples | ForEach-Object {
-  [pscustomobject]@{ path=$_.Path; instance=$_.InstanceName; raw_value=$_.RawValue;
-    cooked_value=$_.CookedValue; status=$_.Status; timestamp_utc=$_.Timestamp.ToUniversalTime().ToString('o') }
-})
+Add-Type -TypeDefinition (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'windows_counters.cs') -Raw)
+$rows = @([GufoPdhCollector]::Collect([GufoNativePdhApi]::new()))
 $processes = @(Get-Process -ErrorAction Stop | ForEach-Object {
   [pscustomobject]@{ pid=$_.Id; name=$_.ProcessName }
 })
-[pscustomobject]@{ schema=1; provider='PDH/Get-Counter;DXGI/EnumAdapters1';
+[pscustomobject]@{ schema=1; provider='PDH/native-gauges;DXGI/EnumAdapters1';
   adapters=$adapters; counters=$rows; processes=$processes } | ConvertTo-Json -Depth 6 -Compress

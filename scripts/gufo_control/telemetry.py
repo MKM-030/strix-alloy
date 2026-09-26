@@ -17,7 +17,9 @@ class TelemetryError(ValueError):
     """A required telemetry reading could not be trusted."""
 
 
-PROVIDER = 'PDH/Get-Counter;DXGI/EnumAdapters1'
+HISTORICAL_PROVIDER = 'PDH/Get-Counter;DXGI/EnumAdapters1'
+PROVIDER = 'PDH/native-gauges;DXGI/EnumAdapters1'
+ALLOWED_PROVIDERS = frozenset((HISTORICAL_PROVIDER, PROVIDER))
 KNOWN = {'gufo', 'llama-server', 'llama-cli', 'ollama', 'ollama_llama_server',
          'vmmem', 'vmmemwsl', 'wslhost', 'com.docker.backend', 'docker desktop', 'lm studio'}
 HOST = {'available bytes': 'available_physical_bytes', 'committed bytes': 'host_committed_bytes',
@@ -75,7 +77,8 @@ def normalize_snapshot(raw: dict, *, captured_monotonic: float, now_monotonic: f
         raise TelemetryError('stale collection')
     if not isinstance(now_utc, datetime) or now_utc.utcoffset() is None:
         raise TelemetryError('timezone-aware UTC reference required')
-    if not isinstance(raw, dict) or type(raw.get('schema')) is not int or raw['schema'] != 1 or raw.get('provider') != PROVIDER:
+    if (not isinstance(raw, dict) or type(raw.get('schema')) is not int or raw['schema'] != 1
+            or not isinstance(raw.get('provider'), str) or raw['provider'] not in ALLOWED_PROVIDERS):
         raise TelemetryError('unknown telemetry provider/schema')
     for field in ('adapters', 'counters', 'processes'):
         if not isinstance(raw.get(field), list) or len(raw[field]) > 10000:
@@ -110,7 +113,7 @@ def normalize_snapshot(raw: dict, *, captured_monotonic: float, now_monotonic: f
     instance = 'luid_' + luid + '_phys_0'
     result = {'adapter_luid': luid, 'adapter_identity': copy.deepcopy(adapter),
               'dedicated_capacity_bytes': adapter['dedicated_video_memory'],
-              'captured_monotonic': captured_monotonic, 'provider': PROVIDER,
+              'captured_monotonic': captured_monotonic, 'provider': raw['provider'],
               'gpu_scope': 'adapter_aggregate', 'host_scope': 'host_global',
               'inventory_scope': 'known_engine_and_guest_names'}
     stamps = []
@@ -184,6 +187,8 @@ def collect_snapshot() -> dict:
         if completed.returncode or not completed.stdout or len(completed.stdout) > 2 * 1024 * 1024:
             raise TelemetryError('probe failed or output exceeds limit')
         raw = json.loads(completed.stdout.decode('utf-8-sig'))
+        if not isinstance(raw, dict) or raw.get('provider') != PROVIDER:
+            raise TelemetryError('unexpected live telemetry provider')
     except (OSError, subprocess.TimeoutExpired, UnicodeError, ValueError) as error:
         raise TelemetryError('Windows telemetry unavailable: ' + str(error)) from error
     return normalize_snapshot(raw, captured_monotonic=started,
