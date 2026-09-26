@@ -414,9 +414,9 @@ def _parse_sse(parts, submitted):
                 if not isinstance(incoming, dict) or (timings is not None and timings != incoming):
                     raise SmokeError("conflicting_timings")
                 timings = incoming
-    if bytes(pending).strip() or not done or terminal is None or usage is None or timings is None:
+    if bytes(pending).strip() or not done or terminal is None or usage is None:
         raise SmokeError("incomplete_sse")
-    return "".join(content), first_visible, terminal, usage, timings
+    return "".join(content), first_visible, terminal, usage, {} if timings is None else timings
 
 
 class SmokeTask:

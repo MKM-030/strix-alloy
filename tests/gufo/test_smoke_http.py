@@ -521,6 +521,35 @@ class SmokeHttpTests(unittest.TestCase):
         self.assertIn("usage.total_tokens", result["unavailable_metrics"])
         self.assertIn("timings.predicted_n", result["unavailable_metrics"])
 
+    def test_missing_timings_container_is_nonfatal_but_supplied_bad_container_fails(self):
+        usage = {"prompt_tokens": 20, "completion_tokens": 1,
+                 "prompt_tokens_details": {"cached_tokens": 0},
+                 "gufo": {"prefill_tokens": 20}}
+        body = (sse({"choices": [{"delta": {"content": "4"}, "finish_reason": None}]})
+                + sse({"choices": [{"delta": {}, "finish_reason": "stop"}]})
+                + sse({"choices": [], "usage": usage})
+                + b"data: [DONE]\n\n")
+        _, result, posts = self.run_smoke(config={"body": body})
+        self.assertTrue(result["success"], result)
+        self.assertEqual(len(posts), 1)
+        self.assertIsNone(result["metrics"]["engine_timing_prompt_ms"])
+        self.assertIsNone(result["metrics"]["engine_timing_predicted_ms"])
+        self.assertIn("timings.prompt_ms", result["unavailable_metrics"])
+
+        for bad_timings in (None, []):
+            with self.subTest(timings=bad_timings):
+                Handler.calls, Handler.ready_polls = [], 0
+                malformed = (sse({"choices": [{"delta": {"content": "4"},
+                                                  "finish_reason": None}]})
+                             + sse({"choices": [{"delta": {}, "finish_reason": "stop"}],
+                                    "timings": bad_timings})
+                             + sse({"choices": [], "usage": usage})
+                             + b"data: [DONE]\n\n")
+                _, bad_result, bad_posts = self.run_smoke(config={"body": malformed})
+                self.assertFalse(bad_result["success"])
+                self.assertEqual(bad_result["error"], "conflicting_timings")
+                self.assertEqual(len(bad_posts), 1)
+
     def test_invalid_supplied_prefill_fails_full_smoke_with_valid_fallback(self):
         body = valid_events(usage={"gufo": {"prefill_tokens": True}})
         _, result, posts = self.run_smoke(config={"body": body})
