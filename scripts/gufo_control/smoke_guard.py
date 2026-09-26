@@ -142,6 +142,7 @@ class _Guardian:
         self.entries = []
         self.failures = []
         self.manifest = self.profile = self.original = self.current = None
+        self.runtime_baseline = None
         self.run_dir = self.child = self.identity = self.http = self.inspection = None
         self.http_requested = self.inspection_requested = False
         self.secret = ''
@@ -238,7 +239,7 @@ class _Guardian:
 
     def _admit(self, frame, *, owned=False):
         scoped = policy.owned_inventory_frame(frame, self.child) if owned else frame
-        result = policy.admission_decision(self.profile, self.original, scoped,
+        result = policy.admission_decision(self.profile, self.runtime_baseline or self.original, scoped,
                                           now=time.monotonic(), now_utc=utcnow())
         self._decision(self.phase, frame, result)
 
@@ -261,10 +262,17 @@ class _Guardian:
             entry.logged = True
             self._measure(entry)
         frames = [e.frame for e in self.entries if e.phase == 'baseline']
-        reasons = policy.recovery_reasons(self.original, frames[-5:])
+        self.runtime_baseline = policy.stricter_runtime_baseline(self.original, self.current)
+        # Collected frames precede current.last_end: validate them against the
+        # original numeric limits at their own captured validation times.
+        reasons = list(dict.fromkeys(reason for frame in frames
+            for reason in policy.frame_numeric_reasons(self.profile, self.original, frame,
+                now=frame.query_end, now_utc=frame.validated_utc)))
         if _rising_residual(frames[-5:]): reasons.append('rising_residual')
         if reasons: raise ValueError('original_baseline:'+','.join(reasons))
-        self._write('baseline.json', dict(original=asdict(self.original), current=asdict(self.current)))
+        self._write('baseline.json', dict(original=asdict(self.original), current=asdict(self.current),
+            effective=asdict(self.runtime_baseline), current_kind='observed_current_baseline',
+            effective_kind='synthetic_stricter_runtime_limits'))
         self.store.recheck_static(self.manifest)
         self.port_check()
         final = self._collect_one('final_precreate')
@@ -282,7 +290,7 @@ class _Guardian:
         self.port_check()
         self.store.recheck_static(self.manifest, current_run=self.run_dir)
         self._admit(final)  # Account for begin, stamps and evidence I/O before create.
-        reasons = policy.admission_reasons(self.profile, self.original, final,
+        reasons = policy.admission_reasons(self.profile, self.runtime_baseline or self.original, final,
                                            now=time.monotonic(), now_utc=utcnow())
         if reasons: raise ValueError('pre_create:'+','.join(reasons))
         try:
@@ -302,7 +310,7 @@ class _Guardian:
         self._admit(final, owned=True)
         # Decision writes themselves can age a sample; final check performs no I/O.
         scoped = policy.owned_inventory_frame(final, self.child)
-        reasons = policy.admission_reasons(self.profile, self.original, scoped,
+        reasons = policy.admission_reasons(self.profile, self.runtime_baseline or self.original, scoped,
                                            now=time.monotonic(), now_utc=utcnow())
         if reasons: raise ValueError('pre_resume:'+','.join(reasons))
         self.resumed_at = time.monotonic()
@@ -315,7 +323,7 @@ class _Guardian:
         return final
 
     def _runtime(self, frame):
-        return policy.runtime_decision(self.profile, self.original, frame, self.child,
+        return policy.runtime_decision(self.profile, self.runtime_baseline or self.original, frame, self.child,
                                        now=time.monotonic(), now_utc=utcnow())
 
     def _peak(self, frame):
@@ -398,7 +406,7 @@ class _Guardian:
                 if entry.frame is not None and not entry.logged:
                     self._log(entry, 'pending_after_exit')
                     scoped = _historical_frame(entry.frame, entry.proof, self.identity, entry.started)
-                    reasons = policy.frame_numeric_reasons(self.profile, self.original, scoped,
+                    reasons = policy.frame_numeric_reasons(self.profile, self.runtime_baseline or self.original, scoped,
                         now=entry.frame.query_end, now_utc=entry.frame.validated_utc)
                     self._decision('pending_after_exit', entry.frame, dict(allowed=not reasons,
                         reasons=reasons, owned_inventory_proof=scoped.snapshot['owned_inventory_proof']))
@@ -472,13 +480,13 @@ class _Guardian:
             try:
                 value = self._collect_one('recovery')
                 if time.monotonic() > deadline: break
-                reasons = policy.frame_numeric_reasons(self.profile, self.original, value,
+                reasons = policy.frame_numeric_reasons(self.profile, self.runtime_baseline or self.original, value,
                     now=time.monotonic(), now_utc=utcnow())
                 if reasons:
                     self.recovery_samples = []
                     continue
                 self.recovery_samples = (self.recovery_samples+[value])[-5:]
-                reasons = policy.recovery_reasons(self.original, self.recovery_samples)
+                reasons = policy.recovery_reasons(self.current or self.original, self.recovery_samples)
                 if _rising_residual(self.recovery_samples): reasons.append('rising_residual')
                 if not reasons:
                     self.recovered = True
@@ -507,12 +515,15 @@ class _Guardian:
             cleanup_confirmed=clean, evidence_write_confirmed=self.evidence_ok,
             original_baseline=asdict(self.original) if self.original else None,
             current_baseline=asdict(self.current) if self.current else None,
+            runtime_baseline=asdict(self.runtime_baseline) if self.runtime_baseline else None,
+            runtime_baseline_kind='synthetic_stricter_runtime_limits',
             manifest=self.manifest, http=self.http_result, module_inspection=self.module_result,
             resumed_monotonic=self.resumed_at, recovery_samples=len(self.recovery_samples),
             runtime_samples=self.runtime_samples,
             runtime_phase='serving_attempt; readiness/POST progress not exposed',
             runtime_peak_evidence='sampled_lower_bound' if self.runtime_samples else 'unknown',
-            sampled_peak_deltas=self.peaks, allowance_bytes=dict(self.profile.envelope) if self.profile else None,
+            sampled_peak_deltas=self.peaks, sampled_peak_delta_baseline='original_operator_baseline',
+            allowance_bytes=dict(self.profile.envelope) if self.profile else None,
             largest_query_seconds=self.largest_query, largest_sample_gap_seconds=self.largest_gap,
             largest_sample_age_seconds=self.largest_sample_age,
             model_payload_hash_limit='Pinned GGUF metadata only; tensor payloads not fully hashed',

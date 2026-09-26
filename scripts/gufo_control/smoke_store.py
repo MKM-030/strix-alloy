@@ -246,6 +246,7 @@ def expected_qualification(pins: StorePins, guard_review_id: str) -> dict:
         'gdn_result_sha256': pins.gdn_result_sha256,
         'iq_result_sha256': pins.iq_result_sha256,
         'margin_report_sha256': pins.margin_sha256,
+        'recovery_policy': 'per-run-recovery-stricter-runtime-v1',
         'guard_review_id': guard_review_id,
     }
 

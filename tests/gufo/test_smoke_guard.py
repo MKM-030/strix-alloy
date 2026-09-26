@@ -252,11 +252,115 @@ class GuardianTests(unittest.TestCase):
                 self.assertEqual(self.h.queries, [])
                 setattr(self.h, attr, None)
 
-    def test_current_stability_cannot_replace_original_baseline(self):
-        self.h.query_changes = lambda phase, index: dict(available_physical_bytes=50*GIB)
+    def test_fresh_stable_background_recovers_without_rewriting_original(self):
+        original_bytes = json.dumps(self.h.manifest, sort_keys=True).encode()
+        self.h.query_changes = lambda phase, index: dict(available_physical_bytes=50*GIB,
+            host_committed_bytes=20*GIB)
         result = self.h.run()
-        self.assertIn('physical_not_recovered', result['failure'])
+        self.assertTrue(result['success'], result)
+        self.assertEqual(result['recovery_samples'], 5)
+        self.assertEqual(json.dumps(self.h.manifest, sort_keys=True).encode(), original_bytes)
+        saved = json.loads((Path(result['run'])/'baseline.json').read_text())
+        self.assertEqual(result['original_baseline'],
+                         json.loads(original_bytes)['operator']['original_baseline'])
+        self.assertEqual(saved['original'], result['original_baseline'])
+        self.assertEqual(saved['current'], result['current_baseline'])
+        self.assertEqual(saved['effective'], result['runtime_baseline'])
+        self.assertEqual(saved['current_kind'], 'observed_current_baseline')
+        self.assertEqual(saved['effective_kind'], 'synthetic_stricter_runtime_limits')
+        self.assertEqual(result['runtime_baseline_kind'], saved['effective_kind'])
+        self.assertEqual(saved['effective']['committed_max'], 16*GIB)
+        self.assertEqual(saved['current']['committed_max'], 20*GIB)
+        self.assertEqual(result['sampled_peak_delta_baseline'], 'original_operator_baseline')
+        self.assertEqual(result['sampled_peak_deltas']['host_committed_rise_bytes'], 4*GIB)
+        recovery = [q.value for q in self.h.queries if q.phase == 'recovery']
+        self.assertEqual(len(recovery), 5)
+        self.assertGreater(recovery[0].query_start, self.h.children[0].closed_at)
+        self.assertGreater(recovery[0].query_start, saved['current']['last_end'])
+
+    def test_fresh_baseline_cannot_cross_original_live_ceiling(self):
+        self.h.query_changes = lambda p, i: dict(host_committed_bytes=88*GIB+1)
+        result = self.h.run()
+        self.assertIn('original_baseline:commit_envelope', result['failure'])
         self.assertEqual(self.h.children, [])
+
+    def test_early_baseline_frame_is_checked_against_original_ceiling(self):
+        self.h.query_changes = lambda p, i: dict(host_committed_bytes=
+            88*GIB+(1 if p == 'baseline' and i == 0 else 0))
+        result = self.h.run()
+        self.assertIn('original_baseline:commit_envelope', result['failure'])
+        self.assertEqual(self.h.children, [])
+
+    def test_rising_fresh_baseline_is_not_admitted(self):
+        self.h.query_changes = lambda p, i: dict(host_committed_bytes=20*GIB+i)
+        result = self.h.run()
+        self.assertIn('rising_residual', result['failure'])
+        self.assertEqual(self.h.children, [])
+
+    def test_original_or_lower_current_ceilings_apply_in_all_later_phases(self):
+        for current_commit in (12*GIB, 20*GIB):
+            for phase in ('final_precreate', 'final_preresume', 'serving_attempt', 'pending_after_exit', 'recovery'):
+                with self.subTest(current_commit=current_commit, phase=phase), tempfile.TemporaryDirectory() as root:
+                    h = Harness(root)
+                    ceiling = min(16*GIB, current_commit)+72*GIB
+                    if phase == 'pending_after_exit':
+                        h.child_exit = 1.2
+                        h.query_delay = lambda p, i: 1.5 if p == 'serving_attempt' else .1
+                    def changes(p, i):
+                        breach = p == phase or (phase == 'pending_after_exit' and p == 'serving_attempt')
+                        return dict(host_committed_bytes=ceiling+1 if breach else current_commit)
+                    h.query_changes = changes
+                    result = h.run()
+                    if phase == 'recovery':
+                        self.assertFalse(result['cleanup_confirmed'])
+                        self.assertEqual(result['recovery_samples'], 0)
+                    else:
+                        self.assertIn('commit_envelope', result['failure'] or '')
+                    if phase == 'final_precreate': self.assertEqual(h.children, [])
+                    if phase == 'final_preresume': self.assertFalse(h.children[0].resumed)
+
+    def test_fresh_baseline_preserves_absolute_admission_and_runtime_floors(self):
+        for phase, changes, reason in (
+                ('final_precreate', dict(available_physical_bytes=49*GIB-1), 'prelaunch_physical_floor'),
+                ('final_precreate', dict(host_commit_limit_bytes=104*GIB-1), 'commit_floor'),
+                ('serving_attempt', dict(available_physical_bytes=24*GIB-1), 'runtime_physical_floor'),
+                ('serving_attempt', dict(host_commit_limit_bytes=32*GIB-1), 'commit_floor')):
+            with self.subTest(phase=phase, reason=reason), tempfile.TemporaryDirectory() as root:
+                h = Harness(root)
+                h.query_changes = lambda p, i: dict(host_committed_bytes=20*GIB,
+                    **(changes if p == phase else {}))
+                result = h.run()
+                self.assertIn(reason, result['failure'])
+                self.assertFalse(result['success'])
+
+    def test_fresh_recovery_requires_five_later_valid_frames(self):
+        for invalid in ('four', 'identity', 'duplicate'):
+            with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as root:
+                h = Harness(root)
+                def changes(p, i):
+                    values = dict(host_committed_bytes=20*GIB)
+                    if p == 'recovery' and invalid == 'identity':
+                        identity = deepcopy(frame(0).snapshot['adapter_identity'])
+                        identity['luid'] = '0x00000000_0x000111c2'
+                        values.update(adapter_identity=identity, adapter_luid=identity['luid'])
+                    return values
+                h.query_changes = changes
+                if invalid == 'four':
+                    h.query_error = lambda p, i: RuntimeError('only_four') if p == 'recovery' and i == 4 else None
+                if invalid == 'duplicate':
+                    query = h.query
+                    def duplicate(collect):
+                        value = query(collect)
+                        if value.phase == 'recovery':
+                            first = next(q for q in h.queries if q.phase == 'recovery')
+                            value.value = first.value
+                        return value
+                    h.query = duplicate
+                result = h.run()
+                self.assertEqual(len(h.children), 1)
+                self.assertTrue(h.children[0].resumed)
+                self.assertFalse(result['cleanup_confirmed'])
+                self.assertTrue((h.root/'incomplete.json').exists())
 
     def test_precreate_ages_during_recheck_and_never_creates(self):
         def recheck(current):

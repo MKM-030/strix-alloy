@@ -158,6 +158,27 @@ class StoreFixture:
 
 
 class SmokeStoreTests(unittest.TestCase):
+    def test_qualification_binds_exact_per_run_recovery_policy(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            expected = store.expected_qualification(f.pins, 'review-123')
+            self.assertEqual(expected.get('recovery_policy'), 'per-run-recovery-stricter-runtime-v1')
+            for value in (None, 'historical-recovery', 'per-run-recovery-stricter-runtime-v2'):
+                changed = deepcopy(expected)
+                if value is None:
+                    changed.pop('recovery_policy')
+                else:
+                    changed['recovery_policy'] = value
+                operator_store.atomic_json(f.qualification, changed)
+                with self.subTest(value=value), self.assertRaisesRegex(ValueError, 'qualification_mismatch'):
+                    f.verify()
+            operator_store.atomic_json(f.qualification, expected)
+            manifest = f.verify()
+            self.assertEqual(manifest['qualification'], expected)
+            del manifest['qualification']['recovery_policy']
+            with self.assertRaisesRegex(ValueError, 'qualification_mismatch'):
+                f.recheck(manifest)
+
     def test_valid_manifest_and_recheck(self):
         with tempfile.TemporaryDirectory() as temp:
             f = StoreFixture(temp)

@@ -31,6 +31,68 @@ class Owner:
 
 
 class SmokePolicyTests(unittest.TestCase):
+    def test_stricter_baseline_selects_each_limit_without_mutating_evidence(self):
+        self.assertTrue(callable(getattr(policy, 'stricter_runtime_baseline', None)))
+        original = baseline(series())
+        for changes in (
+                dict(available_min=50*GIB, committed_max=20*GIB,
+                     gpu_max=tuple(v+GIB for v in original.gpu_max)),
+                dict(available_min=54*GIB, committed_max=12*GIB,
+                     gpu_max=tuple(v//2 for v in original.gpu_max)),
+                dict(available_min=50*GIB, committed_max=12*GIB,
+                     gpu_max=(original.gpu_max[0]+GIB, 0, original.gpu_max[2]))):
+            current = replace(original, first_start=20, last_end=31.5, **changes)
+            before = deepcopy((original, current))
+            effective = policy.stricter_runtime_baseline(original, current)
+            self.assertEqual(effective, replace(current,
+                available_min=max(original.available_min, current.available_min),
+                committed_max=min(original.committed_max, current.committed_max),
+                gpu_max=tuple(min(a, b) for a, b in zip(original.gpu_max, current.gpu_max))))
+            self.assertEqual((original, current), before)
+
+    def test_stricter_baseline_validates_both_identity_and_temporal_order(self):
+        self.assertTrue(callable(getattr(policy, 'stricter_runtime_baseline', None)))
+        original = baseline(series())
+        current = baseline(series(start=20))
+        for first, second, reason in (
+                (None, current, 'invalid_baseline'),
+                (original, replace(current, committed_max=True), 'invalid_baseline'),
+                (replace(original, gpu_max=(-1, 0, 0)), current, 'invalid_baseline'),
+                (original, replace(current, identity=('other', *current.identity[1:])), 'adapter_changed'),
+                (original, replace(current, first_start=11, last_end=22.5), 'sample_before_baseline')):
+            with self.subTest(reason=reason), self.assertRaisesRegex(ValueError, reason):
+                policy.stricter_runtime_baseline(first, second)
+        touching = replace(current, first_start=original.last_end, last_end=original.last_end+10)
+        self.assertEqual(policy.stricter_runtime_baseline(original, touching), touching)
+
+    def test_original_and_current_byte_boundaries_apply_to_admission_and_runtime(self):
+        self.assertTrue(callable(getattr(policy, 'stricter_runtime_baseline', None)))
+        # Synthetic large carve/available values isolate every independent ceiling.
+        identity = deepcopy(frame(0).snapshot['adapter_identity'])
+        identity['dedicated_video_memory'] = 128*GIB
+        original = baseline(series(available_physical_bytes=80*GIB,
+            dedicated_capacity_bytes=128*GIB, adapter_identity=identity))
+        for delta in (-GIB, GIB):
+            current = replace(original, first_start=20, last_end=31.5,
+                available_min=original.available_min-delta,
+                committed_max=original.committed_max+delta,
+                gpu_max=tuple(v+(delta if delta > 0 else -v//2) for v in original.gpu_max))
+            effective = policy.stricter_runtime_baseline(original, current)
+            limits = [('available_physical_bytes', effective.available_min-24*GIB, -1, 'physical_envelope'),
+                ('host_committed_bytes', effective.committed_max+72*GIB, 1, 'commit_envelope'),
+                *((key, maximum+allowance*GIB, 1, 'gpu_envelope:'+key)
+                  for key, maximum, allowance in zip(GPU_FIELDS, effective.gpu_max, (68, 20, 68)))]
+            for key, limit, sign, reason in limits:
+                for extra in (0, 1):
+                    changes = dict(available_physical_bytes=80*GIB,
+                        dedicated_capacity_bytes=128*GIB, adapter_identity=identity)
+                    changes[key] = limit+sign*extra
+                    f = frame(40, **changes)
+                    for runtime in (False, True):
+                        with self.subTest(delta=delta, key=key, extra=extra, runtime=runtime):
+                            self.assertEqual(self.decide(f, base=effective, runtime=runtime),
+                                             [reason] if extra else [])
+
     def test_shared_numeric_validation_never_excludes_inventory(self):
         p = policy.profile_from_manifest(manifest())
         b = baseline(series())

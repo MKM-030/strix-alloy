@@ -20,6 +20,24 @@ def _canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False)
 
 
+def stricter_runtime_baseline(original, current):
+    """Synthetic numeric limits, retaining the observed current time/identity.
+
+    This is not a measurement or a claim that historical drift was reclaimed.
+    Recovery tolerances must use the actual current baseline instead.
+    """
+    if not _base_valid(original) or not _base_valid(current):
+        raise ValueError('invalid_baseline')
+    if original.identity != current.identity:
+        raise ValueError('adapter_changed')
+    if current.first_start < original.last_end:
+        raise ValueError('sample_before_baseline')
+    return replace(current,
+        available_min=max(original.available_min, current.available_min),
+        committed_max=min(original.committed_max, current.committed_max),
+        gpu_max=tuple(min(a, b) for a, b in zip(original.gpu_max, current.gpu_max)))
+
+
 @dataclass(frozen=True)
 class SmokeProfile:
     profile_id: str = PROFILE_ID
@@ -145,6 +163,10 @@ def admission_decision(profile, original_baseline, frame, *, now, now_utc) -> di
             accounting_basis=None)
     else:
         result = evaluate_admission(frame.snapshot, dict(profile.envelope), now=now)
+        numeric = frame_numeric_reasons(profile, original_baseline, frame,
+                                        now=now, now_utc=now_utc)
+        result['reasons'] = list(dict.fromkeys([*result['reasons'], *numeric]))
+        result['allowed'] = not result['reasons']
     result['owned_inventory_proof'] = deepcopy(frame.snapshot.get('owned_inventory_proof',
         dict(status='not_excluded', excluded_pid=None))) if (
             isinstance(frame, Frame) and isinstance(frame.snapshot, dict)) else None
