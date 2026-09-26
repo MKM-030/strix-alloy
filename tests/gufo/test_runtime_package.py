@@ -1,6 +1,7 @@
 """Offline tests for the optional static GUFO package."""
 
 import contextlib
+import copy
 import hashlib
 import io
 import json
@@ -218,8 +219,8 @@ class RuntimePackageTests(unittest.TestCase):
     def test_source_change_during_copy_cannot_publish(self):
         with fixture_context() as f:
             real_copy = runtime_package._copy_file_exclusive
-            def change_source(source, destination):
-                real_copy(source, destination)
+            def change_source(source, destination, *args):
+                real_copy(source, destination, *args)
                 if source.name == 'gufo.exe':
                     source.write_bytes(b'new')
             with patch.object(runtime_package, '_copy_file_exclusive', side_effect=change_source):
@@ -230,8 +231,8 @@ class RuntimePackageTests(unittest.TestCase):
     def test_publish_race_preserves_independent_target(self):
         with fixture_context() as f:
             real_copy = runtime_package._copy_file_exclusive
-            def create_race(source, destination):
-                real_copy(source, destination)
+            def create_race(source, destination, *args):
+                real_copy(source, destination, *args)
                 if source.name == 'gufo.exe':
                     f.runtime.mkdir()
                     (f.runtime / 'user.txt').write_text('keep', encoding='utf-8')
@@ -239,6 +240,65 @@ class RuntimePackageTests(unittest.TestCase):
                 with self.assertRaises((ValueError, OSError)):
                     f.stage()
             self.assertEqual((f.runtime / 'user.txt').read_text(encoding='utf-8'), 'keep')
+
+    def test_replaced_staging_junction_cannot_write_to_independent_directory(self):
+        with fixture_context() as f:
+            foreign = f.root / 'independent-destination'
+            foreign.mkdir()
+            real_copy = runtime_package._copy_file_exclusive
+            switched = []
+
+            def replace_before_copy(source, destination, *args):
+                if not switched:
+                    junction = destination.parent
+                    junction.rename(junction.with_name(junction.name + '-original'))
+                    created = subprocess.run(
+                        ['cmd.exe', '/c', 'mklink', '/J', str(junction), str(foreign)],
+                        capture_output=True, text=True, check=False)
+                    self.assertEqual(created.returncode, 0, created.stderr)
+                    switched.append(junction)
+                real_copy(source, destination, *args)
+
+            try:
+                with patch.object(runtime_package, '_copy_file_exclusive',
+                                  side_effect=replace_before_copy):
+                    with self.assertRaises((ValueError, OSError)):
+                        f.stage()
+                self.assertTrue(switched)
+                self.assertEqual(list(foreign.iterdir()), [])
+            finally:
+                for junction in switched:
+                    junction.rmdir()  # Only the test-owned junction, nonrecursive.
+
+    def test_owned_destination_must_be_below_staging_root(self):
+        with fixture_context() as f:
+            staging = f.root / 'owned-stage'
+            staging.mkdir()
+            identity = (staging.stat().st_dev, staging.stat().st_ino)
+            with self.assertRaises(ValueError):
+                runtime_package._owned_destination(staging, identity, f.root)
+
+    def test_manifest_tree_and_host_numbers_require_exact_integer_types(self):
+        with fixture_context() as f:
+            manifest = f.stage()
+            for section, field in (('trees', 'count'), ('trees', 'bytes'),
+                                   ('host_prerequisites', 'size_bytes')):
+                with self.subTest(section=section, field=field):
+                    changed = copy.deepcopy(manifest)
+                    changed[section][0][field] = float(changed[section][0][field])
+                    with self.assertRaises(ValueError):
+                        runtime_package._validate_manifest(changed, f.policy)
+
+    def test_manifest_historical_source_paths_must_be_canonical_absolute_local(self):
+        with fixture_context() as f:
+            manifest = f.stage()
+            for source in ('../relative', 'not an absolute path', 'X',
+                           'C:\\old\\..\\build', '\\\\server\\share\\build'):
+                with self.subTest(source=source):
+                    changed = copy.deepcopy(manifest)
+                    changed['sources']['build_dir'] = source
+                    with self.assertRaises(ValueError):
+                        runtime_package._validate_manifest(changed, f.policy)
 
     def test_stage_verify_do_not_launch_subprocess(self):
         with fixture_context() as f, patch('subprocess.run', side_effect=AssertionError('spawned')):

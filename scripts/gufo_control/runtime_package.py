@@ -126,6 +126,33 @@ def _root(path: Path, *, must_exist: bool) -> Path:
     return resolved
 
 
+def _canonical_historical_root(value: str) -> bool:
+    """Validate recorded provenance syntax without accessing an old source tree."""
+    if type(value) is not str or not value or value.startswith(('\\\\', '//')):
+        return False
+    path = Path(value)
+    return (path.is_absolute() and str(path) == value
+            and not any(part in ('.', '..') for part in path.parts)
+            and not any(part.endswith((' ', '.')) for part in path.parts[1:]))
+
+
+def _owned_directory(path: Path, identity: tuple[int, int]) -> None:
+    _check_components(path)
+    if (not path.is_dir() or _is_reparse(path)
+            or (path.stat().st_dev, path.stat().st_ino) != identity):
+        raise ValueError(f'staging_directory_changed:{path}')
+
+
+def _owned_destination(staging_root: Path, identity: tuple[int, int],
+                       destination: Path) -> None:
+    _owned_directory(staging_root, identity)
+    root_parts = tuple(part.casefold() for part in staging_root.parts)
+    destination_parts = tuple(part.casefold() for part in destination.parts)
+    if destination_parts[:len(root_parts)] != root_parts or len(destination_parts) <= len(root_parts):
+        raise ValueError(f'destination_outside_staging:{destination}')
+    _check_components(destination.parent)
+
+
 def _overlap(a: Path, b: Path) -> bool:
     left = tuple(part.casefold() for part in a.parts)
     right = tuple(part.casefold() for part in b.parts)
@@ -266,8 +293,11 @@ def _source_path(row: dict, inventory: dict, policy: dict) -> Path:
     return Path(sources['sdk_dir']) / 'bin' / name
 
 
-def _copy_file_exclusive(source: Path, destination: Path) -> None:
+def _copy_file_exclusive(source: Path, destination: Path,
+                         staging_root: Path, staging_identity: tuple[int, int]) -> None:
+    _owned_destination(staging_root, staging_identity, destination)
     destination.parent.mkdir(parents=True, exist_ok=True)
+    _owned_destination(staging_root, staging_identity, destination)
     with source.open('rb') as reader, destination.open('xb') as writer:
         shutil.copyfileobj(reader, writer, length=1024 * 1024)
 
@@ -324,7 +354,7 @@ def _validate_manifest(manifest: dict, policy: dict) -> None:
         raise ValueError('runtime_manifest_time_not_utc')
     sources = manifest['sources']
     if (type(sources) is not dict or set(sources) != {'build_dir', 'sdk_dir', 'vcpkg_dir'}
-            or not all(type(value) is str and value for value in sources.values())):
+            or not all(_canonical_historical_root(value) for value in sources.values())):
         raise ValueError('runtime_manifest_sources_invalid')
     files = manifest['files']
     if type(files) is not list or not all(_valid_record(row, named=False) for row in files):
@@ -337,7 +367,12 @@ def _validate_manifest(manifest: dict, policy: dict) -> None:
             or len(flat) != len(expected)):
         raise ValueError('runtime_manifest_dll_set_invalid')
     trees = manifest['trees']
-    if trees != policy['trees']:
+    if (type(trees) is not list or len(trees) != len(policy['trees'])
+            or not all(type(row) is dict and set(row) == {'name', 'count', 'bytes', 'digest'}
+                       and type(row['name']) is str and type(row['digest']) is str
+                       and type(row['count']) is int and type(row['bytes']) is int
+                       for row in trees)
+            or trees != policy['trees']):
         raise ValueError('runtime_manifest_tree_records_invalid')
     for pin in trees:
         name = pin['name']
@@ -348,9 +383,8 @@ def _validate_manifest(manifest: dict, policy: dict) -> None:
     if len(files) != len(flat) + sum(row['count'] for row in trees):
         raise ValueError('runtime_manifest_extra_file_records')
     hosts = manifest['host_prerequisites']
-    if (type(hosts) is not list or len(hosts) != 1 or type(hosts[0]) is not dict
-            or set(hosts[0]) != {'path', 'size_bytes', 'sha256'}
-            or type(hosts[0]['path']) is not str
+    if (type(hosts) is not list or len(hosts) != 1
+            or not _valid_record(hosts[0], named=False)
             or (hosts[0]['size_bytes'], hosts[0]['sha256']) != (
                 policy['host_openmp']['size_bytes'], policy['host_openmp']['sha256'])):
         raise ValueError('runtime_manifest_host_invalid')
@@ -381,6 +415,7 @@ def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
     policy = load_policy()
     target = _root(runtime_dir, must_exist=False)
     parent = _root(target.parent, must_exist=True)
+    parent_identity = (parent.stat().st_dev, parent.stat().st_ino)
     inventory = _inventory(build_dir, sdk_dir, vcpkg_dir, policy)
     for source in inventory['sources'].values():
         if _overlap(target, Path(source)):
@@ -397,6 +432,7 @@ def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
     if _free_bytes(parent) < payload_bytes + RESERVE_BYTES:
         raise ValueError('insufficient_runtime_free_space')
     lock = parent / f'{target.name}.stage.lock'
+    _owned_directory(parent, parent_identity)
     _check_components(lock)
     try:
         descriptor = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
@@ -407,11 +443,14 @@ def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
     try:
         with os.fdopen(descriptor, 'w', encoding='utf-8') as stream:
             stream.write(str(temporary))
+        _owned_directory(parent, parent_identity)
         temporary.mkdir()
+        staging_identity = (temporary.stat().st_dev, temporary.stat().st_ino)
+        _owned_directory(temporary, staging_identity)
         for row in inventory['files']:
             source = _source_path(row, inventory, policy)
             destination = temporary / row['path']
-            _copy_file_exclusive(source, destination)
+            _copy_file_exclusive(source, destination, temporary, staging_identity)
             _checked_file(source, row)
             _checked_file(destination, row)
         manifest = {
@@ -428,15 +467,20 @@ def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
         }
         manifest_path = temporary / 'runtime-manifest.json'
         pending = temporary / 'runtime-manifest.json.pending'
+        _owned_destination(temporary, staging_identity, pending)
         with pending.open('x', encoding='utf-8') as stream:
             json.dump(manifest, stream, indent=2, sort_keys=True)
             stream.write('\n')
+        _owned_destination(temporary, staging_identity, manifest_path)
         os.replace(pending, manifest_path)
+        _owned_directory(temporary, staging_identity)
         _validate_manifest(manifest, policy)
         _verify_payload(temporary, inventory['files'], inventory['trees'])
         # Recheck all sources after copying, including installed vcpkg counterparts.
         _inventory(Path(inventory['sources']['build_dir']), Path(inventory['sources']['sdk_dir']),
                    Path(inventory['sources']['vcpkg_dir']), policy)
+        _owned_directory(parent, parent_identity)
+        _owned_directory(temporary, staging_identity)
         if target.exists():
             current_identity = (target.stat().st_dev, target.stat().st_ino)
             if (target_identity is None or current_identity != target_identity
@@ -445,6 +489,8 @@ def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
             target.rmdir()  # Existing empty target only; never recursive.
         if target.exists():
             raise ValueError(f'runtime_target_appeared:{target}')
+        _owned_directory(parent, parent_identity)
+        _owned_directory(temporary, staging_identity)
         temporary.rename(target)  # Windows refuses an independently created target.
         return manifest
     except (ValueError, OSError) as error:
