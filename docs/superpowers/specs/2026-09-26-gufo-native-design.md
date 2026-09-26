@@ -1,6 +1,6 @@
 # Optional GUFO backend on Windows
 
-Status: native-Windows-first direction approved by the user on 26 September 2026. This written specification is the next review checkpoint; it does not claim implementation, a successful build or new benchmark results.
+Status: native-Windows-first direction and this written specification approved by the user on 26 September 2026. Proceed to implementation planning and execution; approval does not claim implementation, a successful build or new benchmark results.
 
 ## Outcome and boundaries
 

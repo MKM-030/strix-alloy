@@ -37,6 +37,9 @@ Thumbs.db
 __pycache__/
 *.pyc
 
+# Private agent task briefs, reports and progress (keep out of release commits).
+.superpowers/
+
 # Local agent worktrees: scratch checkouts, never repo content.
 # Nine of these were once committed as stray gitlinks (mode 160000) with
 # no .gitmodules, which made a fresh clone materialise nine empty dirs.
@@ -74,4 +77,3 @@ artifacts/**/*.whl
 artifacts/**/*.tar.gz
 artifacts/**/*.zip
 artifacts/**/*.so
-
