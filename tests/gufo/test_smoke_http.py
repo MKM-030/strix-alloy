@@ -1,4 +1,5 @@
 import json
+import socket
 import threading
 import time
 import unittest
@@ -40,6 +41,28 @@ def valid_events(**overrides):
         events.insert(1, {"choices": [{"delta": {"reasoning_content": "thinking"},
                                         "finish_reason": None}]})
     return b"".join(sse(event) for event in events) + b"data: [DONE]\n\n"
+
+
+class TimedSocket:
+    def __init__(self, receives, clock):
+        self.receives, self.clock = iter(receives), clock
+
+    def recv(self, _):
+        arrived, data = next(self.receives, (self.clock["now"], b""))
+        self.clock["now"] = arrived
+        return data
+
+
+def timed_body_parts(receives):
+    clock = {"now": 0.0}
+    with patch.object(smoke_http.time, "monotonic", side_effect=lambda: clock["now"]):
+        reader = smoke_http._Reader(TimedSocket(receives, clock), 10.0, threading.Event())
+        head = reader.until(b"\r\n\r\n", 16_384)
+        headers = {name.lower(): value.strip() for name, value in
+                   (line.split(":", 1) for line in head.decode("ascii").split("\r\n")[1:-2])}
+        parts = list(smoke_http._body_chunks(reader, headers))
+        visible = smoke_http._parse_sse(parts, 0.0)[1]
+    return visible, parts
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -411,18 +434,151 @@ class SmokeHttpTests(unittest.TestCase):
         self.assertIn("data:", task.result["responses"][-1]["raw_response"])
         self.assertEqual(sum(call[0] == "POST" for call in Handler.calls), 1)
 
-    def test_transport_failure_after_post_attempt_never_replays(self):
-        # Closing the listening socket after the preflight routes forces a POST send failure.
+    def test_content_length_visible_time_uses_event_completing_receive(self):
+        events = valid_events()
+        first = events.index(b"\n\n") + 2
+        visible = events.index(b'"content": "4"')
+        complete = events.index(b"\n\n", visible) + 2
+        head = f"HTTP/1.1 200 OK\r\nContent-Length: {len(events)}\r\n\r\n".encode()
+        arrived, parts = timed_body_parts([(0.1, head + events[:complete]),
+                                           (0.9, events[complete:])])
+        self.assertEqual(arrived, 100.0)
+        self.assertEqual(b"".join(part for part, _ in parts), events)
+        self.assertLess(first, complete)
+
+    def test_chunked_visible_time_uses_receive_within_chunk(self):
+        events = valid_events()
+        visible = events.index(b'"content": "4"')
+        complete = events.index(b"\n\n", visible) + 2
+        head = b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n"
+        chunk_head = f"{len(events):X};x=y\r\n".encode()
+        arrived, parts = timed_body_parts([(0.1, head + chunk_head + events[:complete]),
+                                           (0.9, events[complete:] + b"\r\n0\r\n\r\n")])
+        self.assertEqual(arrived, 100.0)
+        self.assertEqual(b"".join(part for part, _ in parts), events)
+
+    def test_framing_rejects_non_digit_content_length_and_chunk_size(self):
+        for value in ("+2", "1_0", "-2", "2.0"):
+            with self.subTest(content_length=value):
+                reader = smoke_http._Reader(TimedSocket([(0.1, b"ok")], {"now": 0}),
+                                            time.monotonic() + 1, threading.Event())
+                with self.assertRaisesRegex(smoke_http.SmokeError, "malformed_content_length"):
+                    list(smoke_http._body_chunks(reader, {"content-length": value}))
+        for value in (b"+2", b"0_2", b"-2", b"2.0"):
+            with self.subTest(chunk_size=value):
+                clock = {"now": 0}
+                reader = smoke_http._Reader(TimedSocket([(0.1, value + b";x=y\r\nok\r\n0\r\n\r\n")], clock),
+                                            time.monotonic() + 1, threading.Event())
+                with self.assertRaisesRegex(smoke_http.SmokeError, "malformed_chunk_size"):
+                    list(smoke_http._body_chunks(reader, {"transfer-encoding": "chunked"}))
+
+    def test_supplied_invalid_counters_and_metrics_fail_despite_fallbacks(self):
+        cases = [
+            ({"gufo": {"prefill_tokens": True}}, {}, "usage.gufo.prefill_tokens"),
+            ({"gufo": {"prefill_tokens": -1}}, {}, "usage.gufo.prefill_tokens"),
+            ({"prompt_tokens_details": {"cached_tokens": True}}, {}, "usage.prompt_tokens_details.cached_tokens"),
+            ({"cached_tokens": -1}, {}, "usage.cached_tokens"),
+            ({}, {"prompt_n": True}, "timings.prompt_n"),
+            ({}, {"cache_n": -1}, "timings.cache_n"),
+            ({"gufo": {"ttft_ms": float("nan")}}, {}, "usage.gufo.ttft_ms"),
+            ({"draft_tokens": True}, {}, "usage.draft_tokens"),
+            ({}, {"predicted_n": "1"}, "timings.predicted_n"),
+        ]
+        base_usage = {"prompt_tokens": 20, "completion_tokens": 1,
+                      "prompt_tokens_details": {"cached_tokens": 0},
+                      "gufo": {"prefill_tokens": 20}}
+        base_timings = {"prompt_n": 20, "cache_n": 0, "predicted_n": 1}
+        for usage_change, timings_change, field in cases:
+            with self.subTest(field=field, value=(usage_change, timings_change)):
+                usage = json.loads(json.dumps(base_usage))
+                for name, value in usage_change.items():
+                    if name in ("gufo", "prompt_tokens_details"):
+                        usage[name].update(value)
+                    else:
+                        usage[name] = value
+                metrics, errors, _ = smoke_http._validate_usage(usage, base_timings | timings_change)
+                self.assertIn(field, " ".join(errors))
+                self.assertTrue(errors)
+
+    def test_absent_optional_metrics_are_nonfatal_diagnostics(self):
+        usage = {"prompt_tokens": 20, "completion_tokens": 1,
+                 "prompt_tokens_details": {"cached_tokens": 0},
+                 "gufo": {"prefill_tokens": 20}}
+        timings = {"prompt_n": 20, "cache_n": 0}
+        body = (sse({"choices": [{"delta": {"content": "4"}, "finish_reason": None}]})
+                + sse({"choices": [{"delta": {}, "finish_reason": "stop"}], "timings": timings})
+                + sse({"choices": [], "usage": usage, "timings": timings})
+                + b"data: [DONE]\n\n")
+        _, result, posts = self.run_smoke(config={"body": body})
+        self.assertTrue(result["success"], result)
+        self.assertEqual(len(posts), 1)
+        self.assertIsNone(result["metrics"]["engine_ttft_ms"])
+        self.assertIsNone(result["metrics"]["draft_tokens"])
+        self.assertIsNone(result["metrics"]["total_tokens"])
+        self.assertIsNone(result["metrics"]["engine_predicted_tokens"])
+        self.assertIn("usage.gufo.ttft_ms", result["unavailable_metrics"])
+        self.assertIn("usage.draft_tokens", result["unavailable_metrics"])
+        self.assertIn("usage.total_tokens", result["unavailable_metrics"])
+        self.assertIn("timings.predicted_n", result["unavailable_metrics"])
+
+    def test_invalid_supplied_prefill_fails_full_smoke_with_valid_fallback(self):
+        body = valid_events(usage={"gufo": {"prefill_tokens": True}})
+        _, result, posts = self.run_smoke(config={"body": body})
+        self.assertEqual(len(posts), 1)
+        self.assertFalse(result["success"])
+        self.assertEqual(result["error"], "validation_failed")
+        self.assertIn("invalid_usage.gufo.prefill_tokens", result["validation_errors"])
+        self.assertEqual(result["metrics"]["new_prefill_tokens"], 20)
+
+    def test_response_side_close_after_post_is_one_attempt(self):
+        # The request reached the handler; closing its response is not a send failure.
         Handler.calls, Handler.ready_polls = [], 0
         original = Handler.do_POST
-        Handler.do_POST = lambda self: (self.server.shutdown(), self.connection.close())
+        def close_response(handler):
+            body = handler.rfile.read(int(handler.headers["Content-Length"]))
+            Handler.calls.append(("POST", handler.path, handler.headers.get("Authorization"), body))
+            handler.connection.close()
+        Handler.do_POST = close_response
         try:
             _, result, posts = self.run_smoke(lifetime=1)
         finally:
             Handler.do_POST = original
         self.assertFalse(result["success"])
         self.assertTrue(result["post_attempted"])
-        self.assertLessEqual(len(posts), 1)
+        self.assertEqual(len(posts), 1)
+
+    def test_ambiguous_post_send_failure_is_one_attempt(self):
+        actual_connect = socket.create_connection
+        connects = []
+        sends = []
+
+        class FailedSendSocket:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_):
+                pass
+
+            def settimeout(self, _):
+                pass
+
+            def sendall(self, wire):
+                sends.append(wire)
+                raise TimeoutError("ambiguous send")
+
+        def connect(*args, **kwargs):
+            connects.append(args[0])
+            if len(connects) == 3:
+                return FailedSendSocket()
+            return actual_connect(*args, **kwargs)
+
+        with patch.object(smoke_http.socket, "create_connection", side_effect=connect):
+            _, result, posts = self.run_smoke()
+        self.assertFalse(result["success"])
+        self.assertTrue(result["post_attempted"])
+        self.assertEqual(len(connects), 3)
+        self.assertEqual(len(sends), 1)
+        self.assertEqual(len(posts), 0)
 
 
 if __name__ == "__main__":

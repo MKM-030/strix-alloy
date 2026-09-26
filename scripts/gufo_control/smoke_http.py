@@ -54,6 +54,7 @@ class _Reader:
     def __init__(self, sock, deadline, cancel):
         self.sock, self.deadline, self.cancel = sock, deadline, cancel
         self.buffer = bytearray()
+        self.arrivals = []
         self.raw = bytearray()
         self.wire_count = 0
 
@@ -69,39 +70,49 @@ class _Reader:
                 if self.wire_count > MAX_RESPONSE + 16_384:
                     raise SmokeError("response_wire_limit")
                 self.raw.extend(data)
+                self.buffer.extend(data)
+                self.arrivals.append((len(data), time.monotonic()))
             return data
+
+    def _consume(self, length):
+        out = bytes(self.buffer[:length])
+        del self.buffer[:length]
+        last_arrived = None
+        remaining = length
+        while remaining:
+            count, arrived = self.arrivals[0]
+            taken = min(count, remaining)
+            remaining -= taken
+            last_arrived = arrived
+            if taken == count:
+                self.arrivals.pop(0)
+            else:
+                self.arrivals[0] = (count - taken, arrived)
+        return out, last_arrived
 
     def until(self, marker, limit):
         while marker not in self.buffer:
             if len(self.buffer) > limit and marker not in self.buffer:
                 raise SmokeError("response_header_limit")
-            data = self._recv()
-            if not data:
+            if not self._recv():
                 raise SmokeError("truncated_response")
-            self.buffer.extend(data)
         index = self.buffer.index(marker) + len(marker)
         if index > limit:
             raise SmokeError("response_header_limit")
-        out = bytes(self.buffer[:index])
-        del self.buffer[:index]
-        return out
+        return self._consume(index)[0]
 
     def exact(self, length):
         while len(self.buffer) < length:
-            data = self._recv()
-            if not data:
+            if not self._recv():
                 raise SmokeError("truncated_response")
-            self.buffer.extend(data)
-        out = bytes(self.buffer[:length])
-        del self.buffer[:length]
-        return out
+        return self._consume(length)[0]
 
     def some(self, maximum=4096):
         if not self.buffer:
-            self.buffer.extend(self._recv())
-        out = bytes(self.buffer[:maximum])
-        del self.buffer[:maximum]
-        return out
+            self._recv()
+        if not self.buffer:
+            return b"", None
+        return self._consume(min(maximum, len(self.buffer), self.arrivals[0][0]))
 
 
 def _body_chunks(reader, headers):
@@ -109,8 +120,11 @@ def _body_chunks(reader, headers):
     if transfer == "chunked":
         while True:
             line = reader.until(b"\r\n", 128)[:-2]
+            digits = line.split(b";", 1)[0]
+            if not digits or any(byte not in b"0123456789abcdefABCDEF" for byte in digits):
+                raise SmokeError("malformed_chunk_size")
             try:
-                size = int(line.split(b";", 1)[0], 16)
+                size = int(digits, 16)
             except ValueError as exc:
                 raise SmokeError("malformed_chunk_size") from exc
             if size < 0 or size > MAX_RESPONSE:
@@ -121,28 +135,35 @@ def _body_chunks(reader, headers):
                 return
             remaining = size
             while remaining:
-                part = reader.exact(min(remaining, 4096))
+                part, arrived = reader.some(min(remaining, 4096))
+                if not part:
+                    raise SmokeError("truncated_response")
                 remaining -= len(part)
-                yield part, time.monotonic()
+                yield part, arrived
             if reader.exact(2) != b"\r\n":
                 raise SmokeError("malformed_chunk_end")
     elif "content-length" in headers:
+        digits = headers["content-length"]
+        if not digits or not digits.isascii() or not digits.isdecimal():
+            raise SmokeError("malformed_content_length")
         try:
-            remaining = int(headers["content-length"])
+            remaining = int(digits)
         except ValueError as exc:
             raise SmokeError("malformed_content_length") from exc
         if remaining < 0 or remaining > MAX_RESPONSE:
             raise SmokeError("response_body_limit")
         while remaining:
-            part = reader.exact(min(remaining, 4096))
+            part, arrived = reader.some(min(remaining, 4096))
+            if not part:
+                raise SmokeError("truncated_response")
             remaining -= len(part)
-            yield part, time.monotonic()
+            yield part, arrived
     else:
         while True:
-            part = reader.some()
+            part, arrived = reader.some()
             if not part:
                 return
-            yield part, time.monotonic()
+            yield part, arrived
 
 
 def _exchange(method, path, body, key, deadline, cancel):
@@ -225,22 +246,38 @@ def _redact(value, key):
 
 def _validate_usage(usage, timings):
     problems = []
+    unavailable = []
     if not isinstance(usage, dict) or not isinstance(timings, dict):
-        return {}, ["missing_usage_or_timings"]
+        return {}, ["missing_usage_or_timings"], unavailable
     gufo = usage.get("gufo")
     if not isinstance(gufo, dict):
+        if "gufo" in usage:
+            problems.append("invalid_usage.gufo")
         gufo = {}
     details = usage.get("prompt_tokens_details")
     if not isinstance(details, dict):
+        if "prompt_tokens_details" in usage:
+            problems.append("invalid_usage.prompt_tokens_details")
         details = {}
-    prompt = _int_or_none(usage.get("prompt_tokens"))
-    completion = _int_or_none(usage.get("completion_tokens"))
-    total = _int_or_none(usage.get("total_tokens"))
-    prefill = _int_or_none(gufo.get("prefill_tokens"))
-    timing_prefill = _int_or_none(timings.get("prompt_n"))
-    cached = _int_or_none(details.get("cached_tokens"))
-    legacy_cached = _int_or_none(usage.get("cached_tokens"))
-    timing_cached = _int_or_none(timings.get("cache_n"))
+
+    def read(source, name, label, parser, optional=False):
+        if name not in source:
+            if optional:
+                unavailable.append(label)
+            return None
+        value = parser(source[name])
+        if value is None:
+            problems.append("invalid_" + label)
+        return value
+
+    prompt = read(usage, "prompt_tokens", "usage.prompt_tokens", _int_or_none)
+    completion = read(usage, "completion_tokens", "usage.completion_tokens", _int_or_none)
+    total = read(usage, "total_tokens", "usage.total_tokens", _int_or_none, True)
+    prefill = read(gufo, "prefill_tokens", "usage.gufo.prefill_tokens", _int_or_none)
+    timing_prefill = read(timings, "prompt_n", "timings.prompt_n", _int_or_none)
+    cached = read(details, "cached_tokens", "usage.prompt_tokens_details.cached_tokens", _int_or_none)
+    legacy_cached = read(usage, "cached_tokens", "usage.cached_tokens", _int_or_none)
+    timing_cached = read(timings, "cache_n", "timings.cache_n", _int_or_none)
     if prefill is None:
         prefill = timing_prefill
     if cached is None:
@@ -264,23 +301,23 @@ def _validate_usage(usage, timings):
         problems.append("prompt_parts_disagree")
     if total is not None and prompt is not None and completion is not None and total != prompt + completion:
         problems.append("total_disagrees")
-    predicted = _int_or_none(timings.get("predicted_n"))
+    predicted = read(timings, "predicted_n", "timings.predicted_n", _int_or_none, True)
     if predicted is not None and completion is not None and predicted != completion:
         problems.append("completion_disagrees")
     return {
         "logical_prompt_tokens": prompt, "new_prefill_tokens": prefill,
         "cached_prompt_tokens": cached, "completion_tokens": completion,
         "total_tokens": total,
-        "engine_prefill_ms": _number_or_none(gufo.get("prefill_ms")),
-        "engine_decode_ms": _number_or_none(gufo.get("decode_ms")),
-        "engine_ttft_ms": _number_or_none(gufo.get("ttft_ms")),
-        "engine_queue_ms": _number_or_none(gufo.get("queue_ms")),
-        "engine_timing_prompt_ms": _number_or_none(timings.get("prompt_ms")),
-        "engine_timing_predicted_ms": _number_or_none(timings.get("predicted_ms")),
-        "engine_predicted_tokens": _int_or_none(timings.get("predicted_n")),
-        "draft_tokens": _int_or_none(usage.get("draft_tokens")),
-        "draft_tokens_accepted": _int_or_none(usage.get("draft_tokens_accepted")),
-    }, list(dict.fromkeys(problems))
+        "engine_prefill_ms": read(gufo, "prefill_ms", "usage.gufo.prefill_ms", _number_or_none, True),
+        "engine_decode_ms": read(gufo, "decode_ms", "usage.gufo.decode_ms", _number_or_none, True),
+        "engine_ttft_ms": read(gufo, "ttft_ms", "usage.gufo.ttft_ms", _number_or_none, True),
+        "engine_queue_ms": read(gufo, "queue_ms", "usage.gufo.queue_ms", _number_or_none, True),
+        "engine_timing_prompt_ms": read(timings, "prompt_ms", "timings.prompt_ms", _number_or_none, True),
+        "engine_timing_predicted_ms": read(timings, "predicted_ms", "timings.predicted_ms", _number_or_none, True),
+        "engine_predicted_tokens": predicted,
+        "draft_tokens": read(usage, "draft_tokens", "usage.draft_tokens", _int_or_none, True),
+        "draft_tokens_accepted": read(usage, "draft_tokens_accepted", "usage.draft_tokens_accepted", _int_or_none, True),
+    }, list(dict.fromkeys(problems)), unavailable
 
 
 def _strict_json(text):
@@ -465,12 +502,13 @@ def start_smoke(*, api_key: str, startup_deadline: float,
             if not headers.get("content-type", "").lower().startswith("text/event-stream"):
                 raise SmokeError("wrong_completion_content_type")
             visible, first_ms, reason, usage, timings = _parse_sse(parts, submitted)
-            metrics, errors = _validate_usage(usage, timings)
+            metrics, errors, unavailable = _validate_usage(usage, timings)
             metrics["first_visible_content_ms"] = first_ms
             metrics["http_duration_ms"] = result["metrics"]["http_duration_ms"]
             result["metrics"] = metrics
             result.update(visible_answer=visible, finish_reason=reason,
-                          usage=usage, timings=timings, validation_errors=errors)
+                          usage=usage, timings=timings, validation_errors=errors,
+                          unavailable_metrics=unavailable)
             if visible.strip() != "4": errors.append("wrong_answer")
             if reason != "stop": errors.append("incomplete_finish")
             if first_ms is None: errors.append("no_visible_content")
