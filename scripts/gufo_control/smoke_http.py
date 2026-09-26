@@ -410,7 +410,7 @@ def _merge_tool_calls(calls, tools, *, streaming=True):
                 tool["function"][field] += value
 
 
-def parse_sse_response(parts, submitted):
+def parse_sse_response(parts, submitted, *, path="/v1/chat/completions"):
     pending = bytearray()
     content = []
     reasoning, tools, models = [], {}, []
@@ -462,7 +462,8 @@ def parse_sse_response(parts, submitted):
                     raise SmokeError("malformed_sse_choices")
                 if terminal is not None:
                     raise SmokeError("duplicate_or_bad_terminal")
-                delta = choice.get("delta", {})
+                delta = ({"content": choice.get("text")} if path == "/v1/completions"
+                         else choice.get("delta", {}))
                 if not isinstance(delta, dict):
                     raise SmokeError("malformed_sse_delta")
                 visible = delta.get("content")

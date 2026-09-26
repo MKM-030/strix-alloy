@@ -718,6 +718,25 @@ class SmokeHttpTests(unittest.TestCase):
 
 
 class ReusableHelpersTests(unittest.TestCase):
+    def test_legacy_sse_text_is_endpoint_aware_and_uses_frame_arrival(self):
+        self.assertIn("path", inspect.signature(smoke_http.parse_sse_response).parameters)
+        first = sse({"choices": [{"text": "", "finish_reason": None}]})
+        visible = sse({"choices": [{"text": "hello", "finish_reason": None}]})
+        final = (sse({"choices": [{"text": "!", "finish_reason": "stop"}], "usage": {}})
+                 + b"data: [DONE]\n\n")
+        parts = [(first + visible[:-1], 10.1), (visible[-1:], 10.25), (final, 10.5)]
+        result = smoke_http.parse_sse_response(parts, 10, path="/v1/completions")
+        self.assertEqual(result["visible_answer"], "hello!")
+        self.assertEqual(result["first_visible_content_ms"], 250)
+        self.assertEqual(result["first_useful_output_ms"], 250)
+        # Existing chat callers and the smoke wrapper retain chat-only defaults.
+        self.assertEqual(smoke_http.parse_sse_response(parts, 10)["visible_answer"], "")
+        self.assertEqual(smoke_http._parse_sse(parts, 10)[0], "")
+        malformed = sse({"choices": [{"text": 7, "finish_reason": "stop"}], "usage": {}})
+        with self.assertRaises(smoke_http.SmokeError):
+            smoke_http.parse_sse_response([(malformed + b"data: [DONE]\n\n", 11)],
+                                          10, path="/v1/completions")
+
     def test_exchange_explicit_bounds_are_validated_before_connect(self):
         self.assertIn("port", inspect.signature(smoke_http._exchange).parameters)
         for kwargs in ({"host": "example.com"}, {"port": True}, {"port": 65536},

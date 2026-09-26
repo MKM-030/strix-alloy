@@ -44,7 +44,10 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", cfg.get("content_type", "text/event-stream"))
         self.send_header("X-Echo", KEY)
         body = cfg.get("body", response())
-        self.send_header("Content-Length", str(cfg.get("length", len(body))))
+        if cfg.get("chunked"):
+            self.send_header("Transfer-Encoding", "chunked")
+        else:
+            self.send_header("Content-Length", str(cfg.get("length", len(body))))
         self.end_headers()
         try:
             # Windows monotonic() can have a 15ms clock tick: make wall timing observable.
@@ -115,6 +118,25 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(result["visible_answer"], "answer")
         for field in ("first_visible_content_ms", "engine_pp_tokens_per_second", "engine_tg_tokens_per_second", "http_pp_tokens_per_second", "mtp_acceptance"):
             self.assertIsNone(result["metrics"][field], field)
+
+    def test_legacy_stream_text_and_first_arrival(self):
+        events = [
+            {"choices": [{"text": "", "finish_reason": None}]},
+            {"model": "local", "choices": [{"text": "ans", "finish_reason": None}]},
+            {"choices": [{"text": "wer", "finish_reason": "stop"}], "usage": usage()}]
+        parts = [(b"data: " + json.dumps(event).encode() + b"\n\n", arrived)
+                 for event, arrived in zip(events, (10.1, 10.25, 10.5))]
+        parts.append((b"data: [DONE]\n\n", 10.75))
+        body = b"".join(part for part, _ in parts)
+        with patch.object(smoke_http, "_exchange", return_value=(
+                200, {"content-type": "text/event-stream"}, body, 10, 11, parts)):
+            result = self.call({"model": "local", "prompt": "x", "max_tokens": 1,
+                                "stream": True}, path="/v1/completions")
+        self.assertTrue(result["success"], result)
+        self.assertEqual(result["visible_answer"], "answer")
+        self.assertEqual(result["metrics"]["first_visible_content_ms"], 250)
+        self.assertEqual(result["metrics"]["first_useful_output_ms"], 250)
+        self.assertIsNone(result["metrics"]["first_tool_call_ms"])
 
     def test_json_chat_tools_and_stop_edge(self):
         obj = json.loads(response(False))
@@ -211,7 +233,7 @@ class BenchmarkTests(unittest.TestCase):
         self.server.config = {"body": b"", "length": smoke_http.MAX_RESPONSE+1}
         self.assertEqual(self.call()["error"], "response_body_limit")
 
-    def test_timeout_and_cancel_keep_partial_wire(self):
+    def test_timeout_and_cancel_keep_partial_body_evidence(self):
         for cancelling in (False, True):
             self.server.calls = []
             started, release, cancel = threading.Event(), threading.Event(), threading.Event()
@@ -225,9 +247,39 @@ class BenchmarkTests(unittest.TestCase):
             worker.join(1); release.set()
             self.assertFalse(worker.is_alive())
             self.assertEqual(result[0]["error"], "cancelled" if cancelling else "deadline_exceeded")
-            self.assertTrue(result[0]["raw_response"])
+            self.assertTrue(result[0]["body_parts"])
             self.assertNotIn(KEY, json.dumps(result[0]))
             self.assertEqual(len(self.server.calls), 1)
+
+    def test_chunked_timeout_omits_wire_with_split_key_and_keeps_sanitized_body(self):
+        first, second = KEY.encode()[:7], KEY.encode()[7:]
+        for interrupted_chunk in (False, True):
+            with self.subTest(interrupted_chunk=interrupted_chunk):
+                release, started = threading.Event(), threading.Event()
+                # Neither wire contains the contiguous key. Dechunking the
+                # received bytes reconstructs it, even inside an unfinished chunk.
+                wire = (f"{len(first):x}\r\n".encode() + first + b"\r\n"
+                        + f"{len(second) + (10 if interrupted_chunk else 0):x}\r\n".encode()
+                        + second + (b"" if interrupted_chunk else b"\r\n"))
+                self.assertNotIn(KEY.encode(), wire)
+                self.server.config = {"body": wire, "chunked": True, "stall": True,
+                                      "started": started, "release": release}
+                try:
+                    result = self.call(deadline=time.monotonic() + .35)
+                finally:
+                    release.set()
+                self.assertEqual(result["error"], "deadline_exceeded")
+                self.assertEqual(result["raw_response_base64"], "")
+                self.assertEqual(result["raw_response"], "")
+                self.assertEqual(result["raw_response_omission_reason"],
+                                 "partial_wire_body_offsets_unavailable")
+                self.assertTrue(result["raw_response_is_partial_wire"])
+                decoded = b"".join(base64.b64decode(part["base64"])
+                                   for part in result["body_parts"])
+                self.assertEqual(decoded, b"*" * len(KEY))
+                self.assertEqual(sum(part["byte_count"] for part in result["body_parts"]), len(KEY))
+                self.assertTrue(result["evidence_redacted"])
+                self.assertNotIn(KEY, json.dumps(result))
 
     def test_redacts_cross_fragment_bytes_before_base64_and_preserves_boundaries(self):
         body = response().replace(b"answer", KEY.encode())

@@ -80,7 +80,13 @@ def _record_evidence(result, raw, parts, key, *, wire=False):
             result["evidence_redacted"] = True
         return clean
 
-    raw = sanitize(raw)
+    # Partial HTTP wire can split a secret across chunk framing, including an
+    # interrupted chunk. Transport does not retain body-to-wire offsets, so
+    # plaintext replacement cannot safely sanitize this representation. Keep
+    # decoded body fragments below and explicitly omit the unsafe wire copy.
+    result["raw_response_omission_reason"] = (
+        "partial_wire_body_offsets_unavailable" if wire else None)
+    raw = b"" if wire else sanitize(raw)
     result.update(raw_response=raw.decode("utf-8", "replace"),
                   raw_response_base64=base64.b64encode(raw).decode("ascii"),
                   raw_response_is_partial_wire=wire)
@@ -191,7 +197,7 @@ def request_once(*, port: int, api_key: str, path: str, request: dict,
         if request["stream"]:
             if content_type != "text/event-stream":
                 raise smoke_http.SmokeError("wrong_completion_content_type")
-            parsed = smoke_http.parse_sse_response(parts, submitted)
+            parsed = smoke_http.parse_sse_response(parts, submitted, path=path)
         else:
             if content_type != "application/json":
                 raise smoke_http.SmokeError("wrong_completion_content_type")
