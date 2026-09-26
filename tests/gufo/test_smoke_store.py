@@ -151,9 +151,10 @@ class StoreFixture:
                 first, self.pins.model_revision),
         )
 
-    def recheck(self, manifest):
+    def recheck(self, manifest, *, current_run=None):
         return store._recheck_static(manifest, self.pins,
-                                     source_validator=lambda: None)
+                                     source_validator=lambda: None,
+                                     current_run=current_run)
 
 
 class SmokeStoreTests(unittest.TestCase):
@@ -343,6 +344,112 @@ class SmokeStoreTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'model_shard_changed'):
                     store.begin_run(run, manifest, f.base)
             self.assertFalse((f.evidence / 'attempt.json').exists())
+
+    def test_public_current_run_recheck_is_exact_and_strict_by_default(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            run = f.evidence / 'run-one'
+            run.mkdir()
+            other = f.evidence / 'run-two'
+            other.mkdir()
+            with patch.object(store, 'PINS', f.pins), patch.object(
+                    operator_store, 'source_identity', return_value=None):
+                store.begin_run(run, manifest, f.base)
+                store.recheck_static(manifest, current_run=run)
+                with self.assertRaisesRegex(ValueError, 'prior_smoke_incomplete'):
+                    store.recheck_static(manifest)
+                with self.assertRaises(ValueError):
+                    store.recheck_static(manifest, current_run=other)
+                with self.assertRaises(ValueError):
+                    store.begin_run(other, manifest, f.base)
+
+    def test_current_run_recheck_rejects_marker_and_manifest_changes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            run = f.evidence / 'run-one'
+            run.mkdir()
+            with patch.object(store, 'PINS', f.pins), patch.object(
+                    operator_store, 'source_identity', return_value=None):
+                store.begin_run(run, manifest, f.base)
+                marker_paths = (f.evidence / 'attempt.json',
+                                f.evidence / 'incomplete.json',
+                                run / 'manifest.json')
+                for path in marker_paths:
+                    original = path.read_bytes()
+                    try:
+                        path.unlink()
+                        with self.subTest(path=path, change='missing'):
+                            with self.assertRaises(ValueError):
+                                store.recheck_static(manifest, current_run=run)
+                        path.write_bytes(b'{invalid json')
+                        with self.subTest(path=path, change='malformed'):
+                            with self.assertRaises(ValueError):
+                                store.recheck_static(manifest, current_run=run)
+                        changed = json.loads(original)
+                        if path.name == 'manifest.json':
+                            changed['profile'] = 'other-profile'
+                        elif path.name == 'attempt.json':
+                            changed['profile'] = 'other-profile'
+                        else:
+                            changed['original_baseline']['available_min'] += 1
+                        operator_store.atomic_json(path, changed)
+                        with self.subTest(path=path, change='mismatched'):
+                            with self.assertRaises(ValueError):
+                                store.recheck_static(manifest, current_run=run)
+                    finally:
+                        path.write_bytes(original)
+                marker = operator_store.read_json(f.evidence / 'attempt.json')
+                marker['run'] = str(f.evidence / 'run-two')
+                operator_store.atomic_json(f.evidence / 'attempt.json', marker)
+                with self.assertRaises(ValueError):
+                    store.recheck_static(manifest, current_run=run)
+
+    def test_current_run_recheck_rejects_changed_input_and_completed_attempt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            run = f.evidence / 'run-one'
+            run.mkdir()
+            with patch.object(store, 'PINS', f.pins), patch.object(
+                    operator_store, 'source_identity', return_value=None):
+                store.begin_run(run, manifest, f.base)
+                changed = deepcopy(manifest)
+                changed['operator']['original_baseline']['available_min'] += 1
+                with self.assertRaises(ValueError):
+                    store.recheck_static(changed, current_run=run)
+                changed = deepcopy(manifest)
+                changed['profile'] = 'other-profile'
+                with self.assertRaises(ValueError):
+                    store.recheck_static(changed, current_run=run)
+                store.finish_run(run, {'cleanup_confirmed': True})
+                with self.assertRaises(ValueError):
+                    store.recheck_static(manifest, current_run=run)
+                with self.assertRaisesRegex(ValueError, 'attempt'):
+                    store.begin_run(run, manifest, f.base)
+
+    def test_begin_write_failure_keeps_consumed_attempt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            f = StoreFixture(temp)
+            manifest = f.verify()
+            run = f.evidence / 'run-one'
+            run.mkdir()
+            original_atomic = operator_store.atomic_json
+
+            def fail_manifest(path, value):
+                if Path(path) == run / 'manifest.json':
+                    raise OSError('simulated_manifest_write_failure')
+                return original_atomic(path, value)
+
+            with patch.object(store, 'PINS', f.pins), patch.object(
+                    operator_store, 'source_identity', return_value=None), patch.object(
+                    operator_store, 'atomic_json', side_effect=fail_manifest):
+                with self.assertRaisesRegex(OSError, 'simulated_manifest_write_failure'):
+                    store.begin_run(run, manifest, f.base)
+            self.assertTrue((f.evidence / 'attempt.json').exists())
+            self.assertTrue((f.evidence / 'incomplete.json').exists())
+            self.assertFalse((run / 'manifest.json').exists())
 
 
 if __name__ == '__main__':

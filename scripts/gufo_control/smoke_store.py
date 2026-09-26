@@ -346,7 +346,28 @@ def _expected_artifact_paths(pins: StorePins):
     return [(label, str(path.resolve(strict=True))) for label, path in expected]
 
 
-def _recheck_static(manifest: dict, pins: StorePins, *, source_validator) -> None:
+def _current_run_markers(manifest: dict, pins: StorePins, current_run: Path) -> None:
+    run_dir = Path(current_run)
+    root = pins.evidence.resolve(strict=True)
+    if (not run_dir.is_absolute() or not run_dir.is_dir()
+            or run_dir.parent.resolve(strict=True) != root
+            or run_dir.resolve(strict=True).parent != root):
+        raise ValueError('invalid_smoke_run_directory')
+    run = str(run_dir)
+    attempt = operator_store.read_json(pins.evidence / 'attempt.json')
+    latch = operator_store.read_json(pins.evidence / 'incomplete.json')
+    persisted = operator_store.read_json(run_dir / 'manifest.json')
+    expected = json.loads(json.dumps(manifest, allow_nan=False))
+    if (not isinstance(attempt, dict) or attempt.get('run') != run
+            or attempt.get('profile') != PROFILE_ID
+            or not isinstance(latch, dict) or latch.get('run') != run
+            or latch.get('original_baseline') != expected['operator']['original_baseline']
+            or persisted != expected):
+        raise ValueError('current_smoke_run_mismatch')
+
+
+def _recheck_static(manifest: dict, pins: StorePins, *, source_validator,
+                    current_run=None) -> None:
     source_validator()
     try:
         if (manifest['profile'] != PROFILE_ID
@@ -394,16 +415,20 @@ def _recheck_static(manifest: dict, pins: StorePins, *, source_validator) -> Non
             raise ValueError('qualification_mismatch')
         if (pins.operator_evidence / 'incomplete.json').exists():
             raise ValueError('operator_incomplete')
-        if (pins.evidence / 'incomplete.json').exists():
-            raise ValueError('prior_smoke_incomplete')
-        if (pins.evidence / 'attempt.json').exists():
-            raise ValueError('prior_smoke_attempt')
+        if current_run is None:
+            if (pins.evidence / 'incomplete.json').exists():
+                raise ValueError('prior_smoke_incomplete')
+            if (pins.evidence / 'attempt.json').exists():
+                raise ValueError('prior_smoke_attempt')
+        else:
+            _current_run_markers(manifest, pins, current_run)
     except (KeyError, TypeError, IndexError, OSError) as error:
         raise ValueError('manifest_recheck_invalid') from error
 
 
-def recheck_static(manifest: dict) -> None:
-    _recheck_static(manifest, PINS, source_validator=operator_store.source_identity)
+def recheck_static(manifest: dict, *, current_run=None) -> None:
+    _recheck_static(manifest, PINS, source_validator=operator_store.source_identity,
+                    current_run=current_run)
 
 
 def _load_original_operator_baseline(pins: StorePins) -> Baseline:
