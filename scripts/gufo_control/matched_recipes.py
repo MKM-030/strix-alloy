@@ -7,6 +7,9 @@ from . import benchmark_recipes as base
 PROFILE_AR = 'matched4k-iq4xs-ar-v1'
 PROFILE_AR_V2 = 'matched4k-iq4xs-ar-v2'
 PROFILE_MTP = 'matched4k-iq4xs-mtp-length-d1-v1'
+PROFILE_MTP_D3 = 'matched4k-iq4xs-mtp-length-d3-v1'
+MTP_DRAFT_LIMITS = {PROFILE_MTP: 1, PROFILE_MTP_D3: 3}
+PROFILES = (PROFILE_AR, PROFILE_AR_V2, *MTP_DRAFT_LIMITS)
 REFERENCE_PROFILE = 'ar4k-iq4xs-correctness-pp1-v2'
 REFERENCE_RECIPE_SHA256 = '9C7665685B8F2FCAD983DCFBC65AF205B60B3E2146EA0A73BA4184F99E4909D1'
 REFERENCE_RESULT_SHA256 = '692149EEB38F89E662D9428A725533F14793680F5C70E8477A3B53E2DE8B04F3'
@@ -42,13 +45,13 @@ def validate_fixture() -> list[dict]:
 
 
 def recipe_definition(profile_id: str) -> dict:
-    if profile_id not in (PROFILE_AR, PROFILE_AR_V2, PROFILE_MTP):
+    if profile_id not in PROFILES:
         raise ValueError('unknown_profile')
     validate_fixture()
     definition = base.recipe_definition(REFERENCE_PROFILE)
     definition['profile_id'] = profile_id
     definition['max_prompt_tokens'] = 2304
-    mtp = profile_id == PROFILE_MTP
+    mtp = profile_id in MTP_DRAFT_LIMITS
     definition.update(
         reference_profile=REFERENCE_PROFILE,
         reference_result_sha256=REFERENCE_RESULT_SHA256,
@@ -56,7 +59,7 @@ def recipe_definition(profile_id: str) -> dict:
         fixed_calibration=list(CALIBRATION),
         input_count_provenance='same_pinned_tokenizer_template_and_request',
         speculative=mtp,
-        draft_tokens=1 if mtp else 0,
+        draft_tokens=MTP_DRAFT_LIMITS.get(profile_id, 0),
         mtp_policy='length' if mtp else None,
         mtp_draft_vocab='full' if mtp else None,
     )

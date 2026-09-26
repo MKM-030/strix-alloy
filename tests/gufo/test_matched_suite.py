@@ -23,7 +23,7 @@ class MatchedSuiteTests(unittest.TestCase):
         def send(**kwargs):
             index=len(calls); calls.append(kwargs)
             row=definition['schedule'][index]
-            value=observation(row,mtp=profile==matched_recipes.PROFILE_MTP)
+            value=observation(row,mtp=profile in matched_recipes.MTP_DRAFT_LIMITS)
             if row['case']=='DE':
                 value['visible_answer']='{"sprache":"de","hoechste_prioritaet":"B","begruendung":"Alle Nutzer sind betroffen."}'
             elif row['case']=='CODE':
@@ -44,7 +44,7 @@ class MatchedSuiteTests(unittest.TestCase):
             return task.result,calls
 
     def test_both_modes_complete_all_36(self):
-        for profile in (matched_recipes.PROFILE_AR,matched_recipes.PROFILE_MTP):
+        for profile in matched_recipes.PROFILES:
             with self.subTest(profile=profile):
                 for item in self.root.iterdir(): item.unlink()
                 result,calls=self.run_suite(profile)
@@ -55,7 +55,18 @@ class MatchedSuiteTests(unittest.TestCase):
                 self.assertEqual(result['rows'][-1]['matched_evidence']['actual_prompt_tokens'],2047)
                 pp=next(r for r in result['rows'] if r['case']=='PP1')
                 self.assertEqual(pp['matched_evidence']['acceptance_reason'],
-                    'no_proposals' if profile==matched_recipes.PROFILE_MTP else 'not_applicable')
+                    'no_proposals' if profile in matched_recipes.MTP_DRAFT_LIMITS else 'not_applicable')
+
+    def test_draft3_positive_native_counters_across_full_corpus(self):
+        def active(index, value):
+            if index == 0:
+                value['usage'].update(draft_tokens=4, draft_tokens_accepted=3)
+                value['timings'].update(draft_n=4, draft_n_accepted=3)
+                value['metrics']['mtp_acceptance'] = .75
+        result, calls = self.run_suite(matched_recipes.PROFILE_MTP_D3, mutate=active)
+        self.assertTrue(result['success'], result.get('error'))
+        self.assertEqual(len(calls), 36)
+        self.assertEqual(result['rows'][0]['matched_evidence']['accepted'], 3)
 
     def test_altered_final_request_rejected_before_post(self):
         def altered(row,request):

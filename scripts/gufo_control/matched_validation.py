@@ -22,7 +22,7 @@ def assess(row, observation, definition):
     timings = raw_timings if isinstance(raw_timings, dict) else {}
     gufo = raw_gufo if isinstance(raw_gufo, dict) else {}
     details = raw_details if isinstance(raw_details, dict) else {}
-    mtp = definition['profile_id'] == matched_recipes.PROFILE_MTP
+    mtp = definition['profile_id'] in matched_recipes.MTP_DRAFT_LIMITS
     evidence = dict(mode='mtp' if mtp else 'ar', proposed=None, accepted=None,
         acceptance_ratio=None, acceptance_reason='unavailable', lookup_provenance=None,
         quality_failed='known_correctness_failure' in base_errors and observation.get('success') is True,
