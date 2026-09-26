@@ -1,0 +1,492 @@
+"""Fixed, bounded HTTP smoke client for the optional native GUFO profile."""
+
+import json
+import math
+import socket
+import threading
+import time
+
+
+HOST = "127.0.0.1"
+PORT = 8836
+MODEL = "gufo-flash-next"
+MAX_REQUEST = 16_384
+MAX_RESPONSE = 1_048_576
+MAX_READY_POLLS = 240
+SOCKET_SLICE = 0.25
+PROMPT = "What is 2 + 2? Reply with the number only."
+REQUEST = {
+    "model": MODEL,
+    "messages": [{"role": "user", "content": PROMPT}],
+    "max_tokens": 64,
+    "temperature": 0,
+    "top_p": 1,
+    "top_k": 0,
+    "min_p": 0,
+    "min_keep": 1,
+    "seed": 42,
+    "repeat_penalty": 1,
+    "repeat_last_n": 0,
+    "frequency_penalty": 0,
+    "presence_penalty": 0,
+    "cache_prompt": False,
+    "chat_template_kwargs": {"enable_thinking": False},
+    "stream": True,
+    "stream_options": {"include_usage": True},
+}
+
+
+class SmokeError(Exception):
+    def __init__(self, code, raw_response=b""):
+        super().__init__(code)
+        self.code = code
+        self.raw_response = raw_response
+
+
+def _check(deadline, cancel):
+    if cancel.is_set():
+        raise SmokeError("cancelled")
+    if time.monotonic() >= deadline:
+        raise SmokeError("deadline_exceeded")
+
+
+class _Reader:
+    def __init__(self, sock, deadline, cancel):
+        self.sock, self.deadline, self.cancel = sock, deadline, cancel
+        self.buffer = bytearray()
+        self.raw = bytearray()
+        self.wire_count = 0
+
+    def _recv(self):
+        while True:
+            _check(self.deadline, self.cancel)
+            try:
+                data = self.sock.recv(4096)
+            except socket.timeout:
+                continue
+            if data:
+                self.wire_count += len(data)
+                if self.wire_count > MAX_RESPONSE + 16_384:
+                    raise SmokeError("response_wire_limit")
+                self.raw.extend(data)
+            return data
+
+    def until(self, marker, limit):
+        while marker not in self.buffer:
+            if len(self.buffer) > limit and marker not in self.buffer:
+                raise SmokeError("response_header_limit")
+            data = self._recv()
+            if not data:
+                raise SmokeError("truncated_response")
+            self.buffer.extend(data)
+        index = self.buffer.index(marker) + len(marker)
+        if index > limit:
+            raise SmokeError("response_header_limit")
+        out = bytes(self.buffer[:index])
+        del self.buffer[:index]
+        return out
+
+    def exact(self, length):
+        while len(self.buffer) < length:
+            data = self._recv()
+            if not data:
+                raise SmokeError("truncated_response")
+            self.buffer.extend(data)
+        out = bytes(self.buffer[:length])
+        del self.buffer[:length]
+        return out
+
+    def some(self, maximum=4096):
+        if not self.buffer:
+            self.buffer.extend(self._recv())
+        out = bytes(self.buffer[:maximum])
+        del self.buffer[:maximum]
+        return out
+
+
+def _body_chunks(reader, headers):
+    transfer = headers.get("transfer-encoding", "").lower()
+    if transfer == "chunked":
+        while True:
+            line = reader.until(b"\r\n", 128)[:-2]
+            try:
+                size = int(line.split(b";", 1)[0], 16)
+            except ValueError as exc:
+                raise SmokeError("malformed_chunk_size") from exc
+            if size < 0 or size > MAX_RESPONSE:
+                raise SmokeError("response_body_limit")
+            if size == 0:
+                if reader.exact(2) != b"\r\n":
+                    raise SmokeError("malformed_chunk_end")
+                return
+            remaining = size
+            while remaining:
+                part = reader.exact(min(remaining, 4096))
+                remaining -= len(part)
+                yield part, time.monotonic()
+            if reader.exact(2) != b"\r\n":
+                raise SmokeError("malformed_chunk_end")
+    elif "content-length" in headers:
+        try:
+            remaining = int(headers["content-length"])
+        except ValueError as exc:
+            raise SmokeError("malformed_content_length") from exc
+        if remaining < 0 or remaining > MAX_RESPONSE:
+            raise SmokeError("response_body_limit")
+        while remaining:
+            part = reader.exact(min(remaining, 4096))
+            remaining -= len(part)
+            yield part, time.monotonic()
+    else:
+        while True:
+            part = reader.some()
+            if not part:
+                return
+            yield part, time.monotonic()
+
+
+def _exchange(method, path, body, key, deadline, cancel):
+    if not key or any(ch.isspace() for ch in key) or "\r" in key or "\n" in key:
+        raise SmokeError("invalid_private_key")
+    if body is not None and len(body) > MAX_REQUEST:
+        raise SmokeError("request_body_limit")
+    _check(deadline, cancel)
+    headers = [f"{method} {path} HTTP/1.1", f"Host: {HOST}:{PORT}",
+               f"Authorization: Bearer {key}", "Connection: close",
+               "Accept: application/json, text/event-stream"]
+    if body is not None:
+        headers += ["Content-Type: application/json", f"Content-Length: {len(body)}"]
+    wire = ("\r\n".join(headers) + "\r\n\r\n").encode("ascii") + (body or b"")
+    submitted = time.monotonic()
+    reader = None
+    try:
+        with socket.create_connection((HOST, PORT), timeout=SOCKET_SLICE) as sock:
+            sock.settimeout(SOCKET_SLICE)
+            _check(deadline, cancel)
+            sock.sendall(wire)
+            reader = _Reader(sock, deadline, cancel)
+            raw_head = reader.until(b"\r\n\r\n", 16_384)
+            head = raw_head[:-4].decode("iso-8859-1").split("\r\n")
+            status_parts = head[0].split(" ", 2)
+            if len(status_parts) < 2 or not status_parts[0].startswith("HTTP/1."):
+                raise SmokeError("malformed_status")
+            try:
+                status = int(status_parts[1])
+            except ValueError as exc:
+                raise SmokeError("malformed_status") from exc
+            response_headers = {}
+            for line in head[1:]:
+                if ":" not in line:
+                    raise SmokeError("malformed_header")
+                name, value = line.split(":", 1)
+                name = name.strip().lower()
+                if name in response_headers:
+                    raise SmokeError("duplicate_header")
+                response_headers[name] = value.strip()
+            transfer = response_headers.get("transfer-encoding")
+            if transfer is not None and transfer.lower() != "chunked":
+                raise SmokeError("unsupported_transfer_encoding")
+            if transfer is not None and "content-length" in response_headers:
+                raise SmokeError("ambiguous_response_framing")
+            parts, total = [], 0
+            for part, arrived in _body_chunks(reader, response_headers):
+                total += len(part)
+                if total > MAX_RESPONSE:
+                    raise SmokeError("response_body_limit")
+                parts.append((part, arrived))
+            _check(deadline, cancel)
+            return status, response_headers, b"".join(p for p, _ in parts), submitted, time.monotonic(), parts
+    except SmokeError as exc:
+        if reader is not None:
+            exc.raw_response = bytes(reader.raw)
+        raise
+    except (OSError, UnicodeError) as exc:
+        raise SmokeError(f"transport_{type(exc).__name__}",
+                         bytes(reader.raw) if reader is not None else b"") from None
+
+
+def _int_or_none(value):
+    return value if type(value) is int and value >= 0 else None
+
+
+def _number_or_none(value):
+    return value if type(value) in (int, float) and math.isfinite(value) and value >= 0 else None
+
+
+def _redact(value, key):
+    if isinstance(value, str):
+        return value.replace(key, "[REDACTED]")
+    if isinstance(value, dict):
+        return {_redact(name, key): _redact(item, key) for name, item in value.items()}
+    if isinstance(value, list):
+        return [_redact(item, key) for item in value]
+    return value
+
+
+def _validate_usage(usage, timings):
+    problems = []
+    if not isinstance(usage, dict) or not isinstance(timings, dict):
+        return {}, ["missing_usage_or_timings"]
+    gufo = usage.get("gufo")
+    if not isinstance(gufo, dict):
+        gufo = {}
+    details = usage.get("prompt_tokens_details")
+    if not isinstance(details, dict):
+        details = {}
+    prompt = _int_or_none(usage.get("prompt_tokens"))
+    completion = _int_or_none(usage.get("completion_tokens"))
+    total = _int_or_none(usage.get("total_tokens"))
+    prefill = _int_or_none(gufo.get("prefill_tokens"))
+    timing_prefill = _int_or_none(timings.get("prompt_n"))
+    cached = _int_or_none(details.get("cached_tokens"))
+    legacy_cached = _int_or_none(usage.get("cached_tokens"))
+    timing_cached = _int_or_none(timings.get("cache_n"))
+    if prefill is None:
+        prefill = timing_prefill
+    if cached is None:
+        cached = legacy_cached if legacy_cached is not None else timing_cached
+    if prompt is None or completion is None or prefill is None or cached is None:
+        problems.append("required_token_count_unknown")
+    if prompt is not None and prompt > 512:
+        problems.append("prompt_exceeds_512")
+    if completion is not None and completion > 64:
+        problems.append("completion_exceeds_64")
+    if cached is not None and cached != 0:
+        problems.append("cache_hit")
+    if gufo.get("cache_hit") is True or gufo.get("cache_disk_hit") is True:
+        problems.append("cache_hit")
+    for name, a, b in (("prefill_disagrees", prefill, timing_prefill),
+                       ("cached_disagrees", cached, legacy_cached),
+                       ("cached_disagrees", cached, timing_cached)):
+        if a is not None and b is not None and a != b:
+            problems.append(name)
+    if prompt is not None and prefill is not None and cached is not None and prompt != prefill + cached:
+        problems.append("prompt_parts_disagree")
+    if total is not None and prompt is not None and completion is not None and total != prompt + completion:
+        problems.append("total_disagrees")
+    predicted = _int_or_none(timings.get("predicted_n"))
+    if predicted is not None and completion is not None and predicted != completion:
+        problems.append("completion_disagrees")
+    return {
+        "logical_prompt_tokens": prompt, "new_prefill_tokens": prefill,
+        "cached_prompt_tokens": cached, "completion_tokens": completion,
+        "total_tokens": total,
+        "engine_prefill_ms": _number_or_none(gufo.get("prefill_ms")),
+        "engine_decode_ms": _number_or_none(gufo.get("decode_ms")),
+        "engine_ttft_ms": _number_or_none(gufo.get("ttft_ms")),
+        "engine_queue_ms": _number_or_none(gufo.get("queue_ms")),
+        "engine_timing_prompt_ms": _number_or_none(timings.get("prompt_ms")),
+        "engine_timing_predicted_ms": _number_or_none(timings.get("predicted_ms")),
+        "engine_predicted_tokens": _int_or_none(timings.get("predicted_n")),
+        "draft_tokens": _int_or_none(usage.get("draft_tokens")),
+        "draft_tokens_accepted": _int_or_none(usage.get("draft_tokens_accepted")),
+    }, list(dict.fromkeys(problems))
+
+
+def _strict_json(text):
+    def finite_float(number):
+        value = float(number)
+        if not math.isfinite(value):
+            raise ValueError("nonfinite_json_number")
+        return value
+
+    def reject_constant(_):
+        raise ValueError("nonfinite_json_number")
+
+    return json.loads(text, parse_float=finite_float, parse_constant=reject_constant)
+
+
+def _json_object(body):
+    try:
+        value = _strict_json(body.decode("utf-8", "strict"))
+    except (UnicodeError, ValueError) as exc:
+        raise SmokeError("malformed_json") from exc
+    if not isinstance(value, dict):
+        raise SmokeError("malformed_json")
+    return value
+
+
+def _capture(result, path, status, body):
+    result["responses"].append({"path": path, "status": status,
+                                "raw_response": body.decode("utf-8", "replace")})
+
+
+def _parse_sse(parts, submitted):
+    pending = bytearray()
+    content = []
+    first_visible = None
+    terminal = None
+    usage = None
+    timings = None
+    done = False
+    for part, arrived in parts:
+        pending.extend(part)
+        normalized = bytes(pending).replace(b"\r\n", b"\n")
+        frames = normalized.split(b"\n\n")
+        pending[:] = frames.pop()
+        for frame in frames:
+            if done:
+                raise SmokeError("sse_after_done")
+            try:
+                lines = frame.decode("utf-8", "strict").split("\n")
+            except UnicodeError as exc:
+                raise SmokeError("malformed_sse_utf8") from exc
+            fields = [line[5:].lstrip(" ") for line in lines if line.startswith("data:")]
+            if not fields:
+                continue
+            payload = "\n".join(fields)
+            if payload == "[DONE]":
+                done = True
+                continue
+            try:
+                event = _strict_json(payload)
+            except ValueError as exc:
+                raise SmokeError("malformed_sse_json") from exc
+            if not isinstance(event, dict):
+                raise SmokeError("malformed_sse_json")
+            if "error" in event:
+                raise SmokeError("sse_server_error")
+            choices = event.get("choices")
+            if not isinstance(choices, list):
+                raise SmokeError("malformed_sse_choices")
+            if choices:
+                if len(choices) != 1 or not isinstance(choices[0], dict):
+                    raise SmokeError("malformed_sse_choices")
+                choice = choices[0]
+                delta = choice.get("delta", {})
+                if not isinstance(delta, dict):
+                    raise SmokeError("malformed_sse_delta")
+                visible = delta.get("content")
+                if visible is not None:
+                    if not isinstance(visible, str):
+                        raise SmokeError("malformed_sse_delta")
+                    if visible and first_visible is None:
+                        first_visible = 1000 * (arrived - submitted)
+                    content.append(visible)
+                reason = choice.get("finish_reason")
+                if reason is not None:
+                    if terminal is not None or not isinstance(reason, str):
+                        raise SmokeError("duplicate_or_bad_terminal")
+                    terminal = reason
+            if "usage" in event:
+                if usage is not None or not isinstance(event["usage"], dict):
+                    raise SmokeError("duplicate_or_bad_usage")
+                usage = event["usage"]
+            if "timings" in event:
+                incoming = event["timings"]
+                if not isinstance(incoming, dict) or (timings is not None and timings != incoming):
+                    raise SmokeError("conflicting_timings")
+                timings = incoming
+    if bytes(pending).strip() or not done or terminal is None or usage is None or timings is None:
+        raise SmokeError("incomplete_sse")
+    return "".join(content), first_visible, terminal, usage, timings
+
+
+class SmokeTask:
+    def __init__(self, cancel):
+        self.done = threading.Event()
+        self.cancel = cancel
+        self.result = None
+
+
+def start_smoke(*, api_key: str, startup_deadline: float,
+                lifetime_deadline: float, cancel: threading.Event | None = None) -> SmokeTask:
+    if (not isinstance(api_key, str) or not api_key or len(api_key) > 256
+            or not api_key.isascii() or any(c.isspace() for c in api_key)):
+        raise ValueError("invalid_private_key")
+    if not all(type(x) in (int, float) and math.isfinite(x)
+               for x in (startup_deadline, lifetime_deadline)):
+        raise ValueError("invalid_deadline")
+    if startup_deadline <= time.monotonic() or lifetime_deadline <= time.monotonic():
+        raise ValueError("expired_deadline")
+    task = SmokeTask(cancel if cancel is not None else threading.Event())
+
+    def work():
+        result = {"success": False, "error": None, "post_attempted": False,
+                  "request": json.loads(json.dumps(REQUEST)), "responses": [], "metrics": {},
+                  "ready_polls": 0, "timestamps": {"worker_started_monotonic": time.monotonic()}}
+        path = None
+        try:
+            ready_deadline = min(startup_deadline, lifetime_deadline,
+                                 result["timestamps"]["worker_started_monotonic"] + 480)
+            ready = False
+            for _ in range(MAX_READY_POLLS):
+                _check(ready_deadline, task.cancel)
+                path = "/ready"
+                result["ready_polls"] += 1
+                try:
+                    status, _, body, _, _, _ = _exchange("GET", path, None, api_key,
+                                                          ready_deadline, task.cancel)
+                except SmokeError as exc:
+                    if exc.code == "transport_ConnectionRefusedError":
+                        task.cancel.wait(min(2, max(0, ready_deadline-time.monotonic())))
+                        continue
+                    raise
+                _capture(result, path, status, body)
+                response = _json_object(body)
+                if (status == 503 and isinstance(response.get("error"), dict)
+                        and response["error"].get("code") == "not_ready"):
+                    task.cancel.wait(min(2, max(0, ready_deadline-time.monotonic())))
+                    continue
+                if status != 200:
+                    raise SmokeError(f"ready_http_{status}")
+                if response.get("status") != "ready" or response.get("model") != MODEL:
+                    raise SmokeError("wrong_ready_model")
+                ready = True
+                break
+            if not ready:
+                raise SmokeError("ready_poll_limit")
+            path = "/v1/models"
+            status, _, body, _, _, _ = _exchange("GET", path, None, api_key,
+                                                  ready_deadline, task.cancel)
+            _capture(result, path, status, body)
+            if status != 200:
+                raise SmokeError(f"models_http_{status}")
+            models = _json_object(body).get("data")
+            if (not isinstance(models, list) or len(models) != 1
+                    or not isinstance(models[0], dict) or models[0].get("id") != MODEL):
+                raise SmokeError("wrong_models_identity")
+            body = json.dumps(REQUEST, separators=(",", ":"), allow_nan=False).encode("utf-8")
+            if len(body) > MAX_REQUEST:
+                raise SmokeError("request_body_limit")
+            path = "/v1/chat/completions"
+            completion_deadline = min(time.monotonic()+60, lifetime_deadline)
+            _check(completion_deadline, task.cancel)
+            result["post_attempted"] = True
+            result["timestamps"]["post_attempt_monotonic"] = time.monotonic()
+            status, headers, response, submitted, completed, parts = _exchange(
+                "POST", path, body, api_key, completion_deadline, task.cancel)
+            _capture(result, path, status, response)
+            result["timestamps"].update(post_submitted_monotonic=submitted,
+                                        post_completed_monotonic=completed)
+            result["metrics"]["http_duration_ms"] = 1000 * (completed-submitted)
+            if status != 200:
+                raise SmokeError(f"completion_http_{status}")
+            if not headers.get("content-type", "").lower().startswith("text/event-stream"):
+                raise SmokeError("wrong_completion_content_type")
+            visible, first_ms, reason, usage, timings = _parse_sse(parts, submitted)
+            metrics, errors = _validate_usage(usage, timings)
+            metrics["first_visible_content_ms"] = first_ms
+            metrics["http_duration_ms"] = result["metrics"]["http_duration_ms"]
+            result["metrics"] = metrics
+            result.update(visible_answer=visible, finish_reason=reason,
+                          usage=usage, timings=timings, validation_errors=errors)
+            if visible.strip() != "4": errors.append("wrong_answer")
+            if reason != "stop": errors.append("incomplete_finish")
+            if first_ms is None: errors.append("no_visible_content")
+            if errors:
+                raise SmokeError("validation_failed")
+            result["success"] = True
+        except SmokeError as exc:
+            result["error"] = exc.code
+            if exc.raw_response:
+                _capture(result, path, None, exc.raw_response)
+        except Exception as exc:
+            result["error"] = "unexpected_" + type(exc).__name__
+        finally:
+            result["timestamps"]["worker_finished_monotonic"] = time.monotonic()
+            task.result = _redact(result, api_key)
+            task.done.set()
+
+    threading.Thread(target=work, daemon=True, name="gufo-smoke-http").start()
+    return task
