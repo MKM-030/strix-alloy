@@ -1,5 +1,6 @@
 """Offline lifecycle tests: fixed policy, synthetic counters, no model or endpoint."""
 from contextlib import contextmanager, ExitStack, redirect_stdout, redirect_stderr
+from collections import Counter, deque
 from copy import deepcopy
 from dataclasses import asdict, replace
 from datetime import timedelta
@@ -33,13 +34,16 @@ class Event:
 
 
 class Harness:
-    def __init__(self, root):
+    def __init__(self, root, *, query_history_limit=None):
         self.root = Path(root)
         self.clock = Clock()
         self.base = baseline(series())
         self.manifest = manifest()
         self.manifest['operator'] = dict(original_baseline=asdict(self.base))
         self.events, self.queries, self.children, self.http_tasks = [], [], [], []
+        if query_history_limit is not None:
+            self.queries = deque(maxlen=query_history_limit)
+        self.query_counts = Counter()
         self.query_changes = lambda phase, index: {}
         self.query_delay = lambda phase, index: 0.1
         self.query_error = lambda phase, index: None
@@ -100,7 +104,8 @@ class Harness:
     def query(self, collect):
         h = self
         phase = self.guard.phase
-        index = sum(q.phase == phase for q in self.queries)
+        index = self.query_counts[phase]
+        self.query_counts[phase] += 1
         class Query:
             def __init__(self):
                 self.started = h.clock.monotonic()
@@ -123,7 +128,7 @@ class Harness:
     def owned(self, argv, *, cwd, env, stdout_path, stderr_path):
         h = self
         self.events.append('create')
-        assert (self.root/'attempt.json').exists()
+        assert (self.root/'attempt.json').exists() or (self.root/'current.json').exists()
         assert (self.root/'incomplete.json').exists()
         class Child:
             def __init__(self):
@@ -200,6 +205,13 @@ class Harness:
 
 
 class GuardianTests(unittest.TestCase):
+    def test_http_success_closes_finite_child_after_private_answer(self):
+        result = self.h.run()
+        self.assertTrue(result['success'], result)
+        child = self.h.children[0]
+        self.assertAlmostEqual(child.closed_at-child.resume_at, self.h.http_delay, delta=.051)
+        self.assertEqual(len(self.h.http_tasks), 1)
+
     def test_injected_profile_mismatch_refuses_before_child_or_collection(self):
         result = self.h.run(profile_id='ar4k-iq4xs-correctness-pp1-v2')
         self.assertFalse(result['success'])

@@ -19,6 +19,7 @@ import uuid
 
 from . import operator_probe as probe
 from . import operator_store, smoke_store, smoke_policy as policy, smoke_http
+from . import service_lifecycle, service_store
 from .operator_policy import Frame, GPU_FIELDS, MAX_QUERY_SECONDS
 from .telemetry import collect_snapshot
 from .winjob import OwnedProcess
@@ -74,6 +75,8 @@ class _QueryEntry:
         self.query = None
         self.frame = None
         self.logged = False
+        self.measured = False
+        self.pending_after_exit = False
         self._started = time.monotonic()
         self._unknown_done = threading.Event()
 
@@ -134,8 +137,12 @@ class _Guardian:
     def __init__(self, *, store=smoke_store, owned_factory=None, query_factory=None,
                  http_start=None, collect=collect_snapshot, port_check=check_port,
                  policy_module=policy, argv_builder=fixed_argv,
-                 profile_id=smoke_store.PROFILE_ID):
+                 profile_id=smoke_store.PROFILE_ID, lifecycle=None):
         self.store = store
+        self.lifecycle = lifecycle
+        self.ready = False
+        self.stop_requested = False
+        self.lifetime_deadline = None
         self.policy, self.argv_builder, self.profile_id = policy_module, argv_builder, profile_id
         self.owned_factory = OwnedProcess if owned_factory is None else owned_factory
         self.query_factory = probe.Query if query_factory is None else query_factory
@@ -143,6 +150,9 @@ class _Guardian:
         self.collect, self.port_check = collect, port_check
         self.phase = 'static'
         self.entries = []
+        self.baseline_complete = False
+        self.collector_queries = 0
+        self.summarized_queries = 0
         self.failures = []
         self.manifest = self.profile = self.original = self.current = None
         self.runtime_baseline = None
@@ -196,10 +206,35 @@ class _Guardian:
     def _query(self, collect, proof=None):
         if self.entries and not self.entries[-1].done.is_set():
             raise RuntimeError('collector_overlap')
+        self._prune_entries()
         entry = _QueryEntry(self.phase, proof)
         self.entries.append(entry)
+        self.collector_queries += 1
         entry.query = self.query_factory(collect)
         return entry
+
+    def _prune_entries(self):
+        if not self.baseline_complete or not self.entries: return
+        retained = []
+        for entry in self.entries:
+            if (entry is self.entries[-1] or entry.pending_after_exit
+                    or any(entry.frame is frame for frame in self.recovery_samples)
+                    or not (entry.done.is_set() and entry.measured and entry.logged)):
+                retained.append(entry)
+            else:
+                self.summarized_queries += 1
+        self.entries = retained
+
+    def _sync_telemetry(self):
+        # probe.log_frame flushes but does not fsync. Entries become discardable
+        # only after this separate durable barrier succeeds, including baseline.
+        try:
+            with (self.run_dir/'telemetry.jsonl').open('a', encoding='utf-8') as stream:
+                stream.flush()
+                os.fsync(stream.fileno())
+        except BaseException:
+            self.evidence_ok = False
+            raise
 
     def _proof(self, frame):
         proof = self.policy.owned_inventory_frame(frame, self.child).snapshot['owned_inventory_proof']
@@ -221,8 +256,10 @@ class _Guardian:
             # but says nothing about evidence writes.
             if not isinstance(error, TimeoutError): self.evidence_ok = False
             raise
+        self._sync_telemetry()
         self.entries[-1].logged = True
         self._measure(self.entries[-1])
+        self._prune_entries()
         return value
 
     def _measure(self, entry):
@@ -231,11 +268,14 @@ class _Guardian:
         self.largest_query = max(self.largest_query, duration)
         if duration > MAX_QUERY_SECONDS:
             self.collector_deadline_confirmed = False
+        if entry.done.is_set(): entry.measured = True
 
     def _log(self, entry, phase):
         try:
             probe.log_frame(self.run_dir/'telemetry.jsonl', entry.frame, phase)
+            self._sync_telemetry()
             entry.logged = True
+            self._measure(entry)
         except BaseException:
             self.evidence_ok = False
             raise
@@ -263,6 +303,7 @@ class _Guardian:
         except OSError as error:
             if not isinstance(error, TimeoutError): self.evidence_ok = False
             raise
+        self._sync_telemetry()
         for entry in self.entries:
             entry.logged = True
             self._measure(entry)
@@ -278,10 +319,13 @@ class _Guardian:
         self._write('baseline.json', dict(original=asdict(self.original), current=asdict(self.current),
             effective=asdict(self.runtime_baseline), current_kind='observed_current_baseline',
             effective_kind='synthetic_stricter_runtime_limits'))
-        self.store.recheck_static(self.manifest)
+        self.baseline_complete = True
+        self._prune_entries()
+        preparing = dict(prepared_run=self.run_dir) if isinstance(self.store, service_store.InstalledStore) else {}
+        self.store.recheck_static(self.manifest, **preparing)
         self.port_check()
         final = self._collect_one('final_precreate')
-        self.store.recheck_static(self.manifest)
+        self.store.recheck_static(self.manifest, **preparing)
         self._admit(final)
         # The permanent marker is consumed even if any subsequent setup fails.
         try:
@@ -311,23 +355,35 @@ class _Guardian:
         self.identity = deepcopy(self.child.identity)
         self.policy.owned_inventory_frame(final, self.child)
         self._write('owned.json', self.identity)
+        if self.lifecycle is not None:
+            self.lifecycle.on_started(self.run_dir, deepcopy(self.identity), self.secret)
         final = self._collect_one('final_preresume', owned=True)
         self._admit(final, owned=True)
         self.store.recheck_static(self.manifest, current_run=self.run_dir)
         self.port_check()
         self._phase('resuming')
         self._admit(final, owned=True)
+        resumed_at = time.monotonic()
+        self.lifetime_deadline = (resumed_at+LIFETIME_SECONDS if self.lifecycle is None
+                                  else self.lifecycle.deadline(resumed_at))
+        if self.lifecycle is not None:
+            service_lifecycle._validate_deadline(self.lifetime_deadline, time.monotonic())
+        if isinstance(self.store, service_store.InstalledStore):
+            if self.lifecycle is None or self.lifetime_deadline != service_lifecycle._qualified_deadline(self.manifest, resumed_at):
+                raise ValueError('service_deadline_qualification_mismatch')
         # Decision writes themselves can age a sample; final check performs no I/O.
         scoped = self.policy.owned_inventory_frame(final, self.child)
         reasons = self.policy.admission_reasons(self.profile, self.runtime_baseline or self.original, scoped,
                                            now=time.monotonic(), now_utc=utcnow())
         if reasons: raise ValueError('pre_resume:'+','.join(reasons))
-        self.resumed_at = time.monotonic()
+        if self.lifecycle is not None:
+            service_lifecycle._validate_deadline(self.lifetime_deadline, time.monotonic())
+        self.resumed_at = resumed_at
         self.child.resume()
         self.http_requested = True
         self.http = self.http_start(api_key=self.secret,
             startup_deadline=self.resumed_at+STARTUP_SECONDS,
-            lifetime_deadline=self.resumed_at+LIFETIME_SECONDS, cancel=self.cancel)
+            lifetime_deadline=self.lifetime_deadline, cancel=self.cancel)
         self._phase('serving_attempt')
         return final
 
@@ -358,7 +414,7 @@ class _Guardian:
         pending = None
         while True:
             now = time.monotonic()
-            if now >= self.resumed_at+LIFETIME_SECONDS:
+            if now >= self.lifetime_deadline:
                 raise TimeoutError('lifetime_timeout')
             if self.child.wait(0):
                 self.exit_code = self.child.exit_code()
@@ -392,17 +448,38 @@ class _Guardian:
             if not result['allowed']:
                 self._decision('serving_attempt', last, result)
             self._observe_inspection()
-            if self.http.done.is_set():
+            if self.lifecycle is not None:
+                request = self.lifecycle.poll(time.monotonic())
+                if time.monotonic() >= self.lifetime_deadline:
+                    raise TimeoutError('lifetime_timeout')
+                # A control result never supersedes freshness or live ownership.
+                result = self._runtime(last)
+                if not result['allowed']:
+                    self._decision('serving_attempt', last, result)
+                if request == 'handoff_failed':
+                    raise RuntimeError('handoff_failed')
+                if request == 'stop':
+                    self.stop_requested = True
+                    return
+                if request is not None:
+                    raise ValueError('invalid_lifecycle_request')
+            if not self.ready and self.http.done.is_set():
                 self.http_result = _redact(self.http.result, self.secret)
                 if not isinstance(self.http_result, dict) or self.http_result.get('success') is not True:
                     raise ValueError('http:'+str(self.http_result.get('error') if isinstance(self.http_result, dict) else 'invalid_result'))
                 if self.inspection is not None and self.inspection.done.is_set():
-                    return
+                    if self.lifecycle is None: return
+                    self.lifecycle.on_ready(dict(run=str(self.run_dir), profile=self.profile_id,
+                        identity=deepcopy(self.identity), runtime_samples=self.runtime_samples,
+                        captured_monotonic=last.snapshot['captured_monotonic'],
+                        observed_monotonic=time.monotonic(), lifetime_deadline=self.lifetime_deadline))
+                    self.ready = True
             if pending is None and now-self.entries[-1].started >= QUERY_INTERVAL:
                 pending = self._query(self.collect, self._proof(last))
             time.sleep(POLL_SECONDS)
 
     def _drain(self, entry):
+        entry.pending_after_exit = True
         # Never grant a fresh ownership proof after close, or extend the query deadline.
         try:
             while not entry.done.is_set() and time.monotonic() <= entry.started+MAX_QUERY_SECONDS:
@@ -511,7 +588,8 @@ class _Guardian:
                  and self._workers_terminal() and self.recovered and self.evidence_ok)
         return _redact(dict(profile=self.profile_id,
             success=not self.failures and clean and self.http_result is not None
-                    and self.http_result.get('success') is True,
+                    and self.http_result.get('success') is True
+                    and (self.lifecycle is None or (self.ready and self.stop_requested)),
             failure=';'.join(self.failures) or None,
             run=str(self.run_dir) if self.run_dir else None,
             owned_exit_confirmed=self.exited, exit_code=self.exit_code, identity=self.identity,
@@ -529,6 +607,10 @@ class _Guardian:
             manifest=self.manifest, http=self.http_result, module_inspection=self.module_result,
             resumed_monotonic=self.resumed_at, recovery_samples=len(self.recovery_samples),
             runtime_samples=self.runtime_samples,
+            collector_queries=self.collector_queries,
+            collector_completed_queries=self.summarized_queries+sum(e.done.is_set() for e in self.entries),
+            collector_retained_queries=len(self.entries),
+            service_ready=self.ready, stop_requested=self.stop_requested,
             runtime_phase='serving_attempt; readiness/POST progress not exposed',
             runtime_peak_evidence='sampled_lower_bound' if self.runtime_samples else 'unknown',
             sampled_peak_deltas=self.peaks, sampled_peak_delta_baseline='original_operator_baseline',
@@ -551,17 +633,26 @@ class _Guardian:
                     operator_store.atomic_json(latch, dict(run=str(self.run_dir),
                         phase='cleanup_unconfirmed', original_baseline=asdict(self.original)))
         except BaseException as error:
-            self.evidence_ok = False
-            self._fail(error)
-            result = self._result()
-            # Preserve whatever markers exist, and try to retain a refusal latch.
-            try:
-                latch = self.store.EVIDENCE/'incomplete.json'
-                if not latch.exists():
-                    operator_store.atomic_json(latch, dict(run=str(self.run_dir), phase='evidence_write_failed'))
+            result = self._terminal_failure(error)
+        return result
+
+    def _terminal_failure(self, error):
+        self.evidence_ok = False
+        self._fail(error)
+        result = self._result()
+        if self.run_dir is None: return result
+        # Preserve immutable installed terminal evidence, even if finish_run
+        # wrote it before failing to retire the latch. Never erase to continue.
+        try:
+            latch = self.store.EVIDENCE/'incomplete.json'
+            if not latch.exists():
+                operator_store.atomic_json(latch, dict(run=str(self.run_dir), phase='evidence_write_failed'))
+            if isinstance(self.store, service_store.InstalledStore):
+                service_store._exclusive_json(self.run_dir/('result-failure-'+uuid.uuid4().hex+'.json'), result)
+            else:
                 self._write('result.json', result)
-            except BaseException:
-                pass  # The returned result remains explicitly unconfirmed.
+        except BaseException:
+            pass  # The returned result remains explicitly unconfirmed.
         return result
 
     def run(self):
@@ -574,7 +665,13 @@ class _Guardian:
                         self._fail(error)
                     finally:
                         self._cleanup()
-                    return self._persist(self._result())
+                    result = self._persist(self._result())
+                    if self.lifecycle is not None:
+                        try:
+                            self.lifecycle.on_result(deepcopy(result))
+                        except BaseException as error:
+                            result = self._terminal_failure(error)
+                    return result
         except BaseException as error:
             self._fail(error)
             return self._result()
