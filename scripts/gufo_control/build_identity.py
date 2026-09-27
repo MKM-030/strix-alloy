@@ -13,14 +13,28 @@ import subprocess
 
 
 PINS_PATH = Path(__file__).resolve().parents[2] / 'config/gufo-build-pins.json'
+ROOT = Path(__file__).resolve().parents[2]
+BUILD_RECIPES = {
+    'service-ar4k-v1': (PINS_PATH, ROOT / 'engine-patches/gufo/manifest.json'),
+    'service-ar4k-header-v1': (ROOT / 'config/gufo-header-build-pins.json',
+                               ROOT / 'engine-patches/gufo/service-header-v1/manifest.json'),
+}
 REPARSE = getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0x400)
 _CACHE_PATH_KEYS = {'CMAKE_C_COMPILER', 'CMAKE_CXX_COMPILER', 'CMAKE_HIP_COMPILER',
                     'CMAKE_PREFIX_PATH', 'CMAKE_TOOLCHAIN_FILE', 'CMAKE_MAKE_PROGRAM',
                     'Python3_EXECUTABLE', 'CMAKE_HOME_DIRECTORY', 'CMAKE_CACHEFILE_DIR'}
 
 
-def load_pins() -> dict:
-    return json.loads(PINS_PATH.read_text(encoding='utf-8'))
+def recipe_paths(recipe: str = 'service-ar4k-v1') -> dict[str, Path]:
+    try:
+        pins, manifest = BUILD_RECIPES[recipe]
+    except (KeyError, TypeError) as error:
+        raise ValueError(f'unknown_build_recipe:{recipe}') from error
+    return {'pins': pins, 'manifest': manifest}
+
+
+def load_pins(recipe: str = 'service-ar4k-v1') -> dict:
+    return json.loads(recipe_paths(recipe)['pins'].read_text(encoding='utf-8'))
 
 
 def file_hash(path: Path) -> str:
@@ -100,14 +114,20 @@ def verify_git(repo: Path, git: Path, *, remote: str, head: str | None,
     return values
 
 
-def verify_reviewed_patch(pins: dict) -> dict:
-    root = Path(__file__).resolve().parents[2] / 'engine-patches/gufo'
-    manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
+def verify_reviewed_patch(pins: dict, *, recipe: str = 'service-ar4k-v1') -> dict:
+    manifest_path = recipe_paths(recipe)['manifest']
+    manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+    expected_patch = ('ar4k-service-v1.patch' if recipe == 'service-ar4k-v1'
+                      else 'service-header-v1.patch')
+    patch_path = manifest_path.parent / expected_patch
     if (manifest.get('reviewed_source_head') != pins['source_reviewed_head']
             or manifest.get('reviewed_source_tree') != pins['source_tree']
             or manifest.get('base_commit') != pins['source_base']
+            or manifest.get('name') != expected_patch.removesuffix('.patch')
+            or manifest.get('patch', {}).get('file') != expected_patch
+            or manifest['patch'].get('size_bytes') != patch_path.stat().st_size
             or manifest.get('patch', {}).get('sha256') != pins['patch_sha256']
-            or file_hash(root / manifest['patch']['file']) != pins['patch_sha256']):
+            or file_hash(patch_path) != pins['patch_sha256']):
         raise ValueError('reviewed_patch_identity_mismatch')
     return {'reviewed_head': pins['source_reviewed_head'],
             'reviewed_tree': pins['source_tree'],

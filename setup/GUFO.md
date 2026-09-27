@@ -74,6 +74,17 @@ Use explicit local paths for every tool and input. For example:
   -Jobs 2
 ```
 
+The omitted `-BuildRecipe` selects the historical `service-ar4k-v1` source and
+build pins. To select the separately reviewed header-fixed source in a new
+build directory, add `-BuildRecipe service-ar4k-header-v1` and point `-SourceDir`
+at a clean checkout with tree
+`7912be2688d6874c0e13f4723aad00a5c3cbe1cf`. This recipe uses
+`config/gufo-header-build-pins.json` and the complete
+`engine-patches/gufo/service-header-v1/` export. It has not had a GPU build,
+runtime staging, model run or service qualification; its output has no static
+runtime acceptance identity. A later reviewed build must use a distinct build
+directory and pass the existing resource and dependency gates.
+
 `-Jobs` accepts only 1 or 2. The command requires 24 GiB available physical
 memory and 25 GiB free on the build volume at entry and throughout configure
 and compile. It imports VS tools only into the child build environment and

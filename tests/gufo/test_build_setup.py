@@ -18,6 +18,32 @@ from gufo_control import build_identity, build_setup
 
 
 class BuildIdentityTests(unittest.TestCase):
+    def test_build_recipes_are_closed_and_pin_distinct_reviewed_trees(self):
+        legacy = build_identity.load_pins()
+        self.assertEqual(legacy['source_tree'], '273d84974a604c81023dae15d379a9bfc0b1c29b')
+        header = build_identity.load_pins('service-ar4k-header-v1')
+        self.assertEqual(header['source_reviewed_head'],
+                         'e6feed7ca52df4661d10434c72a8ea5b5f054bc2')
+        self.assertEqual(header['source_tree'],
+                         '7912be2688d6874c0e13f4723aad00a5c3cbe1cf')
+        self.assertEqual(header['source_base'], legacy['source_base'])
+        self.assertEqual(header['ports'], legacy['ports'])
+        self.assertEqual(header['sdk_version'], legacy['sdk_version'])
+        self.assertNotEqual(build_identity.recipe_paths('service-ar4k-header-v1')['pins'],
+                            build_identity.recipe_paths('service-ar4k-v1')['pins'])
+        with self.assertRaisesRegex(ValueError, 'unknown_build_recipe'):
+            build_identity.load_pins('../anywhere')
+
+    def test_header_patch_is_separate_and_tamper_refused(self):
+        recipe = 'service-ar4k-header-v1'
+        pins = build_identity.load_pins(recipe)
+        record = build_identity.verify_reviewed_patch(pins, recipe=recipe)
+        self.assertEqual(record['reviewed_tree'], pins['source_tree'])
+        self.assertEqual(record['patch_sha256'], pins['patch_sha256'])
+        with self.assertRaisesRegex(ValueError, 'reviewed_patch_identity_mismatch'):
+            build_identity.verify_reviewed_patch({**pins, 'patch_sha256': '0' * 64},
+                                                 recipe=recipe)
+
     @unittest.skipUnless(shutil.which('git'), 'Git fixture requires local Git')
     def test_exact_tree_with_independent_head_and_base_ancestor_is_accepted(self):
         git = Path(shutil.which('git'))
@@ -173,6 +199,34 @@ class BuildIdentityTests(unittest.TestCase):
 
 
 class BuildSetupTests(unittest.TestCase):
+    def test_unknown_recipe_refuses_before_path_checks_or_child(self):
+        args = SimpleNamespace(jobs=2, build_recipe='other')
+        with patch.object(build_setup, '_canonical_paths',
+                          side_effect=AssertionError('path checks reached')):
+            with self.assertRaisesRegex(ValueError, 'unknown_build_recipe'):
+                build_setup.build_gufo(args)
+
+    @unittest.skipUnless(os.name == 'nt', 'PowerShell entrypoint')
+    def test_powershell_forwards_selected_header_recipe(self):
+        script = Path(__file__).resolve().parents[2] / 'setup/build-gufo-windows.ps1'
+        self.assertIn("'--build-recipe', $BuildRecipe", script.read_text(encoding='utf-8'))
+        powershell = Path(os.environ['SystemRoot']) / 'System32/WindowsPowerShell/v1.0/powershell.exe'
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            argv = [str(powershell), '-NoProfile', '-NonInteractive', '-File', str(script),
+                    '-PythonExe', sys.executable, '-GitExe', str(root / 'git.exe'),
+                    '-SourceDir', str(root / 'source'), '-BuildDir', str(root / 'build'),
+                    '-SdkDir', str(root / 'sdk'), '-VcpkgDir', str(root / 'vcpkg'),
+                    '-VcVars64', str(root / 'vcvars64.bat'),
+                    '-CMakeExe', str(root / 'cmake.exe'),
+                    '-NinjaExe', str(root / 'ninja.exe'), '-BuildRecipe',
+                    'service-ar4k-header-v1']
+            completed = subprocess.run(argv, capture_output=True, text=True, timeout=15)
+            self.assertEqual(completed.returncode, 2)
+            self.assertIn('path_missing', completed.stdout + completed.stderr)
+            self.assertNotIn('unknown_build_recipe', completed.stdout + completed.stderr)
+            self.assertFalse((root / 'build').exists())
+
     def test_exact_commands_include_reviewed_flags_and_only_gufo(self):
         paths = {key: f'C:/fixed/{key}' for key in ('source', 'build', 'sdk', 'vcpkg', 'cmake', 'ninja', 'python')}
         expected = build_setup.cache_values(paths, 'a' * 40)
@@ -549,6 +603,82 @@ class BuildSetupTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'foreign_or_incomplete'):
                     build_setup.build_gufo(args, **options)
                 self.assertEqual(len(commands), 2)
+
+    def test_header_recipe_hashes_selected_inputs_before_after_and_on_reuse(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            build = root / 'build'
+            build.mkdir()
+            paths = {name: str(root / name) for name in
+                     ('source', 'build', 'sdk', 'vcpkg', 'python', 'git', 'vcvars',
+                      'cmake', 'ninja')}
+            (root / 'vcvars').write_bytes(b'harmless-fixture')
+            args = SimpleNamespace(jobs=2, build_recipe='service-ar4k-header-v1',
+                                   source_dir=root, build_dir=build, sdk_dir=root,
+                                   vcpkg_dir=root)
+            pins = build_identity.load_pins('service-ar4k-header-v1')
+            calls = []
+            def command(argv, **kwargs):
+                calls.append(argv)
+                if len(calls) == 1:
+                    values = build_setup._cache_proof(paths,
+                        build_setup.cache_values(paths, 'a' * 40))
+                    (build / 'CMakeCache.txt').write_text(''.join(
+                        f'{key}:STRING={value}\n' for key, value in values.items()))
+                else:
+                    (build / 'gufo.exe').write_bytes(b'harmless-fixture')
+                stdout = kwargs['log_prefix'].with_name(
+                    kwargs['log_prefix'].name + '.stdout.log')
+                stderr = kwargs['log_prefix'].with_name(
+                    kwargs['log_prefix'].name + '.stderr.log')
+                stdout.write_text('fixture output')
+                stderr.write_text('')
+                return {'argv': argv, 'exit_code': 0, 'stdout_log': str(stdout),
+                        'stderr_log': str(stderr), 'duration_seconds': 0.1}
+            with patch.object(build_setup, '_canonical_paths', return_value=paths), \
+                 patch.object(build_setup.identity, 'verify_git',
+                              return_value={'status': '', 'head': 'a' * 40}), \
+                 patch.object(build_setup.identity, 'verify_sdk', return_value={}), \
+                 patch.object(build_setup.identity, 'verify_tools', return_value={}), \
+                 patch.object(build_setup.identity, 'verify_ports', return_value={}), \
+                 patch.object(build_setup.identity, 'verify_dependency_dlls', return_value=[]), \
+                 patch.object(build_setup.runtime_package, 'load_policy',
+                              return_value={'sdk_dlls': [], 'vcpkg_dlls': []}), \
+                 patch.object(build_setup.identity, 'file_hash',
+                              wraps=build_identity.file_hash) as hash_check, \
+                 patch.object(build_setup, 'run_owned', side_effect=command):
+                options = {'pins': pins,
+                    'resources': lambda: {'available_ram_bytes': 30 * 1024**3,
+                                          'free_disk_bytes': 30 * 1024**3,
+                                          'sampled_at': build_setup.time.monotonic()},
+                    'vcvars_loader': lambda *_: ({'PATH': 'host'}, {'vcvars_sha256':
+                        build_identity.file_hash(root / 'vcvars')})}
+                record = build_setup.build_gufo(args, **options)
+                selected = build_identity.recipe_paths('service-ar4k-header-v1')
+                inputs = record['inputs']
+                self.assertEqual(inputs['build_recipe'], args.build_recipe)
+                self.assertEqual(inputs['build_pins_path'], str(selected['pins']))
+                self.assertEqual(inputs['build_pins_sha256'],
+                                 build_identity.file_hash(selected['pins']))
+                self.assertNotEqual(inputs['build_pins_sha256'],
+                                    build_identity.file_hash(build_identity.PINS_PATH))
+                self.assertEqual(inputs['patch_manifest_sha256'],
+                                 build_identity.file_hash(selected['manifest']))
+                self.assertEqual(inputs['patch_sha256'], pins['patch_sha256'])
+                self.assertEqual(inputs['runtime_pins_sha256'],
+                                 build_identity.file_hash(build_setup.runtime_package.POLICY_PATH))
+                self.assertEqual(build_setup.build_gufo(args, **options), record)
+                self.assertEqual(len(calls), 2)
+                for hashed in (selected['pins'], selected['manifest'],
+                               selected['manifest'].parent / 'service-header-v1.patch',
+                               build_setup.runtime_package.POLICY_PATH):
+                    self.assertGreaterEqual(sum(call.args == (hashed,)
+                                                for call in hash_check.call_args_list), 3)
+                args.build_recipe = 'service-ar4k-v1'
+                with self.assertRaisesRegex(ValueError, 'foreign_or_incomplete'):
+                    build_setup.build_gufo(args, pins=build_identity.load_pins(),
+                                           **{k: v for k, v in options.items() if k != 'pins'})
+                self.assertEqual(len(calls), 2)
 
 
 if __name__ == '__main__':

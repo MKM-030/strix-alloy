@@ -8,7 +8,8 @@ param(
     [Parameter(Mandatory = $true)][string]$VcVars64,
     [Parameter(Mandatory = $true)][string]$CMakeExe,
     [Parameter(Mandatory = $true)][string]$NinjaExe,
-    [string]$Jobs = '2'
+    [string]$Jobs = '2',
+    [ValidateSet('service-ar4k-v1', 'service-ar4k-header-v1')][string]$BuildRecipe = 'service-ar4k-v1'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -28,7 +29,8 @@ try {
         '--source-dir', $SourceDir, '--build-dir', $BuildDir,
         '--sdk-dir', $SdkDir, '--vcpkg-dir', $VcpkgDir,
         '--vcvars64', $VcVars64, '--cmake-exe', $CMakeExe,
-        '--ninja-exe', $NinjaExe, '--jobs', $Jobs)
+        '--ninja-exe', $NinjaExe, '--jobs', $Jobs,
+        '--build-recipe', $BuildRecipe)
     & $python @childArgs
     exit $LASTEXITCODE
 } catch {

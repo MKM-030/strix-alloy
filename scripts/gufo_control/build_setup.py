@@ -290,18 +290,34 @@ def _canonical_paths(args) -> dict[str, str]:
     return values
 
 
+def _recipe_evidence(recipe: str) -> dict:
+    if recipe == 'service-ar4k-v1':
+        return {}
+    paths = identity.recipe_paths(recipe)
+    patch = paths['manifest'].parent / 'service-header-v1.patch'
+    return {'build_recipe': recipe,
+            'build_pins_path': str(paths['pins']),
+            'patch_manifest_path': str(paths['manifest']),
+            'patch_manifest_sha256': identity.file_hash(paths['manifest']),
+            'patch_path': str(patch),
+            'patch_sha256': identity.file_hash(patch),
+            'dependency_policy_path': str(runtime_package.POLICY_PATH)}
+
+
 def build_gufo(args, *, pins=None, owner_factory=OwnedProcess, resources=None,
                vcvars_loader=None) -> dict:
     """Internal injection seams support offline tests; no bypass reaches the CLI."""
+    recipe = getattr(args, 'build_recipe', 'service-ar4k-v1')
+    recipe_files = identity.recipe_paths(recipe)
     jobs = validate_jobs(args.jobs)
-    pins = identity.load_pins() if pins is None else pins
+    pins = identity.load_pins(recipe) if pins is None else pins
     paths = _canonical_paths(args)
     build = Path(paths['build'])
     source = Path(paths['source'])
     git = Path(paths['git'])
     source_record = identity.verify_git(source, git, remote=pins['source_remote'],
         head=None, tree=pins['source_tree'], base=pins['source_base'])
-    source_record.update(identity.verify_reviewed_patch(pins))
+    source_record.update(identity.verify_reviewed_patch(pins, recipe=recipe))
     vcpkg_record = identity.verify_git(Path(paths['vcpkg']), git,
         remote='https://github.com/microsoft/vcpkg.git', head=pins['vcpkg_commit'],
         tree=None,
@@ -326,8 +342,9 @@ def build_gufo(args, *, pins=None, owner_factory=OwnedProcess, resources=None,
         expected_input = {'paths': paths, 'source': source_record, 'vcpkg': vcpkg_record,
                           'sdk': sdk_record, 'tools': tools_record, 'vcvars': vc_record,
                           'ports': ports, 'dependency_dlls': dll_records,
-                          'build_pins_sha256': identity.file_hash(identity.PINS_PATH),
-                          'runtime_pins_sha256': identity.file_hash(runtime_package.POLICY_PATH)}
+                          'build_pins_sha256': identity.file_hash(recipe_files['pins']),
+                          'runtime_pins_sha256': identity.file_hash(runtime_package.POLICY_PATH),
+                          **_recipe_evidence(recipe)}
         verify_built_manifest(manifest, paths, values, jobs, expected_input)
         effective = identity.verify_cache(build / 'CMakeCache.txt', _cache_proof(paths, values))
         if manifest.get('cache_effective') != effective:
@@ -349,8 +366,9 @@ def build_gufo(args, *, pins=None, owner_factory=OwnedProcess, resources=None,
                          'vcpkg': vcpkg_record, 'sdk': sdk_record,
                          'tools': tools_record, 'vcvars': vc_record,
                          'ports': ports, 'dependency_dlls': dll_records,
-                         'build_pins_sha256': identity.file_hash(identity.PINS_PATH),
-                         'runtime_pins_sha256': identity.file_hash(runtime_package.POLICY_PATH)},
+                         'build_pins_sha256': identity.file_hash(recipe_files['pins']),
+                         'runtime_pins_sha256': identity.file_hash(runtime_package.POLICY_PATH),
+                         **_recipe_evidence(recipe)},
               'cache_expected': values, 'commands': []}
     write_manifest(manifest_path, record)
     try:
@@ -377,7 +395,7 @@ def build_gufo(args, *, pins=None, owner_factory=OwnedProcess, resources=None,
         record['commands'][-1].update(result, status='succeeded')
         final_source = identity.verify_git(source, git, remote=pins['source_remote'],
             head=None, tree=pins['source_tree'], base=pins['source_base'])
-        final_source.update(identity.verify_reviewed_patch(pins))
+        final_source.update(identity.verify_reviewed_patch(pins, recipe=recipe))
         final_vcpkg = identity.verify_git(Path(paths['vcpkg']), git,
             remote='https://github.com/microsoft/vcpkg.git', head=pins['vcpkg_commit'],
             tree=None, base=pins['vcpkg_commit'])
@@ -389,8 +407,9 @@ def build_gufo(args, *, pins=None, owner_factory=OwnedProcess, resources=None,
                         'ports': identity.verify_ports(Path(paths['vcpkg']), pins),
                         'dependency_dlls': identity.verify_dependency_dlls(
                             Path(paths['sdk']), Path(paths['vcpkg']), dependency_policy),
-                        'build_pins_sha256': identity.file_hash(identity.PINS_PATH),
-                        'runtime_pins_sha256': identity.file_hash(runtime_package.POLICY_PATH)}
+                        'build_pins_sha256': identity.file_hash(recipe_files['pins']),
+                        'runtime_pins_sha256': identity.file_hash(runtime_package.POLICY_PATH),
+                        **_recipe_evidence(recipe)}
         if final_inputs != record['inputs']:
             raise ValueError('build_inputs_changed_during_compile')
         check_resources((resources or (lambda: sample_resources(build.parent)))())
@@ -417,6 +436,7 @@ def main(argv=None) -> int:
                  'vcpkg-dir', 'vcvars64', 'cmake-exe', 'ninja-exe'):
         parser.add_argument('--' + name, required=True, type=Path)
     parser.add_argument('--jobs', type=int, default=2)
+    parser.add_argument('--build-recipe', default='service-ar4k-v1')
     args = parser.parse_args(argv)
     try:
         record = build_gufo(args)

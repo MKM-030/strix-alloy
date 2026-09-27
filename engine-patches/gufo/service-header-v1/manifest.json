@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "name": "service-header-v1",
+  "status": "source-reviewed-build-unqualified",
+  "upstream_url": "https://github.com/pixmaate/gufo.git",
+  "base_commit": "cff564964e8506c0abb3e530cecb55332187ac6c",
+  "base_tree": "dd8f9bc491d0c43976f6cdf9b5ab40f6d727a043",
+  "reviewed_source_head": "e6feed7ca52df4661d10434c72a8ea5b5f054bc2",
+  "reviewed_source_tree": "7912be2688d6874c0e13f4723aad00a5c3cbe1cf",
+  "patch": {
+    "file": "service-header-v1.patch",
+    "size_bytes": 127744,
+    "sha256": "42D99993E71C79A0582C8422B925AACD26EA436524D0C1CDB22D11DC1552D5B5"
+  },
+  "source_commits": [
+    "b64eb8a5da258ee89668ea8d486bbc6cbdd54cc2",
+    "b44670319b1623936275bf73fc9a4cfe6a2103a7",
+    "fb438cf4f208d596fbce441cb04cdd0c3e5bf818",
+    "c7be24589a0ce03ed8713bc618adf264f8a163ee",
+    "139aa9c58dadcb75c1bd0741aad0823fc65a0547",
+    "a86a95f4cec0011871203c3d86f0330433a0cae4",
+    "0df82e00114c00a9715156702a67984e47a2ee0d",
+    "e6feed7ca52df4661d10434c72a8ea5b5f054bc2"
+  ],
+  "review": {
+    "prior_service_complete_patch_review": "approved",
+    "header_cap_task_review": "approved",
+    "prompt_fixture_task_review": "approved",
+    "new_complete_patch_review": "pending independent review"
+  },
+  "cpu_validation": {
+    "header_cap_socket_test": "reported passed in reviewed task",
+    "prompt_fixture_and_route_tests": "2 passed, 0 skipped in final focused run",
+    "fixture_execution": "six CPU-only offline preparations, no model or GPU execution"
+  },
+  "export_validation": {
+    "apply_check_at_pinned_base": true,
+    "alternate_index_reconstructed_tree": "7912be2688d6874c0e13f4723aad00a5c3cbe1cf",
+    "preserved_source_worktree_unchanged": true
+  },
+  "gpu_build_verified": false,
+  "runtime_qualified": false,
+  "persistent_service_qualified": false,
+  "license": "../LICENSE.upstream"
+}
