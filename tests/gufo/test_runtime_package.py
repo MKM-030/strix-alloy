@@ -64,6 +64,9 @@ class Fixture:
         self.service_policy = copy.deepcopy(self.policy)
         self.service_policy['source_commit'] = '139aa9c58dadcb75c1bd0741aad0823fc65a0547'
         self.service_policy['executable'] = {'name': 'gufo.exe', **stamp(b'service-exe')}
+        self.header_policy = copy.deepcopy(self.service_policy)
+        self.header_policy['source_commit'] = 'e6feed7ca52df4661d10434c72a8ea5b5f054bc2'
+        self.header_policy['executable'] = {'name': 'gufo.exe', **stamp(b'header-exe')}
 
     def stage(self, *, variant='baseline'):
         return runtime_package.stage_runtime(self.build, self.sdk, self.vcpkg,
@@ -72,7 +75,8 @@ class Fixture:
     def patches(self):
         return (patch.object(runtime_package, 'load_policy',
                              side_effect=lambda variant='baseline':
-                             self.service_policy if variant == 'service-ar4k-v1' else self.policy),
+                             self.service_policy if variant == 'service-ar4k-v1' else
+                             self.header_policy if variant == 'service-ar4k-header-v1' else self.policy),
                 patch.object(runtime_package, '_host_openmp_record', return_value=self.host),
                 patch.object(runtime_package, '_free_bytes', return_value=2**40))
 
@@ -86,6 +90,42 @@ def fixture_context():
 
 
 class RuntimePackageTests(unittest.TestCase):
+    def test_header_variant_has_measured_identity_and_unchanged_dependencies(self):
+        old = runtime_package.load_policy(variant='service-ar4k-v1')
+        header = runtime_package.load_policy(variant='service-ar4k-header-v1')
+        self.assertEqual(header['source_commit'], 'e6feed7ca52df4661d10434c72a8ea5b5f054bc2')
+        self.assertEqual(header['executable'], {'name': 'gufo.exe', 'size_bytes': 42440192,
+            'sha256': '9682019A5198B19CA131D60298A1E896186099ACC971C17B04BB31E302F7FFE9'})
+        for key in ('schema', 'kind', 'sdk_version', 'sdk_dlls', 'vcpkg_dlls',
+                    'trees', 'host_openmp'):
+            self.assertEqual(header[key], old[key])
+
+    def test_header_variant_stages_unqualified_and_refuses_wrong_identity(self):
+        with fixture_context() as f:
+            (f.build / 'gufo.exe').write_bytes(b'header-exe')
+            manifest = f.stage(variant='service-ar4k-header-v1')
+            self.assertEqual(manifest['policy_sha256'],
+                             runtime_package.REVIEWED_HEADER_POLICY_SHA256)
+            self.assertFalse(manifest['runtime_qualified'])
+            self.assertEqual(runtime_package.verify_runtime(
+                f.runtime, variant='service-ar4k-header-v1'), manifest)
+            with self.assertRaises(ValueError):
+                runtime_package.verify_runtime(f.runtime, variant='service-ar4k-v1')
+            (f.runtime / 'gufo.exe').write_bytes(b'tampered')
+            with self.assertRaisesRegex(ValueError, 'file_identity_mismatch'):
+                runtime_package.verify_runtime(f.runtime, variant='service-ar4k-header-v1')
+
+    def test_header_policy_digest_tamper_is_refused(self):
+        with TemporaryDirectory() as temp:
+            changed = Path(temp) / 'header-pins.json'
+            changed.write_bytes(runtime_package.HEADER_POLICY_PATH.read_bytes() + b' ')
+            variants = dict(runtime_package.POLICY_VARIANTS)
+            variants['service-ar4k-header-v1'] = (
+                changed, *variants['service-ar4k-header-v1'][1:])
+            with patch.object(runtime_package, 'POLICY_VARIANTS', variants):
+                with self.assertRaisesRegex(ValueError, 'runtime_policy_changed_unreviewed'):
+                    runtime_package.load_policy(variant='service-ar4k-header-v1')
+
     def test_service_variant_is_explicit_and_unknown_variant_is_rejected_before_paths(self):
         with fixture_context() as f:
             with self.assertRaisesRegex(ValueError, 'unknown_runtime_variant'):
@@ -427,6 +467,22 @@ class RuntimePackageTests(unittest.TestCase):
                     result = subprocess.run(command, capture_output=True, text=True, check=False)
                     self.assertEqual(result.returncode, 0, result.stderr)
                     self.assertIn('--runtime-variant service-ar4k-v1', result.stdout)
+
+    def test_wrapper_forwards_header_variant_to_stage_and_verify(self):
+        with TemporaryDirectory(prefix='gufo wrapper ') as temp:
+            helper = Path(temp) / 'fake python.cmd'
+            helper.write_text('@echo off\r\necho %*\r\n', encoding='utf-8')
+            wrapper = Path(__file__).resolve().parents[2] / 'setup/stage-gufo-runtime.ps1'
+            common = ['powershell.exe', '-NoProfile', '-File', str(wrapper),
+                      '-PythonExe', str(helper), '-RuntimeDir', str(Path(temp) / 'runtime'),
+                      '-RuntimeVariant', 'service-ar4k-header-v1']
+            for command in (common + ['-Verify'], common + [
+                    '-BuildDir', str(Path(temp) / 'build'), '-SdkDir', str(Path(temp) / 'sdk'),
+                    '-VcpkgDir', str(Path(temp) / 'vcpkg')]):
+                with self.subTest(command=command):
+                    result = subprocess.run(command, capture_output=True, text=True, check=False)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertIn('--runtime-variant service-ar4k-header-v1', result.stdout)
 
     def test_unknown_nonempty_target_is_not_touched(self):
         with TemporaryDirectory() as temp:

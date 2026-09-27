@@ -65,6 +65,61 @@ class InstalledFixture:
 
 
 class InstalledStoreTests(unittest.TestCase):
+    def test_installed_candidate_is_header_build_without_moving_historical_smoke(self):
+        old = service_store.service_smoke_store.PINS
+        new = service_store.PINS
+        self.assertEqual(old.source_commit, '139aa9c58dadcb75c1bd0741aad0823fc65a0547')
+        self.assertEqual(new.source_commit, 'e6feed7ca52df4661d10434c72a8ea5b5f054bc2')
+        self.assertEqual(service_store.SOURCE_TREE, '7912be2688d6874c0e13f4723aad00a5c3cbe1cf')
+        self.assertEqual(service_store.RUNTIME_VARIANT, 'service-ar4k-header-v1')
+        self.assertEqual(new.executable, (42440192,
+            '9682019A5198B19CA131D60298A1E896186099ACC971C17B04BB31E302F7FFE9'))
+        self.assertEqual(new.margin_sha256,
+            'DAF6C99521AC4B751CD13E3462E46FEBB8F33038E24FCF39DCAF8C6309991E9F')
+        self.assertNotEqual(new.build, old.build)
+
+    def test_installed_source_check_uses_its_own_exact_head_and_tree(self):
+        with tempfile.TemporaryDirectory() as root:
+            source = Path(root) / 'source'
+            source.mkdir()
+            pins = replace(service_store.PINS, source=source)
+            with patch.object(service_store, 'PINS', pins), patch.object(
+                    service_store.service_smoke_store, 'source_identity',
+                    side_effect=AssertionError('historical source used')), patch.object(
+                    service_store.build_identity, 'verify_git', return_value={'status': ''}) as verify:
+                service_store.source_identity()
+            self.assertEqual(verify.call_args.args[0], source)
+            self.assertEqual(verify.call_args.kwargs['head'], pins.source_commit)
+            self.assertEqual(verify.call_args.kwargs['tree'], service_store.SOURCE_TREE)
+
+    def test_installed_source_check_refuses_a_changed_source(self):
+        with tempfile.TemporaryDirectory() as root:
+            source = Path(root) / 'source'
+            source.mkdir()
+            pins = replace(service_store.PINS, source=source)
+            with patch.object(service_store, 'PINS', pins), patch.object(
+                    service_store.build_identity, 'verify_git',
+                    side_effect=ValueError('git_identity_mismatch')):
+                with self.assertRaisesRegex(ValueError, 'git_identity_mismatch'):
+                    service_store.source_identity()
+
+    def test_on_disk_profile_and_empty_anchor_bind_header_candidate(self):
+        profile = operator_store.read_json(service_store.PROFILE_PATH)
+        anchor = operator_store.read_json(service_store.ANCHOR_PATH)
+        self.assertEqual(profile, service_store.expected_profile(service_store.PINS))
+        self.assertEqual(anchor, service_store.expected_anchor(profile))
+        self.assertIsNone(anchor['acceptance_sha256'])
+        self.assertIsNone(anchor['installed_workload'])
+
+    def test_profile_digest_mismatch_refuses_even_with_empty_acceptance(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = self.fixture(root)
+            anchor = operator_store.read_json(f.anchor)
+            anchor['profile_sha256'] = '0' * 64
+            operator_store.atomic_json(f.anchor, anchor)
+            with self.assertRaisesRegex(ValueError, 'acceptance_anchor_invalid'):
+                f.store.verify_static()
+
     def fixture(self, root, *, accepted=False):
         fixture = InstalledFixture(root)
         self.enterContext(patch.object(service_store, 'PINS', fixture.f.pins))

@@ -1,10 +1,10 @@
 # Optional GUFO static runtime package
 
-The staging command verifies and stages one of two reviewed GUFO server binaries into an independent local runtime directory. It does not build a new binary, start a service, load a model, run GPU checks, or qualify the runtime for use. A separate bounded build command is described below. The installed start/print-only/status/stop controller is implemented and independently reviewed offline; real persistent-service qualification remains incomplete, so activation refuses.
+The staging command verifies and stages one of three pinned GUFO server binaries into an independent local runtime directory. It does not build a new binary, start a service, load a model, run GPU checks, or qualify the runtime for use. A separate bounded build command is described below. The installed start/print-only/status/stop controller is implemented and independently reviewed offline; real persistent-service qualification remains incomplete, so activation refuses.
 
 Prerequisites are 64-bit Python 3.12, Windows PowerShell 5.1 or later, and explicit paths to the existing pinned build, TheRock SDK, vcpkg tree, and a separate runtime destination. The default `baseline` identity pins [pixmaate/gufo](https://github.com/pixmaate/gufo) commit `cff564964e8506c0abb3e530cecb55332187ac6c` in `config/gufo-runtime-pins.json`. The explicit `service-ar4k-v1` identity pins source commit `139aa9c58dadcb75c1bd0741aad0823fc65a0547` and its distinct `gufo.exe` (42,439,168 bytes, SHA-256 `66798D3BCAD27B7E2BEC16980B225F83CC3F017FAD9088ADA8D64D604BC4F209`) in `config/gufo-service-runtime-pins.json`. Both use the same TheRock SDK 10.2.0, vcpkg `x64-windows` DLLs, resource trees, and host OpenMP prerequisite. The [GUFO MIT license](https://github.com/pixmaate/gufo/blob/main/LICENSE) and third-party notices need separate review before any redistribution. This command creates a local package only; it does not redistribute AMD binaries or model weights.
 
-The baseline payload is 311,830,580 bytes (about 298 MiB); the service payload is 311,839,796 bytes. Each includes `gufo.exe`, 17 named DLLs, and two gfx1151 resource trees. The destination volume must have the selected payload space plus a 1 GiB reserve. The host must supply the pinned `libomp140.x86_64.dll` from the Windows system directory; it is checked but not copied. The manifest records static identity with status `staged-static-only` and `runtime_qualified: false`.
+The baseline payload is 311,830,580 bytes (about 298 MiB); the historical service payload is 311,839,796 bytes and the header-fixed service payload is 311,840,820 bytes. Each includes `gufo.exe`, 17 named DLLs, and two gfx1151 resource trees. The destination volume must have the selected payload space plus a 1 GiB reserve. The host must supply the pinned `libomp140.x86_64.dll` from the Windows system directory; it is checked but not copied. The manifest records static identity with status `staged-static-only` and `runtime_qualified: false`.
 
 From this repository root, use explicit paths:
 
@@ -21,7 +21,7 @@ From this repository root, use explicit paths:
   -Verify -RuntimeDir 'C:\Path\To\Independent\GUFO-Runtime'
 ```
 
-For the reviewed service candidate, use its build directory and add `-RuntimeVariant service-ar4k-v1` to both stage and verify. The Python entry point accepts the same choice as `--runtime-variant service-ar4k-v1`. An omitted choice always selects `baseline`; a package staged under one identity fails verification under the other.
+For the historical service candidate, use its build directory and add `-RuntimeVariant service-ar4k-v1` to both stage and verify. The new header-fixed candidate uses `-RuntimeVariant service-ar4k-header-v1`, the completed build at `C:\Projects\strix-alloy-research\build\gufo-service-header-frontdoor-20260927`, and a distinct destination such as `C:\Projects\strix-alloy-research\runtimes\gufo-native-service-header-e6feed7-therock10.2`. Its policy is `config/gufo-service-header-runtime-pins.json`: clean source `e6feed7ca52df4661d10434c72a8ea5b5f054bc2`, tree `7912be2688d6874c0e13f4723aad00a5c3cbe1cf`, and `gufo.exe` 42,440,192 bytes with SHA-256 `9682019A5198B19CA131D60298A1E896186099ACC971C17B04BB31E302F7FFE9`. The Python entry point accepts the same variant names. An omitted choice selects `baseline`; verification under a different identity fails.
 
 The stage operation verifies every source and destination byte against the selected fixed policy. It refuses unknown nonempty destinations and does not overwrite files. Verify is read-only and works after moving a valid package, provided the current host still supplies the OpenMP prerequisite. Any different `gufo.exe` requires a newly reviewed package policy. Successful staging is not service qualification.
 
@@ -80,10 +80,10 @@ build directory, add `-BuildRecipe service-ar4k-header-v1` and point `-SourceDir
 at a clean checkout with tree
 `7912be2688d6874c0e13f4723aad00a5c3cbe1cf`. This recipe uses
 `config/gufo-header-build-pins.json` and the complete
-`engine-patches/gufo/service-header-v1/` export. It has not had a GPU build,
-runtime staging, model run or service qualification; its output has no static
-runtime acceptance identity. A later reviewed build must use a distinct build
-directory and pass the existing resource and dependency gates.
+`engine-patches/gufo/service-header-v1/` export. The reviewed build completed
+in a distinct directory; its static runtime identity is the separate
+`service-ar4k-header-v1` policy above. Runtime staging, model execution and
+service qualification remain pending.
 
 `-Jobs` accepts only 1 or 2. The command requires 24 GiB available physical
 memory and 25 GiB free on the build volume at entry and throughout configure

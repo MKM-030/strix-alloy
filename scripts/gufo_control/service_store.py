@@ -13,21 +13,29 @@ from pathlib import Path
 import platform
 import sys
 
-from . import operator_store, runtime_package, service_smoke_store, smoke_store
+from . import build_identity, operator_store, runtime_package, service_smoke_store, smoke_store
 from .benchmark_runtime import BoundStore
 
 
 PROFILE_ID = smoke_store.INSTALLED_SERVICE
 PROFILE_PATH = Path(__file__).resolve().parents[2] / 'config/gufo-service-profile.json'
-SOURCE_TREE = service_smoke_store.SOURCE_TREE
-RUNTIME_VARIANT = service_smoke_store.RUNTIME_VARIANT
-RUNTIME_POLICY_SHA256 = service_smoke_store.RUNTIME_POLICY_SHA256
+SOURCE_TREE = '7912be2688d6874c0e13f4723aad00a5c3cbe1cf'
+SOURCE_REMOTE = 'https://github.com/pixmaate/gufo.git'
+SOURCE_BASE = 'cff564964e8506c0abb3e530cecb55332187ac6c'
+RUNTIME_VARIANT = 'service-ar4k-header-v1'
+RUNTIME_POLICY_SHA256 = runtime_package.REVIEWED_HEADER_POLICY_SHA256
 CONTROLLER_ID = 'gufo-native-installed-controller-v1'
 CONTROLLER_SOURCE_DIR = Path(__file__).resolve().parent
 ANCHOR_PATH = PROFILE_PATH.with_name('gufo-service-acceptance-anchor.json')
 PINS = replace(service_smoke_store.PINS, profile_id=PROFILE_ID,
+    source=smoke_store.ROOT/'engine/gufo-ar4k-header-cap',
+    source_commit='e6feed7ca52df4661d10434c72a8ea5b5f054bc2',
+    build=smoke_store.ROOT/'runtimes/gufo-native-service-header-e6feed7-therock10.2',
+    executable=(42440192, '9682019A5198B19CA131D60298A1E896186099ACC971C17B04BB31E302F7FFE9'),
     evidence=smoke_store.ROOT/'reports/gufo-native-installed-v1-runs',
-    qualification=smoke_store.ROOT/'reports/gufo-native-installed-v1-acceptance.json')
+    qualification=smoke_store.ROOT/'reports/gufo-native-installed-v1-acceptance.json',
+    margin_report=smoke_store.ROOT/'reports/gufo-header-lifecycle-margin-review-20260927.md',
+    margin_sha256='DAF6C99521AC4B751CD13E3462E46FEBB8F33038E24FCF39DCAF8C6309991E9F')
 
 
 def _canonical(value):
@@ -108,7 +116,10 @@ def installed_binding(pins):
 
 
 def source_identity():
-    return service_smoke_store.source_identity()
+    source = build_identity.checked_path(PINS.source, directory=True)
+    return build_identity.verify_git(source, Path('git'), remote=SOURCE_REMOTE,
+                                     head=PINS.source_commit, tree=SOURCE_TREE,
+                                     base=SOURCE_BASE)
 
 
 def controller_artifacts():

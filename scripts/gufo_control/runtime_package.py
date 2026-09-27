@@ -19,6 +19,8 @@ POLICY_PATH = Path(__file__).resolve().parents[2] / 'config/gufo-runtime-pins.js
 REVIEWED_POLICY_SHA256 = 'C363650BDFF6B79B3482B198D7EFBEE03E25C9D52A298B51B9B54724316F6B63'
 SERVICE_POLICY_PATH = Path(__file__).resolve().parents[2] / 'config/gufo-service-runtime-pins.json'
 REVIEWED_SERVICE_POLICY_SHA256 = '5AA64C7E718619E4654DCF4B5997D77AAE47B41611DCAA897020224FD0F0A5E8'
+HEADER_POLICY_PATH = Path(__file__).resolve().parents[2] / 'config/gufo-service-header-runtime-pins.json'
+REVIEWED_HEADER_POLICY_SHA256 = '4A96FCE35E00DB04DC9FC51B600253DEB7C6E8CC93D51EFCE7175BDF5EBAA7E6'
 POLICY_VARIANTS = {
     'baseline': (POLICY_PATH, REVIEWED_POLICY_SHA256,
                  'cff564964e8506c0abb3e530cecb55332187ac6c',
@@ -26,6 +28,9 @@ POLICY_VARIANTS = {
     'service-ar4k-v1': (SERVICE_POLICY_PATH, REVIEWED_SERVICE_POLICY_SHA256,
                         '139aa9c58dadcb75c1bd0741aad0823fc65a0547',
                         42439168, '66798D3BCAD27B7E2BEC16980B225F83CC3F017FAD9088ADA8D64D604BC4F209'),
+    'service-ar4k-header-v1': (HEADER_POLICY_PATH, REVIEWED_HEADER_POLICY_SHA256,
+                               'e6feed7ca52df4661d10434c72a8ea5b5f054bc2',
+                               42440192, '9682019A5198B19CA131D60298A1E896186099ACC971C17B04BB31E302F7FFE9'),
 }
 RESERVE_BYTES = 1 << 30
 REPARSE = getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0x400)
@@ -67,7 +72,7 @@ def _variant_pin(variant: str) -> tuple:
 
 
 def load_policy(*, variant: str = 'baseline') -> dict:
-    """Read one of the two reviewed policies by closed variant name."""
+    """Read a reviewed policy by closed variant name."""
     policy_path, policy_sha256, source_commit, exe_size, exe_sha256 = _variant_pin(variant)
     raw = policy_path.read_bytes()
     if _digest_bytes(raw) != policy_sha256:

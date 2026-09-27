@@ -1,7 +1,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$PythonExe,
     [Parameter(Mandatory = $true)][string]$RuntimeDir,
-    [ValidateSet('baseline', 'service-ar4k-v1')][string]$RuntimeVariant = 'baseline',
+    [ValidateSet('baseline', 'service-ar4k-v1', 'service-ar4k-header-v1')][string]$RuntimeVariant = 'baseline',
     [switch]$Verify,
     [string]$BuildDir,
     [string]$SdkDir,
