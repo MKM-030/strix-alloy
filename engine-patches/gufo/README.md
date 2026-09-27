@@ -58,10 +58,12 @@ qualification. [Static staging](../../setup/GUFO.md) supports the original
 binary and the explicit `service-ar4k-v1` candidate as separate identities.
 It neither compiles the patch nor accepts arbitrary rebuilt binaries.
 
-Reusable start/status/stop remains under implementation. The installed-profile
-store and lifecycle monitor have passed offline tests and independent review;
-control-channel integration and real service qualification remain unfinished.
-Do not clear the failed finite run's records or replay its consumed profile.
+The installed-profile store, lifecycle monitor, authenticated control channel
+and start/print-only/status/stop commands have passed offline tests and
+independent review. Real service qualification remains unfinished and public
+activation refuses. Offline command tests do not qualify model-backed lifetime,
+memory recovery or a production service. Do not clear the failed finite run's
+records or replay its consumed profile.
 
 Cache bypass is not zero snapshot retention. One active plus one queued request
 does not limit HTTP prompt preparation to two simultaneous callers. Model
