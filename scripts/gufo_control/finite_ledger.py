@@ -84,6 +84,7 @@ class Ledger:
         self.limits = MappingProxyType(workload.limits())
         self.root = checked_path(root, directory=True, exists=not create)
         self._mutex = threading.Lock()
+        self._transport_failed = False
         self.header = dict(schema=1, profile='ar4k-service-lifecycle-v1',
             workload_sha256=WORKLOAD_SHA256, lifecycle=index, run_id=run_id,
             resumed_at=resumed_at, deadline=resumed_at+self.life['lifetime_seconds'])
@@ -106,6 +107,8 @@ class Ledger:
         if not self._mutex.acquire(timeout=1):
             raise RuntimeError('finite_ledger_busy')
         try:
+            if self._transport_failed:
+                raise ValueError('finite_transport_failed')
             checked_path(self.root, directory=True)
             checked_path(self.root/'runner.lock', exists=False)
             with operator_store.exclusive(self.root):
@@ -255,6 +258,7 @@ class Ledger:
             _exclusive(self.root/f'{slot}.outcome.json', row, limit)
             committed_at = self.clock()
             if committed_at >= reservations[slot]['deadline']:
+                self._transport_failed = True
                 _exclusive(self.root/FAILURE_LATCH,
                            dict(schema=1, run_id=self.header['run_id'], slot=slot,
                                 deadline=reservations[slot]['deadline'],
@@ -270,6 +274,7 @@ class Ledger:
             if (slot not in reservations or code != 'outcome_deadline' or
                     not _time(observed_at) or observed_at < reservations[slot]['deadline']):
                 raise ValueError('finite_transport_latch_invalid')
+            self._transport_failed = True
             _exclusive(self.root/FAILURE_LATCH,
                        dict(schema=1, run_id=self.header['run_id'], slot=slot,
                             deadline=reservations[slot]['deadline'],

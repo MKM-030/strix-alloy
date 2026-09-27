@@ -538,3 +538,85 @@ class FiniteTransportTests(unittest.TestCase):
         result = self.client(lambda *args: ScriptedSocket([wire])).get('ready', 1)
         self.assertFalse(result.success)
         self.assertEqual(result.error, 'malformed_header')
+
+    def _header_disconnect_with_length(self, declared):
+        for attempt in range(1, 31):
+            post = self.workload.post(1, attempt)
+            row = self.ledger.reserve('post', attempt, body=post.body)
+            self.ledger.complete(row['slot'], {'success': True})
+        wire = (b'HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\n'
+                + f'Content-Length: {declared}\r\n\r\n'.encode())
+        sock = ScriptedSocket([wire])
+        result = self.client(lambda *args: sock).post(31, disconnect='headers')
+        self.assertTrue(sock.closed)
+        self.assertEqual(result.wire_bytes, len(wire))
+        return result
+
+    def test_header_disconnect_rejects_nonnumeric_length(self):
+        result = self._header_disconnect_with_length('bogus')
+        self.assertFalse(result.success)
+        self.assertEqual(result.error, 'malformed_content_length')
+
+    def test_header_disconnect_rejects_negative_length(self):
+        result = self._header_disconnect_with_length('-1')
+        self.assertFalse(result.success)
+        self.assertEqual(result.error, 'malformed_content_length')
+
+    def test_header_disconnect_rejects_over_body_limit_length(self):
+        result = self._header_disconnect_with_length('7340033')
+        self.assertFalse(result.success)
+        self.assertEqual(result.error, 'response_body_limit')
+
+    def test_failed_complete_latch_write_poisons_live_ledger(self):
+        from gufo_control import finite_ledger
+        original = finite_ledger._exclusive
+        row = self.ledger.reserve('ready', 1)
+        self.now[0] = 161.0
+        def fail_latch(path, value, maximum):
+            if path.name == finite_ledger.FAILURE_LATCH:
+                raise OSError('injected latch write failure')
+            return original(path, value, maximum)
+        with patch.object(finite_ledger, '_exclusive', side_effect=fail_latch):
+            with self.assertRaises(OSError):
+                self.ledger.complete(row['slot'], {'success': True})
+        self.assertFalse((self.root / finite_ledger.FAILURE_LATCH).exists())
+        for action in (self.ledger.snapshot,
+                       lambda: self.ledger.reserve('ready', 2),
+                       lambda: self.ledger.complete(row['slot'], {'success': True})):
+            with self.assertRaisesRegex(ValueError, 'finite_transport_failed'):
+                action()
+
+    def test_failed_explicit_latch_write_poisons_live_ledger(self):
+        from gufo_control import finite_ledger
+        row = self.ledger.reserve('ready', 1)
+        self.ledger.complete(row['slot'], {'success': True})
+        self.now[0] = 161.0
+        with patch.object(finite_ledger, '_exclusive', side_effect=OSError('injected latch failure')):
+            with self.assertRaises(OSError):
+                self.ledger.fail_transport(row['slot'], 'outcome_deadline', self.now[0])
+        self.assertFalse((self.root / finite_ledger.FAILURE_LATCH).exists())
+        with self.assertRaisesRegex(ValueError, 'finite_transport_failed'):
+            self.ledger.snapshot()
+        with self.assertRaisesRegex(ValueError, 'finite_transport_failed'):
+            self.ledger.reserve('ready', 2)
+
+    def test_concurrent_first_evidence_directory_creation(self):
+        from concurrent.futures import ThreadPoolExecutor
+        sibling = self.root.with_name(self.root.name + '-finite-evidence')
+        barrier = threading.Barrier(2)
+        original_mkdir = Path.mkdir
+        body = b'{"error":{"code":"not_ready"}}'
+        wire = (b'HTTP/1.1 503 Service Unavailable\r\nContent-Type: application/json\r\n'
+                + f'Content-Length: {len(body)}\r\n\r\n'.encode() + body)
+        client = self.client(lambda *args: ScriptedSocket([wire]))
+        def synchronized_mkdir(path, *args, **kwargs):
+            if path == sibling:
+                barrier.wait(timeout=2)
+            return original_mkdir(path, *args, **kwargs)
+        with patch.object(Path, 'mkdir', synchronized_mkdir):
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                first = pool.submit(client.get, 'ready', 1)
+                second = pool.submit(client.get, 'ready', 2)
+                results = [first.result(timeout=5), second.result(timeout=5)]
+        self.assertTrue(all(result.success for result in results), results)
+        self.assertEqual(self.ledger.snapshot()['counts']['ready'], 2)

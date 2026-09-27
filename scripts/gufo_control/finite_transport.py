@@ -227,7 +227,7 @@ class FiniteTransport:
     def _evidence_dir(self):
         root = checked_path(self.evidence_root, directory=True, exists=False)
         if not root.exists():
-            root.mkdir()
+            root.mkdir(exist_ok=True)
         checked_path(root, directory=True)
         maximum = sum(self.workload.lifecycle(self.ledger.index)[key] for key in
                       ('maximum_post_attempts', 'maximum_ready_polls', 'maximum_model_queries'))
@@ -357,6 +357,17 @@ class FiniteTransport:
             if ((transfer is not None and transfer.lower() != 'chunked') or
                     (transfer is not None and 'content-length' in headers)):
                 raise smoke_http.SmokeError('ambiguous_response_framing')
+            limit = (self.workload.limits()['post_response_body_bytes'] if post else
+                     self.workload.limits()['get_response_body_bytes'])
+            if 'content-length' in headers:
+                digits = headers['content-length']
+                if not digits or not digits.isascii() or not digits.isdecimal():
+                    raise smoke_http.SmokeError('malformed_content_length')
+                significant = digits.lstrip('0') or '0'
+                maximum = str(limit)
+                if (len(significant) > len(maximum) or
+                        len(significant) == len(maximum) and significant > maximum):
+                    raise smoke_http.SmokeError('response_body_limit')
             content_type = headers.get('content-type', '').split(';', 1)[0].lower()
             if disconnect is not None and (status != 200 or content_type != 'text/event-stream'):
                 raise smoke_http.SmokeError('cancel_headers')
@@ -370,8 +381,6 @@ class FiniteTransport:
             else:
                 observer = (SseObserver(path, disconnect if type(disconnect) is int else None, emit)
                             if content_type == 'text/event-stream' else None)
-                limit = (self.workload.limits()['post_response_body_bytes'] if post else
-                         self.workload.limits()['get_response_body_bytes'])
                 for part, arrived in smoke_http._body_chunks(reader, headers, body_limit=limit):
                     self._check(deadline, self.cancel)
                     if response_size + len(part) > limit:
