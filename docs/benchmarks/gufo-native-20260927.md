@@ -35,6 +35,43 @@ answers added unwanted fences and long answers were truncated. MTP acceptance
 was 1,542/2,082 proposals (74.06%); aggregate counters do not prove every
 draft-depth path executed. Cold prefill remained about 9% below AR.
 
+## Halogen-style HTTP prefill comparison
+
+Historical deployment comparison, **not an isolated engine or OS speedup**.
+Same filler/calibration and one-output HTTP measurement for our two deployments;
+no prompt-cache hits. Local cells retain all three repetitions (mean ± sample
+SD). The GUFO column uses the completed **16k-capacity AR run**, not the 4k
+AR/MTP runs above. Author figures are published references, not our measurements.
+
+| Requested PP size (our actual input/output) | Halogen Linux, author reference | Our WSL2 Halogen 0.13.8, serial | Our native GUFO, AR/16k |
+|---|---:|---:|---:|
+| 2048 (2047/1) | 812 | 820.95 ± 32.72 | 849.01 ± 11.54 |
+| 8192 (8185/1) | 1041 | 783.39 ± 85.23 | 901.41 ± 19.51 |
+
+Our WSL2 2k result is close to the published reference; its 8k result is lower.
+This does not establish general Linux/Windows parity. The deployments differ
+in model format/quantization (Halogen HGN w4b versus GUFO GGUF IQ4_XS), version,
+context capacity (WSL2 32k versus GUFO 16k), carve (32 versus 64 GiB), and run
+conditions. WSL2 restart/first-request failures remain documented separately;
+these are retained successful benchmark runs, not cold-start guarantees.
+
+Decode must stay in separate recipe groups: our historical Halogen ten-prompt
+MTP mean was **41.20 tok/s** across 30 requests. The GUFO sustained runbook
+measurements above are not that corpus, so they cannot establish a decode win
+or loss against it. Native Strix Alloy/PROJFIX's synthetic llama-bench and
+single-prompt served results likewise do not fill this table. Published GUFO
+stage-timed/warmed PP is not interchangeable with one-output HTTP PP.
+
+Reference: [pinned Halogen README](https://github.com/peonist-ai/halogen-flash-server/blob/c8270bb31cd824a0bf53fe9ecf80059c13e7a5bf/README.md#served-throughput-end-to-end-over-http).
+Local sources: `C:\Projects\strix-alloy-wsl2\docs\benchmarks\upstream-20260924.md`
+and its original size log; research report `gufo-native-ar16k-v3-20260926.md`
+and result SHA-256 `A813E83F9EBF362D065DA73E0F7A25ED563CBB1CF0C9888952BC8A679A099809`.
+The 27 September read-only check revalidated all six GUFO PP request hashes,
+counts, means and sample SDs. WSL2 HTTP statistics come from the original client
+log, not a reconstruction from its differently timed engine CSV. The full
+four-way recipe/caveat map is `halogen-alloy-gufo-comparison-20260926.md` in the
+research archive. No model was rerun to add this section.
+
 ## Memory and status
 
 Cap 3 reported **66.114 GiB (70.99 GB)** device usage after loading. Sampled
