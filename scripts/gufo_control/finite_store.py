@@ -268,6 +268,7 @@ def _current_run_markers(manifest, pins, current_run):
 class FiniteStore(BoundStore):
     def __init__(self):
         super().__init__(PINS)
+        self._admission_witness = None
 
     def verify_static(self):
         smoke_store._incomplete_latches(self.PINS)
@@ -301,6 +302,8 @@ class FiniteStore(BoundStore):
         return smoke_store._load_original_operator_baseline(self.PINS)
 
     def record_admission(self, run_dir, manifest, current_baseline, frame, *, now, now_utc):
+        if self._admission_witness is not None:
+            raise ValueError('finite_admission_pending')
         run = _run(self.PINS, run_dir)
         self.recheck_static(manifest, prepared_run=run)
         history = _history(self.PINS, prepared_run=run)
@@ -319,15 +322,22 @@ class FiniteStore(BoundStore):
             decision=decision, checked_monotonic=now, query_start=frame.query_start,
             query_end=frame.query_end, sample=frame.snapshot)
         _write(run/'finite-admission.json', proof)
+        self._admission_witness = (str(run), _digest(proof))
         return proof
 
     def begin_run(self, run_dir, manifest, baseline):
+        witness = self._admission_witness
+        self._admission_witness = None
+        if witness is None:
+            raise ValueError('finite_admission_witness')
         run = _run(self.PINS, run_dir)
         self.recheck_static(manifest, prepared_run=run)
         history = _history(self.PINS, prepared_run=run)
         if not _same(asdict(baseline), manifest['operator']['original_baseline']):
             raise ValueError('finite_original_baseline_changed')
         proof = _read(run/'finite-admission.json')
+        if witness != (str(run), _digest(proof)):
+            raise ValueError('finite_admission_witness')
         if (proof.get('profile') != fp.PROFILE_ID or proof.get('run') != str(run)
                 or type(proof.get('lifecycle')) is not int or proof['lifecycle'] != len(history)+1
                 or proof.get('manifest_sha256') != _digest(manifest)

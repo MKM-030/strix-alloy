@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from gufo_control import finite_profile as fp, finite_store as fs
 from gufo_control import operator_store, service_store, smoke_store
-from gufo_control.operator_policy import baseline
+from gufo_control.operator_policy import MAX_PRELAUNCH_AGE_SECONDS, baseline
 from test_operator_policy import frame, series
 from test_finite_profile import candidate, qualified
 
@@ -170,6 +170,45 @@ class FiniteStoreTests(unittest.TestCase):
                             operator_evidence=self.root/'operator-runs')
         with self.assertRaisesRegex(ValueError, 'prior_smoke_incomplete'):
             smoke_store._incomplete_latches(installed)
+
+    def test_begin_rejects_rewritten_stale_query_start(self):
+        f = frame(32); self.clock.return_value = f.query_end
+        m = self.store.verify_static()
+        run = self.evidence/'run-1'; run.mkdir()
+        self.store.record_admission(run, m, baseline(series(start=20)), f,
+            now=f.query_end, now_utc=f.validated_utc)
+        self.clock.return_value += MAX_PRELAUNCH_AGE_SECONDS + 1
+        proof = fs._read(run/'finite-admission.json')
+        proof['query_start'] = self.clock.return_value
+        operator_store.atomic_json(run/'finite-admission.json', proof)
+        with self.assertRaisesRegex(ValueError, 'finite_admission_witness'):
+            self.store.begin_run(run, m, self.base)
+        self.assertFalse((self.evidence/'incomplete.json').exists())
+
+    def test_begin_rejects_other_admission_proof_changes(self):
+        f = frame(32); self.clock.return_value = f.query_end
+        m = self.store.verify_static()
+        run = self.evidence/'run-1'; run.mkdir()
+        self.store.record_admission(run, m, baseline(series(start=20)), f,
+            now=f.query_end, now_utc=f.validated_utc)
+        proof = fs._read(run/'finite-admission.json')
+        proof['sample'] = dict(proof['sample'],
+            available_physical_bytes=proof['sample']['available_physical_bytes'] + 1)
+        operator_store.atomic_json(run/'finite-admission.json', proof)
+        with self.assertRaisesRegex(ValueError, 'finite_admission_witness'):
+            self.store.begin_run(run, m, self.base)
+        self.assertFalse((self.evidence/'incomplete.json').exists())
+
+    def test_begin_rejects_disk_only_admission_from_fresh_store(self):
+        f = frame(32); self.clock.return_value = f.query_end
+        m = self.store.verify_static()
+        run = self.evidence/'run-1'; run.mkdir()
+        self.store.record_admission(run, m, baseline(series(start=20)), f,
+            now=f.query_end, now_utc=f.validated_utc)
+        fresh_store = fs.FiniteStore()
+        with self.assertRaisesRegex(ValueError, 'finite_admission_witness'):
+            fresh_store.begin_run(run, m, self.base)
+        self.assertFalse((self.evidence/'incomplete.json').exists())
 
     def test_fresh_admission_required_and_first_recovery_precedes_second(self):
         first, m = self.prepared(); self.store.finish_run(first, self.result(first, m))
