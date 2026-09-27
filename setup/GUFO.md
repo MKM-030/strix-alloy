@@ -88,6 +88,13 @@ one-request guardian against the reviewed `139aa9c` source/tree and the complete
 `C:\Projects\strix-alloy-research\runtimes\gufo-native-service-139aa9c-therock10.2`.
 Historical operator results retain their original `cff564` source identity.
 
+Local qualification status (27 September): the new candidate loaded and
+answered the fixed request correctly, then exited successfully. The overall
+attempt failed memory recovery: available Windows RAM remained below the
+required49GiB. Its consumed-attempt and incomplete-cleanup records are retained;
+do not clear them or replay the profile. Persistent service is not qualified.
+Local evidence: `C:\Projects\strix-alloy-research\reports\gufo-service-policy-smoke-validation-20260927.md`.
+
 From this repository, inspect the fixed profile without launching GUFO:
 
 ```powershell
