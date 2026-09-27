@@ -1,4 +1,5 @@
 """Bounded owned-stderr scheduling hint; never a readiness proof."""
+import hashlib
 import os
 import re
 import time
@@ -24,6 +25,7 @@ class ListeningHint:
         self.clock = clock
         self.offset = 0
         self.pending = b''
+        self.prefix_hash = hashlib.sha256()
         self.identity = None
         self.matched = False
 
@@ -45,36 +47,75 @@ class ListeningHint:
         if self.clock() >= deadline:
             raise TimeoutError('finite_listening_deadline')
 
+    def _hash_prefix(self, stream, length, deadline):
+        digest = hashlib.sha256()
+        try:
+            stream.seek(0)
+        except (OSError, ValueError) as error:
+            raise ValueError('finite_listening_file_changed') from error
+        consumed = 0
+        while consumed < length:
+            try:
+                block = stream.read(min(8192, length - consumed))
+            except (OSError, ValueError) as error:
+                raise ValueError('finite_listening_file_changed') from error
+            self._check_deadline(deadline)
+            if not block:
+                raise ValueError('finite_listening_file_changed')
+            consumed += len(block)
+            digest.update(block)
+        return digest
+
     def poll(self, deadline: float) -> bool:
         self._check_deadline(deadline)
         before = self._path_stat()
         self._check_file(before)
-        if self.matched:
-            self._check_deadline(deadline)
-            return True
         with self.path.open('rb') as stream:
             opened = os.fstat(stream.fileno())
             if _identity(opened) != self.identity:
                 raise ValueError('finite_listening_file_changed')
+            current_prefix = self._hash_prefix(stream, self.offset, deadline)
+            if current_prefix.digest() != self.prefix_hash.digest():
+                raise ValueError('finite_listening_file_changed')
+            if self.matched:
+                opened_after = os.fstat(stream.fileno())
+                after = self._path_stat()
+                self._check_file(after)
+                if (_identity(opened_after) != self.identity
+                        or _identity(after) != _identity(opened_after)):
+                    raise ValueError('finite_listening_file_changed')
+                if opened_after.st_size < self.offset:
+                    raise ValueError('finite_listening_file_changed')
+                if opened_after.st_size > 1048576:
+                    raise ValueError('finite_listening_byte_limit')
+                self._check_deadline(deadline)
+                return True
             stream.seek(self.offset)
             chunk = stream.read(min(8192, 1048577 - self.offset))
+            candidate_hash = self.prefix_hash.copy()
+            candidate_hash.update(chunk)
+            next_offset = self.offset + len(chunk)
+            if next_offset > 1048576:
+                raise ValueError('finite_listening_byte_limit')
+            current_prefix = self._hash_prefix(stream, next_offset, deadline)
+            if current_prefix.digest() != candidate_hash.digest():
+                raise ValueError('finite_listening_file_changed')
             try:
                 opened_after = os.fstat(stream.fileno())
             except (OSError, ValueError) as error:
                 raise ValueError('finite_listening_file_changed') from error
-        self.offset += len(chunk)
-        if self.offset > 1048576:
-            raise ValueError('finite_listening_byte_limit')
         after = self._path_stat()
         self._check_file(after)
         if (_identity(opened_after) != self.identity
                 or _identity(after) != _identity(opened_after)):
             raise ValueError('finite_listening_file_changed')
-        if opened_after.st_size < self.offset:
+        if opened_after.st_size < next_offset or after.st_size < next_offset:
             raise ValueError('finite_listening_file_changed')
         if opened_after.st_size > 1048576:
             raise ValueError('finite_listening_byte_limit')
         self._check_deadline(deadline)
+        self.offset = next_offset
+        self.prefix_hash = candidate_hash
         self.pending += chunk
         while b'\n' in self.pending:
             line, self.pending = self.pending.split(b'\n', 1)

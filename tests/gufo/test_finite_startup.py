@@ -34,6 +34,13 @@ class ListeningHintTests(unittest.TestCase):
         self.assertEqual(self.hint.offset, len(MARKER))
         self.assertTrue(self.hint.poll(580.0))
 
+    def test_changed_consumed_prefix_between_polls_is_rejected(self):
+        self.log.write_bytes(MARKER[:20])
+        self.assertFalse(self.hint.poll(580.0))
+        self.log.write_bytes(b'X' * 20 + MARKER[20:])
+        with self.assertRaisesRegex(ValueError, 'finite_listening_file_changed'):
+            self.hint.poll(580.0)
+
     def test_open_handle_replacement_during_read_is_rejected(self):
         self.log.write_bytes(MARKER)
         original_open = Path.open
@@ -116,6 +123,13 @@ class ListeningHintTests(unittest.TestCase):
         self.assertTrue(self.hint.poll(580.0))
         self.log.rename(self.root / 'old-stderr.log')
         self.log.write_bytes(MARKER)
+        with self.assertRaisesRegex(ValueError, 'finite_listening_file_changed'):
+            self.hint.poll(580.0)
+
+    def test_cached_match_rechecks_consumed_prefix(self):
+        self.log.write_bytes(MARKER)
+        self.assertTrue(self.hint.poll(580.0))
+        self.log.write_bytes(b'X' + MARKER[1:])
         with self.assertRaisesRegex(ValueError, 'finite_listening_file_changed'):
             self.hint.poll(580.0)
 
