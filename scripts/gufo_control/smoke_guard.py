@@ -286,6 +286,16 @@ class _Guardian:
                                           now=time.monotonic(), now_utc=utcnow())
         self._decision(self.phase, frame, result)
 
+    def _prepared_recheck_kwargs(self):
+        return (dict(prepared_run=self.run_dir)
+                if isinstance(self.store, service_store.InstalledStore) else {})
+
+    def _before_begin(self, frame):
+        return None
+
+    def _immutable_terminal(self):
+        return isinstance(self.store, service_store.InstalledStore)
+
     def _prelaunch(self):
         self.manifest = self.store.verify_static()
         if self.manifest.get('profile') != self.profile_id:
@@ -321,12 +331,13 @@ class _Guardian:
             effective_kind='synthetic_stricter_runtime_limits'))
         self.baseline_complete = True
         self._prune_entries()
-        preparing = dict(prepared_run=self.run_dir) if isinstance(self.store, service_store.InstalledStore) else {}
+        preparing = self._prepared_recheck_kwargs()
         self.store.recheck_static(self.manifest, **preparing)
         self.port_check()
         final = self._collect_one('final_precreate')
         self.store.recheck_static(self.manifest, **preparing)
         self._admit(final)
+        self._before_begin(final)
         # The permanent marker is consumed even if any subsequent setup fails.
         try:
             self.store.begin_run(self.run_dir, self.manifest, self.original)
@@ -647,7 +658,7 @@ class _Guardian:
             latch = self.store.EVIDENCE/'incomplete.json'
             if not latch.exists():
                 operator_store.atomic_json(latch, dict(run=str(self.run_dir), phase='evidence_write_failed'))
-            if isinstance(self.store, service_store.InstalledStore):
+            if self._immutable_terminal():
                 service_store._exclusive_json(self.run_dir/('result-failure-'+uuid.uuid4().hex+'.json'), result)
             else:
                 self._write('result.json', result)

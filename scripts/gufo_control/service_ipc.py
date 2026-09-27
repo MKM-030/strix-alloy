@@ -686,6 +686,12 @@ class _IpcLifecycle:
     def deadline(self, resumed_at):
         return self.deadline_provider(resumed_at)
 
+    def _authorize_event(self, event):
+        return True
+
+    def _handoff_fields(self):
+        return {}
+
     def on_started(self, run_dir, child_identity, api_key):
         from . import operator_store
         if self.profile_validator:
@@ -712,7 +718,7 @@ class _IpcLifecycle:
             raise ValueError('readiness_binding_mismatch')
         self.status.update(state='ready')
         self.server.reply(self.parent_event, dict(state='ready', guardian=self.record['guardian'],
-            child=self.record['child'], run=self.record['run']), retain=True)
+            child=self.record['child'], run=self.record['run'], **self._handoff_fields()), retain=True)
 
     def poll(self, now):
         from . import operator_store
@@ -721,6 +727,9 @@ class _IpcLifecycle:
         if self.server:
             for event in self.server.poll():
                 command = event['command']
+                if command != 'disconnect' and not self._authorize_event(event):
+                    self.server.reply(event, dict(state='refused'))
+                    continue
                 original = self.parent_event and event['channel'] is self.parent_event['channel']
                 if command == 'disconnect':
                     if original and not self.committed:
@@ -745,7 +754,8 @@ class _IpcLifecycle:
                             self.failed = True
                         self.server.reply(event, dict(state='refused'))
                         continue
-                    operator_store.atomic_json(self.run_dir/'handoff.json', dict(self.record, state='committed'))
+                    operator_store.atomic_json(self.run_dir/'handoff.json',
+                        dict(self.record, state='committed', **self._handoff_fields()))
                     self.committed = True
                     self.status.update(state='running')
                     self.server.reply(event, dict(state='committed'))
