@@ -6,6 +6,8 @@ import hashlib
 import io
 import json
 from pathlib import Path
+import os
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -54,8 +56,17 @@ class ServiceRecoveryTests(unittest.TestCase):
     @contextmanager
     def isolated(self):
         d = self.d
+        from gufo_control import smoke_http, winjob
         source = d.read_pinned(d.RUN/'result.json', d.RESULT_SHA)
         with tempfile.TemporaryDirectory() as folder, ExitStack() as stack:
+            forbidden = []
+            for owner, name in ((winjob, 'OwnedProcess'), (winjob, '_api'),
+                                (smoke_http, 'start_smoke'), (smoke_http, '_exchange'),
+                                (subprocess, 'Popen'), (os, 'kill'),
+                                (d, 'collect_snapshot')):
+                spy = stack.enter_context(patch.object(owner, name,
+                    side_effect=AssertionError('forbidden_native_or_http_call:'+name)))
+                forbidden.append(spy)
             root = Path(folder)/'profile'; root.mkdir()
             run = root/'run'; run.mkdir()
             operator = Path(folder)/'operator'; operator.mkdir()
@@ -133,7 +144,11 @@ class ServiceRecoveryTests(unittest.TestCase):
             stack.enter_context(patch.object(d, 'check_port', side_effect=lambda: (_ for _ in ()).throw(OSError('occupied')) if state['port'] else None))
             output = io.StringIO()
             stack.enter_context(redirect_stdout(output))
-            yield state, output
+            try:
+                yield state, output
+            finally:
+                for spy in forbidden:
+                    spy.assert_not_called()
 
     def test_success_is_bounded_and_preserves_failed_source(self):
         with self.isolated() as (state, output):
@@ -250,6 +265,40 @@ class ServiceRecoveryTests(unittest.TestCase):
             self.assertTrue(d.LATCH.exists())
             self.assertFalse(d.ARCHIVE.exists())
             self.assertTrue(d.CERTIFICATE.exists())
+
+    def test_delayed_operator_blocker_write_refuses_before_rename(self):
+        with self.isolated() as (state, _):
+            d = self.d
+            original = d.write_new
+            def delayed_write(path, value):
+                digest = original(path, value)
+                if path == d.operator_store.EVIDENCE/'incomplete.json':
+                    state['now'] += 61
+                return digest
+            with patch.object(d, 'write_new', side_effect=delayed_write):
+                with self.assertRaisesRegex(ValueError, 'deadline'):
+                    d.main()
+            self.assertEqual(state['queries'], 5)
+            self.assertTrue(d.LATCH.exists())
+            self.assertFalse(d.ARCHIVE.exists())
+            self.assertTrue((d.operator_store.EVIDENCE/'incomplete.json').exists())
+
+    def test_delayed_post_rename_verification_restores_latch(self):
+        with self.isolated() as (state, _):
+            d = self.d
+            original = d.read_pinned
+            def delayed_read(path, digest):
+                value = original(path, digest)
+                if path == d.ARCHIVE:
+                    state['now'] += 61
+                return value
+            with patch.object(d, 'read_pinned', side_effect=delayed_read):
+                with self.assertRaisesRegex(ValueError, 'deadline'):
+                    d.main()
+            self.assertEqual(state['queries'], 5)
+            self.assertTrue(d.LATCH.exists())
+            self.assertFalse(d.ARCHIVE.exists())
+            self.assertTrue((d.operator_store.EVIDENCE/'incomplete.json').exists())
 
 
 if __name__ == '__main__':

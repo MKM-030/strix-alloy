@@ -69,7 +69,7 @@ def validate_result(result):
         raise ValueError('unexpected_http_outcome')
 
 
-def pinned_state():
+def pinned_state(*, archived=False, blocker_sha=None):
     for path in (ROOT, RUN, operator_store.EVIDENCE):
         if path.is_symlink() or path.resolve(strict=True) != path or not path.is_dir():
             raise ValueError('unexpected_directory')
@@ -77,13 +77,17 @@ def pinned_state():
         raise ValueError('unexpected_run_parent')
     result = read_pinned(RUN/'result.json', RESULT_SHA)
     validate_result(result)
-    latch = read_pinned(LATCH, LATCH_SHA)
+    latch = read_pinned(ARCHIVE if archived else LATCH, LATCH_SHA)
     attempt = read_pinned(ATTEMPT, ATTEMPT_SHA)
     if (latch['run'] != str(RUN) or latch['original_baseline'] != result['original_baseline']
             or attempt != dict(profile=PROFILE_ID, run=str(RUN))):
         raise ValueError('marker_identity_mismatch')
-    if (operator_store.EVIDENCE/'incomplete.json').exists():
-        raise ValueError('operator_cleanup_unconfirmed')
+    blocker = operator_store.EVIDENCE/'incomplete.json'
+    if blocker_sha is None:
+        if blocker.exists():
+            raise ValueError('operator_cleanup_unconfirmed')
+    else:
+        read_pinned(blocker, blocker_sha)
     return result
 
 
@@ -158,13 +162,14 @@ def _create_telemetry():
         os.fsync(stream.fileno())
 
 
-def archive_verified(certificate_sha):
+def archive_verified(certificate_sha, check_current):
     # The global blocker is recognized by all operator and service starts.
     blocker = operator_store.EVIDENCE/'incomplete.json'
     blocker_sha = write_new(blocker, dict(run=str(RUN),
         phase='late_recovery_archival_in_progress', certificate_sha256=certificate_sha,
         original_latch_sha256=LATCH_SHA, original_latch=str(LATCH), archive=str(ARCHIVE)))
     try:
+        check_current(archived=False, blocker_sha=blocker_sha)
         if ARCHIVE.exists():
             raise ValueError('archive_already_exists')
         os.rename(LATCH, ARCHIVE)
@@ -175,6 +180,7 @@ def archive_verified(certificate_sha):
         if LATCH.exists():
             raise ValueError('latch_archival_unconfirmed')
         read_pinned(blocker, blocker_sha)
+        check_current(archived=True, blocker_sha=blocker_sha)
     except BaseException:
         # Restoration cannot overwrite. The separate blocker remains on errors.
         if not LATCH.exists() and ARCHIVE.exists():
@@ -244,7 +250,18 @@ def main():
             validate_frame(frames[-1], profile, strict, pins)
             if time.monotonic() > deadline:
                 raise ValueError('present_recovery_deadline_expired')
-            archive_verified(digest)
+            def check_current(*, archived, blocker_sha):
+                if time.monotonic() >= deadline:
+                    raise ValueError('present_recovery_deadline_expired')
+                require_pid_absent()
+                check_port()
+                pinned_state(archived=archived, blocker_sha=blocker_sha)
+                read_pinned(CERTIFICATE, digest)
+                validate_frame(frames[-1], profile, strict, pins)
+                if (time.monotonic() >= deadline or recovery_reasons(current, frames)
+                        or _rising_residual(frames)):
+                    raise ValueError('present_recovery_deadline_or_policy_expired')
+            archive_verified(digest, check_current)
             print(json.dumps(dict(disposition='exact_failed_latch_archived_after_late_recovery',
                 certificate=str(CERTIFICATE), certificate_sha256=digest,
                 archive=str(ARCHIVE), original_result_unchanged=True,
