@@ -65,6 +65,17 @@ class ResponseTests(unittest.TestCase):
         with self.assertRaises(smoke_http.SmokeError):
             client.parse_buffered(encoded(value), client.CHAT)
 
+    def test_buffered_positive_validates_receive_metadata(self):
+        workload = load_workload()
+        post = next(workload.post(1, attempt) for attempt in range(1, 67)
+                    if workload.post(1, attempt).request_id == 'responses_arithmetic')
+        body = encoded(response())
+        cases = [([], 1.0), ([(b'x', 1.0)], float('nan')),
+                 ([(b'x', float('nan'))], 0.0)]
+        for parts, submitted in cases:
+            with self.subTest(parts=parts, submitted=submitted), self.assertRaises(smoke_http.SmokeError):
+                client.parse_positive_response(post, body, parts, submitted)
+
     def test_response_sse_split_utf8_crlf_and_terminal(self):
         wire = semantic_wire(semantic_events())
         split = wire.index('ü'.encode()) + 1
@@ -113,6 +124,13 @@ class ResponseTests(unittest.TestCase):
             with self.subTest(timestamp=timestamp), self.assertRaises(smoke_http.SmokeError):
                 client.parse_responses_sse([(wire, timestamp)], 1.0)
 
+    def test_response_sse_rejects_elapsed_overflow(self):
+        wire = semantic_wire(semantic_events())
+        for label, arrived in (('large_int', 10**308), ('large_float', 1e308),
+                               ('beyond_float', 10**1000)):
+            with self.subTest(timestamp=label), self.assertRaises(smoke_http.SmokeError):
+                client.parse_responses_sse([(wire, arrived)], 0)
+
     def test_tool_without_usage_only_opt_in_and_native_timings(self):
         workload = load_workload()
         post = next(post for post in (workload.post(1, n) for n in range(1, 67))
@@ -132,6 +150,10 @@ class ResponseTests(unittest.TestCase):
         self.assertIsNone(result['usage'])
         self.assertEqual(result['tool_calls'][0]['function']['name'], 'report_sum')
         self.assertEqual(result['timings']['prompt_n'], 2304)
+        for label, arrived in (('large_int', 10**308), ('large_float', 1e308),
+                               ('beyond_float', 10**1000)):
+            with self.subTest(timestamp=label), self.assertRaises(smoke_http.SmokeError):
+                client.parse_positive_response(post, wire, [(wire, arrived)], 0)
         incomplete_wire = b''.join(
             b'data: '+encoded(dict(choices=[dict(index=0, delta={}, finish_reason='tool_calls')],
                                    timings=dict(prompt_n=2304, predicted_n=10, cache_n=0)))+b'\n\n'

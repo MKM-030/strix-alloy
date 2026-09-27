@@ -12,6 +12,9 @@ from .finite_workload import PreparedPost
 BODY_LIMIT = 7340032
 OUTPUT_LIMIT = 1048576
 PART_LIMIT = 65536
+# Large enough to exceed any plausible qualification duration while keeping
+# converted first-output milliseconds safely representable as a finite float.
+MAX_ELAPSED_SECONDS = 1e305
 CHAT = '/v1/chat/completions'
 RESPONSES = '/v1/responses'
 MESSAGES = '/v1/messages'
@@ -47,9 +50,20 @@ def _finite_number(value):
         return False
 
 
+def _elapsed_ms(arrived, submitted):
+    try:
+        elapsed = arrived - submitted
+        if elapsed < 0 or elapsed > MAX_ELAPSED_SECONDS:
+            return None
+        milliseconds = float(elapsed) * 1000.0
+    except (OverflowError, TypeError, ValueError):
+        return None
+    return milliseconds if math.isfinite(milliseconds) else None
+
+
 def _parts(parts, submitted):
     if (not _finite_number(submitted)
-            or submitted < 0 or type(parts) not in (list, tuple)
+            or submitted < 0 or type(parts) not in (list, tuple) or not parts
             or len(parts) > PART_LIMIT):
         _fail('parts')
     size, previous = 0, submitted
@@ -60,6 +74,8 @@ def _parts(parts, submitted):
         if (type(part) is not bytes or not part
                 or not _finite_number(arrived)
                 or arrived < previous):
+            _fail('parts')
+        if _elapsed_ms(arrived, submitted) is None:
             _fail('parts')
         size += len(part)
         if size > BODY_LIMIT:
@@ -205,8 +221,8 @@ def parse_responses_sse(parts, submitted):
             if byte_count > OUTPUT_LIMIT:
                 _fail('output_limit')
             if text and first is None:
-                first = (arrived - submitted) * 1000
-                if not math.isfinite(first):
+                first = _elapsed_ms(arrived, submitted)
+                if first is None:
                     _fail('sse_timestamp')
             output.append(text)
         elif kind == 'response.completed':
@@ -244,9 +260,9 @@ def parse_positive_response(post, body, parts, submitted):
     streaming = request.get('stream', False)
     if type(streaming) is not bool:
         _fail('stream')
+    parts = _parts(parts, submitted)
     if not streaming:
         return parse_buffered(body, post.route)
-    parts = _parts(parts, submitted)
     if b''.join(part for part, _ in parts) != body:
         _fail('body_parts_disagree')
     if post.route == RESPONSES:
