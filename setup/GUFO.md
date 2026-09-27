@@ -95,6 +95,15 @@ required49GiB. Its consumed-attempt and incomplete-cleanup records are retained;
 do not clear them or replay the profile. Persistent service is not qualified.
 Local evidence: `C:\Projects\strix-alloy-research\reports\gufo-service-policy-smoke-validation-20260927.md`.
 
+The separate `python -m gufo_control.service_recovery` command is bound to that
+exact failed run. After independent review, it can observe present memory
+recovery without launching GUFO, then archive only that run's verified
+incomplete latch under a separate operator blocker. A late certificate means
+`present_recovery_observed_later`; it leaves the original result failed, does
+not certify recovery within the original deadline, and does not authorize a
+new model attempt or qualify persistent service. Do not run the command until
+its implementation and evidence have been independently reviewed.
+
 From this repository, inspect the fixed profile without launching GUFO:
 
 ```powershell
