@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import threading
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -220,6 +221,55 @@ class LedgerTests(unittest.TestCase):
         (self.root/'unexpected.json').write_text('{}')
         with self.assertRaisesRegex(ValueError, 'finite_ledger_entry'):
             self.ledger.snapshot()
+
+    def test_directory_scan_stops_at_entry_cap_and_closes_iterator(self):
+        maximum = 2 + 2*(self.ledger.life['maximum_post_attempts']
+                         + self.ledger.life['maximum_ready_polls'] + 1)
+
+        class SyntheticEntries:
+            def __init__(self):
+                self.pulled = 0
+                self.closed = False
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_):
+                self.closed = True
+
+            def __iter__(self):
+                return self
+
+            def __next__(self):
+                self.pulled += 1
+                if self.pulled > maximum + 1:
+                    raise AssertionError('unbounded_directory_scan')
+                return SimpleNamespace(name='runner.lock', path=str(self.root/'runner.lock'))
+
+        entries = SyntheticEntries()
+        entries.root = self.root
+        with patch.object(finite_ledger.os, 'scandir', return_value=entries) as scan:
+            with self.assertRaisesRegex(ValueError, 'finite_ledger_entries'):
+                self.ledger.snapshot()
+        scan.assert_called_once_with(self.root)
+        self.assertEqual(entries.pulled, maximum + 1)
+        self.assertTrue(entries.closed)
+
+    def test_exponent_overflow_in_outcome_and_nested_result_refuses_readback(self):
+        self.reserve_post()
+        self.ledger.complete('post-001', {'success': True, 'seconds': 1.0,
+                                          'nested': {'elapsed': -1.0}})
+        outcome = self.root/'post-001.outcome.json'
+        original = outcome.read_text(encoding='utf-8')
+        for before, after in (('"seconds":1.0', '"seconds":1e400'),
+                              ('"elapsed":-1.0', '"elapsed":-1e400')):
+            with self.subTest(overflow=after):
+                self.assertIn(before, original)
+                outcome.write_text(original.replace(before, after), encoding='utf-8')
+                with self.assertRaisesRegex(ValueError, 'finite_nonfinite_json'):
+                    self.ledger.snapshot()
+        outcome.write_text(original, encoding='utf-8')
+        self.assertEqual(self.ledger.snapshot()['completed'], 1)
 
     def test_nonfinite_outcome_stays_uncommitted(self):
         self.reserve_post()

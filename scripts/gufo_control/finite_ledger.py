@@ -51,8 +51,13 @@ def _read(path, maximum):
         return result
     def constant(value):
         raise ValueError('finite_nonfinite_json')
+    def finite_float(value):
+        parsed = float(value)
+        if not math.isfinite(parsed):
+            raise ValueError('finite_nonfinite_json')
+        return parsed
     return json.loads(data.decode('utf-8'), object_pairs_hook=pairs,
-                      parse_constant=constant)
+                      parse_constant=constant, parse_float=finite_float)
 
 
 def _exclusive(path, value, maximum):
@@ -129,40 +134,41 @@ class Ledger:
             evidence_allowance=wire+self.limits['get_summary_bytes']+RECORD_LIMIT)
 
     def _scan(self):
-        reservations, outcomes, names = {}, {}, []
+        reservations, outcomes = {}, {}
         maximum = 2 + 2*(self.life['maximum_post_attempts'] + self.life['maximum_ready_polls'] + 1)
-        for path in self.root.iterdir():
-            names.append(path.name)
-            if len(names) > maximum:
-                raise ValueError('finite_ledger_entries')
-            if path.name in ('identity.json', 'runner.lock'):
-                continue
-            match = re.fullmatch(r'(ready|models|post)-([0-9]{3})\.(reserved|outcome)\.json', path.name)
-            if not match:
-                raise ValueError('finite_ledger_entry')
-            kind, digits, suffix = match.groups()
-            ordinal = int(digits)
-            spec = self._spec(kind, ordinal)
-            slot = f'{kind}-{ordinal:03d}'
-            if suffix == 'reserved':
-                row = _read(path, RECORD_LIMIT)
-                expected = dict(schema=1, kind=kind, ordinal=ordinal, **spec)
-                if (type(row) is not dict or set(row) != set(expected) | {'started', 'deadline'}
-                        or any(row[k] != v or type(row[k]) is not type(v) for k, v in expected.items())
-                        or not _time(row['started']) or not _time(row['deadline'])
-                        or row['started'] < self.header['resumed_at']
-                        or row['deadline'] != self._deadline(kind, row['started'])
-                        or row['deadline'] <= row['started']):
-                    raise ValueError('finite_reservation_invalid')
-                reservations[slot] = row
-            else:
-                limit = self.limits['post_summary_bytes' if kind == 'post' else 'get_summary_bytes']
-                row = _read(path, limit)
-                if (type(row) is not dict or set(row) != {'schema', 'slot', 'reservation_sha256', 'result'}
-                        or type(row['schema']) is not int or row['schema'] != 1 or row['slot'] != slot
-                        or type(row['result']) is not dict or type(row['result'].get('success')) is not bool):
-                    raise ValueError('finite_outcome_invalid')
-                outcomes[slot] = row
+        with os.scandir(self.root) as entries:
+            for count, entry in enumerate(entries, 1):
+                if count > maximum:
+                    raise ValueError('finite_ledger_entries')
+                path = Path(entry.path)
+                if entry.name in ('identity.json', 'runner.lock'):
+                    continue
+                match = re.fullmatch(r'(ready|models|post)-([0-9]{3})\.(reserved|outcome)\.json', entry.name)
+                if not match:
+                    raise ValueError('finite_ledger_entry')
+                kind, digits, suffix = match.groups()
+                ordinal = int(digits)
+                spec = self._spec(kind, ordinal)
+                slot = f'{kind}-{ordinal:03d}'
+                if suffix == 'reserved':
+                    row = _read(path, RECORD_LIMIT)
+                    expected = dict(schema=1, kind=kind, ordinal=ordinal, **spec)
+                    if (type(row) is not dict or set(row) != set(expected) | {'started', 'deadline'}
+                            or any(row[k] != v or type(row[k]) is not type(v) for k, v in expected.items())
+                            or not _time(row['started']) or not _time(row['deadline'])
+                            or row['started'] < self.header['resumed_at']
+                            or row['deadline'] != self._deadline(kind, row['started'])
+                            or row['deadline'] <= row['started']):
+                        raise ValueError('finite_reservation_invalid')
+                    reservations[slot] = row
+                else:
+                    limit = self.limits['post_summary_bytes' if kind == 'post' else 'get_summary_bytes']
+                    row = _read(path, limit)
+                    if (type(row) is not dict or set(row) != {'schema', 'slot', 'reservation_sha256', 'result'}
+                            or type(row['schema']) is not int or row['schema'] != 1 or row['slot'] != slot
+                            or type(row['result']) is not dict or type(row['result'].get('success')) is not bool):
+                        raise ValueError('finite_outcome_invalid')
+                    outcomes[slot] = row
         for kind in KINDS:
             numbers = sorted(row['ordinal'] for row in reservations.values() if row['kind'] == kind)
             if numbers != list(range(1, len(numbers)+1)):
