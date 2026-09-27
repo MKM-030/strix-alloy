@@ -42,8 +42,13 @@ clean source checkout. It does not execute GUFO, run tests, copy runtime files,
 or change the fixed staging policies above. A new `gufo.exe` hash requires a later
 review and runtime policy update before staging. The build manifest always says
 `runtimeStaged: false` and `runtime_qualified: false`. This reusable entrypoint
-has passed offline fixture tests but has not itself been used for a real GUFO
-build.
+has passed offline fixture tests and a real two-job HIP build on the target
+Windows host (27 September). An identical second invocation verified and reused
+the completed build without recompiling. Its new executable hash differs from
+the staged candidate; it is not automatically accepted by the static runtime
+policy and has not been executed. This proves the build workflow, not bit-for-bit
+reproducibility, clean-machine installation or runtime qualification. Local
+evidence: `C:\Projects\strix-alloy-research\reports\gufo-build-frontdoor-validation-20260927.md`.
 
 Start with the reviewed [source patch](../engine-patches/gufo/README.md) applied
 to upstream `cff564964e8506c0abb3e530cecb55332187ac6c` and committed in a
