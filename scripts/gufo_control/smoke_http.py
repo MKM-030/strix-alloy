@@ -51,8 +51,11 @@ def _check(deadline, cancel):
 
 
 class _Reader:
-    def __init__(self, sock, deadline, cancel):
+    def __init__(self, sock, deadline, cancel, *, wire_limit=MAX_RESPONSE + 16_384,
+                 on_wire=None, retain_raw=True, clock=time.monotonic, check=None):
         self.sock, self.deadline, self.cancel = sock, deadline, cancel
+        self.wire_limit, self.on_wire, self.retain_raw = wire_limit, on_wire, retain_raw
+        self.clock, self.check = clock, _check if check is None else check
         self.buffer = bytearray()
         self.arrivals = []
         self.raw = bytearray()
@@ -60,18 +63,22 @@ class _Reader:
 
     def _recv(self):
         while True:
-            _check(self.deadline, self.cancel)
+            self.check(self.deadline, self.cancel)
             try:
                 data = self.sock.recv(4096)
             except socket.timeout:
                 continue
             if data:
+                arrived = self.clock()
                 self.wire_count += len(data)
-                if self.wire_count > MAX_RESPONSE + 16_384:
+                if self.on_wire is not None:
+                    self.on_wire(data, arrived)
+                if self.wire_count > self.wire_limit:
                     raise SmokeError("response_wire_limit")
-                self.raw.extend(data)
+                if self.retain_raw:
+                    self.raw.extend(data)
                 self.buffer.extend(data)
-                self.arrivals.append((len(data), time.monotonic()))
+                self.arrivals.append((len(data), arrived))
             return data
 
     def _consume(self, length):
@@ -115,7 +122,7 @@ class _Reader:
         return self._consume(min(maximum, len(self.buffer), self.arrivals[0][0]))
 
 
-def _body_chunks(reader, headers):
+def _body_chunks(reader, headers, *, body_limit=MAX_RESPONSE):
     transfer = headers.get("transfer-encoding", "").lower()
     if transfer == "chunked":
         while True:
@@ -127,7 +134,7 @@ def _body_chunks(reader, headers):
                 size = int(digits, 16)
             except ValueError as exc:
                 raise SmokeError("malformed_chunk_size") from exc
-            if size < 0 or size > MAX_RESPONSE:
+            if size < 0 or size > body_limit:
                 raise SmokeError("response_body_limit")
             if size == 0:
                 if reader.exact(2) != b"\r\n":
@@ -150,7 +157,7 @@ def _body_chunks(reader, headers):
             remaining = int(digits)
         except ValueError as exc:
             raise SmokeError("malformed_content_length") from exc
-        if remaining < 0 or remaining > MAX_RESPONSE:
+        if remaining < 0 or remaining > body_limit:
             raise SmokeError("response_body_limit")
         while remaining:
             part, arrived = reader.some(min(remaining, 4096))

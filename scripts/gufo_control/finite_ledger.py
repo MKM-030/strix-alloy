@@ -22,6 +22,7 @@ from .finite_workload import WORKLOAD_SHA256, Workload
 KINDS = ('ready', 'models', 'post')
 RECORD_LIMIT = 4096
 BASE_EVIDENCE_RESERVE = 1048576
+FAILURE_LATCH = 'transport-failed.json'
 
 
 def _time(value):
@@ -94,7 +95,9 @@ class Ledger:
         else:
             checked_path(self.root/'runner.lock')
         with self._locked():
-            reservations, outcomes = self._scan()
+            reservations, outcomes, late_latch = self._scan()
+            if late_latch is not None:
+                raise ValueError('finite_transport_failed')
             if not create and set(reservations) != set(outcomes):
                 raise ValueError('finite_incomplete_handoff')
 
@@ -135,13 +138,25 @@ class Ledger:
 
     def _scan(self):
         reservations, outcomes = {}, {}
+        late_latch = None
         maximum = 2 + 2*(self.life['maximum_post_attempts'] + self.life['maximum_ready_polls'] + 1)
         with os.scandir(self.root) as entries:
             for count, entry in enumerate(entries, 1):
-                if count > maximum:
+                if count > maximum + (entry.name == FAILURE_LATCH or late_latch is not None):
                     raise ValueError('finite_ledger_entries')
                 path = Path(entry.path)
                 if entry.name in ('identity.json', 'runner.lock'):
+                    continue
+                if entry.name == FAILURE_LATCH:
+                    row = _read(path, RECORD_LIMIT)
+                    if (type(row) is not dict or
+                            set(row) != {'schema', 'run_id', 'slot', 'deadline', 'observed_at', 'code'}
+                            or type(row['schema']) is not int or row['schema'] != 1
+                            or row['run_id'] != self.header['run_id']
+                            or type(row['slot']) is not str or row['code'] != 'outcome_deadline'
+                            or not _time(row['deadline']) or not _time(row['observed_at'])):
+                        raise ValueError('finite_transport_latch_invalid')
+                    late_latch = row
                     continue
                 match = re.fullmatch(r'(ready|models|post)-([0-9]{3})\.(reserved|outcome)\.json', entry.name)
                 if not match:
@@ -177,11 +192,16 @@ class Ledger:
             if (slot not in reservations or row['reservation_sha256'] !=
                     sha256(_encoded(reservations[slot])).hexdigest().upper()):
                 raise ValueError('finite_outcome_binding')
+        if late_latch is not None:
+            target = reservations.get(late_latch['slot'])
+            if (target is None or late_latch['deadline'] != target['deadline']
+                    or late_latch['observed_at'] < target['deadline']):
+                raise ValueError('finite_transport_latch_invalid')
         if (sum(row['wire_allowance'] for row in reservations.values()) > self.life['maximum_response_wire_bytes']
                 or BASE_EVIDENCE_RESERVE + sum(row['evidence_allowance'] for row in reservations.values())
                 > self.life['maximum_client_evidence_bytes']):
             raise ValueError('finite_budget_exceeded')
-        return reservations, outcomes
+        return reservations, outcomes, late_latch
 
     def _deadline(self, kind, now):
         end = min(now+self.limits['operation_seconds'], self.header['deadline'])
@@ -191,7 +211,9 @@ class Ledger:
 
     def reserve(self, kind, ordinal, *, body=b''):
         with self._locked():
-            reservations, outcomes = self._scan()
+            reservations, outcomes, late_latch = self._scan()
+            if late_latch is not None:
+                raise ValueError('finite_transport_failed')
             if any(row['result']['success'] is False for row in outcomes.values()):
                 raise ValueError('finite_prior_failure')
             spec = self._spec(kind, ordinal)
@@ -219,7 +241,9 @@ class Ledger:
 
     def complete(self, slot, result):
         with self._locked():
-            reservations, outcomes = self._scan()
+            reservations, outcomes, late_latch = self._scan()
+            if late_latch is not None:
+                raise ValueError('finite_transport_failed')
             if slot not in reservations or slot in outcomes:
                 raise ValueError('finite_outcome_slot')
             if type(result) is not dict or type(result.get('success')) is not bool:
@@ -229,10 +253,33 @@ class Ledger:
             row = dict(schema=1, slot=slot, reservation_sha256=
                 sha256(_encoded(reservations[slot])).hexdigest().upper(), result=result)
             _exclusive(self.root/f'{slot}.outcome.json', row, limit)
+            committed_at = self.clock()
+            if committed_at >= reservations[slot]['deadline']:
+                _exclusive(self.root/FAILURE_LATCH,
+                           dict(schema=1, run_id=self.header['run_id'], slot=slot,
+                                deadline=reservations[slot]['deadline'],
+                                observed_at=committed_at, code='outcome_deadline'), RECORD_LIMIT)
+                raise ValueError('finite_outcome_deadline')
+            return committed_at
+
+    def fail_transport(self, slot, code, observed_at):
+        with self._locked():
+            reservations, outcomes, late_latch = self._scan()
+            if late_latch is not None:
+                raise ValueError('finite_transport_failed')
+            if (slot not in reservations or code != 'outcome_deadline' or
+                    not _time(observed_at) or observed_at < reservations[slot]['deadline']):
+                raise ValueError('finite_transport_latch_invalid')
+            _exclusive(self.root/FAILURE_LATCH,
+                       dict(schema=1, run_id=self.header['run_id'], slot=slot,
+                            deadline=reservations[slot]['deadline'],
+                            observed_at=observed_at, code=code), RECORD_LIMIT)
 
     def snapshot(self):
         with self._locked():
-            reservations, outcomes = self._scan()
+            reservations, outcomes, late_latch = self._scan()
+            if late_latch is not None:
+                raise ValueError('finite_transport_failed')
             return dict(reserved=len(reservations), completed=len(outcomes),
                 pending=sorted(set(reservations)-set(outcomes)),
                 counts={kind: sum(row['kind'] == kind for row in reservations.values()) for kind in KINDS},
