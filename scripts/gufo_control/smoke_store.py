@@ -429,7 +429,10 @@ def _incomplete_latches(pins, *, manifest=None, current_run=None):
     for root in roots:
         if (root / 'incomplete.json').exists():
             if current_run is not None and root.resolve() == pins.evidence.resolve():
-                if pins.profile_id == INSTALLED_SERVICE:
+                if pins.profile_id == FINITE_SERVICE:
+                    from .finite_store import _current_run_markers as finite_current_run_markers
+                    finite_current_run_markers(manifest, pins, current_run)
+                elif pins.profile_id == INSTALLED_SERVICE:
                     from .service_store import _current_run_markers as installed_current_run_markers
                     installed_current_run_markers(manifest, pins, current_run)
                 else:
