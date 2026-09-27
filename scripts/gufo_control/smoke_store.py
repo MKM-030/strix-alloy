@@ -71,11 +71,13 @@ MATCHED_MARGIN_SHA256 = '49433BB54E71F7F27418FEC63E71DA98F4C372F31E19E6A95292E21
 MATCHED_D3_MARGIN_SHA256 = '825F2BDE34A4BE070517EE4DD00EA3FA911A4141326591A8DDB47A43FD0AE66D'
 SERVICE_SMOKE = 'ar4k-service-policy-smoke-v1'
 INSTALLED_SERVICE = 'ar4k-native-installed-v1'
+FINITE_SERVICE = 'ar4k-service-lifecycle-v1'
 MTP_MARGIN_SHA256 = '7EC8175FFFC356058A0CA8F07B02F3A20AE3E8B88F44F9357D2E13C39F2E8AF6'
 MTP_PREDECESSOR_SHA256 = '692149EEB38F89E662D9428A725533F14793680F5C70E8477A3B53E2DE8B04F3'
 PROFILE_ROOTS = {PROFILE_ID: 'gufo-ar4k-http-slots-smoke-runs',
                  SERVICE_SMOKE: 'gufo-service-policy-smoke-v1-runs',
                  INSTALLED_SERVICE: 'gufo-native-installed-v1-runs',
+                 FINITE_SERVICE: 'gufo-service-lifecycle-v1-runs',
                  BENCHMARK_4K: 'gufo-ar4k-benchmark-v2-runs',
                  BENCHMARK_16K: 'gufo-ar16k-benchmark-v3-runs',
                  MTP_4K: 'gufo-mtp4k-stage-v1-runs',
@@ -92,7 +94,8 @@ def profile_bounds(profile_id):
         return MTP_BOUNDS
     if profile_id == MATCHED_MTP:
         return MATCHED_MTP_BOUNDS
-    if profile_id in (PROFILE_ID, BENCHMARK_4K, BENCHMARK_16K, MATCHED_AR, MATCHED_AR_V2, SERVICE_SMOKE, INSTALLED_SERVICE):
+    if profile_id in (PROFILE_ID, BENCHMARK_4K, BENCHMARK_16K, MATCHED_AR,
+                       MATCHED_AR_V2, SERVICE_SMOKE, INSTALLED_SERVICE, FINITE_SERVICE):
         return BOUNDS
     raise ValueError('unknown_profile')
 FIRST_PREDECESSOR_RUN = '20260926T164942Z-a4d64a8f565248bdb508895b6f3ec931'
@@ -332,6 +335,9 @@ def _experiment(value, profile_id):
 def _binding(pins):
     if pins.profile_id not in PROFILE_ROOTS:
         raise ValueError('unknown_profile')
+    if pins.profile_id == FINITE_SERVICE:
+        from .finite_profile import finite_binding
+        return finite_binding(pins)
     if pins.profile_id == SERVICE_SMOKE:
         from .service_smoke_store import service_binding
         return service_binding(pins)

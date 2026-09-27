@@ -13,7 +13,7 @@ from .admission import evaluate_admission, _evaluate_service_admission, GIB, RUN
 from .operator_policy import (Frame, Baseline, baseline, recovery_reasons,
     _base_valid, _frame_reasons, _identity, MAX_PRELAUNCH_AGE_SECONDS,
     MAX_SAMPLE_AGE_SECONDS, GPU_FIELDS)
-from .smoke_store import PROFILE_ID, BOUNDS, PINS, SERVICE_SMOKE, INSTALLED_SERVICE, expected_qualification, profile_bounds
+from .smoke_store import PROFILE_ID, BOUNDS, PINS, SERVICE_SMOKE, INSTALLED_SERVICE, FINITE_SERVICE, expected_qualification, profile_bounds
 
 
 def _demand(pins):
@@ -78,6 +78,9 @@ def profile_from_manifest(manifest: dict, *, pins=PINS) -> SmokeProfile:
     No qualification file is created/read here. Missing reviews fail closed.
     The caller must retain and recheck the complete store manifest before launch.
     """
+    if pins.profile_id == FINITE_SERVICE:
+        from .finite_profile import profile_from_manifest as finite_profile_from_manifest
+        return finite_profile_from_manifest(manifest, pins=pins)
     if pins.profile_id == INSTALLED_SERVICE:
         from . import service_store
         try:
@@ -137,6 +140,9 @@ def _profile_valid(profile, *, pins=PINS):
     review = profile.review_id
     if not isinstance(review, str) or not review.strip():
         return False
+    if pins.profile_id == FINITE_SERVICE:
+        from .finite_profile import profile_valid as finite_profile_valid
+        return finite_profile_valid(profile, pins=pins)
     if pins.profile_id == INSTALLED_SERVICE:
         from . import service_store
         try:
@@ -226,7 +232,7 @@ def admission_decision(profile, original_baseline, frame, *, now, now_utc, pins=
             shared_physical_allowance_bytes=None, predicted_available_bytes=None,
             accounting_basis=None)
     else:
-        if pins.profile_id in (SERVICE_SMOKE, INSTALLED_SERVICE):
+        if pins.profile_id in (SERVICE_SMOKE, INSTALLED_SERVICE, FINITE_SERVICE):
             result = _evaluate_service_admission(frame.snapshot, dict(profile.envelope),
                                                  now=now, pins=pins)
         else:
