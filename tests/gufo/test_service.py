@@ -186,6 +186,60 @@ class ServiceTests(unittest.TestCase):
                         self.assertIn(command+'_unverified', result['refusals'])
                 ipc.assert_not_called()
 
+    def test_completed_pointer_malformed_records_refuse_public_commands(self):
+        f = self.fixture(accepted=True)
+        manifest = f.store.verify_static()
+        run = f.f.pins.evidence/'completed'; run.mkdir()
+        f.store.begin_run(run, manifest, f.f.base)
+        f.store.finish_run(run, test_service_store.InstalledStoreTests.clean_result(run, manifest))
+        self.assertIn('result_sha256', service_store._read(f.f.pins.evidence/'current.json'))
+        for name, malformed in (('identity.json', []), ('identity.json', None),
+                                ('manifest.json', []), ('result.json', [])):
+            path = run/name
+            original = path.read_bytes()
+            with self.subTest(record=name, value=malformed):
+                service_store.operator_store.atomic_json(path, malformed)
+                corrupted = path.read_bytes()
+                try:
+                    with patch.object(service_ipc, 'control_request',
+                                      side_effect=AssertionError('invalid evidence reached IPC')) as ipc:
+                        for command in ('status', 'stop'):
+                            code, result = self.invoke(command, f)
+                            self.assertEqual(code, 2, result)
+                            self.assertEqual(result['phase'], 'unknown/stale')
+                            self.assertIsNone(result['cleanup_confirmed'])
+                            self.assertIn(command+'_unverified', result['refusals'])
+                    ipc.assert_not_called()
+                    self.assertEqual(path.read_bytes(), corrupted)
+                finally:
+                    path.write_bytes(original)
+
+    def test_linked_prior_identity_malformed_refuses_public_commands(self):
+        f = self.fixture(accepted=True)
+        manifest = f.store.verify_static()
+        first = f.f.pins.evidence/'first'; first.mkdir()
+        f.store.begin_run(first, manifest, f.f.base)
+        f.store.finish_run(first, test_service_store.InstalledStoreTests.clean_result(first, manifest))
+        second = f.f.pins.evidence/'second'; second.mkdir()
+        f.store.begin_run(second, manifest, f.f.base)
+        f.store.finish_run(second, test_service_store.InstalledStoreTests.clean_result(second, manifest))
+        pointer_path = f.f.pins.evidence/'current.json'
+        pointer_before = pointer_path.read_bytes()
+        path = first/'identity.json'
+        service_store.operator_store.atomic_json(path, [])
+        corrupted = path.read_bytes()
+        with patch.object(service_ipc, 'control_request',
+                          side_effect=AssertionError('invalid history reached IPC')) as ipc:
+            for command in ('status', 'stop'):
+                code, result = self.invoke(command, f)
+                self.assertEqual(code, 2, result)
+                self.assertEqual(result['phase'], 'unknown/stale')
+                self.assertIsNone(result['cleanup_confirmed'])
+                self.assertIn(command+'_unverified', result['refusals'])
+        ipc.assert_not_called()
+        self.assertEqual(pointer_path.read_bytes(), pointer_before)
+        self.assertEqual(path.read_bytes(), corrupted)
+
     def test_status_verifies_identity_adapter_and_surfaces_transport_uncertainty_once(self):
         f = self.fixture(accepted=True)
         record, response = self.live_record(f)

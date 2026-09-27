@@ -334,7 +334,8 @@ def _prior_run(pins, *, prepared_run=None):
         visited.add(run)
         identity = _read(run/'identity.json')
         manifest = _read(run/'manifest.json')
-        if (identity.get('run') != str(run) or identity.get('profile') != PROFILE_ID
+        if (type(identity) is not dict or type(manifest) is not dict
+                or identity.get('run') != str(run) or identity.get('profile') != PROFILE_ID
                 or identity.get('manifest_sha256') != _digest(manifest)
                 or expected_identity != _digest(identity)):
             raise ValueError('installed_prior_identity_invalid')
@@ -342,7 +343,7 @@ def _prior_run(pins, *, prepared_run=None):
             result = _read(run/'result.json')
         except ValueError as error:
             raise ValueError('installed_prior_result_missing') from error
-        if (expected_result != _digest(result)
+        if (type(result) is not dict or expected_result != _digest(result)
                 or result.get('run') != str(run) or result.get('profile') != PROFILE_ID
                 or _canonical(result.get('manifest')) != _canonical(manifest)
                 or not _clean(result)):
