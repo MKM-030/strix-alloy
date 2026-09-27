@@ -32,6 +32,17 @@ def _text(value):
 
 
 def evaluate_admission(sample: dict, envelope: dict, *, now: float) -> dict:
+    return _evaluate_admission(sample, envelope, now=now, source_commit=SOURCE_COMMIT)
+
+
+def _evaluate_service_admission(sample: dict, envelope: dict, *, now: float, pins) -> dict:
+    """Internal seam: the closed service binding authenticates candidate identity."""
+    from .service_smoke_store import service_binding
+    service_binding(pins)
+    return _evaluate_admission(sample, envelope, now=now, source_commit=pins.source_commit)
+
+
+def _evaluate_admission(sample: dict, envelope: dict, *, now: float, source_commit: str) -> dict:
     """Evaluate trusted profile bounds against a fresh, scoped telemetry sample.
 
     A future trusted loader must bind qualification and allowance review IDs to
@@ -72,7 +83,7 @@ def evaluate_admission(sample: dict, envelope: dict, *, now: float) -> dict:
     if envelope.get("qualified") is not True or not _text(envelope.get("review_id")):
         reasons.append("unqualified_envelope")
     revision = envelope.get("model_revision")
-    if envelope.get("source_commit") != SOURCE_COMMIT or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
+    if envelope.get("source_commit") != source_commit or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
         reasons.append("invalid_profile_identity")
     if envelope.get("shared_memory_policy") != "measured_margin":
         reasons.append("invalid_shared_memory_policy")

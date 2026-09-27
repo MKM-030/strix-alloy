@@ -79,3 +79,44 @@ stderr logs. The manifest records source, SDK, compiler, VS/Windows SDK,
 vcpkg ports and DLLs, commands, effective CMake cache, and executable hash.
 Failed or incomplete build directories retain their evidence and must be
 reviewed manually; the command does not erase or automatically resume them.
+
+## Finite service-policy smoke
+
+The separate `ar4k-service-policy-smoke-v1` adapter runs the existing private,
+one-request guardian against the reviewed `139aa9c` source/tree and the complete
+`service-ar4k-v1` package at
+`C:\Projects\strix-alloy-research\runtimes\gufo-native-service-139aa9c-therock10.2`.
+Historical operator results retain their original `cff564` source identity.
+
+From this repository, inspect the fixed profile without launching GUFO:
+
+```powershell
+$env:PYTHONPATH = 'scripts'
+python -m gufo_control.service_smoke status
+python -m gufo_control.service_smoke print-only
+```
+
+`print-only` checks static prerequisites and port availability; it never creates
+an attempt or qualification. It refuses until an independent review supplies
+the exact `reports/gufo-service-policy-smoke-v1-qualification.json` binding under
+the research root. The adapter never creates that authorization itself.
+
+Only after independent review, `python -m gufo_control.service_smoke run` may
+attempt the fixed public greedy 2+2 request: AR, context 4096, complete framed
+input at most 512 tokens, output at most 64, one session/pending slot, no
+thinking/preservation, speculation, vision or cache lookup/disk cache. It uses
+loopback 8836, a private per-run key, three HTTP workers, 16 KiB input and 1 MiB
+output limits; no retry or warmup is provided. Startup/request/lifetime limits
+are 480/60/600 seconds; cleanup/recovery limits are 10/60 seconds.
+
+The independently reviewed allowances are GPU/host/shared 68/4/20 GiB, with
+49 GiB launch, 24 GiB runtime and 12 GiB commit reserves. Fresh correctly scoped
+telemetry and the original/current stricter baselines remain mandatory; floors
+are stop conditions, not reservations. Source/tree, full runtime package,
+qualification, model descriptors and projector absence are rechecked before
+creation and resume. Rechecks retain the existing freshness deadlines.
+
+Evidence is separate in `reports/gufo-service-policy-smoke-v1-runs`. A consumed
+attempt remains consumed after cleanup, and incomplete cleanup blocks related
+old and new profiles in both directions. Success proves only this finite
+request; it does not qualify persistent serving or change launch settings.

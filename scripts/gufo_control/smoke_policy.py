@@ -9,11 +9,11 @@ import json
 import ntpath
 from types import MappingProxyType
 
-from .admission import evaluate_admission, GIB, RUNTIME_FLOOR, COMMIT_RESERVE
+from .admission import evaluate_admission, _evaluate_service_admission, GIB, RUNTIME_FLOOR, COMMIT_RESERVE
 from .operator_policy import (Frame, Baseline, baseline, recovery_reasons,
     _base_valid, _frame_reasons, _identity, MAX_PRELAUNCH_AGE_SECONDS,
     MAX_SAMPLE_AGE_SECONDS, GPU_FIELDS)
-from .smoke_store import PROFILE_ID, BOUNDS, PINS, expected_qualification, profile_bounds
+from .smoke_store import PROFILE_ID, BOUNDS, PINS, SERVICE_SMOKE, expected_qualification, profile_bounds
 
 
 def _demand(pins):
@@ -178,7 +178,11 @@ def admission_decision(profile, original_baseline, frame, *, now, now_utc, pins=
             shared_physical_allowance_bytes=None, predicted_available_bytes=None,
             accounting_basis=None)
     else:
-        result = evaluate_admission(frame.snapshot, dict(profile.envelope), now=now)
+        if pins.profile_id == SERVICE_SMOKE:
+            result = _evaluate_service_admission(frame.snapshot, dict(profile.envelope),
+                                                 now=now, pins=pins)
+        else:
+            result = evaluate_admission(frame.snapshot, dict(profile.envelope), now=now)
         numeric = frame_numeric_reasons(profile, original_baseline, frame,
                                         now=now, now_utc=now_utc, pins=pins)
         result['reasons'] = list(dict.fromkeys([*result['reasons'], *numeric]))
