@@ -410,7 +410,9 @@ def _merge_tool_calls(calls, tools, *, streaming=True):
                 tool["function"][field] += value
 
 
-def parse_sse_response(parts, submitted, *, path="/v1/chat/completions"):
+def parse_sse_response(parts, submitted, *, path="/v1/chat/completions", require_usage=True):
+    if type(require_usage) is not bool:
+        raise ValueError("invalid_require_usage")
     pending = bytearray()
     content = []
     reasoning, tools, models = [], {}, []
@@ -496,7 +498,7 @@ def parse_sse_response(parts, submitted, *, path="/v1/chat/completions"):
                 if not isinstance(incoming, dict) or (timings is not None and timings != incoming):
                     raise SmokeError("conflicting_timings")
                 timings = incoming
-    if bytes(pending).strip() or not done or terminal is None or usage is None:
+    if bytes(pending).strip() or not done or terminal is None or (require_usage and usage is None):
         raise SmokeError("incomplete_sse")
     useful = [value for value in (first_visible, first_tool) if value is not None]
     return {"visible_answer": "".join(content), "reasoning_content": "".join(reasoning),
