@@ -4,16 +4,17 @@ from __future__ import annotations
 
 import argparse
 import base64
+import binascii
 import ctypes
 from datetime import datetime, timezone
-import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
 import sys
+import tempfile
 import time
 
 from . import build_identity as identity
@@ -27,6 +28,13 @@ DISK_FLOOR = 25 * GIB
 SAMPLE_MAX_AGE_SECONDS = 5
 CONFIGURE_DEADLINE_SECONDS = 45 * 60
 BUILD_DEADLINE_SECONDS = 6 * 60 * 60
+VCVARS_OUTPUT_LIMIT = 1 << 20
+VCVARS_BUILD_KEYS = ('PATH', 'INCLUDE', 'LIB', 'LIBPATH', 'VSINSTALLDIR',
+    'VCINSTALLDIR', 'VCTOOLSINSTALLDIR', 'VCTOOLSVERSION', 'VISUALSTUDIOVERSION',
+    'WINDOWSSDKDIR', 'WINDOWSSDKVERSION', 'WINDOWSSDKVERBINPATH',
+    'UNIVERSALCRTSDKDIR', 'UCRTVERSION', 'FRAMEWORKDIR', 'FRAMEWORKVERSION',
+    'FRAMEWORKDIR64', 'FRAMEWORKVERSION64', 'NETFXSDKDIR', 'DEVENVDIR',
+    'VSCMD_ARG_TGT_ARCH', 'VSCMD_ARG_HOST_ARCH', 'VSCMD_VER')
 
 
 def validate_jobs(jobs: int) -> int:
@@ -149,9 +157,82 @@ def write_manifest(path: Path, record: dict) -> None:
     os.replace(pending, path)
 
 
-def _vcvars_environment(paths: dict[str, str], pins: dict) -> tuple[dict, dict]:
-    # The complete environment crosses only an in-memory pipe into this process.
-    # It is never printed or written to a manifest/log.
+def verify_built_manifest(manifest: dict, paths: dict[str, str], values: dict[str, str],
+                          jobs: int, expected_inputs: dict) -> None:
+    expected_keys = {'schema', 'kind', 'status', 'created_utc', 'runtimeStaged',
+                     'runtime_qualified', 'target', 'jobs', 'inputs',
+                     'cache_expected', 'cache_effective', 'commands', 'executable'}
+    if type(manifest) is not dict or set(manifest) != expected_keys:
+        raise ValueError('foreign_or_incomplete_build_dir')
+    try:
+        created = datetime.fromisoformat(manifest['created_utc'])
+    except (TypeError, ValueError) as error:
+        raise ValueError('foreign_or_incomplete_build_dir') from error
+    if (type(manifest['schema']) is not int or manifest['schema'] != 1
+            or manifest['kind'] != 'gufo-native-build' or manifest['status'] != 'built'
+            or created.utcoffset() is None or created.utcoffset().total_seconds() != 0
+            or manifest['runtimeStaged'] is not False
+            or manifest['runtime_qualified'] is not False
+            or manifest['target'] != 'gufo' or type(manifest['jobs']) is not int
+            or manifest['jobs'] != jobs or manifest['inputs'] != expected_inputs
+            or manifest['cache_expected'] != values):
+        raise ValueError('foreign_or_incomplete_build_dir')
+    commands = manifest['commands']
+    if type(commands) is not list or len(commands) != 2:
+        raise ValueError('foreign_or_incomplete_build_dir')
+    for record, argv, name in zip(commands,
+                                  (configure_argv(paths, values), build_argv(paths, jobs)),
+                                  ('configure', 'build')):
+        prefix = Path(paths['build']) / name
+        stdout = prefix.with_name(name + '.stdout.log')
+        stderr = prefix.with_name(name + '.stderr.log')
+        if (type(record) is not dict or set(record) != {'argv', 'exit_code',
+                'stdout_log', 'stderr_log', 'duration_seconds', 'status'}
+                or record['argv'] != argv or record['status'] != 'succeeded'
+                or type(record['exit_code']) is not int or record['exit_code'] != 0
+                or record['stdout_log'] != str(stdout)
+                or record['stderr_log'] != str(stderr)
+                or type(record['duration_seconds']) not in (int, float)
+                or not math.isfinite(record['duration_seconds'])
+                or record['duration_seconds'] < 0):
+            raise ValueError('foreign_or_incomplete_build_dir')
+        for path in (stdout, stderr):
+            try:
+                identity.checked_path(path)
+            except (ValueError, OSError) as error:
+                raise ValueError('foreign_or_incomplete_build_dir') from error
+
+
+def _owned_vcvars_output(argv: list[str], cwd: Path, *, deadline_seconds: float,
+                         owner_factory=OwnedProcess) -> bytes:
+    """Capture only selected build variables under the existing Windows job."""
+    with tempfile.TemporaryDirectory(prefix='gufo-vcvars-') as folder:
+        stdout = Path(folder) / 'selected.stdout'
+        stderr = Path(folder) / 'selected.stderr'
+        deadline = time.monotonic() + deadline_seconds
+        with owner_factory(argv, cwd=cwd, env=dict(os.environ),
+                           stdout_path=stdout, stderr_path=stderr) as child:
+            child.resume()
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise TimeoutError('vcvars_deadline_exceeded')
+                if child.wait(min(200, max(1, int(remaining * 1000)))):
+                    code = child.exit_code()
+                    break
+            if code != 0:
+                raise ValueError(f'vcvars_import_failed:{code}')
+        if not stdout.is_file() or stdout.stat().st_size == 0:
+            raise ValueError('vcvars_output_missing')
+        if stdout.stat().st_size > VCVARS_OUTPUT_LIMIT:
+            raise ValueError('vcvars_output_oversized')
+        return stdout.read_bytes()
+
+
+def _vcvars_environment(paths: dict[str, str], pins: dict, *,
+                        deadline_seconds: float = 60,
+                        owner_factory=OwnedProcess) -> tuple[dict, dict]:
+    # Only fixed compiler/SDK variables enter the temporary owned output.
     system = Path(os.environ['SystemRoot'])
     cmd = identity.checked_path(system / 'System32/cmd.exe')
     powershell = identity.checked_path(system / 'System32/WindowsPowerShell/v1.0/powershell.exe')
@@ -159,22 +240,31 @@ def _vcvars_environment(paths: dict[str, str], pins: dict) -> tuple[dict, dict]:
         raise ValueError('unsupported_shell_path:vcvars')
     quoted_cmd = str(cmd).replace("'", "''")
     quoted_vcvars = paths['vcvars'].replace("'", "''")
+    allowed = ','.join("'" + key + "'" for key in VCVARS_BUILD_KEYS)
     script = (f"$lines = & '{quoted_cmd}' /d /c ('\"' + '{quoted_vcvars}' + '\" >nul && set'); "
               "if ($LASTEXITCODE -ne 0) { exit 3 }; "
+              f"$allow = @({allowed}); "
               "$values = @{}; foreach ($line in $lines) { "
-              "if ($line -match '^([^=]+)=(.*)$') { $values[$matches[1]] = $matches[2] } }; "
-              "ConvertTo-Json -InputObject $values -Compress")
+              "if ($line -match '^([^=]+)=(.*)$') { "
+              "$key = $matches[1].ToUpperInvariant(); "
+              "if ($allow -ccontains $key) { $values[$key] = $matches[2] } } }; "
+              "$json = ConvertTo-Json -InputObject $values -Compress; "
+              "$text = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json)); "
+              f"if ($text.Length -gt {VCVARS_OUTPUT_LIMIT}) {{ exit 4 }}; "
+              "[Console]::Out.WriteLine($text)")
     encoded = base64.b64encode(script.encode('utf-16le')).decode('ascii')
-    completed = subprocess.run([str(powershell), '-NoProfile', '-NonInteractive',
-                                '-EncodedCommand', encoded],
-                               capture_output=True, text=True, timeout=60,
-                               creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
-    if completed.returncode:
-        raise ValueError(f'vcvars_import_failed:{completed.returncode}')
+    argv = [str(powershell), '-NoProfile', '-NonInteractive', '-EncodedCommand', encoded]
+    raw = _owned_vcvars_output(argv, Path(paths['vcvars']).parent,
+                               deadline_seconds=deadline_seconds, owner_factory=owner_factory)
     try:
-        env = {key.upper(): value for key, value in json.loads(completed.stdout).items()}
-    except json.JSONDecodeError as error:
+        imported = json.loads(base64.b64decode(raw.strip(), validate=True).decode('utf-8'))
+        if (type(imported) is not dict or not set(imported).issubset(VCVARS_BUILD_KEYS)
+                or not all(type(value) is str for value in imported.values())):
+            raise ValueError('vcvars_environment_invalid')
+    except (UnicodeError, ValueError, binascii.Error) as error:
         raise ValueError('vcvars_environment_invalid') from error
+    env = {key.upper(): value for key, value in os.environ.items()}
+    env.update(imported)
     selected = {key: env.get(key.upper(), '') for key in ('VisualStudioVersion',
                 'VCToolsVersion', 'VCToolsInstallDir', 'WindowsSdkDir', 'WindowsSDKVersion')}
     if (selected['VisualStudioVersion'] != pins['visual_studio_version']
@@ -220,7 +310,8 @@ def build_gufo(args, *, pins=None, owner_factory=OwnedProcess, resources=None,
     tools_record = identity.verify_tools(paths, pins)
     ports = identity.verify_ports(Path(paths['vcpkg']), pins)
     dependency_policy = runtime_package.load_policy()
-    dll_records = identity.verify_dependency_dlls(Path(paths['vcpkg']), dependency_policy)
+    dll_records = identity.verify_dependency_dlls(Path(paths['sdk']),
+        Path(paths['vcpkg']), dependency_policy)
     loader = _vcvars_environment if vcvars_loader is None else vcvars_loader
     vcenv, vc_record = loader(paths, pins)
     env = child_environment(paths, vcenv)
@@ -237,12 +328,7 @@ def build_gufo(args, *, pins=None, owner_factory=OwnedProcess, resources=None,
                           'ports': ports, 'dependency_dlls': dll_records,
                           'build_pins_sha256': identity.file_hash(identity.PINS_PATH),
                           'runtime_pins_sha256': identity.file_hash(runtime_package.POLICY_PATH)}
-        if (manifest.get('status') != 'built' or manifest.get('inputs') != expected_input
-                or manifest.get('jobs') != jobs or manifest.get('target') != 'gufo'
-                or manifest.get('cache_expected') != values
-                or manifest.get('runtimeStaged') is not False
-                or manifest.get('runtime_qualified') is not False):
-            raise ValueError('foreign_or_incomplete_build_dir')
+        verify_built_manifest(manifest, paths, values, jobs, expected_input)
         effective = identity.verify_cache(build / 'CMakeCache.txt', _cache_proof(paths, values))
         if manifest.get('cache_effective') != effective:
             raise ValueError('foreign_or_incomplete_build_dir')
@@ -302,7 +388,7 @@ def build_gufo(args, *, pins=None, owner_factory=OwnedProcess, resources=None,
                                    'vcvars_sha256': identity.file_hash(Path(paths['vcvars']))},
                         'ports': identity.verify_ports(Path(paths['vcpkg']), pins),
                         'dependency_dlls': identity.verify_dependency_dlls(
-                            Path(paths['vcpkg']), dependency_policy),
+                            Path(paths['sdk']), Path(paths['vcpkg']), dependency_policy),
                         'build_pins_sha256': identity.file_hash(identity.PINS_PATH),
                         'runtime_pins_sha256': identity.file_hash(runtime_package.POLICY_PATH)}
         if final_inputs != record['inputs']:

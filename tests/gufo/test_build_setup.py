@@ -1,6 +1,8 @@
 """Offline contract tests for the guarded GUFO build entrypoint."""
 
+import base64
 import json
+import hashlib
 import os
 from pathlib import Path
 import shutil
@@ -98,8 +100,35 @@ class BuildIdentityTests(unittest.TestCase):
             dll.parent.mkdir(parents=True)
             dll.write_bytes(b'wrong')
             with self.assertRaisesRegex(ValueError, 'dll'):
-                build_identity.verify_dependency_dlls(root, {
-                    'vcpkg_dlls': [{'name': 'example.dll', 'size_bytes': 5, 'sha256': '0' * 64}]})
+                build_identity.verify_dependency_dlls(root, root, {
+                    'sdk_dlls': [], 'vcpkg_dlls': [
+                        {'name': 'example.dll', 'size_bytes': 5, 'sha256': '0' * 64}]})
+
+    def test_nine_sdk_dlls_recorded_and_missing_or_tampered_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            sdk = root / 'sdk'
+            vcpkg = root / 'vcpkg'
+            (sdk / 'bin').mkdir(parents=True)
+            names = ('amdhip64_7.dll', 'amd_comgr.dll', 'rocm_kpack.dll',
+                     'hipblas.dll', 'rocsolver.dll', 'rocblas.dll',
+                     'libhipblaslt.dll', 'libtensilelite-host.dll', 'origami.dll')
+            pins = []
+            for index, name in enumerate(names):
+                data = f'fixture-{index}'.encode()
+                (sdk / 'bin' / name).write_bytes(data)
+                pins.append({'name': name, 'size_bytes': len(data),
+                             'sha256': hashlib.sha256(data).hexdigest().upper()})
+            policy = {'sdk_dlls': pins, 'vcpkg_dlls': []}
+            records = build_identity.verify_dependency_dlls(sdk, vcpkg, policy)
+            self.assertEqual([row['name'] for row in records], list(names))
+            self.assertTrue(all(row['kind'] == 'sdk' for row in records))
+            (sdk / 'bin' / names[0]).write_bytes(b'wrong')
+            with self.assertRaisesRegex(ValueError, 'sdk_dll'):
+                build_identity.verify_dependency_dlls(sdk, vcpkg, policy)
+            (sdk / 'bin' / names[0]).unlink()
+            with self.assertRaises((ValueError, OSError)):
+                build_identity.verify_dependency_dlls(sdk, vcpkg, policy)
 
     def test_vcpkg_exact_port_revision_and_unique_base_record(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -173,6 +202,25 @@ class BuildSetupTests(unittest.TestCase):
                                          'free_disk_bytes': 30 * 1024**3,
                                          'sampled_at': 0.0}, now=10.0)
 
+    @unittest.skipUnless(os.name == 'nt', 'PowerShell entrypoint')
+    def test_powershell_front_door_rejects_fractional_jobs_before_python(self):
+        script = Path(__file__).resolve().parents[2] / 'setup/build-gufo-windows.ps1'
+        powershell = Path(os.environ['SystemRoot']) / 'System32/WindowsPowerShell/v1.0/powershell.exe'
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            argv = [str(powershell), '-NoProfile', '-NonInteractive', '-File', str(script),
+                    '-PythonExe', sys.executable, '-GitExe', str(root / 'git.exe'),
+                    '-SourceDir', str(root / 'source'), '-BuildDir', str(root / 'build'),
+                    '-SdkDir', str(root / 'sdk'), '-VcpkgDir', str(root / 'vcpkg'),
+                    '-VcVars64', str(root / 'vcvars64.bat'),
+                    '-CMakeExe', str(root / 'cmake.exe'),
+                    '-NinjaExe', str(root / 'ninja.exe'), '-Jobs', '1.5']
+            completed = subprocess.run(argv, capture_output=True, text=True, timeout=15)
+            self.assertNotEqual(completed.returncode, 0)
+            self.assertIn('Jobs must be exactly 1 or 2',
+                          completed.stdout + completed.stderr)
+            self.assertFalse((root / 'build').exists())
+
     def test_child_environment_is_process_only_and_disables_manifest_install(self):
         original = dict(os.environ)
         paths = {'sdk': 'C:/sdk', 'ninja': 'C:/tools/ninja.exe'}
@@ -241,24 +289,35 @@ class BuildSetupTests(unittest.TestCase):
             self.assertEqual(json.loads((build / 'build-manifest.json').read_text()), record)
             self.assertFalse((build / 'build-manifest.json.pending').exists())
 
-    def test_vcvars_import_uses_bounded_private_subprocess_and_uppercase_keys(self):
+    def test_vcvars_import_uses_owned_selected_output_and_uppercase_keys(self):
         values = {'PATH': 'C:/host', 'VISUALSTUDIOVERSION': '17.0',
                   'VCTOOLSVERSION': '14.44.35207', 'VCTOOLSINSTALLDIR': 'C:/tools',
-                  'WINDOWSSDKDIR': 'C:/sdk', 'WINDOWSSDKVERSION': '10.0.26100.0\\'}
+                  'WINDOWSSDKDIR': 'C:/sdk', 'WINDOWSSDKVERSION': '10.0.26100.0\\',
+                  'INCLUDE': 'C:/include', 'LIB': 'C:/lib', 'LIBPATH': 'C:/libpath'}
         paths = {'vcvars': 'C:/Program Files/VC/vcvars64.bat', 'python': 'C:/python.exe'}
         pins = {'visual_studio_version': '17.0', 'vc_tools_version': '14.44.35207',
                 'windows_sdk_version': '10.0.26100.0'}
-        with patch.object(build_setup.subprocess, 'run', return_value=SimpleNamespace(
-                returncode=0, stdout=json.dumps(values), stderr='')) as run, \
+        payload = base64.b64encode(json.dumps(values).encode())
+        with patch.object(build_setup, '_owned_vcvars_output',
+                          return_value=payload) as owned, \
                 patch.object(build_setup.identity, 'checked_path', side_effect=lambda p: p), \
                 patch.object(build_setup.identity, 'file_hash', return_value='A' * 64), \
                 patch.object(Path, 'is_dir', return_value=True):
             env, selected = build_setup._vcvars_environment(paths, pins)
         self.assertEqual(env['PATH'], 'C:/host')
+        self.assertEqual(env['INCLUDE'], 'C:/include')
         self.assertEqual(selected['VCToolsVersion'], '14.44.35207')
         self.assertEqual(selected['WindowsSDKVersion'], '10.0.26100.0\\')
-        self.assertEqual(run.call_args.kwargs['timeout'], 60)
-        self.assertIn('-EncodedCommand', run.call_args.args[0])
+        self.assertEqual(owned.call_args.kwargs['deadline_seconds'], 60)
+        self.assertIn('-EncodedCommand', owned.call_args.args[0])
+        for payload in (b'not-base64',
+                        base64.b64encode(json.dumps({**values,
+                            'GUFO_BUILD_SECRET_FIXTURE': 'must-not-import'}).encode())):
+            with self.subTest(payload=payload[:12]), \
+                 patch.object(build_setup, '_owned_vcvars_output', return_value=payload), \
+                 patch.object(build_setup.identity, 'checked_path', side_effect=lambda p: p):
+                with self.assertRaisesRegex(ValueError, 'vcvars_environment_invalid'):
+                    build_setup._vcvars_environment(paths, pins)
 
     @unittest.skipUnless(os.name == 'nt', 'Windows vcvars fixture')
     def test_vcvars_fixture_imports_only_into_child_environment(self):
@@ -269,16 +328,80 @@ class BuildSetupTests(unittest.TestCase):
                 'set "VCToolsVersion=14.44.35207"\n'
                 f'set "VCToolsInstallDir={root}"\n'
                 f'set "WindowsSdkDir={root}"\n'
-                'set "WindowsSDKVersion=10.0.26100.0\\"\n', encoding='ascii')
+                'set "WindowsSDKVersion=10.0.26100.0\\"\n'
+                'set "INCLUDE=C:/fixture/include"\n'
+                'set "LIB=C:/fixture/lib"\n'
+                'set "LIBPATH=C:/fixture/libpath"\n'
+                'set "GUFO_BUILD_SECRET_FIXTURE=child-only-secret"\n', encoding='ascii')
             original = dict(os.environ)
-            env, selected = build_setup._vcvars_environment(
-                {'vcvars': str(vcvars), 'python': sys.executable},
-                {'visual_studio_version': '17.0',
-                 'vc_tools_version': '14.44.35207',
-                 'windows_sdk_version': '10.0.26100.0'})
+            with patch.dict(os.environ, {'GUFO_BUILD_SECRET_FIXTURE': 'parent-marker'}), \
+                 patch.object(subprocess, 'run',
+                              side_effect=AssertionError('unowned subprocess forbidden')):
+                env, selected = build_setup._vcvars_environment(
+                    {'vcvars': str(vcvars), 'python': sys.executable},
+                    {'visual_studio_version': '17.0',
+                     'vc_tools_version': '14.44.35207',
+                     'windows_sdk_version': '10.0.26100.0'})
             self.assertEqual(selected['VCToolsVersion'], '14.44.35207')
             self.assertIn('PATH', env)
+            self.assertEqual(env['INCLUDE'], 'C:/fixture/include')
+            self.assertEqual(env['LIB'], 'C:/fixture/lib')
+            self.assertEqual(env['LIBPATH'], 'C:/fixture/libpath')
+            self.assertEqual(env['GUFO_BUILD_SECRET_FIXTURE'], 'parent-marker')
             self.assertEqual(dict(os.environ), original)
+            self.assertEqual([item.name for item in root.iterdir()], ['vcvars64.bat'])
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows owned vcvars descendant')
+    def test_vcvars_timeout_closes_harmless_descendant(self):
+        import ctypes
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            marker = root / 'descendant.pid'
+            helper = root / 'spawn.py'
+            helper.write_text('import subprocess,sys,time\nfrom pathlib import Path\n'
+                "child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'])\n"
+                'Path(sys.argv[1]).write_text(str(child.pid))\ntime.sleep(60)\n')
+            vcvars = root / 'vcvars64.bat'
+            vcvars.write_text(f'@echo off\n"{sys.executable}" "{helper}" "{marker}"\n')
+            with self.assertRaisesRegex(TimeoutError, 'deadline'):
+                build_setup._vcvars_environment(
+                    {'vcvars': str(vcvars), 'python': sys.executable}, {},
+                    deadline_seconds=4)
+            self.assertTrue(marker.is_file(), 'descendant must have started')
+            pid = int(marker.read_text())
+            kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+            kernel.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
+            kernel.OpenProcess.restype = ctypes.c_void_p
+            kernel.WaitForSingleObject.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
+            kernel.WaitForSingleObject.restype = ctypes.c_ulong
+            kernel.CloseHandle.argtypes = [ctypes.c_void_p]
+            handle = kernel.OpenProcess(0x100000, False, pid)
+            if handle:
+                try:
+                    self.assertEqual(kernel.WaitForSingleObject(handle, 5000), 0)
+                finally:
+                    kernel.CloseHandle(handle)
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows owned stdout bounds')
+    def test_vcvars_owned_output_refuses_missing_oversize_and_helper_failure(self):
+        powershell = Path(os.environ['SystemRoot']) / 'System32/WindowsPowerShell/v1.0/powershell.exe'
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            for mode, expected in (('none', 'output_missing'),
+                                   ('large', 'oversized')):
+                with self.subTest(mode=mode):
+                    if mode == 'none':
+                        script = 'exit 0'
+                    else:
+                        script = '[Console]::Out.Write("x" * 1048577)'
+                    encoded = base64.b64encode(script.encode('utf-16le')).decode('ascii')
+                    argv = [str(powershell), '-NoProfile', '-NonInteractive',
+                            '-EncodedCommand', encoded]
+                    with self.assertRaisesRegex(ValueError, expected):
+                        build_setup._owned_vcvars_output(argv, root, deadline_seconds=10)
+            argv[-1] = base64.b64encode('exit 7'.encode('utf-16le')).decode('ascii')
+            with self.assertRaisesRegex(ValueError, 'import_failed:7'):
+                build_setup._owned_vcvars_output(argv, root, deadline_seconds=10)
 
     def test_failed_configure_records_exit_and_never_builds(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -346,9 +469,16 @@ class BuildSetupTests(unittest.TestCase):
                         f'{key}:STRING={value}\n' for key, value in all_values.items()))
                 else:
                     (build / 'gufo.exe').write_bytes(b'harmless-fixture')
+                stdout = kwargs['log_prefix'].with_name(
+                    kwargs['log_prefix'].name + '.stdout.log')
+                stderr = kwargs['log_prefix'].with_name(
+                    kwargs['log_prefix'].name + '.stderr.log')
+                stdout.write_text('fixture output')
+                stderr.write_text('')
                 return {'argv': argv, 'exit_code': 0,
-                        'stdout_log': str(build / 'child.stdout.log'),
-                        'stderr_log': str(build / 'child.stderr.log')}
+                        'stdout_log': str(stdout),
+                        'stderr_log': str(stderr),
+                        'duration_seconds': 0.1}
             with patch.object(build_setup, '_canonical_paths', return_value=paths), \
                  patch.object(build_setup.identity, 'verify_git', return_value={'status': '', 'head': 'a' * 40}) as git_check, \
                  patch.object(build_setup.identity, 'verify_reviewed_patch', return_value={}), \
@@ -384,6 +514,21 @@ class BuildSetupTests(unittest.TestCase):
                 second = build_setup.build_gufo(args, **options)
                 self.assertEqual(second, first)
                 self.assertEqual(len(commands), 2)
+                for mutation in (
+                    lambda row: row.update(schema=2),
+                    lambda row: row.update(kind='unknown'),
+                    lambda row: row.update(commands=[]),
+                    lambda row: row['commands'][0].update(argv=['wrong']),
+                    lambda row: row['commands'][1].update(exit_code=1),
+                    lambda row: row['commands'][0].update(stdout_log='C:/unknown.log'),
+                    lambda row: row['commands'][0].update(status='failed'),
+                ):
+                    altered = json.loads(json.dumps(first))
+                    mutation(altered)
+                    (build / 'build-manifest.json').write_text(json.dumps(altered))
+                    with self.assertRaisesRegex(ValueError, 'foreign_or_incomplete'):
+                        build_setup.build_gufo(args, **options)
+                (build / 'build-manifest.json').write_text(json.dumps(first))
                 altered = dict(first)
                 altered['cache_expected'] = {**first['cache_expected'], 'GUFO_VERSION': 'wrong'}
                 (build / 'build-manifest.json').write_text(json.dumps(altered))

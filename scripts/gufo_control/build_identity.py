@@ -180,13 +180,16 @@ def verify_ports(vcpkg: Path, pins: dict) -> dict:
     return verified
 
 
-def verify_dependency_dlls(vcpkg: Path, policy: dict) -> list[dict]:
+def verify_dependency_dlls(sdk: Path, vcpkg: Path, policy: dict) -> list[dict]:
     records = []
-    for pin in policy['vcpkg_dlls']:
-        path = checked_path(vcpkg / 'installed/x64-windows/bin' / pin['name'])
-        if path.stat().st_size != pin['size_bytes'] or file_hash(path) != pin['sha256']:
-            raise ValueError(f'vcpkg_dll_identity_mismatch:{pin["name"]}')
-        records.append({'path': str(path), **pin})
+    for kind, root, pins in (
+            ('sdk', sdk / 'bin', policy['sdk_dlls']),
+            ('vcpkg', vcpkg / 'installed/x64-windows/bin', policy['vcpkg_dlls'])):
+        for pin in pins:
+            path = checked_path(root / pin['name'])
+            if path.stat().st_size != pin['size_bytes'] or file_hash(path) != pin['sha256']:
+                raise ValueError(f'{kind}_dll_identity_mismatch:{pin["name"]}')
+            records.append({'kind': kind, 'path': str(path), **pin})
     return records
 
 

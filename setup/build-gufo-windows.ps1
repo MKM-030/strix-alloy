@@ -8,12 +8,15 @@ param(
     [Parameter(Mandatory = $true)][string]$VcVars64,
     [Parameter(Mandatory = $true)][string]$CMakeExe,
     [Parameter(Mandatory = $true)][string]$NinjaExe,
-    [ValidateRange(1, 2)][int]$Jobs = 2
+    [string]$Jobs = '2'
 )
 
 $ErrorActionPreference = 'Stop'
 
 try {
+    if ($Jobs -cnotmatch '^[12]$') {
+        throw 'Jobs must be exactly 1 or 2.'
+    }
     $python = (Resolve-Path -LiteralPath $PythonExe -ErrorAction Stop).ProviderPath
     if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
         throw 'PythonExe must name an existing file.'
@@ -25,7 +28,7 @@ try {
         '--source-dir', $SourceDir, '--build-dir', $BuildDir,
         '--sdk-dir', $SdkDir, '--vcpkg-dir', $VcpkgDir,
         '--vcvars64', $VcVars64, '--cmake-exe', $CMakeExe,
-        '--ninja-exe', $NinjaExe, '--jobs', [string]$Jobs)
+        '--ninja-exe', $NinjaExe, '--jobs', $Jobs)
     & $python @childArgs
     exit $LASTEXITCODE
 } catch {
