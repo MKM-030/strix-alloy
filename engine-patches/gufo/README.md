@@ -16,9 +16,12 @@ source review. Four focused native Windows CPU policy tests passed. A separate
 GPU-capable build now also compiles the HIP-only adapters, typed loaders and
 setters; four non-HIP test binaries from that build passed, including the MTP
 sampling and prompt-lookup tests. **This is not a GPU-runtime-qualified server,
-persistent launcher or installer.** The new server has not been executed.
-The old benchmark binary and static runtime package are unchanged; their results
-do not qualify this new source revision. Build identities are in the manifest.
+persistent launcher or installer.** The separately staged service candidate
+subsequently loaded the model, answered the fixed request correctly and exited
+code 0. That attempt **failed memory recovery** because available Windows RAM
+did not return to 49 GiB; its failure and consumed-attempt records remain.
+The old benchmark binary/package are unchanged, and their performance results
+do not qualify this service revision. See the [recorded status](../../setup/GUFO.md#finite-service-policy-smoke).
 
 ## Reproduce the source
 
@@ -47,13 +50,18 @@ and the existing Halogen, native Strix Alloy and 27B backends intact.
 
 ## Remaining gates
 
-The separate [build entrypoint](../../setup/GUFO.md) has offline fixture coverage;
-the recorded GPU-capable build above did not exercise that entrypoint.
-Persistent start/status/stop is still unfinished. The new executable needs its
-own runtime package policy and staged correctness/memory/shutdown qualification
-before use. The
-[static staging command](../../setup/GUFO.md) accepts the previously pinned
-binary only; it does not build or stage this patch.
+The separate [build entrypoint](../../setup/GUFO.md#build-the-reviewed-source-extension)
+has completed a real two-job HIP build and verified reuse on this host. Its
+output differs from the already staged candidate and has not been executed
+or accepted by the exact-hash runtime policy; build success is not runtime
+qualification. [Static staging](../../setup/GUFO.md) supports the original
+binary and the explicit `service-ar4k-v1` candidate as separate identities.
+It neither compiles the patch nor accepts arbitrary rebuilt binaries.
+
+Reusable start/status/stop remains under implementation. The installed-profile
+store and lifecycle monitor have passed offline tests and independent review;
+control-channel integration and real service qualification remain unfinished.
+Do not clear the failed finite run's records or replay its consumed profile.
 
 Cache bypass is not zero snapshot retention. One active plus one queued request
 does not limit HTTP prompt preparation to two simultaneous callers. Model

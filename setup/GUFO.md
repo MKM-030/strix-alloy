@@ -101,13 +101,16 @@ do not clear them or replay the profile. Persistent service is not qualified.
 Local evidence: `C:\Projects\strix-alloy-research\reports\gufo-service-policy-smoke-validation-20260927.md`.
 
 The separate `python -m gufo_control.service_recovery` command is bound to that
-exact failed run. After independent review, it can observe present memory
+exact failed run. Its implementation has passed independent review, but the
+live audit has not been run: subsequent available-memory readings remain below
+49 GiB. Once its live prerequisites hold, it can observe present memory
 recovery without launching GUFO, then archive only that run's verified
 incomplete latch under a separate operator blocker. A late certificate means
 `present_recovery_observed_later`; it leaves the original result failed, does
 not certify recovery within the original deadline, and does not authorize a
-new model attempt or qualify persistent service. Do not run the command until
-its implementation and evidence have been independently reviewed.
+new model attempt or qualify persistent service. Review the exact current
+prerequisites and evidence before invoking its one-time audit; do not consume
+it against a known failed memory floor or erase prior disposition artifacts.
 
 From this repository, inspect the fixed profile without launching GUFO:
 
@@ -118,17 +121,22 @@ python -m gufo_control.service_smoke print-only
 ```
 
 `print-only` checks static prerequisites and port availability; it never creates
-an attempt or qualification. It refuses until an independent review supplies
-the exact `reports/gufo-service-policy-smoke-v1-qualification.json` binding under
-the research root. The adapter never creates that authorization itself.
+an attempt or qualification. The exact
+`reports/gufo-service-policy-smoke-v1-qualification.json` binding was supplied
+for the recorded attempt, which is now consumed. Historical qualification does
+not permit a second run; the retained failure also blocks related profiles.
+The adapter never creates or renews its own authorization.
 
-Only after independent review, `python -m gufo_control.service_smoke run` may
-attempt the fixed public greedy 2+2 request: AR, context 4096, complete framed
+The recorded `python -m gufo_control.service_smoke run` attempted exactly the
+fixed public greedy 2+2 request: AR, context 4096, complete framed
 input at most 512 tokens, output at most 64, one session/pending slot, no
 thinking/preservation, speculation, vision or cache lookup/disk cache. It uses
 loopback 8836, a private per-run key, three HTTP workers, 16 KiB input and 1 MiB
 output limits; no retry or warmup is provided. Startup/request/lifetime limits
 are 480/60/600 seconds; cleanup/recovery limits are 10/60 seconds.
+This is the consumed experiment's recipe, not a reusable launch command.
+Another experiment needs a separate reviewed identity and fresh admission
+after the historical recovery failure has been reconciled.
 
 The independently reviewed allowances are GPU/host/shared 68/4/20 GiB, with
 49 GiB launch, 24 GiB runtime and 12 GiB commit reserves. Fresh correctly scoped
