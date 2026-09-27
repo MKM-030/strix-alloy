@@ -19,7 +19,7 @@
 - CPU-only builds/tests use two jobs and fresh24GiB available RAM/25GiB free C: checks. Existing toolchain/dependencies only, no acquisition. No direct metadata-helper execution during implementation; the parent uses the reviewed final binary later.
 - The helper's HTTP200 remains synthetic preparation-only, not an answer or correctness/performance measurement. No stream-body callback is executed by this helper.
 
-## Task1: Extend bounded preparation choices and resolved-tool evidence
+## Task 1: Extend bounded preparation choices and resolved-tool evidence
 
 **Files:** Modify `tests/cli/service_prompt_fixture.cpp` and `tests/cli/service_prompt_fixture_test.cpp` only, relative to the new component worktree below. Do not modify CMake or the first-six fixture.
 
