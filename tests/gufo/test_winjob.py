@@ -17,7 +17,10 @@ def _await_file(path, seconds=5):
     deadline = time.monotonic() + seconds
     while time.monotonic() < deadline:
         if path.exists():
-            return path.read_text()
+            try:
+                return path.read_text()
+            except PermissionError:
+                pass  # Windows can briefly deny a newly replaced file's open.
         time.sleep(0.02)
     raise AssertionError(f"child did not write {path}")
 
@@ -509,6 +512,83 @@ class WinJobTests(unittest.TestCase):
                 finally:
                     if observer:
                         observer[0].CloseHandle(observer[1])
+
+        # Exercise the actual service bootstrap and existing guardian, with only
+        # harmless child / synthetic telemetry injected inside the test module.
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            env = dict(os.environ, PYTHONPATH=os.pathsep.join((
+                str(Path(__file__).resolve().parents[2]/'scripts'), str(Path(__file__).resolve().parent))))
+            launcher = subprocess.Popen([sys.executable, '-m', 'test_service_ipc', '_native_launcher',
+                str(root/'bootstrap.json')], cwd=folder, env=env, close_fds=True,
+                creationflags=subprocess.CREATE_NO_WINDOW, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            guardian_handle = child_observer = None
+            try:
+                guardian_identity = json.loads(_await_file(root/'guardian.json', 15))
+                kernel = C.WinDLL('kernel32', use_last_error=True)
+                kernel.OpenProcess.argtypes = [C.c_ulong, C.c_int, C.c_ulong]
+                kernel.OpenProcess.restype = C.c_void_p
+                kernel.TerminateProcess.argtypes = [C.c_void_p, C.c_uint]
+                kernel.TerminateProcess.restype = C.c_int
+                kernel.WaitForSingleObject.argtypes = [C.c_void_p, C.c_ulong]
+                kernel.CloseHandle.argtypes = [C.c_void_p]
+                candidate = kernel.OpenProcess(0x101001, False, guardian_identity['pid'])
+                self.assertTrue(candidate)
+                # Authenticate this retained handle before it can ever be used
+                # to terminate our helper; PID alone is not ownership proof.
+                from gufo_control import winjob
+                api = winjob._api()
+                try:
+                    times = [winjob.W.FILETIME() for _ in range(4)]
+                    self.assertTrue(api.GetProcessTimes(candidate, *(C.byref(t) for t in times)))
+                    image = C.create_unicode_buffer(32768)
+                    length = winjob.W.DWORD(len(image))
+                    self.assertTrue(api.QueryFullProcessImageNameW(candidate, 0, image, C.byref(length)))
+                    self.assertEqual(api.GetProcessId(candidate), guardian_identity['pid'])
+                    self.assertEqual(times[0].dwHighDateTime << 32 | times[0].dwLowDateTime,
+                                     guardian_identity['creation_time_100ns'])
+                    self.assertEqual(os.path.normcase(image.value), os.path.normcase(guardian_identity['executable']))
+                    guardian_handle, candidate = candidate, None
+                finally:
+                    if candidate:
+                        kernel.CloseHandle(candidate)
+                record = json.loads(_await_file(root/'endpoint.json', 15))
+                child_observer = _observer(record['child']['pid'])
+                try:
+                    result = json.loads(_await_file(root/'launcher-result.json', 15))
+                except AssertionError:
+                    diagnostics = (root/'helper-result.json').read_text() if (root/'helper-result.json').exists() else 'no guardian result'
+                    if launcher.poll() is not None:
+                        diagnostics += launcher.stderr.read().decode(errors='replace')
+                    self.fail(diagnostics)
+                self.assertEqual(result['state'], 'committed')
+                (root/'exit-launcher').touch()
+                _, errors = launcher.communicate(timeout=5)
+                self.assertEqual(launcher.returncode, 0, errors.decode(errors='replace'))
+                key_file = Path(record['credentials'])
+                key = json.loads(key_file.read_text())['api_key']
+                for path in root.rglob('*.json'):
+                    if path != key_file:
+                        self.assertNotIn(key.encode(), path.read_bytes(), str(path))
+                self.assertEqual(kernel.WaitForSingleObject(guardian_handle, 0), 258)
+                self.assertEqual(child_observer[0].WaitForSingleObject(child_observer[1], 0), 258)
+                self.assertTrue(kernel.TerminateProcess(guardian_handle, 1))
+                self.assertEqual(kernel.WaitForSingleObject(guardian_handle, 5000), 0)
+                self.assertEqual(child_observer[0].WaitForSingleObject(child_observer[1], 5000), 0)
+                self.assertTrue((root/'evidence'/'incomplete.json').exists())
+            finally:
+                if launcher.poll() is None:
+                    launcher.terminate()
+                    launcher.wait(timeout=5)
+                launcher.stderr.close()
+                if guardian_handle:
+                    if kernel.WaitForSingleObject(guardian_handle, 0) == 258:
+                        kernel.TerminateProcess(guardian_handle, 1)
+                    self.assertEqual(kernel.WaitForSingleObject(guardian_handle, 5000), 0)
+                    kernel.CloseHandle(guardian_handle)
+                if child_observer:
+                    self.assertEqual(child_observer[0].WaitForSingleObject(child_observer[1], 5000), 0)
+                    child_observer[0].CloseHandle(child_observer[1])
 
     def test_close_kills_descendant_in_same_job(self):
         with tempfile.TemporaryDirectory() as folder:
