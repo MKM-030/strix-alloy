@@ -61,12 +61,18 @@ class Fixture:
                                          'digest': runtime_package.tree_digest(rows)})
         self.host = {'path': str(self.root / 'System32/libomp140.x86_64.dll'),
                      **stamp(b'host')}
+        self.service_policy = copy.deepcopy(self.policy)
+        self.service_policy['source_commit'] = '139aa9c58dadcb75c1bd0741aad0823fc65a0547'
+        self.service_policy['executable'] = {'name': 'gufo.exe', **stamp(b'service-exe')}
 
-    def stage(self):
-        return runtime_package.stage_runtime(self.build, self.sdk, self.vcpkg, self.runtime)
+    def stage(self, *, variant='baseline'):
+        return runtime_package.stage_runtime(self.build, self.sdk, self.vcpkg,
+                                             self.runtime, variant=variant)
 
     def patches(self):
-        return (patch.object(runtime_package, 'load_policy', return_value=self.policy),
+        return (patch.object(runtime_package, 'load_policy',
+                             side_effect=lambda variant='baseline':
+                             self.service_policy if variant == 'service-ar4k-v1' else self.policy),
                 patch.object(runtime_package, '_host_openmp_record', return_value=self.host),
                 patch.object(runtime_package, '_free_bytes', return_value=2**40))
 
@@ -80,6 +86,39 @@ def fixture_context():
 
 
 class RuntimePackageTests(unittest.TestCase):
+    def test_service_variant_is_explicit_and_unknown_variant_is_rejected_before_paths(self):
+        with fixture_context() as f:
+            with self.assertRaisesRegex(ValueError, 'unknown_runtime_variant'):
+                runtime_package.stage_runtime(f.build, f.sdk, f.vcpkg,
+                                              f.root / 'unknown', variant='unknown')
+            self.assertFalse((f.root / 'unknown').exists())
+            with self.assertRaisesRegex(ValueError, 'unknown_runtime_variant'):
+                runtime_package.verify_runtime(f.root / 'missing', variant='unknown')
+            with self.assertRaisesRegex(ValueError, 'unknown_runtime_variant'):
+                runtime_package.inventory_sources(f.build, f.sdk, f.vcpkg, variant='unknown')
+        with self.assertRaisesRegex(ValueError, 'unknown_runtime_variant'):
+            runtime_package.load_policy(variant='unknown')
+
+    def test_distinct_variants_verify_only_under_the_selected_identity(self):
+        with fixture_context() as f:
+            baseline = f.stage()
+            self.assertEqual(baseline['policy_sha256'], runtime_package.REVIEWED_POLICY_SHA256)
+            f.runtime = f.root / 'service-runtime'
+            (f.build / 'gufo.exe').write_bytes(b'service-exe')
+            service = f.stage(variant='service-ar4k-v1')
+            self.assertEqual(service['policy_sha256'], runtime_package.REVIEWED_SERVICE_POLICY_SHA256)
+            self.assertEqual(service['expected_source_commit'], f.service_policy['source_commit'])
+            self.assertEqual(service['files'][0]['sha256'], f.service_policy['executable']['sha256'])
+            self.assertEqual(len(service['files']), len(baseline['files']))
+            self.assertEqual(service['runtime_qualified'], False)
+            self.assertEqual(service['status'], 'staged-static-only')
+            self.assertEqual(runtime_package.verify_runtime(f.runtime, variant='service-ar4k-v1'), service)
+            self.assertEqual(f.stage(variant='service-ar4k-v1'), service)
+            with self.assertRaises(ValueError):
+                runtime_package.verify_runtime(f.runtime)
+            with self.assertRaises(ValueError):
+                runtime_package.verify_runtime(f.root / 'runtime', variant='service-ar4k-v1')
+
     def test_real_policy_matches_reviewed_pins(self):
         policy = runtime_package.load_policy()
         self.assertEqual(policy['source_commit'], smoke_store.PINS.source_commit)
@@ -92,6 +131,54 @@ class RuntimePackageTests(unittest.TestCase):
                               for row in policy[key]}, pins)
         self.assertEqual({row['name']: (row['count'], row['bytes'], row['digest'])
                           for row in policy['trees']}, smoke_store.TREES)
+
+    def test_service_policy_changes_only_source_and_executable(self):
+        baseline = runtime_package.load_policy()
+        service = runtime_package.load_policy(variant='service-ar4k-v1')
+        self.assertEqual(service['source_commit'], '139aa9c58dadcb75c1bd0741aad0823fc65a0547')
+        self.assertEqual(service['executable'], {
+            'name': 'gufo.exe', 'size_bytes': 42439168,
+            'sha256': '66798D3BCAD27B7E2BEC16980B225F83CC3F017FAD9088ADA8D64D604BC4F209'})
+        for key in ('schema', 'kind', 'sdk_version', 'sdk_dlls', 'vcpkg_dlls',
+                    'trees', 'host_openmp'):
+            self.assertEqual(service[key], baseline[key])
+
+    def test_changed_service_policy_digest_is_rejected(self):
+        with TemporaryDirectory() as temp:
+            changed = Path(temp) / 'changed.json'
+            changed.write_bytes(runtime_package.SERVICE_POLICY_PATH.read_bytes() + b' ')
+            variants = dict(runtime_package.POLICY_VARIANTS)
+            variants['service-ar4k-v1'] = (changed, *variants['service-ar4k-v1'][1:])
+            with patch.object(runtime_package, 'POLICY_VARIANTS', variants):
+                with self.assertRaisesRegex(ValueError, 'runtime_policy_changed_unreviewed'):
+                    runtime_package.load_policy(variant='service-ar4k-v1')
+
+    def test_service_selection_rejects_baseline_executable_before_target_creation(self):
+        with fixture_context() as f:
+            with self.assertRaisesRegex(ValueError, 'file_identity_mismatch'):
+                f.stage(variant='service-ar4k-v1')
+            self.assertFalse(f.runtime.exists())
+
+    def test_python_cli_forwards_exact_variant_to_stage_and_verify(self):
+        with patch.object(runtime_package, 'stage_runtime', return_value={}) as stage, \
+                patch.object(runtime_package, 'verify_runtime', return_value={}) as verify, \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(runtime_package.main([
+                'stage', '--build-dir', 'C:/build', '--sdk-dir', 'C:/sdk',
+                '--vcpkg-dir', 'C:/vcpkg', '--runtime-dir', 'C:/runtime',
+                '--runtime-variant', 'service-ar4k-v1']), 0)
+            stage.assert_called_once_with(Path('C:/build'), Path('C:/sdk'),
+                                          Path('C:/vcpkg'), Path('C:/runtime'),
+                                          variant='service-ar4k-v1')
+            self.assertEqual(runtime_package.main([
+                'verify', '--runtime-dir', 'C:/runtime',
+                '--runtime-variant', 'service-ar4k-v1']), 0)
+            verify.assert_called_once_with(Path('C:/runtime'), variant='service-ar4k-v1')
+        with patch.object(runtime_package, 'verify_runtime', return_value={}) as verify, \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(runtime_package.main([
+                'verify', '--runtime-dir', 'C:/runtime']), 0)
+            verify.assert_called_once_with(Path('C:/runtime'), variant='baseline')
 
     def test_tree_digest_is_ordinal_and_case_preserving(self):
         rows = [{'path': 'library/gfx1151/a.co', **stamp(b'a')},
@@ -287,7 +374,8 @@ class RuntimePackageTests(unittest.TestCase):
                     changed = copy.deepcopy(manifest)
                     changed[section][0][field] = float(changed[section][0][field])
                     with self.assertRaises(ValueError):
-                        runtime_package._validate_manifest(changed, f.policy)
+                        runtime_package._validate_manifest(changed, f.policy,
+                                                           runtime_package.REVIEWED_POLICY_SHA256)
 
     def test_manifest_historical_source_paths_must_be_canonical_absolute_local(self):
         with fixture_context() as f:
@@ -298,7 +386,8 @@ class RuntimePackageTests(unittest.TestCase):
                     changed = copy.deepcopy(manifest)
                     changed['sources']['build_dir'] = source
                     with self.assertRaises(ValueError):
-                        runtime_package._validate_manifest(changed, f.policy)
+                        runtime_package._validate_manifest(changed, f.policy,
+                                                           runtime_package.REVIEWED_POLICY_SHA256)
 
     def test_stage_verify_do_not_launch_subprocess(self):
         with fixture_context() as f, patch('subprocess.run', side_effect=AssertionError('spawned')):
@@ -320,6 +409,25 @@ class RuntimePackageTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn('space target', result.stdout)
             self.assertIn('PYPATH=unchanged sentinel', result.stdout)
+            self.assertIn('--runtime-variant baseline', result.stdout)
+
+    def test_wrapper_forwards_service_variant_to_stage_and_verify(self):
+        with TemporaryDirectory(prefix='gufo wrapper ') as temp:
+            helper = Path(temp) / 'fake python.cmd'
+            helper.write_text('@echo off\r\necho %*\r\n', encoding='utf-8')
+            wrapper = Path(__file__).resolve().parents[2] / 'setup/stage-gufo-runtime.ps1'
+            common = ['powershell.exe', '-NoProfile', '-File', str(wrapper),
+                      '-PythonExe', str(helper), '-RuntimeDir', str(Path(temp) / 'space target'),
+                      '-RuntimeVariant', 'service-ar4k-v1']
+            for command in (common + ['-Verify'],
+                            common + ['-BuildDir', str(Path(temp) / 'space build'),
+                                      '-SdkDir', str(Path(temp) / 'space sdk'),
+                                      '-VcpkgDir', str(Path(temp) / 'space vcpkg')]):
+                with self.subTest(command=command):
+                    result = subprocess.run(command, capture_output=True, text=True, check=False)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertIn('--runtime-variant service-ar4k-v1', result.stdout)
+
     def test_unknown_nonempty_target_is_not_touched(self):
         with TemporaryDirectory() as temp:
             target = Path(temp) / 'runtime'

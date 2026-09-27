@@ -1,6 +1,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$PythonExe,
     [Parameter(Mandatory = $true)][string]$RuntimeDir,
+    [ValidateSet('baseline', 'service-ar4k-v1')][string]$RuntimeVariant = 'baseline',
     [switch]$Verify,
     [string]$BuildDir,
     [string]$SdkDir,
@@ -26,6 +27,7 @@ try {
         $childArgs += @('stage', '--build-dir', $BuildDir, '--sdk-dir', $SdkDir,
                         '--vcpkg-dir', $VcpkgDir, '--runtime-dir', $RuntimeDir)
     }
+    $childArgs += @('--runtime-variant', $RuntimeVariant)
     & $python @childArgs
     exit $LASTEXITCODE
 } catch {

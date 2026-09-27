@@ -17,6 +17,16 @@ from uuid import uuid4
 
 POLICY_PATH = Path(__file__).resolve().parents[2] / 'config/gufo-runtime-pins.json'
 REVIEWED_POLICY_SHA256 = 'C363650BDFF6B79B3482B198D7EFBEE03E25C9D52A298B51B9B54724316F6B63'
+SERVICE_POLICY_PATH = Path(__file__).resolve().parents[2] / 'config/gufo-service-runtime-pins.json'
+REVIEWED_SERVICE_POLICY_SHA256 = '5AA64C7E718619E4654DCF4B5997D77AAE47B41611DCAA897020224FD0F0A5E8'
+POLICY_VARIANTS = {
+    'baseline': (POLICY_PATH, REVIEWED_POLICY_SHA256,
+                 'cff564964e8506c0abb3e530cecb55332187ac6c',
+                 42429952, 'E7F5B899C54C747EE5038C0598016394D2A70F25EE69AFBB1E02859FD223D943'),
+    'service-ar4k-v1': (SERVICE_POLICY_PATH, REVIEWED_SERVICE_POLICY_SHA256,
+                        '139aa9c58dadcb75c1bd0741aad0823fc65a0547',
+                        42439168, '66798D3BCAD27B7E2BEC16980B225F83CC3F017FAD9088ADA8D64D604BC4F209'),
+}
 RESERVE_BYTES = 1 << 30
 REPARSE = getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0x400)
 _SDK_NAMES = ('amdhip64_7.dll', 'amd_comgr.dll', 'rocm_kpack.dll', 'hipblas.dll',
@@ -50,10 +60,17 @@ def _valid_record(row, *, named=True) -> bool:
             and _valid_hash(row['sha256']) and type(row['name' if named else 'path']) is str)
 
 
-def load_policy() -> dict:
-    """Read the sole reviewed policy; callers cannot supply another policy."""
-    raw = POLICY_PATH.read_bytes()
-    if _digest_bytes(raw) != REVIEWED_POLICY_SHA256:
+def _variant_pin(variant: str) -> tuple:
+    if type(variant) is not str or variant not in POLICY_VARIANTS:
+        raise ValueError(f'unknown_runtime_variant:{variant}')
+    return POLICY_VARIANTS[variant]
+
+
+def load_policy(*, variant: str = 'baseline') -> dict:
+    """Read one of the two reviewed policies by closed variant name."""
+    policy_path, policy_sha256, source_commit, exe_size, exe_sha256 = _variant_pin(variant)
+    raw = policy_path.read_bytes()
+    if _digest_bytes(raw) != policy_sha256:
         raise ValueError('runtime_policy_changed_unreviewed')
     try:
         policy = json.loads(raw)
@@ -63,12 +80,12 @@ def load_policy() -> dict:
             'sdk_version', 'executable', 'sdk_dlls', 'vcpkg_dlls', 'trees', 'host_openmp'}
             or type(policy['schema']) is not int or policy['schema'] != 1
             or policy['kind'] != 'gufo-native-static-runtime'
-            or policy['source_commit'] != 'cff564964e8506c0abb3e530cecb55332187ac6c'
+            or policy['source_commit'] != source_commit
             or policy['sdk_version'] != '10.2.0'):
         raise ValueError('runtime_policy_schema_or_identity_invalid')
     exe = policy['executable']
     if not _valid_record(exe) or exe['name'] != 'gufo.exe' or (exe['size_bytes'], exe['sha256']) != (
-            42429952, 'E7F5B899C54C747EE5038C0598016394D2A70F25EE69AFBB1E02859FD223D943'):
+            exe_size, exe_sha256):
         raise ValueError('runtime_policy_executable_invalid')
     for key, names in (('sdk_dlls', _SDK_NAMES), ('vcpkg_dlls', _VCPKG_NAMES)):
         rows = policy[key]
@@ -281,8 +298,10 @@ def _inventory(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path, policy: dict) ->
             'host_prerequisites': [host]}
 
 
-def inventory_sources(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path) -> dict:
-    return _inventory(build_dir, sdk_dir, vcpkg_dir, load_policy())
+def inventory_sources(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
+                      *, variant: str = 'baseline') -> dict:
+    _variant_pin(variant)
+    return _inventory(build_dir, sdk_dir, vcpkg_dir, load_policy(variant=variant))
 
 
 def _source_path(row: dict, inventory: dict, policy: dict) -> Path:
@@ -332,7 +351,7 @@ def _verify_payload(runtime: Path, files: list[dict], trees: list[dict]) -> None
         _check_tree(rows, pin, name)
 
 
-def _validate_manifest(manifest: dict, policy: dict) -> None:
+def _validate_manifest(manifest: dict, policy: dict, policy_sha256: str) -> None:
     keys = {'schema', 'kind', 'status', 'created_utc', 'expected_source_commit',
             'sdk_version', 'policy_sha256', 'sources', 'files', 'trees',
             'host_prerequisites', 'runtime_qualified'}
@@ -344,7 +363,7 @@ def _validate_manifest(manifest: dict, policy: dict) -> None:
             or manifest['runtime_qualified'] is not False
             or manifest['expected_source_commit'] != policy['source_commit']
             or manifest['sdk_version'] != policy['sdk_version']
-            or manifest['policy_sha256'] != _digest_bytes(POLICY_PATH.read_bytes())):
+            or manifest['policy_sha256'] != policy_sha256):
         raise ValueError('runtime_manifest_identity_invalid')
     try:
         created = datetime.fromisoformat(manifest['created_utc'])
@@ -390,8 +409,9 @@ def _validate_manifest(manifest: dict, policy: dict) -> None:
         raise ValueError('runtime_manifest_host_invalid')
 
 
-def verify_runtime(runtime_dir: Path) -> dict:
-    policy = load_policy()
+def verify_runtime(runtime_dir: Path, *, variant: str = 'baseline') -> dict:
+    policy_sha256 = _variant_pin(variant)[1]
+    policy = load_policy(variant=variant)
     runtime = _root(runtime_dir, must_exist=True)
     manifest_path = runtime / 'runtime-manifest.json'
     _check_components(manifest_path)
@@ -401,7 +421,7 @@ def verify_runtime(runtime_dir: Path) -> dict:
         manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
     except (UnicodeError, json.JSONDecodeError) as error:
         raise ValueError('runtime_manifest_json_invalid') from error
-    _validate_manifest(manifest, policy)
+    _validate_manifest(manifest, policy, policy_sha256)
     host = _host_openmp_record(policy)
     if (host['size_bytes'], host['sha256']) != (
             policy['host_openmp']['size_bytes'], policy['host_openmp']['sha256']):
@@ -411,8 +431,9 @@ def verify_runtime(runtime_dir: Path) -> dict:
 
 
 def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
-                  runtime_dir: Path) -> dict:
-    policy = load_policy()
+                  runtime_dir: Path, *, variant: str = 'baseline') -> dict:
+    policy_sha256 = _variant_pin(variant)[1]
+    policy = load_policy(variant=variant)
     target = _root(runtime_dir, must_exist=False)
     parent = _root(target.parent, must_exist=True)
     parent_identity = (parent.stat().st_dev, parent.stat().st_ino)
@@ -424,7 +445,7 @@ def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
         if not target.is_dir():
             raise ValueError('runtime_target_not_directory')
         if any(target.iterdir()):
-            return verify_runtime(target)
+            return verify_runtime(target, variant=variant)
         target_identity = (target.stat().st_dev, target.stat().st_ino)
     else:
         target_identity = None
@@ -459,7 +480,7 @@ def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
             'created_utc': datetime.now(timezone.utc).isoformat(),
             'expected_source_commit': policy['source_commit'],
             'sdk_version': policy['sdk_version'],
-            'policy_sha256': _digest_bytes(POLICY_PATH.read_bytes()),
+            'policy_sha256': policy_sha256,
             'sources': inventory['sources'], 'files': inventory['files'],
             'trees': inventory['trees'],
             'host_prerequisites': inventory['host_prerequisites'],
@@ -474,7 +495,7 @@ def stage_runtime(build_dir: Path, sdk_dir: Path, vcpkg_dir: Path,
         _owned_destination(temporary, staging_identity, manifest_path)
         os.replace(pending, manifest_path)
         _owned_directory(temporary, staging_identity)
-        _validate_manifest(manifest, policy)
+        _validate_manifest(manifest, policy, policy_sha256)
         _verify_payload(temporary, inventory['files'], inventory['trees'])
         # Recheck all sources after copying, including installed vcpkg counterparts.
         _inventory(Path(inventory['sources']['build_dir']), Path(inventory['sources']['sdk_dir']),
@@ -506,15 +527,17 @@ def main(argv=None) -> int:
     stage = commands.add_parser('stage')
     for name in ('build-dir', 'sdk-dir', 'vcpkg-dir', 'runtime-dir'):
         stage.add_argument(f'--{name}', required=True, type=Path)
+    stage.add_argument('--runtime-variant', choices=tuple(POLICY_VARIANTS), default='baseline')
     verify = commands.add_parser('verify')
     verify.add_argument('--runtime-dir', required=True, type=Path)
+    verify.add_argument('--runtime-variant', choices=tuple(POLICY_VARIANTS), default='baseline')
     args = parser.parse_args(argv)
     try:
         if args.command == 'stage':
             result = stage_runtime(args.build_dir, args.sdk_dir, args.vcpkg_dir,
-                                   args.runtime_dir)
+                                   args.runtime_dir, variant=args.runtime_variant)
         else:
-            result = verify_runtime(args.runtime_dir)
+            result = verify_runtime(args.runtime_dir, variant=args.runtime_variant)
     except (ValueError, OSError) as error:
         print(f'refused: {error}', file=sys.stderr)
         return 2

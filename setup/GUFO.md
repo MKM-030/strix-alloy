@@ -1,10 +1,10 @@
 # Optional GUFO static runtime package
 
-The staging command verifies and stages one reviewed GUFO server binary. It creates an independent local runtime directory. It does not build a new binary, start a service, load a model, run GPU checks, or qualify the runtime for use. A separate bounded build command is described below. The persistent start/status/stop workflow remains a later delivery step.
+The staging command verifies and stages one of two reviewed GUFO server binaries into an independent local runtime directory. It does not build a new binary, start a service, load a model, run GPU checks, or qualify the runtime for use. A separate bounded build command is described below. The persistent start/status/stop workflow remains a later delivery step.
 
-Prerequisites are 64-bit Python 3.12, Windows PowerShell 5.1 or later, and explicit paths to the existing pinned build, TheRock SDK, vcpkg tree, and a separate runtime destination. The reviewed tuple is [pixmaate/gufo](https://github.com/pixmaate/gufo) commit `cff564964e8506c0abb3e530cecb55332187ac6c`, [TheRock](https://github.com/ROCm/TheRock) SDK 10.2.0, and [vcpkg](https://github.com/microsoft/vcpkg) installed `x64-windows` DLLs at the hashes in `config/gufo-runtime-pins.json`. The [GUFO MIT license](https://github.com/pixmaate/gufo/blob/main/LICENSE) and third-party notices need separate review before any redistribution. This command creates a local package only; it does not redistribute AMD binaries or model weights.
+Prerequisites are 64-bit Python 3.12, Windows PowerShell 5.1 or later, and explicit paths to the existing pinned build, TheRock SDK, vcpkg tree, and a separate runtime destination. The default `baseline` identity pins [pixmaate/gufo](https://github.com/pixmaate/gufo) commit `cff564964e8506c0abb3e530cecb55332187ac6c` in `config/gufo-runtime-pins.json`. The explicit `service-ar4k-v1` identity pins source commit `139aa9c58dadcb75c1bd0741aad0823fc65a0547` and its distinct `gufo.exe` (42,439,168 bytes, SHA-256 `66798D3BCAD27B7E2BEC16980B225F83CC3F017FAD9088ADA8D64D604BC4F209`) in `config/gufo-service-runtime-pins.json`. Both use the same TheRock SDK 10.2.0, vcpkg `x64-windows` DLLs, resource trees, and host OpenMP prerequisite. The [GUFO MIT license](https://github.com/pixmaate/gufo/blob/main/LICENSE) and third-party notices need separate review before any redistribution. This command creates a local package only; it does not redistribute AMD binaries or model weights.
 
-The expected payload is 311,830,580 bytes (about 298 MiB): `gufo.exe`, 17 named DLLs, and two gfx1151 resource trees. The destination volume must have that payload space plus a 1 GiB reserve. The host must supply the pinned `libomp140.x86_64.dll` from the Windows system directory; it is checked but not copied. The manifest records static identity and keeps `runtime_qualified` false.
+The baseline payload is 311,830,580 bytes (about 298 MiB); the service payload is 311,839,796 bytes. Each includes `gufo.exe`, 17 named DLLs, and two gfx1151 resource trees. The destination volume must have the selected payload space plus a 1 GiB reserve. The host must supply the pinned `libomp140.x86_64.dll` from the Windows system directory; it is checked but not copied. The manifest records static identity with status `staged-static-only` and `runtime_qualified: false`.
 
 From this repository root, use explicit paths:
 
@@ -21,7 +21,9 @@ From this repository root, use explicit paths:
   -Verify -RuntimeDir 'C:\Path\To\Independent\GUFO-Runtime'
 ```
 
-The stage operation verifies every source and destination byte against the fixed portable policy. It refuses unknown nonempty destinations and does not overwrite files. Verify is read-only and works after moving a valid package, provided the current host still supplies the OpenMP prerequisite. A newly built `gufo.exe` with a different hash needs a newly reviewed package policy; it is not equivalent to this pinned binary.
+For the reviewed service candidate, use its build directory and add `-RuntimeVariant service-ar4k-v1` to both stage and verify. The Python entry point accepts the same choice as `--runtime-variant service-ar4k-v1`. An omitted choice always selects `baseline`; a package staged under one identity fails verification under the other.
+
+The stage operation verifies every source and destination byte against the selected fixed policy. It refuses unknown nonempty destinations and does not overwrite files. Verify is read-only and works after moving a valid package, provided the current host still supplies the OpenMP prerequisite. Any different `gufo.exe` requires a newly reviewed package policy. Successful staging is not service qualification.
 
 Rollback means stop selecting this optional runtime in a later launcher configuration. Neither stage nor verify removes a package. If removal is desired, review the exact runtime path and remove it explicitly outside this command.
 
@@ -29,15 +31,15 @@ Rollback means stop selecting this optional runtime in a later launcher configur
 
 The optional [AR4K source patch](../engine-patches/gufo/README.md) adds reviewed
 engine-side request limits and has passed focused native CPU tests. A separate
-native HIP build of that reviewed source has also succeeded. That executable is
-not the binary pinned by this staging command. Its runtime identity and
-persistent-service qualification remain separate delivery steps.
+native HIP build of that reviewed source has also succeeded. Its executable is
+pinned by the explicit `service-ar4k-v1` static runtime identity above.
+Persistent-service qualification remains a separate delivery step.
 
 ## Build the reviewed source extension
 
 `build-gufo-windows.ps1` configures and compiles only the `gufo` target from a
 clean source checkout. It does not execute GUFO, run tests, copy runtime files,
-or change the fixed staging policy above. A new `gufo.exe` hash requires a later
+or change the fixed staging policies above. A new `gufo.exe` hash requires a later
 review and runtime policy update before staging. The build manifest always says
 `runtimeStaged: false` and `runtime_qualified: false`. This reusable entrypoint
 has passed offline fixture tests but has not itself been used for a real GUFO
