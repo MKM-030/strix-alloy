@@ -83,6 +83,32 @@ for arbitrary context sizes/concurrency. No driver, carve or OS setting changed.
 
 ## What the additional Reddit reference changes
 
+The following community comparison was checked on 27 September. All rates
+are tokens/s; our cells use mean plus/minus sample SD over three repetitions.
+The community columns are author-reported, not locally reproduced results.
+
+| Measurement | Our Halogen WSL2 | Our native GUFO | Community GUFO Windows port | Wordweaver Windows fork |
+|---|---:|---:|---:|---:|
+| Model format | HGN w4b | GGUF IQ4_XS | GGUF UD-Q4_K_XL | GGUF IQ4_XS |
+| Filler PP2048, HTTP for our runs | 820.95 +/- 32.72 | 849.01 +/- 11.54 | No matched figure | 994 |
+| Filler PP8192, HTTP for our runs | 783.39 +/- 85.23 | 901.41 +/- 19.51 | No matched figure | 1026 |
+| Filler PP32768 | Not measured in this suite | Not yet measured | No matched figure | 1015 |
+| Halogen ten-prompt decode, MTP mean | 41.20 | Not yet measured | 43.0 | 47.6 |
+| Our sustained runbook, AR greedy | Different corpus | 27.89 +/- 0.02 | Not reported | Not reported |
+| Our sustained runbook, MTP cap 3 greedy | Different corpus | 35.99 +/- 0.46 | Not reported | Not reported |
+| Our sustained runbook, MTP cap 3 sampled | Different corpus | 37.71 +/- 0.88 | Not reported | Not reported |
+
+The Reddit post's main table supplies the Wordweaver figures; the GUFO Windows
+port contributor's comment supplies 43.0 on Halogen's ten prompts. Wordweaver
+describes a custom native HIP llama.cpp fork on a 60-70 W laptop, not GUFO,
+and had no public repository in the checked post. Neither contributor supplies
+the complete raw repetitions and timing boundaries needed to establish a
+controlled cross-engine comparison here. Our GUFO PP cells are AR at 16k
+capacity; its runbook decode cells are at 4k capacity. They must not be combined
+into an implied single configuration or substituted for its missing Halogen
+ten-prompt result. See the local timing, quantization and configuration caveats
+above; these numbers do not establish Windows/Linux parity or a causal gain.
+
 The [Wordweaver discussion](https://www.reddit.com/r/StrixHalo/comments/1wqsv03/yet_another_windows_strix_halo_q38fn_attempt/)
 supports isolated tests of prompt lookup on repetitive versus ordinary text,
 and the sampled MTP survival policy. Its author has no public fork in the
