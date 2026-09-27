@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from gufo_control.finite_startup import ListeningHint
 
@@ -33,6 +34,137 @@ class ListeningHintTests(unittest.TestCase):
         self.assertEqual(self.hint.offset, len(MARKER))
         self.assertTrue(self.hint.poll(580.0))
 
+    def test_open_handle_replacement_during_read_is_rejected(self):
+        self.log.write_bytes(MARKER)
+        original_open = Path.open
+        log_path = self.log
+        root_dir = self.root
+
+        class ReplacingReader:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return self.stream.__exit__(*args)
+
+            def seek(self, *args):
+                return self.stream.seek(*args)
+
+            def fileno(self):
+                return self.stream.fileno()
+
+            def read(self, *args):
+                chunk = self.stream.read(*args)
+                self.stream.close()
+                log_path.rename(root_dir / 'old-stderr.log')
+                with original_open(log_path, 'wb') as changed:
+                    changed.write(b'changed\n')
+                return chunk
+
+        def replacing_open(path, *args, **kwargs):
+            stream = original_open(path, *args, **kwargs)
+            if path == self.log:
+                return ReplacingReader(stream)
+            return stream
+
+        with patch.object(Path, 'open', replacing_open):
+            with self.assertRaisesRegex(ValueError, 'finite_listening_file_changed'):
+                self.hint.poll(580.0)
+
+    def test_growth_past_total_bound_during_read_is_rejected(self):
+        self.log.write_bytes(MARKER)
+        original_open = Path.open
+        log_path = self.log
+
+        class GrowingReader:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return self.stream.__exit__(*args)
+
+            def seek(self, *args):
+                return self.stream.seek(*args)
+
+            def fileno(self):
+                return self.stream.fileno()
+
+            def read(self, *args):
+                chunk = self.stream.read(*args)
+                with original_open(log_path, 'ab') as append:
+                    append.write(b'x' * (1048576 + 1))
+                return chunk
+
+        def growing_open(path, *args, **kwargs):
+            stream = original_open(path, *args, **kwargs)
+            if path == self.log:
+                return GrowingReader(stream)
+            return stream
+
+        with patch.object(Path, 'open', growing_open):
+            with self.assertRaisesRegex(ValueError, 'finite_listening_byte_limit'):
+                self.hint.poll(580.0)
+
+    def test_cached_match_rechecks_replaced_file(self):
+        self.log.write_bytes(MARKER)
+        self.assertTrue(self.hint.poll(580.0))
+        self.log.rename(self.root / 'old-stderr.log')
+        self.log.write_bytes(MARKER)
+        with self.assertRaisesRegex(ValueError, 'finite_listening_file_changed'):
+            self.hint.poll(580.0)
+
+    def test_multiple_carriage_returns_do_not_match(self):
+        self.log.write_bytes(MARKER[:-1] + b'\r\r\n')
+        self.assertFalse(self.hint.poll(580.0))
+
+    def test_reparse_validation_after_read_uses_synthetic_injected_seam(self):
+        self.log.write_bytes(MARKER)
+        original_open = Path.open
+        real_checked_path = __import__(
+            'gufo_control.finite_startup', fromlist=['checked_path']).checked_path
+        after_read = [False]
+
+        class ReadObserved:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return self.stream.__exit__(*args)
+
+            def seek(self, *args):
+                return self.stream.seek(*args)
+
+            def fileno(self):
+                return self.stream.fileno()
+
+            def read(self, *args):
+                result = self.stream.read(*args)
+                after_read[0] = True
+                return result
+
+        def observed_open(path, *args, **kwargs):
+            stream = original_open(path, *args, **kwargs)
+            return ReadObserved(stream) if path == self.log else stream
+
+        def synthetic_reparse_check(path, **kwargs):
+            if after_read[0] and Path(path) == self.log:
+                raise ValueError('reparse_path:synthetic_test_injection')
+            return real_checked_path(path, **kwargs)
+
+        with patch.object(Path, 'open', observed_open), patch(
+                'gufo_control.finite_startup.checked_path', synthetic_reparse_check):
+            with self.assertRaisesRegex(ValueError, 'reparse_path:synthetic_test_injection'):
+                self.hint.poll(580.0)
+
     def test_marker_io_that_crosses_deadline_fails(self):
         self.log.write_bytes(MARKER)
         original_open = Path.open
@@ -41,7 +173,6 @@ class ListeningHintTests(unittest.TestCase):
             if path == self.log:
                 self.now[0] = 580.0
             return result
-        from unittest.mock import patch
         with patch.object(Path, 'open', late_open):
             with self.assertRaisesRegex(TimeoutError, 'finite_listening_deadline'):
                 self.hint.poll(580.0)
