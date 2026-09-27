@@ -249,6 +249,75 @@ class PhaseScheduleTests(unittest.TestCase):
         self.assertFalse(certificate.complete)
         self.assertEqual(ledger.snapshot()['counts']['post'], 1)
 
+    def test_final_snapshot_crossing_lifecycle_deadline_refuses_completion(self):
+        ledger, workload, transport = self.synthetic_setup(index=2,
+            readiness_complete=True)
+        original_snapshot = ledger.snapshot
+        calls = 0
+        def crossing_snapshot():
+            nonlocal calls
+            calls += 1
+            result = original_snapshot()
+            if calls == 2:
+                self.advance(ledger.header['deadline'] - .1 - self.clock())
+            elif calls == 3:
+                self.advance(ledger.header['deadline'] - self.clock())
+            return result
+        ledger.snapshot = crossing_snapshot
+        certificate = run_remaining(workload, ledger, transport,
+            self.handoff(ledger), clock=self.clock, pause=self.pause)
+        self.assertEqual(calls, 3)
+        self.assertEqual(certificate.post_count, 6)
+        self.assertFalse(certificate.complete)
+        self.assertIn('finite_client_lost_or_deadline', certificate.failure)
+        self.assertEqual(transport.calls[-1], 'post-006')
+
+    def test_stop_during_final_snapshot_refuses_completion(self):
+        ledger, workload, transport = self.synthetic_setup(index=2,
+            readiness_complete=True)
+        stopped = threading.Event()
+        original_snapshot = ledger.snapshot
+        calls = 0
+        def stopping_snapshot():
+            nonlocal calls
+            calls += 1
+            result = original_snapshot()
+            if calls == 3:
+                stopped.set()
+            return result
+        ledger.snapshot = stopping_snapshot
+        certificate = run_remaining(workload, ledger, transport,
+            self.handoff(ledger), clock=self.clock, pause=self.pause,
+            stop_event=stopped)
+        self.assertEqual(calls, 3)
+        self.assertEqual(certificate.post_count, 6)
+        self.assertFalse(certificate.complete)
+        self.assertIn('finite_client_lost_or_deadline', certificate.failure)
+        self.assertEqual(transport.calls[-1], 'post-006')
+
+    def test_parent_loss_during_final_snapshot_refuses_completion(self):
+        ledger, workload, transport = self.synthetic_setup(index=2,
+            readiness_complete=True)
+        alive = [True]
+        original_snapshot = ledger.snapshot
+        calls = 0
+        def losing_snapshot():
+            nonlocal calls
+            calls += 1
+            result = original_snapshot()
+            if calls == 3:
+                alive[0] = False
+            return result
+        ledger.snapshot = losing_snapshot
+        certificate = run_remaining(workload, ledger, transport,
+            self.handoff(ledger), clock=self.clock, pause=self.pause,
+            parent_alive=lambda: alive[0])
+        self.assertEqual(calls, 3)
+        self.assertEqual(certificate.post_count, 6)
+        self.assertFalse(certificate.complete)
+        self.assertIn('finite_client_lost_or_deadline', certificate.failure)
+        self.assertEqual(transport.calls[-1], 'post-006')
+
     def test_early_stop_cannot_turn_readiness_into_coverage(self):
         ledger, workload, transport = self.synthetic_setup(index=2,
             readiness_complete=True)

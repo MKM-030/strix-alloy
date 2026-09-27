@@ -441,10 +441,18 @@ def run_remaining(workload, ledger, transport, handoff: VerifiedHandoff, *,
             terminal = False
     if not terminal:
         failure = failure or 'finite_worker_unjoined'
+    returned_slots = tuple(r.slot for r in receipts)
+    pending_semantic_review = any(
+        (r.result.assessment or {}).get('answer_status') ==
+        'pending_semantic_review' for r in receipts)
+    if failure is None and terminal:
+        try:
+            live()
+        except BaseException as error:
+            failure = type(error).__name__ + ':' + str(error)
     return CoverageCertificate(ledger.header['run_id'], ledger.index,
-        tuple(r.slot for r in receipts), handoff.ready_count, 1,
+        returned_slots, handoff.ready_count, 1,
         final_count, terminal,
         tuple(boundaries), tuple(idle), tuple(waves),
-        any((r.result.assessment or {}).get('answer_status') ==
-            'pending_semantic_review' for r in receipts), failure,
+        pending_semantic_review, failure,
         failure is None and terminal)
