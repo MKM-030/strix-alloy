@@ -23,13 +23,13 @@
 
 **Files:** Modify only `tests/cli/text_request_policy_routes_test.cpp` in the component checkout; report outside the checkout at `C:/Projects/strix-alloy-research/reports/gufo-finite-parser-fixtures-implementation-20260927.md`.
 
-**Interfaces:** Existing anonymous-namespace `PolicyBackend`, `Chat(std::string)` and `Expect(bool,std::string_view)`. Existing `HandleOpenAiChat`, `json::parse`, response.status/body/streaming_body. `PolicyBackend` is not final; a local subclass can return the actual served alias without changing existing tests.
+**Interfaces:** Existing anonymous-namespace `PolicyBackend`, `Chat(std::string)` and `Expect(bool,std::string_view)`. Existing `HandleOpenAiChat`, `json::parse`, response.status/body/streaming_body. Remove `final` from the test-only `PolicyBackend` declaration so the local subclass below can return the actual served alias; existing instances and production code are unchanged. The original plan incorrectly described this helper as non-final; the first compile caught that factual mistake.
 
 - [ ] Step1 — inspect identity and baseline evidence.
 
 Verify clean branch/BASE. The unchanged route target passed in the previous two-test run at this exact BASE; its raw log is `build/gufo-lifecycle-fixture-cpu-20260927/Testing/Temporary/LastTest.log`. Read that existing baseline evidence instead of rerunning an unchanged test. Confirm the helper executable still hashes `1D21C3112795C7849A0E1F9E19068BFBEE64C578BF0613FA8CBAB352B9FC46DB`. Read AGENTS.md and the negative contract `reports/gufo-lifecycle-negative-fixture-contract-20260927.md`.
 
-- [ ] Step2 — add the following characterization function before the anonymous namespace closes, then add `TestFiniteParserFixtures();` before `return0` in main.
+- [ ] Step2 — change `class PolicyBackend final : public TextGenerationBackend` to `class PolicyBackend : public TextGenerationBackend`, add the following characterization function before the anonymous namespace closes, then add `TestFiniteParserFixtures();` before `return0` in main.
 
 ```cpp
 void TestFiniteParserFixtures() {
