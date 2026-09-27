@@ -72,6 +72,16 @@ public static class GufoPdhCollector {
   }
 
   public static GufoPdhRow[] Collect(IGufoPdhApi api) {
+    return CollectPaths(api,Paths,3);
+  }
+
+  public static GufoPdhRow[] CollectProcess(IGufoPdhApi api) {
+    return CollectPaths(api,new [] {
+      @"\GPU Process Memory(*)\Dedicated Usage", @"\GPU Process Memory(*)\Shared Usage",
+      @"\GPU Process Memory(*)\Total Committed" },0);
+  }
+
+  static GufoPdhRow[] CollectPaths(IGufoPdhApi api,string[] paths,int wildcardStart) {
     if(IntPtr.Size!=8) throw new InvalidOperationException("x64 required");
     if(Marshal.SizeOf(typeof(GufoPdhRawCounter))!=40 ||
        Marshal.OffsetOf(typeof(GufoPdhRawCounter),"FirstValue").ToInt32()!=16 ||
@@ -82,13 +92,13 @@ public static class GufoPdhCollector {
     Check(api.Open(out query),"open");
     if(query==IntPtr.Zero) throw new InvalidOperationException("null PDH query");
     try {
-      var counters=new IntPtr[Paths.Length];
-      for(int i=0;i<Paths.Length;i++) Check(api.Add(query,Paths[i],out counters[i]),"add");
+      var counters=new IntPtr[paths.Length];
+      for(int i=0;i<paths.Length;i++) Check(api.Add(query,paths[i],out counters[i]),"add");
       Check(api.Collect(query),"collect");
       var rows=new List<GufoPdhRow>();
-      for(int i=0;i<Paths.Length;i++) {
-        GufoPdhObservation[] values=api.Read(counters[i],Paths[i],i>=3);
-        if(values==null || values.Length==0 || values.Length>1024 || (i<3 && values.Length!=1))
+      for(int i=0;i<paths.Length;i++) {
+        GufoPdhObservation[] values=api.Read(counters[i],paths[i],i>=wildcardStart);
+        if(values==null || values.Length==0 || values.Length>1024 || (i<wildcardStart && values.Length!=1))
           throw new InvalidOperationException("missing or excessive PDH instances");
         foreach(var value in values) rows.Add(Validate(value));
       }

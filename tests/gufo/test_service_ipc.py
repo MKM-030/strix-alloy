@@ -70,6 +70,10 @@ def _native_launcher_helper(descriptor_path):
     def private_test_entry(argv, **kwargs):
         assert argv[1:3] == ['-m', 'gufo_control.service']
         argv = [argv[0], '-m', 'test_service_ipc', '_native_guardian', str(descriptor_path)]
+        # Only the test entry needs this private helper module; production fixes
+        # its module path to scripts without inheriting arbitrary PYTHONPATH.
+        kwargs['env'] = dict(kwargs['env'], PYTHONPATH=kwargs['env']['PYTHONPATH']+
+                             os.pathsep+str(Path(__file__).resolve().parent))
         return real_popen(argv, **kwargs)
     process = None
     try:
@@ -244,6 +248,8 @@ class NativeTests(unittest.TestCase):
     def test_status_disconnect_is_not_original_parent_disconnect_and_stop_startup(self):
         ipc = self.ipc
         with self.parent_session() as (life, channel, root):
+            life.status_provider = lambda: dict(phase='unknown/stale', ready=None,
+                aggregate_sample=None, owned_counters=None)
             for command in ('status', 'stop', 'stop'):
                 results = []
                 def request():
@@ -263,6 +269,12 @@ class NativeTests(unittest.TestCase):
                     thread.join(3)
                 self.assertFalse(thread.is_alive())
                 self.assertIsInstance(results[0], dict, results)
+                if command == 'status':
+                    self.assertEqual(results[0]['phase'], 'unknown/stale')
+                    self.assertIsNone(results[0]['aggregate_sample'])
+                    self.assertEqual(results[0]['guardian'], life.record['guardian'])
+                    self.assertEqual(results[0]['child'], life.record['child'])
+                    self.assertFalse(results[0]['handoff_confirmed'])
             self.assertEqual(life.poll(time.monotonic()), 'stop')
             self.assertFalse((root/'handoff.json').exists())
             with self.assertRaises(ValueError):

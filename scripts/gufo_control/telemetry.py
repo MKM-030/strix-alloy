@@ -3,6 +3,7 @@ import copy
 from datetime import datetime, timezone
 import json
 import math
+import ntpath
 import os
 from pathlib import Path
 import re
@@ -30,6 +31,85 @@ LUID = re.compile(r'0x[0-9a-f]{8}_0x[0-9a-f]{8}')
 HOST_PATH = re.compile(r'\\\\[^\\]+\\memory\\([^\\]+)')
 GPU_PATH = re.compile(r'\\\\[^\\]+\\gpu adapter memory\(([^)]+)\)\\([^\\]+)')
 INSTANCE = re.compile(r'luid_(0x[0-9a-f]{8}_0x[0-9a-f]{8})_phys_([0-9]+)')
+PROCESS_PATH = re.compile(r'\\\\[^\\]+\\gpu process memory\(([^)]+)\)\\([^\\]+)')
+PROCESS_INSTANCE = re.compile(r'pid_([0-9]+)_luid_(0x[0-9a-f]{8}_0x[0-9a-f]{8})_phys_([0-9]+)')
+OWNED_FIELDS = ('process_dedicated_bytes', 'process_shared_bytes',
+                'process_total_committed_bytes', 'working_set_bytes', 'private_bytes')
+
+
+def _owned_identity(expected, actual):
+    if (not isinstance(expected, dict) or not isinstance(actual, dict)
+            or any(type(expected.get(k)) is not int or expected[k] <= 0
+                   or expected[k] != actual.get(k) for k in ('pid', 'creation_time_100ns'))
+            or not isinstance(expected.get('executable'), str)
+            or ntpath.normcase(expected['executable']) != ntpath.normcase(actual.get('executable', ''))):
+        raise TelemetryError('owned_identity_mismatch')
+
+
+def _owned_snapshot(raw, request, *, luid, captured_monotonic, now_utc):
+    result = dict(available=False, reason='not_requested', provider=PROVIDER,
+        gpu_scope='owned_process_target_adapter', host_scope='owned_process',
+        required_for_admission=False, captured_monotonic=captured_monotonic,
+        adapter_luid=luid, identity=None, sample_utc_min=None, sample_utc_max=None,
+        **dict.fromkeys(OWNED_FIELDS))
+    if request is None: return result
+    try:
+        _owned_identity(request, request)
+        if request.get('adapter_luid') != luid:
+            raise TelemetryError('owned_adapter_mismatch')
+        result['identity'] = {k: request[k] for k in ('pid', 'creation_time_100ns', 'executable')}
+        if not isinstance(raw, dict) or raw.get('available') is not True:
+            reason = raw.get('reason') if isinstance(raw, dict) else None
+            result['reason'] = reason if reason in ('process_exited', 'owned_identity_mismatch',
+                'owned_handle_unavailable', 'process_counters_unavailable') else 'process_counters_unavailable'
+            return result
+        _owned_identity(request, raw.get('identity_before'))
+        _owned_identity(request, raw.get('identity_after'))
+        values, stamps = {}, []
+        for key in ('working_set_bytes', 'private_bytes'):
+            value = integer(raw.get(key), key)
+            values[key], stamp = counter_value(dict(status=0, raw_value=value,
+                cooked_value=value, timestamp_utc=raw.get('host_timestamp_utc')), key, now_utc)
+            stamps.append(stamp)
+        rows = raw.get('counters')
+        if not isinstance(rows, list) or len(rows) > 10000:
+            raise TelemetryError('owned_rows_invalid')
+        for row in rows:
+            parsed = PROCESS_PATH.fullmatch(row['path'].lower())
+            instance = PROCESS_INSTANCE.fullmatch(parsed[1]) if parsed else None
+            if not instance or row.get('instance', '').lower() != parsed[1] or parsed[2] not in GPU:
+                raise TelemetryError('owned_counter_identity_invalid')
+            if int(instance[1]) != request['pid'] or instance[2] != luid: continue
+            if instance[3] != '0': raise TelemetryError('owned_topology_ambiguous')
+            key = GPU[parsed[2]].replace('adapter_', 'process_')
+            if key in values: raise TelemetryError('owned_counter_ambiguous')
+            values[key], stamp = counter_value(row, key, now_utc)
+            stamps.append(stamp)
+        if set(values) != set(OWNED_FIELDS): raise TelemetryError('owned_instance_missing')
+        result.update(values, available=True, reason=None,
+            sample_utc_min=min(stamps).isoformat(), sample_utc_max=max(stamps).isoformat())
+    except (ValueError, TypeError, KeyError, AttributeError, OverflowError) as error:
+        reason = str(error)
+        result['reason'] = reason if reason in ('owned_instance_missing', 'owned_counter_ambiguous',
+            'owned_identity_mismatch', 'owned_adapter_mismatch', 'owned_topology_ambiguous') else 'owned_sample_invalid_or_stale'
+    return result
+
+
+def _host_process_memory(peer):
+    """Query only the retained query/synchronize handle; never acquire kill rights."""
+    import ctypes as C
+    from ctypes import wintypes as W
+    class Memory(C.Structure):
+        _fields_ = [('cb', W.DWORD), ('faults', W.DWORD)] + [
+            (key, C.c_size_t) for key in ('peak_ws', 'ws', 'peak_paged', 'paged',
+                'peak_nonpaged', 'nonpaged', 'pagefile', 'peak_pagefile', 'private')]
+    api = C.WinDLL('psapi', use_last_error=True)
+    fn = api.GetProcessMemoryInfo
+    fn.argtypes, fn.restype = [W.HANDLE, C.POINTER(Memory), W.DWORD], W.BOOL
+    value = Memory()
+    value.cb = C.sizeof(value)
+    if not fn(peer.handle, C.byref(value), value.cb): raise C.WinError(C.get_last_error())
+    return dict(working_set_bytes=int(value.ws), private_bytes=int(value.private))
 
 
 def integer(value, label, maximum=MAX_BYTES):
@@ -69,7 +149,7 @@ def counter_value(row, key, now_utc):
 
 
 def normalize_snapshot(raw: dict, *, captured_monotonic: float, now_monotonic: float,
-                       now_utc: datetime) -> dict:
+                       now_utc: datetime, owned=None) -> dict:
     """Qualify English PDH paths for one Radeon 8060S adapter aggregate."""
     if not finite_time(captured_monotonic) or not finite_time(now_monotonic):
         raise TelemetryError('invalid monotonic timestamp')
@@ -170,26 +250,60 @@ def normalize_snapshot(raw: dict, *, captured_monotonic: float, now_monotonic: f
                   commit_headroom_bytes=result['host_commit_limit_bytes'] - result['host_committed_bytes'],
                   sample_utc_min=min(stamps).isoformat(), sample_utc_max=max(stamps).isoformat(),
                   raw=copy.deepcopy(raw))
+    result['owned_counters'] = _owned_snapshot(raw.get('owned'), owned, luid=luid,
+        captured_monotonic=captured_monotonic, now_utc=now_utc)
     return result
 
 
-def collect_snapshot() -> dict:
+def collect_snapshot(*, owned=None) -> dict:
     """Run exactly one bounded, hidden, read-only Windows PowerShell probe."""
     if os.name != 'nt' or struct.calcsize('P') != 8:
         raise TelemetryError('Windows x64 required')
     executable = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32/WindowsPowerShell/v1.0/powershell.exe'
+    started = time.monotonic()
+    peer = None
+    diagnostic = dict(available=False, reason='not_requested')
+    if owned is not None:
+        try:
+            from .service_ipc import _Peer
+            _owned_identity(owned, owned)
+            peer = _Peer(owned['pid'])
+            _owned_identity(owned, peer.identity)
+            diagnostic = dict(available=True, identity_before=dict(peer.identity))
+        except (OSError, ValueError, TypeError, KeyError):
+            diagnostic = dict(available=False, reason='owned_handle_unavailable')
     try:
         script = Path(__file__).with_name('windows_probe.ps1').resolve(strict=True)
-        started = time.monotonic()
-        completed = subprocess.run([str(executable), '-NoProfile', '-NonInteractive', '-File', str(script)],
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5,
+        remaining = 5 if owned is None else 5-(time.monotonic()-started)
+        if remaining <= 0: raise TelemetryError('sample_deadline_expired')
+        argv = [str(executable), '-NoProfile', '-NonInteractive', '-File', str(script)]
+        if diagnostic['available']: argv += ['-OwnedPid', str(owned['pid'])]
+        completed = subprocess.run(argv,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=remaining,
                                    creationflags=subprocess.CREATE_NO_WINDOW)
         if completed.returncode or not completed.stdout or len(completed.stdout) > 2 * 1024 * 1024:
             raise TelemetryError('probe failed or output exceeds limit')
         raw = json.loads(completed.stdout.decode('utf-8-sig'))
         if not isinstance(raw, dict) or raw.get('provider') != PROVIDER:
             raise TelemetryError('unexpected live telemetry provider')
+        if diagnostic['available']:
+            try:
+                if not peer.alive(): raise TelemetryError('process_exited')
+                _owned_identity(owned, peer.identity)
+                diagnostic.update(_host_process_memory(peer), identity_after=dict(peer.identity),
+                    host_timestamp_utc=datetime.now(timezone.utc).isoformat())
+                if not peer.alive(): raise TelemetryError('process_exited')
+                optional = raw.get('owned', {})
+                if not isinstance(optional, dict) or optional.get('available') is not True:
+                    raise TelemetryError('process_counters_unavailable')
+                diagnostic['counters'] = optional.get('counters')
+            except (OSError, ValueError, TypeError, KeyError):
+                diagnostic = dict(available=False, reason='process_exited' if not peer.alive()
+                                  else 'process_counters_unavailable')
+        raw['owned'] = diagnostic
     except (OSError, subprocess.TimeoutExpired, UnicodeError, ValueError) as error:
         raise TelemetryError('Windows telemetry unavailable: ' + str(error)) from error
+    finally:
+        if peer is not None: peer.close()
     return normalize_snapshot(raw, captured_monotonic=started,
-                              now_monotonic=time.monotonic(), now_utc=datetime.now(timezone.utc))
+                              now_monotonic=time.monotonic(), now_utc=datetime.now(timezone.utc), owned=owned)

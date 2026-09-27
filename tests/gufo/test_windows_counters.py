@@ -57,6 +57,22 @@ public static class GufoNativeHarness {
 
 @unittest.skipUnless(os.name == "nt", "native PDH harness requires Windows")
 class NativeCounterTests(unittest.TestCase):
+    def test_process_counter_query_uses_existing_validation_and_closes_on_failure(self):
+        source = SOURCE.read_text()
+        self.assertIn('CollectProcess', source, 'optional PDH query missing')
+        harness = HARNESS.replace('GufoPdhCollector.Collect(api)', 'GufoPdhCollector.CollectProcess(api)')
+        command = ("$ErrorActionPreference='Stop'; $source=Get-Content -LiteralPath '"+
+            str(SOURCE).replace("'", "''")+"' -Raw; Add-Type -TypeDefinition ($source + @'\n"+
+            harness+"\n'@); [GufoNativeHarness]::Run() | ConvertTo-Json -Compress")
+        encoded = base64.b64encode(command.encode('utf-16le')).decode('ascii')
+        run = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-EncodedCommand', encoded],
+            capture_output=True, text=True, timeout=30, creationflags=subprocess.CREATE_NO_WINDOW)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        result = json.loads(run.stdout)
+        self.assertEqual(result['rowCount'], 3)
+        self.assertEqual(result['closes'], 9)
+        self.assertEqual(result['rejected'], 7)
+
     def test_validation_layout_and_query_release(self):
         command = (
             "$ErrorActionPreference='Stop'; "

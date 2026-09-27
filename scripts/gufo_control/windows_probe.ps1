@@ -1,3 +1,4 @@
+param([uint32]$OwnedPid = 0)
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 $source = @'
@@ -50,8 +51,16 @@ Add-Type -TypeDefinition $source
 $adapters = @([GufoDxgiProbe]::Enumerate())
 Add-Type -TypeDefinition (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'windows_counters.cs') -Raw)
 $rows = @([GufoPdhCollector]::Collect([GufoNativePdhApi]::new()))
+$owned = @{ available=$false; reason='not_requested' }
+if ($OwnedPid -gt 0) {
+  try {
+    $owned = @{ available=$true; counters=@([GufoPdhCollector]::CollectProcess([GufoNativePdhApi]::new())) }
+  } catch {
+    $owned = @{ available=$false; reason='process_counters_unavailable' }
+  }
+}
 $processes = @(Get-Process -ErrorAction Stop | ForEach-Object {
   [pscustomobject]@{ pid=$_.Id; name=$_.ProcessName }
 })
 [pscustomobject]@{ schema=1; provider='PDH/native-gauges;DXGI/EnumAdapters1';
-  adapters=$adapters; counters=$rows; processes=$processes } | ConvertTo-Json -Depth 6 -Compress
+  adapters=$adapters; counters=$rows; processes=$processes; owned=$owned } | ConvertTo-Json -Depth 6 -Compress

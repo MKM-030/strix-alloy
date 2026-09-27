@@ -671,10 +671,11 @@ def _validate_descriptor(descriptor):
 
 class _IpcLifecycle:
     """Five-method adapter; all post-start pipe work is nonblocking."""
-    def __init__(self, descriptor, deadline_provider, *, profile_validator=None):
+    def __init__(self, descriptor, deadline_provider, *, profile_validator=None, status_provider=None):
         self.parent = _validate_descriptor(descriptor)
         self.descriptor, self.deadline_provider = dict(descriptor), deadline_provider
         self.profile_validator = profile_validator
+        self.status_provider = status_provider
         self.server = self.parent_event = None
         self.record = self.run_dir = None
         self.status = dict(state='starting', api_key='[REDACTED]')
@@ -753,7 +754,11 @@ class _IpcLifecycle:
                     self.status.update(state='stopping')
                     self.server.reply(event, dict(state='stopping'))
                 elif command == 'status':
-                    self.server.reply(event, dict(self.status))
+                    snapshot = self.status_provider() if self.status_provider else {}
+                    self.server.reply(event, dict(snapshot, **self.status,
+                        handoff_confirmed=self.committed,
+                        guardian=self.record['guardian'], child=self.record['child'],
+                        run=self.record['run']))
         if self.failed:
             return 'handoff_failed'
         if self.stopping:
@@ -773,13 +778,14 @@ class _IpcLifecycle:
 
 def _run_guardian(guardian, descriptor):
     """Private bootstrap seam. Production guardian qualification stays in force."""
-    from .service_lifecycle import _qualified_deadline
+    from .service_lifecycle import _qualified_deadline, _snapshot
     from . import service_store
     def verify_profile():
         if service_store._digest(guardian.manifest['installed_profile']) != descriptor['profile_digest']:
             raise ValueError('bootstrap_profile_mismatch')
     lifecycle = _IpcLifecycle(descriptor,
-        lambda resumed_at: _qualified_deadline(guardian.manifest, resumed_at), profile_validator=verify_profile)
+        lambda resumed_at: _qualified_deadline(guardian.manifest, resumed_at),
+        profile_validator=verify_profile, status_provider=lambda: _snapshot(guardian))
     guardian.lifecycle = lifecycle
     try:
         return guardian.run()
@@ -803,4 +809,6 @@ def _launch_hidden(descriptor_path):
     return subprocess.Popen([sys.executable, '-m', 'gufo_control.service', '_guardian',
         '--profile', PROFILE_ID, '--bootstrap', str(path)],
         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-        close_fds=True, creationflags=subprocess.CREATE_NO_WINDOW)
+        close_fds=True, creationflags=subprocess.CREATE_NO_WINDOW,
+        env=dict(os.environ, PYTHONPATH=str(Path(__file__).resolve().parents[1])),
+        cwd=str(Path(__file__).resolve().parents[2]))

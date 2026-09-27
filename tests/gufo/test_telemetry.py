@@ -2,11 +2,13 @@
 import copy
 from datetime import datetime, timedelta, timezone
 import json
+import os
 import subprocess
 import unittest
 from unittest.mock import patch
 
 from gufo_control.telemetry import TelemetryError, collect_snapshot, normalize_snapshot
+from gufo_control import telemetry
 from gufo_control.operator_policy import Frame, _frame_reasons
 
 G = 1 << 30
@@ -14,6 +16,154 @@ NOW = datetime(2026, 9, 26, 12, 0, 1, tzinfo=timezone.utc)
 STAMP = "2026-09-26T12:00:00Z"
 LUID = "0x00000000_0x000111c1"
 INSTANCE = "luid_" + LUID + "_phys_0"
+
+
+def owned_fixture():
+    request = dict(pid=42, creation_time_100ns=123456, executable='C:\\test\\engine.exe', adapter_luid=LUID)
+    rows = []
+    for luid, value in ((LUID, 123), ('0x00000000_0x00014fe1', 999)):
+        instance = 'pid_42_luid_'+luid+'_phys_0'
+        for label in ('dedicated usage', 'shared usage', 'total committed'):
+            rows.append(dict(path='\\\\host\\gpu process memory('+instance+')\\'+label,
+                instance=instance, raw_value=value, cooked_value=value, status=0, timestamp_utc=STAMP))
+    raw = dict(available=True, identity_before=dict(request), identity_after=dict(request),
+        working_set_bytes=500, private_bytes=700, host_timestamp_utc=STAMP, counters=rows)
+    return request, raw
+
+
+class OwnedTelemetryTests(unittest.TestCase):
+    def normalize(self, owned_raw, request):
+        raw = fixture()
+        raw['owned'] = owned_raw
+        self.assertIn('owned', __import__('inspect').signature(normalize_snapshot).parameters,
+                      'optional owned normalization missing')
+        return normalize_snapshot(raw, captured_monotonic=100, now_monotonic=101,
+            now_utc=NOW, owned=request)
+
+    def test_same_pid_two_adapters_selects_only_exact_identity_and_luid(self):
+        request, owned = owned_fixture()
+        result = self.normalize(owned, request)
+        diagnostic = result['owned_counters']
+        self.assertTrue(diagnostic['available'], diagnostic)
+        self.assertEqual(diagnostic['gpu_scope'], 'owned_process_target_adapter')
+        self.assertEqual(diagnostic['process_dedicated_bytes'], 123)
+        self.assertEqual(diagnostic['working_set_bytes'], 500)
+        self.assertEqual(diagnostic['private_bytes'], 700)
+        self.assertEqual(result['adapter_dedicated_bytes'], G)
+
+    def test_optional_identity_missing_stale_ambiguous_or_null_stays_unavailable(self):
+        edits = [lambda o: o['identity_after'].update(creation_time_100ns=456),
+            lambda o: o['identity_before'].update(pid=99),
+            lambda o: o['identity_after'].update(executable='C:\\other.exe'),
+            lambda o: o.update(counters=[]), lambda o: o.update(working_set_bytes=None),
+            lambda o: o['counters'][0].update(timestamp_utc='2020-01-01T00:00:00Z'),
+            lambda o: o['counters'].append(dict(o['counters'][0])),
+            lambda o: o['counters'][0].update(raw_value=None),
+            lambda o: o.update(available=False, reason='process_exited'),
+            lambda o: o.update(host_timestamp_utc='2020-01-01T00:00:00Z')]
+        for edit in edits:
+            with self.subTest(edit=edit):
+                request, owned = owned_fixture()
+                edit(owned)
+                result = self.normalize(owned, request)
+                self.assertTrue(result['telemetry_ok'])
+                self.assertFalse(result['owned_counters']['available'])
+                self.assertIsNone(result['owned_counters']['process_dedicated_bytes'])
+                self.assertTrue(result['owned_counters']['reason'])
+
+    def test_wrong_target_luid_is_unavailable_without_weakening_aggregate(self):
+        request, owned = owned_fixture()
+        request['adapter_luid'] = '0x00000000_0x00014fe1'
+        result = self.normalize(owned, request)
+        self.assertFalse(result['owned_counters']['available'])
+        self.assertEqual(result['adapter_dedicated_bytes'], G)
+
+    @unittest.skipUnless(os.name == 'nt', 'retained process handle requires Windows')
+    def test_retained_current_process_handle_and_fake_pdh_sample(self):
+        from gufo_control import service_ipc
+        request = dict(service_ipc._process_identity(os.getpid()), adapter_luid=LUID)
+        raw = fixture()
+        raw['provider'] = telemetry.PROVIDER
+        _, optional = owned_fixture()
+        for row in optional['counters']:
+            row['path'] = row['path'].replace('pid_42_', 'pid_'+str(os.getpid())+'_')
+            row['instance'] = row['instance'].replace('pid_42_', 'pid_'+str(os.getpid())+'_')
+        raw['owned'] = optional
+        now = datetime.now(timezone.utc)
+        for row in raw['counters']+optional['counters']: row['timestamp_utc'] = now.isoformat()
+        peers = []
+        original = service_ipc._Peer
+        def retain(pid):
+            peer = original(pid)
+            peers.append(peer)
+            return peer
+        with patch.object(service_ipc, '_Peer', side_effect=retain), patch.object(
+                telemetry.subprocess, 'run', return_value=subprocess.CompletedProcess(
+                    [], 0, json.dumps(raw).encode(), b'')) as probe:
+            sample = collect_snapshot(owned=request)
+        diagnostic = sample['owned_counters']
+        self.assertTrue(diagnostic['available'], diagnostic)
+        self.assertGreater(diagnostic['working_set_bytes'], 0)
+        self.assertEqual(diagnostic['identity']['creation_time_100ns'], request['creation_time_100ns'])
+        self.assertTrue(all(peer.handle is None for peer in peers))
+        self.assertEqual(probe.call_count, 1)
+        self.assertIn('-OwnedPid', probe.call_args.args[0])
+        self.assertLessEqual(probe.call_args.kwargs['timeout'], 5)
+
+    def test_failed_optional_handle_and_exit_preserve_aggregate(self):
+        from gufo_control import service_ipc
+        from unittest.mock import Mock
+        request, optional = owned_fixture()
+        now = datetime.now(timezone.utc)
+        raw = fixture()
+        raw['provider'] = telemetry.PROVIDER
+        raw['owned'] = optional
+        for row in raw['counters']+optional['counters']: row['timestamp_utc'] = now.isoformat()
+        for kind in ('open_failure', 'reuse', 'exit'):
+            peer = Mock(identity=dict(request), alive=lambda: False)
+            if kind == 'reuse': peer.identity['creation_time_100ns'] += 1
+            with patch.object(service_ipc, '_Peer', side_effect=OSError() if kind == 'open_failure' else None,
+                              return_value=peer), patch.object(telemetry.subprocess, 'run',
+                return_value=subprocess.CompletedProcess([], 0, json.dumps(raw).encode(), b'')) as probe:
+                result = collect_snapshot(owned=request)
+            self.assertTrue(result['telemetry_ok'])
+            self.assertFalse(result['owned_counters']['available'])
+            self.assertIsNone(result['owned_counters']['private_bytes'])
+            if kind != 'open_failure': peer.close.assert_called_once()
+            if kind in ('open_failure', 'reuse'): self.assertNotIn('-OwnedPid', probe.call_args.args[0])
+
+    def test_no_instance_is_not_a_measured_zero_or_process_exit(self):
+        request, optional = owned_fixture()
+        optional['counters'] = []
+        result = self.normalize(optional, request)['owned_counters']
+        self.assertEqual(result['reason'], 'owned_instance_missing')
+        self.assertIsNone(result['process_dedicated_bytes'])
+        optional.update(available=False, reason='process_exited')
+        result = self.normalize(optional, request)['owned_counters']
+        self.assertEqual(result['reason'], 'process_exited')
+
+    def test_malformed_optional_reply_does_not_fail_aggregate_and_identity_time_is_bounded(self):
+        from gufo_control import service_ipc
+        from unittest.mock import Mock
+        request, _ = owned_fixture()
+        raw = fixture()
+        raw['provider'] = telemetry.PROVIDER
+        now = datetime.now(timezone.utc)
+        for row in raw['counters']: row['timestamp_utc'] = now.isoformat()
+        raw['owned'] = None
+        peer = Mock(identity=dict(request), alive=lambda: True)
+        with patch.object(service_ipc, '_Peer', return_value=peer), patch.object(
+            telemetry, '_host_process_memory', return_value=dict(working_set_bytes=1,private_bytes=2)), patch.object(
+            telemetry.time, 'monotonic', side_effect=[100.,100.5,101.]), patch.object(
+            telemetry.subprocess, 'run', return_value=subprocess.CompletedProcess([],0,json.dumps(raw).encode(),b'')) as probe:
+            try:
+                result = collect_snapshot(owned=request)
+            except AttributeError as error:
+                self.fail('optional malformed reply escaped aggregate isolation: '+str(error))
+        self.assertTrue(result['telemetry_ok'])
+        self.assertFalse(result['owned_counters']['available'])
+        self.assertEqual(probe.call_args.kwargs['timeout'], 4.5)
+        peer.close.assert_called_once()
 
 
 def fixture():
