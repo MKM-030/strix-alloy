@@ -78,6 +78,17 @@ class LedgerTests(unittest.TestCase):
         return self.ledger.reserve('post', attempt,
                                   body=self.workload.post(1, attempt).body)
 
+    def test_receipt_requires_completed_exact_slot(self):
+        row = self.ledger.reserve('ready', 1)
+        with self.assertRaisesRegex(ValueError, 'finite_receipt_incomplete'):
+            self.ledger.receipt('ready-001')
+        self.ledger.complete(row['slot'], {'success': True})
+        reservation, outcome = self.ledger.receipt('ready-001')
+        self.assertEqual(reservation['ordinal'], 1)
+        self.assertEqual(outcome['result'], {'success': True})
+        with self.assertRaisesRegex(ValueError, 'finite_receipt_incomplete'):
+            self.ledger.receipt('post-001')
+
     def test_reservation_is_durable_before_return_and_never_refunded(self):
         row = self.reserve_post()
         path = self.root/'post-001.reserved.json'

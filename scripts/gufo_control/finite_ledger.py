@@ -280,6 +280,15 @@ class Ledger:
                             deadline=reservations[slot]['deadline'],
                             observed_at=observed_at, code=code), RECORD_LIMIT)
 
+    def receipt(self, slot: str) -> tuple[dict, dict]:
+        with self._locked():
+            reservations, outcomes, late_latch = self._scan()
+            if late_latch is not None:
+                raise ValueError('finite_transport_failed')
+            if type(slot) is not str or slot not in reservations or slot not in outcomes:
+                raise ValueError('finite_receipt_incomplete')
+            return json.loads(_encoded(reservations[slot])), json.loads(_encoded(outcomes[slot]))
+
     def snapshot(self):
         with self._locked():
             reservations, outcomes, late_latch = self._scan()
