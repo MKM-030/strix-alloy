@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from hashlib import sha256
 import json
 from pathlib import Path
+import shutil
 import tempfile
 import threading
 import unittest
@@ -36,27 +37,45 @@ class InstalledFixture:
         self.profile = self.f.root/'installed-profile.json'
         self.value = service_store.expected_profile(self.f.pins)
         operator_store.atomic_json(self.profile, self.value)
+        self.anchor = self.f.root/'installed-acceptance-anchor.json'
+        operator_store.atomic_json(self.anchor, service_store.expected_anchor(self.value))
         operator_store.atomic_json(self.f.build/'runtime-manifest.json',
                                    {'policy_sha256': service_store.RUNTIME_POLICY_SHA256})
 
-    def accepted(self):
+    @staticmethod
+    def workload():
+        return dict(schema=1, kind='gufo-native-installed-finite-workload',
+                    profile_id=service_store.PROFILE_ID, lifetime_seconds=1200,
+                    max_generation_posts=2, max_model_queries=2,
+                    max_prompt_tokens=2304, max_output_tokens=256,
+                    context_tokens=4096, sessions=1, sole_client=True)
+
+    def accepted(self, workload=None):
+        workload = self.workload() if workload is None else workload
         record = service_store.expected_acceptance(self.value, 'independent-review',
-                                                   'persistent-envelope-review')
+                                                   'persistent-envelope-review', workload)
+        before = service_store.controller_artifacts()
         operator_store.atomic_json(self.f.pins.qualification, record)
-        return operator_store.artifact_record(self.f.pins.qualification)['sha256']
+        anchor = service_store.expected_anchor(self.value)
+        anchor['installed_workload'] = workload
+        anchor['acceptance_sha256'] = operator_store.artifact_record(
+            self.f.pins.qualification)['sha256']
+        operator_store.atomic_json(self.anchor, anchor)
+        assert before == service_store.controller_artifacts()
 
 
 class InstalledStoreTests(unittest.TestCase):
     def fixture(self, root, *, accepted=False):
         fixture = InstalledFixture(root)
         self.enterContext(patch.object(service_store, 'PINS', fixture.f.pins))
+        self.enterContext(patch.object(service_store, 'ANCHOR_PATH', fixture.anchor))
         self.enterContext(patch.object(service_store, 'source_identity', return_value=None))
         self.enterContext(patch.object(service_store.runtime_package, 'verify_runtime',
                                       return_value={'policy_sha256': service_store.RUNTIME_POLICY_SHA256}))
         self.enterContext(patch.object(smoke_store, 'validate_ar4k_model',
             side_effect=lambda first: smoke_store.ValidatedModel(first, fixture.f.pins.model_revision)))
         if accepted:
-            self.enterContext(patch.object(service_store, 'ACCEPTANCE_SHA256', fixture.accepted()))
+            fixture.accepted()
         fixture.store = service_store.InstalledStore(fixture.profile)
         return fixture
 
@@ -161,6 +180,91 @@ class InstalledStoreTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'controller'):
                     f.store.recheck_static(manifest)
 
+    def test_on_disk_anchor_approval_cycle_keeps_controller_bytes_unchanged(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = self.fixture(root)
+            before = service_store.controller_artifacts()
+            f.accepted()
+            manifest = f.store.verify_static()
+            self.assertEqual(before, service_store.controller_artifacts())
+            self.assertEqual(manifest['qualification_anchor']['installed_workload'],
+                             f.workload())
+            self.assertEqual(manifest['qualification_anchor']['acceptance_sha256'],
+                             manifest['qualification_stamp']['sha256'])
+            f.store.recheck_static(manifest)
+            anchor = operator_store.read_json(f.anchor)
+            anchor['acceptance_sha256'] = '0'*64
+            operator_store.atomic_json(f.anchor, anchor)
+            with self.assertRaises(ValueError):
+                f.store.recheck_static(manifest)
+
+    def test_missing_installed_workload_and_smoke_substitution_refuse(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = self.fixture(root)
+            with self.assertRaisesRegex(ValueError, 'installed_workload'):
+                service_store.expected_acceptance(f.value, 'review', 'envelope', None)
+            smoke = service_store.service_smoke_store.service_binding(
+                service_store.service_smoke_store.PINS)['service']['workload']
+            with self.assertRaisesRegex(ValueError, 'installed_workload'):
+                service_store.expected_acceptance(f.value, 'review', 'envelope', smoke)
+            anchor = operator_store.read_json(f.anchor)
+            anchor['acceptance_sha256'] = '0'*64
+            operator_store.atomic_json(f.anchor, anchor)
+            with self.assertRaisesRegex(ValueError, 'persistent_service_unqualified'):
+                f.store.verify_static()
+
+    def test_changed_or_malformed_on_disk_anchor_refuses(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = self.fixture(root, accepted=True)
+            manifest = f.store.verify_static()
+            anchor = operator_store.read_json(f.anchor)
+            anchor['installed_workload']['max_generation_posts'] += 1
+            operator_store.atomic_json(f.anchor, anchor)
+            with self.assertRaisesRegex(ValueError, 'anchor|acceptance'):
+                f.store.recheck_static(manifest)
+            with self.assertRaisesRegex(ValueError, 'service_acceptance'):
+                f.store.verify_static()
+            anchor['schema'] = True
+            operator_store.atomic_json(f.anchor, anchor)
+            with self.assertRaisesRegex(ValueError, 'acceptance_anchor_invalid'):
+                f.store.verify_static()
+
+    def test_temporary_safety_dependency_change_invalidates_acceptance(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = self.fixture(root)
+            copied = f.f.root/'controller-sources'
+            shutil.copytree(service_store.CONTROLLER_SOURCE_DIR, copied,
+                            ignore=shutil.ignore_patterns('__pycache__'))
+            with patch.object(service_store, 'CONTROLLER_SOURCE_DIR', copied):
+                f.accepted()
+                manifest = f.store.verify_static()
+                expected = {'operator_policy.py', 'winjob.py', 'operator_probe.py',
+                    'telemetry.py', 'smoke_http.py', 'model_identity.py',
+                    'runtime_package.py', 'windows_probe.ps1', 'windows_counters.cs'}
+                self.assertTrue(expected.issubset({row['name'] for row in
+                                                   manifest['controller_artifacts']}))
+                target = copied/'operator_policy.py'
+                target.write_bytes(target.read_bytes()+b'\n# changed safety behavior\n')
+                with self.assertRaisesRegex(ValueError, 'controller'):
+                    f.store.recheck_static(manifest)
+                with self.assertRaisesRegex(ValueError, 'service_acceptance'):
+                    f.store.verify_static()
+
+    def test_new_nested_service_source_invalidates_controller_binding(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = self.fixture(root)
+            copied = f.f.root/'controller-sources'
+            shutil.copytree(service_store.CONTROLLER_SOURCE_DIR, copied,
+                            ignore=shutil.ignore_patterns('__pycache__'))
+            with patch.object(service_store, 'CONTROLLER_SOURCE_DIR', copied):
+                f.accepted()
+                manifest = f.store.verify_static()
+                future = copied/'future_service'
+                future.mkdir()
+                (future/'guardian.py').write_text('SAFE = False\n', encoding='utf-8')
+                with self.assertRaisesRegex(ValueError, 'controller'):
+                    f.store.recheck_static(manifest)
+
     def test_bound_policy_admits_only_exact_installed_acceptance(self):
         with tempfile.TemporaryDirectory() as root:
             f = self.fixture(root, accepted=True)
@@ -174,6 +278,17 @@ class InstalledStoreTests(unittest.TestCase):
             changed['qualification']['profile_sha256'] = '0'*64
             with self.assertRaises(ValueError):
                 bound.profile_from_manifest(changed)
+
+    def test_bound_frame_policy_does_not_read_controller_sources_per_sample(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = self.fixture(root, accepted=True)
+            bound = BoundPolicy(f.f.pins)
+            profile = bound.profile_from_manifest(f.store.verify_static())
+            sample = frame(12)
+            with patch.object(service_store, 'controller_artifacts',
+                              side_effect=AssertionError('source read during frame')):
+                self.assertEqual(bound.admission_reasons(profile, baseline(series()), sample,
+                    now=sample.query_end, now_utc=sample.validated_utc), [])
 
     def test_no_child_failed_result_cannot_retire_latch(self):
         with tempfile.TemporaryDirectory() as root:

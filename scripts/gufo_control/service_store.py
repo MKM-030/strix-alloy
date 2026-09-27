@@ -1,9 +1,8 @@
 """Closed installed GUFO candidate with separate, currently absent service acceptance.
 
-Inspection is read only. A future independent review must pin ACCEPTANCE_SHA256
-before any installed start can be admitted. Runtime execution belongs to a caller.
+Inspection is read only. A separate local trust-anchor file has no approval by
+default. Runtime execution belongs to a caller.
 """
-from copy import deepcopy
 from dataclasses import asdict, replace
 from hashlib import sha256
 import json
@@ -24,7 +23,8 @@ SOURCE_TREE = service_smoke_store.SOURCE_TREE
 RUNTIME_VARIANT = service_smoke_store.RUNTIME_VARIANT
 RUNTIME_POLICY_SHA256 = service_smoke_store.RUNTIME_POLICY_SHA256
 CONTROLLER_ID = 'gufo-native-installed-controller-v1'
-ACCEPTANCE_SHA256 = None  # No independent persistent-service acceptance exists.
+CONTROLLER_SOURCE_DIR = Path(__file__).resolve().parent
+ANCHOR_PATH = PROFILE_PATH.with_name('gufo-service-acceptance-anchor.json')
 PINS = replace(service_smoke_store.PINS, profile_id=PROFILE_ID,
     evidence=smoke_store.ROOT/'reports/gufo-native-installed-v1-runs',
     qualification=smoke_store.ROOT/'reports/gufo-native-installed-v1-acceptance.json')
@@ -112,29 +112,113 @@ def source_identity():
 
 
 def controller_artifacts():
-    """Capture current controller bytes without embedding its own hash in source."""
-    from . import admission, benchmark_runtime, smoke_guard, smoke_policy
-    modules = (service_smoke_store, smoke_store, smoke_policy, admission,
-               benchmark_runtime, smoke_guard, operator_store)
-    files = [('service_store', Path(__file__)),
-             *((module.__name__.rsplit('.', 1)[-1], Path(module.__file__))
-               for module in modules)]
-    return [dict(module=name, path=str(path.resolve(strict=True)),
-                 sha256=operator_store.artifact_record(path)['sha256'])
-            for name, path in files]
+    """Inventory all local controller sources, including future service modules.
+
+    The trust anchor resides in config and is deliberately excluded.
+    """
+    root = CONTROLLER_SOURCE_DIR.resolve(strict=True)
+    if not root.is_dir() or CONTROLLER_SOURCE_DIR.is_symlink():
+        raise ValueError('controller_source_root_invalid')
+    entries = list(root.rglob('*'))
+    if any(path.is_symlink() for path in entries):
+        raise ValueError('controller_source_path_invalid')
+    files = sorted((path for path in entries
+                    if path.suffix in ('.py', '.ps1', '.cs')),
+                   key=lambda path: path.relative_to(root).as_posix())
+    if not files or not any(path.relative_to(root).as_posix() == 'service_store.py'
+                            for path in files):
+        raise ValueError('controller_source_inventory_invalid')
+    rows = []
+    for path in files:
+        if not path.is_file() or not path.resolve(strict=True).is_relative_to(root):
+            raise ValueError('controller_source_path_invalid')
+        rows.append(dict(name=path.relative_to(root).as_posix(),
+                         path=str(path.resolve(strict=True)),
+                         sha256=operator_store.artifact_record(path)['sha256']))
+    return rows
 
 
-def expected_acceptance(profile, review_id, envelope_review_id):
+def expected_anchor(profile):
+    return dict(schema=1, profile_id=PROFILE_ID, profile_sha256=_digest(profile),
+                controller_id=CONTROLLER_ID, acceptance_sha256=None,
+                installed_workload=None)
+
+
+def _installed_workload(value):
+    keys = {'schema', 'kind', 'profile_id', 'lifetime_seconds',
+            'max_generation_posts', 'max_model_queries', 'max_prompt_tokens',
+            'max_output_tokens', 'context_tokens', 'sessions', 'sole_client'}
+    if (type(value) is not dict or set(value) != keys
+            or type(value['schema']) is not int or value['schema'] != 1
+            or value['kind'] != 'gufo-native-installed-finite-workload'
+            or value['profile_id'] != PROFILE_ID
+            or type(value['sole_client']) is not bool or value['sole_client'] is not True
+            or type(value['context_tokens']) is not int or value['context_tokens'] != 4096
+            or type(value['sessions']) is not int or value['sessions'] != 1
+            or any(type(value[k]) is not int or not 1 <= value[k] <= limit for k, limit in (
+                ('lifetime_seconds', 86400), ('max_generation_posts', 10000),
+                ('max_model_queries', 10000), ('max_prompt_tokens', 2304),
+                ('max_output_tokens', 256)))):
+        raise ValueError('installed_workload_invalid')
+    return value
+
+
+def validate_anchor(profile, anchor):
+    expected = expected_anchor(profile)
+    if (type(anchor) is not dict or set(anchor) != set(expected)
+            or any(anchor[k] != expected[k] for k in (
+                'schema', 'profile_id', 'profile_sha256', 'controller_id'))
+            or type(anchor['schema']) is not int
+            or (anchor['acceptance_sha256'] is not None
+                and not smoke_store._digest_valid(anchor['acceptance_sha256']))):
+        raise ValueError('acceptance_anchor_invalid')
+    if anchor['installed_workload'] is not None:
+        _installed_workload(anchor['installed_workload'])
+    return anchor
+
+
+def _anchor(profile):
+    if not ANCHOR_PATH.is_absolute() or ANCHOR_PATH.is_symlink():
+        raise ValueError('acceptance_anchor_path_invalid')
+    try:
+        anchor, stamp = smoke_store._json_artifact(ANCHOR_PATH, None, 'acceptance_anchor')
+    except OSError as error:
+        raise ValueError('persistent_service_unqualified') from error
+    validate_anchor(profile, anchor)
+    return anchor, stamp
+
+
+def acceptance_record(profile, review_id, envelope_review_id,
+                      installed_workload, artifacts):
     if (not isinstance(review_id, str) or not review_id.strip()
             or not isinstance(envelope_review_id, str) or not envelope_review_id.strip()):
         raise ValueError('service_review_missing')
-    finite = service_smoke_store.service_binding(service_smoke_store.PINS)['service']['workload']
+    workload = _installed_workload(installed_workload)
+    required = {'service_store.py', 'smoke_store.py', 'smoke_policy.py',
+        'operator_policy.py', 'winjob.py', 'operator_probe.py', 'telemetry.py',
+        'smoke_http.py', 'model_identity.py', 'runtime_package.py',
+        'windows_probe.ps1', 'windows_counters.cs'}
+    if (type(artifacts) is not list or not required.issubset(
+            {row.get('name') for row in artifacts if type(row) is dict})
+            or any(type(row) is not dict or set(row) != {'name', 'path', 'sha256'}
+                   or type(row['name']) is not str or type(row['path']) is not str
+                   or not Path(row['path']).is_absolute()
+                   or not smoke_store._digest_valid(row['sha256']) for row in artifacts)
+            or [row['name'] for row in artifacts] != sorted(
+                {row['name'] for row in artifacts})):
+        raise ValueError('controller_artifacts_invalid')
     return dict(schema=1, profile_id=PROFILE_ID, profile_sha256=_digest(profile),
-        controller=deepcopy(profile['controller']), finite_workload_sha256=_digest(finite),
-        controller_artifacts=controller_artifacts(),
-        envelope=deepcopy(profile['envelope']), review_id=review_id,
+        controller=profile['controller'], installed_workload=workload,
+        installed_workload_sha256=_digest(workload),
+        controller_artifacts=artifacts,
+        envelope=profile['envelope'], review_id=review_id,
         persistent_envelope_review_id=envelope_review_id,
         status='persistent-service-accepted')
+
+
+def expected_acceptance(profile, review_id, envelope_review_id, installed_workload):
+    return acceptance_record(profile, review_id, envelope_review_id,
+                             installed_workload, controller_artifacts())
 
 
 def _profile(profile_path, pins):
@@ -147,14 +231,15 @@ def _profile(profile_path, pins):
     return profile, operator_store.artifact_record(profile_path)
 
 
-def _acceptance(profile, pins):
-    if ACCEPTANCE_SHA256 is None:
+def _acceptance(profile, pins, anchor):
+    if anchor['acceptance_sha256'] is None or anchor['installed_workload'] is None:
         raise ValueError('persistent_service_unqualified')
     try:
         record, stamp = smoke_store._json_artifact(pins.qualification,
-            ACCEPTANCE_SHA256, 'service_acceptance')
+            anchor['acceptance_sha256'], 'service_acceptance')
         if (not isinstance(record, dict) or record != expected_acceptance(
-                profile, record.get('review_id'), record.get('persistent_envelope_review_id'))):
+                profile, record.get('review_id'), record.get('persistent_envelope_review_id'),
+                anchor['installed_workload'])):
             raise ValueError('service_acceptance_mismatch')
         return record, stamp
     except (OSError, ValueError, TypeError, KeyError) as error:
@@ -192,7 +277,9 @@ def inspect_installed_profile(profile_path: Path) -> dict:
     except (OSError, ValueError, KeyError, TypeError) as error:
         result['refusals'].append(str(error))
     try:
-        _acceptance(candidate['installed_profile'] if candidate else result['identity'], PINS)
+        profile = candidate['installed_profile'] if candidate else result['identity']
+        anchor, _ = _anchor(profile)
+        _acceptance(profile, PINS, anchor)
         result['qualified'] = True
     except ValueError as error:
         result['refusals'].append(str(error))
@@ -323,7 +410,11 @@ class InstalledStore(BoundStore):
         smoke_store._incomplete_latches(self.PINS)
         _prior_run(self.PINS)
         manifest = _candidate(self.profile_path, self.PINS)
-        qualification, stamp = _acceptance(manifest['installed_profile'], self.PINS)
+        anchor, anchor_stamp = _anchor(manifest['installed_profile'])
+        qualification, stamp = _acceptance(manifest['installed_profile'], self.PINS,
+                                            anchor)
+        manifest['qualification_anchor'] = anchor
+        manifest['qualification_anchor_stamp'] = anchor_stamp
         manifest['qualification'] = qualification
         manifest['qualification_stamp'] = stamp
         return manifest
@@ -359,7 +450,11 @@ class InstalledStore(BoundStore):
                     or operator_store.artifact_record(self.PINS.margin_report)
                        != {k: v for k, v in manifest['margin_report'].items() if k != 'label'}):
                 raise ValueError('installed_history_changed')
-            record, record_stamp = _acceptance(profile, self.PINS)
+            anchor, anchor_stamp = _anchor(profile)
+            if (manifest['qualification_anchor'] != anchor
+                    or manifest['qualification_anchor_stamp'] != anchor_stamp):
+                raise ValueError('acceptance_anchor_changed')
+            record, record_stamp = _acceptance(profile, self.PINS, anchor)
             if (manifest['qualification'] != record
                     or manifest['qualification_stamp'] != record_stamp):
                 raise ValueError('service_acceptance_changed')

@@ -85,10 +85,14 @@ def profile_from_manifest(manifest: dict, *, pins=PINS) -> SmokeProfile:
             q = manifest['qualification']
             review = q['review_id']
             envelope_review = q['persistent_envelope_review_id']
-            if (service_store.ACCEPTANCE_SHA256 is None
-                    or manifest['qualification_stamp']['sha256'] != service_store.ACCEPTANCE_SHA256
+            anchor = service_store.validate_anchor(manifest['installed_profile'],
+                                                   manifest['qualification_anchor'])
+            if (anchor['acceptance_sha256'] is None
+                    or anchor['installed_workload'] is None
+                    or manifest['qualification_stamp']['sha256'] != anchor['acceptance_sha256']
                     or _canonical(q) != _canonical(service_store.expected_acceptance(
-                        manifest['installed_profile'], review, envelope_review))
+                        manifest['installed_profile'], review, envelope_review,
+                        anchor['installed_workload']))
                     or _canonical(manifest['installed_profile']) != _canonical(
                         service_store.expected_profile(pins))
                     or manifest['profile'] != pins.profile_id
@@ -136,20 +140,21 @@ def _profile_valid(profile, *, pins=PINS):
     if pins.profile_id == INSTALLED_SERVICE:
         from . import service_store
         try:
-            if service_store.ACCEPTANCE_SHA256 is None:
-                return False
+            q = json.loads(profile.qualification_json)
+            workload = q['installed_workload']
             expected = SmokeProfile(**_demand(pins), profile_id=pins.profile_id,
                 source_commit=pins.source_commit, model_revision=pins.model_revision,
                 qualified=True, review_id=review,
                 shared_allowance_review_id=profile.shared_allowance_review_id,
-                qualification_json=_canonical(service_store.expected_acceptance(
+                qualification_json=_canonical(service_store.acceptance_record(
                     service_store.expected_profile(pins), review,
-                    profile.shared_allowance_review_id)))
+                    profile.shared_allowance_review_id, workload,
+                    q['controller_artifacts'])))
             return (profile == expected and profile.qualified is True
                 and all(type(getattr(profile, k)) is int for k in (
                     'gpu_peak_bytes', 'host_peak_bytes',
                     'shared_physical_allowance_bytes', 'commit_peak_bytes')))
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, KeyError):
             return False
     try:
         expected = SmokeProfile(**_demand(pins), profile_id=pins.profile_id, source_commit=pins.source_commit,
