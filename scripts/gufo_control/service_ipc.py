@@ -565,8 +565,6 @@ def _connect(record, deadline):
         if handle != _INVALID:
             break
         if time.monotonic() >= deadline:
-            if channel not in _RETAINED_CLEANUP:
-                _RETAINED_CLEANUP.append(channel)
             raise TimeoutError('control_connect_timeout')
         time.sleep(.005)
     channel = _Channel(handle)
@@ -589,6 +587,10 @@ def _connect(record, deadline):
 
 
 def _close_client(channel):
+    # Own the entire operation graph independently of any cleanup exception.
+    # Only confirmed retirement below may release this strong reference.
+    if channel not in _RETAINED_CLEANUP:
+        _RETAINED_CLEANUP.append(channel)
     deadline = time.monotonic()+2
     while not channel.retire():
         if time.monotonic() >= deadline:
@@ -608,6 +610,7 @@ def control_request(record: dict, command: str, *, timeout_seconds: float) -> di
     deadline = time.monotonic()+timeout_seconds
     channel = _connect(record, deadline)
     committed = False
+    outcome = None
     try:
         identity = _process_identity(os.getpid())
         channel.send(_envelope(record, channel.challenge, command=command, client=identity), 'request')
@@ -627,13 +630,22 @@ def control_request(record: dict, command: str, *, timeout_seconds: float) -> di
             _validate_envelope(response, record, channel.challenge)
             if response.get('state') != 'committed':
                 raise ValueError('commit_ack_invalid')
-        return response
+        outcome = response
     except (OSError, ValueError, TimeoutError):
         if committed:
-            return dict(state='indeterminate', run_id=record['run_id'], requires_status=True)
-        raise
+            outcome = dict(state='indeterminate', run_id=record['run_id'], requires_status=True)
+        else:
+            raise
     finally:
-        _close_client(channel)
+        try:
+            _close_client(channel)
+        except (OSError, RuntimeError):
+            if outcome is None:
+                raise
+            # Transport retirement cannot revoke a received ACK or classify a
+            # possibly durable commit as failed. Never expose exception text.
+            outcome = dict(outcome, cleanup_error='control_cleanup_incomplete')
+    return outcome
 
 
 def _validate_descriptor(descriptor):

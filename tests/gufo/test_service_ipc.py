@@ -1,6 +1,7 @@
 """Local protocol and native Windows security tests; no model execution."""
 import importlib
 import importlib.util
+import gc
 import json
 import os
 from pathlib import Path
@@ -12,6 +13,7 @@ import sys
 import unittest
 from unittest.mock import patch
 import uuid
+import weakref
 from contextlib import contextmanager
 
 
@@ -99,6 +101,40 @@ def _native_launcher_helper(descriptor_path):
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_handoff_outcome_survives_unconfirmed_client_cleanup(self):
+        from types import SimpleNamespace
+        ipc = importlib.import_module('gufo_control.service_ipc')
+        record = dict(run_id='exact-run', profile_digest='a'*64,
+                      guardian={'pid': 1}, child={'pid': 2}, run='exact-directory')
+        for acknowledged in (True, False):
+            with self.subTest(acknowledged=acknowledged):
+                channel = ipc._Channel(None)
+                ready = ipc._envelope(record, channel.challenge, state='ready',
+                    guardian=record['guardian'], child=record['child'], run=record['run'])
+                ack = ipc._envelope(record, channel.challenge, state='committed')
+                responses = ['sent', ready, 'sent', ack if acknowledged else TimeoutError('lost_ack')]
+                clock = SimpleNamespace(monotonic=iter([0, 0, 3]).__next__, sleep=lambda _: None)
+                try:
+                    with patch.object(ipc, '_connect', return_value=channel), \
+                            patch.object(ipc, '_process_identity', return_value={'pid': 3}), \
+                            patch.object(channel, 'send'), patch.object(channel, 'receive'), \
+                            patch.object(ipc, '_wait_channel', side_effect=responses), \
+                            patch.object(channel, 'retire', return_value=False), \
+                            patch.object(ipc, 'time', clock):
+                        try:
+                            result = ipc.control_request(record, 'handoff', timeout_seconds=1)
+                        except RuntimeError as error:
+                            self.fail(f'cleanup erased the handoff outcome: {error}')
+                    self.assertEqual(result['state'], 'committed' if acknowledged else 'indeterminate')
+                    self.assertEqual(result['run_id'], record['run_id'])
+                    self.assertEqual(result['cleanup_error'], 'control_cleanup_incomplete')
+                    if not acknowledged:
+                        self.assertTrue(result['requires_status'])
+                    self.assertIn(channel, ipc._RETAINED_CLEANUP)
+                finally:
+                    ipc._close_client(channel)
+                self.assertNotIn(channel, ipc._RETAINED_CLEANUP)
+
     def test_envelope_binds_run_digest_version_and_challenge(self):
         ipc = importlib.import_module('gufo_control.service_ipc')
         record = dict(run_id='run', profile_digest='a'*64)
@@ -255,14 +291,94 @@ class NativeTests(unittest.TestCase):
     def test_native_inherited_pipe_handle_is_denied(self):
         ipc = self.ipc
         server = ipc.ControlServer(uuid.uuid4().hex, dict(ipc._process_identity(os.getpid()), profile_digest='a'*64))
+        helper = None
         try:
+            handle = server._slots[0].handle
+            self.assertFalse(ipc._inherited(handle))  # Also proves parent handle validity.
+            query = ipc._api().GetNamedPipeInfo
+            query.argtypes = [ipc.W.HANDLE] + [ipc.C.POINTER(ipc.W.DWORD)]*4
+            query.restype = ipc.W.BOOL
+            self.assertTrue(query(handle, None, None, None, None))
+            # Python may reuse a noninherited numeric handle. Query the actual
+            # pipe object, with the same idle pipe explicitly inherited as control.
             code = ('import ctypes as C,sys; a=C.WinDLL("kernel32",use_last_error=True); '
-                'a.GetNamedPipeClientProcessId.argtypes=[C.c_void_p,C.POINTER(C.c_ulong)]; '
-                'v=C.c_ulong(); sys.exit(1 if a.GetNamedPipeClientProcessId(int(sys.argv[1]),C.byref(v)) else 0)')
-            helper = subprocess.run([sys.executable, '-c', code, str(server._slots[0].handle)],
-                close_fds=False, creationflags=subprocess.CREATE_NO_WINDOW, capture_output=True, timeout=5)
-            self.assertEqual(helper.returncode, 0, helper.stderr)
+                'a.GetNamedPipeInfo.argtypes=[C.c_void_p]+[C.POINTER(C.c_ulong)]*4; '
+                'valid=bool(a.GetNamedPipeInfo(int(sys.argv[1]),None,None,None,None)); '
+                'sys.exit(0 if valid==bool(int(sys.argv[2])) else 1)')
+            for inherited in (False, True):
+                os.set_handle_inheritable(handle, inherited)
+                helper = subprocess.Popen([sys.executable, '-c', code, str(handle), str(int(inherited))],
+                    close_fds=False, creationflags=subprocess.CREATE_NO_WINDOW,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                self.assertEqual(helper.wait(timeout=5), 0, f'inheritance={inherited}')
         finally:
+            if helper is not None:
+                if helper.poll() is None:
+                    helper.terminate()
+                helper.wait(timeout=5)
+            os.set_handle_inheritable(server._slots[0].handle, False)
+            server.close()
+
+    def test_absent_and_busy_endpoint_have_bounded_connection_timeout(self):
+        ipc = self.ipc
+        server = ipc.ControlServer(uuid.uuid4().hex, dict(ipc._process_identity(os.getpid()), profile_digest='a'*64))
+        occupied = None
+        try:
+            occupied = ipc._api().CreateFileW(server.record['endpoint'], 0x12019b, 0, None, 3, 0x40000000, None)
+            self.assertNotEqual(occupied, ipc._INVALID)
+            missing_id = uuid.uuid4().hex
+            absent = dict(server.record, run_id=missing_id, endpoint='\\\\.\\pipe\\gufo-'+missing_id)
+            for record in (absent, server.record):
+                with self.subTest(endpoint=record['endpoint']):
+                    started = time.monotonic()
+                    try:
+                        with self.assertRaisesRegex(TimeoutError, 'control_connect_timeout'):
+                            ipc._connect(record, started+.02)
+                    except UnboundLocalError as error:
+                        self.fail(f'connection timeout accessed a nonexistent channel: {error}')
+                    self.assertLess(time.monotonic()-started, 1)
+        finally:
+            if occupied not in (None, ipc._INVALID):
+                ipc.winjob._check(ipc._api().CloseHandle(occupied))
+            server.close()
+
+    def test_client_cancellation_owner_survives_discarded_exception_and_collection(self):
+        ipc = self.ipc
+        server = ipc.ControlServer(uuid.uuid4().hex, dict(ipc._process_identity(os.getpid()), profile_digest='a'*64))
+        channel = operation = None
+        owner = None
+        handle = None
+        try:
+            handle = ipc._api().CreateFileW(server.record['endpoint'], 0x12019b, 0, None, 3, 0x40000000, None)
+            self.assertNotEqual(handle, ipc._INVALID)
+            channel = ipc._Channel(handle)
+            channel.receive()
+            operation = channel.operation
+            owner = weakref.ref(channel)
+            now = time.monotonic()
+            with patch.object(operation, 'poll', return_value=None), \
+                    patch.object(ipc.time, 'monotonic', side_effect=[now, now, now+3]):
+                try:
+                    ipc._close_client(channel)
+                except RuntimeError as error:
+                    self.assertEqual(str(error), 'pending_io_retained')
+                else:
+                    self.fail('unconfirmed client retirement did not fail')
+            del channel
+            gc.collect()
+            self.assertIsNotNone(owner(), 'discarding the exception freed the pending client channel')
+            self.assertIn(owner(), ipc._RETAINED_CLEANUP)
+            self.assertIs(owner().operation, operation)
+            ipc._close_client(owner())
+            self.assertIsNone(owner(), 'confirmed retirement did not release registry ownership')
+        finally:
+            # Keep native operation storage alive even on the pre-fix RED path.
+            channel = owner() if owner else channel
+            if channel is None and operation is not None and operation.overlapped.event:
+                channel = ipc._Channel(handle)
+                channel.operation = operation
+            if channel is not None:
+                ipc._close_client(channel)
             server.close()
 
     def test_replaced_endpoint_cannot_be_joined_after_all_old_handles_close(self):
