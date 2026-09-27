@@ -24,8 +24,10 @@ def _check_redundant_number(source, name, expected, errors, unavailable, label):
     actual = _finite_number(source[name])
     if actual is None:
         errors.append('invalid_' + label)
-    elif expected is not None and not math.isclose(
-            actual, expected, rel_tol=_RATE_TOLERANCE, abs_tol=_RATE_TOLERANCE):
+    elif expected is None:
+        errors.append(label + '_unverifiable')
+    elif not math.isclose(actual, expected, rel_tol=_RATE_TOLERANCE,
+                          abs_tol=_RATE_TOLERANCE):
         errors.append(label + '_disagrees')
 
 
@@ -58,6 +60,10 @@ def validate_metrics(route, usage, timings, *, expected_prompt, output_limit,
     logical = p + c if p is not None and c is not None else None
     if logical is not None and logical != expected_prompt:
         errors.append('prepared_prompt_count_disagrees')
+    if p is not None and p > expected_prompt:
+        errors.append('prefill_exceeds_' + str(expected_prompt))
+    if c is not None and c > expected_prompt:
+        errors.append('cached_prompt_exceeds_' + str(expected_prompt))
     if out == 0:
         errors.append('empty_generation')
     if out is not None and out > output_limit:
@@ -137,13 +143,15 @@ def validate_metrics(route, usage, timings, *, expected_prompt, output_limit,
 
     prompt_ms = metrics.get('engine_timing_prompt_ms')
     predicted_ms = metrics.get('engine_timing_predicted_ms')
+    prompt_count_valid = p is not None and p <= expected_prompt
+    output_count_valid = out is not None and 0 < out <= output_limit
     expected_values = {
-        'prompt_per_token_ms': prompt_ms / p if p is not None and p > 0 and prompt_ms is not None else None,
-        'prompt_per_second': p * 1000.0 / prompt_ms if p is not None and prompt_ms and prompt_ms > 0 else
-                             (0.0 if p is not None and prompt_ms == 0 else None),
-        'predicted_per_token_ms': predicted_ms / out if out is not None and out > 0 and predicted_ms is not None else None,
-        'predicted_per_second': out * 1000.0 / predicted_ms if out is not None and predicted_ms and predicted_ms > 0 else
-                                (0.0 if out is not None and predicted_ms == 0 else None),
+        'prompt_per_token_ms': prompt_ms / p if prompt_count_valid and p > 0 and prompt_ms is not None else None,
+        'prompt_per_second': p * 1000.0 / prompt_ms if prompt_count_valid and prompt_ms and prompt_ms > 0 else
+                             (0.0 if prompt_count_valid and prompt_ms == 0 else None),
+        'predicted_per_token_ms': predicted_ms / out if output_count_valid and predicted_ms is not None else None,
+        'predicted_per_second': out * 1000.0 / predicted_ms if output_count_valid and predicted_ms and predicted_ms > 0 else
+                                (0.0 if output_count_valid and predicted_ms == 0 else None),
     }
     for name, expected in expected_values.items():
         _check_redundant_number(timings, name, expected, errors, unavailable,

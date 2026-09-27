@@ -150,6 +150,46 @@ class AssessmentTests(unittest.TestCase):
         parsed['usage']['completion_tokens_per_second'] = 500.0 + 1e-8
         self.assertTrue(self.positive(1, parsed)['native_metrics_valid'])
 
+    def test_present_redundant_rates_require_source_durations(self):
+        cases = (
+            ('prompt_ms', 'prompt_per_second', 'prompt_tokens_per_second',
+             'engine_pp_tokens_per_second'),
+            ('prompt_ms', 'prompt_per_token_ms', None,
+             'engine_pp_tokens_per_second'),
+            ('predicted_ms', 'predicted_per_second', 'completion_tokens_per_second',
+             'engine_tg_tokens_per_second'),
+            ('predicted_ms', 'predicted_per_token_ms', None,
+             'engine_tg_tokens_per_second'),
+        )
+        for duration, timing_field, usage_field, rate_key in cases:
+            parsed = parsed_for(1)
+            del parsed['timings'][duration]
+            parsed['timings'][timing_field] = 123.0
+            if usage_field:
+                parsed['usage'][usage_field] = 123.0
+            with self.subTest(duration=duration, timing_field=timing_field):
+                result = self.positive(1, parsed)
+                self.assertFalse(result['native_metrics_valid'])
+                self.assertFalse(result['fully_validated'])
+                self.assertIsNone(result['metrics'][rate_key])
+
+    def test_huge_native_counts_return_invalid_metrics_without_rates(self):
+        for field in ('prompt_n', 'predicted_n'):
+            parsed = parsed_for(1)
+            parsed['timings'][field] = 10**1000
+            post = WORKLOAD.post(1, 1)
+            row = next(r for r in WORKLOAD.document()['request_pool'] if r['id'] == post.request_id)
+            result = finite_metrics.validate_metrics(
+                post.route, parsed['usage'], parsed['timings'],
+                expected_prompt=row['native_preparation']['framed_tokens'],
+                output_limit=64)
+            with self.subTest(field=field):
+                self.assertFalse(result['valid'])
+                self.assertIsNone(result['metrics'].get('engine_pp_tokens_per_second'))
+                self.assertIsNone(result['metrics'].get('engine_tg_tokens_per_second'))
+                self.assertIn('engine_pp_tokens_per_second', result['unavailable'])
+                self.assertIn('engine_tg_tokens_per_second', result['unavailable'])
+
     def test_optional_timings_missing_or_zero_produce_no_rate(self):
         for value in (None, 0):
             parsed = parsed_for(1)
