@@ -915,6 +915,7 @@ class PhaseScheduleTests(unittest.TestCase):
                 self.advance(580.0-self.clock())
         ledger, workload, transport = self.synthetic_setup(index=2,
             on_started=started)
+        self.advance(579.96-self.clock())  # POST crosses startup, not its own 60s limit.
         class Marker:
             def poll(self, deadline):
                 return True
@@ -1096,4 +1097,3 @@ git -c user.name=Codex -c user.email=codex@openai.com commit -m "feat: execute b
 The future finite guardian wrapper injects `start_readiness` as `_Guardian.http_start`, uses its own finite lifecycle deadline provider to capture `resumed_at` exactly, and obtains `run_dir` and private key from `on_started`. It joins the readiness thread **before** calling the authenticated IPC `on_ready`/handoff path and derives `readiness_digest` from live `ReturnedReceipt` objects plus the ledger/evidence checks. Only that authenticated wrapper constructs `VerifiedHandoff` with the exact run ID, counts, digest, joined-worker proof and committed IPC state. The continuation independently checks its ledger and consumes only the remaining scheduled POSTs; its certificate does not claim to have authenticated the wrapper. The wrapper tracks the continuation after handoff, treats early stop/parent death as failure, issues authenticated stop only after `certificate.complete`, then requires guardian terminal success, owned exit, clean workers, evidence and five-sample recovery before lifecycle 2. An uncertain handoff is resolved by exact-run authenticated status, never a second launch. Installed `_run_guardian`, installed profile pins and installed service behavior stay untouched.
 
 Structural full coverage can coexist with pending manual prose review. It is not final semantic acceptance, service acceptance or a speed claim. Sampled per-phase memory and missing owned counters remain unknown until the later guardian evidence binding; no zero imputation or fabricated peak. The old failed recovery latch, fresh admission and full 68/4/20 envelope review remain separate gates.
-
