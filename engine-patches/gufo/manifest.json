@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "name": "ar4k-service-v1",
-  "status": "cpu-verified-source-patch",
+  "status": "built-runtime-unqualified-source-patch",
   "upstream_url": "https://github.com/pixmaate/gufo.git",
   "base_commit": "cff564964e8506c0abb3e530cecb55332187ac6c",
   "base_tree": "dd8f9bc491d0c43976f6cdf9b5ab40f6d727a043",
@@ -50,7 +50,28 @@
     "upstream_license_text_matches": true,
     "measured_gpu_executable_unchanged": true
   },
-  "gpu_build_verified": false,
+  "gpu_build_verified": true,
+  "gpu_build_validation": {
+    "date": "2026-09-27",
+    "source_head": "139aa9c58dadcb75c1bd0741aad0823fc65a0547",
+    "source_tree": "273d84974a604c81023dae15d379a9bfc0b1c29b",
+    "sdk_version": "10.2.0",
+    "architecture": "gfx1151",
+    "build_type": "RelWithDebInfo",
+    "hip_flags": "-O2 -DNDEBUG -g0",
+    "jobs": 2,
+    "gufo_exe_size_bytes": 42439168,
+    "gufo_exe_sha256": "66798D3BCAD27B7E2BEC16980B225F83CC3F017FAD9088ADA8D64D604BC4F209",
+    "cpu_tests_passed": [
+      "openai_chat_test",
+      "text_generation_scheduler_test",
+      "qwen38_flash_next.mtp_sampling",
+      "qwen38_flash_next.prompt_lookup"
+    ],
+    "cpu_test_seconds": 0.74,
+    "server_executed": false,
+    "gpu_workload_executed": false
+  },
   "runtime_qualified": false,
   "persistent_service_qualified": false,
   "license": "LICENSE.upstream"

@@ -12,11 +12,13 @@ rejected, not silently clipped or stripped. See patched `docs/CLI.md` for the
 required companion flags and API restrictions.
 
 All three implementation tasks and the final complete patch passed independent
-source review. Four focused native Windows CPU tests passed. **This is not a
-GPU-qualified build, persistent launcher or installer.** CPU tests do not
-compile the HIP-only adapters, typed loaders or setters. The old benchmark
-binary and static runtime package are unchanged; their results do not qualify
-this new source revision.
+source review. Four focused native Windows CPU policy tests passed. A separate
+GPU-capable build now also compiles the HIP-only adapters, typed loaders and
+setters; four non-HIP test binaries from that build passed, including the MTP
+sampling and prompt-lookup tests. **This is not a GPU-runtime-qualified server,
+persistent launcher or installer.** The new server has not been executed.
+The old benchmark binary and static runtime package are unchanged; their results
+do not qualify this new source revision. Build identities are in the manifest.
 
 ## Reproduce the source
 
@@ -45,9 +47,11 @@ and the existing Halogen, native Strix Alloy and 27B backends intact.
 
 ## Remaining gates
 
-The reproducible build entrypoint and persistent start/status/stop workflow are
-still unfinished. A GPU-capable build needs its own identity, runtime package
-policy and staged correctness/memory/shutdown qualification before use. The
+The separate [build entrypoint](../../setup/GUFO.md) has offline fixture coverage;
+the recorded GPU-capable build above did not exercise that entrypoint.
+Persistent start/status/stop is still unfinished. The new executable needs its
+own runtime package policy and staged correctness/memory/shutdown qualification
+before use. The
 [static staging command](../../setup/GUFO.md) accepts the previously pinned
 binary only; it does not build or stage this patch.
 
