@@ -24,3 +24,10 @@ From this repository root, use explicit paths:
 The stage operation verifies every source and destination byte against the fixed portable policy. It refuses unknown nonempty destinations and does not overwrite files. Verify is read-only and works after moving a valid package, provided the current host still supplies the OpenMP prerequisite. A newly built `gufo.exe` with a different hash needs a newly reviewed package policy; it is not equivalent to this pinned binary.
 
 Rollback means stop selecting this optional runtime in a later launcher configuration. Neither stage nor verify removes a package. If removal is desired, review the exact runtime path and remove it explicitly outside this command.
+
+## Separate request-policy source extension
+
+The optional [AR4K source patch](../engine-patches/gufo/README.md) adds reviewed
+engine-side request limits and has passed focused native CPU tests. It is not
+the binary pinned by this staging command. Its GPU build, runtime identity and
+persistent-service qualification remain separate, unfinished delivery steps.
