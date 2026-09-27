@@ -5,7 +5,11 @@ import importlib
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 import tempfile
 import time
 from datetime import datetime, timezone
@@ -476,6 +480,94 @@ class ServiceTests(unittest.TestCase):
             code, result = self.invoke('start', f)
         self.assertEqual(code, 2)
         ipc.assert_not_called()
+
+
+class ServiceWrapperTests(unittest.TestCase):
+    """Invoke the native entry points against a temporary, inert service module."""
+
+    def setUp(self):
+        self.root = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        self.app = self.root/'app'
+        self.app.mkdir()
+        source = Path(__file__).resolve().parents[2]/'app'
+        for name in ('launch-gufo-flash-next.ps1', 'Launch GUFO Flash Next.cmd'):
+            original = source/name
+            self.assertTrue(original.is_file(), f'wrapper missing: {original}')
+            shutil.copyfile(original, self.app/name)
+        package = self.root/'scripts'/'gufo_control'
+        package.mkdir(parents=True)
+        (package/'__init__.py').write_text('')
+        (package/'service.py').write_text(
+            'import json, os, sys\n'
+            'def main(argv=None):\n'
+            '    with open(os.environ["WRAPPER_CAPTURE"], "w") as stream:\n'
+            '        json.dump({"argv": argv, "path": sys.path[0]}, stream)\n'
+            '    print(json.dumps({"phase": "unknown/stale", "ready": None, "refusals": ["persistent_service_unqualified"]}))\n'
+            '    return int(os.environ["WRAPPER_CLI_EXIT"])\n')
+        config = self.root/'config'
+        config.mkdir()
+        self.profile = config/'gufo-service-profile.json'
+        self.profile.write_text(json.dumps({'evidence': {
+            'runs': str(self.root/'runs'), 'acceptance': str(self.root/'acceptance.json')}}))
+        self.capture = self.root/'capture.json'
+
+    def invoke_wrapper(self, *args, cmd=False, cli_exit=0):
+        env = dict(os.environ, WRAPPER_CAPTURE=str(self.capture),
+                   WRAPPER_CLI_EXIT=str(cli_exit))
+        entry = self.app/('Launch GUFO Flash Next.cmd' if cmd else 'launch-gufo-flash-next.ps1')
+        argv = (['cmd.exe', '/d', '/c', str(entry)] if cmd else
+                ['powershell.exe', '-NoProfile', '-File', str(entry)])
+        return subprocess.run(argv + list(args), cwd=self.root, env=env,
+                              capture_output=True, text=True, timeout=15)
+
+    def test_four_commands_forward_exact_profile_and_cli_exit(self):
+        for command in ('start', 'print-only', 'status', 'stop'):
+            with self.subTest(command=command):
+                result = self.invoke_wrapper('-Command', command, '-PythonExe', sys.executable,
+                                             cli_exit=2)
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn('persistent_service_unqualified', result.stdout)
+                self.assertIn(str(self.root/'acceptance.json'), result.stderr)
+                observed = json.loads(self.capture.read_text())
+                self.assertEqual(observed['argv'],
+                                 [command, '--profile', str(self.profile)])
+                self.assertEqual(observed['path'], str(self.root/'scripts'))
+                self.capture.unlink()
+        result = self.invoke_wrapper('-Command', 'print-only', '-PythonExe', sys.executable)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.capture.unlink()
+
+    def test_missing_prerequisites_and_unknown_argument_refuse_before_cli(self):
+        cases = (
+            (('-Command', 'start'), 'PythonExe'),
+            (('-Command', 'start', '-PythonExe', str(self.root/'missing-python.exe')), 'PythonExe'),
+            (('-Command', 'start', '-PythonExe', sys.executable, '-Extra', 'x'), 'Extra'),
+            (('-Command', 'restart', '-PythonExe', sys.executable), 'restart'),
+        )
+        for args, reason in cases:
+            with self.subTest(args=args):
+                result = self.invoke_wrapper(*args)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(reason.lower(), result.stderr.lower())
+                self.assertFalse(self.capture.exists())
+        self.profile.unlink()
+        result = self.invoke_wrapper('-Command', 'start', '-PythonExe', sys.executable)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn(str(self.profile), result.stderr)
+        self.assertFalse(self.capture.exists())
+        self.profile.write_text('{}')
+        (self.root/'scripts'/'gufo_control'/'service.py').unlink()
+        result = self.invoke_wrapper('-Command', 'start', '-PythonExe', sys.executable)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('controller', result.stderr.lower())
+        self.assertFalse(self.capture.exists())
+
+    def test_cmd_forwards_and_preserves_cli_exit(self):
+        result = self.invoke_wrapper('-Command', 'status', '-PythonExe', sys.executable,
+                                     cmd=True, cli_exit=2)
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertEqual(json.loads(self.capture.read_text())['argv'],
+                         ['status', '--profile', str(self.profile)])
 
 
 if __name__ == '__main__': unittest.main()
