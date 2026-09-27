@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "profile_id": "ar4k-native-installed-v1",
+  "runtime": {
+    "path": "C:\\Projects\\strix-alloy-research\\runtimes\\gufo-native-service-139aa9c-therock10.2",
+    "variant": "service-ar4k-v1",
+    "policy_sha256": "5AA64C7E718619E4654DCF4B5997D77AAE47B41611DCAA897020224FD0F0A5E8",
+    "executable_sha256": "66798D3BCAD27B7E2BEC16980B225F83CC3F017FAD9088ADA8D64D604BC4F209"
+  },
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-research\\engine\\gufo-ar4k-service",
+    "commit": "139aa9c58dadcb75c1bd0741aad0823fc65a0547",
+    "tree": "273d84974a604c81023dae15d379a9bfc0b1c29b"
+  },
+  "model": {
+    "first_shard": "C:\\AI\\models\\qwen38-flash\\unsloth-UD-IQ4_XS\\Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf",
+    "revision": "38bb39ee97821de2c9009abb7e93950eec396e66",
+    "shards": [
+      {
+        "name": "Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf",
+        "size_bytes": 10946624,
+        "descriptor_sha256": "9cd7aa82ad189b54ea3c97d1c89463b4473f9f6bd9472b8381c42236e5915de8"
+      },
+      {
+        "name": "Qwen3.8-Flash-Next-UD-IQ4_XS-00002-of-00003.gguf",
+        "size_bytes": 49835229856,
+        "descriptor_sha256": "65aed4c0d6ffeda13b7188179f3c4d9764076012eedacf7cc5e4df52f46d7f70"
+      },
+      {
+        "name": "Qwen3.8-Flash-Next-UD-IQ4_XS-00003-of-00003.gguf",
+        "size_bytes": 43836407744,
+        "descriptor_sha256": "f23293bb029821907bf79414b2a88d698ce66e87b274602d120bbcb3fe08c4a9"
+      }
+    ]
+  },
+  "controller": {
+    "id": "gufo-native-installed-controller-v1",
+    "python_implementation": "CPython",
+    "python_version": "3.12.10",
+    "python_executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+  },
+  "endpoint": {
+    "host": "127.0.0.1",
+    "port": 8836,
+    "alias": "gufo-flash-next"
+  },
+  "request_flags": {
+    "sessions": 1,
+    "context": 4096,
+    "mtp": false,
+    "vision": false,
+    "projector": false,
+    "thinking": false,
+    "prompt_lookup": false,
+    "disk_cache": false,
+    "max_connections": 3,
+    "max_request_bytes": 16384,
+    "max_pending": 1,
+    "max_pending_per_client": 1,
+    "request_timeout_ms": 60000,
+    "max_output_bytes": 1048576,
+    "input_tokens": 2304,
+    "output_tokens": 256
+  },
+  "envelope": {
+    "gpu_gib": 68,
+    "host_gib": 4,
+    "shared_gib": 20,
+    "prelaunch_gib": 49,
+    "runtime_gib": 24,
+    "commit_reserve_gib": 12
+  },
+  "operator_history": {
+    "source_commit": "cff564964e8506c0abb3e530cecb55332187ac6c",
+    "failed_run": "C:\\Projects\\strix-alloy-research\\reports\\gufo-operator-runs\\20260926T125657Z-7f662648dd3c4ff887bdb875297023a1",
+    "failed_result_sha256": "2DDF73DCB8B6DB10693DCE880EFB0192C58696401F7A8FEB79D6738F3F998F91",
+    "gdn_run": "C:\\Projects\\strix-alloy-research\\reports\\gufo-operator-runs\\20260926T132033Z-b76accd8438c4201bc454eff0c03e8ca",
+    "gdn_result_sha256": "709A899B77782E9BCEE456D1A4FFBCFC52A365BA106024AAF9A40BBDDE0017E6",
+    "iq_run": "C:\\Projects\\strix-alloy-research\\reports\\gufo-operator-runs\\20260926T132127Z-3387e0be5a174fe199e197fc7c723d47",
+    "iq_result_sha256": "4D7C4646E9C14F2500EE282BCB753B950BB2CDAA45089DED3687F07F53547605",
+    "sequence": "C:\\Projects\\strix-alloy-research\\reports\\gufo-operator-runs\\sequence.json"
+  },
+  "evidence": {
+    "runs": "C:\\Projects\\strix-alloy-research\\reports\\gufo-native-installed-v1-runs",
+    "acceptance": "C:\\Projects\\strix-alloy-research\\reports\\gufo-native-installed-v1-acceptance.json"
+  },
+  "candidate_margin": {
+    "path": "C:\\Projects\\strix-alloy-research\\reports\\gufo-service-policy-margin-delta-review-20260927.md",
+    "sha256": "857FDC17EBABD7717E0274661C3FD190DBA2C8910C279845DE32F331F842CBC8"
+  },
+  "acceptance_status": "persistent_service_unqualified"
+}

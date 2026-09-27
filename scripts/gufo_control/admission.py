@@ -37,8 +37,13 @@ def evaluate_admission(sample: dict, envelope: dict, *, now: float) -> dict:
 
 def _evaluate_service_admission(sample: dict, envelope: dict, *, now: float, pins) -> dict:
     """Internal seam: the closed service binding authenticates candidate identity."""
-    from .service_smoke_store import service_binding
-    service_binding(pins)
+    from . import smoke_store
+    if pins.profile_id == smoke_store.INSTALLED_SERVICE:
+        from .service_store import installed_binding
+        installed_binding(pins)
+    else:
+        from .service_smoke_store import service_binding
+        service_binding(pins)
     return _evaluate_admission(sample, envelope, now=now, source_commit=pins.source_commit)
 
 

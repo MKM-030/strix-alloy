@@ -70,10 +70,12 @@ MATCHED_MTP_D3_BOUNDS = dict(BOUNDS, gpu_gib=73)
 MATCHED_MARGIN_SHA256 = '49433BB54E71F7F27418FEC63E71DA98F4C372F31E19E6A95292E21148874344'
 MATCHED_D3_MARGIN_SHA256 = '825F2BDE34A4BE070517EE4DD00EA3FA911A4141326591A8DDB47A43FD0AE66D'
 SERVICE_SMOKE = 'ar4k-service-policy-smoke-v1'
+INSTALLED_SERVICE = 'ar4k-native-installed-v1'
 MTP_MARGIN_SHA256 = '7EC8175FFFC356058A0CA8F07B02F3A20AE3E8B88F44F9357D2E13C39F2E8AF6'
 MTP_PREDECESSOR_SHA256 = '692149EEB38F89E662D9428A725533F14793680F5C70E8477A3B53E2DE8B04F3'
 PROFILE_ROOTS = {PROFILE_ID: 'gufo-ar4k-http-slots-smoke-runs',
                  SERVICE_SMOKE: 'gufo-service-policy-smoke-v1-runs',
+                 INSTALLED_SERVICE: 'gufo-native-installed-v1-runs',
                  BENCHMARK_4K: 'gufo-ar4k-benchmark-v2-runs',
                  BENCHMARK_16K: 'gufo-ar16k-benchmark-v3-runs',
                  MTP_4K: 'gufo-mtp4k-stage-v1-runs',
@@ -90,7 +92,7 @@ def profile_bounds(profile_id):
         return MTP_BOUNDS
     if profile_id == MATCHED_MTP:
         return MATCHED_MTP_BOUNDS
-    if profile_id in (PROFILE_ID, BENCHMARK_4K, BENCHMARK_16K, MATCHED_AR, MATCHED_AR_V2, SERVICE_SMOKE):
+    if profile_id in (PROFILE_ID, BENCHMARK_4K, BENCHMARK_16K, MATCHED_AR, MATCHED_AR_V2, SERVICE_SMOKE, INSTALLED_SERVICE):
         return BOUNDS
     raise ValueError('unknown_profile')
 FIRST_PREDECESSOR_RUN = '20260926T164942Z-a4d64a8f565248bdb508895b6f3ec931'
@@ -333,6 +335,9 @@ def _binding(pins):
     if pins.profile_id == SERVICE_SMOKE:
         from .service_smoke_store import service_binding
         return service_binding(pins)
+    if pins.profile_id == INSTALLED_SERVICE:
+        from .service_store import installed_binding
+        return installed_binding(pins)
     if pins.operator_source_commit is not None:
         raise ValueError('unexpected_operator_source')
     bounds = profile_bounds(pins.profile_id)
@@ -418,7 +423,11 @@ def _incomplete_latches(pins, *, manifest=None, current_run=None):
     for root in roots:
         if (root / 'incomplete.json').exists():
             if current_run is not None and root.resolve() == pins.evidence.resolve():
-                _current_run_markers(manifest, pins, current_run)
+                if pins.profile_id == INSTALLED_SERVICE:
+                    from .service_store import _current_run_markers as installed_current_run_markers
+                    installed_current_run_markers(manifest, pins, current_run)
+                else:
+                    _current_run_markers(manifest, pins, current_run)
             else:
                 raise ValueError('prior_smoke_incomplete')
 
@@ -618,11 +627,8 @@ def _projector_absent(first_shard: Path):
             raise ValueError(f'projector_directory_unavailable:{directory}') from error
 
 
-def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dict:
-    _binding(pins)
-    _incomplete_latches(pins)
-    benchmark = _benchmark_records(pins)
-    source_validator()
+def _verify_candidate_artifacts(pins: StorePins, *, model_validator) -> dict:
+    """Immutable candidate payload checks, with no attempt or qualification state."""
     artifacts = [_checked_artifact(pins.build / pins.executable_name,
                                    pins.executable, 'server_executable')]
     for name, pin in pins.sdk_dlls.items():
@@ -648,6 +654,23 @@ def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dic
                         or sidecar.get('stamp') != list(pins.sidecar_stamp)):
         raise ValueError('model_sidecar_changed')
     _projector_absent(pins.first_shard)
+    return {
+        'executable': str((pins.build / pins.executable_name).resolve()),
+        'sdk': str(pins.sdk),
+        'model': {'first_shard': str(model.first_shard),
+                  'revision': model.revision, 'shards': model_stamps,
+                  'payload_hash_limit': 'bounded GGUF metadata only',
+                  **({'sidecar': sidecar} if sidecar else {})},
+        'artifacts': artifacts,
+    }
+
+
+def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dict:
+    _binding(pins)
+    _incomplete_latches(pins)
+    benchmark = _benchmark_records(pins)
+    source_validator()
+    candidate = _verify_candidate_artifacts(pins, model_validator=model_validator)
     baseline, state = _operator_sequence(pins)
     margin = _checked_artifact(pins.margin_report,
                                (pins.margin_report.stat().st_size,
@@ -660,14 +683,8 @@ def _verify_static(pins: StorePins, *, source_validator, model_validator) -> dic
     return {
         'profile': pins.profile_id,
         'source': pins.source_commit,
-        'executable': str((pins.build / pins.executable_name).resolve()),
-        'sdk': str(pins.sdk),
         'bounds': dict(pins.bounds),
-        'model': {'first_shard': str(model.first_shard),
-                  'revision': model.revision, 'shards': model_stamps,
-                  'payload_hash_limit': 'bounded GGUF metadata only',
-                  **({'sidecar': sidecar} if sidecar else {})},
-        'artifacts': artifacts,
+        **candidate,
         'operator': {'original_baseline': asdict(baseline),
                      'state': state},
         'margin_report': margin,
@@ -718,6 +735,42 @@ def _current_run_markers(manifest: dict, pins: StorePins, current_run: Path) -> 
         raise ValueError('current_smoke_run_mismatch')
 
 
+def _recheck_candidate_artifacts(manifest: dict, pins: StorePins) -> None:
+    if (manifest['executable'] != str((pins.build / pins.executable_name).resolve())
+            or manifest['sdk'] != str(pins.sdk)
+            or manifest['model']['first_shard'] != str(pins.first_shard.resolve(strict=True))
+            or manifest['model']['revision'] != pins.model_revision
+            or len(manifest['model']['shards']) != 3):
+        raise ValueError('manifest_identity_mismatch')
+    present = [(record['label'], record['stamp'][0])
+               for record in manifest['artifacts']]
+    if present != _expected_artifact_paths(pins):
+        raise ValueError('manifest_artifacts_mismatch')
+    for record in manifest['artifacts']:
+        if operator_store.stamp(record['stamp'][0]) != record['stamp']:
+            raise ValueError(f'artifact_changed:{record["label"]}')
+    for stamped, name in zip(manifest['model']['shards'], pins.shard_names):
+        if stamped[0] != str((pins.first_shard.parent / name).resolve(strict=True)):
+            raise ValueError('manifest_model_mismatch')
+        if operator_store.stamp(stamped[0]) != stamped:
+            raise ValueError('model_shard_changed')
+    if pins.sidecar:
+        sidecar = manifest['model']['sidecar']
+        if (sidecar != {'path': str(pins.sidecar.path),
+                        'size_bytes': pins.sidecar.size_bytes,
+                        'descriptor_end': pins.sidecar.descriptor_end,
+                        'tensor_count': pins.sidecar.tensor_count,
+                        'descriptor_sha256': pins.sidecar.descriptor_sha256,
+                        'stamp': list(pins.sidecar_stamp)}
+                or operator_store.stamp(pins.sidecar.path) != list(pins.sidecar_stamp)
+                or pins.sidecar.path.is_symlink() or pins.sidecar.path.parent.is_symlink()
+                or pins.sidecar.path.resolve(strict=True) != pins.sidecar.path):
+            raise ValueError('model_sidecar_changed')
+    elif 'sidecar' in manifest['model']:
+        raise ValueError('unexpected_sidecar')
+    _projector_absent(pins.first_shard)
+
+
 def _recheck_static(manifest: dict, pins: StorePins, *, source_validator,
                     current_run=None) -> None:
     _binding(pins)
@@ -727,41 +780,10 @@ def _recheck_static(manifest: dict, pins: StorePins, *, source_validator,
         _recheck_benchmark(manifest, pins)
         if (manifest['profile'] != pins.profile_id
                 or manifest['source'] != pins.source_commit
-                or manifest['executable'] != str((pins.build / pins.executable_name).resolve())
-                or manifest['sdk'] != str(pins.sdk)
                 or manifest['bounds'] != pins.bounds
-                or any(type(manifest['bounds'].get(k)) is not int for k in pins.bounds)
-                or manifest['model']['first_shard'] != str(pins.first_shard.resolve(strict=True))
-                or manifest['model']['revision'] != pins.model_revision
-                or len(manifest['model']['shards']) != 3):
+                or any(type(manifest['bounds'].get(k)) is not int for k in pins.bounds)):
             raise ValueError('manifest_identity_mismatch')
-        present = [(record['label'], record['stamp'][0])
-                   for record in manifest['artifacts']]
-        if present != _expected_artifact_paths(pins):
-            raise ValueError('manifest_artifacts_mismatch')
-        for record in manifest['artifacts']:
-            if operator_store.stamp(record['stamp'][0]) != record['stamp']:
-                raise ValueError(f'artifact_changed:{record["label"]}')
-        for stamped, name in zip(manifest['model']['shards'], pins.shard_names):
-            if stamped[0] != str((pins.first_shard.parent / name).resolve(strict=True)):
-                raise ValueError('manifest_model_mismatch')
-            if operator_store.stamp(stamped[0]) != stamped:
-                raise ValueError('model_shard_changed')
-        if pins.sidecar:
-            sidecar = manifest['model']['sidecar']
-            if (sidecar != {'path': str(pins.sidecar.path),
-                            'size_bytes': pins.sidecar.size_bytes,
-                            'descriptor_end': pins.sidecar.descriptor_end,
-                            'tensor_count': pins.sidecar.tensor_count,
-                            'descriptor_sha256': pins.sidecar.descriptor_sha256,
-                            'stamp': list(pins.sidecar_stamp)}
-                    or operator_store.stamp(pins.sidecar.path) != list(pins.sidecar_stamp)
-                    or pins.sidecar.path.is_symlink() or pins.sidecar.path.parent.is_symlink()
-                    or pins.sidecar.path.resolve(strict=True) != pins.sidecar.path):
-                raise ValueError('model_sidecar_changed')
-        elif 'sidecar' in manifest['model']:
-            raise ValueError('unexpected_sidecar')
-        _projector_absent(pins.first_shard)
+        _recheck_candidate_artifacts(manifest, pins)
         state_paths = [pins.failed_run / 'result.json', pins.gdn_run / 'result.json',
                        pins.iq_run / 'result.json',
                        pins.operator_evidence / 'sequence.json']

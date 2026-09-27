@@ -13,7 +13,7 @@ from .admission import evaluate_admission, _evaluate_service_admission, GIB, RUN
 from .operator_policy import (Frame, Baseline, baseline, recovery_reasons,
     _base_valid, _frame_reasons, _identity, MAX_PRELAUNCH_AGE_SECONDS,
     MAX_SAMPLE_AGE_SECONDS, GPU_FIELDS)
-from .smoke_store import PROFILE_ID, BOUNDS, PINS, SERVICE_SMOKE, expected_qualification, profile_bounds
+from .smoke_store import PROFILE_ID, BOUNDS, PINS, SERVICE_SMOKE, INSTALLED_SERVICE, expected_qualification, profile_bounds
 
 
 def _demand(pins):
@@ -78,6 +78,31 @@ def profile_from_manifest(manifest: dict, *, pins=PINS) -> SmokeProfile:
     No qualification file is created/read here. Missing reviews fail closed.
     The caller must retain and recheck the complete store manifest before launch.
     """
+    if pins.profile_id == INSTALLED_SERVICE:
+        from . import service_store
+        try:
+            service_store.installed_binding(pins)
+            q = manifest['qualification']
+            review = q['review_id']
+            envelope_review = q['persistent_envelope_review_id']
+            if (service_store.ACCEPTANCE_SHA256 is None
+                    or manifest['qualification_stamp']['sha256'] != service_store.ACCEPTANCE_SHA256
+                    or _canonical(q) != _canonical(service_store.expected_acceptance(
+                        manifest['installed_profile'], review, envelope_review))
+                    or _canonical(manifest['installed_profile']) != _canonical(
+                        service_store.expected_profile(pins))
+                    or manifest['profile'] != pins.profile_id
+                    or manifest['source'] != pins.source_commit
+                    or manifest['model']['revision'] != pins.model_revision
+                    or manifest['model']['first_shard'] != str(pins.first_shard)):
+                raise ValueError('service_acceptance_mismatch')
+            return SmokeProfile(**_demand(pins), profile_id=pins.profile_id,
+                source_commit=pins.source_commit, model_revision=pins.model_revision,
+                qualified=True, review_id=review,
+                shared_allowance_review_id=envelope_review,
+                qualification_json=_canonical(q))
+        except (KeyError, TypeError, AttributeError) as error:
+            raise ValueError('invalid_profile_manifest') from error
     try:
         q = manifest['qualification']
         review = q['guard_review_id']
@@ -108,6 +133,24 @@ def _profile_valid(profile, *, pins=PINS):
     review = profile.review_id
     if not isinstance(review, str) or not review.strip():
         return False
+    if pins.profile_id == INSTALLED_SERVICE:
+        from . import service_store
+        try:
+            if service_store.ACCEPTANCE_SHA256 is None:
+                return False
+            expected = SmokeProfile(**_demand(pins), profile_id=pins.profile_id,
+                source_commit=pins.source_commit, model_revision=pins.model_revision,
+                qualified=True, review_id=review,
+                shared_allowance_review_id=profile.shared_allowance_review_id,
+                qualification_json=_canonical(service_store.expected_acceptance(
+                    service_store.expected_profile(pins), review,
+                    profile.shared_allowance_review_id)))
+            return (profile == expected and profile.qualified is True
+                and all(type(getattr(profile, k)) is int for k in (
+                    'gpu_peak_bytes', 'host_peak_bytes',
+                    'shared_physical_allowance_bytes', 'commit_peak_bytes')))
+        except (ValueError, TypeError):
+            return False
     try:
         expected = SmokeProfile(**_demand(pins), profile_id=pins.profile_id, source_commit=pins.source_commit,
             model_revision=pins.model_revision, qualified=True, review_id=review,
@@ -178,7 +221,7 @@ def admission_decision(profile, original_baseline, frame, *, now, now_utc, pins=
             shared_physical_allowance_bytes=None, predicted_available_bytes=None,
             accounting_basis=None)
     else:
-        if pins.profile_id == SERVICE_SMOKE:
+        if pins.profile_id in (SERVICE_SMOKE, INSTALLED_SERVICE):
             result = _evaluate_service_admission(frame.snapshot, dict(profile.envelope),
                                                  now=now, pins=pins)
         else:
