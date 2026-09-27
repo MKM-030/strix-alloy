@@ -119,7 +119,7 @@ class ServiceTests(unittest.TestCase):
         record = dict(run=str(run), run_id='a'*32, profile_digest=service_store._digest(f.value),
             guardian=guardian, child=child, endpoint='\\\\.\\pipe\\gufo-'+'a'*32)
         for name, data in (('owned.json', child), ('control.json', record),
-                           ('baseline.json', {'current': {'identity': [LUID]}})):
+                           ('baseline.json', {'current': {'identity': [LUID, *f.f.base.identity[1:]]}})):
             service_store.operator_store.atomic_json(run/name, data)
         now = datetime.now(timezone.utc)
         raw = fixture()
@@ -131,6 +131,60 @@ class ServiceTests(unittest.TestCase):
             aggregate_sample={k:sample[k] for k in service_lifecycle._AGGREGATE_FIELDS},
             owned_counters=sample['owned_counters'])
         return record, response
+
+    def test_malformed_durable_records_refuse_status_and_stop_without_ipc(self):
+        f = self.fixture(accepted=True)
+        record, _ = self.live_record(f)
+        run = Path(record['run'])
+        paths = {'current.json': f.f.pins.evidence/'current.json',
+                 'result.json': run/'result.json', 'control.json': run/'control.json',
+                 'owned.json': run/'owned.json', 'manifest.json': run/'manifest.json',
+                 'identity.json': run/'identity.json'}
+        for name, malformed in (('current.json', []), ('current.json', None),
+                                ('result.json', [1]), ('control.json', [1]),
+                                ('control.json', dict(record, guardian={})),
+                                ('control.json', dict(record, endpoint='wrong')),
+                                ('owned.json', [1]), ('manifest.json', [1]),
+                                ('identity.json', [1])):
+            path = paths[name]
+            original = path.read_bytes() if path.exists() else None
+            with self.subTest(record=name, value=malformed):
+                service_store.operator_store.atomic_json(path, malformed)
+                try:
+                    with patch.object(service_ipc, 'control_request',
+                                      side_effect=AssertionError('invalid evidence reached IPC')) as ipc:
+                        for command in ('status', 'stop'):
+                            code, result = self.invoke(command, f)
+                            self.assertEqual(code, 2, result)
+                            self.assertEqual(result['phase'], 'unknown/stale')
+                            self.assertIsNone(result['cleanup_confirmed'])
+                            self.assertIn(command+'_unverified', result['refusals'])
+                    ipc.assert_not_called()
+                finally:
+                    if original is None:
+                        path.unlink()
+                    else:
+                        path.write_bytes(original)
+
+    def test_malformed_baseline_identity_refuses_status_and_stop_before_ipc(self):
+        f = self.fixture(accepted=True)
+        record, _ = self.live_record(f)
+        path = Path(record['run'])/'baseline.json'
+        for malformed in ([], None, {'current': []}, {'current': {'identity': []}},
+                          {'current': {'identity': [LUID]}},
+                          {'current': {'identity': ['wrong']}},
+                          {'current': {'identity': [None]}}):
+            with self.subTest(baseline=malformed):
+                service_store.operator_store.atomic_json(path, malformed)
+                with patch.object(service_ipc, 'control_request',
+                                  side_effect=AssertionError('invalid baseline reached IPC')) as ipc:
+                    for command in ('status', 'stop'):
+                        code, result = self.invoke(command, f)
+                        self.assertEqual(code, 2, result)
+                        self.assertEqual(result['phase'], 'unknown/stale')
+                        self.assertIsNone(result['cleanup_confirmed'])
+                        self.assertIn(command+'_unverified', result['refusals'])
+                ipc.assert_not_called()
 
     def test_status_verifies_identity_adapter_and_surfaces_transport_uncertainty_once(self):
         f = self.fixture(accepted=True)

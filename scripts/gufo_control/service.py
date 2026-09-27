@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import re
 import tempfile
 import time
 
@@ -39,24 +40,58 @@ def _terminal_facts(result):
         stop_reason='stop_requested' if result.get('stop_requested') else 'guardian_failure')
 
 
+def _object(value, name):
+    if type(value) is not dict:
+        raise ValueError(f'{name}_invalid')
+    return value
+
+
+def _baseline_luid(run):
+    baseline = _object(store._read(run/'baseline.json'), 'baseline')
+    current = _object(baseline.get('current'), 'baseline_current')
+    identity = current.get('identity')
+    if (type(identity) is not list or len(identity) != 7
+            or type(identity[0]) is not str
+            or re.fullmatch(r'0x[0-9a-f]{8}_0x[0-9a-f]{8}', identity[0]) is None
+            or any(type(value) is not int for value in identity[1:5])
+            or type(identity[5]) is not str or type(identity[6]) is not int):
+        raise ValueError('baseline_identity_invalid')
+    return identity[0]
+
+
+def _process_identity(value, *, guardian=False):
+    if (type(value) is not dict
+            or any(type(value.get(key)) is not int or value[key] <= 0
+                   for key in ('pid', 'creation_time_100ns'))
+            or type(value.get('executable')) is not str or not value['executable']
+            or (guardian and (type(value.get('user_sid')) is not str
+                              or not value['user_sid']))):
+        raise ValueError('control_identity_invalid')
+
+
 def _evidence(profile_digest, *, expected_run=None):
     """Read only the exact installed pointer/manifest chain and its bound control."""
     root = store.PINS.evidence
-    pointer = store._read(root/'current.json')
-    if pointer.get('profile') != store.PROFILE_ID:
+    pointer = _object(store._read(root/'current.json'), 'installed_current')
+    if (pointer.get('profile') != store.PROFILE_ID
+            or type(pointer.get('run')) is not str
+            or type(pointer.get('identity_sha256')) is not str):
         raise ValueError('installed_current_invalid')
     run = store._run_path(store.PINS, pointer['run'])
     if expected_run is not None and str(run) != expected_run:
         raise ValueError('run_changed')
-    manifest, identity = store._read(run/'manifest.json'), store._read(run/'identity.json')
+    manifest = _object(store._read(run/'manifest.json'), 'installed_manifest')
+    identity = _object(store._read(run/'identity.json'), 'installed_identity')
     if (identity.get('run') != str(run) or identity.get('profile') != store.PROFILE_ID
             or identity.get('manifest_sha256') != store._digest(manifest)
             or pointer.get('identity_sha256') != store._digest(identity)
+            or type(manifest.get('installed_profile')) is not dict
+            or type(manifest.get('executable')) is not str
             or store._digest(manifest['installed_profile']) != profile_digest):
         raise ValueError('installed_current_identity_invalid')
     result = None
     if (run/'result.json').exists():
-        result = store._read(run/'result.json')
+        result = _object(store._read(run/'result.json'), 'installed_result')
         if (result.get('run') != str(run) or result.get('profile') != store.PROFILE_ID
                 or result.get('manifest') != manifest):
             raise ValueError('installed_result_invalid')
@@ -65,15 +100,23 @@ def _evidence(profile_digest, *, expected_run=None):
                 result = None  # finish_run has not committed all terminal evidence.
             else:
                 store._prior_run(store.PINS)
-    record = store._read(run/'control.json') if (run/'control.json').exists() else None
-    if record:
-        child = store._read(run/'owned.json')
+    record_path = run/'control.json'
+    record = _object(store._read(record_path), 'control_record') if record_path.exists() else None
+    if record is not None:
+        child = _object(store._read(run/'owned.json'), 'owned_identity')
+        _process_identity(record.get('guardian'), guardian=True)
+        _process_identity(record.get('child'))
+        _process_identity(child)
+        run_id = record.get('run_id')
         if (record.get('run') != str(run) or record.get('profile_digest') != profile_digest
+                or type(run_id) is not str or re.fullmatch(r'[0-9a-f]{32}', run_id) is None
+                or record.get('endpoint') != r'\\.\pipe\gufo-'+run_id
                 or record.get('child') != child or child.get('executable') != manifest['executable']):
             raise ValueError('control_evidence_mismatch')
+        _baseline_luid(run)
     handoff = False
-    if record and (run/'handoff.json').exists():
-        handoff = store._read(run/'handoff.json') == dict(record, state='committed')
+    if record is not None and (run/'handoff.json').exists():
+        handoff = _object(store._read(run/'handoff.json'), 'handoff_evidence') == dict(record, state='committed')
         if not handoff: raise ValueError('handoff_evidence_mismatch')
     return str(run), record, result, handoff
 
@@ -84,8 +127,7 @@ def _live(result, record, response):
         raise ValueError('status_identity_mismatch')
     sample = response.get('aggregate_sample')
     if sample is not None:
-        baseline = store._read(Path(record['run'])/'baseline.json')['current']
-        if (sample.get('adapter_luid') != baseline['identity'][0]
+        if (sample.get('adapter_luid') != _baseline_luid(Path(record['run']))
                 or not lifecycle._fresh(sample, time.monotonic(), datetime.now(timezone.utc))):
             raise ValueError('status_sample_stale_or_wrong_adapter')
         sample = {k: sample[k] for k in lifecycle._AGGREGATE_FIELDS}
