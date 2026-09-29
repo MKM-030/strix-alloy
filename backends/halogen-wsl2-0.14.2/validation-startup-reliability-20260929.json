@@ -1,0 +1,410 @@
+{
+  "schema": 1,
+  "base_commit": "6a868ef352a01436b3544bf1b20b183ea552c2c2",
+  "recorded_at": 1790704543.7466888,
+  "reported_failure": "1eef2c3809be43ddb41954ffb42b6e37",
+  "old_incident_files_unchanged": true,
+  "runtime_sources": {
+    "Install.ps1": "972906245d06a3ba7366e85d7ac4a2256484150ffdb811fc4d8747d36ffa0f78",
+    "Start.ps1": "a8518c59eecbda6ec0e371e465aa41294cc16a2ebd8cece20390d1b776b95922",
+    "Uninstall.ps1": "482ccfcf48c2f6bc8963920be538ac1f71ac3d419901b58a678e8085b00c3553",
+    "patches/halogen-preflight-bridge.c": "0a109d47b25f64683cd952c708b067c5695abb90a042a18e1c2426964cdb5d3b",
+    "patches/halogen-preflight-trampoline.S": "77f30756961d2e1680af8e162c2634e57b1e638ac2cf963796ad1f5fc409aa99",
+    "patches/hip-preflight-plan.h": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b",
+    "patches/hip-register-hybrid.c": "8fcdb255b091f353e33017108c341a9e9eb2375ecf0ada9711fc285495f5babe",
+    "patches/hip-register-private-rw.c": "0546a8817fdec642ae3e9b597a9912b547ccd743d6da7eda923d647d0d421c9c",
+    "profiles/preflight-sequences.json": "9df3f1c86196c5e6187bebec754d56e67c4b57e660f13ca647a006dd1d42079c",
+    "profiles/release.json": "d2acb47667eae8e2a5795670852129d087edfaca2d3c764f20724d5f6715e65b",
+    "scripts/auth_api.py": "6aca71de936e90e81cb38fa406bcc4f0fedf93e44e44680dc441677b5e3b2a63",
+    "scripts/bridge_adapter.py": "700524db458bfbcfe8b655c19fff2b298533e14298926924030ad654492c19ef",
+    "scripts/entrypoint_adapter.py": "a602c837b57f0805cd86ad41400535312673174dc299bbd4d65ac2f21860d3b6",
+    "scripts/halogen0142_hip_probe.c": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
+    "scripts/host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+    "scripts/lease_supervisor.py": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de",
+    "scripts/portable.py": "bc7c6413a48104d0423da3e8f6ff34b674e14f995a1ae0e23a3e277fffc91297",
+    "scripts/runner.py": "17024959c050ceb24c81a6d0b512bcd8ac5728de413a90b07abde2d218304357",
+    "scripts/sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+    "scripts/service.py": "4f0961a9a2dfada22abfdfd111bbef991c0f16e21fd1c37189924a6751156348",
+    "scripts/startup_guard.py": "d4348187df5a7a0e3790ebd24d78572e43ad58d31e35430dd24c7423fdd6d8be",
+    "scripts/startup_cache.py": "6b2a6096599ae3a39b7a192621089f7ae87272e05b01f22fb5abbe08a20af552",
+    "scripts/startup_monitor.py": "e5da5b9a6aafa76095c59eb7a32a15d6eb085c6122b66a200eb19ad7a0874be9"
+  },
+  "windows_memory_settings_restored": true,
+  "runs": [
+    {
+      "run_id": "dd576496339c448d8c518be621a69769",
+      "context": 129024,
+      "memory_compression_setting": true,
+      "min_available_physical_gib": 12.339019775390625,
+      "min_commit_headroom_gib": 110.73435974121094,
+      "samples": 329,
+      "startup_cache_stop_ack": true,
+      "guard_failure": false,
+      "validation": {
+        "run_id": "dd576496339c448d8c518be621a69769",
+        "health": {
+          "context": 129024,
+          "slot_ctx": 129024,
+          "kv_pool_positions": 129024,
+          "slots": 1,
+          "version": {
+            "api": "0.14.2",
+            "engine": "0.14.2",
+            "match": true
+          }
+        },
+        "auth": {
+          "missing": 401,
+          "incorrect": 401
+        },
+        "requests": [
+          {
+            "label": "arithmetic",
+            "answer": "42",
+            "usage": {
+              "prompt_tokens": 26,
+              "completion_tokens": 3,
+              "total_tokens": 29,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 0.4530000000013388
+          },
+          {
+            "label": "short",
+            "answer": "OK",
+            "usage": {
+              "prompt_tokens": 17,
+              "completion_tokens": 2,
+              "total_tokens": 19,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 0.3429999999971187
+          },
+          {
+            "label": "long",
+            "answer": "OK",
+            "usage": {
+              "prompt_tokens": 22524,
+              "completion_tokens": 2,
+              "total_tokens": 22526,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 18.2970000000023
+          }
+        ],
+        "stream": {
+          "done": true,
+          "content_chunks": 110,
+          "characters": 110,
+          "seconds": 5.985000000000582
+        },
+        "completed_at": 1790702752.6686478
+      },
+      "terminal_outcome": {
+        "ready": true,
+        "cleanup": true,
+        "recovery": true,
+        "error": null,
+        "stopped_at": 1790702930.1263404,
+        "context": 129024
+      },
+      "still_serving_at_snapshot": false,
+      "manifest_sha256": "33017bf586fc162d5bba5847995015e8264117543f045834e388f9e52199ca84"
+    },
+    {
+      "run_id": "5cf071e3eee8456aad60de9c5c8cca9f",
+      "context": 129024,
+      "memory_compression_setting": false,
+      "min_available_physical_gib": 16.532115936279297,
+      "min_commit_headroom_gib": 114.27533340454102,
+      "samples": 249,
+      "startup_cache_stop_ack": true,
+      "guard_failure": false,
+      "validation": {
+        "run_id": "5cf071e3eee8456aad60de9c5c8cca9f",
+        "health": {
+          "context": 129024,
+          "slot_ctx": 129024,
+          "kv_pool_positions": 129024,
+          "slots": 1,
+          "version": {
+            "api": "0.14.2",
+            "engine": "0.14.2",
+            "match": true
+          }
+        },
+        "auth": {
+          "missing": 401,
+          "incorrect": 401
+        },
+        "requests": [
+          {
+            "label": "arithmetic",
+            "answer": "42",
+            "usage": {
+              "prompt_tokens": 26,
+              "completion_tokens": 3,
+              "total_tokens": 29,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 0.4540000000015425
+          },
+          {
+            "label": "short",
+            "answer": "OK",
+            "usage": {
+              "prompt_tokens": 17,
+              "completion_tokens": 2,
+              "total_tokens": 19,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 0.3280000000013388
+          },
+          {
+            "label": "long",
+            "answer": "OK",
+            "usage": {
+              "prompt_tokens": 22524,
+              "completion_tokens": 2,
+              "total_tokens": 22526,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 18.23400000000038
+          }
+        ],
+        "stream": {
+          "done": true,
+          "content_chunks": 110,
+          "characters": 110,
+          "seconds": 5.23399999999674
+        },
+        "completed_at": 1790703301.7609625
+      },
+      "terminal_outcome": {
+        "ready": true,
+        "cleanup": true,
+        "recovery": true,
+        "error": null,
+        "stopped_at": 1790703397.7573342,
+        "context": 129024
+      },
+      "still_serving_at_snapshot": false,
+      "manifest_sha256": "8d14daba42470e4237fdc1cfb969a83a242955c9adbe1d7c11f064cb071f56b1"
+    },
+    {
+      "run_id": "df1dff04708f45ab8d08aa28a2e43688",
+      "context": 129024,
+      "memory_compression_setting": false,
+      "min_available_physical_gib": 12.28497314453125,
+      "min_commit_headroom_gib": 115.9417724609375,
+      "samples": 306,
+      "startup_cache_stop_ack": true,
+      "guard_failure": false,
+      "validation": {
+        "run_id": "df1dff04708f45ab8d08aa28a2e43688",
+        "health": {
+          "context": 129024,
+          "slot_ctx": 129024,
+          "kv_pool_positions": 129024,
+          "slots": 1,
+          "version": {
+            "api": "0.14.2",
+            "engine": "0.14.2",
+            "match": true
+          }
+        },
+        "auth": {
+          "missing": 401,
+          "incorrect": 401
+        },
+        "requests": [
+          {
+            "label": "arithmetic",
+            "answer": "42",
+            "usage": {
+              "prompt_tokens": 26,
+              "completion_tokens": 3,
+              "total_tokens": 29,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 0.4540000000015425
+          },
+          {
+            "label": "short",
+            "answer": "OK",
+            "usage": {
+              "prompt_tokens": 17,
+              "completion_tokens": 2,
+              "total_tokens": 19,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 0.35900000000037835
+          },
+          {
+            "label": "long",
+            "answer": "OK",
+            "usage": {
+              "prompt_tokens": 120024,
+              "completion_tokens": 2,
+              "total_tokens": 120026,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 98.875
+          }
+        ],
+        "stream": {
+          "done": true,
+          "content_chunks": 110,
+          "characters": 110,
+          "seconds": 5.828000000001339
+        },
+        "completed_at": 1790703746.1579545
+      },
+      "terminal_outcome": {
+        "ready": true,
+        "cleanup": true,
+        "recovery": true,
+        "error": null,
+        "stopped_at": 1790703823.8680038,
+        "context": 129024
+      },
+      "still_serving_at_snapshot": false,
+      "manifest_sha256": "c6f734f6dbc8affc4e7bb7c758c8f14273b44411e93fb27f64df4ee152dc918a"
+    },
+    {
+      "run_id": "ac78e241a71d4907a61a9628363b81a9",
+      "context": 129024,
+      "memory_compression_setting": true,
+      "min_available_physical_gib": 18.03317642211914,
+      "min_commit_headroom_gib": 115.2782211303711,
+      "samples": 573,
+      "startup_cache_stop_ack": true,
+      "guard_failure": false,
+      "validation": {
+        "run_id": "ac78e241a71d4907a61a9628363b81a9",
+        "health": {
+          "context": 129024,
+          "slot_ctx": 129024,
+          "kv_pool_positions": 129024,
+          "slots": 1,
+          "version": {
+            "api": "0.14.2",
+            "engine": "0.14.2",
+            "match": true
+          }
+        },
+        "auth": {
+          "missing": 401,
+          "incorrect": 401
+        },
+        "requests": [
+          {
+            "label": "arithmetic",
+            "answer": "42",
+            "usage": {
+              "prompt_tokens": 26,
+              "completion_tokens": 3,
+              "total_tokens": 29,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 0.4540000000015425
+          },
+          {
+            "label": "short",
+            "answer": "OK",
+            "usage": {
+              "prompt_tokens": 17,
+              "completion_tokens": 2,
+              "total_tokens": 19,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 0.3280000000013388
+          },
+          {
+            "label": "long",
+            "answer": "OK",
+            "usage": {
+              "prompt_tokens": 120024,
+              "completion_tokens": 2,
+              "total_tokens": 120026,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "seconds": 98.15599999999904
+          }
+        ],
+        "stream": {
+          "done": true,
+          "content_chunks": 110,
+          "characters": 110,
+          "seconds": 4.109000000000378
+        },
+        "completed_at": 1790704179.0552166
+      },
+      "terminal_outcome": null,
+      "still_serving_at_snapshot": true,
+      "manifest_sha256": "09bac7b008de3c356632596f4261c627ce0001145c99015575a58a9f25fb7c2a"
+    }
+  ],
+  "tests": {
+    "installed_windows": {
+      "discovered": 77,
+      "passed": 73,
+      "skipped_linux_only": 4
+    },
+    "linux_startup_tests": 10,
+    "shared_tests": 12,
+    "fresh_windows": {
+      "discovered": 77,
+      "passed": 70,
+      "skipped": 7
+    },
+    "powershell_files_parsed_working_and_fresh": 16
+  },
+  "limitations": [
+    "Controlled repetitive long prompts, not a general quality evaluation",
+    "No days-long stability claim",
+    "Physical-memory margin still depends on host activity",
+    "Fresh checkout source tests are not a fresh-machine runtime installation"
+  ],
+  "public_exposure": {
+    "funnel_configured": true,
+    "local_port": 8731,
+    "https_port": 443,
+    "unauthenticated_https_status": 401,
+    "probe_origin": "Windows PC",
+    "authenticated_local_tests_passed": true,
+    "independent_external_authenticated_test": false,
+    "actual_user_cloud_instance_tested": false,
+    "credentials_published": false
+  },
+  "final_recheck": {
+    "seconds_since_ready": 754.3,
+    "authenticated_local_answer": "OK",
+    "server_left_running": true,
+    "fresh_final_shared_tests_passed": 12
+  }
+}

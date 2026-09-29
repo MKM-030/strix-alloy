@@ -12,6 +12,20 @@ The container lease now uses observed sequence progress rather than comparing
 Windows and WSL wall clocks. [Clock-fix validation](validation-clock-fix-20260929.md)
 records the regression tests and separates live startup from source checks.
 
+## Startup reliability
+
+The startup controller now maintains model-file cache advice independently of
+HTTP readiness and records guest/cgroup memory. It stops that worker before
+serving any inference. Memory failures report the rejected sample rather than
+only a generic dead-guard message. The original 12 GiB runtime reserves remain.
+See the [startup investigation and live tests](validation-startup-reliability-20260929.md)
+for repeated starts, authenticated streaming and 120K-prompt evidence. This does
+not promise that every workload or simultaneous gaming fits the machine.
+
+A one-machine Windows memory-compression experiment did not show a repeatable
+benefit; the setting was restored. Disabling memory compression is not required
+by this package. No installer or launcher changes Windows/WSL memory settings.
+
 ## Start the installed server
 
 From the repository root in PowerShell 7:

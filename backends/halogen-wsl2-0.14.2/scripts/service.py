@@ -21,6 +21,7 @@ import urllib.request
 import uuid
 
 import portable
+from startup_monitor import StartupMonitor
 import runner as r
 import startup_guard as sg
 from lease_supervisor import fresh, lease_record
@@ -173,6 +174,7 @@ def build_manifest(o, attempt, run_id):
     mounts['/candidate/entrypoint-wsl-candidate.sh']=r.linux_path(attempt/'entrypoint-service.sh')
     mounts.update({'/candidate/auth_api.py':r.linux_path(ROOT/'scripts/auth_api.py'),
                    '/candidate/lease_supervisor.py':r.linux_path(ROOT/'scripts/lease_supervisor.py'),
+                   '/candidate/startup_cache.py':r.linux_path(ROOT/'scripts/startup_cache.py'),
                    '/candidate/api-token.txt':r.linux_path(TOKEN_PATH),
                    '/service-state':r.linux_path(attempt)})
     return dict(schema=1,version='0.14.2',image=r.IMAGE,run_id=run_id,
@@ -261,6 +263,24 @@ def admission(host,context,stop,log):
     raise ValueError('Memory admission did not stabilize within 240 seconds: '+str(last_error))
 
 
+def check_runtime_frame(frame, age):
+    fields = ('available_bytes', 'commit_headroom_bytes')
+    if not 0 <= age <= 2:
+        raise ValueError(f'Memory sample too slow/stale: {age:.3f}s (maximum 2s)')
+    if any(type(frame.get(key)) is not int or frame[key] < 0 for key in fields):
+        raise ValueError('Invalid physical/commit memory telemetry: ' + repr(frame))
+    if any(frame[key] < 12*r.GIB for key in fields):
+        raise ValueError('Physical/commit memory reserve crossed: '
+            f'{frame[fields[0]]/r.GIB:.3f}/{frame[fields[1]]/r.GIB:.3f} GiB; minimum 12/12 GiB')
+
+
+def startup_exit_error(attempt):
+    try: reason = read(attempt/'guard-failure.json').get('error')
+    except (OSError, ValueError): reason = None
+    return RuntimeError('Engine exited during startup; ' + (
+        'guard cause: '+str(reason) if reason else 'inspect engine.log and startup-cache.jsonl'))
+
+
 def guard(attempt):
     r.configure()
     m=read(attempt/'manifest.json'); cid=read(attempt/'container.json')['id']
@@ -269,14 +289,16 @@ def guard(attempt):
     host=r.load_module('service_host_frames',ROOT/'scripts/host_frames.py')
     checked=0
     sequence=0
+    frame=None; sample_age=None
     try:
         owned(r.inspect(cid),cid,m)
         while True:
             if not fresh(read(attempt/'controller.json'),m['run_id']):
                 raise RuntimeError('Controller heartbeat is stale')
             began=time.monotonic(); frame=host.frame()
-            r.check_frame(frame,age=time.monotonic()-began)
-            log.info(json.dumps({'time':time.time(),**frame}))
+            sample_age=time.monotonic()-began
+            log.info(json.dumps({'time':time.time(),'sample_age':sample_age,**frame}))
+            check_runtime_frame(frame,sample_age)
             if time.monotonic()-checked>=5:
                 info=r.inspect(cid); owned(info,cid,m,running=info['State']['Running']); checked=time.monotonic()
             sequence += 1
@@ -297,7 +319,7 @@ def guard(attempt):
             time.sleep(1)
     except BaseException as error:
         try:
-            atomic(attempt/'guard-failure.json',{'error':str(error)})
+            atomic(attempt/'guard-failure.json',{'error':str(error),'last_frame':frame,'sample_age':sample_age})
         except OSError as report_error:
             print(f'Guard failure: {error}; could not save diagnostics: {report_error}',
                   file=sys.stderr,flush=True)
@@ -353,6 +375,7 @@ def serve(o):
     handle=lock.open('x',encoding='utf-8'); handle.write(run_id); handle.flush()
     stop=threading.Event(); heart_stop=threading.Event()
     cid=None; guard_proc=None; follower=None; follower_thread=None; baseline=None
+    cache_worker=None; cache_stopped=False
     cleanup=False; recovered=False; ready=False; m=None; error=None; creation_attempted=False
     state=dict(schema=1,run_id=run_id,attempt=str(attempt),phase='starting',
                endpoint=API+'/v1',model=MODEL,context=o.context_size,slots=1,
@@ -409,6 +432,8 @@ def serve(o):
         atomic(attempt/'admission-start.json',baseline)
         if cancelled(): raise InterruptedError('Startup cancelled')
         r.docker('start',cid)
+        cache_worker=StartupMonitor(r.WSL,cid,attempt,run_id,o.startup_timeout,atomic,
+            logger(attempt/'startup-cache.jsonl',raw=True))
         follower=subprocess.Popen(r.WSL+['docker','logs','--follow','--timestamps',cid],
             stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,encoding='utf-8',errors='replace',
             creationflags=NO_WINDOW)
@@ -419,11 +444,14 @@ def serve(o):
             if cancelled(): raise InterruptedError('Startup cancelled')
             guard_alive(guard_proc,attempt)
             info=r.inspect(cid); owned(info,cid,m,running=info['State']['Running'])
-            if not info['State']['Running']: raise RuntimeError('Engine exited during startup; inspect engine.log')
+            if not info['State']['Running']: raise startup_exit_error(attempt)
+            cache_worker.check()
             try: health=http('/health',secret)
             except (OSError,ValueError): health={}
             if health.get('status')=='ok':
                 validate_health(health,o.context_size)
+                cache_worker.stop(); cache_stopped=True
+                log.info('Startup-cache worker stopped before inference; client cache is retained')
                 atomic(attempt/'health.json',health)
                 # Negative auth probe: an endpoint is not authenticated merely because valid requests work.
                 try: http('/v1/models','incorrect-token')
@@ -441,10 +469,6 @@ def serve(o):
                     atomic(attempt/(label+'.json'),{'answer':answer,'correct':True})
                 r.validate_sample(r.sample(cid,attempt,'ready',9997),cid)
                 ready=True; break
-            if time.monotonic()-last_advice>=3:
-                # Reclaim clean file cache during load only, never during client inference.
-                r.docker('exec',cid,'python3','-c',sg.CACHE_CODE,timeout=20)
-                last_advice=time.monotonic()
             if time.monotonic()-last_note>=20:
                 f=host.frame(); log.info('Loading: Windows free %.2f GiB; commit headroom %.2f GiB',
                     f['available_bytes']/r.GIB,f['commit_headroom_bytes']/r.GIB); last_note=time.monotonic()
@@ -473,6 +497,9 @@ def serve(o):
         error=str(exc).replace(secret,'[REDACTED]'); log.error('%s',error)
     finally:
         log.info('Stopping owned server and checking memory recovery')
+        if cache_worker and not cache_stopped:
+            try: cache_worker.stop(); cache_stopped=True
+            except Exception as exc: log.warning('Startup-cache stop: %s',exc)
         try:
             if cid is None and creation_attempted:
                 info=r.inspect('halogen-flash-hybrid-service-'+run_id)
@@ -507,6 +534,9 @@ def serve(o):
                 guard_proc.terminate()
                 try: guard_proc.wait(timeout=10)
                 except subprocess.TimeoutExpired: guard_proc.kill(); guard_proc.wait(timeout=5)
+            if cache_worker:
+                try: cache_worker.close()
+                except Exception as exc: log.warning('Startup-cache reader cleanup: %s',exc)
             heart_stop.set(); heartbeat_thread.join(timeout=5)
             if follower:
                 if follower.poll() is None: follower.terminate()
