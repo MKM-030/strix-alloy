@@ -1,156 +1,189 @@
 # Halogen 0.14.2 on Windows / WSL2
 
-Experimental, version-pinned Strix Alloy adaptation for a 128 GiB Strix Halo
-Windows PC. This package uses **Halogen 0.14.2**, not the 0.13.8 compatibility
-package in `../halogen-wsl2`. It is independent of native PROJFIX and GUFO.
-Upstream Halogen does not support WSL2; this adaptation is not an upstream release.
+A local, authenticated Halogen server for a 128 GiB Strix Halo Windows PC.
+The normal launcher defaults to **129,024 context positions (126 Ã— 1,024), one
+session slot, and continuous serving**. It does not stop after five minutes.
+This is an experimental WSL2 adaptation; it is not an upstream WSL support claim.
+**The 126K service now passed live startup and authenticated inference after a
+Windows heartbeat-file replacement fix. See the [current validation record](validation-heartbeat-fix-20260929.md)
+for the tested lifecycle and remaining limits.**
 
-The packaged profiles use **4,096 context positions, one slot, and bounded
-serving**. Larger-context, multi-slot and unattended operation are not enabled
-by this update. The first-party smoke tests use serial drafting. Do not infer
-MTP, arbitrary client workloads or prolonged stability from those tests.
+## Start the installed server
 
-## Prerequisites
+From the repository root in PowerShell 7:
 
-Use Windows 11, PowerShell 7, Windows Python 3.12+, a 128 GiB Strix Halo machine
-with the reviewed 64 GiB graphics carve, Ubuntu 24.04 WSL2 with a 56GB memory
-ceiling, working `/dev/dxg`, GCC 13.3, OpenSSL development headers and Docker
-Engine in that distro. The chosen Linux user must already have Docker access.
-Models must be on native WSL Ext4, not a Windows-mounted drive.
-
-The existing [WSL2 prerequisite guide](../halogen-wsl2/docs/setup.md#1-prepare-windows-and-wsl)
-explains the host setup. Its 0.13.8 image and launch commands are **not** the
-0.14.2 commands. Do not run both packages together. No installer here changes
-BIOS, drivers, services, security policy, pagefile, or WSL configuration.
-
-Obtain the official HGN checkpoint, matching overlay and complete tokenizer:
-
-```text
-/srv/models/flash-next/
-  qwen38-flash-next-w4b.hgn
-  qwen38-flash-next-w4b.overlay.hgn
-  tokenizer/tokenizer.json
-  tokenizer/tokenizer_config.json
-  ... retain all other supplied tokenizer assets
+```powershell
+.\backends\halogen-wsl2-0.14.2\Start.ps1
 ```
 
-The existing model files can be reused. No model download, model conversion or
-cloud fallback is performed. Obtain the qualified AMD DXG library or wheel
-separately, following the [dependency instructions](../halogen-wsl2/docs/setup.md#2-obtain-the-dependencies).
-Models, the Halogen image and AMD components retain their own license terms.
+That command loads the model, checks API/engine identity and two short answers,
+then prints `READY`, the endpoint, the token, and the active context size.
+Keep the terminal open. Engine output, requests and memory status appear there.
+The model is loaded once and stays loaded until you stop it or a health/resource
+failure triggers shutdown. There is no automatic restart loop.
 
-The exact required image is below. Pull it manually **only if it is not already
-present**, from a shell inside your selected WSL distro:
+The previous `Serve4k` command was a finite qualification test, not the normal
+interactive server. It remains available explicitly; `Serve` is now the default.
+
+## Choose context and lifetime
+
+```powershell
+# Default: 126K in binary units; prompt and generated output share this window.
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -ContextSize 129024
+
+# Other examples; only one server may run at a time.
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -ContextSize 65536
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -ContextSize 126000
+
+# Continuous (default). StartupTimeoutSeconds limits loading, not serving.
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -ServeSeconds 0 -StartupTimeoutSeconds 900
+
+# An optional finite serving window, measured AFTER readiness.
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -ServeSeconds 1800
+```
+
+`ContextSize` accepts 4,096â€“262,144 positions and sets both `HALOGEN_CTX` and
+`HALOGEN_KV_POOL_POSITIONS`. Slot count stays one. The launcher checks `/health`
+for the actual context, slot context, pool size and slot count; it refuses a
+silently reduced context rather than advertising the requested number.
+Changing context requires stopping and restarting the server; it is not a
+per-request change. Larger values need more memory and may fail admission on a
+busy desktop. Accepting a parameter is not proof that every workload fits.
+
+`ServeSeconds 0` has no wall-clock serving cutoff. `StartupTimeoutSeconds`
+defaults to 900 and accepts 120â€“3600. A positive `ServeSeconds` is optional and
+accepts up to 604800 seconds. These are not client request timeouts.
+
+## Endpoint and API token
+
+| Client field | Value |
+|---|---|
+| OpenAI-compatible base URL | `http://127.0.0.1:8731/v1` |
+| Model ID | `halogen-qwen3.8-flash-next` |
+| Authentication | `Authorization: Bearer <token>` |
+| Token location | `backends/halogen-wsl2-0.14.2/.local/api-token.txt` |
+
+The first normal start generates a cryptographically random 256-bit token.
+It persists across restarts and is printed after readiness. It is not a dummy
+key: missing, invalid and duplicate authorization headers receive HTTP 401.
+The API token belongs in the client's API-key field. `/health`, `/v1/models`,
+chat, Responses and the other HTTP API routes are authenticated.
+
+The token file is excluded from Git. On Windows its inherited permissions are
+removed and access is restricted to the current user and SYSTEM. It is mounted
+read-only inside the owned container; its value is not placed in Docker arguments,
+container environment variables, source manifests, or application log records.
+Do not commit it or paste it into an issue. Anyone who can read your user account's
+private files can use this local credential; this is not isolation from that user.
+
+In a second PowerShell terminal at the repository root:
+
+```powershell
+$token = (Get-Content '.\backends\halogen-wsl2-0.14.2\.local\api-token.txt' -Raw).Trim()
+$headers = @{ Authorization = "Bearer $token" }
+Invoke-RestMethod 'http://127.0.0.1:8731/health' -Headers $headers
+.\app\test-backend.ps1 -Backend Halogen
+```
+
+The test helper reads the same token automatically. It also accepts `-ApiToken`,
+`-ApiTokenFile`, or `HALOGEN_API_TOKEN`. The API is bound to loopback: use this URL
+on the Windows PC, not on another device. No cloud fallback or public binding is
+configured. The native engine's internal port is not published.
+
+## Logs, status and stopping
+
+```powershell
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -Status
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -Logs
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -Stop
+```
+
+Ctrl+C in the serving terminal also requests shutdown. `-Stop` targets the
+recorded service run, not all Python, WSL or Docker processes. Wait for `STOPPED`
+and confirmed recovery before starting another engine.
+
+The status record is `.local/current-service.json`. It identifies the current
+run under `.local/services/<run-id>/`, including `engine.log` and `service.log`.
+Engine output is shown live and written to rotating files. Application log files
+rotate at 10 MiB with five backups; Docker also has a bounded log rotation policy.
+The host guard records rotating memory telemetry. Request logs include method,
+path, status and elapsed time, not authorization headers, query strings, prompt
+bodies or response bodies. The startup token is printed separately to the
+terminal and is not sent to the file logger. Treat engine diagnostics as local
+operational data, not material to upload indiscriminately.
+
+## Memory and crash handling
+
+The single-slot, 48 GiB copy policy, 44 GiB cgroup, pinned engine/bridge,
+read-only model mounts and 12 GiB physical/commit runtime floors are retained.
+Admission scales with context. The default 129,024-position profile plans for
+47 GiB Windows available physical memory and 121 GiB commit headroom. A refusal
+prints both required and measured values. Close an unused memory-heavy app or
+choose a smaller context; the launcher will not close your applications.
+
+Continuous serving does not remove orphan-process protection. A separate host
+memory guard and controller heartbeat maintain a lease read by a supervisor
+inside the container. Loss of either process stops renewal; a stale lease stops
+the owned engine instead of leaving it running indefinitely. Normal shutdown
+verifies the exact container's terminal state and baseline-relative memory recovery.
+An unresolved failure retains its evidence and lock. Do not delete a lock merely
+to get past a refusal. Save work before inference; guards cannot guarantee against
+all driver failures. Never reproduce the historical three-full-260K experiment.
+
+## Fresh installation
+
+Required: Windows 11, PowerShell 7, Windows Python 3.12+, 128 GiB Strix Halo,
+reviewed 64 GiB graphics carve, Ubuntu 24.04 WSL2 with a 56GB ceiling, working DXG,
+GCC 13.3, OpenSSL headers and Docker Engine accessible to the chosen Linux user.
+See the [host prerequisite guide](../halogen-wsl2/docs/setup.md#1-prepare-windows-and-wsl).
+No script changes BIOS, drivers, services, pagefile, security policy or WSL settings.
+
+Reuse the matching HGN checkpoint, overlay and complete tokenizer on native WSL
+Ext4. Obtain the qualified DXG library or AMD wheel separately. Models and binaries
+are external; the installer neither downloads a model nor requires a running server.
+The required image is pinned, not `latest`:
 
 ```sh
 docker pull ghcr.io/peonist-ai/halogen-flash-server@sha256:f3f99aa48f3a051f18da9ee24b333ca108fe745773fd036a365fe1875871d0be
 ```
 
-No floating `latest` tag is accepted. [Release pins](profiles/release.json)
-identify the image, engine, entrypoint, compiled adapters and HIP header.
-
-## Install this version explicitly
-
-From the repository root in PowerShell 7, replace the example paths:
+Pull only when absent. From the repository root, replace the example paths:
 
 ```powershell
-# Checks prerequisites; does not build, write configuration or load the model.
 .\backends\halogen-wsl2-0.14.2\Install.ps1 -Distribution Ubuntu-24.04 `
   -ModelDirectory /srv/models/flash-next -DxgLibrary /opt/rocm/lib/librocdxg.so.1
-
-# Extracts pinned dependencies locally and builds the reviewed adapters.
 .\backends\halogen-wsl2-0.14.2\Install.ps1 -Install -Distribution Ubuntu-24.04 `
   -ModelDirectory /srv/models/flash-next -DxgLibrary /opt/rocm/lib/librocdxg.so.1
+.\backends\halogen-wsl2-0.14.2\Start.ps1
 ```
 
-Use `-LinuxUser <user>` for a nondefault Linux user. Instead of `-DxgLibrary`,
-`-AmdWheel <absolute-path-to-the-qualified-wheel>` extracts only its pinned DXG
-library. Add `-VerifyModelHash` on explicit installation to hash both large HGN
-files; otherwise the installer verifies their sizes. It does not silently claim
-that a size check is a fresh full model hash check.
+Use `-LinuxUser` when the default user is not the intended one. `-AmdWheel`
+is an alternative to `-DxgLibrary`; `-VerifyModelHash` performs full weight hashes
+on explicit installation. Otherwise the two large weight files are size-checked.
+Setup extracts pinned dependencies from a stopped temporary container, builds
+three small adapters locally, and verifies their hashes. No driver is replaced.
 
-Installation creates a **stopped** temporary container to extract the exact
-engine, entrypoint and HIP headers, then removes that owned container. It never
-starts that container, launches the model, or writes an installed driver. Three
-small adapters are compiled locally and must match their pinned SHA-256 values.
-Generated assets and machine configuration stay under this version's ignored
-`.local/` directory. The other package's installation is not overwritten or
-silently migrated. Installation does not require a running model server.
+## Diagnostics, rollback and validation
 
-## First run: qualify, then serve
-
-Run these sequentially. Each command must finish successfully before the next:
-
-```powershell
-# Confirms the exact preflight vector, then exits before model registration.
-.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Trace4k
-
-# Loads the model, checks two short answers and verifies shutdown/recovery.
-.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Single4k
-
-# Loads the model, checks readiness, then exposes a bounded serving window.
-.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Serve4k -ServeSeconds 300
-```
-
-The last command prints `READY` after its two smoke answers. From a second
-PowerShell 7 window at the repository root:
-
-```powershell
-.\app\test-backend.ps1 -Backend Halogen
-```
-
-The API is `http://127.0.0.1:8731/v1`. The helper requests serial drafting,
-thinking off, and a small non-streaming answer. Keep requests inside the 4K
-context and remaining serving window. A larger context or extra slots are not
-accepted as launcher arguments. Serving lasts 30–300 seconds after the initial
-smoke answers and has an independent 600-second total container deadline.
-Slow startup can therefore refuse a long serving window rather than extending
-the deadline. Outstanding requests may be interrupted when serving ends.
-
-`Single4k` requires a successful **current-source** `Trace4k`. `Serve4k` requires
-both successful trace and smoke qualifications for the exact installed source,
-artifacts and configuration. A changed source/configuration or incomplete prior
-run cannot inherit an old pass. Do not edit state files to bypass this check.
-
-After installation, `Start.ps1 -Profile Serve4k -PrintOnly` prints the sealed
-command without launching a model or contacting WSL. The shared repository
-selector remains read-only discovery; it does not start or hot-switch engines.
-
-## Resource and lifecycle controls
-
-Prelaunch admission requires a stable 45 GiB Windows available-physical and
-117 GiB commit-headroom window, with a new immediate sample before container
-creation and start. Runtime floors remain 12 GiB for both counters. The pinned
-copy policy, one-slot KV pool, read-only mounts, 44 GiB cgroup, loopback port and
-process-tree deadline are not relaxed to make a launch pass. These are observed
-experimental limits, not a guarantee that driver behavior cannot freeze a host.
-Save work before inference. Never repeat the historical three-full-260k test.
-
-Ctrl+C requests the controller's cleanup. Normal shutdown drains the sampler,
-stops only the verified owned container, verifies terminal state and memory
-recovery, then waits for the host guard to exit. A success marker is written only
-after that sequence succeeds. The independent container deadline remains if the
-console is lost. Do not wrap this bounded profile in an automatic restart loop.
-
-Full local run evidence is retained under `.local/attempts/`; failed attempts
-remain failures. An unresolved `.local/runner.lock` blocks further runs and
-uninstall. Inspect the exact owned container and recovery evidence before any
-manual reconciliation; never delete the lock merely to get past a refusal.
-
-## Rollback and tests
-
-After stopping this version and verifying cleanup, the original package remains
-available at `backends/halogen-wsl2/`, with its separate installer and 0.13.8
-`Serve32k` profile. Nothing silently falls back or runs both versions together.
+`-Profile Trace4k`, `Single4k`, and `Serve4k` retain their original finite,
+exact-source qualification contract. They do not accept a custom context.
+Use the default `Serve` profile for the authenticated interactive service.
+The 0.13.8 compatibility package in `../halogen-wsl2` remains unchanged and
+must not run at the same time. Stop and verify recovery before uninstalling.
 
 ```powershell
 .\backends\halogen-wsl2-0.14.2\Uninstall.ps1
 python -B -m unittest discover -s backends/halogen-wsl2-0.14.2/tests -v
 ```
 
-Uninstall removes only hash-verified manifest-owned generated files; model files,
-Docker images, retained attempts and unrelated data remain. Offline tests use
-fixtures, not a model. Two local-asset checks are skipped in a fresh clone until
-explicit installation. [Validation](validation-20260929.md) separates source,
-build, fresh-checkout and live checks. [Notices](THIRD_PARTY_NOTICES.md) identify
-external components; no engine, driver, header bundle or model is redistributed.
+Uninstall removes only manifest-owned generated installation files. Local run
+logs, the separately generated service credential and user model files are retained.
+[Earlier 4K validation](validation-20260929.md) is historical evidence, not a claim
+that every context or prolonged runtime was tested. [Third-party notices](THIRD_PARTY_NOTICES.md)
+cover the separately obtained engine and dependencies; the API wrapper leaves the
+pinned engine and upstream API file unchanged.
+
+Reinstallation note: after uninstall, retained service logs and the token make
+the version directory nonempty. The unchanged installer refuses to overwrite
+those files. Use a fresh checkout for a clean reinstall and preserve the previous
+checkout as evidence; no automatic service-state migration is implemented.

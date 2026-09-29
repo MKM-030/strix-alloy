@@ -72,45 +72,44 @@ API test below from a second PowerShell terminal after the model is ready.
 Stop only the instance you started using the original launcher's `-Stop` with
 its matching `-RuntimeDir` and port. Do not use global process-kill commands.
 
-## Halogen 0.14.2: install, qualify, then serve briefly
+## Halogen 0.14.2: configurable context and continuous serving
 
-Follow the [0.14.2 setup guide](../../backends/halogen-wsl2-0.14.2/README.md)
-for the pinned image, host prerequisites and external HGN/overlay/tokenizer.
-This version has its own ignored `.local` installation and reuses model files
-without copying another checkout's machine configuration. No running model
-server is needed for installation. The examples below require an already
-obtained qualified DXG library; replace the Linux paths and distro/user as needed.
+The service now passed live 129024-position startup and authenticated inference
+after a Windows heartbeat-file replacement fix. [Current validation and limits](../../backends/halogen-wsl2-0.14.2/validation-heartbeat-fix-20260929.md).
+
+Follow the [Halogen installation and service guide](../../backends/halogen-wsl2-0.14.2/README.md)
+for prerequisites and the explicit installer. Your existing HGN weights and
+pinned image can be reused; the installer does not require a running server.
+After installation:
 
 ```powershell
-.\backends\halogen-wsl2-0.14.2\Install.ps1 -Distribution Ubuntu-24.04 `
-  -ModelDirectory /srv/models/flash-next -DxgLibrary /opt/rocm/lib/librocdxg.so.1
-.\backends\halogen-wsl2-0.14.2\Install.ps1 -Install -Distribution Ubuntu-24.04 `
-  -ModelDirectory /srv/models/flash-next -DxgLibrary /opt/rocm/lib/librocdxg.so.1
-
-# Run each command only after the previous one exits successfully.
-.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Trace4k
-.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Single4k
-.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Serve4k -ServeSeconds 300
+.\backends\halogen-wsl2-0.14.2\Start.ps1
+# Equivalent default context: -ContextSize 129024 (126 * 1024)
+# No serving timer: -ServeSeconds 0
 ```
 
-Use `-AmdWheel` instead of `-DxgLibrary` for the qualified downloaded AMD wheel.
-`-VerifyModelHash` on explicit installation adds full hashes of both large model
-files; default model checks verify sizes. Install builds three pinned adapters
-and extracts local dependencies from a stopped container, not from a model server.
+The model loads, passes short startup checks, then prints READY, the endpoint,
+and the generated local API token. The API remains `http://127.0.0.1:8731/v1`.
+Configure model `halogen-qwen3.8-flash-next` and put the printed token in your
+client's API-key field. Authentication is enforced, not a placeholder.
+The secret is kept only in this package's ignored `.local/api-token.txt`.
 
-The first profile validates the exact trace and exits before model registration.
-The second loads the model, checks two short serial answers, then verifies clean
-shutdown and memory recovery. The third requires both exact-source passes and
-exposes one **4,096-position slot** on `http://127.0.0.1:8731/v1` for 30–300
-seconds after its initial smoke answers, subject to a 600-second total container
-deadline. Keep the supervising terminal open; this is not an always-on service.
-Failed or unresolved runs retain their evidence and block automatic retries.
+Context is configurable from 4096 to 262144 positions, with a single slot and
+memory admission sized for the chosen context. The 126K default is 129024 tokens;
+use `-ContextSize 126000` for exactly 126,000. The window includes prompt and output.
+A context change requires stopping and restarting the server. The accepted range
+is not a guarantee that every size fits every busy desktop.
 
-The older [0.13.8 package](../../backends/halogen-wsl2/docs/setup.md) remains
-unchanged at `backends/halogen-wsl2/`, including its separate `Serve32k` profile.
-It is an explicit fallback, not a silent alternative. Stop and verify cleanup
-before using another version. The 0.14.2 update does not inherit 0.13.8's larger
-context qualification or activate the historical full-context research tests.
+Engine and API activity appear live in the terminal and rotating log files.
+`Start.ps1 -Logs` follows the current engine log; `-Status` reads service status;
+`-Stop` requests owned-service shutdown. Ctrl+C also requests cleanup.
+Positive `-ServeSeconds` values are optional; the default does not stop at 300
+seconds. A startup timeout, memory guard and controller/guard liveness lease
+still stop a failed or orphaned server. There is no automatic restart loop.
+
+The older `Trace4k`, `Single4k` and `Serve4k` profiles remain finite diagnostic
+commands. They are not the normal server. The separate 0.13.8 package is an
+explicit compatibility fallback; never run both versions at the same time.
 
 ## Send a short API request in a second terminal
 
@@ -123,7 +122,7 @@ After the selected server is ready, use exactly one of:
 
 The helper verifies `/v1/models` and sends one small, non-streaming request.
 Halogen requests explicitly select serial drafting and disable thinking.
-It does not load or stop a server. It rejects GUFO and non-loopback destinations,
+It does not load or stop a server. It reads the Halogen token automatically and rejects GUFO and non-loopback destinations,
 uses no cloud fallback, and follows no HTTP redirects. PASS means nonempty final
 answer text; `exact_ok` separately reports whether the answer was exactly `OK`.
 Whole-request time is not decode tokens/second or time to first token.
@@ -134,11 +133,9 @@ Stop the current backend and confirm its own cleanup before starting another.
 The selector does not enforce mutual exclusion across launchers. Switching between
 the published native and WSL2 memory profiles may require a supported manual
 carve change and reboot; that is not automated or newly qualified here.
-Do not restart the historical three-full-260k experiment. Do not turn bounded
-Halogen serving into an unattended service with a restart loop.
+Do not restart the historical three-full-260k experiment. The normal Halogen service stays running until stopped, but must not be wrapped in an automatic restart loop.
 
-GUFO's service qualification, its portable runtime/model installation, a shared
-long-running endpoint, and common start/status/stop ownership remain open.
+GUFO's service qualification, its portable runtime/model installation, a cross-engine shared endpoint and common ownership controls remain open.
 A model-load benchmark or a successful offline test is not a substitute for
 those gates. The 141-commit local GUFO research history is not force-pushed or
 rewritten by this checkpoint. No new GUFO speed or correctness claim is made.

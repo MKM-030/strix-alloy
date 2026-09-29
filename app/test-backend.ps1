@@ -5,6 +5,8 @@ param(
     [Parameter(Mandatory)][ValidateSet('Native','Projfix','Halogen','GUFO')]
     [string]$Backend,
     [uri]$ApiBase,
+    [string]$ApiToken,
+    [string]$ApiTokenFile,
     [ValidateRange(1,120)][int]$TimeoutSeconds = 60
 )
 Set-StrictMode -Version Latest
@@ -24,7 +26,18 @@ if (-not $ApiBase.IsAbsoluteUri -or $ApiBase.Scheme -ne 'http' -or
     throw 'ApiBase must be loopback HTTP /v1 without credentials, query, or fragment.'
 }
 $base = $ApiBase.AbsoluteUri.TrimEnd('/')
-$listing = Invoke-RestMethod "$base/models" -TimeoutSec $TimeoutSeconds -MaximumRedirection 0 -NoProxy
+$headers = @{}
+if (-not $ApiToken) { $ApiToken = $env:HALOGEN_API_TOKEN }
+if (-not $ApiToken -and -not $native) {
+    if (-not $ApiTokenFile) {
+        $ApiTokenFile = Join-Path $PSScriptRoot '../backends/halogen-wsl2-0.14.2/.local/api-token.txt'
+    }
+    if (Test-Path -LiteralPath $ApiTokenFile -PathType Leaf) {
+        $ApiToken = (Get-Content -LiteralPath $ApiTokenFile -Raw).Trim()
+    }
+}
+if ($ApiToken) { $headers.Authorization = "Bearer $ApiToken" }
+$listing = Invoke-RestMethod "$base/models" -TimeoutSec $TimeoutSeconds -MaximumRedirection 0 -NoProxy -Headers $headers
 if ($listing.PSObject.Properties.Name -notcontains 'data' -or $model -cnotin @($listing.data.id)) {
     throw "Expected advertised model '$model' is not ready. Inspect the server logs."
 }
@@ -38,7 +51,7 @@ $watch = [Diagnostics.Stopwatch]::StartNew()
 try {
     $response = Invoke-RestMethod "$base/chat/completions" -Method Post `
         -ContentType 'application/json; charset=utf-8' -Body ($request | ConvertTo-Json -Depth 5) `
-        -TimeoutSec $TimeoutSeconds -MaximumRedirection 0 -NoProxy
+        -TimeoutSec $TimeoutSeconds -MaximumRedirection 0 -NoProxy -Headers $headers
 } finally { $watch.Stop() }
 if ($response.PSObject.Properties.Name -notcontains 'choices' -or @($response.choices).Count -eq 0) {
     throw 'No chat choice was returned.'

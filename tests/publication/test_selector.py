@@ -44,7 +44,7 @@ class SelectorTests(unittest.TestCase):
                 if name == 'Halogen':
                     self.assertEqual(data['version'], '0.14.2')
                     self.assertEqual(data['launcher'], 'backends/halogen-wsl2-0.14.2/Start.ps1')
-                    self.assertIn('Serve4k', data['start_command'])
+                    self.assertIn('-ContextSize 129024', data['start_command'])
                 if name == 'GUFO':
                     self.assertEqual(data['status'], 'persistent_service_unqualified')
                     self.assertIsNone(data['launcher'])

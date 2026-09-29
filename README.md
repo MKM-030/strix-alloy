@@ -10,7 +10,7 @@ is preserved separately and its persistent service is not qualified for publicat
 | Backend | Included here | Entry point |
 |---|---|---|
 | Native llama.cpp / PROJFIX | Existing native source and build/launch workflow; runtime and weights external | `app/launch-flash-next.ps1` |
-| **Halogen WSL2 0.14.2** | Version-pinned installer, adapters, guarded 4K one-slot profiles and tests | [`backends/halogen-wsl2-0.14.2/`](backends/halogen-wsl2-0.14.2/README.md): install, then `Trace4k`, `Single4k`, `Serve4k` |
+| **Halogen WSL2 0.14.2** | Configurable context (default 126K), continuous guarded serving, Bearer authentication and live logs | [`backends/halogen-wsl2-0.14.2/`](backends/halogen-wsl2-0.14.2/README.md): install, then `Start.ps1` |
 | Halogen WSL2 0.13.8 compatibility | Unchanged published source and its separate bounded 32K workflow | `backends/halogen-wsl2/`; explicit fallback, never concurrent with 0.14.2 |
 | GUFO | Availability description only; no qualified portable service | `app/select-backend.ps1 -Backend GUFO -Action Describe` |
 
