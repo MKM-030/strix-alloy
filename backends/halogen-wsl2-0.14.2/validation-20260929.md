@@ -1,4 +1,4 @@
-# Halogen 0.14.2 update validation â€” 29 September 2026
+# Halogen 0.14.2 update validation — 29 September 2026
 
 This record applies to the version-specific package in this directory, on one
 128 GiB Strix Halo Windows / WSL2 machine. It is not an upstream WSL support
@@ -27,6 +27,8 @@ entire pair of large model files. Explicit `-VerifyModelHash` remains available.
 | Shared selector/API helper suite | 10 passed |
 | Fresh staged checkout, without installed assets | 25 passed, two installed-asset checks skipped |
 | Shared helpers from that fresh checkout | 10 passed |
+| Fresh single-branch Git clone of code commit `826cc1a` | 25 backend tests passed, two installed-asset checks skipped; all 10 shared helper tests passed |
+| PowerShell parsing from that Git clone | 16 source files, no parser errors |
 | PowerShell parsing | 16 source files, no parser errors |
 | Current package source hashes in fresh checkout | 18 of 18 matched |
 | Legacy 0.13.8 imported files | 84 of 84 unchanged, including fresh-checkout verification |
@@ -44,7 +46,7 @@ in the historical integration validation; this update does not relabel it.
 | Profile | Observed result |
 |---|---|
 | Trace4k, final source | Passed exact pre-registration trace, terminal state, recovery and guard exit |
-| Single4k | API and engine both reported 0.14.2; answers were `42` and `GrÃ¼n`; cleanup/recovery passed |
+| Single4k | API and engine both reported 0.14.2; answers were `42` and `Grün`; cleanup/recovery passed |
 | Serve4k, 30 seconds | Repeated correct smoke answers; reached READY; timer and shutdown/recovery passed |
 | Real shared PowerShell helper during serving | Exit 0, advertised `halogen-qwen3.8-flash-next`, final answer exactly `OK` |
 
@@ -70,7 +72,7 @@ retained under `.local/attempts/`, not included as a machine-specific public dum
 Only a 4,096-position, single-slot profile is supplied. The live serving check
 uses a 30-second window and serial requests; it does not establish arbitrary
 MTP/DFlash2 behavior, 32K/260K contexts, concurrency, 300-second stress stability
-or unattended operation. The permitted serving range is 30â€“300 seconds, within
+or unattended operation. The permitted serving range is 30–300 seconds, within
 the separate 600-second container deadline. Fresh installations must run their
 own exact-source Trace4k and Single4k gates before Serve4k is accepted.
 

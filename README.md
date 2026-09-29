@@ -20,7 +20,7 @@ The shared `app/select-backend.ps1` is **read-only discovery**, not a model mana
 It does not start engines, change a client endpoint, or enable unqualified profiles.
 Native and Halogen still use different ports and reviewed memory configurations.
 The shared Halogen description now selects **0.14.2**. Its `Serve4k` profile is
-limited to 30â€“300 seconds; larger contexts and persistent service are not
+limited to 30–300 seconds; larger contexts and persistent service are not
 qualified by this update. The original WSL2 repository and its unchanged 0.13.8
 package remain explicit compatibility paths. See the [0.14.2 setup guide](backends/halogen-wsl2-0.14.2/README.md).
 

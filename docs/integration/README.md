@@ -101,7 +101,7 @@ and extracts local dependencies from a stopped container, not from a model serve
 The first profile validates the exact trace and exits before model registration.
 The second loads the model, checks two short serial answers, then verifies clean
 shutdown and memory recovery. The third requires both exact-source passes and
-exposes one **4,096-position slot** on `http://127.0.0.1:8731/v1` for 30â€“300
+exposes one **4,096-position slot** on `http://127.0.0.1:8731/v1` for 30–300
 seconds after its initial smoke answers, subject to a 600-second total container
 deadline. Keep the supervising terminal open; this is not an always-on service.
 Failed or unresolved runs retain their evidence and block automatic retries.

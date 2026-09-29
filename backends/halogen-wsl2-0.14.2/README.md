@@ -102,7 +102,7 @@ PowerShell 7 window at the repository root:
 The API is `http://127.0.0.1:8731/v1`. The helper requests serial drafting,
 thinking off, and a small non-streaming answer. Keep requests inside the 4K
 context and remaining serving window. A larger context or extra slots are not
-accepted as launcher arguments. Serving lasts 30â€“300 seconds after the initial
+accepted as launcher arguments. Serving lasts 30–300 seconds after the initial
 smoke answers and has an independent 600-second total container deadline.
 Slow startup can therefore refuse a long serving window rather than extending
 the deadline. Outstanding requests may be interrupted when serving ends.
