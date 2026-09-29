@@ -1,0 +1,518 @@
+{
+  "schema": "strix-alloy-public-package-live-v1",
+  "packageSourceFreezeSha256": "b5727b7638cc29b60f54cf299333f98023d1292fbef54811f3fe9f90a643bcc8",
+  "scope": "Portable package same-machine qualification; not clean OS install or statistical benchmark",
+  "install": {
+    "dryRunPassed": true,
+    "bothNativeHashesReproduced": true
+  },
+  "trace": {
+    "run": "20260925-143925-aa4e1a623de942cdaa11718e170276d7",
+    "outcome": {
+      "mode": "PreflightTrace32k",
+      "finishedUtc": "2026-09-25T14:39:33.1829775Z",
+      "failure": null,
+      "elapsedSeconds": 7.8431316,
+      "traceEvidence": {
+        "classification": "diagnostic",
+        "traceRanges": 252,
+        "preStopExitCode": 1,
+        "containerExitCode": 1,
+        "engineExitObserved": false,
+        "attachedExitCode": 1,
+        "expectedEngineExitCode": 77
+      },
+      "telemetry": {
+        "finalCaptured": false,
+        "status": "not-applicable",
+        "observationCount": 0
+      },
+      "classification": "diagnostic",
+      "cleanupErrors": []
+    }
+  },
+  "single32k": {
+    "windowsGuardMinimumBytes": 26929344512.0,
+    "terminal": {
+      "stopSucceeded": true,
+      "exitCode": 137,
+      "startedAt": "2026-09-25T14:40:42.514091524Z",
+      "finalState": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 137,
+        "Error": "",
+        "StartedAt": "2026-09-25T14:40:42.514091524Z",
+        "FinishedAt": "2026-09-25T14:43:12.211164885Z"
+      },
+      "finishedAt": "2026-09-25T14:43:12.211164885Z",
+      "oomKilled": false,
+      "running": false,
+      "stopRequested": true,
+      "error": "",
+      "explicitStop": true,
+      "pid": 0,
+      "windowsAvailableBytes": 29188202496,
+      "preStopState": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 841,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-09-25T14:40:42.514091524Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "id": "d202d165b0a401a623beedd6bb8792d0f12b19a287cbd42874b6a5c140e3a9f6"
+    },
+    "samples": [
+      {
+        "sourceFile": "prose128-sample-1.json",
+        "sourceSha256": "b795ea6a49f2e262d75f73917e128ecfee169894a564f1b4d2194a3626cbe617",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+            }
+          ],
+          "max_tokens": 128,
+          "temperature": 0,
+          "enable_thinking": false,
+          "reasoning_effort": "low",
+          "drafter": "serial"
+        },
+        "promptSha256": "600c81327edf065e4cf748a193fe39934d91d1d377fe3fbdf5d2547b11a54b7b",
+        "response": {
+          "id": "chatcmpl-e5e806a13fa54bcabf6fb53b",
+          "created": 1790347364,
+          "model": "halogen-qwen3.8-flash-next",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "finish_reason": "length",
+              "message": {
+                "role": "assistant",
+                "content": "PROSE_CHECK\n\nThe operational dynamics of Large Language Models (LLMs), particularly those utilizing the Mixture-of-Experts (MoE) architecture, present a complex interplay between memory bandwidth, computational latency, and storage hierarchy. To understand the distinct costs associated with the prefill and decoding phases, one must first dissect the architectural nuances of MoE and then examine how the underlying operating system, specifically the interaction between Windows and Windows Subsystem for Linux (WSL), manages physical RAM resources.\n\nIn a standard dense model, every token processed activates the entire network. In contrast, an MoE model consists of a shared attention mechanism and"
+              }
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 58,
+            "completion_tokens": 128,
+            "total_tokens": 186,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 58,
+            "predicted_n": 128,
+            "prompt_ms": 2439.5,
+            "predicted_ms": 6908.6,
+            "prompt_per_second": 23.775,
+            "predicted_per_second": 18.528,
+            "cache_n": 0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          }
+        },
+        "httpWallSeconds": 10.142748
+      },
+      {
+        "sourceFile": "prose128-sample-2.json",
+        "sourceSha256": "46406b0afc6b9ee9cbb46600f58e30c16b385b86c44a9cca7e76e29d31cfb49b",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+            }
+          ],
+          "max_tokens": 128,
+          "temperature": 0,
+          "enable_thinking": false,
+          "reasoning_effort": "low",
+          "drafter": "mtp"
+        },
+        "promptSha256": "600c81327edf065e4cf748a193fe39934d91d1d377fe3fbdf5d2547b11a54b7b",
+        "response": {
+          "id": "chatcmpl-325c2b3bd0b840f5885b7505",
+          "created": 1790347374,
+          "model": "halogen-qwen3.8-flash-next",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "finish_reason": "length",
+              "message": {
+                "role": "assistant",
+                "content": "PROSE_CHECK\n\nThe operational dynamics of Large Language Models (LLMs), particularly those utilizing the Mixture-of-Experts (MoE) architecture, present a complex interplay between memory bandwidth, computational latency, and storage hierarchy. To understand the distinct costs associated with the prefill and decoding phases, one must first dissect the architectural nuances of MoE and then examine how the underlying operating system, specifically the interaction between Windows and Windows Subsystem for Linux (WSL), manages physical RAM resources.\n\nIn a standard dense model, every token processed activates the entire network. In contrast, an MoE model consists of a shared attention mechanism and"
+              }
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 58,
+            "completion_tokens": 128,
+            "total_tokens": 186,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 58,
+            "predicted_n": 128,
+            "prompt_ms": 596.1,
+            "predicted_ms": 4082.9,
+            "prompt_per_second": 97.299,
+            "predicted_per_second": 31.35,
+            "cache_n": 0,
+            "draft_n": 83,
+            "draft_n_accepted": 44
+          }
+        },
+        "httpWallSeconds": 5.135212
+      },
+      {
+        "sourceFile": "prose128-sample-3.json",
+        "sourceSha256": "89a6b8a98fe83d6040f77c5b41d85d0c85b9e1c5840c12dca009a1cfd1c2ec23",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+            }
+          ],
+          "max_tokens": 128,
+          "temperature": 0,
+          "enable_thinking": false,
+          "reasoning_effort": "low",
+          "drafter": "mtp"
+        },
+        "promptSha256": "600c81327edf065e4cf748a193fe39934d91d1d377fe3fbdf5d2547b11a54b7b",
+        "response": {
+          "id": "chatcmpl-92e8f316118f44db9103d8d7",
+          "created": 1790347379,
+          "model": "halogen-qwen3.8-flash-next",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "finish_reason": "length",
+              "message": {
+                "role": "assistant",
+                "content": "PROSE_CHECK\n\nThe operational dynamics of Large Language Models (LLMs), particularly those utilizing the Mixture-of-Experts (MoE) architecture, present a complex interplay between memory bandwidth, computational latency, and storage hierarchy. To understand the distinct costs associated with the prefill and decoding phases, one must first dissect the architectural nuances of MoE and then examine how the underlying operating system, specifically the interaction between Windows and Windows Subsystem for Linux (WSL), manages physical RAM resources.\n\nIn a standard dense model, every token processed activates the entire network. In contrast, an MoE model consists of a shared attention mechanism and"
+              }
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 58,
+            "completion_tokens": 128,
+            "total_tokens": 186,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 58,
+            "predicted_n": 128,
+            "prompt_ms": 595.0,
+            "predicted_ms": 2883.9,
+            "prompt_per_second": 97.479,
+            "predicted_per_second": 44.384,
+            "cache_n": 0,
+            "draft_n": 83,
+            "draft_n_accepted": 44
+          }
+        },
+        "httpWallSeconds": 3.779688
+      },
+      {
+        "sourceFile": "prose128-sample-4.json",
+        "sourceSha256": "d5a9ba46c2a23e26b2a52a83a20bd9b9c6bb34b2bf889c043c225d6d425e788b",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+            }
+          ],
+          "max_tokens": 128,
+          "temperature": 0,
+          "enable_thinking": false,
+          "reasoning_effort": "low",
+          "drafter": "serial"
+        },
+        "promptSha256": "600c81327edf065e4cf748a193fe39934d91d1d377fe3fbdf5d2547b11a54b7b",
+        "response": {
+          "id": "chatcmpl-407411c370f04a0eb3cc2692",
+          "created": 1790347382,
+          "model": "halogen-qwen3.8-flash-next",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "finish_reason": "length",
+              "message": {
+                "role": "assistant",
+                "content": "PROSE_CHECK\n\nThe operational dynamics of Large Language Models (LLMs), particularly those utilizing the Mixture-of-Experts (MoE) architecture, present a complex interplay between memory bandwidth, computational latency, and storage hierarchy. To understand the distinct costs associated with the prefill and decoding phases, one must first dissect the architectural nuances of MoE and then examine how the underlying operating system, specifically the interaction between Windows and Windows Subsystem for Linux (WSL), manages physical RAM resources.\n\nIn a standard dense model, every token processed activates the entire network. In contrast, an MoE model consists of a shared attention mechanism and"
+              }
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 58,
+            "completion_tokens": 128,
+            "total_tokens": 186,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 58,
+            "predicted_n": 128,
+            "prompt_ms": 600.1,
+            "predicted_ms": 3477.0,
+            "prompt_per_second": 96.651,
+            "predicted_per_second": 36.813,
+            "cache_n": 0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          }
+        },
+        "httpWallSeconds": 4.18374
+      }
+    ],
+    "outcome": {
+      "traceEvidence": null,
+      "mode": "PreflightPinned32k",
+      "telemetry": {
+        "observationCount": 4,
+        "finalCaptured": true,
+        "status": "complete"
+      },
+      "finishedUtc": "2026-09-25T14:43:13.2424443Z",
+      "failure": null,
+      "cleanupErrors": [],
+      "classification": "qualification",
+      "elapsedSeconds": 152.6434511
+    },
+    "run": "20260925-144040-2eb8d0662f1c438b92fa7cd2036387e3"
+  },
+  "serve": {
+    "run": "20260925-144420-2241b72a497345218ae30a870b3b3abb",
+    "requestedWindowSeconds": 60,
+    "testKind": "Deliberate Ctrl-C after successful real API answer, before natural expiry",
+    "shellExit": 1,
+    "health": {
+      "status": "ok",
+      "context": 32768,
+      "slotContext": 32768,
+      "pool": 32768,
+      "slots": 1,
+      "version": {
+        "api": "0.13.8",
+        "engine": "0.13.8",
+        "match": true
+      },
+      "promptCacheEnabled": false,
+      "requestedSeconds": 60
+    },
+    "answer": {
+      "request": {
+        "temperature": 0,
+        "reasoning_effort": "low",
+        "drafter": "mtp",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Start with PUBLIC_PACKAGE_OK. Explain unified memory in one short sentence."
+          }
+        ],
+        "max_tokens": 64,
+        "enable_thinking": false
+      },
+      "response": {
+        "id": "chatcmpl-3af1cccaa7df4e23a83f7333",
+        "created": 1790347593,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "PUBLIC_PACKAGE_OK. Unified memory allows the CPU and GPU to access the same physical memory pool, eliminating the need for explicit data transfers between them."
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 26,
+          "completion_tokens": 30,
+          "total_tokens": 56,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 26,
+          "predicted_n": 30,
+          "prompt_ms": 1244.9,
+          "predicted_ms": 1543.6,
+          "prompt_per_second": 20.885,
+          "predicted_per_second": 19.435,
+          "cache_n": 0,
+          "draft_n": 17,
+          "draft_n_accepted": 13
+        }
+      },
+      "wallSeconds": 3.0383853,
+      "passed": true
+    },
+    "outcome": {
+      "finishedUtc": "2026-09-25T14:46:45.3746817Z",
+      "classification": "bounded-serving",
+      "telemetry": {
+        "finalCaptured": false,
+        "observationCount": 2,
+        "status": "failed"
+      },
+      "mode": "PreflightServe32k",
+      "failure": null,
+      "elapsedSeconds": 145.1482962,
+      "traceEvidence": null,
+      "cleanupErrors": []
+    },
+    "terminal": {
+      "windowsAvailableBytes": 29437259776,
+      "startedAt": "2026-09-25T14:44:22.020969109Z",
+      "preStopState": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 847,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-09-25T14:44:22.020969109Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "exitCode": 137,
+      "oomKilled": false,
+      "finalState": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 137,
+        "Error": "",
+        "StartedAt": "2026-09-25T14:44:22.020969109Z",
+        "FinishedAt": "2026-09-25T14:46:45.327808017Z"
+      },
+      "id": "1f728f5d003f0280a51826e623657e115dfd90683c3d69cc4b01b14f74417812",
+      "finishedAt": "2026-09-25T14:46:45.327808017Z",
+      "pid": 0,
+      "stopRequested": true,
+      "explicitStop": true,
+      "stopSucceeded": true,
+      "running": false,
+      "error": ""
+    },
+    "interpretation": "API and interruption cleanup passed. Final runtime telemetry intentionally incomplete due to Ctrl-C; not a normally completed serving-window qualification."
+  },
+  "uninstall": {
+    "uninstallPassed": true,
+    "generatedOwnedFilesRemoved": 4,
+    "runLogRetainedByteIdentical": true,
+    "unmanagedCanaryRetainedByteIdentical": true,
+    "modelDeletionInvoked": false,
+    "reinstallPassed": true
+  },
+  "naturalExpiry": {
+    "run": "20260925-144750-8fa438df7100498b88ab0baf966f3a75",
+    "requestedSeconds": 30,
+    "shellExit": 0,
+    "health": {
+      "status": "ok",
+      "context": 32768,
+      "slotContext": 32768,
+      "pool": 32768,
+      "slots": 1,
+      "version": {
+        "api": "0.13.8",
+        "engine": "0.13.8",
+        "match": true
+      },
+      "promptCacheEnabled": false
+    },
+    "outcome": {
+      "finishedUtc": "2026-09-25T14:50:32.6572832Z",
+      "classification": "bounded-serving",
+      "cleanupErrors": [],
+      "elapsedSeconds": 162.4222682,
+      "mode": "PreflightServe32k",
+      "failure": null,
+      "traceEvidence": null,
+      "telemetry": {
+        "observationCount": 4,
+        "status": "complete",
+        "finalCaptured": true
+      }
+    },
+    "terminal": {
+      "explicitStop": true,
+      "windowsAvailableBytes": 29266427904,
+      "stopRequested": true,
+      "running": false,
+      "error": "",
+      "pid": 0,
+      "finalState": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 137,
+        "Error": "",
+        "StartedAt": "2026-09-25T14:47:52.322307048Z",
+        "FinishedAt": "2026-09-25T14:50:31.413049648Z"
+      },
+      "preStopState": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 858,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-09-25T14:47:52.322307048Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "stopSucceeded": true,
+      "id": "f73e7ad71036218d28a1ec1727df89143d9dbf5eb112ebac9818e9ca5507a92e",
+      "startedAt": "2026-09-25T14:47:52.322307048Z",
+      "finishedAt": "2026-09-25T14:50:31.413049648Z",
+      "exitCode": 137,
+      "oomKilled": false
+    }
+  },
+  "recoveredWindowsAvailableBytes": 54592757760
+}

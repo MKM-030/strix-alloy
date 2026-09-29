@@ -1,0 +1,775 @@
+{
+  "schema": "strix-alloy-public-responses-v1",
+  "note": "Synthetic public prompts. Exact recipe reconstruction checked against original; original response objects retained. Calibration rows are not measured benchmark samples.",
+  "samples": [
+    {
+      "sourceRun": "20260925-130138-9156f7602ec948f2b62a9e57e8eb3a87",
+      "sourceFile": "prose128-sample-1.json",
+      "sourceSha256": "117c5f6525c260fc3493ce79493eb8b0513298ea5940bf130f4dec0a1ecd5fbb",
+      "promptUtf8Sha256": "600c81327edf065e4cf748a193fe39934d91d1d377fe3fbdf5d2547b11a54b7b",
+      "promptRecipe": {
+        "literal": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "serial"
+      },
+      "response": {
+        "id": "chatcmpl-63cbfb03e79e42a3b0fe2749",
+        "created": 1790341421,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "PROSE_CHECK\n\nThe operational dynamics of Large Language Models (LLMs), particularly those utilizing the Mixture-of-Experts (MoE) architecture, present a complex interplay between memory bandwidth, computational latency, and storage hierarchy. To understand the distinct costs associated with the prefill and decoding phases, one must first dissect the architectural nuances of MoE and then examine how the underlying operating system, specifically the interaction between Windows and Windows Subsystem for Linux (WSL), manages physical RAM resources.\n\nIn a standard dense model, every token processed activates the entire network. In contrast, an MoE model consists of a shared attention mechanism and"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 58,
+          "completion_tokens": 128,
+          "total_tokens": 186,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 58,
+          "predicted_n": 128,
+          "prompt_ms": 2617.1,
+          "predicted_ms": 7346.4,
+          "prompt_per_second": 22.162,
+          "predicted_per_second": 17.423,
+          "cache_n": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "httpWallSeconds": 10.125988
+    },
+    {
+      "sourceRun": "20260925-130138-9156f7602ec948f2b62a9e57e8eb3a87",
+      "sourceFile": "prose128-sample-2.json",
+      "sourceSha256": "4812f3e63f240a8bd1589e06b994749fa46b03978e10ae959964c41392a3acb5",
+      "promptUtf8Sha256": "600c81327edf065e4cf748a193fe39934d91d1d377fe3fbdf5d2547b11a54b7b",
+      "promptRecipe": {
+        "literal": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-6a4b78b9ed8448cd89fe5f95",
+        "created": 1790341433,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "PROSE_CHECK\n\nThe operational dynamics of Large Language Models (LLMs), particularly those utilizing the Mixture-of-Experts (MoE) architecture, present a complex interplay between memory bandwidth, computational latency, and storage hierarchy. To understand the distinct costs associated with the prefill and decoding phases, one must first dissect the architectural nuances of MoE and then examine how the underlying operating system, specifically the interaction between Windows and Windows Subsystem for Linux (WSL), manages physical RAM resources.\n\nIn a standard dense model, every token processed activates the entire network. In contrast, an MoE model consists of a shared attention mechanism and"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 58,
+          "completion_tokens": 128,
+          "total_tokens": 186,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 58,
+          "predicted_n": 128,
+          "prompt_ms": 660.7,
+          "predicted_ms": 4289.0,
+          "prompt_per_second": 87.786,
+          "predicted_per_second": 29.844,
+          "cache_n": 0,
+          "draft_n": 83,
+          "draft_n_accepted": 44
+        }
+      },
+      "httpWallSeconds": 5.100433
+    },
+    {
+      "sourceRun": "20260925-130138-9156f7602ec948f2b62a9e57e8eb3a87",
+      "sourceFile": "prose128-sample-3.json",
+      "sourceSha256": "99e8e2574a3881b7471a61bf869f187ed67c8d6106eb39ac8102a5cc6bbacad8",
+      "promptUtf8Sha256": "600c81327edf065e4cf748a193fe39934d91d1d377fe3fbdf5d2547b11a54b7b",
+      "promptRecipe": {
+        "literal": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-cd7d0a91ba4b47d489035cd8",
+        "created": 1790341438,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "PROSE_CHECK\n\nThe operational dynamics of Large Language Models (LLMs), particularly those utilizing the Mixture-of-Experts (MoE) architecture, present a complex interplay between memory bandwidth, computational latency, and storage hierarchy. To understand the distinct costs associated with the prefill and decoding phases, one must first dissect the architectural nuances of MoE and then examine how the underlying operating system, specifically the interaction between Windows and Windows Subsystem for Linux (WSL), manages physical RAM resources.\n\nIn a standard dense model, every token processed activates the entire network. In contrast, an MoE model consists of a shared attention mechanism and"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 58,
+          "completion_tokens": 128,
+          "total_tokens": 186,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 58,
+          "predicted_n": 128,
+          "prompt_ms": 614.8,
+          "predicted_ms": 2992.2,
+          "prompt_per_second": 94.34,
+          "predicted_per_second": 42.778,
+          "cache_n": 0,
+          "draft_n": 83,
+          "draft_n_accepted": 44
+        }
+      },
+      "httpWallSeconds": 3.768304
+    },
+    {
+      "sourceRun": "20260925-130138-9156f7602ec948f2b62a9e57e8eb3a87",
+      "sourceFile": "prose128-sample-4.json",
+      "sourceSha256": "6b709499b9de1bce12bf386f1b448978333638a31c74aef5c0353c787fa0b599",
+      "promptUtf8Sha256": "600c81327edf065e4cf748a193fe39934d91d1d377fe3fbdf5d2547b11a54b7b",
+      "promptRecipe": {
+        "literal": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "serial"
+      },
+      "response": {
+        "id": "chatcmpl-b813403ebb72441389cf52f2",
+        "created": 1790341442,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "PROSE_CHECK\n\nThe operational dynamics of Large Language Models (LLMs), particularly those utilizing the Mixture-of-Experts (MoE) architecture, present a complex interplay between memory bandwidth, computational latency, and storage hierarchy. To understand the distinct costs associated with the prefill and decoding phases, one must first dissect the architectural nuances of MoE and then examine how the underlying operating system, specifically the interaction between Windows and Windows Subsystem for Linux (WSL), manages physical RAM resources.\n\nIn a standard dense model, every token processed activates the entire network. In contrast, an MoE model consists of a shared attention mechanism and"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 58,
+          "completion_tokens": 128,
+          "total_tokens": 186,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 58,
+          "predicted_n": 128,
+          "prompt_ms": 594.1,
+          "predicted_ms": 3252.8,
+          "prompt_per_second": 97.627,
+          "predicted_per_second": 39.351,
+          "cache_n": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "httpWallSeconds": 4.172978
+    },
+    {
+      "sourceRun": "20260925-130518-61e612f7d6ca4129aab809b260f7da70",
+      "sourceFile": "context-check-sample-1.json",
+      "sourceSha256": "91fe276c2caed5479eafb74c43f4f3e2e3838f502839a79e5cd99d7275154b14",
+      "promptUtf8Sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "promptRecipe": {
+        "literal": "x"
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 1,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "serial"
+      },
+      "response": {
+        "id": "chatcmpl-45c91066de474f53b8e20239",
+        "created": 1790341636,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "Hello"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 13,
+          "completion_tokens": 1,
+          "total_tokens": 14,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 13,
+          "predicted_n": 1,
+          "prompt_ms": 742.4,
+          "predicted_ms": 0.0,
+          "prompt_per_second": 17.511,
+          "predicted_per_second": 0.0,
+          "cache_n": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "httpWallSeconds": 0.855381
+    },
+    {
+      "sourceRun": "20260925-130518-61e612f7d6ca4129aab809b260f7da70",
+      "sourceFile": "context-check-sample-2.json",
+      "sourceSha256": "01883734abc53904c28d4ff0eb2a3a57a00f39d7f51e577b8931f28b97fa78aa",
+      "promptUtf8Sha256": "5452e85ddc62a506acab2a164895757a928f9d259fa15374b5120483513de0b7",
+      "promptRecipe": {
+        "prefix": "x",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 20,
+        "suffix": ""
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 1,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "serial"
+      },
+      "response": {
+        "id": "chatcmpl-0720a798cb854edba4c8b58c",
+        "created": 1790341637,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "It"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 373,
+          "completion_tokens": 1,
+          "total_tokens": 374,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 373,
+          "predicted_n": 1,
+          "prompt_ms": 1556.3,
+          "predicted_ms": 0.0,
+          "prompt_per_second": 239.671,
+          "predicted_per_second": 0.0,
+          "cache_n": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "httpWallSeconds": 1.724962
+    },
+    {
+      "sourceRun": "20260925-130518-61e612f7d6ca4129aab809b260f7da70",
+      "sourceFile": "context-check-sample-3.json",
+      "sourceSha256": "b9e69fdaf3307c493598e4a2ff4f7214b4e19ee25befc38908126ca011b38adb",
+      "promptUtf8Sha256": "ec0915a807009ebbe4b415f8b066c2baa6b82a8c0ddf0f2fdea16bed374fc1b8",
+      "promptRecipe": {
+        "prefix": "Start your answer with CONTEXT_CHECK. Summarize the supplied filler in one sentence.\n",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 28,
+        "suffix": "\nStart with CONTEXT_CHECK."
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 32,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "serial"
+      },
+      "response": {
+        "id": "chatcmpl-6e574653059c492aa8c639d9",
+        "created": 1790341639,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "CONTEXT_CHECK. The supplied text repeatedly states that the unified memory architecture alters how inference engines schedule work between the accelerator and the host processor."
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 540,
+          "completion_tokens": 28,
+          "total_tokens": 568,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 540,
+          "predicted_n": 28,
+          "prompt_ms": 1483.9,
+          "predicted_ms": 780.0,
+          "prompt_per_second": 363.906,
+          "predicted_per_second": 35.897,
+          "cache_n": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "httpWallSeconds": 2.494712
+    },
+    {
+      "sourceRun": "20260925-130518-61e612f7d6ca4129aab809b260f7da70",
+      "sourceFile": "context-check-sample-4.json",
+      "sourceSha256": "92eb6cc2b7b2eac3108d3d5a4889c61aa1f17c9b430b9892ed78974d595e1d94",
+      "promptUtf8Sha256": "ec0915a807009ebbe4b415f8b066c2baa6b82a8c0ddf0f2fdea16bed374fc1b8",
+      "promptRecipe": {
+        "prefix": "Start your answer with CONTEXT_CHECK. Summarize the supplied filler in one sentence.\n",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 28,
+        "suffix": "\nStart with CONTEXT_CHECK."
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 32,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-612eebb948d14b148ef96947",
+        "created": 1790341641,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "CONTEXT_CHECK. The supplied text repeatedly states that the unified memory architecture alters how inference engines schedule work between the accelerator and the host processor."
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 540,
+          "completion_tokens": 28,
+          "total_tokens": 568,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 540,
+          "predicted_n": 28,
+          "prompt_ms": 1320.0,
+          "predicted_ms": 632.0,
+          "prompt_per_second": 409.091,
+          "predicted_per_second": 44.304,
+          "cache_n": 0,
+          "draft_n": 20,
+          "draft_n_accepted": 11
+        }
+      },
+      "httpWallSeconds": 2.158025
+    },
+    {
+      "sourceRun": "20260925-130518-61e612f7d6ca4129aab809b260f7da70",
+      "sourceFile": "context-check-sample-5.json",
+      "sourceSha256": "a43b219fddfaeabb15b02c7898be0e489dfdbb72af522bef573528c3b518c8c1",
+      "promptUtf8Sha256": "a6b66802258dd40df0733390a1d61789150c54b8a8bc6976a0928529adb79de5",
+      "promptRecipe": {
+        "prefix": "Start your answer with CONTEXT_CHECK. Summarize the supplied filler in one sentence.\n",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 14444,
+        "suffix": "\nStart with CONTEXT_CHECK."
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 32,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-e6b753a4f0df4c71b58941db",
+        "created": 1790341643,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "CONTEXT_CHECK. The supplied filler consists of a single sentence repeated multiple times, stating that the unified memory architecture changes how inference engines schedule work across the accelerator and the"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 260028,
+          "completion_tokens": 32,
+          "total_tokens": 260060,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 260028,
+          "predicted_n": 32,
+          "prompt_ms": 328766.6,
+          "predicted_ms": 873.7,
+          "prompt_per_second": 790.92,
+          "predicted_per_second": 36.626,
+          "cache_n": 0,
+          "draft_n": 20,
+          "draft_n_accepted": 14
+        }
+      },
+      "httpWallSeconds": 354.398605
+    },
+    {
+      "sourceRun": "20260925-134546-87c43fbed70140638d434f1ecc647786",
+      "sourceFile": "sessions-check-group-2-session-01.json",
+      "sourceSha256": "e8fa673c33e86b8dba88e918c0fc491952504071ce0757b35e1958397ea02c55",
+      "promptUtf8Sha256": "23a4035a74120a2f6bbcde6304044732776f0f910ad5de887208422685011b56",
+      "promptRecipe": {
+        "prefix": "Begin with the exact marker GROUP-2-SESSION-01. Explain why independent inference sessions matter; continue to the output cap.\n",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 454,
+        "suffix": ""
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-076dd1f4084b4cb48316518f",
+        "created": 1790344073,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "GROUP-2-SESSION-01\n\nIndependent inference sessions are critical for maintaining system stability, security, and performance in modern AI deployments. By isolating each inference request into its own session, the system prevents cross-contamination of state, ensuring that data from one user or task does not leak into another. This isolation is fundamental for multi-tenant environments where strict data privacy and compliance are required.\n\nFurthermore, independent sessions allow for more efficient resource management. The scheduler can allocate compute resources (such as GPU memory and processing time) dynamically based on the specific needs of each session, rather than managing a monolithic, shared state that can"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 8212,
+          "completion_tokens": 128,
+          "total_tokens": 8340,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 8212,
+          "predicted_n": 128,
+          "prompt_ms": 10246.2,
+          "predicted_ms": 8845.8,
+          "prompt_per_second": 801.468,
+          "predicted_per_second": 14.47,
+          "cache_n": 0,
+          "draft_n": 8,
+          "draft_n_accepted": 4
+        }
+      },
+      "httpWallSeconds": 30.695512
+    },
+    {
+      "sourceRun": "20260925-134546-87c43fbed70140638d434f1ecc647786",
+      "sourceFile": "sessions-check-group-2-session-02.json",
+      "sourceSha256": "4255a26bf9631a610c6772b4690f430327aefd6506424711d49bc246e6995f99",
+      "promptUtf8Sha256": "073283afe7ff4478e5a21a1ccafed9cf3e6e7b8d5c49579dbd0bdefebfcf1d27",
+      "promptRecipe": {
+        "prefix": "Begin with the exact marker GROUP-2-SESSION-02. Explain why independent inference sessions matter; continue to the output cap.\n",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 454,
+        "suffix": ""
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-e44a96d4bcbc44138ae5ad96",
+        "created": 1790344073,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "GROUP-2-SESSION-02\n\nIndependent inference sessions are critical for maintaining system stability, security, and performance in modern AI deployments. By isolating each inference request into its own session, engines can prevent cross-contamination of state, ensuring that one user's data or context does not leak into another's. This isolation is fundamental for multi-tenant environments where strict data privacy and compliance are required.\n\nFurthermore, independent sessions allow for more efficient resource scheduling. The accelerator and host processor can manage memory allocation and compute cycles per session, preventing a single heavy workload from starving others. This leads to predictable latency and higher throughput, as the"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 8212,
+          "completion_tokens": 128,
+          "total_tokens": 8340,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 8212,
+          "predicted_n": 128,
+          "prompt_ms": 9670.6,
+          "predicted_ms": 18680.5,
+          "prompt_per_second": 849.172,
+          "predicted_per_second": 6.852,
+          "cache_n": 0,
+          "draft_n": 8,
+          "draft_n_accepted": 7
+        }
+      },
+      "httpWallSeconds": 29.813732
+    },
+    {
+      "sourceRun": "20260925-134546-87c43fbed70140638d434f1ecc647786",
+      "sourceFile": "sessions-check-group-3-session-01.json",
+      "sourceSha256": "dc87cc23a41523f0ddf898b4ad7c7f388dd3ab7fc1afecf9920f709194c50698",
+      "promptUtf8Sha256": "305b478c86ae4ca0bbb0656d60f3e5b0f51dccdf6dbfdf0349f73fec92f0ada0",
+      "promptRecipe": {
+        "prefix": "Begin with the exact marker GROUP-3-SESSION-01. Explain why independent inference sessions matter; continue to the output cap.\n",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 454,
+        "suffix": ""
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-131eb8c1a5544168a9146ca8",
+        "created": 1790344104,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "GROUP-3-SESSION-01\n\nIndependent inference sessions are critical for maintaining system stability, security, and performance in modern AI deployments. By isolating each inference request into its own session, the system prevents cross-contamination of context, ensuring that data from one user or task does not leak into another. This isolation is fundamental for privacy compliance and accurate model behavior, as it guarantees that each inference operates on a clean slate without residual state from previous interactions.\n\nFurthermore, independent sessions allow for better resource management and scheduling. The inference engine can allocate compute resources dynamically based on the specific needs of each session, optimizing throughput and latency. This"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 8212,
+          "completion_tokens": 128,
+          "total_tokens": 8340,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 8212,
+          "predicted_n": 128,
+          "prompt_ms": 9627.8,
+          "predicted_ms": 26702.6,
+          "prompt_per_second": 852.947,
+          "predicted_per_second": 4.794,
+          "cache_n": 0,
+          "draft_n": 8,
+          "draft_n_accepted": 6
+        }
+      },
+      "httpWallSeconds": 38.620812
+    },
+    {
+      "sourceRun": "20260925-134546-87c43fbed70140638d434f1ecc647786",
+      "sourceFile": "sessions-check-group-3-session-02.json",
+      "sourceSha256": "4e167c5838258635c838df6e26a29333a6aa980f5fc22e875568db58c9ed00da",
+      "promptUtf8Sha256": "258fc764dda5cbfac3e0bae98d69f3f5cc9efed8c97e9bd4d0a869b6d761e945",
+      "promptRecipe": {
+        "prefix": "Begin with the exact marker GROUP-3-SESSION-02. Explain why independent inference sessions matter; continue to the output cap.\n",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 454,
+        "suffix": ""
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-179c1f8a9dca477f8a695a3f",
+        "created": 1790344104,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "GROUP-3-SESSION-02\n\nIndependent inference sessions are critical for maintaining system stability, security, and performance in modern AI deployments. By isolating each inference request into its own session, the system prevents cross-contamination of state, ensuring that data from one user or task does not leak into another. This isolation is fundamental for multi-tenant environments where strict data privacy and compliance are required.\n\nFurthermore, independent sessions allow for more efficient resource management. The scheduler can allocate compute resources (such as GPU memory and processing time) dynamically based on the specific needs of each session, rather than managing a monolithic, shared state that can"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 8212,
+          "completion_tokens": 128,
+          "total_tokens": 8340,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 8212,
+          "predicted_n": 128,
+          "prompt_ms": 9800.1,
+          "predicted_ms": 6474.9,
+          "prompt_per_second": 837.951,
+          "predicted_per_second": 19.769,
+          "cache_n": 0,
+          "draft_n": 3,
+          "draft_n_accepted": 1
+        }
+      },
+      "httpWallSeconds": 39.255458
+    },
+    {
+      "sourceRun": "20260925-134546-87c43fbed70140638d434f1ecc647786",
+      "sourceFile": "sessions-check-group-3-session-03.json",
+      "sourceSha256": "000240363b60a9218f993ea5860a7e2a132448e207590191ca84b5924edb47ae",
+      "promptUtf8Sha256": "92d810b7b4a93fd07340a949e12665c4ff22bbea794203cd4552adeb1f2345f3",
+      "promptRecipe": {
+        "prefix": "Begin with the exact marker GROUP-3-SESSION-03. Explain why independent inference sessions matter; continue to the output cap.\n",
+        "repeat_unit": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+        "repeats": 454,
+        "suffix": ""
+      },
+      "messageRole": "user",
+      "requestSettings": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "drafter": "mtp"
+      },
+      "response": {
+        "id": "chatcmpl-3b48b79e1ed34cb1aa86628b",
+        "created": 1790344104,
+        "model": "halogen-qwen3.8-flash-next",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "length",
+            "message": {
+              "role": "assistant",
+              "content": "GROUP-3-SESSION-03\n\nIndependent inference sessions are critical for maintaining system stability, security, and performance in modern AI deployments. By isolating each inference request into its own session, the system prevents cross-contamination of state, ensuring that data from one user or task does not leak into another. This isolation is fundamental for multi-tenant environments where strict data privacy and compliance are required.\n\nFurthermore, independent sessions allow for more efficient resource management. The scheduler can allocate compute resources (such as GPU memory and processing time) dynamically based on the specific needs of each session, rather than managing a monolithic, shared state that can"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 8212,
+          "completion_tokens": 128,
+          "total_tokens": 8340,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "timings": {
+          "prompt_n": 8212,
+          "predicted_n": 128,
+          "prompt_ms": 10527.3,
+          "predicted_ms": 16289.6,
+          "prompt_per_second": 780.067,
+          "predicted_per_second": 7.858,
+          "cache_n": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "httpWallSeconds": 39.065686
+    }
+  ]
+}

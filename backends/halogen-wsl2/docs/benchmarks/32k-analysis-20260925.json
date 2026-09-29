@@ -1,0 +1,61 @@
+{
+  "schema": "halogen-preflight-32k-analysis-v1",
+  "run": "results/hybrid48-model-20260925/20260925-130138-9156f7602ec948f2b62a9e57e8eb3a87",
+  "qualified": true,
+  "samples": [
+    {
+      "mode": "serial",
+      "repetition": 1,
+      "promptTokens": 58,
+      "outputTokens": 128,
+      "prefillTokensPerSecond": 22.162,
+      "decodeTokensPerSecond": 17.423,
+      "wallSeconds": 10.125988,
+      "cacheTokens": 0
+    },
+    {
+      "mode": "mtp",
+      "repetition": 1,
+      "promptTokens": 58,
+      "outputTokens": 128,
+      "prefillTokensPerSecond": 87.786,
+      "decodeTokensPerSecond": 29.844,
+      "wallSeconds": 5.100433,
+      "cacheTokens": 0
+    },
+    {
+      "mode": "mtp",
+      "repetition": 2,
+      "promptTokens": 58,
+      "outputTokens": 128,
+      "prefillTokensPerSecond": 94.34,
+      "decodeTokensPerSecond": 42.778,
+      "wallSeconds": 3.768304,
+      "cacheTokens": 0
+    },
+    {
+      "mode": "serial",
+      "repetition": 2,
+      "promptTokens": 58,
+      "outputTokens": 128,
+      "prefillTokensPerSecond": 97.627,
+      "decodeTokensPerSecond": 39.351,
+      "wallSeconds": 4.172978,
+      "cacheTokens": 0
+    }
+  ],
+  "arithmeticVerified": true,
+  "gpuCopiedWeightBytes": 50433337536,
+  "hostRegisteredWeightBytes": 22574008704,
+  "weightPayloadBytes": 73007346240,
+  "windowsGuardMinimumBytes": 27266002944.0,
+  "sampledAdapterUsagePeakBytes": 85441536000.0,
+  "cgroupPeakBytes": 24649949184.0,
+  "limits": [
+    "four responses only; two repetitions per mode",
+    "order and OS-cache warmup confound comparison",
+    "58-token prompt is not representative large-input prefill",
+    "GPU counters are adapter-wide, not exact per-model residency",
+    "successful HIP copies/host registrations are not proof of 120GB capacity"
+  ]
+}

@@ -1,14 +1,39 @@
-# strix-alloy
+# Strix Alloy
+
+One source repository for native Windows PROJFIX and the pinned experimental
+Halogen WSL2 package, with explicit backend availability rather than silent fallback.
+**This integration branch is not a new all-in-one runtime release.** GUFO research
+is preserved separately and its persistent service is not qualified for publication.
+
+## Choose an implementation
+
+| Backend | Included here | Entry point |
+|---|---|---|
+| Native llama.cpp / PROJFIX | Existing native source and build/launch workflow; runtime and weights external | `app/launch-flash-next.ps1` |
+| Halogen WSL2 0.13.8 | Pinned installer, guards, source patches, notices and tests | `backends/halogen-wsl2/Install.ps1`, then `Start.ps1` in that directory |
+| GUFO | Availability description only; no qualified portable service | `app/select-backend.ps1 -Backend GUFO -Action Describe` |
+
+[Start, test and switch safely](docs/integration/README.md) explains the exact
+PowerShell commands, fresh-install prerequisites and remaining qualification gates.
+The shared `app/select-backend.ps1` is **read-only discovery**, not a model manager.
+It does not start engines, change a client endpoint, or enable unqualified profiles.
+Native and Halogen still use different ports and reviewed memory configurations.
+The original WSL2 repository remains available as a compatibility path.
+
+## Published native Windows backend
+
+The remainder of this page describes the existing native v0.1.1 package, not
+Halogen, GUFO, or a new combined binary download.
 
 Windows-native Qwen inference on AMD Strix Halo, built on [pwilkin's `llama.cpp` fork](https://github.com/pwilkin/llama.cpp/tree/strix-halo).
 
-## What this is
+### What this is
 
 An experimental Windows package for running **Qwen3.8-Flash-Next** locally on an AMD Strix Halo APU — the Ryzen AI Max / Max+ 300 series with a Radeon 8060S (`gfx1151`, RDNA 3.5). No Linux, no WSL, no CUDA, no datacenter GPU. It runs the model on the machine under your desk while you use Windows for everything else.
 
 Scope is deliberately narrow: one model family, one GPU architecture, one operating system, measured on one box — stated plainly rather than generalised.
 
-## Why I built it
+### Why I built it
 
 My old desktop stopped working. It was still on DDR3, and rather than rebuild around it I bought a **BOSGAME M5 with 128 GB of unified memory**. I still have an **RTX 2070 SUPER** I want to put back to use.
 
@@ -18,7 +43,7 @@ I am also building **REV:N**, an AI-driven GTA V / FiveM project, and it needs l
 
 **The plan I am working toward** is the M5's 8060S handling inference and the RTX 2070 SUPER acting as an eGPU for games, with Windows available throughout. **That is a goal, not a validated result.** Nothing in this release uses a second GPU, and simultaneous gaming plus inference has not been tested. The numbers below are inference-only.
 
-## Download and run
+### Download and run
 
 strix-alloy documents and distributes the tested llama.cpp configuration and Windows HIP changes used to run Qwen3.8-Flash-Next on Strix Halo. Download the external GGUF files, optionally add the matching MTP sidecar, and load them with a compatible llama-server using your normal model-launch workflow. Use the server's existing web UI or your preferred client. **No separate strix-alloy application is required** - the package is a llama.cpp runtime plus one launch script.
 
@@ -26,7 +51,7 @@ strix-alloy documents and distributes the tested llama.cpp configuration and Win
 | --- | --- | --- | --- |
 | Qwen3.8-Flash-Next PROJFIX GGUF shards (9 files, ~100 GB) | Yes | [ilintar/qwen3.8-flash-next-gguf-strix-halo](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo) - `Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00001-of-00009.gguf` … `-00009-of-00009.gguf` | Start shard 1 with the compatible server |
 | Matching shared MTP sidecar (2.6 GiB) | Optional | Same repo: [`mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf`](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo/resolve/main/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf) | Enables the tested MTP flags. The gain is **workload-dependent** - it is largest on short-context instructed decoding and shrinks as context grows; the measured figures are in [Current numbers](#current-numbers) below |
-| Windows llama.cpp runtime (HIP/ROCm) | Only if your existing runtime lacks the model or shared-MTP support | The [v0.1.1 release](../../releases/tag/v0.1.1) archive (v0.1.0 is superseded), or build from source with [`setup/`](setup/) | The same normal `llama-server` workflow |
+| Windows llama.cpp runtime (HIP/ROCm) | Only if your existing runtime lacks the model or shared-MTP support | The [v0.1.1 release](https://github.com/MKM-030/strix-alloy/releases/tag/v0.1.1) archive (v0.1.0 is superseded), or build from source with [`setup/`](setup/) | The same normal `llama-server` workflow |
 
 Weights stay on your disk and are never bundled or auto-downloaded; the upstream repo is Apache-2.0 and the files are unchanged from the publisher (verified by size and SHA-256, see [`config/model-manifest.example.json`](config/model-manifest.example.json)). No separate tokenizer or PLE file is needed.
 
@@ -61,7 +86,7 @@ Once ready, the server's own chat page is at `http://127.0.0.1:8826` and the Ope
 
 Full details, troubleshooting and uninstall: **[docs/user/README.md](docs/user/README.md)**. You do **not** need a compiler, the ROCm SDK, Git or Python to run the runtime - those are only needed to build it from source.
 
-## Current numbers
+### Current numbers
 
 Published measurements, 17 September 2026. Native Windows HIP, TheRock SDK, IQ4_NL "PROJFIX", 96 GB carve. MTP runs use a shared Q8_0 draft head.
 
@@ -78,7 +103,7 @@ Published measurements, 17 September 2026. Native Windows HIP, TheRock SDK, IQ4_
 
 For context, on speculative serving Halogen publishes 45.3 t/s (mean over ten prompt shapes) and CIRU 44.53 t/s on a 12,960-token replay. Our 45.31 is one prompt's median, so a tie is not established. The [full comparison](docs/benchmarks/engine-comparison.md) separates synthetic, served-serial, MTP and prefill results with pinned sources; the [claim ledger](docs/benchmarks/CLAIM-LEDGER.md) records every correction, including figures I had to withdraw.
 
-## Requirements and honest limitations
+### Requirements and honest limitations
 
 - **Tested configuration:** one Ryzen AI Max+ 395 / Radeon 8060S box, Windows 11, 128 GB unified memory, 96 GB carve. Other Strix Halo variants are untested.
 - **Models are external.** Nothing is bundled and nothing is downloaded automatically.
@@ -86,16 +111,16 @@ For context, on speculative serving Halogen publishes 45.3 t/s (mean over ten pr
 - **The eGPU / simultaneous gaming setup is unvalidated** and is not part of this release.
 - **Open correctness items remain:** state handling after partial draft acceptance, and full multi-turn / long-context quality validation. Completing a 251k request shows capacity, not accuracy. Speculative decoding is not guaranteed bit-identical to serial decoding in the first ~2050 tokens.
 
-## Credits and collaboration
+### Credits and collaboration
 
 Built on [pwilkin / ilintar](https://github.com/pwilkin/llama.cpp)'s `strix-halo` engine and its Qwen kernels and PROJFIX quantization; on [llama.cpp](https://github.com/ggml-org/llama.cpp); on [Qwen](https://github.com/QwenLM)'s model; and on [AMD's TheRock](https://github.com/ROCm/TheRock) HIP SDK. I learned from [Halogen / peonist-ai](https://github.com/peonist-ai/halogen-flash-server), [CIRU](https://github.com/ciru-ai/Qwen3.8-Flash-CIRU-STRIX-IU4), [olliehm](https://github.com/olliehm/qwen-flash-next-windows), [myhacsint](https://github.com/myhacsint/llama.cpp), [stew675](https://github.com/stew675/llama-cpp-rdna-boosts), [SixVolts](https://github.com/SixVolts/llama-halo-hybrid), [halo-box](https://github.com/halo-box/strix-llama.cpp), [drluoto](https://github.com/drluoto/llama.cpp) and the r/StrixHalo community. [Full credits](docs/CREDITS.md).
 
 Most of the kernel work is theirs. My contribution is the Windows integration, local patches, tested configurations and the measurement trail. I am not trying to beat these projects — I would rather share findings and patches with them.
 
-## Developers and researchers
+### Developers and researchers
 
 - **Build from source:** [`setup/README.md`](setup/README.md) creates a fresh engine checkout at the pinned base revision, applies the ordered [patch series](engine-patches/) and builds with checked exit codes.
 - **Benchmark evidence and kernel experiments:** [`docs/benchmarks/`](docs/benchmarks/) - including negative results and retractions.
 - **Reproduce the runtime archive:** [`packaging/build-release.ps1`](packaging/build-release.ps1).
 
-**Maintenance status:** release and packaging complete. New performance research is paused — this is a stabilisation release, not an ongoing optimisation programme.
+**Native v0.1.1 maintenance status:** release and packaging complete. New performance research is paused — this is a stabilisation release, not an ongoing optimisation programme.
