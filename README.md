@@ -26,6 +26,12 @@ checkpoint and overlay. Normal serving is continuous with a 126K default;
 The 0.14.2 rollback package and original 0.13.8 package remain available.
 See the [current Halogen setup guide](backends/halogen-wsl2-0.15.0/README.md).
 
+## Measured Halogen performance
+
+[PP2048/TG128 and context-capacity benchmark](docs/benchmarks/halogen0150-pp2048-20260929.md)
+records measured results, original and clock-calibrated rates, external comparison limits,
+and a refused 262K admission separately from successful 32K/126K runs.
+
 ## Published native Windows backend
 
 The remainder of this page describes the existing native v0.1.1 package, not
