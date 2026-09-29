@@ -6,6 +6,7 @@ $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $files = @(
     Get-ChildItem -LiteralPath (Join-Path $root 'app') -Filter '*.ps1' -File
     Get-ChildItem -LiteralPath (Join-Path $root 'backends/halogen-wsl2') -Filter '*.ps1' -File -Recurse
+    Get-ChildItem -LiteralPath (Join-Path $root 'backends/halogen-wsl2-0.14.2') -Filter '*.ps1' -File -Recurse | Where-Object FullName -NotMatch '[\\/]\.local[\\/]'
     Get-Item -LiteralPath $PSCommandPath
 )
 $failures = @()

@@ -1,8 +1,9 @@
 # One source repository: installation and testing
 
 This is a **source integration checkpoint**, not an all-engine serving release.
-The published native runtime remains v0.1.1. The Halogen package below is pinned
-to the published 0.13.8 adaptation, not the local 0.14.2 research candidate.
+The published native runtime remains v0.1.1. The current Halogen package is pinned
+to **0.14.2**, with guarded 4K single-session profiles. The unchanged 0.13.8
+package remains an explicit compatibility option, not the selected current version.
 GUFO persistent service remains unqualified and is not enabled or substituted.
 
 ## Fresh checkout and prerequisites
@@ -71,33 +72,45 @@ API test below from a second PowerShell terminal after the model is ready.
 Stop only the instance you started using the original launcher's `-Stop` with
 its matching `-RuntimeDir` and port. Do not use global process-kill commands.
 
-## Halogen: install the included WSL2 package, then serve briefly
+## Halogen 0.14.2: install, qualify, then serve briefly
 
-Follow the included [WSL2 setup guide](../../backends/halogen-wsl2/docs/setup.md)
-first: Ubuntu 24.04, working DXG, Docker Engine, required compiler/headers,
-qualified AMD DXG library, and the external HGN/overlay/tokenizer on native WSL
-Ext4. The installer does not install operating-system prerequisites or fetch
-large model files. The package keeps its own `.local` configuration.
-
-The following example uses an already obtained, pinned AMD wheel. Replace the
-paths, distro and model directory; the first command checks, the second installs:
+Follow the [0.14.2 setup guide](../../backends/halogen-wsl2-0.14.2/README.md)
+for the pinned image, host prerequisites and external HGN/overlay/tokenizer.
+This version has its own ignored `.local` installation and reuses model files
+without copying another checkout's machine configuration. No running model
+server is needed for installation. The examples below require an already
+obtained qualified DXG library; replace the Linux paths and distro/user as needed.
 
 ```powershell
-.\backends\halogen-wsl2\Install.ps1 -Distribution Ubuntu-24.04 `
-  -ModelDirectory /srv/models/flash-next -AmdWheel C:\Downloads\rocm_sdk_core-10.0.0-py3-none-linux_x86_64.whl
-.\backends\halogen-wsl2\Install.ps1 -Install -VerifyModelHash -Distribution Ubuntu-24.04 `
-  -ModelDirectory /srv/models/flash-next -AmdWheel C:\Downloads\rocm_sdk_core-10.0.0-py3-none-linux_x86_64.whl
-.\backends\halogen-wsl2\Start.ps1 -Profile Serve32k -ServeSeconds 300
+.\backends\halogen-wsl2-0.14.2\Install.ps1 -Distribution Ubuntu-24.04 `
+  -ModelDirectory /srv/models/flash-next -DxgLibrary /opt/rocm/lib/librocdxg.so.1
+.\backends\halogen-wsl2-0.14.2\Install.ps1 -Install -Distribution Ubuntu-24.04 `
+  -ModelDirectory /srv/models/flash-next -DxgLibrary /opt/rocm/lib/librocdxg.so.1
+
+# Run each command only after the previous one exits successfully.
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Trace4k
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Single4k
+.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Serve4k -ServeSeconds 300
 ```
 
-Use `-DxgLibrary` instead of `-AmdWheel` only with an already available Linux
-library of the exact qualified hash, as described in the setup guide.
-Serving is loopback-only at `http://127.0.0.1:8731/v1`, model ID
-`halogen-qwen3.8-flash-next`. It stops **300 seconds after readiness**, including
-outstanding requests. Keep its supervising window open; Ctrl+C requests the
-existing exact-container cleanup. This is not an always-on server.
-The package under this repository requires its own explicit installation;
-configuration from a different checkout is not silently copied or reused.
+Use `-AmdWheel` instead of `-DxgLibrary` for the qualified downloaded AMD wheel.
+`-VerifyModelHash` on explicit installation adds full hashes of both large model
+files; default model checks verify sizes. Install builds three pinned adapters
+and extracts local dependencies from a stopped container, not from a model server.
+
+The first profile validates the exact trace and exits before model registration.
+The second loads the model, checks two short serial answers, then verifies clean
+shutdown and memory recovery. The third requires both exact-source passes and
+exposes one **4,096-position slot** on `http://127.0.0.1:8731/v1` for 30â€“300
+seconds after its initial smoke answers, subject to a 600-second total container
+deadline. Keep the supervising terminal open; this is not an always-on service.
+Failed or unresolved runs retain their evidence and block automatic retries.
+
+The older [0.13.8 package](../../backends/halogen-wsl2/docs/setup.md) remains
+unchanged at `backends/halogen-wsl2/`, including its separate `Serve32k` profile.
+It is an explicit fallback, not a silent alternative. Stop and verify cleanup
+before using another version. The 0.14.2 update does not inherit 0.13.8's larger
+context qualification or activate the historical full-context research tests.
 
 ## Send a short API request in a second terminal
 
@@ -109,6 +122,7 @@ After the selected server is ready, use exactly one of:
 ```
 
 The helper verifies `/v1/models` and sends one small, non-streaming request.
+Halogen requests explicitly select serial drafting and disable thinking.
 It does not load or stop a server. It rejects GUFO and non-loopback destinations,
 uses no cloud fallback, and follows no HTTP redirects. PASS means nonempty final
 answer text; `exact_ok` separately reports whether the answer was exactly `OK`.
@@ -134,13 +148,17 @@ rewritten by this checkpoint. No new GUFO speed or correctness claim is made.
 ```powershell
 python -B -m unittest discover -s tests/publication -v
 pwsh -NoProfile -File tests/publication/Test-PowerShellSyntax.ps1
-# The included WSL2 package also retains its own tests/ directory.
+python -B -m unittest discover -s backends/halogen-wsl2-0.14.2/tests -v
+# The unchanged 0.13.8 package also retains its own tests/ directory.
 ```
 
 The API tests use a tiny fake loopback server, not a loaded model. Linux-only
 C fixtures are skipped on Windows and must not be counted as Windows passes.
 The [source manifest](halogen-source-manifest.json) records every imported
-WSL2 file against commit `6b35ef80445d426237f87175258c7ceab724b252`.
+legacy 0.13.8 WSL2 file against commit `6b35ef80445d426237f87175258c7ceab724b252`.
 Original licenses and third-party notices remain inside that package.
 [Validation record](validation-20260929.md) separates rerun tests from historical
 inference evidence and lists what was not executed for this publication.
+
+[Halogen 0.14.2 validation](../../backends/halogen-wsl2-0.14.2/validation-20260929.md)
+records this update separately; the earlier source-integration validation remains historical.

@@ -33,7 +33,7 @@ $request = @{
     temperature=0; max_tokens=128; stream=$false
 }
 if ($native) { $request.chat_template_kwargs = @{enable_thinking=$false} }
-else { $request.enable_thinking = $false }
+else { $request.enable_thinking = $false; $request.reasoning_effort = 'none'; $request.drafter = 'serial' }
 $watch = [Diagnostics.Stopwatch]::StartNew()
 try {
     $response = Invoke-RestMethod "$base/chat/completions" -Method Post `

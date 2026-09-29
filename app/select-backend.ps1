@@ -44,9 +44,9 @@ if ($Action -eq 'Describe') {
         }
         halogen = @{
             status='experimental_bounded'; model_format='HGN checkpoint + overlay + tokenizer on WSL Ext4'
-            launcher='backends/halogen-wsl2/Start.ps1'; api='http://127.0.0.1:8731/v1'
-            qualification='Pinned 0.13.8 WSL2 package; 64 GiB carve, WSL 56GB; 30-300 seconds after readiness.'
-            start_command='.\backends\halogen-wsl2\Start.ps1 -Profile Serve32k -ServeSeconds 300'
+            version='0.14.2'; launcher='backends/halogen-wsl2-0.14.2/Start.ps1'; api='http://127.0.0.1:8731/v1'
+            qualification='Pinned 0.14.2 WSL2 package; 4K, one slot; run Trace4k then Single4k first. Bounded Serve4k: 30-300 seconds.'
+            start_command='.\backends\halogen-wsl2-0.14.2\Start.ps1 -Profile Serve4k -ServeSeconds 300'
             print_only_supported=$false
         }
         gufo = @{

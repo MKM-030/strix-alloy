@@ -41,6 +41,10 @@ class SelectorTests(unittest.TestCase):
                 data = json.loads(result.stdout)
                 self.assertFalse(data['selector_starts_models'])
                 self.assertFalse(data['single_shared_endpoint'])
+                if name == 'Halogen':
+                    self.assertEqual(data['version'], '0.14.2')
+                    self.assertEqual(data['launcher'], 'backends/halogen-wsl2-0.14.2/Start.ps1')
+                    self.assertIn('Serve4k', data['start_command'])
                 if name == 'GUFO':
                     self.assertEqual(data['status'], 'persistent_service_unqualified')
                     self.assertIsNone(data['launcher'])

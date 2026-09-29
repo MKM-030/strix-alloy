@@ -10,7 +10,8 @@ is preserved separately and its persistent service is not qualified for publicat
 | Backend | Included here | Entry point |
 |---|---|---|
 | Native llama.cpp / PROJFIX | Existing native source and build/launch workflow; runtime and weights external | `app/launch-flash-next.ps1` |
-| Halogen WSL2 0.13.8 | Pinned installer, guards, source patches, notices and tests | `backends/halogen-wsl2/Install.ps1`, then `Start.ps1` in that directory |
+| **Halogen WSL2 0.14.2** | Version-pinned installer, adapters, guarded 4K one-slot profiles and tests | [`backends/halogen-wsl2-0.14.2/`](backends/halogen-wsl2-0.14.2/README.md): install, then `Trace4k`, `Single4k`, `Serve4k` |
+| Halogen WSL2 0.13.8 compatibility | Unchanged published source and its separate bounded 32K workflow | `backends/halogen-wsl2/`; explicit fallback, never concurrent with 0.14.2 |
 | GUFO | Availability description only; no qualified portable service | `app/select-backend.ps1 -Backend GUFO -Action Describe` |
 
 [Start, test and switch safely](docs/integration/README.md) explains the exact
@@ -18,7 +19,10 @@ PowerShell commands, fresh-install prerequisites and remaining qualification gat
 The shared `app/select-backend.ps1` is **read-only discovery**, not a model manager.
 It does not start engines, change a client endpoint, or enable unqualified profiles.
 Native and Halogen still use different ports and reviewed memory configurations.
-The original WSL2 repository remains available as a compatibility path.
+The shared Halogen description now selects **0.14.2**. Its `Serve4k` profile is
+limited to 30â€“300 seconds; larger contexts and persistent service are not
+qualified by this update. The original WSL2 repository and its unchanged 0.13.8
+package remain explicit compatibility paths. See the [0.14.2 setup guide](backends/halogen-wsl2-0.14.2/README.md).
 
 ## Published native Windows backend
 
@@ -123,4 +127,4 @@ Most of the kernel work is theirs. My contribution is the Windows integration, l
 - **Benchmark evidence and kernel experiments:** [`docs/benchmarks/`](docs/benchmarks/) - including negative results and retractions.
 - **Reproduce the runtime archive:** [`packaging/build-release.ps1`](packaging/build-release.ps1).
 
-**Native v0.1.1 maintenance status:** release and packaging complete. New performance research is paused — this is a stabilisation release, not an ongoing optimisation programme.
+**Maintenance status:** release and packaging complete. New performance research is paused — this is a stabilisation release, not an ongoing optimisation programme.

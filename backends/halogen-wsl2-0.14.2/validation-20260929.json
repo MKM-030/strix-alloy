@@ -1,0 +1,132 @@
+{
+  "schema": "strix-halogen0142-validation-v1",
+  "date": "2026-09-29",
+  "version": "0.14.2",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:f3f99aa48f3a051f18da9ee24b333ca108fe745773fd036a365fe1875871d0be",
+  "scope": {
+    "context_positions": 4096,
+    "slots": 1,
+    "serving_seconds_tested": 30,
+    "smoke_drafter": "serial"
+  },
+  "source_manifest_sha256": "e8a38d1dbd183fd586eb048811a203b326e04fababf763aae77f83ac00a5d4f9",
+  "tests": {
+    "installed_backend": {
+      "passed": 27,
+      "skipped": 0
+    },
+    "publication_helpers": {
+      "passed": 10,
+      "skipped": 0
+    },
+    "fresh_export_backend": {
+      "passed": 25,
+      "skipped": 2
+    },
+    "fresh_export_helpers": {
+      "passed": 10,
+      "skipped": 0
+    },
+    "powershell_parsed_files": 16
+  },
+  "legacy_files_unchanged": 84,
+  "current_source_files_hashed": 18,
+  "live": [
+    {
+      "run": "halogen-flash-hybrid-0142-trace-decc7a4121364288ba118e6a098a44aa",
+      "stage": "trace",
+      "success_sha256": "bd1af4e26228bfe69a2ccf604ff28f821d6a49355c5d34b25ed110c3a83cf6bc",
+      "seal_sha256": "bca021624f1d18b72ed5297733f03a66944a0b3057cf77eadb9c6514942251e8",
+      "passed": true,
+      "cleanup": true,
+      "recovery": true,
+      "guard_exit": true,
+      "container_terminal": {
+        "Running": false,
+        "Pid": 0,
+        "OOMKilled": false,
+        "Error": "",
+        "ExitCode": 1
+      },
+      "direct_host_samples": 62,
+      "minimum_available_physical_bytes": 50329079808,
+      "minimum_commit_headroom_bytes": 217571348480,
+      "recovery_last_five_verified": true
+    },
+    {
+      "run": "halogen-flash-hybrid-0142-smoke-dba779978fc84b77a44178008423bfdc",
+      "stage": "smoke",
+      "success_sha256": "38b3b56ca99257c9397e824417623e86a3c0408371ba37995960b55472855e4f",
+      "seal_sha256": "53afb37d29ed8a7c3dc283ea09089f2b2dd514db702b60c8d0a93a86485d71e9",
+      "passed": true,
+      "cleanup": true,
+      "recovery": true,
+      "guard_exit": true,
+      "container_terminal": {
+        "Running": false,
+        "Pid": 0,
+        "OOMKilled": false,
+        "Error": "",
+        "ExitCode": 137
+      },
+      "direct_host_samples": 179,
+      "minimum_available_physical_bytes": 21871755264,
+      "minimum_commit_headroom_bytes": 117434957824,
+      "recovery_last_five_verified": true,
+      "versions": {
+        "api": "0.14.2",
+        "engine": "0.14.2",
+        "match": true
+      },
+      "answers": {
+        "arithmetic": "42",
+        "german": "Gr\u00fcn"
+      }
+    },
+    {
+      "run": "halogen-flash-hybrid-0142-serve-c18cb1c676d54743968afb9c5ff4a14f",
+      "stage": "serve",
+      "success_sha256": "d3c2af50305cc5149bb3b2f97b49fad8e822ccb37c542096e46e714c9f691e2c",
+      "seal_sha256": "dcfc5b80967b84375de66606830efb2dc909f7994280e276b0910e57712c5616",
+      "passed": true,
+      "cleanup": true,
+      "recovery": true,
+      "guard_exit": true,
+      "container_terminal": {
+        "Running": false,
+        "Pid": 0,
+        "OOMKilled": false,
+        "Error": "",
+        "ExitCode": 137
+      },
+      "direct_host_samples": 204,
+      "minimum_available_physical_bytes": 23330459648,
+      "minimum_commit_headroom_bytes": 115495354368,
+      "recovery_last_five_verified": true,
+      "versions": {
+        "api": "0.14.2",
+        "engine": "0.14.2",
+        "match": true
+      },
+      "answers": {
+        "arithmetic": "42",
+        "german": "Gr\u00fcn"
+      }
+    }
+  ],
+  "api_helper": {
+    "returncode": 0,
+    "stderr": "",
+    "result": {
+      "request_seconds": 0.366,
+      "result": "PASS: basic non-streaming inference only",
+      "answer": "OK",
+      "advertised_model": "halogen-qwen3.8-flash-next",
+      "exact_ok": true,
+      "note": "Wall time is not decode speed. Advertised model name is not proof of backend identity."
+    }
+  },
+  "model_integrity": "Existing HGN files reused; sizes checked; no new full model SHA-256 run.",
+  "binary_assets_distributed": false,
+  "persistent_service_qualified": false
+}

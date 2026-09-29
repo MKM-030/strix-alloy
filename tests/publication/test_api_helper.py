@@ -70,6 +70,8 @@ class ApiHelperTests(unittest.TestCase):
                 self.assertFalse(body['stream'])
                 if backend == 'Halogen':
                     self.assertFalse(body['enable_thinking'])
+                    self.assertEqual(body['drafter'], 'serial')
+                    self.assertEqual(body['reasoning_effort'], 'none')
                 else:
                     self.assertFalse(body['chat_template_kwargs']['enable_thinking'])
 
