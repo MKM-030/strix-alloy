@@ -44,9 +44,9 @@ if ($Action -eq 'Describe') {
         }
         halogen = @{
             status='experimental_guarded_service'; model_format='HGN checkpoint + overlay + tokenizer on WSL Ext4'
-            version='0.14.2'; launcher='backends/halogen-wsl2-0.14.2/Start.ps1'; api='http://127.0.0.1:8731/v1'
-            qualification='Pinned 0.14.2; configurable context, default 129024; continuous serving, Bearer auth, live logs.'
-            start_command='.\backends\halogen-wsl2-0.14.2\Start.ps1 -ContextSize 129024'
+            version='0.15.0'; launcher='backends/halogen-wsl2-0.15.0/Start.ps1'; api='http://127.0.0.1:8731/v1'
+            qualification='Pinned 0.15.0; configurable context, default 129024; continuous serving, Bearer auth, live logs.'
+            start_command='.\backends\halogen-wsl2-0.15.0\Start.ps1 -ContextSize 129024'
             print_only_supported=$false
         }
         gufo = @{

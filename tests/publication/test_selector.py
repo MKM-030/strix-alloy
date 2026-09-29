@@ -42,8 +42,8 @@ class SelectorTests(unittest.TestCase):
                 self.assertFalse(data['selector_starts_models'])
                 self.assertFalse(data['single_shared_endpoint'])
                 if name == 'Halogen':
-                    self.assertEqual(data['version'], '0.14.2')
-                    self.assertEqual(data['launcher'], 'backends/halogen-wsl2-0.14.2/Start.ps1')
+                    self.assertEqual(data['version'], '0.15.0')
+                    self.assertEqual(data['launcher'], 'backends/halogen-wsl2-0.15.0/Start.ps1')
                     self.assertIn('-ContextSize 129024', data['start_command'])
                 if name == 'GUFO':
                     self.assertEqual(data['status'], 'persistent_service_unqualified')

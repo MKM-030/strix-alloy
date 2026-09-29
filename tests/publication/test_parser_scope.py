@@ -15,9 +15,9 @@ class ParserScopeTests(unittest.TestCase):
         parser.parent.mkdir(parents=True)
         shutil.copyfile(ROOT/'tests/publication/Test-PowerShellSyntax.ps1',parser)
         for rel in ['app/native.ps1','backends/halogen-wsl2/Start.ps1',
-                    'backends/halogen-wsl2-0.14.2/Start.ps1']:
+                    'backends/halogen-wsl2-0.14.2/Start.ps1','backends/halogen-wsl2-0.15.0/Start.ps1']:
             p=root/rel; p.parent.mkdir(parents=True,exist_ok=True)
-            p.write_text('param(' if bad_source and '0.14.2' in rel else 'param()',encoding='utf-8')
+            p.write_text('param(' if bad_source and ('0.14.2' if bad_source is True else bad_source) in rel else 'param()',encoding='utf-8')
         ignored=root/'backends/halogen-wsl2-0.14.2/.local/broken.ps1'
         ignored.parent.mkdir(); ignored.write_text('param(',encoding='utf-8')
         return subprocess.run([PWSH,'-NoProfile','-File',str(parser)],
@@ -33,6 +33,12 @@ class ParserScopeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             result=self.fixture(Path(td)/'.local/checkout')
             self.assertEqual(result.returncode,0,result.stderr)
-            self.assertIn('parsed 4 PowerShell',result.stdout)
+            self.assertIn('parsed 5 PowerShell',result.stdout)
+
+    def test_new_backend_source_is_also_parsed(self):
+        with tempfile.TemporaryDirectory() as td:
+            result=self.fixture(Path(td)/'.local/checkout',bad_source='0.15.0')
+            self.assertNotEqual(result.returncode,0)
+            self.assertIn('0.15.0',result.stderr)
 
 if __name__=='__main__': unittest.main()

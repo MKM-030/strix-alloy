@@ -2,8 +2,9 @@
 
 This is a **source integration checkpoint**, not an all-engine serving release.
 The published native runtime remains v0.1.1. The current Halogen package is pinned
-to **0.14.2**, with guarded 4K single-session profiles. The unchanged 0.13.8
-package remains an explicit compatibility option, not the selected current version.
+to **0.15.0**, with configurable context (default 126K), one slot, authenticated
+continuous serving and live logs. The unchanged 0.14.2 and 0.13.8 packages
+remain explicit rollback/compatibility options, not the selected current version.
 GUFO persistent service remains unqualified and is not enabled or substituted.
 
 ## Fresh checkout and prerequisites
@@ -72,18 +73,18 @@ API test below from a second PowerShell terminal after the model is ready.
 Stop only the instance you started using the original launcher's `-Stop` with
 its matching `-RuntimeDir` and port. Do not use global process-kill commands.
 
-## Halogen 0.14.2: configurable context and continuous serving
+## Halogen 0.15.0: configurable context and continuous serving
 
-The service now passed live 129024-position startup and authenticated inference
-after a Windows heartbeat-file replacement fix. [Current validation and limits](../../backends/halogen-wsl2-0.14.2/validation-heartbeat-fix-20260929.md).
+Use the version-pinned 0.15.0 package with the existing w4b model and overlay.
+[Upgrade validation and limits](../../backends/halogen-wsl2-0.15.0/validation-upgrade-20260929.md).
 
-Follow the [Halogen installation and service guide](../../backends/halogen-wsl2-0.14.2/README.md)
-for prerequisites and the explicit installer. Your existing HGN weights and
-pinned image can be reused; the installer does not require a running server.
+Follow the [Halogen installation and service guide](../../backends/halogen-wsl2-0.15.0/README.md)
+for prerequisites and the explicit installer. Reuse your existing HGN weights
+and obtain the new pinned 0.15.0 image. Setup does not require a running server.
 After installation:
 
 ```powershell
-.\backends\halogen-wsl2-0.14.2\Start.ps1
+.\backends\halogen-wsl2-0.15.0\Start.ps1
 # Equivalent default context: -ContextSize 129024 (126 * 1024)
 # No serving timer: -ServeSeconds 0
 ```
@@ -92,7 +93,7 @@ The model loads, passes short startup checks, then prints READY, the endpoint,
 and the generated local API token. The API remains `http://127.0.0.1:8731/v1`.
 Configure model `halogen-qwen3.8-flash-next` and put the printed token in your
 client's API-key field. Authentication is enforced, not a placeholder.
-The secret is kept only in this package's ignored `.local/api-token.txt`.
+The secret is stored locally in this package's ignored `.local/api-token.txt`.
 
 Context is configurable from 4096 to 262144 positions, with a single slot and
 memory admission sized for the chosen context. The 126K default is 129024 tokens;
@@ -145,7 +146,7 @@ rewritten by this checkpoint. No new GUFO speed or correctness claim is made.
 ```powershell
 python -B -m unittest discover -s tests/publication -v
 pwsh -NoProfile -File tests/publication/Test-PowerShellSyntax.ps1
-python -B -m unittest discover -s backends/halogen-wsl2-0.14.2/tests -v
+python -B -m unittest discover -s backends/halogen-wsl2-0.15.0/tests -v
 # The unchanged 0.13.8 package also retains its own tests/ directory.
 ```
 
@@ -158,4 +159,4 @@ Original licenses and third-party notices remain inside that package.
 inference evidence and lists what was not executed for this publication.
 
 [Halogen 0.14.2 validation](../../backends/halogen-wsl2-0.14.2/validation-20260929.md)
-records this update separately; the earlier source-integration validation remains historical.
+is historical rollback evidence, not the current 0.15.0 upgrade validation.
