@@ -23,7 +23,7 @@ import uuid
 import portable
 import runner as r
 import startup_guard as sg
-from lease_supervisor import fresh
+from lease_supervisor import fresh, lease_record
 
 DEFAULT_CONTEXT = 126 * 1024
 ROOT = Path(__file__).resolve().parents[1]
@@ -268,6 +268,7 @@ def guard(attempt):
     log=logger(attempt/'host-guard.jsonl',raw=True)
     host=r.load_module('service_host_frames',ROOT/'scripts/host_frames.py')
     checked=0
+    sequence=0
     try:
         owned(r.inspect(cid),cid,m)
         while True:
@@ -278,7 +279,8 @@ def guard(attempt):
             log.info(json.dumps({'time':time.time(),**frame}))
             if time.monotonic()-checked>=5:
                 info=r.inspect(cid); owned(info,cid,m,running=info['State']['Running']); checked=time.monotonic()
-            atomic(attempt/'lease.json',{'run_id':m['run_id'],'time':time.time()})
+            sequence += 1
+            atomic(attempt/'lease.json',lease_record(m['run_id'],sequence))
             if not (attempt/'armed.json').exists(): atomic(attempt/'armed.json',{'id':cid})
             if (attempt/'quiesce-request.json').exists():
                 if read(attempt/'quiesce-request.json')!={'schema':1,'container_id':cid}:

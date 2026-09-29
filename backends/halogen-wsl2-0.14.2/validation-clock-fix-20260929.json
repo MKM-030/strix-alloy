@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "date": "2026-09-29",
+  "previous_commit": "a8e35fe2c00fcade9cfb0f4762fc6421319c830e",
+  "incident_run": "62899697e0df4b948f70c763d282e6c1",
+  "incident_original_files_unchanged": true,
+  "clock_samples": [
+    {
+      "windows_before": 1790700419.940107,
+      "guest": 1790700418.3770452,
+      "windows_after": 1790700424.1843095,
+      "offset_min": 1.5630619525909424,
+      "offset_max": 5.80726432800293
+    },
+    {
+      "windows_before": 1790700424.1843095,
+      "guest": 1790700418.4291685,
+      "windows_after": 1790700424.2608328,
+      "offset_min": 5.755141019821167,
+      "offset_max": 5.831664323806763
+    },
+    {
+      "windows_before": 1790700424.2608328,
+      "guest": 1790700418.504086,
+      "windows_after": 1790700424.3344543,
+      "offset_min": 5.756746768951416,
+      "offset_max": 5.830368280410767
+    }
+  ],
+  "clock_fix": {
+    "schema": 2,
+    "production_no_progress_seconds": 45,
+    "cross_os_utc_comparison": false,
+    "startup_requires_observed_renewal": true
+  },
+  "tests": {
+    "installed_windows_backend_passed": 64,
+    "shared_helper_passed": 10,
+    "linux_cpu_process_passed": 3,
+    "fresh_backend_passed": 61,
+    "fresh_backend_skipped": 6,
+    "fresh_shared_passed": 10
+  },
+  "new_launch": {
+    "run_id": "21cd229604f442fc9a61220152a93b3d",
+    "context": 129024,
+    "outcome": {
+      "ready": false,
+      "cleanup": true,
+      "recovery": true,
+      "error": "Context 129024 needs 47 GiB free physical / 121 GiB commit headroom; observed 43.97 / 197.92",
+      "stopped_at": 1790700935.2115424,
+      "context": 129024
+    },
+    "container_created": false
+  },
+  "tailscale": {
+    "backend_state": "Running",
+    "funnel_configured": false,
+    "external_access_tested": false
+  }
+}

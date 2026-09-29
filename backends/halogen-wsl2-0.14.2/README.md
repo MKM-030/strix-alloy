@@ -8,6 +8,10 @@ This is an experimental WSL2 adaptation; it is not an upstream WSL support claim
 Windows heartbeat-file replacement fix. See the [current validation record](validation-heartbeat-fix-20260929.md)
 for the tested lifecycle and remaining limits.**
 
+The container lease now uses observed sequence progress rather than comparing
+Windows and WSL wall clocks. [Clock-fix validation](validation-clock-fix-20260929.md)
+records the regression tests and separates live startup from source checks.
+
 ## Start the installed server
 
 From the repository root in PowerShell 7:
