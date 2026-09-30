@@ -11,7 +11,7 @@ with explicit availability, reproducible measurements and no silent fallback.
 | **Halogen WSL2 0.15.1** | w4b + overlay and v2 tested at 262144 capacity; authenticated continuous serving | [Install and run](backends/halogen-wsl2-0.15.1/README.md) |
 | **Managed Windows endpoint** | Owns selected Halogen process and serves one stable streaming API on port 8840 | [server/Start.ps1](server/README.md) |
 | Native llama.cpp / PROJFIX | Existing native workflow, external runtime/weights; unified native profile still needs qualification | `app/launch-flash-next.ps1` |
-| GUFO native Windows | Candidate builds and operator tests investigated; numerical gates unresolved; not enabled | [Review and remaining gates](docs/integration/unified-review-20260930.md) |
+| GUFO native Windows | Original numerical blockers resolved with pinned TheRock 10.0; tested native and managed text serving | [Build, qualify and register](backends/gufo-windows/README.md) |
 | Halogen 0.15.0 / 0.14.2 / 0.13.8 | Retained explicit rollback packages; never run alongside another large model | Version-specific `backends/` directories |
 
 After installing the selected backend, use PowerShell 7:
@@ -27,6 +27,9 @@ backend token is reused. Stop and confirm cleanup before changing engine/checkpo
 Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
+
+[GUFO toolchain resolution and native PP512/PP2048 measurements](docs/integration/gufo-toolchain-resolution-20260930.md)
+include the controlled compiler/runtime matrix, unchanged numerical tests and the new AMD driver.
 
 [Current w4b/v2 PP512, PP2048 and 262K results](docs/benchmarks/halogen0151-v2-262k-20260930.md)
 include raw and clock-calibrated rates, memory observations and gateway overhead.

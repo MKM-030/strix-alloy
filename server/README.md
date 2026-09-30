@@ -7,10 +7,11 @@ model execution, transfer a live KV cache between engines, or silently switch mo
 
 ## Current availability
 
-Halogen 0.15.1 with w4b + overlay and the verified v2 checkpoint is the implemented
-backend. GUFO and Projfix have adapter slots but require a locally qualified profile;
-unqualified candidates are refused, not replaced by a different engine. The reviewed
-GUFO Windows build failed two operator exactness checks. It is not enabled by default.
+Halogen 0.15.1 and a locally qualified GUFO Windows profile are implemented.
+GUFO must use the [pinned build/qualification workflow](../backends/gufo-windows/README.md);
+its earlier 10.2-toolchain numerical failures are resolved by the qualified 10.0 build.
+The current GUFO profile supports the tested Chat Completions route and 262144 capacity.
+Projfix still needs separate native-profile qualification. Unqualified profiles are refused.
 
 Install the engine first using the version-specific backend guide. Then use PowerShell 7:
 
@@ -104,3 +105,15 @@ The gateway does not pad or rearrange messages to manufacture hits. See the
 During shutdown, status reports `stopping`; wait for `stopped` and confirmed
 backend cleanup before another launch. Memory-recovery diagnostics include
 the unchanged threshold and observed value rather than mislabeling a live guard.
+
+## Select the tested GUFO profile
+
+After explicit GUFO registration and STOPPED confirmation:
+
+```powershell
+.\server\Start.ps1 -Backend GUFO -ContextSize 262144
+```
+
+The public model ID becomes `gufo-flash-next`; endpoint and existing token remain unchanged.
+Native executable and app-local runtime DLL hashes are verified before launch. This is
+text-serving regression qualification, not certification of arbitrary models or every API route.

@@ -50,9 +50,9 @@ if ($Action -eq 'Describe') {
             print_only_supported=$false
         }
         gufo = @{
-            status='persistent_service_unqualified'; model_format='GUFO-compatible GGUF; not HGN'
-            launcher=$null; api=$null; start_command=$null
-            qualification='Research work is preserved locally, not promoted to a portable serving release.'
+            status='experimental_local_qualification_required'; model_format='GUFO-compatible GGUF + shared MTP sidecar; not HGN'
+            launcher='server/Start.ps1'; api='http://127.0.0.1:8840/v1'; start_command='.\server\Start.ps1 -Backend GUFO -ContextSize 262144'
+            qualification='Pinned TheRock 10.0.0 numerical gates pass; Build, Qualify and Register a local profile before serving. See backends/gufo-windows.'
             print_only_supported=$false
         }
     }

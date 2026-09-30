@@ -93,6 +93,15 @@ def validate_engine(engine, repo):
     with executable.open('rb') as f: actual=hashlib.file_digest(f,'sha256').hexdigest()
     if actual!=engine.get('executable_sha256'):
         raise ValueError('Native runtime identity changed; requalification required')
+    for name, expected in engine.get('runtime_hashes',{}).items():
+        if not isinstance(name,str) or Path(name).name!=name or '/' in name or '\\' in name:
+            raise ValueError('Runtime pin must be an app-local filename')
+        artifact=executable.parent/name
+        if artifact.is_symlink() or not artifact.is_file():
+            raise ValueError('Pinned native runtime component missing: '+name)
+        with artifact.open('rb') as stream: observed=hashlib.file_digest(stream,'sha256').hexdigest()
+        if observed!=expected:
+            raise ValueError('Native runtime bytes changed; requalification required: '+name)
     command=engine['command']
     if any(not isinstance(x,str) or '\x00' in x for x in command):
         raise ValueError('Invalid native argument vector')
@@ -122,7 +131,11 @@ class Engine:
                      '-Checkpoint',self.config['checkpoint'],'-ContextSize',str(self.config['context']),
                      '-PromptCache',self.config.get('prompt_cache','Off')]
         else:
-            command=self.config['command']
+            command=list(self.config['command'])
+            if self.config.get('api_key_from_backend_token'):
+                if not self.gateway.backend_secret or '--api-key' in command:
+                    raise ValueError('A unique backend token is required for the native API')
+                command+=['--api-key',self.gateway.backend_secret]
             env['PATH']=str(self.directory)+os.pathsep+env.get('PATH','')
             env.update(self.config.get('environment',{}))
         env['ALLOY_MANAGED']='1'

@@ -46,8 +46,8 @@ class SelectorTests(unittest.TestCase):
                     self.assertEqual(data['launcher'], 'backends/halogen-wsl2-0.15.1/Start.ps1')
                     self.assertIn('-ContextSize 129024', data['start_command'])
                 if name == 'GUFO':
-                    self.assertEqual(data['status'], 'persistent_service_unqualified')
-                    self.assertIsNone(data['launcher'])
+                    self.assertEqual(data['status'], 'experimental_local_qualification_required')
+                    self.assertEqual(data['launcher'], 'server/Start.ps1')
 
     def test_native_plan_preserves_arguments_without_execution(self):
         result = self.invoke('-Backend', 'Projfix', '-Action', 'PrintOnly',

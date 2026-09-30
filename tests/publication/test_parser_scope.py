@@ -16,7 +16,7 @@ class ParserScopeTests(unittest.TestCase):
         shutil.copyfile(ROOT/'tests/publication/Test-PowerShellSyntax.ps1',parser)
         for rel in ['app/native.ps1','backends/halogen-wsl2/Start.ps1',
                     'backends/halogen-wsl2-0.14.2/Start.ps1','backends/halogen-wsl2-0.15.0/Start.ps1',
-                    'backends/halogen-wsl2-0.15.1/Start.ps1','server/Start.ps1']:
+                    'backends/halogen-wsl2-0.15.1/Start.ps1','server/Start.ps1','backends/gufo-windows/Build.ps1']:
             p=root/rel; p.parent.mkdir(parents=True,exist_ok=True)
             p.write_text('param(' if bad_source and ('0.14.2' if bad_source is True else bad_source) in rel else 'param()',encoding='utf-8')
         ignored=root/'backends/halogen-wsl2-0.14.2/.local/broken.ps1'
@@ -34,7 +34,7 @@ class ParserScopeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             result=self.fixture(Path(td)/'.local/checkout')
             self.assertEqual(result.returncode,0,result.stderr)
-            self.assertIn('parsed 7 PowerShell',result.stdout)
+            self.assertIn('parsed 8 PowerShell',result.stdout)
 
     def test_new_backend_source_is_also_parsed(self):
         with tempfile.TemporaryDirectory() as td:
@@ -44,10 +44,10 @@ class ParserScopeTests(unittest.TestCase):
 
 
     def test_current_backend_and_managed_launcher_are_parsed(self):
-        for match in ('0.15.1','server/'):
+        for match in ('0.15.1','server/','gufo-windows'):
             with tempfile.TemporaryDirectory() as td:
                 result=self.fixture(Path(td)/'.local/checkout',bad_source=match)
                 self.assertNotEqual(result.returncode,0)
-                self.assertIn('Start.ps1',result.stderr)
+                self.assertIn('Build.ps1' if match=='gufo-windows' else 'Start.ps1',result.stderr)
 
 if __name__=='__main__': unittest.main()

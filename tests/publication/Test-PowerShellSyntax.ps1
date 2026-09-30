@@ -10,6 +10,7 @@ $files = @(
     Get-ChildItem -LiteralPath (Join-Path $root 'backends/halogen-wsl2-0.15.0') -Filter '*.ps1' -File -Recurse | Where-Object { ([IO.Path]::GetRelativePath($root, $_.FullName).Replace([char]92,[char]47)) -notmatch '/[.]local/' }
     Get-ChildItem -LiteralPath (Join-Path $root 'backends/halogen-wsl2-0.15.1') -Filter '*.ps1' -File -Recurse | Where-Object { ([IO.Path]::GetRelativePath($root, $_.FullName).Replace([char]92,[char]47)) -notmatch '/[.]local/' }
     Get-ChildItem -LiteralPath (Join-Path $root 'server') -Filter '*.ps1' -File
+    Get-ChildItem -LiteralPath (Join-Path $root 'backends/gufo-windows') -Filter '*.ps1' -File
     Get-Item -LiteralPath $PSCommandPath
 )
 $failures = @()

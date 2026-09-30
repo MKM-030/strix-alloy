@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source_repository": "thomas9120/gufo",
+  "source_commit": "7e924c2d787aabf640db3c0f818cb824dc18ec8e",
+  "sdk_version": "10.0.0",
+  "sdk_archive_url": "https://stable.repo.amd.com/rocm/core/tarball/therock-dist-windows-gfx1151-10.0.0.tar.gz",
+  "sdk_archive_sha256": "1293927b06b3b8d4bd7e0265823fb998bc9e0d83c68f33dcfa5d32663b30ce38",
+  "compiler_sha256": "812397316720f03d66425d660f4e861c620125ce3d9c5447035062a442c5ab29",
+  "tested_display_driver": "32.0.32015.2008",
+  "tests": {
+    "config": "9375d79e80459bb0eedd35d08b446af79d0a6f241c717332faa967edf9a83edd",
+    "ngram": "9c5fc079e862f7fcda64510b9cbab54d1c67a9e33f8b6c59934499bcdb71676d",
+    "mtp_sampling": "e4dd53737998bef139f1ad04f8153caf2dafb1e29b689ac374987380ed15800b",
+    "prompt_lookup": "3935a21c354d70da88fce05ca48cab255658cbe33085af9c350e0ff617eea7de",
+    "mtp_ops": "bd86263348754b41097e40442fd98e516c3df0a82199e468538f12b7925125ba",
+    "blaslt_ops": "a90c78ae8ec42bb9288e77b0ee6f56d2d79f56896c477e65b3c648ba007cd311",
+    "hc_mix_ops": "7154e20c85ef52cba226122f08f731712d1e3e3f086c71ab3da3cd7bc5b5c643",
+    "gdn_ops": "61a592c79fbaa68aeb98569dd8752a1939cd76815bf7b0222dfe13ef2139ac80",
+    "attention_ops": "06e2d41e82ad07b7db5c989cd0dc6b6fb1ea27bfad367392757de3e7bcf8ed57",
+    "moe_epilogue_ops": "1c359faaddf136ff6769d7cab668664b979b52cf50b40c33384a88f690e16a2d",
+    "moe_ids_ops": "6fa9db2b154e8a33935535f26f1fee67bf8c559c818cab4cf3806763c5259871",
+    "projection_ops": "feb90af6211a37ea42b35561a62b1bd418f727082c070d8a50ce758958a35f77",
+    "routed_wmma_ops": "5c9e8f38b0bd37d8f216c2b6a19a07c1c2c97b7e49af6b9bd0937b673e97a9f4",
+    "iq_experts_ops": "be7e6c5e2761467f4bb4321a6ad4c87e49233120588a8025f516432d33d188a5",
+    "select_ops": "578676802689ca2d390c844192abb433e01a64244dafa16282efe1659581b89c"
+  },
+  "runtime_hashes": {
+    "amdhip64_7.dll": "546fb3d6e2d2194a9526fb94ec2fd3aa5b92a48a7595f04efece80162047ef69",
+    "amd_comgr.dll": "213db0bedaa07027ce136ba1797299a2b0cfa2c6bb33584ce3861be8be067937",
+    "libhipblaslt.dll": "746fa2f7e037b3d03a0b904659bfc21bfbf0fe1a86f127564ac2dee38b85442e",
+    "rocblas.dll": "8ecbe340d8052e5292a47b96f3c93c20767ced0032db47851b792da7039d1e0b"
+  }
+}

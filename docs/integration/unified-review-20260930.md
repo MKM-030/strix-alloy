@@ -152,3 +152,9 @@ No unmeasured improvement is represented as a throughput win.
 
 [Recorded GUFO operator results](gufo-qualification-20260930.json)
 [Publication validation record](validation-20260930.md)
+
+## Subsequent GUFO resolution
+
+The historical 10.2-build failures above were resolved without changing kernel equations
+by using the upstream-qualified 10.0 toolchain. See the [controlled resolution and native
+benchmarks](gufo-toolchain-resolution-20260930.md); the old failed results remain preserved.
