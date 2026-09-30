@@ -91,3 +91,16 @@ numerics and lifecycle, run matched benchmarks, then promote with rollback avail
 
 See the [research and implementation review](../docs/integration/unified-review-20260930.md)
 and [measured checkpoint comparison](../docs/benchmarks/halogen0151-v2-262k-20260930.md).
+
+## Measured prefix reuse
+
+`-PromptCache Exact` is an opt-in for byte-identical cold/warm behavior. Repeated
+system/document layouts were measured successfully with both serial and MTP;
+the original exactly-8192-token case still missed in Exact mode. Flexible mode
+hit that case but does not offer the same general reproducibility contract.
+The gateway does not pad or rearrange messages to manufacture hits. See the
+[measured cache follow-up](../docs/benchmarks/halogen-cache-gufo-followup-20260930.md).
+
+During shutdown, status reports `stopping`; wait for `stopped` and confirmed
+backend cleanup before another launch. Memory-recovery diagnostics include
+the unchanged threshold and observed value rather than mislabeling a live guard.

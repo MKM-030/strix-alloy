@@ -49,3 +49,30 @@ is not a test of a filled 262144-token conversation.
 The original calibration verifies Linux raw-clock intervals against Windows QPC. A
 clock-rate change inside a request can still affect phase-level accuracy. Raw fields,
 request wall time and calibrated fields are all retained so this is inspectable.
+
+## Prefix-cache shape test
+
+This is a separate warm-prefix experiment, not a cold PP throughput benchmark.
+After a core run has created `prompt-8192-prose.txt`, stop the backend cleanly and
+restart with `-PromptCache Exact` (or `Flexible`). Wait for READY before running
+this command, with `$Out` pointing to the completed core run from above:
+
+```powershell
+$CacheOut = Join-Path $Backend ('.local\benchmarks\cache-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+python .\scripts\benchmarks\cache_shapes.py `
+  --backend $Backend --mode Exact --drafter mtp --context 262144 `
+  --prompt-file (Join-Path $Out 'prompt-8192-prose.txt') --output $CacheOut
+```
+
+Four explicit layouts are tested: the original single message, a slightly longer
+single message, a system document and a document in history. Each has one initial
+request and two identical repeats, requesting 64 output tokens. The initial request
+may itself reuse a previous case's prefix, so inspect both initial and repeat
+`cache_n` rather than labeling every first request cold. No real client messages
+are automatically padded or rearranged. `--drafter serial` selects the non-MTP control.
+
+The [measured follow-up](../../docs/benchmarks/halogen-cache-gufo-followup-20260930.md)
+records the exact-8192 miss alongside working reuse cases, not just the best result.
+Cache misses are retained as results; output hashes expose any cold/warm difference.
+Flexible mode has no universal bit-identical-to-cold guarantee, even when one test
+happens to match. Keep cache Off for the PP512/PP2048 kernel-throughput comparison.

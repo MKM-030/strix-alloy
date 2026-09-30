@@ -271,6 +271,9 @@ async def run(config_path, port):
     except Exception as exc:
         error=str(exc); LOG.error('controller_failed type=%s detail=%s',type(exc).__name__,error)
     finally:
+        state.update(phase='stopping',heartbeat=time.time())
+        try: atomic(LOCAL/'current.json',state)
+        except OSError as exc: LOG.warning('Stopping-state write failed; cleanup continues: %s',exc)
         gateway.draining=True; stop.set()
         if guard_task:
             try: await guard_task

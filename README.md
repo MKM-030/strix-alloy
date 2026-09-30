@@ -33,6 +33,8 @@ include raw and clock-calibrated rates, memory observations and gateway overhead
 [Reproduction scripts](scripts/benchmarks/README.md) and the
 [source-by-source research review](docs/integration/unified-review-20260930.md)
 separate measured changes from unqualified ideas.
+[Prefix-cache behavior and GUFO diagnostics](docs/benchmarks/halogen-cache-gufo-followup-20260930.md)
+show where cache reuse works, where it still misses, and the remaining native-engine gates.
 
 The [earlier 0.15.0 benchmark](docs/benchmarks/halogen0150-pp2048-20260929.md) remains
 a historical baseline, including its previously refused 262K admission; it is not the current limit.

@@ -351,6 +351,11 @@ def guard(attempt):
         return 2
 
 
+def guard_exit_failed(code):
+    """None means still running, not an abnormal process exit."""
+    return code is not None and code != 0
+
+
 def guard_alive(process, attempt):
     try:
         r.guard_alive(process,attempt)
@@ -527,6 +532,9 @@ def serve(o):
     except BaseException as exc:
         error=str(exc).replace(secret,'[REDACTED]'); log.error('%s',error)
     finally:
+        state['phase']='stopping'
+        try: atomic(STATE_PATH,state)
+        except OSError as exc: log.warning('Stopping-state write failed; continuing owned cleanup: %s',exc)
         log.info('Stopping owned server and checking memory recovery')
         if cache_worker and not cache_stopped:
             try: cache_worker.stop(); cache_stopped=True
@@ -549,12 +557,18 @@ def serve(o):
                     frame=host.frame(); r.check_frame(frame); frames.append(frame)
                     if r.recovered(frames,baseline['available_bytes']): recovered=True; break
                     time.sleep(1)
-                atomic(attempt/'recovery.json',{'passed':recovered,'frames':frames})
+                atomic(attempt/'recovery.json',{'passed':recovered,'frames':frames,
+                    'baseline_available_bytes':baseline['available_bytes'],
+                    'required_available_bytes':max(24*r.GIB,baseline['available_bytes']-2*r.GIB)})
+                if not recovered:
+                    log.error('Memory recovery below original baseline threshold; required %.3f GiB, last %.3f GiB',
+                        max(24*r.GIB,baseline['available_bytes']-2*r.GIB)/r.GIB,
+                        frames[-1]['available_bytes']/r.GIB if frames else -1)
             else: recovered=True
             if guard_proc:
                 if guard_proc.poll() is None and cleanup and recovered:
                     r.finish_guard(attempt,cid,guard_proc)
-                elif guard_proc.poll()!=0:
+                elif guard_exit_failed(guard_proc.poll()):
                     raise RuntimeError('Memory guard stopped abnormally; evidence retained')
             if not cleanup or not recovered: raise RuntimeError('Cleanup/recovery incomplete; lock retained')
         except BaseException as exc:
