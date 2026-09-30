@@ -1,3 +1,7 @@
+> Current managed entry point: [server/Start.ps1](../../server/README.md).
+> Current Halogen package: [0.15.1 with w4b and v2](../../backends/halogen-wsl2-0.15.1/README.md).
+> The original consolidation notes below retain historical commands; use the current guides for new installs.
+
 # One source repository: installation and testing
 
 This is a **source integration checkpoint**, not an all-engine serving release.

@@ -30,7 +30,7 @@ $headers = @{}
 if (-not $ApiToken) { $ApiToken = $env:HALOGEN_API_TOKEN }
 if (-not $ApiToken -and -not $native) {
     if (-not $ApiTokenFile) {
-        $ApiTokenFile = Join-Path $PSScriptRoot '../backends/halogen-wsl2-0.15.0/.local/api-token.txt'
+        $ApiTokenFile = Join-Path $PSScriptRoot '../backends/halogen-wsl2-0.15.1/.local/api-token.txt'
     }
     if (Test-Path -LiteralPath $ApiTokenFile -PathType Leaf) {
         $ApiToken = (Get-Content -LiteralPath $ApiTokenFile -Raw).Trim()

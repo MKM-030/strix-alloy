@@ -1,36 +1,42 @@
 # Strix Alloy
 
-One source repository for native Windows PROJFIX and the pinned experimental
-Halogen WSL2 package, with explicit backend availability rather than silent fallback.
-**This integration branch is not a new all-in-one runtime release.** GUFO research
-is preserved separately and its persistent service is not qualified for publication.
+One Windows-facing control and API layer for version-pinned local inference engines,
+with explicit availability, reproducible measurements and no silent fallback.
+**This is an experimental integration branch, not a universally qualified kernel bundle.**
 
-## Choose an implementation
+## Current implementations
 
-| Backend | Included here | Entry point |
+| Backend | Status | Entry point |
 |---|---|---|
-| Native llama.cpp / PROJFIX | Existing native source and build/launch workflow; runtime and weights external | `app/launch-flash-next.ps1` |
-| **Halogen WSL2 0.15.0** | Configurable context (default 126K), continuous guarded serving, Bearer authentication and live logs | [`backends/halogen-wsl2-0.15.0/`](backends/halogen-wsl2-0.15.0/README.md): install, then `Start.ps1` |
-| Halogen WSL2 0.14.2 rollback | Previous complete package, retained unchanged | `backends/halogen-wsl2-0.14.2/Start.ps1`; stop the selected engine before switching |
-| Halogen WSL2 0.13.8 compatibility | Unchanged published source and its separate bounded 32K workflow | `backends/halogen-wsl2/`; explicit fallback, never concurrent with another engine |
-| GUFO | Availability description only; no qualified portable service | `app/select-backend.ps1 -Backend GUFO -Action Describe` |
+| **Halogen WSL2 0.15.1** | w4b + overlay and v2 tested at 262144 capacity; authenticated continuous serving | [Install and run](backends/halogen-wsl2-0.15.1/README.md) |
+| **Managed Windows endpoint** | Owns selected Halogen process and serves one stable streaming API on port 8840 | [server/Start.ps1](server/README.md) |
+| Native llama.cpp / PROJFIX | Existing native workflow, external runtime/weights; unified native profile still needs qualification | `app/launch-flash-next.ps1` |
+| GUFO native Windows | Candidate builds and operator tests investigated; numerical gates unresolved; not enabled | [Review and remaining gates](docs/integration/unified-review-20260930.md) |
+| Halogen 0.15.0 / 0.14.2 / 0.13.8 | Retained explicit rollback packages; never run alongside another large model | Version-specific `backends/` directories |
 
-[Start, test and switch safely](docs/integration/README.md) explains the exact
-PowerShell commands, fresh-install prerequisites and remaining qualification gates.
-The shared `app/select-backend.ps1` is **read-only discovery**, not a model manager.
-It does not start engines, change a client endpoint, or enable unqualified profiles.
-Native and Halogen still use different ports and reviewed memory configurations.
-The shared Halogen description selects **0.15.0**, using the existing w4b HGN
-checkpoint and overlay. Normal serving is continuous with a 126K default;
-`Serve4k` is an explicitly selected finite diagnostic, not the default server.
-The 0.14.2 rollback package and original 0.13.8 package remain available.
-See the [current Halogen setup guide](backends/halogen-wsl2-0.15.0/README.md).
+After installing the selected backend, use PowerShell 7:
 
-## Measured Halogen performance
+```powershell
+.\server\Setup.ps1
+.\server\Start.ps1 -Backend Halogen -Checkpoint v2 -ContextSize 262144
+```
 
-[PP2048/TG128 and context-capacity benchmark](docs/benchmarks/halogen0150-pp2048-20260929.md)
-records measured results, original and clock-calibrated rates, external comparison limits,
-and a refused 262K admission separately from successful 32K/126K runs.
+The managed default is v2, 129024 context positions, cache Off and no time-based
+shutdown. API base: `http://127.0.0.1:8840/v1`; model `halogen-v2`. The existing
+backend token is reused. Stop and confirm cleanup before changing engine/checkpoint.
+Native/GUFO adapter slots do not imply they have passed current qualification.
+
+## Measurements and implementation evidence
+
+[Current w4b/v2 PP512, PP2048 and 262K results](docs/benchmarks/halogen0151-v2-262k-20260930.md)
+include raw and clock-calibrated rates, memory observations and gateway overhead.
+[Reproduction scripts](scripts/benchmarks/README.md) and the
+[source-by-source research review](docs/integration/unified-review-20260930.md)
+separate measured changes from unqualified ideas.
+
+The [earlier 0.15.0 benchmark](docs/benchmarks/halogen0150-pp2048-20260929.md) remains
+a historical baseline, including its previously refused 262K admission; it is not the current limit.
+The read-only `app/select-backend.ps1` remains discovery, not the managed launcher.
 
 ## Published native Windows backend
 
