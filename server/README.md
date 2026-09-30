@@ -9,7 +9,7 @@ model execution, transfer a live KV cache between engines, or silently switch mo
 
 Halogen 0.15.1 and a locally qualified GUFO Windows profile are implemented.
 GUFO must use the [pinned build/qualification workflow](../backends/gufo-windows/README.md);
-its earlier 10.2-toolchain numerical failures are resolved by the qualified 10.0 build.
+its current qualified build uses TheRock 10.2.0a20260930 with the pinned numerical compatibility patch.
 The current GUFO profile supports the tested Chat Completions route and 262144 capacity.
 Projfix still needs separate native-profile qualification. Unqualified profiles are refused.
 

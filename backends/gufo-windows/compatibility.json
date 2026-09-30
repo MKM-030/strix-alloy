@@ -2,10 +2,10 @@
   "schema": 1,
   "source_repository": "thomas9120/gufo",
   "source_commit": "7e924c2d787aabf640db3c0f818cb824dc18ec8e",
-  "sdk_version": "10.0.0",
-  "sdk_archive_url": "https://stable.repo.amd.com/rocm/core/tarball/therock-dist-windows-gfx1151-10.0.0.tar.gz",
-  "sdk_archive_sha256": "1293927b06b3b8d4bd7e0265823fb998bc9e0d83c68f33dcfa5d32663b30ce38",
-  "compiler_sha256": "812397316720f03d66425d660f4e861c620125ce3d9c5447035062a442c5ab29",
+  "sdk_version": "10.2.0",
+  "sdk_archive_url": "https://nightly.repo.amd.com/rocm/core/tarball/therock-dist-windows-gfx1151-10.2.0a20260930.tar.gz",
+  "sdk_archive_sha256": "caf1a7f20b4a824e9410db273b9c3ee0ee18d90a315914fce066fd8514997e56",
+  "compiler_sha256": "cd87822b7881563aef2b18aca1e277d0d04b0186b80975d4aa48c5c474d340d7",
   "tested_display_driver": "32.0.32015.2008",
   "tests": {
     "config": "9375d79e80459bb0eedd35d08b446af79d0a6f241c717332faa967edf9a83edd",
@@ -25,9 +25,31 @@
     "select_ops": "578676802689ca2d390c844192abb433e01a64244dafa16282efe1659581b89c"
   },
   "runtime_hashes": {
-    "amdhip64_7.dll": "546fb3d6e2d2194a9526fb94ec2fd3aa5b92a48a7595f04efece80162047ef69",
-    "amd_comgr.dll": "213db0bedaa07027ce136ba1797299a2b0cfa2c6bb33584ce3861be8be067937",
-    "libhipblaslt.dll": "746fa2f7e037b3d03a0b904659bfc21bfbf0fe1a86f127564ac2dee38b85442e",
-    "rocblas.dll": "8ecbe340d8052e5292a47b96f3c93c20767ced0032db47851b792da7039d1e0b"
-  }
+    "amdhip64_7.dll": "344386dd39b2bba7060d62720054b9375401f23f2bcd29d730dd8d43019683cd",
+    "amd_comgr.dll": "0dd4e51ff6c32354b859ce8d91bd056eeb6cf4b42bc42fa6e7728ab5637cc954",
+    "libhipblaslt.dll": "4ecfc8e9407f89f9434b11533338738c42180eda4ee9478922d6c8c6ceb76795",
+    "rocblas.dll": "36d8d37d422ca4259b3ee8a4f41ed16bc845a8fdf656c45f1cdd31dc3744106c"
+  },
+  "sdk_build": "10.2.0a20260930",
+  "source_patch": {
+    "file": "patches/qualified-numerics.patch",
+    "sha256": "f7173edf67d5d834da06554fbdfd7e3df39ec5246e87047eb2335ea34d24e1fd",
+    "files": {
+      "src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp": {
+        "before_sha256": "28eb2f6927dfaaeb81267cc045c8ac78aca5510f2bdffa5aedb1995e292fe74a",
+        "after_sha256": "a5b28f33f6d03ff7b7c0ee12c66638e099159a539721e29a3b1f22c03207be4e"
+      },
+      "src/models/qwen38_flash_next/kernels/rocm/mmq/quantize.hip.cpp": {
+        "before_sha256": "984332a72a689511810aff9a272ea1afa873f39c50f4ed105ddf84838ba67cbb",
+        "after_sha256": "67725e46f604c1246a7e55cf0f25f1877cd050c686d902b0c19179e0f9107050"
+      },
+      "src/models/qwen38_flash_next/kernels/rocm/numeric_compat.hpp": {
+        "before_sha256": null,
+        "after_sha256": "6b414b3e1131517e0843308980b25e3d055e916403ffec576eeae48bfaf48170"
+      }
+    }
+  },
+  "nightly_checked_at": "2026-09-30T13:12:46.134975+00:00",
+  "archive_digest_provenance": "Locally computed after download from official AMD HTTPS; no publisher checksum sidecar was available",
+  "qualification_scope": "Original operator tests plus matched full-model logit hashes; see latest-SDK evidence report"
 }

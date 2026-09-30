@@ -1,0 +1,8 @@
+# Patch digests are exact bytes; never rewrite their line endings on checkout.
+# A unified diff must retain its single-space blank context lines.
+patches/*.patch -text whitespace=-blank-at-eol
+*.json text eol=lf
+*.py text eol=lf
+*.ps1 text eol=lf
+*.md text eol=lf
+tests/*.py text eol=lf

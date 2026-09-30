@@ -33,13 +33,29 @@ def check_source(directory, pins):
                                        timeout=20).strip()
     if git('rev-parse','HEAD')!=pins['source_commit']:
         raise ValueError('GUFO source revision differs from the qualified candidate')
-    if git('status','--porcelain','--untracked-files=no'):
+    modified=git('status','--porcelain','--untracked-files=no')
+    patch=pins.get('source_patch')
+    if patch:
+        files=patch.get('files') or {patch['path']:patch}
+        for rel, expected in files.items():
+            target=(root/rel).resolve()
+            if not target.is_relative_to(root) or not target.is_file():
+                raise ValueError('Missing or escaped compatibility source: '+rel)
+            if digest(target)!=expected['after_sha256']:
+                raise ValueError('Required compatibility source patch missing or changed: '+rel)
+        changed=set(git('diff','HEAD','--name-only').splitlines())
+        if patch.get('files'):
+            changed.update(git('ls-files','--others','--exclude-standard').splitlines())
+        if changed != set(files):
+            raise ValueError('Unexpected source changes outside the pinned compatibility patch')
+    elif modified:
         raise ValueError('Tracked GUFO source is modified; qualify it separately')
     for name,expected in pins['tests'].items():
         path=root/'tests/models/qwen38_flash_next'/(name+'_test.cpp')
         if digest(path)!=expected:
             raise ValueError('Numerical test changed: '+name)
-    return {'source_commit':pins['source_commit'],'unchanged_tests':len(pins['tests'])}
+    return {'source_commit':pins['source_commit'],'unchanged_tests':len(pins['tests']),
+            'source_patch_sha256':patch['sha256'] if patch else None}
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)

@@ -158,3 +158,10 @@ No unmeasured improvement is represented as a throughput win.
 The historical 10.2-build failures above were resolved without changing kernel equations
 by using the upstream-qualified 10.0 toolchain. See the [controlled resolution and native
 benchmarks](gufo-toolchain-resolution-20260930.md); the old failed results remain preserved.
+
+## Latest-SDK qualification supersedes the downgrade workaround
+
+The [latest-SDK report](gufo-latest-sdk-20260930.md) records the source-only numerical
+compatibility patch, unchanged original operator tests, matched complete-logit rows
+and measurements on TheRock 10.2.0a20260930 with driver32.0.32015.2008. The historical
+10.0 results above remain a baseline, not the current compiler selection.

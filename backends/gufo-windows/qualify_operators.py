@@ -46,7 +46,9 @@ def main():
     check_sdk(args.sdk,pins);check_source(args.source,pins)
     report={'schema':1,**identity,'passed':all(r['exit']==0 for r in rows),
             'scope':'original numerical operators only; not whole-model quality or performance',
-            'runtime_hashes':pins['runtime_hashes'],'tests':rows}
+            'runtime_hashes':pins['runtime_hashes'],'tests':rows,
+            'gufo_executable_sha256':digest(args.build/'gufo.exe'),
+            'sdk_build':pins.get('sdk_build',pins['sdk_version'])}
     (args.output/'qualification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     return 0 if report['passed'] else 2
 

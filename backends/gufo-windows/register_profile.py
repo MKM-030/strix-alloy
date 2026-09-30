@@ -15,7 +15,11 @@ def main():
     required={(mode,test) for mode in ('default','none') for test in pins['tests']}
     observed={(r['mode'],r['test']) for r in proof.get('tests',[]) if r.get('exit')==0}
     if (not proof.get('passed') or proof.get('source_commit')!=pins['source_commit']
-        or proof.get('sdk_version')!=pins['sdk_version'] or observed!=required
+        or proof.get('sdk_version')!=pins['sdk_version']
+        or proof.get('compiler_sha256')!=pins['compiler_sha256']
+        or proof.get('source_patch_sha256')!=pins.get('source_patch',{}).get('sha256')
+        or proof.get('runtime_hashes')!=pins['runtime_hashes']
+        or proof.get('gufo_executable_sha256')!=digest(args.build/'gufo.exe') or observed!=required
         or len(proof.get('tests',[]))!=len(required)):
         raise ValueError('Complete matching operator qualification is required')
     for row in proof['tests']:
@@ -47,7 +51,9 @@ def main():
       'engine':{'kind':'native','qualified':True,'command':command,
         'api_key_from_backend_token':True,'executable_sha256':digest(executable),
         'runtime_hashes':pins['runtime_hashes'],'environment':{}},
-      'qualification':{'source_commit':pins['source_commit'],'sdk':'10.0.0',
+      'qualification':{'source_commit':pins['source_commit'],'sdk':pins.get('sdk_build',pins['sdk_version']),
+        'compiler_sha256':pins['compiler_sha256'],
+        'source_patch_sha256':pins.get('source_patch',{}).get('sha256'),
         'scope':'Original operator gates passed; model profile explicitly selected by local operator. Not independent model-quality certification.',
         'operator_proof_sha256':digest(args.qualification)}}
     root=Path(__file__).resolve().parents[2]

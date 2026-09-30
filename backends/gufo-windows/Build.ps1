@@ -11,12 +11,23 @@ $ErrorActionPreference='Stop'
 $source=(Resolve-Path -LiteralPath $SourceDirectory).Path.Replace('\','/')
 $sdk=(Resolve-Path -LiteralPath $SdkDirectory).Path.Replace('\','/')
 $vp=(Resolve-Path -LiteralPath $VcpkgDirectory).Path.Replace('\','/')
-& python (Join-Path $PSScriptRoot 'verify_toolchain.py') --sdk $sdk --source $source
+& python (Join-Path $PSScriptRoot 'verify_toolchain.py') --sdk $sdk
 if($LASTEXITCODE -ne 0){throw 'Unqualified GUFO toolchain/source; no build was configured'}
 if(-not(Test-Path "$vp/installed/x64-windows/lib")){throw 'Install the pinned GUFO vcpkg dependencies first'}
-$build="$source/build/gpu-test-100"
+$build="$source/build/gpu-test"
 $active=Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -and $_.ExecutablePath.Replace('\','/').StartsWith($build+'/',[StringComparison]::OrdinalIgnoreCase) }
 if($active){throw 'A process is using this build; stop it before rebuilding or replacing DLLs'}
+if(Test-Path "$build/CMakeCache.txt"){
+ $cached=Select-String -LiteralPath "$build/CMakeCache.txt" -Pattern '^CMAKE_HIP_COMPILER:FILEPATH=(.*)$'
+ if($cached -and $cached.Matches[0].Groups[1].Value.Replace('\','/') -ne "$sdk/lib/llvm/bin/clang++.exe"){
+  throw 'Build cache uses another SDK. Use a separate source checkout; do not mix compiler objects.'
+ }
+}
+& python (Join-Path $PSScriptRoot 'apply_compatibility_patch.py') --source $source --apply
+if($LASTEXITCODE -ne 0){throw 'Pinned source patch failed; no build was configured'}
+& python (Join-Path $PSScriptRoot 'verify_toolchain.py') --sdk $sdk --source $source
+if($LASTEXITCODE -ne 0){throw 'Patched source or numerical test identity mismatch'}
+
 $vswhere=Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Microsoft Visual Studio/Installer/vswhere.exe'
 $vs=& $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 if(-not $vs){throw 'Visual Studio C++ Build Tools not found'}
@@ -29,7 +40,7 @@ cmake -S $source --preset gpu-test -B $build "-DCMAKE_MAKE_PROGRAM=$ninja" `
  "-DCMAKE_C_COMPILER=$sdk/lib/llvm/bin/clang.exe" "-DCMAKE_CXX_COMPILER=$sdk/lib/llvm/bin/clang++.exe" `
  "-DCMAKE_HIP_COMPILER=$sdk/lib/llvm/bin/clang++.exe" "-DCMAKE_TOOLCHAIN_FILE=$vp/scripts/buildsystems/vcpkg.cmake" `
  -DVCPKG_MANIFEST_MODE=OFF "-DVCPKG_INSTALLED_DIR=$vp/installed" -DVCPKG_TARGET_TRIPLET=x64-windows `
- "-DCMAKE_PREFIX_PATH=$sdk" -DCMAKE_LINKER_TYPE=LLD -DGUFO_VERSION=7e924c2d787a-therock100 `
+ "-DCMAKE_PREFIX_PATH=$sdk" -DCMAKE_LINKER_TYPE=LLD -DGUFO_VERSION=7e924c2d787a-therock102a20260930-numericcompat `
  '-DCMAKE_HIP_FLAGS_RELWITHDEBINFO=-O2 -DNDEBUG -g0'
 if($LASTEXITCODE -ne 0){throw 'CMake configuration failed'}
 $targets=@('qwen38_flash_next_tests')
