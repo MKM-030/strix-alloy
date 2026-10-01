@@ -173,3 +173,31 @@ an output file or changes your registered default. Keep these profiles in `.loca
 For Halogen, the existing managed `Start.ps1 -ContextSize ...` path already supports
 these capacities; use `-PromptCache Exact` for the conversation matrix and `Off`
 for the separate cold controls.
+
+## Additional Halogen reserve observation and larger cold inputs
+
+The October 1 investigation established fresh baselines; it did not promote a new
+allocator or prefill setting. [Results and limits](../../docs/benchmarks/halogen-placement-baseline-20261001.md)
+include 27 retained PP512/PP2048/PP8192 requests and the recorded Windows memory floor.
+
+In a separate PowerShell 7 terminal, before starting Halogen, run the additional
+monitor and leave that terminal open:
+
+```powershell
+$Root = (Get-Location).Path
+$Watch = Join-Path $Root ('server\.local\reserve-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+.\server\.local\venv\Scripts\python.exe -B -u `
+  .\scripts\benchmarks\halogen_reserve_watch.py --repo $Root --out $Watch
+```
+
+It observes the next managed Halogen run and requests an ordinary owned stop below
+18 GiB available, providing margin above 16 GiB. Existing 12 GiB guards remain intact.
+This extra observer is not automatically installed as a Windows service, and cannot
+guarantee an instantaneous floor against outside allocations or process termination.
+It exits after that owned run stops. It writes local memory samples, not API keys.
+
+`gateway_cold.py` now accepts `--sizes 512 2048 8192` (or the reviewed 32768 point).
+The default remains 512/2048. Supply existing exact-length `prompt-<size>-prose.txt`
+files via `--prompts`; insufficient capacity/output room and duplicate sizes fail.
+The documented core Halogen benchmark can generate exact 8192-token inputs. Name a
+new output directory for every run, and never report a warm prefix-cache hit as cold PP.

@@ -61,3 +61,13 @@ def cell_name(backend,context,fill,tag=''):
     if tag and not re.fullmatch(r'[a-zA-Z0-9_-]{1,48}',tag):
         raise ValueError('Use a short alphanumeric run tag, not a path')
     return f'{backend}-c{context}-p{fill}'+('-'+tag if tag else '')
+
+
+def benchmark_input_sizes(values, capacity):
+    """Cold benchmark lengths; reserve space for 128 actual generated tokens."""
+    if type(capacity) is not int or not values:
+        raise ValueError('Invalid benchmark capacity or empty size list')
+    if any(type(v) is not int or v not in (512,2048,8192,32768) or v+128>capacity for v in values):
+        raise ValueError('Unsupported benchmark length or insufficient output room')
+    if len(set(values))!=len(values): raise ValueError('Repeated benchmark sizes')
+    return tuple(values)

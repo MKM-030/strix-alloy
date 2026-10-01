@@ -2,16 +2,18 @@
 import argparse,asyncio,hashlib,json,statistics,time
 from pathlib import Path
 import aiohttp
-from article_metrics import validate_backend,backend_validation_finished
+from article_metrics import validate_backend,backend_validation_finished,benchmark_input_sizes
 from clock_probe import ClockProbe
 P=argparse.ArgumentParser(description=__doc__)
 P.add_argument('--backend',choices=['halogen-v2','halogen-w4b','gufo','projfix'],required=True)
 P.add_argument('--context',type=int,required=True)
+P.add_argument('--sizes',type=int,nargs='+',default=[512,2048])
 P.add_argument('--prompts',type=Path,required=True)
 P.add_argument('--output',type=Path,required=True)
 P.add_argument('--token-file',type=Path,required=True)
 a=P.parse_args();R=Path(__file__).resolve().parents[2]
 if not 4096<=a.context<=262144:raise ValueError('Unsupported context')
+sizes=benchmark_input_sizes(a.sizes,a.context)
 a.output.mkdir(parents=True,exist_ok=False)
 key=a.token_file.read_text(encoding='ascii').strip();clock=None;rows=[]
 if a.backend.startswith('halogen'):
@@ -48,7 +50,7 @@ async def run():
             wall=time.perf_counter()-start;last=clock.sample() if clock else None
             cal=clock.compare(first,last) if clock else {'monotonic_per_raw':1.0}
             return value,wall,cal
-        for size in (512,2048):
+        for size in sizes:
             prompt=(a.prompts/f'prompt-{size}-prose.txt').read_text(encoding='utf-8')
             base={'model':model,'messages':[{'role':'user','content':prompt}],
                   'temperature':0,'seed':1,'stream':False,'cache_prompt':False,

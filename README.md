@@ -28,6 +28,8 @@ Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
 
+[Halogen placement investigation and fresh baselines](docs/benchmarks/halogen-placement-baseline-20261001.md) records measured PP512/PP2048/PP8192 rates and the supplementary 16 GiB reserve target; no new optimization was promoted.
+
 [PROJFIX decode restored](docs/integration/projfix-decode-restored-20261001.md) records the measured placement fix and output checks. The [initial recovery report](docs/integration/projfix-recovery-20261001.md) preserves the earlier slow and failed configurations.
 
 [Article-format filled-context and display-driver comparison](docs/benchmarks/strix-alloy-article-driver-comparison-20260930.md)

@@ -1,0 +1,2211 @@
+{
+  "schema": 1,
+  "date": "2026-10-01",
+  "engine": "Halogen 0.15.1",
+  "checkpoint": "v2",
+  "context_capacity": 262144,
+  "display_driver": "32.0.32015.2008",
+  "prefill_chunk": 2048,
+  "max_tok_arena": 2048,
+  "cases": [
+    {
+      "name": "v2-baseline-cold",
+      "summary": {
+        "backend": "halogen-v2",
+        "context": 262144,
+        "run_id": "99bca7c7090c486ab3999e07d0bf2c21",
+        "passed": true,
+        "rows": [
+          {
+            "size": 512,
+            "output": 1,
+            "drafter": "serial",
+            "n": 3,
+            "pp_mean": 1048.5746576230247,
+            "decode_mean": 0.0,
+            "pp_stdev": 2.3933057987957698,
+            "decode_stdev": 0.0
+          },
+          {
+            "size": 512,
+            "output": 128,
+            "drafter": "mtp",
+            "n": 3,
+            "pp_mean": 992.0307055063164,
+            "decode_mean": 42.93693672628272,
+            "pp_stdev": 43.11771449802532,
+            "decode_stdev": 0.44438207874760993
+          },
+          {
+            "size": 512,
+            "output": 128,
+            "drafter": "serial",
+            "n": 3,
+            "pp_mean": 1047.724844769838,
+            "decode_mean": 36.72236149407931,
+            "pp_stdev": 3.7307825341295167,
+            "decode_stdev": 0.20874906472003701
+          },
+          {
+            "size": 2048,
+            "output": 1,
+            "drafter": "serial",
+            "n": 3,
+            "pp_mean": 1384.2057332523348,
+            "decode_mean": 0.0,
+            "pp_stdev": 25.25253825999968,
+            "decode_stdev": 0.0
+          },
+          {
+            "size": 2048,
+            "output": 128,
+            "drafter": "mtp",
+            "n": 3,
+            "pp_mean": 1383.133153875204,
+            "decode_mean": 43.9410536300097,
+            "pp_stdev": 30.08155676672245,
+            "decode_stdev": 0.508438061484468
+          },
+          {
+            "size": 2048,
+            "output": 128,
+            "drafter": "serial",
+            "n": 3,
+            "pp_mean": 1379.5560977561138,
+            "decode_mean": 35.79588212050174,
+            "pp_stdev": 30.417168781948472,
+            "decode_stdev": 0.18605804331380674
+          }
+        ],
+        "samples": 18,
+        "measured_at": 1790853073.7076924,
+        "harness_sha256": "9b68bc42dadaae11cbefd3d08ad5b3c7f9b42c266908132267a9bf4b6bfd67f7",
+        "route": "http://127.0.0.1:8840/v1/chat/completions",
+        "cache": "Off"
+      },
+      "identity_checks": [
+        {
+          "input": 512,
+          "all_serial_mtp_and_repeat_outputs_identical": true
+        },
+        {
+          "input": 2048,
+          "all_serial_mtp_and_repeat_outputs_identical": true
+        }
+      ],
+      "samples": [
+        {
+          "size": 512,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 1,
+            "prompt_ms": 639.0,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 801.252,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 1,
+            "total_tokens": 513,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 1.0187523000058718,
+          "clock_calibration": {
+            "before": {
+              "mono": 196.432537337,
+              "raw": 195.451402499,
+              "utc": 1790852977.793837,
+              "qpc": 75960.21166205,
+              "roundtrip": 0.0005224999913480133
+            },
+            "after": {
+              "mono": 197.451791933,
+              "raw": 196.470617895,
+              "utc": 1790852978.8118942,
+              "qpc": 75961.23089430001,
+              "roundtrip": 0.00042559999565128237
+            },
+            "monotonic_per_raw": 1.0000384609574748,
+            "raw_per_qpc": 0.9999834640162493,
+            "window_seconds": 1.0192322500079172,
+            "handshake_uncertainty_seconds": 0.0004740499934996478
+          },
+          "pp_tps": 801.2828169190985,
+          "decode_tps": 0.0,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 1,
+            "prompt_ms": 489.3,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1046.393,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 1,
+            "total_tokens": 513,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 0.4976079999905778,
+          "clock_calibration": {
+            "before": {
+              "mono": 197.453223432,
+              "raw": 196.472047449,
+              "utc": 1790852978.813323,
+              "qpc": 75961.2323243,
+              "roundtrip": 0.0002758000046014786
+            },
+            "after": {
+              "mono": 197.951239454,
+              "raw": 196.970047009,
+              "utc": 1790852979.3113422,
+              "qpc": 75961.73029889999,
+              "roundtrip": 0.00044940000225324184
+            },
+            "monotonic_per_raw": 1.0000330562540873,
+            "raw_per_qpc": 1.0000501230623573,
+            "window_seconds": 0.49797459998808336,
+            "handshake_uncertainty_seconds": 0.0003626000034273602
+          },
+          "pp_tps": 1046.4275898328833,
+          "decode_tps": 0.0,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 1,
+            "prompt_ms": 488.5,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1048.106,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 1,
+            "total_tokens": 513,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 0.49660579999908805,
+          "clock_calibration": {
+            "before": {
+              "mono": 197.952448695,
+              "raw": 196.971254155,
+              "utc": 1790852979.3125486,
+              "qpc": 75961.7314671,
+              "roundtrip": 0.0004580000095302239
+            },
+            "after": {
+              "mono": 198.449472782,
+              "raw": 197.468261466,
+              "utc": 1790852979.8095753,
+              "qpc": 75962.2285404,
+              "roundtrip": 0.0004693999944720417
+            },
+            "monotonic_per_raw": 1.000033754030623,
+            "raw_per_qpc": 0.9998672449442749,
+            "window_seconds": 0.49707329999364447,
+            "handshake_uncertainty_seconds": 0.0004637000020011328
+          },
+          "pp_tps": 1048.14137780202,
+          "decode_tps": 0.0,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 1,
+            "prompt_ms": 487.1,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1051.119,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 1,
+            "total_tokens": 513,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 0.49651699999230914,
+          "clock_calibration": {
+            "before": {
+              "mono": 198.45064141,
+              "raw": 197.46942804,
+              "utc": 1790852979.8107412,
+              "qpc": 75962.22973235001,
+              "roundtrip": 0.00031550000130664557
+            },
+            "after": {
+              "mono": 198.947561087,
+              "raw": 197.966330696,
+              "utc": 1790852980.3076637,
+              "qpc": 75962.72662345,
+              "roundtrip": 0.00042570001096464694
+            },
+            "monotonic_per_raw": 1.0000342541940264,
+            "raw_per_qpc": 1.0000232566276348,
+            "window_seconds": 0.4968910999887157,
+            "handshake_uncertainty_seconds": 0.00037060000613564625
+          },
+          "pp_tps": 1051.1550052341706,
+          "decode_tps": 0.0,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 128,
+            "prompt_ms": 527.9,
+            "predicted_ms": 3973.2,
+            "prompt_per_second": 969.881,
+            "predicted_per_second": 32.216,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 65,
+            "draft_n_accepted": 62
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 128,
+            "total_tokens": 640,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 4.508875200001057,
+          "clock_calibration": {
+            "before": {
+              "mono": 198.948657897,
+              "raw": 197.967425775,
+              "utc": 1790852980.3087578,
+              "qpc": 75962.72768340001,
+              "roundtrip": 0.0003173999866703525
+            },
+            "after": {
+              "mono": 203.4581011,
+              "raw": 202.476701117,
+              "utc": 1790852984.8192239,
+              "qpc": 75967.23697130001,
+              "roundtrip": 0.0005004000122426078
+            },
+            "monotonic_per_raw": 1.0000372257152785,
+            "raw_per_qpc": 0.9999972150812659,
+            "window_seconds": 4.509287900000345,
+            "handshake_uncertainty_seconds": 0.00040889999945648015
+          },
+          "pp_tps": 969.91710451396,
+          "decode_tps": 32.217199263643415,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b53696fadd86db9fcd817c21af4601bce22b917b2cb40f0fd52b874c61a2b9d1",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 128,
+            "prompt_ms": 493.8,
+            "predicted_ms": 3509.5,
+            "prompt_per_second": 1036.857,
+            "predicted_per_second": 36.472,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 128,
+            "total_tokens": 640,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 4.012296599990805,
+          "clock_calibration": {
+            "before": {
+              "mono": 203.459275688,
+              "raw": 202.477873761,
+              "utc": 1790852984.8203955,
+              "qpc": 75967.23815975,
+              "roundtrip": 0.0003015000111190602
+            },
+            "after": {
+              "mono": 207.472134956,
+              "raw": 206.490584088,
+              "utc": 1790852988.8313723,
+              "qpc": 75971.2508492,
+              "roundtrip": 0.000476800007163547
+            },
+            "monotonic_per_raw": 1.0000371173067286,
+            "raw_per_qpc": 1.000005202745247,
+            "window_seconds": 4.012689449999016,
+            "handshake_uncertainty_seconds": 0.0003891500091413036
+          },
+          "pp_tps": 1036.8954853393027,
+          "decode_tps": 36.47335374241101,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b53696fadd86db9fcd817c21af4601bce22b917b2cb40f0fd52b874c61a2b9d1",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 128,
+            "prompt_ms": 487.9,
+            "predicted_ms": 3474.7,
+            "prompt_per_second": 1049.395,
+            "predicted_per_second": 36.838,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 128,
+            "total_tokens": 640,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 3.9707254999957513,
+          "clock_calibration": {
+            "before": {
+              "mono": 207.473180183,
+              "raw": 206.491627075,
+              "utc": 1790852988.8324142,
+              "qpc": 75971.2519207,
+              "roundtrip": 0.00028080001357011497
+            },
+            "after": {
+              "mono": 211.444431256,
+              "raw": 210.462731052,
+              "utc": 1790852992.8036687,
+              "qpc": 75975.22301069999,
+              "roundtrip": 0.0004405999934533611
+            },
+            "monotonic_per_raw": 1.000037041588644,
+            "raw_per_qpc": 1.0000035196906125,
+            "window_seconds": 3.9710899999918183,
+            "handshake_uncertainty_seconds": 0.00036070000351173803
+          },
+          "pp_tps": 1049.433871257915,
+          "decode_tps": 36.83936453804247,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b53696fadd86db9fcd817c21af4601bce22b917b2cb40f0fd52b874c61a2b9d1",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 128,
+            "prompt_ms": 543.4,
+            "predicted_ms": 2946.4,
+            "prompt_per_second": 942.216,
+            "predicted_per_second": 43.443,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 65,
+            "draft_n_accepted": 62
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 128,
+            "total_tokens": 640,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 3.4995310999947833,
+          "clock_calibration": {
+            "before": {
+              "mono": 211.445577966,
+              "raw": 210.463877099,
+              "utc": 1790852992.8048146,
+              "qpc": 75975.2241542,
+              "roundtrip": 0.0003690000012284145
+            },
+            "after": {
+              "mono": 214.945615267,
+              "raw": 213.963782929,
+              "utc": 1790852996.3029258,
+              "qpc": 75978.72406395,
+              "roundtrip": 0.000382099999114871
+            },
+            "monotonic_per_raw": 1.0000375641535484,
+            "raw_per_qpc": 0.9999988799720498,
+            "window_seconds": 3.499909749996732,
+            "handshake_uncertainty_seconds": 0.00037555000017164275
+          },
+          "pp_tps": 942.2513935464998,
+          "decode_tps": 43.4446318995226,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b53696fadd86db9fcd817c21af4601bce22b917b2cb40f0fd52b874c61a2b9d1",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 128,
+            "prompt_ms": 503.9,
+            "predicted_ms": 2994.4,
+            "prompt_per_second": 1016.075,
+            "predicted_per_second": 42.746,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 65,
+            "draft_n_accepted": 62
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 128,
+            "total_tokens": 640,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 3.506943799991859,
+          "clock_calibration": {
+            "before": {
+              "mono": 214.946549931,
+              "raw": 213.964715137,
+              "utc": 1790852996.303857,
+              "qpc": 75978.72500564999,
+              "roundtrip": 0.0002249000099254772
+            },
+            "after": {
+              "mono": 218.453988081,
+              "raw": 217.472023286,
+              "utc": 1790852999.8127682,
+              "qpc": 75982.23228685,
+              "roundtrip": 0.0004428999964147806
+            },
+            "monotonic_per_raw": 1.0000370657480062,
+            "raw_per_qpc": 1.000007683725382,
+            "window_seconds": 3.507281200014404,
+            "handshake_uncertainty_seconds": 0.0003339000031701289
+          },
+          "pp_tps": 1016.1126615799054,
+          "decode_tps": 42.74758441246428,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b53696fadd86db9fcd817c21af4601bce22b917b2cb40f0fd52b874c61a2b9d1",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 128,
+            "prompt_ms": 490.7,
+            "predicted_ms": 3508.8,
+            "prompt_per_second": 1043.407,
+            "predicted_per_second": 36.48,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 128,
+            "total_tokens": 640,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 4.0075260999874445,
+          "clock_calibration": {
+            "before": {
+              "mono": 218.455098177,
+              "raw": 217.473131491,
+              "utc": 1790852999.8138754,
+              "qpc": 75982.23350575,
+              "roundtrip": 0.0004470999992918223
+            },
+            "after": {
+              "mono": 222.463327691,
+              "raw": 221.481212378,
+              "utc": 1790853003.8199825,
+              "qpc": 75986.24149355001,
+              "roundtrip": 0.0004602999979397282
+            },
+            "monotonic_per_raw": 1.0000370818364643,
+            "raw_per_qpc": 1.0000232253674546,
+            "window_seconds": 4.007987800010596,
+            "handshake_uncertainty_seconds": 0.00045369999861577526
+          },
+          "pp_tps": 1043.4456914477396,
+          "decode_tps": 36.48135274539422,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b53696fadd86db9fcd817c21af4601bce22b917b2cb40f0fd52b874c61a2b9d1",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 128,
+            "prompt_ms": 487.5,
+            "predicted_ms": 3474.0,
+            "prompt_per_second": 1050.256,
+            "predicted_per_second": 36.845,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 128,
+            "total_tokens": 640,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 3.9697473000123864,
+          "clock_calibration": {
+            "before": {
+              "mono": 222.46455325,
+              "raw": 221.48243551,
+              "utc": 1790853003.8212047,
+              "qpc": 75986.24271354999,
+              "roundtrip": 0.0003068999940296635
+            },
+            "after": {
+              "mono": 226.434839037,
+              "raw": 225.452573978,
+              "utc": 1790853007.791494,
+              "qpc": 75990.21284825,
+              "roundtrip": 0.0004616999940481037
+            },
+            "monotonic_per_raw": 1.0000371067662164,
+            "raw_per_qpc": 1.000000949084124,
+            "window_seconds": 3.9701347000082023,
+            "handshake_uncertainty_seconds": 0.0003842999940388836
+          },
+          "pp_tps": 1050.2949716038595,
+          "decode_tps": 36.84636719880124,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b53696fadd86db9fcd817c21af4601bce22b917b2cb40f0fd52b874c61a2b9d1",
+          "reasoning_present": false
+        },
+        {
+          "size": 512,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 512,
+            "predicted_n": 128,
+            "prompt_ms": 503.1,
+            "predicted_ms": 3003.5,
+            "prompt_per_second": 1017.69,
+            "predicted_per_second": 42.617,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 65,
+            "draft_n_accepted": 62
+          },
+          "usage": {
+            "prompt_tokens": 512,
+            "completion_tokens": 128,
+            "total_tokens": 640,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 3.514728299996932,
+          "clock_calibration": {
+            "before": {
+              "mono": 226.436042654,
+              "raw": 225.45377701,
+              "utc": 1790853007.792696,
+              "qpc": 75990.21405715,
+              "roundtrip": 0.0003243000101065263
+            },
+            "after": {
+              "mono": 229.951354263,
+              "raw": 228.968957152,
+              "utc": 1790853011.3069713,
+              "qpc": 75993.72920259999,
+              "roundtrip": 0.0005023999983677641
+            },
+            "monotonic_per_raw": 1.0000373997902543,
+            "raw_per_qpc": 1.0000098692967436,
+            "window_seconds": 3.5151454499864485,
+            "handshake_uncertainty_seconds": 0.0004133500042371452
+          },
+          "pp_tps": 1017.728061392544,
+          "decode_tps": 42.61859386686127,
+          "prompt_sha256": "24e6031264c77130dc9f78a70d0e373410d54f89598408cd14e075e990e8eb23",
+          "output_sha256": "b53696fadd86db9fcd817c21af4601bce22b917b2cb40f0fd52b874c61a2b9d1",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 1,
+            "prompt_ms": 4859.0,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 421.486,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 1,
+            "total_tokens": 2049,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 4.869971600011922,
+          "clock_calibration": {
+            "before": {
+              "mono": 229.95302217,
+              "raw": 228.970624397,
+              "utc": 1790853011.3086379,
+              "qpc": 75993.7309056,
+              "roundtrip": 0.00035180000122636557
+            },
+            "after": {
+              "mono": 234.823896751,
+              "raw": 233.841316248,
+              "utc": 1790853016.1801953,
+              "qpc": 75998.60145615,
+              "roundtrip": 0.0007989000005181879
+            },
+            "monotonic_per_raw": 1.0000375162308757,
+            "raw_per_qpc": 1.00002901129707,
+            "window_seconds": 4.870550550011103,
+            "handshake_uncertainty_seconds": 0.0005753500008722767
+          },
+          "pp_tps": 421.50181256608687,
+          "decode_tps": 0.0,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 1,
+            "prompt_ms": 1471.7,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1391.588,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 1,
+            "total_tokens": 2049,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 1.4820896000019275,
+          "clock_calibration": {
+            "before": {
+              "mono": 234.824982316,
+              "raw": 233.842399171,
+              "utc": 1790853016.1812775,
+              "qpc": 75998.60268105,
+              "roundtrip": 0.00028649999876506627
+            },
+            "after": {
+              "mono": 236.30750591,
+              "raw": 235.324869422,
+              "utc": 1790853017.6638045,
+              "qpc": 76000.08513990001,
+              "roundtrip": 0.0004456000024219975
+            },
+            "monotonic_per_raw": 1.0000359825095868,
+            "raw_per_qpc": 1.0000076905979114,
+            "window_seconds": 1.4824588500050595,
+            "handshake_uncertainty_seconds": 0.0003660500005935319
+          },
+          "pp_tps": 1391.6380728285508,
+          "decode_tps": 0.0,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 1,
+            "prompt_ms": 1510.3,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1356.022,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 1,
+            "total_tokens": 2049,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 1.5208741999958875,
+          "clock_calibration": {
+            "before": {
+              "mono": 236.308715252,
+              "raw": 235.326076248,
+              "utc": 1790853017.6650102,
+              "qpc": 76000.0863549,
+              "roundtrip": 0.00028240001120138913
+            },
+            "after": {
+              "mono": 237.830035959,
+              "raw": 236.847341862,
+              "utc": 1790853019.1842268,
+              "qpc": 76001.60760975,
+              "roundtrip": 0.0004707000043708831
+            },
+            "monotonic_per_raw": 1.0000362152404414,
+            "raw_per_qpc": 1.0000070757384942,
+            "window_seconds": 1.5212548499985132,
+            "handshake_uncertainty_seconds": 0.0003765500077861361
+          },
+          "pp_tps": 1356.0711086627737,
+          "decode_tps": 0.0,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 1,
+            "prompt_ms": 1457.8,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1404.857,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 1,
+            "total_tokens": 2049,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 1.4697540000051958,
+          "clock_calibration": {
+            "before": {
+              "mono": 237.831159922,
+              "raw": 236.848463722,
+              "utc": 1790853019.1853478,
+              "qpc": 76001.6087478,
+              "roundtrip": 0.0002756000030785799
+            },
+            "after": {
+              "mono": 239.301351689,
+              "raw": 238.3186021,
+              "utc": 1790853020.6555429,
+              "qpc": 76003.07887135001,
+              "roundtrip": 0.0004554999904939905
+            },
+            "monotonic_per_raw": 1.0000363156290497,
+            "raw_per_qpc": 1.0000100862198888,
+            "window_seconds": 1.4701235500106122,
+            "handshake_uncertainty_seconds": 0.0003655499967862852
+          },
+          "pp_tps": 1404.9080182656799,
+          "decode_tps": 0.0,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 128,
+            "prompt_ms": 1497.9,
+            "predicted_ms": 4276.7,
+            "prompt_per_second": 1367.247,
+            "predicted_per_second": 29.93,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 61,
+            "draft_n_accepted": 66
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 128,
+            "total_tokens": 2176,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 5.7850680999981705,
+          "clock_calibration": {
+            "before": {
+              "mono": 239.302519467,
+              "raw": 238.319767583,
+              "utc": 1790853020.656707,
+              "qpc": 76003.08006835,
+              "roundtrip": 0.0002784999960567802
+            },
+            "after": {
+              "mono": 245.088220301,
+              "raw": 244.105253679,
+              "utc": 1790853026.4403746,
+              "qpc": 76008.8655048,
+              "roundtrip": 0.00045020000834483653
+            },
+            "monotonic_per_raw": 1.0000371166737674,
+            "raw_per_qpc": 1.0000085812031605,
+            "window_seconds": 5.7854364499944495,
+            "handshake_uncertainty_seconds": 0.0003643500022008084
+          },
+          "pp_tps": 1367.2977476608585,
+          "decode_tps": 29.93111090204586,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "ca03c54c8caa9d1d43a436f4c5a7c5d06ad939203c9ec974e69c0c4332ce4a3b",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 128,
+            "prompt_ms": 1470.1,
+            "predicted_ms": 3599.4,
+            "prompt_per_second": 1393.103,
+            "predicted_per_second": 35.561,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 128,
+            "total_tokens": 2176,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 5.08031380000466,
+          "clock_calibration": {
+            "before": {
+              "mono": 245.089387697,
+              "raw": 244.106419762,
+              "utc": 1790853026.44154,
+              "qpc": 76008.8667021,
+              "roundtrip": 0.00030839999089948833
+            },
+            "after": {
+              "mono": 250.170275986,
+              "raw": 249.187117252,
+              "utc": 1790853031.5235868,
+              "qpc": 76013.94739315001,
+              "roundtrip": 0.00043709999590646476
+            },
+            "monotonic_per_raw": 1.0000375537020991,
+            "raw_per_qpc": 1.0000012675420413,
+            "window_seconds": 5.0806910500105005,
+            "handshake_uncertainty_seconds": 0.00037274999340297654
+          },
+          "pp_tps": 1393.1553161750555,
+          "decode_tps": 35.56233544720035,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "ca03c54c8caa9d1d43a436f4c5a7c5d06ad939203c9ec974e69c0c4332ce4a3b",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 128,
+            "prompt_ms": 1456.1,
+            "predicted_ms": 3581.0,
+            "prompt_per_second": 1406.497,
+            "predicted_per_second": 35.744,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 128,
+            "total_tokens": 2176,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 5.048538200004259,
+          "clock_calibration": {
+            "before": {
+              "mono": 250.171235895,
+              "raw": 249.188074914,
+              "utc": 1790853031.5245433,
+              "qpc": 76013.94836185,
+              "roundtrip": 0.0002373000024817884
+            },
+            "after": {
+              "mono": 255.220517999,
+              "raw": 254.237169401,
+              "utc": 1790853036.5748568,
+              "qpc": 76018.99734665,
+              "roundtrip": 0.0006491000094683841
+            },
+            "monotonic_per_raw": 1.0000371585440728,
+            "raw_per_qpc": 1.0000217245653515,
+            "window_seconds": 5.048984799999744,
+            "handshake_uncertainty_seconds": 0.00044320000597508624
+          },
+          "pp_tps": 1406.5492633807628,
+          "decode_tps": 35.74532819499934,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "ca03c54c8caa9d1d43a436f4c5a7c5d06ad939203c9ec974e69c0c4332ce4a3b",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 128,
+            "prompt_ms": 1500.5,
+            "predicted_ms": 3066.2,
+            "prompt_per_second": 1364.878,
+            "predicted_per_second": 41.745,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 61,
+            "draft_n_accepted": 66
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 128,
+            "total_tokens": 2176,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 4.40788079999038,
+          "clock_calibration": {
+            "before": {
+              "mono": 255.221700548,
+              "raw": 254.238349375,
+              "utc": 1790853036.5760355,
+              "qpc": 76018.9986232,
+              "roundtrip": 0.00031680001120548695
+            },
+            "after": {
+              "mono": 259.800935708,
+              "raw": 258.64663208,
+              "utc": 1790853041.1530476,
+              "qpc": 76023.4069054,
+              "roundtrip": 0.00047820000327192247
+            },
+            "monotonic_per_raw": 1.0387798302513793,
+            "raw_per_qpc": 1.0000001145558506,
+            "window_seconds": 4.4082822000054875,
+            "handshake_uncertainty_seconds": 0.0003975000072387047
+          },
+          "pp_tps": 1417.807737153842,
+          "decode_tps": 43.36386401384383,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "ca03c54c8caa9d1d43a436f4c5a7c5d06ad939203c9ec974e69c0c4332ce4a3b",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 128,
+            "prompt_ms": 1622.4,
+            "predicted_ms": 3141.9,
+            "prompt_per_second": 1262.327,
+            "predicted_per_second": 40.74,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 61,
+            "draft_n_accepted": 66
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 128,
+            "total_tokens": 2176,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 4.408984099994996,
+          "clock_calibration": {
+            "before": {
+              "mono": 259.802491401,
+              "raw": 258.64806695,
+              "utc": 1790853041.154601,
+              "qpc": 76023.40821719999,
+              "roundtrip": 0.0005876000068383291
+            },
+            "after": {
+              "mono": 264.579522923,
+              "raw": 263.057469481,
+              "utc": 1790853045.579429,
+              "qpc": 76027.81773139999,
+              "roundtrip": 0.00046540000766981393
+            },
+            "monotonic_per_raw": 1.0833738785278533,
+            "raw_per_qpc": 0.9999746754414475,
+            "window_seconds": 4.409514200000558,
+            "handshake_uncertainty_seconds": 0.0005265000072540715
+          },
+          "pp_tps": 1367.5720979604293,
+          "decode_tps": 44.136651811224745,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "ca03c54c8caa9d1d43a436f4c5a7c5d06ad939203c9ec974e69c0c4332ce4a3b",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 128,
+            "prompt_ms": 1589.8,
+            "predicted_ms": 3716.5,
+            "prompt_per_second": 1288.212,
+            "predicted_per_second": 34.441,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 128,
+            "total_tokens": 2176,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 5.087786799995229,
+          "clock_calibration": {
+            "before": {
+              "mono": 264.580923706,
+              "raw": 263.058760712,
+              "utc": 1790853045.5808263,
+              "qpc": 76027.81906089999,
+              "roundtrip": 0.0003612000000430271
+            },
+            "after": {
+              "mono": 269.899807878,
+              "raw": 268.147025991,
+              "utc": 1790853050.4815507,
+              "qpc": 76032.90728725,
+              "roundtrip": 0.0005078999965917319
+            },
+            "monotonic_per_raw": 1.045323677197359,
+            "raw_per_qpc": 1.0000076507976596,
+            "window_seconds": 5.088226350009791,
+            "handshake_uncertainty_seconds": 0.0004345499983173795
+          },
+          "pp_tps": 1346.5985048497644,
+          "decode_tps": 36.00199276635425,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "ca03c54c8caa9d1d43a436f4c5a7c5d06ad939203c9ec974e69c0c4332ce4a3b",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 128,
+            "prompt_ms": 1478.2,
+            "predicted_ms": 3591.6,
+            "prompt_per_second": 1385.469,
+            "predicted_per_second": 35.639,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 128,
+            "total_tokens": 2176,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 5.080073499993887,
+          "clock_calibration": {
+            "before": {
+              "mono": 269.900950904,
+              "raw": 268.148166065,
+              "utc": 1790853050.4826896,
+              "qpc": 76032.90844395,
+              "roundtrip": 0.00028390000807121396
+            },
+            "after": {
+              "mono": 274.981565564,
+              "raw": 273.228591786,
+              "utc": 1790853055.5614395,
+              "qpc": 76037.98886235,
+              "roundtrip": 0.0003989000106230378
+            },
+            "monotonic_per_raw": 1.000037189599922,
+            "raw_per_qpc": 1.0000014410228895,
+            "window_seconds": 5.080418400000781,
+            "handshake_uncertainty_seconds": 0.0003414000093471259
+          },
+          "pp_tps": 1385.5205250378144,
+          "decode_tps": 35.640325400151625,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "ca03c54c8caa9d1d43a436f4c5a7c5d06ad939203c9ec974e69c0c4332ce4a3b",
+          "reasoning_present": false
+        },
+        {
+          "size": 2048,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 2048,
+            "predicted_n": 128,
+            "prompt_ms": 1501.5,
+            "predicted_ms": 2888.0,
+            "prompt_per_second": 1363.969,
+            "predicted_per_second": 44.321,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 61,
+            "draft_n_accepted": 66
+          },
+          "usage": {
+            "prompt_tokens": 2048,
+            "completion_tokens": 128,
+            "total_tokens": 2176,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 4.399660600000061,
+          "clock_calibration": {
+            "before": {
+              "mono": 274.982582731,
+              "raw": 273.229606535,
+              "utc": 1790853055.562453,
+              "qpc": 76037.98988245,
+              "roundtrip": 0.0002471000043442473
+            },
+            "after": {
+              "mono": 279.38277195,
+              "raw": 277.629632438,
+              "utc": 1790853059.9626374,
+              "qpc": 76042.38988244999,
+              "roundtrip": 0.0004256999964127317
+            },
+            "monotonic_per_raw": 1.00003711705423,
+            "raw_per_qpc": 1.000005887046771,
+            "window_seconds": 4.399999999994179,
+            "handshake_uncertainty_seconds": 0.0003364000003784895
+          },
+          "pp_tps": 1364.019626511341,
+          "decode_tps": 44.322645064960525,
+          "prompt_sha256": "c6cf49ca4cb82709360eeaa15862cc4bfddc0bea42e0530979b9695a71cdd2a0",
+          "output_sha256": "ca03c54c8caa9d1d43a436f4c5a7c5d06ad939203c9ec974e69c0c4332ce4a3b",
+          "reasoning_present": false
+        }
+      ]
+    },
+    {
+      "name": "v2-base-large-cold",
+      "summary": {
+        "backend": "halogen-v2",
+        "context": 262144,
+        "run_id": "7f85418ea48a4668ab5b3dd6b73d1965",
+        "passed": true,
+        "rows": [
+          {
+            "size": 8192,
+            "output": 1,
+            "drafter": "serial",
+            "n": 3,
+            "pp_mean": 1368.2748983904103,
+            "decode_mean": 0.0,
+            "pp_stdev": 1.661800507739286,
+            "decode_stdev": 0.0
+          },
+          {
+            "size": 8192,
+            "output": 128,
+            "drafter": "mtp",
+            "n": 3,
+            "pp_mean": 1328.8650179173062,
+            "decode_mean": 40.71153121518328,
+            "pp_stdev": 8.645556241620673,
+            "decode_stdev": 0.836935476891153
+          },
+          {
+            "size": 8192,
+            "output": 128,
+            "drafter": "serial",
+            "n": 3,
+            "pp_mean": 1345.1476336559836,
+            "decode_mean": 34.69880416168302,
+            "pp_stdev": 20.083290471635785,
+            "decode_stdev": 2.556199871920539
+          }
+        ],
+        "samples": 9,
+        "measured_at": 1790854037.2203035,
+        "harness_sha256": "aa055cba4612137b06fa738028a7a247e9d6a2330a53fd180a32ec4398b184df",
+        "route": "http://127.0.0.1:8840/v1/chat/completions",
+        "cache": "Off"
+      },
+      "identity_checks": [
+        {
+          "input": 8192,
+          "all_serial_mtp_and_repeat_outputs_identical": true
+        }
+      ],
+      "samples": [
+        {
+          "size": 8192,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 1,
+            "prompt_ms": 7441.8,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1100.809,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 1,
+            "total_tokens": 8193,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 7.470032400000491,
+          "clock_calibration": {
+            "before": {
+              "mono": 407.982622685,
+              "raw": 405.407259872,
+              "utc": 1790853919.9123647,
+              "qpc": 76902.42538155001,
+              "roundtrip": 0.0007129000005079433
+            },
+            "after": {
+              "mono": 415.453319512,
+              "raw": 412.877961834,
+              "utc": 1790853927.3805537,
+              "qpc": 76909.8960416,
+              "roundtrip": 0.0005266000080155209
+            },
+            "monotonic_per_raw": 0.9999993126482539,
+            "raw_per_qpc": 1.0000056102148396,
+            "window_seconds": 7.470660049992148,
+            "handshake_uncertainty_seconds": 0.0006197500042617321
+          },
+          "pp_tps": 1100.8082433570116,
+          "decode_tps": 0.0,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 1,
+            "prompt_ms": 5995.5,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1366.358,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 1,
+            "total_tokens": 8193,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 6.046155499992892,
+          "clock_calibration": {
+            "before": {
+              "mono": 415.457964426,
+              "raw": 412.882605482,
+              "utc": 1790853927.3851964,
+              "qpc": 76909.90076285001,
+              "roundtrip": 0.00031829999352339655
+            },
+            "after": {
+              "mono": 421.50479462,
+              "raw": 418.929443639,
+              "utc": 1790853933.4326222,
+              "qpc": 76915.94754725,
+              "roundtrip": 0.0009289000008720905
+            },
+            "monotonic_per_raw": 0.9999986831134184,
+            "raw_per_qpc": 1.000008890180698,
+            "window_seconds": 6.046784399994067,
+            "handshake_uncertainty_seconds": 0.0006235999971977435
+          },
+          "pp_tps": 1366.356200661484,
+          "decode_tps": 0.0,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 1,
+            "prompt_ms": 5983.0,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1369.213,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 1,
+            "total_tokens": 8193,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 6.014143599997624,
+          "clock_calibration": {
+            "before": {
+              "mono": 421.507246729,
+              "raw": 418.931893681,
+              "utc": 1790853933.4350712,
+              "qpc": 76915.950037,
+              "roundtrip": 0.000734600005671382
+            },
+            "after": {
+              "mono": 427.522199444,
+              "raw": 424.94685421,
+              "utc": 1790853939.448236,
+              "qpc": 76921.9649771,
+              "roundtrip": 0.0008450000023003668
+            },
+            "monotonic_per_raw": 0.9999987009058631,
+            "raw_per_qpc": 1.0000033963772288,
+            "window_seconds": 6.014940099994419,
+            "handshake_uncertainty_seconds": 0.0007898000039858744
+          },
+          "pp_tps": 1369.2112212634195,
+          "decode_tps": 0.0,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 1,
+          "drafter": "serial",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 1,
+            "prompt_ms": 5982.8,
+            "predicted_ms": 0.0,
+            "prompt_per_second": 1369.259,
+            "predicted_per_second": 0.0,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 1,
+            "total_tokens": 8193,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 6.010537800000748,
+          "clock_calibration": {
+            "before": {
+              "mono": 427.524713121,
+              "raw": 424.949365629,
+              "utc": 1790853939.4507463,
+              "qpc": 76921.9675011,
+              "roundtrip": 0.0007737999985693023
+            },
+            "after": {
+              "mono": 433.536189801,
+              "raw": 430.96084989,
+              "utc": 1790853945.4624996,
+              "qpc": 76927.9789544,
+              "roundtrip": 0.001040199989802204
+            },
+            "monotonic_per_raw": 0.9999987389137682,
+            "raw_per_qpc": 1.0000051503374607,
+            "window_seconds": 6.011453299986897,
+            "handshake_uncertainty_seconds": 0.0009069999941857532
+          },
+          "pp_tps": 1369.2572732463275,
+          "decode_tps": 0.0,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6220.1,
+            "predicted_ms": 4297.1,
+            "prompt_per_second": 1317.021,
+            "predicted_per_second": 29.788,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 65,
+            "draft_n_accepted": 62
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 10.543240800005151,
+          "clock_calibration": {
+            "before": {
+              "mono": 433.538567386,
+              "raw": 430.963226248,
+              "utc": 1790853945.4648747,
+              "qpc": 76927.98137515,
+              "roundtrip": 0.000727299993741326
+            },
+            "after": {
+              "mono": 444.082380178,
+              "raw": 441.507048982,
+              "utc": 1790853956.0065613,
+              "qpc": 76938.52519829999,
+              "roundtrip": 0.00042300000495743006
+            },
+            "monotonic_per_raw": 0.9999990570782277,
+            "raw_per_qpc": 0.9999999605468949,
+            "window_seconds": 10.543823149986565,
+            "handshake_uncertainty_seconds": 0.000575149999349378
+          },
+          "pp_tps": 1317.0197581522245,
+          "decode_tps": 29.787971912246245,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "2f9ebbe3ad3fbc2df90a3c55b058f776d674e9c9a9531c31452959b07d03425b",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 0,
+          "phase": "warmup",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6036.3,
+            "predicted_ms": 3611.0,
+            "prompt_per_second": 1357.123,
+            "predicted_per_second": 35.447,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 9.712978299998213,
+          "clock_calibration": {
+            "before": {
+              "mono": 444.083631337,
+              "raw": 441.508298192,
+              "utc": 1790853956.0078099,
+              "qpc": 76938.5264526,
+              "roundtrip": 0.00029340000764932483
+            },
+            "after": {
+              "mono": 453.79698219,
+              "raw": 451.22165987,
+              "utc": 1790853965.721913,
+              "qpc": 76948.23979335,
+              "roundtrip": 0.00042389999725855887
+            },
+            "monotonic_per_raw": 0.9999988855557568,
+            "raw_per_qpc": 1.0000021545617288,
+            "window_seconds": 9.713340750007774,
+            "handshake_uncertainty_seconds": 0.00035865000245394185
+          },
+          "pp_tps": 1357.1214875620853,
+          "decode_tps": 35.44696049629491,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "2f9ebbe3ad3fbc2df90a3c55b058f776d674e9c9a9531c31452959b07d03425b",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6019.1,
+            "predicted_ms": 3625.9,
+            "prompt_per_second": 1361.001,
+            "predicted_per_second": 35.302,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 9.708687299993471,
+          "clock_calibration": {
+            "before": {
+              "mono": 453.798245943,
+              "raw": 451.222921363,
+              "utc": 1790853965.7231736,
+              "qpc": 76948.24104175,
+              "roundtrip": 0.00035010000283364207
+            },
+            "after": {
+              "mono": 463.507307085,
+              "raw": 460.931994083,
+              "utc": 1790853975.4320073,
+              "qpc": 76957.9501429,
+              "roundtrip": 0.00046960001054685563
+            },
+            "monotonic_per_raw": 0.9999988075071294,
+            "raw_per_qpc": 0.9999970718209101,
+            "window_seconds": 9.709101149986964,
+            "handshake_uncertainty_seconds": 0.00040985000669024885
+          },
+          "pp_tps": 1360.9993770160106,
+          "decode_tps": 35.301957902616685,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "2f9ebbe3ad3fbc2df90a3c55b058f776d674e9c9a9531c31452959b07d03425b",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 1,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6182.4,
+            "predicted_ms": 3126.7,
+            "prompt_per_second": 1325.052,
+            "predicted_per_second": 40.938,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 65,
+            "draft_n_accepted": 62
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 9.373062699989532,
+          "clock_calibration": {
+            "before": {
+              "mono": 463.508606085,
+              "raw": 460.933290585,
+              "utc": 1790853975.4333029,
+              "qpc": 76957.95139865001,
+              "roundtrip": 0.00042270000267308205
+            },
+            "after": {
+              "mono": 472.882047229,
+              "raw": 470.306742162,
+              "utc": 1790853984.8065398,
+              "qpc": 76967.32489330001,
+              "roundtrip": 0.0004337999998824671
+            },
+            "monotonic_per_raw": 0.9999988869628378,
+            "raw_per_qpc": 0.9999954048083377,
+            "window_seconds": 9.373494650004432,
+            "handshake_uncertainty_seconds": 0.00042825000127777457
+          },
+          "pp_tps": 1325.0505251678821,
+          "decode_tps": 40.93795443448465,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "2f9ebbe3ad3fbc2df90a3c55b058f776d674e9c9a9531c31452959b07d03425b",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6471.7,
+            "predicted_ms": 3402.7,
+            "prompt_per_second": 1265.819,
+            "predicted_per_second": 37.617,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 65,
+            "draft_n_accepted": 62
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 9.357688100004452,
+          "clock_calibration": {
+            "before": {
+              "mono": 472.88337437,
+              "raw": 470.308067215,
+              "utc": 1790853984.807864,
+              "qpc": 76967.32622165,
+              "roundtrip": 0.0002575000107754022
+            },
+            "after": {
+              "mono": 482.780702063,
+              "raw": 479.666136237,
+              "utc": 1790853994.4584382,
+              "qpc": 76976.6842724,
+              "roundtrip": 0.0004600000102072954
+            },
+            "monotonic_per_raw": 1.0576249939738873,
+            "raw_per_qpc": 1.0000019525432697,
+            "window_seconds": 9.358050750000984,
+            "handshake_uncertainty_seconds": 0.0003587500104913488
+          },
+          "pp_tps": 1338.7618122470321,
+          "decode_tps": 39.78467939831572,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "2f9ebbe3ad3fbc2df90a3c55b058f776d674e9c9a9531c31452959b07d03425b",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 2,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6538.6,
+            "predicted_ms": 3661.9,
+            "prompt_per_second": 1252.868,
+            "predicted_per_second": 34.955,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 9.728545600009966,
+          "clock_calibration": {
+            "before": {
+              "mono": 482.781935266,
+              "raw": 479.667272219,
+              "utc": 1790853994.4596674,
+              "qpc": 76976.68542245001,
+              "roundtrip": 0.0002965000021504238
+            },
+            "after": {
+              "mono": 493.05222443,
+              "raw": 489.396348983,
+              "utc": 1790854003.8947558,
+              "qpc": 76986.41443235,
+              "roundtrip": 0.000625100001343526
+            },
+            "monotonic_per_raw": 1.055628341016141,
+            "raw_per_qpc": 1.0000068726438296,
+            "window_seconds": 9.729009899980156,
+            "handshake_uncertainty_seconds": 0.0004608000017469749
+          },
+          "pp_tps": 1322.5629683522104,
+          "decode_tps": 36.899488660219205,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "2f9ebbe3ad3fbc2df90a3c55b058f776d674e9c9a9531c31452959b07d03425b",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "drafter": "serial",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6059.7,
+            "predicted_ms": 4013.2,
+            "prompt_per_second": 1351.882,
+            "predicted_per_second": 31.895,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 0,
+            "draft_n_accepted": 0
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 10.135905200004345,
+          "clock_calibration": {
+            "before": {
+              "mono": 493.053604005,
+              "raw": 489.397726879,
+              "utc": 1790854003.8961327,
+              "qpc": 76986.41586934999,
+              "roundtrip": 0.00031310001213569194
+            },
+            "after": {
+              "mono": 503.189898444,
+              "raw": 499.534032148,
+              "utc": 1790854014.0299046,
+              "qpc": 76996.55216625001,
+              "roundtrip": 0.00046349999320227653
+            },
+            "monotonic_per_raw": 0.9999989315633536,
+            "raw_per_qpc": 1.0000008256448802,
+            "window_seconds": 10.136296900018351,
+            "handshake_uncertainty_seconds": 0.00038830000266898423
+          },
+          "pp_tps": 1351.8805555997296,
+          "decode_tps": 31.894965922213164,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "2f9ebbe3ad3fbc2df90a3c55b058f776d674e9c9a9531c31452959b07d03425b",
+          "reasoning_present": false
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "drafter": "mtp",
+          "rep": 3,
+          "phase": "measured",
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6193.0,
+            "predicted_ms": 3090.9,
+            "prompt_per_second": 1322.784,
+            "predicted_per_second": 41.412,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 65,
+            "draft_n_accepted": 62
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "wall_seconds": 9.349111000003177,
+          "clock_calibration": {
+            "before": {
+              "mono": 503.191177863,
+              "raw": 499.535310857,
+              "utc": 1790854014.0311828,
+              "qpc": 76996.55345695,
+              "roundtrip": 0.00030109999352134764
+            },
+            "after": {
+              "mono": 512.540678177,
+              "raw": 508.884820244,
+              "utc": 1790854023.377594,
+              "qpc": 77005.90293585,
+              "roundtrip": 0.00042630000098142773
+            },
+            "monotonic_per_raw": 0.9999990295747482,
+            "raw_per_qpc": 1.0000032608238714,
+            "window_seconds": 9.34947889999603,
+            "handshake_uncertainty_seconds": 0.0003636999972513877
+          },
+          "pp_tps": 1322.7827163370039,
+          "decode_tps": 41.41195981274947,
+          "prompt_sha256": "cbf7d4b552b169a25ab3bfb5f84b7afa38653677c3efc06f4f92993ca48db9c5",
+          "output_sha256": "2f9ebbe3ad3fbc2df90a3c55b058f776d674e9c9a9531c31452959b07d03425b",
+          "reasoning_present": false
+        }
+      ]
+    }
+  ],
+  "measured_requests": 27,
+  "reserve_observations": [
+    {
+      "run_id": "99bca7c7090c486ab3999e07d0bf2c21",
+      "minimum_available_gib": 37.365333557128906,
+      "stop_requested": true,
+      "required_reserve_gib": 16,
+      "stop_threshold_gib": 18,
+      "all_samples_above_16_gib": true
+    },
+    {
+      "run_id": "7f85418ea48a4668ab5b3dd6b73d1965",
+      "minimum_available_gib": 37.09550857543945,
+      "stop_requested": false,
+      "required_reserve_gib": 16,
+      "stop_threshold_gib": 18,
+      "stop_reasons": [],
+      "all_samples_above_16_gib": true
+    }
+  ],
+  "timing": "Original engine fields and per-request WSL monotonic/raw calibration retained. Phase calibration is approximate; not a GPU speedup.",
+  "outcome": "Baseline established. No live-tested optimization or measured improvement in this task.",
+  "unexecuted_candidates": [
+    {
+      "candidate": "8 GiB pinned-host workspace adapter",
+      "mock_allocation_tests": "passed before executable scoping; not a real HIP/model test",
+      "live_tested": false,
+      "reason": "Tool safety blocked launcher integration; experimental service edits reverted."
+    },
+    {
+      "candidate": "8192 prefill chunk and matching arena",
+      "configuration_test": "passed",
+      "live_tested": false,
+      "reason": "Candidate startup blocked by tool safety; previous settings restored."
+    }
+  ],
+  "reserve_policy": {
+    "existing_runtime_reserve_gib": 12,
+    "additional_stop_threshold_gib": 18,
+    "requested_minimum_gib": 16,
+    "sample_period_seconds": 0.2,
+    "method": "Additional observer requests ordinary owned-controller stop; does not modify existing guards. Polling cannot guarantee an instantaneous floor against arbitrary outside allocations."
+  },
+  "monitor_correction": "An initial redundant controller-heartbeat check stopped a retry during startup with ample RAM. Removed from supplementary observer; underlying liveness checks untouched. Initial stopped attempt has no credited timings.",
+  "runtime_sources_unchanged": true,
+  "weights_changed": false,
+  "allocator_changed": false,
+  "final_state": {
+    "checked_at": "2026-10-01T11:34:13.609226+00:00",
+    "run_id": "f09bc011fb454fbc8c66268da8d78181",
+    "phase": "ready",
+    "model": "halogen-v2",
+    "context": 262144,
+    "runtime_configuration": "Original baseline, no optimization promoted",
+    "checks": [
+      {
+        "origin": "http://127.0.0.1:8840",
+        "transport": "IPv4, normal TLS certificate verification",
+        "missing_status": 401,
+        "wrong_status": 401,
+        "status": 200,
+        "answer": "OK"
+      },
+      {
+        "origin": "https://strix-alloy.tail7f425a.ts.net",
+        "transport": "IPv4, normal TLS certificate verification",
+        "missing_status": 401,
+        "wrong_status": 401,
+        "status": 200,
+        "answer": "OK"
+      }
+    ],
+    "additional_monitor_run_minimum_gib": 37.50871276855469,
+    "request_origin": "Windows PC, not the external cloud instance",
+    "api_key_changed": false
+  },
+  "source_tests": {
+    "fresh_source_export": true,
+    "all_passed": true,
+    "suites": {
+      "benchmark": {
+        "exit_code": 0,
+        "reported_tests": 33,
+        "skipped": 0
+      },
+      "server": {
+        "exit_code": 0,
+        "reported_tests": 23,
+        "skipped": 0
+      },
+      "publication": {
+        "exit_code": 0,
+        "reported_tests": 15,
+        "skipped": 0
+      },
+      "halogen": {
+        "exit_code": 0,
+        "reported_tests": 108,
+        "skipped": 22
+      },
+      "projfix": {
+        "exit_code": 0,
+        "reported_tests": 12,
+        "skipped": 0
+      },
+      "gufo_policy": {
+        "exit_code": 0,
+        "reported_tests": 15,
+        "skipped": 0
+      }
+    },
+    "powershell_result": "PASS: parsed 27 PowerShell source files; none were executed."
+  }
+}
