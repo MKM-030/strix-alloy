@@ -26,3 +26,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Article-comparison corpus
+
+The optional article input preparer retrieves public LlamaStash TUI source at
+revision `a88808c148aa9c539691238ce06a89d25f6dbb6c` as data, never as executable code.
+Those source files are also distributed under the MIT License text above, with:
+
+Copyright (c) 2026 Deepu K Sasidharan
+
+The pinned repository's LICENSE is the authoritative notice. The benchmark's
+added fixture records and measurement logic are separate Strix Alloy work.

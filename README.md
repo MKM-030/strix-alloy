@@ -28,6 +28,9 @@ Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
 
+[Article-format filled-context and display-driver comparison](docs/benchmarks/strix-alloy-article-driver-comparison-20260930.md)
+separates completed three-turn measurements, short-prompt before/after controls, and failed or non-comparable configurations.
+
 [Latest-SDK numerical validation and PP512/PP2048 measurements](docs/integration/gufo-latest-sdk-20260930.md)
 include the controlled compiler/runtime matrix, unchanged numerical tests and the new AMD driver.
 

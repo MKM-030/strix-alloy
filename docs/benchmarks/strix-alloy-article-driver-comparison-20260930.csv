@@ -1,0 +1,17 @@
+context,target_input,engine,weights,status,three_turn_minutes,prefill_tps,decode_tps,acceptance,retrieval_correct,retrieval_total,capped_outputs,phase_time_basis,reason
+65536,32768,GUFO latest-SDK,UD-IQ4_XS + Q8_0 MTP,measured,1.9970578298965596,707.8760949465345,40.5231453030757,0.7975543478260869,14,14,0,native engine timing,
+131072,65536,GUFO latest-SDK,UD-IQ4_XS + Q8_0 MTP,measured,2.926000515343274,666.0653307482266,38.42741106881081,0.7668031799566369,16,16,1,native engine timing,
+131072,98304,GUFO latest-SDK,UD-IQ4_XS + Q8_0 MTP,measured,4.022960622779604,623.3237259359637,35.65890755908186,0.7308602999210734,16,16,0,native engine timing,
+262144,131072,GUFO latest-SDK,UD-IQ4_XS + Q8_0 MTP,measured,4.963181068715934,623.5389820516896,34.12687452234728,0.7309812568908489,16,16,1,native engine timing,
+65536,32768,Halogen 0.15.1,v2 HGN,measured,2.080623949866693,1041.8866955964872,30.317006614668937,0.8389996092223525,14,14,0,WSL-clock-calibrated estimate,
+131072,65536,Halogen 0.15.1,v2 HGN,measured,2.384359256018423,1114.1290655604957,34.05327998599257,0.8569836552748885,16,16,0,WSL-clock-calibrated estimate,
+131072,98304,Halogen 0.15.1,v2 HGN,measured,2.6874610684357108,1147.9368702816528,39.57609602671253,0.8548158640226629,16,16,0,WSL-clock-calibrated estimate,
+262144,131072,Halogen 0.15.1,v2 HGN,measured,3.475999404090578,1117.305745893993,32.38649627484894,0.8443642198154834,16,16,0,WSL-clock-calibrated estimate,
+65536,32768,Halogen 0.15.1,w4b HGN + overlay,measured,1.9347679615793283,1070.9374537480521,33.84735280691545,0.8453695836873407,14,14,0,WSL-clock-calibrated estimate,
+131072,65536,Halogen 0.15.1,w4b HGN + overlay,measured,2.637231353459535,1076.4974004077026,29.244669115899214,0.8252990213845596,16,16,0,WSL-clock-calibrated estimate,
+131072,98304,Halogen 0.15.1,w4b HGN + overlay,measured,2.7176351641657024,1142.9285999912383,38.81388593997154,0.8278985507246377,16,16,0,WSL-clock-calibrated estimate,
+262144,131072,Halogen 0.15.1,w4b HGN + overlay,measured,3.5322109076034907,1098.4038986302678,31.685547840537296,0.8272859216255443,16,16,0,WSL-clock-calibrated estimate,
+65536,32768,PROJFIX native HIP,IQ4_NL-PROJFIX + Q8_0 MTP,not_completed,,,,,,,,native engine timing,Windows physical/commit reserve crossed 12 GiB
+131072,65536,PROJFIX native HIP,IQ4_NL-PROJFIX + Q8_0 MTP,not_completed,,,,,,,,native engine timing,RuntimeError('Windows physical/commit reserve crossed 12 GiB')
+131072,98304,PROJFIX native HIP,IQ4_NL-PROJFIX + Q8_0 MTP,not_completed,,,,,,,,native engine timing,RuntimeError('Windows physical/commit reserve crossed 12 GiB')
+262144,131072,PROJFIX native HIP,IQ4_NL-PROJFIX + Q8_0 MTP,not_completed,,,,,,,,native engine timing,RuntimeError('Windows physical/commit reserve crossed 12 GiB')

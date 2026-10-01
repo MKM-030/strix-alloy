@@ -76,3 +76,100 @@ records the exact-8192 miss alongside working reuse cases, not just the best res
 Cache misses are retained as results; output hashes expose any cold/warm difference.
 Flexible mode has no universal bit-identical-to-cold guarantee, even when one test
 happens to match. Keep cache Off for the PP512/PP2048 kernel-throughput comparison.
+
+## Article-format, filled-context comparison
+
+`article_bench.py` measures the three-turn workload through the managed gateway
+on port 8840. It uses the column definitions and occupied-context geometry of
+Reddit post `1wu0m53`, with a disclosed replacement coding corpus. It does not
+reproduce the article's separate Aider exercise suite or its unpublished prompts.
+
+Use the same matching tokenizer JSON as the checkpoint. Its digest and the twelve
+public code-file digests are pinned in `article-corpus-manifest.json`. Preparation
+retrieves text as benchmark data and does not execute it or download model weights.
+
+```powershell
+$Py = '.\server\.local\venv\Scripts\python.exe'
+$Work = Join-Path (Get-Location) ('server\.local\benchmarks\article-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+$Tokenizer = 'C:\AI\models\Flash-Next\tokenizer.json' # Matching local tokenizer export.
+& $Py .\scripts\benchmarks\prepare_article_inputs.py --work $Work --tokenizer $Tokenizer
+& $Py -m pip install --target "$Work\vendor" --no-deps 'tokenizers==0.23.2'
+```
+
+Start the desired managed backend, wait for READY, and use a second PowerShell
+terminal for measurement. Do not launch another model alongside the selected one.
+The following runs the 256K-capacity / 50%-filled case on an already ready GUFO:
+
+```powershell
+& $Py .\scripts\benchmarks\article_bench.py `
+  --work $Work --backend gufo --context 262144 --fill 131072 `
+  --token-file '.\backends\halogen-wsl2-0.15.1\.local\api-token.txt' --reps 2
+```
+
+Backend labels are `gufo`, `projfix`, `halogen-v2`, and `halogen-w4b`. The active
+model ID and allocated capacity must match; the client never starts or swaps an
+engine. Halogen should use Exact cache for this conversational test. Native profiles
+must be explicitly configured for the requested capacity, then stopped/restarted;
+changing the client's `--context` does not resize a running model.
+
+| Allocated capacity | Initial input target | Interpretation |
+|---:|---:|---|
+| 65536 | 32768 | 64K, half occupied |
+| 131072 | 65536 | 128K, half occupied |
+| 131072 | 98304 | 128K, three-quarters occupied |
+| 262144 | 131072 | 256K, half occupied |
+
+Each result keeps exact observed input/output counts, first-token latency, engine
+phase counters, cache statistics, acceptance counts, output text and retrieval grade.
+The reported three-turn time is normalized to 1000 output tokens per turn; it is not
+the elapsed job duration. Truncation is reported, not counted as a completed coding
+exercise. Inputs/code outputs are never executed. Review raw files before publishing:
+they include workload text and local run IDs, although no API-key values are written.
+
+### Readiness-gated repeats and cold driver controls
+
+The article client now waits for Halogen's own startup validation to finish,
+not just an open gateway port. Use `--tag ready-confirmed` (or another unique
+alphanumeric tag) to repeat a cell without replacing its earlier evidence.
+Original failed/partial runs should remain alongside the replacement.
+
+For a before/after comparison, retain the **original calibrated prompt files**.
+Restart the selected engine with cache Off, then run this independent client:
+
+```powershell
+$ColdOut = Join-Path $Work 'cold-v2-repeat'
+$Prompts = 'C:\Benchmarks\prior-v2-prompts' # Contains prompt-512-prose.txt and prompt-2048-prose.txt.
+& $Py .\scripts\benchmarks\gateway_cold.py `
+  --backend halogen-v2 --context 262144 --prompts $Prompts --output $ColdOut `
+  --token-file '.\backends\halogen-wsl2-0.15.1\.local\api-token.txt'
+```
+
+This sends PP512/PP2048 probes and 128-token prose generation through port 8840,
+with a warmup and three measured repeats. Halogen serial/MTP ordering alternates.
+Native engines use their configured draft mode, not a silently changed one.
+Actual counts, cache misses, prompt/output hashes and raw/calibrated timings are
+retained. The client does not start, resize, update or swap any engine.
+A driver-only attribution requires matching the other conditions; the mere fact
+that one run happened after a driver install does not establish causation.
+
+### Native capacity profiles without replacing your default
+
+An existing native profile's argument vector and metadata must agree. To create
+an isolated 64K GUFO configuration from the already qualified local profile:
+
+```powershell
+$Profile = Join-Path $Work 'gufo-64k.json'
+& $Py .\scripts\benchmarks\prepare_native_profile.py `
+  --source '.\server\.local\qualified-gufo.json' --context 65536 --output $Profile
+# First stop the existing controller and confirm STOPPED with completed cleanup.
+& $Py .\server\controller.py run --config $Profile --port 8840
+```
+
+The helper changes only the context argument and its metadata in a new file. It
+preserves binary/library pins and never marks an unqualified runtime qualified.
+Passing operator checks is not proof that the new capacity fits: the controller's
+memory checks and actual measured run remain necessary. The tool never overwrites
+an output file or changes your registered default. Keep these profiles in `.local/`.
+For Halogen, the existing managed `Start.ps1 -ContextSize ...` path already supports
+these capacities; use `-PromptCache Exact` for the conversation matrix and `Off`
+for the separate cold controls.
