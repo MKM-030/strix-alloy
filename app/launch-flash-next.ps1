@@ -38,7 +38,8 @@ param(
 
     [int]$Port = 8826,
     [int]$ContextSize = 32768,
-    [int]$Ubatch = 2048,
+    [int]$Ubatch = 512,
+    [int]$BatchSize = 2048,
     [string]$Device = 'ROCm0',
 
     # Model id reported by /v1/models. Set explicitly so a client's configured model name keeps
@@ -183,9 +184,11 @@ $serverArgs = @(
     '-fa', 'on',
     '-fit', 'off',
     '--load-mode', 'none',
+    # AUTO becomes resident loading on this iGPU; keep the PLE table CPU-mapped.
+    '--lazy-mode', 'on',
     '-ctk', 'f16', '-ctv', 'f16',
     '-c', "$ContextSize",
-    '-b', "$Ubatch",
+    '-b', "$BatchSize",
     '-ub', "$Ubatch",
     '--parallel', '1',
     '--host', '127.0.0.1',

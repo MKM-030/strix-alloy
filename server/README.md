@@ -11,7 +11,7 @@ Halogen 0.15.1 and a locally qualified GUFO Windows profile are implemented.
 GUFO must use the [pinned build/qualification workflow](../backends/gufo-windows/README.md);
 its current qualified build uses TheRock 10.2.0a20260930 with the pinned numerical compatibility patch.
 The current GUFO profile supports the tested Chat Completions route and 262144 capacity.
-Projfix still needs separate native-profile qualification. Unqualified profiles are refused.
+PROJFIX now has a [recovered native profile](../backends/projfix-windows/README.md) using explicit mapped lookup loading and microbatch512. Its measured limitations remain documented; unqualified runtime replacements are refused.
 
 Install the engine first using the version-specific backend guide. Then use PowerShell 7:
 
@@ -117,3 +117,13 @@ After explicit GUFO registration and STOPPED confirmation:
 The public model ID becomes `gufo-flash-next`; endpoint and existing token remain unchanged.
 Native executable and app-local runtime DLL hashes are verified before launch. This is
 text-serving regression qualification, not certification of arbitrary models or every API route.
+
+## Select the recovered PROJFIX profile
+
+After explicit registration and a confirmed STOPPED state:
+
+```powershell
+.\server\Start.ps1 -Backend Projfix -ContextSize 262144
+```
+
+Model ID: `projfix-flash-next`. Registration and decode-mode selection are separate from starting the server. No different engine or model is substituted on failure.
