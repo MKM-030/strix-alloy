@@ -11,7 +11,7 @@ Halogen 0.15.1 and a locally qualified GUFO Windows profile are implemented.
 GUFO must use the [pinned build/qualification workflow](../backends/gufo-windows/README.md);
 its current qualified build uses TheRock 10.2.0a20260930 with the pinned numerical compatibility patch.
 The current GUFO profile supports the tested Chat Completions route and 262144 capacity.
-PROJFIX now has a [recovered native profile](../backends/projfix-windows/README.md) using explicit mapped lookup loading and microbatch512. Its measured limitations remain documented; unqualified runtime replacements are refused.
+PROJFIX has a [measured fast serial profile](../backends/projfix-windows/README.md): pinned-host expert placement, mapped lookup loading and microbatch512. Registration defaults to serial; explicit legacy MTP retains the older resident layout. Unqualified runtime replacements are refused.
 
 Install the engine first using the version-specific backend guide. Then use PowerShell 7:
 

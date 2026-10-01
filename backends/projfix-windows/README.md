@@ -1,4 +1,4 @@
-# PROJFIX native Windows recovery profile
+# PROJFIX native Windows: restored decode performance
 
 This package supplies a measured loading policy for the existing IQ4_NL-PROJFIX
 Flash-Next engine. It is not a new model, a kernel rewrite or a GUFO fallback.
@@ -19,6 +19,36 @@ The 2048-token microbatch reproduced a GPU launch failure even after memory pres
 was removed. The 512-token profile avoids that tested failing path; it does not prove
 the underlying large-microbatch kernel defect repaired. No watchdog, driver, BIOS,
 Windows memory policy or 12 GiB physical/commit reserve is disabled by this package.
+
+## Fast serial placement on the 64 GiB carve-out
+
+The default registration is now **serial decoding with split weight placement**.
+At 262144 capacity, PP512/TG128 measured 33.12 tokens/s and PP2048/TG128 31.77 tokens/s,
+versus about 6.3 serial and 12 MTP tokens/s in the preceding resident configuration.
+These are native engine rates through Strix Alloy, not a WSL clock correction.
+
+The target contains about 66.34 GiB of non-lookup weights before working buffers.
+The selected 54 expert tensors (first 18 layers) occupy 23.73 GiB. This configuration
+keeps those weights in GPU-accessible pinned host buffers using:
+
+```text
+-ot ^blk[.](?:[0-9]|1[0-7])[.]ffn_(?:gate|up|down)_exps[.]weight$=CPU
+```
+
+In this **pinned engine**, the CPU selector prefers the GPU host buffer and the
+integrated HIP backend supports that buffer. This is not a universal instruction
+to execute model layers on the CPU. Buffer selection must be rechecked for another
+engine, model, carve-out or runtime. No weight values, precision or equations change.
+The final outputs matched the retained slow serial reference on both short tests.
+
+Keep mapped lookup loading, microbatch512 and f16 KV. The 12 GiB physical/commit
+reserves and normal watchdog remain enabled. The current improvement is a placement
+fix, not a claim that the large-microbatch kernel failure is repaired.
+
+Mixed-placement MTP failed before serving with `invalid vector subscript` in draft
+loading. Explicit draft placement and the already-installed full Q8_0 head did not
+resolve it. Therefore `--mode mtp` deliberately retains the older, slower resident
+configuration; it is not silently enabled on top of the fast placement.
 
 ## Prepare the runtime
 
@@ -90,16 +120,19 @@ with remaining limitations, are recorded in the [repair report](../../docs/integ
 .\server\Start.ps1 -Stop
 ```
 
-Registration defaults to `--mode mtp`. `--mode serial` is an explicit no-draft
-control, not an automatic fallback. Changing mode or capacity requires a separate
+Registration defaults to `--mode serial`, with the measured pinned-host expert placement.
+`--mode mtp` explicitly selects the older resident configuration, not an automatic fallback. Changing mode or capacity requires a separate
 profile and controlled stop/start. Never infer that MTP helps from its name alone;
 measure actual output lengths, accepted draft tokens and whole-request timing.
 
 The legacy standalone launcher now also specifies mapped lookup loading and a
-512 microbatch by default. Its separate `-BatchSize` default is2048. Prefer the
+512 microbatch by default. Without `-DraftPath`, it also applies the fast placement.
+Its separate `-BatchSize` default is 2048. An explicit draft keeps the older resident path. Prefer the
 managed controller for monitored operation; a printed standalone command is not a
 substitute for the independent process and memory protections.
 
+[Decode-restoration measurements](../../docs/integration/projfix-decode-restored-20261001.md)
+record the placement comparison, output checks and limits. The historical
 [Measured recovery results](../../docs/integration/projfix-recovery-20261001.md)
 separate short-prompt performance, long-history continuity and failed experiments.
 Do not present successful startup as recovery of the earlier speed figures.

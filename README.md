@@ -10,7 +10,7 @@ with explicit availability, reproducible measurements and no silent fallback.
 |---|---|---|
 | **Halogen WSL2 0.15.1** | w4b + overlay and v2 tested at 262144 capacity; authenticated continuous serving | [Install and run](backends/halogen-wsl2-0.15.1/README.md) |
 | **Managed Windows endpoint** | Owns one selected engine and serves one stable streaming API on port 8840 | [server/Start.ps1](server/README.md) |
-| Native llama.cpp / PROJFIX | Recovered mapped-lookup /512-microbatch profile; 262144 capacity tested, performance limitations retained | [Prepare and register](backends/projfix-windows/README.md) |
+| Native llama.cpp / PROJFIX | Fast serial pinned-host placement; 31-33 t/s short-prompt decode at 262144 capacity; explicit legacy MTP retained | [Prepare and register](backends/projfix-windows/README.md) |
 | GUFO native Windows | Latest qualified TheRock 10.2.0a20260930 with source-level numeric compatibility; native and managed text serving | [Build, qualify and register](backends/gufo-windows/README.md) |
 | Halogen 0.15.0 / 0.14.2 / 0.13.8 | Retained explicit rollback packages; never run alongside another large model | Version-specific `backends/` directories |
 
@@ -28,7 +28,7 @@ Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
 
-[PROJFIX recovery and limitations](docs/integration/projfix-recovery-20261001.md) records the two distinct failures, the tested safe configuration, and measured performance.
+[PROJFIX decode restored](docs/integration/projfix-decode-restored-20261001.md) records the measured placement fix and output checks. The [initial recovery report](docs/integration/projfix-recovery-20261001.md) preserves the earlier slow and failed configurations.
 
 [Article-format filled-context and display-driver comparison](docs/benchmarks/strix-alloy-article-driver-comparison-20260930.md)
 separates completed three-turn measurements, short-prompt before/after controls, and failed or non-comparable configurations.

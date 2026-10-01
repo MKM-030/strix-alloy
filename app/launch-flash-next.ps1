@@ -198,6 +198,10 @@ $serverArgs = @(
 )
 
 $profile = 'serial'
+if (-not $DraftPath) {
+    # This pinned fork selects GPU-accessible host buffers for these expert weights.
+    $serverArgs += @('-ot', '^blk[.](?:[0-9]|1[0-7])[.]ffn_(?:gate|up|down)_exps[.]weight$=CPU')
+}
 if ($DraftPath) {
     if (-not (Test-Path -LiteralPath $DraftPath)) { throw "Draft model not found: $DraftPath" }
     $serverArgs += @(

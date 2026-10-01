@@ -3,7 +3,7 @@ import argparse,hashlib,json
 from pathlib import Path
 PINS=Path(__file__).with_name('compatibility.json')
 
-def command(runtime,model,draft,context,mode="mtp"):
+def command(runtime,model,draft,context,mode="serial"):
     if type(context) is not int or context not in (32768,65536,131072,262144):
         raise ValueError('Use a reviewed 32K, 64K, 128K or 256K capacity')
     if mode not in ("serial","mtp"): raise ValueError("Choose serial or mtp explicitly")
@@ -21,6 +21,7 @@ def command(runtime,model,draft,context,mode="mtp"):
         while index<len(args):
             if args[index] in remove: index+=2
             else: result.append(args[index]);index+=1
+        result += ['-ot', r'^blk[.](?:[0-9]|1[0-7])[.]ffn_(?:gate|up|down)_exps[.]weight$=CPU']
         return result
     return args
 
@@ -37,7 +38,7 @@ def validate_runtime(runtime,pins):
             raise ValueError('Runtime component differs from measured configuration: '+name)
     return root
 
-def make_profile(runtime,models,token_file,context,pins,mode="mtp"):
+def make_profile(runtime,models,token_file,context,pins,mode="serial"):
     runtime=validate_runtime(runtime,pins);models=Path(models).resolve(strict=True)
     files=[models/name for name in pins['model_files'] if mode=='mtp' or name!=pins['draft']]
     for path in files:
@@ -57,14 +58,14 @@ def make_profile(runtime,models,token_file,context,pins,mode="mtp"):
             'runtime_hashes':{k:v for k,v in pins['runtime_files'].items() if '/' not in k and k.endswith('.dll')},
             'environment':{'HSA_OVERRIDE_GFX_VERSION':'11.5.1'}},
         'qualification':{'scope':'Explicit local registration of measured runtime/loading policy. Model size/header checks are not complete-file checksums or general model-quality certification.',
-            'decoding_mode':mode,'sdk_runtime':pins['sdk_runtime'],'source':'docs/integration/projfix-recovery-20261001.md',
+            'decoding_mode':mode,'placement':'pinned-host-experts-0-17' if mode=='serial' else 'legacy-device-resident','sdk_runtime':pins['sdk_runtime'],'source':'docs/integration/projfix-decode-restored-20261001.md',
             'manifest_sha256':digest(PINS)}}
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('runtime','models','token-file'):parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--context',type=int,default=262144)
-    parser.add_argument('--mode',choices=['serial','mtp'],default='mtp')
+    parser.add_argument('--mode',choices=['serial','mtp'],default='serial')
     group=parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--output',type=Path);group.add_argument('--register',action='store_true')
     args=parser.parse_args();pins=json.loads(PINS.read_text(encoding='utf-8'))

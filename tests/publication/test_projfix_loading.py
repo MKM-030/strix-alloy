@@ -19,4 +19,13 @@ class ProjfixLoadingTests(unittest.TestCase):
             self.assertRegex(result.stdout,r'-ctk\s+f16\s+-ctv\s+f16')
             self.assertNotIn('--lazy-mode auto',result.stdout)
             self.assertRegex(result.stdout,r'-b\s+2048\s+-ub\s+512')
+            selector=r'^blk[.](?:[0-9]|1[0-7])[.]ffn_(?:gate|up|down)_exps[.]weight$=CPU'
+            self.assertIn('-ot '+selector,result.stdout)
+            draft=root/'draft.gguf';draft.write_bytes(b'fixture not executed')
+            alternate=subprocess.run([PWSH,'-NoProfile','-File',str(ROOT/'app/launch-flash-next.ps1'),
+                '-PrintOnly','-RuntimeDir',str(runtime),'-ModelDir',str(model),'-Port','49873',
+                '-DraftPath',str(draft)],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=30)
+            self.assertEqual(alternate.returncode,0,alternate.stderr)
+            self.assertIn('--spec-type draft-mtp',alternate.stdout)
+            self.assertNotIn(selector,alternate.stdout)
 if __name__=='__main__':unittest.main()
