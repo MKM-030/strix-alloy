@@ -1,49 +1,96 @@
-# Halogen NPU bridge investigation — 2026-10-02
+# Halogen NPU bridge research — 2 October 2026
 
-## Implemented
+## Verified local facts
 
-- `halogen_npu_scheduler.py`: isolated FLM NPU sidecar supervisor.
-- `halogen_npu_ab.py`: control/concurrent/control qualification; concurrent NPU work fails closed above 1% Halogen decode regression.
-- `halogen_npu_seam.py`: inventories binary state-export/tap capabilities.
-- `halogen_mtp_extract.py`: extracts the 31 embedded `mtp.*` tensors from a Halogen HGN into a standalone HGN without re-quantization. A synthetic regression test verifies table/payload selection. The real w4b extraction produced 31 tensors / 1,479,351,552 bytes and metadata matches the source entries.
+- FastFlowLM 1.0.7 NPU runtime validates on the BOSGAME Ryzen AI Max+ 395.
+- A live `qwen3:0.6b` NPU2 sidecar was started on port 8877.
+- The pinned Halogen 0.15.1 `flash_serve` was extracted from the release image;
+  SHA-256 is `81a5f68fe418358b8684cdd520651fa14217d586409fcc1a0e8a81bb5e3ec4af`,
+  matching the repository pin.
+- The old analysis binary and the pinned 0.15.1 binary are different. The old
+  binary exposes `--drafter-taps` / `--drafter-hidden`; 0.15.1 does not.
+  0.15.1 does contain internal `HALOGEN_TAP_FROM_SCAN`,
+  `HALOGEN_MTP_PREFILL`, `state_segs` and `state_segs_src` paths. Static
+  xref inspection shows the first two default enabled; they are not IPC hooks.
+- The exact w4b checkpoint was inspected through Halogen's own 0.15.1 inspector.
 
-## Current Halogen 0.15.1 binary
+## Flash-Next MTP geometry
 
-The pinned `flash_serve` SHA-256 is `81a5f68fe418358b8684cdd520651fa14217d586409fcc1a0e8a81bb5e3ec4af`.
+The checkpoint carries 31 `mtp.*` tensors:
+- 21 q4c tensors, 1,476,636,384 bytes.
+- 10 bf16 tensors, 2,710,016 bytes.
+- hidden size 2560; hyperconnection state width 10240 (4 streams).
+- 512 routed experts, top-10 per token, expert intermediate size 640.
+- The two routed expert matrices account for ~1.426 GiB of the head, but one
+  token touches only ten experts. From the stored tensor sizes, the selected
+  routed expert payload is ~27.85 MB per draft step before dense attention,
+  shared-expert, mixer and lm-head work.
 
-Static xref/capability inspection shows:
+This sparsity is why an NPU draft head remains worth prototyping: the whole
+1.48-GB head need not be streamed per token.
 
-- `HALOGEN_MTP_PREFILL` is compiled in and defaults enabled when unset. Setting it is not a new optimization.
-- `HALOGEN_TAP_FROM_SCAN` is compiled in and defaults enabled when unset. It selects an internal tap source; it is not an external IPC/export endpoint.
-- The older Halogen engine binary contains `--drafter-taps`, `--drafter-hidden`, `--drafter-ingest-bench`, `--drafter-round-bench` and `drafter.target_hidden`; current 0.15.1 `flash_serve` does not expose those CLI export flags.
-- Therefore an online NPU MTP bridge still requires a new Halogen state-export/import seam or upstream/source support.
+## FastFlowLM comparison
 
-## FastFlowLM finding
+The shipped FastFlowLM 1.0.7 `qwen3_8mtp_npu.dll` is a real NPU implementation.
+Its release binary contains `speculate_npu`, `npu_mtp_layer`,
+`MTP_layer.xclbin`, NPU lm-heads and exported `mtp_draft()`. It explicitly
+reports no host fallback for the 64 decoder layers / draft head in this build.
 
-FLM 1.0.7 ships `qwen3_8mtp_npu.dll` and `xclbins/Qwen3.8-27B-NPU2/MTP_layer.xclbin`. Binary inspection confirms an actual NPU MTP implementation (`npu_mtp_layer`, `speculate_npu`, `MTP_layer.xclbin`) and exported timing/statistics methods. The public header comments are stale/incomplete relative to the shipped DLL: the DLL explicitly states there is no host fallback and the decoder/MTP path runs on-device.
+It cannot be used directly for Flash-Next:
+- Qwen3.8-27B hidden width is 5120, Flash-Next is 2560 + four 10240-wide
+  hyperconnection streams.
+- 27B's MTP layer is dense; Flash-Next's MTP layer is a 512-expert top-10 MoE.
+- Flash-Next has hyperconnection mixers absent from the 27B head.
 
-This NPU kernel cannot be dropped into Flash-Next unchanged. Qwen3.8-27B uses hidden size 5120 / intermediate 17408, whereas Flash-Next's Halogen MTP tensors use 2560 base width, four-stream 10240 hyperconnection state and a 512-expert MoE MTP layer. The xclbin/runtime ABI therefore needs a Flash-Next-specific layout/weight staging path.
+FastFlowLM's Qwen3.6-MoE DLL does contain NPU expert-prefill machinery and MoE
+routing, so the practical implementation path is to reuse design/components,
+not the existing Qwen3.8-27B bitstream verbatim.
 
-## Decode decision
+## Decode design
 
-The useful target remains `Halogen target -> normalized target hidden -> NPU Flash-Next MTP -> Halogen verify`. A whole second NPU model is not the drafter. Prior coexistence measurements already showed continuous independent NPU work reduces GPU decode by roughly 7%; idle/throttled sidecar work is a system-throughput feature, not a Halogen tok/s speedup.
+Target design:
 
-Next implementation boundary is a Flash-Next-specific NPU MTP layer using the extracted 31 tensors. The FLM DLL exports low-level `npu_mtp_layer`, `mtp_layout`, `mtp_proj` and NPU sequence symbols, but its packaged xclbin geometry is for 27B. Reusing that ABI without a matching Flash-Next xclbin would be unsafe.
+Halogen target GPU -> 10240-wide target state -> Flash-Next-specific NPU MTP
+graph -> draft token(s) -> Halogen GPU verifier.
 
-## Prefill decision
+The target verifier remains authoritative. Rejection must restore the exact
+Halogen target/drafter state. A sidecar whole model is not part of this path.
 
-NPU-prefilling an independent model cannot accelerate Halogen because its KV/DeltaNet state is not interchangeable. Halogen's own `HALOGEN_MTP_PREFILL` is already enabled. A useful NPU prefill split needs a contiguous Flash-Next subgraph plus state import/export; until that seam exists, the qualified GPU prefill tuning remains the correct path.
+The online blocker is Halogen 0.15.1: it has no supported external state export
+or draft-import endpoint. A new binary/source seam is required. Until that seam
+exists, no standalone NPU process can replace Halogen's internal MTP work.
 
-## Additional measurements and binary inspection
+## Prefill design
 
-FLM 1.0.7 NPU validation on this BOSGAME reports `amd_device_found=true`, `npu_driver_ok=true`, `ready=true`. A local Qwen3-0.6B-NPU2 sanity run at a 574-token prompt measured 1001–1022 prefill tok/s and 92.2–93.0 decode tok/s (three requests; generated lengths 72/128/73). This is only an NPU health/throughput probe, not a Flash-Next speed claim.
+A second model prefilling on the NPU does not accelerate Halogen because its
+KV/DeltaNet/hyperconnection state is not interchangeable. The first viable
+prefill offload is therefore a contiguous Halogen subgraph with state handoff.
 
-The shipped `qwen3_8mtp_npu.dll` exports the low-level `npu_mtp_layer`, `mtp_proj`, `speculate_npu`, `mtp_draft`, state save/restore/crop, and speculation timing/statistics symbols. Its packaged `MTP_layer.xclbin` is therefore a genuine NPU MTP kernel, not merely a CPU implementation. The public v1.0.7 header comment describing a CPU-only phase is stale/incomplete relative to the distributed binary.
+The highest-value first candidate is MTP priming, not target prefill:
+`HALOGEN_MTP_PREFILL` already identifies a separate draft-head prompt phase.
+Moving that phase to the same future Flash-Next NPU MTP graph can reduce first
+decode latency without requiring all 48 target layers to move.
 
-`halogen_npu_compat.py` now fails closed when comparing the extracted Flash-Next head to the packaged Qwen3.8-27B kernel geometry. Flash Next uses 2560-wide MTP projections, 10240-wide four-stream hyperconnection state and a 512-expert MoE (`experts.gate_up_proj` shape 512x1280x2560). Qwen3.8-27B uses hidden size 5120 and a dense MTP. Result: the packaged 27B `MTP_layer.xclbin` is not a safe drop-in kernel; a Flash-Next-specific xclbin/layout is required.
+Full target-prefill offload remains behind the state-import/export seam and must
+beat the already measured ~1.5k tok/s Halogen PP8192 path end-to-end.
 
-A fresh current-Halogen A/B run was attempted after the old local worktree was intentionally removed. The ignored local v2 HGN had not been retained in Git. The remaining 124.1-GB w4b checkpoint can be mapped directly from NTFS, but with the current 64-GB Windows GPU carve-out Halogen correctly refuses to pin its 65.60-GiB trunk: only ~53.5 GiB was available and the 16-GiB floor would be violated. No unsafe memory-floor reduction was attempted. Prior completed v2 coexistence evidence remains the valid current result: continuous independent NPU load costs about 7% GPU decode; throttled work reduced the loss to roughly 2–3% but did not accelerate Halogen.
+## NPU coexistence control
 
-## Concrete next engineering step
+Earlier measured Halogen-v2 coexistence showed continuous independent NPU work
+reduced GPU decode by roughly 6.5–7.6%; throttling with 4-second gaps reduced
+the loss to roughly 2–3%. Therefore independent continuous sidecar work is not
+promoted as a Halogen speedup. The checked-in A/B harness fails closed above a
+1% GPU regression.
 
-The next speed-producing implementation is not another sidecar flag. It is a Flash-Next-specific NPU MTP xclbin/sequence with this contract: 2560/10240 target-hidden input, hyperconnection mixer, Flash-Next attention, 512-expert top-10 MoE, and the draft readout. Halogen 0.15.1 has internal tap machinery (`HALOGEN_TAP_FROM_SCAN`) but no external online tap/import API. Therefore the second required change is an upstream/source-level Halogen hook that exports normalized target hidden state and accepts NPU draft tokens while retaining Halogen target verification and rollback. Prefill NPU work has the same state-boundary requirement and is not promoted independently.
+## Current artifacts
+
+- `scripts/benchmarks/halogen_npu_scheduler.py`
+- `scripts/benchmarks/halogen_npu_ab.py`
+- `scripts/benchmarks/halogen_npu_seam.py`
+- `scripts/benchmarks/halogen_npu_bridge_probe.py`
+- `docs/research/halogen-npu-seam-20261002.json`
+- `docs/research/halogen-mtp-geometry-20261002.json`
+- `docs/research/halogen-npu-bridge-probe-20261002.json`
+- `docs/research/halogen-w4b-inspect-20261002.json`
+
+The large inspector JSON is evidence only; no model weights are copied into Git.

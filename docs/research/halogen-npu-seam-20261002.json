@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "binary_linux": "/home/revn/halogen-re/flash_serve0151",
+  "capabilities": {
+    "legacy_drafter_taps": false,
+    "legacy_drafter_hidden": false,
+    "legacy_drafter_ingest_bench": false,
+    "legacy_drafter_round_bench": false,
+    "current_tap_from_scan": true,
+    "current_mtp_prefill": true,
+    "mtp_target_hidden": false,
+    "mtp_head": true
+  },
+  "online_external_state_export": false,
+  "offline_state_export": false,
+  "current_internal_tap_path": true,
+  "notes": [
+    "HALOGEN_TAP_FROM_SCAN and HALOGEN_MTP_PREFILL are internal boolean switches, not IPC/export endpoints.",
+    "Static xref inspection of flash_serve 0.15.1 shows both default enabled when unset; setting them cannot be claimed as a new speedup.",
+    "An online NPU MTP bridge still needs a new state-export/import seam or binary/source support."
+  ]
+}

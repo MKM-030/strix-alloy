@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "halogen": {
+    "hidden_size": 2560,
+    "hyperconnection_width": 10240,
+    "experts": 512,
+    "experts_per_token": 10,
+    "expert_intermediate": 640,
+    "mtp_tensors": 31,
+    "mtp_q4_bytes": 1476636384,
+    "mtp_bf16_bytes": 2710016,
+    "active_expert_weight_bytes_per_step_estimate": 27852800
+  },
+  "flm_qwen38_27b": {
+    "hidden_size": 5120,
+    "dense_mtp": true,
+    "features": {
+      "speculate_npu": true,
+      "npu_mtp_layer": true,
+      "MTP_layer.xclbin": true,
+      "dequant_mm.xclbin": true,
+      "npu_lm_head": true
+    }
+  },
+  "flm_qwen36_moe": {
+    "features": {
+      "num_experts": true,
+      "moe_router": true,
+      "expert_prefill": true,
+      "moe_gate": true
+    }
+  },
+  "direct_qwen38_mtp_reuse": false,
+  "reason": [
+    "Flash-Next hidden size is 2560 with four 10240-wide hyperconnection streams; Qwen3.8-27B is 5120-wide.",
+    "Flash-Next MTP contains a 512-expert MoE layer (top-10) and hyperconnection mixers; the 27B MTP head is dense.",
+    "FLM's shipped NPU DLL therefore cannot consume Halogen target state without a new Flash-Next-specific graph."
+  ],
+  "candidate_reuse": [
+    "FLM NPU dequantized-matmul/lm-head infrastructure",
+    "FLM Qwen3.6-MoE routing/expert design patterns",
+    "FLM Qwen3.8 attention/MTP dispatch and checkpoint/rollback design"
+  ],
+  "promotion": "Requires Flash-Next-specific AIE2P bitstreams plus an online Halogen state-export/import seam; fail closed until measured."
+}
