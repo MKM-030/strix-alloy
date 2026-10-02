@@ -1,0 +1,90 @@
+{
+  "date_utc": "2026-09-24",
+  "status": "serving_and_size_suites_completed_not_clean_install_qualification",
+  "hardware": {
+    "cpu": "AMD Ryzen AI Max+ 395",
+    "gpu": "AMD Radeon 8060S",
+    "physical_ram_bytes": 137438953472,
+    "vgm_bytes": 34359738368,
+    "windows_visible_ram_kib": 100293444,
+    "windows": "Windows 11 Pro 10.0.26200",
+    "amd_driver": "32.0.31041.1004",
+    "wsl_kernel": "6.18.33.2-microsoft-standard-WSL2"
+  },
+  "wsl_settings": {
+    "distribution": "Ubuntu-24.04",
+    "memory": "88GB",
+    "processors": 24,
+    "swap": "32GB",
+    "autoMemoryReclaim": "gradual",
+    "sparseVhd": true,
+    "model_filesystem": "native WSL Ext4 in VHDX"
+  },
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:6e626c979d536ab1edb07898e278be6686afd353758ea268817457f801d687dd",
+  "engine_version": "0.13.8",
+  "model_files": [
+    {"name": "qwen38-flash-next-w4b.hgn", "bytes": 124068083904, "sha256": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6"},
+    {"name": "qwen38-flash-next-w4b.overlay.hgn", "bytes": 2572466560, "sha256": "1cdfc3a9f988955bfe9a71bb808d393030abbf9f99d34ffa1ef93815a49b39ab"}
+  ],
+  "model_hash_note": "Full files read and SHA256-hashed after inference stopped, using a read-only, no-network, no-GPU container with a 2GiB memory limit. Hashing exited successfully.",
+  "sha256": {
+    "chat_template.jinja": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041",
+    "hip-register-hybrid.c": "ebf697ac0c33d3f54eb70d0cacea66a1b16e39de713357cd192c3942c982242f",
+    "hip-register-private-rw.c": "657870083143192a56c316bc56659fb9d2552db51441ffa8dc62561f681dc8e0",
+    "hip-register-hybrid.so": "a695e10ba6372866bd018269f7e017d3f9790f92571c90fb9083032c89517a6e",
+    "hip-register-private-rw.so": "5ae3a5d3efada2bc8f7246741fb15692e4d858ded47ee33b7c81686028f3ecc1",
+    "guard-halogen-startup.py": "4864bfd19d0a0ea4c696bda7533177b881b86b6757e83bfd9c73cd2cca7aa4f9",
+    "librocdxg.so": "0de8e26350933754d3d9ead9446c39e04792a2bef68d1b6df97950d07312b9d6",
+    "libdxcore.so": "83d1671a839bcf71709349e77cd68341515df2e63080765618876996a0f4190c",
+    "bench-serving.py": "7edd38e6ce04854298cf7584ecac13d47afeb96c93e4c85fe113c14094944f83",
+    "halogen-bench.py": "0587690c50cfa6769b54d67c7553ba8aa3ec861e677082590d322b0b2f0f846f",
+    "eval-prompts.json": "23df9feb5ec2b343f675bb08dc6c0c2286e17dd6d73acf4e7d363d0c0c49922b",
+    "serve_api.py": "97019cc97cdad6f21f0abe795527de740422f94b81324ffee27f237dd1dcc572"
+  },
+  "engine_env": {
+    "HALOGEN_CTX": "32768",
+    "HALOGEN_KV_POOL_POSITIONS": "32768",
+    "HALOGEN_KV_SLOTS": "1",
+    "HALOGEN_MAX_TOK": "2048",
+    "HALOGEN_PREFILL_CHUNK": "2048",
+    "HALOGEN_PROMPT_CACHE": "0",
+    "HALOGEN_FLASH_ROUTE_GEMM": "0",
+    "HALOGEN_FLASH_PIN_TRUNK": "1",
+    "HALOGEN_HYBRID_COPY_BYTES": "30064771072",
+    "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+    "HSA_ENABLE_DXG_DETECTION": "1",
+    "HSA_ENABLE_SDMA": "1",
+    "AMD_SERIALIZE_KERNEL": "0",
+    "AMD_SERIALIZE_COPY": "0",
+    "HALOGEN_TOPK_REPLAY": "0",
+    "HALOGEN_HOST_RESERVE_GIB": "12",
+    "HALOGEN_ENGINE_WATCHDOG_S": "120"
+  },
+  "container": {
+    "memory_limit_bytes": 73014444032,
+    "memory_plus_swap_limit_bytes": 73014444032,
+    "api_binding": "127.0.0.1:8731",
+    "model_mount_read_only": true
+  },
+  "guard": {
+    "startup_abort_below_bytes": 21474836480,
+    "readiness_and_runtime_abort_below_bytes": 25769803776,
+    "startup_advice_below_bytes": 68719476736,
+    "minimum_advice_interval_seconds": 1,
+    "maximum_pending_advice_operations": 1,
+    "runtime_cache_advice": false,
+    "guaranteed_memory_reservation": false
+  },
+  "engine_memory": {
+    "weight_payload_bytes": 73007346240,
+    "copied_weight_bytes": 29002991808,
+    "registered_weight_bytes": 44004354432,
+    "reported_total_gib_rounded": 72.5,
+    "disk_backed_lookup_table_gib_rounded": 47.7,
+    "note": "Engine accounting, Windows counters and GPU adapter counters overlap; do not sum them."
+  },
+  "commands": {
+    "serving": "python3 /halogen/tools/bench-serving.py serial,mtp 256 low 3",
+    "size_sweep": "python3 /halogen/tools/halogen-bench.py --api http://127.0.0.1:8731 -p 512,2048,8192,16384 -n 128 -d serial,mtp -r 3"
+  }
+}

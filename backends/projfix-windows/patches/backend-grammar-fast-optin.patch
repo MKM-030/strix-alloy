@@ -1,0 +1,52 @@
+diff --git a/common/sampling.cpp b/common/sampling.cpp
+--- a/common/sampling.cpp
++++ b/common/sampling.cpp
+@@ -11,6 +11,7 @@
+ #include <cctype>
+ #include <climits>
+ #include <cmath>
++#include <cstdlib>
+ #include <cstring>
+ #include <unordered_map>
+ #include <vector>
+@@ -415,5 +416,10 @@
+-    if (grmr && params.backend_sampling) {
++    const char * grammar_fast = std::getenv("LLAMA_BACKEND_GRAMMAR_FAST");
++    const bool backend_grammar_fast = grammar_fast && std::strcmp(grammar_fast, "1") == 0 &&
++        !params.grammar_lazy && params.grammar_triggers.empty() &&
++        grammar_str.compare(0, 11, "%llguidance") != 0 && !rbudget;
++
++    if (grmr && params.backend_sampling && !backend_grammar_fast) {
+         LOG_WRN("%s: backend sampling is not compatible with grammar, disabling\n", __func__);
+ 
+         params.backend_sampling = false;
+     }
+@@ -614,9 +620,26 @@
+         if (id != LLAMA_TOKEN_NULL) {
+-            LOG_DBG("%s: Backend sampler selected token: '%d'. Will not run any CPU samplers\n", __func__, id);
++            LOG_DBG("%s: Backend sampler selected token: '%d'\n", __func__, id);
+ 
+-            GGML_ASSERT(!gsmpl->grmr    && "using grammar in combination with backend sampling is not supported");
+             GGML_ASSERT(!gsmpl->rbudget && "using reasoning budget in combination with backend sampling is not supported");
++            if (gsmpl->grmr) {
++                llama_token_data single_token_data = { id, 1.0f, 0.0f };
++                llama_token_data_array single_token_data_array = { &single_token_data, 1, -1, false };
++                llama_sampler_apply(gsmpl->grmr, &single_token_data_array);
++                if (grammar_first || single_token_data.logit == -INFINITY) {
++                    const auto * vocab = llama_model_get_vocab(llama_get_model(ctx));
++                    if (cur_p.size != (size_t) llama_vocab_n_tokens(vocab) ||
++                        llama_get_sampled_probs_ith(ctx, idx) || llama_get_sampled_logits_ith(ctx, idx)) {
++                        throw std::runtime_error("backend grammar fallback requires full logits");
++                    }
++                    llama_sampler_apply(gsmpl->grmr, &cur_p);
++                    llama_sampler_apply(chain, &cur_p);
++                    if (cur_p.selected == -1) {
++                        throw std::runtime_error("backend grammar fallback found no valid token");
++                    }
++                    id = cur_p.data[cur_p.selected].id;
++                }
++            }
+
+             for (size_t i = 0; i < cur_p.size; ++i) {
+                 if (cur_p.data[i].id == id) {
+                     cur_p.selected = i;

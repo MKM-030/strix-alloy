@@ -1,0 +1,33 @@
+{
+  "schema": "halogen-preflight-sessions260k-analysis-v1",
+  "run": "results/hybrid48-model-20260925/20260925-140337-54488b05b897469cb5cf407f83a4b940",
+  "qualified": false,
+  "requestedSessions": 3,
+  "requestedInputPerSession": 260000,
+  "contextPerRequest": 262144,
+  "totalPoolPositions": 786432,
+  "actualCompletedRequests": 0,
+  "measuredInputTokens": null,
+  "measuredOutputTokens": null,
+  "cumulativeThroughput": null,
+  "failure": "startup-pressure-guard-during-KV-allocation",
+  "startupAbortThresholdBytes": 21474836480,
+  "windowsAvailableAtStopDecisionBytes": 19590668288,
+  "minimumWindowsAvailableDuringStopBytes": 19228377088,
+  "gpuCopiedWeightBytes": 50433337536,
+  "hostRegisteredWeightBytes": 22574008704,
+  "engineEstimatedKvGiB": 21.6,
+  "runtimeTelemetryStarted": false,
+  "terminalPid": 0,
+  "terminalRunning": false,
+  "oomKilled": false,
+  "exitCode": 137,
+  "recoveredWindowsAvailableBytes": 57376460800,
+  "limits": [
+    "No inference started; do not report zero tokens/s as a measured throughput",
+    "Guard-initiated stop, not observed Docker OOM kill",
+    "No runtime GPU/cgroup peak measurement because readiness was never reached",
+    "This bounds this guarded configuration, not ultimate hardware capacity",
+    "Controller cleanup classification flags early exit; guard records prove intended pressure stop"
+  ]
+}

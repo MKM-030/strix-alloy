@@ -1,0 +1,33 @@
+{
+  "schema": "halogen-failed-request-evidence-v1",
+  "date_utc": "2026-09-24",
+  "attempt": "repeat3",
+  "profile": "0.13.8; 32768-position pool; one slot; arena 2048; cache off; hybrid copy cap 28 GiB",
+  "request": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Start with PROSE_CHECK. Explain in detail the different memory and compute costs of prefill and decoding in a mixture-of-experts model. Discuss Windows and WSL sharing physical RAM. Write at least 700 words."
+      }
+    ],
+    "max_tokens": 512,
+    "temperature": 0,
+    "enable_thinking": false,
+    "reasoning_effort": "low",
+    "drafter": "serial"
+  },
+  "client_timeout_seconds": 180,
+  "outcome": "TimeoutError('timed out')",
+  "api_observation": "client disconnected mid-request (non-streaming), 488 token(s) generated and dropped; generation cancelled",
+  "delivered_response": null,
+  "completed_request_timings": null,
+  "completed_requests": 0,
+  "planned_requests": 12,
+  "mtp_tested": false,
+  "suite_passed": false,
+  "notes": [
+    "The request was output-budget-limited; asking for 700 words does not imply that 512 tokens could deliver them.",
+    "Engine progress counters are partial, not a completed-response throughput.",
+    "This failed repeat is separate from the previously completed original 60-response serving suite."
+  ]
+}

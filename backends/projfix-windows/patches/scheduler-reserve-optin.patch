@@ -1,0 +1,107 @@
+diff --git a/src/llama-context.cpp b/src/llama-context.cpp
+index 7d5ffbd4875..03621ad1c07 100644
+--- a/src/llama-context.cpp
++++ b/src/llama-context.cpp
+@@ -1206,11 +1206,29 @@ void llama_context::set_warmup(bool value) {
+     //sched_need_reserve = true;
+ }
+ 
++// [TAG_SAMPLER_KEEP_RESERVE] the samplers of a backend chain, in order: two chains with the same signature add the
++// same operations to the graph, so the compute buffers reserved for one fit the other
++static std::string llama_sampler_chain_signature(llama_sampler * chain) {
++    std::string sig;
++    const int32_t n = llama_sampler_chain_n(chain);
++    for (int32_t i = 0; i < n; ++i) {
++        sig += llama_sampler_name(llama_sampler_chain_get(chain, i));
++        sig += '|';
++    }
++    return sig;
++}
++
+ bool llama_context::set_sampler(llama_seq_id seq_id, llama_sampler * sampler) {
+     if (!sampler && sampling.samplers.count(seq_id) == 0) {
+         return true;
+     }
+ 
++    // [TAG_SAMPLER_KEEP_RESERVE] LLAMA_SAMPLER_KEEP_RESERVE=1 explicitly enables reuse; unset keeps the old behavior
++    static const bool keep_reserve = [] {
++        const char * value = getenv("LLAMA_SAMPLER_KEEP_RESERVE");
++        return value != nullptr && std::strcmp(value, "1") == 0;
++    }();
++
+     LLAMA_LOG_DEBUG("%s: seq_id = %d, sampler = %p\n", __func__, (int) seq_id, (void *) sampler);
+ 
+     if (sampler && model.split_mode() == LLAMA_SPLIT_MODE_TENSOR) {
+@@ -1223,6 +1241,7 @@ bool llama_context::set_sampler(llama_seq_id seq_id, llama_sampler * sampler) {
+             sched_need_reserve = true;
+         }
+         sampling.samplers.erase(seq_id);
++        sampling.signatures.erase(seq_id);
+         return false;
+     }
+ 
+@@ -1237,9 +1256,20 @@ bool llama_context::set_sampler(llama_seq_id seq_id, llama_sampler * sampler) {
+ 
+         sampler->iface->backend_init(sampler, buft, cparams.n_outputs_max_per_seq);
+ 
+-        sampling.samplers[seq_id] = sampler;
++        // [TAG_SAMPLER_KEEP_RESERVE] a server sets a new chain for every request (and clears it in between), usually
++        // identical to the previous one; re-creating the scheduler and re-reserving the graphs costs ~150 ms per
++        // request on a large MoE. The graph itself is still rebuilt (llm_graph_input_sampling::can_reuse compares the
++        // sampler pointers), and the allocator grows its buffers if a graph ever needs more.
++        const std::string sig = llama_sampler_chain_signature(sampler);
++        const bool same_chain = keep_reserve && cparams.n_seq_max == 1 &&
++            sampling.signatures.count(seq_id) > 0 && sampling.signatures[seq_id] == sig;
+ 
+-        sched_need_reserve = true;
++        sampling.samplers[seq_id]   = sampler;
++        sampling.signatures[seq_id] = sig;
++
++        if (!same_chain) {
++            sched_need_reserve = true;
++        }
+ 
+         return true;
+     }
+@@ -1252,12 +1282,21 @@ bool llama_context::set_sampler(llama_seq_id seq_id, llama_sampler * sampler) {
+         }
+ 
+         sampling.samplers.erase(seq_id);
++        sampling.signatures.erase(seq_id);
+ 
+         return false;
+     }
+ 
+     sampling.samplers.erase(seq_id);
+ 
++    if (keep_reserve && cparams.n_seq_max == 1) {
++        // [TAG_SAMPLER_KEEP_RESERVE] the buffers reserved with the chain also fit the graph without it: keep them, and
++        // remember the chain, which the next request of this sequence usually sets again
++        return true;
++    }
++
++    sampling.signatures.erase(seq_id);
++
+     sched_need_reserve = true;
+ 
+     return true;
+diff --git a/src/llama-context.h b/src/llama-context.h
+--- a/src/llama-context.h
++++ b/src/llama-context.h
+@@ -11,6 +11,7 @@
+ #include <map>
++#include <string>
+ #include <vector>
+ 
+ struct llama_model;
+ class llama_batch_allocr;
+ 
+@@ -307,6 +308,8 @@
+     struct sampling_info {
+         // !samplers.empty() to check if any samplers are active
+         std::map<llama_seq_id, llama_sampler *> samplers;
++        // Names of the last backend chain, retained only for explicit reservation reuse
++        std::map<llama_seq_id, std::string> signatures;
+ 
+         buffer_view<float>       logits     = {nullptr, 0};
+         buffer_view<llama_token> sampled    = {nullptr, 0};

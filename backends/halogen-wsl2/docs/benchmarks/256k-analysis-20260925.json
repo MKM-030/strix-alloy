@@ -1,0 +1,63 @@
+{
+  "schema": "halogen-preflight-256k-analysis-v1",
+  "run": "results/hybrid48-model-20260925/20260925-130518-61e612f7d6ca4129aab809b260f7da70",
+  "qualified": true,
+  "samples": [
+    {
+      "label": "small_serial",
+      "mode": "serial",
+      "promptTokens": 540,
+      "outputTokens": 28,
+      "prefillTokensPerSecond": 363.906,
+      "decodeTokensPerSecond": 35.897,
+      "promptMs": 1483.9,
+      "generationMs": 780.0,
+      "wallSeconds": 2.494712,
+      "cacheTokens": 0,
+      "passed": true
+    },
+    {
+      "label": "small_mtp",
+      "mode": "mtp",
+      "promptTokens": 540,
+      "outputTokens": 28,
+      "prefillTokensPerSecond": 409.091,
+      "decodeTokensPerSecond": 44.304,
+      "promptMs": 1320.0,
+      "generationMs": 632.0,
+      "wallSeconds": 2.158025,
+      "cacheTokens": 0,
+      "passed": true
+    },
+    {
+      "label": "large_mtp",
+      "mode": "mtp",
+      "promptTokens": 260028,
+      "outputTokens": 32,
+      "prefillTokensPerSecond": 790.92,
+      "decodeTokensPerSecond": 36.626,
+      "promptMs": 328766.6,
+      "generationMs": 873.7,
+      "wallSeconds": 354.398605,
+      "cacheTokens": 0,
+      "passed": true
+    }
+  ],
+  "arithmeticVerified": true,
+  "gpuCopiedWeightBytes": 50433337536,
+  "hostRegisteredWeightBytes": 22574008704,
+  "weightPayloadBytes": 73007346240,
+  "windowsGuardMinimumBytes": 26031091712,
+  "sampledAdapterUsagePeakBytes": 92428980224,
+  "cgroupPeakBytes": 25248124928,
+  "sampledSwapPeakBytes": 0,
+  "observations": 29,
+  "recoveredWindowsAvailableBytes": 54978355200,
+  "limits": [
+    "one measured response per mode/context, not statistical stable average",
+    "large input is repeated synthetic filler",
+    "HTTP wall time includes more than engine prefill/decode; not a TTFT measurement",
+    "GPU counters are adapter-wide, not exact per-model residency",
+    "single KV slot; no concurrency result from this run"
+  ]
+}

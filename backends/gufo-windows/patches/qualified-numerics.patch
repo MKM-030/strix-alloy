@@ -1,0 +1,537 @@
+diff --git a/src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp b/src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp
+index a8e017a14f02419a486de95f1d1f5588959d40e4..5670d6599360fc5b1750b190649e823de8f650dd 100644
+--- a/src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp
++++ b/src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp
+@@ -8,6 +8,7 @@
+ #include <hipcub/block/block_radix_sort.hpp>
+ #include <stdexcept>
+ #include <type_traits>
++#include "src/models/qwen38_flash_next/kernels/rocm/numeric_compat.hpp"
+ 
+ #include "src/models/qwen38_flash_next/mtp_sampling.hpp"
+ 
+@@ -18,11 +19,25 @@ namespace {
+ 
+ constexpr unsigned kThreads = 256;
+ 
++// Retain the validated quantizer's fused remainder at half-integer boundaries.
++__device__ __forceinline__ float RoundQuantizedProduct(float value, float inverse) {
++#pragma clang fp reassociate(off)
++  asm volatile("" : "+v"(inverse));
++  float product = __fmul_rn(value, inverse);
++  asm volatile("" : "+v"(product));
++  const float integral = truncf(product);
++  const float remainder = __fmaf_rn(value, inverse, -integral);
++  const float step = copysignf(fabsf(remainder) >= 0.5F ? 1.0F : 0.0F, product);
++  return __fadd_rn(integral, step);
++}
++
++
++
+ __device__ __forceinline__ float SigmoidF(float x) {
+   return 1.0f / (1.0f + __expf(-x));
+ }
+ __device__ __forceinline__ float SoftplusF(float x) {
+-  return x > 20.0f ? x : log1pf(__expf(x));
++  return x > 20.0f ? x : alloy_math_compat::log1p_positive(__expf(x));
+ }
+ __device__ __forceinline__ float SiluF(float x) {
+   return x * SigmoidF(x);
+@@ -77,6 +92,8 @@ __device__ __forceinline__ float WaveSum(float v) {
+ 
+ /// Block-wide sum over kThreads threads; every thread receives the total.
+ __device__ float BlockSum(float v, float* shared) {
++  // Preserve the documented wave-partial sum order across compiler versions.
++#pragma clang fp reassociate(off)
+   for (int offset = warpSize / 2; offset > 0; offset >>= 1) {
+     v += __shfl_xor(v, offset);
+   }
+@@ -372,13 +389,13 @@ __global__ void HcMixEpilogueF16Kernel(const __half* xn, const float* gate,
+       const float d = max_abs / 127.0F;
+       const float id = (d != 0.0F) ? (1.0F / d) : 0.0F;
+       const auto q0 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-          static_cast<std::int8_t>(roundf(acc.x * id))));
++          static_cast<std::int8_t>(RoundQuantizedProduct(acc.x, id))));
+       const auto q1 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-          static_cast<std::int8_t>(roundf(acc.y * id))));
++          static_cast<std::int8_t>(RoundQuantizedProduct(acc.y, id))));
+       const auto q2 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-          static_cast<std::int8_t>(roundf(acc.z * id))));
++          static_cast<std::int8_t>(RoundQuantizedProduct(acc.z, id))));
+       const auto q3 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-          static_cast<std::int8_t>(roundf(acc.w * id))));
++          static_cast<std::int8_t>(RoundQuantizedProduct(acc.w, id))));
+       const std::size_t kb = i / 32;
+       const std::uint32_t pos = i % 32;  // 0, 4, ..., 28
+       std::int8_t* tile =
+@@ -470,7 +487,7 @@ __global__ void HcCombineKernel(float* res, const float* block_out,
+       }
+       const float d = max_abs / 127.0F;
+       const float id = (d != 0.0F) ? (1.0F / d) : 0.0F;
+-      const auto q = static_cast<std::int8_t>(roundf(v * id));
++      const auto q = static_cast<std::int8_t>(RoundQuantizedProduct(v, id));
+       const std::size_t num_blocks =
+           (static_cast<std::size_t>(streams) * hidden) / 32;
+       const std::size_t kb = (static_cast<std::size_t>(s) * hidden + i) / 32;
+@@ -598,13 +615,13 @@ __global__ void HcCombineVec4Kernel(float* res, const float* block_out,
+       const float d = max_abs / 127.0F;
+       const float id = (d != 0.0F) ? (1.0F / d) : 0.0F;
+       const auto q0 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-          static_cast<std::int8_t>(roundf(n.x * id))));
++          static_cast<std::int8_t>(RoundQuantizedProduct(n.x, id))));
+       const auto q1 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-          static_cast<std::int8_t>(roundf(n.y * id))));
++          static_cast<std::int8_t>(RoundQuantizedProduct(n.y, id))));
+       const auto q2 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-          static_cast<std::int8_t>(roundf(n.z * id))));
++          static_cast<std::int8_t>(RoundQuantizedProduct(n.z, id))));
+       const auto q3 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-          static_cast<std::int8_t>(roundf(n.w * id))));
++          static_cast<std::int8_t>(RoundQuantizedProduct(n.w, id))));
+       const std::size_t kb = e / 32;
+       const std::uint32_t pos = e % 32;  // 0, 4, ..., 28
+       std::int8_t* tile =
+@@ -738,13 +755,13 @@ __global__ void HcCombineMoeF16Kernel(
+         const float d = max_abs / 127.0F;
+         const float id = (d != 0.0F) ? (1.0F / d) : 0.0F;
+         const auto q0 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-            static_cast<std::int8_t>(roundf(n.x * id))));
++            static_cast<std::int8_t>(RoundQuantizedProduct(n.x, id))));
+         const auto q1 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-            static_cast<std::int8_t>(roundf(n.y * id))));
++            static_cast<std::int8_t>(RoundQuantizedProduct(n.y, id))));
+         const auto q2 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-            static_cast<std::int8_t>(roundf(n.z * id))));
++            static_cast<std::int8_t>(RoundQuantizedProduct(n.z, id))));
+         const auto q3 = static_cast<std::uint32_t>(static_cast<std::uint8_t>(
+-            static_cast<std::int8_t>(roundf(n.w * id))));
++            static_cast<std::int8_t>(RoundQuantizedProduct(n.w, id))));
+         const std::size_t kb = e / 32;
+         const std::uint32_t pos = e % 32;  // 0, 4, ..., 28
+         std::int8_t* tile =
+@@ -819,13 +836,13 @@ __global__ void SwigluQ8Kernel(const float* gate, const float* up, void* out_q8,
+   const float d = max_abs / 127.0F;
+   const float id = (d != 0.0F) ? (1.0F / d) : 0.0F;
+   const auto q0 = static_cast<std::uint32_t>(
+-      static_cast<std::uint8_t>(static_cast<std::int8_t>(roundf(v.x * id))));
++      static_cast<std::uint8_t>(static_cast<std::int8_t>(RoundQuantizedProduct(v.x, id))));
+   const auto q1 = static_cast<std::uint32_t>(
+-      static_cast<std::uint8_t>(static_cast<std::int8_t>(roundf(v.y * id))));
++      static_cast<std::uint8_t>(static_cast<std::int8_t>(RoundQuantizedProduct(v.y, id))));
+   const auto q2 = static_cast<std::uint32_t>(
+-      static_cast<std::uint8_t>(static_cast<std::int8_t>(roundf(v.z * id))));
++      static_cast<std::uint8_t>(static_cast<std::int8_t>(RoundQuantizedProduct(v.z, id))));
+   const auto q3 = static_cast<std::uint32_t>(
+-      static_cast<std::uint8_t>(static_cast<std::int8_t>(roundf(v.w * id))));
++      static_cast<std::uint8_t>(static_cast<std::int8_t>(RoundQuantizedProduct(v.w, id))));
+   const std::size_t tl = row % kQ8ActTileTokens;
+   const std::uint32_t pos = static_cast<std::uint32_t>(i % 32);
+   std::int8_t* tile = Q8ActTile(out_q8, k / 32, row / kQ8ActTileTokens, i / 32);
+@@ -1508,7 +1525,7 @@ __global__ void GdnEpilogueKernel(const float* raw, const float* z,
+     }
+     const float dq = max_abs / 127.0F;
+     const float id = (dq != 0.0F) ? (1.0F / dq) : 0.0F;
+-    const auto q = static_cast<std::int8_t>(roundf(n * id));
++    const auto q = static_cast<std::int8_t>(RoundQuantizedProduct(n, id));
+     const std::size_t kb = ((head * d) + (r * warpSize)) / 32;
+     std::int8_t* tile =
+         Q8ActTile(out_q8, num_blocks, tok / kQ8ActTileTokens, kb);
+@@ -1675,6 +1692,8 @@ __global__ void PrepareAttentionKernel(
+     std::uint32_t heads, std::uint32_t kv_heads, std::uint32_t d,
+     std::uint32_t rotary, const std::uint32_t* start_pos, float theta,
+     float eps, const qwen::vision::DeviceRope* rope) {
++  // Match BlockSum rather than allowing a different reduction tree per tile.
++#pragma clang fp reassociate(off)
+   __shared__ float partial[kHeadsPerBlock][8];
+   __shared__ float norm[kHeadsPerBlock][256];
+   const std::uint32_t t = blockIdx.x, first = blockIdx.y * kHeadsPerBlock,
+@@ -2380,6 +2399,8 @@ template<unsigned MaxExperts>
+ __global__ void RouterTopKKernel(const float* logits, std::uint32_t stride,
+                                  std::int32_t* ids, float* weights,
+                                  std::uint32_t n_experts, std::uint32_t k) {
++  // Keep normalized expert weights on the original serial sum order.
++#pragma clang fp reassociate(off)
+   __shared__ float probs[1024];
+   __shared__ float shared[32];
+   __shared__ std::uint32_t chosen[32];
+@@ -3280,13 +3301,13 @@ __global__ void QuantizeQ8TiledVec4Kernel(const float* __restrict__ x,
+   const float d = max_abs / 127.0F;
+   const float id = (d != 0.0F) ? (1.0F / d) : 0.0F;
+   const auto q0 = static_cast<std::uint32_t>(
+-      static_cast<std::uint8_t>(static_cast<std::int8_t>(roundf(v.x * id))));
++      static_cast<std::uint8_t>(static_cast<std::int8_t>(RoundQuantizedProduct(v.x, id))));
+   const auto q1 = static_cast<std::uint32_t>(
+-      static_cast<std::uint8_t>(static_cast<std::int8_t>(roundf(v.y * id))));
++      static_cast<std::uint8_t>(static_cast<std::int8_t>(RoundQuantizedProduct(v.y, id))));
+   const auto q2 = static_cast<std::uint32_t>(
+-      static_cast<std::uint8_t>(static_cast<std::int8_t>(roundf(v.z * id))));
++      static_cast<std::uint8_t>(static_cast<std::int8_t>(RoundQuantizedProduct(v.z, id))));
+   const auto q3 = static_cast<std::uint32_t>(
+-      static_cast<std::uint8_t>(static_cast<std::int8_t>(roundf(v.w * id))));
++      static_cast<std::uint8_t>(static_cast<std::int8_t>(RoundQuantizedProduct(v.w, id))));
+   const std::size_t tt = tok / kQ8ActTileTokens;
+   const std::size_t tl = tok % kQ8ActTileTokens;
+   std::int8_t* tile = Q8ActTile(y, num_blocks, tt, blk);
+@@ -3321,7 +3342,7 @@ __global__ void QuantizeQ8TiledKernel(const float* __restrict__ x,
+   }
+   const float d = max_abs / 127.0F;
+   const float id = (d != 0.0F) ? (1.0F / d) : 0.0F;
+-  const auto q = static_cast<std::int8_t>(roundf(val * id));
++  const auto q = static_cast<std::int8_t>(RoundQuantizedProduct(val, id));
+   const std::size_t tt = tok / kQ8ActTileTokens;
+   const std::size_t tl = tok % kQ8ActTileTokens;
+   std::int8_t* tile = Q8ActTile(y, num_blocks, tt, blk);
+@@ -4986,6 +5007,8 @@ __launch_bounds__(256) __global__ void DenseF16GEMMKernel(
+   }
+ 
+   if constexpr (kAttention) {
++    // Keep fused normalization ordered like the standalone preparation path.
++#pragma clang fp reassociate(off)
+     static_assert(BM == 256 && BN == 128 && BK == 2 && WM == 8 && WN == 1);
+     static_assert(!kHcMix && !kSsmConv && kRowGroup == 1);
+     constexpr unsigned stride = 36, dim = 256, width = 6144, kvwidth = 512;
+@@ -5137,13 +5160,13 @@ __launch_bounds__(256) __global__ void DenseF16GEMMKernel(
+             const float d = max_abs / 127.0F;
+             const float id = d != 0.0F ? 1.0F / d : 0.0F;
+             const auto q0 = static_cast<unsigned>(static_cast<unsigned char>(
+-                static_cast<signed char>(roundf(value.x * id))));
++                static_cast<signed char>(RoundQuantizedProduct(value.x, id))));
+             const auto q1 = static_cast<unsigned>(static_cast<unsigned char>(
+-                static_cast<signed char>(roundf(value.y * id))));
++                static_cast<signed char>(RoundQuantizedProduct(value.y, id))));
+             const auto q2 = static_cast<unsigned>(static_cast<unsigned char>(
+-                static_cast<signed char>(roundf(value.z * id))));
++                static_cast<signed char>(RoundQuantizedProduct(value.z, id))));
+             const auto q3 = static_cast<unsigned>(static_cast<unsigned char>(
+-                static_cast<signed char>(roundf(value.w * id))));
++                static_cast<signed char>(RoundQuantizedProduct(value.w, id))));
+             const unsigned pos = h % 32;
+             auto* tile = Q8ActTile(mixed_q8, hidden / 32,
+                                    token / kQ8ActTileTokens, h / 32);
+diff --git a/src/models/qwen38_flash_next/kernels/rocm/mmq/quantize.hip.cpp b/src/models/qwen38_flash_next/kernels/rocm/mmq/quantize.hip.cpp
+index d02a1e18f7b26aa32724eab23e1f09764bfd1ce8..4a1eef894ecf4ede7453eb43200c099cd9ad2389 100644
+--- a/src/models/qwen38_flash_next/kernels/rocm/mmq/quantize.hip.cpp
++++ b/src/models/qwen38_flash_next/kernels/rocm/mmq/quantize.hip.cpp
+@@ -3,6 +3,18 @@ namespace qfn_mmq {
+ #include "quantize.hpp"
+ #include <cstdint>
+ 
++// Retain the validated quantizer's fused remainder at half-integer boundaries.
++__device__ __forceinline__ float RoundQuantizedProduct(float value, float inverse) {
++#pragma clang fp reassociate(off)
++  asm volatile("" : "+v"(inverse));
++  float product = __fmul_rn(value, inverse);
++  asm volatile("" : "+v"(product));
++  const float integral = truncf(product);
++  const float remainder = __fmaf_rn(value, inverse, -integral);
++  const float step = copysignf(fabsf(remainder) >= 0.5F ? 1.0F : 0.0F, product);
++  return __fadd_rn(integral, step);
++}
++
+ __launch_bounds__(HIP_QUANTIZE_BLOCK_SIZE, 1)
+ static __global__ void quantize_q8_1(
+         const float * __restrict__ x, void * __restrict__ vy,
+@@ -38,7 +50,7 @@ static __global__ void quantize_q8_1(
+     sum  = warp_reduce_sum<QK8_1>(sum);
+ 
+     const float  d = amax / 127.0f;
+-    const int8_t q = amax == 0.0f ? 0 : roundf(xi / d);
++    const int8_t q = amax == 0.0f ? 0 : RoundQuantizedProduct(xi, __builtin_amdgcn_rcpf(d));
+ 
+     y[ib].qs[iqs] = q;
+ 
+@@ -107,10 +119,10 @@ static __global__ void quantize_mmq_q8_1(
+ 
+     const float d_inv = 127.0f / amax;
+     char4 q;
+-    q.x = roundf(xi.x*d_inv);
+-    q.y = roundf(xi.y*d_inv);
+-    q.z = roundf(xi.z*d_inv);
+-    q.w = roundf(xi.w*d_inv);
++    q.x = RoundQuantizedProduct(xi.x, d_inv);
++    q.y = RoundQuantizedProduct(xi.y, d_inv);
++    q.z = RoundQuantizedProduct(xi.z, d_inv);
++    q.w = RoundQuantizedProduct(xi.w, d_inv);
+ 
+     // Write back 4 int8 values as a single 32 bit value for better memory bandwidth:
+     char4 * yqs4 = (char4 *) y[ib].qs;
+diff --git a/src/models/qwen38_flash_next/kernels/rocm/numeric_compat.hpp b/src/models/qwen38_flash_next/kernels/rocm/numeric_compat.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..08887764e768cd9b76491d190ad073678e13f5eb
+--- /dev/null
++++ b/src/models/qwen38_flash_next/kernels/rocm/numeric_compat.hpp
+@@ -0,0 +1,274 @@
++/*
++==============================================================================
++ROCm-Device-Libs Release License
++==============================================================================
++University of Illinois/NCSA
++Open Source License
++
++Copyright (c) 2014-2016, Advanced Micro Devices, Inc.
++All rights reserved.
++
++Developed by:
++
++    AMD Research and AMD HSA Software Development
++
++    Advanced Micro Devices, Inc.
++
++    www.amd.com
++
++Permission is hereby granted, free of charge, to any person obtaining a copy of
++this software and associated documentation files (the "Software"), to deal with
++the Software without restriction, including without limitation the rights to
++use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
++of the Software, and to permit persons to whom the Software is furnished to do
++so, subject to the following conditions:
++
++    * Redistributions of source code must retain the above copyright notice,
++      this list of conditions and the following disclaimers.
++
++    * Redistributions in binary form must reproduce the above copyright notice,
++      this list of conditions and the following disclaimers in the
++      documentation and/or other materials provided with the distribution.
++
++    * Neither the names of the LLVM Team, University of Illinois at
++      Urbana-Champaign, nor the names of its contributors may be used to
++      endorse or promote products derived from this Software without specific
++      prior written permission.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
++FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
++CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE
++SOFTWARE.
++*/
++
++// Numerical compatibility for the qualified gfx1151 compiler transition.
++// Derived from ROCm OCML log1pF.cl, lnepF.cl and ep.h. The scalar steps retain
++// the validated FP32/FMA boundaries; all instructions are compiled by the selected SDK.
++// Empty output constraints preserve compensated error terms under fast-math.
++// This positive-domain helper is used only after exp in SoftplusF.
++#pragma once
++namespace alloy_math_compat {
++__device__ __forceinline__ float log1p_positive(float x) {
++#pragma clang fp reassociate(off) contract(off)
++  if (x < 0.0f || !isfinite(x)) return log1pf(x);
++  if (x < 0x1.0p-24f) return x;
++  int exponent = 0;
++  // Range reduction and compensated 1+x.
++  float t1 = __fadd_rn(x,1.0f);
++  asm volatile("" : "+v"(t1));
++  float t2 = frexpf(t1, &exponent);
++  asm volatile("" : "+v"(t2));
++  float t3 = __fadd_rn(t1,-1.0f);
++  asm volatile("" : "+v"(t3));
++  const int t4 = exponent - static_cast<int>((t2 < 0x1.5555560000000p-1f));
++  float t5 = __fsub_rn(t3,t1);
++  asm volatile("" : "+v"(t5));
++  const int t6 = -t4;
++  float t7 = __fsub_rn(x,t3);
++  asm volatile("" : "+v"(t7));
++  float t8 = ldexpf(t1,t6);
++  asm volatile("" : "+v"(t8));
++  float t9 = __fadd_rn(t5,1.0f);
++  asm volatile("" : "+v"(t9));
++  float t10 = static_cast<float>(t4);
++  asm volatile("" : "+v"(t10));
++  float t11 = __fadd_rn(t9,t7);
++  asm volatile("" : "+v"(t11));
++  float t12 = __fadd_rn(t8,1.0f);
++  asm volatile("" : "+v"(t12));
++  float t13 = ldexpf(t11,t6);
++  asm volatile("" : "+v"(t13));
++  float t14 = __fadd_rn(t8,-1.0f);
++  asm volatile("" : "+v"(t14));
++  float t15 = __fadd_rn(t12,-1.0f);
++  asm volatile("" : "+v"(t15));
++  float t16 = __fadd_rn(t14,1.0f);
++  asm volatile("" : "+v"(t16));
++  float t17 = __fsub_rn(t8,t15);
++  asm volatile("" : "+v"(t17));
++  float t18 = __fsub_rn(t8,t16);
++  asm volatile("" : "+v"(t18));
++  float t19 = __fadd_rn(t13,t17);
++  asm volatile("" : "+v"(t19));
++  float t20 = __fadd_rn(t13,t18);
++  asm volatile("" : "+v"(t20));
++  float t21 = __fadd_rn(t12,t19);
++  asm volatile("" : "+v"(t21));
++  float t22 = __fadd_rn(t14,t20);
++  asm volatile("" : "+v"(t22));
++  float t23 = __builtin_amdgcn_rcpf(t21);
++  asm volatile("" : "+v"(t23));
++  float t24 = __fsub_rn(t12,t21);
++  asm volatile("" : "+v"(t24));
++  float t25 = -t21;
++  asm volatile("" : "+v"(t25));
++  float t26 = __fsub_rn(t14,t22);
++  asm volatile("" : "+v"(t26));
++  float t27 = __fadd_rn(t19,t24);
++  asm volatile("" : "+v"(t27));
++  float t28 = __fadd_rn(t20,t26);
++  asm volatile("" : "+v"(t28));
++  float t29 = fabsf(x);
++  asm volatile("" : "+v"(t29));
++  // Compensated quotient, retaining the legacy multiply/FMA ordering.
++  float t30 = __fmul_rn(t22,t23);
++  asm volatile("" : "+v"(t30));
++  float t31 = __fmul_rn(t21,t30);
++  asm volatile("" : "+v"(t31));
++  float t32 = -t31;
++  asm volatile("" : "+v"(t32));
++  float t33 = __fmaf_rn(t30,t21,t32);
++  asm volatile("" : "+v"(t33));
++  float t34 = __fmaf_rn(t30,t27,t33);
++  asm volatile("" : "+v"(t34));
++  float t35 = __fmaf_rn(t21,t30,t34);
++  asm volatile("" : "+v"(t35));
++  float t36 = __fsub_rn(t22,t35);
++  asm volatile("" : "+v"(t36));
++  float t37 = __fmaf_rn(t25,t30,t35);
++  asm volatile("" : "+v"(t37));
++  float t38 = __fsub_rn(t22,t36);
++  asm volatile("" : "+v"(t38));
++  float t39 = __fsub_rn(t37,t34);
++  asm volatile("" : "+v"(t39));
++  float t40 = __fsub_rn(t38,t35);
++  asm volatile("" : "+v"(t40));
++  float t41 = __fadd_rn(t28,t40);
++  asm volatile("" : "+v"(t41));
++  float t42 = __fadd_rn(t39,t41);
++  asm volatile("" : "+v"(t42));
++  float t43 = __fadd_rn(t36,t42);
++  asm volatile("" : "+v"(t43));
++  float t44 = __fmul_rn(t23,t43);
++  asm volatile("" : "+v"(t44));
++  float t45 = __fsub_rn(t36,t43);
++  asm volatile("" : "+v"(t45));
++  float t46 = __fmul_rn(t21,t44);
++  asm volatile("" : "+v"(t46));
++  float t47 = __fadd_rn(t42,t45);
++  asm volatile("" : "+v"(t47));
++  float t48 = -t46;
++  asm volatile("" : "+v"(t48));
++  float t49 = __fmaf_rn(t44,t21,t48);
++  asm volatile("" : "+v"(t49));
++  float t50 = __fmaf_rn(t44,t27,t49);
++  asm volatile("" : "+v"(t50));
++  float t51 = __fmaf_rn(t21,t44,t50);
++  asm volatile("" : "+v"(t51));
++  float t52 = __fsub_rn(t43,t51);
++  asm volatile("" : "+v"(t52));
++  float t53 = __fmaf_rn(t25,t44,t51);
++  asm volatile("" : "+v"(t53));
++  float t54 = __fsub_rn(t43,t52);
++  asm volatile("" : "+v"(t54));
++  float t55 = __fmaf_rn(t22,t23,t44);
++  asm volatile("" : "+v"(t55));
++  float t56 = -t22;
++  asm volatile("" : "+v"(t56));
++  float t57 = __fsub_rn(t53,t50);
++  asm volatile("" : "+v"(t57));
++  float t58 = __fsub_rn(t54,t51);
++  asm volatile("" : "+v"(t58));
++  float t59 = __fmaf_rn(t56,t23,t55);
++  asm volatile("" : "+v"(t59));
++  float t60 = __fadd_rn(t47,t58);
++  asm volatile("" : "+v"(t60));
++  float t61 = __fmul_rn(t10,-0x1.62e4300000000p-1f);
++  asm volatile("" : "+v"(t61));
++  float t62 = -t59;
++  asm volatile("" : "+v"(t62));
++  float t63 = __fadd_rn(t57,t60);
++  asm volatile("" : "+v"(t63));
++  float t64 = __fmaf_rn(t23,t43,t62);
++  asm volatile("" : "+v"(t64));
++  float t65 = __fadd_rn(t52,t63);
++  asm volatile("" : "+v"(t65));
++  float t66 = __fmaf_rn(t23,t65,t64);
++  asm volatile("" : "+v"(t66));
++  float t67 = __fadd_rn(t55,t66);
++  asm volatile("" : "+v"(t67));
++  float t68 = __fmul_rn(t67,t67);
++  asm volatile("" : "+v"(t68));
++  float t69 = __fmaf_rn(t68,0x1.36db58p-2f,0x1.992b460000000p-2f);
++  asm volatile("" : "+v"(t69));
++  float t70 = __fmul_rn(t67,t68);
++  asm volatile("" : "+v"(t70));
++  float t71 = __fmaf_rn(t68,t69,0x1.5555b40000000p-1f);
++  asm volatile("" : "+v"(t71));
++  float t72 = __fmul_rn(t70,t71);
++  asm volatile("" : "+v"(t72));
++  float t73 = __fmaf_rn(t67,0x1.0000000000000p+1f,t72);
++  asm volatile("" : "+v"(t73));
++  // Log polynomial and high/low ln(2) reconstruction.
++  float t74 = __fmaf_rn(t67,-0x1.0000000000000p+1f,t73);
++  asm volatile("" : "+v"(t74));
++  float t75 = __fsub_rn(t67,t55);
++  asm volatile("" : "+v"(t75));
++  float t76 = __fmaf_rn(t10,0x1.62e4300000000p-1f,t61);
++  asm volatile("" : "+v"(t76));
++  float t77 = -t74;
++  asm volatile("" : "+v"(t77));
++  float t78 = __fsub_rn(t66,t75);
++  asm volatile("" : "+v"(t78));
++  float t79 = __fmaf_rn(t70,t71,t77);
++  asm volatile("" : "+v"(t79));
++  float t80 = __fmaf_rn(t10,-0x1.05c6100000000p-29f,t76);
++  asm volatile("" : "+v"(t80));
++  float t81 = __fmaf_rn(t78,0x1.0000000000000p+1f,t79);
++  asm volatile("" : "+v"(t81));
++  float t82 = __fmaf_rn(t10,0x1.62e4300000000p-1f,t80);
++  asm volatile("" : "+v"(t82));
++  float t83 = __fadd_rn(t73,t81);
++  asm volatile("" : "+v"(t83));
++  float t84 = __fmaf_rn(t10,-0x1.62e4300000000p-1f,t82);
++  asm volatile("" : "+v"(t84));
++  float t85 = __fadd_rn(t82,t83);
++  asm volatile("" : "+v"(t85));
++  float t86 = __fsub_rn(t83,t73);
++  asm volatile("" : "+v"(t86));
++  float t87 = __fsub_rn(t80,t84);
++  asm volatile("" : "+v"(t87));
++  float t88 = __fsub_rn(t85,t82);
++  asm volatile("" : "+v"(t88));
++  float t89 = __fsub_rn(t81,t86);
++  asm volatile("" : "+v"(t89));
++  float t90 = __fsub_rn(t85,t88);
++  asm volatile("" : "+v"(t90));
++  float t91 = __fadd_rn(t87,t89);
++  asm volatile("" : "+v"(t91));
++  float t92 = __fsub_rn(t82,t90);
++  asm volatile("" : "+v"(t92));
++  float t93 = __fsub_rn(t83,t88);
++  asm volatile("" : "+v"(t93));
++  float t94 = __fadd_rn(t93,t92);
++  asm volatile("" : "+v"(t94));
++  float t95 = __fsub_rn(t91,t87);
++  asm volatile("" : "+v"(t95));
++  float t96 = __fadd_rn(t91,t94);
++  asm volatile("" : "+v"(t96));
++  float t97 = __fsub_rn(t91,t95);
++  asm volatile("" : "+v"(t97));
++  float t98 = __fsub_rn(t89,t95);
++  asm volatile("" : "+v"(t98));
++  float t99 = __fadd_rn(t85,t96);
++  asm volatile("" : "+v"(t99));
++  float t100 = __fsub_rn(t87,t97);
++  asm volatile("" : "+v"(t100));
++  float t101 = __fsub_rn(t99,t85);
++  asm volatile("" : "+v"(t101));
++  float t102 = __fadd_rn(t98,t100);
++  asm volatile("" : "+v"(t102));
++  float t103 = __fsub_rn(t96,t101);
++  asm volatile("" : "+v"(t103));
++  float t104 = __fadd_rn(t102,t103);
++  asm volatile("" : "+v"(t104));
++  float t105 = __fadd_rn(t99,t104);
++  asm volatile("" : "+v"(t105));
++  float t106 = t105;
++  asm volatile("" : "+v"(t106));
++  return t106;
++}
++}

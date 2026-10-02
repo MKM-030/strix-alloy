@@ -1,0 +1,23 @@
+halogen-bench: halogen-qwen3.8-flash-next, ctx 32768, reps 3, effort low
+endpoint http://127.0.0.1:8731  (HTTP: chat template + tokenizer + engine)
+
+| model | drafter | test | tokens | t/s | min-max |
+| --- | --- | --- | ---: | ---: | ---: |
+| halogen-qwen3.8-flash-next | serial | pp512 | 517 | 376.59 ± 17.37 | 359.8-394.5 |
+| halogen-qwen3.8-flash-next | serial | pp2048 | 2047 | 820.95 ± 32.72 | 801.1-858.7 |
+| halogen-qwen3.8-flash-next | serial | pp8192 | 8185 | 783.39 ± 85.23 | 686.6-847.4 |
+| halogen-qwen3.8-flash-next | serial | pp16384 | 16393 | 771.82 ± 50.72 | 736.8-830.0 |
+| halogen-qwen3.8-flash-next | serial | tg128 | 128 | 26.26 ± 9.67 | 4.5-34.3 |
+| halogen-qwen3.8-flash-next | mtp | pp512 | 517 | 378.24 ± 2.99 | 374.8-380.4 |
+| halogen-qwen3.8-flash-next | mtp | pp2048 | 2047 | 636.14 ± 238.03 | 361.7-785.8 |
+| halogen-qwen3.8-flash-next | mtp | pp8192 | 8185 | 782.58 ± 98.16 | 669.3-842.0 |
+| halogen-qwen3.8-flash-next | mtp | pp16384 | 16393 | 769.84 ± 46.73 | 719.2-811.4 |
+| halogen-qwen3.8-flash-next | mtp | tg128 | 128 | 34.45 ± 8.84 | 15.6-44.2 |
+
+pp = prefill (prompt processing), tg = token generation.
+Both are END-TO-END over HTTP and include that request's prefill, so tg
+slightly understates the pure decode rate.
+tg is a MEAN OVER PROMPT SHAPES, and the min-max column is not noise: draft
+acceptance depends on how predictable the text is, so code and proofs run
+~2x prose. Quote the mean with the prompt set named, never a single shape.
+  note: tg128 over 10 prompt shapes x 3 reps (eval-prompts.json)

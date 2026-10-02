@@ -1,0 +1,60 @@
+import pathlib
+import sys
+import unittest
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+from reddit_suite import compare_quality, compare_top_logprobs, make_prompt, NEEDLE
+
+
+class RedditSuiteTests(unittest.TestCase):
+    def test_prompt_is_repeatable_and_buries_needle(self):
+        prompt = make_prompt(8192)
+        self.assertEqual(prompt, make_prompt(8192))
+        self.assertEqual(prompt.count(NEEDLE), 1)
+        self.assertGreater(prompt.index(NEEDLE), len(prompt) // 4)
+        self.assertLess(prompt.index(NEEDLE), len(prompt) * 3 // 4)
+        self.assertNotEqual(prompt, make_prompt(16384))
+
+    def test_occupied_prompt_requests_full_length_generation(self):
+        prompt = make_prompt(8192, task='generation')
+        self.assertIn('Continue until the token limit.', prompt)
+        self.assertNotIn('Return only the hidden key.', prompt)
+        self.assertEqual(prompt.count(NEEDLE), 1)
+        with self.assertRaises(ValueError):
+            make_prompt(8192, task='unreviewed')
+
+    def test_top_n_proxy_requires_overlap_and_finite_scores(self):
+        control = [{'token': 'A', 'logprob': -0.1, 'top_logprobs': [
+            {'token': 'A', 'logprob': -0.1}, {'token': 'B', 'logprob': -2.5}]}]
+        self.assertEqual(compare_top_logprobs(control, control)['max_abs_delta'], 0)
+        self.assertIsNone(compare_top_logprobs(control, []))
+        self.assertIsNone(compare_top_logprobs(control, [{'token': 'A', 'logprob': -0.1,
+                                                          'top_logprobs': []}]))
+        changed = [{'token': 'A', 'logprob': -0.1, 'top_logprobs': [
+            {'token': 'A', 'logprob': -0.1}, {'token': 'C', 'logprob': -2.5}]}]
+        self.assertIsNone(compare_top_logprobs(control, changed))
+        self.assertIsNone(compare_top_logprobs([{'token': 'A'}], [{'token': 'A'}]))
+
+    def test_quality_requires_control_capability_if_exposed(self):
+        control = {'backend': 'halogen-v2', 'rows': [{'name': 'arithmetic', 'passed': True,
+            'sha256': 'abc', 'top_logprobs': [{'token': 'A', 'logprob': -0.1,
+                                              'top_logprobs': [{'token': 'A', 'logprob': -0.1}]}]}]}
+        candidate = {'backend': 'halogen-v2', 'rows': [{'name': 'arithmetic', 'passed': True,
+            'sha256': 'abc', 'top_logprobs': None}]}
+        result = compare_quality(control, candidate)
+        self.assertFalse(result['passed'])
+        self.assertIn('arithmetic:logprob_unavailable', result['failures'])
+
+    def test_quality_rejects_functional_and_hash_drift(self):
+        control = {'backend': 'gufo-flash-next', 'rows': [{'name': 'arithmetic', 'passed': True,
+                                                          'sha256': 'abc'}]}
+        candidate = {'backend': 'gufo-flash-next', 'rows': [{'name': 'arithmetic', 'passed': False,
+                                                            'sha256': 'def'}]}
+        result = compare_quality(control, candidate)
+        self.assertFalse(result['passed'])
+        self.assertEqual(result['mismatched'], ['arithmetic'])
+        self.assertEqual(result['logprob_proxy'], {})
+
+
+if __name__ == '__main__':
+    unittest.main()

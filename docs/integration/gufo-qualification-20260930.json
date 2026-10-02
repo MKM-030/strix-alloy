@@ -1,0 +1,189 @@
+{
+  "source_commit": "7e924c2d787aabf640db3c0f818cb824dc18ec8e",
+  "compiler_sdk": "TheRock 10.2.0",
+  "hip_flags": "-O2 -DNDEBUG -g0",
+  "qualified": false,
+  "results": [
+    {
+      "mode": "default",
+      "test": "config",
+      "exit": 0,
+      "seconds": 0.01724340000009761
+    },
+    {
+      "mode": "default",
+      "test": "ngram",
+      "exit": 0,
+      "seconds": 0.13186210000003484
+    },
+    {
+      "mode": "default",
+      "test": "mtp_sampling",
+      "exit": 0,
+      "seconds": 0.14021060000004582
+    },
+    {
+      "mode": "default",
+      "test": "prompt_lookup",
+      "exit": 0,
+      "seconds": 0.013729899999816553
+    },
+    {
+      "mode": "default",
+      "test": "mtp_ops",
+      "exit": 0,
+      "seconds": 0.36141029999998864
+    },
+    {
+      "mode": "default",
+      "test": "blaslt_ops",
+      "exit": 0,
+      "seconds": 0.6283478000000287
+    },
+    {
+      "mode": "default",
+      "test": "hc_mix_ops",
+      "exit": 0,
+      "seconds": 0.401655799999844
+    },
+    {
+      "mode": "default",
+      "test": "gdn_ops",
+      "exit": 0,
+      "seconds": 0.5441235999996934
+    },
+    {
+      "mode": "default",
+      "test": "attention_ops",
+      "exit": 1,
+      "seconds": 0.3293404000000919
+    },
+    {
+      "mode": "default",
+      "test": "moe_epilogue_ops",
+      "exit": 0,
+      "seconds": 0.18413920000011785
+    },
+    {
+      "mode": "default",
+      "test": "moe_ids_ops",
+      "exit": 0,
+      "seconds": 0.22800599999982296
+    },
+    {
+      "mode": "default",
+      "test": "projection_ops",
+      "exit": 1,
+      "seconds": 2.9856994000001578
+    },
+    {
+      "mode": "default",
+      "test": "routed_wmma_ops",
+      "exit": 0,
+      "seconds": 22.11253949999991
+    },
+    {
+      "mode": "default",
+      "test": "iq_experts_ops",
+      "exit": 0,
+      "seconds": 1.7423463000000083
+    },
+    {
+      "mode": "default",
+      "test": "select_ops",
+      "exit": 0,
+      "seconds": 1.456560100000388
+    },
+    {
+      "mode": "none",
+      "test": "config",
+      "exit": 0,
+      "seconds": 0.008823600000141596
+    },
+    {
+      "mode": "none",
+      "test": "ngram",
+      "exit": 0,
+      "seconds": 0.1304095000000416
+    },
+    {
+      "mode": "none",
+      "test": "mtp_sampling",
+      "exit": 0,
+      "seconds": 0.11452169999984108
+    },
+    {
+      "mode": "none",
+      "test": "prompt_lookup",
+      "exit": 0,
+      "seconds": 0.007252200000039011
+    },
+    {
+      "mode": "none",
+      "test": "mtp_ops",
+      "exit": 0,
+      "seconds": 0.31273670000018683
+    },
+    {
+      "mode": "none",
+      "test": "blaslt_ops",
+      "exit": 0,
+      "seconds": 0.6005003999998735
+    },
+    {
+      "mode": "none",
+      "test": "hc_mix_ops",
+      "exit": 0,
+      "seconds": 0.3856254999996054
+    },
+    {
+      "mode": "none",
+      "test": "gdn_ops",
+      "exit": 0,
+      "seconds": 0.5270300000001953
+    },
+    {
+      "mode": "none",
+      "test": "attention_ops",
+      "exit": 1,
+      "seconds": 0.32478100000025734
+    },
+    {
+      "mode": "none",
+      "test": "moe_epilogue_ops",
+      "exit": 0,
+      "seconds": 0.17971039999974892
+    },
+    {
+      "mode": "none",
+      "test": "moe_ids_ops",
+      "exit": 0,
+      "seconds": 0.23011970000015936
+    },
+    {
+      "mode": "none",
+      "test": "projection_ops",
+      "exit": 1,
+      "seconds": 2.9448365000002923
+    },
+    {
+      "mode": "none",
+      "test": "routed_wmma_ops",
+      "exit": 0,
+      "seconds": 22.14174129999992
+    },
+    {
+      "mode": "none",
+      "test": "iq_experts_ops",
+      "exit": 0,
+      "seconds": 1.7809401999998045
+    },
+    {
+      "mode": "none",
+      "test": "select_ops",
+      "exit": 0,
+      "seconds": 1.5008698999999979
+    }
+  ],
+  "reason": "Attention preparation and projection failed exact output checks in both default and disabled Windows tuning modes; no tolerance was relaxed."
+}

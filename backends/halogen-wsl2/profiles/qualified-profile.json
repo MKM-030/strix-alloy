@@ -1,0 +1,31 @@
+{
+  "schema": "strix-alloy-qualified-profile-v1",
+  "status": "experimental; portable copy requires local qualification",
+  "profile": "flash0138-copy48-v1",
+  "physicalMemoryBytes": 137438953472,
+  "windowsVisibleBytes": 68340748288,
+  "vgmGiB": 64,
+  "wslMemoryGB": 56,
+  "windowsLaunchFloorGiB": 49,
+  "windowsStartupAbortGiB": 20,
+  "windowsReadyRuntimeFloorGiB": 24,
+  "guestReserveGiB": 12,
+  "cgroupMemoryGiB": 44,
+  "cgroupExtraSwapGiB": 0,
+  "modelFiles": [
+    {"name": "qwen38-flash-next-w4b.hgn", "bytes": 124068083904, "sha256": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6"},
+    {"name": "qwen38-flash-next-w4b.overlay.hgn", "bytes": 2572466560, "sha256": "1cdfc3a9f988955bfe9a71bb808d393030abbf9f99d34ffa1ef93815a49b39ab"}
+  ],
+  "tokenizerAssets": ["tokenizer/tokenizer.json", "tokenizer/tokenizer_config.json"],
+  "toolchain": {"linux": "Ubuntu 24.04", "gcc": "13.3.0", "windowsPythonMinimum": "3.12", "powershellMinimum": "7.0"},
+  "dxg": {
+    "urlForManualDownloadOnly": "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-core/rocm_sdk_core-10.0.0-py3-none-linux_x86_64.whl",
+    "wheelSha256": "3bf4a72d11aa2a4ee1e90572c73630f937d38c1b7af4dda45b483b54655138a7",
+    "member": "_rocm_sdk_core/lib/librocdxg.so.1",
+    "bytes": 6606449,
+    "sha256": "0de8e26350933754d3d9ead9446c39e04792a2bef68d1b6df97950d07312b9d6"
+  },
+  "publicProfiles": ["Trace32k", "Single32k", "Single256k", "Sessions32k", "Serve32k"],
+  "serve32k": {"minimumSeconds": 30, "maximumSeconds": 300, "defaultSeconds": 300, "foreground": true},
+  "excluded": ["27B", "Sessions260k", "unbounded service", "automatic model download"]
+}

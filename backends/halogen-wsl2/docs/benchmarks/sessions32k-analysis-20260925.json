@@ -1,0 +1,107 @@
+{
+  "schema": "halogen-preflight-sessions32k-analysis-v1",
+  "run": "results/hybrid48-model-20260925/20260925-134546-87c43fbed70140638d434f1ecc647786",
+  "passed": true,
+  "arithmeticVerified": true,
+  "groups": [
+    {
+      "sessions": 2,
+      "inputTokens": 16424,
+      "outputTokens": 256,
+      "totalTokens": 16680,
+      "groupWallSeconds": 30.84561880000183,
+      "aggregateEndToEndOutputTokensPerSecond": 8.299395828622016,
+      "aggregateEndToEndInputTokensPerSecond": 532.4581136300312,
+      "clientOverlapSeconds": 29.95774370000072,
+      "samples": [
+        {
+          "marker": "GROUP-2-SESSION-01",
+          "actual_prompt_tokens": 8212,
+          "actual_output_tokens": 128,
+          "prompt_ms": 10246.2,
+          "generation_ms": 8845.8,
+          "prompt_tokens_per_second": 801.468,
+          "generation_tokens_per_second": 14.47,
+          "wall_seconds": 30.695512,
+          "cache_tokens": 0,
+          "passed": true
+        },
+        {
+          "marker": "GROUP-2-SESSION-02",
+          "actual_prompt_tokens": 8212,
+          "actual_output_tokens": 128,
+          "prompt_ms": 9670.6,
+          "generation_ms": 18680.5,
+          "prompt_tokens_per_second": 849.172,
+          "generation_tokens_per_second": 6.852,
+          "wall_seconds": 29.813732,
+          "cache_tokens": 0,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "sessions": 3,
+      "inputTokens": 24636,
+      "outputTokens": 384,
+      "totalTokens": 25020,
+      "groupWallSeconds": 39.42140569999901,
+      "aggregateEndToEndOutputTokensPerSecond": 9.74090074114251,
+      "aggregateEndToEndInputTokensPerSecond": 624.9396631739243,
+      "clientOverlapSeconds": 38.78715320000265,
+      "samples": [
+        {
+          "marker": "GROUP-3-SESSION-01",
+          "actual_prompt_tokens": 8212,
+          "actual_output_tokens": 128,
+          "prompt_ms": 9627.8,
+          "generation_ms": 26702.6,
+          "prompt_tokens_per_second": 852.947,
+          "generation_tokens_per_second": 4.794,
+          "wall_seconds": 38.620812,
+          "cache_tokens": 0,
+          "passed": true
+        },
+        {
+          "marker": "GROUP-3-SESSION-02",
+          "actual_prompt_tokens": 8212,
+          "actual_output_tokens": 128,
+          "prompt_ms": 9800.1,
+          "generation_ms": 6474.9,
+          "prompt_tokens_per_second": 837.951,
+          "generation_tokens_per_second": 19.769,
+          "wall_seconds": 39.255458,
+          "cache_tokens": 0,
+          "passed": true
+        },
+        {
+          "marker": "GROUP-3-SESSION-03",
+          "actual_prompt_tokens": 8212,
+          "actual_output_tokens": 128,
+          "prompt_ms": 10527.3,
+          "generation_ms": 16289.6,
+          "prompt_tokens_per_second": 780.067,
+          "generation_tokens_per_second": 7.858,
+          "wall_seconds": 39.065686,
+          "cache_tokens": 0,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "windowsGuardMinimumBytes": 27058495488.0,
+  "sampledAdapterUsagePeakBytes": 85769244672.0,
+  "cgroupPeakBytes": 25108201472.0,
+  "swapPeakBytes": 0.0,
+  "observations": 7,
+  "controllerSeconds": 203.2191301,
+  "recoveredWindowsAvailableBytes": 57264951296,
+  "limitations": [
+    "One group at each concurrency, not repeated stable averages",
+    "Synthetic repeated filler, not distinct production input",
+    "Shared32768 pool, not three260k contexts",
+    "MTP requested; most decode tokens recorded head off under mixed prefill/decode scheduling",
+    "Aggregate output/commonwall includes prefill; not pure decode throughput",
+    "GPU counters adapter-wide, not per-model residency"
+  ]
+}

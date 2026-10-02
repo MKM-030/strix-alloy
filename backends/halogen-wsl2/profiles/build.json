@@ -1,0 +1,64 @@
+{
+  "schema": "halogen-preflight-build-v1",
+  "builtUtc": "2026-09-25T12:37:25.3417672Z",
+  "profile": "flash0138-copy48-v1",
+  "hybridProfile": "vgm64-copy48-v1",
+  "engineSha256": "39382df17e7bd922a302d7dbfaaaa80d5dbb4a813e50268265a74c70c8679625",
+  "copyCapBytes": 51539607552,
+  "hostCapBytes": 25769803776,
+  "sources": [
+    {
+      "path": "patches/hip-register-hybrid.c",
+      "sha256": "6580422cd5f50e6e99f9a716b0c073922333e64dc484e48854c9764c03825dc0"
+    },
+    {
+      "path": "patches/hip-preflight-plan.h",
+      "sha256": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b"
+    },
+    {
+      "path": "patches/halogen-preflight-bridge.c",
+      "sha256": "3a365e6a36e12b70980b69ed07d42b933a9a639177d6a70955035c227f294e93"
+    },
+    {
+      "path": "patches/halogen-preflight-trampoline.S",
+      "sha256": "77f30756961d2e1680af8e162c2634e57b1e638ac2cf963796ad1f5fc409aa99"
+    }
+  ],
+  "adapters": [
+    {
+      "role": "preflight-hybrid",
+      "binary": "bin/halogen-preflight-adadd8dd5cebcdf559fcc9df767a2bcb36e6946c1a123b90c670320bf7a873f5.so",
+      "binarySha256": "adadd8dd5cebcdf559fcc9df767a2bcb36e6946c1a123b90c670320bf7a873f5"
+    },
+    {
+      "role": "private",
+      "source": "patches/hip-register-private-rw.c",
+      "sourceSha256": "0546a8817fdec642ae3e9b597a9912b547ccd743d6da7eda923d647d0d421c9c",
+      "binary": "bin/hip-register-private-rw-vgm64copy48-0546a8817fdec642ae3e9b597a9912b547ccd743d6da7eda923d647d0d421c9c.so",
+      "binarySha256": "f567e21d5c7293ce75f62d36e57bf65915640c11fb2c753b39757d17b3ed034d"
+    }
+  ],
+  "compiler": "gcc",
+  "compilerVersion": "13.3.0",
+  "compilerArguments": [
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fPIC",
+    "-shared",
+    "-DHALOGEN_RESEARCH_VGM64=1",
+    "-DHALOGEN_PREFLIGHT_V1=1",
+    "-mno-avx",
+    "-mno-avx2",
+    "-mno-avx512f",
+    "patches/hip-register-hybrid.c",
+    "patches/halogen-preflight-bridge.c",
+    "patches/halogen-preflight-trampoline.S",
+    "-ldl",
+    "-pthread",
+    "-Wl,-z,relro,-z,now,-z,noexecstack,-z,defs",
+    "-o",
+    "bin/halogen-preflight-build-96bdbb83a6474753936a3ed4c7fe4788.so"
+  ]
+}

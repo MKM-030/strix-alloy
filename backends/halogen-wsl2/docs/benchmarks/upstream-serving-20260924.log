@@ -1,0 +1,91 @@
+bench: 10 cases x 2 drafters x 3 rep(s), max_tokens=256, effort=low, greedy
+  r0 code_a    serial    256 tok   17.28s wall
+  r0 code_a    mtp       256 tok    5.95s wall
+  r0 code_b    serial    256 tok   13.60s wall
+  r0 code_b    mtp       256 tok    9.72s wall
+  r0 proof_a   serial    256 tok   12.91s wall
+  r0 proof_a   mtp       256 tok    6.59s wall
+  r0 proof_b   serial    256 tok   16.16s wall
+  r0 proof_b   mtp       256 tok    5.98s wall
+  r0 proc_a    serial    256 tok   12.37s wall
+  r0 proc_a    mtp       256 tok    6.77s wall
+  r0 proc_b    serial    256 tok   17.29s wall
+  r0 proc_b    mtp       256 tok    8.28s wall
+  r0 chat_a    serial    226 tok   15.98s wall
+  r0 chat_a    mtp       226 tok    8.65s wall
+  r0 chat_b    serial    256 tok   14.95s wall
+  r0 chat_b    mtp       256 tok   11.86s wall
+  r0 prose_a   serial    256 tok   14.98s wall
+  r0 prose_a   mtp       256 tok   11.66s wall
+  r0 prose_b   serial    256 tok   20.69s wall
+  r0 prose_b   mtp       256 tok   10.35s wall
+  r1 code_a    serial    256 tok   10.07s wall
+  r1 code_a    mtp       256 tok    5.83s wall
+  r1 code_b    serial    256 tok    7.55s wall
+  r1 code_b    mtp       256 tok    6.02s wall
+  r1 proof_a   serial    256 tok    7.44s wall
+  r1 proof_a   mtp       256 tok    8.57s wall
+  r1 proof_b   serial    256 tok    7.53s wall
+  r1 proof_b   mtp       256 tok    5.63s wall
+  r1 proc_a    serial    256 tok    7.42s wall
+  r1 proc_a    mtp       256 tok    5.89s wall
+  r1 proc_b    serial    256 tok   10.33s wall
+  r1 proc_b    mtp       256 tok    6.47s wall
+  r1 chat_a    serial    226 tok    6.64s wall
+  r1 chat_a    mtp       226 tok    6.18s wall
+  r1 chat_b    serial    256 tok    9.93s wall
+  r1 chat_b    mtp       256 tok    7.56s wall
+  r1 prose_a   serial    256 tok    7.47s wall
+  r1 prose_a   mtp       256 tok    7.40s wall
+  r1 prose_b   serial    256 tok    7.51s wall
+  r1 prose_b   mtp       256 tok    9.96s wall
+  r2 code_a    serial    256 tok    7.51s wall
+  r2 code_a    mtp       256 tok    5.71s wall
+  r2 code_b    serial    256 tok    7.79s wall
+  r2 code_b    mtp       256 tok    8.16s wall
+  r2 proof_a   serial    256 tok    7.72s wall
+  r2 proof_a   mtp       256 tok    6.02s wall
+  r2 proof_b   serial    256 tok    7.51s wall
+  r2 proof_b   mtp       256 tok    5.85s wall
+  r2 proc_a    serial    256 tok    9.62s wall
+  r2 proc_a    mtp       256 tok    6.15s wall
+  r2 proc_b    serial    256 tok    7.63s wall
+  r2 proc_b    mtp       256 tok    6.59s wall
+  r2 chat_a    serial    226 tok    6.83s wall
+  r2 chat_a    mtp       226 tok    8.39s wall
+  r2 chat_b    serial    256 tok    7.74s wall
+  r2 chat_b    mtp       256 tok    7.32s wall
+  r2 prose_a   serial    256 tok    7.72s wall
+  r2 prose_a   mtp       256 tok    9.70s wall
+  r2 prose_b   serial    256 tok    7.74s wall
+  r2 prose_b   mtp       256 tok    7.23s wall
+note: serial emit no ledger line (non-speculative); scored on wall and marked *, not comparable to engine t/s.
+
+case       drafter       t/s  commit/rd  prefill    wall
+code_a     serial      22.03*                   11.62s
+code_a     mtp         49.48       2.04    0.65s   5.83s  (±1.29)
+code_b     serial      26.53*                    9.65s
+code_b     mtp         44.56       1.84    0.72s   7.96s  (±4.79)
+proof_a    serial      27.36*                    9.36s
+proof_a    mtp         45.41       1.86    0.61s   7.06s  (±2.35)
+proof_b    serial      24.62*                   10.40s
+proof_b    mtp         49.15       1.92    0.60s   5.82s  (±1.45)
+proc_a     serial      26.11*                    9.80s
+proc_a     mtp         45.48       1.84    0.61s   6.27s  (±3.46)
+proc_b     serial      21.79*                   11.75s
+proc_b     mtp         40.19       1.63    0.64s   7.11s  (±5.21)
+chat_a     serial      23.02*                    9.82s
+chat_a     mtp         36.14       1.47    0.62s   7.74s  (±6.11)
+chat_b     serial      23.54*                   10.87s
+chat_b     mtp         34.73       1.41    0.61s   8.91s  (±4.58)
+prose_a    serial      25.46*                   10.06s
+prose_a    mtp         32.85       1.38    0.69s   9.59s  (±7.37)
+prose_b    serial      21.37*                   11.98s
+prose_b    mtp         34.05       1.45    0.65s   9.18s  (±6.37)
+
+=== identity (sha256 of reasoning+content, per case) ===
+PASS, every drafter byte-identical on every case
+
+=== means over all cases ===
+serial    no engine t/s (non-speculative; see the wall-scored * rows above)
+mtp       mean  41.20 t/s   min 32.85  max 49.48   commit 1.68/round

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "version": "0.15.0",
+  "upstream_commit": "f9efa0ddad12a94699132dc9ed28292096c0f758",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:28ef278ab621a67b02550d1f1bfecfe641552803b96dae588018425fcfe38f36",
+  "engine_sha256": "a7c096afa6c882cc8ee5fadae1311f49826c047ecf7731a5339efa3b7a413181",
+  "entrypoint_sha256": "fd1e25308f78e115e610c0b9b7bb87b1b51a9c2e7a902d010e800977c00bdafa",
+  "adapted_entrypoint_sha256": "d99bad9c436ccb05555e9b0e6631aef201e5487f7828ee1e3cc8a68a242b22c9",
+  "bridge_sha256": "61d16edba99d091d7c0cb4feb34b66708c348a9f821f52f70379b2ddaf559551",
+  "private_sha256": "f567e21d5c7293ce75f62d36e57bf65915640c11fb2c753b39757d17b3ed034d",
+  "probe_sha256": "bc09fa83b07d15fe4fb719063d28e9e14f96e0b171efeea25f1fae2554dc2d29",
+  "hip_header_sha256": "a075feec4c32d01b35dfe97e01ef7b55aa62bac7b7590ca7cefc2564668aa6a2",
+  "profiles": [
+    "Trace4k",
+    "Single4k",
+    "Serve4k"
+  ],
+  "context": 4096,
+  "slots": 1,
+  "windows_admission_physical_gib": 45,
+  "windows_admission_commit_gib": 117,
+  "windows_runtime_physical_gib": 12,
+  "windows_runtime_commit_gib": 12,
+  "serve_seconds_range": [
+    30,
+    300
+  ],
+  "status": "experimental WSL2 adaptation; legacy w4b checkpoint retained; continuous Serve supported",
+  "service": {
+    "default_context": 129024,
+    "context_range": [
+      4096,
+      262144
+    ],
+    "slots": 1,
+    "default_serve_seconds": 0,
+    "checkpoint": "qwen38-flash-next-w4b.hgn",
+    "v2_checkpoint_qualified": false
+  }
+}
