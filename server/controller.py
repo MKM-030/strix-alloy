@@ -6,6 +6,7 @@ import ctypes
 import hashlib
 import json
 import logging
+import math
 import os
 from pathlib import Path
 import signal
@@ -66,6 +67,13 @@ class MemoryStatus(ctypes.Structure):
         'pagefile_available','virtual_total','virtual_available','extended')]
 
 
+def memory_reserve_gib(configuration):
+    value=configuration.get("minimum_reserve_gib",12)
+    if type(value) not in (int,float) or not math.isfinite(value) or not 12<=value<=128:
+        raise ValueError("Memory reserve must be finite, 12..128 GiB; protection cannot be relaxed")
+    return float(value)
+
+
 def available_gib():
     if os.name!='nt': return None
     value=MemoryStatus(); value.length=ctypes.sizeof(value)
@@ -74,8 +82,23 @@ def available_gib():
     return value.available/(1024**3)
 
 
+def halogen_draft_arguments(engine):
+    args=[]
+    for key,flag,allowed in (("draft_tokens","-DraftTokens",(1,2,3)),
+                             ("prefill_chunk","-PrefillChunk",(2048,4096,8192))):
+        if key not in engine: continue
+        value=engine[key]
+        if type(value) is not int or value not in allowed:
+            raise ValueError("Invalid Halogen option: "+key)
+        if key=="prefill_chunk" and "context" in engine and value>engine["context"]:
+            raise ValueError("Prefill chunk exceeds context")
+        args += [flag,str(value)]
+    return args
+
+
 def validate_engine(engine, repo):
     if engine.get('kind')=='halogen':
+        halogen_draft_arguments(engine)
         directory=(repo/engine['directory']).resolve()
         if not directory.is_relative_to((repo/'backends').resolve()):
             raise ValueError('Halogen backend directory is outside this repository')
@@ -130,6 +153,7 @@ class Engine:
             command=[self.config['powershell'],'-NoProfile','-File',str(self.directory/'Start.ps1'),
                      '-Checkpoint',self.config['checkpoint'],'-ContextSize',str(self.config['context']),
                      '-PromptCache',self.config.get('prompt_cache','Off')]
+            command+=halogen_draft_arguments(self.config)
         else:
             command=list(self.config['command'])
             if self.config.get('api_key_from_backend_token'):
@@ -214,15 +238,21 @@ def control(action):
 
 
 async def run(config_path, port):
-    configuration=read(config_path)
+    profile_bytes=Path(config_path).read_bytes()
+    configuration=json.loads(profile_bytes.decode('utf-8-sig'))
+    reserve=memory_reserve_gib(configuration)
     gateway=load_config(config_path)
+    if Path(config_path).read_bytes()!=profile_bytes:
+        raise ValueError('Selected profile changed while loading')
     if not 1024<=port<=65535 or int(gateway.backend.upstream.rsplit(':',1)[1])==port:
         raise ValueError('Public and backend ports must be valid and distinct')
     engine=Engine(configuration['engine'],gateway,ROOT.parent,LOCAL)
     run_id=uuid.uuid4().hex
     state={'schema':1,'run_id':run_id,'pid':os.getpid(),'phase':'starting',
            'backend':gateway.backend.identifier,'checkpoint':gateway.backend.checkpoint,
-           'context':gateway.backend.context,'port':port,'heartbeat':time.time()}
+           'context':gateway.backend.context,'port':port,'heartbeat':time.time(),
+           'minimum_reserve_gib':reserve,
+           'profile_sha256':hashlib.sha256(profile_bytes).hexdigest()}
     stop=asyncio.Event(); loop=asyncio.get_running_loop(); original=None
     def interrupt(*_): loop.call_soon_threadsafe(stop.set)
     original=signal.signal(signal.SIGINT,interrupt)
@@ -247,10 +277,10 @@ async def run(config_path, port):
                 state['memory']=snapshot
                 state['minimum_available_gib']=min(state.get('minimum_available_gib',float('inf')),
                                                    snapshot['available_bytes']/1024**3)
-                if min(snapshot['available_bytes'],snapshot['commit_headroom_bytes'])<12*1024**3:
+                if min(snapshot['available_bytes'],snapshot['commit_headroom_bytes'])<reserve*1024**3:
                     if engine.config['kind']=='native': engine.process.close()
                     stop.set()
-                    raise RuntimeError('Windows physical/commit reserve crossed 12 GiB')
+                    raise RuntimeError(f'Windows physical/commit reserve crossed {reserve:g} GiB')
                 await asyncio.sleep(.5)
         guard_task=asyncio.create_task(memory_guard())
         deadline=time.monotonic()+1200
@@ -275,7 +305,7 @@ async def run(config_path, port):
             if server_task.done(): await server_task; raise RuntimeError('Gateway unexpectedly stopped')
             if engine.stopped_unexpectedly(): raise RuntimeError('Engine process exited')
             free=available_gib()
-            if free is not None and free<12: raise RuntimeError('Windows physical reserve crossed 12 GiB')
+            if free is not None and free<reserve: raise RuntimeError(f'Windows physical reserve crossed {reserve:g} GiB')
             state.update(heartbeat=time.time(),active_requests=gateway.active,available_gib=free)
             atomic(LOCAL/'current.json',state)
             await asyncio.sleep(1)

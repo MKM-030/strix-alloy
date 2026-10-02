@@ -137,9 +137,10 @@ For a before/after comparison, retain the **original calibrated prompt files**.
 Restart the selected engine with cache Off, then run this independent client:
 
 ```powershell
-$ColdOut = Join-Path $Work 'cold-v2-repeat'
+$ColdOut = Join-Path (Get-Location) ('server/.local/cold-v2-repeat-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
 $Prompts = 'C:\Benchmarks\prior-v2-prompts' # Contains prompt-512-prose.txt and prompt-2048-prose.txt.
 & $Py .\scripts\benchmarks\gateway_cold.py `
+  --profile '.\server\.local\halogen-mtp-shallow-262k.json' `
   --backend halogen-v2 --context 262144 --prompts $Prompts --output $ColdOut `
   --token-file '.\backends\halogen-wsl2-0.15.1\.local\api-token.txt'
 ```
@@ -196,8 +197,58 @@ This extra observer is not automatically installed as a Windows service, and can
 guarantee an instantaneous floor against outside allocations or process termination.
 It exits after that owned run stops. It writes local memory samples, not API keys.
 
-`gateway_cold.py` now accepts `--sizes 512 2048 8192` (or the reviewed 32768 point).
+`gateway_cold.py` accepts `--sizes 512 2048 8192 16384` (or the separately reviewed 32768 point).
 The default remains 512/2048. Supply existing exact-length `prompt-<size>-prose.txt`
 files via `--prompts`; insufficient capacity/output room and duplicate sizes fail.
 The documented core Halogen benchmark can generate exact 8192-token inputs. Name a
 new output directory for every run, and never report a warm prefix-cache hit as cold PP.
+
+For the matched three-engine follow-up, create a new immutable set of bounded prose
+inputs with the local, pinned tokenizer. This command only writes text and hashes;
+it does not start a model or alter a profile:
+
+```powershell
+$Py = '.\server\.local\venv\Scripts\python.exe'
+$Prompts = '.\server\.local\cold-inputs-20261002'
+& $Py -B .\scripts\benchmarks\prepare_gateway_prompts.py `
+  --tokenizer '.\server\.local\benchmarks\driver-compare-20260930-214302\tokenizer.json' `
+  --output $Prompts
+```
+
+Run only after an isolated 18 GiB-reserve profile is READY, with no competing
+traffic and a new output path. Repeat separately for `gufo`, `projfix` and
+`halogen-v2` (or explicitly `halogen-w4b`) using matching managed profiles:
+
+```powershell
+& $Py -B .\scripts\benchmarks\gateway_cold.py `
+  --profile '.\server\.local\gufo-serial-control-262k.json' `
+  --backend gufo --context 262144 --sizes 512 2048 8192 16384 `
+  --prompts $Prompts --output '.\server\.local\cold-gufo-new' `
+  --token-file '.\backends\halogen-wsl2-0.15.1\.local\api-token.txt'
+```
+
+The gateway itself observes and calibrates the actual chat-template token count
+for each size, then requires exact PP lengths, 128 generated TG tokens, zero cached
+tokens and no output clamp. A one-token PP probe has no meaningful decode rate.
+Samples retain request/prompt/output hashes, phase and acceptance counters when
+exposed, and 0.2-second host RAM/commit observations. These are **not** VRAM peaks;
+unknown speculative acceptance is reported as null, never zero. Source-level
+tests do not require a running model. Later commands for the other profiles and
+the three-turn/quality gates are in `server/.local/NEXT_STEPS.json`.
+
+The cold runner requires `--profile` and refuses a managed run whose recorded
+profile SHA-256 differs from those exact file bytes. It also confines raw output
+to `server/.local`. For the complete ordered 10-profile matrix, use the two-
+terminal commands in `NEXT_STEPS.json`: GUFO serial/Latin/lookup/disk, PROJFIX
+serial/64 checkpoints/host MTP, then Halogen 2048 control/4096/8192. The common
+`reddit_bench.py` records matched prompt bytes (text-token target labels, not
+exact chat-token PP), serial and available speculative TG128, three coding/tool
+turns, occupied-context TG128, phase/wall timings, memory minima, hashes and
+available draft acceptance. `quality_gate.py` requires same-backend functional
+and deterministic hash parity; valid top-N logprobs, when returned by *both*
+configurations, are compared as a proxy, never full-logit equivalence. An
+unsupported or malformed logprob response is recorded as unavailable.
+`compare_reddit.py` compares control/candidate raw workload samples by case and
+repetition, including cross-mode serial/MTP comparisons. It refuses different
+harness/tokenizer revisions, input hashes and token counts, and records output
+hash drift; the ordered matrix invokes it after collecting candidate quality.

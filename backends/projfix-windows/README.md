@@ -45,8 +45,8 @@ Keep mapped lookup loading, microbatch512 and f16 KV. The 12 GiB physical/commit
 reserves and normal watchdog remain enabled. The current improvement is a placement
 fix, not a claim that the large-microbatch kernel failure is repaired.
 
-Mixed-placement MTP failed before serving with `invalid vector subscript` in draft
-loading. Explicit draft placement and the already-installed full Q8_0 head did not
+Earlier mixed-placement MTP failed before serving with `invalid vector subscript` in draft
+loading. The explicit single-device split experiment below resolves that startup failure. Explicit draft placement and the already-installed full Q8_0 head did not
 resolve it. Therefore `--mode mtp` deliberately retains the older, slower resident
 configuration; it is not silently enabled on top of the fast placement.
 
@@ -142,3 +142,75 @@ The old article benchmark used different operating conditions and remains unchan
 python -B -m unittest discover -s backends/projfix-windows/tests -v
 python -B -m unittest discover -s tests/publication -p test_projfix_loading.py -v
 ```
+
+## Opt-in mixed-placement MTP
+
+`--mode mtp-host` adds an explicit `--tensor-split 1` to the fast host-expert
+placement and retains the real MTP head. On this single-GPU machine the positive
+split avoids the loader's zero-free-memory normalization. It is not NPU offload.
+No runtime, driver, weight precision or existing default is replaced.
+
+The mode requires `--output`; `--register` is refused while general equivalence
+qualification remains incomplete. Read the [measured implementation report](../../docs/research/mtp-host-implementation-20261001.md)
+for the exact tested contexts, output comparisons and performance trade-offs.
+
+```powershell
+$Candidate = '.\server\.local\projfix-mtp-host.json'
+python .\backends\projfix-windows\profile.py `
+  --runtime $Runtime --models $Models --token-file $TokenFile `
+  --context 262144 --mode mtp-host --output $Candidate
+# Stop the current engine normally and confirm STOPPED before this command:
+.\server\.local\venv\Scripts\python.exe -B .\server\controller.py `
+  run --config $Candidate --port 8840
+```
+
+This candidate requests an 18 GiB physical/commit reserve from the controller,
+leaving margin above a 16 GiB availability target. Polling cannot guarantee that
+unrelated instantaneous allocations never cross that target. Existing profiles
+retain their previous reserve unless an explicitly stricter value is configured.
+Use the ordinary `Start.ps1 -Stop` control to stop the candidate before returning
+to the normal Halogen, GUFO or serial PROJFIX profile.
+
+For a separately reversible scheduler checkpoint experiment, generate a
+**serial** profile with the same runtime, model, token and 262144 context as
+the control:
+
+```powershell
+$Candidate = '.\server\.local\projfix-checkpoints64-serial-262k.json'
+python .\backends\projfix-windows\profile.py `
+  --runtime $Runtime --models $Models --token-file $TokenFile `
+  --context 262144 --mode serial --ctx-checkpoints 64 --output $Candidate
+```
+
+The existing
+`--cache-ram 8192` MiB cap remains; the generated profile requests 18 GiB
+headroom and cannot be registered as the default. Compare against a fresh
+18 GiB serial control with the ordered matrix in `server/.local/NEXT_STEPS.json`.
+
+## Rebuild-only grammar experiment
+
+`patches/backend-grammar-fast-optin.patch` stages a reversible change against
+the pinned pwilkin source. The existing CPU sampler already checks a sampled
+token against the grammar before a full resample; PLE prefetch is also present
+in the pinned source. The patch does not duplicate either optimization.
+
+The patch keeps backend grammar sampling disabled by default. In a **separate
+rebuilt candidate only**, `LLAMA_BACKEND_GRAMMAR_FAST=1` permits eager,
+trigger-free, non-LLGuidance grammar without reasoning-budget sampling. It
+checks the GPU-selected token against grammar and resamples from full raw logits
+on rejection; when full logits are unavailable it fails closed rather than
+emitting an invalid token. Source applicability/reversibility tests are in
+`tests/test_grammar_patch.py`. This is not a qualified binary or a deployment
+instruction: compile, exercise both valid/rejected paths, compare grammar
+outputs/logits and run the broad gate before considering promotion. The pinned
+production executable, DLLs, runtime hashes and default profiles remain intact.
+An isolated patched `common/sampling.cpp` passed the pinned clang/PCH syntax
+check on 2 October 2026; no linked binary or grammar operator result is claimed.
+
+`patches/scheduler-reserve-optin.patch` is a separate, default-off source
+candidate using `LLAMA_SAMPLER_KEEP_RESERVE=1`. It applied and reversed cleanly
+and passed an isolated `llama-context.cpp` clang/PCH syntax check. Matching
+sampler names alone does not prove identical graph allocation, sampler lifetime
+or output equivalence. Do not enable it on the registered binary; test graph
+growth, changed sampling chains, cancellation and multi-turn memory/quality
+in a separately pinned candidate before any speed claim.

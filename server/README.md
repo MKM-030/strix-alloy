@@ -127,3 +127,36 @@ After explicit registration and a confirmed STOPPED state:
 ```
 
 Model ID: `projfix-flash-next`. Registration and decode-mode selection are separate from starting the server. No different engine or model is substituted on failure.
+
+## Optional stricter memory reserve
+
+A local controller profile may set `minimum_reserve_gib` to a finite numeric value
+from 12 through 128. Omitting it keeps the existing 12 GiB policy; smaller values,
+booleans, strings and non-finite values are rejected before launching an engine.
+Both physical availability and commit headroom use the selected threshold.
+The running state reports that value. This is a polled guard, not an allocator
+reservation or a guarantee against arbitrary instantaneous outside allocations.
+
+The [opt-in PROJFIX mtp-host profile](../backends/projfix-windows/README.md)
+uses an 18 GiB threshold and a shallow, one-token MTP draft. It does not use the NPU,
+replace the registered serial profile, or alter Halogen/GUFO defaults. Its evidence
+and rejected wider-draft result are kept in the implementation report.
+
+## Backend-specific draft profiles
+
+`draft_profiles.py --source <existing-profile.json> --draft-tokens 1 --output <new.json>`
+creates an isolated Halogen/GUFO tuning profile. It never writes a registered
+profile, starts a model, changes weights or relaxes an existing memory reserve.
+The minimum requested physical/commit reserve is 18 GiB. Native runtime hashes
+are checked before the new profile is written and again on controller startup.
+
+Halogen's option is forwarded as `HALOGEN_MTP_DEPTH` through the normal managed
+launcher. GUFO uses its own `--draft-tokens`; optional `--draft-vocab latin` and
+`--mtp-policy survival` are translated to the GUFO-specific switches, never to
+PROJFIX flags. GUFO-only options are rejected for Halogen. Depths outside 1..3,
+ambiguous duplicate native options and unsupported engines are refused.
+
+Existing `Start.ps1` defaults do not select these profiles automatically. Stop
+normally, confirm STOPPED, then start the new profile with `controller.py run`.
+Read [measured effects and limits](../docs/research/halogen-gufo-mtp-20261001.md)
+before treating a tuning option as a speed or general-quality guarantee.

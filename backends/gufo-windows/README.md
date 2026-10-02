@@ -116,3 +116,72 @@ The numerical helper derives from ROCm Device Libraries and retains its
 University of Illinois/NCSA license within the patched header. The surrounding
 GUFO source remains under its upstream license. No captured model tensors,
 SDK binaries, model weights, API-key values or developer runtime DLLs are shipped.
+
+## Isolated MTP tuning profiles
+
+The existing registered GUFO profile remains the control. To create a shallow
+MTP candidate with the same executable, DLL pins, model and memory placement:
+
+```powershell
+$Py = '.\server\.local\venv\Scripts\python.exe'
+& $Py .\server\draft_profiles.py `
+  --source .\server\.local\qualified-gufo.json --draft-tokens 1 `
+  --output .\server\.local\gufo-mtp-shallow-262k.json
+```
+
+`--draft-vocab latin` selects GUFO's existing reduced draft-only vocabulary;
+`--mtp-policy survival` selects its existing confidence-based sampled draft policy.
+The target verifier still uses the full vocabulary. Defaults are `full`/`length`.
+These flags are not PROJFIX's `--tensor-split` or per-tensor host placement.
+`--lookup-workload copy` deterministically enables GUFO's existing prompt lookup
+for an isolated copy/repetition profile; `--lookup-workload prose` explicitly
+disables it. Contradictory `--no-prompt-lookup` or `--prompt-lookup` combinations
+are rejected. This is profile selection before startup, not a per-request
+content router, and never changes the registered default. Test both profiles
+against the same hashes and quality gate before preferring either.
+A generated candidate is experimental until its workload has been compared.
+
+All generated profiles request at least 18 GiB physical/commit headroom and keep
+a stricter existing reserve. They never overwrite a file or register a default.
+After an ordinary managed stop and confirmed STOPPED, run the candidate with:
+
+```powershell
+& $Py .\server\controller.py run `
+  --config .\server\.local\gufo-mtp-shallow-262k.json --port 8840
+```
+
+See [measured comparisons](../../docs/research/halogen-gufo-mtp-20261001.md).
+
+To create an independent serial control, use `server/gufo_serial_profile.py`
+with the qualified source and a new `server/.local/gufo-serial-control-262k.json`
+output. The existing Latin MTP profile may be cloned by `draft_profiles.py`
+with `--prompt-lookup` for the measured copy/edit workload. `--cache-disk`
+accepts only a path under `server/.local` and bounds disk staging to 4 GiB and
+the disk cache to 8 GiB. `--lookup-workload copy` or `prose` is a manually
+declared, deterministic **startup profile policy**, not an HTTP content router:
+it cannot inspect future requests or switch engines while running. Do not
+claim automatic per-request routing. Compare the isolated profiles and quality
+controls in `server/.local/NEXT_STEPS.json` before adopting any candidate.
+
+## Experimental upstream attention tiles (not the registered build)
+
+GUFO upstream commit `6a4c897` compacts selected sparse-attention blocks across
+windows before assigning tiles to split workers. The exact kernel hunk applies
+after this package's numerical compatibility patch, but this is **source-only**
+and has not passed a Windows model-level quality/performance qualification.
+Work only in a separate unbuilt checkout of the pinned source. The command
+checks the exact post-numerics source hash and patch applicability by default;
+`--apply` is an explicit opt-in and refuses a built checkout:
+
+```powershell
+python -B .\backends\gufo-windows\optin_attention.py --source $ExperimentalGufo
+python -B .\backends\gufo-windows\optin_attention.py --source $ExperimentalGufo --apply
+python -B .\backends\gufo-windows\optin_attention.py --source $ExperimentalGufo --patch greedy --apply
+```
+
+Do not use the resulting source to replace the registered executable. Build and
+compare operator tests, full-model logits, quality and occupied-depth decode
+before considering a separately pinned candidate profile. [Review and limits](../../docs/research/gufo-upstream-review-20261002.md)
+also cover upstream scheduler and verification changes that do not cherry-pick.
+`--patch greedy` stages only the compatible CPU greedy-penalty linear walk from
+upstream #332, not that commit's unrelated API or GPU-verification changes.

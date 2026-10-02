@@ -19,4 +19,13 @@ class ProfileTests(unittest.TestCase):
     def test_unreviewed_context_is_rejected(self):
         for value in (0, True, 1048576):
             with self.assertRaises(ValueError):command('runtime','target','draft',value)
+    def test_checkpoint_candidate_is_opt_in(self):
+        control=command('runtime','target','draft',262144)
+        self.assertNotIn('--ctx-checkpoints',control)
+        candidate=command('runtime','target','draft',262144,checkpoints=64)
+        self.assertEqual(candidate[candidate.index('--ctx-checkpoints')+1],'64')
+        self.assertEqual(candidate[candidate.index('--cache-ram')+1],'8192')
+        for invalid in (0,12,256,True):
+            with self.subTest(invalid=invalid),self.assertRaises(ValueError):
+                command('runtime','target','draft',262144,checkpoints=invalid)
 if __name__=='__main__':unittest.main()

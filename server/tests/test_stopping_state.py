@@ -1,4 +1,4 @@
-import asyncio,copy,tempfile,unittest
+import asyncio,copy,json,tempfile,unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock,Mock,patch
@@ -19,14 +19,16 @@ class StoppingStateTests(unittest.IsolatedAsyncioTestCase):
             transitions.append(copy.deepcopy(state))
             if fail_stopping_write and state['phase']=='stopping':raise PermissionError('fixture lock')
         with tempfile.TemporaryDirectory() as d, patch.object(controller,'LOCAL',Path(d)), \
-             patch.object(controller,'read',return_value={'engine':{}}), \
              patch.object(controller,'load_config',return_value=gateway), \
              patch.object(controller,'Engine',return_value=engine), \
              patch.object(controller,'atomic',side_effect=record),patch('socket.socket') as socket:
             socket.return_value.__enter__.return_value.connect_ex.return_value=1
-            code=await controller.run(Path(d)/'fixture.json',18881)
+            fixture=Path(d)/'fixture.json'
+            fixture.write_text(json.dumps({'engine':{},'minimum_reserve_gib':18}))
+            code=await controller.run(fixture,18881)
         self.assertEqual(code,2)
         self.assertEqual([s['phase'] for s in transitions],['starting','stopping','failed'])
+        self.assertTrue(all(len(s['profile_sha256'])==64 for s in transitions))
         self.assertEqual(cleanup_seen,[True]);engine.stop.assert_awaited_once()
 
     async def test_stopping_is_published_before_cleanup(self):

@@ -40,6 +40,8 @@ def options(argv=None):
     p = argparse.ArgumentParser(description='Halogen service: authenticated, logged, continuous by default')
     p.add_argument('--checkpoint',choices=['w4b','v2'],default='w4b')
     p.add_argument('--prompt-cache',choices=['Off','Exact','Flexible'],default='Off')
+    p.add_argument('--draft-tokens',type=int,choices=(1,2,3),default=None)
+    p.add_argument('--prefill-chunk',type=int,choices=(2048,4096,8192),default=None)
     p.add_argument('--context-size',type=int,default=DEFAULT_CONTEXT)
     p.add_argument('--serve-seconds',type=int,default=0,help='0 means until explicitly stopped')
     p.add_argument('--startup-timeout',type=int,default=900)
@@ -54,6 +56,8 @@ def options(argv=None):
 
 
 def validate_options(o):
+    if getattr(o,"prefill_chunk",None) is not None and o.prefill_chunk>o.context_size:
+        raise ValueError("Prefill chunk exceeds context capacity")
     if type(o.context_size) is not int or not 4096 <= o.context_size <= 262144:
         raise ValueError('ContextSize must be 4096..262144 positions (prompt + output), one slot')
     if type(o.serve_seconds) is not int or not 0 <= o.serve_seconds <= 604800:
@@ -153,7 +157,11 @@ def verify_checkpoint(machine, checkpoint):
     portable.check_hash(LOCAL/'libhalogen0151-v2-preflight.so',portable.RELEASE['v2_bridge_sha256'])
 
 
-def environment(context, checkpoint="w4b", prompt_cache="Off"):
+def environment(context, checkpoint="w4b", prompt_cache="Off", draft_tokens=None, prefill_chunk=None):
+    if draft_tokens is not None and (type(draft_tokens) is not int or draft_tokens not in (1,2,3)):
+        raise ValueError("Draft depth must be 1, 2 or 3")
+    if prefill_chunk is not None and (type(prefill_chunk) is not int or prefill_chunk not in (2048,4096,8192) or prefill_chunk>context):
+        raise ValueError("Invalid prefill chunk for context")
     env=r.environment(r.manifest_for('serve'))
     env.update(HALOGEN_CTX=str(context),HALOGEN_KV_POOL_POSITIONS=str(context),
                HALOGEN_KV_SLOTS='1',HALOGEN_API_PORT='8731',HALOGEN_VERBOSE='1')
@@ -166,6 +174,10 @@ def environment(context, checkpoint="w4b", prompt_cache="Off"):
     elif checkpoint != 'w4b':
         raise ValueError('Unknown checkpoint; no silent fallback')
     if prompt_cache not in ('Off','Exact','Flexible'): raise ValueError('Unknown cache policy')
+    if draft_tokens is not None: env['HALOGEN_MTP_DEPTH']=str(draft_tokens)
+    if prefill_chunk is not None:
+        env['HALOGEN_PREFILL_CHUNK']=str(prefill_chunk)
+        env['HALOGEN_MAX_TOK']=str(max(prefill_chunk,int(env.get('HALOGEN_MAX_TOK',prefill_chunk))))
     env['HALOGEN_PROMPT_CACHE']={'Off':'0','Exact':'1','Flexible':'2'}[prompt_cache]
     return env
 
@@ -201,7 +213,7 @@ def build_manifest(o, attempt, run_id):
         mounts['/candidate/libhalogen0151-v2-preflight.so']=r.linux_path(LOCAL/'libhalogen0151-v2-preflight.so')
     return dict(schema=1,version='0.15.1',image=r.IMAGE,run_id=run_id,checkpoint=checkpoint,
         context=o.context_size,slots=1,serve_seconds=o.serve_seconds,startup_timeout=o.startup_timeout,
-        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off')),sources=source_hashes(),
+        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None)),sources=source_hashes(),
         entrypoint_sha256=portable.digest(attempt/'entrypoint-service.sh'))
 
 

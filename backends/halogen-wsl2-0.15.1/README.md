@@ -107,3 +107,39 @@ contains the actual PP/Decode and memory results, clock-calibration caveat, mana
 lifecycle checks and limitations. [Benchmark scripts](../../scripts/benchmarks/README.md)
 provide reproduction commands. [Research review](../../docs/integration/unified-review-20260930.md)
 records investigated ideas without promoting untested kernel or driver changes.
+
+## Opt-in shallow MTP through Strix Alloy
+
+The managed controller can now forward a validated draft depth of 1, 2 or 3.
+The backend's optional `-DraftTokens` becomes `--draft-tokens` in the service and
+`HALOGEN_MTP_DEPTH` in the recorded container manifest. Without this option,
+existing environment defaults remain unchanged. Legacy 4K qualification modes
+refuse the option. No allocator, checkpoint or kernel is replaced.
+
+Create a separate managed profile from an existing generated Halogen profile:
+
+```powershell
+$Py = '.\server\.local\venv\Scripts\python.exe'
+& $Py .\server\draft_profiles.py `
+  --source .\server\.local\halogen-v2-262144-Off.json --draft-tokens 1 `
+  --output .\server\.local\halogen-mtp-shallow-262k.json
+# After a normal managed stop and confirmed STOPPED:
+& $Py .\server\controller.py run `
+  --config .\server\.local\halogen-mtp-shallow-262k.json --port 8840
+```
+
+The candidate requests at least 18 GiB physical/commit headroom from the managed
+controller. Directly starting the backend alone does not add this outer guard.
+A polling guard cannot guarantee a floor against instantaneous outside allocations.
+The client may still request serial decoding; this option only sets the greedy
+MTP draft depth. It is not NPU offload or PROJFIX's tensor-placement selector.
+See [measurements and scope](../../docs/research/halogen-gufo-mtp-20261001.md).
+
+`draft_profiles.py --prefill-chunk 4096` and `8192` generate isolated v2
+candidates; they forward the chunk through the launcher into the existing
+Halogen container with a matching token arena. The earlier PP8192 output
+hashes differ from the 2048 control. Neither candidate is qualified or a
+replacement default. Run each 18 GiB managed profile sequentially through
+the exact PP/TG and broad quality matrix in `server/.local/NEXT_STEPS.json`;
+the quality gate treats output drift as failure and labels exposed top-N
+logprob differences a proxy, not full-logit equivalence.
