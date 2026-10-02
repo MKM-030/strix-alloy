@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "date": "2026-10-02",
+  "hardware": "AMD Ryzen AI Max+ 395 / NPU Strix Halo",
+  "xrt": {
+    "version": "2.21.0",
+    "npu_driver": "32.0.20102.3930",
+    "firmware": "1.1.2.65",
+    "power_mode": "Performance",
+    "gemm_tops": 51.3,
+    "latency_us": 87.0,
+    "throughput_ops_per_s": 54778.0
+  },
+  "flash_next_mtp": {
+    "hidden_size": 2560,
+    "hyperconnection_width": 10240,
+    "experts": 512,
+    "experts_per_token": 10,
+    "expert_intermediate": 640,
+    "mtp_bytes_w4b": 1479346400,
+    "selected_expert_weight_bytes_estimate": 27852800
+  },
+  "expert0_cpu_onnx": {
+    "graph": "gate_up -> SiLU(gate)*up -> down",
+    "input": [1, 2560],
+    "gate_up": [1280, 2560],
+    "down": [2560, 640],
+    "provider": "CPUExecutionProvider",
+    "repetitions": 100,
+    "mean_ms": 0.101871,
+    "median_ms": 0.098100,
+    "min_ms": 0.083600,
+    "p95_ms": 0.137000
+  },
+  "windows_ml": {
+    "onnxruntime_windowsml": "1.25.2.202605110140",
+    "vitisai_provider_state_before_install": "NOT_PRESENT",
+    "status": "provider acquisition in progress; no NPU ONNX latency claimed"
+  },
+  "interpretation": [
+    "NPU peak compute is not the limiting concern for one MTP step; dispatch and weight/state movement dominate.",
+    "One routed expert is already sub-millisecond on CPU when dequantized weights are resident; offloading experts individually would be a bad design.",
+    "A useful NPU graph must batch the top-10 expert work and preferably include dense attention/shared-expert/lm-head work in one persistent graph."
+  ]
+}

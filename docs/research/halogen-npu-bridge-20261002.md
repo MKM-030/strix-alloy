@@ -94,3 +94,50 @@ promoted as a Halogen speedup. The checked-in A/B harness fails closed above a
 - `docs/research/halogen-w4b-inspect-20261002.json`
 
 The large inspector JSON is evidence only; no model weights are copied into Git.
+
+## New microbench evidence
+
+The machine's own XRT validation was run with no FLM workload active:
+
+- NPU GEMM validation: **51.3 TOPS**, PASS.
+- NPU latency validation: **87.0 us average**, PASS.
+- NPU throughput validation: **54,778 op/s**, PASS.
+
+The HGN v2 container format is now parsed directly by
+`scripts/benchmarks/hgn_extract_mtp.py`, using the public HGN 1.0.1 container
+and q4c storage specification. The parser reproduced the inspector's 31 MTP
+tensors and 1,479,346,400 payload bytes.
+
+`hgn_q4c_slice.py` decodes arbitrary q4c-v2 row ranges without expanding the
+whole 1.48-GB head. Expert 0 was decoded successfully:
+
+- gate/up: [1280, 2560], finite, range -0.1582 .. 0.2264.
+- down: [2560, 640], finite, range -0.3006 .. 0.2617.
+
+A real one-expert ONNX graph was generated from those weights:
+`gate_up -> SiLU(gate) * up -> down`. With weights resident, Windows ML's CPU
+EP measured 100 iterations at mean 0.1019 ms, median 0.0981 ms, minimum
+0.0836 ms and p95 0.1370 ms.
+
+This changes the NPU partition recommendation. Individual expert dispatch is too
+fine-grained: its dispatch overhead could be comparable to useful work. The NPU
+candidate must fuse/batch all top-10 selected experts and, ideally, keep the
+attention/shared-expert/lm-head portions in the same persistent graph.
+
+A Windows-ML/VitisAI path is being prepared for exactly that microbenchmark.
+The Python Windows ML runtime installed successfully, but the VitisAI EP was
+reported as NOT_PRESENT and its automatic provider acquisition had not completed
+at the time of this evidence snapshot. No NPU ONNX latency is therefore claimed.
+
+## Weight conversion path
+
+The implementation now has three reversible stages:
+
+1. Parse HGN metadata and payload offsets without loading the trunk.
+2. Decode only required q4c-v2 rows (including one selected expert) into a
+   reference FP32 representation.
+3. Generate a standalone ONNX expert graph for CPU/NPU numerical and latency A/B.
+
+These tools are independent of the Halogen server and do not modify model files.
+They are the basis for converting the complete top-10 MTP sparse path once the
+NPU execution provider is available.
