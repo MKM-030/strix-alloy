@@ -104,8 +104,10 @@ Once ready, the server offers both of these on `127.0.0.1:8826`:
 | Built-in chat page | `http://127.0.0.1:8826` |
 | OpenAI-compatible API | `http://127.0.0.1:8826/v1`, model id `Qwen3.8-Flash-Next` |
 
-Point any existing client at that endpoint. Nothing else is required - there is no proxy, no
-gateway and no client to install.
+Use that endpoint with a client that supports OpenAI-compatible Chat Completions. The
+[client connection guide](client-connections.md) gives the exact ZCode and Unsloth fields,
+the desktop launch fix, and the current Codex compatibility status. Add `-OpenBrowser` to the
+launcher if you also want the built-in chat page to open when the model is ready.
 
 ```powershell
 curl http://127.0.0.1:8826/v1/chat/completions -H 'Content-Type: application/json' -d '{

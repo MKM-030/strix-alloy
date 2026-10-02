@@ -45,6 +45,12 @@ param(
     # working no matter which quant or folder the weights came from.
     [string]$Alias = 'Qwen3.8-Flash-Next',
 
+    # Open llama-server's built-in chat page when ready (useful for desktop shortcuts).
+    [switch]$OpenBrowser,
+
+    # Diagnostic opt-out: use the GGUF's original strict system-message template.
+    [switch]$UseModelTemplate,
+
     # Print the resolved command and exit without starting anything.
     [switch]$PrintOnly,
 
@@ -57,6 +63,18 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+function ConvertTo-WindowsArgument {
+    param([AllowEmptyString()][string]$Argument)
+
+    # Start-Process joins ArgumentList values instead of preserving argv. Quote
+    # whitespace/empty arguments, and escape quotes plus their preceding slashes
+    # according to the Windows C runtime command-line rules used by llama-server.
+    if ($Argument.Length -gt 0 -and $Argument -notmatch '[\s"]') { return $Argument }
+    $escaped = [regex]::Replace($Argument, '(\\*)"', '$1$1\"')
+    $escaped = [regex]::Replace($escaped, '(\\+)$', '$1$1')
+    return '"' + $escaped + '"'
+}
 
 function Resolve-RuntimeDir {
     if ($RuntimeDir) { return (Resolve-Path -LiteralPath $RuntimeDir).Path }
@@ -168,6 +186,7 @@ if ($existing.Count -gt 0) {
         Write-Host "Already running on http://127.0.0.1:$Port (PID $($existing[0].Process.Id)) - reusing it."
         Write-Host "Chat:  http://127.0.0.1:$Port"
         Write-Host "API:   http://127.0.0.1:$Port/v1"
+        if ($OpenBrowser -and -not $PrintOnly) { Start-Process "http://127.0.0.1:$Port" }
         return
     }
     throw "Port $Port is already in use by PID $($existing[0].Process.Id): $cmd`nStop that first, or choose another -Port."
@@ -193,6 +212,17 @@ $serverArgs = @(
     '--seed', '1234',
     '--jinja'
 )
+
+# Coding clients can send additional developer/system messages after the first
+# turn. Keep those instructions while preserving the model's original chat/tool
+# formatting for ordinary messages.
+if (-not $UseModelTemplate) {
+    $clientTemplate = Join-Path $PSScriptRoot 'flash-next-clients.jinja'
+    if (-not (Test-Path -LiteralPath $clientTemplate)) {
+        throw "Client chat template not found: $clientTemplate. Restore the app folder or pass -UseModelTemplate."
+    }
+    $serverArgs += @('--chat-template-file', $clientTemplate)
+}
 
 $profile = 'serial'
 if ($DraftPath) {
@@ -223,7 +253,8 @@ if ($PrintOnly) { return }
 Push-Location (Split-Path $serverExe -Parent)
 try {
     $env:HSA_OVERRIDE_GFX_VERSION = '11.5.1'
-    $proc = Start-Process -FilePath $serverExe -ArgumentList $serverArgs -PassThru -NoNewWindow
+    $nativeArguments = ($serverArgs | ForEach-Object { ConvertTo-WindowsArgument $_ }) -join ' '
+    $proc = Start-Process -FilePath $serverExe -ArgumentList $nativeArguments -PassThru -NoNewWindow
 } finally {
     Pop-Location
 }
@@ -245,6 +276,7 @@ if (-not $ready) {
 Write-Host ''
 Write-Host "ready - http://127.0.0.1:$Port"
 Write-Host "chat UI : http://127.0.0.1:$Port"
-Write-Host "API     : http://127.0.0.1:$Port/v1  (model id: $(Split-Path $target -Leaf))"
+Write-Host "API     : http://127.0.0.1:$Port/v1  (model id: $Alias)"
 Write-Host ''
 Write-Host 'Leave this window open while you use the model; closing it stops the server.'
+if ($OpenBrowser) { Start-Process "http://127.0.0.1:$Port" }

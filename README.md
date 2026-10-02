@@ -57,6 +57,8 @@ hf download ilintar/qwen3.8-flash-next-gguf-strix-halo `
 
 Once ready, the server's own chat page is at `http://127.0.0.1:8826` and the OpenAI-compatible API is `http://127.0.0.1:8826/v1`, model id `Qwen3.8-Flash-Next` - point LM Studio, Z Code or a `curl` at it. Note that importing the GGUF into another runtime (LM Studio, Ollama, a stock llama.cpp build) does **not** bring these kernels or this flag set with it; the same weights on a different runtime are a different measurement.
 
+For desktop use, the [client connection guide](docs/user/client-connections.md) covers the corrected shortcut, optional `-OpenBrowser`, ZCode and Unsloth setup, and the current Codex compatibility status. No agent flag is required to connect an API client.
+
 **Set your GPU carve first.** In BIOS/UEFI, reserve **96 GB** as dedicated graphics memory. The model needs about 72 GB of device memory. A small carve loads but runs several times slower; a 0.5 GB carve will not load. The carve is a reservation of system RAM, **not** a separate memory bank and **not** isolation.
 
 Full details, troubleshooting and uninstall: **[docs/user/README.md](docs/user/README.md)**. You do **not** need a compiler, the ROCm SDK, Git or Python to run the runtime - those are only needed to build it from source.
