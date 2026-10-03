@@ -1,0 +1,409 @@
+{
+  "schema": "halogen0162-long-context-v1",
+  "measured_commit": "2bb5642f266dae3030ab95b2ca18d033da73be33",
+  "engine": "Halogen 0.16.2",
+  "checkpoint": "v2",
+  "cache": "Off",
+  "mtp_depth": 2,
+  "allocated_context": 262144,
+  "slots": 1,
+  "repetitions": 1,
+  "warmups": 0,
+  "runtime_reserve_gib": 18,
+  "profile_sha256": "e535484cdfd5ce3de4afc110a630296e5e5c556e2968ee22d118416cc6e37c1a",
+  "source_seal": {
+    "backends\\halogen-wsl2-0.16.2\\Install.ps1": "f3385dcf52137aceefa8bd3d08fb423f2ef46a52f71733ffdf5b4129d399ce3f",
+    "backends\\halogen-wsl2-0.16.2\\patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+    "backends\\halogen-wsl2-0.16.2\\patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+    "backends\\halogen-wsl2-0.16.2\\patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+    "backends\\halogen-wsl2-0.16.2\\patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+    "backends\\halogen-wsl2-0.16.2\\patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+    "backends\\halogen-wsl2-0.16.2\\profiles\\preflight-sequences.json": "2578343f8d732785e630b385fd67bf71a17ba20cdf95b6b7cc90259bdccc886b",
+    "backends\\halogen-wsl2-0.16.2\\profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+    "backends\\halogen-wsl2-0.16.2\\profiles\\sources.json": "9b013f8780eb5b1b4586739a72f1633ce642bf2a05c27451b05443ce59d08ab6",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\kernel_controls.py": "e9a086edd91a0f5a29d404f8813c785a110972663d906c0f311ffcd535dd251f",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\service.py": "95b90017076edb4ee797220ea23ba4b0f5018d6e0c78849f669149c4a9272b7a",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+    "backends\\halogen-wsl2-0.16.2\\Start.ps1": "3dbaa263a8bc35e2d3b2b892130156e08cd04aef7853c9c632cd7b317411188b",
+    "backends\\halogen-wsl2-0.16.2\\Uninstall.ps1": "b3ab23f778426ac026f7dea59f72a7b239f6b60aca0e4698ec169d5270bf1361",
+    "scripts\\benchmarks\\article_metrics.py": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+    "scripts\\benchmarks\\clock_probe.py": "a3f32a4c5c7e423c47ceebdd2f0fe0cd1860d7840c9fd0de10756e887c70a05e",
+    "scripts\\benchmarks\\gateway_cold.py": "fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d",
+    "server\\.local\\upgrade0162\\analyze_cold.py": "b92379fbf3ce83be8a520a1f630506eae536c4ccfaffee38cbdb100fdeec7e46",
+    "server\\.local\\upgrade0162\\run_matrix.py": "12ca2f6a890a83415df398e1b867daf0cf0211e3a6275e67f628e92bf0841d58",
+    "server\\check_updates.py": "0055af10d22cf37ef8e73e0bdf8524f091a535e491f95b67ebb7fba75bdcc0a8",
+    "server\\controller.py": "cdce66f5c189e0ed6d83e4ace284fe27825acdadd372efeed68b968e31e4a3bb",
+    "server\\draft_profiles.py": "a5c3969b46d6e3b4f337fc1294cbbff7a81363ba24f0060a2f019e2b2bc9fd44",
+    "server\\gateway.py": "8753ed03137e43a9eb44238ee0e6ac9bf39b4d014413d572ff218ae97a844881",
+    "server\\gufo_serial_profile.py": "f26b06abc6be7c77bbcf8b574028ef62971ac087a2f84b28104f501251516c9f",
+    "server\\host_frames.py": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+    "server\\manage.py": "f941d72c6af273c4d180a63bb52401889fdfa2bdf93ca390f516873d6260ad54",
+    "server\\owned_child.py": "6f75520f65c76941ec4306915929fd529ec7f46bd0fd20bd6f01f82afb749f10",
+    "server\\Setup.ps1": "7a6125b3841611ad9f881fac679d0f8089342921792ab90b5144b350ac1d5816",
+    "server\\Start.ps1": "ddf23aadb7c244dff2e30ee4c08ee8cfda50c4328a76663b37aeccac738d159a",
+    "server\\winjob.py": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+    "server\\.local\\upgrade0162\\run_128k_260k_resume.py": "e92b6ce7c2bddbe612c2e810f60d8f3896a6d3c326396f71a4577e08065f9141",
+    "scripts\\benchmarks\\reddit_runtime.py": "8bc974964b3eb32205db96aee94a761f9774bac7411cbec7efe2fcd5920ea9a5",
+    "scripts\\benchmarks\\reddit_suite.py": "f4c805c441c7b527437b5569f134f85ac73cff4048b6bce5fbe4e16114f1486d"
+  },
+  "helper_interpreter_sha256": "0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14",
+  "started_at": 1791047934.2453117,
+  "finished_at": 1791048703.490636,
+  "rows": [
+    {
+      "name": "prefill128k",
+      "usage": {
+        "prompt_tokens": 128034,
+        "completion_tokens": 22,
+        "total_tokens": 128056,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "timings": {
+        "prompt_n": 128034,
+        "predicted_n": 22,
+        "prompt_ms": 78999.3,
+        "predicted_ms": 356.0,
+        "prompt_per_second": 1620.698,
+        "predicted_per_second": 61.798,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 16,
+        "draft_n_accepted": 15
+      },
+      "clock_calibration": {
+        "before": {
+          "mono": 209.088093072,
+          "raw": 208.360853479,
+          "utc": 1791047688.9178662,
+          "qpc": 270690.28879,
+          "roundtrip": 0.0006548000383190811
+        },
+        "after": {
+          "mono": 288.925886697,
+          "raw": 288.198644868,
+          "utc": 1791047768.7488487,
+          "qpc": 270770.12655225,
+          "roundtrip": 0.0006147000240162015
+        },
+        "monotonic_per_raw": 1.0000000280067876,
+        "raw_per_qpc": 1.000000364977878,
+        "window_seconds": 79.83776224998292,
+        "handshake_uncertainty_seconds": 0.0006347500311676413
+      },
+      "input_text_sha256": "f7b28eb127e8c127708fedec9b0f66ecc367b6b0f412287a0fc62ea5fa6d0522",
+      "prompt_sha256": "7a34ec8b05e02f41b02a448d0b062c65da571a73889fb62e628659d4d0c0bd55",
+      "request_sha256": "432d01fb1f3347da2575f02c8ed767abf802ca76218fc6114087645f4e8ceb8c",
+      "sha256": "be3755f1cf7fd74082cb0d2667fd0edead8a18eaa0b87a408e0f1ac8db3129bf",
+      "requested_output": 32,
+      "wall_seconds": 79.81900660000974,
+      "minimum_memory": {
+        "available_bytes": 23372021760,
+        "commit_headroom_bytes": 121323700224
+      },
+      "finish_reason": "stop",
+      "drafted": 16,
+      "accepted": 15,
+      "draft_acceptance": 0.9375,
+      "pp_tps_calibrated": 1620.6980453905446,
+      "decode_tps_calibrated": 61.79800173076346,
+      "marker_present": true
+    },
+    {
+      "name": "decode128k",
+      "usage": {
+        "prompt_tokens": 128048,
+        "completion_tokens": 2048,
+        "total_tokens": 130096,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "timings": {
+        "prompt_n": 128048,
+        "predicted_n": 2048,
+        "prompt_ms": 92135.8,
+        "predicted_ms": 32060.9,
+        "prompt_per_second": 1389.775,
+        "predicted_per_second": 63.878,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 1583,
+        "draft_n_accepted": 1487
+      },
+      "clock_calibration": {
+        "before": {
+          "mono": 211.469016891,
+          "raw": 206.147738973,
+          "utc": 1791048119.6330452,
+          "qpc": 271121.044417,
+          "roundtrip": 0.0006161999772302806
+        },
+        "after": {
+          "mono": 336.680721901,
+          "raw": 328.483111689,
+          "utc": 1791048241.956761,
+          "qpc": 271243.3798347,
+          "roundtrip": 0.0010040000197477639
+        },
+        "monotonic_per_raw": 1.0235118611252152,
+        "raw_per_qpc": 0.9999996322896431,
+        "window_seconds": 122.33541770000011,
+        "handshake_uncertainty_seconds": 0.0008100999984890223
+      },
+      "input_text_sha256": "2879b57bf862fdbfcfcc9e733dcb9951eb3a7af5b94f08bfd6beb0080489926e",
+      "prompt_sha256": "fe15741c08eea74ce2d320e366c6a2e383bd40665d4fbe5e1aaa896bd31e06ef",
+      "request_sha256": "aa82fa27226187d7b5aaec005911b05e4f2f789dd5930b84125e2171e80d18a6",
+      "sha256": "cefcb662f5589068567209bbd20742701329435708c2822a083a4b3af82d2a03",
+      "requested_output": 2048,
+      "wall_seconds": 122.3076159999473,
+      "minimum_memory": {
+        "available_bytes": 24975507456,
+        "commit_headroom_bytes": 121913860096
+      },
+      "finish_reason": "length",
+      "drafted": 1583,
+      "accepted": 1487,
+      "draft_acceptance": 0.9393556538218573,
+      "pp_tps_calibrated": 1422.451196795296,
+      "decode_tps_calibrated": 65.37989066495649,
+      "marker_present": true
+    },
+    {
+      "name": "prefill260k",
+      "usage": {
+        "prompt_tokens": 260028,
+        "completion_tokens": 22,
+        "total_tokens": 260050,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "timings": {
+        "prompt_n": 260028,
+        "predicted_n": 22,
+        "prompt_ms": 190024.2,
+        "predicted_ms": 353.1,
+        "prompt_per_second": 1368.394,
+        "predicted_per_second": 62.305,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 16,
+        "draft_n_accepted": 15
+      },
+      "clock_calibration": {
+        "before": {
+          "mono": 336.685945008,
+          "raw": 328.488332874,
+          "utc": 1791048241.9619818,
+          "qpc": 271243.38503545,
+          "roundtrip": 0.00042830000165849924
+        },
+        "after": {
+          "mono": 528.692231495,
+          "raw": 520.473913121,
+          "utc": 1791048433.9270563,
+          "qpc": 271435.3705803,
+          "roundtrip": 0.0007502000080421567
+        },
+        "monotonic_per_raw": 1.0001078531000784,
+        "raw_per_qpc": 1.0000001843732456,
+        "window_seconds": 191.98554485000204,
+        "handshake_uncertainty_seconds": 0.000589250004850328
+      },
+      "input_text_sha256": "a6b66802258dd40df0733390a1d61789150c54b8a8bc6976a0928529adb79de5",
+      "prompt_sha256": "85e201133ef07944601386896bf518a10245df6bc62b894b5ee5cd6595aad142",
+      "request_sha256": "4a7aecbff6b3e070668a9e9c0366922b1c19cb474b12c9e75eefa5aa6bd34a28",
+      "sha256": "be3755f1cf7fd74082cb0d2667fd0edead8a18eaa0b87a408e0f1ac8db3129bf",
+      "requested_output": 32,
+      "wall_seconds": 191.40937070001382,
+      "minimum_memory": {
+        "available_bytes": 24911912960,
+        "commit_headroom_bytes": 121973018624
+      },
+      "finish_reason": "stop",
+      "drafted": 16,
+      "accepted": 15,
+      "draft_acceptance": 0.9375,
+      "pp_tps_calibrated": 1368.5415855350288,
+      "decode_tps_calibrated": 62.311719787400385,
+      "marker_present": true
+    },
+    {
+      "name": "decode260k",
+      "usage": {
+        "prompt_tokens": 260042,
+        "completion_tokens": 2048,
+        "total_tokens": 262090,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "timings": {
+        "prompt_n": 260042,
+        "predicted_n": 2048,
+        "prompt_ms": 193675.1,
+        "predicted_ms": 31721.1,
+        "prompt_per_second": 1342.671,
+        "predicted_per_second": 64.563,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 1583,
+        "draft_n_accepted": 1487
+      },
+      "clock_calibration": {
+        "before": {
+          "mono": 528.697369536,
+          "raw": 520.4790514,
+          "utc": 1791048433.9321945,
+          "qpc": 271435.37567840004,
+          "roundtrip": 0.0005464000278152525
+        },
+        "after": {
+          "mono": 754.945620765,
+          "raw": 745.290627328,
+          "utc": 1791048658.7256703,
+          "qpc": 271660.18726559996,
+          "roundtrip": 0.00043760001426562667
+        },
+        "monotonic_per_raw": 1.0063905752854116,
+        "raw_per_qpc": 0.9999999498606006,
+        "window_seconds": 224.811587199918,
+        "handshake_uncertainty_seconds": 0.0004920000210404396
+      },
+      "input_text_sha256": "d1185deeee6891784cf9691ad1cca769e0491e95dc70d27c5b2bfeecbd3bf577",
+      "prompt_sha256": "f518a5ba76acf1cf4d1a91baa9e193367ec546d4b10aa36b579b4a07cb547e7d",
+      "request_sha256": "5e58a3c34bd1e7daf9430e705823fd270acefa261ad94ceb60ffdb17716e5ae6",
+      "sha256": "cefcb662f5589068567209bbd20742701329435708c2822a083a4b3af82d2a03",
+      "requested_output": 2048,
+      "wall_seconds": 224.71901329996763,
+      "minimum_memory": {
+        "available_bytes": 25878716416,
+        "commit_headroom_bytes": 123249020928
+      },
+      "finish_reason": "length",
+      "drafted": 1583,
+      "accepted": 1487,
+      "draft_acceptance": 0.9393556538218573,
+      "pp_tps_calibrated": 1351.251440109039,
+      "decode_tps_calibrated": 64.97559471215203,
+      "marker_present": true
+    }
+  ],
+  "controller_minimum_available_gib": 21.748523712158203,
+  "recording_runs": 2,
+  "retained_prior_requests": 1,
+  "new_measured_requests": 3,
+  "prior_prefill_source_seal": {
+    "backends\\halogen-wsl2-0.16.2\\Install.ps1": "f3385dcf52137aceefa8bd3d08fb423f2ef46a52f71733ffdf5b4129d399ce3f",
+    "backends\\halogen-wsl2-0.16.2\\patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+    "backends\\halogen-wsl2-0.16.2\\patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+    "backends\\halogen-wsl2-0.16.2\\patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+    "backends\\halogen-wsl2-0.16.2\\patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+    "backends\\halogen-wsl2-0.16.2\\patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+    "backends\\halogen-wsl2-0.16.2\\profiles\\preflight-sequences.json": "2578343f8d732785e630b385fd67bf71a17ba20cdf95b6b7cc90259bdccc886b",
+    "backends\\halogen-wsl2-0.16.2\\profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+    "backends\\halogen-wsl2-0.16.2\\profiles\\sources.json": "9b013f8780eb5b1b4586739a72f1633ce642bf2a05c27451b05443ce59d08ab6",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\kernel_controls.py": "e9a086edd91a0f5a29d404f8813c785a110972663d906c0f311ffcd535dd251f",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\service.py": "95b90017076edb4ee797220ea23ba4b0f5018d6e0c78849f669149c4a9272b7a",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+    "backends\\halogen-wsl2-0.16.2\\scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+    "backends\\halogen-wsl2-0.16.2\\Start.ps1": "3dbaa263a8bc35e2d3b2b892130156e08cd04aef7853c9c632cd7b317411188b",
+    "backends\\halogen-wsl2-0.16.2\\Uninstall.ps1": "b3ab23f778426ac026f7dea59f72a7b239f6b60aca0e4698ec169d5270bf1361",
+    "scripts\\benchmarks\\article_metrics.py": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+    "scripts\\benchmarks\\clock_probe.py": "a3f32a4c5c7e423c47ceebdd2f0fe0cd1860d7840c9fd0de10756e887c70a05e",
+    "scripts\\benchmarks\\gateway_cold.py": "fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d",
+    "server\\.local\\upgrade0162\\analyze_cold.py": "b92379fbf3ce83be8a520a1f630506eae536c4ccfaffee38cbdb100fdeec7e46",
+    "server\\.local\\upgrade0162\\run_matrix.py": "12ca2f6a890a83415df398e1b867daf0cf0211e3a6275e67f628e92bf0841d58",
+    "server\\check_updates.py": "0055af10d22cf37ef8e73e0bdf8524f091a535e491f95b67ebb7fba75bdcc0a8",
+    "server\\controller.py": "cdce66f5c189e0ed6d83e4ace284fe27825acdadd372efeed68b968e31e4a3bb",
+    "server\\draft_profiles.py": "a5c3969b46d6e3b4f337fc1294cbbff7a81363ba24f0060a2f019e2b2bc9fd44",
+    "server\\gateway.py": "8753ed03137e43a9eb44238ee0e6ac9bf39b4d014413d572ff218ae97a844881",
+    "server\\gufo_serial_profile.py": "f26b06abc6be7c77bbcf8b574028ef62971ac087a2f84b28104f501251516c9f",
+    "server\\host_frames.py": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+    "server\\manage.py": "f941d72c6af273c4d180a63bb52401889fdfa2bdf93ca390f516873d6260ad54",
+    "server\\owned_child.py": "6f75520f65c76941ec4306915929fd529ec7f46bd0fd20bd6f01f82afb749f10",
+    "server\\Setup.ps1": "7a6125b3841611ad9f881fac679d0f8089342921792ab90b5144b350ac1d5816",
+    "server\\Start.ps1": "ddf23aadb7c244dff2e30ee4c08ee8cfda50c4328a76663b37aeccac738d159a",
+    "server\\winjob.py": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+    "server\\.local\\upgrade0162\\run_128k_260k_retry.py": "a9860a5b44d3ae3b19c6f569bead0e3b155b114213572567c9a9a2846c21bba9",
+    "scripts\\benchmarks\\reddit_runtime.py": "8bc974964b3eb32205db96aee94a761f9774bac7411cbec7efe2fcd5920ea9a5",
+    "scripts\\benchmarks\\reddit_suite.py": "f4c805c441c7b527437b5569f134f85ac73cff4048b6bce5fbe4e16114f1486d"
+  },
+  "prior_prefill_raw_receipts": {
+    "prefill128k.json": "deea5048ca60f799da68a8c85ca9595b51c697c6a1f303a0dc70cb66e4405594",
+    "plan.json": "dce828fe3f9101de1ba21292b0d7c55005bdac1825392f4da789eb532485bf36",
+    "result.json": "9b1573fc0b4c04e900f1a94fe7760ebe4dbb94a95c3f4a3264a4c6820c95a0fa",
+    "terminal.json": "3ce637adc082d77305715d3623f60cd233d5168273e05cf9a054e49f47a42fed",
+    "backend-manifest.json": "c1c80f4d9467445d3e7ef29f1e719ad948ca1ba90152bc67227aba6d86f4a028"
+  },
+  "prior_prefill_original_aggregate_passed": false,
+  "prior_prefill_original_error": "RuntimeError: Published workload count, cache, finish or marker check failed",
+  "controller_exit_code": 0,
+  "cleanup": true,
+  "recovery": true,
+  "raw_receipts": {
+    "plan.json": "ea266b7125f98bb2ba986aa83c403cff69d91fdfeb24b57ee1d2f4872fae1522",
+    "result.json": "8012edd38b7f1b60e7e1a2a4a69b3a71ef14475a2598a52da152b5ece63cef9b",
+    "terminal.json": "5fef1af30bc5b8d4db8c304740ab91ab82c2a5819652570dbd576932fe6e18f8",
+    "backend-manifest.json": "9609e7e8a3918f30e80fc808170b881e59495c7024f2608049165d8edc58258d"
+  },
+  "earlier_attempts": [
+    {
+      "kind": "memory_guard_startup_abort",
+      "measured_requests": 0,
+      "minimum_available_gib": 17.5741004943848,
+      "cleanup": true,
+      "recovery": true,
+      "receipt_sha256": "9bcaefecc836147ba05736840f84201639717a440aeaaca37dd372121eb3fa15"
+    },
+    {
+      "kind": "retained_ownership_lock_refusal",
+      "measured_requests": 0,
+      "cleanup": true,
+      "recovery": true,
+      "receipt_sha256": "16e898702c9235df6c560c50b0ddd0265bffa956bb1b1d4a617a568ad6c7b736"
+    }
+  ],
+  "limits": [
+    "Synthetic repeated filler; completion and marker checks are not long-context retrieval quality.",
+    "Single retained request per case; no statistical repeat guarantee.",
+    "Whole-response decode; historical native 20-second token window was not repeated.",
+    "Historical 0.13.8/w4b versus current 0.16.2/v2 includes checkpoint and setup changes.",
+    "Calibrated phase rates use the whole-request guest-clock ratio; raw phase rates and host wall are retained."
+  ]
+}

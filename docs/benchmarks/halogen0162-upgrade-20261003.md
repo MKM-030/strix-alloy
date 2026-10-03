@@ -310,3 +310,7 @@ Eight added reader regression tests expose the expected retry/delegation failure
 - [x] Complete late pristine-stock cold confirmation and decline tuned kernel promotion after its screening advantage disappears; no tuned kernel finalist is selected.
 - [x] Validate the focused Off/Exact retained cells through a new derived receipt, preserve the original failed parent aggregation, and retain the combined deployment scope.
 - [x] Record stock/cache-Off selection, uncertainty, ordinary-stop lifecycle proof and reproducible public evidence; no tuned kernel or optional Exact recipe is promoted.
+
+## Later occupied-context follow-up
+
+At the user's later request, [128K and 260K synthetic measurements](halogen0162-long-context-20261003.md) were run on commit `2bb5642f266dae3030ab95b2ca18d033da73be33`, after the reader changes described above. This separate follow-up preserves the original upgrade measurements and records per-workload MTP acceptance.
