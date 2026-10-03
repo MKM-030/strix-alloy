@@ -41,7 +41,7 @@ class PrefillLookupTests(unittest.TestCase):
         self.assertIn('--prompt-lookup',self.tune(source)['engine']['command'])
         self.assertNotIn('--prompt-lookup',self.tune(source,prompt_lookup=False)['engine']['command'])
     def test_bad_values_and_backend_confusion_rejected(self):
-        for value in (0, True, 1.5, '8192', 16384):
+        for value in (0, True, 1.5, '8192', 65536):
             with self.subTest(value=value),self.assertRaises(ValueError):
                 self.tune(self.profile(),prefill_chunk=value)
         source=self.profile(); source['backend']['context']=4096

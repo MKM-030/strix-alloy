@@ -3,7 +3,9 @@ import argparse
 import copy
 import json
 from pathlib import Path
-from controller import memory_reserve_gib, validate_engine
+from controller import (halogen_draft_arguments, halogen_kernel_arguments, halogen_kernel_module,
+                        memory_reserve_gib, validate_engine,
+                        validate_halogen_launcher_controls)
 
 
 def replace_option(args, flag, value):
@@ -17,19 +19,23 @@ def replace_option(args, flag, value):
 
 
 def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
-         prefill_chunk=None, prompt_lookup=None, cache_disk=None, lookup_workload=None):
+         prefill_chunk=None, prompt_lookup=None, cache_disk=None, lookup_workload=None,
+         prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None):
     if type(draft_tokens) is not int or draft_tokens not in (1, 2, 3):
         raise ValueError('Draft depth must be an integer from 1 through 3')
     if draft_vocab not in ('full', 'latin') or mtp_policy not in ('length', 'survival'):
         raise ValueError('Unsupported draft policy or vocabulary')
     if prefill_chunk is not None:
         context = source.get("backend", {}).get("context")
-        if type(prefill_chunk) is not int or prefill_chunk not in (2048,4096,8192):
-            raise ValueError("Prefill chunk must be 2048, 4096 or 8192")
+        if type(prefill_chunk) is not int or prefill_chunk not in (2048,4096,8192,16384,32768):
+            raise ValueError("Prefill chunk must be 2048, 4096, 8192, 16384 or 32768")
         if type(context) is not int or prefill_chunk > context:
             raise ValueError("Prefill chunk exceeds the declared context")
     if prompt_lookup is not None and type(prompt_lookup) is not bool:
         raise ValueError("Prompt lookup must be an explicit boolean")
+    if type(prefill_keep_trunk) is not bool: raise ValueError("Prefill keep trunk must be boolean")
+    if admit_ticks is not None and (type(admit_ticks) is not int or not 1 <= admit_ticks <= 1024):
+        raise ValueError("Admit ticks must be 1..1024")
     if lookup_workload not in (None, 'copy', 'prose'):
         raise ValueError('Lookup workload must be copy or prose')
     if lookup_workload is not None:
@@ -54,7 +60,25 @@ def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
             raise ValueError('GUFO prompt lookup does not apply to Halogen')
         engine['draft_tokens'] = draft_tokens
         if prefill_chunk is not None: engine['prefill_chunk'] = prefill_chunk
+        if prefill_keep_trunk: engine['prefill_keep_trunk'] = True
+        if admit_ticks is not None: engine['admit_ticks'] = admit_ticks
+        halogen_draft_arguments(engine)
+        repo=Path(__file__).resolve().parents[1]
+        validate_halogen_launcher_controls(engine,repo)
+        if kernel_controls is not None or 'kernel_controls' in engine:
+            if not isinstance(engine.get('directory'),str):
+                raise ValueError('Kernel controls require a declared Halogen backend')
+            directory=(repo/engine['directory']).resolve()
+            if not directory.is_relative_to((repo/'backends').resolve()):
+                raise ValueError('Halogen backend directory is outside this repository')
+            if kernel_controls is not None:
+                module=halogen_kernel_module(directory)
+                engine['kernel_controls']=(module.parse(kernel_controls) if isinstance(kernel_controls,str)
+                                           else module.validate(kernel_controls))
+            halogen_kernel_arguments(engine,directory)
     elif backend == 'gufo-flash-next' and engine.get('kind') == 'native':
+        if prefill_keep_trunk or admit_ticks is not None or kernel_controls is not None:
+            raise ValueError('Halogen-only prefill controls do not apply to GUFO')
         if engine.get('qualified') is not True:
             raise ValueError('Retain a previously qualified GUFO runtime')
         args = engine['command']
@@ -83,6 +107,10 @@ def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
         mtp_policy=mtp_policy, weight_placement='unchanged-backend-native',
         tuning_evidence='docs/research/halogen-gufo-mtp-20261001.md')
     if prefill_chunk is not None: result['qualification']['prefill_chunk']=prefill_chunk
+    if prefill_keep_trunk: result['qualification']['prefill_keep_trunk']=True
+    if admit_ticks is not None: result['qualification']['admit_ticks']=admit_ticks
+    if 'kernel_controls' in engine:
+        result['qualification']['kernel_controls']=copy.deepcopy(engine['kernel_controls'])
     if prompt_lookup is not None: result['qualification']['prompt_lookup']=prompt_lookup
     if lookup_workload is not None: result['qualification']['lookup_workload']=lookup_workload
     if cache_disk is not None: result['qualification']['cache_disk']=str(cache_disk)
@@ -98,7 +126,10 @@ def main():
     p.add_argument('--draft-tokens', type=int, choices=(1, 2, 3), required=True)
     p.add_argument('--draft-vocab', choices=('full', 'latin'), default='full')
     p.add_argument('--mtp-policy', choices=('length', 'survival'), default='length')
-    p.add_argument('--prefill-chunk',type=int,choices=(2048,4096,8192))
+    p.add_argument('--prefill-chunk',type=int,choices=(2048,4096,8192,16384,32768))
+    p.add_argument('--prefill-keep-trunk',action='store_true')
+    p.add_argument('--admit-ticks',type=int)
+    p.add_argument('--kernel-controls-json',help='Explicit experimental HALOGEN_* numeric controls as a JSON object')
     p.add_argument('--prompt-lookup',action=argparse.BooleanOptionalAction,default=None)
     p.add_argument('--lookup-workload',choices=('copy','prose'))
     p.add_argument('--cache-disk',type=Path)
@@ -109,7 +140,9 @@ def main():
     result = tune(source, draft_tokens=a.draft_tokens,
                   draft_vocab=a.draft_vocab, mtp_policy=a.mtp_policy,
                   prefill_chunk=a.prefill_chunk, prompt_lookup=a.prompt_lookup,
-                  cache_disk=a.cache_disk, lookup_workload=a.lookup_workload)
+                  cache_disk=a.cache_disk, lookup_workload=a.lookup_workload,
+                  prefill_keep_trunk=a.prefill_keep_trunk, admit_ticks=a.admit_ticks,
+                  kernel_controls=a.kernel_controls_json)
     validate_engine(result['engine'], Path(__file__).resolve().parents[1])
     a.output.parent.mkdir(parents=True, exist_ok=True)
     with a.output.open('x', encoding='utf-8') as stream:

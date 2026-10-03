@@ -32,7 +32,7 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
         observed=dict(pool.map(inspect,TARGETS.items()))
     repo=Path(__file__).resolve().parents[1]
-    pins=repo/'backends/halogen-wsl2-0.15.1/profiles/release.json'
+    pins=repo/'backends/halogen-wsl2-0.16.2/profiles/release.json'
     report={'checked_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'installed_backend_pin':json.loads(pins.read_text()) if pins.exists() else None,
             'upstreams':observed,'driver_policy':'Check the official AMD release notes; updates are separate controlled A/B tests, never startup actions.',

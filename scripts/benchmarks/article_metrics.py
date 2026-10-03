@@ -8,6 +8,18 @@ def checked_profile_hash(state, profile_path):
         raise ValueError('Managed run does not match the selected profile bytes')
     return actual
 
+def halogen_backend_directory(repo, profile):
+    """Use the managed profile's installed package for guest clocks and state."""
+    engine = profile.get('engine', {})
+    directory = engine.get('directory')
+    if engine.get('kind') != 'halogen' or not isinstance(directory, str) or not directory:
+        raise ValueError('A managed Halogen backend directory is required')
+    repo = Path(repo).resolve()
+    backend = (repo / directory).resolve()
+    if not backend.is_relative_to((repo / 'backends').resolve()):
+        raise ValueError('Halogen backend directory is outside this repository')
+    return backend
+
 def normalized_seconds(ttft,decode_tps):
     if not all(math.isfinite(x) for x in (ttft,decode_tps)) or ttft<0 or decode_tps<=0:
         raise ValueError('Valid first-token time and positive decode rate required')

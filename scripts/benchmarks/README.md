@@ -1,7 +1,8 @@
 # Reproduce the Halogen capacity benchmarks
 
-These scripts measure the authenticated local Halogen 0.15.1 backend, not arbitrary
-engines. They preserve raw engine timings and independently measured Windows/WSL
+The original capacity examples below target the authenticated local Halogen 0.15.1
+backend. The later managed-client sections also cover the pinned 0.16.2 backend.
+They preserve raw engine timings and independently measured Windows/WSL
 clock intervals. Calibrated phase rates are derived approximations, not engine speedups.
 They do not change clock synchronization or kernel math.
 
@@ -252,3 +253,139 @@ unsupported or malformed logprob response is recorded as unavailable.
 repetition, including cross-mode serial/MTP comparisons. It refuses different
 harness/tokenizer revisions, input hashes and token counts, and records output
 hash drift; the ordered matrix invokes it after collecting candidate quality.
+
+## Three-turn agent recording and matched comparison
+
+`halogen_agent_bench.py` records an already READY managed Halogen profile. It never
+starts, stops, swaps or clears an engine. Use the existing server Python environment
+with `tokenizers` available, the reviewed profile/tokenizer bytes, and the current
+managed controller run ID. The client enforces the matching profile/run identity
+and 18 GiB host physical/commit reserve. All raw paths must be under `server/.local`.
+
+```powershell
+$Py = '.\server\.local\venv\Scripts\python.exe'
+$Profile = '.\server\.local\upgrade0162\stock.json' # Prepared, reviewed local profile.
+$Tokenizer = '.\server\.local\upgrade0162\tokenizer.json'
+$Vendor = '.\server\.local\upgrade0162\vendor' # Existing tokenizers 0.23.2 folder.
+$env:PYTHONPATH = (Resolve-Path $Vendor).Path
+$RunId = '<READY managed controller run ID>'
+$ProfileSha = (Get-FileHash $Profile -Algorithm SHA256).Hash.ToLowerInvariant()
+$TokenizerSha = (Get-FileHash $Tokenizer -Algorithm SHA256).Hash.ToLowerInvariant()
+$AgentOut = '.\server\.local\agent-control-new'
+& $Py -B .\scripts\benchmarks\halogen_agent_bench.py run `
+  --profile $Profile --profile-sha256 $ProfileSha --run-id $RunId `
+  --tokenizer $Tokenizer --tokenizer-sha256 $TokenizerSha `
+  --mode serial --reps 3 --max-tokens 256 --out $AgentOut
+```
+
+These local profile/tokenizer/vendor paths refer to the prepared October 3 setup;
+substitute the matching reviewed local files when reproducing elsewhere. A vendored
+tokenizer package must be on `PYTHONPATH`; the server venv alone does not provide it
+in this setup. The command neither downloads a dependency nor prepares a profile.
+
+If the reviewed local vendor folder is absent, obtain the same pinned tokenizer
+package in a new isolated folder, then use that folder for `PYTHONPATH`:
+
+```powershell
+$Vendor = Join-Path (Get-Location) ('server\.local\agent-vendor-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+& $Py -m pip install --target $Vendor --only-binary=:all: --no-deps 'tokenizers==0.23.2'
+$env:PYTHONPATH = (Resolve-Path $Vendor).Path
+& $Py -B -c "import tokenizers; print(tokenizers.__version__)"
+```
+
+This setup command retrieves the tokenizer library; the matching tokenizer JSON
+and reviewed managed profile must already be supplied locally. Retain the package
+version and its installation provenance with the raw recording.
+
+The first run snapshots the public repository sources and constructs a deterministic
+shared system prefix of at least 8192 tokenizer text tokens. The three turns request
+a function edit, two tests after an explicitly synthetic file/test-report payload,
+and a follow-up function edit. Three repetitions mean nine measured calls, with no
+separate warmup. The next turn retains the complete actual assistant message,
+including any reasoning fields. Actual API input counts include chat framing and
+are recorded separately from local text counts.
+
+For a speculative or cache candidate, use its reviewed profile pins and READY run
+ID, a fresh output directory, and both `--workload "$AgentOut\workload"` and
+`--control $AgentOut`. Reusing the immutable workload prevents changed repository
+snapshots from changing the comparison. For an Off/Exact/Flexible timing series,
+hold prefill chunk and token arena explicitly at 32768 across all three profiles;
+otherwise inherited chunk behavior is not controlled by the comparison.
+The client records hits and misses equally and does not enforce cold requests.
+The published fixed-32768 Exact run recorded zero hits; its passing checks therefore
+do not establish correctness after an Exact warm hit. A comparison with chunk unset
+must separately retain the effective engine behavior and its combined deployment scope.
+
+An offline comparison requires no live engine:
+
+```powershell
+& $Py -B .\scripts\benchmarks\halogen_agent_bench.py compare `
+  --control $AgentOut --candidate '.\server\.local\agent-candidate-new' `
+  --out '.\server\.local\agent-comparison-new.json'
+```
+
+Inspect `summary.json` for both `passed_execution` and `passed_quality`, plus the
+comparison when supplied. Execution success alone does not establish code quality.
+`length` outputs are incomplete. Function outputs use bounded restricted grading;
+the test turn checks the required straight-line AST shape without running pytest.
+This is a small synthetic coding fixture, not an Aider exercise result. Comparisons
+require matching harness/workload/tokenizer identities and retain input/output,
+actual token-count and finish-reason drift. Draft/cache counters remain unknown
+when absent. Per-call host memory samples are not VRAM peaks.
+
+## Functional, strict-format and first-token quality gate
+
+Run `quality_gate.py` separately on the same READY managed profile, with a new
+output directory. `--structured-json` constrains only the JSON/tool-JSON cases:
+
+```powershell
+& $Py -B .\scripts\benchmarks\quality_gate.py `
+  --profile $Profile --run-id $RunId --mode serial --structured-json `
+  --out '.\server\.local\quality-control-new'
+```
+
+Repeat with the candidate profile/run ID and `--control` pointing to the control's
+`quality.json`; the suite revision and structured policy must match. The ten checks
+separate functional success from strict formatting and include code, multilingual
+responses, long-context retrieval, memory and interleaved state checks. Keep real
+strict-format failures, including correct JSON wrapped in unwanted Markdown.
+
+When supported, separate one-token requests compare exposed top-N probabilities
+(top 5 on the pinned 0.16.2 API). This is a target-model prefill proxy, not full-logit
+or MTP draft-logit equivalence. Grammar-masked JSON cases omit that incompatible
+probe and record it as unavailable. Auxiliary/probe/repetition calls contribute to
+the recorded host-memory minimum. See the [0.16.2 report](../../docs/benchmarks/halogen0162-upgrade-20261003.md)
+for preserved harness/API failures and the current qualification status.
+
+## Research-only standalone n-gram extraction
+
+`halogen_ngram_extract.py` copies the reviewed lookup tensor into a canonical
+single-entry HGN v2 file without model execution or tensor conversion. No real
+large-table extraction has been completed in the 2026-10-03 investigation; fixture
+tests do not establish a deployed model variant or measured inference performance.
+
+The CLI accepts only the pinned 124068083904-byte w4b source with SHA256
+`9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6`,
+the reviewed `layers.1.ple.ngram_embedding.weight` storage/shape, and a previously
+reviewed `bounded_hash.py` receipt from the same host/filesystem. That receipt must
+match the complete current source file identity; copying a receipt between Windows
+and WSL does not supply the required identity. Output and receipt must be new files
+in existing directories, with enough space for the 51200246144-byte output.
+
+```powershell
+# Research invocation only; use the reviewed source and same-host checksum receipt.
+$Source = 'C:\Research\reviewed-w4b.hgn'
+$Receipt = 'C:\Research\reviewed-w4b.hash.json'
+$Extracted = 'C:\Research\ngram-standalone-new.hgn'
+& $Py -B .\scripts\benchmarks\halogen_ngram_extract.py $Source $Extracted `
+  --source-receipt $Receipt --verify-xor
+```
+
+Reads are bounded to 8 MiB. Payload and full output SHA256 are computed during the
+copy; source/output identities are rechecked before the receipt is published. XOR32
+is checked when NumPy is available, and `--verify-xor` requires it for this large
+payload. Omitting the flag can leave XOR verification unavailable, which the receipt
+records explicitly. The default receipt path is `<output>.receipt.json`; `--receipt`
+selects another new path. The script refuses existing outputs, source/output aliases,
+parent traversal and symlink/reparse paths. Generated receipts contain private paths
+and must be sanitized before publication.

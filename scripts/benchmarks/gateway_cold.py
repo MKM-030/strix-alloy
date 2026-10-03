@@ -4,7 +4,7 @@ from pathlib import Path
 import aiohttp
 from article_metrics import (validate_backend,backend_validation_finished,benchmark_input_sizes,
                              calibrated_prompt,cold_sample,memory_snapshot,acceptance,verified_prompt,
-                             checked_profile_hash)
+                             checked_profile_hash,halogen_backend_directory)
 from clock_probe import ClockProbe
 import sys
 P=argparse.ArgumentParser(description=__doc__)
@@ -24,10 +24,11 @@ if not a.output.resolve().is_relative_to((R/'server/.local').resolve()):
     raise ValueError('Raw benchmark output must stay under server/.local')
 a.output.mkdir(parents=True,exist_ok=False)
 manifest_path=a.prompts/'manifest.json'
-manifest=json.loads(manifest_path.read_text(encoding='utf-8')) if manifest_path.exists() else None
+input_manifest=json.loads(manifest_path.read_text(encoding='utf-8')) if manifest_path.exists() else None
+profile=json.loads(a.profile.read_text(encoding='utf-8-sig'))
 key=a.token_file.read_text(encoding='ascii').strip();clock=None;rows=[]
 if a.backend.startswith('halogen'):
-    backend=R/'backends/halogen-wsl2-0.15.1'
+    backend=halogen_backend_directory(R,profile)
     machine=json.loads((backend/'.local/machine.json').read_text())
     clock=ClockProbe(machine['distro'],machine['user'])
 async def run():
@@ -47,12 +48,12 @@ async def run():
         if state.get('minimum_reserve_gib',0)<18:
             raise ValueError('Benchmark requires an isolated profile with an 18 GiB reserve')
         if clock:
-            manifest=json.loads((Path(inner['attempt'])/'manifest.json').read_text())
-            if manifest['environment']['HALOGEN_PROMPT_CACHE']!='0':raise ValueError('Cold controls require cache Off')
+            engine_manifest=json.loads((Path(inner['attempt'])/'manifest.json').read_text())
+            if engine_manifest['environment']['HALOGEN_PROMPT_CACHE']!='0':raise ValueError('Cold controls require cache Off')
         (a.output/'identity.json').write_text(json.dumps({'backend':a.backend,'context':a.context,
             'managed_run_id':run_id,'halogen_run_id':inner['run_id'] if clock else None,
-            'profile_sha256':profile_sha256,'profile':json.loads(a.profile.read_text(encoding='utf-8-sig')),
-            'input_manifest_sha256':hashlib.sha256(manifest_path.read_bytes()).hexdigest() if manifest else None,
+            'profile_sha256':profile_sha256,'profile':profile,
+            'input_manifest_sha256':hashlib.sha256(manifest_path.read_bytes()).hexdigest() if input_manifest else None,
             'client_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},indent=2))
         async def query(body):
             current=json.loads((R/'server/.local/current.json').read_text())
@@ -93,7 +94,7 @@ async def run():
             return value,wall,cal,{'before':memory_before,'after':memory_snapshot(after),
                                     'observed_minimum':minimum}
         for size in sizes:
-            prompt=verified_prompt(a.prompts/f'prompt-{size}-prose.txt',size,manifest)
+            prompt=verified_prompt(a.prompts/f'prompt-{size}-prose.txt',size,input_manifest)
             base={'model':model,'messages':[{'role':'user','content':prompt}],
                   'temperature':0,'seed':1,'stream':False,'cache_prompt':False,
                   'enable_thinking':False,'reasoning_effort':'none',

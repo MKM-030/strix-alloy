@@ -34,11 +34,11 @@ def make_prompt(size, tokenizer=None, task='retrieval'):
                                         add_special_tokens=False).ids)
         low, high = 0, size
         while low < high:
-            middle = (low + high + 1) // 2
-            if count(middle) <= size:
-                low = middle
+            midpoint = (low + high + 1) // 2
+            if count(midpoint) <= size:
+                low = midpoint
             else:
-                high = middle - 1
+                high = midpoint - 1
         repetitions = low
     return assemble(repetitions)
 
@@ -113,6 +113,9 @@ def compare_top_logprobs(control, candidate):
 def compare_quality(control, candidate, tolerance=0.05):
     if control.get('backend') and candidate.get('backend') and control['backend'] != candidate['backend']:
         raise ValueError('Compare configurations of the same backend only')
+    if any(control.get(key) != candidate.get(key)
+           for key in ('grading_policy', 'structured_json')):
+        raise ValueError('Quality grading or structured JSON policy differs')
     previous = {row['name']: row for row in control['rows']}
     current = {row['name']: row for row in candidate['rows']}
     if previous.keys() != current.keys():
@@ -124,16 +127,21 @@ def compare_quality(control, candidate, tolerance=0.05):
     failures += sorted(name + ':control_failed' for name, row in previous.items()
                        if not row.get('passed'))
     proxies = {}
+    probability_failures = []
     for name in previous:
         proxy = compare_top_logprobs(previous[name].get('top_logprobs'),
                                      current[name].get('top_logprobs'))
         if proxy is not None:
             proxies[name] = proxy
             if proxy['max_abs_delta'] > tolerance:
-                failures.append(name + ':top_n')
+                probability_failures.append(name + ':top_n')
         elif previous[name].get('top_logprobs') or current[name].get('top_logprobs'):
-            failures.append(name + ':logprob_unavailable')
+            probability_failures.append(name + ':logprob_unavailable')
+    failures += probability_failures
     return {'passed': not mismatched and not failures,
+            'parity_passed': not mismatched and not probability_failures,
+            'functional_passed': all(row.get('functional_passed', row.get('passed', False))
+                                     for row in list(previous.values()) + list(current.values())),
             'mismatched': mismatched, 'failures': sorted(failures),
             'logprob_proxy': proxies, 'tolerance': tolerance,
             'comparison_kind': 'deterministic_output_and_optional_top_n_proxy_not_full_logits'}
@@ -166,7 +174,11 @@ def validate_python_function(source):
         isinstance(node, _ALLOWED) and
         (not isinstance(node, ast.Name) or not node.id.startswith('__')) and
         (not isinstance(node, ast.Call) or
-         (isinstance(node.func, ast.Name) and node.func.id == 'sum')) and
+         (isinstance(node.func, ast.Name) and
+          (node.func.id == 'sum' or
+           (node.func.id == 'isinstance' and len(node.args) == 2 and not node.keywords and
+            isinstance(node.args[0], ast.Name) and isinstance(node.args[1], ast.Name) and
+            node.args[1].id == 'int')))) and
         (not isinstance(node, ast.Constant) or
          type(node.value) in (int, bool, type(None)))
         for node in nodes)

@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "version": "0.16.1",
+  "upstream_commit": "6ff580c0f37513da2c4aae984ba89291efe08af6",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:089701309a7ed9f70c91daca6a66080828e032788d4e6d0da4d427587387ede5",
+  "engine_sha256": "3829caf926da67bf1567e5f93a05f3fd925a7e08b52867b44ca3b3332915f907",
+  "entrypoint_sha256": "e65480cd7dcd8ca1d3242a75972fef0acccbdf7b3489bb876b03e2b945ce2685",
+  "adapted_entrypoint_sha256": "b87cfa5a9c6b88dd7d0fa7d6039d96dec2554df0e10f80e24fb617dda9262da9",
+  "bridge_sha256": "82f706e7f4629070e8fe2f1f081d6a5bd040ec16ecaa17c6102f50a56b006a9f",
+  "private_sha256": "f567e21d5c7293ce75f62d36e57bf65915640c11fb2c753b39757d17b3ed034d",
+  "probe_sha256": "6a8ec9574a9e982ad67af8bfd15c051a8305c9e8e6d2e9c48aac10ba2286072f",
+  "hip_header_sha256": "a075feec4c32d01b35dfe97e01ef7b55aa62bac7b7590ca7cefc2564668aa6a2",
+  "profiles": [
+    "Trace4k",
+    "Single4k",
+    "Serve4k"
+  ],
+  "context": 4096,
+  "slots": 1,
+  "windows_admission_physical_gib": 45,
+  "windows_admission_commit_gib": 117,
+  "windows_runtime_physical_gib": 12,
+  "windows_runtime_commit_gib": 12,
+  "serve_seconds_range": [
+    30,
+    300
+  ],
+  "status": "experimental WSL2 adaptation of Halogen 0.16.1; v2 + performance controls; official Linux NPU unavailable under WSL2",
+  "service": {
+    "default_context": 129024,
+    "context_range": [
+      4096,
+      262144
+    ],
+    "slots": 1,
+    "default_serve_seconds": 0,
+    "checkpoint": "qwen38-flash-next-w4b.hgn",
+    "v2_checkpoint_qualified": false,
+    "checkpoint_options": [
+      "w4b",
+      "v2"
+    ],
+    "v2_expected_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687"
+  },
+  "v2_bridge_sha256": "9f2cdb4a7f4c19c31081593480d184d640c598cc55665071fb4b23733e3690b3"
+}

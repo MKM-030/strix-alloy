@@ -9,6 +9,6 @@ class PrefillForwardingTests(unittest.TestCase):
     def test_prefill_without_draft_override(self):
         self.assertEqual(halogen_draft_arguments({'prefill_chunk':4096}),['-PrefillChunk','4096'])
     def test_bad_chunk_is_not_silently_ignored(self):
-        for value in (None,True,0,'8192',16384):
+        for value in (None,True,0,'8192',65536):
             with self.subTest(value=value),self.assertRaises(ValueError):
                 halogen_draft_arguments({'prefill_chunk':value})

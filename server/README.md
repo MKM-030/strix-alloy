@@ -7,7 +7,12 @@ model execution, transfer a live KV cache between engines, or silently switch mo
 
 ## Current availability
 
-Halogen 0.15.1 and a locally qualified GUFO Windows profile are implemented.
+The managed Halogen generator now selects the experimental
+[0.16.2 WSL package](../backends/halogen-wsl2-0.16.2/README.md), using the existing
+v2 checkpoint, one slot, prompt cache Off and an 18 GiB physical/commit reserve.
+New live upgrade evidence is recorded separately from historical 0.15.1 results
+in the [0.16.2 report](../docs/benchmarks/halogen0162-upgrade-20261003.md).
+A locally qualified GUFO Windows profile is also implemented.
 GUFO must use the [pinned build/qualification workflow](../backends/gufo-windows/README.md);
 its current qualified build uses TheRock 10.2.0a20260930 with the pinned numerical compatibility patch.
 The current GUFO profile supports the tested Chat Completions route and 262144 capacity.
@@ -20,8 +25,9 @@ Install the engine first using the version-specific backend guide. Then use Powe
 .\server\Start.ps1 -Backend Halogen -Checkpoint v2 -ContextSize 262144
 ```
 
-Defaults: v2, 129024 context positions, one active request, cache Off, continuous
-serving. `-ContextSize` is allocated capacity, not the length of every input prompt.
+Defaults: Halogen 0.16.2, v2, 129024 context positions, one active request,
+cache Off, continuous serving and an 18 GiB physical/commit reserve.
+`-ContextSize` is allocated capacity, not the length of every input prompt.
 The controller refuses to adopt an existing engine: stop any standalone backend and
 confirm its cleanup before using this launcher. A second managed instance is locked out.
 
@@ -49,8 +55,8 @@ committed configuration, screenshots or benchmark exports.
 Changing checkpoint, context or engine is an explicit stop/start operation. New requests
 during shutdown are rejected; existing streams are drained with a bounded shutdown
 period. `-PromptCache Off|Exact|Flexible` maps to Halogen's 0/1/2 modes. Off is the cold
-benchmark control and the default. The current Exact-cache experiment reported no
-reused tokens, so no warm-cache speed benefit is qualified by this release. Exact/Flexible must be benchmarked separately as warm-cache workloads;
+benchmark control and the default. Earlier Exact/Flexible cache measurements
+used 0.15.1 and do not qualify 0.16.2 behavior. Exact/Flexible must be benchmarked separately as warm-cache workloads;
 do not publish a cached-prefix rate as cold PP512 or PP2048 performance.
 
 Only an explicitly configured native executable with a matching SHA-256 and qualified
@@ -81,7 +87,7 @@ The backend keeps its own rotating engine logs and independent memory/lease guar
 
 ```powershell
 .\server\.local\venv\Scripts\python.exe -B -m unittest discover -s server/tests -v
-python -B -m unittest discover -s backends/halogen-wsl2-0.15.1/tests -v
+python -B -m unittest discover -s backends/halogen-wsl2-0.16.2/tests -v
 python .\server\check_updates.py
 ```
 
@@ -91,11 +97,15 @@ The policy is latest **qualified** versions: pin candidates, reproduce builds, c
 numerics and lifecycle, run matched benchmarks, then promote with rollback available.
 
 See the [research and implementation review](../docs/integration/unified-review-20260930.md)
-and [measured checkpoint comparison](../docs/benchmarks/halogen0151-v2-262k-20260930.md).
+and the [historical 0.15.1 checkpoint comparison](../docs/benchmarks/halogen0151-v2-262k-20260930.md).
+The [0.16.2 upgrade report](../docs/benchmarks/halogen0162-upgrade-20261003.md)
+contains evidence for the current experimental package; source-test success alone
+does not establish model quality or performance.
 
 ## Measured prefix reuse
 
-`-PromptCache Exact` is an opt-in for byte-identical cold/warm behavior. Repeated
+The following measurements describe Halogen 0.15.1. `-PromptCache Exact` is an
+opt-in for byte-identical cold/warm behavior. Repeated
 system/document layouts were measured successfully with both serial and MTP;
 the original exactly-8192-token case still missed in Exact mode. Flexible mode
 hit that case but does not offer the same general reproducibility contract.
@@ -131,7 +141,8 @@ Model ID: `projfix-flash-next`. Registration and decode-mode selection are separ
 ## Optional stricter memory reserve
 
 A local controller profile may set `minimum_reserve_gib` to a finite numeric value
-from 12 through 128. Omitting it keeps the existing 12 GiB policy; smaller values,
+from 12 through 128. Newly generated Halogen profiles explicitly request 18 GiB.
+Omitting it from a legacy profile keeps the existing 12 GiB policy; smaller values,
 booleans, strings and non-finite values are rejected before launching an engine.
 Both physical availability and commit headroom use the selected threshold.
 The running state reports that value. This is a polled guard, not an allocator
@@ -160,3 +171,22 @@ Existing `Start.ps1` defaults do not select these profiles automatically. Stop
 normally, confirm STOPPED, then start the new profile with `controller.py run`.
 Read [measured effects and limits](../docs/research/halogen-gufo-mtp-20261001.md)
 before treating a tuning option as a speed or general-quality guarantee.
+
+For the 0.16.2 Halogen package, isolated profiles also accept `--prefill-chunk`
+2048/4096/8192/16384/32768 (bounded by context), the v2-only
+`--prefill-keep-trunk`, and `--admit-ticks` 1..1024. The ordinary managed
+`Start.ps1` keeps the baseline defaults; use `draft_profiles.py` and the explicit
+controller profile path for these experiments. Linux NPU support is unavailable
+through the WSL adaptation.
+
+`--kernel-controls-json` accepts an explicit JSON object of supported numeric
+`HALOGEN_*` controls and writes it to `engine.kernel_controls`. For example,
+`{"HALOGEN_DN_SCAN":1}` selects one DeltaNet ablation. The controller validates
+these controls again and the backend records their effective environment values.
+The exact allowlist and interface budgets are in the selected backend's
+[`kernel_controls.py`](../backends/halogen-wsl2-0.16.2/scripts/kernel_controls.py).
+Unknown names, duplicate keys, booleans, paths and non-integer values are rejected.
+Counter bounds describe this experimental interface, not proven upstream ranges.
+Use the [0.16.2 report](../docs/benchmarks/halogen0162-upgrade-20261003.md) for
+measured comparisons and qualification; exposing a control does not select it as
+a serving default.

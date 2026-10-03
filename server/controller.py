@@ -4,11 +4,13 @@ import asyncio
 import contextlib
 import ctypes
 import hashlib
+import importlib.util
 import json
 import logging
 import math
 import os
 from pathlib import Path
+import re
 import signal
 import subprocess
 import sys
@@ -85,7 +87,8 @@ def available_gib():
 def halogen_draft_arguments(engine):
     args=[]
     for key,flag,allowed in (("draft_tokens","-DraftTokens",(1,2,3)),
-                             ("prefill_chunk","-PrefillChunk",(2048,4096,8192))):
+                             ("prefill_chunk","-PrefillChunk",(2048,4096,8192,16384,32768)),
+                             ("admit_ticks","-AdmitTicks",tuple(range(1,1025)))):
         if key not in engine: continue
         value=engine[key]
         if type(value) is not int or value not in allowed:
@@ -93,7 +96,53 @@ def halogen_draft_arguments(engine):
         if key=="prefill_chunk" and "context" in engine and value>engine["context"]:
             raise ValueError("Prefill chunk exceeds context")
         args += [flag,str(value)]
+    if 'prefill_keep_trunk' in engine:
+        if engine['prefill_keep_trunk'] is not True: raise ValueError('Invalid Halogen option: prefill_keep_trunk')
+        if engine.get('checkpoint')!='v2': raise ValueError('Prefill keep trunk requires the v2 checkpoint')
+        args += ['-PrefillKeepTrunk']
     return args
+
+
+def validate_halogen_launcher_controls(engine, repo):
+    extended_chunk=engine.get('prefill_chunk') in (16384,32768)
+    if not (extended_chunk or 'prefill_keep_trunk' in engine or 'admit_ticks' in engine):
+        return
+    if not isinstance(engine.get('directory'),str):
+        raise ValueError('Halogen controls require a declared backend launcher')
+    directory=(repo/engine['directory']).resolve()
+    launcher=directory/'Start.ps1'
+    if not directory.is_relative_to((repo/'backends').resolve()) or not launcher.is_file():
+        raise ValueError('Halogen backend launcher is unavailable')
+    # Inspect declarations without executing the launcher. Legacy packages do not
+    # accept these newer controls, even though their basic managed path is valid.
+    script=launcher.read_text(encoding='utf-8-sig')
+    match=re.search(r'\bparam\s*\((.*?)^\)',script,re.S|re.M|re.I)
+    parameters=match.group(1) if match else ''
+    if extended_chunk:
+        match=re.search(r'\[ValidateSet\(([^)]*)\)\]\s*\[int\]\s*\$PrefillChunk\b',parameters,re.I)
+        values={value.strip() for value in match.group(1).split(',')} if match else set()
+        if str(engine['prefill_chunk']) not in values:
+            raise ValueError('Halogen launcher does not support the selected prefill chunk')
+    for key,kind,name in (('prefill_keep_trunk','switch','PrefillKeepTrunk'),
+                          ('admit_ticks','int','AdmitTicks')):
+        if key in engine and not re.search(r'\['+kind+r'\]\s*\$'+name+r'\b',parameters,re.I):
+            raise ValueError('Halogen launcher does not support '+key)
+
+
+def halogen_kernel_module(directory):
+    source=directory/'scripts/kernel_controls.py'
+    if source.is_symlink() or not source.is_file():
+        raise ValueError('Selected backend has no managed kernel-controls support')
+    spec=importlib.util.spec_from_file_location('alloy_halogen_kernel_controls',source)
+    module=importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def halogen_kernel_arguments(engine, directory):
+    if 'kernel_controls' not in engine: return []
+    controls=halogen_kernel_module(directory).validate(engine['kernel_controls'])
+    return ['-KernelControlsJson',json.dumps(controls,sort_keys=True,separators=(',',':'))]
 
 
 def validate_engine(engine, repo):
@@ -107,7 +156,11 @@ def validate_engine(engine, repo):
         if type(engine.get('context')) is not int or not 4096<=engine['context']<=262144:
             raise ValueError('Invalid context')
         if not (directory/'Start.ps1').is_file(): raise ValueError('Backend launcher missing')
+        validate_halogen_launcher_controls(engine,repo)
+        halogen_kernel_arguments(engine,directory)
         return directory
+    if 'kernel_controls' in engine:
+        raise ValueError('Managed kernel controls apply only to Halogen')
     if engine.get('kind')!='native' or engine.get('qualified') is not True:
         raise ValueError('Native backend requires an explicitly qualified local profile')
     executable=Path(engine['command'][0])
@@ -154,6 +207,7 @@ class Engine:
                      '-Checkpoint',self.config['checkpoint'],'-ContextSize',str(self.config['context']),
                      '-PromptCache',self.config.get('prompt_cache','Off')]
             command+=halogen_draft_arguments(self.config)
+            command+=halogen_kernel_arguments(self.config,self.directory)
         else:
             command=list(self.config['command'])
             if self.config.get('api_key_from_backend_token'):

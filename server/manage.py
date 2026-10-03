@@ -7,7 +7,7 @@ import sys
 from controller import atomic,control
 ROOT=Path(__file__).resolve().parent
 REPO=ROOT.parent
-PACKAGE=REPO/'backends/halogen-wsl2-0.15.1'
+PACKAGE=REPO/'backends/halogen-wsl2-0.16.2'
 
 
 def make_profile(backend, checkpoint, context, prompt_cache='Off'):
@@ -30,11 +30,11 @@ def make_profile(backend, checkpoint, context, prompt_cache='Off'):
         raise ValueError('Install and qualify the Halogen backend before generating a gateway profile')
     settings=json.loads(machine.read_text(encoding='utf-8-sig'))
     identifier='halogen-'+checkpoint
-    return {'schema':1,'token_file':str(token),'backend_token_file':str(token),
+    return {'schema':1,'minimum_reserve_gib':18,'token_file':str(token),'backend_token_file':str(token),
         'concurrency':1,'body_bytes':16*1024**2,'request_seconds':1800,
         'backend':{'identifier':identifier,'upstream':'http://127.0.0.1:8731',
             'model':'halogen-qwen3.8-flash-next','checkpoint':checkpoint,'context':context,
-            'expected':{'status':'ok','version.api':'0.15.1','version.engine':'0.15.1',
+            'expected':{'status':'ok','version.api':'0.16.2','version.engine':'0.16.2',
                         'version.match':True,'context':context,'slot_ctx':context,
                         'kv_pool_positions':context,'slots':1},
             'routes':['/v1/chat/completions','/v1/completions','/v1/responses',

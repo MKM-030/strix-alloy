@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "version": "0.16.2",
+  "upstream_commit": "main-2026-10-03",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+  "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+  "entrypoint_sha256": "ae2face04d9fcaaab3df0cd6a3cab047c6acd6322bc69e8d3d632632508b8f1b",
+  "adapted_entrypoint_sha256": "e68722b13e6d5f5cb43fbda89f3ea3c92c13be5a8da96113c91b4cfee08a1033",
+  "bridge_sha256": "fdcbc42c1876efbd08154176ee692c89c96470a42fdbd6b91aa98cca2bcfd014",
+  "private_sha256": "f567e21d5c7293ce75f62d36e57bf65915640c11fb2c753b39757d17b3ed034d",
+  "probe_sha256": "789b9fd10edfa70923cb19c9216049488437fb7a265b69f77e9acc3c23745e53",
+  "hip_header_sha256": "a075feec4c32d01b35dfe97e01ef7b55aa62bac7b7590ca7cefc2564668aa6a2",
+  "profiles": [
+    "Trace4k",
+    "Single4k",
+    "Serve4k"
+  ],
+  "context": 4096,
+  "slots": 1,
+  "windows_admission_physical_gib": 45,
+  "windows_admission_commit_gib": 117,
+  "windows_runtime_physical_gib": 12,
+  "windows_runtime_commit_gib": 12,
+  "serve_seconds_range": [
+    30,
+    300
+  ],
+  "status": "experimental WSL2 adaptation of Halogen 0.16.2; v2 + performance controls; official Linux NPU unavailable under WSL2",
+  "service": {
+    "default_context": 129024,
+    "context_range": [
+      4096,
+      262144
+    ],
+    "slots": 1,
+    "default_serve_seconds": 0,
+    "checkpoint": "qwen38-flash-next-w4b.hgn",
+    "v2_checkpoint_qualified": false,
+    "checkpoint_options": [
+      "w4b",
+      "v2"
+    ],
+    "v2_expected_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687"
+  },
+  "v2_bridge_sha256": "baae974d7116d14c21df67e6204459e2c4ba6094c8e2422703c216a7af0b4074",
+  "rocroller_compat_image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:f51a7d81cc6098fb8e30b88da7180117957e7d6828591a78275762c786fd7d74",
+  "rocroller_compat_sha256": "9e35bc339b10da3ab2c6f7afbed0d4a1bb5bb2608bf8e3bb43031cfe654c1975"
+}

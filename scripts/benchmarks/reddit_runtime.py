@@ -68,7 +68,11 @@ class ManagedClient:
         return observed
 
     def call(self, messages, max_tokens, mode, label, *, top_logprobs=False,
-             cold=False):
+             cold=False, response_format=None):
+        if response_format is not None and (
+                self.profile['engine']['kind'] != 'halogen' or
+                response_format != {'type': 'json_object'}):
+            raise ValueError('Only Halogen json_object response format is supported')
         self.assert_identity()
         self.health()
         before = frame()
@@ -97,6 +101,8 @@ class ManagedClient:
             body.update(logprobs=True, top_logprobs=5)
         if cold:
             body['cache_prompt'] = False
+        if response_format is not None:
+            body['response_format'] = dict(response_format)
         started = time.perf_counter()
         worker = threading.Thread(target=sample_memory, daemon=True)
         worker.start()
@@ -139,6 +145,7 @@ class ManagedClient:
                 'text': text, 'sha256': digest(text.encode('utf-8')),
                 'requested_output': max_tokens, 'wall_seconds': wall,
                 'cold_prompt': cold,
+                'response_format': response_format,
                 'usage': usage, 'timings': timings, 'engine_phases': phase,
                 'draft_accounting': draft or None, 'finish_reason': choice.get('finish_reason'),
                 'drafted': drafted, 'accepted': accepted,

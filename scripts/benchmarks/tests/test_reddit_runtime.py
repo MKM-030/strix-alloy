@@ -52,9 +52,14 @@ class RuntimeTests(unittest.TestCase):
                 with patch.object(client, 'request', side_effect=fake_request):
                     row = client.call([{'role': 'user', 'content': 'Reply OK'}],
                                       2, 'serial', 'test', cold=True)
+                    structured = client.call([{'role': 'user', 'content': 'Return JSON'}],
+                        2, 'serial', 'json', response_format={'type': 'json_object'})
                 self.assertEqual(row['usage']['completion_tokens'], 2)
                 self.assertTrue(captured[0]['cache_prompt'] is False)
                 self.assertEqual(captured[0]['drafter'], 'serial')
+                self.assertNotIn('response_format', captured[0])
+                self.assertEqual(captured[1]['response_format'], {'type': 'json_object'})
+                self.assertEqual(structured['response_format'], {'type': 'json_object'})
                 self.assertNotIn('x' * 40, json.dumps(row))
                 state['profile_sha256'] = 'wrong'
                 state_file.write_text(json.dumps(state))
@@ -66,6 +71,17 @@ class RuntimeTests(unittest.TestCase):
         self.assertFalse(judge('tool_json', '{"tool":"lookup","arguments":{"id":43}}'))
         self.assertEqual(evaluate_code('def add_even(values):\n    return sum(x for x in values if x % 2 == 0)')[0], True)
         self.assertEqual(evaluate_code('import os\ndef add_even(values): return 0')[0], False)
+
+    def test_isinstance_integer_filter_is_executed_and_stays_bounded(self):
+        valid = 'def add_even(values):\n    return sum(v for v in values if isinstance(v, int) and v % 2 == 0)'
+        self.assertEqual(evaluate_code(valid), (True, 'unit_tests_exit_0'))
+        wrong = 'def add_even(values):\n    return sum(v for v in values if isinstance(v, int))'
+        self.assertEqual(evaluate_code(wrong), (False, 'unit_tests_exit_1'))
+        for source in (valid.replace('isinstance(v, int)', 'isinstance(v, float)'),
+                       valid.replace('isinstance(v, int)', 'isinstance(v, int, int)'),
+                       valid.replace('isinstance(v, int)', 'eval(v)')):
+            with self.subTest(source=source):
+                self.assertEqual(evaluate_code(source), (False, 'syntax_or_unsafe_ast'))
 
 
 if __name__ == '__main__':
