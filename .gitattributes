@@ -7,3 +7,10 @@ tests/publication/*.py text eol=lf
 tests/publication/*.ps1 text eol=lf
 docs/integration/*.md text eol=lf
 docs/integration/*.json text eol=lf
+
+# Preserve measured benchmark byte hashes across checkout platforms.
+scripts/benchmarks/article_bench.py -text
+scripts/benchmarks/polyglot_tool_bench.py -text
+scripts/benchmarks/polyglot-coding-manifest.json -text
+scripts/benchmarks/render_article_report.py -text
+docs/benchmarks/strix-alloy-article-comparison-20261003.json -text

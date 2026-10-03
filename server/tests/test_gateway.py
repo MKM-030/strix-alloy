@@ -3,7 +3,8 @@ import json
 from pathlib import Path
 import sys
 import unittest
-from aiohttp import web,ClientSession
+from unittest.mock import patch
+from aiohttp import web,ClientSession,ClientTimeout
 from aiohttp.test_utils import TestClient,TestServer
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from gateway import Backend,Gateway
@@ -84,6 +85,34 @@ class GatewayTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(first,b'data: {"text":"first"}\n\n')
         self.assertFalse(self.release.is_set())
         self.release.set(); self.assertEqual(await r.read(),b'data: [DONE]\n\n')
+
+    async def test_slow_nonstream_response_uses_configured_request_budget(self):
+        # Scale long request/read timers so the old 300-second idle cap is 0.3s,
+        # while the configured 1200-second budget is 1.2s. Keep connect/health
+        # timers intact; the request still travels through real HTTP sockets.
+        def accelerated_timeout(*args, **kwargs):
+            for field in ('total', 'sock_read'):
+                if kwargs.get(field, 0) >= 300:
+                    kwargs[field] *= .001
+            return ClientTimeout(*args, **kwargs)
+
+        gateway=Gateway(self.gateway.backend,KEY,BACKEND_KEY,request_seconds=1200)
+        client=TestClient(TestServer(gateway.app,handler_cancellation=True))
+        try:
+            with patch('gateway.aiohttp.ClientTimeout',side_effect=accelerated_timeout):
+                await client.start_server()
+                pending=asyncio.create_task(client.post('/v1/chat/completions',headers=HEADERS,
+                    json={'model':'fixture','hold':True,'stream':False}))
+                await asyncio.wait_for(self.start.wait(),2)
+                await asyncio.sleep(.6)
+                self.release.set()
+                response=await asyncio.wait_for(pending,2)
+                self.assertEqual(response.status,200)
+                self.assertEqual((await response.json())['choices'][0]['message']['content'],'OK')
+                self.assertEqual(gateway.completed,1)
+        finally:
+            self.release.set()
+            await client.close()
 
     async def test_busy_rejects_without_queueing_another_generation(self):
         pending=asyncio.create_task(self.client.post('/v1/chat/completions',headers=HEADERS,

@@ -87,7 +87,7 @@ class Gateway:
         return await handler(request)
 
     async def session_context(self, app):
-        timeout=aiohttp.ClientTimeout(total=self.request_seconds,connect=5,sock_read=300)
+        timeout=aiohttp.ClientTimeout(total=self.request_seconds,connect=5,sock_read=self.request_seconds)
         async with aiohttp.ClientSession(timeout=timeout,trust_env=False,auto_decompress=False) as client:
             self.client=client
             self.last_healthy=0.0

@@ -1,31 +1,67 @@
-Title: Halogen 0.16.2 on Windows/WSL2: fresh 128K and 260K numbers
+Title: Qwen3.8-Flash-Next on my Windows Strix Halo: Halogen 0.16.2, GUFO and PROJFIX
 
-Quick update on my Windows setup. Strix Alloy is now running Halogen 0.16.2 with the v2 weights on my Ryzen AI Max+ 395 / 8060S with 128 GB RAM. I still use Windows as my everyday desktop and run the model through WSL2 in Codex.
+Measured on 3 October 2026: eleven valid timing cells and one PROJFIX reserve failure.
 
-I ended up keeping stock compute settings, MTP depth 2 and prompt cache Off. The shorter prose runs look like this:
+I tried the long-chat layout from [deepu105's comparison](https://www.reddit.com/r/LocalLLM/comments/1wu0m53/benchmarks_best_engine_for_qwen_38flashnext_on/) on my BOSGAME Ryzen AI Max+ 395 / Radeon 8060S: 128 GiB installed memory, Windows 11 Pro, driver 32.0.32015.2008. I didn't record a fixed wattage.
 
-| Input tokens | Cold prefill tok/s | Serial decode tok/s | MTP decode tok/s | MTP acceptance |
-|---:|---:|---:|---:|---:|
-| 8,192 | 1,715 | 35.8 | 47.1 | 60.0% |
-| 16,384 | 1,681 | 35.5 | 45.3 | 56.3% |
+GUFO and PROJFIX run natively on Windows; Halogen uses Ubuntu 24.04 WSL2/Docker with DXG. The weights differ: v2 HGN, Unsloth UD-IQ4_XS, and IQ4_NL-PROJFIX. This compares those setups on my machine; it doesn't isolate engine, quantization or OS effects from the reference post.
 
-Three measured repeats after warmup, with 128 generated tokens. Prefill uses a separate probe.
+Each cell is two three-turn conversations at temperature 1 / top-p .95 / top-k 20, low-effort thinking requested, and a 1536-token answer limit. I used twelve pinned LlamaStash code files plus exact-value fixtures, with ungraded implementation/review follow-ups. 3-turn time is the normalized sum of `TTFT + 1000/decode t/s` per turn, averaged across both conversations. Prefill covers initial requests; regular sampled decode is weighted across all six answers, including reasoning tokens. MTP accept is accepted/proposed draft tokens. Actual wall times and counts are in the report.
 
-I also repeated the synthetic long-context workload from my earlier post, plus a 128K version:
+**64K capacity, 32K initial input — 50% filled**
 
-| Actual input: prefill / decode test | Cold prefill tok/s | MTP decode tok/s | MTP acceptance |
-|---:|---:|---:|---:|
-| 128,034 / 128,048 | 1,621 | 65.4 | 93.9% (1487/1583) |
-| 260,028 / 260,042 | 1,369 | 65.0 | 93.9% (1487/1583) |
+| Engine | Weights | 3-turn time | Prefill t/s | Sampled decode t/s | MTP accept | Retrieval |
+|---|---|---:|---:|---:|---:|---:|
+| Halogen 0.16.2 / WSL2 | v2 HGN + lookup source | 2.17 min | 1010.3 | 30.55 | 83.9% | 14/14 |
+| GUFO / Windows | UD-IQ4_XS + Q8_0 MTP | 2.01 min | 715.7 | 39.63 | 79.8% | 14/14 |
+| PROJFIX / Windows, cache0 | IQ4_NL-PROJFIX + Q8_0 MTP | 3.70 min | 241.7 | 35.51 | 85.2% | 14/14 |
 
-Each long result is one cold request: a 32-token output cap for the prefill probe, and the full 2,048-token answer for decode. Early EOS is retained. One slot, 262,144-token capacity, zero cached input. Rates use the same clock calibration as the short runs; raw engine timings and wall time are in the report.
+**128K capacity, 64K initial input — 50% filled**
 
-The long inputs are repeated filler and the output is predictable numbered paragraphs. This checks speed at depth, not 260K coding quality. Acceptance is accepted/drafted tokens and depends on the task: the separate three-turn coding fixture reached 88.3% (699/792).
+| Engine | Weights | 3-turn time | Prefill t/s | Sampled decode t/s | MTP accept | Retrieval |
+|---|---|---:|---:|---:|---:|---:|
+| Halogen 0.16.2 / WSL2 | v2 HGN + lookup source | 2.44 min | 1011.7 | 37.25 | 85.1% | 16/16 |
+| GUFO / Windows | UD-IQ4_XS + Q8_0 MTP | 2.94 min | 673.3 | 37.23 | 76.7% | 16/16 |
+| PROJFIX / Windows, cache0 | IQ4_NL-PROJFIX + Q8_0 MTP | 5.33 min | 287.1 | 34.13 | 83.7% | 16/16 |
 
-My earlier post used Halogen 0.13.8 with w4b weights. This is 0.16.2 with v2, so the comparison includes both the checkpoint and setup changes. The long decode number covers the whole answer, unlike the old 20-second window.
+**128K capacity, 96K initial input — 75% filled**
 
-I closed the game for these runs and kept the 18 GiB memory reserve enforced.
+| Engine | Weights | 3-turn time | Prefill t/s | Sampled decode t/s | MTP accept | Retrieval |
+|---|---|---:|---:|---:|---:|---:|
+| Halogen 0.16.2 / WSL2 | v2 HGN + lookup source | 2.49 min | 1398.7 | 36.72 | 83.6% | 16/16 |
+| GUFO / Windows | UD-IQ4_XS + Q8_0 MTP | 4.04 min | 632.8 | 33.94 | 73.1% | 16/16 |
+| PROJFIX / Windows, cache0 | IQ4_NL-PROJFIX + Q8_0 MTP | 4.72 min | 507.0 | 34.54 | 85.0% | 16/16 |
 
-[Code and setup](https://github.com/MKM-030/strix-alloy) · [Long-context measurements](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/halogen0162-long-context-20261003.md)
+**256K capacity, 128K initial input — 50% filled**
 
-Thanks again to Peonist AI for Halogen and the engine work. Strix Alloy supplies the Windows/WSL integration.
+| Engine | Weights | 3-turn time | Prefill t/s | Sampled decode t/s | MTP accept | Retrieval |
+|---|---|---:|---:|---:|---:|---:|
+| Halogen 0.16.2 / WSL2 | v2 HGN + lookup source | 3.25 min | 1248.2 | 33.90 | 85.0% | 16/16 |
+| GUFO / Windows | UD-IQ4_XS + Q8_0 MTP | 5.10 min | 611.1 | 32.45 | 73.1% | 16/16 |
+| PROJFIX / Windows, cache0 | IQ4_NL-PROJFIX + Q8_0 MTP | Reserve failure | — | — | — | Not scored |
+
+GUFO is quicker at 32K input; Halogen has the shorter conversation at larger inputs among completed results. Every completed cell retrieved all its exact values. The last table is 128K input in a 256K-capacity engine.
+
+Halogen used stock compute, MTP depth 2 / Exact cache; GUFO used proposal cap 3/full vocabulary/length policy, prefill 2048, without prompt lookup; PROJFIX used MTP-host depth 1 / `--cache-ram 0`. Initial requests were cold and follow-ups reused history in every completed cell.
+
+GUFO hit the answer cap once at 128K/50% and once at 256K/50%; PROJFIX hit it three times at 64K/50%, once at 128K/50% and once in the partial 256K/50% run. Halogen had no cap hits. Truncated answers stay in the recorded data.
+
+The selected PROJFIX rerun adds only `--cache-ram 0`. At 256K/50%, it crossed the 18 GiB physical reserve during request 4, after one conversation. Cleanup succeeded; that partial cell is unscored. The earlier 256K cancellation is documented separately.
+
+**Separate coding pass/time check**
+
+| Engine | First-attempt passes | Final passes (up to two attempts) | Actual suite time |
+|---|---:|---:|---:|
+| Halogen 0.16.2 / WSL2 | 5/10 | 7/10 | 27.59 min |
+| GUFO / Windows | 5/10 | 6/10 | 36.23 min |
+| PROJFIX / Windows, cache0 | — | Unscored reserve stop | 5.26 min (partial) |
+
+This uses ten disclosed Aider polyglot Python exercises, a read/write tool agent, up to two attempts, a 4096-token call cap and pristine official tests. Halogen hit that cap once; GUFO three times; PROJFIX's two recorded calls had no caps. Its loop/subset differs from the author's Pi run. Coding time is actual suite elapsed.
+
+PROJFIX coding had a transport abort, then a retry after a gateway timeout fix with the 600-second API limit unchanged. It passed affine-cipher, then hit the physical reserve; the partial suite is unscored.
+
+My earlier approximately 65 tok/s result used predictable synthetic output; it stays in the separate [long-context report](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/halogen0162-long-context-20261003.md).
+
+[Code and setup](https://github.com/MKM-030/strix-alloy) · [Method, counts, build and failure details](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/strix-alloy-article-comparison-20261003.md) · [Sanitized evidence](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/strix-alloy-article-comparison-20261003.json)
+
+Thanks to Peonist AI, GUFO and the llama.cpp fork maintainers for the engine work. Alloy supplies the local Windows/WSL integration and measurement wrapper.
