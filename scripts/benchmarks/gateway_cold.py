@@ -18,6 +18,7 @@ P.add_argument('--profile',type=Path,required=True)
 a=P.parse_args();R=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(R/'server'))
 from host_frames import frame
+from controller import read as read_state
 if not 4096<=a.context<=262144:raise ValueError('Unsupported context')
 sizes=benchmark_input_sizes(a.sizes,a.context)
 if not a.output.resolve().is_relative_to((R/'server/.local').resolve()):
@@ -35,11 +36,11 @@ async def run():
     deadline=time.monotonic()+1200
     async with aiohttp.ClientSession(trust_env=False,timeout=aiohttp.ClientTimeout(total=180)) as client:
         while True:
-            state=json.loads((R/'server/.local/current.json').read_text())
+            state=read_state(R/'server/.local/current.json')
             if state['phase'] in ('stopped','failed'):raise RuntimeError('Controller terminal')
             if state['context']!=a.context:raise ValueError('Wrong context capacity')
             model=validate_backend(a.backend,state['backend'])
-            inner=json.loads((backend/'.local/current-service.json').read_text()) if clock else None
+            inner=read_state(backend/'.local/current-service.json') if clock else None
             if state['phase']=='ready' and backend_validation_finished(a.backend,a.context,inner):break
             if time.monotonic()>deadline:raise TimeoutError('Startup validation did not complete')
             await asyncio.sleep(1)
@@ -56,7 +57,7 @@ async def run():
             'input_manifest_sha256':hashlib.sha256(manifest_path.read_bytes()).hexdigest() if input_manifest else None,
             'client_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},indent=2))
         async def query(body):
-            current=json.loads((R/'server/.local/current.json').read_text())
+            current=read_state(R/'server/.local/current.json')
             if current['run_id']!=run_id or current['phase']!='ready':raise RuntimeError('Runtime changed')
             checked_profile_hash(current,a.profile)
             async with client.get('http://127.0.0.1:8840/health',headers={'Authorization':'Bearer '+key}) as health_response:
@@ -88,7 +89,7 @@ async def run():
             physical_after=frame()
             for field in minimum:minimum[field]=min(minimum[field],physical_after[field])
             if min(minimum.values())<18*1024**3:raise ValueError('Memory reserve crossed during request')
-            after=json.loads((R/'server/.local/current.json').read_text())
+            after=read_state(R/'server/.local/current.json')
             if after['run_id']!=run_id or after['phase']!='ready':raise RuntimeError('Runtime changed during request')
             cal=clock.compare(first,last) if clock else {'monotonic_per_raw':1.0}
             return value,wall,cal,{'before':memory_before,'after':memory_snapshot(after),

@@ -84,5 +84,77 @@ class RuntimeTests(unittest.TestCase):
                 self.assertEqual(evaluate_code(source), (False, 'syntax_or_unsafe_ast'))
 
 
+class RuntimeStateSharingTests(unittest.TestCase):
+    def client(self):
+        # Exercise the actual identity validator without initialization or HTTP.
+        client = ManagedClient.__new__(ManagedClient)
+        client.state_path = pathlib.Path('offline-current.json')
+        client.expected_run_id = 'owned-run'
+        client.profile_sha256 = 'profile-sha'
+        client.profile = {'backend': {'identifier': 'halogen-v2', 'context': 262144},
+                          'minimum_reserve_gib': 18}
+        return client
+
+    def ready(self):
+        return {'phase': 'ready', 'run_id': 'owned-run', 'backend': 'halogen-v2',
+                'context': 262144, 'profile_sha256': 'profile-sha',
+                'minimum_reserve_gib': 18}
+
+    def test_transient_sharing_retries_before_validating_managed_identity(self):
+        client, state = self.client(), self.ready()
+        failures = [PermissionError('sharing'), PermissionError('sharing'), json.dumps(state)]
+        with patch.object(pathlib.Path, 'read_text', side_effect=failures) as raw, \
+             patch('controller.time.monotonic', return_value=0), \
+             patch('controller.time.sleep') as pause:
+            self.assertEqual(client.assert_identity(), state)
+        self.assertEqual(raw.call_count, 3)
+        self.assertTrue(all(call.kwargs == {'encoding': 'utf-8-sig'} for call in raw.call_args_list))
+        self.assertEqual([call.args for call in pause.call_args_list], [(.025,), (.025,)])
+
+    def test_changed_identity_after_sharing_retry_remains_rejected(self):
+        for change in ({'run_id': 'replacement'}, {'profile_sha256': 'replacement'},
+                       {'phase': 'stopped'}, {'phase': 'failed'}, {'minimum_reserve_gib': 17}):
+            with self.subTest(change=change):
+                state = dict(self.ready(), **change)
+                with patch.object(pathlib.Path, 'read_text',
+                                  side_effect=[PermissionError('sharing'), json.dumps(state)]) as raw, \
+                     patch('controller.time.monotonic', return_value=0), \
+                     patch('controller.time.sleep') as pause:
+                    with self.assertRaises(ValueError):
+                        self.client().assert_identity()
+                self.assertEqual(raw.call_count, 2)
+                pause.assert_called_once_with(.025)
+
+    def test_persistent_sharing_remains_bounded_and_propagates_permission_error(self):
+        now = [0.0]
+        failure = PermissionError('persistent sharing')
+
+        def pause(seconds):
+            now[0] += seconds
+
+        with patch.object(pathlib.Path, 'read_text', side_effect=failure) as raw, \
+             patch('controller.time.monotonic', side_effect=lambda: now[0]), \
+             patch('controller.time.sleep', side_effect=pause):
+            with self.assertRaises(PermissionError) as caught:
+                self.client().assert_identity()
+        self.assertIs(caught.exception, failure)
+        self.assertGreaterEqual(now[0], 1.0)
+        self.assertLessEqual(now[0], 1.025)
+        self.assertLessEqual(raw.call_count, 42)
+
+    def test_missing_or_malformed_state_does_not_retry_or_gain_identity(self):
+        for value, error in ((FileNotFoundError('missing'), FileNotFoundError),
+                             ('not JSON', json.JSONDecodeError),
+                             (OSError('other I/O'), OSError)):
+            with self.subTest(value=value):
+                with patch.object(pathlib.Path, 'read_text', side_effect=[value]) as raw, \
+                     patch('controller.time.monotonic', return_value=0), \
+                     patch('controller.time.sleep') as pause:
+                    with self.assertRaises(error):
+                        self.client().assert_identity()
+                raw.assert_called_once_with(encoding='utf-8-sig')
+                pause.assert_not_called()
+
+
 if __name__ == '__main__':
     unittest.main()

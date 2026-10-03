@@ -39245,5 +39245,61 @@
     "First-token top-5 logprobs are a target-prefill proxy, not full or MTP-draft logits.",
     "Lifecycle cleanup/recovery and finalist quality qualification are required before promotion.",
     "0.16.1 data is archival; q8g64/HGN extractors remain research-only."
-  ]
+  ],
+  "publication_provenance": {
+    "measured_commit": "b77a3bddb4a84bb4af0388c476ee686de3aa1362",
+    "original_public_evidence_sha256": "2c31ac90e21429bc42cc0310a5648de3ba49a59d94ea95e1c587d36aec70d5d9",
+    "original_measurement_fields_preserved": true,
+    "measured_source_scope": "Fresh sealed stock, twelve screening cells, matched cache series, late stock confirmation and focused default-cache cells. Historical artifacts retain earlier source/harness identities.",
+    "reader_robustness_change": {
+      "after_sealed_measurements": true,
+      "live_inference_rerun": false,
+      "files": [
+        {
+          "path": "scripts/benchmarks/gateway_cold.py",
+          "measured_sha256": "ca968c1b7140f556baa3f63e7ac5885852cdf83b9c176149509a3e703553332f",
+          "reader_sha256": "fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d"
+        },
+        {
+          "path": "scripts/benchmarks/reddit_runtime.py",
+          "measured_sha256": "9e9fb05c83677fbe319e3b9437d25444792c077256fb2b3cf3385f378a8fabc2",
+          "reader_sha256": "8bc974964b3eb32205db96aee94a761f9774bac7411cbec7efe2fcd5920ea9a5"
+        }
+      ],
+      "controller_unchanged": true,
+      "scope": "Two imports and five mutable-state read delegations to the existing bounded controller reader.",
+      "verification": {
+        "red": {
+          "tests": 8,
+          "failures": 9,
+          "errors": 6,
+          "exit_code": 1,
+          "subtest_failure_counts": true,
+          "log": {
+            "label": "reader-state-tests-red.log",
+            "sha256": "d808ab9e135a713acb1af27f97fdc1b1880942de1dc198a806c3d6df4c90c1ea"
+          }
+        },
+        "green": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "exit_code": 0,
+          "log": {
+            "label": "reader-state-tests-green.log",
+            "sha256": "358eafb5403c4ceb4345338fda72bd8ecf0b90ad4dd9af86d6f3a420fbcc9606"
+          }
+        },
+        "full_benchmarks": {
+          "tests": 92,
+          "skipped": 1,
+          "exit_code": 0,
+          "log": {
+            "label": "reader-state-full-benchmarks.log",
+            "sha256": "a3eedd97ee253bc5c4fba206ff4f5d3ddde444d263bdcd9068c1f3d19c48319c"
+          }
+        }
+      }
+    }
+  }
 }

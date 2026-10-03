@@ -284,6 +284,19 @@ Completed default deployment cells: **2/2**.
 
 The finalized decision retains stock compute, depth 2, cache Off and unset prefill/arena overrides. No optional Exact recipe is selected, and no additional live experiment is planned for this investigation. The decision receipt and its limits are published in the JSON: late-stock cold confirmation removes useful kernel evidence, Flexible fails correctness, and both fixed-chunk and default Exact provide no observed agent benefit. This selection does not infer Exact warm-hit behavior or general cold/broad qualification from the focused cache comparison.
 
+## Measured source and later reader robustness
+
+The fresh sealed stock control, twelve screening cells, matched cache series, late stock confirmation and focused default-cache cells use the public source in measured commit `b77a3bddb4a84bb4af0388c476ee686de3aa1362`. Their immutable source seals match that commit; historical artifacts retain their earlier source/harness identities. Separately recorded ignored wrappers supply the measured execution retry behavior.
+
+After the sealed measurements ended and that source was committed, a separate reader robustness change makes `gateway_cold.py` and `reddit_runtime.py` delegate mutable controller-state reads to the existing bounded reader. The source diff contains two imports and five read delegations; `server/controller.py` is unchanged. The original recorded source/recording seals remain intact in the JSON, with the later source hashes added only as separate publication provenance.
+
+| Client | Measured SHA256 | Later reader SHA256 |
+|---|---|---|
+| gateway_cold.py | `ca968c1b7140f556baa3f63e7ac5885852cdf83b9c176149509a3e703553332f` | `fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d` |
+| reddit_runtime.py | `9e9fb05c83677fbe319e3b9437d25444792c077256fb2b3cf3385f378a8fabc2` | `8bc974964b3eb32205db96aee94a761f9774bac7411cbec7efe2fcd5920ea9a5` |
+
+Eight added reader regression tests expose the expected retry/delegation failures against the measured source, then all eight pass with the new reader source. The RED run retains nine assertion failures and six errors across subtests; two immediate-error methods already pass before the change. The full later benchmark suite passes **92 tests with one skip**. Actual RED/GREEN/full-suite log hashes are retained in the separate provenance. **No live inference rerun follows this reader change**; reported timings describe the measured commit and its sealed wrappers.
+
 ## Qualification scope and remaining work
 
 0.16.1 artifacts are archival and do not establish an upgrade performance comparison. Historical 0.15.1 results are also unmatched references. The q8g64/HGN slicing and n-gram extraction utilities are research tools; they do not imply a deployed model variant, completed large-table extraction, or measured q8g64 engine performance.

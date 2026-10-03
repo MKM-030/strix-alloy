@@ -12,6 +12,7 @@ from reddit_suite import check_identity, digest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / 'server'))
 from host_frames import frame
+from controller import read as read_state
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 STATE = ROOT / 'server/.local/current.json'
@@ -49,7 +50,7 @@ class ManagedClient:
         self.health()
 
     def assert_identity(self):
-        state = json.loads(self.state_path.read_text(encoding='utf-8-sig'))
+        state = read_state(self.state_path)
         check_identity(self.profile, state, self.expected_run_id, self.profile_sha256)
         return state
 
