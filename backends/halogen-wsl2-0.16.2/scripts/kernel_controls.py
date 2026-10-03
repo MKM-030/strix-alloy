@@ -3,6 +3,8 @@
 These internal controls are not upstream support or numerical-quality claims.
 Counter ceilings below bound this experiment interface; they are not advertised
 upstream ranges. No path, driver, NPU or host-admission override is accepted.
+The documented lookup-I/O thread policy is limited here to the matched 32/64
+probe; an omitted control retains the image's default.
 """
 import json
 
@@ -19,6 +21,7 @@ COUNTER_MAX={
     'HALOGEN_CACHE_RESERVE_MB':4096,
 }
 MODES={
+    'HALOGEN_NGRAM_GATHER_THREADS':frozenset((32,64)),
     'HALOGEN_FA_OPT':frozenset(range(8)),  # low-three-bit optimization mask
     # Mode zero does not disable every dispatch using the V2 getter.
     'HALOGEN_FLASH_MOE_V2':frozenset((0,1,2)),

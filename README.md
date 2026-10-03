@@ -8,6 +8,7 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
+| **Halogen WSL2 0.16.2** | Pinned v2 upgrade and sampled filled-context comparison measured with an 18 GiB reserve | [Install and run](backends/halogen-wsl2-0.16.2/README.md) |
 | **Halogen WSL2 0.15.1** | w4b + overlay and v2 tested at 262144 capacity; authenticated continuous serving | [Install and run](backends/halogen-wsl2-0.15.1/README.md) |
 | **Managed Windows endpoint** | Owns one selected engine and serves one stable streaming API on port 8840 | [server/Start.ps1](server/README.md) |
 | Native llama.cpp / PROJFIX | Fast serial pinned-host placement; 31-33 t/s short-prompt decode at 262144 capacity; explicit legacy MTP retained | [Prepare and register](backends/projfix-windows/README.md) |
@@ -27,6 +28,13 @@ backend token is reused. Stop and confirm cleanup before changing engine/checkpo
 Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
+
+[Halogen 0.16.2, GUFO and PROJFIX sampled comparison](docs/benchmarks/strix-alloy-article-comparison-20261003.md)
+includes filled-context timing, MTP acceptance, coding results and the retained PROJFIX reserve stop.
+[The matched lookup-thread experiment](docs/benchmarks/halogen0162-gather-20261004.md)
+separates the warm file-cache effect from thread tuning.
+[The selected-ten-expert ONNX prototype](docs/research/halogen-npu-top10-20261004.md)
+records sparse conversion and provider qualification; it does not implement online Halogen MTP offload.
 
 [Halogen placement investigation and fresh baselines](docs/benchmarks/halogen-placement-baseline-20261001.md) records measured PP512/PP2048/PP8192 rates and the supplementary 16 GiB reserve target; no new optimization was promoted.
 

@@ -1,0 +1,2322 @@
+{
+  "schema": 1,
+  "experiment": "Halogen 0.16.2 gather 64/32/64, 2026-10-04",
+  "conclusion": "No demonstrated gather32 performance gain against warmed gather64. Keep stock compute and defaults unchanged. MTP acceptance is identical.",
+  "created_at_utc": "2026-10-03T22:45:59.251569+00:00",
+  "scope": {
+    "context": 65536,
+    "target_input": 32768,
+    "repetitions_per_cell": 2,
+    "turns_per_rep": 3,
+    "output_limit": 1536,
+    "order": [
+      "gather64a",
+      "gather32",
+      "gather64b"
+    ],
+    "thread_counts": {
+      "gather64a": 64,
+      "gather32": 32,
+      "gather64b": 64
+    },
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence_penalty": 0,
+      "repetition_penalty": 1.0,
+      "repeat_penalty": 1.0,
+      "max_tokens": 1536,
+      "cache_prompt": true,
+      "enable_thinking": true,
+      "reasoning_effort": "low",
+      "drafter": "mtp",
+      "chat_template_kwargs": {
+        "enable_thinking": true
+      },
+      "seed_by_rep": [
+        20260930,
+        20260931
+      ]
+    },
+    "stock_compute_and_defaults": "unchanged; experimental gather control only",
+    "quality": "Exact-value retrieval graded; sampled code/review outputs ungraded. Replacement coding corpus, not unpublished author prompts."
+  },
+  "definitions": {
+    "three_turn_seconds": "For each repetition sum TTFT + 1000 / calibrated decode_tps across its three turns, then average the two sums. Models 1000 output tokens per turn; not actual elapsed conversation time.",
+    "decode_tps": "Output-token-weighted harmonic mean of calibrated native decode rates over all six turns. Native rates multiplied by measured guest-monotonic / guest-raw clock ratios.",
+    "prefill_tps": "Arithmetic mean of calibrated native prefill rates for the two initial turns.",
+    "observed_wall_seconds": "Sum of six independently measured client request wall times for actual output lengths; excludes startup, inter-request checks, process overhead, and cleanup.",
+    "cache": "Initial cache_n=0 means cold KV/prompt cache, not a verified cold OS lookup-file cache. Follow-ups cache_n=32768."
+  },
+  "comparisons": {
+    "gather32_vs_gather64a": {
+      "three_turn_seconds": {
+        "candidate": 103.9290587786191,
+        "baseline": 139.38599392074653,
+        "difference": -35.456935142127435,
+        "percent_difference": -25.437946916164258
+      },
+      "prefill_tps": {
+        "candidate": 1085.3047228179287,
+        "baseline": 766.483535057742,
+        "difference": 318.8211877601867,
+        "percent_difference": 41.59530807614398
+      },
+      "decode_tps": {
+        "candidate": 40.503561771450684,
+        "baseline": 32.22577510419171,
+        "difference": 8.277786667258972,
+        "percent_difference": 25.686850480695654
+      },
+      "observed_wall_seconds": {
+        "candidate": 177.78993100003572,
+        "baseline": 240.795845799963,
+        "difference": -63.00591479992727,
+        "percent_difference": -26.16569841170281
+      },
+      "mtp_acceptance": {
+        "candidate": 0.8386063275931117,
+        "baseline": 0.8386063275931117,
+        "difference": 0.0,
+        "percent_difference": 0.0
+      },
+      "normalized_repetitions": [
+        {
+          "rep": 0,
+          "difference_seconds": -53.98142272932424,
+          "percent_difference": -33.61956207646488
+        },
+        {
+          "rep": 1,
+          "difference_seconds": -16.93244755493062,
+          "percent_difference": -14.324467211766756
+        }
+      ]
+    },
+    "gather32_vs_gather64b": {
+      "three_turn_seconds": {
+        "candidate": 103.9290587786191,
+        "baseline": 103.48842317418158,
+        "difference": 0.44063560443751726,
+        "percent_difference": 0.4257825087313316
+      },
+      "prefill_tps": {
+        "candidate": 1085.3047228179287,
+        "baseline": 1087.2189420426143,
+        "difference": -1.9142192246856666,
+        "percent_difference": -0.17606566172304605
+      },
+      "decode_tps": {
+        "candidate": 40.503561771450684,
+        "baseline": 40.74236855672895,
+        "difference": -0.23880678527826404,
+        "percent_difference": -0.5861386898647125
+      },
+      "observed_wall_seconds": {
+        "candidate": 177.78993100003572,
+        "baseline": 176.98049070010893,
+        "difference": 0.8094402999267913,
+        "percent_difference": 0.4573613152075495
+      },
+      "mtp_acceptance": {
+        "candidate": 0.8386063275931117,
+        "baseline": 0.8386063275931117,
+        "difference": 0.0,
+        "percent_difference": 0.0
+      },
+      "normalized_repetitions": [
+        {
+          "rep": 0,
+          "difference_seconds": 0.6512307695031865,
+          "percent_difference": 0.6147580316623991
+        },
+        {
+          "rep": 1,
+          "difference_seconds": 0.23004043937187646,
+          "percent_difference": 0.22766366346549383
+        }
+      ]
+    }
+  },
+  "equivalence": {
+    "requests_checked": 18,
+    "request_files": 18,
+    "output_files": 18,
+    "matched_rep_turn_groups": 6,
+    "all_requests_outputs_counts_and_draft_counters_identical": true,
+    "method": "SHA-256 file bytes, canonical request JSON matching recorded hashes, UTF-8 content/reasoning digests, prompt/output token counts, message counts, finish/cache/draft counters by repetition/turn. No prompt/output text or token-file contents retained.",
+    "turns": [
+      {
+        "rep": 0,
+        "turn": 0,
+        "all_three_identical": true,
+        "request_file_sha256": "dca70245cc81be6344133db1960b1472ce41f59b1b4ca7d38552665c6f049341",
+        "canonical_request_sha256": "415e9d5c83a3be9656ab33b1dea2aa597773c7a2e44f33dbef69283704bfb304",
+        "output_file_sha256": "4d92035187a1586238fd89c5309dbb2cb9c904e345209997aa01c0f458a8b0f6",
+        "content_sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+        "reasoning_sha256": "1bc77c19d2b4e1de34d466bc610e3396e32024ba890c9a4c28f14093265af982",
+        "request_messages": 2,
+        "prompt_tokens": 32791,
+        "output_tokens": 275,
+        "drafted": 138,
+        "accepted": 136,
+        "cache_n": 0,
+        "finish_reason": "stop"
+      },
+      {
+        "rep": 0,
+        "turn": 1,
+        "all_three_identical": true,
+        "request_file_sha256": "e454193fd29b3f9c32178e5c4fb56656d8519a6d5741d56654fe70b461070fed",
+        "canonical_request_sha256": "3a42457a08f68ff8b3c91ad52d984718f5df06f07c815f701238e163f90bf502",
+        "output_file_sha256": "eb73cd97de2c2ecf0ac5ad3e5a1be387c23ffc7110703267f24fcb64a35da8e2",
+        "content_sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+        "reasoning_sha256": "4eebcc216468bf9fa615225871abf8958c5b7901118fe523a9b16114b9f88e36",
+        "request_messages": 4,
+        "prompt_tokens": 32952,
+        "output_tokens": 1002,
+        "drafted": 551,
+        "accepted": 450,
+        "cache_n": 32768,
+        "finish_reason": "stop"
+      },
+      {
+        "rep": 0,
+        "turn": 2,
+        "all_three_identical": true,
+        "request_file_sha256": "e16a2dfe5e75cf9188d3f45c6e10fccb9b05233a0649a3cb638d1d0fe1c8bc3a",
+        "canonical_request_sha256": "8a3d53f504e391f69a946cef0f5a448563f8b942373d0d302f469f866604b63f",
+        "output_file_sha256": "ec27aafc14472ab24066f173dabbb42beb75e827c35152e2bb4daaf364d80aaa",
+        "content_sha256": "4b921009fdeb7e14f546219582624eff5da5247a85576bb975601fbdd396a754",
+        "reasoning_sha256": "9b6fcc9fb45c604b5a2e1e2c4576070bceb9ae22785bdf1aa4be80601a95f7b6",
+        "request_messages": 6,
+        "prompt_tokens": 33615,
+        "output_tokens": 967,
+        "drafted": 536,
+        "accepted": 430,
+        "cache_n": 32768,
+        "finish_reason": "stop"
+      },
+      {
+        "rep": 1,
+        "turn": 0,
+        "all_three_identical": true,
+        "request_file_sha256": "28382c8d57f362d4eb7fb153903d8790c6c6d9cf3cf24685cc58cbb1cc1d8fce",
+        "canonical_request_sha256": "17b5a345e2db4fce9f16ac9f99eec4c5639db82d4a66d56b33b1c21f96ee1e7f",
+        "output_file_sha256": "2111038a53f28890ce2cd9f431eb7bcc6542495d5462f68e5cb97001ee530a38",
+        "content_sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+        "reasoning_sha256": "97e49fab2c7f73cda2767d737474593232f052b3f09a7204d92c0a90bc3bb6fa",
+        "request_messages": 2,
+        "prompt_tokens": 32792,
+        "output_tokens": 300,
+        "drafted": 151,
+        "accepted": 148,
+        "cache_n": 0,
+        "finish_reason": "stop"
+      },
+      {
+        "rep": 1,
+        "turn": 1,
+        "all_three_identical": true,
+        "request_file_sha256": "fb77809d7cc52d04370660ced924694846f3b7408c938a5de6d4ad7a8fc91d76",
+        "canonical_request_sha256": "728ac550dcb884988538937107f295efbfa35767476a04f542068db3775f41a6",
+        "output_file_sha256": "8ce206404e1a683ebe818132bc2fbacf7cc1292776150535906fa16bee1f99ba",
+        "content_sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+        "reasoning_sha256": "1eab5622726d348e355ed46744eeb2f64e5d7f6a1104170955364ad0630127ff",
+        "request_messages": 4,
+        "prompt_tokens": 32980,
+        "output_tokens": 796,
+        "drafted": 431,
+        "accepted": 364,
+        "cache_n": 32768,
+        "finish_reason": "stop"
+      },
+      {
+        "rep": 1,
+        "turn": 2,
+        "all_three_identical": true,
+        "request_file_sha256": "11dc9b114ea1c03d21f13cf5ac532ca2493235dd5a505369321b39a606f90b6e",
+        "canonical_request_sha256": "f1865300f79a6697b40b8c9ad011d6562e0ef3ece92bbbb0f97f78fccf17118b",
+        "output_file_sha256": "19cd2e84edea54f46ae2902811db40266d15ee84c5dc8606f45b5d5ccdc4316c",
+        "content_sha256": "7690cc4ddac3f7c9baa59be28c3f0a52631308548b8b7ed0a837e3ea2ce5f359",
+        "reasoning_sha256": "876dbc8743d0965612f5f644cab02ebe51e8451683850a33af32a2be5cf89346",
+        "request_messages": 6,
+        "prompt_tokens": 33559,
+        "output_tokens": 1283,
+        "drafted": 690,
+        "accepted": 566,
+        "cache_n": 32768,
+        "finish_reason": "stop"
+      }
+    ]
+  },
+  "runtime_pin_checks": {
+    "profile_changes_only": [
+      "engine.kernel_controls.HALOGEN_NGRAM_GATHER_THREADS",
+      "qualification.kernel_controls.HALOGEN_NGRAM_GATHER_THREADS"
+    ],
+    "actual_manifest_environment_difference_keys": [
+      "HALOGEN_NGRAM_GATHER_THREADS"
+    ],
+    "client_equal_and_matches_current": true,
+    "corpus_equal_and_matches_current": true,
+    "source_seals_equal_and_match_current": true,
+    "manifest_source_hashes_equal": true,
+    "image_equal": true,
+    "source_seals": {
+      "scripts\\benchmarks\\article_bench.py": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+      "scripts\\benchmarks\\article_metrics.py": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+      "server\\controller.py": "cdce66f5c189e0ed6d83e4ace284fe27825acdadd372efeed68b968e31e4a3bb",
+      "server\\gateway.py": "3b4443b8d103dd0aad77061c04cac031abf75f3224a65f64b1e9fa0a5d834b95",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\kernel_controls.py": "472fadae923b3d18aad758648561a2952e0679ba9894d9408bde33be87864825",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\service.py": "95b90017076edb4ee797220ea23ba4b0f5018d6e0c78849f669149c4a9272b7a"
+    },
+    "report_renderer": {
+      "path": "scripts/benchmarks/render_article_report.py",
+      "sha256": "2bf627353169c92ec48931dcc2cffa1a47287f5a9f016709d9e58f5a05d3ed10"
+    },
+    "coordinator": {
+      "path": "server/.local/article0162-20261003/run_gather_20261004.py",
+      "sha256": "f27aa5e914d13cf2bae1cb737550f3581b70d4d29c757cef3d652db59ce3896b"
+    },
+    "matrix_state": {
+      "path": "server/.local/article0162-20261003/gather-matrix-state-20261004.json",
+      "sha256": "feea5ad4124a48743b52cc40de4767071792dc43da513ac1ed57c37bd5271ef8",
+      "phase": "complete",
+      "completed": [
+        "gather64a",
+        "gather32",
+        "gather64b"
+      ],
+      "failed": []
+    }
+  },
+  "memory_scope": {
+    "per_request": "0.2-second client host RAM/commit samples and retained controller snapshots; summary host_memory_floor_bytes takes per-request observed minima.",
+    "controller_full_run": "Terminal controller minimum_available_gib, sampled every 0.5 seconds from engine start through readiness/requests/shutdown; full-run minimum commit headroom not retained.",
+    "reserve_gib": 18,
+    "native_startup_warning": "Logs report 0.0 GiB left after loaded allocations. Retained Windows host telemetry reports over 24 GiB; native warning is guest startup text, not a measured Windows reserve minimum."
+  },
+  "limitations": [
+    "Only two repetitions per cell in fixed 64/32/64 order; no randomized or counterbalanced replication.",
+    "First64 initial lookup is 36.6 seconds; 32 and final64 first reads are both 10.4 seconds. Warmed final64 largely reproduces 32, consistent with OS lookup-file-cache/order confounding; no cache flush or disk-residency measurement.",
+    "Prompt/KV cache was cold at each initial turn, but OS file-cache coldness was not controlled.",
+    "No MTP depth sweep: manifests retain depth 2. Acceptance is 2094/2497=0.8386063275931117 in every cell. Greedy depth documentation does not establish a sampled depth or acceptance gain here.",
+    "Hash identity covers these 18 sampled requests only; not general sampled-distribution or coding-quality equivalence."
+  ],
+  "primary_documentation": [
+    {
+      "url": "https://github.com/peonist-ai/halogen-flash-server/blob/7f31bbd4021f217a1be9776bdb7304bcf8eca62d/docs/FLAGS.md#L30",
+      "claim": "MTP_DEPTH is documented as consecutive draft depth for greedy requests."
+    },
+    {
+      "url": "https://github.com/peonist-ai/halogen-flash-server/blob/7f31bbd4021f217a1be9776bdb7304bcf8eca62d/docs/FLAGS.md#L79-L84",
+      "claim": "Prompt lookup applies to greedy requests; sampled requests use the MTP head and adaptive acceptance policy."
+    }
+  ],
+  "cells": [
+    {
+      "backend": "halogen-v2",
+      "context": 65536,
+      "target_input": 32768,
+      "passed_execution": true,
+      "three_turn_seconds": 139.38599392074653,
+      "three_turn_repetitions": [
+        160.565514228139,
+        118.20647361335406
+      ],
+      "prefill_tps": 766.483535057742,
+      "decode_tps": 32.22577510419171,
+      "mtp_acceptance": 0.8386063275931117,
+      "retrieval_correct": 14,
+      "retrieval_total": 14,
+      "retrieval_details": [
+        {
+          "correct": 7,
+          "total": 7,
+          "missing": []
+        },
+        {
+          "correct": 7,
+          "total": 7,
+          "missing": []
+        }
+      ],
+      "actual_initial_tokens": [
+        32791,
+        32792
+      ],
+      "initial_cached_tokens": [
+        0,
+        0
+      ],
+      "initial_cache_observations": [
+        "cold",
+        "cold"
+      ],
+      "followup_cache_observations": [
+        "warm",
+        "warm",
+        "warm",
+        "warm"
+      ],
+      "observed_wall_seconds": 240.795845799963,
+      "requests": 6,
+      "capped_outputs": 0,
+      "generated_tokens": 4623,
+      "output_limit": 1536,
+      "eos_outputs": 6,
+      "clamped_outputs": 0,
+      "prompt_cache": "Exact",
+      "host_memory_floor_bytes": {
+        "available_bytes": 26646470656,
+        "commit_headroom_bytes": 124437192704
+      },
+      "memory_scope": "0.2-second host RAM/commit samples plus controller snapshots",
+      "profile_sha256": "4a8713bbb091bf847450b94662bedc9eaa22c42dca6b5707faaf6a69e84a4b42",
+      "client_sha256": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+      "corpus_sha256": "0e97b463b61bf6c8b5d9e97128bc44cf5638e30c4c97108681a3007260aaac83",
+      "measured_at": 1791066048.301378,
+      "status": "completed",
+      "summary_sha256": "dd953634c74f5492140b9956458144aa293ad75a93babf16a12fd6c2d9dcd7a3",
+      "turns": [
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 0,
+          "prompt_tokens": 32791,
+          "output_tokens": 275,
+          "ttft_seconds": 59.86605069995858,
+          "visible_ttft_seconds": 65.78733679995639,
+          "wall_seconds": 69.64551349997055,
+          "last_delivery_seconds": 69.64367989997845,
+          "stream_events": 252,
+          "pp_tps": 548.2521199370177,
+          "decode_tps": 28.124826937867425,
+          "normalized_1000_seconds": 95.42182504158109,
+          "drafted": 138,
+          "accepted": 136,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "exact-value retrieval",
+          "raw_phase_timings": {
+            "prompt_n": 32791,
+            "prompt_ms": 59811.8,
+            "prompt_per_second": 548.236,
+            "predicted_n": 275,
+            "predicted_ms": 9778.2,
+            "predicted_per_second": 28.124,
+            "draft_n": 138,
+            "draft_n_accepted": 136,
+            "cache_n": 0
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0000294032807362,
+            "raw_per_qpc": 1.0000001368028928,
+            "window_seconds": 69.64718455006368,
+            "handshake_uncertainty_seconds": 0.0004100500082131475
+          },
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 30751154176,
+              "commit_headroom_bytes": 128906014720
+            },
+            "after": {
+              "available_bytes": 29385355264,
+              "commit_headroom_bytes": 127728443392
+            },
+            "observed_minimum": {
+              "available_bytes": 29323100160,
+              "commit_headroom_bytes": 127669661696
+            },
+            "controller_before": {
+              "available_bytes": 30627864576,
+              "commit_headroom_bytes": 128717172736
+            },
+            "controller_after": {
+              "available_bytes": 29373714432,
+              "commit_headroom_bytes": 127728664576
+            }
+          },
+          "retrieval": {
+            "correct": 7,
+            "total": 7,
+            "missing": []
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 1,
+          "prompt_tokens": 32952,
+          "output_tokens": 1002,
+          "ttft_seconds": 1.7830351000302471,
+          "visible_ttft_seconds": 18.14929430000484,
+          "wall_seconds": 35.542504900018685,
+          "last_delivery_seconds": 35.49682890000986,
+          "stream_events": 970,
+          "pp_tps": 110.40724483761576,
+          "decode_tps": 29.681872341810745,
+          "normalized_1000_seconds": 35.473632124510104,
+          "drafted": 551,
+          "accepted": 450,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 184,
+            "prompt_ms": 1666.6,
+            "prompt_per_second": 110.404,
+            "predicted_n": 1002,
+            "predicted_ms": 33759.5,
+            "predicted_per_second": 29.681,
+            "draft_n": 551,
+            "draft_n_accepted": 450,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0000293905801942,
+            "raw_per_qpc": 1.000000577508182,
+            "window_seconds": 35.54402090003714,
+            "handshake_uncertainty_seconds": 0.00043620000360533595
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29382434816,
+              "commit_headroom_bytes": 127725289472
+            },
+            "after": {
+              "available_bytes": 29405036544,
+              "commit_headroom_bytes": 127768883200
+            },
+            "observed_minimum": {
+              "available_bytes": 29063315456,
+              "commit_headroom_bytes": 127325790208
+            },
+            "controller_before": {
+              "available_bytes": 29385814016,
+              "commit_headroom_bytes": 127729496064
+            },
+            "controller_after": {
+              "available_bytes": 29356285952,
+              "commit_headroom_bytes": 127706316800
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 2,
+          "prompt_tokens": 33615,
+          "output_tokens": 967,
+          "ttft_seconds": 1.0069274999550544,
+          "visible_ttft_seconds": 13.49584709998453,
+          "wall_seconds": 28.724637200008146,
+          "last_delivery_seconds": 28.723335599992424,
+          "stream_events": 940,
+          "pp_tps": 959.0411948206975,
+          "decode_tps": 34.88802567192486,
+          "normalized_1000_seconds": 29.6700570620478,
+          "drafted": 536,
+          "accepted": 430,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 847,
+            "prompt_ms": 883.2,
+            "prompt_per_second": 959.013,
+            "predicted_n": 967,
+            "predicted_ms": 27717.8,
+            "predicted_per_second": 34.887,
+            "draft_n": 536,
+            "draft_n_accepted": 430,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 1.000029399831595,
+            "raw_per_qpc": 0.9999995100927366,
+            "window_seconds": 28.72589290002361,
+            "handshake_uncertainty_seconds": 0.0004101000085938722
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29404921856,
+              "commit_headroom_bytes": 127763230720
+            },
+            "after": {
+              "available_bytes": 29411381248,
+              "commit_headroom_bytes": 127756361728
+            },
+            "observed_minimum": {
+              "available_bytes": 29332332544,
+              "commit_headroom_bytes": 127645159424
+            },
+            "controller_before": {
+              "available_bytes": 29356285952,
+              "commit_headroom_bytes": 127706316800
+            },
+            "controller_after": {
+              "available_bytes": 29419401216,
+              "commit_headroom_bytes": 127733403648
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 0,
+          "prompt_tokens": 32792,
+          "output_tokens": 300,
+          "ttft_seconds": 33.3773777000024,
+          "visible_ttft_seconds": 36.960207399970386,
+          "wall_seconds": 39.9851045999676,
+          "last_delivery_seconds": 39.98351619997993,
+          "stream_events": 277,
+          "pp_tps": 984.7149501784662,
+          "decode_tps": 45.40533489650821,
+          "normalized_1000_seconds": 55.401221424077704,
+          "drafted": 151,
+          "accepted": 148,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "exact-value retrieval",
+          "raw_phase_timings": {
+            "prompt_n": 32792,
+            "prompt_ms": 33302.0,
+            "prompt_per_second": 984.686,
+            "predicted_n": 300,
+            "predicted_ms": 6607.3,
+            "predicted_per_second": 45.404,
+            "draft_n": 151,
+            "draft_n_accepted": 148,
+            "cache_n": 0
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0000294004164436,
+            "raw_per_qpc": 0.9999997819276186,
+            "window_seconds": 39.986517149955034,
+            "handshake_uncertainty_seconds": 0.0004266499890945852
+          },
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29400805376,
+              "commit_headroom_bytes": 127753650176
+            },
+            "after": {
+              "available_bytes": 28610703360,
+              "commit_headroom_bytes": 126959050752
+            },
+            "observed_minimum": {
+              "available_bytes": 26646470656,
+              "commit_headroom_bytes": 124437192704
+            },
+            "controller_before": {
+              "available_bytes": 29419401216,
+              "commit_headroom_bytes": 127733403648
+            },
+            "controller_after": {
+              "available_bytes": 28616396800,
+              "commit_headroom_bytes": 126956503040
+            }
+          },
+          "retrieval": {
+            "correct": 7,
+            "total": 7,
+            "missing": []
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 1,
+          "prompt_tokens": 32980,
+          "output_tokens": 796,
+          "ttft_seconds": 0.460942400037311,
+          "visible_ttft_seconds": 8.253464800014626,
+          "wall_seconds": 22.131777600036003,
+          "last_delivery_seconds": 22.12980440002866,
+          "stream_events": 776,
+          "pp_tps": 616.4760721664879,
+          "decode_tps": 36.73407686961902,
+          "normalized_1000_seconds": 27.683621863286646,
+          "drafted": 431,
+          "accepted": 364,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 212,
+            "prompt_ms": 343.9,
+            "prompt_per_second": 616.458,
+            "predicted_n": 796,
+            "predicted_ms": 21670.1,
+            "predicted_per_second": 36.733,
+            "draft_n": 431,
+            "draft_n_accepted": 364,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0000293161358729,
+            "raw_per_qpc": 1.0000010902697,
+            "window_seconds": 22.133076999976765,
+            "handshake_uncertainty_seconds": 0.00036949999048374593
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28610678784,
+              "commit_headroom_bytes": 126959050752
+            },
+            "after": {
+              "available_bytes": 28568539136,
+              "commit_headroom_bytes": 126893268992
+            },
+            "observed_minimum": {
+              "available_bytes": 28522143744,
+              "commit_headroom_bytes": 126826012672
+            },
+            "controller_before": {
+              "available_bytes": 28616396800,
+              "commit_headroom_bytes": 126956503040
+            },
+            "controller_after": {
+              "available_bytes": 28568289280,
+              "commit_headroom_bytes": 126893260800
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 2,
+          "prompt_tokens": 33559,
+          "output_tokens": 1283,
+          "ttft_seconds": 0.8838068000040948,
+          "visible_ttft_seconds": 16.5988763999776,
+          "wall_seconds": 44.76630799996201,
+          "last_delivery_seconds": 44.764691499993205,
+          "stream_events": 1269,
+          "pp_tps": 1095.7253467753064,
+          "decode_tps": 29.20746405626591,
+          "normalized_1000_seconds": 35.121630325989706,
+          "drafted": 690,
+          "accepted": 566,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 791,
+            "prompt_ms": 761.1,
+            "prompt_per_second": 1039.285,
+            "predicted_n": 1283,
+            "predicted_ms": 46312.0,
+            "predicted_per_second": 27.703,
+            "draft_n": 690,
+            "draft_n_accepted": 566,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0543069002009136,
+            "raw_per_qpc": 1.0000002916165458,
+            "window_seconds": 44.76768175000325,
+            "handshake_uncertainty_seconds": 0.00040175000322051346
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28568461312,
+              "commit_headroom_bytes": 126893273088
+            },
+            "after": {
+              "available_bytes": 27431866368,
+              "commit_headroom_bytes": 125731774464
+            },
+            "observed_minimum": {
+              "available_bytes": 27416203264,
+              "commit_headroom_bytes": 125711720448
+            },
+            "controller_before": {
+              "available_bytes": 28568289280,
+              "commit_headroom_bytes": 126893260800
+            },
+            "controller_after": {
+              "available_bytes": 27442663424,
+              "commit_headroom_bytes": 125752803328
+            }
+          }
+        }
+      ],
+      "draft_counters_complete_for_recorded_turns": true,
+      "recorded_drafted_total": 2497,
+      "recorded_accepted_total": 2094,
+      "identity": {
+        "profile_sha256": "4a8713bbb091bf847450b94662bedc9eaa22c42dca6b5707faaf6a69e84a4b42",
+        "client_sha256": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+        "corpus_sha256": "0e97b463b61bf6c8b5d9e97128bc44cf5638e30c4c97108681a3007260aaac83",
+        "checkpoint_label": "v2",
+        "model_alias": "halogen-qwen3.8-flash-next",
+        "engine_kind": "halogen",
+        "context": 65536,
+        "minimum_reserve_gib": 18,
+        "expected_versions": {
+          "version.api": "0.16.2",
+          "version.engine": "0.16.2",
+          "version.match": true
+        },
+        "native_settings": {},
+        "prompt_lookup": false,
+        "disk_cache_configured": false,
+        "profile_settings": {
+          "checkpoint": "v2",
+          "context": 65536,
+          "prompt_cache": "Exact",
+          "draft_tokens": 2,
+          "kernel_controls": {
+            "HALOGEN_NGRAM_GATHER_THREADS": 64
+          }
+        },
+        "qualification": {
+          "draft_tokens": 2,
+          "draft_vocab": "full",
+          "mtp_policy": "length",
+          "weight_placement": "unchanged-backend-native",
+          "experimental": true
+        },
+        "runtime_hashes": {},
+        "weight_filenames": {},
+        "halogen_manifest": {
+          "schema": 1,
+          "version": "0.16.2",
+          "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+          "checkpoint": "v2",
+          "context": 65536,
+          "slots": 1,
+          "entrypoint_sha256": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0",
+          "environment": {
+            "HALOGEN_NGRAM_GATHER_THREADS": "64",
+            "HALOGEN_MTP_DEPTH": "2",
+            "HALOGEN_CTX": "65536",
+            "HALOGEN_KV_POOL_POSITIONS": "65536",
+            "HALOGEN_KV_SLOTS": "1",
+            "HALOGEN_HOST_RESERVE_GIB": "18",
+            "HALOGEN_PROMPT_CACHE": "1",
+            "HALOGEN_CHECKPOINT_VARIANT": "v2"
+          },
+          "source_hashes": {
+            "scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+            "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+            "scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+            "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+            "scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+            "scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+            "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+            "scripts\\kernel_controls.py": "472fadae923b3d18aad758648561a2952e0679ba9894d9408bde33be87864825",
+            "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+            "scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+            "scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+            "scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+            "scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+            "scripts\\service.py": "95b90017076edb4ee797220ea23ba4b0f5018d6e0c78849f669149c4a9272b7a",
+            "scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+            "scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+            "scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+            "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+            "patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+            "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+            "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+            "patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+            "patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+            "profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+            "profiles\\sources.json": "4859bc2c6fe1e488ceab509789c27237f6cc7968a50cf94efcf66538f7c5f152"
+          }
+        },
+        "engine_manifest_sha256": "a586e28078970eed8fe8edc53d5c6b8c30d017e4072b348be2d9061c9244e1a8"
+      },
+      "lifecycle": {
+        "passed": true,
+        "cleanup": true,
+        "finished_at": 1791066107.0033844,
+        "result_sha256": "5d1238f6e3564330721a69baccf56d1e97a499fbada8c25dd12daded9f7e722d",
+        "terminal_sha256": "d328abdfcce222d750ac6c98e5acdca3528c7d6eea7a37e96dd4f98f59a5d4a5",
+        "terminal_controller": {
+          "phase": "stopped",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 65536,
+          "minimum_reserve_gib": 18.0,
+          "profile_sha256": "4a8713bbb091bf847450b94662bedc9eaa22c42dca6b5707faaf6a69e84a4b42",
+          "minimum_available_gib": 24.795242309570312,
+          "memory": {
+            "available_bytes": 27515686912,
+            "commit_headroom_bytes": 125843234816
+          }
+        },
+        "terminal_backend": {
+          "phase": "stopped",
+          "checkpoint": "v2",
+          "context": 65536,
+          "slots": 1,
+          "prompt_cache": "Exact",
+          "outcome": {
+            "ready": true,
+            "cleanup": true,
+            "recovery": true,
+            "context": 65536
+          }
+        }
+      },
+      "tag": "gather64a",
+      "gather_threads": 64,
+      "native_lookup_reads": [
+        {
+          "rep": 0,
+          "turn": 0,
+          "rows": 524288,
+          "tokens": 32768,
+          "seconds": 36.6,
+          "threads": 64,
+          "source": "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/controller.log",
+          "line": 1220
+        },
+        {
+          "rep": 1,
+          "turn": 0,
+          "rows": 524288,
+          "tokens": 32768,
+          "seconds": 10.7,
+          "threads": 64,
+          "source": "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/controller.log",
+          "line": 1296
+        }
+      ],
+      "artifact_pins": {
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/engine-manifest.json": "0f953e0a97ee16df41becbac6899e809a7b310fa6c2bc7f00b195d8e40355e2f",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/source-seals.json": "2c617119fd91818cf77afd323c7455272959d367585c5018c774dde4d33c06d4",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/before.json": "22851e8051dfc3249feafef1d267bf9d4c94330b10fe83d207a33a813f2b6316",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/ready.json": "a33414078b18212f65d7f6242d3eae906537aacb270695479860f62ceb44df56",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/controller.log": "a98d9b7529fe6919f0c637f26b19cd4e745580b47c49a9723ec256e4b2c20cd3",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/terminal.json": "d328abdfcce222d750ac6c98e5acdca3528c7d6eea7a37e96dd4f98f59a5d4a5",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/result.json": "5d1238f6e3564330721a69baccf56d1e97a499fbada8c25dd12daded9f7e722d",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64a/benchmark-p32768.log": "116f90569188c091e9379fd11ae40d1234150829037b8745dbec3c0887311b16",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather64a/summary.json": "dd953634c74f5492140b9956458144aa293ad75a93babf16a12fd6c2d9dcd7a3",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather64a/identity.json": "ce2da4a4359e449951a87f7e03772afe3af1481d71a51121ed02a060b4992669",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather64a/samples.jsonl": "f77d9174976977621c9ae488115579a77c4439d300f39719f66e791500f110c0",
+        "server/.local/article0162-20261003/halogen-gather64-gather64a-c65536.json": "4a8713bbb091bf847450b94662bedc9eaa22c42dca6b5707faaf6a69e84a4b42",
+        "backends/halogen-wsl2-0.16.2/.local/services/78dceb37c7c54ef8b4eea51eb40ea497/manifest.json": "a586e28078970eed8fe8edc53d5c6b8c30d017e4072b348be2d9061c9244e1a8"
+      }
+    },
+    {
+      "backend": "halogen-v2",
+      "context": 65536,
+      "target_input": 32768,
+      "passed_execution": true,
+      "three_turn_seconds": 103.9290587786191,
+      "three_turn_repetitions": [
+        106.58409149881476,
+        101.27402605842344
+      ],
+      "prefill_tps": 1085.3047228179287,
+      "decode_tps": 40.503561771450684,
+      "mtp_acceptance": 0.8386063275931117,
+      "retrieval_correct": 14,
+      "retrieval_total": 14,
+      "retrieval_details": [
+        {
+          "correct": 7,
+          "total": 7,
+          "missing": []
+        },
+        {
+          "correct": 7,
+          "total": 7,
+          "missing": []
+        }
+      ],
+      "actual_initial_tokens": [
+        32791,
+        32792
+      ],
+      "initial_cached_tokens": [
+        0,
+        0
+      ],
+      "initial_cache_observations": [
+        "cold",
+        "cold"
+      ],
+      "followup_cache_observations": [
+        "warm",
+        "warm",
+        "warm",
+        "warm"
+      ],
+      "observed_wall_seconds": 177.78993100003572,
+      "requests": 6,
+      "capped_outputs": 0,
+      "generated_tokens": 4623,
+      "output_limit": 1536,
+      "eos_outputs": 6,
+      "clamped_outputs": 0,
+      "prompt_cache": "Exact",
+      "host_memory_floor_bytes": {
+        "available_bytes": 27757346816,
+        "commit_headroom_bytes": 125903667200
+      },
+      "memory_scope": "0.2-second host RAM/commit samples plus controller snapshots",
+      "profile_sha256": "1e89146e4853b04e1f93f279bd62232f3ccc9fe1cfccd533ce35ca53036c70d1",
+      "client_sha256": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+      "corpus_sha256": "0e97b463b61bf6c8b5d9e97128bc44cf5638e30c4c97108681a3007260aaac83",
+      "measured_at": 1791066509.2237322,
+      "status": "completed",
+      "summary_sha256": "0c9a1bf381e62f685c35f52ec0f513ad8473689a785ffaed477e947c13fe03ed",
+      "turns": [
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 0,
+          "prompt_tokens": 32791,
+          "output_tokens": 275,
+          "ttft_seconds": 31.30844460002845,
+          "visible_ttft_seconds": 35.14985049999086,
+          "wall_seconds": 37.56553960003657,
+          "last_delivery_seconds": 37.56298869999591,
+          "stream_events": 252,
+          "pp_tps": 1050.9127321479632,
+          "decode_tps": 43.96298879490586,
+          "normalized_1000_seconds": 54.054850779670936,
+          "drafted": 138,
+          "accepted": 136,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "exact-value retrieval",
+          "raw_phase_timings": {
+            "prompt_n": 32791,
+            "prompt_ms": 31202.4,
+            "prompt_per_second": 1050.913,
+            "predicted_n": 275,
+            "predicted_ms": 6255.2,
+            "predicted_per_second": 43.963,
+            "draft_n": 138,
+            "draft_n_accepted": 136,
+            "cache_n": 0
+          },
+          "clock": {
+            "monotonic_per_raw": 0.9999997451244425,
+            "raw_per_qpc": 1.000000698159227,
+            "window_seconds": 37.56732675002422,
+            "handshake_uncertainty_seconds": 0.0007218499958980829
+          },
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 30103789568,
+              "commit_headroom_bytes": 128566145024
+            },
+            "after": {
+              "available_bytes": 28877582336,
+              "commit_headroom_bytes": 127415283712
+            },
+            "observed_minimum": {
+              "available_bytes": 27757346816,
+              "commit_headroom_bytes": 125903667200
+            },
+            "controller_before": {
+              "available_bytes": 30144573440,
+              "commit_headroom_bytes": 128600580096
+            },
+            "controller_after": {
+              "available_bytes": 28877561856,
+              "commit_headroom_bytes": 127426953216
+            }
+          },
+          "retrieval": {
+            "correct": 7,
+            "total": 7,
+            "missing": []
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 1,
+          "prompt_tokens": 32952,
+          "output_tokens": 1002,
+          "ttft_seconds": 0.6581286999862641,
+          "visible_ttft_seconds": 10.44966340000974,
+          "wall_seconds": 26.02919049997581,
+          "last_delivery_seconds": 25.98596570000518,
+          "stream_events": 970,
+          "pp_tps": 392.6071412993597,
+          "decode_tps": 39.45921385673711,
+          "normalized_1000_seconds": 26.000752190425214,
+          "drafted": 551,
+          "accepted": 450,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 184,
+            "prompt_ms": 486.3,
+            "prompt_per_second": 378.367,
+            "predicted_n": 1002,
+            "predicted_ms": 26348.7,
+            "predicted_per_second": 38.028,
+            "draft_n": 551,
+            "draft_n_accepted": 450,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0376357909103058,
+            "raw_per_qpc": 1.0000025768007121,
+            "window_seconds": 26.030712650041096,
+            "handshake_uncertainty_seconds": 0.0005013499758206308
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28877570048,
+              "commit_headroom_bytes": 127415283712
+            },
+            "after": {
+              "available_bytes": 28763377664,
+              "commit_headroom_bytes": 127242379264
+            },
+            "observed_minimum": {
+              "available_bytes": 27818852352,
+              "commit_headroom_bytes": 125953576960
+            },
+            "controller_before": {
+              "available_bytes": 28877561856,
+              "commit_headroom_bytes": 127426953216
+            },
+            "controller_after": {
+              "available_bytes": 28897189888,
+              "commit_headroom_bytes": 127407849472
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 2,
+          "prompt_tokens": 33615,
+          "output_tokens": 967,
+          "ttft_seconds": 0.9625582000007853,
+          "visible_ttft_seconds": 12.028592100017704,
+          "wall_seconds": 25.70117510005366,
+          "last_delivery_seconds": 25.698875000001863,
+          "stream_events": 940,
+          "pp_tps": 1011.3812020350637,
+          "decode_tps": 39.11455547059498,
+          "normalized_1000_seconds": 26.52848852871861,
+          "drafted": 536,
+          "accepted": 430,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 847,
+            "prompt_ms": 893.2,
+            "prompt_per_second": 948.276,
+            "predicted_n": 967,
+            "predicted_ms": 26367.7,
+            "predicted_per_second": 36.674,
+            "draft_n": 536,
+            "draft_n_accepted": 430,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0665472942846426,
+            "raw_per_qpc": 1.0000000560648574,
+            "window_seconds": 25.702504849992692,
+            "handshake_uncertainty_seconds": 0.0004066500114277005
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28765077504,
+              "commit_headroom_bytes": 127238029312
+            },
+            "after": {
+              "available_bytes": 28920569856,
+              "commit_headroom_bytes": 127469846528
+            },
+            "observed_minimum": {
+              "available_bytes": 28413939712,
+              "commit_headroom_bytes": 126886330368
+            },
+            "controller_before": {
+              "available_bytes": 28897189888,
+              "commit_headroom_bytes": 127407849472
+            },
+            "controller_after": {
+              "available_bytes": 28918153216,
+              "commit_headroom_bytes": 127467700224
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 0,
+          "prompt_tokens": 32792,
+          "output_tokens": 300,
+          "ttft_seconds": 29.370280399976764,
+          "visible_ttft_seconds": 32.90559849998681,
+          "wall_seconds": 35.7099946999806,
+          "last_delivery_seconds": 35.707615999970585,
+          "stream_events": 277,
+          "pp_tps": 1119.6967134878942,
+          "decode_tps": 47.33098788877306,
+          "normalized_1000_seconds": 50.49808788098649,
+          "drafted": 151,
+          "accepted": 148,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "exact-value retrieval",
+          "raw_phase_timings": {
+            "prompt_n": 32792,
+            "prompt_ms": 29286.5,
+            "prompt_per_second": 1119.697,
+            "predicted_n": 300,
+            "predicted_ms": 6338.4,
+            "predicted_per_second": 47.331,
+            "draft_n": 151,
+            "draft_n_accepted": 148,
+            "cache_n": 0
+          },
+          "clock": {
+            "monotonic_per_raw": 0.9999997441163943,
+            "raw_per_qpc": 1.0000010326358517,
+            "window_seconds": 35.711512400012,
+            "handshake_uncertainty_seconds": 0.0006175999878905714
+          },
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28906729472,
+              "commit_headroom_bytes": 127452315648
+            },
+            "after": {
+              "available_bytes": 28152283136,
+              "commit_headroom_bytes": 126690873344
+            },
+            "observed_minimum": {
+              "available_bytes": 28131500032,
+              "commit_headroom_bytes": 126684860416
+            },
+            "controller_before": {
+              "available_bytes": 28918153216,
+              "commit_headroom_bytes": 127467700224
+            },
+            "controller_after": {
+              "available_bytes": 28158898176,
+              "commit_headroom_bytes": 126697877504
+            }
+          },
+          "retrieval": {
+            "correct": 7,
+            "total": 7,
+            "missing": []
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 1,
+          "prompt_tokens": 32980,
+          "output_tokens": 796,
+          "ttft_seconds": 0.4873234999831766,
+          "visible_ttft_seconds": 7.455292999977246,
+          "wall_seconds": 19.998159700015094,
+          "last_delivery_seconds": 19.996021799976006,
+          "stream_events": 776,
+          "pp_tps": 628.3919575307019,
+          "decode_tps": 40.75247810227644,
+          "normalized_1000_seconds": 25.02570856432948,
+          "drafted": 431,
+          "accepted": 364,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 212,
+            "prompt_ms": 354.2,
+            "prompt_per_second": 598.532,
+            "predicted_n": 796,
+            "predicted_ms": 20507.1,
+            "predicted_per_second": 38.816,
+            "draft_n": 431,
+            "draft_n_accepted": 364,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0498886567981358,
+            "raw_per_qpc": 0.9999989033738086,
+            "window_seconds": 19.999517749994993,
+            "handshake_uncertainty_seconds": 0.00044314999831840396
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28138074112,
+              "commit_headroom_bytes": 126659837952
+            },
+            "after": {
+              "available_bytes": 28129976320,
+              "commit_headroom_bytes": 126694219776
+            },
+            "observed_minimum": {
+              "available_bytes": 28112031744,
+              "commit_headroom_bytes": 126626816000
+            },
+            "controller_before": {
+              "available_bytes": 28158898176,
+              "commit_headroom_bytes": 126697877504
+            },
+            "controller_after": {
+              "available_bytes": 28125716480,
+              "commit_headroom_bytes": 126686027776
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 2,
+          "prompt_tokens": 33559,
+          "output_tokens": 1283,
+          "ttft_seconds": 0.889443600026425,
+          "visible_ttft_seconds": 15.008670100010931,
+          "wall_seconds": 32.785871399973985,
+          "last_delivery_seconds": 32.78439400001662,
+          "stream_events": 1269,
+          "pp_tps": 1042.5727324860832,
+          "decode_tps": 40.223989678919565,
+          "normalized_1000_seconds": 25.750229613107475,
+          "drafted": 690,
+          "accepted": 566,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 791,
+            "prompt_ms": 758.7,
+            "prompt_per_second": 1042.573,
+            "predicted_n": 1283,
+            "predicted_ms": 31896.2,
+            "predicted_per_second": 40.224,
+            "draft_n": 690,
+            "draft_n_accepted": 566,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 0.9999997434098937,
+            "raw_per_qpc": 1.0000008574252661,
+            "window_seconds": 32.78767385001993,
+            "handshake_uncertainty_seconds": 0.0006304499984253198
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28158918656,
+              "commit_headroom_bytes": 126692339712
+            },
+            "after": {
+              "available_bytes": 28099874816,
+              "commit_headroom_bytes": 126637539328
+            },
+            "observed_minimum": {
+              "available_bytes": 27988459520,
+              "commit_headroom_bytes": 126471147520
+            },
+            "controller_before": {
+              "available_bytes": 28129079296,
+              "commit_headroom_bytes": 126688792576
+            },
+            "controller_after": {
+              "available_bytes": 28097511424,
+              "commit_headroom_bytes": 126638727168
+            }
+          }
+        }
+      ],
+      "draft_counters_complete_for_recorded_turns": true,
+      "recorded_drafted_total": 2497,
+      "recorded_accepted_total": 2094,
+      "identity": {
+        "profile_sha256": "1e89146e4853b04e1f93f279bd62232f3ccc9fe1cfccd533ce35ca53036c70d1",
+        "client_sha256": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+        "corpus_sha256": "0e97b463b61bf6c8b5d9e97128bc44cf5638e30c4c97108681a3007260aaac83",
+        "checkpoint_label": "v2",
+        "model_alias": "halogen-qwen3.8-flash-next",
+        "engine_kind": "halogen",
+        "context": 65536,
+        "minimum_reserve_gib": 18,
+        "expected_versions": {
+          "version.api": "0.16.2",
+          "version.engine": "0.16.2",
+          "version.match": true
+        },
+        "native_settings": {},
+        "prompt_lookup": false,
+        "disk_cache_configured": false,
+        "profile_settings": {
+          "checkpoint": "v2",
+          "context": 65536,
+          "prompt_cache": "Exact",
+          "draft_tokens": 2,
+          "kernel_controls": {
+            "HALOGEN_NGRAM_GATHER_THREADS": 32
+          }
+        },
+        "qualification": {
+          "draft_tokens": 2,
+          "draft_vocab": "full",
+          "mtp_policy": "length",
+          "weight_placement": "unchanged-backend-native",
+          "experimental": true
+        },
+        "runtime_hashes": {},
+        "weight_filenames": {},
+        "halogen_manifest": {
+          "schema": 1,
+          "version": "0.16.2",
+          "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+          "checkpoint": "v2",
+          "context": 65536,
+          "slots": 1,
+          "entrypoint_sha256": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0",
+          "environment": {
+            "HALOGEN_NGRAM_GATHER_THREADS": "32",
+            "HALOGEN_MTP_DEPTH": "2",
+            "HALOGEN_CTX": "65536",
+            "HALOGEN_KV_POOL_POSITIONS": "65536",
+            "HALOGEN_KV_SLOTS": "1",
+            "HALOGEN_HOST_RESERVE_GIB": "18",
+            "HALOGEN_PROMPT_CACHE": "1",
+            "HALOGEN_CHECKPOINT_VARIANT": "v2"
+          },
+          "source_hashes": {
+            "scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+            "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+            "scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+            "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+            "scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+            "scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+            "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+            "scripts\\kernel_controls.py": "472fadae923b3d18aad758648561a2952e0679ba9894d9408bde33be87864825",
+            "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+            "scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+            "scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+            "scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+            "scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+            "scripts\\service.py": "95b90017076edb4ee797220ea23ba4b0f5018d6e0c78849f669149c4a9272b7a",
+            "scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+            "scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+            "scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+            "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+            "patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+            "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+            "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+            "patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+            "patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+            "profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+            "profiles\\sources.json": "4859bc2c6fe1e488ceab509789c27237f6cc7968a50cf94efcf66538f7c5f152"
+          }
+        },
+        "engine_manifest_sha256": "c2e26d08a57b5726c116856ad6f529b353023229ade3f18b9db874c3de1d6548"
+      },
+      "lifecycle": {
+        "passed": true,
+        "cleanup": true,
+        "finished_at": 1791066540.7893965,
+        "result_sha256": "8c7aaf15c23cc8d41f470d6ecfa285cee482ca33e0842169f24871cd33c572a2",
+        "terminal_sha256": "369cc65081869e83222e49364448bc146c8940104da77c4a766996adb3d884d9",
+        "terminal_controller": {
+          "phase": "stopped",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 65536,
+          "minimum_reserve_gib": 18.0,
+          "profile_sha256": "1e89146e4853b04e1f93f279bd62232f3ccc9fe1cfccd533ce35ca53036c70d1",
+          "minimum_available_gib": 25.82537841796875,
+          "memory": {
+            "available_bytes": 28180996096,
+            "commit_headroom_bytes": 126746554368
+          }
+        },
+        "terminal_backend": {
+          "phase": "stopped",
+          "checkpoint": "v2",
+          "context": 65536,
+          "slots": 1,
+          "prompt_cache": "Exact",
+          "outcome": {
+            "ready": true,
+            "cleanup": true,
+            "recovery": true,
+            "context": 65536
+          }
+        }
+      },
+      "tag": "gather32",
+      "gather_threads": 32,
+      "native_lookup_reads": [
+        {
+          "rep": 0,
+          "turn": 0,
+          "rows": 524288,
+          "tokens": 32768,
+          "seconds": 10.4,
+          "threads": 32,
+          "source": "server/.local/article0162-20261003/halogen-v2-c65536-gather32/controller.log",
+          "line": 1204
+        },
+        {
+          "rep": 1,
+          "turn": 0,
+          "rows": 524288,
+          "tokens": 32768,
+          "seconds": 9.4,
+          "threads": 32,
+          "source": "server/.local/article0162-20261003/halogen-v2-c65536-gather32/controller.log",
+          "line": 1270
+        }
+      ],
+      "artifact_pins": {
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather32/engine-manifest.json": "9d2dc63c566fbaf1b52e1541e670c33656d9751c015fa39f2ab5aa07904c1952",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather32/source-seals.json": "2c617119fd91818cf77afd323c7455272959d367585c5018c774dde4d33c06d4",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather32/before.json": "ba1e44e00a33dbd3bf14b235d582ec6bf1f19c889a47a4e25bf0810f051a5bbc",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather32/ready.json": "ab08e6cba18bf5810857b09cd611d8177377d90df29c59b28654141dc384f2c4",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather32/controller.log": "5e2304eb128fd41995b28db6a3e02d5b664b618b02f61556b16bb5a53e5cd6a4",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather32/terminal.json": "369cc65081869e83222e49364448bc146c8940104da77c4a766996adb3d884d9",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather32/result.json": "8c7aaf15c23cc8d41f470d6ecfa285cee482ca33e0842169f24871cd33c572a2",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather32/benchmark-p32768.log": "cce5b2fde4c26f571fc2f9f76ddbe2346edc89ed3c87e589970443de3414b842",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather32/summary.json": "0c9a1bf381e62f685c35f52ec0f513ad8473689a785ffaed477e947c13fe03ed",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather32/identity.json": "2fb667cf7cb34b95ea01820b4ee445756764e57733996159e30c883f8c3bcf09",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather32/samples.jsonl": "4e5b62b94f361700e12b750e2a7fa4e2228ad494e14e3cced2c91cd7c20e29fd",
+        "server/.local/article0162-20261003/halogen-gather32-gather32-c65536.json": "1e89146e4853b04e1f93f279bd62232f3ccc9fe1cfccd533ce35ca53036c70d1",
+        "backends/halogen-wsl2-0.16.2/.local/services/a4bb24391e2f447cb195bad90f63f087/manifest.json": "c2e26d08a57b5726c116856ad6f529b353023229ade3f18b9db874c3de1d6548"
+      }
+    },
+    {
+      "backend": "halogen-v2",
+      "context": 65536,
+      "target_input": 32768,
+      "passed_execution": true,
+      "three_turn_seconds": 103.48842317418158,
+      "three_turn_repetitions": [
+        105.93286072931157,
+        101.04398561905157
+      ],
+      "prefill_tps": 1087.2189420426143,
+      "decode_tps": 40.74236855672895,
+      "mtp_acceptance": 0.8386063275931117,
+      "retrieval_correct": 14,
+      "retrieval_total": 14,
+      "retrieval_details": [
+        {
+          "correct": 7,
+          "total": 7,
+          "missing": []
+        },
+        {
+          "correct": 7,
+          "total": 7,
+          "missing": []
+        }
+      ],
+      "actual_initial_tokens": [
+        32791,
+        32792
+      ],
+      "initial_cached_tokens": [
+        0,
+        0
+      ],
+      "initial_cache_observations": [
+        "cold",
+        "cold"
+      ],
+      "followup_cache_observations": [
+        "warm",
+        "warm",
+        "warm",
+        "warm"
+      ],
+      "observed_wall_seconds": 176.98049070010893,
+      "requests": 6,
+      "capped_outputs": 0,
+      "generated_tokens": 4623,
+      "output_limit": 1536,
+      "eos_outputs": 6,
+      "clamped_outputs": 0,
+      "prompt_cache": "Exact",
+      "host_memory_floor_bytes": {
+        "available_bytes": 28027219968,
+        "commit_headroom_bytes": 126526152704
+      },
+      "memory_scope": "0.2-second host RAM/commit samples plus controller snapshots",
+      "profile_sha256": "4a8713bbb091bf847450b94662bedc9eaa22c42dca6b5707faaf6a69e84a4b42",
+      "client_sha256": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+      "corpus_sha256": "0e97b463b61bf6c8b5d9e97128bc44cf5638e30c4c97108681a3007260aaac83",
+      "measured_at": 1791066942.627577,
+      "status": "completed",
+      "summary_sha256": "a775eb584e28a6e78d9067a5bc778706b88b1808edfd6878cdf90bf17e24ebef",
+      "turns": [
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 0,
+          "prompt_tokens": 32791,
+          "output_tokens": 275,
+          "ttft_seconds": 31.119299299956765,
+          "visible_ttft_seconds": 34.87435399997048,
+          "wall_seconds": 37.1721877999953,
+          "last_delivery_seconds": 37.16961379995337,
+          "stream_events": 252,
+          "pp_tps": 1062.9389511370937,
+          "decode_tps": 44.20613766390178,
+          "normalized_1000_seconds": 53.740592469764465,
+          "drafted": 138,
+          "accepted": 136,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "exact-value retrieval",
+          "raw_phase_timings": {
+            "prompt_n": 32791,
+            "prompt_ms": 32508.5,
+            "prompt_per_second": 1008.69,
+            "predicted_n": 275,
+            "predicted_ms": 6555.5,
+            "predicted_per_second": 41.95,
+            "draft_n": 138,
+            "draft_n_accepted": 136,
+            "cache_n": 0
+          },
+          "clock": {
+            "monotonic_per_raw": 1.053781589127575,
+            "raw_per_qpc": 1.0000004125905186,
+            "window_seconds": 37.174712100066245,
+            "handshake_uncertainty_seconds": 0.0005669000092893839
+          },
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 30062231552,
+              "commit_headroom_bytes": 128522960896
+            },
+            "after": {
+              "available_bytes": 28997619712,
+              "commit_headroom_bytes": 127521923072
+            },
+            "observed_minimum": {
+              "available_bytes": 28985118720,
+              "commit_headroom_bytes": 127521923072
+            },
+            "controller_before": {
+              "available_bytes": 30092230656,
+              "commit_headroom_bytes": 128543875072
+            },
+            "controller_after": {
+              "available_bytes": 29011976192,
+              "commit_headroom_bytes": 127544459264
+            }
+          },
+          "retrieval": {
+            "correct": 7,
+            "total": 7,
+            "missing": []
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 1,
+          "prompt_tokens": 32952,
+          "output_tokens": 1002,
+          "ttft_seconds": 0.646552000020165,
+          "visible_ttft_seconds": 10.504319200001191,
+          "wall_seconds": 25.92042889998993,
+          "last_delivery_seconds": 25.875167199992575,
+          "stream_events": 970,
+          "pp_tps": 359.82752031078275,
+          "decode_tps": 39.71784597686805,
+          "normalized_1000_seconds": 25.824151021437565,
+          "drafted": 551,
+          "accepted": 450,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 184,
+            "prompt_ms": 517.9,
+            "prompt_per_second": 355.281,
+            "predicted_n": 1002,
+            "predicted_ms": 25550.6,
+            "predicted_per_second": 39.216,
+            "draft_n": 551,
+            "draft_n_accepted": 450,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 1.0127969700343749,
+            "raw_per_qpc": 1.0000004848711244,
+            "window_seconds": 25.92234195000492,
+            "handshake_uncertainty_seconds": 0.0005431500030681491
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28997349376,
+              "commit_headroom_bytes": 127521923072
+            },
+            "after": {
+              "available_bytes": 28969017344,
+              "commit_headroom_bytes": 127495688192
+            },
+            "observed_minimum": {
+              "available_bytes": 28797997056,
+              "commit_headroom_bytes": 127218909184
+            },
+            "controller_before": {
+              "available_bytes": 29011976192,
+              "commit_headroom_bytes": 127544459264
+            },
+            "controller_after": {
+              "available_bytes": 28980494336,
+              "commit_headroom_bytes": 127501287424
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 2,
+          "prompt_tokens": 33615,
+          "output_tokens": 967,
+          "ttft_seconds": 0.9454386999714188,
+          "visible_ttft_seconds": 11.960171499988064,
+          "wall_seconds": 25.5309385000146,
+          "last_delivery_seconds": 25.52898990001995,
+          "stream_events": 940,
+          "pp_tps": 1045.8068911333971,
+          "decode_tps": 39.334958293235644,
+          "normalized_1000_seconds": 26.36811723810954,
+          "drafted": 536,
+          "accepted": 430,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 847,
+            "prompt_ms": 809.9,
+            "prompt_per_second": 1045.808,
+            "predicted_n": 967,
+            "predicted_ms": 24583.9,
+            "predicted_per_second": 39.335,
+            "draft_n": 536,
+            "draft_n_accepted": 430,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 0.9999989397034611,
+            "raw_per_qpc": 1.0000000231497805,
+            "window_seconds": 25.53247899992857,
+            "handshake_uncertainty_seconds": 0.0004971000016666949
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28969000960,
+              "commit_headroom_bytes": 127495688192
+            },
+            "after": {
+              "available_bytes": 28891906048,
+              "commit_headroom_bytes": 127405563904
+            },
+            "observed_minimum": {
+              "available_bytes": 28800999424,
+              "commit_headroom_bytes": 127309045760
+            },
+            "controller_before": {
+              "available_bytes": 28980494336,
+              "commit_headroom_bytes": 127501287424
+            },
+            "controller_after": {
+              "available_bytes": 28880908288,
+              "commit_headroom_bytes": 127408558080
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 0,
+          "prompt_tokens": 32792,
+          "output_tokens": 300,
+          "ttft_seconds": 29.5845069999923,
+          "visible_ttft_seconds": 33.097884899994824,
+          "wall_seconds": 35.886921900033485,
+          "last_delivery_seconds": 35.88493020000169,
+          "stream_events": 277,
+          "pp_tps": 1111.4989329481352,
+          "decode_tps": 47.61099712783697,
+          "normalized_1000_seconds": 50.58805786692688,
+          "drafted": 151,
+          "accepted": 148,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "exact-value retrieval",
+          "raw_phase_timings": {
+            "prompt_n": 32792,
+            "prompt_ms": 29502.5,
+            "prompt_per_second": 1111.499,
+            "predicted_n": 300,
+            "predicted_ms": 6301.0,
+            "predicted_per_second": 47.611,
+            "draft_n": 151,
+            "draft_n_accepted": 148,
+            "cache_n": 0
+          },
+          "clock": {
+            "monotonic_per_raw": 0.9999999396743814,
+            "raw_per_qpc": 1.0000009700873147,
+            "window_seconds": 35.88852949999273,
+            "handshake_uncertainty_seconds": 0.0006348000024445355
+          },
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28870811648,
+              "commit_headroom_bytes": 127413354496
+            },
+            "after": {
+              "available_bytes": 28093358080,
+              "commit_headroom_bytes": 126637719552
+            },
+            "observed_minimum": {
+              "available_bytes": 28048101376,
+              "commit_headroom_bytes": 126536962048
+            },
+            "controller_before": {
+              "available_bytes": 28891897856,
+              "commit_headroom_bytes": 127405563904
+            },
+            "controller_after": {
+              "available_bytes": 28099330048,
+              "commit_headroom_bytes": 126648500224
+            }
+          },
+          "retrieval": {
+            "correct": 7,
+            "total": 7,
+            "missing": []
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 1,
+          "prompt_tokens": 32980,
+          "output_tokens": 796,
+          "ttft_seconds": 0.4746732000494376,
+          "visible_ttft_seconds": 7.40081530000316,
+          "wall_seconds": 19.91385240003001,
+          "last_delivery_seconds": 19.911510200006887,
+          "stream_events": 776,
+          "pp_tps": 601.4179667510554,
+          "decode_tps": 40.952997735944,
+          "normalized_1000_seconds": 24.892910088293416,
+          "drafted": 431,
+          "accepted": 364,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 212,
+            "prompt_ms": 352.5,
+            "prompt_per_second": 601.418,
+            "predicted_n": 796,
+            "predicted_ms": 19437.0,
+            "predicted_per_second": 40.953,
+            "draft_n": 431,
+            "draft_n_accepted": 364,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 0.9999999447157474,
+            "raw_per_qpc": 1.0000020796679079,
+            "window_seconds": 19.915212949970737,
+            "handshake_uncertainty_seconds": 0.000487349956529215
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28104036352,
+              "commit_headroom_bytes": 126648336384
+            },
+            "after": {
+              "available_bytes": 28127051776,
+              "commit_headroom_bytes": 126630711296
+            },
+            "observed_minimum": {
+              "available_bytes": 28094963712,
+              "commit_headroom_bytes": 126628790272
+            },
+            "controller_before": {
+              "available_bytes": 28099330048,
+              "commit_headroom_bytes": 126648500224
+            },
+            "controller_after": {
+              "available_bytes": 28116643840,
+              "commit_headroom_bytes": 126634926080
+            }
+          }
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 2,
+          "prompt_tokens": 33559,
+          "output_tokens": 1283,
+          "ttft_seconds": 0.856407500046771,
+          "visible_ttft_seconds": 14.913008100003935,
+          "wall_seconds": 32.55616120004561,
+          "last_delivery_seconds": 32.55362200003583,
+          "stream_events": 1269,
+          "pp_tps": 1093.295949293833,
+          "decode_tps": 40.47499812280288,
+          "normalized_1000_seconds": 25.563017663831268,
+          "drafted": 690,
+          "accepted": 566,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "reasoning_tokens_included": true,
+          "turn_kind": "sampled code / review (ungraded)",
+          "raw_phase_timings": {
+            "prompt_n": 791,
+            "prompt_ms": 723.5,
+            "prompt_per_second": 1093.296,
+            "predicted_n": 1283,
+            "predicted_ms": 31698.6,
+            "predicted_per_second": 40.475,
+            "draft_n": 690,
+            "draft_n_accepted": 566,
+            "cache_n": 32768
+          },
+          "clock": {
+            "monotonic_per_raw": 0.9999999536208246,
+            "raw_per_qpc": 1.0000004700578369,
+            "window_seconds": 32.55769914999837,
+            "handshake_uncertainty_seconds": 0.0005405500123742968
+          },
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28135337984,
+              "commit_headroom_bytes": 126633771008
+            },
+            "after": {
+              "available_bytes": 28071403520,
+              "commit_headroom_bytes": 126610788352
+            },
+            "observed_minimum": {
+              "available_bytes": 28027219968,
+              "commit_headroom_bytes": 126526152704
+            },
+            "controller_before": {
+              "available_bytes": 28145410048,
+              "commit_headroom_bytes": 126648442880
+            },
+            "controller_after": {
+              "available_bytes": 28068089856,
+              "commit_headroom_bytes": 126601011200
+            }
+          }
+        }
+      ],
+      "draft_counters_complete_for_recorded_turns": true,
+      "recorded_drafted_total": 2497,
+      "recorded_accepted_total": 2094,
+      "identity": {
+        "profile_sha256": "4a8713bbb091bf847450b94662bedc9eaa22c42dca6b5707faaf6a69e84a4b42",
+        "client_sha256": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+        "corpus_sha256": "0e97b463b61bf6c8b5d9e97128bc44cf5638e30c4c97108681a3007260aaac83",
+        "checkpoint_label": "v2",
+        "model_alias": "halogen-qwen3.8-flash-next",
+        "engine_kind": "halogen",
+        "context": 65536,
+        "minimum_reserve_gib": 18,
+        "expected_versions": {
+          "version.api": "0.16.2",
+          "version.engine": "0.16.2",
+          "version.match": true
+        },
+        "native_settings": {},
+        "prompt_lookup": false,
+        "disk_cache_configured": false,
+        "profile_settings": {
+          "checkpoint": "v2",
+          "context": 65536,
+          "prompt_cache": "Exact",
+          "draft_tokens": 2,
+          "kernel_controls": {
+            "HALOGEN_NGRAM_GATHER_THREADS": 64
+          }
+        },
+        "qualification": {
+          "draft_tokens": 2,
+          "draft_vocab": "full",
+          "mtp_policy": "length",
+          "weight_placement": "unchanged-backend-native",
+          "experimental": true
+        },
+        "runtime_hashes": {},
+        "weight_filenames": {},
+        "halogen_manifest": {
+          "schema": 1,
+          "version": "0.16.2",
+          "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+          "checkpoint": "v2",
+          "context": 65536,
+          "slots": 1,
+          "entrypoint_sha256": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0",
+          "environment": {
+            "HALOGEN_NGRAM_GATHER_THREADS": "64",
+            "HALOGEN_MTP_DEPTH": "2",
+            "HALOGEN_CTX": "65536",
+            "HALOGEN_KV_POOL_POSITIONS": "65536",
+            "HALOGEN_KV_SLOTS": "1",
+            "HALOGEN_HOST_RESERVE_GIB": "18",
+            "HALOGEN_PROMPT_CACHE": "1",
+            "HALOGEN_CHECKPOINT_VARIANT": "v2"
+          },
+          "source_hashes": {
+            "scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+            "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+            "scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+            "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+            "scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+            "scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+            "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+            "scripts\\kernel_controls.py": "472fadae923b3d18aad758648561a2952e0679ba9894d9408bde33be87864825",
+            "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+            "scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+            "scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+            "scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+            "scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+            "scripts\\service.py": "95b90017076edb4ee797220ea23ba4b0f5018d6e0c78849f669149c4a9272b7a",
+            "scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+            "scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+            "scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+            "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+            "patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+            "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+            "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+            "patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+            "patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+            "profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+            "profiles\\sources.json": "4859bc2c6fe1e488ceab509789c27237f6cc7968a50cf94efcf66538f7c5f152"
+          }
+        },
+        "engine_manifest_sha256": "f51808296c2c5c25063d7ec415a3a4cf6df4f38682c7ce3a647cb183c9b343ed"
+      },
+      "lifecycle": {
+        "passed": true,
+        "cleanup": true,
+        "finished_at": 1791066974.6358907,
+        "result_sha256": "4697174a2cc6ef1dea6626a35efd698bdadcc0b1ef4cf7d2b59aa0f860aa9ca2",
+        "terminal_sha256": "ab1adc3795b76538a5808db731f8bda3b6052da64e72278a6c1df3b5da11c032",
+        "terminal_controller": {
+          "phase": "stopped",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 65536,
+          "minimum_reserve_gib": 18.0,
+          "profile_sha256": "4a8713bbb091bf847450b94662bedc9eaa22c42dca6b5707faaf6a69e84a4b42",
+          "minimum_available_gib": 26.119449615478516,
+          "memory": {
+            "available_bytes": 28183519232,
+            "commit_headroom_bytes": 126717292544
+          }
+        },
+        "terminal_backend": {
+          "phase": "stopped",
+          "checkpoint": "v2",
+          "context": 65536,
+          "slots": 1,
+          "prompt_cache": "Exact",
+          "outcome": {
+            "ready": true,
+            "cleanup": true,
+            "recovery": true,
+            "context": 65536
+          }
+        }
+      },
+      "tag": "gather64b",
+      "gather_threads": 64,
+      "native_lookup_reads": [
+        {
+          "rep": 0,
+          "turn": 0,
+          "rows": 524288,
+          "tokens": 32768,
+          "seconds": 10.4,
+          "threads": 64,
+          "source": "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/controller.log",
+          "line": 1204
+        },
+        {
+          "rep": 1,
+          "turn": 0,
+          "rows": 524288,
+          "tokens": 32768,
+          "seconds": 9.8,
+          "threads": 64,
+          "source": "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/controller.log",
+          "line": 1270
+        }
+      ],
+      "artifact_pins": {
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/engine-manifest.json": "569f2e194cf78611019b87373dbfe18056bc23f538025cd6abb040aef21eaccd",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/source-seals.json": "2c617119fd91818cf77afd323c7455272959d367585c5018c774dde4d33c06d4",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/before.json": "cc71356ee11a43ff1272943adf7c114e431e97f9f1244d43abac8d3bc8e850ae",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/ready.json": "6457427805dd55291e7919be101caa7dd44f49c040c285a712d47e152a485b7c",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/controller.log": "7355d00c5cad5a617ee93c1c734d9a16f84448100ec382c5f2266f3ca87da6f9",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/terminal.json": "ab1adc3795b76538a5808db731f8bda3b6052da64e72278a6c1df3b5da11c032",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/result.json": "4697174a2cc6ef1dea6626a35efd698bdadcc0b1ef4cf7d2b59aa0f860aa9ca2",
+        "server/.local/article0162-20261003/halogen-v2-c65536-gather64b/benchmark-p32768.log": "3bfec760bf156bd170dd9e7259ae41129213c55e69e86faa3e31f20dd4b68770",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather64b/summary.json": "a775eb584e28a6e78d9067a5bc778706b88b1808edfd6878cdf90bf17e24ebef",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather64b/identity.json": "034662e7bd21fe7fac853bfecd5261f1f9c0d4c7c48abd83307c27145ea0065e",
+        "server/.local/article0162-20261003/halogen-v2-c65536-p32768-gather64b/samples.jsonl": "0ec879977637d0a1ebcfa687b0dd94ec981f9f5697bf5db40d19f4935fe9b0c8",
+        "server/.local/article0162-20261003/halogen-gather64-gather64b-c65536.json": "4a8713bbb091bf847450b94662bedc9eaa22c42dca6b5707faaf6a69e84a4b42",
+        "backends/halogen-wsl2-0.16.2/.local/services/5b0baf0136844c9f81915d0e267fbb3a/manifest.json": "f51808296c2c5c25063d7ec415a3a4cf6df4f38682c7ce3a647cb183c9b343ed"
+      }
+    }
+  ]
+}

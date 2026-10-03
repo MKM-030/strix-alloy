@@ -389,3 +389,19 @@ records explicitly. The default receipt path is `<output>.receipt.json`; `--rece
 selects another new path. The script refuses existing outputs, source/output aliases,
 parent traversal and symlink/reparse paths. Generated receipts contain private paths
 and must be sanitized before publication.
+
+## Selected-ten-expert ONNX prototype
+
+`halogen_npu_expert_onnx.py` retains single-expert conversion and adds bounded
+q4c extraction of ten selected MTP experts through `--hgn`, `--manifest`,
+`--expert-ids` and `--out`. The graph fixes those IDs and accepts dynamic routing
+coefficients. `--check-model`, `--provider cpu|npu`, `--reps` and `--report`
+provide a separate replay with numerical checks and execution-provider attribution.
+The NPU path refuses CPU fallback; compilation and warm-up are reported separately.
+Optional `--ep-dir` selects a complete byte-identical copy of the installed
+provider directory, verified before loading, for the measured local resource-path workaround.
+
+See the [conversion and qualification report](../../docs/research/halogen-npu-top10-20261004.md)
+for commands, measured evidence and the missing native Halogen state interface.
+Coordinate hardware replay with engine cleanup and the 18 GiB physical/commit
+guard. This is a sparse expert prototype, not full MTP or live Halogen offload.

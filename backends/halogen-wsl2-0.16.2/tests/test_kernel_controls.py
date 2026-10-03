@@ -56,9 +56,29 @@ class KernelControlsTests(unittest.TestCase):
                 self.module().parse(value)
         self.assertEqual(self.module().parse('{"HALOGEN_DN_SCAN":0}'),{'HALOGEN_DN_SCAN':0})
 
+    def test_lookup_io_threads_accept_only_the_matched_probe_values(self):
+        for value in (32,64):
+            with self.subTest(value=value):
+                controls={'HALOGEN_NGRAM_GATHER_THREADS':value}
+                try:
+                    parsed=self.module().parse(json.dumps(controls))
+                except ValueError as error:
+                    self.fail('Documented lookup-I/O probe value was refused: '+str(error))
+                self.assertEqual(parsed,controls)
+                self.assertEqual(self.module().environment(controls),
+                                 {'HALOGEN_NGRAM_GATHER_THREADS':str(value)})
+
+    def test_lookup_io_threads_refuse_coercion_and_unmeasured_values(self):
+        for value in (0,1,16,31,33,63,65,128,-1,True,False,'32',32.0,None):
+            with self.subTest(value=value),self.assertRaises(ValueError):
+                self.module().validate({'HALOGEN_NGRAM_GATHER_THREADS':value})
+
+    def test_lookup_io_threads_do_not_add_a_default_override(self):
+        self.assertNotIn('HALOGEN_NGRAM_GATHER_THREADS',self.module().environment({}))
+
     @unittest.skipUnless(shutil.which('pwsh'),'PowerShell 7 launcher fixture')
     def test_launcher_preserves_json_as_one_argument(self):
-        controls='{"HALOGEN_DN_SCAN":0,"HALOGEN_ATTN_FA":64}'
+        controls='{"HALOGEN_DN_SCAN":0,"HALOGEN_ATTN_FA":64,"HALOGEN_NGRAM_GATHER_THREADS":32}'
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary); (root/'scripts').mkdir()
             shutil.copyfile(ROOT/'Start.ps1',root/'Start.ps1')
