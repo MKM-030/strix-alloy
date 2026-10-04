@@ -1,0 +1,229 @@
+{
+  "schema": "halogen_qmoe_resumed_attempts_v1",
+  "generated_at_utc": "2026-10-04T11:11:28.8381506Z",
+  "attempts": [
+    {
+      "attempt": "qmoe-diagnostic-admission-758cde7a2ddd4710b02ada7ea71ab6b8",
+      "passed": false,
+      "error": "RuntimeError: QMoEBf child exit 3221226505",
+      "terminal_exit_hex": "0xc0000409",
+      "native_stage": "failed",
+      "normal_native_counters": null,
+      "completed_call_timings": null,
+      "output_qualified": false,
+      "captured_faults": [
+        {
+          "exception_code": "0x00000000c0000005",
+          "module_offset": "0x00000000000f2186",
+          "module_path": "C:\\windows\\SYSTEM32\\xrt_coreutil.dll",
+          "fault_address": "0x0000000000000000",
+          "frames": []
+        }
+      ],
+      "owned_job_closed": true,
+      "latch_released": true,
+      "sealed_ort_final_verified": true,
+      "minimum_reserve_gib": {
+        "physical": 43.57078170776367,
+        "commit": 199.07655334472656
+      },
+      "artifact_sha256": {
+        "result.json": "6f6673c046f1f04a788c238404d433f952d476659736827496bdac912eec12ee",
+        "admission.json": "bd5a648545e8a02cc2d5c383876e7822afb8e4185f2e59149f61285a630a2b5c",
+        "identity.json": "bc2aa53b59e62195cfbdd2042c7f6455bfb9c578ab82d7a25ae82c558599b7e7",
+        "native-fault.jsonl": "ccacbf5e2ed0ae6dc8f5b7b0bdee0928a1a02e6f1a9a34010bd9efd887aab76a",
+        "stdout.txt": "f3376e54e4cb568fd7289b01a4735abed96d68ed9b7e05e852b7d2a983589d9f",
+        "stderr.txt": "73b79a216e08ba3ec07b8e70248a926ec9551ea350604de6b28cbe4b581831fe",
+        "memory.jsonl": "b4be6aa3d023052516aa0d5066d4ca70f1b32f7b3500f973dcc23d899f519e1f"
+      }
+    },
+    {
+      "attempt": "qmoe-basename-admission-3b6d81d849784e9b8f75fb5e02517e5d",
+      "passed": false,
+      "error": "RuntimeError: QMoEBf child exit 3221226505",
+      "terminal_exit_hex": "0xc0000409",
+      "native_stage": "failed",
+      "normal_native_counters": null,
+      "completed_call_timings": null,
+      "output_qualified": false,
+      "captured_faults": [
+        {
+          "exception_code": "0x00000000c0000005",
+          "module_offset": "0x00000000000f2186",
+          "module_path": "C:\\windows\\SYSTEM32\\xrt_coreutil.dll",
+          "fault_address": "0x0000000000000000",
+          "frames": []
+        }
+      ],
+      "owned_job_closed": true,
+      "latch_released": true,
+      "sealed_ort_final_verified": true,
+      "minimum_reserve_gib": {
+        "physical": 43.627689361572266,
+        "commit": 198.98826599121094
+      },
+      "artifact_sha256": {
+        "result.json": "f903153f06594a41bd9576db514564ce70ad19e3c2463ec5bbf935dfd7509101",
+        "admission.json": "db2d086ac167826448b374f60138f8139515c24a3cc1e8513d0692e1d06829b5",
+        "identity.json": "f77425b3c865e26d36264977f549111ec7e2a4568e9dc29a425983f1149a159f",
+        "native-fault.jsonl": "e92e79bf51892c6fecf1b5aeb16fd080e69e4755c81cb131a90ce9edc43c92f4",
+        "stdout.txt": "3d48aa6e15f85f06b68c518e0776677ea9c30d0c885abd0e8ba994860268066e",
+        "stderr.txt": "7a3d6b3f6240279f5219489b941162704f4c8267b798bad3944ab98205c61cc2",
+        "memory.jsonl": "48fabbc296434be454db215801f54c0b75054e797ab81d93677ab81efb0b7967"
+      }
+    },
+    {
+      "attempt": "qmoe-stack-admission-67b8899b9b6147e0877624740a2fd210",
+      "passed": false,
+      "error": "RuntimeError: QMoEBf child exit 3221226505",
+      "terminal_exit_hex": "0xc0000409",
+      "native_stage": "failed",
+      "normal_native_counters": null,
+      "completed_call_timings": null,
+      "output_qualified": false,
+      "captured_faults": [
+        {
+          "exception_code": "0x00000000c0000005",
+          "module_offset": "0x00000000002ca541",
+          "module_path": "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004\\onnxruntime_providers_ryzenai.dll",
+          "fault_address": "0x000005f1de174ba0",
+          "frames": [
+            {
+              "module_offset": "0x00000000002ca541"
+            },
+            {
+              "module_offset": "0x0000000000076630"
+            },
+            {
+              "module_offset": "0x000000000007fbae"
+            },
+            {
+              "module_offset": "0x0000000000077508"
+            },
+            {
+              "module_offset": "0x000000000014eb48"
+            },
+            {
+              "module_offset": "0x00000000000e5dce"
+            },
+            {
+              "module_offset": "0x000000000007a641"
+            },
+            {
+              "module_offset": "0x00000000009083e7"
+            },
+            {
+              "module_offset": "0x000000000090e274"
+            },
+            {
+              "module_offset": "0x000000000090f301"
+            },
+            {
+              "module_offset": "0x000000000090a232"
+            },
+            {
+              "module_offset": "0x00000000009093f4"
+            }
+          ]
+        }
+      ],
+      "owned_job_closed": true,
+      "latch_released": true,
+      "sealed_ort_final_verified": true,
+      "minimum_reserve_gib": {
+        "physical": 45.235694885253906,
+        "commit": 200.64915084838867
+      },
+      "artifact_sha256": {
+        "result.json": "ba453b87720820bd480547da8f681f7c0e29fab3d4baf5af500e815fbb26c84d",
+        "admission.json": "12cfa7bf617a243c45ca5704c1c3cec24529b9eb9317b3f58ed499d2aa03de9e",
+        "identity.json": "2f495839b310e92100b582fd073be2ffd5455e7ed52a8343571e36defd5b7051",
+        "native-fault.jsonl": "0ed5f70f4abd72ac3d3d693031e00bf8af557908f5c375cae8ac739fa506a4e7",
+        "stdout.txt": "2adaf6b0a574479d1cde5a0c8a4adce6c4201f3d2333f80a648896f3ea6415f2",
+        "stderr.txt": "fcc9e2743206330bf8dd2e30d99171d9f397f5ec1daf17e186a024e28af08d7c",
+        "memory.jsonl": "15d6b08198a7499df21a43bdde5e2eb3284a6f7e7cbe35a9e30479266aede00a"
+      }
+    },
+    {
+      "attempt": "qmoe-rank3-admission-61e998509c8d4f86b39aaf6ef3bee0fb",
+      "passed": false,
+      "error": "RuntimeError: QMoEBf child exit 3221226505",
+      "terminal_exit_hex": "0xc0000409",
+      "native_stage": "failed",
+      "normal_native_counters": null,
+      "completed_call_timings": null,
+      "output_qualified": false,
+      "captured_faults": [
+        {
+          "exception_code": "0x00000000c0000005",
+          "module_offset": "0x00000000000f2186",
+          "module_path": "C:\\windows\\SYSTEM32\\xrt_coreutil.dll",
+          "fault_address": "0x0000000000000000",
+          "frames": [
+            {
+              "module_offset": "0x00000000000f2186"
+            },
+            {
+              "module_offset": "0x000000000056a7a5"
+            },
+            {
+              "module_offset": "0x0000000000c7cac7"
+            },
+            {
+              "module_offset": "0x0000000000151ccd"
+            },
+            {
+              "module_offset": "0x000000000014eca0"
+            },
+            {
+              "module_offset": "0x00000000000e5dce"
+            },
+            {
+              "module_offset": "0x000000000007a641"
+            },
+            {
+              "module_offset": "0x00000000009083e7"
+            },
+            {
+              "module_offset": "0x000000000090e274"
+            },
+            {
+              "module_offset": "0x000000000090f301"
+            },
+            {
+              "module_offset": "0x000000000090a232"
+            },
+            {
+              "module_offset": "0x00000000009093f4"
+            }
+          ]
+        }
+      ],
+      "owned_job_closed": true,
+      "latch_released": true,
+      "sealed_ort_final_verified": true,
+      "minimum_reserve_gib": {
+        "physical": 43.372642517089844,
+        "commit": 198.7775115966797
+      },
+      "artifact_sha256": {
+        "result.json": "3874db767655a807cbeab27691dba295401b5eb837a8086e69b64f9ff2336080",
+        "admission.json": "9264ce022512a93387ecb28d0fe1399023f0c7ed0381a1e24b69e2721f0a7244",
+        "identity.json": "fba331ec6c007da5540bf031b4e08be182543bdb9f399281d7a0f1d12cac2c4b",
+        "native-fault.jsonl": "5ab3681c307ac9e4583019a742e1c2e499410dafcc592b483bd297f25762057e",
+        "stdout.txt": "cddace65bea20c356f8068fb5b977c41302204aa7663a18ea18acb3bdae5e3c2",
+        "stderr.txt": "ce28d9d26bfde3c433871babdb715236e5aa1504a268309163c95f6929e891ec",
+        "memory.jsonl": "bd1faced6526f98fe5c232ba8509fbbb74b21b92cb70251d9b86d45fd1a372d7"
+      }
+    }
+  ],
+  "speed_gain_established": false,
+  "full_mtp_proven": false,
+  "stock": {
+    "scope": "Halogen0.16.2 v2 capacity262144 cacheOff greedy thinkingOff; warmup excluded; 3 measured repeats",
+    "pp8192_tg1_serial": 1661.0181,
+    "pp8192_tg128_mtp_prefill": 1584.5019,
+    "pp8192_tg128_mtp_decode": 47.06,
+    "mtp_acceptance": 0.6
+  }
+}

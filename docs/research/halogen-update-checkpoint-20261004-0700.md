@@ -34,3 +34,20 @@ dated 2026-09-29 and 26.8.1 WHQL Recommended dated 2026-08-20. No newer applicab
 engine/GPU package appeared in these checked channels. The earlier full driver
 branch comparison remains scoped to its original check; no installed versions
 or system settings were changed.
+
+## Resumed check at 11:11–11:14 UTC
+
+The direct main and tags APIs still return `7f31bbd4021f217a1be9776bdb7304bcf8eca62d`
+and newest tag `v0.16.2`. The latest-release endpoint remains HTTP404, as above.
+The live official [Max+395 download page](https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html)
+still lists 26.9.2 WHQL Optional dated2026-09-29 and 26.8.1 Recommended.
+The [GPU package notes](https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html)
+retain DriverStore32.0.32015.2008 and NPU MCDM32.00.20102.3930; the
+[Ryzen AI release notes](https://ryzenai.docs.amd.com/en/main/relnotes.html)
+remain version1.8.0. No newer package was established in these channels.
+No package, driver, firmware or operating-system setting was changed.
+
+The requested [Reddit comparison](https://www.reddit.com/r/LocalLLM/comments/1wu0m53/benchmarks_best_engine_for_qwen_38flashnext_on/)
+was rechecked for methodology and new approaches. Its independent Linux/70W
+figures are external references. They do not replace this machine's matched
+workload results or establish an NPU MTP speedup.
