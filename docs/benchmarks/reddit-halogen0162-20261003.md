@@ -6,6 +6,8 @@ I tried the long-chat layout from [deepu105's comparison](https://www.reddit.com
 
 GUFO and PROJFIX run natively on Windows; Halogen uses Ubuntu 24.04 WSL2/Docker with DXG. The weights differ: v2 HGN, Unsloth UD-IQ4_XS, and IQ4_NL-PROJFIX. This compares those setups on my machine; it doesn't isolate engine, quantization or OS effects from the reference post.
 
+Halogen's v2 HGN checkpoint averages **4.16 bits per weight**: 4-bit experts and other weights, 6-bit mixing layers, and 8-bit dense MTP projections. Its separate n-gram lookup table is FP8. These are the [published v2 quantization details](https://github.com/peonist-ai/halogen-flash-server/blob/main/docs/QUANT.md#the-v2-checkpoint-015-on); IQ4_XS is the GUFO quantization.
+
 Each cell is two three-turn conversations at temperature 1 / top-p .95 / top-k 20, low-effort thinking requested, and a 1536-token answer limit. I used twelve pinned LlamaStash code files plus exact-value fixtures, with ungraded implementation/review follow-ups. 3-turn time is the normalized sum of `TTFT + 1000/decode t/s` per turn, averaged across both conversations. Prefill covers initial requests; regular sampled decode is weighted across all six answers, including reasoning tokens. MTP accept is accepted/proposed draft tokens. Actual wall times and counts are in the report.
 
 **64K capacity, 32K initial input — 50% filled**
