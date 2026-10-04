@@ -75,3 +75,31 @@ Even successful synthetic admission would leave the full target work
 unfinished. The checked public Halogen engine has no documented external
 Flash-Next drafter/verification/state-transaction contract; independent NPU
 services are a different interface. [Integration assessment](halogen-laya-jev-sidecar-feasibility-20261004.md).
+
+## Prepared invocation; extension pending
+
+Separate local guard/probe sources have now been prepared under
+`server/.local/optimization9h-20261004`, with the native/source/header pins and
+the existing frozen graph/ORT-stage contract. They require
+`--allow-post-window-admission` in both entry points; missing-flag checks
+returned guard exit1 and probe exit2 without creating a report or initializing
+a native session. The exact proposed argument vector and final source hashes
+are retained in `retained-allocator-runner-preparation.json`; it is a
+preparation record, not an inference result. No post-window extension has
+been received and no native admission was launched.
+
+The new guard retains ownership attached to constructor exceptions, records
+closure/final-idle/final-reserve failures independently, pins `server/winjob.py`
+and holds a shared latch through pending closure of the same child. That latch
+coordinates cooperating retained-session guards only; the historical guards
+remain unchanged and root must exclude concurrent historical launches.
+Lifecycle changes received source review and AST parsing, not runtime
+qualification. After a caught native exception, the probe leaves unavailable
+native counters null and preserves stdout/fault evidence. Its outer schema1
+is distinct from native schema2; strict no-CPU-fallback applies to the actual
+QMoEBf session, while the holder uses defaults and empty EP options.
+
+The proposed attempt retains 22-GiB initial and 18-GiB monitored physical/commit
+reserve and the 90-second native-child limit. Successful synthetic admission
+would still not prove full NPU MTP, residency, quality or throughput. A new
+hardware execution requires extension of the user's original nine-hour window.
