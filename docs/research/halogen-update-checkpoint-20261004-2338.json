@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "scheduled_check_utc": "2026-10-04T23:38:06Z",
+  "check_started_utc": "2026-10-04T23:38:13Z",
+  "actual_check_utc": "2026-10-04T23:41:00Z",
+  "compared_with_utc": "2026-10-04T21:38:06Z",
+  "baseline_path": "docs/research/halogen-update-checkpoint-20261004-2138.json",
+  "baseline_sha256": "8f6137cf06d2cf2745bb92359aa4ca3ceb6dca75140cf70d73556647b7304ae4",
+  "halogen_main": {
+    "status": "revalidated",
+    "tag": "v0.16.2",
+    "sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "new_commits": 0,
+    "latest_commit_date": "2026-10-03T04:29:22Z",
+    "observed_utc": "2026-10-04T23:39:30.0135090Z",
+    "tags": [
+      {
+        "name": "v0.16.2",
+        "sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d"
+      },
+      {
+        "name": "v0.16.1",
+        "sha": "6ff580c0f37513da2c4aae984ba89291efe08af6"
+      },
+      {
+        "name": "v0.16.0",
+        "sha": "5a3c49d6da52a8b90c318374960b778b66a47cfe"
+      }
+    ],
+    "tags_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/tags?per_page=3",
+    "commits_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits?since=2026-10-04T21%3A38%3A06Z&per_page=10",
+    "latest_commit_url": "https://github.com/peonist-ai/halogen-flash-server/commit/7f31bbd4021f217a1be9776bdb7304bcf8eca62d"
+  },
+  "gpu_channel": {
+    "status": "revalidated",
+    "optional": "26.9.2 WHQL",
+    "optional_release_date": "2026-09-29",
+    "recommended": "26.8.1",
+    "recommended_release_date": "2026-08-20",
+    "windows_driver_store_versions_in_optional_package": [
+      "32.0.32015.2008",
+      "32.0.21045.11001"
+    ],
+    "packaged_npu_mcdm_driver": "32.00.20102.3930",
+    "packaged_npu_mcdm_driver_date": "2026-05-07",
+    "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+    "optional_release_notes_url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html",
+    "relevant_change_status": "No WSL clock or Halogen performance fix is documented in the checked optional-driver release notes."
+  },
+  "ryzen_ai": {
+    "status": "revalidated",
+    "documentation_version": "1.8.0",
+    "separate_driver_version_revalidated": true,
+    "separate_production_npu_driver_version": "32.0.203.376",
+    "minimum_npu_driver_version": "32.0.203.280",
+    "production_driver_supported_processors": [
+      "Phoenix",
+      "Hawk Point",
+      "Strix",
+      "Strix Halo",
+      "Krackan Point"
+    ],
+    "installation_page_updated": "2026-09-28",
+    "url": "https://ryzenai.docs.amd.com/en/latest/relnotes.html",
+    "driver_source_url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+    "driver_channel_note": "The Ryzen AI installation driver and the NPU MCDM driver packaged in Adrenalin are separate source channels; no version ordering or installed-driver claim is inferred.",
+    "relevant_change_status": "Checked release notes retain version 1.8.0; no ready Halogen-native MTP-head candidate is established."
+  },
+  "windows_ml_vitisai": {
+    "status": "revalidated",
+    "current_msix": "1.8.75.0",
+    "current_ep": "1605",
+    "current_release": "2026 9D",
+    "upcoming_msix": "1.8.80.0",
+    "upcoming_status": "preview/planned; GA 2026 10D not guaranteed",
+    "url": "https://github.com/microsoft/WindowsML/wiki/Windows-ML-Execution-Provider-Releases"
+  },
+  "reddit_check": {
+    "query": "site:reddit.com/r/StrixHalo Halogen Qwen3.8 NPU October 2026",
+    "lead": "https://www.reddit.com/r/StrixHalo/comments/1wvfrj0/halogenflashserver_0160_strix_halo_npu_now_serves/",
+    "lead_status": "Existing upstream NPU sidecar announcement. A comment claims an NPU/CPU MTP-tree engine but supplies no reproducible source/build assets in the retrieved material; unqualified.",
+    "additional_leads": [
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1wxiwad/halogen_0162_on_windowswsl2_qwen38flashnext_at/",
+        "published_date": "2026-10-04",
+        "status": "Strix Alloy project report; its numbers do not independently establish a new same-workload improvement."
+      },
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1ww407o/rog_flow_z13_2025_128gb_qwen38_flashnext/",
+        "published_date": "2026-10-02",
+        "status": "Different OS, power settings, model formats and workloads; source lead only."
+      }
+    ],
+    "qualified_new_candidate": false
+  },
+  "new_information_revalidated": [
+    "Exact separate production NPU driver 32.0.203.376 is now revalidated from the official installation page; the prior checkpoint marked separate-driver revalidation unavailable."
+  ],
+  "new_official_release_found": false,
+  "qualified_performance_change": false,
+  "qualified_acceptance_change": false,
+  "runtime_or_hardware_actions_for_update_check": false,
+  "installs": false
+}

@@ -129,5 +129,45 @@
   "windows_power_readback_evidence": {
     "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-windows-power-readback-20261005.json",
     "sha256": "9a89f69bd3167f09899d933756f6e591327e9dc182761dca023b6d5e999716c7"
-  }
+  },
+  "latest_cpu_paging_control": {
+    "passed": true,
+    "run_id": "c4b3c8be6b584d4c901b43e54cc6e8d8",
+    "context_capacity": 262144,
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "measured_repetitions": 3,
+    "prefill_tps": 1253.2246838452827,
+    "decode_tps": 42.41874837521408,
+    "accepted": 207,
+    "drafted": 345,
+    "acceptance": 0.6,
+    "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+    "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+    "npu_integrated": false,
+    "native_mtp": true,
+    "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+    "keep_server_open": true,
+    "measured_at_utc": "2026-10-04T23:17:24Z"
+  },
+  "latest_cpu_paging_report": {
+    "path": "docs\\research\\halogen-cpu-paging-control-20261005.json",
+    "sha256": "a5e778f6c74d923788ca047e0dd424492a4ca90c15007a76310b16390f96bf3b"
+  },
+  "latest_control_minus_historical": {
+    "source_report": "docs/research/halogen-performance-gap-audit-20261005.json",
+    "prefill_tps": {
+      "historical": 1866.537224602995,
+      "current": 1253.2246838452827,
+      "difference": -613.3125407577122,
+      "percent": -32.85830749441182
+    },
+    "decode_tps": {
+      "historical": 48.42362060395627,
+      "current": 42.41874837521408,
+      "difference": -6.004872228742194,
+      "percent": -12.40070889753252
+    }
+  },
+  "token_rate_interpretation": "No admitted NPU-on engine result; no demonstrated useful NPU acceleration. Current normal GPU result and historical result are distinct operating-state cohorts."
 }

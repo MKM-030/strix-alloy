@@ -78,6 +78,23 @@ and SmartShiftMax support returned an API failure rather than a positive
 capability. No power policy or tuning change was made. The cause of the lower
 GPU operating range remains unresolved.
 
+The newer unchanged normal control finished at 23:17:24 UTC: **1,253.224684
+prefill / 42.418748 MTP decode tok/s / 60.0% acceptance**, still on the GPU.
+All four outputs match the same frozen hash. Its
+[CPU/paging report](halogen-cpu-paging-control-20261005.md) records zero engine
+major faults, storage-read bytes and swap activity during the requests.
+The earlier controls above are retained as separate cohorts. The new normal
+mean is 613.312541 prefill tok/s and 6.004872 decode tok/s below historical
+Stock A; neither difference is an NPU effect.
+
+In practical token-rate terms, this NPU candidate has **no demonstrated gain**.
+There is no admitted NPU-on engine result to pair with the GPU result, and no
+measured NPU token rate or token-rate difference. Keeping the original GPU path
+is the deployment decision, rather than interpreting component milliseconds as
+tokens per second. Two idle CPU threads and the absent official ROCr polling
+backoff are a separate candidate under investigation; no throughput recovery
+has yet been attributed to that candidate.
+
 [Machine-readable decision and pinned receipts](halogen-useful-npu-decision-20261005.json),
 [precision correction evidence](halogen-npu-precision-correction-20261004.md),
 and [performance-gap audit](halogen-performance-gap-audit-20261005.md).

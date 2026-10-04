@@ -1,0 +1,79 @@
+{
+  "schema": "halogen.rocr-idle-poll-backoff-candidate.v1",
+  "source_pin": "2b22ab0195cc1461cd9abf3b969e9dd7c10af350",
+  "merge_fix": "46558b7af4dc79b8b8014619c1afdb82db079a9f",
+  "sdk": "7.14.0",
+  "original_hsa_sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+  "missing_backoff_statically_verified": true,
+  "hot_live_thread_stack_attribution": false,
+  "private_candidate_built": false,
+  "private_candidate_loaded": false,
+  "probe_executed": false,
+  "live_optimization_qualified": false,
+  "measured_prefill_delta_tps": null,
+  "measured_decode_delta_tps": null,
+  "measured_acceptance_delta": null,
+  "source_fetch": {
+    "passed": true,
+    "expected_blobs": 436,
+    "expected_bytes": 8573428,
+    "tree_git_sha": "28542580ed0e1104bfc1795cc7f1a6af03eeca52",
+    "workers": 6
+  },
+  "source_fetch_owned": {
+    "status": "passed",
+    "minimum_physical_gib": 27.45153045654297,
+    "minimum_commit_gib": 119.90679931640625,
+    "all_owned_jobs_closed": true,
+    "monitor_stopped": true,
+    "cleanup_pending": false
+  },
+  "source_receipts": [
+    {
+      "path": "server/.local/optimization9h-20261004/guest-idle-threads-c8784f761bad4afab0c62ec3c274373e-pair.json",
+      "sha256": "4ce5e2240057bb8e7dd6da8c2070649f6dac1d6ea25dbff797cabcdd37a0a739"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/rocr-runtime-audit-de4bdf56e14b4feb8777e870f0593a6d/sdk-metadata.json",
+      "sha256": "baf202e90ef5af17e9bedc68c063cb936fa75f8cdfdc479dba50d15dfe954431"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/rocr-runtime-audit-de4bdf56e14b4feb8777e870f0593a6d/rocr-static-audit-native-rms-20261005.md",
+      "sha256": "329b94ef93feb7ec3ff1a9a2774f43b0cd52df06d6864169be0e6248f60facc6"
+    },
+    {
+      "path": "server/.local/rocr-async-spin-source-audit-20261005/candidate-spec.json",
+      "sha256": "cb2b966df4fe0505cc3fd0eb5d5b76790dbc8b853ae8c48271888f9bb67f1025"
+    },
+    {
+      "path": "server/.local/rocr-private-source-52061e485927476c8aba16b0e941de14/source-fetch-result.json",
+      "sha256": "533e301e91963b6b70b863209d67a95679cce80da7f4cfdea022564d7a34dbdb"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/rocr-source-fetch-owned-3e758ce5d56c4372b26b24a4639c8491/result.json",
+      "sha256": "7fcd6b3fe0f51cbc7f31e550ff48654b24951328d7991ff45dd1755738a41d13"
+    },
+    {
+      "path": "docs/research/halogen-cpu-paging-control-20261005.json",
+      "sha256": "a5e778f6c74d923788ca047e0dd424492a4ca90c15007a76310b16390f96bf3b"
+    },
+    {
+      "path": "scripts/benchmarks/patches/rocr-2b22ab0-async-poll-backoff.patch",
+      "sha256": "ead910aaf82bb7ace5bf59ad288f4ae5d620feefa32d594221832878de93f745"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_rocr_private_source_fetch.py",
+      "sha256": "e8f7789e45a2a572ffc75f6b4e87a35756753c611edb684b1ffbd7afd172b548"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_rocr_poll_backoff_probe.py",
+      "sha256": "c876af06e68c4d68896219bc8f6f701da642ac21a1302d7ab230957bc730ece6"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_rocr_poll_backoff_probe.md",
+      "sha256": "35f7407d39c6b98cd41a7ad937670c5e5987a5aafc416fb5fb8c4b186c2cdfe1"
+    }
+  ],
+  "next": "Private pinned-source stock and patched builds with matched SDK compiler/dependencies, ABI gate, bounded component qualification; preserve colleague server",
+  "full_goal_complete": false
+}

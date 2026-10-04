@@ -1,0 +1,1054 @@
+{
+  "schema_version": 1,
+  "report_date": "2026-10-05",
+  "experiment_kind": "normal_frozen_control_with_read_only_cpu_paging_bookends",
+  "control_window": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62",
+  "adlx_window": "server/.local/optimization9h-20261004/adlx-colleague-control-3427ef8f49634b3a9706d693f5f85ec4",
+  "execution_owner": "root agent",
+  "report_author_performed_new_acquisitions": false,
+  "engine_optimization_claim": false,
+  "npu_integrated": false,
+  "identity": {
+    "run_id": "c4b3c8be6b584d4c901b43e54cc6e8d8",
+    "pid": 28488,
+    "context_capacity": 262144,
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+    "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+    "client_sha256": "805a0c3232a852e78fd48496b2b9b40c145001e303dc36785261c2fb5d2c3372",
+    "npu_integrated": false,
+    "native_mtp": true,
+    "keep_server_open": true
+  },
+  "result": {
+    "passed": true,
+    "run_id": "c4b3c8be6b584d4c901b43e54cc6e8d8",
+    "context_capacity": 262144,
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "measured_repetitions": 3,
+    "prefill_tps": 1253.2246838452827,
+    "decode_tps": 42.41874837521408,
+    "accepted": 207,
+    "drafted": 345,
+    "acceptance": 0.6,
+    "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+    "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+    "npu_integrated": false,
+    "native_mtp": true,
+    "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+    "keep_server_open": true,
+    "measured_at_utc": "2026-10-04T23:17:24Z"
+  },
+  "controls": {
+    "warmups": 1,
+    "measured_requests": 3,
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "capacity_tokens": 262144,
+    "frozen_output_hash_matches_all_four": true,
+    "accepted_per_request": 69,
+    "drafted_per_request": 115
+  },
+  "historical_comparison": {
+    "source_report": "docs/research/halogen-performance-gap-audit-20261005.json",
+    "prefill_tps": {
+      "historical": 1866.537224602995,
+      "current": 1253.2246838452827,
+      "difference": -613.3125407577122,
+      "percent": -32.85830749441182
+    },
+    "decode_tps": {
+      "historical": 48.42362060395627,
+      "current": 42.41874837521408,
+      "difference": -6.004872228742194,
+      "percent": -12.40070889753252
+    }
+  },
+  "requests": [
+    {
+      "index": 0,
+      "phase": "warmup",
+      "prefill_tps": 1399.53664971974,
+      "decode_tps": 41.56236537625121,
+      "wall_seconds": 8.961975799997163,
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "accepted": 69,
+      "drafted": 115,
+      "qpc_before": 30420.802406349998,
+      "qpc_after": 30429.76512655,
+      "clock_window_seconds": 8.962720200001058,
+      "clock_uncertainty_seconds": 0.0007377999991149409,
+      "minimum_memory": {
+        "available_bytes": 29455376384,
+        "commit_headroom_bytes": 128764166144
+      },
+      "host_snapshot_valid": true,
+      "guest_snapshot_valid": true,
+      "host_counter_interval_seconds": 9.3306846,
+      "guest_counter_interval_seconds": 9.391036536,
+      "host_busy_fraction": 0.1433727377340726,
+      "guest_busy_fraction_excluding_iowait": 0.14370782056371575,
+      "engine_cpu_seconds": 27.99,
+      "engine_average_logical_cores": 2.9805016616325513,
+      "engine_minor_fault_delta": 600,
+      "engine_major_fault_delta": 0,
+      "engine_read_bytes_delta": 0,
+      "engine_rchar_delta": 0,
+      "engine_rss_bytes": 1504288768,
+      "engine_rss_change_bytes": 0,
+      "engine_swap_bytes": 0,
+      "system_major_fault_delta": 6,
+      "system_fault_delta": 32716,
+      "system_pgpgin_delta": 0,
+      "swap_used_bytes": 0,
+      "swap_in_bytes": 0,
+      "swap_out_bytes": 0,
+      "nonzero_scan_steal_allocstall_refault_compact_oom_deltas": [],
+      "guest_memory_before": {
+        "cached_bytes": 2715525120,
+        "available_bytes": 56878948352
+      },
+      "guest_memory_after": {
+        "cached_bytes": 2715525120,
+        "available_bytes": 56883343360
+      },
+      "host_memory_before": {
+        "available_bytes": 29484515328,
+        "system_cache_bytes": 21190311936
+      },
+      "host_memory_after": {
+        "available_bytes": 29474889728,
+        "system_cache_bytes": 21240844288
+      },
+      "readable_host_pid_delta_count": 137,
+      "unqualified_host_pid_delta_count": 75,
+      "selected_host_pids": [
+        {
+          "pid": 15260,
+          "image_basename": null,
+          "priority_class": null,
+          "creation_time_100ns": null,
+          "valid": false,
+          "errors_before": [
+            {
+              "operation": "OpenProcess.QUERY_LIMITED_INFORMATION",
+              "winerror": 5
+            }
+          ],
+          "delta_errors": [
+            {
+              "operation": "process_delta",
+              "error": "process identity unavailable or PID reused"
+            }
+          ],
+          "cpu_delta_100ns": null,
+          "average_logical_cores": null,
+          "page_fault_delta_soft_and_hard": null
+        },
+        {
+          "pid": 28488,
+          "image_basename": "python.exe",
+          "priority_class": 32,
+          "creation_time_100ns": "134356195694285399",
+          "valid": true,
+          "errors_before": [],
+          "delta_errors": [],
+          "cpu_delta_100ns": {
+            "kernel": 312500,
+            "user": 312500
+          },
+          "average_logical_cores": 0.006696695004222668,
+          "page_fault_delta_soft_and_hard": 3
+        },
+        {
+          "pid": 2504,
+          "image_basename": "python.exe",
+          "priority_class": 32,
+          "creation_time_100ns": "134356195803791432",
+          "valid": true,
+          "errors_before": [],
+          "delta_errors": [],
+          "cpu_delta_100ns": {
+            "kernel": 781250,
+            "user": 156250
+          },
+          "average_logical_cores": 0.010046580340161457,
+          "page_fault_delta_soft_and_hard": 72
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "phase": "measured",
+      "prefill_tps": 1329.6217331165933,
+      "decode_tps": 42.28740862281948,
+      "wall_seconds": 9.256595300001209,
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "accepted": 69,
+      "drafted": 115,
+      "qpc_before": 30430.841635,
+      "qpc_after": 30440.09879385,
+      "clock_window_seconds": 9.257158849999541,
+      "clock_uncertainty_seconds": 0.0005579499993473291,
+      "minimum_memory": {
+        "available_bytes": 29459374080,
+        "commit_headroom_bytes": 128780001280
+      },
+      "host_snapshot_valid": true,
+      "guest_snapshot_valid": true,
+      "host_counter_interval_seconds": 9.6967998,
+      "guest_counter_interval_seconds": 9.6653457265,
+      "host_busy_fraction": 0.1409882258226829,
+      "guest_busy_fraction_excluding_iowait": 0.1498975059788179,
+      "engine_cpu_seconds": 28.78,
+      "engine_average_logical_cores": 2.9776482719177153,
+      "engine_minor_fault_delta": 600,
+      "engine_major_fault_delta": 0,
+      "engine_read_bytes_delta": 0,
+      "engine_rchar_delta": 0,
+      "engine_rss_bytes": 1504288768,
+      "engine_rss_change_bytes": 0,
+      "engine_swap_bytes": 0,
+      "system_major_fault_delta": 6,
+      "system_fault_delta": 33334,
+      "system_pgpgin_delta": 0,
+      "swap_used_bytes": 0,
+      "swap_in_bytes": 0,
+      "swap_out_bytes": 0,
+      "nonzero_scan_steal_allocstall_refault_compact_oom_deltas": [],
+      "guest_memory_before": {
+        "cached_bytes": 2715521024,
+        "available_bytes": 56871239680
+      },
+      "guest_memory_after": {
+        "cached_bytes": 2715533312,
+        "available_bytes": 56888451072
+      },
+      "host_memory_before": {
+        "available_bytes": 29458550784,
+        "system_cache_bytes": 21241249792
+      },
+      "host_memory_after": {
+        "available_bytes": 29481779200,
+        "system_cache_bytes": 21241552896
+      },
+      "readable_host_pid_delta_count": 137,
+      "unqualified_host_pid_delta_count": 75,
+      "selected_host_pids": [
+        {
+          "pid": 15260,
+          "image_basename": null,
+          "priority_class": null,
+          "creation_time_100ns": null,
+          "valid": false,
+          "errors_before": [
+            {
+              "operation": "OpenProcess.QUERY_LIMITED_INFORMATION",
+              "winerror": 5
+            }
+          ],
+          "delta_errors": [
+            {
+              "operation": "process_delta",
+              "error": "process identity unavailable or PID reused"
+            }
+          ],
+          "cpu_delta_100ns": null,
+          "average_logical_cores": null,
+          "page_fault_delta_soft_and_hard": null
+        },
+        {
+          "pid": 28488,
+          "image_basename": "python.exe",
+          "priority_class": 32,
+          "creation_time_100ns": "134356195694285399",
+          "valid": true,
+          "errors_before": [],
+          "delta_errors": [],
+          "cpu_delta_100ns": {
+            "kernel": 468750,
+            "user": 156250
+          },
+          "average_logical_cores": 0.006444539277128815,
+          "page_fault_delta_soft_and_hard": 1
+        },
+        {
+          "pid": 2504,
+          "image_basename": "python.exe",
+          "priority_class": 32,
+          "creation_time_100ns": "134356195803791432",
+          "valid": true,
+          "errors_before": [],
+          "delta_errors": [],
+          "cpu_delta_100ns": {
+            "kernel": 468750,
+            "user": 0
+          },
+          "average_logical_cores": 0.0048339650814368685,
+          "page_fault_delta_soft_and_hard": 60
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "phase": "measured",
+      "prefill_tps": 1263.7819066824952,
+      "decode_tps": 42.389411873413145,
+      "wall_seconds": 9.524641600000905,
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "accepted": 69,
+      "drafted": 115,
+      "qpc_before": 30441.9437126,
+      "qpc_after": 30451.468979700003,
+      "clock_window_seconds": 9.525267100001656,
+      "clock_uncertainty_seconds": 0.0006209000002854737,
+      "minimum_memory": {
+        "available_bytes": 29461925888,
+        "commit_headroom_bytes": 128774139904
+      },
+      "host_snapshot_valid": true,
+      "guest_snapshot_valid": true,
+      "host_counter_interval_seconds": 9.9604458,
+      "guest_counter_interval_seconds": 9.9090815475,
+      "host_busy_fraction": 0.14912796394277875,
+      "guest_busy_fraction_excluding_iowait": 0.14898495143607488,
+      "engine_cpu_seconds": 29.59,
+      "engine_average_logical_cores": 2.986149610148821,
+      "engine_minor_fault_delta": 600,
+      "engine_major_fault_delta": 0,
+      "engine_read_bytes_delta": 0,
+      "engine_rchar_delta": 0,
+      "engine_rss_bytes": 1504288768,
+      "engine_rss_change_bytes": 0,
+      "engine_swap_bytes": 0,
+      "system_major_fault_delta": 6,
+      "system_fault_delta": 33484,
+      "system_pgpgin_delta": 0,
+      "swap_used_bytes": 0,
+      "swap_in_bytes": 0,
+      "swap_out_bytes": 0,
+      "nonzero_scan_steal_allocstall_refault_compact_oom_deltas": [],
+      "guest_memory_before": {
+        "cached_bytes": 2715533312,
+        "available_bytes": 56871952384
+      },
+      "guest_memory_after": {
+        "cached_bytes": 2715533312,
+        "available_bytes": 56859602944
+      },
+      "host_memory_before": {
+        "available_bytes": 29485666304,
+        "system_cache_bytes": 21241946112
+      },
+      "host_memory_after": {
+        "available_bytes": 29484421120,
+        "system_cache_bytes": 21242241024
+      },
+      "readable_host_pid_delta_count": 137,
+      "unqualified_host_pid_delta_count": 75,
+      "selected_host_pids": [
+        {
+          "pid": 15260,
+          "image_basename": null,
+          "priority_class": null,
+          "creation_time_100ns": null,
+          "valid": false,
+          "errors_before": [
+            {
+              "operation": "OpenProcess.QUERY_LIMITED_INFORMATION",
+              "winerror": 5
+            }
+          ],
+          "delta_errors": [
+            {
+              "operation": "process_delta",
+              "error": "process identity unavailable or PID reused"
+            }
+          ],
+          "cpu_delta_100ns": null,
+          "average_logical_cores": null,
+          "page_fault_delta_soft_and_hard": null
+        },
+        {
+          "pid": 28488,
+          "image_basename": "python.exe",
+          "priority_class": 32,
+          "creation_time_100ns": "134356195694285399",
+          "valid": true,
+          "errors_before": [],
+          "delta_errors": [],
+          "cpu_delta_100ns": {
+            "kernel": 0,
+            "user": 0
+          },
+          "average_logical_cores": 0,
+          "page_fault_delta_soft_and_hard": 0
+        },
+        {
+          "pid": 2504,
+          "image_basename": "python.exe",
+          "priority_class": 32,
+          "creation_time_100ns": "134356195803791432",
+          "valid": true,
+          "errors_before": [],
+          "delta_errors": [],
+          "cpu_delta_100ns": {
+            "kernel": 468750,
+            "user": 0
+          },
+          "average_logical_cores": 0.004705717691944004,
+          "page_fault_delta_soft_and_hard": 60
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "phase": "measured",
+      "prefill_tps": 1166.2704117367596,
+      "decode_tps": 42.579424629409615,
+      "wall_seconds": 10.103274500001135,
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "accepted": 69,
+      "drafted": 115,
+      "qpc_before": 30452.29336605,
+      "qpc_after": 30462.39733595,
+      "clock_window_seconds": 10.103969900002994,
+      "clock_uncertainty_seconds": 0.0006916000020282809,
+      "minimum_memory": {
+        "available_bytes": 29476020224,
+        "commit_headroom_bytes": 128794636288
+      },
+      "host_snapshot_valid": true,
+      "guest_snapshot_valid": true,
+      "host_counter_interval_seconds": 10.5404674,
+      "guest_counter_interval_seconds": 10.553686097,
+      "host_busy_fraction": 0.14752731987405074,
+      "guest_busy_fraction_excluding_iowait": 0.14619424629615113,
+      "engine_cpu_seconds": 31.44,
+      "engine_average_logical_cores": 2.979053925901507,
+      "engine_minor_fault_delta": 600,
+      "engine_major_fault_delta": 0,
+      "engine_read_bytes_delta": 0,
+      "engine_rchar_delta": 0,
+      "engine_rss_bytes": 1504288768,
+      "engine_rss_change_bytes": 0,
+      "engine_swap_bytes": 0,
+      "system_major_fault_delta": 6,
+      "system_fault_delta": 33260,
+      "system_pgpgin_delta": 0,
+      "swap_used_bytes": 0,
+      "swap_in_bytes": 0,
+      "swap_out_bytes": 0,
+      "nonzero_scan_steal_allocstall_refault_compact_oom_deltas": [],
+      "guest_memory_before": {
+        "cached_bytes": 2715541504,
+        "available_bytes": 56864243712
+      },
+      "guest_memory_after": {
+        "cached_bytes": 2715545600,
+        "available_bytes": 56855556096
+      },
+      "host_memory_before": {
+        "available_bytes": 29501353984,
+        "system_cache_bytes": 21242634240
+      },
+      "host_memory_after": {
+        "available_bytes": 29526872064,
+        "system_cache_bytes": 21242949632
+      },
+      "readable_host_pid_delta_count": 137,
+      "unqualified_host_pid_delta_count": 75,
+      "selected_host_pids": [
+        {
+          "pid": 15260,
+          "image_basename": null,
+          "priority_class": null,
+          "creation_time_100ns": null,
+          "valid": false,
+          "errors_before": [
+            {
+              "operation": "OpenProcess.QUERY_LIMITED_INFORMATION",
+              "winerror": 5
+            }
+          ],
+          "delta_errors": [
+            {
+              "operation": "process_delta",
+              "error": "process identity unavailable or PID reused"
+            }
+          ],
+          "cpu_delta_100ns": null,
+          "average_logical_cores": null,
+          "page_fault_delta_soft_and_hard": null
+        },
+        {
+          "pid": 28488,
+          "image_basename": "python.exe",
+          "priority_class": 32,
+          "creation_time_100ns": "134356195694285399",
+          "valid": true,
+          "errors_before": [],
+          "delta_errors": [],
+          "cpu_delta_100ns": {
+            "kernel": 937500,
+            "user": 468750
+          },
+          "average_logical_cores": 0.013335365334815249,
+          "page_fault_delta_soft_and_hard": 0
+        },
+        {
+          "pid": 2504,
+          "image_basename": "python.exe",
+          "priority_class": 32,
+          "creation_time_100ns": "134356195803791432",
+          "valid": true,
+          "errors_before": [],
+          "delta_errors": [],
+          "cpu_delta_100ns": {
+            "kernel": 468750,
+            "user": 156250
+          },
+          "average_logical_cores": 0.005929062654800415,
+          "page_fault_delta_soft_and_hard": 72
+        }
+      ]
+    }
+  ],
+  "measured_summary": {
+    "measured_engine_cpu_seconds": 89.81,
+    "measured_guest_snapshot_seconds": 30.128113371,
+    "measured_engine_average_logical_cores": 2.9809367381910863,
+    "engine_average_logical_cores_by_request": [
+      2.9805016616325513,
+      2.9776482719177153,
+      2.986149610148821,
+      2.979053925901507
+    ],
+    "measured_host_busy_percent_range": [
+      14.098822582268289,
+      14.912796394277875
+    ],
+    "guest_available_gib_range": [
+      52.950862884521484,
+      52.98149871826172
+    ],
+    "guest_cache_gib_range": [
+      2.5290260314941406,
+      2.5290489196777344
+    ],
+    "host_cache_gib_range": [
+      19.735015869140625,
+      19.784038543701172
+    ],
+    "engine_rss_gib": 1.4009780883789062,
+    "adlx_guard_available_min_gib": 27.432308197021484,
+    "adlx_guard_commit_headroom_min_gib": 119.91383743286133,
+    "control_guard_available_min_gib": 27.43206024169922,
+    "control_guard_commit_headroom_min_gib": 119.91371536254883,
+    "control_guard_minima_evidence": "Root-confirmed owned control guardian result; distinct from the ADLX guardian result.",
+    "comparison_historical": {
+      "prefill_tps": {
+        "historical": 1866.537224602995,
+        "current": 1253.2246838452827,
+        "difference": -613.3125407577122,
+        "percent": -32.85830749441182
+      },
+      "decode_tps": {
+        "historical": 48.42362060395627,
+        "current": 42.41874837521408,
+        "difference": -6.004872228742194,
+        "percent": -12.40070889753252
+      }
+    },
+    "measured_system_major_faults": 18,
+    "measured_engine_major_faults": 0,
+    "measured_engine_minor_faults": 1800,
+    "measured_engine_read_bytes": 0
+  },
+  "background_host_cpu": {
+    "scope": "Fixed supplied PID list, only readable stable identities, measured requests 1-3; excludes controller PID28488/backend PID2504 and unqualified vmmem PID15260",
+    "TopPIDs": [
+      {
+        "PID": 26548,
+        "Image": "dllhost.exe",
+        "CPUSeconds": 4.03125,
+        "Elapsed": 30.20911185,
+        "WeightedCores": 0.1334448367769541,
+        "MinCores": 0.11853697080876315,
+        "MaxCores": 0.15364760621243856
+      },
+      {
+        "PID": 1940,
+        "Image": "ChatGPT.exe",
+        "CPUSeconds": 1.25,
+        "Elapsed": 30.1988079,
+        "WeightedCores": 0.04139236237864873,
+        "MinCores": 0.032226821880597174,
+        "MaxCores": 0.05781031571874794
+      },
+      {
+        "PID": 17104,
+        "Image": "pythonw.exe",
+        "CPUSeconds": 1.046875,
+        "Elapsed": 30.209158549999998,
+        "WeightedCores": 0.03465422574638379,
+        "MinCores": 0.0015679046142424323,
+        "MaxCores": 0.09483193412844884
+      },
+      {
+        "PID": 16216,
+        "Image": "ChatGPT.exe",
+        "CPUSeconds": 0.671875,
+        "Elapsed": 30.208685749999997,
+        "WeightedCores": 0.022241119840839155,
+        "MinCores": 0.019262965145545822,
+        "MaxCores": 0.025086589625348543
+      },
+      {
+        "PID": 9488,
+        "Image": "OsdShowV2.4.exe",
+        "CPUSeconds": 0.53125,
+        "Elapsed": 30.206644150000002,
+        "WeightedCores": 0.017587190333422056,
+        "MinCores": 0.014500303158160355,
+        "MaxCores": 0.021952760189031178
+      },
+      {
+        "PID": 15864,
+        "Image": "ChatGPT.exe",
+        "CPUSeconds": 0.34375,
+        "Elapsed": 30.208694,
+        "WeightedCores": 0.011379174485331937,
+        "MinCores": 0.007839558353249617,
+        "MaxCores": 0.014499807749304578
+      },
+      {
+        "PID": 15568,
+        "Image": "codex.exe",
+        "CPUSeconds": 0.265625,
+        "Elapsed": 30.208341400000002,
+        "WeightedCores": 0.008793101100214657,
+        "MinCores": 0.003222267977281804,
+        "MaxCores": 0.01185429725814941
+      },
+      {
+        "PID": 8596,
+        "Image": "explorer.exe",
+        "CPUSeconds": 0.1875,
+        "Elapsed": 30.20605075,
+        "WeightedCores": 0.006207365588829914,
+        "MinCores": 0.0014819374000714792,
+        "MaxCores": 0.010976678730090951
+      },
+      {
+        "PID": 17984,
+        "Image": "RiotClientServices.exe",
+        "CPUSeconds": 0.1875,
+        "Elapsed": 30.209285699999995,
+        "WeightedCores": 0.006206700875419906,
+        "MinCores": 0.004703714385525492,
+        "MaxCores": 0.008055147420926098
+      },
+      {
+        "PID": 4656,
+        "Image": "python.exe",
+        "CPUSeconds": 0.15625,
+        "Elapsed": 30.2023076,
+        "WeightedCores": 0.005173445753529111,
+        "MinCores": 0.0031368417973639748,
+        "MaxCores": 0.006444781069395
+      }
+    ],
+    "TopImages": [
+      {
+        "Image": "dllhost.exe",
+        "PIDs": [
+          2944,
+          15668,
+          19488,
+          26548
+        ],
+        "CPUSeconds": 4.03125,
+        "CoresSumAcrossPIDsMeanWindow": 0.13369285608535666
+      },
+      {
+        "Image": "ChatGPT.exe",
+        "PIDs": [
+          1940,
+          2364,
+          7328,
+          11316,
+          11728,
+          14580,
+          15160,
+          15596,
+          15864,
+          15896,
+          16216,
+          24840,
+          25152,
+          25336
+        ],
+        "CPUSeconds": 2.3125,
+        "CoresSumAcrossPIDsMeanWindow": 0.07624592789465795
+      },
+      {
+        "Image": "pythonw.exe",
+        "PIDs": [
+          17104
+        ],
+        "CPUSeconds": 1.046875,
+        "CoresSumAcrossPIDsMeanWindow": 0.033207311357404005
+      },
+      {
+        "Image": "OsdShowV2.4.exe",
+        "PIDs": [
+          9488,
+          11852
+        ],
+        "CPUSeconds": 0.546875,
+        "CoresSumAcrossPIDsMeanWindow": 0.01807855992242362
+      },
+      {
+        "Image": "codex.exe",
+        "PIDs": [
+          14236,
+          15568
+        ],
+        "CPUSeconds": 0.265625,
+        "CoresSumAcrossPIDsMeanWindow": 0.008683975298145775
+      },
+      {
+        "Image": "explorer.exe",
+        "PIDs": [
+          8596
+        ],
+        "CPUSeconds": 0.1875,
+        "CoresSumAcrossPIDsMeanWindow": 0.0063010562214535085
+      },
+      {
+        "Image": "RiotClientServices.exe",
+        "PIDs": [
+          17984
+        ],
+        "CPUSeconds": 0.1875,
+        "CoresSumAcrossPIDsMeanWindow": 0.0062286156981692245
+      },
+      {
+        "Image": "vgtray.exe",
+        "PIDs": [
+          25876
+        ],
+        "CPUSeconds": 0.15625,
+        "CoresSumAcrossPIDsMeanWindow": 0.0052266775935639114
+      }
+    ],
+    "PerWindowBackgroundCores": [
+      {
+        "Index": 1,
+        "SumCores": 0.2980661445831401
+      },
+      {
+        "Index": 2,
+        "SumCores": 0.32300536183011996
+      },
+      {
+        "Index": 3,
+        "SumCores": 0.3808356355804777
+      }
+    ]
+  },
+  "adlx_alignment": {
+    "method": "Linear interpolation of host epoch_ns to QPC between adjacent anchors; no extrapolation; only complete successful sensor query intervals inside request before/after QPC windows",
+    "anchor_count": 440,
+    "first_anchor": {
+      "epoch_ns": "1791155778364081100",
+      "qpc": 30397.0477927
+    },
+    "last_anchor": {
+      "epoch_ns": "1791155868394159000",
+      "qpc": 30487.0778712
+    },
+    "sample_count": 90,
+    "successful_sensor_queries": 90,
+    "outside_anchors": [],
+    "requests": [
+      {
+        "index": 0,
+        "phase": "warmup",
+        "request_within_anchors": true,
+        "qpc_before": 30420.802406349998,
+        "qpc_after": 30429.76512655,
+        "sensor_count": 9,
+        "sensor_indexes": [
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
+        ]
+      },
+      {
+        "index": 1,
+        "phase": "measured",
+        "request_within_anchors": true,
+        "qpc_before": 30430.841635,
+        "qpc_after": 30440.09879385,
+        "sensor_count": 9,
+        "sensor_indexes": [
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42
+        ]
+      },
+      {
+        "index": 2,
+        "phase": "measured",
+        "request_within_anchors": true,
+        "qpc_before": 30441.9437126,
+        "qpc_after": 30451.468979700003,
+        "sensor_count": 9,
+        "sensor_indexes": [
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53
+        ]
+      },
+      {
+        "index": 3,
+        "phase": "measured",
+        "request_within_anchors": true,
+        "qpc_before": 30452.29336605,
+        "qpc_after": 30462.39733595,
+        "sensor_count": 10,
+        "sensor_indexes": [
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64
+        ]
+      }
+    ],
+    "measured_sensor_count": 28,
+    "measured_sensor_statistics": {
+      "clock": {
+        "min": 976,
+        "mean": 1642.0357142857142,
+        "max": 2134
+      },
+      "power": {
+        "min": 39,
+        "mean": 54.25,
+        "max": 59
+      },
+      "usage": {
+        "min": 19,
+        "mean": 82.14285714285714,
+        "max": 100
+      },
+      "temperature": {
+        "min": 46,
+        "mean": 53.82142857142857,
+        "max": 57
+      },
+      "vram": {
+        "min": 1000,
+        "mean": 1000,
+        "max": 1000
+      },
+      "npu_activity": {
+        "min": 0,
+        "mean": 0,
+        "max": 0
+      },
+      "npu_frequency": {
+        "min": 0,
+        "mean": 0,
+        "max": 0
+      }
+    }
+  },
+  "distinct_idle_thread_evidence": {
+    "receipt": "server/.local/optimization9h-20261004/guest-idle-threads-c8784f761bad4afab0c62ec3c274373e-pair.json",
+    "engine_pid": 87,
+    "engine_start_ticks": 7969,
+    "boot_id": "6ec1d4c5-5915-4883-9a30-05ce57be6e90",
+    "elapsed_seconds": 167.634578861,
+    "threads": [
+      {
+        "tid": 90,
+        "start_ticks": 7981,
+        "cpu_seconds": 167.45,
+        "average_logical_cores": 0.9988989213188941,
+        "state": "R",
+        "wchan": "0"
+      },
+      {
+        "tid": 91,
+        "start_ticks": 7981,
+        "cpu_seconds": 167.46,
+        "average_logical_cores": 0.9989585748824248,
+        "state": "R",
+        "wchan": "0"
+      }
+    ],
+    "completed_count_before": 16,
+    "completed_count_after": 16,
+    "completion_count_evidence": "Root reports the unchanged count; the thread pair receipt itself contains no request counters.",
+    "request_control_window": false,
+    "throughput_or_power_cause_proven": false
+  },
+  "lifecycle": {
+    "measurement_passed": true,
+    "measurement_exit_code": 0,
+    "measurement_job_closed": true,
+    "measurement_memory_monitor_stopped": true,
+    "measurement_lifecycle_evidence": "Root confirmation; control result independently records passed=true.",
+    "sensor_result": {
+      "passed": true,
+      "exit_code": 0,
+      "error": null,
+      "owned_job_closed": true,
+      "cleanup_pending": false,
+      "minimum": {
+        "available_bytes": 29455216640,
+        "commit_headroom_bytes": 128756502528
+      },
+      "final_memory": {
+        "available_bytes": 29674819584,
+        "committed_bytes": 111171575808,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 128967864320
+      },
+      "source_sha256": "8bd7faf2861f2d638b322a7a3f7fb8c3e6f1200720bcb0323b4e9239784fd4e0"
+    },
+    "server_kept_open": true
+  },
+  "interpretation": [
+    "No engine-attributed recurrent storage reads or major faults were observed in these four request bookends; the engine has 600 minor faults per request.",
+    "Measured guest scan/steal/allocstall/refault/compaction/OOM and swap counters are zero; system major faults are six per bookend and are not attributed to the engine.",
+    "The separate idle thread pair is a concrete CPU-overhead lead, not proof of throughput or package-power causation.",
+    "Current GPU clocks and reported power remain below the historical cohort operating range; no thermal or package-power-limit cause is established.",
+    "No NPU integration, system tuning intervention or optimization benefit is measured; the optimization goal remains active."
+  ],
+  "limitations": [
+    "CPU/paging counter intervals contain acquisition/transport bookends outside engine timers; they are not separate prefill/decode intervals.",
+    "Guest raw monotonic clocks and host QPC have separate origins; guest UTC and ADLX driver timestamps were not used for request alignment.",
+    "The supplied fixed PID set yielded 137 readable and 75 unqualified process deltas per window; missing attribution is not zero activity.",
+    "vmmem PID15260 getters returned Win32 error5, so its CPU/IO/page-fault attribution is unavailable; no PID reuse is established.",
+    "Windows PageFaultCount combines soft and hard faults; Windows process IO does not identify physical disk traffic.",
+    "Linux read_bytes/rchar and major faults do not measure GPU memory traffic, all cached mapped accesses, lookup-specific residency, or every host-side cache path.",
+    "The observations do not refute startup cache warnings and do not establish a throughput cause.",
+    "Two bookends do not establish intermediate gauge minima; guardian memory minima and separate request-aligned ADLX samples have their own scopes."
+  ],
+  "evidence": [
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/identity.json",
+      "sha256": "862bb079fa993022baec1b14cf15d40fe798a7dd9ad28cc9dbc84247e1bd84cb"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-after-0.json",
+      "sha256": "417f0af6888335ebe35ff79593774c74582205905ffeb1acf5f3d876bc21628c"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-after-1.json",
+      "sha256": "dbcae48106015de672cfe8a33423f6749656de50d0260abccf413a96656ed70b"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-after-2.json",
+      "sha256": "c818010f797d9a829069679575250bcb9e80565befdedf2252be9e790f64abf3"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-after-3.json",
+      "sha256": "b260dd6361fb9f498be185a5539946360a54c62607e1f22c0a6729f5bb4d140d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-before-0.json",
+      "sha256": "1e1c15e56617836c9492c9c06c5813279a512ac8746071c2b71e482129042509"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-before-1.json",
+      "sha256": "0aa67aed0a59b36723f39b75b843e65571ecae8a12b719f421893943bb549ff1"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-before-2.json",
+      "sha256": "cac404126646e16390b7090714e90bf357213ee66d923dacf127e1653a42056d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-before-3.json",
+      "sha256": "db68a3d904e7e3ad504fb15a0aef525f033a632b9667d5dacf037d9ff0e8a060"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-delta-0.json",
+      "sha256": "f85933c59290ac7f298932d2389a7420dfe9fa5d98afa0d661eda533d773b9d5"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-delta-1.json",
+      "sha256": "4b401495b79c59a2682d8be98c233b8dca48d5b06dac3dd6751dd5faeec2ec0f"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-delta-2.json",
+      "sha256": "bb178c4123a584aeb418d9e2ea2a3e2424121d7aed38b3fc45b58d079855486e"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/paging-delta-3.json",
+      "sha256": "7547c2d39f810acf94e88c52c290bc00f4a847ae5dd2774c7a5dcc98812a54b5"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/result.json",
+      "sha256": "8575d230d2583200acb9c58927b4bcc8cc0ab4420080415fb2dedac31a91786e"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/colleague-cpu-paging-control-bef77695786445df83a69ee1a325de62/samples.json",
+      "sha256": "22a767d3a24e3e60b82660d818f0982b7b0b1524f6df58058152f91e75d2572b"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/adlx-colleague-control-3427ef8f49634b3a9706d693f5f85ec4/adlx.ndjson",
+      "sha256": "f031f4063a716341f6cabcb71e18f444e5adf08017366f16dbda06bae479df7d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/adlx-colleague-control-3427ef8f49634b3a9706d693f5f85ec4/host-anchors.jsonl",
+      "sha256": "0957d325e121b87ff7732971e336fbfb102ff68a2816e8a5393570bdf780ad10"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/adlx-colleague-control-3427ef8f49634b3a9706d693f5f85ec4/identity.json",
+      "sha256": "38486f4d5a591b752714fcdfcb35f90619bbca01aaf1fd3e59e242951dc3ee2d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/adlx-colleague-control-3427ef8f49634b3a9706d693f5f85ec4/result.json",
+      "sha256": "51f89cf9f9f222ca92ef53ffa804ccd3a3c281e5fb5074af76b4e7a0e451c3bb"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/adlx-colleague-control-3427ef8f49634b3a9706d693f5f85ec4/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/guest-idle-threads-c8784f761bad4afab0c62ec3c274373e-pair.json",
+      "sha256": "4ce5e2240057bb8e7dd6da8c2070649f6dac1d6ea25dbff797cabcdd37a0a739"
+    }
+  ]
+}
