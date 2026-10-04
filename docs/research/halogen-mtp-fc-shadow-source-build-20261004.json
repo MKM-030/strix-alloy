@@ -1,0 +1,140 @@
+{
+  "schema": "halogen0162.paired-fc-shadow-source-build.v1",
+  "timestamp_utc": "2026-10-04T19:27:14.309163+00:00",
+  "source": {
+    "path": "scripts/benchmarks/halogen0162_mtp_fc_quality_publish.c",
+    "sha256": "d33b5dd1e31a38b99e496ab1f378d349493fbc73cac507fbb0698f1b096e740f"
+  },
+  "binary": {
+    "path": "/home/revn/halogen-re/libhalogen0162-mtp-fc-quality-24de4312a6b846c487463aa6457c402a.so",
+    "sha256": "d99d76c571c583440f5e6c1a8d9d60446586ca9813dd292fbf40149b65537a2c"
+  },
+  "build": {
+    "receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\paired-shim-compile-24de4312a6b846c487463aa6457c402a\\result.json",
+    "sha256": "19aa3fac621264c5909d35177385641a5ea5a0108d560a865fde0f2e2549d7a7",
+    "result": {
+      "status": "passed",
+      "errors": [],
+      "stages": [
+        {
+          "name": "compile",
+          "command": [
+            "C:\\Windows\\System32\\wsl.exe",
+            "-d",
+            "Ubuntu-24.04",
+            "-u",
+            "revn",
+            "--exec",
+            "gcc",
+            "-O2",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-shared",
+            "-fPIC",
+            "-fno-optimize-sibling-calls",
+            "/mnt/c/Projects/strix-alloy-clean/scripts/benchmarks/halogen0162_mtp_fc_quality_publish.c",
+            "-ldl",
+            "-lcrypto",
+            "-pthread",
+            "-o",
+            "/home/revn/halogen-re/libhalogen0162-mtp-fc-quality-24de4312a6b846c487463aa6457c402a.so"
+          ],
+          "cwd": "C:\\Projects\\strix-alloy-clean",
+          "deadline_seconds": 45,
+          "started": 1791141811.5412323,
+          "owned_identity": {
+            "pid": 26160,
+            "creation_time_100ns": 134356154115462042,
+            "executable": "C:\\Windows\\System32\\wsl.exe"
+          },
+          "exit_code": 0,
+          "owned_job_closed": true,
+          "cleanup_pending": false,
+          "finished": 1791141812.5408163
+        },
+        {
+          "name": "binary-hash",
+          "command": [
+            "C:\\Windows\\System32\\wsl.exe",
+            "-d",
+            "Ubuntu-24.04",
+            "-u",
+            "revn",
+            "--exec",
+            "sha256sum",
+            "/home/revn/halogen-re/libhalogen0162-mtp-fc-quality-24de4312a6b846c487463aa6457c402a.so"
+          ],
+          "cwd": "C:\\Projects\\strix-alloy-clean",
+          "deadline_seconds": 15,
+          "started": 1791141812.544822,
+          "owned_identity": {
+            "pid": 29136,
+            "creation_time_100ns": 134356154125476434,
+            "executable": "C:\\Windows\\System32\\wsl.exe"
+          },
+          "exit_code": 0,
+          "owned_job_closed": true,
+          "cleanup_pending": false,
+          "finished": 1791141812.7763212
+        }
+      ],
+      "config_sha256": "fae0d3485c8c8277f0e29009b899521932dcf0a3a16d0e14f3c7803c7e54a34d",
+      "final_memory": {
+        "available_bytes": 35583475712,
+        "committed_bytes": 121889886208,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 118249553920
+      },
+      "minimum_physical_gib": 33.05244064331055,
+      "minimum_commit_gib": 110.09313201904297,
+      "monitor_stopped": true,
+      "cleanup_pending": false,
+      "no_child_launched": false,
+      "all_owned_jobs_closed": true
+    }
+  },
+  "source_reviews": {
+    "ABI_protocol": "released",
+    "concurrency_rollback": "released",
+    "root": "released",
+    "reviewed_prior_source_sha256": "d1737292d623fd9d497550e2e4b05b3ef4c5be5286ca9fe9b173aee407f76c24",
+    "narrow_fixes": [
+      "O_NONBLOCK before regular-file check",
+      "sticky mutation guard through full-head exit, including restored outputs"
+    ],
+    "unchanged_other_code_proved_by_reversing_exact_two_edits": true
+  },
+  "defaults": {
+    "enabled": false,
+    "skip_original_fc": false,
+    "max_calls": 4,
+    "response_deadline_ms": 200,
+    "header_bytes": 224,
+    "request_bytes": 51424,
+    "response_bytes": 25856,
+    "armed_bytes": 120
+  },
+  "original_head_and_FCs_once_source_contract": true,
+  "observed_runtime_original_once": false,
+  "loaded_into_engine": false,
+  "providers_initialized": false,
+  "runtime_negative_paths_qualified": false,
+  "transport_qualified": false,
+  "live_model_discovery_and_epoch_admission_qualified": false,
+  "native_reset_interception_qualified": false,
+  "raw_weight_binding_qualified": false,
+  "numerical_parity_qualified": false,
+  "npu_execution_qualified": false,
+  "acceptance_improvement_qualified": false,
+  "speed_improvement_qualified": false,
+  "full_goal_completed": false,
+  "next": [
+    "fresh serial owned model/epoch observation and canonical asset/graph binding",
+    "Linux/Windows transport and persistent qualified NPU responder",
+    "exclusive native RMS and FC oracle, frozen CPU/NPU numeric gates",
+    "unarmed, malformed, timeout, paired restore and fail-stop runtime qualification",
+    "accepted-prefix lifecycle and matched greedy output/acceptance",
+    "separately qualified useful skip/overlap offload and matched end-to-end timing"
+  ]
+}
