@@ -74,6 +74,20 @@
       "backend-manifest.json": "d6d091b712c8769843921f1be49dade66cfac6128b6968b96155049a3efc3eac"
     }
   },
+  "stock_prefill_descriptive_comparison": {
+    "initial_artifact": "server/.local/optimization9h-20261004/stock8k-c",
+    "latest_artifact": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1",
+    "scope": "PP8192/TG1 serial; one excluded warmup and three measured requests per control; saved cold-analysis.json only",
+    "initial_raw_pp_tps": 1731.2223333333332,
+    "latest_raw_pp_tps": 1522.1146666666666,
+    "initial_whole_request_mono_raw_ratio": 1.0000521025864886,
+    "latest_whole_request_mono_raw_ratio": 1.0913134710507366,
+    "initial_independent_request_wall_seconds": 4.755304866664422,
+    "latest_independent_request_wall_seconds": 4.955917533331861,
+    "calibrated_pp_change_percent": -4.0601843,
+    "independent_wall_change_percent": 4.2187130,
+    "interpretation": "Lower calibrated PP is also visible in independent wall; larger clock correction offsets part of raw guest-rate decline, but does not explain wall increase. Cause unisolated."
+  },
   "latest_stock_control": {
     "artifact": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1",
     "completed_utc": "2026-10-04T07:27:58.108Z",

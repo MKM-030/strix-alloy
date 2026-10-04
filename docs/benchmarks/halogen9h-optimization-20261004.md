@@ -28,6 +28,15 @@ All twelve corresponding prompt/request/output hashes in the latest control
 match the earlier stock control, including warmups. The unchanged warmup rule
 excludes the first repetition of each cell.
 
+Relative to the initial control, latest calibrated PP-only is 4.060% lower.
+Independent client request wall also rises from 4.75530 to 4.95592 seconds
+(+4.219%); the decline is therefore visible beyond the phase-rate display.
+Raw guest PP changes from 1731.222 to 1522.115 tok/s, while the whole-request
+monotonic/raw correction changes from 1.000052 to 1.091313. Calibration offsets
+part of that raw-rate decline; it does not explain the independent wall increase.
+These are descriptive comparisons of three measured samples per control,
+with no isolated cause for the stock variation.
+
 The current cold client differs from the old measured revision only by commit
 `2bb5642`'s bounded mutable-state read retries. Those reads occur outside the
 per-request wall interval. Request construction, sampling, iteration order and
