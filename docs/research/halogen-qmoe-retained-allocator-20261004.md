@@ -1,9 +1,14 @@
 # Retained Light allocator-session candidate — 4 October 2026
 
-**Compiled but never invoked.** This is a separate opt-in source candidate,
-not a proven access-violation repair, NPU execution, complete MTP implementation
-or speed gain. It was prepared after the nine-hour hardware window ended;
-no provider session, inference call or real-bank conversion was performed.
+**One separately authorized invocation failed at the first synthetic call.**
+The holder and strict execution sessions were created, but the native helper
+raised a read access violation before a returned-call marker or validated
+output. [Execution evidence](halogen-qmoe-retained-allocator-admission-20261004.md)
+records the failed attempt and confirmed owned-job closure. This candidate
+does not establish an access-violation repair, NPU placement, complete MTP
+implementation or speed gain. It was prepared after the nine-hour hardware
+window ended and invoked only after the user's explicit single-attempt
+authorization; no real-bank conversion was performed.
 Current matched stock remains 1661.0181 PP-only / 47.0600 MTP decode tok/s /
 60% acceptance, in separate 8K PP/TG cohorts.
 
@@ -55,7 +60,7 @@ It evaluates the actual serializer expression; it does not load the DLL,
 create an ORT session or call the NPU. Historical raw receipts, the original
 native C hash and its built DLL remain unchanged.
 
-[Source/build evidence](halogen-qmoe-retained-allocator-20261004.json) records
+[Historical source/build evidence](halogen-qmoe-retained-allocator-20261004.json) records
 the new source, wrapper and DLL hashes; pinned API-header hashes; graph-byte
 identity; AST/layout checks; compile exit0 and zero runtime attempts/returns.
 The original C source remains SHA256
@@ -76,7 +81,7 @@ unfinished. The checked public Halogen engine has no documented external
 Flash-Next drafter/verification/state-transaction contract; independent NPU
 services are a different interface. [Integration assessment](halogen-laya-jev-sidecar-feasibility-20261004.md).
 
-## Prepared invocation; extension pending
+## Preparation checkpoint and later authorization
 
 Separate local guard/probe sources have now been prepared under
 `server/.local/optimization9h-20261004`, with the native/source/header pins and
@@ -85,8 +90,11 @@ the existing frozen graph/ORT-stage contract. They require
 returned guard exit1 and probe exit2 without creating a report or initializing
 a native session. The exact proposed argument vector and final source hashes
 are retained in `retained-allocator-runner-preparation.json`; it is a
-preparation record, not an inference result. No post-window extension has
-been received and no native admission was launched.
+preparation record, not an inference result. At that checkpoint no post-window
+extension had been received and no native admission had been launched. The
+user subsequently authorized the prepared attempt with “freigabe erteilt”.
+The separate execution record below supersedes those runtime-zero observations;
+the source/build JSON remains unchanged as a historical build receipt.
 
 The new guard retains ownership attached to constructor exceptions, records
 closure/final-idle/final-reserve failures independently, pins `server/winjob.py`
@@ -101,5 +109,12 @@ QMoEBf session, while the holder uses defaults and empty EP options.
 
 The proposed attempt retains 22-GiB initial and 18-GiB monitored physical/commit
 reserve and the 90-second native-child limit. Successful synthetic admission
-would still not prove full NPU MTP, residency, quality or throughput. A new
-hardware execution requires extension of the user's original nine-hour window.
+would still not prove full NPU MTP, residency, quality or throughput. The
+authorization covered one attempt with these bounds, not a renewal of the
+nine-hour window. It has now been used; the heartbeat remains paused.
+
+The attempt `qmoe-retained-admission-daf275ea3fd74e81a9990f37782612aa`
+reached `synthetic_call_0_invoke` and raised a read AV. No normal native receipt
+was returned, so its counters and native cleanup remain unknown. The parent
+confirmed process/job closure, released the latch and verified the complete
+ORT stage after exit. No unchanged retry was performed.

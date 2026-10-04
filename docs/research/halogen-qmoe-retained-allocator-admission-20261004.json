@@ -1,0 +1,205 @@
+{
+  "schema": "halogen_qmoe_retained_allocator_admission_v1",
+  "state": "one authorized synthetic attempt failed at first call; job closure confirmed",
+  "recorded_at_utc": "2026-10-04T09:38:44.276301Z",
+  "authorization": {
+    "received_at_utc": "2026-10-04T09:33:50.2703298Z",
+    "source": "direct human message in this chat",
+    "message": "freigabe erteilt",
+    "scope": "one prepared retained-allocator synthetic admission; at most two native calls; 90-second child limit; nine-hour heartbeat remains paused"
+  },
+  "native_child_deadline_seconds": 90,
+  "initial_reserve_gib": 22,
+  "monitored_reserve_gib": 18,
+  "launch_count": 1,
+  "retry_count": 0,
+  "receipt_directory": "server/.local/optimization9h-20261004/qmoe-retained-admission-daf275ea3fd74e81a9990f37782612aa",
+  "child_pid": 36984,
+  "child_report_started_at_utc": "2026-10-04T09:33:53.317Z",
+  "child_report_failed_at_utc": "2026-10-04T09:33:56.355Z",
+  "passed": false,
+  "guard_source_sha256": "0631723ea8027015469c1229799d9d6e9584c906b1bbaafd778b1d03ee9257c4",
+  "probe_source_sha256": "9308aac3a9e9efa04f317a4d1ba779111b89d1a7a17b2c4ac98505d0a7c27cb8",
+  "native_source_pins": {
+    "qmoe_retained_allocator.c": "4ca5af4a92788e4deafa7e986a4d1e33d94a9973e7c911b714a033b832a42429",
+    "invoke_native_candidate.py": "a5b80605d88b625044c104d46021cda969725f73326da603e20015b59915e2da",
+    "source-build-receipt.json": "47303ed5f64a51685dc3f6a2daab5faab04934fb9fd91bdd0624e90bae1e591b",
+    "onnxruntime_c_api.h": "acc0cf4b3f28d39339c76770d76164bb7a0637dc89f5fde764b4017b632f6743",
+    "onnxruntime_error_code.h": "5ce3b054e798eced8d14f5b86e98692fd33470463f96194ce0700a2d53dd8721",
+    "onnxruntime_ep_c_api.h": "e6c986c9e98583f8113b2c6bc3864814883b806d501cf24da4d239c45753e235"
+  },
+  "native_library_sha256": "73e71258c98c6d1ecb679ef9d8b919978b096e2294a702f385a117b9028bcb39",
+  "winjob_source_sha256": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+  "graph_manifest_sha256": "9f694e76125cef522e90df002bd010a28efb6fbf78ccd117e0cc0dcae83d5b54",
+  "ort_stage_manifest_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+  "synthetic_bank_sha256": "05283a60ce7858fdfa93d46ce84e86a5a38d5bbe46631e8571d2ff632890365f",
+  "synthetic_bank_bytes": 2986344448,
+  "full_bank_hash_verified_by_guard": true,
+  "stage_evidence": [
+    "QMOE_CAPI_STAGE load_pinned_ort",
+    "QMOE_CAPI_STAGE register_pinned_light",
+    "QMOE_CAPI_STAGE retained_allocator_session_admission",
+    "QMOE_CAPI_STAGE oga_retained_cpu_session_allocator",
+    "QMOE_CAPI_ALLOCATOR name=RMM type=0 mem=0 device=0",
+    "QMOE_CAPI_STAGE strict_session_admission",
+    "QMOE_CAPI_STAGE synthetic_call_0_invoke"
+  ],
+  "session_setup_scope": "flushed markers establish holder creation, allocator acquisition, and strict execution-session/tensor/binding setup; native counters unavailable",
+  "holder_graph_run_calls": 0,
+  "actual_session_cpu_fallback_allowed": false,
+  "holder_configuration": {
+    "provider_options": {},
+    "cpu_fallback_setting": "default, not disabled",
+    "graph_run_calls": 0
+  },
+  "call_count": null,
+  "completed_calls": null,
+  "session_creations": null,
+  "normal_native_receipt_returned": false,
+  "validated_output_hashes_received": [],
+  "completed_call_timings_received": [],
+  "failed_native_admission_host_ms": 458.5002,
+  "timing_scope": "failed host admission including setup and failed invocation; not completed-call latency or engine throughput",
+  "error": "OSError: exception: access violation reading 0x0000045887CFECA0",
+  "captured_fault": {
+    "schema": "halogen_qmoe_av_v1",
+    "record": 1,
+    "thread_id": "0x0000000000006c7c",
+    "exception_code": "0x00000000c0000005",
+    "exception_flags": "0x0000000000000000",
+    "exception_address": "0x00007ffbdda2a541",
+    "parameter_count": "0x0000000000000002",
+    "av_type": "read",
+    "av_operation": "0x0000000000000000",
+    "fault_address": "0x0000045887cfeca0",
+    "rip": "0x00007ffbdda2a541",
+    "snapshot_module_count": "0x0000000000000038",
+    "module_lookup": "unknown",
+    "module_path": null,
+    "module_base": null,
+    "module_offset": null,
+    "context_flags": "0x000000000010005f",
+    "rax": "0x00001b86955d62c0",
+    "rbx": "0x0000000000000000",
+    "rcx": "0x00001b86955d62c0",
+    "rdx": "0x00000172dad40000",
+    "rsi": "0x000000000000000a",
+    "rdi": "0x0000002dcc9dc8f0",
+    "rbp": "0x0000002dcc9dcaa0",
+    "rsp": "0x0000002dcc9dc848",
+    "r8": "0x000002e5acfbecc0",
+    "r9": "0x0000045887cfecc0",
+    "r10": "0x00007ffbdd760000",
+    "r11": "0x0000000000000000",
+    "r12": "0x0000017380821000",
+    "r13": "0x0000000000000001",
+    "r14": "0x0000000000000089",
+    "r15": "0x000000000000000a",
+    "eflags": "0x0000000000010206",
+    "mxcsr": "0x0000000000001fa2",
+    "cs": "0x0000000000000033",
+    "ss": "0x000000000000002b"
+  },
+  "fault_attribution_scope": "arm-time 56-module snapshot; later-loaded modules may be absent; responsible module unknown",
+  "child_exit_code": 3221226505,
+  "child_exit_hex": "0xC0000409",
+  "native_cleanup_normal_return": false,
+  "python_fault_collector_stopped": true,
+  "python_bootstrap_shutdown": true,
+  "profile_bytes": 0,
+  "light_kernel_attribution_proven": false,
+  "internal_npu_placement_proven": false,
+  "full_native_npu_mtp_complete": false,
+  "real_weight_execution_proven": false,
+  "weight_residency_proven": false,
+  "quality_proven": false,
+  "acceptance_gain_established": false,
+  "speed_gain_established": false,
+  "owned_job_closed": true,
+  "closure_error": null,
+  "admission_latch_released": true,
+  "ort_stage_final_verified": true,
+  "minimum": {
+    "available_bytes": 45759987712,
+    "commit_headroom_bytes": 212978393088
+  },
+  "minimum_available_gib": 42.6173095703125,
+  "minimum_commit_headroom_gib": 198.3515853881836,
+  "final_memory": {
+    "available_bytes": 48107544576,
+    "committed_bytes": 25595797504,
+    "commit_limit_bytes": 240139440128,
+    "commit_headroom_bytes": 214543642624
+  },
+  "final_available_gib": 44.80364227294922,
+  "final_commit_headroom_gib": 199.8093376159668,
+  "memory_scope": "parent guard sampled full owned-child window; child report has a narrower sample scope",
+  "postflight": {
+    "checked_at_utc": "2026-10-04T09:38:44.2063351Z",
+    "child_pid": 36984,
+    "child_present": false,
+    "active_hardware_processes": [],
+    "listeners": [],
+    "controller_phase": "stopped",
+    "active_requests": 0,
+    "backend_phase": "stopped",
+    "source": "fresh local PowerShell process and port inspection"
+  },
+  "raw_receipts": [
+    {
+      "name": "admission.json",
+      "bytes": 14463,
+      "sha256": "4a4b23cc2d6f6ee0d8c335f0a7a011c3f50e5ded1efe498d1a5be899496b753b"
+    },
+    {
+      "name": "admission.json.native-ort-profile_2026-10-04_11-33-56_221.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "identity.json",
+      "bytes": 3222,
+      "sha256": "0ed464f64be096399c6d94907506529a34b3b559af9180b29ccd1183a1363e6e"
+    },
+    {
+      "name": "memory.jsonl",
+      "bytes": 2038,
+      "sha256": "9cf2b6e3fed3ada382cc30170500632c5f9f08a7c3d253559a7f52db1e6ce475"
+    },
+    {
+      "name": "native-fault.jsonl",
+      "bytes": 1059,
+      "sha256": "246cea851fc8fd594f15327f4ea38437c0aca998e8770bfd5b7e1f81efbd6c99"
+    },
+    {
+      "name": "ort-stage-manifest.json",
+      "bytes": 435196,
+      "sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f"
+    },
+    {
+      "name": "postflight.json",
+      "bytes": 321,
+      "sha256": "6732a612a7b31496f4e8a5a8171c2841215c27920c6bec8c452e6f9094ce3faf"
+    },
+    {
+      "name": "result.json",
+      "bytes": 1178,
+      "sha256": "b76df98de73b917a80d9e9090d34f4f8e7d7f913300bd82324516777253dcb6e"
+    },
+    {
+      "name": "stderr.txt",
+      "bytes": 697,
+      "sha256": "e2aad60f2eead37aec545152d0b6e744873e6d88784ae3aa8ca54abff21292b0"
+    },
+    {
+      "name": "stdout.txt",
+      "bytes": 6547,
+      "sha256": "192f6ed967162fc768dc79f8dc4d27bf2baddd9b68651edbb2155cf8d3211eab"
+    }
+  ],
+  "preparation_record_sha256": "3170e225bbfb3a80eb44418f68c76bd62746b3ed62a9bc0f58c2daf543b0cf33",
+  "historical_build_receipt": "docs/research/halogen-qmoe-retained-allocator-20261004.json",
+  "independent_read_only_receipt_review": "allocator_candidate_scope; no hardware invocation or file changes",
+  "nine_hour_window_renewed": false,
+  "heartbeat_reactivated": false
+}

@@ -627,12 +627,14 @@ now implements OGA's exact 96-byte holder graph with fresh default options
 and empty Light provider options. Existing MSVC compiled it with warnings
 treated as errors. Graph-byte identity, Python syntax and receipt ABI were
 checked; the distinct export was inspected without loading the DLL.
-Runtime attempts and returns are both zero. The original executed native
-source and raw receipts remain unchanged. A scoped wrapper correction stops
+At this source-only checkpoint, runtime attempts and returns were both zero.
+The original executed native source and raw receipts remain unchanged.
+A scoped wrapper correction stops
 sentinel hashes from being emitted after a returned call fails output
 validation. This is source/build and evidence-storage progress, not a
 throughput gain, first-call repair or completed native NPU MTP. No hardware
-work was restarted after the deadline.
+work had been restarted after the deadline at that checkpoint. The separately
+authorized 09:33 UTC execution below supersedes the runtime-zero state.
 
 ## Final heartbeat shutdown at 09:18–09:20 UTC / 11:18–11:20 Berlin
 
@@ -650,10 +652,33 @@ it was not restarted for inspection. The live agent inventory contains only
 the active root and completed subagents. Main was clean and synchronized
 before this final record. The latest code/preparation commit was `6a60c2a`.
 
-The full goal remains `blocked`, not achieved. The retained allocator-session
-variant is compiled/prepared but has zero native sessions or inference calls;
-any future post-window execution still requires the pending human extension.
+At this 09:20 UTC shutdown checkpoint, the full goal remained `blocked`, not
+achieved. The retained allocator-session variant was compiled/prepared with
+zero native sessions or inference calls, and post-window execution awaited
+the human extension. The later authorization and execution are recorded below.
 Full Flash-Next NPU MTP and an overall throughput/acceptance gain remain
 unproved. The matched stock cells above remain the final measured result;
 the 8K PP-only rate must not be presented as the same MTP request's prefill
 rate or as a cold 128K/260K measurement.
+
+## Separately authorized retained-allocator attempt at 09:33 UTC
+
+The user's subsequent “freigabe erteilt” authorized the prepared single
+synthetic NPU attempt, with at most two calls, a 90-second child limit and
+22/18-GiB admission/monitored reserves. This did not renew the nine-hour window
+or reactivate its paused heartbeat. Root used local PowerShell and excluded
+concurrent engines and measurement processes before launching it once.
+
+The holder and strict execution sessions were created, but the first synthetic
+call raised a read access violation. No returned-call marker, validated output,
+normal native receipt or usable profile was produced. The child later exited
+with `0xC0000409`; the captured AV was `0xC0000005`, with unknown faulting module.
+Parent receipts confirm job closure, latch release and final ORT-stage integrity.
+Monitored physical/commit headroom minima were 42.617 / 198.352 GiB.
+
+[Detailed execution evidence](../research/halogen-qmoe-retained-allocator-admission-20261004.md)
+preserves the failed result separately from the historical source/build receipt.
+No unchanged retry or real-bank conversion followed. Full NPU MTP and a speed
+or acceptance gain remain unproved. The matched stock 8K results remain
+1661.0181 PP-only; the MTP request cohort is 1584.5019 prefill / 47.0600 decode
+tok/s with 60% acceptance.
