@@ -156,3 +156,24 @@ complete-head latency or acceptance gain is claimed here.
 Only the new probe, new ignored guard and this new report were edited for this
 task. Earlier probe/result hashes remain unchanged. Root owns admission and
 integration; this source preparation made no hardware launch or commit.
+
+## Root execution outcome at 04:59 UTC
+
+Root executed the frozen probe once, after the greedy depth matrix completed
+and ordinary GPU cleanup/recovery passed. ORT 1.25.2 advertised both Light NPU
+and Light GPU devices; the exact NPU selector passed. The persistent session
+then failed strict admission because some graph nodes were assigned to the
+default CPU provider while CPU fallback was explicitly disabled. No warmup or
+measured inference ran: `calls=[]`, zero NPU calls, and no latency result.
+This rejects this exact eight-op graph/shape under the tested Light defaults;
+it does not establish that converted QMoEBf or other prepared models fail.
+
+Artifacts are retained under
+`server/.local/optimization9h-20261004/light-ep-admission-1`.
+`light-admission.json` SHA256 is
+`207aa5f2933ec91e0db42b29f7fe5d885789f640ac5b5606ca3521445c2dad49`;
+`result.json` records terminal exit1 and `owned_job_closed=true` with no guard
+errors. Provider unregistration, DLL-directory close, bootstrap shutdown and
+owned child/job close all passed. GPU state remained stopped. Minimum
+physical/commit headroom in the child report was 48.0187 / 202.5903 GiB.
+The probe is not promoted and should not be repeated unchanged.

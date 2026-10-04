@@ -211,3 +211,56 @@ and bounded owned-process guard are prepared; they have no hardware result yet.
 Complete draft-head timing is being prepared separately from the earlier MLP
 bracket. No new end-to-end speed or acceptance gain is qualified, and full NPU
 MTP remains unfinished.
+
+## Status at 05:06 UTC / 07:06 Berlin
+
+The [greedy depth matrix](halogen0162-greedy-depth-results-20261004/README.md)
+has completed. Depth3 measured 45.8395 decode tok/s and 68.3220% acceptance;
+the warmed depth2 stock B measured 46.9304 tok/s and 73.9142%. Each cell produced
+the same 4509 tokens across six EOS responses, with identical requests, outputs
+and reasoning, 14/14 retrieval checks, zero caps and ordinary cleanup/recovery.
+Implementation and review answers remain ungraded. Depth3's six-request wall
+was 162.1064 seconds versus 159.7677 for stock B, 1.46% slower. The separate
+normalized three-turn estimate was also 0.584% slower. Retain depth2; the
+earlier apparent improvement against stock A did not survive the second control.
+
+The [Light EP probe](../research/halogen-npu-light-ep-route-20261004.md)
+discovered the requested Light NPU device but failed strict session admission:
+nodes remained assigned to CPU with CPU fallback disabled. There were zero NPU
+calls and no NPU timings. The retained child is terminal, its owned job is
+closed, provider unregistration and bootstrap shutdown passed, and minimum
+physical/commit headroom was 48.0187 / 202.5903 GiB. Do not repeat this exact
+graph under unchanged provider defaults.
+
+A complete native MTP forward event timing run is now root-owned. Its new tap
+includes transforms, the entire head block, vocabulary projection, argmax and
+the native synchronization/result copy. Wrapper host time is recorded
+separately. This instrumented diagnostic supplies neither a new throughput
+baseline nor accepted-token latency; its output and timing gates are pending.
+
+The user's historical 1731.31 prefill / 46.59 MTP decode comparison has been
+answered directly: latest matched stock is 1605.07 / 46.87, with unchanged 60%
+acceptance. The prefill decline is real and unexplained; the lower 32K sampled
+conversation rates are a separate workload. No end-to-end speed or acceptance
+gain has been qualified during this optimization window. Full NPU MTP remains
+unfinished.
+
+At 05:09 UTC, the
+[complete count1 MTP forward diagnostic](../research/halogen-mtp-full-head-event-timing-20261004.md)
+passed matched request/output and ordinary cleanup/recovery. Seventy-three
+single-token GPU brackets averaged 3.323555 ms, median 3.298629 and p95 3.587692;
+57 wrappers averaged 3.325287 ms of instrumented host time. Forty-two other-count
+forwards were counted but not timed. This is wider than the prior MLP-only
+0.404612-ms scope, but does not provide total request MTP cost, exact stock
+latency, accepted-token cost or NPU speedup. Minimum physical/commit headroom
+was 22.4347 / 113.9627 GiB. The retained coordinator is terminal, exit0.
+
+The [stock wrapper reconstruction](../research/halogen-stock-wrapper-reconstruction-20261004.md)
+reproduced both retained manifests and entrypoint bytes exactly. Normalized
+controller/PowerShell/Python/container launch arguments and the tracked measured
+request path are identical. A rollback of these tracked wrappers would not
+isolate an identified changed inference path; the actual prefill-drift cause
+remains unproven. The recovered
+[QMoEBf format](../research/halogen-npu-light-qmoe-contract-20261004.md)
+and [full-head state ABI](../research/halogen-mtp-full-head-state-abi-20261004.md)
+are concrete integration prerequisites, not a deployed full NPU draft.
