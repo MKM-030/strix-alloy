@@ -113,3 +113,30 @@ and its stack pointed into `Event.wait`; this does not distinguish waiting,
 GIL reacquisition or OS scheduling, or establish heartbeat-file transport
 staleness. All owned processes are terminal, reserve held, and the partial
 output remains unqualified. No SSD speed result is claimed.
+
+## Status at 03:39 UTC / 05:39 Berlin
+
+No new end-to-end speed or acceptance improvement is qualified. The unchanged
+matched stock result remains 1731.31 PP8192-only / 46.59 MTP TG128 tok/s / 60%
+acceptance. Full NPU MTP remains incomplete.
+
+The [live BF16 candidate](../research/halogen-npu-live-bf16-20261004.md)
+uses actual captured routes and a 150-MiB resident bank, removing runtime weight
+feeds. CPU replay passed its labelled graph/approximation contracts. Strict NPU
+provider admission failed before any replay because two Gather nodes remained
+outside the compiled expert partition; there are zero NPU calls or NPU timings.
+The independent complete-MLP CPU sum also fails the existing approximation gate
+for 2 / 1 elements; native intermediate arithmetic is still being diagnosed.
+
+The root-owned [GPU event run](../research/halogen-mtp-event-timing-seam-20261004.md)
+captured 73 original MTP MLP calls, with matched stock output and ordinary
+cleanup/recovery. Instrumented GPU brackets average .404612 ms (median .390229,
+p95 .487068). They include waits and enqueue/observer overhead and are not
+exact uninstrumented latency. Earlier NPU subgraphs have not demonstrated a
+speed advantage over this native complete MLP.
+
+The [SSD preparation](halogen0162-lookup-direct-20261004.md) finally completed
+the full 51.2-GB extraction with verified payload XOR, canonical output hash,
+unchanged source identity and terminal owned observer/worker. Physical/commit
+headroom minima were 44.058 / 198.347 GiB. Independent full readback and ordinary
+lookup-source qualification remain pending; no SSD decode gain is claimed.

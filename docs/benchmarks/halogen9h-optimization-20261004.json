@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-04",
-  "status": "active nine-hour optimization; stock baseline reproduced; matmul, NPU parameter and mmap-advice candidates rejected",
+  "status": "active nine-hour optimization; no qualified overall gain; live MLP timing completed, BF16 Gather NPU admission failed, direct SSD extraction completed but qualification pending",
   "work_deadline_utc": "2026-10-04T08:39:15Z",
   "source_commit_at_baseline": "d950029",
   "baseline": {
@@ -75,7 +75,8 @@
     }
   },
   "pending_experiments": [
-    "full live Halogen NPU MTP integration: unavailable qualified tensor/state ABI"
+    "full live Halogen NPU MTP integration: MLP capture established but complete arithmetic and persistent full-head state remain unqualified",
+    "standalone SSD lookup: independent full readback and normal qualifier before matched placement benchmark"
   ],
   "qualifications": "No new speed or acceptance improvement promoted. NPU partial graph is not full MTP.",
   "completed_experiments": [
