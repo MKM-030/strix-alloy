@@ -58,8 +58,12 @@ retains depth2: depth1 raises acceptance by 6.001 percentage points but takes
 1.857% longer actual wall and 2.757% longer normalized time than warmed stockB.
 Its different 32K coding workflow does not replace the 8K control. The separate
 QMoEBf `model_root` session-configuration candidate also failed at the first
-inference invocation, with the same XRT null-read location. No supported next
-NPU candidate is identified at this publication checkpoint.
+inference invocation, with the same XRT null-read location. The subsequent
+public CAPI session-allocator candidate reaches call 0 using the provider's
+CPU-addressable `RMM` allocator, then faults without returning output. Its
+early module snapshot cannot attribute this new access violation to XRT.
+Details and separate cleanup scopes are in the
+[session allocator report](../research/halogen-qmoe-session-allocator-20261004.md).
 
 The [32K sampled gather experiment](halogen0162-gather-20261004.md) has a
 different prompt and conversation mix; its 1087.22/40.74 rates and 83.86%
@@ -566,3 +570,25 @@ next NPU candidate is currently identified, no large hardware job is active,
 and full live NPU MTP remains unfinished. Root publishes the static details in
 the [XRT diagnosis](../research/halogen-qmoe-xrt-fault-20261004.md). This update
 copied saved metadata and pins without tests, artifact rehashing or hardware.
+
+## Follow-up at 08:23 UTC / 10:23 Berlin
+
+The advertised HOST_ACCESSIBLE allocator candidate stopped before inference
+because Light exposes no allocator with that advertised category. A separate
+native CAPI candidate obtains a session allocator through OGA's requested
+Cpu/device/default key. Its first attempt stopped at an extra returned-name
+comparison; ORT source review showed that comparison was not part of OGA's
+contract. The corrected candidate logs `RMM`, type0/mem0/CPU-device0, allocates
+all three tensors through the session allocator, and reaches call 0. It then
+raises an access violation with no output or profile qualification. The early
+snapshot's module attribution is unknown. No unchanged crash is repeated;
+real-bank conversion remains deferred. The parent proves owned-job closure,
+the 18-GiB reserve, and final sealed-stage integrity. Python cleanup after a
+ctypes exception does not establish native session cleanup.
+
+No throughput or acceptance measurement replaces the 1661.02 / 47.060 / 60%
+stock row. The user's Laya/Jev proposal is evaluated separately in the
+[sidecar feasibility note](../research/halogen-laya-jev-sidecar-feasibility-20261004.md).
+A target-trained parallel drafter is a plausible research direction; the
+published decision models and other Qwen DFlash checkpoints are not ready
+native heads for our Flash-Next target. No new model was downloaded or trained.

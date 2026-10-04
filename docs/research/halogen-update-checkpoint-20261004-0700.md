@@ -23,3 +23,14 @@ The separate Ryzen AI driver branch does not establish that `32.0.203.376` super
 GitHub API data was fetched directly through read-only HTTPS because the web reader could not open those API URLs. AMD pages were read from their current official URLs; the installation page reports last updated 2026-09-28. This finding concerns the named public channels at the check time, and does not rule out an unlisted OEM, Windows Update, preview, or later publication. No conclusion relies on absent search results or an assumed 26.10.1 URL.
 
 No hardware tests, engine launches, installs, environment changes, driver changes, firmware changes, or commits were performed. Only this checkpoint file was created.
+
+## Subsequent root check at 08:26–08:27 UTC
+
+Direct read-only GitHub HTTPS returned the same main SHA
+`7f31bbd4021f217a1be9776bdb7304bcf8eca62d`, message `0.16.2`, and newest observed
+tag `v0.16.2` at that SHA, checked at `2026-10-04T08:26:48.8909898Z`.
+The official Max+395 Windows 11 download page still lists 26.9.2 WHQL Optional
+dated 2026-09-29 and 26.8.1 WHQL Recommended dated 2026-08-20. No newer applicable
+engine/GPU package appeared in these checked channels. The earlier full driver
+branch comparison remains scoped to its original check; no installed versions
+or system settings were changed.

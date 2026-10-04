@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-04",
-  "status": "active nine-hour optimization until 08:39:15 UTC; no qualified overall optimization gain; full NPU MTP incomplete; latest direct stock without ADLX/MTP observers measured 1661.0181 PP-only / 47.0600 MTP decode / 60 percent acceptance; older ADLX control preserved separately; stock variation cause unisolated; depth1 coding candidate rejected despite +6.001 percentage-point acceptance because actual wall is +1.857 percent versus warmed stockB; isolated ORT1.29 completes strict session initialization but first observed inference crashes before return; native collector locates null read in System32 xrt_coreutil.dll+0xf2186, upstream cause unresolved; eight-call state metadata passed without ownership/performance qualification; separate official model_root session-configuration candidate also initializes then faults at call 0 with read 0/RBX 0 at the same XRT offset; no supported next NPU candidate currently identified and no large hardware job active",
+  "status": "active optimization until08:39:15UTC; no qualified overall gain; full NPU MTP incomplete; current comparable stock1661.0181PP-only/47.0600MTPdecode/60percentacceptance. HOST_ACCESSIBLE candidate stopped before inference. Native CAPI session allocator acquired; first extra-name check corrected using ORT/OGA source; corrected RMM candidate reaches call0 then access violation without output. Module unknown in early snapshot; native cleanup unobserved, parent job closed and reserve/stage integrity verified. Laya/Jev feasibility assessment is research only; no model installed/trained.",
   "work_deadline_utc": "2026-10-04T08:39:15Z",
   "source_commit_at_baseline": "d950029",
   "baseline": {
@@ -85,7 +85,7 @@
     "initial_independent_request_wall_seconds": 4.755304866664422,
     "latest_independent_request_wall_seconds": 4.955917533331861,
     "calibrated_pp_change_percent": -4.0601843,
-    "independent_wall_change_percent": 4.2187130,
+    "independent_wall_change_percent": 4.218713,
     "interpretation": "Lower calibrated PP is also visible in independent wall; larger clock correction offsets part of raw guest-rate decline, but does not explain wall increase. Cause unisolated."
   },
   "latest_stock_control": {
@@ -294,11 +294,11 @@
         "clock_ratio": {
           "n": 3,
           "mean": 1.0835469596088738,
-          "stdev": 1.0822108012829703E-08,
+          "stdev": 1.0822108012829703e-08,
           "minimum": 1.0835469471290942,
           "maximum": 1.083546966404953,
-          "cv_percent": 9.987668662497233E-07,
-          "ordered_first_to_last_percent": -1.0266087979715621E-07
+          "cv_percent": 9.987668662497233e-07,
+          "ordered_first_to_last_percent": -1.0266087979715621e-07
         },
         "drafted": 0,
         "accepted": 0,
@@ -3538,5 +3538,171 @@
     "speed_gain_established": false,
     "full_mtp_proven": false,
     "observation": "Eight kind 1/flag 0 count1 entries; eight FD attention launches, zero scatter/raw descriptors, 331 original launches. FD ownership/lifetime and commit/discard remain unresolved."
-  }
+  },
+  "npu_session_allocator_followup": {
+    "scope": "bounded synthetic admission; no speed/quality/full-MTP qualification",
+    "report": "docs/research/halogen-qmoe-session-allocator-20261004.md",
+    "attempts": [
+      {
+        "label": "advertised_HOST_ACCESSIBLE",
+        "artifact": "server/.local/optimization9h-20261004/qmoe-light-admission-db32fa0ec39a4c92850036df59844d1b",
+        "guard": {
+          "passed": false,
+          "error": "RuntimeError: QMoEBf child exit 1",
+          "exit_code": 1,
+          "owned_job_closed": true,
+          "minimum": {
+            "available_bytes": 47460294656,
+            "commit_headroom_bytes": 213449003008
+          },
+          "final_memory": {
+            "available_bytes": 47672020992,
+            "committed_bytes": 26445541376,
+            "commit_limit_bytes": 240139440128,
+            "commit_headroom_bytes": 213693898752
+          },
+          "ort_stage_final_verified": true
+        },
+        "admission": {
+          "passed": false,
+          "error": "ValueError: Light device advertises no HOST_ACCESSIBLE allocator",
+          "failed_at_stage": "synthetic_call_0_prepare",
+          "provider_unregistered": true,
+          "native_fault_collector_stopped": true,
+          "dll_directory_closed": true,
+          "ort_dll_directory_closed": true,
+          "bootstrap_shutdown": true
+        },
+        "small_artifact_sha256": {
+          "admission.json": "355e2a537fd9de1fe69b9c857dd3853e0e9ee8b9288990df03951d626cc654b5",
+          "result.json": "2282e38f4ead1457d1e7b833aa9d20f1f4424d9dcee2a3d2b4371ad80c3cc417",
+          "stdout.txt": "a54244eb229562acc000f627794fb3cfff5137fd59741c93d3da916078a946fa",
+          "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "native-fault.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "attempted_calls_from_stage_log": 0,
+        "returned_calls": 0,
+        "performance_result": false
+      },
+      {
+        "label": "public_CAPI_extra_name_gate",
+        "artifact": "server/.local/optimization9h-20261004/qmoe-light-admission-1c9baae117d84816ab28050abaae2482",
+        "guard": {
+          "passed": false,
+          "error": "RuntimeError: QMoEBf child exit 1",
+          "exit_code": 1,
+          "owned_job_closed": true,
+          "minimum": {
+            "available_bytes": 46919348224,
+            "commit_headroom_bytes": 213229412352
+          },
+          "final_memory": {
+            "available_bytes": 46967554048,
+            "committed_bytes": 26843582464,
+            "commit_limit_bytes": 240139440128,
+            "commit_headroom_bytes": 213295857664
+          },
+          "ort_stage_final_verified": true
+        },
+        "admission": {
+          "passed": false,
+          "error": "ValueError: Native session allocator admission failed: contract: Session allocator differs from exact OGA Cpu/device/default key",
+          "failed_at_stage": "native_session_allocator_admission",
+          "native_capi_receipt": {
+            "schema": 1,
+            "api_version": 29,
+            "session_creations": 1,
+            "allocator_acquired": 1,
+            "allocator_type": 0,
+            "allocator_mem_type": 0,
+            "allocator_device_type": 0,
+            "calls_attempted": 0,
+            "calls_completed": 0,
+            "zero_outputs": 0,
+            "cleanup_completed": 1,
+            "provider_unregistered": 1,
+            "qpc_frequency": 10000000,
+            "return_code": 1,
+            "error": "contract: Session allocator differs from exact OGA Cpu/device/default key",
+            "call_ticks": [
+              0,
+              0
+            ],
+            "allocator_scope": "public CreateAllocator on frozen Light session; exact OGA Cpu/device/default key",
+            "equivalence_to_oga_trivial_session_initialization_proven": false,
+            "complete_mtp_proven": false,
+            "speed_gain_established": false,
+            "host_call_ms": [
+              0.0,
+              0.0
+            ],
+            "output_sha256": [
+              "f90cc8cb9aae3ed02fefec201436fd6ba5ab9054c102fd44e3e9019c68145a88",
+              "f90cc8cb9aae3ed02fefec201436fd6ba5ab9054c102fd44e3e9019c68145a88"
+            ],
+            "passed": false
+          },
+          "native_cleanup_normal_return": true,
+          "provider_unregistered": true,
+          "native_fault_collector_stopped": true,
+          "dll_directory_closed": true,
+          "ort_dll_directory_closed": true,
+          "bootstrap_shutdown": true
+        },
+        "small_artifact_sha256": {
+          "admission.json": "2919fa5b618b1314b7f153923fab6cc6bc29ac093da1182e2b3c262ee14bdaf1",
+          "result.json": "6e69c77ffdd11d477fb63249ccf0a87116b8428efb4a72bc8e19db0918584963",
+          "stdout.txt": "c695f02802414c760de5e5296b0d3d6c9cf5ebc35be2ef47e01787be44142fd7",
+          "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "native-fault.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "attempted_calls_from_stage_log": 0,
+        "returned_calls": 0,
+        "performance_result": false
+      },
+      {
+        "label": "public_CAPI_corrected_RMM",
+        "artifact": "server/.local/optimization9h-20261004/qmoe-light-admission-9436f2f0f523473c874705172cfb035a",
+        "guard": {
+          "passed": false,
+          "error": "RuntimeError: QMoEBf child exit 1",
+          "exit_code": 1,
+          "owned_job_closed": true,
+          "minimum": {
+            "available_bytes": 46459703296,
+            "commit_headroom_bytes": 212530659328
+          },
+          "final_memory": {
+            "available_bytes": 46518841344,
+            "committed_bytes": 27533217792,
+            "commit_limit_bytes": 240139440128,
+            "commit_headroom_bytes": 212606222336
+          },
+          "ort_stage_final_verified": true
+        },
+        "admission": {
+          "passed": false,
+          "error": "OSError: exception: access violation reading 0x000004A88F029680",
+          "failed_at_stage": "native_session_allocator_admission",
+          "native_cleanup_normal_return": false,
+          "native_fault_collector_stopped": true,
+          "dll_directory_closed": true,
+          "ort_dll_directory_closed": true,
+          "bootstrap_shutdown": true
+        },
+        "small_artifact_sha256": {
+          "admission.json": "e2873241bd61a04da6790026546a8f195ce3fcbef6e145d54f2a1ff6d2bdc759",
+          "result.json": "08a1bdf59bb53c579d8aa4a64d6f96bc794eb45e4675142bf49438d8f2d81418",
+          "stdout.txt": "d57caeb15874d7c38f0ae4ba07d1d1de8388b07c586684a917f7ff04d9eae734",
+          "stderr.txt": "a1ad9e7acf5f703261c0dc75600c499477e01b11857e1ca3127d4b20c4fbb384",
+          "native-fault.jsonl": "8b38bb4d5e4ceea6831d8222cfb1c3d887ab38912117585dd8b54655056f7ee1"
+        },
+        "attempted_calls_from_stage_log": 1,
+        "returned_calls": 0,
+        "performance_result": false
+      }
+    ],
+    "corrected_counter_note": "Child counters remain initialization defaults after ctypes AV; native stage log establishes one invocation without return. Sentinel hashes and zero timing fields in rejected name-gate receipt are not returned inference outputs/timings."
+  },
+  "laya_jev_feasibility_note": "docs/research/halogen-laya-jev-sidecar-feasibility-20261004.md"
 }

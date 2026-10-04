@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "date": "2026-10-04",
+  "scope": "saved frozen synthetic zero-bank 512-expert/top10 QMoEBf admission attempts",
+  "native_executions_for_this_report": 0,
+  "receipt_root": "server/.local/optimization9h-20261004",
+  "outputs_returned": 0,
+  "speed_gain_established": false,
+  "full_mtp_proven": false,
+  "equivalence_to_oga_trivial_session_initialization_proven": false,
+  "attempts": [
+    {
+      "directory": "qmoe-light-admission-db32fa0ec39a4c92850036df59844d1b",
+      "outcome": "HOST_ACCESSIBLE memory info absent; failed before inference",
+      "inference_attempts": 0,
+      "inference_returns": 0,
+      "initialization_ms": 115.2467,
+      "parent_exit_code": 1,
+      "owned_job_closed": true,
+      "ort_stage_final_verified": true,
+      "parent_guard_minimum_physical_bytes": 47460294656,
+      "parent_guard_minimum_commit_headroom_bytes": 213449003008,
+      "child_minimum_physical_gib": 44.16022491455078,
+      "seals": {
+        "result.json": "2282e38f4ead1457d1e7b833aa9d20f1f4424d9dcee2a3d2b4371ad80c3cc417",
+        "admission.json": "355e2a537fd9de1fe69b9c857dd3853e0e9ee8b9288990df03951d626cc654b5",
+        "stdout.txt": "a54244eb229562acc000f627794fb3cfff5137fd59741c93d3da916078a946fa"
+      }
+    },
+    {
+      "directory": "qmoe-light-admission-1c9baae117d84816ab28050abaae2482",
+      "outcome": "session allocator acquired; unsupported extra name check rejected it",
+      "returned_allocator_name": null,
+      "inference_attempts": 0,
+      "inference_returns": 0,
+      "native_cleanup_normal_return": true,
+      "native_provider_unregistered": true,
+      "output_hashes_are_unexecuted_sentinel_buffers": true,
+      "parent_exit_code": 1,
+      "owned_job_closed": true,
+      "ort_stage_final_verified": true,
+      "parent_guard_minimum_physical_bytes": 46919348224,
+      "parent_guard_minimum_commit_headroom_bytes": 213229412352,
+      "child_minimum_physical_gib": 43.64388656616211,
+      "seals": {
+        "result.json": "6e69c77ffdd11d477fb63249ccf0a87116b8428efb4a72bc8e19db0918584963",
+        "admission.json": "2919fa5b618b1314b7f153923fab6cc6bc29ac093da1182e2b3c262ee14bdaf1",
+        "stdout.txt": "c695f02802414c760de5e5296b0d3d6c9cf5ebc35be2ef47e01787be44142fd7"
+      }
+    },
+    {
+      "directory": "qmoe-light-admission-9436f2f0f523473c874705172cfb035a",
+      "outcome": "RMM acquired; first inference invocation faults with no return",
+      "returned_allocator_name": "RMM",
+      "allocator_type": 0,
+      "allocator_mem_type": 0,
+      "allocator_device_type": 0,
+      "inference_attempts_from_stdout": 1,
+      "inference_returns_from_stdout": 0,
+      "outer_zero_counters_are_defaults_after_ctypes_exception": true,
+      "native_capi_receipt_returned": false,
+      "native_cleanup_normal_return": false,
+      "python_collector_stopped": true,
+      "python_dll_directories_closed": true,
+      "bootstrap_shutdown": true,
+      "failed_admission_host_ms": 182.1987,
+      "failed_admission_host_ms_is_inference_timing": false,
+      "fault": {
+        "exception_code": "0xc0000005",
+        "av_type": "read",
+        "rip": "0x00007ffbda7ca541",
+        "fault_address": "0x000004a88f029680",
+        "snapshot_module_count": 56,
+        "module_lookup": "unknown",
+        "module_path": null,
+        "same_as_prior_xrt_null_bo_fault_proven": false
+      },
+      "parent_exit_code": 1,
+      "owned_job_closed": true,
+      "ort_stage_final_verified": true,
+      "parent_guard_minimum_physical_bytes": 46459703296,
+      "parent_guard_minimum_commit_headroom_bytes": 212530659328,
+      "child_minimum_physical_gib": 43.292232513427734,
+      "seals": {
+        "result.json": "08a1bdf59bb53c579d8aa4a64d6f96bc794eb45e4675142bf49438d8f2d81418",
+        "admission.json": "e2873241bd61a04da6790026546a8f195ce3fcbef6e145d54f2a1ff6d2bdc759",
+        "stdout.txt": "d57caeb15874d7c38f0ae4ba07d1d1de8388b07c586684a917f7ff04d9eae734",
+        "native-fault.jsonl": "8b38bb4d5e4ceea6831d8222cfb1c3d887ab38912117585dd8b54655056f7ee1"
+      }
+    }
+  ],
+  "root_supplied_artifact_pins": {
+    "qmoe-session-allocator-native/qmoe_session_allocator.c": "acd9d442a460158f0ae8bf204a55db67e1390e8aab2a0d5ce8be247ad4d496af",
+    "qmoe-session-allocator-native/qmoe_session_allocator.dll": "b4319f835ca7bcc6b8c7c3c27f767dc38ed5b9305b462b34a0a360ed209791f4",
+    "halogen_qmoe_native_session_allocator_candidate.py": "b6d33616d120c122a8c694d58f642683f0f0a6831f443e3f89c6ab141cc69e91",
+    "run_qmoe_native_session_allocator_guard.py": "1c1f4cc4ba5c33435b79f20f85a171e30b9c889749698ae7e7eed1ad8ff313e2",
+    "provider_library": "ccc3bd0c2a8f519f9cd5fb112491785918810819f80c804302f717d2a93456ec",
+    "ort_stage_manifest": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+    "frozen_zero_bank": "05283a60ce7858fdfa93d46ce84e86a5a38d5bbe46631e8571d2ff632890365f"
+  },
+  "ort_stage_from_guard_receipts": {
+    "package_version": "1.29.0",
+    "c_api_max_version": 29,
+    "file_count": 630,
+    "total_bytes": 45280440
+  },
+  "root_reported_source_followup": {
+    "tracked_c_source": "scripts/benchmarks/halogen_qmoe_session_allocator.c",
+    "tracked_c_source_identical_to_corrected_observed_run": true,
+    "tracked_wrapper": "scripts/benchmarks/halogen_qmoe_session_allocator_invoke.py",
+    "serialization_fix": "output hashes and timings only for completed calls",
+    "wrapper_source_reviewed_and_ast_parsed": true,
+    "revised_wrapper_executed": false,
+    "raw_receipts_are_revised_wrapper_results": false
+  },
+  "decision": "Stop executions; no returned output, valid inference timing, real-bank admission or speed claim."
+}
