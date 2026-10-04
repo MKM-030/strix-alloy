@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-04",
-  "status": "active nine-hour optimization; no qualified overall gain; GPU MLP timing completed, BF16 Gather variants fail NPU admission, direct SSD extraction/readback/qualification passed; matched placement running",
+  "status": "active nine-hour optimization; no qualified overall gain; GPU MLP timing completed, BF16 Gather variants fail NPU admission, direct SSD placement rejected against warmed stock; paired-DeltaNet window running, separate greedy coding depth matrix prepared",
   "work_deadline_utc": "2026-10-04T08:39:15Z",
   "source_commit_at_baseline": "d950029",
   "baseline": {
@@ -76,10 +76,29 @@
   },
   "pending_experiments": [
     "full live Halogen NPU MTP integration: MLP capture established but complete arithmetic and persistent full-head state remain unqualified",
-    "qualified standalone SSD lookup: matched stock A / candidate / stock B placement benchmark"
+    "paired DeltaNet kernel: matched 8K stock / candidate / stock window running",
+    "greedy coding depth 2 / 3 / 2: saved direct client and matched runner prepared; sampled depth changes are ineffective in this engine"
   ],
   "qualifications": "No new speed or acceptance improvement promoted. NPU partial graph is not full MTP.",
   "completed_experiments": [
+    {
+      "name": "direct E lookup placement against stock A and stock B",
+      "promoted": false,
+      "report": "halogen0162-lookup-direct-results-20261004/results.json",
+      "capacity": 65536,
+      "target_input": 32768,
+      "temperature": 1,
+      "effective_sampled_proposals_per_round": 1,
+      "e_prefill_tps": 901.0016331321415,
+      "e_decode_tps": 38.48644828924242,
+      "stock_b_prefill_tps": 1033.5419271550713,
+      "stock_b_decode_tps": 40.71567048406769,
+      "common_accepted": 2094,
+      "common_proposed": 2497,
+      "all_corresponding_request_output_reasoning_hashes_match": true,
+      "cleanup_recovery_proven": true,
+      "reason": "E does not beat the warmed stock B control; fixed order and unflushed file caches confound the first-stock improvement."
+    },
     {
       "name": "persistent machine-specific matmul plan",
       "promoted": false,

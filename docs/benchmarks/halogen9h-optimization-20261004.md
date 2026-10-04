@@ -166,3 +166,22 @@ At 04:03 UTC, the matched SSD matrix is running in its first stock cell. Three
 of six request samples have been retained. Neither partial rows nor the earlier
 unmatched 32K rates establish a placement gain. The root continues to own the
 single engine launch; the 18-GiB physical/commit floor remains unchanged.
+
+At 04:20 UTC the full SSD stock A / E: / stock B matrix completed with all
+eighteen requests and normal cleanup/recovery. E: measured 901.00 prefill,
+38.49 decode and 114.18 normalized three-turn seconds; the second stock control
+measured 1033.54 / 40.72 / 104.32 seconds. All cells accepted 2094/2497 drafts
+(83.8606%) and retrieved 14/14 fixtures. E: is not promoted: its improvement
+against the first stock cell does not survive the warmed stock bookend.
+The [placement report](halogen0162-lookup-direct-results-20261004/README.md)
+confirms all corresponding request/output/reasoning hashes match. Its native
+lookup reads were 22.5/10.1 seconds for stock A, 11.4/9.5 for E: and 11.4/9.7
+for stock B. Those observations support retaining the warmed stock comparison;
+they do not prove an isolated cause for throughput differences.
+
+The [sampled-depth dispatch audit](../research/halogen-sampled-mtp-depth-20261004.md)
+establishes that this sampled workload uses one draft per round regardless of
+the startup depth flag. A new directly saved greedy client and depth 2 / 3 / 2
+coordinator have been prepared; that is a separate workload, with no timing
+result yet. Root also started a stock / paired-DeltaNet / stock 8K window at
+04:21 UTC. Neither preparation establishes a speed or acceptance improvement.

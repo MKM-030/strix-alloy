@@ -1,0 +1,4330 @@
+{
+  "schema": 1,
+  "date": "2026-10-04",
+  "experiment": "root-owned direct lookup placement stockA/E/stockB",
+  "scope": "32K occupied input at 64K capacity; two three-turn sampled conversations per cell. Separate from 8K greedy controls. Coding/review outputs are ungraded; retrieval equivalence is observed 14/14 only.",
+  "geometry": {
+    "capacity": 65536,
+    "initial_target_input": 32768,
+    "repetitions": 2,
+    "turns": 3,
+    "requests_per_cell": 6,
+    "output_limit": 1536,
+    "prompt_cache": "Exact",
+    "startup_mtp_depth": 2,
+    "effective_sampled_proposals_per_round": 1,
+    "sampled_verification_input_tokens": 2,
+    "sampled_mtp_depth_evidence": {
+      "path": "docs/research/halogen-sampled-mtp-depth-20261004.md",
+      "sha256": "5ba268a0f5e9de8e1679ae2b7820b598548d66339b6b1373fbd6e3e29139b5f9"
+    },
+    "thinking": "low requested",
+    "no_os_cache_flush": true
+  },
+  "publication_checks": {
+    "matrix_complete": true,
+    "source_seals_verified": true,
+    "all_18_requests_complete": true,
+    "all_cleanup_recovery_proven": true,
+    "physical_commit_request_floors_gib": 18,
+    "compute_manifest_only_permitted_differences": true,
+    "both_stock_controls_compared": true
+  },
+  "lookup_qualification": {
+    "schema": 1,
+    "configuration": {
+      "receipt": "<repo>\\server\\.local\\optimization9h-20261004\\lookup-direct-process-diagnostic-263bf3b410474d07bfc03b59945bfada\\extraction.receipt.json",
+      "receipt_sha256": "067f2f7c847ca9b358767bd8699176c1d94994f21335618abc7f9bf4bea78e4a"
+    },
+    "source": {
+      "path": "/mnt/c/AI/models/halogen-flashnext/qwen38-flash-next-w4b.hgn",
+      "sha256": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6",
+      "identity": {
+        "size": 124068083904,
+        "device": 71,
+        "inode": 12384898978924366,
+        "mtime_ns": 1789244565219639800,
+        "ctime_ns": 1789244565219639800
+      },
+      "header_sha256": "27be7f0039f807dc56cb57b682190951c45bd27a5d96fb53475dff6d7ffa6c8b"
+    },
+    "tensor": {
+      "name": "layers.1.ple.ngram_embedding.weight",
+      "storage": 10,
+      "dimensions": [
+        128,
+        2500012,
+        160
+      ],
+      "variant": 0,
+      "source_offset": 1882122624,
+      "bytes": 51200245764,
+      "sha256": "c42900db1bef0d9a688241031f614e179752b0463f822dc07a197b1a42493d8c",
+      "xor32": "f682e517",
+      "xor32_verified": true
+    },
+    "output": {
+      "path": "/mnt/e/AI/halogen-experiments/lookup-direct-20261004/263bf3b410474d07bfc03b59945bfada/ngram.hgn",
+      "bytes": 51200246144,
+      "sha256": "3343a193cb2e1fe68fac83a42b49176621174abb1cc57ba67e2ab149ead80575",
+      "identity": {
+        "size": 51200246144,
+        "device": 73,
+        "inode": 1407374883785163,
+        "mtime_ns": 1791084593714887100,
+        "ctime_ns": 1791084593714887100
+      },
+      "data_offset": 320
+    },
+    "read_mode": "bounded-cache",
+    "reserve_gib": 18
+  },
+  "cells": [
+    {
+      "tag": "lookup-stocka",
+      "metrics": {
+        "three_turn_seconds": 127.82810699339689,
+        "prefill_tps": 731.4965273539704,
+        "decode_tps": 36.06732508978709,
+        "mtp_acceptance": 0.8386063275931117,
+        "observed_wall_seconds": 223.13579580013175
+      },
+      "normalized_repetitions_seconds": [
+        137.01678148381197,
+        118.63943250298179
+      ],
+      "actual_wall_repetitions_seconds": [
+        117.81820970005356,
+        105.31758610007819
+      ],
+      "draft_counts": {
+        "accepted": 2094,
+        "proposed": 2497
+      },
+      "generated_tokens": 4623,
+      "retrieval_correct": 14,
+      "retrieval_total": 14,
+      "capped_outputs": 0,
+      "eos_outputs": 6,
+      "clamped_outputs": 0,
+      "memory_floor_bytes": {
+        "available_bytes": 28260458496,
+        "commit_headroom_bytes": 126296879104
+      },
+      "requests": [
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 0,
+          "prompt_tokens": 32791,
+          "output_tokens": 275,
+          "ttft_seconds": 52.66383809997933,
+          "visible_ttft_seconds": 56.79280029999791,
+          "wall_seconds": 59.34338500001468,
+          "last_delivery_seconds": 59.34158379997825,
+          "stream_events": 252,
+          "timings": {
+            "prompt_n": 32791,
+            "predicted_n": 275,
+            "prompt_ms": 55191.4,
+            "predicted_ms": 7234.9,
+            "prompt_per_second": 594.132,
+            "predicted_per_second": 38.01,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 1,
+            "draft_n": 138,
+            "draft_n_accepted": 136
+          },
+          "usage": {
+            "prompt_tokens": 32791,
+            "completion_tokens": 275,
+            "total_tokens": 33066,
+            "completion_tokens_details": {
+              "reasoning_tokens": 170
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 215.845230884,
+              "raw": 211.783326086,
+              "utc": 1791086432.177322,
+              "qpc": 309437.33518085,
+              "roundtrip": 0.0004376999568194151
+            },
+            "after": {
+              "mono": 278.346171135,
+              "raw": 271.128278592,
+              "utc": 1791086491.5363448,
+              "qpc": 309496.6801284,
+              "roundtrip": 0.0004290000069886446
+            },
+            "monotonic_per_raw": 1.0531803904414772,
+            "raw_per_qpc": 1.0000000835120781,
+            "window_seconds": 59.344947549980134,
+            "handshake_uncertainty_seconds": 0.00043334998190402985
+          },
+          "pp_tps": 625.7281717337756,
+          "decode_tps": 40.031386640680545,
+          "normalized_1000_seconds": 77.64423683000443,
+          "drafted": 138,
+          "accepted": 136,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 30803185664,
+              "committed_bytes": 111413641216,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 128725798912
+            },
+            "after": {
+              "available_bytes": 29386633216,
+              "committed_bytes": 112628867072,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127510573056
+            },
+            "observed_minimum": {
+              "available_bytes": 29386633216,
+              "commit_headroom_bytes": 127510573056
+            },
+            "controller_before": {
+              "available_bytes": 30828568576,
+              "commit_headroom_bytes": 128744521728
+            },
+            "controller_after": {
+              "available_bytes": 29421895680,
+              "commit_headroom_bytes": 127547367424
+            }
+          },
+          "request_sha256": "415e9d5c83a3be9656ab33b1dea2aa597773c7a2e44f33dbef69283704bfb304",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "dca70245cc81be6344133db1960b1472ce41f59b1b4ca7d38552665c6f049341",
+          "output_file_sha256": "4d92035187a1586238fd89c5309dbb2cb9c904e345209997aa01c0f458a8b0f6",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+            "utf8_bytes": 258,
+            "characters": 250
+          },
+          "visible_answer": {
+            "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+            "utf8_bytes": 258,
+            "characters": 250
+          },
+          "reasoning": {
+            "sha256": "1bc77c19d2b4e1de34d466bc610e3396e32024ba890c9a4c28f14093265af982",
+            "utf8_bytes": 492,
+            "characters": 484
+          },
+          "reasoning_tokens": 170
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 1,
+          "prompt_tokens": 32952,
+          "output_tokens": 1002,
+          "ttft_seconds": 0.8396647999761626,
+          "visible_ttft_seconds": 11.731334800017066,
+          "wall_seconds": 29.360318000020925,
+          "last_delivery_seconds": 29.311748999985866,
+          "stream_events": 970,
+          "timings": {
+            "prompt_n": 184,
+            "predicted_n": 1002,
+            "prompt_ms": 733.4,
+            "predicted_ms": 30895.6,
+            "prompt_per_second": 250.886,
+            "predicted_per_second": 32.432,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32790,
+            "draft_n": 551,
+            "draft_n_accepted": 450
+          },
+          "usage": {
+            "prompt_tokens": 32952,
+            "completion_tokens": 1002,
+            "total_tokens": 33954,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 391
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 278.354787641,
+              "raw": 271.136230271,
+              "utc": 1791086491.5449584,
+              "qpc": 309496.68809185,
+              "roundtrip": 0.00032649998320266604
+            },
+            "after": {
+              "mono": 310.163220686,
+              "raw": 300.49786739,
+              "utc": 1791086521.2659965,
+              "qpc": 309526.04971025,
+              "roundtrip": 0.0004331000382080674
+            },
+            "monotonic_per_raw": 1.0833330892307997,
+            "raw_per_qpc": 1.0000006375340236,
+            "window_seconds": 29.361618399969302,
+            "handshake_uncertainty_seconds": 0.00037980001070536673
+          },
+          "pp_tps": 271.79310542475844,
+          "decode_tps": 35.1346587499333,
+          "normalized_1000_seconds": 29.301589166948943,
+          "drafted": 551,
+          "accepted": 450,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29386625024,
+              "committed_bytes": 112628867072,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127510573056
+            },
+            "after": {
+              "available_bytes": 29413535744,
+              "committed_bytes": 112573014016,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127566426112
+            },
+            "observed_minimum": {
+              "available_bytes": 29353103360,
+              "commit_headroom_bytes": 127463972864
+            },
+            "controller_before": {
+              "available_bytes": 29421895680,
+              "commit_headroom_bytes": 127547367424
+            },
+            "controller_after": {
+              "available_bytes": 29411876864,
+              "commit_headroom_bytes": 127556562944
+            }
+          },
+          "request_sha256": "3a42457a08f68ff8b3c91ad52d984718f5df06f07c815f701238e163f90bf502",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "e454193fd29b3f9c32178e5c4fb56656d8519a6d5741d56654fe70b461070fed",
+          "output_file_sha256": "eb73cd97de2c2ecf0ac5ad3e5a1be387c23ffc7110703267f24fcb64a35da8e2",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+                "utf8_bytes": 258,
+                "characters": 250
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+            "utf8_bytes": 2264,
+            "characters": 2222
+          },
+          "visible_answer": {
+            "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+            "utf8_bytes": 2264,
+            "characters": 2222
+          },
+          "reasoning": {
+            "sha256": "4eebcc216468bf9fa615225871abf8958c5b7901118fe523a9b16114b9f88e36",
+            "utf8_bytes": 1510,
+            "characters": 1510
+          },
+          "reasoning_tokens": 391
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 2,
+          "prompt_tokens": 33615,
+          "output_tokens": 967,
+          "ttft_seconds": 1.039161199994851,
+          "visible_ttft_seconds": 13.691075800044928,
+          "wall_seconds": 29.114506700017955,
+          "last_delivery_seconds": 29.112459300027695,
+          "stream_events": 940,
+          "timings": {
+            "prompt_n": 847,
+            "predicted_n": 967,
+            "prompt_ms": 906.8,
+            "predicted_ms": 28073.5,
+            "prompt_per_second": 934.054,
+            "predicted_per_second": 34.445,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32951,
+            "draft_n": 536,
+            "draft_n_accepted": 430
+          },
+          "usage": {
+            "prompt_tokens": 33615,
+            "completion_tokens": 967,
+            "total_tokens": 34582,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 415
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 310.644135225,
+              "raw": 300.946014036,
+              "utc": 1791086521.3288581,
+              "qpc": 309526.49786360003,
+              "roundtrip": 0.0004153999616391957
+            },
+            "after": {
+              "mono": 339.760082933,
+              "raw": 330.061966234,
+              "utc": 1791086550.4417977,
+              "qpc": 309555.61381979997,
+              "roundtrip": 0.000539399974513799
+            },
+            "monotonic_per_raw": 0.9999998457890023,
+            "raw_per_qpc": 0.9999998625517407,
+            "window_seconds": 29.1159561999375,
+            "handshake_uncertainty_seconds": 0.0004773999680764973
+          },
+          "pp_tps": 934.0538559586007,
+          "decode_tps": 34.444994688202186,
+          "normalized_1000_seconds": 30.070955486858587,
+          "drafted": 536,
+          "accepted": 430,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29393448960,
+              "committed_bytes": 112602554368,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127536885760
+            },
+            "after": {
+              "available_bytes": 29372915712,
+              "committed_bytes": 112640200704,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127499239424
+            },
+            "observed_minimum": {
+              "available_bytes": 29355151360,
+              "commit_headroom_bytes": 127489982464
+            },
+            "controller_before": {
+              "available_bytes": 29413367808,
+              "commit_headroom_bytes": 127566336000
+            },
+            "controller_after": {
+              "available_bytes": 29372166144,
+              "commit_headroom_bytes": 127504715776
+            }
+          },
+          "request_sha256": "8a3d53f504e391f69a946cef0f5a448563f8b942373d0d302f469f866604b63f",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "e16a2dfe5e75cf9188d3f45c6e10fccb9b05233a0649a3cb638d1d0fe1c8bc3a",
+          "output_file_sha256": "ec27aafc14472ab24066f173dabbb42beb75e827c35152e2bb4daaf364d80aaa",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+                "utf8_bytes": 258,
+                "characters": 250
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+                "utf8_bytes": 2264,
+                "characters": 2222
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "56f12c0d1712d06fc7513d1e015c64e7679f553344bd48e14465007e0d167e5b",
+                "utf8_bytes": 203,
+                "characters": 203
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "4b921009fdeb7e14f546219582624eff5da5247a85576bb975601fbdd396a754",
+            "utf8_bytes": 2077,
+            "characters": 2071
+          },
+          "visible_answer": {
+            "sha256": "4b921009fdeb7e14f546219582624eff5da5247a85576bb975601fbdd396a754",
+            "utf8_bytes": 2077,
+            "characters": 2071
+          },
+          "reasoning": {
+            "sha256": "9b6fcc9fb45c604b5a2e1e2c4576070bceb9ae22785bdf1aa4be80601a95f7b6",
+            "utf8_bytes": 1815,
+            "characters": 1809
+          },
+          "reasoning_tokens": 415
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 0,
+          "prompt_tokens": 32792,
+          "output_tokens": 300,
+          "ttft_seconds": 39.238016599963885,
+          "visible_ttft_seconds": 42.89350619999459,
+          "wall_seconds": 45.92334889998892,
+          "last_delivery_seconds": 45.92211159999715,
+          "stream_events": 277,
+          "timings": {
+            "prompt_n": 32792,
+            "predicted_n": 300,
+            "prompt_ms": 39165.6,
+            "predicted_ms": 6684.8,
+            "prompt_per_second": 837.265,
+            "predicted_per_second": 44.878,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 37,
+            "draft_n": 151,
+            "draft_n_accepted": 148
+          },
+          "usage": {
+            "prompt_tokens": 32792,
+            "completion_tokens": 300,
+            "total_tokens": 33092,
+            "completion_tokens_details": {
+              "reasoning_tokens": 168
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 340.817915176,
+              "raw": 331.119798732,
+              "utc": 1791086551.4990427,
+              "qpc": 309556.67164099996,
+              "roundtrip": 0.00042380002560094
+            },
+            "after": {
+              "mono": 386.742845172,
+              "raw": 377.044735147,
+              "utc": 1791086597.420563,
+              "qpc": 309602.59658465,
+              "roundtrip": 0.00043569999979808927
+            },
+            "monotonic_per_raw": 0.9999998602284403,
+            "raw_per_qpc": 0.9999998424597969,
+            "window_seconds": 45.92494365002494,
+            "handshake_uncertainty_seconds": 0.00042975001269951463
+          },
+          "pp_tps": 837.2648829741651,
+          "decode_tps": 44.87799372733195,
+          "normalized_1000_seconds": 61.52065263034802,
+          "drafted": 151,
+          "accepted": 148,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29362569216,
+              "committed_bytes": 112642772992,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127496667136
+            },
+            "after": {
+              "available_bytes": 28642136064,
+              "committed_bytes": 113240244224,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126899195904
+            },
+            "observed_minimum": {
+              "available_bytes": 28630093824,
+              "commit_headroom_bytes": 126857588736
+            },
+            "controller_before": {
+              "available_bytes": 29372166144,
+              "commit_headroom_bytes": 127504715776
+            },
+            "controller_after": {
+              "available_bytes": 28648689664,
+              "commit_headroom_bytes": 126927208448
+            }
+          },
+          "request_sha256": "17b5a345e2db4fce9f16ac9f99eec4c5639db82d4a66d56b33b1c21f96ee1e7f",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "28382c8d57f362d4eb7fb153903d8790c6c6d9cf3cf24685cc58cbb1cc1d8fce",
+          "output_file_sha256": "2111038a53f28890ce2cd9f431eb7bcc6542495d5462f68e5cb97001ee530a38",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+            "utf8_bytes": 287,
+            "characters": 279
+          },
+          "visible_answer": {
+            "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+            "utf8_bytes": 287,
+            "characters": 279
+          },
+          "reasoning": {
+            "sha256": "97e49fab2c7f73cda2767d737474593232f052b3f09a7204d92c0a90bc3bb6fa",
+            "utf8_bytes": 483,
+            "characters": 475
+          },
+          "reasoning_tokens": 168
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 1,
+          "prompt_tokens": 32980,
+          "output_tokens": 796,
+          "ttft_seconds": 0.4815375000471249,
+          "visible_ttft_seconds": 8.40113090001978,
+          "wall_seconds": 22.56294870004058,
+          "last_delivery_seconds": 22.560157100029755,
+          "stream_events": 776,
+          "timings": {
+            "prompt_n": 212,
+            "predicted_n": 796,
+            "prompt_ms": 355.0,
+            "predicted_ms": 22079.0,
+            "prompt_per_second": 597.183,
+            "predicted_per_second": 36.052,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32791,
+            "draft_n": 431,
+            "draft_n_accepted": 364
+          },
+          "usage": {
+            "prompt_tokens": 32980,
+            "completion_tokens": 796,
+            "total_tokens": 33776,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 269
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 386.750988125,
+              "raw": 377.052877491,
+              "utc": 1791086597.4287052,
+              "qpc": 309602.60471625,
+              "roundtrip": 0.0003972999984398484
+            },
+            "after": {
+              "mono": 409.315285969,
+              "raw": 399.617179456,
+              "utc": 1791086619.9930131,
+              "qpc": 309625.1690243,
+              "roundtrip": 0.000421999953687191
+            },
+            "monotonic_per_raw": 0.9999998173663884,
+            "raw_per_qpc": 0.9999997303249719,
+            "window_seconds": 22.564308050030377,
+            "handshake_uncertainty_seconds": 0.0004096499760635197
+          },
+          "pp_tps": 597.1828909343119,
+          "decode_tps": 36.05199341569303,
+          "normalized_1000_seconds": 28.219254759384885,
+          "drafted": 431,
+          "accepted": 364,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28642099200,
+              "committed_bytes": 113241305088,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126898135040
+            },
+            "after": {
+              "available_bytes": 28382154752,
+              "committed_bytes": 113628459008,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126510981120
+            },
+            "observed_minimum": {
+              "available_bytes": 28260458496,
+              "commit_headroom_bytes": 126296879104
+            },
+            "controller_before": {
+              "available_bytes": 28648689664,
+              "commit_headroom_bytes": 126927208448
+            },
+            "controller_after": {
+              "available_bytes": 28370870272,
+              "commit_headroom_bytes": 126505480192
+            }
+          },
+          "request_sha256": "728ac550dcb884988538937107f295efbfa35767476a04f542068db3775f41a6",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "fb77809d7cc52d04370660ced924694846f3b7408c938a5de6d4ad7a8fc91d76",
+          "output_file_sha256": "8ce206404e1a683ebe818132bc2fbacf7cc1292776150535906fa16bee1f99ba",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+                "utf8_bytes": 287,
+                "characters": 279
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+            "utf8_bytes": 1983,
+            "characters": 1971
+          },
+          "visible_answer": {
+            "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+            "utf8_bytes": 1983,
+            "characters": 1971
+          },
+          "reasoning": {
+            "sha256": "1eab5622726d348e355ed46744eeb2f64e5d7f6a1104170955364ad0630127ff",
+            "utf8_bytes": 1143,
+            "characters": 1127
+          },
+          "reasoning_tokens": 269
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 2,
+          "prompt_tokens": 33559,
+          "output_tokens": 1283,
+          "ttft_seconds": 0.8786826000432484,
+          "visible_ttft_seconds": 17.197809700039215,
+          "wall_seconds": 36.831288500048686,
+          "last_delivery_seconds": 36.829183600028045,
+          "stream_events": 1269,
+          "timings": {
+            "prompt_n": 791,
+            "predicted_n": 1283,
+            "prompt_ms": 754.0,
+            "predicted_ms": 35970.1,
+            "prompt_per_second": 1049.072,
+            "predicted_per_second": 35.669,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32979,
+            "draft_n": 690,
+            "draft_n_accepted": 566
+          },
+          "usage": {
+            "prompt_tokens": 33559,
+            "completion_tokens": 1283,
+            "total_tokens": 34842,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 537,
+              "reasoning_closed_at": 512,
+              "reasoning_closed_by": "answer_room"
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 409.323785268,
+              "raw": 399.625676496,
+              "utc": 1791086620.0015094,
+              "qpc": 309625.1775355,
+              "roundtrip": 0.00030120002338662744
+            },
+            "after": {
+              "mono": 446.175727036,
+              "raw": 436.4582869,
+              "utc": 1791086656.8280885,
+              "qpc": 309662.01015845,
+              "roundtrip": 0.0004157000221312046
+            },
+            "monotonic_per_raw": 1.000524843712893,
+            "raw_per_qpc": 0.9999996593789892,
+            "window_seconds": 36.8326229499653,
+            "handshake_uncertainty_seconds": 0.000358450022758916
+          },
+          "pp_tps": 1049.622598843572,
+          "decode_tps": 35.68772065039518,
+          "normalized_1000_seconds": 28.899525113248888,
+          "drafted": 690,
+          "accepted": 566,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28382138368,
+              "committed_bytes": 113628459008,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126510981120
+            },
+            "after": {
+              "available_bytes": 28448526336,
+              "committed_bytes": 113469411328,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126670028800
+            },
+            "observed_minimum": {
+              "available_bytes": 28367728640,
+              "commit_headroom_bytes": 126501040128
+            },
+            "controller_before": {
+              "available_bytes": 28370870272,
+              "commit_headroom_bytes": 126505480192
+            },
+            "controller_after": {
+              "available_bytes": 28454490112,
+              "commit_headroom_bytes": 126675369984
+            }
+          },
+          "request_sha256": "f1865300f79a6697b40b8c9ad011d6562e0ef3ece92bbbb0f97f78fccf17118b",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "11dc9b114ea1c03d21f13cf5ac532ca2493235dd5a505369321b39a606f90b6e",
+          "output_file_sha256": "19cd2e84edea54f46ae2902811db40266d15ee84c5dc8606f45b5d5ccdc4316c",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+                "utf8_bytes": 287,
+                "characters": 279
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+                "utf8_bytes": 1983,
+                "characters": 1971
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "56f12c0d1712d06fc7513d1e015c64e7679f553344bd48e14465007e0d167e5b",
+                "utf8_bytes": 203,
+                "characters": 203
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "7690cc4ddac3f7c9baa59be28c3f0a52631308548b8b7ed0a837e3ea2ce5f359",
+            "utf8_bytes": 2670,
+            "characters": 2664
+          },
+          "visible_answer": {
+            "sha256": "7690cc4ddac3f7c9baa59be28c3f0a52631308548b8b7ed0a837e3ea2ce5f359",
+            "utf8_bytes": 2670,
+            "characters": 2664
+          },
+          "reasoning": {
+            "sha256": "876dbc8743d0965612f5f644cab02ebe51e8451683850a33af32a2be5cf89346",
+            "utf8_bytes": 2208,
+            "characters": 2196
+          },
+          "reasoning_tokens": 537
+        }
+      ],
+      "lifecycle": {
+        "managed_run_id": "6ae11272f5b74f388f6fa9adf99db8d0",
+        "backend_run_id": "1a7e40489cea4a38862da2d7f6b7bf45",
+        "controller_pid": 29884,
+        "container_id": "c35223e973513fdca2fa0cdc31d8c3556d817fc65b3eab9698011c527a9e4073",
+        "container_exit_code": 1,
+        "cleanup": true,
+        "recovery": true
+      },
+      "profile_sha256": "fbf9ef954f77fc491302dac4d3f45eff953925c9c31ae4016ac240212aa679c2",
+      "compute_manifest": {
+        "schema": 1,
+        "version": "0.16.2",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+        "run_id": "<backend-run>",
+        "checkpoint": "v2",
+        "context": 65536,
+        "slots": 1,
+        "serve_seconds": 0,
+        "startup_timeout": 900,
+        "mounts": {
+          "/models": "/home/revn/halogen-models-native",
+          "/usr/lib/libdxcore.so": "/usr/lib/wsl/lib/libdxcore.so",
+          "/usr/lib/librocdxg.so": "/home/revn/ciru-runtime/venv/lib/python3.14/site-packages/_rocm_sdk_core/lib/librocdxg.so.1",
+          "/usr/local/lib/python3.12/site-packages/_rocm_sdk_libraries/lib/librocroller.so.1": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/librocroller-compat.so.1",
+          "/ngram-w4b.hgn": "<permitted lookup source>",
+          "/candidate/entrypoint-wsl-candidate.sh": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/services/<backend-run>/entrypoint-service.sh",
+          "/candidate/libhalogen0162-preflight.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/libhalogen0162-preflight.so",
+          "/candidate/hip-register-private-rw.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/hip-register-private-rw.so",
+          "/candidate/halogen0162_hip_probe": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/halogen0162_hip_probe",
+          "/candidate/auth_api.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/auth_api.py",
+          "/candidate/lease_supervisor.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/lease_supervisor.py",
+          "/candidate/startup_cache.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/startup_cache.py",
+          "/candidate/api-token.txt": "<redacted credential path/value>",
+          "/service-state": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/services/<backend-run>",
+          "/candidate/libhalogen0162-v2-preflight.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/libhalogen0162-v2-preflight.so"
+        },
+        "environment": {
+          "HALOGEN_WSL_PROFILE": "halogen0162-dxg",
+          "HALOGEN_CTX": "65536",
+          "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+          "HALOGEN_CK_OVERLAY": "",
+          "HALOGEN_PREFLIGHT_PROFILE": "flash0162-v2-device64-chunk64-v1",
+          "HALOGEN_HYBRID_PROFILE": "vgm64-v2-device64-v1",
+          "HALOGEN_KV_POOL_POSITIONS": "65536",
+          "HALOGEN_KV_SLOTS": "1",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+          "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+          "HALOGEN_FLASH_PIN_TRUNK": "1",
+          "HALOGEN_PROMPT_CACHE": "1",
+          "HALOGEN_DMALLOC_LOG": "1",
+          "HALOGEN_VERBOSE": "1",
+          "HALOGEN_ENGINE_WATCHDOG_S": "120",
+          "HALOGEN_TOKENIZER": "/models/tokenizer",
+          "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+          "HSA_ENABLE_SDMA": "1",
+          "HSA_ENABLE_DXG_DETECTION": "1",
+          "AMD_SERIALIZE_KERNEL": "0",
+          "AMD_SERIALIZE_COPY": "0",
+          "LD_PRELOAD": "/candidate/libhalogen0162-v2-preflight.so:/candidate/hip-register-private-rw.so",
+          "HALOGEN_API_PORT": "8731",
+          "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+          "HALOGEN_CHECKPOINT_VARIANT": "v2",
+          "HALOGEN_MTP_DEPTH": "2"
+        },
+        "sources": {
+          "scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+          "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+          "scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+          "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+          "scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+          "scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+          "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+          "scripts\\kernel_controls.py": "45e63bd2d5eed78f721a0a74facf8918e17f3ec0cec2affa0793c9127c2f0534",
+          "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+          "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+          "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+          "scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+          "scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+          "scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+          "scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+          "scripts\\service.py": "2df703adc7a255a527b94a0c4c225a140023727da5e453fdd3474169566ab34a",
+          "scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+          "scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+          "scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+          "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+          "patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+          "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+          "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+          "patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+          "patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+          "profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+          "profiles\\sources.json": "6da961b984f8d211fe49f07d403b9f4ceedf20aad83c29a4b877d960d29e1379"
+        },
+        "entrypoint_sha256": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0"
+      },
+      "profile": {
+        "schema": 1,
+        "minimum_reserve_gib": 18,
+        "token_file": "<redacted credential path/value>",
+        "backend_token_file": "<redacted credential path/value>",
+        "concurrency": 1,
+        "body_bytes": 16777216,
+        "request_seconds": 1800,
+        "backend": {
+          "identifier": "halogen-v2",
+          "upstream": "http://127.0.0.1:8731",
+          "model": "halogen-qwen3.8-flash-next",
+          "checkpoint": "v2",
+          "context": 65536,
+          "expected": {
+            "status": "ok",
+            "version.api": "0.16.2",
+            "version.engine": "0.16.2",
+            "version.match": true,
+            "context": 65536,
+            "slot_ctx": 65536,
+            "kv_pool_positions": 65536,
+            "slots": 1
+          },
+          "routes": [
+            "/v1/chat/completions",
+            "/v1/completions",
+            "/v1/responses",
+            "/v1/messages",
+            "/v1/messages/count_tokens"
+          ]
+        },
+        "engine": {
+          "kind": "halogen",
+          "directory": "backends/halogen-wsl2-0.16.2",
+          "checkpoint": "v2",
+          "context": 65536,
+          "prompt_cache": "Exact",
+          "powershell": "C:\\Program Files\\PowerShell\\7\\pwsh.EXE",
+          "draft_tokens": 2
+        },
+        "qualification": {
+          "experimental": true,
+          "draft_tokens": 2,
+          "draft_vocab": "full",
+          "mtp_policy": "length",
+          "weight_placement": "unchanged-backend-native",
+          "tuning_evidence": "docs/research/halogen-gufo-mtp-20261001.md",
+          "experiment": "matched-lookup-placement-20261004"
+        }
+      },
+      "lookup_reads": {
+        "owned_log": "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/engine.log",
+        "events": [
+          {
+            "line": 1199,
+            "timestamp": "2026-10-04T04:00:55.751772554Z",
+            "rows": 524288,
+            "tokens": 32768,
+            "seconds": 22.5,
+            "threads": 64,
+            "approximate_client_windows": [
+              {
+                "rep": 0,
+                "turn": 0
+              }
+            ]
+          },
+          {
+            "line": 1270,
+            "timestamp": "2026-10-04T04:02:42.225335421Z",
+            "rows": 524288,
+            "tokens": 32768,
+            "seconds": 10.1,
+            "threads": 64,
+            "approximate_client_windows": [
+              {
+                "rep": 1,
+                "turn": 0
+              }
+            ]
+          }
+        ],
+        "scope": "Exact owned engine log messages; may include calibration/startup. UTC completion within a client clock window is approximate attribution. Missing messages are not zero read cost."
+      }
+    },
+    {
+      "tag": "lookup-e",
+      "metrics": {
+        "three_turn_seconds": 114.1825467389043,
+        "prefill_tps": 901.0016331321415,
+        "decode_tps": 38.48644828924242,
+        "mtp_acceptance": 0.8386063275931117,
+        "observed_wall_seconds": 196.39977879996877
+      },
+      "normalized_repetitions_seconds": [
+        116.89962200591728,
+        111.46547147189135
+      ],
+      "actual_wall_repetitions_seconds": [
+        99.30951410002308,
+        97.09026469994569
+      ],
+      "draft_counts": {
+        "accepted": 2094,
+        "proposed": 2497
+      },
+      "generated_tokens": 4623,
+      "retrieval_correct": 14,
+      "retrieval_total": 14,
+      "capped_outputs": 0,
+      "eos_outputs": 6,
+      "clamped_outputs": 0,
+      "memory_floor_bytes": {
+        "available_bytes": 27851358208,
+        "commit_headroom_bytes": 126134071296
+      },
+      "requests": [
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 0,
+          "prompt_tokens": 32791,
+          "output_tokens": 275,
+          "ttft_seconds": 38.32467200001702,
+          "visible_ttft_seconds": 42.280536099977326,
+          "wall_seconds": 44.68106229999103,
+          "last_delivery_seconds": 44.678559500025585,
+          "stream_events": 252,
+          "timings": {
+            "prompt_n": 32791,
+            "predicted_n": 275,
+            "prompt_ms": 38254.3,
+            "predicted_ms": 6355.2,
+            "prompt_per_second": 857.185,
+            "predicted_per_second": 43.272,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 1,
+            "draft_n": 138,
+            "draft_n_accepted": 136
+          },
+          "usage": {
+            "prompt_tokens": 32791,
+            "completion_tokens": 275,
+            "total_tokens": 33066,
+            "completion_tokens_details": {
+              "reasoning_tokens": 170
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 715.258646359,
+              "raw": 705.440871669,
+              "utc": 1791086925.785546,
+              "qpc": 309930.9925619,
+              "roundtrip": 0.0010789999505504966
+            },
+            "after": {
+              "mono": 759.942032452,
+              "raw": 750.124276566,
+              "utc": 1791086970.4635243,
+              "qpc": 309975.67599665,
+              "roundtrip": 0.0008735000155866146
+            },
+            "monotonic_per_raw": 0.9999995791726253,
+            "raw_per_qpc": 0.9999993318998022,
+            "window_seconds": 44.683434750011656,
+            "handshake_uncertainty_seconds": 0.0009762499830685556
+          },
+          "pp_tps": 857.1846392730868,
+          "decode_tps": 43.27198178995784,
+          "normalized_1000_seconds": 61.434313819843965,
+          "drafted": 138,
+          "accepted": 136,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 30186139648,
+              "committed_bytes": 111764930560,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 128374509568
+            },
+            "after": {
+              "available_bytes": 28871380992,
+              "committed_bytes": 112959574016,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127179866112
+            },
+            "observed_minimum": {
+              "available_bytes": 28857548800,
+              "commit_headroom_bytes": 127134109696
+            },
+            "controller_before": {
+              "available_bytes": 30235738112,
+              "commit_headroom_bytes": 128422293504
+            },
+            "controller_after": {
+              "available_bytes": 28870008832,
+              "commit_headroom_bytes": 127187054592
+            }
+          },
+          "request_sha256": "415e9d5c83a3be9656ab33b1dea2aa597773c7a2e44f33dbef69283704bfb304",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "dca70245cc81be6344133db1960b1472ce41f59b1b4ca7d38552665c6f049341",
+          "output_file_sha256": "4d92035187a1586238fd89c5309dbb2cb9c904e345209997aa01c0f458a8b0f6",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+            "utf8_bytes": 258,
+            "characters": 250
+          },
+          "visible_answer": {
+            "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+            "utf8_bytes": 258,
+            "characters": 250
+          },
+          "reasoning": {
+            "sha256": "1bc77c19d2b4e1de34d466bc610e3396e32024ba890c9a4c28f14093265af982",
+            "utf8_bytes": 492,
+            "characters": 484
+          },
+          "reasoning_tokens": 170
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 1,
+          "prompt_tokens": 32952,
+          "output_tokens": 1002,
+          "ttft_seconds": 0.7616765999700874,
+          "visible_ttft_seconds": 11.060675999964587,
+          "wall_seconds": 27.434783899981994,
+          "last_delivery_seconds": 27.39100070000859,
+          "stream_events": 970,
+          "timings": {
+            "prompt_n": 184,
+            "predicted_n": 1002,
+            "prompt_ms": 596.4,
+            "predicted_ms": 26672.0,
+            "prompt_per_second": 308.518,
+            "predicted_per_second": 37.567,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32790,
+            "draft_n": 551,
+            "draft_n_accepted": 450
+          },
+          "usage": {
+            "prompt_tokens": 32952,
+            "completion_tokens": 1002,
+            "total_tokens": 33954,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 391
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 759.987326151,
+              "raw": 750.169548911,
+              "utc": 1791086970.5087962,
+              "qpc": 309975.72135505,
+              "roundtrip": 0.00033190002432093024
+            },
+            "after": {
+              "mono": 787.423401639,
+              "raw": 777.605636428,
+              "utc": 1791086997.9439158,
+              "qpc": 310003.15742785,
+              "roundtrip": 0.00042349996510893106
+            },
+            "monotonic_per_raw": 0.9999995615628464,
+            "raw_per_qpc": 1.000000536409956,
+            "window_seconds": 27.436072800017428,
+            "handshake_uncertainty_seconds": 0.00037769999471493065
+          },
+          "pp_tps": 308.51786473424625,
+          "decode_tps": 37.56698352923145,
+          "normalized_1000_seconds": 27.38079546592547,
+          "drafted": 551,
+          "accepted": 450,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28871368704,
+              "committed_bytes": 112959574016,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127179866112
+            },
+            "after": {
+              "available_bytes": 28881473536,
+              "committed_bytes": 112928333824,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127211106304
+            },
+            "observed_minimum": {
+              "available_bytes": 28774260736,
+              "commit_headroom_bytes": 127040876544
+            },
+            "controller_before": {
+              "available_bytes": 28870008832,
+              "commit_headroom_bytes": 127187054592
+            },
+            "controller_after": {
+              "available_bytes": 28874612736,
+              "commit_headroom_bytes": 127192145920
+            }
+          },
+          "request_sha256": "3a42457a08f68ff8b3c91ad52d984718f5df06f07c815f701238e163f90bf502",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "e454193fd29b3f9c32178e5c4fb56656d8519a6d5741d56654fe70b461070fed",
+          "output_file_sha256": "eb73cd97de2c2ecf0ac5ad3e5a1be387c23ffc7110703267f24fcb64a35da8e2",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+                "utf8_bytes": 258,
+                "characters": 250
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+            "utf8_bytes": 2264,
+            "characters": 2222
+          },
+          "visible_answer": {
+            "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+            "utf8_bytes": 2264,
+            "characters": 2222
+          },
+          "reasoning": {
+            "sha256": "4eebcc216468bf9fa615225871abf8958c5b7901118fe523a9b16114b9f88e36",
+            "utf8_bytes": 1510,
+            "characters": 1510
+          },
+          "reasoning_tokens": 391
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 2,
+          "prompt_tokens": 33615,
+          "output_tokens": 967,
+          "ttft_seconds": 1.038468400016427,
+          "visible_ttft_seconds": 12.809204999997746,
+          "wall_seconds": 27.19366790005006,
+          "last_delivery_seconds": 27.19157870003255,
+          "stream_events": 940,
+          "timings": {
+            "prompt_n": 847,
+            "predicted_n": 967,
+            "prompt_ms": 875.9,
+            "predicted_ms": 26153.6,
+            "prompt_per_second": 967.005,
+            "predicted_per_second": 36.974,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32951,
+            "draft_n": 536,
+            "draft_n_accepted": 430
+          },
+          "usage": {
+            "prompt_tokens": 33615,
+            "completion_tokens": 967,
+            "total_tokens": 34582,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 415
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 787.432163587,
+              "raw": 777.614397231,
+              "utc": 1791086997.9526763,
+              "qpc": 310003.1661746,
+              "roundtrip": 0.0003776000230573118
+            },
+            "after": {
+              "mono": 814.627110305,
+              "raw": 804.809355988,
+              "utc": 1791087025.143524,
+              "qpc": 310030.36113574996,
+              "roundtrip": 0.0004535000189207494
+            },
+            "monotonic_per_raw": 0.9999995573076569,
+            "raw_per_qpc": 0.999999912007817,
+            "window_seconds": 27.194961149943992,
+            "handshake_uncertainty_seconds": 0.0004155500209890306
+          },
+          "pp_tps": 967.0045719142908,
+          "decode_tps": 36.973983631893304,
+          "normalized_1000_seconds": 28.084512720147845,
+          "drafted": 536,
+          "accepted": 430,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28881395712,
+              "committed_bytes": 112928333824,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127211106304
+            },
+            "after": {
+              "available_bytes": 28817735680,
+              "committed_bytes": 113010511872,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127128928256
+            },
+            "observed_minimum": {
+              "available_bytes": 28759887872,
+              "commit_headroom_bytes": 127017168896
+            },
+            "controller_before": {
+              "available_bytes": 28874612736,
+              "commit_headroom_bytes": 127192145920
+            },
+            "controller_after": {
+              "available_bytes": 28814442496,
+              "commit_headroom_bytes": 127126036480
+            }
+          },
+          "request_sha256": "8a3d53f504e391f69a946cef0f5a448563f8b942373d0d302f469f866604b63f",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "e16a2dfe5e75cf9188d3f45c6e10fccb9b05233a0649a3cb638d1d0fe1c8bc3a",
+          "output_file_sha256": "ec27aafc14472ab24066f173dabbb42beb75e827c35152e2bb4daaf364d80aaa",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+                "utf8_bytes": 258,
+                "characters": 250
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+                "utf8_bytes": 2264,
+                "characters": 2222
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "56f12c0d1712d06fc7513d1e015c64e7679f553344bd48e14465007e0d167e5b",
+                "utf8_bytes": 203,
+                "characters": 203
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "4b921009fdeb7e14f546219582624eff5da5247a85576bb975601fbdd396a754",
+            "utf8_bytes": 2077,
+            "characters": 2071
+          },
+          "visible_answer": {
+            "sha256": "4b921009fdeb7e14f546219582624eff5da5247a85576bb975601fbdd396a754",
+            "utf8_bytes": 2077,
+            "characters": 2071
+          },
+          "reasoning": {
+            "sha256": "9b6fcc9fb45c604b5a2e1e2c4576070bceb9ae22785bdf1aa4be80601a95f7b6",
+            "utf8_bytes": 1815,
+            "characters": 1809
+          },
+          "reasoning_tokens": 415
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 0,
+          "prompt_tokens": 32792,
+          "output_tokens": 300,
+          "ttft_seconds": 35.162008599960245,
+          "visible_ttft_seconds": 38.77340879995609,
+          "wall_seconds": 41.693233599944506,
+          "last_delivery_seconds": 41.691312599985395,
+          "stream_events": 277,
+          "timings": {
+            "prompt_n": 32792,
+            "predicted_n": 300,
+            "prompt_ms": 35533.7,
+            "predicted_ms": 7074.6,
+            "prompt_per_second": 922.842,
+            "predicted_per_second": 42.405,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 37,
+            "draft_n": 151,
+            "draft_n_accepted": 148
+          },
+          "usage": {
+            "prompt_tokens": 32792,
+            "completion_tokens": 300,
+            "total_tokens": 33092,
+            "completion_tokens_details": {
+              "reasoning_tokens": 168
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 815.269994613,
+              "raw": 805.452240452,
+              "utc": 1791087025.786408,
+              "qpc": 310031.00402145,
+              "roundtrip": 0.0004110999871045351
+            },
+            "after": {
+              "mono": 857.957535582,
+              "raw": 847.146862634,
+              "utc": 1791087067.513219,
+              "qpc": 310072.69864804996,
+              "roundtrip": 0.0004363000043667853
+            },
+            "monotonic_per_raw": 1.0238140732554393,
+            "raw_per_qpc": 0.999999894040118,
+            "window_seconds": 41.6946265999577,
+            "handshake_uncertainty_seconds": 0.0004236999957356602
+          },
+          "pp_tps": 944.8186269911961,
+          "decode_tps": 43.414835776396906,
+          "normalized_1000_seconds": 58.195609490457315,
+          "drafted": 151,
+          "accepted": 148,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28826406912,
+              "committed_bytes": 113006080000,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127133360128
+            },
+            "after": {
+              "available_bytes": 28011204608,
+              "committed_bytes": 113787473920,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126351966208
+            },
+            "observed_minimum": {
+              "available_bytes": 28005388288,
+              "commit_headroom_bytes": 126333759488
+            },
+            "controller_before": {
+              "available_bytes": 28816474112,
+              "commit_headroom_bytes": 127126958080
+            },
+            "controller_after": {
+              "available_bytes": 28011196416,
+              "commit_headroom_bytes": 126351966208
+            }
+          },
+          "request_sha256": "17b5a345e2db4fce9f16ac9f99eec4c5639db82d4a66d56b33b1c21f96ee1e7f",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "28382c8d57f362d4eb7fb153903d8790c6c6d9cf3cf24685cc58cbb1cc1d8fce",
+          "output_file_sha256": "2111038a53f28890ce2cd9f431eb7bcc6542495d5462f68e5cb97001ee530a38",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+            "utf8_bytes": 287,
+            "characters": 279
+          },
+          "visible_answer": {
+            "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+            "utf8_bytes": 287,
+            "characters": 279
+          },
+          "reasoning": {
+            "sha256": "97e49fab2c7f73cda2767d737474593232f052b3f09a7204d92c0a90bc3bb6fa",
+            "utf8_bytes": 483,
+            "characters": 475
+          },
+          "reasoning_tokens": 168
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 1,
+          "prompt_tokens": 32980,
+          "output_tokens": 796,
+          "ttft_seconds": 0.471841000020504,
+          "visible_ttft_seconds": 7.81304119998822,
+          "wall_seconds": 21.074676999996882,
+          "last_delivery_seconds": 21.073157500009984,
+          "stream_events": 776,
+          "timings": {
+            "prompt_n": 212,
+            "predicted_n": 796,
+            "prompt_ms": 381.1,
+            "predicted_ms": 21358.4,
+            "prompt_per_second": 556.284,
+            "predicted_per_second": 37.269,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32791,
+            "draft_n": 431,
+            "draft_n_accepted": 364
+          },
+          "usage": {
+            "prompt_tokens": 32980,
+            "completion_tokens": 796,
+            "total_tokens": 33776,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 269
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 857.965954148,
+              "raw": 847.154632091,
+              "utc": 1791087067.521635,
+              "qpc": 310072.70642445004,
+              "roundtrip": 0.0003094999701716006
+            },
+            "after": {
+              "mono": 879.838882181,
+              "raw": 868.230737344,
+              "utc": 1791087088.560463,
+              "qpc": 310093.78251015,
+              "roundtrip": 0.0004582999972626567
+            },
+            "monotonic_per_raw": 1.0378069273442565,
+            "raw_per_qpc": 1.0000009277360702,
+            "window_seconds": 21.076085699955,
+            "handshake_uncertainty_seconds": 0.00038389998371712863
+          },
+          "pp_tps": 577.3153887707724,
+          "decode_tps": 38.67802637519309,
+          "normalized_1000_seconds": 26.3263142944844,
+          "drafted": 431,
+          "accepted": 364,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28011192320,
+              "committed_bytes": 113787473920,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126351966208
+            },
+            "after": {
+              "available_bytes": 27976880128,
+              "committed_bytes": 113854803968,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126284636160
+            },
+            "observed_minimum": {
+              "available_bytes": 27915440128,
+              "commit_headroom_bytes": 126236172288
+            },
+            "controller_before": {
+              "available_bytes": 28011196416,
+              "commit_headroom_bytes": 126351966208
+            },
+            "controller_after": {
+              "available_bytes": 27976409088,
+              "commit_headroom_bytes": 126287351808
+            }
+          },
+          "request_sha256": "728ac550dcb884988538937107f295efbfa35767476a04f542068db3775f41a6",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "fb77809d7cc52d04370660ced924694846f3b7408c938a5de6d4ad7a8fc91d76",
+          "output_file_sha256": "8ce206404e1a683ebe818132bc2fbacf7cc1292776150535906fa16bee1f99ba",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+                "utf8_bytes": 287,
+                "characters": 279
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+            "utf8_bytes": 1983,
+            "characters": 1971
+          },
+          "visible_answer": {
+            "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+            "utf8_bytes": 1983,
+            "characters": 1971
+          },
+          "reasoning": {
+            "sha256": "1eab5622726d348e355ed46744eeb2f64e5d7f6a1104170955364ad0630127ff",
+            "utf8_bytes": 1143,
+            "characters": 1127
+          },
+          "reasoning_tokens": 269
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 2,
+          "prompt_tokens": 33559,
+          "output_tokens": 1283,
+          "ttft_seconds": 0.8726754999952391,
+          "visible_ttft_seconds": 15.754443799960427,
+          "wall_seconds": 34.322354100004304,
+          "last_delivery_seconds": 34.32120860001305,
+          "stream_events": 1269,
+          "timings": {
+            "prompt_n": 791,
+            "predicted_n": 1283,
+            "prompt_ms": 748.0,
+            "predicted_ms": 33448.5,
+            "prompt_per_second": 1057.487,
+            "predicted_per_second": 38.357,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32979,
+            "draft_n": 690,
+            "draft_n_accepted": 566
+          },
+          "usage": {
+            "prompt_tokens": 33559,
+            "completion_tokens": 1283,
+            "total_tokens": 34842,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 537,
+              "reasoning_closed_at": 512,
+              "reasoning_closed_by": "answer_room"
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 879.847735708,
+              "raw": 868.239589264,
+              "utc": 1791087088.569314,
+              "qpc": 310093.7913848,
+              "roundtrip": 0.0003378000110387802
+            },
+            "after": {
+              "mono": 914.171375166,
+              "raw": 902.563243978,
+              "utc": 1791087122.8874922,
+              "qpc": 310128.11499905,
+              "roundtrip": 0.00043130002450197935
+            },
+            "monotonic_per_raw": 0.9999995555251878,
+            "raw_per_qpc": 1.0000011788969614,
+            "window_seconds": 34.323614249995444,
+            "handshake_uncertainty_seconds": 0.0003845500177703798
+          },
+          "pp_tps": 1057.4865299736643,
+          "decode_tps": 38.356982951279626,
+          "normalized_1000_seconds": 26.943547686949636,
+          "drafted": 690,
+          "accepted": 566,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 27976871936,
+              "committed_bytes": 113854803968,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126284636160
+            },
+            "after": {
+              "available_bytes": 27911999488,
+              "committed_bytes": 113894232064,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126245208064
+            },
+            "observed_minimum": {
+              "available_bytes": 27851358208,
+              "commit_headroom_bytes": 126134071296
+            },
+            "controller_before": {
+              "available_bytes": 27976409088,
+              "commit_headroom_bytes": 126287351808
+            },
+            "controller_after": {
+              "available_bytes": 27929780224,
+              "commit_headroom_bytes": 126275358720
+            }
+          },
+          "request_sha256": "f1865300f79a6697b40b8c9ad011d6562e0ef3ece92bbbb0f97f78fccf17118b",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "11dc9b114ea1c03d21f13cf5ac532ca2493235dd5a505369321b39a606f90b6e",
+          "output_file_sha256": "19cd2e84edea54f46ae2902811db40266d15ee84c5dc8606f45b5d5ccdc4316c",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+                "utf8_bytes": 287,
+                "characters": 279
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+                "utf8_bytes": 1983,
+                "characters": 1971
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "56f12c0d1712d06fc7513d1e015c64e7679f553344bd48e14465007e0d167e5b",
+                "utf8_bytes": 203,
+                "characters": 203
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "7690cc4ddac3f7c9baa59be28c3f0a52631308548b8b7ed0a837e3ea2ce5f359",
+            "utf8_bytes": 2670,
+            "characters": 2664
+          },
+          "visible_answer": {
+            "sha256": "7690cc4ddac3f7c9baa59be28c3f0a52631308548b8b7ed0a837e3ea2ce5f359",
+            "utf8_bytes": 2670,
+            "characters": 2664
+          },
+          "reasoning": {
+            "sha256": "876dbc8743d0965612f5f644cab02ebe51e8451683850a33af32a2be5cf89346",
+            "utf8_bytes": 2208,
+            "characters": 2196
+          },
+          "reasoning_tokens": 537
+        }
+      ],
+      "lifecycle": {
+        "managed_run_id": "24f534b8ae8b44ad80c6db9f48d78d19",
+        "backend_run_id": "01b27f256e334c678e5932ec06d0e585",
+        "controller_pid": 18276,
+        "container_id": "44fea4fed0905fc2ccc0d5423bd987d767ee0bc17bdf8423f29b016fc2bbf48c",
+        "container_exit_code": 1,
+        "cleanup": true,
+        "recovery": true
+      },
+      "profile_sha256": "b25d388dfcad13ffda3341359f7d5a74e3c2ed300a6b76afcc550d289235c2d4",
+      "compute_manifest": {
+        "schema": 1,
+        "version": "0.16.2",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+        "run_id": "<backend-run>",
+        "checkpoint": "v2",
+        "context": 65536,
+        "slots": 1,
+        "serve_seconds": 0,
+        "startup_timeout": 900,
+        "mounts": {
+          "/models": "/home/revn/halogen-models-native",
+          "/usr/lib/libdxcore.so": "/usr/lib/wsl/lib/libdxcore.so",
+          "/usr/lib/librocdxg.so": "/home/revn/ciru-runtime/venv/lib/python3.14/site-packages/_rocm_sdk_core/lib/librocdxg.so.1",
+          "/usr/local/lib/python3.12/site-packages/_rocm_sdk_libraries/lib/librocroller.so.1": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/librocroller-compat.so.1",
+          "/ngram-w4b.hgn": "<permitted lookup source>",
+          "/candidate/entrypoint-wsl-candidate.sh": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/services/<backend-run>/entrypoint-service.sh",
+          "/candidate/libhalogen0162-preflight.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/libhalogen0162-preflight.so",
+          "/candidate/hip-register-private-rw.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/hip-register-private-rw.so",
+          "/candidate/halogen0162_hip_probe": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/halogen0162_hip_probe",
+          "/candidate/auth_api.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/auth_api.py",
+          "/candidate/lease_supervisor.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/lease_supervisor.py",
+          "/candidate/startup_cache.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/startup_cache.py",
+          "/candidate/api-token.txt": "<redacted credential path/value>",
+          "/service-state": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/services/<backend-run>",
+          "/candidate/libhalogen0162-v2-preflight.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/libhalogen0162-v2-preflight.so"
+        },
+        "environment": {
+          "HALOGEN_WSL_PROFILE": "halogen0162-dxg",
+          "HALOGEN_CTX": "65536",
+          "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+          "HALOGEN_CK_OVERLAY": "",
+          "HALOGEN_PREFLIGHT_PROFILE": "flash0162-v2-device64-chunk64-v1",
+          "HALOGEN_HYBRID_PROFILE": "vgm64-v2-device64-v1",
+          "HALOGEN_KV_POOL_POSITIONS": "65536",
+          "HALOGEN_KV_SLOTS": "1",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+          "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+          "HALOGEN_FLASH_PIN_TRUNK": "1",
+          "HALOGEN_PROMPT_CACHE": "1",
+          "HALOGEN_DMALLOC_LOG": "1",
+          "HALOGEN_VERBOSE": "1",
+          "HALOGEN_ENGINE_WATCHDOG_S": "120",
+          "HALOGEN_TOKENIZER": "/models/tokenizer",
+          "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+          "HSA_ENABLE_SDMA": "1",
+          "HSA_ENABLE_DXG_DETECTION": "1",
+          "AMD_SERIALIZE_KERNEL": "0",
+          "AMD_SERIALIZE_COPY": "0",
+          "LD_PRELOAD": "/candidate/libhalogen0162-v2-preflight.so:/candidate/hip-register-private-rw.so",
+          "HALOGEN_API_PORT": "8731",
+          "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+          "HALOGEN_CHECKPOINT_VARIANT": "v2",
+          "HALOGEN_MTP_DEPTH": "2"
+        },
+        "sources": {
+          "scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+          "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+          "scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+          "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+          "scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+          "scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+          "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+          "scripts\\kernel_controls.py": "45e63bd2d5eed78f721a0a74facf8918e17f3ec0cec2affa0793c9127c2f0534",
+          "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+          "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+          "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+          "scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+          "scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+          "scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+          "scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+          "scripts\\service.py": "2df703adc7a255a527b94a0c4c225a140023727da5e453fdd3474169566ab34a",
+          "scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+          "scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+          "scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+          "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+          "patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+          "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+          "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+          "patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+          "patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+          "profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+          "profiles\\sources.json": "6da961b984f8d211fe49f07d403b9f4ceedf20aad83c29a4b877d960d29e1379"
+        },
+        "entrypoint_sha256": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0"
+      },
+      "profile": {
+        "schema": 1,
+        "minimum_reserve_gib": 18,
+        "token_file": "<redacted credential path/value>",
+        "backend_token_file": "<redacted credential path/value>",
+        "concurrency": 1,
+        "body_bytes": 16777216,
+        "request_seconds": 1800,
+        "backend": {
+          "identifier": "halogen-v2",
+          "upstream": "http://127.0.0.1:8731",
+          "model": "halogen-qwen3.8-flash-next",
+          "checkpoint": "v2",
+          "context": 65536,
+          "expected": {
+            "status": "ok",
+            "version.api": "0.16.2",
+            "version.engine": "0.16.2",
+            "version.match": true,
+            "context": 65536,
+            "slot_ctx": 65536,
+            "kv_pool_positions": 65536,
+            "slots": 1
+          },
+          "routes": [
+            "/v1/chat/completions",
+            "/v1/completions",
+            "/v1/responses",
+            "/v1/messages",
+            "/v1/messages/count_tokens"
+          ]
+        },
+        "engine": {
+          "kind": "halogen",
+          "directory": "backends/halogen-wsl2-0.16.2",
+          "checkpoint": "v2",
+          "context": 65536,
+          "prompt_cache": "Exact",
+          "powershell": "C:\\Program Files\\PowerShell\\7\\pwsh.EXE",
+          "draft_tokens": 2,
+          "lookup_tuning": {
+            "receipt": "<repo>\\server\\.local\\optimization9h-20261004\\lookup-direct-process-diagnostic-263bf3b410474d07bfc03b59945bfada\\extraction.receipt.json",
+            "receipt_sha256": "067f2f7c847ca9b358767bd8699176c1d94994f21335618abc7f9bf4bea78e4a"
+          }
+        },
+        "qualification": {
+          "experimental": true,
+          "draft_tokens": 2,
+          "draft_vocab": "full",
+          "mtp_policy": "length",
+          "weight_placement": "standalone-E-NTFS-through-9p",
+          "tuning_evidence": "docs/research/halogen-gufo-mtp-20261001.md",
+          "lookup_tuning": {
+            "receipt": "<repo>\\server\\.local\\optimization9h-20261004\\lookup-direct-process-diagnostic-263bf3b410474d07bfc03b59945bfada\\extraction.receipt.json",
+            "receipt_sha256": "067f2f7c847ca9b358767bd8699176c1d94994f21335618abc7f9bf4bea78e4a"
+          },
+          "experiment": "matched-lookup-placement-20261004"
+        }
+      },
+      "lookup_reads": {
+        "owned_log": "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/engine.log",
+        "events": [
+          {
+            "line": 1190,
+            "timestamp": "2026-10-04T04:08:57.795118669Z",
+            "rows": 524288,
+            "tokens": 32768,
+            "seconds": 11.4,
+            "threads": 64,
+            "approximate_client_windows": [
+              {
+                "rep": 0,
+                "turn": 0
+              }
+            ]
+          },
+          {
+            "line": 1254,
+            "timestamp": "2026-10-04T04:10:35.889533713Z",
+            "rows": 524288,
+            "tokens": 32768,
+            "seconds": 9.5,
+            "threads": 64,
+            "approximate_client_windows": [
+              {
+                "rep": 1,
+                "turn": 0
+              }
+            ]
+          }
+        ],
+        "scope": "Exact owned engine log messages; may include calibration/startup. UTC completion within a client clock window is approximate attribution. Missing messages are not zero read cost."
+      }
+    },
+    {
+      "tag": "lookup-stockb",
+      "metrics": {
+        "three_turn_seconds": 104.31871261793806,
+        "prefill_tps": 1033.5419271550713,
+        "decode_tps": 40.71567048406769,
+        "mtp_acceptance": 0.8386063275931117,
+        "observed_wall_seconds": 180.12421370012453
+      },
+      "normalized_repetitions_seconds": [
+        105.8503220436263,
+        102.78710319224982
+      ],
+      "actual_wall_repetitions_seconds": [
+        90.19717110006604,
+        89.92704260005848
+      ],
+      "draft_counts": {
+        "accepted": 2094,
+        "proposed": 2497
+      },
+      "generated_tokens": 4623,
+      "retrieval_correct": 14,
+      "retrieval_total": 14,
+      "capped_outputs": 0,
+      "eos_outputs": 6,
+      "clamped_outputs": 0,
+      "memory_floor_bytes": {
+        "available_bytes": 28286885888,
+        "commit_headroom_bytes": 126538981376
+      },
+      "requests": [
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 0,
+          "prompt_tokens": 32791,
+          "output_tokens": 275,
+          "ttft_seconds": 32.59348290000344,
+          "visible_ttft_seconds": 36.3811894999817,
+          "wall_seconds": 38.705917300016154,
+          "last_delivery_seconds": 38.7040770999738,
+          "stream_events": 252,
+          "timings": {
+            "prompt_n": 32791,
+            "predicted_n": 275,
+            "prompt_ms": 34805.3,
+            "predicted_ms": 6110.6,
+            "prompt_per_second": 942.127,
+            "predicted_per_second": 45.004,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 1,
+            "draft_n": 138,
+            "draft_n_accepted": 136
+          },
+          "usage": {
+            "prompt_tokens": 32791,
+            "completion_tokens": 275,
+            "total_tokens": 33066,
+            "completion_tokens_details": {
+              "reasoning_tokens": 170
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 1183.714918222,
+              "raw": 1169.391716349,
+              "utc": 1791087389.8749008,
+              "qpc": 310394.94345065,
+              "roundtrip": 0.0005049000028520823
+            },
+            "after": {
+              "mono": 1224.746196031,
+              "raw": 1208.102717619,
+              "utc": 1791087428.401838,
+              "qpc": 310433.6544447,
+              "roundtrip": 0.0004768000217154622
+            },
+            "monotonic_per_raw": 1.0599384273947483,
+            "raw_per_qpc": 1.0000001865112285,
+            "window_seconds": 38.71099404996494,
+            "handshake_uncertainty_seconds": 0.0004908500122837722
+          },
+          "pp_tps": 998.596610786132,
+          "decode_tps": 47.70146898647325,
+          "normalized_1000_seconds": 53.557197880847546,
+          "drafted": 138,
+          "accepted": 136,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 30376480768,
+              "committed_bytes": 111545090048,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 128594350080
+            },
+            "after": {
+              "available_bytes": 29313126400,
+              "committed_bytes": 112520863744,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127618576384
+            },
+            "observed_minimum": {
+              "available_bytes": 29313126400,
+              "commit_headroom_bytes": 127618576384
+            },
+            "controller_before": {
+              "available_bytes": 30418984960,
+              "commit_headroom_bytes": 128616202240
+            },
+            "controller_after": {
+              "available_bytes": 29340868608,
+              "commit_headroom_bytes": 127653351424
+            }
+          },
+          "request_sha256": "415e9d5c83a3be9656ab33b1dea2aa597773c7a2e44f33dbef69283704bfb304",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "dca70245cc81be6344133db1960b1472ce41f59b1b4ca7d38552665c6f049341",
+          "output_file_sha256": "4d92035187a1586238fd89c5309dbb2cb9c904e345209997aa01c0f458a8b0f6",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+            "utf8_bytes": 258,
+            "characters": 250
+          },
+          "visible_answer": {
+            "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+            "utf8_bytes": 258,
+            "characters": 250
+          },
+          "reasoning": {
+            "sha256": "1bc77c19d2b4e1de34d466bc610e3396e32024ba890c9a4c28f14093265af982",
+            "utf8_bytes": 492,
+            "characters": 484
+          },
+          "reasoning_tokens": 170
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 1,
+          "prompt_tokens": 32952,
+          "output_tokens": 1002,
+          "ttft_seconds": 0.6084695000317879,
+          "visible_ttft_seconds": 10.378563300007954,
+          "wall_seconds": 25.848034400027245,
+          "last_delivery_seconds": 25.80372590001207,
+          "stream_events": 970,
+          "timings": {
+            "prompt_n": 184,
+            "predicted_n": 1002,
+            "prompt_ms": 493.2,
+            "predicted_ms": 25238.0,
+            "prompt_per_second": 373.074,
+            "predicted_per_second": 39.702,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32790,
+            "draft_n": 551,
+            "draft_n_accepted": 450
+          },
+          "usage": {
+            "prompt_tokens": 32952,
+            "completion_tokens": 1002,
+            "total_tokens": 33954,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 391
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 1225.178259371,
+              "raw": 1208.53478068,
+              "utc": 1791087428.8339012,
+              "qpc": 310434.08651855,
+              "roundtrip": 0.00043210003059357405
+            },
+            "after": {
+              "mono": 1251.027679001,
+              "raw": 1234.384218666,
+              "utc": 1791087454.6758654,
+              "qpc": 310459.93594500003,
+              "roundtrip": 0.00041479995707049966
+            },
+            "monotonic_per_raw": 0.999999289887856,
+            "raw_per_qpc": 1.0000004462755372,
+            "window_seconds": 25.849426450033206,
+            "handshake_uncertainty_seconds": 0.00042344999383203685
+          },
+          "pp_tps": 373.073735075622,
+          "decode_tps": 39.701971807127656,
+          "normalized_1000_seconds": 25.796135363531064,
+          "drafted": 551,
+          "accepted": 450,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29260656640,
+              "committed_bytes": 112562298880,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127577141248
+            },
+            "after": {
+              "available_bytes": 29187334144,
+              "committed_bytes": 112655044608,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127484395520
+            },
+            "observed_minimum": {
+              "available_bytes": 29150490624,
+              "commit_headroom_bytes": 127424835584
+            },
+            "controller_before": {
+              "available_bytes": 29340868608,
+              "commit_headroom_bytes": 127653351424
+            },
+            "controller_after": {
+              "available_bytes": 29204652032,
+              "commit_headroom_bytes": 127505027072
+            }
+          },
+          "request_sha256": "3a42457a08f68ff8b3c91ad52d984718f5df06f07c815f701238e163f90bf502",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "e454193fd29b3f9c32178e5c4fb56656d8519a6d5741d56654fe70b461070fed",
+          "output_file_sha256": "eb73cd97de2c2ecf0ac5ad3e5a1be387c23ffc7110703267f24fcb64a35da8e2",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+                "utf8_bytes": 258,
+                "characters": 250
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+            "utf8_bytes": 2264,
+            "characters": 2222
+          },
+          "visible_answer": {
+            "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+            "utf8_bytes": 2264,
+            "characters": 2222
+          },
+          "reasoning": {
+            "sha256": "4eebcc216468bf9fa615225871abf8958c5b7901118fe523a9b16114b9f88e36",
+            "utf8_bytes": 1510,
+            "characters": 1510
+          },
+          "reasoning_tokens": 391
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 0,
+          "turn": 2,
+          "prompt_tokens": 33615,
+          "output_tokens": 967,
+          "ttft_seconds": 0.9466281000059098,
+          "visible_ttft_seconds": 12.043164499977138,
+          "wall_seconds": 25.643219400022645,
+          "last_delivery_seconds": 25.64152559998911,
+          "stream_events": 940,
+          "timings": {
+            "prompt_n": 847,
+            "predicted_n": 967,
+            "prompt_ms": 823.8,
+            "predicted_ms": 25026.2,
+            "prompt_per_second": 1028.162,
+            "predicted_per_second": 38.64,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32951,
+            "draft_n": 536,
+            "draft_n_accepted": 430
+          },
+          "usage": {
+            "prompt_tokens": 33615,
+            "completion_tokens": 967,
+            "total_tokens": 34582,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 415
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 1251.869276858,
+              "raw": 1235.225817017,
+              "utc": 1791087455.517463,
+              "qpc": 310460.77755254996,
+              "roundtrip": 0.00041769997915253043
+            },
+            "after": {
+              "mono": 1277.844723805,
+              "raw": 1260.870490997,
+              "utc": 1791087481.164503,
+              "qpc": 310486.42222025,
+              "roundtrip": 0.0004065000102855265
+            },
+            "monotonic_per_raw": 1.0128983104740668,
+            "raw_per_qpc": 1.0000002448832828,
+            "window_seconds": 25.644667700049467,
+            "handshake_uncertainty_seconds": 0.0004120999947190285
+          },
+          "pp_tps": 1041.4235526936375,
+          "decode_tps": 39.13839071671794,
+          "normalized_1000_seconds": 26.496988799247703,
+          "drafted": 536,
+          "accepted": 430,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29165891584,
+              "committed_bytes": 112695635968,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127443804160
+            },
+            "after": {
+              "available_bytes": 29213577216,
+              "committed_bytes": 112595988480,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127543451648
+            },
+            "observed_minimum": {
+              "available_bytes": 29116428288,
+              "commit_headroom_bytes": 127394656256
+            },
+            "controller_before": {
+              "available_bytes": 29163188224,
+              "commit_headroom_bytes": 127456587776
+            },
+            "controller_after": {
+              "available_bytes": 29223440384,
+              "commit_headroom_bytes": 127550197760
+            }
+          },
+          "request_sha256": "8a3d53f504e391f69a946cef0f5a448563f8b942373d0d302f469f866604b63f",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "e16a2dfe5e75cf9188d3f45c6e10fccb9b05233a0649a3cb638d1d0fe1c8bc3a",
+          "output_file_sha256": "ec27aafc14472ab24066f173dabbb42beb75e827c35152e2bb4daaf364d80aaa",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260930,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "e3bc0dc15c43c06e898fab2127cd348262d2920af9089766740d28b48b4b602b",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "3ae2a6b0f6d237fe2c575a1e38378970509f81ae84ac6a9dfc74eea7dc26efd5",
+                "utf8_bytes": 114028,
+                "characters": 113657
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "989d4b78d85a061f655cc028021b4ddfa88ad9fd3918ab9df3479e484a3a6374",
+                "utf8_bytes": 258,
+                "characters": 250
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "2282c93541fdf3367198bfeea87bf3978cd9118f0e86d8de8a60951b9bdbb5bc",
+                "utf8_bytes": 2264,
+                "characters": 2222
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "56f12c0d1712d06fc7513d1e015c64e7679f553344bd48e14465007e0d167e5b",
+                "utf8_bytes": 203,
+                "characters": 203
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "4b921009fdeb7e14f546219582624eff5da5247a85576bb975601fbdd396a754",
+            "utf8_bytes": 2077,
+            "characters": 2071
+          },
+          "visible_answer": {
+            "sha256": "4b921009fdeb7e14f546219582624eff5da5247a85576bb975601fbdd396a754",
+            "utf8_bytes": 2077,
+            "characters": 2071
+          },
+          "reasoning": {
+            "sha256": "9b6fcc9fb45c604b5a2e1e2c4576070bceb9ae22785bdf1aa4be80601a95f7b6",
+            "utf8_bytes": 1815,
+            "characters": 1809
+          },
+          "reasoning_tokens": 415
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 0,
+          "prompt_tokens": 32792,
+          "output_tokens": 300,
+          "ttft_seconds": 30.77236330002779,
+          "visible_ttft_seconds": 34.31548800005112,
+          "wall_seconds": 37.14165080001112,
+          "last_delivery_seconds": 37.13991280004848,
+          "stream_events": 277,
+          "timings": {
+            "prompt_n": 32792,
+            "predicted_n": 300,
+            "prompt_ms": 30690.1,
+            "predicted_ms": 6368.0,
+            "prompt_per_second": 1068.488,
+            "predicted_per_second": 47.111,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 37,
+            "draft_n": 151,
+            "draft_n_accepted": 148
+          },
+          "usage": {
+            "prompt_tokens": 32792,
+            "completion_tokens": 300,
+            "total_tokens": 33092,
+            "completion_tokens_details": {
+              "reasoning_tokens": 168
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 1278.966122585,
+              "raw": 1261.991890566,
+              "utc": 1791087482.2859018,
+              "qpc": 310487.54361339996,
+              "roundtrip": 0.0004230000195093453
+            },
+            "after": {
+              "mono": 1316.109415195,
+              "raw": 1299.135209473,
+              "utc": 1791087519.4223845,
+              "qpc": 310524.6869176,
+              "roundtrip": 0.00042539997957646847
+            },
+            "monotonic_per_raw": 0.9999992920126486,
+            "raw_per_qpc": 1.0000003959521733,
+            "window_seconds": 37.14330420002807,
+            "handshake_uncertainty_seconds": 0.0004241999995429069
+          },
+          "pp_tps": 1068.4872435240109,
+          "decode_tps": 47.11096664600788,
+          "normalized_1000_seconds": 51.99884348486472,
+          "drafted": 151,
+          "accepted": 148,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 0,
+          "expected_cache_state": "cold",
+          "observed_cache_state": "cold",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 0
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 29201784832,
+              "committed_bytes": 112633757696,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 127505682432
+            },
+            "after": {
+              "available_bytes": 28337356800,
+              "committed_bytes": 113507250176,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126632189952
+            },
+            "observed_minimum": {
+              "available_bytes": 28323106816,
+              "commit_headroom_bytes": 126608535552
+            },
+            "controller_before": {
+              "available_bytes": 29201825792,
+              "commit_headroom_bytes": 127521509376
+            },
+            "controller_after": {
+              "available_bytes": 28339179520,
+              "commit_headroom_bytes": 126635696128
+            }
+          },
+          "request_sha256": "17b5a345e2db4fce9f16ac9f99eec4c5639db82d4a66d56b33b1c21f96ee1e7f",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "28382c8d57f362d4eb7fb153903d8790c6c6d9cf3cf24685cc58cbb1cc1d8fce",
+          "output_file_sha256": "2111038a53f28890ce2cd9f431eb7bcc6542495d5462f68e5cb97001ee530a38",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+            "utf8_bytes": 287,
+            "characters": 279
+          },
+          "visible_answer": {
+            "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+            "utf8_bytes": 287,
+            "characters": 279
+          },
+          "reasoning": {
+            "sha256": "97e49fab2c7f73cda2767d737474593232f052b3f09a7204d92c0a90bc3bb6fa",
+            "utf8_bytes": 483,
+            "characters": 475
+          },
+          "reasoning_tokens": 168
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 1,
+          "prompt_tokens": 32980,
+          "output_tokens": 796,
+          "ttft_seconds": 0.4700580000062473,
+          "visible_ttft_seconds": 7.479238600004464,
+          "wall_seconds": 20.056168900046032,
+          "last_delivery_seconds": 20.05365320004057,
+          "stream_events": 776,
+          "timings": {
+            "prompt_n": 212,
+            "predicted_n": 796,
+            "prompt_ms": 346.9,
+            "predicted_ms": 19583.7,
+            "prompt_per_second": 611.127,
+            "predicted_per_second": 40.646,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32791,
+            "draft_n": 431,
+            "draft_n_accepted": 364
+          },
+          "usage": {
+            "prompt_tokens": 32980,
+            "completion_tokens": 796,
+            "total_tokens": 33776,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 269
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 1316.469676146,
+              "raw": 1299.495470285,
+              "utc": 1791087519.782645,
+              "qpc": 310525.04719295,
+              "roundtrip": 0.00042729999404400587
+            },
+            "after": {
+              "mono": 1336.527213143,
+              "raw": 1319.553021541,
+              "utc": 1791087539.837459,
+              "qpc": 310545.10472199996,
+              "roundtrip": 0.0004550000303424895
+            },
+            "monotonic_per_raw": 0.9999992890956741,
+            "raw_per_qpc": 1.0000011071162418,
+            "window_seconds": 20.057529049983714,
+            "handshake_uncertainty_seconds": 0.0004411500121932477
+          },
+          "pp_tps": 611.126565547172,
+          "decode_tps": 40.64597110458277,
+          "normalized_1000_seconds": 25.072742419256144,
+          "drafted": 431,
+          "accepted": 364,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28372103168,
+              "committed_bytes": 113498959872,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126640480256
+            },
+            "after": {
+              "available_bytes": 28359704576,
+              "committed_bytes": 113467068416,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126672371712
+            },
+            "observed_minimum": {
+              "available_bytes": 28310364160,
+              "commit_headroom_bytes": 126584815616
+            },
+            "controller_before": {
+              "available_bytes": 28337373184,
+              "commit_headroom_bytes": 126632189952
+            },
+            "controller_after": {
+              "available_bytes": 28357275648,
+              "commit_headroom_bytes": 126675517440
+            }
+          },
+          "request_sha256": "728ac550dcb884988538937107f295efbfa35767476a04f542068db3775f41a6",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "fb77809d7cc52d04370660ced924694846f3b7408c938a5de6d4ad7a8fc91d76",
+          "output_file_sha256": "8ce206404e1a683ebe818132bc2fbacf7cc1292776150535906fa16bee1f99ba",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+                "utf8_bytes": 287,
+                "characters": 279
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+            "utf8_bytes": 1983,
+            "characters": 1971
+          },
+          "visible_answer": {
+            "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+            "utf8_bytes": 1983,
+            "characters": 1971
+          },
+          "reasoning": {
+            "sha256": "1eab5622726d348e355ed46744eeb2f64e5d7f6a1104170955364ad0630127ff",
+            "utf8_bytes": 1143,
+            "characters": 1127
+          },
+          "reasoning_tokens": 269
+        },
+        {
+          "backend": "halogen-v2",
+          "context": 65536,
+          "target_input": 32768,
+          "rep": 1,
+          "turn": 2,
+          "prompt_tokens": 33559,
+          "output_tokens": 1283,
+          "ttft_seconds": 0.8662857000017539,
+          "visible_ttft_seconds": 15.000766400014982,
+          "wall_seconds": 32.72922290000133,
+          "last_delivery_seconds": 32.727391899970826,
+          "stream_events": 1269,
+          "timings": {
+            "prompt_n": 791,
+            "predicted_n": 1283,
+            "prompt_ms": 747.7,
+            "predicted_ms": 32607.8,
+            "prompt_per_second": 1057.911,
+            "predicted_per_second": 39.346,
+            "cache_n": 32768,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "prefix_n": 32979,
+            "draft_n": 690,
+            "draft_n_accepted": 566
+          },
+          "usage": {
+            "prompt_tokens": 33559,
+            "completion_tokens": 1283,
+            "total_tokens": 34842,
+            "prompt_tokens_details": {
+              "cached_tokens": 32768
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 537,
+              "reasoning_closed_at": 512,
+              "reasoning_closed_by": "answer_room"
+            }
+          },
+          "clock": {
+            "before": {
+              "mono": 1337.08018044,
+              "raw": 1320.105988902,
+              "utc": 1791087540.390426,
+              "qpc": 310545.65768475004,
+              "roundtrip": 0.00045410002348944545
+            },
+            "after": {
+              "mono": 1370.556846913,
+              "raw": 1352.836723809,
+              "utc": 1791087573.1198683,
+              "qpc": 310578.38842805,
+              "roundtrip": 0.0004770999657921493
+            },
+            "monotonic_per_raw": 1.0227899424843208,
+            "raw_per_qpc": 0.9999997435763418,
+            "window_seconds": 32.730743299936876,
+            "handshake_uncertainty_seconds": 0.0004655999946407974
+          },
+          "pp_tps": 1082.0207308435304,
+          "decode_tps": 40.24269307698808,
+          "normalized_1000_seconds": 25.715517288128954,
+          "drafted": 690,
+          "accepted": 566,
+          "finish_reason": "stop",
+          "requested_output_tokens": 1536,
+          "output_capped": false,
+          "eos": true,
+          "max_tokens_clamped_from": null,
+          "cache_n": 32768,
+          "expected_cache_state": "follow-up",
+          "observed_cache_state": "warm",
+          "cache_prompt_requested": true,
+          "native_cache_counters": {
+            "cache_n": 32768
+          },
+          "host_memory": {
+            "before": {
+              "available_bytes": 28340035584,
+              "committed_bytes": 113507282944,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126632157184
+            },
+            "after": {
+              "available_bytes": 28297621504,
+              "committed_bytes": 113564184576,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 126575255552
+            },
+            "observed_minimum": {
+              "available_bytes": 28286885888,
+              "commit_headroom_bytes": 126538981376
+            },
+            "controller_before": {
+              "available_bytes": 28357275648,
+              "commit_headroom_bytes": 126675517440
+            },
+            "controller_after": {
+              "available_bytes": 28307558400,
+              "commit_headroom_bytes": 126591680512
+            }
+          },
+          "request_sha256": "f1865300f79a6697b40b8c9ad011d6562e0ef3ece92bbbb0f97f78fccf17118b",
+          "reasoning_tokens_included": true,
+          "request_file_sha256": "11dc9b114ea1c03d21f13cf5ac532ca2493235dd5a505369321b39a606f90b6e",
+          "output_file_sha256": "19cd2e84edea54f46ae2902811db40266d15ee84c5dc8606f45b5d5ccdc4316c",
+          "request_options": {
+            "model": "halogen-qwen3.8-flash-next",
+            "stream": true,
+            "stream_options": {
+              "include_usage": true
+            },
+            "max_tokens": 1536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "repetition_penalty": 1.0,
+            "repeat_penalty": 1.0,
+            "seed": 20260931,
+            "cache_prompt": true,
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "enable_thinking": true
+            },
+            "reasoning_effort": "low",
+            "drafter": "mtp"
+          },
+          "request_messages": [
+            {
+              "role": "system",
+              "content": {
+                "sha256": "7c971c34a44753735607ffeb1e00ce6e26d8eb15bfc5b4d81b8d232ca7793bb1",
+                "utf8_bytes": 164,
+                "characters": 164
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "baf9f4a125ac2905a11a9bd5c83d7b73418bf4d57a94115c7ff89ef1d9594604",
+                "utf8_bytes": 114329,
+                "characters": 113749
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "3f74aba66cc245cf470eb69d40c9d63836bd5e37d3b1646a83beb462947037fb",
+                "utf8_bytes": 287,
+                "characters": 279
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "6b041611fa1af0b87a6c39da001b853191cc35c85c1b78749b2920a63494acaf",
+                "utf8_bytes": 249,
+                "characters": 249
+              }
+            },
+            {
+              "role": "assistant",
+              "content": {
+                "sha256": "137c9d81c024f2acd114e317535d8fa77b981d65fe0648b26ded87760a847be9",
+                "utf8_bytes": 1983,
+                "characters": 1971
+              }
+            },
+            {
+              "role": "user",
+              "content": {
+                "sha256": "56f12c0d1712d06fc7513d1e015c64e7679f553344bd48e14465007e0d167e5b",
+                "utf8_bytes": 203,
+                "characters": 203
+              }
+            }
+          ],
+          "output_content": {
+            "sha256": "7690cc4ddac3f7c9baa59be28c3f0a52631308548b8b7ed0a837e3ea2ce5f359",
+            "utf8_bytes": 2670,
+            "characters": 2664
+          },
+          "visible_answer": {
+            "sha256": "7690cc4ddac3f7c9baa59be28c3f0a52631308548b8b7ed0a837e3ea2ce5f359",
+            "utf8_bytes": 2670,
+            "characters": 2664
+          },
+          "reasoning": {
+            "sha256": "876dbc8743d0965612f5f644cab02ebe51e8451683850a33af32a2be5cf89346",
+            "utf8_bytes": 2208,
+            "characters": 2196
+          },
+          "reasoning_tokens": 537
+        }
+      ],
+      "lifecycle": {
+        "managed_run_id": "5073f572195e4570b0ead65324f5d615",
+        "backend_run_id": "d13c01c17be648f59d5c1ff20aa49221",
+        "controller_pid": 6868,
+        "container_id": "78ff1ff6dac619907381faa0855061e87eb9452bf141d64507e4ef2068f873fa",
+        "container_exit_code": 1,
+        "cleanup": true,
+        "recovery": true
+      },
+      "profile_sha256": "fbf9ef954f77fc491302dac4d3f45eff953925c9c31ae4016ac240212aa679c2",
+      "compute_manifest": {
+        "schema": 1,
+        "version": "0.16.2",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+        "run_id": "<backend-run>",
+        "checkpoint": "v2",
+        "context": 65536,
+        "slots": 1,
+        "serve_seconds": 0,
+        "startup_timeout": 900,
+        "mounts": {
+          "/models": "/home/revn/halogen-models-native",
+          "/usr/lib/libdxcore.so": "/usr/lib/wsl/lib/libdxcore.so",
+          "/usr/lib/librocdxg.so": "/home/revn/ciru-runtime/venv/lib/python3.14/site-packages/_rocm_sdk_core/lib/librocdxg.so.1",
+          "/usr/local/lib/python3.12/site-packages/_rocm_sdk_libraries/lib/librocroller.so.1": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/librocroller-compat.so.1",
+          "/ngram-w4b.hgn": "<permitted lookup source>",
+          "/candidate/entrypoint-wsl-candidate.sh": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/services/<backend-run>/entrypoint-service.sh",
+          "/candidate/libhalogen0162-preflight.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/libhalogen0162-preflight.so",
+          "/candidate/hip-register-private-rw.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/hip-register-private-rw.so",
+          "/candidate/halogen0162_hip_probe": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/halogen0162_hip_probe",
+          "/candidate/auth_api.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/auth_api.py",
+          "/candidate/lease_supervisor.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/lease_supervisor.py",
+          "/candidate/startup_cache.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/scripts/startup_cache.py",
+          "/candidate/api-token.txt": "<redacted credential path/value>",
+          "/service-state": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/services/<backend-run>",
+          "/candidate/libhalogen0162-v2-preflight.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/libhalogen0162-v2-preflight.so"
+        },
+        "environment": {
+          "HALOGEN_WSL_PROFILE": "halogen0162-dxg",
+          "HALOGEN_CTX": "65536",
+          "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+          "HALOGEN_CK_OVERLAY": "",
+          "HALOGEN_PREFLIGHT_PROFILE": "flash0162-v2-device64-chunk64-v1",
+          "HALOGEN_HYBRID_PROFILE": "vgm64-v2-device64-v1",
+          "HALOGEN_KV_POOL_POSITIONS": "65536",
+          "HALOGEN_KV_SLOTS": "1",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+          "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+          "HALOGEN_FLASH_PIN_TRUNK": "1",
+          "HALOGEN_PROMPT_CACHE": "1",
+          "HALOGEN_DMALLOC_LOG": "1",
+          "HALOGEN_VERBOSE": "1",
+          "HALOGEN_ENGINE_WATCHDOG_S": "120",
+          "HALOGEN_TOKENIZER": "/models/tokenizer",
+          "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+          "HSA_ENABLE_SDMA": "1",
+          "HSA_ENABLE_DXG_DETECTION": "1",
+          "AMD_SERIALIZE_KERNEL": "0",
+          "AMD_SERIALIZE_COPY": "0",
+          "LD_PRELOAD": "/candidate/libhalogen0162-v2-preflight.so:/candidate/hip-register-private-rw.so",
+          "HALOGEN_API_PORT": "8731",
+          "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+          "HALOGEN_CHECKPOINT_VARIANT": "v2",
+          "HALOGEN_MTP_DEPTH": "2"
+        },
+        "sources": {
+          "scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+          "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+          "scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+          "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+          "scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+          "scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+          "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+          "scripts\\kernel_controls.py": "45e63bd2d5eed78f721a0a74facf8918e17f3ec0cec2affa0793c9127c2f0534",
+          "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+          "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+          "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+          "scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+          "scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+          "scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+          "scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+          "scripts\\service.py": "2df703adc7a255a527b94a0c4c225a140023727da5e453fdd3474169566ab34a",
+          "scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+          "scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+          "scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+          "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+          "patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+          "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+          "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+          "patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+          "patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+          "profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+          "profiles\\sources.json": "6da961b984f8d211fe49f07d403b9f4ceedf20aad83c29a4b877d960d29e1379"
+        },
+        "entrypoint_sha256": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0"
+      },
+      "profile": {
+        "schema": 1,
+        "minimum_reserve_gib": 18,
+        "token_file": "<redacted credential path/value>",
+        "backend_token_file": "<redacted credential path/value>",
+        "concurrency": 1,
+        "body_bytes": 16777216,
+        "request_seconds": 1800,
+        "backend": {
+          "identifier": "halogen-v2",
+          "upstream": "http://127.0.0.1:8731",
+          "model": "halogen-qwen3.8-flash-next",
+          "checkpoint": "v2",
+          "context": 65536,
+          "expected": {
+            "status": "ok",
+            "version.api": "0.16.2",
+            "version.engine": "0.16.2",
+            "version.match": true,
+            "context": 65536,
+            "slot_ctx": 65536,
+            "kv_pool_positions": 65536,
+            "slots": 1
+          },
+          "routes": [
+            "/v1/chat/completions",
+            "/v1/completions",
+            "/v1/responses",
+            "/v1/messages",
+            "/v1/messages/count_tokens"
+          ]
+        },
+        "engine": {
+          "kind": "halogen",
+          "directory": "backends/halogen-wsl2-0.16.2",
+          "checkpoint": "v2",
+          "context": 65536,
+          "prompt_cache": "Exact",
+          "powershell": "C:\\Program Files\\PowerShell\\7\\pwsh.EXE",
+          "draft_tokens": 2
+        },
+        "qualification": {
+          "experimental": true,
+          "draft_tokens": 2,
+          "draft_vocab": "full",
+          "mtp_policy": "length",
+          "weight_placement": "unchanged-backend-native",
+          "tuning_evidence": "docs/research/halogen-gufo-mtp-20261001.md",
+          "experiment": "matched-lookup-placement-20261004"
+        }
+      },
+      "lookup_reads": {
+        "owned_log": "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/engine.log",
+        "events": [
+          {
+            "line": 1191,
+            "timestamp": "2026-10-04T04:16:41.383110176Z",
+            "rows": 524288,
+            "tokens": 32768,
+            "seconds": 11.4,
+            "threads": 64,
+            "approximate_client_windows": [
+              {
+                "rep": 0,
+                "turn": 0
+              }
+            ]
+          },
+          {
+            "line": 1252,
+            "timestamp": "2026-10-04T04:18:12.433926698Z",
+            "rows": 524288,
+            "tokens": 32768,
+            "seconds": 9.7,
+            "threads": 64,
+            "approximate_client_windows": [
+              {
+                "rep": 1,
+                "turn": 0
+              }
+            ]
+          }
+        ],
+        "scope": "Exact owned engine log messages; may include calibration/startup. UTC completion within a client clock window is approximate attribution. Missing messages are not zero read cost."
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "control": "lookup-stocka",
+      "normalized_improvement_percent": 10.674929462264082,
+      "actual_wall_improvement_percent": 11.98194888645795,
+      "normalized_matched_repetitions": [
+        {
+          "rep": 0,
+          "stock_seconds": 137.01678148381197,
+          "e_seconds": 116.89962200591728,
+          "improvement_percent": 14.682259545172183
+        },
+        {
+          "rep": 1,
+          "stock_seconds": 118.63943250298179,
+          "e_seconds": 111.46547147189135,
+          "improvement_percent": 6.046860541843991
+        }
+      ],
+      "request_output_comparisons": [
+        {
+          "rep": 0,
+          "turn": 0,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 0,
+          "turn": 1,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 0,
+          "turn": 2,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 1,
+          "turn": 0,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 1,
+          "turn": 1,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 1,
+          "turn": 2,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        }
+      ]
+    },
+    {
+      "control": "lookup-stockb",
+      "normalized_improvement_percent": -9.455479149835778,
+      "actual_wall_improvement_percent": -9.03574525906896,
+      "normalized_matched_repetitions": [
+        {
+          "rep": 0,
+          "stock_seconds": 105.8503220436263,
+          "e_seconds": 116.89962200591728,
+          "improvement_percent": -10.43860778972121
+        },
+        {
+          "rep": 1,
+          "stock_seconds": 102.78710319224982,
+          "e_seconds": 111.46547147189135,
+          "improvement_percent": -8.443051715748595
+        }
+      ],
+      "request_output_comparisons": [
+        {
+          "rep": 0,
+          "turn": 0,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 0,
+          "turn": 1,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 0,
+          "turn": 2,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 1,
+          "turn": 0,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 1,
+          "turn": 1,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        },
+        {
+          "rep": 1,
+          "turn": 2,
+          "exact_request_content_equal": true,
+          "visible_content_equal": true,
+          "reasoning_equal": true
+        }
+      ]
+    }
+  ],
+  "conclusion": {
+    "text": "E does not beat both stock means; improvement over first stockA alone is not evidence of a placement gain.",
+    "e_faster_than_both_stock_means": false,
+    "both_matched_repetitions_faster_than_both_controls": false,
+    "causal_placement_gain_established": false,
+    "os_cache_order_confounded": true,
+    "retrieval_equivalence_observed_only": true,
+    "output_equivalence_not_assumed": true,
+    "generated_code_executed": false
+  },
+  "source_hashes": {
+    "publisher": "49fce06881001400dea08e451954b6fdf89a303ba2bfea660205a7ba6da06938",
+    "coordinator": "086d6bd3800eb4a9ff4b838a510cb0410c8ee19198aceef4a4211d700101658a",
+    "client": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+    "metrics": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5"
+  },
+  "raw_artifact_source_profile_client_corpus_sha256": {
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/admission-create.json": "18450cb612dceb507ba8c5ca4c129be75e6624b675db887405c154fe82735bc0",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/admission-start.json": "6c29740035fdd11ad25ec326e952fd161251c6dffe57da924c941068089b1df3",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/arithmetic.json": "9db054b6300eb9675c5fd7728d0db31ebbbc743523c8f849d8d2017b18655343",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/armed.json": "571cf7a714d97302d3a13af81df8becd02653a0bca079f2e005a9c87670b9a87",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/cache-stop.json": "5089395e4bc44bffcebafddc55475b68c68035183ba7ec3a2ad19e23d8b89779",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/container.json": "571cf7a714d97302d3a13af81df8becd02653a0bca079f2e005a9c87670b9a87",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/controller.json": "60b0b9d0519b2617690c743d00f2b5fe1524b1c6221a98f5e5ce6a7257418f46",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/engine.log": "ef470dc648807613dc21332f28abbe56fbf41d0ad1b78a7f8028851f03f07f16",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/entrypoint-service.sh": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/german.json": "a624caab48170f7416b3aac7a5127b21a82ce93d20b347e6402e73e195729521",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/guard-exit-ack.json": "9a5a3c5f425b98aa7dbcacc2a7b8edd61cf328ae912275ecd9b04ec331846579",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/guard-exit-request.json": "3b526aea9d30d45a46f1e032f88053d118d152cec2a2baeb0f5ca8f28500feb2",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/guard-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/health.json": "e6344753371aa091c75a3806989f2dd3372279ca9c89c4e7690e7a35cdc59204",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/host-guard.jsonl": "2184838630bbc296756fb88633999fb85074e5d2996ac02da7ba5f3349ecc114",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/lease.json": "7e6bd79779cc3259ca9575b49d19972641fae9ebe9d0684adb84a0420f819901",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/manifest.json": "d61527be19ad3941622c1f182a50474202e2687615ea6dcee59217462e020081",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/outcome.json": "a1c5d612f410007753b0c63e5807ef99cffabd0d893becb1f52e3687874791e5",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/quiesce-ack.json": "9a5a3c5f425b98aa7dbcacc2a7b8edd61cf328ae912275ecd9b04ec331846579",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/quiesce-request.json": "3b526aea9d30d45a46f1e032f88053d118d152cec2a2baeb0f5ca8f28500feb2",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/ready.json": "1aa0ab9059bf16ccec4e5e18e0210f997f74142846aef9aee659bb9540116f25",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/recovery.json": "5d06605f497b3ea0808d338c3a3f2384ed5b251c375ba35f6f5ae2020d97a6bb",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/service.log": "d7869d418b418281f9156518d155759b723faa9a5e78b67ec947ff759c0f32f6",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/startup-cache.jsonl": "626d35c45e953a92581527ab68995cb0ead097d9081d05eb9783994cd45036d4",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/stop.json": "56387a2c2b5f9b18e4e02e9d355a7c2c3f097de1d7d7b23a4e19dd82abe4028f",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/telemetry-9997-process.json": "a07c731da4ba10d24d1a5b0854ae8c1595b5baabec5549b95663b261b85f3261",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/telemetry-9997.json": "521a0baab0fb9a133df801baf1f7692d32116715f34c3f2566bc8fb0ff0bcd96",
+    "backends/halogen-wsl2-0.16.2/.local/services/01b27f256e334c678e5932ec06d0e585/terminal.json": "0835984187a6baa39f1b9f6c8f07465385d50fec9fa926b75f69ff808d5dfc55",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/admission-create.json": "4799f6c39803217404816afc3e8bdbfdbc5823d7de39416d89a63d9aa8324f28",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/admission-start.json": "6d84dc40fb4a9075a51d95205fe8b55236f132d34c4d2c77ede101a0fa8d8b1d",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/arithmetic.json": "9db054b6300eb9675c5fd7728d0db31ebbbc743523c8f849d8d2017b18655343",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/armed.json": "b4adbb79851d2af39993f52ce6cee902284e0fc206eb24bd9b560146c0af90fa",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/cache-stop.json": "4963cd8a4ac442625993c13142fa6866990705fd475c5f968d4f1d828690cbee",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/container.json": "b4adbb79851d2af39993f52ce6cee902284e0fc206eb24bd9b560146c0af90fa",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/controller.json": "a7079132830cbb011e6432e564c30733a6b96c2d20786268c97e7fa822d4050d",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/engine.log": "6992e0c2a5977094adc9b84e58c7a581f063e344132b1ae14909ceb1e45087f6",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/entrypoint-service.sh": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/german.json": "a624caab48170f7416b3aac7a5127b21a82ce93d20b347e6402e73e195729521",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/guard-exit-ack.json": "31e07933cb9685817ee042ef765fd613f7b429e829a1da1f56d438928935527b",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/guard-exit-request.json": "625e26ceee0455464396a443d94d7aa411fcbcaadea82d22276c8400ec080d13",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/guard-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/health.json": "0998705ca27923e3385745969124d79bacba993af456dbf982b33c11e7295434",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/host-guard.jsonl": "4b5c007610c8eb5ddb6327a4aa12d8d40a97dd1807341b60251a20cd0fd6460c",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/lease.json": "bc132917ba6cc9ef09bf640f1c253e95f3fa7abb678fbdddfc5ccea5d8454d94",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/manifest.json": "343ddf02e635b7cf601d101e747bc0c38dcf242c1cef1ace591bb49aa2eb3dd3",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/outcome.json": "63e717739b498d99c8c3bd92fd7552fe6882f1ba7c2593c1b6635f9d458df802",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/quiesce-ack.json": "31e07933cb9685817ee042ef765fd613f7b429e829a1da1f56d438928935527b",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/quiesce-request.json": "625e26ceee0455464396a443d94d7aa411fcbcaadea82d22276c8400ec080d13",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/ready.json": "5dde12c08adbd68721aa95b2297c882a127ec48a14a6437b5a42bbe06da8b080",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/recovery.json": "2cca5d28c8e873cde0b3f5d445d19c0c99f699e4d5cc1b494b22f6ecc7f270e1",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/service.log": "c3f42bf96e39133dcd786f9a8da6b10d29930a27dda6fab97db46e9bfc42f80a",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/startup-cache.jsonl": "1c123c36bce3f48672a7e84459f816c2137f03d8282d644e8423aec580a5ed9e",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/stop.json": "3a871a2cc30e30ec9e6787178c20523dd5040bad47841478931f344ec0cebaa7",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/telemetry-9997-process.json": "deeb633e1dc7db20f5acffca4003ef14201fac6409bab9115f718544626a4f2d",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/telemetry-9997.json": "222831c2df766d1a5467b47beb16ce1538c981a1cb73bea5c7f1fcc7cdf773a3",
+    "backends/halogen-wsl2-0.16.2/.local/services/1a7e40489cea4a38862da2d7f6b7bf45/terminal.json": "48a6f9246a25a006684ea18f1805ca08a56bbde1a96a2d465b69b48e10fd7cab",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/admission-create.json": "452e6d83cf2fcb4a9840f0fe8cbcb9cf7930f65595be0805552030a635cb23c7",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/admission-start.json": "ad3fff2ec93dcef64b09e373f25f2c7333039614f988a79fc9638a71a31de45e",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/arithmetic.json": "9db054b6300eb9675c5fd7728d0db31ebbbc743523c8f849d8d2017b18655343",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/armed.json": "0338721d77071dacd41c54f07d6f844e845e8c769a48d5a5e6a5d1850de847c5",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/cache-stop.json": "788c4d35f6c1ef4b5760db654faba121126e4aa76cd3b2305f4570c070727e4f",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/container.json": "0338721d77071dacd41c54f07d6f844e845e8c769a48d5a5e6a5d1850de847c5",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/controller.json": "fc23f72c5f15d13ec6844d28213875807d855f2982f391bc306ee2e00e92e2b8",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/engine.log": "505b8967a958b6e20f792318436fc061847165cedceca94e6042147a4c1f450d",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/entrypoint-service.sh": "f3ee2640146141aa87b0455e01384c93a1c41fcfa256a9d30ba04105b46564b0",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/german.json": "a624caab48170f7416b3aac7a5127b21a82ce93d20b347e6402e73e195729521",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/guard-exit-ack.json": "1eb0a38fe644b010c5202b3ef2eb892daee484317c0a908f4f037ced4d531490",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/guard-exit-request.json": "a35bd2dd6171260a7438a651d90fe4b4f10e9b2dba4097f1734c1cc4164fa0eb",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/guard-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/health.json": "2e88a64081a054260af41e568805efa72093c356e8d080f28792af5cbe6eeef4",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/host-guard.jsonl": "7d911e3fdafb09533fd2bc2b72df57398e0bb3ff2634c6f1ea3f16ada665e08a",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/lease.json": "c2aec2a8af397fdb103270c52b04ea0dfcc4e670f0e38e8e98d75b67dd56d7d3",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/manifest.json": "599095ad3eff90cf650b0404855c45142b2100c1fcf742511b6141ed23f436aa",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/outcome.json": "bb14bc686319e3cab94f06ed281b2d13799909b00e0975af66e3f8b388de3652",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/quiesce-ack.json": "1eb0a38fe644b010c5202b3ef2eb892daee484317c0a908f4f037ced4d531490",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/quiesce-request.json": "a35bd2dd6171260a7438a651d90fe4b4f10e9b2dba4097f1734c1cc4164fa0eb",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/ready.json": "e4072a5c5900bae7b402d3e545c5e6ab9c2b00e92f77c5afc4b811b4ed6450c9",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/recovery.json": "1674779b34412fd6166ebaa245276b265a038fc39c19a68a30ac7fbbfbde1b6c",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/service.log": "282d533efc73539746866d30257abb66457927b2ff9885c1093f875a2918ecba",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/startup-cache.jsonl": "a386fa752a243ddd2aa7a7c79fb0e31c9ee205a02072ac3802e27290fb2817e8",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/stop.json": "972a3b2dc0860773019b2eabd4867bf65ceef3abb0a612fbce2a2c2c93094242",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/telemetry-9997-process.json": "71a8f167aa4d7e67c2dc44bd4aac4ab66cac6b68159bda4e082b2a5b8bde5e37",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/telemetry-9997.json": "3794e28ad6e2a673a2dee813d8085c8117b0013c8646817bc787912665d1db99",
+    "backends/halogen-wsl2-0.16.2/.local/services/d13c01c17be648f59d5c1ff20aa49221/terminal.json": "865851aac8bc9f45195a0ef02f934fc6ab3231a62f5409d8ebb6309d5d244e61",
+    "backends/halogen-wsl2-0.16.2/Install.ps1": "f3385dcf52137aceefa8bd3d08fb423f2ef46a52f71733ffdf5b4129d399ce3f",
+    "backends/halogen-wsl2-0.16.2/Start.ps1": "0a4cf4afed4949fb2ca7d532bcbdba10974bd40f99c7f20d86b9647a0213dc6e",
+    "backends/halogen-wsl2-0.16.2/Uninstall.ps1": "b3ab23f778426ac026f7dea59f72a7b239f6b60aca0e4698ec169d5270bf1361",
+    "backends/halogen-wsl2-0.16.2/patches/halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+    "backends/halogen-wsl2-0.16.2/patches/halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+    "backends/halogen-wsl2-0.16.2/patches/hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+    "backends/halogen-wsl2-0.16.2/patches/hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+    "backends/halogen-wsl2-0.16.2/patches/hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+    "backends/halogen-wsl2-0.16.2/profiles/preflight-sequences.json": "2578343f8d732785e630b385fd67bf71a17ba20cdf95b6b7cc90259bdccc886b",
+    "backends/halogen-wsl2-0.16.2/profiles/release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+    "backends/halogen-wsl2-0.16.2/profiles/sources.json": "6da961b984f8d211fe49f07d403b9f4ceedf20aad83c29a4b877d960d29e1379",
+    "backends/halogen-wsl2-0.16.2/scripts/auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+    "backends/halogen-wsl2-0.16.2/scripts/bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+    "backends/halogen-wsl2-0.16.2/scripts/bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+    "backends/halogen-wsl2-0.16.2/scripts/checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+    "backends/halogen-wsl2-0.16.2/scripts/entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+    "backends/halogen-wsl2-0.16.2/scripts/halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+    "backends/halogen-wsl2-0.16.2/scripts/host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+    "backends/halogen-wsl2-0.16.2/scripts/kernel_controls.py": "45e63bd2d5eed78f721a0a74facf8918e17f3ec0cec2affa0793c9127c2f0534",
+    "backends/halogen-wsl2-0.16.2/scripts/lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+    "backends/halogen-wsl2-0.16.2/scripts/lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+    "backends/halogen-wsl2-0.16.2/scripts/matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+    "backends/halogen-wsl2-0.16.2/scripts/matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+    "backends/halogen-wsl2-0.16.2/scripts/memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+    "backends/halogen-wsl2-0.16.2/scripts/portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+    "backends/halogen-wsl2-0.16.2/scripts/runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+    "backends/halogen-wsl2-0.16.2/scripts/sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+    "backends/halogen-wsl2-0.16.2/scripts/service.py": "2df703adc7a255a527b94a0c4c225a140023727da5e453fdd3474169566ab34a",
+    "backends/halogen-wsl2-0.16.2/scripts/startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+    "backends/halogen-wsl2-0.16.2/scripts/startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+    "backends/halogen-wsl2-0.16.2/scripts/startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+    "backends/halogen-wsl2-0.16.2/scripts/state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+    "docs/research/halogen-sampled-mtp-depth-20261004.md": "5ba268a0f5e9de8e1679ae2b7820b598548d66339b6b1373fbd6e3e29139b5f9",
+    "scripts/benchmarks/article_bench.py": "d44d2f1a18099207f6c4df5bbc22ea0190ce0ed190035cc9722adae00529976a",
+    "scripts/benchmarks/article_metrics.py": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+    "scripts/benchmarks/clock_probe.py": "a3f32a4c5c7e423c47ceebdd2f0fe0cd1860d7840c9fd0de10756e887c70a05e",
+    "scripts/benchmarks/reddit_suite.py": "f4c805c441c7b527437b5569f134f85ac73cff4048b6bce5fbe4e16114f1486d",
+    "server/.local/article0162-20261003/corpus.json": "0e97b463b61bf6c8b5d9e97128bc44cf5638e30c4c97108681a3007260aaac83",
+    "server/.local/article0162-20261003/halogen-lookup-e-c65536.json": "b25d388dfcad13ffda3341359f7d5a74e3c2ed300a6b76afcc550d289235c2d4",
+    "server/.local/article0162-20261003/halogen-lookup-stocka-c65536.json": "fbf9ef954f77fc491302dac4d3f45eff953925c9c31ae4016ac240212aa679c2",
+    "server/.local/article0162-20261003/halogen-lookup-stockb-c65536.json": "fbf9ef954f77fc491302dac4d3f45eff953925c9c31ae4016ac240212aa679c2",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/before.json": "67ceea85f5fd74bc5482258f7f75f0aa4d4a5009760b1494e18495f3a86f7727",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/benchmark-p32768.log": "8f4dfefb168baefa832d5ac56984373a0f8c20cd792cb99961a8a9bcab5df381",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/controller.log": "34d4223e35de5361d34868b9aa8e10214955264937e78ea6c5ce5a6d3f4f63c7",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/engine-manifest.json": "c8e90b0ec563cf152af46c8d1aa168d253365c87831146bc31f04c97336927bf",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/prepared-plan.json": "44ca24489ae1054cc0b838ed6cb343a9d1fcdd061338e15322a131de5bd1a0c9",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/ready.json": "14f9453a65bc6276d39bfaa04c05a3e3bcd1a8aba7911f16963667e9781df27b",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/result.json": "fb77e2095d1fe1f542f1cdf80444e95a57d4e2f53a459cf020879b304543313d",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/retained-process.json": "0d6d123c471db563aa57c7cee170d668ea9eb36b3906cf6e3edfbb55ef13d610",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/settled-idle.json": "ff65500d6502dc3ab06734571b7745f55b6fd1a7d7c6359e3be34c2f49bf11b1",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/source-seals.json": "13b14b4d2ed848ae390ee1221a5507d219eb976925add4c95f1b684d89e69c11",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/stop.log": "4d7f6d30e89035d82f07bc7edf573a93ddeca7ef7816370a9a91841084f962ae",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-e/terminal.json": "4dbb93c98db031b5824d8f9cf67f7bc9d432cb1de360e56a9d4988b3944a9f57",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/before.json": "4a57c58da43b2996e1a2f73d7ce6bafbc65417b323edbbfb69eb6ef39bbfb27a",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/benchmark-p32768.log": "69f24424687d46e02502df6e30a477e9c0a058d9e9a536cd2f4c230e9915bda3",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/controller.log": "7468c4d4cf8494eec5133da1ebf8cfd660ace91ed33bea3dbdba4e1e2927a947",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/engine-manifest.json": "8c1432f861feb619015ad9151f1cc52f3997a246bc30820d02967715586fa882",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/prepared-plan.json": "4680293a476aa6eaaf5988f6c42494577573149197751c6ee1deda128e9af6a6",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/ready.json": "fee73252976de0401da5c8c326cab1ca7e7750354e9ac488436df2923dd3c621",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/result.json": "796bd6eeb6bc0603ba0d31c4485e7964b628f0b7dba26cf55370ce10902ea391",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/retained-process.json": "7edc586df039b92c39d46597ab6b1ce8a0d78ff56ad43cb44f6051c686918a2a",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/settled-idle.json": "8d4d9633dcf4b9057e842243a87a827677f01a4f5a0d5ccc0036bbb07d3391c0",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/source-seals.json": "13b14b4d2ed848ae390ee1221a5507d219eb976925add4c95f1b684d89e69c11",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/stop.log": "4d7f6d30e89035d82f07bc7edf573a93ddeca7ef7816370a9a91841084f962ae",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stocka/terminal.json": "6bb7006ea92936d219699696e3530defd9f68ffa2c3b918c9e5ff1430af9e693",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/before.json": "71464d3f2cf08621e4ef782d5bb5aea23f77b7a1eb828ef4c6576ae38528e4a7",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/benchmark-p32768.log": "af23a3b8da6bf6233dbba902f4065cdec244fb6c5449ab482a82a72bc18bee55",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/controller.log": "c24caa6c99e7e7f9703edd190a416bdff851423cc923b8811af04209c00fa5a9",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/engine-manifest.json": "46fe849b8ea27d04e3b43978296860aaea4646f75057e01589abfe786187a174",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/prepared-plan.json": "d6751f391e23a7baa6f68994821c7184a97512f2cccd80d7592610a37b8da081",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/ready.json": "c35d7ef06cf4e95c151272bda1946a2ae439ec3745807314cce20bddc1e7ac05",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/result.json": "66e82c8734fe46e537174d49ccd6e2f2d95b79b5b591df740653423e2aa688ad",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/retained-process.json": "87294d7026fd6fc913cee4bb00203bdab1d41e6ed9119031b9b2fcf04f5ca2d3",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/settled-idle.json": "bfbfc951bad0703a408fadacc3a16cae719d6b8868f813206216ee2afbfcae7c",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/source-seals.json": "13b14b4d2ed848ae390ee1221a5507d219eb976925add4c95f1b684d89e69c11",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/stop.log": "4d7f6d30e89035d82f07bc7edf573a93ddeca7ef7816370a9a91841084f962ae",
+    "server/.local/article0162-20261003/halogen-v2-c65536-lookup-stockb/terminal.json": "5f96b3b4ce5f918b572d645db03434300dd975a2a199a5db5cb4a03b14745043",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/gold-0.json": "21beec941bd994b28f8b1bd4c438285277fe9476912aa8d058034497ec02809a",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/gold-1.json": "926a9532a2aebb7c5083c1fd00f20237115810b29413f6b4e6e7a565f6744ba8",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/identity.json": "43d876f8514605a135b2ae7505719a7cc09a6b384a82dfe59ec4619cea702da9",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep0-turn0-output.json": "4d92035187a1586238fd89c5309dbb2cb9c904e345209997aa01c0f458a8b0f6",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep0-turn0-request.json": "dca70245cc81be6344133db1960b1472ce41f59b1b4ca7d38552665c6f049341",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep0-turn1-output.json": "eb73cd97de2c2ecf0ac5ad3e5a1be387c23ffc7110703267f24fcb64a35da8e2",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep0-turn1-request.json": "e454193fd29b3f9c32178e5c4fb56656d8519a6d5741d56654fe70b461070fed",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep0-turn2-output.json": "ec27aafc14472ab24066f173dabbb42beb75e827c35152e2bb4daaf364d80aaa",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep0-turn2-request.json": "e16a2dfe5e75cf9188d3f45c6e10fccb9b05233a0649a3cb638d1d0fe1c8bc3a",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep1-turn0-output.json": "2111038a53f28890ce2cd9f431eb7bcc6542495d5462f68e5cb97001ee530a38",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep1-turn0-request.json": "28382c8d57f362d4eb7fb153903d8790c6c6d9cf3cf24685cc58cbb1cc1d8fce",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep1-turn1-output.json": "8ce206404e1a683ebe818132bc2fbacf7cc1292776150535906fa16bee1f99ba",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep1-turn1-request.json": "fb77809d7cc52d04370660ced924694846f3b7408c938a5de6d4ad7a8fc91d76",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep1-turn2-output.json": "19cd2e84edea54f46ae2902811db40266d15ee84c5dc8606f45b5d5ccdc4316c",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/rep1-turn2-request.json": "11dc9b114ea1c03d21f13cf5ac532ca2493235dd5a505369321b39a606f90b6e",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/samples.jsonl": "5cd9d7045f06c39803395543774c0753af3024b58bf24307c4c5df8546d4d8b9",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-e/summary.json": "e7b160203055681310c0effe936c37abd7917a6d0aea0a8383868a86ae4c6d91",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/gold-0.json": "21beec941bd994b28f8b1bd4c438285277fe9476912aa8d058034497ec02809a",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/gold-1.json": "926a9532a2aebb7c5083c1fd00f20237115810b29413f6b4e6e7a565f6744ba8",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/identity.json": "ecf2bfd3b8b84ebc19c00627b6ed6fc61ffa22ff0b4ae79b52450a1f65c68fb1",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep0-turn0-output.json": "4d92035187a1586238fd89c5309dbb2cb9c904e345209997aa01c0f458a8b0f6",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep0-turn0-request.json": "dca70245cc81be6344133db1960b1472ce41f59b1b4ca7d38552665c6f049341",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep0-turn1-output.json": "eb73cd97de2c2ecf0ac5ad3e5a1be387c23ffc7110703267f24fcb64a35da8e2",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep0-turn1-request.json": "e454193fd29b3f9c32178e5c4fb56656d8519a6d5741d56654fe70b461070fed",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep0-turn2-output.json": "ec27aafc14472ab24066f173dabbb42beb75e827c35152e2bb4daaf364d80aaa",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep0-turn2-request.json": "e16a2dfe5e75cf9188d3f45c6e10fccb9b05233a0649a3cb638d1d0fe1c8bc3a",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep1-turn0-output.json": "2111038a53f28890ce2cd9f431eb7bcc6542495d5462f68e5cb97001ee530a38",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep1-turn0-request.json": "28382c8d57f362d4eb7fb153903d8790c6c6d9cf3cf24685cc58cbb1cc1d8fce",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep1-turn1-output.json": "8ce206404e1a683ebe818132bc2fbacf7cc1292776150535906fa16bee1f99ba",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep1-turn1-request.json": "fb77809d7cc52d04370660ced924694846f3b7408c938a5de6d4ad7a8fc91d76",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep1-turn2-output.json": "19cd2e84edea54f46ae2902811db40266d15ee84c5dc8606f45b5d5ccdc4316c",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/rep1-turn2-request.json": "11dc9b114ea1c03d21f13cf5ac532ca2493235dd5a505369321b39a606f90b6e",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/samples.jsonl": "9c3fdde5f5e6c54535d1cd77a2603fc63ec46975b3af7b9e6e559e5b7e144be0",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stocka/summary.json": "699bae7fb1ba70972de8a4ce9a6124aaf560d5a25e50a53f1c18bcb116d50ba1",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/gold-0.json": "21beec941bd994b28f8b1bd4c438285277fe9476912aa8d058034497ec02809a",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/gold-1.json": "926a9532a2aebb7c5083c1fd00f20237115810b29413f6b4e6e7a565f6744ba8",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/identity.json": "e2f5cd556fe76421509ef5bd3d2bafa38bf66ad5b3bc51e8ff5fc9c882361ce6",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep0-turn0-output.json": "4d92035187a1586238fd89c5309dbb2cb9c904e345209997aa01c0f458a8b0f6",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep0-turn0-request.json": "dca70245cc81be6344133db1960b1472ce41f59b1b4ca7d38552665c6f049341",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep0-turn1-output.json": "eb73cd97de2c2ecf0ac5ad3e5a1be387c23ffc7110703267f24fcb64a35da8e2",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep0-turn1-request.json": "e454193fd29b3f9c32178e5c4fb56656d8519a6d5741d56654fe70b461070fed",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep0-turn2-output.json": "ec27aafc14472ab24066f173dabbb42beb75e827c35152e2bb4daaf364d80aaa",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep0-turn2-request.json": "e16a2dfe5e75cf9188d3f45c6e10fccb9b05233a0649a3cb638d1d0fe1c8bc3a",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep1-turn0-output.json": "2111038a53f28890ce2cd9f431eb7bcc6542495d5462f68e5cb97001ee530a38",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep1-turn0-request.json": "28382c8d57f362d4eb7fb153903d8790c6c6d9cf3cf24685cc58cbb1cc1d8fce",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep1-turn1-output.json": "8ce206404e1a683ebe818132bc2fbacf7cc1292776150535906fa16bee1f99ba",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep1-turn1-request.json": "fb77809d7cc52d04370660ced924694846f3b7408c938a5de6d4ad7a8fc91d76",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep1-turn2-output.json": "19cd2e84edea54f46ae2902811db40266d15ee84c5dc8606f45b5d5ccdc4316c",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/rep1-turn2-request.json": "11dc9b114ea1c03d21f13cf5ac532ca2493235dd5a505369321b39a606f90b6e",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/samples.jsonl": "b865ff8069abbf52113a533efbb382aeb027d55bde081b1a8bb41b5812656cd1",
+    "server/.local/article0162-20261003/halogen-v2-c65536-p32768-lookup-stockb/summary.json": "aed334f6114f9dd2ee17cc5036d66048883d3acfe695949deb80939fecafa5b2",
+    "server/.local/article0162-20261003/halogen-v2-c65536.json": "ecf8273e27fe98c0d3294648788c0d38df9bcceda19389a543c4b07748674236",
+    "server/.local/article0162-20261003/lookup-direct-placement-matrix-state-20261004.json": "4d43b1863e783a7e62e62a903cd54a872da410f8ac038af42335abbe93a151bb",
+    "server/.local/article0162-20261003/run_article.py": "2b25a4982b2bc760f8db081a0170842236b4f3b1a5fadbd4324c0dc678b47e25",
+    "server/.local/article0162-20261003/run_lookup_direct_placement_20261004.py": "086d6bd3800eb4a9ff4b838a510cb0410c8ee19198aceef4a4211d700101658a",
+    "server/.local/article0162-20261003/run_mmap_advice_20261004.py": "e046e552ae48876fe002fe81e82b070bb074610b25cc51767d97b78e17c08657",
+    "server/.local/article0162-20261003/tokenizer.json": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+    "server/.local/optimization9h-20261004/lookup-direct-process-diagnostic-263bf3b410474d07bfc03b59945bfada/extraction.receipt.json": "067f2f7c847ca9b358767bd8699176c1d94994f21335618abc7f9bf4bea78e4a",
+    "server/.local/upgrade0162/run_matrix.py": "12ca2f6a890a83415df398e1b867daf0cf0211e3a6275e67f628e92bf0841d58",
+    "server/Setup.ps1": "7a6125b3841611ad9f881fac679d0f8089342921792ab90b5144b350ac1d5816",
+    "server/Start.ps1": "ddf23aadb7c244dff2e30ee4c08ee8cfda50c4328a76663b37aeccac738d159a",
+    "server/check_updates.py": "0055af10d22cf37ef8e73e0bdf8524f091a535e491f95b67ebb7fba75bdcc0a8",
+    "server/controller.py": "989f7299e6dab41b5780dc92790c6ece584d5ec714bc6026b852f19f93537ba1",
+    "server/draft_profiles.py": "961b627659b723618c5041d2584400913ded3e7284011713fdd198051f5fc3a2",
+    "server/gateway.py": "3b4443b8d103dd0aad77061c04cac031abf75f3224a65f64b1e9fa0a5d834b95",
+    "server/gufo_serial_profile.py": "f26b06abc6be7c77bbcf8b574028ef62971ac087a2f84b28104f501251516c9f",
+    "server/host_frames.py": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+    "server/manage.py": "f941d72c6af273c4d180a63bb52401889fdfa2bdf93ca390f516873d6260ad54",
+    "server/owned_child.py": "6f75520f65c76941ec4306915929fd529ec7f46bd0fd20bd6f01f82afb749f10",
+    "server/winjob.py": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c"
+  }
+}

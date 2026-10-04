@@ -2,7 +2,10 @@
 
 The complete lookup table is extracted to E: with a canonical receipt and has
 passed independent full readback and ordinary lookup-source qualification.
-No SSD placement throughput or acceptance result is claimed yet.
+The completed matched placement comparison rejects E: against the second stock
+control: 38.49 versus 40.72 decode tok/s, with unchanged 83.8606% acceptance.
+The first stock cell is slower than both later cells; fixed run order and
+unflushed file caches prevent attributing that difference to placement.
 
 The root-owned process-observer diagnostic completed in 758.64 guest seconds.
 It copied 51,200,245,764 payload bytes from the existing pinned w4b checkpoint
@@ -84,7 +87,15 @@ two three-turn repetitions, stock A / candidate / stock B. Prepared state
 SHA-256 is `f573a5ef8215f100352aaedc32391408bdcb4affcda08a9231ac2fbd9d9645cb`;
 coordinator SHA-256 is
 `086d6bd3800eb4a9ff4b838a510cb0410c8ee19198aceef4a4211d700101658a`.
-The new matrix state has its own name. Root started it at 03:57 UTC; at 04:03
-UTC the first stock cell was serving its second repetition, with three of six
-request samples retained. The full stock A / candidate / stock B comparison is
-still running and has no qualified placement result yet.
+The new matrix state has its own name. Root started it at 03:57 UTC and finished
+at 04:20 UTC with eighteen completed requests and normal cleanup/recovery.
+E: measured 901.00 prefill / 38.49 decode / 114.18 normalized three-turn seconds;
+the second stock control measured 1033.54 / 40.72 / 104.32. Retrieval was 14/14
+and accepted/proposed drafts were 2094/2497 in every cell. Placement is not
+promoted; the retained timings belong to this 32K sampled workload, separate
+from the 8K greedy stock control.
+
+The [complete placement report](halogen0162-lookup-direct-results-20261004/README.md)
+retains both stock controls, per-request equivalence, cache/read timings,
+memory floors and artifact hashes. Every corresponding request, visible output
+and reasoning hash matches across these eighteen sampled requests.

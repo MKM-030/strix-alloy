@@ -42,7 +42,7 @@ Each cell is two three-turn conversations at temperature 1 / top-p .95 / top-k 2
 
 GUFO is quicker at 32K input; Halogen has the shorter conversation at larger inputs among completed results. Every completed cell retrieved all its exact values. The last table is 128K input in a 256K-capacity engine.
 
-Halogen used stock compute, MTP depth 2 / Exact cache; GUFO used proposal cap 3/full vocabulary/length policy, prefill 2048, without prompt lookup; PROJFIX used MTP-host depth 1 / `--cache-ram 0`. Initial requests were cold and follow-ups reused history in every completed cell.
+Halogen used stock compute and Exact cache. Its startup MTP depth was 2, but the sampled path proposes one token per round regardless of that setting; depth tuning applies to greedy requests. GUFO used proposal cap 3/full vocabulary/length policy, prefill 2048, without prompt lookup; PROJFIX used MTP-host depth 1 / `--cache-ram 0`. Initial requests were cold and follow-ups reused history in every completed cell. [Halogen sampled-depth evidence](https://github.com/MKM-030/strix-alloy/blob/main/docs/research/halogen-sampled-mtp-depth-20261004.md).
 
 GUFO hit the answer cap once at 128K/50% and once at 256K/50%; PROJFIX hit it three times at 64K/50%, once at 128K/50% and once in the partial 256K/50% run. Halogen had no cap hits. Truncated answers stay in the recorded data.
 
