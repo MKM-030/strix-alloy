@@ -76,3 +76,25 @@ The proposed matmul-plan trial above has since completed and was
 [rejected](../benchmarks/halogen0162-matmul-20261004.md). ADLX telemetry has
 [passed its read-only probe](halogen-adlx-20261004.md); all six queried tuning
 capabilities were unsupported. Neither result establishes a new speed gain.
+
+## Recheck at 13:23 UTC, 4 October
+
+The official main commit API still returns
+`7f31bbd4021f217a1be9776bdb7304bcf8eca62d` (`0.16.2`, committed
+2026-10-03 04:29:22 UTC). The Max+ 395 download page still lists Adrenalin
+26.9.2 Optional, dated September 29. Its release notes list GPU Driver Store
+`32.0.32015.2008` and NPU MCDM `32.00.20102.3930`; fresh local CIM reads
+match those versions. The current [Ryzen AI release notes](https://ryzenai.docs.amd.com/en/main/relnotes.html)
+remain at 1.8.0. No applicable update was identified or installed.
+
+The [requested Reddit comparison](https://www.reddit.com/r/LocalLLM/comments/1wu0m53/benchmarks_best_engine_for_qwen_38flashnext_on/)
+was checked again. Its three-turn column normalizes every turn to 1,000 output
+tokens; it is not observed wall time. Its numbers describe native Arch Linux
+at 70 W and different weights, not this Windows/WSL2 deployment. The current
+upstream README explicitly identifies on-demand lookup-table file reads as a
+cold-prompt cost. The native ext4 lookup trial tests that specific local cost;
+its completed stock/native/stock comparison now qualifies an initial-turn
+prefill gain of 28–32% versus the later stock control. It does not qualify
+a decode or complete three-turn wall gain. The original native recovery
+failure and separate late recovery remain explicit in the
+[measurement report](../benchmarks/halogen0162-native-lookup-20261004.md).
