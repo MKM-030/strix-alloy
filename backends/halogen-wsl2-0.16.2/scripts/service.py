@@ -22,6 +22,7 @@ import uuid
 
 import portable
 import kernel_controls as kc
+import matmul_tuning as mt
 from startup_monitor import StartupMonitor
 import runner as r
 import startup_guard as sg
@@ -46,6 +47,7 @@ def options(argv=None):
     p.add_argument('--prefill-keep-trunk',action='store_true')
     p.add_argument('--admit-ticks',type=int,default=None)
     p.add_argument('--kernel-controls-json',type=kc.parse,default=None)
+    p.add_argument('--matmul-tuning-json',type=mt.parse,default=None)
     p.add_argument('--context-size',type=int,default=DEFAULT_CONTEXT)
     p.add_argument('--serve-seconds',type=int,default=0,help='0 means until explicitly stopped')
     p.add_argument('--startup-timeout',type=int,default=900)
@@ -61,6 +63,10 @@ def options(argv=None):
 
 def validate_options(o):
     kc.validate(getattr(o, 'kernel_controls_json', None) or {})
+    if getattr(o, 'matmul_tuning_json', None) is not None:
+        mt.validate(o.matmul_tuning_json)
+        if getattr(o, 'checkpoint', 'w4b') != 'v2':
+            raise ValueError('Matmul tuning experiment is limited to the pinned v2 checkpoint')
     if getattr(o,"prefill_chunk",None) is not None and o.prefill_chunk>o.context_size:
         raise ValueError("Prefill chunk exceeds context capacity")
     if getattr(o,'prefill_keep_trunk',False) and getattr(o,'checkpoint','w4b') != 'v2':
@@ -158,6 +164,13 @@ def http(path, secret, body=None, timeout=5):
         return json.loads(raw)
 
 
+def native_logs(cid):
+    # Docker preserves the engine's stderr stream, which contains tuning notices.
+    return subprocess.run(r.WSL+['docker','logs',cid], stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,text=True,encoding='utf-8',errors='replace',check=True,
+        timeout=15,creationflags=NO_WINDOW).stdout
+
+
 def verify_checkpoint(machine, checkpoint):
     if checkpoint=='w4b': return
     if checkpoint!='v2': raise ValueError('Unknown checkpoint')
@@ -220,6 +233,7 @@ def source_hashes():
 
 def build_manifest(o, attempt, run_id):
     checkpoint=getattr(o,'checkpoint','w4b')
+    tuning=mt.receipt(getattr(o,'matmul_tuning_json',None))
     base=r.manifest_for('serve')
     mounts=dict(r.FIXED_MOUNTS)
     for role,item in base['artifacts'].items():
@@ -233,10 +247,16 @@ def build_manifest(o, attempt, run_id):
                    '/service-state':r.linux_path(attempt)})
     if checkpoint=='v2':
         mounts['/candidate/libhalogen0162-v2-preflight.so']=r.linux_path(LOCAL/'libhalogen0162-v2-preflight.so')
-    return dict(schema=1,version='0.16.2',image=r.IMAGE,run_id=run_id,checkpoint=checkpoint,
+    if tuning and tuning['mode']=='frozen':
+        mounts[mt.FROZEN_PATH]=r.linux_path(tuning['source'])
+    result=dict(schema=1,version='0.16.2',image=r.IMAGE,run_id=run_id,checkpoint=checkpoint,
         context=o.context_size,slots=1,serve_seconds=o.serve_seconds,startup_timeout=o.startup_timeout,
         mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None)),sources=source_hashes(),
         entrypoint_sha256=portable.digest(attempt/'entrypoint-service.sh'))
+    if tuning:
+        result['environment'].update(mt.environment(o.matmul_tuning_json))
+        result['matmul_tuning']=tuning
+    return result
 
 
 def command(m):
@@ -500,6 +520,7 @@ def serve(o):
         r.exclusive_host(); baseline=host.frame(); check_admission(baseline,o.context_size,getattr(o,"checkpoint","w4b"))
         atomic(attempt/'admission-start.json',baseline)
         if cancelled(): raise InterruptedError('Startup cancelled')
+        mt.revalidate_receipt(m.get('matmul_tuning'))
         r.docker('start',cid)
         cache_worker=StartupMonitor(r.WSL,cid,attempt,run_id,o.startup_timeout,atomic,
             logger(attempt/'startup-cache.jsonl',raw=True))
@@ -522,6 +543,8 @@ def serve(o):
                 cache_worker.stop(); cache_stopped=True
                 log.info('Startup-cache worker stopped before inference; client cache is retained')
                 atomic(attempt/'health.json',health)
+                if (m.get('matmul_tuning') or {}).get('mode') == 'frozen':
+                    mt.revalidate_receipt(m['matmul_tuning'], native_logs(cid))
                 # Negative auth probe: an endpoint is not authenticated merely because valid requests work.
                 try: http('/v1/models','incorrect-token')
                 except urllib.error.HTTPError as exc:
@@ -536,6 +559,8 @@ def serve(o):
                     answer=response['choices'][0]['message']['content'].strip().strip('.!').casefold()
                     if answer!=expected: raise ValueError('Incorrect startup answer: '+label)
                     atomic(attempt/(label+'.json'),{'answer':answer,'correct':True})
+                if (m.get('matmul_tuning') or {}).get('mode') == 'frozen':
+                    mt.revalidate_receipt(m['matmul_tuning'], native_logs(cid))
                 r.validate_sample(r.sample(cid,attempt,'ready',9997),cid)
                 ready=True; break
             if time.monotonic()-last_note>=20:

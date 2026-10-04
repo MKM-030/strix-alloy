@@ -145,6 +145,22 @@ def halogen_kernel_arguments(engine, directory):
     return ['-KernelControlsJson',json.dumps(controls,sort_keys=True,separators=(',',':'))]
 
 
+def halogen_matmul_arguments(engine, directory):
+    if 'matmul_tuning' not in engine: return []
+    source=directory/'scripts/matmul_tuning.py'
+    if source.is_symlink() or not source.is_file():
+        raise ValueError('Selected backend has no managed matmul-plan support')
+    if not re.search(r'\[string\]\s*\$MatmulTuningJson\b', (directory/'Start.ps1').read_text(encoding='utf-8-sig'), re.I):
+        raise ValueError('Selected launcher has no managed matmul-plan support')
+    if engine.get('checkpoint')!='v2':
+        raise ValueError('Matmul tuning experiment requires the pinned v2 checkpoint')
+    spec=importlib.util.spec_from_file_location('alloy_halogen_matmul_tuning',source)
+    module=importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    config=module.validate(engine['matmul_tuning'])
+    return ['-MatmulTuningJson',json.dumps(config,sort_keys=True,separators=(',',':'))]
+
+
 def validate_engine(engine, repo):
     if engine.get('kind')=='halogen':
         halogen_draft_arguments(engine)
@@ -158,9 +174,12 @@ def validate_engine(engine, repo):
         if not (directory/'Start.ps1').is_file(): raise ValueError('Backend launcher missing')
         validate_halogen_launcher_controls(engine,repo)
         halogen_kernel_arguments(engine,directory)
+        halogen_matmul_arguments(engine,directory)
         return directory
     if 'kernel_controls' in engine:
         raise ValueError('Managed kernel controls apply only to Halogen')
+    if 'matmul_tuning' in engine:
+        raise ValueError('Managed matmul plans apply only to Halogen')
     if engine.get('kind')!='native' or engine.get('qualified') is not True:
         raise ValueError('Native backend requires an explicitly qualified local profile')
     executable=Path(engine['command'][0])
@@ -208,6 +227,7 @@ class Engine:
                      '-PromptCache',self.config.get('prompt_cache','Off')]
             command+=halogen_draft_arguments(self.config)
             command+=halogen_kernel_arguments(self.config,self.directory)
+            command+=halogen_matmul_arguments(self.config,self.directory)
         else:
             command=list(self.config['command'])
             if self.config.get('api_key_from_backend_token'):

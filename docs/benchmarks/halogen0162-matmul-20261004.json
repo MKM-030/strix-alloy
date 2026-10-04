@@ -1,0 +1,513 @@
+{
+  "schema": 1,
+  "date": "2026-10-04",
+  "status": "rejected; stock defaults retained",
+  "input_tokens": 8192,
+  "capacity": 262144,
+  "temperature": 0,
+  "thinking": false,
+  "cache": "Off",
+  "mtp_depth": 2,
+  "recorded_requests": 12,
+  "measured_requests": 9,
+  "warmups_per_cell": 1,
+  "baseline_rows": [
+    {
+      "size": 8192,
+      "output": 1,
+      "drafter": "serial",
+      "n": 3,
+      "pp_mean": 1731.3125345422116,
+      "decode_mean": null,
+      "pp_stdev": 3.912819812525871,
+      "decode_stdev": null,
+      "acceptance": null
+    },
+    {
+      "size": 8192,
+      "output": 128,
+      "drafter": "mtp",
+      "n": 3,
+      "pp_mean": 1646.9539743820844,
+      "decode_mean": 46.591108249617356,
+      "pp_stdev": 5.862347662416222,
+      "decode_stdev": 0.07663539076584736,
+      "acceptance": 0.6
+    },
+    {
+      "size": 8192,
+      "output": 128,
+      "drafter": "serial",
+      "n": 3,
+      "pp_mean": 1692.6098995696211,
+      "decode_mean": 35.78121254973927,
+      "pp_stdev": 32.232785411954225,
+      "decode_stdev": 0.41915691771926417,
+      "acceptance": null
+    }
+  ],
+  "frozen_rows": [
+    {
+      "size": 8192,
+      "output": 1,
+      "drafter": "serial",
+      "n": 3,
+      "pp_mean": 1716.6209164442637,
+      "decode_mean": null,
+      "pp_stdev": 18.107283043559825,
+      "decode_stdev": null,
+      "acceptance": null
+    },
+    {
+      "size": 8192,
+      "output": 128,
+      "drafter": "mtp",
+      "n": 3,
+      "pp_mean": 1645.5268631890187,
+      "decode_mean": 44.47545577805928,
+      "pp_stdev": 20.40033440279557,
+      "decode_stdev": 0.44150834591799015,
+      "acceptance": 0.55
+    },
+    {
+      "size": 8192,
+      "output": 128,
+      "drafter": "serial",
+      "n": 3,
+      "pp_mean": 1701.014374315285,
+      "decode_mean": 35.260430909243595,
+      "pp_stdev": 5.822027695348564,
+      "decode_stdev": 0.6021244983215841,
+      "acceptance": null
+    }
+  ],
+  "comparison": {
+    "identity_mismatches": [],
+    "within_run_hash_parity": {
+      "control": true,
+      "candidate": true
+    },
+    "passed": false,
+    "matched_case_comparisons": [
+      {
+        "size": 8192,
+        "output": 1,
+        "mode": "serial",
+        "drift": {
+          "prompt_sha256": [],
+          "output_sha256": [],
+          "request_sha256": []
+        },
+        "pp_tps": {
+          "control": {
+            "n": 3,
+            "mean": 1731.3125345422116,
+            "stdev": 3.912819812525871,
+            "minimum": 1729.0173198332084,
+            "maximum": 1735.8304758512313,
+            "cv_percent": 0.22600308924353088,
+            "ordered_first_to_last_percent": 0.0041924455097097635
+          },
+          "candidate": {
+            "n": 3,
+            "mean": 1716.6209164442637,
+            "stdev": 18.107283043559825,
+            "minimum": 1695.7195759066094,
+            "maximum": 1727.5450547862933,
+            "cv_percent": 1.0548212986398005,
+            "ordered_first_to_last_percent": -1.8422372714106072
+          },
+          "descriptive_bootstrap_95_percent": [
+            -1.9299305265872868,
+            -0.10480217798983782
+          ],
+          "bootstrap_metric": "rate_gain",
+          "throughput_gain_percent": -0.8485826680526221
+        },
+        "wall_seconds": {
+          "control": {
+            "n": 3,
+            "mean": 4.755304866664422,
+            "stdev": 0.010117970488020276,
+            "minimum": 4.743652900040615,
+            "maximum": 4.761870499991346,
+            "cv_percent": 0.21277227794476744,
+            "ordered_first_to_last_percent": -0.031065524147377843
+          },
+          "candidate": {
+            "n": 3,
+            "mean": 4.810374166680655,
+            "stdev": 0.07475241559204714,
+            "minimum": 4.766157600039151,
+            "maximum": 4.89668210002128,
+            "cv_percent": 1.5539833909350382,
+            "ordered_first_to_last_percent": 2.7385686948551147
+          },
+          "descriptive_bootstrap_95_percent": [
+            -2.783331596294225,
+            -0.1151406403828048
+          ],
+          "bootstrap_metric": "inverse_wall_speed_gain",
+          "wall_reduction_percent": -1.158060346504386,
+          "wall_speed_gain_percent": -1.1448028387827769
+        }
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "mode": "mtp",
+        "drift": {
+          "prompt_sha256": [],
+          "output_sha256": [
+            1,
+            2,
+            3
+          ],
+          "request_sha256": []
+        },
+        "pp_tps": {
+          "control": {
+            "n": 3,
+            "mean": 1646.9539743820844,
+            "stdev": 5.862347662416222,
+            "minimum": 1641.801889386822,
+            "maximum": 1653.3325338443367,
+            "cv_percent": 0.35595091020170727,
+            "ordered_first_to_last_percent": -0.23853344666568965
+          },
+          "candidate": {
+            "n": 3,
+            "mean": 1645.5268631890187,
+            "stdev": 20.40033440279557,
+            "minimum": 1628.9246542408428,
+            "maximum": 1668.300308084639,
+            "cv_percent": 1.2397448415554804,
+            "ordered_first_to_last_percent": -0.6362849419246364
+          },
+          "descriptive_bootstrap_95_percent": [
+            -1.1143630301345353,
+            1.2156920832293139
+          ],
+          "bootstrap_metric": "rate_gain",
+          "throughput_gain_percent": -0.08665155282199244
+        },
+        "decode_tps": {
+          "control": {
+            "n": 3,
+            "mean": 46.591108249617356,
+            "stdev": 0.07663539076584736,
+            "minimum": 46.509434259328955,
+            "maximum": 46.661441051253526,
+            "cv_percent": 0.1644850136538161,
+            "ordered_first_to_last_percent": 0.12658479048848204
+          },
+          "candidate": {
+            "n": 3,
+            "mean": 44.47545577805928,
+            "stdev": 0.44150834591799015,
+            "minimum": 44.18112470554507,
+            "maximum": 44.98311616078401,
+            "cv_percent": 0.9927011161418968,
+            "ordered_first_to_last_percent": 0.18334019978787364
+          },
+          "descriptive_bootstrap_95_percent": [
+            -5.217751197330644,
+            -3.492016728699965
+          ],
+          "bootstrap_metric": "rate_gain",
+          "throughput_gain_percent": -4.540893211260877
+        },
+        "wall_seconds": {
+          "control": {
+            "n": 3,
+            "mean": 7.743897666669606,
+            "stdev": 0.014588595209054239,
+            "minimum": 7.727611100010108,
+            "maximum": 7.755767599970568,
+            "cv_percent": 0.1883882747036391,
+            "ordered_first_to_last_percent": 0.09619253496724323
+          },
+          "candidate": {
+            "n": 3,
+            "mean": 7.879583133326378,
+            "stdev": 0.08890919146083441,
+            "minimum": 7.778245199995581,
+            "maximum": 7.944493299990427,
+            "cv_percent": 1.128348923495668,
+            "ordered_first_to_last_percent": 0.3598074883566227
+          },
+          "descriptive_bootstrap_95_percent": [
+            -2.526616522124303,
+            -0.47352539927821846
+          ],
+          "bootstrap_metric": "inverse_wall_speed_gain",
+          "wall_reduction_percent": -1.7521598618325473,
+          "wall_speed_gain_percent": -1.7219878813499068
+        }
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "mode": "serial",
+        "drift": {
+          "prompt_sha256": [],
+          "output_sha256": [
+            1,
+            2,
+            3
+          ],
+          "request_sha256": []
+        },
+        "pp_tps": {
+          "control": {
+            "n": 3,
+            "mean": 1692.6098995696211,
+            "stdev": 32.232785411954225,
+            "minimum": 1655.5045820370294,
+            "maximum": 1713.6822832251162,
+            "cv_percent": 1.9043245239289948,
+            "ordered_first_to_last_percent": -0.2940714173058079
+          },
+          "candidate": {
+            "n": 3,
+            "mean": 1701.014374315285,
+            "stdev": 5.822027695348564,
+            "minimum": 1695.403578407392,
+            "maximum": 1707.0268322071472,
+            "cv_percent": 0.34226798922214424,
+            "ordered_first_to_last_percent": -0.37574804067593837
+          },
+          "descriptive_bootstrap_95_percent": [
+            -0.8681360301728613,
+            2.6441131470474666
+          ],
+          "bootstrap_metric": "rate_gain",
+          "throughput_gain_percent": 0.4965393826303899
+        },
+        "decode_tps": {
+          "control": {
+            "n": 3,
+            "mean": 35.78121254973927,
+            "stdev": 0.41915691771926417,
+            "minimum": 35.426866420507174,
+            "maximum": 36.24390555620805,
+            "cv_percent": 1.1714441402358748,
+            "ordered_first_to_last_percent": 2.306269840529618
+          },
+          "candidate": {
+            "n": 3,
+            "mean": 35.260430909243595,
+            "stdev": 0.6021244983215841,
+            "minimum": 34.56909578961247,
+            "maximum": 35.67009632646455,
+            "cv_percent": 1.707649290706019,
+            "ordered_first_to_last_percent": -2.7376120299492435
+          },
+          "descriptive_bootstrap_95_percent": [
+            -3.387578770400379,
+            0.22261443371767164
+          ],
+          "bootstrap_metric": "rate_gain",
+          "throughput_gain_percent": -1.4554611299763542
+        },
+        "wall_seconds": {
+          "control": {
+            "n": 3,
+            "mean": 8.441408866667189,
+            "stdev": 0.10607367644729973,
+            "minimum": 8.349718999990728,
+            "maximum": 8.557584099995438,
+            "cv_percent": 1.2565873555320324,
+            "ordered_first_to_last_percent": -0.7984449427935192
+          },
+          "candidate": {
+            "n": 3,
+            "mean": 8.470668833334154,
+            "stdev": 0.06365649547103103,
+            "minimum": 8.425006000034045,
+            "maximum": 8.543383400014136,
+            "cv_percent": 0.7514931432631051,
+            "ordered_first_to_last_percent": 1.4050719961459013
+          },
+          "descriptive_bootstrap_95_percent": [
+            -1.6216849758611929,
+            1.0260732460611877
+          ],
+          "bootstrap_metric": "inverse_wall_speed_gain",
+          "wall_reduction_percent": -0.3466242084600779,
+          "wall_speed_gain_percent": -0.34542687528781313
+        }
+      }
+    ],
+    "uncertainty_scope": "Descriptive independent bootstrap, 4096 fixed-seed resamples; n=3 is small. Sequential runs confound treatment with time; no temperature or power telemetry, so no thermal-causation claim."
+  },
+  "historic_comparison": {
+    "scope": "Same requested cold subset versus historic stock; sequential time is not isolated",
+    "hash_drift": {
+      "prompt_sha256": [],
+      "request_sha256": [],
+      "output_sha256": [
+        [
+          8192,
+          128,
+          "mtp",
+          0
+        ],
+        [
+          8192,
+          128,
+          "serial",
+          0
+        ],
+        [
+          8192,
+          128,
+          "serial",
+          1
+        ],
+        [
+          8192,
+          128,
+          "mtp",
+          1
+        ],
+        [
+          8192,
+          128,
+          "mtp",
+          2
+        ],
+        [
+          8192,
+          128,
+          "serial",
+          2
+        ],
+        [
+          8192,
+          128,
+          "serial",
+          3
+        ],
+        [
+          8192,
+          128,
+          "mtp",
+          3
+        ]
+      ]
+    },
+    "all_corresponding_hashes_match": false
+  },
+  "profile_difference": "engine.matmul_tuning only; frozen ALGOS=1 and read-only trained plan",
+  "plan": {
+    "sha256": "9dcfe4789a8a45ed3717f62ce221521606fec5d271f9d648940bf36a42a06d3b",
+    "size_bytes": 1460,
+    "header": {
+      "magic": "HGNTUNE3",
+      "bucket_count": 22,
+      "hipblaslt_version": 100401,
+      "wgp_count": 20,
+      "architecture": "gfx1151"
+    },
+    "readonly_metadata": true,
+    "identity_revalidated_after_shutdown": true,
+    "native_refusal_lines": [],
+    "mounted_container_path": "/candidate/frozen-matmul.plan"
+  },
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+  "sources": {
+    "scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+    "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+    "scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+    "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+    "scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+    "scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+    "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+    "scripts\\kernel_controls.py": "45e63bd2d5eed78f721a0a74facf8918e17f3ec0cec2affa0793c9127c2f0534",
+    "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+    "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+    "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+    "scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+    "scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+    "scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+    "scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+    "scripts\\service.py": "b5f9769d0e0f7f4d7543fc97d153ebc2d9c6b1247154394f6f639bad5a0d96a3",
+    "scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+    "scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+    "scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+    "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+    "patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+    "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+    "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+    "patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+    "patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+    "profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+    "profiles\\sources.json": "480d2147735a44f9fa2b57152da742e79cb3d50a5f8433cdf4f528f4bd090bed"
+  },
+  "lifecycle": {
+    "passed": true,
+    "error": null,
+    "cleanup_proven": true,
+    "source_seal_unchanged": true,
+    "finished_at": 1791073604.8213139,
+    "parent_mutable_reads": {
+      "c:\\projects\\strix-alloy-clean\\server\\.local\\current.json": {
+        "reads": 220,
+        "retries": 0,
+        "failures": 0
+      },
+      "c:\\projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\current-service.json": {
+        "reads": 218,
+        "retries": 0,
+        "failures": 0
+      }
+    }
+  },
+  "minimum_available_gib": 21.440906524658203,
+  "retained_request_memory_minimum": {
+    "available_bytes": 23198408704,
+    "commit_headroom_bytes": 121549975552
+  },
+  "training": {
+    "throughput_qualified": false,
+    "original_result": {
+      "passed": false,
+      "error": "RuntimeError: Owned idle runtime identity changed",
+      "cleanup_proven": true,
+      "source_seal_unchanged": true,
+      "finished_at": 1791073070.4349256,
+      "parent_mutable_reads": {
+        "c:\\projects\\strix-alloy-clean\\server\\.local\\current.json": {
+          "reads": 211,
+          "retries": 1,
+          "failures": 0
+        },
+        "c:\\projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\current-service.json": {
+          "reads": 209,
+          "retries": 0,
+          "failures": 0
+        }
+      }
+    },
+    "note": "All 12 training requests completed, plan wrote 22 buckets, shutdown/recovery passed. The coordinator rejected an asynchronous active_requests=1 snapshot after client exit. Its bounded outside-timing idle retry was corrected before the frozen run; original failure is retained."
+  },
+  "no_stock_bookend": true,
+  "qualification": "Output parity failed and rates/acceptance showed no useful gain; no broader promotion gate was run. Sequential timings do not isolate causation. Training times are not benchmark results.",
+  "raw_artifact_hashes": {
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/result.json": "ca84cccf7f22b4ffad1c1a567177e690650e86a2a9f8e062db711b72d1ff0e13",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/plan.json": "82f0e6f46fcf6470fa997d95834645ec28e3a2e38751495106107ad2cb089a7a",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/identity.json": "4c0873dae8db0823706e17c360f8d04f7497c87d4f6b73ad6de55edc59297244",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/backend-manifest.json": "7a9719251e3bfb9f376c57a7932577089624556ed3488feaec5dae7e54584c2b",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/terminal.json": "651445f14efbdc3dab59599b3c1bec0334ffa4504aa9e8eac59cefd0bc4a6d3d",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/historic-comparison.json": "0e6ddda9f1d10ead83e8dddaa946c1b2e45ca0c9dd155addd06a3b08820b3731",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/cold-analysis.json": "a7fdcec525ba921dbf5529b21bfb057cce8e06d1be6fbcf6ca29e2214973d3b0",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/cold/identity.json": "a4f7b0ce5ac69b1f344fb6a092fbd166b79807169def3233c17fcce2a3543a53",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/cold/summary.json": "37f2d7b85b7cd25a62cedc478b79e55e5384f74fa604d26ff59d65ec81a55a14",
+    "server/.local/optimization9h-20261004/matmul-frozen8k-a/cold/samples.jsonl": "992dfbd965b12968287cb768d0316dad5b9aab147996f52c243d68220aadd15c",
+    "server/.local/optimization9h-20261004/matmul-train8k-a/result.json": "eb43431fc1438f2711a9bcfd0255a627184448f22d6e5b7863389e63c78bc4e1",
+    "server/.local/optimization9h-20261004/matmul-train8k-a/training-diagnostic.json": "2686306a5895ded95ee1e75d4d816b27e169cc4cbca5fb14d01f44a39d475f47",
+    "server/.local/optimization9h-20261004/matmul-trained-plan.json": "0f9958305ff57c24c619e3ad5c19af24ce9d82e982191a9d81220871fa942d0d",
+    "backends/halogen-wsl2-0.16.2/.local/services/470817bf9518407bbc483fd2e070560d/engine.log": "29869114067d30d40089dc098e7983f82be103584f0121b05ea6ae4e10f7c9eb"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "date": "2026-10-04",
+  "status": "active nine-hour optimization; stock baseline reproduced; matmul candidate and NPU parameter probe rejected",
+  "work_deadline_utc": "2026-10-04T08:39:15Z",
+  "source_commit_at_baseline": "d950029",
+  "baseline": {
+    "input_tokens": 8192,
+    "capacity": 262144,
+    "temperature": 0,
+    "thinking": false,
+    "cache": "Off",
+    "mtp_depth": 2,
+    "measured_repetitions": 3,
+    "excluded_warmups_per_cell": 1,
+    "measured_requests": 9,
+    "recorded_requests": 12,
+    "completed": true,
+    "promoted": false,
+    "phase_rows": [
+      {
+        "size": 8192,
+        "output": 1,
+        "drafter": "serial",
+        "n": 3,
+        "pp_mean": 1731.3125345422116,
+        "decode_mean": null,
+        "pp_stdev": 3.912819812525871,
+        "decode_stdev": null,
+        "acceptance": null
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "drafter": "mtp",
+        "n": 3,
+        "pp_mean": 1646.9539743820844,
+        "decode_mean": 46.591108249617356,
+        "pp_stdev": 5.862347662416222,
+        "decode_stdev": 0.07663539076584736,
+        "acceptance": 0.6
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "drafter": "serial",
+        "n": 3,
+        "pp_mean": 1692.6098995696211,
+        "decode_mean": 35.78121254973927,
+        "pp_stdev": 32.232785411954225,
+        "decode_stdev": 0.41915691771926417,
+        "acceptance": null
+      }
+    ],
+    "all_12_historic_prompt_request_output_hashes_match": true,
+    "historic_client_sha256": "ca968c1b7140f556baa3f63e7ac5885852cdf83b9c176149509a3e703553332f",
+    "current_client_sha256": "fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d",
+    "client_change": "Committed 2bb5642 replaces mutable state reads with bounded retries outside per-request wall; request construction and measurement remain unchanged",
+    "hash_parity_passed": true,
+    "cleanup_proven": true,
+    "recovery_proven": true,
+    "source_seal_unchanged": true,
+    "minimum_available_gib": 21.617778778076172,
+    "minimum_commit_headroom_gib": 111.72870254516602,
+    "raw_artifact_hashes": {
+      "result.json": "05141cc8c1d2f42ea6b3cbbb55925b27abc455601dce5440ab3756b4ed173fbf",
+      "cold/identity.json": "44c441627f7610547699e159722148ef2097391b4c0182981561680b5f1223d4",
+      "cold/summary.json": "639a991f01cb9cb288eb35ac52d4365dc39914e72647c07e11956c7a81fc5ac3",
+      "cold/samples.jsonl": "bffb2c6ce523d07357ebe4195557c672cec5db72acb0ff6d5ab435e679b804e5",
+      "cold-analysis.json": "307f69b0aae6f6b201bc5818df9570d967b28ba50c19751b21174de94ba43136",
+      "historic-comparison.json": "1ce17aff0719553e1a86e49a38125acb9a8ccbcc72c34a04f9f84d5394548dbc",
+      "plan.json": "23e9c960bc444f944955374c788d6524644daf0c5fcca9c2d2abad4df9f7c847",
+      "terminal.json": "8b482ac1e20ff77399867bd9b0e36eb04b0f1dd774508bb0b500bf0439a9e961",
+      "backend-manifest.json": "d6d091b712c8769843921f1be49dade66cfac6128b6968b96155049a3efc3eac"
+    }
+  },
+  "pending_experiments": [
+    "mmap lookup access-advice ablation (stock/advice-off/stock)",
+    "full live Halogen NPU MTP integration: unavailable qualified tensor/state ABI"
+  ],
+  "qualifications": "No new speed or acceptance improvement promoted. NPU partial graph is not full MTP.",
+  "completed_experiments": [
+    {
+      "name": "persistent machine-specific matmul plan",
+      "promoted": false,
+      "report": "halogen0162-matmul-20261004.json",
+      "frozen_prefill_tps": 1716.6209164442637,
+      "frozen_decode_tps": 44.47545577805928,
+      "frozen_acceptance": 0.55,
+      "reason": "Changed deterministic decode outputs; no useful gain."
+    },
+    {
+      "name": "tiny NPU variable-matrix support probe",
+      "promoted": false,
+      "report": "../research/halogen-npu-parameter-probe-20261004.md",
+      "reason": "Numerical gate failed:21/64 values outside rtol0.03/atol0.003; no qualified NPU throughput."
+    }
+  ]
+}

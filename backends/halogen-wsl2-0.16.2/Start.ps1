@@ -8,7 +8,7 @@ param(
     [ValidateRange(1,3)][int]$DraftTokens,
     [ValidateSet(2048,4096,8192,16384,32768)][int]$PrefillChunk,
     [switch]$PrefillKeepTrunk, [ValidateRange(1,1024)][int]$AdmitTicks,
-    [string]$KernelControlsJson,
+    [string]$KernelControlsJson, [string]$MatmulTuningJson,
     [ValidateRange(0,604800)][int]$ServeSeconds=0,
     [ValidateRange(120,3600)][int]$StartupTimeoutSeconds=900,
     [switch]$PrintOnly, [switch]$Stop, [switch]$Status, [switch]$Logs
@@ -21,7 +21,7 @@ if ($Logs) {
     exit 0
 }
 if ($Profile -ne 'Serve') {
-    if ($PSBoundParameters.ContainsKey('KernelControlsJson') -or $PSBoundParameters.ContainsKey('PrefillChunk') -or $PrefillKeepTrunk -or $PSBoundParameters.ContainsKey('AdmitTicks') -or $PSBoundParameters.ContainsKey('DraftTokens') -or $PromptCache -ne 'Off' -or $Checkpoint -ne 'w4b' -or $PSBoundParameters.ContainsKey('PromptCache') -or $Stop -or $Status -or $PSBoundParameters.ContainsKey('ContextSize')) {
+    if ($PSBoundParameters.ContainsKey('MatmulTuningJson') -or $PSBoundParameters.ContainsKey('KernelControlsJson') -or $PSBoundParameters.ContainsKey('PrefillChunk') -or $PrefillKeepTrunk -or $PSBoundParameters.ContainsKey('AdmitTicks') -or $PSBoundParameters.ContainsKey('DraftTokens') -or $PromptCache -ne 'Off' -or $Checkpoint -ne 'w4b' -or $PSBoundParameters.ContainsKey('PromptCache') -or $Stop -or $Status -or $PSBoundParameters.ContainsKey('ContextSize')) {
         throw 'Legacy 4K qualification profiles do not accept service controls or ContextSize.'
     }
     $duration=if($PSBoundParameters.ContainsKey('ServeSeconds')){$ServeSeconds}else{300}
@@ -34,6 +34,7 @@ if ($Profile -ne 'Serve') {
     if($PrefillKeepTrunk){$arguments+='--prefill-keep-trunk'}
     if($PSBoundParameters.ContainsKey('AdmitTicks')){$arguments+=@('--admit-ticks',"$AdmitTicks")}
     if($PSBoundParameters.ContainsKey('KernelControlsJson')){$arguments+=@('--kernel-controls-json',$KernelControlsJson)}
+    if($PSBoundParameters.ContainsKey('MatmulTuningJson')){$arguments+=@('--matmul-tuning-json',$MatmulTuningJson)}
     if($Stop){$arguments+='--stop'}
     if($Status){$arguments+='--status'}
 }

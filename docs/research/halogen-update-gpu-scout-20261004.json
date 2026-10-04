@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "checked_at_utc": "2026-10-03T23:49:30Z",
+  "kind": "read_only_research_no_inference",
+  "upstream": {
+    "head": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "head_date_utc": "2026-10-03T04:29:22Z",
+    "latest_tag": "v0.16.2",
+    "newer_engine_found": false,
+    "commit_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits/main",
+    "tags_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/tags?per_page=5"
+  },
+  "installed_inventory": {
+    "manufacturer": "BOSGAME LIMITED",
+    "model": "BeyondMax Series",
+    "bios_version": "3.10",
+    "gpu_name": "AMD Radeon(TM) 8060S Graphics",
+    "gpu_driver_version": "32.0.32015.2008",
+    "gpu_driver_date_local": "2026-09-28T02:00:00+02:00",
+    "npu_name": "NPU Compute Accelerator Device",
+    "npu_driver_version": "32.0.20102.3930",
+    "npu_driver_date_local": "2026-07-05T02:00:00+02:00",
+    "active_power_scheme": "REV:N Performance",
+    "installed_power_scheme_names": ["Balanced", "REV:N Performance"],
+    "amdadlx64_file_version": "1.5.0.124",
+    "atiadlxx_file_version": "7.26.20.1616",
+    "methods": ["Get-CimInstance selected fields", "AMD CN DriverVersion registry field", "powercfg /getactivescheme", "powercfg /list", "DLL version metadata"]
+  },
+  "official_driver_channel": {
+    "newest_package": "Adrenalin 26.9.2 WHQL Optional",
+    "release_date": "2026-09-29",
+    "recommended_package": "Adrenalin 26.8.1",
+    "gpu_driver_store_version": "32.0.32015.2008",
+    "npu_mcdm_version": "32.00.20102.3930",
+    "npu_release_note_date": "2026-05-07",
+    "both_installed_versions_match": true,
+    "date_discrepancy_preserved": true,
+    "url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html"
+  },
+  "static_plan_audit": {
+    "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+    "engine_bytes": 26052768,
+    "reader_rva": "0x18c4560",
+    "writer_rva": "0x18c4b50",
+    "algorithm_getter_rva": "0x18c6220",
+    "timing_routine_rva": "0x18c6290",
+    "magic_ascii": "HGNTUNE3",
+    "header_bytes": 52,
+    "record_bytes": 64,
+    "header_fields": {
+      "bucket_count_u32_offset": 8,
+      "hipblaslt_version_i32_offset": 12,
+      "wgp_count_i32_offset": 16,
+      "arch_ascii_offset": 20,
+      "arch_ascii_bytes": 32
+    },
+    "normal_workspace_bytes": 134217728,
+    "training_requested_candidates": 8,
+    "warmup_gemms_per_valid_candidate": 2,
+    "timed_gemms_per_valid_candidate": 4,
+    "incremental_peak_memory_measured": false,
+    "training_latency_measured": false,
+    "native_arch_or_library_mismatch": "ignore_and_regenerate",
+    "native_wgp_mismatch": "warn_and_load",
+    "wrapper_recommended_algorithm_values": [1, 8],
+    "plan_trial_status": "proposed_unmeasured_unqualified"
+  },
+  "candidates": [
+    {
+      "name": "persisted_machine_workload_matmul_plan",
+      "priority": 1,
+      "training": {"HALOGEN_MATMUL_ALGOS": "8", "HALOGEN_MATMUL_TUNING_FILE": "/tmp/halogen-local.plan"},
+      "frozen": {"HALOGEN_MATMUL_ALGOS": "1", "HALOGEN_MATMUL_TUNING_FILE": "fixed_read_only_sealed_path"},
+      "requires_wrapper_implementation": true,
+      "changes_numerical_accumulation": true,
+      "qualified_gain": null
+    },
+    {
+      "name": "adaptive_speculation_on_off",
+      "priority": 2,
+      "documented_default": "32,0.35,64",
+      "documented_disabled": "0",
+      "only_if_low_acceptance_windows_observed": true,
+      "requires_wrapper_implementation": true,
+      "qualified_gain": null
+    },
+    {
+      "name": "read_only_adlx_telemetry",
+      "priority": 3,
+      "library_present": true,
+      "device_metrics_supported": null,
+      "collection_overhead_measured": false
+    }
+  ],
+  "actions_performed": {
+    "engine_launches": 0,
+    "model_runs": 0,
+    "gpu_or_npu_hardware_tests": 0,
+    "driver_installs": 0,
+    "firmware_changes": 0,
+    "power_scheme_changes": 0,
+    "broad_tests": 0
+  }
+}
