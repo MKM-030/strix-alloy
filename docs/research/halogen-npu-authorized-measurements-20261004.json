@@ -1,0 +1,1703 @@
+{
+  "schema": "halogen.authorized-npu-measurements.v1",
+  "timestamp_utc": "2026-10-04T21:24:38.236403+00:00",
+  "npu_integrated": false,
+  "full_goal_completed": false,
+  "current_regular_mtp": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\colleague-mtp-measurement-83c7b2c6c4ef48498104fe40b2a1cbae\\result.json",
+    "sha256": "985f50f8b20307912c15b48380ddd59aafbbb62d09b35a5d4e239209dc51a455",
+    "value": {
+      "passed": true,
+      "run_id": "c4b3c8be6b584d4c901b43e54cc6e8d8",
+      "context_capacity": 262144,
+      "actual_input_tokens": 8192,
+      "output_tokens": 128,
+      "measured_repetitions": 3,
+      "prefill_tps": 1239.198391627115,
+      "decode_tps": 42.15041241183947,
+      "accepted": 207,
+      "drafted": 345,
+      "acceptance": 0.6,
+      "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "npu_integrated": false,
+      "native_mtp": true,
+      "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+      "keep_server_open": true,
+      "measured_at_utc": "2026-10-04T20:38:41Z"
+    }
+  },
+  "native_FC_npu": {
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-npu-diagnostic-0891843328694edeb622f89dc550d8ca\\diagnostic.json",
+      "sha256": "d038d9221f2c502a16a6f74aa40e959c5b83b2120b4f4314691eca8bad97ce57"
+    },
+    "outer_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-npu-diagnostic-0891843328694edeb622f89dc550d8ca\\result.json",
+      "sha256": "549557d548675f6b31053d818b2f5876b0c7e904410a224a1d281a3facb05863",
+      "value": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "standalone-npu-projection-diagnostic",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "-u",
+              "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_mtp_fc_npu_diagnostic.py",
+              "--model",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-projection-679839c01d074349b93f0bc3c37a26ab.onnx",
+              "--projection-receipt",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-projection-679839c01d074349b93f0bc3c37a26ab.onnx.json",
+              "--projection-receipt-sha256",
+              "10b953f75bc7ba23195f8d5616ef6b46bb5a017bf91666ad7e96fb58a58284a6",
+              "--fc-fixtures",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-fixtures-f47a1312c34f47b6a23188247f46741b\\fixtures.json",
+              "--fc-fixtures-sha256",
+              "ae61a7924d985b1fd35e5d87eabd47736dbf20b91958bd5d7003dcf1cdb84f11",
+              "--native-fc-replay",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-original-06875d9ccbb548b3affac7128cb0788a\\native\\replay.json",
+              "--native-fc-replay-sha256",
+              "2fb0f6a198581156e430301064acef3e41d10a99e0a0cd06ab5ae9a16b8ed5fb",
+              "--failed-cpu-gate",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-cpu-gate-82c4aaa101594704910fd2c779e68ec7\\projection.json",
+              "--failed-cpu-gate-sha256",
+              "9590a62a09f365a25fe71c6b1e2a7a1106b19d9ba6786e827ce4540f9641d938",
+              "--ep-dir",
+              "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004",
+              "--report",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-npu-diagnostic-0891843328694edeb622f89dc550d8ca\\diagnostic.json"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 180,
+            "started": 1791146837.5676756,
+            "owned_identity": {
+              "pid": 25780,
+              "creation_time_100ns": 134356204375707810,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791146863.1917925
+          }
+        ],
+        "config_sha256": "214eeeeb082415657772b848f5be1962053e630721347db260576896ad817577",
+        "final_memory": {
+          "available_bytes": 30029504512,
+          "committed_bytes": 111730479104,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 128408961024
+        },
+        "minimum_physical_gib": 27.18963623046875,
+        "minimum_commit_gib": 118.76969528198242,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "timing_scope": "candidate two-output FC host calls/copies; normalization/seed-add/native head/transfer integration excluded",
+    "cpu_timing": {
+      "measured_calls": 8,
+      "host_call_ms": {
+        "mean": 1.1237375,
+        "median": 1.12325,
+        "minimum": 1.0989,
+        "maximum": 1.1645
+      },
+      "session_run_ms": {
+        "mean": 1.1189125,
+        "median": 1.11825,
+        "minimum": 1.0941,
+        "maximum": 1.1596
+      },
+      "prepare_and_copy_ms": {
+        "mean": 0.004824999999999999,
+        "median": 0.00485,
+        "minimum": 0.0045,
+        "maximum": 0.0052
+      }
+    },
+    "npu_timing": {
+      "measured_calls": 8,
+      "host_call_ms": {
+        "mean": 0.684275,
+        "median": 0.67875,
+        "minimum": 0.6567,
+        "maximum": 0.7317
+      },
+      "session_run_ms": {
+        "mean": 0.6766125000000001,
+        "median": 0.67135,
+        "minimum": 0.6492,
+        "maximum": 0.7242
+      },
+      "prepare_and_copy_ms": {
+        "mean": 0.0076625,
+        "median": 0.0076,
+        "minimum": 0.0066,
+        "maximum": 0.0091
+      }
+    },
+    "native_comparisons": {
+      "A": {
+        "e_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "exact_BF16_word_mismatches": 2173,
+          "max_abs_error": 0.0078125,
+          "mismatched_elements": 0,
+          "elements": 2560,
+          "non_BF16_lattice_elements": 0
+        },
+        "h_projection": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "exact_BF16_word_mismatches": 8980,
+          "max_abs_error": 0.072265625,
+          "mismatched_elements": 882,
+          "elements": 10240,
+          "non_BF16_lattice_elements": 0
+        }
+      },
+      "B": {
+        "e_projection": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "exact_BF16_word_mismatches": 2187,
+          "max_abs_error": 0.005859375,
+          "mismatched_elements": 1,
+          "elements": 2560,
+          "non_BF16_lattice_elements": 0
+        },
+        "h_projection": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "exact_BF16_word_mismatches": 8958,
+          "max_abs_error": 0.03515625,
+          "mismatched_elements": 962,
+          "elements": 10240,
+          "non_BF16_lattice_elements": 0
+        }
+      }
+    },
+    "profile_proof": {
+      "passed": true,
+      "node_events": 12,
+      "executed_node_providers": [
+        "VitisAIExecutionProvider"
+      ],
+      "node_event_ops": [
+        "VitisAIExecutionProvider_16172090604733434043_0"
+      ]
+    },
+    "context_proof": {
+      "passed": true,
+      "hardware_partitions_only": true,
+      "missing_required_outputs": [],
+      "cpu_fallback_disabled_in_context": true,
+      "cache_key_matches": true,
+      "provider_library_matches": true,
+      "stx_partition_pass": true,
+      "partitions": [
+        {
+          "id": "vaiml_par_0",
+          "device": "VAIML",
+          "nodes": [
+            "h_projection",
+            "h_projection_bf16",
+            "h_projection_fp32",
+            "h_streams",
+            "e_projection",
+            "e_projection_bf16",
+            "e_projection_fp32"
+          ],
+          "inputs": [
+            "e_norm",
+            "h_norm"
+          ],
+          "outputs": [
+            "h_projection",
+            "e_projection"
+          ],
+          "constantInitializers": [
+            "W_embedding_bf16_widened",
+            "W_hidden_bf16_widened",
+            "stream_shape"
+          ],
+          "vaimlParam": {
+            "vaimlModelPath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-npu-diagnostic-0891843328694edeb622f89dc550d8ca\\vitisai-cache\\40f0e64bd031b1f4124ef2cb45376f32f4d61cc3498cde5856afbeea43481e96\\vaiml_par_0",
+            "deviceName": "stx",
+            "outputShapes": [
+              {
+                "shapes": [
+                  "4",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              }
+            ],
+            "inputShapes": [
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "10240"
+                ]
+              }
+            ],
+            "vaimlUnarchivePath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-npu-diagnostic-0891843328694edeb622f89dc550d8ca\\vitisai-cache\\40f0e64bd031b1f4124ef2cb45376f32f4d61cc3498cde5856afbeea43481e96",
+            "subgraphName": "vaiml_par_0",
+            "priority": "normal",
+            "runnerType": "hw",
+            "deviceBatchSize": 1,
+            "inputNames": [
+              "e_norm",
+              "h_norm"
+            ],
+            "outputNames": [
+              "h_projection",
+              "e_projection"
+            ],
+            "enablePreemption": true
+          }
+        }
+      ],
+      "config_passes": [
+        {
+          "name": "init",
+          "plugin": "vaip-pass_init"
+        },
+        {
+          "name": "vaiml_partition",
+          "plugin": "vaip-pass_vaiml_partition",
+          "vaimlConfig": {
+            "device": "stx"
+          }
+        }
+      ],
+      "scope": "every dynamic FC candidate value including projection BF16 casts in hw/stx partitions; RMS and seed-add absent; internal kernel offload not independently observed"
+    },
+    "diagnostic_completed": true,
+    "native_accuracy_passed": false,
+    "integration_admission": false,
+    "failed_cpu_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-cpu-gate-82c4aaa101594704910fd2c779e68ec7\\projection.json",
+      "sha256": "9590a62a09f365a25fe71c6b1e2a7a1106b19d9ba6786e827ce4540f9641d938",
+      "passed": false
+    }
+  },
+  "tiled_D_npu": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\tiled-npu-diagnostic-1f250023b55f4b6a94dbf81c072129aa\\diagnostic.json",
+    "sha256": "62704e3d6951a1e41873f0e9179887c5a5d61dc9303dbc11da7bceb865ba6778",
+    "diagnostic_completed": true,
+    "graph_fidelity_passed": false,
+    "integration_admission": false,
+    "timing_scope": "candidate graph host calls including five observable outputs; no full-head/native/NPU speed promotion",
+    "npu_timing": {
+      "measured_calls": 8,
+      "host_call_ms": {
+        "mean": 1.0279625000000001,
+        "median": 1.024,
+        "minimum": 1.0079,
+        "maximum": 1.0553
+      },
+      "session_run_ms": {
+        "mean": 1.0190625,
+        "median": 1.0133999999999999,
+        "minimum": 1.0,
+        "maximum": 1.0474
+      },
+      "prepare_and_copy_ms": {
+        "mean": 0.0089,
+        "median": 0.00825,
+        "minimum": 0.0077,
+        "maximum": 0.0135
+      }
+    },
+    "cpu_timing": {
+      "measured_calls": 8,
+      "host_call_ms": {
+        "mean": 1.451075,
+        "median": 1.4680499999999999,
+        "minimum": 1.3632,
+        "maximum": 1.5349
+      },
+      "session_run_ms": {
+        "mean": 1.4451,
+        "median": 1.46155,
+        "minimum": 1.3575,
+        "maximum": 1.5297
+      },
+      "prepare_and_copy_ms": {
+        "mean": 0.005975,
+        "median": 0.0058,
+        "minimum": 0.0052,
+        "maximum": 0.0067
+      }
+    },
+    "profile_proof": {
+      "passed": true,
+      "node_events": 12,
+      "executed_node_providers": [
+        "VitisAIExecutionProvider"
+      ],
+      "node_event_ops": [
+        "VitisAIExecutionProvider_17514367645262449500_0"
+      ]
+    },
+    "context_proof": {
+      "passed": true,
+      "hardware_partitions_only": true,
+      "missing_required_outputs": [],
+      "cpu_fallback_disabled_in_context": true,
+      "cache_key_matches": true,
+      "provider_library_matches": true,
+      "stx_partition_pass": true,
+      "partitions": [
+        {
+          "id": "vaiml_par_0",
+          "device": "VAIML",
+          "nodes": [
+            "seed",
+            "seed_bf16_widened",
+            "seed_bf16_widened_bf16",
+            "seed_fp32",
+            "h_projection",
+            "h_projection_bf16",
+            "h_projection_fp32",
+            "h_streams",
+            "h_norm",
+            "h_norm_bf16",
+            "h_norm_fp32",
+            "h_unit",
+            "h_inverse_rms",
+            "h_rms",
+            "h_mean_eps",
+            "h_mean",
+            "h_row_sum",
+            "h_row_sum_3d",
+            "h_partial_sums",
+            "h_tiled_square",
+            "h_tiles",
+            "e_projection",
+            "e_projection_bf16",
+            "e_projection_fp32",
+            "e_norm",
+            "e_norm_bf16",
+            "e_norm_fp32",
+            "e_unit",
+            "e_inverse_rms",
+            "e_rms",
+            "e_mean_eps",
+            "e_mean",
+            "e_row_sum",
+            "e_row_sum_3d",
+            "e_partial_sums",
+            "e_tiled_square",
+            "e_tiles"
+          ],
+          "inputs": [
+            "e",
+            "h"
+          ],
+          "outputs": [
+            "seed",
+            "h_norm",
+            "h_partial_sums",
+            "e_norm",
+            "e_partial_sums"
+          ],
+          "constantInitializers": [
+            "W_embedding",
+            "W_hidden",
+            "e_gamma_plus_one",
+            "e_inv_width",
+            "e_tile_shape",
+            "epsilon",
+            "h_gamma_plus_one",
+            "h_inv_width",
+            "h_tile_shape",
+            "rms_scalar_shape",
+            "seed_shape",
+            "stream_shape",
+            "tile_feature_axis",
+            "tile_group_axis"
+          ],
+          "vaimlParam": {
+            "vaimlModelPath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\tiled-npu-diagnostic-1f250023b55f4b6a94dbf81c072129aa\\vitisai-cache\\aba83cfed93098a5b186ad17e671aee5b55903da30d1afe561b6fc8e5a6950ca\\vaiml_par_0",
+            "deviceName": "stx",
+            "outputShapes": [
+              {
+                "shapes": [
+                  "1",
+                  "4",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "10240"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "40",
+                  "1"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "10",
+                  "1"
+                ]
+              }
+            ],
+            "inputShapes": [
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "10240"
+                ]
+              }
+            ],
+            "vaimlUnarchivePath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\tiled-npu-diagnostic-1f250023b55f4b6a94dbf81c072129aa\\vitisai-cache\\aba83cfed93098a5b186ad17e671aee5b55903da30d1afe561b6fc8e5a6950ca",
+            "subgraphName": "vaiml_par_0",
+            "priority": "normal",
+            "runnerType": "hw",
+            "deviceBatchSize": 1,
+            "inputNames": [
+              "e",
+              "h"
+            ],
+            "outputNames": [
+              "seed",
+              "h_norm",
+              "h_partial_sums",
+              "e_norm",
+              "e_partial_sums"
+            ],
+            "maxSpillBufferSize": "25600",
+            "enablePreemption": true
+          }
+        }
+      ],
+      "config_passes": [
+        {
+          "name": "init",
+          "plugin": "vaip-pass_init"
+        },
+        {
+          "name": "vaiml_partition",
+          "plugin": "vaip-pass_vaiml_partition",
+          "vaimlConfig": {
+            "device": "stx"
+          }
+        }
+      ],
+      "scope": "retained VAIML hw/stx partition names cover every original dynamic D value including norm, arithmetic, reshape and BF16 casts; internal kernel offload is not independently observed"
+    },
+    "comparisons": {
+      "A": {
+        "graph_comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "max_abs_error": 0.072265625,
+          "mismatched_elements": 879,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 8757,
+          "bf16_word_mismatches": 8757,
+          "non_bf16_lattice_elements": 0
+        },
+        "hidden_rms_comparisons": {
+          "ort": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_word_mismatches": 3847,
+            "max_abs_error": 0.03125,
+            "mismatched_elements": 0,
+            "non_bf16_lattice_elements": 0
+          },
+          "numpy": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_word_mismatches": 3845,
+            "max_abs_error": 0.03125,
+            "mismatched_elements": 0,
+            "non_bf16_lattice_elements": 0
+          },
+          "native": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_word_mismatches": 3845,
+            "max_abs_error": 0.03125,
+            "mismatched_elements": 0,
+            "non_bf16_lattice_elements": 0
+          }
+        },
+        "independent_numpy_comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.072265625,
+          "mismatched_elements": 8695,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 8754,
+          "bf16_word_mismatches": 8754,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      "B": {
+        "graph_comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "max_abs_error": 0.03125,
+          "mismatched_elements": 985,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 8735,
+          "bf16_word_mismatches": 8735,
+          "non_bf16_lattice_elements": 0
+        },
+        "hidden_rms_comparisons": {
+          "ort": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_word_mismatches": 3592,
+            "max_abs_error": 0.03125,
+            "mismatched_elements": 0,
+            "non_bf16_lattice_elements": 0
+          },
+          "numpy": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_word_mismatches": 3592,
+            "max_abs_error": 0.03125,
+            "mismatched_elements": 0,
+            "non_bf16_lattice_elements": 0
+          },
+          "native": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_word_mismatches": 3592,
+            "max_abs_error": 0.03125,
+            "mismatched_elements": 0,
+            "non_bf16_lattice_elements": 0
+          }
+        },
+        "independent_numpy_comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.03125,
+          "mismatched_elements": 8691,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 8734,
+          "bf16_word_mismatches": 8734,
+          "non_bf16_lattice_elements": 0
+        }
+      }
+    },
+    "error": "RuntimeError: frozen original ORT seed/tiled diagnostic screen failed; every returned output retained"
+  },
+  "tiled_D_owned_result": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\tiled-npu-diagnostic-1f250023b55f4b6a94dbf81c072129aa\\result.json",
+    "sha256": "dce32aec29ec2d34ac4c22660442ef79939fba456400a82a8a3aea9ad731a32c",
+    "value": {
+      "status": "passed",
+      "errors": [],
+      "stages": [
+        {
+          "name": "standalone-tiled-npu-diagnostic",
+          "command": [
+            "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+            "-B",
+            "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_mtp_tiled_npu_diagnostic.py",
+            "--reference-mode",
+            "original-ORT-seed-and-distinct-RMS-words",
+            "--wire-mode",
+            "D",
+            "--provider",
+            "npu",
+            "--model",
+            "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-prepare-tile256-c51427b7d56e41188e6b7d7426e306bb.onnx",
+            "--tiled-receipt",
+            "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-prepare-tile256-c51427b7d56e41188e6b7d7426e306bb.onnx.json",
+            "--tiled-receipt-sha256",
+            "13b4a2bb03ef02e147142d89b252e6b40aa0d2c83dd0315a2fc19446d2c41ca8",
+            "--baseline",
+            "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\d-prepare-replay-20261004-1608\\cpu.json",
+            "--baseline-sha256",
+            "6d140e5abd82b9fa1b90db80b10bf8eb43b5bc4858d9a9bdae47f2dd65b5fb3d",
+            "--e-u16",
+            "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\input-embedding.u16",
+            "--e-sha256",
+            "af284c0101ac76b7562b3d9e19cfc6721266f282358d8f313a09b961435ee374",
+            "--h-u16",
+            "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mtp-tap-resume-d20a7077972049538940fe6b95bf62c7\\trace\\01-entry-residual-last-u16.bin",
+            "--h-sha256",
+            "e8f30dae31f7d0e81a634633dfcb3dd1c7e7303cbd2f814e3a50c50c90c682e6",
+            "--rms-fixtures",
+            "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rms-kernel-fixtures-32a8c40bb6e345b3bf6a90d9fda3e666\\fixtures.json",
+            "--rms-fixtures-sha256",
+            "1b0c66d46406598028d573353a6e24f42e54527e69a3cf022bf0ffa4284e15a6",
+            "--native-rms-replay",
+            "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-rms-original-02735783579e4a018abc755f9ab19c9b\\native\\replay.json",
+            "--native-rms-replay-sha256",
+            "4fecd22ab29a9f6d27139eb3b9c313cd7dd5229c406c84f406e8dfd6bbeed9ec",
+            "--report",
+            "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\tiled-npu-diagnostic-1f250023b55f4b6a94dbf81c072129aa\\diagnostic.json",
+            "--ep-dir",
+            "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004",
+            "--failed-cpu-gate",
+            "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\d-tiled-cpu-ca80a5b5fead40a7bcb0c10f2875060a\\cpu.json",
+            "--failed-cpu-gate-sha256",
+            "15a8b999391dd4e3a9bc342f3809180e956ab65150025949ef89630459668cc6"
+          ],
+          "cwd": "C:\\Projects\\strix-alloy-clean",
+          "deadline_seconds": 180,
+          "started": 1791147253.9385328,
+          "owned_identity": {
+            "pid": 28032,
+            "creation_time_100ns": 134356208539414186,
+            "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+          },
+          "exit_code": 0,
+          "owned_job_closed": true,
+          "cleanup_pending": false,
+          "finished": 1791147315.7387333
+        }
+      ],
+      "config_sha256": "89efe16b4225cbed2a9cf2ff57df3fbf1dfa6b0eabb6680bc024fab6f3141d4e",
+      "final_memory": {
+        "available_bytes": 29951500288,
+        "committed_bytes": 111767146496,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 128372293632
+      },
+      "minimum_physical_gib": 27.20306396484375,
+      "minimum_commit_gib": 118.83821487426758,
+      "monitor_stopped": true,
+      "cleanup_pending": false,
+      "no_child_launched": false,
+      "all_owned_jobs_closed": true
+    }
+  },
+  "static_expert0": {
+    "cpu": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\expert0-npu-measurement-256af9fa6fb94bbfb7ff2da09fcb82bf\\cpu.json",
+      "sha256": "2cbff7eb3cc4325775fe5c0560cf6b71fa55564ee4fadcf9c072a46a09c69f85",
+      "value": {
+        "schema": 1,
+        "provider_requested": "cpu",
+        "model_sha256": "b07cf0fafee7bf7918276eb81e8cf84f7c388e1dc6d3e5c466c745a42dd8f7b9",
+        "data_sha256": "3d5870c4292df5a393572c3654f74f9254c27583212857f19cde79606d70fa8f",
+        "scope": "expert-subgraph replay; synthetic input; not Halogen PP/TG or live target state",
+        "passed": true,
+        "cpu_fallback_allowed": true,
+        "profiling_enabled": true,
+        "ort_version": "1.25.2",
+        "session_providers": [
+          "CPUExecutionProvider"
+        ],
+        "session_initialization_ms": 18.9522,
+        "input_sha256": "b9dfa7e1dea92b06d6435483708c263b8cf350f7d4b094a27328cae0813461c4",
+        "routing_sha256": "e00e5eb9444182f352323374ef4e08ebcb784725fdd4fd612d7730540b3e0c8c",
+        "max_abs_error": 3.5390257835388184e-08,
+        "warmup_runs": 1,
+        "warmup_ms": 2.4233,
+        "tolerance": {
+          "rtol": 3e-05,
+          "atol": 3e-06
+        },
+        "profile": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\expert0-npu-measurement-256af9fa6fb94bbfb7ff2da09fcb82bf\\cpu_2026-10-04_22-57-01_488.json",
+        "executed_providers": [
+          "CPUExecutionProvider"
+        ],
+        "repetitions": 100,
+        "mean_ms": 0.22767099999999998,
+        "median_ms": 0.2124,
+        "min_ms": 0.2055,
+        "p95_ms": 0.2534,
+        "samples_ms": [
+          0.7108,
+          0.5104,
+          0.4456,
+          0.3126,
+          0.2271,
+          0.2175,
+          0.2131,
+          0.2282,
+          0.2171,
+          0.2171,
+          0.2117,
+          0.2203,
+          0.236,
+          0.2149,
+          0.2215,
+          0.2121,
+          0.2094,
+          0.2401,
+          0.2252,
+          0.2124,
+          0.2246,
+          0.2122,
+          0.2111,
+          0.2097,
+          0.2132,
+          0.2133,
+          0.2151,
+          0.2206,
+          0.2241,
+          0.21,
+          0.213,
+          0.2097,
+          0.2111,
+          0.2226,
+          0.2166,
+          0.2116,
+          0.2131,
+          0.2124,
+          0.2109,
+          0.2069,
+          0.2269,
+          0.2127,
+          0.2095,
+          0.2357,
+          0.2124,
+          0.2099,
+          0.2474,
+          0.2328,
+          0.2217,
+          0.212,
+          0.2115,
+          0.218,
+          0.2552,
+          0.2219,
+          0.2119,
+          0.2115,
+          0.2137,
+          0.2112,
+          0.2077,
+          0.2369,
+          0.2095,
+          0.2147,
+          0.2055,
+          0.2064,
+          0.2086,
+          0.2086,
+          0.2342,
+          0.2124,
+          0.2075,
+          0.2093,
+          0.215,
+          0.2205,
+          0.2431,
+          0.2114,
+          0.2098,
+          0.2086,
+          0.2093,
+          0.2094,
+          0.2107,
+          0.2073,
+          0.214,
+          0.2084,
+          0.2092,
+          0.2106,
+          0.2268,
+          0.2103,
+          0.2111,
+          0.2102,
+          0.2077,
+          0.2131,
+          0.2109,
+          0.2096,
+          0.2091,
+          0.2474,
+          0.2074,
+          0.2084,
+          0.2073,
+          0.2534,
+          0.2105,
+          0.2145
+        ]
+      }
+    },
+    "npu": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\expert0-npu-measurement-256af9fa6fb94bbfb7ff2da09fcb82bf\\npu.json",
+      "sha256": "a1b85fce661b8b8938258f8494b33a590ae5814701ddc5ff7ab618879651441e",
+      "value": {
+        "schema": 1,
+        "provider_requested": "npu",
+        "model_sha256": "b07cf0fafee7bf7918276eb81e8cf84f7c388e1dc6d3e5c466c745a42dd8f7b9",
+        "data_sha256": "3d5870c4292df5a393572c3654f74f9254c27583212857f19cde79606d70fa8f",
+        "scope": "expert-subgraph replay; synthetic input; not Halogen PP/TG or live target state",
+        "passed": true,
+        "cpu_fallback_allowed": false,
+        "profiling_enabled": true,
+        "catalog_provider_library": "C:\\Program Files\\WindowsApps\\MicrosoftCorporationII.WinML.AMD.NPU.EP.1.8_1.8.75.0_x64__8wekyb3d8bbwe\\ExecutionProvider\\onnxruntime_vitisai_ep.dll",
+        "catalog_provider_library_sha256": "95fb8d62d424f400a2f5f4e9f4d1ac1affdb35dd8c3309e85339010f50307352",
+        "provider_copy_requested": true,
+        "provider_copy_files": [
+          {
+            "relative_path": "AMD_WINML_0604_Drop_for_MSFT_Third_Party_Notices.pdf",
+            "bytes": 3508302,
+            "catalog_sha256": "8ee7b030984b012586779bf4c52f15a496038b11dc7fdc5c4ac4b253a0111e40",
+            "copied_sha256": "8ee7b030984b012586779bf4c52f15a496038b11dc7fdc5c4ac4b253a0111e40"
+          },
+          {
+            "relative_path": "dyn_dispatch_core.dll",
+            "bytes": 160975648,
+            "catalog_sha256": "3d71cbb95c4eb8e5cc28741d7d9f3ac51df404ebf0dbca40b7102783f63bcf93",
+            "copied_sha256": "3d71cbb95c4eb8e5cc28741d7d9f3ac51df404ebf0dbca40b7102783f63bcf93"
+          },
+          {
+            "relative_path": "me_aie4.dll",
+            "bytes": 73929000,
+            "catalog_sha256": "34433758a2baa8b113a25c3c5aecb377332fcd6a73fe9e8ebae01217a3ae9eff",
+            "copied_sha256": "34433758a2baa8b113a25c3c5aecb377332fcd6a73fe9e8ebae01217a3ae9eff"
+          },
+          {
+            "relative_path": "onnxruntime_providers_ryzenai.dll",
+            "bytes": 4368688,
+            "catalog_sha256": "ccc3bd0c2a8f519f9cd5fb112491785918810819f80c804302f717d2a93456ec",
+            "copied_sha256": "ccc3bd0c2a8f519f9cd5fb112491785918810819f80c804302f717d2a93456ec"
+          },
+          {
+            "relative_path": "onnxruntime_providers_vitisai.dll",
+            "bytes": 296144,
+            "catalog_sha256": "77e5be802550e6679876709ebb035d5a2af2a51c941ec194cbdef32027690a7d",
+            "copied_sha256": "77e5be802550e6679876709ebb035d5a2af2a51c941ec194cbdef32027690a7d"
+          },
+          {
+            "relative_path": "onnxruntime_vitis_ai_custom_ops.dll",
+            "bytes": 2758944,
+            "catalog_sha256": "be3acceb0f2de7c8d24eec3e3a8e6970c40cff31fb7637c7f90dc6ad915fe15e",
+            "copied_sha256": "be3acceb0f2de7c8d24eec3e3a8e6970c40cff31fb7637c7f90dc6ad915fe15e"
+          },
+          {
+            "relative_path": "onnxruntime_vitisai_ep.dll",
+            "bytes": 437944688,
+            "catalog_sha256": "95fb8d62d424f400a2f5f4e9f4d1ac1affdb35dd8c3309e85339010f50307352",
+            "copied_sha256": "95fb8d62d424f400a2f5f4e9f4d1ac1affdb35dd8c3309e85339010f50307352"
+          },
+          {
+            "relative_path": "ryzen_mm.dll",
+            "bytes": 308512,
+            "catalog_sha256": "57b7a50dafa974cb57bfe20fb59a822966fa73751febd67ce9d0b70ca2b3128c",
+            "copied_sha256": "57b7a50dafa974cb57bfe20fb59a822966fa73751febd67ce9d0b70ca2b3128c"
+          },
+          {
+            "relative_path": "third-party.zip",
+            "bytes": 16180139,
+            "catalog_sha256": "57dc1d3df49eed7813422fc2cc968e26f07de6b192288609707850f1dbe077b2",
+            "copied_sha256": "57dc1d3df49eed7813422fc2cc968e26f07de6b192288609707850f1dbe077b2"
+          },
+          {
+            "relative_path": "waic_inmem.dll",
+            "bytes": 2060576,
+            "catalog_sha256": "aff57dbb526f637286597e15a5a2070aaa2d47ab7fe22b5cdf20810b9e4304bf",
+            "copied_sha256": "aff57dbb526f637286597e15a5a2070aaa2d47ab7fe22b5cdf20810b9e4304bf"
+          },
+          {
+            "relative_path": "waic_mlir.dll",
+            "bytes": 34860880,
+            "catalog_sha256": "e41e0f0143c946c577cf21a6a362aa7b32d94756e5dda533f38d3acbffbc6796",
+            "copied_sha256": "e41e0f0143c946c577cf21a6a362aa7b32d94756e5dda533f38d3acbffbc6796"
+          },
+          {
+            "relative_path": "z.dll",
+            "bytes": 252720,
+            "catalog_sha256": "2bb0d952cb586579ad3309e5f68d1c01b4673fd9ac652a4d52c63a262be53d96",
+            "copied_sha256": "2bb0d952cb586579ad3309e5f68d1c01b4673fd9ac652a4d52c63a262be53d96"
+          }
+        ],
+        "provider_library": "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004\\onnxruntime_vitisai_ep.dll",
+        "provider_library_sha256": "95fb8d62d424f400a2f5f4e9f4d1ac1affdb35dd8c3309e85339010f50307352",
+        "placement_scope": "ORT EP attribution; internal provider CPU/AIE split requires compiler evidence",
+        "cache_key": "55b0db9cacc92510aa79edd7ce3ec8a28b5411df18aaabb3227b8c77a951426a",
+        "ort_version": "1.25.2",
+        "session_providers": [
+          "VitisAIExecutionProvider",
+          "CPUExecutionProvider"
+        ],
+        "session_initialization_ms": 18714.9852,
+        "input_sha256": "b9dfa7e1dea92b06d6435483708c263b8cf350f7d4b094a27328cae0813461c4",
+        "routing_sha256": "e00e5eb9444182f352323374ef4e08ebcb784725fdd4fd612d7730540b3e0c8c",
+        "max_abs_error": 0.0006235409528017044,
+        "warmup_runs": 1,
+        "warmup_ms": 2.3741,
+        "tolerance": {
+          "rtol": 0.03,
+          "atol": 0.003
+        },
+        "profile": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\expert0-npu-measurement-256af9fa6fb94bbfb7ff2da09fcb82bf\\npu_2026-10-04_22-57-04_076.json",
+        "executed_providers": [
+          "VitisAIExecutionProvider"
+        ],
+        "repetitions": 100,
+        "mean_ms": 0.496503,
+        "median_ms": 0.49150000000000005,
+        "min_ms": 0.3944,
+        "p95_ms": 0.5563,
+        "samples_ms": [
+          0.7484,
+          0.4656,
+          0.4401,
+          0.487,
+          0.4608,
+          0.4449,
+          0.4866,
+          0.4721,
+          0.4976,
+          0.4565,
+          0.4161,
+          0.4246,
+          0.6071,
+          0.5952,
+          0.4114,
+          0.4465,
+          0.489,
+          0.5118,
+          0.4614,
+          0.4448,
+          0.4885,
+          0.5052,
+          0.4951,
+          0.4839,
+          0.4913,
+          0.4752,
+          0.4508,
+          0.4352,
+          0.3944,
+          0.442,
+          0.4548,
+          0.4332,
+          0.4868,
+          0.4803,
+          0.4622,
+          0.4573,
+          0.4901,
+          0.4928,
+          0.487,
+          0.4812,
+          0.5338,
+          0.5264,
+          0.5406,
+          0.5083,
+          0.4726,
+          0.5119,
+          0.4692,
+          0.5362,
+          0.5403,
+          0.5563,
+          0.5398,
+          0.5755,
+          0.6083,
+          0.5426,
+          0.5221,
+          0.5246,
+          0.5386,
+          0.5201,
+          0.524,
+          0.5398,
+          0.5229,
+          0.5423,
+          0.5214,
+          0.536,
+          0.5345,
+          0.5165,
+          0.5172,
+          0.4886,
+          0.5093,
+          0.4857,
+          0.5027,
+          0.4975,
+          0.5061,
+          0.4643,
+          0.4507,
+          0.4871,
+          0.4982,
+          0.4817,
+          0.4667,
+          0.5083,
+          0.4829,
+          0.4505,
+          0.4185,
+          0.4387,
+          0.4789,
+          0.4917,
+          0.4698,
+          0.4863,
+          0.518,
+          0.4952,
+          0.4769,
+          0.509,
+          0.4898,
+          0.5529,
+          0.5127,
+          0.5033,
+          0.5198,
+          0.5283,
+          0.511,
+          0.4926
+        ],
+        "provider_unregistered": true,
+        "dll_directory_closed": true,
+        "bootstrap_shutdown": true
+      }
+    },
+    "outer": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\expert0-npu-measurement-256af9fa6fb94bbfb7ff2da09fcb82bf\\result.json",
+      "sha256": "147cb83357ba0d40e3e60406ed5bea18a9e06a7d8ff72495d78843895f0b1949",
+      "value": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "cpu",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "-u",
+              "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_expert_onnx.py",
+              "--check-model",
+              "C:\\AI\\halogen-mtp-npu\\expert0.onnx",
+              "--provider",
+              "cpu",
+              "--reps",
+              "100",
+              "--report",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\expert0-npu-measurement-256af9fa6fb94bbfb7ff2da09fcb82bf\\cpu.json"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 180,
+            "started": 1791147421.039068,
+            "owned_identity": {
+              "pid": 20832,
+              "creation_time_100ns": 134356210210421565,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791147421.7103677
+          },
+          {
+            "name": "npu",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "-u",
+              "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_expert_onnx.py",
+              "--check-model",
+              "C:\\AI\\halogen-mtp-npu\\expert0.onnx",
+              "--provider",
+              "npu",
+              "--reps",
+              "100",
+              "--report",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\expert0-npu-measurement-256af9fa6fb94bbfb7ff2da09fcb82bf\\npu.json",
+              "--ep-dir",
+              "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 180,
+            "started": 1791147421.740755,
+            "owned_identity": {
+              "pid": 2624,
+              "creation_time_100ns": 134356210217430851,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791147443.065923
+          }
+        ],
+        "config_sha256": "b919316814bb30876ff767945d7902dc0a4233cea39f363f03ce08dca0a2d09e",
+        "final_memory": {
+          "available_bytes": 29840154624,
+          "committed_bytes": 111784787968,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 128354652160
+        },
+        "minimum_physical_gib": 27.31908416748047,
+        "minimum_commit_gib": 119.00025177001953,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "integration_admission": false,
+    "scope": "old-lineage w4b fixed expert0, one synthetic input,100 calls; no v2 or MTP qualification"
+  },
+  "fp32_projection_suffix": {
+    "cpu": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-cpu-33685d0b3c294a79aec9ba49cc98e0ca\\cpu.json",
+      "sha256": "92d094ac7e4499e4eda2ba3adf167ebca08e7cde8b1157b9f977a5c6061ca03c",
+      "passed": true,
+      "timing": {
+        "measured_calls": 8,
+        "host_call_ms": {
+          "mean": 1.3767125,
+          "median": 1.37,
+          "minimum": 1.316,
+          "maximum": 1.4627
+        },
+        "session_run_ms": {
+          "mean": 1.3693875,
+          "median": 1.3632,
+          "minimum": 1.3088,
+          "maximum": 1.4538
+        },
+        "prepare_and_copy_ms": {
+          "mean": 0.007325,
+          "median": 0.0072,
+          "minimum": 0.0063,
+          "maximum": 0.0089
+        }
+      },
+      "model_sha256": "8416a42e0db20bc3f64a663a3d1cbec22754e4b6f2fb13b17c012f316a556432",
+      "data_sha256": "a220218d57d4eb9c5cd7231bd696c394a226da5a529fb51cb8c8cbe5e7be379f",
+      "profile_proof": {
+        "passed": true,
+        "node_events": 132,
+        "executed_node_providers": [
+          "CPUExecutionProvider"
+        ],
+        "node_event_ops": [
+          "Add",
+          "Cast",
+          "MatMul",
+          "Reshape"
+        ]
+      },
+      "context_proof": null,
+      "comparisons": {
+        "A": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.0,
+          "mismatched_elements": 0,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 0,
+          "bf16_word_mismatches": 0,
+          "non_bf16_lattice_elements": 0
+        },
+        "B": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.0,
+          "mismatched_elements": 0,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 0,
+          "bf16_word_mismatches": 0,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      "error": null
+    },
+    "cpu_owned_result": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-cpu-33685d0b3c294a79aec9ba49cc98e0ca\\result.json",
+      "sha256": "53d3f3dcabdb44442567648b8d21dc97bacddcf09a5d02cad7546334624956eb",
+      "value": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "cpu",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "-u",
+              "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_v2_d_projection_probe.py",
+              "--model",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-fp32-projection-8d171dcd3ffe4e5989257cccf92e0010.onnx",
+              "--projection-receipt",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-fp32-projection-8d171dcd3ffe4e5989257cccf92e0010.onnx.json",
+              "--projection-receipt-sha256",
+              "13a8132fc7ecb42b4d7beb51a9f80b4e51bb425f69ef5775b69c4c58375af7d3",
+              "--baseline",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\d-prepare-replay-20261004-1608\\cpu.json",
+              "--baseline-sha256",
+              "6d140e5abd82b9fa1b90db80b10bf8eb43b5bc4858d9a9bdae47f2dd65b5fb3d",
+              "--boundary-diagnostic",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\d-prepare-boundary-diagnostic.json",
+              "--boundary-diagnostic-sha256",
+              "68ab8fe6124a01e63ef970df9804b2eb90333b3606742b03ade294db46d4802b",
+              "--e-u16",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\input-embedding.u16",
+              "--e-sha256",
+              "af284c0101ac76b7562b3d9e19cfc6721266f282358d8f313a09b961435ee374",
+              "--h-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mtp-tap-resume-d20a7077972049538940fe6b95bf62c7\\trace\\01-entry-residual-last-u16.bin",
+              "--h-sha256",
+              "e8f30dae31f7d0e81a634633dfcb3dd1c7e7303cbd2f814e3a50c50c90c682e6",
+              "--e-norm-a-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-fixtures-78c49b8e265c4de9adb9c0cf3cc8254e\\A-ort-rms.u16",
+              "--e-norm-a-sha256",
+              "97079c27ab56da44c2ab29780c856be79803d402caf754acfbf7d187fbe34892",
+              "--e-norm-b-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-fixtures-78c49b8e265c4de9adb9c0cf3cc8254e\\B-ort-rms.u16",
+              "--e-norm-b-sha256",
+              "8104e72375af48ab130c04b01fe68399e1d6c84951f9aa45c67a54b7d00db6ce",
+              "--h-norm-a-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rms-kernel-fixtures-32a8c40bb6e345b3bf6a90d9fda3e666\\A-ort-rms.u16",
+              "--h-norm-a-sha256",
+              "62d3dd5d91a85c7b7701c3a8054e49250a1193159c12c31136ca22e915b148b1",
+              "--h-norm-b-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rms-kernel-fixtures-32a8c40bb6e345b3bf6a90d9fda3e666\\B-ort-rms.u16",
+              "--h-norm-b-sha256",
+              "54d43f5a215a3c346c60224ba30b71cf0e91a44ee43c74789f972133d1b743bb",
+              "--reference-mode",
+              "original-ORT-normalized-cut",
+              "--wire-mode",
+              "D",
+              "--provider",
+              "cpu",
+              "--report",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-cpu-33685d0b3c294a79aec9ba49cc98e0ca\\cpu.json"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 180,
+            "started": 1791147745.1155918,
+            "owned_identity": {
+              "pid": 16536,
+              "creation_time_100ns": 134356213451191803,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791147746.1203775
+          }
+        ],
+        "config_sha256": "81c565430c2fce66118543423aa33d16573f60ca1f4d8f490ca2894c9c337bb2",
+        "final_memory": {
+          "available_bytes": 29885792256,
+          "committed_bytes": 111833694208,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 128305745920
+        },
+        "minimum_physical_gib": 27.742412567138672,
+        "minimum_commit_gib": 119.39364242553711,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "npu": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-npu-487728b36faf4f5a8cb3df8d5508d961\\npu.json",
+      "sha256": "6763914de473d8dd3f8e4651a7b460f2e081a116983e815fba74f82bebe49ec1",
+      "passed": false,
+      "timing": {
+        "measured_calls": 8,
+        "host_call_ms": {
+          "mean": 0.7278625,
+          "median": 0.681,
+          "minimum": 0.6525,
+          "maximum": 0.8723
+        },
+        "session_run_ms": {
+          "mean": 0.718875,
+          "median": 0.67235,
+          "minimum": 0.6451,
+          "maximum": 0.8592
+        },
+        "prepare_and_copy_ms": {
+          "mean": 0.0089875,
+          "median": 0.0077,
+          "minimum": 0.0066,
+          "maximum": 0.0141
+        }
+      },
+      "model_sha256": "8416a42e0db20bc3f64a663a3d1cbec22754e4b6f2fb13b17c012f316a556432",
+      "data_sha256": "a220218d57d4eb9c5cd7231bd696c394a226da5a529fb51cb8c8cbe5e7be379f",
+      "profile_proof": {
+        "passed": true,
+        "node_events": 12,
+        "executed_node_providers": [
+          "VitisAIExecutionProvider"
+        ],
+        "node_event_ops": [
+          "VitisAIExecutionProvider_9588706944488004922_0"
+        ]
+      },
+      "context_proof": {
+        "passed": true,
+        "hardware_partitions_only": true,
+        "missing_required_outputs": [],
+        "cpu_fallback_disabled_in_context": true,
+        "cache_key_matches": true,
+        "provider_library_matches": true,
+        "stx_partition_pass": true,
+        "partitions": [
+          {
+            "id": "vaiml_par_0",
+            "device": "VAIML",
+            "nodes": [
+              "seed",
+              "seed_bf16_widened",
+              "seed_bf16_widened_bf16",
+              "seed_fp32",
+              "h_projection",
+              "h_projection_bf16",
+              "h_projection_fp32",
+              "h_streams",
+              "e_projection",
+              "e_projection_bf16",
+              "e_projection_fp32"
+            ],
+            "inputs": [
+              "e_norm",
+              "h_norm"
+            ],
+            "outputs": [
+              "seed"
+            ],
+            "constantInitializers": [
+              "W_embedding",
+              "W_hidden",
+              "seed_shape",
+              "stream_shape"
+            ],
+            "vaimlParam": {
+              "vaimlModelPath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-npu-487728b36faf4f5a8cb3df8d5508d961\\vitisai-cache\\5b7a68074c8878564cbda374d98a55f0be4ab89353e88cce5e0d785715456ba1\\vaiml_par_0",
+              "deviceName": "stx",
+              "outputShapes": [
+                {
+                  "shapes": [
+                    "1",
+                    "4",
+                    "2560"
+                  ]
+                }
+              ],
+              "inputShapes": [
+                {
+                  "shapes": [
+                    "1",
+                    "2560"
+                  ]
+                },
+                {
+                  "shapes": [
+                    "1",
+                    "10240"
+                  ]
+                }
+              ],
+              "vaimlUnarchivePath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-npu-487728b36faf4f5a8cb3df8d5508d961\\vitisai-cache\\5b7a68074c8878564cbda374d98a55f0be4ab89353e88cce5e0d785715456ba1",
+              "subgraphName": "vaiml_par_0",
+              "priority": "normal",
+              "runnerType": "hw",
+              "deviceBatchSize": 1,
+              "inputNames": [
+                "e_norm",
+                "h_norm"
+              ],
+              "outputNames": [
+                "seed"
+              ],
+              "maxSpillBufferSize": "25600",
+              "enablePreemption": true
+            }
+          }
+        ],
+        "config_passes": [
+          {
+            "name": "init",
+            "plugin": "vaip-pass_init"
+          },
+          {
+            "name": "vaiml_partition",
+            "plugin": "vaip-pass_vaiml_partition",
+            "vaimlConfig": {
+              "device": "stx"
+            }
+          }
+        ],
+        "scope": "retained VAIML hw/stx partition names cover every original dynamic D value including norm, arithmetic, reshape and BF16 casts; internal kernel offload is not independently observed"
+      },
+      "comparisons": {
+        "A": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "max_abs_error": 0.072265625,
+          "mismatched_elements": 842,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 8736,
+          "bf16_word_mismatches": 8736,
+          "non_bf16_lattice_elements": 0
+        },
+        "B": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "max_abs_error": 0.03125,
+          "mismatched_elements": 953,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 8749,
+          "bf16_word_mismatches": 8749,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      "error": "RuntimeError: original ORT cut seed gate failed; all returned outputs retained"
+    },
+    "npu_owned_result": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-npu-487728b36faf4f5a8cb3df8d5508d961\\result.json",
+      "sha256": "21de47ff3a82b17d6e904c27910290d77cb6e80980ddcfcb2f3ecafd36b95cad",
+      "value": {
+        "status": "failed",
+        "errors": [
+          "RuntimeError: stage failed: npu"
+        ],
+        "stages": [
+          {
+            "name": "npu",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "-u",
+              "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_v2_d_projection_probe.py",
+              "--model",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-fp32-projection-8d171dcd3ffe4e5989257cccf92e0010.onnx",
+              "--projection-receipt",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-fp32-projection-8d171dcd3ffe4e5989257cccf92e0010.onnx.json",
+              "--projection-receipt-sha256",
+              "13a8132fc7ecb42b4d7beb51a9f80b4e51bb425f69ef5775b69c4c58375af7d3",
+              "--baseline",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\d-prepare-replay-20261004-1608\\cpu.json",
+              "--baseline-sha256",
+              "6d140e5abd82b9fa1b90db80b10bf8eb43b5bc4858d9a9bdae47f2dd65b5fb3d",
+              "--boundary-diagnostic",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\d-prepare-boundary-diagnostic.json",
+              "--boundary-diagnostic-sha256",
+              "68ab8fe6124a01e63ef970df9804b2eb90333b3606742b03ade294db46d4802b",
+              "--e-u16",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\input-embedding.u16",
+              "--e-sha256",
+              "af284c0101ac76b7562b3d9e19cfc6721266f282358d8f313a09b961435ee374",
+              "--h-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mtp-tap-resume-d20a7077972049538940fe6b95bf62c7\\trace\\01-entry-residual-last-u16.bin",
+              "--h-sha256",
+              "e8f30dae31f7d0e81a634633dfcb3dd1c7e7303cbd2f814e3a50c50c90c682e6",
+              "--e-norm-a-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-fixtures-78c49b8e265c4de9adb9c0cf3cc8254e\\A-ort-rms.u16",
+              "--e-norm-a-sha256",
+              "97079c27ab56da44c2ab29780c856be79803d402caf754acfbf7d187fbe34892",
+              "--e-norm-b-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-fixtures-78c49b8e265c4de9adb9c0cf3cc8254e\\B-ort-rms.u16",
+              "--e-norm-b-sha256",
+              "8104e72375af48ab130c04b01fe68399e1d6c84951f9aa45c67a54b7d00db6ce",
+              "--h-norm-a-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rms-kernel-fixtures-32a8c40bb6e345b3bf6a90d9fda3e666\\A-ort-rms.u16",
+              "--h-norm-a-sha256",
+              "62d3dd5d91a85c7b7701c3a8054e49250a1193159c12c31136ca22e915b148b1",
+              "--h-norm-b-u16",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rms-kernel-fixtures-32a8c40bb6e345b3bf6a90d9fda3e666\\B-ort-rms.u16",
+              "--h-norm-b-sha256",
+              "54d43f5a215a3c346c60224ba30b71cf0e91a44ee43c74789f972133d1b743bb",
+              "--reference-mode",
+              "original-ORT-normalized-cut",
+              "--wire-mode",
+              "D",
+              "--provider",
+              "npu",
+              "--report",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-npu-487728b36faf4f5a8cb3df8d5508d961\\npu.json",
+              "--ep-dir",
+              "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004",
+              "--cpu-gate",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fp32-projection-cpu-33685d0b3c294a79aec9ba49cc98e0ca\\cpu.json",
+              "--cpu-gate-sha256",
+              "92d094ac7e4499e4eda2ba3adf167ebca08e7cde8b1157b9f977a5c6061ca03c"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 180,
+            "started": 1791147755.278778,
+            "owned_identity": {
+              "pid": 18928,
+              "creation_time_100ns": 134356213552849883,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 1,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791147777.731774
+          }
+        ],
+        "config_sha256": "3261ed3e2f0928b030b6651e479c49526935ee6da4fec4959fa27b03788cfd36",
+        "final_memory": {
+          "available_bytes": 29838888960,
+          "committed_bytes": 111830749184,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 128308690944
+        },
+        "minimum_physical_gib": 27.186420440673828,
+        "minimum_commit_gib": 118.86301803588867,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "integration_admission": false,
+    "native_parity": false,
+    "scope": "originalFP32 normalizedFC plus seed suffix against retained CPU-ORT cut; no nativeQ8/fullD/MTP qualification"
+  },
+  "original_GPU_FC_timing": {
+    "summary": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\gpu-timing-summary.json",
+      "sha256": "5f1ee5c9acf68d318d1c7adcb9e33e746f36c73807626921fc9e432f37add796",
+      "value": {
+        "measured_pairs": 16,
+        "warmups": 4,
+        "means": {
+          "embedding_gpu_ms": {
+            "mean": 0.152995063,
+            "minimum": 0.127515003,
+            "maximum": 0.166678995
+          },
+          "hidden_gpu_ms": {
+            "mean": 0.158707124125,
+            "minimum": 0.150858,
+            "maximum": 0.174740002
+          },
+          "pair_gpu_ms": {
+            "mean": 0.3117021861875,
+            "minimum": 0.291424006,
+            "maximum": 0.326007009
+          },
+          "host_enqueue_wait_ms": {
+            "mean": 0.4871700625,
+            "minimum": 0.44233,
+            "maximum": 0.760418
+          }
+        },
+        "replay_sha256": "4eeaef8311d94ea12691b8e4580f63ae55b0048837806c432bd91ca402035c1a",
+        "timing_scope": "resident original M1 then M4; stream0 event brackets and monotonic enqueue-through-end-event-wait; excludes setup/copies/comparisons/file IO; includes host enqueue gaps and event overhead",
+        "output_parity": true,
+        "transport_timing_qualified": false,
+        "end_to_end_throughput_qualified": false,
+        "colleague_server_preserved": true
+      }
+    },
+    "outer": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\result.json",
+      "sha256": "8bf3ef97c3a2cc21dcac375c7c621bd27967e6c4b60a56cc6875573176a35772",
+      "value": {
+        "passed": true,
+        "error": null,
+        "own_container_removed": true,
+        "own_job_closed": true,
+        "monitor_stopped": true,
+        "create_attempted": true,
+        "create_identity_recovered": false,
+        "cleanup_pending": false,
+        "container_name": "alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d",
+        "container_id": "2745ace0275e74b43621b2471c3697e6609d76159794712ab8b83ce916969189",
+        "ownership_label": "f7c3c720f88f4edfaa0a1adcee68a56d",
+        "physical_minimum_gib": 27.622146606445312,
+        "commit_minimum_gib": 119.1750373840332,
+        "final_memory": {
+          "available_bytes": 29662826496,
+          "committed_bytes": 112006676480,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 128132763648
+        },
+        "timing_claim": true,
+        "npu_initialized": false
+      }
+    },
+    "source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_fc_timing.c",
+      "sha256": "e6da80abb13b318354627788888bd5537e905bb9858713da13152d9a115ca61f"
+    },
+    "replay": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\native\\timing.json",
+      "sha256": "4eeaef8311d94ea12691b8e4580f63ae55b0048837806c432bd91ca402035c1a"
+    },
+    "scope": "resident original pairedFC with event overhead/host enqueue gaps; no liveengine cache, transport or token-throughput qualification"
+  }
+}
