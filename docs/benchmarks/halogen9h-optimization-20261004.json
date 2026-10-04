@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-04",
-  "status": "active optimization until08:39:15UTC; no qualified overall gain; full NPU MTP incomplete; current comparable stock1661.0181PP-only/47.0600MTPdecode/60percentacceptance. HOST_ACCESSIBLE candidate stopped before inference. Native CAPI session allocator acquired; first extra-name check corrected using ORT/OGA source; corrected RMM candidate reaches call0 then access violation without output. Module unknown in early snapshot; native cleanup unobserved, parent job closed and reserve/stage integrity verified. Laya/Jev feasibility assessment is research only; no model installed/trained.",
+  "status": "Hardware optimization window ended at 08:39:15 UTC; objective not achieved, no qualified overall gain, full NPU MTP incomplete. Current comparable stock: 1661.0181 PP-only, 47.0600 MTP decode tok/s, 60 percent acceptance. Corrected native RMM candidate attempted one inference and returned none; faulting module unknown, native cleanup unobserved, parent job closed and reserve/stage integrity verified. Retained WSL helper closed after ownership verification at 08:36:29 UTC. Laya/Jev assessment is research only; no model installed or trained. Independent Halogen NPU services exist, but no external Flash-Next drafter seam was documented in checked public sources.",
   "work_deadline_utc": "2026-10-04T08:39:15Z",
   "source_commit_at_baseline": "d950029",
   "baseline": {
@@ -3704,5 +3704,31 @@
     ],
     "corrected_counter_note": "Child counters remain initialization defaults after ctypes AV; native stage log establishes one invocation without return. Sentinel hashes and zero timing fields in rejected name-gate receipt are not returned inference outputs/timings."
   },
-  "laya_jev_feasibility_note": "docs/research/halogen-laya-jev-sidecar-feasibility-20261004.md"
+  "laya_jev_feasibility_note": "docs/research/halogen-laya-jev-sidecar-feasibility-20261004.md",
+  "window_closeout": {
+    "deadline_utc": "2026-10-04T08:39:15Z",
+    "deadline_passed_observed_utc": "2026-10-04T08:40:19Z",
+    "optimization_objective_achieved": false,
+    "qualified_overall_gain": false,
+    "full_native_npu_mtp_complete": false,
+    "further_hardware_runs_started_by_closeout": 0,
+    "controller_backend_state": "stopped",
+    "active_controller_requests": 0,
+    "owned_native_attempt_windows_pids_absent": [31052, 40280],
+    "retained_wsl_lifetime_helper": {
+      "distribution": "Ubuntu-24.04",
+      "boot_id": "fe6514a9-1e89-42bf-b5d0-d72cdd2ac508",
+      "pid": 703,
+      "starttime_ticks": 397,
+      "cwd": "/mnt/c/Projects/strix-alloy-clean",
+      "command_marker": "root-mtp-state-wsl-lifetime",
+      "ownership_verified_before_sigterm": true,
+      "pid_exists_after": false,
+      "closed_observed_utc": "2026-10-04T08:36:29Z",
+      "evidence_scope": "Root local tool observation; this helper closure is distinct from unobserved native allocator/session/provider cleanup after the AV"
+    },
+    "checked_halogen_source_commit": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "independent_npu_service_contract_documented": true,
+    "external_flash_next_drafter_contract_documented_in_checked_sources": false
+  }
 }

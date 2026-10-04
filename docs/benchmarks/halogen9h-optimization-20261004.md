@@ -6,8 +6,9 @@ without ADLX or MTP observers, measured **1661.02 ± 4.57 PP8192-only**, **47.06
 0.556 MTP TG128 tok/s**, and **60% acceptance**. The earlier ADLX-observed control
 remains a separate historical receipt. Stock variation has no isolated cause;
 this sequential control does not measure ADLX overhead or establish a tuning
-gain. The nine-hour window remains active until 08:39:15 UTC
-(10:39:15 Berlin).
+gain. The nine-hour hardware optimization window ended at 08:39:15 UTC
+(10:39:15 Berlin). Its optimization objective was not achieved; the closeout
+below records the final process lifecycle and remaining limits.
 
 | Stock control, exact 8192 input | Prefill tok/s | Decode tok/s | MTP acceptance |
 | --- | ---: | ---: | ---: |
@@ -534,7 +535,7 @@ than warmed stockB. It is rejected; depth2 remains selected.
 No optimization gain is promoted. Full live NPU MTP remains unfinished. At this
 checkpoint, the separate `model_root` session-configuration source candidate
 had no runtime receipt; its subsequent negative receipt is below. The window
-remains active until 08:39:15 UTC. This publication
+remained active at that checkpoint until 08:39:15 UTC. This publication
 read saved metadata only and performed no tests, rehash loops or hardware runs.
 
 ## Subsequent `model_root` session-configuration candidate failure
@@ -592,3 +593,29 @@ stock row. The user's Laya/Jev proposal is evaluated separately in the
 A target-trained parallel drafter is a plausible research direction; the
 published decision models and other Qwen DFlash checkpoints are not ready
 native heads for our Flash-Next target. No new model was downloaded or trained.
+
+## Window closeout after 08:39:15 UTC / 10:39:15 Berlin
+
+The agreed hardware-work window has ended. No qualified overall gain or full
+native NPU MTP implementation was achieved. Retain stock depth 2 and the
+matched 8K control: PP-only 1661.0181 tok/s, MTP decode 47.0600 tok/s and
+acceptance 60%. These are separate PP/TG cohorts, not cold 128K/260K rates.
+The prefill decline remains unisolated, while decode remains approximately 47.
+
+Controller/backend were stopped with zero active controller requests. The
+native attempt's Windows PIDs 31052 and 40280 were absent. Root additionally
+closed the retained WSL lifetime helper locally after verifying Ubuntu-24.04,
+boot ID, PID 703 starttime 397, repository cwd and the exact
+`root-mtp-state-wsl-lifetime` command marker. Scoped SIGTERM was followed by
+`pid_exists_after:false`, observed at 08:36:29 UTC. This resolves the retained
+helper lifecycle; it does not prove that the faulted native helper returned
+through allocator/session/provider cleanup. No Remote Desktop Commander was
+used for this closure.
+
+The final source comparison found an independent NPU-service contract, but
+no documented Flash-Next external-drafter seam in the checked public Halogen
+0.16.2 deployment sources. The [Laya/Jev assessment](../research/halogen-laya-jev-sidecar-feasibility-20261004.md)
+now records that distinction and GPU/NPU resource contention. Documentation
+closeout uses existing receipts and source review; no new hardware run is
+claimed. The objective remains incomplete rather than being declared
+successful when the time window expires.

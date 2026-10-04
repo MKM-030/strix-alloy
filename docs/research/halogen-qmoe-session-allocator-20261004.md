@@ -105,3 +105,22 @@ has a subsequent serialization-only correction: timing/output-hash entries
 are emitted only for completed calls. That hook's syntax was parsed without
 native imports; no runtime rerun is claimed for the correction. Original
 attempt receipts and the rejected helper's sentinel hashes remain preserved.
+
+## Final source comparison; no further execution
+
+OGA v0.14 obtains its RyzenAI allocator from a separate retained trivial
+session, whereas this helper obtains it from the actual QMoEBf session.
+Matching that initialization/lifetime structure is a supported future
+source-alignment candidate, but no evidence establishes that it repairs this
+first-call fault. OGA's allocator-backed tensor creation is already an
+official path. [OGA allocator initialization](https://github.com/microsoft/onnxruntime-genai/blob/v0.14.0/src/models/model.cpp#L340-L416),
+[tensor allocation](https://github.com/microsoft/onnxruntime-genai/blob/v0.14.0/src/tensor.cpp#L20-L34).
+
+OGA uses normal `Run`, but ORT1.29 `RunWithBinding` delegates to the same
+underlying `InferenceSession::Run`; selecting direct Run is not an established
+kernel change or repair. Header `max_npu_buffer_size=0` matches the inspected
+AMD converter's separate `.packed.qexperts` branch. Public conversion fields
+do not establish Light runtime support for width2560/512 experts/top10.
+No further runtime call, bank conversion or model training was performed for
+this comparison. [OGA Run](https://github.com/microsoft/onnxruntime-genai/blob/v0.14.0/src/models/model.cpp#L122-L123),
+[ORT binding delegation](https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/core/session/inference_session.cc#L3585-L3589).
