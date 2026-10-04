@@ -1,0 +1,262 @@
+{
+  "schema": "halogen0162.native-fc-preparation.v1",
+  "timestamp_utc": "2026-10-04T18:31:50.409601+00:00",
+  "scope": "retained raw-fixture extraction and host compile; CPU protobuf build; no new original FC GPU/NPU/inference execution",
+  "source_sha256": {
+    "scripts/benchmarks/halogen0162_fc_replay.c": "8535dbe608b49f8bbad8a962359de59e78df1bd0b9cae922045277b6a1d77826",
+    "scripts/benchmarks/halogen0162_fc_owned_run.py": "74fb8d1f44f1e025bdacbe96f95289d72387fc8b9be5ef2eee8a4e4e553b6211",
+    "scripts/benchmarks/halogen0162_fc_image_wrapper.py": "c1120b8ca7d50c508e94affafe7bf59ed329d3d72c751b9407cf1cb4383b7542",
+    "scripts/benchmarks/halogen_npu_v2_d_projection_graph.py": "8cabd689422ef07e0d48684e7b2fae8a6d1d71571b17605619f796a33f0b11bd",
+    "scripts/benchmarks/halogen_npu_v2_d_projection_probe.py": "3097b6630fe7c622fe2250c21275eb0d02c0dccd19312d25391b0031bbe31aab",
+    "scripts/benchmarks/halogen_npu_v2_d_native_projection_graph.py": "8b4d6b9fab064cb556637398796412cb1ccdd555d56193e20fbc2c57285e0c66",
+    "scripts/benchmarks/halogen_npu_v2_d_native_projection_probe.py": "7d1f51fd254389906c66b3ce44117fbe889b38b73861d192e4965893f6b0d9b0",
+    "docs/research/halogen-native-fc-accumulation-20261004.md": "d44524bff59f76f46bebf148ce404906af2187df261d196f0a755e6ad02ca7ce"
+  },
+  "fixture_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-fixtures-f47a1312c34f47b6a23188247f46741b\\fixtures.json",
+    "sha256": "ae61a7924d985b1fd35e5d87eabd47736dbf20b91958bd5d7003dcf1cdb84f11"
+  },
+  "original_fc_host_binary": {
+    "path": "/home/revn/halogen-re/fc-replay-143eee1a74a048769a70d6668b441f31",
+    "sha256": "fc631bcc9f8aecbf38ec457704481dea74603cead686c7da2405572d892beaae"
+  },
+  "original_fc_gpu_execution": false,
+  "candidate_inference_sessions": 0,
+  "npu_execution": false,
+  "speed_improvement_qualified": false,
+  "acceptance_improvement_qualified": false,
+  "full_d_qualified": false,
+  "full_head_qualified": false,
+  "full_goal_completed": false,
+  "graph": {
+    "model": "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-projection-679839c01d074349b93f0bc3c37a26ab.onnx",
+    "model_sha256": "9672f9b98b8b0b0efc10fadb30d0668ee9af25200681fe9b2e421dec97821291",
+    "receipt": {
+      "path": "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-projection-679839c01d074349b93f0bc3c37a26ab.onnx.json",
+      "sha256": "10b953f75bc7ba23195f8d5616ef6b46bb5a017bf91666ad7e96fb58a58284a6"
+    },
+    "external_data_sha256": "a220218d57d4eb9c5cd7231bd696c394a226da5a529fb51cb8c8cbe5e7be379f",
+    "original_external_data_unchanged": true,
+    "output_shapes": {
+      "e_projection": [
+        1,
+        2560
+      ],
+      "h_projection": [
+        4,
+        2560
+      ]
+    },
+    "weight_lineage": "BF16-rounded-original-decoded-FP32",
+    "native_accumulation_parity_qualified": false,
+    "embedding_rms_qualified": false
+  },
+  "owned_preparation_windows": {
+    "fixtures": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-fixtures-owned-f47a1312c34f47b6a23188247f46741b\\result.json",
+        "sha256": "c02de3778ebd4d664099e94cca8f84b9a5a0392c48127600250d14e30ed92e83"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-kernel-fixtures.py",
+              "--out",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-fixtures-f47a1312c34f47b6a23188247f46741b"
+            ],
+            "deadline_seconds": 45,
+            "name": "fixtures",
+            "started": 1791136645.0976355,
+            "owned_identity": {
+              "pid": 4020,
+              "creation_time_100ns": 134356102451042784,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791136649.5044334
+          }
+        ],
+        "config_sha256": "fb161fdb42e4b24385c84964663d9123f3c75111d508d68c96ae7746f2c01b61",
+        "final_memory": {
+          "available_bytes": 50026065920,
+          "committed_bytes": 22179282944,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 217960157184
+        },
+        "minimum_physical_gib": 46.50006866455078,
+        "minimum_commit_gib": 202.87231826782227,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "compile": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-compile-143eee1a74a048769a70d6668b441f31\\result.json",
+        "sha256": "6676290548d2263653de6b09c262717931674858445d36cf6b8374477a1db4a7"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "deadline_seconds": 45,
+            "command": [
+              "C:\\Windows\\System32\\wsl.exe",
+              "-d",
+              "Ubuntu-24.04",
+              "-u",
+              "revn",
+              "--exec",
+              "gcc",
+              "-O2",
+              "-Wall",
+              "-Wextra",
+              "-Werror",
+              "-D__HIP_PLATFORM_AMD__",
+              "-I/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/hip-include",
+              "/mnt/c/Projects/strix-alloy-clean/scripts/benchmarks/halogen0162_fc_replay.c",
+              "-ldl",
+              "-lcrypto",
+              "-o",
+              "/home/revn/halogen-re/fc-replay-143eee1a74a048769a70d6668b441f31"
+            ],
+            "name": "compile",
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "started": 1791137003.9524672,
+            "owned_identity": {
+              "pid": 23896,
+              "creation_time_100ns": 134356106039558569,
+              "executable": "C:\\Windows\\System32\\wsl.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791137004.8507204
+          }
+        ],
+        "config_sha256": "a6363370561262bcd0702fdb8e8b83160e6859940f3852eb784a917a93b6ce50",
+        "final_memory": {
+          "available_bytes": 26864889856,
+          "committed_bytes": 112925196288,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 127214243840
+        },
+        "minimum_physical_gib": 25.028797149658203,
+        "minimum_commit_gib": 118.47974014282227,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "graph_build": {
+      "plan": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-projection-current-build-plan.json",
+        "sha256": "a9529c2b5db517988b3942e2ea4159a0e4594af2831e4281c8be6ccac7fb2f27"
+      },
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-projection-cpu-build-679839c01d074349b93f0bc3c37a26ab\\result.json",
+        "sha256": "0567913c9d8af5eac8add5ff2504ea338834e409a923757c366b462762dde43c"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "build",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_v2_d_native_projection_graph.py",
+              "--source-model",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-prepare.onnx",
+              "--source-build-receipt",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-prepare.onnx.json",
+              "--source-build-receipt-sha256",
+              "06bba1a8bb9658047ce12292becf7bbee9d639498a345aaf3019af4540bcfd99",
+              "--output",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-projection-679839c01d074349b93f0bc3c37a26ab.onnx",
+              "--wire-mode",
+              "D"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 45,
+            "started": 1791137948.2177556,
+            "owned_identity": {
+              "pid": 26068,
+              "creation_time_100ns": 134356115482221868,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791137948.9485133
+          }
+        ],
+        "config_sha256": "abfa9176fc8b83da4953a5f17ab481ddfe07acbb1a6256f46ca6861ff9fc8028",
+        "final_memory": {
+          "available_bytes": 27446648832,
+          "committed_bytes": 113941598208,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 126197841920
+        },
+        "minimum_physical_gib": 25.51998519897461,
+        "minimum_commit_gib": 117.4913330078125,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    }
+  },
+  "user_server": {
+    "observation": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-fc-server-observation-5194f344024346f0947fe4adc7fcdd75.json",
+      "sha256": "be0ce49070cf16fa8ef67aedcf2386183a9c07125890d7d74dddb5ef27ed5ad5"
+    },
+    "observed_utc": "2026-10-04T18:29:17.2680822Z",
+    "controller_pid": 10048,
+    "controller_run_id": "c5fd81b1e4cb47b3a6cd3ba1f6ead0cc",
+    "phase": "ready",
+    "context_capacity": 262144,
+    "active_requests": 0,
+    "authenticated_health_status": "ok",
+    "real_windows_handle_observed": true,
+    "running_container_count": 1,
+    "owned_child_pids_absent": [
+      4020,
+      23896,
+      26068
+    ],
+    "preserved": true
+  },
+  "validation": {
+    "source_only_peer_review": true,
+    "ast_checks": true,
+    "graph_checker": true,
+    "reserve_gib": 18,
+    "component_admission_gib": 22,
+    "tolerances_changed": false,
+    "cpu_tolerance": {
+      "rtol": 0.002,
+      "atol": 0.0002
+    },
+    "npu_tolerance": {
+      "rtol": 0.03,
+      "atol": 0.003
+    }
+  },
+  "next": "Exclusive original Q8 FC GPU replay; original-word CPU gate; strict NPU projection gate; full D/head/history/native verification and measured useful integration",
+  "last_official_update_check_utc": "2026-10-04T17:30:56Z",
+  "next_official_update_check_not_before_utc": "2026-10-04T19:30:56Z"
+}
