@@ -48,3 +48,68 @@ passed, with the retained failure lock subsequently retired after identity and
 terminal-state verification. The selected-expert
 [NPU replay](../research/halogen-npu-top10-20261004.md) remains a partial graph;
 no full Halogen MTP, acceptance or GPU speed gain is claimed from it.
+
+## Status at 02:10 UTC / 04:10 Berlin
+
+The matched stock result remains 1731.31 prefill / 46.59 MTP decode / 60%
+acceptance. Relative to the earlier 1714.94 / 47.06 control, the descriptive
+changes are +0.95% prefill and -1.00% decode. No new overall speed or acceptance
+improvement has been qualified during this window.
+
+These are separate PP8192/TG1 and TG128 phase measurements on a greedy story
+request, not throughput for an arbitrary conversation. The 32K sampled article
+workload uses a different prompt, thinking policy, output lengths and cache
+opportunities. Its 1087.22 / 40.74 / 83.86% values cannot establish a regression
+or improvement against the 8K control. Acceptance means accepted draft tokens
+divided by proposed draft tokens; higher acceptance alone does not imply faster
+decode when draft depth and computation change.
+
+The first high/residual NPU projection passed precision but took 1.17655 ms
+versus 0.70204 ms on CPU at tiny geometry. The extended tiny expert still failed
+precision and was not promoted. A subsequent guarded
+[full-width runtime expert probe](../research/halogen-npu-v2-dynamic-20261004.md)
+using actual v2 weights passed all twelve calls and strict ORT provider
+attribution. Its mean host call was 126.94446 ms versus 114.60971 ms on CPU in
+the same window; repeated transfer of 187.5 MiB of runtime weights is not a
+useful live decode path. This is an expert subgraph, not full MTP.
+
+The latest E-backed loop formatting attempt failed before any lookup payload
+extraction. It retained 40.256 GiB physical and 198.685 GiB commit headroom.
+Its receipt and fresh namespace queries confirm the owned mount, loop and
+worker are absent. Direct E placement is supported by the existing validator
+and is being prepared as the next bounded storage experiment.
+
+## Status at 03:00 UTC / 05:00 Berlin
+
+No new end-to-end speed or acceptance improvement has been qualified. The
+matched comparison remains 1731.31 PP8192-only / 46.59 MTP TG128 tok/s / 60%
+acceptance. The 1087.22 / 40.74 / 83.86% sampled 32K conversation result remains
+a different workload. The work so far consists of measured comparisons,
+rejected tuning candidates, NPU subgraphs and live-interface implementation;
+full NPU MTP is unfinished.
+
+A new root-owned [routing tap](../research/halogen-mtp-routing-live-20261004.md)
+captured 73 complete speculative MTP MLP calls
+with the unchanged stock output hash. They used 215 different experts among
+730 slots. Consecutive calls shared 1.2083 experts on average out of ten. A
+64-expert resident set selected using only the first half of the trace covered
+45.68% of expert slots and zero complete calls in the second half. This small
+trace does not support a tiny whole-call static-set cache. Capture timing is
+intrusive and supplies no throughput claim. Original shutdown and memory
+recovery passed; minimum physical/commit headroom was 22.6227 / 113.9947 GiB.
+Artifacts are retained under
+`server/.local/optimization9h-20261004/mtp-route-capture-353f04fbb6cf42cb8a4f9030aa4eafc9`.
+
+The FP32 constant-bank NPU attempt executed zero NPU calls because strict
+provider placement failed. Read-only BF16 rounding changes 95,746,308 of
+98,304,000 weights and fails the strict CPU reference gate. This rules out the
+qualified lossless-conversion path; it does not measure live drafting quality
+or NPU performance for an approximate BF16 model.
+
+The direct-E diagnostic extraction stopped after 503,316,480 payload bytes
+without a canonical extraction receipt. Its observer last read a fresh frame
+in about 21 ms. At refusal, its diagnostic stage was `sleep` for over two seconds
+and its stack pointed into `Event.wait`; this does not distinguish waiting,
+GIL reacquisition or OS scheduling, or establish heartbeat-file transport
+staleness. All owned processes are terminal, reserve held, and the partial
+output remains unqualified. No SSD speed result is claimed.

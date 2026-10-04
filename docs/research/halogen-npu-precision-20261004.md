@@ -6,8 +6,9 @@ and BF16 output ties rounded away from zero reproduce every returned value for
 both A and B. The frozen FP32-reference gate remains failed. This explains the
 first projection's retained outputs. One four-term split now passes the same
 unchanged gate on NPU, but takes more host-call time than CPU at this tiny size.
-The complete eight-operator graph and the closed provider's implementation still
-require separate evidence. No supported
+Applying the split to the complete tiny expert graph still fails nine of 64 B
+values. Its full arithmetic and the closed provider's implementation remain
+unresolved. No supported
 Windows ML / VitisAI provider option to disable BFP16 GEMM was found in the
 current primary references. This diagnostic agent launched CPU calculations only;
 the root agent ran the isolated NPU graph under its owned-job guard.
@@ -305,6 +306,100 @@ precision only and supplies no Halogen or MTP speedup.
 | Memory samples | `c07e3314fcf085a40cddff62f510e0645e630533c4f0c2ee7fd5cc2368574c1d` |
 | Owned-stage receipts | `d8b0f84c579d499b8e3d1f571bd5e7fb178386fd4e94c59e3f215e424b13067d` |
 | Cleanup receipt | `2412b2c72f59b3ff0dedc7ec08e190004fbb7b4cb4536101f431fab31fb6705f` |
+
+## Full tiny expert graph extension, guarded NPU failure
+
+[`halogen_npu_precision_expert_split_probe.py`](../../scripts/benchmarks/halogen_npu_precision_expert_split_probe.py)
+replaces only the original eight-operator graph's first MatMul with the measured
+four-MatMul/three-Add split. The remaining seven serialized ONNX nodes are
+checked byte-for-byte against the frozen original: Split, Sigmoid, two gating
+Muls, down-projection MatMul, routing Mul and ReduceSum. All original A/B
+fixtures, four input hashes and full per-expert FP32 references remain unchanged.
+The first-projection splitter and original parameter-probe source are hash-bound
+dependencies. The original builders and previous probe sources are unchanged.
+
+Every host call times first-projection high/residual preparation and fresh
+copies of all six graph inputs, including the unchanged down weights and routing
+coefficients. Each call feeds 410,152 bytes; fixture, split and reference
+accounting totals 1,312,928 bytes under the 64 MiB ceiling. It retains all twelve
+full output arrays before validation and keeps the same strict NPU provider
+checks and unchanged NPU/CPU tolerances.
+
+The single CPU replay passes all four warmups and eight measured calls at
+`rtol=3e-5`, `atol=3e-6`: A maximum absolute error is
+`1.4901161193847656e-8`, B is `3.5762786865234375e-7`. All 156 profiled Node
+events are CPU; mean measured call time is 0.763625 ms including preparation
+and copies. This verifies CPU equivalence of the full tiny graph candidate.
+[Full tiny candidate CPU receipt](C:/AI/halogen-mtp-npu/expert-split-offline-20261004/cpu.json).
+
+| Full tiny candidate artifact | SHA-256 |
+| --- | --- |
+| Frozen source | `68bd9da3f0ad90971c84fed2706b306631767d001ef4b16be9326dafd8a2428f` |
+| 1,295-byte ONNX, 14 operators | `2a8fdff4069b4145cdc8f135d1857cfdcf01a049acd0e677f6821faf7ddb2afe` |
+| CPU receipt | `0a1a57049f8f22406bbfed11d69c191817d990598bd2157dabf609790b4eb6df` |
+| Frozen original parameter-probe dependency | `ddd476b25f6e434b03390fb0974d54f157fcd26492417641a5ed9cc38fa15a1c` |
+| Frozen first-projection split dependency | `012f496c94e52f06ed2b530a58fbc35781ef7795f44715b16f13d75285a68412` |
+
+The root-owned
+[expert-split-guarded-20261004-b](C:/AI/halogen-mtp-npu/expert-split-guarded-20261004-b/result.json)
+is terminal **failed**: build and CPU exited 0; NPU exited 1 after retaining all
+twelve complete outputs. All three owned jobs closed, without guard or cleanup
+errors. Fresh memory minima were 43.7302895 GiB physical and 198.6546402 GiB
+commit headroom. All twelve Node events were exclusively VitisAI. A passes
+0/64 violations with maximum absolute error `0.0007314234972000122`; B fails
+9/64 with maximum error `0.027966737747192383` at the unchanged gate. Every
+repeat of each fixture has the same output. `timing_qualified=false`; these
+failed NPU timings supply no performance claim. The same-window CPU mean is
+0.7535125 ms including preparation and copies.
+[Retained full NPU arrays](C:/AI/halogen-mtp-npu/expert-split-guarded-20261004-b/npu.json).
+
+| Guarded full tiny artifact | SHA-256 |
+| --- | --- |
+| NPU receipt | `b11dd8f8228589d933a7b55e29f05576a6326d409d3c37143ac4e722c16847c4` |
+| CPU receipt | `a0a66b5a86bfa33491eb908cf0a7c20b93603cc00866a270d7b8c25d146c619a` |
+| NPU profile | `4eee03429f2ad1976ddafaa2f13a4d5f7664bb9d29375e3420b23989565ca16f` |
+| A NPU output | `65847e3b3b447175b445a6c77ca77fc6430badbae2a19e6b3fc26ba24ccc3e96` |
+| B NPU output | `8ab3f7ae697fcd8c958b156eee90bd338759e5462ca2e980cdadf32672819339` |
+| Guard result | `af7fecc08ba024bfb103d9d96a4a9a3602cabd88e882d834eb07dd8cd1310fca` |
+| Memory stream | `68468c30583e9990a7301f532440673e4ae2f3fbfc798ac9594c606aa1da5d6d` |
+| Cleanup receipt | `d0d09e4c2fe96ce2416043f8ee23b8167b27b0a8b5abbb56a84fb59f9d532b3d` |
+
+## Narrow remaining-error diagnosis
+
+[`halogen_npu_precision_down_diagnose.py`](../../scripts/benchmarks/halogen_npu_precision_down_diagnose.py)
+checks every retained full-graph array hash, original fixture/reference hash and
+gate, then recomputes the separately observed first projection exactly. Fixed
+suffix ablations use that projection with exact FP32 SiLU rounded to BF16 RNE,
+BF16 RNE gating/routing products and FP32 route accumulation rounded to BF16
+nearest/ties-away. Those suffix rules are hypotheses: the compiler logs fused
+`SiLUBf163D`, `MulBf163D`, `GemmBfp16` and `ReduceSum`, but does not expose their
+complete numerical implementation or retain intermediate activation arrays.
+
+| B suffix arithmetic hypothesis | Violations / 64 | Maximum error | L2 error |
+| --- | ---: | ---: | ---: |
+| Observed NPU | 9 | 0.027966738 | 0.07236348 |
+| Observed first projection, FP32 remainder | 1 | 0.006978780 | 0.02364218 |
+| BF16 activation, FP32 down/routing | 1 | 0.006135911 | 0.02124744 |
+| BF16 down/routing, no BFP down operands | 2 | 0.013561845 | 0.02919062 |
+| BFP down weights only | 6 | 0.017482638 | 0.05073417 |
+| BFP down activation only | 6 | 0.019855440 | 0.05265860 |
+| BFP both down operands | 9 | 0.027959943 | 0.07129952 |
+| Two-term down-weight split forecast | 6 | 0.020989299 | 0.05467974 |
+
+The both-operand down-GEMM hypothesis reproduces the failure count and nearly
+the maximum error, but exactly matches only 12/64 A and 15/64 B values; its
+maximum residual to the measured B output is `0.015625`. It does not establish
+an exact full-graph formula or distinguish the closed SiLU/reduction behavior.
+Within this model, down-weight and down-activation quantization cause similar
+error. Weight precision does not dominate, and a two-MatMul/one-Add down-weight
+split still forecasts six failing B values. No such graph was prepared or run.
+This synthetic failure does not establish a failure for real v2 MTP weights.
+[Complete offline ablation receipt](C:/AI/halogen-mtp-npu/expert-split-offline-20261004/down-diagnosis.json).
+
+Diagnosis source SHA-256 is
+`df0d3478c5d8f6d213bac74d0a0444bae3873319686ffe57c122058348c4e576`;
+receipt SHA-256 is
+`f1f25ccf582de428ae2e83fd15d650efba73ec71bff5b0fed52471c291e44b45`.
 
 This work does not qualify full-width dynamic expert matrices, full NPU MTP,
 acceptance, live target-state handoff, or a Halogen speedup. The measured builder,

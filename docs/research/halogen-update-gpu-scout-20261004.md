@@ -59,3 +59,20 @@ For this OEM, [BOSGAME's product FAQ](https://www.bosgamepc.com/en/products/bosg
 A useful reversible addition is **read-only GPU telemetry** during the root's existing trials. [AMD ADLX GPU metrics](https://gpuopen.com/manuals/adlx/adlx-sdk-references/adlx-interfaces/performance-monitoring/iadlxgpumetrics/) expose clock, temperature, usage and power where supported; the [official sample](https://gpuopen.com/manuals/adlx/programming-with-adlx/adlx-samples/cplus-samples/performance-monitoring/perfgpumetrics/) checks support before reading values. The installed library is present, but device support and collection overhead are untested. Missing metrics must remain unavailable. This can address the prior run-order drift without claiming thermal causation from timings alone.
 
 Reddit leads, checked against primary sources above: [October 2 Halogen NPU announcement](https://www.reddit.com/r/StrixHalo/comments/1wvfrj0/halogenflashserver_0160_strix_halo_npu_now_serves/) led to the actual NPU requirements; [BOSGAME performance-button discussion](https://www.reddit.com/r/StrixHalo/comments/1w2hryh/bosgame_m5_performance_button_on_linux/) describes Linux hardware-button state and anecdotal performance/noise differences. Neither supplies a qualified Windows Halogen tuning result. Linux kernel/IOMMU recipes and hardware modifications remain outside this run.
+
+## Recheck at 02:57 UTC, 4 October
+
+Official GitHub metadata still places main and the newest v0.16.2 tag at
+`7f31bbd4021f217a1be9776bdb7304bcf8eca62d`. The Max+ 395 download page still
+lists Adrenalin 26.9.2 as its newest package; its GPU/NPU versions match the
+installed drivers. No update was installed.
+
+The separate [Ryzen AI installation channel](https://ryzenai.docs.amd.com/en/latest/inst.html)
+lists NPU driver 32.0.203.376 for Strix Halo and software 1.8.0. The different
+driver branch alone does not establish that it supersedes installed MCDM
+32.0.20102.3930. No newer applicable driver was verified.
+
+The proposed matmul-plan trial above has since completed and was
+[rejected](../benchmarks/halogen0162-matmul-20261004.md). ADLX telemetry has
+[passed its read-only probe](halogen-adlx-20261004.md); all six queried tuning
+capabilities were unsupported. Neither result establishes a new speed gain.

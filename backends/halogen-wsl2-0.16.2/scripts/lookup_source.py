@@ -222,7 +222,17 @@ def guarded_hash(machine, local, receipt):
             temporary = guard.with_suffix('.tmp')
             with temporary.open('w', encoding='utf-8') as stream:
                 json.dump(dict(schema=1, run_id=run_id, sequence=sequence, time=time.time(), frame=frame), stream)
-            temporary.replace(guard)
+            deadline = time.monotonic() + .5
+            while True:
+                try:
+                    temporary.replace(guard)
+                    break
+                except PermissionError:
+                    # A guest read can briefly hold the Windows destination.
+                    # Retries do not renew the guest's observed progress age.
+                    if time.monotonic() >= deadline:
+                        raise
+                    time.sleep(.01)
             if any(type(frame.get(key)) is not int or frame[key] < 18 * 1024**3
                    for key in ('available_bytes', 'commit_headroom_bytes')):
                 raise ValueError('Lookup qualification crossed the 18 GiB physical/commit reserve')
