@@ -319,3 +319,36 @@ bank is prepared for strict provider admission. It contains zero experts and
 has no NPU inference, acceptance or speed result. Approximate q4c-to-affine
 INT4 preparation also passed its one numerical fixture. These prerequisites
 do not change the stock numbers or qualify a complete NPU draft.
+
+At 05:59 UTC, the root-owned
+[strict Light QMoEBf admission](../research/halogen-qmoe-graph-contract-20261004.md)
+failed during its sole session-creation attempt: `com.ryzenai:QMoEBf(-1)` was
+not a registered function/op. Graph/header/manifest, source/helper and complete
+provider-copy pins validated; the actual Light NPU device was selected with
+CPU fallback disabled. There were zero calls, no numerical result and no
+kernel attribution. The 1.8323-ms failed-construction host timing is not NPU
+latency. Missing operator registration does not establish an unsupported
+512-expert/top10 shape; that capability was not tested.
+
+Provider unregistration, DLL-directory closure, WinML bootstrap shutdown and
+root-owned job closure passed; the child is terminal, exit1. Child observed
+physical/commit minima were 48.146 / 202.802 GiB, while the guard observed
+48.172 / 202.824 GiB. This first receipt supplies no fallback or inference result. The stock
+baseline remains **1768.47 PP-only / 46.355 MTP decode / 60% acceptance**.
+No end-to-end gain is qualified, and full live NPU MTP remains incomplete.
+
+At 06:03 UTC, root's changed candidate explicitly registered custom operators
+from the same pinned Light DLL. That resolved the missing-operator gate, but
+ORT 1.25.2 then rejected `Unsupported version '27' in custom op 'QMoEBf` during
+initialization. It again completed zero calls; the 10.2292-ms host construction
+time is not NPU latency. Its profile contains two session events and zero Node
+events. This custom-op API compatibility rejection does not test 512/top10
+shape support. Both candidate receipts are retained separately in the
+[graph report](../research/halogen-qmoe-graph-contract-20261004.md).
+
+The second child's provider unregistration, DLL-directory closure, bootstrap
+shutdown and owned-job closure passed, with terminal exit1. Child observed
+physical/commit minima were 45.908 / 200.606 GiB; guard minima were
+45.930 / 200.627 GiB. No unchanged attempt is proposed. The stock baseline
+remains 1768.47 / 46.355 / 60%; no new end-to-end gain or full NPU MTP is
+qualified.
