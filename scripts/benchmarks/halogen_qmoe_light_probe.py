@@ -9,6 +9,7 @@ complete bank before launch. This child does not rehash the 3-GB bank.
 """
 import argparse
 import ctypes
+import faulthandler
 import gc
 import hashlib
 import json
@@ -33,6 +34,8 @@ ORT_STAGE_MANIFEST = ORT_STAGE / "stage-manifest.json"
 ORT_STAGE_MANIFEST_SHA256 = "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f"
 ORT_STAGE_TREES = ("onnxruntime", "onnxruntime-1.29.0.dist-info")
 ORT_DONOR = Path(r"C:\AI\runtimes\qwen3-tts\.venv\Lib\site-packages")
+FAULT_LIBRARY = ROOT / "server/.local/optimization9h-20261004/qmoe-fault-capture-build/halogen_qmoe_fault_capture.dll"
+FAULT_LIBRARY_SHA256 = "c75b93bb3a13a357df545f0e5261f2a54eead53ca26d3e540c9ae7d70017064d"
 BANK_BYTES = 2_986_344_448
 BANK_SHA256 = "05283a60ce7858fdfa93d46ce84e86a5a38d5bbe46631e8571d2ff632890365f"
 BF16 = 16
@@ -45,6 +48,7 @@ PROTOBUF_SOURCE = ROOT / "server/.local/optimization9h-20261004/qmoe-source-only
 PROTOBUF_SOURCE_SHA256 = "11535c7348e169fd16fbda6da598281f8ee68b190f491b2e426358216f450d33"
 OPTION_SOURCE = "https://huggingface.co/amd/gpt-oss-20B_eager_rai_1.8.0_npu_16K/resolve/bcbb238a3e7e1c11fcac9850bde957e34eb51ebd/genai_config.json"
 DEPENDENCIES = {
+    "scripts/benchmarks/halogen_qmoe_fault_capture.c": "ebe093f7b7efc652f0accea8bf8c07be56284911acc7b6ae9a4f5ca738b8dc6d",
     "scripts/benchmarks/halogen_npu_light_ep_admission_probe.py": "401ea8c9c83758568f19b7e07e3bf128b2d194d79fc01861355b53ca0ad89100",
     "scripts/benchmarks/halogen_npu_expert_onnx.py": "900a4deb32b86a48c6c132bf1326a3174bc5ef11482fd88b98005d0c40a4b722",
     "scripts/benchmarks/hgn_q4c_slice.py": "fe0dd1b9974f95bed02f37dddde1ee7c286f3f69d491548008d4a94ea703fdce",
@@ -160,6 +164,9 @@ def verify_sources(args):
     runtime_hashes = {name: digest(RUNTIME / name) for name in RUNTIME_FILES}
     require(runtime_hashes == RUNTIME_FILES, "Pinned runtime dependency changed")
     ort_stage_pins = verify_ort_stage(args)
+    require(plain_path(FAULT_LIBRARY).stat().st_size == 31744
+            and digest(FAULT_LIBRARY) == FAULT_LIBRARY_SHA256,
+            "Root-reviewed native fault collector changed")
     require(digest(PACKAGE / "AppxManifest.xml") == PACKAGE_MANIFEST_SHA256,
             "Installed provider package manifest changed")
     require(digest(LIBRARY) == LIBRARY_SHA256 and LIBRARY.stat().st_size == 4368688,
@@ -195,6 +202,7 @@ def verify_sources(args):
             "Bank hash scope changed; root guard must verify the complete bank")
     return manifest, model_path, header_path, dict(
         dependencies=actual, runtime=runtime_hashes, ort_stage=ort_stage_pins,
+        fault_collector_library=str(FAULT_LIBRARY), fault_collector_sha256=FAULT_LIBRARY_SHA256,
         builder_manifest_sha256=MANIFEST_SHA256,
         builder_source_sha256=BUILDER_SOURCE_SHA256, protobuf_source_sha256=PROTOBUF_SOURCE_SHA256,
         graph_sha256=manifest["graph_sha256"], header_sha256=manifest["header_sha256"],
@@ -261,11 +269,13 @@ def run(args):
     runtime = session = options = devices = all_devices = dll_directory = ort_dll_directory = ort = None
     feed = outputs = output = x_storage = router_storage = actual = model = None
     registered = profile_finished = False
+    fault_library, fault_armed = None, False
     memory_samples, cleanup_errors = [], []
 
     def stage(name):
         result["stage"] = name
         result["stages"].append(dict(stage=name, epoch_ns=time.time_ns(), qpc=time.perf_counter()))
+        print("QMOE_STAGE " + name, flush=True)
 
     try:
         stage("source_and_artifact_validation")
@@ -362,9 +372,25 @@ def run(args):
             result["initialization_ms"] = (time.perf_counter_ns() - started) / 1e6
         result["session_providers"] = session.get_providers()
         reserve("after_session")
+        stage("native_fault_capture_arm")
+        fault_path = args.report.parent / "native-fault.jsonl"
+        require(not fault_path.exists(), "Native fault metadata must be fresh")
+        fault_library = ctypes.CDLL(str(FAULT_LIBRARY))
+        fault_library.start_capture.argtypes = [ctypes.c_wchar_p]
+        fault_library.start_capture.restype = ctypes.c_uint32
+        fault_library.stop_capture.argtypes = []
+        fault_library.stop_capture.restype = ctypes.c_uint32
+        require(fault_library.start_capture(str(fault_path.resolve())) == 0,
+                "Native fault metadata collector did not arm")
+        fault_armed = True
+        result["native_fault_metadata"] = dict(path=str(fault_path),
+            collector_sha256=FAULT_LIBRARY_SHA256, record_limit=8, record_byte_limit=8192,
+            scope="exception metadata and arm-time module snapshot; no payload or performance evidence")
+        print("QMOE_SESSION_PROVIDERS " + json.dumps(result["session_providers"]), flush=True)
         stage("synthetic_admission_calls")
         for index in range(MAX_CALLS):
             reserve("before_call_" + str(index))
+            stage("synthetic_call_" + str(index) + "_prepare")
             prepare_started = time.perf_counter_ns()
             x_storage = np.full(activation["shape"], 0x3F80 if index == 0 else 0x4000, dtype=np.uint16)
             scores = np.zeros(router["shape"], dtype=np.float32)
@@ -381,11 +407,13 @@ def run(args):
                        prepare_ms=(started - prepare_started) / 1e6, passed=False)
             result["calls"].append(row)
             result["call_count"] += 1
+            stage("synthetic_call_" + str(index) + "_invoke")
             try:
                 outputs = session.run_with_ort_values([output_contract["name"]], feed)
             finally:
                 row["host_session_call_ms"] = (time.perf_counter_ns() - started) / 1e6
             result["completed_calls"] += 1
+            stage("synthetic_call_" + str(index) + "_returned")
             require(len(outputs) == 1, "Expected one bounded BF16 output")
             output = outputs[0]
             require(output.device_name() == "cpu" and output.element_type() == BF16
@@ -401,6 +429,7 @@ def run(args):
                        finite=bool(np.isfinite(actual).all()), zero_output=bool((actual == 0).all()))
             row["passed"] = row["finite"] and row["zero_output"]
             require(row["passed"], "Frozen zero-bank output is not finite zeros")
+            stage("synthetic_call_" + str(index) + "_validated")
             feed = outputs = output = x_storage = router_storage = actual = None
             reserve("after_call_" + str(index))
         stage("profile_attribution")
@@ -422,6 +451,12 @@ def run(args):
         result.update(error=type(exc).__name__ + ": " + str(exc), failed_at_stage=result.get("stage"))
     finally:
         stage("cleanup")
+        if fault_armed:
+            try:
+                require(fault_library.stop_capture() == 0, "Native fault collector stop failed")
+                result["native_fault_collector_stopped"] = True
+            except Exception as exc:
+                cleanup_errors.append("native fault collector stop: " + str(exc))
         if session is not None and not profile_finished:
             try:
                 result["partial_profile"] = str(session.end_profiling())
@@ -469,6 +504,9 @@ def run(args):
 
 
 def main():
+    # Native access violations bypass Python finally/report serialization.
+    # Persist stage markers and a Python stack in the owned child logs.
+    faulthandler.enable(all_threads=True)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)

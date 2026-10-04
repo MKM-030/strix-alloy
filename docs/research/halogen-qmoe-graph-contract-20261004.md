@@ -2,13 +2,16 @@
 
 The public builder `scripts/benchmarks/halogen_qmoe_graph.py` constructs exactly one `com.ryzenai::QMoEBf` node, domain opset1, and an official AMD Header sidecar against a completed external bank. It imports ONNX/protobuf only for static serialization/checking. It does not import DynamicDispatch or ONNX Runtime, invoke a provider/device, pack weights, decode a model, or read/hash the bank payload. This is a runtime candidate, not a qualified NPU draft.
 
-Root's two guarded Light candidate versions completed with zero calls each.
+Root's first two guarded Light candidate versions completed with zero calls each.
 At 05:59 UTC, QMoEBf was not registered. At 06:03 UTC, explicit custom-op
 registration from the same pinned DLL resolved that first gate, but ORT 1.25.2
 rejected custom-op version27 during initialization. These are distinct
 registration and API-compatibility failures; neither tests 512-expert/top10
 execution support. Cleanup passed in both. No NPU latency, numerical result,
-residency, acceptance or speed gain exists.
+residency, acceptance or speed gain exists. Subsequent isolated ORT 1.29
+receipts below resolve the API-version initialization gate, but fault during
+inference. The per-call observer proves the first invocation does not return;
+no NPU execution result is qualified.
 
 ## Exact source and pack pins
 
@@ -181,3 +184,101 @@ The second receipt is retained independently under
 
 Both original negative receipts are preserved. This publication made no source
 change or runtime call.
+
+## Isolated ORT 1.29: session admitted, first inference does not return
+
+Root isolated the existing complete ORT 1.29 package under
+`server/.local/optimization9h-20261004/qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495/`.
+Its sealed manifest SHA256 is
+`3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f`:
+630 files, 45,280,440 bytes and C API maximum 29. Installed runtimes were not
+replaced. Three separate guarded children kept graph, Header, synthetic zero
+bank and inference inputs identical while source versions added diagnostic
+observability, flushed stages/faulthandler, then per-call stages.
+
+Common graph SHA256 is
+`b04764ee869ec27ea8eb4ff774b0a63fcdf8bc9212c0dcdb1f74949087ba2738`,
+contract SHA256 `9f694e76125cef522e90df002bd010a28efb6fbf78ccd117e0cc0dcae83d5b54`,
+guard source SHA256 `9610d697f13f62ccbee6a9f621b54ed04a57a0313ba33a649d293010ca3b2eed`,
+and child interpreter SHA256
+`0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14`.
+The Light/custom-op DLL and synthetic bank retain their earlier expected pins.
+
+| Receipt under `server/.local/optimization9h-20261004/` | Probe source SHA256 | Guard result SHA256 |
+|---|---|---|
+| `qmoe-light-admission-73b5e986a34b421ea8a0223b839529a0` | `0c0e0071e8c3953f91df0729c3c86e44c959f8616e1feb392cae95a01c942abc` | `5f2ffd973c15e8b24990577725218e6cb72055f92b0e1cbb69ab244c04ad913c` |
+| `qmoe-light-admission-0c46d0d069b044d6a0de52ebd3faa948` | `99dab6096f8813451902520f97b7e1fd04a51319b96b895b39fcbb8ea2bb240a` | `f155a8f28e08ba71a10153bc7bf6d8df602569c0fbfb04890967e0bd1fd025fb` |
+| `qmoe-light-admission-b7796faf67894b17a6465a48ff29b1d2` | `a371cea50c0d902af76095cdbd324ced66edd8a013d37f2275abbe9fae18ad7d` | `8764d9cd321ed9bcca0c68f9ad51895372f53fad001f11e9b4ace5531c3cc098` |
+
+For A/B/C hash columns below, aliases refer to these runs in table order.
+
+The first child has empty stdout/stderr and no child JSON, so its session
+and call progress is unknown. The second completes strict session
+initialization, reaches `synthetic_admission_calls`, then faulthandler reports
+an access violation inside ORT `run_with_ort_values`/`invoke`; its per-call
+index and count are unknown. The third additionally flushes
+`synthetic_call_0_prepare` and `synthetic_call_0_invoke`, with no returned
+marker and no call 1. It proves one attempted host inference invocation and
+zero returned calls. Missing counters for the earlier runs remain unknown.
+
+All three exit 3221225477 (`0xC0000005`, Windows access violation). None writes
+`admission.json`; each created ORT profile is zero bytes. There is no returned
+output, numerical qualification, successful NPU latency or profile attribution.
+The guards record `owned_job_closed=true`, `ort_stage_final_verified=true`
+for all 630 staged files, and the unchanged 18-GiB physical/commit reserve.
+Child provider unregistration, DLL-directory closure and bootstrap shutdown
+are unobserved after the hard crash; owned-job closure is observed cleanup.
+
+| Saved artifact | A SHA256 | B SHA256 | C SHA256 |
+|---|---|---|---|
+| `result.json` | `5f2ffd973c15e8b24990577725218e6cb72055f92b0e1cbb69ab244c04ad913c` | `f155a8f28e08ba71a10153bc7bf6d8df602569c0fbfb04890967e0bd1fd025fb` | `8764d9cd321ed9bcca0c68f9ad51895372f53fad001f11e9b4ace5531c3cc098` |
+| `identity.json` | `6a679e97243990fbd1d425165c58bd15b0c5ad757b4f19fd0594136e66dcc336` | `d34c29f34aaec88bc07b338d2e664c0197b4dbd5e49bff83d16c0a3345fce636` | `2df3aa14b093a5360743498a3a8fed48a7d0d785136a6115032ac7ce00c3d339` |
+| `memory.jsonl` | `f05003842f4070366db31232c6e1fa76361ed39decda809f014df72fa7e54dfb` | `c6342c7c13babc2f5240cc162470289bcb1db88ac33b5772a1e4b3899e9dcd05` | `f07b4e4f217ba079ddae54a1c8500541af2562a17dff3ba64a1d6a4421ca19e2` |
+| `stdout.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` | `85c8a11df8d12e2c706e4fc1a27e29678b7b3a1e98c8cca51e8dc381ee245450` | `d99a8633dbc0cfd804d31a14086db546315eddfbd0fe38a9ce98c4dc8f668e35` |
+| `stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` | `0b124356d5c10d183bde4630614c130319c08c9e774966699614033fbdedacd8` | `8966ea3de61b08e9ba17a91a479750aa07b7d3130fdf7189cfc6868555affd55` |
+
+Each `ort-stage-manifest.json` snapshot has the common stage hash above.
+All three empty ORT profiles hash to
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+Their exact filenames and all artifact extents are retained in the
+[nine-hour evidence JSON](../benchmarks/halogen9h-optimization-20261004.json).
+
+Runs B and C establish that the historical custom-op API 27 versus 25
+initialization rejection is resolved under ORT 1.29. Strict session
+initialization completes, while the first inference invocation does not
+return. This does not establish successful 512/top10 execution, NPU dispatch,
+weight residency, routing, shape/padding or activation correctness. The
+Python stack locates the host boundary, not the faulting native instruction
+or its cause. At that stage, native fault-address/module collection was being
+prepared separately; the subsequent collector receipt is below. No further
+unchanged inference run is proposed.
+
+Both earlier registration/API negative receipts remain intact. The stock
+baseline stays **1768.47 PP-only / 46.355 MTP decode / 60% acceptance**.
+No gain is qualified and full live NPU MTP remains unfinished. This publication
+read retained receipts only; no tests, weight payloads or hardware were run.
+
+## Subsequent native fault-address collection
+
+Root's separate `server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933`
+uses probe source SHA256
+`694febe34066e63aa777978742a37300037c54e8d4f43c32a8147b1c90c846ff`.
+Prior source pins and negative receipts remain unchanged. The retained
+`native-fault.jsonl` reports the call 0 invocation's access violation:
+read of address 0, instruction `0x00007ffbdb7d2186`, arm-time module snapshot
+`C:\Windows\System32\xrt_coreutil.dll`, base `0x00007ffbdb6e0000`,
+module offset `0xf2186`. This is a captured native fault location, not a
+diagnosis of version compatibility, input, packing, device or ownership cause.
+
+Strict session initialization completed and the flushed log reaches
+`synthetic_call_0_invoke` without a return or call 1. Session provider inventory
+is `["RyzenAILightExecutionProvider", "CPUExecutionProvider"]`; that inventory
+alone does not establish CPU fallback or successful NPU placement. The source
+retains disabled fallback, but execution attribution remains unavailable.
+There is no child `admission.json`, returned output or successful latency;
+the created ORT profile is zero bytes. Guard exit is 3221225477, owned job
+closure and final 630-file stage verification pass, with the 18-GiB reserve held.
+Separate static version/module investigation is ongoing; no cause is claimed.
+The stock 1768.47 / 46.355 / 60% control and unfinished full-NPU-MTP status remain
+unchanged. This publication read saved receipts only; no artifact hashes were
+recomputed and no hardware was launched.

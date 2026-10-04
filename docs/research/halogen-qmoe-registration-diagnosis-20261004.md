@@ -1,6 +1,6 @@
 # QMoEBf registration and runtime API boundary in installed Light1.8
 
-The first strict Light candidate stopped at **ONNX custom-op registration**, before shape admission or NPU execution. Registering the **same verified Light DLL** resolved that error in the next owned attempt, which now stops at **custom-op C API version27 versus the installed runtime's maximum25**. An existing complete CPython3.12 ONNX Runtime1.29 package accepts API27 in static binary evidence and supplies a candidate for a new root-owned guarded attempt. Full Light compatibility remains unqualified.
+The first strict Light candidate stopped at **ONNX custom-op registration**, before shape admission or NPU execution. Registering the **same verified Light DLL** resolved that error, then exposed **custom-op C API version 27 versus runtime maximum 25**. Subsequent root-owned isolated ORT 1.29 attempts resolve that API gate and complete strict session initialization, but the per-call observer proves the **first inference invocation crashes before returning**. Full Light execution compatibility and the native fault cause remain unqualified.
 
 ## Observed failure and missing boundary
 
@@ -79,7 +79,7 @@ Source inspection shows that the candidate exposes `get_ep_devices`, `register_e
 | `onnxruntime-1.29.0.dist-info/METADATA` | `eb1f9c5003bd1146122da378763d3f0a853e48d5156f2d54685481820794ac80` |
 | `onnxruntime-1.29.0.dist-info/WHEEL` | `f767fbbf21c4fc6662c119c3d88d39bc24ff4b7f54be4472ba0b980c028e19bf` |
 
-This is an API-level candidate only. It has not been imported, used to load Light, or run through provider registration, session creation, or NPU execution during this diagnosis. Its complete-package/runtime compatibility, Light plugin registration, required dependencies, QMoEBf shape admission, and512/top10 behavior still require the next owned guard. Retain the existing graph/Header/bank pins, selected verified Light copy, strict NPU attribution, provider options, memory floors, and cleanup ownership. No graph or packing change is justified by this API-version error.
+At this static investigation stage this was an API-level candidate only: it had not been imported, used to load Light, or run through provider registration, session creation or inference. Subsequent owned receipts below establish strict session initialization but no returned inference; full execution compatibility and 512/top10 behavior remain unqualified. Retain the existing graph/Header/bank pins, selected verified Light copy, strict NPU attribution, provider options, memory floors, and cleanup ownership. No graph or packing change is justified by this API-version error.
 
 ## Sealed task-local candidate prepared for root review
 
@@ -101,6 +101,84 @@ The public stager is an identical source copy for reproducibility, not another e
 
 The probe now requires the sealed manifest path/hash, verifies the complete staged tree before package selection and immediately before ORT import, rejects preloaded ORT, and confirms the imported package version and native binding's exact staged path. The existing pinned WinML interpreter, NumPy, ONNX, WinUI bootstrap dependencies, and old-environment ORT file pins remain in its source checks. The guard verifies the whole stage before launch, seals a copy of its manifest in the owned attempt receipt, passes the manifest pin to the child, monitors that seal, and verifies the whole stage again after owned closure. Its child retains `-B` so the stage does not gain bytecode files. Existing native lifetime ownership, memory floors,90-second deadline, strict fallback/device policy, and synthetic graph/bank pins are retained.
 
-Static compilation succeeded for the three changed Python files. AST-extracted file-verifier functions independently accepted all630 sealed files in both probe and guard and rejected a wrong manifest pin, preloaded ORT, and a simulated native-binding digest mismatch. The checks imported only standard-library modules; they did not import the probe, guard, ORT, NumPy, ONNX, WinUI, or host/device helpers. No native admission child was started. Root owns review and launch of this candidate; successful runtime initialization or NPU behavior has not been established here.
+Static compilation succeeded for the three changed Python files. AST-extracted file-verifier functions independently accepted all630 sealed files in both probe and guard and rejected a wrong manifest pin, preloaded ORT, and a simulated native-binding digest mismatch. The checks imported only standard-library modules; they did not import the probe, guard, ORT, NumPy, ONNX, WinUI, or host/device helpers. At that source-preparation stage no native admission child had been started; root owned review and launch. The subsequent receipts below establish session initialization but no returned inference.
 
 This investigation used retained source/receipts, static PE imports/exports/strings/code, file version/hash reads, Python source/metadata reads, official documentation/source, and the authorized complete-package file copy. No target DLL was loaded, native target module imported, EP registered, provider/session/device invoked, task model loaded, or graph/packer test repeated. The probe and staging/guard files were adapted in addition to this diagnosis note; frozen graph source contracts and artifacts were unchanged.
+
+## Subsequent owned ORT 1.29 receipts: API gate resolved, native inference fault
+
+Root isolated the existing complete ORT 1.29 package under
+`server/.local/optimization9h-20261004/qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495/`.
+Its sealed manifest SHA256 is
+`3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f`:
+630 files, 45,280,440 bytes and C API maximum 29. Installed runtimes were not
+replaced. Three separate guarded children kept graph, Header, synthetic zero
+bank and inference inputs identical while source versions added diagnostic
+observability, flushed stages/faulthandler, then per-call stages.
+
+| Receipt under `server/.local/optimization9h-20261004/` | Probe source SHA256 | Guard result SHA256 |
+|---|---|---|
+| `qmoe-light-admission-73b5e986a34b421ea8a0223b839529a0` | `0c0e0071e8c3953f91df0729c3c86e44c959f8616e1feb392cae95a01c942abc` | `5f2ffd973c15e8b24990577725218e6cb72055f92b0e1cbb69ab244c04ad913c` |
+| `qmoe-light-admission-0c46d0d069b044d6a0de52ebd3faa948` | `99dab6096f8813451902520f97b7e1fd04a51319b96b895b39fcbb8ea2bb240a` | `f155a8f28e08ba71a10153bc7bf6d8df602569c0fbfb04890967e0bd1fd025fb` |
+| `qmoe-light-admission-b7796faf67894b17a6465a48ff29b1d2` | `a371cea50c0d902af76095cdbd324ced66edd8a013d37f2275abbe9fae18ad7d` | `8764d9cd321ed9bcca0c68f9ad51895372f53fad001f11e9b4ace5531c3cc098` |
+
+The first child has empty stdout/stderr and no child JSON, so its session
+and call progress is unknown. The second completes strict session
+initialization, reaches `synthetic_admission_calls`, then faulthandler reports
+an access violation inside ORT `run_with_ort_values`/`invoke`; its per-call
+index and count are unknown. The third additionally flushes
+`synthetic_call_0_prepare` and `synthetic_call_0_invoke`, with no returned
+marker and no call 1. It proves one attempted host inference invocation and
+zero returned calls. Missing counters for the earlier runs remain unknown.
+
+All three exit 3221225477 (`0xC0000005`, Windows access violation). None writes
+`admission.json`; each created ORT profile is zero bytes. There is no returned
+output, numerical qualification, successful NPU latency or profile attribution.
+The guards record `owned_job_closed=true`, `ort_stage_final_verified=true`
+for all 630 staged files, and the unchanged 18-GiB physical/commit reserve.
+Child provider unregistration, DLL-directory closure and bootstrap shutdown
+are unobserved after the hard crash; owned-job closure is observed cleanup.
+
+Runs B and C establish that the historical custom-op API 27 versus 25
+initialization rejection is resolved under ORT 1.29. Strict session
+initialization completes, while the first inference invocation does not
+return. This does not establish successful 512/top10 execution, NPU dispatch,
+weight residency, routing, shape/padding or activation correctness. The
+Python stack locates the host boundary, not the faulting native instruction
+or its cause. At that stage, native fault-address/module collection was being
+prepared separately; the subsequent collector receipt is below. No further
+unchanged inference run is proposed.
+
+Both earlier registration/API negative receipts remain intact. The stock
+baseline stays **1768.47 PP-only / 46.355 MTP decode / 60% acceptance**.
+No gain is qualified and full live NPU MTP remains unfinished. This publication
+read retained receipts only; no tests, weight payloads or hardware were run.
+
+Exact raw hashes and shared graph/runtime pins are in the
+[graph receipt report](halogen-qmoe-graph-contract-20261004.md) and
+[nine-hour evidence JSON](../benchmarks/halogen9h-optimization-20261004.json).
+
+## Subsequent native fault-address collection
+
+Root's separate `server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933`
+uses probe source SHA256
+`694febe34066e63aa777978742a37300037c54e8d4f43c32a8147b1c90c846ff`.
+Prior source pins and negative receipts remain unchanged. The retained
+`native-fault.jsonl` reports the call 0 invocation's access violation:
+read of address 0, instruction `0x00007ffbdb7d2186`, arm-time module snapshot
+`C:\Windows\System32\xrt_coreutil.dll`, base `0x00007ffbdb6e0000`,
+module offset `0xf2186`. This is a captured native fault location, not a
+diagnosis of version compatibility, input, packing, device or ownership cause.
+
+Strict session initialization completed and the flushed log reaches
+`synthetic_call_0_invoke` without a return or call 1. Session provider inventory
+is `["RyzenAILightExecutionProvider", "CPUExecutionProvider"]`; that inventory
+alone does not establish CPU fallback or successful NPU placement. The source
+retains disabled fallback, but execution attribution remains unavailable.
+There is no child `admission.json`, returned output or successful latency;
+the created ORT profile is zero bytes. Guard exit is 3221225477, owned job
+closure and final 630-file stage verification pass, with the 18-GiB reserve held.
+Separate static version/module investigation is ongoing; no cause is claimed.
+The stock 1768.47 / 46.355 / 60% control and unfinished full-NPU-MTP status remain
+unchanged. This publication read saved receipts only; no artifact hashes were
+recomputed and no hardware was launched.

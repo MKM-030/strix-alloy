@@ -352,3 +352,123 @@ physical/commit minima were 45.908 / 200.606 GiB; guard minima were
 45.930 / 200.627 GiB. No unchanged attempt is proposed. The stock baseline
 remains 1768.47 / 46.355 / 60%; no new end-to-end gain or full NPU MTP is
 qualified.
+
+## Subsequent ORT 1.29 QMoEBf receipts
+
+Root isolated the existing complete ORT 1.29 package under
+`server/.local/optimization9h-20261004/qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495/`.
+Its sealed manifest SHA256 is
+`3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f`:
+630 files, 45,280,440 bytes and C API maximum 29. Installed runtimes were not
+replaced. Three separate guarded children kept graph, Header, synthetic zero
+bank and inference inputs identical while source versions added diagnostic
+observability, flushed stages/faulthandler, then per-call stages.
+
+| Receipt under `server/.local/optimization9h-20261004/` | Probe source SHA256 | Guard result SHA256 |
+|---|---|---|
+| `qmoe-light-admission-73b5e986a34b421ea8a0223b839529a0` | `0c0e0071e8c3953f91df0729c3c86e44c959f8616e1feb392cae95a01c942abc` | `5f2ffd973c15e8b24990577725218e6cb72055f92b0e1cbb69ab244c04ad913c` |
+| `qmoe-light-admission-0c46d0d069b044d6a0de52ebd3faa948` | `99dab6096f8813451902520f97b7e1fd04a51319b96b895b39fcbb8ea2bb240a` | `f155a8f28e08ba71a10153bc7bf6d8df602569c0fbfb04890967e0bd1fd025fb` |
+| `qmoe-light-admission-b7796faf67894b17a6465a48ff29b1d2` | `a371cea50c0d902af76095cdbd324ced66edd8a013d37f2275abbe9fae18ad7d` | `8764d9cd321ed9bcca0c68f9ad51895372f53fad001f11e9b4ace5531c3cc098` |
+
+The first child has empty stdout/stderr and no child JSON, so its session
+and call progress is unknown. The second completes strict session
+initialization, reaches `synthetic_admission_calls`, then faulthandler reports
+an access violation inside ORT `run_with_ort_values`/`invoke`; its per-call
+index and count are unknown. The third additionally flushes
+`synthetic_call_0_prepare` and `synthetic_call_0_invoke`, with no returned
+marker and no call 1. It proves one attempted host inference invocation and
+zero returned calls. Missing counters for the earlier runs remain unknown.
+
+All three exit 3221225477 (`0xC0000005`, Windows access violation). None writes
+`admission.json`; each created ORT profile is zero bytes. There is no returned
+output, numerical qualification, successful NPU latency or profile attribution.
+The guards record `owned_job_closed=true`, `ort_stage_final_verified=true`
+for all 630 staged files, and the unchanged 18-GiB physical/commit reserve.
+Child provider unregistration, DLL-directory closure and bootstrap shutdown
+are unobserved after the hard crash; owned-job closure is observed cleanup.
+
+Runs B and C establish that the historical custom-op API 27 versus 25
+initialization rejection is resolved under ORT 1.29. Strict session
+initialization completes, while the first inference invocation does not
+return. This does not establish successful 512/top10 execution, NPU dispatch,
+weight residency, routing, shape/padding or activation correctness. The
+Python stack locates the host boundary, not the faulting native instruction
+or its cause. At that stage, native fault-address/module collection was being
+prepared separately; the subsequent collector receipt is below. No further
+unchanged inference run is proposed.
+
+Both earlier registration/API negative receipts remain intact. The stock
+baseline stays **1768.47 PP-only / 46.355 MTP decode / 60% acceptance**.
+No gain is qualified and full live NPU MTP remains unfinished. This publication
+read retained receipts only; no tests, weight payloads or hardware were run.
+
+Exact raw hashes and shared graph/runtime pins are in the
+[graph report](../research/halogen-qmoe-graph-contract-20261004.md) and evidence
+JSON. These are diagnostic failures, not additional throughput measurements.
+
+## Subsequent native fault-address collection
+
+Root's separate `server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933`
+uses probe source SHA256
+`694febe34066e63aa777978742a37300037c54e8d4f43c32a8147b1c90c846ff`.
+Prior source pins and negative receipts remain unchanged. The retained
+`native-fault.jsonl` reports the call 0 invocation's access violation:
+read of address 0, instruction `0x00007ffbdb7d2186`, arm-time module snapshot
+`C:\Windows\System32\xrt_coreutil.dll`, base `0x00007ffbdb6e0000`,
+module offset `0xf2186`. This is a captured native fault location, not a
+diagnosis of version compatibility, input, packing, device or ownership cause.
+
+Strict session initialization completed and the flushed log reaches
+`synthetic_call_0_invoke` without a return or call 1. Session provider inventory
+is `["RyzenAILightExecutionProvider", "CPUExecutionProvider"]`; that inventory
+alone does not establish CPU fallback or successful NPU placement. The source
+retains disabled fallback, but execution attribution remains unavailable.
+There is no child `admission.json`, returned output or successful latency;
+the created ORT profile is zero bytes. Guard exit is 3221225477, owned job
+closure and final 630-file stage verification pass, with the 18-GiB reserve held.
+Separate static version/module investigation is ongoing; no cause is claimed.
+The stock 1768.47 / 46.355 / 60% control and unfinished full-NPU-MTP status remain
+unchanged. This publication read saved receipts only; no artifact hashes were
+recomputed and no hardware was launched.
+
+## Separate successful native MTP state metadata receipt
+
+Root's `server/.local/mtp-state-20261004/mtp-state-capture-a04197fc0a0e4e4cbaccec5f956dcf21`
+records a successful eight-call count1 metadata capture with unchanged source
+pins, stock-output parity, and cleanup/recovery proven. All eight entries
+observe L48 kind 1 and scatter flag 0. Selected scopes contain 331 original
+kernel launches, 8 FD attention launches, 0 scatter launches and 0 captured raw
+host descriptors. Descriptor capture was enabled but its exact scatter
+callsite never occurred. Observer HIP calls and device-pointer dereferences
+are zero. The five-file trace is 9234 bytes; its recorded `records.json` SHA256
+is `c205a7959dc3f329ec1eac78e213ba0de3475fa848fcac6014f97d672b3264f2`.
+
+The first failed pre-engine hash-timeout receipt remains unchanged with zero
+samples and its original false cleanup/recovery fields. The positive receipt
+qualifies branch/mode and launch metadata for this instrumented cohort, with
+unmeasured overhead. FD lifetime/ownership, private state commit/discard,
+acceptance and NPU speed remain unqualified. Details are in the
+[state observer note](../research/halogen-mtp-state-tap-source-review-20261004.md)
+and [full-head ABI note](../research/halogen-mtp-full-head-state-abi-20261004.md).
+
+## Follow-up at 07:00 UTC / 09:00 Berlin
+
+The [static XRT diagnosis](../research/halogen-qmoe-xrt-fault-20261004.md)
+identifies the immediate fault as a null object passed to `xrt::bo::size()`.
+System32 and DriverStore copies are byte-identical. The four relevant provider
+options match AMD's pinned example; no source-backed single runtime change
+has been identified. Caller, missing buffer role and upstream cause remain
+unknown. No unchanged crash is repeated and real-bank conversion is deferred
+until a working runtime admission exists.
+
+The [upstream checkpoint](../research/halogen-update-checkpoint-20261004-0700.md)
+still finds the pinned Halogen 0.16.2 and matching AMD Windows driver package.
+No engine, driver, firmware or BIOS update was made.
+
+A separate root-owned greedy coding comparison now runs depth2 / depth1 /
+depth2, using the unchanged client and six requests per cell. The exact
+32K-input, 64K-capacity, Exact-cache workflow and 18-GiB reserve match the
+previous greedy depth matrix. Depth1 was already slower in the short-story
+screen; this new run only fills the missing coding comparison. Its results
+are pending and must not replace the historical 8K stock control. No speed
+or acceptance gain is qualified at this checkpoint.
