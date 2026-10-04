@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-04",
-  "status": "active nine-hour optimization; no qualified overall gain; GPU MLP timing completed, BF16 Gather variants fail NPU admission, direct SSD placement rejected against warmed stock; paired-DeltaNet window running, separate greedy coding depth matrix prepared",
+  "status": "active nine-hour optimization; no qualified overall gain; paired DeltaNet failed startup arithmetic, direct SSD placement rejected; greedy coding depth matrix running; alternative Light EP and complete draft-head timing prepared separately",
   "work_deadline_utc": "2026-10-04T08:39:15Z",
   "source_commit_at_baseline": "d950029",
   "baseline": {
@@ -74,13 +74,43 @@
       "backend-manifest.json": "d6d091b712c8769843921f1be49dade66cfac6128b6968b96155049a3efc3eac"
     }
   },
+  "latest_stock_control": {
+    "artifact": "server/.local/optimization9h-20261004/dn-pair-stock8k-a",
+    "input_tokens": 8192,
+    "capacity": 262144,
+    "cache": "Off",
+    "temperature": 0,
+    "mtp_depth": 2,
+    "prefill_only_tps": 1605.0690515030292,
+    "prefill_only_sample_stdev": 15.645621572094377,
+    "mtp_decode_tps": 46.87401522350075,
+    "mtp_decode_sample_stdev": 0.44796008863612913,
+    "serial_decode_tps": 36.357080676194016,
+    "acceptance": 0.6,
+    "accepted": 207,
+    "proposed": 345,
+    "all_corresponding_historic_prompt_request_output_hashes_match": true,
+    "cleanup_proven": true,
+    "source_seal_unchanged_within_this_run": true,
+    "comparison_limit": "Prefill is 7.29 percent below the earlier baseline and wall time is 7.84 percent higher. Profile, engine environment and requests match; wrapper sources changed as optional support was added. Retained evidence does not prove the cause of the prefill drift.",
+    "report": "../research/halogen-dn-fused-pair-negative-20261004.md"
+  },
   "pending_experiments": [
     "full live Halogen NPU MTP integration: MLP capture established but complete arithmetic and persistent full-head state remain unqualified",
-    "paired DeltaNet kernel: matched 8K stock / candidate / stock window running",
-    "greedy coding depth 2 / 3 / 2: saved direct client and matched runner prepared; sampled depth changes are ineffective in this engine"
+    "greedy coding depth 2 / 3 / 2: matched matrix running; sampled depth changes are ineffective in this engine",
+    "Light EP admission: a new guarded route prepared, no provider session or hardware result yet",
+    "complete native MTP forward timing: separate instrumented head and wrapper brackets being prepared"
   ],
   "qualifications": "No new speed or acceptance improvement promoted. NPU partial graph is not full MTP.",
   "completed_experiments": [
+    {
+      "name": "paired DeltaNet kernel",
+      "promoted": false,
+      "report": "../research/halogen-dn-fused-pair-negative-20261004.md",
+      "completed_candidate_requests": 0,
+      "cleanup_recovery_proven": true,
+      "reason": "HALOGEN_DN_FUSED_PAIR=1 failed the existing startup arithmetic answer gate before readiness; no candidate throughput exists."
+    },
     {
       "name": "direct E lookup placement against stock A and stock B",
       "promoted": false,

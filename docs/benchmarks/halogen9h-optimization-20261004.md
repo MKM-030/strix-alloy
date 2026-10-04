@@ -185,3 +185,29 @@ the startup depth flag. A new directly saved greedy client and depth 2 / 3 / 2
 coordinator have been prepared; that is a separate workload, with no timing
 result yet. Root also started a stock / paired-DeltaNet / stock 8K window at
 04:21 UTC. Neither preparation establishes a speed or acceptance improvement.
+
+## Status at 04:43 UTC / 06:43 Berlin
+
+The latest unchanged stock control is **1605.07 ± 15.65 PP8192-only**, **46.874 ±
+0.448 MTP TG128 tok/s**, **36.357 ± 0.093 serial TG128**, and **60% acceptance**
+(207/345 measured proposals). The earlier 1731.31 prefill measurement remains
+historical. Prefill fell 7.29% and its client wall rose 7.84% even after clock
+correction. Matching profile, engine environment and prompt/request/output
+hashes do not establish the cause; wrapper support sources changed between
+these windows. No thermal, background-load or file-cache cause is proven.
+
+The [paired DeltaNet candidate](../research/halogen-dn-fused-pair-negative-20261004.md)
+failed the existing startup arithmetic answer check before readiness. It has
+zero benchmark samples; normal cleanup/recovery and unchanged source seals
+passed. It is rejected without another run. The separate
+[norm-fold audit](../research/halogen-dn-norm-fold-audit-20261004.md) also finds no
+distinct saved normalization launch for cache Off or the actual Exact32K
+workload, so no norm-fold experiment was launched.
+
+The greedy coding depth 2 / 3 / 2 matrix is now running. It is separate from the
+sampled article workload. A new saved
+[Light EP admission probe](../research/halogen-npu-light-ep-route-20261004.md)
+and bounded owned-process guard are prepared; they have no hardware result yet.
+Complete draft-head timing is being prepared separately from the earlier MLP
+bracket. No new end-to-end speed or acceptance gain is qualified, and full NPU
+MTP remains unfinished.
