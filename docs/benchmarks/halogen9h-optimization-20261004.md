@@ -633,3 +633,27 @@ sentinel hashes from being emitted after a returned call fails output
 validation. This is source/build and evidence-storage progress, not a
 throughput gain, first-call repair or completed native NPU MTP. No hardware
 work was restarted after the deadline.
+
+## Final heartbeat shutdown at 09:18–09:20 UTC / 11:18–11:20 Berlin
+
+The bounded heartbeat fired after its explicit 08:39:15 UTC deadline. Root
+updated automation `halogen-neun-stunden-optimierung-und-zahlenstatus` to
+`PAUSED`, preserving its name, prompt, schedule and target thread. The app
+confirmed the update, and its saved `automation.toml` independently records
+`status = "PAUSED"` with update time `1791105567619` milliseconds since epoch.
+No new native measurement was launched.
+
+Current local observations show controller/backend `stopped`, zero controller
+requests, no listeners on the owned ports 8731/8840 and no matching owned
+Windows Python measurement processes. WSL lists Ubuntu-24.04 as `Stopped`;
+it was not restarted for inspection. The live agent inventory contains only
+the active root and completed subagents. Main was clean and synchronized
+before this final record. The latest code/preparation commit was `6a60c2a`.
+
+The full goal remains `blocked`, not achieved. The retained allocator-session
+variant is compiled/prepared but has zero native sessions or inference calls;
+any future post-window execution still requires the pending human extension.
+Full Flash-Next NPU MTP and an overall throughput/acceptance gain remain
+unproved. The matched stock cells above remain the final measured result;
+the 8K PP-only rate must not be presented as the same MTP request's prefill
+rate or as a cold 128K/260K measurement.
