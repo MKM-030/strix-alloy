@@ -1,0 +1,2671 @@
+{
+  "schema": "halogen.native-FC-precision-correction.v1",
+  "observed_utc": "2026-10-04T21:51:29.672221+00:00",
+  "original_tolerances": {
+    "cpu": {
+      "rtol": 0.002,
+      "atol": 0.0002
+    },
+    "npu": {
+      "rtol": 0.03,
+      "atol": 0.003
+    }
+  },
+  "original_builder": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_v2_d_native_projection_split_graph.py",
+    "sha256": "7954af5205d9e21907e600207707a01355a3a5b75909c4f30a7a4aa2993d4526"
+  },
+  "model_receipt": {
+    "path": "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-split-4e52fc16d4f54409ab685ec624aa1ed6.onnx.json",
+    "sha256": "bdb498a8f18e6abe9b7521a42baf2c8dfb1dd8b110e5ff6ac6bcb98c068efe0e"
+  },
+  "cpu": {
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-cpu-7a7771ce41aa47bc9d394f2a2f12208b\\cpu.json",
+      "sha256": "97b1435dded58777d1a5b038ee6253b983eaca43faf45c227dfa4aada862647d"
+    },
+    "owned": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-cpu-7a7771ce41aa47bc9d394f2a2f12208b\\result.json",
+      "sha256": "c7986aa05234ad0ed064c76e0912c822216c19628fd73492534cb22a106b1084"
+    },
+    "diagnostic_completed": true,
+    "passed": true,
+    "cpu_passed": true,
+    "error": null,
+    "integration_admission": false,
+    "source_sha256": "a3ed6d88c38126b7636a3f5e233ebfb6787fc935e7f49b5caed52e428ed25c8b",
+    "model_sha256": "54c11ef83175df9b5d6afc9a2a64e17a11ce76bab1a31c2768c762bcae68c2c2",
+    "data_sha256": "87e720e72d1ae6c3c883b14a25afbc0e5123a3b167de52cf03314e017b9f8797",
+    "transformer_sha256": "7954af5205d9e21907e600207707a01355a3a5b75909c4f30a7a4aa2993d4526",
+    "timing_scope": "dynamic high/residual preparation including reconstruction/requantization diagnostics and preparation hashes + fresh contiguous copies + session.run; compile/post-run validation and hashing/static weight split and live transport excluded",
+    "timing_observations": {
+      "measured_calls": 8,
+      "qualified_for_acceleration": false,
+      "host_call_ms": {
+        "mean": 6.7588875,
+        "minimum": 6.6634,
+        "maximum": 6.9733,
+        "median": 6.705,
+        "p95": 6.9733
+      },
+      "prepare_and_copy_ms": {
+        "mean": 0.9639125,
+        "minimum": 0.9421,
+        "maximum": 0.9822,
+        "median": 0.96225,
+        "p95": 0.9822
+      },
+      "session_run_ms": {
+        "mean": 5.794975,
+        "minimum": 5.686,
+        "maximum": 5.996,
+        "median": 5.7522,
+        "p95": 5.996
+      }
+    },
+    "context_proof": null,
+    "profile_proof": {
+      "passed": true,
+      "node_events": 216,
+      "executed_node_providers": [
+        "CPUExecutionProvider"
+      ],
+      "node_event_ops": [
+        "Add",
+        "Cast",
+        "MatMul"
+      ]
+    },
+    "ort_graph_optimization_level": "ORT_DISABLE_ALL",
+    "exact_native_FC_word_parity_on_frozen_inputs": false,
+    "input_split_diagnostics": {
+      "A": {
+        "e": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            1,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 2560,
+          "original_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "high_sha256": "28734bdc3125257d32eb1eb22344ec2187bc6bd128c61244594d909bf629d589",
+          "low_sha256": "29589b86a84349f3ded58e99e693c185d39b691508445c051629b92422c6a1b6",
+          "reconstructed_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+          "high_requantization_bit_mismatches": 1,
+          "high_requantization_numeric_mismatches": 0,
+          "high_requantization_max_abs_change": 0.0,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 2022,
+          "low_max_abs": 0.0078125,
+          "original_max_abs": 1.2578125,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        },
+        "h": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            4,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 10240,
+          "original_sha256": "046f98dc1fdd85fe6a67ddc4188683813a9603e53cdf85718ffc7e096bb56e01",
+          "high_sha256": "724b7fa14dc592db11a2873099ea2f5949cb7f8287d780113f898df6dc3ce638",
+          "low_sha256": "444f085c89ace89699b4673ae2e461d64560b3b860dcd24f6bf4e5528adab253",
+          "reconstructed_sha256": "acd742dfd46067fc5bb8e4973ce10bdb7aa6e4d913cbb01a15cc53a0d2603222",
+          "reconstruction_bit_mismatches": 4,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+          "high_requantization_bit_mismatches": 131,
+          "high_requantization_numeric_mismatches": 21,
+          "high_requantization_max_abs_change": 0.015625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 8105,
+          "low_max_abs": 0.0625,
+          "original_max_abs": 13.1875,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        }
+      },
+      "B": {
+        "e": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            1,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 2560,
+          "original_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "high_sha256": "ea33edb98f5f7c75a4e7c1b9a6863ca61b2cbc7fbd89b4be6ce7965addf65f10",
+          "low_sha256": "da3c2efb58faaff0cf6e907c7ed14f883cddb143d9e85f1098ebc80580cfe217",
+          "reconstructed_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+          "high_requantization_bit_mismatches": 14,
+          "high_requantization_numeric_mismatches": 5,
+          "high_requantization_max_abs_change": 0.00390625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 1971,
+          "low_max_abs": 0.0078125,
+          "original_max_abs": 1.5390625,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        },
+        "h": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            4,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 10240,
+          "original_sha256": "183eaad194d1bc7bf049ad9da686bae861d0689f7053e4daf5e51f69c8d1ce10",
+          "high_sha256": "079a84eede70d48c9c2822cf2b4e875e1ae00d5de24fcead091b372d6033d24a",
+          "low_sha256": "5053e707fba31a8c307e075107bbeb7df913fcd8865ff65861d90d1d2388b38b",
+          "reconstructed_sha256": "593430c5daa3a14900b1f0cfee4fd665cacede4692cf923e014c366d5de02caa",
+          "reconstruction_bit_mismatches": 2,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+          "high_requantization_bit_mismatches": 87,
+          "high_requantization_numeric_mismatches": 17,
+          "high_requantization_max_abs_change": 0.015625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 8025,
+          "low_max_abs": 0.015625,
+          "original_max_abs": 3.9375,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        }
+      }
+    },
+    "weight_split_diagnostics": {
+      "W_embedding": {
+        "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+        "shape": [
+          2560,
+          2560
+        ],
+        "K_axis": -2,
+        "eb_size": 8,
+        "elements": 6553600,
+        "original_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+        "high_sha256": "843a8b523ae2c5cf3ada31ff22f41b0d8148c457a3a15eee838f603da081f7e5",
+        "low_sha256": "23acb33477f9b60991102fd2589a0ec11ca00ed1e53eb99acf6d81b898cd3736",
+        "reconstructed_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+        "reconstruction_bit_mismatches": 0,
+        "reconstruction_numeric_mismatches": 0,
+        "reconstruction_max_abs_error": 0.0,
+        "high_requantized_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+        "high_requantization_bit_mismatches": 34846,
+        "high_requantization_numeric_mismatches": 8449,
+        "high_requantization_max_abs_change": 0.00048828125,
+        "high_idempotence_assumed": false,
+        "low_BF16_bit_mismatches": 0,
+        "low_BF16_max_abs_change": 0.0,
+        "low_nonzero_elements": 5013065,
+        "low_max_abs": 0.0009765625,
+        "original_max_abs": 0.224609375,
+        "finite": true,
+        "numerical_admission_claim": false,
+        "per_value_correction": false,
+        "decoded_original_sha256": "724dc746b2755556ee2676a55844fa7851a48a78411889148b5fd5c0bdd348c6",
+        "decoded_to_BF16_bit_changes": 6217076
+      },
+      "W_hidden": {
+        "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+        "shape": [
+          2560,
+          2560
+        ],
+        "K_axis": -2,
+        "eb_size": 8,
+        "elements": 6553600,
+        "original_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+        "high_sha256": "36d2d441c1ff9f79aa42249e797481df08e2dda4fcde362b0d85c44af3c5273f",
+        "low_sha256": "f28a105cb2b770a32c60b048b914bb70963bc33d4e2f0d6c8a03328b2ad92839",
+        "reconstructed_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+        "reconstruction_bit_mismatches": 0,
+        "reconstruction_numeric_mismatches": 0,
+        "reconstruction_max_abs_error": 0.0,
+        "high_requantized_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+        "high_requantization_bit_mismatches": 42257,
+        "high_requantization_numeric_mismatches": 8692,
+        "high_requantization_max_abs_change": 0.001953125,
+        "high_idempotence_assumed": false,
+        "low_BF16_bit_mismatches": 0,
+        "low_BF16_max_abs_change": 0.0,
+        "low_nonzero_elements": 5055586,
+        "low_max_abs": 0.00390625,
+        "original_max_abs": 0.88671875,
+        "finite": true,
+        "numerical_admission_claim": false,
+        "per_value_correction": false,
+        "decoded_original_sha256": "196a9deed6dde2b4005d9a66844005b9cebc928fafe90c4401b70dba1879a69e",
+        "decoded_to_BF16_bit_changes": 6160768
+      }
+    },
+    "split_algorithm_diagnostics": {
+      "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+      "input_K_axis": -1,
+      "weight_K_axis": -2,
+      "high_idempotence_assumed": false,
+      "per_value_correction": false,
+      "weight_preparation_is_static": true,
+      "input_preparation_timed_every_call": true
+    },
+    "profile_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-cpu-7a7771ce41aa47bc9d394f2a2f12208b\\cpu_2026-10-04_23-40-41_373.json",
+      "sha256": "51a516befdb9b45fb08fa2a8fac389cb8d5d346f3adc5202d40f97bfec88c160"
+    },
+    "comparisons": {
+      "A": {
+        "e_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "exact_BF16_word_mismatches": 0,
+          "max_abs_error": 0.0,
+          "mismatched_elements": 0,
+          "elements": 2560,
+          "non_BF16_lattice_elements": 0
+        },
+        "h_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "exact_BF16_word_mismatches": 0,
+          "max_abs_error": 0.0,
+          "mismatched_elements": 0,
+          "elements": 10240,
+          "non_BF16_lattice_elements": 0
+        }
+      },
+      "B": {
+        "e_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "exact_BF16_word_mismatches": 1,
+          "max_abs_error": 1.9073486328125e-06,
+          "mismatched_elements": 0,
+          "elements": 2560,
+          "non_BF16_lattice_elements": 0
+        },
+        "h_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "exact_BF16_word_mismatches": 0,
+          "max_abs_error": 0.0,
+          "mismatched_elements": 0,
+          "elements": 10240,
+          "non_BF16_lattice_elements": 0
+        }
+      }
+    },
+    "cleanup": {
+      "all_owned_jobs_closed": true,
+      "cleanup_pending": false,
+      "monitor_stopped": true,
+      "minimum_physical_gib": 27.74966812133789,
+      "minimum_commit_gib": 120.09999084472656
+    }
+  },
+  "npu": {
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-6303d333ba3446b6a0486c5ff03f2fcf\\npu.json",
+      "sha256": "1f9e04356ca3d85c3d8e82a680dced868829d0f665962cde508b6fe7df1c054f"
+    },
+    "owned": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-6303d333ba3446b6a0486c5ff03f2fcf\\result.json",
+      "sha256": "0943cbe50c8e4ed96733a583b9b5495bfea88045754db8ad10e54a42d2664ce7"
+    },
+    "diagnostic_completed": true,
+    "passed": false,
+    "cpu_passed": true,
+    "error": "RuntimeError: frozen original GPU FC gate failed; both returned projections retained",
+    "integration_admission": false,
+    "source_sha256": "a3ed6d88c38126b7636a3f5e233ebfb6787fc935e7f49b5caed52e428ed25c8b",
+    "model_sha256": "54c11ef83175df9b5d6afc9a2a64e17a11ce76bab1a31c2768c762bcae68c2c2",
+    "data_sha256": "87e720e72d1ae6c3c883b14a25afbc0e5123a3b167de52cf03314e017b9f8797",
+    "transformer_sha256": "7954af5205d9e21907e600207707a01355a3a5b75909c4f30a7a4aa2993d4526",
+    "timing_scope": "dynamic high/residual preparation including reconstruction/requantization diagnostics and preparation hashes + fresh contiguous copies + session.run; compile/post-run validation and hashing/static weight split and live transport excluded",
+    "timing_observations": {
+      "measured_calls": 8,
+      "qualified_for_acceleration": false,
+      "host_call_ms": {
+        "mean": 2.670975,
+        "minimum": 2.6195,
+        "maximum": 2.7108,
+        "median": 2.67815,
+        "p95": 2.7108
+      },
+      "prepare_and_copy_ms": {
+        "mean": 0.9954125,
+        "minimum": 0.9462,
+        "maximum": 1.0322,
+        "median": 0.99435,
+        "p95": 1.0322
+      },
+      "session_run_ms": {
+        "mean": 1.6755625,
+        "minimum": 1.6557,
+        "maximum": 1.7145,
+        "median": 1.6728,
+        "p95": 1.7145
+      }
+    },
+    "context_proof": {
+      "passed": true,
+      "hardware_partitions_only": true,
+      "missing_required_outputs": [],
+      "cpu_fallback_disabled_in_context": true,
+      "cache_key_matches": true,
+      "provider_library_matches": true,
+      "stx_partition_pass": true,
+      "partitions": [
+        {
+          "id": "vaiml_par_0",
+          "device": "VAIML",
+          "nodes": [
+            "h_projection",
+            "h_projection_bf16",
+            "h_projection_fp32",
+            "h_sum_h_lh",
+            "h_sum_h",
+            "h_hh",
+            "h_hl",
+            "h_lh",
+            "h_ll",
+            "e_projection",
+            "e_projection_bf16",
+            "e_projection_fp32",
+            "e_sum_h_lh",
+            "e_sum_h",
+            "e_hh",
+            "e_hl",
+            "e_lh",
+            "e_ll"
+          ],
+          "inputs": [
+            "e_high",
+            "e_low",
+            "h_high",
+            "h_low"
+          ],
+          "outputs": [
+            "h_projection",
+            "e_projection"
+          ],
+          "constantInitializers": [
+            "W_embedding_high",
+            "W_embedding_low",
+            "W_hidden_high",
+            "W_hidden_low"
+          ],
+          "vaimlParam": {
+            "vaimlModelPath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-6303d333ba3446b6a0486c5ff03f2fcf\\vitisai-cache\\2891bd676777bc609203d48635193b31b1a504cdff65b6f559160471ace4f436\\vaiml_par_0",
+            "deviceName": "stx",
+            "outputShapes": [
+              {
+                "shapes": [
+                  "4",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              }
+            ],
+            "inputShapes": [
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "4",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "4",
+                  "2560"
+                ]
+              }
+            ],
+            "vaimlUnarchivePath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-6303d333ba3446b6a0486c5ff03f2fcf\\vitisai-cache\\2891bd676777bc609203d48635193b31b1a504cdff65b6f559160471ace4f436",
+            "subgraphName": "vaiml_par_0",
+            "priority": "normal",
+            "runnerType": "hw",
+            "deviceBatchSize": 1,
+            "inputNames": [
+              "e_high",
+              "e_low",
+              "h_high",
+              "h_low"
+            ],
+            "outputNames": [
+              "h_projection",
+              "e_projection"
+            ],
+            "maxSpillBufferSize": "40960",
+            "enablePreemption": true
+          }
+        }
+      ],
+      "config_passes": [
+        {
+          "name": "init",
+          "plugin": "vaip-pass_init"
+        },
+        {
+          "name": "vaiml_partition",
+          "plugin": "vaip-pass_vaiml_partition",
+          "vaimlConfig": {
+            "device": "stx"
+          }
+        }
+      ],
+      "scope": "all dynamic split partials, recombination Adds and original projection BF16 casts in hw/stx; RMS/seed-add absent"
+    },
+    "profile_proof": {
+      "passed": true,
+      "node_events": 12,
+      "executed_node_providers": [
+        "VitisAIExecutionProvider"
+      ],
+      "node_event_ops": [
+        "VitisAIExecutionProvider_2029858956261676892_0"
+      ]
+    },
+    "ort_graph_optimization_level": "ORT_DISABLE_ALL",
+    "exact_native_FC_word_parity_on_frozen_inputs": false,
+    "input_split_diagnostics": {
+      "A": {
+        "e": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            1,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 2560,
+          "original_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "high_sha256": "28734bdc3125257d32eb1eb22344ec2187bc6bd128c61244594d909bf629d589",
+          "low_sha256": "29589b86a84349f3ded58e99e693c185d39b691508445c051629b92422c6a1b6",
+          "reconstructed_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+          "high_requantization_bit_mismatches": 1,
+          "high_requantization_numeric_mismatches": 0,
+          "high_requantization_max_abs_change": 0.0,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 2022,
+          "low_max_abs": 0.0078125,
+          "original_max_abs": 1.2578125,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        },
+        "h": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            4,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 10240,
+          "original_sha256": "046f98dc1fdd85fe6a67ddc4188683813a9603e53cdf85718ffc7e096bb56e01",
+          "high_sha256": "724b7fa14dc592db11a2873099ea2f5949cb7f8287d780113f898df6dc3ce638",
+          "low_sha256": "444f085c89ace89699b4673ae2e461d64560b3b860dcd24f6bf4e5528adab253",
+          "reconstructed_sha256": "acd742dfd46067fc5bb8e4973ce10bdb7aa6e4d913cbb01a15cc53a0d2603222",
+          "reconstruction_bit_mismatches": 4,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+          "high_requantization_bit_mismatches": 131,
+          "high_requantization_numeric_mismatches": 21,
+          "high_requantization_max_abs_change": 0.015625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 8105,
+          "low_max_abs": 0.0625,
+          "original_max_abs": 13.1875,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        }
+      },
+      "B": {
+        "e": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            1,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 2560,
+          "original_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "high_sha256": "ea33edb98f5f7c75a4e7c1b9a6863ca61b2cbc7fbd89b4be6ce7965addf65f10",
+          "low_sha256": "da3c2efb58faaff0cf6e907c7ed14f883cddb143d9e85f1098ebc80580cfe217",
+          "reconstructed_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+          "high_requantization_bit_mismatches": 14,
+          "high_requantization_numeric_mismatches": 5,
+          "high_requantization_max_abs_change": 0.00390625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 1971,
+          "low_max_abs": 0.0078125,
+          "original_max_abs": 1.5390625,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        },
+        "h": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            4,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 10240,
+          "original_sha256": "183eaad194d1bc7bf049ad9da686bae861d0689f7053e4daf5e51f69c8d1ce10",
+          "high_sha256": "079a84eede70d48c9c2822cf2b4e875e1ae00d5de24fcead091b372d6033d24a",
+          "low_sha256": "5053e707fba31a8c307e075107bbeb7df913fcd8865ff65861d90d1d2388b38b",
+          "reconstructed_sha256": "593430c5daa3a14900b1f0cfee4fd665cacede4692cf923e014c366d5de02caa",
+          "reconstruction_bit_mismatches": 2,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+          "high_requantization_bit_mismatches": 87,
+          "high_requantization_numeric_mismatches": 17,
+          "high_requantization_max_abs_change": 0.015625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 8025,
+          "low_max_abs": 0.015625,
+          "original_max_abs": 3.9375,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        }
+      }
+    },
+    "weight_split_diagnostics": {
+      "W_embedding": {
+        "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+        "shape": [
+          2560,
+          2560
+        ],
+        "K_axis": -2,
+        "eb_size": 8,
+        "elements": 6553600,
+        "original_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+        "high_sha256": "843a8b523ae2c5cf3ada31ff22f41b0d8148c457a3a15eee838f603da081f7e5",
+        "low_sha256": "23acb33477f9b60991102fd2589a0ec11ca00ed1e53eb99acf6d81b898cd3736",
+        "reconstructed_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+        "reconstruction_bit_mismatches": 0,
+        "reconstruction_numeric_mismatches": 0,
+        "reconstruction_max_abs_error": 0.0,
+        "high_requantized_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+        "high_requantization_bit_mismatches": 34846,
+        "high_requantization_numeric_mismatches": 8449,
+        "high_requantization_max_abs_change": 0.00048828125,
+        "high_idempotence_assumed": false,
+        "low_BF16_bit_mismatches": 0,
+        "low_BF16_max_abs_change": 0.0,
+        "low_nonzero_elements": 5013065,
+        "low_max_abs": 0.0009765625,
+        "original_max_abs": 0.224609375,
+        "finite": true,
+        "numerical_admission_claim": false,
+        "per_value_correction": false,
+        "decoded_original_sha256": "724dc746b2755556ee2676a55844fa7851a48a78411889148b5fd5c0bdd348c6",
+        "decoded_to_BF16_bit_changes": 6217076
+      },
+      "W_hidden": {
+        "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+        "shape": [
+          2560,
+          2560
+        ],
+        "K_axis": -2,
+        "eb_size": 8,
+        "elements": 6553600,
+        "original_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+        "high_sha256": "36d2d441c1ff9f79aa42249e797481df08e2dda4fcde362b0d85c44af3c5273f",
+        "low_sha256": "f28a105cb2b770a32c60b048b914bb70963bc33d4e2f0d6c8a03328b2ad92839",
+        "reconstructed_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+        "reconstruction_bit_mismatches": 0,
+        "reconstruction_numeric_mismatches": 0,
+        "reconstruction_max_abs_error": 0.0,
+        "high_requantized_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+        "high_requantization_bit_mismatches": 42257,
+        "high_requantization_numeric_mismatches": 8692,
+        "high_requantization_max_abs_change": 0.001953125,
+        "high_idempotence_assumed": false,
+        "low_BF16_bit_mismatches": 0,
+        "low_BF16_max_abs_change": 0.0,
+        "low_nonzero_elements": 5055586,
+        "low_max_abs": 0.00390625,
+        "original_max_abs": 0.88671875,
+        "finite": true,
+        "numerical_admission_claim": false,
+        "per_value_correction": false,
+        "decoded_original_sha256": "196a9deed6dde2b4005d9a66844005b9cebc928fafe90c4401b70dba1879a69e",
+        "decoded_to_BF16_bit_changes": 6160768
+      }
+    },
+    "split_algorithm_diagnostics": {
+      "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+      "input_K_axis": -1,
+      "weight_K_axis": -2,
+      "high_idempotence_assumed": false,
+      "per_value_correction": false,
+      "weight_preparation_is_static": true,
+      "input_preparation_timed_every_call": true
+    },
+    "profile_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-6303d333ba3446b6a0486c5ff03f2fcf\\npu_2026-10-04_23-41-09_117.json",
+      "sha256": "f85a98700e24bb08f30eaa7450caf0f5f9e2f3b3e30e7b862304f74aa41035b6"
+    },
+    "context_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-6303d333ba3446b6a0486c5ff03f2fcf\\vitisai-cache\\2891bd676777bc609203d48635193b31b1a504cdff65b6f559160471ace4f436\\context.json",
+      "sha256": "9770d6c820ac36d2e106e1a98460d73438f83657de36c6f94a050bb330ca6e50"
+    },
+    "comparisons": {
+      "A": {
+        "e_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "exact_BF16_word_mismatches": 956,
+          "max_abs_error": 0.00390625,
+          "mismatched_elements": 0,
+          "elements": 2560,
+          "non_BF16_lattice_elements": 0
+        },
+        "h_projection": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "exact_BF16_word_mismatches": 4191,
+          "max_abs_error": 0.015625,
+          "mismatched_elements": 6,
+          "elements": 10240,
+          "non_BF16_lattice_elements": 0
+        }
+      },
+      "B": {
+        "e_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "exact_BF16_word_mismatches": 1123,
+          "max_abs_error": 0.001953125,
+          "mismatched_elements": 0,
+          "elements": 2560,
+          "non_BF16_lattice_elements": 0
+        },
+        "h_projection": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "exact_BF16_word_mismatches": 4069,
+          "max_abs_error": 0.015625,
+          "mismatched_elements": 8,
+          "elements": 10240,
+          "non_BF16_lattice_elements": 0
+        }
+      }
+    },
+    "cleanup": {
+      "all_owned_jobs_closed": true,
+      "cleanup_pending": false,
+      "monitor_stopped": true,
+      "minimum_physical_gib": 27.1510009765625,
+      "minimum_commit_gib": 119.50625228881836
+    }
+  },
+  "earlier_default_ORT_cpu": {
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-cpu-d8bcb1c44cc14061a3c9f28de98cec44\\cpu.json",
+      "sha256": "78a8ded80e86236615cf245bc7a9a53f1341274506ac6143284efb693659f6b1"
+    },
+    "owned": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-cpu-d8bcb1c44cc14061a3c9f28de98cec44\\result.json",
+      "sha256": "359835a01557ca96420777cf3f5cf105614a315b3598bbca340c2f0df05f1366"
+    },
+    "diagnostic_completed": true,
+    "passed": false,
+    "cpu_passed": false,
+    "error": "RuntimeError: frozen original GPU FC gate failed; both returned projections retained",
+    "integration_admission": false,
+    "source_sha256": "9de0e79ea26f3e168188cebffa3b8bee2a5caf332a933a4f5710c8cf9c916e98",
+    "model_sha256": "54c11ef83175df9b5d6afc9a2a64e17a11ce76bab1a31c2768c762bcae68c2c2",
+    "data_sha256": "87e720e72d1ae6c3c883b14a25afbc0e5123a3b167de52cf03314e017b9f8797",
+    "transformer_sha256": "7954af5205d9e21907e600207707a01355a3a5b75909c4f30a7a4aa2993d4526",
+    "timing_scope": "dynamic high/residual preparation including reconstruction/requantization diagnostics and preparation hashes + fresh contiguous copies + session.run; compile/post-run validation and hashing/static weight split and live transport excluded",
+    "timing_observations": {
+      "measured_calls": 8,
+      "qualified_for_acceleration": false,
+      "host_call_ms": {
+        "mean": 6.5754624999999995,
+        "minimum": 6.4904,
+        "maximum": 6.6738,
+        "median": 6.585699999999999,
+        "p95": 6.6738
+      },
+      "prepare_and_copy_ms": {
+        "mean": 0.944375,
+        "minimum": 0.9241,
+        "maximum": 0.9651,
+        "median": 0.94365,
+        "p95": 0.9651
+      },
+      "session_run_ms": {
+        "mean": 5.6310875,
+        "minimum": 5.5535,
+        "maximum": 5.7242,
+        "median": 5.639900000000001,
+        "p95": 5.7242
+      }
+    },
+    "context_proof": null,
+    "profile_proof": {
+      "passed": true,
+      "node_events": 144,
+      "executed_node_providers": [
+        "CPUExecutionProvider"
+      ],
+      "node_event_ops": [
+        "Cast",
+        "Gemm",
+        "MatMul"
+      ]
+    },
+    "ort_graph_optimization_level": null,
+    "exact_native_FC_word_parity_on_frozen_inputs": false,
+    "input_split_diagnostics": {
+      "A": {
+        "e": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            1,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 2560,
+          "original_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "high_sha256": "28734bdc3125257d32eb1eb22344ec2187bc6bd128c61244594d909bf629d589",
+          "low_sha256": "29589b86a84349f3ded58e99e693c185d39b691508445c051629b92422c6a1b6",
+          "reconstructed_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+          "high_requantization_bit_mismatches": 1,
+          "high_requantization_numeric_mismatches": 0,
+          "high_requantization_max_abs_change": 0.0,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 2022,
+          "low_max_abs": 0.0078125,
+          "original_max_abs": 1.2578125,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        },
+        "h": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            4,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 10240,
+          "original_sha256": "046f98dc1fdd85fe6a67ddc4188683813a9603e53cdf85718ffc7e096bb56e01",
+          "high_sha256": "724b7fa14dc592db11a2873099ea2f5949cb7f8287d780113f898df6dc3ce638",
+          "low_sha256": "444f085c89ace89699b4673ae2e461d64560b3b860dcd24f6bf4e5528adab253",
+          "reconstructed_sha256": "acd742dfd46067fc5bb8e4973ce10bdb7aa6e4d913cbb01a15cc53a0d2603222",
+          "reconstruction_bit_mismatches": 4,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+          "high_requantization_bit_mismatches": 131,
+          "high_requantization_numeric_mismatches": 21,
+          "high_requantization_max_abs_change": 0.015625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 8105,
+          "low_max_abs": 0.0625,
+          "original_max_abs": 13.1875,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        }
+      },
+      "B": {
+        "e": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            1,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 2560,
+          "original_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "high_sha256": "ea33edb98f5f7c75a4e7c1b9a6863ca61b2cbc7fbd89b4be6ce7965addf65f10",
+          "low_sha256": "da3c2efb58faaff0cf6e907c7ed14f883cddb143d9e85f1098ebc80580cfe217",
+          "reconstructed_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+          "high_requantization_bit_mismatches": 14,
+          "high_requantization_numeric_mismatches": 5,
+          "high_requantization_max_abs_change": 0.00390625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 1971,
+          "low_max_abs": 0.0078125,
+          "original_max_abs": 1.5390625,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        },
+        "h": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            4,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 10240,
+          "original_sha256": "183eaad194d1bc7bf049ad9da686bae861d0689f7053e4daf5e51f69c8d1ce10",
+          "high_sha256": "079a84eede70d48c9c2822cf2b4e875e1ae00d5de24fcead091b372d6033d24a",
+          "low_sha256": "5053e707fba31a8c307e075107bbeb7df913fcd8865ff65861d90d1d2388b38b",
+          "reconstructed_sha256": "593430c5daa3a14900b1f0cfee4fd665cacede4692cf923e014c366d5de02caa",
+          "reconstruction_bit_mismatches": 2,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+          "high_requantization_bit_mismatches": 87,
+          "high_requantization_numeric_mismatches": 17,
+          "high_requantization_max_abs_change": 0.015625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 8025,
+          "low_max_abs": 0.015625,
+          "original_max_abs": 3.9375,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        }
+      }
+    },
+    "weight_split_diagnostics": {
+      "W_embedding": {
+        "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+        "shape": [
+          2560,
+          2560
+        ],
+        "K_axis": -2,
+        "eb_size": 8,
+        "elements": 6553600,
+        "original_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+        "high_sha256": "843a8b523ae2c5cf3ada31ff22f41b0d8148c457a3a15eee838f603da081f7e5",
+        "low_sha256": "23acb33477f9b60991102fd2589a0ec11ca00ed1e53eb99acf6d81b898cd3736",
+        "reconstructed_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+        "reconstruction_bit_mismatches": 0,
+        "reconstruction_numeric_mismatches": 0,
+        "reconstruction_max_abs_error": 0.0,
+        "high_requantized_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+        "high_requantization_bit_mismatches": 34846,
+        "high_requantization_numeric_mismatches": 8449,
+        "high_requantization_max_abs_change": 0.00048828125,
+        "high_idempotence_assumed": false,
+        "low_BF16_bit_mismatches": 0,
+        "low_BF16_max_abs_change": 0.0,
+        "low_nonzero_elements": 5013065,
+        "low_max_abs": 0.0009765625,
+        "original_max_abs": 0.224609375,
+        "finite": true,
+        "numerical_admission_claim": false,
+        "per_value_correction": false,
+        "decoded_original_sha256": "724dc746b2755556ee2676a55844fa7851a48a78411889148b5fd5c0bdd348c6",
+        "decoded_to_BF16_bit_changes": 6217076
+      },
+      "W_hidden": {
+        "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+        "shape": [
+          2560,
+          2560
+        ],
+        "K_axis": -2,
+        "eb_size": 8,
+        "elements": 6553600,
+        "original_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+        "high_sha256": "36d2d441c1ff9f79aa42249e797481df08e2dda4fcde362b0d85c44af3c5273f",
+        "low_sha256": "f28a105cb2b770a32c60b048b914bb70963bc33d4e2f0d6c8a03328b2ad92839",
+        "reconstructed_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+        "reconstruction_bit_mismatches": 0,
+        "reconstruction_numeric_mismatches": 0,
+        "reconstruction_max_abs_error": 0.0,
+        "high_requantized_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+        "high_requantization_bit_mismatches": 42257,
+        "high_requantization_numeric_mismatches": 8692,
+        "high_requantization_max_abs_change": 0.001953125,
+        "high_idempotence_assumed": false,
+        "low_BF16_bit_mismatches": 0,
+        "low_BF16_max_abs_change": 0.0,
+        "low_nonzero_elements": 5055586,
+        "low_max_abs": 0.00390625,
+        "original_max_abs": 0.88671875,
+        "finite": true,
+        "numerical_admission_claim": false,
+        "per_value_correction": false,
+        "decoded_original_sha256": "196a9deed6dde2b4005d9a66844005b9cebc928fafe90c4401b70dba1879a69e",
+        "decoded_to_BF16_bit_changes": 6160768
+      }
+    },
+    "split_algorithm_diagnostics": {
+      "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+      "input_K_axis": -1,
+      "weight_K_axis": -2,
+      "high_idempotence_assumed": false,
+      "per_value_correction": false,
+      "weight_preparation_is_static": true,
+      "input_preparation_timed_every_call": true
+    },
+    "profile_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-cpu-d8bcb1c44cc14061a3c9f28de98cec44\\cpu_2026-10-04_23-35-25_929.json",
+      "sha256": "7f1209bf1f7264cced54c3ee340adda9141bed35242cbb26fe562a8cf5e61304"
+    },
+    "comparisons": {
+      "A": {
+        "e_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "exact_BF16_word_mismatches": 0,
+          "max_abs_error": 0.0,
+          "mismatched_elements": 0,
+          "elements": 2560,
+          "non_BF16_lattice_elements": 0
+        },
+        "h_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "exact_BF16_word_mismatches": 1,
+          "max_abs_error": 0.0001220703125,
+          "mismatched_elements": 0,
+          "elements": 10240,
+          "non_BF16_lattice_elements": 0
+        }
+      },
+      "B": {
+        "e_projection": {
+          "passed": true,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "exact_BF16_word_mismatches": 1,
+          "max_abs_error": 1.9073486328125e-06,
+          "mismatched_elements": 0,
+          "elements": 2560,
+          "non_BF16_lattice_elements": 0
+        },
+        "h_projection": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "exact_BF16_word_mismatches": 1,
+          "max_abs_error": 0.00048828125,
+          "mismatched_elements": 1,
+          "elements": 10240,
+          "non_BF16_lattice_elements": 0
+        }
+      }
+    },
+    "cleanup": {
+      "all_owned_jobs_closed": true,
+      "cleanup_pending": false,
+      "monitor_stopped": true,
+      "minimum_physical_gib": 27.727718353271484,
+      "minimum_commit_gib": 120.06322860717773
+    }
+  },
+  "earlier_default_ORT_npu": {
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-d5f48f117339402090e96795905e0f25\\npu.json",
+      "sha256": "25c8f480a4c7c170fcdedcb6c08bf5e7ee4693fb7d37fae91a8041e8c7d2ac7b"
+    },
+    "owned": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-d5f48f117339402090e96795905e0f25\\result.json",
+      "sha256": "22fc0b22dd1b42043332d9d5e3cc236e66f615e0077f11ba701926cf1f382a97"
+    },
+    "diagnostic_completed": false,
+    "passed": false,
+    "cpu_passed": false,
+    "error": "RuntimeError: every dynamic four-term FC value requires strict hw/stx placement",
+    "integration_admission": false,
+    "source_sha256": "9de0e79ea26f3e168188cebffa3b8bee2a5caf332a933a4f5710c8cf9c916e98",
+    "model_sha256": "54c11ef83175df9b5d6afc9a2a64e17a11ce76bab1a31c2768c762bcae68c2c2",
+    "data_sha256": "87e720e72d1ae6c3c883b14a25afbc0e5123a3b167de52cf03314e017b9f8797",
+    "transformer_sha256": "7954af5205d9e21907e600207707a01355a3a5b75909c4f30a7a4aa2993d4526",
+    "timing_scope": "dynamic high/residual preparation including reconstruction/requantization diagnostics and preparation hashes + fresh contiguous copies + session.run; compile/post-run validation and hashing/static weight split and live transport excluded",
+    "timing_observations": null,
+    "context_proof": {
+      "passed": false,
+      "hardware_partitions_only": true,
+      "missing_required_outputs": [
+        "e_hl",
+        "e_lh",
+        "e_ll",
+        "h_hl",
+        "h_lh",
+        "h_ll"
+      ],
+      "cpu_fallback_disabled_in_context": true,
+      "cache_key_matches": true,
+      "provider_library_matches": true,
+      "stx_partition_pass": true,
+      "partitions": [
+        {
+          "id": "vaiml_par_0",
+          "device": "VAIML",
+          "nodes": [
+            "h_projection",
+            "h_projection_bf16",
+            "h_projection_fp32",
+            "h_sum_h_lh",
+            "h_sum_h",
+            "h_hh",
+            "e_projection",
+            "e_projection_bf16",
+            "e_projection_fp32",
+            "e_sum_h_lh",
+            "e_sum_h",
+            "e_hh"
+          ],
+          "inputs": [
+            "e_high",
+            "e_low",
+            "h_high",
+            "h_low"
+          ],
+          "outputs": [
+            "h_projection",
+            "e_projection"
+          ],
+          "constantInitializers": [
+            "W_embedding_high",
+            "W_embedding_low",
+            "W_hidden_high",
+            "W_hidden_low"
+          ],
+          "vaimlParam": {
+            "vaimlModelPath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-d5f48f117339402090e96795905e0f25\\vitisai-cache\\3881c231b16102be222b18bbcc11d191c73293e40ac8787a6157f04f30dce526\\vaiml_par_0",
+            "deviceName": "stx",
+            "outputShapes": [
+              {
+                "shapes": [
+                  "4",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              }
+            ],
+            "inputShapes": [
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "1",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "4",
+                  "2560"
+                ]
+              },
+              {
+                "shapes": [
+                  "4",
+                  "2560"
+                ]
+              }
+            ],
+            "vaimlUnarchivePath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-d5f48f117339402090e96795905e0f25\\vitisai-cache\\3881c231b16102be222b18bbcc11d191c73293e40ac8787a6157f04f30dce526",
+            "subgraphName": "vaiml_par_0",
+            "priority": "normal",
+            "runnerType": "hw",
+            "deviceBatchSize": 1,
+            "inputNames": [
+              "e_high",
+              "e_low",
+              "h_high",
+              "h_low"
+            ],
+            "outputNames": [
+              "h_projection",
+              "e_projection"
+            ],
+            "maxSpillBufferSize": "40960",
+            "enablePreemption": true
+          }
+        }
+      ],
+      "config_passes": [
+        {
+          "name": "init",
+          "plugin": "vaip-pass_init"
+        },
+        {
+          "name": "vaiml_partition",
+          "plugin": "vaip-pass_vaiml_partition",
+          "vaimlConfig": {
+            "device": "stx"
+          }
+        }
+      ],
+      "scope": "all dynamic split partials, recombination Adds and original projection BF16 casts in hw/stx; RMS/seed-add absent"
+    },
+    "profile_proof": null,
+    "ort_graph_optimization_level": null,
+    "exact_native_FC_word_parity_on_frozen_inputs": null,
+    "input_split_diagnostics": {
+      "A": {
+        "e": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            1,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 2560,
+          "original_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "high_sha256": "28734bdc3125257d32eb1eb22344ec2187bc6bd128c61244594d909bf629d589",
+          "low_sha256": "29589b86a84349f3ded58e99e693c185d39b691508445c051629b92422c6a1b6",
+          "reconstructed_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+          "high_requantization_bit_mismatches": 1,
+          "high_requantization_numeric_mismatches": 0,
+          "high_requantization_max_abs_change": 0.0,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 2022,
+          "low_max_abs": 0.0078125,
+          "original_max_abs": 1.2578125,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        },
+        "h": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            4,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 10240,
+          "original_sha256": "046f98dc1fdd85fe6a67ddc4188683813a9603e53cdf85718ffc7e096bb56e01",
+          "high_sha256": "724b7fa14dc592db11a2873099ea2f5949cb7f8287d780113f898df6dc3ce638",
+          "low_sha256": "444f085c89ace89699b4673ae2e461d64560b3b860dcd24f6bf4e5528adab253",
+          "reconstructed_sha256": "acd742dfd46067fc5bb8e4973ce10bdb7aa6e4d913cbb01a15cc53a0d2603222",
+          "reconstruction_bit_mismatches": 4,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+          "high_requantization_bit_mismatches": 131,
+          "high_requantization_numeric_mismatches": 21,
+          "high_requantization_max_abs_change": 0.015625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 8105,
+          "low_max_abs": 0.0625,
+          "original_max_abs": 13.1875,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        }
+      },
+      "B": {
+        "e": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            1,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 2560,
+          "original_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "high_sha256": "ea33edb98f5f7c75a4e7c1b9a6863ca61b2cbc7fbd89b4be6ce7965addf65f10",
+          "low_sha256": "da3c2efb58faaff0cf6e907c7ed14f883cddb143d9e85f1098ebc80580cfe217",
+          "reconstructed_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+          "high_requantization_bit_mismatches": 14,
+          "high_requantization_numeric_mismatches": 5,
+          "high_requantization_max_abs_change": 0.00390625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 1971,
+          "low_max_abs": 0.0078125,
+          "original_max_abs": 1.5390625,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        },
+        "h": {
+          "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+          "shape": [
+            4,
+            2560
+          ],
+          "K_axis": -1,
+          "eb_size": 8,
+          "elements": 10240,
+          "original_sha256": "183eaad194d1bc7bf049ad9da686bae861d0689f7053e4daf5e51f69c8d1ce10",
+          "high_sha256": "079a84eede70d48c9c2822cf2b4e875e1ae00d5de24fcead091b372d6033d24a",
+          "low_sha256": "5053e707fba31a8c307e075107bbeb7df913fcd8865ff65861d90d1d2388b38b",
+          "reconstructed_sha256": "593430c5daa3a14900b1f0cfee4fd665cacede4692cf923e014c366d5de02caa",
+          "reconstruction_bit_mismatches": 2,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+          "high_requantization_bit_mismatches": 87,
+          "high_requantization_numeric_mismatches": 17,
+          "high_requantization_max_abs_change": 0.015625,
+          "high_idempotence_assumed": false,
+          "low_BF16_bit_mismatches": 0,
+          "low_BF16_max_abs_change": 0.0,
+          "low_nonzero_elements": 8025,
+          "low_max_abs": 0.015625,
+          "original_max_abs": 3.9375,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false
+        }
+      }
+    },
+    "weight_split_diagnostics": {
+      "W_embedding": {
+        "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+        "shape": [
+          2560,
+          2560
+        ],
+        "K_axis": -2,
+        "eb_size": 8,
+        "elements": 6553600,
+        "original_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+        "high_sha256": "843a8b523ae2c5cf3ada31ff22f41b0d8148c457a3a15eee838f603da081f7e5",
+        "low_sha256": "23acb33477f9b60991102fd2589a0ec11ca00ed1e53eb99acf6d81b898cd3736",
+        "reconstructed_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+        "reconstruction_bit_mismatches": 0,
+        "reconstruction_numeric_mismatches": 0,
+        "reconstruction_max_abs_error": 0.0,
+        "high_requantized_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+        "high_requantization_bit_mismatches": 34846,
+        "high_requantization_numeric_mismatches": 8449,
+        "high_requantization_max_abs_change": 0.00048828125,
+        "high_idempotence_assumed": false,
+        "low_BF16_bit_mismatches": 0,
+        "low_BF16_max_abs_change": 0.0,
+        "low_nonzero_elements": 5013065,
+        "low_max_abs": 0.0009765625,
+        "original_max_abs": 0.224609375,
+        "finite": true,
+        "numerical_admission_claim": false,
+        "per_value_correction": false,
+        "decoded_original_sha256": "724dc746b2755556ee2676a55844fa7851a48a78411889148b5fd5c0bdd348c6",
+        "decoded_to_BF16_bit_changes": 6217076
+      },
+      "W_hidden": {
+        "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+        "shape": [
+          2560,
+          2560
+        ],
+        "K_axis": -2,
+        "eb_size": 8,
+        "elements": 6553600,
+        "original_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+        "high_sha256": "36d2d441c1ff9f79aa42249e797481df08e2dda4fcde362b0d85c44af3c5273f",
+        "low_sha256": "f28a105cb2b770a32c60b048b914bb70963bc33d4e2f0d6c8a03328b2ad92839",
+        "reconstructed_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+        "reconstruction_bit_mismatches": 0,
+        "reconstruction_numeric_mismatches": 0,
+        "reconstruction_max_abs_error": 0.0,
+        "high_requantized_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+        "high_requantization_bit_mismatches": 42257,
+        "high_requantization_numeric_mismatches": 8692,
+        "high_requantization_max_abs_change": 0.001953125,
+        "high_idempotence_assumed": false,
+        "low_BF16_bit_mismatches": 0,
+        "low_BF16_max_abs_change": 0.0,
+        "low_nonzero_elements": 5055586,
+        "low_max_abs": 0.00390625,
+        "original_max_abs": 0.88671875,
+        "finite": true,
+        "numerical_admission_claim": false,
+        "per_value_correction": false,
+        "decoded_original_sha256": "196a9deed6dde2b4005d9a66844005b9cebc928fafe90c4401b70dba1879a69e",
+        "decoded_to_BF16_bit_changes": 6160768
+      }
+    },
+    "split_algorithm_diagnostics": {
+      "rule": "one-pass BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); low=original-BFP16_high",
+      "input_K_axis": -1,
+      "weight_K_axis": -2,
+      "high_idempotence_assumed": false,
+      "per_value_correction": false,
+      "weight_preparation_is_static": true,
+      "input_preparation_timed_every_call": true
+    },
+    "context_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-split-npu-d5f48f117339402090e96795905e0f25\\vitisai-cache\\3881c231b16102be222b18bbcc11d191c73293e40ac8787a6157f04f30dce526\\context.json",
+      "sha256": "3b01aa5c9f20f7d379bed6346f6f79cf8eb9a79f003411928eababdfa216b7e6"
+    },
+    "comparisons": {},
+    "cleanup": {
+      "all_owned_jobs_closed": true,
+      "cleanup_pending": false,
+      "monitor_stopped": true,
+      "minimum_physical_gib": 27.175636291503906,
+      "minimum_commit_gib": 119.5491828918457
+    }
+  },
+  "original_GPU_budget": {
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\gpu-timing-summary.json",
+      "sha256": "5f1ee5c9acf68d318d1c7adcb9e33e746f36c73807626921fc9e432f37add796"
+    },
+    "event_pair_mean_ms": 0.3117021861875,
+    "host_pair_mean_ms": 0.4871700625
+  },
+  "current_regular_MTP": {
+    "prefill_tps": 1239.198391627115,
+    "decode_tps": 42.15041241183947,
+    "acceptance": 0.6,
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "context_capacity": 262144,
+    "npu_integrated": false,
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\colleague-mtp-measurement-83c7b2c6c4ef48498104fe40b2a1cbae\\result.json",
+      "sha256": "985f50f8b20307912c15b48380ddd59aafbbb62d09b35a5d4e239209dc51a455"
+    }
+  },
+  "useful_NPU_decode_offload_proved": false,
+  "measured_NPU_token_delta": null,
+  "live_offload_enabled": false,
+  "acceptance_gain_measured": false,
+  "prefill_trunk_offloaded": false,
+  "full_goal_completed": false,
+  "stable_high_candidate": {
+    "model_receipt": {
+      "path": "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-stable-7d51948d0cdb454aa4e15079bc19aee6.onnx.json",
+      "sha256": "7abfe3723b74fe3728644e0a727662b9903a9a68bb8906ac4967923d4d6d653b"
+    },
+    "cpu": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-cpu-8ab32923ac844b5898afb471383b0df3\\cpu.json",
+        "sha256": "da8be1da0f7b10816f6a15cfd904f2e02fb219bf024b5812b6b2028d6973e823"
+      },
+      "owned": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-cpu-8ab32923ac844b5898afb471383b0df3\\result.json",
+        "sha256": "8d51254e28cf1e52358a40a713066297dd1d95cc4a55e2428ca7149a9928895d"
+      },
+      "diagnostic_completed": true,
+      "passed": false,
+      "cpu_passed": false,
+      "error": "RuntimeError: frozen original GPU FC gate failed; both returned projections retained",
+      "integration_admission": false,
+      "source_sha256": "2ba71370edddd8d772111a16a985a90e02396066e6d88d04686acccbfa6b2558",
+      "model_sha256": "77e704f65f2d04a35379360e65cf13919cbb02747656bc7675991254d60a0c0f",
+      "data_sha256": "61ccb018d6855f1d189c39a22554bfaf82f1a31e95a7cd8b745042f7798b906f",
+      "transformer_sha256": "94438473e7b1084818515b6c8308b86dc1f24a48cee05fa68e0b1f3c48636566",
+      "timing_scope": "dynamic bounded stable-high/residual preparation including reconstruction/requantization diagnostics and preparation hashes + fresh contiguous copies + session.run; compile/post-run validation and hashing/static weight split and live transport excluded",
+      "timing_observations": {
+        "measured_calls": 8,
+        "qualified_for_acceleration": false,
+        "host_call_ms": {
+          "mean": 7.4679875,
+          "minimum": 7.2582,
+          "maximum": 7.9064,
+          "median": 7.3755500000000005,
+          "p95": 7.9064
+        },
+        "prepare_and_copy_ms": {
+          "mean": 1.6341,
+          "minimum": 1.5626,
+          "maximum": 2.0455,
+          "median": 1.5708,
+          "p95": 2.0455
+        },
+        "session_run_ms": {
+          "mean": 5.8338875,
+          "minimum": 5.687,
+          "maximum": 6.1515,
+          "median": 5.80025,
+          "p95": 6.1515
+        }
+      },
+      "context_proof": null,
+      "profile_proof": {
+        "passed": true,
+        "node_events": 216,
+        "executed_node_providers": [
+          "CPUExecutionProvider"
+        ],
+        "node_event_ops": [
+          "Add",
+          "Cast",
+          "MatMul"
+        ]
+      },
+      "ort_graph_optimization_level": "ORT_DISABLE_ALL",
+      "exact_native_FC_word_parity_on_frozen_inputs": false,
+      "input_split_diagnostics": {
+        "A": {
+          "e": {
+            "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+            "shape": [
+              1,
+              2560
+            ],
+            "K_axis": -1,
+            "eb_size": 8,
+            "elements": 2560,
+            "original_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+            "high_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+            "low_sha256": "29589b86a84349f3ded58e99e693c185d39b691508445c051629b92422c6a1b6",
+            "reconstructed_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+            "reconstruction_bit_mismatches": 0,
+            "reconstruction_numeric_mismatches": 0,
+            "reconstruction_max_abs_error": 0.0,
+            "high_requantized_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+            "high_requantization_bit_mismatches": 0,
+            "high_requantization_numeric_mismatches": 0,
+            "high_requantization_max_abs_change": 0.0,
+            "high_idempotence_assumed": false,
+            "high_idempotence_verified": true,
+            "stable_high": {
+              "max_iterations": 8,
+              "iterations": 2,
+              "quantization_calls": 3,
+              "converged": true,
+              "initial_high_sha256": "28734bdc3125257d32eb1eb22344ec2187bc6bd128c61244594d909bf629d589",
+              "initial_to_stable_bit_mismatches": 1,
+              "initial_to_stable_numeric_mismatches": 0,
+              "initial_to_stable_max_abs_change": 0.0,
+              "history": [
+                {
+                  "iteration": 1,
+                  "bit_mismatches": 1,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "28734bdc3125257d32eb1eb22344ec2187bc6bd128c61244594d909bf629d589",
+                  "output_high_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d"
+                },
+                {
+                  "iteration": 2,
+                  "bit_mismatches": 0,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+                  "output_high_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d"
+                }
+              ]
+            },
+            "final_high_verification_quantization_calls": 1,
+            "low_BF16_bit_mismatches": 0,
+            "low_BF16_max_abs_change": 0.0,
+            "low_nonzero_elements": 2022,
+            "low_max_abs": 0.0078125,
+            "original_max_abs": 1.2578125,
+            "finite": true,
+            "numerical_admission_claim": false,
+            "per_value_correction": false
+          },
+          "h": {
+            "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+            "shape": [
+              4,
+              2560
+            ],
+            "K_axis": -1,
+            "eb_size": 8,
+            "elements": 10240,
+            "original_sha256": "046f98dc1fdd85fe6a67ddc4188683813a9603e53cdf85718ffc7e096bb56e01",
+            "high_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+            "low_sha256": "1da31810eba044e26df92889d4cf6d0e269b00c90243b29bf1557ddfd8d83d34",
+            "reconstructed_sha256": "acd742dfd46067fc5bb8e4973ce10bdb7aa6e4d913cbb01a15cc53a0d2603222",
+            "reconstruction_bit_mismatches": 4,
+            "reconstruction_numeric_mismatches": 0,
+            "reconstruction_max_abs_error": 0.0,
+            "high_requantized_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+            "high_requantization_bit_mismatches": 0,
+            "high_requantization_numeric_mismatches": 0,
+            "high_requantization_max_abs_change": 0.0,
+            "high_idempotence_assumed": false,
+            "high_idempotence_verified": true,
+            "stable_high": {
+              "max_iterations": 8,
+              "iterations": 2,
+              "quantization_calls": 3,
+              "converged": true,
+              "initial_high_sha256": "724b7fa14dc592db11a2873099ea2f5949cb7f8287d780113f898df6dc3ce638",
+              "initial_to_stable_bit_mismatches": 131,
+              "initial_to_stable_numeric_mismatches": 21,
+              "initial_to_stable_max_abs_change": 0.015625,
+              "history": [
+                {
+                  "iteration": 1,
+                  "bit_mismatches": 131,
+                  "numeric_mismatches": 21,
+                  "max_abs_change": 0.015625,
+                  "input_high_sha256": "724b7fa14dc592db11a2873099ea2f5949cb7f8287d780113f898df6dc3ce638",
+                  "output_high_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9"
+                },
+                {
+                  "iteration": 2,
+                  "bit_mismatches": 0,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+                  "output_high_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9"
+                }
+              ]
+            },
+            "final_high_verification_quantization_calls": 1,
+            "low_BF16_bit_mismatches": 1,
+            "low_BF16_max_abs_change": 6.103515625e-05,
+            "low_nonzero_elements": 8109,
+            "low_max_abs": 0.0625,
+            "original_max_abs": 13.1875,
+            "finite": true,
+            "numerical_admission_claim": false,
+            "per_value_correction": false
+          }
+        },
+        "B": {
+          "e": {
+            "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+            "shape": [
+              1,
+              2560
+            ],
+            "K_axis": -1,
+            "eb_size": 8,
+            "elements": 2560,
+            "original_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+            "high_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+            "low_sha256": "32c24004529654b616c01a77c350174e9d9b4819a3e2e994b811d885d0fc524c",
+            "reconstructed_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+            "reconstruction_bit_mismatches": 0,
+            "reconstruction_numeric_mismatches": 0,
+            "reconstruction_max_abs_error": 0.0,
+            "high_requantized_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+            "high_requantization_bit_mismatches": 0,
+            "high_requantization_numeric_mismatches": 0,
+            "high_requantization_max_abs_change": 0.0,
+            "high_idempotence_assumed": false,
+            "high_idempotence_verified": true,
+            "stable_high": {
+              "max_iterations": 8,
+              "iterations": 2,
+              "quantization_calls": 3,
+              "converged": true,
+              "initial_high_sha256": "ea33edb98f5f7c75a4e7c1b9a6863ca61b2cbc7fbd89b4be6ce7965addf65f10",
+              "initial_to_stable_bit_mismatches": 14,
+              "initial_to_stable_numeric_mismatches": 5,
+              "initial_to_stable_max_abs_change": 0.00390625,
+              "history": [
+                {
+                  "iteration": 1,
+                  "bit_mismatches": 14,
+                  "numeric_mismatches": 5,
+                  "max_abs_change": 0.00390625,
+                  "input_high_sha256": "ea33edb98f5f7c75a4e7c1b9a6863ca61b2cbc7fbd89b4be6ce7965addf65f10",
+                  "output_high_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52"
+                },
+                {
+                  "iteration": 2,
+                  "bit_mismatches": 0,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+                  "output_high_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52"
+                }
+              ]
+            },
+            "final_high_verification_quantization_calls": 1,
+            "low_BF16_bit_mismatches": 0,
+            "low_BF16_max_abs_change": 0.0,
+            "low_nonzero_elements": 1972,
+            "low_max_abs": 0.0078125,
+            "original_max_abs": 1.5390625,
+            "finite": true,
+            "numerical_admission_claim": false,
+            "per_value_correction": false
+          },
+          "h": {
+            "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+            "shape": [
+              4,
+              2560
+            ],
+            "K_axis": -1,
+            "eb_size": 8,
+            "elements": 10240,
+            "original_sha256": "183eaad194d1bc7bf049ad9da686bae861d0689f7053e4daf5e51f69c8d1ce10",
+            "high_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+            "low_sha256": "2d1f9193b885b71c981311ecc65e278f0473706af764bb18978232e2369f4804",
+            "reconstructed_sha256": "593430c5daa3a14900b1f0cfee4fd665cacede4692cf923e014c366d5de02caa",
+            "reconstruction_bit_mismatches": 2,
+            "reconstruction_numeric_mismatches": 0,
+            "reconstruction_max_abs_error": 0.0,
+            "high_requantized_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+            "high_requantization_bit_mismatches": 0,
+            "high_requantization_numeric_mismatches": 0,
+            "high_requantization_max_abs_change": 0.0,
+            "high_idempotence_assumed": false,
+            "high_idempotence_verified": true,
+            "stable_high": {
+              "max_iterations": 8,
+              "iterations": 2,
+              "quantization_calls": 3,
+              "converged": true,
+              "initial_high_sha256": "079a84eede70d48c9c2822cf2b4e875e1ae00d5de24fcead091b372d6033d24a",
+              "initial_to_stable_bit_mismatches": 87,
+              "initial_to_stable_numeric_mismatches": 17,
+              "initial_to_stable_max_abs_change": 0.015625,
+              "history": [
+                {
+                  "iteration": 1,
+                  "bit_mismatches": 87,
+                  "numeric_mismatches": 17,
+                  "max_abs_change": 0.015625,
+                  "input_high_sha256": "079a84eede70d48c9c2822cf2b4e875e1ae00d5de24fcead091b372d6033d24a",
+                  "output_high_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594"
+                },
+                {
+                  "iteration": 2,
+                  "bit_mismatches": 0,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+                  "output_high_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594"
+                }
+              ]
+            },
+            "final_high_verification_quantization_calls": 1,
+            "low_BF16_bit_mismatches": 0,
+            "low_BF16_max_abs_change": 0.0,
+            "low_nonzero_elements": 8029,
+            "low_max_abs": 0.0234375,
+            "original_max_abs": 3.9375,
+            "finite": true,
+            "numerical_admission_claim": false,
+            "per_value_correction": false
+          }
+        }
+      },
+      "weight_split_diagnostics": {
+        "W_embedding": {
+          "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+          "shape": [
+            2560,
+            2560
+          ],
+          "K_axis": -2,
+          "eb_size": 8,
+          "elements": 6553600,
+          "original_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+          "high_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+          "low_sha256": "985e8db19bd9fd62fbc6af79c609edb459c774cee2c8ec97757ff58ed8da1d87",
+          "reconstructed_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+          "high_requantization_bit_mismatches": 0,
+          "high_requantization_numeric_mismatches": 0,
+          "high_requantization_max_abs_change": 0.0,
+          "high_idempotence_assumed": false,
+          "high_idempotence_verified": true,
+          "stable_high": {
+            "max_iterations": 8,
+            "iterations": 2,
+            "quantization_calls": 3,
+            "converged": true,
+            "initial_high_sha256": "843a8b523ae2c5cf3ada31ff22f41b0d8148c457a3a15eee838f603da081f7e5",
+            "initial_to_stable_bit_mismatches": 34846,
+            "initial_to_stable_numeric_mismatches": 8449,
+            "initial_to_stable_max_abs_change": 0.00048828125,
+            "history": [
+              {
+                "iteration": 1,
+                "bit_mismatches": 34846,
+                "numeric_mismatches": 8449,
+                "max_abs_change": 0.00048828125,
+                "input_high_sha256": "843a8b523ae2c5cf3ada31ff22f41b0d8148c457a3a15eee838f603da081f7e5",
+                "output_high_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd"
+              },
+              {
+                "iteration": 2,
+                "bit_mismatches": 0,
+                "numeric_mismatches": 0,
+                "max_abs_change": 0.0,
+                "input_high_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+                "output_high_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd"
+              }
+            ]
+          },
+          "final_high_verification_quantization_calls": 1,
+          "low_BF16_bit_mismatches": 34,
+          "low_BF16_max_abs_change": 9.5367431640625e-07,
+          "low_nonzero_elements": 5015307,
+          "low_max_abs": 0.0009765625,
+          "original_max_abs": 0.224609375,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false,
+          "decoded_original_sha256": "724dc746b2755556ee2676a55844fa7851a48a78411889148b5fd5c0bdd348c6",
+          "decoded_to_BF16_bit_changes": 6217076
+        },
+        "W_hidden": {
+          "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+          "shape": [
+            2560,
+            2560
+          ],
+          "K_axis": -2,
+          "eb_size": 8,
+          "elements": 6553600,
+          "original_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+          "high_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+          "low_sha256": "03ebb99d3f80be71528f8c38bfdf0c7cca355c8c58eb3ce9356e15f1889275b9",
+          "reconstructed_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+          "high_requantization_bit_mismatches": 0,
+          "high_requantization_numeric_mismatches": 0,
+          "high_requantization_max_abs_change": 0.0,
+          "high_idempotence_assumed": false,
+          "high_idempotence_verified": true,
+          "stable_high": {
+            "max_iterations": 8,
+            "iterations": 2,
+            "quantization_calls": 3,
+            "converged": true,
+            "initial_high_sha256": "36d2d441c1ff9f79aa42249e797481df08e2dda4fcde362b0d85c44af3c5273f",
+            "initial_to_stable_bit_mismatches": 42257,
+            "initial_to_stable_numeric_mismatches": 8692,
+            "initial_to_stable_max_abs_change": 0.001953125,
+            "history": [
+              {
+                "iteration": 1,
+                "bit_mismatches": 42257,
+                "numeric_mismatches": 8692,
+                "max_abs_change": 0.001953125,
+                "input_high_sha256": "36d2d441c1ff9f79aa42249e797481df08e2dda4fcde362b0d85c44af3c5273f",
+                "output_high_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d"
+              },
+              {
+                "iteration": 2,
+                "bit_mismatches": 0,
+                "numeric_mismatches": 0,
+                "max_abs_change": 0.0,
+                "input_high_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+                "output_high_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d"
+              }
+            ]
+          },
+          "final_high_verification_quantization_calls": 1,
+          "low_BF16_bit_mismatches": 41,
+          "low_BF16_max_abs_change": 9.5367431640625e-07,
+          "low_nonzero_elements": 5057843,
+          "low_max_abs": 0.00390625,
+          "original_max_abs": 0.88671875,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false,
+          "decoded_original_sha256": "196a9deed6dde2b4005d9a66844005b9cebc928fafe90c4401b70dba1879a69e",
+          "decoded_to_BF16_bit_changes": 6160768
+        }
+      },
+      "split_algorithm_diagnostics": {
+        "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+        "input_K_axis": -1,
+        "weight_K_axis": -2,
+        "high_idempotence_assumed": false,
+        "per_value_correction": false,
+        "stable_high_fixed_point_required": true,
+        "max_high_iterations": 8,
+        "iteration_condition": "bit-exact Q(high)==high",
+        "bounded_nonconvergence_is_failure": true,
+        "weight_preparation_is_static": true,
+        "input_preparation_timed_every_call": true
+      },
+      "profile_receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-cpu-8ab32923ac844b5898afb471383b0df3\\cpu_2026-10-04_23-48-48_203.json",
+        "sha256": "976e2d044d3a89dc9c4501755bd66512286c2e9b816d398adf095d35328bc967"
+      },
+      "comparisons": {
+        "A": {
+          "e_projection": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.002,
+              "atol": 0.0002
+            },
+            "exact_BF16_word_mismatches": 0,
+            "max_abs_error": 0.0,
+            "mismatched_elements": 0,
+            "elements": 2560,
+            "non_BF16_lattice_elements": 0
+          },
+          "h_projection": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.002,
+              "atol": 0.0002
+            },
+            "exact_BF16_word_mismatches": 0,
+            "max_abs_error": 0.0,
+            "mismatched_elements": 0,
+            "elements": 10240,
+            "non_BF16_lattice_elements": 0
+          }
+        },
+        "B": {
+          "e_projection": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.002,
+              "atol": 0.0002
+            },
+            "exact_BF16_word_mismatches": 1,
+            "max_abs_error": 1.9073486328125e-06,
+            "mismatched_elements": 0,
+            "elements": 2560,
+            "non_BF16_lattice_elements": 0
+          },
+          "h_projection": {
+            "passed": false,
+            "tolerance": {
+              "rtol": 0.002,
+              "atol": 0.0002
+            },
+            "exact_BF16_word_mismatches": 1,
+            "max_abs_error": 0.00048828125,
+            "mismatched_elements": 1,
+            "elements": 10240,
+            "non_BF16_lattice_elements": 0
+          }
+        }
+      },
+      "cleanup": {
+        "all_owned_jobs_closed": true,
+        "cleanup_pending": false,
+        "monitor_stopped": true,
+        "minimum_physical_gib": 27.80855941772461,
+        "minimum_commit_gib": 120.18519973754883
+      }
+    },
+    "npu": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-npu-d0089638177b442398c0b283ccb0cfb9\\npu.json",
+        "sha256": "bc98c1310042129b09bd857879a24a6259eaf023424ecbb8eade8c8907f3834b"
+      },
+      "owned": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-npu-d0089638177b442398c0b283ccb0cfb9\\result.json",
+        "sha256": "ad13bed5e920351d73e3acec183ab5b110ca72a1118e722cd2d6c2d41bee5d7c"
+      },
+      "diagnostic_completed": true,
+      "passed": true,
+      "cpu_passed": false,
+      "error": null,
+      "integration_admission": false,
+      "source_sha256": "2ba71370edddd8d772111a16a985a90e02396066e6d88d04686acccbfa6b2558",
+      "model_sha256": "77e704f65f2d04a35379360e65cf13919cbb02747656bc7675991254d60a0c0f",
+      "data_sha256": "61ccb018d6855f1d189c39a22554bfaf82f1a31e95a7cd8b745042f7798b906f",
+      "transformer_sha256": "94438473e7b1084818515b6c8308b86dc1f24a48cee05fa68e0b1f3c48636566",
+      "timing_scope": "dynamic bounded stable-high/residual preparation including reconstruction/requantization diagnostics and preparation hashes + fresh contiguous copies + session.run; compile/post-run validation and hashing/static weight split and live transport excluded",
+      "timing_observations": {
+        "measured_calls": 8,
+        "qualified_for_acceleration": false,
+        "host_call_ms": {
+          "mean": 3.5395125,
+          "minimum": 3.2375,
+          "maximum": 4.5037,
+          "median": 3.37195,
+          "p95": 4.5037
+        },
+        "prepare_and_copy_ms": {
+          "mean": 1.6894875,
+          "minimum": 1.4952,
+          "maximum": 1.9348,
+          "median": 1.6308500000000001,
+          "p95": 1.9348
+        },
+        "session_run_ms": {
+          "mean": 1.850025,
+          "minimum": 1.7064,
+          "maximum": 2.6814,
+          "median": 1.7353,
+          "p95": 2.6814
+        }
+      },
+      "context_proof": {
+        "passed": true,
+        "hardware_partitions_only": true,
+        "missing_required_outputs": [],
+        "cpu_fallback_disabled_in_context": true,
+        "cache_key_matches": true,
+        "provider_library_matches": true,
+        "stx_partition_pass": true,
+        "partitions": [
+          {
+            "id": "vaiml_par_0",
+            "device": "VAIML",
+            "nodes": [
+              "h_projection",
+              "h_projection_bf16",
+              "h_projection_fp32",
+              "h_sum_h_lh",
+              "h_sum_h",
+              "h_hh",
+              "h_hl",
+              "h_lh",
+              "h_ll",
+              "e_projection",
+              "e_projection_bf16",
+              "e_projection_fp32",
+              "e_sum_h_lh",
+              "e_sum_h",
+              "e_hh",
+              "e_hl",
+              "e_lh",
+              "e_ll"
+            ],
+            "inputs": [
+              "e_high",
+              "e_low",
+              "h_high",
+              "h_low"
+            ],
+            "outputs": [
+              "h_projection",
+              "e_projection"
+            ],
+            "constantInitializers": [
+              "W_embedding_high",
+              "W_embedding_low",
+              "W_hidden_high",
+              "W_hidden_low"
+            ],
+            "vaimlParam": {
+              "vaimlModelPath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-npu-d0089638177b442398c0b283ccb0cfb9\\vitisai-cache\\a2939832059c26a9373fa7433973cccf4726f2a34447be2aef63fe7fa17503b9\\vaiml_par_0",
+              "deviceName": "stx",
+              "outputShapes": [
+                {
+                  "shapes": [
+                    "4",
+                    "2560"
+                  ]
+                },
+                {
+                  "shapes": [
+                    "1",
+                    "2560"
+                  ]
+                }
+              ],
+              "inputShapes": [
+                {
+                  "shapes": [
+                    "1",
+                    "2560"
+                  ]
+                },
+                {
+                  "shapes": [
+                    "1",
+                    "2560"
+                  ]
+                },
+                {
+                  "shapes": [
+                    "4",
+                    "2560"
+                  ]
+                },
+                {
+                  "shapes": [
+                    "4",
+                    "2560"
+                  ]
+                }
+              ],
+              "vaimlUnarchivePath": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-npu-d0089638177b442398c0b283ccb0cfb9\\vitisai-cache\\a2939832059c26a9373fa7433973cccf4726f2a34447be2aef63fe7fa17503b9",
+              "subgraphName": "vaiml_par_0",
+              "priority": "normal",
+              "runnerType": "hw",
+              "deviceBatchSize": 1,
+              "inputNames": [
+                "e_high",
+                "e_low",
+                "h_high",
+                "h_low"
+              ],
+              "outputNames": [
+                "h_projection",
+                "e_projection"
+              ],
+              "maxSpillBufferSize": "40960",
+              "enablePreemption": true
+            }
+          }
+        ],
+        "config_passes": [
+          {
+            "name": "init",
+            "plugin": "vaip-pass_init"
+          },
+          {
+            "name": "vaiml_partition",
+            "plugin": "vaip-pass_vaiml_partition",
+            "vaimlConfig": {
+              "device": "stx"
+            }
+          }
+        ],
+        "scope": "all dynamic split partials, recombination Adds and original projection BF16 casts in hw/stx; RMS/seed-add absent"
+      },
+      "profile_proof": {
+        "passed": true,
+        "node_events": 12,
+        "executed_node_providers": [
+          "VitisAIExecutionProvider"
+        ],
+        "node_event_ops": [
+          "VitisAIExecutionProvider_17286270705814491264_0"
+        ]
+      },
+      "ort_graph_optimization_level": "ORT_DISABLE_ALL",
+      "exact_native_FC_word_parity_on_frozen_inputs": false,
+      "input_split_diagnostics": {
+        "A": {
+          "e": {
+            "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+            "shape": [
+              1,
+              2560
+            ],
+            "K_axis": -1,
+            "eb_size": 8,
+            "elements": 2560,
+            "original_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+            "high_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+            "low_sha256": "29589b86a84349f3ded58e99e693c185d39b691508445c051629b92422c6a1b6",
+            "reconstructed_sha256": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+            "reconstruction_bit_mismatches": 0,
+            "reconstruction_numeric_mismatches": 0,
+            "reconstruction_max_abs_error": 0.0,
+            "high_requantized_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+            "high_requantization_bit_mismatches": 0,
+            "high_requantization_numeric_mismatches": 0,
+            "high_requantization_max_abs_change": 0.0,
+            "high_idempotence_assumed": false,
+            "high_idempotence_verified": true,
+            "stable_high": {
+              "max_iterations": 8,
+              "iterations": 2,
+              "quantization_calls": 3,
+              "converged": true,
+              "initial_high_sha256": "28734bdc3125257d32eb1eb22344ec2187bc6bd128c61244594d909bf629d589",
+              "initial_to_stable_bit_mismatches": 1,
+              "initial_to_stable_numeric_mismatches": 0,
+              "initial_to_stable_max_abs_change": 0.0,
+              "history": [
+                {
+                  "iteration": 1,
+                  "bit_mismatches": 1,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "28734bdc3125257d32eb1eb22344ec2187bc6bd128c61244594d909bf629d589",
+                  "output_high_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d"
+                },
+                {
+                  "iteration": 2,
+                  "bit_mismatches": 0,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d",
+                  "output_high_sha256": "405b94463862715d09aa899714dd30f95bf1388cfa775ffe6d685cd7512eaa7d"
+                }
+              ]
+            },
+            "final_high_verification_quantization_calls": 1,
+            "low_BF16_bit_mismatches": 0,
+            "low_BF16_max_abs_change": 0.0,
+            "low_nonzero_elements": 2022,
+            "low_max_abs": 0.0078125,
+            "original_max_abs": 1.2578125,
+            "finite": true,
+            "numerical_admission_claim": false,
+            "per_value_correction": false
+          },
+          "h": {
+            "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+            "shape": [
+              4,
+              2560
+            ],
+            "K_axis": -1,
+            "eb_size": 8,
+            "elements": 10240,
+            "original_sha256": "046f98dc1fdd85fe6a67ddc4188683813a9603e53cdf85718ffc7e096bb56e01",
+            "high_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+            "low_sha256": "1da31810eba044e26df92889d4cf6d0e269b00c90243b29bf1557ddfd8d83d34",
+            "reconstructed_sha256": "acd742dfd46067fc5bb8e4973ce10bdb7aa6e4d913cbb01a15cc53a0d2603222",
+            "reconstruction_bit_mismatches": 4,
+            "reconstruction_numeric_mismatches": 0,
+            "reconstruction_max_abs_error": 0.0,
+            "high_requantized_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+            "high_requantization_bit_mismatches": 0,
+            "high_requantization_numeric_mismatches": 0,
+            "high_requantization_max_abs_change": 0.0,
+            "high_idempotence_assumed": false,
+            "high_idempotence_verified": true,
+            "stable_high": {
+              "max_iterations": 8,
+              "iterations": 2,
+              "quantization_calls": 3,
+              "converged": true,
+              "initial_high_sha256": "724b7fa14dc592db11a2873099ea2f5949cb7f8287d780113f898df6dc3ce638",
+              "initial_to_stable_bit_mismatches": 131,
+              "initial_to_stable_numeric_mismatches": 21,
+              "initial_to_stable_max_abs_change": 0.015625,
+              "history": [
+                {
+                  "iteration": 1,
+                  "bit_mismatches": 131,
+                  "numeric_mismatches": 21,
+                  "max_abs_change": 0.015625,
+                  "input_high_sha256": "724b7fa14dc592db11a2873099ea2f5949cb7f8287d780113f898df6dc3ce638",
+                  "output_high_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9"
+                },
+                {
+                  "iteration": 2,
+                  "bit_mismatches": 0,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9",
+                  "output_high_sha256": "e622a89fa7bc53bb3c0873674002ca54119a14da30f993da0971570788170ca9"
+                }
+              ]
+            },
+            "final_high_verification_quantization_calls": 1,
+            "low_BF16_bit_mismatches": 1,
+            "low_BF16_max_abs_change": 6.103515625e-05,
+            "low_nonzero_elements": 8109,
+            "low_max_abs": 0.0625,
+            "original_max_abs": 13.1875,
+            "finite": true,
+            "numerical_admission_claim": false,
+            "per_value_correction": false
+          }
+        },
+        "B": {
+          "e": {
+            "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+            "shape": [
+              1,
+              2560
+            ],
+            "K_axis": -1,
+            "eb_size": 8,
+            "elements": 2560,
+            "original_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+            "high_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+            "low_sha256": "32c24004529654b616c01a77c350174e9d9b4819a3e2e994b811d885d0fc524c",
+            "reconstructed_sha256": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+            "reconstruction_bit_mismatches": 0,
+            "reconstruction_numeric_mismatches": 0,
+            "reconstruction_max_abs_error": 0.0,
+            "high_requantized_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+            "high_requantization_bit_mismatches": 0,
+            "high_requantization_numeric_mismatches": 0,
+            "high_requantization_max_abs_change": 0.0,
+            "high_idempotence_assumed": false,
+            "high_idempotence_verified": true,
+            "stable_high": {
+              "max_iterations": 8,
+              "iterations": 2,
+              "quantization_calls": 3,
+              "converged": true,
+              "initial_high_sha256": "ea33edb98f5f7c75a4e7c1b9a6863ca61b2cbc7fbd89b4be6ce7965addf65f10",
+              "initial_to_stable_bit_mismatches": 14,
+              "initial_to_stable_numeric_mismatches": 5,
+              "initial_to_stable_max_abs_change": 0.00390625,
+              "history": [
+                {
+                  "iteration": 1,
+                  "bit_mismatches": 14,
+                  "numeric_mismatches": 5,
+                  "max_abs_change": 0.00390625,
+                  "input_high_sha256": "ea33edb98f5f7c75a4e7c1b9a6863ca61b2cbc7fbd89b4be6ce7965addf65f10",
+                  "output_high_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52"
+                },
+                {
+                  "iteration": 2,
+                  "bit_mismatches": 0,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52",
+                  "output_high_sha256": "8d59adc269bd92f28f539d004e974c60d6648f053465930f2b6aa40a4e4d3b52"
+                }
+              ]
+            },
+            "final_high_verification_quantization_calls": 1,
+            "low_BF16_bit_mismatches": 0,
+            "low_BF16_max_abs_change": 0.0,
+            "low_nonzero_elements": 1972,
+            "low_max_abs": 0.0078125,
+            "original_max_abs": 1.5390625,
+            "finite": true,
+            "numerical_admission_claim": false,
+            "per_value_correction": false
+          },
+          "h": {
+            "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+            "shape": [
+              4,
+              2560
+            ],
+            "K_axis": -1,
+            "eb_size": 8,
+            "elements": 10240,
+            "original_sha256": "183eaad194d1bc7bf049ad9da686bae861d0689f7053e4daf5e51f69c8d1ce10",
+            "high_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+            "low_sha256": "2d1f9193b885b71c981311ecc65e278f0473706af764bb18978232e2369f4804",
+            "reconstructed_sha256": "593430c5daa3a14900b1f0cfee4fd665cacede4692cf923e014c366d5de02caa",
+            "reconstruction_bit_mismatches": 2,
+            "reconstruction_numeric_mismatches": 0,
+            "reconstruction_max_abs_error": 0.0,
+            "high_requantized_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+            "high_requantization_bit_mismatches": 0,
+            "high_requantization_numeric_mismatches": 0,
+            "high_requantization_max_abs_change": 0.0,
+            "high_idempotence_assumed": false,
+            "high_idempotence_verified": true,
+            "stable_high": {
+              "max_iterations": 8,
+              "iterations": 2,
+              "quantization_calls": 3,
+              "converged": true,
+              "initial_high_sha256": "079a84eede70d48c9c2822cf2b4e875e1ae00d5de24fcead091b372d6033d24a",
+              "initial_to_stable_bit_mismatches": 87,
+              "initial_to_stable_numeric_mismatches": 17,
+              "initial_to_stable_max_abs_change": 0.015625,
+              "history": [
+                {
+                  "iteration": 1,
+                  "bit_mismatches": 87,
+                  "numeric_mismatches": 17,
+                  "max_abs_change": 0.015625,
+                  "input_high_sha256": "079a84eede70d48c9c2822cf2b4e875e1ae00d5de24fcead091b372d6033d24a",
+                  "output_high_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594"
+                },
+                {
+                  "iteration": 2,
+                  "bit_mismatches": 0,
+                  "numeric_mismatches": 0,
+                  "max_abs_change": 0.0,
+                  "input_high_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594",
+                  "output_high_sha256": "f4bedbb391a3a604ef31e946cda3ffc3b0f53941655314773de8e135730ac594"
+                }
+              ]
+            },
+            "final_high_verification_quantization_calls": 1,
+            "low_BF16_bit_mismatches": 0,
+            "low_BF16_max_abs_change": 0.0,
+            "low_nonzero_elements": 8029,
+            "low_max_abs": 0.0234375,
+            "original_max_abs": 3.9375,
+            "finite": true,
+            "numerical_admission_claim": false,
+            "per_value_correction": false
+          }
+        }
+      },
+      "weight_split_diagnostics": {
+        "W_embedding": {
+          "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+          "shape": [
+            2560,
+            2560
+          ],
+          "K_axis": -2,
+          "eb_size": 8,
+          "elements": 6553600,
+          "original_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+          "high_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+          "low_sha256": "985e8db19bd9fd62fbc6af79c609edb459c774cee2c8ec97757ff58ed8da1d87",
+          "reconstructed_sha256": "e11de3c032cdf2a98a92549c8667c073d7e834d8be291a39ce07278ee38fd7ed",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+          "high_requantization_bit_mismatches": 0,
+          "high_requantization_numeric_mismatches": 0,
+          "high_requantization_max_abs_change": 0.0,
+          "high_idempotence_assumed": false,
+          "high_idempotence_verified": true,
+          "stable_high": {
+            "max_iterations": 8,
+            "iterations": 2,
+            "quantization_calls": 3,
+            "converged": true,
+            "initial_high_sha256": "843a8b523ae2c5cf3ada31ff22f41b0d8148c457a3a15eee838f603da081f7e5",
+            "initial_to_stable_bit_mismatches": 34846,
+            "initial_to_stable_numeric_mismatches": 8449,
+            "initial_to_stable_max_abs_change": 0.00048828125,
+            "history": [
+              {
+                "iteration": 1,
+                "bit_mismatches": 34846,
+                "numeric_mismatches": 8449,
+                "max_abs_change": 0.00048828125,
+                "input_high_sha256": "843a8b523ae2c5cf3ada31ff22f41b0d8148c457a3a15eee838f603da081f7e5",
+                "output_high_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd"
+              },
+              {
+                "iteration": 2,
+                "bit_mismatches": 0,
+                "numeric_mismatches": 0,
+                "max_abs_change": 0.0,
+                "input_high_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd",
+                "output_high_sha256": "0f9fae806351ae107492c656c2d01e36983180eeeeee7cba0700ed3a7b2564cd"
+              }
+            ]
+          },
+          "final_high_verification_quantization_calls": 1,
+          "low_BF16_bit_mismatches": 34,
+          "low_BF16_max_abs_change": 9.5367431640625e-07,
+          "low_nonzero_elements": 5015307,
+          "low_max_abs": 0.0009765625,
+          "original_max_abs": 0.224609375,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false,
+          "decoded_original_sha256": "724dc746b2755556ee2676a55844fa7851a48a78411889148b5fd5c0bdd348c6",
+          "decoded_to_BF16_bit_changes": 6217076
+        },
+        "W_hidden": {
+          "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+          "shape": [
+            2560,
+            2560
+          ],
+          "K_axis": -2,
+          "eb_size": 8,
+          "elements": 6553600,
+          "original_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+          "high_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+          "low_sha256": "03ebb99d3f80be71528f8c38bfdf0c7cca355c8c58eb3ce9356e15f1889275b9",
+          "reconstructed_sha256": "9434e69c3ee125518fa33c025b334e8fce5450bae355332009308d839673b300",
+          "reconstruction_bit_mismatches": 0,
+          "reconstruction_numeric_mismatches": 0,
+          "reconstruction_max_abs_error": 0.0,
+          "high_requantized_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+          "high_requantization_bit_mismatches": 0,
+          "high_requantization_numeric_mismatches": 0,
+          "high_requantization_max_abs_change": 0.0,
+          "high_idempotence_assumed": false,
+          "high_idempotence_verified": true,
+          "stable_high": {
+            "max_iterations": 8,
+            "iterations": 2,
+            "quantization_calls": 3,
+            "converged": true,
+            "initial_high_sha256": "36d2d441c1ff9f79aa42249e797481df08e2dda4fcde362b0d85c44af3c5273f",
+            "initial_to_stable_bit_mismatches": 42257,
+            "initial_to_stable_numeric_mismatches": 8692,
+            "initial_to_stable_max_abs_change": 0.001953125,
+            "history": [
+              {
+                "iteration": 1,
+                "bit_mismatches": 42257,
+                "numeric_mismatches": 8692,
+                "max_abs_change": 0.001953125,
+                "input_high_sha256": "36d2d441c1ff9f79aa42249e797481df08e2dda4fcde362b0d85c44af3c5273f",
+                "output_high_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d"
+              },
+              {
+                "iteration": 2,
+                "bit_mismatches": 0,
+                "numeric_mismatches": 0,
+                "max_abs_change": 0.0,
+                "input_high_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d",
+                "output_high_sha256": "6c3617323c4bfcabc7878ce4b5b1ef227590660944becb90c6ba6882b7c8861d"
+              }
+            ]
+          },
+          "final_high_verification_quantization_calls": 1,
+          "low_BF16_bit_mismatches": 41,
+          "low_BF16_max_abs_change": 9.5367431640625e-07,
+          "low_nonzero_elements": 5057843,
+          "low_max_abs": 0.00390625,
+          "original_max_abs": 0.88671875,
+          "finite": true,
+          "numerical_admission_claim": false,
+          "per_value_correction": false,
+          "decoded_original_sha256": "196a9deed6dde2b4005d9a66844005b9cebc928fafe90c4401b70dba1879a69e",
+          "decoded_to_BF16_bit_changes": 6160768
+        }
+      },
+      "split_algorithm_diagnostics": {
+        "rule": "bounded stable-high fixed point of Q=BF16 RNE then K-axis eb8 BFP16, half-away mantissa rounding, signed carry (negative -128 allowed); start high=Q(original), repeat Q(high) uniformly until bit-exact Q(high)==high within 8 stability iterations, otherwise fail; low=original-stable_high, original unchanged",
+        "input_K_axis": -1,
+        "weight_K_axis": -2,
+        "high_idempotence_assumed": false,
+        "per_value_correction": false,
+        "stable_high_fixed_point_required": true,
+        "max_high_iterations": 8,
+        "iteration_condition": "bit-exact Q(high)==high",
+        "bounded_nonconvergence_is_failure": true,
+        "weight_preparation_is_static": true,
+        "input_preparation_timed_every_call": true
+      },
+      "profile_receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-npu-d0089638177b442398c0b283ccb0cfb9\\npu_2026-10-04_23-49-22_313.json",
+        "sha256": "5caccbab160552e0717cec606b7c69dfceb0f894b1ba78ab626bc8dfdb23cf30"
+      },
+      "context_receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-stable-npu-d0089638177b442398c0b283ccb0cfb9\\vitisai-cache\\a2939832059c26a9373fa7433973cccf4726f2a34447be2aef63fe7fa17503b9\\context.json",
+        "sha256": "a2346fecf92e86e9e10c402c0d99f4ae642c9b3b71eb4906af84c76478f1e74a"
+      },
+      "comparisons": {
+        "A": {
+          "e_projection": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_BF16_word_mismatches": 858,
+            "max_abs_error": 0.00390625,
+            "mismatched_elements": 0,
+            "elements": 2560,
+            "non_BF16_lattice_elements": 0
+          },
+          "h_projection": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_BF16_word_mismatches": 3648,
+            "max_abs_error": 0.015625,
+            "mismatched_elements": 0,
+            "elements": 10240,
+            "non_BF16_lattice_elements": 0
+          }
+        },
+        "B": {
+          "e_projection": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_BF16_word_mismatches": 847,
+            "max_abs_error": 0.001953125,
+            "mismatched_elements": 0,
+            "elements": 2560,
+            "non_BF16_lattice_elements": 0
+          },
+          "h_projection": {
+            "passed": true,
+            "tolerance": {
+              "rtol": 0.03,
+              "atol": 0.003
+            },
+            "exact_BF16_word_mismatches": 3614,
+            "max_abs_error": 0.015625,
+            "mismatched_elements": 0,
+            "elements": 10240,
+            "non_BF16_lattice_elements": 0
+          }
+        }
+      },
+      "cleanup": {
+        "all_owned_jobs_closed": true,
+        "cleanup_pending": false,
+        "monitor_stopped": true,
+        "minimum_physical_gib": 27.151180267333984,
+        "minimum_commit_gib": 119.5311279296875
+      }
+    }
+  }
+}
