@@ -1,0 +1,108 @@
+{
+  "schema": "halogen.useful-npu-decision.v1",
+  "current_regular_mtp": {
+    "passed": true,
+    "run_id": "c4b3c8be6b584d4c901b43e54cc6e8d8",
+    "context_capacity": 262144,
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "measured_repetitions": 3,
+    "prefill_tps": 1229.1252650015765,
+    "decode_tps": 41.945033861739496,
+    "accepted": 207,
+    "drafted": 345,
+    "acceptance": 0.6,
+    "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+    "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+    "npu_integrated": false,
+    "native_mtp": true,
+    "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+    "keep_server_open": true,
+    "measured_at_utc": "2026-10-04T22:02:49Z"
+  },
+  "regular_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\colleague-mtp-control-6bfeff8a087049b3b41282e5ac8b6a73\\result.json",
+    "sha256": "7608f07c77531b0ffe9e9dc9dc1b41969dee64e34dfe3463a0cb32335bbdf2b8"
+  },
+  "regular_owned_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\colleague-regular-control-owned-ab4b0b6769714d3bb389ff8287952184\\result.json",
+    "sha256": "693276b8d1af8e0eef8597cefc0d21765a62a5d32d33e2373e10c0cfd30c1272"
+  },
+  "precision_evidence": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-npu-precision-correction-20261004.json",
+    "sha256": "2730d123a84ec52f14789084e6cd7f42d86c7bf76fc5652dddf51d63fcef9990"
+  },
+  "npu_tolerances": {
+    "rtol": 0.03,
+    "atol": 0.003,
+    "changed": false
+  },
+  "stable_npu_frozen_A_B": {
+    "embedding_failures": [
+      0,
+      0
+    ],
+    "hidden_failures": [
+      0,
+      0
+    ],
+    "calls": 12,
+    "cpu_fallback": false,
+    "full_head_or_logit_parity_qualified": false
+  },
+  "paired_FC_timings_ms": {
+    "original_gpu_event": 0.311702186,
+    "original_gpu_host_enqueue_wait": 0.487170063,
+    "stable_npu_session_run": 1.850025,
+    "stable_npu_complete_diagnostic": 3.5395125
+  },
+  "timing_scope": "Resident original GPU replay versus standalone NPU diagnostic; not an engine A/B",
+  "measured_npu_prefill_tps": null,
+  "measured_npu_decode_tps": null,
+  "measured_npu_prefill_delta_tps": null,
+  "measured_npu_decode_delta_tps": null,
+  "measured_npu_acceptance": null,
+  "decision": "Do not activate synchronous NPU FC replacement: even session.run alone is slower; keep native GPU prefill and MTP",
+  "useful_npu_acceleration_qualified": false,
+  "npu_integrated": false,
+  "colleague_server_kept_open": true,
+  "conditioned_control": {
+    "passed": true,
+    "experiment_kind": "conditioned_control",
+    "run_id": "c4b3c8be6b584d4c901b43e54cc6e8d8",
+    "context_capacity": 262144,
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "measured_repetitions": 3,
+    "prefill_tps": 1259.9870284221254,
+    "decode_tps": 41.62501623186373,
+    "accepted": 207,
+    "drafted": 345,
+    "acceptance": 0.6,
+    "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+    "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+    "npu_integrated": false,
+    "native_mtp": true,
+    "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+    "keep_server_open": true,
+    "engine_optimization_claim": false,
+    "conditioning_is_outside_mtp_timer": true,
+    "conditioning_repetitions": 4,
+    "controlled_inference_requests": 8,
+    "conditioning_request_sha256": "c908c88d62356450236f5dacb1bad2cb51a8ce19dced1bae739e97bda854d91f",
+    "conditioning_output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+    "conditioning_request_wall_sum_seconds": 24.451234600004682,
+    "controlled_request_wall_sum_seconds": 62.79122650001227,
+    "measured_at_utc": "2026-10-04T22:23:30Z"
+  },
+  "conditioned_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\colleague-mtp-conditioned-control-e5f2e0b48baa454299d62861316dd7d0\\result.json",
+    "sha256": "3a78cb1e789ed3cd30b08ae8b174a5391fe0096647f5df8a8d3dd632b7f02dfe"
+  },
+  "conditioned_control_is_engine_optimization": false,
+  "embedding_cache_evidence": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-embedding-cache-replay-20261005.json",
+    "sha256": "082c28028910c3e4cea85c42096f6407c4bb17690b63fb9dc2365940b88d51b0"
+  },
+  "embedding_cache_enabled": false
+}

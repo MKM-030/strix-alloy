@@ -1,0 +1,686 @@
+{
+  "method": "Map requested/completed Windows epoch ms to QPC by interpolation between adjacent epoch_ns/QPC host anchors, no extrapolation. Select successful query intervals wholly contained in each request's before/after QPC. No guest UTC or driver timestamp used. Means are arithmetic sample means.",
+  "timeline": {
+    "anchor_count": 440,
+    "anchor_qpc": [
+      25868.7202721,
+      25958.8346029
+    ],
+    "anchor_epoch_ms": [
+      1791151250036.5603,
+      1791151340150.89
+    ],
+    "anchor_gap_ms": {
+      "n": 439,
+      "min": 201.0781000026327,
+      "mean": 205.27182414578394,
+      "max": 216.48600000116858
+    },
+    "affine_slope": 1.0000000043762287,
+    "affine_max_abs_residual_ms": 0.001647057629838855,
+    "sensor_count": 90,
+    "successful_sensor_count": 90,
+    "within_anchor_count": 90,
+    "sensor_query_span_ms": {
+      "n": 90,
+      "min": 0,
+      "mean": 0.18888888888888888,
+      "max": 3
+    }
+  },
+  "requests": [
+    {
+      "index": 0,
+      "phase": "warmup",
+      "request_qpc": [
+        25949.18407345,
+        25958.181421150002
+      ],
+      "request_seconds": 8.997347700002138,
+      "anchor_overlap_seconds": 8.997347700002138,
+      "anchor_overlap_fraction": 1,
+      "samples": [
+        {
+          "index": 80,
+          "requested_qpc": 25949.743712306412,
+          "completed_qpc": 25949.74471230586,
+          "values": {
+            "gpu_clock": 687,
+            "gpu_power": 36,
+            "gpu_temperature": 45,
+            "vram_clock": 1000,
+            "gpu_usage": 1,
+            "dedicated_vram": 65142,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 1
+        },
+        {
+          "index": 81,
+          "requested_qpc": 25950.75471288641,
+          "completed_qpc": 25950.75471288641,
+          "values": {
+            "gpu_clock": 1272,
+            "gpu_power": 64,
+            "gpu_temperature": 59,
+            "vram_clock": 1000,
+            "gpu_usage": 43,
+            "dedicated_vram": 65134,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 0
+        },
+        {
+          "index": 82,
+          "requested_qpc": 25951.761713143696,
+          "completed_qpc": 25951.76271314194,
+          "values": {
+            "gpu_clock": 1770,
+            "gpu_power": 83,
+            "gpu_temperature": 58,
+            "vram_clock": 1000,
+            "gpu_usage": 79,
+            "dedicated_vram": 65133,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 1
+        },
+        {
+          "index": 83,
+          "requested_qpc": 25952.76971311767,
+          "completed_qpc": 25952.770713114376,
+          "values": {
+            "gpu_clock": 1843,
+            "gpu_power": 71,
+            "gpu_temperature": 55,
+            "vram_clock": 1000,
+            "gpu_usage": 92,
+            "dedicated_vram": 65133,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 1
+        },
+        {
+          "index": 84,
+          "requested_qpc": 25953.779713102595,
+          "completed_qpc": 25953.779713102595,
+          "values": {
+            "gpu_clock": 1768,
+            "gpu_power": 61,
+            "gpu_temperature": 54,
+            "vram_clock": 1000,
+            "gpu_usage": 97,
+            "dedicated_vram": 65136,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 0
+        },
+        {
+          "index": 85,
+          "requested_qpc": 25954.78771305778,
+          "completed_qpc": 25954.78771305778,
+          "values": {
+            "gpu_clock": 1697,
+            "gpu_power": 57,
+            "gpu_temperature": 53,
+            "vram_clock": 1000,
+            "gpu_usage": 99,
+            "dedicated_vram": 65133,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 0
+        },
+        {
+          "index": 86,
+          "requested_qpc": 25955.79871343481,
+          "completed_qpc": 25955.79871343481,
+          "values": {
+            "gpu_clock": 1636,
+            "gpu_power": 56,
+            "gpu_temperature": 55,
+            "vram_clock": 1000,
+            "gpu_usage": 97,
+            "dedicated_vram": 65136,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 0
+        },
+        {
+          "index": 87,
+          "requested_qpc": 25956.803713519395,
+          "completed_qpc": 25956.803713519395,
+          "values": {
+            "gpu_clock": 1934,
+            "gpu_power": 55,
+            "gpu_temperature": 53,
+            "vram_clock": 1000,
+            "gpu_usage": 94,
+            "dedicated_vram": 65133,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 0
+        },
+        {
+          "index": 88,
+          "requested_qpc": 25957.814713019565,
+          "completed_qpc": 25957.815713019325,
+          "values": {
+            "gpu_clock": 2085,
+            "gpu_power": 55,
+            "gpu_temperature": 53,
+            "vram_clock": 1000,
+            "gpu_usage": 92,
+            "dedicated_vram": 65136,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 1
+        }
+      ],
+      "metrics": {
+        "gpu_clock": {
+          "n": 9,
+          "min": 687,
+          "mean": 1632.4444444444443,
+          "max": 2085
+        },
+        "gpu_power": {
+          "n": 9,
+          "min": 36,
+          "mean": 59.77777777777778,
+          "max": 83
+        },
+        "gpu_temperature": {
+          "n": 9,
+          "min": 45,
+          "mean": 53.888888888888886,
+          "max": 59
+        },
+        "vram_clock": {
+          "n": 9,
+          "min": 1000,
+          "mean": 1000,
+          "max": 1000
+        },
+        "gpu_usage": {
+          "n": 9,
+          "min": 1,
+          "mean": 77.11111111111111,
+          "max": 99
+        },
+        "dedicated_vram": {
+          "n": 9,
+          "min": 65133,
+          "mean": 65135.11111111111,
+          "max": 65142
+        },
+        "shared_gpu_memory": {
+          "n": 9,
+          "min": 19578,
+          "mean": 19578,
+          "max": 19578
+        },
+        "npu_frequency": {
+          "n": 9,
+          "min": 0,
+          "mean": 0,
+          "max": 0
+        },
+        "npu_activity": {
+          "n": 9,
+          "min": 0,
+          "mean": 0,
+          "max": 0
+        }
+      },
+      "handshake_uncertainty_ms": 0.47530000119877513
+    },
+    {
+      "index": 1,
+      "phase": "measured",
+      "request_qpc": [
+        25958.38311485,
+        25968.437670799998
+      ],
+      "request_seconds": 10.054555949998758,
+      "anchor_overlap_seconds": 0.45148804999917047,
+      "anchor_overlap_fraction": 0.04490382790094537,
+      "samples": [
+        {
+          "index": 89,
+          "requested_qpc": 25958.817712993565,
+          "completed_qpc": 25958.817712993565,
+          "values": {
+            "gpu_clock": 2177,
+            "gpu_power": 55,
+            "gpu_temperature": 53,
+            "vram_clock": 1000,
+            "gpu_usage": 91,
+            "dedicated_vram": 65135,
+            "shared_gpu_memory": 19578,
+            "npu_frequency": 0,
+            "npu_activity": 0
+          },
+          "query_span_ms": 0
+        }
+      ],
+      "metrics": {
+        "gpu_clock": {
+          "n": 1,
+          "min": 2177,
+          "mean": 2177,
+          "max": 2177
+        },
+        "gpu_power": {
+          "n": 1,
+          "min": 55,
+          "mean": 55,
+          "max": 55
+        },
+        "gpu_temperature": {
+          "n": 1,
+          "min": 53,
+          "mean": 53,
+          "max": 53
+        },
+        "vram_clock": {
+          "n": 1,
+          "min": 1000,
+          "mean": 1000,
+          "max": 1000
+        },
+        "gpu_usage": {
+          "n": 1,
+          "min": 91,
+          "mean": 91,
+          "max": 91
+        },
+        "dedicated_vram": {
+          "n": 1,
+          "min": 65135,
+          "mean": 65135,
+          "max": 65135
+        },
+        "shared_gpu_memory": {
+          "n": 1,
+          "min": 19578,
+          "mean": 19578,
+          "max": 19578
+        },
+        "npu_frequency": {
+          "n": 1,
+          "min": 0,
+          "mean": 0,
+          "max": 0
+        },
+        "npu_activity": {
+          "n": 1,
+          "min": 0,
+          "mean": 0,
+          "max": 0
+        }
+      },
+      "handshake_uncertainty_ms": 0.7453500020346837
+    },
+    {
+      "index": 2,
+      "phase": "measured",
+      "request_qpc": [
+        25968.4489339,
+        25978.10609335
+      ],
+      "request_seconds": 9.657159450001927,
+      "anchor_overlap_seconds": 0,
+      "anchor_overlap_fraction": 0,
+      "samples": [],
+      "metrics": {
+        "gpu_clock": {
+          "n": 0
+        },
+        "gpu_power": {
+          "n": 0
+        },
+        "gpu_temperature": {
+          "n": 0
+        },
+        "vram_clock": {
+          "n": 0
+        },
+        "gpu_usage": {
+          "n": 0
+        },
+        "dedicated_vram": {
+          "n": 0
+        },
+        "shared_gpu_memory": {
+          "n": 0
+        },
+        "npu_frequency": {
+          "n": 0
+        },
+        "npu_activity": {
+          "n": 0
+        }
+      },
+      "handshake_uncertainty_ms": 0.5452500008686911
+    },
+    {
+      "index": 3,
+      "phase": "measured",
+      "request_qpc": [
+        25979.093284399998,
+        25988.636369350002
+      ],
+      "request_seconds": 9.543084950004413,
+      "anchor_overlap_seconds": 0,
+      "anchor_overlap_fraction": 0,
+      "samples": [],
+      "metrics": {
+        "gpu_clock": {
+          "n": 0
+        },
+        "gpu_power": {
+          "n": 0
+        },
+        "gpu_temperature": {
+          "n": 0
+        },
+        "vram_clock": {
+          "n": 0
+        },
+        "gpu_usage": {
+          "n": 0
+        },
+        "dedicated_vram": {
+          "n": 0
+        },
+        "shared_gpu_memory": {
+          "n": 0
+        },
+        "npu_frequency": {
+          "n": 0
+        },
+        "npu_activity": {
+          "n": 0
+        }
+      },
+      "handshake_uncertainty_ms": 0.4832500017073471
+    }
+  ],
+  "historical_mtp_cohort": {
+    "sensor_sample_count": 24,
+    "metrics": {
+      "gpu_clock": {
+        "n": 24,
+        "min": 2125,
+        "mean": 2677.1666666666665,
+        "median": 2717.5,
+        "p95": 2880.7,
+        "max": 2894
+      },
+      "gpu_power": {
+        "n": 24,
+        "min": 85,
+        "mean": 135.58333333333334,
+        "median": 139.5,
+        "p95": 154.85,
+        "max": 155
+      },
+      "gpu_temperature": {
+        "n": 24,
+        "min": 60,
+        "mean": 79.54166666666667,
+        "median": 80,
+        "p95": 86.85,
+        "max": 88
+      },
+      "vram_clock": {
+        "n": 24,
+        "min": 1000,
+        "mean": 1000,
+        "median": 1000,
+        "p95": 1000,
+        "max": 1000
+      },
+      "gpu_usage": {
+        "n": 24,
+        "min": 63,
+        "mean": 93.16666666666667,
+        "median": 96,
+        "p95": 98.85,
+        "max": 99
+      }
+    },
+    "rates": {
+      "pp_tps": {
+        "n": 3,
+        "min": 1674.4932291639868,
+        "mean": 1678.9172629051538,
+        "median": 1675.109286982746,
+        "p95": 1685.9452740101306,
+        "max": 1687.149272568729
+      },
+      "decode_tps": {
+        "n": 3,
+        "min": 46.06669005369556,
+        "mean": 46.3550308645076,
+        "median": 46.18169580787574,
+        "p95": 46.753205639543914,
+        "max": 46.81670673195149
+      }
+    }
+  },
+  "limitations": [
+    "Logger includes only the complete warmup and 0.45148805 seconds of the first measured request; no complete measured request is covered.",
+    "One-hertz sensor spacing, unknown sensor refresh latency, and observed anchor residual limit phase-specific inference.",
+    "GPUPower accounting is unverified; reported W do not identify CPU/GPU/package rail or an enforceable limit.",
+    "Neither the 1866.537/48.423621 post-reboot reference nor initial 1239.198392/42.150412 run has matched GPU sensors; historical GPU cohort is a different same-shape control.",
+    "No performance or thermal cause, power setting, or affinity effect is established."
+  ],
+  "schema": "halogen.performance-gap-offline-audit.v1",
+  "evidence_scope": "Source and retained JSON/log receipts only; no hardware, provider, model payload, process mutation, tests or engine restart performed by this audit.",
+  "inputs": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\colleague-mtp-measurement-83c7b2c6c4ef48498104fe40b2a1cbae\\samples.json",
+      "sha256": "43806889b463990fbddc260619a9ad07fbb9e99e1474f02a5a43e426274364b1"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\colleague-mtp-control-6bfeff8a087049b3b41282e5ac8b6a73\\samples.json",
+      "sha256": "abad9463ec8e53bd4a68ebc10aaadc051b531c591acd6d99f22ed5863c97fea5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\colleague-mtp-control-6bfeff8a087049b3b41282e5ac8b6a73\\result.json",
+      "sha256": "7608f07c77531b0ffe9e9dc9dc1b41969dee64e34dfe3463a0cb32335bbdf2b8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\adlx-colleague-control-956f16bf49dd4b8b82f2dc6037270e31\\adlx.ndjson",
+      "sha256": "3cd4600c0cca78d67ebf6a8bbe313d984f0835e652c7addbe909be70b02b14a5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\adlx-colleague-control-956f16bf49dd4b8b82f2dc6037270e31\\host-anchors.jsonl",
+      "sha256": "d38932ee64bf38dfc3619e8989610e654d47c9fd444dfffa417cdb0e1071a1b9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\pld-stock8k-bookend-1742f9e165de45bea641446004e9733e\\stocka\\backend-manifest.json",
+      "sha256": "7cf7551004c5d2c1c368dd45a0308b1e3fb5750573d026112ff2cf33d2706166"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\services\\136f9811e33241b6977e3535cb9cf046\\manifest.json",
+      "sha256": "6041faac07bcea531eaad304a3c7ee66254f18f2768dad869ab0b5b86a22cf47"
+    }
+  ],
+  "historical_mtp_warmup": {
+    "phase": "warmup",
+    "size": 8192,
+    "output": 128,
+    "mode": "mtp",
+    "rep": 0,
+    "start_qpc": 314844.8673688,
+    "end_qpc": 314853.19451365,
+    "duration_seconds": 8.327144850045443,
+    "pp_tps": 1702.825575371703,
+    "decode_tps": 36.62155003270328,
+    "sample_indices": [
+      271,
+      272,
+      273,
+      274,
+      275,
+      276,
+      277,
+      278
+    ],
+    "metrics": {
+      "gpu_temperature": {
+        "n": 8,
+        "min": 61,
+        "mean": 74,
+        "median": 76.5,
+        "p95": 81.3,
+        "max": 82
+      },
+      "gpu_clock": {
+        "n": 8,
+        "min": 2533,
+        "mean": 2678.125,
+        "median": 2721,
+        "p95": 2748.65,
+        "max": 2749
+      },
+      "vram_clock": {
+        "n": 8,
+        "min": 1000,
+        "mean": 1000,
+        "median": 1000,
+        "p95": 1000,
+        "max": 1000
+      },
+      "gpu_power": {
+        "n": 8,
+        "min": 114,
+        "mean": 133.875,
+        "median": 138.5,
+        "p95": 143.6,
+        "max": 145
+      },
+      "gpu_usage": {
+        "n": 8,
+        "min": 79,
+        "mean": 93.375,
+        "median": 97,
+        "p95": 99,
+        "max": 99
+      }
+    },
+    "query_span_ms": {
+      "n": 8,
+      "min": 0,
+      "mean": 0.125,
+      "median": 0,
+      "p95": 0.6499999999999995,
+      "max": 1
+    },
+    "boundary_distance_ms": {
+      "n": 8,
+      "min": 318.50434374064207,
+      "mean": 2149.2686753117596,
+      "median": 2150.2016041777097,
+      "p95": 3755.7858447427857,
+      "max": 3978.1853150343522
+    }
+  },
+  "profile_comparison": {
+    "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+    "actual_environment_equal": true,
+    "actual_sources_equal": true,
+    "image_equal": true,
+    "entrypoint_sha256_equal": true,
+    "mount_differences": "Run-specific service-state/entrypoint paths only; model/runtime/lookup mounts equal."
+  },
+  "measurements": [
+    {
+      "cohort": "Historical post-reboot Stock A",
+      "prefill_tps": 1866.537224602995,
+      "decode_tps": 48.42362060395627,
+      "wall_seconds": 7.054106700000015,
+      "accepted": 207,
+      "drafted": 345
+    },
+    {
+      "cohort": "Initial keep-open measurement",
+      "prefill_tps": 1239.198391627115,
+      "decode_tps": 42.15041241183947,
+      "wall_seconds": 9.674219699999716,
+      "accepted": 207,
+      "drafted": 345
+    },
+    {
+      "cohort": "Fresh keep-open control",
+      "prefill_tps": 1229.1252650015765,
+      "decode_tps": 41.945033861739496,
+      "wall_seconds": 9.751004366666166,
+      "accepted": 207,
+      "drafted": 345
+    }
+  ],
+  "temporal_findings": [
+    "One-time current memory telemetry ended 2026-10-04T20:36:19.649251Z, before original benchmark's host wall window; no temporal evidence of its direct overlap.",
+    "Current native startup geometry unchanged: 62.1 GiB weights, 7.2 GiB KV, 12.3 GiB workspace; 81.6 GiB total. Both guest logs print 0.0 GiB remaining despite Windows headroom; that guest warning cannot establish cache exhaustion.",
+    "Original current first warmup had a logged 4.4 s lookup read, followed by prefill 11.49 s and decode 4.04 s. Measured current calls stabilized near 6.6 s prefill /3.0 s decode; warmup excluded.",
+    "Historical client executed calibration requests plus four PP8192/TG1 calls, then alternating serial/MTP TG128; current client sent four sequential MTP requests. This is an unisolated conditioning difference, not proof of a caching or graph cause.",
+    "Fresh same-open-engine control remains slow; its warmup decode 42.40 tok/s and measured mean 41.95 mean indicate the initial single warmup alone is not enough to explain the steady decode gap.",
+    "No source manifest contains a decode-profiling override or live NPU swap. Timing-shim replay used its own process/container; no retained identity shows it loaded into the colleague engine."
+  ],
+  "cpu_findings": [
+    "Retained CPU-rate evidence found only halogen-io-metadata-20261004.json: one post-cleanup snapshot, initial formatted CPU zero, no vmmem instance, 6.422 s query. No contemporaneous process CPU deltas, ready queues, affinity masks or guest thread counters cover either reference or current benchmark.",
+    "Historical source command and identical service source hash supply no --cpus, --cpu-quota or cpuset. Retained historical container.json records only ID, so historical effective HostConfig values are unavailable.",
+    "Prior scout and root's fresh readback both name REV:N Performance; scheme name does not prove OEM hardware power mode. Root readback shows AC EPP0/maxCPU100 and current Docker quota0/noCpuset. No evidenced changed Windows scheme or Docker CPU cap.",
+    "Root current .wslconfig readback:56GB/processors24/swap32GB/reclaimgradual, preserved unchanged. No Oct4 historical equivalently bound file found. A September report's processors24 is a different deployment and does not qualify today's prior state."
+  ],
+  "options": [
+    {
+      "option": "No-restart improvement",
+      "status": "No evidence-backed exact runtime setting selected",
+      "reason": "Manual/auto/preset ADLX GPU tuning unsupported; active Windows scheme already Performance. Existing runtime CPU masks/load and OEM mode not measured historically. A narrower affinity or undocumented power setter would be a speculative intervention."
+    },
+    {
+      "option": "No-restart single-variable diagnostic",
+      "variable": "Outside-window conditioning: insert one frozen serial PP8192/TG1 request before each MTP request, including one warmup and three measured requests, versus the sequential MTP control",
+      "purpose": "Tests the identified historical/current request-order difference on same engine/profile without changing output workload",
+      "qualification": "This is a conditioning test, not an admitted optimization. Retain first and late calls separately and compare host wall/outputs/207-345 counters; temporal drift remains a confound."
+    },
+    {
+      "option": "No-restart source-supported performance direction",
+      "variable": "Read-only CPU deltas and full-window GPU/OEM-mode observation, then select one reversible supported setting if a bottleneck is actually identified",
+      "purpose": "Determine whether lower clocks at high GPU usage coincide with CPU activity or OEM state; existing partial stream cannot isolate this"
+    },
+    {
+      "option": "Restart-dependent concrete prefill candidate",
+      "variable": "Change only qualified lookup-source mount from /mnt/c populated w4b source to existing bit-identical native WSL ngram-only HGN",
+      "evidence": "halogen0162-native-lookup-20261004.md: both sampled article initial-turn replicas exceed late stock by28.16%/31.66%; no decode/full-wall win",
+      "dependency": "Native file mapping/tensor pointers established at model load; mount replacement is read at service.build_manifest and HGN initialization. No supported remap endpoint; colleague engine must be stopped and restarted. Current8K gain remains unmeasured."
+    },
+    {
+      "option": "Previously rejected alternatives",
+      "status": "Do not repeat without new evidence",
+      "reason": "PLD0 same acceptance and slightly lower decode; trained matmul plan slower and changed outputs; 32gather did not beat warmed64; depths/chunk/kernel screens already completed."
+    }
+  ]
+}
