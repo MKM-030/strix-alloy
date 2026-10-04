@@ -1,11 +1,12 @@
 # Halogen optimization window — 4 October 2026
 
-At approximately six hours, **no new end-to-end speed or acceptance improvement
-has been qualified, and full NPU MTP remains incomplete**. The latest unchanged
-8K stock control, observed with read-only ADLX telemetry, measured **1768.47 ±
-4.06 PP8192-only**, **46.355 ± 0.404 MTP TG128 tok/s**, and **60% acceptance**.
-This is a stock rebound, not a promoted optimization. Its cause and ADLX overhead
-are not isolated. The nine-hour window remains active until 08:39:15 UTC
+**No optimization has delivered a qualified overall gain, and full NPU MTP
+remains incomplete**. The latest direct 8K stock control,
+without ADLX or MTP observers, measured **1661.02 ± 4.57 PP8192-only**, **47.060 ±
+0.556 MTP TG128 tok/s**, and **60% acceptance**. The earlier ADLX-observed control
+remains a separate historical receipt. Stock variation has no isolated cause;
+this sequential control does not measure ADLX overhead or establish a tuning
+gain. The nine-hour window remains active until 08:39:15 UTC
 (10:39:15 Berlin).
 
 | Stock control, exact 8192 input | Prefill tok/s | Decode tok/s | MTP acceptance |
@@ -13,12 +14,14 @@ are not isolated. The nine-hour window remains active until 08:39:15 UTC
 | Earlier late stock, PP-only / MTP TG128 | 1714.94 ± 17.55 | 47.06 ± 0.60 | 60.00% |
 | Initial window control, PP-only / MTP TG128 | 1731.31 ± 3.91 | 46.59 ± 0.08 | 60.00% |
 | Intervening unchanged stock control | 1605.07 ± 15.65 | 46.874 ± 0.448 | 60.00% |
-| Latest stock control with ADLX observation | 1768.47 ± 4.06 | 46.355 ± 0.404 | 60.00% |
+| Earlier stock control with ADLX observation | 1768.47 ± 4.06 | 46.355 ± 0.404 | 60.00% |
+| Latest direct stock control without observers | 1661.02 ± 4.57 | 47.060 ± 0.556 | 60.00% |
 
 Each current cell has one excluded warmup and three measured repetitions.
 The prefill column is a separate one-output-token serial request, while decode
 is from 128-output-token MTP requests. Latest serial TG128 measures
-35.683 ± 0.376 tok/s.
+35.942 ± 0.291 tok/s. In the same TG128 requests, MTP prefill measured
+1584.50 ± 5.19 tok/s and serial prefill 1615.92 ± 11.95 tok/s.
 The profile has 262144 capacity, v2 weights, cache Off and stock depth 2.
 Requests are greedy (temperature 0), seed 1, with thinking disabled.
 All twelve corresponding prompt/request/output hashes in the latest control
@@ -34,11 +37,20 @@ is descriptive and does not prove a new tuning gain or its cause.
 
 The 18-GiB physical/commit reserve held. Owned controller/backend shutdown,
 cleanup and recovery passed. The latest lifecycle result records unchanged
-source seals, and all 50 pinned source hashes were independently rechecked.
-Numeric minima, phase rows and artifact hashes are retained in the
+source seals; its 50 recorded source pins were copied without a new hash loop.
+Numeric minima, phase rows and recorded pins are retained in the
 [evidence JSON](halogen9h-optimization-20261004.json). Original controls are
 retained under ignored `server/.local/optimization9h-20261004/stock8k-c`,
-`dn-pair-stock8k-a`, and `adlx-control-stock8k-1`.
+`dn-pair-stock8k-a`, and `adlx-control-stock8k-1`. The latest direct receipt is
+`stock8k-final-no-observer-1`.
+
+The published [depth1 coding comparison](halogen0162-greedy-depth1-results-20261004/README.md)
+retains depth2: depth1 raises acceptance by 6.001 percentage points but takes
+1.857% longer actual wall and 2.757% longer normalized time than warmed stockB.
+Its different 32K coding workflow does not replace the 8K control. The separate
+QMoEBf `model_root` session-configuration candidate also failed at the first
+inference invocation, with the same XRT null-read location. No supported next
+NPU candidate is identified at this publication checkpoint.
 
 The [32K sampled gather experiment](halogen0162-gather-20261004.md) has a
 different prompt and conversation mix; its 1087.22/40.74 rates and 83.86%
@@ -465,10 +477,83 @@ The [upstream checkpoint](../research/halogen-update-checkpoint-20261004-0700.md
 still finds the pinned Halogen 0.16.2 and matching AMD Windows driver package.
 No engine, driver, firmware or BIOS update was made.
 
-A separate root-owned greedy coding comparison now runs depth2 / depth1 /
+At this checkpoint, a separate root-owned greedy coding comparison was running depth2 / depth1 /
 depth2, using the unchanged client and six requests per cell. The exact
 32K-input, 64K-capacity, Exact-cache workflow and 18-GiB reserve match the
 previous greedy depth matrix. Depth1 was already slower in the short-story
 screen; this new run only fills the missing coding comparison. Its results
-are pending and must not replace the historical 8K stock control. No speed
+were pending at this checkpoint and must not replace the historical 8K stock control. No speed
 or acceptance gain is qualified at this checkpoint.
+
+## Follow-up at 07:28 UTC / 09:28 Berlin
+
+The direct stock receipt `server/.local/optimization9h-20261004/stock8k-final-no-observer-1`
+passed with `error=null`, proven cleanup, unchanged source seal, and terminal
+controller/backend state `stopped`. The backend outcome records recovery.
+All twelve retained requests preserve corresponding historic prompt, request
+and output hashes. Each of the three cells has one excluded warmup and three
+measured repetitions; all cache/disk-restore counts and reasoning output are
+zero. No ADLX or MTP state/timing observer was enabled; the ordinary stock
+preflight/private-registration preload and harness memory monitoring remain.
+
+| Measured cell, n=3 | Prefill tok/s | Decode tok/s | Actual request wall s |
+|---|---:|---:|---:|
+| PP8192/TG1 serial | 1661.0181 ± 4.5741 | — | 4.9559 ± 0.0144 |
+| PP8192/TG128 MTP | 1584.5019 ± 5.1858 | 47.0600 ± 0.5563 | 7.9116 ± 0.0436 |
+| PP8192/TG128 serial | 1615.9214 ± 11.9475 | 35.9416 ± 0.2911 | 8.6678 ± 0.0748 |
+
+MTP accepted 207/345 drafts, or 60%. The retained measured-plus-warmup memory
+minima were 24,680,947,712 available and 122,965,147,648 commit-headroom bytes.
+The controller's lifecycle available minimum was 24,624,709,632 bytes; no
+aggregate lifecycle commit minimum is recorded. The 18-GiB floor held. These
+host-memory scopes do not measure VRAM peaks. Recorded profile, client,
+coordinator, runtime and source-seal pins are copied into the evidence JSON;
+only `cold/samples.jsonl` has a saved raw-artifact hash published for this new
+receipt. Earlier artifact hashes are not reused for it.
+
+The completed [depth1 report](halogen0162-greedy-depth1-results-20261004/README.md)
+is a separate depth2/depth1/depth2 coding matrix. All 18 requests completed with
+matched hashes, token counts and retrieval results; coding/review remain
+ungraded. Depth1's 6.001-point acceptance increase accompanies 1.857% longer
+actual wall, 2.757% longer normalized time and 5.608% lower calibrated decode
+than warmed stockB. It is rejected; depth2 remains selected.
+
+No optimization gain is promoted. Full live NPU MTP remains unfinished. At this
+checkpoint, the separate `model_root` session-configuration source candidate
+had no runtime receipt; its subsequent negative receipt is below. The window
+remains active until 08:39:15 UTC. This publication
+read saved metadata only and performed no tests, rehash loops or hardware runs.
+
+## Subsequent `model_root` session-configuration candidate failure
+
+The separate receipt
+`server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8`
+pins probe source
+`f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0`
+and unchanged guard source
+`9610d697f13f62ccbee6a9f621b54ed04a57a0313ba33a649d293010ca3b2eed`.
+Root's source review identifies the candidate change as the official OGA v0.14
+session option `model_root=str(model_path.parent)` before `SetupProvider`.
+Saved stdout independently confirms that exact bank/graph directory as
+`qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b`.
+
+Strict session initialization completes; call 0 prepare/invoke is flushed,
+but there is no return marker or call 1. The native collector again records
+access violation `0xc0000005`, read address 0, `RBX=0`, in the arm-time snapshot
+of System32 `xrt_coreutil.dll` at offset `0xf2186`. This run's RIP is
+`0x00007ffbdb9a2186`, module base `0x00007ffbdb8b0000`; earlier absolute
+addresses and source pins remain in their own receipts. The upstream cause
+and successful NPU execution attribution remain unresolved.
+
+The child exits 3221225477. The guard proves owned-job closure and final
+verification of all 630 staged ORT 1.29 files; it does not record child-finally
+cleanup or a broader recovery certificate. Its minima are 43,867,795,456
+available and 209,941,692,416 commit-headroom bytes, above the 18-GiB floor.
+There is no `admission.json`, returned output or successful latency; the ORT
+profile is zero bytes. The session provider list remains inventory only.
+
+This supported configuration candidate did not resolve the fault. No supported
+next NPU candidate is currently identified, no large hardware job is active,
+and full live NPU MTP remains unfinished. Root publishes the static details in
+the [XRT diagnosis](../research/halogen-qmoe-xrt-fault-20261004.md). This update
+copied saved metadata and pins without tests, artifact rehashing or hardware.

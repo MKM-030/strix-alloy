@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-04",
-  "status": "active nine-hour optimization; about six hours with no qualified overall speed or acceptance gain; full NPU MTP incomplete; fresh stock with ADLX observation rebounded to 1768.47 PP-only / 46.355 MTP decode / 60 percent acceptance without an isolated cause; rejected candidates remain rejected; isolated ORT1.29 resolves API27 initialization rejection, but first observed inference crashes before return; no NPU result or gain; native fault collector locates null read in System32 xrt_coreutil.dll+0xf2186 with cause unknown; separate eight-call state metadata capture passed without ownership/performance qualification",
+  "status": "active nine-hour optimization until 08:39:15 UTC; no qualified overall optimization gain; full NPU MTP incomplete; latest direct stock without ADLX/MTP observers measured 1661.0181 PP-only / 47.0600 MTP decode / 60 percent acceptance; older ADLX control preserved separately; stock variation cause unisolated; depth1 coding candidate rejected despite +6.001 percentage-point acceptance because actual wall is +1.857 percent versus warmed stockB; isolated ORT1.29 completes strict session initialization but first observed inference crashes before return; native collector locates null read in System32 xrt_coreutil.dll+0xf2186, upstream cause unresolved; eight-call state metadata passed without ownership/performance qualification; separate official model_root session-configuration candidate also initializes then faults at call 0 with read 0/RBX 0 at the same XRT offset; no supported next NPU candidate currently identified and no large hardware job active",
   "work_deadline_utc": "2026-10-04T08:39:15Z",
   "source_commit_at_baseline": "d950029",
   "baseline": {
@@ -75,6 +75,453 @@
     }
   },
   "latest_stock_control": {
+    "artifact": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1",
+    "completed_utc": "2026-10-04T07:27:58.108Z",
+    "result_finished_at": 1791098878.108179,
+    "terminal_receipt_time": 1791098877.7768743,
+    "profile_sha256": "e535484cdfd5ce3de4afc110a630296e5e5c556e2968ee22d118416cc6e37c1a",
+    "input_tokens": 8192,
+    "capacity": 262144,
+    "cache": "Off",
+    "temperature": 0,
+    "thinking": false,
+    "mtp_depth": 2,
+    "optimization_gain_qualified": false,
+    "adlx_observed": false,
+    "mtp_state_or_timing_observer_enabled": false,
+    "observation_scope": "Direct stock requests without ADLX or MTP observers; ordinary stock preflight/private-registration preload and harness host-memory monitoring retained",
+    "measured_requests": 9,
+    "recorded_requests": 12,
+    "excluded_warmups_per_cell": 1,
+    "prefill_only_tps": 1661.018055623853,
+    "prefill_only_sample_stdev": 4.574088778077103,
+    "mtp_request_prefill_tps": 1584.5018961870337,
+    "mtp_request_prefill_sample_stdev": 5.185840844615756,
+    "mtp_decode_tps": 47.06001969486716,
+    "mtp_decode_sample_stdev": 0.5563064639904032,
+    "serial_request_prefill_tps": 1615.9213918308067,
+    "serial_request_prefill_sample_stdev": 11.947476173109823,
+    "serial_decode_tps": 35.94161383064068,
+    "serial_decode_sample_stdev": 0.2910653152215256,
+    "phase_rows": [
+      {
+        "size": 8192,
+        "output": 1,
+        "drafter": "serial",
+        "n": 3,
+        "pp_mean": 1661.018055623853,
+        "decode_mean": null,
+        "pp_stdev": 4.574088778077103,
+        "decode_stdev": null,
+        "acceptance": null
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "drafter": "mtp",
+        "n": 3,
+        "pp_mean": 1584.5018961870337,
+        "decode_mean": 47.06001969486716,
+        "pp_stdev": 5.185840844615756,
+        "decode_stdev": 0.5563064639904032,
+        "acceptance": 0.6
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "drafter": "serial",
+        "n": 3,
+        "pp_mean": 1615.9213918308067,
+        "decode_mean": 35.94161383064068,
+        "pp_stdev": 11.947476173109823,
+        "decode_stdev": 0.2910653152215256,
+        "acceptance": null
+      }
+    ],
+    "calibrated_cohorts": [
+      {
+        "size": 8192,
+        "output": 1,
+        "mode": "serial",
+        "pp": {
+          "n": 3,
+          "mean": 1661.018055623853,
+          "stdev": 4.574088778077103,
+          "minimum": 1656.6516410940553,
+          "maximum": 1665.7748025261403,
+          "cv_percent": 0.27537863074938973,
+          "ordered_first_to_last_percent": -0.5476827610941037
+        },
+        "raw_pp": {
+          "n": 3,
+          "mean": 1522.1146666666666,
+          "stdev": 15.661119925897175,
+          "minimum": 1506.048,
+          "maximum": 1537.336,
+          "cv_percent": 1.028905395162772,
+          "ordered_first_to_last_percent": -2.0352089588743127
+        },
+        "decode": null,
+        "wall": {
+          "n": 3,
+          "mean": 4.955917533331861,
+          "stdev": 0.014386989968189469,
+          "minimum": 4.940568899968639,
+          "maximum": 4.969096400018316,
+          "cv_percent": 0.29029922050613916,
+          "ordered_first_to_last_percent": 0.5774132620609329
+        },
+        "clock_ratio": {
+          "n": 3,
+          "mean": 1.0913134710507366,
+          "stdev": 0.008264821936141156,
+          "minimum": 1.0835463441473694,
+          "maximum": 1.0999992304986663,
+          "cv_percent": 0.7573279497946299,
+          "ordered_first_to_last_percent": 1.5184294091494133
+        },
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "mode": "mtp",
+        "pp": {
+          "n": 3,
+          "mean": 1584.5018961870337,
+          "stdev": 5.185840844615756,
+          "minimum": 1580.305645059095,
+          "maximum": 1590.299555859393,
+          "cv_percent": 0.32728524068636533,
+          "ordered_first_to_last_percent": -0.46526254689048807
+        },
+        "raw_pp": {
+          "n": 3,
+          "mean": 1456.1299999999999,
+          "stdev": 12.87159958979465,
+          "minimum": 1442.254,
+          "maximum": 1467.68,
+          "cv_percent": 0.8839595084089094,
+          "ordered_first_to_last_percent": -1.7323939823394863
+        },
+        "decode": {
+          "n": 3,
+          "mean": 47.06001969486716,
+          "stdev": 0.5563064639904032,
+          "minimum": 46.42064367672545,
+          "maximum": 47.43333244120025,
+          "cv_percent": 1.1821211882133564,
+          "ordered_first_to_last_percent": -2.1349728394692957
+        },
+        "wall": {
+          "n": 3,
+          "mean": 7.91161773330532,
+          "stdev": 0.04359702590187288,
+          "minimum": 7.868236300011631,
+          "maximum": 7.955427199951373,
+          "cv_percent": 0.5510507126544256,
+          "ordered_first_to_last_percent": 1.1081377911796197
+        },
+        "clock_ratio": {
+          "n": 3,
+          "mean": 1.0882040209329669,
+          "stdev": 0.008066600084143402,
+          "minimum": 1.0835465195815115,
+          "maximum": 1.0975185283886288,
+          "cv_percent": 0.7412764453146883,
+          "ordered_first_to_last_percent": 1.289470138533022
+        },
+        "drafted": 345,
+        "accepted": 207,
+        "acceptance": 0.6
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "mode": "serial",
+        "pp": {
+          "n": 3,
+          "mean": 1615.9213918308067,
+          "stdev": 11.947476173109823,
+          "minimum": 1604.3267271333336,
+          "maximum": 1628.1929036504805,
+          "cv_percent": 0.7393599857956934,
+          "ordered_first_to_last_percent": 0.6805233242470621
+        },
+        "raw_pp": {
+          "n": 3,
+          "mean": 1491.3256666666666,
+          "stdev": 11.026278852511126,
+          "minimum": 1480.625,
+          "maximum": 1502.651,
+          "cv_percent": 0.7393608987603956,
+          "ordered_first_to_last_percent": 0.680523427606583
+        },
+        "decode": {
+          "n": 3,
+          "mean": 35.94161383064068,
+          "stdev": 0.2910653152215256,
+          "minimum": 35.71045737180804,
+          "maximum": 36.26848341430504,
+          "cv_percent": 0.809828174641921,
+          "ordered_first_to_last_percent": 0.3792819918006174
+        },
+        "wall": {
+          "n": 3,
+          "mean": 8.66780433334255,
+          "stdev": 0.07476283988743224,
+          "minimum": 8.581514300021809,
+          "maximum": 8.713186500011943,
+          "cv_percent": 0.8625349282498348,
+          "ordered_first_to_last_percent": -0.05135090380585794
+        },
+        "clock_ratio": {
+          "n": 3,
+          "mean": 1.0835469596088738,
+          "stdev": 1.0822108012829703E-08,
+          "minimum": 1.0835469471290942,
+          "maximum": 1.083546966404953,
+          "cv_percent": 9.987668662497233E-07,
+          "ordered_first_to_last_percent": -1.0266087979715621E-07
+        },
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      }
+    ],
+    "acceptance": 0.6,
+    "accepted": 207,
+    "proposed": 345,
+    "all_corresponding_historic_prompt_request_output_hashes_match": true,
+    "historic_comparison": {
+      "scope": "Same requested cold subset versus historic stock; sequential time is not isolated",
+      "hash_drift": {
+        "prompt_sha256": [],
+        "request_sha256": [],
+        "output_sha256": []
+      },
+      "all_corresponding_hashes_match": true
+    },
+    "repeated_hashes": [
+      {
+        "size": 8192,
+        "output": 1,
+        "mode": "serial",
+        "samples": 4,
+        "passed": true
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "mode": "mtp",
+        "samples": 4,
+        "passed": true
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "mode": "serial",
+        "samples": 4,
+        "passed": true
+      }
+    ],
+    "cross_mode_hashes": [
+      {
+        "size": 8192,
+        "rep": 0,
+        "passed": true
+      },
+      {
+        "size": 8192,
+        "rep": 1,
+        "passed": true
+      },
+      {
+        "size": 8192,
+        "rep": 2,
+        "passed": true
+      },
+      {
+        "size": 8192,
+        "rep": 3,
+        "passed": true
+      }
+    ],
+    "recorded_request_hashes": [
+      {
+        "size": 8192,
+        "output": 1,
+        "drafter": "serial",
+        "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+        "request_sha256": "c908c88d62356450236f5dacb1bad2cb51a8ce19dced1bae739e97bda854d91f",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "drafter": "mtp",
+        "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+        "request_sha256": "fcd4fb7a1ea80aecbbe8b42289019a9b08b5f54458c02ec3e1060c95372b16d0",
+        "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "drafter": "serial",
+        "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+        "request_sha256": "0e2dd6a3520c44da5d76cc2f65f097789794d3703c3a3d12219415784bacd538",
+        "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+      }
+    ],
+    "all_retained_cache_and_disk_restore_counts_zero": true,
+    "all_retained_reasoning_output_absent": true,
+    "passed": true,
+    "error": null,
+    "cleanup_proven": true,
+    "recovery_proven": true,
+    "source_seal_unchanged_within_this_run": true,
+    "recorded_source_seal_entries": 50,
+    "source_seal": {
+      "backends\\halogen-wsl2-0.16.2\\Install.ps1": "f3385dcf52137aceefa8bd3d08fb423f2ef46a52f71733ffdf5b4129d399ce3f",
+      "backends\\halogen-wsl2-0.16.2\\patches\\halogen-preflight-bridge.c": "e0f45e7fcb1a66d4cc328edc8881cccb5a6b268dd3f8f484649adaab26ae49eb",
+      "backends\\halogen-wsl2-0.16.2\\patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+      "backends\\halogen-wsl2-0.16.2\\patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+      "backends\\halogen-wsl2-0.16.2\\patches\\hip-register-hybrid.c": "fc59fc9fdfee242c548f99d66f43caf7e7f0f0074f7cc95251aeaf25f50b1efd",
+      "backends\\halogen-wsl2-0.16.2\\patches\\hip-register-private-rw.c": "11a3e1c0acb668847be695bb87f49f27532b43bfe9a6816fa46bad1991d2a44f",
+      "backends\\halogen-wsl2-0.16.2\\profiles\\preflight-sequences.json": "2578343f8d732785e630b385fd67bf71a17ba20cdf95b6b7cc90259bdccc886b",
+      "backends\\halogen-wsl2-0.16.2\\profiles\\release.json": "becbd5c8a2e0d9539d2a2df09ff73ac10a1b5ffa38f9d77965dc5db44b324476",
+      "backends\\halogen-wsl2-0.16.2\\profiles\\sources.json": "6da961b984f8d211fe49f07d403b9f4ceedf20aad83c29a4b877d960d29e1379",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\auth_api.py": "971a7384b7951504485a16c64aafd96e0e9d57161eb1f95b3b3eebcdf1bb84d4",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\bridge_adapter.py": "35ec70aea2cb04b62eabef60f0db512c0b09488264cb331f97556f0d3c204b0a",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\entrypoint_adapter.py": "487d3f216d41dc821e83062a379c64388ba15a87ca7ff45affa5c6808c0ec01f",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\halogen0162_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\kernel_controls.py": "45e63bd2d5eed78f721a0a74facf8918e17f3ec0cec2affa0793c9127c2f0534",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\memory_budget.py": "8c66b534246052e46e20c75a6b063b856f396c086b796a9f2ac07ecb853b9a80",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\portable.py": "8b820e37229c4d5241cd95c8de39ceb75a3249baa56b531ea332e332fd7442c8",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\runner.py": "14bed4dc8e3ef2a4dd1e7ea0393bac0c9e07a97ae8f3358227ac65b5525ffe0d",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\sample.ps1": "8d08580535c49fbd9caad6b4b4978c9cb9604ec68b18cdfb4fc0310b15b21db3",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\service.py": "2df703adc7a255a527b94a0c4c225a140023727da5e453fdd3474169566ab34a",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\startup_cache.py": "364ab5c6d9387c2c1e20195433c135b12169aa93139f2d7efcce02c14a7beb14",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\startup_guard.py": "009ed3311c72de36b34f662912bf0a4d334b929d5294826c45360d2593bb2ba9",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\startup_monitor.py": "cc935a79f77c1ce65cb90c0891c1752fa381a645a168bbf66ef9398a854bd8d7",
+      "backends\\halogen-wsl2-0.16.2\\scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+      "backends\\halogen-wsl2-0.16.2\\Start.ps1": "0a4cf4afed4949fb2ca7d532bcbdba10974bd40f99c7f20d86b9647a0213dc6e",
+      "backends\\halogen-wsl2-0.16.2\\Uninstall.ps1": "b3ab23f778426ac026f7dea59f72a7b239f6b60aca0e4698ec169d5270bf1361",
+      "scripts\\benchmarks\\article_metrics.py": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+      "scripts\\benchmarks\\clock_probe.py": "a3f32a4c5c7e423c47ceebdd2f0fe0cd1860d7840c9fd0de10756e887c70a05e",
+      "scripts\\benchmarks\\gateway_cold.py": "fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d",
+      "server\\.local\\upgrade0162\\analyze_cold.py": "b92379fbf3ce83be8a520a1f630506eae536c4ccfaffee38cbdb100fdeec7e46",
+      "server\\.local\\upgrade0162\\run_matrix.py": "12ca2f6a890a83415df398e1b867daf0cf0211e3a6275e67f628e92bf0841d58",
+      "server\\check_updates.py": "0055af10d22cf37ef8e73e0bdf8524f091a535e491f95b67ebb7fba75bdcc0a8",
+      "server\\controller.py": "989f7299e6dab41b5780dc92790c6ece584d5ec714bc6026b852f19f93537ba1",
+      "server\\draft_profiles.py": "961b627659b723618c5041d2584400913ded3e7284011713fdd198051f5fc3a2",
+      "server\\gateway.py": "3b4443b8d103dd0aad77061c04cac031abf75f3224a65f64b1e9fa0a5d834b95",
+      "server\\gufo_serial_profile.py": "f26b06abc6be7c77bbcf8b574028ef62971ac087a2f84b28104f501251516c9f",
+      "server\\host_frames.py": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+      "server\\manage.py": "f941d72c6af273c4d180a63bb52401889fdfa2bdf93ca390f516873d6260ad54",
+      "server\\owned_child.py": "6f75520f65c76941ec4306915929fd529ec7f46bd0fd20bd6f01f82afb749f10",
+      "server\\Setup.ps1": "7a6125b3841611ad9f881fac679d0f8089342921792ab90b5144b350ac1d5816",
+      "server\\Start.ps1": "ddf23aadb7c244dff2e30ee4c08ee8cfda50c4328a76663b37aeccac738d159a",
+      "server\\winjob.py": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+      "server\\.local\\optimization9h-20261004\\run_gpu_window.py": "50beb57d3bf391353a4e5c791722e00c27992265ecd0b6f715bf8def5e76b7fc",
+      "server\\.local\\upgrade0162\\state_read_bootstrap.py": "7bfb4300433bf5983a1c6c112f90294d957e80cbf53a3ec3749e5fe5ad8c2fea"
+    },
+    "recorded_input_pins": {
+      "server\\.local\\upgrade0162\\stock.json": "e535484cdfd5ce3de4afc110a630296e5e5c556e2968ee22d118416cc6e37c1a",
+      "server\\.local\\upgrade0162\\prompts\\manifest.json": "a799260384b71e1df6cbf011d3378d9a85f01a6d0d36e16b354f7bebee7c7ca7",
+      "server\\.local\\upgrade0162\\tokenizer.json": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+      "server\\.local\\upgrade0162\\prompts\\prompt-8192-prose.txt": "a3cc039610c5c87978560e28e8a0ad19130e1349d4baed896f6b5f5ed1cf2441",
+      "server\\.local\\upgrade0162\\prompts\\prompt-16384-prose.txt": "da2fd2da94f2806969dbe37e92ea94dc01d73e0e054a2b5d13e316faf56e4cce"
+    },
+    "current_client_sha256": "fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d",
+    "historic_client_sha256": "ca968c1b7140f556baa3f63e7ac5885852cdf83b9c176149509a3e703553332f",
+    "client_change": "Committed 2bb5642 replaces mutable state reads with bounded retries outside per-request wall; request construction and measurement remain unchanged",
+    "controller_runtime": {
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "executable_sha256": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+      "helper_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+      "helper_sha256": "0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14",
+      "venv_config": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\pyvenv.cfg",
+      "venv_config_sha256": "aa6eb1ce3b6508cbe3a30900618df1638a1a6a40b541fe1ed21cdb82bba73d5a",
+      "site_packages": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Lib\\site-packages",
+      "aiohttp_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Lib\\site-packages\\aiohttp\\__init__.py",
+      "aiohttp_sha256": "071300f33556ba68fb74aed7718b63c411c476ed395c81326436a2dfefd40d5d",
+      "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]"
+    },
+    "recorded_pin_publication_scope": "Copied from saved plan/summary/analysis/sample receipts; no source or artifact rehashing by publication",
+    "lifecycle": {
+      "controller_run_id": "0561c7f1f7eb4bcd91bf4db351246d5a",
+      "controller_pid": 26880,
+      "controller_phase": "stopped",
+      "backend_run_id": "ed4b0b7bfa4a4fc88def5ddfd21a5899",
+      "backend_controller_pid": 30712,
+      "backend_phase": "stopped",
+      "active_requests": 0,
+      "backend_outcome": {
+        "ready": true,
+        "cleanup": true,
+        "recovery": true,
+        "error": null,
+        "stopped_at": 1791098877.7095437,
+        "context": 262144
+      },
+      "parent_mutable_reads": {
+        "c:\\projects\\strix-alloy-clean\\server\\.local\\current.json": {
+          "reads": 214,
+          "retries": 0,
+          "failures": 0
+        },
+        "c:\\projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\current-service.json": {
+          "reads": 212,
+          "retries": 0,
+          "failures": 0
+        }
+      }
+    },
+    "memory": {
+      "minimum_reserve_gib": 18,
+      "memory_floor_held": true,
+      "controller_lifecycle_minimum_available_bytes": 24624709632,
+      "controller_lifecycle_minimum_available_gib": 22.933547973632812,
+      "controller_lifecycle_minimum_commit_headroom_bytes": null,
+      "controller_lifecycle_commit_minimum_scope": "No aggregate lifecycle commit minimum recorded",
+      "retained_measured_and_warmup_minimum": {
+        "available_bytes": 24680947712,
+        "commit_headroom_bytes": 122965147648
+      },
+      "cold_summary_minimum": {
+        "available_bytes": 24685539328,
+        "commit_headroom_bytes": 122965147648
+      },
+      "retained_sample_scope": "Retained measured plus warmup samples; excludes calibration requests and lifecycle. Not VRAM peak.",
+      "cold_summary_scope": "0.2-second host RAM/commit samples plus controller snapshots; not VRAM peak"
+    },
+    "raw_artifact_hashes": {
+      "cold/samples.jsonl": "feca0b78387099ea732406d94b10a2baa0c62c3cac494237b88f787db662ae27"
+    },
+    "artifact_paths": {
+      "result.json": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/result.json",
+      "terminal.json": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/terminal.json",
+      "plan.json": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/plan.json",
+      "cold-analysis.json": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/cold-analysis.json",
+      "historic-comparison.json": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/historic-comparison.json",
+      "cold/summary.json": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/cold/summary.json",
+      "cold/samples.jsonl": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/cold/samples.jsonl",
+      "client-retry-receipt.json": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/client-retry-receipt.json",
+      "backend-manifest.json": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1/backend-manifest.json"
+    },
+    "comparison_limit": "Separate sequential stock control. Rates use whole-request guest mono/raw correction and independent client wall remains saved; no controlled ADLX ablation, thermal/restart cause, tuning gain, accuracy gain, or full NPU MTP result follows."
+  },
+  "adlx_observed_stock_control": {
     "artifact": "server/.local/optimization9h-20261004/adlx-control-stock8k-1",
     "completed_utc": "2026-10-04T05:32:34.671932Z",
     "profile_sha256": "e535484cdfd5ce3de4afc110a630296e5e5c556e2968ee22d118416cc6e37c1a",
@@ -382,12 +829,98 @@
   },
   "pending_experiments": [
     "full live Halogen NPU MTP integration: MLP capture established but complete arithmetic and persistent full-head state remain unqualified",
-    "unexplained stock prefill variation: initial 1731.31, intervening 1605.07, latest ADLX-observed 1768.47; tracked native launch and request paths reconstructed identical; no historical GPU sensors",
+    "unexplained sequential stock prefill variation: initial 1731.31, intervening 1605.07, earlier ADLX-observed 1768.47, latest direct no-observer 1661.0181; preserved matched request/output hashes; no isolated instrumentation, clock, thermal or restart cause",
     "QMoEBf deployment: compatible offline packer, compiled geometry and native draft-state lifecycle remain unqualified",
     "QMoEBf native first-inference fault: collector locates null read in System32 xrt_coreutil.dll+0xf2186; cause and version relationships under separate static investigation; no successful inference qualification"
   ],
-  "qualifications": "No new end-to-end speed or acceptance improvement qualified or promoted. Latest ADLX-observed measurement is an unchanged stock control; stock rebound and diagnostic timing are not tuning gains. Full live NPU MTP remains incomplete. Isolated ORT1.29 strict session initialization completes; first observed host inference AVs before return. No successful output, timing, profile attribution or native cause is established. Successful native state metadata observes kind1/flag0 and FD attention only; no state rollback or NPU-speed qualification. Latest collector identifies native null-read location, not cause.",
+  "qualifications": "No new overall optimization gain qualified or promoted. Latest direct no-observer measurement is an unchanged stock control; sequential stock variation and diagnostic timing are not tuning gains. Depth1 coding increases acceptance by 6.001 percentage points but is slower than warmed stockB in actual wall by 1.857 percent, normalized time by 2.757 percent, and calibrated decode by 5.608 percent; retain depth2 and do not claim accuracy improvement. Full live NPU MTP remains incomplete. Strict isolated ORT1.29 session initialization completes but first observed host inference AVs before return; no successful output, timing or profile attribution. Native collector identifies null-read location, not upstream cause. State metadata observes kind 1/flag 0 and FD attention only, without rollback or speed qualification. The separate official model_root session-configuration candidate is also rejected after strict initialization and the same first-call native fault. No supported next NPU candidate is currently identified; full live NPU MTP remains unfinished.",
   "completed_experiments": [
+    {
+      "name": "strict Light QMoEBf ORT1.29 model_root session-option candidate: first host inference native fault",
+      "artifact": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8",
+      "report": "../research/halogen-qmoe-xrt-fault-20261004.md",
+      "passed": false,
+      "promoted": false,
+      "probe_source_sha256": "f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0",
+      "guard_source_sha256": "9610d697f13f62ccbee6a9f621b54ed04a57a0313ba33a649d293010ca3b2eed",
+      "candidate_change": {
+        "session_option": "model_root",
+        "value": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b",
+        "configured_before": "SetupProvider",
+        "configured_directory_observed_in_stdout": true,
+        "intended_value": "str(model_path.parent)",
+        "source_delta_provenance": "Root source review: only official OGA v0.14 model_root session option added to the prior candidate; saved receipts independently confirm configured directory",
+        "fault_resolved": false
+      },
+      "session_initialization_completed_observed": true,
+      "first_call_index_observed": 0,
+      "first_call_returned_observed": false,
+      "completed_calls": 0,
+      "observation": "Configured model_root matches exact bank/graph directory and strict session initializes. Call 0 invoke does not return; AV read 0 with RBX 0 again in System32 xrt_coreutil.dll+0xf2186. Upstream cause remains unresolved; configuration candidate did not resolve the fault.",
+      "native_module_offset": "0x00000000000f2186",
+      "native_fault_address": "0x0000000000000000",
+      "native_rbx": "0x0000000000000000",
+      "child_exit_code": 3221225477,
+      "owned_job_closed": true,
+      "ort_stage_final_verified": true,
+      "minimum": {
+        "available_bytes": 43867795456,
+        "commit_headroom_bytes": 209941692416
+      },
+      "speed_gain_established": false,
+      "full_mtp_proven": false
+    },
+    {
+      "name": "unchanged direct 8K stock control without ADLX or MTP observers",
+      "artifact": "server/.local/optimization9h-20261004/stock8k-final-no-observer-1",
+      "passed": true,
+      "promoted": false,
+      "optimization_gain_qualified": false,
+      "prefill_only_tps": 1661.018055623853,
+      "mtp_decode_tps": 47.06001969486716,
+      "acceptance": 0.6,
+      "observation": "Twelve retained requests preserve corresponding historic hashes; one excluded warmup and three measured repetitions per cell. Lifecycle/source seals/floors pass. Separate sequential stock control, no optimization or observer-overhead cause established."
+    },
+    {
+      "name": "greedy coding MTP depth2 / depth1 / depth2",
+      "report": "halogen0162-greedy-depth1-results-20261004/README.md",
+      "evidence": "halogen0162-greedy-depth1-results-20261004/results.json",
+      "passed": true,
+      "promoted": false,
+      "verdict": "Depth1 does not beat both current stock controls on actual wall and normalized time; retain depth2.",
+      "stock_depth_retained": 2,
+      "workflow_scope": "Separate 32K-input, 64K Exact-capacity, thinking-on low-effort coding/review workflow; not the 8K stock story control",
+      "requests": 18,
+      "coding_and_review_graded": false,
+      "depth1_vs_controls": {
+        "stockA": {
+          "actual_wall_reduction_percent": 14.664956357299097,
+          "normalized_time_reduction_percent": 14.72313197303431,
+          "corrected_decode_change_percent": 17.618693626962312,
+          "raw_decode_change_percent": 17.19068022336645
+        },
+        "stockB": {
+          "actual_wall_reduction_percent": -1.8572397064499535,
+          "normalized_time_reduction_percent": -2.7567924432284174,
+          "corrected_decode_change_percent": -5.608182083755953,
+          "raw_decode_change_percent": -5.738750390498049
+        }
+      },
+      "acceptance_change_percentage_points": 6.001075035795089,
+      "accuracy_improvement_qualified": false,
+      "timing_scope": {
+        "actual_wall": "Sum of six client request intervals.",
+        "normalized_time": "Mean of two three-turn sums of TTFT + 1000/calibrated decode tok/s; not elapsed wall.",
+        "phase_rates": "Prefill mean of two cold initial requests; decode token-weighted across all six requests, including reasoning.",
+        "clock_caveat": "Native phase rates corrected by whole-request guest monotonic/raw ratio. This does not prove each phase shares one clock ratio; raw rates and independent client wall are retained."
+      },
+      "recorded_pins": {
+        "coordinator_sha256": "163638c6f5085157119231c08067d93de059434b0f27f8ed0aeb055dd22dc95c",
+        "reused_coordinator_sha256": "304d4ae032e8a408c08cdde0f75469b6fa2c88028a4a577e704bb2e224511ed3",
+        "client_sha256": "abe774387941efefa94c5b07089fcd9623ca1464c9e7d8e2cf2687515e3d6b03",
+        "corpus_sha256": "0e97b463b61bf6c8b5d9e97128bc44cf5638e30c4c97108681a3007260aaac83"
+      }
+    },
     {
       "name": "instrumented complete count1 native MTP host-state metadata capture",
       "passed": true,
@@ -2221,15 +2754,246 @@
         "stdout.txt": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/stdout.txt"
       },
       "raw_artifact_hashes_recomputed_by_publication": false
+    },
+    {
+      "name": "strict Light QMoEBf ORT1.29 model_root session-option candidate: first host inference native fault",
+      "promoted": false,
+      "passed": false,
+      "artifact": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8",
+      "report": "../research/halogen-qmoe-xrt-fault-20261004.md",
+      "failure_category": "model_root_session_candidate_native_access_violation",
+      "ort_version": "1.29.0",
+      "provider": "RyzenAILightExecutionProvider",
+      "cpu_fallback_allowed": false,
+      "automatic_acquisition_allowed": false,
+      "session_creation_attempts_observed": 1,
+      "session_initialization_completed_observed": true,
+      "custom_op_api_version_rejection_resolved_observed": true,
+      "calls": 1,
+      "completed_calls": 0,
+      "call_count_scope": "observed Python host invocations; NPU dispatch unproved; missing counters remain null",
+      "first_call_index_observed": 0,
+      "first_call_returned_observed": false,
+      "second_call_started_observed": false,
+      "failed_at_stage": "synthetic_call_0_invoke",
+      "observation": "Configured model_root matches exact bank/graph directory and strict session initializes. Call 0 invoke does not return; AV read 0 with RBX 0 again in System32 xrt_coreutil.dll+0xf2186. Upstream cause remains unresolved; configuration candidate did not resolve the fault.",
+      "error": "RuntimeError: QMoEBf child exit 3221225477",
+      "child_exit_code": 3221225477,
+      "windows_exception_code_hex": "0xC0000005",
+      "native_exception_address_known": true,
+      "faulting_native_module_known": true,
+      "native_fault_cause_established": false,
+      "admission_json_present": false,
+      "successful_output_artifacts": 0,
+      "initialization_ms": null,
+      "npu_latency_ms": null,
+      "timing_scope": "no child completion receipt or returned output; guard lifetime is not NPU latency",
+      "profile_path": "admission.json.ort-profile_2026-10-04_09-30-50_002.json",
+      "profile_bytes": 0,
+      "profile_events": null,
+      "profile_node_events_observed": 0,
+      "profile_attribution_established": false,
+      "probe_source_sha256": "f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0",
+      "guard_source_sha256": "9610d697f13f62ccbee6a9f621b54ed04a57a0313ba33a649d293010ca3b2eed",
+      "source_and_artifact_pins": {
+        "python_sha256": "0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14",
+        "graph_sha256": "b04764ee869ec27ea8eb4ff774b0a63fcdf8bc9212c0dcdb1f74949087ba2738",
+        "builder_manifest_sha256": "9f694e76125cef522e90df002bd010a28efb6fbf78ccd117e0cc0dcae83d5b54",
+        "header_sha256": "a0521a8b773a9695fbdae4e852eb4188b175a6d73af8af98c33f0a1617aea18a",
+        "provider_library_sha256": "ccc3bd0c2a8f519f9cd5fb112491785918810819f80c804302f717d2a93456ec",
+        "bank_sha256_expected": "05283a60ce7858fdfa93d46ce84e86a5a38d5bbe46631e8571d2ff632890365f",
+        "bank_hash_scope": "expected existing synthetic bank pin; publication did not read or hash payload",
+        "ort_stage_manifest_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+        "ort_stage_snapshot_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f"
+      },
+      "guard_ort_stage": {
+        "manifest_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\stage-manifest.json",
+        "manifest_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+        "package_version": "1.29.0",
+        "c_api_max_version": 29,
+        "stage_root": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495",
+        "file_count": 630,
+        "total_bytes": 45280440
+      },
+      "ort_stage_final_verified": true,
+      "owned_job_closed": true,
+      "child_provider_cleanup_observed": null,
+      "child_dll_directory_closure_observed": null,
+      "child_bootstrap_shutdown_observed": null,
+      "cleanup_scope": "owned job closed after hard crash; child finally completion unobserved",
+      "guard_minimum_available_gib": 40.85506820678711,
+      "guard_minimum_commit_headroom_gib": 195.5234375,
+      "minimum_reserve_gib": 18,
+      "guard_result": {
+        "passed": false,
+        "error": "RuntimeError: QMoEBf child exit 3221225477",
+        "exit_code": 3221225477,
+        "owned_job_closed": true,
+        "minimum": {
+          "available_bytes": 43867795456,
+          "commit_headroom_bytes": 209941692416
+        },
+        "final_memory": {
+          "available_bytes": 47019212800,
+          "committed_bytes": 27211452416,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 212927987712
+        },
+        "ort_stage": {
+          "manifest_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\stage-manifest.json",
+          "manifest_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+          "package_version": "1.29.0",
+          "c_api_max_version": 29,
+          "stage_root": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495",
+          "file_count": 630,
+          "total_bytes": 45280440
+        },
+        "ort_stage_final_verified": true
+      },
+      "stdout": "QMOE_STAGE source_and_artifact_validation\r\nQMOE_STAGE static_graph_validation\r\nQMOE_STAGE provider_copy_validation\r\nQMOE_STAGE winml_bootstrap\r\nQMOE_STAGE sealed_ort_validation_before_import\r\nQMOE_STAGE provider_registration\r\nQMOE_STAGE npu_device_selection\r\nQMOE_MODEL_ROOT C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b\r\nQMOE_STAGE custom_operator_registration\r\nQMOE_STAGE strict_session_admission\r\nQMOE_STAGE native_fault_capture_arm\r\nQMOE_SESSION_PROVIDERS [\"RyzenAILightExecutionProvider\", \"CPUExecutionProvider\"]\r\nQMOE_STAGE synthetic_admission_calls\r\nQMOE_STAGE synthetic_call_0_prepare\r\nQMOE_STAGE synthetic_call_0_invoke\r\n",
+      "stderr": "Windows fatal exception: access violation\n\nCurrent thread 0x0000436c (most recent call first):\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 387 in invoke\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 397 in run_with_ort_values\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 419 in run\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 526 in main\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 534 in <module>\n",
+      "full_mtp_proven": false,
+      "internal_placement_proven": false,
+      "weight_residency_proven": false,
+      "shape_support_established": false,
+      "numerical_quality_proven": false,
+      "acceptance_qualified": false,
+      "speed_gain_established": false,
+      "reason": "Official model_root session-option candidate did not resolve the observed first-inference native fault. Owned-job closure and sealed-stage verification are observed; no broader recovery certificate, returned NPU output, latency, profile attribution, shape support or full-MTP qualification.",
+      "session_providers_observed": [
+        "RyzenAILightExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "session_provider_list_scope": "session inventory only; CPU fallback disabled by source contract; no successful execution attribution",
+      "native_fault_records": [
+        {
+          "schema": "halogen_qmoe_av_v1",
+          "record": 1,
+          "thread_id": "0x000000000000436c",
+          "exception_code": "0x00000000c0000005",
+          "exception_flags": "0x0000000000000000",
+          "exception_address": "0x00007ffbdb9a2186",
+          "parameter_count": "0x0000000000000002",
+          "av_type": "read",
+          "av_operation": "0x0000000000000000",
+          "fault_address": "0x0000000000000000",
+          "rip": "0x00007ffbdb9a2186",
+          "snapshot_module_count": "0x0000000000000053",
+          "module_lookup": "arm_snapshot",
+          "module_path": "C:\\windows\\SYSTEM32\\xrt_coreutil.dll",
+          "module_path_truncated": false,
+          "module_base": "0x00007ffbdb8b0000",
+          "module_offset": "0x00000000000f2186",
+          "module_size": "0x00000000001ed000",
+          "context_flags": "0x000000000010005f",
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000016",
+          "rdx": "0x0000000000000010",
+          "rsi": "0x00000185d8121240",
+          "rdi": "0x0000000000000000",
+          "rbp": "0x00000009957ecb20",
+          "rsp": "0x00000009957ec960",
+          "r8": "0x00000185d53d1680",
+          "r9": "0x00000185d51c0000",
+          "r10": "0x00000185d53d0000",
+          "r11": "0x00000009957ec9f0",
+          "r12": "0x00007ffb7db78cd0",
+          "r13": "0x00007ffb7db7ede0",
+          "r14": "0x0000000000000000",
+          "r15": "0x00007ffb7db78cd0",
+          "eflags": "0x0000000000010246",
+          "mxcsr": "0x0000000000001fa2",
+          "cs": "0x0000000000000033",
+          "ss": "0x000000000000002b"
+        }
+      ],
+      "native_fault_artifact": "native-fault.jsonl",
+      "native_exception_address": "0x00007ffbdb9a2186",
+      "faulting_native_module": "C:\\windows\\SYSTEM32\\xrt_coreutil.dll",
+      "native_module_base": "0x00007ffbdb8b0000",
+      "native_module_offset": "0x00000000000f2186",
+      "native_fault_address": "0x0000000000000000",
+      "native_fault_operation": "read",
+      "native_module_lookup_scope": "arm_snapshot",
+      "raw_artifact_paths": {
+        "admission.json.ort-profile_2026-10-04_09-30-50_002.json": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/admission.json.ort-profile_2026-10-04_09-30-50_002.json",
+        "identity.json": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/identity.json",
+        "memory.jsonl": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/memory.jsonl",
+        "native-fault.jsonl": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/native-fault.jsonl",
+        "ort-stage-manifest.json": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/ort-stage-manifest.json",
+        "result.json": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/result.json",
+        "stderr.txt": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/stderr.txt",
+        "stdout.txt": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/stdout.txt"
+      },
+      "raw_artifact_hashes_recomputed_by_publication": false,
+      "candidate_change": {
+        "session_option": "model_root",
+        "value": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b",
+        "configured_before": "SetupProvider",
+        "configured_directory_observed_in_stdout": true,
+        "intended_value": "str(model_path.parent)",
+        "source_delta_provenance": "Root source review: only official OGA v0.14 model_root session option added to the prior candidate; saved receipts independently confirm configured directory",
+        "fault_resolved": false
+      },
+      "native_rbx": "0x0000000000000000",
+      "upstream_fault_cause_established": false,
+      "saved_identity": {
+        "command": [
+          "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+          "-B",
+          "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py",
+          "--root-owned-admission",
+          "--expected-source-sha256",
+          "f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0",
+          "--model",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b\\halogen-qmoe-512-top10.onnx",
+          "--manifest",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b\\halogen-qmoe-512-top10.contract.json",
+          "--report",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8\\admission.json",
+          "--ort-stage-manifest",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\stage-manifest.json",
+          "--expected-ort-stage-manifest-sha256",
+          "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f"
+        ],
+        "identity": {
+          "pid": 32060,
+          "creation_time_100ns": 134355726470190054,
+          "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+        },
+        "probe_sha256": "f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0",
+        "manifest_sha256": "9f694e76125cef522e90df002bd010a28efb6fbf78ccd117e0cc0dcae83d5b54",
+        "model_sha256": "b04764ee869ec27ea8eb4ff774b0a63fcdf8bc9212c0dcdb1f74949087ba2738",
+        "python_sha256": "0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14",
+        "guard_sha256": "9610d697f13f62ccbee6a9f621b54ed04a57a0313ba33a649d293010ca3b2eed",
+        "ort_stage": {
+          "manifest_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\stage-manifest.json",
+          "manifest_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+          "package_version": "1.29.0",
+          "c_api_max_version": 29,
+          "stage_root": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495",
+          "file_count": 630,
+          "total_bytes": 45280440
+        },
+        "ort_stage_snapshot": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8\\ort-stage-manifest.json",
+        "ort_stage_snapshot_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+        "before": {
+          "available_bytes": 47017136128,
+          "committed_bytes": 27201212416,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 212938227712
+        }
+      }
     }
   ],
   "qmoe_light_admission": {
-    "name": "strict Light QMoEBf ORT1.29 native fault collection at first host inference invocation",
+    "name": "strict Light QMoEBf ORT1.29 model_root session-option candidate: first host inference native fault",
     "promoted": false,
     "passed": false,
-    "artifact": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933",
-    "report": "../research/halogen-qmoe-graph-contract-20261004.md",
-    "failure_category": "native_access_violation",
+    "artifact": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8",
+    "report": "../research/halogen-qmoe-xrt-fault-20261004.md",
+    "failure_category": "model_root_session_candidate_native_access_violation",
     "ort_version": "1.29.0",
     "provider": "RyzenAILightExecutionProvider",
     "cpu_fallback_allowed": false,
@@ -2244,7 +3008,7 @@
     "first_call_returned_observed": false,
     "second_call_started_observed": false,
     "failed_at_stage": "synthetic_call_0_invoke",
-    "observation": "Strict session initialized; first call0 invoke did not return. Native collector reports null read in System32 xrt_coreutil.dll+0xf2186. Fault location is observed; cause is unproved.",
+    "observation": "Configured model_root matches exact bank/graph directory and strict session initializes. Call 0 invoke does not return; AV read 0 with RBX 0 again in System32 xrt_coreutil.dll+0xf2186. Upstream cause remains unresolved; configuration candidate did not resolve the fault.",
     "error": "RuntimeError: QMoEBf child exit 3221225477",
     "child_exit_code": 3221225477,
     "windows_exception_code_hex": "0xC0000005",
@@ -2256,12 +3020,12 @@
     "initialization_ms": null,
     "npu_latency_ms": null,
     "timing_scope": "no child completion receipt or returned output; guard lifetime is not NPU latency",
-    "profile_path": "admission.json.ort-profile_2026-10-04_08-49-59_731.json",
+    "profile_path": "admission.json.ort-profile_2026-10-04_09-30-50_002.json",
     "profile_bytes": 0,
     "profile_events": null,
     "profile_node_events_observed": 0,
     "profile_attribution_established": false,
-    "probe_source_sha256": "694febe34066e63aa777978742a37300037c54e8d4f43c32a8147b1c90c846ff",
+    "probe_source_sha256": "f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0",
     "guard_source_sha256": "9610d697f13f62ccbee6a9f621b54ed04a57a0313ba33a649d293010ca3b2eed",
     "source_and_artifact_pins": {
       "python_sha256": "0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14",
@@ -2289,8 +3053,8 @@
     "child_dll_directory_closure_observed": null,
     "child_bootstrap_shutdown_observed": null,
     "cleanup_scope": "owned job closed after hard crash; child finally completion unobserved",
-    "guard_minimum_available_gib": 40.967342376708984,
-    "guard_minimum_commit_headroom_gib": 197.07538604736328,
+    "guard_minimum_available_gib": 40.85506820678711,
+    "guard_minimum_commit_headroom_gib": 195.5234375,
     "minimum_reserve_gib": 18,
     "guard_result": {
       "passed": false,
@@ -2298,14 +3062,14 @@
       "exit_code": 3221225477,
       "owned_job_closed": true,
       "minimum": {
-        "available_bytes": 43988348928,
-        "commit_headroom_bytes": 211608084480
+        "available_bytes": 43867795456,
+        "commit_headroom_bytes": 209941692416
       },
       "final_memory": {
-        "available_bytes": 47150645248,
-        "committed_bytes": 27142537216,
+        "available_bytes": 47019212800,
+        "committed_bytes": 27211452416,
         "commit_limit_bytes": 240139440128,
-        "commit_headroom_bytes": 212996902912
+        "commit_headroom_bytes": 212927987712
       },
       "ort_stage": {
         "manifest_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\stage-manifest.json",
@@ -2318,8 +3082,8 @@
       },
       "ort_stage_final_verified": true
     },
-    "stdout": "QMOE_STAGE source_and_artifact_validation\nQMOE_STAGE static_graph_validation\nQMOE_STAGE provider_copy_validation\nQMOE_STAGE winml_bootstrap\nQMOE_STAGE sealed_ort_validation_before_import\nQMOE_STAGE provider_registration\nQMOE_STAGE npu_device_selection\nQMOE_STAGE custom_operator_registration\nQMOE_STAGE strict_session_admission\nQMOE_STAGE native_fault_capture_arm\nQMOE_SESSION_PROVIDERS [\"RyzenAILightExecutionProvider\", \"CPUExecutionProvider\"]\nQMOE_STAGE synthetic_admission_calls\nQMOE_STAGE synthetic_call_0_prepare\nQMOE_STAGE synthetic_call_0_invoke\n",
-    "stderr": "Windows fatal exception: access violation\n\nCurrent thread 0x00000fd0 (most recent call first):\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 387 in invoke\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 397 in run_with_ort_values\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 412 in run\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 519 in main\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 527 in <module>\n",
+    "stdout": "QMOE_STAGE source_and_artifact_validation\r\nQMOE_STAGE static_graph_validation\r\nQMOE_STAGE provider_copy_validation\r\nQMOE_STAGE winml_bootstrap\r\nQMOE_STAGE sealed_ort_validation_before_import\r\nQMOE_STAGE provider_registration\r\nQMOE_STAGE npu_device_selection\r\nQMOE_MODEL_ROOT C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b\r\nQMOE_STAGE custom_operator_registration\r\nQMOE_STAGE strict_session_admission\r\nQMOE_STAGE native_fault_capture_arm\r\nQMOE_SESSION_PROVIDERS [\"RyzenAILightExecutionProvider\", \"CPUExecutionProvider\"]\r\nQMOE_STAGE synthetic_admission_calls\r\nQMOE_STAGE synthetic_call_0_prepare\r\nQMOE_STAGE synthetic_call_0_invoke\r\n",
+    "stderr": "Windows fatal exception: access violation\n\nCurrent thread 0x0000436c (most recent call first):\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 387 in invoke\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 397 in run_with_ort_values\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 419 in run\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 526 in main\n  File \"C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py\", line 534 in <module>\n",
     "full_mtp_proven": false,
     "internal_placement_proven": false,
     "weight_residency_proven": false,
@@ -2327,7 +3091,7 @@
     "numerical_quality_proven": false,
     "acceptance_qualified": false,
     "speed_gain_established": false,
-    "reason": "Native AV location captured, not a cause diagnosis. No returned NPU output, successful latency, profile attribution, shape-support or full-MTP qualification.",
+    "reason": "Official model_root session-option candidate did not resolve the observed first-inference native fault. Owned-job closure and sealed-stage verification are observed; no broader recovery certificate, returned NPU output, latency, profile attribution, shape support or full-MTP qualification.",
     "session_providers_observed": [
       "RyzenAILightExecutionProvider",
       "CPUExecutionProvider"
@@ -2337,39 +3101,39 @@
       {
         "schema": "halogen_qmoe_av_v1",
         "record": 1,
-        "thread_id": "0x0000000000000fd0",
+        "thread_id": "0x000000000000436c",
         "exception_code": "0x00000000c0000005",
         "exception_flags": "0x0000000000000000",
-        "exception_address": "0x00007ffbdb7d2186",
+        "exception_address": "0x00007ffbdb9a2186",
         "parameter_count": "0x0000000000000002",
         "av_type": "read",
         "av_operation": "0x0000000000000000",
         "fault_address": "0x0000000000000000",
-        "rip": "0x00007ffbdb7d2186",
+        "rip": "0x00007ffbdb9a2186",
         "snapshot_module_count": "0x0000000000000053",
         "module_lookup": "arm_snapshot",
         "module_path": "C:\\windows\\SYSTEM32\\xrt_coreutil.dll",
         "module_path_truncated": false,
-        "module_base": "0x00007ffbdb6e0000",
+        "module_base": "0x00007ffbdb8b0000",
         "module_offset": "0x00000000000f2186",
         "module_size": "0x00000000001ed000",
         "context_flags": "0x000000000010005f",
         "rax": "0x0000000000000000",
         "rbx": "0x0000000000000000",
-        "rcx": "0x0000000000000015",
+        "rcx": "0x0000000000000016",
         "rdx": "0x0000000000000010",
-        "rsi": "0x000002280f48ae00",
+        "rsi": "0x00000185d8121240",
         "rdi": "0x0000000000000000",
-        "rbp": "0x00000048cdbecaa0",
-        "rsp": "0x00000048cdbec8e0",
-        "r8": "0x000002280c5d18c0",
-        "r9": "0x000002280c4d0000",
-        "r10": "0x000002280c5d0000",
-        "r11": "0x00000048cdbec970",
-        "r12": "0x00007ffb7ca88cd0",
-        "r13": "0x00007ffb7ca8ede0",
+        "rbp": "0x00000009957ecb20",
+        "rsp": "0x00000009957ec960",
+        "r8": "0x00000185d53d1680",
+        "r9": "0x00000185d51c0000",
+        "r10": "0x00000185d53d0000",
+        "r11": "0x00000009957ec9f0",
+        "r12": "0x00007ffb7db78cd0",
+        "r13": "0x00007ffb7db7ede0",
         "r14": "0x0000000000000000",
-        "r15": "0x00007ffb7ca88cd0",
+        "r15": "0x00007ffb7db78cd0",
         "eflags": "0x0000000000010246",
         "mxcsr": "0x0000000000001fa2",
         "cs": "0x0000000000000033",
@@ -2377,24 +3141,82 @@
       }
     ],
     "native_fault_artifact": "native-fault.jsonl",
-    "native_exception_address": "0x00007ffbdb7d2186",
+    "native_exception_address": "0x00007ffbdb9a2186",
     "faulting_native_module": "C:\\windows\\SYSTEM32\\xrt_coreutil.dll",
-    "native_module_base": "0x00007ffbdb6e0000",
+    "native_module_base": "0x00007ffbdb8b0000",
     "native_module_offset": "0x00000000000f2186",
     "native_fault_address": "0x0000000000000000",
     "native_fault_operation": "read",
     "native_module_lookup_scope": "arm_snapshot",
     "raw_artifact_paths": {
-      "admission.json.ort-profile_2026-10-04_08-49-59_731.json": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/admission.json.ort-profile_2026-10-04_08-49-59_731.json",
-      "identity.json": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/identity.json",
-      "memory.jsonl": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/memory.jsonl",
-      "native-fault.jsonl": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/native-fault.jsonl",
-      "ort-stage-manifest.json": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/ort-stage-manifest.json",
-      "result.json": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/result.json",
-      "stderr.txt": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/stderr.txt",
-      "stdout.txt": "server/.local/optimization9h-20261004/qmoe-light-admission-d35f5a8b9b034d63a4f58faf0850e933/stdout.txt"
+      "admission.json.ort-profile_2026-10-04_09-30-50_002.json": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/admission.json.ort-profile_2026-10-04_09-30-50_002.json",
+      "identity.json": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/identity.json",
+      "memory.jsonl": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/memory.jsonl",
+      "native-fault.jsonl": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/native-fault.jsonl",
+      "ort-stage-manifest.json": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/ort-stage-manifest.json",
+      "result.json": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/result.json",
+      "stderr.txt": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/stderr.txt",
+      "stdout.txt": "server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/stdout.txt"
     },
-    "raw_artifact_hashes_recomputed_by_publication": false
+    "raw_artifact_hashes_recomputed_by_publication": false,
+    "candidate_change": {
+      "session_option": "model_root",
+      "value": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b",
+      "configured_before": "SetupProvider",
+      "configured_directory_observed_in_stdout": true,
+      "intended_value": "str(model_path.parent)",
+      "source_delta_provenance": "Root source review: only official OGA v0.14 model_root session option added to the prior candidate; saved receipts independently confirm configured directory",
+      "fault_resolved": false
+    },
+    "native_rbx": "0x0000000000000000",
+    "upstream_fault_cause_established": false,
+    "saved_identity": {
+      "command": [
+        "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+        "-B",
+        "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_light_probe.py",
+        "--root-owned-admission",
+        "--expected-source-sha256",
+        "f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0",
+        "--model",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b\\halogen-qmoe-512-top10.onnx",
+        "--manifest",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b\\halogen-qmoe-512-top10.contract.json",
+        "--report",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8\\admission.json",
+        "--ort-stage-manifest",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\stage-manifest.json",
+        "--expected-ort-stage-manifest-sha256",
+        "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f"
+      ],
+      "identity": {
+        "pid": 32060,
+        "creation_time_100ns": 134355726470190054,
+        "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+      },
+      "probe_sha256": "f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0",
+      "manifest_sha256": "9f694e76125cef522e90df002bd010a28efb6fbf78ccd117e0cc0dcae83d5b54",
+      "model_sha256": "b04764ee869ec27ea8eb4ff774b0a63fcdf8bc9212c0dcdb1f74949087ba2738",
+      "python_sha256": "0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14",
+      "guard_sha256": "9610d697f13f62ccbee6a9f621b54ed04a57a0313ba33a649d293010ca3b2eed",
+      "ort_stage": {
+        "manifest_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495\\stage-manifest.json",
+        "manifest_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+        "package_version": "1.29.0",
+        "c_api_max_version": 29,
+        "stage_root": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-ort129-stage-f1e210f85e8e4f609aa66df0b80e5495",
+        "file_count": 630,
+        "total_bytes": 45280440
+      },
+      "ort_stage_snapshot": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8\\ort-stage-manifest.json",
+      "ort_stage_snapshot_sha256": "3760ee417baa2ecea0d5c8921f3a80568483a28cd1b24479f9ef4f8b8583216f",
+      "before": {
+        "available_bytes": 47017136128,
+        "committed_bytes": 27201212416,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 212938227712
+      }
+    }
   },
   "mtp_state_capture_attempts": [
     {

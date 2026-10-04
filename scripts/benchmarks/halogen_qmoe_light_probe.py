@@ -350,6 +350,13 @@ def run(args):
         all_devices = None
         require(len(devices) == 1, "Expected exactly one pinned Light NPU device")
         options = ort.SessionOptions()
+        # Official OGA v0.14.0 adds this session key before SetupProvider;
+        # the frozen Header binds its bank by a sibling relative basename.
+        # This is one initialization candidate, not a proven crash remedy.
+        model_root = str(model_path.parent)
+        options.add_session_config_entry("model_root", model_root)
+        result["session_model_root"] = model_root
+        print("QMOE_MODEL_ROOT " + model_root, flush=True)
         options.intra_op_num_threads = options.inter_op_num_threads = 1
         options.enable_profiling = True
         options.profile_file_prefix = str(args.report.parent / (args.report.name + ".ort-profile"))

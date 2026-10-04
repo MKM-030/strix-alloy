@@ -94,3 +94,37 @@ packing limits. No additional EP/graph probe was prepared.
 
 PE checks used existing MSVC `dumpbin` (`/headers /exports /imports` and bounded
 `/disasm:bytes /range`), plus read-only parsing of native PE metadata/bytes.
+
+## Source-backed initialization follow-up: `model_root`
+
+Further comparison found one missing session key. Official OGA v0.14.0's
+[RyzenAI session setup](https://github.com/microsoft/onnxruntime-genai/blob/v0.14.0/src/ryzenai/session_options.cpp#L14)
+sets `model_root` to the configuration directory before provider setup.
+Its [provider setup](https://github.com/microsoft/onnxruntime-genai/blob/v0.14.0/src/ryzenai/interface.cpp#L132)
+otherwise follows the current device-selection, provider-options and custom-op
+registration sequence; no separate QMoE buffer-initialization call is present
+there. This establishes a setup candidate, not an OGA-exclusive requirement or
+the prior crash's cause.
+
+The frozen Header's `external_data.filename` is `qmoe-synthetic.bin`, a sibling
+relative basename. Root added only
+`options.add_session_config_entry("model_root", str(model_path.parent))`
+before provider setup; the graph, Header, bank, runtime and four provider options
+stayed fixed. The changed probe source SHA256 is
+`f24261d262c1f632f9be67eef6723880ff3e5c86d54583d2f7f1924e4cdc6aa0`.
+
+The new owned receipt is
+`server/.local/optimization9h-20261004/qmoe-light-admission-35fbd2d784664032ab28cd0d4c761ef8/`.
+Its stdout confirms the absolute frozen graph directory as `QMOE_MODEL_ROOT`.
+Strict session initialization still succeeds, but the first call0 invocation
+again terminates with `0xc0000005` before returning. Its native record reports
+the same XRT RVA `0xf2186`, `RBX=0` and a read at zero. There is no returned
+output or successful NPU timing, and no child `admission.json` was serialized.
+The parent closed its owned job and verified the complete ORT stage; physical
+and commit minima were 43,867,795,456 and 209,941,692,416 bytes.
+
+This setting did not remedy the immediate fault. Retain it as alignment with
+the documented setup, with its negative receipt preserved. No further
+unchanged crash or real-bank conversion is launched. A supported host for the
+isolated graph, missing buffer role and underlying cause remain unqualified;
+full NPU MTP remains unfinished.
