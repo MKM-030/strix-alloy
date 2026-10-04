@@ -23,6 +23,7 @@ import uuid
 import portable
 import kernel_controls as kc
 import matmul_tuning as mt
+import speculation_policy as sp
 import lookup_source as lookup
 from startup_monitor import StartupMonitor
 import runner as r
@@ -49,6 +50,7 @@ def options(argv=None):
     p.add_argument('--admit-ticks',type=int,default=None)
     p.add_argument('--kernel-controls-json',type=kc.parse,default=None)
     p.add_argument('--matmul-tuning-json',type=mt.parse,default=None)
+    p.add_argument('--speculation-policy-json',type=sp.parse,default=None)
     p.add_argument('--lookup-receipt',default=None)
     p.add_argument('--lookup-receipt-sha256',default=None)
     p.add_argument('--context-size',type=int,default=DEFAULT_CONTEXT)
@@ -74,6 +76,8 @@ def validate_options(o):
             raise ValueError('Standalone lookup experiments require the pinned v2 checkpoint')
         lookup.validate_configuration({'receipt': lookup_path, 'receipt_sha256': lookup_sha})
     kc.validate(getattr(o, 'kernel_controls_json', None) or {})
+    if getattr(o, 'speculation_policy_json', None) is not None:
+        sp.validate(o.speculation_policy_json)
     if getattr(o, 'matmul_tuning_json', None) is not None:
         mt.validate(o.matmul_tuning_json)
         if getattr(o, 'checkpoint', 'w4b') != 'v2':
@@ -192,7 +196,7 @@ def verify_checkpoint(machine, checkpoint, lookup_override=None):
     portable.check_hash(LOCAL/'libhalogen0162-v2-preflight.so',portable.RELEASE['v2_bridge_sha256'])
 
 
-def environment(context, checkpoint="w4b", prompt_cache="Off", draft_tokens=None, prefill_chunk=None, prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None):
+def environment(context, checkpoint="w4b", prompt_cache="Off", draft_tokens=None, prefill_chunk=None, prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, speculation_policy=None):
     if draft_tokens is not None and (type(draft_tokens) is not int or draft_tokens not in (1,2,3)):
         raise ValueError("Draft depth must be 1, 2 or 3")
     if prefill_chunk is not None and (type(prefill_chunk) is not int or prefill_chunk not in (2048,4096,8192,16384,32768) or prefill_chunk>context):
@@ -226,6 +230,7 @@ def environment(context, checkpoint="w4b", prompt_cache="Off", draft_tokens=None
     if admit_ticks is not None: env['HALOGEN_ADMIT_TICKS']=str(admit_ticks)
     env['HALOGEN_PROMPT_CACHE']={'Off':'0','Exact':'1','Flexible':'2'}[prompt_cache]
     env.update(kc.environment(kernel_controls or {}))
+    env.update(sp.environment(speculation_policy))
     return env
 
 
@@ -263,11 +268,13 @@ def build_manifest(o, attempt, run_id):
         mounts[mt.FROZEN_PATH]=r.linux_path(tuning['source'])
     result=dict(schema=1,version='0.16.2',image=r.IMAGE,run_id=run_id,checkpoint=checkpoint,
         context=o.context_size,slots=1,serve_seconds=o.serve_seconds,startup_timeout=o.startup_timeout,
-        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None)),sources=source_hashes(),
+        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None),getattr(o,'speculation_policy_json',None)),sources=source_hashes(),
         entrypoint_sha256=portable.digest(attempt/'entrypoint-service.sh'))
     if tuning:
         result['environment'].update(mt.environment(o.matmul_tuning_json))
         result['matmul_tuning']=tuning
+    if getattr(o, 'speculation_policy_json', None) is not None:
+        result['speculation_policy'] = sp.validate(o.speculation_policy_json)
     qualified_lookup = getattr(o, 'qualified_lookup', None)
     if qualified_lookup is not None:
         result['mounts']['/ngram-w4b.hgn'] = qualified_lookup['output']['path']

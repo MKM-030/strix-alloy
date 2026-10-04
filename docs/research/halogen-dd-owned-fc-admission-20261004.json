@@ -1,0 +1,272 @@
+{
+  "schema": 1,
+  "scope": "synthetic zero-weight expert FC1/FC2 admission; original geometry; real XRT/DD calls",
+  "qualified_synthetic_operator_execution": true,
+  "full_mtp_proven": false,
+  "acceptance_qualified": false,
+  "speed_gain_established": false,
+  "source_fix": {
+    "problem": "preformatted initialization allocated scratch with uninitialized group size",
+    "change": "set_shape(...,32) and validate geometry before initialize_const_params",
+    "dd_version": "1.8.0.6",
+    "dd_sha256": "3d71cbb95c4eb8e5cc28741d7d9f3ac51df404ebf0dbca40b7102783f63bcf93",
+    "source_sha256": "ac2a266ca6413280ae01cbafed1a14df1b01ce26f48114933a2acc307c65ff47"
+  },
+  "artifact_directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-owned-fc-admission-9210c341c0434659b12d7a516810986c",
+  "artifact_hashes": {
+    "identity.json": "98794d4642e47304949781421016320a71eae9aa98d3dcafb6640f9709bdde62",
+    "stdout.txt": "e62a6e5fb98e0b13c5475a0c289c6c6572e43903bf8edd33fcf14a6ecfeeac6a",
+    "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "memory.jsonl": "35c5e42e300e5a4739796ace58f167a77639de7444175c03aca95d954f7d6700",
+    "native-fault.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "admission.json": "d1b190d6a63b0558c889afeff2d063ca5d3124e82d390f5b8f9a4c341063633f",
+    "result.json": "d3fbec20743fe6bdeee64afa8799c97abc0eeb9f60c2c90af4f5ce5e5b28cfe0"
+  },
+  "config_sha256": "6994d2a1833dc6a3df71bd19385ea95c6f100e6ba8242116e55851a13f8a60c7",
+  "calls": [
+    {
+      "fc_index": 0,
+      "call": 0,
+      "passed": true,
+      "receipt": {
+        "schema": 1,
+        "size": 88,
+        "stage": 4,
+        "fc_index": 0,
+        "calls_completed": 1,
+        "output_valid": 1,
+        "logical_k": 2560,
+        "logical_n": 1280,
+        "kernel_k": 2560,
+        "kernel_n": 2560,
+        "packed_bytes": 4198400,
+        "input_bo_bytes": 5120,
+        "output_bo_bytes": 5120,
+        "qpc_frequency": 10000000,
+        "qpc_start": 3375337330439,
+        "qpc_end": 3375337357237
+      },
+      "error": "",
+      "output_sha256": "8ce8ba8e726ee8925e6560d86ac35be1097691d1cfac888e6bd20e804ea9eb15",
+      "completed_call_ms": 2.6798
+    },
+    {
+      "fc_index": 0,
+      "call": 1,
+      "passed": true,
+      "receipt": {
+        "schema": 1,
+        "size": 88,
+        "stage": 4,
+        "fc_index": 0,
+        "calls_completed": 2,
+        "output_valid": 1,
+        "logical_k": 2560,
+        "logical_n": 1280,
+        "kernel_k": 2560,
+        "kernel_n": 2560,
+        "packed_bytes": 4198400,
+        "input_bo_bytes": 5120,
+        "output_bo_bytes": 5120,
+        "qpc_frequency": 10000000,
+        "qpc_start": 3375337373477,
+        "qpc_end": 3375337376060
+      },
+      "error": "",
+      "output_sha256": "8ce8ba8e726ee8925e6560d86ac35be1097691d1cfac888e6bd20e804ea9eb15",
+      "completed_call_ms": 0.2583
+    },
+    {
+      "fc_index": 1,
+      "call": 0,
+      "passed": true,
+      "receipt": {
+        "schema": 1,
+        "size": 88,
+        "stage": 4,
+        "fc_index": 1,
+        "calls_completed": 1,
+        "output_valid": 1,
+        "logical_k": 640,
+        "logical_n": 2560,
+        "kernel_k": 768,
+        "kernel_n": 3072,
+        "packed_bytes": 1597440,
+        "input_bo_bytes": 1536,
+        "output_bo_bytes": 6144,
+        "qpc_frequency": 10000000,
+        "qpc_start": 3375337505579,
+        "qpc_end": 3375337508302
+      },
+      "error": "",
+      "output_sha256": "a11937f356a9b0ba592c82f5290bac8016cb33a3f9bc68d3490147c158ebb10d",
+      "completed_call_ms": 0.2723
+    },
+    {
+      "fc_index": 1,
+      "call": 1,
+      "passed": true,
+      "receipt": {
+        "schema": 1,
+        "size": 88,
+        "stage": 4,
+        "fc_index": 1,
+        "calls_completed": 2,
+        "output_valid": 1,
+        "logical_k": 640,
+        "logical_n": 2560,
+        "kernel_k": 768,
+        "kernel_n": 3072,
+        "packed_bytes": 1597440,
+        "input_bo_bytes": 1536,
+        "output_bo_bytes": 6144,
+        "qpc_frequency": 10000000,
+        "qpc_start": 3375337523078,
+        "qpc_end": 3375337525195
+      },
+      "error": "",
+      "output_sha256": "a11937f356a9b0ba592c82f5290bac8016cb33a3f9bc68d3490147c158ebb10d",
+      "completed_call_ms": 0.2117
+    }
+  ],
+  "contexts": [
+    {
+      "fc_index": 0,
+      "create_code": 0,
+      "create_host_ms": 89.3479,
+      "create_receipt": {
+        "schema": 1,
+        "size": 88,
+        "stage": 2,
+        "fc_index": 0,
+        "calls_completed": 0,
+        "output_valid": 0,
+        "logical_k": 2560,
+        "logical_n": 1280,
+        "kernel_k": 2560,
+        "kernel_n": 2560,
+        "packed_bytes": 4198400,
+        "input_bo_bytes": 5120,
+        "output_bo_bytes": 5120,
+        "qpc_frequency": 10000000,
+        "qpc_start": 0,
+        "qpc_end": 0
+      },
+      "create_error": "",
+      "destroy_returned": true
+    },
+    {
+      "fc_index": 1,
+      "create_code": 0,
+      "create_host_ms": 9.3338,
+      "create_receipt": {
+        "schema": 1,
+        "size": 88,
+        "stage": 2,
+        "fc_index": 1,
+        "calls_completed": 0,
+        "output_valid": 0,
+        "logical_k": 640,
+        "logical_n": 2560,
+        "kernel_k": 768,
+        "kernel_n": 3072,
+        "packed_bytes": 1597440,
+        "input_bo_bytes": 1536,
+        "output_bo_bytes": 6144,
+        "qpc_frequency": 10000000,
+        "qpc_start": 0,
+        "qpc_end": 0
+      },
+      "create_error": "",
+      "destroy_returned": true
+    }
+  ],
+  "loaded_modules": {
+    "dyn_dispatch_core.dll": "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004\\dyn_dispatch_core.dll",
+    "xrt_coreutil.dll": "C:\\Windows\\System32\\xrt_coreutil.dll",
+    "halogen_dd_owned_fc.dll": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\halogen_dd_owned_fc.dll",
+    "halogen_qmoe_fault_capture_stack.dll": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-rank3-native\\halogen_qmoe_fault_capture_stack.dll",
+    "me_aie4.dll": null,
+    "ryzen_mm.dll": null,
+    "dyn_bins.dll": null
+  },
+  "lifecycle": {
+    "schema": 2,
+    "passed": true,
+    "errors": [],
+    "exit_code": 0,
+    "owned_job_closed": true,
+    "minimum": {
+      "available_bytes": 45670440960,
+      "commit_headroom_bytes": 211604512768
+    },
+    "final_memory": {
+      "available_bytes": 45804969984,
+      "committed_bytes": 28410884096,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 211728556032
+    },
+    "memory_recovery": [
+      {
+        "epoch": 1791114565.3191435,
+        "available_bytes": 45804969984,
+        "committed_bytes": 28410884096,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 211728556032
+      }
+    ],
+    "process_commit_limit_bytes": 8589934592,
+    "monitor_abort_reserve_gib": 22,
+    "hard_reserve_gib": 18,
+    "fault_record_count": 0,
+    "full_mtp_proven": false,
+    "speed_gain_established": false
+  },
+  "previous_failed_run_recovery": {
+    "schema": 1,
+    "scope": "post hoc terminal recovery; original guard omitted final result",
+    "source": "retained memory/stdout/identity and fresh CIM PID+listener check at current root turn",
+    "original_child_pid": 30544,
+    "child_absent_in_fresh_cim": true,
+    "ports_8731_8840_absent_in_fresh_cim": true,
+    "original_owned_close_returned": true,
+    "original_result_missing": true,
+    "original_exit_code": null,
+    "exact_violating_frame": null,
+    "logged_minimum": {
+      "available_bytes": 20599062528,
+      "commit_headroom_bytes": 182347702272
+    },
+    "max_logged_commit_bytes": 57791737856,
+    "original_before": {
+      "available_bytes": 49081790464,
+      "committed_bytes": 24162279424,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 215977160704
+    },
+    "last_completed_stage": "DD_OWNED_STAGE fc0_create",
+    "fault_records": 0,
+    "current_memory": {
+      "available_bytes": 50009374720,
+      "committed_bytes": 23335600128,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 216803840000
+    },
+    "current_epoch": 1791114484.014389,
+    "passed": false,
+    "speed_gain_established": false
+  },
+  "guard_cpu_check": {
+    "passed": true,
+    "scope": "CPU-only committed ceiling check; no provider imports",
+    "limit_bytes": 134217728,
+    "attempt_bytes": 536870912,
+    "exit_code": 0,
+    "closed": true,
+    "identity": {
+      "pid": 41056,
+      "creation_time_100ns": 134355880638715694,
+      "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+    }
+  }
+}

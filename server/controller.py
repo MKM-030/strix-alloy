@@ -145,6 +145,29 @@ def halogen_kernel_arguments(engine, directory):
     return ['-KernelControlsJson',json.dumps(controls,sort_keys=True,separators=(',',':'))]
 
 
+def halogen_speculation_module(directory):
+    supported = Path(__file__).resolve().parents[1] / 'backends/halogen-wsl2-0.16.2'
+    if directory.resolve() != supported.resolve():
+        raise ValueError('Speculation policy requires the pinned Halogen 0.16.2 backend')
+    source = directory / 'scripts/speculation_policy.py'
+    if source.is_symlink() or not source.is_file():
+        raise ValueError('Selected backend has no managed speculation-policy support')
+    if not re.search(r'\[string\]\s*\$SpeculationPolicyJson\b',
+                     (directory / 'Start.ps1').read_text(encoding='utf-8-sig'), re.I):
+        raise ValueError('Selected launcher has no managed speculation-policy support')
+    spec = importlib.util.spec_from_file_location('alloy_halogen_speculation_policy', source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def halogen_speculation_arguments(engine, directory):
+    if 'speculation_policy' not in engine:
+        return []
+    policy = halogen_speculation_module(directory).validate(engine['speculation_policy'])
+    return ['-SpeculationPolicyJson', json.dumps(policy, sort_keys=True, separators=(',', ':'))]
+
+
 def halogen_matmul_arguments(engine, directory):
     if 'matmul_tuning' not in engine: return []
     source=directory/'scripts/matmul_tuning.py'
@@ -193,11 +216,14 @@ def validate_engine(engine, repo):
         if not (directory/'Start.ps1').is_file(): raise ValueError('Backend launcher missing')
         validate_halogen_launcher_controls(engine,repo)
         halogen_kernel_arguments(engine,directory)
+        halogen_speculation_arguments(engine,directory)
         halogen_matmul_arguments(engine,directory)
         halogen_lookup_arguments(engine,directory)
         return directory
     if 'kernel_controls' in engine:
         raise ValueError('Managed kernel controls apply only to Halogen')
+    if 'speculation_policy' in engine:
+        raise ValueError('Managed speculation policies apply only to Halogen')
     if 'matmul_tuning' in engine:
         raise ValueError('Managed matmul plans apply only to Halogen')
     if 'lookup_tuning' in engine:
@@ -249,6 +275,7 @@ class Engine:
                      '-PromptCache',self.config.get('prompt_cache','Off')]
             command+=halogen_draft_arguments(self.config)
             command+=halogen_kernel_arguments(self.config,self.directory)
+            command+=halogen_speculation_arguments(self.config,self.directory)
             command+=halogen_matmul_arguments(self.config,self.directory)
             command+=halogen_lookup_arguments(self.config,self.directory)
         else:

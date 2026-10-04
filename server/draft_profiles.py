@@ -4,6 +4,7 @@ import copy
 import json
 from pathlib import Path
 from controller import (halogen_draft_arguments, halogen_kernel_arguments, halogen_kernel_module,
+                        halogen_speculation_arguments, halogen_speculation_module,
                         halogen_lookup_arguments,
                         memory_reserve_gib, validate_engine,
                         validate_halogen_launcher_controls)
@@ -21,7 +22,8 @@ def replace_option(args, flag, value):
 
 def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
          prefill_chunk=None, prompt_lookup=None, cache_disk=None, lookup_workload=None,
-         prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, lookup_tuning=None):
+         prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, lookup_tuning=None,
+         speculation_policy=None):
     if type(draft_tokens) is not int or draft_tokens not in (1, 2, 3):
         raise ValueError('Draft depth must be an integer from 1 through 3')
     if draft_vocab not in ('full', 'latin') or mtp_policy not in ('length', 'survival'):
@@ -66,6 +68,15 @@ def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
         halogen_draft_arguments(engine)
         repo=Path(__file__).resolve().parents[1]
         validate_halogen_launcher_controls(engine,repo)
+        if speculation_policy is not None or 'speculation_policy' in engine:
+            if not isinstance(engine.get('directory'), str):
+                raise ValueError('Speculation policy requires a declared Halogen backend')
+            directory = (repo / engine['directory']).resolve()
+            module = halogen_speculation_module(directory)
+            if speculation_policy is not None:
+                engine['speculation_policy'] = (module.parse(speculation_policy)
+                    if isinstance(speculation_policy, str) else module.validate(speculation_policy))
+            halogen_speculation_arguments(engine, directory)
         if lookup_tuning is not None:
             engine['lookup_tuning'] = copy.deepcopy(lookup_tuning)
         if 'lookup_tuning' in engine:
@@ -84,7 +95,8 @@ def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
             halogen_kernel_arguments(engine,directory)
     elif backend == 'gufo-flash-next' and engine.get('kind') == 'native':
         if (prefill_keep_trunk or admit_ticks is not None or kernel_controls is not None
-                or lookup_tuning is not None or 'lookup_tuning' in engine):
+                or lookup_tuning is not None or 'lookup_tuning' in engine
+                or speculation_policy is not None or 'speculation_policy' in engine):
             raise ValueError('Halogen-only prefill controls do not apply to GUFO')
         if engine.get('qualified') is not True:
             raise ValueError('Retain a previously qualified GUFO runtime')
@@ -120,6 +132,8 @@ def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
         result['qualification']['kernel_controls']=copy.deepcopy(engine['kernel_controls'])
     if 'lookup_tuning' in engine:
         result['qualification']['lookup_tuning']=copy.deepcopy(engine['lookup_tuning'])
+    if 'speculation_policy' in engine:
+        result['qualification']['speculation_policy']=copy.deepcopy(engine['speculation_policy'])
     if prompt_lookup is not None: result['qualification']['prompt_lookup']=prompt_lookup
     if lookup_workload is not None: result['qualification']['lookup_workload']=lookup_workload
     if cache_disk is not None: result['qualification']['cache_disk']=str(cache_disk)
@@ -139,6 +153,7 @@ def main():
     p.add_argument('--prefill-keep-trunk',action='store_true')
     p.add_argument('--admit-ticks',type=int)
     p.add_argument('--kernel-controls-json',help='Explicit experimental HALOGEN_* numeric controls as a JSON object')
+    p.add_argument('--speculation-policy-json',help='Opt-in HALOGEN_PLD / HALOGEN_SPEC_ADAPT off or stock strings')
     p.add_argument('--lookup-receipt',type=Path)
     p.add_argument('--lookup-receipt-sha256')
     p.add_argument('--prompt-lookup',action=argparse.BooleanOptionalAction,default=None)
@@ -156,6 +171,7 @@ def main():
                   cache_disk=a.cache_disk, lookup_workload=a.lookup_workload,
                   prefill_keep_trunk=a.prefill_keep_trunk, admit_ticks=a.admit_ticks,
                   kernel_controls=a.kernel_controls_json,
+                  speculation_policy=a.speculation_policy_json,
                   lookup_tuning=({'receipt':str(a.lookup_receipt.absolute()),
                                   'receipt_sha256':a.lookup_receipt_sha256}
                                  if a.lookup_receipt else None))
