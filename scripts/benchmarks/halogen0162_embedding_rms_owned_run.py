@@ -1,8 +1,11 @@
-"""Exclusive original Q8 FC replay with retained job and 18 GiB reserve.
+"""Exclusive two-call original embedding RMS replay with retained ownership.
 
-Root runs this after checking actual process/controller/provider handles. It
-does not stop or adopt a user engine. Only the frozen tiny FC fixtures and
-original GPU code are mounted; no model/NPU/complete-head session is created.
+Root checks actual process/controller/provider handles before invocation. A
+live user engine is never stopped/adopted. New fixtures, receipts and owned
+container/job are separate from FC and hidden RMS. No model/NPU session is
+mounted/created; native gather/full-D/head/acceptance/speed remain unqualified.
+An observation timeout fails the window and cleans only matching owned IDs;
+no create/start/replay retry or engine restart is performed.
 """
 import argparse
 import hashlib
@@ -10,6 +13,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import socket
 import stat
 import struct
@@ -18,26 +22,34 @@ import threading
 import time
 import uuid
 
+
 ROOT = Path(__file__).resolve().parents[2]
 WORK = ROOT / 'server/.local/optimization9h-20261004'
 BACKEND = ROOT / 'backends/halogen-wsl2-0.16.2'
-FIXTURES = WORK / 'fc-fixtures-f47a1312c34f47b6a23188247f46741b'
-SOURCE = ROOT / 'scripts/benchmarks/halogen0162_fc_replay.c'
-WRAPPER = ROOT / 'scripts/benchmarks/halogen0162_fc_image_wrapper.py'
+FIXTURES = WORK / 'embedding-rms-fixtures-78c49b8e265c4de9adb9c0cf3cc8254e'
+SOURCE = ROOT / 'scripts/benchmarks/halogen0162_embedding_rms_replay.c'
+WRAPPER = ROOT / 'scripts/benchmarks/halogen0162_embedding_rms_image_wrapper.py'
 HSACO = WORK / 'mtp-route-static-20261004/engine-gfx1151.hsaco'
 IMAGE = 'ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a'
-BINARY = '/home/revn/halogen-re/fc-replay-143eee1a74a048769a70d6668b441f31'
-BINARY_SHA = 'fc631bcc9f8aecbf38ec457704481dea74603cead686c7da2405572d892beaae'
-sys.path.insert(0, str(ROOT / 'server'))
+BINARY_PATTERN = r'/home/revn/halogen-re/embedding-rms-replay-[0-9a-f]{32}'
+SOURCE_SHA = '7ea99028014f590a0938d5a06790f51ce571948706d851c16bfcb72f694f4fa8'
+ENGINE_SHA = 'ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b'
+CODE_SHA = '45941c0579dc3487d07978a50c85cbaa141bbb674b225e708e82d81397334a83'
+BRIDGE_SHA = '0de8e26350933754d3d9ead9446c39e04792a2bef68d1b6df97950d07312b9d6'
+HIP_SHA = '6f3c9fe6b655a611e04a9a5a157cb46c425717e2873973f11a67bb6bbf6587b5'
+FIXTURES_SHA = 'cf7ae0ed36d323ae32b6664ed080bc2b3cdd44863878d51719b53ddef9f72246'
+PREPARER_SHA = '669c8dcbb18f2f06584d392130cfe52df24516e639315d855f0c74348536edc0'
+GAMMA_SHA = '04c4a570850e06f2d8913da8220d54d4c7f87db6eb6d45480b938e8ba41d6a86'
+sys.path.insert(0,str(ROOT/'server'))
 from host_frames import frame
 from winjob import OwnedProcess
-sys.path.insert(0, str(BACKEND / 'scripts'))
+sys.path.insert(0,str(BACKEND/'scripts'))
 import runner as backend
 
 
 def sha(path):
     with Path(path).open('rb') as stream:
-        return hashlib.file_digest(stream, 'sha256').hexdigest()
+        return hashlib.file_digest(stream,'sha256').hexdigest()
 
 
 def capture(path, maximum, expected_sha=None, exact_bytes=None):
@@ -80,126 +92,116 @@ def idle():
         raise RuntimeError('Another container is active; no competing GPU window admitted')
 
 
-def validate_receipts(replay, runtime, fixture, wrapper_sha):
-    required = dict(schema='halogen0162.original-q8-fc-kernel-replay.v1', passed=True,
-        engine_sha256='ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b',
-        codeobject_sha256='45941c0579dc3487d07978a50c85cbaa141bbb674b225e708e82d81397334a83',
-        codeobject_engine_offset=331776, codeobject_bytes=17704408,
-        K=2560, N=2560, grid=[160, 1, 1], block=[256, 1, 1], shared_bytes=0, default_stream=True,
-        static_lds_bytes=0, wave_size=32, kernarg_bytes=40, kernarg_alignment=8, hidden_arguments=False,
-        user_argument_offsets=[0, 8, 16, 24, 32], user_argument_types=['u8*', 'u16*', 'u16*', 'i64', 'i64'],
-        q8_group_size=64, weight_row_bytes=2720, weight_bytes=6963200, raw_weights_copied_unchanged=True,
-        native_arithmetic='affine dequant FMA; decoded-weight BF16 RNE; packed BF16 dot2 FP32 accumulation/reduction; output BF16 RNE',
-        embedding_rms_qualified=False, full_D_parity_qualified=False, seed_add_implemented=False,
-        full_head_qualified=False, acceptance_claim=False, speed_claim=False, tolerance_adjustment=False,
-        arithmetic_fitting=False, logical_calls=4, launch_attempts=4, launches_ok=4, synchronizations_ok=4,
-        copies_ok=14, allocations_ok=4, free_ok=4, module_loads=1, module_unloads=1,
-        cleanup_errors=0, file_close_errors=0, immutable_files_rechecked=True, output_files_written=4,
-        error='', error_code=0, halogen_lq8_wave='1')
-    kernels = [dict(branch='embedding', symbol='_ZN7halogen12_GLOBAL__N_16k_lq8wILi1ELi16ELi1EEEvPKhPKtPtll',
-                   host_identity_rva='0x18d6690', registration_rva='0x184b596', gpu_entry_rva='0x2d1200', descriptor_rva='0x1fa340', M=1),
-               dict(branch='hidden', symbol='_ZN7halogen12_GLOBAL__N_16k_lq8wILi4ELi16ELi1EEEvPKhPKtPtll',
-                   host_identity_rva='0x18d66f0', registration_rva='0x184b7be', gpu_entry_rva='0x2d7800', descriptor_rva='0x1fa640', M=4)]
-    if any(replay.get(key) != value for key, value in required.items()) or replay.get('kernels') != kernels:
-        raise RuntimeError('Original kernel/schema/ABI/arithmetic receipt differs')
-    runtime_required = dict(schema='halogen0162.fc-image-runtime-binding.v1', phase='validated-before-exec',
-        fixture_manifest_sha256='ae61a7924d985b1fd35e5d87eabd47736dbf20b91958bd5d7003dcf1cdb84f11',
-        fixture_preparer_sha256='1fadd3b89872e6a1f9c1d5fecfd459e20c556b2d9039581ca2469ae1a435500c',
+def validate_receipts(replay, runtime, fixture, wrapper_sha, binary, binary_sha):
+    required = dict(schema='halogen0162.embedding-rms-original-kernel-replay.v1', passed=True,
+        engine_sha256=ENGINE_SHA, codeobject_sha256=CODE_SHA,
+        kernel_symbol='_ZN7halogen12_GLOBAL__N_117k_rmsnorm_groupedEPKtS2_Ptii',
+        host_identity_rva='0x18d5160', registration_rva='0x1848906',
+        gpu_entry_rva='0x22d200', descriptor_rva='0x1f6cc0',
+        embedding_host_launch_return_rva='0x17db51c', codeobject_engine_offset=331776, codeobject_bytes=17704408,
+        width=2560, groups=1, tensor_bytes=5120, grid=[1,1,1], block=[256,1,1],
+        shared_bytes=0, default_stream=True, static_lds_bytes=1024, wave_size=32,
+        kernarg_bytes=288, kernarg_alignment=8, hidden_arguments=True,
+        user_argument_offsets=[0,8,16,24,28], user_argument_types=['u16*','u16*','u16*','i32','i32'],
+        input_output_alias=True, raw_gamma_copied_unchanged=True, epsilon_fp32_bits='0x358637bd',
+        native_arithmetic='strided FP32 square FMA; LDS pairwise FP32 reduction; full width mean plus epsilon; native rsq; FP32 x*inverse then*(1+raw BF16 gamma); BF16 RNE store',
+        table_gather_replayed=False, full_D_parity_qualified=False, full_head_qualified=False,
+        acceptance_claim=False, speed_claim=False, tolerance_adjustment=False, arithmetic_fitting=False,
+        logical_calls=2, launch_attempts=2, launches_ok=2, synchronizations_ok=2, copies_ok=6,
+        allocations_ok=2, free_ok=2, module_loads=1, module_unloads=1, cleanup_errors=0,
+        file_close_errors=0, immutable_files_rechecked=True, output_files_written=2, error='', error_code=0,
+        runtime_sha256=HIP_SHA)
+    if any(replay.get(key) != value for key,value in required.items()):
+        raise RuntimeError('Original embedding RMS kernel/schema/ABI/arithmetic receipt differs')
+    runtime_required = dict(schema='halogen0162.embedding-rms-image-runtime-binding.v1', phase='validated-before-exec',
+        binary_source_path=binary, replay_sha256=binary_sha,
+        fixture_manifest_sha256=FIXTURES_SHA, fixture_preparer_sha256=PREPARER_SHA,
         outer_exclusive_gpu_guard_acknowledged=True, outer_owned_job_guard_required=True,
         host_server_observation_performed=False, admission_gib=22, reserve_gib=18,
         read_only_image_required=True, candidate_fixture_mounts_read_only_required=True,
-        models_required=False, model_reads_performed=False, halogen_lq8_wave='1',
-        embedding_rms_qualified=False, full_d_qualified=False, full_head_qualified=False,
-        acceptance_claim=False, speed_claim=False, arithmetic_fitting=False, tolerance_adjustment=False)
-    if any(runtime.get(key) != value for key, value in runtime_required.items()):
+        models_required=False, model_reads_performed=False, table_gather_replayed=False,
+        raw_gamma_copied_unchanged=True, input_output_alias=True, embedding_rms_qualified=False,
+        full_d_qualified=False, full_head_qualified=False, acceptance_claim=False, speed_claim=False,
+        arithmetic_fitting=False, tolerance_adjustment=False, input_provenance=fixture['bindings'])
+    if any(runtime.get(key) != value for key,value in runtime_required.items()):
         raise RuntimeError('Image wrapper guard/scope/fixture binding differs')
     bindings = runtime['file_bindings']
-    fixed = {'wrapper': ('/candidate/wrapper.py', wrapper_sha),
-        'fc_source': ('/candidate/halogen0162_fc_replay.c', '8535dbe608b49f8bbad8a962359de59e78df1bd0b9cae922045277b6a1d77826'),
-        'replay': ('/candidate/replay', BINARY_SHA),
-        'bridge': ('/usr/lib/librocdxg.so', '0de8e26350933754d3d9ead9446c39e04792a2bef68d1b6df97950d07312b9d6'),
-        'engine': ('/candidate/flash_serve', required['engine_sha256']),
-        'codeobject': ('/candidate/engine-gfx1151.hsaco', required['codeobject_sha256']),
-        'fixtures': ('/fixtures/fixtures.json', runtime_required['fixture_manifest_sha256'])}
-    for short, branch in (('e', 'embedding'), ('h', 'hidden')):
-        row = fixture['raw_weights'][short]
-        fixed[short + '_weight'] = ('/fixtures/' + row['file'], row['sha256'])
-        if replay['raw_weight_sha256'][branch] != row['sha256']:
-            raise RuntimeError('Native raw-weight lineage differs')
-    for label in ('A', 'B'):
-        for short in ('e', 'h'):
-            row = fixture['inputs'][label][short]
-            fixed[label + '_' + short] = ('/fixtures/' + row['file'], row['sha256'])
-    if any((bindings[key]['path'], bindings[key]['sha256']) != value for key, value in fixed.items()):
-        raise RuntimeError('Wrapper file hashes/paths differ from root/C/fixtures')
-    hip_sha = replay['runtime_sha256']
-    if (not isinstance(hip_sha, str) or len(hip_sha) != 64 or any(c not in '0123456789abcdef' for c in hip_sha) or
-            runtime['sha256'] != hip_sha or bindings['hip']['sha256'] != hip_sha or
+    fixed = {'wrapper':('/candidate/wrapper.py',wrapper_sha),
+        'rms_source':('/candidate/halogen0162_embedding_rms_replay.c',SOURCE_SHA),
+        'replay':('/candidate/replay',binary_sha), 'bridge':('/usr/lib/librocdxg.so',BRIDGE_SHA),
+        'engine':('/candidate/flash_serve',ENGINE_SHA), 'codeobject':('/candidate/engine-gfx1151.hsaco',CODE_SHA),
+        'fixtures':('/fixtures/fixtures.json',FIXTURES_SHA),
+        'gamma':('/fixtures/raw-gamma.u16',GAMMA_SHA)}
+    for row in fixture['rows']:
+        label = row['label']
+        item = row['files'][label+'-input.u16']
+        fixed[label+'_input'] = ('/fixtures/'+item['file'],item['sha256'])
+    if any((bindings[key]['path'],bindings[key]['sha256']) != value for key,value in fixed.items()):
+        raise RuntimeError('Wrapper paths/hashes differ from root/C/fixtures')
+    if (runtime['sha256'] != HIP_SHA or bindings['hip']['sha256'] != HIP_SHA or
             bindings['hip']['path'] != runtime['library']):
         raise RuntimeError('Exact installed HIP path/hash binding differs')
-    command = ['/candidate/replay', '/candidate/flash_serve', '/candidate/engine-gfx1151.hsaco', runtime['library'], hip_sha]
-    for key in ('e_weight', 'h_weight', 'A_e', 'A_h', 'B_e', 'B_h'):
-        command.extend([bindings[key]['path'], bindings[key]['sha256']])
+    command = ['/candidate/replay','/candidate/flash_serve','/candidate/engine-gfx1151.hsaco',runtime['library'],HIP_SHA]
+    for key in ('A_input','gamma','B_input','gamma'):
+        command.extend([bindings[key]['path'],bindings[key]['sha256']])
     command.append('/result/native')
-    if runtime['command'] != command or len(command) != 18 or len(replay.get('fixtures', [])) != 4:
-        raise RuntimeError('Exact FC execution arguments/fixture count differ')
-    for li, label in enumerate(('A', 'B')):
-        for bi, (short, branch, streams) in enumerate((('e', 'embedding', 1), ('h', 'hidden', 4))):
-            row = fixture['inputs'][label][short]
-            expected = dict(id=label + '-' + branch, input_sha256=row['sha256'],
-                output_file=label + '-' + branch + '-fc-u16.bin', input_bytes=row['bytes'], output_bytes=row['bytes'],
-                streams=streams, vectors_completed=streams, output_copied=True, completed=True, nonfinite_output=0)
-            if any(replay['fixtures'][li * 2 + bi].get(key) != value for key, value in expected.items()):
-                raise RuntimeError('Native FC input/output completion binding differs')
+    if runtime['command'] != command or len(command) != 14 or len(replay.get('fixtures',[])) != 2:
+        raise RuntimeError('Exact embedding RMS execution arguments/fixture count differ')
+    for index,row in enumerate(fixture['rows']):
+        label = row['label']
+        expected = dict(id=label,input_sha256=row['files'][label+'-input.u16']['sha256'],
+            raw_gamma_sha256=GAMMA_SHA, output_file=label+'-embedding-rms-u16.bin',
+            input_bytes=5120,gamma_bytes=5120,output_bytes=5120,output_copied=True,completed=True,nonfinite_output=0)
+        if any(replay['fixtures'][index].get(key) != value for key,value in expected.items()):
+            raise RuntimeError('Native RMS input/gamma/output completion binding differs')
 
 
-def compare(out, fixture, replay, replay_sha):
+def compare(out,fixture,replay,replay_sha):
     rows = []
-    for label_index, label in enumerate(('A', 'B')):
-        for branch_index, (short, branch, count) in enumerate((('e', 'embedding', 2560), ('h', 'hidden', 10240))):
-            replay_row = replay['fixtures'][label_index * 2 + branch_index]
-            name = label + '-' + branch + '-fc-u16.bin'
-            actual_path = out / 'native' / name
-            raw, output_sha = capture(actual_path, count * 2, replay_row['output_sha256'], count * 2)
-            if (len(raw) != count * 2 or replay_row['id'] != label + '-' + branch or
-                    replay_row['output_file'] != name or replay_row['output_sha256'] != output_sha or
-                    replay_row['input_sha256'] != fixture['inputs'][label][short]['sha256']):
-                raise RuntimeError('Native output/input/receipt binding differs')
-            actual = struct.unpack('<' + str(count) + 'H', raw)
-            values = [struct.unpack('<f', struct.pack('<I', word << 16))[0] for word in actual]
-            if not all(math.isfinite(value) for value in values):
-                raise RuntimeError('Native projection contains nonfinite values')
-            row = dict(label=label, branch=branch, output_sha256=output_sha, comparisons={})
-            refs = fixture['references'][label][short]
-            for lineage, item in (('original_decoded_FP32_numpy', refs['bf16']),
-                                  ('BF16_weight_numpy', refs['bf16_weight_reference']['bf16'])):
-                ref_path = FIXTURES / item['file']
-                if ref_path.parent != FIXTURES or item['bytes'] != count * 2:
-                    raise RuntimeError('Bounded independent frozen projection reference differs')
-                ref_raw, _ = capture(ref_path, count * 2, item['sha256'], count * 2)
-                expected = struct.unpack('<' + str(count) + 'H', ref_raw)
-                reference = [struct.unpack('<f', struct.pack('<I', word << 16))[0] for word in expected]
-                row['comparisons'][lineage] = dict(exact_word_mismatches=sum(a != b for a, b in zip(actual, expected)),
-                    max_abs_error=max(abs(a - b) for a, b in zip(values, reference)),
-                    outside_frozen_cpu_tolerance=sum(abs(a - b) > .0002 + .002 * abs(b) for a, b in zip(values, reference)),
-                    tolerance=dict(rtol=.002, atol=.0002), informational_only=True)
-            rows.append(row)
-    return dict(scope='four original Q8 FC calls on frozen normalized A/B; seed/full-head/NPU excluded',
-                replay_sha256=replay_sha, rows=rows, tolerance_adjustment=False,
-                arithmetic_fitting=False, speed_claim=False)
+    for index,fixture_row in enumerate(fixture['rows']):
+        label = fixture_row['label']
+        replay_row = replay['fixtures'][index]
+        name = label+'-embedding-rms-u16.bin'
+        raw,output_sha = capture(out/'native'/name,5120,replay_row['output_sha256'],5120)
+        actual = struct.unpack('<2560H',raw)
+        values = [struct.unpack('<f',struct.pack('<I',word<<16))[0] for word in actual]
+        if not all(math.isfinite(value) for value in values):
+            raise RuntimeError('Native embedding RMS contains nonfinite values')
+        row = dict(label=label,output_sha256=output_sha,comparisons={})
+        for lineage,suffix in (('original_NumPy_RMS','-numpy-rms.u16'),('original_ORT_RMS','-ort-rms.u16')):
+            item = fixture_row['files'][label+suffix]
+            ref_path = FIXTURES/item['file']
+            if ref_path.parent != FIXTURES or item['bytes'] != 5120 or item['file'] != label+suffix:
+                raise RuntimeError('Bounded frozen normalization reference differs')
+            ref_raw,_ = capture(ref_path,5120,item['sha256'],5120)
+            expected = struct.unpack('<2560H',ref_raw)
+            reference = [struct.unpack('<f',struct.pack('<I',word<<16))[0] for word in expected]
+            if not all(math.isfinite(value) for value in reference):
+                raise RuntimeError('Frozen normalization reference contains nonfinite values')
+            row['comparisons'][lineage] = dict(
+                exact_word_mismatches=sum(a!=b for a,b in zip(actual,expected)),
+                max_abs_error=max(abs(a-b) for a,b in zip(values,reference)),
+                outside_frozen_cpu_tolerance=sum(abs(a-b)>.0002+.002*abs(b) for a,b in zip(values,reference)),
+                tolerance=dict(rtol=.002,atol=.0002),informational_only=True)
+        rows.append(row)
+    return dict(scope='two original in-place embedding RMS calls on frozen A/B; table-gather/full-D/head/NPU excluded',
+        replay_sha256=replay_sha,rows=rows,tolerance_adjustment=False,arithmetic_fitting=False,speed_claim=False)
 
 
-def run(wrapper_sha):
-    if len(wrapper_sha) != 64 or any(c not in '0123456789abcdef' for c in wrapper_sha):
-        raise ValueError('Independent lowercase wrapper SHA256 required')
-    pins = {SOURCE: '8535dbe608b49f8bbad8a962359de59e78df1bd0b9cae922045277b6a1d77826',
+def run(wrapper_sha,controller_sha,binary,binary_sha):
+    for value in (wrapper_sha,controller_sha,binary_sha):
+        if not isinstance(value,str) or len(value)!=64 or any(c not in '0123456789abcdef' for c in value):
+            raise ValueError('Independent lowercase wrapper/controller/binary SHA256 required')
+    if re.fullmatch(BINARY_PATTERN,binary) is None:
+        raise ValueError('Exact root-compiled embedding RMS replay path required')
+    pins = {SOURCE: SOURCE_SHA,
         WRAPPER: wrapper_sha,
-        HSACO: '45941c0579dc3487d07978a50c85cbaa141bbb674b225e708e82d81397334a83',
-        BACKEND / '.local/flash_serve': 'ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b',
-        FIXTURES / 'fixtures.json': 'ae61a7924d985b1fd35e5d87eabd47736dbf20b91958bd5d7003dcf1cdb84f11',
+        HSACO: CODE_SHA,
+        BACKEND / '.local/flash_serve': ENGINE_SHA,
+        FIXTURES / 'fixtures.json': FIXTURES_SHA,
         ROOT / 'server/host_frames.py': '417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8',
         ROOT / 'server/winjob.py': '3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c'}
-    pins[Path(__file__)] = sha(__file__)
+    pins[Path(__file__)] = controller_sha
     for path, expected in pins.items():
         if sha(path) != expected:
             raise ValueError('Sealed input/source changed: ' + str(path))
@@ -209,13 +211,13 @@ def run(wrapper_sha):
         raise RuntimeError('User engine remains active; replay deferred without shutdown')
     backend.configure()
     idle()
-    binary_sha = backend.invoke(backend.WSL + ['sha256sum', BINARY], timeout=20).split()[0]
-    if binary_sha != BINARY_SHA:
+    observed_binary_sha = backend.invoke(backend.WSL + ['sha256sum', binary], timeout=20).split()[0]
+    if observed_binary_sha != binary_sha:
         raise ValueError('Root-compiled original-kernel replay binary changed')
     fixture_raw, _ = capture(FIXTURES / 'fixtures.json', 1 << 20, pins[FIXTURES / 'fixtures.json'])
     fixture = json.loads(fixture_raw)
     identity = uuid.uuid4().hex
-    name = 'alloy-fc-original-' + identity
+    name = 'alloy-embedding-rms-original-' + identity
     out = WORK / name
     out.mkdir(exist_ok=False)
 
@@ -242,7 +244,7 @@ def run(wrapper_sha):
     def verify_container():
         info = backend.inspect(cid)
         if (info['Id'] != cid or info['Name'] != '/' + name or info['Config']['Image'] != IMAGE or
-                info['Config']['Labels'].get('strix-alloy.fc-original') != identity):
+                info['Config']['Labels'].get('strix-alloy.embedding-rms-original') != identity):
             raise RuntimeError('Owned container identity differs')
         return info
 
@@ -250,14 +252,14 @@ def run(wrapper_sha):
         # A create timeout may occur after the daemon created our container.
         # Recover only its exact UUID name, label and image; never delete by prefix.
         found = backend.docker('ps', '-aq', '--no-trunc', '--filter', 'name=^/' + name + '$',
-                               '--filter', 'label=strix-alloy.fc-original=' + identity, timeout=20).split()
+                               '--filter', 'label=strix-alloy.embedding-rms-original=' + identity, timeout=20).split()
         if not found:
             return None
         if len(found) != 1:
             raise RuntimeError('Ambiguous exact owned container recovery')
         info = backend.inspect(found[0])
         if (info['Id'] != found[0] or info['Name'] != '/' + name or info['Config']['Image'] != IMAGE or
-                info['Config']['Labels'].get('strix-alloy.fc-original') != identity):
+                info['Config']['Labels'].get('strix-alloy.embedding-rms-original') != identity):
             raise RuntimeError('Recovered container ownership differs')
         return found[0]
 
@@ -282,8 +284,8 @@ def run(wrapper_sha):
     try:
         reserve(22)
         monitor.start()
-        mounts = {'/candidate/replay': BINARY,
-            '/candidate/halogen0162_fc_replay.c': backend.linux_path(SOURCE),
+        mounts = {'/candidate/replay': binary,
+            '/candidate/halogen0162_embedding_rms_replay.c': backend.linux_path(SOURCE),
             '/candidate/flash_serve': backend.linux_path(BACKEND / '.local/flash_serve'),
             '/candidate/engine-gfx1151.hsaco': backend.linux_path(HSACO),
             '/candidate/wrapper.py': backend.linux_path(WRAPPER),
@@ -296,7 +298,7 @@ def run(wrapper_sha):
             '--device=/dev/dxg', '--memory=2g', '--memory-swap=2g', '--pids-limit=128',
             '--ipc=private', '--shm-size=64m', '--ulimit=core=0:0', '--ulimit=memlock=-1:-1',
             '--security-opt=seccomp=unconfined', '--security-opt=label=disable',
-            '--tmpfs=/tmp:rw,size=64m', '--label=strix-alloy.fc-original=' + identity]
+            '--tmpfs=/tmp:rw,size=64m', '--label=strix-alloy.embedding-rms-original=' + identity]
         for dest, source in sorted(mounts.items()):
             args += ['--mount', 'type=bind,src=' + source + ',dst=' + dest + ',readonly']
         args += ['--mount', 'type=bind,src=' + backend.linux_path(out) + ',dst=/result',
@@ -304,9 +306,10 @@ def run(wrapper_sha):
             '--env=HSA_DISABLE_COREDUMP_ON_EXCEPTION=1',
             '--env=LD_LIBRARY_PATH=/usr/lib:/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib:/usr/local/lib/python3.12/site-packages/_rocm_sdk_libraries/lib',
             '--entrypoint=timeout', IMAGE, '--signal=TERM', '--kill-after=5s', '60s',
-            'python3', '/candidate/wrapper.py', '--source-sha256', wrapper_sha, '--outer-exclusive-gpu-guard']
+            'python3', '/candidate/wrapper.py', '--source-sha256', wrapper_sha,
+            '--binary-source-path', binary, '--replay-sha256', binary_sha, '--outer-exclusive-gpu-guard']
         write('plan.json', dict(schema=1, identity=identity, image=IMAGE, source_pins={str(p): v for p, v in pins.items()},
-            binary_sha256=binary_sha, command=args, native_kernel_calls=4, models_mounted=False,
+            binary_path=binary, binary_sha256=binary_sha, command=args, native_kernel_calls=2, models_mounted=False,
             npu_initialized=False, timing_claim=False, admission_gib=22, runtime_reserve_gib=18))
         idle()
         create_attempted = True
@@ -344,7 +347,7 @@ def run(wrapper_sha):
         replay = json.loads(replay_raw)
         runtime_raw, runtime_sha = capture(out / 'runtime.json', 65536)
         runtime = json.loads(runtime_raw)
-        validate_receipts(replay, runtime, fixture, wrapper_sha)
+        validate_receipts(replay, runtime, fixture, wrapper_sha, binary, binary_sha)
         comparisons = compare(out, fixture, replay, replay_sha)
         comparisons['runtime_binding_sha256'] = runtime_sha
         capture(out / 'native/replay.json', 32768, replay_sha)
@@ -412,4 +415,8 @@ def run(wrapper_sha):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--wrapper-sha256', required=True)
-    raise SystemExit(run(parser.parse_args().wrapper_sha256))
+    parser.add_argument('--controller-sha256', required=True)
+    parser.add_argument('--binary', required=True)
+    parser.add_argument('--binary-sha256', required=True)
+    options = parser.parse_args()
+    raise SystemExit(run(options.wrapper_sha256,options.controller_sha256,options.binary,options.binary_sha256))

@@ -1,0 +1,351 @@
+{
+  "schema": "halogen0162.embedding-and-native-d-cpu-preparation.v1",
+  "timestamp_utc": "2026-10-04T19:07:29.448589+00:00",
+  "scope": "CPU frozen fixture preparation, host GCC build, exact ELF function/capture read and protobuf graph composition",
+  "sources": {
+    "scripts/benchmarks/halogen0162_embedding_rms_replay.c": "7ea99028014f590a0938d5a06790f51ce571948706d851c16bfcb72f694f4fa8",
+    "scripts/benchmarks/halogen0162_embedding_rms_image_wrapper.py": "185b1bcee0787284752bd2223748393f773b3735c17d6871d80d4124358d75d7",
+    "scripts/benchmarks/halogen0162_embedding_rms_owned_run.py": "2a8bd797a6078f35b54a24e46742a2954f3156223069eb35ff7cb77a5f85fd66",
+    "scripts/benchmarks/halogen0162_fc_owned_run.py": "4377babdf8befd0481bd27e68a0c963e580a4285e0d0874c2700c03ac1a92152",
+    "scripts/benchmarks/halogen_npu_v2_d_native_graph.py": "978353f091d49ccbe1b3031d5c67cff24391ee6c931bf08b5d89a04ac1e45567"
+  },
+  "owned_windows": {
+    "embedding_fixtures": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-cpu-prepare-78c49b8e265c4de9adb9c0cf3cc8254e\\result.json",
+        "sha256": "48840f0b6425347fdda0e0f8c476fb7a369eb2481bfce16591d31c2fc31fbefd"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "fixtures",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-fixtures.py",
+              "--out",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-fixtures-78c49b8e265c4de9adb9c0cf3cc8254e"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 45,
+            "started": 1791140242.6620586,
+            "owned_identity": {
+              "pid": 22716,
+              "creation_time_100ns": 134356138426648498,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791140243.108052
+          }
+        ],
+        "config_sha256": "07e3113cc0ad0cccda1dc48545b1ab65f1b9d9f0d4f07c6e1c5fe7713eb13a6c",
+        "final_memory": {
+          "available_bytes": 27325317120,
+          "committed_bytes": 114032136192,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 126107303936
+        },
+        "minimum_physical_gib": 25.400230407714844,
+        "minimum_commit_gib": 117.38685989379883,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "embedding_host_compile": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-compile-9b772ea1c64141039885b462700f091a\\result.json",
+        "sha256": "7c27a82d0861c4a430efead6bdd53d20ab63fd47977e563e47e080cba4b349db"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "compile",
+            "command": [
+              "C:\\Windows\\System32\\wsl.exe",
+              "-d",
+              "Ubuntu-24.04",
+              "-u",
+              "revn",
+              "--exec",
+              "gcc",
+              "-O2",
+              "-Wall",
+              "-Wextra",
+              "-Werror",
+              "-D__HIP_PLATFORM_AMD__",
+              "-I/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.16.2/.local/hip-include",
+              "/mnt/c/Projects/strix-alloy-clean/scripts/benchmarks/halogen0162_embedding_rms_replay.c",
+              "-ldl",
+              "-lcrypto",
+              "-o",
+              "/home/revn/halogen-re/embedding-rms-replay-9b772ea1c64141039885b462700f091a"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 45,
+            "started": 1791140528.287822,
+            "owned_identity": {
+              "pid": 24104,
+              "creation_time_100ns": 134356141282907246,
+              "executable": "C:\\Windows\\System32\\wsl.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791140529.06918
+          },
+          {
+            "name": "binary-hash",
+            "command": [
+              "C:\\Windows\\System32\\wsl.exe",
+              "-d",
+              "Ubuntu-24.04",
+              "-u",
+              "revn",
+              "--exec",
+              "sha256sum",
+              "/home/revn/halogen-re/embedding-rms-replay-9b772ea1c64141039885b462700f091a"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 15,
+            "started": 1791140529.0716944,
+            "owned_identity": {
+              "pid": 22696,
+              "creation_time_100ns": 134356141290740260,
+              "executable": "C:\\Windows\\System32\\wsl.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791140529.180566
+          }
+        ],
+        "config_sha256": "92371786a6a048c2fd5da787ee6920a9f6aba3de4c361ad4eb96538e68dca55f",
+        "final_memory": {
+          "available_bytes": 27359289344,
+          "committed_bytes": 114013134848,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 126126305280
+        },
+        "minimum_physical_gib": 25.46869659423828,
+        "minimum_commit_gib": 117.44552230834961,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "dispatcher_and_capture_read": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dispatch-read-384a4299ed2d4c5a8af4231c5d305586\\result.json",
+        "sha256": "afc88e19bfec5dbe81d04e72f12be4500f8bc6a77f7311384d46719ed463eca1"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "read",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dispatch-function-read.py",
+              "--out",
+              "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dispatch-read-384a4299ed2d4c5a8af4231c5d305586\\dispatch.json"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 30,
+            "started": 1791140540.7388492,
+            "owned_identity": {
+              "pid": 17672,
+              "creation_time_100ns": 134356141407423884,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791140540.959982
+          }
+        ],
+        "config_sha256": "f129833d35ea346638d47c47b31ec79478afe4e5613a2efa611d58d4e1ac002f",
+        "final_memory": {
+          "available_bytes": 27356917760,
+          "committed_bytes": 114010423296,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 126129016832
+        },
+        "minimum_physical_gib": 25.484722137451172,
+        "minimum_commit_gib": 117.46549606323242,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    },
+    "native_d_graph_build": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-d-build-473354cdb57a4e5f8e910f341d58024f\\result.json",
+        "sha256": "73cbec47e12a9b4e91b8ada06d9946b3697ec196c89866643d83fb0ea37ac309"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "build",
+            "command": [
+              "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe",
+              "-B",
+              "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_v2_d_native_graph.py",
+              "--source-model",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-prepare.onnx",
+              "--source-build-receipt",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-prepare.onnx.json",
+              "--source-build-receipt-sha256",
+              "06bba1a8bb9658047ce12292becf7bbee9d639498a345aaf3019af4540bcfd99",
+              "--output",
+              "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-473354cdb57a4e5f8e910f341d58024f.onnx",
+              "--wire-mode",
+              "D"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 45,
+            "started": 1791140705.2947712,
+            "owned_identity": {
+              "pid": 26116,
+              "creation_time_100ns": 134356143053008396,
+              "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791140705.8586195
+          }
+        ],
+        "config_sha256": "1b6746b1e89c825dc1cae5ab9d57b8a5a7156df178807bf372cad65c5d477f72",
+        "final_memory": {
+          "available_bytes": 27351994368,
+          "committed_bytes": 113977847808,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 126161592320
+        },
+        "minimum_physical_gib": 25.43585205078125,
+        "minimum_commit_gib": 117.44813919067383,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      }
+    }
+  },
+  "embedding_fixture_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-fixtures-78c49b8e265c4de9adb9c0cf3cc8254e\\fixtures.json",
+    "sha256": "cf7ae0ed36d323ae32b6664ed080bc2b3cdd44863878d51719b53ddef9f72246"
+  },
+  "raw_embedding_gamma_sha256": "04c4a570850e06f2d8913da8220d54d4c7f87db6eb6d45480b938e8ba41d6a86",
+  "original_embedding_replay_binary": {
+    "path": "/home/revn/halogen-re/embedding-rms-replay-9b772ea1c64141039885b462700f091a",
+    "sha256": "22d7159d69d4a8ca6753be7bef60773dae2015ed206c435e1f9f270594b1d6d2"
+  },
+  "dispatcher_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dispatch-read-384a4299ed2d4c5a8af4231c5d305586\\dispatch.json",
+    "sha256": "9518b78d43b19e16386cddf5c74c4bac2229acbcdc0c1326d1ff8db5f23992fe"
+  },
+  "dispatcher_read": {
+    "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+    "regions": {
+      "fc_dispatcher": {
+        "rva": 24694672,
+        "end_rva": 24702887,
+        "file_offset": 24690576,
+        "bytes": 8215,
+        "sha256": "f8f9d77041011251d11d0b97d7298926aa053d5435310826a00c408e5bff24e9",
+        "first32": "554157415641554154534883ec484c89cb4589c589cd4989d64989f74989fc4c"
+      },
+      "full_head": {
+        "rva": 25015056,
+        "end_rva": 25019017,
+        "file_offset": 25010960,
+        "bytes": 3961,
+        "sha256": "132f2da76d86694ffe5f120d61e304e57c685f3db72935c6d5e61bf7b0d5cc20",
+        "first32": "554157415641554154534881ec98000000b8ffffffff80bf00090000010f8531"
+      }
+    },
+    "windows_bounded_capture_verified": true,
+    "capture_bytes": 5120,
+    "capture_sha256": "04c4a570850e06f2d8913da8220d54d4c7f87db6eb6d45480b938e8ba41d6a86",
+    "engine_executed": false,
+    "model_payload_read": false,
+    "provider_initialized": false
+  },
+  "native_d_graph": {
+    "receipt": {
+      "path": "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-473354cdb57a4e5f8e910f341d58024f.onnx.json",
+      "sha256": "03e89f6c5652206a36766a1ba88b7272172a596b20602ca2c992f4b3a561f361"
+    },
+    "model": "C:\\AI\\halogen-mtp-npu\\v2-d-prepare-20261004\\d-native-473354cdb57a4e5f8e910f341d58024f.onnx",
+    "model_sha256": "0f3da669a0ff20473dd6c3565081a367e61305cfb34d5fab021ef274574488f5",
+    "data_sha256": "a220218d57d4eb9c5cd7231bd696c394a226da5a529fb51cb8c8cbe5e7be379f",
+    "data_bytes": 52480000,
+    "output_shapes": {
+      "seed": [
+        1,
+        10240
+      ],
+      "e_partial_sums": [
+        1,
+        10,
+        1
+      ],
+      "h_partial_sums": [
+        1,
+        40,
+        1
+      ],
+      "e_norm": [
+        1,
+        2560
+      ],
+      "h_norm": [
+        1,
+        10240
+      ],
+      "e_projection": [
+        1,
+        2560
+      ],
+      "h_projection": [
+        4,
+        2560
+      ]
+    },
+    "original_external_data_unchanged": true,
+    "weight_lineage": "BF16-rounded-original-decoded-FP32",
+    "native_arithmetic_qualified": false
+  },
+  "preserved_failed_cpu_attempt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\embedding-rms-cpu-prepare-f7f8e60b51904195ad34717bfc93b7f3",
+  "fixed_cause": "Windows path/descriptor ctime values differ; birthtime matches across APIs and ctime remains checked within each API",
+  "fixture_cpu_session_creations": 0,
+  "fixture_cpu_inference_calls": 0,
+  "original_embedding_gpu_execution": false,
+  "original_fc_gpu_execution": false,
+  "graph_provider_sessions": 0,
+  "npu_execution": false,
+  "full_d_qualified": false,
+  "full_head_qualified": false,
+  "acceptance_improvement_qualified": false,
+  "speed_improvement_qualified": false,
+  "full_goal_completed": false,
+  "user_engine_preserved": {
+    "pid": 10048,
+    "run_id": "c5fd81b1e4cb47b3a6cd3ba1f6ead0cc",
+    "context": 262144
+  }
+}
