@@ -3,8 +3,10 @@
  * Default: no detours. HALOGEN_MTP_FC_QUALITY=shadow4-v1,
  * HALOGEN_MTP_FC_QUALITY_DIR=/tmp/alloy-mtp-fc-quality-<32 lowercase hex>,
  * and explicit HALOGEN_MTP_WIRE=D are required. The constructor creates the
- * directory exclusively; root subsequently publishes the exact 120-byte armed
- * descriptor. There is no skip mode: each original e/h FC executes once.
+ * directory exclusively. One unarmed native head may publish observed.bin;
+ * root then binds that observation and publishes the exact 120-byte armed
+ * descriptor before any further head. There is no skip mode: each original
+ * e/h FC executes once. Discovery reads host identity/descriptor values only.
  * This source does not qualify transport, reset interception, integration,
  * arithmetic, NPU execution, parity, acceptance, or performance.
  * Root-only build: gcc -O2 -Wall -Wextra -Werror -shared -fPIC
@@ -62,6 +64,7 @@
 #define REQUEST_BODY_BYTES (2U*PAIR_BYTES)
 #define MAX_CALLS 4U
 #define WAIT_NS 200000000ULL
+#define ARMWAIT_NS 2000000000ULL
 #define LOG_LIMIT 32768U
 #ifndef RENAME_NOREPLACE
 #define RENAME_NOREPLACE 1U
@@ -98,12 +101,30 @@ struct header {
 };
 struct request {struct header header;unsigned char body[REQUEST_BODY_BYTES];};
 struct response {struct header header;unsigned char body[PAIR_BYTES],digest[32];};
+struct observation {
+    unsigned char magic[8];
+    uint32_t version,record_bytes;
+    unsigned char nonce[16];
+    uint32_t pid,reserved;
+    uint64_t starttime,head_caller,model;
+    int32_t sequence,count,position,token,slot,outer_position;
+    uint32_t wire,wire_guard;
+    uint64_t tokens,e_input,e_output,h_input,h_output,seed,e_descriptor_address,h_descriptor_address,e_weight,h_weight;
+    unsigned char e_descriptor[DESCRIPTOR_BYTES],h_descriptor[DESCRIPTOR_BYTES];
+    int32_t head_result,head_errno,outer_position_after;
+    uint32_t reserved_after;
+    unsigned char digest[32];
+};
 _Static_assert(sizeof(struct armed)==120 && offsetof(struct armed,model)==48 &&
                offsetof(struct armed,model_binding)==56,"armed wire ABI");
 _Static_assert(sizeof(struct header)==224 && offsetof(struct header,nonce)==48 &&
                offsetof(struct header,model)==80 && offsetof(struct header,model_binding)==96 &&
                offsetof(struct header,request_binding)==192,"FC header ABI");
 _Static_assert(sizeof(struct request)==51424 && sizeof(struct response)==25856,"FC packet extents");
+_Static_assert(sizeof(struct observation)==464 && offsetof(struct observation,starttime)==40 &&
+               offsetof(struct observation,tokens)==96 && offsetof(struct observation,e_descriptor)==176 &&
+               offsetof(struct observation,head_result)==416 && offsetof(struct observation,digest)==432,
+               "discovery observation ABI");
 typedef int32_t (*head_fn)(void *,const int32_t *,int32_t,int32_t);
 typedef void (*fc_fn)(void *,const uint16_t *,uint16_t *,int32_t,int32_t,int64_t);
 typedef struct {unsigned x,y,z;} hip_dim3;
@@ -116,7 +137,7 @@ struct context {
     int32_t token,count,position,slot,outer_position,head_result,head_errno;
     unsigned sequence,e_calls,h_calls,phase,original_calls[2],launches[2],launch_ok[2];
     unsigned sync_attempts,sync_ok,copy_attempts,copy_ok,restore_attempts,restore_ok;
-    unsigned captured,response_ready,published,restored,completed;
+    unsigned captured,response_ready,published,restored,completed,discovering,pair_observed,wire_guard;
     unsigned char e_descriptor[DESCRIPTOR_BYTES],h_descriptor[DESCRIPTOR_BYTES];
     char native_e_hash[65],native_h_hash[65],candidate_e_hash[65],candidate_h_hash[65];
     const char *error,*outcome;
@@ -124,6 +145,13 @@ struct context {
     struct response response;
 };
 static struct context contexts[MAX_CALLS]; /* Fixed < 320 KiB host-only staging. */
+static struct context discovery; /* One further fixed host context, no tensor capture. */
+static struct observation observed;
+_Static_assert(sizeof contexts+sizeof discovery+sizeof observed<=400U*1024U,"bounded host discovery/shadow staging");
+static uint32_t process_pid;
+static uint64_t process_starttime;
+static unsigned discovery_reserved,observed_published;
+static int32_t last_position,last_outer_position;
 static _Thread_local struct context *active;
 static _Thread_local unsigned head_depth;
 static head_fn original_head;
@@ -212,6 +240,41 @@ static int write_all(int fd,const void *data,size_t bytes) {
     }
     return 1;
 }
+/* Linux field22 is process start time in clock ticks since boot. The comm
+ * field may contain spaces/parentheses; parse after its final ')', not by a
+ * naive whitespace split. The bounded kernel file is identity, not payload. */
+static int read_process_identity(uint32_t *pid,uint64_t *starttime) {
+    int fd=open("/proc/self/stat",O_RDONLY|O_CLOEXEC|O_NOFOLLOW|O_NONBLOCK);
+    if (fd<0) return 0;
+    char record[4097];ssize_t bytes=-1;unsigned attempts=0;
+    do {bytes=read(fd,record,sizeof record-1);} while (bytes<0 && errno==EINTR && ++attempts<4);
+    int ok=bytes>0 && bytes<(ssize_t)sizeof record-1;
+    if (close(fd)) ok=0;
+    if (!ok) return 0;
+    record[bytes]=0;char *end=NULL;errno=0;
+    unsigned long parsed_pid=strtoul(record,&end,10);
+    if (errno || !end || end==record || end[0]!=' ' || end[1]!='(' ||
+        !parsed_pid || parsed_pid>INT32_MAX || parsed_pid!=(unsigned long)getpid()) return 0;
+    char *last=strrchr(end+1,')');
+    if (!last || last[1]!=' ' || !last[2]) return 0;
+    char *at=last+2;
+    for (unsigned field=3;field<=22;field++) {
+        while (*at==' ' || *at=='\t' || *at=='\n') at++;
+        if (!*at) return 0;
+        char *first=at;while (*at && *at!=' ' && *at!='\t' && *at!='\n') at++;
+        if (field==22) {
+            for (char *digit=first;digit<at;digit++) if (*digit<'0' || *digit>'9') return 0;
+            errno=0;unsigned long long ticks=strtoull(first,&end,10);
+            if (errno || end!=at || !ticks) return 0;
+            *pid=(uint32_t)parsed_pid;*starttime=(uint64_t)ticks;return 1;
+        }
+    }
+    return 0;
+}
+static int same_process(void) {
+    uint32_t pid=0;uint64_t starttime=0;
+    return read_process_identity(&pid,&starttime) && pid==process_pid && starttime==process_starttime;
+}
 /* No-follow exact regular owner-only files, unchanged handle and pathname. */
 static int read_exact_file(const char *name,void *data,size_t bytes,int pending_link) {
     int fd=openat(directory_fd,name,O_RDONLY|O_CLOEXEC|O_NOFOLLOW|O_NONBLOCK);
@@ -238,8 +301,15 @@ static int read_arm(struct armed *arm) {
         !nonzero(arm->model_binding,32) || !nonzero(arm->graph_binding,32)) return -1;
     return 1;
 }
+static int observation_live(uintptr_t model);
+static int same_observed_file(void) {
+    struct observation copy;
+    return observed_published && read_exact_file("observed.bin",&copy,sizeof copy,0)==1 &&
+        !memcmp(&copy,&observed,sizeof copy);
+}
 static int same_arm(const struct context *s) {
-    struct armed arm;return read_arm(&arm)==1 && !memcmp(&arm,&s->arm,sizeof arm) && arm.model==s->model;
+    struct armed arm;return observation_live(s->model) && same_observed_file() && read_arm(&arm)==1 &&
+        !memcmp(&arm,&s->arm,sizeof arm) && arm.model==s->model;
 }
 static int known_head_caller(uintptr_t caller) {
     return caller==0x17dcc08 || caller==0x17dcd54 || caller==0x17dcf49 || caller==0x17de236;
@@ -254,18 +324,19 @@ static int wire_D(void) {
         *(const unsigned char *)(engine_base+WIRE_GUARD_RVA)!=0;
 }
 static int stable_native(const struct context *s,int paired) {
-    if (!mapped_span(s->model,MODEL_BYTES,NULL) || !mapped_span(s->tokens,sizeof(int32_t),NULL) ||
+    if (!same_process() || !mapped_span(s->model,MODEL_BYTES,NULL) || !mapped_span(s->tokens,sizeof(int32_t),NULL) ||
         ((const unsigned char *)s->model)[0x900]!=1 || int32_at((void *)s->tokens,0)!=s->token ||
         int32_at((void *)s->model,0x220)!=s->outer_position || int32_at((void *)s->model,0xa0)!=s->slot ||
         memcmp((void *)(s->model+0x908),s->e_descriptor,DESCRIPTOR_BYTES) ||
         memcmp((void *)(s->model+0x980),s->h_descriptor,DESCRIPTOR_BYTES) || !wire_D() ||
+        *(const unsigned char *)(engine_base+WIRE_GUARD_RVA)!=s->wire_guard ||
         pointer_at((void *)s->model,0x6c8)!=s->e_input || pointer_at((void *)s->model,0xb00)!=s->e_output ||
         pointer_at((void *)s->model,0x6d0)!=s->seed) return 0;
     return !paired || (pointer_at((void *)engine_base,H_INPUT_RVA)==s->h_input &&
                        pointer_at((void *)engine_base,H_OUTPUT_RVA)==s->h_output);
 }
 static int stable(const struct context *s,int paired) {
-    if (atomic_load(&disabled) || !same_arm(s) || !stable_native(s,paired)) return 0;
+    if (atomic_load(&disabled) || (!s->discovering && !same_arm(s)) || !stable_native(s,paired)) return 0;
     lock_state();int serial=in_flight==1;unlock_state();return serial;
 }
 static int pair_spans(const struct context *s) {
@@ -276,6 +347,82 @@ static int pair_spans(const struct context *s) {
         for (unsigned j=0;j<i;j++) if (!disjoint(p[i],n[i],p[j],n[j])) return 0;
     }
     return 1;
+}
+/* Cached discovery pointer/descriptor identity is a separate admission gate;
+ * nonzero opaque manifest hashes alone never admit candidate writes. The host
+ * tokens pointer belongs to the historical discovery call and is not reused. */
+static int observation_live(uintptr_t model) {
+    return observed_published && observed.pid==process_pid && observed.starttime==process_starttime &&
+        same_process() && model==observed.model && mapped_span(model,MODEL_BYTES,NULL) &&
+        ((const unsigned char *)model)[0x900]==1 && int32_at((void *)model,0xa0)==observed.slot &&
+        !memcmp((void *)(model+0x908),observed.e_descriptor,DESCRIPTOR_BYTES) &&
+        !memcmp((void *)(model+0x980),observed.h_descriptor,DESCRIPTOR_BYTES) &&
+        pointer_at((void *)model,0x6c8)==observed.e_input && pointer_at((void *)model,0xb00)==observed.e_output &&
+        pointer_at((void *)model,0x6d0)==observed.seed &&
+        pointer_at((void *)engine_base,H_INPUT_RVA)==observed.h_input &&
+        pointer_at((void *)engine_base,H_OUTPUT_RVA)==observed.h_output && wire_D() &&
+        *(const unsigned char *)(engine_base+WIRE_GUARD_RVA)==observed.wire_guard;
+}
+static int valid_head_entry(void *model,const int32_t *tokens,int32_t count,int32_t position,uintptr_t caller) {
+    return count==1 && position>=0 && known_head_caller(caller) && same_process() &&
+        mapped_span((uintptr_t)model,MODEL_BYTES,NULL) && mapped_span((uintptr_t)tokens,sizeof *tokens,NULL) &&
+        ((const unsigned char *)model)[0x900]==1 && int32_at(tokens,0)>=0 &&
+        int32_at(model,0x220)>=0 && int32_at(model,0xa0)>=0;
+}
+static void context_entry(struct context *s,void *model,const int32_t *tokens,int32_t count,int32_t position,uintptr_t caller) {
+    s->model=(uintptr_t)model;s->tokens=(uintptr_t)tokens;s->head_caller=caller;
+    s->token=int32_at(tokens,0);s->count=count;s->position=position;
+    s->slot=int32_at(model,0xa0);s->outer_position=int32_at(model,0x220);s->seed=pointer_at(model,0x6d0);
+    memcpy(s->e_descriptor,(const unsigned char *)model+0x908,DESCRIPTOR_BYTES);
+    memcpy(s->h_descriptor,(const unsigned char *)model+0x980,DESCRIPTOR_BYTES);
+    if (!normal_descriptor(s->e_descriptor) || !normal_descriptor(s->h_descriptor)) reject(s,"head-descriptor-contract");
+}
+static int discovery_after_head(const struct context *s) {
+    /* Native installs the ABI position after seed-add; the outer position must
+     * not be compared with its pre-seed value at full-head exit. All descriptor
+     * and device buffer identities must nevertheless remain unchanged. */
+    return same_process() && mapped_span(s->model,MODEL_BYTES,NULL) &&
+        mapped_span(s->tokens,sizeof(int32_t),NULL) && int32_at((void *)s->tokens,0)==s->token &&
+        ((const unsigned char *)s->model)[0x900]==1 && int32_at((void *)s->model,0xa0)==s->slot &&
+        int32_at((void *)s->model,0x220)>=0 &&
+        !memcmp((void *)(s->model+0x908),s->e_descriptor,DESCRIPTOR_BYTES) &&
+        !memcmp((void *)(s->model+0x980),s->h_descriptor,DESCRIPTOR_BYTES) &&
+        pointer_at((void *)s->model,0x6c8)==s->e_input && pointer_at((void *)s->model,0xb00)==s->e_output &&
+        pointer_at((void *)s->model,0x6d0)==s->seed &&
+        pointer_at((void *)engine_base,H_INPUT_RVA)==s->h_input &&
+        pointer_at((void *)engine_base,H_OUTPUT_RVA)==s->h_output && wire_D() &&
+        *(const unsigned char *)(engine_base+WIRE_GUARD_RVA)==s->wire_guard && pair_spans(s);
+}
+/* Called under the all-head mutex after the original head returns, before the
+ * in-flight count is released. Exactly one fixed record; no device copies. */
+static int publish_observation(struct context *s) {
+    struct armed premature;
+    if (observed_published || in_flight!=1 || atomic_load(&disabled) || s->error ||
+        !s->pair_observed || s->head_result<0 || !discovery_after_head(s) || read_arm(&premature)!=0) return 0;
+    memcpy(observed.magic,"HGNFCO01",8);observed.version=1;observed.record_bytes=sizeof observed;
+    memcpy(observed.nonce,run_nonce,16);observed.pid=process_pid;observed.starttime=process_starttime;
+    observed.head_caller=s->head_caller;observed.model=s->model;observed.sequence=0;
+    observed.count=s->count;observed.position=s->position;observed.token=s->token;observed.slot=s->slot;
+    observed.outer_position=s->outer_position;observed.wire='D';observed.wire_guard=s->wire_guard;
+    observed.tokens=s->tokens;observed.e_input=s->e_input;observed.e_output=s->e_output;
+    observed.h_input=s->h_input;observed.h_output=s->h_output;observed.seed=s->seed;
+    observed.e_descriptor_address=s->model+0x908;observed.h_descriptor_address=s->model+0x980;
+    observed.e_weight=pointer_at(s->e_descriptor,0x10);observed.h_weight=pointer_at(s->h_descriptor,0x10);
+    memcpy(observed.e_descriptor,s->e_descriptor,DESCRIPTOR_BYTES);memcpy(observed.h_descriptor,s->h_descriptor,DESCRIPTOR_BYTES);
+    observed.head_result=s->head_result;observed.head_errno=s->head_errno;
+    observed.outer_position_after=int32_at((void *)s->model,0x220);
+    if (!digest_two(&observed,offsetof(struct observation,digest),NULL,0,observed.digest)) return 0;
+    int fd=openat(directory_fd,"observed.partial",O_WRONLY|O_CREAT|O_EXCL|O_CLOEXEC|O_NOFOLLOW,0600);
+    if (fd<0) return 0;
+    struct stat status;int ok=!fstat(fd,&status) && S_ISREG(status.st_mode) && status.st_uid==geteuid() &&
+        status.st_nlink==1 && (status.st_mode&0777)==0600 && !status.st_size &&
+        write_all(fd,&observed,sizeof observed) && !fsync(fd);
+    if (close(fd)) ok=0;
+    if (ok && syscall(SYS_renameat2,directory_fd,"observed.partial",directory_fd,"observed.bin",RENAME_NOREPLACE)) ok=0;
+    if (!ok) {if (unlinkat(directory_fd,"observed.partial",0) && errno!=ENOENT) return 0;return 0;}
+    if (fsync(directory_fd)) return 0;
+    observed_published=1;last_position=s->position;last_outer_position=observed.outer_position_after;
+    return same_observed_file();
 }
 static void resolve_symbols(void) {
     real_launch=(launch_fn)dlsym(RTLD_NEXT,"hipLaunchKernel");
@@ -342,6 +489,36 @@ static int publish_request(struct context *s) {
 static uint64_t now_ns(void) {
     struct timespec value;if (clock_gettime(CLOCK_MONOTONIC,&value)) return 0;
     return (uint64_t)value.tv_sec*1000000000ULL+(uint64_t)value.tv_nsec;
+}
+/* One discovery rendezvous before the native caller can enter another head.
+ * The original head is complete but stays registered in-flight. Do not hold
+ * the state mutex while polling: any other head must register and invalidate
+ * this serial epoch. No device operation is performed in this wait. */
+static int await_discovery_arm(struct context *s) {
+    uint64_t started=now_ns();if (!started) return -1;
+    for (;;) {
+        uint64_t current=now_ns();if (!current || current<started) return -1;
+        if (current-started>=ARMWAIT_NS) return 0;
+        if (atomic_load(&disabled) || !observation_live(s->model) || !same_observed_file()) return -1;
+        struct armed arm;int ready=read_arm(&arm);
+        if (ready<0 || (ready==1 && arm.model!=observed.model)) return -1;
+        if (ready==1) {
+            lock_state();
+            struct armed confirmed;
+            int valid=in_flight==1 &&
+                !atomic_load(&disabled) && observation_live(s->model) && same_observed_file();
+            if (valid && (read_arm(&confirmed)!=1 || memcmp(&arm,&confirmed,sizeof arm))) valid=0;
+            current=now_ns();
+            if (!current || current<started || current-started>=ARMWAIT_NS) valid=0;
+            if (valid && epoch_armed && memcmp(&arm,&epoch_arm,sizeof arm)) valid=0;
+            if (valid) {epoch_arm=arm;epoch_armed=1;}
+            unlock_state();
+            return valid?1:-1;
+        }
+        current=now_ns();if (!current || current<started) return -1;
+        if (current-started>=ARMWAIT_NS) return 0;
+        struct timespec pause={0,10000000};if (nanosleep(&pause,NULL) && errno!=EINTR) return -1;
+    }
 }
 static int await_response(struct context *s) {
     char name[40];snprintf(name,sizeof name,"%03u-response.bin",s->sequence);
@@ -437,6 +614,7 @@ __attribute__((noinline)) static void shadow_fc(void *descriptor,const uint16_t 
         if (caller==E_RETURN_RVA) {
             s->e_calls++;s->original_calls[0]++;
             s->e_input=(uintptr_t)input;s->e_output=(uintptr_t)output;
+            s->wire_guard=*(const unsigned char *)(engine_base+WIRE_GUARD_RVA);
             if (s->e_calls!=1 || s->h_calls || descriptor!=(void *)(s->model+0x908) ||
                 n!=2560 || m!=1 || k!=2560 || !normal_descriptor(s->e_descriptor) ||
                 !disjoint(s->e_input,E_BYTES,s->e_output,E_BYTES) || !stable(s,0)) reject(s,"embedding-fc-contract");
@@ -456,7 +634,14 @@ __attribute__((noinline)) static void shadow_fc(void *descriptor,const uint16_t 
     int result_errno=errno;if (s) s->phase=saved_phase;
     if (phase && (s->launches[phase-1]!=1 || s->launch_ok[phase-1]!=1 || !stable(s,phase==2)))
         reject(s,"original-fc-completion");
-    if (phase==2 && !s->error) paired_shadow(s);
+    if (phase==2 && !s->error) {
+        if (s->discovering) {
+            if (s->e_calls==1 && s->h_calls==1 && s->original_calls[0]==1 && s->original_calls[1]==1 &&
+                s->launches[0]==1 && s->launches[1]==1 && s->launch_ok[0]==1 && s->launch_ok[1]==1 &&
+                stable(s,1) && pair_spans(s)) s->pair_observed=1;
+            else reject(s,"discovery-exact-native-pair");
+        } else paired_shadow(s);
+    }
     errno=result_errno;
 }
 static void log_context(struct context *s) {
@@ -464,7 +649,7 @@ static void log_context(struct context *s) {
     /* The transported binding is already a digest; encode it directly. */
     for (unsigned i=0;i<32;i++) snprintf(binding+2*i,3,"%02x",(unsigned)s->request.header.request_binding[i]);
     char line[4096];int bytes=snprintf(line,sizeof line,
-        "{\"sequence\":%u,\"outcome\":\"%s\",\"error\":%s%s%s,\"position\":%d,\"outer_position\":%d,"
+        "{\"sequence\":%u,\"discovery\":%s,\"outcome\":\"%s\",\"error\":%s%s%s,\"position\":%d,\"outer_position\":%d,"
         "\"slot\":%d,\"token\":%d,\"model\":\"0x%" PRIxPTR "\",\"head_caller_rva\":\"0x%" PRIxPTR "\","
         "\"head_result\":%d,\"head_errno\":%d,\"completed\":%s,\"e_calls\":%u,\"h_calls\":%u,"
         "\"original_e_calls\":%u,\"original_h_calls\":%u,\"e_launches\":%u,\"h_launches\":%u,"
@@ -476,7 +661,7 @@ static void log_context(struct context *s) {
         "\"excluded_count_calls\":%u,\"overlaps\":%u,\"integration_qualified\":false,"
         "\"arithmetic_qualified\":false,\"npu_qualified\":false,\"parity_qualified\":false,"
         "\"acceptance_qualified\":false,\"performance_qualified\":false,\"native_reset_interception_qualified\":false}\n",
-        s->sequence,s->outcome?s->outcome:"native_unmatched",s->error?"\"":"",s->error?s->error:"null",s->error?"\"":"",
+        s->sequence,s->discovering?"true":"false",s->outcome?s->outcome:"native_unmatched",s->error?"\"":"",s->error?s->error:"null",s->error?"\"":"",
         s->position,s->outer_position,s->slot,s->token,s->model,s->head_caller,s->head_result,s->head_errno,
         s->completed?"true":"false",s->e_calls,s->h_calls,s->original_calls[0],s->original_calls[1],
         s->launches[0],s->launches[1],s->launch_ok[0],s->launch_ok[1],s->captured?"true":"false",
@@ -497,25 +682,35 @@ __attribute__((noinline)) static int32_t shadow_head(void *model,const int32_t *
         if (output_exposed) fatal("full-head-overlap-after-output-write");
     }
     in_flight++;struct context *s=NULL;
-    if (atomic_load(&initialized) && !atomic_load(&disabled) && count==1 && calls<MAX_CALLS) {
+    if (atomic_load(&initialized) && !atomic_load(&disabled)) {
         struct armed arm;int armed=read_arm(&arm);
         if (armed<0) atomic_store(&disabled,1);
+        if (observed_published && (count!=1 || !known_head_caller(caller) ||
+            !observation_live((uintptr_t)model) || !same_observed_file() || position<last_position ||
+            int32_at(model,0x220)<last_outer_position)) {
+            armed=-1;atomic_store(&disabled,1);
+        }
+        /* A discovery record is one completed head in one paused owned epoch.
+         * Any subsequent unarmed head makes that observation stale. */
+        if ((armed==1 && !observed_published) || (armed==0 && observed_published)) {
+            armed=-1;atomic_store(&disabled,1);
+        }
         if (armed==1 && epoch_armed && memcmp(&arm,&epoch_arm,sizeof arm)) {
             armed=-1;atomic_store(&disabled,1);
         }
-        if (armed==1) {
+        if (armed==1 && calls<MAX_CALLS && !atomic_load(&disabled)) {
             if (!epoch_armed) {epoch_arm=arm;epoch_armed=1;}
-            if (arm.model!=(uintptr_t)model || position<0 || !known_head_caller(caller) ||
-                !mapped_span((uintptr_t)model,MODEL_BYTES,NULL) || !mapped_span((uintptr_t)tokens,sizeof *tokens,NULL) ||
-                ((const unsigned char *)model)[0x900]!=1 || int32_at(tokens,0)<0 ||
-                int32_at(model,0x220)<0 || int32_at(model,0xa0)<0) atomic_store(&disabled,1);
+            if (arm.model!=observed.model || arm.model!=(uintptr_t)model ||
+                !valid_head_entry(model,tokens,count,position,caller)) atomic_store(&disabled,1);
             else {
-                s=&contexts[calls];s->sequence=calls++;s->arm=arm;s->model=(uintptr_t)model;s->tokens=(uintptr_t)tokens;
-                s->head_caller=caller;s->token=int32_at(tokens,0);s->count=count;s->position=position;
-                s->slot=int32_at(model,0xa0);s->outer_position=int32_at(model,0x220);s->seed=pointer_at(model,0x6d0);
-                memcpy(s->e_descriptor,(const unsigned char *)model+0x908,DESCRIPTOR_BYTES);
-                memcpy(s->h_descriptor,(const unsigned char *)model+0x980,DESCRIPTOR_BYTES);
-                if (!normal_descriptor(s->e_descriptor) || !normal_descriptor(s->h_descriptor)) reject(s,"head-descriptor-contract");
+                s=&contexts[calls];s->sequence=calls++;s->arm=arm;
+                context_entry(s,model,tokens,count,position,caller);last_position=position;
+            }
+        } else if (armed==0 && !discovery_reserved && count==1 && !atomic_load(&disabled)) {
+            if (!valid_head_entry(model,tokens,count,position,caller)) atomic_store(&disabled,1);
+            else {
+                discovery_reserved=1;s=&discovery;s->discovering=1;s->sequence=0;
+                context_entry(s,model,tokens,count,position,caller);
             }
         }
     }
@@ -529,6 +724,27 @@ __attribute__((noinline)) static int32_t shadow_head(void *model,const int32_t *
         if (s->e_calls!=1 || s->h_calls!=1 || s->original_calls[0]!=1 || s->original_calls[1]!=1)
             reject(s,"head-exact-pair-count");
         if (result<0) reject(s,"native-head-result");
+        if (s->discovering) {
+            if (publish_observation(s)) {
+                s->outcome="native_discovery_published";
+                /* Root validates this synced native receipt before HELLO/ARM. */
+                log_context(s);
+                if (!atomic_load(&disabled)) {
+                    unlock_state();int armed=await_discovery_arm(s);lock_state();
+                    if (armed==1 && in_flight==1 && !atomic_load(&disabled) &&
+                        observation_live(s->model) && same_observed_file()) s->outcome="native_discovery_armed";
+                    else {
+                        s->outcome=armed==0?"native_discovery_arm_timeout":"native_discovery_arm_rejected";
+                        reject(s,armed==0?"discovery-arm-timeout":"discovery-arm-identity-or-overlap");
+                    }
+                } else s->outcome="native_discovery_arm_rejected";
+            }
+            else {s->outcome="native_discovery_rejected";reject(s,"discovery-publication-or-identity");}
+        } else if (!atomic_load(&disabled)) {
+            if (!observation_live(s->model) || !same_observed_file() ||
+                int32_at((void *)s->model,0x220)<last_outer_position) reject(s,"post-head-observation-identity");
+            else last_outer_position=int32_at((void *)s->model,0x220);
+        }
         output_exposed=0;log_context(s);
     }
     if (!in_flight) fatal("head-in-flight-underflow");
@@ -652,6 +868,7 @@ __attribute__((constructor)) static void install(void) {
     if (!buffer_hash((void *)sites.head,HEAD_BYTES,hash) || strcmp(hash,HEAD_SHA) ||
         !buffer_hash((void *)sites.fc,FC_BYTES,hash) || strcmp(hash,FC_SHA)) fatal("mapped-function-hash");
     engine_base=sites.base;
+    if (!read_process_identity(&process_pid,&process_starttime)) fatal("process-identity");
     int tmp=open("/tmp",O_RDONLY|O_DIRECTORY|O_CLOEXEC|O_NOFOLLOW);struct stat status;
     if (tmp<0 || fstat(tmp,&status) || !S_ISDIR(status.st_mode)) fatal("tmp-directory");
     const char *name=directory+sizeof "/tmp/"-1;
@@ -672,6 +889,8 @@ __attribute__((constructor)) static void install(void) {
         "\"head_sha256\":\"" HEAD_SHA "\",\"fc_dispatcher_sha256\":\"" FC_SHA "\","
         "\"head_rva\":\"0x17db310\",\"fc_rva\":\"0x178cf90\",\"request_bytes\":51424,"
         "\"response_bytes\":25856,\"armed_bytes\":120,\"request_binding_offset\":192,\"limit\":4,"
+        "\"observed_bytes\":464,\"observed_digest_offset\":432,\"discovery_limit\":1,\"discovery_device_copies\":0,"
+        "\"discovery_arm_wait_ns\":2000000000,"
         "\"wait_ns\":200000000,\"original_each_once\":true,\"paired_restore\":true,"
         "\"integration_qualified\":false,\"arithmetic_qualified\":false,\"npu_qualified\":false,"
         "\"parity_qualified\":false,\"acceptance_qualified\":false,\"performance_qualified\":false,"

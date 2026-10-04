@@ -1,0 +1,306 @@
+{
+  "schema": "halogen0162.fc-discovery-transport-preparation.v1",
+  "timestamp_utc": "2026-10-04T20:04:50.903560+00:00",
+  "sources": {
+    "halogen0162_mtp_fc_quality_publish.c": "7f2c9565ba25e3c2beddefd4a50305955680fdd345af67c1e5701b4dcfda4f60",
+    "halogen_mtp_fc_coordinator.py": "130347fb1001c5abe4617b923ce49d2df2de78ce5104a5658a3ae9c6d9c376d8",
+    "halogen_mtp_fc_transport.py": "8df23d9b9e93da659f349ed6eba193fb45ee9502edebe23fd580ff10d46e427b",
+    "halogen_mtp_fc_relay.py": "9954475a1193a3495add83395d69e526a6286c947b1e835ed6484f387e96eba9",
+    "tests/test_halogen_mtp_fc_coordinator.py": "49d579842a4b4bd29005a31b8d50bad691b4438bef677d0b7d9bcdc268d8973c",
+    "tests/test_halogen_mtp_fc_transport.py": "3315c4ea383287e0c14220aea64e6cd94ec49acb5e4cd358a807cb3f0c16faf4",
+    "tests/test_halogen_mtp_fc_relay.py": "d85837b2e4cc5bac0647c8f24d7af158830b5181b4622b04eba8d5d1f700f03c"
+  },
+  "windows": {
+    "offline-codec-pipe": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-offline-checks-c53b05ac713548b0af9f56be8152ae88\\result.json",
+        "sha256": "57b082ac84950ff8d10c9befbe80d0d234d35d8d81d0bb5c8cf1361415e5848d"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "focused-offline-checks",
+            "command": [
+              "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+              "-B",
+              "-m",
+              "unittest",
+              "scripts.benchmarks.tests.test_halogen_mtp_fc_coordinator",
+              "scripts.benchmarks.tests.test_halogen_mtp_fc_transport",
+              "-v"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 30,
+            "started": 1791143766.9982667,
+            "owned_identity": {
+              "pid": 26800,
+              "creation_time_100ns": 134356173670018957,
+              "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791143767.6245878
+          }
+        ],
+        "config_sha256": "61ebffa9d7dc8f335207d2d627d590cdb1225422f5bbc76f17ca3c6faced4b7f",
+        "final_memory": {
+          "available_bytes": 36521873408,
+          "committed_bytes": 122734522368,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 117404917760
+        },
+        "minimum_physical_gib": 34.001861572265625,
+        "minimum_commit_gib": 109.33020401000977,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      },
+      "focused_checks": 13
+    },
+    "native-host-compile": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\paired-shim-compile-9965f26cdf5e476dae2c4ffc02f25cab\\result.json",
+        "sha256": "e90bd02e21b6bd296fefe00dfc89b35d6469f69b026d9411efc60a4ec9705ece"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "compile",
+            "command": [
+              "C:\\Windows\\System32\\wsl.exe",
+              "-d",
+              "Ubuntu-24.04",
+              "-u",
+              "revn",
+              "--exec",
+              "gcc",
+              "-O2",
+              "-Wall",
+              "-Wextra",
+              "-Werror",
+              "-shared",
+              "-fPIC",
+              "-fno-optimize-sibling-calls",
+              "/mnt/c/Projects/strix-alloy-clean/scripts/benchmarks/halogen0162_mtp_fc_quality_publish.c",
+              "-ldl",
+              "-lcrypto",
+              "-pthread",
+              "-o",
+              "/home/revn/halogen-re/libhalogen0162-mtp-fc-quality-9965f26cdf5e476dae2c4ffc02f25cab.so"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 45,
+            "started": 1791143994.702972,
+            "owned_identity": {
+              "pid": 27596,
+              "creation_time_100ns": 134356175947068159,
+              "executable": "C:\\Windows\\System32\\wsl.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791143995.6084824
+          },
+          {
+            "name": "binary-hash",
+            "command": [
+              "C:\\Windows\\System32\\wsl.exe",
+              "-d",
+              "Ubuntu-24.04",
+              "-u",
+              "revn",
+              "--exec",
+              "sha256sum",
+              "/home/revn/halogen-re/libhalogen0162-mtp-fc-quality-9965f26cdf5e476dae2c4ffc02f25cab.so"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 15,
+            "started": 1791143995.6123853,
+            "owned_identity": {
+              "pid": 20576,
+              "creation_time_100ns": 134356175956150044,
+              "executable": "C:\\Windows\\System32\\wsl.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791143995.846918
+          }
+        ],
+        "config_sha256": "239e793fbe0b44614f38651d7cff99e25b9dfb5f5580eab4ec428a0c5b0fd225",
+        "final_memory": {
+          "available_bytes": 36471328768,
+          "committed_bytes": 122803949568,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 117335490560
+        },
+        "minimum_physical_gib": 33.95893478393555,
+        "minimum_commit_gib": 109.26559829711914,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      },
+      "focused_checks": 0
+    },
+    "linux-file-transport": {
+      "receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\fc-linux-checks-2178e0f0e34e4b2cb28f5c2d3ad11ce3\\result.json",
+        "sha256": "a0ded115769aecc9ca3605c2f927b5c92df065d94b9dec60acdeb6d8fe95a1b9"
+      },
+      "result": {
+        "status": "passed",
+        "errors": [],
+        "stages": [
+          {
+            "name": "linux-file-transport-checks",
+            "command": [
+              "C:\\Windows\\System32\\wsl.exe",
+              "-d",
+              "Ubuntu-24.04",
+              "-u",
+              "revn",
+              "--cd",
+              "/mnt/c/Projects/strix-alloy-clean",
+              "--exec",
+              "python3",
+              "-B",
+              "/mnt/c/Projects/strix-alloy-clean/scripts/benchmarks/tests/test_halogen_mtp_fc_relay.py",
+              "-v"
+            ],
+            "cwd": "C:\\Projects\\strix-alloy-clean",
+            "deadline_seconds": 30,
+            "started": 1791144025.9635596,
+            "owned_identity": {
+              "pid": 25376,
+              "creation_time_100ns": 134356176259676648,
+              "executable": "C:\\Windows\\System32\\wsl.exe"
+            },
+            "exit_code": 0,
+            "owned_job_closed": true,
+            "cleanup_pending": false,
+            "finished": 1791144026.418255
+          }
+        ],
+        "config_sha256": "1aa77c30b959454b166f198da63359f48c507ab9f81477f0951437c7468a379a",
+        "final_memory": {
+          "available_bytes": 36427145216,
+          "committed_bytes": 122854490112,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 117284950016
+        },
+        "minimum_physical_gib": 33.915714263916016,
+        "minimum_commit_gib": 109.21006393432617,
+        "monitor_stopped": true,
+        "cleanup_pending": false,
+        "no_child_launched": false,
+        "all_owned_jobs_closed": true
+      },
+      "focused_checks": 3
+    }
+  },
+  "binary": {
+    "path": "/home/revn/halogen-re/libhalogen0162-mtp-fc-quality-9965f26cdf5e476dae2c4ffc02f25cab.so",
+    "sha256": "2882071c9299771707453b46d47dac8fa9e891556fcc74513ef01a55676a32c3",
+    "loaded": false
+  },
+  "source_reviews": {
+    "discovery_abi": "released",
+    "coordinator": "released",
+    "transport": "released",
+    "relay_publication_and_native_receipt": "released",
+    "root": "released"
+  },
+  "observation_bytes": 464,
+  "observation_digest_offset": 432,
+  "armed_bytes": 120,
+  "paired_header_bytes": 224,
+  "frame_header_bytes": 56,
+  "discovery_arm_wait_ns": 2000000000,
+  "candidate_response_wait_ns": 200000000,
+  "original_each_once": true,
+  "device_copies_in_discovery": 0,
+  "live_server_observation": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\discovery-transport-server-observation-0ba93ececcc640748e474adf3636c9aa.json",
+    "sha256": "0ba404752fab4edcb05dbcd26b62781282c371f1c8037910ec0c0226b8658534"
+  },
+  "live_server": {
+    "observed_utc": "2026-10-04T20:01:49.1425503Z",
+    "controller": {
+      "ProcessId": 10048,
+      "Name": "python.exe",
+      "CreationDate": "2026-10-04T19:59:38.811622+02:00"
+    },
+    "state": {
+      "schema": 1,
+      "run_id": "c5fd81b1e4cb47b3a6cd3ba1f6ead0cc",
+      "pid": 10048,
+      "phase": "ready",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "port": 8840,
+      "heartbeat": 1791144107.6504297,
+      "minimum_reserve_gib": 18.0,
+      "profile_sha256": "189b65f80c460dade73892599dad6a087e0e41adafcb0a9c39682d94368269ef",
+      "memory": {
+        "available_bytes": 36436709376,
+        "committed_bytes": 122834812928,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 117304627200
+      },
+      "minimum_available_gib": 18.33190155029297,
+      "ready_at": 1791136973.927891,
+      "active_requests": 0,
+      "available_gib": 33.93333053588867
+    },
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 2,
+      "cancelled": 0
+    },
+    "game": [
+      {
+        "ProcessId": 20004,
+        "Name": "League of Legends.exe",
+        "CreationDate": "2026-10-04T21:46:14.539101+02:00"
+      }
+    ],
+    "owned_child_pids": []
+  },
+  "live_container_state": {
+    "id": "a254bb42298ed84e22d5720050f081e4bd9fb7f6bb724d4f65ff96bf99bd1116",
+    "running": true,
+    "paused": false,
+    "host_linux_pid": 915,
+    "started_at": "2026-10-04T18:00:49.479514711Z"
+  },
+  "optimization_gpu_calls": 0,
+  "optimization_npu_sessions": 0,
+  "native_shim_loaded": false,
+  "native_discovery_qualified": false,
+  "native_reset_qualified": false,
+  "container_pipe_qualified": false,
+  "canonical_asset_admission_qualified": false,
+  "native_projection_parity_qualified": false,
+  "persistent_npu_responder_implemented": false,
+  "npu_placement_qualified": false,
+  "acceptance_qualified": false,
+  "performance_qualified": false,
+  "full_goal_completed": false,
+  "latest_official_update": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-update-checkpoint-20261004-1936.json",
+    "sha256": "a88efc84fb23c4932778bef33a9a40ae79feebf8edef8306374a48d07f4ad413"
+  }
+}
