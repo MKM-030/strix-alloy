@@ -124,3 +124,12 @@ do not establish Light runtime support for width2560/512 experts/top10.
 No further runtime call, bank conversion or model training was performed for
 this comparison. [OGA Run](https://github.com/microsoft/onnxruntime-genai/blob/v0.14.0/src/models/model.cpp#L122-L123),
 [ORT binding delegation](https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/core/session/inference_session.cc#L3585-L3589).
+
+A subsequent [retained-session source candidate](halogen-qmoe-retained-allocator-20261004.md)
+was prepared and compiled after the hardware window, without invocation.
+It leaves this executed C source and historical receipts unchanged. The
+tracked invocation hook received another serialization-only correction:
+output hashes now cover validated/copied slots (`zero_outputs`), because a
+returned call can fail validation before its output is copied. That scoped
+failure was reproduced and corrected without an ORT/provider call. It is
+not a new result for any historical native attempt.

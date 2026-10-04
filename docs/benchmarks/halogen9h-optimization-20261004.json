@@ -3730,5 +3730,24 @@
     "checked_halogen_source_commit": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
     "independent_npu_service_contract_documented": true,
     "external_flash_next_drafter_contract_documented_in_checked_sources": false
+  },
+  "post_window_source_followup": {
+    "note": "docs/research/halogen-qmoe-retained-allocator-20261004.md",
+    "source_build_evidence": "docs/research/halogen-qmoe-retained-allocator-20261004.json",
+    "native_source": "scripts/benchmarks/halogen_qmoe_retained_allocator.c",
+    "invocation_hook": "scripts/benchmarks/halogen_qmoe_retained_allocator_invoke.py",
+    "state": "separate source candidate compiled; not invoked or connected to production",
+    "runtime_attempts": 0,
+    "runtime_returns": 0,
+    "qualified_overall_gain": false,
+    "full_native_npu_mtp_complete": false,
+    "original_executed_native_source_unchanged": true,
+    "historical_raw_receipts_unchanged": true,
+    "wrapper_serialization_correction": "Hash only zero_outputs validated/copied slots; calls_completed can precede failed output validation and leave sentinel storage untouched",
+    "serialization_reproducer": {
+      "scope": "actual serializer expression evaluated in pure Python; no ORT/provider session or DLL invocation",
+      "before_correction_exit_code": 1,
+      "after_correction_exit_code": 0
+    }
   }
 }

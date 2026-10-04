@@ -619,3 +619,17 @@ now records that distinction and GPU/NPU resource contention. Documentation
 closeout uses existing receipts and source review; no new hardware run is
 claimed. The objective remains incomplete rather than being declared
 successful when the time window expires.
+
+## Source-only follow-up after the hardware window
+
+The [separate retained allocator-session candidate](../research/halogen-qmoe-retained-allocator-20261004.md)
+now implements OGA's exact 96-byte holder graph with fresh default options
+and empty Light provider options. Existing MSVC compiled it with warnings
+treated as errors. Graph-byte identity, Python syntax and receipt ABI were
+checked; the distinct export was inspected without loading the DLL.
+Runtime attempts and returns are both zero. The original executed native
+source and raw receipts remain unchanged. A scoped wrapper correction stops
+sentinel hashes from being emitted after a returned call fails output
+validation. This is source/build and evidence-storage progress, not a
+throughput gain, first-call repair or completed native NPU MTP. No hardware
+work was restarted after the deadline.
