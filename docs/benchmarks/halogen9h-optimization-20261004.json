@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-04",
-  "status": "active nine-hour optimization; stock baseline reproduced; matmul candidate and NPU parameter probe rejected",
+  "status": "active nine-hour optimization; stock baseline reproduced; matmul, NPU parameter and mmap-advice candidates rejected",
   "work_deadline_utc": "2026-10-04T08:39:15Z",
   "source_commit_at_baseline": "d950029",
   "baseline": {
@@ -75,7 +75,6 @@
     }
   },
   "pending_experiments": [
-    "mmap lookup access-advice ablation (stock/advice-off/stock)",
     "full live Halogen NPU MTP integration: unavailable qualified tensor/state ABI"
   ],
   "qualifications": "No new speed or acceptance improvement promoted. NPU partial graph is not full MTP.",
@@ -94,6 +93,13 @@
       "promoted": false,
       "report": "../research/halogen-npu-parameter-probe-20261004.md",
       "reason": "Numerical gate failed:21/64 values outside rtol0.03/atol0.003; no qualified NPU throughput."
+    },
+    {
+      "name": "lookup mmap-advice ablation",
+      "promoted": false,
+      "report": "halogen0162-mmap-advice-20261004.json",
+      "completed_candidate_requests": 0,
+      "reason": "Physical reserve crossed at 17.881542 GiB; no candidate throughput. Backend cleanup/recovery passed; original coordinator cleanup=false preserved, followed by verified inactive-lock retirement."
     }
   ]
 }

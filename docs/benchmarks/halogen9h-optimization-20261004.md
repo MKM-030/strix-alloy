@@ -40,7 +40,11 @@ The [persistent local hipBLASLt plan](halogen0162-matmul-20261004.md) was reject
 the frozen 8K run measured 1716.62 prefill / 44.48 MTP decode / 55% acceptance
 and changed deterministic decode outputs. Training times are excluded.
 The tiny NPU variable-matrix probe also failed its numerical gate; it adds no
-qualified NPU speed or acceptance result. The bounded lookup mmap-advice
-ablation is the next direct prefill experiment. The selected-expert
+qualified NPU speed or acceptance result. The bounded lookup
+[mmap-advice ablation](halogen0162-mmap-advice-20261004.md) was rejected after
+the first candidate request crossed the 18-GiB physical reserve; it completed
+zero requests and has no throughput result. Owned shutdown and memory recovery
+passed, with the retained failure lock subsequently retired after identity and
+terminal-state verification. The selected-expert
 [NPU replay](../research/halogen-npu-top10-20261004.md) remains a partial graph;
 no full Halogen MTP, acceptance or GPU speed gain is claimed from it.
