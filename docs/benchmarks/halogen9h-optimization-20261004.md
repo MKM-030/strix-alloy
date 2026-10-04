@@ -1,23 +1,29 @@
 # Halogen optimization window — 4 October 2026
 
-The nine-hour optimization remains active until 08:39:15 UTC (10:39:15 Berlin).
-The first completed step reproduces the earlier 8K stock workload. It confirms
-that the later 32K sampled-conversation rates did not establish a regression
-of that 8K test. No new optimization is promoted by this control.
+At approximately six hours, **no new end-to-end speed or acceptance improvement
+has been qualified, and full NPU MTP remains incomplete**. The latest unchanged
+8K stock control, observed with read-only ADLX telemetry, measured **1768.47 ±
+4.06 PP8192-only**, **46.355 ± 0.404 MTP TG128 tok/s**, and **60% acceptance**.
+This is a stock rebound, not a promoted optimization. Its cause and ADLX overhead
+are not isolated. The nine-hour window remains active until 08:39:15 UTC
+(10:39:15 Berlin).
 
 | Stock control, exact 8192 input | Prefill tok/s | Decode tok/s | MTP acceptance |
 | --- | ---: | ---: | ---: |
 | Earlier late stock, PP-only / MTP TG128 | 1714.94 ± 17.55 | 47.06 ± 0.60 | 60.00% |
-| Fresh control, PP-only / MTP TG128 | 1731.31 ± 3.91 | 46.59 ± 0.08 | 60.00% |
+| Initial window control, PP-only / MTP TG128 | 1731.31 ± 3.91 | 46.59 ± 0.08 | 60.00% |
+| Intervening unchanged stock control | 1605.07 ± 15.65 | 46.874 ± 0.448 | 60.00% |
+| Latest stock control with ADLX observation | 1768.47 ± 4.06 | 46.355 ± 0.404 | 60.00% |
 
-Each fresh cell has one excluded warmup and three measured repetitions.
+Each current cell has one excluded warmup and three measured repetitions.
 The prefill column is a separate one-output-token serial request, while decode
-is from 128-output-token MTP requests. Serial TG128 measures 35.78 ± 0.42 tok/s.
+is from 128-output-token MTP requests. Latest serial TG128 measures
+35.683 ± 0.376 tok/s.
 The profile has 262144 capacity, v2 weights, cache Off and stock depth 2.
 Requests are greedy (temperature 0), seed 1, with thinking disabled.
-All twelve corresponding prompt/request/output hashes match the earlier
-stock control, including warmups. The first MTP warmup was slower and remains
-in the raw evidence; it is excluded under the unchanged warmup rule.
+All twelve corresponding prompt/request/output hashes in the latest control
+match the earlier stock control, including warmups. The unchanged warmup rule
+excludes the first repetition of each cell.
 
 The current cold client differs from the old measured revision only by commit
 `2bb5642`'s bounded mutable-state read retries. Those reads occur outside the
@@ -27,10 +33,12 @@ source seal remained fixed for the complete lifecycle. The sequential comparison
 is descriptive and does not prove a new tuning gain or its cause.
 
 The 18-GiB physical/commit reserve held. Owned controller/backend shutdown,
-cleanup and recovery passed. Numeric minima, all phase rows and nine raw artifact
-hashes are retained in the [evidence JSON](halogen9h-optimization-20261004.json).
-Original artifacts are under ignored
-`server/.local/optimization9h-20261004/stock8k-c`.
+cleanup and recovery passed. The latest lifecycle result records unchanged
+source seals, and all 50 pinned source hashes were independently rechecked.
+Numeric minima, phase rows and artifact hashes are retained in the
+[evidence JSON](halogen9h-optimization-20261004.json). Original controls are
+retained under ignored `server/.local/optimization9h-20261004/stock8k-c`,
+`dn-pair-stock8k-a`, and `adlx-control-stock8k-1`.
 
 The [32K sampled gather experiment](halogen0162-gather-20261004.md) has a
 different prompt and conversation mix; its 1087.22/40.74 rates and 83.86%
@@ -264,3 +272,50 @@ remains unproven. The recovered
 [QMoEBf format](../research/halogen-npu-light-qmoe-contract-20261004.md)
 and [full-head state ABI](../research/halogen-mtp-full-head-state-abi-20261004.md)
 are concrete integration prerequisites, not a deployed full NPU draft.
+
+## Stock control completed at 05:32 UTC / 07:32 Berlin
+
+The [ADLX-observed stock control](../research/halogen-stock-adlx-control-20261004.md)
+completed twelve requests with nine measured rows, identical historic
+prompt/request/output hashes, ordinary cleanup/recovery and unchanged source
+seals. PP8192/TG1 measured 1768.4717 ± 4.0632 tok/s; MTP TG128 prefill/decode
+measured 1678.9173 ± 7.1358 / 46.3550 ± 0.4039 tok/s. Serial TG128 measured
+1762.9222 ± 8.2040 prefill and 35.6829 ± 0.3762 decode. MTP accepted 207/345
+proposals (60%). These are means and sample standard deviations across three
+measured repetitions per cohort.
+
+The intervening control's PP8192/TG1 guest mono/raw clock ratio was 1.0833332;
+this control's ratio was 1.0000147. The corrected rates already account for
+those ratios. Host-measured client wall also fell from 5.12831 to 4.65772 seconds
+(9.18%), so the rebound is present in actual request wall, not only in native
+clock arithmetic. Corrected PP was 10.18% above the intervening control and
+2.15% above the initial window control; this sequential stock variation does
+not establish an optimization gain, a restart effect or a thermal cause.
+
+QPC-aligned measured PP-only telemetry contained 14 samples: GPU temperature
+74–80 °C (mean 76.43), clock 2083–2770 MHz (mean 2664.14), reported GPU power
+109–151 W (mean 139.79), and usage 68–100% (mean 94.93%). MTP and serial TG128
+each contained 24 samples; their complete request windows reached 88 and
+87 °C respectively. VRAM clock was 1000 MHz throughout all 62 measured samples.
+The research report retains the complete cohort ranges and means.
+
+Host epoch/QPC anchors averaged 204.63 ms apart, with 220.04 ms maximum gap and
+0.810 ms maximum absolute affine consistency residual. The nearest selected
+sensor sample was 46.37 ms from a request boundary. GetCurrentGPUMetrics/TimeStamp
+spans were 0–1 ms, averaging 0.208 ms over 360 successful samples; they exclude
+later sensor getters, output and logger costs. One-hertz sampling, unbracketed
+host anchors and unavailable sensor refresh latency limit phase precision.
+TG128 telemetry covers prefill and generation together. No guest UTC or raw
+ADLX driver timestamp was used for alignment. Earlier workloads have no
+comparable GPU sensors, and ADLX overhead was not isolated.
+
+No new end-to-end speed or acceptance gain is qualified. The rejected tuning
+candidates remain rejected, depth2 and stock placement remain selected, and
+full live NPU MTP is still unfinished.
+
+At 05:46 UTC, guarded [official offline QMoE packing](../research/halogen-qmoe-offline-pack-20261004.md)
+passed both actual expert geometries. A streamed, aligned synthetic 512-expert
+bank is prepared for strict provider admission. It contains zero experts and
+has no NPU inference, acceptance or speed result. Approximate q4c-to-affine
+INT4 preparation also passed its one numerical fixture. These prerequisites
+do not change the stock numbers or qualify a complete NPU draft.

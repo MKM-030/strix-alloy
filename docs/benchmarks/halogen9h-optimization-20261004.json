@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-04",
-  "status": "active nine-hour optimization; no qualified overall gain; paired DeltaNet, direct SSD placement and greedy depth3 rejected; Light EP graph admission failed; complete count1 draft-head timing passed separately; stock wrapper launch and request paths reconstructed identical",
+  "status": "active nine-hour optimization; about six hours with no qualified overall speed or acceptance gain; full NPU MTP incomplete; fresh stock with ADLX observation rebounded to 1768.47 PP-only / 46.355 MTP decode / 60 percent acceptance without an isolated cause; rejected candidates remain rejected",
   "work_deadline_utc": "2026-10-04T08:39:15Z",
   "source_commit_at_baseline": "d950029",
   "baseline": {
@@ -75,33 +75,335 @@
     }
   },
   "latest_stock_control": {
-    "artifact": "server/.local/optimization9h-20261004/dn-pair-stock8k-a",
+    "artifact": "server/.local/optimization9h-20261004/adlx-control-stock8k-1",
+    "completed_utc": "2026-10-04T05:32:34.671932Z",
+    "profile_sha256": "e535484cdfd5ce3de4afc110a630296e5e5c556e2968ee22d118416cc6e37c1a",
     "input_tokens": 8192,
     "capacity": 262144,
     "cache": "Off",
     "temperature": 0,
+    "thinking": false,
     "mtp_depth": 2,
-    "prefill_only_tps": 1605.0690515030292,
-    "prefill_only_sample_stdev": 15.645621572094377,
-    "mtp_decode_tps": 46.87401522350075,
-    "mtp_decode_sample_stdev": 0.44796008863612913,
-    "serial_decode_tps": 36.357080676194016,
+    "optimization_gain_qualified": false,
+    "adlx_observed": true,
+    "adlx_overhead_isolated": false,
+    "measured_requests": 9,
+    "recorded_requests": 12,
+    "excluded_warmups_per_cell": 1,
+    "prefill_only_tps": 1768.4717081562424,
+    "prefill_only_sample_stdev": 4.063167556963972,
+    "mtp_decode_tps": 46.3550308645076,
+    "mtp_decode_sample_stdev": 0.403936920581286,
+    "serial_decode_tps": 35.68287115961886,
+    "serial_decode_sample_stdev": 0.37618915017293414,
+    "phase_rows": [
+      {
+        "size": 8192,
+        "output": 1,
+        "drafter": "serial",
+        "n": 3,
+        "pp_mean": 1768.4717081562424,
+        "pp_stdev": 4.063167556963972,
+        "decode_mean": null,
+        "decode_stdev": null,
+        "acceptance": null
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "drafter": "mtp",
+        "n": 3,
+        "pp_mean": 1678.9172629051538,
+        "pp_stdev": 7.135780905752946,
+        "decode_mean": 46.3550308645076,
+        "decode_stdev": 0.403936920581286,
+        "acceptance": 0.6
+      },
+      {
+        "size": 8192,
+        "output": 128,
+        "drafter": "serial",
+        "n": 3,
+        "pp_mean": 1762.9222371452936,
+        "pp_stdev": 8.204030348032617,
+        "decode_mean": 35.68287115961886,
+        "decode_stdev": 0.37618915017293414,
+        "acceptance": null
+      }
+    ],
     "acceptance": 0.6,
     "accepted": 207,
     "proposed": 345,
     "all_corresponding_historic_prompt_request_output_hashes_match": true,
     "cleanup_proven": true,
+    "recovery_proven": true,
     "source_seal_unchanged_within_this_run": true,
-    "comparison_limit": "Prefill is 7.29 percent below the earlier baseline and wall time is 7.84 percent higher. Profile, engine environment and requests match; wrapper sources changed as optional support was added. Retained evidence does not prove the cause of the prefill drift.",
-    "report": "../research/halogen-dn-fused-pair-negative-20261004.md"
+    "source_seal_entries_independently_rechecked": 50,
+    "source_seal_current_mismatches": [],
+    "memory": {
+      "controller_lifecycle_minimum_available_gib": 22.539466857910156,
+      "retained_measured_and_warmup_samples_minimum_available_gib": 22.470985412597656,
+      "retained_measured_and_warmup_samples_minimum_commit_headroom_gib": 113.43729782104492,
+      "logger_window_minimum_available_gib": 22.539466857910156,
+      "logger_window_minimum_commit_headroom_gib": 113.43925857543945,
+      "minimum_reserve_gib": 18
+    },
+    "stock_variation": {
+      "intervening_pp_tps": 1605.0690515030292,
+      "current_pp_tps": 1768.4717081562424,
+      "descriptive_pp_change_percent": 10.180412892529356,
+      "descriptive_pp_change_from_initial_window_percent": 2.1463007326898653,
+      "intervening_client_wall_seconds": 5.128309499996249,
+      "current_client_wall_seconds": 4.657717699980519,
+      "client_wall_reduction_percent": 9.176353338582121,
+      "intervening_guest_mono_per_raw": 1.083333235944966,
+      "current_guest_mono_per_raw": 1.0000147258266219,
+      "raw_rates_clock_corrected": true,
+      "cause_isolated": false
+    },
+    "telemetry": {
+      "artifact": "server/.local/optimization9h-20261004/adlx-stock8k-fb606b9bfd344e398ea5f2fda2a45dd7",
+      "alignment": "Piecewise interpolation from Windows host epoch_ns/qpc anchors to C++ requested_epoch_ms/completed_epoch_ms; request membership uses before/after QPC only, no guest utc or raw ADLX driver timestamp. Warmups excluded; successful sensor intervals wholly contained in request windows. No extrapolation.",
+      "cohorts": [
+        {
+          "output": 1,
+          "mode": "serial",
+          "requests": 3,
+          "sensor_samples": 14,
+          "metrics": {
+            "gpu_temperature": {
+              "min": 74,
+              "mean": 76.42857142857143,
+              "max": 80
+            },
+            "gpu_clock": {
+              "min": 2083,
+              "mean": 2664.1428571428573,
+              "max": 2770
+            },
+            "vram_clock": {
+              "min": 1000,
+              "mean": 1000,
+              "max": 1000
+            },
+            "gpu_power": {
+              "min": 109,
+              "mean": 139.78571428571428,
+              "max": 151
+            },
+            "gpu_usage": {
+              "min": 68,
+              "mean": 94.92857142857143,
+              "max": 100
+            }
+          },
+          "query_span_ms": {
+            "min": 0,
+            "mean": 0.21428571428571427,
+            "max": 1
+          }
+        },
+        {
+          "output": 128,
+          "mode": "mtp",
+          "requests": 3,
+          "sensor_samples": 24,
+          "metrics": {
+            "gpu_temperature": {
+              "min": 60,
+              "mean": 79.54166666666667,
+              "max": 88
+            },
+            "gpu_clock": {
+              "min": 2125,
+              "mean": 2677.1666666666665,
+              "max": 2894
+            },
+            "vram_clock": {
+              "min": 1000,
+              "mean": 1000,
+              "max": 1000
+            },
+            "gpu_power": {
+              "min": 85,
+              "mean": 135.58333333333334,
+              "max": 155
+            },
+            "gpu_usage": {
+              "min": 63,
+              "mean": 93.16666666666667,
+              "max": 99
+            }
+          },
+          "query_span_ms": {
+            "min": 0,
+            "mean": 0.25,
+            "max": 1
+          }
+        },
+        {
+          "output": 128,
+          "mode": "serial",
+          "requests": 3,
+          "sensor_samples": 24,
+          "metrics": {
+            "gpu_temperature": {
+              "min": 57,
+              "mean": 79.08333333333333,
+              "max": 87
+            },
+            "gpu_clock": {
+              "min": 2091,
+              "mean": 2666.7083333333335,
+              "max": 2883
+            },
+            "vram_clock": {
+              "min": 1000,
+              "mean": 1000,
+              "max": 1000
+            },
+            "gpu_power": {
+              "min": 94,
+              "mean": 132.29166666666666,
+              "max": 154
+            },
+            "gpu_usage": {
+              "min": 62,
+              "mean": 91.95833333333333,
+              "max": 99
+            }
+          },
+          "query_span_ms": {
+            "min": 0,
+            "mean": 0.20833333333333334,
+            "max": 1
+          }
+        }
+      ],
+      "timeline": {
+        "anchors": 1770,
+        "anchor_epoch_start_ns": 1791091603783453600,
+        "anchor_epoch_end_ns": 1791091965765177500,
+        "anchor_qpc_start": 314572.466822,
+        "anchor_qpc_end": 314934.4491769,
+        "anchor_qpc_gap_ms": {
+          "n": 1769,
+          "min": 199.91720002144575,
+          "mean": 204.62541260598348,
+          "median": 204.62739997310564,
+          "p95": 206.8965200218372,
+          "max": 220.03580001182854
+        },
+        "anchor_epoch_gap_ms": {
+          "n": 1769,
+          "min": 200.0912,
+          "mean": 204.62505590729225,
+          "median": 204.6286,
+          "p95": 206.89922,
+          "max": 220.8971
+        },
+        "affine_qpc_seconds_per_epoch_second": 0.9999998438954506,
+        "affine_anchor_residual_ms": {
+          "n": 1770,
+          "min": -0.40988372537142936,
+          "mean": 1.4410302831730356e-11,
+          "median": -0.04408662609023395,
+          "p95": 0.3980110708141637,
+          "max": 0.8099799171912281
+        },
+        "affine_anchor_max_absolute_residual_ms": 0.8099799171912281,
+        "sensor_sample_count": 360,
+        "sensor_success_count": 360,
+        "sensor_samples_within_anchor_span": 359,
+        "sensor_sample_spacing_epoch_ms": {
+          "n": 359,
+          "min": 1000,
+          "mean": 1007.8969359331477,
+          "median": 1008,
+          "p95": 1014.0,
+          "max": 1017
+        },
+        "all_query_span_ms": {
+          "n": 360,
+          "min": 0,
+          "mean": 0.20833333333333334,
+          "median": 0.0,
+          "p95": 1.0,
+          "max": 1
+        },
+        "measured_query_span_ms": {
+          "n": 62,
+          "min": 0,
+          "mean": 0.22580645161290322,
+          "median": 0.0,
+          "p95": 1.0,
+          "max": 1
+        },
+        "total_query_span_ms": 75,
+        "measured_sensor_sample_count": 62,
+        "request_qpc_span_seconds": 86.50668250001036,
+        "request_clock_handshake_uncertainty_ms": {
+          "n": 12,
+          "min": 0.4044499946758151,
+          "mean": 0.5408916622400284,
+          "median": 0.47039998753461987,
+          "p95": 0.7459424770786426,
+          "max": 0.8507999591529369
+        },
+        "measured_boundary_min_distance_ms": 46.37177102267742
+      },
+      "limitations": [
+        "Reported completed_epoch_ms is taken after GetCurrentGPUMetrics/TimeStamp, before sensor getters and output; query span excludes later getters, stdout, and logger/memory-monitor costs. Millisecond endpoint quantization means 0 ms is below reporting resolution, not zero cost.",
+        "Host anchors sample epoch_ns and qpc consecutively without a scheduling bracket; affine residual measures observed clock consistency, not a certified absolute timing error.",
+        "About 1 Hz sensors give only a few observations during each ~4.66 s PP-only request. Snapshot refresh latency is unavailable because no driver timestamp is used. MTP/serial TG128 cohort windows cover both prefill and generation, with no exact phase marker.",
+        "Reported GPUPower sensor accounting is unverified; board power/hotspot/fan telemetry unavailable.",
+        "No earlier workload GPU telemetry exists. This stock run rebounded but establishes neither historical thermal causation nor instrumentation-free equivalence."
+      ],
+      "raw_artifact_hashes": {
+        "adlx.ndjson": "7d6027f61df7888197d7cf761ea11b3894d8fd795e74575f9111050a59be50a2",
+        "host-anchors.jsonl": "89abbcc7d9f729fb43996858d42000ebf34f71fde3fffee918dd2db34430f62e",
+        "identity.json": "833b301822daab6d97169bcf17736160ebdbe2fcad3b7e4ffef2a3935166ba36",
+        "result.json": "55b90750fcb985e9619d0111683cea0f8ea6ed081aa2655185b24df2911c8979",
+        "cohort-telemetry-analysis.json": "478d80b7d20db50eb6d8639d51ed376b5eb9ad210a19feb8661aeca56fa1fad9"
+      }
+    },
+    "comparison_limit": "Unchanged stock rebounded; host client wall is shorter after correction from the intervening guest mono/raw ratio of 1.0833332 to 1.0000147. Sequential windows and ADLX observation do not establish an optimization, ADLX overhead, restart effect or thermal cause; no earlier workload GPU sensors exist.",
+    "report": "../research/halogen-stock-adlx-control-20261004.md",
+    "raw_artifact_hashes": {
+      "result.json": "1593649916b91ac2373aeb55a2242e7cdc0184dcb562535c2c94af594ebae044",
+      "terminal.json": "158d210306b5555208f2a08ddc87721eaf3658fb69a7c917649c0812fc435492",
+      "plan.json": "b5c1957426bcec04a17dd5bba398078a9e3998b726a6e92bc973a2a9cdf84ee1",
+      "cold-analysis.json": "e79b7e810b5d7ae0492d0d742b500bc8a88ae590b22b74dc42a0e2b6090869f6",
+      "historic-comparison.json": "1ce17aff0719553e1a86e49a38125acb9a8ccbcc72c34a04f9f84d5394548dbc",
+      "cold/samples.jsonl": "02081125ed81fd45f8fcf7844b4e8dbc332128b852cd88fb57808636bfd2d9e8",
+      "cold/summary.json": "a02871a76af4881d391e542334ebe4d0e9a8e804e700fd6d4d650c761d5c690f",
+      "backend-manifest.json": "4ba5fe46f2db1c3a56f3b4d6fe45bb550503709d1cd688e847ad16daad6d3e7b"
+    }
   },
   "pending_experiments": [
     "full live Halogen NPU MTP integration: MLP capture established but complete arithmetic and persistent full-head state remain unqualified",
-    "unexplained 7.29 percent stock prefill decline: tracked native launch and request paths reconstructed identical",
+    "unexplained stock prefill variation: initial 1731.31, intervening 1605.07, latest ADLX-observed 1768.47; tracked native launch and request paths reconstructed identical; no historical GPU sensors",
     "QMoEBf deployment: compatible offline packer, compiled geometry and native draft-state lifecycle remain unqualified"
   ],
-  "qualifications": "No new speed or acceptance improvement promoted. NPU partial graph is not full MTP.",
+  "qualifications": "No new end-to-end speed or acceptance improvement qualified or promoted. Latest ADLX-observed measurement is an unchanged stock control; stock rebound and diagnostic timing are not tuning gains. Full live NPU MTP remains incomplete.",
   "completed_experiments": [
+    {
+      "name": "unchanged stock control with read-only ADLX observation",
+      "promoted": false,
+      "optimization_gain_qualified": false,
+      "adlx_overhead_isolated": false,
+      "report": "../research/halogen-stock-adlx-control-20261004.md",
+      "artifact": "server/.local/optimization9h-20261004/adlx-control-stock8k-1",
+      "measured_requests": 9,
+      "recorded_requests": 12,
+      "prefill_only_tps": 1768.4717081562424,
+      "mtp_decode_tps": 46.3550308645076,
+      "acceptance": 0.6,
+      "all_corresponding_historic_prompt_request_output_hashes_match": true,
+      "cleanup_recovery_proven": true,
+      "source_seal_unchanged": true,
+      "reason": "Stock rates rebounded with shorter host client wall; sequential evidence does not isolate an optimization, clock-only explanation, ADLX overhead, restart or thermal cause. Full NPU MTP is incomplete."
+    },
     {
       "name": "instrumented complete count1 native MTP forward",
       "promoted": false,
@@ -134,7 +436,7 @@
       "depth3_decode_tps": 45.8395,
       "stock_b_prefill_tps": 1093.6699,
       "stock_b_decode_tps": 46.9304,
-      "depth3_acceptance_percent": 68.3220,
+      "depth3_acceptance_percent": 68.322,
       "stock_depth2_acceptance_percent": 73.9142,
       "depth3_actual_six_request_wall_seconds": 162.1064,
       "stock_b_actual_six_request_wall_seconds": 159.7677,
@@ -207,6 +509,85 @@
       "report": "halogen0162-mmap-advice-20261004.json",
       "completed_candidate_requests": 0,
       "reason": "Physical reserve crossed at 17.881542 GiB; no candidate throughput. Backend cleanup/recovery passed; original coordinator cleanup=false preserved, followed by verified inactive-lock retirement."
+    },
+    {
+      "name": "official offline QMoE packing and synthetic aligned 512-expert bank",
+      "promoted": false,
+      "npu_inference_calls": 0,
+      "full_mtp": false,
+      "source": "scripts/benchmarks/halogen_qmoe_pack_probe.py",
+      "artifact": "server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b",
+      "bank": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-pack-admission-5306a9a57ecd44d79255fce2cc89378b\\qmoe-synthetic.bin",
+        "num_experts": 512,
+        "expert_stride": 5832704,
+        "fc1_bytes": 4198400,
+        "fc2_raw_bytes": 1597440,
+        "fc2_tail_padding": 36864,
+        "fc2_padded_bytes": 1634304,
+        "bytes": 2986344448,
+        "sha256": "05283a60ce7858fdfa93d46ce84e86a5a38d5bbe46631e8571d2ff632890365f",
+        "synthetic": true,
+        "scope": "zero experts for provider admission only; no quality or throughput result"
+      },
+      "geometry": [
+        {
+          "label": "FC1",
+          "logical_kn": [
+            2560,
+            1280
+          ],
+          "padded_kn": [
+            2560,
+            2560
+          ],
+          "bytes": 4198400,
+          "pack_host_ms": 54.73760003224015,
+          "packed_sha256": "86c91b127824a0d0fa47814ae59280ddd6b7902225c7d9efcea8407edd367346",
+          "synthetic_weights": true,
+          "no_npu_inference": true
+        },
+        {
+          "label": "FC2",
+          "logical_kn": [
+            640,
+            2560
+          ],
+          "padded_kn": [
+            768,
+            3072
+          ],
+          "bytes": 1597440,
+          "pack_host_ms": 22.211600036825985,
+          "packed_sha256": "44f9e4a43ef1b42617097bf08974a914be3a2729d192c7da3ae4e05dbfa16ee8",
+          "synthetic_weights": true,
+          "no_npu_inference": true
+        }
+      ],
+      "owned_job_closed": true,
+      "reason": "Packing prerequisite passed; synthetic zero experts establish no inference, quality, acceptance, residency or speed gain.",
+      "report": "../research/halogen-qmoe-offline-pack-20261004.md"
     }
-  ]
+  ],
+  "intervening_stock_control": {
+    "artifact": "server/.local/optimization9h-20261004/dn-pair-stock8k-a",
+    "input_tokens": 8192,
+    "capacity": 262144,
+    "cache": "Off",
+    "temperature": 0,
+    "mtp_depth": 2,
+    "prefill_only_tps": 1605.0690515030292,
+    "prefill_only_sample_stdev": 15.645621572094377,
+    "mtp_decode_tps": 46.87401522350075,
+    "mtp_decode_sample_stdev": 0.44796008863612913,
+    "serial_decode_tps": 36.357080676194016,
+    "acceptance": 0.6,
+    "accepted": 207,
+    "proposed": 345,
+    "all_corresponding_historic_prompt_request_output_hashes_match": true,
+    "cleanup_proven": true,
+    "source_seal_unchanged_within_this_run": true,
+    "comparison_limit": "Prefill is 7.29 percent below the earlier baseline and wall time is 7.84 percent higher. Profile, engine environment and requests match; wrapper sources changed as optional support was added. Retained evidence does not prove the cause of the prefill drift.",
+    "report": "../research/halogen-dn-fused-pair-negative-20261004.md"
+  }
 }
