@@ -8,6 +8,14 @@ target state. More weight preparation
 does not create either interface. No head integration code was added or built;
 this receipt used source, small metadata and public documentation only.
 
+The actual session tool records were checked separately from assistant summaries.
+At `2026-10-04T08:30:36.046Z`, a single newline sent through `write_stdin` to a
+running shell session was refused: "approval required by policy, but
+AskForApproval is set to Never". This ordinary session-input approval refusal
+contains no semantic rejection of runtime hooks. No runtime-hook approval or
+safety rejection was found in the inspected tool outputs. The unsupported
+public API finding above is independent of that refusal.
+
 ## Current upstream surface
 
 On 4 October, `git ls-remote` of the official Halogen repository returned HEAD

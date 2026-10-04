@@ -1,0 +1,383 @@
+{
+  "schema": 1,
+  "scope": "Standalone count1 D preparation CPU arithmetic screening; NPU unstarted; no native parity or acceptance/speed improvement",
+  "date": "2026-10-04",
+  "model_sha256": "3dd6940b38d788643b709837959d36ab16d1b926e548121b6f6efcc554147518",
+  "data_sha256": "a220218d57d4eb9c5cd7231bd696c394a226da5a529fb51cb8c8cbe5e7be379f",
+  "builder_sha256": "6334b32fc8a9a5cb792590d0422c0ee1fb532a7c475785f75979962ec80c2544",
+  "probe_sha256": "f5214bfc4c4a24ccfec7a708fcd90b919d05c1f0dfa8bf79eaa3bab6b5cf18a3",
+  "build_receipt_sha256": "06bba1a8bb9658047ce12292becf7bbee9d639498a345aaf3019af4540bcfd99",
+  "assets_receipt_sha256": "dbf679c94c75439638b01058c2c6915d43dd211c69b27918f7caa77d826e8fb7",
+  "cpu_raw_receipt_sha256": "6d140e5abd82b9fa1b90db80b10bf8eb43b5bc4858d9a9bdae47f2dd65b5fb3d",
+  "original_model_source_unchanged": true,
+  "cpu": {
+    "passed": false,
+    "error": "RuntimeError: frozen arithmetic screening failed; all returned outputs retained",
+    "tolerance": {
+      "rtol": 0.002,
+      "atol": 0.0002
+    },
+    "profile_proof": {
+      "passed": true,
+      "node_events": 348,
+      "executed_node_providers": [
+        "CPUExecutionProvider"
+      ],
+      "node_event_ops": [
+        "Add",
+        "Cast",
+        "MatMul",
+        "Mul",
+        "Reciprocal",
+        "ReduceMean",
+        "Reshape",
+        "Sqrt"
+      ]
+    },
+    "calls": [
+      {
+        "warmup": true,
+        "label": "A",
+        "output_sha256": "4fadb4e59e61b3d1ed75d9279f4c5b017b36f23d277ad7f6d6fb411d81c34bec",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.00390625,
+          "mismatched_elements": 74,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 109,
+          "bf16_word_mismatches": 109,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": true,
+        "label": "B",
+        "output_sha256": "1728c475732e0ed8b265627de771771a294ff1d87194bf3d41d25c16a9a47787",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.0078125,
+          "mismatched_elements": 55,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 76,
+          "bf16_word_mismatches": 76,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": true,
+        "label": "A",
+        "output_sha256": "4fadb4e59e61b3d1ed75d9279f4c5b017b36f23d277ad7f6d6fb411d81c34bec",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.00390625,
+          "mismatched_elements": 74,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 109,
+          "bf16_word_mismatches": 109,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": true,
+        "label": "B",
+        "output_sha256": "1728c475732e0ed8b265627de771771a294ff1d87194bf3d41d25c16a9a47787",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.0078125,
+          "mismatched_elements": 55,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 76,
+          "bf16_word_mismatches": 76,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": false,
+        "label": "A",
+        "output_sha256": "4fadb4e59e61b3d1ed75d9279f4c5b017b36f23d277ad7f6d6fb411d81c34bec",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.00390625,
+          "mismatched_elements": 74,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 109,
+          "bf16_word_mismatches": 109,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": false,
+        "label": "B",
+        "output_sha256": "1728c475732e0ed8b265627de771771a294ff1d87194bf3d41d25c16a9a47787",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.0078125,
+          "mismatched_elements": 55,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 76,
+          "bf16_word_mismatches": 76,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": false,
+        "label": "A",
+        "output_sha256": "4fadb4e59e61b3d1ed75d9279f4c5b017b36f23d277ad7f6d6fb411d81c34bec",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.00390625,
+          "mismatched_elements": 74,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 109,
+          "bf16_word_mismatches": 109,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": false,
+        "label": "B",
+        "output_sha256": "1728c475732e0ed8b265627de771771a294ff1d87194bf3d41d25c16a9a47787",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.0078125,
+          "mismatched_elements": 55,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 76,
+          "bf16_word_mismatches": 76,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": false,
+        "label": "A",
+        "output_sha256": "4fadb4e59e61b3d1ed75d9279f4c5b017b36f23d277ad7f6d6fb411d81c34bec",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.00390625,
+          "mismatched_elements": 74,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 109,
+          "bf16_word_mismatches": 109,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": false,
+        "label": "B",
+        "output_sha256": "1728c475732e0ed8b265627de771771a294ff1d87194bf3d41d25c16a9a47787",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.0078125,
+          "mismatched_elements": 55,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 76,
+          "bf16_word_mismatches": 76,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": false,
+        "label": "A",
+        "output_sha256": "4fadb4e59e61b3d1ed75d9279f4c5b017b36f23d277ad7f6d6fb411d81c34bec",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.00390625,
+          "mismatched_elements": 74,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 109,
+          "bf16_word_mismatches": 109,
+          "non_bf16_lattice_elements": 0
+        }
+      },
+      {
+        "warmup": false,
+        "label": "B",
+        "output_sha256": "1728c475732e0ed8b265627de771771a294ff1d87194bf3d41d25c16a9a47787",
+        "comparison": {
+          "passed": false,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "max_abs_error": 0.0078125,
+          "mismatched_elements": 55,
+          "elements": 10240,
+          "exact_fp32_bit_mismatches": 76,
+          "bf16_word_mismatches": 76,
+          "non_bf16_lattice_elements": 0
+        }
+      }
+    ],
+    "measured": 8,
+    "warmup": 4
+  },
+  "boundary_diagnostic": [
+    {
+      "stages": [
+        {
+          "name": "seed",
+          "reference_hash": "6117e5ef852418cd1a710730a12c048106e984809310426c3c44f23938dffffc",
+          "actual_hash": "4fadb4e59e61b3d1ed75d9279f4c5b017b36f23d277ad7f6d6fb411d81c34bec",
+          "exact_bit_mismatches": 109,
+          "max_abs_error": 0.00390625
+        },
+        {
+          "name": "e_norm",
+          "reference_hash": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "actual_hash": "10f9076ae12ec107232e248848ad88a552d89fd00b3eb139c598798b493eefaf",
+          "exact_bit_mismatches": 0,
+          "max_abs_error": 0.0
+        },
+        {
+          "name": "h_norm",
+          "reference_hash": "046f98dc1fdd85fe6a67ddc4188683813a9603e53cdf85718ffc7e096bb56e01",
+          "actual_hash": "1dfd2bedf61fb406d3a688e5056886b2ac27d13a5d189d4e878cb5c03ea1c454",
+          "exact_bit_mismatches": 2,
+          "max_abs_error": 0.0078125
+        },
+        {
+          "name": "e_projection_fp32",
+          "reference_hash": "91417798200f0eb5d3883cae8f8bd6070d2d67368ae9b329fc7e67b84850b078",
+          "actual_hash": "01415a3b32d19cca9ebbb5d269d14bf28a673729b25bedd2b0fcf5a066f5f773",
+          "exact_bit_mismatches": 2358,
+          "max_abs_error": 4.76837158203125E-07
+        },
+        {
+          "name": "h_projection_fp32",
+          "reference_hash": "d9d7ed050c5c6953d8e045a6ede2c8010a5b93ddad103df450c60228993af859",
+          "actual_hash": "9e8b4bb9d6645c25fd5eb78f718f64208bcef50c90a38ea2b7df0b5cc7a4f661",
+          "exact_bit_mismatches": 9701,
+          "max_abs_error": 0.0059525370597839355
+        },
+        {
+          "name": "e_projection",
+          "reference_hash": "8abca50d4aeb343488f2b7f8260854f62fd1f0502eec3551100f49db0034d893",
+          "actual_hash": "91a8f4f6fa0998e219971fb2fc8f0451d27591d84c1709116aa7a71e7f148d2c",
+          "exact_bit_mismatches": 2,
+          "max_abs_error": 3.0517578125E-05
+        },
+        {
+          "name": "h_projection",
+          "reference_hash": "e4527d5186f73464ca9a5cb75a50f54823c412450428241295f1a695f9393a89",
+          "actual_hash": "3b99d4df5b6a3ee6cc1a7ffa77bce995ad6b9deef728398280baca2eef6e25e1",
+          "exact_bit_mismatches": 238,
+          "max_abs_error": 0.00390625
+        }
+      ],
+      "label": "A"
+    },
+    {
+      "stages": [
+        {
+          "name": "seed",
+          "reference_hash": "bc4cbd071cc1f241d7be5c927df45162bcbe3cfc2b47183e7911ab46b4b58a9e",
+          "actual_hash": "1728c475732e0ed8b265627de771771a294ff1d87194bf3d41d25c16a9a47787",
+          "exact_bit_mismatches": 76,
+          "max_abs_error": 0.0078125
+        },
+        {
+          "name": "e_norm",
+          "reference_hash": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "actual_hash": "4c3edd20e8a3969b345c8e9a8cddcb171a46be9d1b4fcefb95bf08f0942bcd58",
+          "exact_bit_mismatches": 0,
+          "max_abs_error": 0.0
+        },
+        {
+          "name": "h_norm",
+          "reference_hash": "183eaad194d1bc7bf049ad9da686bae861d0689f7053e4daf5e51f69c8d1ce10",
+          "actual_hash": "5649acfe2cf5c3fa6ffc9caaf3bc89b62d4f874d2194466be7cba000fc3f7b91",
+          "exact_bit_mismatches": 4,
+          "max_abs_error": 0.00390625
+        },
+        {
+          "name": "e_projection_fp32",
+          "reference_hash": "df12b1a875582f5dc46c4dc4782582621a77c81073bbbfcb37a27eb9d56e1f18",
+          "actual_hash": "91d8f81aa9ea62bc932245641c70ec8c45487a17259fa1baec2563e09d1d42a5",
+          "exact_bit_mismatches": 2406,
+          "max_abs_error": 4.172325134277344E-07
+        },
+        {
+          "name": "h_projection_fp32",
+          "reference_hash": "ecfce32729a21a601e0de9e295b823bc29f2688793760e9bf9b9363f7ea17d98",
+          "actual_hash": "090c7e711559544e5a62be2eba81f7764e52e338182e8ab7212e474586c41562",
+          "exact_bit_mismatches": 9693,
+          "max_abs_error": 0.0027004480361938477
+        },
+        {
+          "name": "e_projection",
+          "reference_hash": "db8d07441436d6153dad194bf98b02dde1db1da1cc139fbe438fc0e147595702",
+          "actual_hash": "db8d07441436d6153dad194bf98b02dde1db1da1cc139fbe438fc0e147595702",
+          "exact_bit_mismatches": 0,
+          "max_abs_error": 0.0
+        },
+        {
+          "name": "h_projection",
+          "reference_hash": "df4d18fcf4bd6fccaad998f222e80e0999377387529c8c8db5f1c876abeda906",
+          "actual_hash": "0b9b5926457b5e72ba3ebb4c21ce26b34d072e4889680a832c63dc81a4ebbf60",
+          "exact_bit_mismatches": 148,
+          "max_abs_error": 0.0078125
+        }
+      ],
+      "label": "B"
+    }
+  ],
+  "npu": {
+    "session_creations": 0,
+    "reason": "CPU arithmetic admission failed; frozen screen preserved",
+    "started": false
+  },
+  "lifecycle": {
+    "all_owned_jobs_closed": true,
+    "minimum_physical_gib": 47.543846130371094,
+    "minimum_commit_gib": 202.33633041381836,
+    "cleanup_pending": false,
+    "window_errors": [
+      "RuntimeError: stage failed: cpu"
+    ]
+  },
+  "next": "Matched native D hidden-RMS output, wire D observed, immediately before fc_hidden; no new performance sweep"
+}

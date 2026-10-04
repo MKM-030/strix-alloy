@@ -58,11 +58,53 @@ For D, the hidden norm width is 10240 with one group (`0x17db5a8..0x17db5b0`),
 `k_hyper_seed_add` combines it with the embedding projection
 (`0x17dba4b`). A uses a different input pointer; other modes use grouped
 norm with four groups and `k_hc_fold`, with B selecting a different fold scalar.
-Do not infer the runtime mode from its default or silently select another mode.
-Public RMSNorm uses FP32 normalization and zero-centered gamma `1+weight`;
-whether HGN norm payloads already fold this offset remains a qualification
-item. The full-head ABI establishes raw u16 residual storage; its numeric
-interpretation and every required intermediate rounding must be proved.
+The actual live wire mode was not recorded. Do not infer it from the default
+or silently select another mode.
+
+Static-only Windows LLVM inspection of the pinned retained gfx1151 shader now
+establishes the D norm and seed arithmetic. The bounded evidence is
+`server/.local/optimization9h-20261004/mtp-route-static-20261004/cpu-d-input-static-audit.json`
+(SHA256 `ece0f957bcd39016cf48398346475b5658a23c20bcdd8fa27319018c2de55be2`),
+with three symbol disassemblies totaling 42,481 bytes. This work read no model
+payload or metadata and launched no engine, WSL process, provider or hardware.
+
+`k_rmsnorm_grouped` (host identity `0x18d5160`, GPU `0x22d200`) widens the
+residual u16 words as **BF16**, by shifting them left 16 before FP32 arithmetic
+(`0x22d330/340`). It computes whole-row squared-sum/10240, adds FP32 epsilon
+bits **`0x358637bd` = FP32(1e-6)** at `0x22d42c`, then uses `v_rsq_f32`.
+The norm weight is also BF16; the kernel adds **1.0** to its widened value at
+`0x22d510`. Its operation order is `(x * inverse_rms) * (1.0 + raw_weight)`
+with two FP32 products (`0x22d508/518`), followed by nearest-even BF16 rounding
+(`0x22d530..544`: retained bit16 plus `0x7fff`, then high16 store).
+The native store0 loader branch (`0x17ee638..642`, selected by the jump-table
+entry at engine file offset `0x45e18`) copies norm bytes through the H2D byte
+copy helper without adding 1. The native names/field writes bind this to
+`mtp.pre_fc_norm_hidden.weight` at `model+0xaf0` and embedding norm at `+0xae8`.
+Use the raw stored norm words and add 1 exactly once in the norm; no additional
+folding is needed in the D asset/reference path. This does not establish the
+history of checkpoint conversion before serialization.
+
+`k_embed_gather` (GPU `0x24b600`) copies exactly 2560 u16 words from the token's
+`token_id * 0x1400` byte row without conversion; its output at `model+0x6c8`
+feeds the same norm kernel in-place with width2560/groups1 (`0x17db475..517`).
+`k_hyper_seed_add` (GPU `0x24bc00`) widens both projected inputs as BF16, adds
+the same projected embedding to each stream by indexing modulo2560, and
+rounds the FP32 sum to BF16 nearest-even (`0x24bd88..bdd0`, scalar tail
+`0x24bee4..bf10`). These contracts prove the input and output storage casts,
+not the native matrix-multiply internals: `0x178cf90` dispatches multiple FC
+paths, whose q8 dequantization, accumulation and output rounding still need
+qualification. Ordinary CPU sqrt/reciprocal also does not guarantee the bits
+of GPU `v_rsq_f32` or its denormal branches.
+
+The smallest ordinary-source numerical reference is therefore count1 D
+preparation on supplied BF16 residual/embedding rows, raw norm words and
+decoded FC weights: both proven norms, four applications of the same
+`fc_hidden`, one `fc_embedding`, and the proven seed-add. Keep each BF16
+boundary and the multiplication order explicit, require an explicit D mode,
+and test with synthetic inputs. FP32 asset MatMuls with explicit BF16 casts
+form an approximate algebra reference until the FC/rsq parity gates pass.
+A supplied gathered embedding row is an explicit input cut; a host table
+gather does not establish NPU execution of that stage or a complete head.
 
 ## Complete stage contracts
 
