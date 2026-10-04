@@ -1,0 +1,1075 @@
+{
+  "schema": 1,
+  "date": "2026-10-04",
+  "run_id": "1742f9e165de45bea641446004e9733e",
+  "plan_sha256": "6d253e8eaa0fef3ecc4ce6d5fdca4e3f86e9e20ec11cdf08161a75c3d1f8dbe6",
+  "workload": {
+    "capacity": 262144,
+    "input_tokens": 8192,
+    "output_tokens": [
+      1,
+      128
+    ],
+    "cache": "Off",
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "mtp_depth": 2,
+    "adaptation": "native default 32,0.35,64",
+    "warmups": 1,
+    "measured_repetitions": 3,
+    "physical_and_commit_floor_gib": 18
+  },
+  "matched_hashes_and_counts": true,
+  "normal_cleanup_all_cells": true,
+  "prompt_lookup_off_selected": false,
+  "acceptance_scope": "Combined speculative accepted/drafted counts; not isolated draft-head accuracy",
+  "cells": [
+    {
+      "raw_samples_sha256": "97d9c3efe6f8719960007c0ad19e0a689d5a250dd4210036c3c239425fe5f5b8",
+      "measured_samples": 9,
+      "hash_parity_passed": true,
+      "cohorts": [
+        {
+          "size": 8192,
+          "output": 1,
+          "mode": "serial",
+          "pp": {
+            "n": 3,
+            "mean": 1873.1775132842422,
+            "stdev": 69.25462081509318,
+            "minimum": 1820.1992643502424,
+            "maximum": 1951.5432351643117,
+            "cv_percent": 3.697173403158628,
+            "ordered_first_to_last_percent": 7.215911652450613
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1873.1796666666667,
+            "stdev": 69.25421378034221,
+            "minimum": 1820.202,
+            "maximum": 1951.545,
+            "cv_percent": 3.6971474233211414,
+            "ordered_first_to_last_percent": 7.215847471874004
+          },
+          "decode": null,
+          "wall": {
+            "n": 3,
+            "mean": 4.403409666666657,
+            "stdev": 0.15959870958404473,
+            "minimum": 4.223009700000034,
+            "maximum": 4.5262230999999815,
+            "cv_percent": 3.6244347372943744,
+            "ordered_first_to_last_percent": -6.699037879947822
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 0.9999988440642249,
+            "stdev": 3.1049702845781077e-07,
+            "minimum": 0.9999984970625472,
+            "maximum": 0.9999990956725628,
+            "cv_percent": 3.104973873728489e-05,
+            "ordered_first_to_last_percent": 5.986109152811281e-05
+          },
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "mode": "mtp",
+          "pp": {
+            "n": 3,
+            "mean": 1866.537224602995,
+            "stdev": 5.811942762847595,
+            "minimum": 1859.9141812060554,
+            "maximum": 1870.7869098268206,
+            "cv_percent": 0.31137566860386473,
+            "ordered_first_to_last_percent": -0.5811847711598372
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1866.539,
+            "stdev": 5.811959996421209,
+            "minimum": 1859.916,
+            "maximum": 1870.789,
+            "cv_percent": 0.3113762957227901,
+            "ordered_first_to_last_percent": -0.581198627958579
+          },
+          "decode": {
+            "n": 3,
+            "mean": 48.423620603956266,
+            "stdev": 0.16538342525151245,
+            "minimum": 48.31496336201367,
+            "maximum": 48.613952460837574,
+            "cv_percent": 0.3415346130437847,
+            "ordered_first_to_last_percent": 0.5626717465652131
+          },
+          "wall": {
+            "n": 3,
+            "mean": 7.054106700000015,
+            "stdev": 0.0066801654560102565,
+            "minimum": 7.047163900000044,
+            "maximum": 7.060488899999996,
+            "cv_percent": 0.09469895679363968,
+            "ordered_first_to_last_percent": 0.18908315726773317
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 0.9999990488421421,
+            "stdev": 1.8096365013260304e-07,
+            "minimum": 0.9999988827317354,
+            "maximum": 0.9999992416850599,
+            "cv_percent": 1.809638222577646e-05,
+            "ordered_first_to_last_percent": 1.3937805087849142e-05
+          },
+          "drafted": 345,
+          "accepted": 207,
+          "acceptance": 0.6
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "mode": "serial",
+          "pp": {
+            "n": 3,
+            "mean": 1941.6495575597512,
+            "stdev": 13.867179750496158,
+            "minimum": 1928.5263102507834,
+            "maximum": 1956.1568693079953,
+            "cv_percent": 0.7141958082242355,
+            "ordered_first_to_last_percent": -0.6050297194541199
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1941.6509999999998,
+            "stdev": 13.866896444410273,
+            "minimum": 1928.528,
+            "maximum": 1956.158,
+            "cv_percent": 0.7141806866635803,
+            "ordered_first_to_last_percent": -0.6050198245911576
+          },
+          "decode": {
+            "n": 3,
+            "mean": 36.72630600453976,
+            "stdev": 0.18486273897215372,
+            "minimum": 36.53197888389367,
+            "maximum": 36.899967668736934,
+            "cv_percent": 0.5033523898355112,
+            "ordered_first_to_last_percent": 0.4163505226837172
+          },
+          "wall": {
+            "n": 3,
+            "mean": 7.739536233333335,
+            "stdev": 0.02775445536312618,
+            "minimum": 7.712179600000013,
+            "maximum": 7.767672100000027,
+            "cv_percent": 0.358606181641618,
+            "ordered_first_to_last_percent": -0.3722492353927076
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 0.999999256387389,
+            "stdev": 1.5180281911059355e-07,
+            "minimum": 0.9999991238140091,
+            "maximum": 0.9999994219832935,
+            "cv_percent": 1.5180293199316817e-05,
+            "ordered_first_to_last_percent": -9.955093238644963e-06
+          },
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        }
+      ],
+      "mtp_vs_serial": [
+        {
+          "size": 8192,
+          "decode_gain_percent": 31.8499622531343,
+          "wall_reduction_percent": 8.856209373130785
+        }
+      ],
+      "retained_samples_memory_minimum": {
+        "available_bytes": 30474600448,
+        "commit_headroom_bytes": 132515241984
+      },
+      "name": "stocka",
+      "pld": "3,3",
+      "normal_cleanup": true,
+      "source_seal_unchanged": true,
+      "lifecycle_minimum_gib": {
+        "available_bytes": 28.38079071044922,
+        "commit_headroom_bytes": 123.4150619506836
+      }
+    },
+    {
+      "raw_samples_sha256": "8ce53ce9d643a9540c2fd7b3e359c3b8bb882ee4caff083f1fb7c0e71dc2d5fa",
+      "measured_samples": 9,
+      "hash_parity_passed": true,
+      "cohorts": [
+        {
+          "size": 8192,
+          "output": 1,
+          "mode": "serial",
+          "pp": {
+            "n": 3,
+            "mean": 1925.159692398435,
+            "stdev": 71.06999047461159,
+            "minimum": 1844.586088445518,
+            "maximum": 1978.932201830947,
+            "cv_percent": 3.6916413093019815,
+            "ordered_first_to_last_percent": -1.3629276883337815
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1925.162,
+            "stdev": 71.07038274133606,
+            "minimum": 1844.588,
+            "maximum": 1978.935,
+            "cv_percent": 3.691657260081804,
+            "ordered_first_to_last_percent": -1.3629553269814298
+          },
+          "decode": null,
+          "wall": {
+            "n": 3,
+            "mean": 4.281281033333357,
+            "stdev": 0.16075885816847796,
+            "minimum": 4.161368400000015,
+            "maximum": 4.4639530000000605,
+            "cv_percent": 3.7549242134967464,
+            "ordered_first_to_last_percent": 1.3734256260508282
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 0.9999988053154567,
+            "stdev": 1.9606620780272117e-07,
+            "minimum": 0.9999985860227582,
+            "maximum": 0.9999989636956969,
+            "cv_percent": 1.9606644204026896e-05,
+            "ordered_first_to_last_percent": 2.80205552982693e-05
+          },
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "mode": "mtp",
+          "pp": {
+            "n": 3,
+            "mean": 1884.4102799485581,
+            "stdev": 5.094001199869413,
+            "minimum": 1878.854640859951,
+            "maximum": 1888.861420729841,
+            "cv_percent": 0.27032336079213454,
+            "ordered_first_to_last_percent": 0.354478587703988
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1884.4116666666669,
+            "stdev": 5.0940824819916,
+            "minimum": 1878.856,
+            "maximum": 1888.863,
+            "cv_percent": 0.27032747525929485,
+            "ordered_first_to_last_percent": 0.35447101853469665
+          },
+          "decode": {
+            "n": 3,
+            "mean": 48.23196449305086,
+            "stdev": 0.41114266759225043,
+            "minimum": 47.76796904811573,
+            "maximum": 48.55096487883664,
+            "cv_percent": 0.8524277870777726,
+            "ordered_first_to_last_percent": -1.61272970099553
+          },
+          "wall": {
+            "n": 3,
+            "mean": 7.022569666666641,
+            "stdev": 0.02172405269769437,
+            "minimum": 7.003573200000005,
+            "maximum": 7.04625539999995,
+            "cv_percent": 0.3093462041510226,
+            "ordered_first_to_last_percent": 0.40432435981643255
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 0.9999992641848577,
+            "stdev": 9.468021129499627e-08,
+            "minimum": 0.9999991639043387,
+            "maximum": 0.9999993520372578,
+            "cv_percent": 9.468028096218067e-06,
+            "ordered_first_to_last_percent": 7.542433566598561e-06
+          },
+          "drafted": 345,
+          "accepted": 207,
+          "acceptance": 0.6
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "mode": "serial",
+          "pp": {
+            "n": 3,
+            "mean": 1926.9023581587826,
+            "stdev": 30.82096636609719,
+            "minimum": 1904.0968274375787,
+            "maximum": 1961.9665434711385,
+            "cv_percent": 1.599508466819648,
+            "ordered_first_to_last_percent": 0.553904401187677
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1926.9036666666668,
+            "stdev": 30.82110326275387,
+            "minimum": 1904.098,
+            "maximum": 1961.968,
+            "cv_percent": 1.5995144851258192,
+            "ordered_first_to_last_percent": 0.5539105655276266
+          },
+          "decode": {
+            "n": 3,
+            "mean": 36.99230823283694,
+            "stdev": 0.2021308391678838,
+            "minimum": 36.77897509643505,
+            "maximum": 37.18097239751127,
+            "cv_percent": 0.5464131567449972,
+            "ordered_first_to_last_percent": -0.6429539257465477
+          },
+          "wall": {
+            "n": 3,
+            "mean": 7.734887133333321,
+            "stdev": 0.0815031900456718,
+            "minimum": 7.640780500000005,
+            "maximum": 7.782792599999993,
+            "cv_percent": 1.0537088472103961,
+            "ordered_first_to_last_percent": -0.021898309355283807
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 0.9999993215649416,
+            "stdev": 6.32961683397842e-08,
+            "minimum": 0.9999992576184414,
+            "maximum": 0.9999993841900883,
+            "cv_percent": 6.329621128215299e-06,
+            "ordered_first_to_last_percent": -6.13038310115499e-06
+          },
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        }
+      ],
+      "mtp_vs_serial": [
+        {
+          "size": 8192,
+          "decode_gain_percent": 30.383765699261822,
+          "wall_reduction_percent": 9.209151399210002
+        }
+      ],
+      "retained_samples_memory_minimum": {
+        "available_bytes": 30603329536,
+        "commit_headroom_bytes": 132489256960
+      },
+      "name": "off",
+      "pld": "0",
+      "normal_cleanup": true,
+      "source_seal_unchanged": true,
+      "lifecycle_minimum_gib": {
+        "available_bytes": 28.31765365600586,
+        "commit_headroom_bytes": 123.39209747314453
+      }
+    },
+    {
+      "raw_samples_sha256": "6f5e1960f41b809c2b73466b292a4777bec8942cb4966987deb70d84ce18567b",
+      "measured_samples": 9,
+      "hash_parity_passed": true,
+      "cohorts": [
+        {
+          "size": 8192,
+          "output": 1,
+          "mode": "serial",
+          "pp": {
+            "n": 3,
+            "mean": 1923.5847828898532,
+            "stdev": 62.87447742204763,
+            "minimum": 1851.548570582041,
+            "maximum": 1967.4315542143634,
+            "cv_percent": 3.2686096282998043,
+            "ordered_first_to_last_percent": 6.258706116248081
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1923.5870000000002,
+            "stdev": 62.8751337095994,
+            "minimum": 1851.55,
+            "maximum": 1967.434,
+            "cv_percent": 3.2686399788311835,
+            "ordered_first_to_last_percent": 6.258756177256886
+          },
+          "decode": null,
+          "wall": {
+            "n": 3,
+            "mean": 4.2853257666666495,
+            "stdev": 0.14337599208705304,
+            "minimum": 4.187053800000058,
+            "maximum": 4.449846499999921,
+            "cv_percent": 3.3457431218485496,
+            "ordered_first_to_last_percent": -5.9056576445922
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 0.9999988541650201,
+            "stdev": 3.3591408401802993e-07,
+            "minimum": 0.9999985776413778,
+            "maximum": 0.9999992279884643,
+            "cv_percent": 3.359144689205787e-05,
+            "ordered_first_to_last_percent": -4.711236100130023e-05
+          },
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "mode": "mtp",
+          "pp": {
+            "n": 3,
+            "mean": 1885.8537155052327,
+            "stdev": 2.8300831030689353,
+            "minimum": 1882.6578365022654,
+            "maximum": 1888.04253436756,
+            "cv_percent": 0.15006906844366438,
+            "ordered_first_to_last_percent": -0.28520002951619716
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1744.3026666666665,
+            "stdev": 8.071820137573232,
+            "minimum": 1737.839,
+            "maximum": 1753.35,
+            "cv_percent": 0.4627534138326089,
+            "ordered_first_to_last_percent": -0.8846493854621107
+          },
+          "decode": {
+            "n": 3,
+            "mean": 48.280434412668335,
+            "stdev": 0.5167328473386413,
+            "minimum": 47.6912857128382,
+            "maximum": 48.65680541676344,
+            "cv_percent": 1.070273815106882,
+            "ordered_first_to_last_percent": 2.024520181189682
+          },
+          "wall": {
+            "n": 3,
+            "mean": 7.016649499999933,
+            "stdev": 0.023083222630953304,
+            "minimum": 7.001532099999849,
+            "maximum": 7.043219599999929,
+            "cv_percent": 0.32897784948433756,
+            "ordered_first_to_last_percent": -0.5398497016890991
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 1.0811617684931714,
+            "stdev": 0.003759989268383187,
+            "minimum": 1.0768201068626115,
+            "maximum": 1.0833327117772507,
+            "cv_percent": 0.3477730509860269,
+            "ordered_first_to_last_percent": 0.6047997128892701
+          },
+          "drafted": 345,
+          "accepted": 207,
+          "acceptance": 0.6
+        },
+        {
+          "size": 8192,
+          "output": 128,
+          "mode": "serial",
+          "pp": {
+            "n": 3,
+            "mean": 1924.7440295154759,
+            "stdev": 31.701760263494123,
+            "minimum": 1895.3741717550222,
+            "maximum": 1958.3514369635884,
+            "cv_percent": 1.6470637018406311,
+            "ordered_first_to_last_percent": 1.325981352247907
+          },
+          "raw_pp": {
+            "n": 3,
+            "mean": 1825.287,
+            "stdev": 63.161237297887034,
+            "minimum": 1772.776,
+            "maximum": 1895.375,
+            "cv_percent": 3.4603455400650436,
+            "ordered_first_to_last_percent": -6.468324210248633
+          },
+          "decode": {
+            "n": 3,
+            "mean": 37.028982419339584,
+            "stdev": 0.28173014278597663,
+            "minimum": 36.72065034738945,
+            "maximum": 37.2729837123656,
+            "cv_percent": 0.7608368482705966,
+            "ordered_first_to_last_percent": -1.4818598082688705
+          },
+          "wall": {
+            "n": 3,
+            "mean": 7.735782933333364,
+            "stdev": 0.06926179442795238,
+            "minimum": 7.655844399999978,
+            "maximum": 7.777889800000139,
+            "cv_percent": 0.8953430444577811,
+            "ordered_first_to_last_percent": -0.05496606547659155
+          },
+          "clock_ratio": {
+            "n": 3,
+            "mean": 1.0555550533920648,
+            "stdev": 0.04811246598377166,
+            "minimum": 0.9999995630178842,
+            "maximum": 1.0833328518819167,
+            "cv_percent": 4.558025261606251,
+            "ordered_first_to_last_percent": 8.333332527920545
+          },
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        }
+      ],
+      "mtp_vs_serial": [
+        {
+          "size": 8192,
+          "decode_gain_percent": 30.385528465001286,
+          "wall_reduction_percent": 9.29619457436811
+        }
+      ],
+      "retained_samples_memory_minimum": {
+        "available_bytes": 30779199488,
+        "commit_headroom_bytes": 132455952384
+      },
+      "name": "stockb",
+      "pld": "3,3",
+      "normal_cleanup": true,
+      "source_seal_unchanged": true,
+      "lifecycle_minimum_gib": {
+        "available_bytes": 28.662090301513672,
+        "commit_headroom_bytes": 123.3481216430664
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "stock": "stocka",
+      "comparison": {
+        "identity_mismatches": [],
+        "within_run_hash_parity": {
+          "control": true,
+          "candidate": true
+        },
+        "passed": true,
+        "matched_case_comparisons": [
+          {
+            "size": 8192,
+            "output": 1,
+            "mode": "serial",
+            "drift": {
+              "prompt_sha256": [],
+              "output_sha256": [],
+              "request_sha256": []
+            },
+            "pp_tps": {
+              "control": {
+                "n": 3,
+                "mean": 1873.1775132842422,
+                "stdev": 69.25462081509318,
+                "minimum": 1820.1992643502424,
+                "maximum": 1951.5432351643117,
+                "cv_percent": 3.697173403158628,
+                "ordered_first_to_last_percent": 7.215911652450613
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 1925.159692398435,
+                "stdev": 71.06999047461159,
+                "minimum": 1844.586088445518,
+                "maximum": 1978.932201830947,
+                "cv_percent": 3.6916413093019815,
+                "ordered_first_to_last_percent": -1.3629276883337815
+              },
+              "descriptive_bootstrap_95_percent": [
+                -1.9082925299015896,
+                7.6826190688986
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": 2.775080244426631
+            },
+            "wall_seconds": {
+              "control": {
+                "n": 3,
+                "mean": 4.403409666666657,
+                "stdev": 0.15959870958404473,
+                "minimum": 4.223009700000034,
+                "maximum": 4.5262230999999815,
+                "cv_percent": 3.6244347372943744,
+                "ordered_first_to_last_percent": -6.699037879947822
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 4.281281033333357,
+                "stdev": 0.16075885816847796,
+                "minimum": 4.161368400000015,
+                "maximum": 4.4639530000000605,
+                "cv_percent": 3.7549242134967464,
+                "ordered_first_to_last_percent": 1.3734256260508282
+              },
+              "descriptive_bootstrap_95_percent": [
+                -1.8211190557880008,
+                7.751884709177204
+              ],
+              "bootstrap_metric": "inverse_wall_speed_gain",
+              "wall_reduction_percent": 2.773501504023135,
+              "wall_speed_gain_percent": 2.8526189330349006
+            }
+          },
+          {
+            "size": 8192,
+            "output": 128,
+            "mode": "mtp",
+            "drift": {
+              "prompt_sha256": [],
+              "output_sha256": [],
+              "request_sha256": []
+            },
+            "pp_tps": {
+              "control": {
+                "n": 3,
+                "mean": 1866.537224602995,
+                "stdev": 5.811942762847595,
+                "minimum": 1859.9141812060554,
+                "maximum": 1870.7869098268206,
+                "cv_percent": 0.31137566860386473,
+                "ordered_first_to_last_percent": -0.5811847711598372
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 1884.4102799485581,
+                "stdev": 5.094001199869413,
+                "minimum": 1878.854640859951,
+                "maximum": 1888.861420729841,
+                "cv_percent": 0.27032336079213454,
+                "ordered_first_to_last_percent": 0.354478587703988
+              },
+              "descriptive_bootstrap_95_percent": [
+                0.5835442218118603,
+                1.3588663546180157
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": 0.9575515082140829
+            },
+            "decode_tps": {
+              "control": {
+                "n": 3,
+                "mean": 48.423620603956266,
+                "stdev": 0.16538342525151245,
+                "minimum": 48.31496336201367,
+                "maximum": 48.613952460837574,
+                "cv_percent": 0.3415346130437847,
+                "ordered_first_to_last_percent": 0.5626717465652131
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 48.23196449305086,
+                "stdev": 0.41114266759225043,
+                "minimum": 47.76796904811573,
+                "maximum": 48.55096487883664,
+                "cv_percent": 0.8524277870777726,
+                "ordered_first_to_last_percent": -1.61272970099553
+              },
+              "descriptive_bootstrap_95_percent": [
+                -1.3356652627327215,
+                0.3497344604440178
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": -0.39579054295197924
+            },
+            "wall_seconds": {
+              "control": {
+                "n": 3,
+                "mean": 7.054106700000015,
+                "stdev": 0.0066801654560102565,
+                "minimum": 7.047163900000044,
+                "maximum": 7.060488899999996,
+                "cv_percent": 0.09469895679363968,
+                "ordered_first_to_last_percent": 0.18908315726773317
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 7.022569666666641,
+                "stdev": 0.02172405269769437,
+                "minimum": 7.003573200000005,
+                "maximum": 7.04625539999995,
+                "cv_percent": 0.3093462041510226,
+                "ordered_first_to_last_percent": 0.40432435981643255
+              },
+              "descriptive_bootstrap_95_percent": [
+                0.13896506410191467,
+                0.7215388282085788
+              ],
+              "bootstrap_metric": "inverse_wall_speed_gain",
+              "wall_reduction_percent": 0.4470733811465344,
+              "wall_speed_gain_percent": 0.4490811032187958
+            }
+          },
+          {
+            "size": 8192,
+            "output": 128,
+            "mode": "serial",
+            "drift": {
+              "prompt_sha256": [],
+              "output_sha256": [],
+              "request_sha256": []
+            },
+            "pp_tps": {
+              "control": {
+                "n": 3,
+                "mean": 1941.6495575597512,
+                "stdev": 13.867179750496158,
+                "minimum": 1928.5263102507834,
+                "maximum": 1956.1568693079953,
+                "cv_percent": 0.7141958082242355,
+                "ordered_first_to_last_percent": -0.6050297194541199
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 1926.9023581587826,
+                "stdev": 30.82096636609719,
+                "minimum": 1904.0968274375787,
+                "maximum": 1961.9665434711385,
+                "cv_percent": 1.599508466819648,
+                "ordered_first_to_last_percent": 0.553904401187677
+              },
+              "descriptive_bootstrap_95_percent": [
+                -2.2008746255425926,
+                0.9160338211938512
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": -0.7595191080466024
+            },
+            "decode_tps": {
+              "control": {
+                "n": 3,
+                "mean": 36.72630600453976,
+                "stdev": 0.18486273897215372,
+                "minimum": 36.53197888389367,
+                "maximum": 36.899967668736934,
+                "cv_percent": 0.5033523898355112,
+                "ordered_first_to_last_percent": 0.4163505226837172
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 36.99230823283694,
+                "stdev": 0.2021308391678838,
+                "minimum": 36.77897509643505,
+                "maximum": 37.18097239751127,
+                "cv_percent": 0.5464131567449972,
+                "ordered_first_to_last_percent": -0.6429539257465477
+              },
+              "descriptive_bootstrap_95_percent": [
+                0.02534724831617652,
+                1.4279022878900482
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": 0.724282557206557
+            },
+            "wall_seconds": {
+              "control": {
+                "n": 3,
+                "mean": 7.739536233333335,
+                "stdev": 0.02775445536312618,
+                "minimum": 7.712179600000013,
+                "maximum": 7.767672100000027,
+                "cv_percent": 0.358606181641618,
+                "ordered_first_to_last_percent": -0.3722492353927076
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 7.734887133333321,
+                "stdev": 0.0815031900456718,
+                "minimum": 7.640780500000005,
+                "maximum": 7.782792599999993,
+                "cv_percent": 1.0537088472103961,
+                "ordered_first_to_last_percent": -0.021898309355283807
+              },
+              "descriptive_bootstrap_95_percent": [
+                -0.7862246413818275,
+                1.1765368734256043
+              ],
+              "bootstrap_metric": "inverse_wall_speed_gain",
+              "wall_reduction_percent": 0.06006949072724366,
+              "wall_speed_gain_percent": 0.060105595852566474
+            }
+          }
+        ],
+        "uncertainty_scope": "Descriptive independent bootstrap, 4096 fixed-seed resamples; n=3 is small. Sequential runs confound treatment with time; no temperature or power telemetry, so no thermal-causation claim."
+      }
+    },
+    {
+      "stock": "stockb",
+      "comparison": {
+        "identity_mismatches": [],
+        "within_run_hash_parity": {
+          "control": true,
+          "candidate": true
+        },
+        "passed": true,
+        "matched_case_comparisons": [
+          {
+            "size": 8192,
+            "output": 1,
+            "mode": "serial",
+            "drift": {
+              "prompt_sha256": [],
+              "output_sha256": [],
+              "request_sha256": []
+            },
+            "pp_tps": {
+              "control": {
+                "n": 3,
+                "mean": 1923.5847828898532,
+                "stdev": 62.87447742204763,
+                "minimum": 1851.548570582041,
+                "maximum": 1967.4315542143634,
+                "cv_percent": 3.2686096282998043,
+                "ordered_first_to_last_percent": 6.258706116248081
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 1925.159692398435,
+                "stdev": 71.06999047461159,
+                "minimum": 1844.586088445518,
+                "maximum": 1978.932201830947,
+                "cv_percent": 3.6916413093019815,
+                "ordered_first_to_last_percent": -1.3629276883337815
+              },
+              "descriptive_bootstrap_95_percent": [
+                -4.1705366686145995,
+                4.5085698521776685
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": 0.0818736726652558
+            },
+            "wall_seconds": {
+              "control": {
+                "n": 3,
+                "mean": 4.2853257666666495,
+                "stdev": 0.14337599208705304,
+                "minimum": 4.187053800000058,
+                "maximum": 4.449846499999921,
+                "cv_percent": 3.3457431218485496,
+                "ordered_first_to_last_percent": -5.9056576445922
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 4.281281033333357,
+                "stdev": 0.16075885816847796,
+                "minimum": 4.161368400000015,
+                "maximum": 4.4639530000000605,
+                "cv_percent": 3.7549242134967464,
+                "ordered_first_to_last_percent": 1.3734256260508282
+              },
+              "descriptive_bootstrap_95_percent": [
+                -4.208315084713288,
+                4.60489272268636
+              ],
+              "bootstrap_metric": "inverse_wall_speed_gain",
+              "wall_reduction_percent": 0.09438566759041311,
+              "wall_speed_gain_percent": 0.09447483829725378
+            }
+          },
+          {
+            "size": 8192,
+            "output": 128,
+            "mode": "mtp",
+            "drift": {
+              "prompt_sha256": [],
+              "output_sha256": [],
+              "request_sha256": []
+            },
+            "pp_tps": {
+              "control": {
+                "n": 3,
+                "mean": 1885.8537155052327,
+                "stdev": 2.8300831030689353,
+                "minimum": 1882.6578365022654,
+                "maximum": 1888.04253436756,
+                "cv_percent": 0.15006906844366438,
+                "ordered_first_to_last_percent": -0.28520002951619716
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 1884.4102799485581,
+                "stdev": 5.094001199869413,
+                "minimum": 1878.854640859951,
+                "maximum": 1888.861420729841,
+                "cv_percent": 0.27032336079213454,
+                "ordered_first_to_last_percent": 0.354478587703988
+              },
+              "descriptive_bootstrap_95_percent": [
+                -0.3690514160635261,
+                0.19569755413071377
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": -0.07654016559220933
+            },
+            "decode_tps": {
+              "control": {
+                "n": 3,
+                "mean": 48.280434412668335,
+                "stdev": 0.5167328473386413,
+                "minimum": 47.6912857128382,
+                "maximum": 48.65680541676344,
+                "cv_percent": 1.070273815106882,
+                "ordered_first_to_last_percent": 2.024520181189682
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 48.23196449305086,
+                "stdev": 0.41114266759225043,
+                "minimum": 47.76796904811573,
+                "maximum": 48.55096487883664,
+                "cv_percent": 0.8524277870777726,
+                "ordered_first_to_last_percent": -1.61272970099553
+              },
+              "descriptive_bootstrap_95_percent": [
+                -1.2903390451340702,
+                1.120192151230337
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": -0.10039246789534939
+            },
+            "wall_seconds": {
+              "control": {
+                "n": 3,
+                "mean": 7.016649499999933,
+                "stdev": 0.023083222630953304,
+                "minimum": 7.001532099999849,
+                "maximum": 7.043219599999929,
+                "cv_percent": 0.32897784948433756,
+                "ordered_first_to_last_percent": -0.5398497016890991
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 7.022569666666641,
+                "stdev": 0.02172405269769437,
+                "minimum": 7.003573200000005,
+                "maximum": 7.04625539999995,
+                "cv_percent": 0.3093462041510226,
+                "ordered_first_to_last_percent": 0.40432435981643255
+              },
+              "descriptive_bootstrap_95_percent": [
+                -0.466431432118497,
+                0.3168091086566571
+              ],
+              "bootstrap_metric": "inverse_wall_speed_gain",
+              "wall_reduction_percent": -0.08437312803935004,
+              "wall_speed_gain_percent": -0.08430199980511421
+            }
+          },
+          {
+            "size": 8192,
+            "output": 128,
+            "mode": "serial",
+            "drift": {
+              "prompt_sha256": [],
+              "output_sha256": [],
+              "request_sha256": []
+            },
+            "pp_tps": {
+              "control": {
+                "n": 3,
+                "mean": 1924.7440295154759,
+                "stdev": 31.701760263494123,
+                "minimum": 1895.3741717550222,
+                "maximum": 1958.3514369635884,
+                "cv_percent": 1.6470637018406311,
+                "ordered_first_to_last_percent": 1.325981352247907
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 1926.9023581587826,
+                "stdev": 30.82096636609719,
+                "minimum": 1904.0968274375787,
+                "maximum": 1961.9665434711385,
+                "cv_percent": 1.599508466819648,
+                "ordered_first_to_last_percent": 0.553904401187677
+              },
+              "descriptive_bootstrap_95_percent": [
+                -1.9593608586032873,
+                2.229316868366138
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": 0.1121358793797711
+            },
+            "decode_tps": {
+              "control": {
+                "n": 3,
+                "mean": 37.028982419339584,
+                "stdev": 0.28173014278597663,
+                "minimum": 36.72065034738945,
+                "maximum": 37.2729837123656,
+                "cv_percent": 0.7608368482705966,
+                "ordered_first_to_last_percent": -1.4818598082688705
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 36.99230823283694,
+                "stdev": 0.2021308391678838,
+                "minimum": 36.77897509643505,
+                "maximum": 37.18097239751127,
+                "cv_percent": 0.5464131567449972,
+                "ordered_first_to_last_percent": -0.6429539257465477
+              },
+              "descriptive_bootstrap_95_percent": [
+                -0.9533859584375359,
+                0.7638404630077256
+              ],
+              "bootstrap_metric": "rate_gain",
+              "throughput_gain_percent": -0.09904184264996063
+            },
+            "wall_seconds": {
+              "control": {
+                "n": 3,
+                "mean": 7.735782933333364,
+                "stdev": 0.06926179442795238,
+                "minimum": 7.655844399999978,
+                "maximum": 7.777889800000139,
+                "cv_percent": 0.8953430444577811,
+                "ordered_first_to_last_percent": -0.05496606547659155
+              },
+              "candidate": {
+                "n": 3,
+                "mean": 7.734887133333321,
+                "stdev": 0.0815031900456718,
+                "minimum": 7.640780500000005,
+                "maximum": 7.782792599999993,
+                "cv_percent": 1.0537088472103961,
+                "ordered_first_to_last_percent": -0.021898309355283807
+              },
+              "descriptive_bootstrap_95_percent": [
+                -1.1195175192732387,
+                1.2247095262929886
+              ],
+              "bootstrap_metric": "inverse_wall_speed_gain",
+              "wall_reduction_percent": 0.011579952640383695,
+              "wall_speed_gain_percent": 0.01158129374871919
+            }
+          }
+        ],
+        "uncertainty_scope": "Descriptive independent bootstrap, 4096 fixed-seed resamples; n=3 is small. Sequential runs confound treatment with time; no temperature or power telemetry, so no thermal-causation claim."
+      }
+    }
+  ],
+  "elapsed_seconds": 961.8075444698334,
+  "decision": "Retain stock PLD3,3. PLD-off MTP decode is lower than both stock controls and acceptance is unchanged; no qualified gain.",
+  "limits": "Single fixed greedy prose prompt, n=3 per cohort, no GPU power/temperature sensor stream, no full-logit equality proof; not a long-context occupied-input benchmark or NPU integration measurement."
+}

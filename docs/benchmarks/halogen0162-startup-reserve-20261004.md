@@ -56,3 +56,20 @@ PLD `3,3` → `0` → `3,3` plan was prepared with the corrected admission sourc
 unchanged 8K requests and 262144 capacity. It has not started. This narrows the
 next experiment to regular decode and speculative selection; the abandoned
 five-cell plan has no valid measurements to repeat.
+
+The prepared three-cell attempt subsequently stopped before model creation.
+Initial logged admission waits observed about 42.16–43.84 GiB; retained memory
+samples later stayed above 44 GiB for roughly 63 seconds. The fresh check
+after exclusive-host inspection then observed 42.32 GiB and refused creation.
+Its engine log is empty, there were no requests, and normal cleanup/recovery
+passed. The precise allocation responsible for the decline is unproved;
+checkpoint/source preflight and exclusive-host inspection precede these
+backend checks.
+
+After the user's 16:49:41 Europe/Berlin reboot, a fresh identical comparison
+completed all three cells in 16.03 minutes. Post-WSL availability was 50.444 GiB
+physical / 209.103 GiB commit; lifecycle minimums were 28.318 / 123.348 GiB.
+The corrected admission and 18-GiB guard remained enabled, and each cell
+completed with normal cleanup. This qualifies the successful configuration
+at the observed headroom, not the sufficiency of exactly 44 GiB. See the
+[completed comparison](halogen0162-pld-stock8k-20261004.md).

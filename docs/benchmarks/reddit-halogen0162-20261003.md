@@ -71,3 +71,7 @@ Thanks to Peonist AI, GUFO and the llama.cpp fork maintainers for the engine wor
 I also moved Halogen's n-gram feature lookup file from the Windows-backed mount to WSL ext4 and ran stock → native → stock with the same answers and token counts. This was a separate 64K-capacity / 32K-input run with cache Off; the tables above use Exact cache.
 
 Initial prefill was 1441 t/s with the native file, versus 989 and 1109 t/s for the stock bookends. Each of the two initial requests was 28–32% faster than the later stock control. Draft acceptance stayed at **2156/2539 = 84.92%** in all three cells. Decode varied too much between the stock controls to claim a gain. The native run's RAM recovery also required a separate later check, which is retained in the evidence. [Result and counts](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/halogen0162-native-lookup-20261004.md).
+
+**Separate 8K greedy check after reboot**
+
+With 8192 input tokens, 128 output tokens, cache Off and MTP depth2, two fresh stock controls measured **48.28–48.42 t/s regular decode** and **207/345 = 60% draft acceptance** each. Serial PP8192/TG1 was 1873–1924 t/s; serial decode was 36.73–37.03 t/s. Turning prompt lookup off gave 48.23 t/s and the same acceptance, so I kept stock. All answers and token counts matched. This is an 8K-input check in a 262144-capacity engine, separate from the sampled long-chat tables above. [Full comparison](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/halogen0162-pld-stock8k-20261004.md).
