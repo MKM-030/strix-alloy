@@ -121,3 +121,14 @@ Artifacts are retained under
 This rules out promoting this exact graph with the installed verified provider.
 It does not assert that all BF16 Gather configurations are unsupported. The
 original failed FP32-bank attempt and lossless-conversion gate remain unchanged.
+
+Source inspection also establishes BF16 hidden/output boundaries in inspected
+native kernels. Some affine kernels perform separate code-plane dot products
+and then FP16 scale/bias combinations, rather than a dot against independently
+BF16-rounded full weights. The inspected `<32,3,5>` kernel is alternate-path
+evidence: defaults are affine enabled and routed modes 16/2, and the executed
+branch has not been captured. Adding supported rounding boundaries to a
+retained-bank CPU diagnostic still fails both contracts; this does not justify
+relaxing the gate or asserting complete-native fidelity. The source-only note
+`C:\AI\halogen-mtp-npu\v2-native-arithmetic-source-20261004\native-arithmetic.md`
+has SHA-256 `ada37e169b610094fa389ad06da994687e64015d516802fbfc9d5724f8ae7947`.

@@ -140,3 +140,29 @@ the full 51.2-GB extraction with verified payload XOR, canonical output hash,
 unchanged source identity and terminal owned observer/worker. Physical/commit
 headroom minima were 44.058 / 198.347 GiB. Independent full readback and ordinary
 lookup-source qualification remain pending; no SSD decode gain is claimed.
+
+The later rank-two row-Gather variant also failed strict provider admission
+before any NPU replay. It reuses the exact 150-MiB bank and changes only the
+Gather shape/index contract; its CPU replay passes, but no NPU latency exists.
+The independent SSD readback is now running under a separate owned supervisor.
+
+At 03:49 UTC, the official Halogen main and newest tag `v0.16.2` still point to
+`7f31bbd4021f217a1be9776bdb7304bcf8eca62d`.
+[Official tag](https://github.com/peonist-ai/halogen-flash-server/tree/v0.16.2).
+The rechecked Adrenalin 26.9.2 note lists installed GPU driver
+32.0.32015.2008 and NPU MCDM 32.00.20102.3930. Searches found no indexed official
+26.9.3 or 26.10.1 notes; that absence is not a universal release check.
+[AMD package contents](https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html).
+No driver or firmware change was made.
+
+At 03:53 UTC, independent full SSD readback and normal lookup-source
+qualification have passed. Complete hash/extent/metadata agree, all owned
+reader/observer processes are terminal, and the normal immutable qualification
+seal is available. The matched stock A / SSD candidate / stock B matrix is
+prepared but has not supplied timings. The stock numbers above remain the
+only qualified overall result.
+
+At 04:03 UTC, the matched SSD matrix is running in its first stock cell. Three
+of six request samples have been retained. Neither partial rows nor the earlier
+unmatched 32K rates establish a placement gain. The root continues to own the
+single engine launch; the 18-GiB physical/commit floor remains unchanged.
