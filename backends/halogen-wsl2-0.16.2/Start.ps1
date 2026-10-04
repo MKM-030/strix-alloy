@@ -9,11 +9,14 @@ param(
     [ValidateSet(2048,4096,8192,16384,32768)][int]$PrefillChunk,
     [switch]$PrefillKeepTrunk, [ValidateRange(1,1024)][int]$AdmitTicks,
     [string]$KernelControlsJson, [string]$MatmulTuningJson,
+    [string]$LookupReceipt, [string]$LookupReceiptSha256,
     [ValidateRange(0,604800)][int]$ServeSeconds=0,
     [ValidateRange(120,3600)][int]$StartupTimeoutSeconds=900,
     [switch]$PrintOnly, [switch]$Stop, [switch]$Status, [switch]$Logs
 )
 $ErrorActionPreference='Stop'
+if ($PSBoundParameters.ContainsKey('LookupReceipt') -ne $PSBoundParameters.ContainsKey('LookupReceiptSha256')) { throw 'LookupReceipt and LookupReceiptSha256 must be supplied together.' }
+if ($PSBoundParameters.ContainsKey('LookupReceipt') -and ($Profile -ne 'Serve' -or $Checkpoint -ne 'v2')) { throw 'Standalone lookup experiments require Serve with the v2 checkpoint.' }
 if (@($Stop,$Status,$Logs | Where-Object { $_ }).Count -gt 1) { throw 'Select only one of Stop, Status, Logs.' }
 if ($Logs) {
     $state=Get-Content -LiteralPath (Join-Path $PSScriptRoot '.local/current-service.json') -Raw | ConvertFrom-Json
@@ -35,6 +38,7 @@ if ($Profile -ne 'Serve') {
     if($PSBoundParameters.ContainsKey('AdmitTicks')){$arguments+=@('--admit-ticks',"$AdmitTicks")}
     if($PSBoundParameters.ContainsKey('KernelControlsJson')){$arguments+=@('--kernel-controls-json',$KernelControlsJson)}
     if($PSBoundParameters.ContainsKey('MatmulTuningJson')){$arguments+=@('--matmul-tuning-json',$MatmulTuningJson)}
+    if($PSBoundParameters.ContainsKey('LookupReceipt')){$arguments+=@('--lookup-receipt',$LookupReceipt,'--lookup-receipt-sha256',$LookupReceiptSha256)}
     if($Stop){$arguments+='--stop'}
     if($Status){$arguments+='--status'}
 }

@@ -4,6 +4,7 @@ import copy
 import json
 from pathlib import Path
 from controller import (halogen_draft_arguments, halogen_kernel_arguments, halogen_kernel_module,
+                        halogen_lookup_arguments,
                         memory_reserve_gib, validate_engine,
                         validate_halogen_launcher_controls)
 
@@ -20,7 +21,7 @@ def replace_option(args, flag, value):
 
 def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
          prefill_chunk=None, prompt_lookup=None, cache_disk=None, lookup_workload=None,
-         prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None):
+         prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, lookup_tuning=None):
     if type(draft_tokens) is not int or draft_tokens not in (1, 2, 3):
         raise ValueError('Draft depth must be an integer from 1 through 3')
     if draft_vocab not in ('full', 'latin') or mtp_policy not in ('length', 'survival'):
@@ -65,6 +66,11 @@ def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
         halogen_draft_arguments(engine)
         repo=Path(__file__).resolve().parents[1]
         validate_halogen_launcher_controls(engine,repo)
+        if lookup_tuning is not None:
+            engine['lookup_tuning'] = copy.deepcopy(lookup_tuning)
+        if 'lookup_tuning' in engine:
+            directory=(repo/engine['directory']).resolve()
+            halogen_lookup_arguments(engine,directory)
         if kernel_controls is not None or 'kernel_controls' in engine:
             if not isinstance(engine.get('directory'),str):
                 raise ValueError('Kernel controls require a declared Halogen backend')
@@ -77,7 +83,8 @@ def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
                                            else module.validate(kernel_controls))
             halogen_kernel_arguments(engine,directory)
     elif backend == 'gufo-flash-next' and engine.get('kind') == 'native':
-        if prefill_keep_trunk or admit_ticks is not None or kernel_controls is not None:
+        if (prefill_keep_trunk or admit_ticks is not None or kernel_controls is not None
+                or lookup_tuning is not None or 'lookup_tuning' in engine):
             raise ValueError('Halogen-only prefill controls do not apply to GUFO')
         if engine.get('qualified') is not True:
             raise ValueError('Retain a previously qualified GUFO runtime')
@@ -111,6 +118,8 @@ def tune(source, *, draft_tokens, draft_vocab='full', mtp_policy='length',
     if admit_ticks is not None: result['qualification']['admit_ticks']=admit_ticks
     if 'kernel_controls' in engine:
         result['qualification']['kernel_controls']=copy.deepcopy(engine['kernel_controls'])
+    if 'lookup_tuning' in engine:
+        result['qualification']['lookup_tuning']=copy.deepcopy(engine['lookup_tuning'])
     if prompt_lookup is not None: result['qualification']['prompt_lookup']=prompt_lookup
     if lookup_workload is not None: result['qualification']['lookup_workload']=lookup_workload
     if cache_disk is not None: result['qualification']['cache_disk']=str(cache_disk)
@@ -130,10 +139,14 @@ def main():
     p.add_argument('--prefill-keep-trunk',action='store_true')
     p.add_argument('--admit-ticks',type=int)
     p.add_argument('--kernel-controls-json',help='Explicit experimental HALOGEN_* numeric controls as a JSON object')
+    p.add_argument('--lookup-receipt',type=Path)
+    p.add_argument('--lookup-receipt-sha256')
     p.add_argument('--prompt-lookup',action=argparse.BooleanOptionalAction,default=None)
     p.add_argument('--lookup-workload',choices=('copy','prose'))
     p.add_argument('--cache-disk',type=Path)
     a = p.parse_args()
+    if bool(a.lookup_receipt) != bool(a.lookup_receipt_sha256):
+        p.error('Lookup experiment requires both receipt path and its reviewed SHA256')
     if a.output.exists() or a.output.resolve() == a.source.resolve():
         raise ValueError('Existing source and destination profiles are never overwritten')
     source = json.loads(a.source.read_text(encoding='utf-8-sig'))
@@ -142,7 +155,10 @@ def main():
                   prefill_chunk=a.prefill_chunk, prompt_lookup=a.prompt_lookup,
                   cache_disk=a.cache_disk, lookup_workload=a.lookup_workload,
                   prefill_keep_trunk=a.prefill_keep_trunk, admit_ticks=a.admit_ticks,
-                  kernel_controls=a.kernel_controls_json)
+                  kernel_controls=a.kernel_controls_json,
+                  lookup_tuning=({'receipt':str(a.lookup_receipt.absolute()),
+                                  'receipt_sha256':a.lookup_receipt_sha256}
+                                 if a.lookup_receipt else None))
     validate_engine(result['engine'], Path(__file__).resolve().parents[1])
     a.output.parent.mkdir(parents=True, exist_ok=True)
     with a.output.open('x', encoding='utf-8') as stream:

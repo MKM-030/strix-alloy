@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 import unittest
 from unittest.mock import patch
+import tempfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import service
@@ -11,6 +12,26 @@ import startup_guard
 
 
 class StockV2Tests(unittest.TestCase):
+    def test_lookup_omission_preserves_stock_manifest_and_override_is_per_attempt(self):
+        fixed = {'/models': '/home/revn/models', '/ngram-w4b.hgn': '/mnt/c/original-w4b.hgn'}
+        with tempfile.TemporaryDirectory() as temporary:
+            attempt = Path(temporary)
+            (attempt / 'entrypoint-service.sh').write_text('fixture')
+            options = service.options(['--checkpoint', 'v2'])
+            with patch.object(service.r, 'FIXED_MOUNTS', fixed), patch.object(service.r, 'MACHINE',
+                    {'ngram_source': '/mnt/c/original-w4b.hgn'}), patch.object(service.r, 'linux_path',
+                    side_effect=lambda path: '/fixture/' + Path(path).name):
+                stock = service.build_manifest(options, attempt, 'stock')
+                self.assertNotIn('lookup_tuning', stock)
+                self.assertEqual(stock['mounts']['/ngram-w4b.hgn'], '/mnt/c/original-w4b.hgn')
+                options.qualified_lookup = {'output': {'path': '/home/revn/qualified-lookup.hgn'},
+                                            'configuration': {'receipt_sha256': 'a' * 64}}
+                candidate = service.build_manifest(options, attempt, 'candidate')
+                self.assertEqual(candidate['mounts']['/ngram-w4b.hgn'], '/home/revn/qualified-lookup.hgn')
+                self.assertEqual(candidate['environment']['HALOGEN_NGRAM_TABLE'], '/ngram-w4b.hgn')
+                self.assertEqual(candidate['lookup_tuning']['configuration']['receipt_sha256'], 'a' * 64)
+                self.assertEqual(fixed['/ngram-w4b.hgn'], '/mnt/c/original-w4b.hgn')
+
     def test_configured_existing_lookup_source_is_used(self):
         with patch.object(service.r, 'MACHINE', {'ngram_source': '/mnt/c/models/w4b.hgn'}):
             env = service.environment(262144, 'v2')

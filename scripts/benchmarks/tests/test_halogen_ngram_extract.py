@@ -68,7 +68,8 @@ class NgramExtractionTests(unittest.TestCase):
             root = Path(directory)
             source, receipt, expected, original, payload = self.fixture(root)
             destination = root / 'ngram.hgn'
-            result = self.extract(source, destination, receipt, expected, chunk_bytes=8)
+            result = self.extract(source, destination, receipt, expected, chunk_bytes=8,
+                                  flush_bytes=16)
             output = destination.read_bytes()
             self.assertEqual(struct.unpack_from('<IIQQQQ', output),
                              (0x314e4748, 2, 1, 104, 320, 384))

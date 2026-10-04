@@ -161,6 +161,25 @@ def halogen_matmul_arguments(engine, directory):
     return ['-MatmulTuningJson',json.dumps(config,sort_keys=True,separators=(',',':'))]
 
 
+def halogen_lookup_arguments(engine, directory):
+    if 'lookup_tuning' not in engine: return []
+    supported = Path(__file__).resolve().parents[1] / 'backends/halogen-wsl2-0.16.2'
+    if directory.resolve() != supported.resolve() or engine.get('checkpoint') != 'v2':
+        raise ValueError('Lookup source experiment requires Halogen 0.16.2 v2')
+    source = directory / 'scripts/lookup_source.py'
+    if source.is_symlink() or not source.is_file():
+        raise ValueError('Selected backend has no managed lookup-source support')
+    launcher = (directory / 'Start.ps1').read_text(encoding='utf-8-sig')
+    for name in ('LookupReceipt', 'LookupReceiptSha256'):
+        if not re.search(r'\[string\]\s*\$' + name + r'\b', launcher, re.I):
+            raise ValueError('Selected launcher has no managed lookup-source support')
+    spec = importlib.util.spec_from_file_location('alloy_halogen_lookup_source', source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    value = module.validate_configuration(engine['lookup_tuning'])
+    return ['-LookupReceipt', value['receipt'], '-LookupReceiptSha256', value['receipt_sha256']]
+
+
 def validate_engine(engine, repo):
     if engine.get('kind')=='halogen':
         halogen_draft_arguments(engine)
@@ -175,11 +194,14 @@ def validate_engine(engine, repo):
         validate_halogen_launcher_controls(engine,repo)
         halogen_kernel_arguments(engine,directory)
         halogen_matmul_arguments(engine,directory)
+        halogen_lookup_arguments(engine,directory)
         return directory
     if 'kernel_controls' in engine:
         raise ValueError('Managed kernel controls apply only to Halogen')
     if 'matmul_tuning' in engine:
         raise ValueError('Managed matmul plans apply only to Halogen')
+    if 'lookup_tuning' in engine:
+        raise ValueError('Managed lookup sources apply only to Halogen')
     if engine.get('kind')!='native' or engine.get('qualified') is not True:
         raise ValueError('Native backend requires an explicitly qualified local profile')
     executable=Path(engine['command'][0])
@@ -228,6 +250,7 @@ class Engine:
             command+=halogen_draft_arguments(self.config)
             command+=halogen_kernel_arguments(self.config,self.directory)
             command+=halogen_matmul_arguments(self.config,self.directory)
+            command+=halogen_lookup_arguments(self.config,self.directory)
         else:
             command=list(self.config['command'])
             if self.config.get('api_key_from_backend_token'):

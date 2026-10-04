@@ -23,6 +23,7 @@ import uuid
 import portable
 import kernel_controls as kc
 import matmul_tuning as mt
+import lookup_source as lookup
 from startup_monitor import StartupMonitor
 import runner as r
 import startup_guard as sg
@@ -48,6 +49,8 @@ def options(argv=None):
     p.add_argument('--admit-ticks',type=int,default=None)
     p.add_argument('--kernel-controls-json',type=kc.parse,default=None)
     p.add_argument('--matmul-tuning-json',type=mt.parse,default=None)
+    p.add_argument('--lookup-receipt',default=None)
+    p.add_argument('--lookup-receipt-sha256',default=None)
     p.add_argument('--context-size',type=int,default=DEFAULT_CONTEXT)
     p.add_argument('--serve-seconds',type=int,default=0,help='0 means until explicitly stopped')
     p.add_argument('--startup-timeout',type=int,default=900)
@@ -62,6 +65,14 @@ def options(argv=None):
 
 
 def validate_options(o):
+    lookup_path = getattr(o, 'lookup_receipt', None)
+    lookup_sha = getattr(o, 'lookup_receipt_sha256', None)
+    if (lookup_path is None) != (lookup_sha is None):
+        raise ValueError('Lookup receipt and independent receipt SHA-256 must be supplied together')
+    if lookup_path is not None:
+        if getattr(o, 'checkpoint', 'w4b') != 'v2':
+            raise ValueError('Standalone lookup experiments require the pinned v2 checkpoint')
+        lookup.validate_configuration({'receipt': lookup_path, 'receipt_sha256': lookup_sha})
     kc.validate(getattr(o, 'kernel_controls_json', None) or {})
     if getattr(o, 'matmul_tuning_json', None) is not None:
         mt.validate(o.matmul_tuning_json)
@@ -171,12 +182,13 @@ def native_logs(cid):
         timeout=15,creationflags=NO_WINDOW).stdout
 
 
-def verify_checkpoint(machine, checkpoint):
+def verify_checkpoint(machine, checkpoint, lookup_override=None):
     if checkpoint=='w4b': return
     if checkpoint!='v2': raise ValueError('Unknown checkpoint')
     from checkpoint_integrity import verify, verify_ngram
     verify(machine,LOCAL)
-    verify_ngram(machine,LOCAL)
+    if lookup_override is None:
+        verify_ngram(machine,LOCAL)
     portable.check_hash(LOCAL/'libhalogen0162-v2-preflight.so',portable.RELEASE['v2_bridge_sha256'])
 
 
@@ -256,6 +268,11 @@ def build_manifest(o, attempt, run_id):
     if tuning:
         result['environment'].update(mt.environment(o.matmul_tuning_json))
         result['matmul_tuning']=tuning
+    qualified_lookup = getattr(o, 'qualified_lookup', None)
+    if qualified_lookup is not None:
+        result['mounts']['/ngram-w4b.hgn'] = qualified_lookup['output']['path']
+        result['environment']['HALOGEN_NGRAM_TABLE'] = '/ngram-w4b.hgn'
+        result['lookup_tuning'] = qualified_lookup
     return result
 
 
@@ -452,7 +469,11 @@ def serve(o):
     machine=r.MACHINE
     actual=portable.preflight(machine['distro'],machine['user'],machine['models'],machine['dxg'],checkpoint=getattr(o,'checkpoint','w4b'),ngram_source=machine.get('ngram_source'))
     if actual!=machine: raise ValueError('Installed machine configuration drift')
-    verify_checkpoint(machine,getattr(o,'checkpoint','w4b'))
+    lookup_configuration = None
+    if getattr(o, 'lookup_receipt', None) is not None:
+        lookup_configuration = {'receipt': o.lookup_receipt, 'receipt_sha256': o.lookup_receipt_sha256}
+        o.qualified_lookup = lookup.qualify(machine, LOCAL, lookup_configuration)
+    verify_checkpoint(machine,getattr(o,'checkpoint','w4b'),lookup_configuration)
     secret=token()
     run_id=uuid.uuid4().hex
     attempt=LOCAL/'services'/run_id; attempt.mkdir(parents=True)
@@ -503,6 +524,7 @@ def serve(o):
         frame=host.frame(); check_admission(frame,o.context_size,getattr(o,'checkpoint','w4b'))
         atomic(attempt/'admission-create.json',frame)
         log.info('Creating Halogen 0.16.2: context=%s, slots=1; no model download',o.context_size)
+        lookup.revalidate(machine, m.get('lookup_tuning'))
         creation_attempted=True
         cid=r.docker(*command(m),timeout=30)
         owned(r.inspect(cid),cid,m); atomic(attempt/'container.json',{'id':cid})
@@ -521,6 +543,7 @@ def serve(o):
         atomic(attempt/'admission-start.json',baseline)
         if cancelled(): raise InterruptedError('Startup cancelled')
         mt.revalidate_receipt(m.get('matmul_tuning'))
+        lookup.revalidate(machine, m.get('lookup_tuning'))
         r.docker('start',cid)
         cache_worker=StartupMonitor(r.WSL,cid,attempt,run_id,o.startup_timeout,atomic,
             logger(attempt/'startup-cache.jsonl',raw=True))

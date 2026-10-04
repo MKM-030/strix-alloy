@@ -26,6 +26,7 @@ SOURCE_BYTES = 124068083904
 TABLE_DIMS = (128, 2500012, 160)
 TABLE_BYTES = 51200245764
 MAX_CHUNK_BYTES = 8 * 1024**2
+MAX_DIRTY_BYTES = 64 * 1024**2
 
 
 @dataclass(frozen=True)
@@ -153,9 +154,12 @@ def _remove_created(path, identity):
 
 
 def extract_ngram(source, destination, *, source_receipt, expected=ExtractionSpec(),
-                  chunk_bytes=MAX_CHUNK_BYTES, verify_xor=None, receipt_path=None):
+                  chunk_bytes=MAX_CHUNK_BYTES, verify_xor=None, receipt_path=None,
+                  flush_bytes=MAX_DIRTY_BYTES):
     if not 4 <= chunk_bytes <= MAX_CHUNK_BYTES or chunk_bytes % 4:
         raise ValueError('Chunk size must be divisible by four and at most 8 MiB')
+    if not chunk_bytes <= flush_bytes <= MAX_DIRTY_BYTES or flush_bytes % 4:
+        raise ValueError('Flush interval must be aligned, at least one chunk and at most 64 MiB')
     source, destination = _safe_path(source), _safe_path(destination)
     receipt_path = _safe_path(receipt_path or destination.with_suffix(destination.suffix + '.receipt.json'))
     if source == destination or receipt_path in (source, destination):
@@ -199,7 +203,7 @@ def extract_ngram(source, destination, *, source_receipt, expected=ExtractionSpe
                 write(entry)
                 write(b'\0' * (DATA_OFFSET - HEADER_BYTES - ENTRY_BYTES))
                 input_stream.seek(tensor['offset'])
-                position, checksum = 0, 0
+                position, checksum, flushed = 0, 0, 0
                 while position < tensor['size']:
                     block = _read_exact(input_stream, min(chunk_bytes, tensor['size'] - position))
                     write(block)
@@ -210,6 +214,15 @@ def extract_ngram(source, destination, *, source_receipt, expected=ExtractionSpe
                         os.posix_fadvise(input_stream.fileno(), tensor['offset'] + position,
                                          len(block), os.POSIX_FADV_DONTNEED)
                     position += len(block)
+                    if position - flushed >= flush_bytes:
+                        # Bound this output's dirty pages before requesting their
+                        # reclamation. This never changes global cache settings.
+                        output.flush()
+                        os.fsync(output.fileno())
+                        if hasattr(os, 'posix_fadvise'):
+                            os.posix_fadvise(output.fileno(), DATA_OFFSET + flushed,
+                                             position - flushed, os.POSIX_FADV_DONTNEED)
+                        flushed = position
                 write(b'\0' * (end - DATA_OFFSET - tensor['size']))
                 if do_xor and checksum != tensor['xor32']:
                     raise ValueError('Ngram payload XOR32 mismatch')
@@ -221,6 +234,8 @@ def extract_ngram(source, destination, *, source_receipt, expected=ExtractionSpe
                     raise ValueError('Incomplete standalone HGN output')
                 output.flush()
                 os.fsync(output.fileno())
+                if hasattr(os, 'posix_fadvise'):
+                    os.posix_fadvise(output.fileno(), 0, end, os.POSIX_FADV_DONTNEED)
                 written_identity = file_identity(os.fstat(output.fileno()))
             _safe_path(destination)
             output_info = _path_stat(destination)
