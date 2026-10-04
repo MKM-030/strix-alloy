@@ -28,13 +28,13 @@ class ServiceTests(unittest.TestCase):
         class Host:
             def frame(self):
                 count[0]+=1
-                return {'available_bytes':(45 if count[0]<=5 else 48)*s.r.GIB,
+                return {'available_bytes':(51 if count[0]<=5 else 54)*s.r.GIB,
                         'commit_headroom_bytes':200*s.r.GIB}
         def advance(seconds): clock[0]+=seconds
         with patch.object(s.r,'exclusive_host'), patch.object(s.time,'monotonic',side_effect=lambda:clock[0]), patch.object(s.time,'sleep',side_effect=advance):
             result=s.admission(Host(),129024,s.threading.Event(),Mock())
         self.assertGreaterEqual(clock[0],65)
-        self.assertEqual(result['available_bytes'],48*s.r.GIB)
+        self.assertEqual(result['available_bytes'],54*s.r.GIB)
 
     def test_memory_admission_timeout_does_not_lower_floor(self):
         clock=[0.0]
@@ -44,7 +44,7 @@ class ServiceTests(unittest.TestCase):
         with patch.object(s.r,'exclusive_host'), patch.object(s.time,'monotonic',side_effect=lambda:clock[0]), patch.object(s.time,'sleep',side_effect=advance):
             with self.assertRaisesRegex(ValueError,'did not stabilize'):
                 s.admission(Host(),129024,s.threading.Event(),Mock())
-        self.assertEqual(s.floors(129024),(46,121))
+        self.assertEqual(s.floors(129024),(52,127))
 
     def test_default_126k_and_continuous(self):
         o=s.options()
@@ -72,13 +72,23 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(s.options(['--startup-timeout','1800']).serve_seconds,0)
 
     def test_memory_planning_scales_up_without_lowering_baseline(self):
-        self.assertEqual(s.floors(4096),(46,117))
-        self.assertEqual(s.floors(129024),(46,121))
-        self.assertEqual(s.floors(262144),(46,125))
+        self.assertEqual(s.floors(4096),(52,123))
+        self.assertEqual(s.floors(129024),(52,127))
+        self.assertEqual(s.floors(262144),(52,131))
         phys,commit=s.floors(129024)
         s.check_admission({'available_bytes':phys*s.r.GIB,'commit_headroom_bytes':commit*s.r.GIB},129024)
         with self.assertRaises(ValueError):
             s.check_admission({'available_bytes':phys*s.r.GIB-1,'commit_headroom_bytes':commit*s.r.GIB},129024)
+
+    def test_v2_262k_memory_admission_physical_and_commit_boundaries(self):
+        good={'available_bytes':44*s.r.GIB,'commit_headroom_bytes':131*s.r.GIB}
+        s.check_admission(good,262144,'v2')
+        for key in good:
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                s.check_admission({**good,key:good[key]-1},262144,'v2')
+        self.assertEqual(s.floors(262144,'v2'),(44,131))
+        with self.assertRaises(ValueError):
+            s.check_admission({**good,'available_bytes':38*s.r.GIB},262144,'v2')
 
     def test_actual_health_context_must_match(self):
         good={'status':'ok','version':{'api':'0.16.2','engine':'0.16.2','match':True},

@@ -40,6 +40,6 @@ class Version0161Tests(unittest.TestCase):
         self.assertTrue((ROOT/'scripts/auth_api.py').exists())
         self.assertTrue((ROOT/'scripts/startup_cache.py').exists())
         self.assertTrue((ROOT/'scripts/startup_monitor.py').exists())
-        self.assertEqual(service.floors(129024),(46,121))
+        self.assertEqual(service.floors(129024),(52,127))
 
 if __name__=='__main__': unittest.main()
