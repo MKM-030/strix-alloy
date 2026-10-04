@@ -20,6 +20,26 @@ WORK = ROOT / "server/.local/optimization9h-20261004"
 PACK_SOURCE = SCRIPTS / "halogen_qmoe_real_pack.py"
 PACK_SHA = "b74d76c4082d447285f55a1af41e8f28ec85a4bd35b5ce1535553eed6fe004d1"
 TOLERANCE = {"rtol": .03, "atol": .003}
+REFERENCE_CONTRACT_VERSION = "affine_bf16_scale_and_dequant_rne_v2"
+REFERENCE_CONTRACT = {
+    "version": REFERENCE_CONTRACT_VERSION,
+    "input": "saved BF16 words widened to FP32",
+    "weight": "BF16_RNE((q-zp)*BF16_RNE(scale))",
+    "accumulation": "FP64 dot then FP32 output",
+    "kernel_emulation": False,
+    "public_helper": {
+        "url": "https://github.com/amd/DynamicDispatch/blob/b3051f03e20aab237cda3bbe4cd2081f76b72b06/tests/cpp/include/mladfmatmulbias_helpers.hpp#L75-L92",
+        "commit": "b3051f03e20aab237cda3bbe4cd2081f76b72b06",
+        "git_blob": "a10a7a26350fe3be30cd430b7c685f167d580647",
+        "sha256": "fb715bdcd3db4343b181f83fe11b8cdc05b812ebbc3fbc6d9cc63f707ab0a5a5",
+    },
+    "installed_sdk_validation_accessor": {
+        "wheel_version": "1.8.0",
+        "path": "include/ryzenai/dynamic_dispatch/ops/ops_common/mladf_matmul_matrix.hpp",
+        "sha256": "bf152c12d33ad04fde80c342519dacfe03607ab4a32f37744c62776db6347f00",
+        "lines": [242, 255, 403, 416],
+    },
+}
 
 
 def sha(path):
@@ -46,8 +66,12 @@ def metrics(actual, expected, np):
                 relative_l2_error=float(np.sqrt(np.square(error).sum() / denominator)) if denominator else 0.0)
 
 
-def independent_affine(prepared, np, rounded_scales):
-    """Decode nibbles directly; never call affine.reconstruct_rows or DD."""
+def independent_affine(prepared, np, bf16_reference):
+    """Decode nibbles; apply documented scale/product BF16 RNE for references.
+
+    False retains the separate FP32 affine weight-approximation diagnostic.
+    This does not emulate the v2 kernel's BFP conversion or accumulation.
+    """
     n, k = prepared.N, prepared.K
     codes = np.empty((n, k), dtype=np.int16)
     codes[:, 0::2] = prepared.weights & 15
@@ -56,8 +80,9 @@ def independent_affine(prepared, np, rounded_scales):
     zeros = np.empty((n, blocks), dtype=np.int16)
     zeros[:, 0::2] = prepared.zero_points & 15
     zeros[:, 1::2] = prepared.zero_points[:, :blocks // 2] >> 4
-    scales = widen(bf16_words(prepared.scales, np), np) if rounded_scales else prepared.scales
-    return ((codes.reshape(n, blocks, 32) - zeros[:, :, None]) * scales[:, :, None]).reshape(n, k).astype(np.float32)
+    scales = widen(bf16_words(prepared.scales, np), np) if bf16_reference else prepared.scales
+    rows = ((codes.reshape(n, blocks, 32) - zeros[:, :, None]) * scales[:, :, None]).reshape(n, k).astype(np.float32)
+    return widen(bf16_words(rows, np), np) if bf16_reference else rows
 
 
 def cpu_dot(rows, x, np):
@@ -82,7 +107,8 @@ def run(args):
                   full_mtp_proven=False, acceptance_qualified=False, speed_gain_established=False,
                   router_semantics_verified=False, activation_semantics_verified=False,
                   approximate_quantization=True, source_sha256=args.expected_probe_sha256,
-                  tolerance=TOLERANCE, fixtures=[], rows=[], completed_experts=0)
+                  tolerance=TOLERANCE, reference_contract_version=REFERENCE_CONTRACT_VERSION,
+                  reference_contract=REFERENCE_CONTRACT, fixtures=[], rows=[], completed_experts=0)
     started, handles = time.perf_counter(), []
     try:
         if sha(__file__) != args.expected_probe_sha256 or sha(PACK_SOURCE) != PACK_SHA:
@@ -158,7 +184,8 @@ def run(args):
                     paths.extend(case_paths)
                     cases.append(dict(call=call, input_path=str(case_paths[0]), affine_reference_path=str(case_paths[1]),
                                       decoded_reference_path=str(case_paths[2]), input_dtype="BF16 words",
-                                      reference_accumulation="FP64 then FP32", approximation_output_error=metrics(affine_ref, decoded_ref, np)))
+                                      reference_accumulation="FP64 then FP32", reference_contract_version=REFERENCE_CONTRACT_VERSION,
+                                      approximation_output_error=metrics(affine_ref, decoded_ref, np)))
                 for path in paths:
                     pins[str(path)] = sha(path)
                 source_bytes += sum(row["bytes"] for row in record["ranges"])
@@ -168,8 +195,9 @@ def run(args):
                 result["rows"].append(dict(label=label, source=record, packed_sha256=pins[str(packed_path)],
                                            affine_input_sha256={key: helper.array_sha(getattr(prepared, key)) for key in ("weights", "bias", "scales", "zero_points")},
                                            independent_affine_fp32_weight_error=quantization,
-                                           independent_affine_bf16_scale_weight_error=rounded_quantization,
+                                           independent_affine_bf16_scale_and_dequant_weight_error=rounded_quantization,
                                            scale_semantics="BF16 nearest-even; SDK AIEMode(16,16,6,1)",
+                                           dequantized_weight_semantics="BF16 nearest-even; pinned AMD validation helper/accessor",
                                            source_row_layout="concatenated" if index == 0 else "linear"))
                 del decoded, ordered, prepared, reconstructed, data
         if source_bytes != helper.SOURCE_BYTES_PER_EXPERT:

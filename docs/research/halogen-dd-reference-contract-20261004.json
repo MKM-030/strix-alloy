@@ -1,0 +1,317 @@
+{
+  "schema": "halogen_dd_real_reference_diagnosis_v1",
+  "scope": "CPU-only retained selected expert0 FC arrays; no native or model reads",
+  "unchanged_tolerance": {
+    "rtol": 0.03,
+    "atol": 0.003
+  },
+  "original_admission_passed": false,
+  "all_original_executions_ok": true,
+  "uniform_127_over_128_attenuation_supported": false,
+  "correction": "Add documented BF16_RNE to dequantized weight after BF16_RNE scale; preserve failed old receipts",
+  "corrected_comparison_status": "completed CPU-only: FC1 one violation in each case remains; FC2 both pass",
+  "corrected_contract": {
+    "version": "affine_bf16_scale_and_dequant_rne_v2",
+    "input": "saved BF16 words widened to FP32",
+    "weight": "BF16_RNE((q-zp)*BF16_RNE(scale))",
+    "accumulation": "FP64 dot then FP32 output",
+    "kernel_emulation": false,
+    "public_helper": {
+      "url": "https://github.com/amd/DynamicDispatch/blob/b3051f03e20aab237cda3bbe4cd2081f76b72b06/tests/cpp/include/mladfmatmulbias_helpers.hpp#L75-L92",
+      "commit": "b3051f03e20aab237cda3bbe4cd2081f76b72b06",
+      "git_blob": "a10a7a26350fe3be30cd430b7c685f167d580647",
+      "sha256": "fb715bdcd3db4343b181f83fe11b8cdc05b812ebbc3fbc6d9cc63f707ab0a5a5"
+    },
+    "installed_sdk_validation_accessor": {
+      "wheel_version": "1.8.0",
+      "path": "include/ryzenai/dynamic_dispatch/ops/ops_common/mladf_matmul_matrix.hpp",
+      "sha256": "bf152c12d33ad04fde80c342519dacfe03607ab4a32f37744c62776db6347f00",
+      "lines": [
+        242,
+        255,
+        403,
+        416
+      ]
+    }
+  },
+  "corrected_source_sha256": {
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_qmoe_real_expert_prepare.py": "443fadf59d3890109d9ffafb15afe6f154faaf253efd5d785a598d36e9810db4",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_dd_real_fc_probe.py": "19e187802d03aa7cc24f07b0c13b0397addd125b2cba3aa9d5eb3b132f0a5bb4"
+  },
+  "fixed_cpu_regression": {
+    "before": "documented product midpoint assertion failed: +/-3.0234375 rather than +/-3.03125",
+    "after": "positive/negative odd/even midpoint cases passed; original FP32 diagnostic unchanged; valid full receipt accepted and eight old/tampered top-level/nested contracts rejected before native setup"
+  },
+  "source_limit": "Validation references establish BF16 dequant semantics, not installed opaque v2 BFP conversion or full kernel emulation",
+  "input_file_pins": {
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\preparation.json": "8c836585906b6399bd2c9fefd9e1626f96890a5d0212c4c3dda5c226f9d795d4",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-owned-fc-admission-9726b06bafab4ba69e4ac85356fec744\\admission.json": "7a7261fcdca7b1ff9f0846e5f51a9896b918610e5e490a1727bfe87d49a05c1d",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-owned-fc-admission-9726b06bafab4ba69e4ac85356fec744\\reviewed-config.json": "b7993db700c1300ff192030b1496672063e84b674d83a688765e6cc01c0efcaa",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC1.call0.input-bf16.npy": "190ca885ce61035932f1ad3d92dcf78458c7f7c3e0ba2bd99f5026760f61c26a",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC1.call0.affine-reference.npy": "f7a5515855ed925eb69314afb2cfb35c5c69360d212d541c2afa0fee68104dce",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC1.call0.decoded-reference.npy": "ec7f1bc71001828b0051c8d27b801a0d8e3f1437a28127b83ac3d46e26890e13",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-owned-fc-admission-9726b06bafab4ba69e4ac85356fec744\\fc0.call0.output-bf16.bin": "95df7d8dbd90e670419c1a4c60e332cb73d3bfa570e39071de386bbde9c3d129",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC1.call1.input-bf16.npy": "b454c7c320506bebde4860261d98738b9bf6a900011ef735535e043c5632f090",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC1.call1.affine-reference.npy": "63ec10af32c03e0d2b6c2803b1571bc9acdcae95509a9e2384a688827b02321d",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC1.call1.decoded-reference.npy": "38787298bb0eb36f3714d1fde9b61220917a350f8eb06b6869fca018a7213de8",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-owned-fc-admission-9726b06bafab4ba69e4ac85356fec744\\fc0.call1.output-bf16.bin": "e7fa9b7659aac6fd2645a1efcbbf6045718124a9f6a7f8c18962b5083bcfbb30",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC2.call0.input-bf16.npy": "edf1c27194f5f7e8e81950fb99c28c1e39cf3be77454992d5ac6f3f84ecd9ff4",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC2.call0.affine-reference.npy": "d9c7d3375d0d73c05896715af06482b9877d44d5a40d28fce37373c4de0fa96a",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC2.call0.decoded-reference.npy": "5359fd5e4676a6eb45ffa70d9aa3aeb40046bfef60b99e7470672ca863721bca",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-owned-fc-admission-9726b06bafab4ba69e4ac85356fec744\\fc1.call0.output-bf16.bin": "5d3d270efec7d89c29e23df17e8a54c5db2a9a491281273e4a30b57cc0c28b73",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC2.call1.input-bf16.npy": "72311fba29d77d81b667541a9bde41ef09274ece18432fd46976c67c247ed88a",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC2.call1.affine-reference.npy": "dc3a3a45e4e2fe6e82f62443f980ea3b6c4c94d3505d779a6df1ae3cd5e7499b",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-70f5eb4dec834bf9b24465e5d2c662f9\\FC2.call1.decoded-reference.npy": "58a02a27c26c22a6e6ebfe5988b6558421d6fe1f08417f9258803b1e39f81482",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-owned-fc-admission-9726b06bafab4ba69e4ac85356fec744\\fc1.call1.output-bf16.bin": "949243d4bba952c39d9537c1a305fd6c910024fe00ec71b6044eaea9591a1ed4",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-a88d6de92c2f4308870143a93be367e3\\preparation.json": "444bda8703820cf0f5c688705e08265bb4b7b9af7a48d814f0974f4206068d98",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-reference-replay.json": "0f4fbc18911294e79a5a47bef0ed3aa42c3c60011dd6105bc97e5eecb580f194"
+  },
+  "rows": [
+    {
+      "fc_index": 0,
+      "label": "FC1",
+      "call": 0,
+      "slope_actual_vs_old_reference": 1.0040799274580714,
+      "intercept": 5.5412603402349825e-05,
+      "correlation": 0.9999748160232632,
+      "old_reference_comparison": {
+        "relative_l2_error": 0.008202876702694793,
+        "rmse": 0.0015997701964358137,
+        "max_abs_error": 0.005940616130828857,
+        "violating_elements": 1
+      },
+      "diagnostic_reference_times_127_over_128": {
+        "relative_l2_error": 0.01396051429874203,
+        "rmse": 0.0027013856407111583,
+        "max_abs_error": 0.00963323307223618,
+        "violating_elements": 2
+      },
+      "decoded_original_comparison": {
+        "relative_l2_error": 0.0905927578788555,
+        "rmse": 0.017678877857004234,
+        "max_abs_error": 0.06776672601699829,
+        "violating_elements": 855
+      },
+      "violations": [
+        {
+          "index": 17,
+          "actual": 0.0101318359375,
+          "reference": 0.006796275731176138,
+          "abs_error": 0.003335560206323862,
+          "permitted": 0.0032038882719352844
+        }
+      ]
+    },
+    {
+      "fc_index": 0,
+      "label": "FC1",
+      "call": 1,
+      "slope_actual_vs_old_reference": 1.004123347682372,
+      "intercept": -5.028000558076037e-05,
+      "correlation": 0.9999734917779065,
+      "old_reference_comparison": {
+        "relative_l2_error": 0.008385956020247078,
+        "rmse": 0.001550313839583482,
+        "max_abs_error": 0.005079686641693115,
+        "violating_elements": 1
+      },
+      "diagnostic_reference_times_127_over_128": {
+        "relative_l2_error": 0.014095685334343416,
+        "rmse": 0.0025855145793144186,
+        "max_abs_error": 0.010441612917929888,
+        "violating_elements": 0
+      },
+      "decoded_original_comparison": {
+        "relative_l2_error": 0.09991684220640494,
+        "rmse": 0.018360599327382206,
+        "max_abs_error": 0.05489888787269592,
+        "violating_elements": 869
+      },
+      "violations": [
+        {
+          "index": 27,
+          "actual": -0.0181884765625,
+          "reference": -0.021952740848064423,
+          "abs_error": 0.0037642642855644226,
+          "permitted": 0.003658582225441933
+        }
+      ]
+    },
+    {
+      "fc_index": 1,
+      "label": "FC2",
+      "call": 0,
+      "slope_actual_vs_old_reference": 1.004337773945344,
+      "intercept": 2.0599917444643395e-05,
+      "correlation": 0.9999755995342692,
+      "old_reference_comparison": {
+        "relative_l2_error": 0.008248837135543611,
+        "rmse": 0.0008115697839601409,
+        "max_abs_error": 0.003582179546356201,
+        "violating_elements": 0
+      },
+      "diagnostic_reference_times_127_over_128": {
+        "relative_l2_error": 0.0141390669080383,
+        "rmse": 0.0013802178544040828,
+        "max_abs_error": 0.006193964276462793,
+        "violating_elements": 0
+      },
+      "decoded_original_comparison": {
+        "relative_l2_error": 0.08422101837012008,
+        "rmse": 0.008288340383478523,
+        "max_abs_error": 0.03659252775833011,
+        "violating_elements": 1348
+      },
+      "violations": []
+    },
+    {
+      "fc_index": 1,
+      "label": "FC2",
+      "call": 1,
+      "slope_actual_vs_old_reference": 1.0044393731311458,
+      "intercept": 3.2928550573884376e-05,
+      "correlation": 0.9999761923164676,
+      "old_reference_comparison": {
+        "relative_l2_error": 0.008239863474673094,
+        "rmse": 0.0007945550107890964,
+        "max_abs_error": 0.0029731541872024536,
+        "violating_elements": 0
+      },
+      "diagnostic_reference_times_127_over_128": {
+        "relative_l2_error": 0.014194968578816712,
+        "rmse": 0.0013581012273480703,
+        "max_abs_error": 0.0049901846796274185,
+        "violating_elements": 0
+      },
+      "decoded_original_comparison": {
+        "relative_l2_error": 0.08536671190460311,
+        "rmse": 0.008289543799874526,
+        "max_abs_error": 0.030931252986192703,
+        "violating_elements": 1335
+      },
+      "violations": []
+    }
+  ],
+  "full_mtp_proven": false,
+  "acceptance_qualified": false,
+  "speed_gain_established": false,
+  "corrected_preparation": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-expert-prepare-a88d6de92c2f4308870143a93be367e3\\preparation.json",
+    "sha256": "444bda8703820cf0f5c688705e08265bb4b7b9af7a48d814f0974f4206068d98"
+  },
+  "corrected_replay": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-reference-replay.json",
+    "sha256": "0f4fbc18911294e79a5a47bef0ed3aa42c3c60011dd6105bc97e5eecb580f194"
+  },
+  "all_packed_and_input_bytes_identical": true,
+  "corrected_comparison_rows": [
+    {
+      "fc_index": 0,
+      "call": 0,
+      "identical_packed_bytes": true,
+      "identical_input_bytes": true,
+      "output_sha256": "95df7d8dbd90e670419c1a4c60e332cb73d3bfa570e39071de386bbde9c3d129",
+      "corrected_reference_sha256": "06f0992af9e7b162c7ab4259e98ea60fe15f3454e72e189427cc8e9bb15cd995",
+      "violations": 1,
+      "max_abs_error": 0.0061408281326293945,
+      "relative_l2_error": 0.008380395913273187,
+      "passed": false
+    },
+    {
+      "fc_index": 0,
+      "call": 1,
+      "identical_packed_bytes": true,
+      "identical_input_bytes": true,
+      "output_sha256": "e7fa9b7659aac6fd2645a1efcbbf6045718124a9f6a7f8c18962b5083bcfbb30",
+      "corrected_reference_sha256": "ca1ab8382e9758bafeb507ccdf047879fba17acbf49f3f5c84e448b6f77da137",
+      "violations": 1,
+      "max_abs_error": 0.005528807640075684,
+      "relative_l2_error": 0.008587837107755502,
+      "passed": false
+    },
+    {
+      "fc_index": 1,
+      "call": 0,
+      "identical_packed_bytes": true,
+      "identical_input_bytes": true,
+      "output_sha256": "5d3d270efec7d89c29e23df17e8a54c5db2a9a491281273e4a30b57cc0c28b73",
+      "corrected_reference_sha256": "6fd29000ffe5ef6e4d4250c25385869ec69252f7e76683b81a2e0302613ee5fb",
+      "violations": 0,
+      "max_abs_error": 0.003410130739212036,
+      "relative_l2_error": 0.008419902414399329,
+      "passed": true
+    },
+    {
+      "fc_index": 1,
+      "call": 1,
+      "identical_packed_bytes": true,
+      "identical_input_bytes": true,
+      "output_sha256": "949243d4bba952c39d9537c1a305fd6c910024fe00ec71b6044eaea9591a1ed4",
+      "corrected_reference_sha256": "71e39dec4c95ee3e9dcf6a65a86805406bf4cfdd3db03a69a7c38b5639d2e76b",
+      "violations": 0,
+      "max_abs_error": 0.003140062093734741,
+      "relative_l2_error": 0.008411077096044734,
+      "passed": true
+    }
+  ],
+  "corrected_arithmetic_passed": false,
+  "remaining_limit": "Installed v2 uses BFP casts and accumulation inside an opaque transaction; documented BF16 reference correction does not resolve residual failures",
+  "numerical_adapter_change_justified": false,
+  "hardware_rerun_performed": false,
+  "fp32_original_weight_approximation_unchanged": true,
+  "original_weight_approximation": {
+    "min_relative_l2_error": 0.08453992246030823,
+    "max_relative_l2_error": 0.08529718379355608
+  },
+  "installed_v2_source_review": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\include\\ryzenai\\dynamic_dispatch\\ops\\llm_ops\\llm_common\\llm_common.hpp",
+      "sha256": "d13a4b200144d15bbf5d16ecc254f9bc22c0001df66d6457eef9e00d24963c3b",
+      "lines": [
+        181,
+        182
+      ],
+      "finding": "v2 selects BFP16_v2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\include\\ryzenai\\dynamic_dispatch\\ops\\llm_ops\\mladfmatmulbias\\utils.hpp",
+      "sha256": "97c14d1e2d165e9e217c48210f0a6aa34f57815e32dfb190cd6e76e29568e957",
+      "lines": [
+        103,
+        110
+      ],
+      "finding": "v2 defaults to BFP_UNIFIED"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\include\\ryzenai\\dynamic_dispatch\\ops\\llm_ops\\mladfmatmulbias\\matmulbias_txn\\matmulbias_txn_utils.cpp",
+      "sha256": "868f68e70d835db69cffb499f2e4e5266ad05461b20b36bf03cb449cd6ac5f5c",
+      "lines": [
+        87,
+        89
+      ],
+      "finding": "transaction prefix maps BF16 ABI to abfp16 and INT4 to wbfp16"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\include\\ryzenai\\dynamic_dispatch\\ops\\llm_ops\\mladfmatmulbias\\matmulbias_buffer\\matmulbias_buffer.cpp",
+      "sha256": "1b48d6f4036a2819549f8248cc948d06ede5c33e7bac9631a495737303b0778d",
+      "lines": [
+        43,
+        53
+      ],
+      "finding": "cast scratch uses exponent group eight"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\include\\ryzenai\\dynamic_dispatch\\ops\\llm_ops\\mladfmatmulbias\\mladfmatmulbias.cpp",
+      "sha256": "ba2b6a2547be3a3bd099029f25ed5e62760fce4c909e8e31c42d793cd2aba0ed",
+      "lines": [
+        902,
+        906,
+        979,
+        1000,
+        1048,
+        1060
+      ],
+      "finding": "opaque transaction receives cast scratch; host activation paths pad and copy words"
+    }
+  ]
+}

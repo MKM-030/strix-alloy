@@ -13,6 +13,8 @@ from pathlib import Path
 import sys
 import time
 
+REFERENCE_CONTRACT_VERSION = "affine_bf16_scale_and_dequant_rne_v2"
+
 
 class Receipt(ctypes.Structure):
     _fields_ = [(name, ctypes.c_uint32) for name in (
@@ -32,6 +34,28 @@ def sha(path):
 def require(value, message):
     if not value:
         raise RuntimeError(message)
+
+
+def qualified_reference_contract(preparation):
+    contract = preparation.get("reference_contract", {})
+    require(preparation.get("reference_contract_version") == REFERENCE_CONTRACT_VERSION
+            and contract.get("version") == REFERENCE_CONTRACT_VERSION
+            and contract.get("weight") == "BF16_RNE((q-zp)*BF16_RNE(scale))"
+            and contract.get("input") == "saved BF16 words widened to FP32"
+            and contract.get("accumulation") == "FP64 dot then FP32 output"
+            and contract.get("kernel_emulation") is False,
+            "Documented BF16 scale/dequant reference contract required")
+    fixtures = preparation.get("fixtures", [])
+    require(len(fixtures) == 2, "Exactly two real reference fixtures required")
+    for index, fc in enumerate(fixtures):
+        cases = fc.get("cases", [])
+        require(fc.get("index") == index and fc.get("expert") == 0
+                and fc.get("synthetic") is False and len(cases) == 2,
+                "Exactly two real expert0 cases per fixture required")
+        require([case.get("call") for case in cases] == [0, 1]
+                and all(case.get("reference_contract_version") == REFERENCE_CONTRACT_VERSION for case in cases),
+                "Saved real reference contract/order differs")
+    return contract
 
 
 def module_path(name):
@@ -76,6 +100,7 @@ def main():
     require(preparation.get("passed") is True and preparation.get("expert") == 0
             and preparation.get("completed_experts") == 1
             and preparation.get("schema") == "halogen_real_expert_fc_preparation_v1", "Qualified expert0 fixture receipt required")
+    contract = qualified_reference_contract(preparation)
     require(config["fixtures"] == preparation["fixtures"], "Real fixture configuration differs from sealed preparation")
     for path, expected in preparation["file_pins"].items():
         require(config["file_pins"].get(path) == expected and sha(path) == expected, "Real fixture pin differs: " + path)
@@ -103,6 +128,7 @@ def main():
     result = dict(schema=1, passed=False, stage="validated", scope="real approximate v2 layer48 expert0 FC arithmetic only",
                   full_mtp_proven=False, acceptance_qualified=False, speed_gain_established=False,
                   expert=0, approximate_quantization=True, router_semantics_verified=False, activation_semantics_verified=False,
+                  reference_contract_version=REFERENCE_CONTRACT_VERSION, reference_contract=contract,
                   calls=[], contexts=[], native_fault_counters=None, cleanup_errors=[])
     directories = []
     library = collector = None
@@ -193,6 +219,8 @@ def main():
                         "Exactly two real expert0 cases required")
                 case = fc["cases"][call]
                 require(case["call"] == call, "Fixed call order differs")
+                require(case.get("reference_contract_version") == REFERENCE_CONTRACT_VERSION,
+                        "Saved real reference contract differs")
                 input_array = saved(case["input_path"], "<u2", fc["k"])
                 affine_reference = saved(case["affine_reference_path"], "<f4", fc["n"])
                 decoded_reference = saved(case["decoded_reference_path"], "<f4", fc["n"])

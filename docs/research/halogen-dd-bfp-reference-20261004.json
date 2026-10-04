@@ -1,0 +1,205 @@
+{
+  "schema": "halogen_dd_documented_bfp_operator_reference_v1",
+  "scope": "CPU-only retained-output comparison for four approximate real expert0 FC operation calls",
+  "reference_contract": {
+    "version": "dd_v2_bfp16_ebs8_sdk_half_away_carry_k_rne_v1",
+    "input": "saved BF16 words widened to FP32",
+    "dequantized_weight": "BF16_RNE((q-zp)*BF16_RNE(scale))",
+    "operand_cast": "BFP16 ebs8 on K; half-away mantissa rounding; shared-exponent carry when a signed rounded mantissa >127; negative -128 representable",
+    "reference_output": "BF16_RNE(FP32(FP64_dot(BFP16(W),BFP16(x))))",
+    "accumulation_emulation": false,
+    "source_choice": "Installed 1.8.0 SDK f2bfp defaults, with public XDNA2 BFP matrix-multiply operand layout; older clamp model retained only as comparison",
+    "dd_to_public_aie_kernel_linkage": "Inferred from DD v2 abfp16/wbfp16 dispatch and public XDNA2 BFP ABI; actual opaque DD intrinsic/kernel implementation not supplied"
+  },
+  "documented_bfp_reference_comparison_passed": true,
+  "original_admission_passed": false,
+  "accepted_reference_contract_changed": false,
+  "exact_kernel_arithmetic_established": false,
+  "hardware_reexecution_performed": false,
+  "tolerance": {
+    "rtol": 0.03,
+    "atol": 0.003
+  },
+  "sources": [
+    {
+      "url": "https://github.com/Xilinx/aie_api/blob/b0422227afd25e9b47930624c857f384b500b524/include/aie_api/detail/aie2p/mmul_bfp16_bfp16.hpp",
+      "commit": "b0422227afd25e9b47930624c857f384b500b524",
+      "git_blob": "da1cd1b5e1a1e8d74afb61b7800994c9f7381f8b",
+      "sha256": "a8fbb13cd7a9597110caa77edc005fc03aa9c91b670752a3ed8b590759f9f7a4",
+      "lines": [
+        16,
+        34
+      ],
+      "finding": "BFP16 ebs8 matrix multiply consumes transposed B through 8x8T intrinsic"
+    },
+    {
+      "url": "https://github.com/Xilinx/aie_api/blob/b0422227afd25e9b47930624c857f384b500b524/include/aie_api/detail/aie2p/mmul_bf16_bf16.hpp",
+      "commit": "b0422227afd25e9b47930624c857f384b500b524",
+      "git_blob": "d37e68812d29e345b5c93f6696645ce9a9bb428e",
+      "sha256": "9001f882101a9c31d31463f1b5139c46b515e5e8967a48e49bd192bc12e47a4d",
+      "lines": [
+        79,
+        85,
+        110,
+        116
+      ],
+      "finding": "Logical KxN B is transposed before ebs8 conversion, grounding K-axis groups"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\include\\ryzenai\\dynamic_dispatch\\ops\\llm_ops\\wts_devkit\\xtensor\\utils\\compress_utils\\compress_utils.hpp",
+      "sha256": "dd11369e03a359e5ed3840d94cbad3887dad5f6af9d8b35342920fd4e6e8b36f",
+      "lines": [
+        62,
+        63,
+        102,
+        108,
+        122,
+        145,
+        185,
+        187
+      ],
+      "finding": "installed f2bfp defaults define half-away rounding, signed overflow carry, ebs8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\include\\ryzenai\\dynamic_dispatch\\ops\\llm_ops\\mladfmatmulbias\\matmulbias_txn\\matmulbias_txn_utils.cpp",
+      "sha256": "868f68e70d835db69cffb499f2e4e5266ad05461b20b36bf03cb449cd6ac5f5c",
+      "lines": [
+        87,
+        89,
+        122
+      ],
+      "finding": "DD v2 selects abfp16/wbfp16 and 2x4x4 overlay"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-owned-client-sdk\\include\\ryzenai\\dynamic_dispatch\\ops\\llm_ops\\mladfmatmulbias\\matmulbias_buffer\\matmulbias_buffer.cpp",
+      "sha256": "1b48d6f4036a2819549f8248cc948d06ede5c33e7bac9631a495737303b0778d",
+      "lines": [
+        43,
+        53
+      ],
+      "finding": "DD v2 BFP scratch uses ebs8"
+    }
+  ],
+  "evidence": {
+    "replay_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-real-bfp-reference-diagnosis.json",
+    "replay_sha256": "a2ec6a646912cc67a157b0384a10aa081cb7579389f76aef8489915c05caf6f0",
+    "source_path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_dd_real_bfp_reference_replay.py",
+    "source_sha256": "9530761bf3a59f5e98540a43a6cfb89818396149763b653a472df3be84d780d0",
+    "native_admission_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\dd-owned-fc-admission-9726b06bafab4ba69e4ac85356fec744\\admission.json",
+    "native_admission_sha256": "7a7261fcdca7b1ff9f0846e5f51a9896b918610e5e490a1727bfe87d49a05c1d"
+  },
+  "rows": [
+    {
+      "fc_index": 0,
+      "call": 0,
+      "independent_packed_decode_matches_affine_reference": true,
+      "native_execution_ok": true,
+      "native_output_sha256": "95df7d8dbd90e670419c1a4c60e332cb73d3bfa570e39071de386bbde9c3d129",
+      "documented_bfp_reference_sha256": "2697b7f6434cf208b5bf9e87408f816d73cf23014c3fd2126f2630d0222ef3b8",
+      "comparison": {
+        "exact_elements": 409,
+        "elements": 1280,
+        "relative_l2_error": 0.005208922245311799,
+        "max_abs_error": 0.00390625,
+        "violating_elements": 0,
+        "passed": true
+      },
+      "unchanged_original_q4c_comparison": {
+        "max_abs_error": 0.06776672601699829,
+        "rmse": 0.017678877857004234,
+        "relative_l2_error": 0.09059275787885548,
+        "violating_elements": 855,
+        "tolerance": {
+          "rtol": 0.03,
+          "atol": 0.003
+        },
+        "passed": false
+      }
+    },
+    {
+      "fc_index": 0,
+      "call": 1,
+      "independent_packed_decode_matches_affine_reference": true,
+      "native_execution_ok": true,
+      "native_output_sha256": "e7fa9b7659aac6fd2645a1efcbbf6045718124a9f6a7f8c18962b5083bcfbb30",
+      "documented_bfp_reference_sha256": "584f5e5373515ad5e40ad9e9b94d6d762a86a5ac777f080e3dc9d16da885a98c",
+      "comparison": {
+        "exact_elements": 408,
+        "elements": 1280,
+        "relative_l2_error": 0.005411429194751304,
+        "max_abs_error": 0.00390625,
+        "violating_elements": 0,
+        "passed": true
+      },
+      "unchanged_original_q4c_comparison": {
+        "max_abs_error": 0.05489888787269592,
+        "rmse": 0.018360599327382206,
+        "relative_l2_error": 0.09991684220640494,
+        "violating_elements": 869,
+        "tolerance": {
+          "rtol": 0.03,
+          "atol": 0.003
+        },
+        "passed": false
+      }
+    },
+    {
+      "fc_index": 1,
+      "call": 0,
+      "independent_packed_decode_matches_affine_reference": true,
+      "native_execution_ok": true,
+      "native_output_sha256": "5d3d270efec7d89c29e23df17e8a54c5db2a9a491281273e4a30b57cc0c28b73",
+      "documented_bfp_reference_sha256": "7f6f2e62b2e67083f1e382e1fdb9fa326beb4f3e9924bdead9c64d22da89a3e8",
+      "comparison": {
+        "exact_elements": 879,
+        "elements": 2560,
+        "relative_l2_error": 0.005006832862878809,
+        "max_abs_error": 0.001953125,
+        "violating_elements": 0,
+        "passed": true
+      },
+      "unchanged_original_q4c_comparison": {
+        "max_abs_error": 0.03659252775833011,
+        "rmse": 0.008288340383478523,
+        "relative_l2_error": 0.08422101837012008,
+        "violating_elements": 1348,
+        "tolerance": {
+          "rtol": 0.03,
+          "atol": 0.003
+        },
+        "passed": false
+      }
+    },
+    {
+      "fc_index": 1,
+      "call": 1,
+      "independent_packed_decode_matches_affine_reference": true,
+      "native_execution_ok": true,
+      "native_output_sha256": "949243d4bba952c39d9537c1a305fd6c910024fe00ec71b6044eaea9591a1ed4",
+      "documented_bfp_reference_sha256": "40a356f8b9e88b6d2e0bc5da5f1b2e7e8e2cc2c6b6c5cc74dad6be2ba3281bfa",
+      "comparison": {
+        "exact_elements": 871,
+        "elements": 2560,
+        "relative_l2_error": 0.005103429476940246,
+        "max_abs_error": 0.001953125,
+        "violating_elements": 0,
+        "passed": true
+      },
+      "unchanged_original_q4c_comparison": {
+        "max_abs_error": 0.030931252986192703,
+        "rmse": 0.008289543799874526,
+        "relative_l2_error": 0.0853667119046031,
+        "violating_elements": 1335,
+        "tolerance": {
+          "rtol": 0.03,
+          "atol": 0.003
+        },
+        "passed": false
+      }
+    }
+  ],
+  "full_mtp_proven": false,
+  "acceptance_qualified": false,
+  "speed_gain_established": false,
+  "limitation": "Passing against an independently defined BFP operator reference is narrower than original q4c fidelity or MTP acceptance. Exact DD cast and accumulation remain unproven; retain all comparisons and provenance."
+}

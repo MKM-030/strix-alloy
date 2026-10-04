@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-04",
+  "scope": "static SDK/source/ABI/shape metadata only; no hardware, native module load, checkpoint read or export",
+  "decision": "no_dense_client_extension_actual_installed_API_contract_not_established",
+  "public_source_commit": "b3051f03e20aab237cda3bbe4cd2081f76b72b06",
+  "public_sources": [
+    {
+      "path": "src/ops/sd/gemm.cpp",
+      "git_blob": "04c3760bb516fb389f8c5eb718507b1c8006d949"
+    },
+    {
+      "path": "include/ops/sd/gemm.hpp",
+      "git_blob": "699c989ec9d9f909a8318ce9d6e91b5a6c0d51b6"
+    },
+    {
+      "path": "tests/cpp/unit_tests/test_sd_gemm.cpp",
+      "git_blob": "7fda7426ffda4237daf7accc7ccebd1010db8fb5"
+    },
+    {
+      "path": "src/ops/sd/sd_helper.hpp",
+      "git_blob": null
+    },
+    {
+      "path": "src/ops/matmul_a16w8_mladf/matmul_a16w8_mladf.cpp",
+      "git_blob": null
+    }
+  ],
+  "installed_sdk_header_receipt_rows": {
+    "include/ryzenai/dynamic_dispatch/ops/op_builder.hpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/op_builder.hpp",
+      "bytes": 5130,
+      "sha256": "63636dfdff900f73f1d23cc948054821bdc7c143dc07643d45d4fa78e57abd56",
+      "crc32": 4167244547
+    },
+    "include/ryzenai/dynamic_dispatch/ops/liquidai/lfm2/gemm_bf16.hpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/liquidai/lfm2/gemm_bf16.hpp",
+      "bytes": 1320,
+      "sha256": "7a4eaca1d28dcb06b55a616b5f11815aa702bb15656bbed52c39c4547529f73a",
+      "crc32": 1381147927
+    },
+    "include/ryzenai/dynamic_dispatch/ops/llm_ops/liquidai/lfm2/gemm_bf16.hpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/llm_ops/liquidai/lfm2/gemm_bf16.hpp",
+      "bytes": 6365,
+      "sha256": "5eab085080d3dd687d6dc968682e625f3f97d9cdfcb8ec119cf48f96bda578e4",
+      "crc32": 1866619039
+    },
+    "include/ryzenai/dynamic_dispatch/ops/llm_ops/mladfmatmulbias/matmulbias_txn/matmulbias_txn_utils.cpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/llm_ops/mladfmatmulbias/matmulbias_txn/matmulbias_txn_utils.cpp",
+      "bytes": 9837,
+      "sha256": "868f68e70d835db69cffb499f2e4e5266ad05461b20b36bf03cb449cd6ac5f5c",
+      "crc32": 1939315135
+    },
+    "include/ryzenai/dynamic_dispatch/ops/llm_ops/mladfmatmulbias/matmulbias_weights/matmulbias_weights_bfp16/matmulbias_weights_bfp16.hpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/llm_ops/mladfmatmulbias/matmulbias_weights/matmulbias_weights_bfp16/matmulbias_weights_bfp16.hpp",
+      "bytes": 3163,
+      "sha256": "57f9730cb4e0a3ed3f4d1a18ad60d4dd0e05588f48b2c50b2b72ca184a2ecb0e",
+      "crc32": 4034592702
+    },
+    "include/ryzenai/dynamic_dispatch/ops/sd/sd_gemm.hpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/sd/sd_gemm.hpp",
+      "bytes": 5895,
+      "sha256": "3bcdbaf453df2773617cc74ff1ce96079dd3a4757df30781ba170c6e216ef750",
+      "crc32": 2647700597
+    },
+    "include/ryzenai/dynamic_dispatch/ops/transformer/MatMulQ.hpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/transformer/MatMulQ.hpp",
+      "bytes": 7770,
+      "sha256": "24e5ba780677d9d694b2e755335a06dad5803de9a6e3688f01d213decc0075bf",
+      "crc32": 316119092
+    },
+    "include/ryzenai/dynamic_dispatch/ops/dmacompiler/matmul/matmul.hpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/dmacompiler/matmul/matmul.hpp",
+      "bytes": 21117,
+      "sha256": "0881e51f87f9dd0eb2a4ea06e360bbeb8b77d6c091b5dc92f65a72233b975e02",
+      "crc32": 2499700744
+    },
+    "include/ryzenai/dynamic_dispatch/ops/mladf_all_ops/matmul_a16w8_mladf/matmul_a16w8_mladf.hpp": {
+      "path": "include/ryzenai/dynamic_dispatch/ops/mladf_all_ops/matmul_a16w8_mladf/matmul_a16w8_mladf.hpp",
+      "bytes": 6672,
+      "sha256": "0eb687f61f21140d64a3653de811875b14d6eb5cd835c6856d12194d5dcf0d34",
+      "crc32": 415034716
+    }
+  },
+  "abi": {
+    "inspection": "dumpbin PE exports and import-library symbol-table metadata only; no module loaded",
+    "dll_path": "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004\\dyn_dispatch_core.dll",
+    "dll_version": "1.8.0.6",
+    "dll_sha256_previous_pin": "3d71cbb95c4eb8e5cc28741d7d9f3ac51df404ebf0dbca40b7102783f63bcf93",
+    "dll_export_count": 1881,
+    "dll_export_text_sha256": "ffc60aa975c7719a76a2d0687c9d8c1526e4b03885bc79a214750178c8f29d94",
+    "sd_gemm_dll_export_count": 0,
+    "lfm_gemm_bf16_dll_export_count": 0,
+    "sd_gemm_import_library_symbol_count": 0,
+    "lfm_gemm_bf16_import_library_symbol_count": 0,
+    "matmulq_bf16_bfp16_exported_methods": [
+      "??0?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@QEAA@$$QEAV0123@@Z",
+      "??0?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@QEAA@AEBV0123@@Z",
+      "??0?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@QEAA@_NAEBV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@@std@@@2@@std@@@Z",
+      "?create_run@?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@UEAA?AV?$optional@Vrun@xrt@@@std@@AEBV?$vector@UNPUBufferSpan@@V?$allocator@UNPUBufferSpan@@@std@@@6@0AEBV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@@std@@@2@@6@@Z",
+      "?export_const_params@?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@QEAA?AV?$vector@V?$vector@EV?$allocator@E@std@@@std@@V?$allocator@V?$vector@EV?$allocator@E@std@@@std@@@2@@std@@AEBV?$vector@UTensor@@V?$allocator@UTensor@@@std@@@6@AEBV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@@std@@@2@@6@@Z",
+      "?initialize_bfp16_wts@?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@QEAAXAEAV?$vector@EV?$allocator@E@std@@@std@@PEBC1PEBM2@Z",
+      "?initialize_const_params@?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@UEAAXAEAVConstBufferIO@@AEBV?$vector@UTensor@@V?$allocator@UTensor@@@std@@@std@@AEBV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@@std@@@2@@7@@Z",
+      "?initialize_const_params@?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@UEAAXAEBV?$vector@UTensor@@V?$allocator@UTensor@@@std@@@std@@AEBV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@@std@@@2@@6@@Z",
+      "?set_tensor_shape@?$MatMulQ@Ubfloat16@meta_types@dynamic_dispatch@ryzenai@@Ubfp16ebs8@234@U1234@U1234@@transformer@dynamic_dispatch@ryzenai@@UEAAXAEBV?$vector@UTensor@@V?$allocator@UTensor@@@std@@@std@@0AEBV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@Vany@2@@std@@@2@@6@@Z"
+    ]
+  },
+  "inventory_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\qmoe-dd-stage-8bba3dba41e94053bb9196b918c2456f\\dyn-bins-inventory.json",
+  "inventory_sha256": "9a54e7e4fcdffa80a4e5dd2c9bdc1de4b40f01cac4df93bff15199e172b3f40d",
+  "plain_dense_primary_count": 61,
+  "selected_candidates": [
+    {
+      "fc": "fc1",
+      "logical_KN": [
+        2560,
+        1280
+      ],
+      "padded_BMKN": [
+        1,
+        1,
+        2816,
+        1280
+      ],
+      "transaction_artifacts": [
+        {
+          "name": "sd_fastpm/gemm_a16bfw16bfpacc16bf_1_1_2816_1280.bin",
+          "bytes": 2664,
+          "crc32": 1554492390
+        },
+        {
+          "name": "sd_fastpm/gemm_a16bfw16bfpacc16bf_1_1_2816_1280_ctrl.bin",
+          "bytes": 14688,
+          "crc32": 770739434
+        },
+        {
+          "name": "sd_fastpm/gemm_a16bfw16bfpacc16bf_1_1_2816_1280_param.bin",
+          "bytes": 24,
+          "crc32": 2859974233
+        },
+        {
+          "name": "sd_fastpm/gemm_a16bfw16bfpacc16bf_1_1_2816_1280_ctrl_meta.json",
+          "bytes": 2722,
+          "crc32": 3413540206
+        }
+      ],
+      "params_u32_le_M_K_N_L1M_L1K_L1N": [
+        1,
+        2816,
+        1280,
+        16,
+        176,
+        80
+      ],
+      "param_hex": "01000000000b00000005000010000000b000000050000000",
+      "param_sha256": "e77d2b95f6ff88c99c3573b72764ff386af9655be1cf5de378aba227e458a6c7",
+      "padded_weight_bytes_without_bias": 4055040,
+      "zero_bias_bytes_if_enabled": 40960,
+      "padded_weight_bytes_with_zero_bias": 4096000,
+      "padding_multiplication_ratio": 1.1,
+      "exact_B1_M1_transaction_present": false
+    },
+    {
+      "fc": "fc2",
+      "logical_KN": [
+        640,
+        2560
+      ],
+      "padded_BMKN": [
+        1,
+        1,
+        3072,
+        3072
+      ],
+      "transaction_artifacts": [
+        {
+          "name": "sd_fastpm/gemm_a16bfw16bfpacc16bf_1_1_3072_3072.bin",
+          "bytes": 2664,
+          "crc32": 1621189271
+        },
+        {
+          "name": "sd_fastpm/gemm_a16bfw16bfpacc16bf_1_1_3072_3072_ctrl.bin",
+          "bytes": 14880,
+          "crc32": 980972360
+        },
+        {
+          "name": "sd_fastpm/gemm_a16bfw16bfpacc16bf_1_1_3072_3072_param.bin",
+          "bytes": 24,
+          "crc32": 1139746463
+        },
+        {
+          "name": "sd_fastpm/gemm_a16bfw16bfpacc16bf_1_1_3072_3072_ctrl_meta.json",
+          "bytes": 2723,
+          "crc32": 82817113
+        }
+      ],
+      "params_u32_le_M_K_N_L1M_L1K_L1N": [
+        1,
+        3072,
+        3072,
+        16,
+        128,
+        64
+      ],
+      "param_hex": "01000000000c0000000c0000100000008000000040000000",
+      "param_sha256": "83a3e6e10a490a45c499cec6547c16007246bbf67e089b991f73e7eee2c5f500",
+      "padded_weight_bytes_without_bias": 10616832,
+      "zero_bias_bytes_if_enabled": 147456,
+      "padded_weight_bytes_with_zero_bias": 10764288,
+      "padding_multiplication_ratio": 5.76,
+      "exact_B1_M1_transaction_present": false
+    }
+  ],
+  "budget": {
+    "experts": 512,
+    "logical_original_bf16_bytes_per_expert": 9830400,
+    "logical_unpadded_bfp_ebs8_bytes_per_expert": 5529600,
+    "padded_sd_no_bias_bytes_per_expert": 14671872,
+    "padded_sd_zero_bias_bytes_per_expert": 14860288,
+    "padded_sd_no_bias_bank_bytes": 7511998464,
+    "padded_sd_zero_bias_bank_bytes": 7608467456,
+    "padded_sd_no_bias_bank_GiB": 6.99609375,
+    "padded_sd_zero_bias_bank_GiB": 7.0859375,
+    "two_zero_bias_packed_copies_bank_GiB": 14.171875,
+    "job_memory_limit_GiB": 8,
+    "available_memory_reserve_GiB": 22,
+    "post_start_reserve_GiB": 18,
+    "zero_bias_single_copy_remainder_MiB": 936.0,
+    "qualification": "constant arithmetic only; no allocation, dense numerical, speed, cache or acceptance admission"
+  },
+  "gaps": [
+    "SD/LFM template implementations are absent from installed exported ABI; headers alone cannot link a direct client.",
+    "Pinned public SD implementation predates installed sd_fastpm/control/preemption/transformation selection; those attributes and bias requirements are not disclosed.",
+    "Exported transformer MatMulQ BF16/BFP16 specialization has no disclosed decoded-float constant contract or implementation/shape linkage; initialize_bfp16_wts is an affine int8/zp/scale API.",
+    "OpBuilder::create is exported, but installed SD/LFM registry entries and constructor attributes are not exposed in SDK sources; their presence cannot be inferred from transaction files.",
+    "Original q4c decoded BF16 promotion to FP32 is exact, but the dense BFP packing fidelity has not been measured. Existing affine INT4 receipts remain unchanged."
+  ],
+  "a16w8_review": {
+    "scope": "same finite static inventory, public implementation and installed ABI review; no native candidate or dtype probing",
+    "named_A16W8_matmul_gemm_primary_count": 243,
+    "named_BF16_or_BFP16_activation_W8_primary_count": 0,
+    "installed_matmul_a16w8_mladf_dll_export_count": 0,
+    "installed_matmul_a16w8_mladf_importlib_symbol_count": 0,
+    "public_implementation_url": "https://github.com/amd/DynamicDispatch/blob/b3051f03e20aab237cda3bbe4cd2081f76b72b06/src/ops/matmul_a16w8_mladf/matmul_a16w8_mladf.cpp",
+    "public_instantiation": "matmul_a16w8_mladf<uint16_t,uint8_t,uint16_t>",
+    "public_activation_dtype_strings": [
+      "uint16",
+      "int16"
+    ],
+    "public_weight_dtype_strings": [
+      "int8",
+      "uint8"
+    ],
+    "public_const_contract": "weights, int64 QDQ coefficients, int32 QDQ parameters, kernel parameters; no disclosed BF16 activation/group32 affine scale contract",
+    "matching_mladf_transactions": [
+      {
+        "name": "gemm_mladf/gemm_mladf_a16w8acc16_4096_512_512.bin",
+        "bytes": 178656,
+        "crc32": 1808801699
+      }
+    ],
+    "other_integer_transactions_with_requested_KN": [
+      {
+        "name": "conv2gemm/conv2gemm_4x4_a16w8acc16_256_2560_1280.bin",
+        "bytes": 3472,
+        "crc32": 1000403187
+      },
+      {
+        "name": "conv2gemm/conv2gemm_4x4_a16w8acc16_64_2560_1280.bin",
+        "bytes": 3472,
+        "crc32": 3363358277
+      },
+      {
+        "name": "conv2gemm/conv2gemm_8x4_a16w8acc16_256_2560_1280.bin",
+        "bytes": 3600,
+        "crc32": 3240983877
+      },
+      {
+        "name": "gemm/gemm_8x4_a16w8acc16_1024_640_2560.bin",
+        "bytes": 3600,
+        "crc32": 1368327384
+      },
+      {
+        "name": "gemmgelu/gemmgelu_8x4_a16w8acc16_1024_640_2560.bin",
+        "bytes": 3600,
+        "crc32": 1368327384
+      }
+    ],
+    "decision": "no_complete_genuine_public_BF16_A16W8_group32_FC_contract_found",
+    "qualification": "Some integer convolution/GEMM rows match FC K/N at M64/256/1024. They do not establish the required operation or group32 fidelity."
+  }
+}
