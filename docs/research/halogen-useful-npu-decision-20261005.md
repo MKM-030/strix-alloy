@@ -42,6 +42,13 @@ NPU candidate. The lower current throughput versus the separate historical
 1,866.537/48.423621 result is real and is being investigated; it cannot be
 attributed to an NPU candidate that was never loaded.
 
+For a direct token-rate comparison, the historical 8K Stock A measurement is
+1,866.537225 prefill and 48.423621 MTP decode tok/s at 60% acceptance. The latest
+standard control is lower by 637.411960 prefill tok/s (34.15%) and 6.478587
+decode tok/s (13.38%). These are separate operating-state cohorts, not an
+NPU-on/off comparison. An NPU row must remain unmeasured; reporting a zero
+token-rate delta would incorrectly imply a completed live A/B.
+
 A separate request-order diagnostic completed at 22:23:30 UTC: one frozen
 serial PP8192/TG1 request before each timed MTP request gave 1,259.987028
 prefill and 41.625016 decode tok/s, with the same 60.0% acceptance and frozen
@@ -56,6 +63,20 @@ also passes exact output checks but supplies no useful speed gain: hits take
 essentially the same host time and misses take longer. It remains disabled.
 An NPU producer would have to demonstrate a benefit after transfers and
 scheduling while preserving quality. No such producer is currently admitted.
+
+The separate [original-gather row-copy cache replay](halogen-embedding-gather-cache-replay-20261005.md)
+also completed with exact outputs and clean ownership receipts. Cache hits
+took 0.341134 ms host time versus 0.322974 ms for the original; misses took
+0.488103 versus 0.336505 ms. This variant remains disabled as well. Its
+synthetic hit ratio and small component fixture do not establish live token
+throughput or acceptance.
+
+The [Windows power readback](halogen-windows-power-readback-20261005.md)
+found Best Performance configured and MaxPerformance effective. The separate
+ADLX probe did not expose supported SmartShift or power-distribution readings,
+and SmartShiftMax support returned an API failure rather than a positive
+capability. No power policy or tuning change was made. The cause of the lower
+GPU operating range remains unresolved.
 
 [Machine-readable decision and pinned receipts](halogen-useful-npu-decision-20261005.json),
 [precision correction evidence](halogen-npu-precision-correction-20261004.md),

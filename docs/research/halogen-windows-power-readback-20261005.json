@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "report_date": "2026-10-05",
+  "scope": "Existing read-only Windows power and ADLX system receipts, verified offline",
+  "execution_owner": "root agent",
+  "report_author_performed_new_acquisitions": false,
+  "system_settings_changed": false,
+  "driver_or_firmware_changed": false,
+  "measured_performance_intervention": false,
+  "conclusions": {
+    "configured_ac_mode": "Best Performance",
+    "effective_mode": "MaxPerformance",
+    "confirmed_usable_adlx_smartshift_or_system_power_distribution_route": false,
+    "smartshift_max_support_state": "unqualified: IsSupported failed with ADLX_FAIL",
+    "throughput_cause_established": false,
+    "measured_prefill_delta_tok_s": null,
+    "measured_decode_delta_tok_s": null,
+    "operating_state_investigation_open": true,
+    "overall_optimization_goal_complete": false
+  },
+  "windows_power_mode": {
+    "observed_utc": "2026-10-04T22:38:37.597483+00:00",
+    "policy_writes": 0,
+    "driver_or_firmware_writes": 0,
+    "ac_line_status": 1,
+    "battery_flag": 128,
+    "battery_percent": 255,
+    "energy_saver_flag": 0,
+    "PowerGetUserConfiguredACPowerMode": {
+      "available": true,
+      "status": 0,
+      "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+      "interpreted_name": "Best Performance"
+    },
+    "PowerGetUserConfiguredDCPowerMode": {
+      "available": true,
+      "status": 0,
+      "guid": "00000000-0000-0000-0000-000000000000"
+    },
+    "effective_notification_version": 2,
+    "effective_registration_status": 0,
+    "effective_initial_callback_received": true,
+    "effective_unregistration_status": 0,
+    "effective_callbacks": [
+      {
+        "mode": 4,
+        "interpreted_name": "MaxPerformance",
+        "observed_utc": "2026-10-04T22:38:37.598276+00:00"
+      }
+    ],
+    "source_sha256": "2163685d6d7553acf95489764e7da29c3095e9f6bb9ee8aa8b9bfc4238f7b1cb"
+  },
+  "adlx_system_power": {
+    "window": "server/.local/optimization9h-20261004/adlx-system-power-c9c48b739d884064bf3cb014f1a11b22",
+    "execution_receipt": {
+      "started_utc": "2026-10-04T22:51:18.3437935Z",
+      "ended_utc": "2026-10-04T22:51:18.6389041Z",
+      "exit_code": 0,
+      "executable": "C:/Projects/strix-alloy-clean/artifacts/halogen-adlx-power/build/out/Release/halogen_adlx_power_probe.exe",
+      "executable_sha256": "abc531e9e5ebf13fc83c0e19c8ea6a63a84c6452097ef04e6cba0fe603dbad67",
+      "source_sha256": "fea6f82f55a6dc544239edfc899b2bc3c6ea2926a6f07be9fe0c34bc68009efa",
+      "read_only": true,
+      "provider_terminated": true
+    },
+    "initialize_result": 0,
+    "adlx_version": "1.5",
+    "adlx_full_version": 281496451547260,
+    "sdk_full_version": 281496451547260,
+    "sdk_commit": "d9f04a9bba022d6cf6333f005dd540b4ad19fb63",
+    "capabilities": [
+      {
+        "query": "IsSupportedCPUUsage",
+        "result": 0,
+        "result_name": "ADLX_OK",
+        "supported": true
+      },
+      {
+        "query": "IsSupportedSmartShift",
+        "result": 0,
+        "result_name": "ADLX_OK",
+        "supported": false
+      },
+      {
+        "query": "IsSupportedPowerDistribution",
+        "result": 0,
+        "result_name": "ADLX_OK",
+        "supported": false
+      },
+      {
+        "query": "SmartShiftMax.IsSupported",
+        "result": 3,
+        "result_name": "ADLX_FAIL",
+        "supported": null
+      }
+    ],
+    "api_results": [
+      {"operation": "GetPerformanceMonitoringServices", "gpu_index": -1, "result": 0},
+      {"operation": "GetSupportedSystemMetrics", "gpu_index": -1, "result": 0},
+      {"operation": "QueryInterface.SystemMetricsSupport1", "gpu_index": -1, "result": 0},
+      {"operation": "QueryInterface.System1", "gpu_index": -1, "result": 0},
+      {"operation": "GetPowerTuningServices", "gpu_index": -1, "result": 0},
+      {"operation": "GetSmartShiftMax", "gpu_index": -1, "result": 0},
+      {"operation": "GetCurrentSystemMetrics", "gpu_index": -1, "result": 0},
+      {"operation": "QueryInterface.SystemMetrics1", "gpu_index": -1, "result": 0},
+      {"operation": "Terminate", "gpu_index": -1, "result": 0}
+    ],
+    "system_sample": {
+      "requested_epoch_ms": 1791154278548,
+      "result": 0,
+      "metrics": {
+        "cpu_usage_percent": {"result": 0, "value": 14.8640705984}
+      },
+      "completed_epoch_ms": 1791154278577,
+      "request_aligned": false,
+      "process_attributed": false
+    },
+    "bias_mode_queried": false,
+    "bias_value_queried": false,
+    "smartshift_value_queried": false,
+    "power_distribution_values_queried": false,
+    "setters_called": false,
+    "metric_tracking_started": false,
+    "termination_result": 0,
+    "stderr_bytes": 0
+  },
+  "evidence": [
+    {
+      "path": "server/.local/optimization9h-20261004/adlx-system-power-c9c48b739d884064bf3cb014f1a11b22/receipt.json",
+      "sha256": "ff033f06775bcbf6558779fb08fefb9ecbcab82da8c414a37bdddbb22231ac69"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/adlx-system-power-c9c48b739d884064bf3cb014f1a11b22/stdout.jsonl",
+      "sha256": "5a15d6ea171a621506dce36f99560d5c4ce7d8a51b3224b7661c2a9e2708ba5c"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/adlx-system-power-c9c48b739d884064bf3cb014f1a11b22/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/windows-power-mode-3b9e76481cd141dbbc4f9242df06784d.json",
+      "sha256": "0e39707f18f3bac58efedea49b2ae98d8a2e0485655d0d33a0ba8e47d763a125"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/read-windows-power-mode.py",
+      "sha256": "2163685d6d7553acf95489764e7da29c3095e9f6bb9ee8aa8b9bfc4238f7b1cb"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_adlx_power_probe.cpp",
+      "sha256": "fea6f82f55a6dc544239edfc899b2bc3c6ea2926a6f07be9fe0c34bc68009efa"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_adlx_power_probe.ps1",
+      "sha256": "91405fc1466411b05127592d065c88f161ecbbaff7f486afbca9b5a865476984"
+    },
+    {
+      "path": "artifacts/halogen-adlx-power/build/out/Release/halogen_adlx_power_probe.exe",
+      "sha256": "abc531e9e5ebf13fc83c0e19c8ea6a63a84c6452097ef04e6cba0fe603dbad67"
+    }
+  ],
+  "result_code_interpretation": {
+    "source": "artifacts/halogen-adlx/build/sdk/ADLX-d9f04a9bba022d6cf6333f005dd540b4ad19fb63/SDK/Include/ADLXDefines.h",
+    "enum_start_line": 278,
+    "ADLX_OK": 0,
+    "ADLX_FAIL": 3,
+    "ADLX_NOT_SUPPORTED": 12
+  },
+  "limitations": [
+    "Later standalone observations apply only at their own timestamps and are not request-aligned telemetry for the earlier standard control.",
+    "SmartShiftMax support is unqualified because its IsSupported query failed; this is not an explicit supported=false result.",
+    "One system CPU usage sample has no inference-request or process attribution.",
+    "No package watts, package power limit, historical state change, or throughput cause is established.",
+    "No power-policy, driver, firmware or tuning change and no matched performance intervention were performed."
+  ],
+  "related_reports": [
+    "docs/research/halogen-performance-gap-audit-20261005.md",
+    "docs/research/halogen-conditioned-control-20261005.md",
+    "docs/research/halogen-useful-npu-decision-20261005.md"
+  ]
+}
