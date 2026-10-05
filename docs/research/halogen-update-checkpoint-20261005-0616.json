@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "actual_check_start_utc": "2026-10-05T06:16:38Z",
+  "actual_check_end_utc": "2026-10-05T06:20:53Z",
+  "baseline_path": "docs/research/halogen-update-checkpoint-20261005-0350.json",
+  "scope": "Read-only official metadata/documentation and Reddit leads; no installs, settings changes, model reads or inference.",
+  "halogen": {
+    "current_main_sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "commit_date": "2026-10-03T04:29:22Z",
+    "latest_tag": "v0.16.2",
+    "latest_tag_commit_sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "annotated_tag_sha": "71b5339a1dc74c26dc0952989e64aee4b06a6546",
+    "annotated_tag_date": "2026-10-03T04:35:36Z",
+    "latest_release_endpoint_http_status": 404,
+    "metadata_method": "ROOT PowerShell GitHub REST; independent source agent review",
+    "main_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits/main",
+    "tags_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/tags?per_page=5",
+    "annotated_tag_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/git/tags/71b5339a1dc74c26dc0952989e64aee4b06a6546",
+    "supported_external_mtp_interface_found": false,
+    "current_host_fabric_hold_proven": false,
+    "overlap_admitted": false
+  },
+  "gpu": {
+    "optional": "26.9.2 WHQL",
+    "optional_release_date": "2026-09-29",
+    "recommended": "26.8.1 WHQL",
+    "recommended_release_date": "2026-08-20",
+    "driver_store": "32.0.32015.2008",
+    "packaged_npu_mcdm": "32.00.20102.3930",
+    "packaged_npu_mcdm_date": "2026-05-07",
+    "documented_halogen_or_wsl_speed_fix_found": false,
+    "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+    "release_notes_url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html"
+  },
+  "ryzen_ai": {
+    "latest_version": "1.8.0",
+    "published_at": "2026-07-23T04:37:16Z",
+    "prerelease": false,
+    "minimum_npu_driver": "32.0.203.280",
+    "separate_production_npu_driver": "32.0.203.376",
+    "installed_inventory_refreshed": false,
+    "release_url": "https://github.com/amd/RyzenAI-SW/releases/tag/v1.8.0",
+    "installation_url": "https://ryzenai.docs.amd.com/en/latest/inst.html"
+  },
+  "windows_ml": {
+    "current_vitisai_msix": "1.8.75.0",
+    "current_ep": "1605",
+    "current_release": "2026 9D",
+    "upcoming_msix": "1.8.80.0",
+    "upcoming_insiders": "2026 9D",
+    "upcoming_ga": "2026 10D",
+    "upcoming_ga_availability_established": false,
+    "url": "https://github.com/microsoft/WindowsML/wiki/Windows-ML-Execution-Provider-Releases"
+  },
+  "fabric": {
+    "new_supported_fp11_395_windows_hold_and_readback_contract_found": false,
+    "negative_finding_scope": "Focused primary-source searches; not proof that unpublished interfaces cannot exist.",
+    "monitoring_sdk_is_read_only": true,
+    "mi300a_fclk_capping_does_not_qualify_395_windows_hold": true
+  },
+  "reddit": {
+    "recent_lead": "https://www.reddit.com/r/StrixHalo/comments/1wxlxp7/im_a_complete_beginner_with_strix/",
+    "lead_disposition": "Embeddings/reranking suggestion repeats existing separate-service functionality.",
+    "new_reproducible_same_engine_mtp_improvement_found": false,
+    "lead_is_qualified_speed_evidence": false
+  },
+  "preserved_runtime": {
+    "controller_pid": 24904,
+    "backend_pid": 24960,
+    "controller_run_id": "370cc96915474e509d12e7329b44f0e7",
+    "backend_run_id": "babc627cdc474863b0aa8b2104297d4c",
+    "same_process_creation_times_verified": true,
+    "phase": "ready",
+    "active_requests": 0,
+    "completed": 5,
+    "cancelled": 0,
+    "initial_physical_gib": 21.21792221069336,
+    "final_physical_gib": 21.299461364746094,
+    "final_commit_headroom_gib": 114.19834899902344,
+    "request_admission_reached": false,
+    "prepared_arena_profile_pin_matches": true,
+    "prepared_arena_profile_started": false,
+    "specific_restart_reply_received": false
+  },
+  "qualified_new_speed_or_acceptance_change": false,
+  "installs": false,
+  "new_inference": false,
+  "new_npu_execution": false,
+  "goal_status": "blocked",
+  "next_due_utc": "2026-10-05T08:16:38Z"
+}
