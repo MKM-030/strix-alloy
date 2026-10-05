@@ -26,8 +26,16 @@ scalar affine conversions from a complete projection, at the cost of increasing
 weight storage to 13,107,200 B and DDR traffic to 13,291,520 B/call. Three layout
 tests pass, including inverse reconstruction of every synthetic BF16 word;
 independent source review found no blocking layout/arithmetic/bounds/ABI issue.
-This sibling has not been built or executed. The packed build's stack evidence
-does not qualify it. Operation counts alone establish no speed advantage.
+This sibling has now been built separately, including its complete 32-core
+lowering, actual DMA/allocation checks and device-free host metadata inspection.
+Its own linked ELF audit proves a maximum full CRT/core/kernel stack path of
+128 B within 4096 B on all 32 cores. The recorded enclosing and inner compiler
+jobs are closed; neither compilation nor inspection opened the NPU. Preparation
+decoded the unchanged, SHA-pinned 6,963,200-B original H extract once in
+118.3896 ms and inversely reconstructed all 6,553,600 BF16 weight words exactly.
+This one-time preparation time is not per-projection latency. No NPU execution,
+native arithmetic result or speed gain is qualified for this sibling. Operation
+counts and static proofs alone establish no speed advantage.
 
 An independent source cost review found 6,553,600 scalar affine decodes per
 complete packed call, followed by 1,638,400 sixteen-lane BF16 MAC calls. The

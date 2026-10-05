@@ -50,8 +50,10 @@ variant removes **6,553,600 scalar affine conversions per call** by decoding
 once during preparation. Weight traffic grows from 6,963,200 to 13,107,200 B;
 specified total DDR traffic grows from 7,147,520 to 13,291,520 B, an extra
 **6.144 MB decimal per call**. This trades decoder work for bandwidth; no speed
-claim follows. This source variant still needs its own build, placement,
-linked-stack and native numeric review. [Original design](halogen-npu-native-hidden-next-design-20261005.md),
+claim follows. Its separate build and placement checks now pass; all 32 linked
+stack paths are bounded at 128 B, and all 6,553,600 prepared BF16 weight words
+round-trip exactly. Native numeric and latency review are still outstanding.
+[Original design](halogen-npu-native-hidden-next-design-20261005.md),
 [decoded source package](../../scripts/benchmarks/halogen_npu_native_hidden_decoded/README.md).
 
 The repaired offline reference now matches all 20,480 frozen original-GPU A/B
