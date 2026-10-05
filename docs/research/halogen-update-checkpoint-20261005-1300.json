@@ -1,0 +1,335 @@
+{
+  "schema": "halogen.update-checkpoint.v1",
+  "started_utc": "2026-10-05T13:02:58Z",
+  "completed_utc": "2026-10-05T13:12:29.335710+00:00",
+  "next_due_utc": "2026-10-05T15:02:58Z",
+  "baseline": "docs/research/halogen-update-checkpoint-20261005-1100.json",
+  "goal_status_preserved": "blocked",
+  "benchmark_runs": 0,
+  "lifecycle_actions": 0,
+  "installations": 0,
+  "findings": {
+    "halogen": {
+      "started_utc": "2026-10-05T13:03:28Z",
+      "completed_utc": null,
+      "main": {
+        "sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+        "ref": "refs/heads/main",
+        "source_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/git/ref/heads/main",
+        "method": "GitHub connector public GET",
+        "subject_from_unchanged_baseline": "0.16.2",
+        "committer_time_from_unchanged_baseline_utc": "2026-10-03T04:29:22Z",
+        "observation_interval_utc": [
+          "2026-10-05T13:04:00Z",
+          "2026-10-05T13:04:01.8302888Z"
+        ]
+      },
+      "comparison": {
+        "main_changed": false,
+        "latest_listed_tag_changed": false,
+        "annotated_tag_changed": false,
+        "release_collection_changed": false,
+        "documents_changed": false,
+        "supported_contract_changed": false,
+        "new_commits_since_1102": 0,
+        "new_actionable_candidates": [],
+        "reason": "Current main and v0.16.2 resolve to the baseline commit and annotated tag; release collection and since-start default-branch commit query are empty."
+      },
+      "conclusion": "Unchanged from 11:02 checkpoint; no new actionable Halogen release or supported fabric overlap/MTP interface found.",
+      "latest_tag": {
+        "name": "v0.16.2",
+        "commit_sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+        "tag_object_sha": "71b5339a1dc74c26dc0952989e64aee4b06a6546",
+        "tag_ref_source_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/git/ref/tags/v0.16.2"
+      },
+      "release_collection": {
+        "count": 0,
+        "source_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/releases?per_page=10"
+      },
+      "commits_since_baseline": {
+        "since_utc": "2026-10-05T11:02:46Z",
+        "count": 0,
+        "source_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits?since=2026-10-05T11:02:46Z&per_page=100"
+      }
+    },
+    "drivers": {
+      "checked_started_utc": "2026-10-05T13:04:14Z",
+      "checked_completed_utc": "2026-10-05T13:06:43Z",
+      "change_from_baseline": "unchanged checked release metadata",
+      "actionable_supported_contract": null,
+      "conclusion": "Checked release channels remain unchanged from the 11:02 checkpoint; no new actionable supported contract established.",
+      "sources": [
+        {
+          "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+          "observed": {
+            "optional": "Adrenalin 26.9.2 WHQL (Optional)",
+            "optional_release_date": "2026-09-29",
+            "recommended": "Adrenalin 26.8.1 (WHQL Recommended)",
+            "recommended_release_date": "2026-08-20"
+          },
+          "change": "none"
+        },
+        {
+          "url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html",
+          "observed": {
+            "last_updated": "2026-09-29",
+            "driver_versions": [
+              "26.20.15.02 / Driver Store 32.0.32015.2008",
+              "25.10.45.11 / Driver Store 32.0.21045.11001"
+            ],
+            "bundled_npu_mcdm": "32.00.20102.3930",
+            "bundled_npu_date": "2026-05-07",
+            "relevant_new_notes": "No relevant new precision, FP11 fabric hold/readback, supported Halogen GPU/NPU overlap, or WSL fix established in the inspected release highlights/fixes."
+          },
+          "change": "none; second packaged Driver Store row recorded for completeness, without treating it as a newer 395 driver"
+        },
+        {
+          "url": "https://github.com/amd/RyzenAI-SW/releases",
+          "observed": {
+            "latest_listed": "v1.8.0",
+            "release_list_shown_date": "23 Jul 04:37",
+            "commit_short": "73c0457"
+          },
+          "change": "none; no newer release listed"
+        },
+        {
+          "url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+          "observed": {
+            "documentation_version": "1.8.0",
+            "minimum_npu_driver": "32.0.203.280",
+            "separate_production_npu_driver": "32.0.203.376",
+            "production_platforms": [
+              "Phoenix",
+              "Hawk Point",
+              "Strix",
+              "Strix Halo",
+              "Krackan Point"
+            ],
+            "last_updated": "2026-09-28"
+          },
+          "change": "none"
+        },
+        {
+          "url": "https://ryzenai.docs.amd.com/en/latest/relnotes.html",
+          "observed": {
+            "documentation_version": "1.8.0",
+            "latest_release_section": "Version 1.8",
+            "new_relevant_supported_contract": null
+          },
+          "change": "none; unchanged deep contract audit not repeated"
+        },
+        {
+          "url": "https://github.com/microsoft/WindowsML/wiki/Windows-ML-Execution-Provider-Releases",
+          "observed": {
+            "vitisai_current_msix": "1.8.75.0",
+            "vitisai_current_ep": "1605",
+            "vitisai_current_release": "2026 9D",
+            "vitisai_upcoming_msix": "1.8.80.0",
+            "vitisai_upcoming_insiders": "2026 9D",
+            "vitisai_upcoming_ga": "2026 10D",
+            "migraphx_current_msix": "1.8.64.0",
+            "migraphx_current_gpu_ep": "7.2.2609.19",
+            "migraphx_current_release": "2026 9D",
+            "migraphx_upcoming_msix": "1.8.65.0",
+            "migraphx_upcoming_insiders": "2026 9D",
+            "migraphx_upcoming_ga": "2026 10D",
+            "support_status": "Only current listed EP versions supported; upcoming preview versions are not guaranteed for release. Values agree across Windows ML 2.x and 1.8.x tables."
+          },
+          "change": "none"
+        },
+        {
+          "url": "https://ryzenai.docs.amd.com/projects/WinML/en/stable/hybrid_oga.html",
+          "observed": {
+            "documentation_version": "1.8.0",
+            "last_updated": "2026-07-23",
+            "oga_version": "0.14.0",
+            "wheel_index_path_contains": "ryzenai_llm/1.8.1/windows/simple/",
+            "model_generate_version": "1.8.0"
+          },
+          "change": "not established; newly noticed old documentation detail, not evidence of a newly published Ryzen AI 1.8.1 release or fabric/overlap contract"
+        }
+      ],
+      "limitations": [
+        "Scoped public release metadata and notes check, not exhaustive source/driver/API proof.",
+        "Primary pages were served through web browsing with crawl labels; exact publishing/edit times within the two-hour interval are not established.",
+        "July 23 OGA documentation contains a 1.8.1 wheel-index path while still calling the software 1.8.0; package-index contents were not inspected and this is not counted as a new full-stack release.",
+        "Windows ML current/upcoming states reflect the official table; no Windows Update entitlement or installed-state query was performed.",
+        "Root exclusively owns hardware/runtime checks; this agent did not access them."
+      ]
+    },
+    "reddit": {
+      "check_started_at_utc": "2026-10-05T13:03:47Z",
+      "checked_at_utc": "2026-10-05T13:08:19Z",
+      "window_start_utc": "2026-10-05T11:02:46Z",
+      "github_since_checkpoint": [
+        {
+          "repo": "rulith-dev/rulith-inference",
+          "url": "https://api.github.com/repos/rulith-dev/rulith-inference/commits?since=2026-10-05T11:02:46Z&per_page=20",
+          "commits": []
+        },
+        {
+          "repo": "rulith-dev/llama.cpp",
+          "branch": "rulith",
+          "url": "https://api.github.com/repos/rulith-dev/llama.cpp/commits?sha=rulith&since=2026-10-05T11:02:46Z&per_page=20",
+          "commits": []
+        },
+        {
+          "repo": "Aristo94/GSQHalo.cpp",
+          "branch": "gsqhalo",
+          "url": "https://api.github.com/repos/Aristo94/GSQHalo.cpp/commits?sha=gsqhalo&since=2026-10-05T11:02:46Z&per_page=20",
+          "commits": [],
+          "releases_url": "https://api.github.com/repos/Aristo94/GSQHalo.cpp/releases?per_page=5",
+          "releases": []
+        },
+        {
+          "repo": "peonist-ai/halogen-flash-server",
+          "url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits?since=2026-10-05T11:02:46Z&per_page=20",
+          "commits": []
+        }
+      ],
+      "rulith_releases": {
+        "url": "https://api.github.com/repos/rulith-dev/rulith-inference/releases?per_page=5",
+        "latest": {
+          "tag": "v0.4.5",
+          "published_at_utc": "2026-10-05T10:26:41Z",
+          "updated_at_utc": "2026-10-05T10:27:23Z",
+          "url": "https://github.com/rulith-dev/rulith-inference/releases/tag/v0.4.5",
+          "applicability": "Unchanged baseline API naming change, predating this window; not a throughput or NPU candidate."
+        },
+        "listed_tags": [
+          "v0.4.5",
+          "v0.4.4",
+          "v0.4.3",
+          "v0.4.2",
+          "v0.4.1"
+        ],
+        "new_releases_since_window_start": []
+      },
+      "real_upstream_deltas": [],
+      "conclusion": "No actual upstream commit/release delta after 11:02:46 UTC in the checked repositories/branches. A fresh 12:36 UTC StrixHalo discussion supplies no reproducible Halogen optimization. The previously unqualified hypotheses remain unqualified.",
+      "concrete_newly_useful_candidate": null,
+      "reddit_new_within_window": [
+        {
+          "title": "Doom for unified memory PC?",
+          "id": "1wy7ffo",
+          "post_utc": "2026-10-05T12:36:00Z",
+          "url": "https://www.reddit.com/r/StrixHalo/comments/1wy7ffo/doom_for_unified_memory_pc/",
+          "comments_source_url": "https://www.reddit.com/r/StrixHalo/comments/1wy7ffo/doom_for_unified_memory_pc.json?limit=10&sort=new",
+          "served_comments": 6,
+          "served_comment_time_range_utc": [
+            "2026-10-05T12:44:39.000Z",
+            "2026-10-05T13:05:06.000Z"
+          ],
+          "content_summary": "Questions about Strata versus unified-memory hardware. Comments raise comparison controls and quality questions, speculate about future hardware bandwidth, and suggest an unspecified CPU-cache/VRAM/RAM/NVMe storage hierarchy.",
+          "assessment": "Fresh discussion, with no code, configuration, primary implementation link, or reproduced Halogen native-HGN throughput/NPU result. Storage-hierarchy speculation is not a concrete optimization candidate. Hardware and quality assertions are not adopted as verified facts."
+        }
+      ],
+      "reddit_freshness_and_limitations": {
+        "strix_halo_new_url": "https://www.reddit.com/r/StrixHalo/new.json?limit=10",
+        "newest_post_utc_as_served": "2026-10-05T03:53:06Z",
+        "newest_post_url_as_served": "https://www.reddit.com/r/StrixHalo/comments/1wxythz/anyone_running_strix_halo_with_5080_on_egpu/",
+        "inconsistency": "The new listing remained at 03:53 UTC while the narrow search supplied the 12:36 UTC post, demonstrating incomplete listing freshness.",
+        "failed_attempts": "Direct external Reddit REST requests were blocked by Reddit network security. Reopens of the larger broad-query cached search references did not complete and were terminated; narrower public web JSON searches succeeded.",
+        "boundary": "Narrow keyword and past-day search results are not exhaustive subreddit or comment coverage. No complete absence of newer relevant Reddit posts/comments is asserted."
+      }
+    },
+    "initial_health": {
+      "time_utc": "2026-10-05T13:02:12.811705+00:00",
+      "controller_pid": 29004,
+      "backend_pid": 11988,
+      "controller_run": "38fed54e495e47848b7d9514b53cde98",
+      "backend_run": "ad59de6c40e24c12a27698d2de20b4b6",
+      "phase": "ready",
+      "heartbeat_age": 1.9366786479949951,
+      "gateway": {
+        "status": "ok",
+        "active_requests": 0,
+        "draining": false,
+        "completed": 9,
+        "cancelled": 0
+      },
+      "native": {
+        "status": "ok",
+        "in_flight": 0,
+        "queued": 0,
+        "busy": false,
+        "context": 262144
+      },
+      "physical_gib": 23.415504455566406,
+      "commit_headroom_gib": 115.94129180908203,
+      "checks": {
+        "controller_pid": true,
+        "backend_pid": true,
+        "controller_run": true,
+        "backend_run": true,
+        "controller_creation": true,
+        "backend_creation": true,
+        "container_id": true,
+        "profile_sha256": true,
+        "phase_ready": true,
+        "heartbeat_fresh": true,
+        "gateway_ready": true,
+        "native_ready": true,
+        "container_running": true,
+        "runtime_reserve": true
+      },
+      "all_checks_passed": true,
+      "no_inference_submitted": true,
+      "new_measurements_started": false,
+      "npu_integrated": false
+    },
+    "final_health": {
+      "time_utc": "2026-10-05T13:06:47.220956+00:00",
+      "controller_pid": 29004,
+      "backend_pid": 11988,
+      "controller_run": "38fed54e495e47848b7d9514b53cde98",
+      "backend_run": "ad59de6c40e24c12a27698d2de20b4b6",
+      "phase": "ready",
+      "heartbeat_age": 1.1209161281585693,
+      "gateway": {
+        "status": "ok",
+        "active_requests": 0,
+        "draining": false,
+        "completed": 9,
+        "cancelled": 0
+      },
+      "native": {
+        "status": "ok",
+        "in_flight": 0,
+        "queued": 0,
+        "busy": false,
+        "context": 262144
+      },
+      "physical_gib": 23.264942169189453,
+      "commit_headroom_gib": 115.74385833740234,
+      "checks": {
+        "controller_pid": true,
+        "backend_pid": true,
+        "controller_run": true,
+        "backend_run": true,
+        "container_id": true,
+        "profile_sha256": true,
+        "phase_ready": true,
+        "heartbeat_fresh": true,
+        "gateway_ready": true,
+        "native_ready": true,
+        "container_running": true,
+        "runtime_reserve": true
+      },
+      "all_checks_passed": true,
+      "no_inference_submitted": true,
+      "new_measurements_started": false,
+      "npu_integrated": false
+    }
+  },
+  "raw_receipt_base": "server/.local/optimization9h-20261004",
+  "raw_receipt_sha256": {
+    "halogen-update-1300.json": "8f0d0303aa43d89cbc568448dd45aa9aab97b2b2d2468e3b6f8c7a3790d25f88",
+    "drivers-update-1300.json": "6fb3fa5ea302671e98a746e65213ae423876ca7b651dc93dec9e2ad1ca6caf0a",
+    "reddit-update-1300.json": "80dcd35b6eabb820d512269758c0dd81529af3c33cd20ae8b85f66ba5ca70cd6",
+    "heartbeat-live-20261005-1300.json": "493912bf7e51406d9d98fa654c9d60680c9b65915ce1e1038f6f59d99bff9aab",
+    "heartbeat-final-20261005-1300.json": "13f5c51fed0039a6b89455dcc337ef7755591a01b48810a5b27d29ee3f4bf543",
+    "heartbeat-processes-20261005-1300.json": "dc18be6db111a6c222cd758e33f13758222ce74ab3ccce955c61e0d968becf9f"
+  },
+  "disposition": "Checked channels unchanged; fresh discussion supplies no concrete Halogen candidate. Exact original ready/open server preserved. No benchmark or NPU diagnostic repeated."
+}
