@@ -1,5 +1,11 @@
 # NPU: Genauigkeit und tatsächlicher Nutzen
 
+Der laufende Server bleibt beim ursprünglichen GPU-MTP-Pfad. Für die aktuelle
+NPU-Auslagerung ist kein positiver Nutzen im vollständigen Engine-Lauf
+nachgewiesen. Die Änderung in Prefill-tok/s, Decode-tok/s und Akzeptanz ist
+weiterhin unbekannt. Aus den Zeiten einzelner Komponenten lässt sich dieser
+Unterschied nicht ableiten.
+
 Die getestete MTP-Projektionskomponente besteht nach der Korrektur die
 unveränderte Entwicklungstoleranz `rtol=0.03, atol=0.003`: keine Überschreitung
 auf beiden eingefrorenen Eingabesätzen in zwölf NPU-Aufrufen. Dafür werden
@@ -44,20 +50,28 @@ bleibt deaktiviert. Am vorhandenen Einhängepunkt stehen die normierten
 Eingaben erst nach dem Trunk bereit; sie können dort nicht während desselben
 Trunk-Prefills vorbereitet werden. Eine frühere tokenbasierte Vorbereitung ist
 jetzt als begrenzter Offline-Eingabeproduzent implementiert. Ihre Planung wurde
-ausgeführt; Live-Veröffentlichung und Tempo-Vorteil sind noch unqualifiziert.
+ausgeführt; inzwischen ist auch die Produktion von 64 ausgewählten
+Checkpoint-Embedding-Zeilen abgeschlossen. Live-Veröffentlichung und
+Tempo-Vorteil sind weiterhin unqualifiziert.
 
 | Neueste normale GPU-Kontrolle | Prefill tok/s | MTP-Decode tok/s | Akzeptanz |
 |---|---:|---:|---:|
 | GPU, 8.192 Eingabe / 128 Ausgabe | 1.277,14 | 41,28 | 60,0 % (207/345) |
 | NPU-Auslagerung im vollständigen Engine | nicht gemessen | nicht gemessen | nicht gemessen |
 
-Die neueste Stock-Kontrolle endete am 5. Oktober 2026 um 02:43:05 UTC. Sie nutzt den
-eingefrorenen nicht repetitiven Prosa-Prompt, einen Aufwärmlauf und drei
-Messläufe, Cache Off, MTP-Tiefe 2 und PLD 3,3. Die frühere Spitze von
+Die neueste Stock-Kontrolle endete am 5. Oktober 2026 um 02:43:05 UTC. Sie nutzt einen
+eingefrorenen, nicht repetitiven synthetischen Wortmix aus einem kleinen
+Wortschatz, erzeugt mit festem Zufallsseed. Es gab einen Aufwärmlauf und drei
+Messläufe mit Cache Off, MTP-Tiefe 2 und PLD 3,3. Die frühere Spitze von
 48,42 Decode-tok/s wurde ebenfalls ohne NPU gemessen. Der Unterschied zum
 obigen Lauf ist kein NPU-an/aus-Effekt. Es gibt bislang keinen belegten
 NPU-Gewinn in Prefill- oder Decode-tok/s. Komponenten-Millisekunden werden
 nicht in Tokenraten umgerechnet.
+
+Die neuen langen Eingaben aus einem einmal verwendeten Romanpräfix bilden
+einen anderen Workload. Ihre Tokenraten und Akzeptanz können deshalb nicht als
+direkter Leistungsunterschied zu dieser synthetischen 8K-Kontrolle berichtet
+werden.
 
 Der neue Vergleich der n-gram-Dateiablage ergab für Stock A **1.321,26 / 41,62**,
 für native WSL-Ablage **1.316,04 / 41,90** und für Stock B **1.277,14 / 41,28**
@@ -86,8 +100,31 @@ Die Phasenraten wurden gegen die Windows-Uhr kalibriert. Das ursprüngliche
 GPU-Profil ist danach bereit und offen geblieben; der Patch ist ein opt-in
 Kandidat. [Vollständiger Runtime-Vergleich](halogen0162-rocr-stock8k-20261005.md).
 
-Die Kontextkapazität beträgt 262.144 Tokens. Die Tabelle enthält keine
-qualifizierte Messung mit 128K oder 260K tatsächlich belegter Eingabe.
+Die Kontextkapazität beträgt **262.144 Positionen**. Im neuen Roman-Workload
+bestätigen native Timings und Usage tatsächlich **131.072 Eingabe- und 128
+Ausgabetokens** für einen einzelnen Aufwärmlauf. Der Lauf endete mit `length`,
+ohne Cache-Tokens und ohne Reasoning-Tokens.
+
+| Einzel-Aufwärmlauf; keine qualifizierte Messkohorte | Prefill tok/s | MTP-Decode tok/s | Akzeptanz |
+|---|---:|---:|---:|
+| GPU, 131.072 Eingabe / 128 Ausgabe | 664,99 | 27,59 | 48,84 % (63/129) |
+
+Die Phasenraten sind gegen die Windows-Uhr kalibriert; die Windows-Wandzeit
+beträgt 202,056 s. Das Verhältnis monotonic/raw ist 1,024663, raw/QPC
+1,000000103; die Handshake-Unsicherheit beträgt 0,502 ms. **Die Kohorte ist
+fehlgeschlagen (`passed=false`): ein ausgeschlossener Aufwärmlauf, null
+Messwiederholungen.** Nach dem Aufwärmlauf wurde die nächste Anfrage mit
+`RuntimeError: 22 GiB physical/commit reserve unavailable` nicht zugelassen.
+Die aggregierten Prefill-, Decode- und Akzeptanzwerte sind deshalb `null`;
+die Tabellenwerte sind keine Mittelwerte. Die beobachteten Minima von
+21,624 GiB freiem physischem Speicher und 114,470 GiB Commit-Reserve blieben
+über der kontinuierlichen 18-GiB-Untergrenze. Diese Untergrenze ersetzt die
+22-GiB-Zulassung vor einer neuen Anfrage nicht. **260.000 Eingabetokens wurden
+nicht gestartet.** Der Server blieb offen und wurde abschließend als bereit
+und im Leerlauf bestätigt; NPU-Auslagerung war nicht integriert.
+[Fehlgeschlagene Langtext-Kohorte](../../server/.local/long-input-admission-source-20261005/measurement-422ad410db5145b081cec88daa5c5967/131072/result.json),
+SHA-256 `e6b8237e440d4c425ac704c2be2ef610051178d0790374fb55bc0643a50fed1a`;
+[einzelner Aufwärmlauf](../../server/.local/long-input-admission-source-20261005/measurement-422ad410db5145b081cec88daa5c5967/131072/samples.json).
 
 Für die aktuelle 0.16.2-Engine ist der Unterschied durch eine NPU-Auslagerung
 in **Prefill-tok/s, Decode-tok/s und Akzeptanz weiterhin nicht gemessen**.
@@ -106,11 +143,39 @@ Referenz. Es wurde nur die ausgewählte Zeile umgepackt und eine eigene kleine
 GPU-Tabelle verwendet. Dieser Beleg qualifiziert weder die Tabelle im laufenden
 Engine noch andere Tokens, den vollständigen MTP-Head oder einen Tempo-Gewinn.
 Die frühe NPU-Vorbereitung bleibt im Live-Engine deaktiviert. Der neue
-Offline-Produzent bereitet höchstens 64 bekannte Tokenzeilen vor und erhält
-den ursprünglichen GPU-Pfad für unbekannte und zurückgestellte Tokens.
-Seine ausgeführte Metadatenplanung las keine Modellbytes; die eigentliche
-Produktion und Veröffentlichung wurden noch nicht ausgeführt.
+Offline-Produzent hat inzwischen **64 ausgewählte Token-Embedding-Zeilen aus
+dem realen Checkpoint** erstellt. Die abgeschlossene Produktion las genau
+**194.688 Checkpointbytes**; die vollständige Checkpointdatei wurde nicht erneut
+gehasht, und es wurden keine FC-Gewichte gelesen. Dieser Lauf führte weder
+CPU- noch NPU-FC aus, lud keine Kandidaten auf ein Gerät und veröffentlichte
+keine Daten im Live-Engine. Er belegt Kandidaten-Eingaben, keinen vollständigen
+MTP-Head und keinen Tempo-Vorteil. Für unbekannte und zurückgestellte Tokens
+bleibt der ursprüngliche GPU-Pfad vorgeschrieben.
+[Abgeschlossene 64-Zeilen-Produktion](../../server/.local/optimization9h-20261004/early64-candidates-40e19242264d414e91a2570f8e964e0e/complete.json),
+SHA-256 `0cbdf9b414840b7c2a3ed1be079faef5d68e3770e836c1be99251332e8dfb563`.
 [Ausgeführter Embedding-Vergleich](../research/halogen-q4c-selected-row-oracle-20261005.md).
+
+Die anschließende CPU-RMS-Korrektur folgt der GPU-Reihenfolge für die
+eingefrorenen rohen Embedding-Zeilen. Sie stimmt auf **64 Zeilen mit jeweils
+2.560 Werten (163.840 insgesamt)** exakt mit den erhaltenen nativen
+GPU-Ausgaben überein: null unterschiedliche BF16-Wörter, null Überschreitungen
+der ursprünglichen CPU-Toleranz `rtol=0.002, atol=0.0002`, maximale absolute
+Abweichung null. Die Toleranz blieb unverändert. Der Vergleich selbst führte
+weder GPU noch NPU aus und ließ keine Live-Veröffentlichung zu. Dieser
+64-Zeilen-Beleg qualifiziert weder die vollständige Tabelle, Live-Allokation,
+FC oder den vollständigen MTP-Head noch zukünftige Zeilen oder einen
+Tempo-Gewinn. Die separate offene Hidden-/MTP-Projektionsprüfung bleibt davon
+unberührt.
+[CPU-RMS-Korrektur auf 64 Zeilen](../../server/.local/optimization9h-20261004/q4c-multirow-owned-35bf1b51d916442b8101605ab80b6dcc/cpu-tree-original-tolerance.json),
+SHA-256 `233d5c97c85e1e923956b50401a1ba091159438ec1f3f79a17b89626ec5f5711`;
+Quell-SHA-256 `ff635c3f295a7044dd388aa9699146c3f752e74c393fcc2dea7af1d02a479185`.
+Der ursprüngliche NumPy-/Kandidatenlauf bleibt als fehlgeschlagen erhalten
+(`passed=false`, `exact-BF16-word-gate`). Sein ergänzender Toleranzvergleich
+enthält zwei BF16-Wortunterschiede und zwei Überschreitungen der ursprünglichen
+CPU-Toleranz bei maximal 0,001953125 absoluter Abweichung; er war keine
+bestandene exakte Parität und kein NPU-Lauf.
+[Ursprüngliches fehlgeschlagenes Gate](../../server/.local/optimization9h-20261004/q4c-multirow-owned-35bf1b51d916442b8101605ab80b6dcc/result/replay/replay.json),
+[ergänzender Toleranzbeleg](../../server/.local/optimization9h-20261004/q4c-multirow-owned-35bf1b51d916442b8101605ab80b6dcc/supplemental-normalized-tolerance.json).
 
 Unterstützter gleichzeitiger GPU/NPU-Betrieb setzt laut aktuellen
 [Halogen-Flags](https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/docs/FLAGS.md)
@@ -122,3 +187,21 @@ alle neuen NPU-Aufrufe fanden im überwachten GPU-Leerlauf statt.
 Belege: [Genauigkeitskorrektur](../research/halogen-npu-precision-correction-20261004.md),
 [CPU-/Paging-Kontrolle](../research/halogen-cpu-paging-control-20261005.md),
 [NPU-Batch-Aufrufprüfung](../research/halogen-npu-batch-cut-source-disposition-20261005.md).
+
+Die portable Python-3.12-Implementierung der RMS-Korrektur wurde ebenfalls auf
+allen 163.840 gespeicherten Werten ausgeführt: exakt null BF16-Abweichungen bei
+unveränderten Toleranzen. Der neue Offline-Adapter bindet diese Implementierung
+explizit mit `--native-rms`; seine erneute Checkpoint-Produktion wurde noch nicht
+gestartet. [Implementierung](../../scripts/benchmarks/halogen0162_embedding_rms_cpu_tree_portable.py),
+[ausgeführter Vergleich](../../server/.local/optimization9h-20261004/q4c-multirow-owned-35bf1b51d916442b8101605ab80b6dcc/cpu-tree-portable-original-tolerance.json).
+
+Für die langen Messungen ist ein Profil mit `prefill_chunk=8192`, weiter
+262.144 Kontextpositionen, MTP2, PLD3,3, Cache Off und 18 GiB Reserve vorbereitet
+und vom Controller validiert. Es wurde nicht gestartet; die Freigabe zur kurzen
+Unterbrechung der Kollegeninstanz ist angefragt. Die installierte Originalinstanz
+verwendet die ungesetzten Prefill-Standardwerte. Laut den
+[Flags der installierten Version 0.16.2](https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/v0.16.2/docs/FLAGS.md)
+dimensioniert `HALOGEN_MAX_TOK` den Prefill-Arbeitsbereich; der Standard 32.768
+benötigt etwa 9 GB. Diese Parameter werden beim Start gelesen. Ein kleinerer
+Arbeitsbereich ist eine konkrete Speichermaßnahme; sein Tok/s-Effekt wurde
+noch nicht gemessen.
