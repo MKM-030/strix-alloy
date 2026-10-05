@@ -3,8 +3,10 @@
 Two threads in the preserved Halogen engine each consumed approximately one
 CPU core during a separate 167.634579-second idle interval. The exact installed
 HSA library has the no-event polling loop without AMD's merged backoff. A
-narrow backport is prepared against its exact source pin. No private library
-has yet been built or loaded, and no token-rate gain is claimed.
+narrow backport is prepared against its exact source pin. Private matched
+source-stock and patched libraries have now been built and pass a static ABI
+and unchanged-image dependency gate. No live-engine replacement or token-rate
+gain is yet qualified.
 
 The normal frozen control measured **1253.224684 prefill / 42.418748 MTP decode
 tok/s / 60.0% acceptance**, at 8192 actual input and 128 output tokens. Its
@@ -61,6 +63,76 @@ candidate must use the same compiler, dependency bytes and flags; only their
 comparison isolates the patch. The original static hsakmt graph and dynamic
 WSL bridge must remain intact. SDK compiler and bundled sysdeps are preferred
 over changing installed runtime or driver components.
+
+## Private build and static gate
+
+Both variants were built in a disposable CPU-only container using the pinned
+Halogen image, SDK Clang 23, identical flags and the original static hsakmt
+graph. No install step, GPU/NPU access or model mount was used. The SDK host
+compiler lacks its compiler-rt builtins archive; both variants use the existing
+libgcc host runtime. Mandatory gfx1250 assembly remains. Image OpenCL blits
+use all 39 original source targets. Compiler packages existed only in that
+private container.
+
+| Private regular SONAME file | SHA256 | Bytes |
+|---|---|---:|
+| Source stock | `2ba2eafa07cfcedb3754a7708858f2c054bc07c9e4e24fe4820b5340cda95af5` | 4807872 |
+| Patched | `cf1f4447cd92330c6a551042eff1ad95de2df4e276c09dfbfe7a252b5fa89434` | 4808016 |
+
+The actual build ended with exit 0. Its container was removed, owned job closed,
+and memory monitor stopped. Minimum physical reserve was 25.567368 GiB and
+commit headroom 118.313515 GiB. Earlier failed attempts are retained separately
+and were also cleaned up.
+
+The static gate preserves all 276 original exports exactly, SONAME 1 and
+ROCR_1, renamed SDK dependencies and the static thunk graph. Source-stock and
+patched interfaces and version needs are identical; only patched contains the
+targeted AsyncEventsLoop sleep call. Snapshots exported from the unchanged
+live image provide every required dependency version, including the private
+build's newer GLIBC, C++ ABI and libm requirements. The original RPATH becomes
+RUNPATH with the same string in both private builds; replay LD_LIBRARY_PATH
+is fixed explicitly. These static checks do not prove successful execution.
+
+An earlier gfx1151-only private build passed the narrower export/version gate
+but failed at `dlopen`: the source references all 39 image arrays directly,
+leaving 38 unresolved when only one is generated. That build is rejected.
+The corrected builder uses the exact original target list, and the static
+gate now also proves every strong unversioned import has a matching self or
+unchanged direct-dependency default export. The old gate is insufficient for
+the failed libraries and is not reused for the corrected build.
+
+## Qualified isolated component result
+
+Three sequential windows completed on the exact pinned image, without a model
+mount or a new large engine. Actual mapped HSA/HIP/DXG hashes match their pins.
+Both A/B RMS outputs are exactly equal across installed stock, source stock
+and patched runtime, including every repetition. All owned containers were
+removed, jobs closed and monitors stopped, with no contamination or cleanup
+pending. Minimum physical reserve was 26.030510 GiB and commit headroom
+118.802414 GiB.
+
+| Fixed measurement | Installed stock | Source stock | Patched |
+|---|---:|---:|---:|
+| Plain GPU-context idle, mean CPU cores | 1.998871 | 1.894406 | **0.011443** |
+| Pending IPC-signal idle, mean CPU cores | 1.999313 | 1.978984 | **0.012010** |
+| A RMS launch/wait median, us | 185.730 | 214.489 | 207.887 |
+| B RMS launch/wait median, us | 193.537 | 213.884 | 216.100 |
+| One Python-observed callback wake, us | 185.887 | 174.178 | 1363.733 |
+
+Only source stock versus patched isolates the backoff. It demonstrates sharply
+lower idle CPU use, while the two kernel medians change by about -3.1% and
++1.0%; this small component sample establishes no general kernel speed gain.
+Compared with the installed binary, the whole private build has about 12%
+higher launch/wait medians. Its single observed callback wake is slower,
+consistent with polling backoff; this is informational rather than a wake
+latency distribution or live-model qualification.
+
+The candidate is useful for the demonstrated idle-spin problem but is **not
+deployed in the colleague server**. Prefill/decode/acceptance deltas remain
+unmeasured. The matched live-engine comparison required for those claims would
+need a singleton maintenance window; this component run preserved the open
+colleague service. Final health remained ready, idle, completed 20, cancelled 0,
+with the original flash_serve PID/start identity retained.
 
 The necessary checks are actual loaded-library hashes, unchanged original RMS
 BF16 outputs, bounded kernel latency, idle CPU, callback progress, ABI and

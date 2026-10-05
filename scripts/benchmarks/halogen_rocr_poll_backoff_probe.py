@@ -37,6 +37,9 @@ EXPECTED_ENV = {
     "HALOGEN_LQ8_WAVE": "1", "HSA_DISABLE_COREDUMP_ON_EXCEPTION": "1",
     "LD_LIBRARY_PATH": "/usr/lib:" + str(BASE) + ":/usr/local/lib/python3.12/site-packages/_rocm_sdk_libraries/lib",
 }
+# HSA may retain a callback beyond a failed observation wait. Keep its ctypes
+# trampoline and closure rooted until process exit, not only probe() return.
+_CALLBACK_ROOTS = []
 
 
 def require(condition, message):
@@ -263,6 +266,7 @@ def probe(args):
             return False
 
         callback = handler_type(on_signal)
+        _CALLBACK_ROOTS.append(callback)
         # IPC=2 permits CPU consumption and guarantees DefaultSignal/BusyWaitSignal
         # at this SDK source pin. This is an explicit diagnostic, not engine IPC.
         create_signal = api(hsa, "hsa_amd_signal_create", [C.c_int64, C.c_uint32, C.c_void_p, C.c_uint64, C.POINTER(Signal)])
@@ -296,6 +300,7 @@ def probe(args):
         report["error"] = type(error).__name__ + ": " + str(error)
     finally:
         actions = []
+        drain_unconfirmed = False
         if hsa is not None and signal.handle:
             if handler_registered and not callback_done.is_set():
                 try:
@@ -303,15 +308,24 @@ def probe(args):
                     require(callback_done.wait(2), "cleanup async callback did not complete")
                 except Exception as error:
                     report["cleanup_errors"].append(str(error))
-            actions.append(("hsa_signal_destroy", lambda: api(hsa, "hsa_signal_destroy", [Signal])(signal)))
-        if hip is not None:
+            drain_unconfirmed = handler_registered and not callback_done.is_set()
+            if not drain_unconfirmed:
+                actions.append(("hsa_signal_destroy", lambda: api(hsa, "hsa_signal_destroy", [Signal])(signal)))
+        report["callback_root_retained_for_process_lifetime"] = callback is not None
+        report["registered_callback_drain_confirmed"] = callback_done.is_set() if handler_registered else None
+        report["unsafe_object_teardown_skipped"] = drain_unconfirmed
+        report["process_exit_without_python_finalization"] = drain_unconfirmed
+        if drain_unconfirmed:
+            report["passed"] = False
+            report["cleanup_errors"].append("registered callback drain unconfirmed; signal/GPU/module/HSA teardown skipped; root owns container cleanup")
+        if hip is not None and not drain_unconfirmed:
             if tensor.value:
                 actions.append(("hipFree tensor", lambda: api(hip, "hipFree", [C.c_void_p])(tensor)))
             if gamma_device.value:
                 actions.append(("hipFree gamma", lambda: api(hip, "hipFree", [C.c_void_p])(gamma_device)))
             if module.value:
                 actions.append(("hipModuleUnload", lambda: api(hip, "hipModuleUnload", [C.c_void_p])(module)))
-        if hsa_owned:
+        if hsa_owned and not drain_unconfirmed:
             actions.append(("hsa_shut_down owned reference", lambda: api(hsa, "hsa_shut_down", [])()))
         for label, action in actions:
             try:
@@ -320,11 +334,21 @@ def probe(args):
                 report["cleanup_errors"].append(str(error))
         report["passed"] = report["passed"] and not report["cleanup_errors"]
         try:
-            write_json(output / "probe.json", report)
-        except Exception as error:
-            report["passed"] = False
-            report["report_write_error"] = type(error).__name__ + ": " + str(error)
-            print(json.dumps(report), file=sys.stderr, flush=True)
+            try:
+                write_json(output / "probe.json", report)
+            except Exception as error:
+                report["passed"] = False
+                report["report_write_error"] = type(error).__name__ + ": " + str(error)
+                print(json.dumps(report), file=sys.stderr, flush=True)
+            if drain_unconfirmed:
+                print(json.dumps(report), file=sys.stderr, flush=True)
+                sys.stdout.flush()
+                sys.stderr.flush()
+        finally:
+            if drain_unconfirmed:
+                # Python finalization must not release a still-registered
+                # CFUNCTYPE trampoline. The owned outer container/job cleans up.
+                os._exit(1)
     print(json.dumps(dict(passed=report["passed"], variant=args.variant, error=report.get("error"),
         cleanup_errors=report["cleanup_errors"], report_write_error=report.get("report_write_error"), output=str(output))))
     return 0 if report["passed"] else 1
@@ -335,6 +359,11 @@ def compare(args):
     stock, candidate = reports
     require(stock.get("variant") in ("stock", "source_stock") and candidate.get("variant") == "candidate" and
             all(row.get("passed") for row in reports), "two passed baseline/candidate reports required")
+    for report in reports:
+        require([row.get("label") for row in report["timings"]] == ["A", "B"], "exact A/B timing cardinality/order required")
+        require([row.get("label") for row in report["idle"]] ==
+                ["gpu_context_after_fixed_replay", "one_pending_ipc_async_signal_diagnostic"],
+                "exact two idle bracket cardinality/order required")
     for key in ("schema", "image", "environment", "warmup_per_fixture", "repeats_per_fixture", "tensor_bytes", "kernel_symbol", "width", "groups", "grid", "block", "shared_bytes", "input_output_alias"):
         require(stock[key] == candidate[key], "comparison configuration differs: " + key)
     for key in ("source", "engine", "codeobject", "fixtures", "gamma", "hip", "bridge", "A_input", "B_input"):

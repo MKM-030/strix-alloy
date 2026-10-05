@@ -25,6 +25,8 @@ The pure Python probe needs no new probe compilation. It validates its independe
 - Complete the pending signal once, retain the Python callback, record its single observed wake latency, return false from the callback, and destroy the signal. That single latency includes Python callback entry and is informational.
 - Free the two tiny GPU buffers, unload the original module, release the owned HSA reference, and report cleanup failures. The process exits after reporting. Failure to write the receipt preserves the full original error/cleanup receipt in stderr and exits unsuccessfully.
 
+The ctypes callback remains rooted for the process lifetime. If a registered callback remains unconfirmed after the two bounded observation waits, skip signal/GPU/module/HSA teardown, write a failed cleanup receipt, and exit with `os._exit(1)` so Python finalization cannot free its trampoline. Root still closes the retained owned container/job. Offline comparison rejects missing, extra, duplicated or reordered A/B timing rows and either fixed idle label.
+
 Each run should fit within about 21 seconds plus initialization/replay overhead. Use the existing outer timeout style with an explicit 60-second deadline and 5-second kill grace; a timeout fails the window rather than initiating a retry.
 
 ## Exact image, mounts, and environment

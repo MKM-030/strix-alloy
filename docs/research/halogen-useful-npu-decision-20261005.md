@@ -1,5 +1,30 @@
 # NPU accuracy and practical throughput decision — 5 October 2026
 
+Die NPU-Komponente besteht auf beiden eingefrorenen Eingabesätzen die
+unveränderte Toleranz `rtol=0.03, atol=0.003`: null Fehler in zwölf Aufrufen.
+Das belegt keine vollständige Modell- oder Akzeptanzparität. Die strengere
+CPU-Prüfung hat weiterhin einen Fehler.
+
+Der praktische Befund: **GPU 0,487 ms, korrigierte NPU 1,850 ms** für die
+gepaarte Projektion; schon die NPU-Ausführung dauert etwa 3,80-mal so lange.
+Die Operation bleibt auf der GPU. Ein tatsächlicher NPU-Effekt auf Prefill,
+Decode oder Akzeptanz ist **nicht gemessen**, weil kein Live-Austausch aktiviert
+wurde. Komponenten-Millisekunden sind keine gemessenen Tokenraten.
+
+| Neueste normale Messung, ohne NPU-Auslagerung | Wert |
+|---|---:|
+| Tatsächliche Eingabe / Ausgabe | 8192 / 128 Tokens |
+| Prefill | **1253,22 tok/s** |
+| MTP-Decode, nicht repetitiver Prosa-Prompt | **42,42 tok/s** |
+| Akzeptanz | **60,0 % (207/345)** |
+| Ende des Kontrolllaufs | 4.10.2026, 23:17:24 UTC |
+
+Die früheren 48,42 Decode-tok/s stammen aus einem separaten GPU-Lauf. Beide
+Kohorten liefen ohne NPU-Auslagerung; die Differenz ist kein NPU-Effekt. Die
+262144-Kontextkapazität ist keine Messung mit 260K tatsächlicher Eingabe.
+
+The detailed retained cohorts and evidence follow.
+
 The corrected NPU projection passes the original development tolerances on both
 frozen native-GPU input sets. It is slower than the original GPU projection, so
 the colleague's Halogen server keeps GPU prefill and native MTP decode.

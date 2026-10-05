@@ -6,9 +6,9 @@
   "original_hsa_sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
   "missing_backoff_statically_verified": true,
   "hot_live_thread_stack_attribution": false,
-  "private_candidate_built": false,
-  "private_candidate_loaded": false,
-  "probe_executed": false,
+  "private_candidate_built": true,
+  "private_candidate_loaded": true,
+  "probe_executed": true,
   "live_optimization_qualified": false,
   "measured_prefill_delta_tps": null,
   "measured_decode_delta_tps": null,
@@ -67,13 +67,352 @@
     },
     {
       "path": "scripts/benchmarks/halogen_rocr_poll_backoff_probe.py",
-      "sha256": "c876af06e68c4d68896219bc8f6f701da642ac21a1302d7ab230957bc730ece6"
+      "sha256": "9b2f6dd62162cbed8ea51f767e018c787a69ebf03fa6e4cc8b6ef153fdf83f52"
     },
     {
       "path": "scripts/benchmarks/halogen_rocr_poll_backoff_probe.md",
-      "sha256": "35f7407d39c6b98cd41a7ad937670c5e5987a5aafc416fb5fb8c4b186c2cdfe1"
+      "sha256": "1e02a12199581d35050e4e3ae626da38af8dc929654ca4ba86ece37fa68a5fc6"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/alloy-rocr-private-build-c546d1553cda4f44bfc53870700e365f/result.json",
+      "sha256": "76bba0cd3c4eebe552ff201b0d0d1c4ede1e4a1df6d065e35e99e11d3fed5a2f"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/alloy-rocr-private-build-c546d1553cda4f44bfc53870700e365f/build/build-manifest.json",
+      "sha256": "21eb93cc6e4ef311c7021a663bc941e32fbe02cd147c3f9d3518663097597aa1"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/rocr-dependency-closure-77059cd95fd74be9b1bce0100d8fa075/abi-gate/gate.json",
+      "sha256": "c48c166c0cd3d449d1f9944be20defcee2e9852074e290578b4c00bf4c2ccff8"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/rocr-dependency-closure-77059cd95fd74be9b1bce0100d8fa075/manifest.json",
+      "sha256": "20169787a6fb8cc939cc54013144ff54d0730af98e7c04bacc094fa9adb844e3"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_rocr_private_build.py",
+      "sha256": "713dcf8c892ff4c15cd1547951093b1e7b5af54f77ffe3a9335c87a00863c5ed"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/alloy-rocr-private-build-7e1ed5efb1ac4203bea49745e4b86372/result.json",
+      "sha256": "c0be18f48c7d6a19f31e4f6b82f1db878c8abb8c469439aefab9dc379d397cae"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/alloy-rocr-private-build-7e1ed5efb1ac4203bea49745e4b86372/build/build-manifest.json",
+      "sha256": "ec770b03bb9821f751dae0fa2b3f6252718e2676bb585e027bbfee65bc9c41d3"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/rocr-complete-static-gate-b0f2bb7aa4e8463b8696a7eab207db87/gate.json",
+      "sha256": "95b58bbee9b413a3e081d65b737f782054405f22556036516a0821a16637e5a7"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/alloy-rocr-component-16a35be771404bd7a7ac3d1b43526528/result.json",
+      "sha256": "7e1a0f5b1dcfd122d65f88db6d6dda43d0bbd2634adaf3cd7b4f21bb69e1e3b8"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/alloy-rocr-component-16a35be771404bd7a7ac3d1b43526528/installed-comparison.json",
+      "sha256": "53fa6d249c1bbe223e83b57e1123074ea08991a141405e5c48f1753860e39f2b"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/alloy-rocr-component-16a35be771404bd7a7ac3d1b43526528/patch-comparison.json",
+      "sha256": "2ba692800c835e7179ff32fb35299b50a577e251856c9be3dca713fa6506ce55"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_rocr_poll_backoff_owned_run.py",
+      "sha256": "bd2945ae634248e63ce2b008c2cbbdc17ac1af7f47a3a97082c8d36a41955c4f"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_rocr_private_build.py",
+      "sha256": "f2d10c9dd322cc0f02cf89d60b37d2a13cc60a17ed4101f50c02c7f98932c03c"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/rocr-runtime-audit-de4bdf56e14b4feb8777e870f0593a6d/rocr-abi-static-native-rms-20261005.py",
+      "sha256": "dbaa5677c3f3b26a12fe10820b6a30d7a3949b33f862587a781ae29082b56eb3"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_rocr_static_abi_gate.py",
+      "sha256": "dbaa5677c3f3b26a12fe10820b6a30d7a3949b33f862587a781ae29082b56eb3"
     }
   ],
-  "next": "Private pinned-source stock and patched builds with matched SDK compiler/dependencies, ABI gate, bounded component qualification; preserve colleague server",
-  "full_goal_complete": false
+  "next": "No live restart while colleague service preserved; qualify a singleton engine A/B in a maintenance window before any tok/s claim",
+  "full_goal_complete": false,
+  "private_build": {
+    "schema": "halogen.rocr-private-build-owned.v1",
+    "out": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-rocr-private-build-7e1ed5efb1ac4203bea49745e4b86372",
+    "name": "alloy-rocr-private-build-7e1ed5efb1ac4203bea49745e4b86372",
+    "status": "passed_private_build_unqualified",
+    "errors": [],
+    "source_sha256": "67027ee0c7099abbad712ec91c09fbe42fc5248f9b0546ebf949b2e408e70477",
+    "bootstrap_sha256": "a89ca43cbd9bb7727ec53d56c23e07f124dfd3c9b8728014f5d61aad87799955",
+    "cpu_only": true,
+    "container_id": "45d7ef58836cb7cdb050fc7b014fe9541d7345cb1a46ac79f0055e17c372520e",
+    "container_removed": true,
+    "job_closed": true,
+    "minimum_physical_gib": 25.567367553710938,
+    "minimum_commit_gib": 118.31351470947266,
+    "child_identity": {
+      "pid": 23000,
+      "creation_time_100ns": 134356340242533376,
+      "executable": "C:\\Windows\\System32\\wsl.exe"
+    },
+    "exit_code": 0,
+    "container_exit_code": 0,
+    "terminal_container_state": {
+      "Status": "exited",
+      "ExitCode": 0,
+      "OOMKilled": false,
+      "StartedAt": "2026-10-05T00:33:29.100156037Z",
+      "FinishedAt": "2026-10-05T00:35:39.842884883Z"
+    },
+    "monitor_stopped": true,
+    "cleanup_pending": false,
+    "finished_epoch": 1791160557.5765502
+  },
+  "static_gate": {
+    "passed": true,
+    "path": "server/.local/optimization9h-20261004/rocr-complete-static-gate-b0f2bb7aa4e8463b8696a7eab207db87/gate.json",
+    "sha256": "95b58bbee9b413a3e081d65b737f782054405f22556036516a0821a16637e5a7",
+    "elf_execution_performed": false,
+    "runtime_qualified_by_following_component": true
+  },
+  "private_candidate_loaded_scope": "isolated small original-RMS component only",
+  "live_engine_candidate_loaded": false,
+  "component_qualified": true,
+  "component_owned_result": {
+    "schema": "halogen.rocr-component-owned.v1",
+    "passed": true,
+    "contaminated": false,
+    "errors": [],
+    "windows": [
+      {
+        "variant": "stock",
+        "hsa_sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+        "container_id": "6b59f10666bb967eabf94a40c609224a722a454fc8669d715f084b88d3106e1b",
+        "container_name": "alloy-rocr-component-stock-69307e39d9d840ec9959c21240bbc7ef",
+        "ownership_label": "69307e39d9d840ec9959c21240bbc7ef",
+        "passed": true,
+        "container_removed": true,
+        "job_closed": true,
+        "create_attempted": true,
+        "create_identity_recovered": false,
+        "cleanup_pending": false,
+        "errors": [],
+        "process_identity": {
+          "pid": 24280,
+          "creation_time_100ns": 134356343176146483,
+          "executable": "C:\\Windows\\System32\\wsl.exe"
+        },
+        "exit_code": 0,
+        "terminal_container_state": {
+          "Status": "exited",
+          "Running": false,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 0,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-10-05T00:38:22.749863627Z",
+          "FinishedAt": "2026-10-05T00:38:45.151842514Z"
+        },
+        "probe_receipt_sha256": "421b0f484f5364a3b71938729e78a4ef98f6eefa94ee4d8ba7d279ca42c41790"
+      },
+      {
+        "variant": "source_stock",
+        "hsa_sha256": "2ba2eafa07cfcedb3754a7708858f2c054bc07c9e4e24fe4820b5340cda95af5",
+        "container_id": "cd4d5a6aa6e8aebc0ce2d899f221ee6e788eb6b8d874192708112d5c2339ed81",
+        "container_name": "alloy-rocr-component-source_stock-f0086caaf40048a7899ac49c2c613108",
+        "ownership_label": "f0086caaf40048a7899ac49c2c613108",
+        "passed": true,
+        "container_removed": true,
+        "job_closed": true,
+        "create_attempted": true,
+        "create_identity_recovered": false,
+        "cleanup_pending": false,
+        "errors": [],
+        "process_identity": {
+          "pid": 28068,
+          "creation_time_100ns": 134356343471849316,
+          "executable": "C:\\Windows\\System32\\wsl.exe"
+        },
+        "exit_code": 0,
+        "terminal_container_state": {
+          "Status": "exited",
+          "Running": false,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 0,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-10-05T00:38:52.293744122Z",
+          "FinishedAt": "2026-10-05T00:39:14.064635331Z"
+        },
+        "probe_receipt_sha256": "b70954f8b6e460a9d67b0b6e2d692b27119f0119889f1cb458d987135c389249"
+      },
+      {
+        "variant": "candidate",
+        "hsa_sha256": "cf1f4447cd92330c6a551042eff1ad95de2df4e276c09dfbfe7a252b5fa89434",
+        "container_id": "36a2141b5c9bfb5e11297154102e7ca38cfa0afb08e469b2bcd81abc560e1da6",
+        "container_name": "alloy-rocr-component-candidate-af2f2ac180ab4396ba71d77d6ef63c63",
+        "ownership_label": "af2f2ac180ab4396ba71d77d6ef63c63",
+        "passed": true,
+        "container_removed": true,
+        "job_closed": true,
+        "create_attempted": true,
+        "create_identity_recovered": false,
+        "cleanup_pending": false,
+        "errors": [],
+        "process_identity": {
+          "pid": 23828,
+          "creation_time_100ns": 134356343760580079,
+          "executable": "C:\\Windows\\System32\\wsl.exe"
+        },
+        "exit_code": 0,
+        "terminal_container_state": {
+          "Status": "exited",
+          "Running": false,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 0,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-10-05T00:39:21.22090142Z",
+          "FinishedAt": "2026-10-05T00:39:43.648955629Z"
+        },
+        "probe_receipt_sha256": "88388e3e4a403a347e5828b1af827f3edd4012f2755373ac93fd6b8a39408005"
+      }
+    ],
+    "config_sha256": "b590f00612b350d167fcd0865624ebe19d06a95604510f480e03327e435e1cf7",
+    "source_sha256": "bd2945ae634248e63ce2b008c2cbbdc17ac1af7f47a3a97082c8d36a41955c4f",
+    "probe_sha256": "9b2f6dd62162cbed8ea51f767e018c787a69ebf03fa6e4cc8b6ef153fdf83f52",
+    "abi_gate_sha256": "95b58bbee9b413a3e081d65b737f782054405f22556036516a0821a16637e5a7",
+    "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+    "root_runtime_reviewed": true,
+    "colleague_preserved": true,
+    "monitor_stopped": true,
+    "controller_handle_closed": true,
+    "minimum_physical_gib": 26.03050994873047,
+    "minimum_commit_gib": 118.80241394042969,
+    "cleanup_pending": false
+  },
+  "installed_comparison": {
+    "schema": "halogen.rocr-poll-backoff-component-comparison.v1",
+    "exact_bf16_parity": true,
+    "baseline_variant": "stock",
+    "comparison_scope": "installed stock versus whole candidate build; patch effect not isolated",
+    "runtime_sha256": {
+      "stock": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+      "candidate": "cf1f4447cd92330c6a551042eff1ad95de2df4e276c09dfbfe7a252b5fa89434"
+    },
+    "timings": [
+      {
+        "label": "A",
+        "exact_bf16_parity": true,
+        "stock_median_us": 185.73000000000002,
+        "candidate_median_us": 207.887,
+        "candidate_over_stock": 1.1192968287298766,
+        "stock_p95_us": 272.907,
+        "candidate_p95_us": 228.303
+      },
+      {
+        "label": "B",
+        "exact_bf16_parity": true,
+        "stock_median_us": 193.537,
+        "candidate_median_us": 216.0995,
+        "candidate_over_stock": 1.1165797754434552,
+        "stock_p95_us": 218.88,
+        "candidate_p95_us": 261.314
+      }
+    ],
+    "idle": [
+      {
+        "label": "gpu_context_after_fixed_replay",
+        "stock_mean_cpu_cores": 1.9988708579995744,
+        "candidate_mean_cpu_cores": 0.011443118249583014
+      },
+      {
+        "label": "one_pending_ipc_async_signal_diagnostic",
+        "stock_mean_cpu_cores": 1.9993128919064052,
+        "candidate_mean_cpu_cores": 0.012010096032000593
+      }
+    ],
+    "single_python_observed_wake_us": {
+      "stock": 185.887,
+      "candidate": 1363.733
+    },
+    "component_only": true,
+    "token_rate_claim": false,
+    "acceptance_claim": false,
+    "adoption_decision_required": true
+  },
+  "patch_comparison": {
+    "schema": "halogen.rocr-poll-backoff-component-comparison.v1",
+    "exact_bf16_parity": true,
+    "baseline_variant": "source_stock",
+    "comparison_scope": "source-built unpatched control versus source-built candidate; matching outer build metadata required",
+    "runtime_sha256": {
+      "stock": "2ba2eafa07cfcedb3754a7708858f2c054bc07c9e4e24fe4820b5340cda95af5",
+      "candidate": "cf1f4447cd92330c6a551042eff1ad95de2df4e276c09dfbfe7a252b5fa89434"
+    },
+    "timings": [
+      {
+        "label": "A",
+        "exact_bf16_parity": true,
+        "stock_median_us": 214.489,
+        "candidate_median_us": 207.887,
+        "candidate_over_stock": 0.9692198667530736,
+        "stock_p95_us": 268.466,
+        "candidate_p95_us": 228.303
+      },
+      {
+        "label": "B",
+        "exact_bf16_parity": true,
+        "stock_median_us": 213.88400000000001,
+        "candidate_median_us": 216.0995,
+        "candidate_over_stock": 1.0103584185820351,
+        "stock_p95_us": 350.352,
+        "candidate_p95_us": 261.314
+      }
+    ],
+    "idle": [
+      {
+        "label": "gpu_context_after_fixed_replay",
+        "stock_mean_cpu_cores": 1.8944062959536652,
+        "candidate_mean_cpu_cores": 0.011443118249583014
+      },
+      {
+        "label": "one_pending_ipc_async_signal_diagnostic",
+        "stock_mean_cpu_cores": 1.9789843081296232,
+        "candidate_mean_cpu_cores": 0.012010096032000593
+      }
+    ],
+    "single_python_observed_wake_us": {
+      "stock": 174.178,
+      "candidate": 1363.733
+    },
+    "component_only": true,
+    "token_rate_claim": false,
+    "acceptance_claim": false,
+    "adoption_decision_required": true
+  },
+  "final_user_health": {
+    "status": "ok",
+    "backend": "halogen-v2",
+    "checkpoint": "v2",
+    "context": 262144,
+    "active_requests": 0,
+    "draining": false,
+    "completed": 20,
+    "cancelled": 0
+  },
+  "failed_gfx1151_build": {
+    "rejected": true,
+    "reason": "38 unresolved directly referenced image arrays; failed dlopen before GPU calls",
+    "receipt_path": "server/.local/optimization9h-20261004/alloy-rocr-component-2288d74953c845bdad76bbbe16497879/result.json"
+  }
 }
