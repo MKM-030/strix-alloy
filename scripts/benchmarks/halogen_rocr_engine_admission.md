@@ -126,8 +126,8 @@ serial draft, a legacy 4K qualification, or the component probe:
   max_tokens128, draftermtp.
 - One warmup and three measured requests per window; 128 output tokens,
   unchanged full-vocabulary MTP2 and PLD3,3, no NPU.
-- Preserve full response/output hashes, prompt/decode timings, acceptance
-  numerator/denominator from matching backend log bounds, actual input/output
+- Preserve full response/output hashes, prompt/decode timings, native response
+  acceptance numerator/denominator and supplemental matching backend log bounds, actual input/output
   counts, owned engine identity, and reserve minima.
 - Report actual measured prompt tok/s, decode tok/s, and aggregate acceptance;
   state any output-parity failure or contaminated window. No retries inside a

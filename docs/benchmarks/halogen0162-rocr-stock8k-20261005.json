@@ -1,0 +1,173 @@
+{
+  "schema": "halogen.rocr-stock8k-report.v1",
+  "date": "2026-10-05",
+  "finished_at_utc": "2026-10-05T01:35:44Z",
+  "passed": true,
+  "errors": [],
+  "coordinator_sha256": "1ac0282fc00fe171d2b32fb0aa201b501d0fd0fc39818f4516f0b69dd4a445eb",
+  "evidence": {
+    "cohort_result": {
+      "path": "server/.local/optimization9h-20261004/rocr-engine-stock8k-33bb30dc863e4d8ea008ee1c47cb9c1a/result.json",
+      "sha256": "a0fa922b169ca3f7c853b939c47d967d587ef8bd8e39c08256e8de3ed691f809"
+    },
+    "restoration_receipt": {
+      "path": "server/.local/optimization9h-20261004/rocr-engine-stock8k-33bb30dc863e4d8ea008ee1c47cb9c1a/restored-original.json",
+      "sha256": "03e6fcc5eda7841b83bc314c00251266fa5a5ca0e2d00e0c6050ac4a16b210cf"
+    },
+    "supplemental_engine_log_bounds": [
+      {"window": "stock_before", "filename": "stock_before/supplemental-engine-log-bounds.json", "sha256": "71828d2f454f4e41d4814a24862fe4eb51e8e2e6e78927bb557fa4b2c95f35ff"},
+      {"window": "source_stock", "filename": "source_stock/supplemental-engine-log-bounds.json", "sha256": "56d1d3e635dea49f6554d4fa48972470d02bf7f966b03e07529a3abf11e1f5c0"},
+      {"window": "candidate", "filename": "candidate/supplemental-engine-log-bounds.json", "sha256": "172d315906c3688f40618aa62f8689f5ed28b8324f1140fb89388446f13ee3ac"},
+      {"window": "stock_after", "filename": "stock_after/supplemental-engine-log-bounds.json", "sha256": "3ee62b810d3fd7778ae06f48e21156e69c49c7160902dd686a67fbaa19f65def"}
+    ],
+    "supplemental_log_scope": "Owned-run serialized request order; primary acceptance uses native response counters; raw log rates are uncalibrated; stock-after log source remains active"
+  },
+  "workload": {
+    "context_capacity": 262144,
+    "input_tokens": 8192,
+    "output_tokens": 128,
+    "warmup_repetitions_per_window": 1,
+    "measured_repetitions_per_window": 3,
+    "total_requests": 16,
+    "temperature": 0,
+    "seed": 1,
+    "stream": false,
+    "thinking": false,
+    "prompt_cache": "Off",
+    "cache_prompt": false,
+    "drafter": "mtp",
+    "native_mtp_depth": 2,
+    "pld": "3,3",
+    "concurrency": 1,
+    "slots": 1,
+    "npu_integrated": false,
+    "phase_rate_method": "Arithmetic mean of 3 native per-response phase rates multiplied by retained guest monotonic/raw calibration, with raw clock checked against Windows QPC",
+    "acceptance_method": "Sum measured native per-response draft_n_accepted / sum draft_n; matching engine log bounds supplemental"
+  },
+  "parity": {
+    "all_16_output_hashes_equal": true,
+    "all_4_request_hashes_equal": true,
+    "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+    "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+    "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+    "measured_accepted_per_window": 207,
+    "measured_drafted_per_window": 345,
+    "acceptance_per_window": 0.6
+  },
+  "runtime": {
+    "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a",
+    "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+    "hsa_path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libhsa-runtime64.so.1",
+    "actual_loaded_identity_method": "Engine /proc maps before/after each window; mapped file inode/device and SHA-256, engine executable SHA-256, PID/start ticks unchanged within window",
+    "private_mount_readonly": true,
+    "model_placement_changed": false
+  },
+  "windows": [
+    {
+      "name": "stock_before", "variant": "stock",
+      "prefill_tps": 1340.3913278514854, "decode_tps": 41.800394202072304,
+      "accepted": 207, "drafted": 345, "acceptance": 0.6,
+      "hsa_sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+      "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+      "controller_run": "c4b3c8be6b584d4c901b43e54cc6e8d8", "backend_run": "136f9811e33241b6977e3535cb9cf046",
+      "cid": "dd1b0e0acdeb18831bb12267a1bb87f7cc756a3658a2c1f17d311a46082a8c2e",
+      "engine_pid": 87, "engine_start_ticks": "7969",
+      "normal_cleanup": true, "memory_recovery": true
+    },
+    {
+      "name": "source_stock", "variant": "source_stock",
+      "prefill_tps": 1312.2996858960773, "decode_tps": 41.975947311131286,
+      "accepted": 207, "drafted": 345, "acceptance": 0.6,
+      "hsa_sha256": "2ba2eafa07cfcedb3754a7708858f2c054bc07c9e4e24fe4820b5340cda95af5",
+      "profile_sha256": "9a3f18541d36865623d82ed62b8380d4ea4e1d01417813c5dab699ceff13a0e2",
+      "controller_run": "50d3c36234c541bf86b1658717392a12", "backend_run": "c82eec5aca414f7393cb2c09c5e58f74",
+      "cid": "5167351ef259501ade4dfbb0abfbf85e8a0525efabc599c12473317514cacf94",
+      "engine_pid": 87, "engine_start_ticks": "1769027",
+      "normal_cleanup": true, "memory_recovery": true
+    },
+    {
+      "name": "candidate", "variant": "candidate",
+      "prefill_tps": 1356.49860734892, "decode_tps": 42.391969502253694,
+      "accepted": 207, "drafted": 345, "acceptance": 0.6,
+      "hsa_sha256": "cf1f4447cd92330c6a551042eff1ad95de2df4e276c09dfbfe7a252b5fa89434",
+      "profile_sha256": "355df20a41db12d5d93e8e495e12ea22ed76048d62dad16de015a25baa359f4d",
+      "controller_run": "701dda02e4bb4dbcaea23a5ea1b2d69b", "backend_run": "85beb01a7693462dafec740f77b7cafe",
+      "cid": "efccd03ebcaf396dee4ee4ee2235b81b93163ced1b74fd0f63501b6ec2257fc8",
+      "engine_pid": 87, "engine_start_ticks": "1796162",
+      "normal_cleanup": true, "memory_recovery": true
+    },
+    {
+      "name": "stock_after", "variant": "stock",
+      "prefill_tps": 1317.7686853606808, "decode_tps": 41.64835500526521,
+      "accepted": 207, "drafted": 345, "acceptance": 0.6,
+      "hsa_sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+      "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+      "controller_run": "a6a9897433c04d27a85985c762f38baa", "backend_run": "a2c448e068154ce58bc9e5256c15b020",
+      "cid": "73101e2fa81f1504175a23a2f1e54270de7c2925b4dcb9ff65bd62dcfc0c62f1",
+      "engine_pid": 87, "engine_start_ticks": "1821727",
+      "left_open": true
+    }
+  ],
+  "candidate_gain_percent": [
+    {"control": "stock_before", "prefill": 1.2016848485026266, "decode": 1.4152385676593937},
+    {"control": "source_stock", "prefill": 3.3680509054349272, "decode": 0.9910966107299357},
+    {"control": "stock_after", "prefill": 2.9390531447966994, "decode": 1.7854594662729761}
+  ],
+  "timing_consistency": {
+    "host_request_wall_mean_seconds": {
+      "stock_before": 9.229209533334748,
+      "source_stock": 9.316332433336356,
+      "candidate": 9.080567866663236,
+      "stock_after": 9.31331610000052
+    },
+    "candidate_raw_decode_mean_tps": 39.13099999999999,
+    "candidate_monotonic_per_raw": [1.0833347307222176, 1.0833346732133673, 1.083334646735047],
+    "candidate_raw_per_qpc": [1.0000016683466517, 1.0000031601148238, 1.0000039309207778],
+    "candidate_handshake_uncertainty_seconds": [0.0006457999988924712, 0.000712799999746494, 0.0006861000001663342],
+    "whole_request_benefit_observed": true,
+    "clock_origin_causal_claim": false,
+    "scope": "Windows whole-request time corroborates the short observed benefit; raw log rates and clock-calibrated phase rates remain separately labeled"
+  },
+  "memory": {
+    "minimum_reserve_gib": 18,
+    "request_telemetry_minimum_physical_gib": 26.082233428955078,
+    "request_telemetry_minimum_commit_gib": 118.80086135864258,
+    "backend_guard_minimum_physical_gib": 25.371540069580078,
+    "backend_guard_minimum_commit_gib": 118.10236358642578,
+    "backend_guard_scope": "Retained logs across all four engine runs at report read; stock_before includes preceding process lifetime; stock_after remains active",
+    "stopped_windows_cleanup_recovery_passed": true
+  },
+  "restoration": {
+    "original_profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+    "original_hsa_sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+    "restored_original_open": true,
+    "controller_pid": 24588,
+    "controller_creation_time_100ns": 134356374886482086,
+    "backend_controller_pid": 26456,
+    "ready": true, "active_requests": 0, "draining": false, "completed": 4, "cancelled": 0,
+    "status_scope": "Saved restoration receipt at cohort completion; later live checks owned by ROOT"
+  },
+  "separate_component_evidence": {
+    "path": "server/.local/optimization9h-20261004/alloy-rocr-component-16a35be771404bd7a7ac3d1b43526528/patch-comparison.json",
+    "sha256": "2ba692800c835e7179ff32fb35299b50a577e251856c9be3dca713fa6506ce55",
+    "scope": "Source-built stock versus candidate fixed RMS replay and idle async signal component; separate from engine cohort CPU usage",
+    "exact_bf16_parity": true,
+    "idle": [
+      {"label": "gpu_context_after_fixed_replay", "stock_cpu_cores": 1.8944062959536652, "candidate_cpu_cores": 0.011443118249583014},
+      {"label": "one_pending_ipc_async_signal_diagnostic", "stock_cpu_cores": 1.9789843081296232, "candidate_cpu_cores": 0.012010096032000593}
+    ],
+    "single_python_observed_wake_us": {"stock": 174.178, "candidate": 1363.733},
+    "engine_idle_cpu_claim": false
+  },
+  "interpretation": {
+    "scope": "One frozen 8192-input/128-output greedy prose cohort, 3 measured repetitions per window",
+    "observed_candidate_decode_gain": "0.99% versus matching source stock; 1.42-1.79% versus installed stock bookends",
+    "generality_established": false,
+    "statistical_significance_claim": false,
+    "historical_decode_reference_tps": 48.42362060395627,
+    "candidate_vs_historical_decode_percent": -12.45601015883101,
+    "historical_performance_recovered": false,
+    "automatic_default_promotion": false,
+    "npu_integrated": false
+  }
+}

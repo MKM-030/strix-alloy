@@ -14,10 +14,10 @@ wurde. Komponenten-Millisekunden sind keine gemessenen Tokenraten.
 | Neueste normale Messung, ohne NPU-Auslagerung | Wert |
 |---|---:|
 | Tatsächliche Eingabe / Ausgabe | 8192 / 128 Tokens |
-| Prefill | **1253,22 tok/s** |
-| MTP-Decode, nicht repetitiver Prosa-Prompt | **42,42 tok/s** |
+| Prefill | **1317,77 tok/s** |
+| MTP-Decode, nicht repetitiver Prosa-Prompt | **41,65 tok/s** |
 | Akzeptanz | **60,0 % (207/345)** |
-| Ende des Kontrolllaufs | 4.10.2026, 23:17:24 UTC |
+| Ende des neuen Runtime-Vergleichs | 5.10.2026, 01:35:44 UTC |
 
 Die früheren 48,42 Decode-tok/s stammen aus einem separaten GPU-Lauf. Beide
 Kohorten liefen ohne NPU-Auslagerung; die Differenz ist kein NPU-Effekt. Die
@@ -50,7 +50,7 @@ are component timings with different scopes, not a matched live-engine A/B.
 Transport and integration costs are not included. A component measurement
 cannot be translated into a measured tok/s improvement.
 
-The latest standard control uses the frozen nonrepetitive greedy prose
+An earlier standard control uses the frozen nonrepetitive greedy prose
 prompt, cache Off, MTP depth 2, PLD 3,3, one warmup and three measured requests:
 
 | Actual input tokens | Output tokens | Prefill tok/s | MTP decode tok/s | Acceptance |
@@ -67,9 +67,9 @@ NPU candidate. The lower current throughput versus the separate historical
 1,866.537/48.423621 result is real and is being investigated; it cannot be
 attributed to an NPU candidate that was never loaded.
 
-For a direct token-rate comparison, the historical 8K Stock A measurement is
-1,866.537225 prefill and 48.423621 MTP decode tok/s at 60% acceptance. The latest
-standard control is lower by 637.411960 prefill tok/s (34.15%) and 6.478587
+For a token-rate comparison with that earlier control, the historical 8K Stock A measurement is
+1,866.537225 prefill and 48.423621 MTP decode tok/s at 60% acceptance. That
+earlier standard control is lower by 637.411960 prefill tok/s (34.15%) and 6.478587
 decode tok/s (13.38%). These are separate operating-state cohorts, not an
 NPU-on/off comparison. An NPU row must remain unmeasured; reporting a zero
 token-rate delta would incorrectly imply a completed live A/B.
@@ -103,22 +103,21 @@ and SmartShiftMax support returned an API failure rather than a positive
 capability. No power policy or tuning change was made. The cause of the lower
 GPU operating range remains unresolved.
 
-The newer unchanged normal control finished at 23:17:24 UTC: **1,253.224684
+The later October 4 unchanged normal control finished at 23:17:24 UTC: **1,253.224684
 prefill / 42.418748 MTP decode tok/s / 60.0% acceptance**, still on the GPU.
 All four outputs match the same frozen hash. Its
 [CPU/paging report](halogen-cpu-paging-control-20261005.md) records zero engine
 major faults, storage-read bytes and swap activity during the requests.
-The earlier controls above are retained as separate cohorts. The new normal
+The earlier controls above are retained as separate cohorts. That normal
 mean is 613.312541 prefill tok/s and 6.004872 decode tok/s below historical
 Stock A; neither difference is an NPU effect.
 
 In practical token-rate terms, this NPU candidate has **no demonstrated gain**.
 There is no admitted NPU-on engine result to pair with the GPU result, and no
 measured NPU token rate or token-rate difference. Keeping the original GPU path
-is the deployment decision, rather than interpreting component milliseconds as
-tokens per second. Two idle CPU threads and the absent official ROCr polling
-backoff are a separate candidate under investigation; no throughput recovery
-has yet been attributed to that candidate.
+is the deployment decision. Two idle CPU threads and the absent official ROCr
+polling backoff were investigated separately; the later engine cohort below
+records a small CPU-runtime benefit without recovering historical throughput.
 
 [Machine-readable decision and pinned receipts](halogen-useful-npu-decision-20261005.json),
 [precision correction evidence](halogen-npu-precision-correction-20261004.md),
@@ -128,3 +127,15 @@ All jobs for the retained regular control are closed and its memory monitor
 stopped. The colleague server remains open. The complete optimization goal
 remains active; this document records a resolved placement decision, not its
 completion.
+
+The newest normal stock control ended with the October 5 private-runtime
+cohort at 01:35:44 UTC: **1,317.768685 prefill / 41.648355 MTP decode tok/s /
+60.0% acceptance (207/345)**. The separate private ROCr candidate achieved
+1,356.498607 / 42.391970 on the same frozen input. Every window used the GPU;
+none establishes an NPU token-rate delta. The candidate's small observed gain
+is limited to this cohort, and the original profile/runtime was restored open.
+The [runtime report](../benchmarks/halogen0162-rocr-stock8k-20261005.md) retains
+both stock bookends, the source-built control, clock calibration, Windows
+whole-request times, mapped runtime hashes and clean lifecycle receipts.
+The [practical German result](../benchmarks/halogen-npu-practical-result-20261005.md)
+states the current deployment choice and token rates.

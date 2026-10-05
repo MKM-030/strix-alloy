@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "scheduled_check_utc": "2026-10-05T01:41:00Z",
+  "check_started_utc": "2026-10-05T01:43:30Z",
+  "actual_check_utc": "2026-10-05T01:45:23Z",
+  "compared_with_utc": "2026-10-04T23:41:00Z",
+  "baseline_path": "docs/research/halogen-update-checkpoint-20261004-2338.json",
+  "baseline_sha256": "9a9daf08492d93cf81bcf83c70f43e2011be678fa24cd933ab6c9bc6524e7598",
+  "scope": "Bounded read-only web/source check; no hardware, runtime, benchmark, install, or installed-driver inspection.",
+  "halogen_main": {
+    "status": "partially_revalidated",
+    "documented_release": "0.16.2",
+    "prior_commit_reachable": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "current_main_sha": null,
+    "new_commits_since_prior_check": null,
+    "new_tag_absence_status": "unverified",
+    "explanation": "Current main README and CHANGELOG still describe 0.16.2; prior commit page is reachable. Browser fetches of tags API, commits-since API, tags page and commits/main failed. Releases HTML exposed no version entries. Do not infer zero new commits or tags.",
+    "repository_url": "https://github.com/peonist-ai/halogen-flash-server",
+    "changelog_url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/CHANGELOG.md",
+    "prior_commit_url": "https://github.com/peonist-ai/halogen-flash-server/commit/7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "tags_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/tags?per_page=3",
+    "commits_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits?since=2026-10-04T23%3A41%3A00Z&per_page=10"
+  },
+  "halogen_flags": {
+    "status": "revalidated_current_documentation",
+    "url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/docs/FLAGS.md",
+    "mtp_depth_default": 2,
+    "pld_default": "3,3",
+    "speculation_adaptation_default": "32,0.35,64",
+    "npu_default": "unset/off",
+    "documented_npu_scope": "Small-model sidecars; supported simultaneous GPU/NPU operation requires the fabric clock held.",
+    "exact_delta_from_prior_checkpoint": "unverified: prior JSON contains no FLAGS snapshot/hash",
+    "qualified_new_halogen_mtp_head_candidate": false
+  },
+  "gpu_channel": {
+    "status": "revalidated_no_version_delta",
+    "optional": "26.9.2 WHQL",
+    "optional_release_date": "2026-09-29",
+    "recommended": "26.8.1",
+    "recommended_release_date": "2026-08-20",
+    "windows_driver_store_versions_in_optional_package": [
+      "32.0.32015.2008",
+      "32.0.21045.11001"
+    ],
+    "packaged_npu_mcdm_driver": "32.00.20102.3930",
+    "packaged_npu_mcdm_driver_date": "2026-05-07",
+    "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+    "optional_release_notes_url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html",
+    "relevant_change_status": "Checked release notes describe game support/fixes; no Halogen or WSL clock/performance fix documented."
+  },
+  "ryzen_ai": {
+    "status": "revalidated_no_version_delta",
+    "documentation_version": "1.8.0",
+    "separate_production_npu_driver_version": "32.0.203.376",
+    "minimum_npu_driver_version": "32.0.203.280",
+    "production_driver_supported_processors": [
+      "Phoenix",
+      "Hawk Point",
+      "Strix",
+      "Strix Halo",
+      "Krackan Point"
+    ],
+    "installation_page_updated": "2026-09-28",
+    "url": "https://ryzenai.docs.amd.com/en/latest/relnotes.html",
+    "driver_source_url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+    "driver_channel_note": "Separate production NPU driver and Adrenalin packaged MCDM driver are different source channels. No version ordering or installed-driver claim."
+  },
+  "windows_ml_vitisai": {
+    "status": "revalidated_no_version_delta",
+    "current_msix": "1.8.75.0",
+    "current_ep": "1605",
+    "current_release": "2026 9D",
+    "upcoming_msix": "1.8.80.0",
+    "upcoming_status": "preview/planned; GA 2026 10D not guaranteed",
+    "url": "https://github.com/microsoft/WindowsML/wiki/Windows-ML-Execution-Provider-Releases"
+  },
+  "reddit_check": {
+    "status": "bounded_search_complete",
+    "queries": [
+      "site:reddit.com/r/StrixHalo Halogen Qwen3.8 NPU October 5 2026",
+      "site:reddit.com/r/StrixHalo halogen flash server poll backoff ROCr",
+      "site:reddit.com/r/StrixHalo \"Halogen\" \"October 05 2026\"",
+      "site:reddit.com/r/StrixHalo \"Halogen\" \"MTP\" \"NPU\""
+    ],
+    "existing_npu_lead": {
+      "url": "https://www.reddit.com/r/StrixHalo/comments/1wvfrj0/halogenflashserver_0160_strix_halo_npu_now_serves/",
+      "published_date": "2026-10-02",
+      "status": "Already captured CPU/NPU MTP-tree claim; retrieved material establishes no reproducible Halogen head integration or same-workload gain."
+    },
+    "existing_project_report": {
+      "url": "https://www.reddit.com/r/StrixHalo/comments/1wxiwad/halogen_0162_on_windowswsl2_qwen38flashnext_at/",
+      "published_date": "2026-10-04",
+      "status": "Strix Alloy report is not independent improvement evidence."
+    },
+    "additional_source_lead": {
+      "reddit_url": "https://www.reddit.com/r/StrixHalo/comments/1wu0nvv/benchmarks_best_engine_for_qwen_38flashnext_on/",
+      "primary_url": "https://github.com/warpfront/hipfire/pull/774",
+      "status": "Older September primary-source branch/PR documents gfx1151 shared prefill and native MTP in Hipfire. Different engine and weights; source-review lead only, not a new Halogen change since 23:41Z.",
+      "qualified_for_current_frozen_halogen_cohort": false
+    },
+    "qualified_new_candidate": false
+  },
+  "actionable_changes_vs_prior_record": [
+    "Current FLAGS semantics and older Hipfire source lead are now explicitly captured; neither establishes a new Halogen performance/acceptance candidate.",
+    "Halogen newer-tag/commit absence could not be revalidated through browser endpoints; retry source-only metadata at the next scheduled check."
+  ],
+  "new_official_release_found": null,
+  "new_official_release_found_explanation": "No new release established from retrieved pages; complete newer Halogen tag/commit absence remains unverified.",
+  "qualified_performance_change": false,
+  "qualified_acceptance_change": false,
+  "runtime_or_hardware_actions_for_update_check": false,
+  "installs": false,
+  "installed_driver_inspected": false
+}
