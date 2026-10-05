@@ -1,0 +1,171 @@
+{
+  "schema": "halogen.windows-wddm-collector-pins.v1",
+  "date": "2026-10-05",
+  "workspace": "C:/Projects/strix-alloy-clean",
+  "scope": "fixed read-only native Windows adapter0/node2 sample; no operating-state matrix",
+  "source_author_actions": "source/report writes, retained metadata reads and file hashing only; no build, native API, provider, hardware or network invocation",
+  "source_files": [
+    {
+      "path": "C:/Projects/strix-alloy-clean/scripts/benchmarks/halogen_windows_wddm_probe.cpp",
+      "sha256": "ce658a938a10f1d72023bdef97893848d44d5c78ac9bc77b2233dc6716ac1d91"
+    },
+    {
+      "path": "C:/Projects/strix-alloy-clean/scripts/benchmarks/halogen_windows_wddm/CMakeLists.txt",
+      "sha256": "a023fd4fc9438a01f9053fc9d99bbe532bb2ad2b43b00b8e4c493bd385d04c98"
+    }
+  ],
+  "build_contract": {
+    "generator": "Visual Studio 17 2022",
+    "architecture": "x64",
+    "configuration": "Release",
+    "windows_sdk_version": "10.0.26100.0",
+    "msvc_toolset": "14.44.35207",
+    "compiler_version_from_retained_configure_stdout": "19.44.35228.0",
+    "language_standard": "C++17",
+    "compile_options": ["/W4", "/WX", "/EHsc", "/permissive-", "/utf-8"],
+    "compile_definitions": [
+      "WIN32_LEAN_AND_MEAN",
+      "NOMINMAX",
+      "_WIN32_WINNT=0x0A00",
+      "NTDDI_VERSION=0x0A000010",
+      "DXGKDDI_INTERFACE_VERSION=0x11007"
+    ],
+    "msvc_runtime_library": "MultiThreaded",
+    "link_import_library": "gdi32",
+    "transitive_toolchain_closure_pinned": false,
+    "bit_reproducible_build_established": false
+  },
+  "toolchain_and_direct_sdk_files": [
+    {
+      "path": "C:/Program Files/CMake/bin/cmake.exe",
+      "sha256": "ab8247ca4554871e5d75c0ee118ee8663727bd6fdf37ad76b17e9cc8d5f286a8"
+    },
+    {
+      "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+      "sha256": "88c8344236a27a6e727e0a8edc49aaa2690bdc7a9464b9d18cc7abe70a9f1c0d"
+    },
+    {
+      "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build/vcvars64.bat",
+      "sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209"
+    },
+    {
+      "path": "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/shared/d3dkmthk.h",
+      "sha256": "e7df81476816d5112cd8c73be18dbaf9924c3af4af352ea2650b48dfc23ba40d"
+    },
+    {
+      "path": "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/shared/d3dkmdt.h",
+      "sha256": "bbb7b4314f5bc78d71db54b2821007cf82b85deee59d4f258e60d940c52e422e"
+    },
+    {
+      "path": "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/shared/d3dukmdt.h",
+      "sha256": "d1c43d619589c2eb3f47877bba6d48735c7f26644fed44a5bb682f9e591eb33f"
+    },
+    {
+      "path": "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/um/Windows.h",
+      "sha256": "b337d661d03a4abefb7b86a2742ce1ad5d19b57cd8b858bd13e7bbcc1dbeeaaa"
+    },
+    {
+      "path": "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/um/winternl.h",
+      "sha256": "a43424486349c38f697c009512dfe4eb8fca733d7665afab42f50752170b9785"
+    },
+    {
+      "path": "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/um/x64/gdi32.lib",
+      "sha256": "f530829c5e91cacd906c9e7363ca873bb8eaeb50114cc6a74a8a04c49bb4ec40"
+    }
+  ],
+  "fixed_acquisition": {
+    "luid_hex": "0x00000000_0x00011884",
+    "physical_adapter_index": 0,
+    "node_ordinal": 2,
+    "expected_vendor_id_u32": 4098,
+    "expected_device_id_u32": 5510,
+    "samples_requested": 1,
+    "maximum_graphics_calls_including_open_close": 13,
+    "internal_pre_call_deadline_seconds": 10,
+    "stdout_ceiling_bytes": 131072,
+    "graphics_entry_points": [
+      "D3DKMTOpenAdapterFromLuid",
+      "D3DKMTQueryAdapterInfo",
+      "D3DKMTCloseAdapter"
+    ],
+    "fabric_clock_observed": false,
+    "fabric_clock_hold_proved": false,
+    "memory_frequency_is_fabric_clock": false,
+    "frequency_hold_setter_called": false,
+    "GPU_NPU_overlap_qualified": false,
+    "settings_changed": false,
+    "throughput_cause_established": false
+  },
+  "retained_root_execution_files": [
+    {
+      "role": "build_result",
+      "path": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/wddm-build-1200a1d89bcb43d9b6c379e93f8b665c/result.json",
+      "sha256": "333c2cd61fb5c0be5003474f2a6a1a7b0f7d32d75ba295a1f7abe5afe9195ec7"
+    },
+    {
+      "role": "build_stage_receipt",
+      "path": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/wddm-build-1200a1d89bcb43d9b6c379e93f8b665c/stages.json",
+      "sha256": "08f2f5ef6e73856d337cbbc506e36068f0c921d28846639e97edd85abeeac736"
+    },
+    {
+      "role": "built_executable",
+      "path": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/wddm-build-1200a1d89bcb43d9b6c379e93f8b665c/build/Release/halogen_windows_wddm_probe.exe",
+      "sha256": "87e0dde5ff325f86e676fe4c79085dfeb0f1a7fa800b588ea032d9dca5603923"
+    },
+    {
+      "role": "sample_result",
+      "path": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/wddm-sample-2074981aa39448e0a98536282acd6dba/result.json",
+      "sha256": "ad89839e58d4569bd5a6b5c733229f89ab9ea6912be5d5605a446085094adb26"
+    },
+    {
+      "role": "sample_stage_receipt",
+      "path": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/wddm-sample-2074981aa39448e0a98536282acd6dba/stages.json",
+      "sha256": "8b0c3bb329125335974e65f8b691627dc7232f8ac5eaf5ae0732fa127491b77a"
+    },
+    {
+      "role": "sample_stdout",
+      "path": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/wddm-sample-2074981aa39448e0a98536282acd6dba/sample-stdout.txt",
+      "sha256": "5b374ff41986d8fc3f46da751f4c6e96a68cdd3180c7bb7d85350d554b9311c7"
+    },
+    {
+      "role": "sample_stderr_empty",
+      "path": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/wddm-sample-2074981aa39448e0a98536282acd6dba/sample-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "retained_root_result": {
+    "configure_exit_code": 0,
+    "build_exit_code": 0,
+    "sample_exit_code": 0,
+    "sample_outer_deadline_seconds": 20,
+    "acquisition_qualified": true,
+    "adapter_identity_verified": true,
+    "node_metadata_qualified": true,
+    "adapter_close_qualified": true,
+    "dynamic_returned_input_mismatch": false,
+    "all_13_attempted_graphics_ntstatus_signed_i32": 0,
+    "all_owned_jobs_closed": true,
+    "cleanup_pending": false,
+    "sample_minimum_physical_gib": 27.219745635986328,
+    "sample_minimum_commit_gib": 119.82342147827148,
+    "sample_monitor_stopped": true,
+    "node_friendly_name": "Compute 0",
+    "engine_type_raw_u32": 0,
+    "WDDM_enum": 3200,
+    "frequency_hz": 653000000,
+    "max_normal_frequency_hz": 2900000000,
+    "max_overclocked_frequency_hz": 2900000000,
+    "memory_frequency_hz": 1000000000,
+    "max_normal_memory_frequency_hz": 1000000000,
+    "max_overclocked_memory_frequency_hz": 1000000000,
+    "power_tenths_of_percentage": 37,
+    "temperature_deci_celsius": 440,
+    "power_state_override_raw_u8": 1,
+    "host_start_qpc_ticks": 470153419611,
+    "host_end_qpc_ticks": 470153433297,
+    "host_qpc_frequency_hz": 10000000,
+    "collection_overhead_distribution_established": false,
+    "loaded_state_behavior_established": false,
+    "hard_deadline_termination_of_blocked_driver_tested": false
+  }
+}

@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.20)
+project(halogen_windows_wddm_probe LANGUAGES CXX)
+if(NOT MSVC OR NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+  message(FATAL_ERROR "Reviewed native Windows MSVC x64 build required")
+endif()
+if(NOT CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION STREQUAL "10.0.26100.0")
+  message(FATAL_ERROR "Reviewed Windows SDK 10.0.26100.0 required")
+endif()
+add_executable(halogen_windows_wddm_probe ../halogen_windows_wddm_probe.cpp)
+target_compile_features(halogen_windows_wddm_probe PRIVATE cxx_std_17)
+target_compile_definitions(halogen_windows_wddm_probe PRIVATE
+  WIN32_LEAN_AND_MEAN NOMINMAX _WIN32_WINNT=0x0A00 NTDDI_VERSION=0x0A000010
+  DXGKDDI_INTERFACE_VERSION=0x11007)
+target_compile_options(halogen_windows_wddm_probe PRIVATE /W4 /WX /EHsc /permissive- /utf-8)
+set_property(TARGET halogen_windows_wddm_probe PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
+target_link_libraries(halogen_windows_wddm_probe PRIVATE gdi32)

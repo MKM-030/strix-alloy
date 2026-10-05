@@ -8,6 +8,22 @@ zerlegt. Die BF16-Ausgabegrenzen bleiben erhalten. Das ist keine vollständige
 Modell-, Logit- oder MTP-Vorschlagsprüfung; die strengere CPU-Prüfung hat noch
 eine Abweichung. Der Live-Austausch bleibt deshalb geschlossen.
 
+Die inzwischen separat geprüfte **Embedding-Projektion** besteht beide
+unveränderten Grenzen: CPU `rtol=0.002, atol=0.0002` und NPU
+`rtol=0.03, atol=0.003`. Je zwölf wechselnde A/B-Aufrufe überschreiten keinen
+Wert. Der NPU-Kontext belegt alle neun dynamischen Graphwerte auf STX-Hardware,
+und das Profil belegt zwölf VitisAI-Ausführungen ohne CPU-Fallback.
+Die Ausgabe ist innerhalb der Toleranz, nicht bitgleich: auf der NPU unterscheiden
+sich 858/847 BF16-Wörter von der nativen GPU-Referenz. Die offene strengere
+Hidden-Prüfung wurde dadurch nicht repariert oder umgangen.
+
+Für diesen kleineren Zweig wurden **0,9674 ms** reine NPU-Session und
+**2,1048 ms** einschließlich frischer Vorbereitung und Diagnose gemessen.
+Das ist eine einzelne Embedding-Projektion; die folgende ältere Vergleichszeile
+umfasst beide Projektionen. Es gibt weiterhin keinen vollständigen Engine-Lauf
+mit NPU-Ersatz und keinen gemessenen NPU-Gewinn in tok/s.
+[Ausgeführte CPU- und NPU-Prüfung](../research/halogen-npu-early-embedding-component-20261005.md).
+
 Der am 5. Oktober zusätzlich geprüfte Kandidat mit kompensierter Addition
 repariert diese strengere Prüfung nicht: Die ursprüngliche Abweichung bleibt,
 und ein weiterer Wert überschreitet die unveränderte CPU-Toleranz. Er wird
@@ -26,8 +42,9 @@ Schon die reine NPU-Ausführung dauert etwa 3,8-mal so lange. Live-Transport
 zwischen Windows und WSL ist dabei noch nicht enthalten. Diese Auslagerung
 bleibt deaktiviert. Am vorhandenen Einhängepunkt stehen die normierten
 Eingaben erst nach dem Trunk bereit; sie können dort nicht während desselben
-Trunk-Prefills vorbereitet werden. Eine neue frühere tokenbasierte Vorbereitung
-ist möglich, aber noch nicht implementiert und ohne gemessenen Vorteil.
+Trunk-Prefills vorbereitet werden. Eine frühere tokenbasierte Vorbereitung ist
+jetzt als begrenzter Offline-Eingabeproduzent implementiert. Ihre Planung wurde
+ausgeführt; Live-Veröffentlichung und Tempo-Vorteil sind noch unqualifiziert.
 
 | Neueste normale GPU-Kontrolle | Prefill tok/s | MTP-Decode tok/s | Akzeptanz |
 |---|---:|---:|---:|
@@ -88,8 +105,19 @@ der anschließende Gather liefern alle 2.560 BF16-Werte exakt wie die eingefrore
 Referenz. Es wurde nur die ausgewählte Zeile umgepackt und eine eigene kleine
 GPU-Tabelle verwendet. Dieser Beleg qualifiziert weder die Tabelle im laufenden
 Engine noch andere Tokens, den vollständigen MTP-Head oder einen Tempo-Gewinn.
-Die frühe NPU-Vorbereitung bleibt unimplementiert und deaktiviert.
+Die frühe NPU-Vorbereitung bleibt im Live-Engine deaktiviert. Der neue
+Offline-Produzent bereitet höchstens 64 bekannte Tokenzeilen vor und erhält
+den ursprünglichen GPU-Pfad für unbekannte und zurückgestellte Tokens.
+Seine ausgeführte Metadatenplanung las keine Modellbytes; die eigentliche
+Produktion und Veröffentlichung wurden noch nicht ausgeführt.
 [Ausgeführter Embedding-Vergleich](../research/halogen-q4c-selected-row-oracle-20261005.md).
+
+Unterstützter gleichzeitiger GPU/NPU-Betrieb setzt laut aktuellen
+[Halogen-Flags](https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/docs/FLAGS.md)
+einen gehaltenen Fabric-Takt voraus. Der neue Windows-Collector wurde gebaut
+und einmal ausgeführt; er liest GPU-Node- und Speicherfrequenz, belegt aber
+keinen Fabric-Takt oder gehaltenen Zustand. Der Server blieb unverändert bereit;
+alle neuen NPU-Aufrufe fanden im überwachten GPU-Leerlauf statt.
 
 Belege: [Genauigkeitskorrektur](../research/halogen-npu-precision-correction-20261004.md),
 [CPU-/Paging-Kontrolle](../research/halogen-cpu-paging-control-20261005.md),

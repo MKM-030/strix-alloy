@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "actual_check_utc": "2026-10-05T03:50:00Z",
+  "baseline_path": "docs/research/halogen-update-checkpoint-20261005-0143.json",
+  "scope": "Read-only official metadata/docs and Reddit search. No installation, settings change or inference.",
+  "halogen": {
+    "current_main_sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "commit_date": "2026-10-03T04:29:22Z",
+    "commit_message": "0.16.2",
+    "latest_tag": "v0.16.2",
+    "latest_tag_sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+    "metadata_method": "Local PowerShell Invoke-RestMethod, HTTP success",
+    "main_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits/main",
+    "tags_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/tags?per_page=3",
+    "flags_url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/docs/FLAGS.md",
+    "supported_gpu_npu_overlap_requires_top_fabric_clock_held": true,
+    "override_1_supported": false,
+    "current_host_hold_proven": false,
+    "overlap_admitted": false
+  },
+  "gpu": {
+    "optional": "26.9.2 WHQL",
+    "optional_release_date": "2026-09-29",
+    "recommended": "26.8.1",
+    "recommended_release_date": "2026-08-20",
+    "packaged_npu_mcdm": "32.00.20102.3930",
+    "packaged_npu_mcdm_date": "2026-05-07",
+    "documented_halogen_or_wsl_performance_fix_found": false,
+    "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+    "release_notes_url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html"
+  },
+  "ryzen_ai": {
+    "docs_version": "1.8.0",
+    "minimum_npu_driver": "32.0.203.280",
+    "separate_production_npu_driver": "32.0.203.376",
+    "installation_method": "Browser unavailable; local PowerShell HTTP200 confirmed both contextual labels",
+    "installation_url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+    "release_notes_url": "https://ryzenai.docs.amd.com/en/latest/relnotes.html",
+    "installed_driver_claim": false
+  },
+  "windows_ml": {
+    "current_vitisai_msix": "1.8.75.0",
+    "current_ep": "1605",
+    "current_release": "2026 9D",
+    "upcoming_msix": "1.8.80.0",
+    "upcoming_status": "Insiders 2026 9D; GA 2026 10D shown as upcoming, not released-current",
+    "url": "https://github.com/microsoft/WindowsML/wiki/Windows-ML-Execution-Provider-Releases"
+  },
+  "reddit": {
+    "query": "site:reddit.com/r/StrixHalo Halogen NPU October 2026 prefill decode",
+    "independent_new_reproducible_head_improvement_found": false,
+    "existing_upstream_npu_post": "https://www.reddit.com/r/StrixHalo/comments/1wvfrj0/halogenflashserver_0160_strix_halo_npu_now_serves/",
+    "own_report_not_independent_evidence": "https://www.reddit.com/r/StrixHalo/comments/1wxiwad/halogen_0162_on_windowswsl2_qwen38flashnext_at/"
+  },
+  "qualified_new_speed_or_acceptance_change": false,
+  "installs": false,
+  "next_due_utc": "2026-10-05T05:50:00Z"
+}
