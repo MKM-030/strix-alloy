@@ -8,6 +8,14 @@ zerlegt. Die BF16-Ausgabegrenzen bleiben erhalten. Das ist keine vollständige
 Modell-, Logit- oder MTP-Vorschlagsprüfung; die strengere CPU-Prüfung hat noch
 eine Abweichung. Der Live-Austausch bleibt deshalb geschlossen.
 
+Der am 5. Oktober zusätzlich geprüfte Kandidat mit kompensierter Addition
+repariert diese strengere Prüfung nicht: Die ursprüngliche Abweichung bleibt,
+und ein weiterer Wert überschreitet die unveränderte CPU-Toleranz. Er wird
+nicht übernommen und wurde wegen der fehlgeschlagenen CPU-Voraussetzung
+nicht auf der NPU gestartet. Die zuvor bestandene NPU-Entwicklungstoleranz
+wurde weder erweitert noch durch den neuen Kandidaten ersetzt.
+[Ausgeführter Genauigkeitsvergleich](../research/halogen-npu-compensated-split-20261005.md).
+
 | Dieselbe gepaarte Projektion | Gemessene Zeit |
 |---|---:|
 | GPU, Host-Aufruf mit Warten | 0,487 ms |
@@ -63,6 +71,25 @@ Kandidat. [Vollständiger Runtime-Vergleich](halogen0162-rocr-stock8k-20261005.m
 
 Die Kontextkapazität beträgt 262.144 Tokens. Die Tabelle enthält keine
 qualifizierte Messung mit 128K oder 260K tatsächlich belegter Eingabe.
+
+Für die aktuelle 0.16.2-Engine ist der Unterschied durch eine NPU-Auslagerung
+in **Prefill-tok/s, Decode-tok/s und Akzeptanz weiterhin nicht gemessen**.
+Der Live-Server verwendet den ursprünglichen GPU-MTP-Pfad; es gibt keinen
+NPU-Anteil, dem seine Tokenrate zugerechnet werden kann. Die Entscheidung ist
+daher: synchrone FC-Auslagerung und ständig laufenden Helfer deaktiviert lassen.
+Eine frühe tokenbasierte NPU-Vorbereitung darf erst nach korrekter nativer
+Eingabelinie und einem vollständigen, vergleichbaren Engine-An/Aus-Vergleich
+aktiviert werden. Ein komponentenweiser Genauigkeitsnachweis allein genügt
+dafür nicht.
+
+Ein neuer kleiner Original-GPU-Vergleich hat am 5. Oktober um 03:34:43 UTC die
+ausgewählte Token-Embedding-Zeile bestanden: Beide originalen Q4C-Decoder und
+der anschließende Gather liefern alle 2.560 BF16-Werte exakt wie die eingefrorene
+Referenz. Es wurde nur die ausgewählte Zeile umgepackt und eine eigene kleine
+GPU-Tabelle verwendet. Dieser Beleg qualifiziert weder die Tabelle im laufenden
+Engine noch andere Tokens, den vollständigen MTP-Head oder einen Tempo-Gewinn.
+Die frühe NPU-Vorbereitung bleibt unimplementiert und deaktiviert.
+[Ausgeführter Embedding-Vergleich](../research/halogen-q4c-selected-row-oracle-20261005.md).
 
 Belege: [Genauigkeitskorrektur](../research/halogen-npu-precision-correction-20261004.md),
 [CPU-/Paging-Kontrolle](../research/halogen-cpu-paging-control-20261005.md),
