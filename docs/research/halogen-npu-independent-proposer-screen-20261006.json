@@ -1,0 +1,474 @@
+{
+  "schema": "halogen.native-pld-component-screen.v1",
+  "timestamp_utc": "2026-10-05T23:09:57.754923+00:00",
+  "model": {
+    "repo": "FastFlowLM/Qwen3.5-0.8B-NPU2",
+    "revision": "1d16e5eaa2508889fb88eb1bfab1921a30a1a466",
+    "language_payload": {
+      "path": "C:\\AI\\models\\halogen-proposer-qwen35-08b-1d16e5e\\model.q4nx",
+      "sha256": "787428ffe87be5e3e5a8fcaf241844b69896ca0c74a41f2432c436739f7ba4e4",
+      "bytes": 560985936
+    },
+    "tokenizer_shared_defined_ids": 248070,
+    "engine_capacity_requested": 4096,
+    "logical_window_limit": 512
+  },
+  "method": {
+    "root_exclusive": true,
+    "large_GPU_engine_normally_stopped": true,
+    "device": "Windows installed XRT NPU2 device0",
+    "one_native_process": true,
+    "frozen_request_families": 1,
+    "isolated_cases_include_first_call": true,
+    "future_labels_used_only_for_offline_scoring_or_postprediction_authoritative_updates": true,
+    "raw_ids": true,
+    "chat_template_added": false,
+    "compiled_source_default_off": true,
+    "snapshot_file_write_time_excluded_from_command_elapsed": true,
+    "warmup_plus_three_full_engine_cohort": false,
+    "native_PLD_hit_eligibility_observed": false
+  },
+  "summary": {
+    "input_tokens_per_isolated_case": 512,
+    "cases": 15,
+    "full_three_draft_cases": 14,
+    "prefill_mean_ms": 418.28974666666664,
+    "prefill_first_ms": 427.4582,
+    "remaining14_prefill_mean_ms": 417.63485714285713,
+    "three_proposal_mean_ms": 45.218385714285716,
+    "three_proposal_range_ms": [
+      44.7268,
+      45.6007
+    ],
+    "two_proposal_last_case_ms": 22.5582,
+    "offline_exact_prefix_ids": 21,
+    "offline_drafted_ids": 44,
+    "offline_exact_prefix_percent": 47.72727272727273,
+    "first_id_equals_target_next": 11,
+    "first_id_equals_native_opening_head": 10,
+    "prefix_length_counts": {
+      "0": 4,
+      "1": 4,
+      "2": 4,
+      "3": 3
+    },
+    "count1_authoritative_append_tokens": 10,
+    "count1_append_mean_ms": 22.46124,
+    "count1_append_range_ms": [
+      21.9341,
+      23.1731
+    ],
+    "startup": {
+      "device_manager_ms": 16.998,
+      "model_ctor_ms": 103.1114,
+      "weights_load_ms": 2352.243
+    }
+  },
+  "parity": {
+    "append_committed_length": 266,
+    "fresh_prefill_committed_length": 266,
+    "append_file": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\flm-pld-component-f3707105ae0c430a99c1ffe4374c798b\\output.json.rows\\command-50-committed.bf16",
+      "sha256": "311b0d8858307049f32e28d9a590ea2544ceb0b6fc4e9eb34fb53da335bb3095",
+      "bytes": 496140
+    },
+    "fresh_prefill_file": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\flm-pld-component-f3707105ae0c430a99c1ffe4374c798b\\output.json.rows\\command-51-committed.bf16",
+      "sha256": "719dc68039507c6080e17aaee652dfdde270babb74c17944128019201ade7c33",
+      "bytes": 496140
+    },
+    "compared_bf16_rows": 248070,
+    "exact_word_differences": 242884,
+    "max_absolute_logit_difference": 1.94140625,
+    "mean_absolute_over_different_rows": 0.352251093578253,
+    "append_greedy_id": 6574,
+    "fresh_prefill_greedy_id": 6574,
+    "exact_word_parity_passed": false,
+    "tolerance_relaxed": false,
+    "note": "Native sequential forward versus parallel full-prefill paths differ. This comparison alone does not identify a synchronization bug or qualify a live append path."
+  },
+  "cases": [
+    {
+      "index": 0,
+      "input_tokens": 512,
+      "draft_ids": [
+        10849,
+        1467,
+        524
+      ],
+      "expected_next_ids": [
+        8337,
+        1145,
+        2116
+      ],
+      "exact_prefix_length": 0,
+      "drafted": 3,
+      "native_cached_first_id": 14367,
+      "native_opening_head_equality": false,
+      "prefill_ms": 427.4582,
+      "propose_ms": 45.2784
+    },
+    {
+      "index": 1,
+      "input_tokens": 512,
+      "draft_ids": [
+        421,
+        1145,
+        2116
+      ],
+      "expected_next_ids": [
+        1145,
+        2116,
+        310
+      ],
+      "exact_prefix_length": 0,
+      "drafted": 3,
+      "native_cached_first_id": 1145,
+      "native_opening_head_equality": false,
+      "prefill_ms": 417.1884,
+      "propose_ms": 45.0814
+    },
+    {
+      "index": 2,
+      "input_tokens": 512,
+      "draft_ids": [
+        279,
+        14367,
+        16534
+      ],
+      "expected_next_ids": [
+        279,
+        32469,
+        6220
+      ],
+      "exact_prefix_length": 1,
+      "drafted": 3,
+      "native_cached_first_id": 279,
+      "native_opening_head_equality": true,
+      "prefill_ms": 417.3177,
+      "propose_ms": 45.1131
+    },
+    {
+      "index": 3,
+      "input_tokens": 512,
+      "draft_ids": [
+        1040,
+        264,
+        8545
+      ],
+      "expected_next_ids": [
+        1040,
+        264,
+        2018
+      ],
+      "exact_prefix_length": 2,
+      "drafted": 3,
+      "native_cached_first_id": 1040,
+      "native_opening_head_equality": true,
+      "prefill_ms": 415.6852,
+      "propose_ms": 45.3525
+    },
+    {
+      "index": 4,
+      "input_tokens": 512,
+      "draft_ids": [
+        6574,
+        11,
+        8545
+      ],
+      "expected_next_ids": [
+        6574,
+        11,
+        11702
+      ],
+      "exact_prefix_length": 2,
+      "drafted": 3,
+      "native_cached_first_id": 6574,
+      "native_opening_head_equality": true,
+      "prefill_ms": 416.2673,
+      "propose_ms": 45.3153
+    },
+    {
+      "index": 5,
+      "input_tokens": 512,
+      "draft_ids": [
+        321,
+        8545,
+        430
+      ],
+      "expected_next_ids": [
+        321,
+        4022,
+        11
+      ],
+      "exact_prefix_length": 1,
+      "drafted": 3,
+      "native_cached_first_id": 321,
+      "native_opening_head_equality": true,
+      "prefill_ms": 419.0243,
+      "propose_ms": 45.5708
+    },
+    {
+      "index": 6,
+      "input_tokens": 512,
+      "draft_ids": [
+        321,
+        279,
+        3594
+      ],
+      "expected_next_ids": [
+        24829,
+        1618,
+        279
+      ],
+      "exact_prefix_length": 0,
+      "drafted": 3,
+      "native_cached_first_id": 87529,
+      "native_opening_head_equality": false,
+      "prefill_ms": 417.7171,
+      "propose_ms": 44.9718
+    },
+    {
+      "index": 7,
+      "input_tokens": 512,
+      "draft_ids": [
+        1618,
+        279,
+        16724
+      ],
+      "expected_next_ids": [
+        1618,
+        279,
+        18169
+      ],
+      "exact_prefix_length": 2,
+      "drafted": 3,
+      "native_cached_first_id": 1618,
+      "native_opening_head_equality": true,
+      "prefill_ms": 417.9865,
+      "propose_ms": 45.3487
+    },
+    {
+      "index": 8,
+      "input_tokens": 512,
+      "draft_ids": [
+        1881,
+        279,
+        1496
+      ],
+      "expected_next_ids": [
+        1881,
+        279,
+        9114
+      ],
+      "exact_prefix_length": 2,
+      "drafted": 3,
+      "native_cached_first_id": 1881,
+      "native_opening_head_equality": true,
+      "prefill_ms": 417.995,
+      "propose_ms": 45.0846
+    },
+    {
+      "index": 9,
+      "input_tokens": 512,
+      "draft_ids": [
+        321,
+        279,
+        12515
+      ],
+      "expected_next_ids": [
+        321,
+        279,
+        12515
+      ],
+      "exact_prefix_length": 3,
+      "drafted": 3,
+      "native_cached_first_id": 321,
+      "native_opening_head_equality": true,
+      "prefill_ms": 417.285,
+      "propose_ms": 44.7268
+    },
+    {
+      "index": 10,
+      "input_tokens": 512,
+      "draft_ids": [
+        13,
+        1049,
+        557
+      ],
+      "expected_next_ids": [
+        13,
+        733,
+        279
+      ],
+      "exact_prefix_length": 1,
+      "drafted": 3,
+      "native_cached_first_id": 13,
+      "native_opening_head_equality": true,
+      "prefill_ms": 416.7117,
+      "propose_ms": 45.0532
+    },
+    {
+      "index": 11,
+      "input_tokens": 512,
+      "draft_ids": [
+        279,
+        4593,
+        314
+      ],
+      "expected_next_ids": [
+        279,
+        6092,
+        314
+      ],
+      "exact_prefix_length": 1,
+      "drafted": 3,
+      "native_cached_first_id": 279,
+      "native_opening_head_equality": true,
+      "prefill_ms": 417.8517,
+      "propose_ms": 45.0662
+    },
+    {
+      "index": 12,
+      "input_tokens": 512,
+      "draft_ids": [
+        17739,
+        68507,
+        11
+      ],
+      "expected_next_ids": [
+        17739,
+        68507,
+        11
+      ],
+      "exact_prefix_length": 3,
+      "drafted": 3,
+      "native_cached_first_id": 7963,
+      "native_opening_head_equality": false,
+      "prefill_ms": 417.7069,
+      "propose_ms": 45.4939
+    },
+    {
+      "index": 13,
+      "input_tokens": 512,
+      "draft_ids": [
+        68507,
+        11,
+        279
+      ],
+      "expected_next_ids": [
+        68507,
+        11,
+        279
+      ],
+      "exact_prefix_length": 3,
+      "drafted": 3,
+      "native_cached_first_id": 68507,
+      "native_opening_head_equality": true,
+      "prefill_ms": 418.2077,
+      "propose_ms": 45.6007
+    },
+    {
+      "index": 14,
+      "input_tokens": 512,
+      "draft_ids": [
+        3594,
+        557
+      ],
+      "expected_next_ids": [
+        14367,
+        557
+      ],
+      "exact_prefix_length": 0,
+      "drafted": 2,
+      "native_cached_first_id": 14367,
+      "native_opening_head_equality": false,
+      "prefill_ms": 419.9435,
+      "propose_ms": 22.5582
+    }
+  ],
+  "raw_output": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\flm-pld-component-f3707105ae0c430a99c1ffe4374c798b\\output.json",
+    "sha256": "aebbb97f8f080826dbc08f3034a89c6c8815bf583661a1fbd4370a3dd48fa433",
+    "bytes": 18935
+  },
+  "owned_result": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\flm-pld-component-f3707105ae0c430a99c1ffe4374c798b\\result.json",
+    "sha256": "ca0278fcdc88a047dfbd9473ff93f96e207d86163e5d0a04770389cd60bb18fe",
+    "bytes": 826
+  },
+  "workload": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-independent-proposer-workload-20261006.json",
+    "sha256": "1f3a2fbfafe1a8fd90f99c23dac49f3f0028644d5f010fcd057edfcce26a4919",
+    "bytes": 12287
+  },
+  "GPU_executed": false,
+  "NPU_executed": true,
+  "native_acceptance_measured": false,
+  "Halogen_prefill_delta_tok_s": null,
+  "Halogen_decode_delta_tok_s": null,
+  "Halogen_acceptance_delta": null,
+  "live_injection_qualified": false,
+  "live_speed_gain_qualified": false,
+  "adoption": false,
+  "next": "Keep this candidate disabled; 45ms proposal and expensive rejection/rebase costs do not justify an engine cohort. Treat state-path word difference explicitly. Faster GPU/CPU proposers need independent residency/contention and state qualification.",
+  "restoration": {
+    "original_ready_open": true,
+    "readiness_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\flm-pld-held-restoration-1503ea86c367413eb470daa611a4e3f2\\final-ready.json",
+      "sha256": "934934d4b7d1f8102a2cb0fc9d2c4182f19598b27fde817be748f857cdd0647b"
+    },
+    "result_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\flm-pld-held-restoration-1503ea86c367413eb470daa611a4e3f2\\result.json",
+      "sha256": "574a4f334f988d93f78d146860939bd041d335bc1b54d4c6aabd5c996d4bdddd"
+    },
+    "admission_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\flm-pld-held-restoration-1503ea86c367413eb470daa611a4e3f2\\held-memory.json",
+      "sha256": "f43f85aae6aa36862cb3631233e120c8351d70d7ad40b3a759b9112464bd92bd"
+    },
+    "controller_identity": {
+      "pid": 20736,
+      "creation_time_100ns": 134357152594915342,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "controller_run": "a61c92e1dec448e9b94e2520c8d03848",
+    "backend_run": "7b37712b8b724501a56baa03d31bd27d",
+    "container_id": "d2f698a223984ac48283db2c52aca6c2e8ea01941a43c631219b2b821d2f5b46",
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "minimum_memory": {
+      "available_bytes": 34291310592,
+      "committed_bytes": 24462495744,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 132579770368
+    },
+    "unchanged_profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+    "exact_44gib_sufficiency_proven": false
+  },
+  "build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\flm-raw-bridge-build-e76dca656c4e4265b2cb8d0ddf4bbe5d\\result.json",
+    "sha256": "e0e95da7ab262891d93759c4c5be9ec63c127b13a39bda0e1a7bc690bb1e6d15"
+  },
+  "sources": {
+    "bridge": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_flm_raw_id_bridge\\bridge.cpp",
+      "sha256": "8851166be2a8461a9b5fbe0b2d7c01a3474cf12e1f8bf411f1a40fadfa21be9c"
+    },
+    "owned_controller": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_flm_pld_component_20261006.py",
+      "sha256": "531226891b17df5e8209a8dff7680d48dbcbc95b9f0499100887d7e7511ebceb"
+    },
+    "lifecycle_preparation": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prepare_flm_pld_lifecycle_20261006.py",
+      "sha256": "0a499c0043efc48d3ce109fa96f08e1cd16a93b3b07557779614eb95dc73002e"
+    }
+  }
+}

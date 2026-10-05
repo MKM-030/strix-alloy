@@ -2,9 +2,10 @@
 
 The injected engine alone implements clear_context(), prefill(tuple[int, ...])
 and forward(int), returning indexable raw logits. No engine/runtime is imported.
-Every authoritative outcome clears/rebuilds the bounded committed window; there
-is deliberately no checkpoint fast path. The caller supplies truthful native
-bindings and verifies outcomes independently. Local serialization is not proof
+An optional append path retains only consumed drafts proven authoritative, with
+clear/rebuild for rejection or window shifts. There is no checkpoint rollback.
+The caller supplies truthful native bindings and verifies outcomes independently.
+Local serialization is not proof
 of native cancellation/reset ownership, acceptance, or performance.
 """
 from dataclasses import dataclass, field, replace
@@ -46,6 +47,7 @@ class PendingProposal:
     binding: ProposalBinding
     ids: tuple
     packet: bytes
+    logits: tuple = field(repr=False)
 
 
 @dataclass(frozen=True)
@@ -98,13 +100,15 @@ class TransactionCoordinator:
     target-position semantics are caller truth; subsequent positions, window
     origins, and current IDs are checked here. Engines need capacity for 512
     committed IDs plus two speculative forward inputs; authoritative results
-    contain up to four IDs, then rebase to 512 before clear/prefill. Python
-    logits copies/argmax are reference behavior, not a production speed claim.
+    contain up to four IDs, then rebase to 512 before clear/prefill.
+    Start below the 512-token cap to permit growth before a window rebase.
+    Python logits copies/argmax are reference behavior, not a speed claim.
     """
     def __init__(self, engine: RawIdEngine, *, model_binding, tokenizer_binding,
-                 key_id, integrity_key, enabled=False):
-        if type(enabled) is not bool:
-            raise ValueError("enabled must be explicit bool")
+                 key_id, integrity_key, enabled=False,
+                 append_when_authoritative=False):
+        if type(enabled) is not bool or type(append_when_authoritative) is not bool:
+            raise ValueError("enabled/append flags must be explicit bool")
         for value, size in ((model_binding, 32), (tokenizer_binding, 32),
                             (key_id, 16), (integrity_key, 32)):
             if type(value) is not bytes or len(value) != size or not any(value):
@@ -113,6 +117,7 @@ class TransactionCoordinator:
                for name in ("clear_context", "prefill", "forward")):
             raise ValueError("raw-ID engine interface required")
         self._engine, self._enabled = engine, enabled
+        self._append_when_authoritative = append_when_authoritative
         self._model, self._tokenizer = model_binding, tokenizer_binding
         self._key_id, self._key = key_id, integrity_key
         self._state = self._pending = None
@@ -202,11 +207,12 @@ class TransactionCoordinator:
             except Exception:
                 self._retire()
                 raise
-            self._pending = PendingProposal(binding, ids, packet)
+            # The final predicted ID has not been consumed by the engine.
+            self._pending = PendingProposal(binding, ids, packet, logits)
             return self._pending
 
     def apply(self, outcome, next_binding, *, outcome_is_authoritative=None):
-        """Rebuild accepted prefix plus correction/bonus; never retain speculative KV.
+        """Synchronize accepted prefix plus correction/bonus; discard rejected state.
 
         The authority callback must validate both outcome and next fingerprint
         against the caller's actual committed target state. False/unavailable
@@ -248,5 +254,20 @@ class TransactionCoordinator:
                      previous.committed_prefix_fingerprint)):
                 raise ValueError("next binding differs from authoritative advancement")
             self._window(next_binding, ids)
-            self._rebuild(next_binding, ids)
+            consumed = len(self._pending.ids) - 1
+            if (self._append_when_authoritative and len(accepted) >= consumed and
+                    next_binding.window_origin == previous.window_origin):
+                # Every already-consumed draft is now authoritative. Only feed
+                # new output beyond that prefix; no rollback/snapshot is used.
+                logits = self._pending.logits
+                self._retire()
+                try:
+                    for token in outputs[consumed:]:
+                        logits = _owned_logits(self._engine.forward(token))
+                except Exception:
+                    self._retire()
+                    raise
+                self._state = CommittedState(next_binding, ids, logits)
+            else:
+                self._rebuild(next_binding, ids)
             return True

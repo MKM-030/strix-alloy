@@ -1,0 +1,61 @@
+{
+  "schema": "halogen.pld-append-reference.v1",
+  "timestamp_utc": "2026-10-05T22:57:55.754313+00:00",
+  "enabled_by_default": false,
+  "initial_committed_window_tokens": 256,
+  "maximum_committed_window_tokens": 512,
+  "rule": "Predicting n IDs consumes n-1. Append only when accepted prefix covers every consumed ID and window origin is unchanged. Otherwise clear/rebuild.",
+  "checkpoint_rollback_used": false,
+  "applicability": {
+    "NPU": true,
+    "GPU": true,
+    "CPU": true,
+    "ordinary_prefill_direct_benefit": false,
+    "complete_engine_benefit_measured": false
+  },
+  "root_tests": {
+    "count": 6,
+    "passed": true,
+    "command": "server/.local/venv/Scripts/python.exe -B -m unittest test_halogen_pld_proposal_wire test_halogen_pld_transaction -v",
+    "cwd": "scripts/benchmarks",
+    "scope": "Deterministic reusable-logit fixture and packet binding; includes fresh replay parity, rejection fallback, window shift and failed append retirement"
+  },
+  "coordinator": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_transaction.py",
+    "sha256": "e19723b339ecf4ae60c3add6737d1ed50cfe0cfdef2d133ecd742c88449ec7b6"
+  },
+  "tests": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\test_halogen_pld_transaction.py",
+    "sha256": "9599e0e8fc0e711a6e7506ab98338774fa08df7bfd3004f12156648f6825805d"
+  },
+  "GPU_executed": false,
+  "NPU_executed": false,
+  "prefill_delta_tok_s": null,
+  "decode_delta_tok_s": null,
+  "native_acceptance_delta": null,
+  "server": {
+    "controller_pid": 4980,
+    "controller_run": "093f67ccd22f4a5f8c865b6da3572d53",
+    "backend_pid": 20352,
+    "backend_run": "a450aad327854e0bbbe33780e4f58770",
+    "container_id": "3429bcc95ca2dbcfb4c7054549d2c020d3df3461fbf2b66d12d514f2971bc84f",
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "memory": {
+      "available_bytes": 34659041280,
+      "committed_bytes": 107213533184,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 132925906944
+    },
+    "stop_submitted": false,
+    "original_ready_open": true
+  }
+}

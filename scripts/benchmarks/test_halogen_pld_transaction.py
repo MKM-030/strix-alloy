@@ -51,25 +51,30 @@ class TransactionTests(unittest.TestCase):
             key_id=KEY_ID, integrity_key=KEY, **kwargs,
         )
 
-    def test_zero_partial_all_rebuild_only_authoritative_ids(self):
+    def test_zero_partial_all_sync_only_authoritative_ids(self):
         # Retaining rejected drafts or shallow logits changes the next prediction.
-        cases = (((), 9, (1, 2, 3, 9), 25),
-                 ((16,), 7, (1, 2, 3, 16, 7), 19),
-                 ((16, 12, 24), 6, (1, 2, 3, 16, 12, 24, 6), 14))
-        for accepted, correction, expected, next_id in cases:
-            with self.subTest(accepted=accepted):
+        cases = ((False, 3, (), 9, (1, 2, 3, 9), 2),
+                 (False, 3, (16,), 7, (1, 2, 3, 16, 7), 2),
+                 (False, 3, (16, 12, 24), 6, (1, 2, 3, 16, 12, 24, 6), 2),
+                 (True, 1, (), 9, (1, 2, 3, 9), 1),
+                 (True, 3, (16,), 7, (1, 2, 3, 16, 7), 2),
+                 (True, 3, (16, 12), 7, (1, 2, 3, 16, 12, 7), 1),
+                 (True, 3, (16, 12, 24), 6, (1, 2, 3, 16, 12, 24, 6), 1))
+        for append, count, accepted, correction, expected, rebuilds in cases:
+            with self.subTest(append=append, count=count, accepted=accepted):
                 engine = FixtureEngine()
-                coordinator = self.coordinator(engine, enabled=True)
+                coordinator = self.coordinator(engine, enabled=True,
+                                               append_when_authoritative=append)
                 initial = binding((1, 2, 3))
                 self.assertTrue(coordinator.reset(initial, (1, 2, 3)))
                 saved_logits = coordinator.state.logits
-                proposal = coordinator.propose(initial, max_drafts=3)
-                self.assertEqual(proposal.ids, (16, 12, 24))
+                proposal = coordinator.propose(initial, max_drafts=count)
+                self.assertEqual(proposal.ids, (16, 12, 24)[:count])
                 self.assertEqual(saved_logits[16], 2.0)
                 decoded = wire.decode_proposal(proposal.packet,
                     trusted_keys={KEY_ID: KEY}, token_id_limit=248070)
                 self.assertEqual(decoded.binding, initial)
-                self.assertEqual(decoded.ids, (16, 12, 24))
+                self.assertEqual(decoded.ids, (16, 12, 24)[:count])
                 outcome = transaction.AuthoritativeOutcome(initial, accepted, correction)
                 following = binding(expected, round_id=b"2" * 16)
                 self.assertFalse(coordinator.apply(outcome, following,
@@ -78,14 +83,18 @@ class TransactionTests(unittest.TestCase):
                     outcome_is_authoritative=lambda *_: True))
                 self.assertEqual(coordinator.state.ids, expected)
                 self.assertEqual(tuple(engine.ids), expected)
-                self.assertEqual(engine.rebuilds, 2)
+                self.assertEqual(engine.rebuilds, rebuilds)
+                fresh = FixtureEngine()
+                self.assertEqual(coordinator.state.logits,
+                                 tuple(fresh.prefill(expected)[:248070]))
                 self.assertEqual(coordinator.propose(following, max_drafts=1).ids,
-                                 (next_id,))
+                                 (sum(expected) % 20 + 10,))
 
     def test_reset_retires_pending_round_and_rebase_keeps_512_window(self):
         # Accepting an old nonce or retaining 513 tokens corrupts fresh state.
         engine = FixtureEngine()
-        coordinator = self.coordinator(engine, enabled=True)
+        coordinator = self.coordinator(engine, enabled=True,
+                                       append_when_authoritative=True)
         old = binding((1, 2, 3))
         coordinator.reset(old, (1, 2, 3))
         coordinator.propose(old)
@@ -104,10 +113,27 @@ class TransactionTests(unittest.TestCase):
         self.assertEqual(coordinator.state.ids, rebased)
         self.assertEqual(coordinator.state.binding.window_origin, 1)
         self.assertEqual(tuple(engine.ids), rebased)
+        self.assertEqual(engine.rebuilds, 3)  # Initial, fresh request, shifted window.
         with self.assertRaises(ValueError):
             coordinator.reset(old, (1, 2, 3))
         self.assertIsNone(coordinator.state)
         self.assertIsNone(coordinator.propose(following))
+
+        # A failed authoritative append must retire private state after mutation.
+        failing = FixtureEngine()
+        feed = self.coordinator(failing, enabled=True, append_when_authoritative=True)
+        feed.reset(old, (1, 2, 3))
+        feed.propose(old, max_drafts=1)
+        def fail_forward(token):
+            failing.ids.append(token)
+            raise RuntimeError("fixture append failure")
+        failing.forward = fail_forward
+        with self.assertRaises(RuntimeError):
+            feed.apply(transaction.AuthoritativeOutcome(old, (), 9),
+                       binding((1, 2, 3, 9), round_id=b"2" * 16),
+                       outcome_is_authoritative=lambda *_: True)
+        self.assertIsNone(feed.state)
+        self.assertIsNone(feed.propose(old))
         valid = binding((1, 2, 3), nonce=b"G" * 16)
         coordinator.reset(valid, (1, 2, 3))
         coordinator.propose(valid)
