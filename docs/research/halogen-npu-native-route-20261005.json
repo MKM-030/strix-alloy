@@ -1,0 +1,1927 @@
+{
+  "schema": "halogen.npu-native-route-results.v1",
+  "time_utc": "2026-10-05T18:46:22.850015+00:00",
+  "NPU_executed": true,
+  "full_engine_NPU_gain_qualified": false,
+  "NPU_tok_s_measured": false,
+  "original_server_restored_ready_open": true,
+  "restored_server": {
+    "time_utc": "2026-10-05T18:43:41.538483+00:00",
+    "passed": true,
+    "controller_pid": 19920,
+    "backend_pid": 15024,
+    "controller_run": "4591d9ff2d4742f59f9369cfc753ea6c",
+    "backend_run": "a0c4a7ad2ba64933a1bd05ed2bc8cf5d",
+    "container_id": "01a26d521c9ae79ee5cb3c87c17933ff4ce4b61ff97fdeccf41801c37418c1f1",
+    "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+    "controller_identity": {
+      "pid": 19920,
+      "creation_time_100ns": 134356991606285376,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "physical_gib": 31.47861099243164,
+    "commit_headroom_gib": 123.99845886230469,
+    "engine_NPU_integrated": false,
+    "no_inference_submitted": true,
+    "no_restart_submitted": true,
+    "prior_bookkeeping_failures_preserved": true,
+    "measurement_repeated": false
+  },
+  "native": {
+    "control": {
+      "status": "passed",
+      "mode": "control",
+      "device_index": 0,
+      "device": "npu2_1col",
+      "kernel": "MLIR_AIE",
+      "input_bytes": 512,
+      "output_bytes": 256,
+      "weight_bytes": 0,
+      "core_calls": 64,
+      "warmups": 8,
+      "measurements": 48,
+      "verified_calls": 56,
+      "verified_values": 3584,
+      "instruction_words": 86,
+      "wait_ms": 500,
+      "deadline_ms": 20000,
+      "initialization_total_us": 27922.8,
+      "artifact_validation_us": 763.7,
+      "device_context_buffers_and_run_us": 27159.1,
+      "launch_wait": {
+        "count": 48,
+        "p50_us": 77.75,
+        "p95_us": 82.405,
+        "mean_us": 81.547917,
+        "min_us": 66.0,
+        "max_us": 291.7
+      },
+      "complete_input_copy_poison_sync_launch_wait_output_sync_readback": {
+        "count": 48,
+        "p50_us": 78.4,
+        "p95_us": 83.07,
+        "mean_us": 82.2625,
+        "min_us": 66.6,
+        "max_us": 293.3
+      },
+      "quantile_method": "linear interpolation at q*(n-1)",
+      "reference_and_verification_excluded_from_complete": true,
+      "xclbin": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\control\\design.xclbin",
+      "instructions": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\control\\insts.bin",
+      "abi": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\control\\design.abi",
+      "arguments": [
+        {
+          "index": 0,
+          "name": "opcode",
+          "size": 8,
+          "offset": 0,
+          "host_type": "uint64_t",
+          "bound": true
+        },
+        {
+          "index": 1,
+          "name": "instr",
+          "size": 8,
+          "offset": 8,
+          "host_type": "char *",
+          "bound": true
+        },
+        {
+          "index": 2,
+          "name": "ninstr",
+          "size": 4,
+          "offset": 16,
+          "host_type": "uint32_t",
+          "bound": true
+        },
+        {
+          "index": 3,
+          "name": "bo0",
+          "size": 8,
+          "offset": 20,
+          "host_type": "void*",
+          "bound": true
+        },
+        {
+          "index": 4,
+          "name": "bo1",
+          "size": 8,
+          "offset": 28,
+          "host_type": "void*",
+          "bound": true
+        },
+        {
+          "index": 5,
+          "name": "bo2",
+          "size": 8,
+          "offset": 36,
+          "host_type": "void*",
+          "bound": false
+        },
+        {
+          "index": 6,
+          "name": "bo3",
+          "size": 8,
+          "offset": 44,
+          "host_type": "void*",
+          "bound": false
+        },
+        {
+          "index": 7,
+          "name": "bo4",
+          "size": 8,
+          "offset": 52,
+          "host_type": "void*",
+          "bound": false
+        }
+      ],
+      "samples": [
+        {
+          "call": 0,
+          "measured": false,
+          "launch_wait_us": 807.7,
+          "complete_us": 810.0,
+          "verify_us": 0.1
+        },
+        {
+          "call": 1,
+          "measured": false,
+          "launch_wait_us": 80.6,
+          "complete_us": 81.3,
+          "verify_us": 0.1
+        },
+        {
+          "call": 2,
+          "measured": false,
+          "launch_wait_us": 81.7,
+          "complete_us": 82.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 3,
+          "measured": false,
+          "launch_wait_us": 79.5,
+          "complete_us": 80.2,
+          "verify_us": 0.1
+        },
+        {
+          "call": 4,
+          "measured": false,
+          "launch_wait_us": 67.0,
+          "complete_us": 67.8,
+          "verify_us": 0.0
+        },
+        {
+          "call": 5,
+          "measured": false,
+          "launch_wait_us": 79.1,
+          "complete_us": 79.8,
+          "verify_us": 0.0
+        },
+        {
+          "call": 6,
+          "measured": false,
+          "launch_wait_us": 66.9,
+          "complete_us": 67.5,
+          "verify_us": 0.1
+        },
+        {
+          "call": 7,
+          "measured": false,
+          "launch_wait_us": 77.2,
+          "complete_us": 78.1,
+          "verify_us": 0.0
+        },
+        {
+          "call": 8,
+          "measured": true,
+          "launch_wait_us": 66.4,
+          "complete_us": 67.0,
+          "verify_us": 0.1
+        },
+        {
+          "call": 9,
+          "measured": true,
+          "launch_wait_us": 78.3,
+          "complete_us": 78.9,
+          "verify_us": 0.1
+        },
+        {
+          "call": 10,
+          "measured": true,
+          "launch_wait_us": 66.4,
+          "complete_us": 67.1,
+          "verify_us": 0.0
+        },
+        {
+          "call": 11,
+          "measured": true,
+          "launch_wait_us": 75.9,
+          "complete_us": 76.6,
+          "verify_us": 0.0
+        },
+        {
+          "call": 12,
+          "measured": true,
+          "launch_wait_us": 78.2,
+          "complete_us": 78.8,
+          "verify_us": 0.1
+        },
+        {
+          "call": 13,
+          "measured": true,
+          "launch_wait_us": 77.6,
+          "complete_us": 78.2,
+          "verify_us": 0.1
+        },
+        {
+          "call": 14,
+          "measured": true,
+          "launch_wait_us": 79.0,
+          "complete_us": 79.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 15,
+          "measured": true,
+          "launch_wait_us": 76.8,
+          "complete_us": 77.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 16,
+          "measured": true,
+          "launch_wait_us": 77.9,
+          "complete_us": 78.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 17,
+          "measured": true,
+          "launch_wait_us": 83.7,
+          "complete_us": 84.4,
+          "verify_us": 0.0
+        },
+        {
+          "call": 18,
+          "measured": true,
+          "launch_wait_us": 78.9,
+          "complete_us": 79.6,
+          "verify_us": 0.0
+        },
+        {
+          "call": 19,
+          "measured": true,
+          "launch_wait_us": 77.5,
+          "complete_us": 78.2,
+          "verify_us": 0.1
+        },
+        {
+          "call": 20,
+          "measured": true,
+          "launch_wait_us": 78.0,
+          "complete_us": 78.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 21,
+          "measured": true,
+          "launch_wait_us": 78.6,
+          "complete_us": 79.2,
+          "verify_us": 0.1
+        },
+        {
+          "call": 22,
+          "measured": true,
+          "launch_wait_us": 76.9,
+          "complete_us": 77.6,
+          "verify_us": 0.0
+        },
+        {
+          "call": 23,
+          "measured": true,
+          "launch_wait_us": 78.2,
+          "complete_us": 78.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 24,
+          "measured": true,
+          "launch_wait_us": 66.4,
+          "complete_us": 67.3,
+          "verify_us": 0.0
+        },
+        {
+          "call": 25,
+          "measured": true,
+          "launch_wait_us": 78.0,
+          "complete_us": 78.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 26,
+          "measured": true,
+          "launch_wait_us": 77.8,
+          "complete_us": 78.4,
+          "verify_us": 0.1
+        },
+        {
+          "call": 27,
+          "measured": true,
+          "launch_wait_us": 76.4,
+          "complete_us": 77.0,
+          "verify_us": 0.1
+        },
+        {
+          "call": 28,
+          "measured": true,
+          "launch_wait_us": 78.3,
+          "complete_us": 79.0,
+          "verify_us": 0.0
+        },
+        {
+          "call": 29,
+          "measured": true,
+          "launch_wait_us": 77.4,
+          "complete_us": 78.1,
+          "verify_us": 0.0
+        },
+        {
+          "call": 30,
+          "measured": true,
+          "launch_wait_us": 78.1,
+          "complete_us": 79.0,
+          "verify_us": 0.1
+        },
+        {
+          "call": 31,
+          "measured": true,
+          "launch_wait_us": 77.7,
+          "complete_us": 78.3,
+          "verify_us": 0.1
+        },
+        {
+          "call": 32,
+          "measured": true,
+          "launch_wait_us": 77.0,
+          "complete_us": 77.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 33,
+          "measured": true,
+          "launch_wait_us": 76.7,
+          "complete_us": 77.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 34,
+          "measured": true,
+          "launch_wait_us": 78.5,
+          "complete_us": 79.2,
+          "verify_us": 0.0
+        },
+        {
+          "call": 35,
+          "measured": true,
+          "launch_wait_us": 78.0,
+          "complete_us": 78.9,
+          "verify_us": 0.1
+        },
+        {
+          "call": 36,
+          "measured": true,
+          "launch_wait_us": 76.4,
+          "complete_us": 77.2,
+          "verify_us": 0.0
+        },
+        {
+          "call": 37,
+          "measured": true,
+          "launch_wait_us": 78.2,
+          "complete_us": 78.8,
+          "verify_us": 0.1
+        },
+        {
+          "call": 38,
+          "measured": true,
+          "launch_wait_us": 76.8,
+          "complete_us": 77.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 39,
+          "measured": true,
+          "launch_wait_us": 78.5,
+          "complete_us": 79.2,
+          "verify_us": 0.1
+        },
+        {
+          "call": 40,
+          "measured": true,
+          "launch_wait_us": 78.1,
+          "complete_us": 78.8,
+          "verify_us": 0.0
+        },
+        {
+          "call": 41,
+          "measured": true,
+          "launch_wait_us": 76.8,
+          "complete_us": 77.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 42,
+          "measured": true,
+          "launch_wait_us": 76.2,
+          "complete_us": 77.1,
+          "verify_us": 0.0
+        },
+        {
+          "call": 43,
+          "measured": true,
+          "launch_wait_us": 76.1,
+          "complete_us": 76.7,
+          "verify_us": 0.1
+        },
+        {
+          "call": 44,
+          "measured": true,
+          "launch_wait_us": 78.1,
+          "complete_us": 78.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 45,
+          "measured": true,
+          "launch_wait_us": 78.7,
+          "complete_us": 79.4,
+          "verify_us": 0.0
+        },
+        {
+          "call": 46,
+          "measured": true,
+          "launch_wait_us": 66.0,
+          "complete_us": 66.6,
+          "verify_us": 0.1
+        },
+        {
+          "call": 47,
+          "measured": true,
+          "launch_wait_us": 77.4,
+          "complete_us": 78.1,
+          "verify_us": 0.1
+        },
+        {
+          "call": 48,
+          "measured": true,
+          "launch_wait_us": 68.9,
+          "complete_us": 69.5,
+          "verify_us": 0.1
+        },
+        {
+          "call": 49,
+          "measured": true,
+          "launch_wait_us": 80.0,
+          "complete_us": 80.6,
+          "verify_us": 0.1
+        },
+        {
+          "call": 50,
+          "measured": true,
+          "launch_wait_us": 79.9,
+          "complete_us": 80.6,
+          "verify_us": 0.0
+        },
+        {
+          "call": 51,
+          "measured": true,
+          "launch_wait_us": 291.7,
+          "complete_us": 293.3,
+          "verify_us": 0.0
+        },
+        {
+          "call": 52,
+          "measured": true,
+          "launch_wait_us": 96.8,
+          "complete_us": 97.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 53,
+          "measured": true,
+          "launch_wait_us": 77.7,
+          "complete_us": 78.4,
+          "verify_us": 0.0
+        },
+        {
+          "call": 54,
+          "measured": true,
+          "launch_wait_us": 77.1,
+          "complete_us": 77.7,
+          "verify_us": 0.1
+        },
+        {
+          "call": 55,
+          "measured": true,
+          "launch_wait_us": 76.3,
+          "complete_us": 77.0,
+          "verify_us": 0.0
+        }
+      ]
+    },
+    "gemv-vector": {
+      "status": "passed",
+      "mode": "gemv-vector",
+      "device_index": 0,
+      "device": "npu2_1col",
+      "kernel": "MLIR_AIE",
+      "input_bytes": 512,
+      "output_bytes": 256,
+      "weight_bytes": 32768,
+      "core_calls": 64,
+      "warmups": 8,
+      "measurements": 48,
+      "verified_calls": 56,
+      "verified_values": 3584,
+      "instruction_words": 86,
+      "wait_ms": 500,
+      "deadline_ms": 20000,
+      "initialization_total_us": 20870.6,
+      "artifact_validation_us": 820.1,
+      "device_context_buffers_and_run_us": 20050.5,
+      "launch_wait": {
+        "count": 48,
+        "p50_us": 74.35,
+        "p95_us": 89.085,
+        "mean_us": 76.43125,
+        "min_us": 69.0,
+        "max_us": 106.5
+      },
+      "complete_input_copy_poison_sync_launch_wait_output_sync_readback": {
+        "count": 48,
+        "p50_us": 75.0,
+        "p95_us": 89.785,
+        "mean_us": 77.183333,
+        "min_us": 69.9,
+        "max_us": 107.9
+      },
+      "quantile_method": "linear interpolation at q*(n-1)",
+      "reference_and_verification_excluded_from_complete": true,
+      "xclbin": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\gemv-vector\\design.xclbin",
+      "instructions": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\gemv-vector\\insts.bin",
+      "abi": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\gemv-vector\\design.abi",
+      "arguments": [
+        {
+          "index": 0,
+          "name": "opcode",
+          "size": 8,
+          "offset": 0,
+          "host_type": "uint64_t",
+          "bound": true
+        },
+        {
+          "index": 1,
+          "name": "instr",
+          "size": 8,
+          "offset": 8,
+          "host_type": "char *",
+          "bound": true
+        },
+        {
+          "index": 2,
+          "name": "ninstr",
+          "size": 4,
+          "offset": 16,
+          "host_type": "uint32_t",
+          "bound": true
+        },
+        {
+          "index": 3,
+          "name": "bo0",
+          "size": 8,
+          "offset": 20,
+          "host_type": "void*",
+          "bound": true
+        },
+        {
+          "index": 4,
+          "name": "bo1",
+          "size": 8,
+          "offset": 28,
+          "host_type": "void*",
+          "bound": true
+        },
+        {
+          "index": 5,
+          "name": "bo2",
+          "size": 8,
+          "offset": 36,
+          "host_type": "void*",
+          "bound": false
+        },
+        {
+          "index": 6,
+          "name": "bo3",
+          "size": 8,
+          "offset": 44,
+          "host_type": "void*",
+          "bound": false
+        },
+        {
+          "index": 7,
+          "name": "bo4",
+          "size": 8,
+          "offset": 52,
+          "host_type": "void*",
+          "bound": false
+        }
+      ],
+      "samples": [
+        {
+          "call": 0,
+          "measured": false,
+          "launch_wait_us": 219.3,
+          "complete_us": 220.4,
+          "verify_us": 0.1
+        },
+        {
+          "call": 1,
+          "measured": false,
+          "launch_wait_us": 82.9,
+          "complete_us": 83.6,
+          "verify_us": 0.1
+        },
+        {
+          "call": 2,
+          "measured": false,
+          "launch_wait_us": 84.9,
+          "complete_us": 85.5,
+          "verify_us": 0.1
+        },
+        {
+          "call": 3,
+          "measured": false,
+          "launch_wait_us": 82.1,
+          "complete_us": 82.8,
+          "verify_us": 0.1
+        },
+        {
+          "call": 4,
+          "measured": false,
+          "launch_wait_us": 82.2,
+          "complete_us": 83.0,
+          "verify_us": 0.0
+        },
+        {
+          "call": 5,
+          "measured": false,
+          "launch_wait_us": 78.0,
+          "complete_us": 78.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 6,
+          "measured": false,
+          "launch_wait_us": 73.9,
+          "complete_us": 74.6,
+          "verify_us": 0.0
+        },
+        {
+          "call": 7,
+          "measured": false,
+          "launch_wait_us": 73.2,
+          "complete_us": 73.9,
+          "verify_us": 0.1
+        },
+        {
+          "call": 8,
+          "measured": true,
+          "launch_wait_us": 74.4,
+          "complete_us": 75.0,
+          "verify_us": 0.1
+        },
+        {
+          "call": 9,
+          "measured": true,
+          "launch_wait_us": 70.4,
+          "complete_us": 71.1,
+          "verify_us": 0.0
+        },
+        {
+          "call": 10,
+          "measured": true,
+          "launch_wait_us": 82.7,
+          "complete_us": 83.4,
+          "verify_us": 0.0
+        },
+        {
+          "call": 11,
+          "measured": true,
+          "launch_wait_us": 76.0,
+          "complete_us": 76.6,
+          "verify_us": 0.1
+        },
+        {
+          "call": 12,
+          "measured": true,
+          "launch_wait_us": 73.9,
+          "complete_us": 74.5,
+          "verify_us": 0.1
+        },
+        {
+          "call": 13,
+          "measured": true,
+          "launch_wait_us": 73.6,
+          "complete_us": 74.6,
+          "verify_us": 0.0
+        },
+        {
+          "call": 14,
+          "measured": true,
+          "launch_wait_us": 73.3,
+          "complete_us": 73.9,
+          "verify_us": 0.1
+        },
+        {
+          "call": 15,
+          "measured": true,
+          "launch_wait_us": 73.3,
+          "complete_us": 74.2,
+          "verify_us": 0.0
+        },
+        {
+          "call": 16,
+          "measured": true,
+          "launch_wait_us": 74.8,
+          "complete_us": 75.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 17,
+          "measured": true,
+          "launch_wait_us": 73.5,
+          "complete_us": 74.1,
+          "verify_us": 0.0
+        },
+        {
+          "call": 18,
+          "measured": true,
+          "launch_wait_us": 73.5,
+          "complete_us": 74.2,
+          "verify_us": 0.0
+        },
+        {
+          "call": 19,
+          "measured": true,
+          "launch_wait_us": 72.4,
+          "complete_us": 73.1,
+          "verify_us": 0.0
+        },
+        {
+          "call": 20,
+          "measured": true,
+          "launch_wait_us": 73.2,
+          "complete_us": 73.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 21,
+          "measured": true,
+          "launch_wait_us": 73.5,
+          "complete_us": 74.3,
+          "verify_us": 0.0
+        },
+        {
+          "call": 22,
+          "measured": true,
+          "launch_wait_us": 74.0,
+          "complete_us": 74.6,
+          "verify_us": 0.1
+        },
+        {
+          "call": 23,
+          "measured": true,
+          "launch_wait_us": 72.4,
+          "complete_us": 73.1,
+          "verify_us": 0.1
+        },
+        {
+          "call": 24,
+          "measured": true,
+          "launch_wait_us": 73.8,
+          "complete_us": 74.5,
+          "verify_us": 0.1
+        },
+        {
+          "call": 25,
+          "measured": true,
+          "launch_wait_us": 74.4,
+          "complete_us": 75.0,
+          "verify_us": 0.1
+        },
+        {
+          "call": 26,
+          "measured": true,
+          "launch_wait_us": 74.5,
+          "complete_us": 75.2,
+          "verify_us": 0.0
+        },
+        {
+          "call": 27,
+          "measured": true,
+          "launch_wait_us": 72.2,
+          "complete_us": 73.0,
+          "verify_us": 0.1
+        },
+        {
+          "call": 28,
+          "measured": true,
+          "launch_wait_us": 73.8,
+          "complete_us": 74.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 29,
+          "measured": true,
+          "launch_wait_us": 73.6,
+          "complete_us": 74.4,
+          "verify_us": 0.1
+        },
+        {
+          "call": 30,
+          "measured": true,
+          "launch_wait_us": 73.1,
+          "complete_us": 73.8,
+          "verify_us": 0.0
+        },
+        {
+          "call": 31,
+          "measured": true,
+          "launch_wait_us": 72.8,
+          "complete_us": 73.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 32,
+          "measured": true,
+          "launch_wait_us": 105.9,
+          "complete_us": 107.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 33,
+          "measured": true,
+          "launch_wait_us": 106.5,
+          "complete_us": 107.7,
+          "verify_us": 0.0
+        },
+        {
+          "call": 34,
+          "measured": true,
+          "launch_wait_us": 92.2,
+          "complete_us": 92.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 35,
+          "measured": true,
+          "launch_wait_us": 82.1,
+          "complete_us": 82.8,
+          "verify_us": 0.0
+        },
+        {
+          "call": 36,
+          "measured": true,
+          "launch_wait_us": 78.9,
+          "complete_us": 79.6,
+          "verify_us": 0.1
+        },
+        {
+          "call": 37,
+          "measured": true,
+          "launch_wait_us": 80.7,
+          "complete_us": 81.4,
+          "verify_us": 0.1
+        },
+        {
+          "call": 38,
+          "measured": true,
+          "launch_wait_us": 73.8,
+          "complete_us": 74.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 39,
+          "measured": true,
+          "launch_wait_us": 75.2,
+          "complete_us": 75.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 40,
+          "measured": true,
+          "launch_wait_us": 75.0,
+          "complete_us": 75.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 41,
+          "measured": true,
+          "launch_wait_us": 73.9,
+          "complete_us": 74.6,
+          "verify_us": 0.0
+        },
+        {
+          "call": 42,
+          "measured": true,
+          "launch_wait_us": 74.5,
+          "complete_us": 75.2,
+          "verify_us": 0.0
+        },
+        {
+          "call": 43,
+          "measured": true,
+          "launch_wait_us": 74.5,
+          "complete_us": 75.2,
+          "verify_us": 0.1
+        },
+        {
+          "call": 44,
+          "measured": true,
+          "launch_wait_us": 74.8,
+          "complete_us": 75.4,
+          "verify_us": 0.1
+        },
+        {
+          "call": 45,
+          "measured": true,
+          "launch_wait_us": 74.8,
+          "complete_us": 75.5,
+          "verify_us": 0.0
+        },
+        {
+          "call": 46,
+          "measured": true,
+          "launch_wait_us": 74.3,
+          "complete_us": 75.0,
+          "verify_us": 0.0
+        },
+        {
+          "call": 47,
+          "measured": true,
+          "launch_wait_us": 74.5,
+          "complete_us": 75.2,
+          "verify_us": 0.0
+        },
+        {
+          "call": 48,
+          "measured": true,
+          "launch_wait_us": 74.3,
+          "complete_us": 75.2,
+          "verify_us": 0.0
+        },
+        {
+          "call": 49,
+          "measured": true,
+          "launch_wait_us": 69.0,
+          "complete_us": 69.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 50,
+          "measured": true,
+          "launch_wait_us": 76.3,
+          "complete_us": 77.1,
+          "verify_us": 0.0
+        },
+        {
+          "call": 51,
+          "measured": true,
+          "launch_wait_us": 74.8,
+          "complete_us": 75.4,
+          "verify_us": 0.1
+        },
+        {
+          "call": 52,
+          "measured": true,
+          "launch_wait_us": 74.0,
+          "complete_us": 74.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 53,
+          "measured": true,
+          "launch_wait_us": 77.2,
+          "complete_us": 77.9,
+          "verify_us": 0.0
+        },
+        {
+          "call": 54,
+          "measured": true,
+          "launch_wait_us": 75.1,
+          "complete_us": 75.7,
+          "verify_us": 0.1
+        },
+        {
+          "call": 55,
+          "measured": true,
+          "launch_wait_us": 83.3,
+          "complete_us": 84.0,
+          "verify_us": 0.0
+        }
+      ]
+    }
+  },
+  "ple_sample": {
+    "schema": "halogen.ple-lossless-probe.v1",
+    "probe_source": "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen_ple_lossless_probe.py",
+    "probe_source_sha256": "74e3ea0fe21ab96e8542b1e458218cb372b6e40fbf6a946095f0e8300aa3a0e6",
+    "input_manifest_sha256": "92bc1e6e4da3cd3bff13ec462e3abab3d209e90fb4eb8491470678487ae4b5e6",
+    "source": {
+      "path": "/home/revn/halogen-experiments/lookup-native-20261004/9447b9641f964497980fcb281b18a5c3/ngram.hgn",
+      "extraction_receipt_sha256": "df0dc1e5d2de921b58c4f18f988624687191ec6f80e2336c90c7de454144c7fb",
+      "tensor_sha256": "c42900db1bef0d9a688241031f614e179752b0463f822dc07a197b1a42493d8c",
+      "standalone_sha256": "3343a193cb2e1fe68fac83a42b49176621174abb1cc57ba67e2ab149ead80575",
+      "identity": {
+        "size": 51200246144,
+        "device": 2096,
+        "inode": 715441,
+        "mtime_ns": 1791117821019016521,
+        "ctime_ns": 1791117821019016521
+      },
+      "full_hash_recomputed": false,
+      "identity_and_prior_receipt_verified": true,
+      "header_sha256": "2fbd8343426b139a5b239ee8fccf55ae51dabd11ebed13aea2e49a553fdcc9ef",
+      "entry_sha256": "85f5c87a4323910e8955d254ac4a9d33b5056d25fd46442251fe5f40dfbfd81f",
+      "bounded_bytes_read": 1310988,
+      "sampling": "16 physical regions, two disjoint windows each; no full-table extrapolation"
+    },
+    "source_receipt_revalidated": false,
+    "source_provenance": "retained from sealed sample manifest",
+    "source_row_ranges_revalidated": false,
+    "sample_payload_bytes": 1310720,
+    "global_scale_bits": "92245139",
+    "sample_sha256": "fcced840a8a2530259741d613d18cacd87a632663dc811578f92944eea4b707c",
+    "raw_bytes_including_scale": 1310724,
+    "aggregate": {
+      "rows": 8192,
+      "distinct_exact_vectors": 8192,
+      "duplicate_vectors": 0,
+      "all_zero_rows": 0,
+      "distinct_byte_symbols": 236,
+      "byte_entropy_bits": 6.483060342939848,
+      "sign_entropy_bits": 0.9999990273555945,
+      "exponent_entropy_bits": 2.554038557059037,
+      "mantissa_entropy_bits": 2.979879038378878
+    },
+    "by_split": {
+      "train": {
+        "rows": 3072,
+        "distinct_exact_vectors": 3072,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 235,
+        "byte_entropy_bits": 6.485208175048619,
+        "sign_entropy_bits": 0.9999939794045208,
+        "exponent_entropy_bits": 2.555710968124366,
+        "mantissa_entropy_bits": 2.9804447813370785
+      },
+      "eval": {
+        "rows": 5120,
+        "distinct_exact_vectors": 5120,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 234,
+        "byte_entropy_bits": 6.4814139776232995,
+        "sign_entropy_bits": 0.9999999888168281,
+        "exponent_entropy_bits": 2.552924858507284,
+        "mantissa_entropy_bits": 2.979528766376747
+      }
+    },
+    "windows": [
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 214,
+        "byte_entropy_bits": 6.479902891392273,
+        "sign_entropy_bits": 0.9999607858804804,
+        "exponent_entropy_bits": 2.5514981703504533,
+        "mantissa_entropy_bits": 2.980337439375179,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-00-window-0.fp8",
+        "sha256": "c2c47f96242351e950d4b3f4bb4f077888d0064c4299e3980b6c86ef11924ea1",
+        "region": 0,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33495,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 218,
+        "byte_entropy_bits": 6.48819703854675,
+        "sign_entropy_bits": 0.9999999380862448,
+        "exponent_entropy_bits": 2.5616075940657654,
+        "mantissa_entropy_bits": 2.9804966300248346,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-00-window-1.fp8",
+        "sha256": "0bc92f869917447f42daa53744c75ba765ebc7d6819953a10f40fe35d513c3af",
+        "region": 0,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33548,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 210,
+        "byte_entropy_bits": 6.493002840043864,
+        "sign_entropy_bits": 0.9999586807736636,
+        "exponent_entropy_bits": 2.5673540356583424,
+        "mantissa_entropy_bits": 2.980192676677602,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-01-window-0.fp8",
+        "sha256": "3b951974aa23a84a6f32c879e7b2695c8cf3b767bcf6cb34abacbff5d59797de",
+        "region": 1,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33568,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 212,
+        "byte_entropy_bits": 6.487891335444879,
+        "sign_entropy_bits": 0.9999502964431044,
+        "exponent_entropy_bits": 2.5608269750773864,
+        "mantissa_entropy_bits": 2.9803995466590267,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-01-window-1.fp8",
+        "sha256": "7dbcd13048bb0feabdc77bc98cb74d29fbf342fe4dc4d48c1a56430180f414ac",
+        "region": 1,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33556,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 218,
+        "byte_entropy_bits": 6.48884828895014,
+        "sign_entropy_bits": 0.9999821068510304,
+        "exponent_entropy_bits": 2.561548826363932,
+        "mantissa_entropy_bits": 2.981054858162676,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-02-window-0.fp8",
+        "sha256": "4f7db0b908a899354e7602f909d9ae43b88074f5675ba694cdd15595954c7681",
+        "region": 2,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33553,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 220,
+        "byte_entropy_bits": 6.487106776185907,
+        "sign_entropy_bits": 0.9999980118796429,
+        "exponent_entropy_bits": 2.5592209598968227,
+        "mantissa_entropy_bits": 2.97993805523092,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-02-window-1.fp8",
+        "sha256": "fb4f177230a33f08b8a79df6647264f02a90f8af18029dfda64dc0af43207a8a",
+        "region": 2,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33535,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 209,
+        "byte_entropy_bits": 6.481050842109363,
+        "sign_entropy_bits": 0.9999752343565644,
+        "exponent_entropy_bits": 2.55354049493587,
+        "mantissa_entropy_bits": 2.9794283376988857,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-03-window-0.fp8",
+        "sha256": "c84a53462f767ebe4f8bbeb586ca8868a6e19fde0ab2a985ef1b3ff05d64fcea",
+        "region": 3,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33522,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 216,
+        "byte_entropy_bits": 6.479828186539202,
+        "sign_entropy_bits": 0.9999284265163993,
+        "exponent_entropy_bits": 2.552027165883121,
+        "mantissa_entropy_bits": 2.9795961632469794,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-03-window-1.fp8",
+        "sha256": "32f2557b1791eca21c672660206b289ad405b969b7e48fbcfb620c285a4992de",
+        "region": 3,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33501,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 216,
+        "byte_entropy_bits": 6.489216993928688,
+        "sign_entropy_bits": 0.9999152384103576,
+        "exponent_entropy_bits": 2.5649254574303493,
+        "mantissa_entropy_bits": 2.980538406205439,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-04-window-0.fp8",
+        "sha256": "9dcdbf6d956d02f93cdde72e1a133523c109e466f8a52e4a90f82636c0664792",
+        "region": 4,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33558,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 213,
+        "byte_entropy_bits": 6.4833863945793055,
+        "sign_entropy_bits": 0.9999082263916701,
+        "exponent_entropy_bits": 2.556986116306875,
+        "mantissa_entropy_bits": 2.9806847507098744,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-04-window-1.fp8",
+        "sha256": "81a0c8a83636e4c43d95cbf44acc68ddd45dcccc0a205b69c89eb5148f4d8575",
+        "region": 4,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33517,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 211,
+        "byte_entropy_bits": 6.486150104991133,
+        "sign_entropy_bits": 0.9999975165690966,
+        "exponent_entropy_bits": 2.557433319253565,
+        "mantissa_entropy_bits": 2.9806426360160247,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-05-window-0.fp8",
+        "sha256": "0f720e14f0d389e962b080f8c9828076279b18d88372e412fe47b81405f16f45",
+        "region": 5,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33525,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 212,
+        "byte_entropy_bits": 6.491777698000635,
+        "sign_entropy_bits": 0.9999993791425414,
+        "exponent_entropy_bits": 2.564338000840503,
+        "mantissa_entropy_bits": 2.9792660364528625,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-05-window-1.fp8",
+        "sha256": "2ba061da1daf5da5d1fa9a44c911415fbda8666d9b48aeff1ac22745cfb7ad6a",
+        "region": 5,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33574,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 210,
+        "byte_entropy_bits": 6.482298976043886,
+        "sign_entropy_bits": 0.9999982388969386,
+        "exponent_entropy_bits": 2.555834101991724,
+        "mantissa_entropy_bits": 2.9790709673419595,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-06-window-0.fp8",
+        "sha256": "40c62e5a9fe554dfe989f2b8d609fb2b179d2fe83b738f70c115e793bbf4785b",
+        "region": 6,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33507,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 212,
+        "byte_entropy_bits": 6.486135066201325,
+        "sign_entropy_bits": 0.9999352716414753,
+        "exponent_entropy_bits": 2.559745417786513,
+        "mantissa_entropy_bits": 2.978822742300099,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-06-window-1.fp8",
+        "sha256": "b0581e2f8c7a48201f08af42c2ba974d2628d21e6df8172722a069beef0b9acb",
+        "region": 6,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33539,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 211,
+        "byte_entropy_bits": 6.475734289862884,
+        "sign_entropy_bits": 0.9999497099687152,
+        "exponent_entropy_bits": 2.549828328253065,
+        "mantissa_entropy_bits": 2.980443409831139,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-07-window-0.fp8",
+        "sha256": "cc68277bdc0ca8dfeef0a82db1358a88ebfc9ed656711769551c57b9f12039e3",
+        "region": 7,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33490,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 214,
+        "byte_entropy_bits": 6.476163178811085,
+        "sign_entropy_bits": 0.9999806759430707,
+        "exponent_entropy_bits": 2.5497165516189186,
+        "mantissa_entropy_bits": 2.979014868420647,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-07-window-1.fp8",
+        "sha256": "a356f4c20e9da06dc59f14f9a49c03b0edf503f4c8a66c3f4b7c917e7a007bbd",
+        "region": 7,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33481,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 217,
+        "byte_entropy_bits": 6.47405341859089,
+        "sign_entropy_bits": 0.9999352716414753,
+        "exponent_entropy_bits": 2.5496950871928363,
+        "mantissa_entropy_bits": 2.978901498663079,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-08-window-0.fp8",
+        "sha256": "289cab21a1e7df0fd6891a43752978895334fc201064a994aabe5c9fcae93194",
+        "region": 8,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33445,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 211,
+        "byte_entropy_bits": 6.484595799274738,
+        "sign_entropy_bits": 0.9999033969086314,
+        "exponent_entropy_bits": 2.559984203242071,
+        "mantissa_entropy_bits": 2.977144929833782,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-08-window-1.fp8",
+        "sha256": "fa852b29ff922ede500e048df0e9d628bfc885c4db2ccf3f0867739a237af218",
+        "region": 8,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33508,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 204,
+        "byte_entropy_bits": 6.458490393302433,
+        "sign_entropy_bits": 0.9999869825940042,
+        "exponent_entropy_bits": 2.5380638256015096,
+        "mantissa_entropy_bits": 2.9794281293920957,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-09-window-0.fp8",
+        "sha256": "8aa763914e8d955f76f59f6b89a93fca7101841a30b1ac9df138cab51191c811",
+        "region": 9,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33361,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 217,
+        "byte_entropy_bits": 6.474923948349408,
+        "sign_entropy_bits": 0.9999731275439552,
+        "exponent_entropy_bits": 2.5522659177061584,
+        "mantissa_entropy_bits": 2.9790568745198414,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-09-window-1.fp8",
+        "sha256": "8c28f1fcc27a0d763b9d7fce03d65076ca3782c7ff2a663e21eae4eca47c0437",
+        "region": 9,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33442,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 210,
+        "byte_entropy_bits": 6.48232908703954,
+        "sign_entropy_bits": 0.9996344698785274,
+        "exponent_entropy_bits": 2.5584451632548566,
+        "mantissa_entropy_bits": 2.9827333931937376,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-10-window-0.fp8",
+        "sha256": "168cb4d081e979ce33dcbdcec363a859312eb8003431c2654a3a61e26b145736",
+        "region": 10,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33472,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 215,
+        "byte_entropy_bits": 6.461185199384635,
+        "sign_entropy_bits": 0.9997330045410039,
+        "exponent_entropy_bits": 2.5391098201782603,
+        "mantissa_entropy_bits": 2.9781761122004444,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-10-window-1.fp8",
+        "sha256": "b62859be089131b42d3899f9ef517b2637d0c727a2090822a6f093d698c3acda",
+        "region": 10,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33386,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 212,
+        "byte_entropy_bits": 6.477339971394002,
+        "sign_entropy_bits": 0.9998967649513966,
+        "exponent_entropy_bits": 2.550766477563149,
+        "mantissa_entropy_bits": 2.981162860307733,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-11-window-0.fp8",
+        "sha256": "d7850c8e1fd22fb816670c703f5953cebf0f0d17a614c440fe370dd1aea6dab1",
+        "region": 11,
+        "window_index": 0,
+        "split": "train",
+        "huffman_row_payload_bytes": 33458,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 207,
+        "byte_entropy_bits": 6.461880131039573,
+        "sign_entropy_bits": 0.9999001084510493,
+        "exponent_entropy_bits": 2.537503491218274,
+        "mantissa_entropy_bits": 2.9789766869676773,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-11-window-1.fp8",
+        "sha256": "e98260b7fed4dbc036ace36f0fe952f1c860cfd340ffa7d66ff4e2b157abaf3b",
+        "region": 11,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33379,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 218,
+        "byte_entropy_bits": 6.464925116529366,
+        "sign_entropy_bits": 0.9999892665361412,
+        "exponent_entropy_bits": 2.5444825538598597,
+        "mantissa_entropy_bits": 2.9802901289566806,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-12-window-0.fp8",
+        "sha256": "cee0358677059dc9d786cd7305aff828013b66fa4a7b4e02f4280c15a7fe5872",
+        "region": 12,
+        "window_index": 0,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33392,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 211,
+        "byte_entropy_bits": 6.474737348220886,
+        "sign_entropy_bits": 0.9999467259983207,
+        "exponent_entropy_bits": 2.550740383129782,
+        "mantissa_entropy_bits": 2.978004583415224,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-12-window-1.fp8",
+        "sha256": "190f0e1bac9b38fd9363f466a7b6ebce19c01ef110e9e31e8806bd8d7a2e1f6b",
+        "region": 12,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33448,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 211,
+        "byte_entropy_bits": 6.466298004163332,
+        "sign_entropy_bits": 0.9998092817540853,
+        "exponent_entropy_bits": 2.540895922205891,
+        "mantissa_entropy_bits": 2.9798709743102823,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-13-window-0.fp8",
+        "sha256": "bf0c452a352e7c7a8a08636b1a45ce9b6e7140edbdf95a0ec8d8ee3616688406",
+        "region": 13,
+        "window_index": 0,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33411,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 211,
+        "byte_entropy_bits": 6.465804968703315,
+        "sign_entropy_bits": 0.9999791899991881,
+        "exponent_entropy_bits": 2.544894897875654,
+        "mantissa_entropy_bits": 2.9789537537217683,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-13-window-1.fp8",
+        "sha256": "52deaa8d4af4618026cbf2d77e062d406c6b9ca004d412d7660fba9941f0c89b",
+        "region": 13,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33405,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 208,
+        "byte_entropy_bits": 6.480426486295534,
+        "sign_entropy_bits": 0.9999838180918792,
+        "exponent_entropy_bits": 2.5547815066865867,
+        "mantissa_entropy_bits": 2.9821303163750534,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-14-window-0.fp8",
+        "sha256": "fc573cc065ad2d7105273a6fe3b3f33cd8a1b38a7d38764a0871c4afa9e4c80d",
+        "region": 14,
+        "window_index": 0,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33471,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 211,
+        "byte_entropy_bits": 6.46950194540121,
+        "sign_entropy_bits": 0.9999951690019449,
+        "exponent_entropy_bits": 2.5506950028460604,
+        "mantissa_entropy_bits": 2.978256270013246,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-14-window-1.fp8",
+        "sha256": "d67686e1e31b930e142bdd7ea66019dbc693cac3e2c8e79c7a8e3c85726a6c8a",
+        "region": 14,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33422,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 203,
+        "byte_entropy_bits": 6.477985787760391,
+        "sign_entropy_bits": 0.9998773918146804,
+        "exponent_entropy_bits": 2.5537263409561266,
+        "mantissa_entropy_bits": 2.981057786812272,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-15-window-0.fp8",
+        "sha256": "d91125d16a69a2e8e73408d330f282568e97cc2399e6d3d0332c8fef4dabe010",
+        "region": 15,
+        "window_index": 0,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33463,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      },
+      {
+        "rows": 256,
+        "distinct_exact_vectors": 256,
+        "duplicate_vectors": 0,
+        "all_zero_rows": 0,
+        "distinct_byte_symbols": 216,
+        "byte_entropy_bits": 6.472279055227265,
+        "sign_entropy_bits": 0.9999359372341403,
+        "exponent_entropy_bits": 2.5488589401787713,
+        "mantissa_entropy_bits": 2.9778352998215745,
+        "file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-samples-fab3fab0a86147f98c9ee5e1028e0301\\region-15-window-1.fp8",
+        "sha256": "fdefc231cf2bbad56528366226fc4cf72455f127498e254b8b13ef9246bae777",
+        "region": 15,
+        "window_index": 1,
+        "split": "eval",
+        "huffman_row_payload_bytes": 33440,
+        "shared_codebook_and_scale_accounted_in_aggregate_only": true
+      }
+    ],
+    "huffman": {
+      "encoded_data_bytes": 1071372,
+      "row_directory_bytes": 32772,
+      "row_checksum_bytes": 32768,
+      "canonical_lengths_bytes": 256,
+      "global_scale_bytes": 4,
+      "net_bytes": 1137172,
+      "rows": 8192,
+      "exact_roundtrip": true,
+      "training_bytes": 491520,
+      "evaluation_bytes": 819200,
+      "pseudocount_per_symbol": 1,
+      "independently_byte_aligned_rows": true,
+      "zero_padding_verified": true,
+      "directory_type": "little-endian uint32 offsets with sentinel",
+      "row_checksums": "CRC32; error detection, not cryptographic identity",
+      "raw_bytes_including_scale": 1310724,
+      "net_ratio": 0.8675907361122556,
+      "net_saving_bytes": 173552,
+      "minimum_code_length": 5,
+      "maximum_code_length": 19,
+      "code_length_counts": {
+        "5": 7,
+        "6": 29,
+        "7": 21,
+        "8": 22,
+        "9": 22,
+        "10": 17,
+        "11": 21,
+        "12": 18,
+        "13": 14,
+        "14": 19,
+        "15": 24,
+        "16": 15,
+        "17": 4,
+        "18": 1,
+        "19": 22
+      },
+      "canonical_lengths_hex": "1110100f0f110f0f100f100f0f100f0e0f0f0e0f0e0f0f0e0e0e0e0d0d0e0d0e0d0c0d0c0c0c0d0c0c0b0c0b0b0b0b0c0b0b0a0b0b0b0a0b0a090909090a0909090809090909080908080808080808080707070707070707060606060606060605050505060606060606070708090a0b0b0c0e101313131313131313131313131010100f100f100f0f10100f0f100f100f0f0f0e0e0e0e0f0e0e0e0d0d0d0d0e0d0c0d0c0d0c0c0d0c0c0b0b0c0b0b0c0b0a0a0a0a0a0b0b0a090a09090a0a0a090909080809090808080808080807080707070707070707060606060606060605050506060606060606070708090a0a0b0c0e11111213131313131313131313",
+      "native_decoder_lut_statistics": {
+        "entry_bytes": 2,
+        "minimum_direct_table_bytes": 1048576,
+        "maximum_code_length_at_most12": false,
+        "native_placement_qualified": false
+      }
+    },
+    "block_zlib": [
+      {
+        "rows_per_block": 1,
+        "blocks": 8192,
+        "level": 6,
+        "encoded_data_bytes": 1384163,
+        "block_directory_bytes": 32772,
+        "global_scale_bytes": 4,
+        "net_bytes": 1416939,
+        "exact_roundtrip": true,
+        "checksums": "zlib stream Adler32 included in encoded bytes",
+        "worst_single_row_raw_decode_bytes": 160,
+        "worst_single_row_amplification_rows": 1,
+        "format_overhead_excludes_file_container": true
+      },
+      {
+        "rows_per_block": 4,
+        "blocks": 2048,
+        "level": 6,
+        "encoded_data_bytes": 1177352,
+        "block_directory_bytes": 8196,
+        "global_scale_bytes": 4,
+        "net_bytes": 1185552,
+        "exact_roundtrip": true,
+        "checksums": "zlib stream Adler32 included in encoded bytes",
+        "worst_single_row_raw_decode_bytes": 640,
+        "worst_single_row_amplification_rows": 4,
+        "format_overhead_excludes_file_container": true
+      },
+      {
+        "rows_per_block": 16,
+        "blocks": 512,
+        "level": 6,
+        "encoded_data_bytes": 1104006,
+        "block_directory_bytes": 2052,
+        "global_scale_bytes": 4,
+        "net_bytes": 1106062,
+        "exact_roundtrip": true,
+        "checksums": "zlib stream Adler32 included in encoded bytes",
+        "worst_single_row_raw_decode_bytes": 2560,
+        "worst_single_row_amplification_rows": 16,
+        "format_overhead_excludes_file_container": true
+      },
+      {
+        "rows_per_block": 64,
+        "blocks": 128,
+        "level": 6,
+        "encoded_data_bytes": 1081436,
+        "block_directory_bytes": 516,
+        "global_scale_bytes": 4,
+        "net_bytes": 1081956,
+        "exact_roundtrip": true,
+        "checksums": "zlib stream Adler32 included in encoded bytes",
+        "worst_single_row_raw_decode_bytes": 10240,
+        "worst_single_row_amplification_rows": 64,
+        "format_overhead_excludes_file_container": true
+      },
+      {
+        "rows_per_block": 256,
+        "blocks": 32,
+        "level": 6,
+        "encoded_data_bytes": 1079642,
+        "block_directory_bytes": 132,
+        "global_scale_bytes": 4,
+        "net_bytes": 1079778,
+        "exact_roundtrip": true,
+        "checksums": "zlib stream Adler32 included in encoded bytes",
+        "worst_single_row_raw_decode_bytes": 40960,
+        "worst_single_row_amplification_rows": 256,
+        "format_overhead_excludes_file_container": true
+      }
+    ],
+    "entropy_is_empirical_model_statistic_not_realized_saving": true,
+    "comparison_scope": "sample files and CPU format accounting only; not source fault or consumer latency",
+    "whole_table_extrapolation": false,
+    "live_consumer_implemented": false,
+    "npu_executed": false,
+    "target_weights_changed": false,
+    "speed_claim": false
+  },
+  "native_supervisor_first_attempt": {
+    "passed": false,
+    "errors": [
+      "Original restoration: ValueError: Canonical absolute path required"
+    ],
+    "stages": [
+      {
+        "mode": "control",
+        "command": [
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\host.exe",
+          "--xclbin",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\control\\design.xclbin",
+          "--instructions",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\control\\insts.bin",
+          "--abi",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\control\\design.abi",
+          "--output",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-998d7fb883cc4152af04600799bf7732\\control\\result.json",
+          "--warmups",
+          "8",
+          "--measurements",
+          "48",
+          "--wait-ms",
+          "500",
+          "--deadline-ms",
+          "20000"
+        ],
+        "deadline_seconds": 90,
+        "identity": {
+          "pid": 19844,
+          "creation_time_100ns": 134356990410853940,
+          "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\host.exe"
+        },
+        "exit_code": 0,
+        "owned_job_closed": true,
+        "elapsed_seconds": 0.07800000000861473,
+        "result_sha256": "2017fb470b442ac2ab7879a68a20c9b93931fa31902bb3e52f41d79298cb4bc2"
+      },
+      {
+        "mode": "gemv-vector",
+        "command": [
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\host.exe",
+          "--xclbin",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\gemv-vector\\design.xclbin",
+          "--instructions",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\gemv-vector\\insts.bin",
+          "--abi",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\gemv-vector\\design.abi",
+          "--output",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-998d7fb883cc4152af04600799bf7732\\gemv-vector\\result.json",
+          "--warmups",
+          "8",
+          "--measurements",
+          "48",
+          "--wait-ms",
+          "500",
+          "--deadline-ms",
+          "20000"
+        ],
+        "deadline_seconds": 90,
+        "identity": {
+          "pid": 27620,
+          "creation_time_100ns": 134356990419023499,
+          "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\host.exe"
+        },
+        "exit_code": 0,
+        "owned_job_closed": true,
+        "elapsed_seconds": 0.0629999999946449,
+        "result_sha256": "24da16c73915e14690adf9e1aec8f931b02233ab697ddedf01520a314a52d7dd"
+      }
+    ],
+    "minimum_memory": {
+      "available_bytes": 46776115200,
+      "committed_bytes": 26269274112,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 213867220992
+    },
+    "original_ready_open": false,
+    "NPU_executed": true,
+    "component_probe_only": true,
+    "prefill_decode_gain_measured": false
+  },
+  "interpretation": {
+    "native_fixture_passed": true,
+    "p95_control_gate_us": 150,
+    "control_p95_gate_passed": true,
+    "same_task_as_original_projection": false,
+    "no_latency_subtraction_as_isolated_compute": true,
+    "no_conversion_to_token_rates": true,
+    "lossless_net_saving_screen_percent": 20,
+    "lossless_screen_passed": false,
+    "no_whole_table_extrapolation": true,
+    "deployment": "original GPU-only arena8192; rejected consumers and NPU sidecars off"
+  },
+  "evidence": {
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-998d7fb883cc4152af04600799bf7732\\result.json": "9686bc6f1ee46704e29d3671cba8062df592136223b358b5ba32ef3b42a1d45f",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-lossless-d27e5aa9958946b690231be7e4f92ed2\\result.json": "4d4238eb4a0244637ad5a6fce4e108d8870e5b7aac3b87e817e90ab42499dded",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ple-lossless-d27e5aa9958946b690231be7e4f92ed2\\owned-result.json": "1657ccbfea4c38af055ddc50f7b7f0aaffb40364373dd55d0cdd304a51c817da",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\owned-result.json": "56376e22884e71ea811cda4d294ec3508de9e7a7b5d16cc931841afda54317db",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-build-365096f270e64577b973db31b0046a7f\\artifacts\\build-receipt.json": "83d70ad4b5959d497cee31288d00589797bd30b81e347a37bfaa261085ac3dda",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-998d7fb883cc4152af04600799bf7732\\normal-restoration-9f09a0475e2b40c5a4ff40f7363784a4\\final-ready-fb14893195ea427fb1eba233c65ce85f.json": "d0f389d6760a2834d4676e49ef2a2e6264ecf573dfc27d6171f934a39638f988",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-998d7fb883cc4152af04600799bf7732\\control\\result.json": "2017fb470b442ac2ab7879a68a20c9b93931fa31902bb3e52f41d79298cb4bc2",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-998d7fb883cc4152af04600799bf7732\\control\\completion.json": "d6ae8df8f1a3154b9530aa45564731b3584c83389efae22292523092ccb44e9a",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-998d7fb883cc4152af04600799bf7732\\gemv-vector\\result.json": "24da16c73915e14690adf9e1aec8f931b02233ab697ddedf01520a314a52d7dd",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-dispatch-998d7fb883cc4152af04600799bf7732\\gemv-vector\\completion.json": "052ccf69f2174eb92478638f553617bf5e4a35facd0c9b2f17a1b5639598e51a",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\npu-native-driver-design-20261005.md": "30c1dac20074f54d3f5bf991d8a6ccc86902193984e159c340e632779f1aff64",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\npu-compact-lookup-design-20261005.md": "aa38acc0639468371f00b1830f239fc3e749575aa5772ae54a6b94fff898b561",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\npu-ple-lossless-result-review-20261005.md": "462ae12ca2ee7355e97605b6f43142ce84ac70aa2bc14084189e4c988edd12fe",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\npu-proposal-seam-audit-20261005.md": "076cdf3ea5f0151bcb85de96a7494cb2a4a6cc99273b74a7e6638c24d3b51d36",
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-npu-native-hidden-next-design-20261005.md": "1100fd0dbf7a07890e152dfc222b25c56fd00c944148063d284011f2d3b251c6"
+  }
+}

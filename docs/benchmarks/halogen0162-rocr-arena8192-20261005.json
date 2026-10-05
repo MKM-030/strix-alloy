@@ -1,0 +1,84 @@
+{
+  "schema": "halogen.rocr-arena8192-report.v1",
+  "passed": true,
+  "windows": [
+    {
+      "name": "stock_before",
+      "prefill_tps": 1263.4779979647496,
+      "decode_tps": 41.54473238013474,
+      "accepted": 207,
+      "drafted": 345,
+      "acceptance": 0.6,
+      "prefill_sd": 55.09200061664488,
+      "decode_sd": 0.5963236595805215,
+      "whole_request_seconds": 9.599227166666727
+    },
+    {
+      "name": "source_stock",
+      "prefill_tps": 1276.7897223974473,
+      "decode_tps": 41.15535661139345,
+      "accepted": 207,
+      "drafted": 345,
+      "acceptance": 0.6,
+      "prefill_sd": 29.615516825867054,
+      "decode_sd": 1.4606121899239453,
+      "whole_request_seconds": 9.571035133330346
+    },
+    {
+      "name": "candidate",
+      "prefill_tps": 1341.1561009537702,
+      "decode_tps": 41.77595122943007,
+      "accepted": 207,
+      "drafted": 345,
+      "acceptance": 0.6,
+      "prefill_sd": 5.842404390036975,
+      "decode_sd": 0.3897127379577599,
+      "whole_request_seconds": 9.194757866673172
+    },
+    {
+      "name": "stock_after",
+      "prefill_tps": 1281.714232054292,
+      "decode_tps": 41.58663095478809,
+      "accepted": 207,
+      "drafted": 345,
+      "acceptance": 0.6,
+      "prefill_sd": 18.207738890439423,
+      "decode_sd": 0.4169248803982935,
+      "whole_request_seconds": 9.49435583333252
+    }
+  ],
+  "gains": [
+    {
+      "versus": "stock_before",
+      "prefill_percent": 6.147958501386408,
+      "decode_percent": 0.5565539505217654
+    },
+    {
+      "versus": "source_stock",
+      "prefill_percent": 5.041266970371683,
+      "decode_percent": 1.507931577161492
+    },
+    {
+      "versus": "stock_after",
+      "prefill_percent": 4.6376850169016715,
+      "decode_percent": 0.4552431161057635
+    }
+  ],
+  "actual_input_tokens": 8192,
+  "output_tokens": 128,
+  "warmups_per_window": 1,
+  "measured_per_window": 3,
+  "context_capacity": 262144,
+  "prefill_chunk": 8192,
+  "max_prefill_tokens": 8192,
+  "NPU_executed": false,
+  "adopted": false,
+  "original_ready_open": true,
+  "evidence": {
+    "result": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rocr-engine-stock8k-d93d15cb8e1d423c8da19bfe4f8d21ef\\result.json",
+    "sha256": "2582945a9bb5b0f4224f6d55cfc5d7d10e388b30314965a34a4a67be61d8a42b",
+    "restoration": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rocr-engine-stock8k-d93d15cb8e1d423c8da19bfe4f8d21ef\\current-arena-final-ready.json"
+  },
+  "source_composition_commit": "3d2297f",
+  "note": "Frozen generated pseudo-prose input with original story continuation; not fully natural input. No general speedup, recovered48.42 or acceptance gain claim. Prefill means positive; installed-stock decode gains below0.6% and within request spread. New direct human NPU-design work takes priority before any long extension."
+}
