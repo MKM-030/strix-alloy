@@ -1,0 +1,153 @@
+{
+  "schema": "halogen.native-hidden-implementation.v1",
+  "date": "2026-10-05",
+  "default_off": true,
+  "source_hashes": {
+    "scripts/benchmarks/halogen_npu_native_hidden/build.ps1": "e2dce985262e4b4103b8314cbf5649cf93707e9309108ae20d84ba8172a10b1e",
+    "scripts/benchmarks/halogen_npu_native_hidden/contract.h": "d0f9f88bfc674456cbd73ff906a8e8453d2bd3f3dcfb1e5040211208800929d9",
+    "scripts/benchmarks/halogen_npu_native_hidden/exact_decode.h": "19ae53a93d333074005dd55031e11e550b09bd15e9396e02ad0d550933da4cac",
+    "scripts/benchmarks/halogen_npu_native_hidden/generate.py": "8c8120569aa1cef14b994cd69fb2e323eb8e6db20ac781df95f1b3946f2736d9",
+    "scripts/benchmarks/halogen_npu_native_hidden/host.cpp": "e55ecbf4998bcb24b85bcfc92e8a8355e9f98b5c0f68ad2121c98882a7ef6dbf",
+    "scripts/benchmarks/halogen_npu_native_hidden/kernels.cc": "792c1327f2d8fe16a16e50085fc361c6435454665e003b1bf53021a620f5235d",
+    "scripts/benchmarks/halogen_npu_native_hidden/LICENSE.txt": "a12f12d8de982f1a526f96b46d03abd5cf3a3fe2d0935a847f0aeb11fe980e85",
+    "scripts/benchmarks/halogen_npu_native_hidden/native_tcp_adapter.cpp": "24beef3f3735e815653a79c6f45a72c383362958eeeb12ac935355b15dd38ad0",
+    "scripts/benchmarks/halogen_npu_native_hidden/pack.py": "1377ae27a909815a354a36c61b51c19540581a7cab059f8962f302c7bb6f3c5f",
+    "scripts/benchmarks/halogen_npu_native_hidden/README.md": "efa78120e7814b868b637fb1d9af5a07364a8c578ffd0dcb3a97b966235fd86e",
+    "scripts/benchmarks/halogen_npu_native_hidden/TCP_ADAPTER.md": "663700fd7310d2e1dc221048336d981bad1609bc51b30fc93a327dad2330102d",
+    "scripts/benchmarks/halogen_npu_native_hidden/test_pack.py": "a12ba667d9260937bb7f0ab9f23346e5833204c381456373a690d8dca9c6964f",
+    "scripts/benchmarks/halogen_npu_native_hidden/test_pack_bound.py": "4f5a90b34d0a58310b99495def2ef8d33450df75a03a999bee6123ea9dda87bb",
+    "scripts/benchmarks/halogen_npu_native_hidden/verify_emission.py": "5e950080cb50f37cbd52f0e2533a22f13348cd43369b4f12cec192d5ba3dfc61",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/bf16_round.h": "612dcd608f990ae6b20e60fa25cfccbbb2c601aef990922bc4c97bf978d12456",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/build.ps1": "5e5bbecdbe5f8c8d4f0e2291fb5a6067a386dd037feb886f98a20ec2923d386e",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/contract.h": "72331d907083f6ad017b20b197ef5a11801e28c61416717fad64368b3145b4bd",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/generate.py": "3289a577c514641b914b88f24f23f39119458aa71b3f5bc24acbdd065e4de37a",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/host.cpp": "932d318827203d3b9d439ca78063dbaa2c9a384e34d8204631b791a08e300938",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/kernels.cc": "c78a204b89198ae14d8207028677639280e2500fe950006684670325db98cfd1",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/LICENSE.txt": "a12f12d8de982f1a526f96b46d03abd5cf3a3fe2d0935a847f0aeb11fe980e85",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/native_tcp_adapter.cpp": "24beef3f3735e815653a79c6f45a72c383362958eeeb12ac935355b15dd38ad0",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/numeric_reference.py": "73cf7859aa8fceafb7ad34b85f95be70e65b0cd1da8d4dd90239f3a2d71562ba",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/pack.py": "80949694efff695d16d8bfdf251129c1b3ffa1ed5b6e1331d988d1f9e4323c70",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/README.md": "e58dd9dc2485cc381fb4aa1838d4095b87a7a9eec5d661957fb09e5483f6e0d5",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/TCP_ADAPTER.md": "e6b02bb82cd2b12328bc3119bb93e4722f8684f32931fefb05441000927415ea",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/test_pack.py": "8e0569f54c707fc2b4a4254ee93b5cd6db437dd1ca11d1ebf987cc9cfaa6cc5a",
+    "scripts/benchmarks/halogen_npu_native_hidden_decoded/verify_emission.py": "503f41244acbbed2f460688dce29d6014972925dced7a6d82da633352533f23b",
+    "scripts/benchmarks/halogen0162_mtp_h_native_replace.c": "899ef082b789d73c2d8eaefd07ca5483d69aff0090ad97ac453627e758c1e094",
+    "scripts/benchmarks/halogen_mtp_h_bridge.c": "b42a64816a7c08d4bf199268c34c6de7aee90dcdba7e2af75cfb4b6f1d27f2b1",
+    "scripts/benchmarks/halogen_mtp_h_bridge_probe.py": "de0cb2e76b514c4d8d0e030ceb6ac5d09535fc8007a75983227c1c781ea28bb3",
+    "scripts/benchmarks/halogen_mtp_h_wire.h": "c8402dbdfbe36c62a8515c652bb8068652172855d90d68ee4258fbf8d3cdf5be",
+    "scripts/benchmarks/halogen_mtp_h_wire.py": "727ac9426c377afb7523ae7cbe63acc42c4a3ec3ac1dd04ad00ae63afc2914b4",
+    "scripts/benchmarks/halogen_npu_native_hidden_owned_build.py": "2ff4a9725917614fc40f3265b4675d7add4d5901af55d4d159a281e44e070f91"
+  },
+  "arithmetic_reference": {
+    "path": "docs/research/halogen-npu-hidden-numeric-20261005.json",
+    "exact_frozen_BF16_words": 20480,
+    "full_native_parity_qualified": false
+  },
+  "packed": {
+    "build_result": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-build-1e686fcec1224cfdacbc3edc12d01c5e\\owned-result.json",
+    "build_result_sha256": "e038c470ec1254c06b2e92687d8e2d241039c9959315fddcb9f289173b20f98c",
+    "build_passed": true,
+    "artifacts_abi_sha256": "855d511b81dcfd1c043b4e5529576c54bcd77841ce5af5767d32e68302812d13",
+    "linked_core_count": 32,
+    "linked_static_stack_verified": true,
+    "weight_bytes": 6963200,
+    "ddr_bytes_per_call": 7147520
+  },
+  "decoded": {
+    "source_review_released": true,
+    "source_layout_tests_passed": 3,
+    "build_executed": false,
+    "NPU_executed": false,
+    "weight_bytes": 13107200,
+    "ddr_bytes_per_call": 13291520
+  },
+  "real_H_probe_attempts": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-component-ef95c3b70c084fe99e4280034017f322\\result.json",
+      "sha256": "08f9a7d8a7aff5e882003c0e4fe1f606fb0da1246f214742248ed36566c6d50f",
+      "result": {
+        "passed": false,
+        "errors": [
+          "RuntimeError: Backend cleanup/recovery is unresolved; matrix halted",
+          "Original restoration: RuntimeError: Backend cleanup/recovery is unresolved; matrix halted"
+        ],
+        "stages": [],
+        "minimum_memory": null,
+        "original_ready_open": false,
+        "NPU_executed": false,
+        "component_probe_only": true,
+        "prefill_decode_gain_measured": false
+      }
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-recovery-52356cddb3284608be876818eac25d1a\\result.json",
+      "sha256": "72401d2e6a9bc84a60946e650858c4a97c06017713fe8216f8d801ea1a41e180",
+      "result": {
+        "passed": false,
+        "errors": [
+          "AssertionError: Original process IDs live; no recovery publication",
+          "Restoration: AssertionError: Original process IDs live; no recovery publication"
+        ],
+        "stages": [],
+        "minimum_memory": {
+          "available_bytes": 45274775552,
+          "committed_bytes": 28562608128,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 211576832000
+        },
+        "original_ready_open": false,
+        "NPU_executed": false,
+        "component_probe_only": true,
+        "prefill_decode_gain_measured": false,
+        "original_failure_preserved": true,
+        "supplemental_publication_complete": true
+      }
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-recovery-f1a271da69364ace8af1ada8b5eaeafe\\result.json",
+      "sha256": "6633efe087fcc90f99e33e22d68e473c672b363fb5f5c612655d42b878493e10",
+      "result": {
+        "passed": false,
+        "errors": [
+          "AssertionError: ",
+          "Restoration: RuntimeError: Retained controller exited before ready: 2"
+        ],
+        "stages": [],
+        "minimum_memory": {
+          "available_bytes": 45299830784,
+          "committed_bytes": 28501454848,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 211637985280
+        },
+        "original_ready_open": false,
+        "NPU_executed": false,
+        "component_probe_only": true,
+        "prefill_decode_gain_measured": false,
+        "original_failure_preserved": true,
+        "supplemental_publication_complete": true
+      }
+    }
+  ],
+  "real_H_NPU_calls": 0,
+  "full_head_qualified": false,
+  "Windows_WSL_live_transport_qualified": false,
+  "new_prefill_decode_acceptance_measurement": false,
+  "engine_acceleration_qualified": false,
+  "driver_changed": false,
+  "global_WSL_settings_changed": false,
+  "gates": {
+    "physical_runtime_gib": 18,
+    "commit_runtime_gib": 18,
+    "NPU_request_gib": 22,
+    "v2_context262144_physical_gib": 44,
+    "v2_context262144_commit_gib": 131
+  },
+  "GPU_admission": {
+    "timestamp_utc": "2026-10-05T20:10:48.5041807Z",
+    "gpu_max_utilization_percentage": 1.0919419984895855,
+    "sample_count": 782,
+    "game_count": 0
+  },
+  "blocked_probe_reason": "Fresh GPU maximum1.091942% exceeded the existing<=1% screen; no native child launched",
+  "server_status": "Original restoration is a separate live owned handle; inspect continuation-current.json; no readiness assertion from this source report"
+}
