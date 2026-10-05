@@ -42,7 +42,7 @@ Each cell is two three-turn conversations at temperature 1 / top-p .95 / top-k 2
 | GUFO / Windows | UD-IQ4_XS + Q8_0 MTP | 5.10 min | 611.1 | 32.45 | 73.1% | 16/16 |
 | PROJFIX / Windows, cache0 | IQ4_NL-PROJFIX + Q8_0 MTP | Reserve failure | — | — | — | Not scored |
 
-GUFO is quicker at 32K input; Halogen has the shorter conversation at larger inputs among completed results. Every completed cell retrieved all its exact values. Halogen's 37.25 t/s row uses approximately 65536 input tokens; its 1398.7 prefill / 36.72 decode / 83.6% acceptance row uses approximately 98304 input tokens. The last Halogen row is **131099 actual input tokens in a 262144-capacity engine**, measuring 1248.2 prefill / 33.90 decode / 85.0% acceptance. No qualified regular-decode result at 260K actual input is retained.
+GUFO is quicker at 32K input; Halogen has the shorter conversation at larger inputs among completed results. Every completed cell retrieved all its exact values. Halogen's 37.25 t/s row uses approximately 65536 input tokens; its 1398.7 prefill / 36.72 decode / 83.6% acceptance row uses approximately 98304 input tokens. The last Halogen row is **131099 actual input tokens in a 262144-capacity engine**, measuring 1248.2 prefill / 33.90 decode / 85.0% acceptance. That 3 October comparison did not measure 260K actual input; a separate 5 October greedy measurement is below.
 
 Halogen used stock compute and Exact cache. Its startup MTP depth was 2, but the sampled path proposes one token per round regardless of that setting; depth tuning applies to greedy requests. GUFO used proposal cap 3/full vocabulary/length policy, prefill 2048, without prompt lookup; PROJFIX used MTP-host depth 1 / `--cache-ram 0`. Initial requests were cold and follow-ups reused history in every completed cell. [Halogen sampled-depth evidence](https://github.com/MKM-030/strix-alloy/blob/main/docs/research/halogen-sampled-mtp-depth-20261004.md).
 
@@ -79,3 +79,16 @@ Initial prefill was 1441 t/s with the native file, versus 989 and 1109 t/s for t
 On 4 October, with 8192 input tokens, 128 output tokens, cache Off and MTP depth2, the first fresh stock control averaged **1866.537 t/s prefill and 48.4236 t/s regular greedy MTP decode** across three paired requests. The second stock control averaged **1885.854 t/s prefill and 48.2804 t/s decode** across three paired requests. Each control had **207/345 = 60% draft acceptance**. Separate serial PP8192/TG1 was 1873–1924 t/s; serial decode was 36.73–37.03 t/s. Turning prompt lookup off gave 48.23 t/s and the same acceptance, so I kept stock. All answers and token counts matched. This is an 8K-input check in a 262144-capacity engine, separate from the sampled long-chat tables above. [Full comparison](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/halogen0162-pld-stock8k-20261004.md).
 
 The older late pristine stock control on 3 October used **16384 input / 128 output tokens** and averaged **1647.279 t/s prefill and 45.3427 t/s regular greedy MTP decode** across three paired requests, with **56.3025% draft acceptance**, cache Off and MTP depth2 at the same 262144 capacity. This 16K control was **not rerun after the reboot**. Its separate serial PP16384/TG1 mean was 1680.803 t/s. [Retained 16K evidence](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/halogen0162-upgrade-20261003-evidence.json).
+
+**5 October update: actual 128K and 260K inputs**
+
+I reran Halogen with exact 131072 and 260000 input tokens, rather than using the context capacity as the input length. These are once-only War and Peace prefixes followed by the same story-writing task. The output is ordinary prose, with no repeated blocks.
+
+| Actual input tokens | Prefill t/s | MTP decode t/s | Draft acceptance |
+|---:|---:|---:|---:|
+| 131072 | 1177.60 | 36.67 | 47.33% (186/393) |
+| 260000 | 1104.87 | 36.81 | 51.20% (192/375) |
+
+Each row is the mean of three runs after one excluded warmup: 128 output tokens, greedy temperature0/seed1, thinking off, prompt cache Off, MTP depth2 and PLD3,3. The native acceptance counters cover that configured draft path. Both sizes ran on the same 262144-capacity instance with `HALOGEN_MAX_TOK=8192` and `HALOGEN_PREFILL_CHUNK=8192`. The engine reported 5.6 GiB of working memory, versus 12.3 GiB for the earlier 32768 arena.
+
+These use different prompts and sampling settings from the long-chat tables, so they are separate results, not an optimization delta. The earlier 48.42 t/s remains an **8K-input** result. The NPU was off: no full-engine NPU speedup has been demonstrated. [Runs, warmups and evidence](https://github.com/MKM-030/strix-alloy/blob/main/docs/benchmarks/halogen0162-natural-long-20261005.md).
