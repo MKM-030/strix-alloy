@@ -1,0 +1,469 @@
+{
+  "schema": "halogen_native_q8_hidden_offline_numeric.v1",
+  "source_sha256": "73cf7859aa8fceafb7ad34b85f95be70e65b0cd1da8d4dd90239f3a2d71562ba",
+  "scope": "bounded offline hidden-FC arithmetic diagnosis; no hardware or engine changes",
+  "schedule": {
+    "lanes": 16,
+    "values_per_block": 16,
+    "dot2_per_block": 8,
+    "iterations": 10,
+    "block_accumulator_reset": true,
+    "lane_add_is_separate_fp32": true,
+    "xor_reduction": [
+      8,
+      4,
+      2,
+      1
+    ]
+  },
+  "dot2_instruction_rounding_proved": false,
+  "native_bit_parity_qualified": false,
+  "gpu_or_npu_executed": false,
+  "npu_hardware_screen_run": false,
+  "dot2_models": {
+    "fused": "RN32(exact p0+p1+acc)",
+    "sequential": "RN32(RN32(exact acc+p0)+p1)",
+    "pair_then_acc": "RN32(acc+RN32(exact p0+p1))"
+  },
+  "scalar_arithmetic": "exact integer dyadics; FP32/BF16 RNE, gradual underflow, finite operands",
+  "vector_arithmetic_proof": "BF16 products have <=16 significant bits and exponents within FP64 normal range; TwoSum identifies every inexact FP64 addition and falls back to scalar integer dot2; standalone FP32 additions preserve recovered lane/reduction rounding",
+  "shader_schedule_source": {
+    "symbol": "_ZN7halogen12_GLOBAL__N_16k_lq8wILi4ELi16ELi1EEEvPKhPKtPtll",
+    "retained_code_object_sha256": "45941c0579dc3487d07978a50c85cbaa141bbb674b225e708e82d81397334a83",
+    "recovered_by": "CPU-only llvm-objdump disassembly of existing engine-gfx1151.hsaco"
+  },
+  "frozen_tolerances": {
+    "cpu": {
+      "rtol": 0.002,
+      "atol": 0.0002
+    },
+    "npu": {
+      "rtol": 0.03,
+      "atol": 0.003
+    }
+  },
+  "fixture_manifest_sha256": "ae61a7924d985b1fd35e5d87eabd47736dbf20b91958bd5d7003dcf1cdb84f11",
+  "native_replay_manifest_sha256": "2fb0f6a198581156e430301064acef3e41d10a99e0a0cd06ab5ae9a16b8ed5fb",
+  "weight_sha256": "018511894df3996e3a2fcb1dff60860c45a808b65036fd38db472b6e985bdd3f",
+  "decoder": "exact u8*FP16+FP16 affine; one FP32 RNE then BF16 RNE",
+  "affine_multiply_exact_reason": "u8 <=8 and FP16 <=11 significant bits; product <=19 bits fits FP32",
+  "input_contract": "unchanged original whole-row RMS10240 BF16 reshaped [4,2560]",
+  "cases": {
+    "A": {
+      "input_sha256": "bf43576e6a9d47efb9a15bcba42d74618ade2ea64b025e747d1c6960e2ddff34",
+      "oracle_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "models": {
+        "fused": {
+          "comparison": {
+            "elements": 10240,
+            "exact_BF16_word_mismatches": 0,
+            "max_abs_error": 0.0,
+            "cpu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.002,
+                "atol": 0.0002
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "npu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.03,
+                "atol": 0.003
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "mismatches": []
+          },
+          "arithmetic_checks": {
+            "exact_integer_fallback_dot2_count": 0,
+            "dot2_count": 13107200,
+            "nonzero_input_subnormals": 0,
+            "nonzero_weight_subnormals": 0
+          },
+          "elapsed_seconds": 0.648,
+          "focused_scalar_integer_checks_passed": true,
+          "output_fp32_sha256": "ed7a5f83427913ac35021ea4e1e5fb0082fd2d755630be01d280547458ac914f",
+          "output_bf16_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+          "focused_values": [
+            {
+              "index": 1729,
+              "fp32_word": "0x3e0515d4",
+              "fp32": 0.12996608018875122,
+              "bf16_word": "0x3e05",
+              "oracle_word": "0x3e05"
+            },
+            {
+              "index": 7029,
+              "fp32_word": "0xbe20cb6a",
+              "fp32": -0.15702596306800842,
+              "bf16_word": "0xbe21",
+              "oracle_word": "0xbe21"
+            }
+          ]
+        },
+        "sequential": {
+          "comparison": {
+            "elements": 10240,
+            "exact_BF16_word_mismatches": 0,
+            "max_abs_error": 0.0,
+            "cpu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.002,
+                "atol": 0.0002
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "npu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.03,
+                "atol": 0.003
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "mismatches": []
+          },
+          "arithmetic_checks": {
+            "exact_integer_fallback_dot2_count": 0,
+            "dot2_count": 13107200,
+            "nonzero_input_subnormals": 0,
+            "nonzero_weight_subnormals": 0
+          },
+          "elapsed_seconds": 0.749,
+          "focused_scalar_integer_checks_passed": true,
+          "output_fp32_sha256": "335d8af30ffe5583f3ec38749711c61081efbbb49a3a3f7c7c69fdf1d540c87c",
+          "output_bf16_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+          "focused_values": [
+            {
+              "index": 1729,
+              "fp32_word": "0x3e0515d4",
+              "fp32": 0.12996608018875122,
+              "bf16_word": "0x3e05",
+              "oracle_word": "0x3e05"
+            },
+            {
+              "index": 7029,
+              "fp32_word": "0xbe20cb6a",
+              "fp32": -0.15702596306800842,
+              "bf16_word": "0xbe21",
+              "oracle_word": "0xbe21"
+            }
+          ]
+        },
+        "pair_then_acc": {
+          "comparison": {
+            "elements": 10240,
+            "exact_BF16_word_mismatches": 0,
+            "max_abs_error": 0.0,
+            "cpu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.002,
+                "atol": 0.0002
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "npu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.03,
+                "atol": 0.003
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "mismatches": []
+          },
+          "arithmetic_checks": {
+            "exact_integer_fallback_dot2_count": 0,
+            "dot2_count": 13107200,
+            "nonzero_input_subnormals": 0,
+            "nonzero_weight_subnormals": 0
+          },
+          "elapsed_seconds": 0.663,
+          "focused_scalar_integer_checks_passed": true,
+          "output_fp32_sha256": "9bc789f144e0f7640d24938a4b5449a8474e376c3a984301d99163f214e90e9d",
+          "output_bf16_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+          "focused_values": [
+            {
+              "index": 1729,
+              "fp32_word": "0x3e0515d4",
+              "fp32": 0.12996608018875122,
+              "bf16_word": "0x3e05",
+              "oracle_word": "0x3e05"
+            },
+            {
+              "index": 7029,
+              "fp32_word": "0xbe20cb6a",
+              "fp32": -0.15702596306800842,
+              "bf16_word": "0xbe21",
+              "oracle_word": "0xbe21"
+            }
+          ]
+        }
+      },
+      "retained_cpu_comparison": {
+        "elements": 10240,
+        "exact_BF16_word_mismatches": 2,
+        "max_abs_error": 0.000244140625,
+        "cpu_frozen_screen": {
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "passed": true,
+          "out_of_tolerance_elements": 0
+        },
+        "npu_frozen_screen": {
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "passed": true,
+          "out_of_tolerance_elements": 0
+        },
+        "mismatches": [
+          {
+            "index": 5608,
+            "stream": 2,
+            "output": 488,
+            "actual_word": "0xb886",
+            "oracle_word": "0xb885"
+          },
+          {
+            "index": 5974,
+            "stream": 2,
+            "output": 854,
+            "actual_word": "0x3d03",
+            "oracle_word": "0x3d02"
+          }
+        ]
+      },
+      "retained_cpu_focused_values": [
+        {
+          "index": 1729,
+          "value": 0.1298828125,
+          "bf16_word": "0x3e05"
+        },
+        {
+          "index": 7029,
+          "value": -0.1572265625,
+          "bf16_word": "0xbe21"
+        }
+      ]
+    },
+    "B": {
+      "input_sha256": "0a46c80b3de775d94eee31b1ca4b3927fe8368353f12f5a40314d88591a31711",
+      "oracle_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "models": {
+        "fused": {
+          "comparison": {
+            "elements": 10240,
+            "exact_BF16_word_mismatches": 0,
+            "max_abs_error": 0.0,
+            "cpu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.002,
+                "atol": 0.0002
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "npu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.03,
+                "atol": 0.003
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "mismatches": []
+          },
+          "arithmetic_checks": {
+            "exact_integer_fallback_dot2_count": 0,
+            "dot2_count": 13107200,
+            "nonzero_input_subnormals": 0,
+            "nonzero_weight_subnormals": 0
+          },
+          "elapsed_seconds": 0.616,
+          "focused_scalar_integer_checks_passed": true,
+          "output_fp32_sha256": "e0a26e4be7494d6f105597e1788f74af7c8f55460df1ce49cd9cf193d274477b",
+          "output_bf16_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+          "focused_values": [
+            {
+              "index": 1729,
+              "fp32_word": "0x3d817ffc",
+              "fp32": 0.06323239207267761,
+              "bf16_word": "0x3d81",
+              "oracle_word": "0x3d81"
+            },
+            {
+              "index": 7029,
+              "fp32_word": "0xbe337ffe",
+              "fp32": -0.1752929389476776,
+              "bf16_word": "0xbe33",
+              "oracle_word": "0xbe33"
+            }
+          ]
+        },
+        "sequential": {
+          "comparison": {
+            "elements": 10240,
+            "exact_BF16_word_mismatches": 0,
+            "max_abs_error": 0.0,
+            "cpu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.002,
+                "atol": 0.0002
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "npu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.03,
+                "atol": 0.003
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "mismatches": []
+          },
+          "arithmetic_checks": {
+            "exact_integer_fallback_dot2_count": 0,
+            "dot2_count": 13107200,
+            "nonzero_input_subnormals": 0,
+            "nonzero_weight_subnormals": 0
+          },
+          "elapsed_seconds": 0.858,
+          "focused_scalar_integer_checks_passed": true,
+          "output_fp32_sha256": "40046e81df7a31c75a40fac21c97e2e403eeca9bcb1d964f48250444d6e3b24a",
+          "output_bf16_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+          "focused_values": [
+            {
+              "index": 1729,
+              "fp32_word": "0x3d817ffc",
+              "fp32": 0.06323239207267761,
+              "bf16_word": "0x3d81",
+              "oracle_word": "0x3d81"
+            },
+            {
+              "index": 7029,
+              "fp32_word": "0xbe337ffe",
+              "fp32": -0.1752929389476776,
+              "bf16_word": "0xbe33",
+              "oracle_word": "0xbe33"
+            }
+          ]
+        },
+        "pair_then_acc": {
+          "comparison": {
+            "elements": 10240,
+            "exact_BF16_word_mismatches": 0,
+            "max_abs_error": 0.0,
+            "cpu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.002,
+                "atol": 0.0002
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "npu_frozen_screen": {
+              "tolerance": {
+                "rtol": 0.03,
+                "atol": 0.003
+              },
+              "passed": true,
+              "out_of_tolerance_elements": 0
+            },
+            "mismatches": []
+          },
+          "arithmetic_checks": {
+            "exact_integer_fallback_dot2_count": 0,
+            "dot2_count": 13107200,
+            "nonzero_input_subnormals": 0,
+            "nonzero_weight_subnormals": 0
+          },
+          "elapsed_seconds": 0.825,
+          "focused_scalar_integer_checks_passed": true,
+          "output_fp32_sha256": "b8f8db57571593afedf67cc435f8dedaba03eb9449b842b6d59db68e42dffd0b",
+          "output_bf16_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+          "focused_values": [
+            {
+              "index": 1729,
+              "fp32_word": "0x3d817ffc",
+              "fp32": 0.06323239207267761,
+              "bf16_word": "0x3d81",
+              "oracle_word": "0x3d81"
+            },
+            {
+              "index": 7029,
+              "fp32_word": "0xbe337ffe",
+              "fp32": -0.1752929389476776,
+              "bf16_word": "0xbe33",
+              "oracle_word": "0xbe33"
+            }
+          ]
+        }
+      },
+      "retained_cpu_comparison": {
+        "elements": 10240,
+        "exact_BF16_word_mismatches": 2,
+        "max_abs_error": 0.0009765625,
+        "cpu_frozen_screen": {
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.0002
+          },
+          "passed": false,
+          "out_of_tolerance_elements": 2
+        },
+        "npu_frozen_screen": {
+          "tolerance": {
+            "rtol": 0.03,
+            "atol": 0.003
+          },
+          "passed": true,
+          "out_of_tolerance_elements": 0
+        },
+        "mismatches": [
+          {
+            "index": 1729,
+            "stream": 0,
+            "output": 1729,
+            "actual_word": "0x3d82",
+            "oracle_word": "0x3d81"
+          },
+          {
+            "index": 7029,
+            "stream": 2,
+            "output": 1909,
+            "actual_word": "0xbe34",
+            "oracle_word": "0xbe33"
+          }
+        ]
+      },
+      "retained_cpu_focused_values": [
+        {
+          "index": 1729,
+          "value": 0.0634765625,
+          "bf16_word": "0x3d82"
+        },
+        {
+          "index": 7029,
+          "value": -0.17578125,
+          "bf16_word": "0xbe34"
+        }
+      ]
+    }
+  },
+  "cpu_report_sha256": "9590a62a09f365a25fe71c6b1e2a7a1106b19d9ba6786e827ce4540f9641d938",
+  "diagnosis": {
+    "all_evaluated_models_match_all_retained_oracle_BF16_words": true,
+    "retained_oracle_cannot_distinguish_dot2_internal_rounding": true,
+    "limitation": "Agreement is limited to retained A/B BF16 outputs; instruction semantics and NPU execution remain unqualified"
+  }
+}
