@@ -29,6 +29,19 @@ independent source review found no blocking layout/arithmetic/bounds/ABI issue.
 This sibling has not been built or executed. The packed build's stack evidence
 does not qualify it. Operation counts alone establish no speed advantage.
 
+An independent source cost review found 6,553,600 scalar affine decodes per
+complete packed call, followed by 1,638,400 sixteen-lane BF16 MAC calls. The
+current vector construction contains 13,107,200 lane-loop iterations and
+52,428,800 scalar load/set pairs in source, with weight gathering repeated for
+four streams. These counts describe the source, not measured instructions or
+cycle costs; compiler transformations may change them. Thus the first real-H
+screen must establish output validity and initial complete cost before further
+kernel variants. If device work dominates, the existing decoded sibling is the
+next concrete compute/bandwidth experiment. A later lossless lane-major layout
+could replace scalar gathers with contiguous vector loads while preserving
+original lane membership, MAC order, block additions and XOR reduction. That
+layout remains unimplemented and has no performance qualification.
+
 The shared binary wire and private TCP/pipe bridge avoid packet files and
 millisecond polling. The H consumer can skip the original projection after a
 complete validated result; before publication, failure falls back once to the
@@ -61,7 +74,21 @@ Current live identities/status belong to ignored
 `server/.local/optimization9h-20261004/continuation-current.json`; this document
 does not assert that the server is ready.
 
-Only after adequate resident memory, an isolated real-H accuracy/latency result,
+The separate stopped-server component coordinator has now been corrected and
+independently reviewed at source SHA256
+`e08750d156b7e63114c1c80ba9a27dfb180552ec5b066f370347cf536feb70d3`.
+It retains suspended process ownership and recovery owners, checks runner lock,
+container/listener isolation during execution and after completion, and keeps
+the recovery latch until owned closure is confirmed. Host launch and confirmed
+native call count are recorded separately. Syntax compilation passed; this is
+not a hardware result. Its finite two-input, zero-warmup screen can run at the
+existing 22/18-GiB standalone bounds while the original engine is already
+terminal. League of Legends PID25960 currently prevents a clean hardware window;
+no child was launched. A fresh read-only container inventory was empty and
+observed 40.62 GiB physical reserve after WSL activation, below the separate
+44-GiB server-start floor. This single sample is not stable startup admission.
+
+Only after an isolated real-H accuracy/latency result, adequate resident memory,
 and a useful complete replacement cost would a regular, bookended engine cohort
 be justified. Component microseconds must not be converted into tok/s. The NPU
 runtime preserves the original numerical tolerances; the server preserves all
