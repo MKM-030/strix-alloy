@@ -1,0 +1,672 @@
+{
+  "schema_version": 1,
+  "scope": "one finite offline exact tokenizer comparison; standard library only",
+  "created_utc": "2026-10-05T22:02:29Z",
+  "prepared_repo": "FastFlowLM/Qwen3.5-0.8B-NPU2",
+  "selected_branch": "flm_q4k_high_precision",
+  "resolved_immutable_commit": "1d16e5eaa2508889fb88eb1bfab1921a30a1a466",
+  "cached_pin_verified": true,
+  "cache_search_roots": [
+    "C:\\AI\\models",
+    "C:\\AI\\runtimes",
+    "C:\\Users\\Marcel\\.cache\\huggingface"
+  ],
+  "cache_candidates": [
+    {
+      "path": "C:\\AI\\models\\flm-npu-probe\\models\\Qwen3-0.6B-NPU2\\tokenizer.json",
+      "bytes": 11422654
+    },
+    {
+      "path": "C:\\AI\\models\\ciru-halo-agent\\bundle\\models\\target\\tokenizer.json",
+      "bytes": 12807982,
+      "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+    },
+    {
+      "path": "C:\\AI\\models\\halogen-flashnext\\tokenizer\\tokenizer.json",
+      "bytes": 12809320
+    },
+    {
+      "path": "C:\\AI\\models\\halogen-27b\\tokenizer\\tokenizer.json",
+      "bytes": 12809320
+    },
+    {
+      "path": "C:\\AI\\models\\qwen3-forced-aligner\\Qwen3-ForcedAligner-0.6B-hf\\tokenizer.json",
+      "bytes": 11429842
+    },
+    {
+      "path": "C:\\AI\\models\\omni\\YihongJin\\Qwen3-Omni-30B-A3B-Instruct-NVFP4-W4A4-full-thinker-awqclip\\tokenizer.json",
+      "bytes": 11424262
+    },
+    {
+      "path": "C:\\AI\\models\\omni\\VikramPal\\Qwen3-Omni-30B-A3B-S2S-DynQuant-4bit\\tokenizer.json",
+      "bytes": 11424262
+    },
+    {
+      "path": "C:\\AI\\models\\omni\\cyankiwi\\Qwen3-Omni-30B-A3B-Instruct-AWQ-4bit\\tokenizer.json",
+      "bytes": 11423986
+    }
+  ],
+  "candidate_found_in_cache": "C:\\AI\\models\\ciru-halo-agent\\bundle\\models\\target\\tokenizer.json",
+  "download_receipts": [
+    {
+      "requested_url": "https://huggingface.co/api/models/FastFlowLM/Qwen3.5-0.8B-NPU2/revision/flm_q4k_high_precision",
+      "saved_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\revision-metadata.json",
+      "bytes": 9377,
+      "sha256": "0cf069b08b78fe79c8a01c4d4c12d0c50dd5e509a3ed3e321b8427f1c45c0d97",
+      "limit_bytes": 2097152,
+      "reused_pinned_text_acquired_by_previous_attempt": true,
+      "network_retrieved_this_execution": false
+    },
+    {
+      "requested_url": "https://huggingface.co/FastFlowLM/Qwen3.5-0.8B-NPU2/resolve/1d16e5eaa2508889fb88eb1bfab1921a30a1a466/tokenizer_config.json",
+      "saved_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\tokenizer_config.json",
+      "bytes": 16788,
+      "sha256": "485aad30cae5f2280d6050a01f9160c435ee5aeabaf4fda7dd59b76ccc8b1f4c",
+      "limit_bytes": 131072,
+      "reused_pinned_text_acquired_by_previous_attempt": true,
+      "network_retrieved_this_execution": false
+    },
+    {
+      "requested_url": "https://huggingface.co/FastFlowLM/Qwen3.5-0.8B-NPU2/resolve/1d16e5eaa2508889fb88eb1bfab1921a30a1a466/config.json",
+      "saved_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\config.json",
+      "bytes": 3098,
+      "sha256": "a571afa7fca18a6ecb4c0c2dbc7758204b442804056280e85d4e2d6c582c70c3",
+      "limit_bytes": 131072,
+      "reused_pinned_text_acquired_by_previous_attempt": true,
+      "network_retrieved_this_execution": false
+    },
+    {
+      "requested_url": "https://huggingface.co/FastFlowLM/Qwen3.5-0.8B-NPU2/resolve/1d16e5eaa2508889fb88eb1bfab1921a30a1a466/chat_template.jinja",
+      "saved_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\chat_template.jinja",
+      "bytes": 7545,
+      "sha256": "0537aa8f59cf80f23dfd42253649959caf944d50f4214ce6b3efb766ce0bd079",
+      "limit_bytes": 131072,
+      "reused_pinned_text_acquired_by_previous_attempt": true,
+      "network_retrieved_this_execution": false
+    }
+  ],
+  "acquisition_deadline_seconds": 180,
+  "candidate_model_config_duplicate_keys": [
+    {
+      "key": "model_type",
+      "first_value": "qwen3_5",
+      "second_value": "qwen3_5_text"
+    }
+  ],
+  "metadata_parse_condition": "Strict tokenizer/config parsing succeeded. Initial attempt rejected model config duplicate model_type; final comparison records both values and uses independently unique vocab_size only. No runtime interpretation qualified.",
+  "source_files": {
+    "target_tokenizer": {
+      "path": "C:\\AI\\models\\halogen-flashnext\\tokenizer\\tokenizer.json",
+      "bytes": 12809320,
+      "sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3"
+    },
+    "target_tokenizer_config": {
+      "path": "C:\\AI\\models\\halogen-flashnext\\tokenizer\\tokenizer_config.json",
+      "bytes": 17928,
+      "sha256": "b11349aafa7cdc6a320767cf7ceb29ed82f7eda5d65e8e0819e76f0ce947bf27"
+    },
+    "candidate_tokenizer": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\tokenizer.json",
+      "bytes": 12807982,
+      "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+    },
+    "candidate_tokenizer_config": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\tokenizer_config.json",
+      "bytes": 16788,
+      "sha256": "485aad30cae5f2280d6050a01f9160c435ee5aeabaf4fda7dd59b76ccc8b1f4c"
+    },
+    "candidate_model_config": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\config.json",
+      "bytes": 3098,
+      "sha256": "a571afa7fca18a6ecb4c0c2dbc7758204b442804056280e85d4e2d6c582c70c3"
+    },
+    "candidate_chat_template": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\chat_template.jinja",
+      "bytes": 7545,
+      "sha256": "0537aa8f59cf80f23dfd42253649959caf944d50f4214ce6b3efb766ce0bd079"
+    },
+    "installed_manifest": {
+      "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\model_list.json",
+      "bytes": 54051,
+      "sha256": "5ec5f1372e69c5a4a015deff0f189d8855fcf1f3116041783a73bda93c7f0721"
+    },
+    "cached_file_metadata": {
+      "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\model_info.json",
+      "bytes": 137841,
+      "sha256": "1cc6e71ded668eb036bbda9e93348865a539ea72f8baaa4921caf4697ba9a4b7"
+    },
+    "comparison_script": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\token-map-94d0d53b1f8742c68e5520b6bebc962a\\compare.py",
+      "bytes": 15806,
+      "sha256": "b7c5df47bd1d4fe69298cb207ed4115473fae93812205235f49584b7cb9bd902"
+    }
+  },
+  "parser_proof": {
+    "duplicate_json_keys_rejected": true,
+    "case_sensitive_json_keys": true,
+    "duplicate_base_ids_rejected": true,
+    "base_added_id_conflicts_rejected": true,
+    "strict_token_utf8_encoding": true,
+    "map_digest_format": "sorted ID; uint32 little-endian ID, uint32 UTF-8 byte length, UTF-8 token-symbol bytes"
+  },
+  "vocabulary": {
+    "target_base_entries": 248044,
+    "candidate_base_entries": 248044,
+    "base_comparison": {
+      "shared_ids_checked": 248044,
+      "id_string_utf8_mismatch_count": 0,
+      "mismatches": [],
+      "target_only_count": 0,
+      "target_only": [],
+      "candidate_only_count": 0,
+      "candidate_only": [],
+      "target_ordered_id_utf8_sha256": "3637b1a115b34b1791c6f639496208b558476d6cd0a8f4592040a8e4a6c6e925",
+      "candidate_ordered_id_utf8_sha256": "3637b1a115b34b1791c6f639496208b558476d6cd0a8f4592040a8e4a6c6e925",
+      "exact_equal": true
+    },
+    "full_defined_comparison": {
+      "shared_ids_checked": 248070,
+      "id_string_utf8_mismatch_count": 0,
+      "mismatches": [],
+      "target_only_count": 7,
+      "target_only": [
+        {
+          "id": 248070,
+          "token": "<|audio_start|>"
+        },
+        {
+          "id": 248071,
+          "token": "<|audio_end|>"
+        },
+        {
+          "id": 248072,
+          "token": "<tts_pad>"
+        },
+        {
+          "id": 248073,
+          "token": "<tts_text_bos>"
+        },
+        {
+          "id": 248074,
+          "token": "<tts_text_eod>"
+        },
+        {
+          "id": 248075,
+          "token": "<tts_text_bos_single>"
+        },
+        {
+          "id": 248076,
+          "token": "<|audio_pad|>"
+        }
+      ],
+      "candidate_only_count": 0,
+      "candidate_only": [],
+      "target_ordered_id_utf8_sha256": "1ea47dc65bdc42fb4bfacda3f3f2b60ca6e996c8a71331edafc9c5e7d0dd2a2a",
+      "candidate_ordered_id_utf8_sha256": "79eec923789b6428a38b6654c93c7b7baadfbc03a595a18054199a05a8212130",
+      "exact_equal": false
+    },
+    "target_defined_count": 248077,
+    "candidate_defined_count": 248070,
+    "target_defined_id_intervals": [
+      [
+        0,
+        248076
+      ]
+    ],
+    "candidate_defined_id_intervals": [
+      [
+        0,
+        248069
+      ]
+    ],
+    "head_size": 248320,
+    "target_undefined_in_head_count": 243,
+    "candidate_undefined_in_head_count": 250,
+    "target_undefined_in_head_intervals": [
+      [
+        248077,
+        248319
+      ]
+    ],
+    "candidate_undefined_in_head_intervals": [
+      [
+        248070,
+        248319
+      ]
+    ],
+    "target_defined_outside_head": [],
+    "candidate_defined_outside_head": []
+  },
+  "added_tokens": {
+    "target_count": 33,
+    "candidate_count": 26,
+    "common_metadata_changed_count": 0,
+    "different_id_record_count": 7,
+    "differences": [
+      {
+        "id": 248070,
+        "candidate_missing": true,
+        "target": {
+          "id": 248070,
+          "content": "<|audio_start|>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        }
+      },
+      {
+        "id": 248071,
+        "candidate_missing": true,
+        "target": {
+          "id": 248071,
+          "content": "<|audio_end|>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        }
+      },
+      {
+        "id": 248072,
+        "candidate_missing": true,
+        "target": {
+          "id": 248072,
+          "content": "<tts_pad>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        }
+      },
+      {
+        "id": 248073,
+        "candidate_missing": true,
+        "target": {
+          "id": 248073,
+          "content": "<tts_text_bos>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        }
+      },
+      {
+        "id": 248074,
+        "candidate_missing": true,
+        "target": {
+          "id": 248074,
+          "content": "<tts_text_eod>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        }
+      },
+      {
+        "id": 248075,
+        "candidate_missing": true,
+        "target": {
+          "id": 248075,
+          "content": "<tts_text_bos_single>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        }
+      },
+      {
+        "id": 248076,
+        "candidate_missing": true,
+        "target": {
+          "id": 248076,
+          "content": "<|audio_pad|>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        }
+      }
+    ],
+    "ordered_entries_equal": false,
+    "target_config_consistency": {
+      "records": 33,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "tokenizer_added_ids_absent_from_config": []
+    },
+    "candidate_config_consistency": {
+      "records": 33,
+      "mismatch_count": 7,
+      "mismatches": [
+        {
+          "id": 248070,
+          "not_in_tokenizer_json": true
+        },
+        {
+          "id": 248071,
+          "not_in_tokenizer_json": true
+        },
+        {
+          "id": 248072,
+          "not_in_tokenizer_json": true
+        },
+        {
+          "id": 248073,
+          "not_in_tokenizer_json": true
+        },
+        {
+          "id": 248074,
+          "not_in_tokenizer_json": true
+        },
+        {
+          "id": 248075,
+          "not_in_tokenizer_json": true
+        },
+        {
+          "id": 248076,
+          "not_in_tokenizer_json": true
+        }
+      ],
+      "tokenizer_added_ids_absent_from_config": []
+    }
+  },
+  "merges": {
+    "target_count": 247587,
+    "candidate_count": 247587,
+    "ordered_pair_mismatch_count": 0,
+    "mismatches": [],
+    "raw_json_representation_equal": true,
+    "target_ordered_pairs_sha256": "f73216a68eea59796c4f48025952a9a19c277c3b7a2d8af202591301ec229c15",
+    "candidate_ordered_pairs_sha256": "f73216a68eea59796c4f48025952a9a19c277c3b7a2d8af202591301ec229c15"
+  },
+  "tokenizer_components": {
+    "version": {
+      "equal": true,
+      "leaf_difference_count": 0,
+      "differences": [],
+      "target": {
+        "type": "str",
+        "canonical_sha256": "a51162aeeb057ca4e3df627977231de20b581f0d0d418ca3a111bc0e408ac6cc",
+        "canonical_bytes": 5,
+        "value": "1.0"
+      },
+      "candidate": {
+        "type": "str",
+        "canonical_sha256": "a51162aeeb057ca4e3df627977231de20b581f0d0d418ca3a111bc0e408ac6cc",
+        "canonical_bytes": 5,
+        "value": "1.0"
+      }
+    },
+    "truncation": {
+      "equal": true,
+      "leaf_difference_count": 0,
+      "differences": [],
+      "target": {
+        "type": "NoneType",
+        "canonical_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "canonical_bytes": 4,
+        "value": null
+      },
+      "candidate": {
+        "type": "NoneType",
+        "canonical_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "canonical_bytes": 4,
+        "value": null
+      }
+    },
+    "padding": {
+      "equal": true,
+      "leaf_difference_count": 0,
+      "differences": [],
+      "target": {
+        "type": "NoneType",
+        "canonical_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "canonical_bytes": 4,
+        "value": null
+      },
+      "candidate": {
+        "type": "NoneType",
+        "canonical_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "canonical_bytes": 4,
+        "value": null
+      }
+    },
+    "normalizer": {
+      "equal": true,
+      "leaf_difference_count": 0,
+      "differences": [],
+      "target": {
+        "type": "dict",
+        "canonical_sha256": "5628358406a1a2864e0f9e853618fc4d47d359acf10253558d0c18886de3f06e",
+        "canonical_bytes": 14,
+        "value": {
+          "type": "NFC"
+        }
+      },
+      "candidate": {
+        "type": "dict",
+        "canonical_sha256": "5628358406a1a2864e0f9e853618fc4d47d359acf10253558d0c18886de3f06e",
+        "canonical_bytes": 14,
+        "value": {
+          "type": "NFC"
+        }
+      }
+    },
+    "pre_tokenizer": {
+      "equal": true,
+      "leaf_difference_count": 0,
+      "differences": [],
+      "target": {
+        "type": "dict",
+        "canonical_sha256": "b36f1669c1fd93eaec200835899e8c42217d172fcb9dd3f4fe725920aec5a8b3",
+        "canonical_bytes": 340
+      },
+      "candidate": {
+        "type": "dict",
+        "canonical_sha256": "b36f1669c1fd93eaec200835899e8c42217d172fcb9dd3f4fe725920aec5a8b3",
+        "canonical_bytes": 340
+      }
+    },
+    "post_processor": {
+      "equal": true,
+      "leaf_difference_count": 0,
+      "differences": [],
+      "target": {
+        "type": "dict",
+        "canonical_sha256": "4942970eeb62af80cf8c4eb5d864699b914996b14b6a5e083528e3eed7dfc44d",
+        "canonical_bytes": 84,
+        "value": {
+          "type": "ByteLevel",
+          "add_prefix_space": false,
+          "trim_offsets": false,
+          "use_regex": false
+        }
+      },
+      "candidate": {
+        "type": "dict",
+        "canonical_sha256": "4942970eeb62af80cf8c4eb5d864699b914996b14b6a5e083528e3eed7dfc44d",
+        "canonical_bytes": 84,
+        "value": {
+          "type": "ByteLevel",
+          "add_prefix_space": false,
+          "trim_offsets": false,
+          "use_regex": false
+        }
+      }
+    },
+    "decoder": {
+      "equal": true,
+      "leaf_difference_count": 0,
+      "differences": [],
+      "target": {
+        "type": "dict",
+        "canonical_sha256": "4942970eeb62af80cf8c4eb5d864699b914996b14b6a5e083528e3eed7dfc44d",
+        "canonical_bytes": 84,
+        "value": {
+          "type": "ByteLevel",
+          "add_prefix_space": false,
+          "trim_offsets": false,
+          "use_regex": false
+        }
+      },
+      "candidate": {
+        "type": "dict",
+        "canonical_sha256": "4942970eeb62af80cf8c4eb5d864699b914996b14b6a5e083528e3eed7dfc44d",
+        "canonical_bytes": 84,
+        "value": {
+          "type": "ByteLevel",
+          "add_prefix_space": false,
+          "trim_offsets": false,
+          "use_regex": false
+        }
+      }
+    }
+  },
+  "model_settings": {
+    "equal": true,
+    "differences": [],
+    "target": {
+      "type": "BPE",
+      "dropout": null,
+      "unk_token": null,
+      "continuing_subword_prefix": "",
+      "end_of_word_suffix": "",
+      "fuse_unk": false,
+      "byte_fallback": false,
+      "ignore_merges": false
+    },
+    "candidate": {
+      "type": "BPE",
+      "dropout": null,
+      "unk_token": null,
+      "continuing_subword_prefix": "",
+      "end_of_word_suffix": "",
+      "fuse_unk": false,
+      "byte_fallback": false,
+      "ignore_merges": false
+    }
+  },
+  "other_top_level": {
+    "difference_count": 0,
+    "differences": []
+  },
+  "tokenizer_config": {
+    "leaf_difference_count": 2,
+    "differences": [
+      {
+        "path": "/chat_template",
+        "target": {
+          "type": "str",
+          "canonical_sha256": "924d3fcc64873b375d5909e8a664ba0aca97c9d6381f5ebda004d1b8a2fb4d64",
+          "canonical_bytes": 9219
+        },
+        "candidate": {
+          "type": "str",
+          "canonical_sha256": "e9cb98e65623809a8a297af444986a3b417ecae1a19d519c0952eb1192abc5c1",
+          "canonical_bytes": 8001
+        }
+      },
+      {
+        "path": "/eos_token_id",
+        "target_missing": true,
+        "candidate": {
+          "type": "list",
+          "canonical_sha256": "ad932f0aa6f9adb31e15f4078bfa55ccacc893f4630af0dc80170628b3fe18bc",
+          "canonical_bytes": 22,
+          "value": [
+            248044,
+            248046,
+            248048
+          ]
+        }
+      }
+    ],
+    "target_keys": [
+      "add_bos_token",
+      "add_prefix_space",
+      "added_tokens_decoder",
+      "additional_special_tokens",
+      "bos_token",
+      "chat_template",
+      "clean_up_tokenization_spaces",
+      "eos_token",
+      "errors",
+      "extra_special_tokens",
+      "model_max_length",
+      "pad_token",
+      "pretokenize_regex",
+      "split_special_tokens",
+      "tokenizer_class",
+      "unk_token"
+    ],
+    "candidate_keys": [
+      "add_bos_token",
+      "add_prefix_space",
+      "added_tokens_decoder",
+      "additional_special_tokens",
+      "bos_token",
+      "chat_template",
+      "clean_up_tokenization_spaces",
+      "eos_token",
+      "eos_token_id",
+      "errors",
+      "extra_special_tokens",
+      "model_max_length",
+      "pad_token",
+      "pretokenize_regex",
+      "split_special_tokens",
+      "tokenizer_class",
+      "unk_token"
+    ]
+  },
+  "chat_template": {
+    "target_config_template": {
+      "type": "str",
+      "canonical_sha256": "924d3fcc64873b375d5909e8a664ba0aca97c9d6381f5ebda004d1b8a2fb4d64",
+      "canonical_bytes": 9219
+    },
+    "candidate_external_template": {
+      "type": "str",
+      "canonical_sha256": "775daeea3748301882ba2ada7306744a66d1392a516d247c984ade8a836ba2ef",
+      "canonical_bytes": 7782
+    },
+    "exact_text_equal": false,
+    "candidate_config_template_present": true
+  },
+  "configuration_completed_map": {
+    "comparison": {
+      "shared_ids_checked": 248077,
+      "id_string_utf8_mismatch_count": 0,
+      "mismatches": [],
+      "target_only_count": 0,
+      "target_only": [],
+      "candidate_only_count": 0,
+      "candidate_only": [],
+      "target_ordered_id_utf8_sha256": "1ea47dc65bdc42fb4bfacda3f3f2b60ca6e996c8a71331edafc9c5e7d0dd2a2a",
+      "candidate_ordered_id_utf8_sha256": "1ea47dc65bdc42fb4bfacda3f3f2b60ca6e996c8a71331edafc9c5e7d0dd2a2a",
+      "exact_equal": true
+    },
+    "all_33_config_declared_added_metadata_equal_to_target": true,
+    "registration_executed": false,
+    "condition": "Exact full map holds only if a loader registers every config-declared added token at its declared ID with its declared metadata. This derivation does not prove installed FLM behavior."
+  },
+  "verdict": {
+    "tokenizer_json_semantically_equal": false,
+    "exact_entire_defined_id_string_map_equal": false,
+    "shared_defined_ids_string_utf8_equal": true,
+    "runtime_encode_decode_executed": false,
+    "model_runtime_loaded": false,
+    "NPU_executed": false,
+    "native_injection_qualified": false,
+    "native_hit_only": true,
+    "engine_gain_qualified": false
+  }
+}
