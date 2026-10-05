@@ -14,10 +14,10 @@ wurde. Komponenten-Millisekunden sind keine gemessenen Tokenraten.
 | Neueste normale Messung, ohne NPU-Auslagerung | Wert |
 |---|---:|
 | Tatsächliche Eingabe / Ausgabe | 8192 / 128 Tokens |
-| Prefill | **1317,77 tok/s** |
-| MTP-Decode, nicht repetitiver Prosa-Prompt | **41,65 tok/s** |
+| Prefill | **1277,14 tok/s** |
+| MTP-Decode, nicht repetitiver Prosa-Prompt | **41,28 tok/s** |
 | Akzeptanz | **60,0 % (207/345)** |
-| Ende des neuen Runtime-Vergleichs | 5.10.2026, 01:35:44 UTC |
+| Ende der neuesten Stock-Kontrolle | 5.10.2026, 02:43:05 UTC |
 
 Die früheren 48,42 Decode-tok/s stammen aus einem separaten GPU-Lauf. Beide
 Kohorten liefen ohne NPU-Auslagerung; die Differenz ist kein NPU-Effekt. Die
@@ -139,3 +139,14 @@ both stock bookends, the source-built control, clock calibration, Windows
 whole-request times, mapped runtime hashes and clean lifecycle receipts.
 The [practical German result](../benchmarks/halogen-npu-practical-result-20261005.md)
 states the current deployment choice and token rates.
+
+The later [native-lookup regular8K cohort](../benchmarks/halogen0162-native-lookup-stock8k-20261005.md)
+finished at 02:43:05 UTC: Stock A1321.262342/41.622021, native lookup
+1316.039681/41.899131, Stock B1277.138669/41.280099 prefill/decode tok/s,
+all60% acceptance with identical outputs. The native mean clears none of the
+bookend-plus-drift guards; it is not adopted for this regular8K profile.
+The original coordinator's advice-helper launch failed before process creation;
+no cache advice was issued. Native ordinary cleanup/recovery passed and a new
+resume measured only the unstarted Stock B, preserving the failed original.
+The original stock server was restored ready and remains open. Every window
+is GPU-only; this still supplies no NPU tok/s or acceptance delta.

@@ -23,16 +23,32 @@ ist möglich, aber noch nicht implementiert und ohne gemessenen Vorteil.
 
 | Neueste normale GPU-Kontrolle | Prefill tok/s | MTP-Decode tok/s | Akzeptanz |
 |---|---:|---:|---:|
-| GPU, 8.192 Eingabe / 128 Ausgabe | 1.317,77 | 41,65 | 60,0 % (207/345) |
+| GPU, 8.192 Eingabe / 128 Ausgabe | 1.277,14 | 41,28 | 60,0 % (207/345) |
 | NPU-Auslagerung im vollständigen Engine | nicht gemessen | nicht gemessen | nicht gemessen |
 
-Der neue Vergleich endete am 5. Oktober 2026 um 01:35:44 UTC. Er nutzt den
+Die neueste Stock-Kontrolle endete am 5. Oktober 2026 um 02:43:05 UTC. Sie nutzt den
 eingefrorenen nicht repetitiven Prosa-Prompt, einen Aufwärmlauf und drei
 Messläufe, Cache Off, MTP-Tiefe 2 und PLD 3,3. Die frühere Spitze von
 48,42 Decode-tok/s wurde ebenfalls ohne NPU gemessen. Der Unterschied zum
 obigen Lauf ist kein NPU-an/aus-Effekt. Es gibt bislang keinen belegten
 NPU-Gewinn in Prefill- oder Decode-tok/s. Komponenten-Millisekunden werden
 nicht in Tokenraten umgerechnet.
+
+Der neue Vergleich der n-gram-Dateiablage ergab für Stock A **1.321,26 / 41,62**,
+für native WSL-Ablage **1.316,04 / 41,90** und für Stock B **1.277,14 / 41,28**
+Prefill-/Decode-tok/s. Akzeptanz und Ausgaben bleiben gleich. Die native Ablage
+überschreitet die Schwankung der beiden Kontrollen nicht zuverlässig und bleibt
+für dieses normale 8K-Profil deaktiviert. Der Server ist wieder bereit und
+bleibt offen. [Vollständige Kohorte](halogen0162-native-lookup-stock8k-20261005.md).
+
+Ein früherer echter GPU/NPU-Koexistenztest auf Halogen 0.15.1 mit 512 Eingabe-
+und 128 Ausgabetokens zeigte den Effekt eines separaten NPU-Helfers:
+MTP-Decode sank bei kontinuierlichen Hilfsanfragen von **43,13 auf 39,93 tok/s**,
+also um rund **3,20 tok/s beziehungsweise 7,4 %**. Der Helfer ersetzte dabei
+keinen Teil des MTP-Heads. Dieser ältere, anders aufgebaute Versuch ist kein
+NPU-an/aus-Vergleich der aktuellen 0.16.2-Projektion. Er begründet, einen ständig
+aktiven Helfer ebenfalls nicht als Beschleunigung zu aktivieren.
+[Gemessene Koexistenz](../research/npu-coexistence-measured-20261001.md).
 
 Ein separater CPU-Runtime-Patch wurde ohne NPU mit demselben Workload geprüft.
 Er erreichte 1.356,50 Prefill- und 42,39 Decode-tok/s. Gegenüber den beiden

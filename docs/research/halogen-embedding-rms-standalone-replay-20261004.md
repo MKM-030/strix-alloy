@@ -1,12 +1,50 @@
-# Original embedding RMS replay preparation
+# Original embedding RMS replay preparation and frozen-row qualification
 
 The new host source
 [halogen0162_embedding_rms_replay.c](../../scripts/benchmarks/halogen0162_embedding_rms_replay.c)
 replays two fixed embedding RMS calls through the original retained Halogen
 0.16.2 shader. Host compilation and CPU fixture preparation have completed.
-Original GPU execution, numerical comparison and NPU qualification remain for
-root's exclusive guarded window.
+At preparation time, original GPU execution and numerical comparison remained
+for root's exclusive guarded window. The later owned Python component replay
+described below now qualifies the original shader on the two frozen raw rows.
+The standalone C executable's `replay.json` has not been used as that evidence.
+NPU normalization placement and live head qualification remain separate work.
 Existing hidden RMS and FC sources and their receipts are unchanged.
+
+On October 5 at 00:38:22..00:38:45 UTC, the stock window under
+`server/.local/optimization9h-20261004/alloy-rocr-component-16a35be771404bd7a7ac3d1b43526528/`
+executed the original embedding RMS shader through
+[halogen_rocr_poll_backoff_probe.py](../../scripts/benchmarks/halogen_rocr_poll_backoff_probe.py).
+Its source SHA256 is
+`9b2f6dd62162cbed8ea51f767e018c787a69ebf03fa6e4cc8b6ef153fdf83f52`.
+The source verifies that the shader is byte-identical to the original engine's
+embedded codeobject, dispatches the original named kernel, preserves raw gamma,
+width2560/groups1 and input/output alias, and compares each repeated output to
+the first complete finite BF16 result. It ran eight warmups and 64 measured
+calls for each A/B input. The normalized hashes match the frozen NumPy and
+original ORT reference hashes:
+
+| Frozen input | Raw BF16 input SHA256 | Repeated original shader output SHA256 |
+|---|---|---|
+| A | `af284c0101ac76b7562b3d9e19cfc6721266f282358d8f313a09b961435ee374` | `97079c27ab56da44c2ab29780c856be79803d402caf754acfbf7d187fbe34892` |
+| B | `e14b7e6b5bd1a53d1e0c26d0eb9d2356728668a89a2e591707c463cc1e2b01b4` | `8104e72375af48ab130c04b01fe68399e1d6c84951f9aa45c67a54b7d00db6ce` |
+
+The stock probe receipt SHA256 is
+`421b0f484f5364a3b71938729e78a4ef98f6eefa94ee4d8ba7d279ca42c41790`;
+the owned-result receipt is
+`350fdbddc0faa56bdaa1a689d0617b18fd7bb48b7f7cb64ace81917a68925d34`.
+The process exited 0, its job closed and its container was removed, with no
+cleanup errors. The outer window receipt
+`7e1a0f5b1dcfd122d65f88db6d6dda43d0bbd2634adaf3cd7b4f21bb69e1e3b8`
+passed without contamination, stopped the monitor and closed the controller;
+minimum physical/commit headroom was 26.030510/118.802414 GiB.
+
+These are two supplied CPU raw rows, including the token14367 fixture. They
+were not captured from the native checkpoint table. Exact frozen-row RMS parity
+therefore closes this arithmetic boundary while leaving native Q4C conversion,
+native gather, broader input coverage, early publication and full head
+correctness unqualified. Historical fixture/projection receipts retain their
+then-current unqualified flags; the later evidence does not rewrite them.
 
 Retained host disassembly at `0x17db475..0x17db517` loads the embedding row
 from `model+0x6c8` and raw norm weights from `model+0xae8`. Instructions

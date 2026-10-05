@@ -2,13 +2,13 @@
   "schema": "halogen.useful-npu-decision.v1",
   "current_regular_mtp": {
     "passed": true,
-    "run_id": "a6a9897433c04d27a85985c762f38baa",
+    "run_id": "370cc96915474e509d12e7329b44f0e7",
     "context_capacity": 262144,
     "actual_input_tokens": 8192,
     "output_tokens": 128,
     "measured_repetitions": 3,
-    "prefill_tps": 1317.7686853606808,
-    "decode_tps": 41.64835500526521,
+    "prefill_tps": 1277.138669037775,
+    "decode_tps": 41.28009913305524,
     "accepted": 207,
     "drafted": 345,
     "acceptance": 0.6,
@@ -18,15 +18,15 @@
     "native_mtp": true,
     "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
     "keep_server_open": true,
-    "measured_at_utc": "2026-10-05T01:35:44.118861+00:00"
+    "measured_at_utc": "2026-10-05T02:43:05.852418+00:00"
   },
   "regular_receipt": {
-    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rocr-engine-stock8k-33bb30dc863e4d8ea008ee1c47cb9c1a\\stock_after\\measurement.json",
-    "sha256": "63b95ff6e8360e16bf330e90143067e7bd4451a0344db00695fa00b0465b466b"
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-lookup-stock8k-resume-20261005\\run\\stock_after\\measurement.json",
+    "sha256": "01ab0c18c938e83f3fb68d39829cbb381c563889064c69598b8433343bb1924f"
   },
   "regular_owned_receipt": {
-    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rocr-engine-stock8k-33bb30dc863e4d8ea008ee1c47cb9c1a\\result.json",
-    "sha256": "a0fa922b169ca3f7c853b939c47d967d587ef8bd8e39c08256e8de3ed691f809"
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-lookup-stock8k-resume-20261005\\run\\result.json",
+    "sha256": "b6e84e956ad89d71bc3da95b65574f8996be7c6de1d617d96d9b0f6e0e042a03"
   },
   "precision_evidence": {
     "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-npu-precision-correction-20261004.json",
@@ -113,12 +113,12 @@
   "historical_vs_current_is_NPU_AB": false,
   "current_minus_historical": {
     "prefill_tps": {
-      "absolute_tps": -548.7685396393192,
-      "percent": -29.400353354287866
+      "absolute_tps": -589.3985559622251,
+      "percent": -31.577112316215672
     },
     "decode_tps": {
-      "absolute_tps": -6.775265598691057,
-      "percent": -13.991654308760026
+      "absolute_tps": -7.143521470901028,
+      "percent": -14.752142408610801
     }
   },
   "embedding_gather_cache_evidence": {
@@ -155,18 +155,18 @@
     "sha256": "a5e778f6c74d923788ca047e0dd424492a4ca90c15007a76310b16390f96bf3b"
   },
   "latest_control_minus_historical": {
-    "source_report": "docs/benchmarks/halogen0162-rocr-stock8k-20261005.json",
+    "source_report": "docs/benchmarks/halogen0162-native-lookup-stock8k-20261005.json",
     "prefill_tps": {
       "historical": 1866.537225,
-      "current": 1317.7686853606808,
-      "difference": -548.7685396393192,
-      "percent": -29.400353354287866
+      "current": 1277.138669037775,
+      "difference": -589.3985559622251,
+      "percent": -31.577112316215672
     },
     "decode_tps": {
       "historical": 48.423620603956266,
-      "current": 41.64835500526521,
-      "difference": -6.775265598691057,
-      "percent": -13.991654308760026
+      "current": 41.28009913305524,
+      "difference": -7.143521470901028,
+      "percent": -14.752142408610801
     }
   },
   "token_rate_interpretation": "No admitted NPU-on engine result; no demonstrated useful NPU acceleration. Current normal GPU result and historical result are distinct operating-state cohorts.",
@@ -210,6 +210,46 @@
           "percent": -13.378980467411516
         }
       }
+    },
+    {
+      "current_regular_mtp": {
+        "passed": true,
+        "run_id": "a6a9897433c04d27a85985c762f38baa",
+        "context_capacity": 262144,
+        "actual_input_tokens": 8192,
+        "output_tokens": 128,
+        "measured_repetitions": 3,
+        "prefill_tps": 1317.7686853606808,
+        "decode_tps": 41.64835500526521,
+        "accepted": 207,
+        "drafted": 345,
+        "acceptance": 0.6,
+        "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+        "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+        "npu_integrated": false,
+        "native_mtp": true,
+        "profile_sha256": "39faa5d1c98289be76d76a396aafd6ae4fe44cba673e61354a8d63f4540b3de7",
+        "keep_server_open": true,
+        "measured_at_utc": "2026-10-05T01:35:44.118861+00:00"
+      },
+      "regular_receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rocr-engine-stock8k-33bb30dc863e4d8ea008ee1c47cb9c1a\\stock_after\\measurement.json",
+        "sha256": "63b95ff6e8360e16bf330e90143067e7bd4451a0344db00695fa00b0465b466b"
+      },
+      "regular_owned_receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\rocr-engine-stock8k-33bb30dc863e4d8ea008ee1c47cb9c1a\\result.json",
+        "sha256": "a0fa922b169ca3f7c853b939c47d967d587ef8bd8e39c08256e8de3ed691f809"
+      },
+      "current_minus_historical": {
+        "prefill_tps": {
+          "absolute_tps": -548.7685396393192,
+          "percent": -29.400353354287866
+        },
+        "decode_tps": {
+          "absolute_tps": -6.775265598691057,
+          "percent": -13.991654308760026
+        }
+      }
     }
   ],
   "latest_rocr_trial": {
@@ -220,18 +260,26 @@
   },
   "batch_cut_source_decision": "Existing normalized-input cut arrives after trunk; no new NPU batch attempt on that cut. Early token-only producer remains unimplemented and unmeasured.",
   "previous_latest_control_minus_historical": {
-    "source_report": "docs/research/halogen-performance-gap-audit-20261005.json",
+    "source_report": "docs/benchmarks/halogen0162-rocr-stock8k-20261005.json",
     "prefill_tps": {
-      "historical": 1866.537224602995,
-      "current": 1253.2246838452827,
-      "difference": -613.3125407577122,
-      "percent": -32.85830749441182
+      "historical": 1866.537225,
+      "current": 1317.7686853606808,
+      "difference": -548.7685396393192,
+      "percent": -29.400353354287866
     },
     "decode_tps": {
-      "historical": 48.42362060395627,
-      "current": 42.41874837521408,
-      "difference": -6.004872228742194,
-      "percent": -12.40070889753252
+      "historical": 48.423620603956266,
+      "current": 41.64835500526521,
+      "difference": -6.775265598691057,
+      "percent": -13.991654308760026
     }
+  },
+  "latest_native_lookup_trial": {
+    "report": "docs/benchmarks/halogen0162-native-lookup-stock8k-20261005.json",
+    "report_sha256": "4682cee96af1b44130ffa5121706f75c21daa81dc551c044d5e1f2e42f97a4c8",
+    "npu_integrated": false,
+    "candidate_adopted": false,
+    "restored_original_open": true,
+    "cache_advice_executed": false
   }
 }

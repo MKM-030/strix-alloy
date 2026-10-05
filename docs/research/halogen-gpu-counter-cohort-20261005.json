@@ -1,0 +1,2238 @@
+{
+  "analysis_source_sha256": "3ab71ccf85d8a7c49d5bf3125704ac4269f80fbf56a1c63fc6f444ec03852bb7",
+  "hardware_provider_process_inventory_network_calls": 0,
+  "request_selection": "Counter acquisition QPC bracket fully inside request QPC calibration bracket",
+  "schema": "halogen.gpu-counter-cohort-offline-analysis.v1",
+  "statistic": "Unweighted arithmetic mean of recorded valid per-instance cooked values; engines are never summed",
+  "windows": [
+    {
+      "above_100_rows": 7,
+      "active_instances": [
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": "1",
+          "engine": 2,
+          "engine_type": "compute 0",
+          "identity_valid": false,
+          "instance": "pid_27016_luid_0x00000000_0x00011884_phys_0_eng_2_engtype_compute 0",
+          "name": "vmwp",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_27016_luid_0x00000000_0x00011884_phys_0_eng_2_engtype_compute 0#1)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 27016,
+          "scopes": {
+            "all": {
+              "above_100_samples": 7,
+              "count": 46,
+              "maximum": 120.6354844319726,
+              "mean": 58.66589017538955,
+              "median": 79.92251195023393,
+              "minimum": 0.0,
+              "positive_samples": 32
+            },
+            "measured_interior": {
+              "above_100_samples": 5,
+              "count": 19,
+              "maximum": 120.6354844319726,
+              "mean": 92.52897829589124,
+              "median": 91.05634979687494,
+              "minimum": 53.047376567010986,
+              "positive_samples": 19
+            },
+            "request_0": {
+              "above_100_samples": 2,
+              "count": 6,
+              "maximum": 116.8994417819388,
+              "mean": 99.29205645071973,
+              "median": 97.22147330334994,
+              "minimum": 89.58540646244066,
+              "positive_samples": 6
+            },
+            "request_1": {
+              "above_100_samples": 2,
+              "count": 6,
+              "maximum": 110.55522523537643,
+              "mean": 87.7277148706599,
+              "median": 90.53965107153688,
+              "minimum": 53.047376567010986,
+              "positive_samples": 6
+            },
+            "request_2": {
+              "above_100_samples": 1,
+              "count": 6,
+              "maximum": 120.6354844319726,
+              "mean": 97.81009986360732,
+              "median": 93.03278025819051,
+              "minimum": 90.37826097209962,
+              "positive_samples": 6
+            },
+            "request_3": {
+              "above_100_samples": 2,
+              "count": 7,
+              "maximum": 117.64147055199179,
+              "mean": 92.11767131661857,
+              "median": 90.37984190573394,
+              "minimum": 64.43270626824082,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": false,
+          "instance": "pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "System",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 4,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 46,
+              "maximum": 1.340265735531785,
+              "mean": 0.3669822468511034,
+              "median": 0.17748997585753115,
+              "minimum": 0.0,
+              "positive_samples": 43
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.5112118841165497,
+              "mean": 0.11973475642052149,
+              "median": 0.07435618336461483,
+              "minimum": 0.0,
+              "positive_samples": 18
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.36045496074942884,
+              "mean": 0.1012054498276993,
+              "median": 0.05986618318454461,
+              "minimum": 0.0,
+              "positive_samples": 5
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.38514655519377416,
+              "mean": 0.10067341745545921,
+              "median": 0.04712964160457905,
+              "minimum": 0.02056437679641267,
+              "positive_samples": 6
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.5112118841165497,
+              "mean": 0.15493182630693011,
+              "median": 0.08884874197103873,
+              "minimum": 0.04160120421435723,
+              "positive_samples": 6
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.21979620358686608,
+              "mean": 0.10590412991651034,
+              "median": 0.132831031612715,
+              "minimum": 0.0,
+              "positive_samples": 6
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": true,
+          "instance": "pid_15864_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "ChatGPT",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_15864_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 15864,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 46,
+              "maximum": 0.07061938183114654,
+              "mean": 0.0040878961552754806,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 4
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.07061938183114654,
+              "mean": 0.00841257903389145,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.03666161174841234,
+              "mean": 0.0061102686247353905,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.07061938183114654,
+              "mean": 0.020529564982587532,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 2
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": true,
+          "instance": "pid_15864_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "ChatGPT",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_15864_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 15864,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 46,
+              "maximum": 0.09901870255703268,
+              "mean": 0.026603495981146516,
+              "median": 0.021262044878598913,
+              "minimum": 0.006181100933927876,
+              "positive_samples": 46
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.056576409160591055,
+              "mean": 0.022973837189305464,
+              "median": 0.01974113264748565,
+              "minimum": 0.007840410865283007,
+              "positive_samples": 19
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.07810859861676558,
+              "mean": 0.033507215765415536,
+              "median": 0.030754735256751257,
+              "minimum": 0.0074121211504284065,
+              "positive_samples": 6
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.04530356195190648,
+              "mean": 0.02158205351365852,
+              "median": 0.018017645937366603,
+              "minimum": 0.012581509080147955,
+              "positive_samples": 6
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.047448900418982747,
+              "mean": 0.02341470745756354,
+              "median": 0.02009835856282876,
+              "minimum": 0.008627166978667613,
+              "positive_samples": 6
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.056576409160591055,
+              "mean": 0.02378890582421021,
+              "median": 0.01974113264748565,
+              "minimum": 0.007840410865283007,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": false,
+          "instance": "pid_2796_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "dwm",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_2796_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 2796,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 46,
+              "maximum": 0.04115222243885359,
+              "mean": 0.004550268655420858,
+              "median": 0.0034020573052513025,
+              "minimum": 0.0011047196285695882,
+              "positive_samples": 46
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.04115222243885359,
+              "mean": 0.005548530537993449,
+              "median": 0.003456656659009144,
+              "minimum": 0.0013585667081849903,
+              "positive_samples": 19
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.005617726143764158,
+              "mean": 0.0038514900325916164,
+              "median": 0.0035703977475613543,
+              "minimum": 0.002707894926956511,
+              "positive_samples": 6
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0036088419373322632,
+              "mean": 0.0028766968282501683,
+              "median": 0.0034178157467968685,
+              "minimum": 0.0013585667081849903,
+              "positive_samples": 6
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.04115222243885359,
+              "mean": 0.010648851327576779,
+              "median": 0.0052111232010287525,
+              "minimum": 0.001813016746924856,
+              "positive_samples": 6
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.003914843530641777,
+              "mean": 0.0034669701838448354,
+              "median": 0.0034432348597846496,
+              "minimum": 0.0030429913219239993,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": false,
+          "instance": "pid_2192_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "csrss",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_2192_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 2192,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 46,
+              "maximum": 0.02110229047818852,
+              "mean": 0.005479064926947539,
+              "median": 0.0027899896297686553,
+              "minimum": 0.0,
+              "positive_samples": 30
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.019867860915079243,
+              "mean": 0.0031144969269728054,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 9
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.004126028249671694,
+              "mean": 0.0015226993002324842,
+              "median": 0.0011723950213073024,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.012993126675481456,
+              "mean": 0.004144305145348952,
+              "median": 0.0024046267383652778,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.002844455650476461,
+              "mean": 0.0012621556857581424,
+              "median": 0.0009964774275057714,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.019867860915079243,
+              "mean": 0.0038195252322629626,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 3
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": "1",
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": false,
+          "instance": "pid_27016_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "vmwp",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_27016_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy#1)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 27016,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 46,
+              "maximum": 0.16197713681619516,
+              "mean": 0.014072020962054005,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 6
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.01925808834749727,
+              "mean": 0.0010135835972366984,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.020521561557577638,
+              "mean": 0.003420260259596273,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.01925808834749727,
+              "mean": 0.002751155478213896,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": true,
+          "instance": "pid_8596_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "explorer",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_8596_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 8596,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 46,
+              "maximum": 0.004595679663222228,
+              "mean": 9.990607963526583e-05,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.004595679663222228,
+              "mean": 0.00024187787701169622,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.004595679663222228,
+              "mean": 0.000765946610537038,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            }
+          }
+        }
+      ],
+      "adapters": [
+        "0x00000000_0x00011884/phys_0",
+        "0x00000000_0x00014b7f/phys_0",
+        "0x00000000_0x00014bd5/phys_0"
+      ],
+      "between_query_seconds": {
+        "count": 45,
+        "maximum": 0.1599218999981531,
+        "mean": 0.0363868911115181,
+        "median": 0.040179000003263354,
+        "minimum": 0.013470800004142802
+      },
+      "boundaries": [
+        {
+          "after": 41762.97662450001,
+          "before": 41753.822840349996,
+          "index": 0,
+          "phase": "warmup"
+        },
+        {
+          "after": 41774.3088523,
+          "before": 41764.9721767,
+          "index": 1,
+          "phase": "measured"
+        },
+        {
+          "after": 41785.9912149,
+          "before": 41776.7211571,
+          "index": 2,
+          "phase": "measured"
+        },
+        {
+          "after": 41797.65412675,
+          "before": 41788.361832099996,
+          "index": 3,
+          "phase": "measured"
+        }
+      ],
+      "counter_types": [
+        542180608
+      ],
+      "coverage_sha256": "95b0479bb785821395cbace9ac12961df151f249a3020f3ae4a8d4d306d98185",
+      "directory": "server\\.local\\optimization9h-20261004\\native-lookup-stock8k-prepared-20261005\\run\\stock_before",
+      "duplicate_instance_name_extra_rows": 368,
+      "first_post_response_query_lead_seconds": 1.0468070499991882,
+      "invalid_rows": 0,
+      "measured": {
+        "accepted": 207,
+        "decode_tps": 41.62202128310705,
+        "drafted": 345,
+        "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+        "prefill_tps": 1321.262341968112,
+        "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810"
+      },
+      "measurement_sha256": "eff0ce97c97beb40f5ad8409e28aa56888ed97b94cba5e46f895c6d9230d0c9a",
+      "name": "stock_before",
+      "negative_rows": 0,
+      "nonfinite_rows": 0,
+      "nonzero_instance_count": 8,
+      "process_count": 20,
+      "process_identity_invalid": [
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "csrss",
+          "pid": 2192
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "vmwp",
+          "pid": 27016
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "dwm",
+          "pid": 2796
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "System",
+          "pid": 4
+        }
+      ],
+      "query_errors": 0,
+      "query_seconds": {
+        "count": 46,
+        "maximum": 1.3424538000035682,
+        "mean": 1.1743033130431129,
+        "median": 1.185608299998421,
+        "minimum": 1.080236199995852
+      },
+      "raw_bytes": 6521138,
+      "raw_sha256": "0fa295e65c7b1922c365db682551500d55ff4e93bb9b6a7495b8b7a6ed74b5cf",
+      "ready_lead_seconds": 6.14999744999659,
+      "request_counts": {
+        "0": {
+          "interior": 6,
+          "overlapping": 8
+        },
+        "1": {
+          "interior": 6,
+          "overlapping": 8
+        },
+        "2": {
+          "interior": 6,
+          "overlapping": 8
+        },
+        "3": {
+          "interior": 7,
+          "overlapping": 9
+        }
+      },
+      "retained_utc_timestamp_before_query_end_seconds": {
+        "count": 46,
+        "maximum": 0.015378236770629883,
+        "mean": 0.008227980655172596,
+        "median": 0.01005852222442627,
+        "minimum": 0.0038373470306396484
+      },
+      "row_count": 16882,
+      "row_counts": {
+        "count": 46,
+        "maximum": 367,
+        "mean": 367.0,
+        "median": 367.0,
+        "minimum": 367
+      },
+      "sample_count": 46,
+      "sample_start_cadence_seconds": {
+        "count": 45,
+        "maximum": 1.496204700000817,
+        "mean": 1.212495582222214,
+        "median": 1.2247791999980109,
+        "minimum": 1.0946971999946982
+      },
+      "timestamp_100nsec_naive_utc_minus_retained_utc_seconds": {
+        "count": 46,
+        "maximum": 7200.000000953674,
+        "mean": 7200.000000425007,
+        "median": 7200.000000476837,
+        "minimum": 7199.999999761581
+      },
+      "zero_instance_count": 359
+    },
+    {
+      "above_100_rows": 4,
+      "active_instances": [
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": "1",
+          "engine": 2,
+          "engine_type": "compute 0",
+          "identity_valid": false,
+          "instance": "pid_27016_luid_0x00000000_0x00011884_phys_0_eng_2_engtype_compute 0",
+          "name": "vmwp",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_27016_luid_0x00000000_0x00011884_phys_0_eng_2_engtype_compute 0#1)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 27016,
+          "scopes": {
+            "all": {
+              "above_100_samples": 4,
+              "count": 50,
+              "maximum": 118.04830453255481,
+              "mean": 54.88253554423438,
+              "median": 76.24672168388888,
+              "minimum": 0.0,
+              "positive_samples": 36
+            },
+            "measured_interior": {
+              "above_100_samples": 2,
+              "count": 19,
+              "maximum": 118.04830453255481,
+              "mean": 92.37083206841793,
+              "median": 93.0806734255418,
+              "minimum": 79.5126388521021,
+              "positive_samples": 19
+            },
+            "request_0": {
+              "above_100_samples": 2,
+              "count": 10,
+              "maximum": 115.95008049470552,
+              "mean": 71.02919554644456,
+              "median": 76.49912357625075,
+              "minimum": 10.215991916392882,
+              "positive_samples": 10
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 98.17191393431676,
+              "mean": 89.21726746094073,
+              "median": 91.17201323746322,
+              "minimum": 80.07542548466712,
+              "positive_samples": 6
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 99.92626508151537,
+              "mean": 91.01182738149782,
+              "median": 91.34267429288982,
+              "minimum": 79.5126388521021,
+              "positive_samples": 6
+            },
+            "request_3": {
+              "above_100_samples": 2,
+              "count": 7,
+              "maximum": 118.04830453255481,
+              "mean": 96.23874860647274,
+              "median": 94.59109283356382,
+              "minimum": 80.74065978100859,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": false,
+          "instance": "pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "System",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 4,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 50,
+              "maximum": 2.843737079352698,
+              "mean": 0.4473181180642128,
+              "median": 0.19128119311416147,
+              "minimum": 0.0,
+              "positive_samples": 49
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.19833903484648827,
+              "mean": 0.09343334286180406,
+              "median": 0.08182313900411747,
+              "minimum": 0.0,
+              "positive_samples": 18
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 10,
+              "maximum": 2.843737079352698,
+              "mean": 0.6102001944308512,
+              "median": 0.10766339897900912,
+              "minimum": 0.056980790649326464,
+              "positive_samples": 10
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.19833903484648827,
+              "mean": 0.11609535236557249,
+              "median": 0.0836712780112159,
+              "minimum": 0.05356936181976016,
+              "positive_samples": 6
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.19435500019338564,
+              "mean": 0.07028540646743252,
+              "median": 0.05610687538750231,
+              "minimum": 0.0,
+              "positive_samples": 5
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.1882073860349373,
+              "mean": 0.09384985162517819,
+              "median": 0.07635668675107096,
+              "minimum": 0.05824485107541792,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": true,
+          "instance": "pid_15864_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "ChatGPT",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_15864_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 15864,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 50,
+              "maximum": 0.09165466192697627,
+              "mean": 0.02394538776213133,
+              "median": 0.019400382302030124,
+              "minimum": 0.007445499437199135,
+              "positive_samples": 50
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.09165466192697627,
+              "mean": 0.029599086922375607,
+              "median": 0.022014112069748897,
+              "minimum": 0.011717779159841141,
+              "positive_samples": 19
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 10,
+              "maximum": 0.04181632569950126,
+              "mean": 0.01974954390156362,
+              "median": 0.017339220465252467,
+              "minimum": 0.011259665084643936,
+              "positive_samples": 10
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.09165466192697627,
+              "mean": 0.030762379587851756,
+              "median": 0.0183487891178771,
+              "minimum": 0.014981688608906323,
+              "positive_samples": 6
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.06787005894993756,
+              "mean": 0.0307809929389113,
+              "median": 0.023228038611989146,
+              "minimum": 0.013447801601089914,
+              "positive_samples": 6
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0450388699244914,
+              "mean": 0.027588916623508312,
+              "median": 0.022014112069748897,
+              "minimum": 0.011717779159841141,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": true,
+          "instance": "pid_15864_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "ChatGPT",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_15864_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 15864,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 50,
+              "maximum": 0.19065341617780282,
+              "mean": 0.012065273065659389,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 4
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.0446146008154497,
+              "mean": 0.0023481368850236683,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 10,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0446146008154497,
+              "mean": 0.0063735144022070995,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": false,
+          "instance": "pid_2192_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "csrss",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_2192_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 2192,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 50,
+              "maximum": 0.023721785537910458,
+              "mean": 0.006221645526205639,
+              "median": 0.003165235239721944,
+              "minimum": 0.0,
+              "positive_samples": 41
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.023721785537910458,
+              "mean": 0.004266625824473233,
+              "median": 0.0026316585766985065,
+              "minimum": 0.0,
+              "positive_samples": 14
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 10,
+              "maximum": 0.02053186341170437,
+              "mean": 0.004378110883452791,
+              "median": 0.0028868014760754642,
+              "minimum": 0.0,
+              "positive_samples": 7
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.014637677559464456,
+              "mean": 0.005792988377845548,
+              "median": 0.0034566034474039506,
+              "minimum": 0.0,
+              "positive_samples": 5
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0030256282462469723,
+              "mean": 0.001479909933257078,
+              "median": 0.0014534144696623625,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.023721785537910458,
+              "mean": 0.00534692868548224,
+              "median": 0.002629115156031584,
+              "minimum": 0.0,
+              "positive_samples": 6
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": "1",
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": false,
+          "instance": "pid_27016_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "vmwp",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_27016_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy#1)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 27016,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 50,
+              "maximum": 0.30641805883175005,
+              "mean": 0.017279448214525223,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 9
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.021708907474864186,
+              "mean": 0.002285034127172549,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 2
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 10,
+              "maximum": 0.30641805883175005,
+              "mean": 0.03477182323817439,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.02170674094141424,
+              "mean": 0.0036177901569023735,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.021708907474864186,
+              "mean": 0.0031012724964091694,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": false,
+          "instance": "pid_2796_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "dwm",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_2796_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 2796,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 50,
+              "maximum": 0.020056802359443276,
+              "mean": 0.003865181448180791,
+              "median": 0.0032990304615219956,
+              "minimum": 0.0013964590947419255,
+              "positive_samples": 50
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.009168734458430637,
+              "mean": 0.0036704332928259886,
+              "median": 0.003492796478311267,
+              "minimum": 0.0013976548532678942,
+              "positive_samples": 19
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 10,
+              "maximum": 0.006101193645052165,
+              "mean": 0.0035392127297284165,
+              "median": 0.0033235698751539074,
+              "minimum": 0.0015750677279123002,
+              "positive_samples": 10
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.009168734458430637,
+              "mean": 0.0037369137689551306,
+              "median": 0.0033769284607833164,
+              "minimum": 0.0013976548532678942,
+              "positive_samples": 6
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.003649140573004073,
+              "mean": 0.002883105398250657,
+              "median": 0.003357479860440947,
+              "minimum": 0.001653086773296373,
+              "positive_samples": 6
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.005090025017916002,
+              "mean": 0.004288302508637008,
+              "median": 0.003948596170669158,
+              "minimum": 0.003492796478311267,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": true,
+          "instance": "pid_8596_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "explorer",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_8596_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 8596,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 50,
+              "maximum": 0.010485802508664313,
+              "mean": 0.00020971605017328624,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 19,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 10,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 6,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            }
+          }
+        }
+      ],
+      "adapters": [
+        "0x00000000_0x00011884/phys_0",
+        "0x00000000_0x00014b7f/phys_0",
+        "0x00000000_0x00014bd5/phys_0"
+      ],
+      "between_query_seconds": {
+        "count": 49,
+        "maximum": 0.16027130000293255,
+        "mean": 0.033177299999806564,
+        "median": 0.039100199996028095,
+        "minimum": 0.013189599994802848
+      },
+      "boundaries": [
+        {
+          "after": 42037.8792634,
+          "before": 42025.2739354,
+          "index": 0,
+          "phase": "warmup"
+        },
+        {
+          "after": 42049.550191400005,
+          "before": 42040.245005799996,
+          "index": 1,
+          "phase": "measured"
+        },
+        {
+          "after": 42061.894595150006,
+          "before": 42052.624220800004,
+          "index": 2,
+          "phase": "measured"
+        },
+        {
+          "after": 42074.01331735,
+          "before": 42064.58935035,
+          "index": 3,
+          "phase": "measured"
+        }
+      ],
+      "counter_types": [
+        542180608
+      ],
+      "coverage_sha256": "748e4300db66d3ac170f92446eda1cc048a52976722beffdf0aaa58c142afde5",
+      "directory": "server\\.local\\optimization9h-20261004\\native-lookup-stock8k-prepared-20261005\\run\\native_lookup",
+      "duplicate_instance_name_extra_rows": 400,
+      "first_post_response_query_lead_seconds": 0.010935949998383876,
+      "invalid_rows": 0,
+      "measured": {
+        "accepted": 207,
+        "decode_tps": 41.89913111746058,
+        "drafted": 345,
+        "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+        "prefill_tps": 1316.0396806045012,
+        "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810"
+      },
+      "measurement_sha256": "a7bad00ef7f038e29069b905839aa1956da910d5bbf7f37f5832938c222db49e",
+      "name": "native_lookup",
+      "negative_rows": 0,
+      "nonfinite_rows": 0,
+      "nonzero_instance_count": 8,
+      "process_count": 20,
+      "process_identity_invalid": [
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "csrss",
+          "pid": 2192
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "vmwp",
+          "pid": 27016
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "dwm",
+          "pid": 2796
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "System",
+          "pid": 4
+        }
+      ],
+      "query_errors": 0,
+      "query_seconds": {
+        "count": 50,
+        "maximum": 1.368489699998463,
+        "mean": 1.1708840460001375,
+        "median": 1.1736239999991085,
+        "minimum": 1.075375400003395
+      },
+      "raw_bytes": 7087552,
+      "raw_sha256": "c97f32d076c4286084d90f4383bd6cbee68069378a9ac5753500aa6a0f2fbf7b",
+      "ready_lead_seconds": 5.65726320000249,
+      "request_counts": {
+        "0": {
+          "interior": 10,
+          "overlapping": 12
+        },
+        "1": {
+          "interior": 6,
+          "overlapping": 8
+        },
+        "2": {
+          "interior": 6,
+          "overlapping": 8
+        },
+        "3": {
+          "interior": 7,
+          "overlapping": 8
+        }
+      },
+      "retained_utc_timestamp_before_query_end_seconds": {
+        "count": 50,
+        "maximum": 0.011201143264770508,
+        "mean": 0.007704648971557617,
+        "median": 0.010139822959899902,
+        "minimum": 0.003631591796875
+      },
+      "row_count": 18350,
+      "row_counts": {
+        "count": 50,
+        "maximum": 367,
+        "mean": 367.0,
+        "median": 367.0,
+        "minimum": 367
+      },
+      "sample_count": 50,
+      "sample_start_cadence_seconds": {
+        "count": 49,
+        "maximum": 1.4749201000013272,
+        "mean": 1.2057185000000517,
+        "median": 1.194646099997044,
+        "minimum": 1.0912786000044434
+      },
+      "timestamp_100nsec_naive_utc_minus_retained_utc_seconds": {
+        "count": 50,
+        "maximum": 7200.000001192093,
+        "mean": 7200.000000433922,
+        "median": 7200.000000476837,
+        "minimum": 7199.999999761581
+      },
+      "zero_instance_count": 359
+    },
+    {
+      "above_100_rows": 10,
+      "active_instances": [
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": "1",
+          "engine": 2,
+          "engine_type": "compute 0",
+          "identity_valid": false,
+          "instance": "pid_20108_luid_0x00000000_0x00011884_phys_0_eng_2_engtype_compute 0",
+          "name": "vmwp",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_20108_luid_0x00000000_0x00011884_phys_0_eng_2_engtype_compute 0#1)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 20108,
+          "scopes": {
+            "all": {
+              "above_100_samples": 10,
+              "count": 54,
+              "maximum": 135.2476216572111,
+              "mean": 55.708771209462775,
+              "median": 76.88706854194305,
+              "minimum": 0.0,
+              "positive_samples": 37
+            },
+            "measured_interior": {
+              "above_100_samples": 6,
+              "count": 22,
+              "maximum": 135.2476216572111,
+              "mean": 96.18919495337849,
+              "median": 93.24456169401381,
+              "minimum": 64.2926588886456,
+              "positive_samples": 22
+            },
+            "request_0": {
+              "above_100_samples": 4,
+              "count": 12,
+              "maximum": 118.4508593445146,
+              "mean": 61.165161518595134,
+              "median": 76.88706854194305,
+              "minimum": 0.0,
+              "positive_samples": 9
+            },
+            "request_1": {
+              "above_100_samples": 4,
+              "count": 8,
+              "maximum": 135.2476216572111,
+              "mean": 98.6013110202039,
+              "median": 96.25806292036168,
+              "minimum": 64.5605166646512,
+              "positive_samples": 8
+            },
+            "request_2": {
+              "above_100_samples": 1,
+              "count": 7,
+              "maximum": 114.28854196167258,
+              "mean": 93.05914293769106,
+              "median": 96.40129187168546,
+              "minimum": 64.2926588886456,
+              "positive_samples": 7
+            },
+            "request_3": {
+              "above_100_samples": 1,
+              "count": 7,
+              "maximum": 134.1110764585035,
+              "mean": 96.56254289269395,
+              "median": 91.09081979322727,
+              "minimum": 79.32340037343492,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": false,
+          "instance": "pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "System",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 4,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 54,
+              "maximum": 3.1477905913628916,
+              "mean": 0.5350202233337499,
+              "median": 0.24070059711814593,
+              "minimum": 0.0,
+              "positive_samples": 52
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 22,
+              "maximum": 1.1945591020104727,
+              "mean": 0.19030953393185202,
+              "median": 0.0965246857754879,
+              "minimum": 0.0,
+              "positive_samples": 21
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 12,
+              "maximum": 2.9719925942406555,
+              "mean": 0.47148340152339335,
+              "median": 0.1603925135779835,
+              "minimum": 0.0,
+              "positive_samples": 11
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 8,
+              "maximum": 0.542850353368467,
+              "mean": 0.15454978988852774,
+              "median": 0.11003003520096166,
+              "minimum": 0.0,
+              "positive_samples": 7
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 1.1945591020104727,
+              "mean": 0.23379704169735296,
+              "median": 0.07929362987067007,
+              "minimum": 0.016897843052755088,
+              "positive_samples": 7
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.5615554565867537,
+              "mean": 0.18769030507300735,
+              "median": 0.1477570573749308,
+              "minimum": 0.055551503586782985,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": true,
+          "instance": "pid_15864_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "ChatGPT",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_15864_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 15864,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 54,
+              "maximum": 0.40088361409351236,
+              "mean": 0.04259488325786404,
+              "median": 0.02414044453305976,
+              "minimum": 0.007369916992088563,
+              "positive_samples": 54
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 22,
+              "maximum": 0.2463849025123873,
+              "mean": 0.04773147732992315,
+              "median": 0.025371654212326598,
+              "minimum": 0.008400423065071258,
+              "positive_samples": 22
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 12,
+              "maximum": 0.08229824698902766,
+              "mean": 0.02812477151181549,
+              "median": 0.021322998674268144,
+              "minimum": 0.00745485748961564,
+              "positive_samples": 12
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 8,
+              "maximum": 0.2463849025123873,
+              "mean": 0.07618280882149502,
+              "median": 0.04117123960058143,
+              "minimum": 0.01514265543950713,
+              "positive_samples": 8
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.03337554386743684,
+              "mean": 0.027895962043788986,
+              "median": 0.029428461684785863,
+              "minimum": 0.017208506361192855,
+              "positive_samples": 7
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.11871301181421905,
+              "mean": 0.03505118519711806,
+              "median": 0.017405509764609785,
+              "minimum": 0.008400423065071258,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": false,
+          "instance": "pid_2796_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "dwm",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_2796_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 2796,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 54,
+              "maximum": 0.09311291537012384,
+              "mean": 0.007052659012982304,
+              "median": 0.0034990588224414103,
+              "minimum": 0.0012558186676950537,
+              "positive_samples": 54
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 22,
+              "maximum": 0.06332271765858014,
+              "mean": 0.0065637430923519615,
+              "median": 0.0035716457051120825,
+              "minimum": 0.001256075647798762,
+              "positive_samples": 22
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 12,
+              "maximum": 0.006048580179810847,
+              "mean": 0.003465162667362785,
+              "median": 0.0036924059248861956,
+              "minimum": 0.0012558186676950537,
+              "positive_samples": 12
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 8,
+              "maximum": 0.06332271765858014,
+              "mean": 0.012767223014697205,
+              "median": 0.005442901846384179,
+              "minimum": 0.002116623597478442,
+              "positive_samples": 8
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.004381168356952337,
+              "mean": 0.002884384726118559,
+              "median": 0.0029474777331454888,
+              "minimum": 0.001256075647798762,
+              "positive_samples": 7
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0045388228909685555,
+              "mean": 0.0031534101187622294,
+              "median": 0.0032909892713749752,
+              "minimum": 0.001653424420187619,
+              "positive_samples": 7
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": true,
+          "instance": "pid_15864_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "ChatGPT",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_15864_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 15864,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 54,
+              "maximum": 0.19339117967240976,
+              "mean": 0.013193450076750702,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 9
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 22,
+              "maximum": 0.052123921057608616,
+              "mean": 0.003611950458220557,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 2
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 12,
+              "maximum": 0.12690690378896313,
+              "mean": 0.023124310316928385,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 8,
+              "maximum": 0.02733898902324364,
+              "mean": 0.003417373627905455,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.052123921057608616,
+              "mean": 0.007446274436801231,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": "1",
+          "engine": 1,
+          "engine_type": "copy",
+          "identity_valid": false,
+          "instance": "pid_20108_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+          "name": "vmwp",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_20108_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy#1)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 20108,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 54,
+              "maximum": 0.22118814033215764,
+              "mean": 0.011735333856982928,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 9
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 22,
+              "maximum": 0.045881416005961136,
+              "mean": 0.0039455668198993665,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 12,
+              "maximum": 0.22118814033215764,
+              "mean": 0.020030094456918685,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 2
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 8,
+              "maximum": 0.045881416005961136,
+              "mean": 0.005735177000745142,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.019109602614634024,
+              "mean": 0.0027299432306620033,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.021811451417190902,
+              "mean": 0.003115921631027272,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": false,
+          "instance": "pid_2192_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "csrss",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_2192_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 2192,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 54,
+              "maximum": 0.044310238763220426,
+              "mean": 0.0055482654666682224,
+              "median": 0.0027876420120536804,
+              "minimum": 0.0,
+              "positive_samples": 38
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 22,
+              "maximum": 0.009077918047409208,
+              "mean": 0.002352392851450294,
+              "median": 0.0025323353394030423,
+              "minimum": 0.0,
+              "positive_samples": 12
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 12,
+              "maximum": 0.044310238763220426,
+              "mean": 0.005752076058181569,
+              "median": 0.0025510659176715225,
+              "minimum": 0.0,
+              "positive_samples": 7
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 8,
+              "maximum": 0.005764647670714698,
+              "mean": 0.0015243225077489636,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.005041477065447502,
+              "mean": 0.0018270827620444244,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 3
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.009077918047409208,
+              "mean": 0.0038240690479433978,
+              "median": 0.0027230391889898117,
+              "minimum": 0.0,
+              "positive_samples": 6
+            }
+          }
+        },
+        {
+          "adapter": "0x00000000_0x00011884",
+          "duplicate_index": null,
+          "engine": 0,
+          "engine_type": "3d",
+          "identity_valid": true,
+          "instance": "pid_8596_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d",
+          "name": "explorer",
+          "path": "\\\\desktop-8m583si\\gpu engine(pid_8596_luid_0x00000000_0x00011884_phys_0_eng_0_engtype_3d)\\utilization percentage",
+          "physical_engine": 0,
+          "pid": 8596,
+          "scopes": {
+            "all": {
+              "above_100_samples": 0,
+              "count": 54,
+              "maximum": 0.0033209773922246756,
+              "mean": 6.149958133749399e-05,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 1
+            },
+            "measured_interior": {
+              "above_100_samples": 0,
+              "count": 22,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_0": {
+              "above_100_samples": 0,
+              "count": 12,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_1": {
+              "above_100_samples": 0,
+              "count": 8,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_2": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            },
+            "request_3": {
+              "above_100_samples": 0,
+              "count": 7,
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "positive_samples": 0
+            }
+          }
+        }
+      ],
+      "adapters": [
+        "0x00000000_0x00011884/phys_0",
+        "0x00000000_0x00014b7f/phys_0",
+        "0x00000000_0x00014bd5/phys_0"
+      ],
+      "between_query_seconds": {
+        "count": 53,
+        "maximum": 0.1562298999997438,
+        "mean": 0.03040552264154133,
+        "median": 0.02927069999714149,
+        "minimum": 0.013436100001854356
+      },
+      "boundaries": [
+        {
+          "after": 42756.83358315,
+          "before": 42740.975900699996,
+          "index": 0,
+          "phase": "warmup"
+        },
+        {
+          "after": 42768.9199095,
+          "before": 42758.9735945,
+          "index": 1,
+          "phase": "measured"
+        },
+        {
+          "after": 42782.376751150005,
+          "before": 42773.0268189,
+          "index": 2,
+          "phase": "measured"
+        },
+        {
+          "after": 42794.13269885,
+          "before": 42784.76975315,
+          "index": 3,
+          "phase": "measured"
+        }
+      ],
+      "counter_types": [
+        542180608
+      ],
+      "coverage_sha256": "bc1db13f99bbb231dbf18498b8327174e4dcb06a2fc6d54401ad41d049ce17ea",
+      "directory": "server\\.local\\optimization9h-20261004\\native-lookup-stock8k-resume-20261005\\run\\stock_after",
+      "duplicate_instance_name_extra_rows": 432,
+      "first_post_response_query_lead_seconds": 1.1008892500030925,
+      "invalid_rows": 0,
+      "measured": {
+        "accepted": 207,
+        "decode_tps": 41.28009913305524,
+        "drafted": 345,
+        "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+        "prefill_tps": 1277.138669037775,
+        "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810"
+      },
+      "measurement_sha256": "01ab0c18c938e83f3fb68d39829cbb381c563889064c69598b8433343bb1924f",
+      "name": "stock_after",
+      "negative_rows": 0,
+      "nonfinite_rows": 0,
+      "nonzero_instance_count": 8,
+      "process_count": 20,
+      "process_identity_invalid": [
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "vmwp",
+          "pid": 20108
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "csrss",
+          "pid": 2192
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "dwm",
+          "pid": 2796
+        },
+        {
+          "errors": [
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.RuntimeException"
+              },
+              "operation": "StartTime"
+            },
+            {
+              "error": {
+                "exception_type": "System.Management.Automation.PropertyNotFoundException"
+              },
+              "operation": "ExecutableMetadata"
+            }
+          ],
+          "name": "System",
+          "pid": 4
+        }
+      ],
+      "query_errors": 0,
+      "query_seconds": {
+        "count": 54,
+        "maximum": 1.319590999999491,
+        "mean": 1.1573780629629187,
+        "median": 1.15579230000003,
+        "minimum": 1.0820737999965786
+      },
+      "raw_bytes": 7653701,
+      "raw_sha256": "d050de4c2cbbc3951f647e7b16cf682878e51470c7a35facfc888128b02470d6",
+      "ready_lead_seconds": 5.24542929999734,
+      "request_counts": {
+        "0": {
+          "interior": 12,
+          "overlapping": 14
+        },
+        "1": {
+          "interior": 8,
+          "overlapping": 9
+        },
+        "2": {
+          "interior": 7,
+          "overlapping": 9
+        },
+        "3": {
+          "interior": 7,
+          "overlapping": 9
+        }
+      },
+      "retained_utc_timestamp_before_query_end_seconds": {
+        "count": 54,
+        "maximum": 0.011446952819824219,
+        "mean": 0.0073296184893007635,
+        "median": 0.006954789161682129,
+        "minimum": 0.0038640499114990234
+      },
+      "row_count": 19818,
+      "row_counts": {
+        "count": 54,
+        "maximum": 367,
+        "mean": 367.0,
+        "median": 367.0,
+        "minimum": 367
+      },
+      "sample_count": 54,
+      "sample_start_cadence_seconds": {
+        "count": 53,
+        "maximum": 1.4758208999992348,
+        "mean": 1.1891527830189004,
+        "median": 1.193293199998152,
+        "minimum": 1.0964506000018446
+      },
+      "timestamp_100nsec_naive_utc_minus_retained_utc_seconds": {
+        "count": 54,
+        "maximum": 7200.000001192093,
+        "mean": 7200.000000551895,
+        "median": 7200.000000476837,
+        "minimum": 7200.0
+      },
+      "zero_instance_count": 359
+    }
+  ]
+}
