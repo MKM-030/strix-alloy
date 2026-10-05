@@ -1,0 +1,370 @@
+{
+  "schema": "halogen.update-checkpoint.v1",
+  "started_utc": "2026-10-05T08:59:32Z",
+  "completed_utc": "2026-10-05T09:14:29Z",
+  "next_due_utc": "2026-10-05T10:59:32Z",
+  "baseline": "docs/research/halogen-update-checkpoint-20261005-0616.md",
+  "goal_status_preserved": "blocked",
+  "benchmark_runs": 0,
+  "lifecycle_actions": 0,
+  "installations": 0,
+  "findings": {
+    "halogen": {
+      "task": "halogen-update-0859",
+      "repository": "peonist-ai/halogen-flash-server",
+      "observed_at_utc": "2026-10-05T09:01:45.7186238Z",
+      "baseline_observed_at_utc": "2026-10-05T06:16:00Z",
+      "baseline_commit": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+      "main": {
+        "sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+        "committer_time_utc": "2026-10-03T04:29:22Z",
+        "subject": "0.16.2",
+        "source_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits/main"
+      },
+      "latest_listed_tag": {
+        "name": "v0.16.2",
+        "commit_sha": "7f31bbd4021f217a1be9776bdb7304bcf8eca62d",
+        "tag_object_sha": "71b5339a1dc74c26dc0952989e64aee4b06a6546",
+        "tagger_time_utc": "2026-10-03T04:35:36Z",
+        "source_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/git/ref/tags/v0.16.2"
+      },
+      "github_release_records": {
+        "count": 0,
+        "latest_endpoint_http_status": 404,
+        "source_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/releases?per_page=10"
+      },
+      "documents": [
+        {
+          "path": "docs/NPU.md",
+          "blob_sha": "27102a10eeca292b067a6be5992a3e1065959f91",
+          "source_url": "https://github.com/peonist-ai/halogen-flash-server/blob/main/docs/NPU.md"
+        },
+        {
+          "path": "docs/FLAGS.md",
+          "blob_sha": "92610f3dc8baace22cce35377f5ce2723d095ace",
+          "source_url": "https://github.com/peonist-ai/halogen-flash-server/blob/main/docs/FLAGS.md"
+        },
+        {
+          "path": "README.md",
+          "blob_sha": "315304b2464895ea8de5e50b78c6f46e0101f570",
+          "source_url": "https://github.com/peonist-ai/halogen-flash-server/blob/main/README.md"
+        },
+        {
+          "path": "CHANGELOG.md",
+          "blob_sha": "34fbb6e701c708994b01d94eead0413872fad434",
+          "source_url": "https://github.com/peonist-ai/halogen-flash-server/blob/main/CHANGELOG.md"
+        }
+      ],
+      "comparison": {
+        "main_changed": false,
+        "latest_tag_changed": false,
+        "documents_changed": false,
+        "reason": "main equals baseline commit, so committed document tree is unchanged",
+        "new_actionable_candidates": [],
+        "supported_contract_changed": false
+      },
+      "unchanged_supported_npu_contract": {
+        "gpu_fabric_top_clock_required": true,
+        "override": "HALOGEN_NPU_WITH_GPU=1 starts anyway and remains unsupported",
+        "routing": "Request model selects a small NPU model; other chat requests go to the Flash model. Separate small-model requests, no main-model NPU draft or prefill route documented."
+      },
+      "operations": {
+        "hardware": false,
+        "local_engine_or_http": false,
+        "lifecycle": false,
+        "installs": false,
+        "tests": false,
+        "code_edits": false,
+        "completed_131072_or_260000_cohorts_repeated": false
+      }
+    },
+    "drivers": {
+      "check": "official GPU/NPU driver and SDK metadata",
+      "observed_utc": "2026-10-05T09:02:25Z",
+      "baseline": "docs/research/halogen-update-checkpoint-20261005-0616.md",
+      "status": "unchanged; no actionable new supported route found",
+      "sources": [
+        {
+          "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+          "status": "Windows 11: Adrenalin 26.9.2 WHQL Optional (2026-09-29); 26.8.1 WHQL Recommended (2026-08-20)"
+        },
+        {
+          "url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html",
+          "status": "Still updated 2026-09-29; RDNA3/4 Driver Store 32.0.32015.2008; packaged NPU MCDM 32.00.20102.3930 dated 2026-05-07. No documented Halogen/WSL, FP11 fabric-transition overlap, or relevant precision fix found."
+        },
+        {
+          "url": "https://github.com/amd/RyzenAI-SW/releases",
+          "status": "Latest remains v1.8.0, released July 23 at 04:37; no newer release listed"
+        },
+        {
+          "url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+          "status": "32.0.203.376 still designated production NPU driver for Strix Halo; minimum 32.0.203.280. This separate channel is distinct from Adrenalin packaged contents."
+        },
+        {
+          "url": "https://github.com/microsoft/WindowsML/wiki/Windows-ML-Execution-Provider-Releases",
+          "status": "VitisAI current MSIX 1.8.75.0 / EP1605 (2026 9D); 1.8.80.0 upcoming, Insider 2026 9D and planned GA 2026 10D. Only current version supported; upcoming versions preview, not guaranteed. MIGraphX current 1.8.64.0 / GPU EP7.2.2609.19; 1.8.65.0 upcoming."
+        },
+        {
+          "url": "https://ryzenai.docs.amd.com/en/latest/relnotes.html",
+          "status": "Version 1.8 remains latest; Strix Halo included in STX. Supports INT8 CNN, BF16 CNN/NLP and OGA LLM capability. No new general GPU/NPU overlap or relevant precision fix established by current release section."
+        },
+        {
+          "url": "https://ryzenai.docs.amd.com/en/main/oga_model_prepare.html",
+          "status": "Hybrid recipe explicitly uses NPU prefill plus GPU token phase; capability does not establish simultaneous Halogen GPU/NPU execution or MTP acceleration."
+        },
+        {
+          "url": "https://www.amd.com/en/developer/ryzen-master-monitoring-sdk.html",
+          "status": "Monitoring SDK 3.1.1.5478 (2026-07-01) provides read-only Fabric Clock metrics in a broadly described Ryzen API; public page does not establish FP11/395 usable readback and top-state hold contract."
+        },
+        {
+          "url": "https://docs.amd.com/r/en-US/68886-ryzen-master-user-guide/RAM",
+          "status": "Generic fabric clock control limited to supported processors; no FP11/395 qualification found in checked sources."
+        },
+        {
+          "url": "https://rocm.docs.amd.com/en/docs-7.14.0/about/release-notes.html",
+          "status": "FCLK control described as maximum capping only on MI300A, not a 395 Windows top-state hold."
+        }
+      ],
+      "limits": "Scoped public-documentation negative finding; no installed inventory, hardware or provider diagnostic, inference, package download/install, setting, runtime/lifecycle or code change performed."
+    },
+    "reddit": {
+      "task": "reddit-update-0859",
+      "checked_at_utc": "2026-10-05T09:07:52Z",
+      "window_start_utc": "2026-10-05T06:16:00Z",
+      "scope": "Read-only public Reddit and linked primary repositories. No runtime, hardware, provider, local HTTP, lifecycle, tests, installs, or benchmark operations.",
+      "conclusion": "No new reproducible Halogen/HGN candidate found in the check window. Two useful older Rulith SSD techniques were newly noticed in this check; portability has not been assessed and neither is claimed as a Halogen improvement.",
+      "fresh_window_evidence": {
+        "strix_halo_new_json": "https://www.reddit.com/r/StrixHalo/new.json?limit=10",
+        "latest_post_utc_as_served": "2026-10-05T03:53:06Z",
+        "latest_post_url": "https://www.reddit.com/r/StrixHalo/comments/1wxythz/anyone_running_strix_halo_with_5080_on_egpu/",
+        "local_llama_limitation": "new listing and JSON returned stale crawls; no complete fresh-window exclusion can be asserted.",
+        "github_since_start": [
+          {
+            "repo": "rulith-dev/rulith-inference",
+            "url": "https://api.github.com/repos/rulith-dev/rulith-inference/commits?since=2026-10-05T06:16:00Z&per_page=20",
+            "commits": []
+          },
+          {
+            "repo": "peonist-ai/halogen-flash-server",
+            "url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits?since=2026-10-05T06:16:00Z&per_page=20",
+            "commits": []
+          },
+          {
+            "repo": "Aristo94/GSQHalo.cpp",
+            "branch": "gsqhalo",
+            "url": "https://api.github.com/repos/Aristo94/GSQHalo.cpp/commits?sha=gsqhalo&since=2026-10-05T06:16:00Z&per_page=20",
+            "commits": []
+          }
+        ],
+        "github_method": "Successful GitHub connector GETs returned unchanged primary JSON; web-tool GitHub history/API opens had failed. No credentials or personal account data were inspected."
+      },
+      "older_useful_leads": [
+        {
+          "name": "Wake SSD before a decode PLE gather",
+          "status": "Older useful lead newly noticed here; not a changed release since 06:16 UTC.",
+          "release": "0.4.0",
+          "commit": "cdd2ef29674eb7ea2a297553a895b0e5eea91414",
+          "commit_utc": "2026-10-01T05:06:11Z",
+          "commit_url": "https://github.com/rulith-dev/rulith-inference/commit/cdd2ef29674eb7ea2a297553a895b0e5eea91414",
+          "source_url": "https://github.com/rulith-dev/rulith-inference/blob/cdd2ef29674eb7ea2a297553a895b0e5eea91414/patches/apply_ple_wake_041.py",
+          "results_url": "https://github.com/rulith-dev/rulith-inference/blob/cdd2ef29674eb7ea2a297553a895b0e5eea91414/docs/results.md",
+          "data_url": "https://github.com/rulith-dev/rulith-inference/blob/cdd2ef29674eb7ea2a297553a895b0e5eea91414/docs/results/decode-040-20261001.json",
+          "mechanism": "Issue a fire-and-forget page read before a small batch's PLE gather to wake the drive/link from a low-power state; STRIX_PLE_WAKE=0 disables it.",
+          "published_measurement": "At eight conversations, PLE gather 0.80 to 0.45 ms. This is a component measurement, not a demonstrated Halogen end-to-end gain.",
+          "portability_limit": "Source operates on llama_lazy_reader and qwen4exp, uses Windows unbuffered/OVERLAPPED I/O, and depends on that stack's gather path."
+        },
+        {
+          "name": "Gather upcoming prompt PLE rows before the GPU requests them",
+          "status": "Older useful lead newly noticed here; not a changed release since 06:16 UTC.",
+          "release": "0.4.3",
+          "release_published_utc": "2026-10-04T02:10:50Z",
+          "release_url": "https://github.com/rulith-dev/rulith-inference/releases/tag/v0.4.3",
+          "commit": "a3f0a386714927caee8511aa8bbb1517cd0e3cfb",
+          "commit_utc": "2026-10-04T02:10:30Z",
+          "commit_url": "https://github.com/rulith-dev/rulith-inference/commit/a3f0a386714927caee8511aa8bbb1517cd0e3cfb",
+          "source_url": "https://github.com/rulith-dev/rulith-inference/blob/a3f0a386714927caee8511aa8bbb1517cd0e3cfb/patches/apply_prefill_043.py",
+          "results_url": "https://github.com/rulith-dev/rulith-inference/blob/a3f0a386714927caee8511aa8bbb1517cd0e3cfb/docs/results.md",
+          "mechanism": "Pregather PLE rows for prompt chunks of at least 64 tokens at the actual step size, after the current pass has taken its own rows; gather a prompt's first chunk as soon as the server schedules it. STRIX_PLE_NOW=0 disables this path.",
+          "published_measurement": "The final chunk of a 110K-token prompt waited 256 ms for rows before, 3 ms after. The complete 0.4.3 bundle gave 2.7 to 9.4 percent faster fresh CacheOff prompt processing across 1K to 16K; that bundle gain cannot be assigned to the SSD change alone.",
+          "portability_limit": "Implementation is in the patched GGUF/HIP qwen4exp runtime, not a documented Halogen/HGN option. Needs source-level portability review before any candidate classification."
+        }
+      ],
+      "reddit_publications": [
+        {
+          "topic": "Rulith Inference 0.4",
+          "utc": "2026-10-01T15:46:29Z",
+          "url": "https://www.reddit.com/r/StrixHalo/comments/1wv2x6c/rulith_inference_formerly_strix_llama_04_125b_moe/"
+        },
+        {
+          "topic": "Halogen 0.16.0 NPU models",
+          "utc": "2026-10-02T00:25:11Z",
+          "url": "https://www.reddit.com/r/StrixHalo/comments/1wvfrj0/halogenflashserver_0160_strix_halo_npu_now_serves/",
+          "assessment": "Existing embedding/reranking/classifier functionality and existing draft/clock caveats; no new reproducible NPU decode integration found."
+        },
+        {
+          "topic": "GSQHalo",
+          "utc": "2026-10-03T14:15:15Z",
+          "url": "https://www.reddit.com/r/StrixHalo/comments/1wwobcq/gsqhalocpp_another_day_another_fork_this_one_is/",
+          "assessment": "Published GGUF/HIP low-bit kernels, MTP buffer and SSD KV persistence changes are concrete, but a different model/runtime path and older than the check window.",
+          "source": "https://github.com/Aristo94/GSQHalo.cpp/blob/gsqhalo/docs/gsqhalo/README.md"
+        }
+      ],
+      "mutations": [
+        "Only this scoped ignored receipt was created."
+      ],
+      "benchmark_runs": 0,
+      "adoption_claim": false
+    },
+    "ssd_portability": {
+      "schema": 1,
+      "audit": "ssd-ahead-source-0905",
+      "date": "2026-10-05",
+      "disposition": "conceptual_missing_integration_not_actionable_stock_halogen0162",
+      "scope": "Primary-source browsing and existing local text artifacts only. No model reads, disassembly execution, hardware queries, tests, provider/HTTP/lifecycle actions, installation or implementation. This ignored receipt is the sole write.",
+      "current_engine_preserved": "Halogen0.16.2 C262144 cacheOff MTP2 PLD3,3 arena8192; existing nativeext4 lookup qualification not treated as new; GPU/NPU overlap unsupported",
+      "sources": [
+        {
+          "change": "Rulith0.4.3 PLE pregather",
+          "commit": "a3f0a386714927caee8511aa8bbb1517cd0e3cfb",
+          "url": "https://github.com/rulith-dev/rulith-inference/blob/a3f0a386714927caee8511aa8bbb1517cd0e3cfb/patches/apply_prefill_043.py",
+          "results_url": "https://github.com/rulith-dev/rulith-inference/blob/a3f0a386714927caee8511aa8bbb1517cd0e3cfb/docs/results.md",
+          "observed_contract": ">=64-token actual n_prompt_step; defer_prefetch/launch_deferred after current rows taken; immediate first-chunk llama_strix_pregather_now; pending entry wait/take_pregathered and matching token runs",
+          "measurement_limit": "110K tail row wait256->3ms is source-local evidence. Fresh cacheOff PP+2.7-9.4% is whole0.4.3 bundle; pregather-only gain is not established."
+        },
+        {
+          "change": "Rulith SSD wake-ahead",
+          "commit": "cdd2ef29674eb7ea2a297553a895b0e5eea91414",
+          "url": "https://github.com/rulith-dev/rulith-inference/blob/cdd2ef29674eb7ea2a297553a895b0e5eea91414/patches/apply_ple_wake_041.py",
+          "observed_contract": "llama_lazy_reader::wake uses Windows unbuffered OVERLAPPED ReadFile of one aligned page, called after small-batch synchronize and before batch preparation; non-Windows wake() is empty"
+        },
+        {
+          "change": "Pinned Halogen supported flags",
+          "url": "https://github.com/peonist-ai/halogen-flash-server/blob/7f31bbd4021f217a1be9776bdb7304bcf8eca62d/docs/FLAGS.md",
+          "observed_contract": "HALOGEN_NGRAM_GATHER_THREADS is documented I/O concurrency, default64, decode unchanged; no documented ahead-of-chunk gathered-entry reader/scheduler interface"
+        }
+      ],
+      "local_evidence": [
+        {
+          "path": "backends/halogen-wsl2-0.16.2/scripts/kernel_controls.py",
+          "line": 25,
+          "supports": "32/64 gather concurrency and FLASH_NGRAM_RANDOM experiment controls only; unknown controls refused"
+        },
+        {
+          "path": "backends/halogen-wsl2-0.16.2/scripts/service.py",
+          "line": 303,
+          "supports": "lookup_tuning qualifies then changes lookup mount/environment; no scheduled async row queue"
+        },
+        {
+          "path": "backends/halogen-wsl2-0.16.2/scripts/bridge_adapter.py",
+          "line": 12,
+          "supports": "Exact engine ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b binding at startup preflight RVA0x1877a40; no prompt pregather adapter"
+        },
+        {
+          "path": "docs/research/halogen-cpu-ssd-opportunities-20261004.md",
+          "line": 73,
+          "supports": "Lookup opens O_RDONLY, maps shared readonly, closes descriptor; actual gather is mapped source plus row stride copied by memcpy rather than pread"
+        },
+        {
+          "path": "server/.local/optimization9h-20261004/mtp-route-static-20261004/host-text-disassembly.txt",
+          "line": 188865,
+          "supports": "Existing D2H row-ID copy at0x17d7aa6; serial memcpy0x17d80fc line189248; worker memcpy0x1847d3b line291246; mmap0x1875b39 line342445 and close0x1875b44 line342448"
+        },
+        {
+          "path": "docs/benchmarks/halogen0162-mmap-advice-20261004.md",
+          "line": 3,
+          "supports": "FLASH_NGRAM_RANDOM=0 completed0requests and crossed18GiB reserve; no demonstrated throughput win"
+        }
+      ],
+      "missing_integration": "Known next actual prompt chunk and rowIDs early enough to overlap current GPU pass, bounded asynchronous row ownership/lifetime and consumer matching/defer/cancel contract. Existing HIP/memcpy seam observations do not provide this scheduler contract; a new private engine intervention or upstream integration would be required.",
+      "recommended_action": "Record source lead without deploying a new setting/interposer or scheduling benchmarks. Preserve current qualified engine."
+    },
+    "initial_health": {
+      "time_utc": "2026-10-05T08:59:21Z",
+      "controller": {
+        "pid": 29004,
+        "run": "38fed54e495e47848b7d9514b53cde98",
+        "phase": "ready",
+        "heartbeat_age": 1.891355037689209
+      },
+      "backend": {
+        "pid": 11988,
+        "run": "ad59de6c40e24c12a27698d2de20b4b6",
+        "phase": "ready"
+      },
+      "gateway": {
+        "status": "ok",
+        "active_requests": 0,
+        "draining": false,
+        "completed": 8,
+        "cancelled": 0
+      },
+      "native": {
+        "status": "ok",
+        "in_flight": 0,
+        "queued": 0,
+        "busy": false,
+        "context": 262144
+      },
+      "physical_gib": 25.587322235107422,
+      "commit_headroom_gib": 118.46199798583984,
+      "container": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 917,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-05T07:22:45.940343051Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      }
+    },
+    "final_health": {
+      "time_utc": "2026-10-05T09:14:29Z",
+      "controller_pid": 29004,
+      "backend_pid": 11988,
+      "controller_run": "38fed54e495e47848b7d9514b53cde98",
+      "backend_run": "ad59de6c40e24c12a27698d2de20b4b6",
+      "phase": "ready",
+      "gateway": {
+        "status": "ok",
+        "active_requests": 0,
+        "draining": false,
+        "completed": 8,
+        "cancelled": 0
+      },
+      "native": {
+        "status": "ok",
+        "in_flight": 0,
+        "queued": 0,
+        "busy": false,
+        "context": 262144
+      },
+      "physical_gib": 25.75223159790039,
+      "commit_headroom_gib": 118.64276504516602,
+      "container": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 917,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-05T07:22:45.940343051Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      }
+    }
+  },
+  "raw_receipt_sha256": {
+    "halogen-update-0859.json": "3ae2fb15348985fa28a778d3d5fa6f0ef7e2297e1e53b613178f06cfdb6d510f",
+    "drivers-update-0859.json": "fe1555122fcb517b0f1ae4036bb0f974d08865607dc2443036b33fe06fda08cc",
+    "reddit-update-0859.json": "d716aac8e6103816b156cb4d2af234da36a1ce42b5087fa1f45eb70c80fbd39a",
+    "ssd-ahead-source-0905.json": "6e805a785796c87b2536cdae8d65e148b8f046f37d8c499339a6e8acb8c6ef15",
+    "heartbeat-live-20261005-0859.json": "5f020bf9174a698aca4cff101750cdbaf37002fcdba6fa68a236da773dacfe2c",
+    "heartbeat-final-20261005-0859.json": "9a9bb9e0a482dfa25937110eb6a24ffecb196cabfa566ac673b781edc5c39296"
+  }
+}
