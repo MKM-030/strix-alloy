@@ -397,3 +397,42 @@ receipt from that adapter is claimed. The tested helper result supplies an
 accuracy correction within its recorded64-row scope; it establishes no arbitrary
 native `v_rsq` equivalence, active NPU benefit, useful overlap, live publication,
 full-engine speed gain or broader admission.
+
+## Source review and practical preparation cost
+
+The final pinned portable helper and thin adapter received a focused source-only
+review. No actionable correctness defect was found, so their source pins remain
+unchanged. This review performed no helper timing, checkpoint production, tensor
+payload read, provider/device call or new test. The existing exact 64-row helper
+receipts retain their bounded accuracy scope.
+
+One portable RMS row performs 5120 BF16 widenings, 13059 explicit FP32 boundary
+conversions, 2564 FP32-bit conversions and one epsilon widening. Each conversion
+uses a `struct.pack` and `struct.unpack`, totaling 41488 serialization calls per
+row, before Python loops, validation, finite checks and allocation. Spending the
+entire original paired-FC host bracket of 0.4871700625 ms on those calls alone
+would require an average 11.74 ns per call; spending the resident embedding GPU
+event bracket of 0.152995 ms would require 3.69 ns. These are arithmetic cost
+budgets from source operation counts, not measured helper elapsed times or a
+matched speed comparison. The adapter additionally decodes and freshly splits
+each row, rehashes sources/metadata, reads bounded checkpoint windows twice,
+serializes/hashes outputs and fsyncs 5N+4 files. It remains an offline candidate
+artifact producer.
+
+The existing [embedding component report](halogen-npu-early-embedding-component-20261005.md)
+records 0.9674 ms for the NPU session and 2.104775 ms for the complete diagnostic
+call, excluding producer/Q4C/RMS, live transport and GPU scheduling. The
+[original GPU component report](halogen-npu-authorized-measurements-20261004.md)
+records 0.311702 ms for the resident embedding+hidden event bracket, 0.487170 ms
+for its host enqueue/wait bracket, and 0.152995 ms for embedding alone. These
+scopes differ, and the prospective embedding-only route retains the hidden GPU
+work. They establish no engine throughput change or useful early-lead budget.
+
+The new helper corrects the recorded accuracy discrepancy; it supplies no
+practical reason to enable a live NPU route or extend projection-accuracy work
+solely to clear more gates. Supported fabric control and a measured useful early
+lead remain unproved. Any later integration decision still needs the existing
+[schedule admission](halogen-npu-early-token-schedule-20261005.md) inequality
+`max(0,L-W)+lookup/publication < G`, with preparation and transport included in
+the applicable latency. No live adoption or speed qualification follows from
+this source review.

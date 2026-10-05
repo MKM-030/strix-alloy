@@ -88,14 +88,18 @@ def halogen_draft_arguments(engine):
     args=[]
     for key,flag,allowed in (("draft_tokens","-DraftTokens",(1,2,3)),
                              ("prefill_chunk","-PrefillChunk",(2048,4096,8192,16384,32768)),
+                             ("max_prefill_tokens","-MaxPrefillTokens",(2048,4096,8192,16384,32768)),
                              ("admit_ticks","-AdmitTicks",tuple(range(1,1025)))):
         if key not in engine: continue
         value=engine[key]
         if type(value) is not int or value not in allowed:
             raise ValueError("Invalid Halogen option: "+key)
-        if key=="prefill_chunk" and "context" in engine and value>engine["context"]:
-            raise ValueError("Prefill chunk exceeds context")
+        if key in ("prefill_chunk","max_prefill_tokens") and "context" in engine and value>engine["context"]:
+            raise ValueError("Halogen prefill limit exceeds context: "+key)
         args += [flag,str(value)]
+    if 'max_prefill_tokens' in engine:
+        if 'prefill_chunk' not in engine or engine['prefill_chunk']>engine['max_prefill_tokens']:
+            raise ValueError('Max prefill tokens requires an explicit chunk no larger than the token arena')
     if 'prefill_keep_trunk' in engine:
         if engine['prefill_keep_trunk'] is not True: raise ValueError('Invalid Halogen option: prefill_keep_trunk')
         if engine.get('checkpoint')!='v2': raise ValueError('Prefill keep trunk requires the v2 checkpoint')
@@ -105,7 +109,7 @@ def halogen_draft_arguments(engine):
 
 def validate_halogen_launcher_controls(engine, repo):
     extended_chunk=engine.get('prefill_chunk') in (16384,32768)
-    if not (extended_chunk or 'prefill_keep_trunk' in engine or 'admit_ticks' in engine):
+    if not (extended_chunk or 'max_prefill_tokens' in engine or 'prefill_keep_trunk' in engine or 'admit_ticks' in engine):
         return
     if not isinstance(engine.get('directory'),str):
         raise ValueError('Halogen controls require a declared backend launcher')
@@ -123,7 +127,8 @@ def validate_halogen_launcher_controls(engine, repo):
         values={value.strip() for value in match.group(1).split(',')} if match else set()
         if str(engine['prefill_chunk']) not in values:
             raise ValueError('Halogen launcher does not support the selected prefill chunk')
-    for key,kind,name in (('prefill_keep_trunk','switch','PrefillKeepTrunk'),
+    for key,kind,name in (('max_prefill_tokens','int','MaxPrefillTokens'),
+                          ('prefill_keep_trunk','switch','PrefillKeepTrunk'),
                           ('admit_ticks','int','AdmitTicks')):
         if key in engine and not re.search(r'\['+kind+r'\]\s*\$'+name+r'\b',parameters,re.I):
             raise ValueError('Halogen launcher does not support '+key)
@@ -209,7 +214,7 @@ def halogen_private_hsa_arguments(engine, directory):
     if directory.resolve() != supported.resolve():
         raise ValueError('Private HSA experiment requires the pinned Halogen 0.16.2 backend')
     if any(key in engine for key in ('kernel_controls', 'matmul_tuning', 'lookup_tuning',
-                                   'prefill_chunk', 'prefill_keep_trunk', 'admit_ticks')):
+                                   'prefill_chunk', 'max_prefill_tokens', 'prefill_keep_trunk', 'admit_ticks')):
         raise ValueError('Private HSA experiment requires the unchanged Stock8K service controls')
     source = directory / 'scripts/private_hsa.py'
     if source.is_symlink() or not source.is_file():

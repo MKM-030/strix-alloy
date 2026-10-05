@@ -195,13 +195,49 @@ explizit mit `--native-rms`; seine erneute Checkpoint-Produktion wurde noch nich
 gestartet. [Implementierung](../../scripts/benchmarks/halogen0162_embedding_rms_cpu_tree_portable.py),
 [ausgeführter Vergleich](../../server/.local/optimization9h-20261004/q4c-multirow-owned-35bf1b51d916442b8101605ab80b6dcc/cpu-tree-portable-original-tolerance.json).
 
-Für die langen Messungen ist ein Profil mit `prefill_chunk=8192`, weiter
-262.144 Kontextpositionen, MTP2, PLD3,3, Cache Off und 18 GiB Reserve vorbereitet
-und vom Controller validiert. Es wurde nicht gestartet; die Freigabe zur kurzen
-Unterbrechung der Kollegeninstanz ist angefragt. Die installierte Originalinstanz
-verwendet die ungesetzten Prefill-Standardwerte. Laut den
+Die frühere Speichermaßnahme war noch nicht vollständig: Das vorbereitete
+Profil mit nur `prefill_chunk=8192` reduzierte die Stückelung, während der
+Wrapper ausdrücklich `HALOGEN_MAX_TOK=32768` setzte. Es hätte den reservierten
+Arbeitsbereich deshalb nicht verkleinert. Dieses Profil wurde nicht gestartet;
+die frühere Annahme eines kleineren Arbeitsbereichs war falsch.
+
+Der Startpfad unterstützt jetzt ausdrücklich `max_prefill_tokens`. Ein neues
+Profil mit `prefill_chunk=8192` **und** `max_prefill_tokens=8192` wurde rein lokal
+validiert: Beide nativen Werte werden 8192; Kontext und KV-Pool bleiben 262.144,
+MTP2, PLD3,3, Cache Off und 18 GiB Reserve bleiben erhalten. Es wurde nicht
+gestartet. Die bereits angefragte Freigabe zur kurzen Unterbrechung der
+Kollegeninstanz ist weiter offen; die Originalinstanz bleibt bereit und offen.
+Die reine Weiterleitung und Grenzprüfung besteht 39 gezielte Prüfungen des
+Agents, zusätzlich wurden die beiden unmittelbar geänderten Testdateien mit
+15 Prüfungen von ROOT erfolgreich ausgeführt. Die PowerShell-Argumentprüfung
+endete vor einem Prozessstart. Ein zusätzlich erfasster Lifecycle-Test wurde
+von der bestehenden `runner.lock` abgewiesen; der Lock wurde nicht verändert.
+Das ist keine ausgeführte neue Engine- oder Speicherqualifikation.
+
+Laut den
 [Flags der installierten Version 0.16.2](https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/v0.16.2/docs/FLAGS.md)
 dimensioniert `HALOGEN_MAX_TOK` den Prefill-Arbeitsbereich; der Standard 32.768
 benötigt etwa 9 GB. Diese Parameter werden beim Start gelesen. Ein kleinerer
 Arbeitsbereich ist eine konkrete Speichermaßnahme; sein Tok/s-Effekt wurde
 noch nicht gemessen.
+[Validiertes neues Profil](../../server/.local/optimization9h-20261004/long-natural-proposed-arena8192-validation-20261005.json),
+Profil-SHA-256 `1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6`.
+
+Ein einzelner überwachter Wartungsversuch am 5. Oktober um 05:02 UTC gab
+`POSIX_FADV_DONTNEED` nur für vollständig enthaltene Seiten des originalen
+n-gram-Tensors auf der Windows-Datei aus. Die Quelldatei wurde read-only
+geöffnet, ihre vollständige Metadatenidentität blieb gleich; gelesen wurden
+nur 264 Metadatenbytes und null Payloadbytes. Es gab genau einen Advice-Aufruf,
+keine Wiederholung, keine globale Cache-Aktion und keine Inferenz. Der eigene
+Child-Prozess endete mit Code 0; sein Job wurde geschlossen. Die kontinuierliche
+18-GiB-Reserve blieb erhalten.
+
+Die 24 Beobachtungen ergaben 21,6303 GiB vorher, 21,6348 GiB zuletzt und maximal
+21,6409 GiB freien physischen Speicher. Die Differenz von ungefähr 4,6 MiB ist
+kein belegter Reclaim-Effekt; der Systemaufruf meldet keine freigegebenen Bytes.
+Die 22-GiB-Zulassungsgrenze wurde nicht erreicht. Weitere 128K- und
+260K-Anfragen wurden deshalb nicht gestartet. Der Server blieb mit derselben
+Identität bereit/im Leerlauf, fünf abgeschlossenen und null abgebrochenen
+Anfragen. Dieser Wartungsversuch ist keine Messkohorte und schwächt die
+Zulassungsregel für Inferenz nicht ab.
+[Abgeschlossener eigener Wartungsjob](../../server/.local/optimization9h-20261004/live-ngram-advice-4a76f1cc005e45b283c1f6156e1f5a9f/result.json).

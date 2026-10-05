@@ -47,6 +47,7 @@ def options(argv=None):
     p.add_argument('--prompt-cache',choices=['Off','Exact','Flexible'],default='Off')
     p.add_argument('--draft-tokens',type=int,choices=(1,2,3),default=None)
     p.add_argument('--prefill-chunk',type=int,choices=(2048,4096,8192,16384,32768),default=None)
+    p.add_argument('--max-prefill-tokens',type=int,choices=(2048,4096,8192,16384,32768),default=None)
     p.add_argument('--prefill-keep-trunk',action='store_true')
     p.add_argument('--admit-ticks',type=int,default=None)
     p.add_argument('--kernel-controls-json',type=kc.parse,default=None)
@@ -78,7 +79,8 @@ def validate_options(o):
         hsa.validate_configuration({'receipt': hsa_path, 'receipt_sha256': hsa_sha})
         hsa.validate_scope(o.checkpoint, o.context_size, o.prompt_cache, o.draft_tokens, o.speculation_policy_json)
         if (o.kernel_controls_json or o.matmul_tuning_json is not None or o.lookup_receipt is not None or
-                o.prefill_chunk is not None or o.prefill_keep_trunk or o.admit_ticks is not None):
+                o.prefill_chunk is not None or getattr(o,'max_prefill_tokens',None) is not None or
+                o.prefill_keep_trunk or o.admit_ticks is not None):
             raise ValueError('Private HSA requires unchanged Stock8K service controls')
     lookup_path = getattr(o, 'lookup_receipt', None)
     lookup_sha = getattr(o, 'lookup_receipt_sha256', None)
@@ -95,8 +97,7 @@ def validate_options(o):
         mt.validate(o.matmul_tuning_json)
         if getattr(o, 'checkpoint', 'w4b') != 'v2':
             raise ValueError('Matmul tuning experiment is limited to the pinned v2 checkpoint')
-    if getattr(o,"prefill_chunk",None) is not None and o.prefill_chunk>o.context_size:
-        raise ValueError("Prefill chunk exceeds context capacity")
+    validate_prefill_limits(o.context_size,getattr(o,'prefill_chunk',None),getattr(o,'max_prefill_tokens',None))
     if getattr(o,'prefill_keep_trunk',False) and getattr(o,'checkpoint','w4b') != 'v2':
         raise ValueError('PREFILL_KEEP_TRUNK is supported only for the v2 checkpoint')
     if getattr(o,'admit_ticks',None) is not None and (type(o.admit_ticks) is not int or not 1 <= o.admit_ticks <= 1024):
@@ -209,11 +210,21 @@ def verify_checkpoint(machine, checkpoint, lookup_override=None):
     portable.check_hash(LOCAL/'libhalogen0162-v2-preflight.so',portable.RELEASE['v2_bridge_sha256'])
 
 
-def environment(context, checkpoint="w4b", prompt_cache="Off", draft_tokens=None, prefill_chunk=None, prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, speculation_policy=None):
+def validate_prefill_limits(context, prefill_chunk, max_prefill_tokens):
+    allowed=(2048,4096,8192,16384,32768)
+    if prefill_chunk is not None and (type(prefill_chunk) is not int or prefill_chunk not in allowed or prefill_chunk>context):
+        raise ValueError('Invalid prefill chunk for context')
+    if max_prefill_tokens is not None:
+        if type(max_prefill_tokens) is not int or max_prefill_tokens not in allowed or max_prefill_tokens>context:
+            raise ValueError('Invalid max prefill tokens for context')
+        if prefill_chunk is None or prefill_chunk>max_prefill_tokens:
+            raise ValueError('Max prefill tokens requires an explicit chunk no larger than the token arena')
+
+
+def environment(context, checkpoint="w4b", prompt_cache="Off", draft_tokens=None, prefill_chunk=None, prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, speculation_policy=None, max_prefill_tokens=None):
     if draft_tokens is not None and (type(draft_tokens) is not int or draft_tokens not in (1,2,3)):
         raise ValueError("Draft depth must be 1, 2 or 3")
-    if prefill_chunk is not None and (type(prefill_chunk) is not int or prefill_chunk not in (2048,4096,8192,16384,32768) or prefill_chunk>context):
-        raise ValueError("Invalid prefill chunk for context")
+    validate_prefill_limits(context,prefill_chunk,max_prefill_tokens)
     if prefill_keep_trunk and checkpoint != 'v2': raise ValueError('PREFILL_KEEP_TRUNK requires v2')
     if admit_ticks is not None and (type(admit_ticks) is not int or not 1 <= admit_ticks <= 1024): raise ValueError('Invalid admit ticks')
     env=r.environment(r.manifest_for('serve'))
@@ -238,7 +249,8 @@ def environment(context, checkpoint="w4b", prompt_cache="Off", draft_tokens=None
     if draft_tokens is not None: env['HALOGEN_MTP_DEPTH']=str(draft_tokens)
     if prefill_chunk is not None:
         env['HALOGEN_PREFILL_CHUNK']=str(prefill_chunk)
-        env['HALOGEN_MAX_TOK']='32768'
+        # Existing chunk profiles keep the stock arena unless explicitly bounded.
+        env['HALOGEN_MAX_TOK']=str(32768 if max_prefill_tokens is None else max_prefill_tokens)
     if prefill_keep_trunk: env['HALOGEN_PREFILL_KEEP_TRUNK']='1'
     if admit_ticks is not None: env['HALOGEN_ADMIT_TICKS']=str(admit_ticks)
     env['HALOGEN_PROMPT_CACHE']={'Off':'0','Exact':'1','Flexible':'2'}[prompt_cache]
@@ -281,7 +293,7 @@ def build_manifest(o, attempt, run_id):
         mounts[mt.FROZEN_PATH]=r.linux_path(tuning['source'])
     result=dict(schema=1,version='0.16.2',image=r.IMAGE,run_id=run_id,checkpoint=checkpoint,
         context=o.context_size,slots=1,serve_seconds=o.serve_seconds,startup_timeout=o.startup_timeout,
-        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None),getattr(o,'speculation_policy_json',None)),sources=source_hashes(),
+        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None),getattr(o,'speculation_policy_json',None),max_prefill_tokens=getattr(o,'max_prefill_tokens',None)),sources=source_hashes(),
         entrypoint_sha256=portable.digest(attempt/'entrypoint-service.sh'))
     if tuning:
         result['environment'].update(mt.environment(o.matmul_tuning_json))

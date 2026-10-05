@@ -164,6 +164,19 @@ The stock profile leaves these controls at the image's compute defaults.
 Holding the arena constant separates chunk-size effects from arena-size effects;
 it does not change context capacity or the actual prompt length.
 
+To opt into a smaller arena, set `engine.max_prefill_tokens` in a separate
+managed profile. The 0.16.2 launcher exposes `-MaxPrefillTokens`, forwarded as
+`--max-prefill-tokens` and recorded as `HALOGEN_MAX_TOK`. It accepts 2048, 4096,
+8192, 16384 or 32768, requires an explicit prefill chunk no larger than that
+limit, and cannot exceed the declared context. For example,
+`engine.prefill_chunk=8192` with `engine.max_prefill_tokens=8192` records both
+native limits as 8192 while retaining a 262144-position context and KV pool.
+This startup setting sizes the per-token scratch arena, not the total input
+capacity; changing it requires a normal managed stop and fresh launch.
+Admission budgets and the 18 GiB runtime reserve remain in force. A lower arena
+allocation or improved long-input rate must be qualified in a new measured
+cohort before claiming a benefit.
+
 ## Internal numeric experiment controls
 
 Managed profiles may include `engine.kernel_controls`, created with
