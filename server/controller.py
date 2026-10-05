@@ -203,6 +203,30 @@ def halogen_lookup_arguments(engine, directory):
     return ['-LookupReceipt', value['receipt'], '-LookupReceiptSha256', value['receipt_sha256']]
 
 
+def halogen_private_hsa_arguments(engine, directory):
+    if 'private_hsa' not in engine: return []
+    supported = Path(__file__).resolve().parents[1] / 'backends/halogen-wsl2-0.16.2'
+    if directory.resolve() != supported.resolve():
+        raise ValueError('Private HSA experiment requires the pinned Halogen 0.16.2 backend')
+    if any(key in engine for key in ('kernel_controls', 'matmul_tuning', 'lookup_tuning',
+                                   'prefill_chunk', 'prefill_keep_trunk', 'admit_ticks')):
+        raise ValueError('Private HSA experiment requires the unchanged Stock8K service controls')
+    source = directory / 'scripts/private_hsa.py'
+    if source.is_symlink() or not source.is_file():
+        raise ValueError('Selected backend has no managed private-HSA support')
+    launcher = (directory / 'Start.ps1').read_text(encoding='utf-8-sig')
+    for name in ('PrivateHsaReceipt', 'PrivateHsaReceiptSha256'):
+        if not re.search(r'\[string\]\s*\$' + name + r'\b', launcher, re.I):
+            raise ValueError('Selected launcher has no managed private-HSA support')
+    spec = importlib.util.spec_from_file_location('alloy_halogen_private_hsa', source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.validate_scope(engine.get('checkpoint'), engine.get('context'), engine.get('prompt_cache', 'Off'),
+                          engine.get('draft_tokens'), engine.get('speculation_policy'))
+    value = module.qualify(engine['private_hsa'])['configuration']
+    return ['-PrivateHsaReceipt', value['receipt'], '-PrivateHsaReceiptSha256', value['receipt_sha256']]
+
+
 def validate_engine(engine, repo):
     if engine.get('kind')=='halogen':
         halogen_draft_arguments(engine)
@@ -219,6 +243,7 @@ def validate_engine(engine, repo):
         halogen_speculation_arguments(engine,directory)
         halogen_matmul_arguments(engine,directory)
         halogen_lookup_arguments(engine,directory)
+        halogen_private_hsa_arguments(engine,directory)
         return directory
     if 'kernel_controls' in engine:
         raise ValueError('Managed kernel controls apply only to Halogen')
@@ -228,6 +253,8 @@ def validate_engine(engine, repo):
         raise ValueError('Managed matmul plans apply only to Halogen')
     if 'lookup_tuning' in engine:
         raise ValueError('Managed lookup sources apply only to Halogen')
+    if 'private_hsa' in engine:
+        raise ValueError('Managed private HSA applies only to Halogen')
     if engine.get('kind')!='native' or engine.get('qualified') is not True:
         raise ValueError('Native backend requires an explicitly qualified local profile')
     executable=Path(engine['command'][0])
@@ -278,6 +305,7 @@ class Engine:
             command+=halogen_speculation_arguments(self.config,self.directory)
             command+=halogen_matmul_arguments(self.config,self.directory)
             command+=halogen_lookup_arguments(self.config,self.directory)
+            command+=halogen_private_hsa_arguments(self.config,self.directory)
         else:
             command=list(self.config['command'])
             if self.config.get('api_key_from_backend_token'):
@@ -365,6 +393,12 @@ async def run(config_path, port):
     profile_bytes=Path(config_path).read_bytes()
     configuration=json.loads(profile_bytes.decode('utf-8-sig'))
     reserve=memory_reserve_gib(configuration)
+    if 'private_hsa' in configuration['engine'] and (
+            reserve != 18 or configuration.get('concurrency', 1) != 1 or
+            configuration['backend'].get('identifier') != 'halogen-v2' or
+            configuration['backend'].get('checkpoint') != 'v2' or
+            configuration['backend'].get('context') != 262144):
+        raise ValueError('Private HSA requires the singleton Stock8K gateway with its 18 GiB reserve')
     gateway=load_config(config_path)
     if Path(config_path).read_bytes()!=profile_bytes:
         raise ValueError('Selected profile changed while loading')

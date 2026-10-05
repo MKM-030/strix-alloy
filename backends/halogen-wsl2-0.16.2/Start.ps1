@@ -10,6 +10,7 @@ param(
     [switch]$PrefillKeepTrunk, [ValidateRange(1,1024)][int]$AdmitTicks,
     [string]$KernelControlsJson, [string]$MatmulTuningJson, [string]$SpeculationPolicyJson,
     [string]$LookupReceipt, [string]$LookupReceiptSha256,
+    [string]$PrivateHsaReceipt, [string]$PrivateHsaReceiptSha256,
     [ValidateRange(0,604800)][int]$ServeSeconds=0,
     [ValidateRange(120,3600)][int]$StartupTimeoutSeconds=900,
     [switch]$PrintOnly, [switch]$Stop, [switch]$Status, [switch]$Logs
@@ -17,6 +18,8 @@ param(
 $ErrorActionPreference='Stop'
 if ($PSBoundParameters.ContainsKey('LookupReceipt') -ne $PSBoundParameters.ContainsKey('LookupReceiptSha256')) { throw 'LookupReceipt and LookupReceiptSha256 must be supplied together.' }
 if ($PSBoundParameters.ContainsKey('LookupReceipt') -and ($Profile -ne 'Serve' -or $Checkpoint -ne 'v2')) { throw 'Standalone lookup experiments require Serve with the v2 checkpoint.' }
+if ($PSBoundParameters.ContainsKey('PrivateHsaReceipt') -ne $PSBoundParameters.ContainsKey('PrivateHsaReceiptSha256')) { throw 'PrivateHsaReceipt and PrivateHsaReceiptSha256 must be supplied together.' }
+if ($PSBoundParameters.ContainsKey('PrivateHsaReceipt') -and ($Profile -ne 'Serve' -or $Checkpoint -ne 'v2')) { throw 'Private HSA experiments require Serve with the v2 checkpoint.' }
 if (@($Stop,$Status,$Logs | Where-Object { $_ }).Count -gt 1) { throw 'Select only one of Stop, Status, Logs.' }
 if ($Logs) {
     $state=Get-Content -LiteralPath (Join-Path $PSScriptRoot '.local/current-service.json') -Raw | ConvertFrom-Json
@@ -40,6 +43,7 @@ if ($Profile -ne 'Serve') {
     if($PSBoundParameters.ContainsKey('MatmulTuningJson')){$arguments+=@('--matmul-tuning-json',$MatmulTuningJson)}
     if($PSBoundParameters.ContainsKey('SpeculationPolicyJson')){$arguments+=@('--speculation-policy-json',$SpeculationPolicyJson)}
     if($PSBoundParameters.ContainsKey('LookupReceipt')){$arguments+=@('--lookup-receipt',$LookupReceipt,'--lookup-receipt-sha256',$LookupReceiptSha256)}
+    if($PSBoundParameters.ContainsKey('PrivateHsaReceipt')){$arguments+=@('--private-hsa-receipt',$PrivateHsaReceipt,'--private-hsa-receipt-sha256',$PrivateHsaReceiptSha256)}
     if($Stop){$arguments+='--stop'}
     if($Status){$arguments+='--status'}
 }

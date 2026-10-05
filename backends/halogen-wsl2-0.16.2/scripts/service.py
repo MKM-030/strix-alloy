@@ -25,6 +25,7 @@ import kernel_controls as kc
 import matmul_tuning as mt
 import speculation_policy as sp
 import lookup_source as lookup
+import private_hsa as hsa
 from startup_monitor import StartupMonitor
 import runner as r
 import startup_guard as sg
@@ -53,6 +54,8 @@ def options(argv=None):
     p.add_argument('--speculation-policy-json',type=sp.parse,default=None)
     p.add_argument('--lookup-receipt',default=None)
     p.add_argument('--lookup-receipt-sha256',default=None)
+    p.add_argument('--private-hsa-receipt',default=None)
+    p.add_argument('--private-hsa-receipt-sha256',default=None)
     p.add_argument('--context-size',type=int,default=DEFAULT_CONTEXT)
     p.add_argument('--serve-seconds',type=int,default=0,help='0 means until explicitly stopped')
     p.add_argument('--startup-timeout',type=int,default=900)
@@ -67,6 +70,16 @@ def options(argv=None):
 
 
 def validate_options(o):
+    hsa_path = getattr(o, 'private_hsa_receipt', None)
+    hsa_sha = getattr(o, 'private_hsa_receipt_sha256', None)
+    if (hsa_path is None) != (hsa_sha is None):
+        raise ValueError('Private HSA receipt and independent receipt SHA-256 must be supplied together')
+    if hsa_path is not None:
+        hsa.validate_configuration({'receipt': hsa_path, 'receipt_sha256': hsa_sha})
+        hsa.validate_scope(o.checkpoint, o.context_size, o.prompt_cache, o.draft_tokens, o.speculation_policy_json)
+        if (o.kernel_controls_json or o.matmul_tuning_json is not None or o.lookup_receipt is not None or
+                o.prefill_chunk is not None or o.prefill_keep_trunk or o.admit_ticks is not None):
+            raise ValueError('Private HSA requires unchanged Stock8K service controls')
     lookup_path = getattr(o, 'lookup_receipt', None)
     lookup_sha = getattr(o, 'lookup_receipt_sha256', None)
     if (lookup_path is None) != (lookup_sha is None):
@@ -280,6 +293,12 @@ def build_manifest(o, attempt, run_id):
         result['mounts']['/ngram-w4b.hgn'] = qualified_lookup['output']['path']
         result['environment']['HALOGEN_NGRAM_TABLE'] = '/ngram-w4b.hgn'
         result['lookup_tuning'] = qualified_lookup
+    qualified_hsa = getattr(o, 'qualified_hsa', None)
+    if qualified_hsa is not None:
+        if result['image'] != hsa.IMAGE:
+            raise ValueError('Private HSA requires the frozen original service image')
+        result['mounts'][hsa.SONAME_PATH] = r.linux_path(qualified_hsa['library']['path'])
+        result['private_hsa'] = qualified_hsa
     return result
 
 
@@ -474,6 +493,9 @@ def main(argv=None):
 def serve(o):
     r.configure()
     machine=r.MACHINE
+    if getattr(o, 'private_hsa_receipt', None) is not None:
+        o.qualified_hsa = hsa.qualify({'receipt': o.private_hsa_receipt,
+                                      'receipt_sha256': o.private_hsa_receipt_sha256})
     actual=portable.preflight(machine['distro'],machine['user'],machine['models'],machine['dxg'],checkpoint=getattr(o,'checkpoint','w4b'),ngram_source=machine.get('ngram_source'))
     if actual!=machine: raise ValueError('Installed machine configuration drift')
     lookup_configuration = None
@@ -532,6 +554,7 @@ def serve(o):
         atomic(attempt/'admission-create.json',frame)
         log.info('Creating Halogen 0.16.2: context=%s, slots=1; no model download',o.context_size)
         lookup.revalidate(machine, m.get('lookup_tuning'))
+        hsa.revalidate(m.get('private_hsa'))
         creation_attempted=True
         cid=r.docker(*command(m),timeout=30)
         owned(r.inspect(cid),cid,m); atomic(attempt/'container.json',{'id':cid})
@@ -551,6 +574,7 @@ def serve(o):
         if cancelled(): raise InterruptedError('Startup cancelled')
         mt.revalidate_receipt(m.get('matmul_tuning'))
         lookup.revalidate(machine, m.get('lookup_tuning'))
+        hsa.revalidate(m.get('private_hsa'))
         r.docker('start',cid)
         cache_worker=StartupMonitor(r.WSL,cid,attempt,run_id,o.startup_timeout,atomic,
             logger(attempt/'startup-cache.jsonl',raw=True))
