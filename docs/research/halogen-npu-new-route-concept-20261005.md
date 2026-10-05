@@ -2,9 +2,9 @@
 
 5 October 2026. The useful concept is a persistent native NPU component with a
 small working set, or a compact token proposer whose output the original target
-verifies. The current evidence establishes a tiny native fixture and exact
-offline references; it does not establish real-H acceleration, engine speedup or
-current server readiness. No hardware or system change is part of this note.
+verifies. Tiny native fixtures, exact offline references and two-call real-H
+tolerance screens now exist; steady-state acceleration and engine speedup remain
+unqualified. Original-server restoration is separately evidenced below.
 
 ## Driver and native Windows/WSL roles
 
@@ -45,21 +45,23 @@ is 6,963,200 B and its decoded BF16 matrix is 13,107,200 B, so neither fits all
 raw SRAM before other allocations. [Fixture and residency evidence](halogen-npu-native-route-20261005.md).
 
 The packaged real-H prototype uses 32 workers, streamed weights and one launch
-per complete projection; it remains unmeasured. Its distinct decoded source
-variant removes **6,553,600 scalar affine conversions per call** by decoding
-once during preparation. Weight traffic grows from 6,963,200 to 13,107,200 B;
-specified total DDR traffic grows from 7,147,520 to 13,291,520 B, an extra
-**6.144 MB decimal per call**. This trades decoder work for bandwidth; no speed
-claim follows. Its separate build and placement checks now pass; all 32 linked
-stack paths are bounded at 128 B, and all 6,553,600 prepared BF16 weight words
-round-trip exactly. Native numeric and latency review are still outstanding.
+per complete projection. Both variants completed two distinct frozen A/B calls,
+zero warmups: means **24.18505 ms packed / 3.5138 ms decoded**. Both pass unchanged
+NPU rtol=0.03 / atol=0.003 with one BF16 word mismatch; this is not exact parity,
+steady-state qualification or engine gain. Runtime initialization is separate:
+33.7685 ms packed / 505.8045 ms decoded. [Initial comparison](halogen-npu-native-hidden-comparison-20261005.md).
+The decoded variant removes **6,553,600 scalar affine conversions per call** by
+decoding once during preparation. DDR traffic grows from 7,147,520 to
+13,291,520 B, an extra **6.144 MB decimal per call**. Its separate build, placement
+and all 32 linked-stack reviews pass; prepared BF16 weights round-trip exactly.
+The native tolerance evidence remains bounded to the two frozen inputs.
 [Original design](halogen-npu-native-hidden-next-design-20261005.md),
 [decoded source package](../../scripts/benchmarks/halogen_npu_native_hidden_decoded/README.md).
 
 The repaired offline reference now matches all 20,480 frozen original-GPU A/B
 BF16 words exactly. That supersedes the earlier CPU misses on those fixtures;
-it does not prove native AIE arithmetic, complete-head correctness or avoided
-GPU work. [Numeric evidence](halogen-npu-hidden-numeric-20261005.md).
+it does not prove native exact AIE parity, complete-head correctness or avoided
+GPU work. Later native tolerance passes are separate. [Numeric evidence](halogen-npu-hidden-numeric-20261005.md).
 
 ## A compact model can learn proposals
 
@@ -106,11 +108,26 @@ exact reconstruction, index overhead and complete lookup-cost measurements.
 [Sample results](halogen-npu-native-route-20261005.json),
 [compression interpretation](halogen-npu-native-route-20261005.md).
 
-Review the complete replacement hook, wire and arithmetic contract before a
-guarded real-H component window. A useful complete consumer measurement and
+The guarded frozen real-H screens supply initial component evidence. A useful
+complete replacement consumer measurement and
 subsequent unchanged-output/acceptance engine A/B are required for acceleration.
 Engine restoration remains a separate lifecycle task with unchanged v2 startup
 floors of 44 GiB physical / 131 GiB commit and 18 GiB live reserves; this concept
-does not relax recovery or certify readiness.
+does not relax recovery or establish engine acceleration.
+Failed restoration receipts from 5 October 2026 remain retained. Original GPU
+serving was restored ready/idle at 21:11:36 UTC. [Final-ready receipt](../../server/.local/optimization9h-20261004/native-hidden-held-restoration-v2-f346f01978f748b8a47457e7cda58889/final-ready.json).
 [Admission source](../../backends/halogen-wsl2-0.16.2/scripts/memory_budget.py),
 [runtime guard](../../backends/halogen-wsl2-0.16.2/scripts/service.py).
+
+The subsequent [default-off contiguous-vector sibling](halogen-npu-native-hidden-vector-20261005.md)
+now implements the lossless lane/pair layout and host input transpose. Its fresh
+offline gates and two-input frozen tolerance screen passed; complete costs were
+2.9699/.3556 ms including the transpose, with zero warmups and one BF16 word
+mismatch. Its own report retains the later lifecycle receipts. These initial
+separate-session observations do not establish a steady-state speed ratio or
+change the live consumer, full-head/acceptance or engine qualification gates.
+Original GPU serving was restored again ready/idle at 21:34:46 UTC after that
+screen, with a separate authenticated check at 21:35:53 UTC. The
+[consumer cost decision](halogen-npu-native-hidden-vector-decision-20261005.md)
+keeps the current H replacement default-off and recommends no live cohort until
+a distinct mechanism provides a plausible useful-cost advantage.

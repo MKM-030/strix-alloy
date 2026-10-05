@@ -1,0 +1,422 @@
+{
+  "schema": "halogen.native-hidden-initial-comparison.v1",
+  "date": "2026-10-05",
+  "hardware_owner": "/root",
+  "scope": "Standalone frozen original-H A/B, two calls per variant, zero warmups",
+  "common_frozen_inputs": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-frozen-A-B-20261005\\inputs.u16",
+  "common_frozen_oracles": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-frozen-A-B-20261005\\oracles.u16",
+  "original_H_raw_sha256": "018511894df3996e3a2fcb1dff60860c45a808b65036fd38db472b6e985bdd3f",
+  "total_real_H_NPU_calls": 4,
+  "verified_values_per_variant": 20480,
+  "runtime_initialization_excluded_from_complete_samples": true,
+  "earlier_decoded_exact_weight_preparation_ms": 118.3896,
+  "earlier_decoded_weight_preparation_is_separate_from_XRT_initialization": true,
+  "decoded_extra_DDR_bytes_per_call": 6144000,
+  "variants": {
+    "packed": {
+      "native_result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-stopped-component-99fc925b97154c89beb6cb4bad833a08\\native-result.json",
+        "sha256": "6cce610e19a946fa2f763db3298540117f2df476bfdce6c494f6dbbaeb8afa57",
+        "result": {
+          "status": "passed",
+          "mode": "cohort",
+          "initialization_us": 33768.5,
+          "warmups": 0,
+          "requested_measurements": 2,
+          "calls": 2,
+          "verified_values": 20480,
+          "exact_word_mismatches": 1,
+          "npu_gate_mismatches": 0,
+          "rtol": 0.03,
+          "atol": 0.003,
+          "ddr_bytes_per_call": 7147520,
+          "weights_synced_once": true,
+          "launch_wait": {
+            "count": 2,
+            "mean_us": 24173.8,
+            "p50_us": 24173.8,
+            "p95_us": 25356.13,
+            "min_us": 22860.1,
+            "max_us": 25487.5
+          },
+          "complete_input_copy_poison_sync_launch_wait_output_sync_readback": {
+            "count": 2,
+            "mean_us": 24185.05,
+            "p50_us": 24185.05,
+            "p95_us": 25367.785,
+            "min_us": 22870.9,
+            "max_us": 25499.2
+          },
+          "samples": [
+            {
+              "call": 0,
+              "measured": true,
+              "launch_wait_us": 25487.5,
+              "complete_us": 25499.2,
+              "exact_word_mismatches": 0,
+              "npu_gate_mismatches": 0,
+              "max_abs": 0.0
+            },
+            {
+              "call": 1,
+              "measured": true,
+              "launch_wait_us": 22860.1,
+              "complete_us": 22870.9,
+              "exact_word_mismatches": 1,
+              "npu_gate_mismatches": 0,
+              "max_abs": 0.000488
+            }
+          ]
+        }
+      },
+      "owned_wrapper_result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-stopped-component-99fc925b97154c89beb6cb4bad833a08\\result.json",
+        "sha256": "61b24e093a09a0d32590a7f8d5e53620de64410946bafd68679c57289b0702fb",
+        "result": {
+          "passed": true,
+          "errors": [],
+          "launch": {
+            "identity": {
+              "pid": 29960,
+              "creation_time_100ns": 134357073476464539,
+              "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-build-1e686fcec1224cfdacbc3edc12d01c5e\\artifacts\\host.exe"
+            },
+            "exit_code": 0,
+            "elapsed_seconds": 0.7660000000032596,
+            "result_sha256": "6cce610e19a946fa2f763db3298540117f2df476bfdce6c494f6dbbaeb8afa57"
+          },
+          "native_child_launched": true,
+          "native_calls": 2,
+          "NPU_executed": true,
+          "owned_job_closed": true,
+          "minimum_memory": {
+            "available_bytes": 49127424000,
+            "committed_bytes": 23996542976,
+            "commit_limit_bytes": 240139440128,
+            "commit_headroom_bytes": 216041738240
+          },
+          "steady_state_qualified": false,
+          "prefill_decode_acceptance_gain_measured": false,
+          "original_server_state_unchanged": true,
+          "original_ready_open": false,
+          "restore_still_requires_resident_44_131": true
+        }
+      },
+      "scope_receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-stopped-component-99fc925b97154c89beb6cb4bad833a08\\scope.json",
+        "sha256": "da354056d5057b71fa58628e793d4cdb3cf833b772b802341b20be07c8c12e74",
+        "plan_sha256": "9438e4dcf99cd6751ea0cdef9f6a39d7ec60e823a3e09753090140ba0e3718ad",
+        "coordinator_source_sha256": "e08750d156b7e63114c1c80ba9a27dfb180552ec5b066f370347cf536feb70d3",
+        "standalone_frozen_component_only": true,
+        "no_lifecycle_action": true,
+        "original_controller_run": "a0cd34c58d964354a17d592a59c87ad6",
+        "original_backend_run": "727cec48c04849749005ed2d8a719cc3"
+      },
+      "complete_ms": [
+        25.499200000000002,
+        22.870900000000002
+      ],
+      "complete_mean_ms": 24.18505,
+      "initialization_ms": 33.7685,
+      "native_bit_exact": false,
+      "frozen_npu_tolerance_screen_passed": true,
+      "steady_state_qualified": false,
+      "live_consumer_qualified": false,
+      "matched_GPU_speedup_qualified": false
+    },
+    "decoded": {
+      "native_result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-decoded-stopped-component-0af50913d99b409abc6883adfb15e51a\\native-result.json",
+        "sha256": "1d26c34e8d3b38d852d047f03d7cf95e9b7992e53b443b52d6d769fd6b24ee6b",
+        "result": {
+          "status": "passed",
+          "mode": "cohort",
+          "initialization_us": 505804.5,
+          "warmups": 0,
+          "requested_measurements": 2,
+          "calls": 2,
+          "verified_values": 20480,
+          "exact_word_mismatches": 1,
+          "npu_gate_mismatches": 0,
+          "rtol": 0.03,
+          "atol": 0.003,
+          "ddr_bytes_per_call": 13291520,
+          "weights_synced_once": true,
+          "per_projection_weight_decoder_calls": 0,
+          "launch_wait": {
+            "count": 2,
+            "mean_us": 3509.75,
+            "p50_us": 3509.75,
+            "p95_us": 4644.785,
+            "min_us": 2248.6,
+            "max_us": 4770.9
+          },
+          "complete_input_copy_poison_sync_launch_wait_output_sync_readback": {
+            "count": 2,
+            "mean_us": 3513.8,
+            "p50_us": 3513.8,
+            "p95_us": 4649.51,
+            "min_us": 2251.9,
+            "max_us": 4775.7
+          },
+          "samples": [
+            {
+              "call": 0,
+              "measured": true,
+              "launch_wait_us": 4770.9,
+              "complete_us": 4775.7,
+              "exact_word_mismatches": 0,
+              "npu_gate_mismatches": 0,
+              "max_abs": 0.0
+            },
+            {
+              "call": 1,
+              "measured": true,
+              "launch_wait_us": 2248.6,
+              "complete_us": 2251.9,
+              "exact_word_mismatches": 1,
+              "npu_gate_mismatches": 0,
+              "max_abs": 0.000488
+            }
+          ]
+        }
+      },
+      "owned_wrapper_result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-decoded-stopped-component-0af50913d99b409abc6883adfb15e51a\\result.json",
+        "sha256": "77b2feff0237c32e583ceae6d210cf39665ca43d4fafbbac005451e9458d88de",
+        "result": {
+          "passed": true,
+          "errors": [],
+          "launch": {
+            "identity": {
+              "pid": 25236,
+              "creation_time_100ns": 134357078347893875,
+              "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-build-a12f2ebb32be433c930188ff81868e8c\\artifacts\\host.exe"
+            },
+            "exit_code": 0,
+            "elapsed_seconds": 0.75,
+            "result_sha256": "1d26c34e8d3b38d852d047f03d7cf95e9b7992e53b443b52d6d769fd6b24ee6b"
+          },
+          "native_child_launched": true,
+          "native_calls": 2,
+          "NPU_executed": true,
+          "owned_job_closed": true,
+          "minimum_memory": {
+            "available_bytes": 49132412928,
+            "committed_bytes": 23951036416,
+            "commit_limit_bytes": 240139440128,
+            "commit_headroom_bytes": 216184541184
+          },
+          "steady_state_qualified": false,
+          "prefill_decode_acceptance_gain_measured": false,
+          "original_server_state_unchanged": true,
+          "original_ready_open": false,
+          "restore_still_requires_resident_44_131": true
+        }
+      },
+      "scope_receipt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-decoded-stopped-component-0af50913d99b409abc6883adfb15e51a\\scope.json",
+        "sha256": "57f7b7f1d81fb09da663853e6f2cbf3fd4a14c0ac166d7ea19047185fead6da7",
+        "plan_sha256": "e2afe4823b9c2452de139225b997fc2d043eae778031dee20b82411bf5f38eaa",
+        "coordinator_source_sha256": "28da7ffb66b71ac788a3683d378b96fa692a0da30c2d2955115eab037847e873",
+        "standalone_frozen_component_only": true,
+        "no_lifecycle_action": true,
+        "original_controller_run": "a0cd34c58d964354a17d592a59c87ad6",
+        "original_backend_run": "727cec48c04849749005ed2d8a719cc3"
+      },
+      "complete_ms": [
+        4.7757,
+        2.2519
+      ],
+      "complete_mean_ms": 3.5138000000000003,
+      "initialization_ms": 505.8045,
+      "native_bit_exact": false,
+      "frozen_npu_tolerance_screen_passed": true,
+      "steady_state_qualified": false,
+      "live_consumer_qualified": false,
+      "matched_GPU_speedup_qualified": false
+    }
+  },
+  "qualification": {
+    "frozen_NPU_tolerance_screens_passed": true,
+    "native_bit_exact": false,
+    "steady_state": false,
+    "matched_original_GPU_timing": false,
+    "Windows_WSL_live_consumer": false,
+    "full_head": false,
+    "acceptance": false,
+    "engine_acceleration": false,
+    "tokens_per_second_inferred": false
+  },
+  "previous_failed_attempts_preserved_in": "docs/research/halogen-npu-native-hidden-implementation-20261005.json",
+  "restoration": {
+    "status": "restored-ready",
+    "final_ready_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-held-restoration-v2-f346f01978f748b8a47457e7cda58889\\final-ready.json",
+      "sha256": "6962218fbcecb0c863e4c07266c3396119756b9279bc4ce5d9f41512fd880c8c",
+      "result": {
+        "passed": true,
+        "time_utc": "2026-10-05T21:11:36.302431+00:00",
+        "controller_identity": {
+          "pid": 21092,
+          "creation_time_100ns": 134357080876651921,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "controller_pid": 21092,
+        "backend_pid": 3804,
+        "controller_run": "ae427fa7f0fa405c8b5dc8ec231310ab",
+        "backend_run": "7bfe79407b5b47aa922704d37f9b83d2",
+        "container_id": "4ccf06dc0d9e78f4a8cceed184fcb0e7507c92f9d3f84829a4eb1d757245b968",
+        "health": {
+          "status": "ok",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 262144,
+          "active_requests": 0,
+          "draining": false,
+          "completed": 0,
+          "cancelled": 0
+        },
+        "engine_NPU_integrated": false,
+        "restoration_only": true,
+        "NPU_executed_during_restoration": false
+      }
+    },
+    "result_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\native-hidden-held-restoration-v2-f346f01978f748b8a47457e7cda58889\\result.json",
+      "sha256": "9ce1b1e1ced5a175a2838866a8e17f986518a5d5b93cc00d371380a98c277b9e",
+      "result": {
+        "passed": true,
+        "errors": [],
+        "observation_errors": [
+          "PermissionError: [Errno 13] Permission denied: 'C:\\\\Projects\\\\strix-alloy-clean\\\\server\\\\.local\\\\current.json'",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline",
+          "TimeoutError: Managed/backend readiness deadline"
+        ],
+        "original_ready_open": true,
+        "restoration_only": true,
+        "NPU_executed_during_restoration": false,
+        "benchmark_started_during_restoration": false,
+        "minimum_memory": {
+          "available_bytes": 33516871680,
+          "committed_bytes": 19751309312,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 132567703552
+        },
+        "owned_WSL_job_closed": true,
+        "persistent_controller": {
+          "launched": true,
+          "terminal_proven": false,
+          "pid": 21092,
+          "returncode": null,
+          "identity": {
+            "pid": 21092,
+            "creation_time_100ns": 134357080876651921,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "controller": {
+            "schema": 1,
+            "run_id": "ae427fa7f0fa405c8b5dc8ec231310ab",
+            "pid": 21092,
+            "phase": "ready",
+            "backend": "halogen-v2",
+            "checkpoint": "v2",
+            "context": 262144,
+            "port": 8840,
+            "heartbeat": 1791234696.1191347,
+            "minimum_reserve_gib": 18.0,
+            "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+            "memory": {
+              "available_bytes": 33563303936,
+              "committed_bytes": 107489619968,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 132649820160
+            },
+            "minimum_available_gib": 31.208599090576172,
+            "ready_at": 1791234684.0158122,
+            "active_requests": 0,
+            "available_gib": 31.25872802734375
+          },
+          "backend": {
+            "schema": 1,
+            "run_id": "7bfe79407b5b47aa922704d37f9b83d2",
+            "attempt": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\services\\7bfe79407b5b47aa922704d37f9b83d2",
+            "phase": "ready",
+            "endpoint": "http://127.0.0.1:8731/v1",
+            "model": "halogen-qwen3.8-flash-next",
+            "context": 262144,
+            "slots": 1,
+            "checkpoint": "v2",
+            "prompt_cache": "Off",
+            "serve_seconds": 0,
+            "controller_pid": 3804,
+            "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\api-token.txt",
+            "log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\services\\7bfe79407b5b47aa922704d37f9b83d2\\engine.log",
+            "controller_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\services\\7bfe79407b5b47aa922704d37f9b83d2\\service.log",
+            "ready_at": 1791234694.1434417,
+            "container_id": "4ccf06dc0d9e78f4a8cceed184fcb0e7507c92f9d3f84829a4eb1d757245b968"
+          }
+        },
+        "recovery_pending": false
+      }
+    },
+    "historical_failures_preserved": true,
+    "component_jobs_performed_no_lifecycle_action": true,
+    "server_readiness_asserted_at_receipt_time": true,
+    "receipt_time_utc": "2026-10-05T21:11:36.302431+00:00",
+    "endpoint": "http://127.0.0.1:8840/v1",
+    "root_reported_restoration_session_exit_code": 0,
+    "engine_NPU_integrated": false,
+    "NPU_executed_during_restoration": false,
+    "benchmark_started_during_restoration": false,
+    "v2_startup_physical_gib": 44,
+    "v2_startup_commit_gib": 131,
+    "live_physical_commit_reserve_gib": 18
+  },
+  "subsequent_vector_report": {
+    "path": "docs/research/halogen-npu-native-hidden-vector-20261005.json",
+    "sha256": "3c9211e24b6c4eefb55d761419b8ffb2ad303003067c8d13270b6d94be1c905e",
+    "scope": "Subsequent distinct two-call vector screen and later restoration; historical packed/decoded counts, variants and restoration remain unchanged.",
+    "excluded_from_this_historical_pair_counts": true,
+    "controlled_steady_state_ratio_claimed": false
+  }
+}
