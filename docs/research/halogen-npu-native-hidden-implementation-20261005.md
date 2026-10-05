@@ -51,9 +51,12 @@ failure or a measured NPU slowdown.
 The ordinary original-server restoration then exited before readiness: after
 WSL activation it had 42.05 GiB physical reserve and 196.98 GiB commit headroom,
 below the unchanged 44-GiB physical startup requirement. Cleanup and recovery
-completed. A separate owned restoration now holds a harmless WSL client while
-checking resident memory, so idle guest shutdown cannot conceal its working
-memory during admission. It changes no global WSL setting and starts no benchmark.
+completed. A separate owned restoration held a harmless WSL client for its
+bounded five-minute resident-memory check, so idle guest shutdown could not
+conceal its working memory during admission. It did not reach the unchanged
+44/131-GiB stable admission and started no new engine or benchmark. Its owned WSL
+job is closed. The server remains stopped pending adequate resident reserve.
+No global WSL setting or foreign program was changed.
 Current live identities/status belong to ignored
 `server/.local/optimization9h-20261004/continuation-current.json`; this document
 does not assert that the server is ready.
