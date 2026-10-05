@@ -1,0 +1,5121 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-05T23:30:22.613761+00:00",
+  "scope": "offline immutable GGUF metadata/tensor-directory and exhaustive token-map comparison; no inference runtime imported or model executed",
+  "gguf_source": {
+    "repo": "ggml-org/Qwen3.5-0.8B-GGUF",
+    "revision": "9447f74101aeb4e93621884dfa36ee8effb8831b",
+    "path": "C:\\AI\\models\\halogen-proposer-qwen35-08b-gguf-9447f741\\Qwen3.5-0.8B-Q4_0.gguf",
+    "bytes": 563036064,
+    "sha256": "57d1997790d1744fba5b40a7317df71ea5e2acee28c47e78f0cce39c0703f8cf",
+    "size_and_hash_pin_verified": true
+  },
+  "target_source": {
+    "path": "C:\\AI\\models\\halogen-flashnext\\tokenizer\\tokenizer.json",
+    "bytes": 12809320,
+    "sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3"
+  },
+  "header": {
+    "version": 3,
+    "endianness": "little",
+    "metadata_count": 41,
+    "tensor_count": 320,
+    "metadata_end": 10942704,
+    "tensor_directory_end": 10961541,
+    "data_start": 10961568,
+    "alignment": 32,
+    "tensor_payload_read_by_parser": false,
+    "all_tensor_extents_within_file": true,
+    "overlapping_tensor_extents": false,
+    "last_tensor_absolute_end": 563036064,
+    "trailing_bytes_after_tensor_extents": 0,
+    "maximum_intertensor_padding_bytes": 0
+  },
+  "metadata_keys": [
+    "general.architecture",
+    "general.base_model.0.name",
+    "general.base_model.0.organization",
+    "general.base_model.0.repo_url",
+    "general.base_model.count",
+    "general.basename",
+    "general.file_type",
+    "general.license",
+    "general.license.link",
+    "general.name",
+    "general.quantization_version",
+    "general.size_label",
+    "general.tags",
+    "general.type",
+    "qwen35.attention.head_count",
+    "qwen35.attention.head_count_kv",
+    "qwen35.attention.key_length",
+    "qwen35.attention.layer_norm_rms_epsilon",
+    "qwen35.attention.value_length",
+    "qwen35.block_count",
+    "qwen35.context_length",
+    "qwen35.embedding_length",
+    "qwen35.feed_forward_length",
+    "qwen35.full_attention_interval",
+    "qwen35.rope.dimension_count",
+    "qwen35.rope.dimension_sections",
+    "qwen35.rope.freq_base",
+    "qwen35.ssm.conv_kernel",
+    "qwen35.ssm.group_count",
+    "qwen35.ssm.inner_size",
+    "qwen35.ssm.state_size",
+    "qwen35.ssm.time_step_rank",
+    "tokenizer.chat_template",
+    "tokenizer.ggml.add_bos_token",
+    "tokenizer.ggml.eos_token_id",
+    "tokenizer.ggml.merges",
+    "tokenizer.ggml.model",
+    "tokenizer.ggml.padding_token_id",
+    "tokenizer.ggml.pre",
+    "tokenizer.ggml.token_type",
+    "tokenizer.ggml.tokens"
+  ],
+  "metadata_types": {
+    "general.architecture": 8,
+    "general.type": 8,
+    "general.name": 8,
+    "general.basename": 8,
+    "general.size_label": 8,
+    "general.license": 8,
+    "general.license.link": 8,
+    "general.base_model.count": 4,
+    "general.base_model.0.name": 8,
+    "general.base_model.0.organization": 8,
+    "general.base_model.0.repo_url": 8,
+    "general.tags": 9,
+    "qwen35.block_count": 4,
+    "qwen35.context_length": 4,
+    "qwen35.embedding_length": 4,
+    "qwen35.feed_forward_length": 4,
+    "qwen35.attention.head_count": 4,
+    "qwen35.attention.head_count_kv": 4,
+    "qwen35.rope.dimension_sections": 9,
+    "qwen35.rope.freq_base": 6,
+    "qwen35.attention.layer_norm_rms_epsilon": 6,
+    "qwen35.attention.key_length": 4,
+    "qwen35.attention.value_length": 4,
+    "qwen35.ssm.conv_kernel": 4,
+    "qwen35.ssm.state_size": 4,
+    "qwen35.ssm.group_count": 4,
+    "qwen35.ssm.time_step_rank": 4,
+    "qwen35.ssm.inner_size": 4,
+    "qwen35.full_attention_interval": 4,
+    "qwen35.rope.dimension_count": 4,
+    "tokenizer.ggml.model": 8,
+    "tokenizer.ggml.pre": 8,
+    "tokenizer.ggml.tokens": 9,
+    "tokenizer.ggml.token_type": 9,
+    "tokenizer.ggml.merges": 9,
+    "tokenizer.ggml.eos_token_id": 4,
+    "tokenizer.ggml.padding_token_id": 4,
+    "tokenizer.ggml.add_bos_token": 7,
+    "tokenizer.chat_template": 8,
+    "general.quantization_version": 4,
+    "general.file_type": 4
+  },
+  "model_metadata": {
+    "general.architecture": "qwen35",
+    "general.type": "model",
+    "general.name": "Qwen3.5 0.8B",
+    "general.basename": "Qwen3.5",
+    "general.size_label": "0.8B",
+    "general.license": "apache-2.0",
+    "general.license.link": "https://huggingface.co/Qwen/Qwen3.5-0.8B/blob/main/LICENSE",
+    "general.base_model.count": 1,
+    "general.base_model.0.name": "Qwen3.5 0.8B Base",
+    "general.base_model.0.organization": "Qwen",
+    "general.base_model.0.repo_url": "https://huggingface.co/Qwen/Qwen3.5-0.8B-Base",
+    "general.tags": [
+      "image-text-to-text"
+    ],
+    "qwen35.block_count": 24,
+    "qwen35.context_length": 262144,
+    "qwen35.embedding_length": 1024,
+    "qwen35.feed_forward_length": 3584,
+    "qwen35.attention.head_count": 8,
+    "qwen35.attention.head_count_kv": 2,
+    "qwen35.rope.dimension_sections": [
+      11,
+      11,
+      10,
+      0
+    ],
+    "qwen35.rope.freq_base": 10000000.0,
+    "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-07,
+    "qwen35.attention.key_length": 256,
+    "qwen35.attention.value_length": 256,
+    "qwen35.ssm.conv_kernel": 4,
+    "qwen35.ssm.state_size": 128,
+    "qwen35.ssm.group_count": 16,
+    "qwen35.ssm.time_step_rank": 16,
+    "qwen35.ssm.inner_size": 2048,
+    "qwen35.full_attention_interval": 4,
+    "qwen35.rope.dimension_count": 64,
+    "general.quantization_version": 2,
+    "general.file_type": 2
+  },
+  "tensor_type_counts": {
+    "F32": 133,
+    "Q8_0": 1,
+    "Q4_0": 186
+  },
+  "total_tensor_elements": 752393024,
+  "embedding_and_head_tensors": [
+    {
+      "name": "output_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 0,
+      "bytes": 4096,
+      "absolute_start": 10961568,
+      "absolute_end": 10965664
+    },
+    {
+      "name": "token_embd.weight",
+      "shape": [
+        1024,
+        248320
+      ],
+      "ggml_type": 8,
+      "type_name": "Q8_0",
+      "offset": 4096,
+      "bytes": 270172160,
+      "absolute_start": 10965664,
+      "absolute_end": 281137824
+    }
+  ],
+  "tensor_directory": [
+    {
+      "name": "output_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 0,
+      "bytes": 4096,
+      "absolute_start": 10961568,
+      "absolute_end": 10965664
+    },
+    {
+      "name": "token_embd.weight",
+      "shape": [
+        1024,
+        248320
+      ],
+      "ggml_type": 8,
+      "type_name": "Q8_0",
+      "offset": 4096,
+      "bytes": 270172160,
+      "absolute_start": 10965664,
+      "absolute_end": 281137824
+    },
+    {
+      "name": "blk.0.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 270176256,
+      "bytes": 1179648,
+      "absolute_start": 281137824,
+      "absolute_end": 282317472
+    },
+    {
+      "name": "blk.0.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 271355904,
+      "bytes": 4096,
+      "absolute_start": 282317472,
+      "absolute_end": 282321568
+    },
+    {
+      "name": "blk.0.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 271360000,
+      "bytes": 3538944,
+      "absolute_start": 282321568,
+      "absolute_end": 285860512
+    },
+    {
+      "name": "blk.0.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 274898944,
+      "bytes": 2064384,
+      "absolute_start": 285860512,
+      "absolute_end": 287924896
+    },
+    {
+      "name": "blk.0.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 276963328,
+      "bytes": 2064384,
+      "absolute_start": 287924896,
+      "absolute_end": 289989280
+    },
+    {
+      "name": "blk.0.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 279027712,
+      "bytes": 2064384,
+      "absolute_start": 289989280,
+      "absolute_end": 292053664
+    },
+    {
+      "name": "blk.0.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 281092096,
+      "bytes": 4096,
+      "absolute_start": 292053664,
+      "absolute_end": 292057760
+    },
+    {
+      "name": "blk.0.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 281096192,
+      "bytes": 64,
+      "absolute_start": 292057760,
+      "absolute_end": 292057824
+    },
+    {
+      "name": "blk.0.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 281096256,
+      "bytes": 9216,
+      "absolute_start": 292057824,
+      "absolute_end": 292067040
+    },
+    {
+      "name": "blk.0.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 281105472,
+      "bytes": 9216,
+      "absolute_start": 292067040,
+      "absolute_end": 292076256
+    },
+    {
+      "name": "blk.0.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 281114688,
+      "bytes": 98304,
+      "absolute_start": 292076256,
+      "absolute_end": 292174560
+    },
+    {
+      "name": "blk.0.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 281212992,
+      "bytes": 64,
+      "absolute_start": 292174560,
+      "absolute_end": 292174624
+    },
+    {
+      "name": "blk.0.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 281213056,
+      "bytes": 512,
+      "absolute_start": 292174624,
+      "absolute_end": 292175136
+    },
+    {
+      "name": "blk.0.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 281213568,
+      "bytes": 1179648,
+      "absolute_start": 292175136,
+      "absolute_end": 293354784
+    },
+    {
+      "name": "blk.1.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 282393216,
+      "bytes": 1179648,
+      "absolute_start": 293354784,
+      "absolute_end": 294534432
+    },
+    {
+      "name": "blk.1.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 283572864,
+      "bytes": 4096,
+      "absolute_start": 294534432,
+      "absolute_end": 294538528
+    },
+    {
+      "name": "blk.1.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 283576960,
+      "bytes": 3538944,
+      "absolute_start": 294538528,
+      "absolute_end": 298077472
+    },
+    {
+      "name": "blk.1.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 287115904,
+      "bytes": 2064384,
+      "absolute_start": 298077472,
+      "absolute_end": 300141856
+    },
+    {
+      "name": "blk.1.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 289180288,
+      "bytes": 2064384,
+      "absolute_start": 300141856,
+      "absolute_end": 302206240
+    },
+    {
+      "name": "blk.1.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 291244672,
+      "bytes": 2064384,
+      "absolute_start": 302206240,
+      "absolute_end": 304270624
+    },
+    {
+      "name": "blk.1.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 293309056,
+      "bytes": 4096,
+      "absolute_start": 304270624,
+      "absolute_end": 304274720
+    },
+    {
+      "name": "blk.1.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 293313152,
+      "bytes": 64,
+      "absolute_start": 304274720,
+      "absolute_end": 304274784
+    },
+    {
+      "name": "blk.1.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 293313216,
+      "bytes": 9216,
+      "absolute_start": 304274784,
+      "absolute_end": 304284000
+    },
+    {
+      "name": "blk.1.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 293322432,
+      "bytes": 9216,
+      "absolute_start": 304284000,
+      "absolute_end": 304293216
+    },
+    {
+      "name": "blk.1.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 293331648,
+      "bytes": 98304,
+      "absolute_start": 304293216,
+      "absolute_end": 304391520
+    },
+    {
+      "name": "blk.1.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 293429952,
+      "bytes": 64,
+      "absolute_start": 304391520,
+      "absolute_end": 304391584
+    },
+    {
+      "name": "blk.1.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 293430016,
+      "bytes": 512,
+      "absolute_start": 304391584,
+      "absolute_end": 304392096
+    },
+    {
+      "name": "blk.1.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 293430528,
+      "bytes": 1179648,
+      "absolute_start": 304392096,
+      "absolute_end": 305571744
+    },
+    {
+      "name": "blk.2.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 294610176,
+      "bytes": 1179648,
+      "absolute_start": 305571744,
+      "absolute_end": 306751392
+    },
+    {
+      "name": "blk.2.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 295789824,
+      "bytes": 4096,
+      "absolute_start": 306751392,
+      "absolute_end": 306755488
+    },
+    {
+      "name": "blk.2.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 295793920,
+      "bytes": 3538944,
+      "absolute_start": 306755488,
+      "absolute_end": 310294432
+    },
+    {
+      "name": "blk.2.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 299332864,
+      "bytes": 2064384,
+      "absolute_start": 310294432,
+      "absolute_end": 312358816
+    },
+    {
+      "name": "blk.2.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 301397248,
+      "bytes": 2064384,
+      "absolute_start": 312358816,
+      "absolute_end": 314423200
+    },
+    {
+      "name": "blk.2.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 303461632,
+      "bytes": 2064384,
+      "absolute_start": 314423200,
+      "absolute_end": 316487584
+    },
+    {
+      "name": "blk.2.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 305526016,
+      "bytes": 4096,
+      "absolute_start": 316487584,
+      "absolute_end": 316491680
+    },
+    {
+      "name": "blk.2.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 305530112,
+      "bytes": 64,
+      "absolute_start": 316491680,
+      "absolute_end": 316491744
+    },
+    {
+      "name": "blk.2.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 305530176,
+      "bytes": 9216,
+      "absolute_start": 316491744,
+      "absolute_end": 316500960
+    },
+    {
+      "name": "blk.2.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 305539392,
+      "bytes": 9216,
+      "absolute_start": 316500960,
+      "absolute_end": 316510176
+    },
+    {
+      "name": "blk.2.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 305548608,
+      "bytes": 98304,
+      "absolute_start": 316510176,
+      "absolute_end": 316608480
+    },
+    {
+      "name": "blk.2.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 305646912,
+      "bytes": 64,
+      "absolute_start": 316608480,
+      "absolute_end": 316608544
+    },
+    {
+      "name": "blk.2.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 305646976,
+      "bytes": 512,
+      "absolute_start": 316608544,
+      "absolute_end": 316609056
+    },
+    {
+      "name": "blk.2.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 305647488,
+      "bytes": 1179648,
+      "absolute_start": 316609056,
+      "absolute_end": 317788704
+    },
+    {
+      "name": "blk.3.attn_k.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 306827136,
+      "bytes": 294912,
+      "absolute_start": 317788704,
+      "absolute_end": 318083616
+    },
+    {
+      "name": "blk.3.attn_k_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 307122048,
+      "bytes": 1024,
+      "absolute_start": 318083616,
+      "absolute_end": 318084640
+    },
+    {
+      "name": "blk.3.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 307123072,
+      "bytes": 4096,
+      "absolute_start": 318084640,
+      "absolute_end": 318088736
+    },
+    {
+      "name": "blk.3.attn_output.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 307127168,
+      "bytes": 1179648,
+      "absolute_start": 318088736,
+      "absolute_end": 319268384
+    },
+    {
+      "name": "blk.3.attn_q.weight",
+      "shape": [
+        1024,
+        4096
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 308306816,
+      "bytes": 2359296,
+      "absolute_start": 319268384,
+      "absolute_end": 321627680
+    },
+    {
+      "name": "blk.3.attn_q_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 310666112,
+      "bytes": 1024,
+      "absolute_start": 321627680,
+      "absolute_end": 321628704
+    },
+    {
+      "name": "blk.3.attn_v.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 310667136,
+      "bytes": 294912,
+      "absolute_start": 321628704,
+      "absolute_end": 321923616
+    },
+    {
+      "name": "blk.3.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 310962048,
+      "bytes": 2064384,
+      "absolute_start": 321923616,
+      "absolute_end": 323988000
+    },
+    {
+      "name": "blk.3.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 313026432,
+      "bytes": 2064384,
+      "absolute_start": 323988000,
+      "absolute_end": 326052384
+    },
+    {
+      "name": "blk.3.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 315090816,
+      "bytes": 2064384,
+      "absolute_start": 326052384,
+      "absolute_end": 328116768
+    },
+    {
+      "name": "blk.3.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 317155200,
+      "bytes": 4096,
+      "absolute_start": 328116768,
+      "absolute_end": 328120864
+    },
+    {
+      "name": "blk.4.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 317159296,
+      "bytes": 1179648,
+      "absolute_start": 328120864,
+      "absolute_end": 329300512
+    },
+    {
+      "name": "blk.4.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 318338944,
+      "bytes": 4096,
+      "absolute_start": 329300512,
+      "absolute_end": 329304608
+    },
+    {
+      "name": "blk.4.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 318343040,
+      "bytes": 3538944,
+      "absolute_start": 329304608,
+      "absolute_end": 332843552
+    },
+    {
+      "name": "blk.4.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 321881984,
+      "bytes": 2064384,
+      "absolute_start": 332843552,
+      "absolute_end": 334907936
+    },
+    {
+      "name": "blk.4.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 323946368,
+      "bytes": 2064384,
+      "absolute_start": 334907936,
+      "absolute_end": 336972320
+    },
+    {
+      "name": "blk.4.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 326010752,
+      "bytes": 2064384,
+      "absolute_start": 336972320,
+      "absolute_end": 339036704
+    },
+    {
+      "name": "blk.4.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 328075136,
+      "bytes": 4096,
+      "absolute_start": 339036704,
+      "absolute_end": 339040800
+    },
+    {
+      "name": "blk.4.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 328079232,
+      "bytes": 64,
+      "absolute_start": 339040800,
+      "absolute_end": 339040864
+    },
+    {
+      "name": "blk.4.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 328079296,
+      "bytes": 9216,
+      "absolute_start": 339040864,
+      "absolute_end": 339050080
+    },
+    {
+      "name": "blk.4.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 328088512,
+      "bytes": 9216,
+      "absolute_start": 339050080,
+      "absolute_end": 339059296
+    },
+    {
+      "name": "blk.4.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 328097728,
+      "bytes": 98304,
+      "absolute_start": 339059296,
+      "absolute_end": 339157600
+    },
+    {
+      "name": "blk.4.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 328196032,
+      "bytes": 64,
+      "absolute_start": 339157600,
+      "absolute_end": 339157664
+    },
+    {
+      "name": "blk.4.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 328196096,
+      "bytes": 512,
+      "absolute_start": 339157664,
+      "absolute_end": 339158176
+    },
+    {
+      "name": "blk.4.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 328196608,
+      "bytes": 1179648,
+      "absolute_start": 339158176,
+      "absolute_end": 340337824
+    },
+    {
+      "name": "blk.5.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 329376256,
+      "bytes": 1179648,
+      "absolute_start": 340337824,
+      "absolute_end": 341517472
+    },
+    {
+      "name": "blk.5.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 330555904,
+      "bytes": 4096,
+      "absolute_start": 341517472,
+      "absolute_end": 341521568
+    },
+    {
+      "name": "blk.5.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 330560000,
+      "bytes": 3538944,
+      "absolute_start": 341521568,
+      "absolute_end": 345060512
+    },
+    {
+      "name": "blk.5.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 334098944,
+      "bytes": 2064384,
+      "absolute_start": 345060512,
+      "absolute_end": 347124896
+    },
+    {
+      "name": "blk.5.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 336163328,
+      "bytes": 2064384,
+      "absolute_start": 347124896,
+      "absolute_end": 349189280
+    },
+    {
+      "name": "blk.5.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 338227712,
+      "bytes": 2064384,
+      "absolute_start": 349189280,
+      "absolute_end": 351253664
+    },
+    {
+      "name": "blk.5.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 340292096,
+      "bytes": 4096,
+      "absolute_start": 351253664,
+      "absolute_end": 351257760
+    },
+    {
+      "name": "blk.5.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 340296192,
+      "bytes": 64,
+      "absolute_start": 351257760,
+      "absolute_end": 351257824
+    },
+    {
+      "name": "blk.5.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 340296256,
+      "bytes": 9216,
+      "absolute_start": 351257824,
+      "absolute_end": 351267040
+    },
+    {
+      "name": "blk.5.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 340305472,
+      "bytes": 9216,
+      "absolute_start": 351267040,
+      "absolute_end": 351276256
+    },
+    {
+      "name": "blk.5.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 340314688,
+      "bytes": 98304,
+      "absolute_start": 351276256,
+      "absolute_end": 351374560
+    },
+    {
+      "name": "blk.5.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 340412992,
+      "bytes": 64,
+      "absolute_start": 351374560,
+      "absolute_end": 351374624
+    },
+    {
+      "name": "blk.5.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 340413056,
+      "bytes": 512,
+      "absolute_start": 351374624,
+      "absolute_end": 351375136
+    },
+    {
+      "name": "blk.5.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 340413568,
+      "bytes": 1179648,
+      "absolute_start": 351375136,
+      "absolute_end": 352554784
+    },
+    {
+      "name": "blk.6.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 341593216,
+      "bytes": 1179648,
+      "absolute_start": 352554784,
+      "absolute_end": 353734432
+    },
+    {
+      "name": "blk.6.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 342772864,
+      "bytes": 4096,
+      "absolute_start": 353734432,
+      "absolute_end": 353738528
+    },
+    {
+      "name": "blk.6.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 342776960,
+      "bytes": 3538944,
+      "absolute_start": 353738528,
+      "absolute_end": 357277472
+    },
+    {
+      "name": "blk.6.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 346315904,
+      "bytes": 2064384,
+      "absolute_start": 357277472,
+      "absolute_end": 359341856
+    },
+    {
+      "name": "blk.6.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 348380288,
+      "bytes": 2064384,
+      "absolute_start": 359341856,
+      "absolute_end": 361406240
+    },
+    {
+      "name": "blk.6.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 350444672,
+      "bytes": 2064384,
+      "absolute_start": 361406240,
+      "absolute_end": 363470624
+    },
+    {
+      "name": "blk.6.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 352509056,
+      "bytes": 4096,
+      "absolute_start": 363470624,
+      "absolute_end": 363474720
+    },
+    {
+      "name": "blk.6.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 352513152,
+      "bytes": 64,
+      "absolute_start": 363474720,
+      "absolute_end": 363474784
+    },
+    {
+      "name": "blk.6.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 352513216,
+      "bytes": 9216,
+      "absolute_start": 363474784,
+      "absolute_end": 363484000
+    },
+    {
+      "name": "blk.6.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 352522432,
+      "bytes": 9216,
+      "absolute_start": 363484000,
+      "absolute_end": 363493216
+    },
+    {
+      "name": "blk.6.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 352531648,
+      "bytes": 98304,
+      "absolute_start": 363493216,
+      "absolute_end": 363591520
+    },
+    {
+      "name": "blk.6.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 352629952,
+      "bytes": 64,
+      "absolute_start": 363591520,
+      "absolute_end": 363591584
+    },
+    {
+      "name": "blk.6.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 352630016,
+      "bytes": 512,
+      "absolute_start": 363591584,
+      "absolute_end": 363592096
+    },
+    {
+      "name": "blk.6.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 352630528,
+      "bytes": 1179648,
+      "absolute_start": 363592096,
+      "absolute_end": 364771744
+    },
+    {
+      "name": "blk.7.attn_k.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 353810176,
+      "bytes": 294912,
+      "absolute_start": 364771744,
+      "absolute_end": 365066656
+    },
+    {
+      "name": "blk.7.attn_k_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 354105088,
+      "bytes": 1024,
+      "absolute_start": 365066656,
+      "absolute_end": 365067680
+    },
+    {
+      "name": "blk.7.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 354106112,
+      "bytes": 4096,
+      "absolute_start": 365067680,
+      "absolute_end": 365071776
+    },
+    {
+      "name": "blk.7.attn_output.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 354110208,
+      "bytes": 1179648,
+      "absolute_start": 365071776,
+      "absolute_end": 366251424
+    },
+    {
+      "name": "blk.7.attn_q.weight",
+      "shape": [
+        1024,
+        4096
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 355289856,
+      "bytes": 2359296,
+      "absolute_start": 366251424,
+      "absolute_end": 368610720
+    },
+    {
+      "name": "blk.7.attn_q_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 357649152,
+      "bytes": 1024,
+      "absolute_start": 368610720,
+      "absolute_end": 368611744
+    },
+    {
+      "name": "blk.7.attn_v.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 357650176,
+      "bytes": 294912,
+      "absolute_start": 368611744,
+      "absolute_end": 368906656
+    },
+    {
+      "name": "blk.7.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 357945088,
+      "bytes": 2064384,
+      "absolute_start": 368906656,
+      "absolute_end": 370971040
+    },
+    {
+      "name": "blk.7.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 360009472,
+      "bytes": 2064384,
+      "absolute_start": 370971040,
+      "absolute_end": 373035424
+    },
+    {
+      "name": "blk.7.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 362073856,
+      "bytes": 2064384,
+      "absolute_start": 373035424,
+      "absolute_end": 375099808
+    },
+    {
+      "name": "blk.7.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 364138240,
+      "bytes": 4096,
+      "absolute_start": 375099808,
+      "absolute_end": 375103904
+    },
+    {
+      "name": "blk.8.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 364142336,
+      "bytes": 1179648,
+      "absolute_start": 375103904,
+      "absolute_end": 376283552
+    },
+    {
+      "name": "blk.8.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 365321984,
+      "bytes": 4096,
+      "absolute_start": 376283552,
+      "absolute_end": 376287648
+    },
+    {
+      "name": "blk.8.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 365326080,
+      "bytes": 3538944,
+      "absolute_start": 376287648,
+      "absolute_end": 379826592
+    },
+    {
+      "name": "blk.8.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 368865024,
+      "bytes": 2064384,
+      "absolute_start": 379826592,
+      "absolute_end": 381890976
+    },
+    {
+      "name": "blk.8.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 370929408,
+      "bytes": 2064384,
+      "absolute_start": 381890976,
+      "absolute_end": 383955360
+    },
+    {
+      "name": "blk.8.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 372993792,
+      "bytes": 2064384,
+      "absolute_start": 383955360,
+      "absolute_end": 386019744
+    },
+    {
+      "name": "blk.8.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 375058176,
+      "bytes": 4096,
+      "absolute_start": 386019744,
+      "absolute_end": 386023840
+    },
+    {
+      "name": "blk.8.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 375062272,
+      "bytes": 64,
+      "absolute_start": 386023840,
+      "absolute_end": 386023904
+    },
+    {
+      "name": "blk.8.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 375062336,
+      "bytes": 9216,
+      "absolute_start": 386023904,
+      "absolute_end": 386033120
+    },
+    {
+      "name": "blk.8.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 375071552,
+      "bytes": 9216,
+      "absolute_start": 386033120,
+      "absolute_end": 386042336
+    },
+    {
+      "name": "blk.8.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 375080768,
+      "bytes": 98304,
+      "absolute_start": 386042336,
+      "absolute_end": 386140640
+    },
+    {
+      "name": "blk.8.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 375179072,
+      "bytes": 64,
+      "absolute_start": 386140640,
+      "absolute_end": 386140704
+    },
+    {
+      "name": "blk.8.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 375179136,
+      "bytes": 512,
+      "absolute_start": 386140704,
+      "absolute_end": 386141216
+    },
+    {
+      "name": "blk.8.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 375179648,
+      "bytes": 1179648,
+      "absolute_start": 386141216,
+      "absolute_end": 387320864
+    },
+    {
+      "name": "blk.9.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 376359296,
+      "bytes": 1179648,
+      "absolute_start": 387320864,
+      "absolute_end": 388500512
+    },
+    {
+      "name": "blk.9.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 377538944,
+      "bytes": 4096,
+      "absolute_start": 388500512,
+      "absolute_end": 388504608
+    },
+    {
+      "name": "blk.9.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 377543040,
+      "bytes": 3538944,
+      "absolute_start": 388504608,
+      "absolute_end": 392043552
+    },
+    {
+      "name": "blk.9.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 381081984,
+      "bytes": 2064384,
+      "absolute_start": 392043552,
+      "absolute_end": 394107936
+    },
+    {
+      "name": "blk.9.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 383146368,
+      "bytes": 2064384,
+      "absolute_start": 394107936,
+      "absolute_end": 396172320
+    },
+    {
+      "name": "blk.9.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 385210752,
+      "bytes": 2064384,
+      "absolute_start": 396172320,
+      "absolute_end": 398236704
+    },
+    {
+      "name": "blk.9.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 387275136,
+      "bytes": 4096,
+      "absolute_start": 398236704,
+      "absolute_end": 398240800
+    },
+    {
+      "name": "blk.9.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 387279232,
+      "bytes": 64,
+      "absolute_start": 398240800,
+      "absolute_end": 398240864
+    },
+    {
+      "name": "blk.9.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 387279296,
+      "bytes": 9216,
+      "absolute_start": 398240864,
+      "absolute_end": 398250080
+    },
+    {
+      "name": "blk.9.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 387288512,
+      "bytes": 9216,
+      "absolute_start": 398250080,
+      "absolute_end": 398259296
+    },
+    {
+      "name": "blk.9.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 387297728,
+      "bytes": 98304,
+      "absolute_start": 398259296,
+      "absolute_end": 398357600
+    },
+    {
+      "name": "blk.9.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 387396032,
+      "bytes": 64,
+      "absolute_start": 398357600,
+      "absolute_end": 398357664
+    },
+    {
+      "name": "blk.9.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 387396096,
+      "bytes": 512,
+      "absolute_start": 398357664,
+      "absolute_end": 398358176
+    },
+    {
+      "name": "blk.9.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 387396608,
+      "bytes": 1179648,
+      "absolute_start": 398358176,
+      "absolute_end": 399537824
+    },
+    {
+      "name": "blk.10.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 388576256,
+      "bytes": 1179648,
+      "absolute_start": 399537824,
+      "absolute_end": 400717472
+    },
+    {
+      "name": "blk.10.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 389755904,
+      "bytes": 4096,
+      "absolute_start": 400717472,
+      "absolute_end": 400721568
+    },
+    {
+      "name": "blk.10.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 389760000,
+      "bytes": 3538944,
+      "absolute_start": 400721568,
+      "absolute_end": 404260512
+    },
+    {
+      "name": "blk.10.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 393298944,
+      "bytes": 2064384,
+      "absolute_start": 404260512,
+      "absolute_end": 406324896
+    },
+    {
+      "name": "blk.10.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 395363328,
+      "bytes": 2064384,
+      "absolute_start": 406324896,
+      "absolute_end": 408389280
+    },
+    {
+      "name": "blk.10.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 397427712,
+      "bytes": 2064384,
+      "absolute_start": 408389280,
+      "absolute_end": 410453664
+    },
+    {
+      "name": "blk.10.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 399492096,
+      "bytes": 4096,
+      "absolute_start": 410453664,
+      "absolute_end": 410457760
+    },
+    {
+      "name": "blk.10.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 399496192,
+      "bytes": 64,
+      "absolute_start": 410457760,
+      "absolute_end": 410457824
+    },
+    {
+      "name": "blk.10.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 399496256,
+      "bytes": 9216,
+      "absolute_start": 410457824,
+      "absolute_end": 410467040
+    },
+    {
+      "name": "blk.10.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 399505472,
+      "bytes": 9216,
+      "absolute_start": 410467040,
+      "absolute_end": 410476256
+    },
+    {
+      "name": "blk.10.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 399514688,
+      "bytes": 98304,
+      "absolute_start": 410476256,
+      "absolute_end": 410574560
+    },
+    {
+      "name": "blk.10.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 399612992,
+      "bytes": 64,
+      "absolute_start": 410574560,
+      "absolute_end": 410574624
+    },
+    {
+      "name": "blk.10.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 399613056,
+      "bytes": 512,
+      "absolute_start": 410574624,
+      "absolute_end": 410575136
+    },
+    {
+      "name": "blk.10.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 399613568,
+      "bytes": 1179648,
+      "absolute_start": 410575136,
+      "absolute_end": 411754784
+    },
+    {
+      "name": "blk.11.attn_k.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 400793216,
+      "bytes": 294912,
+      "absolute_start": 411754784,
+      "absolute_end": 412049696
+    },
+    {
+      "name": "blk.11.attn_k_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 401088128,
+      "bytes": 1024,
+      "absolute_start": 412049696,
+      "absolute_end": 412050720
+    },
+    {
+      "name": "blk.11.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 401089152,
+      "bytes": 4096,
+      "absolute_start": 412050720,
+      "absolute_end": 412054816
+    },
+    {
+      "name": "blk.11.attn_output.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 401093248,
+      "bytes": 1179648,
+      "absolute_start": 412054816,
+      "absolute_end": 413234464
+    },
+    {
+      "name": "blk.11.attn_q.weight",
+      "shape": [
+        1024,
+        4096
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 402272896,
+      "bytes": 2359296,
+      "absolute_start": 413234464,
+      "absolute_end": 415593760
+    },
+    {
+      "name": "blk.11.attn_q_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 404632192,
+      "bytes": 1024,
+      "absolute_start": 415593760,
+      "absolute_end": 415594784
+    },
+    {
+      "name": "blk.11.attn_v.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 404633216,
+      "bytes": 294912,
+      "absolute_start": 415594784,
+      "absolute_end": 415889696
+    },
+    {
+      "name": "blk.11.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 404928128,
+      "bytes": 2064384,
+      "absolute_start": 415889696,
+      "absolute_end": 417954080
+    },
+    {
+      "name": "blk.11.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 406992512,
+      "bytes": 2064384,
+      "absolute_start": 417954080,
+      "absolute_end": 420018464
+    },
+    {
+      "name": "blk.11.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 409056896,
+      "bytes": 2064384,
+      "absolute_start": 420018464,
+      "absolute_end": 422082848
+    },
+    {
+      "name": "blk.11.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 411121280,
+      "bytes": 4096,
+      "absolute_start": 422082848,
+      "absolute_end": 422086944
+    },
+    {
+      "name": "blk.12.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 411125376,
+      "bytes": 1179648,
+      "absolute_start": 422086944,
+      "absolute_end": 423266592
+    },
+    {
+      "name": "blk.12.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 412305024,
+      "bytes": 4096,
+      "absolute_start": 423266592,
+      "absolute_end": 423270688
+    },
+    {
+      "name": "blk.12.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 412309120,
+      "bytes": 3538944,
+      "absolute_start": 423270688,
+      "absolute_end": 426809632
+    },
+    {
+      "name": "blk.12.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 415848064,
+      "bytes": 2064384,
+      "absolute_start": 426809632,
+      "absolute_end": 428874016
+    },
+    {
+      "name": "blk.12.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 417912448,
+      "bytes": 2064384,
+      "absolute_start": 428874016,
+      "absolute_end": 430938400
+    },
+    {
+      "name": "blk.12.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 419976832,
+      "bytes": 2064384,
+      "absolute_start": 430938400,
+      "absolute_end": 433002784
+    },
+    {
+      "name": "blk.12.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 422041216,
+      "bytes": 4096,
+      "absolute_start": 433002784,
+      "absolute_end": 433006880
+    },
+    {
+      "name": "blk.12.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 422045312,
+      "bytes": 64,
+      "absolute_start": 433006880,
+      "absolute_end": 433006944
+    },
+    {
+      "name": "blk.12.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 422045376,
+      "bytes": 9216,
+      "absolute_start": 433006944,
+      "absolute_end": 433016160
+    },
+    {
+      "name": "blk.12.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 422054592,
+      "bytes": 9216,
+      "absolute_start": 433016160,
+      "absolute_end": 433025376
+    },
+    {
+      "name": "blk.12.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 422063808,
+      "bytes": 98304,
+      "absolute_start": 433025376,
+      "absolute_end": 433123680
+    },
+    {
+      "name": "blk.12.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 422162112,
+      "bytes": 64,
+      "absolute_start": 433123680,
+      "absolute_end": 433123744
+    },
+    {
+      "name": "blk.12.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 422162176,
+      "bytes": 512,
+      "absolute_start": 433123744,
+      "absolute_end": 433124256
+    },
+    {
+      "name": "blk.12.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 422162688,
+      "bytes": 1179648,
+      "absolute_start": 433124256,
+      "absolute_end": 434303904
+    },
+    {
+      "name": "blk.13.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 423342336,
+      "bytes": 1179648,
+      "absolute_start": 434303904,
+      "absolute_end": 435483552
+    },
+    {
+      "name": "blk.13.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 424521984,
+      "bytes": 4096,
+      "absolute_start": 435483552,
+      "absolute_end": 435487648
+    },
+    {
+      "name": "blk.13.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 424526080,
+      "bytes": 3538944,
+      "absolute_start": 435487648,
+      "absolute_end": 439026592
+    },
+    {
+      "name": "blk.13.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 428065024,
+      "bytes": 2064384,
+      "absolute_start": 439026592,
+      "absolute_end": 441090976
+    },
+    {
+      "name": "blk.13.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 430129408,
+      "bytes": 2064384,
+      "absolute_start": 441090976,
+      "absolute_end": 443155360
+    },
+    {
+      "name": "blk.13.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 432193792,
+      "bytes": 2064384,
+      "absolute_start": 443155360,
+      "absolute_end": 445219744
+    },
+    {
+      "name": "blk.13.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 434258176,
+      "bytes": 4096,
+      "absolute_start": 445219744,
+      "absolute_end": 445223840
+    },
+    {
+      "name": "blk.13.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 434262272,
+      "bytes": 64,
+      "absolute_start": 445223840,
+      "absolute_end": 445223904
+    },
+    {
+      "name": "blk.13.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 434262336,
+      "bytes": 9216,
+      "absolute_start": 445223904,
+      "absolute_end": 445233120
+    },
+    {
+      "name": "blk.13.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 434271552,
+      "bytes": 9216,
+      "absolute_start": 445233120,
+      "absolute_end": 445242336
+    },
+    {
+      "name": "blk.13.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 434280768,
+      "bytes": 98304,
+      "absolute_start": 445242336,
+      "absolute_end": 445340640
+    },
+    {
+      "name": "blk.13.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 434379072,
+      "bytes": 64,
+      "absolute_start": 445340640,
+      "absolute_end": 445340704
+    },
+    {
+      "name": "blk.13.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 434379136,
+      "bytes": 512,
+      "absolute_start": 445340704,
+      "absolute_end": 445341216
+    },
+    {
+      "name": "blk.13.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 434379648,
+      "bytes": 1179648,
+      "absolute_start": 445341216,
+      "absolute_end": 446520864
+    },
+    {
+      "name": "blk.14.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 435559296,
+      "bytes": 1179648,
+      "absolute_start": 446520864,
+      "absolute_end": 447700512
+    },
+    {
+      "name": "blk.14.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 436738944,
+      "bytes": 4096,
+      "absolute_start": 447700512,
+      "absolute_end": 447704608
+    },
+    {
+      "name": "blk.14.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 436743040,
+      "bytes": 3538944,
+      "absolute_start": 447704608,
+      "absolute_end": 451243552
+    },
+    {
+      "name": "blk.14.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 440281984,
+      "bytes": 2064384,
+      "absolute_start": 451243552,
+      "absolute_end": 453307936
+    },
+    {
+      "name": "blk.14.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 442346368,
+      "bytes": 2064384,
+      "absolute_start": 453307936,
+      "absolute_end": 455372320
+    },
+    {
+      "name": "blk.14.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 444410752,
+      "bytes": 2064384,
+      "absolute_start": 455372320,
+      "absolute_end": 457436704
+    },
+    {
+      "name": "blk.14.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 446475136,
+      "bytes": 4096,
+      "absolute_start": 457436704,
+      "absolute_end": 457440800
+    },
+    {
+      "name": "blk.14.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 446479232,
+      "bytes": 64,
+      "absolute_start": 457440800,
+      "absolute_end": 457440864
+    },
+    {
+      "name": "blk.14.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 446479296,
+      "bytes": 9216,
+      "absolute_start": 457440864,
+      "absolute_end": 457450080
+    },
+    {
+      "name": "blk.14.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 446488512,
+      "bytes": 9216,
+      "absolute_start": 457450080,
+      "absolute_end": 457459296
+    },
+    {
+      "name": "blk.14.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 446497728,
+      "bytes": 98304,
+      "absolute_start": 457459296,
+      "absolute_end": 457557600
+    },
+    {
+      "name": "blk.14.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 446596032,
+      "bytes": 64,
+      "absolute_start": 457557600,
+      "absolute_end": 457557664
+    },
+    {
+      "name": "blk.14.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 446596096,
+      "bytes": 512,
+      "absolute_start": 457557664,
+      "absolute_end": 457558176
+    },
+    {
+      "name": "blk.14.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 446596608,
+      "bytes": 1179648,
+      "absolute_start": 457558176,
+      "absolute_end": 458737824
+    },
+    {
+      "name": "blk.15.attn_k.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 447776256,
+      "bytes": 294912,
+      "absolute_start": 458737824,
+      "absolute_end": 459032736
+    },
+    {
+      "name": "blk.15.attn_k_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 448071168,
+      "bytes": 1024,
+      "absolute_start": 459032736,
+      "absolute_end": 459033760
+    },
+    {
+      "name": "blk.15.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 448072192,
+      "bytes": 4096,
+      "absolute_start": 459033760,
+      "absolute_end": 459037856
+    },
+    {
+      "name": "blk.15.attn_output.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 448076288,
+      "bytes": 1179648,
+      "absolute_start": 459037856,
+      "absolute_end": 460217504
+    },
+    {
+      "name": "blk.15.attn_q.weight",
+      "shape": [
+        1024,
+        4096
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 449255936,
+      "bytes": 2359296,
+      "absolute_start": 460217504,
+      "absolute_end": 462576800
+    },
+    {
+      "name": "blk.15.attn_q_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 451615232,
+      "bytes": 1024,
+      "absolute_start": 462576800,
+      "absolute_end": 462577824
+    },
+    {
+      "name": "blk.15.attn_v.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 451616256,
+      "bytes": 294912,
+      "absolute_start": 462577824,
+      "absolute_end": 462872736
+    },
+    {
+      "name": "blk.15.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 451911168,
+      "bytes": 2064384,
+      "absolute_start": 462872736,
+      "absolute_end": 464937120
+    },
+    {
+      "name": "blk.15.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 453975552,
+      "bytes": 2064384,
+      "absolute_start": 464937120,
+      "absolute_end": 467001504
+    },
+    {
+      "name": "blk.15.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 456039936,
+      "bytes": 2064384,
+      "absolute_start": 467001504,
+      "absolute_end": 469065888
+    },
+    {
+      "name": "blk.15.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 458104320,
+      "bytes": 4096,
+      "absolute_start": 469065888,
+      "absolute_end": 469069984
+    },
+    {
+      "name": "blk.16.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 458108416,
+      "bytes": 1179648,
+      "absolute_start": 469069984,
+      "absolute_end": 470249632
+    },
+    {
+      "name": "blk.16.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 459288064,
+      "bytes": 4096,
+      "absolute_start": 470249632,
+      "absolute_end": 470253728
+    },
+    {
+      "name": "blk.16.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 459292160,
+      "bytes": 3538944,
+      "absolute_start": 470253728,
+      "absolute_end": 473792672
+    },
+    {
+      "name": "blk.16.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 462831104,
+      "bytes": 2064384,
+      "absolute_start": 473792672,
+      "absolute_end": 475857056
+    },
+    {
+      "name": "blk.16.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 464895488,
+      "bytes": 2064384,
+      "absolute_start": 475857056,
+      "absolute_end": 477921440
+    },
+    {
+      "name": "blk.16.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 466959872,
+      "bytes": 2064384,
+      "absolute_start": 477921440,
+      "absolute_end": 479985824
+    },
+    {
+      "name": "blk.16.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 469024256,
+      "bytes": 4096,
+      "absolute_start": 479985824,
+      "absolute_end": 479989920
+    },
+    {
+      "name": "blk.16.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 469028352,
+      "bytes": 64,
+      "absolute_start": 479989920,
+      "absolute_end": 479989984
+    },
+    {
+      "name": "blk.16.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 469028416,
+      "bytes": 9216,
+      "absolute_start": 479989984,
+      "absolute_end": 479999200
+    },
+    {
+      "name": "blk.16.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 469037632,
+      "bytes": 9216,
+      "absolute_start": 479999200,
+      "absolute_end": 480008416
+    },
+    {
+      "name": "blk.16.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 469046848,
+      "bytes": 98304,
+      "absolute_start": 480008416,
+      "absolute_end": 480106720
+    },
+    {
+      "name": "blk.16.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 469145152,
+      "bytes": 64,
+      "absolute_start": 480106720,
+      "absolute_end": 480106784
+    },
+    {
+      "name": "blk.16.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 469145216,
+      "bytes": 512,
+      "absolute_start": 480106784,
+      "absolute_end": 480107296
+    },
+    {
+      "name": "blk.16.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 469145728,
+      "bytes": 1179648,
+      "absolute_start": 480107296,
+      "absolute_end": 481286944
+    },
+    {
+      "name": "blk.17.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 470325376,
+      "bytes": 1179648,
+      "absolute_start": 481286944,
+      "absolute_end": 482466592
+    },
+    {
+      "name": "blk.17.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 471505024,
+      "bytes": 4096,
+      "absolute_start": 482466592,
+      "absolute_end": 482470688
+    },
+    {
+      "name": "blk.17.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 471509120,
+      "bytes": 3538944,
+      "absolute_start": 482470688,
+      "absolute_end": 486009632
+    },
+    {
+      "name": "blk.17.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 475048064,
+      "bytes": 2064384,
+      "absolute_start": 486009632,
+      "absolute_end": 488074016
+    },
+    {
+      "name": "blk.17.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 477112448,
+      "bytes": 2064384,
+      "absolute_start": 488074016,
+      "absolute_end": 490138400
+    },
+    {
+      "name": "blk.17.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 479176832,
+      "bytes": 2064384,
+      "absolute_start": 490138400,
+      "absolute_end": 492202784
+    },
+    {
+      "name": "blk.17.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 481241216,
+      "bytes": 4096,
+      "absolute_start": 492202784,
+      "absolute_end": 492206880
+    },
+    {
+      "name": "blk.17.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 481245312,
+      "bytes": 64,
+      "absolute_start": 492206880,
+      "absolute_end": 492206944
+    },
+    {
+      "name": "blk.17.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 481245376,
+      "bytes": 9216,
+      "absolute_start": 492206944,
+      "absolute_end": 492216160
+    },
+    {
+      "name": "blk.17.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 481254592,
+      "bytes": 9216,
+      "absolute_start": 492216160,
+      "absolute_end": 492225376
+    },
+    {
+      "name": "blk.17.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 481263808,
+      "bytes": 98304,
+      "absolute_start": 492225376,
+      "absolute_end": 492323680
+    },
+    {
+      "name": "blk.17.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 481362112,
+      "bytes": 64,
+      "absolute_start": 492323680,
+      "absolute_end": 492323744
+    },
+    {
+      "name": "blk.17.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 481362176,
+      "bytes": 512,
+      "absolute_start": 492323744,
+      "absolute_end": 492324256
+    },
+    {
+      "name": "blk.17.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 481362688,
+      "bytes": 1179648,
+      "absolute_start": 492324256,
+      "absolute_end": 493503904
+    },
+    {
+      "name": "blk.18.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 482542336,
+      "bytes": 1179648,
+      "absolute_start": 493503904,
+      "absolute_end": 494683552
+    },
+    {
+      "name": "blk.18.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 483721984,
+      "bytes": 4096,
+      "absolute_start": 494683552,
+      "absolute_end": 494687648
+    },
+    {
+      "name": "blk.18.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 483726080,
+      "bytes": 3538944,
+      "absolute_start": 494687648,
+      "absolute_end": 498226592
+    },
+    {
+      "name": "blk.18.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 487265024,
+      "bytes": 2064384,
+      "absolute_start": 498226592,
+      "absolute_end": 500290976
+    },
+    {
+      "name": "blk.18.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 489329408,
+      "bytes": 2064384,
+      "absolute_start": 500290976,
+      "absolute_end": 502355360
+    },
+    {
+      "name": "blk.18.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 491393792,
+      "bytes": 2064384,
+      "absolute_start": 502355360,
+      "absolute_end": 504419744
+    },
+    {
+      "name": "blk.18.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 493458176,
+      "bytes": 4096,
+      "absolute_start": 504419744,
+      "absolute_end": 504423840
+    },
+    {
+      "name": "blk.18.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 493462272,
+      "bytes": 64,
+      "absolute_start": 504423840,
+      "absolute_end": 504423904
+    },
+    {
+      "name": "blk.18.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 493462336,
+      "bytes": 9216,
+      "absolute_start": 504423904,
+      "absolute_end": 504433120
+    },
+    {
+      "name": "blk.18.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 493471552,
+      "bytes": 9216,
+      "absolute_start": 504433120,
+      "absolute_end": 504442336
+    },
+    {
+      "name": "blk.18.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 493480768,
+      "bytes": 98304,
+      "absolute_start": 504442336,
+      "absolute_end": 504540640
+    },
+    {
+      "name": "blk.18.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 493579072,
+      "bytes": 64,
+      "absolute_start": 504540640,
+      "absolute_end": 504540704
+    },
+    {
+      "name": "blk.18.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 493579136,
+      "bytes": 512,
+      "absolute_start": 504540704,
+      "absolute_end": 504541216
+    },
+    {
+      "name": "blk.18.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 493579648,
+      "bytes": 1179648,
+      "absolute_start": 504541216,
+      "absolute_end": 505720864
+    },
+    {
+      "name": "blk.19.attn_k.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 494759296,
+      "bytes": 294912,
+      "absolute_start": 505720864,
+      "absolute_end": 506015776
+    },
+    {
+      "name": "blk.19.attn_k_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 495054208,
+      "bytes": 1024,
+      "absolute_start": 506015776,
+      "absolute_end": 506016800
+    },
+    {
+      "name": "blk.19.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 495055232,
+      "bytes": 4096,
+      "absolute_start": 506016800,
+      "absolute_end": 506020896
+    },
+    {
+      "name": "blk.19.attn_output.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 495059328,
+      "bytes": 1179648,
+      "absolute_start": 506020896,
+      "absolute_end": 507200544
+    },
+    {
+      "name": "blk.19.attn_q.weight",
+      "shape": [
+        1024,
+        4096
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 496238976,
+      "bytes": 2359296,
+      "absolute_start": 507200544,
+      "absolute_end": 509559840
+    },
+    {
+      "name": "blk.19.attn_q_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 498598272,
+      "bytes": 1024,
+      "absolute_start": 509559840,
+      "absolute_end": 509560864
+    },
+    {
+      "name": "blk.19.attn_v.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 498599296,
+      "bytes": 294912,
+      "absolute_start": 509560864,
+      "absolute_end": 509855776
+    },
+    {
+      "name": "blk.19.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 498894208,
+      "bytes": 2064384,
+      "absolute_start": 509855776,
+      "absolute_end": 511920160
+    },
+    {
+      "name": "blk.19.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 500958592,
+      "bytes": 2064384,
+      "absolute_start": 511920160,
+      "absolute_end": 513984544
+    },
+    {
+      "name": "blk.19.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 503022976,
+      "bytes": 2064384,
+      "absolute_start": 513984544,
+      "absolute_end": 516048928
+    },
+    {
+      "name": "blk.19.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 505087360,
+      "bytes": 4096,
+      "absolute_start": 516048928,
+      "absolute_end": 516053024
+    },
+    {
+      "name": "blk.20.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 505091456,
+      "bytes": 1179648,
+      "absolute_start": 516053024,
+      "absolute_end": 517232672
+    },
+    {
+      "name": "blk.20.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 506271104,
+      "bytes": 4096,
+      "absolute_start": 517232672,
+      "absolute_end": 517236768
+    },
+    {
+      "name": "blk.20.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 506275200,
+      "bytes": 3538944,
+      "absolute_start": 517236768,
+      "absolute_end": 520775712
+    },
+    {
+      "name": "blk.20.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 509814144,
+      "bytes": 2064384,
+      "absolute_start": 520775712,
+      "absolute_end": 522840096
+    },
+    {
+      "name": "blk.20.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 511878528,
+      "bytes": 2064384,
+      "absolute_start": 522840096,
+      "absolute_end": 524904480
+    },
+    {
+      "name": "blk.20.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 513942912,
+      "bytes": 2064384,
+      "absolute_start": 524904480,
+      "absolute_end": 526968864
+    },
+    {
+      "name": "blk.20.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 516007296,
+      "bytes": 4096,
+      "absolute_start": 526968864,
+      "absolute_end": 526972960
+    },
+    {
+      "name": "blk.20.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 516011392,
+      "bytes": 64,
+      "absolute_start": 526972960,
+      "absolute_end": 526973024
+    },
+    {
+      "name": "blk.20.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 516011456,
+      "bytes": 9216,
+      "absolute_start": 526973024,
+      "absolute_end": 526982240
+    },
+    {
+      "name": "blk.20.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 516020672,
+      "bytes": 9216,
+      "absolute_start": 526982240,
+      "absolute_end": 526991456
+    },
+    {
+      "name": "blk.20.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 516029888,
+      "bytes": 98304,
+      "absolute_start": 526991456,
+      "absolute_end": 527089760
+    },
+    {
+      "name": "blk.20.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 516128192,
+      "bytes": 64,
+      "absolute_start": 527089760,
+      "absolute_end": 527089824
+    },
+    {
+      "name": "blk.20.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 516128256,
+      "bytes": 512,
+      "absolute_start": 527089824,
+      "absolute_end": 527090336
+    },
+    {
+      "name": "blk.20.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 516128768,
+      "bytes": 1179648,
+      "absolute_start": 527090336,
+      "absolute_end": 528269984
+    },
+    {
+      "name": "blk.21.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 517308416,
+      "bytes": 1179648,
+      "absolute_start": 528269984,
+      "absolute_end": 529449632
+    },
+    {
+      "name": "blk.21.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 518488064,
+      "bytes": 4096,
+      "absolute_start": 529449632,
+      "absolute_end": 529453728
+    },
+    {
+      "name": "blk.21.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 518492160,
+      "bytes": 3538944,
+      "absolute_start": 529453728,
+      "absolute_end": 532992672
+    },
+    {
+      "name": "blk.21.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 522031104,
+      "bytes": 2064384,
+      "absolute_start": 532992672,
+      "absolute_end": 535057056
+    },
+    {
+      "name": "blk.21.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 524095488,
+      "bytes": 2064384,
+      "absolute_start": 535057056,
+      "absolute_end": 537121440
+    },
+    {
+      "name": "blk.21.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 526159872,
+      "bytes": 2064384,
+      "absolute_start": 537121440,
+      "absolute_end": 539185824
+    },
+    {
+      "name": "blk.21.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 528224256,
+      "bytes": 4096,
+      "absolute_start": 539185824,
+      "absolute_end": 539189920
+    },
+    {
+      "name": "blk.21.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 528228352,
+      "bytes": 64,
+      "absolute_start": 539189920,
+      "absolute_end": 539189984
+    },
+    {
+      "name": "blk.21.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 528228416,
+      "bytes": 9216,
+      "absolute_start": 539189984,
+      "absolute_end": 539199200
+    },
+    {
+      "name": "blk.21.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 528237632,
+      "bytes": 9216,
+      "absolute_start": 539199200,
+      "absolute_end": 539208416
+    },
+    {
+      "name": "blk.21.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 528246848,
+      "bytes": 98304,
+      "absolute_start": 539208416,
+      "absolute_end": 539306720
+    },
+    {
+      "name": "blk.21.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 528345152,
+      "bytes": 64,
+      "absolute_start": 539306720,
+      "absolute_end": 539306784
+    },
+    {
+      "name": "blk.21.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 528345216,
+      "bytes": 512,
+      "absolute_start": 539306784,
+      "absolute_end": 539307296
+    },
+    {
+      "name": "blk.21.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 528345728,
+      "bytes": 1179648,
+      "absolute_start": 539307296,
+      "absolute_end": 540486944
+    },
+    {
+      "name": "blk.22.attn_gate.weight",
+      "shape": [
+        1024,
+        2048
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 529525376,
+      "bytes": 1179648,
+      "absolute_start": 540486944,
+      "absolute_end": 541666592
+    },
+    {
+      "name": "blk.22.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 530705024,
+      "bytes": 4096,
+      "absolute_start": 541666592,
+      "absolute_end": 541670688
+    },
+    {
+      "name": "blk.22.attn_qkv.weight",
+      "shape": [
+        1024,
+        6144
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 530709120,
+      "bytes": 3538944,
+      "absolute_start": 541670688,
+      "absolute_end": 545209632
+    },
+    {
+      "name": "blk.22.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 534248064,
+      "bytes": 2064384,
+      "absolute_start": 545209632,
+      "absolute_end": 547274016
+    },
+    {
+      "name": "blk.22.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 536312448,
+      "bytes": 2064384,
+      "absolute_start": 547274016,
+      "absolute_end": 549338400
+    },
+    {
+      "name": "blk.22.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 538376832,
+      "bytes": 2064384,
+      "absolute_start": 549338400,
+      "absolute_end": 551402784
+    },
+    {
+      "name": "blk.22.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 540441216,
+      "bytes": 4096,
+      "absolute_start": 551402784,
+      "absolute_end": 551406880
+    },
+    {
+      "name": "blk.22.ssm_a",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 540445312,
+      "bytes": 64,
+      "absolute_start": 551406880,
+      "absolute_end": 551406944
+    },
+    {
+      "name": "blk.22.ssm_alpha.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 540445376,
+      "bytes": 9216,
+      "absolute_start": 551406944,
+      "absolute_end": 551416160
+    },
+    {
+      "name": "blk.22.ssm_beta.weight",
+      "shape": [
+        1024,
+        16
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 540454592,
+      "bytes": 9216,
+      "absolute_start": 551416160,
+      "absolute_end": 551425376
+    },
+    {
+      "name": "blk.22.ssm_conv1d.weight",
+      "shape": [
+        4,
+        6144
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 540463808,
+      "bytes": 98304,
+      "absolute_start": 551425376,
+      "absolute_end": 551523680
+    },
+    {
+      "name": "blk.22.ssm_dt.bias",
+      "shape": [
+        16
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 540562112,
+      "bytes": 64,
+      "absolute_start": 551523680,
+      "absolute_end": 551523744
+    },
+    {
+      "name": "blk.22.ssm_norm.weight",
+      "shape": [
+        128
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 540562176,
+      "bytes": 512,
+      "absolute_start": 551523744,
+      "absolute_end": 551524256
+    },
+    {
+      "name": "blk.22.ssm_out.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 540562688,
+      "bytes": 1179648,
+      "absolute_start": 551524256,
+      "absolute_end": 552703904
+    },
+    {
+      "name": "blk.23.attn_k.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 541742336,
+      "bytes": 294912,
+      "absolute_start": 552703904,
+      "absolute_end": 552998816
+    },
+    {
+      "name": "blk.23.attn_k_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 542037248,
+      "bytes": 1024,
+      "absolute_start": 552998816,
+      "absolute_end": 552999840
+    },
+    {
+      "name": "blk.23.attn_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 542038272,
+      "bytes": 4096,
+      "absolute_start": 552999840,
+      "absolute_end": 553003936
+    },
+    {
+      "name": "blk.23.attn_output.weight",
+      "shape": [
+        2048,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 542042368,
+      "bytes": 1179648,
+      "absolute_start": 553003936,
+      "absolute_end": 554183584
+    },
+    {
+      "name": "blk.23.attn_q.weight",
+      "shape": [
+        1024,
+        4096
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 543222016,
+      "bytes": 2359296,
+      "absolute_start": 554183584,
+      "absolute_end": 556542880
+    },
+    {
+      "name": "blk.23.attn_q_norm.weight",
+      "shape": [
+        256
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 545581312,
+      "bytes": 1024,
+      "absolute_start": 556542880,
+      "absolute_end": 556543904
+    },
+    {
+      "name": "blk.23.attn_v.weight",
+      "shape": [
+        1024,
+        512
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 545582336,
+      "bytes": 294912,
+      "absolute_start": 556543904,
+      "absolute_end": 556838816
+    },
+    {
+      "name": "blk.23.ffn_down.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 545877248,
+      "bytes": 2064384,
+      "absolute_start": 556838816,
+      "absolute_end": 558903200
+    },
+    {
+      "name": "blk.23.ffn_gate.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 547941632,
+      "bytes": 2064384,
+      "absolute_start": 558903200,
+      "absolute_end": 560967584
+    },
+    {
+      "name": "blk.23.ffn_up.weight",
+      "shape": [
+        1024,
+        3584
+      ],
+      "ggml_type": 2,
+      "type_name": "Q4_0",
+      "offset": 550006016,
+      "bytes": 2064384,
+      "absolute_start": 560967584,
+      "absolute_end": 563031968
+    },
+    {
+      "name": "blk.23.post_attention_norm.weight",
+      "shape": [
+        1024
+      ],
+      "ggml_type": 0,
+      "type_name": "F32",
+      "offset": 552070400,
+      "bytes": 4096,
+      "absolute_start": 563031968,
+      "absolute_end": 563036064
+    }
+  ],
+  "comparison": {
+    "shared_id_start": 0,
+    "shared_id_end": 248069,
+    "shared_ids_checked": 248070,
+    "target_base_count": 248044,
+    "target_defined_count": 248077,
+    "target_added_count": 33,
+    "gguf_indexed_vocab_count": 248320,
+    "symbol_mismatch_count": 0,
+    "symbol_mismatch_examples": [],
+    "shared_symbol_match": true,
+    "target_shared_map_sha256": "79eec923789b6428a38b6654c93c7b7baadfbc03a595a18054199a05a8212130",
+    "gguf_shared_map_sha256": "79eec923789b6428a38b6654c93c7b7baadfbc03a595a18054199a05a8212130",
+    "digest_format": "per ascending ID: uint32-le ID, uint32-le UTF8 byte length, exact UTF8 symbol bytes",
+    "token_types_present": true,
+    "shared_type_counts": {
+      "NORMAL": 248044,
+      "CONTROL": 20,
+      "USER_DEFINED": 6
+    },
+    "all_type_counts": {
+      "NORMAL": 248044,
+      "CONTROL": 27,
+      "USER_DEFINED": 6,
+      "UNUSED": 243
+    },
+    "type_comparison_rule": "target base=>NORMAL(1); added special=>CONTROL(3); added nonspecial=>USER_DEFINED(4)",
+    "type_mismatch_count": 6,
+    "type_mismatch_examples": [
+      {
+        "id": 248060,
+        "target_expected_type": 4,
+        "gguf_type": 3,
+        "target_special": false,
+        "symbol": "<|fim_prefix|>"
+      },
+      {
+        "id": 248061,
+        "target_expected_type": 4,
+        "gguf_type": 3,
+        "target_special": false,
+        "symbol": "<|fim_middle|>"
+      },
+      {
+        "id": 248062,
+        "target_expected_type": 4,
+        "gguf_type": 3,
+        "target_special": false,
+        "symbol": "<|fim_suffix|>"
+      },
+      {
+        "id": 248063,
+        "target_expected_type": 4,
+        "gguf_type": 3,
+        "target_special": false,
+        "symbol": "<|fim_pad|>"
+      },
+      {
+        "id": 248064,
+        "target_expected_type": 4,
+        "gguf_type": 3,
+        "target_special": false,
+        "symbol": "<|repo_name|>"
+      },
+      {
+        "id": 248065,
+        "target_expected_type": 4,
+        "gguf_type": 3,
+        "target_special": false,
+        "symbol": "<|file_sep|>"
+      }
+    ],
+    "shared_added_rows": [
+      {
+        "id": 248044,
+        "symbol": "<|endoftext|>",
+        "target_added_metadata": {
+          "id": 248044,
+          "content": "<|endoftext|>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248045,
+        "symbol": "<|im_start|>",
+        "target_added_metadata": {
+          "id": 248045,
+          "content": "<|im_start|>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248046,
+        "symbol": "<|im_end|>",
+        "target_added_metadata": {
+          "id": 248046,
+          "content": "<|im_end|>",
+          "single_word": false,
+          "lstrip": false,
+          "rstrip": false,
+          "normalized": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248047,
+        "symbol": "<|object_ref_start|>",
+        "target_added_metadata": {
+          "id": 248047,
+          "content": "<|object_ref_start|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248048,
+        "symbol": "<|object_ref_end|>",
+        "target_added_metadata": {
+          "id": 248048,
+          "content": "<|object_ref_end|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248049,
+        "symbol": "<|box_start|>",
+        "target_added_metadata": {
+          "id": 248049,
+          "content": "<|box_start|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248050,
+        "symbol": "<|box_end|>",
+        "target_added_metadata": {
+          "id": 248050,
+          "content": "<|box_end|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248051,
+        "symbol": "<|quad_start|>",
+        "target_added_metadata": {
+          "id": 248051,
+          "content": "<|quad_start|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248052,
+        "symbol": "<|quad_end|>",
+        "target_added_metadata": {
+          "id": 248052,
+          "content": "<|quad_end|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248053,
+        "symbol": "<|vision_start|>",
+        "target_added_metadata": {
+          "id": 248053,
+          "content": "<|vision_start|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248054,
+        "symbol": "<|vision_end|>",
+        "target_added_metadata": {
+          "id": 248054,
+          "content": "<|vision_end|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248055,
+        "symbol": "<|vision_pad|>",
+        "target_added_metadata": {
+          "id": 248055,
+          "content": "<|vision_pad|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248056,
+        "symbol": "<|image_pad|>",
+        "target_added_metadata": {
+          "id": 248056,
+          "content": "<|image_pad|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248057,
+        "symbol": "<|video_pad|>",
+        "target_added_metadata": {
+          "id": 248057,
+          "content": "<|video_pad|>",
+          "normalized": false,
+          "lstrip": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": true
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248058,
+        "symbol": "<tool_call>",
+        "target_added_metadata": {
+          "id": 248058,
+          "content": "<tool_call>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 4,
+        "gguf_type_name": "USER_DEFINED"
+      },
+      {
+        "id": 248059,
+        "symbol": "</tool_call>",
+        "target_added_metadata": {
+          "id": 248059,
+          "content": "</tool_call>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 4,
+        "gguf_type_name": "USER_DEFINED"
+      },
+      {
+        "id": 248060,
+        "symbol": "<|fim_prefix|>",
+        "target_added_metadata": {
+          "id": 248060,
+          "content": "<|fim_prefix|>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248061,
+        "symbol": "<|fim_middle|>",
+        "target_added_metadata": {
+          "id": 248061,
+          "content": "<|fim_middle|>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248062,
+        "symbol": "<|fim_suffix|>",
+        "target_added_metadata": {
+          "id": 248062,
+          "content": "<|fim_suffix|>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248063,
+        "symbol": "<|fim_pad|>",
+        "target_added_metadata": {
+          "id": 248063,
+          "content": "<|fim_pad|>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248064,
+        "symbol": "<|repo_name|>",
+        "target_added_metadata": {
+          "id": 248064,
+          "content": "<|repo_name|>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248065,
+        "symbol": "<|file_sep|>",
+        "target_added_metadata": {
+          "id": 248065,
+          "content": "<|file_sep|>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 3,
+        "gguf_type_name": "CONTROL"
+      },
+      {
+        "id": 248066,
+        "symbol": "<tool_response>",
+        "target_added_metadata": {
+          "id": 248066,
+          "content": "<tool_response>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 4,
+        "gguf_type_name": "USER_DEFINED"
+      },
+      {
+        "id": 248067,
+        "symbol": "</tool_response>",
+        "target_added_metadata": {
+          "id": 248067,
+          "content": "</tool_response>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 4,
+        "gguf_type_name": "USER_DEFINED"
+      },
+      {
+        "id": 248068,
+        "symbol": "<think>",
+        "target_added_metadata": {
+          "id": 248068,
+          "content": "<think>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 4,
+        "gguf_type_name": "USER_DEFINED"
+      },
+      {
+        "id": 248069,
+        "symbol": "</think>",
+        "target_added_metadata": {
+          "id": 248069,
+          "content": "</think>",
+          "lstrip": false,
+          "normalized": false,
+          "rstrip": false,
+          "single_word": false,
+          "special": false
+        },
+        "gguf_type": 4,
+        "gguf_type_name": "USER_DEFINED"
+      }
+    ],
+    "outside_shared_target_rows": [
+      {
+        "id": 248070,
+        "target": "<|audio_start|>",
+        "gguf": "<|audio_start|>",
+        "same_symbol": true,
+        "gguf_type": 3
+      },
+      {
+        "id": 248071,
+        "target": "<|audio_end|>",
+        "gguf": "<|audio_end|>",
+        "same_symbol": true,
+        "gguf_type": 3
+      },
+      {
+        "id": 248072,
+        "target": "<tts_pad>",
+        "gguf": "<tts_pad>",
+        "same_symbol": true,
+        "gguf_type": 3
+      },
+      {
+        "id": 248073,
+        "target": "<tts_text_bos>",
+        "gguf": "<tts_text_bos>",
+        "same_symbol": true,
+        "gguf_type": 3
+      },
+      {
+        "id": 248074,
+        "target": "<tts_text_eod>",
+        "gguf": "<tts_text_eod>",
+        "same_symbol": true,
+        "gguf_type": 3
+      },
+      {
+        "id": 248075,
+        "target": "<tts_text_bos_single>",
+        "gguf": "<tts_text_bos_single>",
+        "same_symbol": true,
+        "gguf_type": 3
+      },
+      {
+        "id": 248076,
+        "target": "<|audio_pad|>",
+        "gguf": "<|audio_pad|>",
+        "same_symbol": true,
+        "gguf_type": 3
+      }
+    ],
+    "all_target_defined_symbol_count_checked": 248077,
+    "all_target_defined_symbol_mismatch_count": 0,
+    "target_all_defined_map_sha256": "1ea47dc65bdc42fb4bfacda3f3f2b60ca6e996c8a71331edafc9c5e7d0dd2a2a",
+    "gguf_at_target_all_defined_map_sha256": "1ea47dc65bdc42fb4bfacda3f3f2b60ca6e996c8a71331edafc9c5e7d0dd2a2a",
+    "gguf_rows_without_target_definition": 243,
+    "merges_retained": true,
+    "target_merge_count": 247587,
+    "gguf_merge_count": 247587,
+    "merge_rank_mismatch_count": 0,
+    "merge_rank_mismatch_examples": [],
+    "target_merge_sha256": "567625e146a9197c27a7d1a6056fdc2ab46f0e4cd015c996de2e8b2bd289cb60",
+    "gguf_merge_sha256": "567625e146a9197c27a7d1a6056fdc2ab46f0e4cd015c996de2e8b2bd289cb60",
+    "merge_digest_format": "per ascending rank: uint32-le rank, uint32-le UTF8 byte length, merge string bytes",
+    "hf_tokenizer_json_retained": false,
+    "hf_component_comparison": null,
+    "gguf_tokenizer_settings": {
+      "tokenizer.ggml.model": "gpt2",
+      "tokenizer.ggml.pre": "qwen35",
+      "tokenizer.ggml.eos_token_id": 248046,
+      "tokenizer.ggml.padding_token_id": 248044,
+      "tokenizer.ggml.add_bos_token": false
+    },
+    "gguf_chat_template_present": true,
+    "target_components": {
+      "version": "1.0",
+      "truncation": null,
+      "padding": null,
+      "normalizer": {
+        "type": "NFC"
+      },
+      "pre_tokenizer": {
+        "type": "Sequence",
+        "pretokenizers": [
+          {
+            "type": "Split",
+            "pattern": {
+              "Regex": "(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?[\\p{L}\\p{M}]+|\\p{N}| ?[^\\s\\p{L}\\p{M}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+"
+            },
+            "behavior": "Isolated",
+            "invert": false
+          },
+          {
+            "type": "ByteLevel",
+            "add_prefix_space": false,
+            "trim_offsets": false,
+            "use_regex": false
+          }
+        ]
+      },
+      "post_processor": {
+        "type": "ByteLevel",
+        "add_prefix_space": false,
+        "trim_offsets": false,
+        "use_regex": false
+      },
+      "decoder": {
+        "type": "ByteLevel",
+        "add_prefix_space": false,
+        "trim_offsets": false,
+        "use_regex": false
+      }
+    },
+    "target_bpe_settings": {
+      "type": "BPE",
+      "dropout": null,
+      "unk_token": null,
+      "continuing_subword_prefix": "",
+      "end_of_word_suffix": "",
+      "fuse_unk": false,
+      "byte_fallback": false,
+      "ignore_merges": false
+    },
+    "complete_runtime_tokenizer_qualified": false,
+    "qualification_limit": "Exact raw symbols/types/merge ranks do not prove runtime pretokenization, NFC, added-token matching flags, decoding, chat/stop policy or call-option equivalence."
+  },
+  "source_references": {
+    "gguf_spec": "https://github.com/ggml-org/ggml/blob/master/docs/gguf.md",
+    "gguf_types": "https://github.com/ggml-org/llama.cpp/blob/master/gguf-py/gguf/constants.py",
+    "immutable_model_tree": "https://huggingface.co/ggml-org/Qwen3.5-0.8B-GGUF/tree/9447f74101aeb4e93621884dfa36ee8effb8831b"
+  },
+  "architecture_vocab_quantization_checks": {
+    "metadata_expected_values": {
+      "general.architecture": "qwen35",
+      "general.file_type": 2,
+      "general.quantization_version": 2,
+      "qwen35.block_count": 24,
+      "qwen35.embedding_length": 1024,
+      "qwen35.attention.head_count": 8,
+      "qwen35.attention.head_count_kv": 2,
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.value_length": 256
+    },
+    "metadata_mismatches": [],
+    "indexed_vocabulary_is_248320": true,
+    "embedding_shape_is_1024_by_248320": true,
+    "quantization_types_match_directory": true
+  },
+  "frozen_workload_membership": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-independent-proposer-workload-20261006.json",
+    "bytes": 12287,
+    "sha256": "1f3a2fbfafe1a8fd90f99c23dac49f3f0028644d5f010fcd057edfcce26a4919",
+    "seed_and_15_replay_file_pins_verified": true,
+    "seed_ids_checked": 512,
+    "committed_updates_checked": 37,
+    "frozen_case_count": 15,
+    "total_prefix_id_occurrences_checked": 7680,
+    "distinct_prefix_ids": 177,
+    "prefix_minimum_id": 11,
+    "prefix_maximum_id": 248069,
+    "prefix_added_token_ids_present": [
+      248045,
+      248046,
+      248068,
+      248069
+    ],
+    "prefix_type_mismatch_ids_present": [],
+    "prefix_out_of_shared_ids": [],
+    "committed_added_token_ids_present": [],
+    "committed_type_mismatch_ids_present": [],
+    "committed_out_of_shared_ids": [],
+    "cases": [
+      {
+        "case_index": 0,
+        "committed_output_offset": 0,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "e5763f1982f89405a2eec3258e3db342d531e22e171363c2ffcf793ccf2d7d4f"
+      },
+      {
+        "case_index": 1,
+        "committed_output_offset": 1,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "1cdb868d01ed4f0cd0896c2b6fa1c0dcb1d529c2a2dd9c8c066b314d8d6d0cba"
+      },
+      {
+        "case_index": 2,
+        "committed_output_offset": 4,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "c22a3927e199b598e0c4caead948050758666cd935d4632067bd5d5a160352da"
+      },
+      {
+        "case_index": 3,
+        "committed_output_offset": 7,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "764fc880dc02db060fb160eef41e31be951b80508e2727b25dfe89b762e293f7"
+      },
+      {
+        "case_index": 4,
+        "committed_output_offset": 10,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "0f0cbf6e017b6cd3482d8f045191952780b58b4bd50f3f8afdc790f1d06252ca"
+      },
+      {
+        "case_index": 5,
+        "committed_output_offset": 13,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "b9e6c8162770dffc285fe7259f38820a90970925cd8f862e4ae5f29374b35f7e"
+      },
+      {
+        "case_index": 6,
+        "committed_output_offset": 16,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "7a9118eb505d853775c8c939f915adb447879fff947e175b6a4e82b1066fdb56"
+      },
+      {
+        "case_index": 7,
+        "committed_output_offset": 17,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "7bd941233bb0065c15b026645373b7a79abdcbc68da49e77ec75016ba1aca067"
+      },
+      {
+        "case_index": 8,
+        "committed_output_offset": 20,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "b1f1fb742dddd5036df038059de253c958243aa96b085a2b4e7d8ac0c34d8d0d"
+      },
+      {
+        "case_index": 9,
+        "committed_output_offset": 23,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "ebfe39db98c7b3157b5ccdf91351a3c6d7c44637fe25ff618d3b19f27107cad9"
+      },
+      {
+        "case_index": 10,
+        "committed_output_offset": 26,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "38179741e204b7efe551d1e65fbfccb11cb254650bb594b1485e353056352a28"
+      },
+      {
+        "case_index": 11,
+        "committed_output_offset": 28,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "56d50b8013db9ff8d665e1bd159e2b92fc45976099591a5b9f5642fcf33a1278"
+      },
+      {
+        "case_index": 12,
+        "committed_output_offset": 31,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "678fada2d274ce72bd326502b0a3c3fa3062481fb7f886809148657b202399a4"
+      },
+      {
+        "case_index": 13,
+        "committed_output_offset": 32,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "12be3199694e36e6b1f9513c7dbc886bb528b89dbd86046c23f2348dd277ae80"
+      },
+      {
+        "case_index": 14,
+        "committed_output_offset": 35,
+        "prefix_length": 512,
+        "minimum_id": 11,
+        "maximum_id": 248069,
+        "out_of_shared_ids": [],
+        "added_token_ids_present": [
+          248045,
+          248046,
+          248068,
+          248069
+        ],
+        "type_mismatch_ids_present": [],
+        "prefix_i32le_sha256": "00666bb7e990c4bc931c551a88747050e50f9cce309fdd77ef9b1d0fa9f9168d"
+      }
+    ],
+    "raw_id_interchange_metadata_gate_passed": true,
+    "qualification": "Existing frozen IDs pass the raw ID/symbol and type admission check, including their four matching added-token classes; none of the six mismatched classes occur. This does not qualify numerical models, execution, whole text tokenizer, future proposals, target acceptance or native injection."
+  }
+}
