@@ -1,0 +1,95 @@
+{
+  "schema": "halogen-ordinary-prefill-static-binding-v1",
+  "date": "2026-10-06",
+  "scope": "finite read-only retained host text audit",
+  "hardware_executed": false,
+  "engine_executed": false,
+  "model_payload_read": false,
+  "current_live_dispatch_bound": false,
+  "pristine_engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+  "retained_host_text_sha256": "523467ac08e576e770a9fcffdb59ffa9542f82d58958bd03d74743f8caccb8f9",
+  "kernel_registrations_sha256": "c38287607691b58e618fb5e1b9f31cb5150daa85d82ecc0d22ecd46171732c2f",
+  "ordinary_layer_path": {
+    "chunk": "0x17dd020",
+    "ordinary_layer_call": "0x17dd791 -> 0x17d9eb0",
+    "normalization_call": "0x17da10c -> 0x1780650",
+    "layer_table_model_offset": "0x4d8",
+    "layer_stride": "0xc68",
+    "DeltaNet_call": "0x17da148 -> 0x1791030",
+    "conditional_layer_tag": "tag != 1"
+  },
+  "bulk_projections": [
+    {
+      "call_site": "0x17913fb",
+      "dispatcher": "0x178cf90",
+      "descriptor": "layer+0x8",
+      "logical_M": 8192,
+      "logical_N": 10240,
+      "logical_K": 2560,
+      "input_pointer": "*(model+0x6e8)",
+      "output_global": "0x18db268",
+      "name_shape_corroboration": "linear_attn.in_proj_qkv.weight",
+      "packed_byte_layout_bound": false
+    },
+    {
+      "call_site": "0x1791420",
+      "dispatcher": "0x178cf90",
+      "descriptor": "layer+0x80",
+      "logical_M": 8192,
+      "logical_N": 6144,
+      "logical_K": 2560,
+      "input_pointer": "*(model+0x6e8)",
+      "output_global": "0x18db278",
+      "name_shape_corroboration": "linear_attn.in_proj_z.weight",
+      "packed_byte_layout_bound": false
+    }
+  ],
+  "small_fusions_rejected_for_count8192": {
+    "0x178ae20": "unsigned(count-1)<=7 at0x178ae5a..0x178ae5f",
+    "0x1796700": "unsigned(count-1)<=7 at0x1796732..0x179673c"
+  },
+  "conditional_packed_library_path": {
+    "packed_helper_call": "0x178cfbb -> 0x17f8280",
+    "required_populated_descriptor_fields": ["0x30", "0x38", "0x40"],
+    "descriptor_N_field": "0x4c",
+    "descriptor_K_field": "0x50",
+    "descriptor_mode_field": "0x48",
+    "dequantize_call": "0x17f865c -> 0x17ec6e0",
+    "prepared_cache_call": "0x17f8629 -> 0x180c4e0",
+    "prepared_library_call": "0x17f8696 -> 0x18c6b80",
+    "library_chain": ["0x18c6b80", "0x18c4f60", "optional0x18c6290", "0x18c6850", "0x18c68e7 hipblasLtMatmul"],
+    "observed_current_route": false,
+    "library_algorithm_bound": false,
+    "library_shader_bound": false,
+    "HGNTUNE3_record_shapes_bound": false
+  },
+  "bounded_candidate": {
+    "mechanism": "existing native packed-trunk GPU pipeline for one bound bulk DN projection",
+    "routine": "0x18092f0",
+    "caller_threshold_getter": "0x1813d60 HALOGEN_HT_TRUNK_GEMM",
+    "default_M_limit": 1280,
+    "KEEP_TRUNK_default_M_limit": 192,
+    "bulk_try_call": "0x17f841f",
+    "independent_scratch_admission": "temporary0x18dcf30 populated and M*K<=value0x18dcf28",
+    "experiment": "complete frozen M8192/N10240/K2560 preparation+library versus existing native HT pipeline; unchanged tolerance; root must check prior retirement first",
+    "partial_kernel_timing_sufficient": false,
+    "hardware_admitted_by_this_audit": false,
+    "required_missing_bindings": [
+      "current descriptor pointer fields and mode",
+      "original packed tensor and auxiliary parameter bytes",
+      "input/output layout and frozen actual input",
+      "temporary buffer capacity",
+      "stock library algorithm"
+    ]
+  },
+  "device_assessment": {
+    "GPU": "source-supported existing packed pipeline; component gain unmeasured",
+    "CPU": "descriptor and correctness review; no offload gain established",
+    "NPU": "no qualified equivalent packed-HT boundary or direct GPU scratch interface"
+  },
+  "metric_assessment": {
+    "Prefill": "candidate only; no new engine result",
+    "Decode": "no gain established from bulk Prefill route",
+    "native_acceptance": "no increase implied by mathematical preservation; no new accepted/drafted result"
+  }
+}

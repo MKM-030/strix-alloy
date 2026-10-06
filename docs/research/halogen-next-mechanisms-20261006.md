@@ -8,7 +8,37 @@ exchange realization produced exact frozen outputs, but showed no demonstrated
 advantage: mean140.444 microseconds original versus141.222 candidate, with the
 second arm faster in every measured pair. No intrinsic slowdown or serving
 gain follows. It remains disabled and is not repeated. A separate two-row Q8
-input-reuse lead is source-only; ordinary Prefill needs its own bound dispatch.
+input-reuse candidate has now compiled offline with 80 VGPR, no spills/LDS,
+wave32 and float mode0xf0. Its [finite screen](halogen-gpu-hidden-q8-rows2-screen-20261006.md)
+produced exact frozen outputs but no demonstrated advantage: original mean
+130.425 microseconds versus133.050 candidate, including same-arm priming and
+balanced order. It remains disabled; no engine cohort is justified. Ordinary
+Prefill needs its own bound dispatch.
+
+The [ordinary Prefill audit](halogen-ordinary-prefill-trunk-route-20261006.md)
+binds two conditional DeltaNet bulk projections: M8192/N10240/K2560 and
+M8192/N6144/K2560. The existing native packed HT pipeline is skipped at this
+M under its default1280 threshold (192 with KEEP_TRUNK); it is a separate
+Prefill lead. Compare its complete transform/multiply/output path with original
+weight preparation plus library GEMM, using frozen actual descriptor operands.
+Current descriptor mode, scratch capacity and observed stock shader remain
+unbound in that first audit. The subsequent [frozen replay design](halogen-prefill-ht-frozen-replay-design-20261006.md)
+binds the source allocation as96 MiB at8192 rows, enough for the40 MiB input,
+and binds this shape's unsplit rotation/multiply path. Actual live pointers,
+packed tensor format/extent, current stock route and stream still need capture.
+Raising a threshold alone does not qualify this route or a gain.
+
+The [HGNTUNE3 audit](halogen-hgntune3-record-audit-20261006.md) decodes the
+64-byte records as bucketM/N/K/actualM, operand type, heuristic selection
+ordinal, returned candidate count, library algorithm ID and two measured
+times. The selection ordinal/count are not Split-K/WGM controls. The format
+has no tensor/HSACO identity or current dispatch-frequency binding. The earlier
+trained-plan failure remains rejected and is not repeated.
+
+| New development | GPU | CPU | NPU | Intended serving effect |
+|---|---|---|---|---|
+| Compact-Q8 two-row H | Exact frozen outputs; measured133.050 versus130.425 microseconds, no advantage; disabled | Host correctness/binding work; no justified CPU offload across this device-resident seam | Prior complete H is slower and no direct equivalent transport is qualified | MTP Decode only; no serving delta measured; exact outputs intend unchanged acceptance; ordinary Prefill unaffected |
+| Native bulk HT path | Existing packed GPU routine may avoid prepared-weight intermediate traffic; full pipeline unmeasured | Frozen descriptor/result comparison; no supported CPU compute win | No qualified packed-HT equivalent or direct GPU scratch interface | Prefill candidate; Decode/acceptance gain not established |
 
 The user's standing instruction on 6 October makes this device comparison a
 requirement for every development. Exact replacements can lower compute or
