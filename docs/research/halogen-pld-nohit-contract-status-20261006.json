@@ -1,0 +1,402 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-06",
+  "title": "Offline no-hit consumer contract status",
+  "verdict": "Bounded offline trusted-caller consumer passes the final recorded synthetic host CPU qualifier. Live integration and serving remain unqualified and default off.",
+  "audit": {
+    "repository": "C:/Projects/strix-alloy-clean",
+    "branch_at_inspection": "main",
+    "head_at_inspection": "d6fc1d6971f4d671b49306d17eeba37fbd79d947",
+    "method": "Independent local source/document/log reads, SHA256 recomputation and receipt/reference checks.",
+    "changes_by_this_report": [
+      "docs/research/halogen-pld-nohit-contract-status-20261006.md",
+      "docs/research/halogen-pld-nohit-contract-status-20261006.json"
+    ],
+    "new_compiler_or_harness_execution": false,
+    "hardware_or_provider_execution": false,
+    "wsl_execution": false,
+    "native_engine_execution": false,
+    "process_lifecycle_action": false,
+    "staging_or_commit": false,
+    "review_overwritten": false,
+    "source_revision_note": "The no-hit source directory was untracked at inspection; HEAD is context, not a claim that these source hashes were committed."
+  },
+  "contract": {
+    "wire": {
+      "header_bytes": 192,
+      "id_bytes_each": 4,
+      "digest_bytes": 32,
+      "min_count": 1,
+      "max_count": 3,
+      "minimum_packet_bytes": 228,
+      "maximum_packet_bytes": 236,
+      "authentication_implemented_here": false
+    },
+    "seam_rva": "0x172d3bd",
+    "displaced_bytes_hex": "48 8d 85 e8 01 00 00",
+    "stock_resume_rva": "0x172d3c4",
+    "proposal_join_rva": "0x172e95f",
+    "decline": "Only saved RAX := RBP + 0x1e8 (mod 2^64); preserve other frame data, RFLAGS, proposal bytes and ledger; resume stock.",
+    "success": "Validate all fields and IDs before mutation, record one birth/epoch/round, write exactly 4*n bytes at original outer RSP+0x360, set saved RBX=n, and return the native proposal join.",
+    "join_source_evidence": "Pinned source review establishes the join's own LEA and RSP+0x38 store before no-constraint EBX-to-R13D and stock continuation; native opening comparison and target verification remain downstream.",
+    "allowance": "1 <= n <= min(3,B); no truncation; B and gate facts come from trusted caller truth.",
+    "ledger_capacity": 64,
+    "default_enabled": false,
+    "engine_callsite_present": false,
+    "allocator_callback_lock_wait_retry_runtime_transport_present": false
+  },
+  "evidence": {
+    "red": {
+      "artifact_directory": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-073942-red-e2e4cec4",
+      "compile_exit": 0,
+      "harness_exit": 1,
+      "failed_behavior_checks": 38,
+      "contract_groups": 4,
+      "expectation_met": true,
+      "errors": [],
+      "children": [
+        {
+          "label": "compile",
+          "owned_job_closed": true,
+          "exit_code": 0,
+          "identity": {
+            "pid": 25016,
+            "creation_time_100ns": 134357387829467410,
+            "executable": "C:\\Windows\\System32\\cmd.exe"
+          },
+          "elapsed_seconds": 2.0857509000052232
+        },
+        {
+          "label": "harness",
+          "owned_job_closed": true,
+          "exit_code": 1,
+          "identity": {
+            "pid": 15812,
+            "creation_time_100ns": 134357387850330500,
+            "executable": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-073942-red-e2e4cec4\\nohit-contract.exe"
+          },
+          "elapsed_seconds": 0.02852510000229813
+        }
+      ],
+      "minimum_memory": {
+        "available_bytes": 33876021248,
+        "committed_bytes": 107544031232,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 132485206016
+      },
+      "maximum_sample_gap_seconds": 0.2654372999968473,
+      "executable": {
+        "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-073942-red-e2e4cec4\\nohit-contract.exe",
+        "sha256": "30938803d51e76221e3369c26800eecd8dbe90ce79ed3371d11d35c23d16bab0"
+      },
+      "historical_source_hashes": {
+        "seam_contract_cpp": "f972fb54866f39484535ae3f409844ebd2e39431154913f679510f06306d1f73",
+        "run_cpu_harness_py": "b3805b58d526776debfe923a8326cd1e064af206bdba155cdbd6f4f2174cbe18"
+      },
+      "historical_pin_note": "The RED receipt captures the earlier decline-only scaffold and launcher. Those two hashes differ from current GREEN source; current bytes do not reproduce historical source hashes. Both archived executable hashes were independently verified.",
+      "receipt_schema_note": "The older RED receipt uses hardware_executed=false although the compile/harness child records show host CPU execution; it is not evidence that no CPU work happened."
+    },
+    "green": {
+      "artifact_directory": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-074415-green-d739d803",
+      "latest_green_directory_at_inspection": true,
+      "compile_exit": 0,
+      "harness_exit": 0,
+      "failed_behavior_checks": 0,
+      "contract_groups": 4,
+      "expectation_met": true,
+      "errors": [],
+      "host_cpu_harness_executed": true,
+      "gpu_npu_executed": false,
+      "wsl_executed": false,
+      "native_engine_loaded": false,
+      "children": [
+        {
+          "label": "compile",
+          "owned_job_closed": true,
+          "exit_code": 0,
+          "identity": {
+            "pid": 18728,
+            "creation_time_100ns": 134357390553720100,
+            "executable": "C:\\Windows\\System32\\cmd.exe"
+          },
+          "elapsed_seconds": 2.1674521999957506
+        },
+        {
+          "label": "harness",
+          "owned_job_closed": true,
+          "exit_code": 0,
+          "identity": {
+            "pid": 30572,
+            "creation_time_100ns": 134357390575395700,
+            "executable": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-074415-green-d739d803\\nohit-contract.exe"
+          },
+          "elapsed_seconds": 0.028901199984829873
+        }
+      ],
+      "minimum_memory": {
+        "available_bytes": 33919729664,
+        "committed_bytes": 107541274624,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 132521857024
+      },
+      "maximum_sample_gap_seconds": 0.26561770000262186,
+      "executable": {
+        "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-074415-green-d739d803\\nohit-contract.exe",
+        "sha256": "c95b42c04e283f1f3fe57a1f54fe78aadb4f3db2f192388c35530bc55fd34b8b"
+      },
+      "current_pins": [
+        {
+          "path": "scripts/benchmarks/halogen_pld_nohit/seam_contract.h",
+          "sha256": "caa67ed65e991e2f8474e5ba16ae5c8a29cc74bc517d253fe95a330e152bc5f2",
+          "current_hash_matches_receipt": true
+        },
+        {
+          "path": "scripts/benchmarks/halogen_pld_nohit/seam_contract.cpp",
+          "sha256": "c03d638baee63cf1d26c69a8cca19dd5c06d4cede60ae46150dbbdcbc2adf0f7",
+          "current_hash_matches_receipt": true
+        },
+        {
+          "path": "scripts/benchmarks/halogen_pld_nohit/contract_harness.cpp",
+          "sha256": "240b923d075f6d872bcf96be771b7882f47aa58dd4048df1d1e99251bb4eaea5",
+          "current_hash_matches_receipt": true
+        },
+        {
+          "path": "scripts/benchmarks/halogen_pld_nohit/run_cpu_harness.py",
+          "sha256": "2f8d2bde3e3d12056d0824c191f04e3a8811ce87d5737a5a3aa901b4aa60ebca",
+          "current_hash_matches_receipt": true
+        },
+        {
+          "path": "server/host_frames.py",
+          "sha256": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+          "current_hash_matches_receipt": true
+        },
+        {
+          "path": "server/winjob.py",
+          "sha256": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+          "current_hash_matches_receipt": true
+        },
+        {
+          "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build/vcvars64.bat",
+          "sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+          "current_hash_matches_receipt": true
+        },
+        {
+          "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+          "sha256": "88c8344236a27a6e727e0a8edc49aaa2690bdc7a9464b9d18cc7abe70a9f1c0d",
+          "current_hash_matches_receipt": true
+        }
+      ],
+      "groups": [
+        {
+          "name": "stock_cases",
+          "scope": "Default-off/absent/disabled packet; displaced LEA with 64-bit wrap; retained store/zero-count/TEST branch continuation."
+        },
+        {
+          "name": "validation_cases",
+          "scope": "Final header/ID failures, exact length/count, all bindings, token definitions, trusted publication, caller ownership/reset/currentness and native gate facts."
+        },
+        {
+          "name": "successful_cases",
+          "scope": "Exact one- and three-ID destination writes, RBX count, canaries, one ledger record and min(3,B) allowance."
+        },
+        {
+          "name": "epoch_and_one_shot_cases",
+          "scope": "Stale/unknown epoch, repeated round and finite 64-entry ledger exhaustion with no eviction."
+        }
+      ]
+    },
+    "compiler": {
+      "msvc_version_directory": "14.44.35207",
+      "recorded_flags": [
+        "/nologo",
+        "/std:c++20",
+        "/W4",
+        "/WX",
+        "/EHsc",
+        "/O2",
+        "/MT",
+        "/link",
+        "/INCREMENTAL:NO"
+      ],
+      "both_compile_stderr_files_empty": true,
+      "both_harness_stderr_files_empty": true,
+      "new_compiler_execution_by_report": false
+    },
+    "guard": {
+      "initial_physical_and_commit_reserve_bytes": 23622320128,
+      "continuous_physical_and_commit_reserve_bytes": 19327352832,
+      "initial_reserve_gib": 22,
+      "continuous_reserve_gib": 18,
+      "requested_sampling_interval_milliseconds": 250,
+      "compiler_deadline_seconds": 90,
+      "harness_deadline_seconds": 10,
+      "both_runs_record_all_owned_jobs_closed": true,
+      "both_runs_record_no_errors": true,
+      "note": "Reserve/cleanup conclusions are recorded run evidence. This report does not fault-inject the attached recovery-owner path or inspect current processes."
+    }
+  },
+  "scope_limits": [
+    "Fake HMAC fixture: opaque 0xa5 digest bytes are not a valid HMAC; complete header/IDs authentication and key trust remain upstream responsibilities.",
+    "Caller booleans assert qualified ownership, reset exclusion, current bindings and ready immutable publication; they do not implement those mechanics.",
+    "SavedFrame contains synthetic GPR/RFLAGS data, 896 stack bytes and 1024 opaque extended-state bytes; equality does not prove real XSAVE capture/restoration.",
+    "Native installation, indirect-entry exclusion, atomic patching, unwind/signal behavior and native pointer/frame lifetimes remain unqualified.",
+    "Authenticated transport/publication ordering, reset synchronization, sufficiently early independent producer readiness and complete authoritative-output handoff remain unqualified.",
+    "No native engine, WSL, GPU/NPU provider or serving request was loaded or run by the final GREEN harness; no native acceptance measurement exists."
+  ],
+  "placement": {
+    "cpu_consumer": "Keep the tiny bounded host branch consumer on CPU. It parses at most 236 bytes and scans at most 64 ledger entries; device dispatch/synchronization has no demonstrated benefit for this work.",
+    "gpu_proposer": "A future independent GPU/Vulkan drafter must establish useful ready proposals before the native no-hit boundary and complete readiness/transport/contention costs. The matched recurrent snapshot API belongs to that separate Vulkan drafter; this consumer owns no snapshot/runtime.",
+    "npu_proposer": "A future independent NPU proposer requires its own ready-publication, model/tokenizer and lifecycle proof. The matched llama.cpp/Vulkan snapshot proof does not transfer to the XRT/NPU engine. No new NPU qualification is established.",
+    "identical_kernels": "Mathematically identical target kernels preserve the native acceptance decisions for the same proposal/input trajectory. Kernel placement or faster identical arithmetic alone cannot change native acceptance; changed useful independent proposals still require native measurement."
+  },
+  "new_serving_measurements": {
+    "measurement_status": "unmeasured",
+    "prefill_tokens_per_second": null,
+    "decode_tokens_per_second": null,
+    "acceptance_rate": null,
+    "prefill_delta_tokens_per_second": null,
+    "decode_delta_tokens_per_second": null,
+    "acceptance_delta_percentage_points": null,
+    "committed_token_time_milliseconds": null,
+    "committed_token_time_delta_milliseconds": null,
+    "interpretation": "Null means unmeasured. Zero would falsely assert a measured value or measured absence of improvement."
+  },
+  "reference_verification": {
+    "all_listed_local_paths_readable_and_hashed": true,
+    "all_eight_final_green_pins_match_current_bytes": true,
+    "reviewed_pins_match_current_bytes": true,
+    "retained_native_elf_and_disassembly_pins_match": true,
+    "both_archived_executable_hashes_match_receipts": true,
+    "source_hashes": [
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/README.md",
+        "sha256": "d0e5373870b2c70b21a3090ac3c21eee0b7d8bc7f725f3275439594453f8665d"
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/REVIEW.md",
+        "sha256": "e1c1e801c8f2452543ecd1b91e75f0ddda22dd7fdbd162bbbab1b35eb1712798"
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/seam_contract.h",
+        "sha256": "caa67ed65e991e2f8474e5ba16ae5c8a29cc74bc517d253fe95a330e152bc5f2"
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/seam_contract.cpp",
+        "sha256": "c03d638baee63cf1d26c69a8cca19dd5c06d4cede60ae46150dbbdcbc2adf0f7"
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/contract_harness.cpp",
+        "sha256": "240b923d075f6d872bcf96be771b7882f47aa58dd4048df1d1e99251bb4eaea5"
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/run_cpu_harness.py",
+        "sha256": "2f8d2bde3e3d12056d0824c191f04e3a8811ce87d5737a5a3aa901b4aa60ebca"
+      },
+      {
+        "path": "server/host_frames.py",
+        "sha256": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8"
+      },
+      {
+        "path": "server/winjob.py",
+        "sha256": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c"
+      },
+      {
+        "path": "docs/research/halogen-recurrent-snapshot-adapter-feasibility-20261006.md",
+        "sha256": "94fe739f97762c567edd010ea8e7e09c91cfd95348635354fe92948503839b0c"
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_proposal_wire.py",
+        "sha256": "4d36783f6b0398199b22f53b40e6e25e0b8ed2b776b65bee1f5a6de62bc99ebb"
+      },
+      {
+        "path": "server/.local/optimization9h-20261004/mtp-route-static-20261004/host-text-disassembly.txt",
+        "sha256": "523467ac08e576e770a9fcffdb59ffa9542f82d58958bd03d74743f8caccb8f9"
+      },
+      {
+        "path": "backends/halogen-wsl2-0.16.2/.local/flash_serve",
+        "sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b"
+      },
+      {
+        "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build/vcvars64.bat",
+        "sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209"
+      },
+      {
+        "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+        "sha256": "88c8344236a27a6e727e0a8edc49aaa2690bdc7a9464b9d18cc7abe70a9f1c0d"
+      }
+    ],
+    "artifact_hashes": [
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-073942-red-e2e4cec4/compile.cmd",
+        "sha256": "dd9340a4c7a0eb96dc4bd765f706c5cdc23ca9977232a629224c934cab8c07fe",
+        "bytes": 882
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-073942-red-e2e4cec4/compile.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-073942-red-e2e4cec4/compile.stdout.txt",
+        "sha256": "12166b8a259093f1da957b4b5b0a55096291dafdef9b16304b3409a4a5236853",
+        "bytes": 61
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-073942-red-e2e4cec4/harness.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-073942-red-e2e4cec4/harness.stdout.txt",
+        "sha256": "69d38cdc2f04183e6bbeafbe5e9dea699e06d2f717a377f6ac558a4d29010a11",
+        "bytes": 2159
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-073942-red-e2e4cec4/nohit-contract.exe",
+        "sha256": "30938803d51e76221e3369c26800eecd8dbe90ce79ed3371d11d35c23d16bab0",
+        "bytes": 154624
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-073942-red-e2e4cec4/result.json",
+        "sha256": "bc749fa030697bad9966541205751aee9c49a48ca2c2c968e0c730ac20d167de",
+        "bytes": 3288
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-074415-green-d739d803/compile.cmd",
+        "sha256": "556cba95200ac1d4f299971fa2e2adfe26e1e2db690c69e8938f1f9c16402f37",
+        "bytes": 888
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-074415-green-d739d803/compile.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-074415-green-d739d803/compile.stdout.txt",
+        "sha256": "12166b8a259093f1da957b4b5b0a55096291dafdef9b16304b3409a4a5236853",
+        "bytes": 61
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-074415-green-d739d803/harness.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-074415-green-d739d803/harness.stdout.txt",
+        "sha256": "38082819d9bb0199f4c90d4bad2915d406be8f7691818f375a0854d85bf569a1",
+        "bytes": 46
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-074415-green-d739d803/nohit-contract.exe",
+        "sha256": "c95b42c04e283f1f3fe57a1f54fe78aadb4f3db2f192388c35530bc55fd34b8b",
+        "bytes": 157696
+      },
+      {
+        "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-074415-green-d739d803/result.json",
+        "sha256": "038b0136039e94d917cf2100fe71071f77c4edbe4ee9f6d1d78cd6c89c05f813",
+        "bytes": 3361
+      }
+    ]
+  },
+  "next_boundary": "Keep the serving decision off. Qualify actual native capture/restoration and installation, authenticated owned publication, reset/epoch/lifetime ownership, early independent proposal readiness and complete authoritative-output handoff before any connected producer or snapshot hardware qualifier."
+}

@@ -42,3 +42,19 @@ not an intrinsic2.439% slowdown. CPU/NPU offload has no qualified benefit at thi
 resident seam; ordinary target Prefill is outside it and acceptance was not
 measured. No unchanged rerun or serving cohort follows. See the
 [source, device assessment and evidence](halogen-gpu-q8-fused-status-20261006.md).
+
+The original W16 preparation sibling has also been screened as a GPU Prefill
+candidate. All 26,214,400 output words matched, but the 16 balanced measured
+pairs split eight wins per arm and their paired median opposed the small mean
+advantage. It remains disabled; CPU metadata and NPU placement establish no
+serving benefit. No complete-engine token-rate or acceptance result follows
+from that preparation screen. See the
+[retained result](halogen-prefill-deq-status-20261006.md).
+
+The new default-off no-hit proposal consumer is bounded CPU branch work. Its
+synthetic contract qualifier passed, while real native installation and ready
+publication remain unqualified. GPU/Vulkan and NPU are separate possible
+proposal producers; each must establish useful readiness, complete resolution
+cost and net serving benefit. This consumer does not change ordinary target
+Prefill, and its tests provide no Decode or acceptance value. See the
+[contract evidence and placement assessment](halogen-pld-nohit-contract-status-20261006.md).
