@@ -33,6 +33,7 @@
 #include <vector>
 #include "llama.h"
 #include "nlohmann/json.hpp"
+#include "replay_policy.h"
 
 // The link command MUST delay all three directly imported llama/ggml DLLs.
 // MSVC does not accept /DELAYLOAD in #pragma comment(linker). Verify the PE.
@@ -46,6 +47,7 @@ constexpr std::size_t shared_rows = 248070;
 constexpr std::size_t max_head_rows = 248320;
 constexpr std::size_t window_limit = 512;
 constexpr std::size_t max_drafts = 3;
+constexpr std::size_t max_replay_outputs = max_drafts + 1;
 constexpr std::size_t max_commands = 64;
 constexpr std::uint32_t context_capacity = 1024;
 constexpr std::int32_t cpu_threads = 4;
@@ -126,6 +128,11 @@ void validate_commands(const json& input) {
             parse_ids(command.at("accepted_ids"), max_drafts, true);
             const auto& extra = command.at("correction_or_bonus");
             if (!extra.is_null()) parse_ids(json::array({extra}), 1, false);
+            continue;
+        }
+        if (op == "resolve_replay") {
+            parse_ids(command.at("ids"), max_replay_outputs, true);
+            parse_ids(json::array({command.at("opening_reference_id")}), 1, false);
             continue;
         }
         throw std::runtime_error("unknown command operation");
@@ -234,8 +241,9 @@ public:
     llama_batch value;
 };
 
-// Synchronous, one owned context and one pending proposal. CLI acceptance is a
-// caller claim, never target verification. No partial removal/rollback is used.
+// Synchronous, one owned context and one pending proposal. CLI acceptance and
+// opening equality are caller-supplied replay evidence, never target verification.
+// No partial removal/rollback is used.
 class Bridge {
 public:
     Bridge(llama_context& context, std::size_t head_rows, bool append_when_authoritative = false)
@@ -324,6 +332,44 @@ public:
         if (ids.size() > window_limit)
             ids.erase(ids.begin(), ids.end() - static_cast<std::ptrdiff_t>(window_limit));
         return rebuild(std::move(ids)); // Rejected mutation, window shift or default policy.
+    }
+    bool opening_reference_equal(llama_token reference) const {
+        check_id(reference);
+        require(logits_.has_value() && pending_ && pending_epoch_ == epoch_ && !proposal_.empty(),
+                "opening comparison requires this context's pending proposal");
+        return proposal_.front() == reference;
+    }
+    const OwnedLogits& resolve_replay(const std::vector<llama_token>& authoritative_ids, bool reuse_permitted) {
+        require(logits_.has_value() && pending_ && pending_epoch_ == epoch_,
+                "resolve_replay requires this context's pending proposal");
+        require(authoritative_ids.size() <= max_replay_outputs, "resolve_replay requires 0..4 retained output IDs");
+        for (auto token : authoritative_ids) check_id(token);
+        auto ids = committed_;
+        ids.insert(ids.end(), authoritative_ids.begin(), authoritative_ids.end());
+        require(!ids.empty(), "resolve_replay requires a nonempty resulting committed prefix");
+        const auto consumed = proposal_.size() - 1;
+        const bool can_append = replay_append_eligible(append_when_authoritative_, reuse_permitted,
+                                                       committed_.size(), proposal_, authoritative_ids);
+        if (can_append) {
+            try {
+                const auto old_length = committed_.size();
+                expect_length(old_length + consumed);
+                auto next = consumed == 0 ? std::move(logits_) : std::move(pending_logits_);
+                require(next.has_value(), "missing owned logits for the consumed replay prefix");
+                const std::vector<llama_token> suffix(authoritative_ids.begin() + consumed, authoritative_ids.end());
+                retire(); // No available feed remains while authoritative mutation runs.
+                if (!suffix.empty()) {
+                    next = decode(suffix, old_length + consumed, "authoritative_replay");
+                }
+                committed_ = std::move(ids);
+                logits_ = std::move(next);
+                update_path_ = "authoritative_append";
+                return *logits_;
+            } catch (...) { invalidate(); throw; }
+        }
+        if (ids.size() > window_limit)
+            ids.erase(ids.begin(), ids.end() - static_cast<std::ptrdiff_t>(window_limit));
+        return rebuild(std::move(ids));
     }
     const std::vector<llama_token>& committed_ids() const { return committed_; }
     const OwnedLogits& committed_logits() const {
@@ -520,7 +566,8 @@ int main(int argc, char** argv) {
                        {"device_name", ggml_backend_dev_name(device)}, {"device_description", ggml_backend_dev_description(device)},
                        {"device_id", props.device_id ? props.device_id : ""}, {"dll_bundle_directory", bundle.root().string()},
                        {"model_file", model_path.string()}, {"shared_rows", shared_rows}, {"f32_row_count", max_head_rows},
-                       {"window_limit", window_limit}, {"actual_n_ctx", llama_n_ctx(context.get())},
+                       {"window_limit", window_limit}, {"replay_output_limit", max_replay_outputs},
+                       {"actual_n_ctx", llama_n_ctx(context.get())},
                        {"actual_n_ctx_seq", llama_n_ctx_seq(context.get())}, {"actual_n_batch", llama_n_batch(context.get())},
                        {"actual_n_ubatch", llama_n_ubatch(context.get())}, {"n_threads", cpu_threads}, {"n_threads_batch", cpu_threads},
                        {"requested_n_outputs_max", 1}, {"requested_n_outputs_max_per_seq", 1},
@@ -545,6 +592,16 @@ int main(int argc, char** argv) {
                 bridge.commit(parse_ids(command.at("accepted_ids"), max_drafts, true),
                               extra.is_null() ? std::nullopt : std::optional<llama_token>(extra.get<llama_token>()));
             }
+            else if (op == "resolve_replay") {
+                const auto ids = parse_ids(command.at("ids"), max_replay_outputs, true);
+                const auto reference = command.at("opening_reference_id").get<llama_token>();
+                const bool opening_equal = bridge.opening_reference_equal(reference);
+                result["opening_reference_id"] = reference;
+                result["opening_reference_equal"] = opening_equal;
+                result["replay_consumed_inputs"] = bridge.consumed_speculative_ids();
+                result["replay_ids"] = ids;
+                bridge.resolve_replay(ids, opening_equal);
+            }
             result["elapsed_ms"] = elapsed_ms(command_started);
             result["ended_unix_ms"] = unix_ms();
             result["native_calls"] = bridge.native_calls();
@@ -553,19 +610,25 @@ int main(int argc, char** argv) {
             result["committed_length"] = bridge.committed_ids().size();
             result["committed_ids"] = bridge.committed_ids();
             result["consumed_speculative_ids"] = bridge.consumed_speculative_ids();
+            double snapshot_write_ms = 0.0;
             if (op != "clear") {
                 const auto file = "command-" + std::to_string(command_index) + "-committed.f32";
+                auto snapshot_started = steady_clock::now();
                 write_rows(rows_dir / file, bridge.committed_logits());
+                snapshot_write_ms += elapsed_ms(snapshot_started);
                 result["committed_f32_file"] = file;
                 result["committed_greedy_id"] = bridge.committed_logits().greedy_id;
                 result["f32_row_count"] = bridge.committed_logits().rows.size();
                 if (const auto* speculative = bridge.speculative_logits()) {
                     const auto pending_file = "command-" + std::to_string(command_index) + "-speculative.f32";
+                    snapshot_started = steady_clock::now();
                     write_rows(rows_dir / pending_file, *speculative);
+                    snapshot_write_ms += elapsed_ms(snapshot_started);
                     result["speculative_f32_file"] = pending_file;
                     result["speculative_greedy_id"] = speculative->greedy_id;
                 }
             }
+            result["snapshot_write_ms"] = snapshot_write_ms;
             output["results"].push_back(std::move(result));
             ++command_index;
         }
