@@ -1,0 +1,255 @@
+{
+  "schema": "halogen.etw-implementation-scope-review.v1",
+  "date": "2026-10-06",
+  "status": "bounded-infrastructure-go-exclusive-attribution-no-go",
+  "review_scope": "Independent retained contract and official source/document review; only this Markdown and JSON companion were written. Root coordinates implementation and execution.",
+  "decision": {
+    "bounded_recorder_and_tdh_materializer": "go",
+    "exclusive_halogen_resolver_from_current_evidence": "no-go",
+    "prospective_complete_resolver": "conditional-on-supported-complete-provenance",
+    "successful_first_increment_may_return_unresolved": true,
+    "historical_sample_recoverable": false,
+    "qualified_speed_gain_claim": false,
+    "reason": "Supported APIs can collect and materialize evidence, but current records and semantics do not establish every allocation, DMA, sequence, execution, engine and guest-task relationship."
+  },
+  "execution": {
+    "implementation_created": false,
+    "provider_queried": false,
+    "trace": false,
+    "live_event_records_read": false,
+    "hardware_executed": false,
+    "privilege_change": false,
+    "privilege_workaround": false,
+    "wsl_executed": false,
+    "engine_operation": false,
+    "lifecycle_action": false,
+    "installation": false,
+    "commit_or_push": false,
+    "repeated_defeated_cohort": false
+  },
+  "inputs": [
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-copy-attribution-contract-20261006-evening.md",
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-copy-attribution-contract-20261006-evening.json",
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-gpu-copy-attribution-20261006.md"
+  ],
+  "historical_sample": {
+    "time_utc": "2026-10-06T10:07:29.2052859Z",
+    "utilization_percent": 2.628345930526,
+    "instance": "pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+    "process_id": 4,
+    "attributed": false,
+    "rejection_retained": true,
+    "original_pdh_timestamp_and_interval_retained": false,
+    "new_capture_cannot_recover_historical_ownership": true
+  },
+  "partial_performance": {
+    "prefill_delta_percent": 1.185202,
+    "decode_delta_percent": 2.168056,
+    "qualified": false,
+    "missing": ["stock-after window", "complete hit/skip coverage"],
+    "evidence_infrastructure_is_acceleration_progress": false
+  },
+  "retained_provider": {
+    "name": "Microsoft-Windows-DxgKrnl",
+    "guid": "802ec45a-1e99-4b83-9920-87c98277ba9d",
+    "registered_descriptors": 706,
+    "persisted_raw_metadata_receipt_known": false,
+    "invent_omitted_fields_or_enumerants": false,
+    "candidate_keywords": "0x845",
+    "candidate_keywords_sufficient": "unproven",
+    "possible_additional_coverage": ["VirtualGpu", "GPUVA", "HardwareSchedulingLog"]
+  },
+  "first_increment": {
+    "form": "One native x64 program with collect and offline decode modes plus disk receipts",
+    "purpose": "Acquire exact typed evidence and report supported candidate relations and unresolved edges",
+    "recorder": {
+      "apis": ["StartTraceW", "EnableTraceEx2", "ControlTraceW"],
+      "one_uniquely_named_directly_owned_session": true,
+      "stop_only_owned_session": true,
+      "mode": "sequential-file",
+      "stacks": false,
+      "general_cpu_sampling": false,
+      "avoid_pid_filters_removing_system_or_ownership_records": true,
+      "clock": {"Wnode.ClientContext": 1, "type": "QPC", "retain_frequency": true, "retain_qpc_utc_calibration": true},
+      "requested_pool": {
+        "buffer_size_kib": 64,
+        "minimum_buffers": 64,
+        "maximum_buffers": 64,
+        "bytes": 4194304,
+        "starting_mode_flag": "EVENT_TRACE_NO_PER_PROCESSOR_BUFFERING",
+        "actual_adjustments_must_be_retained": true,
+        "loss_free_suitability_measured": false,
+        "documentation_high_volume_caution_events_per_second_example": 1000,
+        "per_processor_alternative": "Compute and observe the actual CPU-dependent pool within the retained budget; do not silently expand."
+      },
+      "file": {
+        "maximum_file_size_parameter": 64,
+        "parameter_units": "ETW megabytes",
+        "circular": false,
+        "preload": false,
+        "memory_map": false,
+        "cap_is_disk_not_ram": true,
+        "cap_hit_or_early_end": "incomplete"
+      },
+      "retain": [
+        "requested and actual adjusted properties",
+        "API statuses and session identity",
+        "capture boundaries",
+        "final EventsLost and LogBuffersLost",
+        "complete selected descriptor/schema/map receipt",
+        "new original PDH interval/raw timestamps and exact engine instance",
+        "request boundaries and guest identity receipts"
+      ],
+      "capture_state": {
+        "api": "EnableTraceEx2 EVENT_CONTROL_CODE_CAPTURE_STATE",
+        "meaning": "Provider state request only",
+        "guarantees_complete_dxgkrnl_rundown": false,
+        "verify_actual_relevant_rundown": true
+      },
+      "session_access_failure": "Technical result; no token or privilege workaround"
+    },
+    "decoder": {
+      "apis": ["OpenTraceW", "ProcessTrace", "EventRecordCallback", "TdhGetEventInformation", "TdhGetEventMapInformation", "TdhFormatProperty"],
+      "process_trace_mode": ["PROCESS_TRACE_MODE_EVENT_RECORD", "PROCESS_TRACE_MODE_RAW_TIMESTAMP"],
+      "retain": [
+        "ETL header clock data",
+        "raw event QPC",
+        "provider and complete descriptor",
+        "header PID/TID and flags",
+        "raw payload reference and decode status",
+        "exact field names/types/numeric values and optional map labels"
+      ],
+      "pointer_width": "Use event-header flags; unresolved width remains unresolved",
+      "arrays": "Respect schema count/length, structures and payload bounds; preserve 43/v0 uiNbAllocations, Allocations[] and Write[] together",
+      "numeric_encoding": "Lossless 64-bit handles and identifiers; no floating-point conversion",
+      "bounded_metadata_map_cache": true,
+      "stream_to_disk": true,
+      "whole_etl_load_or_map": false,
+      "lifetime_processing": "Bounded passes or disk indexes",
+      "oversized_failed_unknown_decode": "unresolved",
+      "EVENT_TRACE_LOGFILEW_EventsLost_is_loss_receipt": false,
+      "tdh_implies_handle_or_owner_semantics": false
+    },
+    "process_budgets": {
+      "controller_private_commit_mib_target": 16,
+      "offline_decoder_private_commit_mib_target": 32,
+      "phases_overlap": false,
+      "measured": false,
+      "hard_total_physical_memory_guarantee": false,
+      "caution": "TDH/native overhead, ETW adjustments and file cache remain outside simple requested-pool arithmetic; retain reserve checks and observe process/system memory."
+    },
+    "candidate_same_field_relations": [
+      "Context.hDevice -> Device.hDevice",
+      "Device.DxgProcess -> Process.DxgProcess",
+      "Process.DxgVirtualMachine -> VM.DxgVirtualMachine",
+      "HwQueue.hContext -> Context.hContext"
+    ],
+    "candidate_relation_condition": "Captured scope and valid lifetimes; none alone establishes System allocation beneficiary",
+    "separate_typed_namespaces": true,
+    "emit_unresolved_edge_source_references": true
+  },
+  "unresolved_relationships": [
+    {
+      "id": "referenced-allocation-namespace",
+      "from": "43/v0.Allocations[]",
+      "to_candidates": ["36/38/v2.hVidMmAlloc", "global allocation objects"],
+      "current_status": "unresolved",
+      "required": "Supported element namespace semantics or explicit typed bridge with scope/lifetime"
+    },
+    {
+      "id": "global-allocation-alias",
+      "from": "50/v0,53/v0,76/77/v0.hAllocationGlobalHandle",
+      "to_candidates": ["33/35/v3.hVidMmGlobalAlloc", "33/35/v3.hDxgGlobalAlloc", "36/38/v2.hVidMmGlobalAlloc"],
+      "current_status": "unresolved",
+      "required": "Supported equality/namespace semantics or an explicit mapping record"
+    },
+    {
+      "id": "dma-alias",
+      "from": "53/v0,178/v1.hDmaBuffer",
+      "to_candidates": ["175/v1,43/v0,50/v0,76/77/v0.pDmaBuffer"],
+      "current_status": "unresolved",
+      "required": "Supported handle mapping, adapter scope and reuse boundaries; a complete supported all-pDmaBuffer path may avoid this edge"
+    },
+    {
+      "id": "queue-execute-pairing",
+      "from": ["178-180.SubmitSequence", "175.hQueuePacketContext"],
+      "to_candidates": ["175-177.ulQueueSubmitSequence", "178/180.pQueuePacket"],
+      "current_status": "unresolved",
+      "required": "Defined pairing and scope; submission IDs, completion IDs and fence values remain distinct until their relation is established"
+    },
+    {
+      "id": "classification-execution-interval",
+      "from": ["PacketType", "50.uiType", "250.EngineType", "DMA/queue/hardware queue event timestamps"],
+      "to_candidates": ["copy/paging class", "GPU execution start/end", "preemption/completion"],
+      "current_status": "unresolved",
+      "required": "Exact versioned maps and provider/event timing semantics"
+    },
+    {
+      "id": "allocation-owner-lifetime",
+      "from": ["33-38 allocation families", "hDevice", "shared resources", "hOtherPartitionHandle"],
+      "to_candidates": ["all valid owners/beneficiaries", "exclusive Halogen ownership"],
+      "current_status": "unresolved",
+      "required": "Complete relevant creation/rundown/destruction or otherwise bounded-valid lifetimes, all owners/shares/partition scope and reuse",
+      "device_allocation_stop_schema_retained": false,
+      "shared_or_ambiguous_allocation_is_exclusive": false
+    },
+    {
+      "id": "process-allocation-detail-shortcut",
+      "from": ["50.hProcessId", "36.hProcessAllocDetails", "288/v0.ProcessId,Handle,hProcessAlloc"],
+      "to_candidates": ["allocation beneficiary", "allocation detail/owner bridge"],
+      "current_status": "unresolved",
+      "required": "Defined owner/beneficiary semantics and exact bridge if this optional alternative path is used"
+    },
+    {
+      "id": "guest-process-linux-task",
+      "from": ["472/492/v0.ProcessIdInVm,DxgProcessInVm,DxgVirtualMachine", "474/493/v0 VM lifecycle"],
+      "to_candidates": ["actual uniquely identified Halogen Linux task"],
+      "current_status": "unresolved",
+      "required": "Populated captured guest lifecycle plus initial-namespace TID/PID, TGID, task birth, PID namespace/container mapping and workload identity",
+      "running_kernel_emission_verified": false,
+      "name_or_vmmem_pid_sufficient": false
+    },
+    {
+      "id": "etw-engine-pdh-interval",
+      "from": ["110/v1.pDxgAdapter,AdapterLuid", "250/v0.NodeOrdinal,EngineType"],
+      "to_candidates": ["exact new PDH LUID/physical engine and original integration interval"],
+      "current_status": "unresolved",
+      "required": "Captured exact engine mapping, supported enumeration, original PDH interval and common clock calibration"
+    }
+  ],
+  "event_path_scope": {
+    "every_event_family_always_required": false,
+    "narrower_supported_complete_path_allowed": true,
+    "partial_inventory_events": ["54/v0", "306/v1", "309/v1", "310/v0"],
+    "hardware_scheduling_candidates": ["422/424/v0", "450/v0"],
+    "rule": "Decode actual schemas only when needed; do not guess omitted fields or require redundant families after a supported alternative eliminates an edge."
+  },
+  "prospective_closure": {
+    "new_interval_only": true,
+    "required": [
+      "loss-free complete relevant packet/engine execution graph",
+      "supported allocation provenance to a uniquely identified Halogen task",
+      "valid lifetimes and common clock/PDH mapping"
+    ],
+    "zero_loss_alone_sufficient": false,
+    "coverage_gaps": ["disabled keywords", "missing rundown", "unknown schemas", "unresolved owners"],
+    "otherwise": "unresolved; historical rejection retained",
+    "renewed_user_permission_requested": false
+  },
+  "sources": [
+    {"id": "system-paging", "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/display/system-paging-process", "supports": "System paging contexts/DMA act for other processes"},
+    {"id": "etw-properties", "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntrace/ns-evntrace-event_trace_properties", "supports": "Requested/adjusted pools, file-size units and controller loss statistics"},
+    {"id": "logging-modes", "url": "https://learn.microsoft.com/en-us/windows/win32/etw/logging-mode-constants", "supports": "Sequential/circular behavior and shared-buffer high-volume caution"},
+    {"id": "enable-state", "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntrace/nf-evntrace-enabletraceex2", "supports": "Provider enable and state request semantics"},
+    {"id": "qpc-clock", "url": "https://learn.microsoft.com/en-us/windows/win32/etw/wnode-header", "supports": "ClientContext=1 QPC clock and retained frequency"},
+    {"id": "event-consumer", "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntrace/ns-evntrace-event_trace_logfilew", "supports": "Offline EVENT_RECORD/raw timestamp mode; EventsLost field unused"},
+    {"id": "tdh-example", "url": "https://learn.microsoft.com/en-us/windows/win32/etw/using-tdhformatproperty-to-consume-event-data", "supports": "Reusable buffers, event pointer width, metadata/maps and counted properties"},
+    {"id": "gpu-packet-concepts", "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/display/selections-in-the-gpu-hardware-queue", "supports": "Allocation/timing concepts; does not establish disputed exact ETW aliases"}
+  ],
+  "validation": {
+    "json_syntax": "checked",
+    "markdown_json_consistency": "checked",
+    "checks": ["decisions", "historical sample", "nine unresolved relationship groups", "requested budgets", "execution exclusions"],
+    "recorder_decoder_built_tested_or_executed": false
+  }
+}

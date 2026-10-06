@@ -1,0 +1,4288 @@
+{
+  "schema": "halogen.etw-observed-coverage.v1",
+  "date": "2026-10-06",
+  "status": "idle-materialization-observed-provenance-unresolved",
+  "method": {
+    "streamed_one_jsonl_record_at_a_time": true,
+    "whole_file_load": false,
+    "whole_file_map": false,
+    "held_raw_events": false,
+    "retained": "Counters and small schema signatures only",
+    "max_line_bytes": 10882,
+    "pointer_equality_inference": false,
+    "sequence_or_time_pairing_inference": false
+  },
+  "execution": {
+    "offline_jsonl_read_only": true,
+    "new_trace": false,
+    "live_etw_api": false,
+    "hardware_or_inference": false,
+    "lifecycle_action": false,
+    "implementation_edit": false,
+    "files_written": [
+      "docs/research/halogen-etw-observed-coverage-20261006.md",
+      "docs/research/halogen-etw-observed-coverage-20261006.json"
+    ]
+  },
+  "capture_context": {
+    "owned_capture_by_root": true,
+    "duration_requested_seconds": 5,
+    "idle": true,
+    "halogen_request_in_window": false,
+    "capture_state_requested": false,
+    "rundown_complete": false,
+    "recorder_final_zero_reported_loss": true,
+    "recorder_loss_evidence_source": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-bounded-result-20261006.json",
+    "raw_receipt_combination_owned_by_root": true
+  },
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\etw-native-build-3bc6e3f283a541b9afd2c4a47d7f7bdc\\decoded.jsonl",
+    "file_bytes": 20401644,
+    "line_count": 8456,
+    "header_line": 1,
+    "event_first_line": 2,
+    "event_last_line": 8455,
+    "summary_line": 8456,
+    "input_etl": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\etw-native-build-3bc6e3f283a541b9afd2c4a47d7f7bdc\\owned-idle-5s.etl",
+    "input_etl_bytes": "1179648"
+  },
+  "materialization": {
+    "dxg_events": 8454,
+    "id_version_pairs": 95,
+    "status_counts": {
+      "materialized": 8454
+    },
+    "unresolved_events": 0,
+    "unresolved_properties": 0,
+    "qpc_min": "1956662125660",
+    "qpc_max": "1956712703323",
+    "clock": {
+      "type": "QPC",
+      "reserved_flags": 1,
+      "perf_freq": "10000000"
+    },
+    "decoder_header": {
+      "type": "trace_header",
+      "schema": "halogen.dxg.materialization.v1",
+      "input": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\etw-native-build-3bc6e3f283a541b9afd2c4a47d7f7bdc\\owned-idle-5s.etl",
+      "output": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\etw-native-build-3bc6e3f283a541b9afd2c4a47d7f7bdc\\decoded.jsonl",
+      "input_bytes": "1179648",
+      "clock": {
+        "type": "QPC",
+        "reserved_flags": 1,
+        "perf_freq": "10000000"
+      },
+      "header_statistics": {
+        "buffer_size_bytes": 65536,
+        "buffers_written": 18,
+        "buffers_lost": 0,
+        "events_lost": 0,
+        "start_buffers": 1,
+        "processors": 1,
+        "log_file_mode": 268435457,
+        "maximum_file_size_etw_megabytes": 64,
+        "start_time_filetime": "134357946475225493",
+        "end_time_filetime": "134357946526006029"
+      },
+      "logfile_events_lost": null,
+      "logfile_events_lost_status": "unused-member-not-read",
+      "recorder_controltrace_loss_counters": null,
+      "zero_loss_evidence": "not-supplied",
+      "rundown_complete": null,
+      "ownership": "unresolved"
+    },
+    "decoder_summary": {
+      "type": "summary",
+      "decode_success": true,
+      "process_trace_completed": true,
+      "selected_events_present": true,
+      "abort_reason": "none",
+      "abort_status": 0,
+      "process_trace_status": 0,
+      "close_trace_status": 0,
+      "events_seen": "8456",
+      "other_provider_events": "2",
+      "dxg_events_seen": "8454",
+      "dxg_events_written": "8454",
+      "materialized_events": "8454",
+      "unresolved_events": "0",
+      "events_not_written": "0",
+      "unresolved_properties": "0",
+      "buffers_read": 18,
+      "output_bytes_before_summary": "20400625",
+      "limits": {
+        "input_output_bytes": "67108864",
+        "metadata_bytes": 262144,
+        "property_bytes": 65536,
+        "event_line_bytes": 1048576,
+        "private_commit_bytes": "33554432",
+        "physical_commit_reserve_bytes": "19327352832",
+        "guard_interval_ms": 100
+      },
+      "memory": {
+        "samples": "4",
+        "peak_private_bytes": "4747264",
+        "minimum_available_physical_bytes": "27691597824",
+        "minimum_available_commit_bytes": "126906093568"
+      },
+      "recorder_controltrace_loss_counters": null,
+      "zero_loss_evidence": "not-supplied",
+      "coverage_complete": null,
+      "rundown_complete": null,
+      "ownership": "unresolved",
+      "qualified_performance_gain": false
+    },
+    "zero_loss_counters_in_jsonl": "not supplied; separate recorder receipt is root-owned"
+  },
+  "histogram": [
+    {
+      "id": 17,
+      "version": 0,
+      "count": 168,
+      "first_line": 3,
+      "last_line": 8452
+    },
+    {
+      "id": 18,
+      "version": 0,
+      "count": 140,
+      "first_line": 21,
+      "last_line": 8362
+    },
+    {
+      "id": 19,
+      "version": 0,
+      "count": 140,
+      "first_line": 19,
+      "last_line": 8361
+    },
+    {
+      "id": 22,
+      "version": 0,
+      "count": 52,
+      "first_line": 220,
+      "last_line": 7487
+    },
+    {
+      "id": 33,
+      "version": 3,
+      "count": 5,
+      "first_line": 197,
+      "last_line": 6889
+    },
+    {
+      "id": 34,
+      "version": 3,
+      "count": 10,
+      "first_line": 651,
+      "last_line": 7662
+    },
+    {
+      "id": 36,
+      "version": 2,
+      "count": 10,
+      "first_line": 199,
+      "last_line": 7094
+    },
+    {
+      "id": 37,
+      "version": 2,
+      "count": 15,
+      "first_line": 648,
+      "last_line": 7655
+    },
+    {
+      "id": 39,
+      "version": 0,
+      "count": 15,
+      "first_line": 587,
+      "last_line": 7378
+    },
+    {
+      "id": 43,
+      "version": 0,
+      "count": 15,
+      "first_line": 387,
+      "last_line": 8225
+    },
+    {
+      "id": 50,
+      "version": 0,
+      "count": 15,
+      "first_line": 313,
+      "last_line": 7424
+    },
+    {
+      "id": 55,
+      "version": 0,
+      "count": 10,
+      "first_line": 604,
+      "last_line": 7425
+    },
+    {
+      "id": 67,
+      "version": 0,
+      "count": 5,
+      "first_line": 301,
+      "last_line": 6985
+    },
+    {
+      "id": 68,
+      "version": 0,
+      "count": 5,
+      "first_line": 309,
+      "last_line": 6993
+    },
+    {
+      "id": 71,
+      "version": 2,
+      "count": 88,
+      "first_line": 295,
+      "last_line": 8217
+    },
+    {
+      "id": 72,
+      "version": 0,
+      "count": 90,
+      "first_line": 105,
+      "last_line": 8400
+    },
+    {
+      "id": 73,
+      "version": 2,
+      "count": 92,
+      "first_line": 336,
+      "last_line": 8219
+    },
+    {
+      "id": 74,
+      "version": 0,
+      "count": 89,
+      "first_line": 106,
+      "last_line": 8401
+    },
+    {
+      "id": 92,
+      "version": 0,
+      "count": 5,
+      "first_line": 237,
+      "last_line": 6953
+    },
+    {
+      "id": 94,
+      "version": 0,
+      "count": 5,
+      "first_line": 652,
+      "last_line": 7340
+    },
+    {
+      "id": 170,
+      "version": 0,
+      "count": 15,
+      "first_line": 386,
+      "last_line": 8224
+    },
+    {
+      "id": 171,
+      "version": 2,
+      "count": 5,
+      "first_line": 1453,
+      "last_line": 8036
+    },
+    {
+      "id": 172,
+      "version": 2,
+      "count": 27,
+      "first_line": 407,
+      "last_line": 8270
+    },
+    {
+      "id": 173,
+      "version": 2,
+      "count": 27,
+      "first_line": 411,
+      "last_line": 8274
+    },
+    {
+      "id": 175,
+      "version": 1,
+      "count": 35,
+      "first_line": 225,
+      "last_line": 7495
+    },
+    {
+      "id": 176,
+      "version": 0,
+      "count": 35,
+      "first_line": 230,
+      "last_line": 7623
+    },
+    {
+      "id": 177,
+      "version": 1,
+      "count": 35,
+      "first_line": 229,
+      "last_line": 7622
+    },
+    {
+      "id": 178,
+      "version": 1,
+      "count": 124,
+      "first_line": 16,
+      "last_line": 8324
+    },
+    {
+      "id": 179,
+      "version": 0,
+      "count": 187,
+      "first_line": 34,
+      "last_line": 8346
+    },
+    {
+      "id": 180,
+      "version": 1,
+      "count": 423,
+      "first_line": 58,
+      "last_line": 8360
+    },
+    {
+      "id": 181,
+      "version": 0,
+      "count": 168,
+      "first_line": 2,
+      "last_line": 8451
+    },
+    {
+      "id": 182,
+      "version": 0,
+      "count": 69,
+      "first_line": 52,
+      "last_line": 8327
+    },
+    {
+      "id": 184,
+      "version": 1,
+      "count": 12,
+      "first_line": 990,
+      "last_line": 8040
+    },
+    {
+      "id": 215,
+      "version": 2,
+      "count": 22,
+      "first_line": 396,
+      "last_line": 8259
+    },
+    {
+      "id": 238,
+      "version": 0,
+      "count": 80,
+      "first_line": 61,
+      "last_line": 8339
+    },
+    {
+      "id": 242,
+      "version": 0,
+      "count": 5,
+      "first_line": 315,
+      "last_line": 6999
+    },
+    {
+      "id": 244,
+      "version": 2,
+      "count": 80,
+      "first_line": 27,
+      "last_line": 8323
+    },
+    {
+      "id": 245,
+      "version": 3,
+      "count": 219,
+      "first_line": 23,
+      "last_line": 8325
+    },
+    {
+      "id": 247,
+      "version": 0,
+      "count": 33,
+      "first_line": 181,
+      "last_line": 8002
+    },
+    {
+      "id": 248,
+      "version": 0,
+      "count": 34,
+      "first_line": 123,
+      "last_line": 8393
+    },
+    {
+      "id": 252,
+      "version": 0,
+      "count": 10,
+      "first_line": 42,
+      "last_line": 8321
+    },
+    {
+      "id": 259,
+      "version": 3,
+      "count": 10,
+      "first_line": 86,
+      "last_line": 8357
+    },
+    {
+      "id": 273,
+      "version": 4,
+      "count": 168,
+      "first_line": 4,
+      "last_line": 8453
+    },
+    {
+      "id": 274,
+      "version": 0,
+      "count": 15,
+      "first_line": 308,
+      "last_line": 7426
+    },
+    {
+      "id": 277,
+      "version": 0,
+      "count": 5,
+      "first_line": 650,
+      "last_line": 7341
+    },
+    {
+      "id": 278,
+      "version": 0,
+      "count": 5,
+      "first_line": 653,
+      "last_line": 7343
+    },
+    {
+      "id": 281,
+      "version": 0,
+      "count": 221,
+      "first_line": 103,
+      "last_line": 8398
+    },
+    {
+      "id": 282,
+      "version": 0,
+      "count": 221,
+      "first_line": 107,
+      "last_line": 8402
+    },
+    {
+      "id": 287,
+      "version": 0,
+      "count": 5,
+      "first_line": 198,
+      "last_line": 6890
+    },
+    {
+      "id": 289,
+      "version": 0,
+      "count": 6,
+      "first_line": 727,
+      "last_line": 7827
+    },
+    {
+      "id": 294,
+      "version": 1,
+      "count": 110,
+      "first_line": 24,
+      "last_line": 8326
+    },
+    {
+      "id": 295,
+      "version": 0,
+      "count": 80,
+      "first_line": 28,
+      "last_line": 8313
+    },
+    {
+      "id": 297,
+      "version": 0,
+      "count": 66,
+      "first_line": 22,
+      "last_line": 8318
+    },
+    {
+      "id": 300,
+      "version": 1,
+      "count": 86,
+      "first_line": 59,
+      "last_line": 8351
+    },
+    {
+      "id": 305,
+      "version": 1,
+      "count": 27,
+      "first_line": 17,
+      "last_line": 8317
+    },
+    {
+      "id": 307,
+      "version": 1,
+      "count": 5,
+      "first_line": 314,
+      "last_line": 6998
+    },
+    {
+      "id": 309,
+      "version": 1,
+      "count": 133,
+      "first_line": 203,
+      "last_line": 7434
+    },
+    {
+      "id": 310,
+      "version": 0,
+      "count": 117,
+      "first_line": 204,
+      "last_line": 7435
+    },
+    {
+      "id": 318,
+      "version": 0,
+      "count": 47,
+      "first_line": 183,
+      "last_line": 8276
+    },
+    {
+      "id": 319,
+      "version": 0,
+      "count": 168,
+      "first_line": 5,
+      "last_line": 8454
+    },
+    {
+      "id": 320,
+      "version": 0,
+      "count": 92,
+      "first_line": 291,
+      "last_line": 8212
+    },
+    {
+      "id": 321,
+      "version": 0,
+      "count": 89,
+      "first_line": 101,
+      "last_line": 8396
+    },
+    {
+      "id": 322,
+      "version": 1,
+      "count": 191,
+      "first_line": 100,
+      "last_line": 8395
+    },
+    {
+      "id": 323,
+      "version": 1,
+      "count": 15,
+      "first_line": 595,
+      "last_line": 7455
+    },
+    {
+      "id": 324,
+      "version": 0,
+      "count": 206,
+      "first_line": 102,
+      "last_line": 8397
+    },
+    {
+      "id": 325,
+      "version": 0,
+      "count": 206,
+      "first_line": 109,
+      "last_line": 8404
+    },
+    {
+      "id": 338,
+      "version": 0,
+      "count": 35,
+      "first_line": 288,
+      "last_line": 8209
+    },
+    {
+      "id": 339,
+      "version": 0,
+      "count": 35,
+      "first_line": 292,
+      "last_line": 8213
+    },
+    {
+      "id": 366,
+      "version": 0,
+      "count": 840,
+      "first_line": 141,
+      "last_line": 8428
+    },
+    {
+      "id": 367,
+      "version": 0,
+      "count": 129,
+      "first_line": 99,
+      "last_line": 8394
+    },
+    {
+      "id": 371,
+      "version": 0,
+      "count": 186,
+      "first_line": 104,
+      "last_line": 8399
+    },
+    {
+      "id": 386,
+      "version": 8,
+      "count": 10,
+      "first_line": 85,
+      "last_line": 8356
+    },
+    {
+      "id": 437,
+      "version": 0,
+      "count": 10,
+      "first_line": 87,
+      "last_line": 8358
+    },
+    {
+      "id": 450,
+      "version": 0,
+      "count": 52,
+      "first_line": 20,
+      "last_line": 8340
+    },
+    {
+      "id": 451,
+      "version": 0,
+      "count": 52,
+      "first_line": 57,
+      "last_line": 8349
+    },
+    {
+      "id": 458,
+      "version": 0,
+      "count": 97,
+      "first_line": 122,
+      "last_line": 8450
+    },
+    {
+      "id": 461,
+      "version": 0,
+      "count": 15,
+      "first_line": 388,
+      "last_line": 8226
+    },
+    {
+      "id": 466,
+      "version": 0,
+      "count": 25,
+      "first_line": 389,
+      "last_line": 8228
+    },
+    {
+      "id": 471,
+      "version": 0,
+      "count": 17,
+      "first_line": 110,
+      "last_line": 6839
+    },
+    {
+      "id": 473,
+      "version": 0,
+      "count": 20,
+      "first_line": 525,
+      "last_line": 7267
+    },
+    {
+      "id": 496,
+      "version": 0,
+      "count": 53,
+      "first_line": 8,
+      "last_line": 8287
+    },
+    {
+      "id": 502,
+      "version": 1,
+      "count": 345,
+      "first_line": 9,
+      "last_line": 8293
+    },
+    {
+      "id": 503,
+      "version": 0,
+      "count": 97,
+      "first_line": 121,
+      "last_line": 8449
+    },
+    {
+      "id": 505,
+      "version": 1,
+      "count": 10,
+      "first_line": 115,
+      "last_line": 8385
+    },
+    {
+      "id": 506,
+      "version": 0,
+      "count": 158,
+      "first_line": 12,
+      "last_line": 8291
+    },
+    {
+      "id": 507,
+      "version": 0,
+      "count": 258,
+      "first_line": 11,
+      "last_line": 8359
+    },
+    {
+      "id": 514,
+      "version": 0,
+      "count": 313,
+      "first_line": 6,
+      "last_line": 8455
+    },
+    {
+      "id": 527,
+      "version": 0,
+      "count": 10,
+      "first_line": 83,
+      "last_line": 8354
+    },
+    {
+      "id": 528,
+      "version": 0,
+      "count": 10,
+      "first_line": 84,
+      "last_line": 8355
+    },
+    {
+      "id": 529,
+      "version": 0,
+      "count": 208,
+      "first_line": 13,
+      "last_line": 8364
+    },
+    {
+      "id": 530,
+      "version": 0,
+      "count": 208,
+      "first_line": 117,
+      "last_line": 8389
+    },
+    {
+      "id": 550,
+      "version": 0,
+      "count": 57,
+      "first_line": 18,
+      "last_line": 8383
+    },
+    {
+      "id": 551,
+      "version": 0,
+      "count": 174,
+      "first_line": 108,
+      "last_line": 8403
+    },
+    {
+      "id": 552,
+      "version": 0,
+      "count": 112,
+      "first_line": 232,
+      "last_line": 7657
+    },
+    {
+      "id": 1069,
+      "version": 2,
+      "count": 5,
+      "first_line": 238,
+      "last_line": 6954
+    }
+  ],
+  "opcode_histogram": [
+    {
+      "id": 17,
+      "version": 0,
+      "opcode": 0,
+      "count": 168
+    },
+    {
+      "id": 18,
+      "version": 0,
+      "opcode": 1,
+      "count": 140
+    },
+    {
+      "id": 19,
+      "version": 0,
+      "opcode": 2,
+      "count": 140
+    },
+    {
+      "id": 22,
+      "version": 0,
+      "opcode": 0,
+      "count": 52
+    },
+    {
+      "id": 33,
+      "version": 3,
+      "opcode": 1,
+      "count": 5
+    },
+    {
+      "id": 34,
+      "version": 3,
+      "opcode": 2,
+      "count": 10
+    },
+    {
+      "id": 36,
+      "version": 2,
+      "opcode": 1,
+      "count": 10
+    },
+    {
+      "id": 37,
+      "version": 2,
+      "opcode": 2,
+      "count": 15
+    },
+    {
+      "id": 39,
+      "version": 0,
+      "opcode": 0,
+      "count": 15
+    },
+    {
+      "id": 43,
+      "version": 0,
+      "opcode": 0,
+      "count": 15
+    },
+    {
+      "id": 50,
+      "version": 0,
+      "opcode": 0,
+      "count": 15
+    },
+    {
+      "id": 55,
+      "version": 0,
+      "opcode": 0,
+      "count": 10
+    },
+    {
+      "id": 67,
+      "version": 0,
+      "opcode": 1,
+      "count": 5
+    },
+    {
+      "id": 68,
+      "version": 0,
+      "opcode": 2,
+      "count": 5
+    },
+    {
+      "id": 71,
+      "version": 2,
+      "opcode": 0,
+      "count": 88
+    },
+    {
+      "id": 72,
+      "version": 0,
+      "opcode": 0,
+      "count": 90
+    },
+    {
+      "id": 73,
+      "version": 2,
+      "opcode": 0,
+      "count": 92
+    },
+    {
+      "id": 74,
+      "version": 0,
+      "opcode": 0,
+      "count": 89
+    },
+    {
+      "id": 92,
+      "version": 0,
+      "opcode": 1,
+      "count": 5
+    },
+    {
+      "id": 94,
+      "version": 0,
+      "opcode": 2,
+      "count": 5
+    },
+    {
+      "id": 170,
+      "version": 0,
+      "opcode": 0,
+      "count": 15
+    },
+    {
+      "id": 171,
+      "version": 2,
+      "opcode": 1,
+      "count": 5
+    },
+    {
+      "id": 172,
+      "version": 2,
+      "opcode": 0,
+      "count": 27
+    },
+    {
+      "id": 173,
+      "version": 2,
+      "opcode": 2,
+      "count": 27
+    },
+    {
+      "id": 175,
+      "version": 1,
+      "opcode": 1,
+      "count": 35
+    },
+    {
+      "id": 176,
+      "version": 0,
+      "opcode": 2,
+      "count": 35
+    },
+    {
+      "id": 177,
+      "version": 1,
+      "opcode": 0,
+      "count": 35
+    },
+    {
+      "id": 178,
+      "version": 1,
+      "opcode": 1,
+      "count": 124
+    },
+    {
+      "id": 179,
+      "version": 0,
+      "opcode": 0,
+      "count": 187
+    },
+    {
+      "id": 180,
+      "version": 1,
+      "opcode": 2,
+      "count": 423
+    },
+    {
+      "id": 181,
+      "version": 0,
+      "opcode": 0,
+      "count": 168
+    },
+    {
+      "id": 182,
+      "version": 0,
+      "opcode": 0,
+      "count": 69
+    },
+    {
+      "id": 184,
+      "version": 1,
+      "opcode": 0,
+      "count": 12
+    },
+    {
+      "id": 215,
+      "version": 2,
+      "opcode": 1,
+      "count": 22
+    },
+    {
+      "id": 238,
+      "version": 0,
+      "opcode": 0,
+      "count": 80
+    },
+    {
+      "id": 242,
+      "version": 0,
+      "opcode": 0,
+      "count": 5
+    },
+    {
+      "id": 244,
+      "version": 2,
+      "opcode": 1,
+      "count": 80
+    },
+    {
+      "id": 245,
+      "version": 3,
+      "opcode": 1,
+      "count": 219
+    },
+    {
+      "id": 247,
+      "version": 0,
+      "opcode": 1,
+      "count": 33
+    },
+    {
+      "id": 248,
+      "version": 0,
+      "opcode": 2,
+      "count": 34
+    },
+    {
+      "id": 252,
+      "version": 0,
+      "opcode": 0,
+      "count": 10
+    },
+    {
+      "id": 259,
+      "version": 3,
+      "opcode": 0,
+      "count": 10
+    },
+    {
+      "id": 273,
+      "version": 4,
+      "opcode": 0,
+      "count": 168
+    },
+    {
+      "id": 274,
+      "version": 0,
+      "opcode": 0,
+      "count": 15
+    },
+    {
+      "id": 277,
+      "version": 0,
+      "opcode": 1,
+      "count": 5
+    },
+    {
+      "id": 278,
+      "version": 0,
+      "opcode": 2,
+      "count": 5
+    },
+    {
+      "id": 281,
+      "version": 0,
+      "opcode": 1,
+      "count": 221
+    },
+    {
+      "id": 282,
+      "version": 0,
+      "opcode": 2,
+      "count": 221
+    },
+    {
+      "id": 287,
+      "version": 0,
+      "opcode": 0,
+      "count": 5
+    },
+    {
+      "id": 289,
+      "version": 0,
+      "opcode": 2,
+      "count": 6
+    },
+    {
+      "id": 294,
+      "version": 1,
+      "opcode": 0,
+      "count": 110
+    },
+    {
+      "id": 295,
+      "version": 0,
+      "opcode": 0,
+      "count": 80
+    },
+    {
+      "id": 297,
+      "version": 0,
+      "opcode": 0,
+      "count": 66
+    },
+    {
+      "id": 300,
+      "version": 1,
+      "opcode": 0,
+      "count": 86
+    },
+    {
+      "id": 305,
+      "version": 1,
+      "opcode": 0,
+      "count": 27
+    },
+    {
+      "id": 307,
+      "version": 1,
+      "opcode": 0,
+      "count": 5
+    },
+    {
+      "id": 309,
+      "version": 1,
+      "opcode": 0,
+      "count": 133
+    },
+    {
+      "id": 310,
+      "version": 0,
+      "opcode": 0,
+      "count": 117
+    },
+    {
+      "id": 318,
+      "version": 0,
+      "opcode": 0,
+      "count": 47
+    },
+    {
+      "id": 319,
+      "version": 0,
+      "opcode": 0,
+      "count": 168
+    },
+    {
+      "id": 320,
+      "version": 0,
+      "opcode": 0,
+      "count": 92
+    },
+    {
+      "id": 321,
+      "version": 0,
+      "opcode": 0,
+      "count": 89
+    },
+    {
+      "id": 322,
+      "version": 1,
+      "opcode": 1,
+      "count": 191
+    },
+    {
+      "id": 323,
+      "version": 1,
+      "opcode": 1,
+      "count": 15
+    },
+    {
+      "id": 324,
+      "version": 0,
+      "opcode": 0,
+      "count": 206
+    },
+    {
+      "id": 325,
+      "version": 0,
+      "opcode": 2,
+      "count": 206
+    },
+    {
+      "id": 338,
+      "version": 0,
+      "opcode": 1,
+      "count": 35
+    },
+    {
+      "id": 339,
+      "version": 0,
+      "opcode": 2,
+      "count": 35
+    },
+    {
+      "id": 366,
+      "version": 0,
+      "opcode": 0,
+      "count": 840
+    },
+    {
+      "id": 367,
+      "version": 0,
+      "opcode": 0,
+      "count": 129
+    },
+    {
+      "id": 371,
+      "version": 0,
+      "opcode": 0,
+      "count": 186
+    },
+    {
+      "id": 386,
+      "version": 8,
+      "opcode": 0,
+      "count": 10
+    },
+    {
+      "id": 437,
+      "version": 0,
+      "opcode": 0,
+      "count": 10
+    },
+    {
+      "id": 450,
+      "version": 0,
+      "opcode": 0,
+      "count": 52
+    },
+    {
+      "id": 451,
+      "version": 0,
+      "opcode": 0,
+      "count": 52
+    },
+    {
+      "id": 458,
+      "version": 0,
+      "opcode": 0,
+      "count": 97
+    },
+    {
+      "id": 461,
+      "version": 0,
+      "opcode": 0,
+      "count": 15
+    },
+    {
+      "id": 466,
+      "version": 0,
+      "opcode": 0,
+      "count": 25
+    },
+    {
+      "id": 471,
+      "version": 0,
+      "opcode": 1,
+      "count": 17
+    },
+    {
+      "id": 473,
+      "version": 0,
+      "opcode": 2,
+      "count": 20
+    },
+    {
+      "id": 496,
+      "version": 0,
+      "opcode": 0,
+      "count": 53
+    },
+    {
+      "id": 502,
+      "version": 1,
+      "opcode": 0,
+      "count": 345
+    },
+    {
+      "id": 503,
+      "version": 0,
+      "opcode": 0,
+      "count": 97
+    },
+    {
+      "id": 505,
+      "version": 1,
+      "opcode": 0,
+      "count": 10
+    },
+    {
+      "id": 506,
+      "version": 0,
+      "opcode": 0,
+      "count": 158
+    },
+    {
+      "id": 507,
+      "version": 0,
+      "opcode": 0,
+      "count": 258
+    },
+    {
+      "id": 514,
+      "version": 0,
+      "opcode": 0,
+      "count": 313
+    },
+    {
+      "id": 527,
+      "version": 0,
+      "opcode": 1,
+      "count": 10
+    },
+    {
+      "id": 528,
+      "version": 0,
+      "opcode": 2,
+      "count": 10
+    },
+    {
+      "id": 529,
+      "version": 0,
+      "opcode": 0,
+      "count": 208
+    },
+    {
+      "id": 530,
+      "version": 0,
+      "opcode": 0,
+      "count": 208
+    },
+    {
+      "id": 550,
+      "version": 0,
+      "opcode": 0,
+      "count": 57
+    },
+    {
+      "id": 551,
+      "version": 0,
+      "opcode": 0,
+      "count": 174
+    },
+    {
+      "id": 552,
+      "version": 0,
+      "opcode": 0,
+      "count": 112
+    },
+    {
+      "id": 1069,
+      "version": 2,
+      "opcode": 0,
+      "count": 5
+    }
+  ],
+  "requested_presence": [
+    {
+      "id": 33,
+      "count": 5,
+      "first_line": 197,
+      "last_line": 6889
+    },
+    {
+      "id": 34,
+      "count": 10,
+      "first_line": 651,
+      "last_line": 7662
+    },
+    {
+      "id": 35,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 36,
+      "count": 10,
+      "first_line": 199,
+      "last_line": 7094
+    },
+    {
+      "id": 37,
+      "count": 15,
+      "first_line": 648,
+      "last_line": 7655
+    },
+    {
+      "id": 38,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 43,
+      "count": 15,
+      "first_line": 387,
+      "last_line": 8225
+    },
+    {
+      "id": 50,
+      "count": 15,
+      "first_line": 313,
+      "last_line": 7424
+    },
+    {
+      "id": 53,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 76,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 77,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 110,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 175,
+      "count": 35,
+      "first_line": 225,
+      "last_line": 7495
+    },
+    {
+      "id": 176,
+      "count": 35,
+      "first_line": 230,
+      "last_line": 7623
+    },
+    {
+      "id": 177,
+      "count": 35,
+      "first_line": 229,
+      "last_line": 7622
+    },
+    {
+      "id": 178,
+      "count": 124,
+      "first_line": 16,
+      "last_line": 8324
+    },
+    {
+      "id": 179,
+      "count": 187,
+      "first_line": 34,
+      "last_line": 8346
+    },
+    {
+      "id": 180,
+      "count": 423,
+      "first_line": 58,
+      "last_line": 8360
+    },
+    {
+      "id": 250,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 472,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 474,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 492,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    },
+    {
+      "id": 493,
+      "count": 0,
+      "first_line": null,
+      "last_line": null
+    }
+  ],
+  "requested_and_hw450_schema_variants": [
+    {
+      "id": 33,
+      "version": 3,
+      "opcode": 1,
+      "count": 5,
+      "first_line": 197,
+      "last_line": 6889,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hProcessId",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "hDevice",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "pDxgAdapter",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "Flags",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "AllocationFlags",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "allocSize",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "ulAlignment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 6,
+          "name": "dwReadSegment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 7,
+          "name": "dwWriteSegment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 8,
+          "name": "PreferredSegment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 9,
+          "name": "HintedBank",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 10,
+          "name": "dwEvictionSegment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 11,
+          "name": "Priority",
+          "in_type": 8,
+          "out_type": 18,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 12,
+          "name": "hVidMmGlobalAlloc",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 13,
+          "name": "hDxgGlobalAlloc",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 14,
+          "name": "hDxgSharedResource",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 15,
+          "name": "UsageVersion",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 16,
+          "name": "UsageFlags",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "UsageFlags",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 17,
+          "name": "Format",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "D3DFormat",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 18,
+          "name": "SwizzledFormat",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 19,
+          "name": "ByteOffset",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 20,
+          "name": "Width",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 21,
+          "name": "Height",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 22,
+          "name": "Pitch",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 23,
+          "name": "Depth",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 24,
+          "name": "SlicePitch",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 25,
+          "name": "BackingStoreWasPinned",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 26,
+          "name": "pSectionObject",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 27,
+          "name": "PhysicalAdapterIndex",
+          "in_type": 6,
+          "out_type": 6,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 2,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 28,
+          "name": "PageTableOrDirectory",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 5
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        5472
+      ]
+    },
+    {
+      "id": 34,
+      "version": 3,
+      "opcode": 2,
+      "count": 10,
+      "first_line": 651,
+      "last_line": 7662,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hProcessId",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "hDevice",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "pDxgAdapter",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "Flags",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "AllocationFlags",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "allocSize",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "ulAlignment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 6,
+          "name": "dwReadSegment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 7,
+          "name": "dwWriteSegment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 8,
+          "name": "PreferredSegment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 9,
+          "name": "HintedBank",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 10,
+          "name": "dwEvictionSegment",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 11,
+          "name": "Priority",
+          "in_type": 8,
+          "out_type": 18,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 12,
+          "name": "hVidMmGlobalAlloc",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 13,
+          "name": "hDxgGlobalAlloc",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 14,
+          "name": "hDxgSharedResource",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 15,
+          "name": "UsageVersion",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 16,
+          "name": "UsageFlags",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "UsageFlags",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 17,
+          "name": "Format",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "D3DFormat",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 18,
+          "name": "SwizzledFormat",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 19,
+          "name": "ByteOffset",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 20,
+          "name": "Width",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 21,
+          "name": "Height",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 22,
+          "name": "Pitch",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 23,
+          "name": "Depth",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 24,
+          "name": "SlicePitch",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 25,
+          "name": "BackingStoreWasPinned",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 26,
+          "name": "pSectionObject",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 27,
+          "name": "PhysicalAdapterIndex",
+          "in_type": 6,
+          "out_type": 6,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 2,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 28,
+          "name": "PageTableOrDirectory",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 10
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        5472
+      ]
+    },
+    {
+      "id": 36,
+      "version": 2,
+      "opcode": 1,
+      "count": 10,
+      "first_line": 199,
+      "last_line": 7094,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hProcessId",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "hDevice",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "pDxgAdapter",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "hVidMmAlloc",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "hVidMmGlobalAlloc",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "hDxgResource",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 6,
+          "name": "hDxgSharedResource",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 7,
+          "name": "hThunkAllocation",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 8,
+          "name": "hThunkResource",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 9,
+          "name": "PrivateRuntimeResourceHandle",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 10,
+          "name": "pVirtualAddress",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 11,
+          "name": "hProcessAllocDetails",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 12,
+          "name": "hOtherPartitionHandle",
+          "in_type": 8,
+          "out_type": 18,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 10
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        2912
+      ]
+    },
+    {
+      "id": 37,
+      "version": 2,
+      "opcode": 2,
+      "count": 15,
+      "first_line": 648,
+      "last_line": 7655,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hProcessId",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "hDevice",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "pDxgAdapter",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "hVidMmAlloc",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "hVidMmGlobalAlloc",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "hDxgResource",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 6,
+          "name": "hDxgSharedResource",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 7,
+          "name": "hThunkAllocation",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 8,
+          "name": "hThunkResource",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 9,
+          "name": "PrivateRuntimeResourceHandle",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 10,
+          "name": "pVirtualAddress",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 11,
+          "name": "hProcessAllocDetails",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 12,
+          "name": "hOtherPartitionHandle",
+          "in_type": 8,
+          "out_type": 18,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 15
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        2912
+      ]
+    },
+    {
+      "id": 43,
+      "version": 0,
+      "opcode": 0,
+      "count": 15,
+      "first_line": 387,
+      "last_line": 8225,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hContext",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "pDmaBuffer",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "uiNbAllocations",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "Allocations",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 4,
+          "count": null,
+          "count_property_index": 2,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "Write",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 4,
+          "count": null,
+          "count_property_index": 2,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 15
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        1192
+      ]
+    },
+    {
+      "id": 50,
+      "version": 0,
+      "opcode": 0,
+      "count": 15,
+      "first_line": 313,
+      "last_line": 7424,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hProcessId",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "hAllocationGlobalHandle",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "pDmaBuffer",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "offset",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "size",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "uiType",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "MemoryTransferType",
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 15
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        1384
+      ]
+    },
+    {
+      "id": 175,
+      "version": 1,
+      "opcode": 1,
+      "count": 35,
+      "first_line": 225,
+      "last_line": 7495,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hContext",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "hQueuePacketContext",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "PacketType",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "DmaPacketType",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "uliSubmissionId",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "ulQueueSubmitSequence",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "pDmaBuffer",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 6,
+          "name": "QuantumStatus",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "QuantumStatus",
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 35
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        1704
+      ]
+    },
+    {
+      "id": 176,
+      "version": 0,
+      "opcode": 2,
+      "count": 35,
+      "first_line": 230,
+      "last_line": 7623,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hContext",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "PacketType",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "DmaPacketType",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "uliCompletionId",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "ulQueueSubmitSequence",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "bPreempted",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 35
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        1280
+      ]
+    },
+    {
+      "id": 177,
+      "version": 1,
+      "opcode": 0,
+      "count": 35,
+      "first_line": 229,
+      "last_line": 7622,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hContext",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "PacketType",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "DmaPacketType",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "uliCompletionId",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "ulQueueSubmitSequence",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "InterruptType",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "DmaInterruptType",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "QuantumStatus",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "QuantumStatus",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 6,
+          "name": "FaultedVirtualAddress",
+          "in_type": 10,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 7,
+          "name": "PageFaultFlags",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "DmaPageFaultFlags",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 8,
+          "name": "FaultedProcessHandle",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 35
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        2216
+      ]
+    },
+    {
+      "id": 178,
+      "version": 1,
+      "opcode": 1,
+      "count": 124,
+      "first_line": 16,
+      "last_line": 8324,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hContext",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "PacketType",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "QueuePacketType",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "SubmitSequence",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "DmaBufferSize",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "AllocationListSize",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "PatchLocationListSize",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 6,
+          "name": "bPresent",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 7,
+          "name": "hDmaBuffer",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 8,
+          "name": "pQueuePacket",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 9,
+          "name": "ProgressFenceValue",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 124
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        2216
+      ]
+    },
+    {
+      "id": 179,
+      "version": 0,
+      "opcode": 0,
+      "count": 187,
+      "first_line": 34,
+      "last_line": 8346,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hContext",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "PacketType",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "QueuePacketType",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "SubmitSequence",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 187
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        888
+      ]
+    },
+    {
+      "id": 180,
+      "version": 1,
+      "opcode": 2,
+      "count": 423,
+      "first_line": 58,
+      "last_line": 8360,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hContext",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "PacketType",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": "QueuePacketType",
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "SubmitSequence",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "bPreempted",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "bTimeouted",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 5,
+          "name": "pQueuePacket",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 423
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        1392
+      ]
+    },
+    {
+      "id": 450,
+      "version": 0,
+      "opcode": 0,
+      "count": 52,
+      "first_line": 20,
+      "last_line": 8340,
+      "fields": [
+        {
+          "index": 0,
+          "name": "hHwQueue",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 1,
+          "name": "ProgressFenceValue",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 2,
+          "name": "pDmaBuffer",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 3,
+          "name": "ntStatus",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        },
+        {
+          "index": 4,
+          "name": "NumberOfQueuedPendingFlip",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null,
+          "struct_start_index": null,
+          "struct_members": null
+        }
+      ],
+      "event_statuses": {
+        "materialized": 52
+      },
+      "properties_complete_values": [
+        true
+      ],
+      "metadata_bytes_values": [
+        1280
+      ]
+    }
+  ],
+  "optional_paging_first_record_schemas": [
+    {
+      "id": 309,
+      "version": 1,
+      "opcode": 0,
+      "first_line": 203,
+      "fields": [
+        {
+          "index": 0,
+          "name": "pDxgAdapter",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 1,
+          "name": "hDmaBuffer",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 2,
+          "name": "ContinueNextBuffer",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 3,
+          "name": "hAllocationGlobalHandle",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 4,
+          "name": "PageTableLevel",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 5,
+          "name": "PageTableAddress",
+          "in_type": 10,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 6,
+          "name": "SegmentId",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 7,
+          "name": "NumPageTableUpdateEntries",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 8,
+          "name": "PageTableEntries",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 9,
+          "name": "PageTableEntries64KB",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 10,
+          "name": "StartIndex",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 11,
+          "name": "Flags",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 12,
+          "name": "DriverProtection",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 13,
+          "name": "AllocationOffsetInBytes",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 14,
+          "name": "hProcess",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 15,
+          "name": "UpdateMode",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 16,
+          "name": "FirstPteVirtualAddress",
+          "in_type": 10,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 17,
+          "name": "PageTableObject",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        }
+      ],
+      "scope": "First observed record only; all-record schema variants not independently inventoried for this optional family"
+    },
+    {
+      "id": 310,
+      "version": 0,
+      "opcode": 0,
+      "first_line": 204,
+      "fields": [
+        {
+          "index": 0,
+          "name": "pDxgAdapter",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 1,
+          "name": "hDmaBuffer",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 2,
+          "name": "ContinueNextBuffer",
+          "in_type": 13,
+          "out_type": 13,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 3,
+          "name": "hAllocationGlobalHandle",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 4,
+          "name": "RootPageTableSegmentId",
+          "in_type": 8,
+          "out_type": 8,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 4,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 5,
+          "name": "RootPageTableSegmentOffset",
+          "in_type": 10,
+          "out_type": 10,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 6,
+          "name": "hProcess",
+          "in_type": 16,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 7,
+          "name": "StartVirtualAddress",
+          "in_type": 10,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        },
+        {
+          "index": 8,
+          "name": "EndVirtualAddress",
+          "in_type": 10,
+          "out_type": 19,
+          "flags": 0,
+          "count": 1,
+          "count_property_index": null,
+          "length": 8,
+          "length_property_index": null,
+          "map_name": null
+        }
+      ],
+      "scope": "First observed record only; all-record schema variants not independently inventoried for this optional family"
+    }
+  ],
+  "additional_lifecycle_presence": [
+    {
+      "id": 27,
+      "count": 0
+    },
+    {
+      "id": 29,
+      "count": 0
+    },
+    {
+      "id": 30,
+      "count": 0
+    },
+    {
+      "id": 31,
+      "count": 0
+    },
+    {
+      "id": 32,
+      "count": 0
+    },
+    {
+      "id": 288,
+      "count": 0
+    },
+    {
+      "id": 422,
+      "count": 0
+    },
+    {
+      "id": 423,
+      "count": 0
+    },
+    {
+      "id": 424,
+      "count": 0
+    },
+    {
+      "id": 476,
+      "count": 0
+    },
+    {
+      "id": 477,
+      "count": 0
+    }
+  ],
+  "inventory_updates": [
+    {
+      "id": "37/v2",
+      "first_line": 648,
+      "finding": "Actual device-allocation stop field schema is now retained; previously unretained in the contract."
+    },
+    {
+      "id": "177/v1",
+      "first_line": 229,
+      "finding": "Observed schema does not contain bPreempted; 176/v0 contains it. The earlier selected-field inventory must not override this actual receipt."
+    },
+    {
+      "id": "309/v1,310/v0",
+      "first_lines": [
+        203,
+        204
+      ],
+      "finding": "First observed records fill prior partial inventories and contain hDmaBuffer/hAllocationGlobalHandle; no DMA alias is inferred."
+    }
+  ],
+  "provenance_edges": [
+    {
+      "id": "referenced-allocation-namespace",
+      "name": "Referenced allocation namespace",
+      "status": "unresolved",
+      "observed_effect": "43/v0 arrays and 36/v2 local/global fields now have actual records. No supported Allocations[] namespace bridge is supplied.",
+      "source_lines": [
+        387,
+        199
+      ],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 41
+      }
+    },
+    {
+      "id": "global-allocation-alias",
+      "name": "Global allocation alias",
+      "status": "unresolved",
+      "observed_effect": "50/v0.hAllocationGlobalHandle and 33/36 global allocation fields are observed; 53/76/77 are absent. Names/raw values do not establish either global alias.",
+      "source_lines": [
+        313,
+        197,
+        199
+      ],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 42
+      }
+    },
+    {
+      "id": "dma-alias",
+      "name": "DMA alias",
+      "status": "unresolved",
+      "observed_effect": "175/43/50 contain pDmaBuffer; 178 and first 309/310 records contain hDmaBuffer. Both namespaces are observed, with no supported bridge between them.",
+      "source_lines": [
+        225,
+        387,
+        313,
+        16,
+        203,
+        204
+      ],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 43
+      }
+    },
+    {
+      "id": "queue-execute-pairing",
+      "name": "Queue/execute pairing",
+      "status": "unresolved",
+      "observed_effect": "175-180 materialize sequences, packet-context/packet handles and fence fields. Counts or equal values do not establish pairing, scope or reuse.",
+      "source_lines": [
+        225,
+        230,
+        229,
+        16,
+        34,
+        58
+      ],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 44
+      }
+    },
+    {
+      "id": "classification-execution-interval",
+      "name": "Classification/execution interval",
+      "status": "unresolved",
+      "observed_effect": "PacketType/uiType map names and raw values are recorded. Map contents/enumerant labels and exact GPU execution/preemption timing semantics are not supplied; 250 is absent.",
+      "source_lines": [
+        225,
+        313,
+        16
+      ],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 45
+      }
+    },
+    {
+      "id": "allocation-owner-lifetime",
+      "name": "Allocation owner/lifetime",
+      "status": "unresolved",
+      "observed_effect": "33/34 and 36/37 start/stop schemas are observed; 37/v2 fills the formerly missing stop inventory. Device/context/process lifecycles, all owners/shares and pre-existing-object rundown are absent. Natural bounded lifetimes may be inspectable later, but this review makes no object joins.",
+      "source_lines": [
+        197,
+        651,
+        199,
+        648
+      ],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 46
+      }
+    },
+    {
+      "id": "process-allocation-detail-shortcut",
+      "name": "Process/allocation detail shortcut",
+      "status": "unresolved",
+      "observed_effect": "50.hProcessId and 36.hProcessAllocDetails are materialized with in_type=16, out_type=19, length=8. These typed raw fields do not define a numeric PID or beneficiary bridge; 288 is absent.",
+      "source_lines": [
+        313,
+        199
+      ],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 47
+      }
+    },
+    {
+      "id": "guest-process-linux-task",
+      "name": "Guest process to Linux task",
+      "status": "unresolved",
+      "observed_effect": "472/492 and 474/493 are absent; no Halogen request or matching Linux task/container attestation was captured.",
+      "source_lines": [],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 48
+      }
+    },
+    {
+      "id": "etw-engine-pdh-interval",
+      "name": "ETW engine to PDH interval",
+      "status": "unresolved",
+      "observed_effect": "110/250 adapter/node mapping records and original PDH integration interval are absent. QPC clock calibration alone does not supply engine/workload attribution.",
+      "source_lines": [
+        1
+      ],
+      "criterion": {
+        "path": "C:/Projects/strix-alloy-clean/docs/research/halogen-etw-implementation-scope-review-20261006.md",
+        "line": 49
+      }
+    }
+  ],
+  "conclusion": {
+    "closed_provenance_edges": 0,
+    "total_provenance_edges": 9,
+    "exclusive_halogen_ownership": false,
+    "historical_rejection_retained": true,
+    "prior_partial_performance_qualified": false,
+    "qualified_speed_gain": false,
+    "new_capture_recommended": false,
+    "scope": "Observed idle coverage only; no new diagnostic gates"
+  },
+  "validation": {
+    "json_lines_parsed": 8456,
+    "histogram_sum": 8454,
+    "decoder_summary_matches_streamed_count": true,
+    "requested_and_hw450_schema_variants": 13,
+    "all_nine_edges_remain_unresolved": true
+  }
+}

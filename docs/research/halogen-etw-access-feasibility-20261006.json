@@ -1,0 +1,301 @@
+{
+  "schema": "halogen.etw-access-feasibility.v1",
+  "date": "2026-10-06",
+  "observation_time_utc": "2026-10-06T20:49:17.091Z",
+  "scope": "Narrow read-only token/native identity/provider-security/toolchain check. Only this note and its Markdown companion were saved.",
+  "trace": false,
+  "start_trace_called": false,
+  "enable_trace_called": false,
+  "wpr_called": false,
+  "capture": false,
+  "token_duplication": false,
+  "privilege_or_group_change": false,
+  "uac_or_runas": false,
+  "installation": false,
+  "server_operations": false,
+  "hardware_operations": false,
+  "rejected_audit_repeated_or_inspected": false,
+  "attribution_status": "not-attributed",
+  "speed_gain_claim": false,
+  "conclusion": {
+    "ordinary_session_default_access_eligible": true,
+    "reason": "Performance Log Users S-1-5-32-559 is enabled in both current execution and retained console tokens.",
+    "current_execution_elevated": false,
+    "retained_console_elevated": false,
+    "existing_elevated_console_token_found": false,
+    "se_system_profile_privilege_present": false,
+    "dxgkrnl_enable_authorization": "unknown",
+    "dxgkrnl_enable_denied_proven": false,
+    "dxgkrnl_enable_allowed_proven": false,
+    "provider_acl_read": "denied: EventAccessQuery returned ERROR_ACCESS_DENIED (5); no descriptor returned",
+    "provider_acl_read_denial_is_enable_denial": false,
+    "installed_build_prerequisites_present": true,
+    "build_verified": false,
+    "next_implementation": "Native bounded ordinary file-mode controller can be implemented with the existing token; actual StartTrace and EnableTraceEx2 results must be handled fail-closed when an authorized capture eventually occurs. These read-only checks cannot certify installed provider enable success."
+  },
+  "api_access": {
+    "process_handle_right": "PROCESS_QUERY_LIMITED_INFORMATION (0x1000)",
+    "token_handle_right": "TOKEN_QUERY (0x8)",
+    "functions_called": [
+      "GetCurrentProcess",
+      "OpenProcess",
+      "QueryFullProcessImageNameW",
+      "GetProcessTimes",
+      "OpenProcessToken",
+      "GetTokenInformation",
+      "ConvertSidToStringSidW",
+      "LookupPrivilegeNameW",
+      "EventAccessQuery",
+      "CloseHandle",
+      "LocalFree"
+    ],
+    "console_identity_verified_before_token_query": true,
+    "console_identity_stable_after_token_query": true,
+    "read_only": true,
+    "no_foreign_token_execution_or_duplication": true
+  },
+  "expected_console_identity_source": {
+    "parent_provided": true,
+    "receipt_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\continuation-frontier-final-20261006-evening.json",
+    "authoritative_state_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\continuation-current.json",
+    "receipt_read_by_this_check": false,
+    "matched_native_handle": true
+  },
+  "observations": {
+    "trace": false,
+    "current_execution_process": {
+      "identity": {
+        "pid": 19552,
+        "creation_time_100ns": 134357933570915540,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
+      },
+      "token": {
+        "elevated": false,
+        "elevation_type": "limited",
+        "integrity_sid": "S-1-16-8192",
+        "user_sid": "S-1-5-21-1156977968-1475536068-3990926907-1001",
+        "relevant_groups": [
+          {
+            "sid": "S-1-1-0",
+            "attributes_hex": "0x7",
+            "enabled": true,
+            "deny_only": false
+          },
+          {
+            "sid": "S-1-5-32-544",
+            "attributes_hex": "0x10",
+            "enabled": false,
+            "deny_only": true
+          },
+          {
+            "sid": "S-1-5-32-559",
+            "attributes_hex": "0x7",
+            "enabled": true,
+            "deny_only": false
+          },
+          {
+            "sid": "S-1-5-4",
+            "attributes_hex": "0x7",
+            "enabled": true,
+            "deny_only": false
+          },
+          {
+            "sid": "S-1-5-11",
+            "attributes_hex": "0x7",
+            "enabled": true,
+            "deny_only": false
+          }
+        ],
+        "privileges": [
+          {
+            "name": "SeShutdownPrivilege",
+            "attributes_hex": "0x0",
+            "enabled": false
+          },
+          {
+            "name": "SeChangeNotifyPrivilege",
+            "attributes_hex": "0x3",
+            "enabled": true
+          },
+          {
+            "name": "SeUndockPrivilege",
+            "attributes_hex": "0x0",
+            "enabled": false
+          },
+          {
+            "name": "SeIncreaseWorkingSetPrivilege",
+            "attributes_hex": "0x0",
+            "enabled": false
+          },
+          {
+            "name": "SeTimeZonePrivilege",
+            "attributes_hex": "0x0",
+            "enabled": false
+          }
+        ],
+        "query_access": "TOKEN_QUERY only; no adjustment or duplication"
+      }
+    },
+    "retained_console": {
+      "expected_identity": {
+        "pid": 5136,
+        "creation_time_100ns": 134357918635702750,
+        "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      },
+      "native_identity_before": {
+        "pid": 5136,
+        "creation_time_100ns": 134357918635702750,
+        "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      },
+      "retained_identity_matches": true,
+      "token": {
+        "elevated": false,
+        "elevation_type": "limited",
+        "integrity_sid": "S-1-16-8192",
+        "user_sid": "S-1-5-21-1156977968-1475536068-3990926907-1001",
+        "relevant_groups": [
+          {
+            "sid": "S-1-1-0",
+            "attributes_hex": "0x7",
+            "enabled": true,
+            "deny_only": false
+          },
+          {
+            "sid": "S-1-5-32-544",
+            "attributes_hex": "0x10",
+            "enabled": false,
+            "deny_only": true
+          },
+          {
+            "sid": "S-1-5-32-559",
+            "attributes_hex": "0x7",
+            "enabled": true,
+            "deny_only": false
+          },
+          {
+            "sid": "S-1-5-4",
+            "attributes_hex": "0x7",
+            "enabled": true,
+            "deny_only": false
+          },
+          {
+            "sid": "S-1-5-11",
+            "attributes_hex": "0x7",
+            "enabled": true,
+            "deny_only": false
+          }
+        ],
+        "privileges": [
+          {
+            "name": "SeShutdownPrivilege",
+            "attributes_hex": "0x0",
+            "enabled": false
+          },
+          {
+            "name": "SeChangeNotifyPrivilege",
+            "attributes_hex": "0x3",
+            "enabled": true
+          },
+          {
+            "name": "SeUndockPrivilege",
+            "attributes_hex": "0x0",
+            "enabled": false
+          },
+          {
+            "name": "SeIncreaseWorkingSetPrivilege",
+            "attributes_hex": "0x0",
+            "enabled": false
+          },
+          {
+            "name": "SeTimeZonePrivilege",
+            "attributes_hex": "0x0",
+            "enabled": false
+          }
+        ],
+        "query_access": "TOKEN_QUERY only; no adjustment or duplication"
+      },
+      "native_identity_after": {
+        "pid": 5136,
+        "creation_time_100ns": 134357918635702750,
+        "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      },
+      "identity_stable": true
+    },
+    "provider_security": {
+      "api_available": true,
+      "initial_result": 5,
+      "required_bytes": 0
+    }
+  },
+  "toolchain": {
+    "compiler": {
+      "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+      "file_version": "19.44.35228.0"
+    },
+    "linker": {
+      "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+      "file_version": "14.44.35228.0"
+    },
+    "sdk_version": "10.0.26100.0",
+    "headers": [
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\evntrace.h",
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\evntprov.h",
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\evntcons.h",
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\tdh.h",
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\Windows.h"
+    ],
+    "libraries": [
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64\\tdh.lib",
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64\\advapi32.lib",
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64\\kernel32.lib",
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\ucrt\\x64\\ucrt.lib",
+      "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\ucrt\\x64\\libucrt.lib"
+    ],
+    "msvc_runtime_headers_and_libraries_present": true,
+    "declarations_confirmed": [
+      "StartTraceW",
+      "EnableTraceEx2",
+      "OpenTraceW",
+      "ProcessTrace",
+      "TdhGetEventInformation",
+      "TdhEnumerateManifestProviderEvents",
+      "TdhGetManifestEventInformation"
+    ],
+    "no_per_processor_buffering_value": "0x10000000",
+    "current_path_compiler_linker_available": false,
+    "cmake_on_path": true,
+    "setup_scripts": [
+      "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat",
+      "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
+    ],
+    "setup_scripts_executed": false,
+    "compiler_or_linker_executed": false,
+    "compile_link_verified": false,
+    "evidence": "Delegated read-only installed-file/version/header inspection; no compilation or mutation."
+  },
+  "sources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntrace/nf-evntrace-starttracew",
+      "supports": "Performance Log Users can start ordinary cross-process trace sessions; NT Kernel Logger restrictions are separate."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntrace/nf-evntrace-enabletraceex2",
+      "supports": "Performance Log Users can enable providers to cross-process sessions; actual enablement may return access denied."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntcons/nf-evntcons-eventaccesscontrol",
+      "supports": "Provider GUID permissions can restrict provider enable independently from session creation."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntcons/nf-evntcons-eventaccessquery",
+      "supports": "Read-only retrieval of provider/session security descriptors, including default permissions when no registry GUID entry exists."
+    }
+  ],
+  "limitations": [
+    "The current execution token is the tool-launched Python observer's inherited token; it does not certify every Codex GUI/broker process token.",
+    "No EventAccessQuery security descriptor was available for an access-right evaluation.",
+    "Default group eligibility does not prove there is no provider-specific restrictive ACL.",
+    "No session, enablement, rundown, event delivery, file write, compiler or linker was tested.",
+    "No newly queried token or permission result changes historical attribution or performance qualification."
+  ]
+}
