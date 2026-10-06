@@ -58,3 +58,7 @@ proposal producers; each must establish useful readiness, complete resolution
 cost and net serving benefit. This consumer does not change ordinary target
 Prefill, and its tests provide no Decode or acceptance value. See the
 [contract evidence and placement assessment](halogen-pld-nohit-contract-status-20261006.md).
+The next connected implementation is the bounded authoritative-outcome
+preview/seal handoff described in the
+[native scheduling design](halogen-pld-authoritative-handoff-design-20261006.md).
+Its possible overlap window is structural; useful readiness has not been timed.
