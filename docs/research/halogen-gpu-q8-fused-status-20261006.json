@@ -1,0 +1,838 @@
+{
+  "schema": "halogen.gpu-q8-fused.screen.v1",
+  "timestamp_utc": "2026-10-06T04:47:30.993516+00:00",
+  "status": "finite-screen-complete-retired-original-ready-open",
+  "component_hardware_executed": true,
+  "serving_installed": false,
+  "new_engine_requests": 0,
+  "exact_frozen_output_qualified": true,
+  "component_latency_qualified": true,
+  "actual_prefill_tps": null,
+  "actual_decode_tps": null,
+  "native_acceptance": null,
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_gpu_hidden_q8_fused\\hidden_q8_fused.hip",
+    "bytes": 5905,
+    "sha256": "fa374fd2eaa5dcb7a58aecb4f62eab13eee8a47877c2aa2422e36374d875819b"
+  },
+  "build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-build-4f1251abd4db4d57a35441a87b7e214d\\build.json",
+    "bytes": 5131,
+    "sha256": "f34939438b6132adbf1f2668f77ae67795a4de5a2d6f58fed96a359ea61983d9"
+  },
+  "codeobject": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-build-4f1251abd4db4d57a35441a87b7e214d\\hidden-q8-fused.hsaco",
+    "bytes": 6352,
+    "sha256": "4fed1059167eed6faf2aad4ed4b6636fa6c561003c3d58ab5464b827efb79d4f"
+  },
+  "disassembly": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-build-4f1251abd4db4d57a35441a87b7e214d\\disassembly-stdout.txt",
+    "bytes": 33943,
+    "sha256": "26c0150689e00edb123cf1875b2e107310a1ae6af79297d83ab1c98fac89a45b"
+  },
+  "metadata": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-build-4f1251abd4db4d57a35441a87b7e214d\\metadata-stdout.txt",
+    "bytes": 4772,
+    "sha256": "91dac1e63d79868dfb75b5b6fe8478ed26759c6ff0a90fd3b5d778a06874b517"
+  },
+  "host_build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-host-compile-332b25e2ec0e4347abaa4d69214d0666\\build.json",
+    "bytes": 1879,
+    "sha256": "7d150fcdc468353735272318598c698cb39a9f75dc8a079a19dc1a31971db30f"
+  },
+  "host_binary_sha256": "2ee18d0f7996f9ea5d7476fa73eef74bd80540b4ffe7b50d4e135fb1e03761cc",
+  "harness": {
+    "replay.c": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_gpu_hidden_q8_fused\\replay.c",
+      "bytes": 30400,
+      "sha256": "184247a546507b41832af8dbefda1d3da43fe8f495c6c075a61a1a4243803bcc"
+    },
+    "image_wrapper.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_gpu_hidden_q8_fused\\image_wrapper.py",
+      "bytes": 10402,
+      "sha256": "51c31448b8ea65d8dc5bc9d9a9c486b34fde203a141da4f27558b10dfa0c902e"
+    },
+    "owned_run.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_gpu_hidden_q8_fused\\owned_run.py",
+      "bytes": 31092,
+      "sha256": "916b6719a385a34616d80ea118262cfee95575d8be3b7074e56124beb435320a"
+    },
+    "build.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_gpu_hidden_q8_fused\\build.py",
+      "bytes": 5379,
+      "sha256": "9ccadb14a3b53a3de67b96a8f3df3bdd637abf44b6a1e5d60b6e939571b1439e"
+    }
+  },
+  "geometry": {
+    "K": 2560,
+    "N": 2560,
+    "M": 4,
+    "grid": [
+      160,
+      1,
+      1
+    ],
+    "block": [
+      256,
+      1,
+      1
+    ],
+    "wave32": true,
+    "float_mode": 240,
+    "vgprs": 68,
+    "spills": 0,
+    "LDS": 0,
+    "stream": 0
+  },
+  "static_instruction_counts": {
+    "FMA_MIX": 16,
+    "DOT2": 32,
+    "weight_pair_PERM": 8,
+    "ADD_DPP": 16,
+    "global128_load": 9,
+    "affine32_load": 1
+  },
+  "pre_stop_failed_admission": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-coordinator-e80a4225a9ce4b34bcda7b0ff8adde45\\original-interference.json",
+    "bytes": 1172,
+    "sha256": "c143c2c3dea9eed64fa15a0b0619e27c24f629301ad748a768a5ae84dfbb177e"
+  },
+  "observed_GPU_load": [
+    {
+      "Name": "pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_Copy",
+      "UtilizationPercentage": 1
+    }
+  ],
+  "source_and_emission_reviewer": {
+    "agent": "/root/q8_engine_roi",
+    "release": "one bounded frozen exact-output comparison only"
+  },
+  "harness_lifecycle_reviewer": {
+    "agent": "/root/q8_affine_math",
+    "release": "one finite screen under unchanged guards"
+  },
+  "double_rounding_counterexample": {
+    "code": 3,
+    "scale_half": "0x3c03",
+    "bias_half": "0x9000",
+    "native_FP32": 3.00830078125,
+    "intermediate_FP16": 3.0078125,
+    "native_BF16": "0x4041",
+    "double_rounded_BF16": "0x4040",
+    "reproduced_by_root": true
+  },
+  "placements": {
+    "GPU": "Frozen exact-output qualified; measured no demonstrated component advantage; retired",
+    "CPU": "no qualified faster crossing or exact DOT2 substitute",
+    "NPU": "prior complete H routes slower; not attached"
+  },
+  "ordinary_prefill_affected": false,
+  "acceptance_increase_intended": false,
+  "original_server_preserved": true,
+  "goal_achieved": false,
+  "decision": "No demonstrated component advantage; keep disabled; no unchanged rerun or serving cohort justified",
+  "adopted": false,
+  "engine_hook_installed": false,
+  "component_timing": {
+    "original": {
+      "mean_us": 169.8463140625,
+      "median_us": 171.11900450000002,
+      "min_us": 139.29399800000002,
+      "max_us": 214.331999
+    },
+    "candidate": {
+      "mean_us": 173.988249125,
+      "median_us": 163.8649925,
+      "min_us": 142.307997,
+      "max_us": 266.72899700000005
+    }
+  },
+  "candidate_mean_latency_change_percent": 2.438637002729349,
+  "candidate_faster_pairs": 7,
+  "paired_median_candidate_minus_original_us": 6.590001499999998,
+  "order_strata": {
+    "original_first": {
+      "original": {
+        "mean_gpu_ms": 0.172896376,
+        "minimum_gpu_ms": 0.139293998,
+        "maximum_gpu_ms": 0.214331999,
+        "measured_pairs": 8
+      },
+      "candidate": {
+        "mean_gpu_ms": 0.17136050025,
+        "minimum_gpu_ms": 0.142307997,
+        "maximum_gpu_ms": 0.202561006,
+        "measured_pairs": 8
+      },
+      "paired_original_minus_candidate": {
+        "mean_gpu_ms": 0.0015358757500000021,
+        "minimum_gpu_ms": -0.018317,
+        "maximum_gpu_ms": 0.04969100599999998,
+        "measured_pairs": 8
+      }
+    },
+    "candidate_first": {
+      "original": {
+        "mean_gpu_ms": 0.166796252125,
+        "minimum_gpu_ms": 0.140404999,
+        "maximum_gpu_ms": 0.194144994,
+        "measured_pairs": 8
+      },
+      "candidate": {
+        "mean_gpu_ms": 0.176615998,
+        "minimum_gpu_ms": 0.144210994,
+        "maximum_gpu_ms": 0.266728997,
+        "measured_pairs": 8
+      },
+      "paired_original_minus_candidate": {
+        "mean_gpu_ms": -0.009819745875000004,
+        "minimum_gpu_ms": -0.07266099700000003,
+        "maximum_gpu_ms": 0.031056002,
+        "measured_pairs": 8
+      }
+    }
+  },
+  "input_order_strata": {
+    "A_original_first": {
+      "original": {
+        "mean_gpu_ms": 0.17963450025,
+        "minimum_gpu_ms": 0.139293998,
+        "maximum_gpu_ms": 0.214331999,
+        "measured_pairs": 4
+      },
+      "candidate": {
+        "mean_gpu_ms": 0.17241000025,
+        "minimum_gpu_ms": 0.157610998,
+        "maximum_gpu_ms": 0.202561006,
+        "measured_pairs": 4
+      },
+      "paired_original_minus_candidate": {
+        "mean_gpu_ms": 0.007224500000000002,
+        "minimum_gpu_ms": -0.018317,
+        "maximum_gpu_ms": 0.04969100599999998,
+        "measured_pairs": 4
+      }
+    },
+    "B_original_first": {
+      "original": {
+        "mean_gpu_ms": 0.16615825174999999,
+        "minimum_gpu_ms": 0.140504003,
+        "maximum_gpu_ms": 0.193803996,
+        "measured_pairs": 4
+      },
+      "candidate": {
+        "mean_gpu_ms": 0.17031100025,
+        "minimum_gpu_ms": 0.142307997,
+        "maximum_gpu_ms": 0.200920999,
+        "measured_pairs": 4
+      },
+      "paired_original_minus_candidate": {
+        "mean_gpu_ms": -0.0041527484999999975,
+        "minimum_gpu_ms": -0.01648999699999998,
+        "maximum_gpu_ms": 0.007161990000000007,
+        "measured_pairs": 4
+      }
+    },
+    "A_candidate_first": {
+      "original": {
+        "mean_gpu_ms": 0.16260225325,
+        "minimum_gpu_ms": 0.141846001,
+        "maximum_gpu_ms": 0.194068,
+        "measured_pairs": 4
+      },
+      "candidate": {
+        "mean_gpu_ms": 0.18823424725000001,
+        "minimum_gpu_ms": 0.144210994,
+        "maximum_gpu_ms": 0.266728997,
+        "measured_pairs": 4
+      },
+      "paired_original_minus_candidate": {
+        "mean_gpu_ms": -0.025631994000000005,
+        "minimum_gpu_ms": -0.07266099700000003,
+        "maximum_gpu_ms": 0.00034201200000000265,
+        "measured_pairs": 4
+      }
+    },
+    "B_candidate_first": {
+      "original": {
+        "mean_gpu_ms": 0.17099025099999998,
+        "minimum_gpu_ms": 0.140404999,
+        "maximum_gpu_ms": 0.194144994,
+        "measured_pairs": 4
+      },
+      "candidate": {
+        "mean_gpu_ms": 0.16499774875,
+        "minimum_gpu_ms": 0.146697998,
+        "maximum_gpu_ms": 0.201020002,
+        "measured_pairs": 4
+      },
+      "paired_original_minus_candidate": {
+        "mean_gpu_ms": 0.005992502249999997,
+        "minimum_gpu_ms": -0.0070189979999999985,
+        "maximum_gpu_ms": 0.031056002,
+        "measured_pairs": 4
+      }
+    }
+  },
+  "order_effects": {
+    "original": {
+      "first_position_mean_gpu_ms": 0.172896376,
+      "second_position_mean_gpu_ms": 0.166796252125,
+      "second_minus_first_gpu_ms": -0.006100123875000002,
+      "pairs_each": 8
+    },
+    "candidate": {
+      "first_position_mean_gpu_ms": 0.176615998,
+      "second_position_mean_gpu_ms": 0.17136050025,
+      "second_minus_first_gpu_ms": -0.005255497750000004,
+      "pairs_each": 8
+    }
+  },
+  "retained_all_outliers": true,
+  "intrinsic_slowdown_claim": false,
+  "cold_gain_qualified": false,
+  "outputs": [
+    {
+      "label": "A",
+      "original_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "bytes": 20480,
+      "exact_word_mismatches": 0,
+      "nonfinite_values": 0
+    },
+    {
+      "label": "B",
+      "original_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "bytes": 20480,
+      "exact_word_mismatches": 0,
+      "nonfinite_values": 0
+    }
+  ],
+  "raw_timing_pairs": [
+    {
+      "sequence": 0,
+      "label": "A",
+      "first_arm": "original",
+      "measured": false,
+      "original_gpu_ms": 0.227642998,
+      "candidate_gpu_ms": 0.161295995,
+      "sum_single_gpu_ms": 0.388938993,
+      "original_host_enqueue_wait_ms": 0.673585,
+      "candidate_host_enqueue_wait_ms": 0.410645,
+      "host_pair_elapsed_ms": 1.851681,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 1,
+      "label": "B",
+      "first_arm": "candidate",
+      "measured": false,
+      "original_gpu_ms": 0.155629992,
+      "candidate_gpu_ms": 0.156423002,
+      "sum_single_gpu_ms": 0.312052995,
+      "original_host_enqueue_wait_ms": 0.385234,
+      "candidate_host_enqueue_wait_ms": 0.384772,
+      "host_pair_elapsed_ms": 1.364913,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 2,
+      "label": "B",
+      "first_arm": "original",
+      "measured": false,
+      "original_gpu_ms": 0.161470994,
+      "candidate_gpu_ms": 0.156852007,
+      "sum_single_gpu_ms": 0.318323016,
+      "original_host_enqueue_wait_ms": 0.39915,
+      "candidate_host_enqueue_wait_ms": 0.394716,
+      "host_pair_elapsed_ms": 1.354836,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 3,
+      "label": "A",
+      "first_arm": "candidate",
+      "measured": false,
+      "original_gpu_ms": 0.155586004,
+      "candidate_gpu_ms": 0.145333007,
+      "sum_single_gpu_ms": 0.300918996,
+      "original_host_enqueue_wait_ms": 0.400371,
+      "candidate_host_enqueue_wait_ms": 0.399117,
+      "host_pair_elapsed_ms": 1.36202,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 4,
+      "label": "A",
+      "first_arm": "original",
+      "measured": true,
+      "original_gpu_ms": 0.214331999,
+      "candidate_gpu_ms": 0.164640993,
+      "sum_single_gpu_ms": 0.378973007,
+      "original_host_enqueue_wait_ms": 0.433802,
+      "candidate_host_enqueue_wait_ms": 0.396916,
+      "host_pair_elapsed_ms": 1.373515,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 5,
+      "label": "B",
+      "first_arm": "candidate",
+      "measured": true,
+      "original_gpu_ms": 0.194144994,
+      "candidate_gpu_ms": 0.163088992,
+      "sum_single_gpu_ms": 0.357234001,
+      "original_host_enqueue_wait_ms": 0.404837,
+      "candidate_host_enqueue_wait_ms": 0.338833,
+      "host_pair_elapsed_ms": 1.33531,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 6,
+      "label": "B",
+      "first_arm": "original",
+      "measured": true,
+      "original_gpu_ms": 0.184431002,
+      "candidate_gpu_ms": 0.200920999,
+      "sum_single_gpu_ms": 0.385352015,
+      "original_host_enqueue_wait_ms": 0.397346,
+      "candidate_host_enqueue_wait_ms": 0.393121,
+      "host_pair_elapsed_ms": 1.346729,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 7,
+      "label": "A",
+      "first_arm": "candidate",
+      "measured": true,
+      "original_gpu_ms": 0.194068,
+      "candidate_gpu_ms": 0.266728997,
+      "sum_single_gpu_ms": 0.460797012,
+      "original_host_enqueue_wait_ms": 0.404155,
+      "candidate_host_enqueue_wait_ms": 0.48204,
+      "host_pair_elapsed_ms": 1.456163,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 8,
+      "label": "A",
+      "first_arm": "original",
+      "measured": true,
+      "original_gpu_ms": 0.192616001,
+      "candidate_gpu_ms": 0.202561006,
+      "sum_single_gpu_ms": 0.395177007,
+      "original_host_enqueue_wait_ms": 0.398511,
+      "candidate_host_enqueue_wait_ms": 0.409524,
+      "host_pair_elapsed_ms": 1.360601,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 9,
+      "label": "B",
+      "first_arm": "candidate",
+      "measured": true,
+      "original_gpu_ms": 0.194001004,
+      "candidate_gpu_ms": 0.201020002,
+      "sum_single_gpu_ms": 0.395021021,
+      "original_host_enqueue_wait_ms": 0.395849,
+      "candidate_host_enqueue_wait_ms": 0.41278,
+      "host_pair_elapsed_ms": 1.354319,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 10,
+      "label": "B",
+      "first_arm": "original",
+      "measured": true,
+      "original_gpu_ms": 0.193803996,
+      "candidate_gpu_ms": 0.186642006,
+      "sum_single_gpu_ms": 0.380446017,
+      "original_host_enqueue_wait_ms": 0.405475,
+      "candidate_host_enqueue_wait_ms": 0.391493,
+      "host_pair_elapsed_ms": 1.412106,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 11,
+      "label": "A",
+      "first_arm": "candidate",
+      "measured": true,
+      "original_gpu_ms": 0.169942006,
+      "candidate_gpu_ms": 0.193263993,
+      "sum_single_gpu_ms": 0.363205999,
+      "original_host_enqueue_wait_ms": 0.349063,
+      "candidate_host_enqueue_wait_ms": 0.405906,
+      "host_pair_elapsed_ms": 1.368094,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 12,
+      "label": "A",
+      "first_arm": "original",
+      "measured": true,
+      "original_gpu_ms": 0.172296003,
+      "candidate_gpu_ms": 0.164827004,
+      "sum_single_gpu_ms": 0.337123007,
+      "original_host_enqueue_wait_ms": 0.360604,
+      "candidate_host_enqueue_wait_ms": 0.331419,
+      "host_pair_elapsed_ms": 1.305344,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 13,
+      "label": "B",
+      "first_arm": "candidate",
+      "measured": true,
+      "original_gpu_ms": 0.155410007,
+      "candidate_gpu_ms": 0.149184003,
+      "sum_single_gpu_ms": 0.30459401,
+      "original_host_enqueue_wait_ms": 0.300924,
+      "candidate_host_enqueue_wait_ms": 0.320275,
+      "host_pair_elapsed_ms": 1.232519,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 14,
+      "label": "B",
+      "first_arm": "original",
+      "measured": true,
+      "original_gpu_ms": 0.145894006,
+      "candidate_gpu_ms": 0.142307997,
+      "sum_single_gpu_ms": 0.288201988,
+      "original_host_enqueue_wait_ms": 0.301937,
+      "candidate_host_enqueue_wait_ms": 0.279132,
+      "host_pair_elapsed_ms": 1.097596,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 15,
+      "label": "A",
+      "first_arm": "candidate",
+      "measured": true,
+      "original_gpu_ms": 0.141846001,
+      "candidate_gpu_ms": 0.148733005,
+      "sum_single_gpu_ms": 0.290579021,
+      "original_host_enqueue_wait_ms": 0.287536,
+      "candidate_host_enqueue_wait_ms": 0.300253,
+      "host_pair_elapsed_ms": 1.08027,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 16,
+      "label": "A",
+      "first_arm": "original",
+      "measured": true,
+      "original_gpu_ms": 0.139293998,
+      "candidate_gpu_ms": 0.157610998,
+      "sum_single_gpu_ms": 0.296904981,
+      "original_host_enqueue_wait_ms": 0.279131,
+      "candidate_host_enqueue_wait_ms": 0.334212,
+      "host_pair_elapsed_ms": 1.106407,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "sequence": 17,
+      "label": "B",
+      "first_arm": "candidate",
+      "measured": true,
+      "original_gpu_ms": 0.140404999,
+      "candidate_gpu_ms": 0.146697998,
+      "sum_single_gpu_ms": 0.287102997,
+      "original_host_enqueue_wait_ms": 0.294555,
+      "candidate_host_enqueue_wait_ms": 0.283664,
+      "host_pair_elapsed_ms": 1.094614,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 18,
+      "label": "B",
+      "first_arm": "original",
+      "measured": true,
+      "original_gpu_ms": 0.140504003,
+      "candidate_gpu_ms": 0.151372999,
+      "sum_single_gpu_ms": 0.291877002,
+      "original_host_enqueue_wait_ms": 0.282278,
+      "candidate_host_enqueue_wait_ms": 0.300078,
+      "host_pair_elapsed_ms": 1.120345,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138",
+      "candidate_output_sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    },
+    {
+      "sequence": 19,
+      "label": "A",
+      "first_arm": "candidate",
+      "measured": true,
+      "original_gpu_ms": 0.144553006,
+      "candidate_gpu_ms": 0.144210994,
+      "sum_single_gpu_ms": 0.288764,
+      "original_host_enqueue_wait_ms": 0.289561,
+      "candidate_host_enqueue_wait_ms": 0.300957,
+      "host_pair_elapsed_ms": 1.081369,
+      "outputs_byte_equal": true,
+      "priming_launches": 2,
+      "timed_launches": 2,
+      "original_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "candidate_output_sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    }
+  ],
+  "raw_counters": {
+    "schema": "halogen.gpu-hidden-q8-fused.replay.v1",
+    "passed": true,
+    "scope": "standalone fixed M4 hidden FC; no full-head/token/acceptance/prefill claim",
+    "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+    "original_codeobject_sha256": "45941c0579dc3487d07978a50c85cbaa141bbb674b225e708e82d81397334a83",
+    "candidate_codeobject_sha256": "4fed1059167eed6faf2aad4ed4b6636fa6c561003c3d58ab5464b827efb79d4f",
+    "candidate_codeobject_bytes": 6352,
+    "runtime_sha256": "6f3c9fe6b655a611e04a9a5a157cb46c425717e2873973f11a67bb6bbf6587b5",
+    "runtime_version": 71460850,
+    "driver_version": 71460850,
+    "raw_weight_sha256": "018511894df3996e3a2fcb1dff60860c45a808b65036fd38db472b6e985bdd3f",
+    "candidate_raw_weight_sha256": "018511894df3996e3a2fcb1dff60860c45a808b65036fd38db472b6e985bdd3f",
+    "original_symbol": "_ZN7halogen12_GLOBAL__N_16k_lq8wILi4ELi16ELi1EEEvPKhPKtPtll",
+    "candidate_symbol": "halogen_gpu_hidden_q8_fused",
+    "input_sha256": [
+      "bf43576e6a9d47efb9a15bcba42d74618ade2ea64b025e747d1c6960e2ddff34",
+      "0a46c80b3de775d94eee31b1ca4b3927fe8368353f12f5a40314d88591a31711"
+    ],
+    "expected_output_sha256": [
+      "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc",
+      "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    ],
+    "K": 2560,
+    "N": 2560,
+    "M": 4,
+    "original_grid": [
+      160,
+      1,
+      1
+    ],
+    "candidate_grid": [
+      160,
+      1,
+      1
+    ],
+    "block": [
+      256,
+      1,
+      1
+    ],
+    "default_stream": true,
+    "dynamic_shared_bytes": 0,
+    "public_argument_count": 5,
+    "raw_weight_bytes": 6963200,
+    "candidate_raw_weight_bytes": 6963200,
+    "input_bytes_each": 20480,
+    "output_bytes_each": 20480,
+    "initialization_host_ms": 1146.822123,
+    "initialization_scope": "file/hash checks, module load, resident allocation/upload and event creation; offline compilation excluded",
+    "timing_scope": "one resident same-arm-primed single launch per default-stream event bracket; host enqueue gaps and events included; primer, poison, readback, hashes and IO excluded",
+    "host_pair_scope": "both primers, poison, single enqueue/waits, readback and hash checks; not H-only latency",
+    "untimed_same_arm_primer_per_timed_launch": true,
+    "separate_priming_output": true,
+    "separately_timed_single_launches": true,
+    "exact_hash_after_every_timed_launch": true,
+    "warmup_pairs": 4,
+    "measured_pairs": 16,
+    "first_pair_is_warmup": true,
+    "balanced_A_B_and_arm_order": true,
+    "input_sequence": "A,B,B,A repeated",
+    "pairs_completed": 20,
+    "outputs_equal": 40,
+    "launch_attempts": 80,
+    "launches_ok": 80,
+    "priming_launches": 40,
+    "timed_launches": 40,
+    "copies_ok": 84,
+    "allocations_ok": 8,
+    "free_ok": 8,
+    "module_loads": 2,
+    "module_unloads": 2,
+    "event_creates": 2,
+    "event_records": 80,
+    "event_waits": 40,
+    "event_elapsed": 40,
+    "event_destroys": 2,
+    "cleanup_sync_attempts": 1,
+    "cleanup_sync_ok": 1,
+    "cleanup_errors": 0,
+    "file_close_errors": 0,
+    "immutable_files_rechecked": true,
+    "output_files_written": 4,
+    "full_head_qualified": false,
+    "acceptance_claim": false,
+    "end_to_end_speed_claim": false,
+    "prefill_gain_claim": false,
+    "tolerance_adjustment": false,
+    "arithmetic_fitting": false,
+    "error": "",
+    "error_code": 0
+  },
+  "raw_replay": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-gpu-hidden-q8-fused-5059c7378d8943dfbd41f8ad3fc26018\\native\\timing.json",
+    "bytes": 13422,
+    "sha256": "a65dd9851af676934b1f283671b31a4daf38379540f04c2fade4ebcb5acb2f03"
+  },
+  "comparison": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-gpu-hidden-q8-fused-5059c7378d8943dfbd41f8ad3fc26018\\comparison.json",
+    "bytes": 6556,
+    "sha256": "55ab765260b111d646f171b906196bc3f2b4bd2103aadea3d68f1c5805db0010"
+  },
+  "root_result_audit": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-gpu-hidden-q8-fused-5059c7378d8943dfbd41f8ad3fc26018\\root-result-audit.json",
+    "bytes": 5312,
+    "sha256": "e47181272e7485b76bed5edeff55018f7d66c46cb814dbac7b408619c296df91"
+  },
+  "runtime_binding": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-gpu-hidden-q8-fused-5059c7378d8943dfbd41f8ad3fc26018\\runtime.json",
+    "bytes": 7206,
+    "sha256": "62f76ab0f8650bfe4081229cb83cdde32ca426eedca8f03eae549406bbdff0ab"
+  },
+  "owned_cleanup": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-gpu-hidden-q8-fused-5059c7378d8943dfbd41f8ad3fc26018\\result.json",
+    "bytes": 952,
+    "sha256": "1b83462209970be9862540361c52960625e08f384bc9f5fad1f4974d16cd5d3c"
+  },
+  "coordinator": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-coordinator-30ce0b79b6ac46a2bf54fd88618924fd\\result.json",
+    "bytes": 442,
+    "sha256": "55358ee24d7444335e33fb8e3c48b7b4623dc33430112c85bcce4518ad8e49c0"
+  },
+  "source_seals": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-coordinator-30ce0b79b6ac46a2bf54fd88618924fd\\source-seals.json",
+    "bytes": 1129,
+    "sha256": "4ae9b9b9711e2b2cd7dfb95bf1fa85277df166d2d1b143a62545e98cba5890b3"
+  },
+  "restoration": {
+    "ready": {
+      "passed": true,
+      "time_utc": "2026-10-06T04:45:53.709217+00:00",
+      "controller_identity": {
+        "pid": 25068,
+        "creation_time_100ns": 134357352846161295,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "controller_pid": 25068,
+      "backend_pid": 28660,
+      "controller_run": "c067aa01ff224d318e51dd6237406a21",
+      "backend_run": "b53e26b24a644f589f03c6a5b8d03930",
+      "container_id": "fd33d2b9e3cc16fc1c3d6e0edcef860d30c1c5636ba553b1fe19831f134897df",
+      "health": {
+        "status": "ok",
+        "backend": "halogen-v2",
+        "checkpoint": "v2",
+        "context": 262144,
+        "active_requests": 0,
+        "draining": false,
+        "completed": 0,
+        "cancelled": 0
+      },
+      "engine_NPU_integrated": false,
+      "restoration_only": true,
+      "NPU_executed_during_restoration": false
+    },
+    "result": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-held-restoration-00d5bf7bfa094007bae632a949a20864\\result.json",
+      "bytes": 2652,
+      "sha256": "92fefbf3024936b4f3cb69e9375feab8ac4ee83a51a1255e2ea7bf3da0af4803"
+    },
+    "admission": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-held-restoration-00d5bf7bfa094007bae632a949a20864\\held-memory.json",
+      "bytes": 15345,
+      "sha256": "d3ad7ff4c1179c7c90204e43fb3bb5c0f6ee3fcfa0ae3f38b8a7b63d75a3e323"
+    },
+    "minimum_memory": {
+      "available_bytes": 33084915712,
+      "committed_bytes": 26279350272,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 131752636416
+    },
+    "exact_44gib_sufficiency_proven": false,
+    "second_start_performed": false
+  },
+  "final_live_verification": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\gpu-hidden-q8-fused-coordinator-30ce0b79b6ac46a2bf54fd88618924fd\\final-live-verification.json",
+    "bytes": 1173,
+    "sha256": "ac18a359a212914a7c97d279c6111bda079384477f23c4a3f85493543617b619"
+  },
+  "component_minimum_physical_gib": 43.70973587036133,
+  "component_minimum_commit_gib": 198.76861953735352,
+  "independent_result_reviewer": "/root/q8_engine_roi",
+  "source_agents_terminal": true,
+  "measurement_helpers_terminal": true
+}

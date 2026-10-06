@@ -33,3 +33,12 @@ contract and remains disabled. Neither establishes a Decode or acceptance gain.
 The compact-Q8 two-row GPU MTP kernel also had higher measured component latency
 and remains disabled. Wider cache entries and other shapes remain unmeasured;
 this result does not qualify them.
+
+The subsequent compact-Q8 single-row fused-packing/ADD-DPP GPU H candidate
+also stays disabled. Its complete primed component comparison preserved all40
+timed frozen outputs, but candidate mean173.988microseconds exceeded native
+169.846, with7/16 pair wins and order/drift effects. This establishes no advantage,
+not an intrinsic2.439% slowdown. CPU/NPU offload has no qualified benefit at this
+resident seam; ordinary target Prefill is outside it and acceptance was not
+measured. No unchanged rerun or serving cohort follows. See the
+[source, device assessment and evidence](halogen-gpu-q8-fused-status-20261006.md).
