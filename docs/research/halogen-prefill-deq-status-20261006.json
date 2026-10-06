@@ -1,0 +1,184 @@
+{
+  "schema": "halogen.prefill-deq.status.v1",
+  "decision": "retired-no-useful-advantage",
+  "original_W16": 1,
+  "candidate_W16": 0,
+  "PRE": 1,
+  "KFAST": 1,
+  "N": 10240,
+  "K": 2560,
+  "full_prepared_W_exact": true,
+  "words": 26214400,
+  "bytes_each": 52428800,
+  "excluded_qualifications": 2,
+  "excluded_warmup_pairs": 4,
+  "measured_pairs": 16,
+  "comparison": {
+    "schema": "halogen.prefill-deq.comparison.v1",
+    "excluded_warmup_pairs": 4,
+    "measured_pairs": 16,
+    "prepared_W_only": true,
+    "complete_prep_GEMM_measured": false,
+    "serving_prefill_tok_s": null,
+    "serving_decode_tok_s": null,
+    "native_acceptance": null,
+    "gpu_ms": {
+      "original_mean": 0.872904110375,
+      "candidate_mean": 0.86769036575,
+      "original_median": 0.919883519,
+      "candidate_median": 0.9102090005000001,
+      "paired_candidate_minus_original_mean": -0.0052137446249999955,
+      "paired_candidate_minus_original_median": 0.007455498500000046,
+      "candidate_pair_wins": 8,
+      "order_groups": {
+        "original": -0.011059880375000011,
+        "candidate": 0.0006323911250000203
+      }
+    },
+    "host_enqueue_wait_ms": {
+      "original_mean": 1.239335625,
+      "candidate_mean": 1.2155126875,
+      "original_median": 1.2191635,
+      "candidate_median": 1.287583,
+      "paired_candidate_minus_original_mean": -0.023822937500000016,
+      "paired_candidate_minus_original_median": -0.01031100000000007,
+      "candidate_pair_wins": 9,
+      "order_groups": {
+        "original": -0.16534862500000003,
+        "candidate": 0.11770275
+      }
+    },
+    "qualification_outputs": {
+      "bytes_each": 52428800,
+      "words_each": 26214400,
+      "original_sha256": "6374bfe3b7c36c29cabeb631f125d4291bdf62735abbb0f5c177615d62d675a7",
+      "candidate_sha256": "6374bfe3b7c36c29cabeb631f125d4291bdf62735abbb0f5c177615d62d675a7",
+      "independently_byte_equal": true
+    },
+    "raw_sha256": "093df60932ae8d4b1b6d36574c9bba9c455e4d451f4bb3b93853018f8d92e4a7"
+  },
+  "component": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-prefill-deq-3b1765aa3da1458388076866072fdf7a\\result.json",
+    "bytes": 726,
+    "sha256": "ba4638613d96e802dcd47f7cc63d9925e9fd350f6bb4d45ad6e5bb5fadc22871"
+  },
+  "raw": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-prefill-deq-3b1765aa3da1458388076866072fdf7a\\component\\native\\timing.json",
+    "bytes": 26266,
+    "sha256": "093df60932ae8d4b1b6d36574c9bba9c455e4d451f4bb3b93853018f8d92e4a7"
+  },
+  "original_W": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-prefill-deq-3b1765aa3da1458388076866072fdf7a\\component\\native\\original-W.u16",
+    "bytes": 52428800,
+    "sha256": "6374bfe3b7c36c29cabeb631f125d4291bdf62735abbb0f5c177615d62d675a7"
+  },
+  "candidate_W": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-prefill-deq-3b1765aa3da1458388076866072fdf7a\\component\\native\\candidate-W.u16",
+    "bytes": 52428800,
+    "sha256": "6374bfe3b7c36c29cabeb631f125d4291bdf62735abbb0f5c177615d62d675a7"
+  },
+  "runtime_binding": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-prefill-deq-3b1765aa3da1458388076866072fdf7a\\component\\runtime.json",
+    "bytes": 2341,
+    "sha256": "792ebb835191d3e41c1d552376588ba48c07198cf238926607c4fda006f2a10d"
+  },
+  "coordinator": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-deq-coordinator-6ae4f7290a424f62a17fc1284f5e2504\\result.json",
+    "bytes": 426,
+    "sha256": "db941d81db13286df7d68584054f86aee524edb2cb3514b54e706bbf7e7e0aac"
+  },
+  "restoration": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-deq-held-restoration-263652110aea489fb3a74bdf113977ad\\final-ready.json",
+    "bytes": 844,
+    "sha256": "03c2a1cc86d7a3e4b1472f25222a1cddb484c09b5772a1377f3ad826ff302d07"
+  },
+  "current_server": {
+    "phase": "ready",
+    "controller_pid": 10068,
+    "controller_run_id": "4e6af7d50df54024afee7b47189b8547",
+    "backend_controller_pid": 6964,
+    "backend_run_id": "67ce15759381422c8c1011b4bd81c40e",
+    "container_id": "a144e98c7b978e67b552d682b6c3d188091dd7cacacc11d34845733c7413a918",
+    "context": 262144,
+    "endpoint": "http://127.0.0.1:8840/v1",
+    "keep_open_after_trial": true,
+    "npu_integrated": false,
+    "last_terminal_controller": {
+      "pid": 21092,
+      "run_id": "ae427fa7f0fa405c8b5dc8ec231310ab"
+    },
+    "last_terminal_backend": {
+      "pid": 3804,
+      "run_id": "7bfe79407b5b47aa922704d37f9b83d2"
+    },
+    "restoration_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-deq-held-restoration-263652110aea489fb3a74bdf113977ad\\final-ready.json",
+    "controller_identity": {
+      "pid": 10068,
+      "creation_time_100ns": 134357381762432664,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "sources": {
+    "replay.c": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_deq\\replay.c",
+      "bytes": 28151,
+      "sha256": "0fe60be21173d1f2395725da4ea83aa1210b5d492f3e871927b4e00941d89e5b"
+    },
+    "image_wrapper.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_deq\\image_wrapper.py",
+      "bytes": 5481,
+      "sha256": "1935d06f63d1b97e5214a0919f37142346412244ed3426a531fb71bb23208e1a"
+    },
+    "owned_run.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_deq\\owned_run.py",
+      "bytes": 17064,
+      "sha256": "192cdf556aa472dea3a6135fbb536de2cdb28eea22cb4aa25a3b69e0c5056e8f"
+    },
+    "build.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_deq\\build.py",
+      "bytes": 4773,
+      "sha256": "ea4dd9ad41364a667ddd2191f347a19e06ce91e61b730552e5b2681a25899faf"
+    },
+    "test_image_wrapper.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_deq\\test_image_wrapper.py",
+      "bytes": 954,
+      "sha256": "96e5cc12a347b16763435e597f6f7a5e0d8079e5b23e5f26a482040607f975ec"
+    }
+  },
+  "review": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-prefill-deq-independent-review-20261006.md",
+    "bytes": 7159,
+    "sha256": "08d52c972c7738f86b9984283d90f6dee31291f0251f7943106bec4bc0763c7f"
+  },
+  "full_prep_GEMM_measured": false,
+  "serving_prefill_tok_s": null,
+  "serving_decode_tok_s": null,
+  "native_acceptance": null,
+  "NPU_executed": false,
+  "serving_override_adopted": false,
+  "tolerance_adjustment": false,
+  "placement": {
+    "GPU": "Exact selected original kernels; no useful advantage qualified; disabled.",
+    "CPU": "Owns immutable binding, submission and full output checking; no serving acceleration qualified.",
+    "NPU": "No compatible prepared-weight consumer or useful GPU publication demonstrated; no NPU run justified."
+  },
+  "pre_hardware_failures": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-deq-coordinator-820655713953499c9699fab7655de26b\\result.json",
+      "bytes": 366,
+      "sha256": "06bcbedd981345d1f870c46890aeb8865eac9bba226e7d82f8d8a7c8db59aaaf"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-deq-coordinator-070b5076ffc64645a51c34f4abd85c60\\result.json",
+      "bytes": 584,
+      "sha256": "638bba0116deea2d112ebdb4b7718b531c45d75ff69175c92c0f895141f47e4d"
+    }
+  ],
+  "memory_admission_recovery": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-deq-held-restoration-b42635af0bd1497bafdb27dcce62631b\\result.json",
+    "bytes": 2653,
+    "sha256": "8d8aae0309a1a38f12c11b757b72dc584a14a5790469739eab9cce2c6723ecda"
+  },
+  "no_unchanged_rerun": true,
+  "full_goal_complete": false
+}
