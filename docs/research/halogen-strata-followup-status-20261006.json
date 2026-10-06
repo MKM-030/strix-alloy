@@ -1,0 +1,596 @@
+{
+  "schema": "halogen.strata-followup-status.v1",
+  "secured_utc": "2026-10-06T08:37:45.177351+00:00",
+  "report": {
+    "path": "docs/research/halogen-strata-followup-status-20261006.md",
+    "sha256": "bae6535b679e1b3d1220d8d3e650d849517320085e6b925589a43b0f8c86a1f4"
+  },
+  "immutable_strata_commit": "1735d6471df29b42c26170efaac1f1446a58640f",
+  "sources_and_independent_reviews": [
+    {
+      "path": "scripts/benchmarks/halogen_pld_nohit/native_frame_startup.h",
+      "sha256": "6c1148c8ec746b193b7613d35fbd4beec911ab9901ab95b460ba4a47257d2edf"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_pld_nohit/native_frame_startup.cpp",
+      "sha256": "d18591aa560c3b280698909bddeb8584a29603cf0a065b78828d9ad4abfdae91"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_pld_nohit/NATIVE_FRAME_STARTUP.md",
+      "sha256": "b9731cc69812e8f0a3a5c1d0d5df1a9006178ddc0e36464a210c5714be9f8e31"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_pld_nohit/native_owner_read_issuer.h",
+      "sha256": "9c2046d6ab7873d699725cbc3486e7bbf42e73f3dcbbeaf2849b176b0e37ece8"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_pld_nohit/native_owner_read_issuer.cpp",
+      "sha256": "adb1791a50e07f5d81c5803a6e6ca64b5e2fa50349fe1987ff20b5b095ee377f"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_pld_nohit/NATIVE_OWNER_READ_ISSUER.md",
+      "sha256": "e88c47e84dca0d173b6d63174edd73f38c50dc369596f7408f1015211e825278"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_pld_nohit/NATIVE_FRAME_STARTUP_REVIEW.md",
+      "sha256": "4471c8e3d8f3a652df04803cd16a4af479cc369987a03ef1b7cdfe56ba4ba127"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_pld_nohit/READ_ISSUER_REVIEW.md",
+      "sha256": "23ed5c185df63f7cee27f7f95cd4451e178d95457d45f1ef476a952ad089c40c"
+    },
+    {
+      "path": "scripts/benchmarks/halogen_strata_lookup_replay.py",
+      "sha256": "a844dca2ff4cf9a3b9177ba6e3ce7d4676cd2887d0e665ed309264bac0445004"
+    },
+    {
+      "path": "docs/research/halogen-strata-lookup-complement-20261006.md",
+      "sha256": "6231f195c250442d75f1657f060de3ace3bafe8681be4624637fe8bc055f6cf8"
+    },
+    {
+      "path": "docs/research/halogen-strata-lookup-complement-original-results-20261006.json",
+      "sha256": "bc64a5ae1e66842bf64e2aca5546b9e3724932f71c5bbd9c015484063577f4fe"
+    }
+  ],
+  "lookup_replay_receipt": {
+    "path": "server/.local/optimization9h-20261004/strata-lookup-hybrid-replay-corrected-20261006.json",
+    "sha256": "271c295cb09a4aa3b3abbc03cad01001b042bf949b52883f220ca4d504a47aa8"
+  },
+  "lookup_replay": {
+    "schema": "halogen.strata-owned-lookup-replay.v1",
+    "request_families": 1,
+    "cases": [
+      {
+        "base": 8192,
+        "known_history_tokens": 8192,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8191
+          ]
+        },
+        "observed_native_mtp_pending": [
+          14367,
+          303
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": false,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8193,
+        "known_history_tokens": 8193,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8192
+          ]
+        },
+        "observed_native_mtp_pending": [
+          1145,
+          2116
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8196,
+        "known_history_tokens": 8196,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8195
+          ]
+        },
+        "observed_native_mtp_pending": [
+          279,
+          32469
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8199,
+        "known_history_tokens": 8199,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8198
+          ]
+        },
+        "observed_native_mtp_pending": [
+          1040,
+          264
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8202,
+        "known_history_tokens": 8202,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8201
+          ]
+        },
+        "observed_native_mtp_pending": [
+          6574,
+          11
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8205,
+        "known_history_tokens": 8205,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8204
+          ]
+        },
+        "observed_native_mtp_pending": [
+          321,
+          4022
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8208,
+        "known_history_tokens": 8208,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8207
+          ]
+        },
+        "observed_native_mtp_pending": [
+          87529,
+          279
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": false,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8209,
+        "known_history_tokens": 8209,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8208
+          ]
+        },
+        "observed_native_mtp_pending": [
+          1618,
+          279
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8212,
+        "known_history_tokens": 8212,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8211
+          ]
+        },
+        "observed_native_mtp_pending": [
+          1881,
+          279
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8215,
+        "known_history_tokens": 8215,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8214
+          ]
+        },
+        "observed_native_mtp_pending": [
+          321,
+          279
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8218,
+        "known_history_tokens": 8218,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8217
+          ]
+        },
+        "observed_native_mtp_pending": [
+          13,
+          1049
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": false,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8220,
+        "known_history_tokens": 8220,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8219
+          ]
+        },
+        "observed_native_mtp_pending": [
+          279,
+          6092
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8223,
+        "known_history_tokens": 8223,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8222
+          ]
+        },
+        "observed_native_mtp_pending": [
+          7963,
+          68507
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": false,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8224,
+        "known_history_tokens": 8224,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8223
+          ]
+        },
+        "observed_native_mtp_pending": [
+          68507,
+          11
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": true,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      },
+      {
+        "base": 8227,
+        "known_history_tokens": 8227,
+        "native_known_history_ids": [],
+        "strata_same_prefix": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": [
+            8226
+          ]
+        },
+        "observed_native_mtp_pending": [
+          14367,
+          1467
+        ],
+        "strata_after_two_pending": {
+          "ids": [],
+          "backward_match": 0,
+          "keyed_positions": []
+        },
+        "prior_two_match_labels": false,
+        "extension_matches_third_label": null,
+        "usable_third_label_match": false,
+        "omitted_first_trigram_exact_match_possible_normal": false,
+        "omitted_first_trigram_exact_match_possible_after_two_pending": false
+      }
+    ],
+    "case_count": 15,
+    "complete_third_label_cases": 14,
+    "manifest_sha256": "1f3a2fbfafe1a8fd90f99c23dac49f3f0028644d5f010fcd057edfcce26a4919",
+    "script_sha256": "a844dca2ff4cf9a3b9177ba6e3ce7d4676cd2887d0e665ed309264bac0445004",
+    "native_known_history_candidates": 0,
+    "strata_same_prefix_candidates": 0,
+    "after_two_pending_candidates": 0,
+    "usable_third_label_matches": 0,
+    "scope": "Frozen owned-token arithmetic reconstruction, including declared native MTP inputs; not an independent neural producer or native execution",
+    "original_prompt_first_id_guessed": false,
+    "future_labels_used_for_lookup": false,
+    "native_lookup_hit_count": null,
+    "native_acceptance": null,
+    "prefill_tok_s": null,
+    "decode_tok_s": null,
+    "serving_gain_qualified": false,
+    "GPU_NPU_executed": false,
+    "engine_request_executed": false,
+    "controller_integration_qualified": false,
+    "policy_timing_measured": false
+  },
+  "superseded_initial_replay": {
+    "path": "server/.local/optimization9h-20261004/strata-lookup-hybrid-replay-20261006.json",
+    "sha256": "865aa018b58cc2916497c037e5195b972210ae3eb68a792f7f100aa99e93bca7"
+  },
+  "independent_original_results": {
+    "path": "docs/research/halogen-strata-lookup-complement-original-results-20261006.json",
+    "sha256": "bc64a5ae1e66842bf64e2aca5546b9e3724932f71c5bbd9c015484063577f4fe"
+  },
+  "build_receipt": {
+    "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-101915-native-connections-build-039db0bb/result.json",
+    "sha256": "962567b3f6d077ccbb81e1895af0811c922aa5b9f2e3d4a2914b3b926e003c7b"
+  },
+  "static_inspection_receipt": {
+    "path": "scripts/benchmarks/halogen_pld_nohit/_artifacts/20261006-101915-native-connections-build-039db0bb/static-inspection.json",
+    "sha256": "175e74859a9c66feda781711b3fb756d66f51065fd90de908aed94e2f6131c28"
+  },
+  "build": {
+    "passed": true,
+    "compile_only": true,
+    "startup_caller_present": true,
+    "DSO_loaded": false,
+    "all_owned_jobs_closed": true,
+    "ownership_scope": "Retained Windows jobs/handles plus finite Linux timeout process group; no escaping-descendant or external-cancellation closure proof",
+    "minimum_memory": {
+      "available_bytes": 32945295360,
+      "committed_bytes": 108613103616,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 131471994880
+    },
+    "library": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-101915-native-connections-build-039db0bb\\libhalogen-nohit-frame-startup.so",
+      "sha256": "5fede0dadeb72ad7e3a34f94e232f3d0a234dd6c6f72dbaa7f79f116d82a15ac"
+    },
+    "unlinked_read_issuer": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-101915-native-connections-build-039db0bb\\native_owner_read_issuer.o",
+      "sha256": "3c8f3c7c0839d4b4bba8f6aafdf9ee520c5fe2f6c8c752457b51855448ba8ea2"
+    }
+  },
+  "static_inspection": {
+    "passed": true,
+    "island_sections": [
+      {
+        "name": ".hgn_nohit_rx",
+        "address": 12288,
+        "bytes": 4096,
+        "sha256": "62d3f4e32ca45efa37e3466ae90266863bd7ff8b50f819e0bd5c496685cbe348",
+        "identical_to_reviewed_island": true
+      },
+      {
+        "name": ".hgn_nohit_ro",
+        "address": 16384,
+        "bytes": 4096,
+        "sha256": "50be0062c759e0893defef691dda127465e36b25767e241bc7f9ee45bfc40660",
+        "identical_to_reviewed_island": true
+      },
+      {
+        "name": ".hgn_nohit_config",
+        "address": 20480,
+        "bytes": 4096,
+        "sha256": "bfc2179d5cf4a64ca92539fc3a119957196b7be106f17b5cfdbfc70036dd4cc8",
+        "identical_to_reviewed_island": true
+      },
+      {
+        "name": ".hgn_nohit_owned",
+        "address": 24576,
+        "bytes": 4096,
+        "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7",
+        "identical_to_reviewed_island": true
+      }
+    ],
+    "no_RWX_load": true,
+    "relocation_destinations_outside_island": 73,
+    "init_array": {
+      "address": 48040,
+      "entries": [
+        30768,
+        29856
+      ],
+      "guarded_preload_startup": 29856
+    },
+    "startup_disassembly": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-101915-native-connections-build-039db0bb\\startup-text.stdout.txt",
+      "sha256": "d9c3f215b8dbc241ff83fceeb114ab132dab2bfa20466126eba12c2a611fe5f6"
+    },
+    "stack_frames_compiler_bytes": {
+      "startup_constructor": 432,
+      "serving_process": 8240,
+      "actual_main_stack_bounded": 4304,
+      "read_issuer": 2528
+    },
+    "complete_new_native_read_call_tree_bound": null,
+    "all_owned_jobs_closed": true
+  },
+  "real_native_read_entry_present": false,
+  "native_owner_and_full_prefix_acknowledgement": null,
+  "default_off": true,
+  "DSO_loaded": false,
+  "engine_request_executed": false,
+  "GPU_NPU_executed": false,
+  "server_changed": false,
+  "same_fully_indexed_history_nohit_candidate_retired": true,
+  "multiple_drafter_ensemble_implemented": false,
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "native_acceptance": null,
+  "serving_gain_qualified": false,
+  "automatic_review_rejection": {
+    "agent": "/root/native_outcome_handoff",
+    "action": "Additional native-controller hook source audit",
+    "reason": "This content was flagged for possible cybersecurity risk",
+    "retried": false,
+    "audit_completed": false
+  },
+  "final_consistency_review": {
+    "agent": "/root/final_report_consistency",
+    "source_only": true,
+    "material_errors_found": false,
+    "known_link_typo_corrected": true
+  },
+  "full_acceleration_goal_completed": false,
+  "next_requires": "Concrete complementary timely producer or separately owned retrieval data with incremental yield; then matched serving benefit. No unchanged screen/build replay."
+}
