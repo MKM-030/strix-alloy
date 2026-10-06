@@ -12,8 +12,8 @@ component timings, not measured serving token rates or acceptance deltas.
 
 | Candidate | GPU | CPU | NPU | Possible serving effect |
 |---|---|---|---|---|
-| Native packed HT Prefill pipeline | Existing complete original pipeline | Submission and validation | No qualified packed consumer/interface | Prefill only, still unmeasured |
-| Selective50MiB original-W cache | Resident prepared matrix, original GEMM | Immutable binding and lifetime | No useful producer or extra storage established | Reused Prefill preparation, still unmeasured |
+| Native packed HT Prefill pipeline | Failed exact captured output | Submission and validation | No qualified packed consumer/interface | Retired before measured cohort |
+| Selected50MiB original-W cache | Exact outputs, 1.5208% higher mean component latency | Immutable binding and lifetime | No useful producer or extra storage established | Disabled; no serving comparison justified |
 | Compact two-row MTP kernel | Slower in completed component comparison | No demonstrated offload benefit | No demonstrated offload benefit | No gain adopted |
 
 Exact arithmetic can preserve proposals while reducing computation time. Higher
@@ -24,10 +24,15 @@ development. The cache [design](halogen-selective-original-weight-cache-design-2
 retains original packed weights and is conditional on component correctness,
 useful savings and later serving qualification.
 
-The finite Prefill comparison has not completed arithmetic. Startup attempts
-failed at memory admission, constructor activation on a CLI probe, a modified
-pinned README, and a transient Windows status read, respectively. Their failure
-receipts remain failed. No warmup or failed attempt is presented as a post value.
+The [finite Prefill component comparison](halogen-prefill-ht-component-screen-20261006.md)
+completed arithmetic. Cached original weights measured 23.2392 ms against
+22.8911 ms stock over eight balanced pairs, with all original output bytes
+preserved. Native HT failed exact output qualification. Neither path establishes
+a Prefill, Decode or acceptance gain, and neither proceeds to serving integration.
+Startup attempts previously failed at memory admission, constructor activation
+on a CLI probe, a modified pinned README, and a transient Windows status read.
+Their failure receipts remain failed. No warmup or failed attempt is presented
+as a post value.
 
 The constructor now activates only exact serving argv1`--ck`, with five actual
 CPU probe cases passing against the compiled adapter. Restoration accepts only
@@ -43,5 +48,13 @@ The last failed startup's engine and all owned Windows processes were confirmed
 terminal; Docker ownership, closed ports and original-baseline memory recovery
 were independently proved before the exact lock was archived. This supplemental
 closure preserves the failed normal cleanup evidence. A stock-only normal
-restoration then passed with no errors and closed its owned WSL hold job. No NPU
-producer, synchronous offload, driver or global WSL change was introduced.
+restoration then passed with no errors and closed its owned WSL hold job.
+
+The completed component run encountered a separate export directory collision.
+Its failed coordinator receipt remains preserved. Root exported and validated
+the five small inventory-hashed files from the exact stopped container without
+repeating arithmetic. Normal stock restoration completed in that same run and
+its final ready receipt passed. The export now uses a distinct exclusive results
+directory; the actual filesystem regression reproduced the old collision and
+passed after the correction. An independent source review released the fix.
+No NPU producer, synchronous offload, driver or global WSL change was introduced.

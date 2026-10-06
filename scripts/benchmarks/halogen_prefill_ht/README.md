@@ -2,8 +2,11 @@
 
 The capture module was independently reviewed, compiled and successfully used
 for one original ordinary DeltaNet QKV packed-trunk call on2026-10-06. It is
-default-off and implements no replacement kernel. The separate `replay.c` is
-source only; it has not yet been compiled or measured. Root owns compilation,
+default-off and implements no replacement kernel. The separate `replay.c` was
+compiled and used in one completed finite component screen. Neither tested path
+qualified a speed gain; see
+`docs/research/halogen-prefill-ht-component-screen-20261006.md`.
+Root owns compilation,
 independent review, hardware windows and the normal engine lifecycle. The final
 original server must be restored ready and left open.
 
@@ -250,6 +253,9 @@ owner-only0600 files with one link in an owner-only0700 directory. The worker
 waits at most30 minutes for arm; a timeout does not authorize a duplicate run.
 
 The worker writes `replay.json` and `complete.json`; no harvest trigger is used.
+
+The Windows coordinator exports these small files to an exclusively created
+`replay-results` directory, separate from the `replay` lifecycle directory.
 Top-level `passed` describes completion of the finite screening protocol. Each
 `comparisons[].qualified` separately determines whether a candidate has a full
 exact-output cohort; a numerical rejection remains explicitly retired.

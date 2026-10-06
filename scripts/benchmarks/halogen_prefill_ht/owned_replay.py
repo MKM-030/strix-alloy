@@ -394,7 +394,7 @@ def main():
         inventory=json.loads(text);write(work/'replay-inventory.json',inventory)
         require(set(inventory['files']) == set(OUTPUT_LIMITS) and inventory['bytes'] <= 65536,
                 'Unexpected replay export set')
-        destination=work/'replay';destination.mkdir()
+        destination=work/'replay-results';destination.mkdir()
         for name,record in inventory['files'].items():
             require(name in OUTPUT_LIMITS and 0<record['bytes']<=OUTPUT_LIMITS[name],'Large replay export refused')
             base.service.r.docker('cp',cid+':'+trace+'/'+name,base.service.r.linux_path(destination/name),timeout=15)

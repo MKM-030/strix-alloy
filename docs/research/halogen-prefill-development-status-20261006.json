@@ -2,7 +2,7 @@
   "schema": "halogen.prefill-development-status.v1",
   "created_utc": "2026-10-06T03:53:40.542845+00:00",
   "serving_gain_qualified": false,
-  "component_arithmetic_completed": false,
+  "component_arithmetic_completed": true,
   "NPU_executed": false,
   "new_prefill_tokens_per_second": null,
   "new_decode_tokens_per_second": null,
@@ -49,16 +49,32 @@
         "Restore: RuntimeError: Backend cleanup/recovery is unresolved; matrix halted"
       ],
       "original_ready_open_at_receipt": false
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\result.json",
+      "bytes": 570,
+      "sha256": "e4d23dd5f693c40e8b76940bebaa57c30aa64720785bd2f7a5910eac6c4a0dde",
+      "replayed": false,
+      "passed": false,
+      "errors": [
+        "FileExistsError: [WinError 183] Cannot create a file when that file already exists: 'C:\\\\Projects\\\\strix-alloy-clean\\\\server\\\\.local\\\\optimization9h-20261004\\\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\\\replay'"
+      ],
+      "original_ready_open_at_receipt": true,
+      "supplemental_arithmetic_validation": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\supplemental-component-validation.json",
+        "bytes": 1677,
+        "sha256": "afe830f6594dfd212ae916f2e6cf75d9078f0a51974fcd176c049e9567c82ab5"
+      }
     }
   ],
   "source_sha256": {
     "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\capture.c": "bd06d7fcfab41d950aaafe2a504b33bb5a7c91275cd7984941371278d5c41e82",
     "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\launcher.py": "fdb18993c52da857cf4f76258ad73a537c5120ca05a4be1d30f1eacefffbef18",
     "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\owned_capture.py": "f44e5b18b42096078157390eefff351b0bfbabdf104c6c1b345451eeed4b8310",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\owned_replay.py": "028987ca7b26f6831bde3a851b7d25f825c49f2686237412edefa28c1c042b57",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\README.md": "127462e05ae452424a49897e835e15f6e42de6ce908f72b38edc0715764c6cba",
     "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\replay.c": "63890d4da04b045e85bfba4ae93f46cc2be145616c991eae3bb5804fd97ada83",
-    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\replay_launcher.py": "0d5051e8fda3aec520f24318a163f46318d10f6bc35650390ebf5f506ab4d10f",
-    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\owned_replay.py": "6d077dad04c1124d6f2deb0adfbb4d3be980896ebea783398668341f5056f074",
-    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\README.md": "107cb6ee09cc36ab619828780d6a7f84ce1c65313e57123e69f0f84a45433f5e"
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\replay_launcher.py": "0d5051e8fda3aec520f24318a163f46318d10f6bc35650390ebf5f506ab4d10f"
   },
   "checks": [
     {
@@ -76,18 +92,35 @@
   ],
   "original_ready_open": true,
   "restoration_receipt": {
-    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-held-restoration-90b05d0c442c46668b48f1a624a8b190\\final-ready.json",
-    "sha256": "bd413b0e275b3ec6545730f681fee8fec515af072d2397d66bf76fc461665ac1"
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\final-ready.json",
+    "bytes": 2237,
+    "sha256": "fc9c35ec702fbdc77a7be59d59d32631e3a07beeada071103d59a9ced2485293"
   },
   "restoration_result": {
-    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-held-restoration-90b05d0c442c46668b48f1a624a8b190\\result.json",
-    "sha256": "b2c1632658a470705e4b7bf7fb59f776d822c92f838fd1583172d75f3c00a1d4"
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\result.json",
+    "bytes": 570,
+    "sha256": "e4d23dd5f693c40e8b76940bebaa57c30aa64720785bd2f7a5910eac6c4a0dde"
   },
   "minimum_restoration_physical_gib": 31.657203674316406,
   "minimum_restoration_commit_gib": 123.52994155883789,
   "placements": {
-    "GPU": "Native packed HT and selective original-W preparation cache are pending Prefill candidates; compact two-row MTP kernel showed no component advantage.",
-    "CPU": "Metadata/lifetime, exact validation and bounded Windows status observation.",
-    "NPU": "No supported beneficial consumer for this GPU-resident Prefill boundary. No serving speed claim."
-  }
+    "GPU": "Native failed exact output; selected50MiB prepared-W cache had higher mean latency, both disabled.",
+    "CPU": "Existing bounded submission and metadata; no new CPU arithmetic or serving benefit measured.",
+    "NPU": "No producer connected, no NPU execution, and no supported extra GPU storage established."
+  },
+  "updated_utc": "2026-10-06T04:10:08.324353+00:00",
+  "completed_component_screen": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-prefill-ht-component-screen-20261006.json",
+    "bytes": 20331,
+    "sha256": "42a8c8f6c7b611a652ba2b3c66612e4488f622b008d18183237f1649fe535833"
+  },
+  "latest_live_verification": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\final-live-verification.json",
+    "bytes": 984,
+    "sha256": "7752197945ea7235daf4f41489941a9b6f94210daf6310888ea7ff97e8fe7115"
+  },
+  "restoration_result_passed": false,
+  "restoration_result_note": "Original export collision remains failed; final-ready and live verification independently passed.",
+  "minimum_latest_coordinator_physical_gib": 30.918331146240234,
+  "minimum_latest_coordinator_commit_gib": 122.86381530761719
 }

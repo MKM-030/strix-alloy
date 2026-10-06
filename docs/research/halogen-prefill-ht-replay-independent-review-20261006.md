@@ -197,3 +197,23 @@ WSL, live-process or lifecycle action and edited no coordinator source or plan.
 Root owns the extracted-function mock cases, actual terminal cleanup,
 restoration and any later admitted component replay. No new arithmetic,
 component timing, token rate or acceptance result follows from this review.
+
+## Final export-path correction and component audit
+
+The completed screen exported supplemental results after the original
+coordinator's destination `work/replay` collided with its lifecycle directory.
+The failed coordinator receipt remains failed. The five small files copied from
+the exact stopped container match the pre-stop inventory hashes and pass the
+unchanged output/schedule validator. `/root/prefill_startup_review` independently
+verified the 23-call schedule, all stock/cache output hashes and balanced orders.
+It recommends retiring both tested paths: native failed exact qualification and
+cache mean 23.2392 ms exceeds stock 22.8911 ms before serving overheads.
+
+`/root/prepared_weight_cache_scope` released corrected coordinator SHA256
+`028987ca7b26f6831bde3a851b7d25f825c49f2686237412edefa28c1c042b57`.
+The one-line change selects `work/replay-results`, retaining exclusive mkdir.
+All consumers use the local destination or take a directory parameter; no fixed
+consumer of the previous path was found. Root's execution of the actual extracted
+statements reproduced FileExistsError before the fix, then preserved lifecycle
+evidence and rejected an existing result destination after it. This check used
+no engine or hardware. The correction does not qualify any serving speed gain.

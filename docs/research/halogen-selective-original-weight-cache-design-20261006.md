@@ -196,3 +196,13 @@ reporting actual Prefill tok/s, Decode tok/s, output hashes and native
 accepted/drafted counts, with first-miss and steady hits distinguished.
 Acceptance preservation remains an expectation until that comparison; an
 increase is not a consequence of caching original weights.
+
+## Completed selected-entry screen
+
+The [complete component screen](halogen-prefill-ht-component-screen-20261006.md)
+preserved the exact captured output for this selected entry, but measured
+23.2392 ms versus 22.8911 ms stock mean latency. It provides no positive return
+before wrapper/first-miss costs or the extra 50 MiB residency. The conditional
+serving implementation is therefore retired for this entry. Wider cache entries
+remain unmeasured; this design must not be used to infer their benefit. No new
+hardware cohort is justified by this unchanged result.

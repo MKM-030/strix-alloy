@@ -1,0 +1,651 @@
+{
+  "schema": 1,
+  "timestamp_utc": "2026-10-06T04:07:46.183857+00:00",
+  "scope": "one frozen ordinary layer0 QKV M8192 N10240 K2560 mode4, complete component wall",
+  "raw_component_valid": true,
+  "serving_rates_qualified": false,
+  "token_rate_claim": false,
+  "acceptance_claim": false,
+  "tolerance_widened": false,
+  "NPU_executed": false,
+  "repeated_arithmetic": false,
+  "decision": "retire-both-candidates-no-serving-integration",
+  "stock_mean_ms": 22.891066875,
+  "cached_mean_ms": 23.239202625,
+  "cached_latency_increase_percent": 1.5208367172270476,
+  "mean_saved_ms": -0.34813575,
+  "stock_median_ms": 18.757441,
+  "cached_median_ms": 19.4677595,
+  "cached_wins": 3,
+  "measured_pairs": 8,
+  "excluded_warmup_pairs": 2,
+  "total_pipeline_calls": 23,
+  "pairs": [
+    {
+      "pair": 0,
+      "first": "stock",
+      "stock_ns": 18196090,
+      "cached_ns": 17487754,
+      "saved_ns": 708336,
+      "cached_faster": true
+    },
+    {
+      "pair": 1,
+      "first": "cached-original",
+      "stock_ns": 17435671,
+      "cached_ns": 16709744,
+      "saved_ns": 725927,
+      "cached_faster": true
+    },
+    {
+      "pair": 2,
+      "first": "stock",
+      "stock_ns": 19186323,
+      "cached_ns": 19342444,
+      "saved_ns": -156121,
+      "cached_faster": false
+    },
+    {
+      "pair": 3,
+      "first": "cached-original",
+      "stock_ns": 19170533,
+      "cached_ns": 19593075,
+      "saved_ns": -422542,
+      "cached_faster": false
+    },
+    {
+      "pair": 4,
+      "first": "stock",
+      "stock_ns": 18344349,
+      "cached_ns": 20335638,
+      "saved_ns": -1991289,
+      "cached_faster": false
+    },
+    {
+      "pair": 5,
+      "first": "cached-original",
+      "stock_ns": 18134776,
+      "cached_ns": 19180524,
+      "saved_ns": -1045748,
+      "cached_faster": false
+    },
+    {
+      "pair": 6,
+      "first": "stock",
+      "stock_ns": 42933871,
+      "cached_ns": 40676046,
+      "saved_ns": 2257825,
+      "cached_faster": true
+    },
+    {
+      "pair": 7,
+      "first": "cached-original",
+      "stock_ns": 29726922,
+      "cached_ns": 32588396,
+      "saved_ns": -2861474,
+      "cached_faster": false
+    }
+  ],
+  "order_groups": [
+    {
+      "first": "stock",
+      "count": 4,
+      "stock_mean_ms": 24.66515825,
+      "cached_mean_ms": 24.4604705,
+      "mean_saved_ms": 0.20468775,
+      "cached_wins": 2
+    },
+    {
+      "first": "cached-original",
+      "count": 4,
+      "stock_mean_ms": 21.1169755,
+      "cached_mean_ms": 22.01793475,
+      "mean_saved_ms": -0.90095925,
+      "cached_wins": 1
+    }
+  ],
+  "native_qualified": false,
+  "native_word_mismatches": 26787285,
+  "native_measured_pairs": 0,
+  "cached_exact": true,
+  "cached_resident_bytes": 52428800,
+  "excluded_cached_preparation_ms": 0.706895,
+  "own_device_allocations": 7,
+  "own_device_frees": 7,
+  "cleanup_errors": 0,
+  "coordinator_passed": false,
+  "original_failure_preserved": true,
+  "coordinator_errors": [
+    "FileExistsError: [WinError 183] Cannot create a file when that file already exists: 'C:\\\\Projects\\\\strix-alloy-clean\\\\server\\\\.local\\\\optimization9h-20261004\\\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\\\replay'"
+  ],
+  "original_ready_open": true,
+  "recovery_pending": false,
+  "minimum_memory": {
+    "available_bytes": 33198305280,
+    "commit_headroom_bytes": 131924017152
+  },
+  "current_controller_identity": {
+    "pid": 30520,
+    "creation_time_100ns": 134357329936889843,
+    "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+  },
+  "current_backend_run": "8d20aea0ad794f1fbe7c8b5b24e35c01",
+  "current_container_id": "f6024ad4a65796fbcfb48094d51bc6df3f4df346bdc6c00036a54ca96e60467a",
+  "applicability": {
+    "GPU": "Native failed exact output; selected50MiB prepared-W cache had higher mean latency, both disabled.",
+    "CPU": "Existing bounded submission and metadata; no new CPU arithmetic or serving benefit measured.",
+    "NPU": "No producer connected, no NPU execution, and no supported extra GPU storage established."
+  },
+  "source_refs": {
+    "raw": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\supplemental-replay-results\\replay.json",
+      "bytes": 8088,
+      "sha256": "0c597e9d90a8500fd153679e738e8707bebdde0c46c04a9f272904dea5ba9e2f"
+    },
+    "validation": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\supplemental-component-validation.json",
+      "bytes": 1677,
+      "sha256": "afe830f6594dfd212ae916f2e6cf75d9078f0a51974fcd176c049e9567c82ab5"
+    },
+    "inventory": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\replay-inventory.json",
+      "bytes": 739,
+      "sha256": "215ebb4a579a1eda8d7109091b3bde32a64a38d6583c838810f2b27e25dfb1b5"
+    },
+    "failed_coordinator": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\result.json",
+      "bytes": 570,
+      "sha256": "e4d23dd5f693c40e8b76940bebaa57c30aa64720785bd2f7a5910eac6c4a0dde"
+    },
+    "final_ready": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\final-ready.json",
+      "bytes": 2237,
+      "sha256": "fc9c35ec702fbdc77a7be59d59d32631e3a07beeada071103d59a9ced2485293"
+    },
+    "plan": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\plan.json",
+      "bytes": 7495,
+      "sha256": "4a7186642b0efec7245143adb59a0f002181dfcb113d2632dd1d11beace524aa"
+    },
+    "supplemental_exporter": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\export_completed_prefill_replay_f779.py",
+      "bytes": 3681,
+      "sha256": "ffc1d6476101dc5655845cd151d673b881ef909c0bf098c627dca7080ac641fe"
+    },
+    "final_live_verification": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-f779c96a284443c19d76437dba7a4548\\final-live-verification.json",
+      "bytes": 984,
+      "sha256": "7752197945ea7235daf4f41489941a9b6f94210daf6310888ea7ff97e8fe7115"
+    }
+  },
+  "raw": {
+    "schema": 1,
+    "mode": "ordinary-qkv8192-replay-v1",
+    "passed": true,
+    "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+    "manifest_sha256": "ae1e109f6bfdbe3ce6794dbb31a2e0d156f2eaf634a9876ebd85146773a1f68d",
+    "stock_pipeline": "original-preparation-plus-library",
+    "native_pipeline": "original-rotation-plus-packed-multiply",
+    "cached_pipeline": "original-prepared-weight-resident-plus-library",
+    "M": 8192,
+    "N": 10240,
+    "K": 2560,
+    "descriptor_mode": 4,
+    "raw_y_contract": "exact-native16-bit-words",
+    "tolerance_widened": false,
+    "measurement": "cpu-submission-to-full-device-completion-wall",
+    "gpu_busy_time_claim": false,
+    "token_rate_claim": false,
+    "acceptance_claim": false,
+    "serving_substitution": false,
+    "device": 0,
+    "router": "0x60611313de70",
+    "rotated_scratch": "0x7ba17c000000",
+    "capacity_elements": 50331648,
+    "scratch_allocation_base": "0x7ba17c000000",
+    "scratch_allocation_extent_bytes": 100663296,
+    "partial_scratch": "0x7ba182000000",
+    "native_blocks_default": 80,
+    "native_rows_default": 256,
+    "keep_trunk": false,
+    "ht_threshold_changed": false,
+    "algorithm_bytes_identity": null,
+    "cached_weight_resident_bytes": 52428800,
+    "cached_preparations_excluded": 1,
+    "cached_prepare_wall_ns": 706895,
+    "own_device_bytes_budget": 327705600,
+    "native_successful_calls": 1,
+    "own_device_allocations": 7,
+    "own_device_frees": 7,
+    "cleanup_errors": 0,
+    "input_file_bytes": 222851784,
+    "error_code": 0,
+    "error": null,
+    "comparisons": [
+      {
+        "candidate": "native-ht",
+        "qualified": false,
+        "retired": true,
+        "warmup_pairs": 0,
+        "measured_pairs": 0,
+        "stock_count": 0,
+        "candidate_count": 0,
+        "stock_mean_wall_ms": null,
+        "candidate_mean_wall_ms": null,
+        "error": "native-raw-y-mismatch"
+      },
+      {
+        "candidate": "cached-original",
+        "qualified": true,
+        "retired": false,
+        "warmup_pairs": 2,
+        "measured_pairs": 8,
+        "stock_count": 8,
+        "candidate_count": 8,
+        "stock_mean_wall_ms": 22.891066875,
+        "candidate_mean_wall_ms": 23.239202625,
+        "error": null
+      }
+    ],
+    "runs": [
+      {
+        "index": 0,
+        "arm": "stock",
+        "cohort": 0,
+        "phase": 0,
+        "pair": 0,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 16541128,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 1,
+        "arm": "native-ht",
+        "cohort": 1,
+        "phase": 0,
+        "pair": 0,
+        "completed": true,
+        "exact": false,
+        "wall_ns": 21128278,
+        "word_mismatches": 26787285,
+        "output_sha256": "5c5b88fba411e0dad9791fd7daa59e17d2e113772ff2bf0afc3b55232652671d",
+        "mismatch_examples": [
+          {
+            "word": 2,
+            "expected_u16": 16171,
+            "actual_u16": 16172
+          },
+          {
+            "word": 4,
+            "expected_u16": 48848,
+            "actual_u16": 48849
+          },
+          {
+            "word": 5,
+            "expected_u16": 15970,
+            "actual_u16": 15971
+          },
+          {
+            "word": 10,
+            "expected_u16": 48954,
+            "actual_u16": 48953
+          },
+          {
+            "word": 12,
+            "expected_u16": 48311,
+            "actual_u16": 48310
+          },
+          {
+            "word": 14,
+            "expected_u16": 16143,
+            "actual_u16": 16142
+          },
+          {
+            "word": 16,
+            "expected_u16": 48928,
+            "actual_u16": 48929
+          },
+          {
+            "word": 17,
+            "expected_u16": 16029,
+            "actual_u16": 16028
+          },
+          {
+            "word": 20,
+            "expected_u16": 49000,
+            "actual_u16": 49001
+          },
+          {
+            "word": 21,
+            "expected_u16": 16013,
+            "actual_u16": 16012
+          },
+          {
+            "word": 22,
+            "expected_u16": 48998,
+            "actual_u16": 48997
+          },
+          {
+            "word": 29,
+            "expected_u16": 16079,
+            "actual_u16": 16078
+          },
+          {
+            "word": 31,
+            "expected_u16": 49030,
+            "actual_u16": 49029
+          },
+          {
+            "word": 33,
+            "expected_u16": 15566,
+            "actual_u16": 15556
+          },
+          {
+            "word": 36,
+            "expected_u16": 48940,
+            "actual_u16": 48939
+          },
+          {
+            "word": 37,
+            "expected_u16": 15803,
+            "actual_u16": 15806
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 0,
+        "pair": 0,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 16123987,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 3,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 1,
+        "pair": 0,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 16538823,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 4,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 1,
+        "pair": 0,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 16412255,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 5,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 1,
+        "pair": 1,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 16547524,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 6,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 1,
+        "pair": 1,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 18661400,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 7,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 0,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 18196090,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 8,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 0,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 17487754,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 9,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 1,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 16709744,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 10,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 1,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 17435671,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 11,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 2,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 19186323,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 12,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 2,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 19342444,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 13,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 3,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 19593075,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 14,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 3,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 19170533,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 15,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 4,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 18344349,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 16,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 4,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 20335638,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 17,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 5,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 19180524,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 18,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 5,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 18134776,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 19,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 6,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 42933871,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 20,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 6,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 40676046,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 21,
+        "arm": "cached-original",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 7,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 32588396,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      },
+      {
+        "index": 22,
+        "arm": "stock",
+        "cohort": 2,
+        "phase": 2,
+        "pair": 7,
+        "completed": true,
+        "exact": true,
+        "wall_ns": 29726922,
+        "word_mismatches": 0,
+        "output_sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0",
+        "mismatch_examples": []
+      }
+    ]
+  },
+  "export_path_fix": {
+    "source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\owned_replay.py",
+      "bytes": 31381,
+      "sha256": "028987ca7b26f6831bde3a851b7d25f825c49f2686237412edefa28c1c042b57"
+    },
+    "offline_regression": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\check_prefill_export_directory.py",
+      "bytes": 2179,
+      "sha256": "2d7bf61c0449b27f94175410d60ae48f82fc15a47fa57ec75d90a6f48d5f7cc0"
+    },
+    "reproduced_old_collision": true,
+    "corrected_path_checked": true,
+    "exclusive_destination_checked": true,
+    "reviewer": "/root/prepared_weight_cache_scope",
+    "release": true,
+    "hardware_repeated": false
+  }
+}

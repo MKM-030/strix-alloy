@@ -24,9 +24,12 @@ the original path by default until the serving comparison proves a benefit.
 Root coordinates exclusive hardware, preserves memory reserves and foreign
 programs, and leaves the normal server ready and open after every measurement.
 
-The current selective 50 MiB original-weight preparation cache is a GPU Prefill
-candidate. CPU can own its metadata and lifecycle; no useful NPU contribution is
-established. It duplicates a prepared matrix while retaining original weights.
-The native packed HT pipeline is another GPU Prefill candidate. Neither implies
-a Decode or acceptance increase. The compact-Q8 two-row GPU MTP kernel had higher
-measured component latency and remains disabled.
+The selected 50 MiB original-weight preparation cache was screened as a GPU
+Prefill candidate: exact outputs, but 23.2392 ms versus 22.8911 ms mean complete
+component latency. It remains disabled. CPU can own metadata and lifecycle; no
+useful NPU contribution is established. It duplicates a prepared matrix while
+retaining original weights. The native packed HT pipeline failed the exact output
+contract and remains disabled. Neither establishes a Decode or acceptance gain.
+The compact-Q8 two-row GPU MTP kernel also had higher measured component latency
+and remains disabled. Wider cache entries and other shapes remain unmeasured;
+this result does not qualify them.
