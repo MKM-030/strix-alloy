@@ -96,3 +96,13 @@ than placements for the register relay. No weights are separated and ordinary
 Prefill is unchanged by this source component. No new serving token rates or
 acceptance follow. The explicit next native connection is documented in the
 [owned-copy boundary](halogen-pld-live-capture-connection-20261006.md).
+
+The [native owner connector](halogen-pld-native-owner-connection-status-20261006.md)
+now has a reviewed source path and one successful compile-only check. It remains
+off: native read/prefix authorities, installation and actual outcome integration
+are absent. CPU owns its bounded copy/metadata work; GPU/NPU are possible separate
+proposal producers whose complete readiness and serving cost remain unmeasured.
+It replaces no target Prefill operation and selects no proposals. New Prefill,
+Decode and acceptance values remain null. The earlier vector-screen result does
+not justify adoption or an unchanged rerun. After every development, retain this
+explicit operation-to-metric and CPU/GPU/NPU assessment before any engine cohort.

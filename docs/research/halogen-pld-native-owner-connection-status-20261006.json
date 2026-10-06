@@ -1,0 +1,76 @@
+{
+  "observed_utc": "2026-10-06T07:22:44.945459+00:00",
+  "phase": "default-off source connector reviewed and compiled; native installation absent",
+  "source_pins": {
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_owner_capture.h": "649c202063f572a574622ea133b67822c02c78312686b24de8d57c268dfcf87f",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_owner_capture.cpp": "e7e1ce7399e41a9327530b1b635caae6fe14a458516d7c6836948008ef6cfcdf",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_capture_layout.h": "e7ce7302eb98cfa09a2c7ee2b1747e8c2a88d4311de0dfbdf10a5a03ab7eee1a",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_outcome_handoff.h": "5d4a42ad70edb14ae30f6c3043db4d889565031ef449de4ede9d6ce74536f835",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_frame_relay.h": "f6aaf827d5187a3eb47bda94bf9f19d6eae29664251ede96c29b7d84e9c74cbe",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\seam_contract.h": "caa67ed65e991e2f8474e5ba16ae5c8a29cc74bc517d253fe95a330e152bc5f2",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\NATIVE_OWNER_CAPTURE.md": "63df9530b2be1c5c6b508c84ab5549b8068a3b99aa1e5c14e197af7f69ce13cc",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\NATIVE_OWNER_CAPTURE_REVIEW.md": "6ac5a97953b9f426f0675dac3dae300db78e2b699af25eb6dae93df0b605af4c",
+    "C:\\Projects\\strix-alloy-clean\\server\\host_frames.py": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+    "C:\\Projects\\strix-alloy-clean\\server\\winjob.py": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\run_native_owner_capture_compile.py": "c843f65c6de97f7e18670db22f36d60d54b045516ae81e177775c12860305f3d",
+    "C:\\Windows\\System32\\wsl.exe": "8797ff87fb1ae27f6bbbff141434a404ec2f9f11021444fa0547fc48151d6702"
+  },
+  "compile_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-092116-native-owner-compile-30e0fbd0\\result.json",
+    "sha256": "077fec08aab1e8253933b3fbbf7745f013dff1f2481affd20634b98b610f9824"
+  },
+  "independent_review": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\NATIVE_OWNER_CAPTURE_REVIEW.md",
+    "sha256": "6ac5a97953b9f426f0675dac3dae300db78e2b699af25eb6dae93df0b605af4c"
+  },
+  "object": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-092116-native-owner-compile-30e0fbd0\\native-owner-capture.o",
+    "sha256": "fe9381808daaf3d3b1d5cec2cae41f9d47c49064147d100a1f9de8b0970d502c"
+  },
+  "stack_usage": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-092116-native-owner-compile-30e0fbd0\\native-owner-capture.su",
+    "sha256": "2d941eb205d7fd42f1b0613ca29d2684696e3c04730d9e791471c931b458aa62"
+  },
+  "own_observe_static_stack_bytes": 400,
+  "complete_callback_stack_qualified": false,
+  "owned_native_copy_bytes": 6018,
+  "maximum_suffix_ids": 512,
+  "compile_passed": true,
+  "compiler_executed": true,
+  "harness_executed": false,
+  "all_windows_owned_jobs_closed": true,
+  "minimum_memory": {
+    "available_bytes": 33432137728,
+    "committed_bytes": 108106645504,
+    "commit_limit_bytes": 240139440128,
+    "commit_headroom_bytes": 132028313600
+  },
+  "maximum_sample_gap_seconds": 0.2515830000047572,
+  "ownership_scope": "Retained Windows jobs/handles plus finite Linux timeout process group; no escaping-descendant or external-cancellation closure proof",
+  "native_read_authority_implemented": false,
+  "prior_prefix_acknowledgement_authority_implemented": false,
+  "live_engine_connection": false,
+  "native_lifetime_qualified": false,
+  "real_output_preview_seal_installed": false,
+  "producer_installed": false,
+  "proposals_selected": false,
+  "GPU_executed": false,
+  "NPU_executed": false,
+  "new_prefill_tok_s": null,
+  "new_decode_tok_s": null,
+  "new_native_acceptance": null,
+  "CPU_capture_cost": null,
+  "GPU_NPU_readiness": null,
+  "serving_gain_qualified": false,
+  "placement": {
+    "CPU": "Owns bounded copy, layout decode and metadata; its added complete cost is unmeasured.",
+    "GPU": "Possible separate proposal producer using owned token/outcome values; transfer, contention and timely readiness remain unqualified.",
+    "NPU": "Possible separate proposal producer with the same values; runtime state parity, integration and timely readiness remain unqualified."
+  },
+  "metric_effects": {
+    "prefill": "The connector does not replace ordinary target Prefill.",
+    "decode": "Only useful timely proposals after real installation could improve actual Decode; copying alone supplies no gain.",
+    "acceptance": "Needs better independent proposals; exact vector arithmetic alone normally preserves proposals."
+  },
+  "next": "Use the concrete native serialization audit to implement a real read/seed/lifetime boundary; do not rerun this unchanged compile or prior synthetic harnesses."
+}
