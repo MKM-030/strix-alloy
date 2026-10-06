@@ -62,3 +62,15 @@ The next connected implementation is the bounded authoritative-outcome
 preview/seal handoff described in the
 [native scheduling design](halogen-pld-authoritative-handoff-design-20261006.md).
 Its possible overlap window is structural; useful readiness has not been timed.
+
+The fixed-storage outcome handoff is now implemented and independently reviewed
+in [the source contract](../../scripts/benchmarks/halogen_pld_nohit/HANDOFF.md).
+It copies selected native outcomes into a preview for early private work, grants
+successor eligibility only after continuing seal, and makes retirement observable.
+Its CPU qualifier establishes bounded value behavior, not native installation or
+new token rates. CPU owns this metadata/control path. GPU and NPU remain possible
+independent proposal producers whose complete resolution and readiness costs must
+be compared; this handoff does not move target model weights or ordinary Prefill.
+Native capture and worker exclusion follow the
+[concrete owner/seed/reset audit](halogen-pld-native-owner-capture-path-20261006.md).
+All three serving outcomes remain unqualified for this new component.
