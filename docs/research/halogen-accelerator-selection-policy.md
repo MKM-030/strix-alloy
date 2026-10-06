@@ -106,3 +106,25 @@ It replaces no target Prefill operation and selects no proposals. New Prefill,
 Decode and acceptance values remain null. The earlier vector-screen result does
 not justify adoption or an unchanged rerun. After every development, retain this
 explicit operation-to-metric and CPU/GPU/NPU assessment before any engine cohort.
+
+Multiple different draft sources may improve continuation coverage. Retain total
+authoritative committed tokens per second as the decision metric; at-least-one
+candidate coverage and native accepted/drafted ratios are distinct. Our present
+consumer verifies one linear chain, so parallel branches require additional
+target recurrent/KV-state and commit machinery. Arbitrary model weight subsets
+are not complete trained predictors. See the
+[bounded recommendation](halogen-multi-draft-feasibility-20261006.md).
+
+The [Strata v0.1.40 audit](strata0140-halogen-source-assessment-20261006.md)
+identifies real gfx1151 kernel/source ideas and an owned-token CPU suffix
+proposer. Its incremental yield after native lookup misses is unmeasured.
+`--batch-mtp` concerns concurrent clients. Strata's external GGUF rates, HIP
+switches and library-specific exact reductions supply no Halogen HGN speed or
+acceptance result; some advertised fusion paths are disabled on HIP. Preserve
+the unchanged tolerances and qualify each actual native operation separately.
+
+The [default-off startup installer](halogen-pld-installer-status-20261006.md)
+has reviewed source and corrected linked-object evidence. It has not been loaded
+and selects no drafts. CPU control overhead remains unmeasured; GPU/NPU have no
+new placement or serving benefit. Actual startup/read/outcome authority and a
+complementary timely producer remain required before an acceleration cohort.

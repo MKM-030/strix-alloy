@@ -1,0 +1,73 @@
+{
+  "timestamp_utc": "2026-10-06T08:03:32.090753+00:00",
+  "scope": "Default-off source, corrected host build and static emitted inspection; no DSO load or native entry",
+  "source_refs": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_frame_install.h",
+      "sha256": "68a51e37e92b28cc1caa27c7ce50c4ff33f57c1728da13175fecac08b0a516cf"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_frame_install.cpp",
+      "sha256": "61122012a598f39318b7d5fd6506b60d239dfc3059dc239cdb49ef74f82fd572"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_frame_install_link.S",
+      "sha256": "83c23db12b3d7246f0fe5cb9765689921d436de9061d4eff746292094bdc0b98"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\native_frame_install.ld",
+      "sha256": "373befb7549a998d15868488319bde10030cfb0aedae1c6e39dac5cda4b7e840"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\NATIVE_FRAME_INSTALL.md",
+      "sha256": "b98121a8187eb33f3850bfa54b30c273522e4bc4070d0eba108b08019b9214e4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\INSTALL_REVIEW.md",
+      "sha256": "322228132137e0cff7068170561054fb4ba90cef81e14b15f3021f9e3cdf224d"
+    }
+  ],
+  "first_build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-095427-native-installer-build-0e9a93c0\\result.json",
+    "sha256": "a6b86e2ca407ce22b0322adcc32340ac5488683ff18da1d5e3c9da1f8f36860a"
+  },
+  "first_static_FDE_parser_defect_retained": true,
+  "repair_build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-095656-native-installer-fde-repair-1a136793\\result.json",
+    "sha256": "e63b5b5a56a640e2a82cd766cd7fe0183413b4f290f0fcad9984c9e991f375ef"
+  },
+  "repair_reason": "Valid observer FDE payload16 rejected by redundant payload>=17 check; global payload>=13 suffices",
+  "only_changed_cpp_recompiled": true,
+  "unchanged_prior_objects_hash_checked": true,
+  "corrected_library": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-095656-native-installer-fde-repair-1a136793\\libhalogen-nohit-frame-install.so",
+    "sha256": "55ce07fb50ac3a38c6c4025e8b601c4086a5e3553d308b62585a2cabeb07336b"
+  },
+  "copied_frames": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_pld_nohit\\_artifacts\\20261006-095656-native-installer-fde-repair-1a136793\\copied-island-frames.json",
+    "sha256": "9de90d9a709b0113495454dfc96861ba6b1518b9dd7217652cfec7df87b39c03"
+  },
+  "exact_static_review_passed": true,
+  "CFI_execution_qualified": false,
+  "all_owned_Windows_jobs_closed": true,
+  "minimum_memory": {
+    "available_bytes": 33103097856,
+    "committed_bytes": 108360114176,
+    "commit_limit_bytes": 240139440128,
+    "commit_headroom_bytes": 131699855360
+  },
+  "maximum_sample_gap_seconds": 0.26600000000325963,
+  "source_review_conditional_on_actual_startup_entry": true,
+  "startup_caller_present": false,
+  "live_native_installation": false,
+  "native_read_authority_present": false,
+  "full_prefix_authority_present": false,
+  "proposal_selection_present": false,
+  "GPU_NPU_executed": false,
+  "CPU_capture_cost_ms": null,
+  "GPU_NPU_readiness_ms": null,
+  "new_prefill_tok_s": null,
+  "new_decode_tok_s": null,
+  "new_native_acceptance": null,
+  "serving_gain_qualified": false
+}
