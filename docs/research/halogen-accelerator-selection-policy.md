@@ -74,3 +74,14 @@ be compared; this handoff does not move target model weights or ordinary Prefill
 Native capture and worker exclusion follow the
 [concrete owner/seed/reset audit](halogen-pld-native-owner-capture-path-20261006.md).
 All three serving outcomes remain unqualified for this new component.
+
+The subsequent [native byte-layout decoder](../../scripts/benchmarks/halogen_pld_nohit/CAPTURE_LAYOUT.md)
+supports complete 8K/16K/128K/260K vector lengths with a bounded 512-ID suffix
+and independently recomputes native B from copied fields. It is CPU observation
+work, with no installed capture or packet selection. GPU/NPU placement of these
+checks alone offers no demonstrated benefit; proposal production remains a
+separate possible device task. Its focused CPU evidence adds no Prefill, Decode
+or native acceptance result. The
+[real frame adapter plan](halogen-pld-native-frame-adapter-20261006.md)
+identifies the concrete register/xstate and installed observation work required
+to connect it; synthetic frame equality never supplies that proof.
