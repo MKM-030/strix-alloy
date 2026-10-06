@@ -85,3 +85,14 @@ or native acceptance result. The
 [real frame adapter plan](halogen-pld-native-frame-adapter-20261006.md)
 identifies the concrete register/xstate and installed observation work required
 to connect it; synthetic frame equality never supplies that proof.
+
+The stock-only native frame relay has now passed a focused, real-register Linux
+CPU qualifier: three cases and 18 checks with no failures, using the actual
+observed XCR0 `0xe7` / 2,432-byte XSAVE extent. Its
+[standalone evidence](halogen-pld-native-frame-status-20261006.md) does not qualify
+native installation, literal physical x87 metadata, signals or active CET. CPU
+owns this control path; GPU/NPU remain independent possible producers rather
+than placements for the register relay. No weights are separated and ordinary
+Prefill is unchanged by this source component. No new serving token rates or
+acceptance follow. The explicit next native connection is documented in the
+[owned-copy boundary](halogen-pld-live-capture-connection-20261006.md).
