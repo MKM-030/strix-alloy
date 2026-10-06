@@ -58,6 +58,8 @@ static_assert(sizeof(float) == 4 && std::numeric_limits<float>::is_iec559,
               "snapshots require native IEEE-754 F32 rows");
 static_assert(sizeof(llama_token) == 4 && sizeof(llama_pos) == 4,
               "raw IDs and positions require the pinned int32 C API");
+static_assert(LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY == 1 && LLAMA_STATE_SEQ_FLAGS_ON_DEVICE == 2,
+              "snapshot flags require the pinned public C API");
 
 void require(bool condition, const char* message) {
     if (!condition) throw std::runtime_error(message);
@@ -109,6 +111,12 @@ json read_json(const fs::path& path) {
 void validate_commands(const json& input) {
     require(!input.contains("append_when_authoritative") || input["append_when_authoritative"].is_boolean(),
             "append_when_authoritative must be an explicit boolean");
+    require(!input.contains("device_rejection_snapshot") || input["device_rejection_snapshot"].is_boolean(),
+            "device_rejection_snapshot must be an explicit boolean");
+    require(!input.contains("full_device_rejection_snapshot") || input["full_device_rejection_snapshot"].is_boolean(),
+            "full_device_rejection_snapshot must be an explicit boolean");
+    require(!(input.value("device_rejection_snapshot", false) && input.value("full_device_rejection_snapshot", false)),
+            "partial and full device snapshot modes are mutually exclusive");
     require(input.contains("commands") && input["commands"].is_array() &&
             !input["commands"].empty() && input["commands"].size() <= max_commands,
             "input requires 1..64 commands");
@@ -243,11 +251,18 @@ public:
 
 // Synchronous, one owned context and one pending proposal. CLI acceptance and
 // opening equality are caller-supplied replay evidence, never target verification.
-// No partial removal/rollback is used.
+// Optional device snapshots and full-mode clears belong solely to this independent context.
 class Bridge {
 public:
-    Bridge(llama_context& context, std::size_t head_rows, bool append_when_authoritative = false)
-        : context_(context), head_rows_(head_rows), append_when_authoritative_(append_when_authoritative) {
+    Bridge(llama_context& context, std::size_t head_rows, bool append_when_authoritative = false,
+           bool device_rejection_snapshot = false, bool full_device_rejection_snapshot = false)
+        : context_(context), head_rows_(head_rows), append_when_authoritative_(append_when_authoritative),
+          snapshot_enabled_(device_rejection_snapshot || full_device_rejection_snapshot),
+          full_device_rejection_snapshot_(full_device_rejection_snapshot),
+          snapshot_flags_(full_device_rejection_snapshot ? LLAMA_STATE_SEQ_FLAGS_ON_DEVICE :
+                          LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE) {
+        require(!(device_rejection_snapshot && full_device_rejection_snapshot),
+                "partial and full device snapshot modes are mutually exclusive");
         require(head_rows >= shared_rows && head_rows <= max_head_rows, "native vocabulary is outside the pinned row bound");
         require(llama_get_memory(&context_) != nullptr, "context has no hybrid memory");
     }
@@ -288,6 +303,7 @@ public:
         drafts.reserve(count);
         auto greedy = logits_->greedy_id;
         try {
+            if (snapshot_enabled_ && count > 1) save_snapshot();
             for (std::size_t index = 0; index < count; ++index) {
                 drafts.push_back(greedy);
                 if (index + 1 < count) {
@@ -329,6 +345,8 @@ public:
                 return *logits_;
             } catch (...) { invalidate(); throw; }
         }
+        if (snapshot_enabled_ && !snapshot_.empty() && ids.size() <= window_limit)
+            return restore_and_replay(std::move(ids));
         if (ids.size() > window_limit)
             ids.erase(ids.begin(), ids.end() - static_cast<std::ptrdiff_t>(window_limit));
         return rebuild(std::move(ids)); // Rejected mutation, window shift or default policy.
@@ -358,7 +376,10 @@ public:
                 require(next.has_value(), "missing owned logits for the consumed replay prefix");
                 const std::vector<llama_token> suffix(authoritative_ids.begin() + consumed, authoritative_ids.end());
                 retire(); // No available feed remains while authoritative mutation runs.
-                if (!suffix.empty()) {
+                if (snapshot_enabled_) {
+                    for (std::size_t index = 0; index < suffix.size(); ++index)
+                        next = decode({suffix[index]}, old_length + consumed + index, "authoritative_replay");
+                } else if (!suffix.empty()) {
                     next = decode(suffix, old_length + consumed, "authoritative_replay");
                 }
                 committed_ = std::move(ids);
@@ -367,6 +388,8 @@ public:
                 return *logits_;
             } catch (...) { invalidate(); throw; }
         }
+        if (snapshot_enabled_ && !snapshot_.empty() && ids.size() <= window_limit)
+            return restore_and_replay(std::move(ids));
         if (ids.size() > window_limit)
             ids.erase(ids.begin(), ids.end() - static_cast<std::ptrdiff_t>(window_limit));
         return rebuild(std::move(ids));
@@ -384,6 +407,12 @@ private:
     llama_context& context_;
     const std::size_t head_rows_;
     const bool append_when_authoritative_;
+    const bool snapshot_enabled_;
+    const bool full_device_rejection_snapshot_;
+    const llama_state_seq_flags snapshot_flags_;
+    std::vector<std::uint8_t> snapshot_;
+    std::uint64_t snapshot_epoch_ = 0;
+    std::size_t snapshot_length_ = 0;
     std::vector<llama_token> committed_;
     std::optional<OwnedLogits> logits_;
     std::optional<OwnedLogits> pending_logits_;
@@ -394,7 +423,77 @@ private:
     json calls_ = json::array();
     const char* update_path_ = "none";
     void retire() {
+        snapshot_.clear(); snapshot_length_ = 0; snapshot_epoch_ = 0;
         logits_.reset(); pending_logits_.reset(); committed_.clear(); proposal_.clear(); pending_ = false; ++epoch_;
+    }
+    void save_snapshot() {
+        require(snapshot_.empty() && !pending_, "device snapshot already belongs to a pending round");
+        expect_length(committed_.size());
+        const auto started = steady_clock::now();
+        try {
+            const auto size = llama_state_seq_get_size_ext(&context_, 0, snapshot_flags_);
+            require(size > 0 && size <= 64 * 1024 * 1024, "device snapshot metadata exceeds finite bound");
+            snapshot_.resize(size);
+            require(llama_state_seq_get_data_ext(&context_, snapshot_.data(), size, 0, snapshot_flags_) == size,
+                    "device snapshot byte count differs");
+            llama_synchronize(&context_);
+            expect_length(committed_.size());
+            snapshot_epoch_ = epoch_;
+            snapshot_length_ = committed_.size();
+            calls_.push_back({{"kind", full_device_rejection_snapshot_ ? "save_full_device_snapshot" : "save_partial_device_snapshot"},
+                              {"flags", snapshot_flags_}, {"sequence_id", 0}, {"metadata_bytes", size},
+                              {"committed_length", snapshot_length_}, {"context_epoch", snapshot_epoch_},
+                              {"elapsed_ms", elapsed_ms(started)}});
+        } catch (const std::exception& error) {
+            snapshot_.clear(); snapshot_epoch_ = 0; snapshot_length_ = 0;
+            calls_.push_back({{"kind", "snapshot_save_failed"}, {"error", error.what()},
+                              {"flags", snapshot_flags_},
+                              {"elapsed_ms", elapsed_ms(started)}});
+        }
+    }
+    const OwnedLogits& restore_and_replay(std::vector<llama_token> ids) {
+        require(pending_ && pending_epoch_ == epoch_ && snapshot_epoch_ == epoch_ && snapshot_length_ == committed_.size(),
+                "device snapshot does not belong to this committed boundary");
+        const auto old_length = committed_.size();
+        const auto saved_epoch = snapshot_epoch_;
+        auto metadata = std::move(snapshot_);
+        auto next = std::move(logits_); // Preserve original owned row for an empty resolution.
+        retire(); // No proposal remains available during mutation or fallback.
+        const auto started = steady_clock::now();
+        try {
+            // Only the private context's attention/recurrent buffers are cleared.
+            // ON_DEVICE snapshot buffers live separately in this context's mem_storage.
+            if (full_device_rejection_snapshot_) clear_engine("clear_private_context_for_full_snapshot");
+            const auto restore_started = steady_clock::now();
+            require(llama_state_seq_set_data_ext(&context_, metadata.data(), metadata.size(), 0,
+                                                snapshot_flags_) == metadata.size(),
+                    "device restore byte count differs");
+            if (!full_device_rejection_snapshot_) {
+                // Partial mode restores recurrence before removing attention's suffix.
+                require(llama_memory_seq_rm(llama_get_memory(&context_), 0,
+                                            static_cast<llama_pos>(old_length), -1),
+                        "hybrid speculative suffix removal failed");
+            }
+            llama_synchronize(&context_);
+            expect_length(old_length);
+            calls_.push_back({{"kind", full_device_rejection_snapshot_ ? "restore_full_device_snapshot" : "restore_partial_device_snapshot"},
+                              {"flags", snapshot_flags_}, {"sequence_id", 0},
+                              {"metadata_bytes", metadata.size()}, {"committed_length", old_length},
+                              {"snapshot_context_epoch", saved_epoch},
+                              {"restored_position", llama_memory_seq_pos_max(llama_get_memory(&context_), 0)},
+                              {"elapsed_ms", elapsed_ms(restore_started)}});
+            for (std::size_t index = old_length; index < ids.size(); ++index)
+                next = decode({ids[index]}, index, "authoritative_replay");
+            require(next.has_value(), "snapshot resolution lost its committed row");
+            committed_ = std::move(ids);
+            logits_ = std::move(next);
+            update_path_ = full_device_rejection_snapshot_ ? "full_device_snapshot_restore" : "device_snapshot_restore";
+            return *logits_;
+        } catch (const std::exception& error) {
+            calls_.push_back({{"kind", "snapshot_restore_fallback"}, {"error", error.what()},
+                              {"elapsed_ms", elapsed_ms(started)}});
+            return rebuild(std::move(ids)); // Account for real full rebuild after any failed operation.
+        }
     }
     void expect_length(std::size_t expected) const {
         require(expected <= context_capacity, "consumed state exceeds the requested context capacity");
@@ -402,13 +501,13 @@ private:
         require(maximum == (expected == 0 ? -1 : static_cast<llama_pos>(expected - 1)),
                 "native memory position differs from the adapter's consumed IDs");
     }
-    void clear_engine() {
+    void clear_engine(const char* kind = "clear_both_caches") {
         const auto started = steady_clock::now();
         llama_synchronize(&context_);
         llama_memory_clear(llama_get_memory(&context_), true); // Clears attention and recurrent data/metadata.
         llama_synchronize(&context_);
         expect_length(0);
-        calls_.push_back({{"kind", "clear_both_caches"}, {"elapsed_ms", elapsed_ms(started)}});
+        calls_.push_back({{"kind", kind}, {"data", true}, {"sequence_count", 1}, {"elapsed_ms", elapsed_ms(started)}});
     }
     void invalidate() noexcept {
         retire();
@@ -559,7 +658,12 @@ int main(int argc, char** argv) {
                 llama_n_threads(context.get()) == cpu_threads && llama_n_threads_batch(context.get()) == cpu_threads,
                 "actual context geometry exceeds/differs from the finite requested bounds");
         const bool append_enabled = input.value("append_when_authoritative", false);
-        Bridge bridge(*context, max_head_rows, append_enabled);
+        const bool snapshot_enabled = input.value("device_rejection_snapshot", false);
+        const bool full_snapshot_enabled = input.value("full_device_rejection_snapshot", false);
+        const char* snapshot_mode = full_snapshot_enabled ? "full_device_clear" : snapshot_enabled ? "partial_device" : "off";
+        const llama_state_seq_flags snapshot_flags = full_snapshot_enabled ? LLAMA_STATE_SEQ_FLAGS_ON_DEVICE :
+            snapshot_enabled ? LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY | LLAMA_STATE_SEQ_FLAGS_ON_DEVICE : 0;
+        Bridge bridge(*context, max_head_rows, append_enabled, snapshot_enabled, full_snapshot_enabled);
         bridge.clear_context();
         json output = {{"format", "llama-raw-id-source-bridge-v1"}, {"source_revision", source_revision},
                        {"process_id", GetCurrentProcessId()}, {"backend", backend_name}, {"device_index", device_index},
@@ -572,7 +676,10 @@ int main(int argc, char** argv) {
                        {"actual_n_ubatch", llama_n_ubatch(context.get())}, {"n_threads", cpu_threads}, {"n_threads_batch", cpu_threads},
                        {"requested_n_outputs_max", 1}, {"requested_n_outputs_max_per_seq", 1},
                        {"requested_n_gpu_layers", model_params.n_gpu_layers}, {"offload_kqv", vulkan}, {"op_offload", vulkan},
-                       {"append_when_authoritative", append_enabled}, {"startup_started_unix_ms", startup_started_unix_ms},
+                       {"append_when_authoritative", append_enabled}, {"device_rejection_snapshot", snapshot_enabled},
+                       {"full_device_rejection_snapshot", full_snapshot_enabled},
+                       {"device_snapshot_mode", snapshot_mode}, {"device_snapshot_flags", snapshot_flags},
+                       {"startup_started_unix_ms", startup_started_unix_ms},
                        {"startup_ended_unix_ms", unix_ms()}, {"dll_load_ms", dll_load_ms}, {"backend_device_ms", backend_device_ms},
                        {"model_load_ms", model_load_ms}, {"context_init_ms", context_init_ms},
                        {"cooperative_startup_budget_ms", startup_budget_ms},

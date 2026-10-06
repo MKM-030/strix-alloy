@@ -1,0 +1,818 @@
+{
+  "schema": "halogen.partial-device-snapshot-results.v1",
+  "snapshot_scope": "PARTIAL_ONLY|ON_DEVICE recurrent state; attention suffix removal; scalar authoritative replay",
+  "work": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382",
+  "plan": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-plan-1a07c0ad3795401799c1accc7c7fe382.json",
+  "source_pins": {
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-plan-1a07c0ad3795401799c1accc7c7fe382.json": {
+      "bytes": 11359,
+      "sha256": "b28f6e9c779e3b0cbd0c752699f226e3a7bcff7cb688f9e4eac3f047edbbae2f"
+    },
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-independent-proposer-workload-20261006.json": {
+      "bytes": 12287,
+      "sha256": "1f3a2fbfafe1a8fd90f99c23dac49f3f0028644d5f010fcd057edfcce26a4919"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\vulkan-output.json": {
+      "bytes": 174950,
+      "sha256": "f84e264027b478016837cd21553cf1f4e8a453e565fcc41aebeea16a0721d0e4"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\control-output.json": {
+      "bytes": 190874,
+      "sha256": "3e1fa03b339617a5571eb567e247d7b3edc8e708e4d81a2661f9b7b60dd6fa4c"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\component-result.json": {
+      "bytes": 745,
+      "sha256": "511c59b0af5f8327ac6f173aa83588b5044fce97e6dd0386d5af4499d1649fd2"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\coordinator-result.json": {
+      "bytes": 521,
+      "sha256": "a3ed1e6f9ce85f7e108a9e57c49f27a453ff37b38ee3a038a2c26c4ee28ccec7"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-held-restoration-11377d162f064c189b0154cb8f74367f\\result.json": {
+      "bytes": 6086,
+      "sha256": "05909e2cf2128662151fd4749054484c3bd63916715d77438738465dd3358b36"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-held-restoration-11377d162f064c189b0154cb8f74367f\\supplemental-ready-8bcaad09e312472cbacdbf1974b68723.json": {
+      "bytes": 1454,
+      "sha256": "0376aa12726965b8b0efb82e123d1a0813d174ae51e02ffdf343630cad2abcb5"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\row-difference-analysis.json": {
+      "bytes": 6359,
+      "sha256": "4513eb708cc4b4248a66aee113ab8df29e14f909b28569fdfda5a097b6134367"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\commands.json": {
+      "bytes": 10973,
+      "sha256": "fdf5229ef428f591a3dd8593f7738e23e75dd59c4dd4494a56e0b297288f79ea"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\control-commands.json": {
+      "bytes": 10031,
+      "sha256": "caa2f5280bf5091205b0676ad27020e7e91371f9d3638ee3b32775346cccd214"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\vulkan-stderr.log": {
+      "bytes": 56571,
+      "sha256": "52700e47c4c137e2cf4001a7bb5aa626398acaa68fdbc3b33ec17eb8aede365d"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\control-stderr.log": {
+      "bytes": 56508,
+      "sha256": "fc998a528849ac3e97f086cd48a3e2716ea79201d5abff0d7f3457c29a04a57b"
+    }
+  },
+  "actual_runtime_source_pins": {
+    "C:\\Users\\Marcel\\.codex\\worktrees\\gpu-draft-snapshot\\strix-alloy-clean\\scripts\\benchmarks\\halogen_llama_raw_id_bridge\\bridge.cpp": "04b76e99569ed9dfa1249e8ac0c20c72ad4ced912d012f6477073dbcb5dd57d7",
+    "C:\\Users\\Marcel\\.codex\\worktrees\\gpu-draft-snapshot\\strix-alloy-clean\\scripts\\benchmarks\\halogen_llama_raw_id_bridge\\replay_policy.h": "61583b40f4d569017e78ae5f5c5125f98bb8cd4425503e97824bb76f4a05049f",
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\vendor\\nlohmann\\json.hpp": "aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\bin\\Release\\llama.dll": "ecca09d1880e55bc3c353e09ab3e6569ebf5f41bf5f4c8c6976305777408492e",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\src\\Release\\llama.lib": "8bac31dcbc8ca35632eca31bfb1ed5083999d9bbb404fbb3c3bdfd226fcc73dc",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\include\\llama.h": "0518f73a23ad77192d278b5a5fadc3faea0765901830482111225d794d522581",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\ggml\\include\\ggml.h": "b834c28904934a65dc2b53a0115ae50e33126cc305ae4489bb781ad880b09b5c",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\ggml\\include\\ggml-cpu.h": "316279e004cdeb8e6ef78599acb602bf79a8abdf897fed9fd1914808c1518c6e",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\ggml\\include\\ggml-backend.h": "f9bafda615fafa73306bed0a2c3d5a459cba2c19c9d76e1dc0adc2b3fd0cb2c8",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\ggml\\include\\ggml-opt.h": "3586de1bc8a934b5c72339e2b6937b0641e8f149b512231e666f67de0736eea2",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\ggml\\include\\gguf.h": "e56714aab702e5ce62ee587a409643c08f7e93e8fbb77f48ef7cc85075f96fa4",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\bin\\Release\\ggml.dll": "0792b6391a4fe7cd82dca02cf9beadc39d8b84915c9e73020ad0edf4a9b860ee",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\bin\\Release\\ggml-base.dll": "942a174d0903c59c7edf8b877fccd0d6c3186167cdc804bcddf09dd023c1342e",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\bin\\Release\\ggml-cpu.dll": "468ec58c588b60dd0576230b95ef293c012970792f116f75141b954809d96fc4",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\bin\\Release\\ggml-vulkan.dll": "0b7b612c2050f214c845dd99ae2354193b4ed865852d9378f1ce4fcdad5caacf",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\ggml\\src\\Release\\ggml.lib": "d01ad33b1d8ba55313887eb125b66db7448fe0fd542ab9d720c9263ca94a89b6",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\ggml\\src\\Release\\ggml-base.lib": "ad885e7dcb323ba8ee031062c415cd75ad85d388ec1fa6704c53eeb0586c6237",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\ggml\\src\\Release\\ggml-cpu.lib": "d8ceadc5305e7b358f123771dd90e4d72d31f4e2c103d40a5960ebcbab208dce",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\ggml\\src\\ggml-vulkan\\Release\\ggml-vulkan.lib": "a9a7a348645cf728a7e8dcc9a75bd19aa052b952fb844993ef01dc242dbe221b",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\src\\models\\qwen35.cpp": "552b8c0d671a540c455f11042e1438e6d573e3de3486515be6ce8a8e41da0acc",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\src\\llama-memory-recurrent.cpp": "35903c832ba321aad3fca8b2adf2d481f6ba41196478c6c8f248ffe2bd7d9d51",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\src\\llama-memory-hybrid.cpp": "b2b193c4a412a91b1fe15a3c239d3b2664b5208ff49d6dba244ff8fec0880f92",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\CMakeCache.txt": "395e6482f9340fb04b70e3a4cc3bedf8b21cd748ca9e18d9d77b9e01669be46b",
+    "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\common\\build-info.cpp": "654810f4599cc82d7cc03aa8cb8bf484e0d1b06ec8ae51c21724f9a1fdcd980f",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\llama-raw-bridge-build-aa3f6ac5fd9345499bfb868637631164\\llama-raw-bridge.exe": "d38a638f8d904ba96ec46daa8aa818e980339438864d7117cd48f799c35ef0cb",
+    "C:\\AI\\models\\halogen-proposer-qwen35-08b-gguf-9447f741\\Qwen3.5-0.8B-Q4_0.gguf": "57d1997790d1744fba5b40a7317df71ea5e2acee28c47e78f0cce39c0703f8cf"
+  },
+  "actual_preparation_source_pins": {
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_pld_stock8k_bookend.py": "961a2ee8af2f68ab5e92c83db3f98cb2ee832b3c3f1fae9925d9e6a204478755",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\upgrade0162\\run_matrix.py": "12ca2f6a890a83415df398e1b867daf0cf0211e3a6275e67f628e92bf0841d58",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_rocr_poll_backoff_owned_run.py": "bd2945ae634248e63ce2b008c2cbbdc17ac1af7f47a3a97082c8d36a41955c4f",
+    "C:\\Projects\\strix-alloy-clean\\server\\controller.py": "4793aa575c5ac189a893bca4a8f8b5e1c8e7b24bcbf1b04d5f19607d6e66342e",
+    "C:\\Projects\\strix-alloy-clean\\server\\host_frames.py": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+    "C:\\Projects\\strix-alloy-clean\\server\\winjob.py": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+    "C:\\Projects\\strix-alloy-clean\\server\\owned_child.py": "6f75520f65c76941ec4306915929fd529ec7f46bd0fd20bd6f01f82afb749f10",
+    "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\Start.ps1": "f652b7e9629f4776c00003924649fb490180407992a7de1f9ee8e2e554fd4fe3",
+    "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\scripts\\service.py": "e8b34cad609aef2dfe32c3f183baa9c9bb4e30114e6e65668664e133f5271ac6",
+    "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+    "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\profiles\\sources.json": "aa30c350ec0fb453cfb6bbfaad7dd060956f349bed5dffe0f4ade302b10d3ef9",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_rocr_engine_stock8k.py": "1ac0282fc00fe171d2b32fb0aa201b501d0fd0fc39818f4516f0b69dd4a445eb",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\long-natural-proposed-arena8192-a75ea723f4db4ac5b12badfc8c9ea031.json": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-independent-proposer-workload-20261006.json": "1f3a2fbfafe1a8fd90f99c23dac49f3f0028644d5f010fcd057edfcce26a4919",
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-gguf-proposer-token-map-20261006.json": "6f0e8b9202a77d8bfbcfd2dc2458ccd50bace665ff8d5bf9293709d0ca3dc24b",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\llama-pld-component-b8e9c43678da4c5c81d9c1a91726135c\\commands.json": "1e44fd67e181ca666d2b4bdc9dbab93645a5732c852fb011bb33de596461093b",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mtp-tap-resume-d20a7077972049538940fe6b95bf62c7\\trace\\00-tokens-i32.bin": "dc1b73cc84046ca0fe0ed09520540eed9c06e2682fbd23eeff7077209f7ee31b",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\commands.json": "fdf5229ef428f591a3dd8593f7738e23e75dd59c4dd4494a56e0b297288f79ea",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\control-commands.json": "caa2f5280bf5091205b0676ad27020e7e91371f9d3638ee3b32775346cccd214",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prepare_snapshot_gpu_20261006.py": "6bc8dc2c999a9ebb45588b5305418676fae976d2e755489745e14a35b59feef1",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_snapshot_gpu_20261006.py": "ddb81bc07f89aca8ae6847a322ef1028fbdc6dec540de735484d4772f6482257",
+    "C:\\Users\\Marcel\\.codex\\worktrees\\gpu-draft-snapshot\\strix-alloy-clean\\scripts\\benchmarks\\halogen_llama_raw_id_bridge\\bridge.cpp": "04b76e99569ed9dfa1249e8ac0c20c72ad4ced912d012f6477073dbcb5dd57d7",
+    "C:\\Users\\Marcel\\.codex\\worktrees\\gpu-draft-snapshot\\strix-alloy-clean\\scripts\\benchmarks\\halogen_llama_raw_id_bridge\\replay_policy.h": "61583b40f4d569017e78ae5f5c5125f98bb8cd4425503e97824bb76f4a05049f",
+    "C:\\Users\\Marcel\\.codex\\worktrees\\gpu-draft-snapshot\\strix-alloy-clean\\scripts\\benchmarks\\halogen_llama_raw_id_bridge\\check_snapshot_screen.py": "35fb16aaf60280b0604a843febaa015e4dbce20e064b502117927f726fd210aa"
+  },
+  "component_completed": true,
+  "component_qualified": false,
+  "qualifier_errors": [
+    "AssertionError: Round2: full F32 row differs from authoritative scalar control"
+  ],
+  "state": {
+    "initial_full_row_exact": true,
+    "initial_row_sha256": "aec362d170d65046f0f88ed5b0ed26d66ae02fc29a8652d60b9911c12076e565",
+    "full_f32_rows": 248320,
+    "full_f32_bytes": 993280,
+    "shared_rows": 248070,
+    "exact_post_resolution_rows": 2,
+    "differing_post_resolution_rows": 13,
+    "first_failed_round": 2,
+    "first_failed_transition": [
+      260,
+      263
+    ],
+    "greedy_equal_cases": 15,
+    "all_committed_histories_equal_scalar_control": true,
+    "strict_parity_passed": false,
+    "first_failure_max_absolute_difference": 0.15673139691352844,
+    "max_absolute_difference_all_rounds": 0.27262210845947266,
+    "tolerance_relaxed": false,
+    "cause_established": false
+  },
+  "costs_ms": {
+    "initial256_prefill": 32.6397,
+    "proposal_mean_including_save": 10.955966666666667,
+    "complete_resolution_mean": 8.612,
+    "snapshot_restore_resolution_mean": 11.351533333333332,
+    "authoritative_append_resolution_mean": 4.5027,
+    "save_mean": 2.0116933333333336,
+    "restore_mean": 1.9656333333333333,
+    "complete_seed_plus_all_rounds": 326.1592,
+    "seed_amortized_ms_per_round": 21.743946666666666,
+    "candidate_command_elapsed_total": 1573.0523,
+    "candidate_excluded_warmup_total": 1246.8931,
+    "candidate_snapshot_writes_total": 40.8288,
+    "candidate_runtime_before_manifest": 2328.4921,
+    "control_runtime_before_manifest": 977.9367,
+    "component_processes_elapsed": 4625.0,
+    "candidate_startup": {
+      "dll_load_ms": 7.0331,
+      "backend_device_ms": 74.8499,
+      "model_load_ms": 608.3269,
+      "context_init_ms": 20.6411
+    }
+  },
+  "operations": {
+    "candidate_commands": 34,
+    "control_commands": 41,
+    "excluded_warmup_commands_each": 3,
+    "measured_initial_seed_tokens": 256,
+    "final_committed_tokens": 293,
+    "proposal_rounds": 15,
+    "saves": 15,
+    "restores": 9,
+    "restore_resolutions": 9,
+    "append_resolutions": 6,
+    "full_prefix_rebuilds": 0,
+    "speculative_scalar_calls": 30,
+    "authoritative_scalar_replay_calls": 25,
+    "control_authoritative_scalar_calls": 37,
+    "snapshot_host_metadata_bytes": 460
+  },
+  "offline_labels": {
+    "input_key": "expected_next_ids",
+    "request_families": 1,
+    "cases": 15,
+    "predicted_ids": 45,
+    "scored_label_positions": 44,
+    "unscored_final_third_ids": 1,
+    "leading_prefix_matches": 22,
+    "leading_prefix_lengths": [
+      0,
+      0,
+      1,
+      2,
+      3,
+      1,
+      0,
+      2,
+      2,
+      3,
+      1,
+      1,
+      3,
+      3,
+      0
+    ],
+    "first_id_exact_cases": 11,
+    "opening_reference_equal_cases": 10,
+    "opening_conditioned_leading_matches": 19,
+    "stock_retained_accepted_drafts": 22,
+    "native_acceptance": null,
+    "actual_opening_execution": null,
+    "eligibility": null,
+    "quality_qualified": false
+  },
+  "measured_platform": {
+    "backend": "vulkan",
+    "device": "AMD Radeon(TM) 8060S Graphics",
+    "offloaded_layers": "25/25 (retained log)",
+    "model": "C:\\AI\\models\\halogen-proposer-qwen35-08b-gguf-9447f741\\Qwen3.5-0.8B-Q4_0.gguf",
+    "source_revision": "3466b48806f9fefe1162aa4053ffebcfcabe83aa",
+    "model_sha256": "57d1997790d1744fba5b40a7317df71ea5e2acee28c47e78f0cce39c0703f8cf",
+    "minimum_component_memory": {
+      "available_bytes": 45285400576,
+      "committed_bytes": 27960586240,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 210444996608
+    },
+    "target_contention_measured": false,
+    "NPU_executed": false
+  },
+  "lifecycle": {
+    "normal_stop_proven": true,
+    "owned_component_job_closed": true,
+    "initial_coordinator_passed": false,
+    "initial_coordinator_errors": [
+      "Original restoration incomplete; retained live identities require observation, no automatic second start"
+    ],
+    "held_observation_passed": false,
+    "held_observation_errors": [
+      "AssertionError: Same launched persistent controller readiness remains unverified after bounded observation"
+    ],
+    "preserved_coordinator_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-component-1a07c0ad3795401799c1accc7c7fe382\\coordinator-result.json",
+    "preserved_held_observation_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-held-restoration-11377d162f064c189b0154cb8f74367f\\result.json",
+    "supplemental_ready_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-held-restoration-11377d162f064c189b0154cb8f74367f\\supplemental-ready-8bcaad09e312472cbacdbf1974b68723.json",
+    "supplemental": {
+      "passed": true,
+      "time_utc": "2026-10-06T09:09:50.785347+00:00",
+      "same_launched_controller_adopted": true,
+      "no_restart": true,
+      "no_inference": true,
+      "controller_identity": {
+        "pid": 23252,
+        "creation_time_100ns": 134357508329511428,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend_identity": {
+        "pid": 24280,
+        "creation_time_100ns": 134357508439272936,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
+      },
+      "controller_run": "c7efdc3a588a4d61a95251d512af6c0b",
+      "backend_run": "531394bdda34405c8b28745faf97de4b",
+      "container_id": "bdd3c00aeac60fab202f1dd188bf531c60596de0606cc247547e741f87944510",
+      "health": {
+        "status": "ok",
+        "backend": "halogen-v2",
+        "checkpoint": "v2",
+        "context": 262144,
+        "active_requests": 0,
+        "draining": false,
+        "completed": 0,
+        "cancelled": 0
+      },
+      "memory": {
+        "available_bytes": 33316646912,
+        "committed_bytes": 108261416960,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 131878023168
+      },
+      "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+      "prior_timeout_preserved": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\snapshot-gpu-held-restoration-11377d162f064c189b0154cb8f74367f\\result.json",
+      "original_ready_open": true
+    },
+    "original_ready_open_verified": true
+  },
+  "cases": [
+    {
+      "round": 0,
+      "native_target_base": 8192,
+      "before_length": 256,
+      "after_length": 257,
+      "draft_ids": [
+        2919,
+        314,
+        279
+      ],
+      "expected_next_ids": [
+        8337,
+        1145,
+        2116
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 0,
+      "opening_reference_id": 14367,
+      "opening_reference_equal": false,
+      "opening_conditioned_prefix_matches": 0,
+      "stock_accepted_drafts": 0,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 12.3492,
+      "resolution_ms": 6.2882,
+      "full_f32_word_mismatches": 0,
+      "shared_f32_word_mismatches": 0,
+      "max_absolute_f32_difference": 0.0,
+      "candidate_greedy_id": 421,
+      "scalar_control_greedy_id": 421,
+      "greedy_equal": true,
+      "candidate_row_sha256": "3bd3b4dec05cc0b60ed36faf48844e6b3768467c47fc480d9ddec8f118ec3689",
+      "control_row_sha256": "3bd3b4dec05cc0b60ed36faf48844e6b3768467c47fc480d9ddec8f118ec3689",
+      "candidate_row_file": "command-5-committed.f32",
+      "control_row_file": "command-4-committed.f32"
+    },
+    {
+      "round": 1,
+      "native_target_base": 8193,
+      "before_length": 257,
+      "after_length": 260,
+      "draft_ids": [
+        421,
+        1145,
+        2116
+      ],
+      "expected_next_ids": [
+        1145,
+        2116,
+        310
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 0,
+      "opening_reference_id": 1145,
+      "opening_reference_equal": false,
+      "opening_conditioned_prefix_matches": 0,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 10.7204,
+      "resolution_ms": 15.0258,
+      "full_f32_word_mismatches": 0,
+      "shared_f32_word_mismatches": 0,
+      "max_absolute_f32_difference": 0.0,
+      "candidate_greedy_id": 279,
+      "scalar_control_greedy_id": 279,
+      "greedy_equal": true,
+      "candidate_row_sha256": "fe6920ff46cf353df1906a7f15c70235fd7e4bd35daeb57942818f20503cef84",
+      "control_row_sha256": "fe6920ff46cf353df1906a7f15c70235fd7e4bd35daeb57942818f20503cef84",
+      "candidate_row_file": "command-7-committed.f32",
+      "control_row_file": "command-7-committed.f32"
+    },
+    {
+      "round": 2,
+      "native_target_base": 8196,
+      "before_length": 260,
+      "after_length": 263,
+      "draft_ids": [
+        279,
+        13558,
+        314
+      ],
+      "expected_next_ids": [
+        279,
+        32469,
+        6220
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 1,
+      "opening_reference_id": 279,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 1,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 10.9471,
+      "resolution_ms": 14.8339,
+      "full_f32_word_mismatches": 248319,
+      "shared_f32_word_mismatches": 248069,
+      "max_absolute_f32_difference": 0.15673139691352844,
+      "candidate_greedy_id": 1040,
+      "scalar_control_greedy_id": 1040,
+      "greedy_equal": true,
+      "candidate_row_sha256": "320ce42c234977866efedbbf1aaeabdec8ba690445cae3fd333b1fbb74cfca1b",
+      "control_row_sha256": "5328b6c625a78f5c1efb74a75ae8805e6d3d4e41329da4d9191e17c0e0ec339b",
+      "candidate_row_file": "command-9-committed.f32",
+      "control_row_file": "command-10-committed.f32"
+    },
+    {
+      "round": 3,
+      "native_target_base": 8199,
+      "before_length": 263,
+      "after_length": 266,
+      "draft_ids": [
+        1040,
+        264,
+        8545
+      ],
+      "expected_next_ids": [
+        1040,
+        264,
+        2018
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 2,
+      "opening_reference_id": 1040,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 2,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 10.7123,
+      "resolution_ms": 4.5092,
+      "full_f32_word_mismatches": 248320,
+      "shared_f32_word_mismatches": 248070,
+      "max_absolute_f32_difference": 0.1979541778564453,
+      "candidate_greedy_id": 6574,
+      "scalar_control_greedy_id": 6574,
+      "greedy_equal": true,
+      "candidate_row_sha256": "ff54eb89d4093fd32a11ad889f43ced7d8f4e438af5e657f0bd9c2afa8eb99a9",
+      "control_row_sha256": "3e93d693baa576ab016283f7f80520d9ab165b289b474461285a7c569b734f9c",
+      "candidate_row_file": "command-11-committed.f32",
+      "control_row_file": "command-13-committed.f32"
+    },
+    {
+      "round": 4,
+      "native_target_base": 8202,
+      "before_length": 266,
+      "after_length": 269,
+      "draft_ids": [
+        6574,
+        11,
+        11702
+      ],
+      "expected_next_ids": [
+        6574,
+        11,
+        11702
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 3,
+      "opening_reference_id": 6574,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 3,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 11.3876,
+      "resolution_ms": 4.4003,
+      "full_f32_word_mismatches": 248319,
+      "shared_f32_word_mismatches": 248069,
+      "max_absolute_f32_difference": 0.22678124904632568,
+      "candidate_greedy_id": 321,
+      "scalar_control_greedy_id": 321,
+      "greedy_equal": true,
+      "candidate_row_sha256": "5447bc6727887b503025ab81847538c1cb5435c1e80cf4df6fdc4bcdcb320224",
+      "control_row_sha256": "e861dbaf486142bc7ea7973a90b82c9b17c9f7875059d42758868ee6e1fd02b6",
+      "candidate_row_file": "command-13-committed.f32",
+      "control_row_file": "command-16-committed.f32"
+    },
+    {
+      "round": 5,
+      "native_target_base": 8205,
+      "before_length": 269,
+      "after_length": 272,
+      "draft_ids": [
+        321,
+        8545,
+        11
+      ],
+      "expected_next_ids": [
+        321,
+        4022,
+        11
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 1,
+      "opening_reference_id": 321,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 1,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 10.8192,
+      "resolution_ms": 14.8179,
+      "full_f32_word_mismatches": 248320,
+      "shared_f32_word_mismatches": 248070,
+      "max_absolute_f32_difference": 0.1996610164642334,
+      "candidate_greedy_id": 28701,
+      "scalar_control_greedy_id": 28701,
+      "greedy_equal": true,
+      "candidate_row_sha256": "13a6cd7ce5435c3b1a03ed0dc50358c7f4f8489b5fab3233e2d2fb3901d42a1c",
+      "control_row_sha256": "183017271213f1adb36563c9bdf7e38b878702ecd33fbdb8d348a727c7c0504d",
+      "candidate_row_file": "command-15-committed.f32",
+      "control_row_file": "command-19-committed.f32"
+    },
+    {
+      "round": 6,
+      "native_target_base": 8208,
+      "before_length": 272,
+      "after_length": 273,
+      "draft_ids": [
+        28701,
+        1472,
+        279
+      ],
+      "expected_next_ids": [
+        24829,
+        1618,
+        279
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 0,
+      "opening_reference_id": 87529,
+      "opening_reference_equal": false,
+      "opening_conditioned_prefix_matches": 0,
+      "stock_accepted_drafts": 0,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 10.7095,
+      "resolution_ms": 6.9619,
+      "full_f32_word_mismatches": 248320,
+      "shared_f32_word_mismatches": 248070,
+      "max_absolute_f32_difference": 0.22431421279907227,
+      "candidate_greedy_id": 1618,
+      "scalar_control_greedy_id": 1618,
+      "greedy_equal": true,
+      "candidate_row_sha256": "697bc11221426a8b51eee6e130529b333a2a610ee6da69bfe78a57966a7ea7a7",
+      "control_row_sha256": "02641515aaef00fac990d743c57e5071ad012f10d69a7555d37b3f0677da6783",
+      "candidate_row_file": "command-17-committed.f32",
+      "control_row_file": "command-20-committed.f32"
+    },
+    {
+      "round": 7,
+      "native_target_base": 8209,
+      "before_length": 273,
+      "after_length": 276,
+      "draft_ids": [
+        1618,
+        279,
+        27786
+      ],
+      "expected_next_ids": [
+        1618,
+        279,
+        18169
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 2,
+      "opening_reference_id": 1618,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 2,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 10.6957,
+      "resolution_ms": 4.518,
+      "full_f32_word_mismatches": 248318,
+      "shared_f32_word_mismatches": 248068,
+      "max_absolute_f32_difference": 0.23128747940063477,
+      "candidate_greedy_id": 1881,
+      "scalar_control_greedy_id": 1881,
+      "greedy_equal": true,
+      "candidate_row_sha256": "6b14ce0dfd0139a598fb90e229481e985f8ca9ba11dfba887304353804dc3096",
+      "control_row_sha256": "6ff3fe79902d9debf3e875b7e50743c03ebfad1b6380dc8c71c06239950f7f5c",
+      "candidate_row_file": "command-19-committed.f32",
+      "control_row_file": "command-23-committed.f32"
+    },
+    {
+      "round": 8,
+      "native_target_base": 8212,
+      "before_length": 276,
+      "after_length": 279,
+      "draft_ids": [
+        1881,
+        279,
+        2235
+      ],
+      "expected_next_ids": [
+        1881,
+        279,
+        9114
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 2,
+      "opening_reference_id": 1881,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 2,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 10.8054,
+      "resolution_ms": 4.5483,
+      "full_f32_word_mismatches": 248320,
+      "shared_f32_word_mismatches": 248070,
+      "max_absolute_f32_difference": 0.21461525559425354,
+      "candidate_greedy_id": 321,
+      "scalar_control_greedy_id": 321,
+      "greedy_equal": true,
+      "candidate_row_sha256": "54acb9d6883fc3aa0de4450642e37db67e136e4a3976268d88c76253b8c57367",
+      "control_row_sha256": "aff9bb93d67038b2400eb3389aa42465423bdf35c502b7d0385b3c0e418ab983",
+      "candidate_row_file": "command-21-committed.f32",
+      "control_row_file": "command-26-committed.f32"
+    },
+    {
+      "round": 9,
+      "native_target_base": 8215,
+      "before_length": 279,
+      "after_length": 282,
+      "draft_ids": [
+        321,
+        279,
+        12515
+      ],
+      "expected_next_ids": [
+        321,
+        279,
+        12515
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 3,
+      "opening_reference_id": 321,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 3,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 10.8338,
+      "resolution_ms": 4.4743,
+      "full_f32_word_mismatches": 248318,
+      "shared_f32_word_mismatches": 248068,
+      "max_absolute_f32_difference": 0.2290973663330078,
+      "candidate_greedy_id": 13,
+      "scalar_control_greedy_id": 13,
+      "greedy_equal": true,
+      "candidate_row_sha256": "61c10eefd27e4e9a68af0e2c0fd4fe132ae3160ae240d140cb8fd3079a44d7ec",
+      "control_row_sha256": "90bc256534a6bf33f9a9f10c69973c831fb1203dcde8e137ee26853fe3d14a32",
+      "candidate_row_file": "command-23-committed.f32",
+      "control_row_file": "command-29-committed.f32"
+    },
+    {
+      "round": 10,
+      "native_target_base": 8218,
+      "before_length": 282,
+      "after_length": 284,
+      "draft_ids": [
+        13,
+        1049,
+        557
+      ],
+      "expected_next_ids": [
+        13,
+        733,
+        279
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 1,
+      "opening_reference_id": 13,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 1,
+      "stock_accepted_drafts": 1,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 10.6,
+      "resolution_ms": 11.3296,
+      "full_f32_word_mismatches": 248320,
+      "shared_f32_word_mismatches": 248070,
+      "max_absolute_f32_difference": 0.27262210845947266,
+      "candidate_greedy_id": 279,
+      "scalar_control_greedy_id": 279,
+      "greedy_equal": true,
+      "candidate_row_sha256": "aefe282c94fe97ed835acfe1bf3692bc907c9ca5810fffdaaa82248a8e2a4b1f",
+      "control_row_sha256": "9190a9b539ae344bd545784c6194eafce8fa4d5c0770cbb1636b047652b2fd43",
+      "candidate_row_file": "command-25-committed.f32",
+      "control_row_file": "command-31-committed.f32"
+    },
+    {
+      "round": 11,
+      "native_target_base": 8220,
+      "before_length": 284,
+      "after_length": 287,
+      "draft_ids": [
+        279,
+        3990,
+        314
+      ],
+      "expected_next_ids": [
+        279,
+        6092,
+        314
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 1,
+      "opening_reference_id": 279,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 1,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 10.6241,
+      "resolution_ms": 15.3023,
+      "full_f32_word_mismatches": 248319,
+      "shared_f32_word_mismatches": 248069,
+      "max_absolute_f32_difference": 0.18412303924560547,
+      "candidate_greedy_id": 17739,
+      "scalar_control_greedy_id": 17739,
+      "greedy_equal": true,
+      "candidate_row_sha256": "cadddad262f00eee60f0a84cac2389d3e6c0783da23c9945ce5dfbd1af965f3d",
+      "control_row_sha256": "81309668083f11cb771232a78e0e5a24a3cce429747d484168221af459602595",
+      "candidate_row_file": "command-27-committed.f32",
+      "control_row_file": "command-34-committed.f32"
+    },
+    {
+      "round": 12,
+      "native_target_base": 8223,
+      "before_length": 287,
+      "after_length": 288,
+      "draft_ids": [
+        17739,
+        68507,
+        11
+      ],
+      "expected_next_ids": [
+        17739,
+        68507,
+        11
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 3,
+      "opening_reference_id": 7963,
+      "opening_reference_equal": false,
+      "opening_conditioned_prefix_matches": 0,
+      "stock_accepted_drafts": 0,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 11.5388,
+      "resolution_ms": 6.5553,
+      "full_f32_word_mismatches": 248319,
+      "shared_f32_word_mismatches": 248069,
+      "max_absolute_f32_difference": 0.15538287162780762,
+      "candidate_greedy_id": 68507,
+      "scalar_control_greedy_id": 68507,
+      "greedy_equal": true,
+      "candidate_row_sha256": "1193a58b82fe241ed4bcaf1545f847e73fa61fa14cbc4194d45160480f8888e3",
+      "control_row_sha256": "cbf742bbcffcce09cd9bc09c7aa93da89571c42b56d779b3c959f5ac290387cb",
+      "candidate_row_file": "command-29-committed.f32",
+      "control_row_file": "command-35-committed.f32"
+    },
+    {
+      "round": 13,
+      "native_target_base": 8224,
+      "before_length": 288,
+      "after_length": 291,
+      "draft_ids": [
+        68507,
+        11,
+        279
+      ],
+      "expected_next_ids": [
+        68507,
+        11,
+        279
+      ],
+      "scored_label_count": 3,
+      "leading_prefix_matches": 3,
+      "opening_reference_id": 68507,
+      "opening_reference_equal": true,
+      "opening_conditioned_prefix_matches": 3,
+      "stock_accepted_drafts": 2,
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 10.8468,
+      "resolution_ms": 4.5661,
+      "full_f32_word_mismatches": 248320,
+      "shared_f32_word_mismatches": 248070,
+      "max_absolute_f32_difference": 0.22214007377624512,
+      "candidate_greedy_id": 3594,
+      "scalar_control_greedy_id": 3594,
+      "greedy_equal": true,
+      "candidate_row_sha256": "282f51b377fcda232593d26de795273875ec780d7d328a881f41139ed29c1a72",
+      "control_row_sha256": "59c57cf550b0f01adeb221175791c82ffbc3e783efa53a7eca1f7cfcb39aef60",
+      "candidate_row_file": "command-31-committed.f32",
+      "control_row_file": "command-38-committed.f32"
+    },
+    {
+      "round": 14,
+      "native_target_base": 8227,
+      "before_length": 291,
+      "after_length": 293,
+      "draft_ids": [
+        3594,
+        557,
+        2590
+      ],
+      "expected_next_ids": [
+        14367,
+        557
+      ],
+      "scored_label_count": 2,
+      "leading_prefix_matches": 0,
+      "opening_reference_id": 14367,
+      "opening_reference_equal": false,
+      "opening_conditioned_prefix_matches": 0,
+      "stock_accepted_drafts": 1,
+      "resolution_path": "device_snapshot_restore",
+      "proposal_ms": 10.7496,
+      "resolution_ms": 11.0489,
+      "full_f32_word_mismatches": 248319,
+      "shared_f32_word_mismatches": 248069,
+      "max_absolute_f32_difference": 0.19900751113891602,
+      "candidate_greedy_id": 524,
+      "scalar_control_greedy_id": 524,
+      "greedy_equal": true,
+      "candidate_row_sha256": "3256f7efee9c290fde8cb2f79f926d01740f2c7c4b0d818add60ff34ebea4c5d",
+      "control_row_sha256": "db23280dc47a73408a916ff2166843a322cb7a9b6ed7d6bc27d799109f68ce7d",
+      "candidate_row_file": "command-33-committed.f32",
+      "control_row_file": "command-40-committed.f32"
+    }
+  ],
+  "historical_paired_improvement_measured": false,
+  "target_prefill_tok_s": null,
+  "target_decode_tok_s": null,
+  "serving_gain_qualified": false,
+  "native_integration_qualified": false,
+  "report_generation_scope": "Fresh standard-library CPU arithmetic and retained F32 reads only; no model/runtime load, hardware, lifecycle, bridge/checker edit or Git action"
+}
