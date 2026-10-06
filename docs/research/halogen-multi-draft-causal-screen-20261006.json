@@ -1,0 +1,218 @@
+{
+  "schema": "halogen-multi-draft-causal-offline-review-v1",
+  "timestamp_utc": "2026-10-06T09:48:01.927658+00:00",
+  "scope": "Fresh standard-library CPU evaluation of retained, hash-verified GPU proposals and unchanged target labels; no inference, GPU/NPU or lifecycle work",
+  "input_pins": {
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-independent-proposer-workload-20261006.json": {
+      "sha256": "1f3a2fbfafe1a8fd90f99c23dac49f3f0028644d5f010fcd057edfcce26a4919"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\full-snapshot-gpu-component-d07bf4b747224116b00dd6e1c55a3a62\\vulkan-output.json": {
+      "sha256": "6787f5405c3b5c8a58c72a2085f1e49f5f216e810e42d07c538ecc6ce430b856"
+    },
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-device-full-snapshot-results-20261006.json": {
+      "sha256": "225efa047f80a8901df84918792b13b6232f5898091207d8c3a6c1bc243299e8"
+    }
+  },
+  "case_count": 15,
+  "request_families": 1,
+  "selection_rule": "Use independent chain if its first ID equals retained native opening reference; otherwise keep stock. Future target labels are used only for evaluation.",
+  "summary": {
+    "scored_labels": 44,
+    "stock_prefix": 22,
+    "independent_prefix": 22,
+    "opening_rule_prefix": 22,
+    "opening_rule_delta": 0,
+    "opening_rule_cap2_prefix": 19,
+    "oracle_prefix": 28,
+    "opening_oracle_prefix": 25
+  },
+  "per_round": [
+    {
+      "round": 0,
+      "scored_labels": 3,
+      "stock_prefix": 0,
+      "independent_prefix": 0,
+      "opening_equal": false,
+      "opening_rule_prefix": 0,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 0,
+      "oracle_prefix": 0,
+      "opening_oracle_prefix": 0
+    },
+    {
+      "round": 1,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 0,
+      "opening_equal": false,
+      "opening_rule_prefix": 2,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 2,
+      "oracle_prefix": 2,
+      "opening_oracle_prefix": 2
+    },
+    {
+      "round": 2,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 1,
+      "opening_equal": true,
+      "opening_rule_prefix": 1,
+      "opening_rule_delta": -1,
+      "opening_rule_cap2_prefix": 1,
+      "oracle_prefix": 2,
+      "opening_oracle_prefix": 2
+    },
+    {
+      "round": 3,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 2,
+      "opening_equal": true,
+      "opening_rule_prefix": 2,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 2,
+      "oracle_prefix": 2,
+      "opening_oracle_prefix": 2
+    },
+    {
+      "round": 4,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 3,
+      "opening_equal": true,
+      "opening_rule_prefix": 3,
+      "opening_rule_delta": 1,
+      "opening_rule_cap2_prefix": 2,
+      "oracle_prefix": 3,
+      "opening_oracle_prefix": 3
+    },
+    {
+      "round": 5,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 1,
+      "opening_equal": true,
+      "opening_rule_prefix": 1,
+      "opening_rule_delta": -1,
+      "opening_rule_cap2_prefix": 1,
+      "oracle_prefix": 2,
+      "opening_oracle_prefix": 2
+    },
+    {
+      "round": 6,
+      "scored_labels": 3,
+      "stock_prefix": 0,
+      "independent_prefix": 0,
+      "opening_equal": false,
+      "opening_rule_prefix": 0,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 0,
+      "oracle_prefix": 0,
+      "opening_oracle_prefix": 0
+    },
+    {
+      "round": 7,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 2,
+      "opening_equal": true,
+      "opening_rule_prefix": 2,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 2,
+      "oracle_prefix": 2,
+      "opening_oracle_prefix": 2
+    },
+    {
+      "round": 8,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 2,
+      "opening_equal": true,
+      "opening_rule_prefix": 2,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 2,
+      "oracle_prefix": 2,
+      "opening_oracle_prefix": 2
+    },
+    {
+      "round": 9,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 3,
+      "opening_equal": true,
+      "opening_rule_prefix": 3,
+      "opening_rule_delta": 1,
+      "opening_rule_cap2_prefix": 2,
+      "oracle_prefix": 3,
+      "opening_oracle_prefix": 3
+    },
+    {
+      "round": 10,
+      "scored_labels": 3,
+      "stock_prefix": 1,
+      "independent_prefix": 1,
+      "opening_equal": true,
+      "opening_rule_prefix": 1,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 1,
+      "oracle_prefix": 1,
+      "opening_oracle_prefix": 1
+    },
+    {
+      "round": 11,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 1,
+      "opening_equal": true,
+      "opening_rule_prefix": 1,
+      "opening_rule_delta": -1,
+      "opening_rule_cap2_prefix": 1,
+      "oracle_prefix": 2,
+      "opening_oracle_prefix": 2
+    },
+    {
+      "round": 12,
+      "scored_labels": 3,
+      "stock_prefix": 0,
+      "independent_prefix": 3,
+      "opening_equal": false,
+      "opening_rule_prefix": 0,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 0,
+      "oracle_prefix": 3,
+      "opening_oracle_prefix": 0
+    },
+    {
+      "round": 13,
+      "scored_labels": 3,
+      "stock_prefix": 2,
+      "independent_prefix": 3,
+      "opening_equal": true,
+      "opening_rule_prefix": 3,
+      "opening_rule_delta": 1,
+      "opening_rule_cap2_prefix": 2,
+      "oracle_prefix": 3,
+      "opening_oracle_prefix": 3
+    },
+    {
+      "round": 14,
+      "scored_labels": 2,
+      "stock_prefix": 1,
+      "independent_prefix": 0,
+      "opening_equal": false,
+      "opening_rule_prefix": 1,
+      "opening_rule_delta": 0,
+      "opening_rule_cap2_prefix": 1,
+      "oracle_prefix": 1,
+      "opening_oracle_prefix": 1
+    }
+  ],
+  "component_seed_amortized_ms_per_round": 26.055453333333332,
+  "native_acceptance_measured": false,
+  "new_prefill_tok_s": null,
+  "new_decode_tok_s": null,
+  "live_route_qualified": false,
+  "serving_gain_qualified": false,
+  "decision": "No net leading-label utility for this opening-only rule. Oracle maxima require hindsight. Do not connect this losing rule or repeat the same hardware screen. A distinct predictor/router and supported target verifier would require new evidence."
+}
