@@ -9,6 +9,26 @@ requires better proposals or a different verified speculation policy. Report
 measured serving rates separately from component latency and from unmeasured
 applicability. A faster component alone is not a serving gain.
 
+The distinct growing256 GPU drafter has now completed its finite screen with
+all correction costs: [report](halogen-growing-gpu-proposer-screen-20261006.md).
+Three-ID proposal mean10.148ms plus complete resolution mean22.202ms, with the
+initial seed paid once, totals34.280ms per round. Six rounds appended and nine
+cleared/rebuilt both caches. Offline prefix matches are22/44, with19 matches
+conditioned on opening-reference equality; none are native acceptance values.
+The route remains disabled and is not repeated merely to collect more gates.
+
+| Development | GPU assessment | CPU assessment | NPU assessment | Serving outcome |
+|---|---|---|---|---|
+| Complete growing-window proposer replay | Measured34.280ms/round including seed and all corrections | Prior45.09ms proposal+one-append proxy already too costly under the same planning reference; no repeat | Prior distinct-quantization67.68ms proxy already too costly; no repeat | No Prefill/Decode/native-acceptance delta measured; original restored ready/open |
+
+The31.759ms rejection allowance is conditional on the historical48.2804tok/s
+reference and retained37/15 stock outputs. It is not a controlled comparison
+against every current workload or slower stock rate. The measured component
+cost and limited offline match depth do not justify engine adoption. New
+development must identify its target Prefill/Decode/acceptance mechanism,
+assess GPU/CPU/NPU feasibility, then price complete costs before a matched
+serving comparison. Device utilization alone is not the success metric.
+
 | Development | GPU applicability | CPU applicability | NPU applicability | Serving metric in scope |
 |---|---|---|---|---|
 | BF16 hidden vector sibling | Measured slower:160.095 versus136.962 microseconds; disabled | No new CPU implementation | Existing synchronous projection also rejected | MTP Decode only; target Prefill outside this boundary; exact rows preserve proposal IDs |

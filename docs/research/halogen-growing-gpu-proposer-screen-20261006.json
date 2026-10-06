@@ -1,0 +1,1205 @@
+{
+  "schema": "halogen.growing-gpu-proposer-component-screen.v1",
+  "timestamp_utc": "2026-10-06T01:25:17.580834+00:00",
+  "method": {
+    "root_exclusive": true,
+    "target_normally_stopped": true,
+    "backend": "Vulkan",
+    "raw_ids": true,
+    "initial_seed_tokens": 256,
+    "logical_window_limit": 512,
+    "final_authoritative_tokens": 293,
+    "cases": 15,
+    "predictions": 45,
+    "label_slots": 44,
+    "unscored_predictions": 1,
+    "measured_speculative_forward_inputs": 30,
+    "authoritative_replay_outputs": 37,
+    "excluded_warmup_commands": 3,
+    "commands": 34,
+    "complete_resolution_included": true,
+    "initial_prefill_amortized": true,
+    "opening_equality_is_offline_reference_only": true,
+    "native_hit_count_readiness_gate_observed": false,
+    "real_target_contention_measured": false,
+    "command_cost_includes_synchronization_owned_F32_argmax": true,
+    "command_cost_excludes_snapshot_IO": true,
+    "full_engine_cohort": false,
+    "greedy_range_unchanged": [
+      0,
+      248069
+    ],
+    "tolerance_relaxed": false
+  },
+  "summary": {
+    "initial_prefill_ms": 28.9411,
+    "proposal_ms": {
+      "mean": 10.147833333333333,
+      "minimum": 8.8705,
+      "maximum": 11.1226
+    },
+    "complete_resolution_ms": {
+      "mean": 22.202333333333335,
+      "minimum": 4.4215,
+      "maximum": 35.1866
+    },
+    "proposal_plus_resolution_ms": {
+      "mean": 32.35016666666667,
+      "minimum": 13.4666,
+      "maximum": 46.2061
+    },
+    "seed_amortized_complete_core_ms_per_round": 34.27957333333333,
+    "append_rounds": 6,
+    "rebuild_rounds": 9,
+    "append_resolution_ms": {
+      "mean": 4.716866666666666,
+      "minimum": 4.4215,
+      "maximum": 5.2233
+    },
+    "rebuild_resolution_ms": {
+      "mean": 33.85931111111111,
+      "minimum": 33.2912,
+      "maximum": 35.1866
+    },
+    "offline_prefix_matching_ids": 22,
+    "offline_prefix_label_slots": 44,
+    "offline_prefix_match_percent": 50.0,
+    "opening_reference_equal_rounds": 10,
+    "opening_conditioned_prefix_matching_ids": 19,
+    "stock_retained_native_accepted_ids": 22,
+    "predicted_FIM_classification_difference_ids": [],
+    "snapshot_IO_ms_all_commands": 46.455,
+    "excluded_warmup": [
+      {
+        "op": "prefill",
+        "elapsed_ms": 1010.9718,
+        "snapshot_write_ms": 0.9448,
+        "update_path": "clear_rebuild"
+      },
+      {
+        "op": "propose",
+        "elapsed_ms": 211.9192,
+        "snapshot_write_ms": 5.332,
+        "update_path": "none"
+      },
+      {
+        "op": "resolve_replay",
+        "elapsed_ms": 35.1864,
+        "snapshot_write_ms": 0.6148,
+        "update_path": "clear_rebuild"
+      }
+    ],
+    "startup_ms": {
+      "dll_load_ms": 7.0022,
+      "backend_device_ms": 79.9427,
+      "model_load_ms": 597.5771,
+      "context_init_ms": 21.4156
+    },
+    "native_process_elapsed_before_manifest_ms": 2528.7435,
+    "owned_screen_elapsed_seconds": 3.687000000005355,
+    "coordinator_elapsed_seconds": 279.5320000000065
+  },
+  "decision": {
+    "adopted": false,
+    "route": "synchronous growing256 GPU independent proposer",
+    "retired": true,
+    "reason": "Complete core cost exceeds historical48.2804 reference planning ceiling; offline prefix matches do not establish an advantage over retained stock draft depth",
+    "optimistic_planning_ceiling_ms": 31.758896786790324,
+    "ceiling_reference_decode_tok_s": 48.280434412668335,
+    "ceiling_is_cross_cohort_rejection_bound_only": true,
+    "ceiling_proves_no_gain_for_every_current_workload": false,
+    "actual_native_acceptance_measured": false,
+    "Halogen_prefill_delta_tok_s": null,
+    "Halogen_decode_delta_tok_s": null,
+    "Halogen_acceptance_delta": null,
+    "projection_tolerances_changed": false,
+    "engine_injection_installed": false,
+    "full_acceleration_goal_achieved": false
+  },
+  "platform_assessment": {
+    "GPU": "Actual growing drafter+complete resolution measured; slower than useful budget; remains off",
+    "CPU": "Prior proposal plus one append45.09ms already exceeds generous ceiling; no repeated CPU run",
+    "NPU": "Prior distinct quantization proposal plus one append67.68ms exceeds generous ceiling; no NPU production or repeated run",
+    "target_prefill_benefit": false,
+    "target_weights_removed": false,
+    "independent_model_weights_separate": true,
+    "NPU_extra_GPU_memory": false
+  },
+  "cases": [
+    {
+      "index": 0,
+      "preproposal_tokens": 256,
+      "postresolution_tokens": 257,
+      "draft_ids": [
+        2919,
+        314,
+        279
+      ],
+      "labels_after_prediction": [
+        8337,
+        1145,
+        2116
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 0,
+      "retained_opening_reference": 14367,
+      "opening_reference_equal": false,
+      "replay_ids": [
+        8337
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 10.9695,
+      "resolution_ms": 33.4247,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.2373,
+          "greedy_ms": 0.3377,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.1166,
+          "logits_readiness_ms": 0.0038,
+          "start_position": 256,
+          "synchronize_ms": 3.6582
+        },
+        {
+          "decode_dispatch_ms": 1.2022,
+          "greedy_ms": 0.3376,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.1345,
+          "logits_readiness_ms": 0.0033,
+          "start_position": 257,
+          "synchronize_ms": 2.9135
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.5071,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 5.1165,
+          "greedy_ms": 0.3482,
+          "input_tokens": 257,
+          "kind": "prefill",
+          "logits_copy_ms": 0.0471,
+          "logits_readiness_ms": 0.0043,
+          "start_position": 0,
+          "synchronize_ms": 26.3735
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "preproposal_tokens": 257,
+      "postresolution_tokens": 260,
+      "draft_ids": [
+        421,
+        1145,
+        2116
+      ],
+      "labels_after_prediction": [
+        1145,
+        2116,
+        310
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 0,
+      "retained_opening_reference": 1145,
+      "opening_reference_equal": false,
+      "replay_ids": [
+        1145,
+        2116,
+        310
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 10.6794,
+      "resolution_ms": 33.2912,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.1883,
+          "greedy_ms": 0.3869,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0422,
+          "logits_readiness_ms": 0.0034,
+          "start_position": 257,
+          "synchronize_ms": 3.5357
+        },
+        {
+          "decode_dispatch_ms": 1.1095,
+          "greedy_ms": 0.3848,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0471,
+          "logits_readiness_ms": 0.0028,
+          "start_position": 258,
+          "synchronize_ms": 2.9647
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.4773,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 4.7671,
+          "greedy_ms": 0.3499,
+          "input_tokens": 260,
+          "kind": "prefill",
+          "logits_copy_ms": 0.0645,
+          "logits_readiness_ms": 0.0054,
+          "start_position": 0,
+          "synchronize_ms": 26.594
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "preproposal_tokens": 260,
+      "postresolution_tokens": 263,
+      "draft_ids": [
+        279,
+        13558,
+        314
+      ],
+      "labels_after_prediction": [
+        279,
+        32469,
+        6220
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 1,
+      "retained_opening_reference": 279,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        279,
+        32469,
+        6220
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 10.7755,
+      "resolution_ms": 33.8036,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.1995,
+          "greedy_ms": 0.337,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0431,
+          "logits_readiness_ms": 0.0033,
+          "start_position": 260,
+          "synchronize_ms": 3.7495
+        },
+        {
+          "decode_dispatch_ms": 1.1434,
+          "greedy_ms": 0.3374,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0519,
+          "logits_readiness_ms": 0.0028,
+          "start_position": 261,
+          "synchronize_ms": 2.8918
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.4949,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 4.6608,
+          "greedy_ms": 0.3493,
+          "input_tokens": 263,
+          "kind": "prefill",
+          "logits_copy_ms": 0.0461,
+          "logits_readiness_ms": 0.0055,
+          "start_position": 0,
+          "synchronize_ms": 27.2154
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "preproposal_tokens": 263,
+      "postresolution_tokens": 266,
+      "draft_ids": [
+        1040,
+        264,
+        8545
+      ],
+      "labels_after_prediction": [
+        1040,
+        264,
+        2018
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 2,
+      "retained_opening_reference": 1040,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        1040,
+        264,
+        2018
+      ],
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 10.9891,
+      "resolution_ms": 4.5532,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.4085,
+          "greedy_ms": 0.3403,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0444,
+          "logits_readiness_ms": 0.0037,
+          "start_position": 263,
+          "synchronize_ms": 3.5242
+        },
+        {
+          "decode_dispatch_ms": 1.3454,
+          "greedy_ms": 0.3849,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.032,
+          "logits_readiness_ms": 0.0088,
+          "start_position": 264,
+          "synchronize_ms": 2.8777
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "decode_dispatch_ms": 1.1596,
+          "greedy_ms": 0.3844,
+          "input_tokens": 1,
+          "kind": "authoritative_replay",
+          "logits_copy_ms": 0.036,
+          "logits_readiness_ms": 0.0032,
+          "start_position": 265,
+          "synchronize_ms": 2.9577
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "preproposal_tokens": 266,
+      "postresolution_tokens": 269,
+      "draft_ids": [
+        6574,
+        11,
+        11702
+      ],
+      "labels_after_prediction": [
+        6574,
+        11,
+        11702
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 3,
+      "retained_opening_reference": 6574,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        6574,
+        11,
+        11702
+      ],
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 9.0136,
+      "resolution_ms": 4.453,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 1.1301,
+          "greedy_ms": 0.3368,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0283,
+          "logits_readiness_ms": 0.0032,
+          "start_position": 266,
+          "synchronize_ms": 2.9651
+        },
+        {
+          "decode_dispatch_ms": 1.1378,
+          "greedy_ms": 0.3848,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0396,
+          "logits_readiness_ms": 0.0034,
+          "start_position": 267,
+          "synchronize_ms": 2.9681
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "decode_dispatch_ms": 1.1143,
+          "greedy_ms": 0.3391,
+          "input_tokens": 1,
+          "kind": "authoritative_replay",
+          "logits_copy_ms": 0.021,
+          "logits_readiness_ms": 0.0033,
+          "start_position": 268,
+          "synchronize_ms": 2.9637
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "preproposal_tokens": 269,
+      "postresolution_tokens": 272,
+      "draft_ids": [
+        321,
+        8545,
+        11
+      ],
+      "labels_after_prediction": [
+        321,
+        4022,
+        11
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 1,
+      "retained_opening_reference": 321,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        321,
+        4022,
+        11
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 8.8705,
+      "resolution_ms": 33.7881,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 1.1605,
+          "greedy_ms": 0.3855,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0259,
+          "logits_readiness_ms": 0.0032,
+          "start_position": 269,
+          "synchronize_ms": 2.9225
+        },
+        {
+          "decode_dispatch_ms": 1.02,
+          "greedy_ms": 0.3367,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0291,
+          "logits_readiness_ms": 0.0034,
+          "start_position": 270,
+          "synchronize_ms": 2.9701
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.4909,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 4.9437,
+          "greedy_ms": 0.3973,
+          "input_tokens": 272,
+          "kind": "prefill",
+          "logits_copy_ms": 0.0445,
+          "logits_readiness_ms": 0.0055,
+          "start_position": 0,
+          "synchronize_ms": 26.8719
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "preproposal_tokens": 272,
+      "postresolution_tokens": 273,
+      "draft_ids": [
+        28701,
+        1472,
+        279
+      ],
+      "labels_after_prediction": [
+        24829,
+        1618,
+        279
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 0,
+      "retained_opening_reference": 87529,
+      "opening_reference_equal": false,
+      "replay_ids": [
+        24829
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 10.6755,
+      "resolution_ms": 33.5197,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.4009,
+          "greedy_ms": 0.3374,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0252,
+          "logits_readiness_ms": 0.0035,
+          "start_position": 272,
+          "synchronize_ms": 3.4424
+        },
+        {
+          "decode_dispatch_ms": 0.9986,
+          "greedy_ms": 0.3369,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.049,
+          "logits_readiness_ms": 0.0027,
+          "start_position": 273,
+          "synchronize_ms": 3.0608
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.4855,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 4.534,
+          "greedy_ms": 0.4016,
+          "input_tokens": 273,
+          "kind": "prefill",
+          "logits_copy_ms": 0.0398,
+          "logits_readiness_ms": 0.0046,
+          "start_position": 0,
+          "synchronize_ms": 27.022
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "preproposal_tokens": 273,
+      "postresolution_tokens": 276,
+      "draft_ids": [
+        1618,
+        279,
+        27786
+      ],
+      "labels_after_prediction": [
+        1618,
+        279,
+        18169
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 2,
+      "retained_opening_reference": 1618,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        1618,
+        279,
+        18169
+      ],
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 10.7018,
+      "resolution_ms": 4.4633,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.2848,
+          "greedy_ms": 0.3374,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0266,
+          "logits_readiness_ms": 0.0039,
+          "start_position": 273,
+          "synchronize_ms": 3.6413
+        },
+        {
+          "decode_dispatch_ms": 0.9928,
+          "greedy_ms": 0.3372,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0437,
+          "logits_readiness_ms": 0.0065,
+          "start_position": 274,
+          "synchronize_ms": 3.0126
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "decode_dispatch_ms": 1.0588,
+          "greedy_ms": 0.3369,
+          "input_tokens": 1,
+          "kind": "authoritative_replay",
+          "logits_copy_ms": 0.0259,
+          "logits_readiness_ms": 0.0033,
+          "start_position": 275,
+          "synchronize_ms": 3.0263
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "preproposal_tokens": 276,
+      "postresolution_tokens": 279,
+      "draft_ids": [
+        1881,
+        279,
+        2235
+      ],
+      "labels_after_prediction": [
+        1881,
+        279,
+        9114
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 2,
+      "retained_opening_reference": 1881,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        1881,
+        279,
+        9114
+      ],
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 8.9099,
+      "resolution_ms": 5.1869,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 1.102,
+          "greedy_ms": 0.3851,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0226,
+          "logits_readiness_ms": 0.0087,
+          "start_position": 276,
+          "synchronize_ms": 2.9865
+        },
+        {
+          "decode_dispatch_ms": 1.0481,
+          "greedy_ms": 0.3369,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0281,
+          "logits_readiness_ms": 0.0035,
+          "start_position": 277,
+          "synchronize_ms": 2.9722
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "decode_dispatch_ms": 1.7116,
+          "greedy_ms": 0.385,
+          "input_tokens": 1,
+          "kind": "authoritative_replay",
+          "logits_copy_ms": 0.0213,
+          "logits_readiness_ms": 0.0035,
+          "start_position": 278,
+          "synchronize_ms": 3.0476
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "preproposal_tokens": 279,
+      "postresolution_tokens": 282,
+      "draft_ids": [
+        321,
+        279,
+        12515
+      ],
+      "labels_after_prediction": [
+        321,
+        279,
+        12515
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 3,
+      "retained_opening_reference": 321,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        321,
+        279,
+        12515
+      ],
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 9.5994,
+      "resolution_ms": 4.4215,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 1.2261,
+          "greedy_ms": 0.3855,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0246,
+          "logits_readiness_ms": 0.0033,
+          "start_position": 279,
+          "synchronize_ms": 3.5449
+        },
+        {
+          "decode_dispatch_ms": 1.038,
+          "greedy_ms": 0.3427,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.033,
+          "logits_readiness_ms": 0.0034,
+          "start_position": 280,
+          "synchronize_ms": 2.9825
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "decode_dispatch_ms": 1.0949,
+          "greedy_ms": 0.3375,
+          "input_tokens": 1,
+          "kind": "authoritative_replay",
+          "logits_copy_ms": 0.0235,
+          "logits_readiness_ms": 0.0031,
+          "start_position": 281,
+          "synchronize_ms": 2.9501
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "preproposal_tokens": 282,
+      "postresolution_tokens": 284,
+      "draft_ids": [
+        13,
+        1049,
+        557
+      ],
+      "labels_after_prediction": [
+        13,
+        733,
+        279
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 1,
+      "retained_opening_reference": 13,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        13,
+        733
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 8.9409,
+      "resolution_ms": 33.6498,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 1.1048,
+          "greedy_ms": 0.3376,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0333,
+          "logits_readiness_ms": 0.0033,
+          "start_position": 282,
+          "synchronize_ms": 3.0125
+        },
+        {
+          "decode_dispatch_ms": 1.003,
+          "greedy_ms": 0.3387,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0431,
+          "logits_readiness_ms": 0.0036,
+          "start_position": 283,
+          "synchronize_ms": 3.0425
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.2216,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 5.0764,
+          "greedy_ms": 0.3521,
+          "input_tokens": 284,
+          "kind": "prefill",
+          "logits_copy_ms": 0.0408,
+          "logits_readiness_ms": 0.0045,
+          "start_position": 0,
+          "synchronize_ms": 26.921
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "preproposal_tokens": 284,
+      "postresolution_tokens": 287,
+      "draft_ids": [
+        279,
+        3990,
+        314
+      ],
+      "labels_after_prediction": [
+        279,
+        6092,
+        314
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 1,
+      "retained_opening_reference": 279,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        279,
+        6092,
+        314
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 11.0195,
+      "resolution_ms": 35.1866,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.2229,
+          "greedy_ms": 0.3858,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0423,
+          "logits_readiness_ms": 0.0038,
+          "start_position": 284,
+          "synchronize_ms": 3.8515
+        },
+        {
+          "decode_dispatch_ms": 1.0982,
+          "greedy_ms": 0.3878,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0309,
+          "logits_readiness_ms": 0.0029,
+          "start_position": 285,
+          "synchronize_ms": 2.9773
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.535,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 5.4349,
+          "greedy_ms": 0.3487,
+          "input_tokens": 287,
+          "kind": "prefill",
+          "logits_copy_ms": 0.0515,
+          "logits_readiness_ms": 0.0066,
+          "start_position": 0,
+          "synchronize_ms": 27.7605
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "preproposal_tokens": 287,
+      "postresolution_tokens": 288,
+      "draft_ids": [
+        17739,
+        68507,
+        11
+      ],
+      "labels_after_prediction": [
+        17739,
+        68507,
+        11
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 3,
+      "retained_opening_reference": 7963,
+      "opening_reference_equal": false,
+      "replay_ids": [
+        17739
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 11.1226,
+      "resolution_ms": 33.9423,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.8109,
+          "greedy_ms": 0.3539,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0626,
+          "logits_readiness_ms": 0.005,
+          "start_position": 287,
+          "synchronize_ms": 3.4152
+        },
+        {
+          "decode_dispatch_ms": 1.1081,
+          "greedy_ms": 0.3377,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0588,
+          "logits_readiness_ms": 0.0034,
+          "start_position": 288,
+          "synchronize_ms": 2.9439
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.3218,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 4.9194,
+          "greedy_ms": 0.4,
+          "input_tokens": 288,
+          "kind": "prefill",
+          "logits_copy_ms": 0.045,
+          "logits_readiness_ms": 0.0048,
+          "start_position": 0,
+          "synchronize_ms": 27.2189
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "preproposal_tokens": 288,
+      "postresolution_tokens": 291,
+      "draft_ids": [
+        68507,
+        11,
+        279
+      ],
+      "labels_after_prediction": [
+        68507,
+        11,
+        279
+      ],
+      "label_slots": 3,
+      "unscored_prediction_count": 0,
+      "offline_exact_prefix_ids": 3,
+      "retained_opening_reference": 68507,
+      "opening_reference_equal": true,
+      "replay_ids": [
+        68507,
+        11,
+        279
+      ],
+      "resolution_path": "authoritative_append",
+      "proposal_ms": 10.7986,
+      "resolution_ms": 5.2233,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 2.3971,
+          "greedy_ms": 0.337,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0386,
+          "logits_readiness_ms": 0.0039,
+          "start_position": 288,
+          "synchronize_ms": 3.6161
+        },
+        {
+          "decode_dispatch_ms": 1.0575,
+          "greedy_ms": 0.3369,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0303,
+          "logits_readiness_ms": 0.0033,
+          "start_position": 289,
+          "synchronize_ms": 2.9644
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "decode_dispatch_ms": 1.1047,
+          "greedy_ms": 0.3371,
+          "input_tokens": 1,
+          "kind": "authoritative_replay",
+          "logits_copy_ms": 0.0258,
+          "logits_readiness_ms": 0.0034,
+          "start_position": 290,
+          "synchronize_ms": 3.7398
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "preproposal_tokens": 291,
+      "postresolution_tokens": 293,
+      "draft_ids": [
+        3594,
+        557,
+        2590
+      ],
+      "labels_after_prediction": [
+        14367,
+        557
+      ],
+      "label_slots": 2,
+      "unscored_prediction_count": 1,
+      "offline_exact_prefix_ids": 0,
+      "retained_opening_reference": 14367,
+      "opening_reference_equal": false,
+      "replay_ids": [
+        14367,
+        557
+      ],
+      "resolution_path": "clear_rebuild",
+      "proposal_ms": 9.1517,
+      "resolution_ms": 34.1278,
+      "proposal_native_calls": [
+        {
+          "decode_dispatch_ms": 1.5753,
+          "greedy_ms": 0.385,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0259,
+          "logits_readiness_ms": 0.0034,
+          "start_position": 291,
+          "synchronize_ms": 2.7118
+        },
+        {
+          "decode_dispatch_ms": 1.0571,
+          "greedy_ms": 0.3851,
+          "input_tokens": 1,
+          "kind": "speculative_forward",
+          "logits_copy_ms": 0.0292,
+          "logits_readiness_ms": 0.0028,
+          "start_position": 292,
+          "synchronize_ms": 2.9591
+        }
+      ],
+      "resolution_native_calls": [
+        {
+          "elapsed_ms": 1.4858,
+          "kind": "clear_both_caches"
+        },
+        {
+          "decode_dispatch_ms": 5.4281,
+          "greedy_ms": 0.3995,
+          "input_tokens": 293,
+          "kind": "prefill",
+          "logits_copy_ms": 0.035,
+          "logits_readiness_ms": 0.0045,
+          "start_position": 0,
+          "synchronize_ms": 26.7442
+        }
+      ]
+    }
+  ],
+  "device": {
+    "device_name": "Vulkan0",
+    "device_description": "AMD Radeon(TM) 8060S Graphics",
+    "device_id": "",
+    "actual_n_ctx": 1024,
+    "actual_n_batch": 512,
+    "actual_n_ubatch": 512,
+    "requested_n_gpu_layers": -1,
+    "offload_kqv": true,
+    "op_offload": true
+  },
+  "placement": {
+    "offloaded_layers": "25/25",
+    "GPU_model_buffer": true,
+    "CPU_host_outputs": true,
+    "verified_in_native_log": true,
+    "all_operations_GPU_only_claimed": false
+  },
+  "evidence": {
+    "vulkan-output.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-component-debbe529453644b0b6b87b2fbedcddcd\\vulkan-output.json",
+      "sha256": "893d29762e9f15fde89d2aa9db6a784aca194f047b92347d9bb93f9a60d3061e",
+      "bytes": 168603
+    },
+    "vulkan-stderr.log": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-component-debbe529453644b0b6b87b2fbedcddcd\\vulkan-stderr.log",
+      "sha256": "c093dc9a2017ccfde780d04f1696d5244203264dbe3d19a592d1855d6badc3de",
+      "bytes": 56508
+    },
+    "component-result.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-component-debbe529453644b0b6b87b2fbedcddcd\\component-result.json",
+      "sha256": "5ebf2f3787b0721439ffbb6ff6050f2cff3bc248a7c959c3d070158db7905ea4",
+      "bytes": 665
+    },
+    "coordinator-result.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-component-debbe529453644b0b6b87b2fbedcddcd\\coordinator-result.json",
+      "sha256": "14b6da23cdb5fa87c1024e8203e52028653558f85237c9248ddf98051679c948",
+      "bytes": 400
+    },
+    "commands.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-component-debbe529453644b0b6b87b2fbedcddcd\\commands.json",
+      "sha256": "c777e25394391e54b6c4ab33809628643f1147ba47a83ade281b644bb6839248",
+      "bytes": 10935
+    },
+    "original-interference.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-component-debbe529453644b0b6b87b2fbedcddcd\\original-interference.json",
+      "sha256": "ad122e237947bca80fa9bdc5dd7284a1d62f8c178bfeb4f3ebf401eb3b1eaed2",
+      "bytes": 1043
+    },
+    "screen-interference.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-component-debbe529453644b0b6b87b2fbedcddcd\\screen-interference.json",
+      "sha256": "ad122e237947bca80fa9bdc5dd7284a1d62f8c178bfeb4f3ebf401eb3b1eaed2",
+      "bytes": 1043
+    }
+  },
+  "plan": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-component-plan-debbe529453644b0b6b87b2fbedcddcd.json",
+    "sha256": "95be6ae5dc5a8ceec9075a5afc05c8c68bce8172ac4312d632767f28b599782d",
+    "bytes": 10721
+  },
+  "source": {
+    "path": "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen_llama_raw_id_bridge\\bridge.cpp",
+    "sha256": "621d40e6c83c9589a2281716c75968117aea99a66b99c33e92c9105bacfca32a",
+    "bytes": 34949
+  },
+  "policy": {
+    "path": "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen_llama_raw_id_bridge\\replay_policy.h",
+    "sha256": "61583b40f4d569017e78ae5f5c5125f98bb8cd4425503e97824bb76f4a05049f",
+    "bytes": 815
+  },
+  "workload": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-independent-proposer-workload-20261006.json",
+    "sha256": "1f3a2fbfafe1a8fd90f99c23dac49f3f0028644d5f010fcd057edfcce26a4919",
+    "bytes": 12287
+  },
+  "build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\llama-raw-bridge-build-660b03e46402459bab3c5df34b3969b3\\result.json",
+    "sha256": "059654cd1491e5ab070854c9fdea30f5b49235f342b38883c7be5f36b9b1340e",
+    "bytes": 5988
+  },
+  "restoration": {
+    "original_ready_open": true,
+    "readiness_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-held-restoration-21c565c3ecfa473d9fdd7b90aefa3c18\\final-ready.json",
+      "sha256": "9d981da61c755b8c11a81466e7db7cafff3e85fb134b466484cb4a33e7290e07",
+      "bytes": 844
+    },
+    "result_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-held-restoration-21c565c3ecfa473d9fdd7b90aefa3c18\\result.json",
+      "sha256": "917311f66d812a09105c4643d99b8230162d944dfdd3306b834e2dfe2f9f391c",
+      "bytes": 2652
+    },
+    "admission_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\growing-gpu-held-restoration-21c565c3ecfa473d9fdd7b90aefa3c18\\held-memory.json",
+      "sha256": "d637a37fdc23b3220fb0e29d4181f563d1a0fdb69a4312836d55082c769df2d5",
+      "bytes": 11182
+    },
+    "controller_identity": {
+      "pid": 20032,
+      "creation_time_100ns": 134357232243414926,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "controller_run": "b0c98c46d5c34297923f18c460b9f9b0",
+    "backend_run": "764deaf90c394550bcec7aafbfbad0a3",
+    "container_id": "b09e49e5bdf7b0a0cce4ee23871d8852b3fbf51440dd233b15d657f63999f78c",
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+    "exact_44gib_sufficiency_proven": false
+  }
+}
