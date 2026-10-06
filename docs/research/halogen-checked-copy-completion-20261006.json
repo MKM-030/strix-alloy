@@ -1,0 +1,453 @@
+{
+  "schema": "halogen.checked-copy.completion-attempt.v1",
+  "date": "2026-10-06",
+  "scope": "Source and retained-receipt CPU analysis only; this reporting pass performed no hardware/provider/engine operation, build, new test, or lifecycle action.",
+  "raw_work_directory": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95",
+  "prior_failed_report": "docs/research/halogen-checked-copy-screen-20261006.md",
+  "full_comparison_qualified": false,
+  "causal_speed_gain_qualified": false,
+  "adopted": false,
+  "npu_executed": false,
+  "ordinary_prefill_mechanism": false,
+  "intended_acceptance_change": false,
+  "method": {
+    "checkpoint": "v2",
+    "engine_version": "0.16.2",
+    "input_kind": "exact once-only natural War and Peace corpus plus trailing story task",
+    "input_tokens": 16384,
+    "output_tokens": 128,
+    "context_capacity": 262144,
+    "slots": 1,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "prompt_cache": false,
+    "mtp_depth": 2,
+    "prompt_lookup": "3,3",
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "excluded_warmups_per_completed_window": 1,
+    "measured_repetitions_per_completed_window": 3,
+    "planned_order": [
+      "stock_before",
+      "candidate_checked_copy",
+      "stock_after"
+    ],
+    "stock_after_measured": false,
+    "rate_aggregation": "arithmetic means of all three retained measured per-request calibrated rates; warmups excluded; no sample removal",
+    "consumer_arithmetic_and_tolerances_changed": false
+  },
+  "identity": {
+    "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+    "request_sha256": "3893472a32bac55600fa874f915fbd5ef13c7b7c6a64bff1d25983cc06235fac",
+    "prompt_sha256": "cbaeec7395187803e2e570d3f5554b45d2eb99e5fa80b61c370c7fe87390a663",
+    "stock_profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+    "consumer_mode": "ready64-v1",
+    "ready_policy": "fixed-v1",
+    "host_validation": "checked-copy-v1",
+    "row_origin": 1,
+    "imported_rows": 52,
+    "capacity": 64,
+    "row_bytes": 5120,
+    "device_row_bytes": 327680,
+    "artifact_bytes": 266784,
+    "artifact_sha256": "716bb5ea0eb0acf8092ec4dd167d4f8b83edd766686c0afa3111db65483c47d9",
+    "shared_object_sha256": "9e8aa16f2d52881cff0445c8250287d3defdf318f4b3fafef0d1e220f0bb3ff2",
+    "shared_object_bytes": 63664,
+    "consumer_source_sha256": "e224b6cc0e083c872d5cc7a6c4c2a5a45913c0cff624047b5127385916386165",
+    "consumer_header_sha256": "da138826f9d58cedc38803f372465b04dd4a12dcf0546c791782d435e49c9e66",
+    "launcher_source_sha256": "ce1b05c7143de73d9bd0ccd554ec072a6c5ea204c6dda9073696d674feab5dff",
+    "codec_source_sha256": "3c6c3f2866025b1ab8f8c5dc497e2a85bf9a087ba900061aacd6ae553d823fc5",
+    "model_binding": "8a8b5ebdbf2b1feef8192d6b43d702b798efc996d537139d87d8126796b31201",
+    "provenance": "91baaf46b769e7e11e5e3641dd2068b393ef19559badd8164481666f72972a93",
+    "per_hit_event_query": false
+  },
+  "stock_before": {
+    "qualified_single_window": true,
+    "prefill_tps": 1185.7599967558233,
+    "decode_tps": 35.96606388264878,
+    "mean_wall_seconds": 17.469954399993487,
+    "sum_wall_seconds": 52.409863199980464,
+    "native_prompt_ms_mean": 15163.366666666667,
+    "native_predicted_ms_mean": 3908.7000000000003,
+    "accepted": 186,
+    "drafted": 387,
+    "acceptance": 0.4806201550387597
+  },
+  "candidate": {
+    "qualified": false,
+    "prefill_tps": 1199.8136447784182,
+    "decode_tps": 36.7458284151223,
+    "mean_wall_seconds": 17.20245766666873,
+    "sum_wall_seconds": 51.60737300000619,
+    "native_prompt_ms_mean": 14886.700000000003,
+    "native_predicted_ms_mean": 3798.2000000000003,
+    "accepted": 186,
+    "drafted": 387,
+    "acceptance": 0.4806201550387597
+  },
+  "observed_partial_changes_percent": {
+    "prefill": 1.1852017323104924,
+    "decode": 2.1680563517257667,
+    "request_wall": -1.5311816344801388,
+    "qualified_gain": false
+  },
+  "parity": {
+    "raw_response_count": 8,
+    "included_warmups": 2,
+    "distinct_response_texts": 1,
+    "text_characters": 543,
+    "all_output_text_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+    "method": "Read all eight raw response JSON files, compare choices[0].text strings and independently hash each UTF-8 text.",
+    "all_output_text_equal": true,
+    "all_request_and_prompt_hashes_equal": true,
+    "all_usage_equal": true,
+    "per_response_accepted": 62,
+    "per_response_drafted": 129,
+    "per_response_acceptance": 0.4806201550387597,
+    "measured_acceptance_per_window": "186/387",
+    "cache_and_disk_restore_counts_all_zero": true,
+    "all_finish_reasons": "length"
+  },
+  "samples": [
+    {
+      "window": "stock_before",
+      "index": 0,
+      "phase": "warmup",
+      "prefill_tps": 700.8380947064747,
+      "decode_tps": 29.279824845826084,
+      "wall_seconds": 27.837125299993204,
+      "accepted": 62,
+      "drafted": 129,
+      "prompt_tokens": 16384,
+      "output_tokens": 128,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "finish_reason": "length",
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+    },
+    {
+      "window": "stock_before",
+      "index": 1,
+      "phase": "measured",
+      "prefill_tps": 1180.2494412033677,
+      "decode_tps": 34.93930121975646,
+      "wall_seconds": 17.624692199984565,
+      "accepted": 62,
+      "drafted": 129,
+      "prompt_tokens": 16384,
+      "output_tokens": 128,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "finish_reason": "length",
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+    },
+    {
+      "window": "stock_before",
+      "index": 2,
+      "phase": "measured",
+      "prefill_tps": 1203.9015133531295,
+      "decode_tps": 35.59819743793628,
+      "wall_seconds": 17.314655800000764,
+      "accepted": 62,
+      "drafted": 129,
+      "prompt_tokens": 16384,
+      "output_tokens": 128,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "finish_reason": "length",
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+    },
+    {
+      "window": "stock_before",
+      "index": 3,
+      "phase": "measured",
+      "prefill_tps": 1173.1290357109726,
+      "decode_tps": 37.36069299025361,
+      "wall_seconds": 17.470515199995134,
+      "accepted": 62,
+      "drafted": 129,
+      "prompt_tokens": 16384,
+      "output_tokens": 128,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "finish_reason": "length",
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+    },
+    {
+      "window": "candidate_checked_copy",
+      "index": 0,
+      "phase": "warmup",
+      "prefill_tps": 688.6094353233054,
+      "decode_tps": 28.475499448281198,
+      "wall_seconds": 28.366624300018884,
+      "accepted": 62,
+      "drafted": 129,
+      "prompt_tokens": 16384,
+      "output_tokens": 128,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "finish_reason": "length",
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+    },
+    {
+      "window": "candidate_checked_copy",
+      "index": 1,
+      "phase": "measured",
+      "prefill_tps": 1191.7988540712627,
+      "decode_tps": 37.39492691338948,
+      "wall_seconds": 17.24692109998432,
+      "accepted": 62,
+      "drafted": 129,
+      "prompt_tokens": 16384,
+      "output_tokens": 128,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "finish_reason": "length",
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+    },
+    {
+      "window": "candidate_checked_copy",
+      "index": 2,
+      "phase": "measured",
+      "prefill_tps": 1202.839561511254,
+      "decode_tps": 36.14655776080459,
+      "wall_seconds": 17.237906499998644,
+      "accepted": 62,
+      "drafted": 129,
+      "prompt_tokens": 16384,
+      "output_tokens": 128,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "finish_reason": "length",
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+    },
+    {
+      "window": "candidate_checked_copy",
+      "index": 3,
+      "phase": "measured",
+      "prefill_tps": 1204.8025187527378,
+      "decode_tps": 36.69600057117283,
+      "wall_seconds": 17.122545400023228,
+      "accepted": 62,
+      "drafted": 129,
+      "prompt_tokens": 16384,
+      "output_tokens": 128,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "finish_reason": "length",
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+    }
+  ],
+  "matrix": {
+    "passed": false,
+    "exit_code": 1,
+    "exit_code_provenance": "Root-owned exec session 97096 completion",
+    "errors": [
+      "RuntimeError: Runtime GPU interference contaminated window"
+    ],
+    "original_ready_open": true,
+    "recovery_pending": false,
+    "adoption_claim": false,
+    "minimum_memory": {
+      "available_bytes": 31976484864,
+      "commit_headroom_bytes": 131045167104
+    },
+    "candidate_after_counters_present": false,
+    "stock_after_samples_present": false
+  },
+  "observer_incident": {
+    "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/gpu-runtime.jsonl",
+    "line": 2,
+    "windows_utc": "2026-10-06T10:07:29.2052859Z",
+    "instance": "pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+    "percent": 2.6283459305259953,
+    "pid": 4,
+    "name": "System",
+    "processes": [],
+    "single_vm_worker_pid": 20968,
+    "single_vm_worker_birth": "2026-10-06T08:59:26.9915840Z",
+    "attributed_to_halogen": false,
+    "attributed_to_other_application": false,
+    "underlying_gpu_activity_phase": "unresolved"
+  },
+  "temporal_limits": {
+    "watcher_timestamp_source": "Windows DateTime.UtcNow after Get-Counter returns",
+    "request_utc_source": "WSL Python time.time()",
+    "request_qpc_source": "midpoint of host Windows perf_counter handshake",
+    "gpu_qpc_recorded": false,
+    "pdh_timestamp_recorded": false,
+    "pdh_measurement_interval_recorded": false,
+    "candidate_warmup": {
+      "guest_utc_before_epoch": 1791281220.8903267,
+      "guest_utc_after_epoch": 1791281249.1590564,
+      "qpc_before": 155866.99351875,
+      "qpc_after": 155895.36226075
+    },
+    "candidate_measured_1": {
+      "guest_utc_before_epoch": 1791281249.1859608,
+      "guest_utc_after_epoch": 1791281266.5818038,
+      "qpc_before": 155895.3868361,
+      "qpc_after": 155912.6357716
+    },
+    "nominal_event_offset_after_warmup_guest_utc_ms": 46.22936248779297,
+    "nominal_event_offset_after_measured_1_guest_utc_start_ms": 19.32501792907715,
+    "nominal_timestamp_phase": "measured request 1, only if the two UTC sources are treated as equivalent",
+    "candidate_measured_3": {
+      "guest_utc_duration_seconds": 44.60282015800476,
+      "qpc_duration_seconds": 17.124541650002357
+    },
+    "conclusion": "The reported timestamp is nominally near the warmup/measured-1 boundary, but independent UTC sources and absent GPU QPC/PDH timing prevent exclusive attribution of the underlying activity to either phase. Request rates retain their raw-clock/QPC calibration; no sample was filtered or requalified."
+  },
+  "missing_qualification": [
+    "Passing matrix runtime-interference admission",
+    "Final stock measurement window",
+    "Candidate after-counter receipt and complete nonzero hit/skip/miss coverage"
+  ],
+  "restoration": {
+    "receipt": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/final-ready.json",
+    "controller_pid": 27772,
+    "backend_pid": 24596,
+    "controller_run": "a113ed83b6904e33a554488bded36b73",
+    "backend_run": "08ee047c0db0478fb66147a928a6e4fa",
+    "container_id": "6b7a2377c786511d87d58f766eb0ca04364edf89494820eea650cb8d3605204f",
+    "controller_phase": "ready",
+    "backend_phase": "ready",
+    "active_requests": 0,
+    "open": true,
+    "port": 8840,
+    "stock_profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+    "ld_preload": "/candidate/libhalogen0162-v2-preflight.so:/candidate/hip-register-private-rw.so",
+    "candidate_loaded": false,
+    "backend_creation_time_100ns": "134357550467643170",
+    "backend_identity_provenance": "Root's fresh read-only identity verification; PID24596 python313",
+    "coordinator_pid_23780_absent": true,
+    "public_health": {
+      "receipt": "server/.local/optimization9h-20261004/public-health-restored-6840445985dd402c8d8cf421c96b5f36.json",
+      "timestamp_utc": "2026-10-06T10:20:16.7277973Z",
+      "authenticated": true,
+      "credentials_logged": false,
+      "status": 200,
+      "health": {
+        "status": "ok",
+        "backend": "halogen-v2",
+        "checkpoint": "v2",
+        "context": 262144,
+        "active_requests": 0,
+        "draining": false,
+        "completed": 2,
+        "cancelled": 0
+      }
+    }
+  },
+  "next_investigation": {
+    "kind": "supported Windows GPUView/ETW attribution of PID4 Copy-engine activity",
+    "primary_source": "https://learn.microsoft.com/en-us/windows-hardware/drivers/display/using-gpuview",
+    "source_support": "Microsoft documents ETL video/kernel events, GPU command-buffer submissions and driver command-buffer timing in GPUView.",
+    "status": "documented direction only; no trace collected or tool installed by this reporting pass",
+    "purpose": "Resolve provenance and time interval of the System Copy-engine event before any new serving decision.",
+    "observer_weakening_authorized": false,
+    "unchanged_retry_recommended": false,
+    "npu_production_qualified": false,
+    "attribution_report": "docs/research/halogen-gpu-copy-attribution-20261006.md",
+    "installed_capability": {
+      "provenance": "Root's read-only checks, documented in the attribution report",
+      "wpr_present": true,
+      "wpr_gpu_profile_present": true,
+      "recording_running": false,
+      "current_process_elevated": false,
+      "se_system_profile_privilege_present": false,
+      "gpuview_or_wpa_found_on_path_or_checked_standard_wpt_paths": false,
+      "inventory_exhaustive": false,
+      "trace_collected": false
+    }
+  },
+  "raw_evidence": [
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/matrix-result.json",
+      "sha256": "2d87b50ac5f9bbde7b5ef795af5b3da9be7736965a8b4bb53c9c393442c52572",
+      "bytes": 10799
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/final-ready.json",
+      "sha256": "863603b0390e8170f6efa566fd816928d114d1578176f335d945f84ee434973d",
+      "bytes": 17410
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/plan.json",
+      "sha256": "f389d76f77e088a65d5279136898110b4597d44cf270fd6d7abbf7bb050f70ae",
+      "bytes": 10424
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/stock_before/measurement/samples.json",
+      "sha256": "13fcecdf6a85d74adbab13a9bbc3edd9d9dd51a9184dbc35814cbd3401c66ead",
+      "bytes": 7441
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/measurement/samples.json",
+      "sha256": "b725bf038863bd2b91ce371b08bb47c41155cb4ec27bf30d25a29c216c604952",
+      "bytes": 7441
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/gpu-runtime.jsonl",
+      "sha256": "b6fcec9bc8089a9ef4b59306c95816b9982c43a20a96f07f54c060a9b439eaf4",
+      "bytes": 6563
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/gpu-watch.ps1",
+      "sha256": "0a33d227c53d01d14e377d0dfa106abb85f81cf1d3f64084ba5eb9c148031b18",
+      "bytes": 1871
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/terminal.json",
+      "sha256": "2a7e78587fb08cfbd8efccc3d28407d0bca6bd8fdd8ebd66d318413dc0610ee8",
+      "bytes": 2005
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/stock_before/measurement/response-0.json",
+      "sha256": "d69556357a2c63b573f15d1f2b00d669c5d634ba876f340685f95708a7973ac5",
+      "bytes": 1299
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/stock_before/measurement/response-1.json",
+      "sha256": "60a3335d727eb279c1c308034c43998ab2afebd4b30bde3d7374612bce09a18a",
+      "bytes": 1300
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/stock_before/measurement/response-2.json",
+      "sha256": "901271f2f5027ae3f79d272fe79813cf2349809ef1cb929e7f551e11cf66dd97",
+      "bytes": 1300
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/stock_before/measurement/response-3.json",
+      "sha256": "35089bd8c9d8c51f7950b7d687dc1b552c236b20d94c3178e4a7e820da4af4ca",
+      "bytes": 1300
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/measurement/response-0.json",
+      "sha256": "620a2a1fc42af753d0873be4965888b0430adf1fadd52dea8c9d5382933dbd83",
+      "bytes": 1299
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/measurement/response-1.json",
+      "sha256": "b5defc36fab6e0737f84fa2e06037adea78a49f047390ab457ab2e440f01c831",
+      "bytes": 1300
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/measurement/response-2.json",
+      "sha256": "56df4b7e03e0a88cc1adb1c7ef77d566336afac674e95f183aad35fe07771f98",
+      "bytes": 1300
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95/candidate_checked_copy/measurement/response-3.json",
+      "sha256": "cae483fd9ac49e1c008e7f7b57ea9d7bec2acce10b01e6d0a58cc6911610c9c9",
+      "bytes": 1299
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/public-health-restored-6840445985dd402c8d8cf421c96b5f36.json",
+      "sha256": "4fe075d58e024a3e4988a3713161cc9f25a36e24d45d95359387642b40cbce20",
+      "bytes": 404
+    }
+  ],
+  "decision": "Retain the failed completion attempt and unchanged prior failed report. No qualified acceleration, hit coverage, acceptance improvement or NPU adoption. No observer weakening or unchanged retry."
+}
