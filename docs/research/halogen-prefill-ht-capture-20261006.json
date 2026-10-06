@@ -1,0 +1,335 @@
+{
+  "schema": "halogen.prefill-ht.capture-evidence.v1",
+  "saved_utc": "2026-10-06T02:52:11.132091+00:00",
+  "work": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-capture-9ac79c0cb8c4479189d101c12e6f588f",
+  "fixture_inventory": {
+    "files": {
+      "records.json": {
+        "bytes": 3508,
+        "sha256": "c5e0d744f7160225921dfe163f01694ec33e4f12517c3fce81dff83cfa6dfe7b"
+      },
+      "packed.bin": {
+        "bytes": 13107200,
+        "sha256": "d27fc76fab0646ba5b675f9dd9137c342a39f70aa980acf62f6959f5fdf0245d"
+      },
+      "descriptor-before.bin": {
+        "bytes": 120,
+        "sha256": "d2b1fc6537f1fd8e3761832a43f3fe2940d59863ef641d1007e484355880cb5c"
+      },
+      "tensor.receipt": {
+        "bytes": 301,
+        "sha256": "7b598a867cfb35bd96648bc00b34b120358fbdfecced9a76ad7713e1e58cf795"
+      },
+      "descriptor-after.bin": {
+        "bytes": 120,
+        "sha256": "d2b1fc6537f1fd8e3761832a43f3fe2940d59863ef641d1007e484355880cb5c"
+      },
+      "scales-u16.bin": {
+        "bytes": 20480,
+        "sha256": "dad8e70f72ce13f67692a184cac608e71986d740d43f72201ee52acc4146061e"
+      },
+      "activation.json": {
+        "bytes": 1059,
+        "sha256": "30053e0661326cdfea662d4d6a71d8f2ae2e40441db449988be4741f98f6681e"
+      },
+      "armed": {
+        "bytes": 26,
+        "sha256": "df33a17627b0f5bbaa42dca800cfb2a09d372da280fff6d8f15b672b5e30abe3"
+      },
+      "x-u16.bin": {
+        "bytes": 41943040,
+        "sha256": "d42beb978ad9532b52d282738fe9fe1a01c1e075b0ac9217b8807ed759000668"
+      },
+      "signs-u16.bin": {
+        "bytes": 5120,
+        "sha256": "0866b9d9d28380f5f6ea3fdc0fa78a5643db9629c8a3e0094eb01f5b3e33cd7c"
+      },
+      "complete.json": {
+        "bytes": 156,
+        "sha256": "dd4aa107d90eb5b9ec1b9f4ea085f5bbc7fe2d9c2d178b4d112a36f8690df143"
+      },
+      "harvest": {
+        "bytes": 28,
+        "sha256": "228171c18617cd36de235ea9e9b837768efb70e591f3293544f478d53b88ecd2"
+      },
+      "y-reference-u16.bin": {
+        "bytes": 167772160,
+        "sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0"
+      }
+    },
+    "bytes": 222853318,
+    "file_count": 13,
+    "complete": {
+      "schema": 1,
+      "mode": "ordinary-qkv8192-v1",
+      "passed": true,
+      "instrumented": true,
+      "timing_claim": false,
+      "candidate_calls": 0,
+      "packed_original_calls": 1,
+      "error": null
+    }
+  },
+  "fixture_rehashed_by_root": true,
+  "capture_record": {
+    "schema": 1,
+    "mode": "ordinary-qkv8192-v1",
+    "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b",
+    "receipt_sha256": "7b598a867cfb35bd96648bc00b34b120358fbdfecced9a76ad7713e1e58cf795",
+    "tensor": "layers.0.linear_attn.in_proj_qkv.weight",
+    "store": 16,
+    "variant": 4616,
+    "descriptor_mode": 4,
+    "checkpoint_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "index_sha256": "2302900dfe860fd7a689c90bdf1d3fe674d78aa8bf3c166e05000c9d5e5e9ceb",
+    "M": 8192,
+    "N": 10240,
+    "K": 2560,
+    "output_float32": false,
+    "instrumented": true,
+    "timing_claim": false,
+    "candidate_calls": 0,
+    "packed_original_calls": 1,
+    "matching_fc_calls": 72,
+    "reserved": true,
+    "completed": true,
+    "inputs_ready": true,
+    "output_ready": true,
+    "original_result": 1,
+    "nested_calls": 0,
+    "descriptor": "0x5fd54ae595a8",
+    "diagnostic_name_pointer": "0x5fd54b38b730",
+    "fc_caller_rva": "0x1791400",
+    "packed_caller_rva": "0x178cfc0",
+    "packed_pointer": "0x7e5515a79bc0",
+    "signs_pointer": "0x7e64d409f000",
+    "scales_pointer": "0x7e64d40a0400",
+    "x_pointer": "0x7e65d9000000",
+    "y_pointer": "0x7e654050ec00",
+    "router_before": "0x5fd53b8e9e70",
+    "router_after": "0x5fd53b8e9e70",
+    "rotation_capacity_elements_before": 50331648,
+    "rotation_capacity_elements_after": 50331648,
+    "rotated_pointer_before": "0x7e65bc000000",
+    "rotated_pointer_after": "0x7e65bc000000",
+    "partial_pointer_before": "0x7e65c2000000",
+    "partial_pointer_after": "0x7e65c2000000",
+    "allocation_lifetime_exclusive_external": true,
+    "allocation_snapshot_before": true,
+    "allocation_snapshot_after": true,
+    "observer_allocation_range_queries": 10,
+    "packed_preparation_branch": null,
+    "library_calls": 1,
+    "library_result": 0,
+    "library_handle": "0x5fd54af28810",
+    "library_desc": "0x5fd5518d9d80",
+    "library_a": "0x7e65ac000000",
+    "library_b": "0x7e65d9000000",
+    "library_c": "0x7e654050ec00",
+    "library_d": "0x7e654050ec00",
+    "algorithm_pointer": "0x7ffd352836c0",
+    "algorithm_bytes": null,
+    "algorithm_identity": null,
+    "library_workspace": "0x7e64d6e00000",
+    "library_workspace_bytes": 134217728,
+    "library_stream": "0x0",
+    "observer_hip_syncs": 2,
+    "observer_hip_copies": 5,
+    "nondefault_stream_submissions": 0,
+    "files": [
+      {
+        "name": "packed.bin",
+        "bytes": 13107200,
+        "sha256": "d27fc76fab0646ba5b675f9dd9137c342a39f70aa980acf62f6959f5fdf0245d"
+      },
+      {
+        "name": "signs-u16.bin",
+        "bytes": 5120,
+        "sha256": "0866b9d9d28380f5f6ea3fdc0fa78a5643db9629c8a3e0094eb01f5b3e33cd7c"
+      },
+      {
+        "name": "scales-u16.bin",
+        "bytes": 20480,
+        "sha256": "dad8e70f72ce13f67692a184cac608e71986d740d43f72201ee52acc4146061e"
+      },
+      {
+        "name": "x-u16.bin",
+        "bytes": 41943040,
+        "sha256": "d42beb978ad9532b52d282738fe9fe1a01c1e075b0ac9217b8807ed759000668"
+      },
+      {
+        "name": "y-reference-u16.bin",
+        "bytes": 167772160,
+        "sha256": "d8bf83e883f3bddf62d5ee9a717d1dc10dc171c89cc22f6eda8f01a72385bec0"
+      }
+    ],
+    "launches": [
+      {
+        "caller_rva": "0x17ecd6a",
+        "function_pointer": "0x5fd53b8e2c20",
+        "stream": "0x0",
+        "grid": [
+          20,
+          80,
+          1
+        ],
+        "block": [
+          512,
+          1,
+          1
+        ],
+        "shared_bytes": 0,
+        "result": 0
+      }
+    ],
+    "launches_total": 1,
+    "allocations": [
+      {
+        "name": "packed",
+        "base_before": "0x7e5500000000",
+        "extent_before_bytes": 66687358944,
+        "base_after": "0x7e5500000000",
+        "extent_after_bytes": 66687358944
+      },
+      {
+        "name": "signs",
+        "base_before": "0x7e64d409f000",
+        "extent_before_bytes": 25600,
+        "base_after": "0x7e64d409f000",
+        "extent_after_bytes": 25600
+      },
+      {
+        "name": "scales",
+        "base_before": "0x7e64d409f000",
+        "extent_before_bytes": 25600,
+        "base_after": "0x7e64d409f000",
+        "extent_after_bytes": 25600
+      },
+      {
+        "name": "x",
+        "base_before": "0x7e65d9000000",
+        "extent_before_bytes": 41943040,
+        "base_after": "0x7e65d9000000",
+        "extent_after_bytes": 41943040
+      },
+      {
+        "name": "y",
+        "base_before": "0x7e6530800000",
+        "extent_before_bytes": 2069949440,
+        "base_after": "0x7e6530800000",
+        "extent_after_bytes": 2069949440
+      }
+    ],
+    "error": null
+  },
+  "parent_request": {
+    "usage": {
+      "prompt_tokens": 16384,
+      "completion_tokens": 128,
+      "total_tokens": 16512,
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "wall_seconds": 28.39100000000326,
+    "intrusive_capture": true,
+    "serving_rates_qualified": false,
+    "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d"
+  },
+  "lifecycle": {
+    "captured": true,
+    "original_ready_open": true,
+    "recovery_pending": false,
+    "errors": [
+      "RuntimeError: Unchanged startup admission not met with WSL resident"
+    ],
+    "guard_errors": [],
+    "minimum_memory": {
+      "available_bytes": 31375196160,
+      "commit_headroom_bytes": 130121834496
+    },
+    "pending_controller": null,
+    "serving_rates_qualified": false,
+    "passed": false
+  },
+  "final_ready": {
+    "controller": {
+      "schema": 1,
+      "run_id": "11df605c7494474d880efa4f47e0b1b5",
+      "pid": 26820,
+      "phase": "ready",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "port": 8840,
+      "heartbeat": 1791255047.3416388,
+      "minimum_reserve_gib": 18.0,
+      "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+      "memory": {
+        "available_bytes": 33079660544,
+        "committed_bytes": 108529172480,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 131610267648
+      },
+      "minimum_available_gib": 30.80783462524414,
+      "ready_at": 1791255042.3202841,
+      "active_requests": 0,
+      "available_gib": 30.85826873779297
+    },
+    "backend": {
+      "schema": 1,
+      "run_id": "8d227018faff4eddabfbca8d09427120",
+      "attempt": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\services\\8d227018faff4eddabfbca8d09427120",
+      "phase": "ready",
+      "endpoint": "http://127.0.0.1:8731/v1",
+      "model": "halogen-qwen3.8-flash-next",
+      "context": 262144,
+      "slots": 1,
+      "checkpoint": "v2",
+      "prompt_cache": "Off",
+      "serve_seconds": 0,
+      "controller_pid": 26848,
+      "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\api-token.txt",
+      "log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\services\\8d227018faff4eddabfbca8d09427120\\engine.log",
+      "controller_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\services\\8d227018faff4eddabfbca8d09427120\\service.log",
+      "ready_at": 1791255047.323792,
+      "container_id": "b73a22bae04fa73d1e48bf9e7b4b87a71f8d13f880c5b6521aa0549900c5f961"
+    },
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "controller_identity": {
+      "pid": 26820,
+      "creation_time_100ns": 134357284426765169,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "original_ready_open": true,
+    "NPU_integrated": false
+  },
+  "final_ready_sha256": "a9916dccd38046505903abe39fd407e199ce031fc94cb218af30c2fd20ea2434",
+  "admitted_restoration": {
+    "physical_gib": 44,
+    "commit_gib": 131,
+    "stable_seconds": 60,
+    "deadline_seconds": 240,
+    "samples": 99,
+    "last_frame": {
+      "available_bytes": 47456964608,
+      "committed_bytes": 26253295616,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 213886144512
+    }
+  },
+  "initial_restoration_admission_failed": true,
+  "component_speed_measured": false,
+  "serving_rates_qualified": false,
+  "NPU_executed": false,
+  "acceleration_goal_achieved": false
+}

@@ -1,0 +1,93 @@
+{
+  "schema": "halogen.prefill-development-status.v1",
+  "created_utc": "2026-10-06T03:53:40.542845+00:00",
+  "serving_gain_qualified": false,
+  "component_arithmetic_completed": false,
+  "NPU_executed": false,
+  "new_prefill_tokens_per_second": null,
+  "new_decode_tokens_per_second": null,
+  "new_native_acceptance": null,
+  "attempts": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-68884380429547688cd1978dd34641e8\\result.json",
+      "sha256": "61887f762d055b0b05468a9cf51cd6a87b19ededfcc99778dc09736736627afb",
+      "replayed": false,
+      "passed": false,
+      "errors": [
+        "RuntimeError: Unchanged startup admission not met with WSL resident"
+      ],
+      "original_ready_open_at_receipt": true
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-fdbc62b15a224f5981cef255ca05b870\\result.json",
+      "sha256": "09915f8cff9ea6b62608c040e56ec7d5e3e1257b89ec8726410fbe0c10fc2a87",
+      "replayed": false,
+      "passed": false,
+      "errors": [
+        "RuntimeError: Retained controller exited before ready: 2",
+        "Restore: RuntimeError: Require a stopped controller and proven backend cleanup/recovery"
+      ],
+      "original_ready_open_at_receipt": false
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-955dc3ef5eab435b833013b936399588\\result.json",
+      "sha256": "aba7edfc505a2a4c0627108a4f4f51a3ed38707519f685c7abd55a5aae66df0e",
+      "replayed": false,
+      "passed": false,
+      "errors": [
+        "ValueError: Frozen bookend source/profile/prompt changed: C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\README.md"
+      ],
+      "original_ready_open_at_receipt": true
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-8488bbe683664cf7be062459c714c934\\result.json",
+      "sha256": "db621453fe29abffc70e2bceed8aba46e06c37c2586f01f6d71a4394364b7512",
+      "replayed": false,
+      "passed": false,
+      "errors": [
+        "PermissionError: [Errno 13] Permission denied: 'C:\\\\Projects\\\\strix-alloy-clean\\\\server\\\\.local\\\\current.json'",
+        "Restore: RuntimeError: Backend cleanup/recovery is unresolved; matrix halted"
+      ],
+      "original_ready_open_at_receipt": false
+    }
+  ],
+  "source_sha256": {
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\capture.c": "bd06d7fcfab41d950aaafe2a504b33bb5a7c91275cd7984941371278d5c41e82",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\launcher.py": "fdb18993c52da857cf4f76258ad73a537c5120ca05a4be1d30f1eacefffbef18",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\owned_capture.py": "f44e5b18b42096078157390eefff351b0bfbabdf104c6c1b345451eeed4b8310",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\replay.c": "63890d4da04b045e85bfba4ae93f46cc2be145616c991eae3bb5804fd97ada83",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\replay_launcher.py": "0d5051e8fda3aec520f24318a163f46318d10f6bc35650390ebf5f506ab4d10f",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\owned_replay.py": "6d077dad04c1124d6f2deb0adfbb4d3be980896ebea783398668341f5056f074",
+    "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_prefill_ht\\README.md": "107cb6ee09cc36ab619828780d6a7f84ce1c65313e57123e69f0f84a45433f5e"
+  },
+  "checks": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\state-sharing-probe-5001e8ff0d114189a4f876d9a59ffaa6-result.json",
+      "sha256": "db705d4fd8b774308a8d1f8b82b5cbc6680a3bcbab297431bd9a37af087b49fd"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-pending-snapshot-check.json",
+      "sha256": "21e96239dcaafbc695408f338a1c5c7f9926e87b945223dcdd136c6698c4b711"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-replay-preparation-6f5b91efe2514cf9a08543bced966798\\compile\\result.json",
+      "sha256": "24135c8065741086cc14d3f3e0cb64a91f1fdfe60c94195bc717abeca078d3f9"
+    }
+  ],
+  "original_ready_open": true,
+  "restoration_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-held-restoration-90b05d0c442c46668b48f1a624a8b190\\final-ready.json",
+    "sha256": "bd413b0e275b3ec6545730f681fee8fec515af072d2397d66bf76fc461665ac1"
+  },
+  "restoration_result": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prefill-ht-held-restoration-90b05d0c442c46668b48f1a624a8b190\\result.json",
+    "sha256": "b2c1632658a470705e4b7bf7fb59f776d822c92f838fd1583172d75f3c00a1d4"
+  },
+  "minimum_restoration_physical_gib": 31.657203674316406,
+  "minimum_restoration_commit_gib": 123.52994155883789,
+  "placements": {
+    "GPU": "Native packed HT and selective original-W preparation cache are pending Prefill candidates; compact two-row MTP kernel showed no component advantage.",
+    "CPU": "Metadata/lifetime, exact validation and bounded Windows status observation.",
+    "NPU": "No supported beneficial consumer for this GPU-resident Prefill boundary. No serving speed claim."
+  }
+}

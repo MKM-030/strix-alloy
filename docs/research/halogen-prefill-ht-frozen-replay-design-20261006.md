@@ -112,7 +112,7 @@ merely to expand this experiment.
 `0x18092f0` launches the initial original input rotation:
 
 ```text
-k_ht_rot_rows_h(D.signs, X, rotated_X, M, K)
+k_ht_rot_rows_h(X, D.signs, rotated_X, M, K)
 ```
 
 Argument assembly is `0x18093b4..0x1809444`; registration identity is
