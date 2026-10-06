@@ -332,3 +332,10 @@ or a returned reasoning/thinking event, can be shown. Internal latent computatio
 is not exposed by the REST API. Fast mode disables the generated thinking block,
 so that mode normally has no reasoning text to display. The console observes the
 response; it does not create or infer additional reasoning.
+
+To request generated reasoning, change **both** fast-mode controls in the JSON
+body to `enable_thinking: true` and `reasoning_effort: "medium"`. Do not leave
+`reasoning_effort: "none"` in that request: it disables thinking. Allow a larger
+`max_tokens` budget, for example `1024`, because reasoning and the answer share
+that budget. This is a different generation workload from the historical
+thinking-off benchmark; its latency and rate have not been measured here.

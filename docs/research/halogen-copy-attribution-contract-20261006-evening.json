@@ -1,0 +1,857 @@
+{
+  "schema": "halogen.copy-attribution.contract.v1",
+  "date": "2026-10-06",
+  "status": "not-attributed",
+  "trace": false,
+  "live_event_records_read": false,
+  "hardware_executed": false,
+  "privilege_workaround": false,
+  "lifecycle_action": false,
+  "installation": false,
+  "speed_gain_claim": false,
+  "qualified_performance_gain": false,
+  "implementation_created": false,
+  "scope": "Read-only installed metadata, primary documentation and retained source inspection; only this Markdown/JSON note was saved on root request.",
+  "historical_sample": {
+    "time_utc": "2026-10-06T10:07:29.2052859Z",
+    "utilization_percent": 2.628345930526,
+    "instance": "pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+    "process_id": 4,
+    "attributed": false,
+    "reason": "Original PDH timestamp/integration interval was not retained; no ETW packet or allocation provenance was captured."
+  },
+  "metadata": {
+    "provider": "Microsoft-Windows-DxgKrnl",
+    "guid": "802ec45a-1e99-4b83-9920-87c98277ba9d",
+    "resource": "%SystemRoot%\\system32\\drivers\\dxgkrnl.sys",
+    "registered_event_descriptors": 706,
+    "read_method": "Get-WinEvent -ListProvider 'Microsoft-Windows-DxgKrnl'",
+    "level": "win:LogAlways for listed relevant schemas",
+    "persisted_receipt_path": null,
+    "receipt_availability": "Metadata was inspected in prior tool output. No separate on-disk metadata receipt is known; this note is not an independent raw manifest export.",
+    "inventory_scope": "Exact selected attribution field names retained from installed metadata. Entries with field_inventory_scope explicitly identify partial inventories; no omitted field spelling or numeric packet-type enum is invented.",
+    "keywords": {
+      "Base": "0x1",
+      "References": "0x4",
+      "Resource": "0x40",
+      "LongHaul": "0x800",
+      "GPUVA": "0x100000",
+      "VirtualGpu": "0x800000",
+      "HardwareSchedulingLog": "0x4000000"
+    },
+    "events": [
+      {
+        "ids": [
+          27,
+          29
+        ],
+        "version": 2,
+        "task": "Device",
+        "opcodes": [
+          "Start",
+          "DC_Start"
+        ],
+        "fields": [
+          "hProcessId",
+          "pDxgAdapter",
+          "ClientType",
+          "hDevice",
+          "RequestVSync",
+          "DisableGpuTimeout",
+          "hThunkHandle",
+          "DxgProcess",
+          "HostDeviceHandle",
+          "VirtualGpu"
+        ]
+      },
+      {
+        "ids": [
+          30,
+          31,
+          32
+        ],
+        "version": 0,
+        "task": "Context",
+        "opcodes": [
+          "Start",
+          "Stop",
+          "DC_Start"
+        ],
+        "fields": [
+          "hDevice",
+          "NodeOrdinal",
+          "EngineAffinity",
+          "Flags",
+          "hContext",
+          "ContextHandle",
+          "ParentDxgContext"
+        ],
+        "field_inventory_scope": "Exact selected attribution fields; DMA/allocation-size fields were also present but were not retained verbatim in this note."
+      },
+      {
+        "ids": [
+          33,
+          34,
+          35
+        ],
+        "version": 3,
+        "task": "AdapterAllocation",
+        "opcodes": [
+          "Start",
+          "Stop",
+          "DC_Start"
+        ],
+        "fields": [
+          "hProcessId",
+          "hDevice",
+          "pDxgAdapter",
+          "hVidMmGlobalAlloc",
+          "hDxgGlobalAlloc",
+          "hDxgSharedResource"
+        ],
+        "field_inventory_scope": "Exact selected attribution fields; additional flags, size, segment, format and geometry fields were present."
+      },
+      {
+        "ids": [
+          36,
+          38
+        ],
+        "version": 2,
+        "task": "DeviceAllocation",
+        "opcodes": [
+          "Start",
+          "DC_Start"
+        ],
+        "fields": [
+          "hProcessId",
+          "hDevice",
+          "pDxgAdapter",
+          "hVidMmAlloc",
+          "hVidMmGlobalAlloc",
+          "hDxgResource",
+          "hDxgSharedResource",
+          "hThunkAllocation",
+          "hThunkResource",
+          "PrivateRuntimeResourceHandle",
+          "pVirtualAddress",
+          "hProcessAllocDetails",
+          "hOtherPartitionHandle"
+        ]
+      },
+      {
+        "ids": [
+          43
+        ],
+        "version": 0,
+        "task": "ReferenceAllocations",
+        "opcodes": [
+          "Info"
+        ],
+        "keyword": "References",
+        "fields": [
+          "hContext",
+          "pDmaBuffer",
+          "uiNbAllocations",
+          "Allocations",
+          "Write"
+        ],
+        "arrays": {
+          "Allocations": {
+            "count": "uiNbAllocations",
+            "type": "pointer array"
+          },
+          "Write": {
+            "count": "uiNbAllocations",
+            "type": "Boolean array"
+          }
+        }
+      },
+      {
+        "ids": [
+          50
+        ],
+        "version": 0,
+        "task": "MemoryTransfer",
+        "opcodes": [
+          "Info"
+        ],
+        "keyword": "Resource",
+        "fields": [
+          "hProcessId",
+          "hAllocationGlobalHandle",
+          "pDmaBuffer",
+          "offset",
+          "size",
+          "uiType"
+        ]
+      },
+      {
+        "ids": [
+          53
+        ],
+        "version": 0,
+        "task": "PagingOpTransfer",
+        "opcodes": [
+          "Info"
+        ],
+        "keyword": "Resource",
+        "fields": [
+          "pDxgAdapter",
+          "hDmaBuffer",
+          "ContinueNextBuffer",
+          "hAllocationGlobalHandle",
+          "TransferOffset",
+          "TransferSize",
+          "Flags"
+        ],
+        "field_inventory_scope": "Exact selected fields; source/destination segment IDs and offsets were also present."
+      },
+      {
+        "ids": [
+          54
+        ],
+        "version": 0,
+        "task": "PagingOpFill",
+        "opcodes": [
+          "Info"
+        ],
+        "field_inventory_scope": "Installed schema also has DMA/global-allocation references; complete verbatim fields were not retained."
+      },
+      {
+        "ids": [
+          76,
+          77
+        ],
+        "version": 0,
+        "task": "AddDmaBuffer",
+        "opcodes": [
+          "Start",
+          "Stop"
+        ],
+        "keyword": "Base",
+        "fields": [
+          "hContext",
+          "pDxgAdapter",
+          "pDmaBuffer",
+          "DmaSize",
+          "AllocationListSize",
+          "PatchLocationListSize",
+          "hAllocationGlobalHandle"
+        ]
+      },
+      {
+        "ids": [
+          110
+        ],
+        "version": 1,
+        "task": "DpiReportAdapter",
+        "opcodes": [
+          "Info"
+        ],
+        "fields": [
+          "pDxgAdapter",
+          "AdapterLuid"
+        ],
+        "field_inventory_scope": "Exact selected fields; configuration, bus and vendor fields were also present."
+      },
+      {
+        "ids": [
+          175
+        ],
+        "version": 1,
+        "task": "DmaPacket",
+        "opcodes": [
+          "Start"
+        ],
+        "keyword": "Base",
+        "fields": [
+          "hContext",
+          "hQueuePacketContext",
+          "PacketType",
+          "uliSubmissionId",
+          "ulQueueSubmitSequence",
+          "pDmaBuffer",
+          "QuantumStatus"
+        ]
+      },
+      {
+        "ids": [
+          176
+        ],
+        "version": 0,
+        "task": "DmaPacket",
+        "opcodes": [
+          "Stop"
+        ],
+        "fields": [
+          "hContext",
+          "PacketType",
+          "uliCompletionId",
+          "ulQueueSubmitSequence",
+          "bPreempted"
+        ]
+      },
+      {
+        "ids": [
+          177
+        ],
+        "version": 1,
+        "task": "DmaPacket",
+        "opcodes": [
+          "Info"
+        ],
+        "fields": [
+          "hContext",
+          "PacketType",
+          "uliCompletionId",
+          "ulQueueSubmitSequence",
+          "bPreempted",
+          "InterruptType",
+          "QuantumStatus",
+          "FaultedVirtualAddress",
+          "PageFaultFlags",
+          "FaultedProcessHandle"
+        ]
+      },
+      {
+        "ids": [
+          178
+        ],
+        "version": 1,
+        "task": "QueuePacket",
+        "opcodes": [
+          "Start"
+        ],
+        "fields": [
+          "hContext",
+          "PacketType",
+          "SubmitSequence",
+          "DmaBufferSize",
+          "AllocationListSize",
+          "PatchLocationListSize",
+          "bPresent",
+          "hDmaBuffer",
+          "pQueuePacket",
+          "ProgressFenceValue"
+        ]
+      },
+      {
+        "ids": [
+          179
+        ],
+        "version": 0,
+        "task": "QueuePacket",
+        "opcodes": [
+          "Info"
+        ],
+        "fields": [
+          "hContext",
+          "PacketType",
+          "SubmitSequence"
+        ]
+      },
+      {
+        "ids": [
+          180
+        ],
+        "version": 1,
+        "task": "QueuePacket",
+        "opcodes": [
+          "Stop"
+        ],
+        "fields": [
+          "hContext",
+          "PacketType",
+          "SubmitSequence",
+          "pQueuePacket"
+        ],
+        "field_inventory_scope": "Exact selected fields; preempted/timed-out fields were also present."
+      },
+      {
+        "ids": [
+          250
+        ],
+        "version": 0,
+        "task": "NodeMetadata",
+        "opcodes": [
+          "Info"
+        ],
+        "fields": [
+          "pDxgAdapter",
+          "NodeOrdinal",
+          "EngineType",
+          "FriendlyName"
+        ]
+      },
+      {
+        "ids": [
+          288
+        ],
+        "version": 0,
+        "task": "ProcessAllocationDetails",
+        "opcodes": [
+          "Start"
+        ],
+        "fields": [
+          "ProcessId",
+          "Handle",
+          "Size",
+          "hProcessAlloc"
+        ]
+      },
+      {
+        "ids": [
+          306
+        ],
+        "version": 1,
+        "task": "PagingOpVirtualTransfer",
+        "opcodes": [
+          "Info"
+        ],
+        "field_inventory_scope": "Installed schema also has DMA/global-allocation references; complete verbatim fields were not retained."
+      },
+      {
+        "ids": [
+          309
+        ],
+        "version": 1,
+        "task": "PagingOpUpdatePageTable",
+        "fields": [
+          "hProcess"
+        ],
+        "field_inventory_scope": "Exact selected field; allocation/DMA references were also present."
+      },
+      {
+        "ids": [
+          310
+        ],
+        "version": 0,
+        "task": "PagingOpFlushTlb",
+        "fields": [
+          "hProcess"
+        ],
+        "field_inventory_scope": "Exact selected field; allocation/DMA references were also present."
+      },
+      {
+        "ids": [
+          422,
+          423,
+          424
+        ],
+        "version": 0,
+        "task": "HwQueue",
+        "opcodes": [
+          "Start",
+          "Stop",
+          "DC_Start"
+        ],
+        "fields": [
+          "hContext",
+          "hHwQueue",
+          "ParentDxgHwQueue"
+        ]
+      },
+      {
+        "ids": [
+          450
+        ],
+        "version": 0,
+        "task": "DmaPacket",
+        "opcodes": [
+          "Info"
+        ],
+        "fields": [
+          "hHwQueue",
+          "ProgressFenceValue",
+          "pDmaBuffer",
+          "ntStatus",
+          "NumberOfQueuedPendingFlip"
+        ]
+      },
+      {
+        "ids": [
+          472,
+          477,
+          492
+        ],
+        "version": 0,
+        "task": "Process",
+        "opcodes": [
+          "Start",
+          "Stop",
+          "DC_Start"
+        ],
+        "keyword": "Base",
+        "fields": [
+          "DxgProcess",
+          "ProcessId",
+          "HostProcessHandle",
+          "ProcessFlags",
+          "ProcessIdInVm",
+          "DxgProcessInVm",
+          "DxgVirtualMachine",
+          "ProcessNameInVm"
+        ]
+      },
+      {
+        "ids": [
+          474,
+          493
+        ],
+        "version": 0,
+        "task": "VirtualMachine",
+        "opcodes": [
+          "Start",
+          "DC_Start"
+        ],
+        "fields": [
+          "DxgVirtualMachine",
+          "VmwpProcess",
+          "VmmemProcess",
+          "VmGuid"
+        ]
+      },
+      {
+        "ids": [
+          476
+        ],
+        "version": 0,
+        "task": "VirtualGpu",
+        "opcodes": [
+          "Start"
+        ],
+        "fields": [
+          "DxgVirtualGpu",
+          "VirtualGpuLuid",
+          "DxgVirtualMachine",
+          "DxgAdapter",
+          "VirtualFunctionIndex",
+          "VirtualGpuType"
+        ]
+      }
+    ]
+  },
+  "joins": [
+    {
+      "stage": "DMA execution to context",
+      "events": [
+        "175/v1",
+        "176/v0",
+        "177/v1"
+      ],
+      "keys": [
+        "hContext",
+        "ulQueueSubmitSequence"
+      ],
+      "conditional_fields": [
+        "uliSubmissionId",
+        "uliCompletionId",
+        "pDmaBuffer"
+      ],
+      "caution": "Submission and completion identifiers are not assumed equal merely from their names; pair by documented event semantics and valid captured sequence/lifetime."
+    },
+    {
+      "stage": "Queue/fence to context or DMA",
+      "events": [
+        "178/v1",
+        "179/v0",
+        "180/v1",
+        "422/424/v0",
+        "450/v0"
+      ],
+      "keys": [
+        "hContext",
+        "hHwQueue",
+        "ProgressFenceValue",
+        "pQueuePacket",
+        "SubmitSequence"
+      ],
+      "caution": "Do not equate SubmitSequence with ulQueueSubmitSequence or hDmaBuffer with pDmaBuffer without supported captured relationships."
+    },
+    {
+      "stage": "Context to device and node",
+      "events": [
+        "30/32/v0",
+        "27/29/v2"
+      ],
+      "keys": [
+        "hContext",
+        "hDevice",
+        "NodeOrdinal"
+      ],
+      "caution": "Scope objects by adapter and start/stop/rundown lifetime."
+    },
+    {
+      "stage": "Device to guest process and VM",
+      "events": [
+        "27/29/v2",
+        "472/492/v0",
+        "474/493/v0"
+      ],
+      "keys": [
+        "DxgProcess",
+        "DxgVirtualMachine"
+      ],
+      "identity_fields": [
+        "ProcessIdInVm",
+        "ProcessNameInVm",
+        "DxgProcessInVm",
+        "VmGuid"
+      ],
+      "caution": "Guest fields must be populated, complete and joined to retained Linux identity; host EPROCESS/PID is insufficient."
+    },
+    {
+      "stage": "System DMA to allocation provenance",
+      "events": [
+        "43/v0",
+        "50/v0",
+        "53/v0",
+        "76/77/v0",
+        "33/35/v3",
+        "36/38/v2"
+      ],
+      "keys": [
+        "pDmaBuffer",
+        "hDmaBuffer",
+        "hAllocationGlobalHandle",
+        "hVidMmAlloc",
+        "hVidMmGlobalAlloc",
+        "hDevice"
+      ],
+      "caution": "Metadata alone does not prove the handle namespace of Allocations[] or equivalence of hAllocationGlobalHandle and hVidMmGlobalAlloc. This unresolved bridge prevents current ownership proof."
+    },
+    {
+      "stage": "Adapter/node to PDH engine",
+      "events": [
+        "110/v1",
+        "250/v0"
+      ],
+      "keys": [
+        "pDxgAdapter",
+        "AdapterLuid",
+        "NodeOrdinal",
+        "EngineType"
+      ],
+      "caution": "The captured adapter/node mapping must resolve the observed LUID/physical engine; do not assume numeric EngineType or physical-adapter mapping."
+    }
+  ],
+  "linux_identity": {
+    "possible": true,
+    "proven": false,
+    "source_version": "Microsoft WSL2 Linux kernel linux-msft-wsl-6.6.y",
+    "host_guest_pid_source": "process->pid = current->pid",
+    "other_fields": [
+      "current->tgid",
+      "task_pid_vnr(current)",
+      "task_active_pid_ns(current)"
+    ],
+    "caution": "Host guest PID can identify an initial-namespace task ID/TID rather than the container PID or TGID. Current kernel emission is unverified. Task name alone is insufficient.",
+    "required_evidence": [
+      "Linux task birth/start time",
+      "initial-namespace TID/PID and TGID",
+      "namespace PID mapping",
+      "container identity",
+      "matching GPU process lifecycle"
+    ]
+  },
+  "candidate_source_contract": {
+    "source": "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_mtp_embedding_cache.c",
+    "checked_copy_function_line": 434,
+    "read_call_line": 448,
+    "read_operation": "process_vm_readv(getpid(), local, count, remote, count, 0)",
+    "max_queries": 8,
+    "byte_bound_expression": "MODEL_BYTES + 128u",
+    "acceptance": "Only an exact full-byte result is accepted; partial copies are rejected.",
+    "launch_arguments": "Owned checked values are submitted; runtime copy validation does not supply Windows GPU packet or allocation ownership.",
+    "no_gpu_ownership_identifier_added": true
+  },
+  "prospective_capture": {
+    "execution_authorized_for_metadata_only_subtask": false,
+    "standing_user_authorization": "Root applies the existing user authorization; this note does not require renewed server or measurement permission. Actual session/provider access remains a technical prerequisite.",
+    "implemented": false,
+    "mode": "Sequential file-mode ETW, then offline native TDH decode",
+    "provider_keywords_candidate": "Base | References | Resource | LongHaul = 0x845; prospective only, not proven sufficient",
+    "keyword_caution": "Inspect installed descriptor keywords and confirm guest/lifecycle/rundown coverage in actual capture before declaring this selection sufficient. VirtualGpu/GPUVA/HwScheduler additions may be necessary and must remain within budget.",
+    "stacks": false,
+    "general_cpu_sampling": false,
+    "pool": {
+      "buffer_size_kib": 64,
+      "minimum_buffers": 64,
+      "maximum_buffers": 64,
+      "requested_bytes": 4194304,
+      "mode_flag": "EVENT_TRACE_NO_PER_PROCESSOR_BUFFERING",
+      "actual_adjustment_must_be_checked": true
+    },
+    "file": {
+      "maximum_megabytes": 64,
+      "sequential": true,
+      "circular": false,
+      "preload": false,
+      "memory_map": false,
+      "cap_is_disk_not_ram": true,
+      "full_or_early_stop": "Incomplete evidence; never overwrite oldest lifecycle evidence."
+    },
+    "process_budgets": {
+      "controller_private_commit_mib": 16,
+      "offline_decoder_private_commit_mib": 32,
+      "phases_overlap": false,
+      "status": "Prospective implementation ceilings only; not measured or enforced here."
+    },
+    "memory_claim": "Explicitly controlled pool/controller/decoder components can be budgeted below 0.1 GiB. ETL size is a disk bound, not an OS-memory guarantee. ETW adjustments, native overhead and file cache prevent claiming a hard total physical-memory bound from these settings alone.",
+    "consumer": [
+      "OpenTrace",
+      "ProcessTrace",
+      "EventRecordCallback",
+      "TdhGetEventInformation"
+    ],
+    "bounded_decode": [
+      "Decode incrementally without retaining the whole ETL",
+      "Bound metadata cache and per-event allocations",
+      "Use external/on-disk indexes for allocation lifetimes",
+      "Leave failed/unknown TDH decodes unresolved"
+    ],
+    "fail_closed": [
+      "EventsLost > 0",
+      "LogBuffersLost > 0",
+      "Unexpected actual buffer-pool budget",
+      "Missing start/stop/rundown for relevant objects",
+      "File cap or premature capture termination",
+      "Unresolved handle namespace/mapping",
+      "Shared or multi-owner allocation",
+      "Unresolved Linux namespace/container identity"
+    ],
+    "prerequisites": [
+      "Root-owned reviewed recorder/decoder and applicable existing user authorization",
+      "Authorized session/provider access; retained current token limitation is not bypassed",
+      "Supported lifecycle/rundown coverage on this installed provider",
+      "Complete packet/context/device/allocation/guest records and zero-loss counters",
+      "Retained Linux identity attestation matching guest process lifecycle",
+      "QPC/UTC calibration and original PDH timestamps/integration intervals",
+      "Existing memory reserve gates and independent total-memory observation remain satisfied"
+    ],
+    "can_establish": [
+      "Per-packet adapter/node execution interval when execution lifecycle is complete",
+      "Host/VM identity when its lifecycle join is complete",
+      "Linux task or exclusive Halogen allocation provenance only when every guest and allocation mapping is complete"
+    ],
+    "cannot_establish": [
+      "Historical ownership from the retained PDH UTC sample",
+      "Exclusive ownership of shared or unmapped allocations",
+      "Qualified candidate speed gain or adoption",
+      "Ownership by merely whitelisting System/PID4"
+    ]
+  },
+  "performance": {
+    "candidate_partial_prefill_delta_percent": 1.185202,
+    "candidate_partial_decode_delta_percent": 2.168056,
+    "qualified": false,
+    "missing": [
+      "stock-after window",
+      "complete hit/skip coverage"
+    ],
+    "statement": "These partial measured deltas are not qualified gains. No speed gain is claimed."
+  },
+  "local_sources": [
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-checked-copy-completion-20261006.md",
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-checked-copy-completion-20261006.json",
+    "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-gpu-copy-attribution-20261006.md",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\remaining-frontier-triage-a12936663b244e9486b24a34602040c1.json",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95\\candidate_checked_copy\\gpu-watch.ps1",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\checked-copy-natural16k-eddb92fa20a94e7882bf6a14e1f13f95\\plan.json",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\prepare_checked_copy_candidate_20261006.py",
+    "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_mtp_embedding_cache.c"
+  ],
+  "sources": [
+    {
+      "id": "gpu_pv",
+      "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/display/gpu-paravirtualization",
+      "supports": "Guest GPU processes have corresponding host DXGPROCESS objects backed by vmmem EPROCESS."
+    },
+    {
+      "id": "system_paging",
+      "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/display/system-paging-process",
+      "supports": "System paging has its own contexts and DMA buffers and performs operations affecting other processes."
+    },
+    {
+      "id": "gpuview_packet",
+      "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/display/selections-in-the-gpu-hardware-queue",
+      "supports": "Packet inspection exposes process/context, fence/timing and allocation references; it does not establish all ETW handle-field equalities."
+    },
+    {
+      "id": "tdh_enumerate",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/tdh/nf-tdh-tdhenumeratemanifestproviderevents",
+      "supports": "Supported enumeration of installed manifest event descriptors."
+    },
+    {
+      "id": "tdh_manifest",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/tdh/nf-tdh-tdhgetmanifesteventinformation",
+      "supports": "Supported manifest metadata retrieval by event descriptor."
+    },
+    {
+      "id": "tdh_event",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/tdh/nf-tdh-tdhgeteventinformation",
+      "supports": "Supported decoding metadata for actual EVENT_RECORD values."
+    },
+    {
+      "id": "etw_consume",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/etw/consuming-events",
+      "supports": "OpenTrace/ProcessTrace and EventRecordCallback consumption without GPUView/WPA."
+    },
+    {
+      "id": "etw_properties",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntrace/ns-evntrace-event_trace_properties",
+      "supports": "Buffer units, OS adjustments, pool limits, file cap and lost-event/buffer counters."
+    },
+    {
+      "id": "etw_modes",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/etw/logging-mode-constants",
+      "supports": "Sequential versus circular file logging and NO_PER_PROCESSOR_BUFFERING."
+    },
+    {
+      "id": "wpr_collector",
+      "url": "https://learn.microsoft.com/en-us/windows-hardware/test/wpt/eventcollector",
+      "supports": "Custom collector BufferSize, Buffers and MaximumFileSize settings."
+    },
+    {
+      "id": "start_trace",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/evntrace/nf-evntrace-starttracew",
+      "supports": "Session access restrictions; no privilege workaround proposed."
+    },
+    {
+      "id": "createprocess_ddi",
+      "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/d3dkmddi/ns-d3dkmddi-_dxgkarg_createprocess",
+      "supports": "VirtualMachineProcess process-name semantics; process name may be null."
+    },
+    {
+      "id": "wsl_vmbus",
+      "url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/linux-msft-wsl-6.6.y/drivers/hv/dxgkrnl/dxgvmbus.c",
+      "lines": [
+        628,
+        667
+      ],
+      "supports": "Creates guest process with process->pid, linux_process=1 and current task name."
+    },
+    {
+      "id": "wsl_process",
+      "url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/linux-msft-wsl-6.6.y/drivers/hv/dxgkrnl/dxgprocess.c",
+      "lines": [
+        23,
+        35
+      ],
+      "supports": "pid=current->pid; tgid, namespace PID and PID namespace retained separately."
+    },
+    {
+      "id": "wsl_vmbus_header",
+      "url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/linux-msft-wsl-6.6.y/drivers/hv/dxgkrnl/dxgvmbus.h",
+      "supports": "Create-process message contains process_id, process_name and Linux-process flag."
+    }
+  ],
+  "exclusions": [
+    "No PID4 whitelist",
+    "No discarded historical samples",
+    "No unchanged benchmark retry",
+    "No invented packet ownership proof",
+    "No native-controller audit repeated or inspected",
+    "No engine, GPU, NPU, admin/UAC, service restart or shutdown"
+  ]
+}
