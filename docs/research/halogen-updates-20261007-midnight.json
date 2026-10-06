@@ -1,0 +1,248 @@
+{
+  "format": "bounded-official-update-check-v2",
+  "started_utc": "2026-10-06T22:24:01Z",
+  "completed_utc": "2026-10-06T22:29:51Z",
+  "local_report_date": "2026-10-07",
+  "local_timezone": "Europe/Berlin",
+  "previous_checkpoint": "docs/research/halogen-updates-20261006-evening.json",
+  "previous_checkpoint_sha256": "1a0f86505995635ed815bcd43c5bd2d48ad56eb6c5eae12b69089ce4fae4999a",
+  "previous_completed_utc": "2026-10-06T20:23:42Z",
+  "previous_next_check_not_before_utc": "2026-10-06T22:23:42Z",
+  "gate_due": true,
+  "next_check_not_before_utc": "2026-10-07T00:29:51Z",
+  "next_gate_basis": "Completed source check plus two hours.",
+  "decision": "One new user comment on Halogen KV-cache issue #142, with no feature or maintainer commitment. Checked tracked versions and repository heads are unchanged. No newly qualified current-Halogen cache-off single-active-request Prefill/Decode/native-acceptance route.",
+  "managed_engine_version": "0.16.2",
+  "managed_engine_changed": false,
+  "fresh_inference_measurements": false,
+  "continuation_state_edited": false,
+  "actions": {
+    "gpu_executed": false,
+    "npu_executed": false,
+    "engine_requests": false,
+    "sampling": false,
+    "installation": false,
+    "binaries_or_models_downloaded": false,
+    "driver_or_firmware_action": false,
+    "wsl_action": false,
+    "service_lifecycle": false,
+    "trace_capture": false,
+    "rejected_native_audit_retried": false,
+    "automation_changed": false
+  },
+  "baseline_selection": {
+    "authoritative_fields": [
+      "last_official_update_check_utc",
+      "last_official_update_check_completed_utc",
+      "next_official_update_check_not_before_utc",
+      "latest_official_update"
+    ],
+    "continuation_receipt_pin_matched": true,
+    "older_conflicting_schedule_fields_not_used": true,
+    "stale_wmma_lead_not_reintroduced": true,
+    "reason": "Retained selected-H source review establishes no WMMA/LDS staging to pad."
+  },
+  "official_sources": [
+    {
+      "id": "halogen",
+      "head_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/git/ref/heads/main",
+      "commits_since_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits?since=2026-10-06T20%3A23%3A42Z&per_page=10",
+      "changelog_url": "https://github.com/peonist-ai/halogen-flash-server/blob/6d4e791ea4ca596a1f90e38beefdf2e017ae4544/CHANGELOG.md",
+      "pin": "6d4e791ea4ca596a1f90e38beefdf2e017ae4544",
+      "head_changed": false,
+      "tracked_public_version": "0.16.4",
+      "head_committed_utc_from_previous_receipt": "2026-10-06T17:48:34Z",
+      "commits_since_previous_completion": 0,
+      "commits_since_raw_http_body_empty_array": true,
+      "fresh_api_body_parse": true,
+      "tags_not_separately_refreshed": true,
+      "applicability": "Same tracked source as evening check; server streaming whitespace correction, not a new engine or checkpoint change."
+    },
+    {
+      "id": "halogen_issue_activity",
+      "query_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/issues?state=all&sort=updated&direction=desc&since=2026-10-06T20%3A23%3A42Z&per_page=10",
+      "updated_issue_count": 1,
+      "issue_number": 142,
+      "issue_url": "https://github.com/peonist-ai/halogen-flash-server/issues/142",
+      "state": "open",
+      "updated_utc": "2026-10-06T20:50:46Z",
+      "comment_query_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/issues/142/comments?since=2026-10-06T20%3A23%3A42Z&per_page=10",
+      "new_comment_count": 1,
+      "comments": [
+        {
+          "id": 6025206427,
+          "author": "apartje",
+          "author_association": "NONE",
+          "created_utc": "2026-10-06T20:50:46Z",
+          "updated_utc": "2026-10-06T20:50:46Z",
+          "url": "https://github.com/peonist-ai/halogen-flash-server/issues/142#issuecomment-6025206427",
+          "summary": "User reports not noticing a quality loss with llama.cpp Q8 and wants more context capacity; quotes the earlier maintainer promise to measure.",
+          "feature_or_new_maintainer_commitment": false,
+          "local_performance_evidence": false
+        }
+      ],
+      "inherited_contract": "BF16 KV with no current KV quantization feature; prior maintainer investigation promise remains unqualified."
+    },
+    {
+      "id": "strata",
+      "latest_release_api_url": "https://api.github.com/repos/Niko1221/Strata/releases/latest",
+      "url": "https://github.com/Niko1221/Strata/releases/tag/v0.1.40.1",
+      "version": "v0.1.40.1",
+      "published_utc": "2026-10-06T09:53:35Z",
+      "updated_utc": "2026-10-06T09:53:35Z",
+      "changed_since_previous_check": false,
+      "fresh_api_body_parse": true,
+      "engine_changed_from_0_1_40": false,
+      "applicability": "Same Python server hotfix; no new Halogen engine route."
+    },
+    {
+      "id": "amd_gpu_drivers",
+      "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+      "optional": {
+        "version": "26.9.2",
+        "released": "2026-09-29"
+      },
+      "recommended": {
+        "version": "26.8.1",
+        "released": "2026-08-20"
+      },
+      "changed_since_previous_check": false,
+      "fresh_driver_listing_parse": true,
+      "release_notes_not_refetched": true,
+      "installed_versions_queried": false
+    },
+    {
+      "id": "ryzen_ai",
+      "latest_release_api_url": "https://api.github.com/repos/amd/RyzenAI-SW/releases/latest",
+      "release_url": "https://github.com/amd/RyzenAI-SW/releases/tag/v1.8.0",
+      "version": "v1.8.0",
+      "published_utc": "2026-07-23T04:37:16Z",
+      "updated_utc": "2026-07-23T04:37:16Z",
+      "changed_since_previous_check": false,
+      "fresh_release_body_parse": true,
+      "fresh_docs": [
+        {
+          "url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+          "displayed_last_updated": "2026-09-28",
+          "minimum_windows_npu_driver": "32.0.203.280",
+          "production_windows_npu_driver": "32.0.203.376"
+        },
+        {
+          "url": "https://ryzenai.docs.amd.com/en/latest/linux.html",
+          "displayed_last_updated": "2026-09-28",
+          "supported_platforms": [
+            "STX",
+            "KRK"
+          ],
+          "documented_flow": "NPU-only; XRT and amdxdna."
+        }
+      ],
+      "new_wsl_npu_bridge_or_arbitrary_hgn_operator_contract_found": false,
+      "applicability": "Refreshed documentation retains the previously assessed support scope."
+    },
+    {
+      "id": "amd_fabric_fix_followup",
+      "prior_comment_url": "https://github.com/ROCm/TheRock/issues/8709#issuecomment-6019477697",
+      "comments_since_url": "https://api.github.com/repos/ROCm/TheRock/issues/8709/comments?since=2026-10-06T20%3A23%3A42Z&per_page=10",
+      "new_comment_count": 0,
+      "fresh_raw_http_body_empty_array": true,
+      "raw_body_bytes": 2,
+      "null_projection_not_treated_as_comment": true,
+      "inherited_installed_agesa": "1.0.0.2b",
+      "inherited_metadata_exact_match": "AGESA!V9 StrixHaloPI-FP11 1.0.0.2b",
+      "host_metadata_not_independently_queried": true,
+      "local_overlap_correctness_or_performance_validated": false,
+      "oem_release_availability_not_rechecked": true
+    },
+    {
+      "id": "kyojin",
+      "head_url": "https://api.github.com/repos/Yamz-Labs/kyojin/git/ref/heads/main",
+      "url": "https://github.com/Yamz-Labs/kyojin/tree/8c91be29da2cfbaf22ebd89c047ca8eecd4ad28f",
+      "pin": "8c91be29da2cfbaf22ebd89c047ca8eecd4ad28f",
+      "head_changed": false,
+      "committed_utc_from_previous_receipt": "2026-10-06T19:50:40Z",
+      "fresh_api_body_parse": true,
+      "previously_assessed_confidence_stopping_not_new": true,
+      "applicability": "Same EXL3 runtime/weights; current Halogen lacks the already identified supported native score/stopping contract."
+    }
+  ],
+  "reddit": {
+    "searches": [
+      {
+        "q": "site:reddit.com/r/LocalLLaMA \"halogen\" \"0.16.4\"",
+        "recency_days": 7,
+        "results_returned": false
+      },
+      {
+        "q": "site:reddit.com/r/LocalLLaMA \"Strix Halo\" \"speculative\" \"October 6\"",
+        "recency_days": 7,
+        "results_returned": false
+      },
+      {
+        "q": "site:reddit.com/r/LocalLLaMA \"Halogen\" \"Kyojin\"",
+        "recency_days": 2,
+        "results_returned": true
+      },
+      {
+        "q": "site:reddit.com/r/LocalLLaMA \"Strix Halo\" \"NPU\" \"October\" \"2026\"",
+        "recency_days": 2,
+        "results_returned": true
+      }
+    ],
+    "result_dates_checked_against_window": true,
+    "useful_returned_threads": [
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1wvfrj0/halogenflashserver_0160_strix_halo_npu_now_serves/",
+        "original_post_date": "2026-10-02",
+        "disposition": "Older NPU side-model/overlap discussion; no new qualified local route established."
+      },
+      {
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1wybesy/qwen38flashnext_125b_on_a_single_strix_halo_mini/",
+        "original_post_date": "2026-10-05",
+        "disposition": "Kyojin lead already checked in evening receipt; fresh primary head unchanged."
+      },
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1wuczmb/fastflowlm_can_now_run_qwen38_27b_on_strix_halos/",
+        "original_post_date": "2026-09-30",
+        "disposition": "Older external NPU runtime/model; not current Halogen PP/TG evidence."
+      },
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1wv2x6c/rulith_inference_formerly_strix_llama_04_125b_moe/",
+        "original_post_date": "2026-10-01",
+        "disposition": "Proper sampled speculative acceptance already assessed in local October 1 report; eight-conversation aggregate headline is outside the frozen single-active greedy profile."
+      }
+    ],
+    "new_primary_mechanism_confirmed_since_previous_completion": false,
+    "throughput_anecdotes_used_as_local_evidence": false,
+    "coverage": "Four distinct bounded queries; latter recency filters returned older indexed threads. Search freshness is incomplete and no full ecosystem survey is claimed."
+  },
+  "prior_probe_exclusions": [
+    "Defeated rolling/growing GPU proposer",
+    "0/15 Strata/native/hybrid continuation screens",
+    "Two-row Q8 slower",
+    "Q8D projection neutral",
+    "Device snapshot rollback already completed",
+    "Bulk Prefill already ongoing",
+    "Selected H has no WMMA/LDS padding route",
+    "Rulith proper sampled speculative acceptance already reviewed on October 1"
+  ],
+  "remaining_uncertainties": [
+    "Official BOSGAME compatible fix release availability retained from evening check",
+    "Local overlap correctness and scope of AMD firmware cure",
+    "No qualified native per-depth confidence/stopping API",
+    "No fresh throughput or native acceptance trial",
+    "Bounded Reddit indexing can lag"
+  ],
+  "files_written": [
+    "docs/research/halogen-updates-20261007-midnight.md",
+    "docs/research/halogen-updates-20261007-midnight.json"
+  ],
+  "validation": {
+    "json_parsed": true,
+    "previous_receipt_sha256_verified": true,
+    "report_gate_matches_completion_plus_two_hours": true,
+    "report_links_exist": true,
+    "trailing_whitespace_absent": true,
+    "source_window_and_inherited_evidence_distinguished": true
+  }
+}

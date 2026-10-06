@@ -1,0 +1,246 @@
+{
+  "schema": "halogen.wsl618.process-semantics.v1",
+  "date": "2026-10-06",
+  "status": "exact-release-source-resolved; guest-payload-semantics-only",
+  "running_kernel_version": "6.18.33.2-microsoft-standard-WSL2",
+  "running_version_basis": "Provided by root; no WSL/kernel command run by this assessment.",
+  "release": {
+    "tag": "linux-msft-wsl-6.18.33.2",
+    "url": "https://github.com/microsoft/WSL2-Linux-Kernel/releases/tag/linux-msft-wsl-6.18.33.2",
+    "commit": "c21a03b2943d147c280bdf32530d4fe6badfd6bd",
+    "commit_url": "https://github.com/microsoft/WSL2-Linux-Kernel/commit/c21a03b2943d147c280bdf32530d4fe6badfd6bd",
+    "commit_basis": "Full commit URL linked by Microsoft's exact release page.",
+    "makefile_version": "6.18.33.2",
+    "config_localversion": "-microsoft-standard-WSL2",
+    "config_dxgkrnl": "y",
+    "source_version_matches_reported_release": true,
+    "running_binary_build_attested": false
+  },
+  "source_line_basis": "One-based original UTF-8 raw-source newline counts, verified with bounded read-only HTTPS fetches into memory. Web-renderer line indices normalize whitespace and were not used as source anchors.",
+  "guest_relation": {
+    "creation": {
+      "pid": "current->pid: initial Linux PID namespace task ID/TID",
+      "tgid": "current->tgid: initial-namespace thread-group ID",
+      "vpid": "task_pid_vnr(current): active-namespace task ID",
+      "nspid": "task_active_pid_ns(current): active namespace pointer"
+    },
+    "reuse": "Guest dxgprocess lookup compares stored tgid with current->tgid. A creating task's TID/name can remain associated with later use by another thread of that group.",
+    "message": {
+      "process": "Guest dxgprocess object pointer",
+      "process_id": "Stored creation-task initial-namespace TID (not stored tgid or vpid)",
+      "linux_process": 1,
+      "process_name": "Current task comm copied element by element into the u16 payload array; at most 15 non-NUL comm bytes because TASK_COMM_LEN is 16 including NUL."
+    },
+    "response": "On success, a nonzero returned hprocess is retained as process->host_handle.",
+    "namespace_warning": "The payload ID can differ from container getpid (TGID) and container gettid (namespace-relative TID).",
+    "name_warning": "Task comm is a mutable/truncated label, not a full executable path, command line or ownership proof."
+  },
+  "established": [
+    "Exact official 6.18.33.2 source and standard WSL2 config suffix are available.",
+    "The guest sends its creation-task initial-namespace TID and task comm through the defined create-process protocol.",
+    "Guest objects are looked up by thread-group ID; creation metadata need not equal a later submitting thread's identity.",
+    "The guest retains the returned host process handle as an opaque handle."
+  ],
+  "unresolved": [
+    "Running binary correspondence to this source commit has not been attested.",
+    "No host Windows ETW alias is established for process_id, process, hprocess, ProcessIdInVm, DxgProcessInVm or DxgProcess.",
+    "No captured event emission, lifecycle mapping, allocation provenance, Linux birth/namespace/container attestation or packet ownership is established."
+  ],
+  "attribution_status": "not-attributed",
+  "trace": false,
+  "capture": false,
+  "hardware_executed": false,
+  "wsl_commands": false,
+  "benchmark": false,
+  "installation": false,
+  "kernel_or_wsl_update": false,
+  "broad_update_survey": false,
+  "two_hour_update_gate_changed": false,
+  "speed_gain_claim": false,
+  "sources": [
+    {
+      "path": "Makefile",
+      "ranges": [
+        [
+          2,
+          5
+        ]
+      ],
+      "finding": "VERSION6, PATCHLEVEL18, SUBLEVEL33, EXTRAVERSION.2.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/Makefile",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/Makefile#L2-L5"
+      ]
+    },
+    {
+      "path": "arch/x86/configs/config-wsl",
+      "ranges": [
+        [
+          34,
+          34
+        ],
+        [
+          6603,
+          6603
+        ]
+      ],
+      "finding": "Standard WSL2 local-version suffix and built-in DXGKRNL enabled.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/arch/x86/configs/config-wsl",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/arch/x86/configs/config-wsl#L34",
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/arch/x86/configs/config-wsl#L6603"
+      ]
+    },
+    {
+      "path": "drivers/hv/dxgkrnl/dxgprocess.c",
+      "ranges": [
+        [
+          25,
+          38
+        ]
+      ],
+      "finding": "Creation stores current task pid, tgid, namespace-relative task pid and active PID namespace.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgprocess.c",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgprocess.c#L25-L38"
+      ]
+    },
+    {
+      "path": "drivers/hv/dxgkrnl/dxgmodule.c",
+      "ranges": [
+        [
+          351,
+          380
+        ],
+        [
+          387,
+          403
+        ]
+      ],
+      "finding": "Open finds/reuses a guest dxgprocess by thread-group ID, otherwise invokes creation.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgmodule.c",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgmodule.c#L351-L380",
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgmodule.c#L387-L403"
+      ]
+    },
+    {
+      "path": "drivers/hv/dxgkrnl/dxgvmbus.c",
+      "ranges": [
+        [
+          669,
+          710
+        ]
+      ],
+      "finding": "Create-process payload carries guest object pointer, stored task pid, Linux bit and current task comm; successful returned host handle is retained.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgvmbus.c",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgvmbus.c#L669-L710"
+      ]
+    },
+    {
+      "path": "drivers/hv/dxgkrnl/dxgvmbus.h",
+      "ranges": [
+        [
+          21,
+          21
+        ],
+        [
+          250,
+          263
+        ]
+      ],
+      "finding": "Create-process message types are void* process, u64 process_id, u16 process_name[261], Linux bit; response supplies hprocess.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgvmbus.h",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgvmbus.h#L21",
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/drivers/hv/dxgkrnl/dxgvmbus.h#L250-L263"
+      ]
+    },
+    {
+      "path": "include/linux/pid.h",
+      "ranges": [
+        [
+          168,
+          185
+        ],
+        [
+          234,
+          253
+        ]
+      ],
+      "finding": "Initial versus current namespace helper semantics; task_pid_nr returns task pid, task_tgid_nr returns tgid.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/include/linux/pid.h",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/include/linux/pid.h#L168-L185",
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/include/linux/pid.h#L234-L253"
+      ]
+    },
+    {
+      "path": "kernel/fork.c",
+      "ranges": [
+        [
+          2254,
+          2260
+        ]
+      ],
+      "finding": "Task pid derives from initial-namespace pid_nr; threads inherit tgid, new groups use pid as tgid.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/kernel/fork.c",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/kernel/fork.c#L2254-L2260"
+      ]
+    },
+    {
+      "path": "kernel/pid.c",
+      "ranges": [
+        [
+          510,
+          523
+        ]
+      ],
+      "finding": "A null namespace argument selects the current active PID namespace.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/kernel/pid.c",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/kernel/pid.c#L510-L523"
+      ]
+    },
+    {
+      "path": "kernel/sys.c",
+      "ranges": [
+        [
+          990,
+          1008
+        ]
+      ],
+      "finding": "getpid returns namespace-relative TGID; gettid returns namespace-relative task ID.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/kernel/sys.c",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/kernel/sys.c#L990-L1008"
+      ]
+    },
+    {
+      "path": "include/linux/sched.h",
+      "ranges": [
+        [
+          323,
+          323
+        ],
+        [
+          1177,
+          1177
+        ],
+        [
+          2002,
+          2006
+        ]
+      ],
+      "finding": "Task comm length is16 bytes including NUL; get_task_comm copies the task comm.",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/WSL2-Linux-Kernel/c21a03b2943d147c280bdf32530d4fe6badfd6bd/include/linux/sched.h",
+      "source_urls": [
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/include/linux/sched.h#L323",
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/include/linux/sched.h#L1177",
+        "https://github.com/microsoft/WSL2-Linux-Kernel/blob/c21a03b2943d147c280bdf32530d4fe6badfd6bd/include/linux/sched.h#L2002-L2006"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "schema": "halogen.gpu-pdh.raw-window-result.v1",
+  "timestamp_utc": "2026-10-06T21:43:41.513012+00:00",
+  "phase": "source-built-owned-runtime-rejected-before-baseline-ack",
+  "build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\pdh-native-build-a137425244d04db6b269cdd396811cae\\build.json",
+    "sha256": "37b32102ba726464ca1e8c17d23f53386e5c3167f70c8d1fc2a8cb9abf5480ff"
+  },
+  "raw": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\pdh-idle-runtime-6b0c3f363a134a2783b907e9e0628736\\gpu-pdh-window-c265466ee94c4c52909c27234e125a32\\gpu-pdh.jsonl",
+    "sha256": "82474451403e26afd4267566b1e2d51dab879bcc7eeff5a1efff893046a89347"
+  },
+  "coverage": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\pdh-idle-runtime-6b0c3f363a134a2783b907e9e0628736\\gpu-pdh-window-c265466ee94c4c52909c27234e125a32\\coverage.json",
+    "sha256": "bc622d95ab4f72fc04c1b9b1305ef6ebc5c38d58c30889fa2d6ede30f6e9d232"
+  },
+  "native_query_statuses": [
+    0,
+    0,
+    0
+  ],
+  "native_terminal": {
+    "schema": "halogen.gpu-pdh.window.v1",
+    "event": "terminal",
+    "status": "complete",
+    "reason": "none",
+    "stop_kind": "marker",
+    "stop": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\pdh-idle-runtime-6b0c3f363a134a2783b907e9e0628736\\gpu-pdh-window-c265466ee94c4c52909c27234e125a32\\owned.stop",
+    "seconds": 15,
+    "baseline_emitted": true,
+    "samples": 1,
+    "unresolved_pairs_total": "16",
+    "pair_continuity_only": true,
+    "instance_generation_verified": false,
+    "query_closed": true,
+    "query_open_code": 0,
+    "counter_add_code": 0,
+    "query_close_code": 0,
+    "marker_code": 0,
+    "not_called_code": 4294967295,
+    "pdh_query_called": true,
+    "nominal_sample_ms": 500,
+    "sample_gap_cap_ms": 1500,
+    "output_cap_bytes": 67108864,
+    "output_bytes_before_terminal": "394216",
+    "allocation_cap_bytes": 2293760,
+    "success": true,
+    "acceptance": false,
+    "attribution_qualified": false,
+    "monitor": {
+      "available": true,
+      "samples": 6,
+      "memory_code": 0,
+      "min_physical_bytes": "27641356288",
+      "min_commit_bytes": "127062343680",
+      "max_private_commit_bytes": "7852032",
+      "max_gap_ms": 110.254
+    },
+    "qpc_frequency": "10000000",
+    "begin": {
+      "qpc_before": "1974268233201",
+      "qpc_after": "1974268233225",
+      "utc_filetime_100ns": "134357964081396090",
+      "utc": "2026-10-06T21:40:08.139Z"
+    },
+    "end": {
+      "qpc_before": "1974270718580",
+      "qpc_after": "1974270718584",
+      "utc_filetime_100ns": "134357964083881470",
+      "utc": "2026-10-06T21:40:08.388Z"
+    }
+  },
+  "raw_instance_count": 358,
+  "duplicate_groups": 8,
+  "duplicates_never_arbitrarily_paired": true,
+  "wrapper_acknowledged_baseline": false,
+  "owned_job_closed": true,
+  "root_current_tool_token_is_administrator": false,
+  "proxy_handle_access_denied": [
+    {
+      "pid": 19216,
+      "name": "vmwp.exe"
+    },
+    {
+      "pid": 30936,
+      "name": "vmmemWSL"
+    }
+  ],
+  "inference_executed": false,
+  "server_stopped": false,
+  "NPU_executed": false,
+  "new_prefill_tok_s": null,
+  "new_decode_tok_s": null,
+  "new_acceptance": null,
+  "serving_gain_qualified": false,
+  "next_candidate": "Supported localized explicit PDH paths and provider process-birth validation under review; no second sampler authorized by this receipt",
+  "source_pins": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_gpu_pdh_window.c",
+      "sha256": "9e0388855c9ea2df611a89bbd326a152cf54a3e0e5c2ed110ce2b75a521876ac"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_gpu_pdh_window.py",
+      "sha256": "70c9a3c40c32407ba6b5d955670f4ffc3eed2d10cbfffb29a7690d84463a3ca6"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\pdh_natural_client_20261006.py",
+      "sha256": "19aa263bf3bddb6d05b4f20b9dcc4b696365cb75e5cbccecfe2a227a0f5b2fe4"
+    }
+  ]
+}

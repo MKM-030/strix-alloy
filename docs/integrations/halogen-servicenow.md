@@ -309,7 +309,7 @@ carry a UTC timestamp, a gateway-session identifier and a request identifier.
 They show request arrival and body, upstream status, returned answer text, tool
 calls, usage and completion. Authentication headers are excluded; known API
 secrets and credential fields in payloads are redacted. Terminal controls are
-escaped. Display values are capped at 64 KiB and parsed response events at
+escaped. Display values are capped at 65,536 characters and parsed response events at
 256 KiB, with truncation or `trace_skipped` notices. Transport bytes and
 backpressure still follow the normal gateway path. Content events are not sent
 to the rotating operational log handler.

@@ -1,0 +1,261 @@
+{
+  "schema": "halogen.pdh.natural16k.public-comparison.v1",
+  "report_date": "2026-10-07",
+  "evidence_snapshot_utc": "2026-10-06T22:44:02.9382614Z",
+  "outcome": "incomplete_rejected_candidate_cohort",
+  "comparison_passed": false,
+  "qualified_speed_gain": false,
+  "speed_delta_percent": null,
+  "NPU_executed": false,
+  "adoption_claim": false,
+  "unchanged_retry_performed": false,
+  "measurement_policy": {
+    "actual_input_tokens": 16384,
+    "output_tokens": 128,
+    "context_capacity_positions": 262144,
+    "excluded_warmups_per_window": 1,
+    "planned_measured_requests_per_window": 3,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": "Off",
+    "prompt_cache": "Off",
+    "draft_tokens": 2,
+    "PLD": "3,3",
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "pdh_epoch_policy": "Gate every interval of baseline-through-final epoch, including idle margins",
+    "thresholds_percent": {
+      "copy": 2.0,
+      "other": 1.0
+    },
+    "no_pid4_whitelist": true
+  },
+  "stock_before": {
+    "status": "complete_passed_window_reused_from_failed_original_matrix",
+    "measurement_passed": true,
+    "warmup_requests": 1,
+    "measured_requests": 3,
+    "prefill_tps_mean": 1229.0443570249136,
+    "decode_tps_mean": 36.18858506260781,
+    "accepted": 186,
+    "drafted": 387,
+    "acceptance": 0.4806201550387597,
+    "final_ready_idle_proven": true,
+    "disk_restore_n": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pdh": {
+      "passed": true,
+      "full_epoch_validation_passed": true,
+      "error_count": 0,
+      "sample_count": 99,
+      "raw_bytes": 24560989,
+      "raw_sha256": "81a97f407376e78cb1dcb2f31dd8d6ea870e6562d583505b8c93859123ffc3b4",
+      "native_exit_code": 0,
+      "owned_job_closed": true
+    }
+  },
+  "candidate_checked_copy": {
+    "status": "exploratory_partial_invalid_cohort",
+    "measurement_passed": false,
+    "planned_measured_requests": 3,
+    "completed_measured_requests": 1,
+    "full_candidate_window_completed": false,
+    "window_result_present": false,
+    "warmup": {
+      "excluded": true,
+      "prefill_tps": 658.8155879489414,
+      "decode_tps": 29.29715955407633,
+      "accepted": 62,
+      "drafted": 129
+    },
+    "exploratory_measured_request": {
+      "index": 1,
+      "qualified_for_comparison": false,
+      "prefill_tps": 1206.149566040388,
+      "decode_tps": 36.26419741513953,
+      "accepted": 62,
+      "drafted": 129,
+      "acceptance": 0.4806201550387597,
+      "wall_seconds": 17.148072699987097,
+      "finish_reason": "length",
+      "prompt_tokens": 16384,
+      "completion_tokens": 128,
+      "reasoning_tokens": 0,
+      "cache_n": 0,
+      "disk_restore_n": 0
+    },
+    "observed_response_parity": {
+      "retained_responses": 2,
+      "request_prompt_output_hashes_match_stock": true,
+      "native_acceptance_matches_stock_per_request": true,
+      "complete_candidate_parity_qualified": false
+    },
+    "pdh": {
+      "passed": false,
+      "full_epoch_validation_passed": false,
+      "error_count": 2,
+      "rejection": {
+        "raw_line": 20,
+        "sample_index": 19,
+        "system_pid": 4,
+        "engine_type": "Copy",
+        "provider_occurrence_index": 0,
+        "cooked_percent": 2.0850772653677128,
+        "threshold_percent": 2.0,
+        "scope": "unresolved_foreign_pid",
+        "activity_owner_established": false
+      },
+      "additional_error": "closed_before_validated_measurement_end",
+      "validated_request_qpc_brackets": [],
+      "measured_end_qpc": null,
+      "sample_count": 32,
+      "raw_bytes": 8137726,
+      "raw_sha256": "00014ecda4d0687905aa4a5365c5f1d5f01a2a80f40283f6c661e41ee8f97ef9",
+      "native_exit_code": 0,
+      "owned_job_closed": true,
+      "terminal_success": true,
+      "terminal_status": "complete",
+      "stop_kind": "marker",
+      "terminal_success_is_measurement_admission": false,
+      "instance_generation_verified": false,
+      "attribution_qualified": false,
+      "speed_claim": false
+    },
+    "consumer_counters": {
+      "before_receipt_present": true,
+      "before": {
+        "gather_skips": 0,
+        "m1_skips": 0,
+        "native_fixed_misses": 0,
+        "ready_hits": 0,
+        "retirements": 0,
+        "rms_skips": 0,
+        "seed_rewrites": 0
+      },
+      "after_receipt_present": false,
+      "delta": null,
+      "complete_consumer_execution_qualified": false
+    }
+  },
+  "stock_after": {
+    "status": "not_run",
+    "measured_requests": 0
+  },
+  "preparation": {
+    "succeeded": true,
+    "ready_backend_sources_sha256_corrected_to": "0c8266c74f09cdec7fb3acb6287bf21da38f86305dcad7a9bb8783112846be05",
+    "other_ready_metadata_unchanged": true,
+    "frozen_original_coordinator_control_role_comparison_fixed": true,
+    "compute_request_client_counter_native_pins_unchanged": true,
+    "resume_explicit_and_sealed": true,
+    "current_server_identity_reused_from_resume": false,
+    "continuation_source_sha256": "1420f3a67263e9b855dd87ddebfd19aaf7ee1940d6083fdf0fe01e814d78c96f",
+    "original_source_sha256": "3a3e3ef9440600813d50d8547fe47eb84834c79dce999fe9f5bc3c6953271eba",
+    "native_source_sha256": "7cf45719765d0877c10426a8b3cbd8d973b7d06ab200605110dfb6f9593bd35f",
+    "native_executable_sha256": "53516cb9f2feb9f414fbe024fc8b6053f960acd559c7e1ee5557ead3831145c2"
+  },
+  "original_matrix": {
+    "passed": false,
+    "rewritten": false,
+    "earlier_restoration_ready_open": true,
+    "earlier_recovery_pending": false,
+    "earlier_restoration_substitutes_for_continuation_readiness": false
+  },
+  "continuation_restoration": {
+    "status": "ready_open_verified",
+    "final_ready_receipt_present": true,
+    "matrix_result_receipt_present": true,
+    "final_HistoricalStock_ready_open_claimed": true,
+    "profile": "HistoricalStock",
+    "console_trace": true,
+    "windows_powershell51": true,
+    "context_capacity_positions": 262144,
+    "authenticated_local_health_http": 200,
+    "gateway_active_requests": 0,
+    "gateway_completed": 0,
+    "gateway_cancelled": 0,
+    "model_alias": "halogen-v2",
+    "root_read_only_verification": true,
+    "inference_requests_sent_for_final_verification": 0,
+    "coordinator_exit_code": 1,
+    "benchmark_matrix_passed": false,
+    "recovery_pending": false,
+    "runtime_minimum_physical_gib": 24.550159454345703,
+    "runtime_minimum_commit_gib": 116.98529052734375,
+    "verification_physical_gib": 25.102012634277344,
+    "verification_commit_gib": 117.59223175048828,
+    "automation_status": "PAUSED"
+  },
+  "shared_hashes": {
+    "request_sha256": "3893472a32bac55600fa874f915fbd5ef13c7b7c6a64bff1d25983cc06235fac",
+    "request_file_sha256": "0b616f5eb0aa779244cdbba4c2c7d42c8ee43ec200fc41f596e8331440f5a28c",
+    "prompt_sha256": "cbaeec7395187803e2e570d3f5554b45d2eb99e5fa80b61c370c7fe87390a663",
+    "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+    "stock_profile_sha256": "a4d366cb52f6d1c06de832b6fee36c125570e2c09536acc8bf411c0f95a1dc1a"
+  },
+  "source_evidence": [
+    {
+      "role": "stock_before_window_result",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-85f60ccff81545969780c31d4013c224/stock_before/window-result.json",
+      "sha256": "285a6aefc1e104b5539fed12d565376508418d8f92872cd2dd6551164b614134"
+    },
+    {
+      "role": "stock_before_PDH_coverage",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-85f60ccff81545969780c31d4013c224/stock_before/measurement/pdh/gpu-pdh-window-06e230754bb14ac1a76407299590a987/coverage.json",
+      "sha256": "f48b137da6a56d660e55fe72576611b2fb1c54ae3e8245d10847da77d63b3b02"
+    },
+    {
+      "role": "candidate_measurement_result",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-3535cf8eb5584f79bc66f62b2c1af776/candidate_checked_copy/measurement/result.json",
+      "sha256": "ea876df843ac7852e840dda14ae22b77b7032d5554d08b7e04ce03df8a27875b"
+    },
+    {
+      "role": "candidate_PDH_coverage",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-3535cf8eb5584f79bc66f62b2c1af776/candidate_checked_copy/measurement/pdh/gpu-pdh-window-0df84a53e06f40d99d4efa533a6f3188/coverage.json",
+      "sha256": "364143c7194b8f692d6cfd82fa1cb0193fb1a25794e2521327f3f5837bf9638c"
+    },
+    {
+      "role": "continuation_plan",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-3535cf8eb5584f79bc66f62b2c1af776/plan.json",
+      "sha256": "ca52b6d49beba57485de1fc2ffcb47071d3deffe5c0f286ce01e3f6a195ef1ef"
+    },
+    {
+      "role": "preserved_failed_original_matrix_result",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-85f60ccff81545969780c31d4013c224/matrix-result.json",
+      "sha256": "9feb81837a2901f9027f63597eb8b5f24f0587a5d836241a0812ca1dab194104"
+    },
+    {
+      "role": "continuation_matrix_result",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-3535cf8eb5584f79bc66f62b2c1af776/matrix-result.json",
+      "sha256": "9eba66cd0176573848bf2040fa003c7e07f9e90516ae382e67cb27631fc47fea"
+    },
+    {
+      "role": "continuation_final_ready",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-3535cf8eb5584f79bc66f62b2c1af776/final-ready.json",
+      "sha256": "6701c6f7e92fcd926a7fd1e35f41091e7ddeba6538f201fa136549b49bc2a761"
+    },
+    {
+      "role": "root_final_read_only_verification",
+      "repository_relative_path": "server/.local/optimization9h-20261004/checked-copy-pdh-3535cf8eb5584f79bc66f62b2c1af776/root-final-verification.json",
+      "sha256": "41f93a6b86ecd19b479ef686bc7eb58766bfb763ce6ed35b7b631d30402f149e"
+    }
+  ],
+  "report_scope": {
+    "saved_receipts_only": true,
+    "new_tests_performed": false,
+    "new_inference_or_hardware_operation_performed": false,
+    "run_evidence_or_state_modified": false,
+    "sanitization": "No prompt/response text, credentials, absolute host paths, process identities or container identities; System PID 4 is retained only as the rejection category.",
+    "historical_random8K_speed_delta_claimed": false
+  },
+  "final_verification_utc": "2026-10-06T22:48:21.621218+00:00",
+  "coordinator_terminal_errors": [
+    "RuntimeError: Original client input phase contract changed",
+    "Benchmark stop accounting contaminated"
+  ],
+  "coordinator_terminal_error_interpretation": "PDH rejected the partial cohort before six expected input callbacks completed. The ensuing assertion prevented the coordinator post-measurement accounting update; it does not prove changed source bytes or foreign requests. Original errors stay latched."
+}
