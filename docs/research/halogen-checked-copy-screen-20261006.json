@@ -1,0 +1,135 @@
+{
+  "schema": "halogen.checked-copy.screen.v1",
+  "date_utc": "2026-10-06T01:03:19.301660+00:00",
+  "full_comparison_qualified": false,
+  "adopted": false,
+  "NPU_executed": false,
+  "ordinary_prefill_mechanism": false,
+  "intended_acceptance_change": false,
+  "matrix": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\checked-copy-natural16k-9d18432c19c447a29a2c7f6622d286ea\\matrix-result.json",
+    "sha256": "9b008a1ff303598b1cd76f94691ce21383d2a226b71ad790fe5df203d4c8e6e8",
+    "errors": [
+      "RuntimeError: Runtime GPU interference contaminated window"
+    ]
+  },
+  "method": {
+    "input_tokens": 16384,
+    "output_tokens": 128,
+    "warmups_excluded": 1,
+    "measured_per_completed_window": 3,
+    "context_capacity": 262144,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "prompt_cache": false,
+    "draft_tokens": 2,
+    "prompt_lookup": "3,3",
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192
+  },
+  "stock": {
+    "qualified_single_window": true,
+    "prefill_tps": 1204.6966808569898,
+    "decode_tps": 35.9036671028079,
+    "accepted": 186,
+    "drafted": 387,
+    "acceptance": 0.4806201550387597
+  },
+  "candidate": {
+    "qualified": false,
+    "prefill_tps": 1211.1378483316446,
+    "decode_tps": 36.634005511660526,
+    "accepted": 186,
+    "drafted": 387,
+    "acceptance": 0.4806201550387597,
+    "per_sample_rates": [
+      {
+        "index": 0,
+        "phase": "warmup",
+        "prefill_tps": 725.354704601947,
+        "decode_tps": 29.923145994282667,
+        "accepted": 62,
+        "drafted": 129
+      },
+      {
+        "index": 1,
+        "phase": "measured",
+        "prefill_tps": 1193.1172049258596,
+        "decode_tps": 37.075006367880306,
+        "accepted": 62,
+        "drafted": 129
+      },
+      {
+        "index": 2,
+        "phase": "measured",
+        "prefill_tps": 1226.1181453164834,
+        "decode_tps": 36.156004285120005,
+        "accepted": 62,
+        "drafted": 129
+      },
+      {
+        "index": 3,
+        "phase": "measured",
+        "prefill_tps": 1214.1781947525906,
+        "decode_tps": 36.67100588198126,
+        "accepted": 62,
+        "drafted": 129
+      }
+    ]
+  },
+  "observed_rate_changes_percent": {
+    "prefill": 0.5346713058155705,
+    "decode": 2.0341610419942535,
+    "causal_gain_qualified": false
+  },
+  "output_and_per_sample_counts_equal": true,
+  "observer_incident": {
+    "utc": "2026-10-06T00:56:00.4362696Z",
+    "processes": [],
+    "foreign_gpu": [
+      {
+        "instance": "pid_4_luid_0x00000000_0x00011884_phys_0_eng_1_engtype_copy",
+        "percent": 2.7788253087373507,
+        "pid": 4,
+        "name": "System"
+      }
+    ],
+    "single_vm_worker_pid": 31492,
+    "single_vm_worker_birth": "2026-10-05T21:07:01.1700090Z"
+  },
+  "missing_checks": [
+    "Candidate after-counter receipt and nonzero complete hit coverage",
+    "Final stock measurement window",
+    "Passing full matrix runtime interference admission"
+  ],
+  "limitation": "One System PID4 copy-engine sample exceeded2%; its ownership was not attributed. The screen does not establish a foreign application, a speed gain, or a kernel slowdown.",
+  "build": {
+    "receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\checked-copy-preparation-80c9ac15d93a4f409278fea6900ee27b\\result.json",
+    "sha256": "957dc7ff68069df9ffb8007685f3c4efe2014e76a6b974f811e3520654a1c01d",
+    "build_sources": {
+      "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_mtp_embedding_cache.c": "e224b6cc0e083c872d5cc7a6c4c2a5a45913c0cff624047b5127385916386165",
+      "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_mtp_embedding_cache.h": "da138826f9d58cedc38803f372465b04dd4a12dcf0546c791782d435e49c9e66",
+      "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\tests\\test_halogen_embedding_checked_copy.c": "50eca338a272288121bad4839511eadb9d947d86da049de793ae8b00e4260ee8"
+    },
+    "shared_object": {
+      "path": "/home/revn/halogen-re/libhalogen0162-checked-copy-80c9ac15d93a4f409278fea6900ee27b.so",
+      "sha256": "9e8aa16f2d52881cff0445c8250287d3defdf318f4b3fafef0d1e220f0bb3ff2",
+      "bytes": 63664
+    }
+  },
+  "final_ready": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\checked-copy-natural16k-9d18432c19c447a29a2c7f6622d286ea\\final-ready.json",
+    "sha256": "0918dc07b1a180d995a7c527ab7d4956de819b8ad0ba00a5e593d294316aef8a",
+    "controller_pid": 2592,
+    "controller_run": "aa30e46a3ff64deeaf5f4a66a0cf47fb",
+    "backend_run": "90817d408863467681d52734f2ec649b",
+    "endpoint": "http://127.0.0.1:8840/v1",
+    "NPU_integrated": false
+  },
+  "minimum_runtime_memory": {
+    "available_bytes": 32712650752,
+    "commit_headroom_bytes": 131206340608
+  },
+  "full_goal_completed": false
+}

@@ -279,6 +279,9 @@ int ecache_branch_step(struct ecache_branch *branch,unsigned step) {
 #ifndef HALOGEN_EMBEDDING_CACHE_ENABLE_READY_CANDIDATE
 #define HALOGEN_EMBEDDING_CACHE_ENABLE_READY_CANDIDATE 0
 #endif
+#ifndef HALOGEN_EMBEDDING_CACHE_ENABLE_CHECKED_COPY_CANDIDATE
+#define HALOGEN_EMBEDDING_CACHE_ENABLE_CHECKED_COPY_CANDIDATE 0
+#endif
 #include <dlfcn.h>
 #include <elf.h>
 #include <errno.h>
@@ -292,6 +295,8 @@ int ecache_branch_step(struct ecache_branch *branch,unsigned step) {
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <limits.h>
+#include <sys/uio.h>
 
 #if !defined(__x86_64__) || !defined(__linux__)
 #error Linux x86-64 only for native detours; core-only replay has no platform detours
@@ -374,6 +379,7 @@ static unsigned char run_generation[16];
 static unsigned char model_binding[32],provenance_binding[32];
 static struct ecache_artifact staged_rows;
 static unsigned ready_mode,fixed_rows,artifact_exported;
+static unsigned checked_copy_mode,fixed_import_synchronized;
 static char generation_hex[33],model_hex[65],provenance_hex[65],import_sha[65];
 static uint64_t ready_hits,native_fixed_misses,gather_skips,rms_skips,m1_skips,seed_rewrites;
 static unsigned capacity=ECACHE_MAX_ENTRIES,bound_ready,in_flight;
@@ -419,6 +425,62 @@ static int mapped_spans(const struct mapped_query *queries,unsigned count) {
 static int mapped_span(uintptr_t address,size_t bytes,const char *wanted) {
     const struct mapped_query query={address,bytes,wanted};return mapped_spans(&query,1);
 }
+#define CHECKED_COPY_MAX_QUERIES 8u
+#define CHECKED_COPY_MAX_BYTES (MODEL_BYTES+128u)
+struct checked_copy_query {uintptr_t address;void *destination;size_t bytes;};
+/* Runtime data contract only: current readable bytes may cross VMAs. No remote
+ * pointer is dereferenced by the CPU. A partial/non-atomic read is never used
+ * as a complete snapshot; exclusive immutable host ownership remains required. */
+static int checked_copy(const struct checked_copy_query *queries,unsigned count) {
+    if (!queries || !count || count>CHECKED_COPY_MAX_QUERIES) return 0;
+    struct iovec local[CHECKED_COPY_MAX_QUERIES],remote[CHECKED_COPY_MAX_QUERIES];
+    size_t total=0;
+    for (unsigned i=0;i<count;i++) {
+        if (!ecache_span(queries[i].address,queries[i].bytes) ||
+            !ecache_span((uintptr_t)queries[i].destination,queries[i].bytes) ||
+            queries[i].bytes>CHECKED_COPY_MAX_BYTES-total) return 0;
+        local[i]=(struct iovec){queries[i].destination,queries[i].bytes};
+        remote[i]=(struct iovec){(void *)queries[i].address,queries[i].bytes};
+        total+=queries[i].bytes;
+    }
+    if (total>(size_t)SSIZE_MAX) return 0;
+    int incoming_errno=errno;
+    ssize_t copied=process_vm_readv(getpid(),local,count,remote,count,0);
+    errno=incoming_errno;return copied==(ssize_t)total;
+}
+struct host_snapshot {
+    unsigned char model[MODEL_BYTES];
+    int32_t token;
+    unsigned char wire,wire_guard;
+};
+static int known_head_caller(uintptr_t caller);
+static int read_host_snapshot(uintptr_t model,uintptr_t tokens,struct host_snapshot *snapshot) {
+    if (!snapshot) return 0;
+    struct checked_copy_query queries[4]={
+        {model,snapshot->model,MODEL_BYTES},
+        {engine_base+WIRE_RVA,&snapshot->wire,1},
+        {engine_base+WIRE_GUARD_RVA,&snapshot->wire_guard,1},
+        {tokens,&snapshot->token,sizeof snapshot->token}
+    };
+    snapshot->token=0;return checked_copy(queries,tokens?4:3);
+}
+static int snapshot_bound_values_live(const struct host_snapshot *snapshot) {
+    const unsigned char *model=snapshot->model;
+    return bound_ready && model[0x900]==1 && snapshot->wire=='D' && snapshot->wire_guard!=0 &&
+        snapshot->wire_guard==bound.wire_guard &&
+        pointer_at(model,0x4f0)==bound.table && pointer_at(model,0xae8)==bound.gamma &&
+        pointer_at(model,0x6c8)==bound.input && pointer_at(model,0xb00)==bound.output &&
+        pointer_at(model,0x6d0)==bound.seed && pointer_at(model,0x730)==bound.device_tokens &&
+        !memcmp(model+0x908,bound.descriptor,DESCRIPTOR_BYTES);
+}
+static int checked_head_entry(void *model,const int32_t *tokens,int32_t count,int32_t position,
+        uintptr_t caller,struct host_snapshot *snapshot) {
+    return tokens && count==1 && position>=0 && known_head_caller(caller) &&
+        read_host_snapshot((uintptr_t)model,(uintptr_t)tokens,snapshot) &&
+        snapshot->model[0x900]==1 && snapshot->token>=0 && (uint32_t)snapshot->token<ECACHE_TOKEN_COUNT &&
+        int32_at(snapshot->model,0x220)>=0 && int32_at(snapshot->model,0xa0)>=0 &&
+        snapshot->wire=='D' && snapshot->wire_guard!=0;
+}
 static int normal_descriptor(const unsigned char *descriptor) {
     uintptr_t weight=pointer_at(descriptor,0x10);
     return !pointer_at(descriptor,0) && !pointer_at(descriptor,0x30) && ecache_span(weight,WEIGHT_BYTES) && !(weight&15u);
@@ -447,20 +509,42 @@ static int bound_values_live(void) {
         !memcmp((void *)(bound.model+0x908),bound.descriptor,DESCRIPTOR_BYTES);
 }
 static int bound_live(void) {
+    if (checked_copy_mode) {
+        struct host_snapshot snapshot;
+        return bound_ready && read_host_snapshot(bound.model,0,&snapshot) && snapshot_bound_values_live(&snapshot);
+    }
     return bound_ready && mapped_span(bound.model,MODEL_BYTES,NULL) && bound_values_live();
 }
 static int context_live(const struct head_context *s) {
+    if (checked_copy_mode) {
+        struct host_snapshot snapshot;
+        return !atomic_load(&retired) && bound_ready && s->tokens && s->model==bound.model &&
+            pthread_equal(pthread_self(),bound.thread) && read_host_snapshot(s->model,s->tokens,&snapshot) &&
+            snapshot_bound_values_live(&snapshot) && snapshot.token==s->token &&
+            int32_at(snapshot.model,0x220)==s->outer_position && int32_at(snapshot.model,0xa0)==s->slot;
+    }
     const struct mapped_query queries[2]={{bound.model,MODEL_BYTES,NULL},{s->tokens,sizeof(int32_t),NULL}};
     return !atomic_load(&retired) && bound_ready && mapped_spans(queries,2) && bound_values_live() &&
         s->model==bound.model && pthread_equal(pthread_self(),bound.thread) && int32_at((void *)s->tokens,0)==s->token &&
         int32_at((void *)s->model,0x220)==s->outer_position && int32_at((void *)s->model,0xa0)==s->slot;
 }
-static void bind_model(const struct head_context *s) {
-    bound.model=s->model;bound.table=pointer_at((void *)s->model,0x4f0);bound.gamma=pointer_at((void *)s->model,0xae8);
-    bound.input=pointer_at((void *)s->model,0x6c8);bound.output=pointer_at((void *)s->model,0xb00);
-    bound.seed=pointer_at((void *)s->model,0x6d0);bound.wire_guard=*(const unsigned char *)(engine_base+WIRE_GUARD_RVA);
-    bound.device_tokens=pointer_at((void *)s->model,0x730);
-    bound.thread=pthread_self();memcpy(bound.descriptor,(void *)(s->model+0x908),DESCRIPTOR_BYTES);
+static int head_completion_live(const struct head_context *s) {
+    if (checked_copy_mode) {
+        struct host_snapshot snapshot;
+        return !atomic_load(&retired) && bound_ready && s->model==bound.model &&
+            pthread_equal(pthread_self(),bound.thread) && read_host_snapshot(s->model,0,&snapshot) &&
+            snapshot_bound_values_live(&snapshot) && int32_at(snapshot.model,0xa0)==s->slot;
+    }
+    return bound_live() && int32_at((void *)s->model,0xa0)==s->slot;
+}
+static void bind_model(const struct head_context *s,const struct host_snapshot *snapshot) {
+    const unsigned char *model=checked_copy_mode?snapshot->model:(const unsigned char *)s->model;
+    bound.model=s->model;bound.table=pointer_at(model,0x4f0);bound.gamma=pointer_at(model,0xae8);
+    bound.input=pointer_at(model,0x6c8);bound.output=pointer_at(model,0xb00);
+    bound.seed=pointer_at(model,0x6d0);
+    bound.wire_guard=checked_copy_mode?snapshot->wire_guard:*(const unsigned char *)(engine_base+WIRE_GUARD_RVA);
+    bound.device_tokens=pointer_at(model,0x730);
+    bound.thread=pthread_self();memcpy(bound.descriptor,model+0x908,DESCRIPTOR_BYTES);
     if (!normal_descriptor(bound.descriptor) || !ecache_span(bound.table,TABLE_BYTES) || (bound.table&1u) ||
         !ecache_span(bound.gamma,ECACHE_ROW_BYTES) || (bound.gamma&1u) ||
         !ecache_disjoint(bound.input,ECACHE_ROW_BYTES,bound.output,ECACHE_ROW_BYTES) ||
@@ -485,8 +569,25 @@ static void bind_model(const struct head_context *s) {
                 !ecache_disjoint(row,ECACHE_ROW_BYTES,pointer_at(bound.descriptor,0x10),WEIGHT_BYTES))
                 fatal("ready-row-source-overlap");
         }
-        if (fixed_rows && ecache_import_rows(&cache,&staged_rows)) fatal("ready-row-import");
+        if (fixed_rows) {
+            if (ecache_import_rows(&cache,&staged_rows)) fatal("ready-row-import");
+            /* Import drained the default stream before publishing valid rows.
+             * fixed-v1 has no capture/eviction/write route after this point. */
+            if (checked_copy_mode) fixed_import_synchronized=1;
+        }
     }
+}
+static int lookup_fixed_ready(int32_t token,const uint16_t **row) {
+    if (!row) return ECACHE_ERROR;
+    *row=NULL;
+    if (!checked_copy_mode || !ready_mode || !fixed_rows || !fixed_import_synchronized ||
+        atomic_load(&retired) || !ecache_enter(&cache,0)) return ECACHE_ERROR;
+    if (token>=0 && (uint32_t)token<ECACHE_TOKEN_COUNT) {
+        for (unsigned i=0;i<cache.capacity;i++) if (cache.entries[i].valid && cache.entries[i].token==token) {
+            *row=cache.entries[i].device;return ecache_leave(&cache,ECACHE_HIT);
+        }
+    }
+    return ecache_leave(&cache,ECACHE_MISS);
 }
 static void resolve_symbols(void) {
     native_ops.abi_version=ECACHE_ABI_VERSION;
@@ -513,7 +614,19 @@ static int query_event(void *event) {
 static void require_symbols(void) {
     if (pthread_once(&symbols_once,resolve_symbols)) fatal("symbols-once");
 }
+static int checked_launch_arguments(void **args,uintptr_t *values,unsigned count,unsigned scalars32) {
+    if (!values || !count || count>CHECKED_COPY_MAX_QUERIES || (scalars32&~((1u<<count)-1u))) return 0;
+    uintptr_t sources[CHECKED_COPY_MAX_QUERIES];
+    struct checked_copy_query vector={(uintptr_t)args,sources,count*sizeof *sources};
+    if (!checked_copy(&vector,1)) return 0;
+    struct checked_copy_query cells[CHECKED_COPY_MAX_QUERIES];
+    memset(values,0,count*sizeof *values);
+    for (unsigned i=0;i<count;i++)
+        cells[i]=(struct checked_copy_query){sources[i],&values[i],(scalars32&(1u<<i))?4:8};
+    return checked_copy(cells,count);
+}
 static int launch_arguments(void **args,uintptr_t *values,unsigned count,unsigned scalars32) {
+    if (checked_copy_mode) return checked_launch_arguments(args,values,count,scalars32);
     if (!count || count>MAPPED_SPANS_MAX) return 0;
     if (!mapped_span((uintptr_t)args,count*sizeof(void *),NULL)) return 0;
     memcpy(values,args,count*sizeof(void *));
@@ -521,6 +634,13 @@ static int launch_arguments(void **args,uintptr_t *values,unsigned count,unsigne
     for (unsigned i=0;i<count;i++)
         queries[i]=(struct mapped_query){values[i],(scalars32&(1u<<i))?4:8,NULL};
     return mapped_spans(queries,count);
+}
+static uintptr_t launch_pointer_value(const uintptr_t *values,unsigned index) {
+    return checked_copy_mode?values[index]:pointer_at((void *)values[index],0);
+}
+static int32_t launch_int32_value(const uintptr_t *values,unsigned index) {
+    if (!checked_copy_mode) return int32_at((void *)values[index],0);
+    int32_t value;memcpy(&value,&values[index],sizeof value);return value;
 }
 static int row_launch_shape(hip_dim3 grid,hip_dim3 block,size_t shared,void *stream) {
     return grid.x==1 && grid.y==1 && grid.z==1 && block.x==256 && block.y==1 && block.z==1 && !shared && !stream;
@@ -540,15 +660,19 @@ int hipLaunchKernel(const void *function,hip_dim3 grid,hip_dim3 block,void **arg
             step==ECACHE_BRANCH_RMS?RMS_KERNEL_RVA:SEED_KERNEL_RVA;
         valid=!s->phase && context_live(s) && (uintptr_t)function==engine_base+identity &&
             row_launch_shape(grid,block,shared,stream) && launch_arguments(args,values,count,step==ECACHE_BRANCH_RMS?24u:0);
-        if (valid && step==ECACHE_BRANCH_GATHER) valid=pointer_at((void *)values[0],0)==bound.table &&
-            pointer_at((void *)values[1],0)==bound.device_tokens && pointer_at((void *)values[2],0)==bound.input;
-        if (valid && step==ECACHE_BRANCH_RMS) valid=pointer_at((void *)values[0],0)==bound.input &&
-            pointer_at((void *)values[1],0)==bound.gamma && pointer_at((void *)values[2],0)==bound.input &&
-            int32_at((void *)values[3],0)==2560 && int32_at((void *)values[4],0)==1;
+        if (valid && step==ECACHE_BRANCH_GATHER) valid=launch_pointer_value(values,0)==bound.table &&
+            launch_pointer_value(values,1)==bound.device_tokens && launch_pointer_value(values,2)==bound.input;
+        if (valid && step==ECACHE_BRANCH_RMS) valid=launch_pointer_value(values,0)==bound.input &&
+            launch_pointer_value(values,1)==bound.gamma && launch_pointer_value(values,2)==bound.input &&
+            launch_int32_value(values,3)==2560 && launch_int32_value(values,4)==1;
         if (valid && step==ECACHE_BRANCH_SEED) {
-            uintptr_t hidden=pointer_at((void *)(engine_base+H_OUTPUT_RVA),0),row=(uintptr_t)s->ready_row;
-            valid=s->e_calls==1 && s->h_calls==1 && pointer_at((void *)values[0],0)==bound.output &&
-                pointer_at((void *)values[1],0)==hidden && pointer_at((void *)values[2],0)==bound.seed &&
+            uintptr_t hidden=0,row=(uintptr_t)s->ready_row;
+            if (checked_copy_mode) {
+                const struct checked_copy_query query={engine_base+H_OUTPUT_RVA,&hidden,sizeof hidden};
+                valid=checked_copy(&query,1);
+            } else hidden=pointer_at((void *)(engine_base+H_OUTPUT_RVA),0);
+            valid=valid && s->e_calls==1 && s->h_calls==1 && launch_pointer_value(values,0)==bound.output &&
+                launch_pointer_value(values,1)==hidden && launch_pointer_value(values,2)==bound.seed &&
                 ecache_disjoint(row,ECACHE_ROW_BYTES,hidden,ECACHE_ROW_BYTES) &&
                 ecache_disjoint(row,ECACHE_ROW_BYTES,bound.seed,20480u);
         }
@@ -559,7 +683,11 @@ int hipLaunchKernel(const void *function,hip_dim3 grid,hip_dim3 block,void **arg
         }
         /* Keep model scratch/output and all native hidden/state pointers. The
          * launch API consumes this temporary host argument vector synchronously. */
-        const uint16_t *ready=s->ready_row;void *rewritten[3]={&ready,args[1],args[2]};
+        uintptr_t owned[3]={(uintptr_t)s->ready_row,values[1],values[2]};
+        const uint16_t *ready=s->ready_row;
+        void *rewritten[3];
+        if (checked_copy_mode) {for (unsigned i=0;i<3;i++) rewritten[i]=&owned[i];}
+        else {rewritten[0]=&ready;rewritten[1]=args[1];rewritten[2]=args[2];}
         errno=incoming_errno;int result=real_launch(function,grid,block,rewritten,shared,stream);int result_errno=errno;
         if (result) fatal("ready-seed-launch-result");
         seed_rewrites++;errno=result_errno;return result;
@@ -571,13 +699,22 @@ int hipLaunchKernel(const void *function,hip_dim3 grid,hip_dim3 block,void **arg
             args;
         uintptr_t values[5]={0};
         if (valid) valid=launch_arguments(args,values,5,0);
-        if (valid) valid=pointer_at((void *)values[0],0)==pointer_at(bound.descriptor,0x10) &&
-            pointer_at((void *)values[1],0)==bound.input && pointer_at((void *)values[2],0)==bound.output &&
-            pointer_at((void *)values[3],0)==2560 && pointer_at((void *)values[4],0)==2560;
+        if (valid) valid=launch_pointer_value(values,0)==pointer_at(bound.descriptor,0x10) &&
+            launch_pointer_value(values,1)==bound.input && launch_pointer_value(values,2)==bound.output &&
+            launch_pointer_value(values,3)==2560 && launch_pointer_value(values,4)==2560;
         if (!valid || !context_live(s)) fatal("original-m1-launch-contract");
         if (s->ready_row) {
             if (ecache_branch_step(&s->branch,ECACHE_BRANCH_M1)) fatal("ready-m1-sequence");
             s->launch_ok++;m1_skips++;errno=incoming_errno;return 0;
+        }
+        if (checked_copy_mode) {
+            /* A native fixed miss submits exactly the values just checked,
+             * without rereading its original host argument cells. */
+            void *owned[5];for (unsigned i=0;i<5;i++) owned[i]=&values[i];
+            errno=incoming_errno;int result=real_launch(function,grid,block,owned,shared,stream);
+            int result_errno=errno;
+            if (!result) s->launch_ok++;else fatal("original-m1-launch-result");
+            errno=result_errno;return result;
         }
     }
     errno=incoming_errno;int result=real_launch(function,grid,block,args,shared,stream);int result_errno=errno;
@@ -622,18 +759,23 @@ __attribute__((noinline)) static int32_t cached_head(void *model,const int32_t *
     lock_state();
     if (in_flight || head_depth) fatal("overlapping-or-nested-head");
     maybe_harvest();head_calls++;in_flight++;
+    struct host_snapshot entry;
     unsigned use=atomic_load(&enabled) && !atomic_load(&retired) && !(ready_mode && !fixed_rows && artifact_exported) &&
-        valid_head_entry(model,tokens,count,position,caller);
+        (checked_copy_mode?checked_head_entry(model,tokens,count,position,caller,&entry):
+            valid_head_entry(model,tokens,count,position,caller));
     if (use) eligible_calls++;else excluded_calls++;
     unlock_state();head_depth++;
     struct head_context context={0};
     if (use) {
-        context.model=(uintptr_t)model;context.tokens=(uintptr_t)tokens;context.token=int32_at(tokens,0);
-        context.position=position;context.outer_position=int32_at(model,0x220);context.slot=int32_at(model,0xa0);
-        if (!bound_ready) bind_model(&context);
+        const unsigned char *source_model=checked_copy_mode?entry.model:(const unsigned char *)model;
+        context.model=(uintptr_t)model;context.tokens=(uintptr_t)tokens;
+        context.token=checked_copy_mode?entry.token:int32_at(tokens,0);
+        context.position=position;context.outer_position=int32_at(source_model,0x220);context.slot=int32_at(source_model,0xa0);
+        if (!bound_ready) bind_model(&context,checked_copy_mode?&entry:NULL);
         else if (!context_live(&context)) fatal("generation-mutated");
         if (ready_mode) {
-            int ready=ecache_lookup_ready(&cache,context.token,&context.ready_row);
+            int ready=checked_copy_mode?lookup_fixed_ready(context.token,&context.ready_row):
+                ecache_lookup_ready(&cache,context.token,&context.ready_row);
             if (ready==ECACHE_ERROR) fatal("ready-lookup");
             if (ready==ECACHE_HIT) {ready_hits++;cache.stats.calls++;cache.stats.hits++;}
             else if (fixed_rows) {native_fixed_misses++;cache.stats.calls++;cache.stats.misses++;cache.stats.original_calls++;}
@@ -642,7 +784,7 @@ __attribute__((noinline)) static int32_t cached_head(void *model,const int32_t *
     }
     errno=incoming_errno;int32_t result=original_head(model,tokens,count,position);int result_errno=errno;
     if (use && (context.e_calls>1 || context.h_calls>1 || (result>=0 && (context.e_calls!=1 || context.h_calls!=1)) ||
-        !bound_live() || int32_at(model,0xa0)!=context.slot)) fatal("head-completion-contract");
+        !head_completion_live(&context))) fatal("head-completion-contract");
     if (context.ready_row && (context.branch.stage!=4 || context.branch.failed || context.e_calls!=1 || context.h_calls!=1))
         fatal("ready-head-completion");
     active=NULL;head_depth--;lock_state();in_flight--;unlock_state();errno=result_errno;return result;
@@ -658,7 +800,7 @@ static void retire_cache(void) {
     lock_state();
     if (in_flight) fatal("allocation-or-context-retired-in-head");
     if (bound_ready && !atomic_load(&retired)) {
-        atomic_store(&retired,1);retirements++;
+        atomic_store(&retired,1);fixed_import_synchronized=0;retirements++;
         internal_free++;
         if (cache.initialized && ecache_close(&cache)) fatal("retirement-close");
         internal_free--;
@@ -937,6 +1079,13 @@ __attribute__((constructor)) static void install(void) {
         if (fixed_rows) load_artifact(rows,sha);
         else if (rows || sha) fatal("capture-import-forbidden");
     }
+    const char *host_validation=getenv("HALOGEN_MTP_EMBEDDING_CACHE_HOST_VALIDATION");
+    if (host_validation && strcmp(host_validation,ECACHE_HOST_VALIDATION_MAPS) &&
+        strcmp(host_validation,ECACHE_HOST_VALIDATION_CHECKED_COPY)) fatal("host-validation-policy");
+    checked_copy_mode=host_validation && !strcmp(host_validation,ECACHE_HOST_VALIDATION_CHECKED_COPY);
+    if (checked_copy_mode && (!ready_mode || !fixed_rows)) fatal("checked-copy-fixed-only");
+    if (checked_copy_mode && !HALOGEN_EMBEDDING_CACHE_ENABLE_CHECKED_COPY_CANDIDATE)
+        fatal("checked-copy-live-admission-unqualified");
     int fd=open("/proc/self/exe",O_RDONLY|O_CLOEXEC);struct stat before,after;Elf64_Ehdr elf;
     if (fd<0 || fstat(fd,&before) || !S_ISREG(before.st_mode) || before.st_size!=ENGINE_BYTES ||
         pread(fd,&elf,sizeof elf,0)!=(ssize_t)sizeof elf || memcmp(elf.e_ident,ELFMAG,SELFMAG) ||
@@ -983,7 +1132,8 @@ __attribute__((constructor)) static void install(void) {
         "\"parity_qualified\":false,\"acceptance_qualified\":false,\"performance_qualified\":false,"
         "\"native_reset_interception_qualified\":false}\n",generation,capacity,capacity*ECACHE_ROW_BYTES);
     if (ready_mode) bytes=snprintf(activation,sizeof activation,
-        "{\"schema\":1,\"mode\":\"ready64-v1\",\"policy\":\"%s\",\"engine_sha256\":\"" ENGINE_SHA "\","
+        "{\"schema\":1,\"mode\":\"ready64-v1\",\"policy\":\"%s\",\"host_validation\":\"%s\","
+        "\"per_hit_event_query\":%s,\"engine_sha256\":\"" ENGINE_SHA "\","
         "\"head_sha256\":\"" HEAD_SHA "\",\"fc_dispatcher_sha256\":\"" FC_SHA "\",\"generation\":\"%s\","
         "\"model_binding\":\"%s\",\"provenance\":\"%s\",\"capacity\":%u,\"row_bytes\":5120,\"device_bytes\":%u,"
         "\"origin\":%u,\"imported_rows\":%u,\"import_sha256\":\"%s\",\"default_stream\":true,"
@@ -991,7 +1141,8 @@ __attribute__((constructor)) static void install(void) {
         "\"fixed_misses_native\":%s,\"immutable_owner_contract\":true,\"integration_qualified\":false,"
         "\"arithmetic_qualified\":false,\"npu_qualified\":false,\"parity_qualified\":false,"
         "\"acceptance_qualified\":false,\"performance_qualified\":false,\"native_reset_interception_qualified\":false}\n",
-        fixed_rows?"fixed-v1":"capture-v1",generation,model_hex,provenance_hex,capacity,capacity*ECACHE_ROW_BYTES,
+        fixed_rows?"fixed-v1":"capture-v1",checked_copy_mode?ECACHE_HOST_VALIDATION_CHECKED_COPY:ECACHE_HOST_VALIDATION_MAPS,
+        checked_copy_mode?"false":"true",generation,model_hex,provenance_hex,capacity,capacity*ECACHE_ROW_BYTES,
         fixed_rows?staged_rows.origin:1,fixed_rows?staged_rows.count:0,import_sha,fixed_rows?"true":"false");
     if (bytes<=0 || (size_t)bytes>=sizeof activation) fatal("activation-size");
     publish_file("activation.json",activation,(size_t)bytes);

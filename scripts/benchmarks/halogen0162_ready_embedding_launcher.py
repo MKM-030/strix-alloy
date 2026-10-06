@@ -115,6 +115,10 @@ def validate_plan(plan):
     linux_artifact(plan["shared_object"], 1 << 20)
     ready = plan["ready"]
     require(ready["policy"] in ("fixed-v1", "capture-v1"), "Unsupported ready-row policy")
+    host_validation = ready.get("host_validation", "maps-v1")
+    require(host_validation in ("maps-v1", "checked-copy-v1"), "Unsupported host-validation policy")
+    require(host_validation != "checked-copy-v1" or ready["policy"] == "fixed-v1",
+            "Checked-copy validation requires immutable fixed rows")
     hex_value(ready["generation"], 32)
     hex_value(ready["model_binding"])
     hex_value(ready["provenance"])
@@ -229,6 +233,8 @@ def ready_environment(plan):
               CACHE_PREFIX + "_CAPACITY": "64", CACHE_PREFIX + "_READY_POLICY": ready["policy"],
               CACHE_PREFIX + "_MODEL_BINDING": ready["model_binding"],
               CACHE_PREFIX + "_PROVENANCE": ready["provenance"]}
+    if "host_validation" in ready:
+        result[CACHE_PREFIX + "_HOST_VALIDATION"] = ready["host_validation"]
     if ready["policy"] == "fixed-v1":
         result[CACHE_PREFIX + "_READY_ROWS"] = ROWS_DESTINATION
         result[CACHE_PREFIX + "_READY_ROWS_SHA256"] = ready["rows"]["sha256"]

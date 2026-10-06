@@ -11,6 +11,8 @@
 #define ECACHE_MISS 0
 #define ECACHE_HIT 1
 #define ECACHE_ERROR (-1)
+#define ECACHE_HOST_VALIDATION_MAPS "maps-v1"
+#define ECACHE_HOST_VALIDATION_CHECKED_COPY "checked-copy-v1"
 
 /* All callbacks operate on the same default HIP stream (NULL). Return 0 for
  * success. event_query alone returns 1 for pending, -1 for any native error.
