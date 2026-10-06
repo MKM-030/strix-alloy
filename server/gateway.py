@@ -17,8 +17,10 @@ import time
 from urllib.parse import urlsplit
 import aiohttp
 from aiohttp import web
+from console_trace import ConsoleTrace,RequestTrace
 
 LOG=logging.getLogger('alloy.gateway')
+CONSOLE_TRACE_KEY=web.RequestKey('console_trace',RequestTrace)
 POST_ROUTES={'/v1/chat/completions','/v1/completions','/v1/responses',
              '/v1/messages','/v1/messages/count_tokens','/v1/embeddings',
              '/v1/rerank','/v1/reranking'}
@@ -60,18 +62,21 @@ class Backend:
 
 class Gateway:
     def __init__(self, backend, secret, backend_secret='', *, concurrency=1,
-                 body_bytes=16*1024**2, request_seconds=1800):
+                 body_bytes=16*1024**2, request_seconds=1800, console_trace=False):
         if not isinstance(secret,str) or len(secret)<32:
             raise ValueError('At least 32 characters of API key material required')
         if not 1<=concurrency<=16 or not 1024<=body_bytes<=64*1024**2:
             raise ValueError('Invalid request limits')
         if not 1<=request_seconds<=3600:
             raise ValueError('Request timeout must be 1..3600 seconds')
+        if type(console_trace) is not bool:
+            raise ValueError('console_trace must be a boolean')
         self.backend=backend; self.secret=secret; self.backend_secret=backend_secret
         self.concurrency=concurrency; self.body_bytes=body_bytes
         self.request_seconds=request_seconds; self.active=0; self.draining=False
         self.completed=0; self.cancelled=0; self.client=None
         self.last_healthy=0.0; self.probe_lock=asyncio.Lock()
+        self.console_trace=ConsoleTrace(secrets=(secret,backend_secret)) if console_trace else None
         self.app=web.Application(client_max_size=body_bytes,middlewares=[self.authenticate])
         self.app.add_routes([web.get('/health',self.health),web.get('/v1/models',self.models)])
         for path in sorted(POST_ROUTES): self.app.router.add_post(path,self.inference)
@@ -79,12 +84,29 @@ class Gateway:
 
     @web.middleware
     async def authenticate(self, request, handler):
+        trace=(self.console_trace.start(request.method,request.path,self.backend.identifier)
+               if self.console_trace and request.method=='POST' and request.path in POST_ROUTES else None)
+        if trace is not None: request[CONSOLE_TRACE_KEY]=trace
+        status=500; outcome=None
         # Never accept credentials from URL parameters; no CORS wildcard.
         raw=request.headers.get('Authorization','')
         key=raw[7:] if raw.startswith('Bearer ') else request.headers.get('x-api-key','')
-        if not hmac.compare_digest(key.encode('utf-8'),self.secret.encode('utf-8')):
-            return web.json_response({'error':{'message':'Unauthorized'}},status=401)
-        return await handler(request)
+        try:
+            if not hmac.compare_digest(key.encode('utf-8'),self.secret.encode('utf-8')):
+                status=401
+                return web.json_response({'error':{'message':'Unauthorized'}},status=status)
+            response=await handler(request)
+            status=response.status
+            return response
+        except web.HTTPException as exc:
+            status=exc.status
+            raise
+        except asyncio.CancelledError:
+            status=trace.status if trace is not None and trace.status is not None else 499
+            outcome='cancelled'
+            raise
+        finally:
+            if trace is not None: trace.finish(status,outcome)
 
     async def session_context(self, app):
         timeout=aiohttp.ClientTimeout(total=self.request_seconds,connect=5,sock_read=self.request_seconds)
@@ -144,6 +166,7 @@ class Gateway:
             'checkpoint':self.backend.checkpoint,'routes':list(self.backend.routes)}]})
 
     async def inference(self, request):
+        trace=request.get(CONSOLE_TRACE_KEY)
         if request.path not in self.backend.routes:
             return web.json_response({'error':{'message':'Route unsupported by selected backend'}},status=501)
         if self.draining or self.active>=self.concurrency:
@@ -154,6 +177,7 @@ class Gateway:
             try: body=await request.json()
             except (ValueError,UnicodeError):
                 raise web.HTTPBadRequest(text='Valid UTF-8 JSON required')
+            if trace is not None: trace.payload(body)
             if not isinstance(body,dict) or body.get('model') not in (self.backend.identifier,self.backend.model):
                 raise web.HTTPBadRequest(text='Select a model returned by /v1/models')
             body['model']=self.backend.model
@@ -167,12 +191,16 @@ class Gateway:
                 if 300<=upstream.status<400:
                     raise ValueError('Backend redirect refused')
                 status=upstream.status
+                if trace is not None:
+                    trace.response(status,upstream.headers.get('Content-Type',''),
+                                   upstream.headers.get('Content-Encoding',''))
                 safe_headers={k:v for k,v in upstream.headers.items()
                               if k.lower() in ('content-type','cache-control','x-request-id','content-encoding')}
                 response=web.StreamResponse(status=status,headers=safe_headers)
                 await response.prepare(request)
                 async for chunk in upstream.content.iter_any():
                     await response.write(chunk)  # awaits transport backpressure; no whole-response buffer
+                    if trace is not None: trace.feed(chunk)
                 await response.write_eof()
                 self.completed+=1
                 return response
@@ -184,6 +212,9 @@ class Gateway:
         except (aiohttp.ClientError,TimeoutError,ValueError,OSError) as exc:
             self.last_healthy=0.0
             LOG.warning('upstream_failure backend=%s type=%s',self.backend.identifier,type(exc).__name__)
+            if trace is not None:
+                trace.outcome='upstream_error'
+                trace.emit('error',type=type(exc).__name__)
             if response is not None and response.prepared:
                 if request.transport: request.transport.close()
                 return response
@@ -205,7 +236,8 @@ def load_config(path):
     return Gateway(backend,key('token_file'),
                    key('backend_token_file') if value.get('backend_token_file') else '',
                    concurrency=value.get('concurrency',1),body_bytes=value.get('body_bytes',16*1024**2),
-                   request_seconds=value.get('request_seconds',1800))
+                   request_seconds=value.get('request_seconds',1800),
+                   console_trace=value.get('console_trace',False))
 
 
 async def serve(gateway, port, stop_event=None):

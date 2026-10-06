@@ -287,6 +287,50 @@ def validate_engine(engine, repo):
     return executable.parent
 
 
+def halogen_launch_command(engine, directory):
+    controls = halogen_draft_arguments(engine)
+    controls += halogen_kernel_arguments(engine, directory)
+    controls += halogen_speculation_arguments(engine, directory)
+    controls += halogen_matmul_arguments(engine, directory)
+    controls += halogen_lookup_arguments(engine, directory)
+    controls += halogen_private_hsa_arguments(engine, directory)
+    launcher = engine.get('launcher', 'powershell')
+    if launcher == 'powershell':
+        return [engine['powershell'], '-NoProfile', '-File', str(directory / 'Start.ps1'),
+                '-Checkpoint', engine['checkpoint'], '-ContextSize', str(engine['context']),
+                '-PromptCache', engine.get('prompt_cache', 'Off')] + controls
+    if launcher != 'python':
+        raise ValueError('Unknown Halogen launcher')
+    supported = ROOT.parent / 'backends/halogen-wsl2-0.16.2'
+    executable = Path(engine.get('python_executable', ''))
+    if (directory.resolve() != supported.resolve() or not executable.is_absolute() or
+            not executable.is_file() or executable.resolve() != Path(sys.executable).resolve()):
+        raise ValueError('Direct Halogen service requires the current project Python and pinned backend')
+    # Translate only controls already validated by the normal managed path.
+    flags = {'-DraftTokens': '--draft-tokens', '-PrefillChunk': '--prefill-chunk',
+             '-MaxPrefillTokens': '--max-prefill-tokens', '-AdmitTicks': '--admit-ticks',
+             '-PrefillKeepTrunk': '--prefill-keep-trunk',
+             '-KernelControlsJson': '--kernel-controls-json',
+             '-SpeculationPolicyJson': '--speculation-policy-json',
+             '-MatmulTuningJson': '--matmul-tuning-json',
+             '-LookupReceipt': '--lookup-receipt', '-LookupReceiptSha256': '--lookup-receipt-sha256',
+             '-PrivateHsaReceipt': '--private-hsa-receipt',
+             '-PrivateHsaReceiptSha256': '--private-hsa-receipt-sha256'}
+    translated = []
+    index = 0
+    while index < len(controls):
+        flag = controls[index]
+        translated.append(flags[flag])
+        index += 1
+        if flag != '-PrefillKeepTrunk':
+            translated.append(controls[index])
+            index += 1
+    return [str(executable), '-u', '-B', str(directory / 'scripts/service.py'),
+            '--checkpoint', engine['checkpoint'], '--context-size', str(engine['context']),
+            '--prompt-cache', engine.get('prompt_cache', 'Off'),
+            '--serve-seconds', '0', '--startup-timeout', '900'] + translated
+
+
 class Engine:
     def __init__(self, config, gateway, repo, logs):
         self.config=config; self.gateway=gateway; self.repo=repo; self.logs=logs
@@ -299,20 +343,15 @@ class Engine:
         for name in list(env):
             if name.startswith(('GGML_','GUFO_','A3B_','HIP_','HSA_','HALOGEN_')):
                 env.pop(name)
+        env.pop('ALLOY_POWERSHELL_HOST', None)
         if self.config['kind']=='halogen':
             if (self.directory/'.local/runner.lock').exists():
                 raise ValueError('Existing or unresolved Halogen ownership lock')
             previous=self.directory/'.local/current-service.json'
             self.previous_run=read(previous).get('run_id') if previous.exists() else None
-            command=[self.config['powershell'],'-NoProfile','-File',str(self.directory/'Start.ps1'),
-                     '-Checkpoint',self.config['checkpoint'],'-ContextSize',str(self.config['context']),
-                     '-PromptCache',self.config.get('prompt_cache','Off')]
-            command+=halogen_draft_arguments(self.config)
-            command+=halogen_kernel_arguments(self.config,self.directory)
-            command+=halogen_speculation_arguments(self.config,self.directory)
-            command+=halogen_matmul_arguments(self.config,self.directory)
-            command+=halogen_lookup_arguments(self.config,self.directory)
-            command+=halogen_private_hsa_arguments(self.config,self.directory)
+            command=halogen_launch_command(self.config,self.directory)
+            if self.config.get('launcher') == 'python':
+                env['ALLOY_POWERSHELL_HOST'] = self.config['powershell']
         else:
             command=list(self.config['command'])
             if self.config.get('api_key_from_backend_token'):

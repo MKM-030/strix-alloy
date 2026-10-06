@@ -83,6 +83,34 @@ def verify_sources():
         check_hash(path,sha)
 
 
+def powershell_host_override():
+    """Validate the explicit session host; never search PATH for this override."""
+    value=os.environ.get('ALLOY_POWERSHELL_HOST')
+    if value is None: return None
+    if os.name!='nt' or not value:
+        raise ValueError('PowerShell host override requires native Windows PowerShell 5.1')
+    import ctypes
+    api=ctypes.WinDLL('kernel32',use_last_error=True)
+    api.GetSystemDirectoryW.argtypes=[ctypes.c_wchar_p,ctypes.c_uint32]
+    api.GetSystemDirectoryW.restype=ctypes.c_uint32
+    buffer=ctypes.create_unicode_buffer(32768)
+    length=api.GetSystemDirectoryW(buffer,len(buffer))
+    if not 0<length<len(buffer):
+        raise OSError('Native Windows system directory is unavailable')
+    expected=Path(buffer.value)/'WindowsPowerShell/v1.0/powershell.exe'
+    host=Path(value)
+    if not host.is_absolute() or host.resolve()!=expected.resolve() or not host.is_file():
+        raise ValueError('PowerShell host override must be the native Windows PowerShell executable')
+    for item in (host,*host.parents):
+        if item.is_symlink() or item.is_junction():
+            raise ValueError('Linked PowerShell host override refused')
+    version=run([str(host),'-NoProfile','-NonInteractive','-Command',
+                 "$PSVersionTable.PSVersion.ToString() + ':' + $PSVersionTable.PSEdition"])
+    if not re.fullmatch(r'5\.1(?:\.\d+){0,2}:Desktop',version):
+        raise ValueError('PowerShell host override must report Windows PowerShell 5.1 Desktop')
+    return str(host)
+
+
 def preflight(distro,user,models,dxg,wheel=None,verify_model_hash=False,checkpoint='w4b',ngram_source=None):
     if os.name!='nt' or sys.version_info<(3,12):
         raise ValueError('Windows Python 3.12+ is required')
@@ -93,10 +121,12 @@ def preflight(distro,user,models,dxg,wheel=None,verify_model_hash=False,checkpoi
     if bool(dxg)==bool(wheel): raise ValueError('Supply exactly one -DxgLibrary or -AmdWheel')
     validate_wsl_config((Path.home()/'.wslconfig').read_text(encoding='utf-8-sig'))
     workspace=linux_path(wsl(distro,user,'wslpath','-a','-u',str(ROOT)))
-    pwsh=shutil.which('pwsh')
-    if not pwsh: raise ValueError('Install PowerShell 7 and add pwsh to PATH')
-    if int(run([pwsh,'-NoProfile','-Command','$PSVersionTable.PSVersion.Major']))<7:
-        raise ValueError('PowerShell 7 required')
+    pwsh=powershell_host_override()
+    if pwsh is None:
+        pwsh=shutil.which('pwsh')
+        if not pwsh: raise ValueError('Install PowerShell 7 and add pwsh to PATH')
+        if int(run([pwsh,'-NoProfile','-Command','$PSVersionTable.PSVersion.Major']))<7:
+            raise ValueError('PowerShell 7 required')
     if not wsl(distro,user,'gcc','-dumpfullversion').startswith('13.3.'):
         raise ValueError('The pinned adapters require GCC 13.3 on Ubuntu 24.04')
     release=wsl(distro,user,'cat','/etc/os-release')
@@ -254,8 +284,14 @@ def installed():
     identity(config['distro'],'distribution'); identity(config['user'],'Linux user')
     linux_path(config['models'],native=True); linux_path(config['dxg']); linux_path(config['workspace'])
     if config.get('ngram_source'): linux_path(config['ngram_source'])
-    if not Path(config['pwsh']).is_absolute() or not Path(config['pwsh']).is_file():
-        raise ValueError('Recorded PowerShell executable is unavailable')
+    host=powershell_host_override()
+    if host is None:
+        if not Path(config['pwsh']).is_absolute() or not Path(config['pwsh']).is_file():
+            raise ValueError('Recorded PowerShell executable is unavailable')
+    else:
+        # Normalize only this returned copy. The machine receipt and its
+        # install-manifest hash have already been verified without rewriting.
+        config['pwsh']=host
     return config
 
 

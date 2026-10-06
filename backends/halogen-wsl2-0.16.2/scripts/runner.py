@@ -67,6 +67,8 @@ def configure():
     global WSL,PWSH,FIXED_MOUNTS,MACHINE
     MACHINE=portable.installed()
     WSL=portable.wsl_command(MACHINE['distro'],MACHINE['user'],[])
+    # installed() returns the validated session host in memory when explicitly
+    # overridden; the sealed machine receipt keeps its original launcher path.
     PWSH=MACHINE['pwsh']
     FIXED_MOUNTS={'/models':MACHINE['models'],
                   '/usr/lib/libdxcore.so':'/usr/lib/wsl/lib/libdxcore.so',

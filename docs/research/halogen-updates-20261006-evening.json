@@ -1,0 +1,171 @@
+{
+  "format": "bounded-official-update-check-v2",
+  "started_utc": "2026-10-06T20:14:18Z",
+  "completed_utc": "2026-10-06T20:23:42Z",
+  "metadata_addendum_utc": "2026-10-06T20:27:48Z",
+  "receipt_amended_utc": "2026-10-06T20:28:44Z",
+  "next_gate_basis": "Original completed source check; metadata-only addendum does not reset the two-hour gate.",
+  "previous_checkpoint": "server/.local/optimization9h-20261004/update-checkpoint-20261006-0927.json",
+  "previous_completed_utc": "2026-10-06T09:30:15Z",
+  "previous_next_check_not_before_utc": "2026-10-06T11:30:15Z",
+  "gate_due": true,
+  "next_check_not_before_utc": "2026-10-06T22:23:42Z",
+  "decision": "No newly qualified single-active-request cache-off Halogen PP/TG/native-acceptance route. Installed AGESA already matches AMD's reported firmware fix; no new firmware action or unsupported-overlap qualification follows. Source-only calibrated draft stopping recorded.",
+  "managed_engine_changed": false,
+  "managed_engine_version": "0.16.2",
+  "fresh_inference_measurements": false,
+  "actions": {
+    "gpu_executed": false,
+    "npu_executed": false,
+    "engine_requests": false,
+    "installation": false,
+    "binaries_or_models_downloaded": false,
+    "service_lifecycle": false,
+    "firmware_action": false,
+    "trace_capture": false,
+    "rejected_native_audit_retried": false,
+    "automation_changed": false
+  },
+  "environment": {
+    "process_elevated": false,
+    "wpr_path": "C:\\Windows\\System32\\wpr.exe",
+    "wpa_found_on_path_or_usual_toolkit_location": false,
+    "gpuview_found_on_path_or_usual_toolkit_location": false,
+    "tool_check": "Bounded token membership, Get-Command and ordinary toolkit directory presence only.",
+    "host_metadata_source": "Root's fresh CIM read plus metadata-only root/wmi MSSmBios_RawSMBiosTables ASCII regex match; not independently queried by this research task.",
+    "system": "BOSGAME LIMITED BeyondMax Series",
+    "board": "BOSGAME LIMITED AXB35-02 Version 1.0",
+    "bios": "AMI 3.10, 2026-03-09",
+    "installed_agesa": "1.0.0.2b",
+    "agesa_metadata_read_utc": "2026-10-06T20:25:36.7772445Z",
+    "agesa_metadata_exact_match": "AGESA!V9 StrixHaloPI-FP11 1.0.0.2b",
+    "full_smbios_table_or_serial_emitted": false,
+    "reported_firmware_prerequisite_matches": true,
+    "overlap_cure_or_correctness_validated": false
+  },
+  "official_sources": [
+    {
+      "id": "halogen",
+      "url": "https://github.com/peonist-ai/halogen-flash-server/blob/6d4e791ea4ca596a1f90e38beefdf2e017ae4544/CHANGELOG.md",
+      "pin": "6d4e791ea4ca596a1f90e38beefdf2e017ae4544",
+      "versions_new_since_prior_check": ["0.16.3", "0.16.4"],
+      "tag_object_url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/git/tags/b48ddb44064b8208a535eb1c5b83354654889b4a",
+      "tagged_utc": "2026-10-06T18:04:54Z",
+      "github_releases_empty": true,
+      "fresh_body_parse": true,
+      "applicability": "0.16.3 multistream PLE claim lies outside current one-active-request scope; other changes are server correctness, caching, queueing or NPU side models. 0.16.4 engine unchanged from 0.16.3."
+    },
+    {
+      "id": "halogen_issues",
+      "urls": [
+        "https://github.com/peonist-ai/halogen-flash-server/issues/139",
+        "https://github.com/peonist-ai/halogen-flash-server/issues/142",
+        "https://github.com/peonist-ai/halogen-flash-server/issues/123",
+        "https://github.com/peonist-ai/halogen-flash-server/issues/132"
+      ],
+      "fresh_body_and_recent_comment_parse": true,
+      "findings": ["Held-FCLK hang report open.", "BF16 KV, no current KV quantization feature.", "Two-stream speculative verifier has no build/date.", "Small-group NPU batching fix closed in 0.16.3."]
+    },
+    {
+      "id": "strata",
+      "url": "https://github.com/Niko1221/Strata/releases/tag/v0.1.40.1",
+      "pin": "82f46a8c8f475f001ad76d92f58f4a4f8ffb0253",
+      "published_utc": "2026-10-06T09:53:35Z",
+      "fresh_body_parse": true,
+      "engine_changed_from_0_1_40": false,
+      "history_cleaned": true,
+      "destructive_release_reset_example_executed": false
+    },
+    {
+      "id": "amd_fabric_fix",
+      "url": "https://github.com/ROCm/TheRock/issues/8709#issuecomment-6019477697",
+      "posted_utc": "2026-10-06T15:21:02Z",
+      "author": "harkgill-amd",
+      "fresh_body_parse": true,
+      "tested_platform": "Ryzen AI MAX+ 395, AXB35-02 BIOS 3.07, AGESA StrixHaloPI-FP11 1.0.0.2",
+      "reported_fix_agesa": "1.0.0.2b",
+      "local_installed_agesa_verified": true,
+      "oem_fix_release_availability_verified": false,
+      "local_reported_firmware_prerequisite_matches": true,
+      "fix_internal_mechanism_documented": false,
+      "windows_fp11_395_fabric_hold_api_qualified": false,
+      "halogen_0_16_4_bypass_still_unsupported": true,
+      "actionable_frozen_profile_route_without_unsupported_overlap": false,
+      "pp_tg_acceptance_evidence": false
+    },
+    {
+      "id": "bosgame_firmware_availability",
+      "urls": ["https://www.bosgame.com/pages/support", "https://www.bosgamepc.com/pages/bios-download-center", "https://www.bosgame.com/pages/download-center", "https://www.bosgamepc.com/pages/support"],
+      "delegated_check_completed_utc": "2026-10-06T20:20:53Z",
+      "result_inspected": true,
+      "compatible_agesa_fix_availability_verified": false,
+      "finding": "No matching AXB35-02/M5 BIOS or AGESA release note found in bounded official tables/searches; later direct BIOS download page fetches timed out. No inference from BIOS3.10 numbering.",
+      "contact_sent": false,
+      "downloaded": false
+    },
+    {
+      "id": "amd_gpu_drivers",
+      "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+      "release_notes_url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html",
+      "fresh_page_and_notes_parse": true,
+      "optional": {"version": "26.9.2", "released": "2026-09-29", "driver_store_versions": ["32.0.32015.2008", "32.0.21045.11001"]},
+      "recommended": {"version": "26.8.1", "released": "2026-08-20"},
+      "bundled_npu": {"version": "32.00.20102.3930", "date": "2026-05-07"},
+      "installed_versions_queried": false
+    },
+    {
+      "id": "ryzen_ai",
+      "release_url": "https://github.com/amd/RyzenAI-SW/releases/tag/v1.8.0",
+      "version": "1.8.0",
+      "urls": [
+        "https://ryzenai.docs.amd.com/en/latest/inst.html",
+        "https://ryzenai.docs.amd.com/en/latest/app_development.html",
+        "https://ryzenai.docs.amd.com/en/latest/hybrid_oga.html",
+        "https://ryzenai.docs.amd.com/en/latest/linux.html"
+      ],
+      "fresh_docs_parse": true,
+      "production_windows_npu_driver": "32.0.203.376",
+      "oga_platforms": ["Strix", "Krackan Point"],
+      "linux_documented_flow": "STX/KRK NPU-only with XRT/amdxdna; no NPU WSL access established.",
+      "arbitrary_halogen_hgn_operator_api_established": false
+    },
+    {
+      "id": "rocdxg_and_amdsmi",
+      "urls": [
+        "https://rocm.docs.amd.com/projects/radeon-ryzen/en/latest/docs/install/installryz/wsl/howto_wsl.html",
+        "https://rocm.docs.amd.com/projects/amdsmi/en/develop/how-to/amdsmi-wsl-mode.html"
+      ],
+      "fresh_docs_parse": true,
+      "applicability": "GPU WSL bridge; experimental AMD SMI telemetry backend already assessed in retained Windows support audit. Needs nondefault build; fabric and per-process telemetry unsupported. No NPU bridge or hidden dispatch binding established.",
+      "installed_backend_tested": false
+    },
+    {
+      "id": "kyojin_primary",
+      "url": "https://github.com/Yamz-Labs/kyojin",
+      "pin": "8c91be29da2cfbaf22ebd89c047ca8eecd4ad28f",
+      "committed_utc": "2026-10-06T19:50:40Z",
+      "paths_inspected": ["tools/qwen/SERVE.md", "tools/qwen/spec_policy.py", "exllamav3/generator/draft_confidence.py", "exllamav3/generator/generator.py", "tools/qwen/spec_bench.py"],
+      "fresh_body_parse": true,
+      "candidate": "Online confidence-calibrated early stopping of sequential AR/MTP drafting.",
+      "metric_scope": "Potential Decode work reduction; Prefill unchanged; acceptance ratio needs attempted/accepted counts and committed-time evidence.",
+      "qualification": "Source-only. Current public Halogen lacks native score export/stopping hook; do not retry rejected native audit. Different EXL3 runtime/weights are not drop-in HGN.",
+      "calibrated_qwen_policy_benchmark_verified": false
+    }
+  ],
+  "reddit": {
+    "searches": ["site:reddit.com/r/LocalLLaMA halogen Strix Halo October 2026 0.16.3", "site:reddit.com Strix Halo AMD SMI WSL librocdxg NPU"],
+    "verified_primary_lead": "https://www.reddit.com/r/LocalLLaMA/comments/1wybesy/qwen38flashnext_125b_on_a_single_strix_halo_mini/",
+    "throughput_anecdotes_used_as_local_evidence": false,
+    "coverage": "Two bounded searches; one repository lead checked against pinned primary source. Not a complete ecosystem survey."
+  },
+  "prior_probe_exclusions": ["Defeated rolling/growing GPU proposer", "0/15 Strata/native/hybrid continuation screens", "Two-row Q8 slower", "Q8D projection neutral", "Device snapshot rollback already completed", "Bulk Prefill already ongoing"],
+  "remaining_uncertainties": ["Official BOSGAME compatible fix release availability", "Local GPU/NPU overlap correctness and scope of AMD firmware cure", "No qualified native per-depth confidence/stopping API", "No fresh throughput or native acceptance trial"],
+  "files_written_by_evening_check": ["docs/research/halogen-updates-20261006-evening.md", "docs/research/halogen-updates-20261006-evening.json"],
+  "validation": {
+    "json_parsed": true,
+    "internal_report_links_exist": true,
+    "trailing_whitespace_absent": true,
+    "git_diff_check_passed": true,
+    "independent_read_only_review": "Initial review passed. Amendment review accepted AGESA and qualification distinctions; its chronology correction is addressed by explicit metadata-addendum and receipt-amended timestamps, while preserving the original completed-check gate."
+  }
+}

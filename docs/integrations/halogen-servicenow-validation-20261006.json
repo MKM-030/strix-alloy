@@ -1,0 +1,50 @@
+{
+  "scope": "PowerShell 5.1 foreground launcher and console-only API observation",
+  "validated_utc": "2026-10-06T20:29:00Z",
+  "server_version": "0.16.2",
+  "profile": "HistoricalStock",
+  "context_capacity": 262144,
+  "prefill_chunk": 32768,
+  "max_prefill_tokens": 32768,
+  "draft_tokens": 2,
+  "prompt_cache": "Off",
+  "console_trace": true,
+  "powershell7_required_for_this_launch_route": false,
+  "checks": {
+    "actual_windows_powershell51_parse_and_dry_run": true,
+    "actual_windows_powershell51_native_host_validation": true,
+    "actual_windows_powershell51_helper_exit0_stdout_exit7_timeout_cleanup": true,
+    "ready_sampler_returncode": 0,
+    "server_unittests_passed": 88,
+    "local_authenticated_health": "ok",
+    "https_authenticated_chat_request_succeeded": true,
+    "smoke_answer_correct": true,
+    "smoke_prompt_tokens": 68,
+    "smoke_completion_tokens": 3,
+    "smoke_reasoning_tokens": 0,
+    "smoke_finish_reason": "stop",
+    "unique_content_marker_matches_in_operational_log_files": 0,
+    "operational_log_files_checked": 264,
+    "request_admission_available_physical_gib": 23.13,
+    "runtime_minimum_available_physical_gib_at_verification": 23.05594253540039,
+    "runtime_reserve_physical_and_commit_gib": 18,
+    "existing_funnel_forward_target": "http://127.0.0.1:8840",
+    "network_configuration_changed": false,
+    "servicenow_instance_deployment_or_instance_request": false,
+    "independent_external_fetch_tool": "Endpoint not accessible through web fetch tool; not an independent external reachability proof"
+  },
+  "first_start": {
+    "loaded_model": true,
+    "failed_before_serving": "PowerShell 5.1 helper ExitCode was null",
+    "normal_cleanup_and_recovery": true,
+    "fix": "Retain the directly owned Process.Handle before WaitForExit; keep strict exit-code validation"
+  },
+  "limits": {
+    "fresh_throughput_benchmark": false,
+    "fresh_acceptance_cohort": false,
+    "npu_executed": false,
+    "benchmark_speed_guaranteed_for_new_api_prompts": false,
+    "request_or_answer_content_in_this_receipt": false,
+    "console_writes_can_add_latency": true
+  }
+}

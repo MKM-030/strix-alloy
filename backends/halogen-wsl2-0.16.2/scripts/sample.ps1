@@ -20,10 +20,12 @@ function Start-PortableProcess {
         -RedirectStandardOutput $RedirectStandardOutput -RedirectStandardError $RedirectStandardError
 }
 
-function Stop-HelperChecked($Process, [switch]$Tree) {
+function Stop-HelperChecked($Process) {
     $Process.Refresh()
     if (-not $Process.HasExited) {
-        $Process.Kill($true)
+        # The retained Process object belongs to this directly started WSL
+        # helper. .NET Framework has Kill(), without the newer tree overload.
+        $Process.Kill()
         if (-not $Process.WaitForExit(10000)) { throw 'Killed helper did not terminate within 10 seconds' }
         $Process.Refresh()
         if (-not $Process.HasExited) { throw 'Killed helper did not terminate within 10 seconds' }
@@ -70,6 +72,9 @@ function Invoke-WslBounded {
     $value = ''
     try {
         $p = Start-PortableProcess -FilePath 'wsl.exe' -WindowStyle Hidden -PassThru -ArgumentList ($wslArgs + $Arguments) -RedirectStandardOutput $out -RedirectStandardError $err
+        # Retain the native handle before waiting: Windows PowerShell 5.1's
+        # Start-Process otherwise loses ExitCode when a short helper exits.
+        $null = $p.Handle
         if ($CleanupSamples) {
             try {
                 $bytes = Get-WindowsAvailableBytes

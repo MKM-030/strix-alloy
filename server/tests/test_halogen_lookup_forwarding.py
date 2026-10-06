@@ -20,6 +20,13 @@ class LookupForwardingTests(unittest.TestCase):
                  'powershell': 'pwsh.exe'}
         gateway = SimpleNamespace(secret='', backend_secret='')
         commands = []
+        fixture_lock = repo / stock['directory'] / '.local/runner.lock'
+        actual_exists = Path.exists
+
+        def fixture_exists(path):
+            # Command capture owns no process and must not depend on the live
+            # repository's ownership lock. Preserve every other validation.
+            return False if path == fixture_lock else actual_exists(path)
 
         def fake_child(command, *, stdout_path, stderr_path, **unused):
             commands.append(command)
@@ -37,7 +44,8 @@ class LookupForwardingTests(unittest.TestCase):
             original = copy.deepcopy(source)
             candidate = draft_profiles.tune(source, draft_tokens=2, lookup_tuning=config)
             self.assertEqual(source, original)
-            with patch.object(controller, 'JobChild', side_effect=fake_child):
+            with patch.object(controller, 'JobChild', side_effect=fake_child), \
+                    patch.object(Path, 'exists', fixture_exists):
                 for settings in (stock, candidate['engine']):
                     engine = controller.Engine(settings, gateway, repo, directory)
                     try:
