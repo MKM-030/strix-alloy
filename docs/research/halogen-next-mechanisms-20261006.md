@@ -2,6 +2,14 @@
 
 The goal is higher actual Halogen Prefill and Decode throughput and native draft acceptance. Evaluate GPU, CPU and NPU after each development; select by complete engine benefit. No new improvement is qualified in this source review. The original arena8192 server remains ready/open. Automation remains paused.
 
+The [compact-Q8 GPU H audit and DPP screen](halogen-gpu-compact-h-mechanisms-20261006.md)
+are now complete. Selected H has no WMMA/LDS staging to pad. Its distinct DPP
+exchange realization produced exact frozen outputs, but showed no demonstrated
+advantage: mean140.444 microseconds original versus141.222 candidate, with the
+second arm faster in every measured pair. No intrinsic slowdown or serving
+gain follows. It remains disabled and is not repeated. A separate two-row Q8
+input-reuse lead is source-only; ordinary Prefill needs its own bound dispatch.
+
 The user's standing instruction on 6 October makes this device comparison a
 requirement for every development. Exact replacements can lower compute or
 host overhead while preserving native acceptance; an acceptance increase
