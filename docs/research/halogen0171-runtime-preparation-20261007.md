@@ -43,6 +43,22 @@ This is an admission failure, not a throughput regression or a valid cohort.
 The subsequent reserve check retains one owned WSL sleep process so that
 initialization is accounted for before another normal start is considered.
 
+A second baseline attempt also stopped before engine creation. Its normal
+cleanup and recovery both completed. WSL had become idle during the Windows
+admission wait; after a later WSL initialization, the final check observed
+38.46 GiB physical and 191.36 GiB commit headroom. No inference requests were
+submitted by either failed start, so neither supplies a rate or acceptance
+measurement. A bounded WSL keepalive now accounts for this initialization
+through the next admission decision. Current serving state is **stopped**, and
+restoring the saved original profile ready/open remains outstanding.
+
+One working-set trim of the verified Codex tool host and one bounded action
+on its main/UI processes completed without terminating any program or changing
+memory quotas. These are host preparation actions, not engine performance
+results. The latest warmed observation recorded 38.63 GiB physical available
+and 191.43 GiB commit headroom. The user has been asked to free 2–3 GiB by
+closing unneeded applications; no additional lifecycle approval is required.
+
 Startup admission remains 40 GiB physical and 131 GiB commit headroom at
 262144 context capacity. Runtime reserves remain 18/18 GiB. The retained
 260000-token cohort's 22.56-GiB decline does not support a lower full-context
