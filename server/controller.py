@@ -151,9 +151,11 @@ def halogen_kernel_arguments(engine, directory):
 
 
 def halogen_speculation_module(directory):
-    supported = Path(__file__).resolve().parents[1] / 'backends/halogen-wsl2-0.16.2'
-    if directory.resolve() != supported.resolve():
-        raise ValueError('Speculation policy requires the pinned Halogen 0.16.2 backend')
+    supported = Path(__file__).resolve().parents[1] / 'backends'
+    allowed = tuple((supported / name).resolve() for name in
+                    ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1'))
+    if directory.resolve() not in allowed:
+        raise ValueError('Speculation policy requires a pinned Halogen 0.16.2, 0.17.0 or 0.17.1 backend')
     source = directory / 'scripts/speculation_policy.py'
     if source.is_symlink() or not source.is_file():
         raise ValueError('Selected backend has no managed speculation-policy support')
@@ -301,9 +303,11 @@ def halogen_launch_command(engine, directory):
                 '-PromptCache', engine.get('prompt_cache', 'Off')] + controls
     if launcher != 'python':
         raise ValueError('Unknown Halogen launcher')
-    supported = ROOT.parent / 'backends/halogen-wsl2-0.16.2'
+    supported = ROOT.parent / 'backends'
+    allowed = tuple((supported / name).resolve() for name in
+                    ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1'))
     executable = Path(engine.get('python_executable', ''))
-    if (directory.resolve() != supported.resolve() or not executable.is_absolute() or
+    if (directory.resolve() not in allowed or not executable.is_absolute() or
             not executable.is_file() or executable.resolve() != Path(sys.executable).resolve()):
         raise ValueError('Direct Halogen service requires the current project Python and pinned backend')
     # Translate only controls already validated by the normal managed path.

@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "version": "0.17.1",
+  "upstream_commit": "9196bc6e7b20",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:1952e5c5a50a6c0c52b748b505cba401ce88f7ce92e6b3c8253b4f5bdbcd3161",
+  "engine_sha256": "740c74166147fd933867469467bf125825f99e4e53c8c7dcd8a72709a91400b9",
+  "entrypoint_sha256": "6cfb7e7a5c0aacb4e8f47f1d218f33ad2e8b3ffe9c110dcccc7772b33a62f4b0",
+  "adapted_entrypoint_sha256": "a818f6bfcfebdc0810b308a7346105caef9134cfb043e65712ea47f50c05991c",
+  "bridge_sha256": "a02190faafa24995f272dc8a3a2aac7917c0d107a589d8345169485dc5bcf160",
+  "private_sha256": "4490349dda05d438be312d2a485307d9f5795e9ca0904b92adefce7bb4a803a2",
+  "probe_sha256": "48ef14957e632345e72c4c661931fc7e9cfb75e910119138122ba4611aa909fb",
+  "hip_header_sha256": "a075feec4c32d01b35dfe97e01ef7b55aa62bac7b7590ca7cefc2564668aa6a2",
+  "profiles": [
+    "Trace4k",
+    "Single4k",
+    "Serve4k"
+  ],
+  "context": 4096,
+  "slots": 1,
+  "windows_admission_physical_gib": 45,
+  "windows_admission_commit_gib": 117,
+  "windows_runtime_physical_gib": 18,
+  "windows_runtime_commit_gib": 18,
+  "serve_seconds_range": [
+    30,
+    300
+  ],
+  "status": "Runtime image pins and CPU adapters complete; inactive pending singleton runtime and performance qualification",
+  "service": {
+    "default_context": 262144,
+    "context_range": [
+      4096,
+      262144
+    ],
+    "slots": 1,
+    "default_serve_seconds": 0,
+    "checkpoint": "qwen38-flash-next-v2.hgn",
+    "v2_checkpoint_qualified": false,
+    "checkpoint_options": [
+      "w4b",
+      "v2"
+    ],
+    "v2_expected_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "default_checkpoint": "v2",
+    "runtime_qualified": false,
+    "windows_admission_physical_gib": 40,
+    "windows_admission_commit_gib": 131,
+    "windows_runtime_physical_gib": 18,
+    "windows_runtime_commit_gib": 18
+  },
+  "v2_bridge_sha256": "130966326f6812ed56aa3990d73aabc011f3e5f9cee6070fb576729bcab25bc5",
+  "upstream_api_sha256": "055bbfb877031b0d31b7c038df096467acf9566f6295aa5eb3acd59c9d30d08f",
+  "runtime_qualified": false,
+  "production_bound": false,
+  "stock_rocroller_sha256": "9e35bc339b10da3ab2c6f7afbed0d4a1bb5bb2608bf8e3bb43031cfe654c1975",
+  "public_release_commit": "d4d3c1e24a83189666c1b65505dfc872dc00ebf7",
+  "full_transitive_helper_equivalence_proven": false,
+  "unqualified_artifact_pins": [],
+  "entrypoint_runtime_qualified": false,
+  "runtime_pin_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0171-backend-preparation-20261007\\runtime-probe-build-receipt.json"
+}
