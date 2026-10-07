@@ -22,6 +22,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <limits.h>
+#include <errno.h>
 
 #pragma comment(lib, "advapi32.lib")
 #pragma comment(lib, "tdh.lib")
@@ -55,7 +56,7 @@ typedef struct {
     HANDLE stop_guard;
     volatile LONG abort;
     DWORD abort_status;
-    unsigned long long output_bytes;
+    unsigned long long output_bytes, output_limit;
     unsigned long long all_events, other_events, selected_events, written_events;
     unsigned long long materialized_events, unresolved_events, unresolved_properties;
     unsigned long long peak_private, minimum_physical, minimum_commit;
@@ -63,7 +64,8 @@ typedef struct {
     ULONG buffers_read;
     DWORD clock;
     DWORD process_status, close_status;
-    BYTE *metadata, *property;
+    BYTE *metadata, *property, *map;
+    WCHAR *formatted;
     char *line;
     size_t line_bytes;
     BOOL line_overflow, write_failed;
@@ -204,7 +206,7 @@ static BOOL write_line(decoder *d, BOOL final)
 {
     DWORD written, remaining;
     size_t offset = 0;
-    unsigned long long limit = final ? FILE_LIMIT : FILE_LIMIT - SUMMARY_RESERVE;
+    unsigned long long limit = final ? d->output_limit : d->output_limit - SUMMARY_RESERVE;
     LARGE_INTEGER rollback;
     if (d->line_overflow || d->write_failed) return FALSE;
     if ((unsigned long long)d->line_bytes + 1 > limit - d->output_bytes) {
@@ -256,6 +258,54 @@ static unsigned pointer_width(USHORT flags)
     if (bits == EVENT_HEADER_FLAG_32_BIT_HEADER) return 4;
     if (bits == EVENT_HEADER_FLAG_64_BIT_HEADER) return 8;
     return 0; /* Never substitute this decoder's pointer width. */
+}
+
+/* Scalar display values preserve TDH's installed map labels. Raw bytes remain
+ * authoritative. Unsupported arrays/structures never become guessed labels. */
+static void format_scalar(decoder *d, PEVENT_RECORD event, TRACE_EVENT_INFO *info,
+    const EVENT_PROPERTY_INFO *property, const WCHAR *map_name,
+    unsigned width, ULONG property_bytes, BOOL value_available)
+{
+    ULONG map_bytes = 0, map_status = ERROR_NOT_FOUND, format_bytes = PROPERTY_LIMIT;
+    ULONG format_status = ERROR_NOT_SUPPORTED;
+    USHORT consumed = 0;
+    PEVENT_MAP_INFO map_info = NULL;
+    BOOL scalar = !(property->Flags & (PropertyStruct | PropertyHasCustomSchema |
+        PropertyParamCount)) && property->count == 1 && property_bytes <= USHRT_MAX;
+    if (value_available && scalar && map_name) {
+        map_status = TdhGetEventMapInformation(event, (PWSTR)map_name, NULL, &map_bytes);
+        if (map_status == ERROR_INSUFFICIENT_BUFFER && map_bytes <= METADATA_LIMIT &&
+            map_bytes >= offsetof(EVENT_MAP_INFO, MapEntryArray)) {
+            map_status = TdhGetEventMapInformation(event, (PWSTR)map_name,
+                (PEVENT_MAP_INFO)d->map, &map_bytes);
+            if (map_status == ERROR_SUCCESS && map_bytes <= METADATA_LIMIT) {
+                PEVENT_MAP_INFO candidate = (PEVENT_MAP_INFO)d->map;
+                ULONG j;
+                BOOL valid = candidate->EntryCount <=
+                    (map_bytes - offsetof(EVENT_MAP_INFO, MapEntryArray)) / sizeof(EVENT_MAP_ENTRY);
+                for (j = 0; valid && j < candidate->EntryCount; ++j)
+                    valid = metadata_name(d->map, map_bytes, candidate->MapEntryArray[j].OutputOffset) != NULL;
+                if (valid) map_info = candidate;
+                else map_status = ERROR_INVALID_DATA;
+            }
+        }
+    }
+    if (value_available && scalar && width && (!map_name || map_info)) {
+        format_status = TdhFormatProperty(info, map_info, width,
+            property->nonStructType.InType, property->nonStructType.OutType,
+            (USHORT)property_bytes, (USHORT)property_bytes, d->property,
+            &format_bytes, d->formatted, &consumed);
+    }
+    add(d, ",\"map_status\":%lu,\"map_bytes\":%lu,\"format_status\":%lu,"
+        "\"format_consumed_bytes\":%u,\"formatted\":", map_status, map_bytes,
+        format_status, (unsigned)consumed);
+    if (format_status == ERROR_SUCCESS && consumed == property_bytes &&
+        format_bytes <= PROPERTY_LIMIT) {
+        size_t j, count = format_bytes / sizeof(WCHAR);
+        BOOL terminated = FALSE;
+        for (j = 0; j < count; ++j) if (!d->formatted[j]) { terminated = TRUE; break; }
+        if (terminated) add_wide(d, d->formatted); else add(d, "null");
+    } else add(d, "null");
 }
 
 static void WINAPI event_record(PEVENT_RECORD event)
@@ -397,6 +447,8 @@ static void WINAPI event_record(PEVENT_RECORD event)
                 "\"value_call_made\":%s,\"bytes\":%lu,\"raw_hex\":",
                 property_status, value_called ? "true" : "false", property_bytes);
             if (property_unresolved) add(d, "null"); else add_hex(d, d->property, property_bytes);
+            format_scalar(d, event, info, property, map, width, property_bytes,
+                !property_unresolved && property_bytes > 0);
             add(d, ",\"status\":\"%s\",\"unresolved_reason\":\"%s\"}",
                 property_unresolved ? "unresolved" : "materialized", property_reason);
             if (property_unresolved) {
@@ -480,7 +532,7 @@ static BOOL write_summary(decoder *d, BOOL trace_opened)
         "\"materialized_events\":\"%llu\",\"unresolved_events\":\"%llu\","
         "\"events_not_written\":\"%llu\",\"unresolved_properties\":\"%llu\","
         "\"buffers_read\":%lu,\"output_bytes_before_summary\":\"%llu\","
-        "\"limits\":{\"input_output_bytes\":\"%llu\",\"metadata_bytes\":%lu,"
+        "\"limits\":{\"input_bytes\":\"%llu\",\"output_bytes\":\"%llu\",\"metadata_bytes\":%lu,"
         "\"property_bytes\":%lu,\"event_line_bytes\":%lu,\"private_commit_bytes\":\"%llu\","
         "\"physical_commit_reserve_bytes\":\"%llu\",\"guard_interval_ms\":100},"
         "\"memory\":{\"samples\":\"%llu\",\"peak_private_bytes\":\"%llu\","
@@ -494,7 +546,7 @@ static BOOL write_summary(decoder *d, BOOL trace_opened)
         d->selected_events, d->written_events, d->materialized_events,
         d->unresolved_events, d->selected_events - d->written_events,
         d->unresolved_properties, d->buffers_read, d->output_bytes,
-        FILE_LIMIT, METADATA_LIMIT, PROPERTY_LIMIT, LINE_LIMIT, PRIVATE_LIMIT,
+        FILE_LIMIT, d->output_limit, METADATA_LIMIT, PROPERTY_LIMIT, LINE_LIMIT, PRIVATE_LIMIT,
         RESERVE_LIMIT, d->guard_samples, d->peak_private,
         d->guard_samples ? d->minimum_physical : 0,
         d->guard_samples ? d->minimum_commit : 0);
@@ -513,16 +565,27 @@ int wmain(int argc, WCHAR **argv)
     BY_HANDLE_FILE_INFORMATION input_info;
     DWORD length, error;
     BOOL trace_opened = FALSE, summary_ok = FALSE;
+    ULONG output_mib = 64;
+    BOOL got_output_limit = FALSE;
     int i, result = 3;
     if (argc == 2 && wcscmp(argv[1], L"--help") == 0) {
-        wprintf(L"Usage: halogen_dxg_trace_decode --input absolute.etl --output absolute.jsonl\n"
-            L"Offline only; new output, 64 MiB files, 32 MiB private commit, 18 GiB reserves.\n");
+        wprintf(L"Usage: halogen_dxg_trace_decode --input absolute.etl --output absolute.jsonl [--max-output-mib 64..256]\n"
+            L"Offline only; new output, 64 MiB input, 32 MiB private commit, 18 GiB reserves.\n");
         return 0;
     }
     for (i = 1; i < argc; i += 2) {
         if (i + 1 >= argc) break;
         if (wcscmp(argv[i], L"--input") == 0 && !input_argument) input_argument = argv[i + 1];
         else if (wcscmp(argv[i], L"--output") == 0 && !output_argument) output_argument = argv[i + 1];
+        else if (wcscmp(argv[i], L"--max-output-mib") == 0 && !got_output_limit) {
+            WCHAR *end;
+            ULONG value;
+            errno = 0;
+            value = wcstoul(argv[i + 1], &end, 10);
+            if (errno || end == argv[i + 1] || *end || value < 64 || value > 256 ||
+                argv[i + 1][0] < L'0' || argv[i + 1][0] > L'9') break;
+            output_mib = value; got_output_limit = TRUE;
+        }
         else break;
     }
     if (i != argc || !input_argument || !output_argument ||
@@ -537,6 +600,7 @@ int wmain(int argc, WCHAR **argv)
     memset(&d, 0, sizeof(d));
     memset(&logfile, 0, sizeof(logfile));
     d.output = INVALID_HANDLE_VALUE;
+    d.output_limit = (unsigned long long)output_mib * MIB;
     d.minimum_physical = d.minimum_commit = ULLONG_MAX;
     d.process_status = d.close_status = ERROR_NOT_READY;
     input_handle = CreateFileW(input, GENERIC_READ, FILE_SHARE_READ, NULL,
@@ -557,8 +621,10 @@ int wmain(int argc, WCHAR **argv)
     }
     d.metadata = (BYTE *)malloc(METADATA_LIMIT);
     d.property = (BYTE *)malloc(PROPERTY_LIMIT);
+    d.map = (BYTE *)malloc(METADATA_LIMIT);
+    d.formatted = (WCHAR *)malloc(PROPERTY_LIMIT);
     d.line = (char *)malloc(LINE_LIMIT);
-    if (!d.metadata || !d.property || !d.line) {
+    if (!d.metadata || !d.property || !d.map || !d.formatted || !d.line) {
         fwprintf(stderr, L"Bounded buffer allocation failed.\n"); goto cleanup;
     }
     d.output = CreateFileW(output, GENERIC_WRITE, 0, NULL, CREATE_NEW,
@@ -625,6 +691,6 @@ cleanup:
     if (input_handle != INVALID_HANDLE_VALUE) CloseHandle(input_handle);
     if (d.output != INVALID_HANDLE_VALUE) CloseHandle(d.output);
     if (d.stop_guard) CloseHandle(d.stop_guard);
-    free(d.metadata); free(d.property); free(d.line);
+    free(d.metadata); free(d.property); free(d.map); free(d.formatted); free(d.line);
     return result;
 }

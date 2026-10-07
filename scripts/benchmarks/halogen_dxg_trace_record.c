@@ -8,8 +8,8 @@
  * https://learn.microsoft.com/windows/win32/etw/logging-mode-constants
  * NO_PER_PROCESSOR_BUFFERING omits processor numbers and may increase contention
  * at high event rates. Zero loss does not establish attribution or a speed gain.
- * CAPTURE_STATE is skipped: registration/manifest DC events do not establish
- * provider callback support, and no documented query-only support bit is known.
+ * --capture-state requests provider rundown before and after the work window.
+ * The API result is retained; even success does not prove rundown completeness.
  * Ctrl+C/Break signal main-thread cleanup. Forced termination cannot guarantee it.
  */
 #define WIN32_LEAN_AND_MEAN
@@ -20,6 +20,7 @@
 #include <psapi.h>
 #include <stdio.h>
 #include <wchar.h>
+#include <wctype.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -39,6 +40,7 @@
 #define MAX_GAP_MS 250u
 
 static const WCHAR SESSION_NAME[] = L"StrixAlloy-GpuCopy";
+static WCHAR session_name[64] = L"StrixAlloy-GpuCopy";
 static const GUID DXG_PROVIDER = {
     0x802ec45a, 0x1e99, 0x4b83, {0x99, 0x20, 0x87, 0xc9, 0x82, 0x77, 0xba, 0x9d}
 };
@@ -147,8 +149,9 @@ static BOOL session_receipt(const char *event, TRACEHANDLE trace, const WCHAR *p
 {
     /* Flush ownership evidence before enabling the provider. These JSONL records
      * support manual review after forced termination; they never adopt a session. */
-    printf("{\"event\":\"%s\",\"session\":\"StrixAlloy-GpuCopy\","
-           "\"trace_handle\":\"0x%016llx\",\"output\":", event,
+    printf("{\"event\":\"%s\",\"session\":", event);
+    json_wide(session_name);
+    printf(",\"trace_handle\":\"0x%016llx\",\"output\":",
            (unsigned long long)trace);
     json_wide(path); printf(",\"session_guid\":"); json_guid(guid);
     printf(",\"query_code\":%lu,\"at\":", query_code);
@@ -242,7 +245,7 @@ static void init_properties(PROPERTIES *b, const WCHAR *output, BOOL start)
                            EVENT_TRACE_NO_PER_PROCESSOR_BUFFERING;
         b->p.MaximumFileSize = 64; /* MiB; USE_KBYTES_FOR_SIZE is not set. */
         b->p.FlushTimer = 1;
-        wcscpy_s(b->session, _countof(b->session), SESSION_NAME);
+        wcscpy_s(b->session, _countof(b->session), session_name);
         wcscpy_s(b->file, _countof(b->file), output);
     }
 }
@@ -325,19 +328,23 @@ int wmain(int argc, WCHAR **argv)
     GUARD g;
     PROPERTIES props;
     STATS last = {0}, final = {0};
-    MARK begin = {0}, start_return = {0}, enabled = {0}, stopping = {0};
-    MARK stop_return = {0}, end = {0};
+    MARK begin = {0}, start_return = {0}, enabling = {0}, enabled = {0}, stopping = {0};
+    MARK stop_return = {0}, end = {0}, state_begin = {0}, state_return = {0};
+    MARK final_state_begin = {0}, final_state_return = {0};
     TRACEHANDLE trace = 0;
     GUID session_guid = {0};
     HANDLE output = INVALID_HANDLE_VALUE, thread = NULL;
     WCHAR path[PATH_CHARS] = L"";
+    WCHAR stop_path[PATH_CHARS] = L"";
     ULONGLONG seconds = 0, keywords = 0x845, number, file_size = 0;
     ULONG start_code = NOT_CALLED, enable_code = NOT_CALLED, query_code = NOT_CALLED;
     ULONG stop_code = NOT_CALLED, output_code = NOT_CALLED, stop_attempts = 0;
+    ULONG state_code = NOT_CALLED, final_state_code = NOT_CALLED;
     BOOL plan = FALSE, got_output = FALSE, got_seconds = FALSE, got_keywords = FALSE;
     BOOL owned = FALSE, started = FALSE, closed = FALSE, interval_complete = FALSE;
     BOOL handler = FALSE, joined = FALSE, monitor_available = TRUE, success;
     BOOL session_guid_available = FALSE;
+    BOOL capture_state = FALSE, stopped_by_marker = FALSE, got_stop = FALSE, got_session = FALSE;
     int i;
     ZeroMemory(&g, sizeof(g));
     g.min_physical = g.min_commit = UINT64_MAX;
@@ -345,6 +352,26 @@ int wmain(int argc, WCHAR **argv)
         g.reason = R_CLOCK;
     for (i = 1; i < argc && g.reason == R_NONE; ++i) {
         if (!wcscmp(argv[i], L"--plan") && !plan) plan = TRUE;
+        else if (!wcscmp(argv[i], L"--capture-state") && !capture_state) capture_state = TRUE;
+        else if (!wcscmp(argv[i], L"--session") && !got_session && i + 1 < argc) {
+            const WCHAR *candidate = argv[++i];
+            size_t length = wcslen(candidate), j;
+            got_session = length > wcslen(SESSION_NAME) + 1 && length < _countof(session_name) &&
+                          !wcsncmp(candidate, SESSION_NAME, wcslen(SESSION_NAME)) &&
+                          candidate[wcslen(SESSION_NAME)] == L'-';
+            for (j = wcslen(SESSION_NAME) + 1; got_session && j < length; ++j)
+                if (!iswxdigit(candidate[j]) && candidate[j] != L'-') got_session = FALSE;
+            if (!got_session) g.reason = R_CLI;
+            else wcscpy_s(session_name, _countof(session_name), candidate);
+        } else if (!wcscmp(argv[i], L"--stop-file") && !got_stop && i + 1 < argc) {
+            const WCHAR *candidate = argv[++i];
+            DWORD length = GetFullPathNameW(candidate, PATH_CHARS, stop_path, NULL);
+            size_t n = wcslen(candidate);
+            got_stop = n >= 3 && candidate[1] == L':' &&
+                       (candidate[2] == L'\\' || candidate[2] == L'/') &&
+                       length > 0 && length < PATH_CHARS;
+            if (!got_stop) g.reason = R_CLI;
+        }
         else if (!wcscmp(argv[i], L"--output") && !got_output && i + 1 < argc) {
             got_output = output_path(argv[++i], path);
             if (!got_output) g.reason = R_CLI;
@@ -358,6 +385,8 @@ int wmain(int argc, WCHAR **argv)
         } else g.reason = R_CLI;
     }
     if (!got_output || !got_seconds) g.reason = R_CLI;
+    if (got_stop && (!_wcsicmp(stop_path, path) ||
+                     GetFileAttributesW(stop_path) != INVALID_FILE_ATTRIBUTES)) g.reason = R_CLI;
     mark_now(&begin);
     if (plan || g.reason != R_NONE) goto report;
 
@@ -388,7 +417,7 @@ int wmain(int argc, WCHAR **argv)
     }
     init_properties(&props, path, TRUE);
     mark_now(&begin);
-    start_code = StartTraceW(&trace, SESSION_NAME, &props.p);
+    start_code = StartTraceW(&trace, session_name, &props.p);
     mark_now(&start_return);
     if (start_code != ERROR_SUCCESS) { abort_guard(&g, R_START); goto cleanup; }
     owned = started = TRUE; /* ERROR_ALREADY_EXISTS never establishes ownership. */
@@ -413,17 +442,41 @@ int wmain(int argc, WCHAR **argv)
     }
     save_stats(&last, &props.p, TRUE); validate_stats(&g, &last);
     if (g.reason != R_NONE || g_cancelled) goto cleanup;
+    mark_now(&enabling);
     enable_code = EnableTraceEx2(trace, &DXG_PROVIDER, EVENT_CONTROL_CODE_ENABLE_PROVIDER,
                                 TRACE_LEVEL_VERBOSE, keywords, 0, 100, NULL);
     if (enable_code != ERROR_SUCCESS) { abort_guard(&g, R_ENABLE); goto cleanup; }
     mark_now(&enabled);
-    /* Do not issue CAPTURE_STATE as a capability probe. Support is unverified. */
+    if (capture_state) {
+        mark_now(&state_begin);
+        state_code = EnableTraceEx2(trace, &DXG_PROVIDER, EVENT_CONTROL_CODE_CAPTURE_STATE,
+                                   TRACE_LEVEL_VERBOSE, keywords, 0, 1000, NULL);
+        mark_now(&state_return);
+    }
+    if (g_cancelled) abort_guard(&g, R_CANCEL);
+    if (g.reason != R_NONE) goto cleanup;
+    /* A flushed ready record gives the lifecycle coordinator an exact barrier.
+     * It proves enable returned, never that the provider emitted full rundown. */
+    {
+        MARK ready;
+        mark_now(&ready);
+        printf("{\"event\":\"capture_ready\",\"session\":"); json_wide(session_name);
+        printf(",\"enable_code\":%lu,\"capture_state_requested\":%s,"
+               "\"capture_state_code\":%lu,\"qpc_frequency\":%lld,\"at\":",
+               enable_code, capture_state ? "true" : "false", state_code,
+               (long long)g.frequency.QuadPart);
+        print_mark(&ready); printf("}\n");
+        if (fflush(stdout) || ferror(stdout)) { abort_guard(&g, R_RECEIPT); goto cleanup; }
+    }
     for (;;) {
         LARGE_INTEGER now, size;
         DWORD wait;
         QueryPerformanceCounter(&now);
         if (g_cancelled) abort_guard(&g, R_CANCEL);
         if (g.reason != R_NONE) break;
+        if (got_stop && GetFileAttributesW(stop_path) != INVALID_FILE_ATTRIBUTES) {
+            stopped_by_marker = TRUE; interval_complete = TRUE; break;
+        }
         if (!GetFileSizeEx(output, &size) || size.QuadPart < 0) {
             abort_guard(&g, R_FILE); break;
         }
@@ -445,6 +498,12 @@ int wmain(int argc, WCHAR **argv)
 
 cleanup:
     if (g_cancelled) abort_guard(&g, R_CANCEL);
+    if (owned && enable_code == ERROR_SUCCESS && capture_state && g.reason == R_NONE) {
+        mark_now(&final_state_begin);
+        final_state_code = EnableTraceEx2(trace, &DXG_PROVIDER, EVENT_CONTROL_CODE_CAPTURE_STATE,
+                                         TRACE_LEVEL_VERBOSE, keywords, 0, 1000, NULL);
+        mark_now(&final_state_return);
+    }
     /* Every post-start path, including enable denial, stops only this exact
      * returned handle. No named fallback, orphan adoption or foreign cleanup. */
     while (owned && stop_attempts < 3) {
@@ -497,11 +556,14 @@ report:
               start_code == ERROR_SUCCESS && enable_code == ERROR_SUCCESS &&
               stop_code == ERROR_SUCCESS;
     printf("{\"event\":\"recorder_receipt\",\"mode\":\"%s\",\"status\":\"%s\",\"reason\":\"%s\","
-           "\"session\":\"StrixAlloy-GpuCopy\",\"provider\":"
-           "\"802ec45a-1e99-4b83-9920-87c98277ba9d\",\"output\":",
-           plan ? "plan" : "capture", success ? "complete" :
+           "\"session\":", plan ? "plan" : "capture", success ? "complete" :
            (plan && g.reason == R_NONE ? "planned" : "invalid"), reason_name(g.reason));
+    json_wide(session_name);
+    printf(",\"provider\":"
+           "\"802ec45a-1e99-4b83-9920-87c98277ba9d\",\"output\":");
     json_wide(path);
+    printf(",\"stop_file\":");
+    if (got_stop) json_wide(stop_path); else printf("null");
     printf(",\"trace_handle\":");
     if (started) printf("\"0x%016llx\"", (unsigned long long)trace); else printf("null");
     printf(",\"session_guid\":"); json_guid(session_guid_available ? &session_guid : NULL);
@@ -512,9 +574,10 @@ report:
            "\"stop_code\":%lu,\"stop_attempts\":%lu,\"output_code\":%lu,"
            "\"not_called_code\":4294967295,\"session_started\":%s,"
            "\"owned_session_closed\":%s,\"owned_session_may_remain\":%s,"
-           "\"requested_interval_complete\":%s,\"capture_state_requested\":false,"
-           "\"capture_state_code\":4294967295,"
-           "\"capture_state_support\":\"unverified\",\"rundown_complete\":false,"
+           "\"requested_interval_complete\":%s,\"capture_state_requested\":%s,"
+           "\"capture_state_code\":%lu,\"final_capture_state_code\":%lu,"
+           "\"stopped_by_marker\":%s,"
+           "\"capture_state_support\":\"inspect-emitted-records\",\"rundown_complete\":false,"
            "\"success\":%s,\"attribution_qualified\":false,\"speed_gain\":false,"
            "\"session_api_called\":%s,\"monitor\":{\"available\":%s,\"samples\":%lu,"
            "\"min_physical_bytes\":%llu,\"min_commit_bytes\":%llu,"
@@ -525,7 +588,8 @@ report:
            (unsigned long long)file_size, (long long)g.frequency.QuadPart,
            start_code, enable_code, query_code, stop_code, stop_attempts, output_code,
            started ? "true" : "false", closed ? "true" : "false", owned ? "true" : "false",
-           interval_complete ? "true" : "false", success ? "true" : "false",
+           interval_complete ? "true" : "false", capture_state ? "true" : "false",
+           state_code, final_state_code, stopped_by_marker ? "true" : "false", success ? "true" : "false",
            start_code != NOT_CALLED ? "true" : "false",
            monitor_available && g.samples ? "true" : "false",
            monitor_available ? g.samples : 0,
@@ -537,8 +601,18 @@ report:
            monitor_available ? g.memory_code : 0);
     print_mark(&begin); printf(",\"start_return\":");
     if (start_code != NOT_CALLED) print_mark(&start_return); else printf("null");
+    printf(",\"enable_begin\":");
+    if (enable_code != NOT_CALLED) print_mark(&enabling); else printf("null");
     printf(",\"enabled\":");
     if (enable_code == ERROR_SUCCESS) print_mark(&enabled); else printf("null");
+    printf(",\"capture_state_begin\":");
+    if (state_code != NOT_CALLED) print_mark(&state_begin); else printf("null");
+    printf(",\"capture_state_return\":");
+    if (state_code != NOT_CALLED) print_mark(&state_return); else printf("null");
+    printf(",\"final_capture_state_begin\":");
+    if (final_state_code != NOT_CALLED) print_mark(&final_state_begin); else printf("null");
+    printf(",\"final_capture_state_return\":");
+    if (final_state_code != NOT_CALLED) print_mark(&final_state_return); else printf("null");
     printf(",\"stop_begin\":");
     if (stop_attempts) print_mark(&stopping); else printf("null");
     printf(",\"stop_return\":");

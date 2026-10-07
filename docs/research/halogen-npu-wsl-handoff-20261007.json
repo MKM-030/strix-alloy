@@ -1,0 +1,258 @@
+{
+  "schema": 1,
+  "scope": "Real fresh Windows VitisAI embedding projection -> original WSL HIP gather -> exact diagnostic readback",
+  "versions": {
+    "v1": {
+      "path": "server\\.local\\optimization9h-20261004\\real-handoff-15ce20218f854c5b862db86bcce14436\\handoff\\handoff.json",
+      "sha256": "2d034a0d46737d905cb6b82b5b9cd5665311b3d49ea025d772ce83900dd5961b",
+      "source_sha256": "ab001904b908dd723a0b001df6e88c0445058e9952f84d6dc5407c59763f6500",
+      "gpu_source_sha256": "295e40513ce5bf7d8a0bf7256e1178ca63bb431053ef0d5565d39e84a10a7a15",
+      "measured_rows": 12,
+      "excluded_NPU_warmups": 4,
+      "row_bytes": 5120,
+      "exact_GPU_readbacks": 12,
+      "profile_proof": {
+        "passed": true,
+        "node_events": 16,
+        "executed_node_providers": [
+          "VitisAIExecutionProvider"
+        ],
+        "node_event_ops": [
+          "VitisAIExecutionProvider_1062015466912200364_0"
+        ]
+      },
+      "CPU_fallback_disabled": true,
+      "tolerances": {
+        "rtol": 0.03,
+        "atol": 0.003
+      },
+      "cleanup_errors": [],
+      "metrics_ms": {
+        "npu_session_run_ms": {
+          "mean": 1.6294916666666666,
+          "median": 1.2014,
+          "min": 0.9905,
+          "max": 6.7059
+        },
+        "publication_to_GPU_ack_ms": {
+          "mean": 9.437166666666668,
+          "median": 9.32695,
+          "min": 8.5616,
+          "max": 11.3991
+        },
+        "full_staged_handoff_ms": {
+          "mean": 16.932791666666667,
+          "median": 16.19115,
+          "min": 15.0751,
+          "max": 27.5716
+        }
+      }
+    },
+    "v2": {
+      "path": "server\\.local\\optimization9h-20261004\\real-handoff-v2-1559059fb91c48c1a063fa96814a4940\\handoff\\handoff.json",
+      "sha256": "3c68d61fa77173e5a48ee86f3ea68aabbdcce1f7d33ee36326ebaede1ef978db",
+      "source_sha256": "066a726ffaa4bdd765a13a99116e1c4c3d0b0a7b44e84ec6ed205b6c0c3b42b9",
+      "gpu_source_sha256": "17b05c8858046888ceecd6ba5946f01718114c5e723e39b96b9a593991192e5b",
+      "measured_rows": 12,
+      "excluded_NPU_warmups": 4,
+      "row_bytes": 5120,
+      "exact_GPU_readbacks": 12,
+      "profile_proof": {
+        "passed": true,
+        "node_events": 16,
+        "executed_node_providers": [
+          "VitisAIExecutionProvider"
+        ],
+        "node_event_ops": [
+          "VitisAIExecutionProvider_1062015466912200364_0"
+        ]
+      },
+      "CPU_fallback_disabled": true,
+      "tolerances": {
+        "rtol": 0.03,
+        "atol": 0.003
+      },
+      "cleanup_errors": [],
+      "metrics_ms": {
+        "npu_session_run_ms": {
+          "mean": 2.4703833333333334,
+          "median": 0.9560500000000001,
+          "min": 0.9412,
+          "max": 19.0689
+        },
+        "publication_to_GPU_ack_ms": {
+          "mean": 2.2106166666666667,
+          "median": 1.9708,
+          "min": 1.7475,
+          "max": 4.8925
+        },
+        "full_staged_handoff_ms": {
+          "mean": 6.347916666666666,
+          "median": 4.42575,
+          "min": 4.2851,
+          "max": 26.3266
+        },
+        "pipe_exchange_ms": {
+          "mean": 2.2106166666666667,
+          "median": 1.9708,
+          "min": 1.7475,
+          "max": 4.8925
+        },
+        "production_to_validated_GPU_readback_ms": {
+          "mean": 2.3781166666666667,
+          "median": 2.1191,
+          "min": 1.9206,
+          "max": 5.2023
+        },
+        "artifact_record_ms": {
+          "mean": 9.968591666666667,
+          "median": 8.5521,
+          "min": 6.5622,
+          "max": 18.349
+        }
+      }
+    },
+    "v3": {
+      "path": "server\\.local\\optimization9h-20261004\\real-handoff-v3-22915da8997c4a0891fe2c9fee7e3f84\\handoff\\handoff.json",
+      "sha256": "c0d3cfaab2d4f7d046e60e9623c4932100175ad2b1a6bd25dbb6657ef366a1a9",
+      "source_sha256": "4637e275b517d51c686c7ffb4ee225e66226a019c0f2aa07ff527dcdcaa1d0e9",
+      "gpu_source_sha256": "0c86d4c1755bc082697dc457404df9bf13e1607f4a13629f4f7336bf6094bea4",
+      "measured_rows": 12,
+      "excluded_NPU_warmups": 4,
+      "row_bytes": 5120,
+      "exact_GPU_readbacks": 12,
+      "profile_proof": {
+        "passed": true,
+        "node_events": 16,
+        "executed_node_providers": [
+          "VitisAIExecutionProvider"
+        ],
+        "node_event_ops": [
+          "VitisAIExecutionProvider_1062015466912200364_0"
+        ]
+      },
+      "CPU_fallback_disabled": true,
+      "tolerances": {
+        "rtol": 0.03,
+        "atol": 0.003
+      },
+      "cleanup_errors": [],
+      "metrics_ms": {
+        "npu_session_run_ms": {
+          "mean": 1.3307333333333333,
+          "median": 1.0648,
+          "min": 1.0126,
+          "max": 4.0857
+        },
+        "publication_to_GPU_ack_ms": {
+          "mean": 2.423125,
+          "median": 2.1933,
+          "min": 1.9014,
+          "max": 4.5844
+        },
+        "full_staged_handoff_ms": {
+          "mean": 6.133716666666667,
+          "median": 5.43755,
+          "min": 5.0535,
+          "max": 11.8627
+        },
+        "pipe_exchange_ms": {
+          "mean": 2.423125,
+          "median": 2.1933,
+          "min": 1.9014,
+          "max": 4.5844
+        },
+        "production_to_validated_GPU_readback_ms": {
+          "mean": 2.6313583333333335,
+          "median": 2.3712999999999997,
+          "min": 2.115,
+          "max": 4.9184
+        },
+        "artifact_record_ms": {
+          "mean": 5.623349999999999,
+          "median": 5.57095,
+          "min": 4.9134,
+          "max": 6.6075
+        }
+      }
+    }
+  },
+  "full_path_reduction_percent": 62.511103947714865,
+  "exchange_reduction_percent": 76.57541988237996,
+  "serving_prefill_tps": null,
+  "serving_decode_tps": null,
+  "serving_acceptance": null,
+  "serving_gain_qualified": false,
+  "profiling_caveat": "ORT retained 16 VitisAI-labeled Node events for4warmups+12rows, context hw/stx and CPU fallback disabled; EP-specific EndProfiling callback logged empty-event-container error. Complete device profiling is not claimed.",
+  "namespace_caveat": "v2 system proc979->distro914->container1 does not prove kernel initial PID. Guest5214 remains unbound historically. v3 observed kernelPID/TGID2302 matches fresh Dxg guest2302 and VM e26026b2-5f6f-485e-a66a-dfa3c90d0e56.",
+  "zero_copy": false,
+  "native_projection_bit_parity": false,
+  "component_accuracy_unchanged": true,
+  "GPU_work_replaced_by_live_engine": false,
+  "native_scalar_E_M1_device_mean_ms": 0.152995,
+  "next": "Round-owned multirow PLD Eslab: prepare actual proposal IDs before verifier, retain accepted prefix in GPU slab, compute correction natively with M1 and preserve full hidden/seed head count. Offline contract and native arithmetic/component timing qualification required; no live engine gain claimed. RestoreHistoricalStock automatically only after changed resident44GiB/131GiB60s admission; no wholePID4 whitelist.",
+  "copy_attribution": {
+    "kernel_PID": 2302,
+    "system_proc_PID": 926,
+    "distro_PID": 861,
+    "inner_PID": 1,
+    "captured_guest_PID": 2302,
+    "VM_GUID": "e26026b2-5f6f-485e-a66a-dfa3c90d0e56",
+    "trace_events": 62406,
+    "Copy_spans": 339,
+    "attested_consumer_Compute_queue_records": 78,
+    "qualified_consumer_allocation_origins": 22,
+    "attested_consumer_Copy_DMA_spans": 0,
+    "consumer_Transfer50_during_measured_rows": 0,
+    "whole_Copy_PDH_ownership_qualified": false,
+    "receipts": {
+      "component-identities-native-kernel.json": {
+        "path": "server\\.local\\optimization9h-20261004\\real-handoff-v3-22915da8997c4a0891fe2c9fee7e3f84\\component-identities-native-kernel.json",
+        "sha256": "60f435ea42a0dd348c661c0f1d55c6638fdd73248803e957e0534464cf1dd4f0"
+      },
+      "component-attribution-native-kernel-proof.json": {
+        "path": "server\\.local\\optimization9h-20261004\\real-handoff-v3-22915da8997c4a0891fe2c9fee7e3f84\\component-attribution-native-kernel-proof.json",
+        "sha256": "16ff402b15c3ba75d18ed6e650f2a38b9aa83952e9703eb49b19324c8574e71d"
+      },
+      "component-native-kernel-proof-summary.json": {
+        "path": "server\\.local\\optimization9h-20261004\\real-handoff-v3-22915da8997c4a0891fe2c9fee7e3f84\\component-native-kernel-proof-summary.json",
+        "sha256": "c26196f21a3e3fd91bbec08a4894343a1003e5a032f957189f31dd5f64ea6582"
+      }
+    },
+    "final_reviewed_receipts": {
+      "component-attribution-native-kernel-reviewed.json": {
+        "path": "server\\.local\\optimization9h-20261004\\real-handoff-v3-22915da8997c4a0891fe2c9fee7e3f84\\component-attribution-native-kernel-reviewed.json",
+        "sha256": "4dc002d15ab6272226ab8efce1850e60233ee7791e988bad19a6d41654fd4867"
+      },
+      "component-native-kernel-reviewed-summary.json": {
+        "path": "server\\.local\\optimization9h-20261004\\real-handoff-v3-22915da8997c4a0891fe2c9fee7e3f84\\component-native-kernel-reviewed-summary.json",
+        "sha256": "39a98a74891270112227bcacca70d29300880557f9ffb7fc1e04a9c01541a208"
+      }
+    },
+    "independent_review": {
+      "path": "server\\.local\\optimization9h-20261004\\fill-paging-dma-native-review-b2fe4bc1baf842a98f5c5a9c6d4ce939\\v3-native-kernel-independent-review.json",
+      "sha256": "79e52fa030763ddc41ef7769e70f4f93b1b85584cf8a6c57eaacf85d38cf76f7",
+      "passed": true
+    },
+    "native_alias_and_commit_evidence": {
+      "path": "server\\.local\\optimization9h-20261004\\fill-paging-dma-native-review-b2fe4bc1baf842a98f5c5a9c6d4ce939\\field-namespace-bindings-with-fill-membership.json",
+      "sha256": "0a3a4c672235c6afc333b46569c26ed1076b3e2bbe563691cc2762ee95e0f440",
+      "successful_fill_commit_supported": false
+    }
+  },
+  "focused_offline_tests": {
+    "count": 52,
+    "handoff_count": 16,
+    "attribution_count": 36,
+    "root_passed_20261007": true,
+    "hardware_executed_by_tests": false
+  },
+  "restoration": {
+    "terminal_attempt": "server/.local/optimization9h-20261004/handoff-restoration-fc34e0342c3148d68606aeea857c788c",
+    "visible_launch_attempted": false,
+    "startup_admission_qualified": false,
+    "reason": "Resident physical headroom did not stabilize at44GiB for60s; commit131GiB unchanged",
+    "conditional_watcher": "server/.local/optimization9h-20261004/resident-admission-watch-0683d7aa70be4cf5bc61703ff0ba3dde",
+    "live_ready_open_must_be_reverified": true
+  }
+}
