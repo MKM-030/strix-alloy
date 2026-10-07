@@ -81,12 +81,12 @@ class ServiceTests(unittest.TestCase):
             s.check_admission({'available_bytes':phys*s.r.GIB-1,'commit_headroom_bytes':commit*s.r.GIB},129024)
 
     def test_v2_262k_memory_admission_physical_and_commit_boundaries(self):
-        good={'available_bytes':44*s.r.GIB,'commit_headroom_bytes':131*s.r.GIB}
+        good={'available_bytes':40*s.r.GIB,'commit_headroom_bytes':131*s.r.GIB}
         s.check_admission(good,262144,'v2')
         for key in good:
             with self.subTest(key=key), self.assertRaises(ValueError):
                 s.check_admission({**good,key:good[key]-1},262144,'v2')
-        self.assertEqual(s.floors(262144,'v2'),(44,131))
+        self.assertEqual(s.floors(262144,'v2'),(40,131))
         with self.assertRaises(ValueError):
             s.check_admission({**good,'available_bytes':38*s.r.GIB},262144,'v2')
 

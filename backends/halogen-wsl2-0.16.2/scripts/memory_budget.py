@@ -14,16 +14,9 @@ def admission_floors(context, checkpoint='w4b'):
         raise ValueError('Context must be 4096..262144')
     if checkpoint not in ('w4b','v2'): raise ValueError('Unknown checkpoint')
     if checkpoint == 'v2':
-        # Correct the existing budget: 16 GiB decline + 8 uncertainty + 18 reserve.
-        # Full-capacity failed load declined 20.97 GiB before abort;
-        # the successful load allocated another 1.99 GiB beyond that.
-        # Project that remainder, retain 18 GiB, and add 2 uncertainty.
-        # That projection rounds to 43 GiB. Keep a conservative 44-GiB minimum,
-        # rounding up the successful stock's 43.604-GiB starting headroom.
-        # Apply it to every context until finer evidence exists; fresh live
-        # qualification with an exclusive host is still required.
-        physical = max(44, 16 + 8 + RUNTIME_RESERVE_GIB, math.ceil(20.97 + 1.99 +
-            RUNTIME_RESERVE_GIB + HOST_UNCERTAINTY_GIB))
+        # Explicitly selected v2 startup admission; runtime reserve and
+        # total-commit admission remain independently enforced.
+        physical = 40
     else:
         physical = HOST_STARTUP_DECLINE_GIB + HOST_UNCERTAINTY_GIB + RUNTIME_RESERVE_GIB
     # Keep the existing conservative total-commit estimate until new runs

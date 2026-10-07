@@ -98,7 +98,7 @@ if ($Profile -eq 'Current8K') {
 } else {
     Write-Host 'Prefill chunk / token arena: native stock defaults from the historical profile.'
 }
-Write-Host 'Memory admission: 44 GiB free physical / 131 GiB commit headroom; runtime reserve: 18 / 18 GiB.'
+Write-Host 'Memory admission: 40 GiB free physical / 131 GiB commit headroom; runtime reserve: 18 / 18 GiB.'
 Write-Host ('Base URL: http://127.0.0.1:{0}/v1' -f $Port)
 Write-Host ('Public model: {0}' -f $configuration.backend.identifier)
 Write-Host ('API token file: {0}' -f $configuration.token_file)
