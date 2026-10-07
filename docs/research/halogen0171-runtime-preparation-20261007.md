@@ -65,6 +65,26 @@ Startup admission remains 40 GiB physical and 131 GiB commit headroom at
 startup threshold. A successful start does not prove threshold sufficiency
 under a later full-context workload.
 
+### Subsequent explicit 35-GiB authorization and restoration
+
+The user subsequently instructed: "Reduziere die Startgrenze auf35GiB".
+Both canonical v2 services now use **35 GiB physical startup admission**;
+the previous 40-GiB selection above is historical. The 131-GiB full-context
+commit admission and 18/18-GiB runtime reserves remain unchanged. All31/39
+source pins and five context-budget checks per version passed after binding
+the new allowance. Installed binary/artifact manifests were not rewritten.
+This configuration change does not establish sufficiency at exactly35GiB
+or improve measured token rates by itself.
+
+The exact original ServiceNow profile was then restored in a visible native
+PowerShell5.1 console. Authenticated idle health and all three Windows process
+births were verified: controller29192/run`bdd2cf8e902a42d5b9fbec3cf2b1e6d8`,
+backend24512/run`cefd30e0d7be422c8b688408d483c3fb`, console37240.
+The readiness observation retained25.045GiB physical and114.743GiB commit
+headroom. The server was left open on8840 with console tracing enabled.
+These are restoration observations, not a new inference cohort. Future
+current identities must still be taken from`continuation-current.json`.
+
 The pending comparison uses the retained nonrepetitive 8192-token prompt,
 128 output tokens, temperature 0, seed 1, Thinking Off, Cache Off, MTP2/PLD3,3,
 and explicit prefill chunk/arena 8192/8192. Each window excludes one warmup and

@@ -16,7 +16,7 @@ def admission_floors(context, checkpoint='w4b'):
     if checkpoint == 'v2':
         # Explicitly selected v2 startup admission; runtime reserve and
         # total-commit admission remain independently enforced.
-        physical = 40
+        physical = 35
     else:
         physical = HOST_STARTUP_DECLINE_GIB + HOST_UNCERTAINTY_GIB + RUNTIME_RESERVE_GIB
     # Keep the existing conservative total-commit estimate until new runs
