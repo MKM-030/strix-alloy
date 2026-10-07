@@ -98,6 +98,8 @@ def manifest_for(stage,serve_seconds=300):
     a={key:item(ARTIFACT_ROOT/name,pins[pin],dest) for key,(name,pin,dest) in runtime.items()}
     a['sequences']=item(ROOT/'profiles/preflight-sequences.json',SEQUENCE_SHA)
     a['sources']=item(ROOT/'profiles/sources.json',file_sha(ROOT/'profiles/sources.json'))
+    a['startup_cache']=item(HERE/'startup_cache.py',file_sha(HERE/'startup_cache.py'),
+                            '/candidate/startup_cache.py')
     return {'schema':1,'stage':stage,'image':IMAGE,'engine_sha256':ENGINE_SHA,
             'timeout_seconds':600,'serve_seconds':serve_seconds,'artifacts':a,'machine':MACHINE}
 
@@ -236,7 +238,7 @@ def validate_manifest(m):
     if m != manifest_for(m['stage'],m.get('serve_seconds',300)):
         raise ValueError('Only the installed fixed 4K profile is permitted')
     artifacts=m['artifacts']
-    if not {'entrypoint','bridge','private','probe','engine','sequences','sources'} <= artifacts.keys():
+    if not {'entrypoint','bridge','private','probe','engine','sequences','sources','startup_cache'} <= artifacts.keys():
         raise ValueError('missing candidate artifact role')
     destinations=[]
     for key,item in artifacts.items():
@@ -247,14 +249,19 @@ def validate_manifest(m):
         if destination is not None:
             if not re.fullmatch(r'/candidate/[A-Za-z0-9_.-]+',destination):
                 raise ValueError('candidate mount outside fixed namespace')
-            if not path.is_relative_to(ARTIFACT_ROOT.resolve()):
+            if key == 'startup_cache':
+                if path != (HERE/'startup_cache.py').resolve() or Path(item['path']).is_symlink():
+                    raise ValueError('memory sampler must use the exact package startup-cache source')
+            elif not path.is_relative_to(ARTIFACT_ROOT.resolve()):
                 raise ValueError('mounted artifact outside candidate root')
             destinations.append(destination)
     if len(set(destinations)) != len(destinations): raise ValueError('duplicate mount')
-    for key in ('entrypoint','bridge','private','probe'):
+    for key in ('entrypoint','bridge','private','probe','startup_cache'):
         if not artifacts[key].get('container_path'): raise ValueError('missing runtime artifact mount')
     if artifacts['probe']['container_path'] != '/candidate/halogen0162_hip_probe':
         raise ValueError('probe must be at fixed entrypoint path')
+    if artifacts['startup_cache']['container_path'] != '/candidate/startup_cache.py':
+        raise ValueError('memory sampler must be at fixed startup-cache path')
     if artifacts['engine']['sha256'] != ENGINE_SHA: raise ValueError('wrong engine artifact')
     return trace_vector(artifacts['sequences']['path'])
 

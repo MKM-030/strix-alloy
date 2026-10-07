@@ -65,6 +65,21 @@ def receipt():
                                  realtime_buffers_lost=0))
 
 
+def reversed_rundown_fixture():
+    rows = fixture()
+    rows[1:7] = [
+        event(32, 100, hDevice=30, hContext=40, NodeOrdinal=(1, 8)),
+        event(29, 110, hDevice=30, pDxgAdapter=50, DxgProcess=20),
+        event(492, 120, DxgProcess=20, ProcessIdInVm=707, DxgProcessInVm=21,
+              DxgVirtualMachine=10, ProcessNameInVm=("controlled-copy", 1)),
+        event(110, 125, pDxgAdapter=50, AdapterLuid=0x11884),
+        event(250, 126, pDxgAdapter=50, NodeOrdinal=(1, 8), EngineType=(6, 8),
+              FriendlyName=("Copy", 1)),
+        event(493, 135, DxgVirtualMachine=10, VmGuid=("12345678-1234-1234-1234-123456789abc", 15)),
+    ]
+    return rows
+
+
 class AttributionTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -161,6 +176,51 @@ class AttributionTest(unittest.TestCase):
         context = rows.pop(6)
         context.update(qpc="150", ordinal="150")
         rows.insert(7, context)
+        self.assertIsNone(self.analyze(rows)["packets"][0]["owner"])
+
+    def test_reversed_rundown_chain_attests_only_later_packet(self):
+        rows = reversed_rundown_fixture()
+        rows[6:6] = [
+            event(175, 130, hContext=40, ulQueueSubmitSequence=(4, 8), pDmaBuffer=61, PacketType=(0, 8)),
+            event(176, 131, hContext=40, ulQueueSubmitSequence=(4, 8), PacketType=(0, 8), bPreempted=(0, 8)),
+        ]
+        rows[-1].update(dxg_events_seen="13", dxg_events_written="13")
+        result = self.analyze(rows)
+        self.assertTrue(result["trace_integrity"]["qualified"])
+        self.assertIsNone(result["packets"][0]["owner"])
+        later = result["packets"][1]
+        self.assertEqual(later["owner"]["label"], "standalone-control")
+        self.assertEqual(later["status"], "resolved")
+
+    def test_rundown_metadata_at_packet_tick_does_not_attest(self):
+        rows = reversed_rundown_fixture()
+        rows[6].update(qpc="150", ordinal="150")
+        self.assertIsNone(self.analyze(rows)["packets"][0]["owner"])
+
+    def test_reversed_true_creation_chain_stays_unresolved(self):
+        rows = reversed_rundown_fixture()
+        for row in rows:
+            if row.get("id") in {29, 32, 492, 493}:
+                row["id"] = {29: 27, 32: 30, 492: 472, 493: 474}[row["id"]]
+        self.assertIsNone(self.analyze(rows)["packets"][0]["owner"])
+
+    def test_rundown_parent_tombstone_before_observation_blocks_join(self):
+        for stop in (event(28, 105, hDevice=30, pDxgAdapter=50),
+                     event(477, 115, DxgProcess=20),
+                     event(475, 130, DxgVirtualMachine=10)):
+            with self.subTest(parent_stop=stop["id"]):
+                rows = reversed_rundown_fixture()
+                rows.insert(1, stop)
+                rows[1:-1] = sorted(rows[1:-1], key=lambda row: int(row["qpc"]))
+                rows[-1].update(dxg_events_seen="12", dxg_events_written="12")
+                self.assertIsNone(self.analyze(rows)["packets"][0]["owner"])
+
+    def test_rundown_child_cannot_join_reused_vm(self):
+        rows = reversed_rundown_fixture()
+        rows[1:1] = [event(493, 95, DxgVirtualMachine=10,
+                           VmGuid=("12345678-1234-1234-1234-123456789abc", 15))]
+        rows.insert(7, event(475, 130, DxgVirtualMachine=10))
+        rows[-1].update(dxg_events_seen="13", dxg_events_written="13")
         self.assertIsNone(self.analyze(rows)["packets"][0]["owner"])
 
     def test_hardware_queue_packet_joins_captured_guest_context(self):

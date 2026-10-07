@@ -204,7 +204,9 @@ class LifetimeIndex:
         self.objects = defaultdict(list)
         self.by_field = defaultdict(list)
         self.by_key = defaultdict(list)
+        self.ends_by_field = defaultdict(list)
         self.count = 0
+        self.end_count = 0
 
     def begin(self, kind, key, tick, fields, record, rundown=False):
         active = [item for item in self.by_key[kind, key] if item["end"] is None]
@@ -225,6 +227,14 @@ class LifetimeIndex:
             self.by_field[kind, name, value].append(item)
 
     def end(self, kind, tick, match, record):
+        # A stop before this object's first rundown observation is still a
+        # generation barrier. Keep it even when no captured lifetime is active.
+        self.end_count += 1
+        if self.end_count > MAX_OBJECTS:
+            raise AttributionError("Bounded lifetime stop count exceeded")
+        tombstone = dict(point=(tick, record["source_line"]), match=match)
+        for name, value in match.items():
+            self.ends_by_field[kind, name, value].append(tombstone)
         source = min((self.by_field[kind, name, value] for name, value in match.items()), key=len)
         active = [item for item in source if item["end"] is None and
                   all(item["fields"].get(name) == value for name, value in match.items())]
@@ -243,6 +253,43 @@ class LifetimeIndex:
         if len(candidates) != 1 or candidates[0]["ambiguous"]:
             raise AttributionError("Missing or ambiguous " + kind + " lifetime")
         return candidates[0]
+
+
+    def parent(self, child, kind, work_point, **match):
+        try:
+            return self.resolve(kind, child["begin_point"], **match)
+        except AttributionError:
+            if child["origin"] != "rundown":
+                raise
+        # DC_Start is a state observation, not a birth event. Enumeration may
+        # observe a child before its parent. Only later work may use that parent;
+        # a true creation event must retain the exact parent-at-birth rule.
+        parent = self.resolve(kind, work_point, **match)
+        if (parent["origin"] != "rundown" or
+            not child["begin_point"] < parent["begin_point"] < work_point):
+            raise AttributionError("Missing parent at child birth or rundown observation")
+        stops = min((self.ends_by_field[kind, name, value] for name, value in match.items()), key=len)
+        if any(child["begin_point"] < stop["point"] <= parent["begin_point"] and
+               all(parent["fields"].get(name) == value for name, value in stop["match"].items())
+               for stop in stops):
+            raise AttributionError("Parent teardown separates rundown observations")
+        return parent
+
+
+def require_prior_rundown(items, work_point):
+    if any(item is not None and item["origin"] == "rundown" and
+           work_point[0] <= item["begin_point"][0] for item in items):
+        raise AttributionError("Work is not strictly after required rundown observations")
+
+
+def packet_context(index, packet):
+    point = packet["start"]["qpc"], packet["start"]["source_line"]
+    queue = index.resolve("hwqueue", point, ParentDxgHwQueue=packet["hHwQueue"]) if packet["kind"] == "hardware_info" else None
+    context = (index.parent(queue, "context", point, hContext=queue["fields"]["hContext"]) if queue else
+               index.resolve("context", point, hContext=packet["hContext"]))
+    device = index.parent(context, "device", point, hDevice=context["fields"]["hDevice"])
+    require_prior_rundown((queue, context, device), point)
+    return queue, context, device
 
 
 def reference(record):
@@ -620,9 +667,8 @@ def analyze_records(records, recorder, identities=(), *, engine_type_receipt=Non
         try:
             tick = packet["start"]["qpc"]
             packet_point = tick, packet["start"]["source_line"]
-            queue = None
-            if packet["kind"] == "hardware_info":
-                queue = index.resolve("hwqueue", packet_point, ParentDxgHwQueue=packet["hHwQueue"])
+            queue, context, device = packet_context(index, packet)
+            if queue:
                 packet["hContext"] = queue["fields"]["hContext"]
                 packet["hardware_queue_binding"] = dict(info_field="450.hHwQueue",
                     lifetime_field="422/424.ParentDxgHwQueue", host_parent=queue["fields"]["ParentDxgHwQueue"],
@@ -631,13 +677,9 @@ def analyze_records(records, recorder, identities=(), *, engine_type_receipt=Non
                     namespace_semantics_verified="hardware-parent-queue" in namespace_kinds)
                 if "hardware-parent-queue" not in namespace_kinds:
                     packet["reasons"].append("Info450/ParentDxgHwQueue namespace semantics binding is not verified")
-            context = index.resolve("context", queue["begin_point"] if queue else packet_point,
-                                    hContext=packet["hContext"])
-            # Child references bind the parent lifetime present at child birth,
-            # never a replacement object reusing the handle by DMA-start time.
-            device = index.resolve("device", context["begin_point"], hDevice=context["fields"]["hDevice"])
-            guest = index.resolve("guest", device["begin_point"], DxgProcess=device["fields"]["DxgProcess"])
-            vm = index.resolve("vm", guest["begin_point"], DxgVirtualMachine=guest["fields"]["DxgVirtualMachine"])
+            guest = index.parent(device, "guest", packet_point, DxgProcess=device["fields"]["DxgProcess"])
+            vm = index.parent(guest, "vm", packet_point, DxgVirtualMachine=guest["fields"]["DxgVirtualMachine"])
+            require_prior_rundown((guest, vm), packet_point)
             end_point = (packet["end"]["qpc"], packet["end"]["source_line"]) if packet["end"] else packet_point
             if any(item["end_point"] is not None and end_point >= item["end_point"]
                    for item in ((context, device, guest, vm, queue) if queue else (context, device, guest, vm))):
@@ -646,6 +688,10 @@ def analyze_records(records, recorder, identities=(), *, engine_type_receipt=Non
                          process_name_in_vm=guest["fields"]["ProcessNameInVm"],
                          vm_guid=vm["fields"]["VmGuid"], label=None, linux_task_evidence=None,
                          evidence=context["evidence"] + device["evidence"] + guest["evidence"] + vm["evidence"])
+            observations = [item["evidence"][0] for item in (queue, context, device, guest, vm)
+                            if item is not None and item["origin"] == "rundown"]
+            if observations:
+                owner["required_rundown_observations"] = observations
             if queue:
                 owner["evidence"] += queue["evidence"]
                 if "hardware-parent-queue" not in namespace_kinds:
@@ -663,13 +709,11 @@ def analyze_records(records, recorder, identities=(), *, engine_type_receipt=Non
             packet["reasons"].append(str(error))
         try:
             packet_point = packet["start"]["qpc"], packet["start"]["source_line"]
-            queue = index.resolve("hwqueue", packet_point, ParentDxgHwQueue=packet["hHwQueue"]) if packet["kind"] == "hardware_info" else None
-            context = index.resolve("context", queue["begin_point"] if queue else packet_point,
-                                    hContext=queue["fields"]["hContext"] if queue else packet["hContext"])
-            device = index.resolve("device", context["begin_point"], hDevice=context["fields"]["hDevice"])
+            queue, context, device = packet_context(index, packet)
             adapter = index.resolve("adapter", packet_point, pDxgAdapter=device["fields"]["pDxgAdapter"])
             node = index.resolve("node", packet_point,
                                  pDxgAdapter=device["fields"]["pDxgAdapter"], NodeOrdinal=context["fields"]["NodeOrdinal"])
+            require_prior_rundown((adapter, node), packet_point)
             packet["engine"] = dict(node["fields"], AdapterLuid=f"0x{adapter['fields']['AdapterLuid']:016x}",
                                     **{"class": "copy" if engine_copy is not None and node["fields"]["EngineType"] == engine_copy
                                        else "other" if engine_copy is not None else "unresolved"},
@@ -723,7 +767,7 @@ def analyze_records(records, recorder, identities=(), *, engine_type_receipt=Non
                            beneficiary_ownership_qualified=False, allocation_origin_qualified=False,
                            predicates=["materialized Transfer50/53.hAllocationGlobalHandle raw value equals Allocation33/35.hVidMmGlobalAlloc",
                                        "unique allocation lifetime encloses transfer QPC and source order",
-                                       "child device resolves against captured global allocation birth"], reasons=[])
+                                       "device binds at allocation creation or within a continuous rundown chain observed before transfer"], reasons=[])
         try:
             enabled_transfer = (exact_int(recorder["enabled"]["qpc_after"]) <= point[0] <=
                                 exact_int(recorder["stop_begin"]["qpc_before"]))
@@ -734,10 +778,11 @@ def analyze_records(records, recorder, identities=(), *, engine_type_receipt=Non
             glob = index.resolve("global_allocation", point,
                                  hVidMmGlobalAlloc=transfer["fields"]["hAllocationGlobalHandle"])
             association["global_allocation_lifetime"] = glob
-            device = index.resolve("device", glob["begin_point"], hDevice=glob["fields"]["hDevice"],
-                                   pDxgAdapter=glob["fields"]["pDxgAdapter"])
-            guest = index.resolve("guest", device["begin_point"], DxgProcess=device["fields"]["DxgProcess"])
-            vm = index.resolve("vm", guest["begin_point"], DxgVirtualMachine=guest["fields"]["DxgVirtualMachine"])
+            device = index.parent(glob, "device", point, hDevice=glob["fields"]["hDevice"],
+                                  pDxgAdapter=glob["fields"]["pDxgAdapter"])
+            guest = index.parent(device, "guest", point, DxgProcess=device["fields"]["DxgProcess"])
+            vm = index.parent(guest, "vm", point, DxgVirtualMachine=guest["fields"]["DxgVirtualMachine"])
+            require_prior_rundown((glob, device, guest, vm), point)
             if any(item["end_point"] is not None and point >= item["end_point"] for item in (device, guest, vm)):
                 raise AttributionError("Allocation origin owner lifetime ended before transfer")
             association["guest_origin_candidate"] = dict(process_id_in_vm=guest["fields"]["ProcessIdInVm"],

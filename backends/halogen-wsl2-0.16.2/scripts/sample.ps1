@@ -149,8 +149,13 @@ function Write-MemoryObservation {
                   sharedBytes=[int64]$instance.SharedUsage; totalCommittedBytes=[int64]$instance.TotalCommitted}
     }
     $guest = [ordered]@{}
+    $guestRaw = Invoke-WslBounded -Arguments @('docker','exec',$ContainerId,'python3','/candidate/startup_cache.py','--memory-only') -Seconds 5
+    $guestSnapshot = $guestRaw | ConvertFrom-Json -ErrorAction Stop
+    if ($guestSnapshot.schema -cne 'startup-cache-cgroup-memory-v1' -or
+        [string]$guestSnapshot.cgroup_path -notmatch '^/') { throw 'Invalid exact-cgroup memory telemetry' }
+    $guest['cgroupPath'] = [string]$guestSnapshot.cgroup_path
     foreach ($metric in @('memory.current','memory.peak','memory.swap.current')) {
-        $value = Invoke-WslBounded -Arguments @('docker','exec',$ContainerId,'cat',"/sys/fs/cgroup/$metric") -Seconds 5
+        $value = [string]$guestSnapshot.$metric
         if ($value -notmatch '^\d+$') { throw "Invalid cgroup $metric telemetry" }
         $guest[$metric] = [int64]$value
     }

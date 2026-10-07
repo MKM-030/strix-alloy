@@ -22,13 +22,22 @@ class StartupMonitor:
     def _read(self):
         try:
             for line in self.process.stdout:
-                self.log.info(line.rstrip())
-                record = json.loads(line)
-                if record.get('run_id') != self.run_id:
-                    raise ValueError('Startup-cache diagnostic has wrong run ID')
+                self.log.info(line.rstrip('\r\n'))
+                # Preserve the first error and drain the raw stream to EOF.
+                # A later JSON line cannot turn a failed worker into progress.
+                if self.failure is not None:
+                    continue
+                try:
+                    record = json.loads(line)
+                    if record.get('run_id') != self.run_id:
+                        raise ValueError('Startup-cache diagnostic has wrong run ID')
+                except Exception as exc:
+                    self.failure = str(exc)
+                    continue
                 self.last_record, self.last_seen = record, time.monotonic()
         except Exception as exc:
-            self.failure = str(exc)
+            if self.failure is None:
+                self.failure = str(exc)
 
     def check(self):
         if self.failure or self.process.poll() is not None:
