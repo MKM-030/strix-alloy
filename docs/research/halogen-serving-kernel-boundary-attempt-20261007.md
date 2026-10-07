@@ -40,7 +40,14 @@ It retains 40GiB physical/131GiB commit startup admission,60 seconds stability,
 18GiB runtime reserve and normal visible HistoricalStock lifecycle. Its
 admission observation allows600 seconds. Recovery work is
 `server/.local/optimization9h-20261004/handoff-restoration-4c6f9cc39bc4473bbdf098d05a21ccae/`;
-its separate final-ready receipt, once present, supplies recovery evidence.
+Its separate `final-ready.json` now proves successful visible restoration:
+controller PID30592/run `003b0a5c3e184414b309f042ebb89278`, backend
+PID14964/run `bbdac2f2db9a4fefb4401544b0db14eb`, console PID15532.
+Root independently repeated identity and authenticated idle checks. Physical
+headroom was19.91GiB and commit headroom112.47GiB, above the18GiB runtime floor.
+Restoration tool session98877 exited0; the API remains ready and open on8840.
+The pinned evidence is also retained in
+`server/.local/optimization9h-20261004/authorized40-final-recheck-20261007/`.
 The failed primary receipt must not be rewritten as a successful test.
 
 The next useful CPU check should preserve per-key environment hashes and compare
