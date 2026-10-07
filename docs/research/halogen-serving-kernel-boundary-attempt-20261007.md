@@ -55,3 +55,33 @@ the foreground diagnostic with both direct and wrapped background launches.
 It should retrieve failure receipts before removing its own container. This is
 preparation for diagnosing the shell oracle, without another serving cohort or
 an acceleration claim. Existing serving token rates are unchanged.
+
+## Subsequent diagnostic and recovery
+
+The single follow-up CPU diagnostic passed on 7 October. The direct background
+and wrapped background observers had identical complete environments. The
+foreground observation differed only at `SHLVL`; no key was ignored or
+normalized. The [diagnostic report](halogen-inert-shell-boundary-diagnostic-20261007.md)
+retains the exact receipts. The earlier failed result remains unchanged.
+
+Fresh native-handle verification also found that the previously restored server
+had subsequently stopped through the normal memory guard: physical reserve
+reached 17.984 GiB, below its unchanged 18-GiB floor. The backend confirmed normal
+cleanup and recovery; all three old process identities were absent. This later
+failure does not invalidate the earlier ready observation or establish that
+exactly 40 GiB suffices for sustained serving.
+
+Root restored HistoricalStock once through the reviewed failed-run recovery
+helper, SHA256 `e82950c4dee34ce1e68d2ba76832e3c687d91ebbb8b7e2b17ae81cbb46987944`.
+The normal 40-GiB physical/131-GiB commit start admission, 60-second stability
+and 18-GiB runtime reserve were preserved. Tool session 41270 exited 0. The new
+gateway PID is 14732, backend PID 16852, and visible PowerShell PID 24956;
+authenticated idle readiness was independently verified on port 8840.
+Recovery evidence is in
+`server/.local/optimization9h-20261004/failed40-restoration-e52f445fa5914595af3ec9245bfce48e/`.
+
+The proposed actual-engine capture was not executed. Review found startup
+failure branches that need an exact terminal-container or no-creation proof
+before restoration. Separate unsealed drafts preserve this work; a later
+execution must bind the current server identities. No NPU serving gain or new
+token rates were measured in this follow-up.
