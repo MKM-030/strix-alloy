@@ -1,33 +1,40 @@
-# Inactive Halogen 0.17.1 source candidate
+# Halogen 0.17.1 for WSL2
 
-This separate package is uninstalled. The three CPU adapters were built with
-the existing GCC 13.3.0 compiler and have fresh hashes; none was loaded. The
-HIP probe has not been built. The running ServiceNow server
-continues using the original 0.16.2 instance. No credentials, models or prior
-installation state were copied. `profiles/release.json` retains null pins for
-the HIP header, HIP probe and stock rocRoller. These missing identities prevent
-installation and startup until preparation is complete. The source manifest
-seals the current 39 source files; it does not establish runtime compatibility.
+This canonical package is installed from the pinned Halogen 0.17.1 image at
+upstream revision `9196bc6e7b20`. The adapted entrypoint, engine, three compatibility
+adapters, HIP probe, HIP headers and stock rocRoller identities are complete.
+The local installation manifest records version `0.17.1` and `completed: true`.
+See the [installation review](../../server/.local/optimization9h-20261004/halogen0171-backend-preparation-20261007/final-source-install-review.md)
+and [release pins](profiles/release.json).
 
-The exact 0.17.1 engine/site/function binding and five bridge source files were
-reviewed separately. The 276-byte transitive callee's changed body remains
-semantically unqualified. All HIP/DXG, model-load, tool-loop and throughput
-behavior still requires actual runtime qualification.
+Runtime and performance qualification remain pending. Installation and source
+checks do not establish model-load compatibility, throughput, acceptance or
+memory stability. The preserved private preparation notes and seals describe
+their earlier preparation state; they are historical evidence.
 
-The first later comparison uses the preserved sibling `comparison-contract.json`
-and `comparison-profile-0171.json`: v2 checkpoint, 262144 context/KV positions,
-one slot, prefill chunk and arena 8192, MTP2, PLD3,3 and Cache Off. The original
-0.17.0 contract is retained as `reference0170-comparison-contract.json`; successor
-identity is bound in the new contract and exact 0.17.1 profile.
-Startup 40 GiB physical/131 GiB commit and runtime 18 GiB reserves remain unchanged.
+The current singleton comparison uses the v2 checkpoint, 262144 context/KV
+positions, one slot, prefill chunk and arena 8192, MTP2, PLD `3,3`, Cache Off and
+Thinking Off. Its managed profile disables console tracing. The mechanism under
+evaluation is upstream single-stream learned n-gram row read-ahead. NPU text
+offload and two-stream MTP remain disabled.
 
-The concrete mechanism to evaluate is upstream single-stream learned n-gram
-row read-ahead. No local speed/acceptance gain is established. Defeated NPU
-consumers remain disabled, and neither two-stream MTP nor image generation is
-part of this text-serving comparison.
+The human-authorized v2 startup floor is **35 GiB physical availability and
+131 GiB commit headroom** at 262144 context. Runtime physical and commit floors
+remain **18/18 GiB**. The [35 GiB binding receipt](../../server/.local/optimization9h-20261004/halogen0171-backend-preparation-20261007/authorized35-source-binding.json)
+supersedes the historical 40 GiB comparison contract. Admission floors are
+protection thresholds; they do not reserve memory or establish sufficiency at
+exactly 35 GiB. The w4b budget remains separate in
+[memory_budget.py](scripts/memory_budget.py).
 
-Do not activate this private tree while the user is testing ServiceNow. The
-existing controller excludes private directories; later promotion uses the
-prepared canonical controller/profile binding and normal singleton lifecycle,
-followed by matched measurements and restoration of the ready/open original.
-The standing authorization for later measurement restarts remains valid.
+Use the normal managed singleton lifecycle for runtime work. From the repository
+root, the backend launcher accepts:
+
+```powershell
+.\backends\halogen-wsl2-0.17.1\Start.ps1 -Checkpoint v2 -ContextSize 262144
+```
+
+The frozen three-window comparison is recorded in
+[the Current8K report](../../docs/benchmarks/halogen0171-current8k-20261007.md):
+0.16.2 before, 0.17.1, then 0.16.2 after. Only the first baseline is complete in
+the report skeleton. Candidate results and restoration of the original ready/open
+server remain pending. No local 0.17.1 speed or acceptance gain is claimed yet.

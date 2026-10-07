@@ -39,6 +39,64 @@ MODEL = 'halogen-qwen3.8-flash-next'
 TOKEN_PATH = LOCAL / 'api-token.txt'
 STATE_PATH = LOCAL / 'current-service.json'
 NO_WINDOW = getattr(subprocess, 'CREATE_NO_WINDOW', 0)
+ADMISSION_KEEPALIVE = '''import os, select, sys, time
+deadline = time.monotonic() + float(sys.argv[1])
+print(sys.argv[2], flush=True)
+while time.monotonic() < deadline:
+    remaining = max(0, deadline - time.monotonic())
+    if select.select([sys.stdin], [], [], min(1, remaining))[0]:
+        if not os.read(sys.stdin.fileno(), 4096):
+            raise SystemExit(0)
+raise SystemExit(124)
+'''
+
+
+class AdmissionKeepalive:
+    """Own one bounded foreground guest until the engine takes over WSL life."""
+    def __init__(self, wsl, run_id, seconds):
+        self.ready, self.line, self.closed = threading.Event(), None, False
+        self.run_id = run_id
+        self.reader = threading.Thread(target=self._read, daemon=True)
+        self.process = subprocess.Popen(wsl + ['python3', '-u', '-c', ADMISSION_KEEPALIVE,
+            str(seconds), run_id], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT, text=True, encoding='utf-8', errors='replace',
+            creationflags=NO_WINDOW)
+
+    def arm(self):
+        # The service owns this object before any handshake can fail.
+        self.reader.start()
+        if not self.ready.wait(15) or self.line != self.run_id+'\n':
+            raise RuntimeError('WSL admission keepalive did not arm')
+        self.check()
+
+    def _read(self):
+        try: self.line = self.process.stdout.readline(128)
+        except (OSError, ValueError): pass
+        finally: self.ready.set()
+
+    def check(self):
+        code = self.process.poll()
+        if code is not None:
+            raise RuntimeError(f'WSL admission keepalive stopped (exit={code})')
+
+    def close(self, require_clean=False):
+        if self.closed: return
+        forced = False
+        try: self.process.stdin.close()
+        except (OSError, ValueError): pass
+        try: code = self.process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            forced = True
+            self.process.terminate()
+            try: code = self.process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                self.process.kill(); code = self.process.wait(timeout=5)
+        if self.reader.ident is not None: self.reader.join(timeout=3)
+        if self.reader.is_alive(): raise RuntimeError('WSL admission keepalive reader did not stop')
+        self.process.stdout.close()
+        self.closed = True
+        if require_clean and (forced or code != 0):
+            raise RuntimeError(f'WSL admission keepalive did not release cleanly (exit={code})')
 
 
 def options(argv=None):
@@ -375,14 +433,16 @@ def check_admission(frame, context, checkpoint='w4b'):
             f'observed {frame.get("available_bytes",0)/r.GIB:.2f} / {frame.get("commit_headroom_bytes",0)/r.GIB:.2f}')
 
 
-def admission(host,context,stop,log,checkpoint='w4b'):
+def admission(host,context,stop,log,checkpoint='w4b',keepalive=None):
     r.exclusive_host()
     log.info('Checking memory admission: context=%s, required physical/commit GiB=%s',context,floors(context,checkpoint))
     deadline=time.monotonic()+240; safe_since=None; last_note=-20; last_error=None
     while time.monotonic()<deadline:
         if stop.is_set(): raise InterruptedError('Startup cancelled')
+        if keepalive is not None: keepalive.check()
         started=time.monotonic(); frame=host.frame()
         r.check_frame(frame,age=time.monotonic()-started)
+        if keepalive is not None: keepalive.check()
         try:
             check_admission(frame,context,checkpoint)
             if safe_since is None: safe_since=time.monotonic()
@@ -525,6 +585,7 @@ def serve(o):
     handle=lock.open('x',encoding='utf-8'); handle.write(run_id); handle.flush()
     stop=threading.Event(); heart_stop=threading.Event()
     cid=None; guard_proc=None; follower=None; follower_thread=None; baseline=None
+    keepalive=None; keepalive_clean=True
     cache_worker=None; cache_stopped=False
     cleanup=False; recovered=False; ready=False; m=None; error=None; creation_attempted=False
     state=dict(schema=1,run_id=run_id,attempt=str(attempt),phase='starting',
@@ -561,13 +622,18 @@ def serve(o):
         (attempt/'entrypoint-service.sh').write_bytes(service_entrypoint(original))
         m=build_manifest(o,attempt,run_id); atomic(attempt/'manifest.json',m)
         host=r.load_module('serving_host',ROOT/'scripts/host_frames.py')
-        baseline=admission(host,o.context_size,stop,log,getattr(o,'checkpoint','w4b'))
+        # Admission, command/guard setup, and smoke checks surround the model timeout.
+        keepalive=AdmissionKeepalive(r.WSL,run_id,o.startup_timeout+600)
+        keepalive.arm()
+        baseline=admission(host,o.context_size,stop,log,getattr(o,'checkpoint','w4b'),keepalive=keepalive)
+        keepalive.check()
         r.exclusive_host()
         frame=host.frame(); check_admission(frame,o.context_size,getattr(o,'checkpoint','w4b'))
         atomic(attempt/'admission-create.json',frame)
         log.info('Creating Halogen 0.16.2: context=%s, slots=1; no model download',o.context_size)
         lookup.revalidate(machine, m.get('lookup_tuning'))
         hsa.revalidate(m.get('private_hsa'))
+        keepalive.check()
         creation_attempted=True
         cid=r.docker(*command(m),timeout=30)
         owned(r.inspect(cid),cid,m); atomic(attempt/'container.json',{'id':cid})
@@ -582,12 +648,14 @@ def serve(o):
             time.sleep(.1)
         # Exact source and fresh-memory checks immediately before model startup.
         if source_hashes()!=m['sources']: raise ValueError('Source changed during admission')
+        keepalive.check()
         r.exclusive_host(); baseline=host.frame(); check_admission(baseline,o.context_size,getattr(o,"checkpoint","w4b"))
         atomic(attempt/'admission-start.json',baseline)
         if cancelled(): raise InterruptedError('Startup cancelled')
         mt.revalidate_receipt(m.get('matmul_tuning'))
         lookup.revalidate(machine, m.get('lookup_tuning'))
         hsa.revalidate(m.get('private_hsa'))
+        keepalive.check()
         r.docker('start',cid)
         cache_worker=StartupMonitor(r.WSL,cid,attempt,run_id,o.startup_timeout,atomic,
             logger(attempt/'startup-cache.jsonl',raw=True))
@@ -599,6 +667,7 @@ def serve(o):
         deadline=time.monotonic()+o.startup_timeout; last_advice=0; last_note=0
         while time.monotonic()<deadline:
             if cancelled(): raise InterruptedError('Startup cancelled')
+            keepalive.check()
             guard_alive(guard_proc,attempt)
             info=r.inspect(cid); owned(info,cid,m,running=info['State']['Running'])
             if not info['State']['Running']: raise startup_exit_error(attempt)
@@ -617,18 +686,22 @@ def serve(o):
                 except urllib.error.HTTPError as exc:
                     if exc.code!=401: raise
                 else: raise RuntimeError('API accepted an invalid token')
+                keepalive.check()
                 for label,prompt,expected in [('arithmetic','Reply with only the number: 17 + 25','42'),
                     ('german','Antworte mit genau einem Wort: Welche Farbe hat Gras?','grün')]:
                     body={'model':MODEL,'messages':[{'role':'user','content':prompt}],
                           'max_tokens':32,'stream':False,'temperature':0,
                           'drafter':'serial','enable_thinking':False,'reasoning_effort':'none'}
                     response=http('/v1/chat/completions',secret,body,timeout=60)
+                    keepalive.check()
                     answer=response['choices'][0]['message']['content'].strip().strip('.!').casefold()
                     if answer!=expected: raise ValueError('Incorrect startup answer: '+label)
                     atomic(attempt/(label+'.json'),{'answer':answer,'correct':True})
                 if (m.get('matmul_tuning') or {}).get('mode') == 'frozen':
                     mt.revalidate_receipt(m['matmul_tuning'], native_logs(cid))
                 r.validate_sample(r.sample(cid,attempt,'ready',9997),cid)
+                keepalive.check()
+                keepalive.close(require_clean=True); keepalive=None
                 ready=True; break
             if time.monotonic()-last_note>=20:
                 f=host.frame(); log.info('Loading: Windows free %.2f GiB; commit headroom %.2f GiB',
@@ -662,6 +735,12 @@ def serve(o):
         try: atomic(STATE_PATH,state)
         except OSError as exc: log.warning('Stopping-state write failed; continuing owned cleanup: %s',exc)
         log.info('Stopping owned server and checking memory recovery')
+        if keepalive:
+            try: keepalive.close()
+            except BaseException as exc:
+                keepalive_clean=False
+                error=(error+'; ' if error else '')+'keepalive cleanup: '+str(exc)
+                log.error('%s',error)
         if cache_worker and not cache_stopped:
             try: cache_worker.stop(); cache_stopped=True
             except Exception as exc: log.warning('Startup-cache stop: %s',exc)
@@ -677,6 +756,7 @@ def serve(o):
                 terminal=stop_owned(cid,m); atomic(attempt/'terminal.json',terminal); cleanup=True
             else:
                 cleanup=True
+            cleanup=cleanup and keepalive_clean
             if baseline is not None:
                 frames=[]; until=time.monotonic()+180
                 while time.monotonic()<until:
@@ -701,6 +781,9 @@ def serve(o):
             error=(error+'; ' if error else '')+'cleanup: '+str(exc)
             log.error('%s',error)
         finally:
+            if keepalive and not keepalive.closed:
+                try: keepalive.close()
+                except BaseException as exc: log.warning('WSL admission keepalive cleanup: %s',exc)
             if guard_proc and cleanup and guard_proc.poll() is None:
                 guard_proc.terminate()
                 try: guard_proc.wait(timeout=10)
