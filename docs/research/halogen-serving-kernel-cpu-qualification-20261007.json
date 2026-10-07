@@ -1,0 +1,168 @@
+{
+  "schema": "halogen.serving-kernel-identity.cpu-result.v1",
+  "cases": [
+    {
+      "label": "default",
+      "result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\cpu-identity-qualification-b25dc28b28f64af987b423b8c45cf821\\result.json",
+        "sha256": "affe9aa7d6241045fa5fe04fbbefb251dad19fa20ae8270e6867397cfd0791e7"
+      },
+      "receipts": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\cpu-identity-qualification-b25dc28b28f64af987b423b8c45cf821\\baseline\\baseline-e5f78c2f5afe498db207109a31709e01.json",
+          "sha256": "7470f31d21ec9dc7fda6dd0d9321726716340da8d5bc3a031e8a340c24f1b4c3",
+          "plan_sha256": "832917838d84a4aa7115c790aced24ec9678f3192782416487b531bfb669847c"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\cpu-identity-qualification-b25dc28b28f64af987b423b8c45cf821\\qualify\\post-exec-bb294009af174d439a758503390d443f.json",
+          "sha256": "dc2bcb3f2ba0f20c605d5c5c86f2dadb7bd40def352526da1005f48142cf9817",
+          "plan_sha256": "b29c54b9f96bb873a685f1eed098a508e9ec0dd001757823a71a65855ea14c50"
+        }
+      ],
+      "kernel_identity": {
+        "abi_version": 1,
+        "after": {
+          "ambient": 0,
+          "bounding": 2818844155,
+          "effective": 2818844155,
+          "inheritable": 0,
+          "permitted": 2818844155
+        },
+        "before": {
+          "ambient": 0,
+          "bounding": 552574658043,
+          "effective": 552574658043,
+          "inheritable": 0,
+          "permitted": 552574658043
+        },
+        "capability_count": 41,
+        "capability_drop_checked": 1,
+        "drop_errno": 0,
+        "failure_stage": 0,
+        "kernel_pid": 3897,
+        "kernel_tgid": 3897,
+        "namespace_pid": 7,
+        "namespace_tid": 7,
+        "probe_errno": 0,
+        "probe_fds_closed": 1,
+        "proc_pid_namespace_inode": 4026532232,
+        "struct_bytes": 144
+      },
+      "reporter_snapshot": {
+        "boot_id": "caded6ea-1305-4660-99a2-42a6667c0b74",
+        "capabilities": {
+          "ambient": 0,
+          "bounding": 2818844155,
+          "effective": 2818844155,
+          "inheritable": 0,
+          "permitted": 2818844155
+        },
+        "cgroup": "0::/system.slice/docker-2329e5777f1525a747ba0dbebf8a4b237192e209bfaca5dae1f8cefaf9ecc9fc.scope\n",
+        "namespace_inode": 4026532232,
+        "namespace_pids": [
+          7
+        ],
+        "pid": 7,
+        "start_ticks": 246050,
+        "task_count": 1,
+        "uid": 0
+      },
+      "minimum_memory": {
+        "available_bytes": 44602191872,
+        "commit_headroom_bytes": 212128923648
+      },
+      "independent_baseline": true,
+      "all_non_BPF_bits_preserved": true,
+      "held_FD_exec_same_identity": true,
+      "cpu_identity_capability_exec_qualified": true
+    },
+    {
+      "label": "serving-SYS_PTRACE",
+      "result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\cpu-identity-qualification-0bc8624506f44df1aef72695be05ee4b\\result.json",
+        "sha256": "516d05c4e1e0a478c3fd10a589da9aa23c07420816fee7b1d843a4d2b3f16fcd"
+      },
+      "receipts": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\cpu-identity-qualification-0bc8624506f44df1aef72695be05ee4b\\baseline\\baseline-f40d48ecf74243bb81ba28b06ac35ecd.json",
+          "sha256": "f74b8e9741fb42d6167cd16c50caa853b4aedbe89c3079b5aae836f195673671",
+          "plan_sha256": "d4ea1eae16cb3a3193e34037d0b885fecc5c12cefa9182fbb78267a5a399b792"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\cpu-identity-qualification-0bc8624506f44df1aef72695be05ee4b\\qualify\\post-exec-b366656f0dc040dc9d9937b9d403ede6.json",
+          "sha256": "9f547d23fb85c3eb9f9c78cc5328515cb91a8ddba52fe73491a08c46470d0d4d",
+          "plan_sha256": "40a87a57cfa3f50997b614e5e59f189e411d658576f47e8c98ad87bb1e7c4d56"
+        }
+      ],
+      "kernel_identity": {
+        "abi_version": 1,
+        "after": {
+          "ambient": 0,
+          "bounding": 2819368443,
+          "effective": 2819368443,
+          "inheritable": 0,
+          "permitted": 2819368443
+        },
+        "before": {
+          "ambient": 0,
+          "bounding": 552575182331,
+          "effective": 552575182331,
+          "inheritable": 0,
+          "permitted": 552575182331
+        },
+        "capability_count": 41,
+        "capability_drop_checked": 1,
+        "drop_errno": 0,
+        "failure_stage": 0,
+        "kernel_pid": 4277,
+        "kernel_tgid": 4277,
+        "namespace_pid": 7,
+        "namespace_tid": 7,
+        "probe_errno": 0,
+        "probe_fds_closed": 1,
+        "proc_pid_namespace_inode": 4026532232,
+        "struct_bytes": 144
+      },
+      "reporter_snapshot": {
+        "boot_id": "caded6ea-1305-4660-99a2-42a6667c0b74",
+        "capabilities": {
+          "ambient": 0,
+          "bounding": 2819368443,
+          "effective": 2819368443,
+          "inheritable": 0,
+          "permitted": 2819368443
+        },
+        "cgroup": "0::/system.slice/docker-aa36c2f2e50558b7d7900a97ba8d1fc413c139bd42643c7765639612d3883596.scope\n",
+        "namespace_inode": 4026532232,
+        "namespace_pids": [
+          7
+        ],
+        "pid": 7,
+        "start_ticks": 264797,
+        "task_count": 1,
+        "uid": 0
+      },
+      "minimum_memory": {
+        "available_bytes": 44228009984,
+        "commit_headroom_bytes": 211609948160
+      },
+      "independent_baseline": true,
+      "all_non_BPF_bits_preserved": true,
+      "held_FD_exec_same_identity": true,
+      "cpu_identity_capability_exec_qualified": true
+    }
+  ],
+  "native_compile": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\owned-compile-e2ec50be590e406dbd785d6c71f28c01\\result.json",
+    "sha256": "2915064f6dcc888e3a2edfb04ab4ab4806e20a031fb551bd7c599e1b55b577f6"
+  },
+  "native_helper_sha256": "de97fe27f61943ee23b8df54866ece915b7c2a9f55b8768b18fa56c03f67df37",
+  "first_attempt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\cpu-identity-qualification-520ed0668685446c93f154ed4d9ee519\\result.json",
+    "failure": "Host revn could not read root-owned0600 receipt; no native probe executed. Fixed only exact owned receipt reader."
+  },
+  "devices_accessed": false,
+  "real_flash_serve_executed": false,
+  "serving_copy_attribution_qualified": false,
+  "prefill_decode_acceptance_gain_qualified": false
+}

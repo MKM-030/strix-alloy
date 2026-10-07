@@ -5,8 +5,12 @@ Prepare the real native PLD draft IDs during target verification, then consume
 the already resident accepted prefix with one late native correction row. This
 can remove prefix rows from the native multirow embedding branch while keeping
 the full native hidden, seed, layer48 and history work. There is no established
-acceleration: native multirow-versus-scalar embedding cost, early completion,
-mixed-row numerical quality and concurrent contention remain unmeasured.
+acceleration. The finite original-GPU batch-versus-tail component now passes
+exact arithmetic parity, but finds only0.2–17.6µs mean branch budget across
+six fixed cases, with order/outlier sensitivity. NPU mixed-row numerical
+quality, early completion and concurrent contention remain unmeasured. The
+[result report](halogen-npu-pld-mixed-embedding-result-20261007.md) retires this
+candidate for the current effort.
 
 The new [offline planner](../../scripts/benchmarks/halogen_mtp_pld_mixed_embedding_plan.py)
 implements the bounded row/identity contract with `enable_offline_split=False`
@@ -15,6 +19,14 @@ and returns whole-native fallback on stale or unusable metadata. It has no I/O,
 pointer access, native patch, provider, device execution or timing. Its flags
 always leave native skipping, device execution proof and speed claims false.
 `ClaimedPublication` is metadata, not evidence that an upload or event happened.
+
+The [finite native component](halogen-npu-pld-mixed-embedding-component-20261007.md)
+now has sealed C source and a pinned image wrapper. Root's owned compilation
+passed with `-Wall -Wextra -Werror`; root's subsequent finite GPU run passed
+120/120 recorded exact-parity pairs. Its original-GPU prepared prefix isolates
+batch-versus-tail arithmetic and budget without establishing an NPU producer
+or live skip. Independent offline output/statistical checks support retirement
+of this candidate, not a live implementation.
 
 ## Producer window and replay mapping
 
@@ -93,8 +105,9 @@ Static row independence is supported by the original shaders:
 - Native M4 FC has independent per-stream accumulators and no cross-stream
   reduction, as retained in [the accumulation audit](halogen-native-fc-accumulation-20261004.md).
   M2/M3 registrations exist at identities `0x18d66b0/0x18d66d0`; registration
-  alone does not prove batch output parity with M1. Original M2/M3/M4 embedding
-  versus composed-prefix/native-M1 output is root's next finite component oracle.
+  alone does not prove batch output parity with M1. The subsequent finite
+  original M2/M3/M4 versus composed-prefix/native-M1 component passed exact
+  parity on the frozen A/B fixture rows; no NPU or live-row equivalence follows.
 - Seed `0x24bc1c..34` advances E by `workgroup_id*0x1400`; hidden/output advance
   by `workgroup_id*0x5000`. It adds that E row across its four native streams,
   so a contiguous slab of k rows fits the original full-count seed interface.
@@ -121,11 +134,14 @@ the original seed has completed on its stream, and retire it on reset/cancel/
 epoch change. The metadata contract cannot itself prove those facts. It also
 cannot turn frozen A/B NPU tolerance into live full-head proposal equivalence.
 
-Root's next bounded native component should execute original k-row embedding
-and the exact tail gather/RMS/M1 plus full-k seed for k2/k3/k4, using real
-immutable inputs and prepared prefix rows. Compare outputs and the actual
-branch time with initialization outside the measured interval. This tests the
-proposed removal directly; another ready64/parser/eventquery cohort supplies
+The implemented finite native component compares original k-row embedding
+and exact tail gather/RMS/M1 plus full-k seed for k2/k3/k4, using immutable
+raw A/B inputs in a private two-row table and original-GPU prepared prefix
+rows. Its IDs0/1 are synthetic fixture indices, not live vocabulary IDs.
+Root's finite owned run compared exact outputs and actual branch time with
+initialization outside the measured interval. Exact parity passed; the small
+and order/outlier-sensitive branch budget supports retiring this candidate
+without a live hook or producer. Another ready64/parser/eventquery cohort supplies
 neither this row split nor the missing batch-minus-tail budget. Only afterward
 does a PLD producer/native adapter and matched engine A/B have a defensible cost
 target. Existing v1/v2/v3 handoff sources remain frozen.
@@ -145,9 +161,10 @@ output tokens for the engine decision.
 
 The measured scalar FC alone is **0.152995 ms**, excluding full gather/RMS.
 It is incorrect to claim `a*0.152995 ms` saved: a stock batch may share decoded
-weights and its B(k) has not been measured. One ideal scalar FC removal per
+weights. The finite component now measures B(k)means0.1657–0.1878ms and
+T(1)means0.1655–0.1702ms across these six fixed cases. One ideal scalar FC removal per
 ~24-ms output is only ~0.64%, before overhead. This mixed candidate changes the
-replay workload, but has no measured larger budget.
+replay workload, but its measured branch margin remains only0.00020–0.01760ms.
 
 Root's v3 frozen-scalar handoff succeeded at mean NPU **1.3307 ms**, pipe
 **2.4231 ms**, full staged **6.1337 ms**. The staged path is about **40.1×**
@@ -156,12 +173,14 @@ neither measure an embedding-only batch producer nor bound production latency;
 they show why synchronous scalar insertion is unsupported. Reusing that exact
 staged path for one row would need at least its observed6.1337-ms lead time,
 plus any missing producer preparation, to be ready without a replay stall.
-No current receipt supplies that W or B(k)-T(1).
+No current receipt supplies W or concurrent C/J. The finite component supplies
+only the isolated B(k)-T(1) observations described above.
 
 Prune synchronous scalar/hidden NPU insertion, another ready64 cohort, and
 full-head replacement without a complete state transaction. The actionable
-remaining branch is this default-off mixed-row contract followed by root's
-finite native batch-versus-tail component, with no claimed acceleration.
+result is the preserved default-off mixed-row contract and successful finite
+arithmetic component. Its microsecond-scale timing margin does not justify a
+live/NPU cohort; retire this candidate with no claimed acceleration.
 
 ## Offline verification
 
