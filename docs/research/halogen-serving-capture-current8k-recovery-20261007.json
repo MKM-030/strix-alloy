@@ -260,5 +260,19 @@
   "new_acceptance": null,
   "npu_serving_toks": null,
   "serving_acceleration_qualified": false,
-  "goal_complete": false
+  "goal_complete": false,
+  "pending_startup_fix_v2": {
+    "receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\startup-cgroup-offline-fix-v2-20261007\\fix-receipt-v2.json",
+    "receipt_sha256": "00c32493672020048533345a59509850119e7a033fff94604cc02acdbb343618",
+    "patch": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\startup-cgroup-offline-fix-v2-20261007\\startup-cgroup-exact-leaf-v2.patch",
+    "patch_sha256": "9abf15f8e631163e1dabe9f59fb3b3d349fdf41cec15d261492e3b190a250861",
+    "independent_review": "passed-static",
+    "reviewer": "/root/npu_handoff_impl",
+    "recorded_utc": "2026-10-07T11:28:48.854964+00:00",
+    "runner_helper_mount_coverage": true,
+    "source_pins_checked": true,
+    "production_applied": false,
+    "linux_container_integration_qualified": false,
+    "next": "Apply only in a controlled lifecycle window and rebind fresh source/identity seals; leave current server open"
+  }
 }
