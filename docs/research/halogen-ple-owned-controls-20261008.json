@@ -1,0 +1,375 @@
+{
+  "schema": "halogen-ple-controls-result-v1",
+  "utc": "2026-10-07T23:16:52.598602+00:00",
+  "work": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f",
+  "tool_session": 81988,
+  "tool_exit": 0,
+  "lifecycle": {
+    "work": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f",
+    "controls_complete": true,
+    "original_ready_open": true,
+    "errors": [],
+    "guard_errors": [],
+    "minimum": {
+      "available_bytes": 26064617472,
+      "commit_headroom_bytes": 122801631232
+    },
+    "rates_qualified": false,
+    "NPU_executed": false,
+    "full_goal_completed": false,
+    "utc": "2026-10-07T23:16:36.929342+00:00"
+  },
+  "startup_physical_gib": 35,
+  "full_context_commit_gib": 131,
+  "runtime_reserve_gib": [
+    18,
+    18
+  ],
+  "exact_35gib_sufficiency_proven": false,
+  "workload": {
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "text": "frozen natural raw CRLF",
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "cache": "Off",
+    "drafter": "MTP",
+    "mtp": 2,
+    "pld": [
+      3,
+      3
+    ]
+  },
+  "native_passed": true,
+  "cpu_input_parity": true,
+  "native_fc_cpu_parity": false,
+  "samples": [
+    {
+      "timings": {
+        "prompt_n": 8192,
+        "predicted_n": 128,
+        "prompt_ms": 12527.2,
+        "predicted_ms": 4252.7,
+        "prompt_per_second": 653.937,
+        "predicted_per_second": 30.099,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 120,
+        "draft_n_accepted": 67
+      },
+      "usage": {
+        "prompt_tokens": 8192,
+        "completion_tokens": 128,
+        "total_tokens": 8320,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "finish_reason": "length",
+      "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+      "drafted": 120,
+      "accepted": 67,
+      "acceptance": 0.5583333333333333,
+      "index": 0,
+      "wall_seconds": 16.823598799994215,
+      "clock_calibration": {
+        "before": {
+          "mono": 3078.178772901,
+          "raw": 3032.196711396,
+          "utc": 1791414648.8695781,
+          "qpc": 289308.4461149,
+          "roundtrip": 0.000251400051638484
+        },
+        "after": {
+          "mono": 3095.002703713,
+          "raw": 3049.020644841,
+          "utc": 1791414665.6873512,
+          "qpc": 289325.27005655004,
+          "roundtrip": 0.0004233000217936933
+        },
+        "monotonic_per_raw": 0.9999998434967718,
+        "raw_per_qpc": 0.9999995122995602,
+        "window_seconds": 16.823941650043707,
+        "handshake_uncertainty_seconds": 0.00033735003671608865
+      },
+      "intrusive_component_control": true,
+      "rates_qualified": false
+    },
+    {
+      "timings": {
+        "prompt_n": 8192,
+        "predicted_n": 128,
+        "prompt_ms": 6795.3,
+        "predicted_ms": 3277.2,
+        "prompt_per_second": 1205.539,
+        "predicted_per_second": 39.058,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 120,
+        "draft_n_accepted": 67
+      },
+      "usage": {
+        "prompt_tokens": 8192,
+        "completion_tokens": 128,
+        "total_tokens": 8320,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "finish_reason": "length",
+      "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+      "drafted": 120,
+      "accepted": 67,
+      "acceptance": 0.5583333333333333,
+      "index": 1,
+      "wall_seconds": 10.116677800018806,
+      "clock_calibration": {
+        "before": {
+          "mono": 3095.011971989,
+          "raw": 3049.029913037,
+          "utc": 1791414665.6966193,
+          "qpc": 289325.2793,
+          "roundtrip": 0.0005137999542057514
+        },
+        "after": {
+          "mono": 3105.129391864,
+          "raw": 3059.147333813,
+          "utc": 1791414675.8123393,
+          "qpc": 289335.3967253,
+          "roundtrip": 0.0009672000305727124
+        },
+        "monotonic_per_raw": 0.9999999109456806,
+        "raw_per_qpc": 0.9999995528500446,
+        "window_seconds": 10.117425300006289,
+        "handshake_uncertainty_seconds": 0.0007404999923892319
+      },
+      "intrusive_component_control": true,
+      "rates_qualified": false
+    }
+  ],
+  "component_timings": {
+    "schema": "halogen-ple-owned-complete-v1",
+    "passed": true,
+    "selected_targets": 2,
+    "completed_targets": 2,
+    "target_results": [
+      1,
+      1
+    ],
+    "target_next_arguments": [
+      -1,
+      -1
+    ],
+    "loader_build_sha256": "bf4d0bccb73b99970714de1960b2fc7a194a16447226516917f4f879a4dce6e8",
+    "owner_receipt_sha256": "0fe58a16d6fe461ab891897e3c441ab934ffb91c950051e9aa39cd9b88bc416a",
+    "checkpoint_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "index_sha256": "8ca62a2dbf682aeb4572289c545bf1694c022dc0f76d4b26f1cd1e59c073aad4",
+    "hip_sha256": "6f3c9fe6b655a611e04a9a5a157cb46c425717e2873973f11a67bb6bbf6587b5",
+    "error": null,
+    "runtime_storage_tag": 0,
+    "runtime_storage_tag_offset": 1684,
+    "expected_table_rows": 320001536,
+    "model_table_rows_offset": 1672,
+    "timing_mode": "complete-wall-v1",
+    "timing_source": "CLOCK_MONOTONIC_RAW",
+    "phase_timing_complete": true,
+    "phases": [
+      {
+        "phase": "stock-key-FC",
+        "begin_calls": 1,
+        "end_calls": 1,
+        "pre_drains": 1,
+        "completion_drains": 1,
+        "begin_clock_reads": 1,
+        "end_clock_reads": 1,
+        "pre_drain_clock_reads": 2,
+        "completion_drain_clock_reads": 2,
+        "pre_drain_ns": 18582,
+        "completion_drain_ns": 43481657,
+        "begin_ns": 3037982596848,
+        "end_ns": 3038026211453,
+        "wall_ns": 43614605,
+        "complete": true
+      },
+      {
+        "phase": "stock-value-FC",
+        "begin_calls": 1,
+        "end_calls": 1,
+        "pre_drains": 1,
+        "completion_drains": 1,
+        "begin_clock_reads": 1,
+        "end_clock_reads": 1,
+        "pre_drain_clock_reads": 2,
+        "completion_drain_clock_reads": 2,
+        "pre_drain_ns": 15501,
+        "completion_drain_ns": 10974136,
+        "begin_ns": 3038220819327,
+        "end_ns": 3038231957394,
+        "wall_ns": 11138067,
+        "complete": true
+      },
+      {
+        "phase": "ready-pair-publication",
+        "begin_calls": 1,
+        "end_calls": 1,
+        "pre_drains": 1,
+        "completion_drains": 1,
+        "begin_clock_reads": 1,
+        "end_clock_reads": 1,
+        "pre_drain_clock_reads": 2,
+        "completion_drain_clock_reads": 2,
+        "pre_drain_ns": 291909,
+        "completion_drain_ns": 260,
+        "begin_ns": 3049278738339,
+        "end_ns": 3049317378534,
+        "wall_ns": 38640195,
+        "complete": true
+      },
+      {
+        "phase": "stock-pair-consumer",
+        "begin_calls": 1,
+        "end_calls": 1,
+        "pre_drains": 1,
+        "completion_drains": 1,
+        "begin_clock_reads": 1,
+        "end_clock_reads": 1,
+        "pre_drain_clock_reads": 2,
+        "completion_drain_clock_reads": 2,
+        "pre_drain_ns": 4168008,
+        "completion_drain_ns": 10071,
+        "begin_ns": 3037724701252,
+        "end_ns": 3038279265766,
+        "wall_ns": 554564514,
+        "complete": true
+      },
+      {
+        "phase": "ready-pair-consumer",
+        "begin_calls": 1,
+        "end_calls": 1,
+        "pre_drains": 1,
+        "completion_drains": 1,
+        "begin_clock_reads": 1,
+        "end_clock_reads": 1,
+        "pre_drain_clock_reads": 2,
+        "completion_drain_clock_reads": 2,
+        "pre_drain_ns": 3318393,
+        "completion_drain_ns": 12091,
+        "begin_ns": 3049265937136,
+        "end_ns": 3049381098202,
+        "wall_ns": 115161066,
+        "complete": true
+      }
+    ],
+    "pre_drain_outside_clock": true,
+    "completion_drain_inside_clock": true,
+    "phase_count_limit": 5,
+    "original_phase_count": 3,
+    "consumer_interval_count": 2,
+    "phase_nested_durations_additive": false,
+    "consumer_interval_scope": "key-entry-through-value-return-including-common-native-key-RMS",
+    "intrusive": [
+      {
+        "category": "setup",
+        "begin_calls": 11,
+        "end_calls": 11,
+        "wall_ns": 350921900,
+        "active": false
+      },
+      {
+        "category": "poison",
+        "begin_calls": 2,
+        "end_calls": 2,
+        "wall_ns": 161198526,
+        "active": false
+      },
+      {
+        "category": "oracle",
+        "begin_calls": 10,
+        "end_calls": 10,
+        "wall_ns": 419609795,
+        "active": false
+      },
+      {
+        "category": "readback",
+        "begin_calls": 21,
+        "end_calls": 21,
+        "wall_ns": 351610942,
+        "active": false
+      },
+      {
+        "category": "observer-sync",
+        "begin_calls": 14,
+        "end_calls": 14,
+        "wall_ns": 318279872,
+        "active": false
+      }
+    ],
+    "intrusive_category_call_limit": 64,
+    "intrusive_nested_durations_additive": false,
+    "intrusive_scope": "setup-and-oracle-inclusive;readback-and-observer-sync-subintervals;no-extra-intrusive-drains",
+    "observer_full_engine_lead_auth_producer_costs_qualified": false,
+    "rates_and_gain_qualified": false,
+    "timing_claim": false
+  },
+  "classification": {
+    "intrusive_controls": true,
+    "serving_cohort": false,
+    "NPU_executed": false,
+    "full_engine_gain_qualified": false,
+    "acceptance_improved": false,
+    "live_early_mapping_qualified": false,
+    "projection_weights_exported": false,
+    "candidate_adopted": false,
+    "full_goal_completed": false
+  },
+  "artifacts": {
+    "result.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\result.json",
+      "bytes": 487,
+      "sha256": "8d121527e273a033324b59d3107140b39f9b9abef5d10054329015b0954a179a"
+    },
+    "final-ready.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\final-ready.json",
+      "bytes": 2584,
+      "sha256": "7f3e74e55eb6659a114551c260d0a4dae0cb58bbc5e96711a92f278844be0116"
+    },
+    "trace-inventory.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\trace-inventory.json",
+      "bytes": 3180,
+      "sha256": "6b2c013b2d6730af9ba980552d5047bfc7e91027896aa6ecb7342d0d9c5aeada"
+    },
+    "actual-map-binding.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\actual-map-binding.json",
+      "bytes": 4133,
+      "sha256": "70f9d78d4e5e04fc62041343e83bca3e398bbd458080517c9512d03325311ef9"
+    },
+    "actual-map-binding-after.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\actual-map-binding-after.json",
+      "bytes": 4133,
+      "sha256": "70f9d78d4e5e04fc62041343e83bca3e398bbd458080517c9512d03325311ef9"
+    },
+    "trace/capture-record.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\trace\\capture-record.json",
+      "bytes": 1325,
+      "sha256": "f4f6d9448a910b704bd9546c67b37bb63487637b7aa7f898f7ea76fde02ac391"
+    },
+    "trace/owned-complete.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\trace\\owned-complete.json",
+      "bytes": 3539,
+      "sha256": "c50d8ce8f611d0417766e2d3eb60188017a0bef02db40f32590f6342d8e90778"
+    },
+    "trace/ple-m8192-manifest.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\trace\\ple-m8192-manifest.json",
+      "bytes": 7971,
+      "sha256": "f6d2640e92a2aa158d19830b32c5b45963ae60f41e2e964cc218b9a056fc30b6"
+    },
+    "cpu-parity/receipt.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\cpu-parity\\receipt.json",
+      "bytes": 1106,
+      "sha256": "ba5b19aca22a9a67e9d6448d99cfc6890380a95824c5d756a20f0b5eae6d5192"
+    }
+  }
+}
