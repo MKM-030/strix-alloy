@@ -1,0 +1,191 @@
+{
+  "format": "bounded-official-update-check-v3",
+  "started_utc": "2026-10-07T10:43:21.199606+00:00",
+  "completed_utc": "2026-10-07T10:49:07.120258+00:00",
+  "previous_checkpoint": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\update-checkpoint-20261007-0837.json",
+  "previous_completed_utc": "2026-10-07T08:40:37Z",
+  "not_before_utc": "2026-10-07T10:40:37Z",
+  "tool_clock_gate_verified": true,
+  "tool_clock_gate_utc": "2026-10-07T10:42:23Z",
+  "gate_due": true,
+  "next_check_not_before_utc": "2026-10-07T12:49:07.120258+00:00",
+  "next_gate_basis": "Completed source check plus two hours.",
+  "baseline_notes": {
+    "selection": "Use the private 08:40:37Z receipt completion. continuation-current.json has older/inconsistent serialized update references and was not edited."
+  },
+  "decision": "No new tracked Halogen/Strata implementation, driver listing or current-engine acceleration route since the prior completed checkpoint. MLIR-AIE 1.4.4 was already detected before this check; separate bounded source assessment admits no local speed gain or compatible smaller predictor.",
+  "official_sources": [
+    {
+      "id": "halogen",
+      "url": "https://api.github.com/repos/peonist-ai/halogen-flash-server/git/ref/heads/main",
+      "sha": "6d4e791ea4ca596a1f90e38beefdf2e017ae4544",
+      "head_changed": false,
+      "commits_since_previous_completed_utc": 0,
+      "updated_issues_since_previous_completed_utc": 0,
+      "tracked_public_version_retained": "0.16.4",
+      "managed_version_retained": "0.16.2",
+      "fresh_api_body_parse": true
+    },
+    {
+      "id": "strata",
+      "head_url": "https://api.github.com/repos/Niko1221/Strata/commits/main",
+      "sha": "82f46a8c8f475f001ad76d92f58f4a4f8ffb0253",
+      "release_url": "https://github.com/Niko1221/Strata/releases/tag/v0.1.40.1",
+      "version": "v0.1.40.1",
+      "published_utc": "2026-10-06T09:53:35Z",
+      "updated_utc": "2026-10-06T09:53:35Z",
+      "commits_since_previous_completed_utc": 0,
+      "head_and_release_unchanged": true,
+      "engine_unchanged_from_0_1_40": true,
+      "fresh_api_body_parse": true
+    },
+    {
+      "id": "amd_gpu_drivers",
+      "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+      "recommended": {
+        "version": "26.8.1",
+        "release_date": "2026-08-20"
+      },
+      "optional": {
+        "version": "26.9.2",
+        "release_date": "2026-09-29"
+      },
+      "versions_unchanged": true,
+      "fresh_web_listing_parse": true,
+      "release_notes_refetched": false,
+      "installed_versions_queried": false
+    },
+    {
+      "id": "ryzenai",
+      "version": "v1.8.0",
+      "release_url": "https://github.com/amd/RyzenAI-SW/releases/tag/v1.8.0",
+      "published_utc": "2026-07-23T04:37:16Z",
+      "updated_utc": "2026-07-23T04:37:16Z",
+      "version_unchanged": true,
+      "documentation_url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+      "release_notes_url": "https://ryzenai.docs.amd.com/en/latest/relnotes.html",
+      "minimum_npu_driver": "32.0.203.280",
+      "production_npu_driver": "32.0.203.376",
+      "driver_versions_unchanged": true,
+      "fresh_release_and_documentation_parse": true,
+      "new_wsl_hgn_or_mtp_contract_established": false
+    },
+    {
+      "id": "mlir_aie",
+      "version": "v1.4.4",
+      "release_url": "https://github.com/Xilinx/mlir-aie/releases/tag/v1.4.4",
+      "published_utc": "2026-10-06T16:18:52Z",
+      "updated_utc": "2026-10-06T17:52:56Z",
+      "release_unchanged_from_previous_checkpoint": true,
+      "newly_detected_this_check": false,
+      "assessment": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-mlir-aie144-source-assessment-20261007.json",
+      "fresh_api_body_parse": true
+    },
+    {
+      "id": "amd_fabric_followup",
+      "url": "https://api.github.com/repos/ROCm/TheRock/issues/8709/comments?since=2026-10-07T08%3A40%3A37Z&per_page=10",
+      "new_comments": 0,
+      "fresh_api_body_parse": true,
+      "host_firmware_or_overlap_queried": false
+    }
+  ],
+  "reddit": {
+    "observed_clock_gate_utc": "2026-10-07T10:42:23Z",
+    "queries": [
+      {
+        "q": "site:reddit.com/r/StrixHalo (Halogen OR NPU OR \"MLIR-AIE\") after:2026-10-07",
+        "recency": 1
+      },
+      {
+        "q": "site:reddit.com/r/LocalLLaMA (\"Strix Halo\" OR \"Ryzen AI Max\") (Halogen OR Strata OR NPU OR prefill) after:2026-10-07",
+        "recency": 1
+      },
+      {
+        "q": "site:reddit.com/r/StrixHalo Strata after:2026-10-07",
+        "recency": 1
+      },
+      {
+        "q": "site:reddit.com/r/LocalLLaMA Halogen after:2026-10-07",
+        "recency": 1
+      }
+    ],
+    "queries_passes": 2,
+    "reason_for_second_pass": "First batched tool output was truncated; repeated same bounded indexed query set at medium output length so every returned inventory item could be inspected.",
+    "returned_inventory": [
+      {
+        "title": "Qwen3.8-Flash-Next (125B) on a single Strix Halo mini PC: 44-59 tok/s with speculative decoding, ~1,400 tok/s prefill, engine is open",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1wybesy/qwen38flashnext_125b_on_a_single_strix_halo_mini/"
+      },
+      {
+        "title": "Qwen3.8-Flash-Next on Strata",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1wz4rvx/qwen38flashnext_on_strata/"
+      },
+      {
+        "title": "Story time: Qwen3.8-Flash-Next on my Strix Halo laptop vs Claude Opus 5.5 on the same feature",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1wyzt1d/story_time_qwen38flashnext_on_my_strix_halo/"
+      },
+      {
+        "title": "Is Strix Halo (GMKtec EVO-X2, etc.) the closest thing we have to a \"dream\" local LLM box?",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1wxs0sp/is_strix_halo_gmktec_evox2_etc_the_closest_thing/"
+      },
+      {
+        "title": "halogen-flash-server 0.16.0: Strix Halo NPU now serves embeddings, reranking and classifiers beside Qwen3.8-Flash-Next.  Nearly 10,000 tok/s",
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1wvfrj0/halogenflashserver_0160_strix_halo_npu_now_serves/"
+      },
+      {
+        "title": "Halogen 0.16.2 on Windows/WSL2: Qwen3.8-Flash-Next at 1925 tok/s prefill; 48.42 tok/s decode",
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1wxiwad/halogen_0162_on_windowswsl2_qwen38flashnext_at/"
+      },
+      {
+        "title": "Story time: Qwen3.8-Flash-Next on my Strix Halo laptop vs Claude Opus 5.5 on the same feature",
+        "url": "https://www.reddit.com/r/LocalLLM/comments/1wyztgo/story_time_qwen38flashnext_on_my_strix_halo/"
+      },
+      {
+        "title": "Qwen3.8-Flash-Next on Strata",
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1wyvwjd/qwen38flashnext_on_strata/"
+      },
+      {
+        "title": "Configure Framework Desktop DIY Edition (AMD Ryzen™ AI Max 400 Series)",
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1wugovs/configure_framework_desktop_diy_edition_amd_ryzen/"
+      },
+      {
+        "title": "Thanks to whoever mentioned Strata [9950X3D / 64GB DDR5 / 2×3090 Ti]",
+        "url": "https://www.reddit.com/r/LocalLLM/comments/1wvxbuq/thanks_to_whoever_mentioned_strata_9950x3d_64gb/"
+      },
+      {
+        "title": "Strata Tuning Guide (Universal)",
+        "url": "https://www.reddit.com/r/LocalLLM/comments/1wxsjbk/strata_tuning_guide_universal/"
+      },
+      {
+        "title": "gufo_windows pre-package for Strix Halo users",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1wwhu1a/gufo_windows_prepackage_for_strix_halo_users/"
+      }
+    ],
+    "all_returned_inventory_inspected": true,
+    "deliberate_thread_body_opens": 0,
+    "new_confirmed_acceleration_source": false,
+    "coverage": "Bounded indexed discovery; filters returned October 2–6 originals and coarse freshness labels, not an exact October 7 live inventory. No anecdotal rate admitted as local measurement."
+  },
+  "actionable_differences": [],
+  "coverage_limits": [
+    "Nine GitHub API reads returned HTTP 200; all results inspected. At most ten commits/issues/comments per query; no exhaustive asset/prerelease/installer-channel or rolling-main survey.",
+    "Official AMD/Ryzen AI web listings freshly parsed; release-note/config text is source evidence only.",
+    "Reddit returned October 2–6 originals despite after:2026-10-07 and recency filters. No complete live inventory or timestamp-exact comment coverage. No old thread bodies deliberately reopened.",
+    "Compiler source review is separate from this scheduled delta. Neither this check nor that review supplies a local acceptance or speed result."
+  ],
+  "http_metadata_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\update-research-20261007-1042-http.json",
+  "all_parallel_results_inspected": true,
+  "delegation": "Team slots already occupied; independent official endpoints fetched concurrently and bounded discovery reviewed locally.",
+  "hardware_queried": false,
+  "gpu_executed": false,
+  "npu_executed": false,
+  "engine_requests": false,
+  "compiler_or_sdk_used": false,
+  "installations": false,
+  "binaries_or_models_downloaded": false,
+  "driver_or_firmware_actions": false,
+  "wsl_or_service_lifecycle_actions": false,
+  "continuation_edited": false,
+  "frozen_source_edited": false,
+  "full_goal_completed": false
+}

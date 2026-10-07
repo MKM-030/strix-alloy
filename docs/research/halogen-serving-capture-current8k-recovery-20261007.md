@@ -1,0 +1,25 @@
+# Serving capture and Current8K recovery, 7 October 2026
+
+The authorized **40 GiB physical startup floor is implemented** in commit `c92be7b`. Commit admission remains **131 GiB**, stable admission **60 seconds**, runtime physical/commit reserve **18 GiB**, and new component/NPU/long-request admission **22 GiB**. The regular Current8K restoration completed successfully and its authenticated readiness and exact process births were independently checked at **11:19:10 UTC**. The server remains open on `http://127.0.0.1:8840/v1`, with console request/response logging enabled.
+
+Current8K uses `prefill_chunk=8192` and `max_prefill_tokens=8192`, capacity 262144, MTP2, PLD3,3 and cache Off. Its profile SHA-256 is `50e09bc549f1238a42ff1f68e3a6304ada380ef5eb418adf28f60315f55bf9c1`. The fresh check observed **26.562 GiB physical / 119.173 GiB commit headroom**. The startup receipt records the admission samples; a successful start with headroom above the floor does not prove sufficiency at exactly 40 GiB. No inference or speed measurement was submitted by the final check.
+
+The preceding HistoricalStock restoration became ready but later stopped through its unchanged runtime guard at **17.679367 GiB** physical headroom. That terminal failure remains preserved. Current8K replaces that profile to retain reserve. The historical **48.4236 tok/s** figure is an actual 8192-input result from HistoricalStock; it is not a newly measured speed for the current instance.
+
+## Finite capture results
+
+Two serving-bootstrap capture attempts were completed and cleaned up. The first recorder rejected the wrong session prefix before starting ETW. The corrected attempt used `StrixAlloy-GpuCopy-…`, closed its recorder successfully with zero reported event/buffer loss, and preserved the raw ETL. Its marker-bounded enabled interval was **8.6412373 seconds**, rather than the requested 12 seconds. The native decoder materialized **49118 events** with no unresolved decoder metadata or properties. This is capture integrity, not engine readiness or workload ownership.
+
+The candidate failed before readiness with `Startup-cache worker failed: Expecting value: line 1 column 1 (char 0)`. The coordinator's aggregate error was `owned_process_not_live`. Both the candidate's normal cleanup/recovery and the subsequent regular restoration completed; the later HistoricalStock reserve stop is recorded separately.
+
+Offline attribution leaves **all 180 Copy spans unresolved**: 160 have device `DxgProcess=0`; 20 have a captured host PID12712 association only. All have PID4 headers. Captured guest names include `Xwayland`287 and `halogen0162_hip`1546, but no post-exec native serving attestation was supplied. The 174 Info450 records and the guest origin of 56 allocation aliases remain unqualified. There is no PID4 exemption, serving-owner claim, PDH ownership qualification, NPU integration or serving acceleration result.
+
+## Confirmed startup defect and prepared correction
+
+A single CPU-only diagnostic in the same image reproduced the startup-memory error without an engine, model, GPU/NPU or cache advice. In the host cgroup namespace, `/sys/fs/cgroup/memory.current` is absent; `/proc/self/cgroup` identifies the container's leaf under `/system.slice/docker-<CID>.scope`, where the required metrics are available. The monitor also stopped parsing on the first traceback line and discarded the remaining diagnostic text.
+
+An offline three-file correction resolves the exact unified membership through the most-specific cgroup2 mount, reads only that leaf, adds a memory-only CLI for the existing telemetry script, and drains the complete traceback while preserving the first failure. Its eight focused Python tests and PowerShell fixture passed; a fresh `git apply --check` passed. All production source hashes still match their baseline. The patch is retained at `server/.local/optimization9h-20261004/startup-cgroup-offline-fix-20261007/startup-cgroup-exact-leaf.patch`, SHA-256 `79b017a05bf12415eaa78d1819c8af6e044cfa0af73a172ea9cbcf31368018a4`.
+
+The correction has not been applied to the running server. Independent review passed the resolver and traceback drain but found a caller defect: ordinary runner containers do not mount the helper now required by `sample.ps1`, although service containers do. Version 1 is therefore held; a narrow version 2 with caller mount coverage is being prepared offline. Linux/container integration belongs to a later controlled lifecycle window. A future capture must bind to fresh Current8K identities and match its actual arena, MTP and PLD settings. An unchanged losing proposer or a heartbeat alone does not justify repeating a speed cohort.
+
+The full acceleration goal remains active and unachieved. The latest account query reports **15% used / 85% available**; the cumulative goal counter is a different measure. The official-source check completed at 10:49:07 UTC, with the next check due no earlier than 12:49:07 UTC. Automation remains paused. [Machine-readable evidence](halogen-serving-capture-current8k-recovery-20261007.json) preserves raw receipt paths and hashes.

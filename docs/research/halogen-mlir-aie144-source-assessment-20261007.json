@@ -1,0 +1,228 @@
+{
+  "format": "halogen.mlir-aie-source-assessment.v1",
+  "review_completed_utc": "2026-10-07T10:49:07.120258+00:00",
+  "release": {
+    "version": "v1.4.4",
+    "commit": "e5c705c7b04bb8470db7364287843ba96e487a6e",
+    "published_utc": "2026-10-06T16:18:52Z",
+    "updated_utc": "2026-10-06T17:52:56Z",
+    "url": "https://github.com/Xilinx/mlir-aie/releases/tag/v1.4.4",
+    "already_detected_in_previous_update_checkpoint": true
+  },
+  "decision": "MLIR-AIE 1.4.4 supports a native Windows NPU2 source path for Strix Halo, but supplies neither a qualified smaller raw-ID predictor nor a drop-in change to the measured FLM proposal. No acceleration route is admitted by this source review.",
+  "platform": {
+    "processor_context": "Ryzen AI Max+ 395 / Strix Halo; current host hardware was not queried.",
+    "fp11_meaning": "CPU socket/package label on AMD product page; compiler target is npu2, not FP11.",
+    "architecture_mapping": {
+      "device_docs": "docs/Devices.md:43-52",
+      "runtime": "python/utils/hostruntime/xrtruntime/hostruntime.py:95-105",
+      "strings": [
+        "Strix Halo",
+        "npu5"
+      ],
+      "target": "npu2"
+    },
+    "native_windows": {
+      "guide": "docs/buildHostWinNative.md",
+      "os": "Windows 11",
+      "sdk": "XRT 2.21.75",
+      "pyxrt_python": "CPython 3.13",
+      "repository_driver_minimum": "32.0.20101.3760",
+      "repository_xrt_minimum": "2.21.0"
+    },
+    "historical_local_stack_only": {
+      "mlir_aie": "1.3.4",
+      "driver": "32.0.20102.3930",
+      "xrt": "2.21.0",
+      "isolated_sdk": "2.21.75",
+      "source": "docs/research/halogen-npu-native-route-20261005.md; scripts/benchmarks/halogen_flm_raw_id_bridge/README.md"
+    },
+    "hsa_backend": {
+      "linux_only": true,
+      "source": "python/utils/hostruntime/hsaruntime/discovery.py:24-46"
+    },
+    "wsl_workflow": "WSL compiles device code; Windows builds/runs the host. No NPU guest passthrough or Windows XRT to WSL HIP ownership/fence contract established.",
+    "local_v144_compile_or_runtime_qualified": false
+  },
+  "source_findings": [
+    {
+      "id": "dispatch_time",
+      "finding": "DispatchTime scalars let a compiled design vary DMA/tile bounds without recompilation. Official dyn_copy test checks one cached kernel/artifact pair and varying instruction-stream sizes.",
+      "source": "test/python/npu/test_dispatch_time_scalar.py:92-114",
+      "latency_demonstration": false
+    },
+    {
+      "id": "runtime_path",
+      "finding": "The XRT loader registers an xclbin and constructs hw_context/kernel. Dynamic dispatch creates, fills and syncs a fresh XrtTransport instruction BO; submission waits synchronously.",
+      "source": "python/utils/hostruntime/xrtruntime/hostruntime.py:214-239,336-372; tensor.py:29-34",
+      "automatic_dispatch_cost_reduction_established": false
+    },
+    {
+      "id": "abi_migration",
+      "finding": "The inspected Python wrapper submits its insts_bytes field. The retained native fixture describes uint32 word-count semantics. New emitted artifact/runtime ABI must be validated rather than assumed from that old fixture.",
+      "drop_in_abi_qualified": false
+    },
+    {
+      "id": "kernels_and_cache",
+      "finding": "Release notes add Flash Attention prefill, q4nx dequantization, BF16 GEMM corrections and compiler/kernel caches. These are building blocks and compilation changes, not trained conditional token-proposal weights or a patch to the opaque existing FLM DLL."
+    }
+  ],
+  "smaller_model": {
+    "actual_current_proposer": {
+      "repo": "FastFlowLM/Qwen3.5-0.8B-NPU2",
+      "revision": "1d16e5eaa2508889fb88eb1bfab1921a30a1a466",
+      "qualified_defined_id_range": [
+        0,
+        248069
+      ],
+      "source": "docs/research/halogen-npu-independent-proposer-screen-20261006.md"
+    },
+    "smaller_npu_package_observed": {
+      "repo": "FastFlowLM/Qwen3-0.6B-NPU2",
+      "url": "https://huggingface.co/FastFlowLM/Qwen3-0.6B-NPU2/raw/main/config.json",
+      "vocab_size": 151936,
+      "flm_version_in_config": "0.9.22",
+      "raw_id_compatibility_qualified": false,
+      "compatibility_status": "Not qualified; the target has a larger defined ID domain. No retokenization/state/rollback adapter or local timing/quality evidence reviewed."
+    },
+    "smaller_qualified_direct_id_predictor_found_in_bounded_review": false,
+    "possible_future_candidate": "A distilled same-tokenizer conditional predictor with resident state and a fused small number of kernels; requires trained weights, complete-prefix state qualification, causal router, native consumer/outcome contract and matched measurements.",
+    "training_or_new_model_execution_performed": false
+  },
+  "retained_measurements_not_repeated": {
+    "native_complete_gemv_mean_us": 77.183333,
+    "native_complete_control_mean_us": 82.2625,
+    "native_complete_boundary": "input copy, poison, sync, launch, wait, output sync/readback; reference/verification excluded",
+    "native_source": "docs/research/halogen-npu-native-route-20261005.json",
+    "flm_three_id_mean_ms": 45.218385714285716,
+    "flm_three_id_consumed_forwards": 2,
+    "flm_append_mean_ms": 22.46124,
+    "flm_512_id_rebuild_mean_ms_rounded": 418.29,
+    "flm_source": "docs/research/halogen-npu-independent-proposer-screen-20261006.json",
+    "meaning": "The 45 ms proposal is not an unavoidable Windows small-dispatch floor. These measurements are different tasks; their difference is not an isolated kernel cost or a predicted new proposer speed.",
+    "opening_conditioned_offline_npu_matches": 18,
+    "stock_accepted_drafts_on_same_ten_opening_equal_rounds": 19,
+    "native_acceptance_or_live_gain_established": false
+  },
+  "integration_hold": "Existing native no-hit consumer/relay scaffolding is present. The retained live relay is stock-only; qualified owner packet application, full-prefix outcome acknowledgement and causal selection are separate requirements. Root-owned ongoing changes may close some of these; this review did not edit or revalidate them.",
+  "source_snapshot_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\receipt.json",
+  "source_files": [
+    {
+      "id": "docs/buildHostWinNative.md",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/docs/buildHostWinNative.md",
+      "status": 200,
+      "body_bytes": 15052,
+      "body_sha256": "a25afd3c014ab2912b45e1d9c1c7571fe82fee53244c4fc72453a4f62bf6aead",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\docs\\buildHostWinNative.md"
+    },
+    {
+      "id": "docs/buildHostWin.md",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/docs/buildHostWin.md",
+      "status": 200,
+      "body_bytes": 13837,
+      "body_sha256": "cee55abbd8d2f334d8d716137a1a4f12a73c8ace70989af289f68188737f378b",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\docs\\buildHostWin.md"
+    },
+    {
+      "id": "docs/Devices.md",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/docs/Devices.md",
+      "status": 200,
+      "body_bytes": 3744,
+      "body_sha256": "1081454f92b5566eb2842e004c5106f001a575c7187faf65224d91284d2b647d",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\docs\\Devices.md"
+    },
+    {
+      "id": "python/utils/hostruntime/xrtruntime/hostruntime.py",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/python/utils/hostruntime/xrtruntime/hostruntime.py",
+      "status": 200,
+      "body_bytes": 40397,
+      "body_sha256": "4cd8ccaa71e2d6aee49e0d7832414302a6d91d8771fce0cb8062ccdb80ba5957",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\python\\utils\\hostruntime\\xrtruntime\\hostruntime.py"
+    },
+    {
+      "id": "python/utils/hostruntime/hsaruntime/discovery.py",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/python/utils/hostruntime/hsaruntime/discovery.py",
+      "status": 200,
+      "body_bytes": 5289,
+      "body_sha256": "bc423cd7cccd39528bce911d7f0ead693e34457f7af96840e7c8a9fc4df130bd",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\python\\utils\\hostruntime\\hsaruntime\\discovery.py"
+    },
+    {
+      "id": "python/iron/runtime/runtime.py",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/python/iron/runtime/runtime.py",
+      "status": 200,
+      "body_bytes": 25555,
+      "body_sha256": "5bf3cc15a50d786d81e14da394e199abcd48a1d216835f61c46e3afb9db41339",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\python\\iron\\runtime\\runtime.py"
+    },
+    {
+      "id": "test/python/npu/test_dispatch_time_scalar.py",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/test/python/npu/test_dispatch_time_scalar.py",
+      "status": 200,
+      "body_bytes": 8333,
+      "body_sha256": "9f1ff5c7a6b306b36af4681f04a1307be48b9a4c0be5399135436b53d33c6856",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\test\\python\\npu\\test_dispatch_time_scalar.py"
+    },
+    {
+      "id": "programming_guide/section-2/section-2d/README.md",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/programming_guide/section-2/section-2d/README.md",
+      "status": 200,
+      "body_bytes": 2760,
+      "body_sha256": "b0bc1c9e207057cd34db1431977acd127bc72c2777a8ad73cbe37a8361608a17",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\programming_guide\\section-2\\section-2d\\README.md"
+    },
+    {
+      "id": "tag",
+      "url": "https://api.github.com/repos/Xilinx/mlir-aie/git/ref/tags/v1.4.4",
+      "status": 200,
+      "body_bytes": 339,
+      "body_sha256": "689e6442d8dfe3df5942c23f3cc6c3566c3dfc530135d8a25e176d6394219be4",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\tag.json"
+    },
+    {
+      "id": "qwen3_06b_config",
+      "url": "https://huggingface.co/Qwen/Qwen3-0.6B/raw/main/config.json",
+      "status": 200,
+      "body_bytes": 726,
+      "body_sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\qwen3_06b_config.json"
+    },
+    {
+      "id": "qwen35_08b_config",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B/raw/main/config.json",
+      "status": 200,
+      "body_bytes": 2907,
+      "body_sha256": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\qwen35_08b_config.json"
+    },
+    {
+      "id": "python/utils/hostruntime/xrtruntime/tensor.py",
+      "url": "https://raw.githubusercontent.com/Xilinx/mlir-aie/e5c705c7b04bb8470db7364287843ba96e487a6e/python/utils/hostruntime/xrtruntime/tensor.py",
+      "status": 200,
+      "body_bytes": 8348,
+      "body_sha256": "3c0d491d2f87fde80520bb793c2e1fef17ad88807855e6f6c4528c46f1230fd8",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\python\\utils\\hostruntime\\xrtruntime\\tensor.py"
+    },
+    {
+      "id": "flm_qwen3_06b_config.json",
+      "url": "https://huggingface.co/FastFlowLM/Qwen3-0.6B-NPU2/raw/main/config.json",
+      "status": 200,
+      "body_bytes": 869,
+      "body_sha256": "8a5ec72f5c96766168a4024f88d70841ae341900a0c84fd4fd23f8eeae16c6a7",
+      "local_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\mlir-aie144-source-20261007\\flm_qwen3_06b_config.json"
+    }
+  ],
+  "coverage": "Bounded tag-pinned compiler/runtime/docs/tests plus official model configuration and package discovery. Not an exhaustive model survey, full compiler diff, API validation or installed-host audit.",
+  "hardware_queried": false,
+  "gpu_executed": false,
+  "npu_executed": false,
+  "engine_requests": false,
+  "compiler_or_sdk_used": false,
+  "installations": false,
+  "binaries_or_models_downloaded": false,
+  "driver_or_firmware_actions": false,
+  "wsl_or_service_lifecycle_actions": false,
+  "continuation_edited": false,
+  "frozen_source_edited": false,
+  "full_goal_completed": false
+}
