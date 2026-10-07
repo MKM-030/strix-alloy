@@ -5,11 +5,13 @@ Counter ceilings below bound this experiment interface; they are not advertised
 upstream ranges. No path, driver, NPU or host-admission override is accepted.
 The documented lookup-I/O thread policy is limited here to the matched 32/64
 probe; an omitted control retains the image's default.
+Gram mode requires explicit standalone normalization and compatible pinned
+branch defaults; admitting the experiment does not qualify its numerics.
 """
 import json
 
 SWITCHES=frozenset('HALOGEN_'+name for name in (
-    'DN_SCAN','DN_FUSED','DN_FUSED_NORM','DN_FUSED_PAIR','DN_NORM_FOLD',
+    'DN_SCAN','DN_FUSED','DN_FUSED_NORM','DN_FUSED_GRAM','DN_FUSED_PAIR','DN_NORM_FOLD',
     'DN_PREP_W','DN_UT5','DN_XH','ATTN_QS','CACHE_FULL','CACHE_INPLACE',
     'FLASH_NGRAM_RANDOM'))
 COUNTER_MAX={
@@ -45,6 +47,17 @@ def validate(controls):
         if key in MODES and value not in MODES[key]:
             raise ValueError('Unsupported kernel mode: '+key)
         result[key]=value
+    if result.get('HALOGEN_DN_FUSED_GRAM',0)==1:
+        # Raw Gram with native fused-norm default 1 omits normalization.
+        # Explicit norm 0 retains the native standalone gated RMS norm.
+        if result.get('HALOGEN_DN_FUSED_NORM')!=0:
+            raise ValueError('Gram requires explicit HALOGEN_DN_FUSED_NORM=0')
+        # Absent keys resolve to these exact 0.16.2 branch defaults without
+        # emitting additional environment overrides.
+        for key,required in (('HALOGEN_DN_FUSED',1),('HALOGEN_DN_SCAN',0),
+                             ('HALOGEN_DN_FUSED_PAIR',0),('HALOGEN_DN_NORM_FOLD',0)):
+            if result.get(key,required)!=required:
+                raise ValueError('Gram requires resolved '+key+'='+str(required))
     return result
 
 

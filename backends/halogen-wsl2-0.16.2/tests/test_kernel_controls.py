@@ -76,6 +76,78 @@ class KernelControlsTests(unittest.TestCase):
     def test_lookup_io_threads_do_not_add_a_default_override(self):
         self.assertNotIn('HALOGEN_NGRAM_GATHER_THREADS',self.module().environment({}))
 
+    def test_gram_requires_explicit_standalone_norm_selection(self):
+        for controls in ({'HALOGEN_DN_FUSED_GRAM':1},
+                         {'HALOGEN_DN_FUSED_GRAM':1,'HALOGEN_DN_FUSED':1,
+                          'HALOGEN_DN_SCAN':0,'HALOGEN_DN_FUSED_PAIR':0,
+                          'HALOGEN_DN_NORM_FOLD':0}):
+            with self.subTest(controls=controls),self.assertRaisesRegex(
+                    ValueError,'explicit HALOGEN_DN_FUSED_NORM=0'):
+                self.module().validate(controls)
+
+    def test_gram_refuses_the_norm_omitting_native_combination(self):
+        with self.assertRaisesRegex(ValueError,'explicit HALOGEN_DN_FUSED_NORM=0'):
+            self.module().validate({'HALOGEN_DN_FUSED_GRAM':1,
+                                    'HALOGEN_DN_FUSED_NORM':1})
+
+    def test_complete_guarded_gram_combo_parses_and_reaches_environment(self):
+        controls={'HALOGEN_DN_FUSED_GRAM':1,'HALOGEN_DN_FUSED_NORM':0,
+                  'HALOGEN_DN_FUSED_PAIR':0,'HALOGEN_DN_NORM_FOLD':0,
+                  'HALOGEN_DN_FUSED':1,'HALOGEN_DN_SCAN':0}
+        before=copy.deepcopy(controls)
+        try:
+            parsed=self.module().parse(json.dumps(controls))
+        except ValueError as error:
+            self.fail('Guarded known native Gram combination was refused: '+str(error))
+        self.assertEqual(parsed,before)
+        self.assertEqual(self.module().environment(parsed),
+                         {'HALOGEN_DN_FUSED_GRAM':'1','HALOGEN_DN_FUSED_NORM':'0',
+                          'HALOGEN_DN_FUSED_PAIR':'0','HALOGEN_DN_NORM_FOLD':'0',
+                          'HALOGEN_DN_FUSED':'1','HALOGEN_DN_SCAN':'0'})
+        self.assertEqual(controls,before)
+
+    def test_gram_uses_pinned_branch_defaults_without_adding_overrides(self):
+        controls={'HALOGEN_DN_FUSED_GRAM':1,'HALOGEN_DN_FUSED_NORM':0}
+        try:
+            validated=self.module().validate(controls)
+        except ValueError as error:
+            self.fail('Pinned default branches should admit guarded Gram: '+str(error))
+        self.assertEqual(validated,controls)
+        self.assertEqual(self.module().environment(validated),
+                         {'HALOGEN_DN_FUSED_GRAM':'1','HALOGEN_DN_FUSED_NORM':'0'})
+
+    def test_gram_refuses_incompatible_resolved_branches(self):
+        for key,value,required in (('HALOGEN_DN_FUSED',0,1),
+                                   ('HALOGEN_DN_SCAN',1,0),
+                                   ('HALOGEN_DN_FUSED_PAIR',1,0),
+                                   ('HALOGEN_DN_NORM_FOLD',1,0)):
+            controls={'HALOGEN_DN_FUSED_GRAM':1,'HALOGEN_DN_FUSED_NORM':0,
+                      key:value}
+            with self.subTest(key=key),self.assertRaisesRegex(
+                    ValueError,'resolved '+key+'='+str(required)):
+                self.module().validate(controls)
+
+    def test_gram_omission_and_explicit_off_preserve_existing_stock_controls(self):
+        self.assertEqual(self.module().environment({}),{})
+        stock={'HALOGEN_DN_SCAN':1,'HALOGEN_DN_FUSED':0,
+               'HALOGEN_DN_FUSED_NORM':1,'HALOGEN_DN_FUSED_PAIR':1,
+               'HALOGEN_DN_NORM_FOLD':1}
+        self.assertEqual(self.module().validate(stock),stock)
+        self.assertEqual(self.module().environment(stock),
+                         {'HALOGEN_DN_SCAN':'1','HALOGEN_DN_FUSED':'0',
+                          'HALOGEN_DN_FUSED_NORM':'1','HALOGEN_DN_FUSED_PAIR':'1',
+                          'HALOGEN_DN_NORM_FOLD':'1'})
+        explicit_off={**stock,'HALOGEN_DN_FUSED_GRAM':0}
+        try:
+            validated=self.module().validate(explicit_off)
+        except ValueError as error:
+            self.fail('Explicit Gram off must preserve existing branches: '+str(error))
+        self.assertEqual(validated,explicit_off)
+        self.assertEqual(self.module().environment(validated),
+                         {'HALOGEN_DN_SCAN':'1','HALOGEN_DN_FUSED':'0',
+                          'HALOGEN_DN_FUSED_NORM':'1','HALOGEN_DN_FUSED_PAIR':'1',
+                          'HALOGEN_DN_NORM_FOLD':'1','HALOGEN_DN_FUSED_GRAM':'0'})
+
     @unittest.skipUnless(shutil.which('pwsh'),'PowerShell 7 launcher fixture')
     def test_launcher_preserves_json_as_one_argument(self):
         controls='{"HALOGEN_DN_SCAN":0,"HALOGEN_ATTN_FA":64,"HALOGEN_NGRAM_GATHER_THREADS":32}'
