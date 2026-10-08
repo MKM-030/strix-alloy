@@ -80,8 +80,10 @@ failure, or justify fitting results to the oracle. No correction, tolerance
 change or serving integration was applied. The stricter full CPU result remains
 failed. Actual NPU output must still be compared at the unchanged NPU tolerance.
 
-The unchanged full comparison will not be repeated. The next bounded candidate
-is an actual NPU component run through the supported FLOAT output path. Live
+The unchanged full comparison will not be repeated. The subsequent actual
+[NPU component run](halogen-ple-npu-component-20261008.md) passed all values at
+the unchanged NPU development tolerance, with a single public return of 203 ms.
+This leaves the stricter CPU failure intact. Live
 early publication, an NPU producer, measured lead and complete-engine benefit
 remain open. The original ServiceNow server remains available on port 8840;
 the authorized physical startup floor is 35 GiB, commit admission 131 GiB and
