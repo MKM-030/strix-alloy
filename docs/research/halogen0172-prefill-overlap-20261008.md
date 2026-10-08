@@ -1,5 +1,23 @@
 # Halogen 0.17.2 performance development, 8 October 2026
 
+The subsequent connected ordinary-first-gather comparison is complete. The
+clean 0.17.2 Thinking server was restored in a visible Windows PowerShell 5.1
+console and verified ready/open. Its final three measured 8192-token prose
+requests with Thinking Off and 128 output tokens averaged **1226.59 prefill
+tok/s, 42.88 decode tok/s and 210/339 = 61.95% combined API MTP+PLD acceptance**.
+Serial TG1 prefill was 1261.00 tok/s. These are the current cohort's values,
+separate from the earlier fixed-depth comparison below.
+
+The new exact-version ordinary lookup attachment loaded, but its complete-row
+marker never appeared. It therefore establishes no copied-row coverage or
+speed improvement and stays disabled. The pinned native prefetch branch can
+bypass this ordinary seam; dropping the adapter's flag check would not change
+that branch. A concrete next scope targets the native copy worker after its
+original scalar ID stores, preserving native threads and GPU math. This is a
+static scope, not an installed worker optimization. See the
+[full comparison](../benchmarks/halogen0172-ordinary-first-gather-20261008.md)
+and [worker scope](../../scripts/benchmarks/experimental/native-worker-interception-scope.md).
+
 The serving instance is **Halogen 0.17.2**, v2, context capacity 262144,
 MTP2/PLD3,3, chunk/arena8192, Cache Off and one slot. After the single experimental
 observer window, the clean stock path was restored ready and open. Local and
