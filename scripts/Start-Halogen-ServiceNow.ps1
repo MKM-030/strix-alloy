@@ -5,16 +5,17 @@ Runs the managed Halogen endpoint in this console for a local API client.
 .DESCRIPTION
 Uses the existing project Python environment and normal controller/backend
 ownership, admission, reserve and cleanup rules. No credentials are printed.
-Current8K explicitly pairs an 8192-token prefill chunk with an 8192-token arena.
-HistoricalStock retains the native prefill defaults used by the retained
-2026-10-04 stock benchmark. Both select v2, MTP depth 2 and stock PLD 3,3.
+Current8K defaults to Halogen 0.17.2 and explicitly pairs an 8192-token prefill
+chunk with an 8192-token arena. HistoricalStock requires -HalogenVersion 0.16.2
+and retains the native prefill defaults used by the retained 2026-10-04 stock
+benchmark. Both select v2, MTP depth 2 and stock PLD 3,3.
 The historical 48.424 tok/s result is workload-specific, not a speed guarantee.
 ConsoleTrace opts into request/response content in the console. This script
 does not create a transcript or redirect request content to a file.
 .EXAMPLE
 .\scripts\Start-Halogen-ServiceNow.ps1 -ConsoleTrace
 .EXAMPLE
-.\scripts\Start-Halogen-ServiceNow.ps1 -Profile HistoricalStock -ConsoleTrace
+.\scripts\Start-Halogen-ServiceNow.ps1 -Profile HistoricalStock -HalogenVersion 0.16.2 -ConsoleTrace
 .EXAMPLE
 .\scripts\Start-Halogen-ServiceNow.ps1 -PrintOnly
 .EXAMPLE
@@ -29,7 +30,9 @@ param(
     [switch]$ConsoleTrace,
     [switch]$PrintOnly,
     [switch]$Status,
-    [switch]$Stop
+    [switch]$Stop,
+    [ValidateSet('0.16.2', '0.17.2')]
+    [string]$HalogenVersion = '0.17.2'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -61,15 +64,19 @@ if ($Stop -or $Status) {
     exit $LASTEXITCODE
 }
 
+if ($Profile -eq 'HistoricalStock' -and $HalogenVersion -ne '0.16.2') {
+    throw 'HistoricalStock requires explicit -HalogenVersion 0.16.2 for the retained 2026-10-04 stock profile.'
+}
+
 # make_profile reads installed metadata and token-file paths, not token values.
 # Keep the normal generator as the source of endpoint and readiness settings.
 $profileCode = @'
 import json, sys
 sys.path.insert(0, sys.argv[1])
 from manage import make_profile
-print(json.dumps(make_profile('Halogen', 'v2', 262144, 'Off')))
+print(json.dumps(make_profile('Halogen', 'v2', 262144, 'Off', sys.argv[2])))
 '@
-$profileJson = & $python -u -B -c $profileCode $server
+$profileJson = & $python -u -B -c $profileCode $server $HalogenVersion
 if ($LASTEXITCODE -ne 0) {
     throw 'The installed Halogen profile could not be prepared; no engine was launched.'
 }
@@ -91,7 +98,7 @@ if ($Profile -eq 'Current8K') {
 $configuration | Add-Member -NotePropertyName 'console_trace' `
     -NotePropertyValue ([bool]$ConsoleTrace.IsPresent) -Force
 
-Write-Host ('Profile: {0}; Halogen 0.16.2 v2; MTP depth 2; PLD 3,3; cache Off; one request.' -f $Profile)
+Write-Host ('Profile: {0}; Halogen {1} v2; MTP depth 2; PLD 3,3; cache Off; one request.' -f $Profile, $HalogenVersion)
 Write-Host 'Context capacity: 262144 positions (input plus output).'
 if ($Profile -eq 'Current8K') {
     Write-Host 'Prefill chunk / token arena: 8192 / 8192.'

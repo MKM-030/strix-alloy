@@ -1,0 +1,1238 @@
+{
+  "schema": "halogen0172.stock-adaptive-qualified-file-comparison.v1",
+  "created_utc": "2026-10-08T04:28:16.623115+00:00",
+  "contract": {
+    "schema": "halogen0172.stock-adaptive-depth23-contract.v1",
+    "sequence": [
+      "0172-fixed2-before",
+      "0172-stock-adaptive23",
+      "0172-fixed2-after",
+      "0162-original-visible-restoration"
+    ],
+    "actual_input_tokens": 8192,
+    "prefill_output_tokens": 1,
+    "decode_output_tokens": 128,
+    "warmups_per_cohort": 1,
+    "measured_repetitions_per_cohort": 3,
+    "cache": "Off",
+    "thinking": "Off",
+    "temperature": 0,
+    "seed": 1,
+    "mtp_depth": "fixed2 / native stock adaptive2..3 / fixed2",
+    "pld": "3,3",
+    "context_capacity": 262144,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "admission_physical_commit_gib": [
+      35,
+      131
+    ],
+    "runtime_physical_commit_gib": [
+      18,
+      18
+    ],
+    "preparation_physical_commit_gib": [
+      22,
+      22
+    ]
+  },
+  "frozen_contract_sha256": "630772a47739ac535b79cab8f66cfb8d1df35343d3b097d923242ca4d0b71db9",
+  "candidate_image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+  "prompt_text_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+  "windows": {
+    "before": {
+      "version": "0.17.2",
+      "managed_run_id": "3fa4eea3db2842a6bf8ae8e74789b3b6",
+      "halogen_run_id": "61e92cb9d64542deb200d4ca4eb30399",
+      "measured_at": 1791431784.357396,
+      "cohorts": {
+        "serial-tg1": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1278.0924528686505,
+            "stdev": 8.442872932069042,
+            "min": 1272.0881483631622,
+            "max": 1287.7461725232251
+          },
+          "api_raw_pp": {
+            "mean": 1278.0933333333332,
+            "stdev": 8.442835207045944,
+            "min": 1272.089,
+            "max": 1287.747
+          },
+          "calibrated_decode": null,
+          "api_raw_decode": null,
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "request_sha256": "c908c88d62356450236f5dacb1bad2cb51a8ce19dced1bae739e97bda854d91f",
+          "excluded_warmup": {
+            "pp_tps": 1297.7424919365155,
+            "decode_tps": null,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        },
+        "mtp-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1242.6612235769337,
+            "stdev": 40.40097166067448,
+            "min": 1196.9306894855756,
+            "max": 1273.5125534771091
+          },
+          "api_raw_pp": {
+            "mean": 1223.06,
+            "stdev": 73.98725878825351,
+            "min": 1138.126,
+            "max": 1273.513
+          },
+          "calibrated_decode": {
+            "mean": 44.06240648475015,
+            "stdev": 1.3483068807363057,
+            "min": 43.27398030858436,
+            "max": 45.619254325536275
+          },
+          "api_raw_decode": {
+            "mean": 43.315333333333335,
+            "stdev": 0.055184538897533324,
+            "min": 43.274,
+            "max": 43.378
+          },
+          "accepted": 210,
+          "drafted": 339,
+          "acceptance": 0.6194690265486725,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "fcd4fb7a1ea80aecbbe8b42289019a9b08b5f54458c02ec3e1060c95372b16d0",
+          "excluded_warmup": {
+            "pp_tps": 1258.3905352405338,
+            "decode_tps": 33.299987701366085,
+            "accepted": 70,
+            "drafted": 113,
+            "acceptance": 0.6194690265486725
+          }
+        },
+        "serial-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1275.7266960548186,
+            "stdev": 8.374539800244971,
+            "min": 1266.2174191388372,
+            "max": 1282.0022409094272
+          },
+          "api_raw_pp": {
+            "mean": 1268.7506666666666,
+            "stdev": 20.37611313114776,
+            "min": 1245.288,
+            "max": 1282.003
+          },
+          "calibrated_decode": {
+            "mean": 31.76892891270236,
+            "stdev": 0.8093085589273631,
+            "min": 30.84382021842135,
+            "max": 32.34598553657721
+          },
+          "api_raw_decode": {
+            "mean": 31.599,
+            "stdev": 1.1014894461591525,
+            "min": 30.334,
+            "max": 32.346
+          },
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "0e2dd6a3520c44da5d76cc2f65f097789794d3703c3a3d12219415784bacd538",
+          "excluded_warmup": {
+            "pp_tps": 1301.6805330881698,
+            "decode_tps": 32.111988481453835,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        }
+      },
+      "measured_observed_minimum_bytes": {
+        "available_bytes": 26322436096,
+        "commit_headroom_bytes": 122478075904
+      },
+      "all_recorded_snapshots_minimum_bytes": {
+        "available_bytes": 26316599296,
+        "commit_headroom_bytes": 122478075904
+      },
+      "policy": "fixed2",
+      "startup_proof": {
+        "attempt": "backends\\halogen-wsl2-0.17.2\\.local\\services\\61e92cb9d64542deb200d4ca4eb30399",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+        "engine_api_version": {
+          "api": "0.17.2",
+          "engine": "0.17.2",
+          "match": true
+        },
+        "environment": {
+          "HALOGEN_WSL_PROFILE": "halogen0172-dxg",
+          "HALOGEN_CTX": "262144",
+          "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+          "HALOGEN_CK_OVERLAY": "",
+          "HALOGEN_PREFLIGHT_PROFILE": "flash0172-v2-device64-chunk64-v1",
+          "HALOGEN_HYBRID_PROFILE": "vgm64-0172-v2-device64-v1",
+          "HALOGEN_KV_POOL_POSITIONS": "262144",
+          "HALOGEN_KV_SLOTS": "1",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+          "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+          "HALOGEN_FLASH_PIN_TRUNK": "1",
+          "HALOGEN_PROMPT_CACHE": "0",
+          "HALOGEN_DMALLOC_LOG": "1",
+          "HALOGEN_VERBOSE": "1",
+          "HALOGEN_ENGINE_WATCHDOG_S": "120",
+          "HALOGEN_TOKENIZER": "/models/tokenizer",
+          "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+          "HSA_ENABLE_SDMA": "1",
+          "HSA_ENABLE_DXG_DETECTION": "1",
+          "AMD_SERIALIZE_KERNEL": "0",
+          "AMD_SERIALIZE_COPY": "0",
+          "LD_PRELOAD": "/candidate/libhalogen0172-v2-preflight.so:/candidate/hip-register-private-rw.so",
+          "HALOGEN_API_PORT": "8731",
+          "HF_HUB_OFFLINE": "1",
+          "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+          "HALOGEN_CHECKPOINT_VARIANT": "v2",
+          "HALOGEN_MTP_DEPTH": "2",
+          "HALOGEN_PREFILL_CHUNK": "8192",
+          "HALOGEN_MAX_TOK": "8192",
+          "HALOGEN_PLD": "3,3"
+        },
+        "source_pins": {
+          "scripts\\auth_api.py": "d54892351dada523ab2d002fe1cc7fdbbf2a7d5a01d2750ccab7f7f0f7379394",
+          "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+          "scripts\\bridge_adapter.py": "e1921300a96305cd295f26d1dac086aa066f9594a4e3b486bacb0c6369f942a3",
+          "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+          "scripts\\entrypoint_adapter.py": "7997eadb7cc67306b70d9652e8dd13522f5dbddf3635a329aafab9490da602c8",
+          "scripts\\halogen0172_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+          "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+          "scripts\\kernel_controls.py": "41ac23f5d8b06818cae661adfbae1b357d6f4a80eb15e4374669c542206cf4fc",
+          "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+          "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+          "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+          "scripts\\memory_budget.py": "c95136eb04f09c850b614d421706e06467e883d854bb40c28216eb5c3134a1ef",
+          "scripts\\portable.py": "0f527452746de1135354439daf3b3f57ffb43ec28673aae1f6d02320196a6e91",
+          "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+          "scripts\\runner.py": "61298fa0b29347706c6bbcb12c36e7ff0e3afdbe32447d08238ec1e578f30c6a",
+          "scripts\\sample.ps1": "ba4cee6b0aa6e850597c9fda47247b91cf57088544192d87ee08abac1d53d50a",
+          "scripts\\service.py": "6365da51fb8f142bbff11189205d51ed9ea1d4d126b77cb5e9aa5321a9c34698",
+          "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+          "scripts\\startup_cache.py": "36f7aba4be6d6cfb682aa05a7d93c023784e79a5331dae1d1cfcbf26bb127e45",
+          "scripts\\startup_guard.py": "c53a7cc564fb48657153684f7b85bb53510d48c104e983eb1979c85302b88926",
+          "scripts\\startup_monitor.py": "91529801e906278f467f8069839dce58fc88ce396c8a85000814a8257559a099",
+          "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+          "patches\\halogen-preflight-bridge.c": "bb9a02714ff4896e53c0b144b835f4283f564434b68eb8fbaadfd7733dc51f0d",
+          "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+          "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+          "patches\\hip-register-hybrid.c": "17a392fe5754d4a6dd01c58c9a4fef2fe7706db41585b9b4e9aaae29894b0d3e",
+          "patches\\hip-register-private-rw.c": "8fce544698dc47a94f26d4989f54859560d86c6db29a7d0690739951a77e04aa",
+          "profiles\\release.json": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+          "profiles\\sources.json": "50cd7334add9a5b444eff3e52188abf4421f81e35b8944cc05d898b59198c64d"
+        },
+        "startup_line": "2026-10-08T03:52:57.925304187Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 selectable (drafter 1, speculates while alone)",
+        "api_version_lines": [
+          "2026-10-08T03:53:01.727717591Z serve_api: version 0.17.2, engine version 0.17.2"
+        ],
+        "startup_high_cap_customized": false,
+        "log_prefix": {
+          "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\61e92cb9d64542deb200d4ca4eb30399\\engine.log",
+          "bytes": 144289,
+          "sha256": "5d5afc93a223192352ec2967c4863f3cb192afbb2786b6171306900d5794a551",
+          "scope": "At most first 1 MiB; saved startup proof, not a full-log hash"
+        }
+      },
+      "mtp_vs_serial_decode_percent": 38.69654405355924
+    },
+    "adaptive": {
+      "version": "0.17.2",
+      "managed_run_id": "2bb0e10dac6548109db61b1a88a4c680",
+      "halogen_run_id": "782c5d68bda2461aa23bbcc36bf805e8",
+      "measured_at": 1791432614.2121813,
+      "cohorts": {
+        "serial-tg1": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1249.1786523287735,
+            "stdev": 51.976811912673945,
+            "min": 1191.961880612024,
+            "max": 1293.480022362904
+          },
+          "api_raw_pp": {
+            "mean": 1249.1786666666667,
+            "stdev": 51.97672995998628,
+            "min": 1191.962,
+            "max": 1293.48
+          },
+          "calibrated_decode": null,
+          "api_raw_decode": null,
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "request_sha256": "c908c88d62356450236f5dacb1bad2cb51a8ce19dced1bae739e97bda854d91f",
+          "excluded_warmup": {
+            "pp_tps": 1285.2817928927725,
+            "decode_tps": null,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        },
+        "mtp-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1241.326853130652,
+            "stdev": 10.669408502917001,
+            "min": 1233.3344483876208,
+            "max": 1253.4426230780791
+          },
+          "api_raw_pp": {
+            "mean": 1208.5826666666667,
+            "stdev": 58.64641239098374,
+            "min": 1142.22,
+            "max": 1253.443
+          },
+          "calibrated_decode": {
+            "mean": 42.66258142556573,
+            "stdev": 2.8779139875427684,
+            "min": 39.34498816859404,
+            "max": 44.48742068612628
+          },
+          "api_raw_decode": {
+            "mean": 41.48533333333334,
+            "stdev": 2.374140335644323,
+            "min": 39.345,
+            "max": 44.039
+          },
+          "accepted": 210,
+          "drafted": 339,
+          "acceptance": 0.6194690265486725,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "fcd4fb7a1ea80aecbbe8b42289019a9b08b5f54458c02ec3e1060c95372b16d0",
+          "excluded_warmup": {
+            "pp_tps": 1257.0587954359219,
+            "decode_tps": 32.22499475595225,
+            "accepted": 70,
+            "drafted": 113,
+            "acceptance": 0.6194690265486725
+          }
+        },
+        "serial-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1258.030972296372,
+            "stdev": 32.577686932238116,
+            "min": 1222.9443132615274,
+            "max": 1287.3216612696183
+          },
+          "api_raw_pp": {
+            "mean": 1193.6653333333334,
+            "stdev": 67.63746933714573,
+            "min": 1128.872,
+            "max": 1263.827
+          },
+          "calibrated_decode": {
+            "mean": 32.016467896554396,
+            "stdev": 0.2873565638492426,
+            "min": 31.69399855446474,
+            "max": 32.24540734842335
+          },
+          "api_raw_decode": {
+            "mean": 30.366333333333333,
+            "stdev": 1.1514904833880875,
+            "min": 29.64,
+            "max": 31.694
+          },
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "0e2dd6a3520c44da5d76cc2f65f097789794d3703c3a3d12219415784bacd538",
+          "excluded_warmup": {
+            "pp_tps": 1274.8207062905917,
+            "decode_tps": 32.20499258020421,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        }
+      },
+      "measured_observed_minimum_bytes": {
+        "available_bytes": 26182500352,
+        "commit_headroom_bytes": 122384818176
+      },
+      "all_recorded_snapshots_minimum_bytes": {
+        "available_bytes": 26182500352,
+        "commit_headroom_bytes": 122384818176
+      },
+      "policy": "native stock adaptive2..3",
+      "startup_proof": {
+        "attempt": "backends\\halogen-wsl2-0.17.2\\.local\\services\\782c5d68bda2461aa23bbcc36bf805e8",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+        "engine_api_version": {
+          "api": "0.17.2",
+          "engine": "0.17.2",
+          "match": true
+        },
+        "environment": {
+          "HALOGEN_WSL_PROFILE": "halogen0172-dxg",
+          "HALOGEN_CTX": "262144",
+          "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+          "HALOGEN_CK_OVERLAY": "",
+          "HALOGEN_PREFLIGHT_PROFILE": "flash0172-v2-device64-chunk64-v1",
+          "HALOGEN_HYBRID_PROFILE": "vgm64-0172-v2-device64-v1",
+          "HALOGEN_KV_POOL_POSITIONS": "262144",
+          "HALOGEN_KV_SLOTS": "1",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+          "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+          "HALOGEN_FLASH_PIN_TRUNK": "1",
+          "HALOGEN_PROMPT_CACHE": "0",
+          "HALOGEN_DMALLOC_LOG": "1",
+          "HALOGEN_VERBOSE": "1",
+          "HALOGEN_ENGINE_WATCHDOG_S": "120",
+          "HALOGEN_TOKENIZER": "/models/tokenizer",
+          "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+          "HSA_ENABLE_SDMA": "1",
+          "HSA_ENABLE_DXG_DETECTION": "1",
+          "AMD_SERIALIZE_KERNEL": "0",
+          "AMD_SERIALIZE_COPY": "0",
+          "LD_PRELOAD": "/candidate/libhalogen0172-v2-preflight.so:/candidate/hip-register-private-rw.so",
+          "HALOGEN_API_PORT": "8731",
+          "HF_HUB_OFFLINE": "1",
+          "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+          "HALOGEN_CHECKPOINT_VARIANT": "v2",
+          "HALOGEN_PREFILL_CHUNK": "8192",
+          "HALOGEN_MAX_TOK": "8192",
+          "HALOGEN_PLD": "3,3"
+        },
+        "source_pins": {
+          "scripts\\auth_api.py": "d54892351dada523ab2d002fe1cc7fdbbf2a7d5a01d2750ccab7f7f0f7379394",
+          "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+          "scripts\\bridge_adapter.py": "e1921300a96305cd295f26d1dac086aa066f9594a4e3b486bacb0c6369f942a3",
+          "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+          "scripts\\entrypoint_adapter.py": "7997eadb7cc67306b70d9652e8dd13522f5dbddf3635a329aafab9490da602c8",
+          "scripts\\halogen0172_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+          "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+          "scripts\\kernel_controls.py": "41ac23f5d8b06818cae661adfbae1b357d6f4a80eb15e4374669c542206cf4fc",
+          "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+          "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+          "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+          "scripts\\memory_budget.py": "c95136eb04f09c850b614d421706e06467e883d854bb40c28216eb5c3134a1ef",
+          "scripts\\portable.py": "0f527452746de1135354439daf3b3f57ffb43ec28673aae1f6d02320196a6e91",
+          "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+          "scripts\\runner.py": "61298fa0b29347706c6bbcb12c36e7ff0e3afdbe32447d08238ec1e578f30c6a",
+          "scripts\\sample.ps1": "ba4cee6b0aa6e850597c9fda47247b91cf57088544192d87ee08abac1d53d50a",
+          "scripts\\service.py": "6365da51fb8f142bbff11189205d51ed9ea1d4d126b77cb5e9aa5321a9c34698",
+          "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+          "scripts\\startup_cache.py": "36f7aba4be6d6cfb682aa05a7d93c023784e79a5331dae1d1cfcbf26bb127e45",
+          "scripts\\startup_guard.py": "c53a7cc564fb48657153684f7b85bb53510d48c104e983eb1979c85302b88926",
+          "scripts\\startup_monitor.py": "91529801e906278f467f8069839dce58fc88ce396c8a85000814a8257559a099",
+          "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+          "patches\\halogen-preflight-bridge.c": "bb9a02714ff4896e53c0b144b835f4283f564434b68eb8fbaadfd7733dc51f0d",
+          "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+          "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+          "patches\\hip-register-hybrid.c": "17a392fe5754d4a6dd01c58c9a4fef2fe7706db41585b9b4e9aaae29894b0d3e",
+          "patches\\hip-register-private-rw.c": "8fce544698dc47a94f26d4989f54859560d86c6db29a7d0690739951a77e04aa",
+          "profiles\\release.json": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+          "profiles\\sources.json": "50cd7334add9a5b444eff3e52188abf4421f81e35b8944cc05d898b59198c64d"
+        },
+        "startup_line": "2026-10-08T04:02:47.264338900Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 (up to 3) selectable (drafter 1, speculates while alone)",
+        "api_version_lines": [
+          "2026-10-08T04:02:50.796077927Z serve_api: version 0.17.2, engine version 0.17.2"
+        ],
+        "startup_high_cap_customized": false,
+        "log_prefix": {
+          "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\782c5d68bda2461aa23bbcc36bf805e8\\engine.log",
+          "bytes": 150559,
+          "sha256": "9bb9ebe3e3f04bb1b138e79c7c42ecc87ac4debf9957c9e2b98708fe33b2b23a",
+          "scope": "At most first 1 MiB; saved startup proof, not a full-log hash"
+        }
+      },
+      "mtp_vs_serial_decode_percent": 33.251992578972356
+    },
+    "after": {
+      "version": "0.17.2",
+      "managed_run_id": "df57ff983cbb44a18c9154b796a91845",
+      "halogen_run_id": "6dfa5d9c0cec42cbb1f6ac0bd150d9a0",
+      "measured_at": 1791433042.0857139,
+      "cohorts": {
+        "serial-tg1": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1241.1332824177896,
+            "stdev": 7.276155709702242,
+            "min": 1233.2146470668933,
+            "max": 1247.5244414833132
+          },
+          "api_raw_pp": {
+            "mean": 1241.134,
+            "stdev": 7.2763392581710535,
+            "min": 1233.215,
+            "max": 1247.525
+          },
+          "calibrated_decode": null,
+          "api_raw_decode": null,
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "request_sha256": "c908c88d62356450236f5dacb1bad2cb51a8ce19dced1bae739e97bda854d91f",
+          "excluded_warmup": {
+            "pp_tps": 1236.4348307288262,
+            "decode_tps": null,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        },
+        "mtp-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1175.1586414516366,
+            "stdev": 17.733650418171017,
+            "min": 1163.1566395593934,
+            "max": 1195.527882376539
+          },
+          "api_raw_pp": {
+            "mean": 1169.0283333333334,
+            "stdev": 24.106358338275246,
+            "min": 1148.4,
+            "max": 1195.528
+          },
+          "calibrated_decode": {
+            "mean": 43.76455200737261,
+            "stdev": 0.34353798966655763,
+            "min": 43.50067388938392,
+            "max": 44.152995655953966
+          },
+          "api_raw_decode": {
+            "mean": 43.536,
+            "stdev": 0.6750355546191629,
+            "min": 42.815,
+            "max": 44.153
+          },
+          "accepted": 210,
+          "drafted": 339,
+          "acceptance": 0.6194690265486725,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "fcd4fb7a1ea80aecbbe8b42289019a9b08b5f54458c02ec3e1060c95372b16d0",
+          "excluded_warmup": {
+            "pp_tps": 1170.0562531116086,
+            "decode_tps": 33.34555475364856,
+            "accepted": 70,
+            "drafted": 113,
+            "acceptance": 0.6194690265486725
+          }
+        },
+        "serial-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1234.2121623986288,
+            "stdev": 7.6272974793174235,
+            "min": 1227.8357420961731,
+            "max": 1242.6617045991409
+          },
+          "api_raw_pp": {
+            "mean": 1234.2123333333332,
+            "stdev": 7.627358804549171,
+            "min": 1227.836,
+            "max": 1242.662
+          },
+          "calibrated_decode": {
+            "mean": 32.368662198088394,
+            "stdev": 0.2784565855455952,
+            "min": 32.06399237786852,
+            "max": 32.609993150352494
+          },
+          "api_raw_decode": {
+            "mean": 32.36866666666666,
+            "stdev": 0.2784552627143781,
+            "min": 32.064,
+            "max": 32.61
+          },
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "0e2dd6a3520c44da5d76cc2f65f097789794d3703c3a3d12219415784bacd538",
+          "excluded_warmup": {
+            "pp_tps": 1225.800215528919,
+            "decode_tps": 32.76694905677443,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        }
+      },
+      "measured_observed_minimum_bytes": {
+        "available_bytes": 25939693568,
+        "commit_headroom_bytes": 122119319552
+      },
+      "all_recorded_snapshots_minimum_bytes": {
+        "available_bytes": 25920262144,
+        "commit_headroom_bytes": 122020442112
+      },
+      "policy": "fixed2",
+      "startup_proof": {
+        "attempt": "backends\\halogen-wsl2-0.17.2\\.local\\services\\6dfa5d9c0cec42cbb1f6ac0bd150d9a0",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+        "engine_api_version": {
+          "api": "0.17.2",
+          "engine": "0.17.2",
+          "match": true
+        },
+        "environment": {
+          "HALOGEN_WSL_PROFILE": "halogen0172-dxg",
+          "HALOGEN_CTX": "262144",
+          "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+          "HALOGEN_CK_OVERLAY": "",
+          "HALOGEN_PREFLIGHT_PROFILE": "flash0172-v2-device64-chunk64-v1",
+          "HALOGEN_HYBRID_PROFILE": "vgm64-0172-v2-device64-v1",
+          "HALOGEN_KV_POOL_POSITIONS": "262144",
+          "HALOGEN_KV_SLOTS": "1",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+          "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+          "HALOGEN_FLASH_PIN_TRUNK": "1",
+          "HALOGEN_PROMPT_CACHE": "0",
+          "HALOGEN_DMALLOC_LOG": "1",
+          "HALOGEN_VERBOSE": "1",
+          "HALOGEN_ENGINE_WATCHDOG_S": "120",
+          "HALOGEN_TOKENIZER": "/models/tokenizer",
+          "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+          "HSA_ENABLE_SDMA": "1",
+          "HSA_ENABLE_DXG_DETECTION": "1",
+          "AMD_SERIALIZE_KERNEL": "0",
+          "AMD_SERIALIZE_COPY": "0",
+          "LD_PRELOAD": "/candidate/libhalogen0172-v2-preflight.so:/candidate/hip-register-private-rw.so",
+          "HALOGEN_API_PORT": "8731",
+          "HF_HUB_OFFLINE": "1",
+          "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+          "HALOGEN_CHECKPOINT_VARIANT": "v2",
+          "HALOGEN_MTP_DEPTH": "2",
+          "HALOGEN_PREFILL_CHUNK": "8192",
+          "HALOGEN_MAX_TOK": "8192",
+          "HALOGEN_PLD": "3,3"
+        },
+        "source_pins": {
+          "scripts\\auth_api.py": "d54892351dada523ab2d002fe1cc7fdbbf2a7d5a01d2750ccab7f7f0f7379394",
+          "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+          "scripts\\bridge_adapter.py": "e1921300a96305cd295f26d1dac086aa066f9594a4e3b486bacb0c6369f942a3",
+          "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+          "scripts\\entrypoint_adapter.py": "7997eadb7cc67306b70d9652e8dd13522f5dbddf3635a329aafab9490da602c8",
+          "scripts\\halogen0172_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+          "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+          "scripts\\kernel_controls.py": "41ac23f5d8b06818cae661adfbae1b357d6f4a80eb15e4374669c542206cf4fc",
+          "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+          "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+          "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+          "scripts\\memory_budget.py": "c95136eb04f09c850b614d421706e06467e883d854bb40c28216eb5c3134a1ef",
+          "scripts\\portable.py": "0f527452746de1135354439daf3b3f57ffb43ec28673aae1f6d02320196a6e91",
+          "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+          "scripts\\runner.py": "61298fa0b29347706c6bbcb12c36e7ff0e3afdbe32447d08238ec1e578f30c6a",
+          "scripts\\sample.ps1": "ba4cee6b0aa6e850597c9fda47247b91cf57088544192d87ee08abac1d53d50a",
+          "scripts\\service.py": "6365da51fb8f142bbff11189205d51ed9ea1d4d126b77cb5e9aa5321a9c34698",
+          "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+          "scripts\\startup_cache.py": "36f7aba4be6d6cfb682aa05a7d93c023784e79a5331dae1d1cfcbf26bb127e45",
+          "scripts\\startup_guard.py": "c53a7cc564fb48657153684f7b85bb53510d48c104e983eb1979c85302b88926",
+          "scripts\\startup_monitor.py": "91529801e906278f467f8069839dce58fc88ce396c8a85000814a8257559a099",
+          "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+          "patches\\halogen-preflight-bridge.c": "bb9a02714ff4896e53c0b144b835f4283f564434b68eb8fbaadfd7733dc51f0d",
+          "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+          "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+          "patches\\hip-register-hybrid.c": "17a392fe5754d4a6dd01c58c9a4fef2fe7706db41585b9b4e9aaae29894b0d3e",
+          "patches\\hip-register-private-rw.c": "8fce544698dc47a94f26d4989f54859560d86c6db29a7d0690739951a77e04aa",
+          "profiles\\release.json": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+          "profiles\\sources.json": "50cd7334add9a5b444eff3e52188abf4421f81e35b8944cc05d898b59198c64d"
+        },
+        "startup_line": "2026-10-08T04:14:01.817958990Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 selectable (drafter 1, speculates while alone)",
+        "api_version_lines": [
+          "2026-10-08T04:14:04.852782209Z serve_api: version 0.17.2, engine version 0.17.2"
+        ],
+        "startup_high_cap_customized": false,
+        "log_prefix": {
+          "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\6dfa5d9c0cec42cbb1f6ac0bd150d9a0\\engine.log",
+          "bytes": 141427,
+          "sha256": "11f24b42d5d55e7cab6dbf3694462d9607397ece4d6b38ba492a1f93fdd2c197",
+          "scope": "At most first 1 MiB; saved startup proof, not a full-log hash"
+        }
+      },
+      "mtp_vs_serial_decode_percent": 35.206551755349416
+    }
+  },
+  "comparisons": {
+    "serial_tg1_pp": {
+      "before": 1278.0924528686505,
+      "candidate": 1249.1786523287735,
+      "after": 1241.1332824177896,
+      "bracket_mean": 1259.61286764322,
+      "after_vs_before_percent": -2.8917446752703135,
+      "candidate_vs_before_percent": -2.2622620511513536,
+      "candidate_vs_after_percent": 0.6482277145377191,
+      "candidate_vs_bracket_mean_percent": -0.8283668405173694
+    },
+    "mtp_tg128_pp": {
+      "before": 1242.6612235769337,
+      "candidate": 1241.326853130652,
+      "after": 1175.1586414516366,
+      "bracket_mean": 1208.9099325142852,
+      "after_vs_before_percent": -5.4320985353509705,
+      "candidate_vs_before_percent": -0.1073800663418889,
+      "candidate_vs_after_percent": 5.630576957446332,
+      "candidate_vs_bracket_mean_percent": 2.6815000641897457
+    },
+    "serial_tg128_pp": {
+      "before": 1275.7266960548186,
+      "candidate": 1258.030972296372,
+      "after": 1234.2121623986288,
+      "bracket_mean": 1254.9694292267236,
+      "after_vs_before_percent": -3.254187106421258,
+      "candidate_vs_before_percent": -1.3871093090056408,
+      "candidate_vs_after_percent": 1.929879693573322,
+      "candidate_vs_bracket_mean_percent": 0.24395359746212097
+    },
+    "mtp_tg128_decode": {
+      "before": 44.06240648475015,
+      "candidate": 42.66258142556573,
+      "after": 43.76455200737261,
+      "bracket_mean": 43.91347924606138,
+      "after_vs_before_percent": -0.6759832272906552,
+      "candidate_vs_before_percent": -3.1769146782050783,
+      "candidate_vs_after_percent": -2.517952386719813,
+      "candidate_vs_bracket_mean_percent": -2.8485509278061594
+    },
+    "serial_tg128_decode": {
+      "before": 31.76892891270236,
+      "candidate": 32.016467896554396,
+      "after": 32.368662198088394,
+      "bracket_mean": 32.068795555395376,
+      "after_vs_before_percent": 1.8877982541811056,
+      "candidate_vs_before_percent": 0.7791858029971621,
+      "candidate_vs_after_percent": -1.0880718497992103,
+      "candidate_vs_bracket_mean_percent": -0.1631731343030629
+    },
+    "mtp_pld_combined_acceptance": {
+      "before": 0.6194690265486725,
+      "candidate": 0.6194690265486725,
+      "after": 0.6194690265486725,
+      "bracket_mean": 0.6194690265486725,
+      "candidate_vs_before_percentage_points": 0.0,
+      "candidate_vs_after_percentage_points": 0.0,
+      "candidate_vs_bracket_mean_percentage_points": 0.0,
+      "after_vs_before_percentage_points": 0.0
+    }
+  },
+  "greedy_output_parity": true,
+  "request_identity_parity": true,
+  "policy_delta": "Only omission of engine.draft_tokens and runtime HALOGEN_MTP_DEPTH; native default cap3, no custom cap",
+  "acceptance_definition": "Sum API draft_n_accepted / sum API draft_n across three measured MTP+PLD requests; not isolated MTP-head acceptance",
+  "acceptance_depth_scope": "Startup confirms adaptive cap2..3; selected per-round depths and policy thresholds are not exposed by gateway_cold",
+  "clock_definition": "API raw rate multiplied by monotonic_per_raw; stored rates and clock deltas independently checked",
+  "memory_scope": "0.2-second host RAM/commit samples and controller snapshots; no VRAM/NPU peak",
+  "runtime_identity_scope": "Saved managed/engine IDs, pinned profiles, manifests, ready/health and startup log prefix; no live-state query",
+  "cohort_completeness": {
+    "windows": 3,
+    "rows_per_window": 12,
+    "measured_per_window": 9,
+    "excluded_warmups_per_window": 3,
+    "failure_receipts_in_measured_windows": false
+  },
+  "original_restoration": {
+    "status": "intentionally_superseded_by_human",
+    "original_ready_open": false,
+    "human_supersession": "Develop and keep open latest0.17.2; old0162restore superseded",
+    "superseding_deployment_receipt": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\visible-latest-ready-9aebda234e41405f9eb217ca635d12c3.json"
+  },
+  "latest_deployment": {
+    "status": "verified_by_root_receipt",
+    "version": "0.17.2",
+    "latest_ready_open": true,
+    "original_ready_open": false,
+    "human_supersession": "Develop and keep open latest0.17.2; old0162restore superseded",
+    "receipt": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\visible-latest-ready-9aebda234e41405f9eb217ca635d12c3.json",
+    "utc": "2026-10-08T04:25:08.182652+00:00",
+    "profile_sha256": "0d050151b01750454d151743720199d0e731aa9d24d35ec11cc01fd30299cf68",
+    "visible_launch_receipt": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\visible-latest-launch.json",
+    "controller_run_id": "8e2d43963524479fb30f9752981938b6",
+    "backend_run_id": "0649604a0414417b96e53092ae55d98b",
+    "identities": {
+      "controller": {
+        "pid": 23976,
+        "creation_time_100ns": 134359068742380148,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 34736,
+        "creation_time_100ns": 134359068847499244,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "console": {
+        "pid": 28928,
+        "creation_time_100ns": 134359068739346856,
+        "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      }
+    },
+    "startup_proof": {
+      "attempt": "backends\\halogen-wsl2-0.17.2\\.local\\services\\0649604a0414417b96e53092ae55d98b",
+      "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+      "engine_api_version": {
+        "api": "0.17.2",
+        "engine": "0.17.2",
+        "match": true
+      },
+      "environment": {
+        "HALOGEN_WSL_PROFILE": "halogen0172-dxg",
+        "HALOGEN_CTX": "262144",
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_CK_OVERLAY": "",
+        "HALOGEN_PREFLIGHT_PROFILE": "flash0172-v2-device64-chunk64-v1",
+        "HALOGEN_HYBRID_PROFILE": "vgm64-0172-v2-device64-v1",
+        "HALOGEN_KV_POOL_POSITIONS": "262144",
+        "HALOGEN_KV_SLOTS": "1",
+        "HALOGEN_HOST_RESERVE_GIB": "18",
+        "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+        "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+        "HALOGEN_FLASH_PIN_TRUNK": "1",
+        "HALOGEN_PROMPT_CACHE": "0",
+        "HALOGEN_DMALLOC_LOG": "1",
+        "HALOGEN_VERBOSE": "1",
+        "HALOGEN_ENGINE_WATCHDOG_S": "120",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+        "HSA_ENABLE_SDMA": "1",
+        "HSA_ENABLE_DXG_DETECTION": "1",
+        "AMD_SERIALIZE_KERNEL": "0",
+        "AMD_SERIALIZE_COPY": "0",
+        "LD_PRELOAD": "/candidate/libhalogen0172-v2-preflight.so:/candidate/hip-register-private-rw.so",
+        "HALOGEN_API_PORT": "8731",
+        "HF_HUB_OFFLINE": "1",
+        "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PREFILL_CHUNK": "8192",
+        "HALOGEN_MAX_TOK": "8192",
+        "HALOGEN_PLD": "3,3"
+      },
+      "source_pins": {
+        "scripts\\auth_api.py": "d54892351dada523ab2d002fe1cc7fdbbf2a7d5a01d2750ccab7f7f0f7379394",
+        "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+        "scripts\\bridge_adapter.py": "e1921300a96305cd295f26d1dac086aa066f9594a4e3b486bacb0c6369f942a3",
+        "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+        "scripts\\entrypoint_adapter.py": "7997eadb7cc67306b70d9652e8dd13522f5dbddf3635a329aafab9490da602c8",
+        "scripts\\halogen0172_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+        "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+        "scripts\\kernel_controls.py": "41ac23f5d8b06818cae661adfbae1b357d6f4a80eb15e4374669c542206cf4fc",
+        "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+        "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "scripts\\memory_budget.py": "c95136eb04f09c850b614d421706e06467e883d854bb40c28216eb5c3134a1ef",
+        "scripts\\portable.py": "0f527452746de1135354439daf3b3f57ffb43ec28673aae1f6d02320196a6e91",
+        "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "scripts\\runner.py": "61298fa0b29347706c6bbcb12c36e7ff0e3afdbe32447d08238ec1e578f30c6a",
+        "scripts\\sample.ps1": "ba4cee6b0aa6e850597c9fda47247b91cf57088544192d87ee08abac1d53d50a",
+        "scripts\\service.py": "6365da51fb8f142bbff11189205d51ed9ea1d4d126b77cb5e9aa5321a9c34698",
+        "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+        "scripts\\startup_cache.py": "36f7aba4be6d6cfb682aa05a7d93c023784e79a5331dae1d1cfcbf26bb127e45",
+        "scripts\\startup_guard.py": "c53a7cc564fb48657153684f7b85bb53510d48c104e983eb1979c85302b88926",
+        "scripts\\startup_monitor.py": "91529801e906278f467f8069839dce58fc88ce396c8a85000814a8257559a099",
+        "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+        "patches\\halogen-preflight-bridge.c": "bb9a02714ff4896e53c0b144b835f4283f564434b68eb8fbaadfd7733dc51f0d",
+        "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+        "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+        "patches\\hip-register-hybrid.c": "17a392fe5754d4a6dd01c58c9a4fef2fe7706db41585b9b4e9aaae29894b0d3e",
+        "patches\\hip-register-private-rw.c": "8fce544698dc47a94f26d4989f54859560d86c6db29a7d0690739951a77e04aa",
+        "profiles\\release.json": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+        "profiles\\sources.json": "50cd7334add9a5b444eff3e52188abf4421f81e35b8944cc05d898b59198c64d"
+      },
+      "startup_line": "2026-10-08T04:23:53.001252020Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 selectable (drafter 1, speculates while alone)",
+      "api_version_lines": [
+        "2026-10-08T04:23:56.103390254Z serve_api: version 0.17.2, engine version 0.17.2"
+      ],
+      "startup_high_cap_customized": false,
+      "log_prefix": {
+        "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\0649604a0414417b96e53092ae55d98b\\engine.log",
+        "bytes": 135156,
+        "sha256": "233c377232059a233806fa9f1779f03ba60a8868eda0de2fd7372b6ab2701298",
+        "scope": "At most first 1 MiB; saved startup proof, not a full-log hash"
+      }
+    },
+    "scope": "Saved Root receipt and startup files only; no live-state access here"
+  },
+  "npu_gain_measured": false,
+  "diagnostic_timing_provenance": {
+    "source": "Root's native Windows host timing reconstruction; supplied saved receipts below",
+    "time_basis": "Outer Windows controller.log timestamps converted from Europe/Berlin to UTC; guest timestamps are not used for this overlap claim",
+    "cpu_regression_red_completed_utc": "2026-10-08T03:53:51.5766727Z",
+    "cpu_regression_green_completed_utc": "2026-10-08T03:54:37.1875943Z",
+    "green_file_last_write_utc": "2026-10-08T03:54:37.218161Z",
+    "green_external_duration_seconds": 2.0664482,
+    "green_exact_start_retained": false,
+    "earliest_measured_serial_tg1_start_utc": "2026-10-08T03:54:43.5092Z",
+    "limitations": [
+      "Root places the tiny native CPU green regression in calibration and tens of milliseconds at the beginning of the excluded serial TG1 warmup; it was terminal more than six seconds before the earliest measured request. Rounded outer request end-minus-duration arithmetic gives approximately 23 ms of warmup overlap; approximately 31 ms spans prior calibration completion to green termination.",
+      "No measured-request overlap is established. This does not establish absence of a residual contending effect or a causal effect on any rate; completed MTP rows are not reclassified on this evidence alone.",
+      "Stop observer session57345 failed with WinError31 while querying process name after engine session3961 exited0. Root separately verified current/backend stopped, normal cleanup/recovery true and fresh native identities missing; the observer failure remains preserved.",
+      "A failed observer alone does not justify a duplicate engine or a restart. The next adaptive engine had separately confirmed live handles."
+    ],
+    "saved_receipts": [
+      {
+        "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\before-timing-provenance.json",
+        "saved_receipt": {
+          "schema": "halogen0172.before-native-cpu-regression-timing.v1",
+          "created_utc": "2026-10-08T04:02:55.371757+00:00",
+          "managed_run_id": "3fa4eea3db2842a6bf8ae8e74789b3b6",
+          "timezone": "Europe/Berlin; native Windows outer logger UTC+02:00 on this date",
+          "calibration_end_utc": "2026-10-08T03:54:37.156Z",
+          "calibration_wall_seconds": 12.0583,
+          "excluded_serial_tg1_warmup_end_utc": "2026-10-08T03:54:43.500Z",
+          "excluded_warmup_wall_seconds": 6.3354,
+          "first_measured_serial_tg1_end_utc": "2026-10-08T03:54:49.894Z",
+          "first_measured_wall_seconds": 6.3848,
+          "first_measured_start_end_minus_wall_approx_utc": "2026-10-08T03:54:43.5092Z",
+          "green_all_children_returned_before_receipt_utc": "2026-10-08T03:54:37.1875943Z",
+          "green_receipt_file_lastwrite_utc": "2026-10-08T03:54:37.2181610Z",
+          "green_outer_wall_seconds": 2.0664482,
+          "green_outer_start_utc": null,
+          "observed_overlap": "NativeCPU source regression overlaps calibration and approximately first31ms of excludedTG1warmup; earliest measuredrequest starts over6s after children are terminal",
+          "measured_request_execution_overlap": false,
+          "residual_contention_effect_established": false,
+          "no_causal_speed_correction": true,
+          "no_cohort_repeated": true,
+          "evidence": {
+            "host_excerpt": {
+              "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\before-host-clock-excerpt.txt",
+              "bytes": 1215,
+              "sha256": "421814306694245e61cc238fb509974add138a92a2552d1c1eb3f524215f97a3"
+            },
+            "cpu_regression_receipts": [
+              {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1c\\regression-v1b-red\\result.json",
+                "bytes": 9193,
+                "sha256": "7ae206e35184e15c4f52f2952b68b4e8b96511c8f277c4a1e147f3b37710a0b8"
+              },
+              {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1c\\regression-v1c-green\\result.json",
+                "bytes": 9256,
+                "sha256": "bb9bcd69ee7c124174e4badd48eb211db7cb86e3bcd6aaed23096eabcbe93bfc"
+              }
+            ],
+            "regression_scope": {
+              "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1c\\execution-plan.md",
+              "bytes": 9493,
+              "sha256": "675d2a314ba6666b84c5ec7cb9dd2b1aa621e67e8c7830ff0e137680d4122d86"
+            }
+          }
+        }
+      },
+      {
+        "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\terminal-revalidation-6223152fbfc7450eb0a2e513e578922b.json",
+        "saved_receipt": {
+          "utc": "2026-10-08T04:00:05.825026+00:00",
+          "controller": {
+            "schema": 1,
+            "run_id": "3fa4eea3db2842a6bf8ae8e74789b3b6",
+            "pid": 38920,
+            "phase": "stopped",
+            "backend": "halogen-v2",
+            "checkpoint": "v2",
+            "context": 262144,
+            "port": 8840,
+            "heartbeat": 1791431876.6785214,
+            "minimum_reserve_gib": 18.0,
+            "profile_sha256": "b58223a1e149e2f219fb0d830299f18c01d573d43790ad69fe71c4fe55e91477",
+            "memory": {
+              "available_bytes": 26542252032,
+              "committed_bytes": 117379805184,
+              "commit_limit_bytes": 240139440128,
+              "commit_headroom_bytes": 122759634944
+            },
+            "minimum_available_gib": 24.50271224975586,
+            "ready_at": 1791431625.345979,
+            "active_requests": 0,
+            "available_gib": 24.70782470703125,
+            "error": null
+          },
+          "backend": {
+            "schema": 1,
+            "run_id": "61e92cb9d64542deb200d4ca4eb30399",
+            "attempt": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.2\\.local\\services\\61e92cb9d64542deb200d4ca4eb30399",
+            "phase": "stopped",
+            "endpoint": "http://127.0.0.1:8731/v1",
+            "model": "halogen-qwen3.8-flash-next",
+            "context": 262144,
+            "slots": 1,
+            "checkpoint": "v2",
+            "prompt_cache": "Off",
+            "serve_seconds": 0,
+            "controller_pid": 29756,
+            "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.2\\.local\\api-token.txt",
+            "log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.2\\.local\\services\\61e92cb9d64542deb200d4ca4eb30399\\engine.log",
+            "controller_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.2\\.local\\services\\61e92cb9d64542deb200d4ca4eb30399\\service.log",
+            "ready_at": 1791431633.47251,
+            "container_id": "29e16ec57357dd74b85355c1284c3fcfad0d22f988423040a07abb9af653d981",
+            "outcome": {
+              "ready": true,
+              "cleanup": true,
+              "recovery": true,
+              "error": null,
+              "stopped_at": 1791431876.657517,
+              "context": 262144
+            }
+          },
+          "outcome": {
+            "ready": true,
+            "cleanup": true,
+            "recovery": true,
+            "error": null,
+            "stopped_at": 1791431876.657517,
+            "context": 262144
+          },
+          "actual_native_processes_missing": true,
+          "engine_session_exit_code": 0,
+          "stop_observer_session": 57345,
+          "stop_observer_exit_code": 1,
+          "observation_error": "Transient QueryFullProcessImageNameW WinError31 during completed exit; freshly missing identities independently verified",
+          "window": "fixed2-before",
+          "phase": "terminal-normal-stop",
+          "server_restart_performed": false
+        }
+      }
+    ],
+    "receipt_binding_complete": true
+  },
+  "overall_gpu_npu_acceleration_goal_achieved": false,
+  "exact_35_gib_start_sufficiency_proven": false,
+  "source_pins": [
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\contract.json",
+      "sha256": "630772a47739ac535b79cab8f66cfb8d1df35343d3b097d923242ca4d0b71db9",
+      "bytes": 6057
+    },
+    {
+      "path": "scripts\\benchmarks\\gateway_cold.py",
+      "sha256": "fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d",
+      "bytes": 10890
+    },
+    {
+      "path": "scripts\\benchmarks\\article_metrics.py",
+      "sha256": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+      "bytes": 8932
+    },
+    {
+      "path": "scripts\\benchmarks\\clock_probe.py",
+      "sha256": "a3f32a4c5c7e423c47ceebdd2f0fe0cd1860d7840c9fd0de10756e887c70a05e",
+      "bytes": 1709
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\prompts\\prompt-8192-prose.txt",
+      "sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+      "bytes": 42238
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\profile-fixed2.json",
+      "sha256": "b58223a1e149e2f219fb0d830299f18c01d573d43790ad69fe71c4fe55e91477",
+      "bytes": 1468
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\profile-adaptive.json",
+      "sha256": "12f8fb02e95d57568d7806a6f77ba247e1f03e962a314f7da2a7d4f24a439f27",
+      "bytes": 1492
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\before\\summary.json",
+      "sha256": "1b665710d3ae582652bd345e1958e1fa70e057a723beaeb977848120a77f0448",
+      "bytes": 1417
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\before\\identity.json",
+      "sha256": "15df04354f81f05a149c2a405ddb138ecf05659169de95f25a08a878922fe8ad",
+      "bytes": 2008
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\before\\samples.jsonl",
+      "sha256": "90b6c6d440decb3894823cddf932ebba2e4d7439c5630cffd66d89ca5e5d5f85",
+      "bytes": 20241
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\before\\prompt-8192-prose.txt",
+      "sha256": "e17340a7af7ee2cc77c747af7bad30044a474719ad52abfb2e0c8c0cd700fde3",
+      "bytes": 42516
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\adaptive\\summary.json",
+      "sha256": "8f18f83c0380a9122f10ada9e0e28d13b776a5e3f099b4f07c7d83355581e386",
+      "bytes": 1420
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\adaptive\\identity.json",
+      "sha256": "9b89830b09235ad9adcb46ede07650ca04c02b79843b347fd73fcab0b88fb41a",
+      "bytes": 1982
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\adaptive\\samples.jsonl",
+      "sha256": "ea6aeb2da9a428e558c6ce9faec73e34db6bca4409f71f27d1ab7e15ec99b358",
+      "bytes": 20180
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\adaptive\\prompt-8192-prose.txt",
+      "sha256": "e17340a7af7ee2cc77c747af7bad30044a474719ad52abfb2e0c8c0cd700fde3",
+      "bytes": 42516
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\after\\summary.json",
+      "sha256": "f4d98ab0e6064ce70dac909298c7da71d268bd80a98e51fa5ee756a85679b0e1",
+      "bytes": 1422
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\after\\identity.json",
+      "sha256": "6357acb5e900bc1ae71717a9f3c21b14688f84c0f05b0ce1e1de4ed3a7d3af76",
+      "bytes": 2008
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\after\\samples.jsonl",
+      "sha256": "050a46c1ee2013d8ae7b86b92f1b0208b3564d7c6256632431db340b04e3b3de",
+      "bytes": 20201
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\after\\prompt-8192-prose.txt",
+      "sha256": "e17340a7af7ee2cc77c747af7bad30044a474719ad52abfb2e0c8c0cd700fde3",
+      "bytes": 42516
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\61e92cb9d64542deb200d4ca4eb30399\\manifest.json",
+      "sha256": "eb9f0e3a30660b7aa2778fb302000129a68f45db59b4e7885b89e6d30afa5258",
+      "bytes": 6196
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\61e92cb9d64542deb200d4ca4eb30399\\ready.json",
+      "sha256": "d8f45ee0b1b935a5c5add0215303816d3c7cba13c4014e7409207100ed980073",
+      "bytes": 912
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\61e92cb9d64542deb200d4ca4eb30399\\health.json",
+      "sha256": "8aa23e95749dbe70a96e67ecb34d15cfe326cc01cddd58e86b572884ed8a844e",
+      "bytes": 6152
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\782c5d68bda2461aa23bbcc36bf805e8\\manifest.json",
+      "sha256": "bfd5d0298d534a2d65a181a4d638c555fb43bd9db52c1da0510c66acb6de38ca",
+      "bytes": 6170
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\782c5d68bda2461aa23bbcc36bf805e8\\ready.json",
+      "sha256": "447109569ccd2f2693fdea877aadc737a5aa8aa4acadc6b72fc5d4ce76f55d68",
+      "bytes": 914
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\782c5d68bda2461aa23bbcc36bf805e8\\health.json",
+      "sha256": "b6e3aa10dd1558417af1cd75e8fb311e43a16eb3ac9054dcbcdc3791d6aaff14",
+      "bytes": 6152
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\6dfa5d9c0cec42cbb1f6ac0bd150d9a0\\manifest.json",
+      "sha256": "352578544aaa61a2e40eda046960ed7723b7bb3da7d10a9cc6e7bee0ed2393db",
+      "bytes": 6196
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\6dfa5d9c0cec42cbb1f6ac0bd150d9a0\\ready.json",
+      "sha256": "95d0a1ccadfbe51b30854a29e367443668eae4c8979d637021bd3e8e4fc6cc37",
+      "bytes": 914
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\6dfa5d9c0cec42cbb1f6ac0bd150d9a0\\health.json",
+      "sha256": "8aa23e95749dbe70a96e67ecb34d15cfe326cc01cddd58e86b572884ed8a844e",
+      "bytes": 6152
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\visible-latest-ready-9aebda234e41405f9eb217ca635d12c3.json",
+      "sha256": "7eb9fcc2a525a3899a549ace866de635674b20293b3867a63bae10310ef24b40",
+      "bytes": 3065
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\visible-latest-launch.json",
+      "sha256": "d149f6529b21313c016988535a40794d786c1651fc6326bdb8ce66371b6f70ae",
+      "bytes": 957
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\persistent-latest-profile.json",
+      "sha256": "0d050151b01750454d151743720199d0e731aa9d24d35ec11cc01fd30299cf68",
+      "bytes": 1515
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\0649604a0414417b96e53092ae55d98b\\manifest.json",
+      "sha256": "75c76729f0ad43039b3eb512cbf3a89423dd20105e2a8e871e4fc89fac5c05f8",
+      "bytes": 6196
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\0649604a0414417b96e53092ae55d98b\\ready.json",
+      "sha256": "e4ef1860014ec5e476d64d600e9a017491591e3d508ac6c970d21b4291656c18",
+      "bytes": 913
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\0649604a0414417b96e53092ae55d98b\\health.json",
+      "sha256": "a32f3f2cbe9cb7b366e9cca2d8d02485fca792736216308cf16bcb4e84a1f0c0",
+      "bytes": 6152
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\0649604a0414417b96e53092ae55d98b\\ready.json",
+      "sha256": "e4ef1860014ec5e476d64d600e9a017491591e3d508ac6c970d21b4291656c18",
+      "bytes": 913
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\before-timing-provenance.json",
+      "sha256": "5600890fbffe6974cca65f094b2d67c2caeaebdccf1b3b64410361b7ef7a70f3",
+      "bytes": 2596
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\before-host-clock-excerpt.txt",
+      "sha256": "421814306694245e61cc238fb509974add138a92a2552d1c1eb3f524215f97a3",
+      "bytes": 1215
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1c\\regression-v1b-red\\result.json",
+      "sha256": "7ae206e35184e15c4f52f2952b68b4e8b96511c8f277c4a1e147f3b37710a0b8",
+      "bytes": 9193
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1c\\regression-v1c-green\\result.json",
+      "sha256": "bb9bcd69ee7c124174e4badd48eb211db7cb86e3bcd6aaed23096eabcbe93bfc",
+      "bytes": 9256
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1c\\execution-plan.md",
+      "sha256": "675d2a314ba6666b84c5ec7cb9dd2b1aa621e67e8c7830ff0e137680d4122d86",
+      "bytes": 9493
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\adaptive-depth23-comparison\\terminal-revalidation-6223152fbfc7450eb0a2e513e578922b.json",
+      "sha256": "a18d2fb3a474646413fc71bf5e9296d9eea266f0b29fcb844e17ebab75420f4c",
+      "bytes": 2582
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\result-analysis\\report_comparison.py",
+      "sha256": "00fac2949d84def820d5bd7375be0610b5e87e5c282fdd636f0f9681c723b608",
+      "bytes": 25683
+    }
+  ],
+  "report_helper_sha256": "e2112ad2eeeebce19e57fd92f6b14a736a575c6d3bf1a28e511e4758692828a8"
+}

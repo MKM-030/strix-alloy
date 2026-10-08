@@ -1,5 +1,12 @@
 # Halogen foreground console and ServiceNow REST integration
 
+The foreground launcher defaults to **Halogen 0.17.2**, fixed MTP depth 2 and
+the `Current8K` profile. The measurements below describe historical 0.16.2
+workloads. See the separate [0.17.2 fixed-depth-2 comparison](../benchmarks/halogen0172-fixed-depth2-20261008.md)
+for the newer engine's retained measurements and the
+[0.17.2 adaptive-depth comparison](../benchmarks/halogen0172-stock-adaptive-20261008.md)
+for the subsequent fixed-2/adaptive/fixed-2 windows.
+
 The retained **48.423621 tok/s** result is an 8,192-input-token, 128-output-token
 greedy prose measurement from 4 October 2026. The engine had **262,144 positions
 of capacity**. Capacity is the space available for input plus output; it does not
@@ -19,12 +26,12 @@ Stock A. A new ServiceNow prompt is also a different workload; the launcher
 selects the configuration, without promising the historical rate.
 [Natural long-input report](../benchmarks/halogen0162-natural-long-20261005.md).
 
-The last measured stock 8K control was **41.586631 tok/s** decode and
+A retained 0.16.2 stock 8K control measured **41.586631 tok/s** decode and
 1281.714232 tok/s prefill, still 207 / 345 = 60% accepted, in the 5 October
 `stock_after` cohort. No fresh throughput trial is claimed for this integration
 work. The older 48.42 result remains historical; selecting its startup settings
 does not establish that this host will reproduce its operating state or rate.
-[Last measured stock control](../benchmarks/halogen0162-rocr-arena8192-20261005.md),
+[Retained stock control](../benchmarks/halogen0162-rocr-arena8192-20261005.md),
 [cohort evidence](../benchmarks/halogen0162-rocr-arena8192-20261005.json).
 
 ## Start from Windows PowerShell 5.1
@@ -36,12 +43,13 @@ server and API trace:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -ConsoleTrace
 ```
 
-The default `Current8K` profile pairs an 8,192-token prefill chunk with an
-8,192-token prefill arena. To select the native arena settings of the historical
-Stock A profile:
+The default `Current8K` profile selects Halogen 0.17.2 and pairs an 8,192-token
+prefill chunk with an 8,192-token prefill arena. `-HalogenVersion` selects the
+installed backend explicitly. The historical Stock A profile requires an
+explicit 0.16.2 selection; it rejects 0.17.2:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile HistoricalStock -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile HistoricalStock -HalogenVersion 0.16.2 -ConsoleTrace
 ```
 
 This entry script accepts PowerShell 5.1. Its explicit Python launch route uses
@@ -66,15 +74,20 @@ without it, the normal operational logs are used.
 
 ## What the profiles actually select
 
-Both profiles select Halogen **0.16.2**, native
-`qwen38-flash-next-v2.hgn`, one slot, a 262,144-position pool and context capacity,
+`Current8K` defaults to Halogen **0.17.2**; `HistoricalStock` uses the explicitly
+selected **0.16.2** backend. Both select native `qwen38-flash-next-v2.hgn`, one
+slot, a 262,144-position pool and context capacity,
 MTP depth 2, stock PLD `3,3`, prompt cache Off, one active API request, and an
 18 GiB physical/commit runtime reserve. They retain the stock compute path and
-the normal WSL2 adaptation. The image is pinned as:
+the normal WSL2 adaptation. The default 0.17.2 image is pinned as:
 
 ```text
-ghcr.io/peonist-ai/halogen-flash-server@sha256:0c61bf84ac22308a53f5d1ca6b86806702d7039e5ebc51cae4c66621b92fe04a
+ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd
 ```
+
+The historical backend retains its separate [0.16.2 release pin](../../backends/halogen-wsl2-0.16.2/profiles/release.json).
+The [0.17.2 source and installation notes](../../backends/halogen-wsl2-0.17.2/portable-source-notes.md)
+record the newer engine's identities and reviewed request-option parity.
 
 | Startup control | HistoricalStock | Current8K |
 | --- | --- | --- |
@@ -90,7 +103,7 @@ log records `max_tok 32768` and 12.3 GiB working memory. The later natural long
 profile explicitly used `8192` for both, with 5.6 GiB working memory. These arena
 settings size work buffers and prefill calls; they are separate from the JSON
 answer budget `max_tokens`.
-[Version pin](../../backends/halogen-wsl2-0.16.2/profiles/release.json),
+[Default version pin](../../backends/halogen-wsl2-0.17.2/profiles/release.json),
 [upstream 0.16.2 flags](https://github.com/peonist-ai/halogen-flash-server/blob/v0.16.2/docs/FLAGS.md).
 
 The v2 checkpoint uses mixed precision: 4-bit experts and other weights, 6-bit
@@ -205,7 +218,7 @@ Use the HTTPS hostname instead of loopback from a caller that can reach the
 configured endpoint. This is an example to run manually, not a retained benchmark.
 
 ```powershell
-$tokenPath = 'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.16.2\.local\api-token.txt'
+$tokenPath = 'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.17.2\.local\api-token.txt'
 $apiKey = (Get-Content -LiteralPath $tokenPath -Raw).Trim()
 $headers = @{ Authorization = 'Bearer ' + $apiKey; Accept = 'application/json' }
 $body = @{
