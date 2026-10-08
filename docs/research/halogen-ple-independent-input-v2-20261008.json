@@ -1,0 +1,593 @@
+{
+  "schema": "halogen.ple-independent-input-v2.20261008.v1",
+  "recorded_utc": "2026-10-08T01:01:00.368849+00:00",
+  "independent_root_audit": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-v2-audit-9808c5e09811416a9050a78d39555103.json",
+    "bytes": 22047,
+    "sha256": "e8aa29e4896a116366ca48e8f81e72f1d344175c1e2e113746b30a02a89780b3"
+  },
+  "audit": {
+    "schema": "root.ple-independent-input-v2-audit.v1",
+    "utc": "2026-10-08T00:59:15.041403+00:00",
+    "complete_bf16": {
+      "byte_equal": true,
+      "bytes_compared": 41943040
+    },
+    "complete_float32": {
+      "byte_equal": true,
+      "bytes_compared": 83886080
+    },
+    "complete_input_parity_passed": true,
+    "prepared": {
+      "bf16": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-v2-9d11ef42ee7945ddacebc1781cae793c\\prepared\\input-bf16.bin",
+        "bytes": 41943040,
+        "sha256": "1ea86d8bf9e55210b0ed5c1ac076f32a9f56699215ae3cb44e4667259190aa27"
+      },
+      "float32": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-v2-9d11ef42ee7945ddacebc1781cae793c\\prepared\\input-float32.bin",
+        "bytes": 83886080,
+        "sha256": "b020d49afa49fe67fcd44a5fc46e67f5faab2b322c3bedeb152d09361b115680"
+      }
+    },
+    "worker_receipt": {
+      "CPU_only": true,
+      "GPU_executed": false,
+      "NPU_executed": false,
+      "captured_constants_used_as_runtime_source": false,
+      "checkpoint_sha256_retained": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+      "chunk_offset": 0,
+      "constants_binary_sha256": "92a0c13bf084710eea33b4843748e7657bebc1ed2aed6539fd2f9768896038a3",
+      "constants_receipt_sha256": "79ec059e951aec6b573e76141a1718af5b491f2dfa46287b90c3157a8fe01ef9",
+      "fixture_validation": true,
+      "full_model_rehashed": false,
+      "gate_metrics": {
+        "cancel_probe_count": 133,
+        "cancellation_probe_interval_seconds": 0.01,
+        "cancellation_probe_seconds": 0.003943599644117057,
+        "deadline_checks": 363512,
+        "gate_checks": 363379
+      },
+      "gate_metrics_ready_receipt_scope": "snapshot before ready-receipt serialization/fsync; excludes final forced publication probe",
+      "gate_metrics_stdout_scope": "final counters after the forced publication probe; no ready receipt rewritten",
+      "history_after_signed_int64": [
+        248069,
+        271
+      ],
+      "history_ownership_verified_by_worker": false,
+      "history_sha256": "c20f75712e2ce477596f65c120c5207e5653809b17009e4a4e49b60cab66da00",
+      "input_ownership": "raw int32 owned token file and explicit preceding-two int64 history",
+      "live_mapping_read": false,
+      "live_request_qualification": false,
+      "maximum_working_buffer_estimate_bytes": 268435456,
+      "memory_estimate_excludes": "Python/NumPy runtime; Root guards physical and commit reserve",
+      "native_semantics_sha256": "863b7a0e953c3d728abeecc8b97c7109975b4d9e7c530b2522994f875714f5d0",
+      "numeric_tolerances_unchanged": {
+        "cpu_atol": 0.0002,
+        "cpu_rtol": 0.002,
+        "npu_atol": 0.003,
+        "npu_rtol": 0.03
+      },
+      "oracle_read": false,
+      "outputs": {
+        "bf16": {
+          "bytes": 41943040,
+          "dtype": "little-endian BF16 words",
+          "file": "input-bf16.bin",
+          "sha256": "1ea86d8bf9e55210b0ed5c1ac076f32a9f56699215ae3cb44e4667259190aa27",
+          "shape": [
+            8192,
+            2560
+          ]
+        },
+        "dense_raw_fp8_sha256": "6ff3d20559159a3c5f2f2a6e4a4730a79913510bf5eef55ec5773735190690fa",
+        "float32": {
+          "bytes": 83886080,
+          "dtype": "little-endian FLOAT exact u16<<16",
+          "file": "input-float32.bin",
+          "sha256": "b020d49afa49fe67fcd44a5fc46e67f5faab2b322c3bedeb152d09361b115680",
+          "shape": [
+            8192,
+            2560
+          ]
+        },
+        "lut_bf16_sha256": "d3dc2e606be31904f75c2790988d98561656a8833c224c05b2adf76177d2b408"
+      },
+      "passed": true,
+      "progress": {
+        "payload_bytes_read": 431407104,
+        "payload_read_order_sha256": "3a7aa13d68421d64981550b086cad241961032713a7772299b1e9013766b143a",
+        "read_batches_completed": 90778
+      },
+      "ready_complete": true,
+      "request_id": "00b09419e5f1407981d2af4d0fae7f41",
+      "row_ids_sha256": "a538eab7ca5dcf0c4277f003b08c7953432bf53863353ad4c44a6f11453b57cd",
+      "row_plan": {
+        "batch_count": 90778,
+        "first_ranges": [
+          {
+            "bytes": 4096,
+            "offset": 1883810176
+          },
+          {
+            "bytes": 4096,
+            "offset": 1885215104
+          },
+          {
+            "bytes": 8192,
+            "offset": 1887099264
+          },
+          {
+            "bytes": 4096,
+            "offset": 1888647552
+          },
+          {
+            "bytes": 4096,
+            "offset": 1888881024
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889003904
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889315200
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889343872
+          },
+          {
+            "bytes": 4096,
+            "offset": 1892559232
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893308800
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893747072
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893779840
+          },
+          {
+            "bytes": 8192,
+            "offset": 1894701440
+          },
+          {
+            "bytes": 4096,
+            "offset": 1895057792
+          },
+          {
+            "bytes": 4096,
+            "offset": 1895459200
+          },
+          {
+            "bytes": 20480,
+            "offset": 1898604928
+          }
+        ],
+        "maximum_gap_bytes": 16384,
+        "maximum_read_bytes": 1048576,
+        "page_bytes": 4096,
+        "payload_budget_bytes": 1073741824,
+        "plan_encoding": "ordered little-endian <QQ absolute-offset,length> pairs",
+        "plan_sha256": "890351724e56b0ed702531347d562eb42fc59fdc7258fd1f19394bc100c134dc",
+        "planned_payload_bytes": 431407104,
+        "unique_page_count": 97574
+      },
+      "schema": "private.ple-early-independent-input.v1",
+      "server_changed": false,
+      "soft_deadline_seconds": 170.0,
+      "source_identity_windows_handle": {
+        "st_ctime_ns": 1789244565219639800,
+        "st_dev": 6940694304499994282,
+        "st_ino": 12384898978924364,
+        "st_mtime_ns": 1789244565219639800,
+        "st_size": 124068083904
+      },
+      "source_sha256": "5341c6f1678ad392c031d4b1b7f6e0cbbe87ca5c276896717eaeb1baeb68ffc8",
+      "sparse_atlas_used": false,
+      "speed_claim": false,
+      "table_binding_sha256": "2af59a5a46adaf165cc0e4ecf24bc3999231e1e1e46427e39da3ff89c0757871",
+      "table_generation": "30c005d2c30d4f6594ddc1744defc30b",
+      "table_handle_share": "FILE_SHARE_READ; deny normal write/delete while held",
+      "table_metadata_after": {
+        "descriptor_sha256": "43e25868fffd6b37863b2eb78dbb0ae5e42ad97d4da53fc8588393abc896c2fa",
+        "directory_sha256": "80ccb502fbe4981750f41b96d32f3cfdd1cf18d7d3c296b905e60eabd3a4fb10",
+        "header_sha256": "27be7f0039f807dc56cb57b682190951c45bd27a5d96fb53475dff6d7ffa6c8b",
+        "metadata_bytes": 191784,
+        "scale_bytes": 4,
+        "scale_sha256": "570ec84e55d538f0daf01b728921b04a43b0dd769ad0c935f4fa4e503ea65ab5"
+      },
+      "table_metadata_before": {
+        "descriptor_sha256": "43e25868fffd6b37863b2eb78dbb0ae5e42ad97d4da53fc8588393abc896c2fa",
+        "directory_sha256": "80ccb502fbe4981750f41b96d32f3cfdd1cf18d7d3c296b905e60eabd3a4fb10",
+        "header_sha256": "27be7f0039f807dc56cb57b682190951c45bd27a5d96fb53475dff6d7ffa6c8b",
+        "metadata_bytes": 191784,
+        "scale_bytes": 4,
+        "scale_sha256": "570ec84e55d538f0daf01b728921b04a43b0dd769ad0c935f4fa4e503ea65ab5"
+      },
+      "table_source_sha256_retained": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6",
+      "timings": {
+        "decode_scatter_and_widen_seconds": 0.06519059976562858,
+        "dedup_and_page_plan_seconds": 0.07218560000183061,
+        "dense_output_hash_seconds": 0.06168030045228079,
+        "final_source_and_owned_metadata_hash_seconds": 0.0011694999993778765,
+        "lut_and_unique_decode_seconds": 0.021406700019724667,
+        "numpy_cpu_import_seconds": 0.055554899969138205,
+        "output_persistence_seconds": 0.06877139961579815,
+        "payload_read_hash_seconds": 0.20436460338532925,
+        "row_ids_and_row_id_hash_seconds": 0.032627300010062754,
+        "row_scatter_seconds": 0.7940803976962343,
+        "source_and_owned_metadata_hash_seconds": 0.006555399973876774,
+        "table_metadata_verification_seconds": 0.0007148999720811844,
+        "table_read_seconds": 0.5963493044255301,
+        "table_seek_and_read_seconds": 0.4628537092357874
+      },
+      "tokens_sha256": "10922e273efd8f52c4790c770c9641c09ae54f03fa66da2ed726136c066351a2",
+      "unique_row_count": 95009,
+      "utility_source_sha256": "a8f127931ee16301d0a103850898b9a898da5e91d40d460ca771172909da10d5",
+      "wall_seconds": 2.202999999979511,
+      "worker_version": 2
+    },
+    "final_process_stdout": {
+      "CPU_only": true,
+      "GPU_executed": false,
+      "NPU_executed": false,
+      "captured_constants_used_as_runtime_source": false,
+      "checkpoint_sha256_retained": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+      "chunk_offset": 0,
+      "constants_binary_sha256": "92a0c13bf084710eea33b4843748e7657bebc1ed2aed6539fd2f9768896038a3",
+      "constants_receipt_sha256": "79ec059e951aec6b573e76141a1718af5b491f2dfa46287b90c3157a8fe01ef9",
+      "fixture_validation": true,
+      "full_model_rehashed": false,
+      "gate_metrics": {
+        "cancel_probe_count": 134,
+        "cancellation_probe_interval_seconds": 0.01,
+        "cancellation_probe_seconds": 0.003977199667133391,
+        "deadline_checks": 363514,
+        "gate_checks": 363380
+      },
+      "gate_metrics_ready_receipt_scope": "snapshot before ready-receipt serialization/fsync; excludes final forced publication probe",
+      "gate_metrics_stdout_scope": "final counters after the forced publication probe; no ready receipt rewritten",
+      "history_after_signed_int64": [
+        248069,
+        271
+      ],
+      "history_ownership_verified_by_worker": false,
+      "history_sha256": "c20f75712e2ce477596f65c120c5207e5653809b17009e4a4e49b60cab66da00",
+      "input_ownership": "raw int32 owned token file and explicit preceding-two int64 history",
+      "live_mapping_read": false,
+      "live_request_qualification": false,
+      "maximum_working_buffer_estimate_bytes": 268435456,
+      "memory_estimate_excludes": "Python/NumPy runtime; Root guards physical and commit reserve",
+      "native_semantics_sha256": "863b7a0e953c3d728abeecc8b97c7109975b4d9e7c530b2522994f875714f5d0",
+      "numeric_tolerances_unchanged": {
+        "cpu_atol": 0.0002,
+        "cpu_rtol": 0.002,
+        "npu_atol": 0.003,
+        "npu_rtol": 0.03
+      },
+      "oracle_read": false,
+      "outputs": {
+        "bf16": {
+          "bytes": 41943040,
+          "dtype": "little-endian BF16 words",
+          "file": "input-bf16.bin",
+          "sha256": "1ea86d8bf9e55210b0ed5c1ac076f32a9f56699215ae3cb44e4667259190aa27",
+          "shape": [
+            8192,
+            2560
+          ]
+        },
+        "dense_raw_fp8_sha256": "6ff3d20559159a3c5f2f2a6e4a4730a79913510bf5eef55ec5773735190690fa",
+        "float32": {
+          "bytes": 83886080,
+          "dtype": "little-endian FLOAT exact u16<<16",
+          "file": "input-float32.bin",
+          "sha256": "b020d49afa49fe67fcd44a5fc46e67f5faab2b322c3bedeb152d09361b115680",
+          "shape": [
+            8192,
+            2560
+          ]
+        },
+        "lut_bf16_sha256": "d3dc2e606be31904f75c2790988d98561656a8833c224c05b2adf76177d2b408"
+      },
+      "passed": true,
+      "progress": {
+        "payload_bytes_read": 431407104,
+        "payload_read_order_sha256": "3a7aa13d68421d64981550b086cad241961032713a7772299b1e9013766b143a",
+        "read_batches_completed": 90778
+      },
+      "ready_complete": true,
+      "request_id": "00b09419e5f1407981d2af4d0fae7f41",
+      "row_ids_sha256": "a538eab7ca5dcf0c4277f003b08c7953432bf53863353ad4c44a6f11453b57cd",
+      "row_plan": {
+        "batch_count": 90778,
+        "first_ranges": [
+          {
+            "bytes": 4096,
+            "offset": 1883810176
+          },
+          {
+            "bytes": 4096,
+            "offset": 1885215104
+          },
+          {
+            "bytes": 8192,
+            "offset": 1887099264
+          },
+          {
+            "bytes": 4096,
+            "offset": 1888647552
+          },
+          {
+            "bytes": 4096,
+            "offset": 1888881024
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889003904
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889315200
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889343872
+          },
+          {
+            "bytes": 4096,
+            "offset": 1892559232
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893308800
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893747072
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893779840
+          },
+          {
+            "bytes": 8192,
+            "offset": 1894701440
+          },
+          {
+            "bytes": 4096,
+            "offset": 1895057792
+          },
+          {
+            "bytes": 4096,
+            "offset": 1895459200
+          },
+          {
+            "bytes": 20480,
+            "offset": 1898604928
+          }
+        ],
+        "maximum_gap_bytes": 16384,
+        "maximum_read_bytes": 1048576,
+        "page_bytes": 4096,
+        "payload_budget_bytes": 1073741824,
+        "plan_encoding": "ordered little-endian <QQ absolute-offset,length> pairs",
+        "plan_sha256": "890351724e56b0ed702531347d562eb42fc59fdc7258fd1f19394bc100c134dc",
+        "planned_payload_bytes": 431407104,
+        "unique_page_count": 97574
+      },
+      "schema": "private.ple-early-independent-input.v1",
+      "server_changed": false,
+      "soft_deadline_seconds": 170.0,
+      "source_identity_windows_handle": {
+        "st_ctime_ns": 1789244565219639800,
+        "st_dev": 6940694304499994282,
+        "st_ino": 12384898978924364,
+        "st_mtime_ns": 1789244565219639800,
+        "st_size": 124068083904
+      },
+      "source_sha256": "5341c6f1678ad392c031d4b1b7f6e0cbbe87ca5c276896717eaeb1baeb68ffc8",
+      "sparse_atlas_used": false,
+      "speed_claim": false,
+      "table_binding_sha256": "2af59a5a46adaf165cc0e4ecf24bc3999231e1e1e46427e39da3ff89c0757871",
+      "table_generation": "30c005d2c30d4f6594ddc1744defc30b",
+      "table_handle_share": "FILE_SHARE_READ; deny normal write/delete while held",
+      "table_metadata_after": {
+        "descriptor_sha256": "43e25868fffd6b37863b2eb78dbb0ae5e42ad97d4da53fc8588393abc896c2fa",
+        "directory_sha256": "80ccb502fbe4981750f41b96d32f3cfdd1cf18d7d3c296b905e60eabd3a4fb10",
+        "header_sha256": "27be7f0039f807dc56cb57b682190951c45bd27a5d96fb53475dff6d7ffa6c8b",
+        "metadata_bytes": 191784,
+        "scale_bytes": 4,
+        "scale_sha256": "570ec84e55d538f0daf01b728921b04a43b0dd769ad0c935f4fa4e503ea65ab5"
+      },
+      "table_metadata_before": {
+        "descriptor_sha256": "43e25868fffd6b37863b2eb78dbb0ae5e42ad97d4da53fc8588393abc896c2fa",
+        "directory_sha256": "80ccb502fbe4981750f41b96d32f3cfdd1cf18d7d3c296b905e60eabd3a4fb10",
+        "header_sha256": "27be7f0039f807dc56cb57b682190951c45bd27a5d96fb53475dff6d7ffa6c8b",
+        "metadata_bytes": 191784,
+        "scale_bytes": 4,
+        "scale_sha256": "570ec84e55d538f0daf01b728921b04a43b0dd769ad0c935f4fa4e503ea65ab5"
+      },
+      "table_source_sha256_retained": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6",
+      "timings": {
+        "decode_scatter_and_widen_seconds": 0.06519059976562858,
+        "dedup_and_page_plan_seconds": 0.07218560000183061,
+        "dense_output_hash_seconds": 0.06168030045228079,
+        "final_source_and_owned_metadata_hash_seconds": 0.0011694999993778765,
+        "lut_and_unique_decode_seconds": 0.021406700019724667,
+        "numpy_cpu_import_seconds": 0.055554899969138205,
+        "output_persistence_seconds": 0.06877139961579815,
+        "payload_read_hash_seconds": 0.20436460338532925,
+        "row_ids_and_row_id_hash_seconds": 0.032627300010062754,
+        "row_scatter_seconds": 0.7940803976962343,
+        "source_and_owned_metadata_hash_seconds": 0.006555399973876774,
+        "table_metadata_verification_seconds": 0.0007148999720811844,
+        "table_read_seconds": 0.5963493044255301,
+        "table_seek_and_read_seconds": 0.4628537092357874
+      },
+      "tokens_sha256": "10922e273efd8f52c4790c770c9641c09ae54f03fa66da2ed726136c066351a2",
+      "unique_row_count": 95009,
+      "utility_source_sha256": "a8f127931ee16301d0a103850898b9a898da5e91d40d460ca771172909da10d5",
+      "wall_seconds": 2.202999999979511,
+      "worker_version": 2
+    },
+    "outer": {
+      "scope": "Complete external v2 CPU guard process; native PowerShell startup excluded",
+      "started_utc": "2026-10-08T00:56:12.3887242Z",
+      "finished_utc": "2026-10-08T00:56:14.9346597Z",
+      "wall_seconds": 2.5417731,
+      "guard_exit_code": 0,
+      "native_powershell_version": "5.1.26100.7462",
+      "serving_gain_qualified": false,
+      "controlled_v1_speedup_qualified": false
+    },
+    "owned": {
+      "exit_code": 0,
+      "errors": [],
+      "job_closed": true,
+      "identity": {
+        "pid": 664,
+        "creation_time_100ns": 134358945724913398,
+        "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+      },
+      "minimum": {
+        "available_bytes": 26395676672,
+        "commit_headroom_bytes": 122708430848
+      },
+      "config_sha256": "d94c9c5ff466c8f62f2f738764422dc0d03def82ee1297e8059036ac01e7cd38",
+      "CPU_only": true,
+      "NPU_executed": false,
+      "speed_claim": false
+    },
+    "gate_red": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\ple_early_input_worker_v1.py",
+      "source_sha256": "694c2029cb664d5e4e56f4eeaad534d76809ccac87aa038ed9eaf9cd78edc083",
+      "checks": [
+        {
+          "name": "cadence_and_due_cancellation",
+          "passed": false,
+          "error": "AssertionError: 5000 checks inside 5ms still issue per-boundary filesystem probes"
+        },
+        {
+          "name": "deadline_is_not_cadenced",
+          "passed": true,
+          "deadline_detected_before_next_10ms_cancellation_probe": true
+        },
+        {
+          "name": "ready_publication_forces_probe",
+          "passed": true,
+          "canceled_ready_publication_prevented": true
+        },
+        {
+          "name": "entry_cancellation",
+          "passed": true,
+          "cancellation_present_at_entry_rejected": true
+        }
+      ],
+      "passed": false,
+      "clock_is_controlled_for_boundary_checks": true,
+      "cancellation_files_are_real": true,
+      "model_or_accelerator_access": false,
+      "speed_measurement": false
+    },
+    "gate_green": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\ple_early_input_worker_v2.py",
+      "source_sha256": "5341c6f1678ad392c031d4b1b7f6e0cbbe87ca5c276896717eaeb1baeb68ffc8",
+      "checks": [
+        {
+          "name": "cadence_and_due_cancellation",
+          "passed": true,
+          "checks": 5000,
+          "filesystem_probes_within_5ms": 1,
+          "cancellation_detected_at_next_due_boundary": true
+        },
+        {
+          "name": "deadline_is_not_cadenced",
+          "passed": true,
+          "deadline_detected_before_next_10ms_cancellation_probe": true
+        },
+        {
+          "name": "ready_publication_forces_probe",
+          "passed": true,
+          "canceled_ready_publication_prevented": true
+        },
+        {
+          "name": "entry_cancellation",
+          "passed": true,
+          "cancellation_present_at_entry_rejected": true
+        }
+      ],
+      "passed": true,
+      "clock_is_controlled_for_boundary_checks": true,
+      "cancellation_files_are_real": true,
+      "model_or_accelerator_access": false,
+      "speed_measurement": false
+    },
+    "sources_freshly_verified": 11,
+    "all_row_plan_input_and_payload_digests_unchanged": true,
+    "read_cache_state_controlled": false,
+    "controlled_v1_speedup_qualified": false,
+    "actual_later_chunk_ready_lead_measured": false,
+    "no_NPU_or_GPU_call": true,
+    "serving_integration": false,
+    "prefill_decode_acceptance_gain_qualified": false,
+    "evidence": {
+      "config.json": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-v2-9d11ef42ee7945ddacebc1781cae793c\\config.json",
+        "bytes": 7281,
+        "sha256": "d94c9c5ff466c8f62f2f738764422dc0d03def82ee1297e8059036ac01e7cd38"
+      },
+      "prepared/input-ready.json": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-v2-9d11ef42ee7945ddacebc1781cae793c\\prepared\\input-ready.json",
+        "bytes": 7192,
+        "sha256": "24e5dcaac35aaf4df542eaf8b7906ea415a3ee740b0a2e33aa0266cdb63e4822"
+      },
+      "owned/stdout.txt": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-v2-9d11ef42ee7945ddacebc1781cae793c\\owned\\stdout.txt",
+        "bytes": 6209,
+        "sha256": "6ce05368a3af1b49a059466670505a4c3d97693ab9fc67f6cea4ce1875d3ac32"
+      },
+      "owned/result.json": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-v2-9d11ef42ee7945ddacebc1781cae793c\\owned\\result.json",
+        "bytes": 482,
+        "sha256": "c97f03f520575afea7458985aa9d8395ec1d5b01abdb3889504ed547a8bd219d"
+      },
+      "outer-wall.json": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-v2-9d11ef42ee7945ddacebc1781cae793c\\outer-wall.json",
+        "bytes": 404,
+        "sha256": "b5a9d37df6cb41984d973d8e81cdf8276cb88348d93c1d3db1b6eb2f83574650"
+      }
+    },
+    "review": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-npu-scope-2354\\early-input-worker-v2-delta-review.json",
+      "bytes": 5178,
+      "sha256": "46ceb62ae1659e065486adf60ee937172d0651b72cb3d6af6451f7c9f0a21f25"
+    },
+    "source_delta": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\early-input-worker-v2-delta-design.json",
+      "bytes": 5884,
+      "sha256": "a63e065716123c478023dcd9cde9fe2976d7a5ca4c2f3de6addf8828c1d841e9"
+    }
+  },
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\ple_early_input_worker_v2.py",
+    "bytes": 29908,
+    "sha256": "5341c6f1678ad392c031d4b1b7f6e0cbbe87ca5c276896717eaeb1baeb68ffc8"
+  },
+  "validator": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\validate-input-gate.py",
+    "bytes": 3963,
+    "sha256": "04a6f236d8584636a822d32fa47048ea425ade066bc219d0957eeb82025e9baa"
+  },
+  "no_NPU_or_GPU_call": true,
+  "serving_gain_qualified": false,
+  "controlled_v1_speedup_qualified": false,
+  "actual_later_chunk_ready_lead_measured": false
+}
