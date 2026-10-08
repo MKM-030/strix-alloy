@@ -39,6 +39,15 @@ The actual native worker computes row IDs inline on the CPU; it does not call
 the GPU helper. A new observation must label this path separately and preserve
 the existing native prefetch optimization.
 
+The corrected v2 C/header are now implemented, independently reviewed by Root
+and compiled successfully with `-Wall -Wextra -Werror`. They observe the actual
+CPU-prefetch launch, callback completion, promoted state and native join before
+the second key. The native default64/max256 worker policy is supported and
+callback payload/TID reuse is allowed after return. The built ELF is47064 bytes,
+SHA256`8833bf7dd0424cb3b17027342ceed985fb86fe44dd8444b7a0592915842d0da5`.
+V2 is default-off and has not been loaded. The separate wrapper/manifest port
+remains necessary; the v1 plan and schemas cannot qualify this derivative.
+
 Separately, bounded CPU extraction of the current embedded gfx1151 code object
 closed the static shader identity gap. Six PLE history/input/gather/RMS kernels
 and five default BF16 FC kernels have exact matching function bytes against the
@@ -53,6 +62,14 @@ benefit remain separate qualifications.
 The private mapped-row CPU producer is implemented and independently reviewed.
 It replaces serialized page reads with bounded2048-row indexed copies from one
 read-only mapping. It has not been run and has no measured speed claim.
+
+A separate CPU/SSD candidate was identified in the actual native copy-mode
+worker: retain exact ID generation and original ID order, then use a separate
+page permutation to copy rows into the existing native buffer. The worker uses
+mapped copies rather than read/pread syscalls. This is a real worker split,
+not a launch wrapper. Mapping extents, output lifetime, cross-page rows and
+cancellation/completion behavior must be preserved. No speed claim or hardware
+measurement was made for this candidate.
 
 ## Retained evidence
 

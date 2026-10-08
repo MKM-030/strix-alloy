@@ -46,3 +46,15 @@ and second-chunk ownership; do not repeat v1 unchanged. Static extraction now
 establishes exact PLE and default BF16 shader instruction identity with the old
 validated kernels. Actual current input parity and NPU serving gain remain
 unqualified. See [the current development status](../../../docs/research/halogen0172-prefill-overlap-20261008.md).
+
+The new `ple_early_token_publish_0172_v2.c` and
+`ple_engine_binding_0172_v2.h` bind the native CPU-prefetch launch, worker and
+wait/join paths. They preserve native calls, raw input/carry ownership and
+ordinary prefetch behavior. Worker observation supports the native default64
+and maximum256; callback payload/TID reuse is allowed after return.
+Root independently reviewed the correction and compiled it successfully with
+`-Wall -Wextra -Werror`. The 47,064-byte ELF has SHA256
+`8833bf7dd0424cb3b17027342ceed985fb86fe44dd8444b7a0592915842d0da5`.
+V2 remains default-off and has not been loaded. Its separate launcher/manifest
+port and successful runtime observation remain pending; v1 metadata cannot
+qualify it. No NPU or throughput result follows from this build.
