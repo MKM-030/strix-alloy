@@ -1,0 +1,566 @@
+{
+  "components": [
+    {
+      "label": "down-pair-scalar",
+      "result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-component-v1\\result.json",
+        "bytes": 20436,
+        "sha256": "cfbc7315588d9bc1308eb471ef66b4df2e38fae29c724708b2c178c1db417c37"
+      },
+      "coordinator": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-component-v1\\run.py",
+        "bytes": 11832,
+        "sha256": "778fb95b0cba9bc767a46aab469b7fb71fcf8815dce3f475b8f11fca4a4af185"
+      },
+      "candidate_module": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-component-v1\\build-v2\\moe-down-pair.hsaco",
+        "bytes": 7040,
+        "sha256": "01d445ab387e48ae11a6053871c27d9c662fce11d499eafa289354db4eec6fb3"
+      },
+      "sources": [
+        {
+          "executed": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-component-v1\\kernel.cpp",
+            "bytes": 3909,
+            "sha256": "3adb51fe3efcddcd8fd398e926a7f2ec0a44b928a29c50d58475c34ae0f7a980"
+          },
+          "archived": {
+            "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_moe_shared_weights\\down-pair-scalar.cpp",
+            "bytes": 3909,
+            "sha256": "3adb51fe3efcddcd8fd398e926a7f2ec0a44b928a29c50d58475c34ae0f7a980"
+          }
+        },
+        {
+          "executed": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-component-v1\\host.c",
+            "bytes": 7182,
+            "sha256": "afa26edbae030f139cdd02cec64a7e045475be93403e37f253e6823d1667dc44"
+          },
+          "archived": {
+            "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_moe_shared_weights\\down-pair-scalar_host.c",
+            "bytes": 7182,
+            "sha256": "afa26edbae030f139cdd02cec64a7e045475be93403e37f253e6823d1667dc44"
+          }
+        }
+      ],
+      "resources": {
+        "vgpr_count": 20,
+        "sgpr_count": 26,
+        "group_segment_fixed_size": 2560,
+        "private_segment_fixed_size": 0,
+        "vgpr_spill_count": 0,
+        "sgpr_spill_count": 0
+      },
+      "windows": [
+        {
+          "pattern": 0,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 0,
+          "native_ms": 0.17354299955555555,
+          "candidate_ms": 0.2606734302222222,
+          "candidate_time_change_percent": 50.20682533424461,
+          "native_stddev_ms": 0.009164287534873243,
+          "candidate_stddev_ms": 0.006816190822958224,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.1700038425,
+              "candidate_ms": 0.258482784,
+              "mean_paired_time_change_percent": 52.182909278781075
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.17637432520000002,
+              "candidate_ms": 0.2624259472,
+              "mean_paired_time_change_percent": 49.27116406185037
+            }
+          ],
+          "compared_rows_per_pair": 79360,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        },
+        {
+          "pattern": 1,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 20,
+          "native_ms": 0.16735466333333332,
+          "candidate_ms": 0.2146184611111111,
+          "candidate_time_change_percent": 28.241697504203266,
+          "native_stddev_ms": 0.002347081622506287,
+          "candidate_stddev_ms": 0.0020184400351499422,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.16841446625,
+              "candidate_ms": 0.21377393975,
+              "mean_paired_time_change_percent": 26.947328627580685
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.166506821,
+              "candidate_ms": 0.21529407820000002,
+              "mean_paired_time_change_percent": 29.333980409917785
+            }
+          ],
+          "compared_rows_per_pair": 79360,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        },
+        {
+          "pattern": 2,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 30,
+          "native_ms": 0.16716390355555555,
+          "candidate_ms": 0.19181291588888888,
+          "candidate_time_change_percent": 14.74541561249283,
+          "native_stddev_ms": 0.0011672419139027198,
+          "candidate_stddev_ms": 0.007099450827841531,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.166720312,
+              "candidate_ms": 0.191064965,
+              "mean_paired_time_change_percent": 14.624510381852973
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.1675187768,
+              "candidate_ms": 0.1924112766,
+              "mean_paired_time_change_percent": 14.855845112005586
+            }
+          ],
+          "compared_rows_per_pair": 79360,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        }
+      ],
+      "kernel_timing_batch": 8,
+      "synthetic_inputs": true,
+      "actual_model_weights": false,
+      "resources_closed": true,
+      "serving_adopted": false,
+      "NPU_executed": false,
+      "minimum_available_bytes": 25421279232,
+      "minimum_commit_headroom_bytes": 119454412800,
+      "decision": "reject-no-component-gain"
+    },
+    {
+      "label": "down-pair-vector",
+      "result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-vector-component-v2\\result.json",
+        "bytes": 20533,
+        "sha256": "6ad44eea26b87ccf6b52f44f7fe84355418f8228ab126261d093edc5120893e9"
+      },
+      "coordinator": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-vector-component-v2\\run.py",
+        "bytes": 11846,
+        "sha256": "458b28539d539c9543bae297e4e04706d5b1c2aee40a403ab6e8ff89d680506c"
+      },
+      "candidate_module": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-vector-component-v2\\build-v2\\moe-down-pair.hsaco",
+        "bytes": 6672,
+        "sha256": "b6bc079f1446515ec6044fa133c0028ee58ecce457b9d277320fb3e569a0c34b"
+      },
+      "sources": [
+        {
+          "executed": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-vector-component-v2\\kernel.cpp",
+            "bytes": 5305,
+            "sha256": "8ac01b9150b2b7996e842cd9b2d090c50150d2b0f5f7a64a017b4f5e85739d15"
+          },
+          "archived": {
+            "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_moe_shared_weights\\down-pair-vector.cpp",
+            "bytes": 5305,
+            "sha256": "8ac01b9150b2b7996e842cd9b2d090c50150d2b0f5f7a64a017b4f5e85739d15"
+          }
+        },
+        {
+          "executed": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-down-vector-component-v2\\host.c",
+            "bytes": 7189,
+            "sha256": "0ddf9f054eeee88a063b2959ac169c6793491bf066b8ff1300cae9a49f64ba5c"
+          },
+          "archived": {
+            "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_moe_shared_weights\\down-pair-vector_host.c",
+            "bytes": 7189,
+            "sha256": "0ddf9f054eeee88a063b2959ac169c6793491bf066b8ff1300cae9a49f64ba5c"
+          }
+        }
+      ],
+      "resources": {
+        "vgpr_count": 53,
+        "sgpr_count": 26,
+        "group_segment_fixed_size": 2560,
+        "private_segment_fixed_size": 0,
+        "vgpr_spill_count": 0,
+        "sgpr_spill_count": 0
+      },
+      "windows": [
+        {
+          "pattern": 0,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 0,
+          "native_ms": 0.173078527,
+          "candidate_ms": 0.25994780655555555,
+          "candidate_time_change_percent": 50.19067417621108,
+          "native_stddev_ms": 0.004975531194476678,
+          "candidate_stddev_ms": 0.0026998039032756767,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.1768361255,
+              "candidate_ms": 0.257489346,
+              "mean_paired_time_change_percent": 45.701764596929166
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.1700724482,
+              "candidate_ms": 0.26191457500000004,
+              "mean_paired_time_change_percent": 54.00342451930588
+            }
+          ],
+          "compared_rows_per_pair": 79360,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        },
+        {
+          "pattern": 1,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 20,
+          "native_ms": 0.1705269448888889,
+          "candidate_ms": 0.2187315407777778,
+          "candidate_time_change_percent": 28.268022933441884,
+          "native_stddev_ms": 0.003249865894531282,
+          "candidate_stddev_ms": 0.005989436012509248,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.172918968,
+              "candidate_ms": 0.22017568375,
+              "mean_paired_time_change_percent": 27.37708338449129
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.1686133264,
+              "candidate_ms": 0.2175762264,
+              "mean_paired_time_change_percent": 29.042940949652007
+            }
+          ],
+          "compared_rows_per_pair": 79360,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        },
+        {
+          "pattern": 2,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 30,
+          "native_ms": 0.17570230366666667,
+          "candidate_ms": 0.18646360933333334,
+          "candidate_time_change_percent": 6.12473794713726,
+          "native_stddev_ms": 0.01110966750083083,
+          "candidate_stddev_ms": 0.003970912954017375,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.18249512075,
+              "candidate_ms": 0.1869784035,
+              "mean_paired_time_change_percent": 2.8789051907341463
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.17026805,
+              "candidate_ms": 0.186051774,
+              "mean_paired_time_change_percent": 9.27922253503254
+            }
+          ],
+          "compared_rows_per_pair": 79360,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        }
+      ],
+      "kernel_timing_batch": 8,
+      "synthetic_inputs": true,
+      "actual_model_weights": false,
+      "resources_closed": true,
+      "serving_adopted": false,
+      "NPU_executed": false,
+      "minimum_available_bytes": 25494810624,
+      "minimum_commit_headroom_bytes": 119545569280,
+      "decision": "reject-no-component-gain"
+    },
+    {
+      "label": "gu-pair-vector",
+      "result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-gu-vector-component-v3\\result.json",
+        "bytes": 20509,
+        "sha256": "2d4d9409e8ff1df1decaebf46f6a8eadfa9f095ec8be55318f70df04b43106b5"
+      },
+      "coordinator": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-gu-vector-component-v3\\run.py",
+        "bytes": 11842,
+        "sha256": "61dcee178c53fc882a6ddf911657c618886fd9a90b0a36c050dd52be320d95de"
+      },
+      "candidate_module": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-gu-vector-component-v3\\build-v2\\moe-gu-pair.hsaco",
+        "bytes": 6664,
+        "sha256": "d6ff72bef91f7bca1a3093dd93403d4b80b0c59e7b414721c552f6da80080778"
+      },
+      "sources": [
+        {
+          "executed": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-gu-vector-component-v3\\kernel.cpp",
+            "bytes": 5311,
+            "sha256": "4c5e79f837a44e5c2931cb0c85de8f3c9b888c16de4aaba4b7448a4e6694012c"
+          },
+          "archived": {
+            "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_moe_shared_weights\\gu-pair-vector.cpp",
+            "bytes": 5311,
+            "sha256": "4c5e79f837a44e5c2931cb0c85de8f3c9b888c16de4aaba4b7448a4e6694012c"
+          }
+        },
+        {
+          "executed": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-paired-gu-vector-component-v3\\host.c",
+            "bytes": 7191,
+            "sha256": "41fec8180df496a4b0009122ab05b1c88516c14a3efcef3fd552699f200c33a9"
+          },
+          "archived": {
+            "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_moe_shared_weights\\gu-pair-vector_host.c",
+            "bytes": 7191,
+            "sha256": "41fec8180df496a4b0009122ab05b1c88516c14a3efcef3fd552699f200c33a9"
+          }
+        }
+      ],
+      "resources": {
+        "vgpr_count": 53,
+        "sgpr_count": 28,
+        "group_segment_fixed_size": 10240,
+        "private_segment_fixed_size": 0,
+        "vgpr_spill_count": 0,
+        "sgpr_spill_count": 0
+      },
+      "windows": [
+        {
+          "pattern": 0,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 0,
+          "native_ms": 0.38581694822222223,
+          "candidate_ms": 0.6697363323333333,
+          "candidate_time_change_percent": 73.58914257638563,
+          "native_stddev_ms": 0.004361929215495102,
+          "candidate_stddev_ms": 0.008605462965290222,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.38839531675,
+              "candidate_ms": 0.666860029,
+              "mean_paired_time_change_percent": 71.70082256882351
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.3837542534,
+              "candidate_ms": 0.6720373749999999,
+              "mean_paired_time_change_percent": 75.12876241906773
+            }
+          ],
+          "compared_rows_per_pair": 39680,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        },
+        {
+          "pattern": 1,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 20,
+          "native_ms": 0.31555087044444446,
+          "candidate_ms": 0.414211197,
+          "candidate_time_change_percent": 31.2660606565893,
+          "native_stddev_ms": 0.01764627727772974,
+          "candidate_stddev_ms": 0.01713906926163787,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.31991002725,
+              "candidate_ms": 0.40751412524999997,
+              "mean_paired_time_change_percent": 27.551989007350024
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.312063545,
+              "candidate_ms": 0.41956885439999997,
+              "mean_paired_time_change_percent": 34.65656204644236
+            }
+          ],
+          "compared_rows_per_pair": 39680,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        },
+        {
+          "pattern": 2,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 31,
+          "shared_tasks": 30,
+          "native_ms": 0.27288845855555555,
+          "candidate_ms": 0.2795501383333333,
+          "candidate_time_change_percent": 2.4411731492929967,
+          "native_stddev_ms": 0.009821406679091696,
+          "candidate_stddev_ms": 0.011054117117709063,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.27545774725,
+              "candidate_ms": 0.28284528124999997,
+              "mean_paired_time_change_percent": 2.681831514125499
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.2708330276,
+              "candidate_ms": 0.276914024,
+              "mean_paired_time_change_percent": 2.269692243189132
+            }
+          ],
+          "compared_rows_per_pair": 39680,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        }
+      ],
+      "kernel_timing_batch": 8,
+      "synthetic_inputs": true,
+      "actual_model_weights": false,
+      "resources_closed": true,
+      "serving_adopted": false,
+      "NPU_executed": false,
+      "minimum_available_bytes": 25371963392,
+      "minimum_commit_headroom_bytes": 119408013312,
+      "decision": "reject-no-component-gain"
+    },
+    {
+      "label": "gu-triple-fixed",
+      "result": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-gu-triple-component-v4\\result.json",
+        "bytes": 13381,
+        "sha256": "0ef66e1f9e3968bb204122d0fe36ee78caae838e805ee50c6a1f1c9e337ebfb6"
+      },
+      "coordinator": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-gu-triple-component-v4\\run.py",
+        "bytes": 11818,
+        "sha256": "2a43b27179253107b4315a3da2d9ea7377a61286c88c0f90d5e13d580c6f45ff"
+      },
+      "candidate_module": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-gu-triple-component-v4\\build-v2\\moe-gu-pair.hsaco",
+        "bytes": 6656,
+        "sha256": "0c1520015e3ee65dc47b894a9cd186c83edae386de4e070970fbb7c4bc626fca"
+      },
+      "sources": [
+        {
+          "executed": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-gu-triple-component-v4\\kernel.cpp",
+            "bytes": 3886,
+            "sha256": "953bb590c4a2366e3f7831015e766910c4e5d7192e36586dd195015246b9a27b"
+          },
+          "archived": {
+            "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_moe_shared_weights\\gu-triple-fixed.cpp",
+            "bytes": 3886,
+            "sha256": "953bb590c4a2366e3f7831015e766910c4e5d7192e36586dd195015246b9a27b"
+          }
+        },
+        {
+          "executed": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-gu-triple-component-v4\\host.c",
+            "bytes": 6863,
+            "sha256": "09b659afe356bcee388c0f9c499f60765d938f3deb1c9d69b87aa5ad7e8313a8"
+          },
+          "archived": {
+            "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_moe_shared_weights\\gu-triple-fixed_host.c",
+            "bytes": 6863,
+            "sha256": "09b659afe356bcee388c0f9c499f60765d938f3deb1c9d69b87aa5ad7e8313a8"
+          }
+        }
+      ],
+      "resources": {
+        "vgpr_count": 78,
+        "sgpr_count": 28,
+        "group_segment_fixed_size": 15360,
+        "private_segment_fixed_size": 0,
+        "vgpr_spill_count": 0,
+        "sgpr_spill_count": 0
+      },
+      "windows": [
+        {
+          "pattern": 3,
+          "measured_pairs": 9,
+          "excluded_warmup_pairs": 1,
+          "tasks": 30,
+          "shared_tasks": 30,
+          "native_ms": 0.2706772717777778,
+          "candidate_ms": 0.32492057155555554,
+          "candidate_time_change_percent": 20.039842806717335,
+          "native_stddev_ms": 0.05458971656268365,
+          "candidate_stddev_ms": 0.057088025698701146,
+          "order": [
+            {
+              "order": "AB",
+              "pairs": 4,
+              "native_ms": 0.27442130425,
+              "candidate_ms": 0.334495284,
+              "mean_paired_time_change_percent": 23.169603716476335
+            },
+            {
+              "order": "BA",
+              "pairs": 5,
+              "native_ms": 0.2676820458,
+              "candidate_ms": 0.3172608016,
+              "mean_paired_time_change_percent": 19.005157288660225
+            }
+          ],
+          "compared_rows_per_pair": 38400,
+          "bit_mismatches": 0,
+          "guard_corrupt_bytes": 0
+        }
+      ],
+      "kernel_timing_batch": 8,
+      "synthetic_inputs": true,
+      "actual_model_weights": false,
+      "resources_closed": true,
+      "serving_adopted": false,
+      "NPU_executed": false,
+      "minimum_available_bytes": 25399939072,
+      "minimum_commit_headroom_bytes": 119419691008,
+      "decision": "reject-no-component-gain"
+    }
+  ]
+}
