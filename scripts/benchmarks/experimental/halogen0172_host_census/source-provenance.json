@@ -1,0 +1,137 @@
+{
+  "schema": "halogen0172-host-census-public-source-provenance.v1",
+  "source_snapshot_date": "2026-10-08",
+  "engine": {
+    "version": "0.17.2",
+    "platform": "Linux x86-64",
+    "executable": "/usr/local/bin/flash_serve",
+    "sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913"
+  },
+  "scope": {
+    "kind": "host API attribution",
+    "functions": [
+      "hipMemcpy",
+      "hipMemcpyAsync",
+      "hipDeviceSynchronize",
+      "hipStreamSynchronize",
+      "hipModuleLaunchKernel",
+      "hipLaunchKernel"
+    ],
+    "default_enabled": false,
+    "opt_in_environment": "HG0172_HOST_CENSUS_PATH",
+    "clock": "linux_CLOCK_BOOTTIME_ns",
+    "format_version": 1,
+    "header_bytes": 64,
+    "record_bytes": 96,
+    "max_file_bytes": 67108864,
+    "root_exclusive_work": [
+      "compilation",
+      "hardware",
+      "server/API requests",
+      "profiling",
+      "lifecycle",
+      "live exports"
+    ]
+  },
+  "private_build_receipt": {
+    "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-direct-source-20261008/build.json",
+    "bytes": 1394,
+    "sha256": "c263b2b1bd651b843a0bed905adf2bc1caafe69aef9bc191a2b6dd574d16d02a"
+  },
+  "original_private_library": {
+    "source": {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-direct-source-20261008/libhalogen0172-host-census.so",
+      "bytes": 17472,
+      "sha256": "6408ae1606113206327e5134957aa6e0298e652ae8f52c0c75cabaf4e065a10f"
+    },
+    "copied": false
+  },
+  "files": [
+    {
+      "file": "host_census.c",
+      "role": "observer",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-direct-source-20261008/host_census.c",
+        "bytes": 12055,
+        "sha256": "703366650e53c59944a23f1b143c7a4088e707fd316896379a022d875d0b624d"
+      },
+      "public_copy": {
+        "path": "scripts/benchmarks/experimental/halogen0172_host_census/host_census.c",
+        "bytes": 12055,
+        "sha256": "703366650e53c59944a23f1b143c7a4088e707fd316896379a022d875d0b624d"
+      },
+      "transformation": "verbatim exact built source"
+    },
+    {
+      "file": "analyze_direct.py",
+      "role": "CPU analyzer",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-direct-census-20261008/analyze_direct.py",
+        "bytes": 30597,
+        "sha256": "2209f7dab8883b15fb6337d2408a2b51230b310801d7cbbcd5928d733fb9a1d8"
+      },
+      "public_copy": {
+        "path": "scripts/benchmarks/experimental/halogen0172_host_census/analyze_direct.py",
+        "bytes": 30518,
+        "sha256": "38d84b9ed54d4209f70279c04b87e8d7f691b2c098c8b4c429d9bf39b991cd67"
+      },
+      "transformation": "Replace only BASE_ANALYZER with HERE / \"analyze_host_calls.py\" and OBSERVER_SOURCE with HERE / \"host_census.c\"; preserve all other bytes"
+    },
+    {
+      "file": "analyze_host_calls.py",
+      "role": "CPU analyzer",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-census-20261008/analyze_host_calls.py",
+        "bytes": 16504,
+        "sha256": "d5cafcd4ea59f11d06fc72992e07ab8023799673f064ee6bc05b3e69b2589e62"
+      },
+      "public_copy": {
+        "path": "scripts/benchmarks/experimental/halogen0172_host_census/analyze_host_calls.py",
+        "bytes": 16504,
+        "sha256": "d5cafcd4ea59f11d06fc72992e07ab8023799673f064ee6bc05b3e69b2589e62"
+      },
+      "transformation": "verbatim"
+    }
+  ],
+  "private_evidence": {
+    "raw_export": {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-direct-census-20261008/host-census.bin",
+      "bytes": 10755904,
+      "sha256": "57c11ac1f904c3fc28175844ebf7d8e850fb6fd1351c420117f21de2dc8fe0fb"
+    },
+    "live_export_receipt": {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-direct-census-20261008/live-export-receipt.json",
+      "bytes": 1974,
+      "sha256": "93302994a071cb249b57c03ebf453c7f3dea7e1a3239437dad99043de8f31bf6"
+    },
+    "request_boundaries": {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-direct-census-20261008/request-boundaries.json",
+      "bytes": 6422,
+      "sha256": "f5230b2d91b2da3da8312ef05d2187be502cf68330c752cc65b48b2bfc6963c8"
+    },
+    "direct_analysis": {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-host-direct-census-20261008/host-direct-analysis.json",
+      "bytes": 222735,
+      "sha256": "d4ce6cfd49009d187f8233b2ccf372f9387918026420239ce11e4b138b11634a"
+    },
+    "export_before_normal_stop": true,
+    "capture_completeness_independently_established": false,
+    "copied": false
+  },
+  "public_report": {
+    "markdown": "docs/research/halogen0172-host-call-census-20261008.md",
+    "json": "docs/research/halogen0172-host-call-census-20261008.json",
+    "hashes": "Root writes and verifies public reports separately after analysis."
+  },
+  "claims": {
+    "host_attribution_only": true,
+    "serving_gain_claim_included": false,
+    "GPU_busy_time_established": false,
+    "captured_data_contents_included": false,
+    "models_included": false,
+    "binary_files_included": false,
+    "SDK_probe_sources_included": false,
+    "preserved_package_compilation_performed": false,
+    "preserved_package_verification_owner": "root"
+  }
+}

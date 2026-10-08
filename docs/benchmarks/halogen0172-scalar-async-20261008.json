@@ -1,0 +1,1853 @@
+{
+  "schema": "halogen0172.scalar-async-comparison.v1",
+  "utc": "2026-10-08T11:03:48.444471+00:00",
+  "version": "0.17.2",
+  "actual_input_tokens": 8192,
+  "context_capacity": 262144,
+  "output_tokens": 128,
+  "request_sha256": "243037d0ad3993ab3ad57f9a22ac182ecc7b50e6e6320089d7ba98bd3a7ae00b",
+  "windows": {
+    "before": {
+      "window": "before",
+      "version": "0.17.2",
+      "actual_input_tokens": 8192,
+      "output_tokens": 128,
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "passed": true,
+      "rows": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "wall_seconds": 15.709665499976836,
+          "clock_calibration": {
+            "before": {
+              "mono": 910.715119035,
+              "raw": 890.989048054,
+              "utc": 1791456077.9728715,
+              "qpc": 330741.27557329996,
+              "roundtrip": 0.00028119998751208186
+            },
+            "after": {
+              "mono": 926.909530472,
+              "raw": 906.699422301,
+              "utc": 1791456093.3292954,
+              "qpc": 330756.98586225,
+              "roundtrip": 0.0007538999780081213
+            },
+            "monotonic_per_raw": 1.0308100356102217,
+            "raw_per_qpc": 1.0000054293712233,
+            "window_seconds": 15.710288950009272,
+            "handshake_uncertainty_seconds": 0.0005175499827601016
+          },
+          "pp_tps": 690.1499966618269,
+          "decode_tps": 33.61986931142738,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25762205696,
+            "commit_headroom_bytes": 121945178112
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 12235.6,
+            "predicted_ms": 3924.6,
+            "prompt_per_second": 669.522,
+            "predicted_per_second": 32.615,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "wall_seconds": 9.541736099985428,
+          "clock_calibration": {
+            "before": {
+              "mono": 926.916834237,
+              "raw": 906.706724656,
+              "utc": 1791456093.3365972,
+              "qpc": 330756.9932264,
+              "roundtrip": 0.00038300000596791506
+            },
+            "after": {
+              "mono": 936.459139429,
+              "raw": 916.24903139,
+              "utc": 1791456102.871538,
+              "qpc": 330766.53551505,
+              "roundtrip": 0.000636099954135716
+            },
+            "monotonic_per_raw": 0.9999998384038465,
+            "raw_per_qpc": 1.0000018951426455,
+            "window_seconds": 9.542288650001865,
+            "handshake_uncertainty_seconds": 0.0005095499800518155
+          },
+          "pp_tps": 1233.864800612162,
+          "decode_tps": 44.53999280250732,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25724551168,
+            "commit_headroom_bytes": 121896235008
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6639.3,
+            "predicted_ms": 2873.8,
+            "prompt_per_second": 1233.865,
+            "predicted_per_second": 44.54,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "wall_seconds": 9.804991999990307,
+          "clock_calibration": {
+            "before": {
+              "mono": 936.746974085,
+              "raw": 916.536865635,
+              "utc": 1791456103.159372,
+              "qpc": 330766.82337115,
+              "roundtrip": 0.0004862999776378274
+            },
+            "after": {
+              "mono": 946.55273611,
+              "raw": 926.342629581,
+              "utc": 1791456112.9706337,
+              "qpc": 330776.62910094997,
+              "roundtrip": 0.0008851000457070768
+            },
+            "monotonic_per_raw": 0.9999998040948115,
+            "raw_per_qpc": 1.0000034822535921,
+            "window_seconds": 9.805729799962137,
+            "handshake_uncertainty_seconds": 0.0006857000116724521
+          },
+          "pp_tps": 1190.541766766645,
+          "decode_tps": 44.236991333742175,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25647050752,
+            "commit_headroom_bytes": 121810989056
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6880.9,
+            "predicted_ms": 2893.5,
+            "prompt_per_second": 1190.542,
+            "predicted_per_second": 44.237,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "wall_seconds": 9.725683099997696,
+          "clock_calibration": {
+            "before": {
+              "mono": 946.563425083,
+              "raw": 926.353314914,
+              "utc": 1791456112.981318,
+              "qpc": 330776.63984045,
+              "roundtrip": 0.00037510000402107835
+            },
+            "after": {
+              "mono": 956.289854401,
+              "raw": 936.079747024,
+              "utc": 1791456122.7076402,
+              "qpc": 330786.36623585003,
+              "roundtrip": 0.0009601000347174704
+            },
+            "monotonic_per_raw": 0.9999997129471526,
+            "raw_per_qpc": 1.0000037742648045,
+            "window_seconds": 9.726395400008187,
+            "handshake_uncertainty_seconds": 0.0006676000193692744
+          },
+          "pp_tps": 1223.5446487779238,
+          "decode_tps": 42.64498775863132,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25663561728,
+            "commit_headroom_bytes": 121820942336
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6695.3,
+            "predicted_ms": 3001.5,
+            "prompt_per_second": 1223.545,
+            "predicted_per_second": 42.645,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        }
+      ],
+      "prefill_mean": 1215.9837387189102,
+      "decode_mean": 43.80732396496027,
+      "prefill_stdev": 22.629556692196253,
+      "decode_stdev": 1.017949686834197,
+      "acceptance": 0.6194690265486725,
+      "controller_run_id": "d06cb3d104324586be9c9b0d85e65862",
+      "backend_run_id": "d3adcc353e3b43788a44b075596dd916",
+      "request_sha256": "243037d0ad3993ab3ad57f9a22ac182ecc7b50e6e6320089d7ba98bd3a7ae00b",
+      "completed_utc": "2026-10-08T10:42:47.687439+00:00"
+    },
+    "candidate": {
+      "window": "candidate",
+      "version": "0.17.2",
+      "actual_input_tokens": 8192,
+      "output_tokens": 128,
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "passed": true,
+      "rows": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "wall_seconds": 15.320155799970962,
+          "clock_calibration": {
+            "before": {
+              "mono": 1648.74635597,
+              "raw": 1611.908325065,
+              "utc": 1791456798.7954147,
+              "qpc": 331462.19484595,
+              "roundtrip": 0.00041009997949004173
+            },
+            "after": {
+              "mono": 1665.339645902,
+              "raw": 1627.229025008,
+              "utc": 1791456814.1349766,
+              "qpc": 331477.515564,
+              "roundtrip": 0.0006140000186860561
+            },
+            "monotonic_per_raw": 1.0830634366402825,
+            "raw_per_qpc": 0.9999988181361289,
+            "window_seconds": 15.320718050003052,
+            "handshake_uncertainty_seconds": 0.0005120499990880489
+          },
+          "pp_tps": 713.7247249212699,
+          "decode_tps": 33.63670115173725,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25691725824,
+            "commit_headroom_bytes": 121918423040
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 12431.2,
+            "predicted_ms": 4121.4,
+            "prompt_per_second": 658.987,
+            "predicted_per_second": 31.057,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "wall_seconds": 9.757670199964195,
+          "clock_calibration": {
+            "before": {
+              "mono": 1665.350533556,
+              "raw": 1627.239076435,
+              "utc": 1791456814.145862,
+              "qpc": 331477.5256216,
+              "roundtrip": 0.0003857999690808356
+            },
+            "after": {
+              "mono": 1675.919556073,
+              "raw": 1636.997529969,
+              "utc": 1791456823.8858247,
+              "qpc": 331487.28403665,
+              "roundtrip": 0.0009871000074781477
+            },
+            "monotonic_per_raw": 1.083063262040014,
+            "raw_per_qpc": 1.0000039436742596,
+            "window_seconds": 9.758415049989708,
+            "handshake_uncertainty_seconds": 0.0006864499882794917
+          },
+          "pp_tps": 1212.1167480916538,
+          "decode_tps": 43.23588542063736,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25629081600,
+            "commit_headroom_bytes": 121843949568
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 7319.8,
+            "predicted_ms": 3206.4,
+            "prompt_per_second": 1119.156,
+            "predicted_per_second": 39.92,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "wall_seconds": 9.512451299990062,
+          "clock_calibration": {
+            "before": {
+              "mono": 1675.929419343,
+              "raw": 1637.006634704,
+              "utc": 1791456823.895684,
+              "qpc": 331487.2931667,
+              "roundtrip": 0.00038600002881139517
+            },
+            "after": {
+              "mono": 1686.264940454,
+              "raw": 1646.519915107,
+              "utc": 1791456833.367288,
+              "qpc": 331496.80628190003,
+              "roundtrip": 0.0008597999694757164
+            },
+            "monotonic_per_raw": 1.0864308286067597,
+            "raw_per_qpc": 1.0000173658110136,
+            "window_seconds": 9.513115200039465,
+            "handshake_uncertainty_seconds": 0.0006228999991435558
+          },
+          "pp_tps": 1257.4404731836066,
+          "decode_tps": 43.09979740165876,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25645764608,
+            "commit_headroom_bytes": 121873248256
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 7077.9,
+            "predicted_ms": 3226.5,
+            "prompt_per_second": 1157.405,
+            "predicted_per_second": 39.671,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "wall_seconds": 9.614228799997363,
+          "clock_calibration": {
+            "before": {
+              "mono": 1686.273317179,
+              "raw": 1646.527648064,
+              "utc": 1791456833.3756623,
+              "qpc": 331496.8141937,
+              "roundtrip": 0.00032160000409930944
+            },
+            "after": {
+              "mono": 1696.687012278,
+              "raw": 1656.14268744,
+              "utc": 1791456842.9561021,
+              "qpc": 331506.42917445,
+              "roundtrip": 0.0010281000286340714
+            },
+            "monotonic_per_raw": 1.0830631775667672,
+            "raw_per_qpc": 1.0000060973581442,
+            "window_seconds": 9.61498075001873,
+            "handshake_uncertainty_seconds": 0.0006748500163666904
+          },
+          "pp_tps": 1235.9418773330267,
+          "decode_tps": 43.34202223986689,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25651122176,
+            "commit_headroom_bytes": 121875742720
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 7178.7,
+            "predicted_ms": 3198.6,
+            "prompt_per_second": 1141.154,
+            "predicted_per_second": 40.018,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        }
+      ],
+      "prefill_mean": 1235.1663662027624,
+      "decode_mean": 43.22590168738767,
+      "prefill_stdev": 22.67181239309292,
+      "decode_stdev": 0.12142065004948485,
+      "acceptance": 0.6194690265486725,
+      "controller_run_id": "6385d24f35f1448cb7963cd944ebc283",
+      "backend_run_id": "519e715b1e5e4d5497cf83ebf09bddb0",
+      "request_sha256": "243037d0ad3993ab3ad57f9a22ac182ecc7b50e6e6320089d7ba98bd3a7ae00b",
+      "completed_utc": "2026-10-08T10:54:47.751930+00:00"
+    },
+    "after": {
+      "window": "after",
+      "version": "0.17.2",
+      "actual_input_tokens": 8192,
+      "output_tokens": 128,
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "passed": true,
+      "rows": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "wall_seconds": 15.670755600032862,
+          "clock_calibration": {
+            "before": {
+              "mono": 2053.928448682,
+              "raw": 2004.681004382,
+              "utc": 1791457191.202003,
+              "qpc": 331854.96755235,
+              "roundtrip": 0.0003369000041857362
+            },
+            "after": {
+              "mono": 2069.599722163,
+              "raw": 2020.352272039,
+              "utc": 1791457206.877132,
+              "qpc": 331870.63880775,
+              "roundtrip": 0.0005815000040456653
+            },
+            "monotonic_per_raw": 1.0000003716355406,
+            "raw_per_qpc": 1.0000007821328045,
+            "window_seconds": 15.67125539999688,
+            "handshake_uncertainty_seconds": 0.0004592000041157007
+          },
+          "pp_tps": 689.7192563240934,
+          "decode_tps": 34.043012651588704,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25663537152,
+            "commit_headroom_bytes": 121881632768
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 11877.3,
+            "predicted_ms": 3759.9,
+            "prompt_per_second": 689.719,
+            "predicted_per_second": 34.043,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "wall_seconds": 9.77069490001304,
+          "clock_calibration": {
+            "before": {
+              "mono": 2070.580604007,
+              "raw": 2021.333152761,
+              "utc": 1791457207.858013,
+              "qpc": 331871.61968865,
+              "roundtrip": 0.00042290001874789596
+            },
+            "after": {
+              "mono": 2080.351997437,
+              "raw": 2031.104606724,
+              "utc": 1791457217.6234107,
+              "qpc": 331881.39109499997,
+              "roundtrip": 0.000882200023625046
+            },
+            "monotonic_per_raw": 0.9999938051184475,
+            "raw_per_qpc": 1.0000048726907191,
+            "window_seconds": 9.771406349958852,
+            "handshake_uncertainty_seconds": 0.000652550021186471
+          },
+          "pp_tps": 1215.062472785272,
+          "decode_tps": 42.66073572015809,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25611284480,
+            "commit_headroom_bytes": 121811128320
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6742.0,
+            "predicted_ms": 3000.4,
+            "prompt_per_second": 1215.07,
+            "predicted_per_second": 42.661,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "wall_seconds": 9.651264699990861,
+          "clock_calibration": {
+            "before": {
+              "mono": 2080.360650277,
+              "raw": 2031.113193716,
+              "utc": 1791457217.6319969,
+              "qpc": 331881.3997336,
+              "roundtrip": 0.0003561999765224755
+            },
+            "after": {
+              "mono": 2090.012739422,
+              "raw": 2040.765280725,
+              "utc": 1791457227.282768,
+              "qpc": 331891.05174505,
+              "roundtrip": 0.0010390999959781766
+            },
+            "monotonic_per_raw": 1.000000221299305,
+            "raw_per_qpc": 1.0000078283132374,
+            "window_seconds": 9.652011450030841,
+            "handshake_uncertainty_seconds": 0.000697649986250326
+          },
+          "pp_tps": 1246.3682758203722,
+          "decode_tps": 42.0130092974477,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25574711296,
+            "commit_headroom_bytes": 121766637568
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6572.7,
+            "predicted_ms": 3046.7,
+            "prompt_per_second": 1246.368,
+            "predicted_per_second": 42.013,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "wall_seconds": 9.638954300025944,
+          "clock_calibration": {
+            "before": {
+              "mono": 2090.15874847,
+              "raw": 2040.911288247,
+              "utc": 1791457227.428775,
+              "qpc": 331891.1978124,
+              "roundtrip": 0.00041580002289265394
+            },
+            "after": {
+              "mono": 2099.798181083,
+              "raw": 2050.55071688,
+              "utc": 1791457237.0673492,
+              "qpc": 331900.83724125,
+              "roundtrip": 0.000486500037368387
+            },
+            "monotonic_per_raw": 1.0000004128875635,
+            "raw_per_qpc": 0.9999999774911726,
+            "window_seconds": 9.639428849972319,
+            "handshake_uncertainty_seconds": 0.00045115003013052046
+          },
+          "pp_tps": 1236.510510539601,
+          "decode_tps": 42.92101772154711,
+          "observed_minimum_memory_bytes": {
+            "available_bytes": 25590071296,
+            "commit_headroom_bytes": 121811337216
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6625.1,
+            "predicted_ms": 2982.2,
+            "prompt_per_second": 1236.51,
+            "predicted_per_second": 42.921,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 70
+          },
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "finish_reason": "length",
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "drafted": 113,
+          "accepted": 70,
+          "acceptance": 0.6194690265486725
+        }
+      ],
+      "prefill_mean": 1232.6470863817483,
+      "decode_mean": 42.53158757971763,
+      "prefill_stdev": 16.006494325296018,
+      "decode_stdev": 0.46757807497068604,
+      "acceptance": 0.6194690265486725,
+      "controller_run_id": "a74bf30efcf8447881790b32e9fbebd7",
+      "backend_run_id": "e1159e41c0d44fd6bbe43dda1038bc03",
+      "request_sha256": "243037d0ad3993ab3ad57f9a22ac182ecc7b50e6e6320089d7ba98bd3a7ae00b",
+      "completed_utc": "2026-10-08T11:01:22.156607+00:00"
+    }
+  },
+  "metrics": {
+    "before": {
+      "prefill_clock_normalized": 1215.9837387189102,
+      "decode_clock_normalized": 43.80732396496027,
+      "prefill_stdev": 22.629556692196253,
+      "decode_stdev": 1.017949686834197,
+      "raw_api_prefill": 1215.9840000000002,
+      "raw_api_decode": 43.80733333333333,
+      "request_wall_mean": 9.690803733324477,
+      "request_wall_stdev": 0.1350494164611173,
+      "request_wall_range": [
+        9.541736099985428,
+        9.804991999990307
+      ],
+      "clock_factors": [
+        0.9999998384038465,
+        0.9999998040948115,
+        0.9999997129471526
+      ],
+      "acceptance": {
+        "accepted": 210,
+        "drafted": 339,
+        "ratio": 0.6194690265486725,
+        "scope": "combined API MTP+PLD"
+      }
+    },
+    "candidate": {
+      "prefill_clock_normalized": 1235.1663662027624,
+      "decode_clock_normalized": 43.22590168738767,
+      "prefill_stdev": 22.67181239309292,
+      "decode_stdev": 0.12142065004948485,
+      "raw_api_prefill": 1139.2383333333335,
+      "raw_api_decode": 39.86966666666667,
+      "request_wall_mean": 9.62811676665054,
+      "request_wall_stdev": 0.12319794616571689,
+      "request_wall_range": [
+        9.512451299990062,
+        9.757670199964195
+      ],
+      "clock_factors": [
+        1.083063262040014,
+        1.0864308286067597,
+        1.0830631775667672
+      ],
+      "acceptance": {
+        "accepted": 210,
+        "drafted": 339,
+        "ratio": 0.6194690265486725,
+        "scope": "combined API MTP+PLD"
+      }
+    },
+    "after": {
+      "prefill_clock_normalized": 1232.6470863817483,
+      "decode_clock_normalized": 42.53158757971763,
+      "prefill_stdev": 16.006494325296018,
+      "decode_stdev": 0.46757807497068604,
+      "raw_api_prefill": 1232.6493333333333,
+      "raw_api_decode": 42.531666666666666,
+      "request_wall_mean": 9.686971300009949,
+      "request_wall_stdev": 0.07276755722801474,
+      "request_wall_range": [
+        9.638954300025944,
+        9.77069490001304
+      ],
+      "clock_factors": [
+        0.9999938051184475,
+        1.000000221299305,
+        1.0000004128875635
+      ],
+      "acceptance": {
+        "accepted": 210,
+        "drafted": 339,
+        "ratio": 0.6194690265486725,
+        "scope": "combined API MTP+PLD"
+      }
+    }
+  },
+  "stock_bookend_mean": {
+    "prefill_clock_normalized": 1224.3154125503293,
+    "decode_clock_normalized": 43.16945577233895,
+    "raw_api_prefill": 1224.3166666666666,
+    "raw_api_decode": 43.1695,
+    "request_wall_mean": 9.688887516667213
+  },
+  "candidate_delta_percent": {
+    "prefill_clock_normalized": 0.886287433875399,
+    "decode_clock_normalized": 0.13075428920483745,
+    "raw_api_prefill": -6.949046406839177,
+    "raw_api_decode": -7.643899821247246,
+    "request_wall_mean": -0.6272211325823784
+  },
+  "raw_capture": {
+    "utc": "2026-10-08T10:54:56.011786+00:00",
+    "export_before_normal_stop": true,
+    "engine": {
+      "pid": 87,
+      "sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+      "mapped_library_sha256": {
+        "/candidate/hip-register-private-rw.so": "815b677ad7e4a2708ed8390222b41ba93ca38bd400064d2b946ff2ae495611fa",
+        "/candidate/libhalogen0172-scalar-async.so": "c5326ca86c685a0f29fe384ea79064b79b3d5a6db1844d55dd2559c377d4a830",
+        "/candidate/libhalogen0172-v2-preflight.so": "d061e7c2ff1cb5052b695658d7844fd791f2652e20a7a07173969fedb8dcbb95",
+        "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libamdhip64.so.7": "6f3c9fe6b655a611e04a9a5a157cb46c425717e2873973f11a67bb6bbf6587b5"
+      }
+    },
+    "backend_run_id": "519e715b1e5e4d5497cf83ebf09bddb0",
+    "controller_run_id": "6385d24f35f1448cb7963cd944ebc283",
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 4,
+      "cancelled": 0
+    },
+    "raw_file": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-comparison\\candidate\\scalar-receipt.bin",
+      "bytes": 3392,
+      "sha256": "00bd60c023f4b4aa440219c21b732319b5652caef4226e07c3cd7fd32d05f0a7"
+    },
+    "candidate": {
+      "enabled": true,
+      "default_off": true,
+      "container_output_file": "/tmp/halogen0172-scalar-async-519e715b1e5e4d5497cf83ebf09bddb0.bin",
+      "library_sha256": "c5326ca86c685a0f29fe384ea79064b79b3d5a6db1844d55dd2559c377d4a830",
+      "source_sha256": "f9bd14c1515be15e8906ce4dadbc815a7857c02d1f8531efe090bd32f502dec2",
+      "wrapper_sha256": "755ff13dee6e4c8916abddbb19eb4dc38b30efaca4cd621e76989934af01e0ea",
+      "engine_sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+      "preload_sha256": {
+        "/candidate/libhalogen0172-v2-preflight.so": "d061e7c2ff1cb5052b695658d7844fd791f2652e20a7a07173969fedb8dcbb95",
+        "/candidate/hip-register-private-rw.so": "815b677ad7e4a2708ed8390222b41ba93ca38bd400064d2b946ff2ae495611fa"
+      },
+      "runtime_sha256": "6f3c9fe6b655a611e04a9a5a157cb46c425717e2873973f11a67bb6bbf6587b5",
+      "caller_rva": "0x17b91be",
+      "guard_rva": "0x17b91a5",
+      "stream": "hipStreamLegacy",
+      "export_before_normal_stop": true
+    },
+    "complete_capture_claim": false
+  },
+  "receipt_analysis": {
+    "schema": "halogen0172.scalar-async-receipt-analysis.v1",
+    "analyzedUTC": "2026-10-08T10:54:56.115936+00:00",
+    "status": "observed-substitution-receipts",
+    "receipt": {
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-comparison\\candidate\\scalar-receipt.bin",
+        "exists": true,
+        "bytes": 3392,
+        "sha256": "00bd60c023f4b4aa440219c21b732319b5652caef4226e07c3cd7fd32d05f0a7"
+      },
+      "header_valid": true,
+      "record_integrity_passed": true,
+      "full_records": 52,
+      "valid_records": 52,
+      "invalid_records": 0,
+      "invalid_examples": [],
+      "integrity_issues": [],
+      "footer_present": false,
+      "highest_attempted_substitution_known": false,
+      "capture_complete_independently_established": false,
+      "header": {
+        "magic_hex": "4847534330313732",
+        "version": 1,
+        "header_size": 64,
+        "record_size": 64,
+        "clock_id": 7,
+        "clock_domain": "linux_CLOCK_BOOTTIME_ns",
+        "main_load_base": "0x5e7e082a3000",
+        "base_zero_is_valid": true,
+        "max_file_bytes": 1048576,
+        "caller_rva": "0x17b91be",
+        "guard_rva": "0x17b91a5",
+        "pid": 87,
+        "flags": 7
+      },
+      "trailing_partial_record_bytes": 0,
+      "file_at_cap": false,
+      "max_complete_records": 16383,
+      "sequence_file_index_mismatches": 0,
+      "substitution_counter_mismatches": 0,
+      "error_counter_mismatches": 0,
+      "last_encoded_counters": {
+        "sequence": 52,
+        "substituted_total": 52,
+        "error_total": 0
+      },
+      "counter_scope": "Encoded counters describe attempted substitutions completed through append, including fill errors. They are not an attempted-call footer or GPU completion counter."
+    },
+    "analyzer_source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\analyze_receipt.py",
+      "exists": true,
+      "bytes": 17571,
+      "sha256": "f8fdfed0cf008b67961312ae1fc73ab07facc85cea5d4ba282e570a0df0fd7b8"
+    },
+    "current_C_source_reference": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\scalar_async.c",
+      "exists": true,
+      "bytes": 9667,
+      "sha256": "f9bd14c1515be15e8906ce4dadbc815a7857c02d1f8531efe090bd32f502dec2"
+    },
+    "observed": {
+      "observed_appended_substitution_attempts": 52,
+      "observed_success_result_attempts": 52,
+      "observed_error_result_attempts": 0,
+      "observed_error_path_fences": 0,
+      "result_code_counts": {
+        "0": 52
+      },
+      "error_fence_result_code_counts": {},
+      "thread_counts": {
+        "87": 52
+      },
+      "full_fill_host_duration_sum_ns": 87949,
+      "clipped_fill_host_duration_sum_ns": 87949,
+      "clipped_fill_host_interval_union_ns": 87949,
+      "full_fill_host_duration_stats": {
+        "count": 52,
+        "min_ns": 585,
+        "max_ns": 10257,
+        "mean_ns": 1691.326923076923,
+        "median_ns": 947.5,
+        "p95_nearest_rank_ns": 5610
+      }
+    },
+    "valid_records": [
+      {
+        "file_record_index": 1,
+        "sequence": 1,
+        "pid": 87,
+        "start_ns": 1654133672500,
+        "end_ns": 1654133675933,
+        "tid": 87,
+        "substituted_total": 1,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 2,
+        "sequence": 2,
+        "pid": 87,
+        "start_ns": 1654134209517,
+        "end_ns": 1654134211683,
+        "tid": 87,
+        "substituted_total": 2,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 3,
+        "sequence": 3,
+        "pid": 87,
+        "start_ns": 1654134848501,
+        "end_ns": 1654134851891,
+        "tid": 87,
+        "substituted_total": 3,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 4,
+        "sequence": 4,
+        "pid": 87,
+        "start_ns": 1654135366726,
+        "end_ns": 1654135368849,
+        "tid": 87,
+        "substituted_total": 4,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 5,
+        "sequence": 5,
+        "pid": 87,
+        "start_ns": 1654135748888,
+        "end_ns": 1654135749527,
+        "tid": 87,
+        "substituted_total": 5,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 6,
+        "sequence": 6,
+        "pid": 87,
+        "start_ns": 1654136027329,
+        "end_ns": 1654136027946,
+        "tid": 87,
+        "substituted_total": 6,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 7,
+        "sequence": 7,
+        "pid": 87,
+        "start_ns": 1654136425391,
+        "end_ns": 1654136426441,
+        "tid": 87,
+        "substituted_total": 7,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 8,
+        "sequence": 8,
+        "pid": 87,
+        "start_ns": 1654136718942,
+        "end_ns": 1654136719570,
+        "tid": 87,
+        "substituted_total": 8,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 9,
+        "sequence": 9,
+        "pid": 87,
+        "start_ns": 1654137103096,
+        "end_ns": 1654137104255,
+        "tid": 87,
+        "substituted_total": 9,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 10,
+        "sequence": 10,
+        "pid": 87,
+        "start_ns": 1654137382783,
+        "end_ns": 1654137383433,
+        "tid": 87,
+        "substituted_total": 10,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 11,
+        "sequence": 11,
+        "pid": 87,
+        "start_ns": 1654137640125,
+        "end_ns": 1654137640753,
+        "tid": 87,
+        "substituted_total": 11,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 12,
+        "sequence": 12,
+        "pid": 87,
+        "start_ns": 1654137895419,
+        "end_ns": 1654137896026,
+        "tid": 87,
+        "substituted_total": 12,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 13,
+        "sequence": 13,
+        "pid": 87,
+        "start_ns": 1660979122345,
+        "end_ns": 1660979132602,
+        "tid": 87,
+        "substituted_total": 13,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 14,
+        "sequence": 14,
+        "pid": 87,
+        "start_ns": 1665394750798,
+        "end_ns": 1665394755477,
+        "tid": 87,
+        "substituted_total": 14,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 15,
+        "sequence": 15,
+        "pid": 87,
+        "start_ns": 1665395126223,
+        "end_ns": 1665395126927,
+        "tid": 87,
+        "substituted_total": 15,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 16,
+        "sequence": 16,
+        "pid": 87,
+        "start_ns": 1665395438263,
+        "end_ns": 1665395439227,
+        "tid": 87,
+        "substituted_total": 16,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 17,
+        "sequence": 17,
+        "pid": 87,
+        "start_ns": 1665395791201,
+        "end_ns": 1665395792295,
+        "tid": 87,
+        "substituted_total": 17,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 18,
+        "sequence": 18,
+        "pid": 87,
+        "start_ns": 1665396110639,
+        "end_ns": 1665396111267,
+        "tid": 87,
+        "substituted_total": 18,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 19,
+        "sequence": 19,
+        "pid": 87,
+        "start_ns": 1665396520724,
+        "end_ns": 1665396523475,
+        "tid": 87,
+        "substituted_total": 19,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 20,
+        "sequence": 20,
+        "pid": 87,
+        "start_ns": 1665396840866,
+        "end_ns": 1665396841808,
+        "tid": 87,
+        "substituted_total": 20,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 21,
+        "sequence": 21,
+        "pid": 87,
+        "start_ns": 1665397138034,
+        "end_ns": 1665397138857,
+        "tid": 87,
+        "substituted_total": 21,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 22,
+        "sequence": 22,
+        "pid": 87,
+        "start_ns": 1665397435517,
+        "end_ns": 1665397436253,
+        "tid": 87,
+        "substituted_total": 22,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 23,
+        "sequence": 23,
+        "pid": 87,
+        "start_ns": 1665397733812,
+        "end_ns": 1665397734440,
+        "tid": 87,
+        "substituted_total": 23,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 24,
+        "sequence": 24,
+        "pid": 87,
+        "start_ns": 1665398030698,
+        "end_ns": 1665398031327,
+        "tid": 87,
+        "substituted_total": 24,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 25,
+        "sequence": 25,
+        "pid": 87,
+        "start_ns": 1665398326491,
+        "end_ns": 1665398327141,
+        "tid": 87,
+        "substituted_total": 25,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 26,
+        "sequence": 26,
+        "pid": 87,
+        "start_ns": 1672468267603,
+        "end_ns": 1672468273213,
+        "tid": 87,
+        "substituted_total": 26,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 27,
+        "sequence": 27,
+        "pid": 87,
+        "start_ns": 1675960536553,
+        "end_ns": 1675960540258,
+        "tid": 87,
+        "substituted_total": 27,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 28,
+        "sequence": 28,
+        "pid": 87,
+        "start_ns": 1675960898742,
+        "end_ns": 1675960899511,
+        "tid": 87,
+        "substituted_total": 28,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 29,
+        "sequence": 29,
+        "pid": 87,
+        "start_ns": 1675961192011,
+        "end_ns": 1675961193040,
+        "tid": 87,
+        "substituted_total": 29,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 30,
+        "sequence": 30,
+        "pid": 87,
+        "start_ns": 1675961566115,
+        "end_ns": 1675961567512,
+        "tid": 87,
+        "substituted_total": 30,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 31,
+        "sequence": 31,
+        "pid": 87,
+        "start_ns": 1675961902947,
+        "end_ns": 1675961903586,
+        "tid": 87,
+        "substituted_total": 31,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 32,
+        "sequence": 32,
+        "pid": 87,
+        "start_ns": 1675962198404,
+        "end_ns": 1675962199422,
+        "tid": 87,
+        "substituted_total": 32,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 33,
+        "sequence": 33,
+        "pid": 87,
+        "start_ns": 1675962474625,
+        "end_ns": 1675962475242,
+        "tid": 87,
+        "substituted_total": 33,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 34,
+        "sequence": 34,
+        "pid": 87,
+        "start_ns": 1675962751983,
+        "end_ns": 1675962752752,
+        "tid": 87,
+        "substituted_total": 34,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 35,
+        "sequence": 35,
+        "pid": 87,
+        "start_ns": 1675963033500,
+        "end_ns": 1675963034085,
+        "tid": 87,
+        "substituted_total": 35,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 36,
+        "sequence": 36,
+        "pid": 87,
+        "start_ns": 1675963313154,
+        "end_ns": 1675963313739,
+        "tid": 87,
+        "substituted_total": 36,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 37,
+        "sequence": 37,
+        "pid": 87,
+        "start_ns": 1675963657298,
+        "end_ns": 1675963659475,
+        "tid": 87,
+        "substituted_total": 37,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 38,
+        "sequence": 38,
+        "pid": 87,
+        "start_ns": 1675963964897,
+        "end_ns": 1675963965677,
+        "tid": 87,
+        "substituted_total": 38,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 39,
+        "sequence": 39,
+        "pid": 87,
+        "start_ns": 1682793196728,
+        "end_ns": 1682793202870,
+        "tid": 87,
+        "substituted_total": 39,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 40,
+        "sequence": 40,
+        "pid": 87,
+        "start_ns": 1686306655730,
+        "end_ns": 1686306659175,
+        "tid": 87,
+        "substituted_total": 40,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 41,
+        "sequence": 41,
+        "pid": 87,
+        "start_ns": 1686307040004,
+        "end_ns": 1686307040676,
+        "tid": 87,
+        "substituted_total": 41,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 42,
+        "sequence": 42,
+        "pid": 87,
+        "start_ns": 1686307397503,
+        "end_ns": 1686307399095,
+        "tid": 87,
+        "substituted_total": 42,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 43,
+        "sequence": 43,
+        "pid": 87,
+        "start_ns": 1686307717450,
+        "end_ns": 1686307718696,
+        "tid": 87,
+        "substituted_total": 43,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 44,
+        "sequence": 44,
+        "pid": 87,
+        "start_ns": 1686308026284,
+        "end_ns": 1686308027237,
+        "tid": 87,
+        "substituted_total": 44,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 45,
+        "sequence": 45,
+        "pid": 87,
+        "start_ns": 1686308343458,
+        "end_ns": 1686308344216,
+        "tid": 87,
+        "substituted_total": 45,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 46,
+        "sequence": 46,
+        "pid": 87,
+        "start_ns": 1686308703459,
+        "end_ns": 1686308704682,
+        "tid": 87,
+        "substituted_total": 46,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 47,
+        "sequence": 47,
+        "pid": 87,
+        "start_ns": 1686308994778,
+        "end_ns": 1686308995699,
+        "tid": 87,
+        "substituted_total": 47,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 48,
+        "sequence": 48,
+        "pid": 87,
+        "start_ns": 1686309287083,
+        "end_ns": 1686309287733,
+        "tid": 87,
+        "substituted_total": 48,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 49,
+        "sequence": 49,
+        "pid": 87,
+        "start_ns": 1686309622735,
+        "end_ns": 1686309623916,
+        "tid": 87,
+        "substituted_total": 49,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 50,
+        "sequence": 50,
+        "pid": 87,
+        "start_ns": 1686309915159,
+        "end_ns": 1686309916123,
+        "tid": 87,
+        "substituted_total": 50,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 51,
+        "sequence": 51,
+        "pid": 87,
+        "start_ns": 1686310207887,
+        "end_ns": 1686310208559,
+        "tid": 87,
+        "substituted_total": 51,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      },
+      {
+        "file_record_index": 52,
+        "sequence": 52,
+        "pid": 87,
+        "start_ns": 1693227061317,
+        "end_ns": 1693227066592,
+        "tid": 87,
+        "substituted_total": 52,
+        "error_total": 0,
+        "result": 0,
+        "fence_result": 0,
+        "flags": 1,
+        "reserved": 0
+      }
+    ],
+    "capture_complete_independently_established": false,
+    "GPU_completion_established": false,
+    "serving_gain_established": false,
+    "scope_notes": [
+      "Substitution attempts include failed fill calls; result0 is a HIP enqueue result, not GPU completion.",
+      "Header flags assert the source guard/byte-value legacy-stream contract; this parser does not independently verify the loaded binary/library hash.",
+      "Measured timestamps surround hipMemsetD32Async only; source-value read, receipt append and error-path fence durations are excluded.",
+      "Append order is lock order and need not be timestamp order across threads.",
+      "No footer exists. Live-export EOF and matching counters do not prove all substitutions or requests were captured.",
+      "The current C source hash is a reference, not proof it produced this receipt; root build/export receipts supply that provenance.",
+      "Raw files are read-only; partial bytes/invalid rows are explicit and never silently repaired."
+    ]
+  },
+  "source_build": {
+    "utc": "2026-10-08T10:49:10.356846+00:00",
+    "command": [
+      "wsl.exe",
+      "-d",
+      "Ubuntu-24.04",
+      "-u",
+      "revn",
+      "--exec",
+      "gcc",
+      "-std=c11",
+      "-O2",
+      "-shared",
+      "-fPIC",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "/mnt/c/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-scalar-async-source-20261008/scalar_async.c",
+      "-ldl",
+      "-o",
+      "/mnt/c/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-scalar-async-source-20261008/libhalogen0172-scalar-async.so"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "",
+    "source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\scalar_async.c",
+      "bytes": 9667,
+      "sha256": "f9bd14c1515be15e8906ce4dadbc815a7857c02d1f8531efe090bd32f502dec2"
+    },
+    "CPU_only": true,
+    "HIP_initialized": false,
+    "library": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\libhalogen0172-scalar-async.so",
+      "bytes": 17096,
+      "sha256": "c5326ca86c685a0f29fe384ea79064b79b3d5a6db1844d55dd2559c377d4a830"
+    }
+  },
+  "final_ready_open": {
+    "utc": "2026-10-08T11:01:39.670383+00:00",
+    "version": "0.17.2",
+    "controller": {
+      "schema": 1,
+      "run_id": "a74bf30efcf8447881790b32e9fbebd7",
+      "pid": 5448,
+      "phase": "ready",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "port": 8840,
+      "heartbeat": 1791457299.1878016,
+      "minimum_reserve_gib": 18.0,
+      "profile_sha256": "b5d3692b2623034f5a9c4a5f90b234ba6b792793196963fc0e7b474b3937c839",
+      "memory": {
+        "available_bytes": 25752588288,
+        "committed_bytes": 118194905088,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 121944535040
+      },
+      "minimum_available_gib": 23.826519012451172,
+      "ready_at": 1791457179.3500776,
+      "active_requests": 0,
+      "available_gib": 23.948894500732422
+    },
+    "backend": {
+      "schema": 1,
+      "run_id": "e1159e41c0d44fd6bbe43dda1038bc03",
+      "attempt": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.2\\.local\\services\\e1159e41c0d44fd6bbe43dda1038bc03",
+      "phase": "ready",
+      "endpoint": "http://127.0.0.1:8731/v1",
+      "model": "halogen-qwen3.8-flash-next",
+      "context": 262144,
+      "slots": 1,
+      "checkpoint": "v2",
+      "prompt_cache": "Off",
+      "serve_seconds": 0,
+      "controller_pid": 41560,
+      "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.2\\.local\\api-token.txt",
+      "log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.2\\.local\\services\\e1159e41c0d44fd6bbe43dda1038bc03\\engine.log",
+      "controller_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.2\\.local\\services\\e1159e41c0d44fd6bbe43dda1038bc03\\service.log",
+      "ready_at": 1791457188.5669916,
+      "container_id": "93a905cac78e62aee54b86d11b07b49645d8e3734ca6c3ac1bd1bc6a49b9fc45"
+    },
+    "identities": {
+      "controller": {
+        "pid": 5448,
+        "creation_time_100ns": 134359305641096339,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 41560,
+        "creation_time_100ns": 134359305830959342,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "console": {
+        "pid": 29204,
+        "creation_time_100ns": 134359305638564168,
+        "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      }
+    },
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 4,
+      "cancelled": 0
+    },
+    "profile_sha256": "b5d3692b2623034f5a9c4a5f90b234ba6b792793196963fc0e7b474b3937c839",
+    "candidate_removed": true,
+    "ready_open": true,
+    "inference_performed": false
+  },
+  "output_parity": true,
+  "acceptance_parity": true,
+  "observed_substitutions": 52,
+  "observed_immediate_errors": 0,
+  "per_request_receipt_attribution": false,
+  "complete_capture_claim": false,
+  "GPU_completion_claim": false,
+  "serving_gain_qualified": false,
+  "default_off": true,
+  "repeat_unchanged_candidate": false,
+  "full_goal_completed": false,
+  "stock_after_reference_measured": true,
+  "candidate_post_phase_rates_qualified": false,
+  "interpretation": "No repeatable Prefill/Decode gain qualified. Whole-request clock factors are not phase-specific; raw API signs and wall spread must be considered. The asynchronous host boundary is shorter, but no GPU-work saving is inferred."
+}

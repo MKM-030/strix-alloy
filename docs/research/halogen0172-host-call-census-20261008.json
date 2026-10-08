@@ -1,0 +1,1268 @@
+{
+  "schema": "halogen0172.host-call-census.v1",
+  "utc": "2026-10-08T10:36:26.197823+00:00",
+  "version": "0.17.2",
+  "engine_sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+  "workload": {
+    "input_tokens": 8192,
+    "output_tokens": 128,
+    "natural_non_repeated_prose": true,
+    "context_capacity": 262144,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "cache": "Off",
+    "MTP": 2,
+    "PLD": "3,3",
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+    "request_sha256": "243037d0ad3993ab3ad57f9a22ac182ecc7b50e6e6320089d7ba98bd3a7ae00b",
+    "excluded_warmup": 1,
+    "diagnostic_requests": 1
+  },
+  "qualified_stock_reference": {
+    "prefill_tps": 1226.6182281548402,
+    "decode_tps": 42.60632964277239,
+    "raw_api_prefill_tps": 1226.6183333333333,
+    "raw_api_decode_tps": 42.60633333333333,
+    "combined_MTP_PLD_acceptance": {
+      "accepted": 210,
+      "drafted": 339,
+      "ratio": 0.6194690265486725,
+      "per_measured_row": [
+        {
+          "rep": 1,
+          "accepted": 70,
+          "drafted": 113,
+          "ratio": 0.6194690265486725
+        },
+        {
+          "rep": 2,
+          "accepted": 70,
+          "drafted": 113,
+          "ratio": 0.6194690265486725
+        },
+        {
+          "rep": 3,
+          "accepted": 70,
+          "drafted": 113,
+          "ratio": 0.6194690265486725
+        }
+      ]
+    }
+  },
+  "qualified_stock_source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\benchmarks\\halogen0172-native-worker-page-order-20261008.json",
+    "bytes": 177831,
+    "sha256": "f59de03e9e1bdee167d8d1edbcdf95255f27a1e04fb806e1963dd22d931f320e"
+  },
+  "new_qualified_serving_rates": false,
+  "serving_gain_qualified": false,
+  "NPU_executed": false,
+  "GPU_kernel_busy_time_established": false,
+  "whole_HIP_runtime_coverage_established": false,
+  "requests": [
+    {
+      "phase": "warmup",
+      "wall_seconds": 15.407633299997542,
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "accepted": 70,
+      "drafted": 113,
+      "acceptance": 0.6194690265486725,
+      "clock_calibration": {
+        "before": {
+          "boottime_ns": 5359995826646,
+          "mono": 5359.995829756,
+          "raw": 5344.723457333,
+          "utc": 1791454960.5997033,
+          "qpc": 329624.14780185,
+          "roundtrip": 0.00047969998558983207
+        },
+        "after": {
+          "boottime_ns": 5375404646785,
+          "mono": 5375.404650176,
+          "raw": 5360.131733899,
+          "utc": 1791454976.0062776,
+          "qpc": 329639.55604289996,
+          "roundtrip": 0.0006348000024445355
+        },
+        "monotonic_per_raw": 1.000035296225236,
+        "raw_per_qpc": 1.0000023050023519,
+        "window_seconds": 15.408241049968638,
+        "handshake_uncertainty_seconds": 0.0005572499940171838
+      },
+      "observed_minimum_memory_bytes": {
+        "available_bytes": 25401974784,
+        "commit_headroom_bytes": 121562402816
+      }
+    },
+    {
+      "phase": "diagnostic",
+      "wall_seconds": 9.554752099968027,
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "accepted": 70,
+      "drafted": 113,
+      "acceptance": 0.6194690265486725,
+      "clock_calibration": {
+        "before": {
+          "boottime_ns": 5375410924425,
+          "mono": 5375.410925276,
+          "raw": 5360.138008247,
+          "utc": 1791454976.0125513,
+          "qpc": 329639.56235649996,
+          "roundtrip": 0.000298400002066046
+        },
+        "after": {
+          "boottime_ns": 5384966773493,
+          "mono": 5384.966777754,
+          "raw": 5369.693524755,
+          "utc": 1791454985.5732129,
+          "qpc": 329649.11783995,
+          "roundtrip": 0.0010021000052802265
+        },
+        "monotonic_per_raw": 1.0000351597947832,
+        "raw_per_qpc": 1.0000034595774503,
+        "window_seconds": 9.555483450065367,
+        "handshake_uncertainty_seconds": 0.0006502500036731362
+      },
+      "observed_minimum_memory_bytes": {
+        "available_bytes": 25395142656,
+        "commit_headroom_bytes": 121546240000
+      }
+    }
+  ],
+  "diagnostic_host_calls": {
+    "calls_intersecting": 51489,
+    "target_process_id": 87,
+    "host_duration_sum_ns": 9149538847,
+    "host_interval_union_ns": 9149538847,
+    "by_function": [
+      {
+        "function": "hipMemcpy",
+        "calls_intersecting": 244,
+        "full_host_duration_sum_ns": 6369801564,
+        "clipped_host_duration_sum_ns": 6369801564,
+        "clipped_host_interval_union_ns": 6369801564,
+        "max_full_host_duration_ns": 587620538,
+        "mean_full_host_duration_ns": 26105744.1147541,
+        "union_percent_of_window": 66.66376878503942,
+        "duration_sum_percent_of_window": 66.66376878503942,
+        "calls_starting_inside": 244
+      },
+      {
+        "function": "hipDeviceSynchronize",
+        "calls_intersecting": 171,
+        "full_host_duration_sum_ns": 2637160743,
+        "clipped_host_duration_sum_ns": 2637160743,
+        "clipped_host_interval_union_ns": 2637160743,
+        "max_full_host_duration_ns": 147983177,
+        "mean_full_host_duration_ns": 15421992.649122806,
+        "union_percent_of_window": 27.599458515931687,
+        "duration_sum_percent_of_window": 27.599458515931687,
+        "calls_starting_inside": 171
+      },
+      {
+        "function": "hipLaunchKernel",
+        "calls_intersecting": 49725,
+        "full_host_duration_sum_ns": 118834770,
+        "clipped_host_duration_sum_ns": 118834770,
+        "clipped_host_interval_union_ns": 118834770,
+        "max_full_host_duration_ns": 1047274,
+        "mean_full_host_duration_ns": 2389.8395173453996,
+        "union_percent_of_window": 1.2436766752163364,
+        "duration_sum_percent_of_window": 1.2436766752163364,
+        "calls_starting_inside": 49725
+      },
+      {
+        "function": "hipMemcpyAsync",
+        "calls_intersecting": 1349,
+        "full_host_duration_sum_ns": 23741770,
+        "clipped_host_duration_sum_ns": 23741770,
+        "clipped_host_interval_union_ns": 23741770,
+        "max_full_host_duration_ns": 518532,
+        "mean_full_host_duration_ns": 17599.532987398074,
+        "union_percent_of_window": 0.24847176947749347,
+        "duration_sum_percent_of_window": 0.24847176947749347,
+        "calls_starting_inside": 1349
+      }
+    ],
+    "start_ns": 5375411076331,
+    "end_ns": 5384966194021,
+    "window_duration_ns": 9555117690,
+    "host_union_percent_of_window": 95.75537574566494,
+    "host_duration_sum_percent_of_window": 95.75537574566494,
+    "outside_observed_host_API_intervals_ns": 405578843,
+    "copy_calls": {
+      "copy_calls_intersecting": 1593,
+      "qualified_relative_offset_copy_calls": 1593,
+      "unqualified_relative_offset_copy_calls": 0,
+      "groups": [
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x17b91be",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 4,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 13,
+          "attempted_copy_bytes": 52,
+          "success_result_copy_argument_bytes": 52,
+          "full_host_duration_sum_ns": 6204254343,
+          "clipped_host_duration_sum_ns": 6204254343,
+          "clipped_host_interval_union_ns": 6204254343,
+          "observed_absolute_callers": [
+            "0x5c1c31b951be"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x17ec0b8",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 384,
+          "direction_code": 2,
+          "direction_label": "D2H",
+          "result_code": 0,
+          "calls_intersecting": 56,
+          "attempted_copy_bytes": 21504,
+          "success_result_copy_argument_bytes": 21504,
+          "full_host_duration_sum_ns": 67701380,
+          "clipped_host_duration_sum_ns": 67701380,
+          "clipped_host_interval_union_ns": 67701380,
+          "observed_absolute_callers": [
+            "0x5c1c31bc80b8"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x17f1cc2",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 4,
+          "direction_code": 2,
+          "direction_label": "D2H",
+          "result_code": 0,
+          "calls_intersecting": 113,
+          "attempted_copy_bytes": 452,
+          "success_result_copy_argument_bytes": 452,
+          "full_host_duration_sum_ns": 56259020,
+          "clipped_host_duration_sum_ns": 56259020,
+          "clipped_host_interval_union_ns": 56259020,
+          "observed_absolute_callers": [
+            "0x5c1c31bcdcc2"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 2
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x17f8a00",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 12,
+          "direction_code": 2,
+          "direction_label": "D2H",
+          "result_code": 0,
+          "calls_intersecting": 56,
+          "attempted_copy_bytes": 672,
+          "success_result_copy_argument_bytes": 672,
+          "full_host_duration_sum_ns": 34155102,
+          "clipped_host_duration_sum_ns": 34155102,
+          "clipped_host_interval_union_ns": 34155102,
+          "observed_absolute_callers": [
+            "0x5c1c31bd4a00"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x179173d",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 16,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 16,
+          "success_result_copy_argument_bytes": 16,
+          "full_host_duration_sum_ns": 4500018,
+          "clipped_host_duration_sum_ns": 4500018,
+          "clipped_host_interval_union_ns": 4500018,
+          "observed_absolute_callers": [
+            "0x5c1c31b6d73d"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f9c73",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 20480,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 57,
+          "attempted_copy_bytes": 1167360,
+          "success_result_copy_argument_bytes": 1167360,
+          "full_host_duration_sum_ns": 4034947,
+          "clipped_host_duration_sum_ns": 4034947,
+          "clipped_host_interval_union_ns": 4034947,
+          "observed_absolute_callers": [
+            "0x5c1c31bd5c73"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 3,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f73e4",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 768,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 56,
+          "attempted_copy_bytes": 43008,
+          "success_result_copy_argument_bytes": 43008,
+          "full_host_duration_sum_ns": 3534553,
+          "clipped_host_duration_sum_ns": 3534553,
+          "clipped_host_interval_union_ns": 3534553,
+          "observed_absolute_callers": [
+            "0x5c1c31bd33e4"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f7c32",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 12,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 56,
+          "attempted_copy_bytes": 672,
+          "success_result_copy_argument_bytes": 672,
+          "full_host_duration_sum_ns": 3301609,
+          "clipped_host_duration_sum_ns": 3301609,
+          "clipped_host_interval_union_ns": 3301609,
+          "observed_absolute_callers": [
+            "0x5c1c31bd3c32"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17ec97f",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 7680,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 56,
+          "attempted_copy_bytes": 430080,
+          "success_result_copy_argument_bytes": 430080,
+          "full_host_duration_sum_ns": 3218744,
+          "clipped_host_duration_sum_ns": 3218744,
+          "clipped_host_interval_union_ns": 3218744,
+          "observed_absolute_callers": [
+            "0x5c1c31bc897f"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17b463d",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 768,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 241,
+          "attempted_copy_bytes": 185088,
+          "success_result_copy_argument_bytes": 185088,
+          "full_host_duration_sum_ns": 1974017,
+          "clipped_host_duration_sum_ns": 1974017,
+          "clipped_host_interval_union_ns": 1974017,
+          "observed_absolute_callers": [
+            "0x5c1c31b9063d"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 37
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f76a7",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 768,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 56,
+          "attempted_copy_bytes": 43008,
+          "success_result_copy_argument_bytes": 43008,
+          "full_host_duration_sum_ns": 1554044,
+          "clipped_host_duration_sum_ns": 1554044,
+          "clipped_host_interval_union_ns": 1554044,
+          "observed_absolute_callers": [
+            "0x5c1c31bd36a7"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17b463d",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 512,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 193,
+          "attempted_copy_bytes": 98816,
+          "success_result_copy_argument_bytes": 98816,
+          "full_host_duration_sum_ns": 1518601,
+          "clipped_host_duration_sum_ns": 1518601,
+          "clipped_host_interval_union_ns": 1518601,
+          "observed_absolute_callers": [
+            "0x5c1c31b9063d"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 37
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x17ec0b8",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 256,
+          "direction_code": 2,
+          "direction_label": "D2H",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 256,
+          "success_result_copy_argument_bytes": 256,
+          "full_host_duration_sum_ns": 1181197,
+          "clipped_host_duration_sum_ns": 1181197,
+          "clipped_host_interval_union_ns": 1181197,
+          "observed_absolute_callers": [
+            "0x5c1c31bc80b8"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17b463d",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 256,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 164,
+          "attempted_copy_bytes": 41984,
+          "success_result_copy_argument_bytes": 41984,
+          "full_host_duration_sum_ns": 816389,
+          "clipped_host_duration_sum_ns": 816389,
+          "clipped_host_interval_union_ns": 816389,
+          "observed_absolute_callers": [
+            "0x5c1c31b9063d"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 37
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x17f8a00",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 8,
+          "direction_code": 2,
+          "direction_label": "D2H",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 8,
+          "success_result_copy_argument_bytes": 8,
+          "full_host_duration_sum_ns": 569416,
+          "clipped_host_duration_sum_ns": 569416,
+          "clipped_host_interval_union_ns": 569416,
+          "observed_absolute_callers": [
+            "0x5c1c31bd4a00"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x17f8df3",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 4,
+          "direction_code": 2,
+          "direction_label": "D2H",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 4,
+          "success_result_copy_argument_bytes": 4,
+          "full_host_duration_sum_ns": 558376,
+          "clipped_host_duration_sum_ns": 558376,
+          "clipped_host_interval_union_ns": 558376,
+          "observed_absolute_callers": [
+            "0x5c1c31bd4df3"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17eb851",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 12,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 56,
+          "attempted_copy_bytes": 672,
+          "success_result_copy_argument_bytes": 672,
+          "full_host_duration_sum_ns": 466455,
+          "clipped_host_duration_sum_ns": 466455,
+          "clipped_host_interval_union_ns": 466455,
+          "observed_absolute_callers": [
+            "0x5c1c31bc7851"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17edd5d",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 184320,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 57,
+          "attempted_copy_bytes": 10506240,
+          "success_result_copy_argument_bytes": 10506240,
+          "full_host_duration_sum_ns": 452478,
+          "clipped_host_duration_sum_ns": 452478,
+          "clipped_host_interval_union_ns": 452478,
+          "observed_absolute_callers": [
+            "0x5c1c31bc9d5d"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x1804e57",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 4,
+          "direction_code": 2,
+          "direction_label": "D2H",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 4,
+          "success_result_copy_argument_bytes": 4,
+          "full_host_duration_sum_ns": 436224,
+          "clipped_host_duration_sum_ns": 436224,
+          "clipped_host_interval_union_ns": 436224,
+          "observed_absolute_callers": [
+            "0x5c1c31be0e57"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f7806",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 20480,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 42,
+          "attempted_copy_bytes": 860160,
+          "success_result_copy_argument_bytes": 860160,
+          "full_host_duration_sum_ns": 419024,
+          "clipped_host_duration_sum_ns": 419024,
+          "clipped_host_interval_union_ns": 419024,
+          "observed_absolute_callers": [
+            "0x5c1c31bd3806"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 3,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f0f0a",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 4,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 71,
+          "attempted_copy_bytes": 284,
+          "success_result_copy_argument_bytes": 284,
+          "full_host_duration_sum_ns": 351063,
+          "clipped_host_duration_sum_ns": 351063,
+          "clipped_host_interval_union_ns": 351063,
+          "observed_absolute_callers": [
+            "0x5c1c31bccf0a"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f9de5",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 16,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 28,
+          "attempted_copy_bytes": 448,
+          "success_result_copy_argument_bytes": 448,
+          "full_host_duration_sum_ns": 335952,
+          "clipped_host_duration_sum_ns": 335952,
+          "clipped_host_interval_union_ns": 335952,
+          "observed_absolute_callers": [
+            "0x5c1c31bd5de5"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f76e2",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 20480,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 56,
+          "attempted_copy_bytes": 1146880,
+          "success_result_copy_argument_bytes": 1146880,
+          "full_host_duration_sum_ns": 318449,
+          "clipped_host_duration_sum_ns": 318449,
+          "clipped_host_interval_union_ns": 318449,
+          "observed_absolute_callers": [
+            "0x5c1c31bd36e2"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 3,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17b8f63",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 8388608,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 13,
+          "attempted_copy_bytes": 109051904,
+          "success_result_copy_argument_bytes": 109051904,
+          "full_host_duration_sum_ns": 271087,
+          "clipped_host_duration_sum_ns": 271087,
+          "clipped_host_interval_union_ns": 271087,
+          "observed_absolute_callers": [
+            "0x5c1c31b94f63"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 13
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17ebcce",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 16,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 57,
+          "attempted_copy_bytes": 912,
+          "success_result_copy_argument_bytes": 912,
+          "full_host_duration_sum_ns": 227199,
+          "clipped_host_duration_sum_ns": 227199,
+          "clipped_host_interval_union_ns": 227199,
+          "observed_absolute_callers": [
+            "0x5c1c31bc7cce"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpy",
+          "caller_relative_offset": "0x180262e",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 16,
+          "direction_code": 2,
+          "direction_label": "D2H",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 16,
+          "success_result_copy_argument_bytes": 16,
+          "full_host_duration_sum_ns": 186488,
+          "clipped_host_duration_sum_ns": 186488,
+          "clipped_host_interval_union_ns": 186488,
+          "observed_absolute_callers": [
+            "0x5c1c31bde62e"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f8d21",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 20480,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 20480,
+          "success_result_copy_argument_bytes": 20480,
+          "full_host_duration_sum_ns": 174177,
+          "clipped_host_duration_sum_ns": 174177,
+          "clipped_host_interval_union_ns": 174177,
+          "observed_absolute_callers": [
+            "0x5c1c31bd4d21"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f0f0a",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 32768,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 32768,
+          "success_result_copy_argument_bytes": 32768,
+          "full_host_duration_sum_ns": 156005,
+          "clipped_host_duration_sum_ns": 156005,
+          "clipped_host_interval_union_ns": 156005,
+          "observed_absolute_callers": [
+            "0x5c1c31bccf0a"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f0f0a",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 12,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 28,
+          "attempted_copy_bytes": 336,
+          "success_result_copy_argument_bytes": 336,
+          "full_host_duration_sum_ns": 117512,
+          "clipped_host_duration_sum_ns": 117512,
+          "clipped_host_interval_union_ns": 117512,
+          "observed_absolute_callers": [
+            "0x5c1c31bccf0a"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f0f0a",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 8,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 13,
+          "attempted_copy_bytes": 104,
+          "success_result_copy_argument_bytes": 104,
+          "full_host_duration_sum_ns": 94587,
+          "clipped_host_duration_sum_ns": 94587,
+          "clipped_host_interval_union_ns": 94587,
+          "observed_absolute_callers": [
+            "0x5c1c31bccf0a"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f9e0d",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 184320,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 28,
+          "attempted_copy_bytes": 5160960,
+          "success_result_copy_argument_bytes": 5160960,
+          "full_host_duration_sum_ns": 82477,
+          "clipped_host_duration_sum_ns": 82477,
+          "clipped_host_interval_union_ns": 82477,
+          "observed_absolute_callers": [
+            "0x5c1c31bd5e0d"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f7c32",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 32768,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 32768,
+          "success_result_copy_argument_bytes": 32768,
+          "full_host_duration_sum_ns": 77728,
+          "clipped_host_duration_sum_ns": 77728,
+          "clipped_host_interval_union_ns": 77728,
+          "observed_absolute_callers": [
+            "0x5c1c31bd3c32"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17f7c32",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 8,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 8,
+          "success_result_copy_argument_bytes": 8,
+          "full_host_duration_sum_ns": 71888,
+          "clipped_host_duration_sum_ns": 71888,
+          "clipped_host_interval_union_ns": 71888,
+          "observed_absolute_callers": [
+            "0x5c1c31bd3c32"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17ec97f",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 5120,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 5120,
+          "success_result_copy_argument_bytes": 5120,
+          "full_host_duration_sum_ns": 71857,
+          "clipped_host_duration_sum_ns": 71857,
+          "clipped_host_interval_union_ns": 71857,
+          "observed_absolute_callers": [
+            "0x5c1c31bc897f"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17b8f97",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 8388608,
+          "direction_code": 3,
+          "direction_label": "D2D",
+          "result_code": 0,
+          "calls_intersecting": 13,
+          "attempted_copy_bytes": 109051904,
+          "success_result_copy_argument_bytes": 109051904,
+          "full_host_duration_sum_ns": 48343,
+          "clipped_host_duration_sum_ns": 48343,
+          "clipped_host_interval_union_ns": 48343,
+          "observed_absolute_callers": [
+            "0x5c1c31b94f97"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 13
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17eb851",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 32768,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 32768,
+          "success_result_copy_argument_bytes": 32768,
+          "full_host_duration_sum_ns": 27923,
+          "clipped_host_duration_sum_ns": 27923,
+          "clipped_host_interval_union_ns": 27923,
+          "observed_absolute_callers": [
+            "0x5c1c31bc7851"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17eecc6",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 20971520,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 20971520,
+          "success_result_copy_argument_bytes": 20971520,
+          "full_host_duration_sum_ns": 17171,
+          "clipped_host_duration_sum_ns": 17171,
+          "clipped_host_interval_union_ns": 17171,
+          "observed_absolute_callers": [
+            "0x5c1c31bcacc6"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        },
+        {
+          "function": "hipMemcpyAsync",
+          "caller_relative_offset": "0x17eb851",
+          "caller_rva_qualified": true,
+          "matches_one_of_four_copy_sites": false,
+          "copy_bytes_per_call": 8,
+          "direction_code": 1,
+          "direction_label": "H2D",
+          "result_code": 0,
+          "calls_intersecting": 1,
+          "attempted_copy_bytes": 8,
+          "success_result_copy_argument_bytes": 8,
+          "full_host_duration_sum_ns": 7491,
+          "clipped_host_duration_sum_ns": 7491,
+          "clipped_host_interval_union_ns": 7491,
+          "observed_absolute_callers": [
+            "0x5c1c31bc7851"
+          ],
+          "observed_image_bases": [
+            "0x5c1c303dc000"
+          ],
+          "distinct_source_addresses": 1,
+          "distinct_destination_addresses": 1
+        }
+      ],
+      "four_copy_sites": [
+        {
+          "caller_relative_offset": "0x17bd966",
+          "observed_matching_calls": 0,
+          "groups": [],
+          "qualification": "Counts only records with observer-qualified main-image caller offsets; external/unqualified callers are excluded."
+        },
+        {
+          "caller_relative_offset": "0x17bd98a",
+          "observed_matching_calls": 0,
+          "groups": [],
+          "qualification": "Counts only records with observer-qualified main-image caller offsets; external/unqualified callers are excluded."
+        },
+        {
+          "caller_relative_offset": "0x17bd9b3",
+          "observed_matching_calls": 0,
+          "groups": [],
+          "qualification": "Counts only records with observer-qualified main-image caller offsets; external/unqualified callers are excluded."
+        },
+        {
+          "caller_relative_offset": "0x17bd9dc",
+          "observed_matching_calls": 0,
+          "groups": [],
+          "qualification": "Counts only records with observer-qualified main-image caller offsets; external/unqualified callers are excluded."
+        }
+      ],
+      "scope": "Observed calls only, never extrapolated to unobserved iterations. Sizes are API arguments; failed calls do not establish transferred bytes. Direction is the recorded API kind, not inferred pointer residency."
+    },
+    "quartet_replay": {
+      "definition": "Four consecutive successful-file-order records, same thread/process/API, qualified sites in exact 966/98a/9b3/9dc order. Starts must intersect the window; no unobserved loop iteration is inferred.",
+      "candidate_first_site_starts": 0,
+      "complete_observed_groups": 0,
+      "incomplete_or_interleaved_candidates": 0,
+      "fully_contained_groups": 0,
+      "boundary_crossing_groups": 0,
+      "full_group_temporal_span_stats": null,
+      "full_group_host_duration_sum_stats": null,
+      "full_last_three_host_duration_sum_stats": null,
+      "clipped_quartet_host_duration_sum_ns": 0,
+      "clipped_quartet_host_interval_union_ns": 0,
+      "clipped_last_three_host_duration_sum_ns": 0,
+      "clipped_last_three_host_interval_union_ns": 0,
+      "patterns": [],
+      "first_twenty_by_sequence": [],
+      "ceiling_qualification": "Last-three inclusive host intervals provide an optimistic standalone time-reduction bound only. They can contain GPU wait and dependency time that moves to a later synchronization if copies change; no removable CPU overhead, GPU busy time or serving gain is established. Group temporal gaps also include observer append work and remain unclassified.",
+      "last_three_inclusive_union_percent_of_request": 0.0,
+      "quartet_inclusive_union_percent_of_request": 0.0
+    },
+    "result_code_counts": {
+      "0": 51489
+    }
+  },
+  "trace_integrity": {
+    "source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-direct-census-20261008\\host-census.bin",
+      "exists": true,
+      "bytes": 10755904,
+      "sha256": "57c11ac1f904c3fc28175844ebf7d8e850fb6fd1351c420117f21de2dc8fe0fb"
+    },
+    "layout_valid": true,
+    "valid_records": 112040,
+    "invalid_records": 0,
+    "invalid_examples": [],
+    "integrity_issues": [],
+    "observer_source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-direct-source-20261008\\host_census.c",
+      "exists": true,
+      "bytes": 12055,
+      "sha256": "703366650e53c59944a23f1b143c7a4088e707fd316896379a022d875d0b624d"
+    },
+    "header": {
+      "magic_hex": "4847484330313732",
+      "version": 1,
+      "header_size": 64,
+      "record_size": 96,
+      "clock_id": 7,
+      "clock_domain": "linux_CLOCK_BOOTTIME_ns",
+      "main_load_base": "0x5c1c303dc000",
+      "main_load_base_zero_is_valid": true,
+      "max_file_bytes": 67108864,
+      "pid": 87,
+      "reserved32": 0,
+      "flags": 7,
+      "reserved64": 0
+    },
+    "record_payload_bytes": 10755840,
+    "full_records_in_file": 112040,
+    "trailing_partial_record_bytes": 0,
+    "footer_present": false,
+    "file_at_declared_cap": false,
+    "live_snapshot_completeness_established": false,
+    "sequence": {
+      "semantics": "Assigned under append lock after HIP return; begins1 and follows successful record file order.",
+      "first": 1,
+      "last": 112040,
+      "maximum": 112040,
+      "records_not_equal_to_one_based_file_index": 0,
+      "duplicate_sequence_records": 0,
+      "ordered_contiguous_from_one": true,
+      "mismatch_examples": [],
+      "highest_attempted_sequence_known": false
+    },
+    "unknown_direction_copy_records": 0,
+    "observed_API_counts": {
+      "hipMemcpy": 1664,
+      "hipLaunchKernel": 107145,
+      "hipDeviceSynchronize": 381,
+      "hipMemcpyAsync": 2850
+    },
+    "record_time_envelope": {
+      "earliest_start_ns": 5313131298297,
+      "latest_end_ns": 5384958284603
+    },
+    "observer_loss_accounting": "No footer or attempted/written counters; cap/clock/write failures can silently stop observation, and in-flight calls may not yet have records."
+  },
+  "evidence": {
+    "raw": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-direct-census-20261008\\host-census.bin",
+      "bytes": 10755904,
+      "sha256": "57c11ac1f904c3fc28175844ebf7d8e850fb6fd1351c420117f21de2dc8fe0fb"
+    },
+    "boundaries": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-direct-census-20261008\\request-boundaries.json",
+      "bytes": 6422,
+      "sha256": "f5230b2d91b2da3da8312ef05d2187be502cf68330c752cc65b48b2bfc6963c8"
+    },
+    "analysis": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-direct-census-20261008\\host-direct-analysis.json",
+      "bytes": 222735,
+      "sha256": "d4ce6cfd49009d187f8233b2ccf372f9387918026420239ce11e4b138b11634a"
+    },
+    "independent_packaged_analyzer": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-direct-census-20261008\\public-analyzer-verification.json",
+      "bytes": 222574,
+      "sha256": "34c85837288f14bc45c6f666324a5d9984ad652e9e1c765fef7ce3753dd14d27"
+    },
+    "live_export": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-direct-census-20261008\\live-export-receipt.json",
+      "bytes": 1974,
+      "sha256": "93302994a071cb249b57c03ebf453c7f3dea7e1a3239437dad99043de8f31bf6"
+    },
+    "ready_open": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-direct-census-20261008\\final-ready-open.json",
+      "bytes": 2822,
+      "sha256": "58dcbe092d475eec3e87749af11ea865fb8d4f87b2c14c71be3426a86ed639ae"
+    }
+  },
+  "SDK_export_unavailable": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-host-census-20261008\\export-receipt.json",
+    "bytes": 1015,
+    "sha256": "18b9f34410d8fa7f50f0e0d6d372af2f37c0676e0c22efc4301c608118d92ca5"
+  },
+  "repeat_completed_negative_optimization": false,
+  "full_goal_completed": false
+}

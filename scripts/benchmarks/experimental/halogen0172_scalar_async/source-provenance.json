@@ -1,0 +1,89 @@
+{
+  "utc": "2026-10-08T11:03:48.444471+00:00",
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_scalar_async\\scalar_async.c",
+    "bytes": 9667,
+    "sha256": "f9bd14c1515be15e8906ce4dadbc815a7857c02d1f8531efe090bd32f502dec2"
+  },
+  "analyzer": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0172_scalar_async\\analyze_receipt.py",
+    "bytes": 17571,
+    "sha256": "f8fdfed0cf008b67961312ae1fc73ab07facc85cea5d4ba282e570a0df0fd7b8"
+  },
+  "private_source_build": {
+    "utc": "2026-10-08T10:49:10.356846+00:00",
+    "command": [
+      "wsl.exe",
+      "-d",
+      "Ubuntu-24.04",
+      "-u",
+      "revn",
+      "--exec",
+      "gcc",
+      "-std=c11",
+      "-O2",
+      "-shared",
+      "-fPIC",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "/mnt/c/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-scalar-async-source-20261008/scalar_async.c",
+      "-ldl",
+      "-o",
+      "/mnt/c/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hip-scalar-async-source-20261008/libhalogen0172-scalar-async.so"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "",
+    "source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\scalar_async.c",
+      "bytes": 9667,
+      "sha256": "f9bd14c1515be15e8906ce4dadbc815a7857c02d1f8531efe090bd32f502dec2"
+    },
+    "CPU_only": true,
+    "HIP_initialized": false,
+    "library": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\libhalogen0172-scalar-async.so",
+      "bytes": 17096,
+      "sha256": "c5326ca86c685a0f29fe384ea79064b79b3d5a6db1844d55dd2559c377d4a830"
+    }
+  },
+  "launcher": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\launch_scalar.py",
+    "bytes": 3660,
+    "sha256": "f7c89c58bbdb9788fa0522cbb08f1f0ab9bffb24ea36228f47fb4050a7d1a4aa"
+  },
+  "manifest_patch": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\manifest_patch.py",
+    "bytes": 2877,
+    "sha256": "c82069d1c55f631c4120b7464edc6ac85e1f3601980212512831697084490970"
+  },
+  "wrapper": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\scalar-launch.sh",
+    "bytes": 1424,
+    "sha256": "755ff13dee6e4c8916abddbb19eb4dc38b30efaca4cd621e76989934af01e0ea"
+  },
+  "source_binding": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-source-20261008\\version-manifest.json",
+    "bytes": 8456,
+    "sha256": "ae34d57e3ea8f0a53b04198ccbfcf97a2e40d60eaff9eb203c999e0ddc8b4a78"
+  },
+  "actual_capture": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\hip-scalar-async-comparison\\candidate\\scalar-receipt.bin",
+    "bytes": 3392,
+    "sha256": "00bd60c023f4b4aa440219c21b732319b5652caef4226e07c3cd7fd32d05f0a7"
+  },
+  "report": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\benchmarks\\halogen0172-scalar-async-20261008.md",
+    "bytes": 3274,
+    "sha256": "7bf93aea7649e99585dc9df331f39029585bd1410e6b5de6b7dceaeb1e9a699d"
+  },
+  "evidence": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\benchmarks\\halogen0172-scalar-async-20261008.json",
+    "bytes": 59830,
+    "sha256": "b02d7c9d039c988b765aa3ebb23fba1008322ecc66e918164b9e8cdee006baf5"
+  },
+  "default_off": true,
+  "serving_gain_qualified": false,
+  "per_request_receipt_attribution": false
+}
