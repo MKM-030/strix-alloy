@@ -176,6 +176,25 @@ def halogen_speculation_arguments(engine, directory):
     return ['-SpeculationPolicyJson', json.dumps(policy, sort_keys=True, separators=(',', ':'))]
 
 
+def halogen_api_defaults_arguments(engine, directory):
+    if 'api_defaults' not in engine:
+        return []
+    supported = ROOT.parent / 'backends/halogen-wsl2-0.17.2'
+    if directory.resolve() != supported.resolve():
+        raise ValueError('API defaults require the pinned Halogen 0.17.2 backend')
+    source = directory / 'scripts/api_defaults.py'
+    if source.is_symlink() or not source.is_file():
+        raise ValueError('Selected backend has no managed API-default support')
+    if not re.search(r'\[string\]\s*\$ApiDefaultsJson\b',
+                     (directory / 'Start.ps1').read_text(encoding='utf-8-sig'), re.I):
+        raise ValueError('Selected launcher has no managed API-default support')
+    spec = importlib.util.spec_from_file_location('alloy_halogen_api_defaults', source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    defaults = module.validate(engine['api_defaults'])
+    return ['-ApiDefaultsJson', json.dumps(defaults, sort_keys=True, separators=(',', ':'))]
+
+
 def halogen_matmul_arguments(engine, directory):
     if 'matmul_tuning' not in engine: return []
     source=directory/'scripts/matmul_tuning.py'
@@ -251,6 +270,7 @@ def validate_engine(engine, repo):
         validate_halogen_launcher_controls(engine,repo)
         halogen_kernel_arguments(engine,directory)
         halogen_speculation_arguments(engine,directory)
+        halogen_api_defaults_arguments(engine,directory)
         halogen_matmul_arguments(engine,directory)
         halogen_lookup_arguments(engine,directory)
         halogen_private_hsa_arguments(engine,directory)
@@ -259,6 +279,8 @@ def validate_engine(engine, repo):
         raise ValueError('Managed kernel controls apply only to Halogen')
     if 'speculation_policy' in engine:
         raise ValueError('Managed speculation policies apply only to Halogen')
+    if 'api_defaults' in engine:
+        raise ValueError('Managed API defaults apply only to Halogen')
     if 'matmul_tuning' in engine:
         raise ValueError('Managed matmul plans apply only to Halogen')
     if 'lookup_tuning' in engine:
@@ -294,6 +316,7 @@ def halogen_launch_command(engine, directory):
     controls = halogen_draft_arguments(engine)
     controls += halogen_kernel_arguments(engine, directory)
     controls += halogen_speculation_arguments(engine, directory)
+    controls += halogen_api_defaults_arguments(engine, directory)
     controls += halogen_matmul_arguments(engine, directory)
     controls += halogen_lookup_arguments(engine, directory)
     controls += halogen_private_hsa_arguments(engine, directory)
@@ -318,6 +341,7 @@ def halogen_launch_command(engine, directory):
              '-PrefillKeepTrunk': '--prefill-keep-trunk',
              '-KernelControlsJson': '--kernel-controls-json',
              '-SpeculationPolicyJson': '--speculation-policy-json',
+             '-ApiDefaultsJson': '--api-defaults-json',
              '-MatmulTuningJson': '--matmul-tuning-json',
              '-LookupReceipt': '--lookup-receipt', '-LookupReceiptSha256': '--lookup-receipt-sha256',
              '-PrivateHsaReceipt': '--private-hsa-receipt',

@@ -23,6 +23,7 @@ import uuid
 import portable
 import kernel_controls as kc
 import speculation_policy as sp
+import api_defaults as ad
 from startup_monitor import StartupMonitor
 import runner as r
 import startup_guard as sg
@@ -108,6 +109,7 @@ def options(argv=None):
     p.add_argument('--kernel-controls-json',type=kc.parse,default=None)
     p.add_argument('--matmul-tuning-json',default=None)
     p.add_argument('--speculation-policy-json',type=sp.parse,default=None)
+    p.add_argument('--api-defaults-json',type=ad.parse,default=None)
     p.add_argument('--lookup-receipt',default=None)
     p.add_argument('--lookup-receipt-sha256',default=None)
     p.add_argument('--private-hsa-receipt',default=None)
@@ -143,6 +145,8 @@ def validate_options(o):
     kc.validate(getattr(o, 'kernel_controls_json', None) or {})
     if getattr(o, 'speculation_policy_json', None) is not None:
         sp.validate(o.speculation_policy_json)
+    if getattr(o, 'api_defaults_json', None) is not None:
+        ad.validate(o.api_defaults_json)
     if getattr(o, 'matmul_tuning_json', None) is not None:
         raise ValueError('Private matmul tuning configurations are not rebound to 0.17.2; use the stock image tuning')
     if getattr(o, 'qualified_matmul_tuning', None) is not None:
@@ -272,7 +276,7 @@ def validate_prefill_limits(context, prefill_chunk, max_prefill_tokens):
             raise ValueError('Max prefill tokens requires an explicit chunk no larger than the token arena')
 
 
-def environment(context, checkpoint="v2", prompt_cache="Off", draft_tokens=None, prefill_chunk=None, prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, speculation_policy=None, max_prefill_tokens=None):
+def environment(context, checkpoint="v2", prompt_cache="Off", draft_tokens=None, prefill_chunk=None, prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, speculation_policy=None, max_prefill_tokens=None, api_defaults=None):
     if draft_tokens is not None and (type(draft_tokens) is not int or draft_tokens not in (1,2,3)):
         raise ValueError("Draft depth must be 1, 2 or 3")
     validate_prefill_limits(context,prefill_chunk,max_prefill_tokens)
@@ -308,6 +312,7 @@ def environment(context, checkpoint="v2", prompt_cache="Off", draft_tokens=None,
     env['HALOGEN_PROMPT_CACHE']={'Off':'0','Exact':'1','Flexible':'2'}[prompt_cache]
     env.update(kc.environment(kernel_controls or {}))
     env.update(sp.environment(speculation_policy))
+    env.update(ad.environment(api_defaults))
     return env
 
 
@@ -343,10 +348,12 @@ def build_manifest(o, attempt, run_id):
         mounts['/candidate/libhalogen0172-v2-preflight.so']=r.linux_path(LOCAL/'libhalogen0172-v2-preflight.so')
     result=dict(schema=1,version='0.17.2',image=r.IMAGE,run_id=run_id,checkpoint=checkpoint,
         context=o.context_size,slots=1,serve_seconds=o.serve_seconds,startup_timeout=o.startup_timeout,
-        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None),getattr(o,'speculation_policy_json',None),max_prefill_tokens=getattr(o,'max_prefill_tokens',None)),sources=source_hashes(),
+        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None),getattr(o,'speculation_policy_json',None),max_prefill_tokens=getattr(o,'max_prefill_tokens',None),api_defaults=getattr(o,'api_defaults_json',None)),sources=source_hashes(),
         entrypoint_sha256=portable.digest(attempt/'entrypoint-service.sh'))
     if getattr(o, 'speculation_policy_json', None) is not None:
         result['speculation_policy'] = sp.validate(o.speculation_policy_json)
+    if getattr(o, 'api_defaults_json', None) is not None:
+        result['api_defaults'] = ad.validate(o.api_defaults_json)
     return result
 
 

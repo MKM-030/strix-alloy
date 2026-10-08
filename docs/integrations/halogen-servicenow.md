@@ -43,6 +43,31 @@ server and API trace:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -ConsoleTrace
 ```
 
+For Halogen 0.17.2 this launcher explicitly defaults to Thinking On, medium
+effort and a maximum of 2048 thinking tokens. It forwards the supported upstream
+`HALOGEN_ENABLE_THINKING=1`, `HALOGEN_REASONING_EFFORT=medium` and
+`HALOGEN_MAX_THINKING_TOKENS=2048` through the managed container configuration.
+Individual requests retain upstream precedence, including
+`reasoning_effort: "none"` or `enable_thinking: false`. Forced tool-call behavior
+is unchanged. Use `-Thinking Off` for a server default without Thinking.
+
+For an AI Agent request, allow room for both reasoning and the final answer:
+
+```json
+{
+  "enable_thinking": true,
+  "reasoning_effort": "medium",
+  "max_thinking_tokens": 2048,
+  "max_tokens": 8192
+}
+```
+
+These fields belong in the request body. An input transformer that clamps
+`max_tokens` to 2048 overrides the server's larger output default and needs its
+own budget adjustment. Return the final `message.content` to the text connector;
+keep `reasoning_content` separate. The measured speed results below used
+Thinking Off and do not qualify Thinking On throughput.
+
 The default `Current8K` profile selects Halogen 0.17.2 and pairs an 8,192-token
 prefill chunk with an 8,192-token prefill arena. `-HalogenVersion` selects the
 installed backend explicitly. The historical Stock A profile requires an
@@ -355,6 +380,6 @@ response; it does not create or infer additional reasoning.
 To request generated reasoning, change **both** fast-mode controls in the JSON
 body to `enable_thinking: true` and `reasoning_effort: "medium"`. Do not leave
 `reasoning_effort: "none"` in that request: it disables thinking. Allow a larger
-`max_tokens` budget, for example `1024`, because reasoning and the answer share
+`max_tokens` budget, for example `8192`, because reasoning and the answer share
 that budget. This is a different generation workload from the historical
 thinking-off benchmark; its latency and rate have not been measured here.

@@ -2,7 +2,8 @@
 
 This default-off experiment observes an owned, frozen 16K request early enough
 to investigate preparing the second 8192-token chunk while the GPU handles the
-first. It is a source port and has **not been built, loaded or benchmarked**.
+first. The reviewed callback-bound port compiled successfully on 8 October
+2026. It has **not been loaded or benchmarked**.
 It does not run an NPU worker, substitute model results or change the live server.
 
 The source binds the exact 0.17.2 engine and function signatures in
@@ -16,8 +17,16 @@ Source SHA256:
 Header SHA256:
 `70fef9599dd6f9f4722ce73d73a11a5c92e4e790cc6ba505f5b176a0d6824681`.
 
-Root must make a fresh build with `PLE_EARLY_BUILD_SHA` equal to the actual
-source hash, then issue fresh source/header/owner receipt pins. The preserved
+The CPU-only build used `PLE_EARLY_BUILD_SHA` equal to the actual source hash,
+`-Wall -Wextra -Werror`, and produced a 41,432-byte ELF64 x86-64 shared object.
+Artifact SHA256:
+`51e70a40b0251b040ceb5564c48dd1faba26f3b89abad1e0deab0dd9b0858aaf`.
+The compiler exited zero and its owned job closed; no engine lifecycle, GPU or
+NPU operation was performed. The private receipt is
+`ple0172-host-build-490b932c16c64f14b777d4934ae31a2a/build.json` beneath the
+0.17.2 preparation directory.
+
+Root must issue fresh source/header/owner receipt pins before loading. The preserved
 0.16.2 and original 0.17.2 preparation receipts cannot qualify this derivative.
 Keep ordinary requests delegated, retain cancellation and unchanged numerical
 tolerances, and use the normal lifecycle. Qualification requires owned HTTP

@@ -9,6 +9,8 @@ Current8K defaults to Halogen 0.17.2 and explicitly pairs an 8192-token prefill
 chunk with an 8192-token arena. HistoricalStock requires -HalogenVersion 0.16.2
 and retains the native prefill defaults used by the retained 2026-10-04 stock
 benchmark. Both select v2, MTP depth 2 and stock PLD 3,3.
+Halogen 0.17.2 defaults to Thinking On, medium effort and a 2048-token thinking
+budget. Use -Thinking Off to select the supported server default explicitly.
 The historical 48.424 tok/s result is workload-specific, not a speed guarantee.
 ConsoleTrace opts into request/response content in the console. This script
 does not create a transcript or redirect request content to a file.
@@ -31,6 +33,8 @@ param(
     [switch]$PrintOnly,
     [switch]$Status,
     [switch]$Stop,
+    [ValidateSet('On', 'Off')]
+    [string]$Thinking = 'On',
     [ValidateSet('0.16.2', '0.17.2')]
     [string]$HalogenVersion = '0.17.2'
 )
@@ -67,6 +71,9 @@ if ($Stop -or $Status) {
 if ($Profile -eq 'HistoricalStock' -and $HalogenVersion -ne '0.16.2') {
     throw 'HistoricalStock requires explicit -HalogenVersion 0.16.2 for the retained 2026-10-04 stock profile.'
 }
+if ($HalogenVersion -ne '0.17.2' -and $PSBoundParameters.ContainsKey('Thinking')) {
+    throw 'Thinking server defaults require Halogen 0.17.2.'
+}
 
 # make_profile reads installed metadata and token-file paths, not token values.
 # Keep the normal generator as the source of endpoint and readiness settings.
@@ -101,11 +108,22 @@ if ($Profile -eq 'Current8K') {
     $configuration.engine | Add-Member -NotePropertyName 'prefill_chunk' -NotePropertyValue 8192 -Force
     $configuration.engine | Add-Member -NotePropertyName 'max_prefill_tokens' -NotePropertyValue 8192 -Force
 }
+if ($HalogenVersion -eq '0.17.2') {
+    $configuration.engine | Add-Member -NotePropertyName 'api_defaults' `
+        -NotePropertyValue ([pscustomobject]@{
+            enable_thinking = ($Thinking -eq 'On')
+            reasoning_effort = 'medium'
+            max_thinking_tokens = 2048
+        }) -Force
+}
 $configuration | Add-Member -NotePropertyName 'console_trace' `
     -NotePropertyValue ([bool]$ConsoleTrace.IsPresent) -Force
 
 Write-Host ('Profile: {0}; Halogen {1} v2; MTP depth 2; PLD 3,3; cache Off; one request.' -f $Profile, $HalogenVersion)
 Write-Host 'Context capacity: 262144 positions (input plus output).'
+if ($HalogenVersion -eq '0.17.2') {
+    Write-Host ('Thinking default: {0}; medium effort; thinking budget: 2048 tokens. Requests can override these defaults.' -f $Thinking)
+}
 if ($Profile -eq 'Current8K') {
     Write-Host 'Prefill chunk / token arena: 8192 / 8192.'
 } else {
