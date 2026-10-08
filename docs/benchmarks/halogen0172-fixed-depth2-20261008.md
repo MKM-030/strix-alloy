@@ -1,6 +1,6 @@
 # Halogen 0.17.2: fixed MTP depth 2, matched 8K comparison
 
-Actual input: **8,192 non-repeated prose tokens**; context capacity: **262,144**. v2 checkpoint, one slot, chunk/arena 8192/8192, MTP2, PLD 3,3, Cache Off, Thinking Off, temperature 0/seed 1. Each cohort has three measured repetitions and one excluded warmup.
+Actual input: **8,192 synthetic pseudoprose tokens**, including116 repeated ` a` prefix units for token calibration; context capacity: **262,144**. The previous description as non-repeated prose was incorrect. Output is a normally generated, non-copying story. v2 checkpoint, one slot, chunk/arena8192/8192, MTP2, PLD3,3, Cache Off, Thinking Off, temperature0/seed1. Each cohort has three measured repetitions and one excluded warmup. Timings and original requests are unchanged.
 
 | Window | Serial TG1 prefill tok/s | MTP TG128 prefill tok/s | MTP TG128 decode tok/s | API MTP+PLD acceptance |
 | --- | ---: | ---: | ---: | ---: |

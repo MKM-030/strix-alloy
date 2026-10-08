@@ -2,7 +2,7 @@
 
 No repeatable Prefill or Decode improvement was established. The candidate remains off. The normal 0.17.2 server is restored, ready and open in the visible request-log console.
 
-Stock → candidate → stock; each window has one excluded warmup plus three measurements. Every request has exactly 8,192 natural input tokens and 128 output tokens, temperature 0, seed 1, Thinking Off and Cache Off. Context capacity is 262,144; MTP depth is 2 and PLD is 3,3. Requests, outputs and acceptance match.
+Stock → candidate → stock; each window has one excluded warmup plus three measurements. Every request has exactly8,192 synthetic pseudoprose input tokens, including116 repeated ` a` prefix units for token calibration, and128 normally generated non-copying story tokens. The earlier natural-input description was incorrect. Temperature0, seed1, Thinking Off and Cache Off. Context capacity is262,144; MTP depth is2 and PLD is3,3. Original requests, timings, outputs and acceptance are unchanged.
 
 | Window | Prefill tok/s, normalized | Decode tok/s, normalized | Raw API prefill | Raw API decode | Request wall s | Acceptance |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |

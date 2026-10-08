@@ -2,7 +2,7 @@
 
 A default-off native observer captured 112,040 valid fixed-size records from the actual 0.17.2 engine. The live export survived normal shutdown. This is diagnostic attribution, not a new throughput benchmark or a qualified speedup. The normal Thinking server was restored, authenticated, ready and open in its visible console.
 
-The frozen request used exactly 8,192 natural prose input tokens and 128 output tokens, temperature 0 / seed 1, Thinking Off, Cache Off, MTP2 / PLD3,3, arena and chunk8192, at capacity262144. One warmup and one diagnostic request were kept separate. Both outputs matched; combined API MTP+PLD accounting remained70/113=61.9469%.
+The frozen request used exactly8,192 synthetic pseudoprose input tokens, including116 repeated ` a` prefix units for calibration, and128 normally generated non-copying story tokens. Its earlier natural-prose description was incorrect. Temperature0/seed1, Thinking Off, Cache Off, MTP2/PLD3,3, arena and chunk8192, at capacity262144. One warmup and one diagnostic request were kept separate. Original requests and timings are unchanged; both outputs matched and combined API MTP+PLD accounting remained70/113=61.9469%.
 
 The last qualified stock cohort remains **1,226.62 Prefill tok/s,42.61 Decode tok/s,61.95% combined acceptance**. The historical48.42 Decode tok/s belongs to0.16.2. No instrumented rate is added to the post table.
 
