@@ -95,6 +95,17 @@ it does not qualify live ownership or a Windows-to-WSL readiness lead. The
 owned CPU job closed with exit zero and no errors; the serving server was not
 changed. No NPU or accelerator provider was used.
 
+The v5 derivative also completed one archived replay, adding a 20 MiB raw FP8
+row buffer and a 1 MiB original-order int64 row-ID buffer. Its sampled worker
+wall was 0.859000 seconds before ready publication. All four outputs were
+independently streamed and rehashed (147,849,216 bytes); BF16/FLOAT match the
+previously verified v4 outputs, raw FP8 matches v4's recorded reconstructed
+digest, and row IDs match the recorded original order. The publication,
+process, model, table and constant bindings also agree. No worker was rerun
+for verification. Cache/import conditions differed, so the v4/v5 times do not
+qualify a causal speedup. These are saved second-chunk artifacts; first-chunk
+ownership, a live handoff and serving-rate improvement remain unqualified.
+
 A separate CPU/SSD candidate was identified in the actual native copy-mode
 worker: retain exact ID generation and original ID order, then use a separate
 page permutation to copy rows into the existing native buffer. The worker uses
@@ -111,6 +122,13 @@ phase completion and asynchronous raw-buffer reuse still require a connected
 adapter. A completed countdown alone cannot authorize H2D after cancellation.
 The ordinary first lookup is also being reviewed because changing an already
 overlapped second lookup has limited potential.
+
+The connected candidate targets that ordinary first lookup: group selected
+source pages, copy exact row bytes into their original destination order, and
+retain native GPU ID/history processing, unpack, RMS and FC. Stock second-chunk
+prefetch remains in place. The first lookup uses a different worker and vtable,
+so the prefetch worker binding alone cannot enable it. Implementation is in
+progress; no extra throughput cohort or startup-floor study has been run.
 
 ## Retained evidence
 
@@ -131,6 +149,8 @@ All private evidence below is beneath
   `ple-early-observer-0172-v2-source/ple-early-token-window-0172-v2-e01d259b8503429fa3831dbf01c53e18/{result,token-release-manifest,final-ready}.json`.
 - Actual archived v4 input and artifact verification:
   `ple-input-archived-0172-v4-e01d259b8503429fa3831dbf01c53e18/`.
+- Actual archived v5 raw rows, IDs and independent artifact verification:
+  `ple-input-archived-0172-v5-e01d259b8503429fa3831dbf01c53e18/`.
 - CPU page scheduler source and focused verification:
   `ple0172-native-page-scheduler-v1/delivery.json`.
 

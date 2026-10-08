@@ -55,6 +55,18 @@ and maximum256; callback payload/TID reuse is allowed after return.
 Root independently reviewed the correction and compiled it successfully with
 `-Wall -Wextra -Werror`. The 47,064-byte ELF has SHA256
 `8833bf7dd0424cb3b17027342ceed985fb86fe44dd8444b7a0592915842d0da5`.
-V2 remains default-off and has not been loaded. Its separate launcher/manifest
-port and successful runtime observation remain pending; v1 metadata cannot
-qualify it. No NPU or throughput result follows from this build.
+Root loaded v2 once using its separately sealed launcher and manifest. The
+owned 16,384-token request completed HTTP 200 with 128 output tokens; all 64
+native workers returned and joined. Full request, suffix, carry and promoted
+state bindings passed. The original Thinking-enabled 0.17.2 serving profile
+was restored ready and open, with the observer removed.
+
+The native second-chunk worker interval was 8647.885 ms, but most of that work
+already overlaps GPU execution. The wait-to-join interval was 200.944 ms.
+These intrusive observations are not throughput measurements. No NPU or result
+substitution ran. The completed observation will not be repeated unchanged.
+
+Follow-up implementation targets the ordinary first lookup and preserves the
+existing second-chunk prefetch. Exact raw FP8 rows and original-order row IDs
+are available from an archived CPU replay; native attachment and a serving
+speedup remain unqualified. See the current development status linked above.
