@@ -1,0 +1,608 @@
+{
+  "schema": "halogen.ple-independent-input.20261008.v1",
+  "recorded_utc": "2026-10-08T00:49:00.978570+00:00",
+  "constants_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-constants-6cea6709888147118d703a8e546d6a79\\extracted\\original-constants.json",
+    "bytes": 5102,
+    "sha256": "79ec059e951aec6b573e76141a1718af5b491f2dfa46287b90c3157a8fe01ef9"
+  },
+  "constants": {
+    "schema": "private.ple-original-hash-constants.v1",
+    "passed": true,
+    "source_sha256": "bc70467dab6e7277795d6786155fc0f49e87981a8315b0a7c81692a1eb311c79",
+    "helper_sha256": "a8f127931ee16301d0a103850898b9a898da5e91d40d460ca771172909da10d5",
+    "metadata_receipt_sha256": "36c9e36f6db9d022e224825ed8900a8d4aefdf870d88a96c235b1e2ab2512ab1",
+    "checkpoint_sha256_retained": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "checkpoint_rehashed": false,
+    "model_source": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\revn\\halogen-models-native\\qwen38-flash-next-v2.hgn",
+    "source_identity_windows_unc": {
+      "st_ctime_ns": 1790979072020132000,
+      "st_dev": 0,
+      "st_ino": 616828,
+      "st_mtime_ns": 1790979071648132000,
+      "st_size": 66687678432
+    },
+    "header_sha256": "9e522122a6deedf7f966108b1902939d376126f4888c28ec183f3f6460a937c7",
+    "directory_sha256": "2302900dfe860fd7a689c90bdf1d3fe674d78aa8bf3c166e05000c9d5e5e9ceb",
+    "data": {
+      "file": "hash-constants-i64.bin",
+      "bytes": 280,
+      "sha256": "92a0c13bf084710eea33b4843748e7657bebc1ed2aed6539fd2f9768896038a3"
+    },
+    "tensors": {
+      "multipliers": {
+        "data_offset": 0,
+        "bytes": 24,
+        "sha256": "37349930c3c77bf4927b2afb6b50f30c404f42f00f5790bda96e7d9589c26477",
+        "signed_int64_values": [
+          23703573157769,
+          20109073645365,
+          8052911324071
+        ],
+        "source_offset": 1753322176,
+        "descriptor_sha256": "bd72f97876909845654e8bc999206edd24f31017ebe81a98a492012aca661a4a",
+        "directory_XOR32_verified": true,
+        "native_trace_bytes_equal": true
+      },
+      "offsets": {
+        "data_offset": 24,
+        "bytes": 128,
+        "sha256": "af1566f7a3be2f4a9ee8e2384aa161b8d45cfcbd92376827662a028679b7d8eb",
+        "signed_int64_values": [
+          0,
+          20000003,
+          40000026,
+          60000059,
+          80000106,
+          100000165,
+          120000228,
+          140000297,
+          160000374,
+          180000455,
+          200000548,
+          220000655,
+          240000802,
+          260000955,
+          280001114,
+          300001275
+        ],
+        "source_offset": 1753322240,
+        "descriptor_sha256": "6e426bfa8684d141b658e05c5f588aab420c6ff95b3db91b3e1721e01224605b",
+        "directory_XOR32_verified": true,
+        "native_trace_bytes_equal": true
+      },
+      "moduli": {
+        "data_offset": 152,
+        "bytes": 128,
+        "sha256": "81879b658d9974287ceecc77463e5fdd183cb4cd66692b061ea6af24ef414d39",
+        "signed_int64_values": [
+          20000003,
+          20000023,
+          20000033,
+          20000047,
+          20000059,
+          20000063,
+          20000069,
+          20000077,
+          20000081,
+          20000093,
+          20000107,
+          20000147,
+          20000153,
+          20000159,
+          20000161,
+          20000171
+        ],
+        "source_offset": 1753322368,
+        "descriptor_sha256": "6f011bd950c22d27a29b4aff8dd1f1fd67b361616fc2a7a57a0dd720c0048497",
+        "directory_XOR32_verified": true,
+        "native_trace_bytes_equal": true
+      }
+    },
+    "source_ranges": [
+      {
+        "name": "HGN-header",
+        "offset": 0,
+        "bytes": 104,
+        "sha256": "9e522122a6deedf7f966108b1902939d376126f4888c28ec183f3f6460a937c7"
+      },
+      {
+        "name": "HGN-directory",
+        "offset": 104,
+        "bytes": 322400,
+        "sha256": "2302900dfe860fd7a689c90bdf1d3fe674d78aa8bf3c166e05000c9d5e5e9ceb"
+      },
+      {
+        "name": "layers.1.ple.ple_embedding.layer_multipliers-descriptor",
+        "offset": 7464,
+        "bytes": 160,
+        "sha256": "bd72f97876909845654e8bc999206edd24f31017ebe81a98a492012aca661a4a"
+      },
+      {
+        "name": "layers.1.ple.ple_embedding.layer_multipliers",
+        "offset": 1753322176,
+        "bytes": 24,
+        "sha256": "37349930c3c77bf4927b2afb6b50f30c404f42f00f5790bda96e7d9589c26477"
+      },
+      {
+        "name": "layers.1.ple.ple_embedding.ngram_heads_offsets-descriptor",
+        "offset": 7624,
+        "bytes": 160,
+        "sha256": "6e426bfa8684d141b658e05c5f588aab420c6ff95b3db91b3e1721e01224605b"
+      },
+      {
+        "name": "layers.1.ple.ple_embedding.ngram_heads_offsets",
+        "offset": 1753322240,
+        "bytes": 128,
+        "sha256": "af1566f7a3be2f4a9ee8e2384aa161b8d45cfcbd92376827662a028679b7d8eb"
+      },
+      {
+        "name": "layers.1.ple.ple_embedding.ngram_heads_vocab_sizes-descriptor",
+        "offset": 7784,
+        "bytes": 160,
+        "sha256": "6f011bd950c22d27a29b4aff8dd1f1fd67b361616fc2a7a57a0dd720c0048497"
+      },
+      {
+        "name": "layers.1.ple.ple_embedding.ngram_heads_vocab_sizes",
+        "offset": 1753322368,
+        "bytes": 128,
+        "sha256": "81879b658d9974287ceecc77463e5fdd183cb4cd66692b061ea6af24ef414d39"
+      }
+    ],
+    "model_metadata_bytes_read": 322984,
+    "model_payload_bytes_read": 280,
+    "captured_constants_used_as_runtime_source": false,
+    "native_trace_comparison_only": true,
+    "NPU_executed": false,
+    "GPU_executed": false,
+    "live_mapping_read": false,
+    "server_changed": false,
+    "speed_claim": false,
+    "wall_seconds": 0.034661300014704466
+  },
+  "general_table_binding": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-table-binding-8a651cac3c144cabb2eac77381b02f54\\binding\\table-binding.json",
+    "bytes": 3125,
+    "sha256": "2af59a5a46adaf165cc0e4ecf24bc3999231e1e1e46427e39da3ff89c0757871"
+  },
+  "table": {
+    "descriptor": {
+      "rank": 3,
+      "dimensions": [
+        128,
+        2500012,
+        160
+      ],
+      "variant": 0,
+      "source_offset": 1882122624,
+      "storage": 10,
+      "name": "layers.1.ple.ngram_embedding.weight",
+      "index": 27,
+      "bytes": 51200245764,
+      "xor32": 4135773463,
+      "sha256": "43e25868fffd6b37863b2eb78dbb0ae5e42ad97d4da53fc8588393abc896c2fa"
+    },
+    "table_rows": 320001536,
+    "checkpoint_sha256_retained": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "directory_sha256": "80ccb502fbe4981750f41b96d32f3cfdd1cf18d7d3c296b905e60eabd3a4fb10",
+    "source_path": "C:\\AI\\models\\halogen-flashnext\\qwen38-flash-next-w4b.hgn",
+    "max_valid_row_id": 320001535,
+    "scale_end_exclusive": 53082368388,
+    "table_data_end_exclusive": 53082368384,
+    "index_sha256": "8ca62a2dbf682aeb4572289c545bf1694c022dc0f76d4b26f1cd1e59c073aad4",
+    "directory_bytes": 191680,
+    "directory_count": 1198,
+    "table_data_bytes": 51200245760,
+    "source_bytes": 124068083904,
+    "table_data_offset": 1882122624,
+    "source_sha256_retained": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6",
+    "last_row_start": 53082368224,
+    "row_stride": 160,
+    "header_bytes": 104,
+    "scale_source": "Fresh exact four-byte metadata read immediately after every physical row, matching capture-record.json scale bits; no per-row/per-head scale.",
+    "header_sha256": "27be7f0039f807dc56cb57b682190951c45bd27a5d96fb53475dff6d7ffa6c8b",
+    "scale_offset": 53082368384,
+    "scale_sha256": "570ec84e55d538f0daf01b728921b04a43b0dd769ad0c935f4fa4e503ea65ab5",
+    "scale_bytes_hex_le": "92245139",
+    "directory_offset": 104,
+    "scale_f32_bits": 961619090,
+    "schema": "private.ple-general-table-binding.v1",
+    "passed": true,
+    "source_identity_windows_handle": {
+      "st_size": 124068083904,
+      "st_dev": 6940694304499994282,
+      "st_ino": 12384898978924364,
+      "st_mtime_ns": 1789244565219639800,
+      "st_ctime_ns": 1789244565219639800
+    },
+    "identity_namespace": "fresh native Windows fstat",
+    "identity_relabelled_from_guest": false,
+    "source_sha256": "c8aaed500bafd812f82ef67dc0aa64f79763e8101e22229a16c756afe4de22d0",
+    "helper_sha256": "a8f127931ee16301d0a103850898b9a898da5e91d40d460ca771172909da10d5",
+    "contract_sha256": "225537e5caba6d9c3257b82be5bd4b5c96876e71d66c61f663d058cdb249ab3b",
+    "source_ranges": [
+      {
+        "name": "original-W4B-index",
+        "offset": 0,
+        "bytes": 191784,
+        "sha256": "8ca62a2dbf682aeb4572289c545bf1694c022dc0f76d4b26f1cd1e59c073aad4"
+      },
+      {
+        "name": "original-table-scale",
+        "offset": 53082368384,
+        "bytes": 4,
+        "sha256": "570ec84e55d538f0daf01b728921b04a43b0dd769ad0c935f4fa4e503ea65ab5"
+      }
+    ],
+    "model_metadata_bytes_read": 191784,
+    "model_payload_bytes_read": 4,
+    "table_row_bytes_read": 0,
+    "complete_model_hash_recomputed": false,
+    "index_and_scale_verified": true,
+    "NPU_executed": false,
+    "GPU_executed": false,
+    "live_mapping_read": false,
+    "server_changed": false,
+    "speed_claim": false,
+    "wall_seconds": 0.005164399975910783
+  },
+  "independent_root_audit": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-audit-9561cad491b14d1b8cd5bad3c61f45b7.json",
+    "bytes": 12994,
+    "sha256": "adaec477a7daaa2cdbfbc0bfc656d5325d94ccc8dbdbf4b3e0f812b832e6e10d"
+  },
+  "audit": {
+    "schema": "root.ple-independent-input-audit.v1",
+    "utc": "2026-10-08T00:47:22.506457+00:00",
+    "complete_input_parity_passed": true,
+    "complete_bf16": {
+      "byte_equal": true,
+      "complete_bytes_compared": 41943040
+    },
+    "complete_float32": {
+      "byte_equal": true,
+      "complete_bytes_compared": 83886080
+    },
+    "prepared": {
+      "bf16": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-86e67539e80d485f931bbed2ed93570d\\prepared\\input-bf16.bin",
+        "bytes": 41943040,
+        "sha256": "1ea86d8bf9e55210b0ed5c1ac076f32a9f56699215ae3cb44e4667259190aa27"
+      },
+      "float32": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-86e67539e80d485f931bbed2ed93570d\\prepared\\input-float32.bin",
+        "bytes": 83886080,
+        "sha256": "b020d49afa49fe67fcd44a5fc46e67f5faab2b322c3bedeb152d09361b115680"
+      }
+    },
+    "native_reference_pins": {
+      "native-input-bf16.bin": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\trace\\native-input-bf16.bin",
+        "bytes": 41943040,
+        "sha256": "1ea86d8bf9e55210b0ed5c1ac076f32a9f56699215ae3cb44e4667259190aa27"
+      },
+      "native-host-gather-fp8.bin": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\trace\\native-host-gather-fp8.bin",
+        "bytes": 20971520,
+        "sha256": "6ff3d20559159a3c5f2f2a6e4a4730a79913510bf5eef55ec5773735190690fa"
+      },
+      "native-row-ids-i64.bin": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\trace\\native-row-ids-i64.bin",
+        "bytes": 1048576,
+        "sha256": "a538eab7ca5dcf0c4277f003b08c7953432bf53863353ad4c44a6f11453b57cd"
+      },
+      "native-history-after-i64.bin": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-controls-2c6e928c1d1f46499b8038f36f4c729f\\trace\\native-history-after-i64.bin",
+        "bytes": 16,
+        "sha256": "9d3ec74aaf981ad945dcc08c5b09e496a84353a618b669e7bc38bc40e893df71"
+      }
+    },
+    "native_float_reference": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-full-0adf868b0d3c43dfa0a720d6b7d78678\\prepared\\input-float32.bin",
+      "bytes": 83886080,
+      "sha256": "b020d49afa49fe67fcd44a5fc46e67f5faab2b322c3bedeb152d09361b115680"
+    },
+    "row_id_and_fp8_digest_claims_match_fresh_native_hashes": true,
+    "original_constants_runtime_source": true,
+    "general_table_runtime_source": true,
+    "worker_reads_oracle_or_atlas": false,
+    "evidence": {
+      "config.json": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-86e67539e80d485f931bbed2ed93570d\\config.json",
+        "bytes": 6947,
+        "sha256": "ecfe629390cc9f3a2c123614d92e10ed243e842fcc3fa20d9c87a83a66206cf1"
+      },
+      "prepared/input-ready.json": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-86e67539e80d485f931bbed2ed93570d\\prepared\\input-ready.json",
+        "bytes": 6650,
+        "sha256": "9516a746083e3babb31077d7d8fcce4eee8146b62506ad4819780598a9697003"
+      },
+      "owned/result.json": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-86e67539e80d485f931bbed2ed93570d\\owned\\result.json",
+        "bytes": 484,
+        "sha256": "c50997e214fd3190ac0c894b1331b81ec0090d0397cfb1ba5e6f2d60031ea9e6"
+      },
+      "outer-wall.json": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-independent-input-86e67539e80d485f931bbed2ed93570d\\outer-wall.json",
+        "bytes": 400,
+        "sha256": "b5743fcd5760019df46ce6ca84fb7fffd7c45cbacb1009775d560a48de96533b"
+      }
+    },
+    "receipt": {
+      "CPU_only": true,
+      "GPU_executed": false,
+      "NPU_executed": false,
+      "captured_constants_used_as_runtime_source": false,
+      "checkpoint_sha256_retained": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+      "chunk_offset": 0,
+      "constants_binary_sha256": "92a0c13bf084710eea33b4843748e7657bebc1ed2aed6539fd2f9768896038a3",
+      "constants_receipt_sha256": "79ec059e951aec6b573e76141a1718af5b491f2dfa46287b90c3157a8fe01ef9",
+      "fixture_validation": true,
+      "full_model_rehashed": false,
+      "history_after_signed_int64": [
+        248069,
+        271
+      ],
+      "history_ownership_verified_by_worker": false,
+      "history_sha256": "c20f75712e2ce477596f65c120c5207e5653809b17009e4a4e49b60cab66da00",
+      "input_ownership": "raw int32 owned token file and explicit preceding-two int64 history",
+      "live_mapping_read": false,
+      "live_request_qualification": false,
+      "maximum_working_buffer_estimate_bytes": 268435456,
+      "memory_estimate_excludes": "Python/NumPy runtime; Root guards physical and commit reserve",
+      "native_semantics_sha256": "863b7a0e953c3d728abeecc8b97c7109975b4d9e7c530b2522994f875714f5d0",
+      "numeric_tolerances_unchanged": {
+        "cpu_atol": 0.0002,
+        "cpu_rtol": 0.002,
+        "npu_atol": 0.003,
+        "npu_rtol": 0.03
+      },
+      "oracle_read": false,
+      "outputs": {
+        "bf16": {
+          "bytes": 41943040,
+          "dtype": "little-endian BF16 words",
+          "file": "input-bf16.bin",
+          "sha256": "1ea86d8bf9e55210b0ed5c1ac076f32a9f56699215ae3cb44e4667259190aa27",
+          "shape": [
+            8192,
+            2560
+          ]
+        },
+        "dense_raw_fp8_sha256": "6ff3d20559159a3c5f2f2a6e4a4730a79913510bf5eef55ec5773735190690fa",
+        "float32": {
+          "bytes": 83886080,
+          "dtype": "little-endian FLOAT exact u16<<16",
+          "file": "input-float32.bin",
+          "sha256": "b020d49afa49fe67fcd44a5fc46e67f5faab2b322c3bedeb152d09361b115680",
+          "shape": [
+            8192,
+            2560
+          ]
+        },
+        "lut_bf16_sha256": "d3dc2e606be31904f75c2790988d98561656a8833c224c05b2adf76177d2b408"
+      },
+      "passed": true,
+      "progress": {
+        "payload_bytes_read": 431407104,
+        "payload_read_order_sha256": "3a7aa13d68421d64981550b086cad241961032713a7772299b1e9013766b143a",
+        "read_batches_completed": 90778
+      },
+      "ready_complete": true,
+      "request_id": "3088247ae1a84803b7b829c29f8b81f0",
+      "row_ids_sha256": "a538eab7ca5dcf0c4277f003b08c7953432bf53863353ad4c44a6f11453b57cd",
+      "row_plan": {
+        "batch_count": 90778,
+        "first_ranges": [
+          {
+            "bytes": 4096,
+            "offset": 1883810176
+          },
+          {
+            "bytes": 4096,
+            "offset": 1885215104
+          },
+          {
+            "bytes": 8192,
+            "offset": 1887099264
+          },
+          {
+            "bytes": 4096,
+            "offset": 1888647552
+          },
+          {
+            "bytes": 4096,
+            "offset": 1888881024
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889003904
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889315200
+          },
+          {
+            "bytes": 4096,
+            "offset": 1889343872
+          },
+          {
+            "bytes": 4096,
+            "offset": 1892559232
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893308800
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893747072
+          },
+          {
+            "bytes": 4096,
+            "offset": 1893779840
+          },
+          {
+            "bytes": 8192,
+            "offset": 1894701440
+          },
+          {
+            "bytes": 4096,
+            "offset": 1895057792
+          },
+          {
+            "bytes": 4096,
+            "offset": 1895459200
+          },
+          {
+            "bytes": 20480,
+            "offset": 1898604928
+          }
+        ],
+        "maximum_gap_bytes": 16384,
+        "maximum_read_bytes": 1048576,
+        "page_bytes": 4096,
+        "payload_budget_bytes": 1073741824,
+        "plan_encoding": "ordered little-endian <QQ absolute-offset,length> pairs",
+        "plan_sha256": "890351724e56b0ed702531347d562eb42fc59fdc7258fd1f19394bc100c134dc",
+        "planned_payload_bytes": 431407104,
+        "unique_page_count": 97574
+      },
+      "schema": "private.ple-early-independent-input.v1",
+      "server_changed": false,
+      "soft_deadline_seconds": 170.0,
+      "source_identity_windows_handle": {
+        "st_ctime_ns": 1789244565219639800,
+        "st_dev": 6940694304499994282,
+        "st_ino": 12384898978924364,
+        "st_mtime_ns": 1789244565219639800,
+        "st_size": 124068083904
+      },
+      "source_sha256": "694c2029cb664d5e4e56f4eeaad534d76809ccac87aa038ed9eaf9cd78edc083",
+      "sparse_atlas_used": false,
+      "speed_claim": false,
+      "table_binding_sha256": "2af59a5a46adaf165cc0e4ecf24bc3999231e1e1e46427e39da3ff89c0757871",
+      "table_generation": "d4e4cc2e9dde4f71a2c53deafd1cec6c",
+      "table_handle_share": "FILE_SHARE_READ; deny normal write/delete while held",
+      "table_metadata_after": {
+        "descriptor_sha256": "43e25868fffd6b37863b2eb78dbb0ae5e42ad97d4da53fc8588393abc896c2fa",
+        "directory_sha256": "80ccb502fbe4981750f41b96d32f3cfdd1cf18d7d3c296b905e60eabd3a4fb10",
+        "header_sha256": "27be7f0039f807dc56cb57b682190951c45bd27a5d96fb53475dff6d7ffa6c8b",
+        "metadata_bytes": 191784,
+        "scale_bytes": 4,
+        "scale_sha256": "570ec84e55d538f0daf01b728921b04a43b0dd769ad0c935f4fa4e503ea65ab5"
+      },
+      "table_metadata_before": {
+        "descriptor_sha256": "43e25868fffd6b37863b2eb78dbb0ae5e42ad97d4da53fc8588393abc896c2fa",
+        "directory_sha256": "80ccb502fbe4981750f41b96d32f3cfdd1cf18d7d3c296b905e60eabd3a4fb10",
+        "header_sha256": "27be7f0039f807dc56cb57b682190951c45bd27a5d96fb53475dff6d7ffa6c8b",
+        "metadata_bytes": 191784,
+        "scale_bytes": 4,
+        "scale_sha256": "570ec84e55d538f0daf01b728921b04a43b0dd769ad0c935f4fa4e503ea65ab5"
+      },
+      "table_source_sha256_retained": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6",
+      "timings": {
+        "decode_scatter_and_widen_seconds": 0.06519669969566166,
+        "dedup_and_page_plan_seconds": 0.10164639999857172,
+        "dense_output_hash_seconds": 0.06284020026214421,
+        "final_source_and_owned_metadata_hash_seconds": 0.0012094999547116458,
+        "lut_and_unique_decode_seconds": 0.021772800013422966,
+        "numpy_cpu_import_seconds": 0.05616060004103929,
+        "output_persistence_seconds": 0.07209529995452613,
+        "payload_read_hash_seconds": 0.27057379932375625,
+        "row_ids_and_row_id_hash_seconds": 0.03656430001137778,
+        "row_scatter_seconds": 2.8037463967921212,
+        "source_and_owned_metadata_hash_seconds": 0.006299500004388392,
+        "table_metadata_verification_seconds": 0.0009670000290498137,
+        "table_read_seconds": 20.037822595913894
+      },
+      "tokens_sha256": "10922e273efd8f52c4790c770c9641c09ae54f03fa66da2ed726136c066351a2",
+      "unique_row_count": 95009,
+      "utility_source_sha256": "a8f127931ee16301d0a103850898b9a898da5e91d40d460ca771172909da10d5",
+      "wall_seconds": 24.70299999997951
+    },
+    "owned": {
+      "exit_code": 0,
+      "errors": [],
+      "job_closed": true,
+      "identity": {
+        "pid": 35476,
+        "creation_time_100ns": 134358936355950807,
+        "executable": "C:\\AI\\runtimes\\winml-npu\\Scripts\\python.exe"
+      },
+      "minimum": {
+        "available_bytes": 26386874368,
+        "commit_headroom_bytes": 122511228928
+      },
+      "config_sha256": "ecfe629390cc9f3a2c123614d92e10ed243e842fcc3fa20d9c87a83a66206cf1",
+      "CPU_only": true,
+      "NPU_executed": false,
+      "speed_claim": false
+    },
+    "outer": {
+      "scope": "Complete external CPU guard process: pins, child startup/work/cleanup, guard exit; native PowerShell startup excluded",
+      "started_utc": "2026-10-08T00:40:35.5004775Z",
+      "finished_utc": "2026-10-08T00:41:00.4596456Z",
+      "wall_seconds": 24.9553294,
+      "guard_exit_code": 0,
+      "native_powershell_version": "5.1.26100.7462",
+      "serving_gain_qualified": false
+    },
+    "source_and_configuration_pins_freshly_checked": 11,
+    "logical_unique_row_bytes": 15201440,
+    "read_amplification": 28.37935774505573,
+    "table_read_timer_includes_cancel_stat_deadline_seek_read": true,
+    "isolated_disk_latency_measured": false,
+    "offline_identifiers_prove_live_request_ownership": false,
+    "actual_ready_lead_measured": false,
+    "serving_integration": false,
+    "NPU_executed_in_this_window": false,
+    "prefill_decode_acceptance_gain_qualified": false,
+    "server_verification": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\startup35-observation-b53ad0554a7a478ea29e26a27856b273.json",
+      "bytes": 1504,
+      "sha256": "571d75996e41098f4a30262229222c1878780820cf92a1f9d6f49cc818307dcd"
+    }
+  },
+  "source_and_review_receipts": {
+    "constant_extractor": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\ple_constants_extract_v1.py",
+      "bytes": 5610,
+      "sha256": "bc70467dab6e7277795d6786155fc0f49e87981a8315b0a7c81692a1eb311c79"
+    },
+    "table_binding": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\ple_table_binding_v1.py",
+      "bytes": 4870,
+      "sha256": "c8aaed500bafd812f82ef67dc0aa64f79763e8101e22229a16c756afe4de22d0"
+    },
+    "worker": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\ple_early_input_worker_v1.py",
+      "bytes": 27803,
+      "sha256": "694c2029cb664d5e4e56f4eeaad534d76809ccac87aa038ed9eaf9cd78edc083"
+    },
+    "worker_source_review": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-npu-scope-2354\\early-input-worker-source-review.json",
+      "bytes": 5332,
+      "sha256": "30cd74b4a59516ba1c35c8e31bb8676c0da060fe1684d0bd499a7f33eb010371"
+    },
+    "worker_config_review": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-npu-scope-2354\\early-input-worker-config-review.json",
+      "bytes": 2831,
+      "sha256": "318cf3deec6da27592f25f7507c8e62df63e115abaf4201c7064f49085aec5ba"
+    },
+    "bottleneck_design": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\early-input-worker-bottleneck-design-v1.md",
+      "bytes": 7370,
+      "sha256": "7c67e46f252a73a8d66c643f308bd34ce7e17590289d75bed0f0ae9a3671949c"
+    },
+    "root_auditor": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\record-independent-input-result.py",
+      "bytes": 7369,
+      "sha256": "d46e71768380b93b49dc9a410947bdc0a4ce6a5ef87ffdb80464b9e4ab6a2bd7"
+    }
+  },
+  "no_new_NPU_or_GPU_call": true,
+  "serving_integration": false,
+  "actual_ready_lead_measured": false,
+  "prefill_decode_acceptance_gain_qualified": false
+}
