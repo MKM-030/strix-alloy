@@ -3,8 +3,10 @@
 This default-off experiment observes an owned, frozen 16K request early enough
 to investigate preparing the second 8192-token chunk while the GPU handles the
 first. The reviewed callback-bound port compiled successfully on 8 October
-2026. It has **not been loaded or benchmarked**.
-It does not run an NPU worker, substitute model results or change the live server.
+2026. Root loaded it once for an owned 16K observation. That request failed at
+`later-key-identity` and returned HTTP 502; it supplies no qualified performance
+or token-release interval. Normal cleanup restored a clean 0.17.2 serving instance.
+It does not run an NPU worker or substitute model results.
 
 The source binds the exact 0.17.2 engine and function signatures in
 `ple_engine_binding_0172.h`. Wrapper and Target forwarding use the observed void
@@ -36,3 +38,11 @@ and a measured benefit to the complete request. No NPU token-rate gain is claime
 Private review, native ABI captures and post-fix preparation receipts are retained
 under `server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/`.
 The live ServiceNow instance remains on the qualified stock 0.17.2 path.
+
+The retained current stage has a native-prefetch helper-skip branch. The v1
+observer required the later helper to run inside the second Target, which cannot
+describe that path. A corrected observer must bind the actual prefetch caller
+and second-chunk ownership; do not repeat v1 unchanged. Static extraction now
+establishes exact PLE and default BF16 shader instruction identity with the old
+validated kernels. Actual current input parity and NPU serving gain remain
+unqualified. See [the current development status](../../../docs/research/halogen0172-prefill-overlap-20261008.md).
