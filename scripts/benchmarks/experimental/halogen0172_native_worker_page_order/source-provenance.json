@@ -1,0 +1,161 @@
+{
+  "schema": "halogen0172-native-worker-public-source-provenance.v1",
+  "source_snapshot_date": "2026-10-08",
+  "engine": {
+    "version": "0.17.2",
+    "platform": "Linux x86-64",
+    "executable": "flash_serve",
+    "bytes": 26178504,
+    "sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913"
+  },
+  "private_build_receipt": {
+    "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-worker-detour-v1/build.json",
+    "bytes": 4754,
+    "sha256": "98df6579728dd056ceccc632c23a84ef487a33120513857e8e3b389c330c67d7",
+    "schema": "halogen0172-native-worker-attached-build.v1"
+  },
+  "original_private_artifact": {
+    "file": "libple0172_native_worker_page_order.so",
+    "bytes": 58840,
+    "sha256": "255510f9c5a73d10e0dfdbafb6d5ae2f5deaa4dd90d238278f7ff0bc0095a184",
+    "copied": false
+  },
+  "defaults": {
+    "enabled": false,
+    "opt_in_environment": "PLE0172_NATIVE_WORKER_PAGE_ORDER=1",
+    "native_stride": 160,
+    "native_encoding": 0,
+    "max_tokens": 8192,
+    "max_rows": 131072,
+    "max_scratch_bytes": 6291456,
+    "worker_count": "actual native launcher count, 1..256"
+  },
+  "attachment": {
+    "seams": [
+      "0x1801426",
+      "0x1865ab4",
+      "0x1865d72",
+      "0x17eec5b"
+    ],
+    "copy_skip_continuation": "0x1865791",
+    "selected_failure_exit_code": 79
+  },
+  "files": [
+    {
+      "file": "native_detour_0172.cpp",
+      "role": "production",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-worker-detour-v1/native_detour_0172.cpp",
+        "bytes": 15260,
+        "sha256": "16d15701bd92fd82803914629b6c1c6c28cb4adb6401042bcfe933e985c27296"
+      },
+      "public_copy": {
+        "bytes": 15260,
+        "sha256": "16d15701bd92fd82803914629b6c1c6c28cb4adb6401042bcfe933e985c27296"
+      },
+      "transformation": "verbatim"
+    },
+    {
+      "file": "native_patch_0172.h",
+      "role": "production",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-worker-detour-v1/native_patch_0172.h",
+        "bytes": 11826,
+        "sha256": "c69ced0dba58d295c6fee3b497f3cc8ac98da05a2f1717758afffae7223ecd5f"
+      },
+      "public_copy": {
+        "bytes": 11826,
+        "sha256": "c69ced0dba58d295c6fee3b497f3cc8ac98da05a2f1717758afffae7223ecd5f"
+      },
+      "transformation": "verbatim"
+    },
+    {
+      "file": "native_seams_0172.S",
+      "role": "production",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-worker-detour-v1/native_seams_0172.S",
+        "bytes": 2454,
+        "sha256": "3a4b38f984616b52909495204f91c49b3f6c6e0aed90e48ffe94008bb37fbc07"
+      },
+      "public_copy": {
+        "bytes": 2454,
+        "sha256": "3a4b38f984616b52909495204f91c49b3f6c6e0aed90e48ffe94008bb37fbc07"
+      },
+      "transformation": "verbatim"
+    },
+    {
+      "file": "page_phase_0172.h",
+      "role": "production",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-worker-detour-v1/page_phase_0172.h",
+        "bytes": 13538,
+        "sha256": "4bc04eb453f3443c4424fc2ccff106573c83ed2484bb427383541d793ff274ce"
+      },
+      "public_copy": {
+        "bytes": 13502,
+        "sha256": "55f8aa1f9b9caa726b00a1b9fcb3810a490e2d4ecabe853be807c317fb368d34"
+      },
+      "transformation": "Replace only scheduler include ../ple0172-native-page-scheduler-v1/page_segment_scheduler.h with page_segment_scheduler.h; preserve all other bytes"
+    },
+    {
+      "file": "page_segment_scheduler.h",
+      "role": "production",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-page-scheduler-v1/page_segment_scheduler.h",
+        "bytes": 8826,
+        "sha256": "647edcc2010b4569d295e8a8ffd1087a79d96c432ecc269e2f57fd51b68a8a37"
+      },
+      "public_copy": {
+        "bytes": 8826,
+        "sha256": "647edcc2010b4569d295e8a8ffd1087a79d96c432ecc269e2f57fd51b68a8a37"
+      },
+      "transformation": "verbatim"
+    },
+    {
+      "file": "binding_fixture.cpp",
+      "role": "fixture",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-worker-detour-v1/binding_fixture.cpp",
+        "bytes": 6026,
+        "sha256": "da854dc055d7d8289eac3b7db924c549b84200cef2b8f630c912d9e2eaf0ae3b"
+      },
+      "public_copy": {
+        "bytes": 6026,
+        "sha256": "da854dc055d7d8289eac3b7db924c549b84200cef2b8f630c912d9e2eaf0ae3b"
+      },
+      "transformation": "verbatim"
+    },
+    {
+      "file": "native_seams_cpu_fixture_0172.cpp",
+      "role": "fixture",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-worker-detour-v1/native_seams_cpu_fixture_0172.cpp",
+        "bytes": 8567,
+        "sha256": "e1f96d080effe56066530ec02e345beed415207359d6850764635cc1b6f3f44d"
+      },
+      "public_copy": {
+        "bytes": 8567,
+        "sha256": "e1f96d080effe56066530ec02e345beed415207359d6850764635cc1b6f3f44d"
+      },
+      "transformation": "verbatim"
+    },
+    {
+      "file": "native_seams_cpu_fixture_0172.S",
+      "role": "fixture",
+      "source": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/ple0172-native-worker-detour-v1/native_seams_cpu_fixture_0172.S",
+        "bytes": 6527,
+        "sha256": "62511ffcfc89ee23320fc7d8bf2d8ab8d785ddf08412b97e04f1ebf9cca66066"
+      },
+      "public_copy": {
+        "bytes": 6527,
+        "sha256": "62511ffcfc89ee23320fc7d8bf2d8ab8d785ddf08412b97e04f1ebf9cca66066"
+      },
+      "transformation": "verbatim"
+    }
+  ],
+  "public_artifact_runtime_receipt": "Required fresh root-sealed receipt; original private paths and source hashes do not admit relocated public inputs",
+  "benchmark_report": "docs/benchmarks/halogen0172-native-worker-page-order-20261008.md",
+  "result_claims_included": false,
+  "binary_files_included": false
+}
