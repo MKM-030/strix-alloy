@@ -26,3 +26,11 @@ scripts/benchmarks/halogen_windows_gpu_counter_probe.ps1 -text
 scripts/benchmarks/halogen_gpu_counter_cohort_analysis.py -text
 docs/benchmarks/halogen0162-native-lookup-stock8k-20261005.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/research/halogen-gpu-counter-cohort-20261005.json -text
+
+# Sealed 2026-10-08 artifacts and historical source snapshots retain exact bytes.
+docs/benchmarks/halogen0172-native-attn-bt4-opt-20261008.* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/research/halogen0172-mtp-query-weight-layout-20261008.* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/research/halogen-external-corpus-third-draft-20261008.* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+scripts/benchmarks/experimental/halogen0172_native_attn_bt4_opt/** -text whitespace=blank-at-eol,space-before-tab,cr-at-eol,-blank-at-eof
+scripts/benchmarks/experimental/halogen0172_mtp_query_weight_layout/** -text whitespace=blank-at-eol,space-before-tab,cr-at-eol,-blank-at-eof
+scripts/benchmarks/experimental/halogen_external_corpus_third_draft/** -text whitespace=blank-at-eol,space-before-tab,cr-at-eol,-blank-at-eof

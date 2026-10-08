@@ -1,0 +1,185 @@
+Pinned ELF SHA256 ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913
+Unwind function 0x18266f0..0x1829014
+Every decoded instruction byte verified; only bounded excerpts retained.
+
+EXCERPT 0x18266f0..0x1826784
+018266f0: 55                                           push	rbp
+018266f1: 41 57                                        push	r15
+018266f3: 41 56                                        push	r14
+018266f5: 41 55                                        push	r13
+018266f7: 41 54                                        push	r12
+018266f9: 53                                           push	rbx
+018266fa: 48 81 ec 18 01 00 00                         sub	rsp, 0x118
+01826701: 89 cd                                        mov	ebp, ecx
+01826703: 4c 8b 3f                                     mov	r15, qword ptr [rdi]
+01826706: 48 8b 47 08                                  mov	rax, qword ptr [rdi + 0x8]
+0182670a: 41 83 7f 48 03                               cmp	dword ptr [r15 + 0x48], 0x3
+0182670f: 0f b6 00                                     movzx	eax, byte ptr [rax]
+01826712: 48 8b 4f 10                                  mov	rcx, qword ptr [rdi + 0x10]
+01826716: 8b 19                                        mov	ebx, dword ptr [rcx]
+01826718: 4c 63 eb                                     movsxd	r13, ebx
+0182671b: 48 8b 4f 18                                  mov	rcx, qword ptr [rdi + 0x18]
+0182671f: 4c 8b 31                                     mov	r14, qword ptr [rcx]
+01826722: 0f 85 48 02 00 00                            jne	0x1826970
+01826728: 84 c0                                        test	al, al
+0182672a: 0f 84 88 04 00 00                            je	0x1826bb8
+01826730: 49 89 f4                                     mov	r12, rsi
+01826733: 48 89 54 24 28                               mov	qword ptr [rsp + 0x28], rdx
+01826738: 48 8d 94 24 0c 01 00 00                      lea	rdx, [rsp + 0x10c]
+01826740: 48 8d 4c 24 04                               lea	rcx, [rsp + 0x4]
+01826745: 89 df                                        mov	edi, ebx
+01826747: 4c 89 f6                                     mov	rsi, r14
+0182674a: e8 81 1f fa ff                               call	0x17c86d0
+0182674f: 48 63 84 24 0c 01 00 00                      movsxd	rax, dword ptr [rsp + 0x10c]
+01826757: 4c 0f af e8                                  imul	r13, rax
+0182675b: 49 c1 e5 03                                  shl	r13, 0x3
+0182675f: 0f b6 0d 72 3b 0d 00                         movzx	ecx, byte ptr [rip + 0xd3b72] # 0x18fa2d8
+01826766: c1 e1 16                                     shl	ecx, 0x16
+01826769: 49 39 cd                                     cmp	r13, rcx
+0182676c: 0f 8f dc 21 00 00                            jg	0x182894e
+01826772: 8d 4b 7f                                     lea	ecx, [rbx + 0x7f]
+01826775: 85 db                                        test	ebx, ebx
+01826777: 0f 49 cb                                     cmovns	ecx, ebx
+0182677a: c1 f9 07                                     sar	ecx, 0x7
+0182677d: 0f b6 15 58 3b 0d 00                         movzx	edx, byte ptr [rip + 0xd3b58] # 0x18fa2dc
+
+EXCERPT 0x1826970..0x1826a3f
+01826970: 84 c0                                        test	al, al
+01826972: 0f 84 58 02 00 00                            je	0x1826bd0
+01826978: 49 89 f4                                     mov	r12, rsi
+0182697b: 48 89 54 24 28                               mov	qword ptr [rsp + 0x28], rdx
+01826980: 48 8d 94 24 0c 01 00 00                      lea	rdx, [rsp + 0x10c]
+01826988: 48 8d 4c 24 04                               lea	rcx, [rsp + 0x4]
+0182698d: 89 df                                        mov	edi, ebx
+0182698f: 4c 89 f6                                     mov	rsi, r14
+01826992: e8 39 1d fa ff                               call	0x17c86d0
+01826997: 48 63 84 24 0c 01 00 00                      movsxd	rax, dword ptr [rsp + 0x10c]
+0182699f: 4c 0f af e8                                  imul	r13, rax
+018269a3: 49 c1 e5 03                                  shl	r13, 0x3
+018269a7: 0f b6 0d 2a 39 0d 00                         movzx	ecx, byte ptr [rip + 0xd392a] # 0x18fa2d8
+018269ae: c1 e1 16                                     shl	ecx, 0x16
+018269b1: 49 39 cd                                     cmp	r13, rcx
+018269b4: 0f 8f 94 1f 00 00                            jg	0x182894e
+018269ba: 8d 4b 7f                                     lea	ecx, [rbx + 0x7f]
+018269bd: 85 db                                        test	ebx, ebx
+018269bf: 0f 49 cb                                     cmovns	ecx, ebx
+018269c2: c1 f9 07                                     sar	ecx, 0x7
+018269c5: 0f b6 15 10 39 0d 00                         movzx	edx, byte ptr [rip + 0xd3910] # 0x18fa2dc
+018269cc: c1 e2 0c                                     shl	edx, 0xc
+018269cf: 39 d1                                        cmp	ecx, edx
+018269d1: 0f 8f 77 1f 00 00                            jg	0x182894e
+018269d7: 89 c7                                        mov	edi, eax
+018269d9: 41 89 cd                                     mov	r13d, ecx
+018269dc: 48 c1 e7 20                                  shl	rdi, 0x20
+018269e0: 49 8b 47 38                                  mov	rax, qword ptr [r15 + 0x38]
+018269e4: 48 89 44 24 20                               mov	qword ptr [rsp + 0x20], rax
+018269e9: 49 8b 47 40                                  mov	rax, qword ptr [r15 + 0x40]
+018269ed: 48 89 44 24 18                               mov	qword ptr [rsp + 0x18], rax
+018269f2: 0f b6 05 bf 54 0d 00                         movzx	eax, byte ptr [rip + 0xd54bf] # 0x18fbeb8
+018269f9: 84 c0                                        test	al, al
+018269fb: 0f 84 01 20 00 00                            je	0x1828a02
+01826a01: 4c 09 ef                                     or	rdi, r13
+01826a04: 83 fd 02                                     cmp	ebp, 0x2
+01826a07: 0f 84 87 03 00 00                            je	0x1826d94
+01826a0d: 83 fd 01                                     cmp	ebp, 0x1
+01826a10: 0f 85 b3 05 00 00                            jne	0x1826fc9
+01826a16: 80 3d 93 54 0d 00 01                         cmp	byte ptr [rip + 0xd5493], 0x1 # 0x18fbeb0
+01826a1d: 0f 85 6c 14 00 00                            jne	0x1827e8f
+01826a23: 0f b6 05 5e 54 0d 00                         movzx	eax, byte ptr [rip + 0xd545e] # 0x18fbe88
+01826a2a: 84 c0                                        test	al, al
+01826a2c: 0f 84 8f 20 00 00                            je	0x1828ac1
+01826a32: 80 3d 47 54 0d 00 01                         cmp	byte ptr [rip + 0xd5447], 0x1 # 0x18fbe80
+01826a39: 0f 85 c5 08 00 00                            jne	0x1827304
+
+EXCERPT 0x1827304..0x1827354
+01827304: 80 3d a5 4b 0d 00 01                         cmp	byte ptr [rip + 0xd4ba5], 0x1 # 0x18fbeb0
+0182730b: 0f 85 7e 0b 00 00                            jne	0x1827e8f
+01827311: 0f b6 05 80 4b 0d 00                         movzx	eax, byte ptr [rip + 0xd4b80] # 0x18fbe98
+01827318: 84 c0                                        test	al, al
+0182731a: 0f 84 89 19 00 00                            je	0x1828ca9
+01827320: 80 3d 69 4b 0d 00 01                         cmp	byte ptr [rip + 0xd4b69], 0x1 # 0x18fbe90
+01827327: 0f 85 dc 09 00 00                            jne	0x1827d09
+0182732d: 48 ba 00 01 00 00 01 00 00 00                movabs	rdx, 0x100000100
+01827337: be 01 00 00 00                               mov	esi, 0x1
+0182733c: b9 01 00 00 00                               mov	ecx, 0x1
+01827341: 45 31 c0                                     xor	r8d, r8d
+01827344: 45 31 c9                                     xor	r9d, r9d
+01827347: e8 44 b0 0c 00                               call	0x18f2390
+0182734c: 85 c0                                        test	eax, eax
+0182734e: 0f 85 df 15 00 00                            jne	0x1828933
+
+EXCERPT 0x1827d09..0x1827e8f
+01827d09: 80 3d a0 41 0d 00 01                         cmp	byte ptr [rip + 0xd41a0], 0x1 # 0x18fbeb0
+01827d10: 0f 85 79 01 00 00                            jne	0x1827e8f
+01827d16: 48 ba 00 01 00 00 01 00 00 00                movabs	rdx, 0x100000100
+01827d20: be 01 00 00 00                               mov	esi, 0x1
+01827d25: b9 01 00 00 00                               mov	ecx, 0x1
+01827d2a: 45 31 c0                                     xor	r8d, r8d
+01827d2d: 45 31 c9                                     xor	r9d, r9d
+01827d30: e8 5b a6 0c 00                               call	0x18f2390
+01827d35: 85 c0                                        test	eax, eax
+01827d37: 0f 85 f6 0b 00 00                            jne	0x1828933
+01827d3d: 49 8b 47 30                                  mov	rax, qword ptr [r15 + 0x30]
+01827d41: 8b 4c 24 04                                  mov	ecx, dword ptr [rsp + 0x4]
+01827d45: 48 8b 15 14 23 0d 00                         mov	rdx, qword ptr [rip + 0xd2314] # 0x18fa060
+01827d4c: 48 8b 35 8d 25 0d 00                         mov	rsi, qword ptr [rip + 0xd258d] # 0x18fa2e0
+01827d53: 48 89 84 24 98 00 00 00                      mov	qword ptr [rsp + 0x98], rax
+01827d5b: 4c 89 a4 24 90 00 00 00                      mov	qword ptr [rsp + 0x90], r12
+01827d63: c7 44 24 14 01 00 00 00                      mov	dword ptr [rsp + 0x14], 0x1
+01827d6b: 44 89 74 24 10                               mov	dword ptr [rsp + 0x10], r14d
+01827d70: 89 5c 24 0c                                  mov	dword ptr [rsp + 0xc], ebx
+01827d74: 89 4c 24 08                                  mov	dword ptr [rsp + 0x8], ecx
+01827d78: 48 8b 44 24 20                               mov	rax, qword ptr [rsp + 0x20]
+01827d7d: 48 89 84 24 88 00 00 00                      mov	qword ptr [rsp + 0x88], rax
+01827d85: 48 8b 44 24 18                               mov	rax, qword ptr [rsp + 0x18]
+01827d8a: 48 89 84 24 80 00 00 00                      mov	qword ptr [rsp + 0x80], rax
+01827d92: 48 89 54 24 78                               mov	qword ptr [rsp + 0x78], rdx
+01827d97: 48 89 74 24 70                               mov	qword ptr [rsp + 0x70], rsi
+01827d9c: 48 8b 44 24 28                               mov	rax, qword ptr [rsp + 0x28]
+01827da1: 48 89 44 24 68                               mov	qword ptr [rsp + 0x68], rax
+01827da6: 48 c7 44 24 60 00 00 00 00                   mov	qword ptr [rsp + 0x60], 0x0
+01827daf: 48 8d 84 24 98 00 00 00                      lea	rax, [rsp + 0x98]
+01827db7: 48 89 84 24 a0 00 00 00                      mov	qword ptr [rsp + 0xa0], rax
+01827dbf: 48 8d 84 24 90 00 00 00                      lea	rax, [rsp + 0x90]
+01827dc7: 48 89 84 24 a8 00 00 00                      mov	qword ptr [rsp + 0xa8], rax
+01827dcf: 48 8d 44 24 14                               lea	rax, [rsp + 0x14]
+01827dd4: 48 89 84 24 b0 00 00 00                      mov	qword ptr [rsp + 0xb0], rax
+01827ddc: 48 8d 44 24 10                               lea	rax, [rsp + 0x10]
+01827de1: 48 89 84 24 b8 00 00 00                      mov	qword ptr [rsp + 0xb8], rax
+01827de9: 48 8d 44 24 0c                               lea	rax, [rsp + 0xc]
+01827dee: 48 89 84 24 c0 00 00 00                      mov	qword ptr [rsp + 0xc0], rax
+01827df6: 48 8d 44 24 08                               lea	rax, [rsp + 0x8]
+01827dfb: 48 89 84 24 c8 00 00 00                      mov	qword ptr [rsp + 0xc8], rax
+01827e03: 48 8d 84 24 88 00 00 00                      lea	rax, [rsp + 0x88]
+01827e0b: 48 89 84 24 d0 00 00 00                      mov	qword ptr [rsp + 0xd0], rax
+01827e13: 48 8d 84 24 80 00 00 00                      lea	rax, [rsp + 0x80]
+01827e1b: 48 89 84 24 d8 00 00 00                      mov	qword ptr [rsp + 0xd8], rax
+01827e23: 48 8d 44 24 78                               lea	rax, [rsp + 0x78]
+01827e28: 48 89 84 24 e0 00 00 00                      mov	qword ptr [rsp + 0xe0], rax
+01827e30: 48 8d 44 24 70                               lea	rax, [rsp + 0x70]
+01827e35: 48 89 84 24 e8 00 00 00                      mov	qword ptr [rsp + 0xe8], rax
+01827e3d: 48 8d 44 24 68                               lea	rax, [rsp + 0x68]
+01827e42: 48 89 84 24 f0 00 00 00                      mov	qword ptr [rsp + 0xf0], rax
+01827e4a: 48 8d 44 24 60                               lea	rax, [rsp + 0x60]
+01827e4f: 48 89 84 24 f8 00 00 00                      mov	qword ptr [rsp + 0xf8], rax
+01827e57: 48 8d 7c 24 50                               lea	rdi, [rsp + 0x50]
+01827e5c: 48 8d 74 24 40                               lea	rsi, [rsp + 0x40]
+01827e61: 48 8d 54 24 38                               lea	rdx, [rsp + 0x38]
+01827e66: 48 8d 4c 24 30                               lea	rcx, [rsp + 0x30]
+01827e6b: e8 50 a4 0c 00                               call	0x18f22c0
+01827e70: 48 8b 74 24 50                               mov	rsi, qword ptr [rsp + 0x50]
+01827e75: 8b 54 24 58                                  mov	edx, dword ptr [rsp + 0x58]
+01827e79: 48 8b 4c 24 40                               mov	rcx, qword ptr [rsp + 0x40]
+01827e7e: 44 8b 44 24 48                               mov	r8d, dword ptr [rsp + 0x48]
+01827e83: 48 8d 3d a6 cf 0c 00                         lea	rdi, [rip + 0xccfa6]    # 0x18f4e30
+01827e8a: e9 72 07 00 00                               jmp	0x1828601
+
+EXCERPT 0x1828601..0x1828626
+01828601: 4c 8d 8c 24 a0 00 00 00                      lea	r9, [rsp + 0xa0]
+01828609: ff 74 24 30                                  push	qword ptr [rsp + 0x30]
+0182860d: ff 74 24 40                                  push	qword ptr [rsp + 0x40]
+01828611: e8 ba 9c 0c 00                               call	0x18f22d0
+01828616: 48 83 c4 10                                  add	rsp, 0x10
+0182861a: e9 14 03 00 00                               jmp	0x1828933
+0182861f: 80 3d 4a 38 0d 00 01                         cmp	byte ptr [rip + 0xd384a], 0x1 # 0x18fbe70
+

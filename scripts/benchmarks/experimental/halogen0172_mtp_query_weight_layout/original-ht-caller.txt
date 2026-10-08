@@ -1,0 +1,33 @@
+Pinned ELF SHA256 ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913
+Unwind function 0x17e48f0..0x17e5e73
+Every decoded instruction byte verified; only bounded excerpts retained.
+
+EXCERPT 0x17e48f0..0x17e4940
+017e48f0: 55                                           push	rbp
+017e48f1: 41 57                                        push	r15
+017e48f3: 41 56                                        push	r14
+017e48f5: 41 55                                        push	r13
+017e48f7: 41 54                                        push	r12
+017e48f9: 53                                           push	rbx
+017e48fa: 48 81 ec b8 00 00 00                         sub	rsp, 0xb8
+017e4901: 45 89 c5                                     mov	r13d, r8d
+017e4904: 41 89 c8                                     mov	r8d, ecx
+017e4907: 48 89 d3                                     mov	rbx, rdx
+017e490a: 49 89 f6                                     mov	r14, rsi
+017e490d: 49 89 ff                                     mov	r15, rdi
+017e4910: 48 c7 04 24 00 0a 00 00                      mov	qword ptr [rsp], 0xa00
+017e4918: b9 01 00 00 00                               mov	ecx, 0x1
+017e491d: 4c 89 44 24 68                               mov	qword ptr [rsp + 0x68], r8
+017e4922: 45 89 e9                                     mov	r9d, r13d
+017e4925: e8 96 04 03 00                               call	0x1814dc0
+017e492a: 84 c0                                        test	al, al
+017e492c: 74 12                                        je	0x17e4940
+017e492e: 48 81 c4 b8 00 00 00                         add	rsp, 0xb8
+017e4935: 5b                                           pop	rbx
+017e4936: 41 5c                                        pop	r12
+017e4938: 41 5d                                        pop	r13
+017e493a: 41 5e                                        pop	r14
+017e493c: 41 5f                                        pop	r15
+017e493e: 5d                                           pop	rbp
+017e493f: c3                                           ret
+

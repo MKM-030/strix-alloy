@@ -1,0 +1,43 @@
+Device SHA256 18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039
+Exact symbol _ZN7halogen12k_dv_scatterEPKfPKiPfi
+Symbol 0x226800..0x2268e8; bounded windows only.
+Every decoded instruction word byte-checked.
+	s_clause 0x1                                               // 000000226800: BF850001
+	s_load_b32 s3, s[0:1], 0x2c                                // 000000226804: F40000C0 F800002C
+	s_load_b32 s4, s[0:1], 0x18                                // 00000022680C: F4000100 F8000018
+	s_waitcnt lgkmcnt(0)                                       // 000000226814: BF89FC07
+	s_and_b32 s3, s3, 0xffff                                   // 000000226818: 8B03FF03 0000FFFF
+	s_delay_alu instid0(SALU_CYCLE_1)                          // 000000226820: BF870009
+	v_mad_u64_u32 v[0:1], null, s2, s3, v[0:1]                 // 000000226824: D6FE7C00 04000602
+	s_mov_b32 s2, exec_lo                                      // 00000022682C: BE82007E
+	v_cmpx_gt_i32_e64 s4, v0                                   // 000000226830: D4C4007E 02020004
+	s_cbranch_execz 42                                         // 000000226838: BFA5002A <_ZN7halogen12k_dv_scatterEPKfPKiPfi+0xe4>
+	s_load_b128 s[4:7], s[0:1], null                           // 00000022683C: F4080100 F8000000
+	v_ashrrev_i32_e32 v1, 31, v0                               // 000000226844: 3402009F
+	s_load_b64 s[0:1], s[0:1], 0x10                            // 000000226848: F4040000 F8000010
+	s_mov_b32 s2, exec_lo                                      // 000000226850: BE82007E
+	s_delay_alu instid0(VALU_DEP_1) | instskip(SKIP_1) | instid1(VALU_DEP_1)// 000000226854: BF8700A1
+	v_lshlrev_b64 v[0:1], 2, v[0:1]                            // 000000226858: D73C0000 02020082
+	s_waitcnt lgkmcnt(0)                                       // 000000226860: BF89FC07
+	v_add_co_u32 v2, vcc_lo, s6, v0                            // 000000226864: D7006A02 02020006
+	s_delay_alu instid0(VALU_DEP_1)                            // 00000022686C: BF870001
+	v_add_co_ci_u32_e64 v3, null, s7, v1, vcc_lo               // 000000226870: D5207C03 01AA0207
+	global_load_b32 v2, v[2:3], off                            // 000000226878: DC520000 027C0002
+	v_mov_b32_e32 v3, 0xff800000                               // 000000226880: 7E0602FF FF800000
+	s_waitcnt vmcnt(0)                                         // 000000226888: BF8903F7
+	v_cmpx_lt_i32_e32 -1, v2                                   // 00000022688C: 7D8204C1
+	s_cbranch_execz 11                                         // 000000226890: BFA5000B <_ZN7halogen12k_dv_scatterEPKfPKiPfi+0xc0>
+	v_mov_b32_e32 v3, 0                                        // 000000226894: 7E060280
+	s_delay_alu instid0(VALU_DEP_1) | instskip(NEXT) | instid1(VALU_DEP_1)// 000000226898: BF870091
+	v_lshlrev_b64 v[2:3], 2, v[2:3]                            // 00000022689C: D73C0002 02020482
+	v_add_co_u32 v2, vcc_lo, s4, v2                            // 0000002268A4: D7006A02 02020404
+	s_delay_alu instid0(VALU_DEP_1)                            // 0000002268AC: BF870001
+	v_add_co_ci_u32_e64 v3, null, s5, v3, vcc_lo               // 0000002268B0: D5207C03 01AA0605
+	global_load_b32 v3, v[2:3], off                            // 0000002268B8: DC520000 037C0002
+	s_or_b32 exec_lo, exec_lo, s2                              // 0000002268C0: 8C7E027E
+	v_add_co_u32 v0, vcc_lo, s0, v0                            // 0000002268C4: D7006A00 02020000
+	s_delay_alu instid0(VALU_DEP_1)                            // 0000002268CC: BF870001
+	v_add_co_ci_u32_e64 v1, null, s1, v1, vcc_lo               // 0000002268D0: D5207C01 01AA0201
+	s_waitcnt vmcnt(0)                                         // 0000002268D8: BF8903F7
+	global_store_b32 v[0:1], v3, off                           // 0000002268DC: DC6A0000 007C0300
+	s_endpgm                                                   // 0000002268E4: BFB00000

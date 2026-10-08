@@ -1,0 +1,760 @@
+{
+  "schema": "halogen.external-corpus-third-draft-publication.v1",
+  "classification": "no-useful-third-in-frozen-historical-fixture",
+  "result": {
+    "schema": "halogen.external-natural-corpus-third-draft.v1",
+    "policy": {
+      "key": "exact trailing trigram after observed native pending2",
+      "continuation": "one following token within ONE independently frozen novel prefix",
+      "source_selection": "260000-input natural preparation's longest existing prefix; no label-based selection",
+      "minimum_observations": 1,
+      "candidate": "maximum continuation frequency",
+      "tie_rule": "lowest numeric raw token ID",
+      "backoff": false,
+      "committed_or_pending_ids_indexed": false,
+      "future_labels_indexed": false
+    },
+    "preprocessing_attempt": 2,
+    "total_process_limit_bytes": 536870912,
+    "total_job_limit_bytes": 536870912,
+    "preserved_attempt1_failure_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008\\failure-receipt.json",
+    "corpus": {
+      "title": "War and Peace",
+      "source_body_sha256": "353693ee8384aaba6ae2b78c75936bd668230d3cec8d7ac2c648351204bc1d23",
+      "source_prefix_characters": 1045156,
+      "utf8_bytes": 1070681,
+      "text_sha256": "1f6802cbebabbe0be42a005bb65eec311e7a92192668042ea609f373180abee5",
+      "derived_id_count": 259938,
+      "derived_ids_sha256": "430f77ad13e690f41fb3e7a1bcf9447da88d8ebfea95588bc29c51a96f2978ca",
+      "no_template_or_task": true,
+      "independently_frozen_source": true
+    },
+    "sources": {
+      "workload_sha256": "1f3a2fbfafe1a8fd90f99c23dac49f3f0028644d5f010fcd057edfcce26a4919",
+      "tokenizer_sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+      "actual_target_template_file": "C:\\AI\\models\\halogen-flashnext\\tokenizer\\chat_template.jinja",
+      "actual_target_template_sha256": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041",
+      "old_request_content_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+      "natural_receipt_sha256": "5e94e7795e43d58bfb64d86e6034d8c612284049c8790e3d48dfc5a0d642a346",
+      "native0172_tokenizer_receipt_sha256": "819904a0d165409091188f45c816029e88fa3df111a98fa2d6c79fc37c8efe72",
+      "seed_sha256": "dc1b73cc84046ca0fe0ed09520540eed9c06e2682fbd23eeff7077209f7ee31b",
+      "old_request_sha256": "5bd5e9f41aaa89182716d939f2848c66c136f97f403898ceb9d2219de2417046",
+      "package_version": "0.23.2",
+      "package_binary_sha256": "05848a2a85e1466d19242499ed6b8c016a886db79aca020792aa5598ded77ef9"
+    },
+    "native_seed_mapping": {
+      "exact": true,
+      "compared_native_ids": 8191,
+      "actual_request_render": "pinned target single-user template branch; content.strip() implements explicit |trim",
+      "relation": "rendered actual old request IDs[1:] == native shifted seed[:-1]; first target output not used as mapping label"
+    },
+    "case_count": 15,
+    "complete_third_label_cases": 14,
+    "candidate_cases": 2,
+    "usable_third_label_matches": 0,
+    "denominators": {
+      "all_cases": {
+        "cases": 15,
+        "candidates": 2,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "complete_third_labels": {
+        "cases": 14,
+        "candidates": 2,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "correct_pending2_and_complete": {
+        "cases": 10,
+        "candidates": 2,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "wrong_pending2_and_complete": {
+        "cases": 4,
+        "candidates": 0,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "missing_third_label": {
+        "cases": 1,
+        "candidates": 0,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "wrong_pending2_all": {
+        "cases": 5,
+        "candidates": 0,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      }
+    },
+    "cases": [
+      {
+        "base": 8192,
+        "query": [
+          760,
+          14367,
+          303
+        ],
+        "observed_pending2": [
+          14367,
+          303
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": false,
+        "first_pending_matches_label": false,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          8337,
+          1145,
+          2116
+        ]
+      },
+      {
+        "base": 8193,
+        "query": [
+          8337,
+          1145,
+          2116
+        ],
+        "observed_pending2": [
+          1145,
+          2116
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          1145,
+          2116,
+          310
+        ]
+      },
+      {
+        "base": 8196,
+        "query": [
+          310,
+          279,
+          32469
+        ],
+        "observed_pending2": [
+          279,
+          32469
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          279,
+          32469,
+          6220
+        ]
+      },
+      {
+        "base": 8199,
+        "query": [
+          6220,
+          1040,
+          264
+        ],
+        "observed_pending2": [
+          1040,
+          264
+        ],
+        "candidate_third_id": 4776,
+        "corpus_occurrences": 1,
+        "continuation_counts": {
+          "4776": 1
+        },
+        "mode_count": 1,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": false,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          1040,
+          264,
+          2018
+        ]
+      },
+      {
+        "base": 8202,
+        "query": [
+          2018,
+          6574,
+          11
+        ],
+        "observed_pending2": [
+          6574,
+          11
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          6574,
+          11,
+          11702
+        ]
+      },
+      {
+        "base": 8205,
+        "query": [
+          11702,
+          321,
+          4022
+        ],
+        "observed_pending2": [
+          321,
+          4022
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          321,
+          4022,
+          11
+        ]
+      },
+      {
+        "base": 8208,
+        "query": [
+          11,
+          87529,
+          279
+        ],
+        "observed_pending2": [
+          87529,
+          279
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": false,
+        "first_pending_matches_label": false,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          24829,
+          1618,
+          279
+        ]
+      },
+      {
+        "base": 8209,
+        "query": [
+          24829,
+          1618,
+          279
+        ],
+        "observed_pending2": [
+          1618,
+          279
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          1618,
+          279,
+          18169
+        ]
+      },
+      {
+        "base": 8212,
+        "query": [
+          18169,
+          1881,
+          279
+        ],
+        "observed_pending2": [
+          1881,
+          279
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          1881,
+          279,
+          9114
+        ]
+      },
+      {
+        "base": 8215,
+        "query": [
+          9114,
+          321,
+          279
+        ],
+        "observed_pending2": [
+          321,
+          279
+        ],
+        "candidate_third_id": 13240,
+        "corpus_occurrences": 1,
+        "continuation_counts": {
+          "13240": 1
+        },
+        "mode_count": 1,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": false,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          321,
+          279,
+          12515
+        ]
+      },
+      {
+        "base": 8218,
+        "query": [
+          12515,
+          13,
+          1049
+        ],
+        "observed_pending2": [
+          13,
+          1049
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": false,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          13,
+          733,
+          279
+        ]
+      },
+      {
+        "base": 8220,
+        "query": [
+          733,
+          279,
+          6092
+        ],
+        "observed_pending2": [
+          279,
+          6092
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          279,
+          6092,
+          314
+        ]
+      },
+      {
+        "base": 8223,
+        "query": [
+          314,
+          7963,
+          68507
+        ],
+        "observed_pending2": [
+          7963,
+          68507
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": false,
+        "first_pending_matches_label": false,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          17739,
+          68507,
+          11
+        ]
+      },
+      {
+        "base": 8224,
+        "query": [
+          17739,
+          68507,
+          11
+        ],
+        "observed_pending2": [
+          68507,
+          11
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 3,
+        "pending2_matches_labels": true,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          68507,
+          11,
+          279
+        ]
+      },
+      {
+        "base": 8227,
+        "query": [
+          279,
+          14367,
+          1467
+        ],
+        "observed_pending2": [
+          14367,
+          1467
+        ],
+        "candidate_third_id": null,
+        "corpus_occurrences": 0,
+        "continuation_counts": {},
+        "mode_count": null,
+        "label_count": 2,
+        "pending2_matches_labels": false,
+        "first_pending_matches_label": true,
+        "third_label_match": null,
+        "usable_third_label_match": false,
+        "evaluator_labels": [
+          14367,
+          557
+        ]
+      }
+    ],
+    "cpu_screen_ns": {
+      "tokenize": 588006500,
+      "corpus_scan": 28214700,
+      "complete": 1189222100
+    },
+    "memory": {
+      "baseline": {
+        "PrivateUsage": 10563584,
+        "PeakPagefileUsage": 10563584,
+        "WorkingSetSize": 18964480,
+        "PeakWorkingSetSize": 18964480
+      },
+      "after_tokenizer": {
+        "PrivateUsage": 75223040,
+        "PeakPagefileUsage": 122040320,
+        "WorkingSetSize": 83427328,
+        "PeakWorkingSetSize": 128868352
+      },
+      "after_mapping": {
+        "PrivateUsage": 76419072,
+        "PeakPagefileUsage": 122040320,
+        "WorkingSetSize": 85409792,
+        "PeakWorkingSetSize": 128868352
+      },
+      "after_corpus": {
+        "PrivateUsage": 36937728,
+        "PeakPagefileUsage": 240238592,
+        "WorkingSetSize": 43184128,
+        "PeakWorkingSetSize": 246673408
+      },
+      "max_total_bytes": 536870912,
+      "process_and_job_caps_enforced": true,
+      "job_cap_enforced": true,
+      "final": {
+        "PrivateUsage": 37052416,
+        "PeakPagefileUsage": 240238592,
+        "WorkingSetSize": 43307008,
+        "PeakWorkingSetSize": 246673408
+      }
+    },
+    "native_observation_version": "0.16.2",
+    "source_tokenizer_binding_version": "0.17.2",
+    "corpus_candidates_label_selected": false,
+    "future_output_ids_indexed": false,
+    "native0172_acceptance": null,
+    "serving_gain_qualified": false,
+    "engine_or_hardware_called": false,
+    "script_sha256": "6c0a936f4d8278c283b8c79e9f42810342e5a167963692c5d96141dca8983e50"
+  },
+  "publication_memory_completion": {
+    "schema": "halogen.external-natural-corpus-third-draft.cpu-memory-completion.v1",
+    "baseline": {
+      "PrivateUsage": 10563584,
+      "PeakPagefileUsage": 10563584,
+      "WorkingSetSize": 18964480,
+      "PeakWorkingSetSize": 18964480
+    },
+    "after_result_publication": {
+      "PrivateUsage": 37060608,
+      "PeakPagefileUsage": 240238592,
+      "WorkingSetSize": 43319296,
+      "PeakWorkingSetSize": 246673408
+    },
+    "max_total_bytes": 536870912,
+    "process_and_job_caps_enforced": true,
+    "extra_peak_private_bytes": 229675008,
+    "extra_peak_working_set_bytes": 227708928,
+    "job_cap_enforced": true,
+    "budget_passed": true
+  },
+  "result_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008\\attempt2-512mib-total\\result.json",
+    "bytes": 13460,
+    "sha256": "c934e665367dec005fb79576f2742a040d4dca09c81f853458fcc103f34e50f7"
+  },
+  "findings_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008\\findings.md",
+    "bytes": 6900,
+    "sha256": "ee97ae5e478d280b2dbc1e06387ee464b67890893ca41170ca09bd89cad0076f"
+  },
+  "preserved_attempt1_failure": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008\\failure-receipt.json",
+    "bytes": 4306,
+    "sha256": "3de43a59c7c69a596841038366cab67d62bebeddd42bf70584486affc77c6107"
+  },
+  "independent_causal_review": {
+    "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008\\causal-review.md",
+    "bytes": 1883,
+    "sha256": "797a78e4dc81e25d64df09793a15c2bdc33d97ac538489989bbff29ecf8ef62e"
+  },
+  "independent_causal_review_text": "# Independent causal and artifact audit\n\nReviewer: `/root/mtp_lowrank_assets/third_draft_causal_review`. This review used the saved corrected-attempt artifacts and small standard-library arithmetic. It did not execute a tokenizer, derive another corpus, vary policy, collect timing, rerun the screen or access hardware.\n\nAudit passed. The reviewer reconstructed all 15 causal queries and labels, checked 44 source/artifact hashes, and recomputed continuation counts from the **259,938 stored raw IDs**. The query's current ID matches the actual scalar-entry cached history; pending IDs come from the pinned scalar input and matching return. Corpus candidates freeze before target-label evaluation, and the corrected attempt checks equality with attempt1's sealed policy.\n\nThe result is **2/15 candidates**, both among **10 jointly eligible complete-label cases**, with **zero useful third matches**. At base 8199 candidate 4776 occurs once, versus third label 2018. At base 8215 candidate 13240 occurs once, versus label 12515. Four complete wrong-prefix cases and one incomplete wrong-prefix case have no corpus candidates. All reported denominators reproduce.\n\nThe source sets both process and job private-memory limits to **536,870,912 bytes**. The postpublication memory receipt reports peak private usage **240,238,592 bytes** and peak working set **246,673,408 bytes**, both below the bound. Original attempt1 source, marker and allocation-failure receipt remain preserved. The corrected process is terminal, exit 0, and a subsequent read-only process query found no matching Python process.\n\nThis evidence supports zero joint yield for the one fixed historical native **0.16.2** corpus screen. It establishes no current native 0.17.2 acceptance or serving gain. The corpus's 259,938 raw IDs exclude template/task material; 260,000 is the earlier served-input selection count.\n",
+  "sealed_delivery": {
+    "schema": "halogen.external-natural-corpus-third-draft.delivery.v1",
+    "sealed_utc": "2026-10-08 13:19:48 UTC",
+    "status": "complete_fixed_screen_zero_joint_yield",
+    "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008",
+    "artifacts": [
+      {
+        "file": "screen.py",
+        "bytes": 19619,
+        "sha256": "7c60299e7b3a6ce438002535bbf222c2ce27d158be670bc8ed6c87f058af7f6e"
+      },
+      {
+        "file": "screen-started.json",
+        "bytes": 953,
+        "sha256": "1d48755c6adad159a31cef8f9af1f93b870b864d50ab1bc6ef26cf4be5c834ab"
+      },
+      {
+        "file": "failure-receipt.json",
+        "bytes": 4306,
+        "sha256": "3de43a59c7c69a596841038366cab67d62bebeddd42bf70584486affc77c6107"
+      },
+      {
+        "file": "attempt1-findings.md",
+        "bytes": 4976,
+        "sha256": "4d57869b3a914421bc6d07318a41112745450e92c03d224de65db267dfebfb89"
+      },
+      {
+        "file": "findings.md",
+        "bytes": 6900,
+        "sha256": "ee97ae5e478d280b2dbc1e06387ee464b67890893ca41170ca09bd89cad0076f"
+      },
+      {
+        "file": "causal-review.md",
+        "bytes": 1883,
+        "sha256": "797a78e4dc81e25d64df09793a15c2bdc33d97ac538489989bbff29ecf8ef62e"
+      },
+      {
+        "file": "attempt2-512mib-total/screen.py",
+        "bytes": 20112,
+        "sha256": "6c0a936f4d8278c283b8c79e9f42810342e5a167963692c5d96141dca8983e50"
+      },
+      {
+        "file": "attempt2-512mib-total/screen-started.json",
+        "bytes": 1189,
+        "sha256": "ac191b291f67105c44289f1dca8b53de8c5de73d45fb03dee7fd553c1f7a1747"
+      },
+      {
+        "file": "attempt2-512mib-total/corpus-prefix.txt",
+        "bytes": 1070681,
+        "sha256": "1f6802cbebabbe0be42a005bb65eec311e7a92192668042ea609f373180abee5"
+      },
+      {
+        "file": "attempt2-512mib-total/corpus-ids.i32",
+        "bytes": 1039752,
+        "sha256": "430f77ad13e690f41fb3e7a1bcf9447da88d8ebfea95588bc29c51a96f2978ca"
+      },
+      {
+        "file": "attempt2-512mib-total/result.json",
+        "bytes": 13460,
+        "sha256": "c934e665367dec005fb79576f2742a040d4dca09c81f853458fcc103f34e50f7"
+      },
+      {
+        "file": "attempt2-512mib-total/memory-completion.json",
+        "bytes": 623,
+        "sha256": "fbf22f0dcb33f099891969d234c7748606dc4949654f7f4c0210119f6495a42e"
+      },
+      {
+        "file": "attempt2-512mib-total/execution-receipt.json",
+        "bytes": 777,
+        "sha256": "420bc5c937f0f8e17289da826b0fc934f8336d532d1c7f1924fdc4a7ad4e43bd"
+      }
+    ],
+    "preprocessing_attempts_after_exact_mapping": 2,
+    "completed_corpus_derivations": 1,
+    "completed_retrieval_screens": 1,
+    "attempt1_preserved": true,
+    "attempt1_status": "terminal_exit1_denied_allocation_under_baseline_plus128MiB_cap",
+    "attempt2_status": "terminal_exit0_under_corrected512MiB_total_process_and_job_cap",
+    "same_independently_frozen_corpus": true,
+    "same_predeclared_causal_policy": true,
+    "mapping_compared_native_prompt_ids": 8191,
+    "served_input_selection_tokens": 260000,
+    "raw_corpus_token_count": 259938,
+    "corpus_count_excludes_template_and_task": true,
+    "denominators": {
+      "all_cases": {
+        "cases": 15,
+        "candidates": 2,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "complete_third_labels": {
+        "cases": 14,
+        "candidates": 2,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "correct_pending2_and_complete": {
+        "cases": 10,
+        "candidates": 2,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "wrong_pending2_and_complete": {
+        "cases": 4,
+        "candidates": 0,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "missing_third_label": {
+        "cases": 1,
+        "candidates": 0,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      },
+      "wrong_pending2_all": {
+        "cases": 5,
+        "candidates": 0,
+        "third_label_matches": 0,
+        "joint_usable_third_matches": 0
+      }
+    },
+    "peak_private_bytes": 240238592,
+    "peak_working_set_bytes": 246673408,
+    "process_and_job_limit_bytes": 536870912,
+    "cpu_memory_budget_passed": true,
+    "independent_causal_review": {
+      "status": "passed",
+      "file": "causal-review.md",
+      "reviewer": "/root/mtp_lowrank_assets/third_draft_causal_review",
+      "hashes_checked": 44,
+      "all_queries_and_labels_reconstructed": true,
+      "stored_ids_continuation_counts_reproduced": true,
+      "label_evaluation_after_candidate_freeze": true,
+      "tokenizer_or_screen_rerun": false
+    },
+    "native_observation_version": "0.16.2",
+    "current_tokenizer_receipt_version": "0.17.2",
+    "request_families": 1,
+    "corpora": 1,
+    "native0172_acceptance": null,
+    "serving_gain_qualified": false,
+    "live_arm_supported_by_this_screen": false,
+    "no_follow_on_screen": true,
+    "engine_or_hardware_called": false,
+    "download_or_install_called": false,
+    "public_docs_profiles_or_lifecycle_changed": false
+  },
+  "sealed_delivery_ref": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008\\delivery.json",
+    "bytes": 4944,
+    "sha256": "23b3228bd83101ff91f7d6e50396ea69fa59ca4ff68264b5610d9f1b341c41b9"
+  },
+  "source_archive": {
+    "historical_snapshots": true,
+    "runnable_at_archive_location": false,
+    "sources": [
+      {
+        "archive": "attempt1_screen.py",
+        "original": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008\\screen.py",
+          "bytes": 19619,
+          "sha256": "7c60299e7b3a6ce438002535bbf222c2ce27d158be670bc8ed6c87f058af7f6e"
+        }
+      },
+      {
+        "archive": "attempt2_screen.py",
+        "original": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\external-corpus-third-draft-20261008\\attempt2-512mib-total\\screen.py",
+          "bytes": 20112,
+          "sha256": "6c0a936f4d8278c283b8c79e9f42810342e5a167963692c5d96141dca8983e50"
+        }
+      }
+    ],
+    "screen_executed_by_publication": false
+  },
+  "hardware_executed_by_publication": false,
+  "native0172_acceptance": null,
+  "npu_prefill_tps": null,
+  "npu_decode_tps": null,
+  "serving_gain_qualified": false
+}

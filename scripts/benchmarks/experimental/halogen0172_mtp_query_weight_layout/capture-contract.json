@@ -1,0 +1,84 @@
+{
+  "schema": "halogen0172.mtp-native-query-observer-design.v1",
+  "implemented": false,
+  "live_run_authorized_by_this_artifact": false,
+  "mechanism": "RTLD_NEXT HIP API interception; no machine-state detour",
+  "literal_ordinary_symbols_required": ["hipLaunchKernel", "hipEventRecord", "hipMemcpyAsync"],
+  "default_stream_contract": "legacy null stream0 only; bypass compile-time per-thread aliases; exclude *_spt paths and hipStreamPerThread",
+  "engine_sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+  "query": {"dtype": "BF16", "width": 2560, "bytes": 5120, "preserve_raw_bits": true},
+  "projection": {
+    "api": "hipLaunchKernel",
+    "caller_return_rva": "0x17f6f03",
+    "descriptor_rva": "0x18f5d78",
+    "min_rows_for_this_exact_branch": 9,
+    "stream": 0,
+    "shared_bytes": 0,
+    "grid": "ceil(rows/16),1,1",
+    "block": [256, 1, 1],
+    "arguments": [
+      {"index": 0, "host_value": "packed weights device pointer", "bytes": 8},
+      {"index": 1, "host_value": "final BF16 query device pointer", "bytes": 8},
+      {"index": 2, "host_value": "FLOAT output device pointer", "bytes": 8},
+      {"index": 3, "host_value": "width=2560", "bytes": 8},
+      {"index": 4, "host_value": "projection rows", "bytes": 8},
+      {"index": 5, "host_value": "descriptor+0x58=64", "bytes": 8},
+      {"index": 6, "host_value": "descriptor+0x60 scale device pointer", "bytes": 8},
+      {"index": 7, "host_value": "descriptor+0x68=160", "bytes": 8},
+      {"index": 8, "host_value": "null pointer", "bytes": 8},
+      {"index": 9, "host_value": "zero FLOAT bits", "bytes": 4}
+    ],
+    "pairing": "provisional until matching scatter; one core and optional contiguous tail sharing query",
+    "record_events_before_after_each_native_launch": true
+  },
+  "scatter": {
+    "api": "hipLaunchKernel",
+    "caller_return_rva": "0x17f24b7",
+    "descriptor_rva": "0x18f3be8",
+    "stream": 0,
+    "shared_bytes": 0,
+    "grid": [970, 1, 1],
+    "block": [256, 1, 1],
+    "arguments": [
+      {"index": 0, "host_value": "reduced FLOAT logits device pointer", "bytes": 8},
+      {"index": 1, "host_value": "full token ID to reduced index map device pointer", "bytes": 8},
+      {"index": 2, "host_value": "full FLOAT output device pointer", "bytes": 8},
+      {"index": 3, "host_value": "full count=248320", "bytes": 4}
+    ],
+    "fill": "negative map entries write FLOAT negative infinity",
+    "record_events_before_after_native_launch": true,
+    "snapshot_after_end_event": ["query raw BF16", "core+tail native FLOAT logits", "full signed int32 reverse map"]
+  },
+  "chosen_id": {
+    "api": "hipMemcpy",
+    "caller_return_rva": "0x17f1cc2",
+    "kind": "DeviceToHost",
+    "bytes": 4,
+    "capture_from": "host destination after successful native copy returns",
+    "extra_device_read": false
+  },
+  "capacity": {
+    "candidate_head_slots": 128,
+    "max_complete_heads": 128,
+    "max_rows_per_head": 248320,
+    "gpu_snapshot_bytes": 254935040,
+    "event_count_max": 769,
+    "event_flags": 0,
+    "preallocated_host_staging_bytes": 4194304,
+    "map_snapshot_policy": "each head; offline hash dedup only",
+    "orphan_policy": "orphan consumes its candidate slot; no pending-event reuse",
+    "overflow": "stop snapshots, continue native execution, mark footer partial"
+  },
+  "timing": {
+    "per_head_added_syncs": 0,
+    "post_response_final_event_syncs": 1,
+    "harvest_device": "worker sets captured device ordinal via real HIP API before event/copy operations",
+    "removable": "native core/tail Q4 projection",
+    "retained": "native scatter, selection and target verification",
+    "interpretation": "instrumented GPU stream event brackets, not exclusive busy-kernel time or serving gain"
+  },
+  "labels_available": ["request boundary", "sequential head", "core/tail rows", "runtime row mapping", "native logits", "native chosen ID"],
+  "labels_unavailable": ["model position", "round", "opening/replay", "per-query verifier predictions", "accepted-prefix identity"],
+  "footer_required": ["observed/completed/dropped counts", "ambiguity", "capacity exhaustion", "event/copy/native API errors", "unexpected caller/stream", "request/output hashes", "buffer ownership", "harvest completion"],
+  "mutations_to_engine_behavior": false
+}

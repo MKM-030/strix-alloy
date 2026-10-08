@@ -1,0 +1,126 @@
+Pinned ELF SHA256 ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913
+Unwind function 0x17f4750..0x17f730b
+Every decoded instruction byte verified; only bounded excerpts retained.
+
+EXCERPT 0x17f4750..0x17f47bc
+017f4750: 55                                           push	rbp
+017f4751: 41 57                                        push	r15
+017f4753: 41 56                                        push	r14
+017f4755: 41 55                                        push	r13
+017f4757: 41 54                                        push	r12
+017f4759: 53                                           push	rbx
+017f475a: 48 81 ec d8 00 00 00                         sub	rsp, 0xd8
+017f4761: 0f b6 05 20 78 10 00                         movzx	eax, byte ptr [rip + 0x107820] # 0x18fbf88
+017f4768: 84 c0                                        test	al, al
+017f476a: 0f 84 ab 27 00 00                            je	0x17f6f1b
+017f4770: 83 3d 09 78 10 00 00                         cmp	dword ptr [rip + 0x107809], 0x0 # 0x18fbf80
+017f4777: 0f 84 ad 01 00 00                            je	0x17f492a
+017f477d: 45 8d 48 f7                                  lea	r9d, [r8 - 0x9]
+017f4781: 31 c0                                        xor	eax, eax
+017f4783: 41 83 f9 f8                                  cmp	r9d, -0x8
+017f4787: 0f 82 7c 27 00 00                            jb	0x17f6f09
+017f478d: 48 83 3f 00                                  cmp	qword ptr [rdi], 0x0
+017f4791: 0f 84 72 27 00 00                            je	0x17f6f09
+017f4797: 0f b6 05 7a 78 10 00                         movzx	eax, byte ptr [rip + 0x10787a] # 0x18fc018
+017f479e: 41 ff c8                                     dec	r8d
+017f47a1: 41 83 f8 06                                  cmp	r8d, 0x6
+017f47a5: 0f 87 d0 05 00 00                            ja	0x17f4d7b
+017f47ab: 4c 8d 0d d6 1f 85 fe                         lea	r9, [rip - 0x17ae02a]   # 0x46788
+017f47b2: 4f 63 04 81                                  movsxd	r8, dword ptr [r9 + 4*r8]
+017f47b6: 4d 01 c8                                     add	r8, r9
+017f47b9: 41 ff e0                                     jmp	r8
+
+EXCERPT 0x17f47bc..0x17f4821
+017f47bc: 48 bb 00 00 00 00 01 00 00 00                movabs	rbx, 0x100000000
+017f47c6: 49 89 fe                                     mov	r14, rdi
+017f47c9: 49 89 f7                                     mov	r15, rsi
+017f47cc: 49 89 d4                                     mov	r12, rdx
+017f47cf: 83 f9 08                                     cmp	ecx, 0x8
+017f47d2: 0f 8f b3 10 00 00                            jg	0x17f588b
+017f47d8: 84 c0                                        test	al, al
+017f47da: 0f 84 7f 28 00 00                            je	0x17f705f
+017f47e0: 8b 2d 2a 78 10 00                            mov	ebp, dword ptr [rip + 0x10782a] # 0x18fc010
+017f47e6: 49 89 cd                                     mov	r13, rcx
+017f47e9: 89 cf                                        mov	edi, ecx
+017f47eb: 48 09 df                                     or	rdi, rbx
+017f47ee: 48 81 c3 00 01 00 00                         add	rbx, 0x100
+017f47f5: be 01 00 00 00                               mov	esi, 0x1
+017f47fa: 48 89 da                                     mov	rdx, rbx
+017f47fd: b9 01 00 00 00                               mov	ecx, 0x1
+017f4802: 45 31 c0                                     xor	r8d, r8d
+017f4805: 45 31 c9                                     xor	r9d, r9d
+017f4808: e8 83 db 0f 00                               call	0x18f2390
+017f480d: 89 c1                                        mov	ecx, eax
+017f480f: b0 01                                        mov	al, 0x1
+017f4811: 85 ed                                        test	ebp, ebp
+017f4813: 0f 84 52 1e 00 00                            je	0x17f666b
+017f4819: 85 c9                                        test	ecx, ecx
+017f481b: 0f 85 e8 26 00 00                            jne	0x17f6f09
+
+EXCERPT 0x17f688d..0x17f699e
+017f688d: 85 c9                                        test	ecx, ecx
+017f688f: 0f 85 74 06 00 00                            jne	0x17f6f09
+017f6895: 44 89 e8                                     mov	eax, r13d
+017f6898: 49 8b 0e                                     mov	rcx, qword ptr [r14]
+017f689b: 49 8b 56 58                                  mov	rdx, qword ptr [r14 + 0x58]
+017f689f: 49 8b 76 60                                  mov	rsi, qword ptr [r14 + 0x60]
+017f68a3: 49 8b 7e 68                                  mov	rdi, qword ptr [r14 + 0x68]
+017f68a7: 48 89 4c 24 78                               mov	qword ptr [rsp + 0x78], rcx
+017f68ac: 4c 89 7c 24 70                               mov	qword ptr [rsp + 0x70], r15
+017f68b1: 4c 89 64 24 68                               mov	qword ptr [rsp + 0x68], r12
+017f68b6: 48 c7 44 24 60 00 0a 00 00                   mov	qword ptr [rsp + 0x60], 0xa00
+017f68bf: 48 89 44 24 58                               mov	qword ptr [rsp + 0x58], rax
+017f68c4: 48 89 54 24 50                               mov	qword ptr [rsp + 0x50], rdx
+017f68c9: 48 89 74 24 48                               mov	qword ptr [rsp + 0x48], rsi
+017f68ce: 48 89 7c 24 40                               mov	qword ptr [rsp + 0x40], rdi
+017f68d3: 48 c7 44 24 38 00 00 00 00                   mov	qword ptr [rsp + 0x38], 0x0
+017f68dc: c7 44 24 04 00 00 00 00                      mov	dword ptr [rsp + 0x4], 0x0
+017f68e4: 48 8d 44 24 78                               lea	rax, [rsp + 0x78]
+017f68e9: 48 89 84 24 80 00 00 00                      mov	qword ptr [rsp + 0x80], rax
+017f68f1: 48 8d 44 24 70                               lea	rax, [rsp + 0x70]
+017f68f6: 48 89 84 24 88 00 00 00                      mov	qword ptr [rsp + 0x88], rax
+017f68fe: 48 8d 44 24 68                               lea	rax, [rsp + 0x68]
+017f6903: 48 89 84 24 90 00 00 00                      mov	qword ptr [rsp + 0x90], rax
+017f690b: 48 8d 44 24 60                               lea	rax, [rsp + 0x60]
+017f6910: 48 89 84 24 98 00 00 00                      mov	qword ptr [rsp + 0x98], rax
+017f6918: 48 8d 44 24 58                               lea	rax, [rsp + 0x58]
+017f691d: 48 89 84 24 a0 00 00 00                      mov	qword ptr [rsp + 0xa0], rax
+017f6925: 48 8d 44 24 50                               lea	rax, [rsp + 0x50]
+017f692a: 48 89 84 24 a8 00 00 00                      mov	qword ptr [rsp + 0xa8], rax
+017f6932: 48 8d 44 24 48                               lea	rax, [rsp + 0x48]
+017f6937: 48 89 84 24 b0 00 00 00                      mov	qword ptr [rsp + 0xb0], rax
+017f693f: 48 8d 44 24 40                               lea	rax, [rsp + 0x40]
+017f6944: 48 89 84 24 b8 00 00 00                      mov	qword ptr [rsp + 0xb8], rax
+017f694c: 48 8d 44 24 38                               lea	rax, [rsp + 0x38]
+017f6951: 48 89 84 24 c0 00 00 00                      mov	qword ptr [rsp + 0xc0], rax
+017f6959: 48 8d 44 24 04                               lea	rax, [rsp + 0x4]
+017f695e: 48 89 84 24 c8 00 00 00                      mov	qword ptr [rsp + 0xc8], rax
+017f6966: 48 8d 7c 24 28                               lea	rdi, [rsp + 0x28]
+017f696b: 48 8d 74 24 18                               lea	rsi, [rsp + 0x18]
+017f6970: 48 8d 54 24 10                               lea	rdx, [rsp + 0x10]
+017f6975: 48 8d 4c 24 08                               lea	rcx, [rsp + 0x8]
+017f697a: e8 41 b9 0f 00                               call	0x18f22c0
+017f697f: 48 8b 74 24 28                               mov	rsi, qword ptr [rsp + 0x28]
+017f6984: 8b 54 24 30                                  mov	edx, dword ptr [rsp + 0x30]
+017f6988: 48 8b 4c 24 18                               mov	rcx, qword ptr [rsp + 0x18]
+017f698d: 44 8b 44 24 20                               mov	r8d, dword ptr [rsp + 0x20]
+017f6992: 48 8d 3d df f3 0f 00                         lea	rdi, [rip + 0xff3df]    # 0x18f5d78
+017f6999: e9 50 05 00 00                               jmp	0x17f6eee
+
+EXCERPT 0x17f6ee7..0x17f6f1b
+017f6ee7: 48 8d 3d 0a f0 0f 00                         lea	rdi, [rip + 0xff00a]    # 0x18f5ef8
+017f6eee: 4c 8d 8c 24 80 00 00 00                      lea	r9, [rsp + 0x80]
+017f6ef6: ff 74 24 08                                  push	qword ptr [rsp + 0x8]
+017f6efa: ff 74 24 18                                  push	qword ptr [rsp + 0x18]
+017f6efe: e8 cd b3 0f 00                               call	0x18f22d0
+017f6f03: b0 01                                        mov	al, 0x1
+017f6f05: 48 83 c4 10                                  add	rsp, 0x10
+017f6f09: 48 81 c4 d8 00 00 00                         add	rsp, 0xd8
+017f6f10: 5b                                           pop	rbx
+017f6f11: 41 5c                                        pop	r12
+017f6f13: 41 5d                                        pop	r13
+017f6f15: 41 5e                                        pop	r14
+017f6f17: 41 5f                                        pop	r15
+017f6f19: 5d                                           pop	rbp
+017f6f1a: c3                                           ret
+

@@ -1,0 +1,76 @@
+Pinned ELF SHA256 ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913
+Unwind function 0x1814dc0..0x1815921
+Every decoded instruction byte verified; only bounded excerpts retained.
+
+EXCERPT 0x1814dc0..0x1814f04
+01814dc0: 55                                           push	rbp
+01814dc1: 41 57                                        push	r15
+01814dc3: 41 56                                        push	r14
+01814dc5: 41 55                                        push	r13
+01814dc7: 41 54                                        push	r12
+01814dc9: 53                                           push	rbx
+01814dca: 48 81 ec e8 00 00 00                         sub	rsp, 0xe8
+01814dd1: 44 89 cd                                     mov	ebp, r9d
+01814dd4: 45 89 c1                                     mov	r9d, r8d
+01814dd7: 48 89 54 24 28                               mov	qword ptr [rsp + 0x28], rdx
+01814ddc: 48 89 74 24 20                               mov	qword ptr [rsp + 0x20], rsi
+01814de1: 4c 8b 84 24 20 01 00 00                      mov	r8, qword ptr [rsp + 0x120]
+01814de9: 88 4c 24 17                                  mov	byte ptr [rsp + 0x17], cl
+01814ded: 44 89 4c 24 10                               mov	dword ptr [rsp + 0x10], r9d
+01814df2: 48 8b 57 30                                  mov	rdx, qword ptr [rdi + 0x30]
+01814df6: 48 85 d2                                     test	rdx, rdx
+01814df9: 0f 84 8b 08 00 00                            je	0x181568a
+01814dff: 49 89 fc                                     mov	r12, rdi
+01814e02: 48 83 7f 38 00                               cmp	qword ptr [rdi + 0x38], 0x0
+01814e07: 0f 84 95 08 00 00                            je	0x18156a2
+01814e0d: 49 83 7c 24 40 00                            cmp	qword ptr [r12 + 0x40], 0x0
+01814e13: 0f 84 89 08 00 00                            je	0x18156a2
+01814e19: 41 f6 c1 7f                                  test	r9b, 0x7f
+01814e1d: 0f 85 7f 08 00 00                            jne	0x18156a2
+01814e23: 44 89 c0                                     mov	eax, r8d
+01814e26: 83 e0 7f                                     and	eax, 0x7f
+01814e29: 0f 85 73 08 00 00                            jne	0x18156a2
+01814e2f: 41 8b 44 24 4c                               mov	eax, dword ptr [r12 + 0x4c]
+01814e34: 4d 8b 54 24 50                               mov	r10, qword ptr [r12 + 0x50]
+01814e39: 41 39 c1                                     cmp	r9d, eax
+01814e3c: 0f 85 d3 08 00 00                            jne	0x1815715
+01814e42: 4d 39 d0                                     cmp	r8, r10
+01814e45: 0f 85 ca 08 00 00                            jne	0x1815715
+01814e4b: 48 89 94 24 a8 00 00 00                      mov	qword ptr [rsp + 0xa8], rdx
+01814e53: 4c 89 a4 24 c8 00 00 00                      mov	qword ptr [rsp + 0xc8], r12
+01814e5b: 48 8d 44 24 17                               lea	rax, [rsp + 0x17]
+01814e60: 48 89 84 24 d0 00 00 00                      mov	qword ptr [rsp + 0xd0], rax
+01814e68: 48 8d 44 24 10                               lea	rax, [rsp + 0x10]
+01814e6d: 48 89 84 24 d8 00 00 00                      mov	qword ptr [rsp + 0xd8], rax
+01814e75: 48 8d 84 24 20 01 00 00                      lea	rax, [rsp + 0x120]
+01814e7d: 48 89 84 24 e0 00 00 00                      mov	qword ptr [rsp + 0xe0], rax
+01814e85: 83 fd 08                                     cmp	ebp, 0x8
+01814e88: 7f 7a                                        jg	0x1814f04
+01814e8a: 84 c9                                        test	cl, cl
+01814e8c: 75 58                                        jne	0x1814ee6
+01814e8e: 0f b6 05 b3 6f 0e 00                         movzx	eax, byte ptr [rip + 0xe6fb3] # 0x18fbe48
+01814e95: 84 c0                                        test	al, al
+01814e97: 0f 84 1e 09 00 00                            je	0x18157bb
+01814e9d: 83 3d 9c 6f 0e 00 00                         cmp	dword ptr [rip + 0xe6f9c], 0x0 # 0x18fbe40
+01814ea4: 74 40                                        je	0x1814ee6
+01814ea6: 0f b6 05 9b 6f 0e 00                         movzx	eax, byte ptr [rip + 0xe6f9b] # 0x18fbe48
+01814ead: 84 c0                                        test	al, al
+01814eaf: 0f 84 66 09 00 00                            je	0x181581b
+01814eb5: 3b 2d 85 6f 0e 00                            cmp	ebp, dword ptr [rip + 0xe6f85] # 0x18fbe40
+01814ebb: 7c 29                                        jl	0x1814ee6
+01814ebd: 8b 4c 24 10                                  mov	ecx, dword ptr [rsp + 0x10]
+01814ec1: 4c 8b 8c 24 20 01 00 00                      mov	r9, qword ptr [rsp + 0x120]
+01814ec9: 4c 89 e7                                     mov	rdi, r12
+01814ecc: 48 8b 74 24 20                               mov	rsi, qword ptr [rsp + 0x20]
+01814ed1: 48 8b 54 24 28                               mov	rdx, qword ptr [rsp + 0x28]
+01814ed6: 41 89 e8                                     mov	r8d, ebp
+01814ed9: e8 52 0f 01 00                               call	0x1825e30
+01814ede: 84 c0                                        test	al, al
+01814ee0: 0f 85 9c 07 00 00                            jne	0x1815682
+01814ee6: 48 8d bc 24 c8 00 00 00                      lea	rdi, [rsp + 0xc8]
+01814eee: 48 8b 74 24 20                               mov	rsi, qword ptr [rsp + 0x20]
+01814ef3: 48 8b 54 24 28                               mov	rdx, qword ptr [rsp + 0x28]
+01814ef8: 89 e9                                        mov	ecx, ebp
+01814efa: e8 f1 17 01 00                               call	0x18266f0
+01814eff: e9 7e 07 00 00                               jmp	0x1815682
+
