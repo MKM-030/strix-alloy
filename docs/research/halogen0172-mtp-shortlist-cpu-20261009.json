@@ -1,0 +1,70 @@
+{
+  "schema": "halogen0172.mtp-shortlist-cpu-screen.v1",
+  "date": "2026-10-09",
+  "disposition": "frozen_rank64_top256_not_adopted",
+  "engine_version": "0.17.2",
+  "serving_changed": false,
+  "server_port": 8840,
+  "capture": {
+    "observed_scatters": 112,
+    "exported_heads": 16,
+    "asset_matched_heads": 15,
+    "complete": false,
+    "partial": true,
+    "rows": 34571,
+    "core_rows": 32033,
+    "tail_rows": 2538
+  },
+  "source_reference": {
+    "no_factor_rows": 975,
+    "no_factor_bitwise_matches": 385,
+    "factor_rows": 4796,
+    "factor_bitwise_matches": 2617,
+    "max_absolute_error": 0.0000019073486328125,
+    "max_ulp": 512,
+    "native_bit_parity_qualified": false
+  },
+  "factor_fit": {
+    "rank": 64,
+    "shortlist": 256,
+    "dtype": "BF16",
+    "fit_source": "actual_captured_weights_only",
+    "queries_or_logits_used_for_fit": false,
+    "elapsed_seconds": 55.938363900000695,
+    "basis_bytes": 327680,
+    "coefficient_bytes": 4425088,
+    "peak_private_bytes": 182435840,
+    "peak_working_set_bytes": 170721280,
+    "job_cap_bytes": 268435456,
+    "budget_passed": true,
+    "numpy": "2.3.5",
+    "scipy": "1.16.3",
+    "dependency_scope": "private_experiment_only",
+    "full_eigh_attempted": false
+  },
+  "shortlist": {
+    "heads": 15,
+    "native_winner_recalled": 11,
+    "recall": 0.7333333333333333,
+    "oracle_rescore_same_native_winner": 11,
+    "source_reference_rescore_same_native_winner": 11,
+    "stock_trajectory_only": true,
+    "current_mtp_acceptance": null,
+    "not_relabelled_as_acceptance": true
+  },
+  "analytical_weight_bytes": {
+    "stock": 49782304,
+    "candidate": 5121472,
+    "serving_rate_forecast": false
+  },
+  "engine_or_npu_candidate_executed": false,
+  "new_prefill_tps": null,
+  "new_decode_tps": null,
+  "serving_gain_qualified": false,
+  "private_evidence": {
+    "source_reference_summary_sha256": "5e888b2d4c3b95a889a1d2dc0031e13eeea1d2dccfd8290598c4d5d3160bd2a7",
+    "factor_manifest_sha256": "310aab40bfd033721224e6029468d13e83f6103f3f1d149ad846b62148ff49ce",
+    "factor_evaluation_summary_sha256": "d8fab3b062a5bea7ae34ab9afced9dd89f294ea145aa5bb0854fc6dbaaa5224c"
+  },
+  "goal_complete": false
+}

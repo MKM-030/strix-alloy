@@ -1,0 +1,659 @@
+{
+  "schema": "halogen0172-mtp-q4-kernels-20261009.v2",
+  "report_date": "2026-10-09",
+  "timezone": "Europe/Berlin",
+  "engine_version": "0.17.2",
+  "decision": "Reject both query-LDS candidates for adoption. Global-query batched LUT has a modest order-sensitive component time advantage; keep adoption disabled and engine gain unqualified.",
+  "metadata_policy": "Whitelisted aggregate results, code hashes and repository-relative evidence references only; no payloads, token content, credentials or private process/server state.",
+  "serving_gain_qualified": false,
+  "NPU_executed": false,
+  "serving_throughput_delta": null,
+  "MTP_acceptance_delta": null,
+  "asset_scope": {
+    "origin": "genuine_native0172_pass_through_capture",
+    "matched_captured_heads": 15,
+    "exported_heads": 16,
+    "originally_observed_scatters": 112,
+    "rows_per_matched_head": 34571,
+    "unique_head_row_outputs": 518565,
+    "core_rows": 32033,
+    "tail_rows": 2538,
+    "complete_capture": false,
+    "original_capture_error_preserved": "validated-asset-binding-changed",
+    "new_capture_performed": false,
+    "packed_relocated_input": true,
+    "engine_arena_cache_layout_reproduced": false,
+    "original_private_weights_published": false
+  },
+  "geometry": {
+    "width_bf16_values": 2560,
+    "query_bytes": 5120,
+    "native_codebook_bytes": 64,
+    "code_row_bytes": 1280,
+    "scale_row_bytes": 160,
+    "packed_blob_bytes": 49782304,
+    "core_grid_x": 2003,
+    "tail_grid_x": 159,
+    "block": [
+      256,
+      1,
+      1
+    ],
+    "dynamic_shared_bytes": 0,
+    "stream": "default",
+    "output_bytes": 138284,
+    "post_output_guard_bytes_per_arm": 64
+  },
+  "timing_method": {
+    "native_arm": "A",
+    "candidate_arm": "B",
+    "per_head_excluded_warmup_pairs": 1,
+    "per_head_measured_pairs": 3,
+    "measured_pairs_per_variant": 45,
+    "excluded_warmup_pairs_per_variant": 15,
+    "measured_AB_pairs_per_variant": 22,
+    "measured_BA_pairs_per_variant": 23,
+    "GPU_interval": "HIP events bracket each complete core-plus-tail two-projection path; query/LUT staging inside kernels is included.",
+    "host_interval": "CLOCK_MONOTONIC span covers both arms' event enqueue, four projection launches and pair completion wait.",
+    "outside_timing": "File reads, host/device input and output-poison copies, and output/guard readback.",
+    "deviation": "Sample standard deviation with denominator n-1, calculated independently from aggregate round records.",
+    "headline_percent_change": "100*(candidate mean GPU ms/native mean GPU ms-1); positive means slower.",
+    "paired_percent_change": "Mean and sample SD of each measured pair's candidate/native percentage are also retained; this differs from the ratio of means.",
+    "repeat_limit": "Three measured repetitions per head are repeated observations, not 45 independent capture samples."
+  },
+  "variants": [
+    {
+      "native_gpu": {
+        "n": 45,
+        "mean_ms": 0.920155794066667,
+        "sample_sd_ms": 0.040910229530454145,
+        "minimum_ms": 0.850630999,
+        "maximum_ms": 1.01910996
+      },
+      "cleanup": {
+        "linux_cleanup_closed": true,
+        "allocations": 4,
+        "remaining_allocations": 0,
+        "launches_ok": 240,
+        "external_helpers_closed": true,
+        "events_destroyed": 3,
+        "modules_loaded": 2,
+        "remaining_modules": 0,
+        "frees_ok": 4,
+        "complete": true,
+        "modules_unloaded": 2,
+        "events_created": 3,
+        "remaining_events": 0
+      },
+      "finished": "2026-10-09T00:41:54.677437+02:00",
+      "paired_time_difference": {
+        "n": 45,
+        "mean_ms": 0.04423529744444444,
+        "sample_sd_ms": 0.06365418574169161,
+        "minimum_ms": -0.09091299800000008,
+        "maximum_ms": 0.21914303499999999
+      },
+      "component_exit_code": 0,
+      "reviewed_resources": {
+        "native_static_lds_bytes": 1024,
+        "float_mode": 240,
+        "candidate_static_lds_bytes": 6144,
+        "dx10_clamp": 1,
+        "ieee_mode": 1,
+        "arithmetic_modes_equal": true,
+        "candidate_private_segment_bytes": 0,
+        "kernarg_bytes": 76
+      },
+      "host_pair": {
+        "n": 45,
+        "mean_ms": 2.2088724888888893,
+        "sample_sd_ms": 0.0838333357671426,
+        "minimum_ms": 2.04106,
+        "maximum_ms": 2.381763
+      },
+      "fidelity": {
+        "candidate_native_bit_mismatches": 0,
+        "candidate_native_compared_rows": 2074260,
+        "unique_head_row_outputs": 518565,
+        "heads": 15,
+        "all_pairs": 60,
+        "rows_per_head": 34571,
+        "measured_pairs": 45,
+        "native_capture_max_abs": 0,
+        "excluded_warmup_pairs": 15,
+        "native_capture_compared_rows": 2074260,
+        "native_capture_bit_mismatches": 0,
+        "guard_corrupt_bytes": 0,
+        "candidate_native_max_abs": 0
+      },
+      "decision": "reject_for_adoption",
+      "order_strata": [
+        {
+          "order": "AB",
+          "candidate_time_change_percent": 7.729635022748549,
+          "host_pair": {
+            "n": 22,
+            "mean_ms": 2.212676863636364,
+            "sample_sd_ms": 0.08590015757804469,
+            "minimum_ms": 2.04106,
+            "maximum_ms": 2.356318
+          },
+          "native_gpu": {
+            "n": 22,
+            "mean_ms": 0.9151762237272728,
+            "sample_sd_ms": 0.0400599670502376,
+            "minimum_ms": 0.850630999,
+            "maximum_ms": 0.997040987
+          },
+          "candidate_gpu": {
+            "n": 22,
+            "mean_ms": 0.9859160056363637,
+            "sample_sd_ms": 0.053461092554357756,
+            "minimum_ms": 0.926041007,
+            "maximum_ms": 1.10596502
+          }
+        },
+        {
+          "order": "BA",
+          "candidate_time_change_percent": 2.0416041513142025,
+          "host_pair": {
+            "n": 23,
+            "mean_ms": 2.2052335217391303,
+            "sample_sd_ms": 0.0835721468127823,
+            "minimum_ms": 2.056098,
+            "maximum_ms": 2.381763
+          },
+          "native_gpu": {
+            "n": 23,
+            "mean_ms": 0.9249188613478261,
+            "sample_sd_ms": 0.042034796886208654,
+            "minimum_ms": 0.876504004,
+            "maximum_ms": 1.01910996
+          },
+          "candidate_gpu": {
+            "n": 23,
+            "mean_ms": 0.9438020432173913,
+            "sample_sd_ms": 0.03821572698023883,
+            "minimum_ms": 0.883270979,
+            "maximum_ms": 0.999046981
+          }
+        }
+      ],
+      "started": "2026-10-09T00:41:44.777889+02:00",
+      "pair_gpu": {
+        "n": 45,
+        "mean_ms": 1.8845468808888888,
+        "sample_sd_ms": 0.06626125724079175,
+        "minimum_ms": 1.79000497,
+        "maximum_ms": 2.03656888
+      },
+      "candidate_time_change_percent": 4.807370418105417,
+      "evidence_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-query-stage-component-v1/result.json",
+      "regular_server": {
+        "ready_open_preserved": true,
+        "engine_request_performed": false,
+        "lifecycle_performed": false
+      },
+      "candidate_gpu": {
+        "n": 45,
+        "mean_ms": 0.964391091511111,
+        "sample_sd_ms": 0.05047334207484093,
+        "minimum_ms": 0.883270979,
+        "maximum_ms": 1.10596502
+      },
+      "id": "query_lds",
+      "pins": {
+        "native_module": {
+          "bytes": 17765424,
+          "sha256": "18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039"
+        },
+        "kernel_source": {
+          "bytes": 9394,
+          "sha256": "ce9fce3932c7a9ce1dfa4d3840cc1eeafa4264b337bdf24184b420153dfd3506",
+          "repository_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-vector-memory-source-v1/kernel.cpp"
+        },
+        "descriptor_review_sha256": "3f178b631725d8745dba4b1862c46f6fd0c4e728a6c135010b791cb06994fb12",
+        "host_source": {
+          "bytes": 25994,
+          "sha256": "5d3012b0d5465227eab21071673d0d9202a13e842c8ead8b772b74c591d7da6d",
+          "repository_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-query-stage-component-v1/host.c"
+        },
+        "component_result_sha256": "8196e377e4e1a5949bb7bcd0f9f34e9f192a10e518431cd94adf2d069b1cda7c",
+        "candidate_module": {
+          "bytes": 5888,
+          "sha256": "43a49354801bea6f6e9c86376b9b4a54dadd1b0f75df0e7a81bec877fbb16914"
+        },
+        "build_receipt_sha256": "68d4b1c2333d77d31898b9665c5e496737458d0efac09bbe71e6aa37d3bb4a88",
+        "candidate_disassembly_sha256": "e70933682ceaa3f0bc7aacf78c761a95efdf09e087f40bb7d40da759c64e4619"
+      },
+      "head_mean_native_gpu": {
+        "n": 15,
+        "mean_ms": 0.9201557940666665,
+        "sample_sd_ms": 0.03572786055107293,
+        "minimum_ms": 0.8692913256666666,
+        "maximum_ms": 1.0059569656666667
+      },
+      "paired_percent_change": {
+        "n": 45,
+        "sample_sd": 7.039634644176818,
+        "maximum": 24.71105122636308,
+        "minimum": -9.239069589889537,
+        "mean": 4.995349141441594
+      },
+      "head_mean_candidate_gpu": {
+        "n": 15,
+        "mean_ms": 0.9643910915111109,
+        "sample_sd_ms": 0.03191136614072335,
+        "minimum_ms": 0.9197909833333333,
+        "maximum_ms": 1.0297693426666668
+      },
+      "component_passed": true,
+      "label": "Quarter-major cooperative query LDS",
+      "adopted": false
+    },
+    {
+      "native_gpu": {
+        "n": 45,
+        "mean_ms": 0.889116283311111,
+        "sample_sd_ms": 0.05537133499161716,
+        "minimum_ms": 0.820596993,
+        "maximum_ms": 1.16359699
+      },
+      "cleanup": {
+        "linux_cleanup_closed": true,
+        "allocations": 4,
+        "remaining_allocations": 0,
+        "launches_ok": 240,
+        "external_helpers_closed": true,
+        "events_destroyed": 3,
+        "modules_loaded": 2,
+        "remaining_modules": 0,
+        "frees_ok": 4,
+        "complete": true,
+        "modules_unloaded": 2,
+        "events_created": 3,
+        "remaining_events": 0
+      },
+      "finished": "2026-10-09T00:45:09.632191+02:00",
+      "paired_time_difference": {
+        "n": 45,
+        "mean_ms": 0.011554627888888884,
+        "sample_sd_ms": 0.06689061622397238,
+        "minimum_ms": -0.266979995,
+        "maximum_ms": 0.1670359950000001
+      },
+      "component_exit_code": 0,
+      "reviewed_resources": {
+        "native_static_lds_bytes": 1024,
+        "float_mode": 240,
+        "candidate_static_lds_bytes": 6144,
+        "dx10_clamp": 1,
+        "ieee_mode": 1,
+        "arithmetic_modes_equal": true,
+        "candidate_private_segment_bytes": 0,
+        "kernarg_bytes": 76
+      },
+      "host_pair": {
+        "n": 45,
+        "mean_ms": 2.061874533333333,
+        "sample_sd_ms": 0.08365390117257479,
+        "minimum_ms": 1.934059,
+        "maximum_ms": 2.293536
+      },
+      "fidelity": {
+        "candidate_native_bit_mismatches": 0,
+        "candidate_native_compared_rows": 2074260,
+        "unique_head_row_outputs": 518565,
+        "heads": 15,
+        "all_pairs": 60,
+        "rows_per_head": 34571,
+        "measured_pairs": 45,
+        "native_capture_max_abs": 0,
+        "excluded_warmup_pairs": 15,
+        "native_capture_compared_rows": 2074260,
+        "native_capture_bit_mismatches": 0,
+        "guard_corrupt_bytes": 0,
+        "candidate_native_max_abs": 0
+      },
+      "decision": "reject_for_adoption",
+      "order_strata": [
+        {
+          "order": "AB",
+          "candidate_time_change_percent": 1.153844760746492,
+          "host_pair": {
+            "n": 22,
+            "mean_ms": 2.063347409090909,
+            "sample_sd_ms": 0.09117408620543507,
+            "minimum_ms": 1.934059,
+            "maximum_ms": 2.293536
+          },
+          "native_gpu": {
+            "n": 22,
+            "mean_ms": 0.8939917684545456,
+            "sample_sd_ms": 0.07834826630654453,
+            "minimum_ms": 0.820596993,
+            "maximum_ms": 1.16359699
+          },
+          "candidate_gpu": {
+            "n": 22,
+            "mean_ms": 0.9043070456363633,
+            "sample_sd_ms": 0.011987250587243273,
+            "minimum_ms": 0.885366023,
+            "maximum_ms": 0.922335982
+          }
+        },
+        {
+          "order": "BA",
+          "candidate_time_change_percent": 1.4404492960447435,
+          "host_pair": {
+            "n": 23,
+            "mean_ms": 2.060465695652174,
+            "sample_sd_ms": 0.07782571938424912,
+            "minimum_ms": 1.941758,
+            "maximum_ms": 2.213699
+          },
+          "native_gpu": {
+            "n": 23,
+            "mean_ms": 0.8844527757826086,
+            "sample_sd_ms": 0.01503435797203372,
+            "minimum_ms": 0.85777998,
+            "maximum_ms": 0.927394986
+          },
+          "candidate_gpu": {
+            "n": 23,
+            "mean_ms": 0.8971928695652174,
+            "sample_sd_ms": 0.054804406839951074,
+            "minimum_ms": 0.849452019,
+            "maximum_ms": 1.05959404
+          }
+        }
+      ],
+      "started": "2026-10-09T00:45:00.904371+02:00",
+      "pair_gpu": {
+        "n": 45,
+        "mean_ms": 1.7897871893333335,
+        "sample_sd_ms": 0.0694562455065426,
+        "minimum_ms": 1.71859205,
+        "maximum_ms": 2.06021404
+      },
+      "candidate_time_change_percent": 1.2995631849030076,
+      "evidence_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-query-lut-batch-component-v1/result.json",
+      "regular_server": {
+        "ready_open_preserved": true,
+        "engine_request_performed": false,
+        "lifecycle_performed": false
+      },
+      "candidate_gpu": {
+        "n": 45,
+        "mean_ms": 0.9006709112000001,
+        "sample_sd_ms": 0.03979041173973444,
+        "minimum_ms": 0.849452019,
+        "maximum_ms": 1.05959404
+      },
+      "id": "query_lds_batched_lut",
+      "pins": {
+        "native_module": {
+          "bytes": 17765424,
+          "sha256": "18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039"
+        },
+        "kernel_source": {
+          "bytes": 11389,
+          "sha256": "c8539ff1a7a5853edddacd58b5d202e22365c229ded32c6ad841c4e591e020aa",
+          "repository_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-query-lut-schedule-v1/kernel.cpp"
+        },
+        "descriptor_review_sha256": "380d3c0783447f57c567d1e92288e9867875f2b379dc3b26721846b8db1e1c4d",
+        "host_source": {
+          "bytes": 26000,
+          "sha256": "ad5328a335a1cff10afddbe4d51cbed626ec27f6a7c946f78c95f0563d3715e1",
+          "repository_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-query-lut-batch-component-v1/host.c"
+        },
+        "component_result_sha256": "cce643bb124fa164b5b443f873b8635b55375946ce8cf4f1145f11ddfc43f62b",
+        "candidate_module": {
+          "bytes": 6032,
+          "sha256": "5b1b597f03ad09b9e611ccefd2d01ae0fe178a58d667a311195661ead23ac932"
+        },
+        "build_receipt_sha256": "d4287939df93ff14691cb2bf60e57a12cfb337f015396c312aaa7aeade7d2faf",
+        "candidate_disassembly_sha256": "542d4252438d871bbbb90a74bb5dd0a525b83f8c2d4ab65d39afb6ac0959b649"
+      },
+      "head_mean_native_gpu": {
+        "n": 15,
+        "mean_ms": 0.8891162833111111,
+        "sample_sd_ms": 0.02943201005215861,
+        "minimum_ms": 0.854771654,
+        "maximum_ms": 0.9579160020000002
+      },
+      "paired_percent_change": {
+        "n": 45,
+        "sample_sd": 6.87094920263697,
+        "maximum": 18.970735468153688,
+        "minimum": -22.944369682496347,
+        "mean": 1.61665660742033
+      },
+      "head_mean_candidate_gpu": {
+        "n": 15,
+        "mean_ms": 0.9006709112000001,
+        "sample_sd_ms": 0.019147990064320435,
+        "minimum_ms": 0.8741493423333333,
+        "maximum_ms": 0.942374688
+      },
+      "component_passed": true,
+      "label": "Cooperative query LDS with batched code-pair LUT reads",
+      "adopted": false
+    },
+    {
+      "id": "global_query_batched_lut",
+      "label": "Global query loads with batched code-pair LUT reads",
+      "decision": "component_advantage_only_adoption_disabled",
+      "adopted": false,
+      "component_passed": true,
+      "component_exit_code": 0,
+      "started": "2026-10-09T00:52:36.669456+02:00",
+      "finished": "2026-10-09T00:52:46.085443+02:00",
+      "native_gpu": {
+        "n": 45,
+        "mean_ms": 0.9260006190666666,
+        "sample_sd_ms": 0.04833569126677242,
+        "minimum_ms": 0.839334011,
+        "maximum_ms": 1.04853797
+      },
+      "candidate_gpu": {
+        "n": 45,
+        "mean_ms": 0.9147128159333336,
+        "sample_sd_ms": 0.05006612740224986,
+        "minimum_ms": 0.830640018,
+        "maximum_ms": 1.06385994
+      },
+      "candidate_time_change_percent": -1.2189844046443743,
+      "paired_time_difference": {
+        "n": 45,
+        "mean_ms": -0.011287803133333345,
+        "sample_sd_ms": 0.0581135856409872,
+        "minimum_ms": -0.14053499699999994,
+        "maximum_ms": 0.11605596499999993
+      },
+      "paired_percent_change": {
+        "sample_sd": 6.239426236071944,
+        "minimum": -14.331926041540932,
+        "n": 45,
+        "maximum": 13.651073279202475,
+        "mean": -1.040120017987482
+      },
+      "host_pair": {
+        "n": 45,
+        "mean_ms": 2.160667022222223,
+        "sample_sd_ms": 0.11386501521348721,
+        "minimum_ms": 1.906818,
+        "maximum_ms": 2.431949
+      },
+      "pair_gpu": {
+        "n": 45,
+        "mean_ms": 1.8407119955555562,
+        "sample_sd_ms": 0.0794256503779427,
+        "minimum_ms": 1.70442605,
+        "maximum_ms": 2.05531311
+      },
+      "order_strata": [
+        {
+          "candidate_gpu": {
+            "n": 22,
+            "mean_ms": 0.9231935848636362,
+            "sample_sd_ms": 0.04923656134167711,
+            "minimum_ms": 0.852635026,
+            "maximum_ms": 1.06385994
+          },
+          "candidate_time_change_percent": -0.20383542159885248,
+          "host_pair": {
+            "n": 22,
+            "mean_ms": 2.174391181818182,
+            "sample_sd_ms": 0.12194678654257603,
+            "minimum_ms": 1.992493,
+            "maximum_ms": 2.431949
+          },
+          "order": "AB",
+          "native_gpu": {
+            "n": 22,
+            "mean_ms": 0.925079224,
+            "sample_sd_ms": 0.056498914350613515,
+            "minimum_ms": 0.839334011,
+            "maximum_ms": 1.04853797
+          }
+        },
+        {
+          "candidate_gpu": {
+            "n": 23,
+            "mean_ms": 0.9066007760869566,
+            "sample_sd_ms": 0.050581302442739055,
+            "minimum_ms": 0.830640018,
+            "maximum_ms": 1.01528299
+          },
+          "candidate_time_change_percent": -2.188107915489823,
+          "host_pair": {
+            "n": 23,
+            "mean_ms": 2.1475395652173908,
+            "sample_sd_ms": 0.10661568438590592,
+            "minimum_ms": 1.906818,
+            "maximum_ms": 2.333415
+          },
+          "order": "BA",
+          "native_gpu": {
+            "n": 23,
+            "mean_ms": 0.9268819534782611,
+            "sample_sd_ms": 0.04029871521672282,
+            "minimum_ms": 0.850160003,
+            "maximum_ms": 0.989265978
+          }
+        }
+      ],
+      "head_mean_native_gpu": {
+        "n": 15,
+        "mean_ms": 0.9260006190666666,
+        "sample_sd_ms": 0.024959763239746604,
+        "minimum_ms": 0.8867546716666667,
+        "maximum_ms": 0.9774833123333333
+      },
+      "head_mean_candidate_gpu": {
+        "n": 15,
+        "mean_ms": 0.9147128159333331,
+        "sample_sd_ms": 0.025887548568729466,
+        "minimum_ms": 0.888835013,
+        "maximum_ms": 0.992122313
+      },
+      "fidelity": {
+        "candidate_native_max_abs": 0,
+        "excluded_warmup_pairs": 15,
+        "heads": 15,
+        "all_pairs": 60,
+        "rows_per_head": 34571,
+        "native_capture_compared_rows": 2074260,
+        "native_capture_max_abs": 0,
+        "unique_head_row_outputs": 518565,
+        "native_capture_bit_mismatches": 0,
+        "candidate_native_compared_rows": 2074260,
+        "measured_pairs": 45,
+        "guard_corrupt_bytes": 0,
+        "candidate_native_bit_mismatches": 0
+      },
+      "pins": {
+        "build_receipt_sha256": "76dbcca2d535b307537f1bd9041db5254ddecfdeaa1e526adb6e77102b4801dc",
+        "kernel_source": {
+          "bytes": 11127,
+          "sha256": "1092346e03de5f0681a2d2fedbf669b910b8d321a47b6341da3d83a399c53a50",
+          "repository_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-global-lut-batch-v1/kernel.cpp"
+        },
+        "candidate_disassembly_sha256": "e10fc0296f3ea9303961ddb5b931d2495691b8455d82e7765f4cb2445450c761",
+        "native_module": {
+          "bytes": 17765424,
+          "sha256": "18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039"
+        },
+        "component_result_sha256": "15bcaad5fd339e8c3d01da5add8a7988d501fb12d19645620dfae0636f6be67a",
+        "host_source": {
+          "bytes": 26007,
+          "sha256": "d84d22fcfbc892b2ab8c525168825b3581dc7cccd0c3bddb74bc04aa589948f1",
+          "repository_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-global-lut-batch-component-v1/host.c"
+        },
+        "descriptor_review_sha256": "acb58e5bd0ca1d03b89bd2fb2ecd8cc0dc82e5eec003a385ddc6da2a84797d0b",
+        "candidate_module": {
+          "bytes": 6040,
+          "sha256": "36b14e4cd577f8de3b1d49f6fb643ec46daec74fae21a300d69b318aabb0a7a6"
+        }
+      },
+      "reviewed_resources": {
+        "candidate_private_segment_bytes": 0,
+        "candidate_static_lds_bytes": 1024,
+        "float_mode": 240,
+        "native_static_lds_bytes": 1024,
+        "kernarg_bytes": 76,
+        "dx10_clamp": 1,
+        "arithmetic_modes_equal": true,
+        "ieee_mode": 1
+      },
+      "cleanup": {
+        "complete": true,
+        "remaining_events": 0,
+        "remaining_modules": 0,
+        "frees_ok": 4,
+        "remaining_allocations": 0,
+        "events_created": 3,
+        "external_helpers_closed": true,
+        "launches_ok": 240,
+        "modules_unloaded": 2,
+        "modules_loaded": 2,
+        "events_destroyed": 3,
+        "linux_cleanup_closed": true,
+        "allocations": 4
+      },
+      "regular_server": {
+        "ready_open_preserved": true,
+        "engine_request_performed": false,
+        "lifecycle_performed": false
+      },
+      "evidence_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-global-lut-batch-component-v1/result.json"
+    }
+  ],
+  "initial_preparation_failure": {
+    "class": "Windows executable-path resolution failure (WinError 2)",
+    "component_executed": false,
+    "GPU_executed": false,
+    "engine_request_performed": false,
+    "lifecycle_performed": false,
+    "regular_server_ready_open_preserved": true,
+    "evidence_relative": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/mtp-q4-query-stage-component-v1/preparation-v1-result.json",
+    "evidence_sha256": "f793693be6315cf947a899ee368b58776f784b5971a6846ea51e9f690990f637",
+    "preserved": true
+  },
+  "methodological_limits": [
+    "The relocated packed blob reproduces tested argument values and arithmetic but does not reproduce the engine arena, allocation placement or cache state.",
+    "The fifteen matched heads are partial asset coverage of the earlier capture, not a complete serving trajectory.",
+    "The three variants were measured in separate short cohorts; their native baselines differ, so cross-cohort candidate differences do not isolate LUT scheduling or query-LDS removal.",
+    "The query-LDS candidates are slower in both order strata. Global-query batched LUT has a smaller advantage in AB than BA; its modest overall component advantage is order-sensitive and subject to observed variance.",
+    "Exactness is established for every output in this retained cohort, not for every possible input or current live MTP acceptance.",
+    "No end-to-end token/s, serving acceptance delta, NPU component, or serving gain was measured."
+  ],
+  "regular_server": {
+    "stock_configuration_preserved": true,
+    "experiment_adopted": false,
+    "engine_requests_during_components": false,
+    "lifecycle_changes_during_components": false,
+    "ready_open_after_all_components": true
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "halogen0172.mtp-q4-component-source-archive.v1",
+  "engine_version": "0.17.2",
+  "serving_enabled": false,
+  "sources": [
+    {
+      "file": "query_lds.cpp",
+      "bytes": 9394,
+      "sha256": "ce9fce3932c7a9ce1dfa4d3840cc1eeafa4264b337bdf24184b420153dfd3506"
+    },
+    {
+      "file": "query_lds_lut_batch.cpp",
+      "bytes": 11389,
+      "sha256": "c8539ff1a7a5853edddacd58b5d202e22365c229ded32c6ad841c4e591e020aa"
+    },
+    {
+      "file": "query_global_lut_batch.cpp",
+      "bytes": 11127,
+      "sha256": "1092346e03de5f0681a2d2fedbf669b910b8d321a47b6341da3d83a399c53a50"
+    },
+    {
+      "file": "component_host.c",
+      "bytes": 25994,
+      "sha256": "5d3012b0d5465227eab21071673d0d9202a13e842c8ead8b772b74c591d7da6d"
+    }
+  ],
+  "retained_host": "component_host.c",
+  "candidate_symbol_changes_only": [
+    "halogen0172_q4_query_lut_batch_v1",
+    "halogen0172_q4_query_global_lut_batch_v1"
+  ],
+  "native_payload_published": false,
+  "captured_weights_or_queries_published": false,
+  "result_report": "docs/research/halogen0172-mtp-q4-kernels-20261009.json"
+}
