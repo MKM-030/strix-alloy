@@ -1075,5 +1075,62 @@
     "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\startup35-observation-7f1bc45fb74444579a5e8fe9e20dadee.json",
     "bytes": 1504,
     "sha256": "e46c1870f1bab6543e6cab4c42f105a5f9f2c182a0c83c6e0026dcd3f48a94e3"
+  },
+  "selected_exact_arithmetic_classification": {
+    "raw_result": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-midpoint-6fcfe19163244d5d98a852d9f1c46562\\classification.json",
+      "bytes": 76946,
+      "sha256": "4a67c6f2b768d693ebf93fc1b8cc79bc590fd648cbf72e841b8fc8d87749667b"
+    },
+    "owned_execution": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-midpoint-6fcfe19163244d5d98a852d9f1c46562\\owned\\result.json",
+      "bytes": 484,
+      "sha256": "7201bcf323975aca69d545b674221acc91411de389b9e52c6a1e35fd71311511"
+    },
+    "config": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\ple-midpoint-6fcfe19163244d5d98a852d9f1c46562\\config.json",
+      "bytes": 3196,
+      "sha256": "c75eac60ff7f3d47bbc4c0cf31e848479944825367f11119b7203b2862b79842"
+    },
+    "source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\next-mechanism-20261007\\npu-new-use-2111\\ple-producer-v1\\ple_midpoint_classify_v1.py",
+      "bytes": 12370,
+      "sha256": "eaf42383b4234487a6f512e2b76d6a8779e30d2863307529ed669c85e5734cf4"
+    },
+    "root_complete_source_review": true,
+    "classification_only": true,
+    "selected_bytes_read": 450648,
+    "branches": {
+      "key": {
+        "selected_failures": 16,
+        "fixed_controls": 6,
+        "full_CPU_matches_direct_exact_BF16": 16,
+        "native_matches_direct_exact_BF16": 0,
+        "controls_native_matches_exact_BF16": 6,
+        "exact_ties": 0,
+        "double_rounding_differences": 0,
+        "all_failure_pairs_adjacent": true,
+        "maximum_midpoint_distance_in_pair_gap": 0.0011687511578202248
+      },
+      "value": {
+        "selected_failures": 16,
+        "fixed_controls": 6,
+        "full_CPU_matches_direct_exact_BF16": 16,
+        "native_matches_direct_exact_BF16": 0,
+        "controls_native_matches_exact_BF16": 6,
+        "exact_ties": 0,
+        "double_rounding_differences": 0,
+        "all_failure_pairs_adjacent": true,
+        "maximum_midpoint_distance_in_pair_gap": 0.0010752170346677303
+      }
+    },
+    "full_file_hashes_checked_before_after_by_guard": true,
+    "native_accumulation_algorithm_proved": false,
+    "all_full_failures_classified": false,
+    "full_CPU_accuracy_repaired": false,
+    "NPU_executed": false,
+    "tolerance_changed": false,
+    "oracle_fitted": false,
+    "speed_gain_qualified": false
   }
 }

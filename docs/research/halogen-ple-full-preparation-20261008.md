@@ -57,8 +57,31 @@ rates. They establish no NPU benefit or overlap budget. The CPU projection
 implementation is not enabled in the live server, and no token-rate delta is
 inferred. The future NPU tolerance remains `rtol=0.03, atol=0.003`.
 
-The unchanged full comparison will not be repeated. A bounded selected-position
-arithmetic check is the next step for identifying the accuracy difference. Live
+## Selected exact-arithmetic classification
+
+A separate guarded CPU check completed for the first 16 retained rounded
+failures per branch and six fixed controls per branch. It read 450,648 selected
+bytes; the guard checked complete export/native file hashes before and after.
+Original finite BF16 products were summed exactly as Python integers times
+`2^-266`, then rounded using two fixed references: direct BF16 nearest-even,
+and exact FP32 nearest-even followed by BF16 nearest-even.
+
+All 32 selected failing CPU values match both fixed exact references. None of
+the corresponding native values matches them. Each pair differs by one adjacent
+BF16 word and lies close to its midpoint: maximum exact-sum distance from that
+midpoint is 0.001168752 of the pair's gap. There are no exact ties or double
+rounding differences in these cases. All 12 fixed native controls match the
+exact reference. The child exited zero and its owned job closed.
+
+Higher CPU precision therefore cannot repair native equality at these selected
+positions: the retained CPU result is already the correctly rounded exact dot.
+This does not prove the native GPU accumulation algorithm, classify every
+failure, or justify fitting results to the oracle. No correction, tolerance
+change or serving integration was applied. The stricter full CPU result remains
+failed. Actual NPU output must still be compared at the unchanged NPU tolerance.
+
+The unchanged full comparison will not be repeated. The next bounded candidate
+is an actual NPU component run through the supported FLOAT output path. Live
 early publication, an NPU producer, measured lead and complete-engine benefit
 remain open. The original ServiceNow server remains available on port 8840;
 the authorized physical startup floor is 35 GiB, commit admission 131 GiB and
