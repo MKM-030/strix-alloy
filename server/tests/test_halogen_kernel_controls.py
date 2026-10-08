@@ -41,6 +41,19 @@ class ManagedKernelControlsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'kernel'):
             controller.validate_engine(engine,self.repo)
 
+    def test_0172_draft_vocab_q8_uses_existing_numeric_route(self):
+        source=self.profile('0.17.2')
+        controls={'HALOGEN_DRAFT_VOCAB_Q8':1}
+        result=self.tune(source,kernel_controls=controls)
+        self.assertNotIn('kernel_controls',source['engine'])
+        directory=controller.validate_engine(result['engine'],self.repo)
+        args=controller.halogen_kernel_arguments(result['engine'],directory)
+        self.assertEqual(args[0],'-KernelControlsJson')
+        self.assertEqual(json.loads(args[1]),controls)
+        module=controller.halogen_kernel_module(directory)
+        self.assertEqual(module.environment(controls),{'HALOGEN_DRAFT_VOCAB_Q8':'1'})
+        self.assertNotIn('HALOGEN_DRAFT_VOCAB_Q8',module.environment({}))
+
     def test_tuning_copies_validated_kernel_controls(self):
         source=self.profile(); before=copy.deepcopy(source)
         controls={'HALOGEN_DN_SCAN':0}; result=self.tune(source,kernel_controls=controls)

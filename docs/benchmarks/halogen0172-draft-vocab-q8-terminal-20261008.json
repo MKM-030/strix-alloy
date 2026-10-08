@@ -1,0 +1,1456 @@
+{
+  "schema": "halogen0172.draft-vocab-q8-terminal-file-report.v1",
+  "created_utc": "2026-10-08T05:28:51.419195+00:00",
+  "report_mode": "incomplete_bookend_human_availability_supersession",
+  "frozen_contract_sha256": "faf45a0cb2c5c16e2357c180ff14502949baecf0ff7ad7e7f854bc8a098693e1",
+  "contract": {
+    "schema": "halogen0172.draft-vocab-q8-contract.v1",
+    "candidate_image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+    "sequence": [
+      "0172-stock-q4-before",
+      "0172-draft-q8",
+      "0172-stock-q4-after",
+      "latest0172-visible"
+    ],
+    "actual_input_tokens": 8192,
+    "prefill_output_tokens": 1,
+    "decode_output_tokens": 128,
+    "warmups_per_cohort": 1,
+    "measured_repetitions_per_cohort": 3,
+    "cache": "Off",
+    "thinking": "Off",
+    "temperature": 0,
+    "seed": 1,
+    "mtp_depth": 2,
+    "pld": "3,3",
+    "context_capacity": 262144,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "admission_physical_commit_gib": [
+      35,
+      131
+    ],
+    "runtime_physical_commit_gib": [
+      18,
+      18
+    ],
+    "preparation_physical_commit_gib": [
+      22,
+      22
+    ],
+    "output_parity_required": true,
+    "no_foreign_program_termination": true,
+    "original_ready_open_required_at_end": false,
+    "latest0172_visible_ready_open_required_at_end": true,
+    "candidate_mechanism": "Only native HALOGEN_DRAFT_VOCAB_Q8=1; fixed2/PLD3,3 and existing groups unchanged"
+  },
+  "frozen_selection_rule": {
+    "decode_gain_each_bookend_percent": 3,
+    "max_serial_prefill_regression_percent": 2,
+    "max_mtp_request_wall_regression_percent": 2,
+    "minimum_acceptance_delta_percentage_points": 0,
+    "exact_output_parity": true,
+    "scope": "Descriptive screen on three repetitions; not a statistical significance claim"
+  },
+  "source_inventory_sha256": "084b97580907ae5f2baf88c79a0754970ad0e9a703c870c7b2dc5e42e47140a7",
+  "prompt_text_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+  "windows": {
+    "before": {
+      "version": "0.17.2",
+      "managed_run_id": "578fcade03a742bc8642d5479923c621",
+      "halogen_run_id": "60d83040f15f4f68887c48247d69cc2a",
+      "measured_at": 1791436002.6748805,
+      "consumed_prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+      "prompt_calibration": {
+        "canonical_source_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+        "padding_units": 0,
+        "padding_form": "' a' repeated before canonical text",
+        "actual_input_tokens": 8192,
+        "scope": "Frozen calibration transform and retained API usage; calibration requests excluded"
+      },
+      "cohorts": {
+        "serial-tg1": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1265.7044597493268,
+            "stdev": 12.385921359771896,
+            "min": 1252.101541121896,
+            "max": 1276.3310336419895
+          },
+          "api_raw_pp": {
+            "mean": 1265.7046666666668,
+            "stdev": 12.385678436538356,
+            "min": 1252.102,
+            "max": 1276.331
+          },
+          "calibrated_decode": null,
+          "api_raw_decode": null,
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "request_wall_seconds": {
+            "mean": 6.50677663332317,
+            "stdev": 0.06549861335580034,
+            "min": 6.448614199995063,
+            "max": 6.577725699986331
+          },
+          "output_hashes": [
+            {
+              "rep": 0,
+              "phase": "warmup",
+              "sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+            },
+            {
+              "rep": 1,
+              "phase": "measured",
+              "sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+            },
+            {
+              "rep": 2,
+              "phase": "measured",
+              "sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+            },
+            {
+              "rep": 3,
+              "phase": "measured",
+              "sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+            }
+          ],
+          "repeat_and_warmup_output_parity": true,
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "request_sha256": "c908c88d62356450236f5dacb1bad2cb51a8ce19dced1bae739e97bda854d91f",
+          "excluded_warmup": {
+            "pp_tps": 1298.2563409035267,
+            "decode_tps": null,
+            "wall_seconds": 6.341656900011003,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        },
+        "mtp-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1243.1921229513976,
+            "stdev": 17.836506986522483,
+            "min": 1232.824619859052,
+            "max": 1263.7877900567382
+          },
+          "api_raw_pp": {
+            "mean": 1237.751,
+            "stdev": 23.956890094500956,
+            "min": 1216.64,
+            "max": 1263.788
+          },
+          "calibrated_decode": {
+            "mean": 42.75329273162962,
+            "stdev": 1.0022665948193807,
+            "min": 41.60989872932985,
+            "max": 43.479992777006096
+          },
+          "api_raw_decode": {
+            "mean": 42.56966666666667,
+            "stdev": 1.31742564622575,
+            "min": 41.059,
+            "max": 43.48
+          },
+          "accepted": 210,
+          "drafted": 339,
+          "acceptance": 0.6194690265486725,
+          "request_wall_seconds": {
+            "mean": 9.614836000003075,
+            "stdev": 0.1489525681946791,
+            "min": 9.455821799987461,
+            "max": 9.751112200028729
+          },
+          "output_hashes": [
+            {
+              "rep": 0,
+              "phase": "warmup",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 1,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 2,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 3,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            }
+          ],
+          "repeat_and_warmup_output_parity": true,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "fcd4fb7a1ea80aecbbe8b42289019a9b08b5f54458c02ec3e1060c95372b16d0",
+          "excluded_warmup": {
+            "pp_tps": 1246.537733266259,
+            "decode_tps": 33.08699292005596,
+            "wall_seconds": 10.471980199974496,
+            "accepted": 70,
+            "drafted": 113,
+            "acceptance": 0.6194690265486725
+          }
+        },
+        "serial-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1284.108731828059,
+            "stdev": 9.737153642285802,
+            "min": 1273.1567708594825,
+            "max": 1291.7876817312365
+          },
+          "api_raw_pp": {
+            "mean": 1284.1090000000002,
+            "stdev": 9.737193486831876,
+            "min": 1273.157,
+            "max": 1291.788
+          },
+          "calibrated_decode": {
+            "mean": 31.622660064654138,
+            "stdev": 0.21692408392373896,
+            "min": 31.38699373161733,
+            "max": 31.813992161715046
+          },
+          "api_raw_decode": {
+            "mean": 31.622666666666664,
+            "stdev": 0.21692471812436062,
+            "min": 31.387,
+            "max": 31.814
+          },
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "request_wall_seconds": {
+            "mean": 10.456428633323716,
+            "stdev": 0.0571127149311464,
+            "min": 10.393925499985926,
+            "max": 10.505897799972445
+          },
+          "output_hashes": [
+            {
+              "rep": 0,
+              "phase": "warmup",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 1,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 2,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 3,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            }
+          ],
+          "repeat_and_warmup_output_parity": true,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "0e2dd6a3520c44da5d76cc2f65f097789794d3703c3a3d12219415784bacd538",
+          "excluded_warmup": {
+            "pp_tps": 1284.9189911220512,
+            "decode_tps": 31.853999779909717,
+            "wall_seconds": 10.420053100038785,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        }
+      },
+      "greedy_output_parity": true,
+      "cross_mode_output_parity": true,
+      "parity_failures": [],
+      "measured_observed_minimum_bytes": {
+        "available_bytes": 25630175232,
+        "commit_headroom_bytes": 121635495936
+      },
+      "all_recorded_snapshots_minimum_bytes": {
+        "available_bytes": 25630175232,
+        "commit_headroom_bytes": 121635495936
+      },
+      "policy": "stock-draft-Q4",
+      "startup_proof": {
+        "attempt": "backends\\halogen-wsl2-0.17.2\\.local\\services\\60d83040f15f4f68887c48247d69cc2a",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+        "environment": {
+          "HALOGEN_WSL_PROFILE": "halogen0172-dxg",
+          "HALOGEN_CTX": "262144",
+          "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+          "HALOGEN_CK_OVERLAY": "",
+          "HALOGEN_PREFLIGHT_PROFILE": "flash0172-v2-device64-chunk64-v1",
+          "HALOGEN_HYBRID_PROFILE": "vgm64-0172-v2-device64-v1",
+          "HALOGEN_KV_POOL_POSITIONS": "262144",
+          "HALOGEN_KV_SLOTS": "1",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+          "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+          "HALOGEN_FLASH_PIN_TRUNK": "1",
+          "HALOGEN_PROMPT_CACHE": "0",
+          "HALOGEN_DMALLOC_LOG": "1",
+          "HALOGEN_VERBOSE": "1",
+          "HALOGEN_ENGINE_WATCHDOG_S": "120",
+          "HALOGEN_TOKENIZER": "/models/tokenizer",
+          "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+          "HSA_ENABLE_SDMA": "1",
+          "HSA_ENABLE_DXG_DETECTION": "1",
+          "AMD_SERIALIZE_KERNEL": "0",
+          "AMD_SERIALIZE_COPY": "0",
+          "LD_PRELOAD": "/candidate/libhalogen0172-v2-preflight.so:/candidate/hip-register-private-rw.so",
+          "HALOGEN_API_PORT": "8731",
+          "HF_HUB_OFFLINE": "1",
+          "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+          "HALOGEN_CHECKPOINT_VARIANT": "v2",
+          "HALOGEN_MTP_DEPTH": "2",
+          "HALOGEN_PREFILL_CHUNK": "8192",
+          "HALOGEN_MAX_TOK": "8192",
+          "HALOGEN_PLD": "3,3"
+        },
+        "source_pins": {
+          "scripts\\auth_api.py": "d54892351dada523ab2d002fe1cc7fdbbf2a7d5a01d2750ccab7f7f0f7379394",
+          "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+          "scripts\\bridge_adapter.py": "e1921300a96305cd295f26d1dac086aa066f9594a4e3b486bacb0c6369f942a3",
+          "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+          "scripts\\entrypoint_adapter.py": "7997eadb7cc67306b70d9652e8dd13522f5dbddf3635a329aafab9490da602c8",
+          "scripts\\halogen0172_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+          "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+          "scripts\\kernel_controls.py": "b4049bd0ae0e1f36020926d4d36169cfe2f51b6216f2308144d707b71160c545",
+          "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+          "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+          "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+          "scripts\\memory_budget.py": "c95136eb04f09c850b614d421706e06467e883d854bb40c28216eb5c3134a1ef",
+          "scripts\\portable.py": "0f527452746de1135354439daf3b3f57ffb43ec28673aae1f6d02320196a6e91",
+          "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+          "scripts\\runner.py": "61298fa0b29347706c6bbcb12c36e7ff0e3afdbe32447d08238ec1e578f30c6a",
+          "scripts\\sample.ps1": "ba4cee6b0aa6e850597c9fda47247b91cf57088544192d87ee08abac1d53d50a",
+          "scripts\\service.py": "6365da51fb8f142bbff11189205d51ed9ea1d4d126b77cb5e9aa5321a9c34698",
+          "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+          "scripts\\startup_cache.py": "36f7aba4be6d6cfb682aa05a7d93c023784e79a5331dae1d1cfcbf26bb127e45",
+          "scripts\\startup_guard.py": "c53a7cc564fb48657153684f7b85bb53510d48c104e983eb1979c85302b88926",
+          "scripts\\startup_monitor.py": "91529801e906278f467f8069839dce58fc88ce396c8a85000814a8257559a099",
+          "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+          "patches\\halogen-preflight-bridge.c": "bb9a02714ff4896e53c0b144b835f4283f564434b68eb8fbaadfd7733dc51f0d",
+          "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+          "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+          "patches\\hip-register-hybrid.c": "17a392fe5754d4a6dd01c58c9a4fef2fe7706db41585b9b4e9aaae29894b0d3e",
+          "patches\\hip-register-private-rw.c": "8fce544698dc47a94f26d4989f54859560d86c6db29a7d0690739951a77e04aa",
+          "profiles\\release.json": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+          "profiles\\sources.json": "084b97580907ae5f2baf88c79a0754970ad0e9a703c870c7b2dc5e42e47140a7"
+        },
+        "ready_at": 1791435881.3516452,
+        "entrypoint_sha256": "04c6841e3387ae475d1e5e363cd08551a3f657d612dbbd79ddc48931dbe2a463",
+        "engine_api_version": {
+          "api": "0.17.2",
+          "engine": "0.17.2",
+          "match": true
+        },
+        "startup_line": "2026-10-08T05:03:45.562232381Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 selectable (drafter 1, speculates while alone)",
+        "api_version_lines": [
+          "2026-10-08T05:03:49.398621516Z serve_api: version 0.17.2, engine version 0.17.2"
+        ],
+        "draft_format_configuration": {
+          "q8_enabled": false,
+          "native_environment": "omitted stock default",
+          "engine_sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+          "per_kernel_execution_proven": false,
+          "scope": "Saved native environment and pinned engine dispatch; no per-kernel trace or numerical precision claim"
+        },
+        "log_prefix": {
+          "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\60d83040f15f4f68887c48247d69cc2a\\engine.log",
+          "bytes": 140881,
+          "sha256": "da4f4f96429fa0a1d422957e80e127b1d83636d9df7a79ea5a0f5e43e8f5bced",
+          "scope": "At most first 1 MiB; saved startup proof, not a full-log hash"
+        }
+      }
+    },
+    "candidate": {
+      "version": "0.17.2",
+      "managed_run_id": "0d28bb7dd75b4a3788a589cf6f78debb",
+      "halogen_run_id": "88f28f03379449cdb5e2c1bf465aca45",
+      "measured_at": 1791436394.1111882,
+      "consumed_prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+      "prompt_calibration": {
+        "canonical_source_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+        "padding_units": 0,
+        "padding_form": "' a' repeated before canonical text",
+        "actual_input_tokens": 8192,
+        "scope": "Frozen calibration transform and retained API usage; calibration requests excluded"
+      },
+      "cohorts": {
+        "serial-tg1": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1261.657955216262,
+            "stdev": 7.373698198293089,
+            "min": 1253.1646132328322,
+            "max": 1266.423067703124
+          },
+          "api_raw_pp": {
+            "mean": 1251.878,
+            "stdev": 24.305337952803676,
+            "min": 1223.819,
+            "max": 1266.426
+          },
+          "calibrated_decode": null,
+          "api_raw_decode": null,
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "request_wall_seconds": {
+            "mean": 6.527078700019047,
+            "stdev": 0.039777121609760956,
+            "min": 6.500707900035195,
+            "max": 6.572831800032873
+          },
+          "output_hashes": [
+            {
+              "rep": 0,
+              "phase": "warmup",
+              "sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+            },
+            {
+              "rep": 1,
+              "phase": "measured",
+              "sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+            },
+            {
+              "rep": 2,
+              "phase": "measured",
+              "sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+            },
+            {
+              "rep": 3,
+              "phase": "measured",
+              "sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67"
+            }
+          ],
+          "repeat_and_warmup_output_parity": true,
+          "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+          "request_sha256": "c908c88d62356450236f5dacb1bad2cb51a8ce19dced1bae739e97bda854d91f",
+          "excluded_warmup": {
+            "pp_tps": 1212.8180922359034,
+            "decode_tps": null,
+            "wall_seconds": 6.788439900032245,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        },
+        "mtp-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1126.9163500546667,
+            "stdev": 78.92614619960422,
+            "min": 1065.3606926598022,
+            "max": 1215.8965183608798
+          },
+          "api_raw_pp": {
+            "mean": 1126.9186666666667,
+            "stdev": 78.92626990003596,
+            "min": 1065.363,
+            "max": 1215.899
+          },
+          "calibrated_decode": {
+            "mean": 40.410583520650576,
+            "stdev": 1.399513342147876,
+            "min": 39.32792270792604,
+            "max": 41.990914296739874
+          },
+          "api_raw_decode": {
+            "mean": 40.410666666666664,
+            "stdev": 1.3995164641165645,
+            "min": 39.328,
+            "max": 41.991
+          },
+          "accepted": 207,
+          "drafted": 345,
+          "acceptance": 0.6,
+          "request_wall_seconds": {
+            "mean": 10.511836533337677,
+            "stdev": 0.6049745323902582,
+            "min": 9.818684500001837,
+            "max": 10.933574899972882
+          },
+          "output_hashes": [
+            {
+              "rep": 0,
+              "phase": "warmup",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 1,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 2,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 3,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            }
+          ],
+          "repeat_and_warmup_output_parity": true,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "fcd4fb7a1ea80aecbbe8b42289019a9b08b5f54458c02ec3e1060c95372b16d0",
+          "excluded_warmup": {
+            "pp_tps": 1195.4662272425303,
+            "decode_tps": 33.84100419880707,
+            "wall_seconds": 10.672503700014204,
+            "accepted": 69,
+            "drafted": 115,
+            "acceptance": 0.6
+          }
+        },
+        "serial-tg128": {
+          "n": 3,
+          "excluded_warmups": 1,
+          "calibrated_pp": {
+            "mean": 1198.3851568482312,
+            "stdev": 87.16602316206955,
+            "min": 1103.8178334411637,
+            "max": 1275.513107814667
+          },
+          "api_raw_pp": {
+            "mean": 1198.3876666666667,
+            "stdev": 87.16637461965104,
+            "min": 1103.82,
+            "max": 1275.516
+          },
+          "calibrated_decode": {
+            "mean": 31.79426694527581,
+            "stdev": 0.21771621029079885,
+            "min": 31.54793807813034,
+            "max": 31.960927529615123
+          },
+          "api_raw_decode": {
+            "mean": 31.79433333333333,
+            "stdev": 0.21772076918230243,
+            "min": 31.548,
+            "max": 31.961
+          },
+          "accepted": 0,
+          "drafted": 0,
+          "acceptance": null,
+          "request_wall_seconds": {
+            "mean": 10.922364300000481,
+            "stdev": 0.5391735277561038,
+            "min": 10.46199089998845,
+            "max": 11.515525299997535
+          },
+          "output_hashes": [
+            {
+              "rep": 0,
+              "phase": "warmup",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 1,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 2,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            },
+            {
+              "rep": 3,
+              "phase": "measured",
+              "sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6"
+            }
+          ],
+          "repeat_and_warmup_output_parity": true,
+          "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+          "request_sha256": "0e2dd6a3520c44da5d76cc2f65f097789794d3703c3a3d12219415784bacd538",
+          "excluded_warmup": {
+            "pp_tps": 1250.6084287198837,
+            "decode_tps": 30.1709379678474,
+            "wall_seconds": 10.826129900000524,
+            "accepted": 0,
+            "drafted": 0,
+            "acceptance": null
+          }
+        }
+      },
+      "greedy_output_parity": true,
+      "cross_mode_output_parity": true,
+      "parity_failures": [],
+      "measured_observed_minimum_bytes": {
+        "available_bytes": 25264074752,
+        "commit_headroom_bytes": 121299914752
+      },
+      "all_recorded_snapshots_minimum_bytes": {
+        "available_bytes": 25264074752,
+        "commit_headroom_bytes": 121299914752
+      },
+      "policy": "draft-Q8",
+      "startup_proof": {
+        "attempt": "backends\\halogen-wsl2-0.17.2\\.local\\services\\88f28f03379449cdb5e2c1bf465aca45",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+        "environment": {
+          "HALOGEN_WSL_PROFILE": "halogen0172-dxg",
+          "HALOGEN_CTX": "262144",
+          "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+          "HALOGEN_CK_OVERLAY": "",
+          "HALOGEN_PREFLIGHT_PROFILE": "flash0172-v2-device64-chunk64-v1",
+          "HALOGEN_HYBRID_PROFILE": "vgm64-0172-v2-device64-v1",
+          "HALOGEN_KV_POOL_POSITIONS": "262144",
+          "HALOGEN_KV_SLOTS": "1",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+          "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+          "HALOGEN_FLASH_PIN_TRUNK": "1",
+          "HALOGEN_PROMPT_CACHE": "0",
+          "HALOGEN_DMALLOC_LOG": "1",
+          "HALOGEN_VERBOSE": "1",
+          "HALOGEN_ENGINE_WATCHDOG_S": "120",
+          "HALOGEN_TOKENIZER": "/models/tokenizer",
+          "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+          "HSA_ENABLE_SDMA": "1",
+          "HSA_ENABLE_DXG_DETECTION": "1",
+          "AMD_SERIALIZE_KERNEL": "0",
+          "AMD_SERIALIZE_COPY": "0",
+          "LD_PRELOAD": "/candidate/libhalogen0172-v2-preflight.so:/candidate/hip-register-private-rw.so",
+          "HALOGEN_API_PORT": "8731",
+          "HF_HUB_OFFLINE": "1",
+          "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+          "HALOGEN_CHECKPOINT_VARIANT": "v2",
+          "HALOGEN_MTP_DEPTH": "2",
+          "HALOGEN_PREFILL_CHUNK": "8192",
+          "HALOGEN_MAX_TOK": "8192",
+          "HALOGEN_DRAFT_VOCAB_Q8": "1",
+          "HALOGEN_PLD": "3,3"
+        },
+        "source_pins": {
+          "scripts\\auth_api.py": "d54892351dada523ab2d002fe1cc7fdbbf2a7d5a01d2750ccab7f7f0f7379394",
+          "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+          "scripts\\bridge_adapter.py": "e1921300a96305cd295f26d1dac086aa066f9594a4e3b486bacb0c6369f942a3",
+          "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+          "scripts\\entrypoint_adapter.py": "7997eadb7cc67306b70d9652e8dd13522f5dbddf3635a329aafab9490da602c8",
+          "scripts\\halogen0172_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+          "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+          "scripts\\kernel_controls.py": "b4049bd0ae0e1f36020926d4d36169cfe2f51b6216f2308144d707b71160c545",
+          "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+          "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+          "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+          "scripts\\memory_budget.py": "c95136eb04f09c850b614d421706e06467e883d854bb40c28216eb5c3134a1ef",
+          "scripts\\portable.py": "0f527452746de1135354439daf3b3f57ffb43ec28673aae1f6d02320196a6e91",
+          "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+          "scripts\\runner.py": "61298fa0b29347706c6bbcb12c36e7ff0e3afdbe32447d08238ec1e578f30c6a",
+          "scripts\\sample.ps1": "ba4cee6b0aa6e850597c9fda47247b91cf57088544192d87ee08abac1d53d50a",
+          "scripts\\service.py": "6365da51fb8f142bbff11189205d51ed9ea1d4d126b77cb5e9aa5321a9c34698",
+          "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+          "scripts\\startup_cache.py": "36f7aba4be6d6cfb682aa05a7d93c023784e79a5331dae1d1cfcbf26bb127e45",
+          "scripts\\startup_guard.py": "c53a7cc564fb48657153684f7b85bb53510d48c104e983eb1979c85302b88926",
+          "scripts\\startup_monitor.py": "91529801e906278f467f8069839dce58fc88ce396c8a85000814a8257559a099",
+          "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+          "patches\\halogen-preflight-bridge.c": "bb9a02714ff4896e53c0b144b835f4283f564434b68eb8fbaadfd7733dc51f0d",
+          "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+          "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+          "patches\\hip-register-hybrid.c": "17a392fe5754d4a6dd01c58c9a4fef2fe7706db41585b9b4e9aaae29894b0d3e",
+          "patches\\hip-register-private-rw.c": "8fce544698dc47a94f26d4989f54859560d86c6db29a7d0690739951a77e04aa",
+          "profiles\\release.json": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+          "profiles\\sources.json": "084b97580907ae5f2baf88c79a0754970ad0e9a703c870c7b2dc5e42e47140a7"
+        },
+        "ready_at": 1791436266.3265915,
+        "entrypoint_sha256": "04c6841e3387ae475d1e5e363cd08551a3f657d612dbbd79ddc48931dbe2a463",
+        "engine_api_version": {
+          "api": "0.17.2",
+          "engine": "0.17.2",
+          "match": true
+        },
+        "startup_line": "2026-10-08T05:10:14.860245739Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 selectable (drafter 1, speculates while alone)",
+        "api_version_lines": [
+          "2026-10-08T05:10:18.415553114Z serve_api: version 0.17.2, engine version 0.17.2"
+        ],
+        "draft_format_configuration": {
+          "q8_enabled": true,
+          "native_environment": "1",
+          "engine_sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+          "per_kernel_execution_proven": false,
+          "scope": "Saved native environment and pinned engine dispatch; no per-kernel trace or numerical precision claim"
+        },
+        "log_prefix": {
+          "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\88f28f03379449cdb5e2c1bf465aca45\\engine.log",
+          "bytes": 141268,
+          "sha256": "928954a907580f2761d67086a9140c87cb06f9905800fc081a24ef1ea57c2c78",
+          "scope": "At most first 1 MiB; saved startup proof, not a full-log hash"
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "serial_tg1_pp": {
+      "before": 1265.7044597493268,
+      "candidate": 1261.657955216262,
+      "candidate_vs_before_percent": -0.31970374299432613,
+      "scope": "Descriptive two-arm evidence; missing after, no bookend calibration"
+    },
+    "mtp_tg128_pp": {
+      "before": 1243.1921229513976,
+      "candidate": 1126.9163500546667,
+      "candidate_vs_before_percent": -9.353001096941204,
+      "scope": "Descriptive two-arm evidence; missing after, no bookend calibration"
+    },
+    "serial_tg128_pp": {
+      "before": 1284.108731828059,
+      "candidate": 1198.3851568482312,
+      "candidate_vs_before_percent": -6.675725571758373,
+      "scope": "Descriptive two-arm evidence; missing after, no bookend calibration"
+    },
+    "mtp_tg128_decode": {
+      "before": 42.75329273162962,
+      "candidate": 40.410583520650576,
+      "candidate_vs_before_percent": -5.4795994911658985,
+      "scope": "Descriptive two-arm evidence; missing after, no bookend calibration"
+    },
+    "serial_tg128_decode": {
+      "before": 31.622660064654138,
+      "candidate": 31.79426694527581,
+      "candidate_vs_before_percent": 0.542670604784079,
+      "scope": "Descriptive two-arm evidence; missing after, no bookend calibration"
+    },
+    "mtp_tg128_wall_seconds": {
+      "before": 9.614836000003075,
+      "candidate": 10.511836533337677,
+      "candidate_vs_before_percent": 9.32933784137675,
+      "scope": "Descriptive two-arm evidence; missing after, no bookend calibration"
+    },
+    "mtp_pld_combined_acceptance": {
+      "before": 0.6194690265486725,
+      "candidate": 0.6,
+      "candidate_vs_before_percentage_points": -1.9469026548672552
+    }
+  },
+  "comparison_scope": "Completed before/candidate cohorts only; no after measurement or qualified bookend gain",
+  "selection": {
+    "status": "not_evaluated_incomplete_bookend",
+    "passed": null,
+    "checks": null
+  },
+  "candidate_disposition": "not_promoted",
+  "qualified_bookend_gain": false,
+  "serving_promoted": false,
+  "automatic_serving_promotion": false,
+  "after_present": false,
+  "after_client_started": false,
+  "after_measured_rows": 0,
+  "after_omission_reason": "Trusted human availability steering prioritized latest service restoration with stable public credential",
+  "after_started_then_stopped": {
+    "startup_proof": {
+      "attempt": "backends\\halogen-wsl2-0.17.2\\.local\\services\\a2be72e4c0544cf2bac236b61cbcb484",
+      "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+      "environment": {
+        "HALOGEN_WSL_PROFILE": "halogen0172-dxg",
+        "HALOGEN_CTX": "262144",
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_CK_OVERLAY": "",
+        "HALOGEN_PREFLIGHT_PROFILE": "flash0172-v2-device64-chunk64-v1",
+        "HALOGEN_HYBRID_PROFILE": "vgm64-0172-v2-device64-v1",
+        "HALOGEN_KV_POOL_POSITIONS": "262144",
+        "HALOGEN_KV_SLOTS": "1",
+        "HALOGEN_HOST_RESERVE_GIB": "18",
+        "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+        "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+        "HALOGEN_FLASH_PIN_TRUNK": "1",
+        "HALOGEN_PROMPT_CACHE": "0",
+        "HALOGEN_DMALLOC_LOG": "1",
+        "HALOGEN_VERBOSE": "1",
+        "HALOGEN_ENGINE_WATCHDOG_S": "120",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+        "HSA_ENABLE_SDMA": "1",
+        "HSA_ENABLE_DXG_DETECTION": "1",
+        "AMD_SERIALIZE_KERNEL": "0",
+        "AMD_SERIALIZE_COPY": "0",
+        "LD_PRELOAD": "/candidate/libhalogen0172-v2-preflight.so:/candidate/hip-register-private-rw.so",
+        "HALOGEN_API_PORT": "8731",
+        "HF_HUB_OFFLINE": "1",
+        "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PREFILL_CHUNK": "8192",
+        "HALOGEN_MAX_TOK": "8192",
+        "HALOGEN_PLD": "3,3"
+      },
+      "source_pins": {
+        "scripts\\auth_api.py": "d54892351dada523ab2d002fe1cc7fdbbf2a7d5a01d2750ccab7f7f0f7379394",
+        "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+        "scripts\\bridge_adapter.py": "e1921300a96305cd295f26d1dac086aa066f9594a4e3b486bacb0c6369f942a3",
+        "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+        "scripts\\entrypoint_adapter.py": "7997eadb7cc67306b70d9652e8dd13522f5dbddf3635a329aafab9490da602c8",
+        "scripts\\halogen0172_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+        "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+        "scripts\\kernel_controls.py": "b4049bd0ae0e1f36020926d4d36169cfe2f51b6216f2308144d707b71160c545",
+        "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+        "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "scripts\\memory_budget.py": "c95136eb04f09c850b614d421706e06467e883d854bb40c28216eb5c3134a1ef",
+        "scripts\\portable.py": "0f527452746de1135354439daf3b3f57ffb43ec28673aae1f6d02320196a6e91",
+        "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "scripts\\runner.py": "61298fa0b29347706c6bbcb12c36e7ff0e3afdbe32447d08238ec1e578f30c6a",
+        "scripts\\sample.ps1": "ba4cee6b0aa6e850597c9fda47247b91cf57088544192d87ee08abac1d53d50a",
+        "scripts\\service.py": "6365da51fb8f142bbff11189205d51ed9ea1d4d126b77cb5e9aa5321a9c34698",
+        "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+        "scripts\\startup_cache.py": "36f7aba4be6d6cfb682aa05a7d93c023784e79a5331dae1d1cfcbf26bb127e45",
+        "scripts\\startup_guard.py": "c53a7cc564fb48657153684f7b85bb53510d48c104e983eb1979c85302b88926",
+        "scripts\\startup_monitor.py": "91529801e906278f467f8069839dce58fc88ce396c8a85000814a8257559a099",
+        "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+        "patches\\halogen-preflight-bridge.c": "bb9a02714ff4896e53c0b144b835f4283f564434b68eb8fbaadfd7733dc51f0d",
+        "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+        "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+        "patches\\hip-register-hybrid.c": "17a392fe5754d4a6dd01c58c9a4fef2fe7706db41585b9b4e9aaae29894b0d3e",
+        "patches\\hip-register-private-rw.c": "8fce544698dc47a94f26d4989f54859560d86c6db29a7d0690739951a77e04aa",
+        "profiles\\release.json": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+        "profiles\\sources.json": "084b97580907ae5f2baf88c79a0754970ad0e9a703c870c7b2dc5e42e47140a7"
+      },
+      "ready_at": 1791436677.4889567,
+      "entrypoint_sha256": "04c6841e3387ae475d1e5e363cd08551a3f657d612dbbd79ddc48931dbe2a463",
+      "engine_api_version": {
+        "api": "0.17.2",
+        "engine": "0.17.2",
+        "match": true
+      },
+      "startup_line": "2026-10-08T05:17:07.105594841Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 selectable (drafter 1, speculates while alone)",
+      "api_version_lines": [
+        "2026-10-08T05:17:10.481120606Z serve_api: version 0.17.2, engine version 0.17.2"
+      ],
+      "draft_format_configuration": {
+        "q8_enabled": false,
+        "native_environment": "omitted stock default",
+        "engine_sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+        "per_kernel_execution_proven": false,
+        "scope": "Saved native environment and pinned engine dispatch; no per-kernel trace or numerical precision claim"
+      },
+      "log_prefix": {
+        "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\a2be72e4c0544cf2bac236b61cbcb484\\engine.log",
+        "bytes": 128462,
+        "sha256": "3d88203e61aab39daf83be7e251fd5ce347a98af7c40e498f60e486d4d96a72c",
+        "scope": "At most first 1 MiB; saved startup proof, not a full-log hash"
+      }
+    },
+    "terminal": {
+      "receipt": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-92eb7d12f84146f3b9375f18714683fb.json",
+      "status": "terminal-normal-stop",
+      "identities": {
+        "controller": {
+          "pid": 25260,
+          "creation_time_100ns": 134359100720285575,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend": {
+          "pid": 1152,
+          "creation_time_100ns": 134359100825051391,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        }
+      },
+      "outcome": {
+        "ready": true,
+        "cleanup": true,
+        "recovery": true,
+        "error": null,
+        "stopped_at": 1791436709.6615434,
+        "context": 262144
+      },
+      "terminal_native_proofs": [
+        {
+          "query_error": 31,
+          "proof": {
+            "pid": 1152,
+            "creation_time_100ns": 134359100825051391,
+            "missing": false,
+            "process_signaled": true,
+            "exit_code": 0
+          }
+        }
+      ],
+      "own_handles_closed": true
+    }
+  },
+  "greedy_output_parity": true,
+  "parity_failures": [],
+  "request_identity_parity": true,
+  "cohort_completeness": {
+    "completed_windows": 2,
+    "recorded_rows_per_completed_window": 12,
+    "measured_rows_per_completed_window": 9,
+    "excluded_warmups_per_completed_window": 3,
+    "after_recorded_rows": 0,
+    "after_measured_rows": 0
+  },
+  "normal_stops": {
+    "before": {
+      "receipt": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-5b5910212fac4018ab654115cc2bc9f7.json",
+      "status": "terminal-normal-stop",
+      "identities": {
+        "controller": {
+          "pid": 38944,
+          "creation_time_100ns": 134359092601249239,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend": {
+          "pid": 35348,
+          "creation_time_100ns": 134359092705830656,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        }
+      },
+      "outcome": {
+        "ready": true,
+        "cleanup": true,
+        "recovery": true,
+        "error": null,
+        "stopped_at": 1791436028.217988,
+        "context": 262144
+      },
+      "terminal_native_proofs": [],
+      "own_handles_closed": true
+    },
+    "candidate": {
+      "receipt": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-38b795c63bb543bca110fc811ab90ea2.json",
+      "status": "terminal-normal-stop",
+      "identities": {
+        "controller": {
+          "pid": 26516,
+          "creation_time_100ns": 134359096583982198,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend": {
+          "pid": 19436,
+          "creation_time_100ns": 134359096688482977,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        }
+      },
+      "outcome": {
+        "ready": true,
+        "cleanup": true,
+        "recovery": true,
+        "error": null,
+        "stopped_at": 1791436442.0933394,
+        "context": 262144
+      },
+      "terminal_native_proofs": [
+        {
+          "query_error": 31,
+          "proof": {
+            "pid": 19436,
+            "creation_time_100ns": 134359096688482977,
+            "missing": false,
+            "process_signaled": true,
+            "exit_code": 0
+          }
+        }
+      ],
+      "own_handles_closed": true
+    }
+  },
+  "latest_deployment": {
+    "status": "verified_by_root_recovery_receipt",
+    "version": "0.17.2",
+    "policy": "stock-draft-Q4/fixed2",
+    "latest_ready_open": true,
+    "utc": "2026-10-08T05:23:36.437449+00:00",
+    "receipt": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow-latest-recovery-20261008\\visible-latest-ready-7e43d7cbe24141dba1ee512cca4026f8.json",
+    "profile_sha256": "d176610ff5cad12e439b4ef4d9e55a4eb5bdddd1f1843a47e3ef9f02bc48d812",
+    "controller_run_id": "8d1692617132447c932a2ce2bcb75e29",
+    "backend_run_id": "dbea8d38439f4d2c9dc7c8f22c72331d",
+    "identities": {
+      "controller": {
+        "pid": 31748,
+        "creation_time_100ns": 134359103712256471,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 22856,
+        "creation_time_100ns": 134359103816726702,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "console": {
+        "pid": 35208,
+        "creation_time_100ns": 134359103709419116,
+        "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      }
+    },
+    "startup_proof": {
+      "attempt": "backends\\halogen-wsl2-0.17.2\\.local\\services\\dbea8d38439f4d2c9dc7c8f22c72331d",
+      "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd",
+      "environment": {
+        "HALOGEN_WSL_PROFILE": "halogen0172-dxg",
+        "HALOGEN_CTX": "262144",
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_CK_OVERLAY": "",
+        "HALOGEN_PREFLIGHT_PROFILE": "flash0172-v2-device64-chunk64-v1",
+        "HALOGEN_HYBRID_PROFILE": "vgm64-0172-v2-device64-v1",
+        "HALOGEN_KV_POOL_POSITIONS": "262144",
+        "HALOGEN_KV_SLOTS": "1",
+        "HALOGEN_HOST_RESERVE_GIB": "18",
+        "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+        "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+        "HALOGEN_FLASH_PIN_TRUNK": "1",
+        "HALOGEN_PROMPT_CACHE": "0",
+        "HALOGEN_DMALLOC_LOG": "1",
+        "HALOGEN_VERBOSE": "1",
+        "HALOGEN_ENGINE_WATCHDOG_S": "120",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+        "HSA_ENABLE_SDMA": "1",
+        "HSA_ENABLE_DXG_DETECTION": "1",
+        "AMD_SERIALIZE_KERNEL": "0",
+        "AMD_SERIALIZE_COPY": "0",
+        "LD_PRELOAD": "/candidate/libhalogen0172-v2-preflight.so:/candidate/hip-register-private-rw.so",
+        "HALOGEN_API_PORT": "8731",
+        "HF_HUB_OFFLINE": "1",
+        "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PREFILL_CHUNK": "8192",
+        "HALOGEN_MAX_TOK": "8192",
+        "HALOGEN_PLD": "3,3"
+      },
+      "source_pins": {
+        "scripts\\auth_api.py": "d54892351dada523ab2d002fe1cc7fdbbf2a7d5a01d2750ccab7f7f0f7379394",
+        "scripts\\bounded_hash.py": "8476202c2726ceba6e50183cd5a8f7aa37f9dd883cb85632e8cd83828991ad71",
+        "scripts\\bridge_adapter.py": "e1921300a96305cd295f26d1dac086aa066f9594a4e3b486bacb0c6369f942a3",
+        "scripts\\checkpoint_integrity.py": "c124707e23777c30c8c287fed303b7663815c580581819d5d12e98ec7275ab4d",
+        "scripts\\entrypoint_adapter.py": "7997eadb7cc67306b70d9652e8dd13522f5dbddf3635a329aafab9490da602c8",
+        "scripts\\halogen0172_hip_probe.c": "833ff9521283e58b536e71b89348c23835eba22c4ee0e36bd4484388916e485d",
+        "scripts\\host_frames.py": "68710e048285bb6e4b6de3a2edbc464ea09a39265c646667d8c0234430b7969f",
+        "scripts\\kernel_controls.py": "b4049bd0ae0e1f36020926d4d36169cfe2f51b6216f2308144d707b71160c545",
+        "scripts\\lease_supervisor.py": "7693676333da5be801e33f2e9044bfb8cc529d5bad87c7239e85b206c8b41ef7",
+        "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "scripts\\memory_budget.py": "c95136eb04f09c850b614d421706e06467e883d854bb40c28216eb5c3134a1ef",
+        "scripts\\portable.py": "0f527452746de1135354439daf3b3f57ffb43ec28673aae1f6d02320196a6e91",
+        "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "scripts\\runner.py": "61298fa0b29347706c6bbcb12c36e7ff0e3afdbe32447d08238ec1e578f30c6a",
+        "scripts\\sample.ps1": "ba4cee6b0aa6e850597c9fda47247b91cf57088544192d87ee08abac1d53d50a",
+        "scripts\\service.py": "6365da51fb8f142bbff11189205d51ed9ea1d4d126b77cb5e9aa5321a9c34698",
+        "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+        "scripts\\startup_cache.py": "36f7aba4be6d6cfb682aa05a7d93c023784e79a5331dae1d1cfcbf26bb127e45",
+        "scripts\\startup_guard.py": "c53a7cc564fb48657153684f7b85bb53510d48c104e983eb1979c85302b88926",
+        "scripts\\startup_monitor.py": "91529801e906278f467f8069839dce58fc88ce396c8a85000814a8257559a099",
+        "scripts\\state_io.py": "c443b0cc271c841cc42d44640c81c80c9f72dc4a13d40cf29b608d2840763ab9",
+        "patches\\halogen-preflight-bridge.c": "bb9a02714ff4896e53c0b144b835f4283f564434b68eb8fbaadfd7733dc51f0d",
+        "patches\\halogen-preflight-trampoline.S": "ec46e7f698bfa0acdfa8b431118017631d1cefd05dbfd55ab09545e8d18717b3",
+        "patches\\hip-preflight-plan.h": "9341e612937780f16265940173220103fd421cce64d44e2cd92d8cd28a784176",
+        "patches\\hip-register-hybrid.c": "17a392fe5754d4a6dd01c58c9a4fef2fe7706db41585b9b4e9aaae29894b0d3e",
+        "patches\\hip-register-private-rw.c": "8fce544698dc47a94f26d4989f54859560d86c6db29a7d0690739951a77e04aa",
+        "profiles\\release.json": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+        "profiles\\sources.json": "084b97580907ae5f2baf88c79a0754970ad0e9a703c870c7b2dc5e42e47140a7"
+      },
+      "ready_at": 1791436985.2802937,
+      "entrypoint_sha256": "04c6841e3387ae475d1e5e363cd08551a3f657d612dbbd79ddc48931dbe2a463",
+      "engine_api_version": {
+        "api": "0.17.2",
+        "engine": "0.17.2",
+        "match": true
+      },
+      "startup_line": "2026-10-08T05:22:09.114989275Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 selectable (drafter 1, speculates while alone)",
+      "api_version_lines": [
+        "2026-10-08T05:22:12.764298604Z serve_api: version 0.17.2, engine version 0.17.2"
+      ],
+      "draft_format_configuration": {
+        "q8_enabled": false,
+        "native_environment": "omitted stock default",
+        "engine_sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+        "per_kernel_execution_proven": false,
+        "scope": "Saved native environment and pinned engine dispatch; no per-kernel trace or numerical precision claim"
+      },
+      "log_prefix": {
+        "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\dbea8d38439f4d2c9dc7c8f22c72331d\\engine.log",
+        "bytes": 142890,
+        "sha256": "384ac33ef654afe5f3c0165f1ab888c5104c75ae0dffc45e5268b2660e1b4fc6",
+        "scope": "At most first 1 MiB; saved startup proof, not a full-log hash"
+      }
+    },
+    "credential_continuity": {
+      "stable_token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+      "legacy_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.16.2\\.local\\api-token.txt",
+      "stable_matches_known_ServiceNow_credential": true,
+      "backend_token_changed": false,
+      "no_plaintext_credential_logged": true,
+      "version": "0.17.2",
+      "helper": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow_keep_visible_latest.py",
+      "helper_sha256": "52a95d376b1ce8897d155d9d81d346dcf5c7bd284c590fdf4d675a97132427c8"
+    },
+    "known_credential_http_proof": {
+      "utc": "2026-10-08T05:23:40.076916+00:00",
+      "controller_run_id": "8d1692617132447c932a2ce2bcb75e29",
+      "profile_sha256": "d176610ff5cad12e439b4ef4d9e55a4eb5bdddd1f1843a47e3ef9f02bc48d812",
+      "version": "0.17.2",
+      "results": [
+        {
+          "url": "http://127.0.0.1:8840/health",
+          "http_status": 200,
+          "existing_ServiceNow_credential_used": true,
+          "authenticated_route": false
+        },
+        {
+          "url": "http://127.0.0.1:8840/v1/models",
+          "http_status": 200,
+          "existing_ServiceNow_credential_used": true,
+          "authenticated_route": true
+        },
+        {
+          "url": "https://strix-alloy.tail7f425a.ts.net/health",
+          "http_status": 200,
+          "existing_ServiceNow_credential_used": true,
+          "authenticated_route": false
+        },
+        {
+          "url": "https://strix-alloy.tail7f425a.ts.net/v1/models",
+          "http_status": 200,
+          "existing_ServiceNow_credential_used": true,
+          "authenticated_route": true
+        }
+      ],
+      "stable_matches_known_ServiceNow_credential": true,
+      "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+      "plaintext_credential_logged": false,
+      "inference_request_sent": false
+    },
+    "credential_scope": "Root attests stable known frontend credential equality; backend credential unchanged; no token value or token digest read here",
+    "scope": "Saved readiness/startup/credential-continuity and explicit HTTP evidence only; no live-state access or inference request here"
+  },
+  "npu_gain_measured": false,
+  "overall_gpu_npu_acceleration_goal_achieved": false,
+  "source_pins": [
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\result-analysis\\report_q8.py",
+      "sha256": "b700bf42c380353c77eee7e2283cd4555a9f7cb411cdb2e747e0b8dac3806bde",
+      "bytes": 47751
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\before\\identity.json",
+      "sha256": "f24f28e10f93715946d0bf37fc637405809e494940dce267f5bcd00a013f2556",
+      "bytes": 2007
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\before\\summary.json",
+      "sha256": "ebf99b3d87cd21c75bd6d6d42eeb9ab6ea9453b65cd626819a2d97d9d65d88b7",
+      "bytes": 1421
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\before\\samples.jsonl",
+      "sha256": "331dce77c6630d054167bd5c369881d9a9fa57a3667a6aed0760e431fe229c5e",
+      "bytes": 20180
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\before\\prompt-8192-prose.txt",
+      "sha256": "e17340a7af7ee2cc77c747af7bad30044a474719ad52abfb2e0c8c0cd700fde3",
+      "bytes": 42516
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\candidate\\identity.json",
+      "sha256": "c54fc29f96482df911a1b2c4200415b73d608ef01e0807b7e884849c6a3e3c98",
+      "bytes": 2082
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\candidate\\summary.json",
+      "sha256": "94670f6b640ff2f1626353894ed1a267e438fb3e5d2d4cd6c31a34f6fc310ee3",
+      "bytes": 1403
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\candidate\\samples.jsonl",
+      "sha256": "7d5ce73f5c28c28c3d50f241c74e443f8d11463638e093ba2f5727aaae35b0ca",
+      "bytes": 20139
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\candidate\\prompt-8192-prose.txt",
+      "sha256": "e17340a7af7ee2cc77c747af7bad30044a474719ad52abfb2e0c8c0cd700fde3",
+      "bytes": 42516
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\contract.json",
+      "sha256": "faf45a0cb2c5c16e2357c180ff14502949baecf0ff7ad7e7f854bc8a098693e1",
+      "bytes": 5948
+    },
+    {
+      "path": "scripts\\benchmarks\\gateway_cold.py",
+      "sha256": "fcbb75c8f02018ecd68b13d2160173c415a4a809f3b759012f001f36ff73403d",
+      "bytes": 10890
+    },
+    {
+      "path": "scripts\\benchmarks\\article_metrics.py",
+      "sha256": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+      "bytes": 8932
+    },
+    {
+      "path": "scripts\\benchmarks\\clock_probe.py",
+      "sha256": "a3f32a4c5c7e423c47ceebdd2f0fe0cd1860d7840c9fd0de10756e887c70a05e",
+      "bytes": 1709
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\q8_comparison_control.py",
+      "sha256": "38a0fa4c64c2df41f9847d0afd016f6fc9be43524695c29000633595a7b5d10e",
+      "bytes": 7293
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\q8_record_progress.py",
+      "sha256": "3d5c25bc0e0577ed354d0f8b44ea123e71a899b347d40110095828ba45cb9bf2",
+      "bytes": 4607
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\q8_keep_visible_latest.py",
+      "sha256": "e62987578d59465dda3732e0d795e1015a815db15f5e84eb9f1a83d893a26664",
+      "bytes": 9765
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\q8_preflight.ps1",
+      "sha256": "464aed3194ff0a6aeed7f6f9f86c94f6ff53c96534fcddac40006bfea01c8333",
+      "bytes": 1679
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\scripts\\kernel_controls.py",
+      "sha256": "b4049bd0ae0e1f36020926d4d36169cfe2f51b6216f2308144d707b71160c545",
+      "bytes": 2617
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\revalidate_arena_stop.py",
+      "sha256": "bd8288aff6ce790016fca231cbfac977a4fc0de73552fd1961c1753ce53e668d",
+      "bytes": 4124
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0171-backend-preparation-20261007\\checkpoint_actual_handles.py",
+      "sha256": "8db618365331aa45e283704a86b3c4ec30f953a7104e39cbace846db1382c05c",
+      "bytes": 6153
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\prompts\\prompt-8192-prose.txt",
+      "sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+      "bytes": 42238
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\profiles\\sources.json",
+      "sha256": "084b97580907ae5f2baf88c79a0754970ad0e9a703c870c7b2dc5e42e47140a7",
+      "bytes": 4081
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\profiles\\release.json",
+      "sha256": "ad2702bc3eeff6c9d79f0425d67c1ba0a90df7de86a646377fe36d88462c9db2",
+      "bytes": 2872
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\install-manifest.json",
+      "sha256": "df81375fbe10a89195b4643fd6211133aaaedd3f61bad99fc9e23e35e0b22bab",
+      "bytes": 17776
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\profile-fixed2.json",
+      "sha256": "0d050151b01750454d151743720199d0e731aa9d24d35ec11cc01fd30299cf68",
+      "bytes": 1515
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\profile-q8.json",
+      "sha256": "331a275fbdd1684bedde8b6998d2aadeb4d3e4f3d5c122cf4061b6b75b6fdc2d",
+      "bytes": 1584
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\before\\summary.json",
+      "sha256": "ebf99b3d87cd21c75bd6d6d42eeb9ab6ea9453b65cd626819a2d97d9d65d88b7",
+      "bytes": 1421
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\before\\identity.json",
+      "sha256": "f24f28e10f93715946d0bf37fc637405809e494940dce267f5bcd00a013f2556",
+      "bytes": 2007
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\before\\samples.jsonl",
+      "sha256": "331dce77c6630d054167bd5c369881d9a9fa57a3667a6aed0760e431fe229c5e",
+      "bytes": 20180
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\before\\prompt-8192-prose.txt",
+      "sha256": "e17340a7af7ee2cc77c747af7bad30044a474719ad52abfb2e0c8c0cd700fde3",
+      "bytes": 42516
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\candidate\\summary.json",
+      "sha256": "94670f6b640ff2f1626353894ed1a267e438fb3e5d2d4cd6c31a34f6fc310ee3",
+      "bytes": 1403
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\candidate\\identity.json",
+      "sha256": "c54fc29f96482df911a1b2c4200415b73d608ef01e0807b7e884849c6a3e3c98",
+      "bytes": 2082
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\candidate\\samples.jsonl",
+      "sha256": "7d5ce73f5c28c28c3d50f241c74e443f8d11463638e093ba2f5727aaae35b0ca",
+      "bytes": 20139
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\candidate\\prompt-8192-prose.txt",
+      "sha256": "e17340a7af7ee2cc77c747af7bad30044a474719ad52abfb2e0c8c0cd700fde3",
+      "bytes": 42516
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\60d83040f15f4f68887c48247d69cc2a\\manifest.json",
+      "sha256": "7e5bad30c312fa58713b61baf32fce36ecae3c3f4341198c5b1f043c79ac2419",
+      "bytes": 6196
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\60d83040f15f4f68887c48247d69cc2a\\ready.json",
+      "sha256": "b03493af0b6a152527b6080e998ecd68e15b3a626522dd9e0ce5d8b5194c37d9",
+      "bytes": 914
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\60d83040f15f4f68887c48247d69cc2a\\health.json",
+      "sha256": "8aa23e95749dbe70a96e67ecb34d15cfe326cc01cddd58e86b572884ed8a844e",
+      "bytes": 6152
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\88f28f03379449cdb5e2c1bf465aca45\\manifest.json",
+      "sha256": "794181baef948298712a187cb2b69a89db819d51efe8fb8793bc84455fc385c8",
+      "bytes": 6227
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\88f28f03379449cdb5e2c1bf465aca45\\ready.json",
+      "sha256": "ff74c24afddc709fbe4758434489949996042c7419c88da877196b5c4256f75a",
+      "bytes": 914
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\88f28f03379449cdb5e2c1bf465aca45\\health.json",
+      "sha256": "8aa23e95749dbe70a96e67ecb34d15cfe326cc01cddd58e86b572884ed8a844e",
+      "bytes": 6152
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-38b795c63bb543bca110fc811ab90ea2.json",
+      "sha256": "4ecb7255ba83a2f50cde2a67b12156fe31d93d0bd3e24461a0b9c1d6995d73fb",
+      "bytes": 5152
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-5b5910212fac4018ab654115cc2bc9f7.json",
+      "sha256": "58e33f52f7f681cdc7f067f96b5430e8dbd1139f01496ac0a71cea9b387421f9",
+      "bytes": 4917
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-92eb7d12f84146f3b9375f18714683fb.json",
+      "sha256": "479900f75829caf8c28812a99b330609b1e9e7a9f8a687e1483c315ead552b23",
+      "bytes": 5145
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\60d83040f15f4f68887c48247d69cc2a\\outcome.json",
+      "sha256": "9dc0f1c3de72d34ac3757bbec0c19a30bd6d6f0df9a968a3cff69dc63e3a0498",
+      "bytes": 117
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\88f28f03379449cdb5e2c1bf465aca45\\outcome.json",
+      "sha256": "a62c27d143ef94a6ddacba1207c0964f3104d54da149347d806d0f5a82a0f274",
+      "bytes": 118
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-92eb7d12f84146f3b9375f18714683fb.json",
+      "sha256": "479900f75829caf8c28812a99b330609b1e9e7a9f8a687e1483c315ead552b23",
+      "bytes": 5145
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\a2be72e4c0544cf2bac236b61cbcb484\\manifest.json",
+      "sha256": "3891228041eb2fb688744319a8c7ad8a7b1af1af8bb8ad38fe551ca524b27141",
+      "bytes": 6196
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\a2be72e4c0544cf2bac236b61cbcb484\\ready.json",
+      "sha256": "2c5f535596cbf1a071b8de0d38f8100ab6d9c17703e6c2a3705a200adbed1759",
+      "bytes": 913
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\a2be72e4c0544cf2bac236b61cbcb484\\health.json",
+      "sha256": "6a8b50a2cfe984001e78cc5598f415d580d442799e9aa60f91a9472d6d1ebb4e",
+      "bytes": 6152
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-38b795c63bb543bca110fc811ab90ea2.json",
+      "sha256": "4ecb7255ba83a2f50cde2a67b12156fe31d93d0bd3e24461a0b9c1d6995d73fb",
+      "bytes": 5152
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-5b5910212fac4018ab654115cc2bc9f7.json",
+      "sha256": "58e33f52f7f681cdc7f067f96b5430e8dbd1139f01496ac0a71cea9b387421f9",
+      "bytes": 4917
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\draft-vocab-q8-comparison\\control-stop-92eb7d12f84146f3b9375f18714683fb.json",
+      "sha256": "479900f75829caf8c28812a99b330609b1e9e7a9f8a687e1483c315ead552b23",
+      "bytes": 5145
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\a2be72e4c0544cf2bac236b61cbcb484\\outcome.json",
+      "sha256": "06ee07aef459d50838cc424ca14228c9e8089b45c313c8dd7b5a7fdd9aa759d7",
+      "bytes": 118
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow-latest-recovery-20261008\\visible-latest-ready-7e43d7cbe24141dba1ee512cca4026f8.json",
+      "sha256": "0b9b4922eeda64b6eacbfac1d257102aa709d23eae5441c5c190befeff18f5af",
+      "bytes": 3072
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow-latest-recovery-20261008\\visible-latest-launch.json",
+      "sha256": "aeef5620c649e565c4fe6f7f579b68c8f18f89d31a057138422c5d0798332e51",
+      "bytes": 963
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow-latest-recovery-20261008\\credential-continuity.json",
+      "sha256": "4a70c90de85349f34b63b0e75eb6ceb56907d0e03d64f177d7692b2610cb2d3e",
+      "bytes": 630
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow-latest-recovery-20261008\\known-credential-http-proof.json",
+      "sha256": "6fb2d5d04081b6c090843033e822a3e33884f642a4d177a5f0f9be79b47d0cbb",
+      "bytes": 1209
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow-latest-recovery-20261008\\restored-latest-profile.json",
+      "sha256": "d176610ff5cad12e439b4ef4d9e55a4eb5bdddd1f1843a47e3ef9f02bc48d812",
+      "bytes": 1503
+    },
+    {
+      "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow_keep_visible_latest.py",
+      "sha256": "52a95d376b1ce8897d155d9d81d346dcf5c7bd284c590fdf4d675a97132427c8",
+      "bytes": 10167
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\dbea8d38439f4d2c9dc7c8f22c72331d\\manifest.json",
+      "sha256": "57baa4ef6bda051896ac00ca2abdb113a3a3c25d63188c10a60d3cf9726f9f23",
+      "bytes": 6196
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\dbea8d38439f4d2c9dc7c8f22c72331d\\ready.json",
+      "sha256": "a5ab10a5ed9a2a00102ba92ad3637c746256970c72151bdc649a02da65102b19",
+      "bytes": 914
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\dbea8d38439f4d2c9dc7c8f22c72331d\\health.json",
+      "sha256": "aff8a10d3b4ec26caad6c24f98d5db3bdf790883f54d6dcb660454eb9d1f6cda",
+      "bytes": 6151
+    },
+    {
+      "path": "backends\\halogen-wsl2-0.17.2\\.local\\services\\dbea8d38439f4d2c9dc7c8f22c72331d\\ready.json",
+      "sha256": "a5ab10a5ed9a2a00102ba92ad3637c746256970c72151bdc649a02da65102b19",
+      "bytes": 914
+    }
+  ],
+  "report_helper_sha256": "cac55d81f5fb7046264a81e54d3c1bfba911e302d7bb6f056575f6151fafa43a"
+}

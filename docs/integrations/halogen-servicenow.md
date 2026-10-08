@@ -72,6 +72,12 @@ different profile can start.
 an engine. `-Port` defaults to `8840`. `-ConsoleTrace` enables the content trace;
 without it, the normal operational logs are used.
 
+The launcher uses `server/.local/servicenow-api-token.txt` for the public API
+when that stable credential file exists. This machine's file preserves the
+previously configured ServiceNow key. The backend keeps its own version-specific
+credential separately, so changing the Halogen version does not require changing
+ServiceNow's Authorization header. Credential values are never printed.
+
 ## What the profiles actually select
 
 `Current8K` defaults to Halogen **0.17.2**; `HistoricalStock` uses the explicitly

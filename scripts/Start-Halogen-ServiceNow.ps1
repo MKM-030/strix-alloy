@@ -81,6 +81,12 @@ if ($LASTEXITCODE -ne 0) {
     throw 'The installed Halogen profile could not be prepared; no engine was launched.'
 }
 $configuration = ($profileJson -join [Environment]::NewLine) | ConvertFrom-Json
+# Preserve the public ServiceNow credential across backend-version changes.
+# The backend's own token_file remains separately configured by make_profile.
+$stableApiToken = Join-Path $server '.local\servicenow-api-token.txt'
+if (Test-Path -LiteralPath $stableApiToken -PathType Leaf) {
+    $configuration.token_file = $stableApiToken
+}
 $windowsPowerShell = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
 if (-not (Test-Path -LiteralPath $windowsPowerShell -PathType Leaf)) {
     throw 'Native Windows PowerShell 5.1 is required for the managed telemetry helper.'
