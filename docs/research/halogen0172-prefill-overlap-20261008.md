@@ -45,8 +45,27 @@ CPU-prefetch launch, callback completion, promoted state and native join before
 the second key. The native default64/max256 worker policy is supported and
 callback payload/TID reuse is allowed after return. The built ELF is47064 bytes,
 SHA256`8833bf7dd0424cb3b17027342ceed985fb86fe44dd8444b7a0592915842d0da5`.
-V2 is default-off and has not been loaded. The separate wrapper/manifest port
-remains necessary; the v1 plan and schemas cannot qualify this derivative.
+Root then loaded the separately sealed v2 wrapper and ran one distinct owned
+16,384-token request. It completed HTTP 200 with 128 output tokens. All 64
+native workers returned and joined; the actual full raw input, second suffix,
+carry, callback and promoted state bindings passed. The request was intrusive
+observation, with no warmup-plus-three throughput cohort.
+
+| Native raw-clock observation | Milliseconds |
+| --- | ---: |
+| Small token publication | 17.520212 |
+| Publication to second-chunk CPU launch | 6058.587138 |
+| Whole native CPU worker interval | 8647.885010 |
+| Publication to second key projection | 14708.678294 |
+| Native wait entry to completed join | 200.944243 |
+
+Most second-chunk lookup work is already overlapped. The 14.709-second
+publication-to-key interval is a possible preparation budget, not a measured
+Windows input-ready lead. No NPU, result substitution or device copy was
+performed by the observer. It cannot establish Prefill, Decode, acceptance or a
+serving speedup. The unchanged v2 observation will not be repeated for more
+diagnostics. Its job exited zero, errors were empty, and the clean Thinking
+profile was restored ready and open with the observer removed.
 
 Separately, bounded CPU extraction of the current embedded gfx1151 code object
 closed the static shader identity gap. Six PLE history/input/gather/RMS kernels
@@ -59,9 +78,22 @@ constants, row-ID/FP8 math and BF16 weights without recapturing weights. Actual
 current second-chunk input parity, executed FC route and NPU output/serving
 benefit remain separate qualifications.
 
-The private mapped-row CPU producer is implemented and independently reviewed.
-It replaces serialized page reads with bounded2048-row indexed copies from one
-read-only mapping. It has not been run and has no measured speed claim.
+The private mapped-row CPU producer v4 completed one guarded replay of this
+actual archived second-chunk suffix and carry. Its worker wall was 1.015000
+seconds, sampled before ready-receipt publication. It copied 106,478 unique
+160-byte rows (17,036,480 logical bytes), using 52 bounded indexed-copy tiles
+from one read-only mapping. The mapped copy timer was 0.223063 seconds; mapping
+close took 0.275064 seconds. These are filesystem/cache and CPU component
+intervals, not isolated physical SSD latency. Cache state was not controlled;
+no speedup ratio against prior workers or the native interval is qualified.
+
+Complete 40 MiB BF16 and 80 MiB FLOAT inputs were published and independently
+rehashed. Every one of the 20,971,520 FLOAT words is the exact finite widening
+of its BF16 input. This verifies the saved artifacts, not equality to the
+current native GPU input. The replay ran after the observer was stopped;
+it does not qualify live ownership or a Windows-to-WSL readiness lead. The
+owned CPU job closed with exit zero and no errors; the serving server was not
+changed. No NPU or accelerator provider was used.
 
 A separate CPU/SSD candidate was identified in the actual native copy-mode
 worker: retain exact ID generation and original ID order, then use a separate
@@ -71,6 +103,15 @@ not a launch wrapper. Mapping extents, output lifetime, cross-page rows and
 cancellation/completion behavior must be preserved. No speed claim or hardware
 measurement was made for this candidate.
 
+The separate page-segment scheduler is now implemented and its focused
+synthetic verification covers page crossings, duplicates, exact original-order
+scatter, parallel disjoint-page copies, bounds and cancellation. Native
+attachment remains disabled: scalar-ID ownership, selected mapping provenance,
+phase completion and asynchronous raw-buffer reuse still require a connected
+adapter. A completed countdown alone cannot authorize H2D after cancellation.
+The ordinary first lookup is also being reviewed because changing an already
+overlapped second lookup has limited potential.
+
 ## Retained evidence
 
 All private evidence below is beneath
@@ -78,7 +119,7 @@ All private evidence below is beneath
 
 - Failed single window and clean restoration:
   `ple-early-observer-0172-source/ple-early-token-window-e7dacadddb844d47a7913e8b59122084/{result,final-ready}.json`.
-- Current code object: `ple0172-math-delta-audit/gfx1151-bundle0.hsaco`,
+- Current code object: `ple0172-math-delta-audit/engine0172-gfx1151-bundle0.hsaco`,
   SHA256`18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039`.
 - Complete static bridge: `ple0172-math-delta-audit/audit-delivery.json`,
   SHA256`ad581d6a02fd13980514735cc8bf1187137cff3481dd93a79477589ed80f36f4`.
@@ -86,6 +127,15 @@ All private evidence below is beneath
   worker SHA256`ddd1cc18d31baf0ef885791854c32fbfe4093c08e9db6f7b6748fdfe61345990`.
 - Fresh process identity and local/public health:
   `continuation-checkpoint-6eb39cfe0160409087de596596f11c8f.json`.
+- Successful v2 observation and normal restoration:
+  `ple-early-observer-0172-v2-source/ple-early-token-window-0172-v2-e01d259b8503429fa3831dbf01c53e18/{result,token-release-manifest,final-ready}.json`.
+- Actual archived v4 input and artifact verification:
+  `ple-input-archived-0172-v4-e01d259b8503429fa3831dbf01c53e18/`.
+- CPU page scheduler source and focused verification:
+  `ple0172-native-page-scheduler-v1/delivery.json`.
+
+The [companion status JSON](halogen0172-prefill-overlap-20261008.json) binds
+these completed records and keeps all serving-gain claims false.
 
 No startup-floor investigation was performed. The full acceleration goal
 remains active and unachieved; no new NPU token-rate gain is claimed.

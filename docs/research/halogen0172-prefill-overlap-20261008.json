@@ -1,0 +1,170 @@
+{
+  "schema": "halogen0172-prefill-overlap-status.v2",
+  "utc": "2026-10-08T07:09:56.275197+00:00",
+  "version": "0.17.2",
+  "full_goal_completed": false,
+  "serving_gain_qualified": false,
+  "NPU_executed": false,
+  "throughput_reference": {
+    "report": "docs/benchmarks/halogen0172-fixed-depth2-20261008.md",
+    "actual_input_tokens": 8192,
+    "excluded_warmups": 1,
+    "measured_repetitions": 3,
+    "Thinking": false,
+    "serial_TG1_prefill_tps": 1232.58,
+    "MTP_TG128_prefill_tps": 1199.0,
+    "MTP_TG128_decode_tps": 43.731991573601825,
+    "combined_API_MTP_PLD_accepted": 210,
+    "combined_API_MTP_PLD_proposed": 339,
+    "combined_API_MTP_PLD_acceptance_percent": 61.94690265486725
+  },
+  "observer": {
+    "actual_input_tokens": 16384,
+    "actual_output_tokens": 128,
+    "excluded_warmups": 0,
+    "throughput_cohort": false,
+    "timings": {
+      "publication_wall_ms": 17.520212,
+      "guest_token_release_to_later_cpu_prefetch_launch_ms": 6058.587138,
+      "guest_token_release_to_later_cpu_prefetch_worker_ms": 6059.182106,
+      "native_cpu_prefetch_worker_interval_ms": 8647.88501,
+      "native_cpu_prefetch_join_done_ns": 6738349529046,
+      "later_id_path": "native_cpu_prefetch_inline",
+      "native_prefetch_expected_workers": 64,
+      "native_prefetch_worker_starts": 64,
+      "native_prefetch_worker_returns": 64,
+      "native_prefetch_join_verified": true,
+      "prefetch_interval_is_gpu_helper_interval": false,
+      "guest_token_release_to_later_key_ms": 14708.678294,
+      "actual_native_full_raw_digest_matched": true,
+      "actual_second_slice_bytes_matched": true,
+      "owned_http_response_completed": true,
+      "owned_http_status": 200,
+      "native_forward_abi": "void",
+      "owned_raw_carry_matched": true,
+      "device_carry_observed": false,
+      "actual_Windows_input_ready_observed": false,
+      "NPU_executed": false,
+      "worker_started": false,
+      "serving_gain_qualified": false,
+      "clock": "CLOCK_MONOTONIC_RAW"
+    },
+    "native_join_wait_ms": 200.944243,
+    "tool_session_id": 41849,
+    "exit_code": 0,
+    "terminal": true,
+    "current_Windows_input_ready": false,
+    "current_native_input_parity": false,
+    "result": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-early-observer-0172-v2-source\\ple-early-token-window-0172-v2-e01d259b8503429fa3831dbf01c53e18\\result.json",
+      "bytes": 1792,
+      "sha256": "23d8ea69eb9ebc463c382f3a87acf8e508316bdd7e48625a62a3d6f7be45a07f"
+    },
+    "manifest": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-early-observer-0172-v2-source\\ple-early-token-window-0172-v2-e01d259b8503429fa3831dbf01c53e18\\token-release-manifest.json",
+      "bytes": 4151,
+      "sha256": "bcfede9ef1c6813838637a314c7998c73173b87b71cc3e1163101cfddd2578ae"
+    },
+    "final_ready": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-early-observer-0172-v2-source\\ple-early-token-window-0172-v2-e01d259b8503429fa3831dbf01c53e18\\final-ready.json",
+      "bytes": 2765,
+      "sha256": "df3a7a476f3bea5ba5d08f8a3befab56f4c65e5c144d8ceb8acb8996d58e0683"
+    },
+    "window": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-early-observer-0172-v2-source\\ple-early-token-window-0172-v2-e01d259b8503429fa3831dbf01c53e18\\trace\\token-window.json",
+      "bytes": 2493,
+      "sha256": "7e873f1352dde0689c8ce3f71a8a228a88521eaa9aa3c078158f89e233d66407"
+    }
+  },
+  "CPU_input_replay": {
+    "archived_request_publication": true,
+    "token_rows": 8192,
+    "worker_wall_seconds_excludes_ready_publication": 1.0150000000139698,
+    "timings": {
+      "decode_scatter_and_widen_seconds": 0.0675255001988262,
+      "dedup_and_mapped_plan_seconds": 0.010471399989910424,
+      "dense_output_hash_seconds": 0.06203940015984699,
+      "final_source_and_owned_metadata_hash_seconds": 0.0020413000020198524,
+      "lut_and_unique_decode_seconds": 0.024487499962560833,
+      "mapped_selected_rows_copy_seconds": 0.22306329995626584,
+      "mapped_table_close_seconds": 0.27506360004190356,
+      "mapped_table_create_seconds": 0.00043509999522939324,
+      "numpy_cpu_import_seconds": 0.24005530000431463,
+      "output_persistence_seconds": 0.061737599899061024,
+      "row_ids_and_row_id_hash_seconds": 0.03741990000708029,
+      "selected_row_hash_seconds": 0.007714700070209801,
+      "source_and_owned_metadata_hash_seconds": 0.006596899998839945,
+      "table_metadata_verification_seconds": 0.0008407999994233251
+    },
+    "row_plan": {
+      "kind": "bounded-indexed-read-only-map",
+      "no_synchronous_page_read_loop": true,
+      "physical_io_bytes_observed": false,
+      "row_bytes": 160,
+      "scatter_tile_rows": 2048,
+      "selected_logical_bytes": 17036480,
+      "unique_rows": 106478
+    },
+    "artifacts": {
+      "bf16": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-input-archived-0172-v4-e01d259b8503429fa3831dbf01c53e18\\prepared\\input-bf16.bin",
+        "bytes": 41943040,
+        "sha256": "3aa03f50041988568f26905e2a5634233e828ec6ce104496a17a0e1dd5b924d3"
+      },
+      "float32": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-input-archived-0172-v4-e01d259b8503429fa3831dbf01c53e18\\prepared\\input-float32.bin",
+        "bytes": 83886080,
+        "sha256": "2b4dd5c12a0a1ba66c465ba0ede7345535c59a0c590dfd21fa97a184d8cf0ec7"
+      }
+    },
+    "all_FLOAT_words_exact_finite_BF16_widening": true,
+    "compared_values": 20971520,
+    "native_GPU_input_parity": false,
+    "Windows_to_WSL_live_lead": false,
+    "cache_state_controlled": false,
+    "speedup_ratio_qualified": false,
+    "result": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-input-archived-0172-v4-e01d259b8503429fa3831dbf01c53e18\\result.json",
+      "bytes": 1667,
+      "sha256": "16a27ca2423003b961655a64b64fc09ea91b16d967fa0368422b3dffdfedd14b"
+    },
+    "ready": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-input-archived-0172-v4-e01d259b8503429fa3831dbf01c53e18\\prepared\\input-ready.json",
+      "bytes": 7797,
+      "sha256": "49c2ed2e671868d356a84476105c588ede1167e381df838294fe8336476e8411"
+    },
+    "independent_verification": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple-input-archived-0172-v4-e01d259b8503429fa3831dbf01c53e18\\root-artifact-verification-eb2e6c29916b4fe2af43a63c5c7b1133.json",
+      "bytes": 2813,
+      "sha256": "37395a21d1787a2e5f4582699b1aaae26646ba28afa50d2a779cc6e135412348"
+    }
+  },
+  "page_scheduler": {
+    "default_off": true,
+    "native_attached": false,
+    "delivery": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\ple0172-native-page-scheduler-v1\\delivery.json",
+      "bytes": 9993,
+      "sha256": "1165fc0f5646ad200ef7ab69c3bb1502d484d68a7bff3f89f5da84d3e5362be1"
+    },
+    "source_files_independently_rehashed": 58,
+    "focused_synthetic_compile_and_run_exit_zero": true,
+    "native_lifecycle_and_H2D_completion_qualification": false
+  },
+  "current_server": {
+    "version": "0.17.2",
+    "profile": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\servicenow-thinking-defaults-20261008\\thinking-latest-profile.json",
+    "profile_sha256": "b5d3692b2623034f5a9c4a5f90b234ba6b792793196963fc0e7b474b3937c839",
+    "controller_pid": 30580,
+    "backend_pid": 14472,
+    "latest_ready_open": true,
+    "api_defaults": {
+      "enable_thinking": true,
+      "reasoning_effort": "medium",
+      "max_thinking_tokens": 2048
+    }
+  },
+  "next": "Exact raw-row producer and connected native copy-phase adapter; qualify actual readiness and numerical/native lifecycle before one frozen engine cohort",
+  "unchanged_candidates_repeated": false,
+  "startup_floor_study_performed": false
+}
