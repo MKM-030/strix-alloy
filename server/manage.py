@@ -15,7 +15,7 @@ def make_profile(backend, checkpoint, context, prompt_cache='Off', halogen_versi
         raise ValueError('Context must be 4096..262144 positions')
     if checkpoint not in ('w4b','v2'): raise ValueError('Unknown checkpoint')
     if prompt_cache not in ('Off','Exact','Flexible'): raise ValueError('Unknown cache policy')
-    if halogen_version not in ('0.16.2','0.17.0','0.17.1'):
+    if halogen_version not in ('0.16.2','0.17.0','0.17.1','0.17.2'):
         raise ValueError('Unsupported managed Halogen version')
     if backend!='Halogen':
         if halogen_version!='0.16.2':
@@ -58,7 +58,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('action',choices=['start','status','stop','describe'])
     p.add_argument('--backend',choices=['Halogen','GUFO','Projfix'],default='Halogen')
-    p.add_argument('--halogen-version',choices=['0.16.2','0.17.0','0.17.1'],default='0.16.2')
+    p.add_argument('--halogen-version',choices=['0.16.2','0.17.0','0.17.1','0.17.2'],default='0.16.2')
     p.add_argument('--checkpoint',choices=['w4b','v2'],default='v2')
     p.add_argument('--context',type=int,default=129024)
     p.add_argument('--prompt-cache',choices=['Off','Exact','Flexible'],default='Off')
