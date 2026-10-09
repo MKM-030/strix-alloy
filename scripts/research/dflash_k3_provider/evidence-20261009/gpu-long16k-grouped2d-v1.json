@@ -1,0 +1,1225 @@
+{
+  "schema": "dflash_fixed_16k_component_pair.v1",
+  "enabled": false,
+  "device": "cuda",
+  "device_name": "AMD Radeon(TM) 8060S Graphics",
+  "torch_version": "2.13.0+rocm10.0.0",
+  "torch_version_hip": "7.15.26333",
+  "compute_dtype": "BF16",
+  "threads": 2,
+  "capacity": 16640,
+  "committed_prefix_rows": 16384,
+  "query_positions": [
+    16384,
+    16385,
+    16386
+  ],
+  "prefill_chunk_rows": 128,
+  "checkpoint_sha256": "35a23c17c248ff2e3296e6b78882b6d955af3092498fb7b6c48be1af4bfa971a",
+  "original_head_sha256": "50be0ccd11e4da0c92114600aca321d2c18f795e9e923fd587469587ecfd9df4",
+  "pinned_owner_source_sha256": {
+    "pixel_modeling.py": "9ad90bcb926b32b5144e8a27816ef18b51e9e5ee083108c5fbd8f63bc92b3953",
+    "hf_modeling_qwen3.py": "cbb7f2dc274c2f5592746c0dc6985ca50353efa07376f92cc922b77680a74f69"
+  },
+  "implementation_source_sha256": {
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\provider\\run_long_context.py": "f501d5fd5af07564ad664da69849867ca81ab9c9ac68077044edf86fe135490d",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\provider\\abi.py": "13c80194c7a1fd067052d915ac86f76fe03556d595d81f894a3d6d5dfbabcda3",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\provider\\provider.py": "5c0a84f5da09b7a062f684d1ae646d1f3d101e771aada8b875ce73a7a0b77a54",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\provider\\tensor_graphs.py": "7b7a9c0586bb2e182360a508db4a77a0603930e704f25a05bed53fffd5dcec89",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\provider\\scalar_support.py": "55fad879167d3ca21db15d40b1748efb7e1de171b499db6075bdff045353157a",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\scripts\\research\\dflash_k3_reference\\contract.py": "307e7eb0064c1078ffb7702bffabba3dce52e5b2e101c2f1ffbd74b34a7d8e33",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\scripts\\research\\dflash_k3_reference\\offline_loader.py": "04ba143427129eb6a4e39a6e6e37f5781b3da3f97fc073caa4fa8d2d65dfb14e",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\scripts\\research\\dflash_k3_reference\\reference.py": "dcb34fef1cd75666808eb44a0754bf236cef834fc6245590e7993b09be72e9bf",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\scripts\\research\\dflash_k3_reference\\owner_oracle.py": "52cd20d9116a417e26b4035333751f11209830fabe996e285759f73fba53e572",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\scripts\\research\\dflash_k3_reference\\compare.py": "f602fb72e97cb71b93d51735770810c924304f1e8408b19b8a0e8ab1a4f7e397"
+  },
+  "resources": {
+    "enabled": false,
+    "native_integration_complete": false,
+    "capacity": 16640,
+    "context_kv_shape": [
+      5,
+      2,
+      2,
+      16640,
+      256
+    ],
+    "context_kv_bf16_bytes": 170393600,
+    "target_feature_bytes_per_row": 25600,
+    "maximum_verifier_feature_bytes": 102400,
+    "full_original_head_bf16_bytes": 1271398400,
+    "drafter_payload_bf16_bytes": 996213760,
+    "resident_parameter_bytes": 2267612160,
+    "full_head_macs_per_round": 1907097600,
+    "context_projection_macs_per_retained_row": 45875200,
+    "query_attention_score_bf16_bytes_per_layer": 2396592,
+    "repeated_K_and_V_materialization_bytes_per_layer": 409018368,
+    "grouped2d_K_and_V_bytes_per_layer": 34084864,
+    "head_chunk_rows": 8192,
+    "head_chunk_bf16_bytes": 41943040,
+    "backbone_output_shape": [
+      3,
+      2560
+    ],
+    "head_raw_output_shape": [
+      3
+    ],
+    "rope": "full256_NeoX_split_half;theta1e7;cos_sin_F32_then_BF16",
+    "persistent_rows": "accepted_processed_target_inputs_only",
+    "ephemeral_query_kv": "never_returned_or_committed",
+    "full_vocab_domain": "all248320_rows;raw_ids_unsuppressed;offerable_only0..248076"
+  },
+  "shared_learned_storage_asserted": true,
+  "preparation_ns": 4929757000,
+  "prefill_total_including_CPU_generation_and_final_cache_finite_sync_ns": 2414628700,
+  "prefill_chunks": [
+    {
+      "start": 0,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 5733000,
+      "owned_host_feature_to_projected_cache_append_ns": 505728800
+    },
+    {
+      "start": 128,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 11264200,
+      "owned_host_feature_to_projected_cache_append_ns": 5033500
+    },
+    {
+      "start": 256,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 6588000,
+      "owned_host_feature_to_projected_cache_append_ns": 4945600
+    },
+    {
+      "start": 384,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 10146800,
+      "owned_host_feature_to_projected_cache_append_ns": 4842200
+    },
+    {
+      "start": 512,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7753300,
+      "owned_host_feature_to_projected_cache_append_ns": 4680400
+    },
+    {
+      "start": 640,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8331100,
+      "owned_host_feature_to_projected_cache_append_ns": 4750600
+    },
+    {
+      "start": 768,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8179200,
+      "owned_host_feature_to_projected_cache_append_ns": 4577600
+    },
+    {
+      "start": 896,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8545500,
+      "owned_host_feature_to_projected_cache_append_ns": 4452800
+    },
+    {
+      "start": 1024,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8334100,
+      "owned_host_feature_to_projected_cache_append_ns": 4708200
+    },
+    {
+      "start": 1152,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8487000,
+      "owned_host_feature_to_projected_cache_append_ns": 4870900
+    },
+    {
+      "start": 1280,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9190600,
+      "owned_host_feature_to_projected_cache_append_ns": 4955000
+    },
+    {
+      "start": 1408,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9750800,
+      "owned_host_feature_to_projected_cache_append_ns": 5080500
+    },
+    {
+      "start": 1536,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8596100,
+      "owned_host_feature_to_projected_cache_append_ns": 4956500
+    },
+    {
+      "start": 1664,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8540300,
+      "owned_host_feature_to_projected_cache_append_ns": 5039600
+    },
+    {
+      "start": 1792,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8511000,
+      "owned_host_feature_to_projected_cache_append_ns": 5093300
+    },
+    {
+      "start": 1920,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8501800,
+      "owned_host_feature_to_projected_cache_append_ns": 5163700
+    },
+    {
+      "start": 2048,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7915900,
+      "owned_host_feature_to_projected_cache_append_ns": 5020200
+    },
+    {
+      "start": 2176,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8607900,
+      "owned_host_feature_to_projected_cache_append_ns": 4933700
+    },
+    {
+      "start": 2304,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8530400,
+      "owned_host_feature_to_projected_cache_append_ns": 5157900
+    },
+    {
+      "start": 2432,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8481200,
+      "owned_host_feature_to_projected_cache_append_ns": 4986800
+    },
+    {
+      "start": 2560,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8577100,
+      "owned_host_feature_to_projected_cache_append_ns": 4893200
+    },
+    {
+      "start": 2688,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8655700,
+      "owned_host_feature_to_projected_cache_append_ns": 4881200
+    },
+    {
+      "start": 2816,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7797200,
+      "owned_host_feature_to_projected_cache_append_ns": 4484600
+    },
+    {
+      "start": 2944,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8542700,
+      "owned_host_feature_to_projected_cache_append_ns": 4569000
+    },
+    {
+      "start": 3072,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8501600,
+      "owned_host_feature_to_projected_cache_append_ns": 5063100
+    },
+    {
+      "start": 3200,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8630300,
+      "owned_host_feature_to_projected_cache_append_ns": 5177400
+    },
+    {
+      "start": 3328,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8893100,
+      "owned_host_feature_to_projected_cache_append_ns": 5204000
+    },
+    {
+      "start": 3456,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8562600,
+      "owned_host_feature_to_projected_cache_append_ns": 5220700
+    },
+    {
+      "start": 3584,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9438800,
+      "owned_host_feature_to_projected_cache_append_ns": 6468700
+    },
+    {
+      "start": 3712,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8896700,
+      "owned_host_feature_to_projected_cache_append_ns": 5367600
+    },
+    {
+      "start": 3840,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 6947100,
+      "owned_host_feature_to_projected_cache_append_ns": 4764200
+    },
+    {
+      "start": 3968,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 6917100,
+      "owned_host_feature_to_projected_cache_append_ns": 5135200
+    },
+    {
+      "start": 4096,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8401100,
+      "owned_host_feature_to_projected_cache_append_ns": 5006300
+    },
+    {
+      "start": 4224,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8855200,
+      "owned_host_feature_to_projected_cache_append_ns": 5445400
+    },
+    {
+      "start": 4352,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7897300,
+      "owned_host_feature_to_projected_cache_append_ns": 5076100
+    },
+    {
+      "start": 4480,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8537000,
+      "owned_host_feature_to_projected_cache_append_ns": 5333600
+    },
+    {
+      "start": 4608,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8733500,
+      "owned_host_feature_to_projected_cache_append_ns": 5228500
+    },
+    {
+      "start": 4736,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8732100,
+      "owned_host_feature_to_projected_cache_append_ns": 4847700
+    },
+    {
+      "start": 4864,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8620100,
+      "owned_host_feature_to_projected_cache_append_ns": 5114000
+    },
+    {
+      "start": 4992,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8836500,
+      "owned_host_feature_to_projected_cache_append_ns": 5203100
+    },
+    {
+      "start": 5120,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 5069400,
+      "owned_host_feature_to_projected_cache_append_ns": 4414800
+    },
+    {
+      "start": 5248,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 5512700,
+      "owned_host_feature_to_projected_cache_append_ns": 4522800
+    },
+    {
+      "start": 5376,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 5518400,
+      "owned_host_feature_to_projected_cache_append_ns": 4425800
+    },
+    {
+      "start": 5504,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 5566300,
+      "owned_host_feature_to_projected_cache_append_ns": 5047100
+    },
+    {
+      "start": 5632,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8554400,
+      "owned_host_feature_to_projected_cache_append_ns": 5184300
+    },
+    {
+      "start": 5760,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8794300,
+      "owned_host_feature_to_projected_cache_append_ns": 4662900
+    },
+    {
+      "start": 5888,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7748800,
+      "owned_host_feature_to_projected_cache_append_ns": 4834800
+    },
+    {
+      "start": 6016,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8343500,
+      "owned_host_feature_to_projected_cache_append_ns": 4772900
+    },
+    {
+      "start": 6144,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8228400,
+      "owned_host_feature_to_projected_cache_append_ns": 4778600
+    },
+    {
+      "start": 6272,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8659100,
+      "owned_host_feature_to_projected_cache_append_ns": 5302700
+    },
+    {
+      "start": 6400,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 10565100,
+      "owned_host_feature_to_projected_cache_append_ns": 5148100
+    },
+    {
+      "start": 6528,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8897000,
+      "owned_host_feature_to_projected_cache_append_ns": 5124600
+    },
+    {
+      "start": 6656,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7734400,
+      "owned_host_feature_to_projected_cache_append_ns": 4667000
+    },
+    {
+      "start": 6784,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8449800,
+      "owned_host_feature_to_projected_cache_append_ns": 4925400
+    },
+    {
+      "start": 6912,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8460000,
+      "owned_host_feature_to_projected_cache_append_ns": 4787800
+    },
+    {
+      "start": 7040,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8397200,
+      "owned_host_feature_to_projected_cache_append_ns": 4755500
+    },
+    {
+      "start": 7168,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8502800,
+      "owned_host_feature_to_projected_cache_append_ns": 4551500
+    },
+    {
+      "start": 7296,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8530900,
+      "owned_host_feature_to_projected_cache_append_ns": 4637200
+    },
+    {
+      "start": 7424,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9496900,
+      "owned_host_feature_to_projected_cache_append_ns": 5932800
+    },
+    {
+      "start": 7552,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8418500,
+      "owned_host_feature_to_projected_cache_append_ns": 5791100
+    },
+    {
+      "start": 7680,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 6632300,
+      "owned_host_feature_to_projected_cache_append_ns": 5335600
+    },
+    {
+      "start": 7808,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 6940200,
+      "owned_host_feature_to_projected_cache_append_ns": 5896500
+    },
+    {
+      "start": 7936,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 6036100,
+      "owned_host_feature_to_projected_cache_append_ns": 4545600
+    },
+    {
+      "start": 8064,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8544100,
+      "owned_host_feature_to_projected_cache_append_ns": 5235100
+    },
+    {
+      "start": 8192,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8232800,
+      "owned_host_feature_to_projected_cache_append_ns": 4849100
+    },
+    {
+      "start": 8320,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9057500,
+      "owned_host_feature_to_projected_cache_append_ns": 4525200
+    },
+    {
+      "start": 8448,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8217800,
+      "owned_host_feature_to_projected_cache_append_ns": 5285100
+    },
+    {
+      "start": 8576,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8305400,
+      "owned_host_feature_to_projected_cache_append_ns": 4576400
+    },
+    {
+      "start": 8704,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8653300,
+      "owned_host_feature_to_projected_cache_append_ns": 5020800
+    },
+    {
+      "start": 8832,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 6956200,
+      "owned_host_feature_to_projected_cache_append_ns": 4103100
+    },
+    {
+      "start": 8960,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 4895900,
+      "owned_host_feature_to_projected_cache_append_ns": 4775100
+    },
+    {
+      "start": 9088,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 5841700,
+      "owned_host_feature_to_projected_cache_append_ns": 4397300
+    },
+    {
+      "start": 9216,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 6571300,
+      "owned_host_feature_to_projected_cache_append_ns": 4057600
+    },
+    {
+      "start": 9344,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 5443400,
+      "owned_host_feature_to_projected_cache_append_ns": 4341600
+    },
+    {
+      "start": 9472,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8461600,
+      "owned_host_feature_to_projected_cache_append_ns": 4958200
+    },
+    {
+      "start": 9600,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8493000,
+      "owned_host_feature_to_projected_cache_append_ns": 5112200
+    },
+    {
+      "start": 9728,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7744200,
+      "owned_host_feature_to_projected_cache_append_ns": 4758300
+    },
+    {
+      "start": 9856,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8329600,
+      "owned_host_feature_to_projected_cache_append_ns": 5040000
+    },
+    {
+      "start": 9984,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8440700,
+      "owned_host_feature_to_projected_cache_append_ns": 4543100
+    },
+    {
+      "start": 10112,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8257400,
+      "owned_host_feature_to_projected_cache_append_ns": 4618800
+    },
+    {
+      "start": 10240,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9726300,
+      "owned_host_feature_to_projected_cache_append_ns": 4778800
+    },
+    {
+      "start": 10368,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8577400,
+      "owned_host_feature_to_projected_cache_append_ns": 4912300
+    },
+    {
+      "start": 10496,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7697200,
+      "owned_host_feature_to_projected_cache_append_ns": 4688700
+    },
+    {
+      "start": 10624,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8486200,
+      "owned_host_feature_to_projected_cache_append_ns": 4695000
+    },
+    {
+      "start": 10752,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8408700,
+      "owned_host_feature_to_projected_cache_append_ns": 4993800
+    },
+    {
+      "start": 10880,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8612700,
+      "owned_host_feature_to_projected_cache_append_ns": 4807000
+    },
+    {
+      "start": 11008,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8487700,
+      "owned_host_feature_to_projected_cache_append_ns": 4610200
+    },
+    {
+      "start": 11136,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8796200,
+      "owned_host_feature_to_projected_cache_append_ns": 4758900
+    },
+    {
+      "start": 11264,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9059000,
+      "owned_host_feature_to_projected_cache_append_ns": 4686000
+    },
+    {
+      "start": 11392,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9927500,
+      "owned_host_feature_to_projected_cache_append_ns": 4657400
+    },
+    {
+      "start": 11520,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8237900,
+      "owned_host_feature_to_projected_cache_append_ns": 4291600
+    },
+    {
+      "start": 11648,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8437300,
+      "owned_host_feature_to_projected_cache_append_ns": 4174600
+    },
+    {
+      "start": 11776,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8391100,
+      "owned_host_feature_to_projected_cache_append_ns": 5006800
+    },
+    {
+      "start": 11904,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8281100,
+      "owned_host_feature_to_projected_cache_append_ns": 4862100
+    },
+    {
+      "start": 12032,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7803100,
+      "owned_host_feature_to_projected_cache_append_ns": 4749900
+    },
+    {
+      "start": 12160,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8386500,
+      "owned_host_feature_to_projected_cache_append_ns": 4954900
+    },
+    {
+      "start": 12288,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8207300,
+      "owned_host_feature_to_projected_cache_append_ns": 4637800
+    },
+    {
+      "start": 12416,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8285600,
+      "owned_host_feature_to_projected_cache_append_ns": 4584900
+    },
+    {
+      "start": 12544,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8451500,
+      "owned_host_feature_to_projected_cache_append_ns": 4744100
+    },
+    {
+      "start": 12672,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8379000,
+      "owned_host_feature_to_projected_cache_append_ns": 4676800
+    },
+    {
+      "start": 12800,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7638800,
+      "owned_host_feature_to_projected_cache_append_ns": 4641600
+    },
+    {
+      "start": 12928,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8234100,
+      "owned_host_feature_to_projected_cache_append_ns": 4452500
+    },
+    {
+      "start": 13056,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8185900,
+      "owned_host_feature_to_projected_cache_append_ns": 4678300
+    },
+    {
+      "start": 13184,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8245100,
+      "owned_host_feature_to_projected_cache_append_ns": 4500300
+    },
+    {
+      "start": 13312,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8307100,
+      "owned_host_feature_to_projected_cache_append_ns": 4601100
+    },
+    {
+      "start": 13440,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8263100,
+      "owned_host_feature_to_projected_cache_append_ns": 4810200
+    },
+    {
+      "start": 13568,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8708800,
+      "owned_host_feature_to_projected_cache_append_ns": 4642700
+    },
+    {
+      "start": 13696,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9631400,
+      "owned_host_feature_to_projected_cache_append_ns": 4523400
+    },
+    {
+      "start": 13824,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8210900,
+      "owned_host_feature_to_projected_cache_append_ns": 4636100
+    },
+    {
+      "start": 13952,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8151400,
+      "owned_host_feature_to_projected_cache_append_ns": 4710300
+    },
+    {
+      "start": 14080,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8337000,
+      "owned_host_feature_to_projected_cache_append_ns": 4547500
+    },
+    {
+      "start": 14208,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8279300,
+      "owned_host_feature_to_projected_cache_append_ns": 4935200
+    },
+    {
+      "start": 14336,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7636300,
+      "owned_host_feature_to_projected_cache_append_ns": 4407000
+    },
+    {
+      "start": 14464,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8127600,
+      "owned_host_feature_to_projected_cache_append_ns": 4690200
+    },
+    {
+      "start": 14592,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8308100,
+      "owned_host_feature_to_projected_cache_append_ns": 4870100
+    },
+    {
+      "start": 14720,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8451000,
+      "owned_host_feature_to_projected_cache_append_ns": 4434400
+    },
+    {
+      "start": 14848,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8691000,
+      "owned_host_feature_to_projected_cache_append_ns": 4574400
+    },
+    {
+      "start": 14976,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8366800,
+      "owned_host_feature_to_projected_cache_append_ns": 4677800
+    },
+    {
+      "start": 15104,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 7728200,
+      "owned_host_feature_to_projected_cache_append_ns": 4585300
+    },
+    {
+      "start": 15232,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8288000,
+      "owned_host_feature_to_projected_cache_append_ns": 4649000
+    },
+    {
+      "start": 15360,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8165400,
+      "owned_host_feature_to_projected_cache_append_ns": 4413200
+    },
+    {
+      "start": 15488,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8316100,
+      "owned_host_feature_to_projected_cache_append_ns": 4534800
+    },
+    {
+      "start": 15616,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8394700,
+      "owned_host_feature_to_projected_cache_append_ns": 4649900
+    },
+    {
+      "start": 15744,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8310900,
+      "owned_host_feature_to_projected_cache_append_ns": 4815300
+    },
+    {
+      "start": 15872,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8641600,
+      "owned_host_feature_to_projected_cache_append_ns": 4550300
+    },
+    {
+      "start": 16000,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 9732800,
+      "owned_host_feature_to_projected_cache_append_ns": 4753600
+    },
+    {
+      "start": 16128,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8229800,
+      "owned_host_feature_to_projected_cache_append_ns": 4872700
+    },
+    {
+      "start": 16256,
+      "rows": 128,
+      "synthetic_CPU_feature_generation_ns": 8243500,
+      "owned_host_feature_to_projected_cache_append_ns": 5841300
+    }
+  ],
+  "excluded_warmups": [
+    {
+      "attention_mode": "repeat",
+      "head_mode": "full_bf16",
+      "raw_ids": [
+        25,
+        660,
+        314
+      ],
+      "input_prepare_ns": 3310700,
+      "backbone_including_finite_sync_ns": 575588400,
+      "full_head_including_finite_sync_and_host_ID_copy_ns": 11364100,
+      "component_draft_total_ns": 590263200,
+      "all_hidden_and_logits_finite": true,
+      "CPU_owner_hidden": {
+        "max_absolute_error": 0.1015625,
+        "max_relative_error_nonzero_reference": 27.987951807228917,
+        "zero_reference_nonzero_actual_count": 3,
+        "exact_element_count": 1317,
+        "element_count": 7680,
+        "all_values_finite": true
+      },
+      "CPU_owner_full_vocab_logits": {
+        "max_absolute_error": 0.125,
+        "max_relative_error_nonzero_reference": 2841.9473684210525,
+        "zero_reference_nonzero_actual_count": 0,
+        "exact_element_count": 258221,
+        "element_count": 744960,
+        "all_values_finite": true
+      },
+      "CPU_owner_raw_ids": [
+        25,
+        660,
+        314
+      ],
+      "CPU_owner_raw_id_equality": true
+    },
+    {
+      "attention_mode": "grouped2d",
+      "head_mode": "full_bf16",
+      "raw_ids": [
+        25,
+        660,
+        314
+      ],
+      "input_prepare_ns": 3283300,
+      "backbone_including_finite_sync_ns": 26850000,
+      "full_head_including_finite_sync_and_host_ID_copy_ns": 6343400,
+      "component_draft_total_ns": 36476700,
+      "all_hidden_and_logits_finite": true,
+      "CPU_owner_hidden": {
+        "max_absolute_error": 0.09375,
+        "max_relative_error_nonzero_reference": 27.02409638554217,
+        "zero_reference_nonzero_actual_count": 3,
+        "exact_element_count": 1568,
+        "element_count": 7680,
+        "all_values_finite": true
+      },
+      "CPU_owner_full_vocab_logits": {
+        "max_absolute_error": 0.06494140625,
+        "max_relative_error_nonzero_reference": 1245.3157894736842,
+        "zero_reference_nonzero_actual_count": 0,
+        "exact_element_count": 281744,
+        "element_count": 744960,
+        "all_values_finite": true
+      },
+      "CPU_owner_raw_ids": [
+        25,
+        660,
+        314
+      ],
+      "CPU_owner_raw_id_equality": true
+    }
+  ],
+  "measured_pairs": [
+    {
+      "pair_index": 0,
+      "execution_order": [
+        "repeat",
+        "grouped2d"
+      ],
+      "variants": {
+        "repeat": {
+          "attention_mode": "repeat",
+          "head_mode": "full_bf16",
+          "raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "input_prepare_ns": 1848800,
+          "backbone_including_finite_sync_ns": 45082800,
+          "full_head_including_finite_sync_and_host_ID_copy_ns": 6739500,
+          "component_draft_total_ns": 53671100,
+          "all_hidden_and_logits_finite": true,
+          "CPU_owner_hidden": {
+            "max_absolute_error": 0.1015625,
+            "max_relative_error_nonzero_reference": 27.987951807228917,
+            "zero_reference_nonzero_actual_count": 3,
+            "exact_element_count": 1317,
+            "element_count": 7680,
+            "all_values_finite": true
+          },
+          "CPU_owner_full_vocab_logits": {
+            "max_absolute_error": 0.125,
+            "max_relative_error_nonzero_reference": 2841.9473684210525,
+            "zero_reference_nonzero_actual_count": 0,
+            "exact_element_count": 258221,
+            "element_count": 744960,
+            "all_values_finite": true
+          },
+          "CPU_owner_raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "CPU_owner_raw_id_equality": true
+        },
+        "grouped2d": {
+          "attention_mode": "grouped2d",
+          "head_mode": "full_bf16",
+          "raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "input_prepare_ns": 1332800,
+          "backbone_including_finite_sync_ns": 22048500,
+          "full_head_including_finite_sync_and_host_ID_copy_ns": 6351800,
+          "component_draft_total_ns": 29733100,
+          "all_hidden_and_logits_finite": true,
+          "CPU_owner_hidden": {
+            "max_absolute_error": 0.09375,
+            "max_relative_error_nonzero_reference": 27.02409638554217,
+            "zero_reference_nonzero_actual_count": 3,
+            "exact_element_count": 1568,
+            "element_count": 7680,
+            "all_values_finite": true
+          },
+          "CPU_owner_full_vocab_logits": {
+            "max_absolute_error": 0.06494140625,
+            "max_relative_error_nonzero_reference": 1245.3157894736842,
+            "zero_reference_nonzero_actual_count": 0,
+            "exact_element_count": 281744,
+            "element_count": 744960,
+            "all_values_finite": true
+          },
+          "CPU_owner_raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "CPU_owner_raw_id_equality": true
+        }
+      },
+      "direct_raw_id_equality": true,
+      "direct_repeat_vs_grouped2d_hidden": {
+        "max_absolute_error": 0.09375,
+        "max_relative_error_nonzero_reference": 127.0,
+        "zero_reference_nonzero_actual_count": 3,
+        "exact_element_count": 1419,
+        "element_count": 7680,
+        "all_values_finite": true
+      },
+      "direct_repeat_vs_grouped2d_full_vocab_logits": {
+        "max_absolute_error": 0.109375,
+        "max_relative_error_nonzero_reference": 1890.5911602209944,
+        "zero_reference_nonzero_actual_count": 0,
+        "exact_element_count": 283277,
+        "element_count": 744960,
+        "all_values_finite": true
+      }
+    },
+    {
+      "pair_index": 1,
+      "execution_order": [
+        "grouped2d",
+        "repeat"
+      ],
+      "variants": {
+        "grouped2d": {
+          "attention_mode": "grouped2d",
+          "head_mode": "full_bf16",
+          "raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "input_prepare_ns": 1641900,
+          "backbone_including_finite_sync_ns": 22085600,
+          "full_head_including_finite_sync_and_host_ID_copy_ns": 6523500,
+          "component_draft_total_ns": 30251000,
+          "all_hidden_and_logits_finite": true,
+          "CPU_owner_hidden": {
+            "max_absolute_error": 0.09375,
+            "max_relative_error_nonzero_reference": 27.02409638554217,
+            "zero_reference_nonzero_actual_count": 3,
+            "exact_element_count": 1568,
+            "element_count": 7680,
+            "all_values_finite": true
+          },
+          "CPU_owner_full_vocab_logits": {
+            "max_absolute_error": 0.06494140625,
+            "max_relative_error_nonzero_reference": 1245.3157894736842,
+            "zero_reference_nonzero_actual_count": 0,
+            "exact_element_count": 281744,
+            "element_count": 744960,
+            "all_values_finite": true
+          },
+          "CPU_owner_raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "CPU_owner_raw_id_equality": true
+        },
+        "repeat": {
+          "attention_mode": "repeat",
+          "head_mode": "full_bf16",
+          "raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "input_prepare_ns": 1407700,
+          "backbone_including_finite_sync_ns": 43730600,
+          "full_head_including_finite_sync_and_host_ID_copy_ns": 6342900,
+          "component_draft_total_ns": 51481200,
+          "all_hidden_and_logits_finite": true,
+          "CPU_owner_hidden": {
+            "max_absolute_error": 0.1015625,
+            "max_relative_error_nonzero_reference": 27.987951807228917,
+            "zero_reference_nonzero_actual_count": 3,
+            "exact_element_count": 1317,
+            "element_count": 7680,
+            "all_values_finite": true
+          },
+          "CPU_owner_full_vocab_logits": {
+            "max_absolute_error": 0.125,
+            "max_relative_error_nonzero_reference": 2841.9473684210525,
+            "zero_reference_nonzero_actual_count": 0,
+            "exact_element_count": 258221,
+            "element_count": 744960,
+            "all_values_finite": true
+          },
+          "CPU_owner_raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "CPU_owner_raw_id_equality": true
+        }
+      },
+      "direct_raw_id_equality": true,
+      "direct_repeat_vs_grouped2d_hidden": {
+        "max_absolute_error": 0.09375,
+        "max_relative_error_nonzero_reference": 127.0,
+        "zero_reference_nonzero_actual_count": 3,
+        "exact_element_count": 1419,
+        "element_count": 7680,
+        "all_values_finite": true
+      },
+      "direct_repeat_vs_grouped2d_full_vocab_logits": {
+        "max_absolute_error": 0.109375,
+        "max_relative_error_nonzero_reference": 1890.5911602209944,
+        "zero_reference_nonzero_actual_count": 0,
+        "exact_element_count": 283277,
+        "element_count": 744960,
+        "all_values_finite": true
+      }
+    },
+    {
+      "pair_index": 2,
+      "execution_order": [
+        "repeat",
+        "grouped2d"
+      ],
+      "variants": {
+        "repeat": {
+          "attention_mode": "repeat",
+          "head_mode": "full_bf16",
+          "raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "input_prepare_ns": 1602600,
+          "backbone_including_finite_sync_ns": 44617600,
+          "full_head_including_finite_sync_and_host_ID_copy_ns": 6828200,
+          "component_draft_total_ns": 53048400,
+          "all_hidden_and_logits_finite": true,
+          "CPU_owner_hidden": {
+            "max_absolute_error": 0.1015625,
+            "max_relative_error_nonzero_reference": 27.987951807228917,
+            "zero_reference_nonzero_actual_count": 3,
+            "exact_element_count": 1317,
+            "element_count": 7680,
+            "all_values_finite": true
+          },
+          "CPU_owner_full_vocab_logits": {
+            "max_absolute_error": 0.125,
+            "max_relative_error_nonzero_reference": 2841.9473684210525,
+            "zero_reference_nonzero_actual_count": 0,
+            "exact_element_count": 258221,
+            "element_count": 744960,
+            "all_values_finite": true
+          },
+          "CPU_owner_raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "CPU_owner_raw_id_equality": true
+        },
+        "grouped2d": {
+          "attention_mode": "grouped2d",
+          "head_mode": "full_bf16",
+          "raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "input_prepare_ns": 1747600,
+          "backbone_including_finite_sync_ns": 22534400,
+          "full_head_including_finite_sync_and_host_ID_copy_ns": 6350700,
+          "component_draft_total_ns": 30632700,
+          "all_hidden_and_logits_finite": true,
+          "CPU_owner_hidden": {
+            "max_absolute_error": 0.09375,
+            "max_relative_error_nonzero_reference": 27.02409638554217,
+            "zero_reference_nonzero_actual_count": 3,
+            "exact_element_count": 1568,
+            "element_count": 7680,
+            "all_values_finite": true
+          },
+          "CPU_owner_full_vocab_logits": {
+            "max_absolute_error": 0.06494140625,
+            "max_relative_error_nonzero_reference": 1245.3157894736842,
+            "zero_reference_nonzero_actual_count": 0,
+            "exact_element_count": 281744,
+            "element_count": 744960,
+            "all_values_finite": true
+          },
+          "CPU_owner_raw_ids": [
+            25,
+            660,
+            314
+          ],
+          "CPU_owner_raw_id_equality": true
+        }
+      },
+      "direct_raw_id_equality": true,
+      "direct_repeat_vs_grouped2d_hidden": {
+        "max_absolute_error": 0.09375,
+        "max_relative_error_nonzero_reference": 127.0,
+        "zero_reference_nonzero_actual_count": 3,
+        "exact_element_count": 1419,
+        "element_count": 7680,
+        "all_values_finite": true
+      },
+      "direct_repeat_vs_grouped2d_full_vocab_logits": {
+        "max_absolute_error": 0.109375,
+        "max_relative_error_nonzero_reference": 1890.5911602209944,
+        "zero_reference_nonzero_actual_count": 0,
+        "exact_element_count": 283277,
+        "element_count": 744960,
+        "all_values_finite": true
+      }
+    }
+  ],
+  "CPU_owner_compared": true,
+  "independent_CPU_owner_forward_ns": 3054536700,
+  "CPU_accuracy_qualified": false,
+  "source_scope": "deterministic_synthetic_HCconcat_prefix_and_actual_anchor/mask/head;no_native_target_capture",
+  "timing_scope": "synchronous_components_with_finite_syncs_and_host_ID_copy;no_native_tap_transport_verifier_commit_or_output;fixed_same_cache_and_same_inputs",
+  "cache_unchanged_after_pairs": true,
+  "native_transport_measured": false,
+  "target_acceptance_measured": false,
+  "serving_throughput_measured": false,
+  "server_activation": false
+}

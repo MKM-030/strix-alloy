@@ -1,0 +1,319 @@
+{
+  "schema": "dflash_complete_context_r1_onnx_export.v1",
+  "enabled": false,
+  "checkpoint": "C:\\AI\\halogen-dflash\\pixelml-9cd660f9050c92fedc88cbe547bd53af0392abe1\\model.safetensors",
+  "checkpoint_sha256": "35a23c17c248ff2e3296e6b78882b6d955af3092498fb7b6c48be1af4bfa971a",
+  "config_sha256": "fb9cc99a44e223308466668a6181cb2b782c583e0876a46a11d3b8fbf5b829f0",
+  "onnx_version": "1.23.1",
+  "exporter_sha256": "a867493a8071cb7dd85b310e341b81dfb831df95d175690f200000026af485e8",
+  "graphs": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\npu-context-r1-graphs\\context_projector_r1_bf16_native.onnx",
+      "sha256": "43a0711ad78ce1a369c87f8b763630c209bd245703a541e96058a651c29ebcca",
+      "precision": "bf16_native",
+      "operators": {
+        "Add": 11,
+        "Cast": 154,
+        "Concat": 11,
+        "Greater": 89,
+        "Identity": 1,
+        "IsInf": 89,
+        "IsNaN": 89,
+        "MatMul": 11,
+        "Mul": 28,
+        "Neg": 5,
+        "Not": 1,
+        "Or": 177,
+        "Reciprocal": 6,
+        "ReduceMax": 89,
+        "ReduceMean": 6,
+        "Reshape": 10,
+        "Slice": 10,
+        "Sqrt": 6,
+        "Transpose": 21,
+        "Unsqueeze": 15
+      },
+      "derived_values_with_finite_checks": 89,
+      "checker_full_check_passed": true,
+      "EP_BF16_partition_support": "not_executed_or_qualified",
+      "EP_node_assignment": null,
+      "source_CPU_numerical_errors": null,
+      "hardware_execution": false
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\npu-context-r1-graphs\\context_projector_r1_float_roundtrip.onnx",
+      "sha256": "93ff6be00a4b8a8b66583c73f063ac164ab07ffeb4816322797301a36df66b5e",
+      "precision": "float_roundtrip",
+      "operators": {
+        "Add": 11,
+        "Cast": 252,
+        "Concat": 11,
+        "Greater": 121,
+        "Identity": 1,
+        "IsInf": 121,
+        "IsNaN": 121,
+        "MatMul": 11,
+        "Mul": 28,
+        "Neg": 5,
+        "Not": 1,
+        "Or": 241,
+        "Reciprocal": 6,
+        "ReduceMax": 121,
+        "ReduceMean": 6,
+        "Reshape": 10,
+        "Slice": 10,
+        "Sqrt": 6,
+        "Transpose": 21,
+        "Unsqueeze": 15
+      },
+      "derived_values_with_finite_checks": 121,
+      "checker_full_check_passed": true,
+      "EP_BF16_partition_support": "not_executed_or_qualified",
+      "EP_node_assignment": null,
+      "source_CPU_numerical_errors": null,
+      "hardware_execution": false
+    }
+  ],
+  "weights": [
+    {
+      "name": "fc.weight",
+      "shape": [
+        2560,
+        12800
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 6144,
+      "external_offset": 0,
+      "bytes": 65536000,
+      "raw_bytes_sha256": "9d9029838ceff1fed88effec7a845e0cc269f49f2342bee6fc92ab2480fe900a",
+      "all_values_finite": true
+    },
+    {
+      "name": "hidden_norm.weight",
+      "shape": [
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 65542144,
+      "external_offset": 65536000,
+      "bytes": 5120,
+      "raw_bytes_sha256": "5456e7316ee036333c008e1159b2ac2c4097d71e05954a7551178aa0d6c519ad",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.0.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 183522816,
+      "external_offset": 65541120,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "4467b97d642bb002dc8adc3df0f523fa1019e7790c1041a96a7b6344a68ae5da",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.0.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 249059328,
+      "external_offset": 68162560,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "203655aa53729e172445ab2386862c7a20b04f7d10ebbf7ca102db34d4053185",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.0.self_attn.k_norm.weight",
+      "shape": [
+        256
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 183522304,
+      "external_offset": 70784000,
+      "bytes": 512,
+      "raw_bytes_sha256": "aecab5eb2c5d171aa56a288980e90d92a35c028cb9e06e39a7c9177536111cdf",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.1.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 369656320,
+      "external_offset": 70784512,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "d63fc2b80a1fec0023d7d5936af471d16ec7d1ed2792d21088f0238e39bc2c6c",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.1.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 435192832,
+      "external_offset": 73405952,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "16802f4fc137c532b810cff63be9493837b791bbf0f8a65a7f9d22b99503fd8a",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.1.self_attn.k_norm.weight",
+      "shape": [
+        256
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 369655808,
+      "external_offset": 76027392,
+      "bytes": 512,
+      "raw_bytes_sha256": "221e1db2d9b620bcb0d1dbb0a83eaabacd4c2c7052676eeec605db0a35297c5a",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.2.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 555789824,
+      "external_offset": 76027904,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "31a053492cdfa235a251a30e974cfa0f920a3f1a81d52950f2048d164a2ab752",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.2.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 621326336,
+      "external_offset": 78649344,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "d8e9454af4c6e52b8949eed818bad59e58ba020f768c13943817f62cf0dbc425",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.2.self_attn.k_norm.weight",
+      "shape": [
+        256
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 555789312,
+      "external_offset": 81270784,
+      "bytes": 512,
+      "raw_bytes_sha256": "6e2c919d2722e0801990d41b909bc803102fcb266a8b10849c4dd54e95c59dc8",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.3.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 741923328,
+      "external_offset": 81271296,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "71c9f42909fed29154ee79bab6a0dc44621dc149d45d2eea9c6fcfff71316651",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.3.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 807459840,
+      "external_offset": 83892736,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "03b5788ca2379fcdb71a061327c0bb7a227add41219e031ac14fa358b36d4e9d",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.3.self_attn.k_norm.weight",
+      "shape": [
+        256
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 741922816,
+      "external_offset": 86514176,
+      "bytes": 512,
+      "raw_bytes_sha256": "a9a9b184ea82282bf85824d2e8795663f6734a80dc777dbcc261d14c680f6ae7",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.4.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 928056832,
+      "external_offset": 86514688,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "8e69a34022b3f09bcfc5b4ed5a6f07659ee9c2561d53cbb7e454212504629527",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.4.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        2560
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 993593344,
+      "external_offset": 89136128,
+      "bytes": 2621440,
+      "raw_bytes_sha256": "db95b4054f23617ea872e2bd0d8cd1a7f6301e520e38a12df5a2ca17c55ebb86",
+      "all_values_finite": true
+    },
+    {
+      "name": "layers.4.self_attn.k_norm.weight",
+      "shape": [
+        256
+      ],
+      "dtype": "BF16",
+      "source_absolute_offset": 928056320,
+      "external_offset": 91757568,
+      "bytes": 512,
+      "raw_bytes_sha256": "94074336abece03b66782c0cf1fa09ad72eebf6ce61d91a92a4bb08e7fe7a1e9",
+      "all_values_finite": true
+    }
+  ],
+  "external_weights_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\npu-context-r1-graphs\\context_weights.bf16.bin",
+  "external_weights_bytes": 91758080,
+  "external_weights_sha256": "8fd83bfbf1d80f0f326fd99de29c1e98d913179735573db6ee1b85a074c40993",
+  "opset": 18,
+  "ir_version": 9,
+  "source_tap_indexes": [
+    4,
+    16,
+    24,
+    36,
+    44
+  ],
+  "rows": 1,
+  "BF16_feature_input_bytes": 25600,
+  "BF16_cos_sin_input_bytes": 1024,
+  "BF16_KV_output_bytes": 10240,
+  "FLOAT_feature_input_bytes": 51200,
+  "FLOAT_cos_sin_input_bytes": 2048,
+  "FLOAT_KV_output_bytes": 20480,
+  "source_math_difference": "ONNX Sqrt then Reciprocal in FP32 versus torch.rsqrt; provider GEMM/reduction may differ; every error must be reported with unchanged source accuracy criteria",
+  "finite_policy": "slice_actual_retained_rows_before_dispatch; immutable17weights_checked_once; all_inputs_and_derived_arithmetic_checked; false_finite_discards_entire_output",
+  "hardware_execution": false,
+  "native_transport_qualified": false,
+  "acceptance_qualified": false,
+  "serving_throughput_qualified": false
+}

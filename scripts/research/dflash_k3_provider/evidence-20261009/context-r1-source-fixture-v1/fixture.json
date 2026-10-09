@@ -1,0 +1,89 @@
+{
+  "schema": "dflash_complete_context_R1_CPU_fixture.v1",
+  "rows": 1,
+  "retained_rows_only": true,
+  "input_scope": "synthetic_component_only",
+  "source_CPU_oracle": "pinned_owner_AST_fc_hidden_norm_k_proj_k_norm_v_proj_and_apply_rotary;CPU_BF16;no_full_head",
+  "position": 16384,
+  "checkpoint_sha256": "35a23c17c248ff2e3296e6b78882b6d955af3092498fb7b6c48be1af4bfa971a",
+  "pinned_owner_source_sha256": {
+    "pixel_modeling.py": "9ad90bcb926b32b5144e8a27816ef18b51e9e5ee083108c5fbd8f63bc92b3953",
+    "hf_modeling_qwen3.py": "cbb7f2dc274c2f5592746c0dc6985ca50353efa07376f92cc922b77680a74f69"
+  },
+  "torch_version": "2.13.0+rocm10.0.0",
+  "preparer_sha256": "97d8390ff309ca680376e28ccec280bcd03248a1a79f0e6ebe381cb70e89be85",
+  "source_CPU_calls": [
+    {
+      "call_index": 0,
+      "excluded_warmup": true,
+      "source_CPU_host_input_to_owned_KV_return_ns": 8124500,
+      "exact_equal_to_first_output": true
+    },
+    {
+      "call_index": 1,
+      "excluded_warmup": false,
+      "source_CPU_host_input_to_owned_KV_return_ns": 4281700,
+      "exact_equal_to_first_output": true
+    },
+    {
+      "call_index": 2,
+      "excluded_warmup": false,
+      "source_CPU_host_input_to_owned_KV_return_ns": 3794300,
+      "exact_equal_to_first_output": true
+    },
+    {
+      "call_index": 3,
+      "excluded_warmup": false,
+      "source_CPU_host_input_to_owned_KV_return_ns": 3480000,
+      "exact_equal_to_first_output": true
+    }
+  ],
+  "source_CPU_timing_scope": "owned_feature/cos/sin_clone;exact_owner_complete_context_projection;final_KV_finite_check;owned_KV_return_clone;source_rotary_preparation_excluded;does_not_include_provider_all_derived_finite_checks",
+  "tensors": {
+    "target_features": {
+      "path": "target_features.bf16.bin",
+      "shape": [
+        1,
+        12800
+      ],
+      "dtype": "BF16",
+      "bytes": 25600,
+      "sha256": "ded4a9abffba75bc95f17f80f205639cee2bfb689bb800e312a1667323fdc01b"
+    },
+    "cos": {
+      "path": "cos.bf16.bin",
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "BF16",
+      "bytes": 512,
+      "sha256": "236abcaa3fc8949671ffb142730decbf3def70b65c4649f38aa3bff0e25e4643"
+    },
+    "sin": {
+      "path": "sin.bf16.bin",
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "BF16",
+      "bytes": 512,
+      "sha256": "b0bbd0164569f867452b5b982bc27179bb10f95902300662b277609e1e46b4dc"
+    },
+    "context_kv": {
+      "path": "context_kv.bf16.bin",
+      "shape": [
+        5,
+        2,
+        2,
+        1,
+        256
+      ],
+      "dtype": "BF16",
+      "bytes": 10240,
+      "sha256": "376b50b36269f193c27fa5f50f9a4b676996923ff16ffd58f044d871cb07a467"
+    }
+  },
+  "accelerator_executed": false,
+  "serving_activation": false
+}

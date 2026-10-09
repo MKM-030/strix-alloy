@@ -1,0 +1,148 @@
+{
+  "schema": "dflash_context_r1_root_EP_probe.v1",
+  "enabled": false,
+  "graph": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\npu-context-r1-graphs\\context_projector_r1_float_roundtrip.onnx",
+    "sha256": "93ff6be00a4b8a8b66583c73f063ac164ab07ffeb4816322797301a36df66b5e",
+    "precision": "float_roundtrip",
+    "operators": {
+      "Add": 11,
+      "Cast": 252,
+      "Concat": 11,
+      "Greater": 121,
+      "Identity": 1,
+      "IsInf": 121,
+      "IsNaN": 121,
+      "MatMul": 11,
+      "Mul": 28,
+      "Neg": 5,
+      "Not": 1,
+      "Or": 241,
+      "Reciprocal": 6,
+      "ReduceMax": 121,
+      "ReduceMean": 6,
+      "Reshape": 10,
+      "Slice": 10,
+      "Sqrt": 6,
+      "Transpose": 21,
+      "Unsqueeze": 15
+    },
+    "derived_values_with_finite_checks": 121,
+    "checker_full_check_passed": true,
+    "EP_BF16_partition_support": "not_executed_or_qualified",
+    "EP_node_assignment": null,
+    "source_CPU_numerical_errors": null,
+    "hardware_execution": false
+  },
+  "export_receipt_sha256": "3d65cdca495c50fafee9ea9a3d6df8445e7f7c378a607c2143b1af60c3b1aa83",
+  "fixture_sha256": "abe3c5078bd4649cc0fcda82da3742394b585ed7ba334dd775b6549a0280792f",
+  "fixture_source_CPU_oracle": "pinned_owner_AST_fc_hidden_norm_k_proj_k_norm_v_proj_and_apply_rotary;CPU_BF16;no_full_head",
+  "input_scope": "synthetic_component_only",
+  "precision": "float_roundtrip",
+  "runner_sha256": "d9b60b873da2b88899bfc8ca1e89253e085dd8d79c73d0aa6d690ae545e22e05",
+  "provider_library": "C:\\AI\\halogen-mtp-npu\\npu-ep-1.8.75-20261004\\onnxruntime_vitisai_ep.dll",
+  "provider_library_sha256": "95fb8d62d424f400a2f5f4e9f4d1ac1affdb35dd8c3309e85339010f50307352",
+  "provider_directory_DLL_sha256": {
+    "dyn_dispatch_core.dll": "3d71cbb95c4eb8e5cc28741d7d9f3ac51df404ebf0dbca40b7102783f63bcf93",
+    "me_aie4.dll": "34433758a2baa8b113a25c3c5aecb377332fcd6a73fe9e8ebae01217a3ae9eff",
+    "onnxruntime_providers_ryzenai.dll": "ccc3bd0c2a8f519f9cd5fb112491785918810819f80c804302f717d2a93456ec",
+    "onnxruntime_providers_vitisai.dll": "77e5be802550e6679876709ebb035d5a2af2a51c941ec194cbdef32027690a7d",
+    "onnxruntime_vitis_ai_custom_ops.dll": "be3acceb0f2de7c8d24eec3e3a8e6970c40cff31fb7637c7f90dc6ad915fe15e",
+    "onnxruntime_vitisai_ep.dll": "95fb8d62d424f400a2f5f4e9f4d1ac1affdb35dd8c3309e85339010f50307352",
+    "ryzen_mm.dll": "57b7a50dafa974cb57bfe20fb59a822966fa73751febd67ce9d0b70ca2b3128c",
+    "waic_inmem.dll": "aff57dbb526f637286597e15a5a2070aaa2d47ab7fe22b5cdf20810b9e4304bf",
+    "waic_mlir.dll": "e41e0f0143c946c577cf21a6a362aa7b32d94756e5dda533f38d3acbffbc6796",
+    "z.dll": "2bb0d952cb586579ad3309e5f68d1c01b4673fd9ac652a4d52c63a262be53d96"
+  },
+  "cpu_fallback_allowed": true,
+  "calls": [
+    {
+      "call_index": 0,
+      "excluded_warmup": true,
+      "host_input_to_owned_KV_return_ns": 22032300,
+      "graph_all_finite": true,
+      "host_outputs_all_finite": true,
+      "CPU_owner_error": {
+        "max_absolute_error": 0.0625,
+        "max_relative_error_nonzero_reference": 20.047619047619047,
+        "exact_element_count": 1039,
+        "element_count": 5120,
+        "zero_reference_nonzero_actual_count": 0
+      },
+      "all_FLOAT_output_values_exactly_widened_BF16": true,
+      "returned_KV_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\context-r1-npu-float-mixed-v1.call0.kv.float_roundtrip.bin",
+      "returned_KV_sha256": "5c7f2234c323bc6f71062d7faa1edb364233a01e1354b7a23a75fa54bbe3e688"
+    },
+    {
+      "call_index": 1,
+      "excluded_warmup": false,
+      "host_input_to_owned_KV_return_ns": 8417300,
+      "graph_all_finite": true,
+      "host_outputs_all_finite": true,
+      "CPU_owner_error": {
+        "max_absolute_error": 0.0625,
+        "max_relative_error_nonzero_reference": 20.047619047619047,
+        "exact_element_count": 1039,
+        "element_count": 5120,
+        "zero_reference_nonzero_actual_count": 0
+      },
+      "all_FLOAT_output_values_exactly_widened_BF16": true,
+      "returned_KV_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\context-r1-npu-float-mixed-v1.call1.kv.float_roundtrip.bin",
+      "returned_KV_sha256": "5c7f2234c323bc6f71062d7faa1edb364233a01e1354b7a23a75fa54bbe3e688"
+    },
+    {
+      "call_index": 2,
+      "excluded_warmup": false,
+      "host_input_to_owned_KV_return_ns": 7487100,
+      "graph_all_finite": true,
+      "host_outputs_all_finite": true,
+      "CPU_owner_error": {
+        "max_absolute_error": 0.0625,
+        "max_relative_error_nonzero_reference": 20.047619047619047,
+        "exact_element_count": 1039,
+        "element_count": 5120,
+        "zero_reference_nonzero_actual_count": 0
+      },
+      "all_FLOAT_output_values_exactly_widened_BF16": true,
+      "returned_KV_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\context-r1-npu-float-mixed-v1.call2.kv.float_roundtrip.bin",
+      "returned_KV_sha256": "5c7f2234c323bc6f71062d7faa1edb364233a01e1354b7a23a75fa54bbe3e688"
+    },
+    {
+      "call_index": 3,
+      "excluded_warmup": false,
+      "host_input_to_owned_KV_return_ns": 7726400,
+      "graph_all_finite": true,
+      "host_outputs_all_finite": true,
+      "CPU_owner_error": {
+        "max_absolute_error": 0.0625,
+        "max_relative_error_nonzero_reference": 20.047619047619047,
+        "exact_element_count": 1039,
+        "element_count": 5120,
+        "zero_reference_nonzero_actual_count": 0
+      },
+      "all_FLOAT_output_values_exactly_widened_BF16": true,
+      "returned_KV_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\context-r1-npu-float-mixed-v1.call3.kv.float_roundtrip.bin",
+      "returned_KV_sha256": "5c7f2234c323bc6f71062d7faa1edb364233a01e1354b7a23a75fa54bbe3e688"
+    }
+  ],
+  "executed_node_providers": [
+    "CPUExecutionProvider",
+    "VitisAIExecutionProvider"
+  ],
+  "NPU_only_node_attribution": false,
+  "source_accuracy_qualified": false,
+  "native_transport_measured": false,
+  "serving_throughput_qualified": false,
+  "timing_scope": "fresh_owned_host_feature/cos/sin_copy_or_exact_BF16_widen;ORT_binding;dispatch;output_fence;finite_read;owned_host_KV_return_copy;excludes_native_tap/D2H/IPC/GPU_H2D",
+  "measurement_completed": true,
+  "ort_version": "1.25.2",
+  "session_providers": [
+    "VitisAIExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "session_initialization_ns": 80817691000,
+  "profile_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\context-r1-npu-float-mixed-v1_2026-10-09_18-53-02_180.json",
+  "profile_sha256": "f73033faf55268b35894f0a92f170cc5bfc61ca1a4ee166567523e078d5619aa",
+  "executed_node_event_count": 4056,
+  "placement_limit": "ORT EP attribution does not prove every operation runs on physical NPU; preserve compiler partition/context logs"
+}

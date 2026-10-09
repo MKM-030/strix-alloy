@@ -1,0 +1,407 @@
+{
+  "schema": "dflash_fixed_capacity_component_comparison.v2",
+  "device": "cuda",
+  "capacity": 8,
+  "torch_version": "2.13.0+rocm10.0.0",
+  "torch_version_hip": "7.15.26333",
+  "device_name": "AMD Radeon(TM) 8060S Graphics",
+  "attention_mode": "grouped2d",
+  "head_mode": "chunked",
+  "compute_dtype": "BF16",
+  "threads": 2,
+  "feature_scope": "deterministic_synthetic_HCconcat;not_native_target_captured_features",
+  "source_cpu_oracle": "pinned_owner_dynamic_accepted_context;exact_actual58_weights_and_full_original_head",
+  "fixed_capacity_rounding": "masked_padded_context_may_change_kernel_reduction_order;report_every_error;no_invented_tolerance",
+  "checkpoint_sha256": "35a23c17c248ff2e3296e6b78882b6d955af3092498fb7b6c48be1af4bfa971a",
+  "original_head_sha256": "50be0ccd11e4da0c92114600aca321d2c18f795e9e923fd587469587ecfd9df4",
+  "pinned_owner_source_sha256": {
+    "pixel_modeling.py": "9ad90bcb926b32b5144e8a27816ef18b51e9e5ee083108c5fbd8f63bc92b3953",
+    "hf_modeling_qwen3.py": "cbb7f2dc274c2f5592746c0dc6985ca50353efa07376f92cc922b77680a74f69"
+  },
+  "implementation_source_sha256": {
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\run_comparison.py": "582fb4d641d4216995d26c8e54f285e082edb0bddc8b6ad02bc88edc633aaaab",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\abi.py": "13c80194c7a1fd067052d915ac86f76fe03556d595d81f894a3d6d5dfbabcda3",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\provider.py": "5c0a84f5da09b7a062f684d1ae646d1f3d101e771aada8b875ce73a7a0b77a54",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\tensor_graphs.py": "7b7a9c0586bb2e182360a508db4a77a0603930e704f25a05bed53fffd5dcec89",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\scalar_support.py": "55fad879167d3ca21db15d40b1748efb7e1de171b499db6075bdff045353157a",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\scripts\\research\\dflash_k3_reference\\contract.py": "307e7eb0064c1078ffb7702bffabba3dce52e5b2e101c2f1ffbd74b34a7d8e33",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\scripts\\research\\dflash_k3_reference\\offline_loader.py": "04ba143427129eb6a4e39a6e6e37f5781b3da3f97fc073caa4fa8d2d65dfb14e",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\scripts\\research\\dflash_k3_reference\\reference.py": "dcb34fef1cd75666808eb44a0754bf236cef834fc6245590e7993b09be72e9bf",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\scripts\\research\\dflash_k3_reference\\owner_oracle.py": "52cd20d9116a417e26b4035333751f11209830fabe996e285759f73fba53e572",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\scripts\\research\\dflash_k3_reference\\compare.py": "f602fb72e97cb71b93d51735770810c924304f1e8408b19b8a0e8ab1a4f7e397"
+  },
+  "resources": {
+    "enabled": false,
+    "native_integration_complete": false,
+    "capacity": 8,
+    "context_kv_shape": [
+      5,
+      2,
+      2,
+      8,
+      256
+    ],
+    "context_kv_bf16_bytes": 81920,
+    "target_feature_bytes_per_row": 25600,
+    "maximum_verifier_feature_bytes": 102400,
+    "full_original_head_bf16_bytes": 1271398400,
+    "drafter_payload_bf16_bytes": 996213760,
+    "resident_parameter_bytes": 2267612160,
+    "full_head_macs_per_round": 1907097600,
+    "context_projection_macs_per_retained_row": 45875200,
+    "query_attention_score_bf16_bytes_per_layer": 1584,
+    "repeated_K_and_V_materialization_bytes_per_layer": 270336,
+    "grouped2d_K_and_V_bytes_per_layer": 22528,
+    "head_chunk_rows": 8192,
+    "head_chunk_bf16_bytes": 41943040,
+    "backbone_output_shape": [
+      3,
+      2560
+    ],
+    "head_raw_output_shape": [
+      3
+    ],
+    "rope": "full256_NeoX_split_half;theta1e7;cos_sin_F32_then_BF16",
+    "persistent_rows": "accepted_processed_target_inputs_only",
+    "ephemeral_query_kv": "never_returned_or_committed",
+    "full_vocab_domain": "all248320_rows;raw_ids_unsuppressed;offerable_only0..248076"
+  },
+  "preparation_ns": 5748215100,
+  "prefill_project_and_stage_ns": 551163400,
+  "first_commit_context_update_ns": 4993700,
+  "first_update_plus_second_propose_ns": 26705400,
+  "rounds": [
+    {
+      "round_index": 0,
+      "accepted_context_length": 4,
+      "provider_raw_ids": [
+        256,
+        364,
+        364
+      ],
+      "owner_raw_ids": [
+        256,
+        364,
+        364
+      ],
+      "raw_id_equality": true,
+      "hidden": {
+        "max_absolute_error": 0.09375,
+        "max_relative_error_nonzero_reference": 32.18987341772152,
+        "zero_reference_nonzero_actual_count": 1,
+        "exact_element_count": 1199,
+        "element_count": 7680,
+        "all_values_finite": true
+      },
+      "full_vocab_logits": {
+        "max_absolute_error": 0.078125,
+        "max_relative_error_nonzero_reference": 5314.697777777777,
+        "zero_reference_nonzero_actual_count": 0,
+        "exact_element_count": 171515,
+        "element_count": 744960,
+        "all_values_finite": true
+      },
+      "worker_host_phase_ns": {
+        "input_prepare": 791100,
+        "backbone_including_finite_sync": 382960000,
+        "full_head_and_host_ID_copy": 18187500,
+        "worker_propose_total": 401938600
+      },
+      "independent_CPU_owner_forward_ns": 123177000,
+      "measurement_scope": "synchronous_component_worker_including_explicit_finite_syncs_and_host_ID_copy;no_native_or_transport"
+    },
+    {
+      "round_index": 1,
+      "accepted_context_length": 6,
+      "provider_raw_ids": [
+        21,
+        198,
+        198
+      ],
+      "owner_raw_ids": [
+        21,
+        198,
+        198
+      ],
+      "raw_id_equality": true,
+      "hidden": {
+        "max_absolute_error": 0.0986328125,
+        "max_relative_error_nonzero_reference": 39.588235294117645,
+        "zero_reference_nonzero_actual_count": 4,
+        "exact_element_count": 1077,
+        "element_count": 7680,
+        "all_values_finite": true
+      },
+      "full_vocab_logits": {
+        "max_absolute_error": 0.078125,
+        "max_relative_error_nonzero_reference": 1658.139240506329,
+        "zero_reference_nonzero_actual_count": 0,
+        "exact_element_count": 170149,
+        "element_count": 744960,
+        "all_values_finite": true
+      },
+      "worker_host_phase_ns": {
+        "input_prepare": 892800,
+        "backbone_including_finite_sync": 12085400,
+        "full_head_and_host_ID_copy": 8733500,
+        "worker_propose_total": 21711700
+      },
+      "independent_CPU_owner_forward_ns": 118878700,
+      "measurement_scope": "synchronous_component_worker_including_explicit_finite_syncs_and_host_ID_copy;no_native_or_transport"
+    }
+  ],
+  "head_pair": {
+    "warmups": [
+      {
+        "mode": "chunked",
+        "host_wall_ns_including_finite_sync_and_host_ID_copy": 10030800,
+        "provider_raw_ids": [
+          21,
+          198,
+          198
+        ],
+        "owner_raw_ids": [
+          21,
+          198,
+          198
+        ],
+        "raw_id_equality": true,
+        "CPU_owner_full_vocab_logits": {
+          "max_absolute_error": 0.078125,
+          "max_relative_error_nonzero_reference": 1658.139240506329,
+          "zero_reference_nonzero_actual_count": 0,
+          "exact_element_count": 170149,
+          "element_count": 744960,
+          "all_values_finite": true
+        }
+      },
+      {
+        "mode": "full_bf16",
+        "host_wall_ns_including_finite_sync_and_host_ID_copy": 15699700,
+        "provider_raw_ids": [
+          21,
+          198,
+          198
+        ],
+        "owner_raw_ids": [
+          21,
+          198,
+          198
+        ],
+        "raw_id_equality": true,
+        "CPU_owner_full_vocab_logits": {
+          "max_absolute_error": 0.078125,
+          "max_relative_error_nonzero_reference": 1658.139240506329,
+          "zero_reference_nonzero_actual_count": 0,
+          "exact_element_count": 170149,
+          "element_count": 744960,
+          "all_values_finite": true
+        }
+      }
+    ],
+    "measured_pairs": [
+      {
+        "pair_index": 0,
+        "execution_order": [
+          "chunked",
+          "full_bf16"
+        ],
+        "heads": {
+          "chunked": {
+            "mode": "chunked",
+            "host_wall_ns_including_finite_sync_and_host_ID_copy": 9918200,
+            "provider_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "owner_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "raw_id_equality": true,
+            "CPU_owner_full_vocab_logits": {
+              "max_absolute_error": 0.078125,
+              "max_relative_error_nonzero_reference": 1658.139240506329,
+              "zero_reference_nonzero_actual_count": 0,
+              "exact_element_count": 170149,
+              "element_count": 744960,
+              "all_values_finite": true
+            }
+          },
+          "full_bf16": {
+            "mode": "full_bf16",
+            "host_wall_ns_including_finite_sync_and_host_ID_copy": 7288700,
+            "provider_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "owner_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "raw_id_equality": true,
+            "CPU_owner_full_vocab_logits": {
+              "max_absolute_error": 0.078125,
+              "max_relative_error_nonzero_reference": 1658.139240506329,
+              "zero_reference_nonzero_actual_count": 0,
+              "exact_element_count": 170149,
+              "element_count": 744960,
+              "all_values_finite": true
+            }
+          }
+        },
+        "direct_raw_id_equality": true,
+        "direct_chunked_vs_full_BF16_logits": {
+          "max_absolute_error": 0.0,
+          "max_relative_error_nonzero_reference": 0.0,
+          "zero_reference_nonzero_actual_count": 0,
+          "exact_element_count": 744960,
+          "element_count": 744960,
+          "all_values_finite": true
+        }
+      },
+      {
+        "pair_index": 1,
+        "execution_order": [
+          "full_bf16",
+          "chunked"
+        ],
+        "heads": {
+          "full_bf16": {
+            "mode": "full_bf16",
+            "host_wall_ns_including_finite_sync_and_host_ID_copy": 7260300,
+            "provider_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "owner_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "raw_id_equality": true,
+            "CPU_owner_full_vocab_logits": {
+              "max_absolute_error": 0.078125,
+              "max_relative_error_nonzero_reference": 1658.139240506329,
+              "zero_reference_nonzero_actual_count": 0,
+              "exact_element_count": 170149,
+              "element_count": 744960,
+              "all_values_finite": true
+            }
+          },
+          "chunked": {
+            "mode": "chunked",
+            "host_wall_ns_including_finite_sync_and_host_ID_copy": 9707800,
+            "provider_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "owner_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "raw_id_equality": true,
+            "CPU_owner_full_vocab_logits": {
+              "max_absolute_error": 0.078125,
+              "max_relative_error_nonzero_reference": 1658.139240506329,
+              "zero_reference_nonzero_actual_count": 0,
+              "exact_element_count": 170149,
+              "element_count": 744960,
+              "all_values_finite": true
+            }
+          }
+        },
+        "direct_raw_id_equality": true,
+        "direct_chunked_vs_full_BF16_logits": {
+          "max_absolute_error": 0.0,
+          "max_relative_error_nonzero_reference": 0.0,
+          "zero_reference_nonzero_actual_count": 0,
+          "exact_element_count": 744960,
+          "element_count": 744960,
+          "all_values_finite": true
+        }
+      },
+      {
+        "pair_index": 2,
+        "execution_order": [
+          "chunked",
+          "full_bf16"
+        ],
+        "heads": {
+          "chunked": {
+            "mode": "chunked",
+            "host_wall_ns_including_finite_sync_and_host_ID_copy": 9802700,
+            "provider_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "owner_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "raw_id_equality": true,
+            "CPU_owner_full_vocab_logits": {
+              "max_absolute_error": 0.078125,
+              "max_relative_error_nonzero_reference": 1658.139240506329,
+              "zero_reference_nonzero_actual_count": 0,
+              "exact_element_count": 170149,
+              "element_count": 744960,
+              "all_values_finite": true
+            }
+          },
+          "full_bf16": {
+            "mode": "full_bf16",
+            "host_wall_ns_including_finite_sync_and_host_ID_copy": 7574400,
+            "provider_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "owner_raw_ids": [
+              21,
+              198,
+              198
+            ],
+            "raw_id_equality": true,
+            "CPU_owner_full_vocab_logits": {
+              "max_absolute_error": 0.078125,
+              "max_relative_error_nonzero_reference": 1658.139240506329,
+              "zero_reference_nonzero_actual_count": 0,
+              "exact_element_count": 170149,
+              "element_count": 744960,
+              "all_values_finite": true
+            }
+          }
+        },
+        "direct_raw_id_equality": true,
+        "direct_chunked_vs_full_BF16_logits": {
+          "max_absolute_error": 0.0,
+          "max_relative_error_nonzero_reference": 0.0,
+          "zero_reference_nonzero_actual_count": 0,
+          "exact_element_count": 744960,
+          "element_count": 744960,
+          "all_values_finite": true
+        }
+      }
+    ],
+    "scope": "same_already_computed_second_round_hidden_and_resident_BF16_head;one_excluded_warmup_per_head_then_three_alternating_order_pairs;no_serving_throughput_claim"
+  },
+  "control_fixture": {
+    "selector1_discarded_two_NaN_rejected_rows": true,
+    "selector0_NaN_selected_current_rejected_and_retired": true,
+    "selectors_are_injected_test_controls_not_target_acceptance": true
+  },
+  "native_transport_measured": false,
+  "target_acceptance_measured": false,
+  "serving_throughput_measured": false,
+  "server_activation": false
+}

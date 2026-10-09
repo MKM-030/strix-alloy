@@ -1,0 +1,69 @@
+{
+  "utc": "2026-10-09T16:55:36.715735+00:00",
+  "config_sha256": "bd027b53fb691f4ebc6cc52a406a020ddd090f9a1e4af4e7c4da9ce9be042aa3",
+  "command": [
+    "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "-B",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\provider\\run_long_context.py",
+    "--execute-root-owned",
+    "--device",
+    "cuda",
+    "--checkpoint",
+    "C:\\AI\\halogen-dflash\\pixelml-9cd660f9050c92fedc88cbe547bd53af0392abe1\\model.safetensors",
+    "--config",
+    "C:\\AI\\halogen-dflash\\pixelml-9cd660f9050c92fedc88cbe547bd53af0392abe1\\config.json",
+    "--bindings-receipt",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-checkpoint-20261009\\binding-acquisition-outcome.json",
+    "--prefill-chunk-rows",
+    "128",
+    "--compare-cpu-owner",
+    "--output",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\gpu-long16k-grouped2d-v1.json"
+  ],
+  "server_identities": {
+    "controller": {
+      "pid": 20980,
+      "creation_time_100ns": 134360269974662419,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 25856,
+      "creation_time_100ns": 134360270079932115,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "server_run_ids": [
+    "734f009d38914de1be45a2e3a7d2a326",
+    "863b6b0374a64756a626f3fc14561bf3"
+  ],
+  "health": {
+    "status": "ok",
+    "backend": "halogen-v2",
+    "checkpoint": "v2",
+    "context": 262144,
+    "active_requests": 0,
+    "draining": false,
+    "completed": 4,
+    "cancelled": 0
+  },
+  "memory": {
+    "available_bytes": 30225301504,
+    "committed_bytes": 110448394240,
+    "commit_limit_bytes": 240139440128,
+    "commit_headroom_bytes": 129691045888
+  },
+  "coordinator_identity": {
+    "pid": 18324,
+    "creation_time_100ns": 134360385346868149,
+    "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+  },
+  "accelerator": "GPU",
+  "gpu_host_samples": {
+    "games": [],
+    "counter_count_a": 358,
+    "counter_count_b": 358,
+    "positive_a": [],
+    "positive_b": []
+  },
+  "guard_sha256": "48832185b210e2b53453cfcd4a8080b04fc5abd180585af94913ea3ab7a88141"
+}

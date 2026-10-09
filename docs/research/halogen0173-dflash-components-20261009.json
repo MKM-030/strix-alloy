@@ -1,0 +1,322 @@
+{
+  "schema": "halogen0173.dflash-component-checkpoint.v1",
+  "utc": "2026-10-09T17:00:34.661611+00:00",
+  "source_scope": "actual_trained_drafter_and_original_full_head;deterministic_synthetic_features_only",
+  "serving_gain_qualified": false,
+  "native_target_acceptance_measured": false,
+  "NPU_serving_gain_qualified": false,
+  "head": {
+    "baseline_mean_ms": 9.809566666666665,
+    "candidate_mean_ms": 7.374466666666667,
+    "reduction_percent": 24.823726498282284,
+    "excluded_warmups_per_variant": 1,
+    "alternating_pairs": 3,
+    "exact_logits_per_pair": 744960,
+    "raw_ID_equality": true,
+    "fixture_context_rows": 6,
+    "capacity": 8
+  },
+  "long": {
+    "baseline_mean_ms": 52.73356666666666,
+    "candidate_mean_ms": 30.2056,
+    "reduction_percent": 42.72035458755872,
+    "committed_synthetic_rows": 16384,
+    "capacity": 16640,
+    "prefill_chunk_rows": 128,
+    "raw_ID_equality": true,
+    "CPU_owner_raw_ID_equality": true,
+    "logit_value_equality": false,
+    "CPU_accuracy_qualified": false,
+    "max_direct_logit_absolute_error": 0.109375,
+    "excluded_warmups_per_variant": 1,
+    "alternating_pairs": 3
+  },
+  "NPU": {
+    "precision": "FLOAT_with_explicit_BF16_materialization_roundtrips",
+    "placement": "mixed_CPU_and_VitisAI_NPU_EP;compiler_context_stx_hw",
+    "mean_ms": 7.876933333333333,
+    "excluded_warmups": 1,
+    "measurements": 3,
+    "source_CPU_oracle_mean_ms": 3.852,
+    "directly_equivalent_CPU_cost": false,
+    "source_CPU_cost_difference": "CPU_oracle_has_final_KV_finite_only;EP_checks_all_derived_values",
+    "exact_values": 1039,
+    "values": 5120,
+    "max_absolute_error": 0.0625,
+    "source_accuracy_qualified": false,
+    "unchanged_limit_diagnostics": {
+      "CPU": {
+        "atol": 0.0002,
+        "rtol": 0.002,
+        "passing_values": 1041,
+        "values": 5120,
+        "all_values_pass": false,
+        "scope": "diagnostic_only_existing_projection_limits;not_new_DFlash_accuracy_authorization"
+      },
+      "NPU": {
+        "atol": 0.003,
+        "rtol": 0.03,
+        "passing_values": 4490,
+        "values": 5120,
+        "all_values_pass": false,
+        "scope": "diagnostic_only_existing_projection_limits;not_new_DFlash_accuracy_authorization"
+      }
+    },
+    "limits_provenance_sha256": "6806e34e44f28451aa38fab541c1ce0bd0cfcff747610a8ab7a887246eb11dee",
+    "native_BF16_strict_error": "Fail: [ONNXRuntimeError] : 1 : FAIL : This session contains graph nodes that are assigned to the default CPU EP, but fallback to CPU EP has been explicitly disabled by the user.",
+    "native_BF16_mixed_error": "NotImplemented: [ONNXRuntimeError] : 9 : NOT_IMPLEMENTED : Could not find an implementation for MatMul(13) node with name 'layer_0_k_matmul_98'",
+    "decision": "retain_off;cost_and_numerical_deviation_do_not_support_synchronous_decode_adoption"
+  },
+  "sources": {
+    "abi.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\abi.py",
+      "sha256": "13c80194c7a1fd067052d915ac86f76fe03556d595d81f894a3d6d5dfbabcda3"
+    },
+    "provider.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\provider.py",
+      "sha256": "5c0a84f5da09b7a062f684d1ae646d1f3d101e771aada8b875ce73a7a0b77a54"
+    },
+    "scalar_support.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\scalar_support.py",
+      "sha256": "55fad879167d3ca21db15d40b1748efb7e1de171b499db6075bdff045353157a"
+    },
+    "tensor_graphs.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\tensor_graphs.py",
+      "sha256": "7b7a9c0586bb2e182360a508db4a77a0603930e704f25a05bed53fffd5dcec89"
+    },
+    "run_comparison.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-grouped2d-headpair-v1\\provider\\run_comparison.py",
+      "sha256": "582fb4d641d4216995d26c8e54f285e082edb0bddc8b6ad02bc88edc633aaaab"
+    },
+    "prepare_context_fixture.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\context-r1-v1\\provider\\prepare_context_fixture.py",
+      "sha256": "97d8390ff309ca680376e28ccec280bcd03248a1a79f0e6ebe381cb70e89be85"
+    },
+    "export_context_onnx.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\context-r1-v1\\provider\\export_context_onnx.py",
+      "sha256": "a867493a8071cb7dd85b310e341b81dfb831df95d175690f200000026af485e8"
+    },
+    "run_context_ep.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\context-r1-v1\\provider\\run_context_ep.py",
+      "sha256": "d9b60b873da2b88899bfc8ca1e89253e085dd8d79c73d0aa6d690ae545e22e05"
+    },
+    "run_long_context.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-provider-20261009\\snapshots\\gpu-long16k-grouped2d-v1\\provider\\run_long_context.py",
+      "sha256": "f501d5fd5af07564ad664da69849867ca81ab9c9ac68077044edf86fe135490d"
+    },
+    "embedding_rows.py": {
+      "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-checkpoint-20261009\\embedding_rows.py",
+      "sha256": "d3a01ef5e5af0624bd7ce3fe56d1fc8f77fcfcacaa6ef3270338757db8cd131b"
+    }
+  },
+  "raw_archives": {
+    "gpu-grouped2d-headpair-v1.json": {
+      "sha256": "8b3d24b04bfd821589caecea104e87771789f237b7292c797b281f918508c1c4",
+      "bytes": 16185
+    },
+    "gpu-grouped2d-headpair-v1-intent.json": {
+      "sha256": "9292ddc9d59c69637ecbce36a64033c0dec3a1910150e5562cc6b6a846a62814",
+      "bytes": 5503
+    },
+    "gpu-grouped2d-headpair-v1-outcome.json": {
+      "sha256": "05aa01aabddcf05f80ce0542fc6cfc39de58bcd6f1d60ead89533db160ba8c25",
+      "bytes": 670
+    },
+    "gpu-long16k-grouped2d-v1.json": {
+      "sha256": "3a91dcdad13eec60a4b7b7ffeb0c18363f18a967b61a82cb38f3b304b74978a4",
+      "bytes": 41361
+    },
+    "gpu-long16k-grouped2d-v1-owned/intent.json": {
+      "sha256": "0d01b170942c05aaab542b971f8f894633c0efd3d71c04fcb450ff03e470b0ce",
+      "bytes": 2627
+    },
+    "gpu-long16k-grouped2d-v1-owned/result.json": {
+      "sha256": "cf4080f0b5e0b242fdde0ec0aec4c04fd7c330f38995e76481b28d6782108a51",
+      "bytes": 667
+    },
+    "context-r1-npu-native-v1.json": {
+      "sha256": "b64e39f8893e02f37b45481f3635e6eea2b77da4b15118c0cef5fd5c8e659c63",
+      "bytes": 3482
+    },
+    "context-r1-npu-mixed-v1.json": {
+      "sha256": "430dbabb0d104c067dc077178f57ee7da7837725437f2212dce11a648da9cd67",
+      "bytes": 3447
+    },
+    "context-r1-npu-float-mixed-v1.json": {
+      "sha256": "d9eadc2d8fc471f8a560d97051d004012002affba5493b892c86b90c768685e0",
+      "bytes": 7430
+    },
+    "context-r1-npu-v1-owned/result.json": {
+      "sha256": "887734886b5bf5f841dacbffc723582141984a4a636ec1c69e6eeeb2b3e3b28d",
+      "bytes": 641
+    },
+    "context-r1-npu-mixed-v1-owned/result.json": {
+      "sha256": "6448e521719df3b3b9ae2f1ba55b45c38c1c78c2aec7b9199bf7afdd4f58e377",
+      "bytes": 641
+    },
+    "context-r1-npu-float-mixed-v1-owned/result.json": {
+      "sha256": "8ac6f995ada6027df0e01fbdb8413fefb4cb686cc220d401b764841f04cd20a4",
+      "bytes": 640
+    },
+    "context-r1-source-fixture-v1/fixture.json": {
+      "sha256": "abe3c5078bd4649cc0fcda82da3742394b585ed7ba334dd775b6549a0280792f",
+      "bytes": 2829
+    },
+    "npu-context-r1-graphs/export.json": {
+      "sha256": "3d65cdca495c50fafee9ea9a3d6df8445e7f7c378a607c2143b1af60c3b1aa83",
+      "bytes": 10276
+    }
+  },
+  "compiler_contexts": [
+    {
+      "graph_sha256": "43a0711ad78ce1a369c87f8b763630c209bd245703a541e96058a651c29ebcca",
+      "context_sha256": "9ceec11fdda83ba0d78b93966cfcc4a5affa7a09ac7e3f7c97cbd290c9dde9db",
+      "partitions": [
+        {
+          "id": "vaiml_par_0",
+          "device": "VAIML",
+          "device_name": "stx",
+          "runner_type": "hw",
+          "inputs": [
+            "target_features"
+          ],
+          "outputs": [
+            "layer_4_v_matmul_check_float_719",
+            "layer_4_v_matmul_718",
+            "hidden_norm_gamma_89",
+            "hidden_norm_normalized_74",
+            "fusion_matmul_check_float_24",
+            "hidden_norm_inverse_67",
+            "hidden_norm_sqrt_60",
+            "hidden_norm_variance_53",
+            "hidden_norm_mean_46",
+            "hidden_norm_square_39",
+            "layer_3_v_matmul_check_float_592",
+            "layer_3_v_matmul_591",
+            "layer_2_v_matmul_check_float_465",
+            "layer_2_v_matmul_464",
+            "layer_1_v_matmul_check_float_338",
+            "layer_1_v_matmul_337",
+            "layer_0_v_matmul_check_float_211",
+            "layer_0_v_matmul_210",
+            "hidden_norm_normalized_BF16_check_float_82",
+            "hidden_norm_gamma_check_float_90"
+          ],
+          "nodes": [
+            "layer_4_v_matmul_check_float_719",
+            "layer_4_v_matmul_718",
+            "hidden_norm_gamma_89",
+            "hidden_norm_normalized_BF16_81",
+            "hidden_norm_normalized_74",
+            "fusion_matmul_check_float_24",
+            "fusion_matmul_23",
+            "hidden_norm_inverse_67",
+            "hidden_norm_sqrt_60",
+            "hidden_norm_variance_53",
+            "hidden_norm_mean_46",
+            "hidden_norm_square_39",
+            "layer_3_v_matmul_check_float_592",
+            "layer_3_v_matmul_591",
+            "layer_2_v_matmul_check_float_465",
+            "layer_2_v_matmul_464",
+            "layer_1_v_matmul_check_float_338",
+            "layer_1_v_matmul_337",
+            "layer_0_v_matmul_check_float_211",
+            "layer_0_v_matmul_210",
+            "hidden_norm_normalized_BF16_check_float_82",
+            "hidden_norm_gamma_check_float_90"
+          ]
+        }
+      ]
+    },
+    {
+      "graph_sha256": "93ff6be00a4b8a8b66583c73f063ac164ab07ffeb4816322797301a36df66b5e",
+      "context_sha256": "626e5333976d066405a86c667fc48d8fe80de3706a4023d3f09fdc6154a8c2f1",
+      "partitions": [
+        {
+          "id": "vaiml_par_0",
+          "device": "VAIML",
+          "device_name": "stx",
+          "runner_type": "hw",
+          "inputs": [
+            "target_features"
+          ],
+          "outputs": [
+            "layer_4_v_matmul_969",
+            "hidden_norm_gamma_round_BF16_check_float_118",
+            "hidden_norm_gamma_110",
+            "hidden_norm_normalized_round_BF16_check_float_102",
+            "hidden_norm_normalized_94",
+            "fusion_linear_round_BF16_check_float_45",
+            "fusion_matmul_37",
+            "hidden_norm_inverse_87",
+            "hidden_norm_sqrt_80",
+            "hidden_norm_variance_73",
+            "hidden_norm_mean_66",
+            "hidden_norm_square_59",
+            "layer_4_v_linear_round_BF16_check_float_977",
+            "layer_3_v_matmul_796",
+            "layer_3_v_linear_round_BF16_check_float_804",
+            "layer_2_v_matmul_623",
+            "layer_2_v_linear_round_BF16_check_float_631",
+            "layer_1_v_matmul_450",
+            "layer_1_v_linear_round_BF16_check_float_458",
+            "layer_0_v_matmul_277",
+            "layer_0_v_linear_round_BF16_check_float_285"
+          ],
+          "nodes": [
+            "layer_4_v_matmul_969",
+            "hidden_norm_gamma_round_BF16_check_float_118",
+            "hidden_norm_gamma_round_BF16_117",
+            "hidden_norm_gamma_110",
+            "hidden_norm_normalized_round_BF16_check_float_102",
+            "hidden_norm_normalized_round_BF16_101",
+            "hidden_norm_normalized_94",
+            "fusion_linear_round_BF16_check_float_45",
+            "fusion_linear_round_BF16_44",
+            "fusion_matmul_37",
+            "hidden_norm_inverse_87",
+            "hidden_norm_sqrt_80",
+            "hidden_norm_variance_73",
+            "hidden_norm_mean_66",
+            "hidden_norm_square_59",
+            "layer_4_v_linear_round_BF16_check_float_977",
+            "layer_4_v_linear_round_BF16_976",
+            "layer_3_v_matmul_796",
+            "layer_3_v_linear_round_BF16_check_float_804",
+            "layer_3_v_linear_round_BF16_803",
+            "layer_2_v_matmul_623",
+            "layer_2_v_linear_round_BF16_check_float_631",
+            "layer_2_v_linear_round_BF16_630",
+            "layer_1_v_matmul_450",
+            "layer_1_v_linear_round_BF16_check_float_458",
+            "layer_1_v_linear_round_BF16_457",
+            "layer_0_v_matmul_277",
+            "layer_0_v_linear_round_BF16_check_float_285",
+            "layer_0_v_linear_round_BF16_284"
+          ]
+        }
+      ]
+    }
+  ],
+  "older_two_round_reports": "source_hashes_retained;old_source_bytes_not_archived;not_current_source_qualification",
+  "latest_serving_numbers": {
+    "actual_input_tokens": 16384,
+    "output_tokens": 128,
+    "prefill": 1833.6953788209692,
+    "decode": 43.04733781430367,
+    "accepted": 180,
+    "drafted": 399,
+    "acceptance": 0.45112781954887216,
+    "acceptance_scope": "combined API MTP+PLD draft-token accounting; native MTP-only acceptance not isolated",
+    "measurement_only_no_acceleration_claim": true,
+    "public_document": "docs/benchmarks/halogen0173-natural16k-raw-20261009.md",
+    "receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-v2-20261009\\root-qualification.json"
+  },
+  "integration_remaining": [
+    "actual_owned_semantic_target_features",
+    "D2H_owned_transport_and_ack",
+    "causal_provider_coordination",
+    "native_verification_and_frozen_serving_comparison"
+  ]
+}
