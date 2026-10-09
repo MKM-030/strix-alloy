@@ -1,0 +1,7 @@
+# Independent read-only review
+
+9 October 2026. Delegated reviewer `/root/cpu_reciprocal_screen/arithmetic_review` inspected the archived scalar reference, final screen sources, build and correctness receipts, and emitted assembly. No blocking arithmetic or measurement defect was found. No tests, benchmark, hardware or lifecycle actions were executed by the reviewer.
+
+The review confirms signed remainder, unsigned modulo-2^64 hashing/offset wrap, negative int32 token sign extension, two carry words, EOS replacement, constants load order and original head order. The verification compares against the pinned archived ID bytes, not only the two implementations against each other. Edge checks cover EOS at token zero, signed extrema and large exact-multiple neighborhoods, and admission mismatch at every divisor position before output mutation. Assembly contains sixteen IDIV instructions in the baseline token loop and none in the candidate.
+
+The timing method uses separate translation units without LTO, noinline entry points, identical preallocated outputs, alternating order, and observable output validation outside timing. It measures elapsed CPU component time; serving critical-path impact, Linux/native-worker code generation, and sixteen possible binary thunk round trips remain unmeasured. The measured 0.119450 ms saving per full 8,192-token window supports closing the arithmetic lead without integration or another benchmark.

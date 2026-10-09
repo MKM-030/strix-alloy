@@ -1,0 +1,307 @@
+{
+  "schema": "halogen0173-cpu-id-reciprocal-closed-archive-v1",
+  "date": "2026-10-09",
+  "status": "closed-retain-stock",
+  "conclusion": "The 0.1194500 ms paired median elapsed saving per full 8192-token CPU ID window is too small to justify binary attachment or another engine cohort.",
+  "archive_directory": "scripts/benchmarks/experimental/halogen0173_cpu_id_reciprocal",
+  "fixture_distribution": "Private offline tokens/history/constants/oracle binaries omitted; archive README documents receipt location and relocation.",
+  "source_identity": {
+    "historical_compiled_source_sha256": {
+      "archived_scalar_ids_0172.h": "fc0158d640693e65b3bc45154eba429c93ae946e5d6942a0570bb91d8c7ee3b7",
+      "screen_kernels.h": "42dde4cb602b143c0ca14dfb24392727d9e150092e572e4c0512a4b0f8ec724e",
+      "screen_kernels.cpp": "78f0e569bcc3f5528d22d9f862459f6a0c0b04e62379de5a811a0274d2689d01",
+      "screen_main.cpp": "19dd01bd2c7c1c8a309273784c44bdd1c07c81b21b6b7cfeb679fefb0e9f56b4",
+      "prepare-screen.ps1": "0243c69d170eee976d85bde1b79b8e86f07873eb199cd0c95b06a19df2513f72",
+      "run-screen.ps1": "e3e5a11c345dd0771542ea613ab248ddd290fc8be8007134689ad9112cc57049"
+    },
+    "exact_archived_copy_sha256": {
+      "archived_scalar_ids_0172.h": "fc0158d640693e65b3bc45154eba429c93ae946e5d6942a0570bb91d8c7ee3b7",
+      "screen_kernels.h": "42dde4cb602b143c0ca14dfb24392727d9e150092e572e4c0512a4b0f8ec724e",
+      "screen_kernels.cpp": "78f0e569bcc3f5528d22d9f862459f6a0c0b04e62379de5a811a0274d2689d01",
+      "screen_main.cpp": "19dd01bd2c7c1c8a309273784c44bdd1c07c81b21b6b7cfeb679fefb0e9f56b4",
+      "prepare-screen.ps1": "0243c69d170eee976d85bde1b79b8e86f07873eb199cd0c95b06a19df2513f72",
+      "independent-review.md": "36a7d7f8e0a0cbc41be7a61f2aac942ec1508553d08b4497b03ffdd617d63731",
+      "run-screen.original.ps1": "e3e5a11c345dd0771542ea613ab248ddd290fc8be8007134689ad9112cc57049"
+    },
+    "portable_runner_sha256": "807c3c9aeb5c7f3f53bba9133df0696d5bf6e5e13aef3bac3ce011dc58d77ba7",
+    "portable_runner_changes": "Optional FixtureVerificationPath and missing-fixture message only."
+  },
+  "build": {
+    "compiler_sha256": "cd87822b7881563aef2b18aca1e277d0d04b0186b80975d4aa48c5c474d340d7",
+    "executable_sha256": "574a3416753bb496cfbb90decbc2c9e94af56ae981a904f7d33b2c3a1ef65857",
+    "assembly_sha256": "63ebbfb677621facb5f8a43d3e5020e708f4de8c17b7413fe9f44828b9043326",
+    "compile_exit_code": 0,
+    "separate_translation_units": true,
+    "lto_enabled": false,
+    "vectorization_enabled": false,
+    "baseline_idiv_per_token": 16,
+    "candidate_idiv_per_token": 0
+  },
+  "verification": {
+    "schema": "ple-id-reciprocal-cpu-screen-verify-sanitized-v1",
+    "utc": "2026-10-09T11:58:29.3195329Z",
+    "mode": "verify",
+    "exit_code": 0,
+    "executable_sha256": "574a3416753bb496cfbb90decbc2c9e94af56ae981a904f7d33b2c3a1ef65857",
+    "archived_fixture_receipt_sha256": "3d9ae7aaf04a9f521e2b1ca5ea1dda0edaf41056506c3fb4b84e67c5d789e4f9",
+    "pinned_inputs": {
+      "tokens": {
+        "expected_sha256": "eb61da267c463a95090d7c4b0c33872f69f831d7063a37a7d220f8ebb5e0a42d",
+        "actual_sha256": "eb61da267c463a95090d7c4b0c33872f69f831d7063a37a7d220f8ebb5e0a42d"
+      },
+      "history": {
+        "expected_sha256": "c940a74aceaf252e095513ec8659910c66739f9a67f5af7ace7dc2571290c0c7",
+        "actual_sha256": "c940a74aceaf252e095513ec8659910c66739f9a67f5af7ace7dc2571290c0c7"
+      },
+      "constants": {
+        "expected_sha256": "92a0c13bf084710eea33b4843748e7657bebc1ed2aed6539fd2f9768896038a3",
+        "actual_sha256": "92a0c13bf084710eea33b4843748e7657bebc1ed2aed6539fd2f9768896038a3"
+      },
+      "oracle": {
+        "expected_sha256": "b309f270a5af14d60b895507b8d9964303e7190a81d0c3e475f38d7083cea704",
+        "actual_sha256": "b309f270a5af14d60b895507b8d9964303e7190a81d0c3e475f38d7083cea704"
+      }
+    },
+    "output_ids": {
+      "baseline_sha256": "b309f270a5af14d60b895507b8d9964303e7190a81d0c3e475f38d7083cea704",
+      "literal_sha256": "b309f270a5af14d60b895507b8d9964303e7190a81d0c3e475f38d7083cea704",
+      "exact_oracle_match": true
+    },
+    "result": {
+      "mode": "verify",
+      "tokens": 8192,
+      "ids": 131072,
+      "archived_oracle_exact": true,
+      "signed_remainder_checks": 65840,
+      "scalar_edge_ids_checked": 50960,
+      "unsupported_models_rejected_before_write": 64,
+      "row_payload_reads": false,
+      "checksum_u64": "7612705ad5821c5c"
+    },
+    "benchmark_executed": false,
+    "component_only": true,
+    "engine_accelerator_table_access": false,
+    "live_integration_or_patch": false,
+    "serving_throughput_claim": false,
+    "original_receipt_sha256": "71eedc25a2241983c142ad95a0647ee496e379db77996961e5a33ad816cdecd0",
+    "paths_sanitized": true
+  },
+  "timed_result": {
+    "mode": "bench",
+    "tokens": 8192,
+    "ids": 131072,
+    "archived_oracle_exact": true,
+    "signed_remainder_checks": 65840,
+    "scalar_edge_ids_checked": 50960,
+    "unsupported_models_rejected_before_write": 64,
+    "row_payload_reads": false,
+    "checksum_u64": "7612705ad5821c5c",
+    "samples": 31,
+    "windows_per_sample": 8,
+    "one_admission_per_candidate_window_included": true,
+    "literal_descriptor_setup_required": false,
+    "time_unit": "ms_per_full_8192_token_ID_window",
+    "dynamic_signed_division": {
+      "median_ms": 0.197425,
+      "p10_ms": 0.196425,
+      "p90_ms": 0.1987375,
+      "min_ms": 0.194825,
+      "max_ms": 0.1991375,
+      "mean_ms": 0.197409677
+    },
+    "literal_exact_remainder": {
+      "median_ms": 0.0780625,
+      "p10_ms": 0.0761625,
+      "p90_ms": 0.07875,
+      "min_ms": 0.075675,
+      "max_ms": 0.080175,
+      "mean_ms": 0.07782379
+    },
+    "paired_cpu_ms_saved": {
+      "median_ms": 0.11945,
+      "p10_ms": 0.1186125,
+      "p90_ms": 0.1208375,
+      "min_ms": 0.11825,
+      "max_ms": 0.12115,
+      "mean_ms": 0.119585887
+    },
+    "paired_samples": [
+      [
+        0.1982625,
+        0.077425,
+        0.1208375
+      ],
+      [
+        0.1971625,
+        0.077925,
+        0.1192375
+      ],
+      [
+        0.194825,
+        0.075675,
+        0.11915
+      ],
+      [
+        0.19695,
+        0.0773375,
+        0.1196125
+      ],
+      [
+        0.1967375,
+        0.0780625,
+        0.118675
+      ],
+      [
+        0.197275,
+        0.0786625,
+        0.1186125
+      ],
+      [
+        0.1969625,
+        0.077925,
+        0.1190375
+      ],
+      [
+        0.196625,
+        0.07785,
+        0.118775
+      ],
+      [
+        0.196575,
+        0.0763875,
+        0.1201875
+      ],
+      [
+        0.1961625,
+        0.0758125,
+        0.12035
+      ],
+      [
+        0.197,
+        0.0776,
+        0.1194
+      ],
+      [
+        0.197675,
+        0.078625,
+        0.11905
+      ],
+      [
+        0.197425,
+        0.077575,
+        0.11985
+      ],
+      [
+        0.1965875,
+        0.0783,
+        0.1182875
+      ],
+      [
+        0.1971375,
+        0.0759875,
+        0.12115
+      ],
+      [
+        0.196425,
+        0.0764125,
+        0.1200125
+      ],
+      [
+        0.198425,
+        0.080175,
+        0.11825
+      ],
+      [
+        0.198125,
+        0.078675,
+        0.11945
+      ],
+      [
+        0.19745,
+        0.0781625,
+        0.1192875
+      ],
+      [
+        0.1975125,
+        0.0781,
+        0.1194125
+      ],
+      [
+        0.1975875,
+        0.077425,
+        0.1201625
+      ],
+      [
+        0.1962125,
+        0.0761625,
+        0.12005
+      ],
+      [
+        0.1987875,
+        0.078525,
+        0.1202625
+      ],
+      [
+        0.197675,
+        0.0789375,
+        0.1187375
+      ],
+      [
+        0.1972375,
+        0.07875,
+        0.1184875
+      ],
+      [
+        0.1982125,
+        0.0782625,
+        0.11995
+      ],
+      [
+        0.1980375,
+        0.07905,
+        0.1189875
+      ],
+      [
+        0.1991375,
+        0.0782625,
+        0.120875
+      ],
+      [
+        0.1979,
+        0.0784125,
+        0.1194875
+      ],
+      [
+        0.1987375,
+        0.07775,
+        0.1209875
+      ],
+      [
+        0.198875,
+        0.078325,
+        0.12055
+      ]
+    ]
+  },
+  "timed_receipt_utc": "2026-10-09T11:58:57.9172114Z",
+  "timed_receipt_original_sha256": "0100642254bdc7fccdafec56fd15830ecbb0c54d1eb07984151b842dcee73780",
+  "measurement_scope": {
+    "clock": "std::chrono::steady_clock",
+    "unit": "elapsed ms per full 8192-token ID window",
+    "thread_cpu_consumption_measured": false,
+    "candidate_admission_included": true,
+    "table_payload_reads": false,
+    "binary_thunk_cost_included": false,
+    "engine_critical_path_effect_measured": false,
+    "serving_throughput_claim": false
+  },
+  "archive_actions": {
+    "compilation": false,
+    "tests": false,
+    "benchmark": false,
+    "hardware": false,
+    "integration": false,
+    "state_edits": false,
+    "git_commit": false
+  }
+}
