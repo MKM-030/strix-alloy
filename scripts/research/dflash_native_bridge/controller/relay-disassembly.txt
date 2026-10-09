@@ -1,0 +1,644 @@
+
+retained_relay.o:	file format elf64-x86-64
+
+Disassembly of section .hgn_dflash_relay_templates:
+
+0000000000000000 <hgn_dflash_templates_begin>:
+       0: f3 0f 1e fa                  	endbr64
+       4: 48 8d 64 24 80               	leaq	-0x80(%rsp), %rsp
+       9: 9c                           	pushfq
+       a: 41 57                        	pushq	%r15
+       c: 41 56                        	pushq	%r14
+       e: 41 55                        	pushq	%r13
+      10: 41 54                        	pushq	%r12
+      12: 41 53                        	pushq	%r11
+      14: 41 52                        	pushq	%r10
+      16: 41 51                        	pushq	%r9
+      18: 41 50                        	pushq	%r8
+      1a: 48 8d 64 24 f8               	leaq	-0x8(%rsp), %rsp
+      1f: 55                           	pushq	%rbp
+      20: 57                           	pushq	%rdi
+      21: 56                           	pushq	%rsi
+      22: 52                           	pushq	%rdx
+      23: 51                           	pushq	%rcx
+      24: 53                           	pushq	%rbx
+      25: 50                           	pushq	%rax
+      26: 48 8d 84 24 08 01 00 00      	leaq	0x108(%rsp), %rax
+      2e: 48 89 44 24 38               	movq	%rax, 0x38(%rsp)
+      33: 48 89 e5                     	movq	%rsp, %rbp
+      36: 48 8d 64 24 f0               	leaq	-0x10(%rsp), %rsp
+      3b: 48 c7 45 f0 00 00 00 00      	movq	$0x0, -0x10(%rbp)
+
+0000000000000043 <hgn_dflash_relay_0_mandatory_gate>:
+      43: 4c 8b 15 00 00 00 00         	movq	(%rip), %r10            # 0x4a <hgn_dflash_relay_0_mandatory_gate+0x7>
+		0000000000000046:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x3c
+      4a: 4d 85 d2                     	testq	%r10, %r10
+      4d: 0f 84 80 00 00 00            	je	0xd3 <hgn_dflash_relay_0_optional_begin>
+      53: 41 83 7a 0c 01               	cmpl	$0x1, 0xc(%r10)
+      58: 75 79                        	jne	0xd3 <hgn_dflash_relay_0_optional_begin>
+      5a: 41 83 7a 18 00               	cmpl	$0x0, 0x18(%r10)
+      5f: 74 72                        	je	0xd3 <hgn_dflash_relay_0_optional_begin>
+      61: 4c 8b 5d 20                  	movq	0x20(%rbp), %r11
+      65: 4d 85 db                     	testq	%r11, %r11
+      68: 74 69                        	je	0xd3 <hgn_dflash_relay_0_optional_begin>
+      6a: 49 8b 83 08 01 00 00         	movq	0x108(%r11), %rax
+      71: 48 85 c0                     	testq	%rax, %rax
+      74: 74 5d                        	je	0xd3 <hgn_dflash_relay_0_optional_begin>
+      76: 49 3b 02                     	cmpq	(%r10), %rax
+      79: 75 58                        	jne	0xd3 <hgn_dflash_relay_0_optional_begin>
+      7b: 48 3b 45 28                  	cmpq	0x28(%rbp), %rax
+      7f: 75 52                        	jne	0xd3 <hgn_dflash_relay_0_optional_begin>
+      81: 8b 88 c8 00 00 00            	movl	0xc8(%rax), %ecx
+      87: 41 3b 4a 08                  	cmpl	0x8(%r10), %ecx
+      8b: 75 46                        	jne	0xd3 <hgn_dflash_relay_0_optional_begin>
+      8d: 41 c7 83 24 02 00 00 ff ff ff 7f     	movl	$0x7fffffff, 0x224(%r11) # imm = 0x7FFFFFFF
+      98: c6 80 7d 0b 00 00 00         	movb	$0x0, 0xb7d(%rax)
+      9f: c7 40 40 ff ff ff ff         	movl	$0xffffffff, 0x40(%rax) # imm = 0xFFFFFFFF
+      a6: 48 c7 45 f0 01 00 00 00      	movq	$0x1, -0x10(%rbp)
+      ae: 49 8b 42 50                  	movq	0x50(%r10), %rax
+      b2: 48 83 f8 ff                  	cmpq	$-0x1, %rax
+      b6: 74 0e                        	je	0xc6 <hgn_dflash_relay_0_mandatory_gate+0x83>
+      b8: 48 8d 48 01                  	leaq	0x1(%rax), %rcx
+      bc: f0                           	lock
+      bd: 49 0f b1 4a 50               	cmpxchgq	%rcx, 0x50(%r10)
+      c2: 75 02                        	jne	0xc6 <hgn_dflash_relay_0_mandatory_gate+0x83>
+      c4: eb 0d                        	jmp	0xd3 <hgn_dflash_relay_0_optional_begin>
+      c6: f0                           	lock
+      c7: 49 ff 42 58                  	incq	0x58(%r10)
+      cb: 41 c7 42 6c 00 00 00 00      	movl	$0x0, 0x6c(%r10)
+
+00000000000000d3 <hgn_dflash_relay_0_optional_begin>:
+      d3: 48 83 7d f0 01               	cmpq	$0x1, -0x10(%rbp)
+      d8: 0f 85 12 01 00 00            	jne	0x1f0 <hgn_dflash_relay_0_optional_begin+0x11d>
+      de: 83 3d 00 00 00 00 01         	cmpl	$0x1, (%rip)            # 0xe5 <hgn_dflash_relay_0_optional_begin+0x12>
+		00000000000000e0:  R_X86_64_PC32	hgn_dflash_relay_0_config-0x5
+      e5: 0f 85 05 01 00 00            	jne	0x1f0 <hgn_dflash_relay_0_optional_begin+0x11d>
+      eb: 4c 8b 15 00 00 00 00         	movq	(%rip), %r10            # 0xf2 <hgn_dflash_relay_0_optional_begin+0x1f>
+		00000000000000ee:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x2c
+      f2: 4d 85 d2                     	testq	%r10, %r10
+      f5: 0f 84 f5 00 00 00            	je	0x1f0 <hgn_dflash_relay_0_optional_begin+0x11d>
+      fb: 41 80 3a 01                  	cmpb	$0x1, (%r10)
+      ff: 0f 85 eb 00 00 00            	jne	0x1f0 <hgn_dflash_relay_0_optional_begin+0x11d>
+     105: 4c 8b 1d 00 00 00 00         	movq	(%rip), %r11            # 0x10c <hgn_dflash_relay_0_optional_begin+0x39>
+		0000000000000108:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x34
+     10c: f0                           	lock
+     10d: 49 ff 03                     	incq	(%r11)
+     110: 41 80 3a 01                  	cmpb	$0x1, (%r10)
+     114: 0f 85 cb 00 00 00            	jne	0x1e5 <hgn_dflash_relay_0_optional_begin+0x112>
+     11a: 4c 8b 15 00 00 00 00         	movq	(%rip), %r10            # 0x121 <hgn_dflash_relay_0_optional_begin+0x4e>
+		000000000000011d:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x14
+     121: 64 4d 8b 1a                  	movq	%fs:(%r10), %r11
+     125: 64 49 8b 4a 08               	movq	%fs:0x8(%r10), %rcx
+     12a: 48 8b 45 38                  	movq	0x38(%rbp), %rax
+     12e: 4d 85 db                     	testq	%r11, %r11
+     131: 0f 84 94 00 00 00            	je	0x1cb <hgn_dflash_relay_0_optional_begin+0xf8>
+     137: 4c 39 d9                     	cmpq	%r11, %rcx
+     13a: 0f 86 8b 00 00 00            	jbe	0x1cb <hgn_dflash_relay_0_optional_begin+0xf8>
+     140: 48 39 c8                     	cmpq	%rcx, %rax
+     143: 0f 83 82 00 00 00            	jae	0x1cb <hgn_dflash_relay_0_optional_begin+0xf8>
+     149: 4c 29 d8                     	subq	%r11, %rax
+     14c: 72 7d                        	jb	0x1cb <hgn_dflash_relay_0_optional_begin+0xf8>
+     14e: 48 3b 05 00 00 00 00         	cmpq	(%rip), %rax            # 0x155 <hgn_dflash_relay_0_optional_begin+0x82>
+		0000000000000151:  R_X86_64_PC32	hgn_dflash_relay_0_config+0xc
+     155: 72 74                        	jb	0x1cb <hgn_dflash_relay_0_optional_begin+0xf8>
+     157: 8b 0d 00 00 00 00            	movl	(%rip), %ecx            # 0x15d <hgn_dflash_relay_0_optional_begin+0x8a>
+		0000000000000159:  R_X86_64_PC32	hgn_dflash_relay_0_config
+     15d: 48 8d 81 80 00 00 00         	leaq	0x80(%rcx), %rax
+     164: 48 89 ec                     	movq	%rbp, %rsp
+     167: 48 29 c4                     	subq	%rax, %rsp
+     16a: 48 83 e4 c0                  	andq	$-0x40, %rsp
+     16e: 48 89 65 f8                  	movq	%rsp, -0x8(%rbp)
+     172: fc                           	cld
+     173: 48 89 e7                     	movq	%rsp, %rdi
+     176: 31 c0                        	xorl	%eax, %eax
+     178: f3 aa                        	rep		stosb	%al, %es:(%rdi)
+     17a: 48 8b 05 00 00 00 00         	movq	(%rip), %rax            # 0x181 <hgn_dflash_relay_0_optional_begin+0xae>
+		000000000000017d:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x4
+     181: 48 89 c2                     	movq	%rax, %rdx
+     184: 48 c1 ea 20                  	shrq	$0x20, %rdx
+     188: 48 0f ae 24 24               	xsave64	(%rsp)
+     18d: db e3                        	fninit
+     18f: 0f ae 15 4a 01 00 00         	ldmxcsr	0x14a(%rip)             # 0x2e0 <hgn_dflash_relay_0_config+0x50>
+     196: 31 ff                        	xorl	%edi, %edi
+     198: 48 89 ee                     	movq	%rbp, %rsi
+     19b: 48 8d 55 f0                  	leaq	-0x10(%rbp), %rdx
+     19f: 48 8b 0d 00 00 00 00         	movq	(%rip), %rcx            # 0x1a6 <hgn_dflash_relay_0_optional_begin+0xd3>
+		00000000000001a2:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x3c
+     1a6: 4c 8b 05 00 00 00 00         	movq	(%rip), %r8             # 0x1ad <hgn_dflash_relay_0_optional_begin+0xda>
+		00000000000001a9:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x44
+     1ad: ff 15 00 00 00 00            	callq	*(%rip)                 # 0x1b3 <hgn_dflash_relay_0_optional_begin+0xe0>
+		00000000000001af:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x1c
+     1b3: 48 8b 7d f8                  	movq	-0x8(%rbp), %rdi
+     1b7: 48 8b 05 00 00 00 00         	movq	(%rip), %rax            # 0x1be <hgn_dflash_relay_0_optional_begin+0xeb>
+		00000000000001ba:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x4
+     1be: 48 89 c2                     	movq	%rax, %rdx
+     1c1: 48 c1 ea 20                  	shrq	$0x20, %rdx
+     1c5: 48 0f ae 2f                  	xrstor64	(%rdi)
+     1c9: eb 1a                        	jmp	0x1e5 <hgn_dflash_relay_0_optional_begin+0x112>
+     1cb: 4c 8b 1d 00 00 00 00         	movq	(%rip), %r11            # 0x1d2 <hgn_dflash_relay_0_optional_begin+0xff>
+		00000000000001ce:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x24
+     1d2: f0                           	lock
+     1d3: 49 ff 03                     	incq	(%r11)
+     1d6: 4c 8b 15 00 00 00 00         	movq	(%rip), %r10            # 0x1dd <hgn_dflash_relay_0_optional_begin+0x10a>
+		00000000000001d9:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x3c
+     1dd: 41 c7 42 6c 00 00 00 00      	movl	$0x0, 0x6c(%r10)
+     1e5: 4c 8b 1d 00 00 00 00         	movq	(%rip), %r11            # 0x1ec <hgn_dflash_relay_0_optional_begin+0x119>
+		00000000000001e8:  R_X86_64_PC32	hgn_dflash_relay_0_config+0x34
+     1ec: f0                           	lock
+     1ed: 49 ff 0b                     	decq	(%r11)
+     1f0: 48 83 7d f0 02               	cmpq	$0x2, -0x10(%rbp)
+     1f5: 74 3b                        	je	0x232 <hgn_dflash_relay_0_stock_delta+0x4>
+     1f7: 48 83 7d f0 01               	cmpq	$0x1, -0x10(%rbp)
+     1fc: 74 61                        	je	0x25f <hgn_dflash_relay_0_ready_delta+0x4>
+     1fe: 48 89 ec                     	movq	%rbp, %rsp
+     201: 58                           	popq	%rax
+     202: 5b                           	popq	%rbx
+     203: 59                           	popq	%rcx
+     204: 5a                           	popq	%rdx
+     205: 5e                           	popq	%rsi
+     206: 5f                           	popq	%rdi
+     207: 5d                           	popq	%rbp
+     208: 48 8d 64 24 08               	leaq	0x8(%rsp), %rsp
+     20d: 41 58                        	popq	%r8
+     20f: 41 59                        	popq	%r9
+     211: 41 5a                        	popq	%r10
+     213: 41 5b                        	popq	%r11
+     215: 41 5c                        	popq	%r12
+     217: 41 5d                        	popq	%r13
+     219: 41 5e                        	popq	%r14
+     21b: 41 5f                        	popq	%r15
+     21d: 9d                           	popfq
+     21e: 48 8d a4 24 80 00 00 00      	leaq	0x80(%rsp), %rsp
+     226: 83 be 1c 01 00 00 00         	cmpl	$0x0, 0x11c(%rsi)
+     22d: e9 de c0 17 5a               	jmp	0x5a17c310 <hgn_dflash_templates_end+0x5a17baf8>
+
+000000000000022e <hgn_dflash_relay_0_stock_delta>:
+     22e: de c0                        	faddp	%st, %st(0)
+     230: 17                           	<unknown>
+     231: 5a                           	popq	%rdx
+     232: 48 89 ec                     	movq	%rbp, %rsp
+     235: 58                           	popq	%rax
+     236: 5b                           	popq	%rbx
+     237: 59                           	popq	%rcx
+     238: 5a                           	popq	%rdx
+     239: 5e                           	popq	%rsi
+     23a: 5f                           	popq	%rdi
+     23b: 5d                           	popq	%rbp
+     23c: 48 8d 64 24 08               	leaq	0x8(%rsp), %rsp
+     241: 41 58                        	popq	%r8
+     243: 41 59                        	popq	%r9
+     245: 41 5a                        	popq	%r10
+     247: 41 5b                        	popq	%r11
+     249: 41 5c                        	popq	%r12
+     24b: 41 5d                        	popq	%r13
+     24d: 41 5e                        	popq	%r14
+     24f: 41 5f                        	popq	%r15
+     251: 9d                           	popfq
+     252: 48 8d a4 24 80 00 00 00      	leaq	0x80(%rsp), %rsp
+     25a: e9 de c0 17 5a               	jmp	0x5a17c33d <hgn_dflash_templates_end+0x5a17bb25>
+
+000000000000025b <hgn_dflash_relay_0_ready_delta>:
+     25b: de c0                        	faddp	%st, %st(0)
+     25d: 17                           	<unknown>
+     25e: 5a                           	popq	%rdx
+     25f: 48 89 ec                     	movq	%rbp, %rsp
+     262: 58                           	popq	%rax
+     263: 5b                           	popq	%rbx
+     264: 59                           	popq	%rcx
+     265: 5a                           	popq	%rdx
+     266: 5e                           	popq	%rsi
+     267: 5f                           	popq	%rdi
+     268: 5d                           	popq	%rbp
+     269: 48 8d 64 24 08               	leaq	0x8(%rsp), %rsp
+     26e: 41 58                        	popq	%r8
+     270: 41 59                        	popq	%r9
+     272: 41 5a                        	popq	%r10
+     274: 41 5b                        	popq	%r11
+     276: 41 5c                        	popq	%r12
+     278: 41 5d                        	popq	%r13
+     27a: 41 5e                        	popq	%r14
+     27c: 41 5f                        	popq	%r15
+     27e: 9d                           	popfq
+     27f: 48 8d a4 24 80 00 00 00      	leaq	0x80(%rsp), %rsp
+     287: e9 de c0 17 5a               	jmp	0x5a17c36a <hgn_dflash_templates_end+0x5a17bb52>
+
+0000000000000288 <hgn_dflash_relay_0_scalar_delta>:
+     288: de c0                        	faddp	%st, %st(0)
+     28a: 17                           	<unknown>
+     28b: 5a                           	popq	%rdx
+
+000000000000028c <hgn_dflash_relay_0_code_end>:
+     28c: 0f 1f 40 00                  	nopl	(%rax)
+
+0000000000000290 <hgn_dflash_relay_0_config>:
+     290: 00 00 00 00 00 00 00 00         ........
+     298: 00 00 00 00 00 00 00 00         ........
+     2a0: 00 00 00 00 00 00 00 00         ........
+     2a8: 00 00 00 00 00 00 00 00         ........
+     2b0: 00 00 00 00 00 00 00 00         ........
+     2b8: 00 00 00 00 00 00 00 00         ........
+     2c0: 00 00 00 00 00 00 00 00         ........
+     2c8: 00 00 00 00 00 00 00 00         ........
+     2d0: 00 00 00 00 00 00 00 00         ........
+     2d8: 00 00 00 00 00 00 00 00         ........
+     2e0: 80 1f 00 00 0f 1f 40 00         ......@.
+
+00000000000002e8 <hgn_dflash_relay_0_end>:
+     2e8: 0f 1f 84 00 00 00 00 00      	nopl	(%rax,%rax)
+
+00000000000002f0 <hgn_dflash_relay_1_begin>:
+     2f0: f3 0f 1e fa                  	endbr64
+     2f4: 48 8d 64 24 80               	leaq	-0x80(%rsp), %rsp
+     2f9: 9c                           	pushfq
+     2fa: 41 57                        	pushq	%r15
+     2fc: 41 56                        	pushq	%r14
+     2fe: 41 55                        	pushq	%r13
+     300: 41 54                        	pushq	%r12
+     302: 41 53                        	pushq	%r11
+     304: 41 52                        	pushq	%r10
+     306: 41 51                        	pushq	%r9
+     308: 41 50                        	pushq	%r8
+     30a: 48 8d 64 24 f8               	leaq	-0x8(%rsp), %rsp
+     30f: 55                           	pushq	%rbp
+     310: 57                           	pushq	%rdi
+     311: 56                           	pushq	%rsi
+     312: 52                           	pushq	%rdx
+     313: 51                           	pushq	%rcx
+     314: 53                           	pushq	%rbx
+     315: 50                           	pushq	%rax
+     316: 48 8d 84 24 08 01 00 00      	leaq	0x108(%rsp), %rax
+     31e: 48 89 44 24 38               	movq	%rax, 0x38(%rsp)
+     323: 48 89 e5                     	movq	%rsp, %rbp
+     326: 48 8d 64 24 f0               	leaq	-0x10(%rsp), %rsp
+     32b: 48 c7 45 f0 00 00 00 00      	movq	$0x0, -0x10(%rbp)
+
+0000000000000333 <hgn_dflash_relay_1_mandatory_gate>:
+     333: 4c 8b 15 00 00 00 00         	movq	(%rip), %r10            # 0x33a <hgn_dflash_relay_1_mandatory_gate+0x7>
+		0000000000000336:  R_X86_64_PC32	hgn_dflash_relay_1_config+0x3c
+     33a: 4d 85 d2                     	testq	%r10, %r10
+     33d: 74 51                        	je	0x390 <hgn_dflash_relay_1_mandatory_gate+0x5d>
+     33f: 41 83 7a 0c 01               	cmpl	$0x1, 0xc(%r10)
+     344: 75 4a                        	jne	0x390 <hgn_dflash_relay_1_mandatory_gate+0x5d>
+     346: 41 83 7a 18 00               	cmpl	$0x0, 0x18(%r10)
+     34b: 74 43                        	je	0x390 <hgn_dflash_relay_1_mandatory_gate+0x5d>
+     34d: 4c 8b 5d 08                  	movq	0x8(%rbp), %r11
+     351: 4d 85 db                     	testq	%r11, %r11
+     354: 74 3a                        	je	0x390 <hgn_dflash_relay_1_mandatory_gate+0x5d>
+     356: 49 8b 83 08 01 00 00         	movq	0x108(%r11), %rax
+     35d: 48 85 c0                     	testq	%rax, %rax
+     360: 74 2e                        	je	0x390 <hgn_dflash_relay_1_mandatory_gate+0x5d>
+     362: 49 3b 02                     	cmpq	(%r10), %rax
+     365: 75 29                        	jne	0x390 <hgn_dflash_relay_1_mandatory_gate+0x5d>
+     367: 8b 88 c8 00 00 00            	movl	0xc8(%rax), %ecx
+     36d: 41 3b 4a 08                  	cmpl	0x8(%r10), %ecx
+     371: 75 1d                        	jne	0x390 <hgn_dflash_relay_1_mandatory_gate+0x5d>
+     373: 41 c7 83 24 02 00 00 ff ff ff 7f     	movl	$0x7fffffff, 0x224(%r11) # imm = 0x7FFFFFFF
+     37e: c6 80 7d 0b 00 00 00         	movb	$0x0, 0xb7d(%rax)
+     385: c7 40 40 ff ff ff ff         	movl	$0xffffffff, 0x40(%rax) # imm = 0xFFFFFFFF
+     38c: c6 45 18 01                  	movb	$0x1, 0x18(%rbp)
+     390: 48 89 ec                     	movq	%rbp, %rsp
+     393: 58                           	popq	%rax
+     394: 5b                           	popq	%rbx
+     395: 59                           	popq	%rcx
+     396: 5a                           	popq	%rdx
+     397: 5e                           	popq	%rsi
+     398: 5f                           	popq	%rdi
+     399: 5d                           	popq	%rbp
+     39a: 48 8d 64 24 08               	leaq	0x8(%rsp), %rsp
+     39f: 41 58                        	popq	%r8
+     3a1: 41 59                        	popq	%r9
+     3a3: 41 5a                        	popq	%r10
+     3a5: 41 5b                        	popq	%r11
+     3a7: 41 5c                        	popq	%r12
+     3a9: 41 5d                        	popq	%r13
+     3ab: 41 5e                        	popq	%r14
+     3ad: 41 5f                        	popq	%r15
+     3af: 9d                           	popfq
+     3b0: 48 8d a4 24 80 00 00 00      	leaq	0x80(%rsp), %rsp
+     3b8: 48 8b bb 08 01 00 00         	movq	0x108(%rbx), %rdi
+     3bf: e9 de c0 17 5a               	jmp	0x5a17c4a2 <hgn_dflash_templates_end+0x5a17bc8a>
+
+00000000000003c0 <hgn_dflash_relay_1_stock_delta>:
+     3c0: de c0                        	faddp	%st, %st(0)
+     3c2: 17                           	<unknown>
+     3c3: 5a                           	popq	%rdx
+
+00000000000003c4 <hgn_dflash_relay_1_code_end>:
+     3c4: 0f 1f 40 00                  	nopl	(%rax)
+
+00000000000003c8 <hgn_dflash_relay_1_config>:
+     3c8: 00 00 00 00 00 00 00 00         ........
+     3d0: 00 00 00 00 00 00 00 00         ........
+     3d8: 00 00 00 00 00 00 00 00         ........
+     3e0: 00 00 00 00 00 00 00 00         ........
+     3e8: 00 00 00 00 00 00 00 00         ........
+     3f0: 00 00 00 00 00 00 00 00         ........
+     3f8: 00 00 00 00 00 00 00 00         ........
+     400: 00 00 00 00 00 00 00 00         ........
+     408: 00 00 00 00 00 00 00 00         ........
+     410: 00 00 00 00 00 00 00 00         ........
+     418: 80 1f 00 00 0f 1f 40 00         ......@.
+
+0000000000000420 <hgn_dflash_relay_2_begin>:
+     420: f3 0f 1e fa                  	endbr64
+     424: 48 8d 64 24 80               	leaq	-0x80(%rsp), %rsp
+     429: 9c                           	pushfq
+     42a: 41 57                        	pushq	%r15
+     42c: 41 56                        	pushq	%r14
+     42e: 41 55                        	pushq	%r13
+     430: 41 54                        	pushq	%r12
+     432: 41 53                        	pushq	%r11
+     434: 41 52                        	pushq	%r10
+     436: 41 51                        	pushq	%r9
+     438: 41 50                        	pushq	%r8
+     43a: 48 8d 64 24 f8               	leaq	-0x8(%rsp), %rsp
+     43f: 55                           	pushq	%rbp
+     440: 57                           	pushq	%rdi
+     441: 56                           	pushq	%rsi
+     442: 52                           	pushq	%rdx
+     443: 51                           	pushq	%rcx
+     444: 53                           	pushq	%rbx
+     445: 50                           	pushq	%rax
+     446: 48 8d 84 24 08 01 00 00      	leaq	0x108(%rsp), %rax
+     44e: 48 89 44 24 38               	movq	%rax, 0x38(%rsp)
+     453: 48 89 e5                     	movq	%rsp, %rbp
+     456: 48 8d 64 24 f0               	leaq	-0x10(%rsp), %rsp
+     45b: 48 c7 45 f0 00 00 00 00      	movq	$0x0, -0x10(%rbp)
+
+0000000000000463 <hgn_dflash_relay_2_mandatory_gate>:
+     463: 4c 8b 15 00 00 00 00         	movq	(%rip), %r10            # 0x46a <hgn_dflash_relay_2_mandatory_gate+0x7>
+		0000000000000466:  R_X86_64_PC32	hgn_dflash_relay_2_config+0x3c
+     46a: 4d 85 d2                     	testq	%r10, %r10
+     46d: 0f 84 d6 00 00 00            	je	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     473: 41 83 7a 0c 01               	cmpl	$0x1, 0xc(%r10)
+     478: 0f 85 cb 00 00 00            	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     47e: 4c 8b 5d 38                  	movq	0x38(%rbp), %r11
+     482: 4d 8b 5b 08                  	movq	0x8(%r11), %r11
+     486: 4d 85 db                     	testq	%r11, %r11
+     489: 0f 84 ba 00 00 00            	je	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     48f: 49 83 7b 08 00               	cmpq	$0x0, 0x8(%r11)
+     494: 0f 85 af 00 00 00            	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     49a: 4d 8b 1b                     	movq	(%r11), %r11
+     49d: 4d 85 db                     	testq	%r11, %r11
+     4a0: 0f 84 a3 00 00 00            	je	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4a6: 4d 3b 1a                     	cmpq	(%r10), %r11
+     4a9: 0f 85 9a 00 00 00            	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4af: 41 8b 83 c8 00 00 00         	movl	0xc8(%r11), %eax
+     4b6: 41 3b 42 08                  	cmpl	0x8(%r10), %eax
+     4ba: 0f 85 89 00 00 00            	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4c0: 41 83 bb e8 02 00 00 00      	cmpl	$0x0, 0x2e8(%r11)
+     4c8: 75 7f                        	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4ca: 41 83 7b 18 00               	cmpl	$0x0, 0x18(%r11)
+     4cf: 75 78                        	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4d1: 41 83 7b 40 ff               	cmpl	$-0x1, 0x40(%r11)
+     4d6: 75 71                        	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4d8: 41 83 7b 48 ff               	cmpl	$-0x1, 0x48(%r11)
+     4dd: 75 6a                        	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4df: 41 83 7b 58 ff               	cmpl	$-0x1, 0x58(%r11)
+     4e4: 75 63                        	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4e6: 31 c0                        	xorl	%eax, %eax
+     4e8: b9 01 00 00 00               	movl	$0x1, %ecx
+     4ed: f0                           	lock
+     4ee: 41 0f b1 4a 1c               	cmpxchgl	%ecx, 0x1c(%r10)
+     4f3: 75 54                        	jne	0x549 <hgn_dflash_relay_2_mandatory_gate+0xe6>
+     4f5: 41 c7 42 6c 00 00 00 00      	movl	$0x0, 0x6c(%r10)
+     4fd: 41 83 7a 18 01               	cmpl	$0x1, 0x18(%r10)
+     502: 74 35                        	je	0x539 <hgn_dflash_relay_2_mandatory_gate+0xd6>
+     504: 41 83 7a 18 00               	cmpl	$0x0, 0x18(%r10)
+     509: 74 36                        	je	0x541 <hgn_dflash_relay_2_mandatory_gate+0xde>
+     50b: 49 83 7a 10 ff               	cmpq	$-0x1, 0x10(%r10)
+     510: 74 2f                        	je	0x541 <hgn_dflash_relay_2_mandatory_gate+0xde>
+     512: f0                           	lock
+     513: 49 ff 42 10                  	incq	0x10(%r10)
+     517: 49 c7 42 20 00 00 00 00      	movq	$0x0, 0x20(%r10)
+     51f: 49 c7 42 38 00 00 00 00      	movq	$0x0, 0x38(%r10)
+     527: 49 c7 42 50 00 00 00 00      	movq	$0x0, 0x50(%r10)
+     52f: 41 c7 42 18 00 00 00 00      	movl	$0x0, 0x18(%r10)
+     537: eb 08                        	jmp	0x541 <hgn_dflash_relay_2_mandatory_gate+0xde>
+     539: 49 8b 42 10                  	movq	0x10(%r10), %rax
+     53d: 49 89 42 60                  	movq	%rax, 0x60(%r10)
+     541: 41 c7 42 1c 00 00 00 00      	movl	$0x0, 0x1c(%r10)
+     549: 48 89 ec                     	movq	%rbp, %rsp
+     54c: 58                           	popq	%rax
+     54d: 5b                           	popq	%rbx
+     54e: 59                           	popq	%rcx
+     54f: 5a                           	popq	%rdx
+     550: 5e                           	popq	%rsi
+     551: 5f                           	popq	%rdi
+     552: 5d                           	popq	%rbp
+     553: 48 8d 64 24 08               	leaq	0x8(%rsp), %rsp
+     558: 41 58                        	popq	%r8
+     55a: 41 59                        	popq	%r9
+     55c: 41 5a                        	popq	%r10
+     55e: 41 5b                        	popq	%r11
+     560: 41 5c                        	popq	%r12
+     562: 41 5d                        	popq	%r13
+     564: 41 5e                        	popq	%r14
+     566: 41 5f                        	popq	%r15
+     568: 9d                           	popfq
+     569: 48 8d a4 24 80 00 00 00      	leaq	0x80(%rsp), %rsp
+     571: 48 8b 44 24 08               	movq	0x8(%rsp), %rax
+     576: e9 de c0 17 5a               	jmp	0x5a17c659 <hgn_dflash_templates_end+0x5a17be41>
+
+0000000000000577 <hgn_dflash_relay_2_stock_delta>:
+     577: de c0                        	faddp	%st, %st(0)
+     579: 17                           	<unknown>
+     57a: 5a                           	popq	%rdx
+
+000000000000057b <hgn_dflash_relay_2_code_end>:
+     57b: 0f 1f 44 00 00               	nopl	(%rax,%rax)
+
+0000000000000580 <hgn_dflash_relay_2_config>:
+     580: 00 00 00 00 00 00 00 00         ........
+     588: 00 00 00 00 00 00 00 00         ........
+     590: 00 00 00 00 00 00 00 00         ........
+     598: 00 00 00 00 00 00 00 00         ........
+     5a0: 00 00 00 00 00 00 00 00         ........
+     5a8: 00 00 00 00 00 00 00 00         ........
+     5b0: 00 00 00 00 00 00 00 00         ........
+     5b8: 00 00 00 00 00 00 00 00         ........
+     5c0: 00 00 00 00 00 00 00 00         ........
+     5c8: 00 00 00 00 00 00 00 00         ........
+     5d0: 80 1f 00 00 0f 1f 40 00         ......@.
+
+00000000000005d8 <hgn_dflash_relay_2_end>:
+     5d8: 0f 1f 84 00 00 00 00 00      	nopl	(%rax,%rax)
+
+00000000000005e0 <hgn_dflash_relay_3_begin>:
+     5e0: f3 0f 1e fa                  	endbr64
+     5e4: 48 8d 64 24 80               	leaq	-0x80(%rsp), %rsp
+     5e9: 9c                           	pushfq
+     5ea: 41 57                        	pushq	%r15
+     5ec: 41 56                        	pushq	%r14
+     5ee: 41 55                        	pushq	%r13
+     5f0: 41 54                        	pushq	%r12
+     5f2: 41 53                        	pushq	%r11
+     5f4: 41 52                        	pushq	%r10
+     5f6: 41 51                        	pushq	%r9
+     5f8: 41 50                        	pushq	%r8
+     5fa: 48 8d 64 24 f8               	leaq	-0x8(%rsp), %rsp
+     5ff: 55                           	pushq	%rbp
+     600: 57                           	pushq	%rdi
+     601: 56                           	pushq	%rsi
+     602: 52                           	pushq	%rdx
+     603: 51                           	pushq	%rcx
+     604: 53                           	pushq	%rbx
+     605: 50                           	pushq	%rax
+     606: 48 8d 84 24 08 01 00 00      	leaq	0x108(%rsp), %rax
+     60e: 48 89 44 24 38               	movq	%rax, 0x38(%rsp)
+     613: 48 89 e5                     	movq	%rsp, %rbp
+     616: 48 8d 64 24 f0               	leaq	-0x10(%rsp), %rsp
+     61b: 48 c7 45 f0 00 00 00 00      	movq	$0x0, -0x10(%rbp)
+
+0000000000000623 <hgn_dflash_relay_3_mandatory_gate>:
+     623: 4c 8b 15 00 00 00 00         	movq	(%rip), %r10            # 0x62a <hgn_dflash_relay_3_mandatory_gate+0x7>
+		0000000000000626:  R_X86_64_PC32	hgn_dflash_relay_3_config+0x3c
+     62a: 4d 85 d2                     	testq	%r10, %r10
+     62d: 74 36                        	je	0x665 <hgn_dflash_relay_3_mandatory_gate+0x42>
+     62f: 41 83 7a 0c 01               	cmpl	$0x1, 0xc(%r10)
+     634: 75 2f                        	jne	0x665 <hgn_dflash_relay_3_mandatory_gate+0x42>
+     636: 41 83 7a 18 00               	cmpl	$0x0, 0x18(%r10)
+     63b: 74 28                        	je	0x665 <hgn_dflash_relay_3_mandatory_gate+0x42>
+     63d: 48 8b 45 10                  	movq	0x10(%rbp), %rax
+     641: 48 85 c0                     	testq	%rax, %rax
+     644: 74 1f                        	je	0x665 <hgn_dflash_relay_3_mandatory_gate+0x42>
+     646: 49 3b 02                     	cmpq	(%r10), %rax
+     649: 75 1a                        	jne	0x665 <hgn_dflash_relay_3_mandatory_gate+0x42>
+     64b: 8b 88 c8 00 00 00            	movl	0xc8(%rax), %ecx
+     651: 41 3b 4a 08                  	cmpl	0x8(%r10), %ecx
+     655: 75 0e                        	jne	0x665 <hgn_dflash_relay_3_mandatory_gate+0x42>
+     657: c6 80 7d 0b 00 00 00         	movb	$0x0, 0xb7d(%rax)
+     65e: c7 40 40 ff ff ff ff         	movl	$0xffffffff, 0x40(%rax) # imm = 0xFFFFFFFF
+     665: 48 89 ec                     	movq	%rbp, %rsp
+     668: 58                           	popq	%rax
+     669: 5b                           	popq	%rbx
+     66a: 59                           	popq	%rcx
+     66b: 5a                           	popq	%rdx
+     66c: 5e                           	popq	%rsi
+     66d: 5f                           	popq	%rdi
+     66e: 5d                           	popq	%rbp
+     66f: 48 8d 64 24 08               	leaq	0x8(%rsp), %rsp
+     674: 41 58                        	popq	%r8
+     676: 41 59                        	popq	%r9
+     678: 41 5a                        	popq	%r10
+     67a: 41 5b                        	popq	%r11
+     67c: 41 5c                        	popq	%r12
+     67e: 41 5d                        	popq	%r13
+     680: 41 5e                        	popq	%r14
+     682: 41 5f                        	popq	%r15
+     684: 9d                           	popfq
+     685: 48 8d a4 24 80 00 00 00      	leaq	0x80(%rsp), %rsp
+     68d: 48 8b b0 80 01 00 00         	movq	0x180(%rax), %rsi
+     694: e9 de c0 17 5a               	jmp	0x5a17c777 <hgn_dflash_templates_end+0x5a17bf5f>
+
+0000000000000695 <hgn_dflash_relay_3_stock_delta>:
+     695: de c0                        	faddp	%st, %st(0)
+     697: 17                           	<unknown>
+     698: 5a                           	popq	%rdx
+
+0000000000000699 <hgn_dflash_relay_3_code_end>:
+     699: 0f 1f 80 00 00 00 00         	nopl	(%rax)
+
+00000000000006a0 <hgn_dflash_relay_3_config>:
+     6a0: 00 00 00 00 00 00 00 00         ........
+     6a8: 00 00 00 00 00 00 00 00         ........
+     6b0: 00 00 00 00 00 00 00 00         ........
+     6b8: 00 00 00 00 00 00 00 00         ........
+     6c0: 00 00 00 00 00 00 00 00         ........
+     6c8: 00 00 00 00 00 00 00 00         ........
+     6d0: 00 00 00 00 00 00 00 00         ........
+     6d8: 00 00 00 00 00 00 00 00         ........
+     6e0: 00 00 00 00 00 00 00 00         ........
+     6e8: 00 00 00 00 00 00 00 00         ........
+     6f0: 80 1f 00 00 0f 1f 40 00         ......@.
+
+00000000000006f8 <hgn_dflash_relay_3_end>:
+     6f8: 0f 1f 84 00 00 00 00 00      	nopl	(%rax,%rax)
+
+0000000000000700 <hgn_dflash_relay_4_begin>:
+     700: f3 0f 1e fa                  	endbr64
+     704: 48 8d 64 24 80               	leaq	-0x80(%rsp), %rsp
+     709: 9c                           	pushfq
+     70a: 41 57                        	pushq	%r15
+     70c: 41 56                        	pushq	%r14
+     70e: 41 55                        	pushq	%r13
+     710: 41 54                        	pushq	%r12
+     712: 41 53                        	pushq	%r11
+     714: 41 52                        	pushq	%r10
+     716: 41 51                        	pushq	%r9
+     718: 41 50                        	pushq	%r8
+     71a: 48 8d 64 24 f8               	leaq	-0x8(%rsp), %rsp
+     71f: 55                           	pushq	%rbp
+     720: 57                           	pushq	%rdi
+     721: 56                           	pushq	%rsi
+     722: 52                           	pushq	%rdx
+     723: 51                           	pushq	%rcx
+     724: 53                           	pushq	%rbx
+     725: 50                           	pushq	%rax
+     726: 48 8d 84 24 08 01 00 00      	leaq	0x108(%rsp), %rax
+     72e: 48 89 44 24 38               	movq	%rax, 0x38(%rsp)
+     733: 48 89 e5                     	movq	%rsp, %rbp
+     736: 48 8d 64 24 f0               	leaq	-0x10(%rsp), %rsp
+     73b: 48 c7 45 f0 00 00 00 00      	movq	$0x0, -0x10(%rbp)
+
+0000000000000743 <hgn_dflash_relay_4_mandatory_gate>:
+     743: 4c 8b 15 00 00 00 00         	movq	(%rip), %r10            # 0x74a <hgn_dflash_relay_4_mandatory_gate+0x7>
+		0000000000000746:  R_X86_64_PC32	hgn_dflash_relay_4_config+0x3c
+     74a: 4d 85 d2                     	testq	%r10, %r10
+     74d: 74 36                        	je	0x785 <hgn_dflash_relay_4_mandatory_gate+0x42>
+     74f: 41 83 7a 0c 01               	cmpl	$0x1, 0xc(%r10)
+     754: 75 2f                        	jne	0x785 <hgn_dflash_relay_4_mandatory_gate+0x42>
+     756: 41 83 7a 18 00               	cmpl	$0x0, 0x18(%r10)
+     75b: 74 28                        	je	0x785 <hgn_dflash_relay_4_mandatory_gate+0x42>
+     75d: 48 8b 45 00                  	movq	(%rbp), %rax
+     761: 48 85 c0                     	testq	%rax, %rax
+     764: 74 1f                        	je	0x785 <hgn_dflash_relay_4_mandatory_gate+0x42>
+     766: 49 3b 02                     	cmpq	(%r10), %rax
+     769: 75 1a                        	jne	0x785 <hgn_dflash_relay_4_mandatory_gate+0x42>
+     76b: 8b 88 c8 00 00 00            	movl	0xc8(%rax), %ecx
+     771: 41 3b 4a 08                  	cmpl	0x8(%r10), %ecx
+     775: 75 0e                        	jne	0x785 <hgn_dflash_relay_4_mandatory_gate+0x42>
+     777: c6 80 7d 0b 00 00 00         	movb	$0x0, 0xb7d(%rax)
+     77e: c7 40 40 ff ff ff ff         	movl	$0xffffffff, 0x40(%rax) # imm = 0xFFFFFFFF
+     785: 48 89 ec                     	movq	%rbp, %rsp
+     788: 58                           	popq	%rax
+     789: 5b                           	popq	%rbx
+     78a: 59                           	popq	%rcx
+     78b: 5a                           	popq	%rdx
+     78c: 5e                           	popq	%rsi
+     78d: 5f                           	popq	%rdi
+     78e: 5d                           	popq	%rbp
+     78f: 48 8d 64 24 08               	leaq	0x8(%rsp), %rsp
+     794: 41 58                        	popq	%r8
+     796: 41 59                        	popq	%r9
+     798: 41 5a                        	popq	%r10
+     79a: 41 5b                        	popq	%r11
+     79c: 41 5c                        	popq	%r12
+     79e: 41 5d                        	popq	%r13
+     7a0: 41 5e                        	popq	%r14
+     7a2: 41 5f                        	popq	%r15
+     7a4: 9d                           	popfq
+     7a5: 48 8d a4 24 80 00 00 00      	leaq	0x80(%rsp), %rsp
+     7ad: 49 8d 86 28 03 00 00         	leaq	0x328(%r14), %rax
+     7b4: e9 de c0 17 5a               	jmp	0x5a17c897 <hgn_dflash_templates_end+0x5a17c07f>
+
+00000000000007b5 <hgn_dflash_relay_4_stock_delta>:
+     7b5: de c0                        	faddp	%st, %st(0)
+     7b7: 17                           	<unknown>
+     7b8: 5a                           	popq	%rdx
+
+00000000000007b9 <hgn_dflash_relay_4_code_end>:
+     7b9: 0f 1f 80 00 00 00 00         	nopl	(%rax)
+
+00000000000007c0 <hgn_dflash_relay_4_config>:
+     7c0: 00 00 00 00 00 00 00 00         ........
+     7c8: 00 00 00 00 00 00 00 00         ........
+     7d0: 00 00 00 00 00 00 00 00         ........
+     7d8: 00 00 00 00 00 00 00 00         ........
+     7e0: 00 00 00 00 00 00 00 00         ........
+     7e8: 00 00 00 00 00 00 00 00         ........
+     7f0: 00 00 00 00 00 00 00 00         ........
+     7f8: 00 00 00 00 00 00 00 00         ........
+     800: 00 00 00 00 00 00 00 00         ........
+     808: 00 00 00 00 00 00 00 00         ........
+     810: 80 1f 00 00 0f 1f 40 00         ......@.

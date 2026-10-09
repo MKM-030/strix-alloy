@@ -1,0 +1,443 @@
+{
+  "schema": "halogen0173.dflash.retained-controller-qualification.v1",
+  "scope": "host CPU plus passive native/source qualification",
+  "cpu_harness_exit": 0,
+  "native_engine_executed": false,
+  "native_relay_executed": false,
+  "native_installed": false,
+  "installer_hash_cpu_known_fixture_cases": 3,
+  "installer_hash_cpu_exit": 0,
+  "installer_admission_late_reject_changed_mapped_retry_exit": 0,
+  "explicit_default_off_cold_installer_built": true,
+  "cold_installer_executed": false,
+  "host_relay_cpu_smoke_executed": true,
+  "host_mock_tls_segment_adaptation": "FS to GS only",
+  "host_mock_code_matches_linked_linux_bytes_except_two_tls_prefixes": true,
+  "wsl_executed": false,
+  "api_requests": 0,
+  "device_or_provider_initialized": false,
+  "default_off": true,
+  "mandatory_gate_precedes_optional_admission": true,
+  "invocation_owned_action": true,
+  "template_count": 5,
+  "copied_code_relocations_are_internal": true,
+  "copied_eh_frame_fde_count": 5,
+  "linked_copied_frame_envelope": {
+    "bytes": 1156,
+    "fdes": [
+      {
+        "site": 0,
+        "begin": 20480,
+        "extent": 652
+      },
+      {
+        "site": 1,
+        "begin": 21232,
+        "extent": 212
+      },
+      {
+        "site": 2,
+        "begin": 21536,
+        "extent": 347
+      },
+      {
+        "site": 3,
+        "begin": 21984,
+        "extent": 185
+      },
+      {
+        "site": 4,
+        "begin": 22272,
+        "extent": 185
+      }
+    ],
+    "cie_encoding_verified": true,
+    "exact_single_terminator": true
+  },
+  "real_callback_call_count": 1,
+  "shared_undefined_symbols": [
+    "_Unwind_Find_FDE",
+    "__errno_location",
+    "__register_frame",
+    "dl_iterate_phdr"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-nostdlib",
+        "-fuse-ld=lld",
+        "-Wl,/entry:main,/subsystem:console",
+        "controller_cpu_harness.cpp",
+        "-o",
+        "controller-cpu-harness.exe"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-retained-controller-20261009\\controller-cpu-harness.exe"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-nostdlib",
+        "-fuse-ld=lld",
+        "-Wl,/entry:main,/subsystem:console",
+        "installer_hash_cpu.cpp",
+        "-o",
+        "installer-hash-cpu.exe"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-retained-controller-20261009\\installer-hash-cpu.exe"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-nostdlib",
+        "-fuse-ld=lld",
+        "-Wl,/entry:main,/subsystem:console",
+        "installer_admission_cpu.cpp",
+        "-o",
+        "installer-admission-cpu.exe"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-retained-controller-20261009\\installer-admission-cpu.exe"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\clang.exe",
+        "--target=x86_64-linux-gnu",
+        "-c",
+        "retained_relay.S",
+        "-o",
+        "retained_relay.o"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\llvm-objcopy.exe",
+        "--rename-section",
+        ".eh_frame=.hgn_dflash_relay_frames",
+        "retained_relay.o",
+        "retained_relay_island.o"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\clang++.exe",
+        "--target=x86_64-linux-gnu",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-fPIC",
+        "-fvisibility-inlines-hidden",
+        "-fcf-protection=full",
+        "-c",
+        "retained_callback.cpp",
+        "-o",
+        "retained_callback.o"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\clang++.exe",
+        "--target=x86_64-linux-gnu",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-fPIC",
+        "-fvisibility-inlines-hidden",
+        "-fcf-protection=full",
+        "-c",
+        "cold_install.cpp",
+        "-o",
+        "cold_install.o"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\ld.lld.exe",
+        "-shared",
+        "-z",
+        "noexecstack",
+        "--build-id=none",
+        "-Bsymbolic-functions",
+        "-T",
+        "retained_relay.ld",
+        "retained_relay_island.o",
+        "retained_callback.o",
+        "cold_install.o",
+        "-o",
+        "retained_controller_source.so"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\llvm-objdump.exe",
+        "-dr",
+        "retained_relay.o"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "f2abfcb33ead33034b3043aa9665078b1def1fe5a2a8354f9c198144589fe93d",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\llvm-objdump.exe",
+        "--dwarf=frames",
+        "retained_relay.o"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "8ff194ac19376ae787cce3024ceeabda34941f1781e13775af3028814a58e73b",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\llvm-objdump.exe",
+        "-dr",
+        "retained_callback.o"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "f78c34533f45bd2f1b7cb6601a2f7dffd1e83df5c73138102085668fdcc530bb",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\AMD\\ROCm\\7.2\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DHGN_DFLASH_SYSV_MOCK=1",
+        "-fcf-protection=full",
+        "-nostdlib",
+        "-fuse-ld=lld",
+        "-Wl,/entry:main,/subsystem:console,/stack:8388608",
+        "-Xlinker",
+        "/section:.hgnmock,ERW",
+        "relay_cpu_smoke.cpp",
+        "retained_callback.cpp",
+        "relay_cpu_mock.S",
+        "relay_cpu_entry.S",
+        "-o",
+        "relay-cpu-smoke.exe"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-retained-controller-20261009\\relay-cpu-smoke.exe"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    }
+  ],
+  "artifacts": {
+    "retained_controller.h": {
+      "bytes": 13174,
+      "sha256": "585d56a6c787bf9ec0c3426be4e93ffb13747b2d475cf7a85232f2473f3b0226"
+    },
+    "controller_cpu_harness.cpp": {
+      "bytes": 6789,
+      "sha256": "0a2f87d31c3d0eda6dff3c8bcfd8002d5db4f763c57609c030553436586dc314"
+    },
+    "retained_relay.h": {
+      "bytes": 4742,
+      "sha256": "b3d609f4ec007af3c57030f949649965a14315f016338a5c06fea06825166881"
+    },
+    "retained_relay.S": {
+      "bytes": 11075,
+      "sha256": "aa026d2954825218a77bc84b5667b4efabe3328f3de9372f4e982e32d0dbe259"
+    },
+    "retained_callback.cpp": {
+      "bytes": 713,
+      "sha256": "e893e5ae013857cb2d2d2e6a943a98fa52040d8b5108ceb35a81adcb0e856abd"
+    },
+    "cold_install.h": {
+      "bytes": 1207,
+      "sha256": "56d849f376a28fa778bca97e408da0be51063462b94cc5c9653a0129ee2db621"
+    },
+    "cold_install.cpp": {
+      "bytes": 15412,
+      "sha256": "12c2d2fefb231915e4923b5d75f8ad8ccd488696eb939a80c5f17fbeeb41dd5d"
+    },
+    "cold_install.o": {
+      "bytes": 15904,
+      "sha256": "c76118084c10aa1d7280f6150e1a6335b1ecee93341e39adfa68e7e586a4c3d1"
+    },
+    "retained_relay.ld": {
+      "bytes": 365,
+      "sha256": "e2555fe52515c22e8bf9550c9812fbf0ba2218ef57f5552f6253d11861309482"
+    },
+    "installer_hash_cpu.cpp": {
+      "bytes": 3605,
+      "sha256": "da15b59dc96dcf984696ae98007f75ddb67312dcc1f9c119b2389114571f24bf"
+    },
+    "installer-hash-cpu.exe": {
+      "bytes": 4096,
+      "sha256": "a60c820c19483a06e92e3ec7afcdc53c32a5ac28bff43117367875819a64d4a0"
+    },
+    "installer_admission_cpu.cpp": {
+      "bytes": 2771,
+      "sha256": "a342c1ebf71dfcc4f38066b95c1835e4bd6892a92f4a64c7a58e5a5808eef6f0"
+    },
+    "installer-admission-cpu.exe": {
+      "bytes": 2560,
+      "sha256": "6344d372d442f11456beb9543ef802049affd46533fd0f5bebf108fa207f3ef6"
+    },
+    "build_qualify.py": {
+      "bytes": 22879,
+      "sha256": "f40a3dd72c614f985a3b039fbb02e197a5f8e3ff1e3cc1b29a5823f39961a5bc"
+    },
+    "README.md": {
+      "bytes": 7406,
+      "sha256": "94b5f2894087bf497b443736e91fa457d859cdc2134dedcd296c0d01da369d81"
+    },
+    "controller-cpu-harness.exe": {
+      "bytes": 13312,
+      "sha256": "3082f2fffd7b7a7503c452d2e24e7bc7d69e35486c5d04e9d1cf23dac13f27d7"
+    },
+    "retained_relay.o": {
+      "bytes": 6400,
+      "sha256": "0ea26cdbd5bffdaa991409e6531b627f56587d2ebba138e680d929af5a353af6"
+    },
+    "retained_relay_island.o": {
+      "bytes": 6416,
+      "sha256": "c86fde199d918075723b33389c5cb0b0183e477bbc08f9d67f40a1141ee63745"
+    },
+    "retained_callback.o": {
+      "bytes": 5192,
+      "sha256": "17e02165e3cf47be21697c87d6328226b83007c072de11f035e2a2dec09a186d"
+    },
+    "retained_controller_source.so": {
+      "bytes": 26208,
+      "sha256": "c220de8d563ea6cacaaf9b25550d2b781f2c49b515840d12b71847cdeab91b21"
+    },
+    "native_seams.json": {
+      "bytes": 5787,
+      "sha256": "ddb80b44c688c5eba9478eb2ed05ff494e4ef198583635aed24d415be0ee10e0"
+    },
+    "relay-disassembly.txt": {
+      "bytes": 37659,
+      "sha256": "da09cf454930e2e22740c7fb18cecacfeb92e3d15e9822a36e23f0ef0a61cb7e"
+    },
+    "relay-frames.txt": {
+      "bytes": 49555,
+      "sha256": "a55d2737dfd15cf2ca174c61dbaa3c78a3e37639df073f4c90c13cc2372c2e38"
+    },
+    "callback-disassembly.txt": {
+      "bytes": 45974,
+      "sha256": "063829c943878b9adb685c52950dd048f3ad4a5829b2f35cf96ea889de58fb8f"
+    },
+    "relay_cpu_smoke.cpp": {
+      "bytes": 7360,
+      "sha256": "6a103cd9f476d6f02870c57440780a9aa54dcc92a9c3074f75fa68a521328558"
+    },
+    "relay_cpu_entry.S": {
+      "bytes": 3100,
+      "sha256": "8be6353b9d71dcabc7b660f4238afdbdce3343ba6da2528f7c90f795d3fd9ebb"
+    },
+    "relay_cpu_mock.S": {
+      "bytes": 8841,
+      "sha256": "92ddef843dba547f78a46ec493b576e0261e4628f3e988ee16200080fcfcfecb"
+    },
+    "relay-cpu-smoke.exe": {
+      "bytes": 13824,
+      "sha256": "61b6dadb5f42d0f674d6d0b7ef62c53288a4b83f4957815a8199c6511f262aae"
+    }
+  },
+  "all_writes_confined_to": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-retained-controller-20261009",
+  "limits": [
+    "Linux FS/unwind runtime not executed; host adapted relay smoke only",
+    "Cold installer compiled but not executed; no runtime patch",
+    "No provider scheduling window or causal serving speed proved",
+    "One isolated native slot/null-cache full-reset scope only"
+  ]
+}

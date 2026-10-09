@@ -92,3 +92,10 @@ docs/research/halogen0173-dflash-cpu-reference-20261009.* -text whitespace=cr-at
 scripts/research/dflash_k3_provider/** -text whitespace=cr-at-eol
 scripts/research/dflash_k3_provider/**/*.bin -diff
 docs/research/halogen0173-dflash-components-20261009.* -text whitespace=cr-at-eol
+
+# Keep reviewed native bridge sources, CPU fixtures and receipts byte-exact.
+scripts/research/dflash_native_bridge/** -text whitespace=cr-at-eol
+scripts/research/dflash_native_bridge/**/*.bin -diff
+# These copied originals include a terminal blank line covered by their hashes.
+scripts/research/dflash_native_bridge/controller/passive_elf_review.py whitespace=cr-at-eol,-blank-at-eof
+scripts/research/dflash_native_bridge/controller/relay-frames.txt whitespace=cr-at-eol,-blank-at-eof

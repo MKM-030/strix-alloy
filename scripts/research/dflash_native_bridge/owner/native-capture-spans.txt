@@ -1,0 +1,106 @@
+
+[prefill_generation_assignments_and_actual_cache_branch]
+ 173cc3d: 48 8b 44 24 08               	mov	rax, qword ptr [rsp + 0x8]
+ 173cc42: 48 8b 38                     	mov	rdi, qword ptr [rax]
+ 173cc45: 44 89 e6                     	mov	esi, r12d
+ 173cc48: e8 a3 36 0c 00               	call	0x18002f0 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x848c0>
+ 173cc4d: 48 8b 84 24 88 00 00 00      	mov	rax, qword ptr [rsp + 0x88]
+ 173cc55: 83 78 0c 01                  	cmp	dword ptr [rax + 0xc], 0x1
+ 173cc59: 48 8b 4c 24 08               	mov	rcx, qword ptr [rsp + 0x8]
+ 173cc5e: 48 8b 09                     	mov	rcx, qword ptr [rcx]
+ 173cc61: 0f 94 81 7d 0b 00 00         	sete	byte ptr [rcx + 0xb7d]
+ 173cc68: 74 07                        	je	0x173cc71 <.text+0x113f1>
+ 173cc6a: c7 41 40 ff ff ff ff         	mov	dword ptr [rcx + 0x40], 0xffffffff
+ 173cc71: 48 8b b0 80 01 00 00         	mov	rsi, qword ptr [rax + 0x180]
+ 173cc78: 48 8b 7c 24 08               	mov	rdi, qword ptr [rsp + 0x8]
+ 173cc7d: e8 1e 9d 00 00               	call	0x17469a0 <.text+0x1b120>
+ 173cc82: 48 8b 44 24 08               	mov	rax, qword ptr [rsp + 0x8]
+ 173cc87: 48 8b 70 08                  	mov	rsi, qword ptr [rax + 0x8]
+ 173cc8b: 48 85 f6                     	test	rsi, rsi
+ 173cc8e: 0f 84 fe 01 00 00            	je	0x173ce92 <.text+0x11612>
+
+[record_move_then_holder_destructor_before_birth]
+ 173d39d: 48 8b b4 24 88 00 00 00      	mov	rsi, qword ptr [rsp + 0x88]
+ 173d3a5: 48 8d bc 24 00 0a 00 00      	lea	rdi, [rsp + 0xa00]
+ 173d3ad: e8 8e a8 00 00               	call	0x1747c40 <.text+0x1c3c0>
+ 173d3b2: 48 8b bc 24 88 00 00 00      	mov	rdi, qword ptr [rsp + 0x88]
+ 173d3ba: f3 0f 7e 87 18 04 00 00      	movq	xmm0, qword ptr [rdi + 0x418]
+ 173d3c2: 66 0f d6 84 24 90 0b 00 00   	movq	qword ptr [rsp + 0xb90], xmm0
+ 173d3cb: 48 c7 84 24 88 00 00 00 00 00 00 00  	mov	qword ptr [rsp + 0x88], 0x0
+ 173d3d7: e8 24 fb 00 00               	call	0x174cf00 <.text+0x21680>
+
+[chunk_native_inputs_absolute_position_and_return]
+ 1746eb8: 45 8b 6e 54                  	mov	r13d, dword ptr [r14 + 0x54]
+ 1746ebc: 49 63 b6 10 04 00 00         	movsxd	rsi, dword ptr [r14 + 0x410]
+ 1746ec3: 41 29 f5                     	sub	r13d, esi
+ 1746ec6: 45 39 e5                     	cmp	r13d, r12d
+ 1746ec9: 45 0f 4d ec                  	cmovge	r13d, r12d
+ 1746ecd: 49 8b 3f                     	mov	rdi, qword ptr [r15]
+ 1746ed0: 48 c1 e6 02                  	shl	rsi, 0x2
+ 1746ed4: 49 03 76 38                  	add	rsi, qword ptr [r14 + 0x38]
+ 1746ed8: 44 89 ea                     	mov	edx, r13d
+ 1746edb: e8 00 ec 0b 00               	call	0x1805ae0 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x8a0b0>
+ 1746ee0: 45 03 ae 10 04 00 00         	add	r13d, dword ptr [r14 + 0x410]
+ 1746ee7: 45 89 ae 10 04 00 00         	mov	dword ptr [r14 + 0x410], r13d
+ 1746eee: 45 3b 6e 54                  	cmp	r13d, dword ptr [r14 + 0x54]
+ 1746ef2: 41 0f 9d c4                  	setge	r12b
+ 1746ef6: eb 19                        	jmp	0x1746f11 <.text+0x1b691>
+
+[ordinary_HC_to_common_capture]
+ 17f22aa: 85 db                        	test	ebx, ebx
+ 17f22ac: 41 0f 94 c7                  	sete	r15b
+ 17f22b0: 45 31 ed                     	xor	r13d, r13d
+ 17f22b3: 4c 89 f7                     	mov	rdi, r14
+ 17f22b6: 89 de                        	mov	esi, ebx
+ 17f22b8: 89 ea                        	mov	edx, ebp
+ 17f22ba: 31 c9                        	xor	ecx, ecx
+ 17f22bc: e8 1f 89 fa ff               	call	0x179abe0 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x1f1b0>
+ 17f22c1: 48 63 cb                     	movsxd	rcx, ebx
+ 17f22c4: 49 8b 86 e0 05 00 00         	mov	rax, qword ptr [r14 + 0x5e0]
+ 17f22cb: 48 89 4c 24 18               	mov	qword ptr [rsp + 0x18], rcx
+
+[profiled_HC_to_common_capture]
+ 17f2630: 4c 6b e0 38                  	imul	r12, rax, 0x38
+ 17f2634: 4c 8d 2d 0d c4 10 00         	lea	r13, [rip + 0x10c40d]   # 0x18fea48
+ 17f263b: 4b 8b 7c 2c 10               	mov	rdi, qword ptr [r12 + r13 + 0x10]
+ 17f2640: 31 f6                        	xor	esi, esi
+ 17f2642: e8 19 26 10 00               	call	0x18f4c60 <hipEventRecord@plt>
+ 17f2647: 85 c0                        	test	eax, eax
+ 17f2649: 0f 85 0b 04 00 00            	jne	0x17f2a5a <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x7702a>
+ 17f264f: 4c 89 f7                     	mov	rdi, r14
+ 17f2652: 89 de                        	mov	esi, ebx
+ 17f2654: 89 ea                        	mov	edx, ebp
+ 17f2656: 31 c9                        	xor	ecx, ecx
+ 17f2658: e8 83 85 fa ff               	call	0x179abe0 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x1f1b0>
+ 17f265d: 0f b6 05 a4 ce 10 00         	movzx	eax, byte ptr [rip + 0x10cea4] # 0x18ff508
+ 17f2664: 84 c0                        	test	al, al
+ 17f2666: 0f 84 29 04 00 00            	je	0x17f2a95 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x77065>
+ 17f266c: 4b 8d 04 2c                  	lea	rax, [r12 + r13]
+ 17f2670: 48 83 c0 10                  	add	rax, 0x10
+ 17f2674: 48 8b 78 08                  	mov	rdi, qword ptr [rax + 0x8]
+ 17f2678: 31 f6                        	xor	esi, esi
+ 17f267a: e8 e1 25 10 00               	call	0x18f4c60 <hipEventRecord@plt>
+ 17f267f: 41 b5 01                     	mov	r13b, 0x1
+ 17f2682: 85 c0                        	test	eax, eax
+ 17f2684: 48 8b 4c 24 18               	mov	rcx, qword ptr [rsp + 0x18]
+ 17f2689: 0f 84 35 fc ff ff            	je	0x17f22c4 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x76894>
+
+[FFN_reuses_HC_helper]
+ 17f2440: 4c 89 f7                     	mov	rdi, r14
+ 17f2443: 89 de                        	mov	esi, ebx
+ 17f2445: 89 ea                        	mov	edx, ebp
+ 17f2447: b9 01 00 00 00               	mov	ecx, 0x1
+ 17f244c: e8 8f 87 fa ff               	call	0x179abe0 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x1f1b0>
+
+[authoritative_commit_count]
+ 173fe8d: 47 8b 6c b7 20               	mov	r13d, dword ptr [r15 + 4*r14 + 0x20]
+ 173fe92: 46 89 ac b4 80 03 00 00      	mov	dword ptr [rsp + 4*r14 + 0x380], r13d
+ 173fe9a: 4c 89 ff                     	mov	rdi, r15
+ 173fe9d: 44 89 e6                     	mov	esi, r12d
+ 173fea0: e8 bb c4 0b 00               	call	0x17fc360 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x80930>
+
+[unconstrained_scalar_forward]
+ 1740479: 4c 8d bb 9c 01 00 00         	lea	r15, [rbx + 0x19c]
+ 1740480: 4c 89 fe                     	mov	rsi, r15
+ 1740483: ba 01 00 00 00               	mov	edx, 0x1
+ 1740488: e8 53 56 0c 00               	call	0x1805ae0 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x8a0b0>

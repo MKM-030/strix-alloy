@@ -1,0 +1,154 @@
+{
+  "schema": "halogen0173.dflash.owned-transport-cpu.v1",
+  "commands": [
+    {
+      "argv": [
+        "C:/Program Files/AMD/ROCm/7.2/bin/clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-fno-stack-protector",
+        "-nostdlib",
+        "-fuse-ld=lld",
+        "-Wl,/entry:main,/subsystem:console",
+        "owned_transport.cpp",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-prefill-owner-20261009\\pending_owner.cpp",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-prefill-owner-20261009\\decode_capture.cpp",
+        "transport_cpu_test.cpp",
+        "-o",
+        "transport-cpu-test.exe"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-owned-transport-20261009\\transport-cpu-test.exe"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:/Program Files/AMD/ROCm/7.2/bin/clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-fno-stack-protector",
+        "-nostdlib",
+        "-fuse-ld=lld",
+        "-Wl,/entry:main,/subsystem:console",
+        "owned_transport.cpp",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-prefill-owner-20261009\\pending_owner.cpp",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-prefill-owner-20261009\\decode_capture.cpp",
+        "hip_backend_cpu_test.cpp",
+        "-o",
+        "hip-backend-cpu-test.exe"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-owned-transport-20261009\\hip-backend-cpu-test.exe"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:/Program Files/AMD/ROCm/7.2/bin/clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fno-builtin",
+        "-D_CRT_SECURE_NO_WARNINGS",
+        "-DTRANSPORT_ORDINARY_CRT=1",
+        "owned_transport.cpp",
+        "worker_io.cpp",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-prefill-owner-20261009\\pending_owner.cpp",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-prefill-owner-20261009\\decode_capture.cpp",
+        "wire_cpu_fixture.cpp",
+        "-o",
+        "wire-cpu-fixture.exe"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-owned-transport-20261009\\wire-cpu-fixture.exe"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "reader_cpu_test.py"
+      ],
+      "exit": 0,
+      "stdout": "CPU reader: exact full Binding, IDs, positions, sources and every BF16 word; malformed/stale/loss/terminal paths passed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "owned_reader.py"
+      ],
+      "exit": 0,
+      "stdout": "{\"enabled\": false, \"provider_executed\": false}\n",
+      "stderr": ""
+    }
+  ],
+  "owner_dependencies": {
+    "pending_owner.h": "5d9440be03d5a49289d391afca12967272e85ef67305a6f4d5aff865707774da",
+    "pending_owner.cpp": "feb0ac5d111a9d62fd2dcff92bff7f215b729e1828890b6c7d2f44f46c926470",
+    "decode_capture.h": "fe917fbd05fd0593035ad3d56516ae3a4ef6659439c63fbe35cddebbe90046cf",
+    "decode_capture.cpp": "ca0e049ca9b4e524a44adf8f007d11117374be33b9c3f901efaac0063a7a74bd",
+    "delivery-seal.json": "1028a823fce2c1185cb76268a3c9ecbd6d6f17e823a0f87c1745d6b5b842d959"
+  },
+  "files": {
+    "build_qualify.py": "889fb526984d26356294f4a7632a69c7bb3ab3332f50cd158afc0d4d2ca92981",
+    "cpu-wire-fixture.bin": "5347fb7871bf1b8834aa5c3fcfc90e9915f24796a9aa225868da5840092dbdae",
+    "hip-backend-cpu-test.exe": "78039f2b5f453578e0ef841bad700333807c6d3bf0f6f34ea3e98fffce0e1b22",
+    "hip_backend_cpu_test.cpp": "c2d66ac830162b06b3f6c46559938d88c30222ea530402aa88a6b906e0498359",
+    "owned_reader.py": "11907fdc193dacc6a11c35c7d7cd69ec410b72b85561b95f2f9dedc4168a9995",
+    "owned_transport.cpp": "08c78d3263333ee72bc44ab9e7a7aece1c1b67714021e6364d848231e25d7701",
+    "owned_transport.h": "2658db4487f504b81ac003b0eeaf0cc46db99a5bb90e15d3dd3365fcafef9d47",
+    "reader_cpu_test.py": "1249ced31bea4dc27afb476fe333156368ff545cceb683d81232c8e4d9577d3e",
+    "README.md": "584951ba1c31365fc9aad49d8d83989aa867dffcc4a71cf10e23779343287917",
+    "transport-cpu-test.exe": "52f170740472ff8f174405e4b45853c46de9b7786cd58e45ec754ff4f578e747",
+    "transport_cpu_test.cpp": "b1a7b0521e9b6f0483f050a1707a5b5b9be39b81961be8adebc0dcb277092c59",
+    "wire-cpu-fixture.exe": "9bf8e7a6c91b862c5f499539f670f5acc732531a9b9d8fccaf08480e3995223a",
+    "wire_cpu_fixture.cpp": "eb5f1bf3a52548508e50d17eba604f9097184853e5ceacedec20446a28d4595f",
+    "worker_io.cpp": "d02fcf8aecd475579ba798ed87a5735e4bfe7b325816e240182e28d33e801e0d",
+    "worker_io.h": "da6eeac626f3617939839e4f8e5409e94224becfc15c67aa4f43246b3bde2ddb"
+  },
+  "hardware_initialized": false,
+  "hip_runtime_loaded": false,
+  "native_installed": false,
+  "wsl_executed": false
+}

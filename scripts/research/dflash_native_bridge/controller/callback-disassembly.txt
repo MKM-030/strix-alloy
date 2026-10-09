@@ -1,0 +1,644 @@
+
+retained_callback.o:	file format elf64-x86-64
+
+Disassembly of section .text:
+
+0000000000000000 <hgn_dflash_ready_callback>:
+       0: f3 0f 1e fa                  	endbr64
+       4: 55                           	pushq	%rbp
+       5: 41 57                        	pushq	%r15
+       7: 41 56                        	pushq	%r14
+       9: 41 55                        	pushq	%r13
+       b: 41 54                        	pushq	%r12
+       d: 53                           	pushq	%rbx
+       e: 50                           	pushq	%rax
+       f: 4d 89 c6                     	movq	%r8, %r14
+      12: 49 89 cd                     	movq	%rcx, %r13
+      15: 48 89 d3                     	movq	%rdx, %rbx
+      18: 49 89 f4                     	movq	%rsi, %r12
+      1b: 89 fd                        	movl	%edi, %ebp
+      1d: e8 00 00 00 00               	callq	0x22 <hgn_dflash_ready_callback+0x22>
+		000000000000001e:  R_X86_64_PLT32	__errno_location-0x4
+      22: 49 89 c7                     	movq	%rax, %r15
+      25: 8b 08                        	movl	(%rax), %ecx
+      27: 66 48 0f 6e c3               	movq	%rbx, %xmm0
+      2c: 66 49 0f 6e cc               	movq	%r12, %xmm1
+      31: 66 0f 6c c8                  	punpcklqdq	%xmm0, %xmm1    # xmm1 = xmm1[0],xmm0[0]
+      35: 66 49 0f 6e c6               	movq	%r14, %xmm0
+      3a: 66 49 0f 6e d5               	movq	%r13, %xmm2
+      3f: 66 0f 6c d0                  	punpcklqdq	%xmm0, %xmm2    # xmm2 = xmm2[0],xmm0[0]
+      43: 66 0f ef c0                  	pxor	%xmm0, %xmm0
+      47: 66 0f 76 d0                  	pcmpeqd	%xmm0, %xmm2
+      4b: 66 0f 76 c8                  	pcmpeqd	%xmm0, %xmm1
+      4f: 66 0f 6f c1                  	movdqa	%xmm1, %xmm0
+      53: 0f c6 c2 dd                  	shufps	$0xdd, %xmm2, %xmm0     # xmm0 = xmm0[1,3],xmm2[1,3]
+      57: 0f c6 ca 88                  	shufps	$0x88, %xmm2, %xmm1     # xmm1 = xmm1[0,2],xmm2[0,2]
+      5b: 0f 54 c8                     	andps	%xmm0, %xmm1
+      5e: 0f 50 c1                     	movmskps	%xmm1, %eax
+      61: 09 e8                        	orl	%ebp, %eax
+      63: 75 15                        	jne	0x7a <hgn_dflash_ready_callback+0x7a>
+      65: 4c 89 ef                     	movq	%r13, %rdi
+      68: 4c 89 f6                     	movq	%r14, %rsi
+      6b: 4c 89 e2                     	movq	%r12, %rdx
+      6e: 89 cd                        	movl	%ecx, %ebp
+      70: 48 89 d9                     	movq	%rbx, %rcx
+      73: e8 00 00 00 00               	callq	0x78 <hgn_dflash_ready_callback+0x78>
+		0000000000000074:  R_X86_64_PLT32	_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE-0x4
+      78: 89 e9                        	movl	%ebp, %ecx
+      7a: 41 89 0f                     	movl	%ecx, (%r15)
+      7d: 48 83 c4 08                  	addq	$0x8, %rsp
+      81: 5b                           	popq	%rbx
+      82: 41 5c                        	popq	%r12
+      84: 41 5d                        	popq	%r13
+      86: 41 5e                        	popq	%r14
+      88: 41 5f                        	popq	%r15
+      8a: 5d                           	popq	%rbp
+      8b: c3                           	retq
+
+Disassembly of section .text._ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE:
+
+0000000000000000 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE>:
+       0: f3 0f 1e fa                  	endbr64
+       4: 48 83 39 01                  	cmpq	$0x1, (%rcx)
+       8: 0f 85 ec 04 00 00            	jne	0x4fa <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4fa>
+       e: 8b 47 6c                     	movl	0x6c(%rdi), %eax
+      11: 85 c0                        	testl	%eax, %eax
+      13: 0f 84 e1 04 00 00            	je	0x4fa <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4fa>
+      19: f6 06 01                     	testb	$0x1, (%rsi)
+      1c: 0f 84 d8 04 00 00            	je	0x4fa <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4fa>
+      22: 41 57                        	pushq	%r15
+      24: 41 56                        	pushq	%r14
+      26: 41 55                        	pushq	%r13
+      28: 41 54                        	pushq	%r12
+      2a: 53                           	pushq	%rbx
+      2b: 48 81 ec 50 05 00 00         	subq	$0x550, %rsp            # imm = 0x550
+      32: 48 89 fb                     	movq	%rdi, %rbx
+      35: 48 89 f7                     	movq	%rsi, %rdi
+      38: 49 89 cd                     	movq	%rcx, %r13
+      3b: 49 89 d6                     	movq	%rdx, %r14
+      3e: 49 89 f7                     	movq	%rsi, %r15
+      41: e8 00 00 00 00               	callq	0x46 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x46>
+		0000000000000042:  R_X86_64_PLT32	_ZN10hgn_dflash13complete_pinsERKNS_13ConfigurationE-0x4
+      46: 84 c0                        	testb	%al, %al
+      48: 0f 84 9c 04 00 00            	je	0x4ea <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4ea>
+      4e: 4c 89 fe                     	movq	%r15, %rsi
+      51: 49 83 bf 88 00 00 00 00      	cmpq	$0x0, 0x88(%r15)
+      59: 0f 84 8b 04 00 00            	je	0x4ea <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4ea>
+      5f: 48 83 7e 78 00               	cmpq	$0x0, 0x78(%rsi)
+      64: 0f 84 80 04 00 00            	je	0x4ea <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4ea>
+      6a: 83 be 80 00 00 00 00         	cmpl	$0x0, 0x80(%rsi)
+      71: 0f 84 73 04 00 00            	je	0x4ea <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4ea>
+      77: 48 89 df                     	movq	%rbx, %rdi
+      7a: b9 01 00 00 00               	movl	$0x1, %ecx
+      7f: 31 c0                        	xorl	%eax, %eax
+      81: f0                           	lock
+      82: 0f b1 4b 1c                  	cmpxchgl	%ecx, 0x1c(%rbx)
+      86: 0f 85 5e 04 00 00            	jne	0x4ea <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4ea>
+      8c: 4c 8b 67 50                  	movq	0x50(%rdi), %r12
+      90: 49 8d 44 24 01               	leaq	0x1(%r12), %rax
+      95: 48 83 f8 02                  	cmpq	$0x2, %rax
+      99: 0f 82 44 04 00 00            	jb	0x4e3 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e3>
+      9f: 4c 89 f2                     	movq	%r14, %rdx
+      a2: 0f 57 c0                     	xorps	%xmm0, %xmm0
+      a5: 0f 29 84 24 d0 01 00 00      	movaps	%xmm0, 0x1d0(%rsp)
+      ad: 0f 29 84 24 e0 01 00 00      	movaps	%xmm0, 0x1e0(%rsp)
+      b5: 0f 29 84 24 f0 01 00 00      	movaps	%xmm0, 0x1f0(%rsp)
+      bd: 0f 29 84 24 00 02 00 00      	movaps	%xmm0, 0x200(%rsp)
+      c5: 0f 29 84 24 10 02 00 00      	movaps	%xmm0, 0x210(%rsp)
+      cd: 0f 29 84 24 20 02 00 00      	movaps	%xmm0, 0x220(%rsp)
+      d5: 0f 29 84 24 30 02 00 00      	movaps	%xmm0, 0x230(%rsp)
+      dd: 0f 29 84 24 60 02 00 00      	movaps	%xmm0, 0x260(%rsp)
+      e5: 0f 29 84 24 50 02 00 00      	movaps	%xmm0, 0x250(%rsp)
+      ed: 0f 29 84 24 40 02 00 00      	movaps	%xmm0, 0x240(%rsp)
+      f5: 48 c7 84 24 70 02 00 00 00 00 00 00  	movq	$0x0, 0x270(%rsp)
+     101: 0f 11 84 24 78 02 00 00      	movups	%xmm0, 0x278(%rsp)
+     109: 0f 11 84 24 88 02 00 00      	movups	%xmm0, 0x288(%rsp)
+     111: 0f 11 84 24 98 02 00 00      	movups	%xmm0, 0x298(%rsp)
+     119: 0f 11 84 24 a8 02 00 00      	movups	%xmm0, 0x2a8(%rsp)
+     121: 0f 11 84 24 b8 02 00 00      	movups	%xmm0, 0x2b8(%rsp)
+     129: 0f 11 84 24 c8 02 00 00      	movups	%xmm0, 0x2c8(%rsp)
+     131: 0f 11 84 24 d8 02 00 00      	movups	%xmm0, 0x2d8(%rsp)
+     139: 0f 11 84 24 e8 02 00 00      	movups	%xmm0, 0x2e8(%rsp)
+     141: 0f 11 84 24 f8 02 00 00      	movups	%xmm0, 0x2f8(%rsp)
+     149: 0f 11 84 24 08 03 00 00      	movups	%xmm0, 0x308(%rsp)
+     151: 0f 11 84 24 18 03 00 00      	movups	%xmm0, 0x318(%rsp)
+     159: 0f 11 84 24 28 03 00 00      	movups	%xmm0, 0x328(%rsp)
+     161: 0f 11 84 24 38 03 00 00      	movups	%xmm0, 0x338(%rsp)
+     169: 0f 11 84 24 48 03 00 00      	movups	%xmm0, 0x348(%rsp)
+     171: 0f 11 84 24 58 03 00 00      	movups	%xmm0, 0x358(%rsp)
+     179: 0f 11 84 24 68 03 00 00      	movups	%xmm0, 0x368(%rsp)
+     181: 0f 11 84 24 78 03 00 00      	movups	%xmm0, 0x378(%rsp)
+     189: 4c 8d 84 24 d0 01 00 00      	leaq	0x1d0(%rsp), %r8
+     191: 4c 89 e1                     	movq	%r12, %rcx
+     194: e8 00 00 00 00               	callq	0x199 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x199>
+		0000000000000195:  R_X86_64_PLT32	_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE-0x4
+     199: 84 c0                        	testb	%al, %al
+     19b: 0f 84 3f 03 00 00            	je	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     1a1: 0f 57 c0                     	xorps	%xmm0, %xmm0
+     1a4: 0f 29 04 24                  	movaps	%xmm0, (%rsp)
+     1a8: 0f 29 44 24 10               	movaps	%xmm0, 0x10(%rsp)
+     1ad: 0f 29 44 24 20               	movaps	%xmm0, 0x20(%rsp)
+     1b2: 0f 29 44 24 30               	movaps	%xmm0, 0x30(%rsp)
+     1b7: 0f 29 44 24 40               	movaps	%xmm0, 0x40(%rsp)
+     1bc: 0f 29 44 24 50               	movaps	%xmm0, 0x50(%rsp)
+     1c1: 0f 29 44 24 60               	movaps	%xmm0, 0x60(%rsp)
+     1c6: 0f 29 84 24 90 00 00 00      	movaps	%xmm0, 0x90(%rsp)
+     1ce: 0f 29 84 24 80 00 00 00      	movaps	%xmm0, 0x80(%rsp)
+     1d6: 0f 29 44 24 70               	movaps	%xmm0, 0x70(%rsp)
+     1db: 48 c7 84 24 a0 00 00 00 00 00 00 00  	movq	$0x0, 0xa0(%rsp)
+     1e7: 0f 11 84 24 a8 00 00 00      	movups	%xmm0, 0xa8(%rsp)
+     1ef: 0f 11 84 24 b8 00 00 00      	movups	%xmm0, 0xb8(%rsp)
+     1f7: 0f 11 84 24 c8 00 00 00      	movups	%xmm0, 0xc8(%rsp)
+     1ff: 0f 11 84 24 d8 00 00 00      	movups	%xmm0, 0xd8(%rsp)
+     207: 0f 11 84 24 e8 00 00 00      	movups	%xmm0, 0xe8(%rsp)
+     20f: 0f 11 84 24 f8 00 00 00      	movups	%xmm0, 0xf8(%rsp)
+     217: 0f 11 84 24 08 01 00 00      	movups	%xmm0, 0x108(%rsp)
+     21f: 0f 11 84 24 18 01 00 00      	movups	%xmm0, 0x118(%rsp)
+     227: 0f 11 84 24 28 01 00 00      	movups	%xmm0, 0x128(%rsp)
+     22f: 0f 11 84 24 38 01 00 00      	movups	%xmm0, 0x138(%rsp)
+     237: 0f 11 84 24 48 01 00 00      	movups	%xmm0, 0x148(%rsp)
+     23f: 0f 11 84 24 58 01 00 00      	movups	%xmm0, 0x158(%rsp)
+     247: 0f 11 84 24 68 01 00 00      	movups	%xmm0, 0x168(%rsp)
+     24f: 0f 11 84 24 78 01 00 00      	movups	%xmm0, 0x178(%rsp)
+     257: 0f 11 84 24 88 01 00 00      	movups	%xmm0, 0x188(%rsp)
+     25f: 0f 11 84 24 98 01 00 00      	movups	%xmm0, 0x198(%rsp)
+     267: 0f 11 84 24 a8 01 00 00      	movups	%xmm0, 0x1a8(%rsp)
+     26f: 0f 11 84 24 b8 01 00 00      	movups	%xmm0, 0x1b8(%rsp)
+     277: 49 8b bf 90 00 00 00         	movq	0x90(%r15), %rdi
+     27e: 48 8d b4 24 d0 01 00 00      	leaq	0x1d0(%rsp), %rsi
+     286: 48 89 e2                     	movq	%rsp, %rdx
+     289: 41 ff 97 88 00 00 00         	callq	*0x88(%r15)
+     290: 84 c0                        	testb	%al, %al
+     292: 0f 84 48 02 00 00            	je	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     298: 83 bc 24 b8 01 00 00 03      	cmpl	$0x3, 0x1b8(%rsp)
+     2a0: 0f 85 3a 02 00 00            	jne	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     2a6: 48 8d bc 24 d0 01 00 00      	leaq	0x1d0(%rsp), %rdi
+     2ae: 48 89 e6                     	movq	%rsp, %rsi
+     2b1: e8 00 00 00 00               	callq	0x2b6 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x2b6>
+		00000000000002b2:  R_X86_64_PLT32	_ZN10hgn_dflash5equalERKNS_7BindingES2_-0x4
+     2b6: 84 c0                        	testb	%al, %al
+     2b8: 0f 84 22 02 00 00            	je	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     2be: 41 8b 8f 80 00 00 00         	movl	0x80(%r15), %ecx
+     2c5: 8b 94 24 bc 01 00 00         	movl	0x1bc(%rsp), %edx
+     2cc: 85 d2                        	testl	%edx, %edx
+     2ce: 0f 99 c0                     	setns	%al
+     2d1: 39 ca                        	cmpl	%ecx, %edx
+     2d3: 40 0f 92 c6                  	setb	%sil
+     2d7: 40 84 f0                     	testb	%sil, %al
+     2da: 0f 84 00 02 00 00            	je	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     2e0: 49 8b 47 78                  	movq	0x78(%r15), %rax
+     2e4: 89 d2                        	movl	%edx, %edx
+     2e6: 89 d6                        	movl	%edx, %esi
+     2e8: c1 ee 03                     	shrl	$0x3, %esi
+     2eb: 0f b6 34 30                  	movzbl	(%rax,%rsi), %esi
+     2ef: 83 e2 07                     	andl	$0x7, %edx
+     2f2: 0f a3 d6                     	btl	%edx, %esi
+     2f5: 0f 83 e5 01 00 00            	jae	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     2fb: 8b 94 24 c0 01 00 00         	movl	0x1c0(%rsp), %edx
+     302: 85 d2                        	testl	%edx, %edx
+     304: 40 0f 99 c6                  	setns	%sil
+     308: 39 ca                        	cmpl	%ecx, %edx
+     30a: 40 0f 92 c7                  	setb	%dil
+     30e: 40 20 f7                     	andb	%sil, %dil
+     311: 40 80 ff 01                  	cmpb	$0x1, %dil
+     315: 0f 85 c5 01 00 00            	jne	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     31b: 89 d2                        	movl	%edx, %edx
+     31d: 89 d6                        	movl	%edx, %esi
+     31f: c1 ee 03                     	shrl	$0x3, %esi
+     322: 0f b6 34 30                  	movzbl	(%rax,%rsi), %esi
+     326: 83 e2 07                     	andl	$0x7, %edx
+     329: 0f a3 d6                     	btl	%edx, %esi
+     32c: 0f 83 ae 01 00 00            	jae	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     332: 8b 94 24 c4 01 00 00         	movl	0x1c4(%rsp), %edx
+     339: 85 d2                        	testl	%edx, %edx
+     33b: 40 0f 99 c6                  	setns	%sil
+     33f: 39 ca                        	cmpl	%ecx, %edx
+     341: 0f 92 c1                     	setb	%cl
+     344: 40 20 f1                     	andb	%sil, %cl
+     347: 80 f9 01                     	cmpb	$0x1, %cl
+     34a: 0f 85 90 01 00 00            	jne	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     350: 89 d1                        	movl	%edx, %ecx
+     352: 89 ca                        	movl	%ecx, %edx
+     354: c1 ea 03                     	shrl	$0x3, %edx
+     357: 0f b6 04 10                  	movzbl	(%rax,%rdx), %eax
+     35b: 83 e1 07                     	andl	$0x7, %ecx
+     35e: 0f a3 c8                     	btl	%ecx, %eax
+     361: 0f 83 79 01 00 00            	jae	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     367: 8b 43 6c                     	movl	0x6c(%rbx), %eax
+     36a: 85 c0                        	testl	%eax, %eax
+     36c: 0f 84 6e 01 00 00            	je	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     372: 0f 57 c0                     	xorps	%xmm0, %xmm0
+     375: 0f 29 84 24 90 03 00 00      	movaps	%xmm0, 0x390(%rsp)
+     37d: 0f 29 84 24 a0 03 00 00      	movaps	%xmm0, 0x3a0(%rsp)
+     385: 0f 29 84 24 b0 03 00 00      	movaps	%xmm0, 0x3b0(%rsp)
+     38d: 0f 29 84 24 c0 03 00 00      	movaps	%xmm0, 0x3c0(%rsp)
+     395: 0f 29 84 24 d0 03 00 00      	movaps	%xmm0, 0x3d0(%rsp)
+     39d: 0f 29 84 24 e0 03 00 00      	movaps	%xmm0, 0x3e0(%rsp)
+     3a5: 0f 29 84 24 f0 03 00 00      	movaps	%xmm0, 0x3f0(%rsp)
+     3ad: 0f 29 84 24 20 04 00 00      	movaps	%xmm0, 0x420(%rsp)
+     3b5: 0f 29 84 24 10 04 00 00      	movaps	%xmm0, 0x410(%rsp)
+     3bd: 0f 29 84 24 00 04 00 00      	movaps	%xmm0, 0x400(%rsp)
+     3c5: 48 c7 84 24 30 04 00 00 00 00 00 00  	movq	$0x0, 0x430(%rsp)
+     3d1: 0f 11 84 24 38 04 00 00      	movups	%xmm0, 0x438(%rsp)
+     3d9: 0f 11 84 24 48 04 00 00      	movups	%xmm0, 0x448(%rsp)
+     3e1: 0f 11 84 24 58 04 00 00      	movups	%xmm0, 0x458(%rsp)
+     3e9: 0f 11 84 24 68 04 00 00      	movups	%xmm0, 0x468(%rsp)
+     3f1: 0f 11 84 24 78 04 00 00      	movups	%xmm0, 0x478(%rsp)
+     3f9: 0f 11 84 24 88 04 00 00      	movups	%xmm0, 0x488(%rsp)
+     401: 0f 11 84 24 98 04 00 00      	movups	%xmm0, 0x498(%rsp)
+     409: 0f 11 84 24 a8 04 00 00      	movups	%xmm0, 0x4a8(%rsp)
+     411: 0f 11 84 24 b8 04 00 00      	movups	%xmm0, 0x4b8(%rsp)
+     419: 0f 11 84 24 c8 04 00 00      	movups	%xmm0, 0x4c8(%rsp)
+     421: 0f 11 84 24 d8 04 00 00      	movups	%xmm0, 0x4d8(%rsp)
+     429: 0f 11 84 24 e8 04 00 00      	movups	%xmm0, 0x4e8(%rsp)
+     431: 0f 11 84 24 f8 04 00 00      	movups	%xmm0, 0x4f8(%rsp)
+     439: 0f 11 84 24 08 05 00 00      	movups	%xmm0, 0x508(%rsp)
+     441: 0f 11 84 24 18 05 00 00      	movups	%xmm0, 0x518(%rsp)
+     449: 0f 11 84 24 28 05 00 00      	movups	%xmm0, 0x528(%rsp)
+     451: 0f 11 84 24 38 05 00 00      	movups	%xmm0, 0x538(%rsp)
+     459: 48 8b 43 50                  	movq	0x50(%rbx), %rax
+     45d: 4c 39 e0                     	cmpq	%r12, %rax
+     460: 75 7e                        	jne	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     462: 4c 8d 84 24 90 03 00 00      	leaq	0x390(%rsp), %r8
+     46a: 48 89 df                     	movq	%rbx, %rdi
+     46d: 4c 89 fe                     	movq	%r15, %rsi
+     470: 4c 89 f2                     	movq	%r14, %rdx
+     473: 4c 89 e1                     	movq	%r12, %rcx
+     476: e8 00 00 00 00               	callq	0x47b <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x47b>
+		0000000000000477:  R_X86_64_PLT32	_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE-0x4
+     47b: 84 c0                        	testb	%al, %al
+     47d: 74 61                        	je	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     47f: 48 8d bc 24 d0 01 00 00      	leaq	0x1d0(%rsp), %rdi
+     487: 48 8d b4 24 90 03 00 00      	leaq	0x390(%rsp), %rsi
+     48f: e8 00 00 00 00               	callq	0x494 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x494>
+		0000000000000490:  R_X86_64_PLT32	_ZN10hgn_dflash5equalERKNS_7BindingES2_-0x4
+     494: 84 c0                        	testb	%al, %al
+     496: 74 48                        	je	0x4e0 <_ZN10hgn_dflash14ready_dispatchERNS_4LaneERKNS_13ConfigurationERNS_5FrameERNS_10InvocationE+0x4e0>
+     498: 49 8b 46 38                  	movq	0x38(%r14), %rax
+     49c: 8b 8c 24 bc 01 00 00         	movl	0x1bc(%rsp), %ecx
+     4a3: 89 88 a0 06 00 00            	movl	%ecx, 0x6a0(%rax)
+     4a9: 8b 8c 24 c0 01 00 00         	movl	0x1c0(%rsp), %ecx
+     4b0: 89 88 a4 06 00 00            	movl	%ecx, 0x6a4(%rax)
+     4b6: 8b 8c 24 c4 01 00 00         	movl	0x1c4(%rsp), %ecx
+     4bd: 89 88 a8 06 00 00            	movl	%ecx, 0x6a8(%rax)
+     4c3: b9 40 02 00 00               	movl	$0x240, %ecx            # imm = 0x240
+     4c8: 49 03 4e 20                  	addq	0x20(%r14), %rcx
+     4cc: 48 89 48 18                  	movq	%rcx, 0x18(%rax)
+     4d0: 49 c7 46 68 03 00 00 00      	movq	$0x3, 0x68(%r14)
+     4d8: 49 c7 45 00 02 00 00 00      	movq	$0x2, (%r13)
+     4e0: 48 89 df                     	movq	%rbx, %rdi
+     4e3: c7 47 1c 00 00 00 00         	movl	$0x0, 0x1c(%rdi)
+     4ea: 48 81 c4 50 05 00 00         	addq	$0x550, %rsp            # imm = 0x550
+     4f1: 5b                           	popq	%rbx
+     4f2: 41 5c                        	popq	%r12
+     4f4: 41 5d                        	popq	%r13
+     4f6: 41 5e                        	popq	%r14
+     4f8: 41 5f                        	popq	%r15
+     4fa: c3                           	retq
+
+Disassembly of section .text._ZN10hgn_dflash13complete_pinsERKNS_13ConfigurationE:
+
+0000000000000000 <_ZN10hgn_dflash13complete_pinsERKNS_13ConfigurationE>:
+       0: f3 0f 1e fa                  	endbr64
+       4: 66 0f ef c0                  	pxor	%xmm0, %xmm0
+       8: f3 0f 6f 4f 01               	movdqu	0x1(%rdi), %xmm1
+       d: 66 0f 74 c8                  	pcmpeqb	%xmm0, %xmm1
+      11: 66 0f d7 c9                  	pmovmskb	%xmm1, %ecx
+      15: 31 c0                        	xorl	%eax, %eax
+      17: 81 f1 ff ff 00 00            	xorl	$0xffff, %ecx           # imm = 0xFFFF
+      1d: 0f 84 a6 00 00 00            	je	0xc9 <_ZN10hgn_dflash13complete_pinsERKNS_13ConfigurationE+0xc9>
+      23: f3 0f 6f 47 11               	movdqu	0x11(%rdi), %xmm0
+      28: f3 0f 6f 4f 21               	movdqu	0x21(%rdi), %xmm1
+      2d: 66 0f eb c8                  	por	%xmm0, %xmm1
+      31: 66 0f 70 c1 ee               	pshufd	$0xee, %xmm1, %xmm0     # xmm0 = xmm1[2,3,2,3]
+      36: 66 0f eb c1                  	por	%xmm1, %xmm0
+      3a: 66 0f 70 c8 55               	pshufd	$0x55, %xmm0, %xmm1     # xmm1 = xmm0[1,1,1,1]
+      3f: 66 0f eb c8                  	por	%xmm0, %xmm1
+      43: 66 0f 6f c1                  	movdqa	%xmm1, %xmm0
+      47: 66 0f 72 d0 10               	psrld	$0x10, %xmm0
+      4c: 66 0f eb c1                  	por	%xmm1, %xmm0
+      50: 66 0f 6f c8                  	movdqa	%xmm0, %xmm1
+      54: 66 0f 71 d1 08               	psrlw	$0x8, %xmm1
+      59: 66 0f eb c8                  	por	%xmm0, %xmm1
+      5d: 66 0f 7e c9                  	movd	%xmm1, %ecx
+      61: 84 c9                        	testb	%cl, %cl
+      63: 74 64                        	je	0xc9 <_ZN10hgn_dflash13complete_pinsERKNS_13ConfigurationE+0xc9>
+      65: f3 0f 6f 47 31               	movdqu	0x31(%rdi), %xmm0
+      6a: f3 0f 6f 4f 41               	movdqu	0x41(%rdi), %xmm1
+      6f: 66 0f eb c8                  	por	%xmm0, %xmm1
+      73: 66 0f 70 c1 ee               	pshufd	$0xee, %xmm1, %xmm0     # xmm0 = xmm1[2,3,2,3]
+      78: 66 0f eb c1                  	por	%xmm1, %xmm0
+      7c: 66 0f 70 c8 55               	pshufd	$0x55, %xmm0, %xmm1     # xmm1 = xmm0[1,1,1,1]
+      81: 66 0f eb c8                  	por	%xmm0, %xmm1
+      85: 66 0f 6f c1                  	movdqa	%xmm1, %xmm0
+      89: 66 0f 72 d0 10               	psrld	$0x10, %xmm0
+      8e: 66 0f eb c1                  	por	%xmm1, %xmm0
+      92: 66 0f 6f c8                  	movdqa	%xmm0, %xmm1
+      96: 66 0f 71 d1 08               	psrlw	$0x8, %xmm1
+      9b: 66 0f eb c8                  	por	%xmm0, %xmm1
+      9f: 66 0f 7e c9                  	movd	%xmm1, %ecx
+      a3: 84 c9                        	testb	%cl, %cl
+      a5: 74 22                        	je	0xc9 <_ZN10hgn_dflash13complete_pinsERKNS_13ConfigurationE+0xc9>
+      a7: f3 0f 6f 47 51               	movdqu	0x51(%rdi), %xmm0
+      ac: f3 0f 6f 4f 61               	movdqu	0x61(%rdi), %xmm1
+      b1: 66 0f eb c8                  	por	%xmm0, %xmm1
+      b5: 66 0f ef c0                  	pxor	%xmm0, %xmm0
+      b9: 66 0f 74 c1                  	pcmpeqb	%xmm1, %xmm0
+      bd: 66 0f d7 c0                  	pmovmskb	%xmm0, %eax
+      c1: 35 ff ff 00 00               	xorl	$0xffff, %eax           # imm = 0xFFFF
+      c6: 0f 95 c0                     	setne	%al
+      c9: c3                           	retq
+
+Disassembly of section .text._ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE:
+
+0000000000000000 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE>:
+       0: f3 0f 1e fa                  	endbr64
+       4: 4c 8b 4a 20                  	movq	0x20(%rdx), %r9
+       8: 4c 8b 5a 28                  	movq	0x28(%rdx), %r11
+       c: 48 8b 42 38                  	movq	0x38(%rdx), %rax
+      10: 4d 85 c9                     	testq	%r9, %r9
+      13: 0f 95 c2                     	setne	%dl
+      16: 4d 85 db                     	testq	%r11, %r11
+      19: 41 0f 95 c2                  	setne	%r10b
+      1d: 41 20 d2                     	andb	%dl, %r10b
+      20: 48 85 c0                     	testq	%rax, %rax
+      23: 0f 95 c2                     	setne	%dl
+      26: 44 20 d2                     	andb	%r10b, %dl
+      29: 80 fa 01                     	cmpb	$0x1, %dl
+      2c: 0f 85 c9 00 00 00            	jne	0xfb <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xfb>
+      32: 55                           	pushq	%rbp
+      33: 41 57                        	pushq	%r15
+      35: 41 56                        	pushq	%r14
+      37: 41 55                        	pushq	%r13
+      39: 41 54                        	pushq	%r12
+      3b: 53                           	pushq	%rbx
+      3c: 48 8b 50 78                  	movq	0x78(%rax), %rdx
+      40: 44 8b 57 18                  	movl	0x18(%rdi), %r10d
+      44: 31 c0                        	xorl	%eax, %eax
+      46: 41 83 fa 02                  	cmpl	$0x2, %r10d
+      4a: 0f 85 a0 00 00 00            	jne	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+      50: 4c 39 4f 20                  	cmpq	%r9, 0x20(%rdi)
+      54: 0f 85 96 00 00 00            	jne	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+      5a: 31 c0                        	xorl	%eax, %eax
+      5c: 48 85 d2                     	testq	%rdx, %rdx
+      5f: 0f 84 8b 00 00 00            	je	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+      65: 4c 39 1f                     	cmpq	%r11, (%rdi)
+      68: 0f 85 82 00 00 00            	jne	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+      6e: 4d 39 99 08 01 00 00         	cmpq	%r11, 0x108(%r9)
+      75: 75 77                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      77: 4c 39 4a 10                  	cmpq	%r9, 0x10(%rdx)
+      7b: 75 71                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      7d: 48 8b 02                     	movq	(%rdx), %rax
+      80: 48 3b 47 30                  	cmpq	0x30(%rdi), %rax
+      84: 75 68                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      86: 8b 42 08                     	movl	0x8(%rdx), %eax
+      89: 3b 47 08                     	cmpl	0x8(%rdi), %eax
+      8c: 75 60                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      8e: 41 39 83 c8 00 00 00         	cmpl	%eax, 0xc8(%r11)
+      95: 75 57                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      97: 41 83 b9 1c 01 00 00 00      	cmpl	$0x0, 0x11c(%r9)
+      9f: 7e 4d                        	jle	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      a1: 49 83 b9 90 01 00 00 00      	cmpq	$0x0, 0x190(%r9)
+      a9: 75 43                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      ab: 49 83 b9 40 02 00 00 00      	cmpq	$0x0, 0x240(%r9)
+      b3: 75 39                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      b5: 41 83 b9 18 02 00 00 00      	cmpl	$0x0, 0x218(%r9)
+      bd: 75 2f                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      bf: 41 83 b9 20 01 00 00 03      	cmpl	$0x3, 0x120(%r9)
+      c7: 7c 25                        	jl	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      c9: 41 83 7b 14 04               	cmpl	$0x4, 0x14(%r11)
+      ce: 7c 1e                        	jl	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      d0: 41 83 bb e0 02 00 00 04      	cmpl	$0x4, 0x2e0(%r11)
+      d8: 7c 14                        	jl	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      da: 41 80 bb 7c 0b 00 00 01      	cmpb	$0x1, 0xb7c(%r11)
+      e2: 75 0a                        	jne	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+      e4: 41 83 bb 64 01 00 00 00      	cmpl	$0x0, 0x164(%r11)
+      ec: 74 10                        	je	0xfe <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xfe>
+      ee: 31 c0                        	xorl	%eax, %eax
+      f0: 5b                           	popq	%rbx
+      f1: 41 5c                        	popq	%r12
+      f3: 41 5d                        	popq	%r13
+      f5: 41 5e                        	popq	%r14
+      f7: 41 5f                        	popq	%r15
+      f9: 5d                           	popq	%rbp
+      fa: c3                           	retq
+      fb: 31 c0                        	xorl	%eax, %eax
+      fd: c3                           	retq
+      fe: 45 8b 93 e8 02 00 00         	movl	0x2e8(%r11), %r10d
+     105: 45 85 d2                     	testl	%r10d, %r10d
+     108: 7e e4                        	jle	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+     10a: 41 8b 91 28 02 00 00         	movl	0x228(%r9), %edx
+     111: ff ca                        	decl	%edx
+     113: 31 c0                        	xorl	%eax, %eax
+     115: 83 fa 03                     	cmpl	$0x3, %edx
+     118: 72 d6                        	jb	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+     11a: 41 8d 52 04                  	leal	0x4(%r10), %edx
+     11e: 4d 63 9b 18 01 00 00         	movslq	0x118(%r11), %r11
+     125: 4c 39 da                     	cmpq	%r11, %rdx
+     128: 7f c6                        	jg	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+     12a: 41 0f b6 99 c0 01 00 00      	movzbl	0x1c0(%r9), %ebx
+     132: 45 0f b6 b1 c1 01 00 00      	movzbl	0x1c1(%r9), %r14d
+     13a: 41 0f b6 a9 c2 01 00 00      	movzbl	0x1c2(%r9), %ebp
+     142: 45 0f b6 b9 c4 01 00 00      	movzbl	0x1c4(%r9), %r15d
+     14a: 45 0f b6 99 c5 01 00 00      	movzbl	0x1c5(%r9), %r11d
+     152: 41 0f b6 81 c6 01 00 00      	movzbl	0x1c6(%r9), %eax
+     15a: 49 8b 91 c8 01 00 00         	movq	0x1c8(%r9), %rdx
+     161: 41 c1 e6 08                  	shll	$0x8, %r14d
+     165: 49 09 de                     	orq	%rbx, %r14
+     168: c1 e5 10                     	shll	$0x10, %ebp
+     16b: 45 0f b6 a1 c3 01 00 00      	movzbl	0x1c3(%r9), %r12d
+     173: 41 c1 e4 18                  	shll	$0x18, %r12d
+     177: 41 09 ec                     	orl	%ebp, %r12d
+     17a: 4d 09 f4                     	orq	%r14, %r12
+     17d: 49 c1 e7 20                  	shlq	$0x20, %r15
+     181: 49 c1 e3 28                  	shlq	$0x28, %r11
+     185: 4d 09 fb                     	orq	%r15, %r11
+     188: 4d 09 e3                     	orq	%r12, %r11
+     18b: 48 c1 e0 30                  	shlq	$0x30, %rax
+     18f: 45 0f b6 b1 c7 01 00 00      	movzbl	0x1c7(%r9), %r14d
+     197: 49 c1 e6 38                  	shlq	$0x38, %r14
+     19b: 49 09 c6                     	orq	%rax, %r14
+     19e: 4f 8d 3c 1e                  	leaq	(%r14,%r11), %r15
+     1a2: 49 ff cf                     	decq	%r15
+     1a5: 31 c0                        	xorl	%eax, %eax
+     1a7: 49 39 d7                     	cmpq	%rdx, %r15
+     1aa: 0f 83 40 ff ff ff            	jae	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+     1b0: 45 0f b6 b9 d0 01 00 00      	movzbl	0x1d0(%r9), %r15d
+     1b8: 45 0f b6 a1 d1 01 00 00      	movzbl	0x1d1(%r9), %r12d
+     1c0: 41 c1 e4 08                  	shll	$0x8, %r12d
+     1c4: 4d 09 fc                     	orq	%r15, %r12
+     1c7: 41 0f b6 a9 d2 01 00 00      	movzbl	0x1d2(%r9), %ebp
+     1cf: c1 e5 10                     	shll	$0x10, %ebp
+     1d2: 45 0f b6 a9 d3 01 00 00      	movzbl	0x1d3(%r9), %r13d
+     1da: 41 c1 e5 18                  	shll	$0x18, %r13d
+     1de: 41 09 ed                     	orl	%ebp, %r13d
+     1e1: 4d 09 e5                     	orq	%r12, %r13
+     1e4: 45 0f b6 a1 d4 01 00 00      	movzbl	0x1d4(%r9), %r12d
+     1ec: 49 c1 e4 20                  	shlq	$0x20, %r12
+     1f0: 41 0f b6 a9 d5 01 00 00      	movzbl	0x1d5(%r9), %ebp
+     1f8: 48 c1 e5 28                  	shlq	$0x28, %rbp
+     1fc: 4c 09 e5                     	orq	%r12, %rbp
+     1ff: 4c 09 ed                     	orq	%r13, %rbp
+     202: 45 0f b6 a1 d6 01 00 00      	movzbl	0x1d6(%r9), %r12d
+     20a: 49 c1 e4 30                  	shlq	$0x30, %r12
+     20e: 45 0f b6 a9 d7 01 00 00      	movzbl	0x1d7(%r9), %r13d
+     216: 49 c1 e5 38                  	shlq	$0x38, %r13
+     21a: 4d 09 e5                     	orq	%r12, %r13
+     21d: 49 09 ed                     	orq	%rbp, %r13
+     220: 4c 39 ea                     	cmpq	%r13, %rdx
+     223: 0f 87 c7 fe ff ff            	ja	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+     229: 4d 09 de                     	orq	%r11, %r14
+     22c: 49 89 d3                     	movq	%rdx, %r11
+     22f: 4d 29 f3                     	subq	%r14, %r11
+     232: 31 c0                        	xorl	%eax, %eax
+     234: 41 f6 c3 03                  	testb	$0x3, %r11b
+     238: 0f 85 b2 fe ff ff            	jne	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+     23e: 49 bc fc ff ff ff 03 00 00 00	movabsq	$0x3fffffffc, %r12      # imm = 0x3FFFFFFFC
+     248: 4d 39 e3                     	cmpq	%r12, %r11
+     24b: 0f 87 9f fe ff ff            	ja	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+     251: 41 29 df                     	subl	%ebx, %r15d
+     254: 41 83 e7 03                  	andl	$0x3, %r15d
+     258: 0f 85 92 fe ff ff            	jne	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+     25e: 4c 39 f2                     	cmpq	%r14, %rdx
+     261: 0f 84 87 fe ff ff            	je	0xee <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xee>
+     267: 49 c1 eb 02                  	shrq	$0x2, %r11
+     26b: 48 89 f0                     	movq	%rsi, %rax
+     26e: 4c 29 c0                     	subq	%r8, %rax
+     271: 48 83 f8 e0                  	cmpq	$-0x20, %rax
+     275: 72 35                        	jb	0x2ac <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0x2ac>
+     277: 31 c0                        	xorl	%eax, %eax
+     279: 0f b6 5c 06 01               	movzbl	0x1(%rsi,%rax), %ebx
+     27e: 41 88 1c 00                  	movb	%bl, (%r8,%rax)
+     282: 0f b6 5c 06 02               	movzbl	0x2(%rsi,%rax), %ebx
+     287: 41 88 5c 00 01               	movb	%bl, 0x1(%r8,%rax)
+     28c: 0f b6 5c 06 03               	movzbl	0x3(%rsi,%rax), %ebx
+     291: 41 88 5c 00 02               	movb	%bl, 0x2(%r8,%rax)
+     296: 0f b6 5c 06 04               	movzbl	0x4(%rsi,%rax), %ebx
+     29b: 41 88 5c 00 03               	movb	%bl, 0x3(%r8,%rax)
+     2a0: 48 83 c0 04                  	addq	$0x4, %rax
+     2a4: 48 83 f8 70                  	cmpq	$0x70, %rax
+     2a8: 75 cf                        	jne	0x279 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0x279>
+     2aa: eb 3e                        	jmp	0x2ea <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0x2ea>
+     2ac: 0f 10 46 01                  	movups	0x1(%rsi), %xmm0
+     2b0: 0f 10 4e 11                  	movups	0x11(%rsi), %xmm1
+     2b4: 41 0f 11 00                  	movups	%xmm0, (%r8)
+     2b8: 41 0f 11 48 10               	movups	%xmm1, 0x10(%r8)
+     2bd: 0f 10 46 21                  	movups	0x21(%rsi), %xmm0
+     2c1: 0f 10 4e 31                  	movups	0x31(%rsi), %xmm1
+     2c5: 41 0f 11 40 20               	movups	%xmm0, 0x20(%r8)
+     2ca: 41 0f 11 48 30               	movups	%xmm1, 0x30(%r8)
+     2cf: 0f 10 46 41                  	movups	0x41(%rsi), %xmm0
+     2d3: 0f 10 4e 51                  	movups	0x51(%rsi), %xmm1
+     2d7: 41 0f 11 40 40               	movups	%xmm0, 0x40(%r8)
+     2dc: 41 0f 11 48 50               	movups	%xmm1, 0x50(%r8)
+     2e1: 0f 10 46 61                  	movups	0x61(%rsi), %xmm0
+     2e5: 41 0f 11 40 60               	movups	%xmm0, 0x60(%r8)
+     2ea: 48 8b 47 10                  	movq	0x10(%rdi), %rax
+     2ee: 49 89 40 70                  	movq	%rax, 0x70(%r8)
+     2f2: 0f 10 47 30                  	movups	0x30(%rdi), %xmm0
+     2f6: 41 0f 11 40 78               	movups	%xmm0, 0x78(%r8)
+     2fb: 0f 10 47 40                  	movups	0x40(%rdi), %xmm0
+     2ff: 41 0f 11 80 88 00 00 00      	movups	%xmm0, 0x88(%r8)
+     307: 49 89 88 98 00 00 00         	movq	%rcx, 0x98(%r8)
+     30e: 48 8b 47 58                  	movq	0x58(%rdi), %rax
+     312: 49 89 80 a0 00 00 00         	movq	%rax, 0xa0(%r8)
+     319: 45 89 90 a8 00 00 00         	movl	%r10d, 0xa8(%r8)
+     320: 41 8b 81 9c 01 00 00         	movl	0x19c(%r9), %eax
+     327: 41 89 80 ac 00 00 00         	movl	%eax, 0xac(%r8)
+     32e: 45 89 98 b0 00 00 00         	movl	%r11d, 0xb0(%r8)
+     335: 41 83 fb 40                  	cmpl	$0x40, %r11d
+     339: b9 40 00 00 00               	movl	$0x40, %ecx
+     33e: 41 0f 42 cb                  	cmovbl	%r11d, %ecx
+     342: 41 89 88 b4 00 00 00         	movl	%ecx, 0xb4(%r8)
+     349: 8d 34 8d 00 00 00 00         	leal	(,%rcx,4), %esi
+     350: 48 29 f2                     	subq	%rsi, %rdx
+     353: 31 f6                        	xorl	%esi, %esi
+     355: eb 18                        	jmp	0x36f <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0x36f>
+     357: 45 89 8c b0 bc 00 00 00      	movl	%r9d, 0xbc(%r8,%rsi,4)
+     35f: 48 83 c2 08                  	addq	$0x8, %rdx
+     363: 48 ff c7                     	incq	%rdi
+     366: 48 89 fe                     	movq	%rdi, %rsi
+     369: 48 83 ff 40                  	cmpq	$0x40, %rdi
+     36d: 74 26                        	je	0x395 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0x395>
+     36f: bf 00 00 00 00               	movl	$0x0, %edi
+     374: 4c 39 de                     	cmpq	%r11, %rsi
+     377: 73 02                        	jae	0x37b <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0x37b>
+     379: 8b 3a                        	movl	(%rdx), %edi
+     37b: 41 89 bc b0 b8 00 00 00      	movl	%edi, 0xb8(%r8,%rsi,4)
+     383: 48 8d 7e 01                  	leaq	0x1(%rsi), %rdi
+     387: 45 31 c9                     	xorl	%r9d, %r9d
+     38a: 4c 39 df                     	cmpq	%r11, %rdi
+     38d: 73 c8                        	jae	0x357 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0x357>
+     38f: 44 8b 4a 04                  	movl	0x4(%rdx), %r9d
+     393: eb c2                        	jmp	0x357 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0x357>
+     395: ff c9                        	decl	%ecx
+     397: 41 39 84 88 b8 00 00 00      	cmpl	%eax, 0xb8(%r8,%rcx,4)
+     39f: 0f 94 c0                     	sete	%al
+     3a2: e9 49 fd ff ff               	jmp	0xf0 <_ZN10hgn_dflash15snapshot_nativeERKNS_4LaneERKNS_13ConfigurationERKNS_5FrameEmRNS_8SnapshotE+0xf0>
+
+Disassembly of section .text._ZN10hgn_dflash5equalERKNS_7BindingES2_:
+
+0000000000000000 <_ZN10hgn_dflash5equalERKNS_7BindingES2_>:
+       0: f3 0f 1e fa                  	endbr64
+       4: b8 03 00 00 00               	movl	$0x3, %eax
+       9: 0f 1f 80 00 00 00 00         	nopl	(%rax)
+      10: 0f b6 4c 07 fd               	movzbl	-0x3(%rdi,%rax), %ecx
+      15: 3a 4c 06 fd                  	cmpb	-0x3(%rsi,%rax), %cl
+      19: 0f 85 04 01 00 00            	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      1f: 0f b6 4c 07 fe               	movzbl	-0x2(%rdi,%rax), %ecx
+      24: 3a 4c 06 fe                  	cmpb	-0x2(%rsi,%rax), %cl
+      28: 0f 85 f5 00 00 00            	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      2e: 0f b6 4c 07 ff               	movzbl	-0x1(%rdi,%rax), %ecx
+      33: 3a 4c 06 ff                  	cmpb	-0x1(%rsi,%rax), %cl
+      37: 0f 85 e6 00 00 00            	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      3d: 0f b6 0c 07                  	movzbl	(%rdi,%rax), %ecx
+      41: 3a 0c 06                     	cmpb	(%rsi,%rax), %cl
+      44: 0f 85 d9 00 00 00            	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      4a: 48 83 c0 04                  	addq	$0x4, %rax
+      4e: 48 83 f8 73                  	cmpq	$0x73, %rax
+      52: 75 bc                        	jne	0x10 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x10>
+      54: 48 8b 47 70                  	movq	0x70(%rdi), %rax
+      58: 48 3b 46 70                  	cmpq	0x70(%rsi), %rax
+      5c: 0f 85 c1 00 00 00            	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      62: 48 8b 47 78                  	movq	0x78(%rdi), %rax
+      66: 48 3b 46 78                  	cmpq	0x78(%rsi), %rax
+      6a: 0f 85 b3 00 00 00            	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      70: 48 8b 87 80 00 00 00         	movq	0x80(%rdi), %rax
+      77: 48 3b 86 80 00 00 00         	cmpq	0x80(%rsi), %rax
+      7e: 0f 85 9f 00 00 00            	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      84: 48 8b 87 88 00 00 00         	movq	0x88(%rdi), %rax
+      8b: 48 3b 86 88 00 00 00         	cmpq	0x88(%rsi), %rax
+      92: 0f 85 8b 00 00 00            	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      98: 48 8b 87 90 00 00 00         	movq	0x90(%rdi), %rax
+      9f: 48 3b 86 90 00 00 00         	cmpq	0x90(%rsi), %rax
+      a6: 75 7b                        	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      a8: 48 8b 87 98 00 00 00         	movq	0x98(%rdi), %rax
+      af: 48 3b 86 98 00 00 00         	cmpq	0x98(%rsi), %rax
+      b6: 75 6b                        	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      b8: 48 8b 87 a0 00 00 00         	movq	0xa0(%rdi), %rax
+      bf: 48 3b 86 a0 00 00 00         	cmpq	0xa0(%rsi), %rax
+      c6: 75 5b                        	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      c8: 8b 87 a8 00 00 00            	movl	0xa8(%rdi), %eax
+      ce: 3b 86 a8 00 00 00            	cmpl	0xa8(%rsi), %eax
+      d4: 75 4d                        	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      d6: 8b 87 ac 00 00 00            	movl	0xac(%rdi), %eax
+      dc: 3b 86 ac 00 00 00            	cmpl	0xac(%rsi), %eax
+      e2: 75 3f                        	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      e4: 8b 87 b0 00 00 00            	movl	0xb0(%rdi), %eax
+      ea: 3b 86 b0 00 00 00            	cmpl	0xb0(%rsi), %eax
+      f0: 75 31                        	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+      f2: 8b 87 b4 00 00 00            	movl	0xb4(%rdi), %eax
+      f8: 3b 86 b4 00 00 00            	cmpl	0xb4(%rsi), %eax
+      fe: 75 23                        	jne	0x123 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x123>
+     100: 31 c9                        	xorl	%ecx, %ecx
+     102: 8b 84 8f b8 00 00 00         	movl	0xb8(%rdi,%rcx,4), %eax
+     109: 3b 84 8e b8 00 00 00         	cmpl	0xb8(%rsi,%rcx,4), %eax
+     110: 0f 94 c0                     	sete	%al
+     113: 75 0d                        	jne	0x122 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x122>
+     115: 48 8d 51 01                  	leaq	0x1(%rcx), %rdx
+     119: 48 83 f9 3f                  	cmpq	$0x3f, %rcx
+     11d: 48 89 d1                     	movq	%rdx, %rcx
+     120: 75 e0                        	jne	0x102 <_ZN10hgn_dflash5equalERKNS_7BindingES2_+0x102>
+     122: c3                           	retq
+     123: 31 c0                        	xorl	%eax, %eax
+     125: c3                           	retq

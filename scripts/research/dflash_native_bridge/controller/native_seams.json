@@ -1,0 +1,212 @@
+{
+  "schema": "halogen0173.dflash.retained-native-seams.v1",
+  "runtime_sha256": "af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7",
+  "disassembly_sha256": "1c7ace3b584ec57139b052413381522a414c6d012d93da237dc4d5942f8a7f73",
+  "sites": [
+    {
+      "site": 0,
+      "name": "Entry",
+      "rva": "0x173fcd5",
+      "bytes": "83 be 1c 01 00 00 00",
+      "stock_resume_rva": "0x173fcdc",
+      "native_cfa": "0x1a40",
+      "fde": {
+        "start_rva": 24308352,
+        "end_rva_exclusive": 24398484,
+        "start_file_offset": 24304256,
+        "end_file_offset_exclusive": 24394388,
+        "bytes": 90132,
+        "fde_rva": 24241544,
+        "fde_file_offset": 24241544,
+        "cie_file_offset": 24240092,
+        "cie_augmentation": "zPLR",
+        "fde_pointer_encoding": 27,
+        "code_alignment": 1,
+        "data_alignment": -8,
+        "return_register": 16,
+        "range_verified_from_existing_elf_unwind": true
+      }
+    },
+    {
+      "site": 1,
+      "name": "Prepare",
+      "rva": "0x1782bdc",
+      "bytes": "48 8b bb 08 01 00 00",
+      "stock_resume_rva": "0x1782be3",
+      "native_cfa": "0x30",
+      "fde": {
+        "start_rva": 24652624,
+        "end_rva_exclusive": 24652996,
+        "start_file_offset": 24648528,
+        "end_file_offset_exclusive": 24648900,
+        "bytes": 372,
+        "fde_rva": 24114768,
+        "fde_file_offset": 24114768,
+        "cie_file_offset": 24099924,
+        "cie_augmentation": "zR",
+        "fde_pointer_encoding": 27,
+        "code_alignment": 1,
+        "data_alignment": -8,
+        "return_register": 16,
+        "range_verified_from_existing_elf_unwind": true
+      }
+    },
+    {
+      "site": 2,
+      "name": "PostReset",
+      "rva": "0x173ce9a",
+      "bytes": "48 8b 44 24 08",
+      "stock_resume_rva": "0x173ce9f",
+      "native_cfa": "0x1a40",
+      "fde": {
+        "start_rva": 24308352,
+        "end_rva_exclusive": 24398484,
+        "start_file_offset": 24304256,
+        "end_file_offset_exclusive": 24394388,
+        "bytes": 90132,
+        "fde_rva": 24241544,
+        "fde_file_offset": 24241544,
+        "cie_file_offset": 24240092,
+        "cie_augmentation": "zPLR",
+        "fde_pointer_encoding": 27,
+        "code_alignment": 1,
+        "data_alignment": -8,
+        "return_register": 16,
+        "range_verified_from_existing_elf_unwind": true
+      }
+    },
+    {
+      "site": 3,
+      "name": "InitialFlag",
+      "rva": "0x173cc71",
+      "bytes": "48 8b b0 80 01 00 00",
+      "stock_resume_rva": "0x173cc78",
+      "native_cfa": "0x1a40",
+      "fde": {
+        "start_rva": 24308352,
+        "end_rva_exclusive": 24398484,
+        "start_file_offset": 24304256,
+        "end_file_offset_exclusive": 24394388,
+        "bytes": 90132,
+        "fde_rva": 24241544,
+        "fde_file_offset": 24241544,
+        "cie_file_offset": 24240092,
+        "cie_augmentation": "zPLR",
+        "fde_pointer_encoding": 27,
+        "code_alignment": 1,
+        "data_alignment": -8,
+        "return_register": 16,
+        "range_verified_from_existing_elf_unwind": true
+      }
+    },
+    {
+      "site": 4,
+      "name": "ChunkFlag",
+      "rva": "0x1746c96",
+      "bytes": "49 8d 86 28 03 00 00",
+      "stock_resume_rva": "0x1746c9d",
+      "native_cfa": "0x120",
+      "fde": {
+        "start_rva": 24406816,
+        "end_rva_exclusive": 24410658,
+        "start_file_offset": 24402720,
+        "end_file_offset_exclusive": 24406562,
+        "bytes": 3842,
+        "fde_rva": 24249188,
+        "fde_file_offset": 24249188,
+        "cie_file_offset": 24240092,
+        "cie_augmentation": "zPLR",
+        "fde_pointer_encoding": 27,
+        "code_alignment": 1,
+        "data_alignment": -8,
+        "return_register": 16,
+        "range_verified_from_existing_elf_unwind": true
+      }
+    }
+  ],
+  "built_templates": [
+    {
+      "site": 0,
+      "name": "Entry",
+      "begin": 0,
+      "mandatory_gate": 67,
+      "code_end": 652,
+      "native_cfa": "0x1a40",
+      "exits": {
+        "stock": {
+          "delta_offset": 558,
+          "target_rva": "0x173fcdc"
+        },
+        "ready": {
+          "delta_offset": 603,
+          "target_rva": "0x173fd86"
+        },
+        "scalar": {
+          "delta_offset": 648,
+          "target_rva": "0x1740408"
+        }
+      },
+      "default_off": true
+    },
+    {
+      "site": 1,
+      "name": "Prepare",
+      "begin": 752,
+      "mandatory_gate": 819,
+      "code_end": 964,
+      "native_cfa": "0x30",
+      "exits": {
+        "stock": {
+          "delta_offset": 960,
+          "target_rva": "0x1782be3"
+        }
+      },
+      "default_off": true
+    },
+    {
+      "site": 2,
+      "name": "PostReset",
+      "begin": 1056,
+      "mandatory_gate": 1123,
+      "code_end": 1403,
+      "native_cfa": "0x1a40",
+      "exits": {
+        "stock": {
+          "delta_offset": 1399,
+          "target_rva": "0x173ce9f"
+        }
+      },
+      "default_off": true
+    },
+    {
+      "site": 3,
+      "name": "InitialFlag",
+      "begin": 1504,
+      "mandatory_gate": 1571,
+      "code_end": 1689,
+      "native_cfa": "0x1a40",
+      "exits": {
+        "stock": {
+          "delta_offset": 1685,
+          "target_rva": "0x173cc78"
+        }
+      },
+      "default_off": true
+    },
+    {
+      "site": 4,
+      "name": "ChunkFlag",
+      "begin": 1792,
+      "mandatory_gate": 1859,
+      "code_end": 1977,
+      "native_cfa": "0x120",
+      "exits": {
+        "stock": {
+          "delta_offset": 1973,
+          "target_rva": "0x1746c9d"
+        }
+      },
+      "default_off": true
+    }
+  ]
+}
