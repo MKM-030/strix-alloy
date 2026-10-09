@@ -1,0 +1,278 @@
+{
+  "schema": "halogen0173.distinct-source-followup.v1",
+  "utc": "2026-10-09T15:04:54.357508+00:00",
+  "source_only": true,
+  "current_server": {
+    "version": "0.17.3",
+    "context_capacity": 262144,
+    "endpoint": "http://127.0.0.1:8840/v1",
+    "identities_verified": true,
+    "visible_console_verified": true,
+    "ready_open": true,
+    "active_requests_observed": 0,
+    "same_run_ids": true,
+    "current_profile_sha256": "78e1888d9ecc93a2117be679cd27ffeec1f8f9b99165e18647cef04104bfc141"
+  },
+  "last_qualified_measurement": {
+    "actual_input_tokens": 16384,
+    "output_tokens": 128,
+    "prefill": 1833.6953788209692,
+    "decode": 43.04733781430367,
+    "accepted": 180,
+    "drafted": 399,
+    "acceptance": 0.45112781954887216,
+    "acceptance_scope": "combined API MTP+PLD draft-token accounting; native MTP-only acceptance not isolated",
+    "measurement_only_no_acceleration_claim": true,
+    "public_document": "docs/benchmarks/halogen0173-natural16k-raw-20261009.md"
+  },
+  "new_inference_requests": 0,
+  "new_GPU_runs": 0,
+  "new_NPU_runs": 0,
+  "new_lifecycle_restarts": 0,
+  "new_prefill_decode_gain": null,
+  "new_NPU_on_off_delta_tok_s": null,
+  "DFlash": {
+    "source_snapshot": {
+      "schema": "halogen0173.distinct-source-snapshot.v1",
+      "utc": "2026-10-09T14:46:47.637848+00:00",
+      "model": "PixelML/Qwen3.8-Flash-Next-NVFP4-DFlash",
+      "revision": "9cd660f9050c92fedc88cbe547bd53af0392abe1",
+      "metadata_bytes": 1662,
+      "metadata_sha256": "37dc63ea98fa73938a382751790db262d17a1ac106f5a367c023c6188590142b",
+      "files": [
+        {
+          "url": "https://huggingface.co/PixelML/Qwen3.8-Flash-Next-NVFP4-DFlash/resolve/9cd660f9050c92fedc88cbe547bd53af0392abe1/README.md",
+          "name": "pixelml-README.md",
+          "bytes": 32590,
+          "sha256": "6bcf0fc0ddde74a09a846ef4e529ac098093442c8962021b684d49c6400f42ad"
+        },
+        {
+          "url": "https://huggingface.co/PixelML/Qwen3.8-Flash-Next-NVFP4-DFlash/resolve/9cd660f9050c92fedc88cbe547bd53af0392abe1/config.json",
+          "name": "pixelml-config.json",
+          "bytes": 1210,
+          "sha256": "fb9cc99a44e223308466668a6181cb2b782c583e0876a46a11d3b8fbf5b829f0"
+        }
+      ],
+      "checkpoint_downloaded": false,
+      "model_executed": false,
+      "NPU_executed": false
+    },
+    "metadata_only_weights_not_downloaded": true,
+    "parameters": 498106880,
+    "model_safetensors_metadata": {
+      "bytes": 996219904,
+      "sha256": "35a23c17c248ff2e3296e6b78882b6d955af3092498fb7b6c48be1af4bfa971a",
+      "payload_hash_independently_computed": false
+    },
+    "teacher_tokenizer_sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+    "mounted_frontend_tokenizer_matches": true,
+    "tokenizer_identity_establishes_HGN_weights_equal": false,
+    "trained_tap_ids": [
+      3,
+      15,
+      23,
+      35,
+      43
+    ],
+    "next_layer_boundaries": [
+      4,
+      16,
+      24,
+      36,
+      44
+    ],
+    "internal_mask_id": 248077,
+    "K3_query_positions": "p,p+1,p+2",
+    "K3_prediction_positions": "p+1,p+2,p+3",
+    "retraining_required_before_trial": false,
+    "independent_token_only_producer": false,
+    "provider_executed": false,
+    "NPU_feasibility_measured": false,
+    "geometry": {
+      "schema": "halogen0173.dflash-source-geometry.v1",
+      "config_sha256": "fb9cc99a44e223308466668a6181cb2b782c583e0876a46a11d3b8fbf5b829f0",
+      "metadata_sha256": "37dc63ea98fa73938a382751790db262d17a1ac106f5a367c023c6188590142b",
+      "revision": "9cd660f9050c92fedc88cbe547bd53af0392abe1",
+      "draft_parameters": 498106880,
+      "draft_BF16_weight_geometry_bytes": 996213760,
+      "each_shared_vocab_BF16_geometry_bytes": 1271398400,
+      "rows": [
+        {
+          "input_tokens": 8192,
+          "all_tap_BF16_geometry_bytes": 209715200,
+          "dense_draft_KV_BF16_geometry_bytes": 83886080,
+          "all_tap_GiB": 0.1953125,
+          "draft_KV_GiB": 0.078125
+        },
+        {
+          "input_tokens": 16384,
+          "all_tap_BF16_geometry_bytes": 419430400,
+          "dense_draft_KV_BF16_geometry_bytes": 167772160,
+          "all_tap_GiB": 0.390625,
+          "draft_KV_GiB": 0.15625
+        },
+        {
+          "input_tokens": 131072,
+          "all_tap_BF16_geometry_bytes": 3355443200,
+          "dense_draft_KV_BF16_geometry_bytes": 1342177280,
+          "all_tap_GiB": 3.125,
+          "draft_KV_GiB": 1.25
+        },
+        {
+          "input_tokens": 260000,
+          "all_tap_BF16_geometry_bytes": 6656000000,
+          "dense_draft_KV_BF16_geometry_bytes": 2662400000,
+          "all_tap_GiB": 6.198883056640625,
+          "draft_KV_GiB": 2.47955322265625
+        },
+        {
+          "input_tokens": 262144,
+          "all_tap_BF16_geometry_bytes": 6710886400,
+          "dense_draft_KV_BF16_geometry_bytes": 2684354560,
+          "all_tap_GiB": 6.25,
+          "draft_KV_GiB": 2.5
+        }
+      ],
+      "formulas": {
+        "taps": "T * tap_count * hidden_size * 2",
+        "dense_KV": "T * draft_layer_count * kv_head_count * head_dim * 2(K,V) * 2(BF16)"
+      },
+      "assumptions": {
+        "element_bytes": 2,
+        "all_taps_retained_together": true,
+        "draft_KV_full_uncompressed": true,
+        "geometry_is_live_allocation": false,
+        "requires_full_tap_retention": false,
+        "streamed_chunk_alternative_implemented": false
+      },
+      "timing_measured": false,
+      "NPU_executed": false,
+      "serving_gain": null
+    },
+    "controller_bridge": {
+      "entry_before_generation": "0x1751783",
+      "join": "0x1751803",
+      "linear_verifier_call": "0x1751834",
+      "target_commit_call": "0x17518a3",
+      "continuing_native_draft_replay": "0x1751d89",
+      "PLD_missing_opening_call": "0x17403bb",
+      "bridge_installed": false
+    },
+    "typed_feature_candidate": {
+      "dispatcher_call": "0x17f22bc",
+      "helper": "0x179abe0",
+      "selector": 0,
+      "launch": "0x179f8a9",
+      "descriptor": "0x18f64b0",
+      "symbol": "k_hc_mixed_sig",
+      "BF16_row_width": 2560,
+      "output_pointer": "*(model+0x948)+chunk_row_offset",
+      "five_trained_identities_bound": false,
+      "copy_lifetime_and_request_epoch_bound": false,
+      "all_branch_semantics_qualified": false,
+      "exporter_installed": false
+    },
+    "minimum_trial_prerequisites": [
+      "semantic owned HC taps for prefill and continuing inputs",
+      "checkpoint and embedding/head binding",
+      "serialized K3 provider with accepted-context KV",
+      "pre-generation bridge plus native replay/opening handling",
+      "complete paired output/rate measurement"
+    ]
+  },
+  "Strata": {
+    "utc": "2026-10-09T14:54:17.612783+00:00",
+    "ref_url": "https://api.github.com/repos/Niko1221/Strata/git/ref/tags/v0.1.40",
+    "current_commit": "1cbcacbcae2953f3be9edc46369f0c875bc6ab8b",
+    "ref_sha256": "7b5d9a0c36623666a91294e6e79cffe984cd685523a78421b9825e130e457bdc",
+    "historical_commit": "1735d6471df29b42c26170efaac1f1446a58640f",
+    "historical_current_discrepancy_cause_established": false,
+    "reported_current_and_retained_bytes_equal": {
+      "src/core/verify.cpp": "938579652a136f14d4a01dc66da0035fca93863c66a89f01348b9bbf4a30c364",
+      "src/core/mtp.cpp": "3f214dd53f23565f885f19fecd74cd3bbe4d00f22336b5940a70494396f57648",
+      "src/kernels/cuda/verify_kernels.cu": "1f7a650452510af9892b9636534c8086fd80578ddee1733022e926f3285ae15c",
+      "src/kernels/cuda/fused_gr.cu": "53cabb529587d777e56521443336164c168033afab64bdaa4506c65782657dcc",
+      "src/kernels/cuda/qsa_select.cu": "997023ff9c367cc5d43936371c363700313dbbeddb4a17ae0c52391bf7e5146f",
+      "src/kernels/cuda/fused_gdn.cu": "0b840f8583c28bb16b7e8bd7a77fbb379bc9c5d331f061a5f31f459f97236abc",
+      "src/core/arch_defaults.cpp": "b931498f28897f3816a1beca378f50968ddc193b850cf824727f8342d4927b27",
+      "src/prefill/wmma_gemm.cu": "5e5f2266d652971a0d0cb294b4731a8b198e6949c9c0781f89d95b0d51970672",
+      "include/strata/kernels/gfx_arch.hpp": "ef3e926c0b0e6efa8d17e87e2ccec573e85c63feba30acd3db137b108ef9609d",
+      "src/kernels/cuda/ple.cu": "ca887e5837f70ee4198a7a24329daf4f028744d443e898edb53febe7ba016382"
+    },
+    "root_retained_bytes_verified": true,
+    "agent_current_bytes_verified": true,
+    "hardware_executed": false
+  },
+  "index_scorer": {
+    "default_mode": 3,
+    "query_and_key_count_derived_grid": true,
+    "loop_wrapper": "0x18f1580",
+    "shader": "0x2e800",
+    "early_exit_branch": "0x2e844",
+    "first_buffer_pointer_load": "0x2e858",
+    "first_global_load": "0x2e8d4",
+    "grid_formula": {
+      "x": "ceil(K/128)",
+      "t": "ceil(Q/16)",
+      "a": "max(1,min(t,ceil(240/x)))",
+      "c": "ceil(t/a)",
+      "y": "ceil(t/c)"
+    },
+    "geometry_not_live_capture": true,
+    "region_recheck": {
+      "schema": "halogen0173.source-region-recheck.v1",
+      "engine_bytes": 26188824,
+      "engine_sha256": "af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7",
+      "bundle3_offset": 22097920,
+      "bundle3_bytes": 1976992,
+      "bundle3_sha256": "dbaafa57d9b3bd606d0ee59c6becdd59ae56c3d75a1678d6ccdf8482d2d1317d",
+      "root_exact_region_hashes_verified": [
+        {
+          "name": "loop_wrapper",
+          "rva": "0x18f1580",
+          "bytes": 448,
+          "sha256": "67e00b8abdba73b819eb73a6f19f045a4be704e62e998616f6557d0b679265d8"
+        },
+        {
+          "name": "indexer",
+          "rva": "0x17b5ef0",
+          "bytes": 9742,
+          "sha256": "a508717f4d3aea19eec4498bc86a35c6476d95452115ce6685789a7890155cd6"
+        },
+        {
+          "name": "loop_shader",
+          "rva": "0x2e800",
+          "bytes": 5372,
+          "sha256": "8406bdeb6fa017d26ac5ab32790d09eeec523acc7fc110830e4966763de83bbf"
+        }
+      ],
+      "source_not_live_dispatch": true
+    },
+    "fixed_overlarge_grid_lead_closed": true
+  },
+  "recurrent_state": {
+    "input_output_versions_already_separate": true,
+    "accepted_commit_uses_pointer_swaps": true,
+    "preparatory_clone_identified": false,
+    "proposed_clone_removal_closed": true
+  },
+  "repeated_maps_lead": {
+    "belongs_to_disabled_checked_copy_consumer": true,
+    "live_private_registration_adapter_SHA256": "c998ac7b1a9aee191742a6a7de9944bcd9946c919a1bcf2b2c8cd93dbba61900",
+    "Decode_lookup_intercept_exists": false,
+    "closed_as_current_decode_candidate": true
+  },
+  "STEEL": {
+    "primary_source": "https://arxiv.org/html/2607.09385v1",
+    "source_reference_only": true,
+    "head256_K3_or_Halogen_gain_qualified": false
+  },
+  "document_sha256": "6541fb171365e76bf4edbffe4b7a0e727c789e4d2806210d48092f5df3dce6bb",
+  "accuracy_review": {
+    "agent": "/root/scratchfree_moe_implementation",
+    "passed": true,
+    "small_clarifications_applied": true
+  },
+  "automation_pause_preserved": true,
+  "full_acceleration_goal_achieved": false
+}

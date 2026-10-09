@@ -71,6 +71,14 @@ warmed hit remains a plausible CPU saving; accepting it requires a new complete
 comparison only after the remaining execution-attribution uncertainty is
 actually resolved. No connected evidence currently supplies that resolution.
 
+**9 October scope correction:** those repeated scans belong to the disabled
+checked-copy/ready64 consumer. They are not established overhead in the current
+0.17.3 serving path. Its
+[private registration adapter](../../backends/halogen-wsl2-0.17.3/patches/hip-register-private-rw.c)
+calls the maps-reading `eligible()` only from `hipHostRegister`; it does not
+intercept Decode lookups. This source finding supplies no new serving candidate
+and does not qualify or reopen the incomplete historical comparison.
+
 ## Device and metric decision
 
 CPU owns these observers and checked reads. GPU retains the original compute;
