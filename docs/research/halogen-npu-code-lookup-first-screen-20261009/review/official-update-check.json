@@ -1,0 +1,60 @@
+{
+  "schema": "halogen.passive-source-update-check.v15",
+  "checkedUTC": "2026-10-09T08:09:50Z",
+  "dueUTC": "2026-10-09T08:04:13Z",
+  "nextCheckUTC": "2026-10-09T10:09:50Z",
+  "prior_receipt": "../normal-resolver-cache-20261009/official-update-check.json",
+  "method": "Read-only web refresh of exact official release pages and the requested StrixHalo Reddit post; no registry/digest, installed-state, runtime or hardware refresh",
+  "freshness": "All returned pages marked crawled today. Origin/cache revalidation metadata unavailable. GitHub ancillary tag/asset errors did not obscure release headings.",
+  "halogen": {
+    "latest_changelog_heading": "0.17.3",
+    "locally_serving_from_prior_receipt": "0.17.3",
+    "same_as_prior": true,
+    "url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/CHANGELOG.md",
+    "local_new_gain_qualified": false
+  },
+  "amd_gpu": {
+    "recommended": "26.8.1",
+    "recommended_release_date": "2026-08-20",
+    "optional": "26.9.2",
+    "optional_release_date": "2026-09-29",
+    "same_as_prior": true,
+    "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html"
+  },
+  "ryzen_ai": {
+    "latest_release": "v1.8.0",
+    "release_commit": "73c0457",
+    "same_as_prior": true,
+    "url": "https://github.com/amd/RyzenAI-SW/releases"
+  },
+  "mlir_aie": {
+    "latest_release": "v1.4.4",
+    "release_commit": "e5c705c",
+    "same_as_prior": true,
+    "url": "https://github.com/Xilinx/mlir-aie/releases"
+  },
+  "windows_ml": {
+    "vitisai_ep": "1605",
+    "vitisai_msix": "1.8.75.0",
+    "vitisai_release": "2026 9D",
+    "vitisai_preview": "1.8.80.0",
+    "preview_insiders": "2026 9D",
+    "preview_ga_planned": "2026 10D",
+    "same_as_prior": true,
+    "url": "https://raw.githubusercontent.com/wiki/microsoft/WindowsML/Windows-ML-Execution-Provider-Releases.md"
+  },
+  "reddit": {
+    "requested_url": "https://www.reddit.com/r/StrixHalo/s/LN4puzPYLm",
+    "resolved_url": "https://www.reddit.com/r/StrixHalo/comments/1x0wx70/the_npu_in_your_strix_halo_is_finally_doing_real/",
+    "reviewed_post_and_visible_comments": true,
+    "new_material_relevant_claims_identified": false,
+    "new_applicable_engine_mechanism_established": false,
+    "independently_verified_performance": false,
+    "retained_applicability": "Separate NPU search/routing/guard models; author still denies prefill acceleration and reports CPU Semble17/20 versus NPU search15/20. No newly established direct Halogen prefill/decode mechanism."
+  },
+  "actionable_differences": [],
+  "downloads_or_installations_performed": false,
+  "hardware_or_lifecycle_performed": false,
+  "installed_driver_state_refreshed": false,
+  "state_or_git_changed": false
+}

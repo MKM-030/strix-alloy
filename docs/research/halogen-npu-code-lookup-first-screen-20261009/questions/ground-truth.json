@@ -1,0 +1,332 @@
+{
+  "schema": "strix-alloy.code-lookup.ground-truth.v1",
+  "repository_root": "C:/Projects/strix-alloy-clean",
+  "authorship": "Agent-authored questions grounded in inspected repository Python source; not real human benchmark requests.",
+  "question_order_frozen": true,
+  "created_utc": "2026-10-09T07:54:39.2883538Z",
+  "prepared_before_retrieval_evaluation": true,
+  "retrieval_prototype_not_run": true,
+  "retrieval_outputs_not_inspected": true,
+  "no_model_or_hardware_calls": true,
+  "question_count": 16,
+  "question_payload": "questions.json",
+  "selected_file_allowlist": "selected-files.json",
+  "eligible_corpus_snapshot": "eligible-corpus.json",
+  "evidence_encoding": "Full source SHA256 hashes raw file bytes. Excerpt hashes encode UTF-8 text with LF separators and no terminal newline; line spans are inclusive, 1-based.",
+  "expected": [
+    {
+      "question_id": "intent_01",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/state_io.py",
+          "function_scope": "read_json",
+          "line_start": 9,
+          "line_end": 27,
+          "scope_line_start": 9,
+          "scope_line_end": 27,
+          "source_sha256": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
+          "excerpt_utf8_lf_sha256": "4504cb45152d382402aaf0d46768c89ab23d34da4e34be9246e01a39980bf685",
+          "excerpt": "def read_json(path, *, budget=1.0, clock=time.monotonic, sleep=time.sleep,\n              load=None, windows=None):\n    if not 0 <= budget <= 2.0:\n        raise ValueError('State-read retry budget must be 0..2 seconds')\n    if windows is None:\n        windows = os.name == 'nt'\n    if load is None:\n        load = lambda: Path(path).read_text(encoding='utf-8-sig')\n    deadline = clock() + budget\n    while True:\n        try:\n            return json.loads(load())\n        except OSError as exc:\n            transient = windows and (getattr(exc, 'winerror', None) in (5, 32, 33)\n                                     or exc.errno == errno.EACCES)\n            remaining = deadline - clock()\n            if not transient or remaining <= 0:\n                raise\n            sleep(min(0.025, remaining))"
+        }
+      ],
+      "reason": "Bounded retry loop handles only configured transient Windows access/sharing errors."
+    },
+    {
+      "question_id": "intent_02",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "server/console_trace.py",
+          "function_scope": "ConsoleTrace._safe",
+          "line_start": 43,
+          "line_end": 72,
+          "scope_line_start": 43,
+          "scope_line_end": 72,
+          "source_sha256": "a20796432f760e09f1f3e701e638510d7a11a7210fdc62798e26a019100901ca",
+          "excerpt_utf8_lf_sha256": "8428fe1f9d8eabcafd0215486f4bc1eb598b5fca00dc683d0d0c47b0316f13f6",
+          "excerpt": "    def _safe(self, value, budget, depth=0):\n        if depth >= 32 or budget[0] <= 0:\n            return '[TRUNCATED]'\n        budget[0] -= 1\n        if isinstance(value, str):\n            for secret in self.secrets:\n                value = value.replace(secret, '[REDACTED]')\n            kept = value[:budget[0]]\n            budget[0] -= len(kept)\n            return kept + ('[TRUNCATED]' if len(kept) < len(value) else '')\n        if isinstance(value, dict):\n            result = {}\n            for key, child in value.items():\n                if budget[0] <= 0:\n                    result['[TRUNCATED]'] = True\n                    break\n                safe_key = self._safe(str(key), budget, depth + 1)\n                normalized = ''.join(char for char in str(key).lower() if char.isalnum())\n                result[safe_key] = ('[REDACTED]' if normalized in _CREDENTIAL_FIELDS\n                                    else self._safe(child, budget, depth + 1))\n            return result\n        if isinstance(value, (list, tuple)):\n            result = []\n            for child in value:\n                if budget[0] <= 0:\n                    result.append('[TRUNCATED]')\n                    break\n                result.append(self._safe(child, budget, depth + 1))\n            return result\n        return value"
+        }
+      ],
+      "reason": "This helper applies secret/credential redaction and depth/character budgets recursively."
+    },
+    {
+      "question_id": "intent_03",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/memory_budget.py",
+          "function_scope": "admission_floors",
+          "line_start": 12,
+          "line_end": 26,
+          "scope_line_start": 12,
+          "scope_line_end": 26,
+          "source_sha256": "93548f9fd7a4eb991402829c6969dc0f311e5f3b256981cf3be4d6a4f39963c8",
+          "excerpt_utf8_lf_sha256": "25c00a342d69e8845fa2ea1d061112cdbd1f041461032992f87b02315c100734",
+          "excerpt": "def admission_floors(context, checkpoint='w4b'):\n    if type(context) is not int or not 4096 <= context <= 262144:\n        raise ValueError('Context must be 4096..262144')\n    if checkpoint not in ('w4b','v2'): raise ValueError('Unknown checkpoint')\n    if checkpoint == 'v2':\n        # Explicitly selected v2 startup admission; runtime reserve and\n        # total-commit admission remain independently enforced.\n        physical = 35\n    else:\n        physical = HOST_STARTUP_DECLINE_GIB + HOST_UNCERTAINTY_GIB + RUNTIME_RESERVE_GIB\n    # Keep the existing conservative total-commit estimate until new runs\n    # provide measured evidence for both checkpoints. Commit is not RAM.\n    kv_commit_gib = (context - 4096) * 32768 / (1024 ** 3)\n    commit = max(117, math.ceil(100.247 + 4 + RUNTIME_RESERVE_GIB + kv_commit_gib))\n    return physical, commit"
+        }
+      ],
+      "reason": "Calculates physical and commit admission separately, with checkpoint and context validation."
+    },
+    {
+      "question_id": "intent_04",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "server/gateway.py",
+          "function_scope": "Gateway.authenticate",
+          "line_start": 86,
+          "line_end": 109,
+          "scope_line_start": 86,
+          "scope_line_end": 109,
+          "source_sha256": "0f7795d5ef66871d1c0f84abdd6e60f73d1d5b2a518e09709d6ca26070123b71",
+          "excerpt_utf8_lf_sha256": "523f6496d049f084e1afb487176b1e43cf50c44bbb74e9716058408aa9854f49",
+          "excerpt": "    async def authenticate(self, request, handler):\n        trace=(self.console_trace.start(request.method,request.path,self.backend.identifier)\n               if self.console_trace and request.method=='POST' and request.path in POST_ROUTES else None)\n        if trace is not None: request[CONSOLE_TRACE_KEY]=trace\n        status=500; outcome=None\n        # Never accept credentials from URL parameters; no CORS wildcard.\n        raw=request.headers.get('Authorization','')\n        key=raw[7:] if raw.startswith('Bearer ') else request.headers.get('x-api-key','')\n        try:\n            if not hmac.compare_digest(key.encode('utf-8'),self.secret.encode('utf-8')):\n                status=401\n                return web.json_response({'error':{'message':'Unauthorized'}},status=status)\n            response=await handler(request)\n            status=response.status\n            return response\n        except web.HTTPException as exc:\n            status=exc.status\n            raise\n        except asyncio.CancelledError:\n            status=trace.status if trace is not None and trace.status is not None else 499\n            outcome='cancelled'\n            raise\n        finally:\n            if trace is not None: trace.finish(status,outcome)"
+        }
+      ],
+      "reason": "Middleware chooses an incoming key from headers, compares it, and returns an unauthorized response on mismatch."
+    },
+    {
+      "question_id": "intent_05",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/api_defaults.py",
+          "function_scope": "validate",
+          "line_start": 12,
+          "line_end": 26,
+          "scope_line_start": 12,
+          "scope_line_end": 26,
+          "source_sha256": "2a885eceb0a0edc08ec60726b918c0f6689b1870f256c8b7b3e84e83b6afdaaf",
+          "excerpt_utf8_lf_sha256": "ad7eec93cb1b5e7926684d44c771fa0d6435a2d427f64fa5b5f88b85c4401204",
+          "excerpt": "def validate(defaults):\n    if type(defaults) is not dict:\n        raise ValueError('API defaults must be a JSON object')\n    result = {}\n    for key, value in defaults.items():\n        if key not in FIELDS:\n            raise ValueError('Unsupported API default: ' + str(key))\n        if key == 'enable_thinking' and type(value) is not bool:\n            raise ValueError('enable_thinking must be a boolean')\n        if key == 'reasoning_effort' and (type(value) is not str or value not in EFFORTS):\n            raise ValueError('reasoning_effort must be minimal, low, medium, high, xhigh or max; use enable_thinking=false for Off')\n        if key == 'max_thinking_tokens' and (type(value) is not int or not 1 <= value <= 1 << 30):\n            raise ValueError('max_thinking_tokens must be an integer from 1 to 1073741824')\n        result[key] = value\n    return result"
+        }
+      ],
+      "reason": "Checks supported API-default names and exact value types/ranges."
+    },
+    {
+      "question_id": "intent_06",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/lookup_source.py",
+          "function_scope": "read_receipt",
+          "line_start": 81,
+          "line_end": 126,
+          "scope_line_start": 81,
+          "scope_line_end": 126,
+          "source_sha256": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+          "excerpt_utf8_lf_sha256": "a7978cf09a0a444df86cc356a792b1aa22bd2b7721f8652bad468d32871ce0a3",
+          "excerpt": "def read_receipt(configuration):\n    configuration = validate_configuration(configuration)\n    path = Path(configuration['receipt'])\n    reject_links(path)\n    with path.open('rb') as stream:\n        before = os.fstat(stream.fileno())\n        if not stat.S_ISREG(before.st_mode) or before.st_size > MAX_RECEIPT_BYTES:\n            raise ValueError('Lookup receipt must be a bounded regular JSON file')\n        content = stream.read(MAX_RECEIPT_BYTES + 1)\n        after = os.fstat(stream.fileno())\n    fields = lambda item: tuple(getattr(item, key) for key in\n                               ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns'))\n    reject_links(path)\n    with path.open('rb') as current:\n        current_identity = fields(os.fstat(current.fileno()))\n    if fields(before) != fields(after) or fields(after) != current_identity:\n        raise ValueError('Lookup receipt identity changed while reading')\n    if hashlib.sha256(content).hexdigest() != configuration['receipt_sha256']:\n        raise ValueError('Lookup receipt checksum does not match independent review')\n    receipt = json.loads(content, object_pairs_hook=unique_object)\n    if not isinstance(receipt, dict) or set(receipt) != {'schema', 'source', 'tensor', 'output', 'chunk_bytes'} or type(receipt['schema']) is not int or receipt['schema'] != 1:\n        raise ValueError('Malformed lookup extraction receipt')\n    source, tensor, output = (receipt[key] for key in ('source', 'tensor', 'output'))\n    if (not isinstance(source, dict) or set(source) != {'path', 'sha256', 'identity', 'header_sha256'} or\n            source['sha256'] != SOURCE_SHA or not identity(source['identity'], SOURCE_BYTES) or\n            not sha(source['header_sha256'])):\n        raise ValueError('Lookup receipt does not bind the pinned complete source')\n    if (not isinstance(tensor, dict) or set(tensor) != {'name', 'storage', 'dimensions', 'variant',\n            'source_offset', 'bytes', 'sha256', 'xor32', 'xor32_verified'} or\n            tensor['name'] != TENSOR_NAME or type(tensor['storage']) is not int or tensor['storage'] != 10 or\n            tensor['dimensions'] != [128, 2500012, 160] or\n            not isinstance(tensor['dimensions'], list) or any(type(v) is not int for v in tensor['dimensions']) or tensor['variant'] != 0 or\n            type(tensor['variant']) is not int or tensor['source_offset'] != 1882122624 or\n            type(tensor['source_offset']) is not int or type(tensor['bytes']) is not int or tensor['bytes'] != PAYLOAD_BYTES or not sha(tensor['sha256']) or\n            tensor['xor32'] != f'{4135773463:08x}' or tensor['xor32_verified'] is not True):\n        raise ValueError('Lookup receipt tensor is not the canonical pinned lookup')\n    if (not isinstance(output, dict) or set(output) != {'path', 'bytes', 'sha256', 'identity', 'data_offset'} or\n            type(output['bytes']) is not int or output['bytes'] != OUTPUT_BYTES or not sha(output['sha256']) or\n            not identity(output['identity'], OUTPUT_BYTES) or type(output['data_offset']) is not int or output['data_offset'] != 320):\n        raise ValueError('Lookup receipt output is not the canonical standalone HGN')\n    if type(receipt['chunk_bytes']) is not int or not 4 <= receipt['chunk_bytes'] <= 8 * 1024**2 or receipt['chunk_bytes'] % 4:\n        raise ValueError('Lookup receipt has an invalid bounded extraction chunk size')\n    linux_path(source['path']); linux_path(output['path'])\n    if source['path'] == output['path']:\n        raise ValueError('Standalone lookup cannot alias its original source')\n    return receipt"
+        }
+      ],
+      "reason": "The reader checks bounded regular-file status, before/after/current identity, and reviewed content digest before schema binding."
+    },
+    {
+      "question_id": "exact_01",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "server/controller.py",
+          "function_scope": "halogen_lookup_arguments",
+          "line_start": 216,
+          "line_end": 232,
+          "scope_line_start": 216,
+          "scope_line_end": 232,
+          "source_sha256": "fb53a9c47e1abaffb1a597a2f50434621a850870bc0280e1f6a4576cf128c7fc",
+          "excerpt_utf8_lf_sha256": "44f87c9d75252473a8378bb5fa105301833691b87401a41235e15bca23749aeb",
+          "excerpt": "def halogen_lookup_arguments(engine, directory):\n    if 'lookup_tuning' not in engine: return []\n    supported = Path(__file__).resolve().parents[1] / 'backends/halogen-wsl2-0.16.2'\n    if directory.resolve() != supported.resolve() or engine.get('checkpoint') != 'v2':\n        raise ValueError('Lookup source experiment requires Halogen 0.16.2 v2')\n    source = directory / 'scripts/lookup_source.py'\n    if source.is_symlink() or not source.is_file():\n        raise ValueError('Selected backend has no managed lookup-source support')\n    launcher = (directory / 'Start.ps1').read_text(encoding='utf-8-sig')\n    for name in ('LookupReceipt', 'LookupReceiptSha256'):\n        if not re.search(r'\\[string\\]\\s*\\$' + name + r'\\b', launcher, re.I):\n            raise ValueError('Selected launcher has no managed lookup-source support')\n    spec = importlib.util.spec_from_file_location('alloy_halogen_lookup_source', source)\n    module = importlib.util.module_from_spec(spec)\n    spec.loader.exec_module(module)\n    value = module.validate_configuration(engine['lookup_tuning'])\n    return ['-LookupReceipt', value['receipt'], '-LookupReceiptSha256', value['receipt_sha256']]"
+        }
+      ],
+      "reason": "The named definition returns the launcher receipt flags; the function currently gates this experiment to the 0.16.2 v2 backend."
+    },
+    {
+      "question_id": "exact_02",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "server/draft_profiles.py",
+          "function_scope": "replace_option",
+          "line_start": 13,
+          "line_end": 20,
+          "scope_line_start": 13,
+          "scope_line_end": 20,
+          "source_sha256": "66e8eebbe4691a8f1fffa974ec44889eea50024ca9bbb6400a32679e99046250",
+          "excerpt_utf8_lf_sha256": "a96f2267f9a599b3687ebc3dd0e3bc8d0229638b17365dbe72e0f1e43bc5a7d0",
+          "excerpt": "def replace_option(args, flag, value):\n    count = args.count(flag)\n    if count > 1 or (count and args.index(flag) + 1 >= len(args)):\n        raise ValueError('Ambiguous native option: ' + flag)\n    if count:\n        args[args.index(flag) + 1] = str(value)\n    else:\n        args.extend([flag, str(value)])"
+        }
+      ],
+      "reason": "The named helper replaces a single existing option value or appends the flag/value pair."
+    },
+    {
+      "question_id": "exact_03",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/startup_cache.py",
+          "function_scope": "resolve_cgroup_memory_path",
+          "line_start": 40,
+          "line_end": 75,
+          "scope_line_start": 40,
+          "scope_line_end": 75,
+          "source_sha256": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
+          "excerpt_utf8_lf_sha256": "a9e41bc1f2d2fb49081b66fd523d345a0a3327c3ab5594c394f704217b9e00c2",
+          "excerpt": "def resolve_cgroup_memory_path(cgroup_text, mountinfo_text):\n    memberships = []\n    for line in cgroup_text.splitlines():\n        fields = line.split(':', 2)\n        if len(fields) != 3:\n            raise ValueError('Malformed cgroup membership')\n        if fields[:2] == ['0', '']:\n            # /proc/self/cgroup is literal, unlike mountinfo path fields.\n            if fields[2].endswith(' (deleted)'):\n                raise ValueError('Deleted cgroup membership')\n            memberships.append(_path_components(fields[2]))\n    if len(memberships) != 1:\n        raise ValueError('Exactly one unified cgroup membership required')\n    member = memberships[0]\n    candidates = []\n    for line in mountinfo_text.splitlines():\n        parts = line.split(' - ')\n        if len(parts) != 2:\n            raise ValueError('Malformed mountinfo record')\n        fields, filesystem = parts[0].split(), parts[1].split()\n        if len(fields) < 6 or len(filesystem) < 3:\n            raise ValueError('Malformed mountinfo fields')\n        if filesystem[0] != 'cgroup2':\n            continue\n        root = _path_components(_mount_path(fields[3]))\n        mountpoint = _path_components(_mount_path(fields[4]))\n        if member[:len(root)] == root:\n            path = PurePosixPath('/').joinpath(*mountpoint, *member[len(root):])\n            candidates.append((len(root), path))\n    if not candidates:\n        raise ValueError('No cgroup2 mount covers unified membership')\n    specificity = max(depth for depth, path in candidates)\n    matches = [path for depth, path in candidates if depth == specificity]\n    if len(matches) != 1:\n        raise ValueError('Ambiguous cgroup2 mount for unified membership')\n    return matches[0]"
+        }
+      ],
+      "reason": "The named resolver selects exactly one most-specific cgroup2 mount covering the unified membership."
+    },
+    {
+      "question_id": "exact_04",
+      "expected_status": "answer",
+      "locations": [
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/checkpoint_integrity.py",
+          "function_scope": "receipt_matches",
+          "line_start": 15,
+          "line_end": 20,
+          "scope_line_start": 15,
+          "scope_line_end": 20,
+          "source_sha256": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea",
+          "excerpt_utf8_lf_sha256": "167e1a20d5f0fe05789f2d5aeb1a160c874957cf66401dbed8f7f44e57fb4f5e",
+          "excerpt": "def receipt_matches(receipt, identity, *, size=SIZE, sha=SHA, source=None):\n    return (isinstance(identity,dict)\n            and all(type(identity.get(key)) is int for key in ('size','device','inode','mtime_ns','ctime_ns'))\n            and isinstance(receipt,dict) and receipt.get('sha256')==sha\n            and receipt.get('identity')==identity and identity.get('size')==size\n            and (source is None or receipt.get('source')==source))"
+        }
+      ],
+      "reason": "The named predicate compares typed identity, pinned size/hash, and optional source."
+    },
+    {
+      "question_id": "ambiguous_01",
+      "expected_status": "ambiguous",
+      "locations": [
+        {
+          "path": "server/host_frames.py",
+          "function_scope": "frame",
+          "line_start": 18,
+          "line_end": 27,
+          "scope_line_start": 18,
+          "scope_line_end": 27,
+          "source_sha256": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+          "excerpt_utf8_lf_sha256": "808b3b24856cd17b157463294e150e91a7415185eebb7955ad1f279de0600bbf",
+          "excerpt": "def frame():\n    m, p = Memory(), Performance()\n    m.length, p.length = ctypes.sizeof(m), ctypes.sizeof(p)\n    if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m)):\n        raise OSError('GlobalMemoryStatusEx_failed')\n    if not ctypes.windll.psapi.GetPerformanceInfo(ctypes.byref(p), p.length):\n        raise OSError('GetPerformanceInfo_failed')\n    return dict(available_bytes=m.available, committed_bytes=p.commit_total*p.page_size,\n                commit_limit_bytes=p.commit_limit*p.page_size,\n                commit_headroom_bytes=(p.commit_limit-p.commit_total)*p.page_size)"
+        },
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/host_frames.py",
+          "function_scope": "frame",
+          "line_start": 18,
+          "line_end": 27,
+          "scope_line_start": 18,
+          "scope_line_end": 27,
+          "source_sha256": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+          "excerpt_utf8_lf_sha256": "808b3b24856cd17b157463294e150e91a7415185eebb7955ad1f279de0600bbf",
+          "excerpt": "def frame():\n    m, p = Memory(), Performance()\n    m.length, p.length = ctypes.sizeof(m), ctypes.sizeof(p)\n    if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m)):\n        raise OSError('GlobalMemoryStatusEx_failed')\n    if not ctypes.windll.psapi.GetPerformanceInfo(ctypes.byref(p), p.length):\n        raise OSError('GetPerformanceInfo_failed')\n    return dict(available_bytes=m.available, committed_bytes=p.commit_total*p.page_size,\n                commit_limit_bytes=p.commit_limit*p.page_size,\n                commit_headroom_bytes=(p.commit_limit-p.commit_total)*p.page_size)"
+        }
+      ],
+      "reason": "Both source copies provide the same requested fields; the wording intentionally leaves ownership unspecified.",
+      "required_behavior": "State that the wording permits multiple plausible source locations, and present the listed alternatives."
+    },
+    {
+      "question_id": "ambiguous_02",
+      "expected_status": "ambiguous",
+      "locations": [
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/api_defaults.py",
+          "function_scope": "parse",
+          "line_start": 33,
+          "line_end": 41,
+          "scope_line_start": 29,
+          "scope_line_end": 41,
+          "source_sha256": "2a885eceb0a0edc08ec60726b918c0f6689b1870f256c8b7b3e84e83b6afdaaf",
+          "excerpt_utf8_lf_sha256": "ac854a6b606cb4e1994adcb97da30e6d621490521ba6ae948fa739ef03e54267",
+          "excerpt": "    def unique(pairs):\n        result = {}\n        for key, value in pairs:\n            if key in result:\n                raise ValueError('Duplicate API default: ' + key)\n            result[key] = value\n        return result\n\n    return validate(json.loads(text, object_pairs_hook=unique))",
+          "nested_function_scope": {
+            "name": "parse.unique",
+            "line_start": 33,
+            "line_end": 39
+          }
+        },
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/kernel_controls.py",
+          "function_scope": "parse",
+          "line_start": 54,
+          "line_end": 60,
+          "scope_line_start": 51,
+          "scope_line_end": 60,
+          "source_sha256": "5307e0842f0b5310191fed87387782f96d500a29e42c982b9fda6cf16237bf77",
+          "excerpt_utf8_lf_sha256": "c4de7282421de0b1169bd2a6c0c33f34b7d2ee09470cbe8c487c60e0ac88b212",
+          "excerpt": "    def unique(pairs):\n        result={}\n        for key,value in pairs:\n            if key in result: raise ValueError('Duplicate kernel control: '+key)\n            result[key]=value\n        return result\n    return validate(json.loads(text,object_pairs_hook=unique))",
+          "nested_function_scope": {
+            "name": "parse.unique",
+            "line_start": 54,
+            "line_end": 59
+          }
+        },
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/speculation_policy.py",
+          "function_scope": "parse",
+          "line_start": 33,
+          "line_end": 41,
+          "scope_line_start": 29,
+          "scope_line_end": 41,
+          "source_sha256": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+          "excerpt_utf8_lf_sha256": "02bc3503831b862c7b26e8f3f90782e9c9c35e550df11175f4c8194f1c3e3f2f",
+          "excerpt": "    def unique(pairs):\n        result = {}\n        for key, value in pairs:\n            if key in result:\n                raise ValueError('Duplicate speculation policy: ' + key)\n            result[key] = value\n        return result\n\n    return validate(json.loads(text, object_pairs_hook=unique))",
+          "nested_function_scope": {
+            "name": "parse.unique",
+            "line_start": 33,
+            "line_end": 39
+          }
+        }
+      ],
+      "reason": "Each explicitly named control family has its own duplicate-key hook within parse; selecting only one without qualification loses the stated ambiguity.",
+      "required_behavior": "State that the wording permits multiple plausible source locations, and present the listed alternatives."
+    },
+    {
+      "question_id": "ambiguous_03",
+      "expected_status": "ambiguous",
+      "locations": [
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/api_defaults.py",
+          "function_scope": "environment",
+          "line_start": 44,
+          "line_end": 53,
+          "scope_line_start": 44,
+          "scope_line_end": 53,
+          "source_sha256": "2a885eceb0a0edc08ec60726b918c0f6689b1870f256c8b7b3e84e83b6afdaaf",
+          "excerpt_utf8_lf_sha256": "3c4e61a312a4c7b7dedd93d3e806cd6c624ed86c692ece003f42090a9609f275",
+          "excerpt": "def environment(defaults):\n    result = {}\n    for key, value in ({} if defaults is None else validate(defaults)).items():\n        if key == 'enable_thinking':\n            result['HALOGEN_ENABLE_THINKING'] = '1' if value else '0'\n        elif key == 'reasoning_effort':\n            result['HALOGEN_REASONING_EFFORT'] = value\n        else:\n            result['HALOGEN_MAX_THINKING_TOKENS'] = str(value)\n    return result"
+        },
+        {
+          "path": "backends/halogen-wsl2-0.17.3/scripts/speculation_policy.py",
+          "function_scope": "environment",
+          "line_start": 44,
+          "line_end": 45,
+          "scope_line_start": 44,
+          "scope_line_end": 45,
+          "source_sha256": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+          "excerpt_utf8_lf_sha256": "c25547a3fa40307c1a147600af77d1b5ae110190995aac419bb61fedf83330ea",
+          "excerpt": "def environment(controls):\n    return {} if controls is None else validate(controls)"
+        }
+      ],
+      "reason": "The question expressly permits either family. Both environment functions are plausible answers with distinct validation/translation behavior.",
+      "required_behavior": "State that the wording permits multiple plausible source locations, and present the listed alternatives."
+    },
+    {
+      "question_id": "noanswer_01",
+      "expected_status": "no_answer",
+      "locations": [],
+      "reason": "React/browser UI implementation is outside the tracked Python corpus in the authorized server and Halogen script roots."
+    },
+    {
+      "question_id": "noanswer_02",
+      "expected_status": "no_answer",
+      "locations": [],
+      "reason": "Actual HIP device-kernel implementation is outside this Python-only corpus. Python references or controls for a GEMM kernel do not answer its implementation location."
+    },
+    {
+      "question_id": "noanswer_03",
+      "expected_status": "no_answer",
+      "locations": [],
+      "reason": "PostgreSQL schema migrations and the requested billing table implementation are outside the selected Python corpus; no such ground-truth source span is asserted."
+    }
+  ]
+}

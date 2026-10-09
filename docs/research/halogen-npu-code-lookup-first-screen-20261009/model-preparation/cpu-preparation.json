@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "model_id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "revision": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+  "original_shapes": {
+    "input_ids": [
+      "batch_size",
+      "sequence_length"
+    ],
+    "attention_mask": [
+      "batch_size",
+      "sequence_length"
+    ],
+    "token_type_ids": [
+      "batch_size",
+      "sequence_length"
+    ]
+  },
+  "fixed_input_shape": [
+    1,
+    256
+  ],
+  "output_shape": [
+    1,
+    1
+  ],
+  "pair_layout": "Tokenizer JSON postprocessor, only_second truncation, right pad to256",
+  "max_query_tokens": 64,
+  "files": [
+    {
+      "path": "model/config.json",
+      "bytes": 794,
+      "sha256": "380e02c93f431831be65d99a4e7e5f67c133985bf2e77d9d4eba46847190bacc"
+    },
+    {
+      "path": "model/minilm-b1-s256.onnx",
+      "bytes": 91069253,
+      "sha256": "0cea5330c5ebf136fe7317ab884b67d6758178779c5e40659950238cda06295a"
+    },
+    {
+      "path": "model/onnx/model.onnx",
+      "bytes": 91011230,
+      "sha256": "5d3e70fd0c9ff14b9b5169a51e957b7a9c74897afd0a35ce4bd318150c1d4d4a"
+    },
+    {
+      "path": "model/README.md",
+      "bytes": 3673,
+      "sha256": "7c0ec39941d0d1d766ccde671f592971d82fe45b7eea550a80d1ea864ebc3baa"
+    },
+    {
+      "path": "model/special_tokens_map.json",
+      "bytes": 132,
+      "sha256": "3c3507f36dff57bce437223db3b3081d1e2b52ec3e56ee55438193ecb2c94dd6"
+    },
+    {
+      "path": "model/tokenizer.json",
+      "bytes": 711396,
+      "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+    },
+    {
+      "path": "model/tokenizer_config.json",
+      "bytes": 1330,
+      "sha256": "a5c2e5a7b1a29a0702cd28c08a399b5ecc110c263009d17f7e3b415f25905fd8"
+    },
+    {
+      "path": "model/vocab.txt",
+      "bytes": 231508,
+      "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    }
+  ],
+  "CPU_only": true,
+  "NPU_executed": false,
+  "providers": [
+    "CPUExecutionProvider"
+  ],
+  "original_vs_fixed_cpu_equal": true,
+  "reference_probe_logit": 9.690943717956543,
+  "session_load_seconds": 0.194891799998004,
+  "versions": {
+    "onnx": "1.23.1",
+    "ort": "1.25.2",
+    "numpy": "2.5.3"
+  },
+  "native_prefill_decode_gain_established": false
+}

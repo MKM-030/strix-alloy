@@ -1,0 +1,136 @@
+{
+  "schema": "code-lookup-cpu-prototype-result.v1",
+  "status": "implemented_cpu_correctness_probe_complete",
+  "implementation_sha256": "1cab17e904d4c45bb8b071333f82d9de8f18ffc35726cbf2cd39fd093e61c767",
+  "source_freeze_sha256": "d3a1d69749634a8d85b71072ed2c3e11b0d78f443f37d6a6bb89c5d948d8a71f",
+  "api": {
+    "build": "build_index(repo,index_path)",
+    "load": "load_index(index_path)",
+    "lookup": "lookup(index,query,repo=repo,reranker=None,enable_provider=False,gpu_busy=False)",
+    "statuses": [
+      "ok",
+      "ambiguous",
+      "no_match",
+      "stale_index",
+      "invalid_index"
+    ],
+    "shortlist_limit": 12,
+    "top_result_limit": 3,
+    "source_line_spans": "one-based inclusive exact full lines",
+    "provider_default_off": true,
+    "automatic_main_model_calls": false,
+    "lookup_sufficiency_claim": false,
+    "index_generation_hash_verified": true,
+    "whole_corpus_hash_freshness_checked": true,
+    "returned_excerpts_reread_and_file_hash_bound": true
+  },
+  "corpus": {
+    "tracked_files": 52,
+    "chunks": 248,
+    "source_bytes": 368630,
+    "roots": [
+      "server/",
+      "backends/halogen-wsl2-0.17.3/scripts/"
+    ],
+    "omitted_lines": 0,
+    "generation": "c39df1e9b6e78c9369ad553ea52f4ce932b19acb634e17859eee444aa2a9fca8",
+    "hidden_local_private_cache_untracked_excluded": true,
+    "symlink_junction_reparse_sources_refused": true
+  },
+  "correctness": {
+    "receipt": "test-receipt.json",
+    "receipt_sha256": "162979a87a2f6b20d868ab50f0a28eca57f244c771384cf133410e8521ca09a6",
+    "cases": 4,
+    "passed": true,
+    "full_project_suite_run": false,
+    "scope": "Only the authorized isolated CPU correctness cases"
+  },
+  "real_corpus_smoke": {
+    "build": "build-result.json",
+    "query": "path-smoke-result.json",
+    "query_text": "server/gateway.py",
+    "status": "ok",
+    "provider": {
+      "status": "disabled"
+    },
+    "shortlist": 12,
+    "returned_exact_excerpts": 3,
+    "main_model_called": false,
+    "heldout_evaluation": false,
+    "timed_benchmark": false
+  },
+  "admission": {
+    "cpu_lexical_implementation": true,
+    "semantic_graph_loaded_by_prototype": false,
+    "semantic_model_inference": false,
+    "gpu_session": false,
+    "npu_session": false,
+    "serving_api": false,
+    "lifecycle_change": false,
+    "package_or_model_install": false,
+    "git_mutation": false,
+    "heldout_tuning": false
+  },
+  "purpose": "Direct locations for locate-only tasks; potential task-time/model-request avoidance requires root-owned quality/workflow evaluation",
+  "direct_prefill_decode_gain_established": false,
+  "limitations": [
+    "BM25/identifier ranking does not calibrate answer sufficiency or semantic ambiguity.",
+    "Mentions and definitions can compete; fixed bounded chunks can split a function.",
+    "Any changed/new/missing eligible tracked source makes the index stale and requires an explicit rebuild.",
+    "The provider slot carries minimal same-model identity but performs no model/session/device qualification.",
+    "CPU smoke and four correctness cases are not held-out quality, latency, throughput or NPU benefit evidence.",
+    "Root exclusively owns the frozen question evaluation and future same-model CPU/NPU placement."
+  ],
+  "files": [
+    {
+      "file": "design.md",
+      "bytes": 3014,
+      "sha256": "1e9b7616ad76bc2f8e8331d2d40fd9b02eabab2baba6576c8bca19860499c59c"
+    },
+    {
+      "file": "code_lookup.py",
+      "bytes": 20105,
+      "sha256": "1cab17e904d4c45bb8b071333f82d9de8f18ffc35726cbf2cd39fd093e61c767"
+    },
+    {
+      "file": "test_code_lookup.py",
+      "bytes": 4671,
+      "sha256": "048ce15744f5ce4313ef7e8b0be95759ef781c0d383dc836d524e2a7cac866c3"
+    },
+    {
+      "file": "README.md",
+      "bytes": 6525,
+      "sha256": "7eb53b82ca7fbf97de04f4150283498366b60f9c6e94b9b30263ab99968bec2c"
+    },
+    {
+      "file": "index.json",
+      "bytes": 552648,
+      "sha256": "1ebfb6b296e3e26dbd8fbf56c0416c5da907b853ad76524c4ffb3a6b78de7eeb"
+    },
+    {
+      "file": "build-result.json",
+      "bytes": 180,
+      "sha256": "e369b5deed635af14410963a1b7c40808516bc7bfea1ebb935bef674b82f1b58"
+    },
+    {
+      "file": "path-smoke-result.json",
+      "bytes": 10135,
+      "sha256": "03b67f66de4f869c8bb6e073cbc324f4c6a4d1c495d6f148f86e4587b0e2e23b"
+    },
+    {
+      "file": "test-receipt.json",
+      "bytes": 885,
+      "sha256": "162979a87a2f6b20d868ab50f0a28eca57f244c771384cf133410e8521ca09a6"
+    },
+    {
+      "file": "test-output.txt",
+      "bytes": 707,
+      "sha256": "0f9183d7e13b81ea7207b5902be97fa7018ee15d423f3ea8d3da35645b128ab5"
+    },
+    {
+      "file": "source-freeze.json",
+      "bytes": 10682,
+      "sha256": "d3a1d69749634a8d85b71072ed2c3e11b0d78f443f37d6a6bb89c5d948d8a71f"
+    }
+  ]
+}

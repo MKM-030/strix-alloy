@@ -1,6 +1,6 @@
 # NPU retrieval assessment — 9 October 2026
 
-The [supplied Reddit post](https://www.reddit.com/r/StrixHalo/comments/1x0wx70/the_npu_in_your_strix_halo_is_finally_doing_real/) supplies a useful separate-task NPU candidate: retrieve relevant source passages and rerank them before asking the large GPU model. It does not supply a new Flash prefill, decode, or MTP acceptance mechanism. No new local hardware experiment or inference was performed for this assessment.
+The [supplied Reddit post](https://www.reddit.com/r/StrixHalo/comments/1x0wx70/the_npu_in_your_strix_halo_is_finally_doing_real/) supplies a useful separate-task NPU candidate: retrieve relevant source passages and rerank them before asking the large GPU model. It does not supply a new Flash prefill, decode, or MTP acceptance mechanism. The source review was followed by one frozen CPU-only retrieval quality screen; no new GPU/NPU experiment or Halogen request was performed.
 
 ## What the published evidence supports
 
@@ -16,8 +16,10 @@ The [Halogen NPU documentation](https://github.com/peonist-ai/halogen-flash-serv
 
 The installed Windows NPU provider is a different route. Its earlier component execution does not qualify the upstream semantic models or a new reranker. Keep normal Halogen 0.17.3 serving unchanged and separate GPU/NPU work windows until coexistence is qualified.
 
-## Selected next experiment
+## Selected experiment and first result
 
-Retain the existing default-off Windows `code_lookup` candidate. Compare CPU lexical retrieval, a small reranker on CPU, and the same frozen graph and preprocessing on the Windows NPU, using identical candidate passages and held-out questions. Include a strong CPU semantic control before adopting the NPU. Measure correct file/line retrieval, no-answer handling, cold/warm latency, and actual NPU placement. A later workflow study should count correctly avoided GPU requests and full-task time. Report native prefill/decode and acceptance separately if a controlled engine comparison is performed.
+The default-off `code_lookup` prototype indexes 52 eligible tracked Python sources in 248 bounded chunks. An independent agent froze 16 authored source-location questions before root evaluation: 13 with known answers and three out of scope. Root evaluated CPU BM25 and the pinned `cross-encoder/ms-marco-MiniLM-L6-v2` reranker once, using the same corpus and candidate policy. This is a different small model from the author's Qwen pipeline and does not reproduce that pipeline.
 
-The model and implementation are not yet downloaded, executed, integrated, or measured. This assessment establishes a plausible next use case, not a qualified speed gain. The frozen token-only acceptance selector remains rejected; it should not be placed on the NPU merely because a separate retrieval task succeeded elsewhere.
+BM25 returned a correct line span in its top three for 12/13 known questions; MiniLM did so for 10/13. The raw median lookup observations were 117.22 ms and 485.60 ms respectively. Neither correctly abstained on the three out-of-scope questions. These are heterogeneous single-task observations, not a repeated performance cohort or Halogen token-rate measurements. The [full local first-screen report](halogen-npu-code-lookup-first-screen-20261009.md) retains the frozen questions, source identities, scores, and limitations.
+
+This MiniLM candidate remains disabled and will not be placed on the NPU: faster placement cannot repair its worse source-location ranking. The CPU index still needs calibrated answer sufficiency and a real workflow comparison before automatic routing. The post remains useful for the separate-task architecture; it supplies no qualified local engine gain. The frozen token-only acceptance selector also remains rejected. No NPU component milliseconds are converted to native prefill/decode or acceptance.
