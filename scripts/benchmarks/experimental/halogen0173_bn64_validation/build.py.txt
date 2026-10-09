@@ -1,0 +1,91 @@
+"""Root-owned offline compiler stages for the isolated integer validator."""
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+import time
+
+WORK = Path(__file__).resolve().parent
+ROOT = WORK.parent.parents[3]
+SDK = Path('C:/AI/sdk/therock1151-10.2.0a20260930')
+TOOLS = SDK / 'lib/llvm/bin'
+OUT = WORK / 'build-v1'
+sys.path.insert(0, str(ROOT / 'server'))
+from host_frames import frame
+from winjob import OwnedProcess
+
+
+def ref(path):
+    with path.open('rb') as source:
+        sha = hashlib.file_digest(source, 'sha256').hexdigest()
+    return dict(path=str(path), bytes=path.stat().st_size, sha256=sha)
+
+
+def main():
+    OUT.mkdir(exist_ok=False)
+    record = dict(utc=datetime.now(timezone.utc).isoformat(),
+                  source=ref(WORK / 'validator.hip'), runtime_loaded=False,
+                  engine_changed=False, stages=[])
+    minimum = []
+
+    def reserve():
+        sample = frame()
+        minimum.append(sample)
+        assert min(sample['available_bytes'], sample['commit_headroom_bytes']) >= 18 * 2**30
+
+    def stage(name, args, seconds):
+        reserve()
+        entry = dict(name=name, arguments=args, tool=ref(Path(args[0])))
+        record['stages'].append(entry)
+        process = OwnedProcess(args, cwd=ROOT, env=dict(os.environ),
+                               stdout_path=OUT / (name + '-stdout.txt'),
+                               stderr_path=OUT / (name + '-stderr.txt'))
+        try:
+            entry['identity'] = process.identity
+            (OUT / 'progress.json').write_text(json.dumps(record, indent=2) + '\n')
+            process.resume()
+            deadline = time.monotonic() + seconds
+            while not process.wait(250):
+                reserve()
+                assert time.monotonic() < deadline, 'Owned compiler deadline'
+            entry['exit_code'] = process.exit_code()
+            assert entry['exit_code'] == 0, name + ': inspect retained compiler diagnostics'
+        finally:
+            process.close()
+            entry['owned_job_closed'] = True
+        entry['stdout'] = ref(OUT / (name + '-stdout.txt'))
+        entry['stderr'] = ref(OUT / (name + '-stderr.txt'))
+
+    try:
+        stage('compile', [str(TOOLS / 'clang++.exe'), '-x', 'hip', '--offload-device-only',
+                          '--offload-arch=gfx1151', '-mcode-object-version=6', '-O3',
+                          '-fno-fast-math', '-ffp-contract=off',
+                          '--rocm-path=' + str(SDK), '--hip-path=' + str(SDK),
+                          '--rocm-device-lib-path=' + str(SDK / 'lib/llvm/amdgcn/bitcode'),
+                          str(WORK / 'validator.hip'), '-o', str(OUT / 'validator.bundle')], 120)
+        stage('unbundle', [str(TOOLS / 'clang-offload-bundler.exe'), '--type=o', '--unbundle',
+                           '--targets=hipv4-amdgcn-amd-amdhsa--gfx1151',
+                           '--input=' + str(OUT / 'validator.bundle'),
+                           '--output=' + str(OUT / 'validator.hsaco')], 30)
+        record['code_object'] = ref(OUT / 'validator.hsaco')
+        assert record['code_object']['bytes'] < 2**20
+        stage('metadata', [str(TOOLS / 'llvm-readobj.exe'), '--file-headers', '--notes',
+                          '--symbols', str(OUT / 'validator.hsaco')], 30)
+        assert record['source'] == ref(WORK / 'validator.hip')
+        record['passed'] = True
+    except BaseException as error:
+        record.update(passed=False, error=type(error).__name__ + ': ' + str(error))
+    finally:
+        record.update(finished_utc=datetime.now(timezone.utc).isoformat(),
+                      minimum_available_bytes=min((s['available_bytes'] for s in minimum), default=None),
+                      minimum_commit_headroom_bytes=min((s['commit_headroom_bytes'] for s in minimum), default=None))
+        (OUT / 'build.json').write_text(json.dumps(record, indent=2) + '\n')
+    print(json.dumps(dict(passed=record['passed'], error=record.get('error'),
+                          receipt=str(OUT / 'build.json'))))
+    return 0 if record['passed'] else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

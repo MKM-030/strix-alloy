@@ -1,0 +1,326 @@
+"""Root-owned small isolated validation comparison; normal server is preserved."""
+from datetime import datetime, timezone
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+import urllib.request
+import uuid
+
+WORK = Path(__file__).resolve().parent
+PREP = WORK.parent
+ROOT = PREP.parents[3]
+STATE = PREP.parent / 'continuation-current.json'
+BACKEND = ROOT / 'backends/halogen-wsl2-0.17.3'
+KEY = 'active0173_bn64_validation_component'
+WS = [r'C:\Windows\System32\wsl.exe', '-d', 'Ubuntu-24.04', '-u', 'revn', '--exec']
+PS = r'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
+sys.path.insert(0, str(ROOT / 'server'))
+from controller import atomic, read
+from host_frames import frame
+from winjob import OwnedProcess
+spec = importlib.util.spec_from_file_location(
+    'known_control', PREP / 'bulk-bn64-engine-comparison-v2-resident-fix/control.py')
+c = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(c)
+
+
+def utc():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def ref(path):
+    with path.open('rb') as source:
+        sha = hashlib.file_digest(source, 'sha256').hexdigest()
+    return dict(path=str(path), bytes=path.stat().st_size, sha256=sha)
+
+
+def linux(path):
+    return '/mnt/c/' + path.resolve().relative_to(Path('C:/')).as_posix()
+
+
+def main():
+    resume = sys.argv[1:] == ['--resume-before-hardware']
+    assert sys.argv[1:] in ([], ['--resume-before-hardware'])
+    prior = None
+    if resume:
+        prior = read(WORK / 'result.json')
+        assert prior['error'] == "KeyError: 'LD_LIBRARY_PATH'"
+        assert not prior['hardware_executed'] and prior['own_helpers_closed'] and prior['original_ready_open']
+        assert prior['phase'] == 'terminal' and not prior['coordinator_identity'] and not prior['helper_identity']
+        assert prior['oracle_cpu']['passed'] and prior['oracle_cpu']['fixtures'] == 50
+        assert ref(Path(prior['host_executable']['path'])) == prior['host_executable']
+        for source in prior['sources']:
+            assert ref(Path(source['path'])) == source
+        retained = WORK / ('preparation-failure-' + prior['invocation'] + '.json')
+        with retained.open('xb') as archive:
+            archive.write((WORK / 'result.json').read_bytes())
+    else:
+        assert not (WORK / 'result.json').exists(), 'Retain completed comparison'
+        assert not (WORK / 'progress.json').exists(), 'Resume actual owner, never duplicate a pending job'
+    saved = read(STATE)['current_user_server']
+    profile_path = Path(saved['profile'])
+    assert ref(profile_path)['sha256'] == saved['profile_sha256']
+    backend = read(BACKEND / '.local/current-service.json')
+    docker = WS + ['docker', 'exec', backend['container_id']]
+    token = Path(read(profile_path)['token_file']).read_text(encoding='ascii').strip()
+
+    def idle(admission=False):
+        outer = read(ROOT / 'server/.local/current.json')
+        inner = read(BACKEND / '.local/current-service.json')
+        assert outer['phase'] == inner['phase'] == 'ready'
+        assert outer['run_id'] == saved['controller_run_id']
+        assert inner['run_id'] == saved['backend_run_id']
+        assert inner['container_id'] == backend['container_id']
+        assert 0 <= time.time() - outer['heartbeat'] <= 15
+        for key in ('controller_identity', 'backend_identity', 'foreground_console_identity'):
+            assert c.migration.identity(saved[key]['pid']) == saved[key]
+        request = urllib.request.Request('http://127.0.0.1:8840/health',
+                                         headers={'Authorization': 'Bearer ' + token})
+        with urllib.request.urlopen(request, timeout=10) as response:
+            health = json.load(response)
+        assert health['status'] == 'ok' and health['active_requests'] == 0 and not health['draining']
+        memory = frame()
+        assert min(memory['available_bytes'], memory['commit_headroom_bytes']) >= (22 if admission else 18) * 2**30
+        return dict(health=health, memory=memory)
+
+    before = idle(admission=True)
+    minimum = [before['memory']]
+    invocation = uuid.uuid4().hex
+    temp = '/tmp/alloy0173-bn64-validation-' + invocation
+    source_dir = Path(prior['invocation_source_directory']) if resume else WORK / ('run-' + invocation)
+    if not resume:
+        source_dir.mkdir(exist_ok=False)
+        for name in ('host.c', 'oracle.c', 'validator.hip'):
+            (source_dir / name).write_bytes((WORK / name).read_bytes())
+    else:
+        for name in ('host.c', 'oracle.c', 'validator.hip'):
+            assert (source_dir / name).read_bytes() == (WORK / name).read_bytes()
+    host = source_dir / 'host'
+    held_processes = []
+    record = dict(schema='halogen0173.bn64-validation-component.v1', started_utc=utc(),
+                  invocation=invocation, linux_component_directory=temp,
+                  invocation_source_directory=str(source_dir),
+                  phase='preparing', coordinator_identity=c.migration.identity(os.getpid()),
+                  original_server=saved, before=before,
+                  sources=[ref(WORK / name) for name in ('validator.hip', 'oracle.c', 'host.c', 'design.md', 'review.md')],
+                  coordinator=ref(Path(__file__)), stages=[], hardware_executed=False,
+                  engine_request_performed=False, lifecycle_performed=False,
+                  serving_gain_qualified=False, NPU_executed=False)
+    if resume:
+        record['resumed_preparation'] = ref(retained)
+
+    def publish():
+        atomic(WORK / 'progress.json', record)
+        state = read(STATE)
+        state[KEY] = dict(phase=record['phase'], directory=str(WORK),
+                          coordinator_identity=record['coordinator_identity'],
+                          helper_identity=record.get('helper_identity'),
+                          progress=str(WORK / 'progress.json'),
+                          hardware_executed=record['hardware_executed'],
+                          serving_gain_qualified=False, NPU_executed=False)
+        atomic(STATE, state)
+
+    def command(args, timeout=30):
+        p = subprocess.run(args, capture_output=True, text=True, timeout=timeout,
+                           creationflags=subprocess.CREATE_NO_WINDOW)
+        assert p.returncode == 0, p.stderr[:500]
+        return p.stdout
+
+    def stage(name, args, seconds, hardware=False):
+        entry = dict(name=name, arguments=args)
+        record['stages'].append(entry)
+        process = OwnedProcess(args, cwd=ROOT, env=dict(os.environ),
+                               stdout_path=WORK / (name + '-stdout.txt'),
+                               stderr_path=WORK / (name + '-stderr.txt'))
+        try:
+            entry['identity'] = process.identity
+            record.update(phase=name, helper_identity=process.identity)
+            publish()
+            print(json.dumps(dict(phase=name, identity=process.identity)), flush=True)
+            process.resume()
+            entry['resumed'] = True
+            deadline = time.monotonic() + seconds
+            while not process.wait(200):
+                memory = frame()
+                minimum.append(memory)
+                assert min(memory['available_bytes'], memory['commit_headroom_bytes']) >= 18 * 2**30
+                if hardware:
+                    fresh = idle()
+                    assert fresh['health']['completed'] == before['health']['completed'], 'Concurrent user inference: discard component'
+                assert time.monotonic() < deadline, 'Owned helper deadline'
+            entry['exit_code'] = process.exit_code()
+        finally:
+            try:
+                process.close()
+                entry['owned_job_closed'] = True
+                record['helper_identity'] = None
+            except BaseException as error:
+                entry['close_error'] = type(error).__name__ + ': ' + str(error)
+                held_processes.append((process, entry))
+                raise
+        entry['stdout'] = ref(WORK / (name + '-stdout.txt'))
+        entry['stderr'] = ref(WORK / (name + '-stderr.txt'))
+        return entry['exit_code']
+
+    def cleanup(compiler=False, abort=False):
+        relevant = ('host-build', 'oracle-cpu') if compiler else ('component',)
+        if not any(entry['name'] in relevant and entry.get('resumed') for entry in record['stages']):
+            return dict(observed=[], signalled=[], remaining=[], closed=True, scope='not-launched')
+        # Exclusive per-invocation paths, not reused global source/binary names.
+        targets = [linux(source_dir / 'host.c'), linux(host)] if compiler else [temp + '/host']
+        code = """import json,os,pathlib,signal,time
+targets=%r;abort=%r
+def owned():
+ result=[]
+ for d in pathlib.Path('/proc').iterdir():
+  if not d.name.isdigit():continue
+  try:
+   args=[a.decode() for a in (d/'cmdline').read_bytes().split(b'\\0') if a]
+   if not args or not any(t in args for t in targets):continue
+   if os.path.basename(args[0]) not in ('timeout','gcc','cc1','collect2','ld','host'):continue
+   stat=(d/'stat').read_text().rsplit(')',1)[1].split()
+   result.append(dict(pid=int(d.name),start_ticks=int(stat[19]),arguments=args))
+  except (OSError,UnicodeError):continue
+ return result
+initial=owned();signalled=[]
+if abort:
+ for sig in (signal.SIGTERM,signal.SIGKILL):
+  for item in owned():
+   if {x['pid']:x for x in owned()}.get(item['pid'])==item:
+    try:os.kill(item['pid'],sig);signalled.append(item)
+    except ProcessLookupError:pass
+  deadline=time.monotonic()+2
+  while owned() and time.monotonic()<deadline:time.sleep(.05)
+remaining=owned()
+print(json.dumps(dict(observed=initial,signalled=signalled,remaining=remaining,closed=not remaining)))
+""" % (targets, abort)
+        return json.loads(command((WS if compiler else docker) + ['python3', '-c', code]))
+
+    publish()
+    try:
+        build = read(WORK / 'build-v1/build.json')
+        assert build['passed'] and build['source'] == ref(WORK / 'validator.hip')
+        module = WORK / 'build-v1/validator.hsaco'
+        assert build['code_object'] == ref(module)
+        record['module'] = ref(module)
+        record['build'] = ref(WORK / 'build-v1/build.json')
+        if not resume:
+            assert stage('host-build', WS + ['timeout', '-k', '2', '30', 'gcc', '-std=c11', '-O2',
+                        '-Wall', '-Wextra', '-Werror', linux(source_dir / 'host.c'), '-ldl', '-lm',
+                        '-o', linux(host)], 45) == 0
+            assert stage('oracle-cpu', WS + ['timeout', '-k', '2', '10',
+                         linux(host), '--oracle-only'], 15) == 0
+        record['host_executable'] = ref(host)
+        oracle = prior['oracle_cpu'] if resume else json.loads((WORK / 'oracle-cpu-stdout.txt').read_text())
+        assert oracle == dict(type='oracle', passed=True, fixtures=50, hardware_executed=False)
+        record['oracle_cpu'] = oracle
+        load_code = r"""$ErrorActionPreference='Stop'
+$gaming=@(Get-CimInstance Win32_Process|Where-Object {$_.Name -match 'League|Riot'}|Select-Object ProcessId,Name,CreationDate)
+$gpu=Get-Counter '\GPU Engine(*)\Utilization Percentage' -SampleInterval 1 -MaxSamples 1 -ErrorAction Stop
+$samples=@($gpu.CounterSamples)
+$invalid=@($samples|Where-Object {$_.Status -notin @(0,1) -or [double]::IsNaN($_.CookedValue) -or [double]::IsInfinity($_.CookedValue) -or $_.CookedValue -lt 0})
+[pscustomobject]@{utc=[DateTime]::UtcNow.ToString('o');gaming=$gaming;sample_count=$samples.Count;invalid_count=$invalid.Count;active=@($samples|Where-Object {$_.CookedValue -gt 1}|Select-Object InstanceName,CookedValue)}|ConvertTo-Json -Depth 5
+"""
+        record['current_load'] = json.loads(command([PS, '-NoProfile', '-NonInteractive', '-Command', load_code]))
+        load = record['current_load']
+        assert load['sample_count'] > 0 and load['invalid_count'] == 0
+        assert not load['gaming'] and not load['active'], 'Competing GPU load'
+        command(docker + ['mkdir', '-m', '700', '--', temp])
+        for source, name in ((host, 'host'), (module, 'validator.hsaco')):
+            command(WS + ['docker', 'cp', linux(source), backend['container_id'] + ':' + temp + '/' + name])
+        command(docker + ['chmod', '500', '--', temp + '/host'])
+        ready = idle(admission=True)
+        assert ready['health']['completed'] == before['health']['completed']
+        manifest = read(Path(backend['attempt']) / 'manifest.json')
+        assert manifest['version'] == '0.17.3' and 'bulk_bn64_candidate' not in manifest
+        loader = manifest['environment']
+        environment = ['env'] + [name + '=' + loader[name] for name in
+                       ('LD_LIBRARY_PATH', 'LD_PRELOAD', 'HSA_ENABLE_DXG_DETECTION',
+                        'HSA_ENABLE_SDMA', 'AMD_SERIALIZE_KERNEL', 'AMD_SERIALIZE_COPY')
+                       if name in loader] + ['HSA_DISABLE_COREDUMP_ON_EXCEPTION=1']
+        assert 'LD_PRELOAD=' + loader['LD_PRELOAD'] in environment
+        record['loader_environment_overrides'] = environment[1:]
+        hip = '/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libamdhip64.so.7'
+        record['hardware_executed'] = True
+        code = stage('component', docker + environment + ['timeout', '-k', '2', '30',
+                     temp + '/host', temp + '/validator.hsaco', hip], 45, hardware=True)
+        record['component_exit_code'] = code
+        assert (WORK / 'component-stdout.txt').stat().st_size <= 256 * 1024
+        record['component_rows'] = [json.loads(line) for line in (WORK / 'component-stdout.txt').read_text().splitlines()
+                                    if line.startswith('{')]
+        rows = record['component_rows']
+        assert code == 0 and len(rows) == 307 and rows[-1].get('passed') is True
+        fixtures = [row for row in rows if row.get('type') == 'fixture']
+        pairs = [row for row in rows if row.get('type') == 'paired']
+        assert len(fixtures) == 50 and len({row['fixture'] for row in fixtures}) == 50
+        assert all(row.get('passed') is True for row in fixtures)
+        assert len(pairs) == 256 and len({(row['fixture'], row['pair']) for row in pairs}) == 256
+        assert len({row['fixture'] for row in pairs}) == 4
+        assert all(0 <= row['pair'] < 64 and row['legacy_ns'] > 0 and row['aggregate_ns'] > 0
+                   for row in pairs)
+        assert rows[-1]['clock'] == 'CLOCK_MONOTONIC_RAW' and rows[-1]['pairs'] == 256
+        record['correctness_fixtures'] = len(fixtures)
+        record['timed_pairs'] = len(pairs)
+        record['passed'] = True
+    except BaseException as error:
+        record.update(passed=False, error=type(error).__name__ + ': ' + str(error))
+    finally:
+        closed = ready = False
+        record['linux_cleanup'] = {}
+        for name, compiler in (('component', False), ('compiler', True)):
+            try:
+                record['linux_cleanup'][name] = cleanup(compiler=compiler, abort=not record.get('passed', False))
+            except BaseException as error:
+                record['linux_cleanup'][name] = dict(closed=False, error=type(error).__name__ + ': ' + str(error))
+                record['passed'] = False
+        # Retain real job/process handles and the coordinator until close succeeds.
+        while held_processes:
+            for process, entry in list(held_processes):
+                try:
+                    process.close()
+                    entry['owned_job_closed'] = True
+                    held_processes.remove((process, entry))
+                except BaseException as error:
+                    entry['close_error'] = type(error).__name__ + ': ' + str(error)
+            if held_processes:
+                record['phase'] = 'cleanup-pending'
+                publish()
+                print(json.dumps(dict(phase='cleanup-pending', retained_handles=len(held_processes))), flush=True)
+                time.sleep(1)
+        closed = all(value.get('closed', False) for value in record['linux_cleanup'].values())
+        closed &= all(value.get('owned_job_closed', False) for value in record['stages'])
+        if not closed:
+            record.update(passed=False, cleanup_error='Unconfirmed Linux helper cleanup; preserve ownership record')
+        try:
+            after = idle()
+            record['after'] = after
+            minimum.append(after['memory'])
+            assert after['health']['completed'] == before['health']['completed']
+            assert after['health']['cancelled'] == before['health']['cancelled']
+            ready = True
+        except BaseException as error:
+            record.update(passed=False, final_ready_error=type(error).__name__ + ': ' + str(error))
+        record.update(phase='terminal' if closed else 'cleanup-unconfirmed', finished_utc=utc(),
+                      original_ready_open=ready, own_helpers_closed=closed,
+                      minimum_available_bytes=min(s['available_bytes'] for s in minimum),
+                      minimum_commit_headroom_bytes=min(s['commit_headroom_bytes'] for s in minimum))
+        if closed:
+            record.update(coordinator_identity=None, helper_identity=None)
+        atomic(WORK / 'result.json', record)
+        publish()
+        state = read(STATE)
+        state[KEY].update(result=ref(WORK / 'result.json'), passed=record.get('passed', False),
+                          original_ready_open=ready, own_helpers_closed=closed)
+        atomic(STATE, state)
+    print(json.dumps(dict(passed=record.get('passed', False), error=record.get('error'),
+                          original_ready_open=ready, result=str(WORK / 'result.json'))), flush=True)
+    return 0 if record.get('passed', False) else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

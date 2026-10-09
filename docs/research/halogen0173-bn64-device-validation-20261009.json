@@ -1,0 +1,268 @@
+{
+  "schema": "halogen0173.bn64-device-validation.public.v1",
+  "published_utc": "2026-10-09T04:29:36.055564+00:00",
+  "version": "0.17.3",
+  "component": "Owned fixed-shape GPU integer validation only",
+  "serving_gain_qualified": false,
+  "engine_candidate_enabled": false,
+  "full_goal_completed": false,
+  "NPU_executed": false,
+  "engine_requests": 0,
+  "lifecycle_performed": false,
+  "engine_prefill_tok_s": null,
+  "engine_decode_tok_s": null,
+  "native_acceptance": null,
+  "correctness": {
+    "fixed_fixtures": 50,
+    "CPU_oracle_passed": true,
+    "GPU_full_result_parity": true,
+    "invalid_histograms_suppress_post": true,
+    "scope": "Owned readable finite allocations; no live native-pointer/HIP-fault equivalence"
+  },
+  "timing": {
+    "clock": "CLOCK_MONOTONIC_RAW",
+    "paired_order": "Alternating;32of64 pairs aggregate first per shape",
+    "warmup_pairs_excluded_per_shape": 8,
+    "measured_pairs": 256,
+    "legacy": {
+      "D2H_calls": 8,
+      "D2H_bytes": 22548,
+      "explicit_NULL_stream_waits": 2
+    },
+    "aggregate": {
+      "GPU_kernels": 2,
+      "D2H_calls": 2,
+      "D2H_bytes": 64,
+      "H2D_poison_calls": 2,
+      "H2D_poison_bytes": 64,
+      "explicit_NULL_stream_waits": 2
+    },
+    "included": "Full two-boundary validation: all copies, poison uploads, launches, waits, host decisions",
+    "excluded": "One-time allocation/module/symbol loading, fixture construction/uploads; no native items/projection/fold work",
+    "hardware_device_allocated_bytes": 452660
+  },
+  "shapes": [
+    {
+      "fixture": "uniform-512x160",
+      "measured_pairs": 64,
+      "legacy_mean_ms": 2.2049694375,
+      "aggregate_mean_ms": 1.426302796875,
+      "legacy_median_ms": 2.2032115,
+      "aggregate_median_ms": 1.4045155,
+      "paired_mean_delta_ms": -0.778666640625,
+      "mean_cost_change_percent": -35.31416932054415,
+      "pairs_with_lower_aggregate_cost": 64,
+      "legacy_range_ms": [
+        1.658276,
+        3.039936
+      ],
+      "aggregate_range_ms": [
+        1.013985,
+        1.846339
+      ]
+    },
+    {
+      "fixture": "sparse-tail-boundaries",
+      "measured_pairs": 64,
+      "legacy_mean_ms": 2.029195734375,
+      "aggregate_mean_ms": 1.310959671875,
+      "legacy_median_ms": 2.002249,
+      "aggregate_median_ms": 1.256575,
+      "paired_mean_delta_ms": -0.7182360624999999,
+      "mean_cost_change_percent": -35.39511000998725,
+      "pairs_with_lower_aggregate_cost": 64,
+      "legacy_range_ms": [
+        1.588652,
+        2.80823
+      ],
+      "aggregate_range_ms": [
+        1.001944,
+        1.848389
+      ]
+    },
+    {
+      "fixture": "max-segments-skew",
+      "measured_pairs": 64,
+      "legacy_mean_ms": 2.057462875,
+      "aggregate_mean_ms": 1.355791609375,
+      "legacy_median_ms": 1.937605,
+      "aggregate_median_ms": 1.369208,
+      "paired_mean_delta_ms": -0.701671265625,
+      "mean_cost_change_percent": -34.10371453847011,
+      "pairs_with_lower_aggregate_cost": 64,
+      "legacy_range_ms": [
+        1.662577,
+        7.044533
+      ],
+      "aggregate_range_ms": [
+        1.009115,
+        1.877781
+      ]
+    },
+    {
+      "fixture": "single-expert-511",
+      "measured_pairs": 64,
+      "legacy_mean_ms": 2.206802796875,
+      "aggregate_mean_ms": 1.48200809375,
+      "legacy_median_ms": 2.211097,
+      "aggregate_median_ms": 1.4425780000000001,
+      "paired_mean_delta_ms": -0.7247947031249999,
+      "mean_cost_change_percent": -32.84365527138918,
+      "pairs_with_lower_aggregate_cost": 61,
+      "legacy_range_ms": [
+        1.55708,
+        3.170304
+      ],
+      "aggregate_range_ms": [
+        1.158685,
+        2.071323
+      ]
+    }
+  ],
+  "normal_server": {
+    "kept_ready_open": true,
+    "completed_before": 4,
+    "completed_after": 4,
+    "cancelled_before": 0,
+    "cancelled_after": 0,
+    "context_capacity": 262144,
+    "active_requests_after": 0,
+    "helpers_closed": true,
+    "minimum_available_GiB": 23.051555633544922,
+    "minimum_commit_headroom_GiB": 110.53462982177734
+  },
+  "GPU_admission_load": {
+    "utc": "2026-10-09T04:25:10.8501059Z",
+    "gaming": [],
+    "sample_count": 350,
+    "invalid_count": 0,
+    "active": []
+  },
+  "preparation_failure": {
+    "error": "Optional manifest LD_LIBRARY_PATH was incorrectly required",
+    "hardware_executed": false,
+    "CPU_compile_and_50_fixture_oracle_preserved": true,
+    "resumed_once_without_repeating_preparation": true,
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\bn64-device-validation-20261009\\preparation-failure-f93ef905e13142fea13167a5e174c295.json",
+      "bytes": 10609,
+      "sha256": "01c85d22a1057712c9d1c69aa754babfefd65972cbe66ff7e9e485f8a51d9e6a"
+    }
+  },
+  "evidence": [
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bn64-device-validation-20261009/result.json",
+      "bytes": 66700,
+      "sha256": "7a156b7f19fb26d5214e87386aa72cf4990cd43fe0fcf8ca0a04b1b7172e005b"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bn64-device-validation-20261009/build-v1/build.json",
+      "bytes": 6475,
+      "sha256": "4aefb71b4ff59060da6ef9ec751c0a200a152a2bcfc3ffe4a28b2c9932952c4b"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bn64-device-validation-20261009/component-stdout.txt",
+      "bytes": 37171,
+      "sha256": "42cbbeb98b67472f311f8ae08276842e77bc6a10174687d7c5731c8348855dda"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bn64-device-validation-20261009/component-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bn64-device-validation-20261009/run.py",
+      "bytes": 17678,
+      "sha256": "fcfdff0726b57e5a381eeec0804db339975057e3f618a257c8f32770d5833d2b"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/component-rows.jsonl",
+      "bytes": 37171,
+      "sha256": "42cbbeb98b67472f311f8ae08276842e77bc6a10174687d7c5731c8348855dda"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/design.md",
+      "bytes": 13786,
+      "sha256": "0a863524a335b055f5bd86d21c294867685c0d7d96a2b94e5735bb6ea278b27f"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/host.c",
+      "bytes": 14225,
+      "sha256": "e4c116fe6fe4167f2bbad83f89c6fb8e5332e8956fb8485ef006b2951355561a"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/oracle.c",
+      "bytes": 16631,
+      "sha256": "85f6644f24328c17fdb285c126611b6ba565e70fd30ba469a2fed6f1ed79ca15"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/review.md",
+      "bytes": 2610,
+      "sha256": "97a94ecd900a14130c401b32c041384732ac5a59766ea07125fc29bdddf71db2"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/validator.hip",
+      "bytes": 10570,
+      "sha256": "56f190706a70637172e29e81b98e0e736b5e4f4d13c5bc8fd0a2710b5f4e7191"
+    }
+  ],
+  "ROI_scope_decision": {
+    "measured_engine_phase_means_ms": {
+      "before": {
+        "prompt_ms": 6637.933333333333,
+        "predicted_ms": 2880.9333333333334
+      },
+      "candidate": {
+        "prompt_ms": 6978.666666666667,
+        "predicted_ms": 2893.3333333333335
+      }
+    },
+    "measured_candidate_minus_stock_ms": {
+      "prompt_ms": 340.7333333333336,
+      "predicted_ms": 12.400000000000091
+    },
+    "observed_transactions": 192,
+    "requests_including_warmup": 4,
+    "observed_request_average_transactions": 48.0,
+    "largest_component_mean_saving_ms": 0.778666640625,
+    "optimistic_component_scaled_request_illustration_ms": 37.37599875,
+    "illustration_is_measured_engine_saving": false,
+    "per_request_transaction_count_logged": false,
+    "source_scope": "Disabled BN64 adapter only; normal preload path has no such validator",
+    "native_lifetime_extent_proved": false,
+    "new_live_candidate_justified": false,
+    "decision": "Keep stock; retain component result. No repeated BN64 engine cohort or NPU producer integration."
+  },
+  "pooled_ratio_of_mean_cost_change_percent": -34.398922879097526,
+  "faster_pairs": 253,
+  "qualifications": {
+    "timing_order": "Both balanced order groups favor aggregate; reduction magnitude differs by order (22.440\u201344.123% per shape/order).",
+    "memory_minimum_scope": "Tracked sampled minima; additional checked idle/admission frames are excluded; no continuous observation claim.",
+    "preparation_coordinator_source": "Historical failing coordinator source is hash-only provenance; successful coordinator snapshot is retained.",
+    "root_control_reuse": "Completed control is retired. Constructor error.owner recovery needs repair before any future reuse; no such error occurred in this run."
+  },
+  "independent_reviews": [
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/roi.md",
+      "bytes": 11595,
+      "sha256": "70bed25f1598a8f721313a00137856126663954e20b19ab82d1e3a54f3c11d72"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/evidence-review.md",
+      "bytes": 9920,
+      "sha256": "a485174f68933cac16ceef17ea18437a2baca4c2f724701166a99f27581155bb"
+    }
+  ],
+  "executed_control_snapshots": [
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/run.py.txt",
+      "bytes": 17678,
+      "sha256": "fcfdff0726b57e5a381eeec0804db339975057e3f618a257c8f32770d5833d2b"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0173_bn64_validation/build.py.txt",
+      "bytes": 4150,
+      "sha256": "ca960ed29b600238c6d0bd3f2cfc21fd93aba9f3c479f43291b8079178fdc54d"
+    }
+  ]
+}
