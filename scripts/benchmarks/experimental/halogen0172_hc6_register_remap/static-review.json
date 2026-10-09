@@ -1,0 +1,61 @@
+{
+  "schema": "halogen0172.hc6-register-remap.static-review.v1",
+  "decision": "ready_for_bounded_native_cohort_not_serving_adoption",
+  "HIP_loaded": false,
+  "built_by_this_subtask": false,
+  "hardware_run_by_this_subtask": false,
+  "independent_review": "/root/prefill_new_mechanism_scope/remap_static_review",
+  "remap_review": "no_static_equivalence_blocker",
+  "candidate_redisassembly": "3352instructions; exactly12intoperandchanges; all_other_asm_addresses_identical",
+  "redirect_review": "ABI_and_exact_selection_match; no_retry_after_attempt; native_module_lifetime_retained",
+  "launcher_review": "normal_sealed_lifecycle; default_off; exactcandidate_and_sourceguards; originalprofile_retained",
+  "pins": {
+    "audit_hc6_remap.py": {
+      "bytes": 18628,
+      "sha256": "55a874b9ca95d84dacaa8c16c7d34acc0137d0e4dfa90ef8b10f1efe4eae54a6"
+    },
+    "transform.py": {
+      "bytes": 3262,
+      "sha256": "dc2b0f8eef918b842c4d0dc1892e7042931877dace382ba758bf539ee9626ba9"
+    },
+    "candidate.hsaco": {
+      "bytes": 17765424,
+      "sha256": "39053af36ed652892f7082af4eca5cd153b593260448b3c91a67f277cd0f1259"
+    },
+    "patch-receipt.json": {
+      "bytes": 11908,
+      "sha256": "7bd822dcb8d714843f1bf7910b8439671ac094cf57efb2a717cc0f3bbe1cca78"
+    },
+    "candidate-disassembly.txt": {
+      "bytes": 316175,
+      "sha256": "94adde64c48644623c9b91c05618c2fa496f72a5cfc492d990d466c6f7ecc34c"
+    },
+    "candidate-disassembly-receipt.json": {
+      "bytes": 693,
+      "sha256": "e73699969172d030091007565e2be517e6e57c8b37607fce408f5e4eb8b68974"
+    },
+    "README.md": {
+      "bytes": 11630,
+      "sha256": "b6e4e2388b3ed5aa86ba4df23ded07eeeb5f224a8fe367c1347c14c68c57bf21"
+    },
+    "redirect.c": {
+      "bytes": 13134,
+      "sha256": "892db21c72294589fdcbbb3bd85fcab86a9e79586573d7d392fab3bfe7c51832"
+    },
+    "launch.py": {
+      "bytes": 7241,
+      "sha256": "bb897b4b6e13593933a2c20632df27faf32422391d6e1fb240398cf1545a8f6c"
+    },
+    "hc6-launch.sh": {
+      "bytes": 475,
+      "sha256": "cc18f97ba73ec20e66753f3ef7a86b5f621a56c5d9ba3eae8affff75f85df562"
+    }
+  },
+  "required_runtime_qualification": [
+    "positive selected native redirect attempts with exact candidate pin",
+    "READY and engine/code verified flags; module/function resolved; no candidate errors",
+    "exact full response/token parity and complete fixed workload",
+    "stock/candidate/stock timing comparison beyond pairedstockdrift",
+    "normal closed-stop/restoration receipts owned by root"
+  ]
+}

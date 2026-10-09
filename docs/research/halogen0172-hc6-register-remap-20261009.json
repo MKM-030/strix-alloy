@@ -1,0 +1,602 @@
+{
+  "schema": "halogen0172.hc6-register-remap-public.v1",
+  "status": "complete_rejected_for_serving_no_qualified_gain",
+  "cohort_complete": true,
+  "cohort_validated": true,
+  "serving_speed_gain_proven": false,
+  "serving_adoption_qualified": false,
+  "generated_output_parity_qualified": true,
+  "version": "0.17.2",
+  "target": "gfx1151 native HC6<3> full kernel",
+  "changed_bytes": 14,
+  "changed_integer_operand_bytes": 12,
+  "changed_descriptor_field_bytes": 1,
+  "changed_metadata_bytes": 1,
+  "kernel_instruction_count": 3352,
+  "vgpr_use_native": 125,
+  "vgpr_use_candidate": 120,
+  "physical_wave32_vgpr_allocation_native": 144,
+  "physical_wave32_vgpr_allocation_candidate": 120,
+  "theoretical_vgpr_only_waves_per_simd_native": 10,
+  "theoretical_vgpr_only_waves_per_simd_candidate": 12,
+  "actual_occupancy_measured": false,
+  "theoretical_resources_converted_to_rates": false,
+  "engine_sha256": "ac73b1df48510a34e0246a77bd984f1df0e02e5fa6cf1530d3d77c91d3c0e913",
+  "native_code_sha256": "18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039",
+  "candidate_sha256": "39053af36ed652892f7082af4eca5cd153b593260448b3c91a67f277cd0f1259",
+  "profile_sha256": "b5d3692b2623034f5a9c4a5f90b234ba6b792793196963fc0e7b474b3937c839",
+  "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+  "request_sha256": "243037d0ad3993ab3ad57f9a22ac182ecc7b50e6e6320089d7ba98bd3a7ae00b",
+  "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+  "actual_input_tokens_per_request": 8192,
+  "generated_output_tokens_per_request": 128,
+  "input_kind": "synthetic finite-vocabulary pseudoprose with 116 repeated calibration prefix units",
+  "non_repetitive_natural_input": false,
+  "excluded_warmups_per_arm": 1,
+  "measured_repetitions_per_arm": 3,
+  "temperature": 0,
+  "seed": 1,
+  "thinking": false,
+  "cache": false,
+  "context": 262144,
+  "slots": 1,
+  "mtp_depth_setting": 2,
+  "pld_setting": "3,3",
+  "prefill_chunk_and_max_tokens": 8192,
+  "rate_basis": "direct native API response.timings rates; no clock normalization",
+  "llvm_resource_rule_commit": "8b7a4fb1628138dc89d49b0e4409fd4e1e7f43e5",
+  "client_sha256_by_arm": {
+    "before": "d8397f096b8470f4aa3bc3fcebbeb97baba601bdef06779dc6129e1af9dc43f9",
+    "candidate": "143b4deb76bf5897f55e50224876270be492649d044deccf267811babd360601",
+    "after": "143b4deb76bf5897f55e50224876270be492649d044deccf267811babd360601"
+  },
+  "allowed_client_delta": "health GET audit and four-completion/no-cancellation checks outside timed POSTs; request/timing code unchanged",
+  "source_archive": "scripts/benchmarks/experimental/halogen0172_hc6_register_remap",
+  "source_hash_manifest": "scripts/benchmarks/experimental/halogen0172_hc6_register_remap/source-hashes.json",
+  "private_evidence_directory": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1",
+  "excluded_from_public_archive": [
+    "native/candidate binaries and shared libraries",
+    "model/weight/tensor data",
+    "full disassembly and native bundle bytes",
+    "raw prompts and responses",
+    "credentials",
+    "stats binaries and live runtime service receipts"
+  ],
+  "limitations": [
+    "three measured repetitions per arm; no significance/confidence claim",
+    "separate native module route and host-check cost are not isolated from remap cost",
+    "generated-output/accounting parity for repeated synthetic input does not prove general numerical equivalence",
+    "process-lifetime stats count submissions including startup/warmup; completed-request/lifecycle boundaries are separate",
+    "source archive requires omitted private inputs and is not portable startup",
+    "the full acceleration goal remains unachieved"
+  ],
+  "exact_choices_model_usage_parity": true,
+  "candidate_kept_off": true,
+  "unchanged_candidate_repeat": false,
+  "acceptance_each_measured_arm": {
+    "accepted": 210,
+    "drafted": 339,
+    "fraction": 0.6194690265486725,
+    "scope": "combined native API MTP+PLD"
+  },
+  "arms": {
+    "before": {
+      "controller_run_id": "a7c036a82597490882ee6ba06476820d",
+      "backend_run_id": "3089aa29132942d7a2c9f9ee96df1b2d",
+      "completed_utc": "2026-10-09T00:17:35.462677+00:00",
+      "metrics": {
+        "prefill": {
+          "native_api_rates_tps": [
+            1226.513,
+            1243.605,
+            1229.218
+          ],
+          "mean_tps": 1233.112,
+          "sample_stdev_tps": 9.187303358439864,
+          "min_tps": 1226.513,
+          "max_tps": 1243.605
+        },
+        "decode": {
+          "native_api_rates_tps": [
+            42.699,
+            44.446,
+            43.484
+          ],
+          "mean_tps": 43.543,
+          "sample_stdev_tps": 0.8749931428302736,
+          "min_tps": 42.699,
+          "max_tps": 44.446
+        }
+      },
+      "health_boundaries": {
+        "first": {
+          "status": "ok",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 262144,
+          "active_requests": 0,
+          "draining": false,
+          "completed": 0,
+          "cancelled": 0
+        },
+        "final": {
+          "status": "ok",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 262144,
+          "active_requests": 0,
+          "draining": false,
+          "completed": 4,
+          "cancelled": 0
+        },
+        "completed_delta": 4,
+        "cancelled_delta": 0,
+        "source": "retained matching-run ready-open and pre-stop lifecycle receipts",
+        "qualified": true
+      }
+    },
+    "candidate": {
+      "controller_run_id": "8255c7c943a74a5297bd704be5a7a63a",
+      "backend_run_id": "f0b804158fa648b5b52bff47c4e88117",
+      "completed_utc": "2026-10-09T00:29:10.632665+00:00",
+      "metrics": {
+        "prefill": {
+          "native_api_rates_tps": [
+            1191.668,
+            1149.593,
+            1211.637
+          ],
+          "mean_tps": 1184.2993333333334,
+          "sample_stdev_tps": 31.67155538228788,
+          "min_tps": 1149.593,
+          "max_tps": 1211.637
+        },
+        "decode": {
+          "native_api_rates_tps": [
+            44.12,
+            42.688,
+            43.812
+          ],
+          "mean_tps": 43.54,
+          "sample_stdev_tps": 0.7537532752830968,
+          "min_tps": 42.688,
+          "max_tps": 44.12
+        }
+      },
+      "health_boundaries": {
+        "first": {
+          "status": "ok",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 262144,
+          "active_requests": 0,
+          "draining": false,
+          "completed": 0,
+          "cancelled": 0
+        },
+        "final": {
+          "status": "ok",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 262144,
+          "active_requests": 0,
+          "draining": false,
+          "completed": 4,
+          "cancelled": 0
+        },
+        "completed_delta": 4,
+        "cancelled_delta": 0,
+        "source": "client GET health boundaries outside timed POSTs",
+        "qualified": true
+      }
+    },
+    "after": {
+      "controller_run_id": "410e2504838540b1ab26f9a75b7dae03",
+      "backend_run_id": "0abd374c52c24bbbbbd314a9731819ea",
+      "completed_utc": "2026-10-09T00:39:32.062337+00:00",
+      "metrics": {
+        "prefill": {
+          "native_api_rates_tps": [
+            1240.629,
+            1206.8,
+            1169.2
+          ],
+          "mean_tps": 1205.543,
+          "sample_stdev_tps": 35.731086563383364,
+          "min_tps": 1169.2,
+          "max_tps": 1240.629
+        },
+        "decode": {
+          "native_api_rates_tps": [
+            43.045,
+            43.463,
+            41.353
+          ],
+          "mean_tps": 42.620333333333335,
+          "sample_stdev_tps": 1.1172651132713904,
+          "min_tps": 41.353,
+          "max_tps": 43.463
+        }
+      },
+      "health_boundaries": {
+        "first": {
+          "status": "ok",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 262144,
+          "active_requests": 0,
+          "draining": false,
+          "completed": 0,
+          "cancelled": 0
+        },
+        "final": {
+          "status": "ok",
+          "backend": "halogen-v2",
+          "checkpoint": "v2",
+          "context": 262144,
+          "active_requests": 0,
+          "draining": false,
+          "completed": 4,
+          "cancelled": 0
+        },
+        "completed_delta": 4,
+        "cancelled_delta": 0,
+        "source": "client GET health boundaries outside timed POSTs",
+        "qualified": true
+      }
+    }
+  },
+  "comparison": {
+    "prefill": {
+      "candidate_vs_stock": {
+        "before": {
+          "delta_tps": -48.8126666666667,
+          "delta_percent": -3.9584941730083476,
+          "candidate_range_above_stock_range": false,
+          "candidate_range_below_stock_range": true
+        },
+        "after": {
+          "delta_tps": -21.243666666666513,
+          "delta_percent": -1.7621658179481374,
+          "candidate_range_above_stock_range": false,
+          "candidate_range_below_stock_range": false
+        }
+      },
+      "stock_after_minus_before_tps": -27.569000000000187,
+      "stock_after_vs_before_percent": -2.2357255464224,
+      "advantage_outside_observed_spread": false,
+      "regression_outside_observed_spread": false,
+      "decision": "not_qualified_outside_spread"
+    },
+    "decode": {
+      "candidate_vs_stock": {
+        "before": {
+          "delta_tps": -0.0030000000000001137,
+          "delta_percent": -0.006889741175390106,
+          "candidate_range_above_stock_range": false,
+          "candidate_range_below_stock_range": false
+        },
+        "after": {
+          "delta_tps": 0.9196666666666644,
+          "delta_percent": 2.1578119989676234,
+          "candidate_range_above_stock_range": false,
+          "candidate_range_below_stock_range": false
+        }
+      },
+      "stock_after_minus_before_tps": -0.9226666666666645,
+      "stock_after_vs_before_percent": -2.118978174831005,
+      "advantage_outside_observed_spread": false,
+      "regression_outside_observed_spread": false,
+      "decision": "not_qualified_outside_spread"
+    }
+  },
+  "candidate_stats": {
+    "engine_pid": 87,
+    "counters": {
+      "hook_calls": 206595,
+      "eligible": 21056,
+      "candidate_attempts": 21056,
+      "stock_calls": 185539,
+      "ineligible": 185539,
+      "busy_or_reentrant": 0,
+      "candidate_errors": 0,
+      "stock_errors": 0,
+      "state": 3,
+      "reason": 0,
+      "load_status": 0,
+      "lookup_status": 0,
+      "last_candidate_status": 0,
+      "last_stock_status": 0,
+      "get_device_status": 0,
+      "device": 0,
+      "capture_status": 0,
+      "capture_state": 0,
+      "module_loaded": 1,
+      "function_resolved": 1,
+      "engine_verified": 1,
+      "code_verified": 1,
+      "init_attempts": 1,
+      "disabled_after_error": 0,
+      "code_bytes": 17765424,
+      "eligible_stock_fallback": 0,
+      "reserved26": 0,
+      "reserved27": 0,
+      "reserved28": 0
+    },
+    "two_identical_idle_reads": true,
+    "live_namespace_engine_pid_verified": true,
+    "scope": "process lifetime, including startup/warmup; not per measured request",
+    "qualified": true
+  },
+  "prefill_advantage_qualified_for_this_cohort": false,
+  "qualification_rule": "mean above both stocks, candidate measured range entirely above both stock ranges, minimum mean delta larger than absolute paired stock mean drift",
+  "analysis_receipt": {
+    "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/cohort-analysis.json",
+    "bytes": 18349,
+    "sha256": "e42c269faab4c20bcffd9fb6d1b7a09cf69b336af8a9da22f6fbad76f84e1eed"
+  },
+  "analyzer_source": {
+    "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/analyze_cohort.py",
+    "bytes": 23795,
+    "sha256": "261222649131938e0eb923c5a725ec5264cff343f6e50954136880c1e1373be4"
+  },
+  "source_archive_manifest": {
+    "path": "scripts/benchmarks/experimental/halogen0172_hc6_register_remap/source-hashes.json",
+    "bytes": 2539,
+    "sha256": "44072ba6690c9b7ef3b3d7c2d3d52816465d18d8ba832484b3d8054d1029c71f"
+  },
+  "candidate_normal_stop": {
+    "passed": true,
+    "cleanup": true,
+    "recovery": true,
+    "own_handles_closed": true,
+    "receipt": {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/control-stop-6fcfb126ad8a4660b25140b1c28b5a4b.json",
+      "bytes": 4886,
+      "sha256": "d700a2243534148cfcc8df06811f4465035c08d5044be6b02967e750cb6fa719"
+    }
+  },
+  "final_normal_ready_open": {
+    "passed": true,
+    "candidate_removed": true,
+    "profile_sha256": "b5d3692b2623034f5a9c4a5f90b234ba6b792793196963fc0e7b474b3937c839",
+    "controller_run_id": "410e2504838540b1ab26f9a75b7dae03",
+    "backend_run_id": "0abd374c52c24bbbbbd314a9731819ea",
+    "controller_pid": 21748,
+    "backend_pid": 17844,
+    "visible_console_pid": 8612,
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 4,
+      "cancelled": 0
+    },
+    "fresh_root_checkpoint_utc": "2026-10-09T00:39:39.079222+00:00",
+    "receipt": {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/final-ready-open.json",
+      "bytes": 2823,
+      "sha256": "9df82dca3d1a351407a08061675963897584ae4b712d7bcea2ec1fcf78c9ab57"
+    }
+  },
+  "excluded_warmups": {
+    "before": {
+      "native_prefill_tps": 690.772,
+      "native_decode_tps": 34.003,
+      "qpc_request_wall_seconds": 15.662566900020465,
+      "accepted": 70,
+      "drafted": 113,
+      "excluded_from_measured_rates_and_acceptance": true
+    },
+    "candidate": {
+      "native_prefill_tps": 692.998,
+      "native_decode_tps": 31.845,
+      "qpc_request_wall_seconds": 15.870789300010074,
+      "accepted": 70,
+      "drafted": 113,
+      "excluded_from_measured_rates_and_acceptance": true
+    },
+    "after": {
+      "native_prefill_tps": 690.114,
+      "native_decode_tps": 32.844,
+      "qpc_request_wall_seconds": 15.79740129999118,
+      "accepted": 70,
+      "drafted": 113,
+      "excluded_from_measured_rates_and_acceptance": true
+    }
+  },
+  "retained_private_evidence_pins": [
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/before/summary.json",
+      "bytes": 7736,
+      "sha256": "0e0b86441e2281ecd03bc7768f4ba27e8cfa5002cc90f54e5fa58593f0a9e8fd"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/before/identity.json",
+      "bytes": 9359,
+      "sha256": "6a9da71b8b89841846541b19c383a10c3a57a602b7076e9f4e89ad483d7cd79d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/before/samples.json",
+      "bytes": 6651,
+      "sha256": "34173eac6e4356710fbc8807576cb2bb9293da4d8f5e123630c67f889cf8ed17"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/before/response-0.json",
+      "bytes": 1383,
+      "sha256": "ce1d63e633d742ed2c42cbe2dfc9caeb6ffdbfb3f374be3adbfee7a7775ea52c"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/before/response-1.json",
+      "bytes": 1383,
+      "sha256": "121a3457969a92472752f115fe7cbae52f7e56d5edf144c8aac92cacda2d9149"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/before/response-2.json",
+      "bytes": 1383,
+      "sha256": "779fa0c063696f24e0ebe9cd9f56f0c4d72754e3860bb2933bd7ff084c1399b4"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/before/response-3.json",
+      "bytes": 1383,
+      "sha256": "dc1a0bb6b117b0d530525396773f3f0b993bb99f5a5c12c766f3c87a7728c418"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/summary.json",
+      "bytes": 8184,
+      "sha256": "e258f2311c1f6d3811c6d948bebb22c3ac53d32d843ec56ea515ed69e49af1f7"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/identity.json",
+      "bytes": 11219,
+      "sha256": "6077a70df2bc9d20d37a6f3b04363d8e188d147fc78fbd6cfd480379e18b51a6"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/samples.json",
+      "bytes": 6649,
+      "sha256": "403522ff81cb8b678e5eafdd02b9e6b4c97801888903e98365b2d2893322892c"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/response-0.json",
+      "bytes": 1383,
+      "sha256": "ee5bccd169951675aeaf115fd2f68e7050472e6038bd4db3b17f14492bb5bd00"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/response-1.json",
+      "bytes": 1382,
+      "sha256": "5304e2dc666a6ae2617b6e935b802dcf1ccf63685d49ac5a77088fb75eff32a4"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/response-2.json",
+      "bytes": 1383,
+      "sha256": "11ea2e3b88854667e3cbc1229f6f67c8b873140c2a38fa582b47367a9d2c0e69"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/response-3.json",
+      "bytes": 1383,
+      "sha256": "241b28dd6630ed16aa1001c99c09b31bcb1d9dba8c181c3e3a2662ac1e61422e"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/summary.json",
+      "bytes": 8164,
+      "sha256": "12e7a395c4057fb1bd574c55741e710fdb742e00a6babd7c1f5af0da33063ea5"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/identity.json",
+      "bytes": 9358,
+      "sha256": "53ce2b2f0e8dcbf6268f9cbcab7e3bd39a440a1763375a249106ba39597b3fc1"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/samples.json",
+      "bytes": 6629,
+      "sha256": "2849c4f2e7ac7d4fcade09aafccf2ab8cde7cfd875129f6a2dc262bb3e99870e"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/response-0.json",
+      "bytes": 1383,
+      "sha256": "17febee6f4604a11e9ba5de9cae66765ae028aed43750797519f7f6caa2f12c6"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/response-1.json",
+      "bytes": 1383,
+      "sha256": "aab9510fb395d76ad1b1edcb5567cfe5f3ff000520d6ade7c33fae965604708e"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/response-2.json",
+      "bytes": 1381,
+      "sha256": "dbdb650198f792fd60b47a05715936c2a7794f598d054523ac524d67ece5166e"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/response-3.json",
+      "bytes": 1381,
+      "sha256": "9d7bb33100064b7214ebd89b593f132709436d6fdc5c3d2f897badd0dd6e0183"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/window-before-health.py",
+      "bytes": 6888,
+      "sha256": "d8397f096b8470f4aa3bc3fcebbeb97baba601bdef06779dc6129e1af9dc43f9"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/final-ready-open.json",
+      "bytes": 2824,
+      "sha256": "d76317a989eee5e1694c699854c20da7d98bd50ef3e2739ff812714796f36b5f"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/control-stop-af6dcdd4b42d4b55926fe1e26b04cd97.json",
+      "bytes": 4880,
+      "sha256": "619c131275b7be49079daf4860314445b780ecdd276580eb2a204beaa13938fa"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/window.py",
+      "bytes": 7564,
+      "sha256": "143b4deb76bf5897f55e50224876270be492649d044deccf267811babd360601"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/health-before.json",
+      "bytes": 180,
+      "sha256": "6f26376ecc7e220ee984b08940f5ada2ee38dba64b3f7a2be12bc46ff2e45555"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate/health-after.json",
+      "bytes": 180,
+      "sha256": "11a70568bd7859ab1e2002a55172d1e9063b83900fb7767b186da3205a4f127d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/health-before.json",
+      "bytes": 180,
+      "sha256": "6f26376ecc7e220ee984b08940f5ada2ee38dba64b3f7a2be12bc46ff2e45555"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/after/health-after.json",
+      "bytes": 180,
+      "sha256": "11a70568bd7859ab1e2002a55172d1e9063b83900fb7767b186da3205a4f127d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate-stats.json",
+      "bytes": 2198,
+      "sha256": "b7ed7bd7d78ad4854111c77387c632e466b1576b2fe29a81a201f3f187d6f48d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/candidate-stats.bin",
+      "bytes": 256,
+      "sha256": "1c7570fd854c54ad8b112a8f1cdd92a3cafaac7648bd14df4c6509aec131b3a3"
+    }
+  ],
+  "qualification_limits": [
+    "three measured repetitions per arm; no significance/confidence claim",
+    "observed spread is a bounded screen, not a general performance guarantee",
+    "theoretical allocation/residency is not converted to measured rates",
+    "normal final restoration is separately owned and verified by root"
+  ],
+  "original_private_source_archive_bytes": 96675,
+  "stock_definition": "unchanged normal project Halogen 0.17.2 profile, including existing WSL memory-registration/upload adapters; not vanilla upstream",
+  "candidate_difference": "only HC6 register remap and native-module redirect addition to the normal project profile",
+  "ordinary_normal_stop_receipts": {
+    "before": {
+      "passed": true,
+      "cleanup": true,
+      "recovery": true,
+      "own_handles_closed": true,
+      "receipt": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/control-stop-af6dcdd4b42d4b55926fe1e26b04cd97.json",
+        "bytes": 4880,
+        "sha256": "619c131275b7be49079daf4860314445b780ecdd276580eb2a204beaa13938fa"
+      }
+    },
+    "candidate": {
+      "passed": true,
+      "cleanup": true,
+      "recovery": true,
+      "own_handles_closed": true,
+      "receipt": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-register-remap-v1/control-stop-6fcfb126ad8a4660b25140b1c28b5a4b.json",
+        "bytes": 4886,
+        "sha256": "d700a2243534148cfcc8df06811f4465035c08d5044be6b02967e750cb6fa719"
+      }
+    }
+  },
+  "older_event_diagnostic_reconciliation_exception_relabelled": false
+}
