@@ -1,0 +1,37 @@
+{
+  "id": "chatcmpl-5293eb47e2544814bab37a2d",
+  "created": 1791530434,
+  "model": "halogen-qwen3.8-flash-next",
+  "object": "chat.completion",
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "length",
+      "message": {
+        "role": "assistant",
+        "content": "```sh\n#!/bin/sh\n# cleanup.sh - Remove old .tar.gz backup archives from a directory\n\n# Reject missing or empty first argument\nif [ -z \"$1\" ]; then\n    echo \"Error: missing or empty directory argument\" >&2\n    exit 1\nfi\n\n# Reject extra arguments\nif [ \"$#\" -ne 1 ]; then\n    echo \"Error: exactly one argument required\" >&2\n    exit 1\nfi\n\nbackup_dir=\"$1\"\n\n# Resolve the directory path (handle symlinks, relative paths, etc.)\n# Use realpath if available, otherwise fall"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 550,
+    "completion_tokens": 128,
+    "total_tokens": 678,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  },
+  "timings": {
+    "prompt_n": 550,
+    "predicted_n": 128,
+    "prompt_ms": 1233.5,
+    "predicted_ms": 2990.0,
+    "prompt_per_second": 445.886,
+    "predicted_per_second": 42.809,
+    "cache_n": 0,
+    "disk_restore_n": 0,
+    "disk_restore_ms": 0.0,
+    "draft_n": 101,
+    "draft_n_accepted": 78
+  }
+}

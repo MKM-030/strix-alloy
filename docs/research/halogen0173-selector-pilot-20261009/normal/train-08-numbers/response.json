@@ -1,0 +1,37 @@
+{
+  "id": "chatcmpl-a58898b6212349c48393eebd",
+  "created": 1791530385,
+  "model": "halogen-qwen3.8-flash-next",
+  "object": "chat.completion",
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "length",
+      "message": {
+        "role": "assistant",
+        "content": "To determine whether the cooperative can meet all orders and stall minimums, we must calculate the **Fruit Supply** (apples available for sale) and the **Crate Supply** (physical reusable crates available at any given moment) separately, following the chronological order of events.\n\n### Step 1: Calculate Fruit Supply (Saleable Apples)\n\nFirst, we determine how many kilograms of apples are actually available for sale after removing the 10% damage allowance.\n\n**Friday Harvest:**\n*   Total Harvest: $1,140$ kg\n*   Damaged/Processing: $10\\%"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 612,
+    "completion_tokens": 128,
+    "total_tokens": 740,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  },
+  "timings": {
+    "prompt_n": 612,
+    "predicted_n": 128,
+    "prompt_ms": 1401.4,
+    "predicted_ms": 3242.5,
+    "prompt_per_second": 436.706,
+    "predicted_per_second": 39.476,
+    "cache_n": 0,
+    "disk_restore_n": 0,
+    "disk_restore_ms": 0.0,
+    "draft_n": 106,
+    "draft_n_accepted": 74
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "chatcmpl-fe966fde1b314f4c84d3b7d4",
+  "created": 1791529842,
+  "model": "halogen-qwen3.8-flash-next",
+  "object": "chat.completion",
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "length",
+      "message": {
+        "role": "assistant",
+        "content": "```sql\nWITH day_bounds AS (\n    SELECT\n        report_day::date AS day_start,\n        (report_day::date + INTERVAL '1 day')::timestamptz AS day_end\n),\nactive_rentals AS (\n    SELECT DISTINCT r.equipment_id\n    FROM rentals r\n    CROSS JOIN day_bounds db\n    WHERE r.collected_at < db.day_end\n      AND (r.returned_at IS NULL OR r.returned_at >= db.day_end)\n      AND (r.cancelled_at IS NULL OR r.cancelled_at >= db.day_end)\n),\nactive_maintenance"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 619,
+    "completion_tokens": 128,
+    "total_tokens": 747,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  },
+  "timings": {
+    "prompt_n": 619,
+    "predicted_n": 128,
+    "prompt_ms": 1421.6,
+    "predicted_ms": 3814.0,
+    "prompt_per_second": 435.425,
+    "predicted_per_second": 33.561,
+    "cache_n": 0,
+    "disk_restore_n": 0,
+    "disk_restore_ms": 0.0,
+    "draft_n": 98,
+    "draft_n_accepted": 78
+  }
+}

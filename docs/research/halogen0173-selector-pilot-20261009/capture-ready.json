@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-09T07:13:56.924266+00:00",
+  "role": "capture",
+  "controller": {
+    "schema": 1,
+    "run_id": "f8b3b24e0aa74ea59fef152bc5a25d3b",
+    "pid": 38404,
+    "phase": "ready",
+    "backend": "halogen-v2",
+    "checkpoint": "v2",
+    "context": 262144,
+    "port": 8842,
+    "heartbeat": 1791530035.2992241,
+    "minimum_reserve_gib": 18.0,
+    "profile_sha256": "0a051757f6b22ce0fa81f44e0cfb3a3677d532758aee77da0e9017c20061d91a",
+    "memory": {
+      "available_bytes": 24498151424,
+      "committed_bytes": 121723367424,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 118416072704
+    },
+    "minimum_available_gib": 22.667503356933594,
+    "ready_at": 1791529772.9018583,
+    "active_requests": 0,
+    "available_gib": 22.804378509521484
+  },
+  "backend": {
+    "schema": 1,
+    "run_id": "870a97b511194fef856f5778fdc92dc1",
+    "attempt": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\870a97b511194fef856f5778fdc92dc1",
+    "phase": "ready",
+    "endpoint": "http://127.0.0.1:8731/v1",
+    "model": "halogen-qwen3.8-flash-next",
+    "context": 262144,
+    "slots": 1,
+    "checkpoint": "v2",
+    "prompt_cache": "Off",
+    "serve_seconds": 0,
+    "controller_pid": 37728,
+    "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\selector-real-cohort-20261009\\private-backend-token.txt",
+    "log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\870a97b511194fef856f5778fdc92dc1\\engine.log",
+    "controller_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\870a97b511194fef856f5778fdc92dc1\\service.log",
+    "ready_at": 1791529781.1104214,
+    "container_id": "79d0b9de350d0a65a0d5e1d98ac7be16e23cca2152a8cdd05c6a7328d79bab3d"
+  },
+  "identities": {
+    "controller": {
+      "pid": 38404,
+      "creation_time_100ns": 134360031671889578,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 37728,
+      "creation_time_100ns": 134360031776429290,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "health": {
+    "status": "ok",
+    "backend": "halogen-v2",
+    "checkpoint": "v2",
+    "context": 262144,
+    "active_requests": 0,
+    "draining": false,
+    "completed": 16,
+    "cancelled": 0
+  },
+  "ready_open": true,
+  "console_identity": {
+    "pid": 39816,
+    "creation_time_100ns": 134360031670170631,
+    "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  }
+}

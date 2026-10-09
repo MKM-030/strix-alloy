@@ -1,0 +1,251 @@
+{
+  "utc": "2026-10-09T07:10:33.384461+00:00",
+  "phase": "before",
+  "controller_run_id": "f8b3b24e0aa74ea59fef152bc5a25d3b",
+  "backend_run_id": "870a97b511194fef856f5778fdc92dc1",
+  "container_id": "79d0b9de350d0a65a0d5e1d98ac7be16e23cca2152a8cdd05c6a7328d79bab3d",
+  "manifest_path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\870a97b511194fef856f5778fdc92dc1\\manifest.json",
+  "profile_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\private-profile.json",
+  "identities": {
+    "controller": {
+      "pid": 38404,
+      "creation_time_100ns": 134360031671889578,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 37728,
+      "creation_time_100ns": 134360031776429290,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "environment": {
+    "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+    "HALOGEN_TOKENIZER": "/models/tokenizer",
+    "HALOGEN_CHECKPOINT_VARIANT": "v2",
+    "HALOGEN_MTP_DEPTH": "2",
+    "HALOGEN_PLD": "3,3"
+  },
+  "mounts": {
+    "/models": "/home/revn/halogen-models-native",
+    "/ngram-w4b.hgn": "/mnt/c/AI/models/halogen-flashnext/qwen38-flash-next-w4b.hgn"
+  },
+  "mounted": {
+    "checkpoint": {
+      "size": 66687678432,
+      "device": 2096,
+      "inode": 616828,
+      "mtime_ns": 1790979071648131939,
+      "ctime_ns": 1790979072020131920
+    },
+    "ngram": {
+      "size": 124068083904,
+      "device": 71,
+      "inode": 12384898978924366,
+      "mtime_ns": 1789244565219639800,
+      "ctime_ns": 1789244565219639800
+    },
+    "tokenizer_files": [
+      {
+        "path": "chat_template.jinja",
+        "bytes": 8952,
+        "sha256": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041"
+      },
+      {
+        "path": "generation_config.json",
+        "bytes": 202,
+        "sha256": "e70c136c1b78ddc1fb0905bac8e733a4dc448d4f852a5dd75143fffc70be550e"
+      },
+      {
+        "path": "merges.txt",
+        "bytes": 3353259,
+        "sha256": "a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d"
+      },
+      {
+        "path": "tokenizer.json",
+        "bytes": 12809320,
+        "sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "bytes": 17928,
+        "sha256": "b11349aafa7cdc6a320767cf7ceb29ed82f7eda5d65e8e0819e76f0ce947bf27"
+      },
+      {
+        "path": "vocab.json",
+        "bytes": 6722759,
+        "sha256": "ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003"
+      }
+    ],
+    "tokenizer_identity": {
+      "chat_template.jinja": {
+        "size": 8952,
+        "device": 2096,
+        "inode": 593238,
+        "mtime_ns": 1790956818921894300,
+        "ctime_ns": 1790985007484756205
+      },
+      "generation_config.json": {
+        "size": 202,
+        "device": 2096,
+        "inode": 618531,
+        "mtime_ns": 1790956818866519100,
+        "ctime_ns": 1790985007522446396
+      },
+      "merges.txt": {
+        "size": 3353259,
+        "device": 2096,
+        "inode": 617754,
+        "mtime_ns": 1790956819381030600,
+        "ctime_ns": 1790985007514912558
+      },
+      "tokenizer.json": {
+        "size": 12809320,
+        "device": 2096,
+        "inode": 618550,
+        "mtime_ns": 1789229794608525400,
+        "ctime_ns": 1790985007614579383
+      },
+      "tokenizer_config.json": {
+        "size": 17928,
+        "device": 2096,
+        "inode": 617739,
+        "mtime_ns": 1790956818923890600,
+        "ctime_ns": 1790985007489652612
+      },
+      "vocab.json": {
+        "size": 6722759,
+        "device": 2096,
+        "inode": 593236,
+        "mtime_ns": 1790956819224520600,
+        "ctime_ns": 1790985007480245835
+      }
+    },
+    "native_processes": [
+      {
+        "pid": 87,
+        "exe": "/usr/local/bin/flash_serve",
+        "start_ticks": 270076,
+        "loaded_maps": [
+          "5b44c2c27000-5b44c4352000 r--p 00000000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4352000-5b44c4359000 r-xp 0172a000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4359000-5b44c435a000 r-xp 01731000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c435a000-5b44c4364000 r-xp 01732000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4364000-5b44c4365000 r-xp 0173c000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4365000-5b44c4367000 r-xp 0173d000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4367000-5b44c4369000 r-xp 0173f000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4369000-5b44c436d000 r-xp 01741000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c436d000-5b44c436e000 r-xp 01745000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c436e000-5b44c4397000 r-xp 01746000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4397000-5b44c4398000 r-xp 0176f000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4398000-5b44c4427000 r-xp 01770000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4427000-5b44c4428000 r-xp 017ff000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4428000-5b44c442c000 r-xp 01800000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c442c000-5b44c442d000 r-xp 01804000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c442d000-5b44c44bf000 r-xp 01805000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c44bf000-5b44c44c0000 r-xp 01897000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c44c0000-5b44c451d000 r-xp 01898000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c451d000-5b44c4522000 r--p 018f4000 00:54 928789                     /usr/local/bin/flash_serve",
+          "5b44c4522000-5b44c4524000 rw-p 018f8000 00:54 928789                     /usr/local/bin/flash_serve",
+          "75971cf74000-75978d262000 r--p 00000000 00:47 12384898978924366          /ngram-w4b.hgn",
+          "75978d262000-75a378ebf000 r--p 702ee000 00:47 12384898978924366          /ngram-w4b.hgn",
+          "75a378ebf000-75b400000000 r--p c5bf4b000 00:47 12384898978924366         /ngram-w4b.hgn",
+          "75e350600000-75f2d7454000 r--p 00000000 08:30 616828                     /models/qwen38-flash-next-v2.hgn"
+        ]
+      }
+    ]
+  },
+  "source": {
+    "checkpoint": {
+      "size": 66687678432,
+      "device": 2096,
+      "inode": 616828,
+      "mtime_ns": 1790979071648131939,
+      "ctime_ns": 1790979072020131920
+    },
+    "ngram": {
+      "size": 124068083904,
+      "device": 71,
+      "inode": 12384898978924366,
+      "mtime_ns": 1789244565219639800,
+      "ctime_ns": 1789244565219639800
+    },
+    "tokenizer_files": [
+      {
+        "path": "chat_template.jinja",
+        "bytes": 8952,
+        "sha256": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041"
+      },
+      {
+        "path": "generation_config.json",
+        "bytes": 202,
+        "sha256": "e70c136c1b78ddc1fb0905bac8e733a4dc448d4f852a5dd75143fffc70be550e"
+      },
+      {
+        "path": "merges.txt",
+        "bytes": 3353259,
+        "sha256": "a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d"
+      },
+      {
+        "path": "tokenizer.json",
+        "bytes": 12809320,
+        "sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "bytes": 17928,
+        "sha256": "b11349aafa7cdc6a320767cf7ceb29ed82f7eda5d65e8e0819e76f0ce947bf27"
+      },
+      {
+        "path": "vocab.json",
+        "bytes": 6722759,
+        "sha256": "ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003"
+      }
+    ],
+    "tokenizer_identity": {
+      "chat_template.jinja": {
+        "size": 8952,
+        "device": 2096,
+        "inode": 593238,
+        "mtime_ns": 1790956818921894300,
+        "ctime_ns": 1790985007484756205
+      },
+      "generation_config.json": {
+        "size": 202,
+        "device": 2096,
+        "inode": 618531,
+        "mtime_ns": 1790956818866519100,
+        "ctime_ns": 1790985007522446396
+      },
+      "merges.txt": {
+        "size": 3353259,
+        "device": 2096,
+        "inode": 617754,
+        "mtime_ns": 1790956819381030600,
+        "ctime_ns": 1790985007514912558
+      },
+      "tokenizer.json": {
+        "size": 12809320,
+        "device": 2096,
+        "inode": 618550,
+        "mtime_ns": 1789229794608525400,
+        "ctime_ns": 1790985007614579383
+      },
+      "tokenizer_config.json": {
+        "size": 17928,
+        "device": 2096,
+        "inode": 617739,
+        "mtime_ns": 1790956818923890600,
+        "ctime_ns": 1790985007489652612
+      },
+      "vocab.json": {
+        "size": 6722759,
+        "device": 2096,
+        "inode": 593236,
+        "mtime_ns": 1790956819224520600,
+        "ctime_ns": 1790985007480245835
+      }
+    },
+    "native_processes": []
+  },
+  "inprocess_gpu_asset_attestation": false
+}

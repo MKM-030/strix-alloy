@@ -1,0 +1,20 @@
+{
+  "cache_prompt": false,
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "drafter": "mtp",
+  "enable_thinking": false,
+  "max_tokens": 128,
+  "messages": [
+    {
+      "content": "A TypeScript application has a search widget that calls a local API after the user types. The UI currently shows results from an old query after a newer query has finished. The code below is a simplified version of the relevant component. The actual application passes a different endpoint when the user changes the selected project, so endpoint changes should also cancel outstanding work. The API returns an array of objects with an id and title. Error messages are shown below the input.\n\n```tsx\ntype Hit = { id: string; title: string };\n\nfunction Search({ endpoint }: { endpoint: string }) {\n  const [query, setQuery] = React.useState('');\n  const [hits, setHits] = React.useState<Hit[]>([]);\n  const [error, setError] = React.useState('');\n  const [loading, setLoading] = React.useState(false);\n\n  React.useEffect(() => {\n    if (!query.trim()) {\n      setHits([]);\n      return;\n    }\n    const timer = setTimeout(async () => {\n      setLoading(true);\n      try {\n        const response = await fetch(endpoint + '?q=' + query);\n        const data = await response.json();\n        setHits(data);\n        setError('');\n      } catch (caught) {\n        setError(String(caught));\n      } finally {\n        setLoading(false);\n      }\n    }, 250);\n    return () => clearTimeout(timer);\n  }, [query]);\n\n  return <section>\n    <input value={query} onChange={e => setQuery(e.target.value)} />\n    {loading && <p>Searching</p>}\n    {error && <p>{error}</p>}\n    <ul>{hits.map(hit => <li key={hit.id}>{hit.title}</li>)}</ul>\n  </section>;\n}\n```\n\nFor reproduction, type 'river', wait until the request starts, and immediately replace it with 'ridge'. Suppose the river request takes 700 milliseconds while ridge takes 80 milliseconds. The ridge request completes first. Clearing the timeout cannot cancel river because its callback has already begun. An aborted request should not show an error. When the query becomes empty, the widget should clear results and any prior error immediately and stop showing a loading state. A later completion from the previous query must not reverse those changes.\n\nHTTP 400 and HTTP 500 responses are errors even though fetch itself resolves. Query text can contain spaces, ampersands, or non-ASCII characters. The endpoint may already contain a query string. The fix must encode the search parameter correctly and preserve any existing parameters. The parent may unmount the component while a request is running. React's development strict mode may also run an effect, clean it up, and run it again. Work from the cleaned-up effect must not update state.\n\nDescribe the race and supply a focused corrected effect. Use an AbortController and an effect-local validity guard, include endpoint among the dependencies, and ensure the finally block from a stale request cannot clear loading for a new one. Avoid changing the visible design or introducing a third-party request library.\n",
+      "role": "user"
+    }
+  ],
+  "model": "halogen-v2",
+  "reasoning_effort": "none",
+  "seed": 1,
+  "stream": false,
+  "temperature": 0
+}

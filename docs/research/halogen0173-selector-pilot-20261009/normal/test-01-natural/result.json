@@ -1,0 +1,53 @@
+{
+  "request_id": "test-01-natural",
+  "passed": true,
+  "capture_only": true,
+  "performance_cohort": false,
+  "NPU_executed": false,
+  "prompt_tokens": 606,
+  "completion_tokens": 128,
+  "host_request_seconds": 4.331984499993268,
+  "request_started_utc": "2026-10-09T07:20:59.888953+00:00",
+  "request_finished_utc": "2026-10-09T07:21:04.221640+00:00",
+  "memory_minimum_bytes": {
+    "available_bytes": 24567267328,
+    "commit_headroom_bytes": 118609174528
+  },
+  "metrics": {
+    "timings": {
+      "prompt_n": 606,
+      "predicted_n": 128,
+      "prompt_ms": 1052.9,
+      "predicted_ms": 3262.4,
+      "prompt_per_second": 575.553,
+      "predicted_per_second": 39.235,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "disk_restore_ms": 0.0,
+      "draft_n": 108,
+      "draft_n_accepted": 74
+    },
+    "usage": {
+      "prompt_tokens": 606,
+      "completion_tokens": 128,
+      "total_tokens": 734,
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "finish_reason": "length",
+    "output_sha256": "b911ea0eeb201c5784d25940530507f65b0e533b61ea3002cd77013e3fc68f94",
+    "drafted": 108,
+    "accepted": 74,
+    "acceptance": 0.6851851851851852
+  },
+  "native_log_before_bytes": 139822,
+  "native_log_after_bytes": 140680,
+  "native_log_wire_ids": [
+    13
+  ],
+  "journal_before_bytes": null,
+  "journal_after_bytes": null,
+  "birth": null,
+  "retire": null
+}

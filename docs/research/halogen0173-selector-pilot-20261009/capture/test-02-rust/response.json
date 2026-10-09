@@ -1,0 +1,37 @@
+{
+  "id": "chatcmpl-d92d775ff8bf4279ac3ed1a7",
+  "created": 1791529901,
+  "model": "halogen-qwen3.8-flash-next",
+  "object": "chat.completion",
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "length",
+      "message": {
+        "role": "assistant",
+        "content": "```rust\nuse std::collections::HashMap;\nuse std::time::{Duration, Instant};\n\nstruct Entry<V> {\n    inserted: Instant,\n    value: V,\n}\n\nstruct Cache<V> {\n    entries: HashMap<String, Entry<V>>,\n    ttl: Duration,\n}\n\nimpl<V: Clone> Cache<V> {\n    fn get(&mut self, key: &str, now: Instant) -> Option<V> {\n        // First, check if the entry exists and whether it is expired.\n        // We use checked_duration_since to handle the case where `now`"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 626,
+    "completion_tokens": 128,
+    "total_tokens": 754,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  },
+  "timings": {
+    "prompt_n": 626,
+    "predicted_n": 128,
+    "prompt_ms": 1359.5,
+    "predicted_ms": 2484.1,
+    "prompt_per_second": 460.463,
+    "predicted_per_second": 51.528,
+    "cache_n": 0,
+    "disk_restore_n": 0,
+    "disk_restore_ms": 0.0,
+    "draft_n": 97,
+    "draft_n_accepted": 89
+  }
+}

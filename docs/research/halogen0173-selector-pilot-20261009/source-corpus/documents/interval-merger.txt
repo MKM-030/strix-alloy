@@ -1,0 +1,23 @@
+A calendar service merges occupied time intervals before displaying free slots. Its input is a list of pairs of integers. Each pair represents a half-open interval [start, end), measured in minutes from midnight. An interval is valid only when 0 <= start < end <= 1440. Adjacent intervals should merge because the user should not see a zero-length free slot between them. The function must return a new list and leave both the original list and its pairs unchanged.
+
+```python
+def merge_occupied(intervals):
+    intervals.sort()
+    merged = []
+    for current in intervals:
+        if not merged or merged[-1][1] < current[0]:
+            merged.append(current)
+        else:
+            merged[-1][1] = current[1]
+    return merged
+```
+
+The service receives nested intervals, repeated intervals, and input in arbitrary order. For example, [60, 180] may be followed by [90, 120]. With the current code, merging can shrink the occupied range. The service also accepts tuples in some call paths, so assigning to merged[-1][1] can raise a TypeError. Sorting the original input changes the caller's order, and storing a reference to current can later change a caller-owned pair. These are all behavior problems visible at the function boundary, not merely style concerns.
+
+The desired invalid-input policy is to reject the entire call with ValueError before returning any result. A pair with three entries is invalid. Booleans are invalid even though Python treats them as integers. Strings, floats, and None are also invalid. An empty list is valid and should return an empty list. The outer input is a finite sequence, so supporting a one-shot generator is unnecessary. The resulting merged intervals should always be ordinary two-element lists, sorted by start. The team values straightforward code more than minimizing a small amount of allocation.
+
+The display later subtracts these occupied ranges from a working-hours interval. That later subtraction is outside the requested change. The merge function should not clamp a bad interval to the range of the day, silently discard it, or convert string numbers to integers. Those behaviors would hide malformed input. It also should not mutate some inputs before discovering that a later pair is invalid, because callers often reuse the original schedule to show an error message.
+
+A reviewer suggested replacing the less-than comparison with less-than-or-equal. Check that suggestion carefully against the adjacency requirement. Another suggested assigning max(merged[-1][1], current[1]) but left the input mutation unchanged. The final solution should address the complete contract. Typical lists have fewer than 200 intervals, so an O(n log n) sorting approach is acceptable. There is no need for a tree structure, incremental index, or database integration.
+
+Provide a corrected Python function and mention two small examples that demonstrate the important behavior, including a nested interval and adjacent intervals. Explain why the original function can shrink a range. Keep the code compact enough for a focused review.

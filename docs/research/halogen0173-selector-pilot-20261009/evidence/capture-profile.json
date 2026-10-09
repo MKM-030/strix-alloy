@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "minimum_reserve_gib": 18,
+  "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\selector-real-cohort-20261009\\private-frontend-token.txt",
+  "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\selector-real-cohort-20261009\\private-backend-token.txt",
+  "concurrency": 1,
+  "body_bytes": 16777216,
+  "request_seconds": 1800,
+  "backend": {
+    "identifier": "halogen-v2",
+    "upstream": "http://127.0.0.1:8731",
+    "model": "halogen-qwen3.8-flash-next",
+    "checkpoint": "v2",
+    "context": 262144,
+    "expected": {
+      "status": "ok",
+      "version.api": "0.17.3",
+      "version.engine": "0.17.3",
+      "version.match": true,
+      "context": 262144,
+      "slot_ctx": 262144,
+      "kv_pool_positions": 262144,
+      "slots": 1
+    },
+    "routes": [
+      "/v1/chat/completions",
+      "/v1/completions",
+      "/v1/responses",
+      "/v1/messages",
+      "/v1/messages/count_tokens"
+    ]
+  },
+  "engine": {
+    "kind": "halogen",
+    "directory": "backends/halogen-wsl2-0.17.3",
+    "checkpoint": "v2",
+    "context": 262144,
+    "prompt_cache": "Off",
+    "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "launcher": "python",
+    "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+    "draft_tokens": 2,
+    "speculation_policy": {
+      "HALOGEN_PLD": "3,3"
+    },
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "api_defaults": {
+      "enable_thinking": true,
+      "reasoning_effort": "medium",
+      "max_thinking_tokens": 2048
+    }
+  },
+  "console_trace": true
+}

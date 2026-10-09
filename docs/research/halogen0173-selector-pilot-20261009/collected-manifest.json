@@ -1,0 +1,760 @@
+{
+  "collection_executed": true,
+  "collection_limits": {
+    "held_out_requests": 6,
+    "intended_actual_input_tokens_range": [
+      512,
+      2048
+    ],
+    "max_output_tokens_per_request": 128,
+    "maximum_cohort_seconds": 1800,
+    "maximum_request_seconds": 90,
+    "request_count": 16,
+    "retries_per_request": 0,
+    "total_output_budget": 2048,
+    "training_requests": 10
+  },
+  "inputs_origin": "New authored realistic tasks, not a harvested human or external benchmark corpus",
+  "prepared_date": "2026-10-09",
+  "purpose": "bounded stock-MTP2 token-history selector pilot",
+  "qualification": "Hash-bound root evidence assembled; run independent check_cohort before fitting",
+  "request_order_frozen": true,
+  "requests": [
+    {
+      "category": "natural-summary",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\library-pilot.txt",
+        "bytes": 3055,
+        "sha256": "6449ab0af9c2347df6aaa98f4ac98ebda721165e761cee885e673c83bfde9e1c"
+      },
+      "document_ids": [
+        "library-pilot"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3055,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 474
+      },
+      "order": 1,
+      "owner_birth": 1,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-01-library.json",
+        "bytes": 3407,
+        "sha256": "a22ffe61398104da077c6a4f4f6e60548cf7e57301292741141666f06d74ce23"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-01-library.json",
+        "bytes": 12690,
+        "sha256": "28cca9d725ab5d23f97e3ac6be948ed7e699a27a64a92886125d887b50dbcc7d"
+      },
+      "request_id": "train-01-library",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 3
+    },
+    {
+      "category": "coding-review",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\shipment-parser.txt",
+        "bytes": 3407,
+        "sha256": "c744bc1f5571cd0ddb54aee93987eb0bffcbf7e7b33dcdce714bdc4fa22dcd3e"
+      },
+      "document_ids": [
+        "shipment-parser"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3407,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 440
+      },
+      "order": 2,
+      "owner_birth": 2,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-02-python.json",
+        "bytes": 3793,
+        "sha256": "b1b21064623ba06bc0a7dce758abd94efb432ccf91ca8e2184f76bdd1265af40"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-02-python.json",
+        "bytes": 12687,
+        "sha256": "88babff88bf3c8c1839a8036b8b0721404cd53abcf25ae1990f5955872c462ea"
+      },
+      "request_id": "train-02-python",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 4
+    },
+    {
+      "category": "reasoning-schedule",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\field-survey.txt",
+        "bytes": 2787,
+        "sha256": "8c1d2b3a7ce9606b083114bb25249fd78dd72331fa3dceee295a535e58eba1fc"
+      },
+      "document_ids": [
+        "field-survey"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2787,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 478
+      },
+      "order": 3,
+      "owner_birth": 3,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-03-planning.json",
+        "bytes": 3139,
+        "sha256": "f9b3e0c77c15374e7f6c9fea9939ecf5f74e9dd792b91eaed5f03c36a3e24d75"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-03-planning.json",
+        "bytes": 12706,
+        "sha256": "8007aa4a9544b6059e7baf472af684bd7d10634d47db426a413c83c7665d0d9f"
+      },
+      "request_id": "train-03-planning",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 5
+    },
+    {
+      "category": "natural-german",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\museum-access.txt",
+        "bytes": 3217,
+        "sha256": "0494113e9624b4caa535da173a655e5909689559925c18f9a3a8e45eb0ad9358"
+      },
+      "document_ids": [
+        "museum-access"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3152,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 441
+      },
+      "order": 4,
+      "owner_birth": 4,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-04-german.json",
+        "bytes": 3569,
+        "sha256": "73e4a9e08f5c16818743b4a25118202f196000b5b744aeac5e58429700961c99"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-04-german.json",
+        "bytes": 12685,
+        "sha256": "237733aff06ea1373f91c26bcd388dfd7014b8125d93bd45f63a664ad43d90a5"
+      },
+      "request_id": "train-04-german",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 6
+    },
+    {
+      "category": "coding-sql",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\rental-report.txt",
+        "bytes": 3014,
+        "sha256": "d1564c5dbefa19e6984e50c59599587b4aa02b749d99aa033d981ced45226642"
+      },
+      "document_ids": [
+        "rental-report"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3014,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 456
+      },
+      "order": 5,
+      "owner_birth": 5,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-05-sql.json",
+        "bytes": 3390,
+        "sha256": "01aabe7a1f10a0019b22fe249a5033e47ce546db3511ab5a4a4c37cd908997ec"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-05-sql.json",
+        "bytes": 12649,
+        "sha256": "0c82198bbd7f831785f9137cf2ea5d0746e5d5426818258e8f55cdd4cec87ea6"
+      },
+      "request_id": "train-05-sql",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 7
+    },
+    {
+      "category": "natural-edit",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\bus-notice.txt",
+        "bytes": 3060,
+        "sha256": "22e01f558a7f97f3e29cd8244eb7fa4ba6f742b49d159a1d9930ae8db5499006"
+      },
+      "document_ids": [
+        "bus-notice"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3060,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 500
+      },
+      "order": 6,
+      "owner_birth": 6,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-06-editing.json",
+        "bytes": 3412,
+        "sha256": "db8d43b0ba080c43b4fee3d1a824a93c6c91f58ea230ff9670227f08a435add5"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-06-editing.json",
+        "bytes": 12690,
+        "sha256": "e6723601a5c8679147b544a835f2f2d843643e7d2ae90a4a09ff107daddbfdf5"
+      },
+      "request_id": "train-06-editing",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 8
+    },
+    {
+      "category": "coding-async",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\search-widget.txt",
+        "bytes": 2909,
+        "sha256": "24a1d22421ba0bccf9af45365d76d3dea1bf449350a96cc4806e07bbe887bec9"
+      },
+      "document_ids": [
+        "search-widget"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2909,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 409
+      },
+      "order": 7,
+      "owner_birth": 7,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-07-typescript.json",
+        "bytes": 3296,
+        "sha256": "02099337de22fd29bdfa94ebee961709a805d44b425759cedda22a91b89c334d"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-07-typescript.json",
+        "bytes": 12725,
+        "sha256": "0f6415ba43248f3cfa0ec4d00585e897b77e843095be572275352f15b87d6d96"
+      },
+      "request_id": "train-07-typescript",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 9
+    },
+    {
+      "category": "reasoning-quantitative",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\orchard-orders.txt",
+        "bytes": 2979,
+        "sha256": "75ae7c28c7f23497b4441c6d85e9d474ede1383965dd44d82e2284b6a704c6c2"
+      },
+      "document_ids": [
+        "orchard-orders"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2979,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 494
+      },
+      "order": 8,
+      "owner_birth": 8,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-08-numbers.json",
+        "bytes": 3331,
+        "sha256": "f8589a9bdfb4f398d8839f9f84e810749a060acff59015c4a69244560521fd76"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-08-numbers.json",
+        "bytes": 12700,
+        "sha256": "4e9e87a0e7a0a230a4cdfab02df0533cb6826f1e0f8a4e1d369f0e734c69dc81"
+      },
+      "request_id": "train-08-numbers",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 10
+    },
+    {
+      "category": "natural-diagnostic",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\sensor-outage.txt",
+        "bytes": 3072,
+        "sha256": "11cc138517cd65f7bba4a2d677dfe127f5521e4706d825c29e47c3b35c703b87"
+      },
+      "document_ids": [
+        "sensor-outage"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3072,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 465
+      },
+      "order": 9,
+      "owner_birth": 9,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-09-incident.json",
+        "bytes": 3424,
+        "sha256": "88be1df0ffeec49755ae00a686cfa5f0ee6cb543493635d6b45bc9e2921c8e80"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-09-incident.json",
+        "bytes": 12709,
+        "sha256": "46723a25d487e75fea2cd4ac7114f21b342e2206a24cfb31c0c607222f997c80"
+      },
+      "request_id": "train-09-incident",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 11
+    },
+    {
+      "category": "coding-algorithm",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\interval-merger.txt",
+        "bytes": 3078,
+        "sha256": "d959145262405610cf89b163f2cf777b9b0c33c74259b4193a48be6faf0211c5"
+      },
+      "document_ids": [
+        "interval-merger"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3078,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 460
+      },
+      "order": 10,
+      "owner_birth": 10,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\train-10-algorithm.json",
+        "bytes": 3442,
+        "sha256": "1c07f89b8ac5106ef0d90c2fafc2f2dddc263347bb66db67ce151d047872487a"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\train-10-algorithm.json",
+        "bytes": 12726,
+        "sha256": "d7daa38eaed8f584e7b9f3b90e8b8f29553f45f4ac77d657072a99cad5d23a56"
+      },
+      "request_id": "train-10-algorithm",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "train",
+      "wire_request_id": 12
+    },
+    {
+      "category": "natural-summary",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\food-rescue.txt",
+        "bytes": 2972,
+        "sha256": "d1d9fba3af95561f0d04fb16e3572bbe4806ecb233d4ee36e1cbda60c4449d97"
+      },
+      "document_ids": [
+        "food-rescue"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2972,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 469
+      },
+      "order": 11,
+      "owner_birth": 11,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\test-01-natural.json",
+        "bytes": 3324,
+        "sha256": "7474982901a87f4512d5de623f4a49cd4e2d0767c68868aaa29973398a0b6813"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\test-01-natural.json",
+        "bytes": 12685,
+        "sha256": "c416a50aac31c2c0d688e757e4a3b4fd871b7f307d0e020e6606ee266252e534"
+      },
+      "request_id": "test-01-natural",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "test",
+      "wire_request_id": 13
+    },
+    {
+      "category": "coding-rust",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\cache-expiry.txt",
+        "bytes": 2913,
+        "sha256": "e8041c9249415e5ed646474210cccb901b87841c474dd749f8ab331c4439559b"
+      },
+      "document_ids": [
+        "cache-expiry"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2913,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 440
+      },
+      "order": 12,
+      "owner_birth": 12,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\test-02-rust.json",
+        "bytes": 3290,
+        "sha256": "2d2fc3a6735b5d5704e75434af881e3f5816061fe2e6649a2db3e5a0215e675d"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\test-02-rust.json",
+        "bytes": 12652,
+        "sha256": "a53f803d2b2ecd2770f7a75214c3788704b3777b33d30a615d44bdd82fb98655"
+      },
+      "request_id": "test-02-rust",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "test",
+      "wire_request_id": 14
+    },
+    {
+      "category": "reasoning-allocation",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\workshop-kits.txt",
+        "bytes": 2849,
+        "sha256": "569a392ab07008e9c06ab6cfc703bf39267c35274e6a53197d64df54d4f39b7d"
+      },
+      "document_ids": [
+        "workshop-kits"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2849,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 478
+      },
+      "order": 13,
+      "owner_birth": 13,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\test-03-reasoning.json",
+        "bytes": 3201,
+        "sha256": "48f93c780112dde571eb704606b75eef3266484c06027317385f194e3b1d64cb"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\test-03-reasoning.json",
+        "bytes": 12711,
+        "sha256": "e057806a77075bdaecd9df1411200394be6f3d9ea21ac4dce4e6d020541b8280"
+      },
+      "request_id": "test-03-reasoning",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "test",
+      "wire_request_id": 15
+    },
+    {
+      "category": "natural-german",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\school-garden.txt",
+        "bytes": 3121,
+        "sha256": "2fd90ba1280485dcc4e1f70c1c4db1312b41955f43434f3d8fac6e9ebc31410c"
+      },
+      "document_ids": [
+        "school-garden"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3074,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 422
+      },
+      "order": 14,
+      "owner_birth": 14,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\test-04-german.json",
+        "bytes": 3473,
+        "sha256": "84c01d96376628b20b4a31fbd3b6aeb62850feca81e10cb60e4866a6f9f6f802"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\test-04-german.json",
+        "bytes": 12678,
+        "sha256": "7afcfe52f288447c186548245c69dee8e5bf00584311217d855e124eb85436fb"
+      },
+      "request_id": "test-04-german",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "test",
+      "wire_request_id": 16
+    },
+    {
+      "category": "coding-shell",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\archive-cleanup.txt",
+        "bytes": 2797,
+        "sha256": "b71c2db7ad953598aaeb0ce628bc14f983ef278f679225e0563c1de7af11fe2e"
+      },
+      "document_ids": [
+        "archive-cleanup"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2797,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 443
+      },
+      "order": 15,
+      "owner_birth": 15,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\test-05-shell.json",
+        "bytes": 3156,
+        "sha256": "c271c31d49b671163cd7c66866251c1492145e4e68866f0145c791418ea779c1"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\test-05-shell.json",
+        "bytes": 12671,
+        "sha256": "993e9ee4d8a3d48e995bf4ac4580fcbd6285978dd11b7518ee85ddcb70641f1a"
+      },
+      "request_id": "test-05-shell",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "test",
+      "wire_request_id": 17
+    },
+    {
+      "category": "reasoning-data",
+      "decoded": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\decoded.json",
+        "bytes": 1949731,
+        "sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+      },
+      "document": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\documents\\water-meter.txt",
+        "bytes": 3069,
+        "sha256": "9423f29567a6e2b5ac3571e913901e7d07d32839af4a622900c6522e3bd2f197"
+      },
+      "document_ids": [
+        "water-meter"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3069,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 494
+      },
+      "order": 16,
+      "owner_birth": 16,
+      "payload": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\payloads\\test-06-design.json",
+        "bytes": 3421,
+        "sha256": "3dae53be56a6700dbe92c3a0fc274da2e542fb25d00f244319825e9b00629a25"
+      },
+      "provenance": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\request-provenance\\test-06-design.json",
+        "bytes": 12674,
+        "sha256": "44ebbad07d6d38b66c480782ef439efc7f6084ebff89727f3d78dd07705a13ac"
+      },
+      "request_id": "test-06-design",
+      "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+      "split": "test",
+      "wire_request_id": 18
+    }
+  ],
+  "runtime_contract": {
+    "actual_input_tokens_and_early_eos_are_observations": true,
+    "neural_depth": 2,
+    "output_limit_tokens": 128,
+    "pld": "3,3",
+    "prompt_cache": "Off",
+    "seed": 1,
+    "temperature": 0,
+    "thinking": "Off",
+    "version": "0.17.3"
+  },
+  "schema": "halogen0173.selector-request-cohort.v1",
+  "split_contract": "Freeze whole requests and unique document groups before collection; never split rounds or descendants across train/test.",
+  "status": "observed-collected-pilot-awaiting-offline-review",
+  "assembled_utc": "2026-10-09T07:22:25.572066+00:00",
+  "original_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\manifest.json",
+    "bytes": 15860,
+    "sha256": "76de0b548bfb48f028e50bf8517e8f9514d2cbbc03eb48668d445b834b59960c"
+  },
+  "loaded_assets": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\loaded-assets-receipt.json",
+    "bytes": 28015,
+    "sha256": "7a9f9cc3682bb76a0fd72c44189cf4b28a4200069d4a0806ba314268160a5cde"
+  },
+  "assembly_source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assemble_cohort.py",
+    "bytes": 26900,
+    "sha256": "452d0df59eebd4f5093117e06fda8587f86fbbef740270ca00d8780a0a5b68a6"
+  },
+  "normal_parity": [
+    {
+      "request_id": "train-01-library",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-02-python",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-03-planning",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-04-german",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-05-sql",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-06-editing",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-07-typescript",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-08-numbers",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-09-incident",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "train-10-algorithm",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "test-01-natural",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "test-02-rust",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "test-03-reasoning",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "test-04-german",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "test-05-shell",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "request_id": "test-06-design",
+      "observed": true,
+      "passed": true
+    }
+  ],
+  "actual_client": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\evidence\\root-executed-collect-requests-v2.py",
+    "bytes": 9726,
+    "sha256": "55d95c1f287a7c9e7a6f02dd59ce1f93a23b9d467f86a8a442d0895858ca2bd3"
+  },
+  "client_source_scope": "root-recorded execution, derivative source not launch-sealed",
+  "historical_launch_sealed_parent_client": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\collect_requests.py",
+    "bytes": 8742,
+    "sha256": "32814b240a38b7142d79c08c2e41140ffd525ec40c1dd8695e3817a41d485927"
+  },
+  "all_normal_parity_observed": true,
+  "all_normal_parity_passed": true,
+  "raw_decoded_metadata_unchanged": true,
+  "performance_cohort": false,
+  "NPU_executed": false
+}

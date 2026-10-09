@@ -1,0 +1,37 @@
+{
+  "id": "chatcmpl-2da283dc77034f6d875fecbd",
+  "created": 1791529859,
+  "model": "halogen-qwen3.8-flash-next",
+  "object": "chat.completion",
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "length",
+      "message": {
+        "role": "assistant",
+        "content": "```tsx\ntype Hit = { id: string; title: string };\n\nfunction Search({ endpoint }: { endpoint: string }) {\n  const [query, setQuery] = React.useState('');\n  const [hits, setHits] = React.useState<Hit[]>([]);\n  const [error, setError] = React.useState('');\n  const [loading, setLoading] = React.useState(false);\n\n  React.useEffect(() => {\n    // If query is empty, clear everything immediately and stop\n    if (!query.trim()) {\n      setHits([]);\n      setError('');\n      setLoading(false"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 669,
+    "completion_tokens": 128,
+    "total_tokens": 797,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  },
+  "timings": {
+    "prompt_n": 669,
+    "predicted_n": 128,
+    "prompt_ms": 1392.0,
+    "predicted_ms": 2251.8,
+    "prompt_per_second": 480.603,
+    "predicted_per_second": 56.843,
+    "cache_n": 0,
+    "disk_restore_n": 0,
+    "disk_restore_ms": 0.0,
+    "draft_n": 98,
+    "draft_n_accepted": 91
+  }
+}

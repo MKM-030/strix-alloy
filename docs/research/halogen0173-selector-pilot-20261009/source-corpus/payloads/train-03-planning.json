@@ -1,0 +1,20 @@
+{
+  "cache_prompt": false,
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "drafter": "mtp",
+  "enable_thinking": false,
+  "max_tokens": 128,
+  "messages": [
+    {
+      "content": "A field team must survey four sites on one day. The vehicle leaves the office at 08:00 and must return by 17:00. There are two people in the vehicle, and both must be present at every site. Each survey takes 70 minutes once started. A lunch break of 30 uninterrupted minutes must begin between 12:00 and 13:30. Lunch can take place at a site or while parked at a rest area, but travel time cannot count as lunch. The vehicle has enough fuel and no charging stop is needed.\n\nThe sites are called Alder, Birch, Cedar, and Dock. Travel from the office takes 35 minutes to Alder, 50 minutes to Birch, 65 minutes to Cedar, or 80 minutes to Dock. Return travel takes the same amount of time. Between sites, the travel times are symmetric: Alder to Birch is 25 minutes, Alder to Cedar is 40, Alder to Dock is 60, Birch to Cedar is 20, Birch to Dock is 45, and Cedar to Dock is 30. These are planning estimates already including ordinary traffic; do not add another generic traffic allowance.\n\nAlder accepts survey starts from 08:30 through 10:00. Birch accepts starts from 09:30 through 12:00. Cedar accepts starts from 11:00 through 14:00. Dock accepts starts from 13:00 through 15:00. A start at the end of a window is allowed, and a survey may finish after its start window closes. Waiting before an opening window is allowed. The Dock visit needs a safety briefing lasting 15 minutes immediately before its 70-minute survey. Its start window applies to the survey itself, after the briefing. The safety officer is available for briefings from 12:45 onward.\n\nThe manager proposed this draft: depart at 08:00, start Alder at 08:35, finish at 09:45, reach Birch at 10:10, finish at 11:20, reach Cedar at 11:40, finish at 12:50, take lunch until 13:20, reach Dock at 13:50, complete the briefing at 14:05, finish the survey at 15:15, and arrive back at the office at 16:35. One colleague says the schedule fails because lunch must end before 13:30. Another says the return journey was calculated using the Cedar travel time instead of Dock's. Both objections should be checked against the stated rules instead of accepted automatically.\n\nThere is one optional task: collect a water sample at Birch after the survey, which takes 20 additional minutes. It can be done only after all the ordinary Birch survey work is complete. The manager wants to know whether this task fits while preserving every required visit and the return deadline. No site visit can be shortened or split, and the team cannot send one person ahead. The goal is a valid practical schedule, not an exhaustive proof over every possible route.\n\nCheck the proposed schedule, assess both objections, and say whether the optional sample fits. Give the relevant corrected times and a short justification. Keep the answer concise.\n",
+      "role": "user"
+    }
+  ],
+  "model": "halogen-v2",
+  "reasoning_effort": "none",
+  "seed": 1,
+  "stream": false,
+  "temperature": 0
+}

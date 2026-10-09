@@ -1,0 +1,21 @@
+{
+  "schema": "halogen0173.selector-cost-independent-source-review.v1",
+  "scope": "Source-only review of production collector/installer/clock and bounded private reader against owned-hook baseline",
+  "source_manifest_sha256": "551a7db031cc8ad3bf84b17e2ea75b4e2cd5ba449158bf024b932bfe4d4eb3ea",
+  "root_cpu_qualification_sha256": "b8e3cb0d591ada4664fac7a6bba10502d4c3a427b2aa49e419aa830abe3c7589",
+  "checked_source_pins": 20,
+  "byte_identical_baseline_pins": 9,
+  "blocking_production_findings": [],
+  "reviewed_invariants": [
+    "Original native wire, copied relays and nine-site definitions unchanged",
+    "Owned lifecycle and decisions unchanged; costs are parallel copied values",
+    "Disabled collector and untimed capture reach no clock call",
+    "Clock sample failure/overflow/reversal never invent elapsed cost; errno restored",
+    "Event and cost share bounded ring slot and exact native identity",
+    "Close independently qualifies native and cost I/O and stamp failures",
+    "Reader delegates lifecycle to unchanged ledger and exact-joins sequence plus full owner/source/flags/loss",
+    "Causal depth low/high copied from exact native Begin; raw stock width retained"
+  ],
+  "review_execution": "Read-only source/diff/hash inspection; no imports, builds, tests, engine/API/GPU/NPU executions",
+  "runtime_result_source": "Root receipt records18 CPU reader cases and native fixtures; independent reviewer did not rerun"
+}

@@ -1,0 +1,518 @@
+{
+  "collection_executed": false,
+  "collection_limits": {
+    "held_out_requests": 6,
+    "intended_actual_input_tokens_range": [
+      512,
+      2048
+    ],
+    "max_output_tokens_per_request": 128,
+    "maximum_cohort_seconds": 1800,
+    "maximum_request_seconds": 90,
+    "request_count": 16,
+    "retries_per_request": 0,
+    "total_output_budget": 2048,
+    "training_requests": 10
+  },
+  "inputs_origin": "New authored realistic tasks, not a harvested human or external benchmark corpus",
+  "prepared_date": "2026-10-09",
+  "purpose": "bounded stock-MTP2 token-history selector pilot",
+  "qualification": "Prepared entries have null collection bindings; do not fit until root fills hash-bound observed provenance.",
+  "request_order_frozen": true,
+  "requests": [
+    {
+      "category": "natural-summary",
+      "decoded": null,
+      "document": {
+        "bytes": 3055,
+        "path": "documents/library-pilot.txt",
+        "sha256": "6449ab0af9c2347df6aaa98f4ac98ebda721165e761cee885e673c83bfde9e1c"
+      },
+      "document_ids": [
+        "library-pilot"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3055,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 474
+      },
+      "order": 1,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3407,
+        "path": "payloads/train-01-library.json",
+        "sha256": "a22ffe61398104da077c6a4f4f6e60548cf7e57301292741141666f06d74ce23"
+      },
+      "provenance": null,
+      "request_id": "train-01-library",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "coding-review",
+      "decoded": null,
+      "document": {
+        "bytes": 3407,
+        "path": "documents/shipment-parser.txt",
+        "sha256": "c744bc1f5571cd0ddb54aee93987eb0bffcbf7e7b33dcdce714bdc4fa22dcd3e"
+      },
+      "document_ids": [
+        "shipment-parser"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3407,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 440
+      },
+      "order": 2,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3793,
+        "path": "payloads/train-02-python.json",
+        "sha256": "b1b21064623ba06bc0a7dce758abd94efb432ccf91ca8e2184f76bdd1265af40"
+      },
+      "provenance": null,
+      "request_id": "train-02-python",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "reasoning-schedule",
+      "decoded": null,
+      "document": {
+        "bytes": 2787,
+        "path": "documents/field-survey.txt",
+        "sha256": "8c1d2b3a7ce9606b083114bb25249fd78dd72331fa3dceee295a535e58eba1fc"
+      },
+      "document_ids": [
+        "field-survey"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2787,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 478
+      },
+      "order": 3,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3139,
+        "path": "payloads/train-03-planning.json",
+        "sha256": "f9b3e0c77c15374e7f6c9fea9939ecf5f74e9dd792b91eaed5f03c36a3e24d75"
+      },
+      "provenance": null,
+      "request_id": "train-03-planning",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "natural-german",
+      "decoded": null,
+      "document": {
+        "bytes": 3217,
+        "path": "documents/museum-access.txt",
+        "sha256": "0494113e9624b4caa535da173a655e5909689559925c18f9a3a8e45eb0ad9358"
+      },
+      "document_ids": [
+        "museum-access"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3152,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 441
+      },
+      "order": 4,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3569,
+        "path": "payloads/train-04-german.json",
+        "sha256": "73e4a9e08f5c16818743b4a25118202f196000b5b744aeac5e58429700961c99"
+      },
+      "provenance": null,
+      "request_id": "train-04-german",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "coding-sql",
+      "decoded": null,
+      "document": {
+        "bytes": 3014,
+        "path": "documents/rental-report.txt",
+        "sha256": "d1564c5dbefa19e6984e50c59599587b4aa02b749d99aa033d981ced45226642"
+      },
+      "document_ids": [
+        "rental-report"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3014,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 456
+      },
+      "order": 5,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3390,
+        "path": "payloads/train-05-sql.json",
+        "sha256": "01aabe7a1f10a0019b22fe249a5033e47ce546db3511ab5a4a4c37cd908997ec"
+      },
+      "provenance": null,
+      "request_id": "train-05-sql",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "natural-edit",
+      "decoded": null,
+      "document": {
+        "bytes": 3060,
+        "path": "documents/bus-notice.txt",
+        "sha256": "22e01f558a7f97f3e29cd8244eb7fa4ba6f742b49d159a1d9930ae8db5499006"
+      },
+      "document_ids": [
+        "bus-notice"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3060,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 500
+      },
+      "order": 6,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3412,
+        "path": "payloads/train-06-editing.json",
+        "sha256": "db8d43b0ba080c43b4fee3d1a824a93c6c91f58ea230ff9670227f08a435add5"
+      },
+      "provenance": null,
+      "request_id": "train-06-editing",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "coding-async",
+      "decoded": null,
+      "document": {
+        "bytes": 2909,
+        "path": "documents/search-widget.txt",
+        "sha256": "24a1d22421ba0bccf9af45365d76d3dea1bf449350a96cc4806e07bbe887bec9"
+      },
+      "document_ids": [
+        "search-widget"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2909,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 409
+      },
+      "order": 7,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3296,
+        "path": "payloads/train-07-typescript.json",
+        "sha256": "02099337de22fd29bdfa94ebee961709a805d44b425759cedda22a91b89c334d"
+      },
+      "provenance": null,
+      "request_id": "train-07-typescript",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "reasoning-quantitative",
+      "decoded": null,
+      "document": {
+        "bytes": 2979,
+        "path": "documents/orchard-orders.txt",
+        "sha256": "75ae7c28c7f23497b4441c6d85e9d474ede1383965dd44d82e2284b6a704c6c2"
+      },
+      "document_ids": [
+        "orchard-orders"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2979,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 494
+      },
+      "order": 8,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3331,
+        "path": "payloads/train-08-numbers.json",
+        "sha256": "f8589a9bdfb4f398d8839f9f84e810749a060acff59015c4a69244560521fd76"
+      },
+      "provenance": null,
+      "request_id": "train-08-numbers",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "natural-diagnostic",
+      "decoded": null,
+      "document": {
+        "bytes": 3072,
+        "path": "documents/sensor-outage.txt",
+        "sha256": "11cc138517cd65f7bba4a2d677dfe127f5521e4706d825c29e47c3b35c703b87"
+      },
+      "document_ids": [
+        "sensor-outage"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3072,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 465
+      },
+      "order": 9,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3424,
+        "path": "payloads/train-09-incident.json",
+        "sha256": "88be1df0ffeec49755ae00a686cfa5f0ee6cb543493635d6b45bc9e2921c8e80"
+      },
+      "provenance": null,
+      "request_id": "train-09-incident",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "coding-algorithm",
+      "decoded": null,
+      "document": {
+        "bytes": 3078,
+        "path": "documents/interval-merger.txt",
+        "sha256": "d959145262405610cf89b163f2cf777b9b0c33c74259b4193a48be6faf0211c5"
+      },
+      "document_ids": [
+        "interval-merger"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3078,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 460
+      },
+      "order": 10,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3442,
+        "path": "payloads/train-10-algorithm.json",
+        "sha256": "1c07f89b8ac5106ef0d90c2fafc2f2dddc263347bb66db67ce151d047872487a"
+      },
+      "provenance": null,
+      "request_id": "train-10-algorithm",
+      "session_nonce": null,
+      "split": "train",
+      "wire_request_id": null
+    },
+    {
+      "category": "natural-summary",
+      "decoded": null,
+      "document": {
+        "bytes": 2972,
+        "path": "documents/food-rescue.txt",
+        "sha256": "d1d9fba3af95561f0d04fb16e3572bbe4806ecb233d4ee36e1cbda60c4449d97"
+      },
+      "document_ids": [
+        "food-rescue"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2972,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 469
+      },
+      "order": 11,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3324,
+        "path": "payloads/test-01-natural.json",
+        "sha256": "7474982901a87f4512d5de623f4a49cd4e2d0767c68868aaa29973398a0b6813"
+      },
+      "provenance": null,
+      "request_id": "test-01-natural",
+      "session_nonce": null,
+      "split": "test",
+      "wire_request_id": null
+    },
+    {
+      "category": "coding-rust",
+      "decoded": null,
+      "document": {
+        "bytes": 2913,
+        "path": "documents/cache-expiry.txt",
+        "sha256": "e8041c9249415e5ed646474210cccb901b87841c474dd749f8ab331c4439559b"
+      },
+      "document_ids": [
+        "cache-expiry"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2913,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 440
+      },
+      "order": 12,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3290,
+        "path": "payloads/test-02-rust.json",
+        "sha256": "2d2fc3a6735b5d5704e75434af881e3f5816061fe2e6649a2db3e5a0215e675d"
+      },
+      "provenance": null,
+      "request_id": "test-02-rust",
+      "session_nonce": null,
+      "split": "test",
+      "wire_request_id": null
+    },
+    {
+      "category": "reasoning-allocation",
+      "decoded": null,
+      "document": {
+        "bytes": 2849,
+        "path": "documents/workshop-kits.txt",
+        "sha256": "569a392ab07008e9c06ab6cfc703bf39267c35274e6a53197d64df54d4f39b7d"
+      },
+      "document_ids": [
+        "workshop-kits"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2849,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 478
+      },
+      "order": 13,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3201,
+        "path": "payloads/test-03-reasoning.json",
+        "sha256": "48f93c780112dde571eb704606b75eef3266484c06027317385f194e3b1d64cb"
+      },
+      "provenance": null,
+      "request_id": "test-03-reasoning",
+      "session_nonce": null,
+      "split": "test",
+      "wire_request_id": null
+    },
+    {
+      "category": "natural-german",
+      "decoded": null,
+      "document": {
+        "bytes": 3121,
+        "path": "documents/school-garden.txt",
+        "sha256": "2fd90ba1280485dcc4e1f70c1c4db1312b41955f43434f3d8fac6e9ebc31410c"
+      },
+      "document_ids": [
+        "school-garden"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3074,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 422
+      },
+      "order": 14,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3473,
+        "path": "payloads/test-04-german.json",
+        "sha256": "84c01d96376628b20b4a31fbd3b6aeb62850feca81e10cb60e4866a6f9f6f802"
+      },
+      "provenance": null,
+      "request_id": "test-04-german",
+      "session_nonce": null,
+      "split": "test",
+      "wire_request_id": null
+    },
+    {
+      "category": "coding-shell",
+      "decoded": null,
+      "document": {
+        "bytes": 2797,
+        "path": "documents/archive-cleanup.txt",
+        "sha256": "b71c2db7ad953598aaeb0ce628bc14f983ef278f679225e0563c1de7af11fe2e"
+      },
+      "document_ids": [
+        "archive-cleanup"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 2797,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 443
+      },
+      "order": 15,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3156,
+        "path": "payloads/test-05-shell.json",
+        "sha256": "c271c31d49b671163cd7c66866251c1492145e4e68866f0145c791418ea779c1"
+      },
+      "provenance": null,
+      "request_id": "test-05-shell",
+      "session_nonce": null,
+      "split": "test",
+      "wire_request_id": null
+    },
+    {
+      "category": "reasoning-data",
+      "decoded": null,
+      "document": {
+        "bytes": 3069,
+        "path": "documents/water-meter.txt",
+        "sha256": "9423f29567a6e2b5ac3571e913901e7d07d32839af4a622900c6522e3bd2f197"
+      },
+      "document_ids": [
+        "water-meter"
+      ],
+      "estimated_length": {
+        "actual_input_tokens": null,
+        "characters": 3069,
+        "note": "Authored inputs, length unmeasured; root validates actual API prompt usage.",
+        "words": 494
+      },
+      "order": 16,
+      "owner_birth": null,
+      "payload": {
+        "bytes": 3421,
+        "path": "payloads/test-06-design.json",
+        "sha256": "3dae53be56a6700dbe92c3a0fc274da2e542fb25d00f244319825e9b00629a25"
+      },
+      "provenance": null,
+      "request_id": "test-06-design",
+      "session_nonce": null,
+      "split": "test",
+      "wire_request_id": null
+    }
+  ],
+  "runtime_contract": {
+    "actual_input_tokens_and_early_eos_are_observations": true,
+    "neural_depth": 2,
+    "output_limit_tokens": 128,
+    "pld": "3,3",
+    "prompt_cache": "Off",
+    "seed": 1,
+    "temperature": 0,
+    "thinking": "Off",
+    "version": "0.17.3"
+  },
+  "schema": "halogen0173.selector-request-cohort.v1",
+  "split_contract": "Freeze whole requests and unique document groups before collection; never split rounds or descendants across train/test.",
+  "status": "frozen-inputs-not-collected"
+}

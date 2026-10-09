@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-09T07:25:36.529769+00:00",
+  "role": "normal",
+  "controller": {
+    "schema": 1,
+    "run_id": "a2a0252a68ed41ff95f101423b842d3f",
+    "pid": 26120,
+    "phase": "ready",
+    "backend": "halogen-v2",
+    "checkpoint": "v2",
+    "context": 262144,
+    "port": 8840,
+    "heartbeat": 1791530736.2114658,
+    "minimum_reserve_gib": 18.0,
+    "profile_sha256": "78e1888d9ecc93a2117be679cd27ffeec1f8f9b99165e18647cef04104bfc141",
+    "memory": {
+      "available_bytes": 24318230528,
+      "committed_bytes": 121830744064,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 118308696064
+    },
+    "minimum_available_gib": 22.51895523071289,
+    "ready_at": 1791530327.6051404,
+    "active_requests": 0,
+    "available_gib": 22.612194061279297
+  },
+  "backend": {
+    "schema": 1,
+    "run_id": "1ab9bcb479ce4cb9a4a6ec23f1762bfe",
+    "attempt": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\1ab9bcb479ce4cb9a4a6ec23f1762bfe",
+    "phase": "ready",
+    "endpoint": "http://127.0.0.1:8731/v1",
+    "model": "halogen-qwen3.8-flash-next",
+    "context": 262144,
+    "slots": 1,
+    "checkpoint": "v2",
+    "prompt_cache": "Off",
+    "serve_seconds": 0,
+    "controller_pid": 23480,
+    "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\api-token.txt",
+    "log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\1ab9bcb479ce4cb9a4a6ec23f1762bfe\\engine.log",
+    "controller_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\1ab9bcb479ce4cb9a4a6ec23f1762bfe\\service.log",
+    "ready_at": 1791530330.4862795,
+    "container_id": "76fc113ab8995f4f32fbf1d7df4a2252aa7805539d85d5d32077d4d7a95c6946"
+  },
+  "identities": {
+    "controller": {
+      "pid": 26120,
+      "creation_time_100ns": 134360037001216725,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 23480,
+      "creation_time_100ns": 134360037105619076,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "health": {
+    "status": "ok",
+    "backend": "halogen-v2",
+    "checkpoint": "v2",
+    "context": 262144,
+    "active_requests": 0,
+    "draining": false,
+    "completed": 16,
+    "cancelled": 0
+  },
+  "ready_open": true,
+  "console_identity": {
+    "pid": 41404,
+    "creation_time_100ns": 134360036998032321,
+    "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  }
+}

@@ -1,0 +1,45 @@
+Review this Python routine used by a small warehouse to import daily shipment records. It runs once for each uploaded CSV file. The file includes a header, and the caller passes a text stream opened with UTF-8 and newline=''. A shipment has a customer reference, a positive item count, a destination, and a dispatch date. Warehouse staff sometimes leave optional notes empty. The same customer reference can appear in several rows because one customer can receive multiple parcels. Each parcel nevertheless has a distinct parcel_id supplied by the sender.
+
+```python
+import csv
+from datetime import datetime
+
+def import_shipments(stream, known_parcels, today):
+    rows = csv.DictReader(stream)
+    shipments = []
+    errors = []
+    for index, row in enumerate(rows):
+        try:
+            parcel_id = row['parcel_id'].strip()
+            customer = row['customer'].strip()
+            count = int(row['items'])
+            destination = row['destination'].strip()
+            dispatch = datetime.strptime(row['dispatch_date'], '%Y-%m-%d')
+            if parcel_id in known_parcels:
+                errors.append((index, 'already imported'))
+                continue
+            if count == 0:
+                errors.append((index, 'empty parcel'))
+                continue
+            if dispatch < today:
+                errors.append((index, 'past date'))
+                continue
+            shipments.append({
+                'parcel_id': parcel_id,
+                'customer': customer,
+                'items': count,
+                'destination': destination,
+                'dispatch_date': dispatch,
+                'note': row['note'].strip(),
+            })
+        except ValueError as error:
+            errors.append((index, str(error)))
+    known_parcels.update(shipment['parcel_id'] for shipment in shipments)
+    return shipments, errors
+```
+
+The caller provides today as a datetime.date, not a datetime.datetime. Dates earlier than today are invalid, but today's date is allowed. Blank parcel IDs, blank customer names, and blank destinations are invalid. Negative item counts are invalid as well. The function should reject duplicate parcel IDs within the uploaded file, in addition to IDs already present in known_parcels. CSV row numbers in error messages must match what staff see in a spreadsheet: the header is row 1, so the first data row is row 2. An invalid row should not prevent valid rows later in the same file from being returned.
+
+A missing required column should produce one clear file-level error before processing rows. An extra column is allowed and ignored. The note column is optional, but if it is absent the resulting note should be an empty string. Individual fields may also be None when a malformed row has fewer cells than the header. Such a row should become an error instead of causing an uncaught exception. Do not mutate known_parcels: the caller updates persistent state only after the returned shipments have passed a separate review. The existing update at the end can mark records imported even when that later review fails.
+
+The team is not requesting a full rewrite or a database design. They need the two most serious correctness problems explained and a small corrected loop outline. Focus on behavior visible from the code and requirements. Include one example input that demonstrates a bug, and avoid assuming that the stream can be reread.

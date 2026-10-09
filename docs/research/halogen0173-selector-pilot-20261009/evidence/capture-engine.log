@@ -1,0 +1,1373 @@
+2026-10-09T07:06:39.933140207Z [lease] Waiting for a new guard sequence; independent local 45-second deadline
+2026-10-09T07:06:40.815162360Z [lease] Guard progress confirmed; wall-clock offset is irrelevant
+2026-10-09T07:06:40.834743288Z halogen: halogen-flash-server 0.17.3, mode all
+2026-10-09T07:06:41.180233536Z halogen: WSL candidate DXG and live HIP gfx1151 preflight passed
+2026-10-09T07:06:41.588228250Z halogen: /models/qwen38-flash-next-v2.hgn carries its own precision choices: no quality sidecar applies and none is looked for
+2026-10-09T07:06:41.642751442Z halogen: KV budget 1 slot(s) over one 262144-position pool (each request up to 262144) = 7.3 GiB (~28 KiB/position incl. block scratch + ~115 MiB/slot) + 0.0 GiB prompt cache in RAM, on top of roughly 62.1 GiB (read from the checkpoint) of weights and 6.0 GiB of working memory (HALOGEN_MAX_TOK 8192). Those last two are estimates for this pre-flight check; the engine prints its measured figures once loaded, including the large lookup table it reads from disk and never holds. MemAvailable now 53.6 GiB.
+2026-10-09T07:06:41.646791436Z halogen: WARNING: that budget is close to or over what this host has free (the engine refuses the last pin under 16 GiB of MemAvailable).
+2026-10-09T07:06:41.646804242Z   If startup ends in "checkpoint: refusing to pin" or "HIP ... out of memory", lower HALOGEN_MAX_TOK to 16384 (the working memory, about 4 GiB back on the default checkpoint and 1.6 on w4b, for about 9% of prefill speed)
+2026-10-09T07:06:41.646806734Z   or HALOGEN_KV_POOL_POSITIONS (the pool, ~29.5 KiB a position); a 1,048,576-position pool fits only with HALOGEN_MAX_TOK=16384.
+2026-10-09T07:06:41.647786872Z halogen: GTT in use before this start: unknown (no amdgpu sysfs node is readable from this container)
+2026-10-09T07:06:42.445575529Z serve_api: request defaults HALOGEN_REASONING_EFFORT=medium, HALOGEN_ENABLE_THINKING=True, HALOGEN_MAX_THINKING_TOKENS=2048
+2026-10-09T07:06:45.666528939Z serve_api: chat template /models/tokenizer/chat_template.jinja sha256 c3cf9e34abf4f9e3, thinking control probe passed
+2026-10-09T07:06:45.847331914Z halogen: waiting for engine on 8730 (cold load can take minutes)
+2026-10-09T07:06:45.966117859Z [preflight-bridge] active sha256=af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7 rva=0x1898d20 trace=0
+2026-10-09T07:06:45.978603874Z [private-rw] private file mapping bytes=66687678432 path=/models/qwen38-flash-next-v2.hgn
+2026-10-09T07:07:37.803753770Z [private-rw] private file mapping bytes=124068083904 path=/ngram-w4b.hgn
+2026-10-09T07:07:37.805692688Z checkpoint: mapped 66.7 GB, NOT pinned (Pin::None)
+2026-10-09T07:07:37.805701377Z overlay: none needed (this checkpoint carries its own trunk precision)
+2026-10-09T07:07:37.805703587Z checkpoint: mapped 124.1 GB, NOT pinned (Pin::None)
+2026-10-09T07:07:37.805705115Z n-gram table: 47.68 GiB from /ngram-w4b.hgn (HALOGEN_NGRAM_TABLE)
+2026-10-09T07:07:37.805706664Z startup [   0.0 s] host memory: 26488 contiguous 2 MiB blocks of host memory free (52976 MiB)
+2026-10-09T07:07:37.805708094Z startup [   0.0 s] pinning weights (reads the checkpoint from disk when it is not already in the page cache; this is usually the slowest step)
+2026-10-09T07:07:37.806731964Z [hybrid] device-copy cap=68719476736 bytes
+2026-10-09T07:07:37.806794986Z [v2-layout] ranges=1 aggregate=66687358944 mapping=66687678432
+2026-10-09T07:07:37.806805809Z [v2-layout] range[0]=319488:66687678432
+2026-10-09T07:07:37.806809601Z [preflight] plan phase=1 ranges=1 aggregate=66687358944 copy=66687358944 host=0
+2026-10-09T07:07:37.806812363Z [preflight-bridge] demand aggregate=66687358944 host=0 mapping=66687678432 count=1 floor=17179869184
+2026-10-09T07:06:48.669445316Z [hybrid] copy-cache advised bytes=67108864 file_offset=319488 result=0
+2026-10-09T07:06:48.764427020Z [hybrid] copy-cache advised bytes=67108864 file_offset=67428352 result=0
+2026-10-09T07:06:48.852703523Z [hybrid] copy-cache advised bytes=67108864 file_offset=134537216 result=0
+2026-10-09T07:06:48.942193016Z [hybrid] copy-cache advised bytes=67108864 file_offset=201646080 result=0
+2026-10-09T07:06:49.039653958Z [hybrid] copy-cache advised bytes=67108864 file_offset=268754944 result=0
+2026-10-09T07:06:49.140189295Z [hybrid] copy-cache advised bytes=67108864 file_offset=335863808 result=0
+2026-10-09T07:06:49.241198153Z [hybrid] copy-cache advised bytes=67108864 file_offset=402972672 result=0
+2026-10-09T07:06:49.331293400Z [hybrid] copy-cache advised bytes=67108864 file_offset=470081536 result=0
+2026-10-09T07:06:49.425572768Z [hybrid] copy-cache advised bytes=67108864 file_offset=537190400 result=0
+2026-10-09T07:06:49.517108058Z [hybrid] copy-cache advised bytes=67108864 file_offset=604299264 result=0
+2026-10-09T07:06:49.620177562Z [hybrid] copy-cache advised bytes=67108864 file_offset=671408128 result=0
+2026-10-09T07:06:49.722181956Z [hybrid] copy-cache advised bytes=67108864 file_offset=738516992 result=0
+2026-10-09T07:06:49.836869143Z [hybrid] copy-cache advised bytes=67108864 file_offset=805625856 result=0
+2026-10-09T07:06:49.928827815Z [hybrid] copy-cache advised bytes=67108864 file_offset=872734720 result=0
+2026-10-09T07:06:50.020801153Z [hybrid] copy-cache advised bytes=67108864 file_offset=939843584 result=0
+2026-10-09T07:06:50.114696881Z [hybrid] copy-cache advised bytes=67108864 file_offset=1006952448 result=0
+2026-10-09T07:06:50.114777768Z [v2-upload] completed=1073741824 total=66687358944 chunk_limit=67108864
+2026-10-09T07:06:50.217118836Z [hybrid] copy-cache advised bytes=67108864 file_offset=1074061312 result=0
+2026-10-09T07:06:50.315499803Z [hybrid] copy-cache advised bytes=67108864 file_offset=1141170176 result=0
+2026-10-09T07:06:50.415330832Z [hybrid] copy-cache advised bytes=67108864 file_offset=1208279040 result=0
+2026-10-09T07:06:50.527663570Z [hybrid] copy-cache advised bytes=67108864 file_offset=1275387904 result=0
+2026-10-09T07:06:50.639400082Z [hybrid] copy-cache advised bytes=67108864 file_offset=1342496768 result=0
+2026-10-09T07:06:50.750347805Z [hybrid] copy-cache advised bytes=67108864 file_offset=1409605632 result=0
+2026-10-09T07:06:50.850336138Z [hybrid] copy-cache advised bytes=67108864 file_offset=1476714496 result=0
+2026-10-09T07:07:42.818749924Z [hybrid] copy-cache advised bytes=67108864 file_offset=1543823360 result=0
+2026-10-09T07:06:50.769704916Z [hybrid] copy-cache advised bytes=67108864 file_offset=1610932224 result=0
+2026-10-09T07:06:50.860476088Z [hybrid] copy-cache advised bytes=67108864 file_offset=1678041088 result=0
+2026-10-09T07:06:50.952537393Z [hybrid] copy-cache advised bytes=67108864 file_offset=1745149952 result=0
+2026-10-09T07:06:51.045471726Z [hybrid] copy-cache advised bytes=67108864 file_offset=1812258816 result=0
+2026-10-09T07:06:51.135072807Z [hybrid] copy-cache advised bytes=67108864 file_offset=1879367680 result=0
+2026-10-09T07:06:51.225694468Z [hybrid] copy-cache advised bytes=67108864 file_offset=1946476544 result=0
+2026-10-09T07:06:51.314898899Z [hybrid] copy-cache advised bytes=67108864 file_offset=2013585408 result=0
+2026-10-09T07:06:51.430838569Z [hybrid] copy-cache advised bytes=67108864 file_offset=2080694272 result=0
+2026-10-09T07:06:51.430912652Z [v2-upload] completed=2147483648 total=66687358944 chunk_limit=67108864
+2026-10-09T07:06:51.526567096Z [hybrid] copy-cache advised bytes=67108864 file_offset=2147803136 result=0
+2026-10-09T07:06:51.620200576Z [hybrid] copy-cache advised bytes=67108864 file_offset=2214912000 result=0
+2026-10-09T07:06:51.723979962Z [hybrid] copy-cache advised bytes=67108864 file_offset=2282020864 result=0
+2026-10-09T07:06:51.824388158Z [hybrid] copy-cache advised bytes=67108864 file_offset=2349129728 result=0
+2026-10-09T07:06:51.914497439Z [hybrid] copy-cache advised bytes=67108864 file_offset=2416238592 result=0
+2026-10-09T07:06:52.008041613Z [hybrid] copy-cache advised bytes=67108864 file_offset=2483347456 result=0
+2026-10-09T07:06:52.099475503Z [hybrid] copy-cache advised bytes=67108864 file_offset=2550456320 result=0
+2026-10-09T07:06:52.193979715Z [hybrid] copy-cache advised bytes=67108864 file_offset=2617565184 result=0
+2026-10-09T07:06:52.280046067Z [hybrid] copy-cache advised bytes=67108864 file_offset=2684674048 result=0
+2026-10-09T07:06:52.375076951Z [hybrid] copy-cache advised bytes=67108864 file_offset=2751782912 result=0
+2026-10-09T07:06:52.515504528Z [hybrid] copy-cache advised bytes=67108864 file_offset=2818891776 result=0
+2026-10-09T07:06:52.609200168Z [hybrid] copy-cache advised bytes=67108864 file_offset=2886000640 result=0
+2026-10-09T07:06:52.690753855Z [hybrid] copy-cache advised bytes=67108864 file_offset=2953109504 result=0
+2026-10-09T07:06:52.772873831Z [hybrid] copy-cache advised bytes=67108864 file_offset=3020218368 result=0
+2026-10-09T07:06:52.885533922Z [hybrid] copy-cache advised bytes=67108864 file_offset=3087327232 result=0
+2026-10-09T07:06:52.974198399Z [hybrid] copy-cache advised bytes=67108864 file_offset=3154436096 result=0
+2026-10-09T07:06:52.974280033Z [v2-upload] completed=3221225472 total=66687358944 chunk_limit=67108864
+2026-10-09T07:06:53.066714296Z [hybrid] copy-cache advised bytes=67108864 file_offset=3221544960 result=0
+2026-10-09T07:06:53.156514322Z [hybrid] copy-cache advised bytes=67108864 file_offset=3288653824 result=0
+2026-10-09T07:06:53.260076131Z [hybrid] copy-cache advised bytes=67108864 file_offset=3355762688 result=0
+2026-10-09T07:06:53.365041348Z [hybrid] copy-cache advised bytes=67108864 file_offset=3422871552 result=0
+2026-10-09T07:06:53.490732411Z [hybrid] copy-cache advised bytes=67108864 file_offset=3489980416 result=0
+2026-10-09T07:06:53.971031681Z [hybrid] copy-cache advised bytes=67108864 file_offset=3557089280 result=0
+2026-10-09T07:06:54.055085655Z [hybrid] copy-cache advised bytes=67108864 file_offset=3624198144 result=0
+2026-10-09T07:06:54.142451720Z [hybrid] copy-cache advised bytes=67108864 file_offset=3691307008 result=0
+2026-10-09T07:06:54.227146706Z [hybrid] copy-cache advised bytes=67108864 file_offset=3758415872 result=0
+2026-10-09T07:06:54.313408728Z [hybrid] copy-cache advised bytes=67108864 file_offset=3825524736 result=0
+2026-10-09T07:06:54.410651299Z [hybrid] copy-cache advised bytes=67108864 file_offset=3892633600 result=0
+2026-10-09T07:06:54.492905405Z [hybrid] copy-cache advised bytes=67108864 file_offset=3959742464 result=0
+2026-10-09T07:06:54.571356698Z [hybrid] copy-cache advised bytes=67108864 file_offset=4026851328 result=0
+2026-10-09T07:06:54.652519384Z [hybrid] copy-cache advised bytes=67108864 file_offset=4093960192 result=0
+2026-10-09T07:06:54.737515320Z [hybrid] copy-cache advised bytes=67108864 file_offset=4161069056 result=0
+2026-10-09T07:06:54.832185323Z [hybrid] copy-cache advised bytes=67108864 file_offset=4228177920 result=0
+2026-10-09T07:06:54.832254076Z [v2-upload] completed=4294967296 total=66687358944 chunk_limit=67108864
+2026-10-09T07:06:54.957346244Z [hybrid] copy-cache advised bytes=67108864 file_offset=4295286784 result=0
+2026-10-09T07:06:55.071118886Z [hybrid] copy-cache advised bytes=67108864 file_offset=4362395648 result=0
+2026-10-09T07:06:55.197944961Z [hybrid] copy-cache advised bytes=67108864 file_offset=4429504512 result=0
+2026-10-09T07:06:55.299208402Z [hybrid] copy-cache advised bytes=67108864 file_offset=4496613376 result=0
+2026-10-09T07:06:55.396615478Z [hybrid] copy-cache advised bytes=67108864 file_offset=4563722240 result=0
+2026-10-09T07:06:55.494149820Z [hybrid] copy-cache advised bytes=67108864 file_offset=4630831104 result=0
+2026-10-09T07:06:55.577379120Z [hybrid] copy-cache advised bytes=67108864 file_offset=4697939968 result=0
+2026-10-09T07:06:55.662612141Z [hybrid] copy-cache advised bytes=67108864 file_offset=4765048832 result=0
+2026-10-09T07:06:55.752173715Z [hybrid] copy-cache advised bytes=67108864 file_offset=4832157696 result=0
+2026-10-09T07:06:55.839759677Z [hybrid] copy-cache advised bytes=67108864 file_offset=4899266560 result=0
+2026-10-09T07:06:55.925514139Z [hybrid] copy-cache advised bytes=67108864 file_offset=4966375424 result=0
+2026-10-09T07:06:56.005300379Z [hybrid] copy-cache advised bytes=67108864 file_offset=5033484288 result=0
+2026-10-09T07:06:55.672326007Z [hybrid] copy-cache advised bytes=67108864 file_offset=5100593152 result=0
+2026-10-09T07:06:55.758701071Z [hybrid] copy-cache advised bytes=67108864 file_offset=5167702016 result=0
+2026-10-09T07:06:55.840399304Z [hybrid] copy-cache advised bytes=67108864 file_offset=5234810880 result=0
+2026-10-09T07:06:55.927955867Z [hybrid] copy-cache advised bytes=67108864 file_offset=5301919744 result=0
+2026-10-09T07:06:55.928017470Z [v2-upload] completed=5368709120 total=66687358944 chunk_limit=67108864
+2026-10-09T07:06:56.027965847Z [hybrid] copy-cache advised bytes=67108864 file_offset=5369028608 result=0
+2026-10-09T07:06:56.129851214Z [hybrid] copy-cache advised bytes=67108864 file_offset=5436137472 result=0
+2026-10-09T07:06:56.229603103Z [hybrid] copy-cache advised bytes=67108864 file_offset=5503246336 result=0
+2026-10-09T07:06:56.324902439Z [hybrid] copy-cache advised bytes=67108864 file_offset=5570355200 result=0
+2026-10-09T07:06:56.416667859Z [hybrid] copy-cache advised bytes=67108864 file_offset=5637464064 result=0
+2026-10-09T07:06:56.501784064Z [hybrid] copy-cache advised bytes=67108864 file_offset=5704572928 result=0
+2026-10-09T07:06:56.614614681Z [hybrid] copy-cache advised bytes=67108864 file_offset=5771681792 result=0
+2026-10-09T07:06:56.701392490Z [hybrid] copy-cache advised bytes=67108864 file_offset=5838790656 result=0
+2026-10-09T07:06:56.790128793Z [hybrid] copy-cache advised bytes=67108864 file_offset=5905899520 result=0
+2026-10-09T07:06:56.882774447Z [hybrid] copy-cache advised bytes=67108864 file_offset=5973008384 result=0
+2026-10-09T07:06:56.975099646Z [hybrid] copy-cache advised bytes=67108864 file_offset=6040117248 result=0
+2026-10-09T07:06:57.097285311Z [hybrid] copy-cache advised bytes=67108864 file_offset=6107226112 result=0
+2026-10-09T07:06:57.190543779Z [hybrid] copy-cache advised bytes=67108864 file_offset=6174334976 result=0
+2026-10-09T07:06:57.294148121Z [hybrid] copy-cache advised bytes=67108864 file_offset=6241443840 result=0
+2026-10-09T07:06:57.386662882Z [hybrid] copy-cache advised bytes=67108864 file_offset=6308552704 result=0
+2026-10-09T07:06:57.491505884Z [hybrid] copy-cache advised bytes=67108864 file_offset=6375661568 result=0
+2026-10-09T07:06:57.491585742Z [v2-upload] completed=6442450944 total=66687358944 chunk_limit=67108864
+2026-10-09T07:06:57.589430079Z [hybrid] copy-cache advised bytes=67108864 file_offset=6442770432 result=0
+2026-10-09T07:06:57.701896912Z [hybrid] copy-cache advised bytes=67108864 file_offset=6509879296 result=0
+2026-10-09T07:06:57.812423349Z [hybrid] copy-cache advised bytes=67108864 file_offset=6576988160 result=0
+2026-10-09T07:06:57.913139169Z [hybrid] copy-cache advised bytes=67108864 file_offset=6644097024 result=0
+2026-10-09T07:06:58.019907113Z [hybrid] copy-cache advised bytes=67108864 file_offset=6711205888 result=0
+2026-10-09T07:06:58.118060739Z [hybrid] copy-cache advised bytes=67108864 file_offset=6778314752 result=0
+2026-10-09T07:06:58.209426408Z [hybrid] copy-cache advised bytes=67108864 file_offset=6845423616 result=0
+2026-10-09T07:06:58.300030010Z [hybrid] copy-cache advised bytes=67108864 file_offset=6912532480 result=0
+2026-10-09T07:06:58.391200086Z [hybrid] copy-cache advised bytes=67108864 file_offset=6979641344 result=0
+2026-10-09T07:06:58.482853928Z [hybrid] copy-cache advised bytes=67108864 file_offset=7046750208 result=0
+2026-10-09T07:06:58.575971983Z [hybrid] copy-cache advised bytes=67108864 file_offset=7113859072 result=0
+2026-10-09T07:06:58.684044599Z [hybrid] copy-cache advised bytes=67108864 file_offset=7180967936 result=0
+2026-10-09T07:06:58.778951969Z [hybrid] copy-cache advised bytes=67108864 file_offset=7248076800 result=0
+2026-10-09T07:06:58.869078815Z [hybrid] copy-cache advised bytes=67108864 file_offset=7315185664 result=0
+2026-10-09T07:06:59.383942667Z [hybrid] copy-cache advised bytes=67108864 file_offset=7382294528 result=0
+2026-10-09T07:06:59.489565681Z [hybrid] copy-cache advised bytes=67108864 file_offset=7449403392 result=0
+2026-10-09T07:06:59.489625344Z [v2-upload] completed=7516192768 total=66687358944 chunk_limit=67108864
+2026-10-09T07:06:59.585520618Z [hybrid] copy-cache advised bytes=67108864 file_offset=7516512256 result=0
+2026-10-09T07:06:59.689597344Z [hybrid] copy-cache advised bytes=67108864 file_offset=7583621120 result=0
+2026-10-09T07:06:59.784333072Z [hybrid] copy-cache advised bytes=67108864 file_offset=7650729984 result=0
+2026-10-09T07:06:59.877849496Z [hybrid] copy-cache advised bytes=67108864 file_offset=7717838848 result=0
+2026-10-09T07:06:59.967671199Z [hybrid] copy-cache advised bytes=67108864 file_offset=7784947712 result=0
+2026-10-09T07:07:00.080538333Z [hybrid] copy-cache advised bytes=67108864 file_offset=7852056576 result=0
+2026-10-09T07:07:00.171851152Z [hybrid] copy-cache advised bytes=67108864 file_offset=7919165440 result=0
+2026-10-09T07:07:00.263260612Z [hybrid] copy-cache advised bytes=67108864 file_offset=7986274304 result=0
+2026-10-09T07:07:00.355531908Z [hybrid] copy-cache advised bytes=67108864 file_offset=8053383168 result=0
+2026-10-09T07:07:00.448288518Z [hybrid] copy-cache advised bytes=67108864 file_offset=8120492032 result=0
+2026-10-09T07:07:00.543669094Z [hybrid] copy-cache advised bytes=67108864 file_offset=8187600896 result=0
+2026-10-09T07:07:00.688334086Z [hybrid] copy-cache advised bytes=67108864 file_offset=8254709760 result=0
+2026-10-09T07:07:00.840794578Z [hybrid] copy-cache advised bytes=67108864 file_offset=8321818624 result=0
+2026-10-09T07:07:00.964089340Z [hybrid] copy-cache advised bytes=67108864 file_offset=8388927488 result=0
+2026-10-09T07:07:52.860676347Z [hybrid] copy-cache advised bytes=67108864 file_offset=8456036352 result=0
+2026-10-09T07:07:00.752367680Z [hybrid] copy-cache advised bytes=67108864 file_offset=8523145216 result=0
+2026-10-09T07:07:00.752442240Z [v2-upload] completed=8589934592 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:00.844743562Z [hybrid] copy-cache advised bytes=67108864 file_offset=8590254080 result=0
+2026-10-09T07:07:00.939788212Z [hybrid] copy-cache advised bytes=67108864 file_offset=8657362944 result=0
+2026-10-09T07:07:01.030219200Z [hybrid] copy-cache advised bytes=67108864 file_offset=8724471808 result=0
+2026-10-09T07:07:01.120290266Z [hybrid] copy-cache advised bytes=67108864 file_offset=8791580672 result=0
+2026-10-09T07:07:01.209709513Z [hybrid] copy-cache advised bytes=67108864 file_offset=8858689536 result=0
+2026-10-09T07:07:01.302802694Z [hybrid] copy-cache advised bytes=67108864 file_offset=8925798400 result=0
+2026-10-09T07:07:01.385286589Z [hybrid] copy-cache advised bytes=67108864 file_offset=8992907264 result=0
+2026-10-09T07:07:01.480805300Z [hybrid] copy-cache advised bytes=67108864 file_offset=9060016128 result=0
+2026-10-09T07:07:01.571436420Z [hybrid] copy-cache advised bytes=67108864 file_offset=9127124992 result=0
+2026-10-09T07:07:01.665089787Z [hybrid] copy-cache advised bytes=67108864 file_offset=9194233856 result=0
+2026-10-09T07:07:01.759150300Z [hybrid] copy-cache advised bytes=67108864 file_offset=9261342720 result=0
+2026-10-09T07:07:01.929812925Z [hybrid] copy-cache advised bytes=67108864 file_offset=9328451584 result=0
+2026-10-09T07:07:02.126274978Z [hybrid] copy-cache advised bytes=67108864 file_offset=9395560448 result=0
+2026-10-09T07:07:02.237595205Z [hybrid] copy-cache advised bytes=67108864 file_offset=9462669312 result=0
+2026-10-09T07:07:02.355128307Z [hybrid] copy-cache advised bytes=67108864 file_offset=9529778176 result=0
+2026-10-09T07:07:02.450482105Z [hybrid] copy-cache advised bytes=67108864 file_offset=9596887040 result=0
+2026-10-09T07:07:02.450573327Z [v2-upload] completed=9663676416 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:02.541442067Z [hybrid] copy-cache advised bytes=67108864 file_offset=9663995904 result=0
+2026-10-09T07:07:02.653751530Z [hybrid] copy-cache advised bytes=67108864 file_offset=9731104768 result=0
+2026-10-09T07:07:02.740464322Z [hybrid] copy-cache advised bytes=67108864 file_offset=9798213632 result=0
+2026-10-09T07:07:02.828763200Z [hybrid] copy-cache advised bytes=67108864 file_offset=9865322496 result=0
+2026-10-09T07:07:02.909437565Z [hybrid] copy-cache advised bytes=67108864 file_offset=9932431360 result=0
+2026-10-09T07:07:02.991339420Z [hybrid] copy-cache advised bytes=67108864 file_offset=9999540224 result=0
+2026-10-09T07:07:03.075016642Z [hybrid] copy-cache advised bytes=67108864 file_offset=10066649088 result=0
+2026-10-09T07:07:03.152936514Z [hybrid] copy-cache advised bytes=67108864 file_offset=10133757952 result=0
+2026-10-09T07:07:03.230661671Z [hybrid] copy-cache advised bytes=67108864 file_offset=10200866816 result=0
+2026-10-09T07:07:03.308838477Z [hybrid] copy-cache advised bytes=67108864 file_offset=10267975680 result=0
+2026-10-09T07:07:03.396267378Z [hybrid] copy-cache advised bytes=67108864 file_offset=10335084544 result=0
+2026-10-09T07:07:03.481732461Z [hybrid] copy-cache advised bytes=67108864 file_offset=10402193408 result=0
+2026-10-09T07:07:03.591724498Z [hybrid] copy-cache advised bytes=67108864 file_offset=10469302272 result=0
+2026-10-09T07:07:03.709397416Z [hybrid] copy-cache advised bytes=67108864 file_offset=10536411136 result=0
+2026-10-09T07:07:03.804593476Z [hybrid] copy-cache advised bytes=67108864 file_offset=10603520000 result=0
+2026-10-09T07:07:03.894379532Z [hybrid] copy-cache advised bytes=67108864 file_offset=10670628864 result=0
+2026-10-09T07:07:03.894436248Z [v2-upload] completed=10737418240 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:03.974834225Z [hybrid] copy-cache advised bytes=67108864 file_offset=10737737728 result=0
+2026-10-09T07:07:04.057637331Z [hybrid] copy-cache advised bytes=67108864 file_offset=10804846592 result=0
+2026-10-09T07:07:04.138575807Z [hybrid] copy-cache advised bytes=67108864 file_offset=10871955456 result=0
+2026-10-09T07:07:04.220346772Z [hybrid] copy-cache advised bytes=67108864 file_offset=10939064320 result=0
+2026-10-09T07:07:04.693093311Z [hybrid] copy-cache advised bytes=67108864 file_offset=11006173184 result=0
+2026-10-09T07:07:04.786664572Z [hybrid] copy-cache advised bytes=67108864 file_offset=11073282048 result=0
+2026-10-09T07:07:04.869843378Z [hybrid] copy-cache advised bytes=67108864 file_offset=11140390912 result=0
+2026-10-09T07:07:04.950002412Z [hybrid] copy-cache advised bytes=67108864 file_offset=11207499776 result=0
+2026-10-09T07:07:05.035423029Z [hybrid] copy-cache advised bytes=67108864 file_offset=11274608640 result=0
+2026-10-09T07:07:05.127778366Z [hybrid] copy-cache advised bytes=67108864 file_offset=11341717504 result=0
+2026-10-09T07:07:05.229852724Z [hybrid] copy-cache advised bytes=67108864 file_offset=11408826368 result=0
+2026-10-09T07:07:05.332747280Z [hybrid] copy-cache advised bytes=67108864 file_offset=11475935232 result=0
+2026-10-09T07:07:05.454639308Z [hybrid] copy-cache advised bytes=67108864 file_offset=11543044096 result=0
+2026-10-09T07:07:05.552431474Z [hybrid] copy-cache advised bytes=67108864 file_offset=11610152960 result=0
+2026-10-09T07:07:05.660421073Z [hybrid] copy-cache advised bytes=67108864 file_offset=11677261824 result=0
+2026-10-09T07:07:05.748317873Z [hybrid] copy-cache advised bytes=67108864 file_offset=11744370688 result=0
+2026-10-09T07:07:05.748386128Z [v2-upload] completed=11811160064 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:05.832512439Z [hybrid] copy-cache advised bytes=67108864 file_offset=11811479552 result=0
+2026-10-09T07:07:05.938502640Z [hybrid] copy-cache advised bytes=67108864 file_offset=11878588416 result=0
+2026-10-09T07:07:57.851085115Z [hybrid] copy-cache advised bytes=67108864 file_offset=11945697280 result=0
+2026-10-09T07:07:05.762004729Z [hybrid] copy-cache advised bytes=67108864 file_offset=12012806144 result=0
+2026-10-09T07:07:05.860163236Z [hybrid] copy-cache advised bytes=67108864 file_offset=12079915008 result=0
+2026-10-09T07:07:05.957758749Z [hybrid] copy-cache advised bytes=67108864 file_offset=12147023872 result=0
+2026-10-09T07:07:06.046867956Z [hybrid] copy-cache advised bytes=67108864 file_offset=12214132736 result=0
+2026-10-09T07:07:06.138157439Z [hybrid] copy-cache advised bytes=67108864 file_offset=12281241600 result=0
+2026-10-09T07:07:06.269104606Z [hybrid] copy-cache advised bytes=67108864 file_offset=12348350464 result=0
+2026-10-09T07:07:06.387600284Z [hybrid] copy-cache advised bytes=67108864 file_offset=12415459328 result=0
+2026-10-09T07:07:06.561363837Z [hybrid] copy-cache advised bytes=67108864 file_offset=12482568192 result=0
+2026-10-09T07:07:06.711973164Z [hybrid] copy-cache advised bytes=67108864 file_offset=12549677056 result=0
+2026-10-09T07:07:06.887088203Z [hybrid] copy-cache advised bytes=67108864 file_offset=12616785920 result=0
+2026-10-09T07:07:06.981204338Z [hybrid] copy-cache advised bytes=67108864 file_offset=12683894784 result=0
+2026-10-09T07:07:07.088519439Z [hybrid] copy-cache advised bytes=67108864 file_offset=12751003648 result=0
+2026-10-09T07:07:07.184968558Z [hybrid] copy-cache advised bytes=67108864 file_offset=12818112512 result=0
+2026-10-09T07:07:07.185033173Z [v2-upload] completed=12884901888 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:07.301581082Z [hybrid] copy-cache advised bytes=67108864 file_offset=12885221376 result=0
+2026-10-09T07:07:07.393317859Z [hybrid] copy-cache advised bytes=67108864 file_offset=12952330240 result=0
+2026-10-09T07:07:07.484479110Z [hybrid] copy-cache advised bytes=67108864 file_offset=13019439104 result=0
+2026-10-09T07:07:07.580597435Z [hybrid] copy-cache advised bytes=67108864 file_offset=13086547968 result=0
+2026-10-09T07:07:07.674286562Z [hybrid] copy-cache advised bytes=67108864 file_offset=13153656832 result=0
+2026-10-09T07:07:07.767301197Z [hybrid] copy-cache advised bytes=67108864 file_offset=13220765696 result=0
+2026-10-09T07:07:07.862877630Z [hybrid] copy-cache advised bytes=67108864 file_offset=13287874560 result=0
+2026-10-09T07:07:07.976163717Z [hybrid] copy-cache advised bytes=67108864 file_offset=13354983424 result=0
+2026-10-09T07:07:08.101795836Z [hybrid] copy-cache advised bytes=67108864 file_offset=13422092288 result=0
+2026-10-09T07:07:08.205092197Z [hybrid] copy-cache advised bytes=67108864 file_offset=13489201152 result=0
+2026-10-09T07:07:08.342200032Z [hybrid] copy-cache advised bytes=67108864 file_offset=13556310016 result=0
+2026-10-09T07:07:08.451613993Z [hybrid] copy-cache advised bytes=67108864 file_offset=13623418880 result=0
+2026-10-09T07:07:08.547476205Z [hybrid] copy-cache advised bytes=67108864 file_offset=13690527744 result=0
+2026-10-09T07:07:08.645260717Z [hybrid] copy-cache advised bytes=67108864 file_offset=13757636608 result=0
+2026-10-09T07:07:08.734277176Z [hybrid] copy-cache advised bytes=67108864 file_offset=13824745472 result=0
+2026-10-09T07:07:08.823856389Z [hybrid] copy-cache advised bytes=67108864 file_offset=13891854336 result=0
+2026-10-09T07:07:08.823934524Z [v2-upload] completed=13958643712 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:08.973522870Z [hybrid] copy-cache advised bytes=67108864 file_offset=13958963200 result=0
+2026-10-09T07:07:09.096285494Z [hybrid] copy-cache advised bytes=67108864 file_offset=14026072064 result=0
+2026-10-09T07:07:09.188326863Z [hybrid] copy-cache advised bytes=67108864 file_offset=14093180928 result=0
+2026-10-09T07:07:09.293137758Z [hybrid] copy-cache advised bytes=67108864 file_offset=14160289792 result=0
+2026-10-09T07:07:09.395158371Z [hybrid] copy-cache advised bytes=67108864 file_offset=14227398656 result=0
+2026-10-09T07:07:09.490337514Z [hybrid] copy-cache advised bytes=67108864 file_offset=14294507520 result=0
+2026-10-09T07:07:09.608903717Z [hybrid] copy-cache advised bytes=67108864 file_offset=14361616384 result=0
+2026-10-09T07:07:10.117033813Z [hybrid] copy-cache advised bytes=67108864 file_offset=14428725248 result=0
+2026-10-09T07:07:10.206400461Z [hybrid] copy-cache advised bytes=67108864 file_offset=14495834112 result=0
+2026-10-09T07:07:10.328464576Z [hybrid] copy-cache advised bytes=67108864 file_offset=14562942976 result=0
+2026-10-09T07:07:10.428845696Z [hybrid] copy-cache advised bytes=67108864 file_offset=14630051840 result=0
+2026-10-09T07:07:10.522746181Z [hybrid] copy-cache advised bytes=67108864 file_offset=14697160704 result=0
+2026-10-09T07:07:10.617359935Z [hybrid] copy-cache advised bytes=67108864 file_offset=14764269568 result=0
+2026-10-09T07:07:10.714511733Z [hybrid] copy-cache advised bytes=67108864 file_offset=14831378432 result=0
+2026-10-09T07:07:10.806449871Z [hybrid] copy-cache advised bytes=67108864 file_offset=14898487296 result=0
+2026-10-09T07:07:10.898689476Z [hybrid] copy-cache advised bytes=67108864 file_offset=14965596160 result=0
+2026-10-09T07:07:10.898758456Z [v2-upload] completed=15032385536 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:10.992192308Z [hybrid] copy-cache advised bytes=67108864 file_offset=15032705024 result=0
+2026-10-09T07:08:02.871395057Z [hybrid] copy-cache advised bytes=67108864 file_offset=15099813888 result=0
+2026-10-09T07:07:10.768743662Z [hybrid] copy-cache advised bytes=67108864 file_offset=15166922752 result=0
+2026-10-09T07:07:10.846176945Z [hybrid] copy-cache advised bytes=67108864 file_offset=15234031616 result=0
+2026-10-09T07:07:10.952033384Z [hybrid] copy-cache advised bytes=67108864 file_offset=15301140480 result=0
+2026-10-09T07:07:11.064797635Z [hybrid] copy-cache advised bytes=67108864 file_offset=15368249344 result=0
+2026-10-09T07:07:11.211449413Z [hybrid] copy-cache advised bytes=67108864 file_offset=15435358208 result=0
+2026-10-09T07:07:11.345270663Z [hybrid] copy-cache advised bytes=67108864 file_offset=15502467072 result=0
+2026-10-09T07:07:11.449304807Z [hybrid] copy-cache advised bytes=67108864 file_offset=15569575936 result=0
+2026-10-09T07:07:11.538137911Z [hybrid] copy-cache advised bytes=67108864 file_offset=15636684800 result=0
+2026-10-09T07:07:11.616326218Z [hybrid] copy-cache advised bytes=67108864 file_offset=15703793664 result=0
+2026-10-09T07:07:11.695854321Z [hybrid] copy-cache advised bytes=67108864 file_offset=15770902528 result=0
+2026-10-09T07:07:11.776538896Z [hybrid] copy-cache advised bytes=67108864 file_offset=15838011392 result=0
+2026-10-09T07:07:11.867945965Z [hybrid] copy-cache advised bytes=67108864 file_offset=15905120256 result=0
+2026-10-09T07:07:11.969844049Z [hybrid] copy-cache advised bytes=67108864 file_offset=15972229120 result=0
+2026-10-09T07:07:12.072705653Z [hybrid] copy-cache advised bytes=67108864 file_offset=16039337984 result=0
+2026-10-09T07:07:12.072791783Z [v2-upload] completed=16106127360 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:12.155419660Z [hybrid] copy-cache advised bytes=67108864 file_offset=16106446848 result=0
+2026-10-09T07:07:12.236879799Z [hybrid] copy-cache advised bytes=67108864 file_offset=16173555712 result=0
+2026-10-09T07:07:12.318697236Z [hybrid] copy-cache advised bytes=67108864 file_offset=16240664576 result=0
+2026-10-09T07:07:12.400983665Z [hybrid] copy-cache advised bytes=67108864 file_offset=16307773440 result=0
+2026-10-09T07:07:12.491090662Z [hybrid] copy-cache advised bytes=67108864 file_offset=16374882304 result=0
+2026-10-09T07:07:12.576580032Z [hybrid] copy-cache advised bytes=67108864 file_offset=16441991168 result=0
+2026-10-09T07:07:12.676465296Z [hybrid] copy-cache advised bytes=67108864 file_offset=16509100032 result=0
+2026-10-09T07:07:12.800547353Z [hybrid] copy-cache advised bytes=67108864 file_offset=16576208896 result=0
+2026-10-09T07:07:12.935903968Z [hybrid] copy-cache advised bytes=67108864 file_offset=16643317760 result=0
+2026-10-09T07:07:13.044333569Z [hybrid] copy-cache advised bytes=67108864 file_offset=16710426624 result=0
+2026-10-09T07:07:13.141158132Z [hybrid] copy-cache advised bytes=67108864 file_offset=16777535488 result=0
+2026-10-09T07:07:13.232846355Z [hybrid] copy-cache advised bytes=67108864 file_offset=16844644352 result=0
+2026-10-09T07:07:13.326217445Z [hybrid] copy-cache advised bytes=67108864 file_offset=16911753216 result=0
+2026-10-09T07:07:13.411964336Z [hybrid] copy-cache advised bytes=67108864 file_offset=16978862080 result=0
+2026-10-09T07:07:13.499146317Z [hybrid] copy-cache advised bytes=67108864 file_offset=17045970944 result=0
+2026-10-09T07:07:13.609371394Z [hybrid] copy-cache advised bytes=67108864 file_offset=17113079808 result=0
+2026-10-09T07:07:13.609437081Z [v2-upload] completed=17179869184 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:13.710750519Z [hybrid] copy-cache advised bytes=67108864 file_offset=17180188672 result=0
+2026-10-09T07:07:13.803880237Z [hybrid] copy-cache advised bytes=67108864 file_offset=17247297536 result=0
+2026-10-09T07:07:13.901766843Z [hybrid] copy-cache advised bytes=67108864 file_offset=17314406400 result=0
+2026-10-09T07:07:14.004321123Z [hybrid] copy-cache advised bytes=67108864 file_offset=17381515264 result=0
+2026-10-09T07:07:14.103583866Z [hybrid] copy-cache advised bytes=67108864 file_offset=17448624128 result=0
+2026-10-09T07:07:14.200979063Z [hybrid] copy-cache advised bytes=67108864 file_offset=17515732992 result=0
+2026-10-09T07:07:14.294513419Z [hybrid] copy-cache advised bytes=67108864 file_offset=17582841856 result=0
+2026-10-09T07:07:14.403231085Z [hybrid] copy-cache advised bytes=67108864 file_offset=17649950720 result=0
+2026-10-09T07:07:14.538548703Z [hybrid] copy-cache advised bytes=67108864 file_offset=17717059584 result=0
+2026-10-09T07:07:14.653774568Z [hybrid] copy-cache advised bytes=67108864 file_offset=17784168448 result=0
+2026-10-09T07:07:14.750594754Z [hybrid] copy-cache advised bytes=67108864 file_offset=17851277312 result=0
+2026-10-09T07:07:14.850183678Z [hybrid] copy-cache advised bytes=67108864 file_offset=17918386176 result=0
+2026-10-09T07:07:14.959933536Z [hybrid] copy-cache advised bytes=67108864 file_offset=17985495040 result=0
+2026-10-09T07:07:15.048542529Z [hybrid] copy-cache advised bytes=67108864 file_offset=18052603904 result=0
+2026-10-09T07:07:15.526134167Z [hybrid] copy-cache advised bytes=67108864 file_offset=18119712768 result=0
+2026-10-09T07:07:15.610601602Z [hybrid] copy-cache advised bytes=67108864 file_offset=18186821632 result=0
+2026-10-09T07:07:15.610664450Z [v2-upload] completed=18253611008 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:15.693275479Z [hybrid] copy-cache advised bytes=67108864 file_offset=18253930496 result=0
+2026-10-09T07:07:15.777152342Z [hybrid] copy-cache advised bytes=67108864 file_offset=18321039360 result=0
+2026-10-09T07:07:15.859036477Z [hybrid] copy-cache advised bytes=67108864 file_offset=18388148224 result=0
+2026-10-09T07:07:15.960628170Z [hybrid] copy-cache advised bytes=67108864 file_offset=18455257088 result=0
+2026-10-09T07:08:07.865390336Z [hybrid] copy-cache advised bytes=67108864 file_offset=18522365952 result=0
+2026-10-09T07:07:15.806601068Z [hybrid] copy-cache advised bytes=67108864 file_offset=18589474816 result=0
+2026-10-09T07:07:15.921494329Z [hybrid] copy-cache advised bytes=67108864 file_offset=18656583680 result=0
+2026-10-09T07:07:16.035850682Z [hybrid] copy-cache advised bytes=67108864 file_offset=18723692544 result=0
+2026-10-09T07:07:16.131068377Z [hybrid] copy-cache advised bytes=67108864 file_offset=18790801408 result=0
+2026-10-09T07:07:16.225828396Z [hybrid] copy-cache advised bytes=67108864 file_offset=18857910272 result=0
+2026-10-09T07:07:16.320812835Z [hybrid] copy-cache advised bytes=67108864 file_offset=18925019136 result=0
+2026-10-09T07:07:16.418543231Z [hybrid] copy-cache advised bytes=67108864 file_offset=18992128000 result=0
+2026-10-09T07:07:16.537587788Z [hybrid] copy-cache advised bytes=67108864 file_offset=19059236864 result=0
+2026-10-09T07:07:16.639657755Z [hybrid] copy-cache advised bytes=67108864 file_offset=19126345728 result=0
+2026-10-09T07:07:16.744309088Z [hybrid] copy-cache advised bytes=67108864 file_offset=19193454592 result=0
+2026-10-09T07:07:16.883501802Z [hybrid] copy-cache advised bytes=67108864 file_offset=19260563456 result=0
+2026-10-09T07:07:16.883598225Z [v2-upload] completed=19327352832 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:17.008824030Z [hybrid] copy-cache advised bytes=67108864 file_offset=19327672320 result=0
+2026-10-09T07:07:17.141080179Z [hybrid] copy-cache advised bytes=67108864 file_offset=19394781184 result=0
+2026-10-09T07:07:17.249683786Z [hybrid] copy-cache advised bytes=67108864 file_offset=19461890048 result=0
+2026-10-09T07:07:17.387474483Z [hybrid] copy-cache advised bytes=67108864 file_offset=19528998912 result=0
+2026-10-09T07:07:17.523753978Z [hybrid] copy-cache advised bytes=67108864 file_offset=19596107776 result=0
+2026-10-09T07:07:17.674176295Z [hybrid] copy-cache advised bytes=67108864 file_offset=19663216640 result=0
+2026-10-09T07:07:17.778191972Z [hybrid] copy-cache advised bytes=67108864 file_offset=19730325504 result=0
+2026-10-09T07:07:17.870276533Z [hybrid] copy-cache advised bytes=67108864 file_offset=19797434368 result=0
+2026-10-09T07:07:17.968814640Z [hybrid] copy-cache advised bytes=67108864 file_offset=19864543232 result=0
+2026-10-09T07:07:18.060528549Z [hybrid] copy-cache advised bytes=67108864 file_offset=19931652096 result=0
+2026-10-09T07:07:18.153904113Z [hybrid] copy-cache advised bytes=67108864 file_offset=19998760960 result=0
+2026-10-09T07:07:18.255413766Z [hybrid] copy-cache advised bytes=67108864 file_offset=20065869824 result=0
+2026-10-09T07:07:18.373574802Z [hybrid] copy-cache advised bytes=67108864 file_offset=20132978688 result=0
+2026-10-09T07:07:18.466360416Z [hybrid] copy-cache advised bytes=67108864 file_offset=20200087552 result=0
+2026-10-09T07:07:18.569839927Z [hybrid] copy-cache advised bytes=67108864 file_offset=20267196416 result=0
+2026-10-09T07:07:18.661244002Z [hybrid] copy-cache advised bytes=67108864 file_offset=20334305280 result=0
+2026-10-09T07:07:18.661302787Z [v2-upload] completed=20401094656 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:18.758265309Z [hybrid] copy-cache advised bytes=67108864 file_offset=20401414144 result=0
+2026-10-09T07:07:18.858846359Z [hybrid] copy-cache advised bytes=67108864 file_offset=20468523008 result=0
+2026-10-09T07:07:18.991427206Z [hybrid] copy-cache advised bytes=67108864 file_offset=20535631872 result=0
+2026-10-09T07:07:19.116622600Z [hybrid] copy-cache advised bytes=67108864 file_offset=20602740736 result=0
+2026-10-09T07:07:19.240644531Z [hybrid] copy-cache advised bytes=67108864 file_offset=20669849600 result=0
+2026-10-09T07:07:19.335624727Z [hybrid] copy-cache advised bytes=67108864 file_offset=20736958464 result=0
+2026-10-09T07:07:19.431955233Z [hybrid] copy-cache advised bytes=67108864 file_offset=20804067328 result=0
+2026-10-09T07:07:19.532711587Z [hybrid] copy-cache advised bytes=67108864 file_offset=20871176192 result=0
+2026-10-09T07:07:19.620724718Z [hybrid] copy-cache advised bytes=67108864 file_offset=20938285056 result=0
+2026-10-09T07:07:19.709675983Z [hybrid] copy-cache advised bytes=67108864 file_offset=21005393920 result=0
+2026-10-09T07:07:19.800709251Z [hybrid] copy-cache advised bytes=67108864 file_offset=21072502784 result=0
+2026-10-09T07:07:19.889978660Z [hybrid] copy-cache advised bytes=67108864 file_offset=21139611648 result=0
+2026-10-09T07:07:19.981159947Z [hybrid] copy-cache advised bytes=67108864 file_offset=21206720512 result=0
+2026-10-09T07:07:20.069082160Z [hybrid] copy-cache advised bytes=67108864 file_offset=21273829376 result=0
+2026-10-09T07:07:20.156978359Z [hybrid] copy-cache advised bytes=67108864 file_offset=21340938240 result=0
+2026-10-09T07:07:20.247013923Z [hybrid] copy-cache advised bytes=67108864 file_offset=21408047104 result=0
+2026-10-09T07:07:20.247123877Z [v2-upload] completed=21474836480 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:20.339186724Z [hybrid] copy-cache advised bytes=67108864 file_offset=21475155968 result=0
+2026-10-09T07:07:20.435968249Z [hybrid] copy-cache advised bytes=67108864 file_offset=21542264832 result=0
+2026-10-09T07:07:20.968209296Z [hybrid] copy-cache advised bytes=67108864 file_offset=21609373696 result=0
+2026-10-09T07:08:12.882574215Z [hybrid] copy-cache advised bytes=67108864 file_offset=21676482560 result=0
+2026-10-09T07:07:20.802559816Z [hybrid] copy-cache advised bytes=67108864 file_offset=21743591424 result=0
+2026-10-09T07:07:20.895218676Z [hybrid] copy-cache advised bytes=67108864 file_offset=21810700288 result=0
+2026-10-09T07:07:20.985104036Z [hybrid] copy-cache advised bytes=67108864 file_offset=21877809152 result=0
+2026-10-09T07:07:21.073852754Z [hybrid] copy-cache advised bytes=67108864 file_offset=21944918016 result=0
+2026-10-09T07:07:21.171350429Z [hybrid] copy-cache advised bytes=67108864 file_offset=22012026880 result=0
+2026-10-09T07:07:21.259073088Z [hybrid] copy-cache advised bytes=67108864 file_offset=22079135744 result=0
+2026-10-09T07:07:21.360622756Z [hybrid] copy-cache advised bytes=67108864 file_offset=22146244608 result=0
+2026-10-09T07:07:21.447319390Z [hybrid] copy-cache advised bytes=67108864 file_offset=22213353472 result=0
+2026-10-09T07:07:21.535245025Z [hybrid] copy-cache advised bytes=67108864 file_offset=22280462336 result=0
+2026-10-09T07:07:21.619844104Z [hybrid] copy-cache advised bytes=67108864 file_offset=22347571200 result=0
+2026-10-09T07:07:21.707680792Z [hybrid] copy-cache advised bytes=67108864 file_offset=22414680064 result=0
+2026-10-09T07:07:21.799720444Z [hybrid] copy-cache advised bytes=67108864 file_offset=22481788928 result=0
+2026-10-09T07:07:21.799825643Z [v2-upload] completed=22548578304 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:21.895842095Z [hybrid] copy-cache advised bytes=67108864 file_offset=22548897792 result=0
+2026-10-09T07:07:21.988980350Z [hybrid] copy-cache advised bytes=67108864 file_offset=22616006656 result=0
+2026-10-09T07:07:22.194937865Z [hybrid] copy-cache advised bytes=67108864 file_offset=22683115520 result=0
+2026-10-09T07:07:22.686656881Z [hybrid] copy-cache advised bytes=67108864 file_offset=22750224384 result=0
+2026-10-09T07:07:22.856989014Z [hybrid] copy-cache advised bytes=67108864 file_offset=22817333248 result=0
+2026-10-09T07:07:22.951642734Z [hybrid] copy-cache advised bytes=67108864 file_offset=22884442112 result=0
+2026-10-09T07:07:23.032177448Z [hybrid] copy-cache advised bytes=67108864 file_offset=22951550976 result=0
+2026-10-09T07:07:23.123301333Z [hybrid] copy-cache advised bytes=67108864 file_offset=23018659840 result=0
+2026-10-09T07:07:23.207783473Z [hybrid] copy-cache advised bytes=67108864 file_offset=23085768704 result=0
+2026-10-09T07:07:23.289057117Z [hybrid] copy-cache advised bytes=67108864 file_offset=23152877568 result=0
+2026-10-09T07:07:23.369916489Z [hybrid] copy-cache advised bytes=67108864 file_offset=23219986432 result=0
+2026-10-09T07:07:23.474233979Z [hybrid] copy-cache advised bytes=67108864 file_offset=23287095296 result=0
+2026-10-09T07:07:23.551667079Z [hybrid] copy-cache advised bytes=67108864 file_offset=23354204160 result=0
+2026-10-09T07:07:23.647427057Z [hybrid] copy-cache advised bytes=67108864 file_offset=23421313024 result=0
+2026-10-09T07:07:23.753515419Z [hybrid] copy-cache advised bytes=67108864 file_offset=23488421888 result=0
+2026-10-09T07:07:23.853216957Z [hybrid] copy-cache advised bytes=67108864 file_offset=23555530752 result=0
+2026-10-09T07:07:23.853301094Z [v2-upload] completed=23622320128 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:23.942588469Z [hybrid] copy-cache advised bytes=67108864 file_offset=23622639616 result=0
+2026-10-09T07:07:24.024162910Z [hybrid] copy-cache advised bytes=67108864 file_offset=23689748480 result=0
+2026-10-09T07:07:24.110845492Z [hybrid] copy-cache advised bytes=67108864 file_offset=23756857344 result=0
+2026-10-09T07:07:24.208940089Z [hybrid] copy-cache advised bytes=67108864 file_offset=23823966208 result=0
+2026-10-09T07:07:24.288217290Z [hybrid] copy-cache advised bytes=67108864 file_offset=23891075072 result=0
+2026-10-09T07:07:24.377627650Z [hybrid] copy-cache advised bytes=67108864 file_offset=23958183936 result=0
+2026-10-09T07:07:24.469906702Z [hybrid] copy-cache advised bytes=67108864 file_offset=24025292800 result=0
+2026-10-09T07:07:24.561278117Z [hybrid] copy-cache advised bytes=67108864 file_offset=24092401664 result=0
+2026-10-09T07:07:24.656558109Z [hybrid] copy-cache advised bytes=67108864 file_offset=24159510528 result=0
+2026-10-09T07:07:24.749662015Z [hybrid] copy-cache advised bytes=67108864 file_offset=24226619392 result=0
+2026-10-09T07:07:24.848510228Z [hybrid] copy-cache advised bytes=67108864 file_offset=24293728256 result=0
+2026-10-09T07:07:24.939229737Z [hybrid] copy-cache advised bytes=67108864 file_offset=24360837120 result=0
+2026-10-09T07:07:25.032793462Z [hybrid] copy-cache advised bytes=67108864 file_offset=24427945984 result=0
+2026-10-09T07:07:25.143675146Z [hybrid] copy-cache advised bytes=67108864 file_offset=24495054848 result=0
+2026-10-09T07:07:25.258263835Z [hybrid] copy-cache advised bytes=67108864 file_offset=24562163712 result=0
+2026-10-09T07:07:25.375944553Z [hybrid] copy-cache advised bytes=67108864 file_offset=24629272576 result=0
+2026-10-09T07:07:25.376051181Z [v2-upload] completed=24696061952 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:25.501851031Z [hybrid] copy-cache advised bytes=67108864 file_offset=24696381440 result=0
+2026-10-09T07:07:25.590461438Z [hybrid] copy-cache advised bytes=67108864 file_offset=24763490304 result=0
+2026-10-09T07:07:25.673621844Z [hybrid] copy-cache advised bytes=67108864 file_offset=24830599168 result=0
+2026-10-09T07:07:25.764104130Z [hybrid] copy-cache advised bytes=67108864 file_offset=24897708032 result=0
+2026-10-09T07:07:25.834602489Z [hybrid] copy-cache advised bytes=67108864 file_offset=24964816896 result=0
+2026-10-09T07:07:25.923820133Z [hybrid] copy-cache advised bytes=67108864 file_offset=25031925760 result=0
+2026-10-09T07:07:25.996216436Z [hybrid] copy-cache advised bytes=67108864 file_offset=25099034624 result=0
+2026-10-09T07:07:26.070149818Z [hybrid] copy-cache advised bytes=67108864 file_offset=25166143488 result=0
+2026-10-09T07:07:26.147382031Z [hybrid] copy-cache advised bytes=67108864 file_offset=25233252352 result=0
+2026-10-09T07:07:26.229549272Z [hybrid] copy-cache advised bytes=67108864 file_offset=25300361216 result=0
+2026-10-09T07:07:26.309805188Z [hybrid] copy-cache advised bytes=67108864 file_offset=25367470080 result=0
+2026-10-09T07:07:26.409950973Z [hybrid] copy-cache advised bytes=67108864 file_offset=25434578944 result=0
+2026-10-09T07:07:26.514507806Z [hybrid] copy-cache advised bytes=67108864 file_offset=25501687808 result=0
+2026-10-09T07:07:26.612249796Z [hybrid] copy-cache advised bytes=67108864 file_offset=25568796672 result=0
+2026-10-09T07:07:26.712933846Z [hybrid] copy-cache advised bytes=67108864 file_offset=25635905536 result=0
+2026-10-09T07:07:26.799583910Z [hybrid] copy-cache advised bytes=67108864 file_offset=25703014400 result=0
+2026-10-09T07:07:26.799649965Z [v2-upload] completed=25769803776 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:26.883408756Z [hybrid] copy-cache advised bytes=67108864 file_offset=25770123264 result=0
+2026-10-09T07:07:26.965844853Z [hybrid] copy-cache advised bytes=67108864 file_offset=25837232128 result=0
+2026-10-09T07:07:27.047285091Z [hybrid] copy-cache advised bytes=67108864 file_offset=25904340992 result=0
+2026-10-09T07:07:27.140771666Z [hybrid] copy-cache advised bytes=67108864 file_offset=25971449856 result=0
+2026-10-09T07:07:27.225131475Z [hybrid] copy-cache advised bytes=67108864 file_offset=26038558720 result=0
+2026-10-09T07:07:27.307470445Z [hybrid] copy-cache advised bytes=67108864 file_offset=26105667584 result=0
+2026-10-09T07:07:27.388538799Z [hybrid] copy-cache advised bytes=67108864 file_offset=26172776448 result=0
+2026-10-09T07:07:27.475367711Z [hybrid] copy-cache advised bytes=67108864 file_offset=26239885312 result=0
+2026-10-09T07:07:27.571088999Z [hybrid] copy-cache advised bytes=67108864 file_offset=26306994176 result=0
+2026-10-09T07:07:27.677511056Z [hybrid] copy-cache advised bytes=67108864 file_offset=26374103040 result=0
+2026-10-09T07:07:27.792320721Z [hybrid] copy-cache advised bytes=67108864 file_offset=26441211904 result=0
+2026-10-09T07:07:27.908309492Z [hybrid] copy-cache advised bytes=67108864 file_offset=26508320768 result=0
+2026-10-09T07:07:28.022155361Z [hybrid] copy-cache advised bytes=67108864 file_offset=26575429632 result=0
+2026-10-09T07:07:28.157329454Z [hybrid] copy-cache advised bytes=67108864 file_offset=26642538496 result=0
+2026-10-09T07:07:28.252281703Z [hybrid] copy-cache advised bytes=67108864 file_offset=26709647360 result=0
+2026-10-09T07:07:28.337965603Z [hybrid] copy-cache advised bytes=67108864 file_offset=26776756224 result=0
+2026-10-09T07:07:28.338025743Z [v2-upload] completed=26843545600 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:28.425704417Z [hybrid] copy-cache advised bytes=67108864 file_offset=26843865088 result=0
+2026-10-09T07:07:28.543622062Z [hybrid] copy-cache advised bytes=67108864 file_offset=26910973952 result=0
+2026-10-09T07:07:28.633999060Z [hybrid] copy-cache advised bytes=67108864 file_offset=26978082816 result=0
+2026-10-09T07:07:28.734945982Z [hybrid] copy-cache advised bytes=67108864 file_offset=27045191680 result=0
+2026-10-09T07:07:28.854431272Z [hybrid] copy-cache advised bytes=67108864 file_offset=27112300544 result=0
+2026-10-09T07:07:29.003159781Z [hybrid] copy-cache advised bytes=67108864 file_offset=27179409408 result=0
+2026-10-09T07:07:29.173879431Z [hybrid] copy-cache advised bytes=67108864 file_offset=27246518272 result=0
+2026-10-09T07:07:29.254209681Z [hybrid] copy-cache advised bytes=67108864 file_offset=27313627136 result=0
+2026-10-09T07:07:29.342752867Z [hybrid] copy-cache advised bytes=67108864 file_offset=27380736000 result=0
+2026-10-09T07:07:29.439411473Z [hybrid] copy-cache advised bytes=67108864 file_offset=27447844864 result=0
+2026-10-09T07:07:29.534618514Z [hybrid] copy-cache advised bytes=67108864 file_offset=27514953728 result=0
+2026-10-09T07:07:29.657923008Z [hybrid] copy-cache advised bytes=67108864 file_offset=27582062592 result=0
+2026-10-09T07:07:29.773063583Z [hybrid] copy-cache advised bytes=67108864 file_offset=27649171456 result=0
+2026-10-09T07:07:29.867841718Z [hybrid] copy-cache advised bytes=67108864 file_offset=27716280320 result=0
+2026-10-09T07:07:29.951893848Z [hybrid] copy-cache advised bytes=67108864 file_offset=27783389184 result=0
+2026-10-09T07:07:30.031783926Z [hybrid] copy-cache advised bytes=67108864 file_offset=27850498048 result=0
+2026-10-09T07:07:30.031849905Z [v2-upload] completed=27917287424 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:30.110580618Z [hybrid] copy-cache advised bytes=67108864 file_offset=27917606912 result=0
+2026-10-09T07:07:30.186590493Z [hybrid] copy-cache advised bytes=67108864 file_offset=27984715776 result=0
+2026-10-09T07:07:30.267202498Z [hybrid] copy-cache advised bytes=67108864 file_offset=28051824640 result=0
+2026-10-09T07:07:30.349931189Z [hybrid] copy-cache advised bytes=67108864 file_offset=28118933504 result=0
+2026-10-09T07:07:30.441762838Z [hybrid] copy-cache advised bytes=67108864 file_offset=28186042368 result=0
+2026-10-09T07:07:30.532325217Z [hybrid] copy-cache advised bytes=67108864 file_offset=28253151232 result=0
+2026-10-09T07:07:30.619270736Z [hybrid] copy-cache advised bytes=67108864 file_offset=28320260096 result=0
+2026-10-09T07:07:30.716972703Z [hybrid] copy-cache advised bytes=67108864 file_offset=28387368960 result=0
+2026-10-09T07:07:30.818275839Z [hybrid] copy-cache advised bytes=67108864 file_offset=28454477824 result=0
+2026-10-09T07:07:30.915152943Z [hybrid] copy-cache advised bytes=67108864 file_offset=28521586688 result=0
+2026-10-09T07:07:31.000509797Z [hybrid] copy-cache advised bytes=67108864 file_offset=28588695552 result=0
+2026-10-09T07:07:31.096062417Z [hybrid] copy-cache advised bytes=67108864 file_offset=28655804416 result=0
+2026-10-09T07:07:31.230697180Z [hybrid] copy-cache advised bytes=67108864 file_offset=28722913280 result=0
+2026-10-09T07:07:31.332139885Z [hybrid] copy-cache advised bytes=67108864 file_offset=28790022144 result=0
+2026-10-09T07:07:31.423963373Z [hybrid] copy-cache advised bytes=67108864 file_offset=28857131008 result=0
+2026-10-09T07:07:31.503337783Z [hybrid] copy-cache advised bytes=67108864 file_offset=28924239872 result=0
+2026-10-09T07:07:31.503414088Z [v2-upload] completed=28991029248 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:31.588172407Z [hybrid] copy-cache advised bytes=67108864 file_offset=28991348736 result=0
+2026-10-09T07:07:31.685506789Z [hybrid] copy-cache advised bytes=67108864 file_offset=29058457600 result=0
+2026-10-09T07:07:31.787072810Z [hybrid] copy-cache advised bytes=67108864 file_offset=29125566464 result=0
+2026-10-09T07:07:31.883035731Z [hybrid] copy-cache advised bytes=67108864 file_offset=29192675328 result=0
+2026-10-09T07:07:31.968972612Z [hybrid] copy-cache advised bytes=67108864 file_offset=29259784192 result=0
+2026-10-09T07:07:32.057306966Z [hybrid] copy-cache advised bytes=67108864 file_offset=29326893056 result=0
+2026-10-09T07:07:32.144683744Z [hybrid] copy-cache advised bytes=67108864 file_offset=29394001920 result=0
+2026-10-09T07:07:32.243828435Z [hybrid] copy-cache advised bytes=67108864 file_offset=29461110784 result=0
+2026-10-09T07:07:32.348214626Z [hybrid] copy-cache advised bytes=67108864 file_offset=29528219648 result=0
+2026-10-09T07:07:32.451602775Z [hybrid] copy-cache advised bytes=67108864 file_offset=29595328512 result=0
+2026-10-09T07:07:32.593371379Z [hybrid] copy-cache advised bytes=67108864 file_offset=29662437376 result=0
+2026-10-09T07:07:32.728340610Z [hybrid] copy-cache advised bytes=67108864 file_offset=29729546240 result=0
+2026-10-09T07:07:32.872975604Z [hybrid] copy-cache advised bytes=67108864 file_offset=29796655104 result=0
+2026-10-09T07:07:32.967866411Z [hybrid] copy-cache advised bytes=67108864 file_offset=29863763968 result=0
+2026-10-09T07:07:33.051407172Z [hybrid] copy-cache advised bytes=67108864 file_offset=29930872832 result=0
+2026-10-09T07:07:33.144323385Z [hybrid] copy-cache advised bytes=67108864 file_offset=29997981696 result=0
+2026-10-09T07:07:33.144406157Z [v2-upload] completed=30064771072 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:33.251040947Z [hybrid] copy-cache advised bytes=67108864 file_offset=30065090560 result=0
+2026-10-09T07:07:33.398101656Z [hybrid] copy-cache advised bytes=67108864 file_offset=30132199424 result=0
+2026-10-09T07:07:33.512886885Z [hybrid] copy-cache advised bytes=67108864 file_offset=30199308288 result=0
+2026-10-09T07:07:33.616088087Z [hybrid] copy-cache advised bytes=67108864 file_offset=30266417152 result=0
+2026-10-09T07:07:33.709012978Z [hybrid] copy-cache advised bytes=67108864 file_offset=30333526016 result=0
+2026-10-09T07:07:33.794856740Z [hybrid] copy-cache advised bytes=67108864 file_offset=30400634880 result=0
+2026-10-09T07:07:33.897533033Z [hybrid] copy-cache advised bytes=67108864 file_offset=30467743744 result=0
+2026-10-09T07:07:33.990597287Z [hybrid] copy-cache advised bytes=67108864 file_offset=30534852608 result=0
+2026-10-09T07:07:34.101992841Z [hybrid] copy-cache advised bytes=67108864 file_offset=30601961472 result=0
+2026-10-09T07:07:34.228189619Z [hybrid] copy-cache advised bytes=67108864 file_offset=30669070336 result=0
+2026-10-09T07:07:34.377542591Z [hybrid] copy-cache advised bytes=67108864 file_offset=30736179200 result=0
+2026-10-09T07:07:34.500041649Z [hybrid] copy-cache advised bytes=67108864 file_offset=30803288064 result=0
+2026-10-09T07:07:34.626882981Z [hybrid] copy-cache advised bytes=67108864 file_offset=30870396928 result=0
+2026-10-09T07:07:34.723692409Z [hybrid] copy-cache advised bytes=67108864 file_offset=30937505792 result=0
+2026-10-09T07:07:34.839415109Z [hybrid] copy-cache advised bytes=67108864 file_offset=31004614656 result=0
+2026-10-09T07:07:34.988004127Z [hybrid] copy-cache advised bytes=67108864 file_offset=31071723520 result=0
+2026-10-09T07:07:34.988112684Z [v2-upload] completed=31138512896 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:35.131849000Z [hybrid] copy-cache advised bytes=67108864 file_offset=31138832384 result=0
+2026-10-09T07:07:35.247302900Z [hybrid] copy-cache advised bytes=67108864 file_offset=31205941248 result=0
+2026-10-09T07:07:35.365689604Z [hybrid] copy-cache advised bytes=67108864 file_offset=31273050112 result=0
+2026-10-09T07:07:35.463628776Z [hybrid] copy-cache advised bytes=67108864 file_offset=31340158976 result=0
+2026-10-09T07:07:35.553023062Z [hybrid] copy-cache advised bytes=67108864 file_offset=31407267840 result=0
+2026-10-09T07:07:35.651359981Z [hybrid] copy-cache advised bytes=67108864 file_offset=31474376704 result=0
+2026-10-09T07:07:35.779052165Z [hybrid] copy-cache advised bytes=67108864 file_offset=31541485568 result=0
+2026-10-09T07:07:35.910334717Z [hybrid] copy-cache advised bytes=67108864 file_offset=31608594432 result=0
+2026-10-09T07:07:36.028620275Z [hybrid] copy-cache advised bytes=67108864 file_offset=31675703296 result=0
+2026-10-09T07:08:27.932510353Z [hybrid] copy-cache advised bytes=67108864 file_offset=31742812160 result=0
+2026-10-09T07:07:35.864898665Z [hybrid] copy-cache advised bytes=67108864 file_offset=31809921024 result=0
+2026-10-09T07:07:35.984165520Z [hybrid] copy-cache advised bytes=67108864 file_offset=31877029888 result=0
+2026-10-09T07:07:36.099858918Z [hybrid] copy-cache advised bytes=67108864 file_offset=31944138752 result=0
+2026-10-09T07:07:36.634332512Z [hybrid] copy-cache advised bytes=67108864 file_offset=32011247616 result=0
+2026-10-09T07:07:36.725053035Z [hybrid] copy-cache advised bytes=67108864 file_offset=32078356480 result=0
+2026-10-09T07:07:36.814608732Z [hybrid] copy-cache advised bytes=67108864 file_offset=32145465344 result=0
+2026-10-09T07:07:36.814675469Z [v2-upload] completed=32212254720 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:36.916595265Z [hybrid] copy-cache advised bytes=67108864 file_offset=32212574208 result=0
+2026-10-09T07:07:37.038744116Z [hybrid] copy-cache advised bytes=67108864 file_offset=32279683072 result=0
+2026-10-09T07:07:37.139973898Z [hybrid] copy-cache advised bytes=67108864 file_offset=32346791936 result=0
+2026-10-09T07:07:37.265434740Z [hybrid] copy-cache advised bytes=67108864 file_offset=32413900800 result=0
+2026-10-09T07:07:37.390342947Z [hybrid] copy-cache advised bytes=67108864 file_offset=32481009664 result=0
+2026-10-09T07:07:37.506902683Z [hybrid] copy-cache advised bytes=67108864 file_offset=32548118528 result=0
+2026-10-09T07:07:37.604254514Z [hybrid] copy-cache advised bytes=67108864 file_offset=32615227392 result=0
+2026-10-09T07:07:37.698530169Z [hybrid] copy-cache advised bytes=67108864 file_offset=32682336256 result=0
+2026-10-09T07:07:37.802523723Z [hybrid] copy-cache advised bytes=67108864 file_offset=32749445120 result=0
+2026-10-09T07:07:37.940121858Z [hybrid] copy-cache advised bytes=67108864 file_offset=32816553984 result=0
+2026-10-09T07:07:38.048820831Z [hybrid] copy-cache advised bytes=67108864 file_offset=32883662848 result=0
+2026-10-09T07:07:38.153233310Z [hybrid] copy-cache advised bytes=67108864 file_offset=32950771712 result=0
+2026-10-09T07:07:38.306701295Z [hybrid] copy-cache advised bytes=67108864 file_offset=33017880576 result=0
+2026-10-09T07:07:38.407137651Z [hybrid] copy-cache advised bytes=67108864 file_offset=33084989440 result=0
+2026-10-09T07:07:38.524971338Z [hybrid] copy-cache advised bytes=67108864 file_offset=33152098304 result=0
+2026-10-09T07:07:38.614375234Z [hybrid] copy-cache advised bytes=67108864 file_offset=33219207168 result=0
+2026-10-09T07:07:38.614441018Z [v2-upload] completed=33285996544 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:38.719682725Z [hybrid] copy-cache advised bytes=67108864 file_offset=33286316032 result=0
+2026-10-09T07:07:38.824376666Z [hybrid] copy-cache advised bytes=67108864 file_offset=33353424896 result=0
+2026-10-09T07:07:38.972625159Z [hybrid] copy-cache advised bytes=67108864 file_offset=33420533760 result=0
+2026-10-09T07:07:39.090556542Z [hybrid] copy-cache advised bytes=67108864 file_offset=33487642624 result=0
+2026-10-09T07:07:39.195017623Z [hybrid] copy-cache advised bytes=67108864 file_offset=33554751488 result=0
+2026-10-09T07:07:39.289307942Z [hybrid] copy-cache advised bytes=67108864 file_offset=33621860352 result=0
+2026-10-09T07:07:39.376489399Z [hybrid] copy-cache advised bytes=67108864 file_offset=33688969216 result=0
+2026-10-09T07:07:39.463683424Z [hybrid] copy-cache advised bytes=67108864 file_offset=33756078080 result=0
+2026-10-09T07:07:39.547773222Z [hybrid] copy-cache advised bytes=67108864 file_offset=33823186944 result=0
+2026-10-09T07:07:39.635699160Z [hybrid] copy-cache advised bytes=67108864 file_offset=33890295808 result=0
+2026-10-09T07:07:39.722613368Z [hybrid] copy-cache advised bytes=67108864 file_offset=33957404672 result=0
+2026-10-09T07:07:39.829830518Z [hybrid] copy-cache advised bytes=67108864 file_offset=34024513536 result=0
+2026-10-09T07:07:39.939639660Z [hybrid] copy-cache advised bytes=67108864 file_offset=34091622400 result=0
+2026-10-09T07:07:40.037163040Z [hybrid] copy-cache advised bytes=67108864 file_offset=34158731264 result=0
+2026-10-09T07:07:40.136351024Z [hybrid] copy-cache advised bytes=67108864 file_offset=34225840128 result=0
+2026-10-09T07:07:40.236977872Z [hybrid] copy-cache advised bytes=67108864 file_offset=34292948992 result=0
+2026-10-09T07:07:40.237086797Z [v2-upload] completed=34359738368 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:40.349764065Z [hybrid] copy-cache advised bytes=67108864 file_offset=34360057856 result=0
+2026-10-09T07:07:40.462158354Z [hybrid] copy-cache advised bytes=67108864 file_offset=34427166720 result=0
+2026-10-09T07:07:40.633449234Z [hybrid] copy-cache advised bytes=67108864 file_offset=34494275584 result=0
+2026-10-09T07:07:40.762652000Z [hybrid] copy-cache advised bytes=67108864 file_offset=34561384448 result=0
+2026-10-09T07:07:40.886941757Z [hybrid] copy-cache advised bytes=67108864 file_offset=34628493312 result=0
+2026-10-09T07:07:41.008214711Z [hybrid] copy-cache advised bytes=67108864 file_offset=34695602176 result=0
+2026-10-09T07:07:41.109798425Z [hybrid] copy-cache advised bytes=67108864 file_offset=34762711040 result=0
+2026-10-09T07:07:40.790609154Z [hybrid] copy-cache advised bytes=67108864 file_offset=34829819904 result=0
+2026-10-09T07:07:40.884050519Z [hybrid] copy-cache advised bytes=67108864 file_offset=34896928768 result=0
+2026-10-09T07:07:40.971801266Z [hybrid] copy-cache advised bytes=67108864 file_offset=34964037632 result=0
+2026-10-09T07:07:41.053912607Z [hybrid] copy-cache advised bytes=67108864 file_offset=35031146496 result=0
+2026-10-09T07:07:41.135642809Z [hybrid] copy-cache advised bytes=67108864 file_offset=35098255360 result=0
+2026-10-09T07:07:41.220725736Z [hybrid] copy-cache advised bytes=67108864 file_offset=35165364224 result=0
+2026-10-09T07:07:41.312261900Z halogen: still loading, 60s elapsed (the engine is alive, state R; GTT in use ? GiB; the startup lines above name the step)
+2026-10-09T07:07:41.318345780Z [hybrid] copy-cache advised bytes=67108864 file_offset=35232473088 result=0
+2026-10-09T07:07:41.401001006Z [hybrid] copy-cache advised bytes=67108864 file_offset=35299581952 result=0
+2026-10-09T07:07:41.483575527Z [hybrid] copy-cache advised bytes=67108864 file_offset=35366690816 result=0
+2026-10-09T07:07:41.483657252Z [v2-upload] completed=35433480192 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:41.978520114Z [hybrid] copy-cache advised bytes=67108864 file_offset=35433799680 result=0
+2026-10-09T07:07:42.097511004Z [hybrid] copy-cache advised bytes=67108864 file_offset=35500908544 result=0
+2026-10-09T07:07:42.241594189Z [hybrid] copy-cache advised bytes=67108864 file_offset=35568017408 result=0
+2026-10-09T07:07:42.335986880Z [hybrid] copy-cache advised bytes=67108864 file_offset=35635126272 result=0
+2026-10-09T07:07:42.429121561Z [hybrid] copy-cache advised bytes=67108864 file_offset=35702235136 result=0
+2026-10-09T07:07:42.535010359Z [hybrid] copy-cache advised bytes=67108864 file_offset=35769344000 result=0
+2026-10-09T07:07:42.646024152Z [hybrid] copy-cache advised bytes=67108864 file_offset=35836452864 result=0
+2026-10-09T07:07:42.749453243Z [hybrid] copy-cache advised bytes=67108864 file_offset=35903561728 result=0
+2026-10-09T07:07:42.887573044Z [hybrid] copy-cache advised bytes=67108864 file_offset=35970670592 result=0
+2026-10-09T07:07:42.988832382Z [hybrid] copy-cache advised bytes=67108864 file_offset=36037779456 result=0
+2026-10-09T07:07:43.085445824Z [hybrid] copy-cache advised bytes=67108864 file_offset=36104888320 result=0
+2026-10-09T07:07:43.179808726Z [hybrid] copy-cache advised bytes=67108864 file_offset=36171997184 result=0
+2026-10-09T07:07:43.281505985Z [hybrid] copy-cache advised bytes=67108864 file_offset=36239106048 result=0
+2026-10-09T07:07:43.388554434Z [hybrid] copy-cache advised bytes=67108864 file_offset=36306214912 result=0
+2026-10-09T07:07:43.523832405Z [hybrid] copy-cache advised bytes=67108864 file_offset=36373323776 result=0
+2026-10-09T07:07:43.648496210Z [hybrid] copy-cache advised bytes=67108864 file_offset=36440432640 result=0
+2026-10-09T07:07:43.648545673Z [v2-upload] completed=36507222016 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:43.764419135Z [hybrid] copy-cache advised bytes=67108864 file_offset=36507541504 result=0
+2026-10-09T07:07:43.857029057Z [hybrid] copy-cache advised bytes=67108864 file_offset=36574650368 result=0
+2026-10-09T07:07:43.987937347Z [hybrid] copy-cache advised bytes=67108864 file_offset=36641759232 result=0
+2026-10-09T07:07:44.132043631Z [hybrid] copy-cache advised bytes=67108864 file_offset=36708868096 result=0
+2026-10-09T07:07:44.301308704Z [hybrid] copy-cache advised bytes=67108864 file_offset=36775976960 result=0
+2026-10-09T07:07:44.428428258Z [hybrid] copy-cache advised bytes=67108864 file_offset=36843085824 result=0
+2026-10-09T07:07:44.546047403Z [hybrid] copy-cache advised bytes=67108864 file_offset=36910194688 result=0
+2026-10-09T07:07:44.637456016Z [hybrid] copy-cache advised bytes=67108864 file_offset=36977303552 result=0
+2026-10-09T07:07:44.737045688Z [hybrid] copy-cache advised bytes=67108864 file_offset=37044412416 result=0
+2026-10-09T07:07:44.844182694Z [hybrid] copy-cache advised bytes=67108864 file_offset=37111521280 result=0
+2026-10-09T07:07:44.958833556Z [hybrid] copy-cache advised bytes=67108864 file_offset=37178630144 result=0
+2026-10-09T07:07:45.093790174Z [hybrid] copy-cache advised bytes=67108864 file_offset=37245739008 result=0
+2026-10-09T07:07:45.218113122Z [hybrid] copy-cache advised bytes=67108864 file_offset=37312847872 result=0
+2026-10-09T07:07:45.337952867Z [hybrid] copy-cache advised bytes=67108864 file_offset=37379956736 result=0
+2026-10-09T07:07:45.429517446Z [hybrid] copy-cache advised bytes=67108864 file_offset=37447065600 result=0
+2026-10-09T07:07:45.533261964Z [hybrid] copy-cache advised bytes=67108864 file_offset=37514174464 result=0
+2026-10-09T07:07:45.533337769Z [v2-upload] completed=37580963840 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:45.626979678Z [hybrid] copy-cache advised bytes=67108864 file_offset=37581283328 result=0
+2026-10-09T07:08:37.923048181Z [hybrid] copy-cache advised bytes=67108864 file_offset=37648392192 result=0
+2026-10-09T07:07:45.814148092Z [hybrid] copy-cache advised bytes=67108864 file_offset=37715501056 result=0
+2026-10-09T07:07:45.902357765Z [hybrid] copy-cache advised bytes=67108864 file_offset=37782609920 result=0
+2026-10-09T07:07:46.006668311Z [hybrid] copy-cache advised bytes=67108864 file_offset=37849718784 result=0
+2026-10-09T07:07:46.108348146Z [hybrid] copy-cache advised bytes=67108864 file_offset=37916827648 result=0
+2026-10-09T07:07:46.207851106Z [hybrid] copy-cache advised bytes=67108864 file_offset=37983936512 result=0
+2026-10-09T07:07:46.289240030Z [hybrid] copy-cache advised bytes=67108864 file_offset=38051045376 result=0
+2026-10-09T07:07:46.456770147Z [hybrid] copy-cache advised bytes=67108864 file_offset=38118154240 result=0
+2026-10-09T07:07:46.595960681Z [hybrid] copy-cache advised bytes=67108864 file_offset=38185263104 result=0
+2026-10-09T07:07:46.703773022Z [hybrid] copy-cache advised bytes=67108864 file_offset=38252371968 result=0
+2026-10-09T07:07:46.801975368Z [hybrid] copy-cache advised bytes=67108864 file_offset=38319480832 result=0
+2026-10-09T07:07:46.883355027Z [hybrid] copy-cache advised bytes=67108864 file_offset=38386589696 result=0
+2026-10-09T07:07:47.351145450Z [hybrid] copy-cache advised bytes=67108864 file_offset=38453698560 result=0
+2026-10-09T07:07:47.441763859Z [hybrid] copy-cache advised bytes=67108864 file_offset=38520807424 result=0
+2026-10-09T07:07:47.548072448Z [hybrid] copy-cache advised bytes=67108864 file_offset=38587916288 result=0
+2026-10-09T07:07:47.548138352Z [v2-upload] completed=38654705664 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:47.641969138Z [hybrid] copy-cache advised bytes=67108864 file_offset=38655025152 result=0
+2026-10-09T07:07:47.730272242Z [hybrid] copy-cache advised bytes=67108864 file_offset=38722134016 result=0
+2026-10-09T07:07:47.825439113Z [hybrid] copy-cache advised bytes=67108864 file_offset=38789242880 result=0
+2026-10-09T07:07:47.930800966Z [hybrid] copy-cache advised bytes=67108864 file_offset=38856351744 result=0
+2026-10-09T07:07:48.058402227Z [hybrid] copy-cache advised bytes=67108864 file_offset=38923460608 result=0
+2026-10-09T07:07:48.180755511Z [hybrid] copy-cache advised bytes=67108864 file_offset=38990569472 result=0
+2026-10-09T07:07:48.314850853Z [hybrid] copy-cache advised bytes=67108864 file_offset=39057678336 result=0
+2026-10-09T07:07:48.405305752Z [hybrid] copy-cache advised bytes=67108864 file_offset=39124787200 result=0
+2026-10-09T07:07:48.495114889Z [hybrid] copy-cache advised bytes=67108864 file_offset=39191896064 result=0
+2026-10-09T07:07:48.619177065Z [hybrid] copy-cache advised bytes=67108864 file_offset=39259004928 result=0
+2026-10-09T07:07:48.709015448Z [hybrid] copy-cache advised bytes=67108864 file_offset=39326113792 result=0
+2026-10-09T07:07:48.797553598Z [hybrid] copy-cache advised bytes=67108864 file_offset=39393222656 result=0
+2026-10-09T07:07:48.886484380Z [hybrid] copy-cache advised bytes=67108864 file_offset=39460331520 result=0
+2026-10-09T07:07:48.980475493Z [hybrid] copy-cache advised bytes=67108864 file_offset=39527440384 result=0
+2026-10-09T07:07:49.074684725Z [hybrid] copy-cache advised bytes=67108864 file_offset=39594549248 result=0
+2026-10-09T07:07:49.175769961Z [hybrid] copy-cache advised bytes=67108864 file_offset=39661658112 result=0
+2026-10-09T07:07:49.175829945Z [v2-upload] completed=39728447488 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:49.272006000Z [hybrid] copy-cache advised bytes=67108864 file_offset=39728766976 result=0
+2026-10-09T07:07:49.393212888Z [hybrid] copy-cache advised bytes=67108864 file_offset=39795875840 result=0
+2026-10-09T07:07:49.528299664Z [hybrid] copy-cache advised bytes=67108864 file_offset=39862984704 result=0
+2026-10-09T07:07:49.674962981Z [hybrid] copy-cache advised bytes=67108864 file_offset=39930093568 result=0
+2026-10-09T07:07:49.807475919Z [hybrid] copy-cache advised bytes=67108864 file_offset=39997202432 result=0
+2026-10-09T07:07:49.935295292Z [hybrid] copy-cache advised bytes=67108864 file_offset=40064311296 result=0
+2026-10-09T07:07:50.047287417Z [hybrid] copy-cache advised bytes=67108864 file_offset=40131420160 result=0
+2026-10-09T07:07:50.153424697Z [hybrid] copy-cache advised bytes=67108864 file_offset=40198529024 result=0
+2026-10-09T07:07:50.258433255Z [hybrid] copy-cache advised bytes=67108864 file_offset=40265637888 result=0
+2026-10-09T07:07:50.392921256Z [hybrid] copy-cache advised bytes=67108864 file_offset=40332746752 result=0
+2026-10-09T07:07:50.491378383Z [hybrid] copy-cache advised bytes=67108864 file_offset=40399855616 result=0
+2026-10-09T07:07:50.606232437Z [hybrid] copy-cache advised bytes=67108864 file_offset=40466964480 result=0
+2026-10-09T07:07:50.702443080Z [hybrid] copy-cache advised bytes=67108864 file_offset=40534073344 result=0
+2026-10-09T07:07:50.805132701Z [hybrid] copy-cache advised bytes=67108864 file_offset=40601182208 result=0
+2026-10-09T07:07:50.902363835Z [hybrid] copy-cache advised bytes=67108864 file_offset=40668291072 result=0
+2026-10-09T07:07:51.026289781Z [hybrid] copy-cache advised bytes=67108864 file_offset=40735399936 result=0
+2026-10-09T07:07:51.026328303Z [v2-upload] completed=40802189312 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:51.146805374Z [hybrid] copy-cache advised bytes=67108864 file_offset=40802508800 result=0
+2026-10-09T07:07:51.257231265Z [hybrid] copy-cache advised bytes=67108864 file_offset=40869617664 result=0
+2026-10-09T07:07:51.365695534Z [hybrid] copy-cache advised bytes=67108864 file_offset=40936726528 result=0
+2026-10-09T07:07:51.460318916Z [hybrid] copy-cache advised bytes=67108864 file_offset=41003835392 result=0
+2026-10-09T07:07:51.558293276Z [hybrid] copy-cache advised bytes=67108864 file_offset=41070944256 result=0
+2026-10-09T07:07:51.680404310Z [hybrid] copy-cache advised bytes=67108864 file_offset=41138053120 result=0
+2026-10-09T07:07:51.766721186Z [hybrid] copy-cache advised bytes=67108864 file_offset=41205161984 result=0
+2026-10-09T07:07:51.856148203Z [hybrid] copy-cache advised bytes=67108864 file_offset=41272270848 result=0
+2026-10-09T07:07:51.944597712Z [hybrid] copy-cache advised bytes=67108864 file_offset=41339379712 result=0
+2026-10-09T07:07:52.034964759Z [hybrid] copy-cache advised bytes=67108864 file_offset=41406488576 result=0
+2026-10-09T07:07:52.144119409Z [hybrid] copy-cache advised bytes=67108864 file_offset=41473597440 result=0
+2026-10-09T07:07:52.250162037Z [hybrid] copy-cache advised bytes=67108864 file_offset=41540706304 result=0
+2026-10-09T07:07:52.834331421Z [hybrid] copy-cache advised bytes=67108864 file_offset=41607815168 result=0
+2026-10-09T07:07:53.022678835Z [hybrid] copy-cache advised bytes=67108864 file_offset=41674924032 result=0
+2026-10-09T07:07:53.176696518Z [hybrid] copy-cache advised bytes=67108864 file_offset=41742032896 result=0
+2026-10-09T07:07:53.307249967Z [hybrid] copy-cache advised bytes=67108864 file_offset=41809141760 result=0
+2026-10-09T07:07:53.307320862Z [v2-upload] completed=41875931136 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:53.454195451Z [hybrid] copy-cache advised bytes=67108864 file_offset=41876250624 result=0
+2026-10-09T07:07:53.586913568Z [hybrid] copy-cache advised bytes=67108864 file_offset=41943359488 result=0
+2026-10-09T07:07:53.690604096Z [hybrid] copy-cache advised bytes=67108864 file_offset=42010468352 result=0
+2026-10-09T07:07:53.785413439Z [hybrid] copy-cache advised bytes=67108864 file_offset=42077577216 result=0
+2026-10-09T07:07:53.879723518Z [hybrid] copy-cache advised bytes=67108864 file_offset=42144686080 result=0
+2026-10-09T07:07:53.987360577Z [hybrid] copy-cache advised bytes=67108864 file_offset=42211794944 result=0
+2026-10-09T07:07:54.116505403Z [hybrid] copy-cache advised bytes=67108864 file_offset=42278903808 result=0
+2026-10-09T07:07:54.246731406Z [hybrid] copy-cache advised bytes=67108864 file_offset=42346012672 result=0
+2026-10-09T07:07:54.395426208Z [hybrid] copy-cache advised bytes=67108864 file_offset=42413121536 result=0
+2026-10-09T07:07:54.513217394Z [hybrid] copy-cache advised bytes=67108864 file_offset=42480230400 result=0
+2026-10-09T07:07:54.628651372Z [hybrid] copy-cache advised bytes=67108864 file_offset=42547339264 result=0
+2026-10-09T07:07:54.709146242Z [hybrid] copy-cache advised bytes=67108864 file_offset=42614448128 result=0
+2026-10-09T07:07:54.790862385Z [hybrid] copy-cache advised bytes=67108864 file_offset=42681556992 result=0
+2026-10-09T07:07:54.871282702Z [hybrid] copy-cache advised bytes=67108864 file_offset=42748665856 result=0
+2026-10-09T07:07:54.955009176Z [hybrid] copy-cache advised bytes=67108864 file_offset=42815774720 result=0
+2026-10-09T07:07:55.042111676Z [hybrid] copy-cache advised bytes=67108864 file_offset=42882883584 result=0
+2026-10-09T07:07:55.042193341Z [v2-upload] completed=42949672960 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:55.138263941Z [hybrid] copy-cache advised bytes=67108864 file_offset=42949992448 result=0
+2026-10-09T07:07:55.253511748Z [hybrid] copy-cache advised bytes=67108864 file_offset=43017101312 result=0
+2026-10-09T07:07:55.365155180Z [hybrid] copy-cache advised bytes=67108864 file_offset=43084210176 result=0
+2026-10-09T07:07:55.461916899Z [hybrid] copy-cache advised bytes=67108864 file_offset=43151319040 result=0
+2026-10-09T07:07:55.578647433Z [hybrid] copy-cache advised bytes=67108864 file_offset=43218427904 result=0
+2026-10-09T07:07:55.695320133Z [hybrid] copy-cache advised bytes=67108864 file_offset=43285536768 result=0
+2026-10-09T07:07:55.821862065Z [hybrid] copy-cache advised bytes=67108864 file_offset=43352645632 result=0
+2026-10-09T07:07:55.924805002Z [hybrid] copy-cache advised bytes=67108864 file_offset=43419754496 result=0
+2026-10-09T07:07:56.021758864Z [hybrid] copy-cache advised bytes=67108864 file_offset=43486863360 result=0
+2026-10-09T07:07:56.138169787Z [hybrid] copy-cache advised bytes=67108864 file_offset=43553972224 result=0
+2026-10-09T07:07:56.243092119Z [hybrid] copy-cache advised bytes=67108864 file_offset=43621081088 result=0
+2026-10-09T07:07:56.330362865Z [hybrid] copy-cache advised bytes=67108864 file_offset=43688189952 result=0
+2026-10-09T07:07:56.418925901Z [hybrid] copy-cache advised bytes=67108864 file_offset=43755298816 result=0
+2026-10-09T07:07:56.500770500Z [hybrid] copy-cache advised bytes=67108864 file_offset=43822407680 result=0
+2026-10-09T07:07:56.603126149Z [hybrid] copy-cache advised bytes=67108864 file_offset=43889516544 result=0
+2026-10-09T07:07:56.687544873Z [hybrid] copy-cache advised bytes=67108864 file_offset=43956625408 result=0
+2026-10-09T07:07:56.687602227Z [v2-upload] completed=44023414784 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:56.768580580Z [hybrid] copy-cache advised bytes=67108864 file_offset=44023734272 result=0
+2026-10-09T07:07:56.851961408Z [hybrid] copy-cache advised bytes=67108864 file_offset=44090843136 result=0
+2026-10-09T07:07:56.941982277Z [hybrid] copy-cache advised bytes=67108864 file_offset=44157952000 result=0
+2026-10-09T07:07:57.033844747Z [hybrid] copy-cache advised bytes=67108864 file_offset=44225060864 result=0
+2026-10-09T07:07:57.119821521Z [hybrid] copy-cache advised bytes=67108864 file_offset=44292169728 result=0
+2026-10-09T07:07:57.221585655Z [hybrid] copy-cache advised bytes=67108864 file_offset=44359278592 result=0
+2026-10-09T07:07:57.332620640Z [hybrid] copy-cache advised bytes=67108864 file_offset=44426387456 result=0
+2026-10-09T07:07:57.435604080Z [hybrid] copy-cache advised bytes=67108864 file_offset=44493496320 result=0
+2026-10-09T07:07:57.526801951Z [hybrid] copy-cache advised bytes=67108864 file_offset=44560605184 result=0
+2026-10-09T07:07:57.618588239Z [hybrid] copy-cache advised bytes=67108864 file_offset=44627714048 result=0
+2026-10-09T07:07:58.069727336Z [hybrid] copy-cache advised bytes=67108864 file_offset=44694822912 result=0
+2026-10-09T07:07:58.150606908Z [hybrid] copy-cache advised bytes=67108864 file_offset=44761931776 result=0
+2026-10-09T07:07:58.238763953Z [hybrid] copy-cache advised bytes=67108864 file_offset=44829040640 result=0
+2026-10-09T07:07:58.332588733Z [hybrid] copy-cache advised bytes=67108864 file_offset=44896149504 result=0
+2026-10-09T07:07:58.424785738Z [hybrid] copy-cache advised bytes=67108864 file_offset=44963258368 result=0
+2026-10-09T07:07:58.514934542Z [hybrid] copy-cache advised bytes=67108864 file_offset=45030367232 result=0
+2026-10-09T07:07:58.514987155Z [v2-upload] completed=45097156608 total=66687358944 chunk_limit=67108864
+2026-10-09T07:07:58.647864361Z [hybrid] copy-cache advised bytes=67108864 file_offset=45097476096 result=0
+2026-10-09T07:07:58.785400428Z [hybrid] copy-cache advised bytes=67108864 file_offset=45164584960 result=0
+2026-10-09T07:07:58.904152392Z [hybrid] copy-cache advised bytes=67108864 file_offset=45231693824 result=0
+2026-10-09T07:07:58.997157846Z [hybrid] copy-cache advised bytes=67108864 file_offset=45298802688 result=0
+2026-10-09T07:07:59.084864465Z [hybrid] copy-cache advised bytes=67108864 file_offset=45365911552 result=0
+2026-10-09T07:07:59.172036092Z [hybrid] copy-cache advised bytes=67108864 file_offset=45433020416 result=0
+2026-10-09T07:07:59.265044504Z [hybrid] copy-cache advised bytes=67108864 file_offset=45500129280 result=0
+2026-10-09T07:07:59.355040433Z [hybrid] copy-cache advised bytes=67108864 file_offset=45567238144 result=0
+2026-10-09T07:07:59.442942966Z [hybrid] copy-cache advised bytes=67108864 file_offset=45634347008 result=0
+2026-10-09T07:07:59.549753862Z [hybrid] copy-cache advised bytes=67108864 file_offset=45701455872 result=0
+2026-10-09T07:07:59.642534395Z [hybrid] copy-cache advised bytes=67108864 file_offset=45768564736 result=0
+2026-10-09T07:07:59.723611240Z [hybrid] copy-cache advised bytes=67108864 file_offset=45835673600 result=0
+2026-10-09T07:07:59.806766883Z [hybrid] copy-cache advised bytes=67108864 file_offset=45902782464 result=0
+2026-10-09T07:07:59.891095496Z [hybrid] copy-cache advised bytes=67108864 file_offset=45969891328 result=0
+2026-10-09T07:07:59.991182245Z [hybrid] copy-cache advised bytes=67108864 file_offset=46037000192 result=0
+2026-10-09T07:08:00.070401689Z [hybrid] copy-cache advised bytes=67108864 file_offset=46104109056 result=0
+2026-10-09T07:08:00.070478504Z [v2-upload] completed=46170898432 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:00.157026416Z [hybrid] copy-cache advised bytes=67108864 file_offset=46171217920 result=0
+2026-10-09T07:08:00.253096691Z [hybrid] copy-cache advised bytes=67108864 file_offset=46238326784 result=0
+2026-10-09T07:08:00.370195577Z [hybrid] copy-cache advised bytes=67108864 file_offset=46305435648 result=0
+2026-10-09T07:08:00.479077648Z [hybrid] copy-cache advised bytes=67108864 file_offset=46372544512 result=0
+2026-10-09T07:08:00.586899031Z [hybrid] copy-cache advised bytes=67108864 file_offset=46439653376 result=0
+2026-10-09T07:08:00.670737856Z [hybrid] copy-cache advised bytes=67108864 file_offset=46506762240 result=0
+2026-10-09T07:08:52.962427193Z [hybrid] copy-cache advised bytes=67108864 file_offset=46573871104 result=0
+2026-10-09T07:08:00.875626450Z [hybrid] copy-cache advised bytes=67108864 file_offset=46640979968 result=0
+2026-10-09T07:08:00.975258951Z [hybrid] copy-cache advised bytes=67108864 file_offset=46708088832 result=0
+2026-10-09T07:08:01.066039430Z [hybrid] copy-cache advised bytes=67108864 file_offset=46775197696 result=0
+2026-10-09T07:08:01.147478813Z [hybrid] copy-cache advised bytes=67108864 file_offset=46842306560 result=0
+2026-10-09T07:08:01.227365186Z [hybrid] copy-cache advised bytes=67108864 file_offset=46909415424 result=0
+2026-10-09T07:08:01.316355115Z [hybrid] copy-cache advised bytes=67108864 file_offset=46976524288 result=0
+2026-10-09T07:08:01.393364032Z [hybrid] copy-cache advised bytes=67108864 file_offset=47043633152 result=0
+2026-10-09T07:08:01.473537498Z [hybrid] copy-cache advised bytes=67108864 file_offset=47110742016 result=0
+2026-10-09T07:08:01.562927327Z [hybrid] copy-cache advised bytes=67108864 file_offset=47177850880 result=0
+2026-10-09T07:08:01.563010853Z [v2-upload] completed=47244640256 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:01.646517654Z [hybrid] copy-cache advised bytes=67108864 file_offset=47244959744 result=0
+2026-10-09T07:08:01.747351749Z [hybrid] copy-cache advised bytes=67108864 file_offset=47312068608 result=0
+2026-10-09T07:08:01.868883224Z [hybrid] copy-cache advised bytes=67108864 file_offset=47379177472 result=0
+2026-10-09T07:08:01.963052151Z [hybrid] copy-cache advised bytes=67108864 file_offset=47446286336 result=0
+2026-10-09T07:08:02.091577389Z [hybrid] copy-cache advised bytes=67108864 file_offset=47513395200 result=0
+2026-10-09T07:08:02.175573656Z [hybrid] copy-cache advised bytes=67108864 file_offset=47580504064 result=0
+2026-10-09T07:08:02.261570528Z [hybrid] copy-cache advised bytes=67108864 file_offset=47647612928 result=0
+2026-10-09T07:08:02.357558882Z [hybrid] copy-cache advised bytes=67108864 file_offset=47714721792 result=0
+2026-10-09T07:08:02.444011888Z [hybrid] copy-cache advised bytes=67108864 file_offset=47781830656 result=0
+2026-10-09T07:08:02.546171724Z [hybrid] copy-cache advised bytes=67108864 file_offset=47848939520 result=0
+2026-10-09T07:08:02.654365944Z [hybrid] copy-cache advised bytes=67108864 file_offset=47916048384 result=0
+2026-10-09T07:08:02.738906270Z [hybrid] copy-cache advised bytes=67108864 file_offset=47983157248 result=0
+2026-10-09T07:08:02.826035545Z [hybrid] copy-cache advised bytes=67108864 file_offset=48050266112 result=0
+2026-10-09T07:08:02.912691859Z [hybrid] copy-cache advised bytes=67108864 file_offset=48117374976 result=0
+2026-10-09T07:08:02.996054762Z [hybrid] copy-cache advised bytes=67108864 file_offset=48184483840 result=0
+2026-10-09T07:08:03.455873345Z [hybrid] copy-cache advised bytes=67108864 file_offset=48251592704 result=0
+2026-10-09T07:08:03.455934319Z [v2-upload] completed=48318382080 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:03.565373990Z [hybrid] copy-cache advised bytes=67108864 file_offset=48318701568 result=0
+2026-10-09T07:08:03.663530409Z [hybrid] copy-cache advised bytes=67108864 file_offset=48385810432 result=0
+2026-10-09T07:08:03.754589535Z [hybrid] copy-cache advised bytes=67108864 file_offset=48452919296 result=0
+2026-10-09T07:08:03.875377266Z [hybrid] copy-cache advised bytes=67108864 file_offset=48520028160 result=0
+2026-10-09T07:08:03.964129825Z [hybrid] copy-cache advised bytes=67108864 file_offset=48587137024 result=0
+2026-10-09T07:08:04.053085627Z [hybrid] copy-cache advised bytes=67108864 file_offset=48654245888 result=0
+2026-10-09T07:08:04.138697888Z [hybrid] copy-cache advised bytes=67108864 file_offset=48721354752 result=0
+2026-10-09T07:08:04.235945808Z [hybrid] copy-cache advised bytes=67108864 file_offset=48788463616 result=0
+2026-10-09T07:08:04.317157036Z [hybrid] copy-cache advised bytes=67108864 file_offset=48855572480 result=0
+2026-10-09T07:08:04.408151674Z [hybrid] copy-cache advised bytes=67108864 file_offset=48922681344 result=0
+2026-10-09T07:08:04.487018246Z [hybrid] copy-cache advised bytes=67108864 file_offset=48989790208 result=0
+2026-10-09T07:08:04.570456496Z [hybrid] copy-cache advised bytes=67108864 file_offset=49056899072 result=0
+2026-10-09T07:08:04.666020714Z [hybrid] copy-cache advised bytes=67108864 file_offset=49124007936 result=0
+2026-10-09T07:08:04.748919200Z [hybrid] copy-cache advised bytes=67108864 file_offset=49191116800 result=0
+2026-10-09T07:08:04.841397476Z [hybrid] copy-cache advised bytes=67108864 file_offset=49258225664 result=0
+2026-10-09T07:08:04.965397071Z [hybrid] copy-cache advised bytes=67108864 file_offset=49325334528 result=0
+2026-10-09T07:08:04.965459385Z [v2-upload] completed=49392123904 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:05.119289728Z [hybrid] copy-cache advised bytes=67108864 file_offset=49392443392 result=0
+2026-10-09T07:08:05.314012762Z [hybrid] copy-cache advised bytes=67108864 file_offset=49459552256 result=0
+2026-10-09T07:08:05.427131991Z [hybrid] copy-cache advised bytes=67108864 file_offset=49526661120 result=0
+2026-10-09T07:08:05.506523055Z [hybrid] copy-cache advised bytes=67108864 file_offset=49593769984 result=0
+2026-10-09T07:08:05.619331017Z [hybrid] copy-cache advised bytes=67108864 file_offset=49660878848 result=0
+2026-10-09T07:08:05.730267745Z [hybrid] copy-cache advised bytes=67108864 file_offset=49727987712 result=0
+2026-10-09T07:08:05.844035337Z [hybrid] copy-cache advised bytes=67108864 file_offset=49795096576 result=0
+2026-10-09T07:08:05.918823599Z [hybrid] copy-cache advised bytes=67108864 file_offset=49862205440 result=0
+2026-10-09T07:08:05.991731563Z [hybrid] copy-cache advised bytes=67108864 file_offset=49929314304 result=0
+2026-10-09T07:08:06.140568354Z [hybrid] copy-cache advised bytes=67108864 file_offset=49996423168 result=0
+2026-10-09T07:08:06.238482647Z [hybrid] copy-cache advised bytes=67108864 file_offset=50063532032 result=0
+2026-10-09T07:08:06.365830001Z [hybrid] copy-cache advised bytes=67108864 file_offset=50130640896 result=0
+2026-10-09T07:08:06.498566299Z [hybrid] copy-cache advised bytes=67108864 file_offset=50197749760 result=0
+2026-10-09T07:08:06.622290930Z [hybrid] copy-cache advised bytes=67108864 file_offset=50264858624 result=0
+2026-10-09T07:08:06.704145293Z [hybrid] copy-cache advised bytes=67108864 file_offset=50331967488 result=0
+2026-10-09T07:08:06.781915400Z [hybrid] copy-cache advised bytes=67108864 file_offset=50399076352 result=0
+2026-10-09T07:08:06.781975954Z [v2-upload] completed=50465865728 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:06.857249865Z [hybrid] copy-cache advised bytes=67108864 file_offset=50466185216 result=0
+2026-10-09T07:08:06.934455635Z [hybrid] copy-cache advised bytes=67108864 file_offset=50533294080 result=0
+2026-10-09T07:08:07.009870805Z [hybrid] copy-cache advised bytes=67108864 file_offset=50600402944 result=0
+2026-10-09T07:08:07.084679100Z [hybrid] copy-cache advised bytes=67108864 file_offset=50667511808 result=0
+2026-10-09T07:08:07.159576497Z [hybrid] copy-cache advised bytes=67108864 file_offset=50734620672 result=0
+2026-10-09T07:08:07.241875994Z [hybrid] copy-cache advised bytes=67108864 file_offset=50801729536 result=0
+2026-10-09T07:08:07.320452078Z [hybrid] copy-cache advised bytes=67108864 file_offset=50868838400 result=0
+2026-10-09T07:08:07.403229561Z [hybrid] copy-cache advised bytes=67108864 file_offset=50935947264 result=0
+2026-10-09T07:08:07.487280503Z [hybrid] copy-cache advised bytes=67108864 file_offset=51003056128 result=0
+2026-10-09T07:08:07.580340525Z [hybrid] copy-cache advised bytes=67108864 file_offset=51070164992 result=0
+2026-10-09T07:08:07.671765611Z [hybrid] copy-cache advised bytes=67108864 file_offset=51137273856 result=0
+2026-10-09T07:08:07.751914635Z [hybrid] copy-cache advised bytes=67108864 file_offset=51204382720 result=0
+2026-10-09T07:08:07.831482950Z [hybrid] copy-cache advised bytes=67108864 file_offset=51271491584 result=0
+2026-10-09T07:08:07.942350251Z [hybrid] copy-cache advised bytes=67108864 file_offset=51338600448 result=0
+2026-10-09T07:08:08.054594547Z [hybrid] copy-cache advised bytes=67108864 file_offset=51405709312 result=0
+2026-10-09T07:08:08.150997044Z [hybrid] copy-cache advised bytes=67108864 file_offset=51472818176 result=0
+2026-10-09T07:08:08.151102166Z [v2-upload] completed=51539607552 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:08.243423983Z [hybrid] copy-cache advised bytes=67108864 file_offset=51539927040 result=0
+2026-10-09T07:08:08.325469406Z [hybrid] copy-cache advised bytes=67108864 file_offset=51607035904 result=0
+2026-10-09T07:08:08.410286525Z [hybrid] copy-cache advised bytes=67108864 file_offset=51674144768 result=0
+2026-10-09T07:08:08.899502164Z [hybrid] copy-cache advised bytes=67108864 file_offset=51741253632 result=0
+2026-10-09T07:08:08.995550342Z [hybrid] copy-cache advised bytes=67108864 file_offset=51808362496 result=0
+2026-10-09T07:08:09.080567257Z [hybrid] copy-cache advised bytes=67108864 file_offset=51875471360 result=0
+2026-10-09T07:08:09.164684134Z [hybrid] copy-cache advised bytes=67108864 file_offset=51942580224 result=0
+2026-10-09T07:08:09.249468410Z [hybrid] copy-cache advised bytes=67108864 file_offset=52009689088 result=0
+2026-10-09T07:08:09.330190733Z [hybrid] copy-cache advised bytes=67108864 file_offset=52076797952 result=0
+2026-10-09T07:08:09.415214657Z [hybrid] copy-cache advised bytes=67108864 file_offset=52143906816 result=0
+2026-10-09T07:08:09.508889820Z [hybrid] copy-cache advised bytes=67108864 file_offset=52211015680 result=0
+2026-10-09T07:08:09.616402360Z [hybrid] copy-cache advised bytes=67108864 file_offset=52278124544 result=0
+2026-10-09T07:08:09.716409034Z [hybrid] copy-cache advised bytes=67108864 file_offset=52345233408 result=0
+2026-10-09T07:08:09.812276858Z [hybrid] copy-cache advised bytes=67108864 file_offset=52412342272 result=0
+2026-10-09T07:08:09.892484948Z [hybrid] copy-cache advised bytes=67108864 file_offset=52479451136 result=0
+2026-10-09T07:08:09.977472421Z [hybrid] copy-cache advised bytes=67108864 file_offset=52546560000 result=0
+2026-10-09T07:08:09.977512593Z [v2-upload] completed=52613349376 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:10.058368774Z [hybrid] copy-cache advised bytes=67108864 file_offset=52613668864 result=0
+2026-10-09T07:08:10.140392235Z [hybrid] copy-cache advised bytes=67108864 file_offset=52680777728 result=0
+2026-10-09T07:08:10.219160049Z [hybrid] copy-cache advised bytes=67108864 file_offset=52747886592 result=0
+2026-10-09T07:08:10.304123822Z [hybrid] copy-cache advised bytes=67108864 file_offset=52814995456 result=0
+2026-10-09T07:08:10.393778912Z [hybrid] copy-cache advised bytes=67108864 file_offset=52882104320 result=0
+2026-10-09T07:08:10.477912013Z [hybrid] copy-cache advised bytes=67108864 file_offset=52949213184 result=0
+2026-10-09T07:08:10.565544556Z [hybrid] copy-cache advised bytes=67108864 file_offset=53016322048 result=0
+2026-10-09T07:08:10.667014220Z [hybrid] copy-cache advised bytes=67108864 file_offset=53083430912 result=0
+2026-10-09T07:08:10.755374938Z [hybrid] copy-cache advised bytes=67108864 file_offset=53150539776 result=0
+2026-10-09T07:08:10.833257757Z [hybrid] copy-cache advised bytes=67108864 file_offset=53217648640 result=0
+2026-10-09T07:08:10.910531304Z [hybrid] copy-cache advised bytes=67108864 file_offset=53284757504 result=0
+2026-10-09T07:08:10.990183829Z [hybrid] copy-cache advised bytes=67108864 file_offset=53351866368 result=0
+2026-10-09T07:09:02.992807877Z [hybrid] copy-cache advised bytes=67108864 file_offset=53418975232 result=0
+2026-10-09T07:08:10.894393853Z [hybrid] copy-cache advised bytes=67108864 file_offset=53486084096 result=0
+2026-10-09T07:08:10.992223139Z [hybrid] copy-cache advised bytes=67108864 file_offset=53553192960 result=0
+2026-10-09T07:08:11.081571439Z [hybrid] copy-cache advised bytes=67108864 file_offset=53620301824 result=0
+2026-10-09T07:08:11.081627461Z [v2-upload] completed=53687091200 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:11.176605706Z [hybrid] copy-cache advised bytes=67108864 file_offset=53687410688 result=0
+2026-10-09T07:08:11.261943842Z [hybrid] copy-cache advised bytes=67108864 file_offset=53754519552 result=0
+2026-10-09T07:08:11.363934141Z [hybrid] copy-cache advised bytes=67108864 file_offset=53821628416 result=0
+2026-10-09T07:08:11.467356448Z [hybrid] copy-cache advised bytes=67108864 file_offset=53888737280 result=0
+2026-10-09T07:08:11.556176682Z [hybrid] copy-cache advised bytes=67108864 file_offset=53955846144 result=0
+2026-10-09T07:08:11.640154229Z [hybrid] copy-cache advised bytes=67108864 file_offset=54022955008 result=0
+2026-10-09T07:08:11.721453219Z [hybrid] copy-cache advised bytes=67108864 file_offset=54090063872 result=0
+2026-10-09T07:08:11.817429389Z [hybrid] copy-cache advised bytes=67108864 file_offset=54157172736 result=0
+2026-10-09T07:08:11.918875664Z [hybrid] copy-cache advised bytes=67108864 file_offset=54224281600 result=0
+2026-10-09T07:08:12.019976571Z [hybrid] copy-cache advised bytes=67108864 file_offset=54291390464 result=0
+2026-10-09T07:08:12.113750062Z [hybrid] copy-cache advised bytes=67108864 file_offset=54358499328 result=0
+2026-10-09T07:08:12.192408126Z [hybrid] copy-cache advised bytes=67108864 file_offset=54425608192 result=0
+2026-10-09T07:08:12.303254032Z [hybrid] copy-cache advised bytes=67108864 file_offset=54492717056 result=0
+2026-10-09T07:08:12.408822661Z [hybrid] copy-cache advised bytes=67108864 file_offset=54559825920 result=0
+2026-10-09T07:08:12.513963432Z [hybrid] copy-cache advised bytes=67108864 file_offset=54626934784 result=0
+2026-10-09T07:08:12.637495701Z [hybrid] copy-cache advised bytes=67108864 file_offset=54694043648 result=0
+2026-10-09T07:08:12.637583294Z [v2-upload] completed=54760833024 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:12.755934727Z [hybrid] copy-cache advised bytes=67108864 file_offset=54761152512 result=0
+2026-10-09T07:08:12.838240223Z [hybrid] copy-cache advised bytes=67108864 file_offset=54828261376 result=0
+2026-10-09T07:08:12.921754736Z [hybrid] copy-cache advised bytes=67108864 file_offset=54895370240 result=0
+2026-10-09T07:08:13.029555607Z [hybrid] copy-cache advised bytes=67108864 file_offset=54962479104 result=0
+2026-10-09T07:08:13.190392954Z [hybrid] copy-cache advised bytes=67108864 file_offset=55029587968 result=0
+2026-10-09T07:08:13.355028808Z [hybrid] copy-cache advised bytes=67108864 file_offset=55096696832 result=0
+2026-10-09T07:08:13.454886391Z [hybrid] copy-cache advised bytes=67108864 file_offset=55163805696 result=0
+2026-10-09T07:08:13.583273094Z [hybrid] copy-cache advised bytes=67108864 file_offset=55230914560 result=0
+2026-10-09T07:08:13.693577103Z [hybrid] copy-cache advised bytes=67108864 file_offset=55298023424 result=0
+2026-10-09T07:08:13.788059927Z [hybrid] copy-cache advised bytes=67108864 file_offset=55365132288 result=0
+2026-10-09T07:08:13.883503942Z [hybrid] copy-cache advised bytes=67108864 file_offset=55432241152 result=0
+2026-10-09T07:08:13.975184327Z [hybrid] copy-cache advised bytes=67108864 file_offset=55499350016 result=0
+2026-10-09T07:08:14.533453928Z [hybrid] copy-cache advised bytes=67108864 file_offset=55566458880 result=0
+2026-10-09T07:08:14.649754196Z [hybrid] copy-cache advised bytes=67108864 file_offset=55633567744 result=0
+2026-10-09T07:08:14.774191398Z [hybrid] copy-cache advised bytes=67108864 file_offset=55700676608 result=0
+2026-10-09T07:08:14.924383257Z [hybrid] copy-cache advised bytes=67108864 file_offset=55767785472 result=0
+2026-10-09T07:08:14.924492410Z [v2-upload] completed=55834574848 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:15.046934559Z [hybrid] copy-cache advised bytes=67108864 file_offset=55834894336 result=0
+2026-10-09T07:08:15.148550657Z [hybrid] copy-cache advised bytes=67108864 file_offset=55902003200 result=0
+2026-10-09T07:08:15.297880957Z [hybrid] copy-cache advised bytes=67108864 file_offset=55969112064 result=0
+2026-10-09T07:08:15.423649756Z [hybrid] copy-cache advised bytes=67108864 file_offset=56036220928 result=0
+2026-10-09T07:08:15.557119386Z [hybrid] copy-cache advised bytes=67108864 file_offset=56103329792 result=0
+2026-10-09T07:08:15.672134061Z [hybrid] copy-cache advised bytes=67108864 file_offset=56170438656 result=0
+2026-10-09T07:08:15.797898366Z [hybrid] copy-cache advised bytes=67108864 file_offset=56237547520 result=0
+2026-10-09T07:08:15.909462890Z [hybrid] copy-cache advised bytes=67108864 file_offset=56304656384 result=0
+2026-10-09T07:08:16.013856137Z [hybrid] copy-cache advised bytes=67108864 file_offset=56371765248 result=0
+2026-10-09T07:08:16.104250091Z [hybrid] copy-cache advised bytes=67108864 file_offset=56438874112 result=0
+2026-10-09T07:09:07.982929885Z [hybrid] copy-cache advised bytes=67108864 file_offset=56505982976 result=0
+2026-10-09T07:08:15.887570526Z [hybrid] copy-cache advised bytes=67108864 file_offset=56573091840 result=0
+2026-10-09T07:08:16.021443123Z [hybrid] copy-cache advised bytes=67108864 file_offset=56640200704 result=0
+2026-10-09T07:08:16.122196912Z [hybrid] copy-cache advised bytes=67108864 file_offset=56707309568 result=0
+2026-10-09T07:08:16.216758521Z [hybrid] copy-cache advised bytes=67108864 file_offset=56774418432 result=0
+2026-10-09T07:08:16.336181988Z [hybrid] copy-cache advised bytes=67108864 file_offset=56841527296 result=0
+2026-10-09T07:08:16.336273720Z [v2-upload] completed=56908316672 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:16.436409330Z [hybrid] copy-cache advised bytes=67108864 file_offset=56908636160 result=0
+2026-10-09T07:08:16.529887238Z [hybrid] copy-cache advised bytes=67108864 file_offset=56975745024 result=0
+2026-10-09T07:08:16.625772825Z [hybrid] copy-cache advised bytes=67108864 file_offset=57042853888 result=0
+2026-10-09T07:08:16.723300540Z [hybrid] copy-cache advised bytes=67108864 file_offset=57109962752 result=0
+2026-10-09T07:08:16.865343735Z [hybrid] copy-cache advised bytes=67108864 file_offset=57177071616 result=0
+2026-10-09T07:08:17.016708870Z [hybrid] copy-cache advised bytes=67108864 file_offset=57244180480 result=0
+2026-10-09T07:08:17.171838867Z [hybrid] copy-cache advised bytes=67108864 file_offset=57311289344 result=0
+2026-10-09T07:08:17.321179413Z [hybrid] copy-cache advised bytes=67108864 file_offset=57378398208 result=0
+2026-10-09T07:08:17.496082133Z [hybrid] copy-cache advised bytes=67108864 file_offset=57445507072 result=0
+2026-10-09T07:08:17.599915331Z [hybrid] copy-cache advised bytes=67108864 file_offset=57512615936 result=0
+2026-10-09T07:08:17.694135284Z [hybrid] copy-cache advised bytes=67108864 file_offset=57579724800 result=0
+2026-10-09T07:08:17.777382373Z [hybrid] copy-cache advised bytes=67108864 file_offset=57646833664 result=0
+2026-10-09T07:08:17.856909094Z [hybrid] copy-cache advised bytes=67108864 file_offset=57713942528 result=0
+2026-10-09T07:08:17.962660030Z [hybrid] copy-cache advised bytes=67108864 file_offset=57781051392 result=0
+2026-10-09T07:08:18.072614822Z [hybrid] copy-cache advised bytes=67108864 file_offset=57848160256 result=0
+2026-10-09T07:08:18.172697057Z [hybrid] copy-cache advised bytes=67108864 file_offset=57915269120 result=0
+2026-10-09T07:08:18.172753231Z [v2-upload] completed=57982058496 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:18.266750643Z [hybrid] copy-cache advised bytes=67108864 file_offset=57982377984 result=0
+2026-10-09T07:08:18.360048083Z [hybrid] copy-cache advised bytes=67108864 file_offset=58049486848 result=0
+2026-10-09T07:08:18.454190762Z [hybrid] copy-cache advised bytes=67108864 file_offset=58116595712 result=0
+2026-10-09T07:08:18.552496563Z [hybrid] copy-cache advised bytes=67108864 file_offset=58183704576 result=0
+2026-10-09T07:08:18.645068901Z [hybrid] copy-cache advised bytes=67108864 file_offset=58250813440 result=0
+2026-10-09T07:08:18.753932816Z [hybrid] copy-cache advised bytes=67108864 file_offset=58317922304 result=0
+2026-10-09T07:08:18.854739469Z [hybrid] copy-cache advised bytes=67108864 file_offset=58385031168 result=0
+2026-10-09T07:08:18.955136600Z [hybrid] copy-cache advised bytes=67108864 file_offset=58452140032 result=0
+2026-10-09T07:08:19.044122790Z [hybrid] copy-cache advised bytes=67108864 file_offset=58519248896 result=0
+2026-10-09T07:08:19.127210716Z [hybrid] copy-cache advised bytes=67108864 file_offset=58586357760 result=0
+2026-10-09T07:08:19.214930581Z [hybrid] copy-cache advised bytes=67108864 file_offset=58653466624 result=0
+2026-10-09T07:08:19.306104259Z [hybrid] copy-cache advised bytes=67108864 file_offset=58720575488 result=0
+2026-10-09T07:08:19.394169682Z [hybrid] copy-cache advised bytes=67108864 file_offset=58787684352 result=0
+2026-10-09T07:08:19.879627097Z [hybrid] copy-cache advised bytes=67108864 file_offset=58854793216 result=0
+2026-10-09T07:08:19.997322032Z [hybrid] copy-cache advised bytes=67108864 file_offset=58921902080 result=0
+2026-10-09T07:08:20.103281486Z [hybrid] copy-cache advised bytes=67108864 file_offset=58989010944 result=0
+2026-10-09T07:08:20.103367660Z [v2-upload] completed=59055800320 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:20.188611760Z [hybrid] copy-cache advised bytes=67108864 file_offset=59056119808 result=0
+2026-10-09T07:08:20.281967580Z [hybrid] copy-cache advised bytes=67108864 file_offset=59123228672 result=0
+2026-10-09T07:08:20.381553184Z [hybrid] copy-cache advised bytes=67108864 file_offset=59190337536 result=0
+2026-10-09T07:08:20.475371822Z [hybrid] copy-cache advised bytes=67108864 file_offset=59257446400 result=0
+2026-10-09T07:08:20.571206949Z [hybrid] copy-cache advised bytes=67108864 file_offset=59324555264 result=0
+2026-10-09T07:08:20.677371358Z [hybrid] copy-cache advised bytes=67108864 file_offset=59391664128 result=0
+2026-10-09T07:08:20.761262594Z [hybrid] copy-cache advised bytes=67108864 file_offset=59458772992 result=0
+2026-10-09T07:08:20.860802224Z [hybrid] copy-cache advised bytes=67108864 file_offset=59525881856 result=0
+2026-10-09T07:08:20.984091912Z [hybrid] copy-cache advised bytes=67108864 file_offset=59592990720 result=0
+2026-10-09T07:08:21.110137436Z [hybrid] copy-cache advised bytes=67108864 file_offset=59660099584 result=0
+2026-10-09T07:09:12.986553889Z [hybrid] copy-cache advised bytes=67108864 file_offset=59727208448 result=0
+2026-10-09T07:08:20.864515492Z [hybrid] copy-cache advised bytes=67108864 file_offset=59794317312 result=0
+2026-10-09T07:08:20.962963239Z [hybrid] copy-cache advised bytes=67108864 file_offset=59861426176 result=0
+2026-10-09T07:08:21.042955706Z [hybrid] copy-cache advised bytes=67108864 file_offset=59928535040 result=0
+2026-10-09T07:08:21.123687118Z [hybrid] copy-cache advised bytes=67108864 file_offset=59995643904 result=0
+2026-10-09T07:08:21.203251995Z [hybrid] copy-cache advised bytes=67108864 file_offset=60062752768 result=0
+2026-10-09T07:08:21.203334745Z [v2-upload] completed=60129542144 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:21.288095983Z [hybrid] copy-cache advised bytes=67108864 file_offset=60129861632 result=0
+2026-10-09T07:08:21.372487200Z [hybrid] copy-cache advised bytes=67108864 file_offset=60196970496 result=0
+2026-10-09T07:08:21.511583529Z [hybrid] copy-cache advised bytes=67108864 file_offset=60264079360 result=0
+2026-10-09T07:08:21.684905276Z [hybrid] copy-cache advised bytes=67108864 file_offset=60331188224 result=0
+2026-10-09T07:08:21.792887659Z [hybrid] copy-cache advised bytes=67108864 file_offset=60398297088 result=0
+2026-10-09T07:08:21.885200644Z [hybrid] copy-cache advised bytes=67108864 file_offset=60465405952 result=0
+2026-10-09T07:08:21.977040522Z [hybrid] copy-cache advised bytes=67108864 file_offset=60532514816 result=0
+2026-10-09T07:08:22.070632026Z [hybrid] copy-cache advised bytes=67108864 file_offset=60599623680 result=0
+2026-10-09T07:08:22.161810410Z [hybrid] copy-cache advised bytes=67108864 file_offset=60666732544 result=0
+2026-10-09T07:08:22.247649335Z [hybrid] copy-cache advised bytes=67108864 file_offset=60733841408 result=0
+2026-10-09T07:08:22.330435121Z [hybrid] copy-cache advised bytes=67108864 file_offset=60800950272 result=0
+2026-10-09T07:08:22.414600980Z [hybrid] copy-cache advised bytes=67108864 file_offset=60868059136 result=0
+2026-10-09T07:08:22.518521801Z [hybrid] copy-cache advised bytes=67108864 file_offset=60935168000 result=0
+2026-10-09T07:08:22.637748036Z [hybrid] copy-cache advised bytes=67108864 file_offset=61002276864 result=0
+2026-10-09T07:08:22.750559341Z [hybrid] copy-cache advised bytes=67108864 file_offset=61069385728 result=0
+2026-10-09T07:08:22.845328667Z [hybrid] copy-cache advised bytes=67108864 file_offset=61136494592 result=0
+2026-10-09T07:08:22.845466151Z [v2-upload] completed=61203283968 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:22.970047844Z [hybrid] copy-cache advised bytes=67108864 file_offset=61203603456 result=0
+2026-10-09T07:08:23.104982939Z [hybrid] copy-cache advised bytes=67108864 file_offset=61270712320 result=0
+2026-10-09T07:08:23.240663028Z [hybrid] copy-cache advised bytes=67108864 file_offset=61337821184 result=0
+2026-10-09T07:08:23.351147474Z [hybrid] copy-cache advised bytes=67108864 file_offset=61404930048 result=0
+2026-10-09T07:08:23.451208203Z [hybrid] copy-cache advised bytes=67108864 file_offset=61472038912 result=0
+2026-10-09T07:08:23.551952914Z [hybrid] copy-cache advised bytes=67108864 file_offset=61539147776 result=0
+2026-10-09T07:08:23.643916046Z [hybrid] copy-cache advised bytes=67108864 file_offset=61606256640 result=0
+2026-10-09T07:08:23.747529688Z [hybrid] copy-cache advised bytes=67108864 file_offset=61673365504 result=0
+2026-10-09T07:08:23.842819815Z [hybrid] copy-cache advised bytes=67108864 file_offset=61740474368 result=0
+2026-10-09T07:08:23.941332538Z [hybrid] copy-cache advised bytes=67108864 file_offset=61807583232 result=0
+2026-10-09T07:08:24.050907355Z [hybrid] copy-cache advised bytes=67108864 file_offset=61874692096 result=0
+2026-10-09T07:08:24.147771304Z [hybrid] copy-cache advised bytes=67108864 file_offset=61941800960 result=0
+2026-10-09T07:08:24.241159175Z [hybrid] copy-cache advised bytes=67108864 file_offset=62008909824 result=0
+2026-10-09T07:08:24.338973399Z [hybrid] copy-cache advised bytes=67108864 file_offset=62076018688 result=0
+2026-10-09T07:08:24.430971511Z [hybrid] copy-cache advised bytes=67108864 file_offset=62143127552 result=0
+2026-10-09T07:08:24.521110097Z [hybrid] copy-cache advised bytes=67108864 file_offset=62210236416 result=0
+2026-10-09T07:08:24.521175448Z [v2-upload] completed=62277025792 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:24.645950224Z [hybrid] copy-cache advised bytes=67108864 file_offset=62277345280 result=0
+2026-10-09T07:08:24.767325577Z [hybrid] copy-cache advised bytes=67108864 file_offset=62344454144 result=0
+2026-10-09T07:08:25.301706141Z [hybrid] copy-cache advised bytes=67108864 file_offset=62411563008 result=0
+2026-10-09T07:08:25.414281475Z [hybrid] copy-cache advised bytes=67108864 file_offset=62478671872 result=0
+2026-10-09T07:08:25.507733072Z [hybrid] copy-cache advised bytes=67108864 file_offset=62545780736 result=0
+2026-10-09T07:08:25.611177557Z [hybrid] copy-cache advised bytes=67108864 file_offset=62612889600 result=0
+2026-10-09T07:08:25.706886015Z [hybrid] copy-cache advised bytes=67108864 file_offset=62679998464 result=0
+2026-10-09T07:08:25.821390713Z [hybrid] copy-cache advised bytes=67108864 file_offset=62747107328 result=0
+2026-10-09T07:08:25.919653594Z [hybrid] copy-cache advised bytes=67108864 file_offset=62814216192 result=0
+2026-10-09T07:08:26.012272575Z [hybrid] copy-cache advised bytes=67108864 file_offset=62881325056 result=0
+2026-10-09T07:08:26.106559932Z [hybrid] copy-cache advised bytes=67108864 file_offset=62948433920 result=0
+2026-10-09T07:09:17.997581520Z [hybrid] copy-cache advised bytes=67108864 file_offset=63015542784 result=0
+2026-10-09T07:08:25.885477991Z [hybrid] copy-cache advised bytes=67108864 file_offset=63082651648 result=0
+2026-10-09T07:08:25.983634505Z [hybrid] copy-cache advised bytes=67108864 file_offset=63149760512 result=0
+2026-10-09T07:08:26.095964087Z [hybrid] copy-cache advised bytes=67108864 file_offset=63216869376 result=0
+2026-10-09T07:08:26.247038519Z [hybrid] copy-cache advised bytes=67108864 file_offset=63283978240 result=0
+2026-10-09T07:08:26.247102971Z [v2-upload] completed=63350767616 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:26.355779388Z [hybrid] copy-cache advised bytes=67108864 file_offset=63351087104 result=0
+2026-10-09T07:08:26.450289824Z [hybrid] copy-cache advised bytes=67108864 file_offset=63418195968 result=0
+2026-10-09T07:08:26.540146094Z [hybrid] copy-cache advised bytes=67108864 file_offset=63485304832 result=0
+2026-10-09T07:08:26.629655198Z [hybrid] copy-cache advised bytes=67108864 file_offset=63552413696 result=0
+2026-10-09T07:08:26.723908146Z [hybrid] copy-cache advised bytes=67108864 file_offset=63619522560 result=0
+2026-10-09T07:08:26.819173610Z [hybrid] copy-cache advised bytes=67108864 file_offset=63686631424 result=0
+2026-10-09T07:08:26.916251997Z [hybrid] copy-cache advised bytes=67108864 file_offset=63753740288 result=0
+2026-10-09T07:08:27.008325939Z [hybrid] copy-cache advised bytes=67108864 file_offset=63820849152 result=0
+2026-10-09T07:08:27.098923816Z [hybrid] copy-cache advised bytes=67108864 file_offset=63887958016 result=0
+2026-10-09T07:08:27.200262111Z [hybrid] copy-cache advised bytes=67108864 file_offset=63955066880 result=0
+2026-10-09T07:08:27.290112509Z [hybrid] copy-cache advised bytes=67108864 file_offset=64022175744 result=0
+2026-10-09T07:08:27.383369880Z [hybrid] copy-cache advised bytes=67108864 file_offset=64089284608 result=0
+2026-10-09T07:08:27.479050097Z [hybrid] copy-cache advised bytes=67108864 file_offset=64156393472 result=0
+2026-10-09T07:08:27.561995551Z [hybrid] copy-cache advised bytes=67108864 file_offset=64223502336 result=0
+2026-10-09T07:08:27.644698010Z [hybrid] copy-cache advised bytes=67108864 file_offset=64290611200 result=0
+2026-10-09T07:08:27.721570597Z [hybrid] copy-cache advised bytes=67108864 file_offset=64357720064 result=0
+2026-10-09T07:08:27.721636186Z [v2-upload] completed=64424509440 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:27.815189034Z [hybrid] copy-cache advised bytes=67108864 file_offset=64424828928 result=0
+2026-10-09T07:08:27.917943542Z [hybrid] copy-cache advised bytes=67108864 file_offset=64491937792 result=0
+2026-10-09T07:08:28.017758883Z [hybrid] copy-cache advised bytes=67108864 file_offset=64559046656 result=0
+2026-10-09T07:08:28.110363291Z [hybrid] copy-cache advised bytes=67108864 file_offset=64626155520 result=0
+2026-10-09T07:08:28.210901904Z [hybrid] copy-cache advised bytes=67108864 file_offset=64693264384 result=0
+2026-10-09T07:08:28.291921850Z [hybrid] copy-cache advised bytes=67108864 file_offset=64760373248 result=0
+2026-10-09T07:08:28.372029517Z [hybrid] copy-cache advised bytes=67108864 file_offset=64827482112 result=0
+2026-10-09T07:08:28.455995462Z [hybrid] copy-cache advised bytes=67108864 file_offset=64894590976 result=0
+2026-10-09T07:08:28.555505443Z [hybrid] copy-cache advised bytes=67108864 file_offset=64961699840 result=0
+2026-10-09T07:08:28.654714677Z [hybrid] copy-cache advised bytes=67108864 file_offset=65028808704 result=0
+2026-10-09T07:08:28.746231068Z [hybrid] copy-cache advised bytes=67108864 file_offset=65095917568 result=0
+2026-10-09T07:08:28.829449657Z [hybrid] copy-cache advised bytes=67108864 file_offset=65163026432 result=0
+2026-10-09T07:08:28.907750914Z [hybrid] copy-cache advised bytes=67108864 file_offset=65230135296 result=0
+2026-10-09T07:08:28.984745658Z [hybrid] copy-cache advised bytes=67108864 file_offset=65297244160 result=0
+2026-10-09T07:08:29.063592077Z [hybrid] copy-cache advised bytes=67108864 file_offset=65364353024 result=0
+2026-10-09T07:08:29.142900363Z [hybrid] copy-cache advised bytes=67108864 file_offset=65431461888 result=0
+2026-10-09T07:08:29.143029721Z [v2-upload] completed=65498251264 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:29.228763881Z [hybrid] copy-cache advised bytes=67108864 file_offset=65498570752 result=0
+2026-10-09T07:08:29.306505321Z [hybrid] copy-cache advised bytes=67108864 file_offset=65565679616 result=0
+2026-10-09T07:08:29.419685199Z [hybrid] copy-cache advised bytes=67108864 file_offset=65632788480 result=0
+2026-10-09T07:08:29.545111053Z [hybrid] copy-cache advised bytes=67108864 file_offset=65699897344 result=0
+2026-10-09T07:08:29.645750375Z [hybrid] copy-cache advised bytes=67108864 file_offset=65767006208 result=0
+2026-10-09T07:08:29.741042046Z [hybrid] copy-cache advised bytes=67108864 file_offset=65834115072 result=0
+2026-10-09T07:08:29.831954801Z [hybrid] copy-cache advised bytes=67108864 file_offset=65901223936 result=0
+2026-10-09T07:08:30.071190380Z [hybrid] copy-cache advised bytes=67108864 file_offset=65968332800 result=0
+2026-10-09T07:08:30.645052918Z [hybrid] copy-cache advised bytes=67108864 file_offset=66035441664 result=0
+2026-10-09T07:08:30.726839316Z [hybrid] copy-cache advised bytes=67108864 file_offset=66102550528 result=0
+2026-10-09T07:08:30.804173884Z [hybrid] copy-cache advised bytes=67108864 file_offset=66169659392 result=0
+2026-10-09T07:08:30.890138134Z [hybrid] copy-cache advised bytes=67108864 file_offset=66236768256 result=0
+2026-10-09T07:08:30.984073307Z [hybrid] copy-cache advised bytes=67108864 file_offset=66303877120 result=0
+2026-10-09T07:08:31.090763873Z [hybrid] copy-cache advised bytes=67108864 file_offset=66370985984 result=0
+2026-10-09T07:09:23.011525012Z [hybrid] copy-cache advised bytes=67108864 file_offset=66438094848 result=0
+2026-10-09T07:08:30.911543951Z [hybrid] copy-cache advised bytes=67108864 file_offset=66505203712 result=0
+2026-10-09T07:08:30.911610807Z [v2-upload] completed=66571993088 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:30.995434672Z [hybrid] copy-cache advised bytes=67108864 file_offset=66572312576 result=0
+2026-10-09T07:08:31.077523523Z [hybrid] copy-cache advised bytes=48254976 file_offset=66639421440 result=0
+2026-10-09T07:08:31.077558506Z [v2-upload] completed=66687358944 total=66687358944 chunk_limit=67108864
+2026-10-09T07:08:31.077560901Z [hybrid] device-copy bytes=66687358944 result=0 copied=66687358944
+2026-10-09T07:08:31.077562634Z [preflight] complete phase=1 copied=66687358944 host=0
+2026-10-09T07:08:31.077518940Z checkpoint: pinned 62.11 GiB in 1 range(s) in 112.0 s (0.6 GB/s), 62.11 GiB of payload, MemAvailable was 53.5 GiB
+2026-10-09T07:08:31.077570770Z startup [ 112.0 s] weights pinned: 26485 contiguous 2 MiB blocks free (52970 MiB), 0 compaction stalls during that step (0 failed)
+2026-10-09T07:08:31.077572699Z startup [ 112.0 s] preparing weights
+2026-10-09T07:08:31.191015967Z dmalloc:   1212.500 MiB  (total    1.184 GiB, #1)
+2026-10-09T07:08:31.216293190Z dmalloc:    341.016 MiB  (total    1.517 GiB, #2)
+2026-10-09T07:08:32.017799117Z startup [ 113.0 s] preparing weights, layer 0 of 48
+2026-10-09T07:08:32.630185395Z startup [ 113.6 s] preparing weights, layer 8 of 48
+2026-10-09T07:08:33.061118726Z startup [ 114.0 s] preparing weights, layer 16 of 48
+2026-10-09T07:08:33.641635071Z startup [ 114.6 s] preparing weights, layer 24 of 48
+2026-10-09T07:08:34.151386832Z startup [ 115.1 s] preparing weights, layer 32 of 48
+2026-10-09T07:08:34.584187140Z startup [ 115.5 s] preparing weights, layer 40 of 48
+2026-10-09T07:08:35.057853022Z dmalloc:    272.954 MiB  (total    2.522 GiB, #827)
+2026-10-09T07:08:35.248144438Z startup [ 116.2 s] weights ready; reserving working memory
+2026-10-09T07:08:35.262979479Z dmalloc:    256.000 MiB  (total    2.788 GiB, #846)
+2026-10-09T07:08:35.278025304Z dmalloc:    256.000 MiB  (total    3.038 GiB, #847)
+2026-10-09T07:08:35.472340353Z dmalloc:   1974.058 MiB  (total    4.965 GiB, #848)
+2026-10-09T07:08:35.491759192Z dmalloc:    256.000 MiB  (total    5.215 GiB, #849)
+2026-10-09T07:08:35.501755698Z dmalloc:     96.000 MiB  (total    5.309 GiB, #850)
+2026-10-09T07:08:35.511170958Z dmalloc:    128.000 MiB  (total    5.434 GiB, #851)
+2026-10-09T07:08:35.532181532Z dmalloc:    160.000 MiB  (total    5.630 GiB, #853)
+2026-10-09T07:08:35.573992074Z startup [ 116.5 s] reserving the KV pool, 262144 positions (about 7.2 GiB)
+2026-10-09T07:08:35.604211986Z dmalloc:    256.000 MiB  (total    6.018 GiB, #888)
+2026-10-09T07:08:36.051147444Z dmalloc:    256.000 MiB  (total    6.268 GiB, #889)
+2026-10-09T07:08:36.084423753Z dmalloc:    256.000 MiB  (total    6.543 GiB, #898)
+2026-10-09T07:08:36.110605682Z dmalloc:    256.000 MiB  (total    6.793 GiB, #899)
+2026-10-09T07:08:36.141687686Z dmalloc:    256.000 MiB  (total    7.068 GiB, #908)
+2026-10-09T07:08:36.166929160Z dmalloc:    256.000 MiB  (total    7.318 GiB, #909)
+2026-10-09T07:08:36.198346644Z dmalloc:    256.000 MiB  (total    7.592 GiB, #918)
+2026-10-09T07:09:28.006423190Z dmalloc:    256.000 MiB  (total    7.842 GiB, #919)
+2026-10-09T07:09:28.038008453Z dmalloc:    256.000 MiB  (total    8.117 GiB, #928)
+2026-10-09T07:08:35.853286104Z dmalloc:    256.000 MiB  (total    8.367 GiB, #929)
+2026-10-09T07:08:35.885503578Z dmalloc:    256.000 MiB  (total    8.642 GiB, #938)
+2026-10-09T07:08:35.911145587Z dmalloc:    256.000 MiB  (total    8.892 GiB, #939)
+2026-10-09T07:08:35.943193920Z dmalloc:    256.000 MiB  (total    9.166 GiB, #948)
+2026-10-09T07:08:35.968669133Z dmalloc:    256.000 MiB  (total    9.416 GiB, #949)
+2026-10-09T07:08:36.002754213Z dmalloc:    256.000 MiB  (total    9.691 GiB, #958)
+2026-10-09T07:08:36.028706245Z dmalloc:    256.000 MiB  (total    9.941 GiB, #959)
+2026-10-09T07:08:36.060824282Z dmalloc:    256.000 MiB  (total   10.216 GiB, #968)
+2026-10-09T07:08:36.087296897Z dmalloc:    256.000 MiB  (total   10.466 GiB, #969)
+2026-10-09T07:08:36.122549003Z dmalloc:    256.000 MiB  (total   10.740 GiB, #978)
+2026-10-09T07:08:36.151421212Z dmalloc:    256.000 MiB  (total   10.990 GiB, #979)
+2026-10-09T07:08:36.186991605Z dmalloc:    256.000 MiB  (total   11.265 GiB, #988)
+2026-10-09T07:08:36.216746954Z dmalloc:    256.000 MiB  (total   11.515 GiB, #989)
+2026-10-09T07:08:36.249458707Z dmalloc:    256.000 MiB  (total   11.790 GiB, #998)
+2026-10-09T07:08:36.277109804Z dmalloc:    256.000 MiB  (total   12.040 GiB, #999)
+2026-10-09T07:08:36.306374694Z dmalloc:    256.000 MiB  (total   12.305 GiB, #1002)
+2026-10-09T07:08:36.332000024Z dmalloc:    256.000 MiB  (total   12.555 GiB, #1003)
+2026-10-09T07:08:36.647327664Z halogen: NOTE only 0.0 GiB of host memory is left after the weights and the KV pool. The lookup table is read from disk through the page cache and is never held, so this is the cache it gets: under about 10 GiB its rows page in from disk on every long prompt, a prefill takes minutes instead of seconds, and the watchdog can read that stall as a wedge. Lower HALOGEN_KV_POOL_POSITIONS (each 262,144 positions is about 7.2 GiB) or HALOGEN_MAX_TOK, or stop other workloads on this host.
+2026-10-09T07:08:36.647256441Z startup [ 118.0 s] KV pool reserved: 26079 contiguous 2 MiB blocks free (52158 MiB), 0 compaction stalls during that step (0 failed)
+2026-10-09T07:08:36.647302496Z startup [ 118.0 s] model ready
+2026-10-09T07:08:36.647305335Z startup [ 118.0 s] memory: 62.1 GiB of weights locked in RAM, 7.2 GiB of KV pool, 5.8 GiB of working memory, 75.2 GiB in all
+2026-10-09T07:08:36.647307220Z startup [ 118.0 s] memory: the model's 47.7 GiB lookup table is NOT held in RAM. It is read from disk through the file cache as each request needs it, which is why this server holds less than the checkpoint is large
+2026-10-09T07:08:36.647310828Z startup [ 118.0 s] host memory left for everything else: 26079 contiguous 2 MiB blocks (0.0 GiB total, most of it not contiguous)
+2026-10-09T07:08:36.647312583Z startup [ 118.0 s] free(1) and MemAvailable will report about 53.5 GiB instead: the kernel counts this server's locked weights as reclaimable file cache, and they cannot be reclaimed
+2026-10-09T07:08:36.647314338Z startup [ 118.0 s] opening the socket
+2026-10-09T07:08:36.647316006Z flash_serve: a prompt admitted beside active streams prefills in pieces of 8192 tokens with a decode tick between them (HALOGEN_ADMIT_CHUNK; 0 = the engine's own chunk, which keeps the admitted prompt bitwise its alone self; -1 = the whole prompt at once)
+2026-10-09T07:08:36.647317967Z flash_serve: listening on 127.0.0.1:8730, 1 slots over ONE 262144-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 8192, BATCHED greedy or sampled; MTP depth-2 selectable (drafter 1, speculates while alone)
+2026-10-09T07:08:37.348292359Z halogen: engine listening after 118s
+2026-10-09T07:08:37.349312042Z halogen: engine watchdog on, 120s of silence takes the container down
+2026-10-09T07:08:39.087557533Z serve_api: chat template /models/tokenizer/chat_template.jinja sha256 c3cf9e34abf4f9e3, thinking control probe passed
+2026-10-09T07:08:39.168030189Z /halogen/tools/serve_api.py:4274: DeprecationWarning:
+2026-10-09T07:08:39.168103882Z         on_event is deprecated, use lifespan event handlers instead.
+2026-10-09T07:08:39.168110935Z
+2026-10-09T07:08:39.168113296Z         Read more about it in the
+2026-10-09T07:08:39.168115019Z         [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+2026-10-09T07:08:39.168116763Z
+2026-10-09T07:08:39.168118291Z   @app.on_event("startup")
+2026-10-09T07:08:39.185217611Z INFO:     Started server process [238]
+2026-10-09T07:08:39.185260849Z INFO:     Waiting for application startup.
+2026-10-09T07:08:39.830043750Z flash_serve: grammar: vocabulary of 248077 tokens (248044 plain, longest 128 B) in 105 ms
+2026-10-09T07:08:39.830410922Z serve_api: engine at 127.0.0.1:8730, listening on 0.0.0.0:8731
+2026-10-09T07:08:39.830454237Z serve_api: request defaults HALOGEN_REASONING_EFFORT=medium, HALOGEN_ENABLE_THINKING=True, HALOGEN_MAX_THINKING_TOKENS=2048 (a field the request sends wins; temperature 0 in a request is greedy and takes no sampling default)
+2026-10-09T07:08:39.830460455Z serve_api: a sampled request that omits top_k / top_p gets top_k 20, top_p 0.95 (HALOGEN_TOP_K / HALOGEN_TOP_P where set, else the model's generation_config.json)
+2026-10-09T07:08:39.830464876Z serve_api: version 0.17.3, engine version 0.17.3
+2026-10-09T07:08:39.830535725Z INFO:     Application startup complete.
+2026-10-09T07:08:39.830996977Z INFO:     Uvicorn running on http://0.0.0.0:8731 (Press CTRL+C to quit)
+2026-10-09T07:08:40.599993168Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.541}
+2026-10-09T07:08:40.787051653Z [api] {"method": "GET", "path": "/v1/models", "status": 401, "seconds": 0.0}
+2026-10-09T07:08:41.098354041Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.499}
+2026-10-09T07:08:41.106353096Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:08:41.137867161Z flash_serve: req 1 generated 2 tokens, 0.0 s
+2026-10-09T07:08:41.176921618Z serve_api: batch 3 tok in 0.08s = 35.80 t/s | prompt 25, prefill 0.70s (25 new) | detok 108us/tok | pool 256/262144 0% | think off
+2026-10-09T07:08:41.178275287Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 0.79}
+2026-10-09T07:08:41.493421204Z flash_serve: req 2 generated 2 tokens, 0.0 s
+2026-10-09T07:08:41.533285830Z serve_api: batch 3 tok in 0.08s = 36.99 t/s | prompt 25, prefill 0.23s (25 new) | detok 569us/tok | pool 256/262144 0% | think off
+2026-10-09T07:08:41.534588454Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 0.318}
+2026-10-09T07:08:43.895212071Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.03}
+2026-10-09T07:08:46.693156095Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.031}
+2026-10-09T07:08:49.832932822Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.967}
+2026-10-09T07:08:50.834549759Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.003}
+2026-10-09T07:08:52.616129323Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.006}
+2026-10-09T07:08:55.823284100Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.016}
+2026-10-09T07:08:58.591931390Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.025}
+2026-10-09T07:09:01.352245705Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.003}
+2026-10-09T07:09:04.547642197Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.027}
+2026-10-09T07:09:07.337488833Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.041}
+2026-10-09T07:09:10.543690767Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.024}
+2026-10-09T07:09:13.306982548Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.004}
+2026-10-09T07:09:16.064339028Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.008}
+2026-10-09T07:09:19.222322947Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.004}
+2026-10-09T07:09:22.001127588Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.004}
+2026-10-09T07:09:25.209778398Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.025}
+2026-10-09T07:09:28.010273095Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.036}
+2026-10-09T07:09:31.195271602Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.009}
+2026-10-09T07:09:33.387606045Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.437}
+2026-10-09T07:09:36.144369034Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.012}
+2026-10-09T07:09:38.432648631Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.087}
+2026-10-09T07:09:39.434195456Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.003}
+2026-10-09T07:09:41.213080638Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.01}
+2026-10-09T07:09:44.381065366Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.004}
+2026-10-09T07:09:47.134444433Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.004}
+2026-10-09T07:09:50.306704841Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.003}
+2026-10-09T07:09:53.060334817Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.003}
+2026-10-09T07:09:56.247030871Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.003}
+2026-10-09T07:09:59.056963266Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.063}
+2026-10-09T07:10:01.227514808Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.713}
+2026-10-09T07:10:53.154340341Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.126}
+2026-10-09T07:10:04.113068895Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.004}
+2026-10-09T07:10:06.088024943Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.218}
+2026-10-09T07:10:07.122275865Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.036}
+2026-10-09T07:10:08.552645860Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.28}
+2026-10-09T07:10:09.201116910Z flash_serve: req 3 generated 2 tokens, 0.1 s
+2026-10-09T07:10:10.779118240Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.042}
+2026-10-09T07:10:12.611674993Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.063}
+2026-10-09T07:10:13.191412100Z serve_api: mtp 128 tok in 4.50s = 28.44 t/s | 54 rounds, commit 2.35/round | prompt 585, prefill 1.44s (585 new) | detok 43us/tok | pld 1 rounds, 1.00 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:10:13.192646396Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.948}
+2026-10-09T07:10:13.228968538Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:10:15.134367235Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.344}
+2026-10-09T07:10:15.601500599Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:10:17.139298950Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.241}
+2026-10-09T07:10:17.332215286Z flash_serve: req 4 generated 2 tokens, 0.1 s
+2026-10-09T07:10:19.404134167Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.052}
+2026-10-09T07:10:21.399457657Z serve_api: mtp 128 tok in 4.14s = 30.90 t/s | 49 rounds, commit 2.57/round | prompt 703, prefill 1.62s (703 new) | detok 42us/tok | 1 tok with the head off | pld 10 rounds, 2.50 acc/round | pool 1024/262144 0% | think off
+2026-10-09T07:10:21.400218713Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.776}
+2026-10-09T07:10:21.112175338Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.192}
+2026-10-09T07:10:22.160627820Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.05}
+2026-10-09T07:10:24.359478447Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.794}
+2026-10-09T07:10:25.188816934Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.83}
+2026-10-09T07:10:26.106134285Z flash_serve: req 5 generated 2 tokens, 0.1 s
+2026-10-09T07:10:26.971166903Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.067}
+2026-10-09T07:10:29.215350672Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.035}
+2026-10-09T07:10:29.860143845Z serve_api: mtp 128 tok in 3.83s = 33.42 t/s | 49 rounds, commit 2.57/round | prompt 734, prefill 1.61s (734 new) | detok 44us/tok | 1 tok with the head off | pld 5 rounds, 2.20 acc/round | pool 1024/262144 0% | think off
+2026-10-09T07:10:29.861307941Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.495}
+2026-10-09T07:10:29.887811947Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:10:31.814170161Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.891}
+2026-10-09T07:10:32.814665149Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.002}
+2026-10-09T07:10:34.095163314Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.1}
+2026-10-09T07:10:34.756888246Z flash_serve: req 6 generated 2 tokens, 0.1 s
+2026-10-09T07:10:36.351592979Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.068}
+2026-10-09T07:10:38.193284995Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.073}
+2026-10-09T07:10:38.677080526Z serve_api: mtp 128 tok in 4.41s = 29.02 t/s | 53 rounds, commit 2.38/round | prompt 669, prefill 1.38s (669 new) | detok 45us/tok | 1 tok with the head off | pld 4 rounds, 2.00 acc/round | pool 1024/262144 0% | think off
+2026-10-09T07:10:38.678021001Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.799}
+2026-10-09T07:10:38.685192630Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:10:41.100748619Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.73}
+2026-10-09T07:10:41.706422242Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.026}
+2026-10-09T07:10:42.989060740Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.126}
+2026-10-09T07:10:43.676256063Z flash_serve: req 7 generated 2 tokens, 0.1 s
+2026-10-09T07:10:45.201548827Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.041}
+2026-10-09T07:10:46.968745223Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.004}
+2026-10-09T07:10:47.016003299Z serve_api: mtp 128 tok in 3.81s = 33.56 t/s | 48 rounds, commit 2.62/round | prompt 619, prefill 1.42s (619 new) | detok 45us/tok | 1 tok with the head off | pld 2 rounds, 2.00 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:10:47.016983487Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.247}
+2026-10-09T07:10:47.048896690Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:10:49.468599577Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.358}
+2026-10-09T07:10:50.543455210Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.076}
+2026-10-09T07:10:51.404169588Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.186}
+2026-10-09T07:10:52.058031605Z flash_serve: req 8 generated 2 tokens, 0.1 s
+2026-10-09T07:10:53.673710109Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.105}
+2026-10-09T07:10:55.885088033Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.036}
+2026-10-09T07:10:56.178290859Z serve_api: mtp 128 tok in 4.20s = 30.45 t/s | 52 rounds, commit 2.44/round | prompt 646, prefill 1.38s (646 new) | detok 49us/tok | pld 4 rounds, 2.00 acc/round | pool 1024/262144 0% | think off
+2026-10-09T07:10:56.179193211Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.589}
+2026-10-09T07:10:56.187167948Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:10:58.190470812Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.55}
+2026-10-09T07:10:59.207876329Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.018}
+2026-10-09T07:11:00.478628287Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.108}
+2026-10-09T07:11:01.124165362Z flash_serve: req 9 generated 2 tokens, 0.1 s
+2026-10-09T07:11:02.276979050Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.027}
+2026-10-09T07:11:02.911924597Z serve_api: mtp 128 tok in 2.25s = 56.84 t/s | 36 rounds, commit 3.53/round | prompt 669, prefill 1.39s (669 new) | detok 42us/tok | pld 26 rounds, 2.81 acc/round | pool 1024/262144 0% | think off
+2026-10-09T07:11:02.913349199Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 3.654}
+2026-10-09T07:11:02.933970170Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:11:05.215770706Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.751}
+2026-10-09T07:11:06.226073876Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.012}
+2026-10-09T07:11:07.023301400Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.049}
+2026-10-09T07:11:07.614966853Z flash_serve: req 10 generated 2 tokens, 0.1 s
+2026-10-09T07:11:09.254229360Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.061}
+2026-10-09T07:12:03.283851395Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.041}
+2026-10-09T07:11:11.261167323Z serve_api: mtp 128 tok in 4.14s = 30.92 t/s | 52 rounds, commit 2.42/round | prompt 612, prefill 1.20s (612 new) | detok 44us/tok | 1 tok with the head off | pld 2 rounds, 1.50 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:11:11.262238829Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.346}
+2026-10-09T07:11:11.290721067Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:11:13.668094501Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.421}
+2026-10-09T07:11:14.679525751Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.012}
+2026-10-09T07:11:16.091264720Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.236}
+2026-10-09T07:11:16.308173717Z flash_serve: req 11 generated 2 tokens, 0.1 s
+2026-10-09T07:11:17.925461308Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.088}
+2026-10-09T07:11:20.208087630Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.078}
+2026-10-09T07:11:20.528656887Z serve_api: mtp 128 tok in 4.29s = 29.82 t/s | 56 rounds, commit 2.27/round | prompt 615, prefill 1.41s (615 new) | detok 49us/tok | pld 3 rounds, 2.33 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:11:20.530277274Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.762}
+2026-10-09T07:11:20.548831656Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:11:22.586136336Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.643}
+2026-10-09T07:11:23.587352075Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.003}
+2026-10-09T07:11:24.806947494Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.007}
+2026-10-09T07:11:25.491959274Z flash_serve: req 12 generated 2 tokens, 0.1 s
+2026-10-09T07:11:26.540977684Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.028}
+2026-10-09T07:11:28.776728824Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.008}
+2026-10-09T07:11:28.911088749Z serve_api: mtp 128 tok in 3.98s = 32.20 t/s | 52 rounds, commit 2.44/round | prompt 634, prefill 1.37s (634 new) | detok 46us/tok | pld 4 rounds, 2.50 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:11:28.911930446Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.349}
+2026-10-09T07:11:28.940287613Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:11:31.292692923Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.298}
+2026-10-09T07:11:31.818859727Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.008}
+2026-10-09T07:11:33.088977163Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.078}
+2026-10-09T07:11:33.774353892Z flash_serve: req 13 generated 2 tokens, 0.1 s
+2026-10-09T07:11:35.322025590Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.012}
+2026-10-09T07:11:37.033478442Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.008}
+2026-10-09T07:11:37.482300892Z serve_api: mtp 128 tok in 4.28s = 29.93 t/s | 53 rounds, commit 2.40/round | prompt 606, prefill 1.40s (606 new) | detok 52us/tok | pld 3 rounds, 1.33 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:11:37.483106179Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.681}
+2026-10-09T07:11:37.490741312Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:11:39.897770850Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.644}
+2026-10-09T07:11:40.943135822Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.047}
+2026-10-09T07:11:41.793785113Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.174}
+2026-10-09T07:11:42.474090410Z flash_serve: req 14 generated 2 tokens, 0.1 s
+2026-10-09T07:11:44.061207311Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.058}
+2026-10-09T07:11:44.890330687Z serve_api: mtp 128 tok in 2.48s = 51.53 t/s | 37 rounds, commit 3.41/round | prompt 626, prefill 1.36s (626 new) | detok 54us/tok | 1 tok with the head off | pld 23 rounds, 2.83 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:11:44.891388853Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 3.855}
+2026-10-09T07:11:44.898714854Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:11:46.772757503Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.004}
+2026-10-09T07:11:46.825648563Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:11:49.005139602Z flash_serve: req 15 generated 2 tokens, 0.1 s
+2026-10-09T07:11:49.009168412Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.027}
+2026-10-09T07:11:51.354190210Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.142}
+2026-10-09T07:11:52.107608866Z serve_api: mtp 128 tok in 3.68s = 34.80 t/s | 49 rounds, commit 2.59/round | prompt 635, prefill 1.47s (635 new) | detok 44us/tok | pld 4 rounds, 1.50 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:11:52.108445682Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.16}
+2026-10-09T07:11:52.531656927Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.406}
+2026-10-09T07:11:53.057392178Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:11:55.259327748Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.214}
+2026-10-09T07:11:56.056827804Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.799}
+2026-10-09T07:11:56.765558873Z flash_serve: req 16 generated 2 tokens, 0.1 s
+2026-10-09T07:11:57.773521852Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.033}
+2026-10-09T07:12:00.035468329Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.031}
+2026-10-09T07:12:01.265996584Z serve_api: mtp 128 tok in 4.58s = 27.92 t/s | 56 rounds, commit 2.27/round | prompt 666, prefill 1.39s (666 new) | detok 50us/tok | pool 1024/262144 0% | think off
+2026-10-09T07:12:01.266939971Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.983}
+2026-10-09T07:12:01.755111412Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.976}
+2026-10-09T07:12:02.806916030Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.053}
+2026-10-09T07:12:05.005666315Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.785}
+2026-10-09T07:12:05.756172308Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.752}
+2026-10-09T07:12:06.291344524Z flash_serve: req 17 generated 2 tokens, 0.1 s
+2026-10-09T07:12:07.533574483Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.073}
+2026-10-09T07:12:09.794258778Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.053}
+2026-10-09T07:12:10.085427428Z serve_api: mtp 128 tok in 3.85s = 33.29 t/s | 48 rounds, commit 2.62/round | prompt 550, prefill 1.25s (550 new) | detok 57us/tok | 1 tok with the head off | pld 5 rounds, 2.40 acc/round | pool 768/262144 0% | think off
+2026-10-09T07:12:10.086315234Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 5.102}
+2026-10-09T07:12:10.093424475Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:12:12.037151187Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.538}
+2026-10-09T07:12:13.081669609Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.046}
+2026-10-09T07:12:14.290151722Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.041}
+2026-10-09T07:12:14.843919596Z flash_serve: req 18 generated 2 tokens, 0.1 s
+2026-10-09T07:12:16.541060097Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.033}
+2026-10-09T07:12:18.285693892Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.024}
+2026-10-09T07:12:19.449118717Z serve_api: mtp 128 tok in 5.16s = 24.82 t/s | 62 rounds, commit 2.05/round | prompt 612, prefill 1.19s (612 new) | detok 48us/tok | pool 768/262144 0% | think off
+2026-10-09T07:12:19.450200471Z [api] {"method": "POST", "path": "/v1/chat/completions", "status": 200, "seconds": 6.363}
+2026-10-09T07:12:20.357926009Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.885}
+2026-10-09T07:12:20.512814870Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:12:23.260030286Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.047}
+2026-10-09T07:12:26.521043828Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.045}
+2026-10-09T07:12:29.236990749Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.006}
+2026-10-09T07:12:31.963024682Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.015}
+2026-10-09T07:12:35.227272790Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.039}
+2026-10-09T07:12:37.993432236Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.05}
+2026-10-09T07:12:41.194306829Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.011}
+2026-10-09T07:12:43.907746014Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.019}
+2026-10-09T07:12:44.080354683Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.001}
+2026-10-09T07:12:46.337053758Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.728}
+2026-10-09T07:12:47.337954663Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.002}
+2026-10-09T07:12:49.584403793Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.037}
+2026-10-09T07:12:52.344317604Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.052}
+2026-10-09T07:12:55.540576079Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.017}
+2026-10-09T07:12:58.319092468Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.029}
+2026-10-09T07:13:01.487361569Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.003}
+2026-10-09T07:13:03.906443607Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 0.685}
+2026-10-09T07:13:04.976992551Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.072}
+2026-10-09T07:13:06.687878099Z [api] {"method": "GET", "path": "/health", "status": 200, "seconds": 1.034}
+2026-10-09T07:13:08.732883010Z flash_serve: shutting down
+2026-10-09T07:13:08.732949000Z halogen: a component exited (rc=143); shutting down
+2026-10-09T07:13:08.795890810Z INFO:     Shutting down
+2026-10-09T07:13:08.799747390Z [preflight] reject phase=1 next=1 copied=66687358944 host=0 reason=unregister-invalidates-plan
+2026-10-09T07:13:08.901547973Z INFO:     Waiting for application shutdown.
+2026-10-09T07:13:08.901630923Z INFO:     Application shutdown complete.
+2026-10-09T07:13:08.901646287Z INFO:     Finished server process [238]
+2026-10-09T07:13:09.770128628Z halogen: GTT in use after the engine exited: ? GiB (0s after)

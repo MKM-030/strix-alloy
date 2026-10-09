@@ -1,0 +1,71 @@
+{
+  "request_id": "train-02-python",
+  "passed": true,
+  "capture_only": true,
+  "performance_cohort": false,
+  "NPU_executed": false,
+  "prompt_tokens": 703,
+  "completion_tokens": 128,
+  "host_request_seconds": 5.25688140001148,
+  "request_started_utc": "2026-10-09T07:11:07.863732+00:00",
+  "request_finished_utc": "2026-10-09T07:11:13.119227+00:00",
+  "memory_minimum_bytes": {
+    "available_bytes": 25037033472,
+    "commit_headroom_bytes": 118989918208
+  },
+  "metrics": {
+    "timings": {
+      "prompt_n": 703,
+      "predicted_n": 128,
+      "prompt_ms": 1623.5,
+      "predicted_ms": 4143.0,
+      "prompt_per_second": 433.015,
+      "predicted_per_second": 30.895,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "disk_restore_ms": 0.0,
+      "draft_n": 108,
+      "draft_n_accepted": 77
+    },
+    "usage": {
+      "prompt_tokens": 703,
+      "completion_tokens": 128,
+      "total_tokens": 831,
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "finish_reason": "length",
+    "output_sha256": "2b8d28bbd6f803d21cc8035c95fd2d6a61dcac19a04ccc5820eeb2b98c032194",
+    "drafted": 108,
+    "accepted": 77,
+    "acceptance": 0.7129629629629629
+  },
+  "native_log_before_bytes": 131927,
+  "native_log_after_bytes": 132704,
+  "native_log_wire_ids": [
+    4
+  ],
+  "journal_before_bytes": 57472,
+  "journal_after_bytes": 113792,
+  "birth": {
+    "kind": 1,
+    "flags": 0,
+    "seq": 113,
+    "birth": 2,
+    "cookie": 1,
+    "epoch": 5,
+    "round": 0,
+    "wire_id": 4
+  },
+  "retire": {
+    "kind": 4,
+    "flags": 0,
+    "seq": 222,
+    "birth": 2,
+    "cookie": 1,
+    "epoch": 5,
+    "round": 53,
+    "wire_id": 4
+  }
+}

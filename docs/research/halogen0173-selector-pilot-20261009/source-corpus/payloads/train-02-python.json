@@ -1,0 +1,20 @@
+{
+  "cache_prompt": false,
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "drafter": "mtp",
+  "enable_thinking": false,
+  "max_tokens": 128,
+  "messages": [
+    {
+      "content": "Review this Python routine used by a small warehouse to import daily shipment records. It runs once for each uploaded CSV file. The file includes a header, and the caller passes a text stream opened with UTF-8 and newline=''. A shipment has a customer reference, a positive item count, a destination, and a dispatch date. Warehouse staff sometimes leave optional notes empty. The same customer reference can appear in several rows because one customer can receive multiple parcels. Each parcel nevertheless has a distinct parcel_id supplied by the sender.\n\n```python\nimport csv\nfrom datetime import datetime\n\ndef import_shipments(stream, known_parcels, today):\n    rows = csv.DictReader(stream)\n    shipments = []\n    errors = []\n    for index, row in enumerate(rows):\n        try:\n            parcel_id = row['parcel_id'].strip()\n            customer = row['customer'].strip()\n            count = int(row['items'])\n            destination = row['destination'].strip()\n            dispatch = datetime.strptime(row['dispatch_date'], '%Y-%m-%d')\n            if parcel_id in known_parcels:\n                errors.append((index, 'already imported'))\n                continue\n            if count == 0:\n                errors.append((index, 'empty parcel'))\n                continue\n            if dispatch < today:\n                errors.append((index, 'past date'))\n                continue\n            shipments.append({\n                'parcel_id': parcel_id,\n                'customer': customer,\n                'items': count,\n                'destination': destination,\n                'dispatch_date': dispatch,\n                'note': row['note'].strip(),\n            })\n        except ValueError as error:\n            errors.append((index, str(error)))\n    known_parcels.update(shipment['parcel_id'] for shipment in shipments)\n    return shipments, errors\n```\n\nThe caller provides today as a datetime.date, not a datetime.datetime. Dates earlier than today are invalid, but today's date is allowed. Blank parcel IDs, blank customer names, and blank destinations are invalid. Negative item counts are invalid as well. The function should reject duplicate parcel IDs within the uploaded file, in addition to IDs already present in known_parcels. CSV row numbers in error messages must match what staff see in a spreadsheet: the header is row 1, so the first data row is row 2. An invalid row should not prevent valid rows later in the same file from being returned.\n\nA missing required column should produce one clear file-level error before processing rows. An extra column is allowed and ignored. The note column is optional, but if it is absent the resulting note should be an empty string. Individual fields may also be None when a malformed row has fewer cells than the header. Such a row should become an error instead of causing an uncaught exception. Do not mutate known_parcels: the caller updates persistent state only after the returned shipments have passed a separate review. The existing update at the end can mark records imported even when that later review fails.\n\nThe team is not requesting a full rewrite or a database design. They need the two most serious correctness problems explained and a small corrected loop outline. Focus on behavior visible from the code and requirements. Include one example input that demonstrates a bug, and avoid assuming that the stream can be reread.\n",
+      "role": "user"
+    }
+  ],
+  "model": "halogen-v2",
+  "reasoning_effort": "none",
+  "seed": 1,
+  "stream": false,
+  "temperature": 0
+}

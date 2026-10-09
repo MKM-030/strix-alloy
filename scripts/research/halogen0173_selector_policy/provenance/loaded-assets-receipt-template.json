@@ -1,0 +1,63 @@
+{
+  "schema": "halogen0173.selector-loaded-assets.v1",
+  "status": "template-not-observed",
+  "session_nonce": null,
+  "controller_run_id": null,
+  "backend_run_id": null,
+  "container_id": null,
+  "frontend_process_identity": null,
+  "native_process_identity": null,
+  "manifest": null,
+  "profile": null,
+  "runtime": {
+    "sha256": "af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7",
+    "startup_receipt": null
+  },
+  "checkpoint": {
+    "container_path": "/models/qwen38-flash-next-v2.hgn",
+    "source_path": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+    "bytes": 66687678432,
+    "complete_file_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "integrity_receipt": null,
+    "identity_before": null,
+    "identity_after": null,
+    "loaded_path_evidence": null
+  },
+  "ngram": {
+    "container_path": "/ngram-w4b.hgn",
+    "source_path": "/mnt/c/AI/models/halogen-flashnext/qwen38-flash-next-w4b.hgn",
+    "bytes": 124068083904,
+    "complete_file_sha256": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6",
+    "integrity_receipt": null,
+    "identity_before": null,
+    "identity_after": null,
+    "loaded_path_evidence": null
+  },
+  "frontend_tokenizer": {
+    "container_directory": "/models/tokenizer",
+    "source_directory": "/home/revn/halogen-models-native/tokenizer",
+    "files": [],
+    "asset_set_sha256": null,
+    "asset_set_hash_rule": "SHA256 of UTF8 json.dumps(sorted file rows containing path,bytes,sha256; sort_keys=True,separators=(',',':')))",
+    "identity_before": null,
+    "identity_after": null,
+    "loaded_directory_evidence": null,
+    "loader_api_source": null,
+    "loader_library_versions": null,
+    "tokenization_receipt": null
+  },
+  "fixed_engine_policy": {
+    "neural_depth": 2,
+    "pld": "3,3",
+    "adaptive": null,
+    "manifest_environment": null,
+    "begin_depth_low_values": [],
+    "begin_depth_high_values": [],
+    "begin_adaptive_values": []
+  },
+  "limits": {
+    "complete_hash_receipts_do_not_attest_inprocess_gpu_bytes": true,
+    "checkpoint_hash_is_not_a_standalone_tokenizer_hash": true,
+    "standalone_tokenizer_json_hash_does_not_cover_template_or_added_token_config": true
+  }
+}

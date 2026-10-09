@@ -1,0 +1,20 @@
+{
+  "cache_prompt": false,
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "drafter": "mtp",
+  "enable_thinking": false,
+  "max_tokens": 128,
+  "messages": [
+    {
+      "content": "A housing association is comparing two ways to detect leaking taps in a block of flats. It has hourly readings from the building's main water meter, but it has no meters for individual flats. There are 36 occupied flats and four currently vacant flats. A laundry room in the basement uses the same main supply. The association wants to identify unusual consumption patterns so that staff can investigate, while avoiding claims about a particular resident without evidence.\n\nDuring a normal week, total consumption averaged 12.6 cubic metres per day. Between 02:00 and 04:00, the median hourly flow was 0.08 cubic metres. Last week the daily average rose to 16.2 cubic metres and the median overnight flow rose to 0.19. The weather was similar, but the laundry room's opening hours were extended from 20:00 to midnight. A contractor also cleaned the stairwells on two mornings and used the building's water. No one recorded the quantity used for cleaning.\n\nApproach A raises an alert whenever an hourly reading exceeds 0.7 cubic metres. Approach B raises an alert after six consecutive hours exceed that hour's median from the previous four weeks by at least 0.08 cubic metres. Staff tested both on a month containing three known incidents. One was a continuously running toilet in a vacant flat. One was a burst hose in the laundry room that ran for forty minutes. The third was an unusually large but legitimate cleaning operation. Approach A found the hose event and alerted during the cleaning. Approach B found the running toilet and also alerted during a holiday weekend when more residents stayed home.\n\nThe association does not yet know how many leaks went unnoticed, so neither test estimates sensitivity accurately. It also does not know the cost of each false alert. A member of the board wants to select the approach with fewer alerts, but that would ignore incidents that each approach misses. The caretaker can investigate about three alerts a week without delaying ordinary work. An alert should state the building-level pattern and relevant times, not name a suspected flat. Investigation may include checking the laundry room, vacant flats, and visible communal pipes before contacting residents.\n\nA vendor has offered to install individual meters, but the association has not requested a quote and the board is not deciding that purchase now. Its immediate choice is how to run a six-week pilot using the existing meter. The pilot can record the alert rule, time, investigator effort, finding, and whether a practical repair was made. Staff can also note unusual communal usage in a shared log. The board would like a recommendation that explains why a combination of rules might be useful, but does not claim the combination has already been validated.\n\nRecommend a practical pilot and three measurements to collect. Explain what the existing evidence says about abrupt and persistent events, and how the laundry-hours change affects interpretation. Keep the recommendation cautious about attribution to individual residents while remaining concrete.\n",
+      "role": "user"
+    }
+  ],
+  "model": "halogen-v2",
+  "reasoning_effort": "none",
+  "seed": 1,
+  "stream": false,
+  "temperature": 0
+}

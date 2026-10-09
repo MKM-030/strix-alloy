@@ -1,0 +1,71 @@
+{
+  "request_id": "train-07-typescript",
+  "passed": true,
+  "capture_only": true,
+  "performance_cohort": false,
+  "NPU_executed": false,
+  "prompt_tokens": 669,
+  "completion_tokens": 128,
+  "host_request_seconds": 3.38029080000706,
+  "request_started_utc": "2026-10-09T07:11:51.614650+00:00",
+  "request_finished_utc": "2026-10-09T07:11:54.994139+00:00",
+  "memory_minimum_bytes": {
+    "available_bytes": 24812396544,
+    "commit_headroom_bytes": 118807089152
+  },
+  "metrics": {
+    "timings": {
+      "prompt_n": 669,
+      "predicted_n": 128,
+      "prompt_ms": 1392.0,
+      "predicted_ms": 2251.8,
+      "prompt_per_second": 480.603,
+      "predicted_per_second": 56.843,
+      "cache_n": 0,
+      "disk_restore_n": 0,
+      "disk_restore_ms": 0.0,
+      "draft_n": 98,
+      "draft_n_accepted": 91
+    },
+    "usage": {
+      "prompt_tokens": 669,
+      "completion_tokens": 128,
+      "total_tokens": 797,
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "finish_reason": "length",
+    "output_sha256": "ec4e3cb6111cd3181b93b62061feeeb87596014298eb06151085d6857d29742c",
+    "drafted": 98,
+    "accepted": 91,
+    "acceptance": 0.9285714285714286
+  },
+  "native_log_before_bytes": 137287,
+  "native_log_after_bytes": 138038,
+  "native_log_wire_ids": [
+    9
+  ],
+  "journal_before_bytes": 346240,
+  "journal_after_bytes": 389248,
+  "birth": {
+    "kind": 1,
+    "flags": 0,
+    "seq": 677,
+    "birth": 7,
+    "cookie": 1,
+    "epoch": 25,
+    "round": 0,
+    "wire_id": 9
+  },
+  "retire": {
+    "kind": 4,
+    "flags": 0,
+    "seq": 760,
+    "birth": 7,
+    "cookie": 1,
+    "epoch": 25,
+    "round": 40,
+    "wire_id": 9
+  }
+}

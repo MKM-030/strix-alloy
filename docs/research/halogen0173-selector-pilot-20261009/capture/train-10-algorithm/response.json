@@ -1,0 +1,37 @@
+{
+  "id": "chatcmpl-9762dab5a1514d5a9994b22e",
+  "created": 1791529884,
+  "model": "halogen-qwen3.8-flash-next",
+  "object": "chat.completion",
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "length",
+      "message": {
+        "role": "assistant",
+        "content": "```python\ndef merge_occupied(intervals):\n    \"\"\"\n    Merge occupied time intervals, returning a new list of merged intervals.\n    \n    Args:\n        intervals: A list of pairs [start, end) representing occupied time slots.\n        \n    Returns:\n        A new list of merged intervals as two-element lists, sorted by start.\n        \n    Raises:\n        ValueError: If any interval is invalid (wrong length, non-integer types,\n                    booleans, or out-of-range values).\n    \"\"\"\n    # Validate all intervals first before any mutation or processing\n    for interval in intervals"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 634,
+    "completion_tokens": 128,
+    "total_tokens": 762,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  },
+  "timings": {
+    "prompt_n": 634,
+    "predicted_n": 128,
+    "prompt_ms": 1365.2,
+    "predicted_ms": 3975.6,
+    "prompt_per_second": 464.401,
+    "predicted_per_second": 32.196,
+    "cache_n": 0,
+    "disk_restore_n": 0,
+    "disk_restore_ms": 0.0,
+    "draft_n": 107,
+    "draft_n_accepted": 75
+  }
+}

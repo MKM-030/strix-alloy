@@ -1,0 +1,20 @@
+{
+  "cache_prompt": false,
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "drafter": "mtp",
+  "enable_thinking": false,
+  "max_tokens": 128,
+  "messages": [
+    {
+      "content": "A community equipment rental service needs a daily report. Its PostgreSQL database has the following tables. All timestamps use UTC. A rental begins when equipment is collected and ends when it is returned. A reservation is a request to collect equipment later, so it is not an active rental. The reporting date is supplied as a date parameter named report_day.\n\n```sql\nCREATE TABLE equipment (\n    id bigint PRIMARY KEY,\n    category text NOT NULL,\n    label text NOT NULL,\n    retired_at timestamptz\n);\n\nCREATE TABLE rentals (\n    id bigint PRIMARY KEY,\n    equipment_id bigint NOT NULL REFERENCES equipment(id),\n    member_id bigint NOT NULL,\n    collected_at timestamptz NOT NULL,\n    returned_at timestamptz,\n    cancelled_at timestamptz\n);\n\nCREATE TABLE maintenance (\n    id bigint PRIMARY KEY,\n    equipment_id bigint NOT NULL REFERENCES equipment(id),\n    opened_at timestamptz NOT NULL,\n    closed_at timestamptz,\n    note text NOT NULL\n);\n```\n\nThe report should contain one row for each category, including categories that have zero unavailable items. Count all equipment that was not retired before the start of report_day. Equipment retired exactly at the start of the day should be excluded. An item is unavailable at the end of report_day if it has a rental collected before the next midnight and not returned before that midnight, or an open maintenance period with the same boundary rule. A rental cancelled before the next midnight should not make equipment unavailable. An item can have both an active rental and open maintenance, but it must count only once as unavailable.\n\nHistorical data is imperfect. Two overlapping rental rows can refer to the same item, and multiple maintenance notes can be open simultaneously. The report must resist those duplicates. Returned_at equal to the next midnight means the item is available at that instant. A collection at the next midnight belongs to the following day and must not affect this report. Future maintenance rows are also excluded. There is no requirement to show the number of rental transactions, only distinct equipment counts per category.\n\nA teammate proposed joining equipment to rentals and maintenance, then using COUNT(rentals.id) + COUNT(maintenance.id). On a test category with two items, that query produced six unavailable items. The teammate added DISTINCT to the entire SELECT, but the result stayed wrong. Another suggestion was to group by equipment ID first and then by category. That could work, but the team prefers a readable query with conditional existence tests and clear midnight bounds. The supplied date should be interpreted in UTC even if the database connection's session timezone changes.\n\nProvide a PostgreSQL query that returns category, total_items, unavailable_items, and available_items. Explain briefly why an ordinary join can multiply the counts. Use a single shared expression for the two day boundaries. You may use a CTE. Do not assume that the historical overlap problems have already been repaired.\n",
+      "role": "user"
+    }
+  ],
+  "model": "halogen-v2",
+  "reasoning_effort": "none",
+  "seed": 1,
+  "stream": false,
+  "temperature": 0
+}

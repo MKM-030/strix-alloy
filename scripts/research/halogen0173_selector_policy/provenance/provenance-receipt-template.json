@@ -1,0 +1,86 @@
+{
+  "schema": "halogen0173.selector-request-provenance.v1",
+  "status": "template-not-observed",
+  "request_id": null,
+  "document_ids": [],
+  "split": null,
+  "session_nonce": null,
+  "wire_request_id": null,
+  "owner_birth": null,
+  "payload": null,
+  "document": null,
+  "decoded": null,
+  "evidence": {
+    "journal": null,
+    "startup": null,
+    "close": null,
+    "loaded_assets": null,
+    "profile": null,
+    "engine_log": null,
+    "response": null,
+    "normal_response": null,
+    "health_before": null,
+    "health_after": null
+  },
+  "interval": {
+    "journal_before_bytes": null,
+    "journal_after_bytes": null,
+    "birth_seq": null,
+    "retire_seq": null,
+    "native_log_before_bytes": null,
+    "native_log_after_bytes": null,
+    "native_log_wire_ids": [],
+    "gateway_completed_delta": null,
+    "gateway_cancelled_delta": null
+  },
+  "process_binding": {
+    "controller_run_id": null,
+    "backend_run_id": null,
+    "container_id": null,
+    "frontend_process_identity": null,
+    "native_process_identity": null,
+    "isolated_gateway_port": 8842,
+    "private_credentials_used": null,
+    "normal_gateway_down_during_collection": null
+  },
+  "observed_request": {
+    "http_status": null,
+    "frontend_response_id": null,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "reasoning_tokens": null,
+    "cache_n": null,
+    "disk_restore_n": null,
+    "draft_n": null,
+    "draft_n_accepted": null,
+    "finish_reason": null,
+    "output_sha256": null,
+    "request_started_utc": null,
+    "request_finished_utc": null,
+    "host_request_seconds": null
+  },
+  "fixed_engine_policy": {
+    "neural_depth": 2,
+    "pld": "3,3",
+    "adaptive": null,
+    "profile_source": null,
+    "causal_depth_low_from_begin": null,
+    "causal_depth_high_from_begin": null,
+    "raw_neural_stock_width": -1
+  },
+  "output_parity": {
+    "scope": "not-observed",
+    "reference_output_sha256": null,
+    "capture_output_sha256": null,
+    "accepted_and_drafted_reference": null,
+    "accepted_and_drafted_capture": null
+  },
+  "review": {
+    "observer_only": true,
+    "identity_source": "exclusive-sequential-api-native-log-journal-owner",
+    "loaded_asset_attribution": "root-owned-launch-and-read-only-file-identities",
+    "native_inprocess_asset_attestation": false,
+    "round_costs": "wire-v1-has-none; separate qualified cost-sidecar if present",
+    "notes": []
+  }
+}

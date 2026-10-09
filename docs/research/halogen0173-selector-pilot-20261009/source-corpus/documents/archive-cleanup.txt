@@ -1,0 +1,18 @@
+A Linux backup job creates one compressed archive per project each night. Archives are placed in a directory supplied as the first argument to a cleanup script. Filenames can contain spaces, square brackets, or leading hyphens. The directory may also contain status files and a subdirectory with manual exports. The cleanup job should remove only regular files whose names end in .tar.gz and whose modification times are older than fourteen complete days. It must not follow symbolic links or remove files inside subdirectories.
+
+```sh
+#!/bin/sh
+backup_dir=$1
+for path in $(find $backup_dir -mtime +14); do
+    rm $path
+done
+echo cleanup complete
+```
+
+The administrator saw failures for a file called 'design notes.tar.gz'. Its name was split into two words, so the script tried to remove two nonexistent paths. Another filename began with a hyphen and was interpreted as an option by rm. A third problem occurred when the directory argument was empty: find searched a location different from the intended backup directory. The script nevertheless printed 'cleanup complete', because the final echo returned success. The scheduler therefore reported a successful cleanup even though no useful work had been done.
+
+The new behavior should reject a missing or empty argument, a path that is not a directory, and any extra argument. The directory should be resolved before starting cleanup, and the script should operate on that specific directory. A path beginning with a hyphen must not be treated as a find option. The administrator does not need a recursive search: the manual-export subdirectory is deliberately excluded. A symbolic link with a matching name must be left untouched, even if its target is a regular archive. Archives exactly at the age boundary should follow GNU find's documented day rounding rather than a separately invented timestamp policy.
+
+The environment provides GNU find and rm, but the script is run by POSIX sh. The team would like to use find's -exec form so filenames are passed as separate arguments without parsing find output. Deleting several files in one rm invocation is acceptable. The script should propagate a deletion failure as a nonzero exit status and print the success message only after successful cleanup. A dry-run version that lists candidate paths can be described, but the supplied final script should perform the requested cleanup. There is no need to schedule the job or change its retention period.
+
+Provide a compact corrected script and explain how it handles spaces, option-like names, and the top-level-only rule. Pay attention to the fact that find may not automatically return failure merely because an -exec predicate returns false. State any GNU-specific flag you use. Do not use a shell loop that splits command-substitution output.

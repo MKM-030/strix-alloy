@@ -1,0 +1,35 @@
+A community equipment rental service needs a daily report. Its PostgreSQL database has the following tables. All timestamps use UTC. A rental begins when equipment is collected and ends when it is returned. A reservation is a request to collect equipment later, so it is not an active rental. The reporting date is supplied as a date parameter named report_day.
+
+```sql
+CREATE TABLE equipment (
+    id bigint PRIMARY KEY,
+    category text NOT NULL,
+    label text NOT NULL,
+    retired_at timestamptz
+);
+
+CREATE TABLE rentals (
+    id bigint PRIMARY KEY,
+    equipment_id bigint NOT NULL REFERENCES equipment(id),
+    member_id bigint NOT NULL,
+    collected_at timestamptz NOT NULL,
+    returned_at timestamptz,
+    cancelled_at timestamptz
+);
+
+CREATE TABLE maintenance (
+    id bigint PRIMARY KEY,
+    equipment_id bigint NOT NULL REFERENCES equipment(id),
+    opened_at timestamptz NOT NULL,
+    closed_at timestamptz,
+    note text NOT NULL
+);
+```
+
+The report should contain one row for each category, including categories that have zero unavailable items. Count all equipment that was not retired before the start of report_day. Equipment retired exactly at the start of the day should be excluded. An item is unavailable at the end of report_day if it has a rental collected before the next midnight and not returned before that midnight, or an open maintenance period with the same boundary rule. A rental cancelled before the next midnight should not make equipment unavailable. An item can have both an active rental and open maintenance, but it must count only once as unavailable.
+
+Historical data is imperfect. Two overlapping rental rows can refer to the same item, and multiple maintenance notes can be open simultaneously. The report must resist those duplicates. Returned_at equal to the next midnight means the item is available at that instant. A collection at the next midnight belongs to the following day and must not affect this report. Future maintenance rows are also excluded. There is no requirement to show the number of rental transactions, only distinct equipment counts per category.
+
+A teammate proposed joining equipment to rentals and maintenance, then using COUNT(rentals.id) + COUNT(maintenance.id). On a test category with two items, that query produced six unavailable items. The teammate added DISTINCT to the entire SELECT, but the result stayed wrong. Another suggestion was to group by equipment ID first and then by category. That could work, but the team prefers a readable query with conditional existence tests and clear midnight bounds. The supplied date should be interpreted in UTC even if the database connection's session timezone changes.
+
+Provide a PostgreSQL query that returns category, total_items, unavailable_items, and available_items. Explain briefly why an ordinary join can multiply the counts. Use a single shared expression for the two day boundaries. You may use a CTE. Do not assume that the historical overlap problems have already been repaired.

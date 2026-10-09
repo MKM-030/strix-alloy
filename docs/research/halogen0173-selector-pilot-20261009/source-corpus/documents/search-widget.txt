@@ -1,0 +1,46 @@
+A TypeScript application has a search widget that calls a local API after the user types. The UI currently shows results from an old query after a newer query has finished. The code below is a simplified version of the relevant component. The actual application passes a different endpoint when the user changes the selected project, so endpoint changes should also cancel outstanding work. The API returns an array of objects with an id and title. Error messages are shown below the input.
+
+```tsx
+type Hit = { id: string; title: string };
+
+function Search({ endpoint }: { endpoint: string }) {
+  const [query, setQuery] = React.useState('');
+  const [hits, setHits] = React.useState<Hit[]>([]);
+  const [error, setError] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!query.trim()) {
+      setHits([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(endpoint + '?q=' + query);
+        const data = await response.json();
+        setHits(data);
+        setError('');
+      } catch (caught) {
+        setError(String(caught));
+      } finally {
+        setLoading(false);
+      }
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  return <section>
+    <input value={query} onChange={e => setQuery(e.target.value)} />
+    {loading && <p>Searching</p>}
+    {error && <p>{error}</p>}
+    <ul>{hits.map(hit => <li key={hit.id}>{hit.title}</li>)}</ul>
+  </section>;
+}
+```
+
+For reproduction, type 'river', wait until the request starts, and immediately replace it with 'ridge'. Suppose the river request takes 700 milliseconds while ridge takes 80 milliseconds. The ridge request completes first. Clearing the timeout cannot cancel river because its callback has already begun. An aborted request should not show an error. When the query becomes empty, the widget should clear results and any prior error immediately and stop showing a loading state. A later completion from the previous query must not reverse those changes.
+
+HTTP 400 and HTTP 500 responses are errors even though fetch itself resolves. Query text can contain spaces, ampersands, or non-ASCII characters. The endpoint may already contain a query string. The fix must encode the search parameter correctly and preserve any existing parameters. The parent may unmount the component while a request is running. React's development strict mode may also run an effect, clean it up, and run it again. Work from the cleaned-up effect must not update state.
+
+Describe the race and supply a focused corrected effect. Use an AbortController and an effect-local validity guard, include endpoint among the dependencies, and ensure the finally block from a stale request cannot clear loading for a new one. Avoid changing the visible design or introducing a third-party request library.

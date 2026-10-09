@@ -1,0 +1,20 @@
+{
+  "cache_prompt": false,
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "drafter": "mtp",
+  "enable_thinking": false,
+  "max_tokens": 128,
+  "messages": [
+    {
+      "content": "A Rust service keeps a small cache of parsed configuration files. It uses a monotonic clock so that wall-clock adjustments do not alter expiry. Each entry records when it was inserted and a value that can be cloned. The service is single-threaded; callers hold a mutable reference to the cache. The policy is a fixed time-to-live from insertion. Reading an entry must not extend that lifetime. A zero lifetime means that no entry can be returned from the cache.\n\n```rust\nuse std::collections::HashMap;\nuse std::time::{Duration, Instant};\n\nstruct Entry<V> {\n    inserted: Instant,\n    value: V,\n}\n\nstruct Cache<V> {\n    entries: HashMap<String, Entry<V>>,\n    ttl: Duration,\n}\n\nimpl<V: Clone> Cache<V> {\n    fn get(&mut self, key: &str, now: Instant) -> Option<V> {\n        let entry = self.entries.get_mut(key)?;\n        if now.duration_since(entry.inserted) > self.ttl {\n            self.entries.remove(key);\n            return None;\n        }\n        entry.inserted = now;\n        Some(entry.value.clone())\n    }\n}\n```\n\nThe implementation has accumulated several problems. A read resets inserted, so a frequently accessed entry can survive forever despite the fixed-lifetime policy. The comparison is strictly greater than ttl, whereas an entry should expire exactly at its deadline. A test can pass a now earlier than inserted, and the team wants that case to return None without relying on panic behavior or a clock saturation detail. The mutable borrow can also make removing the entry awkward, depending on how the function is rewritten. The service should remain easy to inspect.\n\nThe tests use a base Instant and offsets created with Duration. One test inserts at base and reads at base plus ten seconds with a ten-second lifetime. Another inserts at base plus five seconds, then reads at base. Both must return None. A third inserts at base, reads at four seconds, and reads again at nine seconds; both reads should return the original value, with no change to the insertion time. A fourth reads again at eleven seconds and should remove the expired entry. Removing expired entries is part of the contract, because otherwise keys can accumulate indefinitely.\n\nThe cache stores at most a few hundred entries, so cloning a value on a hit is acceptable. The task does not require background eviction, a global cleanup pass, an LRU policy, or concurrency primitives. Do not introduce a second clock or change the caller's time representation. There is also an insert method, omitted here, which replaces an existing entry and records the supplied insertion time. That behavior should remain as stated.\n\nProvide a corrected get method. Explain the fixed-lifetime bug and show how the earlier-than-insertion case is handled. Keep the borrow scopes explicit enough that the removal step is clearly valid. You may use checked_duration_since. Assume a recent stable Rust compiler and avoid unrelated refactoring.\n",
+      "role": "user"
+    }
+  ],
+  "model": "halogen-v2",
+  "reasoning_effort": "none",
+  "seed": 1,
+  "stream": false,
+  "temperature": 0
+}

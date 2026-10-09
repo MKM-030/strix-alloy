@@ -1,0 +1,55 @@
+{
+  "actual_client_not_launch_sealed": true,
+  "actual_client_sha256": "55d95c1f287a7c9e7a6f02dd59ce1f93a23b9d467f86a8a442d0895858ca2bd3",
+  "assembler_executed": false,
+  "assembler_sha256": "452d0df59eebd4f5093117e06fda8587f86fbbef740270ca00d8780a0a5b68a6",
+  "checker_sha256": "dcbb7b5db33fba1c9b07ffba7d60cde88c99dc3d9698eefbec15e41de6776481",
+  "limits": [
+    "Root still runs final retained-evidence verifier before fit",
+    "Container frontend PID/inprocess GPU bytes/tokenizer equivalence not attested",
+    "Missing normal baseline remains unobserved; paired text/API-counter parity only"
+  ],
+  "observed_capture": {
+    "actual_prompt_tokens_range": [
+      550,
+      734
+    ],
+    "adaptive": [
+      0
+    ],
+    "causal_depth_high": [
+      0
+    ],
+    "causal_depth_low": [
+      2
+    ],
+    "native_rows": 797,
+    "neural_rows": 701,
+    "output_tokens": 2048,
+    "pld_rows": 96,
+    "requests": 16,
+    "test_requests": 6,
+    "train_requests": 10,
+    "wire_ids_range": [
+      3,
+      18
+    ]
+  },
+  "prepared_manifest_sha256": "76de0b548bfb48f028e50bf8517e8f9514d2cbbc03eb48668d445b834b59960c",
+  "remaining_ingestion_blockers": [],
+  "resolved_findings": [
+    "Actual v2 collector source retained separately from historical launch-sealed v1 parent",
+    "Collected manifest status updated while original frozen input bytes remain unchanged"
+  ],
+  "review_date": "2026-10-09",
+  "review_markdown": {
+    "path": "assembler-source-review.md",
+    "sha256": "af2f8b51a71fbd98ac68e491322ff7e828c42289042db8bd40eb3a8bba55bd90"
+  },
+  "root_reported_actual_client_execution": 19869,
+  "runtime_operated": false,
+  "schema": "halogen0173.selector-assembler-source-review.v1",
+  "source_only": true,
+  "tests_rerun": false,
+  "verifier_executed": false
+}

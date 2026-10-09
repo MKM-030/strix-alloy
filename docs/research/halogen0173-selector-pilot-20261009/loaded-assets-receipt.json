@@ -1,0 +1,574 @@
+{
+  "schema": "halogen0173.selector-loaded-assets.v1",
+  "status": "root-owned-observed-mounted-assets",
+  "session_nonce": "cf194e1fb733d624cdbf08fa47612ed3",
+  "controller_run_id": "f8b3b24e0aa74ea59fef152bc5a25d3b",
+  "backend_run_id": "870a97b511194fef856f5778fdc92dc1",
+  "container_id": "79d0b9de350d0a65a0d5e1d98ac7be16e23cca2152a8cdd05c6a7328d79bab3d",
+  "frontend_process_identity": {
+    "pid": 38404,
+    "creation_time_100ns": 134360031671889578,
+    "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "scope": "Windows private gateway controller; container frontend identity not sampled"
+  },
+  "native_process_identity": {
+    "container_id": "79d0b9de350d0a65a0d5e1d98ac7be16e23cca2152a8cdd05c6a7328d79bab3d",
+    "pid": 87,
+    "start_ticks": 270076,
+    "exe": "/usr/local/bin/flash_serve"
+  },
+  "manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\evidence\\capture-backend-manifest.json",
+    "bytes": 7422,
+    "sha256": "e8ddad506a228e12de9030cafb1293c33c0c03fe4c0c227fc6fdfa431ca1a468"
+  },
+  "profile": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\evidence\\capture-profile.json",
+    "bytes": 1684,
+    "sha256": "0a051757f6b22ce0fa81f44e0cfb3a3677d532758aee77da0e9017c20061d91a"
+  },
+  "runtime": {
+    "sha256": "af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7",
+    "startup_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\native-capture\\startup-status.json",
+      "bytes": 453,
+      "sha256": "ef7d293e3ef243cda9d1f0b06c3c9d6e67a6081cce0c3974067e65d6dfdb7642"
+    }
+  },
+  "checkpoint": {
+    "container_path": "/models/qwen38-flash-next-v2.hgn",
+    "source_path": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+    "bytes": 66687678432,
+    "complete_file_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "integrity_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\evidence\\v2-integrity.json",
+      "bytes": 311,
+      "sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2"
+    },
+    "identity_before": {
+      "size": 66687678432,
+      "device": 2096,
+      "inode": 616828,
+      "mtime_ns": 1790979071648131939,
+      "ctime_ns": 1790979072020131920
+    },
+    "identity_after": {
+      "size": 66687678432,
+      "device": 2096,
+      "inode": 616828,
+      "mtime_ns": 1790979071648131939,
+      "ctime_ns": 1790979072020131920
+    },
+    "loaded_path_evidence": {
+      "snapshots": {
+        "before": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assets-before.json",
+          "bytes": 9704,
+          "sha256": "803ed007de554f2a38e7b46a41b7679dd757a4f0d0a29234202b8e0a2005db22"
+        },
+        "after": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assets-after.json",
+          "bytes": 9703,
+          "sha256": "a2c993acbf043780b3e81ae4c8c97fc04413b28b6593b41e5aa7a95041cc155f"
+        }
+      },
+      "inspected_mounts": {
+        "/models": "/home/revn/halogen-models-native",
+        "/ngram-w4b.hgn": "/mnt/c/AI/models/halogen-flashnext/qwen38-flash-next-w4b.hgn"
+      },
+      "inspected_environment": {
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PLD": "3,3"
+      },
+      "native_process_identity": {
+        "container_id": "79d0b9de350d0a65a0d5e1d98ac7be16e23cca2152a8cdd05c6a7328d79bab3d",
+        "pid": 87,
+        "start_ticks": 270076,
+        "exe": "/usr/local/bin/flash_serve"
+      },
+      "native_loaded_maps_before": [
+        "5b44c2c27000-5b44c4352000 r--p 00000000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4352000-5b44c4359000 r-xp 0172a000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4359000-5b44c435a000 r-xp 01731000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c435a000-5b44c4364000 r-xp 01732000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4364000-5b44c4365000 r-xp 0173c000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4365000-5b44c4367000 r-xp 0173d000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4367000-5b44c4369000 r-xp 0173f000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4369000-5b44c436d000 r-xp 01741000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c436d000-5b44c436e000 r-xp 01745000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c436e000-5b44c4397000 r-xp 01746000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4397000-5b44c4398000 r-xp 0176f000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4398000-5b44c4427000 r-xp 01770000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4427000-5b44c4428000 r-xp 017ff000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4428000-5b44c442c000 r-xp 01800000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c442c000-5b44c442d000 r-xp 01804000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c442d000-5b44c44bf000 r-xp 01805000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c44bf000-5b44c44c0000 r-xp 01897000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c44c0000-5b44c451d000 r-xp 01898000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c451d000-5b44c4522000 r--p 018f4000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4522000-5b44c4524000 rw-p 018f8000 00:54 928789                     /usr/local/bin/flash_serve",
+        "75971cf74000-75978d262000 r--p 00000000 00:47 12384898978924366          /ngram-w4b.hgn",
+        "75978d262000-75a378ebf000 r--p 702ee000 00:47 12384898978924366          /ngram-w4b.hgn",
+        "75a378ebf000-75b400000000 r--p c5bf4b000 00:47 12384898978924366         /ngram-w4b.hgn",
+        "75e350600000-75f2d7454000 r--p 00000000 08:30 616828                     /models/qwen38-flash-next-v2.hgn"
+      ],
+      "native_loaded_maps_after": [
+        "5b44c2c27000-5b44c4352000 r--p 00000000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4352000-5b44c4359000 r-xp 0172a000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4359000-5b44c435a000 r-xp 01731000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c435a000-5b44c4364000 r-xp 01732000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4364000-5b44c4365000 r-xp 0173c000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4365000-5b44c4367000 r-xp 0173d000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4367000-5b44c4369000 r-xp 0173f000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4369000-5b44c436d000 r-xp 01741000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c436d000-5b44c436e000 r-xp 01745000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c436e000-5b44c4397000 r-xp 01746000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4397000-5b44c4398000 r-xp 0176f000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4398000-5b44c4427000 r-xp 01770000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4427000-5b44c4428000 r-xp 017ff000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4428000-5b44c442c000 r-xp 01800000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c442c000-5b44c442d000 r-xp 01804000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c442d000-5b44c44bf000 r-xp 01805000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c44bf000-5b44c44c0000 r-xp 01897000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c44c0000-5b44c451d000 r-xp 01898000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c451d000-5b44c4522000 r--p 018f4000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4522000-5b44c4524000 rw-p 018f8000 00:54 928789                     /usr/local/bin/flash_serve",
+        "75971cf74000-75978d262000 r--p 00000000 00:47 12384898978924366          /ngram-w4b.hgn",
+        "75978d262000-75a378ebf000 r--p 702ee000 00:47 12384898978924366          /ngram-w4b.hgn",
+        "75a378ebf000-75b400000000 r--p c5bf4b000 00:47 12384898978924366         /ngram-w4b.hgn",
+        "75e350600000-75f2d7454000 r--p 00000000 08:30 616828                     /models/qwen38-flash-next-v2.hgn"
+      ],
+      "attribution_scope": "Root-owned launch/mount/stat bindings; no inprocess GPU-byte attestation"
+    },
+    "mounted_identity_before": {
+      "size": 66687678432,
+      "device": 2096,
+      "inode": 616828,
+      "mtime_ns": 1790979071648131939,
+      "ctime_ns": 1790979072020131920
+    },
+    "mounted_identity_after": {
+      "size": 66687678432,
+      "device": 2096,
+      "inode": 616828,
+      "mtime_ns": 1790979071648131939,
+      "ctime_ns": 1790979072020131920
+    }
+  },
+  "ngram": {
+    "container_path": "/ngram-w4b.hgn",
+    "source_path": "/mnt/c/AI/models/halogen-flashnext/qwen38-flash-next-w4b.hgn",
+    "bytes": 124068083904,
+    "complete_file_sha256": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6",
+    "integrity_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\evidence\\ngram-integrity.json",
+      "bytes": 450,
+      "sha256": "823180a506d1864ff9352233e31cde20f8492f4fc92fdd541a9024bcbb199cac"
+    },
+    "identity_before": {
+      "size": 124068083904,
+      "device": 71,
+      "inode": 12384898978924366,
+      "mtime_ns": 1789244565219639800,
+      "ctime_ns": 1789244565219639800
+    },
+    "identity_after": {
+      "size": 124068083904,
+      "device": 71,
+      "inode": 12384898978924366,
+      "mtime_ns": 1789244565219639800,
+      "ctime_ns": 1789244565219639800
+    },
+    "loaded_path_evidence": {
+      "snapshots": {
+        "before": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assets-before.json",
+          "bytes": 9704,
+          "sha256": "803ed007de554f2a38e7b46a41b7679dd757a4f0d0a29234202b8e0a2005db22"
+        },
+        "after": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assets-after.json",
+          "bytes": 9703,
+          "sha256": "a2c993acbf043780b3e81ae4c8c97fc04413b28b6593b41e5aa7a95041cc155f"
+        }
+      },
+      "inspected_mounts": {
+        "/models": "/home/revn/halogen-models-native",
+        "/ngram-w4b.hgn": "/mnt/c/AI/models/halogen-flashnext/qwen38-flash-next-w4b.hgn"
+      },
+      "inspected_environment": {
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PLD": "3,3"
+      },
+      "native_process_identity": {
+        "container_id": "79d0b9de350d0a65a0d5e1d98ac7be16e23cca2152a8cdd05c6a7328d79bab3d",
+        "pid": 87,
+        "start_ticks": 270076,
+        "exe": "/usr/local/bin/flash_serve"
+      },
+      "native_loaded_maps_before": [
+        "5b44c2c27000-5b44c4352000 r--p 00000000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4352000-5b44c4359000 r-xp 0172a000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4359000-5b44c435a000 r-xp 01731000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c435a000-5b44c4364000 r-xp 01732000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4364000-5b44c4365000 r-xp 0173c000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4365000-5b44c4367000 r-xp 0173d000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4367000-5b44c4369000 r-xp 0173f000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4369000-5b44c436d000 r-xp 01741000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c436d000-5b44c436e000 r-xp 01745000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c436e000-5b44c4397000 r-xp 01746000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4397000-5b44c4398000 r-xp 0176f000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4398000-5b44c4427000 r-xp 01770000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4427000-5b44c4428000 r-xp 017ff000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4428000-5b44c442c000 r-xp 01800000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c442c000-5b44c442d000 r-xp 01804000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c442d000-5b44c44bf000 r-xp 01805000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c44bf000-5b44c44c0000 r-xp 01897000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c44c0000-5b44c451d000 r-xp 01898000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c451d000-5b44c4522000 r--p 018f4000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4522000-5b44c4524000 rw-p 018f8000 00:54 928789                     /usr/local/bin/flash_serve",
+        "75971cf74000-75978d262000 r--p 00000000 00:47 12384898978924366          /ngram-w4b.hgn",
+        "75978d262000-75a378ebf000 r--p 702ee000 00:47 12384898978924366          /ngram-w4b.hgn",
+        "75a378ebf000-75b400000000 r--p c5bf4b000 00:47 12384898978924366         /ngram-w4b.hgn",
+        "75e350600000-75f2d7454000 r--p 00000000 08:30 616828                     /models/qwen38-flash-next-v2.hgn"
+      ],
+      "native_loaded_maps_after": [
+        "5b44c2c27000-5b44c4352000 r--p 00000000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4352000-5b44c4359000 r-xp 0172a000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4359000-5b44c435a000 r-xp 01731000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c435a000-5b44c4364000 r-xp 01732000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4364000-5b44c4365000 r-xp 0173c000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4365000-5b44c4367000 r-xp 0173d000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4367000-5b44c4369000 r-xp 0173f000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4369000-5b44c436d000 r-xp 01741000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c436d000-5b44c436e000 r-xp 01745000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c436e000-5b44c4397000 r-xp 01746000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4397000-5b44c4398000 r-xp 0176f000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4398000-5b44c4427000 r-xp 01770000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4427000-5b44c4428000 r-xp 017ff000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4428000-5b44c442c000 r-xp 01800000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c442c000-5b44c442d000 r-xp 01804000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c442d000-5b44c44bf000 r-xp 01805000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c44bf000-5b44c44c0000 r-xp 01897000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c44c0000-5b44c451d000 r-xp 01898000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c451d000-5b44c4522000 r--p 018f4000 00:54 928789                     /usr/local/bin/flash_serve",
+        "5b44c4522000-5b44c4524000 rw-p 018f8000 00:54 928789                     /usr/local/bin/flash_serve",
+        "75971cf74000-75978d262000 r--p 00000000 00:47 12384898978924366          /ngram-w4b.hgn",
+        "75978d262000-75a378ebf000 r--p 702ee000 00:47 12384898978924366          /ngram-w4b.hgn",
+        "75a378ebf000-75b400000000 r--p c5bf4b000 00:47 12384898978924366         /ngram-w4b.hgn",
+        "75e350600000-75f2d7454000 r--p 00000000 08:30 616828                     /models/qwen38-flash-next-v2.hgn"
+      ],
+      "attribution_scope": "Root-owned launch/mount/stat bindings; no inprocess GPU-byte attestation"
+    },
+    "mounted_identity_before": {
+      "size": 124068083904,
+      "device": 71,
+      "inode": 12384898978924366,
+      "mtime_ns": 1789244565219639800,
+      "ctime_ns": 1789244565219639800
+    },
+    "mounted_identity_after": {
+      "size": 124068083904,
+      "device": 71,
+      "inode": 12384898978924366,
+      "mtime_ns": 1789244565219639800,
+      "ctime_ns": 1789244565219639800
+    }
+  },
+  "frontend_tokenizer": {
+    "container_directory": "/models/tokenizer",
+    "source_directory": "/home/revn/halogen-models-native/tokenizer",
+    "files": [
+      {
+        "path": "chat_template.jinja",
+        "bytes": 8952,
+        "sha256": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041"
+      },
+      {
+        "path": "generation_config.json",
+        "bytes": 202,
+        "sha256": "e70c136c1b78ddc1fb0905bac8e733a4dc448d4f852a5dd75143fffc70be550e"
+      },
+      {
+        "path": "merges.txt",
+        "bytes": 3353259,
+        "sha256": "a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d"
+      },
+      {
+        "path": "tokenizer.json",
+        "bytes": 12809320,
+        "sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "bytes": 17928,
+        "sha256": "b11349aafa7cdc6a320767cf7ceb29ed82f7eda5d65e8e0819e76f0ce947bf27"
+      },
+      {
+        "path": "vocab.json",
+        "bytes": 6722759,
+        "sha256": "ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003"
+      }
+    ],
+    "asset_set_sha256": "a1b1fa361792e62b50234273b16183d3923299769a75bac44a2fa78bc4c4b96c",
+    "asset_set_hash_rule": "SHA256 of UTF8 json.dumps(sorted file rows containing path,bytes,sha256; sort_keys=True,separators=(',',':')))",
+    "identity_before": {
+      "chat_template.jinja": {
+        "size": 8952,
+        "device": 2096,
+        "inode": 593238,
+        "mtime_ns": 1790956818921894300,
+        "ctime_ns": 1790985007484756205
+      },
+      "generation_config.json": {
+        "size": 202,
+        "device": 2096,
+        "inode": 618531,
+        "mtime_ns": 1790956818866519100,
+        "ctime_ns": 1790985007522446396
+      },
+      "merges.txt": {
+        "size": 3353259,
+        "device": 2096,
+        "inode": 617754,
+        "mtime_ns": 1790956819381030600,
+        "ctime_ns": 1790985007514912558
+      },
+      "tokenizer.json": {
+        "size": 12809320,
+        "device": 2096,
+        "inode": 618550,
+        "mtime_ns": 1789229794608525400,
+        "ctime_ns": 1790985007614579383
+      },
+      "tokenizer_config.json": {
+        "size": 17928,
+        "device": 2096,
+        "inode": 617739,
+        "mtime_ns": 1790956818923890600,
+        "ctime_ns": 1790985007489652612
+      },
+      "vocab.json": {
+        "size": 6722759,
+        "device": 2096,
+        "inode": 593236,
+        "mtime_ns": 1790956819224520600,
+        "ctime_ns": 1790985007480245835
+      }
+    },
+    "identity_after": {
+      "chat_template.jinja": {
+        "size": 8952,
+        "device": 2096,
+        "inode": 593238,
+        "mtime_ns": 1790956818921894300,
+        "ctime_ns": 1790985007484756205
+      },
+      "generation_config.json": {
+        "size": 202,
+        "device": 2096,
+        "inode": 618531,
+        "mtime_ns": 1790956818866519100,
+        "ctime_ns": 1790985007522446396
+      },
+      "merges.txt": {
+        "size": 3353259,
+        "device": 2096,
+        "inode": 617754,
+        "mtime_ns": 1790956819381030600,
+        "ctime_ns": 1790985007514912558
+      },
+      "tokenizer.json": {
+        "size": 12809320,
+        "device": 2096,
+        "inode": 618550,
+        "mtime_ns": 1789229794608525400,
+        "ctime_ns": 1790985007614579383
+      },
+      "tokenizer_config.json": {
+        "size": 17928,
+        "device": 2096,
+        "inode": 617739,
+        "mtime_ns": 1790956818923890600,
+        "ctime_ns": 1790985007489652612
+      },
+      "vocab.json": {
+        "size": 6722759,
+        "device": 2096,
+        "inode": 593236,
+        "mtime_ns": 1790956819224520600,
+        "ctime_ns": 1790985007480245835
+      }
+    },
+    "loaded_directory_evidence": {
+      "snapshots": {
+        "before": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assets-before.json",
+          "bytes": 9704,
+          "sha256": "803ed007de554f2a38e7b46a41b7679dd757a4f0d0a29234202b8e0a2005db22"
+        },
+        "after": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assets-after.json",
+          "bytes": 9703,
+          "sha256": "a2c993acbf043780b3e81ae4c8c97fc04413b28b6593b41e5aa7a95041cc155f"
+        }
+      },
+      "manifest": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\evidence\\capture-backend-manifest.json",
+        "bytes": 7422,
+        "sha256": "e8ddad506a228e12de9030cafb1293c33c0c03fe4c0c227fc6fdfa431ca1a468"
+      },
+      "actual_inspected_tokenizer_directory": "/models/tokenizer",
+      "source_mount": "/home/revn/halogen-models-native",
+      "file_set_matched_before_after": true,
+      "container_frontend_inprocess_tokenizer_equivalence_observed": false
+    },
+    "loader_api_source": null,
+    "loader_library_versions": null,
+    "tokenization_receipt": {
+      "scope": "Actual API prompt usage and copied native Begin IDs; no independent full prompt tokenization"
+    },
+    "mounted_identity_before": {
+      "chat_template.jinja": {
+        "size": 8952,
+        "device": 2096,
+        "inode": 593238,
+        "mtime_ns": 1790956818921894300,
+        "ctime_ns": 1790985007484756205
+      },
+      "generation_config.json": {
+        "size": 202,
+        "device": 2096,
+        "inode": 618531,
+        "mtime_ns": 1790956818866519100,
+        "ctime_ns": 1790985007522446396
+      },
+      "merges.txt": {
+        "size": 3353259,
+        "device": 2096,
+        "inode": 617754,
+        "mtime_ns": 1790956819381030600,
+        "ctime_ns": 1790985007514912558
+      },
+      "tokenizer.json": {
+        "size": 12809320,
+        "device": 2096,
+        "inode": 618550,
+        "mtime_ns": 1789229794608525400,
+        "ctime_ns": 1790985007614579383
+      },
+      "tokenizer_config.json": {
+        "size": 17928,
+        "device": 2096,
+        "inode": 617739,
+        "mtime_ns": 1790956818923890600,
+        "ctime_ns": 1790985007489652612
+      },
+      "vocab.json": {
+        "size": 6722759,
+        "device": 2096,
+        "inode": 593236,
+        "mtime_ns": 1790956819224520600,
+        "ctime_ns": 1790985007480245835
+      }
+    },
+    "mounted_identity_after": {
+      "chat_template.jinja": {
+        "size": 8952,
+        "device": 2096,
+        "inode": 593238,
+        "mtime_ns": 1790956818921894300,
+        "ctime_ns": 1790985007484756205
+      },
+      "generation_config.json": {
+        "size": 202,
+        "device": 2096,
+        "inode": 618531,
+        "mtime_ns": 1790956818866519100,
+        "ctime_ns": 1790985007522446396
+      },
+      "merges.txt": {
+        "size": 3353259,
+        "device": 2096,
+        "inode": 617754,
+        "mtime_ns": 1790956819381030600,
+        "ctime_ns": 1790985007514912558
+      },
+      "tokenizer.json": {
+        "size": 12809320,
+        "device": 2096,
+        "inode": 618550,
+        "mtime_ns": 1789229794608525400,
+        "ctime_ns": 1790985007614579383
+      },
+      "tokenizer_config.json": {
+        "size": 17928,
+        "device": 2096,
+        "inode": 617739,
+        "mtime_ns": 1790956818923890600,
+        "ctime_ns": 1790985007489652612
+      },
+      "vocab.json": {
+        "size": 6722759,
+        "device": 2096,
+        "inode": 593236,
+        "mtime_ns": 1790956819224520600,
+        "ctime_ns": 1790985007480245835
+      }
+    }
+  },
+  "fixed_engine_policy": {
+    "neural_depth": 2,
+    "pld": "3,3",
+    "adaptive": 0,
+    "manifest_environment": {
+      "reference": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\evidence\\capture-backend-manifest.json",
+        "bytes": 7422,
+        "sha256": "e8ddad506a228e12de9030cafb1293c33c0c03fe4c0c227fc6fdfa431ca1a468"
+      },
+      "inspected_values": {
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PLD": "3,3"
+      }
+    },
+    "begin_depth_low_values": [
+      2
+    ],
+    "begin_depth_high_values": [
+      0
+    ],
+    "begin_adaptive_values": [
+      0
+    ]
+  },
+  "limits": {
+    "complete_hash_receipts_do_not_attest_inprocess_gpu_bytes": true,
+    "checkpoint_hash_is_not_a_standalone_tokenizer_hash": true,
+    "standalone_tokenizer_json_hash_does_not_cover_template_or_added_token_config": true,
+    "container_frontend_inprocess_tokenizer_equivalence_observed": false,
+    "frontend_identity_scope": "Windows private gateway controller",
+    "large_checkpoint_payloads_rehashed_during_assembly": false
+  },
+  "snapshots": {
+    "before": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assets-before.json",
+      "bytes": 9704,
+      "sha256": "803ed007de554f2a38e7b46a41b7679dd757a4f0d0a29234202b8e0a2005db22"
+    },
+    "after": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\npu-selector-real-cohort-20261009\\assets-after.json",
+      "bytes": 9703,
+      "sha256": "a2c993acbf043780b3e81ae4c8c97fc04413b28b6593b41e5aa7a95041cc155f"
+    }
+  }
+}

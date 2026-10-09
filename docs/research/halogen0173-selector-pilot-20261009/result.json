@@ -1,0 +1,340 @@
+{
+  "schema": "halogen0173.selector-pilot-publication-result.v1",
+  "publication_date": "2026-10-09",
+  "decision": {
+    "specific_policy": "Frozen token-hash neural-prefix selector, 64->16->3 MLP",
+    "status": "rejected_after_first_heldout_evaluation",
+    "reason": "Heldout row and request-macro accuracy worse than train-only prior and linear baseline; MLP paired log-loss and Brier worse on all six heldout requests",
+    "first_result_retained": true,
+    "onnx_exported": false,
+    "gpu_placement_measured": false,
+    "npu_placement_measured": false,
+    "engine_policy_changed": false,
+    "trained_policy_speed_gain_established": false
+  },
+  "cohort": {
+    "authored_realistic_tasks": true,
+    "human_benchmark": false,
+    "requests": 16,
+    "train_requests": 10,
+    "test_requests": 6,
+    "actual_input_token_min": 550,
+    "actual_input_token_max": 734,
+    "output_tokens_per_request": 128,
+    "total_output_tokens": 2048,
+    "capture_requests": 16,
+    "uninstrumented_stock_bookend_requests": 16,
+    "total_collected_request_executions": 32,
+    "native_wire_ids": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "normal_parity_identical": 16,
+    "normal_parity_scope": "Exact unstripped UTF-8 output plus full-request API accepted/drafted counters",
+    "collected_manifest_sha256": "c86bf6e0b38bbeacba1eca21d69f963764c838cd5bd139d1957e127c471d6a0a",
+    "request_parity": [
+      {
+        "request_id": "train-01-library",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-02-python",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-03-planning",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-04-german",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-05-sql",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-06-editing",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-07-typescript",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-08-numbers",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-09-incident",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "train-10-algorithm",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "test-01-natural",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "test-02-rust",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "test-03-reasoning",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "test-04-german",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "test-05-shell",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      },
+      {
+        "request_id": "test-06-design",
+        "exact_unstripped_utf8_output_equal": true,
+        "full_request_api_accepted_drafted_equal": true
+      }
+    ]
+  },
+  "native": {
+    "complete_all_source_rows": 797,
+    "complete_neural_rows": 701,
+    "neural_train_rows": 435,
+    "neural_test_rows": 266,
+    "complete_pld_rows": 96,
+    "native_events": 1778,
+    "cost_records": 1714,
+    "censored_pairs": 60,
+    "recorded_loss": {
+      "gaps": 0,
+      "dropped_cumulative": 0,
+      "invalidated_pairs": 0,
+      "unmatched_begins": 0,
+      "unmatched_outcomes": 0,
+      "unretired_owners": 0,
+      "missing_cost_records": 0
+    },
+    "causal_depth_low": 2,
+    "causal_depth_high": 0,
+    "adaptive": 0,
+    "raw_neural_stock_width": -1,
+    "causal_width_rule": "Width2 only from reviewed fixed-depth2/adaptive-off profile and exact Begin low2/adaptive0/allowance>=2; never from attempted outcome count",
+    "accepted_drafted_including_censored": {
+      "neural": {
+        "accepted": 978,
+        "drafted": 1412
+      },
+      "pld": {
+        "accepted": 237,
+        "drafted": 288
+      }
+    },
+    "journal_sha256": "2d265215676ad672452caf4805e4ac3d81ce313407de8c9acec42746614df776",
+    "cost_sidecar_sha256": "e065d4d415b1b9e67174d8715822faab4c145b8d7f82e2dd253d8e6bb167ac34",
+    "decoded_sha256": "6e4036db6dc008c206badac7101c28fcf46cda90033f5a44723a00668751bd67"
+  },
+  "first_heldout": {
+    "report_sha256": "36387bc6e266188ee0d3a49eae36074ed48458712e9b8d54795b494a9d773a7d",
+    "predictions_sha256": "358bba067f06e4bb89591145a827cb207df263cff34309438b94648a643f3c2d",
+    "weights_sha256": "1bc0bc3af44a3ca1ae5209160820c31d218ac270d604a0b28c302036a8be31c9",
+    "source_freeze_sha256": "f4e13429d422bbc63dc843832fea3ad5b74d5a1cc9192ece877958146c24167d",
+    "train_rows": 435,
+    "test_rows": 266,
+    "test_used_for_fitting": false,
+    "row_accuracy_percent_rounded3": {
+      "prior": 59.398,
+      "linear": 47.744,
+      "mlp": 39.098
+    },
+    "request_macro_accuracy_percent_rounded3": {
+      "prior": 63.19,
+      "linear": 52.044,
+      "mlp": 41.422
+    },
+    "metrics": {
+      "prior": {
+        "rows": 266,
+        "requests": 6,
+        "row_accuracy": 0.5939849615097046,
+        "request_macro_accuracy": 0.6318988800048828,
+        "row_log_loss": 0.9606533050537109,
+        "request_macro_log_loss": 0.9174104928970337,
+        "row_multiclass_brier": 0.5663515329360962,
+        "request_macro_multiclass_brier": 0.5351674556732178
+      },
+      "linear": {
+        "rows": 266,
+        "requests": 6,
+        "row_accuracy": 0.4774436056613922,
+        "request_macro_accuracy": 0.5204380750656128,
+        "row_log_loss": 1.1815763711929321,
+        "request_macro_log_loss": 1.1313692331314087,
+        "row_multiclass_brier": 0.6752422451972961,
+        "request_macro_multiclass_brier": 0.641006588935852
+      },
+      "mlp": {
+        "rows": 266,
+        "requests": 6,
+        "row_accuracy": 0.3909774422645569,
+        "request_macro_accuracy": 0.41422325372695923,
+        "row_log_loss": 2.3919308185577393,
+        "request_macro_log_loss": 2.1779422760009766,
+        "row_multiclass_brier": 0.9375396966934204,
+        "request_macro_multiclass_brier": 0.8825337886810303
+      }
+    },
+    "mlp_diagnostic_skip": {
+      "threshold": 0.65,
+      "skipped_rows": 29,
+      "skipped_observed_class_counts": [
+        5,
+        9,
+        15
+      ],
+      "scope": "Observed label selection only; no throughput/counterfactual claim"
+    },
+    "training": {
+      "epochs": 300,
+      "learning_rate": 0.01,
+      "l2": 0.01,
+      "optimizer": "full-batch Adam",
+      "weighting": "equal total weight per train request",
+      "test_used_for_fitting": false
+    },
+    "predictor": {
+      "shape": [
+        64,
+        16,
+        3
+      ],
+      "parameter_count": 1091,
+      "fp32_parameter_bytes": 4364,
+      "normalizer_bytes": 512,
+      "input_bytes": 256,
+      "logit_output_bytes": 12
+    },
+    "paired_uncertainty_scope": "Paired whole-request prediction uncertainty; few requests give limited precision, no speed evidence"
+  },
+  "normal_stock_api_observations": {
+    "requests": 16,
+    "per_request_arithmetic_mean_prefill_tok_s": 499.3601875,
+    "per_request_arithmetic_mean_decode_tok_s": 40.6300625,
+    "api_accepted": 1219,
+    "api_drafted": 1704,
+    "combined_api_acceptance": 0.7153755868544601,
+    "combined_api_acceptance_percent": 71.53755868544602,
+    "performance_cohort": false,
+    "post_benchmark": false,
+    "single_call_per_task": true,
+    "warmup_performed": false,
+    "repeats_performed": false,
+    "clock_qualified_for_performance_claim": false,
+    "scope": "Raw API timings on the 16 stock parity calls, not a policy speed benchmark; API counters are distinct from native source totals",
+    "comparison_to_earlier_8k_or_long_context_benchmarks": false
+  },
+  "observed_neural_cost": {
+    "rows": 701,
+    "median_ns": 72697437.0,
+    "median_ms": 72.697437,
+    "scope": "Actual stock begin-to-outcome including observer; neither committed-token wall time nor alternate width savings",
+    "observer_overhead_included": true,
+    "token_rate_conversion_performed": false,
+    "alternate_width_or_skip_savings_established": false
+  },
+  "normal_restoration_snapshot": {
+    "version": "0.17.3",
+    "utc": "2026-10-09T07:25:36.529769+00:00",
+    "ready_open": true,
+    "port": 8840,
+    "controller_pid": 26120,
+    "backend_pid": 23480,
+    "console_pid": 41404,
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 16,
+      "cancelled": 0
+    },
+    "scope": "Root-owned retained readiness snapshot, not a new publication-worker runtime probe"
+  },
+  "public_sources": {
+    "files": 29,
+    "byte_identical_to_preparation": 28,
+    "adapted_files": [
+      {
+        "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\selector-real-request-provenance-20261009\\check_cohort.py",
+        "path": "C:\\Projects\\strix-alloy-clean\\scripts\\research\\halogen0173_selector_policy\\provenance\\check_cohort.py",
+        "bytes": 15207,
+        "sha256": "6f9b771ddd519a29603ece2e01acd83dcd8561a090ef0c17b427a5501004536e",
+        "source_sha256": "dcbb7b5db33fba1c9b07ffba7d60cde88c99dc3d9698eefbec15e41de6776481",
+        "adaptation": "Repository root parent index4 to3 for published placement; verifier logic unchanged"
+      }
+    ],
+    "map": "source-publication.json",
+    "review": "public-reader-review.json",
+    "reviewed_collected_manifest_sha256": "c86bf6e0b38bbeacba1eca21d69f963764c838cd5bd139d1957e127c471d6a0a",
+    "reader_reverified_requests": 16,
+    "scope": "Only published check_cohort.py repository-root parent index changed from4 to3 for directory placement; verification logic unchanged. Historical original source hashes remain historical."
+  },
+  "bundle": {
+    "copied_source_files": 277,
+    "copied_source_bytes": 4436631,
+    "manifest": "manifest.json",
+    "manifest_sha256": "11cb7b198ec09801bbc51ab2f37b2c100a5797383bef6f012c0e959b819dbe84",
+    "relocation_index": "relocation-index.json",
+    "relocation_index_sha256": "08fb341b38609b15a2d2eb835bd0570d81420c7dc804be8b1a78ac5601558455",
+    "source_bytes_preserved": true,
+    "first_fit_bytes_preserved": true,
+    "original_absolute_references_rewritten": false,
+    "original_references_portable": false,
+    "recursive_reference_following": false
+  },
+  "limitations": [
+    "Six authored heldout tasks give limited precision and do not establish human benchmark generalization.",
+    "Labels and predictions come from observed stock trajectories; a changed policy could change future histories.",
+    "No full native output-token tape was retained; API text parity and bounded copied native suffix have distinct scopes.",
+    "Checkpoint/N-gram/tokenizer source and mounted-file hashes are retained; container frontend PID, in-process tokenizer equivalence and GPU weight bytes are not attested.",
+    "Native cost intervals include observer overhead and cannot establish committed-token wall time, token rate, alternative-width savings or selector speed.",
+    "No ONNX graph export, CPU/GPU/NPU placement latency comparison, policy wiring or end-to-end policy speed measurement followed the failed predictor screen.",
+    "Normal API rates are single stock parity calls with no warmup, repeats or clock qualification; they cannot support a post benchmark or comparison to the earlier 8K or long-context benchmarks.",
+    "Original report/receipt references remain absolute paths from collection. Relocation index permits manual byte lookup only; original readers do not automatically consume the relocated bundle."
+  ],
+  "publication_worker_scope": "Source/evidence copy, JSON/text review and hash verification only; no hardware, API, native assembler/verifier execution, fitting, tests, Git staging or commits"
+}
