@@ -1,0 +1,1027 @@
+{
+  "schema": "halogen0172.gpu-event-attribution-public.v1",
+  "savedUTC": "2026-10-09T00:14:10.430801+00:00",
+  "version": "0.17.2",
+  "original_gpu_kernels_unchanged": true,
+  "NPU_executed": false,
+  "optimization_adopted": false,
+  "actual_input_tokens": 8192,
+  "actual_output_tokens": 128,
+  "input_kind": "synthetic pseudoprose with116 repeated calibration units",
+  "non_repetitive_natural_input": false,
+  "temperature": 0,
+  "seed": 1,
+  "thinking": false,
+  "cache": false,
+  "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+  "request_sha256": "243037d0ad3993ab3ad57f9a22ac182ecc7b50e6e6320089d7ba98bd3a7ae00b",
+  "excluded_warmups": 1,
+  "diagnostic_requests": 1,
+  "qualified_throughput_cohort": false,
+  "qualified_prefill_tok_s": null,
+  "qualified_decode_tok_s": null,
+  "exact_choices_model_usage_match_all_four_retained_stock_responses": true,
+  "record_count": 111302,
+  "sample_probability_denominator": 32,
+  "pool_pairs": 512,
+  "lifetime_sample_cap": 8192,
+  "output_cap_bytes": 33554432,
+  "seed64": 8769098148687599271,
+  "final_counters": {
+    "seen": 106122,
+    "selected": 3316,
+    "harvested": 3316,
+    "pending": 0,
+    "capacity_dropped": 0,
+    "reentrant_skipped": 1023,
+    "timing_disabled": 1,
+    "capture_skips": 0,
+    "event_handles_created": 1024,
+    "event_handles_destroyed": 1024,
+    "retired": 0,
+    "deferred_cleanup": 0
+  },
+  "windows": [
+    {
+      "name": "warmup",
+      "wall_seconds": 16.293642900011037,
+      "observed_launches": 49263,
+      "selected": 1513,
+      "groups": 251,
+      "unsampled_groups": 103,
+      "one_sample_groups": 50,
+      "two_sample_groups": 40,
+      "descriptive_ranking_score_sum_ms": 15121.114836687342,
+      "score_is_not_actual_or_removable_GPU_time": true,
+      "native_errors": 0,
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "accepted": 70,
+      "drafted": 113,
+      "acceptance_percent": 61.94690265486726,
+      "acceptance_scope": "combined API MTP+PLD",
+      "minimum_physical_free_gib": 24.623451232910156,
+      "minimum_commit_free_gib": 112.17805099487305,
+      "geometry_groups": [
+        {
+          "kernel_descriptor_rva": "0x18f4778",
+          "caller_rva": "0x180e5ec",
+          "symbol": "_ZN7halogen12_GLOBAL__N_112k_hc6_fused3ILi3EEEvPtPKtPKfS4_iNS0_5LqGrpES2_liPKhS4_S2_PfPyySB_y",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            256,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 5264,
+          "selected": 179,
+          "harvested": 179,
+          "valid": 179,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.274607663131293,
+          "median_bracket_ms": 0.25735798478126526,
+          "observed_sample_sum_ms": 49.15477170050144,
+          "observed_count_times_sample_mean_ms": 1445.5347387231263,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 1572.9526944160461,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f42f8",
+          "caller_rva": "0x17d3d39",
+          "symbol": "_ZN7halogen12_GLOBAL__N_115k_i4r_rows_gl_oILi1EEEvPKhlPKDF16_PKiPfS5_S5_PDF16_PjNS0_5I4rSdEiS7_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            600,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2688,
+          "selected": 94,
+          "harvested": 94,
+          "valid": 94,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.4382984349702267,
+          "median_bracket_ms": 0.40938600897789,
+          "observed_sample_sum_ms": 41.20005288720131,
+          "observed_count_times_sample_mean_ms": 1178.1461931999693,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 1318.401692390442,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f4300",
+          "caller_rva": "0x17d3e59",
+          "symbol": "_ZN7halogen12_GLOBAL__N_115k_i4r_rows_fl_oEPKhlPKDF16_PKiPfPKfS4_PKtS9_PtPjS6_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            1200,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2688,
+          "selected": 90,
+          "harvested": 90,
+          "valid": 90,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.3107658866378996,
+          "median_bracket_ms": 0.29253749549388885,
+          "observed_sample_sum_ms": 27.968929797410965,
+          "observed_count_times_sample_mean_ms": 835.3387032826741,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 895.0057535171509,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true,
+          "source_geometry_derived_N": 3
+        },
+        {
+          "kernel_descriptor_rva": "0x18f5778",
+          "caller_rva": "0x183daef",
+          "symbol": "_ZN7halogen12_GLOBAL__N_112k_ht_lin_grpILi4ELi4ELb1ELb0ELb0ELb0EEEvNS0_5HtGrpEPKtiiPfPj",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            752,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2015,
+          "selected": 60,
+          "harvested": 60,
+          "valid": 60,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.370440748333931,
+          "median_bracket_ms": 0.3458475023508072,
+          "observed_sample_sum_ms": 22.226444900035858,
+          "observed_count_times_sample_mean_ms": 746.4381078928709,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 711.2462368011475,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f4ef0",
+          "caller_rva": "0x1830341",
+          "symbol": "_ZN7halogen12_GLOBAL__N_18k_ht_linILi4ELi4ELb0ELb1ELb0ELb0EEEvPKjPKtiiiiPKDF16_S7_PfPjPvS5_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            20,
+            8,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2688,
+          "selected": 72,
+          "harvested": 72,
+          "valid": 72,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.26528295709027183,
+          "median_bracket_ms": 0.25064849853515625,
+          "observed_sample_sum_ms": 19.100372910499573,
+          "observed_count_times_sample_mean_ms": 713.0805886586506,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 611.2119331359863,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f5778",
+          "caller_rva": "0x183daef",
+          "symbol": "_ZN7halogen12_GLOBAL__N_112k_ht_lin_grpILi4ELi4ELb1ELb0ELb0ELb0EEEvNS0_5HtGrpEPKtiiPfPj",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            208,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2688,
+          "selected": 77,
+          "harvested": 77,
+          "valid": 77,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.23646851851568593,
+          "median_bracket_ms": 0.2244260013103485,
+          "observed_sample_sum_ms": 18.208075925707817,
+          "observed_count_times_sample_mean_ms": 635.6273777701638,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 582.6584296226501,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f4ef0",
+          "caller_rva": "0x1830341",
+          "symbol": "_ZN7halogen12_GLOBAL__N_18k_ht_linILi4ELi4ELb0ELb1ELb0ELb0EEEvPKjPKtiiiiPKDF16_S7_PfPjPvS5_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            20,
+            5,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2688,
+          "selected": 69,
+          "harvested": 69,
+          "valid": 69,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.23108202823694202,
+          "median_bracket_ms": 0.2009509950876236,
+          "observed_sample_sum_ms": 15.944659948348999,
+          "observed_count_times_sample_mean_ms": 621.1484919009001,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 510.22911834716797,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f43a8",
+          "caller_rva": "0x17d5cc6",
+          "symbol": "_ZN7halogen12_GLOBAL__N_118k_route_topk_w_grpILi2EEEvPKfPiPfiPNS0_6HtItemES7_S4_S4_S4_S4_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2688,
+          "selected": 82,
+          "harvested": 82,
+          "valid": 82,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.22678687759652372,
+          "median_bracket_ms": 0.20847900211811066,
+          "observed_sample_sum_ms": 18.596523962914944,
+          "observed_count_times_sample_mean_ms": 609.6031269794557,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 595.0887668132782,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f5870",
+          "caller_rva": "0x183f86a",
+          "symbol": "_ZN7halogen12_GLOBAL__N_122k_route_logits_rows_sgILi8ELi3ELi0EEEvPKtPKfPfllNS0_5SgArgE",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            65,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2716,
+          "selected": 70,
+          "harvested": 70,
+          "valid": 70,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.2241833141871861,
+          "median_bracket_ms": 0.20404650270938873,
+          "observed_sample_sum_ms": 15.692831993103027,
+          "observed_count_times_sample_mean_ms": 608.8818813323975,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 502.1706237792969,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f3d48",
+          "caller_rva": "0x17b1b99",
+          "symbol": "_ZN7halogen12_GLOBAL__N_115k_dn_recur_rowsILb1ELb1ELb1EEEvPKtPKfS5_NS0_6DnRowsEPtS3_S3_S7_iS3_S3_S5_S5_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            128,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2052,
+          "selected": 53,
+          "harvested": 53,
+          "valid": 53,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.28341618883159925,
+          "median_bracket_ms": 0.2603600025177002,
+          "observed_sample_sum_ms": 15.02105800807476,
+          "observed_count_times_sample_mean_ms": 581.5700194824417,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 480.67385625839233,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f6a88",
+          "caller_rva": "0x17d1ffa",
+          "symbol": "_ZN5q4moe7k_q4moeILi1ELi2ELi128ENS_4TuneILi0ELi128EEELi2EEEvNS_4ArgsE",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            11520,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 36,
+          "selected": 2,
+          "harvested": 2,
+          "valid": 2,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 14.79817819595337,
+          "median_bracket_ms": 14.79817819595337,
+          "observed_sample_sum_ms": 29.59635639190674,
+          "observed_count_times_sample_mean_ms": 532.7344150543213,
+          "sampling_sparsity": "fewer-than8-valid-samples",
+          "nominal_probability_expansion_ms": 947.0834045410156,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f3cd8",
+          "caller_rva": "0x17b0e3b",
+          "symbol": "_ZN7halogen12_GLOBAL__N_117k_dn_conv_ab_rowsILi3ELi0EEEvPKtS3_NS0_6DnRowsEPtNS0_5LqGrpEiS3_l",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            46,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2015,
+          "selected": 78,
+          "harvested": 78,
+          "valid": 78,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.22537526832177088,
+          "median_bracket_ms": 0.21659699827432632,
+          "observed_sample_sum_ms": 17.57927092909813,
+          "observed_count_times_sample_mean_ms": 454.13116566836834,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 562.5366697311401,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        }
+      ],
+      "qualified_post_rates": false
+    },
+    {
+      "name": "diagnostic",
+      "wall_seconds": 10.288079200021457,
+      "observed_launches": 49168,
+      "selected": 1571,
+      "groups": 261,
+      "unsampled_groups": 115,
+      "one_sample_groups": 53,
+      "two_sample_groups": 27,
+      "descriptive_ranking_score_sum_ms": 16443.208323025796,
+      "score_is_not_actual_or_removable_GPU_time": true,
+      "native_errors": 0,
+      "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+      "accepted": 70,
+      "drafted": 113,
+      "acceptance_percent": 61.94690265486726,
+      "acceptance_scope": "combined API MTP+PLD",
+      "minimum_physical_free_gib": 24.60985565185547,
+      "minimum_commit_free_gib": 112.17560958862305,
+      "geometry_groups": [
+        {
+          "kernel_descriptor_rva": "0x18f4778",
+          "caller_rva": "0x180e5ec",
+          "symbol": "_ZN7halogen12_GLOBAL__N_112k_hc6_fused3ILi3EEEvPtPKtPKfS4_iNS0_5LqGrpES2_liPKhS4_S2_PfPyySB_y",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            256,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 5259,
+          "selected": 177,
+          "harvested": 177,
+          "valid": 177,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.3118773716486106,
+          "median_bracket_ms": 0.28506898880004883,
+          "observed_sample_sum_ms": 55.202294781804085,
+          "observed_count_times_sample_mean_ms": 1640.1630975000432,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 1766.4734330177307,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f42f8",
+          "caller_rva": "0x17d3d39",
+          "symbol": "_ZN7halogen12_GLOBAL__N_115k_i4r_rows_gl_oILi1EEEvPKhlPKDF16_PKiPfS5_S5_PDF16_PjNS0_5I4rSdEiS7_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            600,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2686,
+          "selected": 95,
+          "harvested": 95,
+          "valid": 95,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.44544650473092734,
+          "median_bracket_ms": 0.43255099654197693,
+          "observed_sample_sum_ms": 42.317417949438095,
+          "observed_count_times_sample_mean_ms": 1196.469311707271,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 1354.157374382019,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f6a80",
+          "caller_rva": "0x17d119a",
+          "symbol": "_ZN5q4moe7k_q4moeILi1ELi0ELi128ENS_4TuneILi0ELi128EEELi1EEEvNS_4ArgsE",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            5760,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 35,
+          "selected": 1,
+          "harvested": 1,
+          "valid": 1,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 26.906763076782227,
+          "median_bracket_ms": 26.906763076782227,
+          "observed_sample_sum_ms": 26.906763076782227,
+          "observed_count_times_sample_mean_ms": 941.7367076873779,
+          "sampling_sparsity": "fewer-than8-valid-samples",
+          "nominal_probability_expansion_ms": 861.0164184570312,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f4300",
+          "caller_rva": "0x17d3e59",
+          "symbol": "_ZN7halogen12_GLOBAL__N_115k_i4r_rows_fl_oEPKhlPKDF16_PKiPfPKfS4_PKtS9_PtPjS6_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            1200,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2686,
+          "selected": 86,
+          "harvested": 86,
+          "valid": 86,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.3382429646891217,
+          "median_bracket_ms": 0.32558049261569977,
+          "observed_sample_sum_ms": 29.088894963264465,
+          "observed_count_times_sample_mean_ms": 908.5206031549808,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 930.8446388244629,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true,
+          "source_geometry_derived_N": 3
+        },
+        {
+          "kernel_descriptor_rva": "0x18f4ef0",
+          "caller_rva": "0x1830341",
+          "symbol": "_ZN7halogen12_GLOBAL__N_18k_ht_linILi4ELi4ELb0ELb1ELb0ELb0EEEvPKjPKtiiiiPKDF16_S7_PfPjPvS5_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            20,
+            8,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2684,
+          "selected": 85,
+          "harvested": 85,
+          "valid": 85,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.29046081181834726,
+          "median_bracket_ms": 0.27910101413726807,
+          "observed_sample_sum_ms": 24.689169004559517,
+          "observed_count_times_sample_mean_ms": 779.5968189204441,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 790.0534081459045,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f5778",
+          "caller_rva": "0x183daef",
+          "symbol": "_ZN7halogen12_GLOBAL__N_112k_ht_lin_grpILi4ELi4ELb1ELb0ELb0ELb0EEEvNS0_5HtGrpEPKtiiPfPj",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            752,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2011,
+          "selected": 61,
+          "harvested": 61,
+          "valid": 61,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.3834535044724824,
+          "median_bracket_ms": 0.38252198696136475,
+          "observed_sample_sum_ms": 23.390663772821426,
+          "observed_count_times_sample_mean_ms": 771.1249974941621,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 748.5012407302856,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f5778",
+          "caller_rva": "0x183daef",
+          "symbol": "_ZN7halogen12_GLOBAL__N_112k_ht_lin_grpILi4ELi4ELb1ELb0ELb0ELb0EEEvNS0_5HtGrpEPKtiiPfPj",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            208,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2684,
+          "selected": 86,
+          "harvested": 86,
+          "valid": 86,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.2735612194898517,
+          "median_bracket_ms": 0.25717298686504364,
+          "observed_sample_sum_ms": 23.526264876127243,
+          "observed_count_times_sample_mean_ms": 734.238313110762,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 752.8404760360718,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f5870",
+          "caller_rva": "0x183f86a",
+          "symbol": "_ZN7halogen12_GLOBAL__N_122k_route_logits_rows_sgILi8ELi3ELi0EEEvPKtPKfPfllNS0_5SgArgE",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            65,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2712,
+          "selected": 75,
+          "harvested": 75,
+          "valid": 75,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.2601216661930084,
+          "median_bracket_ms": 0.2509010136127472,
+          "observed_sample_sum_ms": 19.50912496447563,
+          "observed_count_times_sample_mean_ms": 705.4499587154388,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 624.2919988632202,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f43a8",
+          "caller_rva": "0x17d5cc6",
+          "symbol": "_ZN7halogen12_GLOBAL__N_118k_route_topk_w_grpILi2EEEvPKfPiPfiPNS0_6HtItemES7_S4_S4_S4_S4_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2685,
+          "selected": 88,
+          "harvested": 88,
+          "valid": 88,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.24724210223013704,
+          "median_bracket_ms": 0.24079850316047668,
+          "observed_sample_sum_ms": 21.75730499625206,
+          "observed_count_times_sample_mean_ms": 663.8450444879179,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 696.2337598800659,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f4ef0",
+          "caller_rva": "0x1830341",
+          "symbol": "_ZN7halogen12_GLOBAL__N_18k_ht_linILi4ELi4ELb0ELb1ELb0ELb0EEEvPKjPKtiiiiPKDF16_S7_PfPjPvS5_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            20,
+            5,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2684,
+          "selected": 78,
+          "harvested": 78,
+          "valid": 78,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.2461931294737718,
+          "median_bracket_ms": 0.23802049458026886,
+          "observed_sample_sum_ms": 19.2030640989542,
+          "observed_count_times_sample_mean_ms": 660.7823595076036,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 614.4980511665344,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f3d48",
+          "caller_rva": "0x17b1b99",
+          "symbol": "_ZN7halogen12_GLOBAL__N_115k_dn_recur_rowsILb1ELb1ELb1EEEvPKtPKfS5_NS0_6DnRowsEPtS3_S3_S7_iS3_S3_S5_S5_",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            128,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 2048,
+          "selected": 65,
+          "harvested": 65,
+          "valid": 65,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 0.306021829522573,
+          "median_bracket_ms": 0.2997150123119354,
+          "observed_sample_sum_ms": 19.891418918967247,
+          "observed_count_times_sample_mean_ms": 626.7327068622295,
+          "sampling_sparsity": "at-least8-valid-samples",
+          "nominal_probability_expansion_ms": 636.5254054069519,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        },
+        {
+          "kernel_descriptor_rva": "0x18f6a88",
+          "caller_rva": "0x17d1ffa",
+          "symbol": "_ZN5q4moe7k_q4moeILi1ELi2ELi128ENS_4TuneILi0ELi128EEELi2EEEvNS_4ArgsE",
+          "API": "hipLaunchKernel",
+          "phase": "unclassified",
+          "stream": "0x0",
+          "grid": [
+            11520,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "shared_bytes": 0,
+          "observed_launches": 36,
+          "selected": 5,
+          "harvested": 5,
+          "valid": 5,
+          "invalid": 0,
+          "pending": 0,
+          "native_errors": 0,
+          "mean_bracket_ms": 14.795455741882325,
+          "median_bracket_ms": 14.808452606201172,
+          "observed_sample_sum_ms": 73.97727870941162,
+          "observed_count_times_sample_mean_ms": 532.6364067077637,
+          "sampling_sparsity": "fewer-than8-valid-samples",
+          "nominal_probability_expansion_ms": 2367.272918701172,
+          "expansion_is_diagnostic_estimate_not_complete_kernel_time": true
+        }
+      ],
+      "qualified_post_rates": false
+    }
+  ],
+  "outside_request_launches": 7691,
+  "outside_request_samples": 232,
+  "source_archive": [
+    {
+      "path": "scripts/benchmarks/experimental/halogen0172_gpu_events/gpu_events.c",
+      "bytes": 14649,
+      "sha256": "a1075daec65d44ffb1ce94ff73da04ccc0e74981f39e52a456a6e0aab306433d"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0172_gpu_events/analyze.py",
+      "bytes": 8652,
+      "sha256": "a7798ce1c6dea14205a5c4dac0344f85b8f800fcf73c59ad504c89e9c1fa5500"
+    },
+    {
+      "path": "scripts/benchmarks/experimental/halogen0172_gpu_events/descriptor-map.json",
+      "bytes": 134072,
+      "sha256": "2798418c57061d64e4e762e333c51ba7e675df02d90eeeac624434bb443f4a3d"
+    }
+  ],
+  "private_evidence": [
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/gpu-events.bin",
+      "bytes": 14246720,
+      "sha256": "6cf80bf8b8ba74e583646f8845d50f0a655996b5bdf16ad4c3184312085c71b7"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/analysis.json",
+      "bytes": 560742,
+      "sha256": "df6affe7b920a4da5fbc0ad32d4e83653be95e991d98c48c70e1798ab762ec3d"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/request-boundaries.json",
+      "bytes": 5992,
+      "sha256": "7d1742a3ef39eac66ce27be98b93261e8e244e1bef11df77da6511406c500192"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/build.json",
+      "bytes": 1386,
+      "sha256": "a1a87d5b95868203b8b071938cc521706f1e380544ebe2b963ef9265f694cc89"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/live-export-receipt.json",
+      "bytes": 2415,
+      "sha256": "b3166019f071e0e2904bf1e60835b7ac7ce7420703b634f6f2778c3751340705"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/runtime-evidence-review.md",
+      "bytes": 13419,
+      "sha256": "8c952d4f4806aa8e7cd08514d7b386a3774fa6c474efd3318b1db7368659ad58"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/design-review.md",
+      "bytes": 14007,
+      "sha256": "b6b457dcd313ae88fa97082e3f79d04669821849fdd9b676375b768516bc3cd2"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/phase-contract.md",
+      "bytes": 18332,
+      "sha256": "d56d90d86d16e90eb1691c80bd84aedcb320801b9c7d3e0df3a5fffe7b121b45"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/analyzer-integrity-result.json",
+      "bytes": 1972,
+      "sha256": "da2698c9053b61f406473cce0bd6c582be00f5ef50a879559ec091ea8b07fdbe"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/final-ready-open.json",
+      "bytes": 2824,
+      "sha256": "d76317a989eee5e1694c699854c20da7d98bd50ef3e2739ff812714796f36b5f"
+    },
+    {
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/gpu-event-attribution-20261009/closed-stop-reconciliation.json",
+      "bytes": 2275,
+      "sha256": "d5dd709d6a42b2b73001d4b85160fe58231d527241f4ca0020f9fc230b854218"
+    }
+  ],
+  "build": {
+    "CPU_compiler_returncode": 0,
+    "flags": [
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "observer_so_sha256": "50b7440aca9abf11f796561296fdc4a806b3e1126803842c48cbb08b9da41f8c"
+  },
+  "limits": {
+    "semantic_phases": "unclassified",
+    "absolute_GPU_timestamps": false,
+    "isolated_kernel_time": false,
+    "GPU_busy_timeline": false,
+    "complete_runtime_coverage": false,
+    "NULL_stream_markers_can_impose_cross_stream_ordering": true,
+    "general_HIP_last_error_transparency": false,
+    "concurrent_capture_transition_safety": false,
+    "sample_bracket_medians_include_observer_driver_dependency_overhead": true,
+    "host_end_precedes_stop_event": true,
+    "common_floor_identifiable": false,
+    "no_component_ms_to_tok_s_conversion": true
+  },
+  "cleanup": {
+    "observer_exported_before_normal_stop": true,
+    "event_destroy_success_not_proof_of_immediate_resource_release": true,
+    "normal_diagnostic_cleanup": true,
+    "normal_diagnostic_recovery": true,
+    "initial_original_recovery_failed": true,
+    "initial_failure_preserved": true,
+    "initial_stale_lock_reconciled_only_after_actual_exits_and_five_admitted_frames": true,
+    "final_version": "0.17.2",
+    "final_ready_open": true,
+    "visible_console_open": true,
+    "controller_pid": 20640,
+    "backend_pid": 27808,
+    "console_pid": 17540
+  },
+  "retained_stock_reference": {
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "input_kind": "synthetic pseudoprose",
+    "thinking": false,
+    "cache": false,
+    "excluded_warmups": 1,
+    "measured_repetitions": 3,
+    "prefill_tok_s": 1225.9777,
+    "decode_tok_s": 42.9987,
+    "accepted": 210,
+    "drafted": 339,
+    "acceptance_scope": "combined API MTP+PLD",
+    "remeasured_here": false,
+    "evidence": {
+      "path": "docs/benchmarks/halogen0172-native-attn-bt4-opt-20261008.json",
+      "bytes": 40820,
+      "sha256": "54aef6179e87938aac317526f2abb4c6cdd84aaf7cfe43c5d38213fd3386b050"
+    }
+  },
+  "official_updates": {
+    "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/updates-20261009-0001/checkpoint-receipt.json",
+    "bytes": 2002,
+    "sha256": "9f85ca5e0913001f52de1631e8b93a827245a0bfee46a5bf51c5d98b6ac3dd3b"
+  },
+  "full_goal_completed": false,
+  "automation_status": "PAUSED"
+}
