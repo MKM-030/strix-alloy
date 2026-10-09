@@ -154,9 +154,9 @@ def halogen_speculation_module(directory):
     supported = Path(__file__).resolve().parents[1] / 'backends'
     allowed = tuple((supported / name).resolve() for name in
                     ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1',
-                     'halogen-wsl2-0.17.2'))
+                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3'))
     if directory.resolve() not in allowed:
-        raise ValueError('Speculation policy requires a pinned Halogen 0.16.2, 0.17.0, 0.17.1 or 0.17.2 backend')
+        raise ValueError('Speculation policy requires a pinned Halogen 0.16.2 or 0.17.x backend')
     source = directory / 'scripts/speculation_policy.py'
     if source.is_symlink() or not source.is_file():
         raise ValueError('Selected backend has no managed speculation-policy support')
@@ -179,9 +179,11 @@ def halogen_speculation_arguments(engine, directory):
 def halogen_api_defaults_arguments(engine, directory):
     if 'api_defaults' not in engine:
         return []
-    supported = ROOT.parent / 'backends/halogen-wsl2-0.17.2'
-    if directory.resolve() != supported.resolve():
-        raise ValueError('API defaults require the pinned Halogen 0.17.2 backend')
+    supported = ROOT.parent / 'backends'
+    allowed = tuple((supported / name).resolve() for name in
+                    ('halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3'))
+    if directory.resolve() not in allowed:
+        raise ValueError('API defaults require a pinned Halogen 0.17.2 or 0.17.3 backend')
     source = directory / 'scripts/api_defaults.py'
     if source.is_symlink() or not source.is_file():
         raise ValueError('Selected backend has no managed API-default support')
@@ -330,7 +332,7 @@ def halogen_launch_command(engine, directory):
     supported = ROOT.parent / 'backends'
     allowed = tuple((supported / name).resolve() for name in
                     ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1',
-                     'halogen-wsl2-0.17.2'))
+                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3'))
     executable = Path(engine.get('python_executable', ''))
     if (directory.resolve() not in allowed or not executable.is_absolute() or
             not executable.is_file() or executable.resolve() != Path(sys.executable).resolve()):

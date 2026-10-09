@@ -1,0 +1,275 @@
+{
+  "schema": "alloy.bulk-bn64-engine-candidate.host-map.v2-resident-fix",
+  "date_utc": "2026-10-09",
+  "status": "default-off source delivery; root owns build and engine validation",
+  "adapter_sha256": "714b90cf716a0ed2b82deb949394ff4154798a0fadd6c421c39aadd7e3c8c24d",
+  "engine": {
+    "version": "0.17.3",
+    "required_runtime_path": "/usr/local/bin/flash_serve",
+    "staged_relative_path": "../updates-20261009-0202/runtime-data/usr/local/bin/flash_serve.data",
+    "bytes": 26188824,
+    "sha256": "af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7",
+    "embedded_native_codeobject": {
+      "file_offset": 339968,
+      "bytes": 17765424,
+      "sha256": "18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039",
+      "entire_object_byte_identical_to_0172": true,
+      "equivalence_evidence": "../updates-20261009-0202/native-codeobject-equivalence.json"
+    }
+  },
+  "scope": {
+    "tokens": 8192,
+    "routed_rows": 81920,
+    "experts": 512,
+    "mode": 1,
+    "output_flag": 1,
+    "device": 0,
+    "stream": "NULL",
+    "capture": "none",
+    "dynamic_shared_bytes": 0,
+    "enable_env": "ALLOY_BULK_BN64_ENABLE=1",
+    "log_env": "ALLOY_BULK_BN64_LOG=/absolute/new/exclusive-log-path",
+    "log_maximum_bytes": 1048576,
+    "new_device_code": false,
+    "host_text_patch": false,
+    "synthetic_kernel_registration": false
+  },
+  "host": {
+    "disassembly": "../bulk-bn64-engine-candidate-v1/host-0173.txt",
+    "registration_target_plt_rva": "0x18f4e10",
+    "mode_int32_rva": "0x18fcca0",
+    "output_flag_uint8_rva": "0x18fccd8",
+    "registration_requirements": {
+      "thread_limit": "UINT32_MAX",
+      "optional_coordinate_pointers": "all NULL",
+      "fat_binary_owner": "common across all seven native handles",
+      "forward_original_registration": true
+    },
+    "kernels": [
+      {
+        "role": "items128",
+        "descriptor_rva": "0x18f92b0",
+        "registration_call_rva": "0x187782e",
+        "symbol": "_ZN5q4moe13k_q4moe_itemsILi128EEEvPKiS2_S2_iPNS_4ItemES4_Pi",
+        "kernarg_bytes": 56,
+        "fixed_lds_bytes": 2048,
+        "block": [
+          512,
+          1,
+          1
+        ]
+      },
+      {
+        "role": "GU128",
+        "descriptor_rva": "0x18f92d0",
+        "registration_call_rva": "0x18778e6",
+        "symbol": "_ZN5q4moe7k_q4moeILi1ELi0ELi128ENS_4TuneILi0ELi128EEELi1EEEvNS_4ArgsE",
+        "kernarg_bytes": 152,
+        "fixed_lds_bytes": 36864,
+        "block": [
+          256,
+          1,
+          1
+        ]
+      },
+      {
+        "role": "DN128split2",
+        "descriptor_rva": "0x18f92d8",
+        "registration_call_rva": "0x1877914",
+        "symbol": "_ZN5q4moe7k_q4moeILi1ELi2ELi128ENS_4TuneILi0ELi128EEELi2EEEvNS_4ArgsE",
+        "kernarg_bytes": 152,
+        "fixed_lds_bytes": 36864,
+        "block": [
+          256,
+          1,
+          1
+        ]
+      },
+      {
+        "role": "items64",
+        "descriptor_rva": "0x18f92a8",
+        "registration_call_rva": "0x1877800",
+        "symbol": "_ZN5q4moe13k_q4moe_itemsILi64EEEvPKiS2_S2_iPNS_4ItemES4_Pi",
+        "kernarg_bytes": 56,
+        "fixed_lds_bytes": 2048,
+        "block": [
+          512,
+          1,
+          1
+        ]
+      },
+      {
+        "role": "GU64",
+        "descriptor_rva": "0x18f92b8",
+        "registration_call_rva": "0x187785c",
+        "symbol": "_ZN5q4moe7k_q4moeILi1ELi0ELi64ENS_4TuneILi0ELi128EEELi1EEEvNS_4ArgsE",
+        "kernarg_bytes": 152,
+        "fixed_lds_bytes": 34816,
+        "block": [
+          256,
+          1,
+          1
+        ]
+      },
+      {
+        "role": "DN64split2",
+        "descriptor_rva": "0x18f92c0",
+        "registration_call_rva": "0x187788a",
+        "symbol": "_ZN5q4moe7k_q4moeILi1ELi2ELi64ENS_4TuneILi0ELi128EEELi2EEEvNS_4ArgsE",
+        "kernarg_bytes": 152,
+        "fixed_lds_bytes": 34816,
+        "block": [
+          256,
+          1,
+          1
+        ]
+      },
+      {
+        "role": "native_fold",
+        "descriptor_rva": "0x18f6bc0",
+        "registration_call_rva": "0x186f3c0",
+        "symbol": "_ZN7halogen12_GLOBAL__N_115k_i4r_fold_rowsEPKtPKiiPKfPKDF16_S2_S6_Pt",
+        "kernarg_bytes": 64,
+        "fixed_lds_bytes": 0,
+        "block": [
+          256,
+          1,
+          1
+        ]
+      }
+    ],
+    "wave_size": 32,
+    "launch_return_rvas": {
+      "items128": "0x17d2e97",
+      "GU128_mode1_N8192": "0x17d354a",
+      "DN_common": "0x17d43aa",
+      "fold_common": "0x17d462c"
+    }
+  },
+  "argument_abi": {
+    "pointer_bytes": 8,
+    "dim3_bytes": 12,
+    "items": {
+      "bytes": 56,
+      "host_launch_argument_form": "seven separately pointed scalar values",
+      "offsets": {
+        "ids": 0,
+        "prefix": 8,
+        "raw": 16,
+        "rows_int32": 24,
+        "gu_items": 32,
+        "dn_items": 40,
+        "counts": 48
+      }
+    },
+    "projection": {
+      "bytes": 152,
+      "host_launch_argument_form": "args[0] points to complete by-value Args aggregate",
+      "offsets": {
+        "weight": 0,
+        "packed": 8,
+        "scale": 16,
+        "stride": 24,
+        "codebook_float32_16": 32,
+        "m0": 96,
+        "m1": 104,
+        "input": 112,
+        "permutation": 120,
+        "items": 128,
+        "count": 136,
+        "output": 144
+      },
+      "replacement_modified_fields": [
+        "items"
+      ]
+    },
+    "fold": {
+      "bytes": 64,
+      "host_launch_argument_form": "eight separately pointed scalar values",
+      "offsets": {
+        "dense": 0,
+        "inverse": 8,
+        "tokens_int32": 16,
+        "weights": 24,
+        "channel": 32,
+        "residual": 40,
+        "scalar": 48,
+        "output": 56
+      },
+      "replacement_modified_fields": []
+    }
+  },
+  "items": {
+    "native128_segment_capacity": 1152,
+    "native64_segment_capacity": 1792,
+    "item_bytes": 16,
+    "GU_multiplier": 5,
+    "DN_multiplier": 10,
+    "GU_payload_bytes": 143360,
+    "DN_payload_bytes": 286720,
+    "guard_bytes_per_end": 4096,
+    "total_additional_device_bytes": 446464,
+    "original_counts_bytes": 8,
+    "original_arena_items_modified": false,
+    "grids": {
+      "items": 1,
+      "GU128": 5760,
+      "DN128": 11520,
+      "GU64": 8960,
+      "DN64": 17920,
+      "fold": 20480
+    }
+  },
+  "native64_read_bounds": {
+    "evidence": "../prefill-bulk-moe-retile-scope-20261009/host-route-proof-v1.activation64-exact.md",
+    "GU_activation_half_open_bytes": [
+      0,
+      41943040
+    ],
+    "DN_activation_half_open_bytes": [
+      0,
+      104857600
+    ],
+    "activation_prefix_padding_bytes": 0,
+    "activation_suffix_padding_bytes": 0,
+    "GU_weight_blob_bytes": 865075200,
+    "DN_weight_blob_bytes": 432537600,
+    "packed_scale_padding_bytes": 0,
+    "GU_m0_minimum_bytes": 2560,
+    "GU_m1_minimum_bytes": 1280,
+    "DN_fold_channel_minimum_bytes": 5120,
+    "device_extent_query_admission_gate": false
+  },
+  "transaction": {
+    "serialized": true,
+    "bound_to": [
+      "PID",
+      "TID",
+      "device0",
+      "streamNULL"
+    ],
+    "interruption_action": "replay stock items128 and every attempted stock GU/DN128 prefix, synchronize, disable later remaps, then forward original call",
+    "rollback_failure_action": "latch fatal HIP999; void unregister exits127",
+    "projection_attempt_phase_recorded_before_submission": true,
+    "fold_commit": "successful original fold submission",
+    "default_private_buffer_lifetime": "isolated process lifetime",
+    "explicit_shutdown_symbol": "alloy_bulk_bn64_shutdown",
+    "destructor_hip_calls": false
+  },
+  "review": {
+    "receipt": "independent-abi-transaction-review.md",
+    "bounded_source_findings_outstanding": 0,
+    "author_compiled_adapter": false,
+    "author_executed_adapter": false,
+    "engine_equality_established": false,
+    "net_engine_performance_established": false,
+    "serving_promotion_established": false
+  },
+  "constructor_delta": {
+    "base_source_sha256": "1168a01f8ffd7346f6b63144b4b1f28e8801c15bc84ecaa56c5364961dba7da7",
+    "excluded_argv1": "--resident-gib",
+    "before_engine_hash_and_exclusive_log": true,
+    "unknown_arguments": "retain existing pinned behavior",
+    "new_kernel_or_memory_admission_gate": false
+  }
+}

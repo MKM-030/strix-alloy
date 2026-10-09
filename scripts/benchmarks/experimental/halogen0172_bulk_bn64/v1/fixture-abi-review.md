@@ -1,0 +1,20 @@
+# Source fixture ABI review
+
+The source-only delivery is `host.c`, `README.md`, and `source-review.py/json`. Fresh CPU verification passes the seven exact native kernel names and metadata,152/56/64-byte aggregate layouts, both full81920-slot route fixtures with ten distinct experts per token, stableP/I inverses, both item capacities, and dense row coverage. No compilation, HIP initialization, kernel launch, engine request, lifecycle, STATE or Git action was performed by this agent.
+
+The source-review pins `host.c` SHA256 `9f3c103dcac668b8da87ad868b9803c7286bb25fd5211e50f2dfac4e973e56ae`. The audited native code object is17,765,424bytes, SHA256 `18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039`; the executable checks this fingerprint and ELF64-AMDGPU header before loading HIP. Compile-time aggregate asserts cover152-byte projection,56-byte item and64-byte fold ABI. All alignment padding is zeroed.
+
+|Kernel|Kernarg bytes|Block|FixedLDS|DynamicLDS|
+|---|---:|---:|---:|---:|
+|items128/items64|56|512|2048|0|
+|GU128 / DN128 split2|152|256|36864|0|
+|GU64 / DN64 split2|152|256|34816|0|
+|native bulk fold|64|256|0|0|
+
+GU suffix`ELi1` and DN suffix`ELi2` are the pinned mode1/outputflag1 host bindings. The independent reviewer verified all seven descriptor/name registrations and the projection count-before-item guards. Every supplied item tuple is checked against CPU expected expert, output tile, sorted rank and row count after each complete operation. Item raw bookkeeping must total81920. CapacityC_B=floor(R/B)+512 is1152/1792 for128/64; storage reserves64's5C/10C sixteen-byte records and8-byte counts. GU/DN launches retain5C_B/10C_B grid bounds; fold grid20480.
+
+The full152-byte projection contains the blob pointer, byte offsets0/GU0x32000000/DN0x19000000, byte scale strides40/10, exact native FP32 codebook[-8..7], metadata pointers, activation/P pointers, native items/count pointer and output pointer. GU+0x60 metadata is2560bytes (two640-elementFP16 planes), GU+0x68 is1280bytes; no expert stride. DN+0x60 is5120bytes shared with fold's FP16 channel operand; DN+0x68 and+0x78 are zero. Native GU/DN blob minima865075200/432537600bytes are fully initialized and require no packed/scale padding. The host route audit covers all92GUmetadata read triples. The final `host-route-proof-v1.activation-bounds.md` certifies conservative activation envelope[-8,L+512), with L41943040 forGUinput and104857600 forDNinput, safely inside the existing initialized4096-byte prefix/suffix guards. P reads stay[0,327680). The native128 apparent-8sites use+136basebias, yielding+128rather than an underread. All23device allocations carry4096-byte leading/trailing guards.
+
+No output arena aliases an input or reference. Native GU/DN/final write100/400/40MiB working surfaces; complete BN128 references retain another100/400/40MiB. Total guarded device allocation is2,515,610,388bytes (2.342844743GiB), bounded under3GiB. Host chunk staging plus route arrays stays under9,388,032bytes excluding runtime/loader overhead. Initialization/transfer/guard/item/word checks are outside BOTH GPU-event boundaries. Each event interval includes native item+GU+DN+fold; identical CPU stable routing and pretransformed input exclude sorting and rotation from BOTH.
+
+Uniform512x160 and boundary-tail patterns retainN8192/R81920/512experts and cover full/tail16/64/128row boundaries. One paired warmup per pattern is excluded; measured pairs alternate order, default3 and maximum7. Payload initialization differs byBN(128=0xa5,64=0x5a) while all redzones stay0xa5, preventing identical missing writes from passing through a shared poison. Every GU/DN/finalBF16word must match bitwise and be finite; every guard must remain unchanged. A first-running64 compares to retained128, and that pair's new128 checks reference repeatability before refreshing the reference. Failure prevents qualification. This finite synthetic pair makes no serving, model accuracy or NPU claim, and universal arithmetic/control-flow proof remains a separate promotion requirement.

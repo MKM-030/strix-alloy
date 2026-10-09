@@ -1,0 +1,67 @@
+{
+  "schema": "alloy.bulk-bn64-engine-comparison.source.v1",
+  "date_utc": "2026-10-09",
+  "source_only": true,
+  "root_owns": ["upgrade", "launch wrapper", "engine lifecycle", "API calls", "hardware", "comparison"],
+  "client": {
+    "path": "window.py",
+    "bytes": 11920,
+    "sha256": "8f3c6285546eaf848d8e3986ce9b079b07cff485ea59f6eea3e534999c81649c"
+  },
+  "derived_from": {
+    "path": "../hc6-registration-route-v1/window.py",
+    "sha256": "229553908053739880dc107bcaef5090d4c29c516251a698bdc859479a39dff8",
+    "request_body_unchanged": true
+  },
+  "profile": {
+    "path": "../halogen0173-migration-20261009/thinking-latest-profile.json",
+    "sha256": "78e1888d9ecc93a2117be679cd27ffeec1f8f9b99165e18647cef04104bfc141",
+    "backend_version": "0.17.3",
+    "backend_directory": "backends/halogen-wsl2-0.17.3"
+  },
+  "prompt": {
+    "path": "../fixed-depth2-comparison/prompts/prompt-8192-prose.txt",
+    "sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+  },
+  "window": {
+    "names": ["before", "candidate", "after"],
+    "actual_input_tokens": 8192,
+    "actual_output_tokens": 128,
+    "excluded_warmups": 1,
+    "measured_repetitions": 3,
+    "temperature": 0,
+    "seed": 1,
+    "prompt_cache": false,
+    "thinking": false,
+    "drafter": "mtp",
+    "mtp_depth": 2,
+    "pld": "3,3",
+    "entry_physical_commit_gib": [22, 22],
+    "runtime_physical_commit_gib": [18, 18],
+    "equality_fields": ["output_sha256", "accepted", "drafted", "finish_reason"],
+    "baseline": "passed before window; all four responses agree",
+    "candidate_manifest_field": "bulk_bn64_candidate.enabled=true",
+    "candidate_environment": "ALLOY_BULK_BN64_ENABLE=1",
+    "stock_omits_manifest_field": true,
+    "stock_omits_bn64_environment": true
+  },
+  "load_snapshot": {
+    "fresh_per_window": true,
+    "synchronous_before_requests": true,
+    "read_only": true,
+    "process_name_pattern": "League|Riot",
+    "process_fields": ["ProcessId", "Name", "CreationDate"],
+    "gpu_counter": "\\GPU Engine(*)\\Utilization Percentage",
+    "allowed_pdh_status": [0, 1],
+    "rejects_empty_invalid_nonfinite_negative": true,
+    "competing_load_percent_threshold": 1,
+    "console_token_values": false
+  },
+  "execution": {
+    "author_imported_client": false,
+    "author_ran_tests": false,
+    "author_built": false,
+    "author_called_API": false,
+    "author_queried_processes_or_GPU": false
+  }
+}

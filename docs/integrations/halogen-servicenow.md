@@ -1,16 +1,16 @@
 # Halogen foreground console and ServiceNow REST integration
 
-The foreground launcher defaults to **Halogen 0.17.2**, fixed MTP depth 2 and
-the `Current8K` profile. The measurements below describe historical 0.16.2
-workloads. See the separate [0.17.2 fixed-depth-2 comparison](../benchmarks/halogen0172-fixed-depth2-20261008.md)
-for the newer engine's retained measurements and the
-[0.17.2 adaptive-depth comparison](../benchmarks/halogen0172-stock-adaptive-20261008.md)
-for the subsequent fixed-2/adaptive/fixed-2 windows.
+The foreground launcher defaults to **installed Halogen 0.17.3**, fixed MTP
+depth 2 and the `Current8K` profile. The measurements
+below describe historical 0.16.2 workloads. The separate
+[historical 0.17.2 fixed-depth-2 comparison](../benchmarks/halogen0172-fixed-depth2-20261008.md)
+and [historical 0.17.2 adaptive-depth comparison](../benchmarks/halogen0172-stock-adaptive-20261008.md)
+retain earlier engine measurements; they do not measure the current 0.17.3 runtime.
 
 The retained **48.423621 tok/s** result is an 8,192-input-token, 128-output-token
-greedy prose measurement from 4 October 2026. The engine had **262,144 positions
-of capacity**. Capacity is the space available for input plus output; it does not
-mean that every request occupies that space. Three measured repetitions followed
+greedy prose measurement from Halogen 0.16.2 on 4 October 2026. The engine had
+**262,144 positions of capacity**. Capacity is the space available for input plus
+output; it does not mean that every request occupies that space. Three measured repetitions followed
 an excluded warmup, with thinking off, seed 1, cache Off and native MTP depth 2.
 [Retained 8K report](../benchmarks/halogen0162-pld-stock8k-20261004.md).
 
@@ -43,8 +43,9 @@ server and API trace:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -ConsoleTrace
 ```
 
-For Halogen 0.17.2 this launcher explicitly defaults to Thinking On, medium
-effort and a maximum of 2048 thinking tokens. It forwards the supported upstream
+For Halogen 0.17.3 and an explicit 0.17.2 selection, this launcher defaults to
+Thinking On, medium effort and a maximum of 2048 thinking tokens. It forwards the
+supported upstream
 `HALOGEN_ENABLE_THINKING=1`, `HALOGEN_REASONING_EFFORT=medium` and
 `HALOGEN_MAX_THINKING_TOKENS=2048` through the managed container configuration.
 Individual requests retain upstream precedence, including
@@ -65,13 +66,15 @@ For an AI Agent request, allow room for both reasoning and the final answer:
 These fields belong in the request body. An input transformer that clamps
 `max_tokens` to 2048 overrides the server's larger output default and needs its
 own budget adjustment. Return the final `message.content` to the text connector;
-keep `reasoning_content` separate. The measured speed results below used
-Thinking Off and do not qualify Thinking On throughput.
+keep `reasoning_content` separate. The retained speed measurements used Thinking
+Off and do not qualify Thinking On throughput.
 
-The default `Current8K` profile selects Halogen 0.17.2 and pairs an 8,192-token
-prefill chunk with an 8,192-token prefill arena. `-HalogenVersion` selects the
-installed backend explicitly. The historical Stock A profile requires an
-explicit 0.16.2 selection; it rejects 0.17.2:
+The default `Current8K` profile selects installed Halogen 0.17.3 and pairs an
+8,192-token prefill chunk with an 8,192-token prefill arena.
+Use `-HalogenVersion 0.17.3` to pin the current version or
+`-HalogenVersion 0.17.2` to select the earlier installed backend explicitly.
+The historical Stock A profile requires an explicit 0.16.2 selection; it rejects
+0.17.2 and 0.17.3:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile HistoricalStock -HalogenVersion 0.16.2 -ConsoleTrace
@@ -105,20 +108,24 @@ ServiceNow's Authorization header. Credential values are never printed.
 
 ## What the profiles actually select
 
-`Current8K` defaults to Halogen **0.17.2**; `HistoricalStock` uses the explicitly
-selected **0.16.2** backend. Both select native `qwen38-flash-next-v2.hgn`, one
+`Current8K` defaults to installed Halogen **0.17.3**;
+`HistoricalStock` uses the explicitly selected **0.16.2** backend.
+Both select native `qwen38-flash-next-v2.hgn`, one
 slot, a 262,144-position pool and context capacity,
 MTP depth 2, stock PLD `3,3`, prompt cache Off, one active API request, and an
 18 GiB physical/commit runtime reserve. They retain the stock compute path and
-the normal WSL2 adaptation. The default 0.17.2 image is pinned as:
+the normal WSL2 adaptation. The current 0.17.3 image is pinned as:
 
 ```text
-ghcr.io/peonist-ai/halogen-flash-server@sha256:0c83ef1093520f0d5b5a00285e59e7ac6b85b1922917fc4a3df95ac5a2638cdd
+ghcr.io/peonist-ai/halogen-flash-server@sha256:3bca0132db3c859c997d52d148e6ea4b7b497b8a695c5ccab97135193fde592a
 ```
 
 The historical backend retains its separate [0.16.2 release pin](../../backends/halogen-wsl2-0.16.2/profiles/release.json).
-The [0.17.2 source and installation notes](../../backends/halogen-wsl2-0.17.2/portable-source-notes.md)
-record the newer engine's identities and reviewed request-option parity.
+The [current 0.17.3 release pin](../../backends/halogen-wsl2-0.17.3/profiles/release.json)
+and [0.17.3 migration notes](../../backends/halogen-wsl2-0.17.3/portable-source-notes.md)
+record the installed engine's identities and source compatibility. The
+[historical 0.17.2 source and installation notes](../../backends/halogen-wsl2-0.17.2/portable-source-notes.md)
+remain available for an explicit 0.17.2 selection.
 
 | Startup control | HistoricalStock | Current8K |
 | --- | --- | --- |
@@ -134,8 +141,8 @@ log records `max_tok 32768` and 12.3 GiB working memory. The later natural long
 profile explicitly used `8192` for both, with 5.6 GiB working memory. These arena
 settings size work buffers and prefill calls; they are separate from the JSON
 answer budget `max_tokens`.
-[Default version pin](../../backends/halogen-wsl2-0.17.2/profiles/release.json),
-[upstream 0.16.2 flags](https://github.com/peonist-ai/halogen-flash-server/blob/v0.16.2/docs/FLAGS.md).
+[Current version pin](../../backends/halogen-wsl2-0.17.3/profiles/release.json),
+[historical upstream 0.16.2 flags](https://github.com/peonist-ai/halogen-flash-server/blob/v0.16.2/docs/FLAGS.md).
 
 The v2 checkpoint uses mixed precision: 4-bit experts and other weights, 6-bit
 mixing layers, and 8-bit dense draft-head projections. Its 62.1 GiB checkpoint
@@ -204,16 +211,16 @@ Thinking controls also support `chat_template_kwargs`; agreeing duplicate contro
 are accepted. Send explicit controls so that server defaults cannot unexpectedly
 enable thinking. The pinned official documentation describes the sampling,
 thinking and token-budget behavior.
-[Halogen 0.16.2 API guidance](https://github.com/peonist-ai/halogen-flash-server/blob/v0.16.2/README.md#using-it).
+[Historical Halogen 0.16.2 API guidance](https://github.com/peonist-ai/halogen-flash-server/blob/v0.16.2/README.md#using-it).
 
 **Cache is a startup setting here.** Although the historical benchmark request
 included `cache_prompt: false`, the retained 0.16.2 `ChatReq` schema does not
 declare or read `cache_prompt`; its unknown fields are ignored. This field is
-therefore not a supported per-request cache switch for this pin. The effective
-cache-off control is `HALOGEN_PROMPT_CACHE=0` in both launch profiles. Do not infer
-support for a parameter merely because a request returns HTTP 200.
+therefore not a supported per-request cache switch for that historical pin.
+The effective cache-off control is `HALOGEN_PROMPT_CACHE=0` in both launch
+profiles. Do not infer support for a parameter merely because a request returns HTTP 200.
 
-This schema check used the retained official-image API extract at
+This historical 0.16.2 schema check used the retained official-image API extract at
 `server/.local/optimization9h-20261004/upstream-api-source-9b538f902be94004b711bf878a78219e/source-stdout.txt`,
 SHA256 `8607cc429448b7eaa51c1bad68fe24c5c59f4bf8662eb28bbf21b130236ac4f1`.
 Its `ChatReq`, `DRAFTERS` and `drafter_id` definitions confirm the body controls.
@@ -249,7 +256,7 @@ Use the HTTPS hostname instead of loopback from a caller that can reach the
 configured endpoint. This is an example to run manually, not a retained benchmark.
 
 ```powershell
-$tokenPath = 'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.17.2\.local\api-token.txt'
+$tokenPath = 'C:\Projects\strix-alloy-clean\server\.local\servicenow-api-token.txt'
 $apiKey = (Get-Content -LiteralPath $tokenPath -Raw).Trim()
 $headers = @{ Authorization = 'Bearer ' + $apiKey; Accept = 'application/json' }
 $body = @{

@@ -1,0 +1,357 @@
+{
+  "schema": "strix-alloy.halogen0173-bulk-bn64-engine.source-archive.v1",
+  "created_utc": "2026-10-09T03:27:39.2134626Z",
+  "source_only": true,
+  "default_off": true,
+  "exact_opt_in": "ALLOY_BULK_BN64_ENABLE=1 plus a new exclusive audit-log path",
+  "engine_scope": "pinned Halogen 0.17.3 / gfx1151 / N8192 R81920 mode1 outputflag1",
+  "source_directory": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008",
+  "target_directory": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine",
+  "evaluation_at_archive_creation": {
+    "v1": "Completed engine window; no native64 hits; unqualified for BN64 execution or serving gain",
+    "v2": "Resident-query constructor fix; independent source review and root CPU build completed; engine cohort pending; no gain qualified"
+  },
+  "workload_scope": "frozen synthetic 8192 input tokens / 116 repeated INPUT calibration units / 128 ordinary OUTPUT tokens; one warmup plus three measurements; not natural long-input or NPU evidence",
+  "reused_baseline_scope": "V2 before is the same four requests as completed V1 after; zero new baseline API requests; do not count shared observations twice",
+  "private_dependencies_archived": false,
+  "copied_files": [
+    {
+      "name": "bulk-bn64-engine-candidate-v1/adapter.c",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v1/adapter.c",
+      "source_bytes": 18339,
+      "source_sha256": "1168a01f8ffd7346f6b63144b4b1f28e8801c15bc84ecaa56c5364961dba7da7",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v1/adapter.c",
+      "target_bytes": 18339,
+      "target_sha256": "1168a01f8ffd7346f6b63144b4b1f28e8801c15bc84ecaa56c5364961dba7da7",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v1/host-map.json",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v1/host-map.json",
+      "source_bytes": 7179,
+      "source_sha256": "a615727a4220aa0f9fa456ab7107ab64005159ad65d81f67922a9e1fbf6126b6",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v1/host-map.json",
+      "target_bytes": 7179,
+      "target_sha256": "a615727a4220aa0f9fa456ab7107ab64005159ad65d81f67922a9e1fbf6126b6",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v1/independent-abi-transaction-review.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v1/independent-abi-transaction-review.md",
+      "source_bytes": 5449,
+      "source_sha256": "aaedd88ef0495d09a55fa70cf6e4229753845f14fd8203dfeb3e859edbbd71da",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v1/independent-abi-transaction-review.md",
+      "target_bytes": 5449,
+      "target_sha256": "aaedd88ef0495d09a55fa70cf6e4229753845f14fd8203dfeb3e859edbbd71da",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v1/source-delivery.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v1/source-delivery.md",
+      "source_bytes": 1574,
+      "source_sha256": "f0d9dece70c3715d6d6b68a2451fd4ba30f23f047eff9c0fd7f8bb48ef353f30",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v1/source-delivery.md",
+      "target_bytes": 1574,
+      "target_sha256": "f0d9dece70c3715d6d6b68a2451fd4ba30f23f047eff9c0fd7f8bb48ef353f30",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v1/README.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v1/README.md",
+      "source_bytes": 5853,
+      "source_sha256": "4248f8df5b7105a45f3ccaa0bb126c7cdb407714993690c8bd28c797c36a880e",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v1/README.md",
+      "target_bytes": 5853,
+      "target_sha256": "4248f8df5b7105a45f3ccaa0bb126c7cdb407714993690c8bd28c797c36a880e",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/window.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/window.py",
+      "source_bytes": 11920,
+      "source_sha256": "8f3c6285546eaf848d8e3986ce9b079b07cff485ea59f6eea3e534999c81649c",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/window.py",
+      "target_bytes": 11920,
+      "target_sha256": "8f3c6285546eaf848d8e3986ce9b079b07cff485ea59f6eea3e534999c81649c",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/launch.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/launch.py",
+      "source_bytes": 5630,
+      "source_sha256": "a9c8e6d66b5565916a20cd19ae5bca62a2b9dbf0d7f9736691f47edb04c1a568",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/launch.py",
+      "target_bytes": 5630,
+      "target_sha256": "a9c8e6d66b5565916a20cd19ae5bca62a2b9dbf0d7f9736691f47edb04c1a568",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/control.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/control.py",
+      "source_bytes": 8214,
+      "source_sha256": "13119cef29d4bfa20090445bbbbc4e8e73cdd8b0d03987a9d6dc8d08b48ac768",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/control.py",
+      "target_bytes": 8214,
+      "target_sha256": "13119cef29d4bfa20090445bbbbc4e8e73cdd8b0d03987a9d6dc8d08b48ac768",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/prepare_seal.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/prepare_seal.py",
+      "source_bytes": 2538,
+      "source_sha256": "9791874e0ae6734cff47bc118bc20c557d66a86325fcc661ed2adc2f4f56e04b",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/prepare_seal.py",
+      "target_bytes": 2538,
+      "target_sha256": "9791874e0ae6734cff47bc118bc20c557d66a86325fcc661ed2adc2f4f56e04b",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/analyze.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/analyze.py",
+      "source_bytes": 14341,
+      "source_sha256": "3be5904e8a7f2d2c64fb7005b15000ef9946aa248a6ad2c8ec8d7f26dfc6b943",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/analyze.py",
+      "target_bytes": 14341,
+      "target_sha256": "3be5904e8a7f2d2c64fb7005b15000ef9946aa248a6ad2c8ec8d7f26dfc6b943",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/frozen-source.json",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/frozen-source.json",
+      "source_bytes": 2424,
+      "source_sha256": "a9aa9794695b536a1ec847e433a1b23a83cc5925b5dba72edefa6f80f8fcbaa7",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/frozen-source.json",
+      "target_bytes": 2424,
+      "target_sha256": "a9aa9794695b536a1ec847e433a1b23a83cc5925b5dba72edefa6f80f8fcbaa7",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/report-template.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/report-template.md",
+      "source_bytes": 2511,
+      "source_sha256": "472233e653886365a5a1528b3162c0373e7076ebf1d5ef57881a0bd646822f49",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/report-template.md",
+      "target_bytes": 2511,
+      "target_sha256": "472233e653886365a5a1528b3162c0373e7076ebf1d5ef57881a0bd646822f49",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/README.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/README.md",
+      "source_bytes": 3621,
+      "source_sha256": "a18ac7780cb08dae322a3a5833034ed36d569ab6b1077392ffde5c70e7fbd199",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/README.md",
+      "target_bytes": 3621,
+      "target_sha256": "a18ac7780cb08dae322a3a5833034ed36d569ab6b1077392ffde5c70e7fbd199",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v1/zero-hit-decision.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v1/zero-hit-decision.md",
+      "source_bytes": 5021,
+      "source_sha256": "25f5101970fec530317340694cef86350800439a03ffb2f7a673e16bfd2743f1",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v1/zero-hit-decision.md",
+      "target_bytes": 5021,
+      "target_sha256": "25f5101970fec530317340694cef86350800439a03ffb2f7a673e16bfd2743f1",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v2-resident-fix/adapter.c",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v2-resident-fix/adapter.c",
+      "source_bytes": 19006,
+      "source_sha256": "714b90cf716a0ed2b82deb949394ff4154798a0fadd6c421c39aadd7e3c8c24d",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v2-resident-fix/adapter.c",
+      "target_bytes": 19006,
+      "target_sha256": "714b90cf716a0ed2b82deb949394ff4154798a0fadd6c421c39aadd7e3c8c24d",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v2-resident-fix/constructor-delta.patch",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v2-resident-fix/constructor-delta.patch",
+      "source_bytes": 1539,
+      "source_sha256": "51173fe45f2f38ed4b9216f24074427a28a591c4b6b1aea9bf05fc493b5db56d",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v2-resident-fix/constructor-delta.patch",
+      "target_bytes": 1539,
+      "target_sha256": "51173fe45f2f38ed4b9216f24074427a28a591c4b6b1aea9bf05fc493b5db56d",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v2-resident-fix/host-map.json",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v2-resident-fix/host-map.json",
+      "source_bytes": 8192,
+      "source_sha256": "44ee2632ac229b1405fc96f6aaf8a3da08119184b1a964f8fa1aec92d136fc79",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v2-resident-fix/host-map.json",
+      "target_bytes": 8192,
+      "target_sha256": "44ee2632ac229b1405fc96f6aaf8a3da08119184b1a964f8fa1aec92d136fc79",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v2-resident-fix/independent-abi-transaction-review.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v2-resident-fix/independent-abi-transaction-review.md",
+      "source_bytes": 6579,
+      "source_sha256": "bec454d34868a8efc806a7a34f34d22b21013e82dac4965efbb82ffb82c2f462",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v2-resident-fix/independent-abi-transaction-review.md",
+      "target_bytes": 6579,
+      "target_sha256": "bec454d34868a8efc806a7a34f34d22b21013e82dac4965efbb82ffb82c2f462",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v2-resident-fix/independent-resident-skip-review.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v2-resident-fix/independent-resident-skip-review.md",
+      "source_bytes": 2885,
+      "source_sha256": "19fc71eefd285b457c4ffe4a2d83e0e2b1b671e1176ad8555aa70e562c379824",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v2-resident-fix/independent-resident-skip-review.md",
+      "target_bytes": 2885,
+      "target_sha256": "19fc71eefd285b457c4ffe4a2d83e0e2b1b671e1176ad8555aa70e562c379824",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-candidate-v2-resident-fix/README.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-candidate-v2-resident-fix/README.md",
+      "source_bytes": 6486,
+      "source_sha256": "b39d12e42cedbdb2d2a6366ffa7da2682b14754dce42ee16ed70c059fa4c596f",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-candidate-v2-resident-fix/README.md",
+      "target_bytes": 6486,
+      "target_sha256": "b39d12e42cedbdb2d2a6366ffa7da2682b14754dce42ee16ed70c059fa4c596f",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v2-resident-fix/window.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v2-resident-fix/window.py",
+      "source_bytes": 11920,
+      "source_sha256": "8f3c6285546eaf848d8e3986ce9b079b07cff485ea59f6eea3e534999c81649c",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v2-resident-fix/window.py",
+      "target_bytes": 11920,
+      "target_sha256": "8f3c6285546eaf848d8e3986ce9b079b07cff485ea59f6eea3e534999c81649c",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v2-resident-fix/launch.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v2-resident-fix/launch.py",
+      "source_bytes": 5643,
+      "source_sha256": "d180dd37e27497480dfd600ed671e582451f911c0d44280a658c3b435ce27490",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v2-resident-fix/launch.py",
+      "target_bytes": 5643,
+      "target_sha256": "d180dd37e27497480dfd600ed671e582451f911c0d44280a658c3b435ce27490",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v2-resident-fix/control.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v2-resident-fix/control.py",
+      "source_bytes": 8214,
+      "source_sha256": "13119cef29d4bfa20090445bbbbc4e8e73cdd8b0d03987a9d6dc8d08b48ac768",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v2-resident-fix/control.py",
+      "target_bytes": 8214,
+      "target_sha256": "13119cef29d4bfa20090445bbbbc4e8e73cdd8b0d03987a9d6dc8d08b48ac768",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v2-resident-fix/prepare_seal.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v2-resident-fix/prepare_seal.py",
+      "source_bytes": 2608,
+      "source_sha256": "6e7ece146b3a096df60db42b4c7072fadc8c5b839c6d340bdce31c9ea312247e",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v2-resident-fix/prepare_seal.py",
+      "target_bytes": 2608,
+      "target_sha256": "6e7ece146b3a096df60db42b4c7072fadc8c5b839c6d340bdce31c9ea312247e",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v2-resident-fix/analyze.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v2-resident-fix/analyze.py",
+      "source_bytes": 14354,
+      "source_sha256": "b03e5c43261d8496aeeab37bb1c6f77b05c5fd4bd248fcc32f5ff5500668e2a9",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v2-resident-fix/analyze.py",
+      "target_bytes": 14354,
+      "target_sha256": "b03e5c43261d8496aeeab37bb1c6f77b05c5fd4bd248fcc32f5ff5500668e2a9",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v2-resident-fix/frozen-source.json",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v2-resident-fix/frozen-source.json",
+      "source_bytes": 2424,
+      "source_sha256": "a9aa9794695b536a1ec847e433a1b23a83cc5925b5dba72edefa6f80f8fcbaa7",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v2-resident-fix/frozen-source.json",
+      "target_bytes": 2424,
+      "target_sha256": "a9aa9794695b536a1ec847e433a1b23a83cc5925b5dba72edefa6f80f8fcbaa7",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v2-resident-fix/report-template.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v2-resident-fix/report-template.md",
+      "source_bytes": 2511,
+      "source_sha256": "472233e653886365a5a1528b3162c0373e7076ebf1d5ef57881a0bd646822f49",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v2-resident-fix/report-template.md",
+      "target_bytes": 2511,
+      "target_sha256": "472233e653886365a5a1528b3162c0373e7076ebf1d5ef57881a0bd646822f49",
+      "byte_identical": true
+    },
+    {
+      "name": "bulk-bn64-engine-comparison-v2-resident-fix/README.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-comparison-v2-resident-fix/README.md",
+      "source_bytes": 488,
+      "source_sha256": "cdf5609157d2ae07ef6b4b9f408ef3948d6a86fda925d9dc2b3c10e3037c0a58",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/bulk-bn64-engine-comparison-v2-resident-fix/README.md",
+      "target_bytes": 488,
+      "target_sha256": "cdf5609157d2ae07ef6b4b9f408ef3948d6a86fda925d9dc2b3c10e3037c0a58",
+      "byte_identical": true
+    },
+    {
+      "name": "prefill-bulk-moe-retile-scope-20261009/host-route-proof-v1.activation64-exact.md",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/prefill-bulk-moe-retile-scope-20261009/host-route-proof-v1.activation64-exact.md",
+      "source_bytes": 3767,
+      "source_sha256": "0b1245c77c6ade3b937e2a965effec477e6ff799d6df44d245fde5a51b03b6fd",
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/prefill-bulk-moe-retile-scope-20261009/host-route-proof-v1.activation64-exact.md",
+      "target_bytes": 3767,
+      "target_sha256": "0b1245c77c6ade3b937e2a965effec477e6ff799d6df44d245fde5a51b03b6fd",
+      "byte_identical": true
+    }
+  ],
+  "documentation": [
+    {
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/README.md",
+      "bytes": 3836,
+      "sha256": "741f41861d9a4d337ac372e1eb3881425e3d35d6820a1cb90a63086845fc5230"
+    },
+    {
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/.gitattributes",
+      "bytes": 99,
+      "sha256": "6c01c5f1e68831eb00779929ae56e1d7e8c75ef5159102c9d371122326cf5951",
+      "purpose": "Preserve archived exact source bytes across Git checkouts"
+    }
+  ],
+  "authored_refs": [
+    {
+      "name": "followup-scope/decision.md",
+      "authored_ref": {
+        "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/bulk-bn64-engine-followup-scope-20261009/decision.md",
+        "bytes": 7498,
+        "sha256": "bc30e174350b7cc3fc02c7ee42f3e4cd94725b5b552acb44c79233af22f09ceb"
+      },
+      "target": "scripts/benchmarks/experimental/halogen0173_bulk_bn64_engine/followup-scope/decision.md",
+      "target_bytes": 7498,
+      "target_sha256": "bc30e174350b7cc3fc02c7ee42f3e4cd94725b5b552acb44c79233af22f09ceb",
+      "byte_identical": true,
+      "scope": "Independent source-only followup decision; completed measurement cycle; no changed candidate activated or third engine experiment"
+    }
+  ],
+  "verification": {
+    "allowed_source_files": 29,
+    "copied_source_files": 29,
+    "copied_source_bytes": 191230,
+    "source_target_byte_equality": true,
+    "source_target_sha256_equality": true,
+    "private_source_unchanged_during_copy": true,
+    "binaries_code_objects_model_data_archived": false,
+    "runtime_or_raw_receipts_archived": false,
+    "source_scripts_executed": false,
+    "git_mutated": false,
+    "state_hardware_lifecycle_mutated": false
+  },
+  "evaluation_completed": {
+    "v1": "Zero-hit activation attempt; no BN64 execution qualified",
+    "v2": "Qualified v2 candidate/before regression; candidate/after and pooled clocks incompatible",
+    "candidate_kept_off": true,
+    "serving_gain_qualified": false
+  },
+  "extended_utc": "2026-10-09T03:46:31.969357+00:00"
+}

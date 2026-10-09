@@ -7,11 +7,24 @@ model execution, transfer a live KV cache between engines, or silently switch mo
 
 ## Current availability
 
-The managed Halogen generator now selects the experimental
-[0.16.2 WSL package](../backends/halogen-wsl2-0.16.2/README.md), using the existing
-v2 checkpoint, one slot, prompt cache Off and an 18 GiB physical/commit reserve.
-New live upgrade evidence is recorded separately from historical 0.15.1 results
-in the [0.16.2 report](../docs/benchmarks/halogen0162-upgrade-20261003.md).
+The original Windows PowerShell 5.1 integration launcher selects installed
+**Halogen 0.17.3** by default. It retains Current8K (8192-token prefill/arena),
+v2, MTP depth 2, PLD `3,3`, Thinking On/medium/2048, the stable public API token
+and optional visible request/response trace. Follow the
+[foreground integration guide](../docs/integrations/halogen-servicenow.md):
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -ConsoleTrace
+```
+
+Explicit `-HalogenVersion 0.17.2` remains available. `HistoricalStock` requires
+explicit `-HalogenVersion 0.16.2`. Historical rates belong to their recorded
+runtime and workload; they are not throughput promises for 0.17.3.
+The generic PowerShell 7 launcher and `manage.py` default below retain the
+[0.16.2 WSL package](../backends/halogen-wsl2-0.16.2/README.md), while the profile
+generator also supports an explicitly selected installed 0.17.3 package.
+Historical upgrade evidence is retained in the
+[0.16.2 report](../docs/benchmarks/halogen0162-upgrade-20261003.md).
 A locally qualified GUFO Windows profile is also implemented.
 GUFO must use the [pinned build/qualification workflow](../backends/gufo-windows/README.md);
 its current qualified build uses TheRock 10.2.0a20260930 with the pinned numerical compatibility patch.
@@ -25,7 +38,7 @@ Install the engine first using the version-specific backend guide. Then use Powe
 .\server\Start.ps1 -Backend Halogen -Checkpoint v2 -ContextSize 262144
 ```
 
-Defaults: Halogen 0.16.2, v2, 129024 context positions, one active request,
+Generic launcher defaults: Halogen 0.16.2, v2, 129024 context positions, one active request,
 cache Off, continuous serving and an 18 GiB physical/commit reserve.
 `-ContextSize` is allocated capacity, not the length of every input prompt.
 The controller refuses to adopt an existing engine: stop any standalone backend and
@@ -37,7 +50,10 @@ Public model:  halogen-v2 (or halogen-w4b when explicitly selected)
 Backend:       http://127.0.0.1:8731/v1
 ```
 
-The gateway reuses the backend's existing token in its ignored `.local/api-token.txt`.
+The generic gateway profile reuses the backend's existing token in its ignored
+`.local/api-token.txt`. The PowerShell 5.1 integration launcher preserves the public
+`server/.local/servicenow-api-token.txt` when present and keeps the backend's
+version-specific token separate.
 Send it as `Authorization: Bearer <token>` (or `x-api-key` for Messages clients).
 No API token is printed to managed logs. Read the key locally; do not put it into URLs,
 committed configuration, screenshots or benchmark exports.
@@ -99,7 +115,7 @@ numerics and lifecycle, run matched benchmarks, then promote with rollback avail
 See the [research and implementation review](../docs/integration/unified-review-20260930.md)
 and the [historical 0.15.1 checkpoint comparison](../docs/benchmarks/halogen0151-v2-262k-20260930.md).
 The [0.16.2 upgrade report](../docs/benchmarks/halogen0162-upgrade-20261003.md)
-contains evidence for the current experimental package; source-test success alone
+contains evidence for that historical package; source-test success alone
 does not establish model quality or performance.
 
 ## Measured prefix reuse

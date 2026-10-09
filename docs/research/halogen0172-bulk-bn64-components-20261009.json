@@ -1,0 +1,566 @@
+{
+  "schema": "halogen0172.bulk-bn64-finite-components.v1",
+  "saved_utc": "2026-10-09T02:22:27.628176+00:00",
+  "native_codeobject_sha256": "18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039",
+  "native_codeobject_exact_equal_in0173": true,
+  "runs": [
+    {
+      "label": "v1",
+      "batch": 1,
+      "private_result": {
+        "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-bulk-bn64-component-v1\\result.json",
+        "bytes": 13915,
+        "sha256": "850e72e118dd5c7e00c962965198238dbaba807c11eb8561c354728f72e6fec3"
+      },
+      "started_utc": "2026-10-09T02:12:12.787724+00:00",
+      "finished_utc": "2026-10-09T02:12:36.475808+00:00",
+      "groups": [
+        {
+          "pattern": "uniform512x160",
+          "warmup": [
+            {
+              "type": "pair",
+              "pattern": "uniform512x160",
+              "rep": 0,
+              "measured": false,
+              "order": "128_64",
+              "native128_ms": 134.688049,
+              "native64_ms": 72.598053,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            }
+          ],
+          "measured": [
+            {
+              "type": "pair",
+              "pattern": "uniform512x160",
+              "rep": 1,
+              "measured": true,
+              "order": "64_128",
+              "native128_ms": 145.083054,
+              "native64_ms": 106.196167,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            },
+            {
+              "type": "pair",
+              "pattern": "uniform512x160",
+              "rep": 2,
+              "measured": true,
+              "order": "128_64",
+              "native128_ms": 136.550308,
+              "native64_ms": 88.1854401,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            },
+            {
+              "type": "pair",
+              "pattern": "uniform512x160",
+              "rep": 3,
+              "measured": true,
+              "order": "64_128",
+              "native128_ms": 105.376846,
+              "native64_ms": 123.791885,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            }
+          ],
+          "native128_mean_ms": 129.00340266666666,
+          "native64_mean_ms": 106.0578307,
+          "time_reduction_percent": 17.78679592348117,
+          "all_measured_pairs_favor64": false
+        },
+        {
+          "pattern": "boundary_tails",
+          "warmup": [
+            {
+              "type": "pair",
+              "pattern": "boundary_tails",
+              "rep": 0,
+              "measured": false,
+              "order": "128_64",
+              "native128_ms": 110.233055,
+              "native64_ms": 66.9517059,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            }
+          ],
+          "measured": [
+            {
+              "type": "pair",
+              "pattern": "boundary_tails",
+              "rep": 1,
+              "measured": true,
+              "order": "64_128",
+              "native128_ms": 106.806999,
+              "native64_ms": 121.254761,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            },
+            {
+              "type": "pair",
+              "pattern": "boundary_tails",
+              "rep": 2,
+              "measured": true,
+              "order": "128_64",
+              "native128_ms": 105.100159,
+              "native64_ms": 95.5537186,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            },
+            {
+              "type": "pair",
+              "pattern": "boundary_tails",
+              "rep": 3,
+              "measured": true,
+              "order": "64_128",
+              "native128_ms": 109.182465,
+              "native64_ms": 97.6500931,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            }
+          ],
+          "native128_mean_ms": 107.02987433333334,
+          "native64_mean_ms": 104.81952423333334,
+          "time_reduction_percent": 2.0651711625074842,
+          "all_measured_pairs_favor64": false
+        }
+      ],
+      "original_ready_open": true,
+      "own_helpers_closed": true,
+      "minimum_available_gib": 21.530517578125,
+      "minimum_commit_headroom_gib": 108.95188903808594,
+      "executable": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-bulk-bn64-component-v1\\host",
+        "bytes": 30200,
+        "sha256": "89c3993d0d7141f0089fb9e57cd33035e36080dd8da0d6539d86fe2a84abb930"
+      },
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-bulk-bn64-component-v1\\host.c",
+        "bytes": 20597,
+        "sha256": "9f3c103dcac668b8da87ad868b9803c7286bb25fd5211e50f2dfac4e973e56ae"
+      }
+    },
+    {
+      "label": "v2_batched",
+      "batch": 4,
+      "private_result": {
+        "path": "server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-bulk-bn64-component-v2-batched\\result.json",
+        "bytes": 14050,
+        "sha256": "98b2aed10848ebdf85a4c0ae851b27fdb0a9652a79d7150dfe81b3e17fd1a754"
+      },
+      "started_utc": "2026-10-09T02:16:26.840077+00:00",
+      "finished_utc": "2026-10-09T02:16:51.327869+00:00",
+      "groups": [
+        {
+          "pattern": "uniform512x160",
+          "warmup": [
+            {
+              "type": "pair",
+              "pattern": "uniform512x160",
+              "rep": 0,
+              "measured": false,
+              "order": "128_64",
+              "native128_ms": 73.3447571,
+              "native64_ms": 51.1007805,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            }
+          ],
+          "measured": [
+            {
+              "type": "pair",
+              "pattern": "uniform512x160",
+              "rep": 1,
+              "measured": true,
+              "order": "64_128",
+              "native128_ms": 78.8693771,
+              "native64_ms": 67.9862442,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            },
+            {
+              "type": "pair",
+              "pattern": "uniform512x160",
+              "rep": 2,
+              "measured": true,
+              "order": "128_64",
+              "native128_ms": 88.342865,
+              "native64_ms": 69.7305069,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            },
+            {
+              "type": "pair",
+              "pattern": "uniform512x160",
+              "rep": 3,
+              "measured": true,
+              "order": "64_128",
+              "native128_ms": 91.1936951,
+              "native64_ms": 73.9942322,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            }
+          ],
+          "native128_mean_ms": 86.1353124,
+          "native64_mean_ms": 70.57032776666667,
+          "time_reduction_percent": 18.07038739356025,
+          "all_measured_pairs_favor64": true
+        },
+        {
+          "pattern": "boundary_tails",
+          "warmup": [
+            {
+              "type": "pair",
+              "pattern": "boundary_tails",
+              "rep": 0,
+              "measured": false,
+              "order": "128_64",
+              "native128_ms": 66.0652771,
+              "native64_ms": 51.1789474,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            }
+          ],
+          "measured": [
+            {
+              "type": "pair",
+              "pattern": "boundary_tails",
+              "rep": 1,
+              "measured": true,
+              "order": "64_128",
+              "native128_ms": 82.8248978,
+              "native64_ms": 64.7368927,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            },
+            {
+              "type": "pair",
+              "pattern": "boundary_tails",
+              "rep": 2,
+              "measured": true,
+              "order": "128_64",
+              "native128_ms": 75.422966,
+              "native64_ms": 64.3557968,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            },
+            {
+              "type": "pair",
+              "pattern": "boundary_tails",
+              "rep": 3,
+              "measured": true,
+              "order": "64_128",
+              "native128_ms": 76.0372391,
+              "native64_ms": 69.6371841,
+              "GU_words": 52428800,
+              "DN_words": 209715200,
+              "final_words": 20971520,
+              "bit_mismatches": [
+                0,
+                0,
+                0
+              ],
+              "nonfinite_words": [
+                0,
+                0,
+                0
+              ],
+              "guards_passed": true
+            }
+          ],
+          "native128_mean_ms": 78.0950343,
+          "native64_mean_ms": 66.2432912,
+          "time_reduction_percent": 15.176052109115979,
+          "all_measured_pairs_favor64": true
+        }
+      ],
+      "original_ready_open": true,
+      "own_helpers_closed": true,
+      "minimum_available_gib": 21.46551513671875,
+      "minimum_commit_headroom_gib": 108.92608261108398,
+      "executable": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-bulk-bn64-component-v2-batched\\host",
+        "bytes": 30200,
+        "sha256": "94f3e02366ccd8ca3d7662146d048a2024a46e0fff2c9c5f2532cf32e8ee6bde"
+      },
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\moe-bulk-bn64-component-v2-batched\\host.c",
+        "bytes": 20733,
+        "sha256": "c429c85f9b42f7f7fad64f0a457a0e4db6b4637adb915f4bf5ccc4b6e2bfaa12"
+      }
+    }
+  ],
+  "source_archive": [
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v1\\host.c",
+      "bytes": 20597,
+      "sha256": "9f3c103dcac668b8da87ad868b9803c7286bb25fd5211e50f2dfac4e973e56ae"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v1\\run.py",
+      "bytes": 11177,
+      "sha256": "60a4177368a7cc9576063fd3942d2b853c935259f094b604aa83ba083aa7e47a"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v1\\fixture-abi-review.md",
+      "bytes": 4063,
+      "sha256": "53f45f36c50fb1e63f18f58ab3deb586225df431766ef1620f6668d2d97fbde0"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v1\\source-review.py",
+      "bytes": 5061,
+      "sha256": "16cadad0d4d261472e5fa15f91f885889691d6ea57c7d9f5e81b3976d6878b64"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v1\\source-review.json",
+      "bytes": 17384,
+      "sha256": "2e2b59952915e508202de08a415f9c79a1bfd8d89dec4b86faa24ffabf54c63b"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v1\\README.md",
+      "bytes": 5316,
+      "sha256": "9fb97b6d7e913132cdb5c96a667252e8ed8eefb66df59f137e076f96b25e36d2"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v1\\prepare_batched_v2.py",
+      "bytes": 3028,
+      "sha256": "1312df90eae31fda2d34fa896f532643bb619855b552191379b7b00e218cf5aa"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v2_batched\\host.c",
+      "bytes": 20733,
+      "sha256": "c429c85f9b42f7f7fad64f0a457a0e4db6b4637adb915f4bf5ccc4b6e2bfaa12"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v2_batched\\run.py",
+      "bytes": 11201,
+      "sha256": "f8c5a1716dd9e6db1a460157e66f8b9938d1ca4dda2b2bfcfaefbc8407facb04"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\v2_batched\\fixture-abi-review.md",
+      "bytes": 4487,
+      "sha256": "c65bf11e072070d179732edc06466af25f9641b708b794b84f1910bcf060598b"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\source_proofs\\host-route-proof-v1.md",
+      "bytes": 13065,
+      "sha256": "07635f6e906cbb431684b4b028fe092cfd41843bf79a6a37268b9e05a53efd68"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\source_proofs\\host-route-proof-v1.fixture-abi.md",
+      "bytes": 7020,
+      "sha256": "642da0444c9df50f53405fd7675d25fbeaa96b5780a31f19706d51d7beff07ae"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\source_proofs\\host-route-proof-v1.weight-bounds.md",
+      "bytes": 5599,
+      "sha256": "67becc4a11a691f8edcd83c73167e659252cc56a3561bed654da1fafd3a090d2"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\source_proofs\\host-route-proof-v1.activation-bounds.md",
+      "bytes": 4210,
+      "sha256": "f793b06e9107342316023f162730ac6a58c4d460a13493815aefd445f2e5b54d"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\source_proofs\\host-route-proof-v1.metadata-bounds.py",
+      "bytes": 5815,
+      "sha256": "295103ac89776281db2a84f321b3281e8cda1d144be62561e1f0a3108e266c03"
+    },
+    {
+      "path": "scripts\\benchmarks\\experimental\\halogen0172_bulk_bn64\\source_proofs\\host-route-proof-v1.metadata-bounds.json",
+      "bytes": 68044,
+      "sha256": "f5244ca0a2d948091d999e4756972f44137678b9b7658e2b35bacf9f9c58d147"
+    }
+  ],
+  "synthetic_inputs": true,
+  "actual_model_weights": false,
+  "NPU_executed": false,
+  "engine_candidate_executed": false,
+  "serving_gain_qualified": false,
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "acceptance": null,
+  "next_engine_candidate_justified": true,
+  "repeat_components_unchanged": false
+}

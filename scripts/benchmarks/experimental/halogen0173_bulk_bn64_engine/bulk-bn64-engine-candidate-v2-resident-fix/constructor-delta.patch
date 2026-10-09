@@ -1,0 +1,26 @@
+--- bulk-bn64-engine-candidate-v1/adapter.c
++++ bulk-bn64-engine-candidate-v2-resident-fix/adapter.c
+@@ -115,11 +115,23 @@
+  if(crypto)dlclose(crypto);
+  return pass;
+ }
++/* The normal entrypoint asks this same pinned executable for resident bytes
++ * before serving. Exclude only its exact argv[1] before claiming the log. */
++static int resident_query(void) {
++ char args[128];int probe_fd=open("/proc/self/cmdline",O_RDONLY|O_CLOEXEC);
++ if(probe_fd<0)return 0;
++ ssize_t bytes;do {bytes=read(probe_fd,args,sizeof(args));} while(bytes<0&&errno==EINTR);
++ close(probe_fd);if(bytes<=0)return 0;
++ char *end=memchr(args,0,(size_t)bytes);if(!end)return 0;
++ size_t used=(size_t)(end-args)+1;static const char flag[]="--resident-gib";
++ return (size_t)bytes-used>=sizeof(flag)&&!memcmp(args+used,flag,sizeof(flag));
++}
+ __attribute__((constructor)) static void initialize(void) {
+  int saved_errno=errno;const char *enable=getenv("ALLOY_BULK_BN64_ENABLE");char exe[4096];
+  ssize_t length=readlink("/proc/self/exe",exe,sizeof(exe));
+  static const char wanted[]="/usr/local/bin/flash_serve";
+  if(!enable||strcmp(enable,"1")||length!=(ssize_t)(sizeof(wanted)-1)||memcmp(exe,wanted,sizeof(wanted)-1))goto out;
++ if(resident_query())goto out;
+  if(!digest_region("/proc/self/exe",0,26188824,"af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7") ||
+     !digest_region("/proc/self/exe",339968,17765424,"18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039"))goto out;
+  dl_iterate_phdr(find_main,NULL);owner=getpid();
