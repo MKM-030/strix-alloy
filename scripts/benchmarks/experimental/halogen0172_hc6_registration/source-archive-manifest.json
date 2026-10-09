@@ -1,0 +1,176 @@
+{
+  "schema": "strix-alloy.halogen0172-hc6-registration.source-archive.v1",
+  "created_utc": "2026-10-09T01:18:02.0711723Z",
+  "source_only": true,
+  "default_off": true,
+  "exact_opt_in": "HG0172_HC6_REGISTER_REMAP=1",
+  "engine_scope": "pinned Halogen 0.17.2 / gfx1151",
+  "source_directory": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1",
+  "target_directory": "scripts/benchmarks/experimental/halogen0172_hc6_registration",
+  "evaluation_at_archive_creation": "cohort pending; no proven speed claim",
+  "workload_scope": "frozen synthetic 8K request / 116 repeated a INPUT prefix calibration units / 128 ordinarily generated prose OUTPUT tokens; not a natural-workload acceptance sample",
+  "private_dependencies_archived": false,
+  "copied_files": [
+    {
+      "name": "registration.c",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/registration.c",
+      "source_bytes": 16080,
+      "source_sha256": "7f2c76b36794a5837dc104bf6b650b6c9719e6497795bb29ddb986cd81b6bd0a",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/registration.c",
+      "target_bytes": 16080,
+      "target_sha256": "7f2c76b36794a5837dc104bf6b650b6c9719e6497795bb29ddb986cd81b6bd0a",
+      "byte_identical": true
+    },
+    {
+      "name": "test_registration.c",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/test_registration.c",
+      "source_bytes": 8583,
+      "source_sha256": "ac0e02a67aaf5d5c1e2f563cdafdd2facb21e9332a84eac7259629c67cd32e3d",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/test_registration.c",
+      "target_bytes": 8583,
+      "target_sha256": "ac0e02a67aaf5d5c1e2f563cdafdd2facb21e9332a84eac7259629c67cd32e3d",
+      "byte_identical": true
+    },
+    {
+      "name": "build.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/build.py",
+      "source_bytes": 2776,
+      "source_sha256": "bcc38cde635aad08fbfbb67fcb024f76a8191825a3a2585e2f45539c268cf982",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/build.py",
+      "target_bytes": 2776,
+      "target_sha256": "bcc38cde635aad08fbfbb67fcb024f76a8191825a3a2585e2f45539c268cf982",
+      "byte_identical": true
+    },
+    {
+      "name": "launch.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/launch.py",
+      "source_bytes": 5760,
+      "source_sha256": "d639d0d4475428c5c5445f07c4b408ea543b42e9394d3f863f40f9441c8352c8",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/launch.py",
+      "target_bytes": 5760,
+      "target_sha256": "d639d0d4475428c5c5445f07c4b408ea543b42e9394d3f863f40f9441c8352c8",
+      "byte_identical": true
+    },
+    {
+      "name": "register-launch.sh",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/register-launch.sh",
+      "source_bytes": 302,
+      "source_sha256": "d16d67a338c7a541456d0b83941df8ab6af7f053abdfe61275d7dcd29f3f3c72",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/register-launch.sh",
+      "target_bytes": 302,
+      "target_sha256": "d16d67a338c7a541456d0b83941df8ab6af7f053abdfe61275d7dcd29f3f3c72",
+      "byte_identical": true
+    },
+    {
+      "name": "control.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/control.py",
+      "source_bytes": 8138,
+      "source_sha256": "773984d7635dbe9bc4e0c821eeecfd14367a180a9f8746c09e13d949c6618d4d",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/control.py",
+      "target_bytes": 8138,
+      "target_sha256": "773984d7635dbe9bc4e0c821eeecfd14367a180a9f8746c09e13d949c6618d4d",
+      "byte_identical": true
+    },
+    {
+      "name": "final_stock.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/final_stock.py",
+      "source_bytes": 6872,
+      "source_sha256": "ede167b8ba0e21d485f539d599405d91fee3ed70e3f0b198c039613d16c76e92",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/final_stock.py",
+      "target_bytes": 6872,
+      "target_sha256": "ede167b8ba0e21d485f539d599405d91fee3ed70e3f0b198c039613d16c76e92",
+      "byte_identical": true
+    },
+    {
+      "name": "window.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/window.py",
+      "source_bytes": 7424,
+      "source_sha256": "229553908053739880dc107bcaef5090d4c29c516251a698bdc859479a39dff8",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/window.py",
+      "target_bytes": 7424,
+      "target_sha256": "229553908053739880dc107bcaef5090d4c29c516251a698bdc859479a39dff8",
+      "byte_identical": true
+    },
+    {
+      "name": "record_handle.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/record_handle.py",
+      "source_bytes": 1129,
+      "source_sha256": "1623c1fcdef1c3b30c2384d3a26d1bc4ea5c7af2073b1404ac3d70e6c3c68cb0",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/record_handle.py",
+      "target_bytes": 1129,
+      "target_sha256": "1623c1fcdef1c3b30c2384d3a26d1bc4ea5c7af2073b1404ac3d70e6c3c68cb0",
+      "byte_identical": true
+    },
+    {
+      "name": "check_candidate.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/check_candidate.py",
+      "source_bytes": 2613,
+      "source_sha256": "068f14702e762d8897353e40bc3715d6fb37c4faae262cd14b04d94085d9caa1",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/check_candidate.py",
+      "target_bytes": 2613,
+      "target_sha256": "068f14702e762d8897353e40bc3715d6fb37c4faae262cd14b04d94085d9caa1",
+      "byte_identical": true
+    },
+    {
+      "name": "prepare_harness.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/prepare_harness.py",
+      "source_bytes": 1375,
+      "source_sha256": "67278520b07f988dfccebabe12c9d324f512c409b09874495f3ce085320461dd",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/prepare_harness.py",
+      "target_bytes": 1375,
+      "target_sha256": "67278520b07f988dfccebabe12c9d324f512c409b09874495f3ce085320461dd",
+      "byte_identical": true
+    },
+    {
+      "name": "extract_runtime.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/extract_runtime.py",
+      "source_bytes": 2095,
+      "source_sha256": "97bf0a6503924e8282999755cb5ed6d23a213a5b98644f6c978d20357d96b19e",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/extract_runtime.py",
+      "target_bytes": 2095,
+      "target_sha256": "97bf0a6503924e8282999755cb5ed6d23a213a5b98644f6c978d20357d96b19e",
+      "byte_identical": true
+    },
+    {
+      "name": "audit_runtime.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/audit_runtime.py",
+      "source_bytes": 2367,
+      "source_sha256": "bb6784d4a12bd15d0b9c8cbd0ae38e419837ac710f5db3416a44f3dc4c8f388a",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/audit_runtime.py",
+      "target_bytes": 2367,
+      "target_sha256": "bb6784d4a12bd15d0b9c8cbd0ae38e419837ac710f5db3416a44f3dc4c8f388a",
+      "byte_identical": true
+    },
+    {
+      "name": "analyze.py",
+      "source": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/analyze.py",
+      "source_bytes": 6085,
+      "source_sha256": "0058987defa1ee90c57b6396e8ff8a73b50e1b16e8385b04e5a8cd32931c8331",
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/analyze.py",
+      "target_bytes": 6085,
+      "target_sha256": "0058987defa1ee90c57b6396e8ff8a73b50e1b16e8385b04e5a8cd32931c8331",
+      "byte_identical": true
+    }
+  ],
+  "documentation": [
+    {
+      "target": "scripts/benchmarks/experimental/halogen0172_hc6_registration/README.md",
+      "bytes": 1943,
+      "sha256": "15f6cecf23fef8c0437b1d60fd23840989cc269a6b76ad60cffa381ae88bd8ca"
+    }
+  ],
+  "verification": {
+    "allowed_source_files": 14,
+    "copied_source_files": 14,
+    "copied_source_bytes": 71599,
+    "source_target_byte_equality": true,
+    "source_target_sha256_equality": true,
+    "private_source_unchanged_during_copy": true,
+    "binaries_code_objects_model_data_archived": false,
+    "source_scripts_executed": false,
+    "git_mutated": false,
+    "state_hardware_lifecycle_mutated": false
+  },
+  "evaluation_completed": "No serving gain qualified; disabled; three-arm raw clocks differ; candidate/after rates overlap",
+  "extended_utc": "2026-10-09T01:30:31.255372+00:00"
+}

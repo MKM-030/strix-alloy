@@ -2,7 +2,9 @@
 
 The candidate ran as **preload + stock fallback**. Its exact-version attachment marker was recorded, but **zero completed-row markers** were recorded. Copied-row execution and a serving improvement are unqualified. Numerically higher decode values remain diagnostic and are not attributed to the ordinary-first-gather path.
 
-Halogen engine 0.17.2; backend `halogen-v2`, Qwen3.8 Flash Next checkpoint v2; context 262144, expected slot context/KV positions 262144, one expected slot and concurrency 1. Frozen requests use 8192 actual input tokens, 1 or 128 output tokens, serial/MTP drafter, Cache Off, Thinking Off, temperature 0 and seed 1. Profiles request `draft_tokens=2`, `HALOGEN_PLD=3,3`, prefill chunk 8192 and maximum prefill tokens 8192. The draft_tokens setting does not independently establish a fixed per-round MTP depth.
+Halogen engine 0.17.2; backend `halogen-v2`, Qwen3.8 Flash Next checkpoint v2; context 262144, expected slot context/KV positions 262144, one expected slot and concurrency 1. Frozen requests use 8192 actual synthetic pseudoprose input tokens, including 116 repeated ` a` prefix units for token calibration, 1 or 128 output tokens, serial/MTP drafter, Cache Off, Thinking Off, temperature 0 and seed 1. Profiles request `draft_tokens=2`, `HALOGEN_PLD=3,3`, prefill chunk 8192 and maximum prefill tokens 8192. The draft_tokens setting does not independently establish a fixed per-round MTP depth.
+
+The retained before/candidate/after prompt copies normalize to the same 42,238 LF bytes as `fixed-depth2-comparison/prompts/prompt-8192-prose.txt`, SHA256 `0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1`. Those bytes begin with 116 repeated ` a` units followed by `Weeks valley cheese clouds`.
 
 ## Measured requests
 

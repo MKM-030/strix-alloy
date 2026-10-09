@@ -1,0 +1,9 @@
+# Halogen 0.17.2 HC6 registration experiment
+
+This is a source-only archive of a default-off, pinned Halogen 0.17.2/gfx1151 experiment. Enablement is exactly `HG0172_HC6_REGISTER_REMAP=1`. The adapter clones the original complete bundle0 and its HIPF wrapper, applies the same frozen fourteen-byte HC6 register remap, protects the copies read-only, and retains them through process exit. It preserves the original returned registration handle and stock host function registration/unregister path. There is no per-launch hook.
+
+The frozen synthetic 8K request uses 116 repeated ` a` input prefix units for token calibration and generates 128 normal prose output tokens. Treat this as calibration evidence, not a natural-workload acceptance sample. The completed comparison establishes no qualified serving speed gain; the candidate remains disabled. See the [results report](../../../../docs/research/halogen0172-hc6-registration-route-20261009.md) for raw rates, exact parity and the clock-scaling limitation.
+
+The fourteen authored source files, including the completed-cohort analyzer, are copied byte for byte from private `server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/hc6-registration-route-v1/`. `source-archive-manifest.json` records every source/target byte count and SHA256, plus the archive verification. Shared libraries, executables, proprietary engine/runtime images, code objects and model data are excluded.
+
+The scripts retain their private preparation layout and Windows/WSL assumptions. Reproduction requires the private engine/runtime fixtures, frozen candidate code object, build/lifecycle receipts, sealed launcher/profile, prompt, and normal project controller/backend helpers. Those dependencies are outside this archive. CPU mocks check byte identity, registration forwarding and retained storage; actual HIP loading, teardown, parity and performance require the owned cohort workflow.

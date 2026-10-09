@@ -2,7 +2,7 @@
 
 The subsequent connected ordinary-first-gather comparison is complete. The
 clean 0.17.2 Thinking server was restored in a visible Windows PowerShell 5.1
-console and verified ready/open. Its final three measured 8192-token prose
+console and verified ready/open. Its final three measured 8192-token synthetic pseudoprose
 requests with Thinking Off and 128 output tokens averaged **1226.59 prefill
 tok/s, 42.88 decode tok/s and 210/339 = 61.95% combined API MTP+PLD acceptance**.
 Serial TG1 prefill was 1261.00 tok/s. These are the current cohort's values,
@@ -24,7 +24,7 @@ observer window, the clean stock path was restored ready and open. Local and
 public authenticated health returned HTTP200. Thinking defaults remain On,
 medium, with a 2048-token thinking budget; clients can override them.
 
-The latest matched 8192-token non-repeated prose comparison uses **Thinking Off**,
+The latest matched 8192-token synthetic pseudoprose comparison uses **Thinking Off**,
 temperature0/seed1, an excluded warmup and three measured runs. It is separate
 from the Thinking-enabled serving configuration:
 
@@ -38,6 +38,13 @@ from the Thinking-enabled serving configuration:
 These values do not establish an NPU benefit. Historical48.42 belongs to a
 different workload/arena. Detailed measurements remain in
 [the matched comparison](../benchmarks/halogen0172-fixed-depth2-20261008.md).
+
+These 8K comparisons use a synthetic prompt with 116 repeated ` a` prefix units
+for token calibration. The retained LF canonical prompt
+`fixed-depth2-comparison/prompts/prompt-8192-prose.txt` is 42,238 bytes with SHA256
+`0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1` and begins
+with those units followed by `Weeks valley cheese clouds`. The retained
+ordinary-first-gather prompt copies normalize to these same LF bytes.
 
 ## Work completed on the current version
 

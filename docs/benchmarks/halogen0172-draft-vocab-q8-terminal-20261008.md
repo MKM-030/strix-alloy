@@ -2,7 +2,9 @@
 
 The before and Q8 candidate cohorts completed. The after engine was started, then normally stopped before any after client or measurement when trusted human steering prioritized permanent availability and short restarts. The two completed cohorts remain useful descriptive evidence; the Q4/Q8/Q4 bookend comparison is incomplete, its frozen screen is not evaluated, and no qualified bookend gain or serving promotion is claimed.
 
-All completed arms consumed exactly8,192 calibrated canonical prose tokens at context262,144, v2, one slot, fixed MTP2, PLD3,3, chunk/arena8192/8192, Cache Off, Thinking Off, temperature0/seed1 and trace On. Only the candidate added native HALOGEN_DRAFT_VOCAB_Q8=1.
+All completed arms consumed exactly8,192 synthetic pseudoprose tokens, including 116 repeated ` a` prefix units for token calibration, at context262,144, v2, one slot, fixed MTP2, PLD3,3, chunk/arena8192/8192, Cache Off, Thinking Off, temperature0/seed1 and trace On. Only the candidate added native HALOGEN_DRAFT_VOCAB_Q8=1.
+
+The retained before/candidate prompt copies normalize to the same 42,238 LF bytes as `fixed-depth2-comparison/prompts/prompt-8192-prose.txt`, SHA256 `0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1`. Those bytes begin with 116 repeated ` a` units followed by `Weeks valley cheese clouds`.
 
 | Completed cohort | Serial TG1 PP tok/s | MTP TG128 PP tok/s | MTP Decode tok/s | MTP request wall s | Accepted/drafted |
 | --- | ---: | ---: | ---: | ---: | ---: |

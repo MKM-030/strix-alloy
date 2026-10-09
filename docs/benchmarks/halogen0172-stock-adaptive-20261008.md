@@ -1,6 +1,6 @@
 # Halogen 0.17.2: stock adaptive depth 2/3, matched 8K comparison
 
-Actual input: **8,192 non-repeated LF prose tokens**; context capacity: **262,144**. All windows use 0.17.2 v2, one slot, chunk/arena8192/8192, PLD3,3, Cache Off, Thinking Off, temperature0/seed1. The middle window only omits the fixed-depth control. Each cohort has three measured repetitions and one excluded warmup.
+Actual input: **8,192 synthetic pseudoprose tokens**, including 116 repeated ` a` prefix units for token calibration; context capacity: **262,144**. All windows use 0.17.2 v2, one slot, chunk/arena8192/8192, PLD3,3, Cache Off, Thinking Off, temperature0/seed1. The middle window only omits the fixed-depth control. Each cohort has three measured repetitions and one excluded warmup.
 
 | Window | Serial TG1 prefill tok/s | MTP TG128 prefill tok/s | MTP TG128 decode tok/s | API MTP+PLD acceptance |
 | --- | ---: | ---: | ---: | ---: |
@@ -38,4 +38,4 @@ The fixed2 stop observer failed with WinError31 after its engine exited0. Root's
 
 The user chose to develop and keep the latest0.17.2 server open. Root verified its fixed2 deployment ready, idle and visibly open at 2026-10-08T04:25:08.182652+00:00; the companion JSON separately binds its profile, launch, process identities and saved startup files. The older0.16.2 restoration was intentionally superseded by that instruction and is not pending.
 
-Evidence: private adaptive-depth23-comparison contract and complete before/adaptive/after raw windows. Prompt SHA256: 0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1. The earlier fixed-depth version report is preserved.
+Evidence: private adaptive-depth23-comparison contract and complete before/adaptive/after raw windows. Prompt SHA256: 0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1. The retained prompt copies normalize to the same 42,238 LF bytes as `fixed-depth2-comparison/prompts/prompt-8192-prose.txt`; those bytes begin with 116 repeated ` a` units followed by `Weeks valley cheese clouds`. The earlier fixed-depth version report is preserved.

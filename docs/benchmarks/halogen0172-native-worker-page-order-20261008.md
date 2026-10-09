@@ -2,7 +2,9 @@
 
 The new native-worker detour executed on all 13 candidate requests and copied 1,703,936 rows. All matching requests, prompts and greedy outputs agree. No repeatable Prefill/Decode improvement is qualified, so the candidate remains default-off. The clean 0.17.2 Thinking server was restored, authenticated health and actual controller/backend/visible-console identities were verified, and it remains open on port 8840.
 
-Frozen workload: 8192 actual input tokens of non-repeated prose; TG1 serial and TG128 serial/MTP; Cache Off, Thinking Off, temperature 0, seed 1. One excluded rep0 warmup and three measured repetitions per cell in stock-before/candidate/stock-after. Capacity 262144, one slot/concurrency 1, checkpoint v2, draft_tokens profile 2/PLD 3,3, prefill_chunk 8192 and max_prefill_tokens 8192. No model precision, GPU kernel, native token-ID computation, thread count or startup-floor changes. No NPU work ran in this series.
+Frozen workload: 8192 actual input tokens of synthetic pseudoprose, including 116 repeated ` a` prefix units for token calibration; TG1 serial and TG128 serial/MTP; Cache Off, Thinking Off, temperature 0, seed 1. One excluded rep0 warmup and three measured repetitions per cell in stock-before/candidate/stock-after. Capacity 262144, one slot/concurrency 1, checkpoint v2, draft_tokens profile 2/PLD 3,3, prefill_chunk 8192 and max_prefill_tokens 8192. No model precision, GPU kernel, native token-ID computation, thread count or startup-floor changes. No NPU work ran in this series.
+
+The retained before/candidate/after prompt copies normalize to the same 42,238 LF bytes as `fixed-depth2-comparison/prompts/prompt-8192-prose.txt`, SHA256 `0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1`. Those bytes begin with 116 repeated ` a` units followed by `Weeks valley cheese clouds`.
 
 ## Results
 
