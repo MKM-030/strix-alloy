@@ -1,0 +1,11 @@
+{
+  "schema": "halogen0173.phase-clock-pairing-red-regression.v2",
+  "command": "python test_decode_move_regression.py",
+  "exit_code": 1,
+  "failure": "ValueError: Unpaired or mismatched end",
+  "production_verifier_unchanged_when_run": true,
+  "reproduces": "Decode begin uses stack object; end uses moved heap object with identical signed request ID and exact native start",
+  "wsl_invoked": false,
+  "upstream_executed": false,
+  "gpu_npu_used": false
+}

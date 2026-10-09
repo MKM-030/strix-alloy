@@ -1,0 +1,309 @@
+{
+  "schema": "alloy0173.scratchfree-moe.real-component-summary.v1",
+  "validated": true,
+  "component_parity_qualified": true,
+  "private_evidence": true,
+  "actual_operation": true,
+  "synthetic_inputs": false,
+  "tokens": 3,
+  "selected_experts": 30,
+  "compared_bf16": 7680,
+  "native_capture_bit_mismatches": 0,
+  "candidate_capture_bit_mismatches": 0,
+  "all_pair_bit_mismatches_zero": true,
+  "excluded_warmups": 1,
+  "warmup_rep": 0,
+  "measured_repetitions": 9,
+  "measured_reps": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "operations_per_timing_bracket": 8,
+  "order_schedule": [
+    "BA",
+    "AB",
+    "BA",
+    "AB",
+    "BA",
+    "AB",
+    "BA",
+    "AB",
+    "BA"
+  ],
+  "latency_units": "milliseconds per captured FL operation, HIP event bracket divided by eight",
+  "native_mean_ms": 0.06224159813333333,
+  "candidate_mean_ms": 0.07052377695555556,
+  "native_stdev_ms": 0.00476960578941553,
+  "candidate_stdev_ms": 0.008368653877997942,
+  "native_range_ms": [
+    0.0573137514,
+    0.0720963776
+  ],
+  "candidate_range_ms": [
+    0.0638668761,
+    0.0886041224
+  ],
+  "candidate_over_native_ratio_of_means": 1.1330650091034011,
+  "candidate_latency_increase_percent": 13.306500910340112,
+  "paired_candidate_over_native_mean": 1.1442600375000294,
+  "paired_candidate_over_native_median": 1.1769601115389563,
+  "paired_candidate_over_native_geometric_mean": 1.129316848566686,
+  "paired_candidate_over_native_range": [
+    0.8876590285168502,
+    1.5459487511403764
+  ],
+  "candidate_slower_pairs": 7,
+  "paired_native_over_candidate_speed_ratio_mean": 0.896793615620652,
+  "all_guards_passed": true,
+  "all_counters_zero": true,
+  "candidate_scratch_untouched_verified": true,
+  "scratch_verification": "Sealed replay reaches exit0 only after every candidate scratch payload byte remains0xa5; cleanup passedtrue and ownedoutcome exit0.",
+  "cleanup_passed": true,
+  "own_handle_closed": true,
+  "component_exit_code": 0,
+  "engine_requests": 0,
+  "serving_traffic_unchanged": true,
+  "controller_api_completed_before": 4,
+  "controller_api_completed_after": 4,
+  "NPU_executed": false,
+  "runtime_minimum_memory_bytes": {
+    "available_bytes": 30961455104,
+    "commit_headroom_bytes": 132388835328
+  },
+  "entry_reserve_gib": 22,
+  "runtime_reserve_gib": 18,
+  "memory_guard_passed": true,
+  "candidate_slower": true,
+  "candidate_keep_disabled": true,
+  "serving_substitution": false,
+  "serving_gain_claim": false,
+  "conclusion": "Candidate was slower in this nine-pair real-operation component cohort; retain disabled and do not substitute into serving.",
+  "measured_pairs": [
+    {
+      "type": "pair",
+      "rep": 1,
+      "measured": true,
+      "order": "BA",
+      "batch": 8,
+      "native_ms": 0.0616816245,
+      "candidate_ms": 0.0781169981,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 1.2664549407254992
+    },
+    {
+      "type": "pair",
+      "rep": 2,
+      "measured": true,
+      "order": "AB",
+      "batch": 8,
+      "native_ms": 0.0632243752,
+      "candidate_ms": 0.0640093759,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 1.0124161084631802
+    },
+    {
+      "type": "pair",
+      "rep": 3,
+      "measured": true,
+      "order": "BA",
+      "batch": 8,
+      "native_ms": 0.0573137514,
+      "candidate_ms": 0.0886041224,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 1.5459487511403764
+    },
+    {
+      "type": "pair",
+      "rep": 4,
+      "measured": true,
+      "order": "AB",
+      "batch": 8,
+      "native_ms": 0.0720963776,
+      "candidate_ms": 0.0639970005,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 0.8876590285168502
+    },
+    {
+      "type": "pair",
+      "rep": 5,
+      "measured": true,
+      "order": "BA",
+      "batch": 8,
+      "native_ms": 0.0593639985,
+      "candidate_ms": 0.0715776235,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 1.205741279371537
+    },
+    {
+      "type": "pair",
+      "rep": 6,
+      "measured": true,
+      "order": "AB",
+      "batch": 8,
+      "native_ms": 0.0627706274,
+      "candidate_ms": 0.0638668761,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 1.0174643578598355
+    },
+    {
+      "type": "pair",
+      "rep": 7,
+      "measured": true,
+      "order": "BA",
+      "batch": 8,
+      "native_ms": 0.0582176261,
+      "candidate_ms": 0.0714963749,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 1.2280881184882253
+    },
+    {
+      "type": "pair",
+      "rep": 8,
+      "measured": true,
+      "order": "AB",
+      "batch": 8,
+      "native_ms": 0.0668783784,
+      "candidate_ms": 0.0640432462,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 0.9576076413958029
+    },
+    {
+      "type": "pair",
+      "rep": 9,
+      "measured": true,
+      "order": "BA",
+      "batch": 8,
+      "native_ms": 0.0586276241,
+      "candidate_ms": 0.069002375,
+      "native_bit_mismatches": 0,
+      "candidate_bit_mismatches": 0,
+      "guards_and_counters": true,
+      "candidate_over_native": 1.1769601115389563
+    }
+  ],
+  "capture_metadata": {
+    "schema": "alloy0173.scratchfree-moe.actual-fl-capture.v1",
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009\\raw-extracted\\actual-n3.flop",
+    "bytes": 25419244,
+    "sha256": "9e30d450746f6e966f857793dc0b39b529013c2a4d06abead12714e57be2c59f",
+    "tokens": 3,
+    "route_tasks": 30,
+    "selected_experts": 30,
+    "task_map_permutation": true,
+    "counters_before_all_zero": true,
+    "counters_after_all_zero": true,
+    "native_bf16_outputs": 7680,
+    "tensor_payload_published": false,
+    "synthetic_inputs": false
+  },
+  "container_id": "22ba57849e220d9d96fd22a45c7b57e1dbbc1199791a272bf7a052043d0b8cf8",
+  "backend_run_id": "ce10feb3195942c8be790e359d4b762f",
+  "artifact_sha256": {
+    "native": "18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039",
+    "candidate": "e75f5b7dbee4f32668c1bd900b10720c910afbd1838389781275580df7932704",
+    "replay": "7a597d24c5213eafb0c8fa90d824e2aea70038cf1c936f0c5f56695a101612d1"
+  },
+  "evidence_inputs": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009\\fl-component\\outcome.json",
+      "bytes": 2084,
+      "sha256": "d06e7ff6eb8170736e2599299a330b831bd0a6f3d1b82920a151d0acc98840cc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009\\fl-component\\intent.json",
+      "bytes": 1960,
+      "sha256": "3558a2d246ab6dad104d9370b4808afc1190828ac3923dab9c1e7f363d6bbfc9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009\\fl-component\\load-before.json",
+      "bytes": 162,
+      "sha256": "58bab7cf9f0bfb1b8a2c7c0e20cab0f61656c7d79d42e39b8952431b417dc188"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009\\fl-component\\stdout.jsonl",
+      "bytes": 2522,
+      "sha256": "df82dc82022b7109c00b989f63850dccbc2a565da5cce69b455373f54e3d74f0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009\\fl-component\\stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\scratchfree-moe-20261009\\delivery-seal.json",
+      "bytes": 6081,
+      "sha256": "43ab97ee18e849724ba84b30fb2d77889a01bad44093c06baad51c1e7a71157b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\gpu-moe-compute-20261008\\bundle0-gfx1151-code-object.data",
+      "bytes": 17765424,
+      "sha256": "18937428b544e8a5ef1dae31db97f36136e8cdeca90e6c49458ef831b822a039"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\scratchfree-moe-20261009\\build-v1\\owner512.hsaco",
+      "bytes": 7296,
+      "sha256": "e75f5b7dbee4f32668c1bd900b10720c910afbd1838389781275580df7932704"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\scratchfree-moe-20261009\\libhalogen0173_fl_replay.so",
+      "bytes": 16656,
+      "sha256": "7a597d24c5213eafb0c8fa90d824e2aea70038cf1c936f0c5f56695a101612d1"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0173_scratchfree_moe\\replay.c",
+      "bytes": 9992,
+      "sha256": "7abb17aa06810e4e6ddbbcf73b43e3a220cc8fb5d8be5fcf5c565ff652d4e63c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0173_scratchfree_moe\\invoke_replay.py",
+      "bytes": 1821,
+      "sha256": "07f9e8bbd2fc23bb40d129788d75a8409d5ea5289a7cde7c800d9d67df593017"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\experimental\\halogen0173_scratchfree_moe\\capture_format.py",
+      "bytes": 2241,
+      "sha256": "00e099cc8df6a2904f24c0cb012a75de8e79e0c7ca47fb1c3bcc0315e521451b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009\\raw-extracted\\capture-copy.json",
+      "bytes": 325,
+      "sha256": "4df99d5deea5643c2780b2ea39db919aa6c354c29b0e2d3586589236840e8df9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009\\raw-extracted\\actual-n3.flop",
+      "bytes": 25419244,
+      "sha256": "9e30d450746f6e966f857793dc0b39b529013c2a4d06abead12714e57be2c59f",
+      "tensor_payload_published": false
+    }
+  ],
+  "analysis_cpu_only": true,
+  "additional_hardware_operations": 0,
+  "completed_utc": "2026-10-09T13:30:29.021994+00:00",
+  "engine_version": "0.17.3",
+  "engine_sha256": "af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7",
+  "observed_utc": "2026-10-09T13:26:10.613756+00:00",
+  "raw_evidence_directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-20261009"
+}

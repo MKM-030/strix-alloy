@@ -1,0 +1,74 @@
+{
+  "schema": "halogen0173.pld-tail.source-archive.v1",
+  "origin_delivery_sha256": "203bb3c0d41ff5b15b36fc557ccc3ded0af065acca39efdf284810b757f9cf82",
+  "default_off": true,
+  "source_only": true,
+  "future_label_oracle": true,
+  "real_npu_producer": false,
+  "serving_gain_qualified": false,
+  "native_runtime_qualified": false,
+  "validation": {
+    "python_oracle_tests_passed": 3,
+    "prepared_native_source_matches": 7,
+    "copied_adapter_header_matches": 3,
+    "existing_output_rejected": true,
+    "import_has_no_source_writes": true,
+    "private_seal_23_files_unchanged": true,
+    "original_cpu_adapter_suite_exit": 0,
+    "archive_native_library_built": false,
+    "hook_installed": false,
+    "engine_requests": 0,
+    "gpu_npu_used": false
+  },
+  "files": [
+    {
+      "name": "generate_readylist_oracle.py",
+      "bytes": 5420,
+      "sha256": "bc10554a392dc2c0bace6bf9c2922cf351cd1bda4621409c8d25af9b723c77a2",
+      "copied_from_sealed_source": true
+    },
+    {
+      "name": "oracle_format.h",
+      "bytes": 535,
+      "sha256": "3716d536cfbbe23fa9907e312486b75298aba330dee9fe8df2daf84e50aa296a",
+      "copied_from_sealed_source": true
+    },
+    {
+      "name": "prepare_native_sources.py",
+      "bytes": 7729,
+      "sha256": "e5b5b37e819235fcc55c2634303b0b7fd7c69401a4631d533e9dfa2e5ae288a9",
+      "original_source_sha256": "d0da87a97f7e8d1ef0743590a61f27b175d57a35c8b18a477dd148a7e1aeddbb",
+      "archive_adaptation": "Explicit pinned source and fresh output directories; main guard; copy header dependencies and record their hashes. Original insertion values and native outputs preserved."
+    },
+    {
+      "name": "README.md",
+      "bytes": 7289,
+      "sha256": "70b650212e2b517bdbb75451a67767cbe110fce87e1ffd467b158c871e2ee974",
+      "archive_documentation": true
+    },
+    {
+      "name": "readylist_oracle.h",
+      "bytes": 5948,
+      "sha256": "187a57a4263e8f0bdcfa207a06608772808fcb369db4bc52065d0c618a1e417d",
+      "copied_from_sealed_source": true
+    },
+    {
+      "name": "tail_adapter.h",
+      "bytes": 6364,
+      "sha256": "c0d0fdda3d070c8fa9f586807c9e9d58ef8d3c7516ed0c55aeec48fc9aa4b405",
+      "copied_from_sealed_source": true
+    },
+    {
+      "name": "tail_adapter_cpu_test.cpp",
+      "bytes": 3451,
+      "sha256": "237bddf8d6711623f5d192f1c00bdebd8de0286aca544069992ffa9a98f69179",
+      "copied_from_sealed_source": true
+    },
+    {
+      "name": "test_oracle_generation.py",
+      "bytes": 1396,
+      "sha256": "2d0b5493763c01738720690c697e2ce3092b61dc3f12051bd050d42aa65ff078",
+      "copied_from_sealed_source": true
+    }
+  ]
+}

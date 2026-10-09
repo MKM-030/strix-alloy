@@ -66,5 +66,12 @@ scripts/research/halogen0173_owned_shadow/costs_v1/** -text whitespace=blank-at-
 scripts/research/halogen0173_selector_policy/** -text whitespace=blank-at-eol,space-before-tab,cr-at-eol,-blank-at-eof
 
 # Retain the first frozen CPU retrieval quality screen without byte conversion.
+# Preserve the three source-only experiment archives and their measured receipts.
+scripts/benchmarks/experimental/halogen0173_phase_clock/** -text whitespace=cr-at-eol
+scripts/benchmarks/experimental/halogen0173_pld_tail/** -text whitespace=cr-at-eol
+scripts/benchmarks/experimental/halogen0173_scratchfree_moe/** -text whitespace=cr-at-eol
+docs/benchmarks/halogen0173-natural16k-raw-20261009.* -text whitespace=cr-at-eol
+docs/benchmarks/halogen0173-phase-pairing-v1-rejected-20261009.* -text whitespace=cr-at-eol
+docs/research/halogen0173-scratchfree-moe-20261009.* -text whitespace=cr-at-eol
 docs/research/halogen-npu-code-lookup-first-screen-20261009.md -text whitespace=cr-at-eol
 docs/research/halogen-npu-code-lookup-first-screen-20261009/** -text whitespace=blank-at-eol,space-before-tab,cr-at-eol,-blank-at-eof

@@ -1,0 +1,106 @@
+{
+  "schema": "halogen0173.phase-clock-cpu-build.v2",
+  "builds": [
+    {
+      "command": [
+        "C:\\AI\\runtimes\\ironenv\\Lib\\site-packages\\llvm-aie\\bin\\clang.exe",
+        "--target=x86_64-unknown-linux-gnu",
+        "-O2",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIC",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-stack-protector",
+        "-fvisibility=hidden",
+        "-mno-avx",
+        "-mno-avx2",
+        "-mno-avx512f",
+        "-c",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\phase_clock.c",
+        "-o",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\phase_clock.o"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\AI\\runtimes\\ironenv\\Lib\\site-packages\\llvm-aie\\bin\\clang.exe",
+        "--target=x86_64-unknown-linux-gnu",
+        "-fPIC",
+        "-c",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\phase_clock_entry.S",
+        "-o",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\phase_clock_entry.o"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\AI\\runtimes\\ironenv\\Lib\\site-packages\\llvm-aie\\bin\\ld.lld.exe",
+        "-shared",
+        "-z",
+        "relro",
+        "-z",
+        "now",
+        "-z",
+        "noexecstack",
+        "--version-script=C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\phase_clock.map",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\phase_clock.o",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\phase_clock_entry.o",
+        "-o",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\libhalogen0173_phase_clock.so"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\AI\\runtimes\\ironenv\\Lib\\site-packages\\llvm-aie\\bin\\clang.exe",
+        "--target=x86_64-pc-windows-msvc",
+        "-O2",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-stack-protector",
+        "-c",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\core_host_test.c",
+        "-o",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\core_host_test.obj"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\AI\\runtimes\\ironenv\\Lib\\site-packages\\llvm-aie\\bin\\lld-link.exe",
+        "/dll",
+        "/noentry",
+        "/nodefaultlib",
+        "/out:C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\core_host_test.dll",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\native0173-phase-clock-pairing-fix-20261009\\core_host_test.obj"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "wsl_invoked": false,
+  "upstream_executed": false,
+  "gpu_npu_used": false,
+  "engine_runtime_qualified": false,
+  "adapter_sha256": "176e78652589523f3d6f4e9404c0f247843f7792ec3f7056342ee60500d16e91",
+  "adapter_bytes": 17152,
+  "host_core_tests": {
+    "sha_vectors": 42,
+    "phase_precision_vectors": 1000,
+    "rejected_invalid_pairs": 5,
+    "pairing_identity_cases": 7,
+    "only_numeric_host_dll_loaded": true,
+    "linux_adapter_loaded": false
+  },
+  "source_pins": {
+    "phase_clock.c": "80f285b0579dbe5a24a9b164ce60a207165d468c419f32d429f648e6eb12905b",
+    "phase_clock_core.h": "362a6ca8dcabebdbf6a6b4a5fcc3f3ab09851433da6c9dda9d3836de2453527c",
+    "phase_clock_entry.S": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d",
+    "phase_clock.map": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb",
+    "phase_clock_pins.h": "7ed150f08c9a2d5480ec7e184d1236d71da8563ac117be4424e5f0760eab75db"
+  }
+}
