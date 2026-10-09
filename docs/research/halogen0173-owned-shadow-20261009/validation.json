@@ -1,0 +1,121 @@
+{
+  "schema": "halogen0173.owned-shadow.validation.v1",
+  "version": "0.17.3",
+  "scope": "Capture correctness validation, not throughput comparison or NPU execution",
+  "runtime_sha256": "af4f07bbe3759206013eb6f1328095ca2105cfda5127c5b9a2ab93e1aea987b7",
+  "session_nonce": "ae16087bf0ab17be08432114bf782663",
+  "actual_input_tokens": 8192,
+  "output_tokens": 128,
+  "input_scope": "synthetic pseudoprose with 116 repeated calibration units",
+  "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+  "request_sha256": "243037d0ad3993ab3ad57f9a22ac182ecc7b50e6e6320089d7ba98bd3a7ae00b",
+  "request_output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+  "profile": {
+    "context_capacity": 262144,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "mtp_depth": 2,
+    "pld": "3,3",
+    "cache": "Off",
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false
+  },
+  "request_stock_parity": true,
+  "api_counter_scope": "Combined API MTP/PLD; same stock output and counts",
+  "api_accepted": 70,
+  "api_drafted": 113,
+  "api_acceptance_percent": 61.94690265486726,
+  "journal_summary": {
+    "events": 122,
+    "matched_pairs": 59,
+    "censored_pairs": 3,
+    "zero_attempt_pairs": 0,
+    "unmatched_outcomes": 0,
+    "invalidated_pairs": 0,
+    "gaps": 0,
+    "native_neural_drafted": 112,
+    "native_neural_accepted": 69,
+    "native_pld_drafted": 0,
+    "native_pld_accepted": 0,
+    "unmatched_begins": 0,
+    "unretired_owners": 0,
+    "dropped_cumulative": 0,
+    "training_rows": 56
+  },
+  "whole_journal_complete": true,
+  "qualified_close": true,
+  "uncensored_neural_depth": 2,
+  "uncensored_prefix_histogram": {
+    "0": 15,
+    "1": 13,
+    "2": 28
+  },
+  "round_cost_labels_available": false,
+  "training_provenance_qualified": false,
+  "NPU_executed": false,
+  "speed_gain_qualified": false,
+  "first_attempt": {
+    "stock_output_parity": true,
+    "whole_journal_complete": false,
+    "startup_drops": 2,
+    "cause": "Serial Record append reaches birth seam with null Request; excluded after exact native proof"
+  },
+  "CPU_qualification": {
+    "reader_tests": 11,
+    "copied_relay_checks": 88,
+    "passed": true,
+    "so_sha256": "f3c67de214b3f7c2f0d0c8c7a70140c47f049b08759e68ce49effbd16deb1c1d"
+  },
+  "sources": [
+    {
+      "path": "shadow_wire.h",
+      "sha256": "a5537bcc0568bed7f40b143b9eb890f6362489c859626d6cdd5bc71e22d6f489"
+    },
+    {
+      "path": "shadow_collector.h",
+      "sha256": "31b01cdf933016204b15d9f2f1b9b1eeca26d944391a2afebc479700988fa287"
+    },
+    {
+      "path": "shadow_collector.cpp",
+      "sha256": "3801f62cacf5fc90a722159c04040451191aa07a0e46340455956eacb0e7aacb"
+    },
+    {
+      "path": "shadow_install.cpp",
+      "sha256": "94b983272ba8ea541d255e116a885a0b05ffb02fda30002ba8410e629cfe3963"
+    },
+    {
+      "path": "shadow_relay.S",
+      "sha256": "0230fc9d2e29aecac83c962182b781dfe58271144c402bf799d1e7f224bd1546"
+    },
+    {
+      "path": "shadow_relay.h",
+      "sha256": "57cba2403873b5e4e932844c4a87e7f05213824b9bc9408b70cb29920eee2459"
+    },
+    {
+      "path": "shadow_relay.ld",
+      "sha256": "6fcec8defdf68e0be9bb7c6885bcfdd580523b3e2cbb10783d72c0d0ce5052ad"
+    },
+    {
+      "path": "shadow_collector_cpu_harness.cpp",
+      "sha256": "79da3724c9f494dc32f898f4cd251f001798a736414b181f6a25007f22077787"
+    },
+    {
+      "path": "shadow_relay_cpu_harness.cpp",
+      "sha256": "50800f563add4ea4ae9eb168100c5b77a5d0e9e02698f48a874b9a4cc5181882"
+    },
+    {
+      "path": "shadow_relay_cpu_harness.S",
+      "sha256": "fbee1b380e23945c7a33a8212d2641dcf614e4d1917dc45ee5b77225a0b7e4e6"
+    },
+    {
+      "path": "ledger.py",
+      "sha256": "2b2bc2b9d655c1e62b6972a991726e7230c5deea869fa528cf5044a88da3c3e1"
+    },
+    {
+      "path": "test_ledger.py",
+      "sha256": "2136d0c1b1542b35a6c47f4a310cb9bcd0b7680764865ff8defc207e7b861205"
+    }
+  ],
+  "journal_sha256": "0c1b057f24620bb256d4e8e22b6d9508673ef125500ff65785794290c9b3543e"
+}
