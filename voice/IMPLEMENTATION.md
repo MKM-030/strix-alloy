@@ -63,3 +63,9 @@ Update 2026-10-12 19:45 UTC
 - Configure-Voice.ps1 preserves callback username; Update-CallbackCredential.ps1 writes only the existing protected local callback secret after user input. Both parse successfully in Windows PowerShell. Bridge17 tests passed after diagnostic addition.
 
 Latest native follow-up: second user message was accepted, then the conversation ended without an answer. This is an additional unresolved dialogue issue, independent of the callback password. Conversation ID 69dd7ecf933f4354e7f2b9fa6aba1035; input collector called capability aca5634f4312121038520464dbb8f236. User language in the runtime was en. No case was created. Investigate response-generation result and task completion before claiming multi-turn success.
+
+## Credential follow-up 2026-10-12 20:47 UTC onward
+- User ran the local correction helper. Callback secret file modification time confirms20:47:06UTC; no whitespace, non-ASCII or line breaks. Bridge restarted and read the updated file.
+- Actual ServiceNow callback still rejects401. Temporary comparison again confirms Basic authentication, matching username, different password. Only booleans were logged; no credential value was exposed.
+- Verified exactly one HTTP connection for the dedicated alias, pointing to credential5782fac7937b4354e7f2b9fa6aba10ea. Credential last updated20:17:36UTC, username email; outbound points to that alias. No wrong reference found.
+- Next handoff: user must set the ServiceNow credential Password to the same locally entered callback password and submit Update. This is a custom shared callback secret, not the account login password or inbound token. Do not weaken authentication or extract stored credentials.
