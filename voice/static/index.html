@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SCC Local Voice</title><link rel="stylesheet" href="/style.css"><script defer src="/app.js"></script></head>
+<body><main><header><span class="eyebrow">Smart Country Convention · Lokale Sprachdemo</span><h1>SCC Local Voice</h1><p>Deine Stimme. Bestehende ServiceNow-Skills.</p></header>
+<div id="status" role="status">Verbindung wird hergestellt …</div>
+<section><div class="row"><h2>Dialog</h2><button id="start">Dialog starten</button><button id="reset" class="secondary">Neuer Dialog</button></div><div id="chat" aria-live="polite"></div><div id="choices"></div><p id="inputLabel"></p>
+<label for="transcript">Nachricht</label><textarea id="transcript" rows="3" maxlength="4000" placeholder="Sprechen oder Nachricht eingeben. Vor dem Senden kannst du den Text korrigieren."></textarea>
+<div class="row"><button id="record" class="secondary">Aufnahme starten</button><button id="send">Senden</button><label class="check"><input id="autoSpeak" type="checkbox" checked> Antworten vorlesen</label></div><p class="hint">Aufnahme starten, sprechen und stoppen. Maximal 60 Sekunden. Während der Antwort ist die nächste Nachricht gesperrt.</p></section>
+<section><h2>Stimme testen</h2><p>Dieser Test nutzt nur die lokalen Sprachmodelle.</p><label for="testText">Testtext</label><input id="testText" maxlength="500" value="Guten Tag. Wie kann ich Ihnen heute helfen?"><div class="row"><button id="audioTest" class="secondary">Stimme abspielen</button><button id="roundtrip" class="secondary">Stimme und Erkennung testen</button></div><p id="audioResult" role="status"></p><audio id="player" controls></audio></section>
+<footer>Qwen3-ASR · HaloGen über ServiceNow · Qwen3-TTS<br>Einzelne Sprachbeiträge, kein Full Duplex. Audio wird vorübergehend verarbeitet und hier nicht gespeichert.</footer></main></body></html>

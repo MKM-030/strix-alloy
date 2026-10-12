@@ -5,6 +5,7 @@ explicit local lifecycle operation, never an arbitrary command in an API body.
 """
 import argparse
 import asyncio
+from collections import deque
 from dataclasses import dataclass
 import hashlib
 import hmac
@@ -62,18 +63,24 @@ class Backend:
 
 class Gateway:
     def __init__(self, backend, secret, backend_secret='', *, concurrency=1,
-                 body_bytes=16*1024**2, request_seconds=1800, console_trace=False):
+                 body_bytes=16*1024**2, request_seconds=1800, console_trace=False,
+                 queue_limit=0, queue_seconds=120):
         if not isinstance(secret,str) or len(secret)<32:
             raise ValueError('At least 32 characters of API key material required')
         if not 1<=concurrency<=16 or not 1024<=body_bytes<=64*1024**2:
             raise ValueError('Invalid request limits')
         if not 1<=request_seconds<=3600:
             raise ValueError('Request timeout must be 1..3600 seconds')
+        if type(queue_limit) is not int or not 0<=queue_limit<=64:
+            raise ValueError('Queue limit must be an integer from 0..64')
+        if type(queue_seconds) not in (int,float) or not 0<queue_seconds<=3600:
+            raise ValueError('Queue timeout must be finite and greater than 0, up to 3600 seconds')
         if type(console_trace) is not bool:
             raise ValueError('console_trace must be a boolean')
         self.backend=backend; self.secret=secret; self.backend_secret=backend_secret
         self.concurrency=concurrency; self.body_bytes=body_bytes
-        self.request_seconds=request_seconds; self.active=0; self.draining=False
+        self.request_seconds=request_seconds; self.active=0; self._draining=False
+        self.queue_limit=queue_limit; self.queue_seconds=queue_seconds; self.waiters=deque()
         self.completed=0; self.cancelled=0; self.client=None
         self.last_healthy=0.0; self.probe_lock=asyncio.Lock()
         self.console_trace=ConsoleTrace(secrets=(secret,backend_secret)) if console_trace else None
@@ -81,6 +88,56 @@ class Gateway:
         self.app.add_routes([web.get('/health',self.health),web.get('/v1/models',self.models)])
         for path in sorted(POST_ROUTES): self.app.router.add_post(path,self.inference)
         self.app.cleanup_ctx.append(self.session_context)
+
+    @property
+    def draining(self):
+        return self._draining
+
+    @draining.setter
+    def draining(self, value):
+        self._draining=value
+        if value:
+            while self.waiters:
+                waiter=self.waiters.popleft()
+                if not waiter.done(): waiter.set_result(False)
+
+    async def acquire_slot(self):
+        # No await between checking capacity and reserving it: all admission
+        # and handoff bookkeeping runs atomically on this event loop.
+        if self.draining: return False
+        if self.active<self.concurrency and not self.waiters:
+            self.active+=1
+            return True
+        if len(self.waiters)>=self.queue_limit: return False
+        waiter=asyncio.get_running_loop().create_future()
+        self.waiters.append(waiter)
+        try:
+            # Waiting has its own finite budget; request_seconds remains the
+            # upstream execution budget, including streamed response reads.
+            acquired=await asyncio.wait_for(asyncio.shield(waiter),self.queue_seconds)
+        except (asyncio.CancelledError,TimeoutError) as exc:
+            if waiter.done() and not waiter.cancelled() and waiter.result():
+                # A grant may race with timeout/disconnect before we resume.
+                self.release_slot()
+            else:
+                waiter.cancel()
+                try: self.waiters.remove(waiter)
+                except ValueError: pass
+            if isinstance(exc,asyncio.CancelledError): raise
+            return False
+        if acquired and self.draining:
+            self.release_slot()
+            return False
+        return acquired
+
+    def release_slot(self):
+        self.active-=1
+        while self.waiters and not self.draining and self.active<self.concurrency:
+            waiter=self.waiters.popleft()
+            if not waiter.done():
+                # Reserve for the oldest waiter before letting new calls in.
+                self.active+=1
+                waiter.set_result(True)
 
     @web.middleware
     async def authenticate(self, request, handler):
@@ -157,6 +214,7 @@ class Gateway:
         return web.json_response({'status':'ok' if ready else 'unavailable',
             'backend':self.backend.identifier,'checkpoint':self.backend.checkpoint,
             'context':self.backend.context,'active_requests':self.active,
+            'queued_requests':len(self.waiters),
             'draining':self.draining,'completed':self.completed,'cancelled':self.cancelled},
             status=200 if ready else 503)
 
@@ -169,10 +227,7 @@ class Gateway:
         trace=request.get(CONSOLE_TRACE_KEY)
         if request.path not in self.backend.routes:
             return web.json_response({'error':{'message':'Route unsupported by selected backend'}},status=501)
-        if self.draining or self.active>=self.concurrency:
-            return web.json_response({'error':{'message':'Engine busy or draining'}},status=429,
-                                     headers={'Retry-After':'1'})
-        self.active+=1; began=time.perf_counter(); response=None; status=502
+        acquired=False; began=time.perf_counter(); response=None; status=502
         try:
             try: body=await request.json()
             except (ValueError,UnicodeError):
@@ -181,6 +236,11 @@ class Gateway:
             if not isinstance(body,dict) or body.get('model') not in (self.backend.identifier,self.backend.model):
                 raise web.HTTPBadRequest(text='Select a model returned by /v1/models')
             body['model']=self.backend.model
+            acquired=await self.acquire_slot()
+            if not acquired:
+                status=429
+                return web.json_response({'error':{'message':'Engine busy or draining'}},status=status,
+                                         headers={'Retry-After':'1'})
             await self.ensure_ready()
             headers=self.upstream_headers()
             headers['Content-Type']='application/json'
@@ -220,7 +280,7 @@ class Gateway:
                 return response
             return web.json_response({'error':{'message':'Selected local backend unavailable; no fallback'}},status=503)
         finally:
-            self.active-=1
+            if acquired: self.release_slot()
             LOG.info('request backend=%s path=%s status=%s seconds=%.4f active=%s',
                 self.backend.identifier,request.path,status,time.perf_counter()-began,self.active)
 
@@ -237,6 +297,7 @@ def load_config(path):
                    key('backend_token_file') if value.get('backend_token_file') else '',
                    concurrency=value.get('concurrency',1),body_bytes=value.get('body_bytes',16*1024**2),
                    request_seconds=value.get('request_seconds',1800),
+                   queue_limit=value.get('queue_limit',0),queue_seconds=value.get('queue_seconds',120),
                    console_trace=value.get('console_trace',False))
 
 
