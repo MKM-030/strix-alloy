@@ -7,9 +7,9 @@ Local speech adapter for existing ServiceNow skills. Repository branch: codex/sc
 - Existing public HaloGen hostname now routes to the authenticated queued gateway on8841. Two simultaneous requests both succeeded. Original8840 and model processes remain running.
 - Qwen3-ASR0.6B on127.0.0.1:8851, CPUfloat32.
 - Qwen3-TTS0.6B CustomVoice on127.0.0.1:8852, CPUbfloat16, Ryan speakingGerman.
-- Browser client on http://127.0.0.1:8850/ is deliberately AUDIO-ONLY until separate ServiceNow credentials and channel are configured. No credentials reach browserJavaScript.
+- Browser client on http://127.0.0.1:8850/ now has ServiceNow enabled. Inbound requests succeed; callbacks currently fail authentication because the password differs between ServiceNow and the local file. No credentials reach browser JavaScript.
 - Actual German bridge roundtrip returned the exact original sentence: TTS6.77s, ASR1.50s. Two worker-level samples also matched exactly. BF16TTS is about2.2times faster thanfloat32; this is utterance-based speech, not full duplex or realtimeTTS.
-- ServiceNow main and quick planners now both succeed with halogen-v2. The original HRvoiceagent cannot execute in this NAVA path: strategyTopic is empty. A normal chat AIagent using the same existing HRtools is being prepared inStudio. End-to-end ServiceNow voice success is NOT yet established.
+- ServiceNow planners and the new normal Chat agent HR case creator SCC Local Voice run in the native assistant preview. The first HR question is displayed. Multi-turn and end-to-end voice remain unverified. The original voice-only agent is unchanged.
 
 ## Start/status/stop
 
@@ -31,26 +31,25 @@ Open http://127.0.0.1:8850/ on this PC. Use the local audio test, then microphon
 
 Stop affects only this worktree's audio/bridge workers. It leaves HaloGen and its gateway running. Do not expose8850 throughFunnel: the UI is intentionally local.
 
-## Remaining ServiceNow handoff
+## ServiceNow connection and remaining credential correction
 
-Create these two credentials through ServiceNow's standard UI; never paste their values into chat:
+The user created both credentials and approved activation. The dedicated SCC assistant, context profile, normal Chat agent and five existing-tool bindings are active. The assistant now references the normal Chat agent; the voice-only example association was removed without changing that original agent.
 
-1. Token Verifications [token_verification]: name `SCC Local Voice Inbound Token`, generate a secure static token and save.
-2. Basic Auth Credentials [basic_auth_credentials]: name `SCC Local Voice Callback`, username `scc-voice`, unique password of at least24characters and save.
+The dedicated Bot Integration identity is `scc-local-voice`. User ID/email and callback username are `marcel.kaefke@soprasteria.com`. User-configured admin ACL and dynamic-user data access were retained. Inbound token verification works.
 
-Choose a dedicated active ServiceNow demo user with the HRpermissions required by the reused tools. Its email must match exactly one active unlocked user. The adapter fixes this identity on the server; the browser cannot choose another user. Avoid using an administrator as the public demo identity.
+Standard message-auth, provider-application, connection alias, HTTP connection, outbound configuration and assistant channel records are created and active where applicable. No new tables or protected-script changes.
 
-Store the same two values locally using the hidden prompts:
+Funnel retains `/` -> 8841 and adds `/scc-voice` -> 8853. Callback URL: https://strix-alloy.tail7f425a.ts.net/scc-voice/callback. External authenticated probe returns200; unauthenticated probe401. UI8850 remains loopback-only.
+
+Actual ServiceNow callbacks reach the bridge with Basic authentication. A value-free comparison confirmed username_match=True and password_match=False. Correct only the local callback password with the EXACT value saved in the ServiceNow credential SCC Local Voice Callback:
 
 ```powershell
-.\Configure-Voice.ps1
+& "C:\Projects\strix-alloy-scc-voice\voice\Update-CallbackCredential.ps1"
 ```
 
-This protects E:\SCC-Voice\secrets with a DACL permitting only the currentWindows account andSYSTEM. Existing explicit directory/file access is removed. Only credentialpaths are stored in bridge.json.
+This hidden prompt preserves the existing restricted file ACL. Never paste secrets into chat. Reload only the bridge after correction; do not stop the working HaloGen/audio services unnecessarily. Configure-Voice.ps1 now preserves the existing callback username on reruns and accepts -CallbackUsername for fresh setup.
 
-`servicenow-setup.js` is preparation code, not executed yet. Once the credentials exist and the dedicated channel is approved, it creates/reuses standard records for the identity, messageauthentication, callbackalias, HTTPconnection, outboundconfiguration and assistantchannel. New outbound/channel/connection records are inactive until tested. No new ServiceNowtables or protectedscript modifications.
-
-Proposed callbackURL: https://strix-alloy.tail7f425a.ts.net/scc-voice/callback. The callback-only listener is127.0.0.1:8853/callback and requiresBasicAuth. Its precise Funnel path mapping must be tested before enabling the outboundconnection. The UI must remain unexposed.
+After correction: prove a real callback, a two-turn text conversation without case creation, and the full ASR -> ServiceNow -> TTS roundtrip. A successful HTTP ACK is not a completed voice test.
 
 ## Diagnostics and recovery
 
@@ -72,7 +71,4 @@ tailscale funnel --bg --yes http://127.0.0.1:8840
 
 Do not retry an uncertain case-creation request automatically. BotHTTP200 is only an acknowledgement; the answer arrives by callback. `completed=true` means the conversationended. Secure/unknown unsupported controls fail visibly instead of being spoken or guessed.
 
-## Prepared ServiceNow draft (19:49 UTC)
-`HR case creator SCC Local Voice` is now created as a normal Chat agent, ID `e850ba4f933b4354e7f2b9fa6aba105d`. Its configuration and all five copied tool bindings are inactive. Existing HR tools and their inputs are retained; no shared tool code was edited. Studio requires an explicit user-access ACL before completion. After the user identifies the demo account and confirms access, configure the ACL and current-user data access through Studio, activate the five bindings and agent, then replace the voice-only example asset in the SCC Local Voice assistant with this Chat agent. Validate a non-writing conversational turn before authorizing any case creation.
-
-Credential forms are prepared in the browser, not submitted: Token Verification `SCC Local Voice Inbound Token`; Basic Auth `SCC Local Voice Callback`, username `scc-voice`. The user must enter/submit the two secrets, then run Configure-Voice.ps1 locally with the same values (not in chat). Inbound token and callback password must each contain at least 24 characters. Channel/connection activation and public callback mapping remain pending confirmation. No end-to-end ServiceNow voice success is claimed yet.
+Latest native follow-up: second user message was accepted, then the conversation ended without an answer. This is an additional unresolved dialogue issue, independent of the callback password. Conversation ID 69dd7ecf933f4354e7f2b9fa6aba1035; input collector called capability aca5634f4312121038520464dbb8f236. User language in the runtime was en. No case was created. Investigate response-generation result and task completion before claiming multi-turn success.

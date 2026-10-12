@@ -308,6 +308,7 @@ class Bridge:
         if not self.settings.service_now_enabled:
             raise web.HTTPServiceUnavailable(text='ServiceNow is disabled')
         if not secrets.compare_digest(request.headers.get('Authorization', ''), self.callback_auth):
+            LOG.warning('Callback authentication rejected; check the configured Basic credential')
             raise web.HTTPUnauthorized()
         try:
             data = await request.json()

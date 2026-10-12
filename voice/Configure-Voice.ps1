@@ -1,4 +1,4 @@
-param([switch]$AudioOnly)
+param([switch]$AudioOnly, [string]$CallbackUsername = '')
 $ErrorActionPreference = 'Stop'
 $root = 'E:\SCC-Voice'
 $secretRoot = Join-Path $root 'secrets'
@@ -42,6 +42,14 @@ function Save-Secret($prompt, $path) {
     $plain = $null
   }
 }
+if ([string]::IsNullOrWhiteSpace($CallbackUsername)) {
+  $existingPath = Join-Path $root 'bridge.json'
+  if (Test-Path -LiteralPath $existingPath) {
+    $existingConfig = Get-Content $existingPath -Raw | ConvertFrom-Json
+    $CallbackUsername = $existingConfig.settings.callback_username
+  }
+  if ([string]::IsNullOrWhiteSpace($CallbackUsername)) { $CallbackUsername = 'scc-voice' }
+}
 $settings = [ordered]@{
   service_now_enabled = !$AudioOnly
   user_id = ''
@@ -49,7 +57,7 @@ $settings = [ordered]@{
   inbound_id = 'scc-local-voice'
   ui_port = 8850
   callback_port = 8853
-  callback_username = 'scc-voice'
+  callback_username = $CallbackUsername
   session_seconds = 1800
   turn_seconds = 180
   max_sessions = 1
@@ -60,7 +68,7 @@ if (!$AudioOnly) {
   $settings.email = Read-Host 'Email of the authorized active ServiceNow demo user'
   if ([string]::IsNullOrWhiteSpace($settings.user_id) -or $settings.email -notmatch '^[^@\s]+@[^@\s]+\.[^@\s]+$') { throw 'A user ID and valid demo email are required' }
   Save-Secret 'ServiceNow inbound static token (hidden)' (Join-Path $secretRoot 'servicenow-token.txt')
-  Save-Secret 'ServiceNow callback password for scc-voice (hidden)' (Join-Path $secretRoot 'callback-password.txt')
+  Save-Secret ('ServiceNow callback password for ' + $CallbackUsername + ' (hidden)') (Join-Path $secretRoot 'callback-password.txt')
 }
 $config = [ordered]@{
   settings = $settings
