@@ -1,0 +1,86 @@
+{
+  "observedDate": "2026-10-13",
+  "mode": "Read-only authenticated UI inspection; no ServiceNow record, scope, property, or runtime changes",
+  "sources": [
+    {
+      "name": "VABotToBotUtil",
+      "sysId": "80fe3e15534e1010ad77ddeeff7b1232",
+      "apiName": "sn_va_as_service.VABotToBotUtil",
+      "protectionPolicy": "None, observed in rendered form",
+      "rawSource": "Full visible source retained in the research browser session; excerpts below are exact source snippets."
+    },
+    {
+      "name": "NowAssistSmallTalkResponse",
+      "sysId": "48d00b69a3e31210ea9e21dad51e611b",
+      "apiName": "sn_nowassist_va.NowAssistSmallTalkResponse",
+      "finding": "Only extends NowAssistBaseResponse and delegates getResponseType to NowAssistSearchResponseHelper.getResponseType(this.getPayload()). No readiness signal in this class."
+    },
+    {
+      "name": "NowAssistBaseResponse",
+      "apiName": "sn_nowassist_va.NowAssistBaseResponse",
+      "finding": "getSummary produces type, message, citation_sources, search_results, and optionally raw_response. No readiness method or flag."
+    }
+  ],
+  "exactSourceExcerpts": {
+    "llmTakeControlSkip": "_processTakeControl: function(response, providerAppId, controlInfos, conversationGr) {\n\t\t\tif(this._isLLMEnabled(conversationGr)) {\n\t\t\t\treturn;\n\t\t\t}",
+    "llmModeCheck": "if(conversationGr.getValue('model_type') === 'llm') {\n\t\t\t\t\treturn true;\n\t\t\t\t}",
+    "topicFinishedFilter": "if (control.actionType != \"TopicFinished\") {\n                    body.push(control);\n                } else {\n                    containsTopicFinishedActionMessage = true;\n                }",
+    "streamingEnd": "var savedStreamId = this._getStreamIdFromProviderUserContext(payload.userId);\n            if (savedStreamId && !payload.streamActive) { // This is the last message for streaming.\n                response.streamState = \"END\";\n                response.streamActive = false;\n                sn_cs.VASystemObject.removeProviderUserContext(VABotToBotConstants.STREAM_ID, this.appInboundId, payload.userId, payload.requestId);\n            }",
+    "outputExtension": "var payloadTransformExtensions = new GlideScriptedExtensionPoint().getExtensions(\"sn_va_as_service.va_api_output_transformation\");",
+    "extensionInput": "var transformedResponse = this._transformResponsePayload({\n                    inputPayload: payload,\n                    responsePayload: response\n                });"
+  },
+  "interpretation": [
+    "For LLM conversations, _processTakeControl and _processScore both return before reading their enable properties. Missing takeControl/score is expected even with the properties true.",
+    "TopicFinished is stripped from the outbound body. It gates completed/faulted conversation flags in _updateResponseFromConversationState; it is not exposed as a user-turn readiness control.",
+    "setStreamingResponse uses a saved stream ID and inactive stream to emit END. It does not inspect pending tool execution or waiting-for-user state.",
+    "The output extension point can transform {inputPayload,responsePayload}; no safe internal waiting-for-user field has yet been proven. An extension should not invent readiness from END.",
+    "Small-talk response type exists upstream, but the observed Bot callback only has OutputText, and no proven stable small-talk type reaches that callback."
+  ],
+  "configuration": {
+    "enable_take_control": {
+      "sysId": "eedaa06a778431101b53c5ed3c5a9986",
+      "value": "true",
+      "application": "Virtual Agent API",
+      "matchingRecordCount": 1
+    },
+    "send_nlu_score": {
+      "sysId": "047aa01277c031101b53c5ed3c5a99e6",
+      "value": "true"
+    },
+    "botToBotChannel": {
+      "sysId": "51cdaa4c53a710105893ddeeff7b129c",
+      "typingIndicatorsEnabled": false,
+      "channelPropertyOverrides": 0
+    },
+    "sccLocalVoiceDeployment": {
+      "sysId": "c623a20f93374354e7f2b9fa6aba10fd",
+      "active": true,
+      "assistantType": "NAVA",
+      "vaTopicAssociationVisible": false,
+      "aiaTriggerConfigurationsRelatedListVisible": true
+    },
+    "topicSearches": {
+      "totalTopicCount": 451,
+      "nameContainsSCC": 0,
+      "nameContainsOnboarding": 0,
+      "limit": "Name searches do not prove that no indirect or differently named association exists."
+    }
+  },
+  "callbackCounterexample": {
+    "helloRequestId": "a08ea0ac99a04b5d9e658078ba43cfeb",
+    "laptopRequestId": "9c3e0ff60bb34782b66a1043f634971c",
+    "sameEndStructure": "streamState END, streamActive false, no completed or takeControl, body OutputText with group/maskType/messageId/streamId/uiType/value",
+    "laptopEndUtcMs": 1791891799631,
+    "nextProgressActionUtcMs": 1791891800738,
+    "actualInputTextEndUtcMs": 1791891836611,
+    "conclusion": "The same END structure can be followed 1.107 seconds later by continuing agent progress and 36.98 seconds later by actual InputText. END-only, streamId-based, and fixed quiet-time readiness are not proven safe barriers."
+  },
+  "authoritativePolicy": "Keep explicit supported input controls authoritative for accepting the next user turn; completed remains conversation termination. No source-proven replacement found for generic LLM replies.",
+  "publicDocumentation": [
+    "https://www.servicenow.com/docs/r/zurich/conversational-interfaces/virtual-agent/virtual-agent-api-whats-new.html",
+    "https://www.servicenow.com/docs/r/api-reference/rest-apis/bot-api.html",
+    "https://www.servicenow.com/docs/r/conversational-interfaces/now-assist-in-virtual-agent/streaming-responses-requestor.html"
+  ],
+  "serviceNowChanges": 0,
+  "newInferenceRequests": 0
+}
