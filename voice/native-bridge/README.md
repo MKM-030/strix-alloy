@@ -24,15 +24,36 @@ was `Guten Tag.` and `Wie kann ich helfen?`; the natural pause correctly made
 two turns with the 550 ms endpoint. Its dialogue response was a fixed test
 fixture, so this still does not verify ServiceNow or a human microphone.
 
+The subsequent complete synthetic-microphone RTP test passed with live
+Whisper, ServiceNow and Qwen3 TTS. It spoke the onboarding request, Alex
+Sommer's name, and an explicit confirmation after the exact order summary.
+ServiceNow reported the existing `REQ0010012` / `RITM0010011`; no replacement
+order was requested. A second fresh call asked for the employee name again.
+Both owned backend sessions were released. The full run took 322.437 seconds,
+including the second call. See `VALIDATION.json` and the local runtime report.
+
+With the separately configured temporary no-thinking gateway mode, first
+received speech took 34.531 seconds from call start (22.533 seconds on the
+second warm call). Substantive responses still took about 50–68 seconds after
+recognition. ServiceNow progress announcements were English, while questions,
+summary and result were German. These remain visible demo limitations. The
+actual native UI call was blocked by browser microphone permissions, so
+native OAuth, the physical microphone and remote UDP media remain unverified.
+
 Automatic turns use energy VAD (100 ms onset, 120 ms minimum voiced audio,
 550 ms final silence). Short confirmation utterances are explicitly tested. Barge-in
 clears queued audio and fences late audio immediately. An already submitted
 ServiceNow request is allowed to finish, because cancelling an order request
 could leave uncertain side effects. The next utterance queues behind it.
+Complete ServiceNow response messages are spoken as soon as they arrive;
+the adapter does not wait for the subsequent input prompt. A failed speech
+request still allows the submitted ServiceNow turn to settle. The configured
+native greeting is spoken once when the backend supplies none, unless the
+caller has already begun speaking.
 This is full-duplex audio transport with interruption, not Omni joint inference.
 The existing SCC bot account remains the fixed demo identity; native browser
 authorization does not impersonate arbitrary employees in the bot backend.
-Native conversation/interaction metadata is currently blank: the existing
+Native conversation/interaction metadata is currently omitted: the existing
 HTTP conversation bridge does not expose those identifiers. Do not interpret
 the native test analysis panel as a complete Voice runtime execution trace.
 
@@ -104,8 +125,22 @@ the JSON file even if the transport listener subsequently starts.
 The actual backend greeting probe on this date reached ServiceNow after 1.015 s
 but produced no complete reply within 186.656 s. Investigation found the
 HaloGen WSL backend stopped, with gateway connection errors. The probe ended
-its owned conversation and was not retried. This is a separate acceptance
-blocker from the validated local speech transport.
+its owned conversation and was not retried. The model was subsequently
+restored without lowering its context or memory guard. A real first-turn
+audio baseline then passed, but needed 105 seconds from recognition to the
+employee-name question. Its first complete ServiceNow announcement arrived
+77 seconds earlier; progressive speech now removes that avoidable adapter
+delay. Runtime reports distinguish backend latency from ASR and TTS latency.
+
+`demo_audio_smoke.py --run-approved-audio-demo --output runtime/<unique-run>`
+replays the authorized demo fixtures as microphone RTP through live ASR,
+ServiceNow and TTS. It uses an isolated random loopback listener, never the
+public route, and retains a WebSocket reader for heartbeat replies. A changed
+order summary pauses for bounded operator review of its exact SHA-256 and
+all supplied choices before the explicit spoken confirmation fixture. A
+failed or ambiguous turn is never retried automatically. `--first-turn-only`
+ends before sending a name or confirmation. These are synthetic audio tests,
+not proof that the actual browser microphone or native OAuth works.
 
 The isolated Funnel path was added and independently checked by the coordinating
 agent: `/scc-native/health` returned 200 in production auth mode; connect without

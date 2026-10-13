@@ -2,10 +2,26 @@
   "date": "2026-10-13",
   "environment": "Windows DESKTOP-8M583SI isolated native-bridge .venv",
   "unit_and_transport": {
-    "passed": 10,
-    "seconds": 2.943,
+    "passed": 18,
+    "seconds": 5.344,
     "existing_bridge_regression_tests_passed": 29,
-    "coverage": ["wrong credential denial", "strict native agent authorization envelope", "PCM odd-fragment alignment", "barge-in stale audio fence", "automatic silence endpoint", "short confirmation utterances", "failed conversation reset isolation", "deferred native offer and trickle ICE", "real SRTP audio and native datachannel transcripts"]
+    "coverage": [
+      "wrong credential denial",
+      "strict native agent authorization envelope",
+      "PCM odd-fragment alignment",
+      "barge-in stale audio fence",
+      "automatic silence endpoint",
+      "short confirmation utterances",
+      "failed conversation reset isolation",
+      "deferred native offer and trickle ICE",
+      "real SRTP audio and native datachannel transcripts",
+      "owned session end frees the sole backend slot",
+      "WebSocket heartbeat reader",
+      "progressive speech before backend input-ready",
+      "speech failure preserves pending backend observation",
+      "greeting once and barge-in fencing",
+      "exact summary review hash and run identifier"
+    ]
   },
   "live_speech_transport": {
     "passed": true,
@@ -13,13 +29,85 @@
     "servicenow_dialog": false,
     "fixture_audio_seconds": 2.64,
     "first_received_audio_seconds_including_input": 5.703,
-    "recognized_turns": ["Guten Tag.", "Wie kann ich helfen?"],
-    "speech_engines": ["Whisper localhost8861", "Qwen3 TTS localhost8862"],
+    "recognized_turns": [
+      "Guten Tag.",
+      "Wie kann ich helfen?"
+    ],
+    "speech_engines": [
+      "Whisper localhost8861",
+      "Qwen3 TTS localhost8862"
+    ],
     "notes": "The fixture pause produces two valid VAD turns. Initial live test incorrectly expected one pair and failed; expectation corrected to allow genuine multiple turns, then passed. No ServiceNow order was created by this probe."
   },
-  "ice_host_candidates": ["100.103.94.78", "192.168.50.19", "169.254.82.74", "172.24.160.1"],
-  "backend_greeting_probe": {"ready_seconds":1.015,"complete_reply":false,"timeout_seconds":186.656,"owned_session_reset":true,"diagnosis":"HaloGen WSL backend stopped; gateway ClientConnectorError; no retry"},
+  "ice_host_candidates": [
+    "100.103.94.78",
+    "192.168.50.19",
+    "169.254.82.74",
+    "172.24.160.1"
+  ],
+  "backend_greeting_probe": {
+    "ready_seconds": 1.015,
+    "complete_reply": false,
+    "timeout_seconds": 186.656,
+    "owned_session_reset": true,
+    "diagnosis": "HaloGen WSL backend stopped; gateway ClientConnectorError; no retry"
+  },
   "native_oauth_call": "pending real native UI",
   "native_microphone_demo": "pending",
-  "real_service_request_creation": "not tested by these probes"
+  "real_service_request_creation": "Existing REQ0010012/RITM0010011 reused through real spoken confirmation; no new order requested",
+  "first_turn_baseline": {
+    "started_utc": "2026-10-13T10:22:41.296Z",
+    "real_servicenow": true,
+    "first_received_audio_seconds": 113.515,
+    "asr_complete_seconds": 8.531,
+    "first_backend_announcement_seconds": 35.984,
+    "employee_question_seconds": 113.125,
+    "name_or_confirmation_sent": false,
+    "owned_session_released": true,
+    "avoidable_buffering_seconds": 77.141
+  },
+  "real_order_audio": {
+    "started_utc": "2026-10-13T10:34:50.213Z",
+    "status": "passed",
+    "native_ui": false,
+    "human_microphone": false,
+    "transport": "real RTP synthetic fixture microphone",
+    "services": [
+      "Whisper 8861",
+      "existing ServiceNow SCC agent via bridge 8850",
+      "Qwen3 TTS 8862"
+    ],
+    "mode": "shared local halogen-v2 alias temporary no-thinking; existing 262144 context unchanged",
+    "first_turn_asr_complete_seconds": 8.593,
+    "first_received_audio_seconds": 34.531,
+    "first_employee_question_seconds": 76.25,
+    "name_asr_complete_seconds": 82.781,
+    "summary_seconds": 134.171,
+    "explicit_confirmation_asr_complete_seconds": 146.312,
+    "request_result_seconds": 213.828,
+    "first_call_closed_seconds": 259.968,
+    "existing_request": "REQ0010012",
+    "existing_requested_item": "RITM0010011",
+    "order_result": "Die passende Anforderung ist bereits vorhanden. Die Nummer ist REQ0010012 mit RITM0010011.",
+    "confirmation_transport": "explicit spoken phrase recognized as typed ASR; no choice auto-selection",
+    "owned_session_released": true,
+    "runtime_report": "runtime/full-audio-fast-20261013/report.json",
+    "known_limitations": [
+      "Backend turns still take about 51–68 seconds after recognition to the substantive question/result",
+      "ServiceNow progress announcements arrived in English; summary and outcome were German",
+      "Native UI microphone and OAuth remain unverified"
+    ],
+    "completed_utc": "2026-10-13T10:40:12.654Z",
+    "total_seconds": 322.437,
+    "second_fresh_call": {
+      "passed": true,
+      "started_utc": "2026-10-13T10:39:10.302Z",
+      "asr_complete_utc": "2026-10-13T10:39:18.760Z",
+      "fresh_employee_question_utc": "2026-10-13T10:40:08.423Z",
+      "question_after_recognition_seconds": 49.663,
+      "first_audio_after_call_start_seconds": 22.533,
+      "owned_session_released": true,
+      "name_or_confirmation_sent": false
+    }
+  }
 }

@@ -40,6 +40,7 @@ class Config:
     tts_url: str = 'http://127.0.0.1:8862/v1/audio/speech'
     vad_threshold: int = 450
     max_call_seconds: int = 1800
+    greeting: str = ''
 
     @property
     def instance_url(self):
@@ -135,7 +136,7 @@ class Dialog:
                 return greetings
         raise RuntimeError('ServiceNow conversation startup timed out')
 
-    async def turn(self, text):
+    async def turn(self, text, on_reply=None):
         await self.request('POST', '/api/message', json={'text':text})
         until = time.monotonic() + 185
         result = []
@@ -145,6 +146,8 @@ class Dialog:
             for event in state.get('events', []):
                 if event.get('kind') == 'bot' and event.get('text'):
                     result.append(event['text'])
+                    if on_reply:
+                        await on_reply(event['text'])
                 elif event.get('kind') in ('error', 'notice'):
                     raise RuntimeError('ServiceNow returned an unsupported or failed turn')
             if state.get('failed'):
@@ -270,10 +273,14 @@ class NativeCall:
     async def process_turns(self):
         try:
             greetings = await self.dialog.open() or []
+            if not greetings and self.config.greeting and self.playback.generation == 0:
+                greetings = [self.config.greeting]
             generation = self.playback.generation
             for greeting in greetings:
                 self.emit('transcript', {'role':'assistant','content':greeting,
                     'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
+                if generation:
+                    continue
                 async for chunk in self.speech.synthesize(greeting):
                     if generation != self.playback.generation:
                         break
@@ -293,17 +300,27 @@ class NativeCall:
                         'caller_turn_id':turn_id,'turn_num':self.turn_number,
                         'latency_ms':int((time.monotonic()-started)*1000)})
                 transcript('user', text)
-                replies = await self.dialog.turn(text)
-                for reply in replies:
+                speech_error = None
+                async def deliver(reply):
+                    nonlocal speech_error
                     transcript('assistant', reply)
-                    if generation != self.playback.generation:
-                        continue
-                    async for chunk in self.speech.synthesize(reply):
-                        if generation != self.playback.generation:
-                            break
-                        while len(self.playback.data) > 48000 and generation == self.playback.generation:
-                            await asyncio.sleep(.02)
-                        self.playback.put(chunk, generation)
+                    if generation != self.playback.generation or speech_error:
+                        return
+                    try:
+                        async for chunk in self.speech.synthesize(reply):
+                            if generation != self.playback.generation:
+                                break
+                            while len(self.playback.data) > 48000 and generation == self.playback.generation:
+                                await asyncio.sleep(.02)
+                            self.playback.put(chunk, generation)
+                    except Exception as error:
+                        # Finish observing the already-submitted ServiceNow turn
+                        # before reporting TTS failure; never retry/cancel an order.
+                        speech_error = error
+                        self.playback.interrupt()
+                await self.dialog.turn(text, on_reply=deliver)
+                if speech_error:
+                    raise RuntimeError('Speech output failed after ServiceNow turn settled')
                 LOG.info('Voice turn completed seconds=%.2f', time.monotonic()-started)
         except asyncio.CancelledError:
             raise

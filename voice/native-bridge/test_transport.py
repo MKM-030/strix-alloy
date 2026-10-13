@@ -73,8 +73,10 @@ class TransportTests(unittest.IsolatedAsyncioTestCase):
             metadata = {'conversation_id':'transport-only', 'interaction_id':''}
             async def open(self):
                 pass
-            async def turn(self, text):
+            async def turn(self, text, on_reply=None):
                 self.received = text
+                if on_reply:
+                    await on_reply('Der Sprachkanal funktioniert.')
                 return ['Der Sprachkanal funktioniert.']
             async def close(self):
                 pass
