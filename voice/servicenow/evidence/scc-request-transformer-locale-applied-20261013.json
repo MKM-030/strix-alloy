@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "status": "applied",
+  "target": "bc126377936f8750e7f2b9fa6aba1012",
+  "field": "request_transformer",
+  "before_sha256": "aec67dcfad588b5bc5a2b9202464c9c1cc01a704fef696899dcbc0cbf6edca2e",
+  "after_sha256": "7462cb47ff804bfd72fb89c2ab08c9d4cb4d68255e47e4a744a8e3aea2997c02",
+  "updated_utc": "2026-10-13 18:15:01",
+  "sys_mod_count_after": "10",
+  "execution_scope": "rhino.global",
+  "attempted": true,
+  "verified": true,
+  "execution_history": "5776af57933b0b54e7f2b9fa6aba107c",
+  "rollback_context": "d776af57933b0b54e7f2b9fa6aba107b",
+  "record_for_rollback": true,
+  "independent_read_execution_history": "86076f1b933b0b54e7f2b9fa6aba1049",
+  "response_transformer_sha256_unchanged": "581e8e127c45435aefe541bad277cc8249d1ac809065aa0e4fc2bef57783e2d2",
+  "protected_config": {
+    "id": "8380c7e193f747d0e7f2b9fa6aba10b6",
+    "written": false,
+    "sha256_unchanged": "4c91a66ccf7aa580ed8737278fb5b2554cf0070c13b7a82994b562838f32da55",
+    "sys_mod_count_unchanged": "3",
+    "updated_utc_unchanged": "2026-10-13 16:13:15"
+  },
+  "conditional_scope": "Only prompt_data.aiConfig8380 gets final locale/concise reasoning suffix. Other configurations including ReActV3 retain identical serialized request behavior.",
+  "scope_checks": "Native ACL denied protected capability-config edits; allowed own Global adapter field verified with GlideRecordSecure.canWrite. No ACL, role, application/update-set, model, role array, token budget, routing or response transformer changed.",
+  "tests": {
+    "conditional_red_observed": true,
+    "conditional_passed": 2,
+    "combined_contract_tests_passed": 7
+  },
+  "runtime_limit": "Configuration/source application verified. Actual German spoken regression is separate and pending; no inference or order executed by this patch."
+}

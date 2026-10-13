@@ -1,0 +1,14 @@
+{
+  "read_only": true,
+  "model": "ff74fcef93a70350e7f2b9fa6aba10ea",
+  "model_display": "halogen-v2",
+  "scope": "global",
+  "mod_count": "9",
+  "updated": "2026-10-13 10:31:52",
+  "record_can_write": true,
+  "request_can_write": true,
+  "request_length": 1130,
+  "request_sha256": "aec67dcfad588b5bc5a2b9202464c9c1cc01a704fef696899dcbc0cbf6edca2e",
+  "request_source": "(function(inputs) {\r\n    var p = inputs && inputs.prompt_data;\r\n    if (!p || p.prompt === null || typeof p.prompt === \"undefined\") {\r\n        throw new Error(\"Strix Alloy: inputs.prompt_data.prompt fehlt.\");\r\n    }\r\n    var prompt = String(p.prompt);\r\n    if (!prompt.replace(/\\s/g, \"\")) {\r\n        throw new Error(\"Strix Alloy: Der Prompt ist leer.\");\r\n    }\r\n    var model = p.model ? String(p.model) : \"halogen-v2\";\r\n    var maxTokens = parseInt(p.max_tokens, 10);\r\n    if (!isFinite(maxTokens) || maxTokens < 1) { maxTokens = 1024; }\r\n    maxTokens = Math.min(maxTokens, 2048);\r\n    var temperature = parseFloat(p.temperature);\r\n    if (!isFinite(temperature)) { temperature = 0; }\r\n    temperature = Math.max(0, Math.min(temperature, 2));\r\n    var body = {model:model,messages:[{role:\"user\",content:prompt}],max_tokens:maxTokens,temperature:temperature,stream:false};\r\n    // ReAct V3 expects an object; keep other skills and older array templates unchanged.\r\n    if (String(p.aiConfig) === \"4780c7e193f747d0e7f2b9fa6aba1030\") { body.response_format = {type:\"json_object\"}; }\r\n    return {body:body,headers:{}};\r\n})(inputs);",
+  "response_sha256": "581e8e127c45435aefe541bad277cc8249d1ac809065aa0e4fc2bef57783e2d2"
+}
