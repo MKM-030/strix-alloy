@@ -6,13 +6,13 @@ Stand: 13.10.2026. Ziel: eigene gehostete Modelle im nativen ServiceNow-Voice-Er
 
 - Der native Voice-Pfad ist für den Custom LLM Provider weiterhin blockiert. Der ursprüngliche Enum-Fehler ist nicht behoben.
 - Der separate Sprachclient verwendet eigene ASR/TTS und den bestehenden ServiceNow-Dialog über Bot API/HaloGen. Er ist ein Custom-Fallback, kein Ersatz des nativen Voice-Runtimes.
-- Root hat die korrigierte externe Navigation aus ServiceNow und HTTP 200 bestätigt; die Gateway-Suite meldet 56 bestandene Tests. Navigation-Fix: `b8de643`; dokumentierte Windows-Abnahme: `024f5ed`.
+- Die Prüfung hat die korrigierte externe Navigation aus ServiceNow und HTTP 200 bestätigt; die Gateway-Suite meldet 56 bestandene Tests. Navigation-Fix: `b8de643`; dokumentierte Windows-Abnahme: `024f5ed`.
 - Damit sind weder eine native Voice-Integration noch die Mikrofon-/Audio-Abnahme am Telefon des Benutzers nachgewiesen. Letztere steht aus.
 - Keine weiteren Custom-UI-Seiten, Tabellen oder Provider-Nachbildungen zur Umgehung der nativen Grenze hinzufügen.
 
 ## Belegte Konfigurationskette
 
-Quellen: vorhandener Upload `upload/Pasted markdown(3).md` mit vollständigem `VoiceServiceConfigurationSNC`, Cache-Ausgabe `upload/Pasted text(10).txt` und Roots aktuelle Leseprüfung auf der Instanz.
+Quellen: vorhandener Upload `upload/Pasted markdown(3).md` mit vollständigem `VoiceServiceConfigurationSNC`, Cache-Ausgabe `upload/Pasted text(10).txt` und aktuelle Leseprüfung auf der Instanz.
 
 1. `_getLLMProvider()` liest `sn_aia.AIAOneExtendUtility.getDefaultProvider()`.
 2. Es wählt die HTTP-Connection über zwei Fälle: Now-LLM-Alias oder LLM-Proxy-Alias für alle anderen Provider.
