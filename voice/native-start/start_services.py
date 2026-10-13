@@ -96,22 +96,23 @@ def speech_start(selected):
     speech.SERVICES = {name: value for name, value in speech.SERVICES.items() if name in selected}
     speech.start()
     if 'tts' in selected:
-        profile = json.loads((speech.PROFILE / 'voice.json').read_text(encoding='utf-8-sig'))
-        reference = (speech.PROFILE / 'reference.wav').read_bytes()
-        digest = hashlib.sha256(reference).hexdigest()
-        if profile['kind'] != 'designed_synthetic_voice' or digest != profile['reference_sha256']:
-            raise RuntimeError('Synthetic SCC reference changed; registration refused')
-        owner = speech.owners()['tts']
-        receipt = RUNTIME / 'registered-voice.json'
-        stamp = {'pid':owner['pid'], 'created':owner['created'], 'reference_sha256':digest}
-        if receipt.exists() and json.loads(receipt.read_text()) == stamp:
-            print('TTS: existing owned voice registration reused', flush=True)
-        else:
-            payload = {'name':'scc-demo', 'ref_text':profile['reference_text'],
-                       'wav_b64':base64.b64encode(reference).decode('ascii')}
-            speech.request(8862, '/v1/audio/voices', 'POST', json.dumps(payload).encode())
-            receipt.write_text(json.dumps(stamp), encoding='utf-8')
-            print('TTS: synthetic SCC voice registered', flush=True)
+        manager = module('scc_voice_profiles', ROOT / 'voice/voice-profile/manage_voice.py')
+        # The same activation lock protects recorder updates and startup restore.
+        # Invalid consent/hash fails closed; do not silently replace an own voice.
+        with manager.activation_lock(manager.PROFILE_ROOT):
+            profile = manager.selected_profile()
+            if profile is None:
+                raise RuntimeError('No validated German voice reference is available')
+            owner = speech.owners()['tts']
+            receipt = RUNTIME / 'registered-voice.json'
+            stamp = {'pid':owner['pid'], 'created':owner['created'],
+                     'reference_sha256':profile['reference_sha256']}
+            if receipt.exists() and json.loads(receipt.read_text()) == stamp:
+                print('TTS: existing owned voice registration reused', flush=True)
+            else:
+                manager.native_register(profile)
+                manager.atomic_json(receipt, stamp)
+                print('TTS: selected German voice registered: ' + profile['name'], flush=True)
 
 
 def start_python(name, ports, script, config, health):

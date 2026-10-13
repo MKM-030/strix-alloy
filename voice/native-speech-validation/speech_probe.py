@@ -72,6 +72,14 @@ def listening(port):
     ]
 
 
+class ProbePreflightError(RuntimeError):
+    """Ownership failed before any HTTP connection/request was created."""
+
+
+class ProbeListenerNotReady(OSError):
+    """No owned listener was available before creating an HTTP connection."""
+
+
 class ProbeHTTPError(RuntimeError):
     def __init__(self, status, body):
         self.status = status
@@ -93,7 +101,12 @@ def assert_owned_listener(port):
 
 
 def request(port, route, method="GET", body=None, content_type="application/json", timeout=40):
-    assert_owned_listener(port)
+    try:
+        assert_owned_listener(port)
+    except RuntimeError as error:
+        raise ProbePreflightError(str(error)) from None
+    except OSError as error:
+        raise ProbeListenerNotReady(str(error)) from None
     conn = http.client.HTTPConnection("127.0.0.1", port, timeout=timeout)
     start = time.perf_counter()
     try:
@@ -232,24 +245,38 @@ def transcribe(path):
     return result
 
 
+def voice_profiles():
+    import importlib.util
+    path = ROOT.parent / 'voice-profile' / 'manage_voice.py'
+    spec = importlib.util.spec_from_file_location('scc_validation_voice_profiles', path)
+    manager = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(manager)
+    return manager
+
+
 def validate():
+    manager = voice_profiles()
+    # A recorder cannot switch the voice while this probe reports its identity.
+    with manager.activation_lock(manager.PROFILE_ROOT):
+        return validate_selected_voice(manager)
+
+
+def validate_selected_voice(manager):
     state = owners()
     if any(name not in state or not same_process(state[name]) for name in SERVICES):
         raise RuntimeError("Both services must match this launcher's ownership record")
-    profile = json.loads((PROFILE / "voice.json").read_text(encoding="utf-8-sig"))
-    reference = (PROFILE / "reference.wav").read_bytes()
-    if hashlib.sha256(reference).hexdigest() != profile["reference_sha256"]:
-        raise RuntimeError("Synthetic SCC voice reference hash mismatch")
-    if profile["kind"] != "designed_synthetic_voice":
-        raise RuntimeError("Only the existing synthetic SCC reference is authorized")
+    profile = manager.selected_profile()
+    if profile is None:
+        raise RuntimeError('No validated German voice reference is available')
     results = {"timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "commands": {k: v["args"] for k, v in SERVICES.items()}}
     results["owned_pids"] = {k: v["pid"] for k, v in state.items()}
     results["before_health"] = {name: health(name) for name in SERVICES}
     results["existing_fixture_asr"] = transcribe(FIXTURE)
     dump({"existing_fixture_asr": results["existing_fixture_asr"]})
-    voice = {"name": "scc-demo", "ref_text": profile["reference_text"], "wav_b64": base64.b64encode(reference).decode("ascii")}
-    raw, registration = request(8862, "/v1/audio/voices", "POST", json.dumps(voice).encode())
-    results["voice_registration"] = {**registration, "voice": "SCC Demo", "reference_sha256": profile["reference_sha256"], "response": json.loads(raw)}
+    registration = manager.native_register(profile)
+    results["voice_registration"] = {**registration, "voice": profile['name'],
+        "kind": profile['kind'], "profile_id": profile['profile_id'],
+        "reference_sha256": profile["reference_sha256"]}
     dump({"voice_registration": {k: v for k, v in results["voice_registration"].items() if k != "response"}})
     payload = {"input": SPEECH, "voice": "scc-demo", "response_format": "pcm", "seed": 42, "max_new_tokens": 96}
     raw, synthesis = request(8862, "/v1/audio/speech", "POST", json.dumps(payload).encode(), timeout=45)
