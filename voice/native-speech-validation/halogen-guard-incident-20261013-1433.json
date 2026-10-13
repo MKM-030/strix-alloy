@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "status": "ORIGINAL_MODEL_RESTART_REQUESTED_BY_ROOT_READINESS_PENDING",
+  "backend_run": "1d996b5648654362afdebee6c5c655ea",
+  "outer_run": "7ddd74f66f2d4fe483f0207d9199f265",
+  "cache": "Off throughout incident; Exact candidate never activated",
+  "guard": {
+    "recorded_utc": "2026-10-13T14:33:34.759815Z",
+    "physical_gib": 17.841,
+    "commit_headroom_gib": 110.252,
+    "minimum_physical_gib": 18,
+    "minimum_commit_gib": 18
+  },
+  "original_outcome": {
+    "cleanup": true,
+    "recovery": false,
+    "required_recovery_physical_gib": 42.44504165649414,
+    "recovery_frames": 180,
+    "terminal_utc": "2026-10-13T14:36:39.383010Z",
+    "records_preserved": true
+  },
+  "additional_consumer": {
+    "process": "powershell.exe",
+    "pid": 19932,
+    "parent_pid": 17608,
+    "created_utc": "2026-10-13T14:28:26.140Z",
+    "working_set_reported_decimal_gb": 22.6,
+    "owner_confirmed_by": "native_bridge agent; root independently checked full command, parent, executable, creation time and process handle",
+    "operation": "Read-only project source extraction; Get-Content -Raw values embedded in PowerShell objects serialized via ConvertTo-Json -Depth8",
+    "terminated_by": "root",
+    "termination_verified_utc": "2026-10-13T14:46:27.610Z",
+    "causality_limit": "Concrete additional memory consumer temporally preceding guard trip. No model KV-growth or cache causal claim is established."
+  },
+  "after_cleanup": {
+    "probe_utc": "2026-10-13T14:49:20.586542Z",
+    "probe_pid": 21372,
+    "probe_exit": 0,
+    "probe_runtime_s": 4.27,
+    "frame_available_bytes": [
+      54913441792,
+      54919278592,
+      54917849088,
+      54917390336,
+      54917664768
+    ],
+    "frame_commit_headroom_bytes": [
+      216314912768,
+      216323358720,
+      216320000000,
+      216318042112,
+      216320245760
+    ],
+    "original_runner_recovered_predicate": true,
+    "terminal_ownership_validated": true,
+    "container_id": "e7c160fedfc4b3ff1468e0c500db2f243bc7bce8f74599a849cb6f3765d057ef",
+    "container_status": "exited",
+    "container_exit": 0,
+    "oom_killed": false
+  },
+  "reconciliation": {
+    "script": "voice/native-speech-validation/runtime/reconcile-halogen-1d996b-20261013.py",
+    "script_sha256": "09388d67f05a56159fed74cc10b2271cc55c66b26d4b62d39d8aa1b11290d2bc",
+    "script_local_checks": "4 branch-guard tests passed; Python compile passed; root independently read full remote source",
+    "verify_root_pid": 19720,
+    "archive_root_pid": 22008,
+    "archive_exit": 0,
+    "complete_receipt": "voice/native-speech-validation/runtime/reconciliation-1d996b5648654362afdebee6c5c655ea-archive-20261013T145617Z-a3dc56e9-complete.json",
+    "archived": true,
+    "guard_outcome_recovery_terminal_manifest_unchanged": true,
+    "exact_lock_preserved_by_rename": true,
+    "wsl_started_or_stopped": false,
+    "verification": "Root read fresh verify receipt; five approximately51GiB frames; no owners/listeners/running WSL; pinned protected records unchanged. Archive repeated all verification and succeeded."
+  },
+  "restart": {
+    "requested_by": "root",
+    "requested_utc": "2026-10-13T14:56:49Z",
+    "launcher_pid": 18256,
+    "command": "voice/Start-NativeModel.ps1 -Action Start",
+    "original_profile_sha256": "cf02e2e695160c3e199a2efbf81920192d77f538616b4a3a00153e33927333c4",
+    "cache": "Off",
+    "context": 262144,
+    "slots": 1,
+    "guard_gib": 18,
+    "readiness": "pending; root owns monitoring; no parallel model actions by audit agent"
+  },
+  "prevention": "Use bounded readers and primitive output fields; do not serialize annotated Get-Content -Raw strings inside PowerShell objects using deep ConvertTo-Json. Track each owned diagnostic PID to exit. No guard reductions or model/profile change were made."
+}
