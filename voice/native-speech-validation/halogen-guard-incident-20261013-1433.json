@@ -83,5 +83,27 @@
     "guard_gib": 18,
     "readiness": "pending; root owns monitoring; no parallel model actions by audit agent"
   },
-  "prevention": "Use bounded readers and primitive output fields; do not serialize annotated Get-Content -Raw strings inside PowerShell objects using deep ConvertTo-Json. Track each owned diagnostic PID to exit. No guard reductions or model/profile change were made."
+  "prevention": "Use bounded readers and primitive output fields; do not serialize annotated Get-Content -Raw strings inside PowerShell objects using deep ConvertTo-Json. Track each owned diagnostic PID to exit. No guard reductions or model/profile change were made.",
+  "root_verified_restoration": {
+    "observed_utc": "2026-10-13T14:59:41.488700+00:00",
+    "verification": "independent stack_status.py, exit 0; current-service.json fresh read",
+    "stack_healthy": true,
+    "all_seven_services_http_status": 200,
+    "model_context": 262144,
+    "model_slots": 1,
+    "model_version_matches": true,
+    "original_profile_sha256": "cf02e2e695160c3e199a2efbf81920192d77f538616b4a3a00153e33927333c4",
+    "backend_run": "07b2cf1d0d054d67807d407d08ac728e",
+    "backend_phase": "ready",
+    "prompt_cache": "Off",
+    "model_in_flight": 0,
+    "gateway_active_requests": 0,
+    "gateway_queued_requests": 0,
+    "native_sessions": 0,
+    "free_gib": 29.659,
+    "commit_headroom_gib": 121.631,
+    "guard_floor_gib": 18,
+    "audio_bot_native_gateway_pids_unchanged": true,
+    "inference_or_order_created_by_verification": false
+  }
 }

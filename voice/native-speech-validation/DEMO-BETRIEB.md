@@ -45,6 +45,41 @@ Segmentwerte und Transportphasen; sie speichert keine Mikrofonaufnahmen und
 verändert keine Namen anhand vorgegebener Werte. Dies ersetzt keinen neuen
 echten Mikrofontest und erklärt die frühere Erkennung als „Hallo“ nicht.
 
+**Neuer nativer Anruf ab 16:16:23 Uhr Berlin:** Die aktive korrigierte Bridge
+verarbeitete vier aufeinanderfolgende Sprachbeiträge. ASR benötigte 0,281,
+0,250, 0,235 und 0,234 Sekunden. Die Gesamtzeiten der vier Dialogschritte
+einschließlich ASR betrugen 42,19, 64,03, 55,94 und 89,28 Sekunden. Die
+Bot-Callbacks bestätigten zweimal `InputText`, danach `Boolean` und zuletzt
+ein abgeschlossenes Gespräch (`completed=true`); der vierte Schritt war um
+16:21:05 Uhr beendet. Kein neuer ASR-Abbruch ist in diesem Lauf
+protokolliert. Der Nutzer bestätigte anschließend die korrekte Erkennung und
+Wiedergabe sowie den Abschluss der Bestellung. Er meldete weiterhin teilweise
+englische Antworten und eine Abschlussbestätigung ohne Artikelangabe. Die
+konkrete neue REQ/RITM ist noch nicht unabhängig aus der Instanz geprüft.
+Die Dialoglatenz bleibt für eine flüssige Messevorführung deutlich zu hoch.
+Eine zusätzliche automatische Audio-Probe wurde um 16:20:53 Uhr vor jedem
+Sessionstart abgebrochen, weil dieser native Nutzeranruf noch aktiv war.
+
+**Latenzanalyse:** Die zeitliche Zuordnung ergibt 18 Modellaufrufe, alle ohne
+Thinking, mit insgesamt 138.321 Prompt- und 3.150 Ausgabetokens. Gemessen sind
+113,10 Sekunden Promptverarbeitung und 76,47 Sekunden Textgenerierung. Die
+Zuordnung berücksichtigt einen Uhrenversatz von etwa 27,6 Sekunden; sie beruht
+auf Zeit und Reihenfolge, nicht auf gemeinsamen Request-IDs. STT dauerte pro
+Beitrag nur etwa ein Viertel einer Sekunde. TTS und Callback-Verzögerungen sind
+in diesem Lauf nicht getrennt gemessen. Eine Cache-Optimierung ist noch nicht
+aktiviert oder als schneller nachgewiesen.
+
+**Artikelantwort vorbereitet, noch nicht in ServiceNow angewandt:** Das
+Bestelltool erhält in beiden Erfolgszweigen `catalog_item_id` und
+`catalog_item_name` aus der tatsächlichen RITM. Anweisung 6 soll diese
+Artikelbezeichnung zusammen mit den echten REQ-/RITM-Nummern nennen. Vier
+Mocktests bestehen; Bestätigungspflicht und Schutz vor automatischer
+Doppelbestellung bleiben unverändert. Der gespeicherte Demoartikel ist laut
+bisheriger Projektdokumentation „SCC Laptop zum Onboarding (Demo)“; ein
+bestimmtes Hersteller-/Laptopmodell wird im Tool nicht ausgewählt. Aktuelle
+Tool-Bindings und Instanzfelder müssen vor Anwendung frisch geprüft werden.
+Der sichere Administrationsbrowser ist derzeit blockiert.
+
 Der echte ServiceNow-Browser hat OAuth, Mikrofon, ASR und hörbare TTS-Antworten
 bereits erfolgreich verwendet. Die einmalige lokale Begrüßung wird an den
 Backend-Dialog übergeben; die Sitzungssprache ist Deutsch. Ein isolierter
@@ -60,8 +95,7 @@ RTP-Audiotest erreichte die Namensfrage nach **33,077 s statt zuvor 52,400 s**
 ab ASR; die echte Eingabebereitschaft wurde bestätigt. Eine englische
 Zwischenansage nach 14,886 s bleibt offen. Alle drei Modellaufrufe dieses
 Tests liefen **ohne Thinking**; allein das Einlesen der Prompts dauerte
-insgesamt 19,31 s. Ein weiterer vollständiger Bestelltest nach der Änderung
-wurde nicht durchgeführt.
+insgesamt 19,31 s. Der spätere reale Nutzeranruf ist oben separat dokumentiert.
 
 Der frühere vollständige Audiotest bestätigte nach ausdrücklich gesprochener
 Freigabe die vorhandenen **REQ0010012 / RITM0010011**; er erzeugte keine neue
@@ -75,6 +109,21 @@ nicht aktiviert. Modell, bestehendes Profil und Speichergrenzen bleiben beim
 Wiederanlauf unverändert. Der No-Thinking-Demomodus des Gateways setzt für
 alle Aufrufe des öffentlichen Alias `halogen-v2` `enable_thinking=false` und
 `reasoning_effort=none`; das betrifft auch andere Nutzer desselben Alias.
+
+**Zusätzlicher Prüfvorfall am Nachmittag:** Ein von der Agentenprüfung
+gestarteter PowerShell-Dateileser blieb hängen und belegte über 20 GiB RAM.
+Der Modell-Speicherwächter stoppte daraufhin den Originalbetrieb. Der eindeutig
+zugeordnete eigene Leseprozess wurde um 16:46:27 Uhr Berlin beendet; danach
+standen wieder etwa 51 GiB zur Verfügung. Die fünf frischen Recovery-Messungen
+bestanden gegen die unveränderte Grenze von 42,445 GiB, ohne laufende
+Controller-/Backendprozesse, Modelllistener oder WSL-Distribution. Die alte
+Sperre wurde um 16:56:17 Uhr einzeln archiviert; historische Fehler- und
+Recovery-Dateien blieben unverändert. Der Originalstart wurde um 16:56:49 Uhr
+über `Start-NativeModel.ps1` angefordert. Dies ist kein Cache-Versuch; Profil,
+Kontext und Schutzgrenzen bleiben unverändert. Der unabhängige Status um
+**16:59:41 Uhr Berlin** bestätigt erneut alle sieben Dienste mit HTTP 200,
+leere Engine-/Gateway-Warteschlangen, keine Native-Sitzung und 29,659 GiB
+freien RAM. Die Audio-, Bot-, Native- und Gateway-Prozesse blieben unverändert.
 
 **Legacy `voice/Start-Voice.ps1` nicht verwenden:** Es startet die stillgelegten CPU-Modelle
 auf 8851/8852 und kann die Speicherreserve von HaloGen aufbrauchen.
