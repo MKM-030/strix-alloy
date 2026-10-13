@@ -2,15 +2,30 @@
 
 Stand: 13.10.2026. Diese Anleitung bedient den vorhandenen Stack. Sie ist kein
 neuer externer Voice-Client. Während eines Anrufs oder Tests keine Dienste neu starten.
-Die technische Statusprobe ist keine native End-to-End-Abnahme: echter
-Mikrofonzugriff und realer ServiceNow-OAuth-Aufruf sind noch nicht nachgewiesen;
-eine vollständige Sprachbestellung ist noch offen. Der bisherige isolierte
-First-Turn-Audiotest erreichte die vollständige Frage nach etwa 113 Sekunden.
+Der vollständige Test über echtes RTP-Audio → Whisper → ServiceNow → Qwen3-TTS
+bestand am 13.10.2026 um 10:40:12 UTC. Er nutzte synthetische Mikrofonaufnahmen
+und einen isolierten Testlistener. Nach ausdrücklich gesprochener Bestätigung
+meldete ServiceNow die bereits vorhandenen **REQ0010012 / RITM0010011**; es
+wurde keine neue Bestellung erzeugt. Eine zweite frische Unterhaltung fragte
+unabhängig erneut nach dem Namen. Beide eigenen Sessions wurden mit bestätigtem
+`/end` und beobachtetem Abschluss freigegeben.
+
+Die erste Namensfrage kam **67,66 s nach ASR**, die zweite nach **49,66 s**.
+Der vollständige erste Anruf dauerte **4 min 20 s**. Die Dialoglatenz bleibt
+für eine flüssige Demo hoch. Nachweise: [VALIDATION.json](../native-bridge/VALIDATION.json)
+und der dort referenzierte Laufbericht; Code-/Nachweisstand `7cf0953`.
+
+Die tatsächliche native Browser-Abnahme bleibt offen: echter Mikrofonzugriff
+und ServiceNow-OAuth wurden noch nicht erfolgreich zusammen geprüft. Der
+Browser meldete blockierten Mikrofonzugriff; der Produktionsmonitor zeigte
+bis 10:42:58 UTC keine native Sitzung. Der bestandene isolierte Audiotest und
+ein gesunder Stack ersetzen diesen Nachweis nicht.
 Seit 10:32:10 UTC ist der reversible No-Thinking-Demomodus auf Gateway 8841
 aktiv. Er setzt für alle Chat-Aufrufe des öffentlichen Alias halogen-v2
 `enable_thinking=false` und `reasoning_effort=none`. Modell, Kontext, Memory
 Guard, Tools und Bestätigungslogik bleiben unverändert. Das betrifft alle
-Caller dieses Alias; neue Latenz- und vollständige Abnahmeergebnisse stehen aus.
+Caller dieses Alias. Die obigen Messwerte stammen aus diesem Modus. Eine
+zusätzliche SCC-Promptoptimierung ist nur ein Entwurf und nicht angewendet.
 **Legacy `voice/Start-Voice.ps1` nicht verwenden:** Es startet die stillgelegten CPU-Modelle
 auf 8851/8852 und kann die Speicherreserve von HaloGen aufbrauchen.
 
@@ -169,3 +184,32 @@ verweigert einen abweichenden Modus bei bereits laufendem Gateway; die laufende
 Konfigurationsdatei nicht von Hand umschreiben. Dieser Wechsel startet nur 8841
 neu, weder HaloGen noch Audio/Bot/Native/Funnel. Details und lokale Vertragstests:
 [HALOGEN-DEMO-MODE.md](../HALOGEN-DEMO-MODE.md).
+
+## Nativen Browser-Test durchführen
+
+Auf dem Demorechner oder einem Browser mit Verbindung in dasselbe erreichbare
+LAN/Tailnet anmelden und den echten ServiceNow-Test öffnen:
+
+[Native Test Assistant öffnen](https://soprasteriaassvsdemo14.service-now.com/now/now-assist-with-va/voice-test/8aa131d793f787105c8132d47aba1095)
+
+Mikrofonzugriff für diese ServiceNow-Seite **zulassen**, passendes Eingabegerät
+wählen und **Start call** drücken. Der Browser muss einen Host-ICE-Kandidaten
+des PCs erreichen (LAN `192.168.50.19` oder Tailnet `100.103.94.78`).
+Das öffentliche HTTPS-Funnel allein stellt keinen UDP-Medienpfad bereit;
+STUN/TURN ist nicht konfiguriert. Bei blockiertem Mikrofon keine erfolgreiche
+native Verbindung behaupten und nicht blind weitere Anrufe starten.
+
+Mit dem bereits geprüften Beispiel sprechen und jeweils die vollständige
+Rückfrage abwarten:
+
+1. **Anliegen:** „Mein neuer Mitarbeiter startet am 1. November, sein Laptop
+   soll zum Onboarding nach Hamburg in unsere Niederlassung geliefert werden.“
+2. **Auf die Namensfrage:** „Der Mitarbeiter heißt Alex Sommer.“
+3. **Erst nach Prüfung der gesprochenen Zusammenfassung:** „Ja, bitte bestelle
+   den Laptop.“
+
+Im geprüften Lauf betraf die Zusammenfassung Alex Sommer, den 1. November 2026,
+Hamburg und den vorhandenen Vorgesetzten. Bei abweichenden Angaben korrigieren;
+die Bestätigung nicht überspringen. Der vorige Lauf fand die existierende
+REQ/RITM wieder; das ist keine pauschale Garantie für weitere Bestellversuche.
+Anruf beenden, Freigabe abwarten und eine neue Unterhaltung getrennt prüfen.
