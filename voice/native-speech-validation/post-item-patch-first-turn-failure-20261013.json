@@ -78,6 +78,15 @@
     }
   ],
   "gateway_attribution": "These two completions are time-correlated with the owned probe. There is no shared Bot-to-gateway request ID; unique causal attribution and internal request roles are not established.",
+  "concurrent_changes": {
+    "reported_at": "2026-10-13T18:16:08+02:00",
+    "source": "User message in this conversation",
+    "other_chat": "Servicenow tabelle finden",
+    "reported_work": "Another ChatGPT session is investigating a different error and updating provider configurations in the same ServiceNow instance.",
+    "exact_change_times_and_records": "Not obtained; overlap with individual requests is unverified.",
+    "interpretation": "This probe is not an isolated regression or performance comparison. The two time-correlated gateway calls cannot be uniquely assigned to this probe. The timeout remains an observed fact; its cause is unproven.",
+    "next_test_condition": "Coordinate a stable provider configuration with no concurrent provider writes before running another comparative voice test."
+  },
   "outcome": {
     "exit_code": 1,
     "error": "No final answer before timeout; TURN_FAILED",
