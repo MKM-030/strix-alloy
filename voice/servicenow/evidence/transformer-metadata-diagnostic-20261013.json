@@ -1,0 +1,48 @@
+{
+  "record": {
+    "table": "sys_generative_ai_custom_llm_transformer",
+    "sys_id": "bc126377936f8750e7f2b9fa6aba1012",
+    "field": "request_transformer"
+  },
+  "purpose": "Observe only whitelisted metadata paths/types and exact known SCC identity match booleans before considering request-scoped thinking changes.",
+  "original": {
+    "file": "transformer-original-20261013.js",
+    "characters": 1110,
+    "sha256": "96c5ae12a9af9f8eff500beb7791edcdffb75de0fc4e833f343207d97da46210"
+  },
+  "temporary": {
+    "file": "transformer-metadata-temporary-20261013.js",
+    "characters": 4088,
+    "sha256": "f65b74b196fbdb42ce8bd7179e8360646577e7e2056b9aa444ae6309261e7e73",
+    "savedAndFreshFormReloadExactComparedAt": "2026-10-13T10:18:35.275Z",
+    "guardAIConfig": "4780c7e193f747d0e7f2b9fa6aba1030",
+    "expiresAt": "2026-10-13T10:29:47.562Z",
+    "marker": "SCC_META_20261013_A",
+    "requestBodyChanged": false,
+    "thinkingChanged": false,
+    "maxRows": 100,
+    "maxDepth": 5,
+    "logsValues": false
+  },
+  "test": {
+    "file": "transformer-metadata-temporary.test.cjs",
+    "result": "PASS: unchanged output, no values or secrets logged, exact bool matches, errors contained, unrelated config unchanged, expiry enforced."
+  },
+  "singleFirstTurn": {
+    "startedAt": "2026-10-13T10:22:41.296Z",
+    "speechRecognitionCompleteAt": "2026-10-13T10:22:49.827Z",
+    "botAcknowledgedAt": "2026-10-13T10:22:50.297Z",
+    "requestId": "2af2afb4c7df4494b029d52970fdcdaa",
+    "conversationAlias": "voice-6ece6a56500e452fb5d656aa9e67b1fd",
+    "orderConfirmationSent": false
+  },
+  "cleanup": {
+    "status": "OUTSTANDING: browser protocol unavailable; exact source restoration not yet verified",
+    "requiredAction": "Restore transformer-original-20261013.js via ServiceNow form, update, reload and compare exact text. Retrieve only syslog entries filtered by messageCONTAINSSCC_META_20261013_A. Do not disable thinking without a proven isolated metadata identity.",
+    "hardExpiryBehavior": "After expiry the diagnostic IIFE returns immediately; original request transformation remains unchanged, but this does not establish source restoration."
+  },
+  "apiFallback": {
+    "available": false,
+    "reason": "Existing project credentials are a Bot API static inbound token and local callback/audio credentials; no ordinary ServiceNow Table API credential found. No secret contents read and no credential reuse attempted."
+  }
+}
