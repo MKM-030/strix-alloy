@@ -167,3 +167,11 @@ Only report the demo ready once routing, authentication, speech, actual dialog p
 - A 409 at login means the one mobile session is already active. Log out in that browser or allow its session to expire. A 429 means the configured attempt/concurrency limit is active; wait rather than bypassing the limit.
 - A 502 after an upstream session failure is not permission to resend a mutation. The gateway may refresh a safe GET once, but does not replay start/message/reset/audio POSTs.
 - Keep ASR/TTS workers, the existing callback route, and unrelated public services running throughout gateway rollback. Bridge restart, if needed to clear the retained slot, must use the verified existing launcher lifecycle.
+
+## Bounded SCC identity compatibility mode
+
+`session_scoped_user_id` defaults to `false`. The SCC single-operator demo enables it because this instance rewrites a reused external identity to an obsolete inactive guest-derived consumer on a later conversation. It is a local compatibility workaround, not a documented ServiceNow consumer repair.
+
+Each new local conversation gets one opaque external `userId`, independent of its private session cookie. The alias stays fixed across every turn, callback, and explicit END. Reset creates a fresh alias only after ending/removing the old local conversation. The verified operator email, app inbound ID, static authentication token, and ServiceNow permissions remain fixed on the server; clients cannot select another identity. Callback correlation still requires the current session/request and matching alias when supplied. No uncertain order is automatically retried.
+
+This mode creates additional ServiceNow runtime account/channel/adapter rows and does not preserve external-channel history across conversations. It is intended for this controlled single-user demo while the platform's stale consumer resolution is investigated. Do not enable it as a general multi-user identity design. Disable it to restore the configured stable `user_id` after the underlying mapping issue is resolved.

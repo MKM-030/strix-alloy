@@ -27,6 +27,7 @@ LOG = logging.getLogger('voice-bridge')
 @dataclass
 class Settings:
     user_id: str = ''
+    session_scoped_user_id: bool = False
     service_now_enabled: bool = True
     email: str = ''
     inbound_id: str = 'scc-local-voice'
@@ -43,6 +44,7 @@ class Settings:
 
 @dataclass
 class Conversation:
+    user_id: str = ''
     sid: str = field(default_factory=lambda: uuid.uuid4().hex)
     csrf: str = field(default_factory=lambda: secrets.token_urlsafe(32))
     created: float = field(default_factory=time.monotonic)
@@ -212,8 +214,14 @@ class Bridge:
         if session is None:
             if len(self.sessions) >= (1 if self.settings.service_now_enabled else self.settings.max_sessions):
                 raise web.HTTPServiceUnavailable(text='Too many local sessions')
-            session = Conversation()
+            # Optional demo workaround for stale external-consumer bindings.
+            # Separate from the private cookie/session ID; fixed for this dialog.
+            user_id = ('voice-' + uuid.uuid4().hex if self.settings.session_scoped_user_id
+                       else self.settings.user_id)
+            session = Conversation(user_id=user_id)
             self.sessions[session.sid] = session
+            if self.settings.session_scoped_user_id:
+                LOG.info('Bot session alias=%s', user_id)
         response = web.json_response({'csrf': session.csrf, 'started': session.started,
             'serviceNowEnabled': self.settings.service_now_enabled,
             'expiresIn': max(0, int(self.settings.session_seconds - time.monotonic() + session.created))})
@@ -273,7 +281,7 @@ class Bridge:
     async def send(self, session, text, typed, action=''):
         request_id = uuid.uuid4().hex
         payload = {'requestId': request_id, 'appInboundId': self.settings.inbound_id,
-            'clientSessionId': session.sid, 'userId': self.settings.user_id,
+            'clientSessionId': session.sid, 'userId': session.user_id,
             'emailId': self.settings.email, 'message': {'text': text, 'typed': typed,
             'clientMessageId': uuid.uuid4().hex}, 'clientVariables': {'voiceSessionId': session.sid}}
         if session.now_session:
@@ -344,7 +352,7 @@ class Bridge:
         session = self.sessions.get(data.get('clientSessionId'))
         LOG.info('Bot callback request_id=%s matched=%s completed=%s controls=%s', data.get('requestId'), bool(session and session.requests and data.get('requestId') == session.requests[-1]), data.get('completed'), [item.get('uiType') for item in data.get('body', []) if isinstance(item, dict)])
         if session and session.requests and data.get('requestId') == session.requests[-1] and not session.ended:
-            if data.get('userId') not in (None, '', self.settings.user_id):
+            if data.get('userId') not in (None, '', session.user_id):
                 raise web.HTTPBadRequest(text='Identity mismatch')
             fingerprint = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
             if fingerprint not in session.fingerprints:

@@ -61,6 +61,50 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(state['ended'])
         self.assertEqual(state['events'], [])
 
+    async def test_session_scoped_identity_stays_fixed_until_reset(self):
+        self.bridge.settings.session_scoped_user_id = True
+        reset = await self.post('/api/reset', {})
+        self.headers['X-CSRF-Token'] = (await reset.json())['csrf']
+        await self.post('/api/start', {'userId': 'client-injection'})
+        first = self.requests[-1]
+        alias = first['userId']
+        self.assertNotEqual(alias, 'demo')
+        self.assertNotEqual(alias, first['clientSessionId'])
+        self.assertNotIn('demo', alias)
+        await self.callback(userId=alias, body=[{'uiType': 'InputText'}])
+        await self.post('/api/message', {'text': 'Laptop', 'userId': 'injection',
+                                        'emailId': 'other@example.test'})
+        self.assertEqual(self.requests[-1]['userId'], alias)
+        self.assertEqual(self.requests[-1]['clientSessionId'], first['clientSessionId'])
+        self.assertEqual(self.requests[-1]['emailId'], 'demo@example.test')
+        self.assertEqual(self.requests[-1]['appInboundId'], 'scc-local-voice')
+        reset = await self.post('/api/reset', {})
+        self.assertEqual(self.requests[-1]['action'], 'END_CONVERSATION')
+        self.assertEqual(self.requests[-1]['userId'], alias)
+        self.headers['X-CSRF-Token'] = (await reset.json())['csrf']
+        await self.post('/api/start', {})
+        self.assertNotEqual(self.requests[-1]['userId'], alias)
+        self.assertEqual(self.requests[-1]['emailId'], 'demo@example.test')
+        self.assertNotEqual(self.requests[-1]['clientSessionId'], first['clientSessionId'])
+
+    async def test_session_scoped_callback_requires_current_alias(self):
+        self.bridge.settings.session_scoped_user_id = True
+        reset = await self.post('/api/reset', {})
+        self.headers['X-CSRF-Token'] = (await reset.json())['csrf']
+        await self.post('/api/start', {})
+        alias = self.requests[-1]['userId']
+        self.assertEqual((await self.callback(userId='demo', body=[
+            {'uiType': 'InputText', 'label': 'Wrong identity'}])).status, 400)
+        self.assertEqual((await self.callback(userId='foreign-alias', body=[
+            {'uiType': 'InputText', 'label': 'Wrong identity'}])).status, 400)
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['busy'])
+        self.assertEqual(state['events'], [])
+        self.assertEqual((await self.callback(userId=alias, body=[
+            {'uiType': 'InputText', 'label': 'Real question'}])).status, 200)
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertEqual([e['text'] for e in state['events']], ['Real question'])
+
     async def test_initial_start_control_allows_first_user_message(self):
         await self.post('/api/start', {})
         await self.callback(body=[{'uiType': 'ActionMsg', 'actionType': 'StartConversation',
