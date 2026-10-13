@@ -11,6 +11,7 @@ from fractions import Fraction
 import io
 import json
 import logging
+import math
 from pathlib import Path
 import time
 from urllib.parse import urlsplit
@@ -51,6 +52,31 @@ class Speech:
     def __init__(self, http, config):
         self.http, self.config = http, config
 
+    @staticmethod
+    def log_asr_diagnostics(data):
+        # Only bounded numeric summaries: never transcript, words or arbitrary keys.
+        segments = data.get('segments')
+        segments = segments if isinstance(segments, list) else []
+        inspected = segments[:256]
+        logprobs, silence = [], []
+        for segment in inspected:
+            if not isinstance(segment, dict):
+                continue
+            for key, values, low, high in (('avg_logprob', logprobs, -1000, 0),
+                                           ('no_speech_prob', silence, 0, 1)):
+                value = segment.get(key)
+                if (type(value) in (int, float) and low <= value <= high
+                        and math.isfinite(value)):
+                    values.append(value)
+        def formatted(value):
+            return 'missing' if value is None else f'{value:.4f}'
+        LOG.info('Voice ASR diagnostics segments=%d truncated=%s logprob_count=%d '
+                 'avg_logprob_mean=%s avg_logprob_min=%s silence_count=%d no_speech_prob_max=%s',
+                 len(inspected), len(segments)>256, len(logprobs),
+                 formatted(sum(logprobs)/len(logprobs) if logprobs else None),
+                 formatted(min(logprobs) if logprobs else None), len(silence),
+                 formatted(max(silence) if silence else None))
+
     async def transcribe(self, pcm):
         buf = io.BytesIO()
         with wave.open(buf, 'wb') as wav:
@@ -61,16 +87,19 @@ class Speech:
         form = FormData()
         form.add_field('file', buf.getvalue(), filename='speech.wav', content_type='audio/wav')
         form.add_field('language', 'de')
-        form.add_field('response_format', 'json')
+        form.add_field('response_format', 'verbose_json')
+        form.add_field('token_timestamps', 'false')
+        form.add_field('no_language_probabilities', 'true')
         form.add_field('temperature', '0')
         async with self.http.post(self.config.asr_url, data=form, allow_redirects=False,
                                   timeout=ClientTimeout(total=30)) as response:
             if response.status != 200:
                 raise RuntimeError('ASR unavailable')
             data = await response.json()
-            text = data.get('text')
+            text = data.get('text') if isinstance(data, dict) else None
             if not isinstance(text, str) or len(text) > 4000:
                 raise RuntimeError('Invalid transcription')
+            self.log_asr_diagnostics(data)
             return text.strip()
 
     async def synthesize(self, text):
@@ -233,6 +262,10 @@ class NativeCall:
         self.pending_events = []
         self.tasks = set()
         self.turns = asyncio.Queue(maxsize=2)
+        self.recognized_turns = asyncio.Queue(maxsize=2)
+        self.asr_task = None
+        self.failed = False
+        self.call_id = uuid.uuid4().hex[:12]
         self.closed = False
         self.turn_number = 0
         self.peer.on('datachannel', self.datachannel)
@@ -268,12 +301,20 @@ class NativeCall:
         elif len(self.pending_events) < 30:
             self.pending_events.append(message)
 
+    def notice(self, code, text):
+        # Native type=error immediately closes WSS. A local notice must remain
+        # visible without ending a possibly side-effecting ServiceNow request.
+        self.emit('transcript', {'role':'assistant','content':text,'code':code,
+            'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
+
     async def microphone(self, track):
         converter = AudioResampler(format='s16', layout='mono', rate=16000)
         gate = EndpointGate(threshold=self.config.vad_threshold)
         try:
             while not self.closed:
                 frame = await track.recv()
+                if self.failed:
+                    continue
                 for mono in converter.resample(frame):
                     pcm = mono.to_ndarray().tobytes()
                     began, utterance = gate.feed(pcm)
@@ -281,18 +322,90 @@ class NativeCall:
                         # Do not cancel a possibly side-effecting ServiceNow request.
                         # Audio is fenced immediately; the next utterance queues.
                         self.playback.interrupt()
+                        LOG.info('Voice input call=%s stage=vad_start generation=%d audio_queue=%d text_queue=%d',
+                                 self.call_id, self.playback.generation, self.turns.qsize(), self.recognized_turns.qsize())
                     if utterance:
                         try:
                             self.turns.put_nowait((self.playback.generation, utterance))
+                            LOG.info('Voice input call=%s stage=queued audio_ms=%d audio_queue=%d text_queue=%d',
+                                     self.call_id, len(utterance)*1000//32000,
+                                     self.turns.qsize(), self.recognized_turns.qsize())
                         except asyncio.QueueFull:
-                            self.emit('error', {'code':'BUSY','message':'Bitte kurz warten, bis die aktuelle Anfrage abgeschlossen ist.'})
+                            LOG.info('Voice input call=%s stage=audio_queue_full', self.call_id)
+                            self.notice('BUSY', 'Die letzte Aufnahme konnte nicht angenommen werden. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.')
         except asyncio.CancelledError:
             raise
         except Exception:
             if not self.closed:
                 LOG.info('Microphone track ended')
 
+    async def recognize_turns(self):
+        """Recognize accepted audio independently; never submit backend requests."""
+        while not self.closed and not self.failed:
+            generation, pcm = await self.turns.get()
+            started = time.monotonic()
+            try:
+                text = await self.speech.transcribe(pcm)
+                if self.closed or self.failed:
+                    return
+                LOG.info('Voice input call=%s stage=asr_complete audio_ms=%d seconds=%.3f empty=%s text_queue=%d',
+                         self.call_id, len(pcm)*1000//32000, time.monotonic()-started,
+                         not bool(text), self.recognized_turns.qsize())
+                if not text:
+                    self.notice('ASR_EMPTY', 'Ich konnte keine Sprache erkennen. Bitte wiederholen Sie Ihre Antwort.')
+                    continue
+                self.turn_number += 1
+                turn = (generation, text, self.turn_number, uuid.uuid4().hex, started)
+                self.transcript(turn, 'user', text)
+                try:
+                    self.recognized_turns.put_nowait(turn)
+                except asyncio.QueueFull:
+                    LOG.info('Voice input call=%s stage=text_queue_full turn=%d', self.call_id, self.turn_number)
+                    self.notice('BUSY', 'Ihre letzte Antwort wurde erkannt, aber nicht weitergeleitet. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.')
+            except asyncio.CancelledError:
+                raise
+            except Exception as error:
+                LOG.warning('Voice input call=%s stage=asr_failed type=%s', self.call_id, type(error).__name__)
+                self.notice('ASR_FAILED', 'Die Spracherkennung ist fehlgeschlagen. Bitte wiederholen Sie Ihre Antwort.')
+            finally:
+                self.turns.task_done()
+
+    def transcript(self, turn, role, content):
+        _, _, number, turn_id, started = turn
+        self.emit('transcript', {'role':role,'content':content,'message_id':uuid.uuid4().hex,
+            'caller_turn_id':turn_id,'turn_num':number,
+            'latency_ms':int((time.monotonic()-started)*1000)})
+
+    async def report_backend_failure(self):
+        self.failed = True
+        self.playback.interrupt()
+        if self.asr_task:
+            self.asr_task.cancel()
+            await asyncio.gather(self.asr_task, return_exceptions=True)
+        for queue in (self.turns, self.recognized_turns):
+            while not queue.empty():
+                queue.get_nowait()
+                queue.task_done()
+        notice = ('Der Sprachdialog konnte nicht fortgesetzt werden. Weitere Antworten werden nicht weitergeleitet. '
+                  'Bitte beenden Sie diesen Anruf.')
+        self.notice('TURN_FAILED', notice)
+        # Local failure feedback only. Never cancel, retry or close a submitted Bot request here.
+        try:
+            async with asyncio.timeout(10):
+                generation = self.playback.generation
+                async for chunk in self.speech.synthesize(notice):
+                    while len(self.playback.data) > 48000 and not self.closed:
+                        await asyncio.sleep(.02)
+                    if self.closed:
+                        return
+                    self.playback.put(chunk, generation)
+        except asyncio.CancelledError:
+            raise
+        except Exception as error:
+            LOG.warning('Voice failure notice call=%s type=%s', self.call_id, type(error).__name__)
+
     async def process_turns(self):
+        self.asr_task = self.spawn(self.recognize_turns())
         try:
             greetings = await self.dialog.open() or []
             fallback_greeting = False
@@ -313,19 +426,13 @@ class NativeCall:
                     while len(self.playback.data) > 48000 and generation == self.playback.generation:
                         await asyncio.sleep(.02)
                     self.playback.put(chunk, generation)
-            while not self.closed:
-                generation, pcm = await self.turns.get()
-                started = time.monotonic()
-                text = await self.speech.transcribe(pcm)
-                if not text:
-                    continue
-                self.turn_number += 1
-                turn_id = uuid.uuid4().hex
+            while not self.closed and not self.failed:
+                turn = await self.recognized_turns.get()
+                generation, text, number, _, started = turn
+                LOG.info('Voice backend call=%s stage=begin turn=%d text_queue=%d',
+                         self.call_id, number, self.recognized_turns.qsize())
                 def transcript(role, content):
-                    self.emit('transcript', {'role':role,'content':content,'message_id':uuid.uuid4().hex,
-                        'caller_turn_id':turn_id,'turn_num':self.turn_number,
-                        'latency_ms':int((time.monotonic()-started)*1000)})
-                transcript('user', text)
+                    self.transcript(turn, role, content)
                 speech_error = None
                 async def deliver(reply):
                     nonlocal speech_error
@@ -344,7 +451,10 @@ class NativeCall:
                         # before reporting TTS failure; never retry/cancel an order.
                         speech_error = error
                         self.playback.interrupt()
-                await self.dialog.turn(text, on_reply=deliver)
+                try:
+                    await self.dialog.turn(text, on_reply=deliver)
+                finally:
+                    self.recognized_turns.task_done()
                 if speech_error:
                     raise RuntimeError('Speech output failed after ServiceNow turn settled')
                 LOG.info('Voice turn completed seconds=%.2f', time.monotonic()-started)
@@ -353,8 +463,7 @@ class NativeCall:
         except Exception as error:
             # Deliberately log type only: network exceptions can contain tokens.
             LOG.warning('Voice turn failed type=%s', type(error).__name__)
-            self.playback.interrupt()
-            self.emit('error', {'code':'TURN_FAILED','message':'Der Sprachdialog konnte nicht fortgesetzt werden. Bitte neu starten.'})
+            await self.report_backend_failure()
 
     async def close(self):
         if self.closed:

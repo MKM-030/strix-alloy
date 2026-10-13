@@ -92,6 +92,28 @@ the adapter does not wait for the subsequent input prompt. A failed speech
 request still allows the submitted ServiceNow turn to settle. The configured
 native greeting is spoken once when the backend supplies none, unless the
 caller has already begun speaking.
+
+The 14:05 UTC update separates bounded microphone recognition from the single
+ServiceNow request worker. Accepted subsequent speech now produces a visible
+user transcript while the prior ServiceNow turn still waits for input readiness;
+it is submitted only after that turn actually becomes ready. Two pending audio
+utterances and two recognized turns are allowed. Overflow and ASR failures show
+explicit German notices. Such notices use assistant transcripts because the
+native client immediately disconnects on a protocol `error` message.
+
+A failed backend turn stops further input and gives a German transcript and
+bounded spoken notice asking the caller to end the call. It never retries or
+automatically ends the submitted request. Late audio is fenced; unsent turns
+are discarded explicitly after failure. This fixes local recognition starvation
+and silent failure, **not ServiceNow's missing input-ready callback** or the
+observed short-name misrecognition. Real-microphone follow-up remains to verify.
+Content-free VAD/queue/timing logs and bounded numeric Whisper segment metrics
+support that test. `verbose_json` explicitly disables token timestamps and
+extra language-probability calculation; transcription validation and decoding
+settings remain unchanged. No confidence cutoff, name prompt or audio recording
+was added. See `INGESTION-VALIDATION-20261013.json` for the 43 native/56 Bot tests,
+source-derived notice contract, isolated TDD failures, and Native-only activation.
+
 This is full-duplex audio transport with interruption, not Omni joint inference.
 The existing SCC bot account remains the fixed demo identity; native browser
 authorization does not impersonate arbitrary employees in the bot backend.
