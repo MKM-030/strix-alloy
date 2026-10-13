@@ -27,6 +27,14 @@ Alle schreibenden Anfragen benötigen die konfigurierte exakte HTTPS-Origin und 
 
 Ein anderer persönlicher Code bestätigt keine Löschung. Der Administratorcode kann als ausdrückliche Bestätigung auch innerhalb einer persönlichen Sitzung die Löschung einer fremden Aufnahme erlauben. Ausgewählte Stimmen, mitgelieferte Standardstimme und laufende Gespräche bleiben davon unabhängig geschützt.
 
+## Editierbare Hörprobe je Stimmprofil
+
+Neben **Original anhören** öffnet **Beispieltext anhören** einen Dialog mit dem gewählten Profil und einem längeren deutschen SCC-Begrüßungstext. Der Text lässt sich auf 3–300 Zeichen ändern und mit **Vorlesen** synthetisieren. Die Wiedergabe oben verwendet denselben Standardtext. Die Auswahl für den nächsten ServiceNow-Anruf bleibt unverändert.
+
+`POST api/profiles/{id}/preview`, `{text}` benötigt Anmeldung, exakte Origin und CSRF und liefert WAV mit PCM16, mono, 24 kHz. Bei einem laufenden Native-Gespräch wird die Vorschau abgelehnt. Nach der Messe bleiben Hörproben der paketierten Standardstimme möglich; eigene Demo-Stimmen werden gesperrt. Der Dialog räumt erzeugte Audio-URLs beim Schließen auf und spielt keine verspätete Antwort aus einem inzwischen geschlossenen Dialog ab.
+
+Die TTS-Engine erhält unter den vorhandenen Sperren genau einen temporären internen Stimmnamen. Dieser wird nach der Synthese entfernt, ohne die registrierte ServiceNow-Stimme, Auswahl oder Registrierungsquittung zu ändern. Bei fehlgeschlagener Bereinigung antwortet der Server mit `503 preview_cleanup_failed`; eine private Datei `runtime/preview-cleanup.json` hält ausschließlich die interne temporäre Identität fest. Vor einer weiteren Vorschau und bei der Messe-Bereinigung wird diese Identität geprüft und bereinigt. Der Native-Status ist eine Vorabprüfung; ein während der Vorschau neu gestartetes Gespräch kann sich TTS-Kapazität mit der Vorschau teilen.
+
 ## Endgültige Löschung und Fehler
 
 Der Server hält seine Stimmaktionssperre sowie die bestehende Betriebssystem-Sperre des Profilmanagers. Er prüft Eigentümer, Auswahl und sichere Pfade. Symlinks, Windows-Junctions und unerwartete Unterverzeichnisse werden abgelehnt. Anschließend verschiebt er genau die Aufnahme atomar in eine private Quarantäne und entfernt deren Dateien physisch, bevor er Erfolg meldet. Nach Erfolg gibt es keine verbleibende WAV-Kopie oder Löschjournaldatei.

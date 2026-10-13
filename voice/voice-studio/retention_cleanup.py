@@ -177,11 +177,31 @@ def private_directory(path):
     security.restrict_private_path(path, directory=True)
 
 
+def validate_preview_cleanup(path, project):
+    """This one journal can name only Studio's ephemeral preview namespace."""
+    safe_path(path, project)
+    if path.name != 'preview-cleanup.json' or path.stat().st_size > 4096:
+        raise Deferred('invalid_preview_cleanup_record')
+    try:
+        record = json.loads(path.read_text(encoding='utf-8'))
+        alias = record.get('alias', '')
+        if (record.get('schema_version') != 1 or not isinstance(alias, str)
+                or not re.fullmatch(r'scc-preview-[a-f0-9]{32}', alias)):
+            raise ValueError()
+    except (ValueError, AttributeError, UnicodeError):
+        raise Deferred('invalid_preview_cleanup_identity') from None
+
+
 def plan(project, manager):
     project = Path(project).absolute()
     profiles, runtime = project / PROFILE_REL, project / STUDIO_REL
     revisions = profiles / 'revisions'
-    result = {'revisions':[], 'quarantine':[], 'uploads':[], 'staging':[], 'previews':[], 'journals':[]}
+    result = {'revisions':[], 'quarantine':[], 'uploads':[], 'staging':[], 'previews':[], 'journals':[],
+              'preview_aliases':[]}
+    preview_journal = runtime / 'preview-cleanup.json'
+    if preview_journal.exists() or preview_journal.is_symlink():
+        validate_preview_cleanup(preview_journal, project)
+        result['preview_aliases'].append(preview_journal)
     for folder in children(revisions, project):
         if folder.name.startswith('.staging-') and TEMP_NAME.fullmatch(folder.name):
             files = children(folder, project)
@@ -350,7 +370,8 @@ def cleanup(project=ROOT, *, manager=None, now=None, apply=False, service_check=
         with cleanup_lock(project / STUDIO_REL, project):
             pending = plan(project, manager)
             result.update(profiles=len(pending['revisions']), quarantine=len(pending['quarantine']),
-                          upload_directories=len(pending['uploads']), staging_directories=len(pending['staging']), preview_files=len(pending['previews']))
+                          upload_directories=len(pending['uploads']), staging_directories=len(pending['staging']),
+                          preview_files=len(pending['previews']), preview_aliases=len(pending['preview_aliases']))
             state = service_check(); assert_idle(state)
             if not apply:
                 return dict(result, status='dry_run')
@@ -359,11 +380,26 @@ def cleanup(project=ROOT, *, manager=None, now=None, apply=False, service_check=
             register = None if state['tts_running'] else lambda profile: {'offline':True}
             manager.restore_synthetic(manager.PROFILE_ROOT, register=register)
             with manager.activation_lock(manager.PROFILE_ROOT):
-                assert_idle(service_check())
+                state = service_check(); assert_idle(state)
                 selected = manager.selected_profile(manager.PROFILE_ROOT)
                 if not selected or selected.get('profile_id') != 'synthetic-scc-demo':
                     raise Deferred('default_voice_not_selected')
                 pending = plan(project, manager)  # revalidate all before first physical removal
+                for journal in pending['preview_aliases']:
+                    state = service_check(); assert_idle(state)
+                    validate_preview_cleanup(journal, project)
+                    if state['tts_running']:
+                        security = module('scc_retention_preview_cleanup', HERE / 'studio_server.py')
+                        try:
+                            # Both helpers retain exact live listener ownership
+                            # checks; the shared activation mutex remains held.
+                            security.recover_preview_alias(manager.native_module(), journal)
+                        except security.APIError:
+                            raise Deferred('preview_cleanup_failed') from None
+                    else:
+                        # assert_idle permits this only when both workers are
+                        # positively offline, so their former registry is gone.
+                        safe_path(journal, project).unlink()
                 # Finish older requested deletions before admitting another
                 # quarantined revision. Every new move has a private journal.
                 for folder in pending['quarantine'] + pending['uploads'] + pending['staging']:

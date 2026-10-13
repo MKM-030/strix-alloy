@@ -153,6 +153,8 @@ test('a session without explicit administrator status hides code creation and se
 test('an administrator sees the new code once and dismissal or logout clears it',async()=>{
   const ui=await mount({isAdmin:true});
   try{
+    assert.equal(ui.find('admin-panel').hidden,true);
+    await ui.find('admin-menu-button').emit('click');
     assert.equal(ui.find('admin-panel').hidden,false);
     ui.find('personal-code-label').value='Neue Testperson';
     await ui.find('create-code-form').emit('submit');

@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 import hashlib
 import hmac
+import http.client
 import importlib.util
 import io
 import json
@@ -51,7 +52,11 @@ MAX_QUARANTINE_BYTES = 64 * 1024 * 1024
 REFERENCE_TEXT = ('Willkommen zur Smart Country Convention. Mit Sopra Steria und ServiceNow '
     'erlebe ich, wie einfach digitale Services werden. Bitte helfen Sie mir, '
     'einen neuen Laptop für meinen Mitarbeiter zu bestellen.')
-PREVIEW_TEXT = 'Guten Tag. Wie kann ich Ihnen helfen?'
+PREVIEW_TEXT = ('Herzlich willkommen bei Sopra Steria auf der Smart Country Convention. '
+    'Gemeinsam mit ServiceNow machen wir digitale Services einfach. Ich helfe Ihnen gern, '
+    'einen neuen Laptop für Ihren Mitarbeiter zu bestellen.')
+MAX_PREVIEW_CHARACTERS = 300
+MAX_PREVIEW_PCM_BYTES = 2_000_000
 LOG = logging.getLogger('scc.voice_studio')
 
 
@@ -334,6 +339,126 @@ async def owned_thread(function, *args):
             raise
 
 
+def owned_preview_exchange(native, route, method, payload=None, *, timeout=5,
+                           limit=4096):
+    """Bound every response and verify the existing listener before each request."""
+    native.assert_owned_listener(8862)
+    connection = http.client.HTTPConnection('127.0.0.1', 8862, timeout=timeout)
+    try:
+        body = json.dumps(payload).encode('utf-8') if payload is not None else None
+        headers = {'Content-Type': 'application/json'} if body is not None else {}
+        connection.request(method, route, body, headers)
+        response = connection.getresponse()
+        raw = response.read(limit + 1)
+        if len(raw) > limit:
+            raise RuntimeError('Native preview response exceeds limit')
+        return response.status, raw
+    finally:
+        connection.close()
+
+
+def remove_preview_alias(native, alias):
+    status, raw = owned_preview_exchange(native, '/v1/audio/voices/' + alias, 'DELETE')
+    try:
+        value = json.loads(raw)
+    except (ValueError, UnicodeError):
+        raise RuntimeError('Native voice removal returned an invalid response') from None
+    if status == 200 and value == {'status': 'deleted'}:
+        return True
+    # A generic router 404 does not prove that removal is implemented. This is
+    # the exact documented Qwen registry error for an absent registered name.
+    if status == 404 and value == {'error': {'type': 'not_found_error',
+            'message': 'no registered voice with this name'}}:
+        return False
+    raise RuntimeError('Native voice removal is unavailable')
+
+
+def preview_cleanup_error():
+    return APIError(503, 'preview_cleanup_failed',
+        'Die temporäre Stimmreferenz der Hörprobe konnte nicht vollständig entfernt werden. '
+        'Bitte den Administrator informieren. Vor einer neuen Hörprobe wird die Bereinigung wiederholt.')
+
+
+def recover_preview_alias(native, cleanup_path):
+    """Recover one interrupted clone before any new clone, including after restart."""
+    cleanup_path = Path(cleanup_path)
+    if not cleanup_path.exists() and not cleanup_path.is_symlink():
+        return
+    try:
+        if is_reparse_path(cleanup_path) or cleanup_path.stat().st_size > 4096:
+            raise RuntimeError('Invalid preview cleanup record')
+        record = json.loads(cleanup_path.read_text(encoding='utf-8'))
+        alias = record.get('alias', '')
+        if (record.get('schema_version') != 1 or not isinstance(alias, str)
+                or not re.fullmatch(r'scc-preview-[a-f0-9]{32}', alias)):
+            raise RuntimeError('Invalid preview cleanup identity')
+        remove_preview_alias(native, alias)
+        cleanup_path.unlink()
+    except Exception:
+        raise preview_cleanup_error() from None
+
+
+def native_profile_preview(manager, profile, text, cleanup_path, *, require_allowed):
+    """Clone into one removable alias; never alter the Now alias or its receipt."""
+    native = manager.native_module()
+    native.assert_owned_listener(8862)
+    recover_preview_alias(native, cleanup_path)
+    import psutil
+    if psutil.virtual_memory().available < 18 * 1024**3:
+        raise RuntimeError('Free memory is below the existing 18 GiB reserve')
+    alias = 'scc-preview-' + secrets.token_hex(16)
+    # Refuse registration if this worker cannot remove it afterwards. No
+    # registration has occurred yet, so unsupported DELETE cannot leak a clone.
+    if remove_preview_alias(native, alias):
+        raise RuntimeError('Unexpected temporary voice alias collision')
+    payload = {'name': alias, 'ref_text': profile['reference_text'],
+        'wav_b64': base64.b64encode((Path(profile['profile_dir']) / 'reference.wav').read_bytes()).decode('ascii')}
+    require_allowed()
+    # Write the single pending identity before POST. If Studio exits abruptly,
+    # its next profile preview removes this clone before registering another.
+    atomic_private_json(cleanup_path, {'schema_version': 1, 'alias': alias})
+    try:
+        require_allowed()
+        status, raw = owned_preview_exchange(native, '/v1/audio/voices', 'POST', payload, timeout=45)
+        try:
+            registered = json.loads(raw)
+        except (ValueError, UnicodeError):
+            raise RuntimeError('Native preview registration returned an invalid response') from None
+        if status != 200 or registered != {'name': alias, 'status': 'registered'}:
+            raise RuntimeError('Native preview registration was rejected')
+        speech = {'model': 'scc-native-qwen3', 'voice': alias, 'input': text,
+            'response_format': 'pcm', 'seed': 42, 'max_new_tokens': 256}
+        require_allowed()
+        status, pcm = owned_preview_exchange(native, '/v1/audio/speech', 'POST', speech,
+            timeout=90, limit=MAX_PREVIEW_PCM_BYTES)
+        if status != 200:
+            raise RuntimeError('Native preview synthesis failed')
+        return pcm
+    finally:
+        # POST can commit before a timeout or disconnected response. Removal is
+        # therefore required even when registration was never acknowledged.
+        # A repeated DELETE also resolves a lost successful deletion response.
+        try:
+            try:
+                remove_preview_alias(native, alias)
+            except Exception:
+                remove_preview_alias(native, alias)
+            Path(cleanup_path).unlink()
+        except Exception:
+            raise preview_cleanup_error() from None
+
+
+def preview_wav(pcm):
+    if (not isinstance(pcm, bytes) or not pcm or len(pcm) % 2
+            or len(pcm) > MAX_PREVIEW_PCM_BYTES or pcm.startswith(b'RIFF')):
+        raise RuntimeError('TTS returned invalid or oversized PCM')
+    output = io.BytesIO()
+    with wave.open(output, 'wb') as wav:
+        wav.setnchannels(1); wav.setsampwidth(2); wav.setframerate(24000)
+        wav.writeframes(pcm)
+    return output.getvalue()
+
+
 def create_app(config, *, manager=None, register=None, idle_check=None, synthesize=None, now=None):
     parsed = urlparse(config.origin)
     if (parsed.scheme != 'https' or not parsed.netloc or parsed.path not in ('', '/')
@@ -439,6 +564,35 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
             raise APIError(404, 'profile_not_found', 'Stimmprofil nicht gefunden.')
         return profile
 
+    def preview_profile_by_id(profile_id):
+        # Check links before manager.read_profile resolves paths or reads audio.
+        # Own revisions are flat immutable transactions; every member must be a
+        # plain file. The packaged reference is trusted only at its fixed path.
+        if profile_id == 'synthetic-scc-demo':
+            folder = manager.DEFAULT_PROFILE
+        elif ID_RE.fullmatch(profile_id):
+            revisions = config.profile_root / 'revisions'
+            folder = revisions / profile_id
+            try:
+                if is_reparse_path(config.profile_root) or is_reparse_path(revisions):
+                    raise OSError('Unsafe profile root')
+            except OSError:
+                raise APIError(404, 'profile_not_found', 'Stimmprofil nicht gefunden.') from None
+        else:
+            raise APIError(404, 'profile_not_found', 'Stimmprofil nicht gefunden.')
+        try:
+            if is_reparse_path(folder) or not folder.is_dir():
+                raise OSError('Unsafe profile directory')
+            for name in ('voice.json', 'reference.wav'):
+                path = folder / name
+                if is_reparse_path(path) or not path.is_file():
+                    raise OSError('Unsafe profile member')
+            if profile_id != 'synthetic-scc-demo':
+                plain_revision_size(folder)
+        except (OSError, APIError):
+            raise APIError(404, 'profile_not_found', 'Stimmprofil nicht gefunden.') from None
+        return profile_by_id(profile_id)
+
     async def default_idle_check():
         async with ClientSession(timeout=ClientTimeout(total=3)) as http:
             async with http.get('http://127.0.0.1:8860/health', allow_redirects=False) as response:
@@ -505,7 +659,8 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         found = session(request)
         value = {'authenticated': bool(found), 'reference_text': REFERENCE_TEXT,
             'max_recording_seconds': 25, 'recording_allowed': utc_clock() < deadline,
-            'retention_due_at_utc': retention['due_at_utc']}
+            'retention_due_at_utc': retention['due_at_utc'],
+            'preview_text': PREVIEW_TEXT, 'max_preview_characters': MAX_PREVIEW_CHARACTERS}
         if found:
             value['csrf'] = found['csrf']
             value.update(public_session(found))
@@ -750,28 +905,56 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
                     raise
             return web.json_response(await owned_thread(remove))
 
+    def preview_text(data):
+        text = data.get('text', PREVIEW_TEXT)
+        if (not isinstance(text, str) or not 3 <= len(text.strip()) <= MAX_PREVIEW_CHARACTERS
+                or any(ord(char) < 32 and char not in '\t\r\n' for char in text)
+                or any(0xd800 <= ord(char) <= 0xdfff for char in text)):
+            raise APIError(400, 'invalid_preview_text', 'Bitte einen kurzen deutschen Text mit 3–300 Zeichen verwenden.')
+        return text.strip()
+
+    async def profile_preview(request):
+        mutation_check(request)
+        text = preview_text(await bounded_json(request, 4096))
+        profile_id = request.match_info['profile_id']
+        if profile_id != 'synthetic-scc-demo':
+            require_fair_open()
+        if operation_lock.locked():
+            raise APIError(409, 'voice_operation_in_progress', 'Eine Stimmaktion läuft bereits. Bitte kurz warten.')
+        async with operation_lock:
+            await require_idle()
+            def render():
+                try:
+                    with manager.activation_lock(config.profile_root):
+                        profile = preview_profile_by_id(profile_id)
+                        def require_allowed():
+                            if profile['kind'] == 'authorized_own_voice':
+                                require_fair_open()
+                        require_allowed()
+                        return preview_wav(native_profile_preview(manager, profile, text,
+                            config.runtime / 'preview-cleanup.json', require_allowed=require_allowed))
+                except RuntimeError as error:
+                    if str(error) == 'Another voice activation is in progress':
+                        raise APIError(409, 'voice_operation_in_progress',
+                            'Eine Stimmaktion läuft bereits. Bitte kurz warten.') from None
+                    raise
+            return web.Response(body=await owned_thread(render), content_type='audio/wav')
+
     async def preview(request):
         mutation_check(request)
-        data = await bounded_json(request, 4096)
-        text = data.get('text', PREVIEW_TEXT)
-        if not isinstance(text, str) or not 3 <= len(text.strip()) <= 300:
-            raise APIError(400, 'invalid_preview_text', 'Bitte einen kurzen deutschen Text mit 3–300 Zeichen verwenden.')
+        text = preview_text(await bounded_json(request, 4096))
         if operation_lock.locked():
             raise APIError(409, 'voice_operation_in_progress', 'Eine Stimmaktion läuft bereits. Bitte kurz warten.')
         async with operation_lock:
             await require_idle()
             def render():
                 with manager.activation_lock(config.profile_root):
-                    if not manager.selected_profile(config.profile_root):
+                    selected = manager.selected_profile(config.profile_root)
+                    if not selected:
                         raise APIError(409, 'no_selected_voice', 'Bitte zuerst ein Stimmprofil auswählen.')
-                    pcm = (synthesize or default_synthesize)(text.strip())
-                    if not pcm or len(pcm) % 2 or len(pcm) > 2_000_000 or pcm.startswith(b'RIFF'):
-                        raise RuntimeError('TTS returned invalid or oversized PCM')
-                    output = io.BytesIO()
-                    with wave.open(output, 'wb') as wav:
-                        wav.setnchannels(1); wav.setsampwidth(2); wav.setframerate(24000)
-                        wav.writeframes(pcm)
-                    return output.getvalue()
+                    if selected['kind'] == 'authorized_own_voice':
+                        require_fair_open()
+                    return preview_wav((synthesize or default_synthesize)(text))
             return web.Response(body=await owned_thread(render), content_type='audio/wav')
 
     async def static(request):
@@ -799,6 +982,7 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         app.router.add_delete(prefix + '/api/profiles/{profile_id}', delete_profile)
         app.router.add_get(prefix + '/api/profiles/{profile_id}/audio', audio)
         app.router.add_post(prefix + '/api/profiles/{profile_id}/activate', activate)
+        app.router.add_post(prefix + '/api/profiles/{profile_id}/preview', profile_preview)
         app.router.add_post(prefix + '/api/preview', preview)
         app.router.add_get(prefix + '/api/access-codes', get_access_codes)
         app.router.add_post(prefix + '/api/access-codes', create_access_code)

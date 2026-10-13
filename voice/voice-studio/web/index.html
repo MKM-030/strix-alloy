@@ -7,9 +7,9 @@
   <meta name="color-scheme" content="light">
   <meta name="referrer" content="same-origin">
   <title>Voice Studio · ServiceNow</title>
-  <link rel="stylesheet" href="/voice-studio/styles.css?v=20261014-qr">
+  <link rel="stylesheet" href="/voice-studio/styles.css?v=20261014-admin-menu">
   <script src="/voice-studio/vendor/qr-code.js?v=20261014-qr"></script>
-  <script type="module" src="/voice-studio/app.js?v=20261014-qr"></script>
+  <script type="module" src="/voice-studio/app.js?v=20261014-admin-menu"></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Zum Inhalt</a>
@@ -18,7 +18,39 @@
       <img class="brand-logo" src="/voice-studio/sopra-steria-logo.png" width="197" height="26" alt="Sopra Steria">
       <div class="brand-caption"><span class="brand-name">Voice Studio · Smart Country Convention</span><span class="brand-context">mit ServiceNow</span></div>
     </div>
-    <div class="header-actions"><span id="session-label" class="session-label" hidden></span><button type="button" id="logout-button" class="button button-quiet" hidden>Abmelden</button></div>
+    <div class="header-actions">
+      <span id="session-label" class="session-label" hidden></span>
+      <div class="admin-menu">
+        <button type="button" id="admin-menu-button" class="button button-quiet admin-menu-button" aria-expanded="false" aria-controls="admin-panel" hidden>Administrator <span class="admin-menu-chevron" aria-hidden="true">⌄</span></button>
+        <section id="admin-panel" class="card admin-panel" aria-labelledby="admin-title" hidden>
+          <div class="admin-heading"><div><p class="eyebrow">Administrator · Persönlicher Zugang</p><h2 id="admin-title">Zugang für eine Person erstellen</h2><p class="section-description">Name eingeben, QR-Code zeigen oder den Anmeldelink weitergeben. Jede Person erhält einen eigenen Zugang für ihre Stimme.</p></div><button id="admin-close-button" class="button button-quiet admin-close-button" type="button">Schließen</button></div>
+          <form id="create-code-form" class="admin-form">
+            <div><label for="personal-code-label">Name der Person</label><input id="personal-code-label" type="text" maxlength="80" autocomplete="off" required placeholder="Zum Beispiel: Vorname Nachname"></div>
+            <button id="create-code-button" class="button button-primary" type="submit">Zugang mit QR-Code erstellen</button>
+          </form>
+          <p class="field-help">Persönliche Zugänge bleiben gültig; eine Anmeldung gilt acht Stunden. Die Aufnahmen der Messe-Demo werden ab dem 16. Oktober gelöscht.</p>
+          <p id="admin-message" class="inline-message" role="status" aria-live="polite" hidden></p>
+          <div id="generated-code-panel" class="generated-code-panel" hidden>
+            <p class="eyebrow">Neu erstellter Zugang · nur jetzt sichtbar</p>
+            <h3 id="generated-code-label"></h3>
+            <div class="generated-access-grid">
+              <figure class="generated-qr-figure"><img id="generated-qr" class="generated-qr" width="200" height="200" alt="" hidden><figcaption>Mit dem Smartphone scannen und direkt anmelden.</figcaption></figure>
+              <div class="generated-access-fields">
+                <label for="generated-login-link">Persönlicher Anmeldelink</label>
+                <input id="generated-login-link" class="generated-code-value" type="text" readonly autocomplete="off" spellcheck="false" aria-describedby="generated-code-help">
+                <label for="generated-access-code">Zugangscode / Token</label>
+                <input id="generated-access-code" class="generated-code-value" type="text" readonly autocomplete="off" spellcheck="false" aria-describedby="generated-code-help">
+                <p id="generated-code-help" class="field-help">QR-Code, Link und Token erlauben die Anmeldung als diese Person. Nur an sie weitergeben und sicher aufbewahren. Nach dem Ausblenden, Schließen dieses Menüs oder Abmelden werden sie nicht erneut angezeigt.</p>
+                <div class="generated-code-actions"><button id="copy-link-button" class="button button-primary" type="button">Link kopieren</button><button id="copy-code-button" class="button button-secondary" type="button">Token kopieren</button><button id="dismiss-code-button" class="button button-quiet" type="button">Ausblenden</button></div>
+                <p id="code-copy-message" class="inline-message" role="status" aria-live="polite" hidden></p>
+              </div>
+            </div>
+          </div>
+          <details id="existing-access-codes" class="existing-access-codes"><summary id="existing-access-summary">Bereits angelegte Zugänge</summary><ul id="personal-access-list" class="personal-access-list"></ul><p class="field-help">Die Namen bleiben gespeichert. Bestehende Tokens, Links und QR-Codes können nicht erneut angezeigt werden.</p></details>
+        </section>
+      </div>
+      <button type="button" id="logout-button" class="button button-quiet" hidden>Abmelden</button>
+    </div>
   </header>
 
   <main id="main-content" class="page-shell">
@@ -40,33 +72,6 @@
       <section class="intro" aria-labelledby="studio-title">
         <div><p class="eyebrow">Eine Stimme, die zu Ihnen gehört</p><h1 id="studio-title">Ihre Stimme.<br> <span>Ihr Assistent.</span></h1><p class="intro-copy">Aufnehmen, anhören, auswählen. Ihr Stimmprofil begleitet die nächste ServiceNow-Anfrage.</p></div>
         <div class="intro-note"><span class="small-dot" aria-hidden="true"></span>Eigene Stimme · kurze Aufnahme</div>
-      </section>
-
-      <section id="admin-panel" class="card admin-panel" aria-labelledby="admin-title" hidden>
-        <div class="admin-heading"><div><p class="eyebrow">Administrator · Persönlicher Zugang</p><h2 id="admin-title">Zugang für eine Person erstellen</h2><p class="section-description">Name eingeben, QR-Code zeigen oder den Anmeldelink weitergeben. Jede Person erhält einen eigenen Zugang für ihre Stimme.</p></div><span class="duration-tag">QR-Code · Link · Token</span></div>
-        <form id="create-code-form" class="admin-form">
-          <div><label for="personal-code-label">Name der Person</label><input id="personal-code-label" type="text" maxlength="80" autocomplete="off" required placeholder="Zum Beispiel: Vorname Nachname"></div>
-          <button id="create-code-button" class="button button-primary" type="submit">Zugang mit QR-Code erstellen</button>
-        </form>
-        <p class="field-help">Persönliche Zugänge bleiben gültig; eine Anmeldung gilt acht Stunden. Die Aufnahmen der Messe-Demo werden ab dem 16. Oktober gelöscht.</p>
-        <p id="admin-message" class="inline-message" role="status" aria-live="polite" hidden></p>
-        <div id="generated-code-panel" class="generated-code-panel" hidden>
-          <p class="eyebrow">Neu erstellter Zugang · nur jetzt sichtbar</p>
-          <h3 id="generated-code-label"></h3>
-          <div class="generated-access-grid">
-            <figure class="generated-qr-figure"><img id="generated-qr" class="generated-qr" width="200" height="200" alt="" hidden><figcaption>Mit dem Smartphone scannen und direkt anmelden.</figcaption></figure>
-            <div class="generated-access-fields">
-              <label for="generated-login-link">Persönlicher Anmeldelink</label>
-              <input id="generated-login-link" class="generated-code-value" type="text" readonly autocomplete="off" spellcheck="false" aria-describedby="generated-code-help">
-              <label for="generated-access-code">Zugangscode / Token</label>
-              <input id="generated-access-code" class="generated-code-value" type="text" readonly autocomplete="off" spellcheck="false" aria-describedby="generated-code-help">
-              <p id="generated-code-help" class="field-help">QR-Code, Link und Token erlauben die Anmeldung als diese Person. Nur an sie weitergeben und sicher aufbewahren. Nach dem Ausblenden oder Abmelden werden sie nicht erneut angezeigt.</p>
-              <div class="generated-code-actions"><button id="copy-link-button" class="button button-primary" type="button">Link kopieren</button><button id="copy-code-button" class="button button-secondary" type="button">Token kopieren</button><button id="dismiss-code-button" class="button button-quiet" type="button">Ausblenden</button></div>
-              <p id="code-copy-message" class="inline-message" role="status" aria-live="polite" hidden></p>
-            </div>
-          </div>
-        </div>
-        <details id="existing-access-codes" class="existing-access-codes"><summary id="existing-access-summary">Bereits angelegte Zugänge</summary><ul id="personal-access-list" class="personal-access-list"></ul><p class="field-help">Die Namen bleiben gespeichert. Bestehende Tokens, Links und QR-Codes können nicht erneut angezeigt werden.</p></details>
       </section>
 
       <section class="active-card" aria-labelledby="active-title">
@@ -96,7 +101,7 @@
 
         <section class="card profiles-card" aria-labelledby="profiles-title">
           <div class="section-heading"><div><p class="eyebrow">02 · Gespeicherte Stimmen</p><h2 id="profiles-title">Ihre Stimmprofile</h2></div><button id="refresh-button" class="icon-button" type="button" aria-label="Stimmprofile aktualisieren" title="Aktualisieren"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6.1 7a7 7 0 0 1 11.5-2L20 8M4 16l2.4 3A7 7 0 0 0 18 17"/></svg></button></div>
-          <p class="section-description">Hören Sie die Originalaufnahme an und wählen Sie die Stimme für Ihre nächste Anfrage.</p>
+          <p class="section-description">Hören Sie die Originalaufnahme oder einen eigenen Beispieltext an und wählen Sie die Stimme für Ihre nächste Anfrage.</p>
           <div id="profile-list" class="profile-list" role="region" aria-label="Gespeicherte Stimmprofile" tabindex="0" aria-live="polite"><div class="empty-state"><span class="empty-mark" aria-hidden="true">≋</span><h3>Stimmprofile werden geladen.</h3></div></div>
           <div class="profile-footer"><span aria-hidden="true">↗</span><p>Beenden Sie ein laufendes Gespräch, bevor Sie die Stimme wechseln. Die Auswahl gilt für den nächsten Anruf.</p></div>
         </section>
@@ -104,6 +109,18 @@
       <footer class="page-footer"><span>Voice Studio</span><span>Ihre persönliche Stimme für die ServiceNow-Sprachdemo.</span></footer>
     </div>
   </main>
+  <dialog id="preview-dialog" class="preview-dialog" aria-labelledby="preview-title" aria-describedby="preview-description">
+    <form id="preview-form">
+      <p class="eyebrow">Stimme ausprobieren</p>
+      <h2 id="preview-title">Beispieltext anhören</h2>
+      <p id="preview-profile-name" class="preview-profile-name"></p>
+      <p id="preview-description" class="dialog-description">Lassen Sie diese Stimme Ihren Text vorlesen. Ihre Auswahl für den nächsten ServiceNow-Anruf bleibt bestehen.</p>
+      <div class="field"><label for="preview-text">Ihr Beispieltext</label><textarea id="preview-text" name="text" rows="5" maxlength="300" required aria-describedby="preview-text-help"></textarea><p id="preview-text-help" class="field-help">3 bis 300 Zeichen. Sie können den vorbereiteten Text anpassen.</p></div>
+      <p id="preview-message" class="inline-message" role="status" aria-live="polite" hidden></p>
+      <audio id="preview-audio" class="preview-audio" controls preload="none" aria-label="Beispieltext mit dieser Stimme" hidden></audio>
+      <div class="dialog-actions"><button id="preview-close-button" class="button button-quiet" type="button">Schließen</button><button id="preview-read-button" class="button button-primary" type="submit">Vorlesen <span aria-hidden="true">▷</span></button></div>
+    </form>
+  </dialog>
   <dialog id="delete-dialog" class="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description">
     <form id="delete-form">
       <p class="eyebrow">Stimmprofil entfernen</p>

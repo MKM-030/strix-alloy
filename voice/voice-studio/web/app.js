@@ -1,4 +1,6 @@
 const TARGET_SAMPLE_RATE = 24000;
+const DEFAULT_PREVIEW_TEXT = 'Herzlich willkommen bei Sopra Steria auf der Smart Country Convention. Gemeinsam mit ServiceNow machen wir digitale Services einfach. Ich helfe Ihnen gern, einen neuen Laptop für Ihren Mitarbeiter zu bestellen.';
+const MAX_PREVIEW_CHARACTERS = 300;
 
 export function encodeWav(samples, inputSampleRate) {
   if (!(samples instanceof Float32Array) || !Number.isFinite(inputSampleRate) || inputSampleRate <= 0) {
@@ -85,7 +87,7 @@ function initializeStudio() {
   const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map(element => [element.id, element]));
   const get = id => elements[id];
   const apiBase = new URL('./api/', import.meta.url);
-  const state = {csrf:'', authenticated:false, isAdmin:false, principalId:'', recordingAllowed:true, profiles:[], selectedProfileId:null, maxSeconds:25, referenceText:'', recorder:null, starting:false, recording:null, operation:false, requestToken:0, previewUrl:null, pendingDeletion:null, deletionReturnFocus:null};
+  const state = {csrf:'', authenticated:false, isAdmin:false, principalId:'', recordingAllowed:true, profiles:[], selectedProfileId:null, maxSeconds:25, referenceText:'', recorder:null, starting:false, recording:null, operation:false, requestToken:0, previewUrl:null, previewText:DEFAULT_PREVIEW_TEXT, previewRequest:null, previewToken:0, previewProfile:null, profilePreviewUrl:null, previewReturnFocus:null, pendingDeletion:null, deletionReturnFocus:null};
   const formatSeconds = seconds => `00:${String(Math.floor(seconds)).padStart(2, '0')}`;
   const apiUrl = path => new URL(path, apiBase).href;
 
@@ -96,7 +98,7 @@ function initializeStudio() {
     element.hidden = !text;
   }
 
-  async function api(path, options = {}) {
+  async function api(path, options = {}, responseType = 'json') {
     const headers = new Headers(options.headers || {});
     if (options.body && !(options.body instanceof FormData)) headers.set('Content-Type', 'application/json');
     if (options.method && options.method !== 'GET' && state.csrf) headers.set('X-CSRF-Token', state.csrf);
@@ -106,39 +108,45 @@ function initializeStudio() {
     if (!response.ok) {
       let detail = {};
       try { detail = await response.json(); } catch { /* A proxy error can return HTML. */ }
-      if (response.status === 401 && path !== 'login') showLogin();
+      if (response.status === 401 && path !== 'login' && responseType !== 'blob') showLogin();
       const error = new Error(detail.error || (response.status === 401 ? 'Der Zugangscode ist ungültig oder die Sitzung ist abgelaufen.' : 'Die Anfrage konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.'));
       error.status = response.status;
       error.code = detail.code;
       throw error;
     }
     if (response.status === 204) return {};
-    return response.json();
+    return responseType === 'blob' ? response.blob() : response.json();
   }
 
   function updateControls() {
     const capturing = Boolean(state.recorder || state.starting);
+    const previewing = Boolean(state.previewRequest || state.previewProfile);
+    const busy = state.operation || previewing;
     const ready = get('profile-name').value.trim().length > 0 && get('voice-consent').checked;
-    get('record-button').disabled = !state.authenticated || !state.recordingAllowed || !state.referenceText || !ready || capturing || state.operation;
+    get('record-button').disabled = !state.authenticated || !state.recordingAllowed || !state.referenceText || !ready || capturing || busy;
     get('record-button').hidden = capturing;
     get('stop-button').hidden = !state.recorder || state.starting || state.recorder.stopping;
     get('stop-button').disabled = Boolean(state.recorder?.stopping);
-    get('profile-name').disabled = capturing || state.operation;
-    get('voice-consent').disabled = capturing || state.operation;
-    get('save-button').disabled = !state.recordingAllowed || !state.recording?.valid || !ready || capturing || state.operation;
-    get('discard-button').disabled = capturing || state.operation;
-    get('refresh-button').disabled = state.operation;
+    get('profile-name').disabled = capturing || busy;
+    get('voice-consent').disabled = capturing || busy;
+    get('save-button').disabled = !state.recordingAllowed || !state.recording?.valid || !ready || capturing || busy;
+    get('discard-button').disabled = capturing || busy;
+    get('refresh-button').disabled = busy;
     get('logout-button').disabled = state.operation;
-    get('active-preview-button').disabled = !state.selectedProfileId || state.operation || capturing;
-    get('create-code-button').disabled = !state.isAdmin || state.operation || capturing;
-    get('personal-code-label').disabled = state.operation || capturing;
-    get('copy-code-button').disabled = state.operation || capturing;
-    get('copy-link-button').disabled = state.operation || capturing;
-    get('dismiss-code-button').disabled = state.operation || capturing;
+    get('admin-menu-button').disabled = state.operation;
+    get('admin-close-button').disabled = state.operation;
+    get('active-preview-button').disabled = !state.selectedProfileId || busy || capturing;
+    get('create-code-button').disabled = !state.isAdmin || busy || capturing;
+    get('personal-code-label').disabled = busy || capturing;
+    get('copy-code-button').disabled = busy || capturing;
+    get('copy-link-button').disabled = busy || capturing;
+    get('dismiss-code-button').disabled = busy || capturing;
+    get('preview-read-button').disabled = !state.authenticated || !state.previewProfile || state.operation || Boolean(state.previewRequest) || capturing;
+    get('preview-text').disabled = state.operation || Boolean(state.previewRequest) || capturing;
     get('delete-confirm-button').disabled = state.operation;
     get('delete-cancel-button').disabled = state.operation;
     get('delete-access-code').disabled = state.operation;
-    for (const button of document.querySelectorAll('[data-profile-action]')) button.disabled = state.operation || capturing || button.dataset.selected === 'true' || button.dataset.expired === 'true';
+    for (const button of document.querySelectorAll('[data-profile-action]')) button.disabled = busy || capturing || button.dataset.selected === 'true' || button.dataset.expired === 'true';
     for (const audio of document.querySelectorAll('audio')) {
       if (capturing) {
         if (!audio.hidden) { audio.dataset.restoreAfterCapture = 'true'; audio.hidden = true; }
@@ -177,12 +185,115 @@ function initializeStudio() {
     state.previewUrl = null;
   }
 
+  function resetProfilePreview() {
+    const audio = get('preview-audio');
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+    audio.hidden = true;
+    delete audio.dataset.restoreAfterCapture;
+    if (state.profilePreviewUrl) URL.revokeObjectURL(state.profilePreviewUrl);
+    state.profilePreviewUrl = null;
+  }
+
+  function restorePreviewFocus() {
+    const target = state.previewReturnFocus;
+    if (!state.authenticated) { state.previewReturnFocus = null; return; }
+    if (!get('preview-dialog').open && !state.previewRequest && !state.operation) {
+      state.previewReturnFocus = null;
+      if (target?.isConnected && !target.disabled) target.focus();
+    }
+  }
+
+  function clearPreviewDialog() {
+    state.previewToken++;
+    state.previewProfile = null;
+    resetProfilePreview();
+    get('preview-text').value = '';
+    get('preview-profile-name').textContent = '';
+    message(get('preview-message'));
+    updateControls();
+  }
+
+  function closePreviewDialog() {
+    clearPreviewDialog();
+    if (get('preview-dialog').open) get('preview-dialog').close();
+    restorePreviewFocus();
+  }
+
+  function openPreviewDialog(profile, returnFocus) {
+    if (!state.authenticated || state.operation || state.previewRequest || state.recorder || state.starting) return;
+    closePreviewDialog();
+    pauseOtherAudio();
+    state.previewProfile = {id:profile.id, name:profile.name};
+    state.previewReturnFocus = returnFocus;
+    get('preview-profile-name').textContent = profile.name || 'Stimmprofil';
+    get('preview-audio').setAttribute('aria-label', `Beispieltext mit der Stimme: ${profile.name || 'Stimmprofil'}`);
+    get('preview-text').value = state.previewText;
+    get('preview-dialog').showModal();
+    updateControls();
+    get('preview-text').focus();
+  }
+
+  function currentPreview(request) {
+    return state.previewRequest === request && request.token === state.previewToken && request.sessionToken === state.requestToken && state.authenticated &&
+      (request.dialog ? get('preview-dialog').open && state.previewProfile?.id === request.profileId : state.selectedProfileId === request.profileId);
+  }
+
+  async function generatePreview(profileId, text, dialog = false) {
+    if (!state.authenticated || state.operation || state.previewRequest || state.recorder || state.starting || (dialog && !state.previewProfile)) return;
+    text = text.trim();
+    const status = dialog ? get('preview-message') : get('page-message');
+    const length = [...text].length;
+    if (length < 3 || length > MAX_PREVIEW_CHARACTERS) {
+      message(status, `Bitte geben Sie einen Beispieltext mit 3 bis ${MAX_PREVIEW_CHARACTERS} Zeichen ein.`, 'error');
+      if (dialog) get('preview-text').focus();
+      return;
+    }
+    const request = {profileId, dialog, token:++state.previewToken, sessionToken:state.requestToken};
+    state.previewRequest = request;
+    pauseOtherAudio();
+    if (dialog) resetProfilePreview(); else resetVoicePreview();
+    message(status, 'Die Stimmvorschau wird erstellt …', 'info');
+    updateControls();
+    try {
+      // Let shared synthesis finish even if the dialog closes; only current results reach the UI.
+      const blob = await api(`profiles/${encodeURIComponent(profileId)}/preview`, {method:'POST', body:JSON.stringify({text})}, 'blob');
+      if (!currentPreview(request)) return;
+      const url = URL.createObjectURL(blob);
+      if (dialog) state.profilePreviewUrl = url; else state.previewUrl = url;
+      const audio = get(dialog ? 'preview-audio' : 'active-preview-audio');
+      audio.src = url;
+      audio.hidden = false;
+      message(status);
+      pauseOtherAudio(audio);
+      try { await audio.play(); }
+      catch { if (currentPreview(request)) message(status, 'Die Vorschau ist bereit. Drücken Sie die Wiedergabetaste.', 'info'); }
+    } catch (error) {
+      if (currentPreview(request)) {
+        if (error.status === 401) {
+          showLogin();
+          message(get('page-message'), error.message, 'error');
+        } else message(status, error instanceof TypeError ? 'Der Sprachdienst ist nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.' : error.message || 'Die Stimmvorschau konnte nicht geladen werden.', 'error');
+      }
+    } finally {
+      if (state.previewRequest === request) {
+        state.previewRequest = null;
+        updateControls();
+        restorePreviewFocus();
+      }
+    }
+  }
+
   function showLogin() {
     state.authenticated = false;
     state.isAdmin = false;
     state.principalId = '';
     state.csrf = '';
     state.requestToken++;
+    state.previewRequest = null;
+    state.previewReturnFocus = null;
+    closePreviewDialog();
     if (state.recorder) void finishRecording(true);
     state.starting = false;
     resetRecording();
@@ -191,9 +302,9 @@ function initializeStudio() {
     get('profile-list').replaceChildren();
     state.profiles = [];
     state.selectedProfileId = null;
-    clearCodeDisplay();
+    closeAdminPanel();
     closeDeletionDialog();
-    get('admin-panel').hidden = true;
+    get('admin-menu-button').hidden = true;
     get('existing-access-codes').open = false;
     get('personal-access-list').replaceChildren();
     get('personal-code-label').value = '';
@@ -212,12 +323,15 @@ function initializeStudio() {
     state.principalId = session.principal_id || '';
     state.recordingAllowed = session.recording_allowed !== false;
     message(get('retention-message'), state.recordingAllowed ? '' : 'Die Aufnahmezeit für diese Messe-Demo ist beendet. Sie können vorhandene Profile weiterhin anhören und löschen sowie die Standardstimme auswählen.', 'info');
-    get('admin-panel').hidden = !state.isAdmin;
-    if (!state.isAdmin) { clearCodeDisplay(); get('existing-access-codes').open = false; get('personal-access-list').replaceChildren(); }
+    closeAdminPanel();
+    get('admin-menu-button').hidden = !state.isAdmin;
+    if (!state.isAdmin) get('personal-access-list').replaceChildren();
     get('session-label').textContent = state.isAdmin ? 'Administrator' : session.label || 'Persönlicher Zugang';
-    get('session-label').hidden = false;
+    get('session-label').hidden = state.isAdmin;
     state.csrf = session.csrf || state.csrf;
     state.referenceText = session.reference_text || state.referenceText;
+    const previewText = typeof session.preview_text === 'string' ? session.preview_text.trim() : '';
+    state.previewText = [...previewText].length >= 3 && [...previewText].length <= MAX_PREVIEW_CHARACTERS ? previewText : DEFAULT_PREVIEW_TEXT;
     state.maxSeconds = Math.min(25, Math.max(3, Number(session.max_recording_seconds) || 25));
     get('reference-text').textContent = state.referenceText;
     get('max-duration-label').textContent = state.maxSeconds;
@@ -285,6 +399,10 @@ function initializeStudio() {
         try { await audio.play(); } catch { message(get('page-message'), 'Die Originalaufnahme kann gerade nicht abgespielt werden. Nutzen Sie die Wiedergabetaste oder aktualisieren Sie die Seite.', 'error'); }
       });
       audio.addEventListener('error', () => message(get('page-message'), 'Die gespeicherte Aufnahme konnte nicht geladen werden. Bitte aktualisieren Sie die Stimmprofile.', 'error'));
+      const preview = create('button', 'button button-secondary', 'Beispieltext anhören');
+      preview.type = 'button';
+      preview.dataset.profileAction = 'preview';
+      preview.addEventListener('click', () => openPreviewDialog(profile, preview));
       const select = create('button', selected ? 'button button-secondary' : 'button button-primary', selected ? 'Für nächsten Anruf ausgewählt' : 'Für nächste ServiceNow-Anfrage verwenden');
       select.type = 'button';
       select.dataset.profileAction = 'select';
@@ -293,7 +411,7 @@ function initializeStudio() {
       if (select.dataset.expired === 'true') select.setAttribute('title', 'Nach der Messe kann nur die Standardstimme ausgewählt werden.');
       select.disabled = selected;
       select.addEventListener('click', () => activateProfile(profile));
-      actions.append(listen, select);
+      actions.append(listen, preview, select);
       item.append(top, actions, audio);
       const deletion = deletionAvailability(profile, state.selectedProfileId);
       if (deletion !== 'hidden') {
@@ -325,6 +443,7 @@ function initializeStudio() {
   }
 
   async function activateProfile(profile) {
+    if (!state.authenticated || state.operation || state.previewRequest || state.previewProfile || state.recorder || state.starting) return;
     if (!state.recordingAllowed && profile.id !== 'synthetic-scc-demo') {
       message(get('page-message'), 'Die Aufnahmezeit dieser Messe-Demo ist beendet. Bitte wählen Sie die Standardstimme aus.', 'error');
       return;
@@ -351,6 +470,23 @@ function initializeStudio() {
     get('generated-qr').hidden = true;
     get('generated-code-panel').hidden = true;
     message(get('code-copy-message'));
+  }
+
+  function closeAdminPanel(restoreFocus = false) {
+    get('admin-panel').hidden = true;
+    get('admin-menu-button').setAttribute('aria-expanded', 'false');
+    clearCodeDisplay();
+    get('existing-access-codes').open = false;
+    message(get('admin-message'));
+    if (restoreFocus && state.authenticated && state.isAdmin) get('admin-menu-button').focus();
+  }
+
+  function toggleAdminPanel() {
+    if (!state.authenticated || !state.isAdmin || state.operation) return;
+    if (!get('admin-panel').hidden) { closeAdminPanel(true); return; }
+    get('admin-panel').hidden = false;
+    get('admin-menu-button').setAttribute('aria-expanded', 'true');
+    get('personal-code-label').focus();
   }
 
   async function loadAccessCodes() {
@@ -382,7 +518,7 @@ function initializeStudio() {
   }
 
   function openDeletionDialog(profile, returnFocus) {
-    if (!state.authenticated || state.operation || state.recorder || state.starting || deletionAvailability(profile, state.selectedProfileId) !== 'allowed') return;
+    if (!state.authenticated || state.operation || state.previewRequest || state.previewProfile || state.recorder || state.starting || deletionAvailability(profile, state.selectedProfileId) !== 'allowed') return;
     pauseOtherAudio();
     state.pendingDeletion = {id:profile.id, name:profile.name};
     state.deletionReturnFocus = returnFocus;
@@ -445,7 +581,7 @@ function initializeStudio() {
 
   async function createPersonalCode(event) {
     event.preventDefault();
-    if (!state.isAdmin || state.operation || state.recorder || state.starting) return;
+    if (!state.authenticated || !state.isAdmin || get('admin-panel').hidden || state.operation || state.recorder || state.starting) return;
     const label = get('personal-code-label').value.trim();
     if (!label) { message(get('admin-message'), 'Bitte geben Sie eine Bezeichnung für den persönlichen Zugang ein.', 'error'); get('personal-code-label').focus(); return; }
     clearCodeDisplay();
@@ -514,7 +650,7 @@ function initializeStudio() {
   }
 
   async function startRecording() {
-    if (!state.recordingAllowed || state.recorder || state.starting || state.operation) return;
+    if (!state.recordingAllowed || state.recorder || state.starting || state.operation || state.previewRequest || state.previewProfile) return;
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
       message(get('record-message'), 'Die Mikrofonaufnahme benötigt eine sichere HTTPS-Verbindung und einen aktuellen Browser.', 'error');
       return;
@@ -639,7 +775,7 @@ function initializeStudio() {
   }
 
   async function saveRecording() {
-    if (!state.recordingAllowed || !state.recording?.valid || state.operation) return;
+    if (!state.recordingAllowed || !state.recording?.valid || state.operation || state.previewRequest || state.previewProfile) return;
     state.operation = true;
     updateControls();
     const button = get('save-button');
@@ -694,6 +830,20 @@ function initializeStudio() {
     finally { state.operation = false; updateControls(); }
   });
   get('profile-name').addEventListener('input', updateControls);
+  get('preview-form').addEventListener('submit', event => {
+    event.preventDefault();
+    return state.previewProfile ? generatePreview(state.previewProfile.id, get('preview-text').value, true) : undefined;
+  });
+  get('preview-close-button').addEventListener('click', closePreviewDialog);
+  get('preview-dialog').addEventListener('cancel', event => { event.preventDefault(); closePreviewDialog(); });
+  get('preview-dialog').addEventListener('close', () => {
+    if (get('preview-dialog').open) return;
+    clearPreviewDialog();
+    restorePreviewFocus();
+  });
+  get('preview-audio').addEventListener('error', () => {
+    if (get('preview-dialog').open && state.profilePreviewUrl) message(get('preview-message'), 'Die Stimmvorschau konnte nicht abgespielt werden. Bitte versuchen Sie es erneut.', 'error');
+  });
   get('delete-form').addEventListener('submit', deleteProfile);
   get('delete-cancel-button').addEventListener('click', closeDeletionDialog);
   get('delete-dialog').addEventListener('cancel', event => {
@@ -708,6 +858,14 @@ function initializeStudio() {
     if (state.authenticated && !state.operation && target?.isConnected && !target.disabled) target.focus();
   });
   get('create-code-form').addEventListener('submit', createPersonalCode);
+  get('admin-menu-button').addEventListener('click', toggleAdminPanel);
+  get('admin-close-button').addEventListener('click', () => { if (!state.operation) closeAdminPanel(true); });
+  get('admin-panel').addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !state.operation && !get('admin-panel').hidden) {
+      event.preventDefault();
+      closeAdminPanel(true);
+    }
+  });
   get('dismiss-code-button').addEventListener('click', () => { clearCodeDisplay(); get('personal-code-label').focus(); });
   get('copy-code-button').addEventListener('click', async () => {
     const input = get('generated-access-code');
@@ -731,33 +889,15 @@ function initializeStudio() {
     try { await loadProfiles(); } catch (error) { message(get('page-message'), error.message, 'error'); }
     finally { state.operation = false; updateControls(); }
   });
-  get('active-preview-button').addEventListener('click', async () => {
-    if (state.operation || !state.selectedProfileId) return;
-    state.operation = true;
-    updateControls();
-    message(get('page-message'));
-    try {
-      const response = await fetch(apiUrl('preview'), {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json','X-CSRF-Token':state.csrf}, body:'{}'});
-      if (!response.ok) {
-        let detail = {}; try { detail = await response.json(); } catch { /* Proxy errors need a friendly fallback. */ }
-        if (response.status === 401) showLogin();
-        throw new Error(detail.error || 'Die Stimmvorschau ist gerade nicht verfügbar. Bitte versuchen Sie es erneut.');
-      }
-      resetVoicePreview();
-      state.previewUrl = URL.createObjectURL(await response.blob());
-      const audio = get('active-preview-audio');
-      audio.src = state.previewUrl;
-      audio.hidden = false;
-      pauseOtherAudio(audio);
-      try { await audio.play(); } catch { message(get('page-message'), 'Die Vorschau ist bereit. Drücken Sie die Wiedergabetaste.', 'info'); }
-    } catch (error) { message(get('page-message'), error instanceof TypeError ? 'Der Sprachdienst ist nicht erreichbar. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.' : error.message || 'Die Stimmvorschau konnte nicht geladen werden.', 'error'); }
-    finally { state.operation = false; updateControls(); }
-  });
+  get('active-preview-button').addEventListener('click', () => state.selectedProfileId && !state.previewProfile ? generatePreview(state.selectedProfileId, state.previewText) : undefined);
   for (const audio of document.querySelectorAll('audio')) audio.addEventListener('play', () => guardPlayback(audio));
   window.addEventListener('pagehide', () => {
     state.requestToken++;
+    state.previewRequest = null;
+    state.previewReturnFocus = null;
+    closePreviewDialog();
     state.starting = false;
-    clearCodeDisplay();
+    closeAdminPanel();
     closeDeletionDialog();
     if (state.recorder) {
       const recorder = state.recorder;
