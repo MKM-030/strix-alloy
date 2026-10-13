@@ -1,6 +1,7 @@
 param(
   [ValidateSet('Start','Stop','Status')][string]$Action = 'Status',
-  [string]$Config = 'E:\SCC-Voice\bridge.json'
+  [string]$Config = 'E:\SCC-Voice\bridge.json',
+  [string]$VoiceProfile = 'E:\SCC-Voice\voices\scc-demo'
 )
 $ErrorActionPreference = 'Stop'
 $voiceRoot = $PSScriptRoot
@@ -11,6 +12,9 @@ $services = @(
   @{ Name='tts'; Port=8852; Exe='E:\SCC-Voice\tts-env\Scripts\python.exe'; Script=(Join-Path $voiceRoot 'audio_service.py'); Args=@('--mode','tts','--port','8852','--threads','6','--dtype','bfloat16','--token-file',$tokenFile,'--cache-dir','E:\SCC-Voice\models') },
   @{ Name='bridge'; Port=8850; Exe='C:\Projects\strix-alloy-clean\server\.local\venv\Scripts\python.exe'; Script=(Join-Path $voiceRoot 'bridge.py'); Args=@('--config',$Config) }
 )
+if ($VoiceProfile) {
+  $services[1].Args += @('--voice-profile', $VoiceProfile)
+}
 function Get-OwnedProcesses($service) {
   $scriptMatch = '(?:^|\s)"?' + [regex]::Escape($service.Script) + '"?(?=\s|$)'
   @(Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" | Where-Object {

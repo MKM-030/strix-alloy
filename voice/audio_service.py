@@ -130,12 +130,13 @@ def create_app(mode, token, backend):
 
     @app.get("/health")
     def health():
-        return {"status": "ready", "mode": mode, "model": MODEL_IDS[mode],
+        return {"status": "ready", "mode": mode, "model": getattr(backend, "model_id", MODEL_IDS[mode]),
+                "voice": getattr(backend, "voice_name", None),
                 "device": "cpu", "dtype": getattr(backend, "dtype", "float32"),
                 "busy": lock.locked(), "max_parallel": 1}
 
     def check_model(name):
-        if name not in (MODEL_IDS[mode], ALIASES[mode]):
+        if name not in (getattr(backend, "model_id", MODEL_IDS[mode]), ALIASES[mode]):
             raise HTTPException(400, "Unsupported model")
 
     def inference_error():
@@ -165,7 +166,7 @@ def create_app(mode, token, backend):
             model_config = ConfigDict(extra="forbid", strict=True)
             model: str
             input: str = Field(min_length=1, max_length=1500)
-            voice: str = "Ryan"
+            voice: str = "scc-demo" if getattr(backend, "voice_profile", None) else "Ryan"
             response_format: str = "wav"
 
         @app.post("/v1/audio/speech")
@@ -174,9 +175,12 @@ def create_app(mode, token, backend):
             check_model(request.model)
             if request.response_format != "wav":
                 raise HTTPException(400, "Only WAV output is supported")
-            voice = VOICES.get(request.voice.lower())
+            if getattr(backend, "voice_profile", None):
+                voice = "scc-demo" if request.voice.lower() in ("scc-demo", "scc demo") else None
+            else:
+                voice = VOICES.get(request.voice.lower())
             if voice is None:
-                raise HTTPException(400, "Unsupported preset voice")
+                raise HTTPException(400, "Unsupported voice for this worker")
             text = request.input.strip()
             if not text:
                 raise HTTPException(400, "Speech text cannot be empty")
@@ -201,10 +205,20 @@ def cpu_dtype(name):
 
 
 class QwenBackend:
-    def __init__(self, mode, threads, dtype="float32"):
+    def __init__(self, mode, threads, dtype="float32", voice_profile=None):
         import torch
         torch_dtype = cpu_dtype(dtype)
         self.dtype = dtype
+        self.voice_profile = voice_profile
+        self.model_id = MODEL_IDS[mode]
+        self.voice_name = None
+        if voice_profile:
+            if mode != "tts":
+                raise ValueError("A voice profile is only supported for TTS")
+            from prepare_demo_voice import BASE_MODEL, read_voice_profile
+            profile = read_voice_profile(voice_profile, BASE_MODEL)
+            self.model_id = BASE_MODEL
+            self.voice_name = profile["name"]
         ensure_memory_reserve()
         torch.set_num_threads(threads)
         torch.set_num_interop_threads(1)
@@ -212,9 +226,9 @@ class QwenBackend:
         from huggingface_hub import snapshot_download
         from huggingface_hub.errors import LocalEntryNotFoundError
         try:
-            source = snapshot_download(MODEL_IDS[mode], local_files_only=True)
+            source = snapshot_download(self.model_id, local_files_only=True)
         except LocalEntryNotFoundError:
-            source = snapshot_download(MODEL_IDS[mode], max_workers=2)
+            source = snapshot_download(self.model_id, max_workers=2)
         if mode == "asr":
             from qwen_asr import Qwen3ASRModel
             self.model = Qwen3ASRModel.from_pretrained(
@@ -223,15 +237,23 @@ class QwenBackend:
         else:
             from qwen_tts import Qwen3TTSModel
             self.model = Qwen3TTSModel.from_pretrained(
-                source, device_map="cpu", dtype=torch_dtype)
+                source, device_map="cpu", dtype=torch_dtype, attn_implementation="sdpa")
+            if voice_profile:
+                from prepare_demo_voice import load_or_create_clone_prompt
+                self.clone_prompt, _ = load_or_create_clone_prompt(self.model, voice_profile)
         ensure_memory_reserve()
 
     def transcribe(self, audio, sample_rate, language):
         return self.model.transcribe(audio=(audio, sample_rate), language=language)[0].text
 
     def synthesize(self, text, voice):
-        waveforms, rate = self.model.generate_custom_voice(
-            text=text, language="German", speaker=voice, max_new_tokens=2048)
+        if self.voice_profile:
+            waveforms, rate = self.model.generate_voice_clone(
+                text=text, language="German", voice_clone_prompt=self.clone_prompt,
+                max_new_tokens=2048)
+        else:
+            waveforms, rate = self.model.generate_custom_voice(
+                text=text, language="German", speaker=voice, max_new_tokens=2048)
         return waveforms[0], rate
 
 
@@ -243,6 +265,7 @@ def main():
     parser.add_argument("--threads", type=int, default=6, choices=range(1, 9))
     parser.add_argument("--token-file", default=r"C:\Projects\strix-alloy-clean\server\.local\servicenow-api-token.txt")
     parser.add_argument("--cache-dir", default=r"E:\SCC-Voice\models")
+    parser.add_argument("--voice-profile", help="Directory containing the validated synthetic German voice profile")
     args = parser.parse_args()
     token = Path(args.token_file).read_text(encoding="utf-8-sig").strip()
     if not token:
@@ -253,7 +276,7 @@ def main():
     os.environ.setdefault("OMP_NUM_THREADS", str(args.threads))
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     LOG.info("Loading %s worker on CPU with %s threads and %s", args.mode, args.threads, args.dtype)
-    backend = QwenBackend(args.mode, args.threads, args.dtype)
+    backend = QwenBackend(args.mode, args.threads, args.dtype, args.voice_profile)
     LOG.info("%s worker ready", args.mode)
     import uvicorn
     uvicorn.run(create_app(args.mode, token, backend), host="127.0.0.1",
