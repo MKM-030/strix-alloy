@@ -74,6 +74,14 @@ shortcut releases the busy state. Finishing natural small-talk continuation
 requires an actual ServiceNow terminal/input-ready contract or routing change.
 The temporary diagnostic budget is configured as zero for future starts.
 
+After the verified ServiceNow Chat/Voice instruction update, the 12:21 UTC
+first-turn RTP probe reached the actual German employee-name question in
+33.077 seconds after recognition, versus 52.400 seconds in the earlier
+comparison. Genuine InputText readiness and owned session release passed;
+all services were healthy and idle afterward. It sent no name or confirmation.
+The earlier announcement still arrived in English, so that language defect
+remains. This test did not repeat generic small talk or the later order steps.
+
 Automatic turns use energy VAD (100 ms onset, 120 ms minimum voiced audio,
 550 ms final silence). Short confirmation utterances are explicitly tested. Barge-in
 clears queued audio and fences late audio immediately. An already submitted
