@@ -4,7 +4,7 @@ import urllib.error, urllib.request
 
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 CLEAN=pathlib.Path(r"C:\Projects\strix-alloy-clean")
-PROFILE=CLEAN/"server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0181-version-bracket-20261012/serving0181-full262-profile.json"
+PROFILE=CLEAN/"server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0181-version-bracket-20261012/serving0181-full262-exact-cache-candidate-20261013.json"
 MODEL=CLEAN/"backends/halogen-wsl2-0.18.1/.local/api-token.txt"
 GATEWAY=ROOT/"server/.local/scc-gateway.json"
 PORTS=(8731,8840,8841,8850,8851,8852,8853,8860,8861,8862)
@@ -41,6 +41,11 @@ def health(port,path="/health",token=None,json_body=True):
         if port==8731:
             result["expected_model"]=value.get("model")=="halogen-qwen3.8-flash-next"
             result["version_matches"]=value.get("version")=={"api":"0.18.1","engine":"0.18.1","match":True}
+            cache=value.get("prompt_cache")
+            if isinstance(cache,dict):
+                result["prompt_cache"]={key:cache[key] for key,kind in
+                    (("mode",int),("enabled",bool),("cap_mb",int),("bitwise_identical_to_cold",bool))
+                    if type(cache.get(key)) is kind}
         if port==8862:
             result["expected_model"]=any(item.get("id")=="scc-native-qwen3" for item in value.get("data",[]) if isinstance(item,dict))
         return result
@@ -98,11 +103,15 @@ def main():
     result["engine_idle"]=model.get("busy") is False and model.get("in_flight")==0 and model.get("queued")==0
     result["gateway_idle"]=gateway.get("active_requests")==0 and gateway.get("queued_requests")==0 and gateway.get("draining") is False
     result["native_idle"]=native.get("nativeSessions")==0
+    cache=model.get("prompt_cache",{})
+    result["model_cache_matches"]=(cache.get("mode")==1 and cache.get("enabled") is True
+        and cache.get("cap_mb",0)>0 and cache.get("bitwise_identical_to_cold") is True)
     listeners_match=all(any(row["port"]==port and row["address"]=="127.0.0.1" and row["expected_process"] is True for row in rows) for port in EXPECTED)
     result["stack_healthy"]=(all(value.get("http_status")==200 for value in services.values())
         and result["memory"].get("above_runtime_floor") is True and not legacy and listeners_match
         and model.get("version_matches") is True and model.get("expected_model") is True
         and model.get("context")==262144 and model.get("slots")==1
+        and result["model_cache_matches"] is True
         and services["tts"].get("expected_model") is True and native.get("auth_mode")=="servicenow"
         and result["funnel"].get("native_route_matches") is True and result["funnel"].get("funnel_allowed") is True)
     print(json.dumps(result,ensure_ascii=False,indent=2))

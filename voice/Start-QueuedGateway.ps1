@@ -2,7 +2,7 @@
 param(
     [ValidateSet('Start','Stop','Status')]
     [string]$Action = 'Start',
-    [string]$ProfileConfig = 'C:\Projects\strix-alloy-clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-profile.json',
+    [string]$ProfileConfig = 'C:\Projects\strix-alloy-clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-exact-cache-candidate-20261013.json',
     [string]$Python = 'C:\Projects\strix-alloy-clean\server\.local\venv\Scripts\python.exe',
     [switch]$DemoNoThinking
 )

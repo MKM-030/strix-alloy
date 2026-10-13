@@ -11,8 +11,8 @@ $ErrorActionPreference = 'Stop'
 $Clean = 'C:\Projects\strix-alloy-clean'
 $Python = "$Clean\server\.local\venv\Scripts\python.exe"
 $Controller = "$Clean\server\controller.py"
-$Profile = "$Clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-profile.json"
-$ProfileHash = 'cf02e2e695160c3e199a2efbf81920192d77f538616b4a3a00153e33927333c4'
+$Profile = "$Clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-exact-cache-candidate-20261013.json"
+$ProfileHash = 'f62b654bd0cfd0bcd00b4ced7416b64584ca530e6be8120e5d61dc45b931c323'
 $StatePath = "$Clean\server\.local\current.json"
 $RunnerLock = "$Clean\backends\halogen-wsl2-0.18.1\.local\runner.lock"
 $StatusScript = Join-Path $PSScriptRoot 'native-speech-validation\stack_status.py'
@@ -94,6 +94,18 @@ function Test-OwnedController($State, $Processes) {
     return @($Processes | Where-Object { [int]$_.ProcessId -notin $lineage }).Count -eq 0
 }
 
+function Test-ExactCacheHealth($Cache) {
+    if ($null -eq $Cache) { return $false }
+    foreach ($field in @('mode', 'enabled', 'cap_mb', 'bitwise_identical_to_cold')) {
+        if ($field -notin @($Cache.PSObject.Properties.Name)) { return $false }
+    }
+    if ($Cache.mode -isnot [int] -or $Cache.enabled -isnot [bool] -or
+        ($Cache.cap_mb -isnot [int] -and $Cache.cap_mb -isnot [long]) -or
+        $Cache.bitwise_identical_to_cold -isnot [bool]) { return $false }
+    return $Cache.mode -eq 1 -and $Cache.enabled -eq $true -and
+        $Cache.cap_mb -gt 0 -and $Cache.bitwise_identical_to_cold -eq $true
+}
+
 function Get-ListenerSnapshot {
     return @(Get-NetTCPConnection -State Listen -ErrorAction Stop | Where-Object {
         $_.LocalPort -in @(8731, 8840, 8851, 8852)
@@ -105,7 +117,7 @@ try {
         if (-not (Test-Path -LiteralPath $file -PathType Leaf)) { throw "HaloGen: Datei fehlt: $file" }
     }
     if ((Get-FileHash -LiteralPath $Profile -Algorithm SHA256).Hash.ToLowerInvariant() -ne $ProfileHash) {
-        throw 'HaloGen: Das freigegebene Originalprofil wurde veraendert; kein Start.'
+        throw 'HaloGen: Das freigegebene Exact-Cache-Profil wurde veraendert; kein Start.'
     }
     if ($Action -eq 'Start') {
         $mutex = New-Object -TypeName System.Threading.Mutex -ArgumentList @($false, 'Local\SCCNativeOriginalModelStarter')
@@ -121,12 +133,25 @@ try {
     $phase = if ($null -eq $state) { 'absent' } else { [string]$state.phase }
     $modelListeners = @($listeners | Where-Object { $_.LocalPort -in @(8731, 8840) })
     $legacy = @($listeners | Where-Object { $_.LocalPort -in @(8851, 8852) } | Select-Object -ExpandProperty LocalPort -Unique)
+    $health = $null
+    $cache = $null
+    $cacheMatches = $false
+    if ($owned -and $state.phase -eq 'ready') {
+        # Existing status helper makes only bounded, allowlisted local GET requests.
+        $healthText = & $Python -B $StatusScript
+        $health = ($healthText -join [Environment]::NewLine) | ConvertFrom-Json
+        if ('prompt_cache' -in @($health.services.model.PSObject.Properties.Name)) {
+            $cache = $health.services.model.prompt_cache
+        }
+        $cacheMatches = Test-ExactCacheHealth $cache
+    }
 
     if ($Action -eq 'Status') {
         [pscustomobject]@{action='status';read_only=$true;phase=$phase;owned_controller=$owned;
             controller_pid=$(if ($owned) {[int]$state.pid} else {$null});runner_lock_exists=(Test-Path -LiteralPath $RunnerLock);
             model_ports=@($modelListeners | Select-Object -ExpandProperty LocalPort -Unique);legacy_ports=$legacy;
-            original_profile_sha256=$ProfileHash} | ConvertTo-Json -Depth 4
+            profile_sha256=$ProfileHash;cache_expected='Exact';cache_mode=$(if ($null -ne $cache -and 'mode' -in @($cache.PSObject.Properties.Name)) {$cache.mode} else {$null});
+            prompt_cache=$cache;cache_matches=$cacheMatches} | ConvertTo-Json -Depth 4
         exit 0
     }
     if ($legacy.Count) { throw 'HaloGen: Legacy-CPU-Audio auf 8851/8852 aktiv. Start-Voice.ps1 nicht verwenden; kein Modellstart.' }
@@ -138,16 +163,16 @@ try {
             throw 'HaloGen: Port 8840 gehoert nicht dem geprueften Controller.'
         }
         if ($state.phase -eq 'ready') {
-            # Existing allowlisted status helper makes only bounded local GET requests.
-            $healthText = & $Python -B $StatusScript
-            $health = ($healthText -join [Environment]::NewLine) | ConvertFrom-Json
             if ($health.services.model.http_status -ne 200 -or -not $health.services.model.expected_model -or
                 -not $health.services.model.version_matches -or $health.services.model.context -ne 262144 -or
-                $health.services.model.slots -ne 1 -or $health.services.controller.http_status -ne 200) {
+                $health.services.model.slots -ne 1 -or $health.services.controller.http_status -ne 200 -or
+                -not $cacheMatches) {
                 throw 'HaloGen: Bestehender Controller ist nicht gesund; kein automatischer Neustart.'
             }
         }
-        [pscustomobject]@{action='reuse';phase=$state.phase;controller_pid=[int]$state.pid;original_profile_sha256=$ProfileHash} | ConvertTo-Json
+        [pscustomobject]@{action='reuse';phase=$state.phase;controller_pid=[int]$state.pid;profile_sha256=$ProfileHash;
+            cache_expected='Exact';cache_mode=$(if ($null -ne $cache -and 'mode' -in @($cache.PSObject.Properties.Name)) {$cache.mode} else {$null});
+            cache_matches=$cacheMatches} | ConvertTo-Json
         exit 0
     }
     if ($processes.Count -or $modelListeners.Count) { throw 'HaloGen: Bestehender Prozess oder Port ist nicht eindeutig zugeordnet; kein Start.' }
@@ -164,7 +189,7 @@ try {
     $started = Start-Process -FilePath $Python -ArgumentList $arguments -WorkingDirectory "$Clean\server" -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
     $receipt = [ordered]@{action='start_requested';utc=[datetime]::UtcNow.ToString('o');launcher_pid=$started.Id;
         launcher_start_ticks=$started.StartTime.ToUniversalTime().Ticks.ToString();python=$Python;controller=$Controller;
-        profile=$Profile;profile_sha256=$ProfileHash;stdout=$stdout;stderr=$stderr;cache='Off';context=262144;slots=1;minimum_reserve_gib=18}
+        profile=$Profile;profile_sha256=$ProfileHash;stdout=$stdout;stderr=$stderr;cache='Exact';context=262144;slots=1;minimum_reserve_gib=18}
     $receipt | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $Runtime "model-launch-$stamp.json") -Encoding UTF8
     $receipt | ConvertTo-Json
     # The managed controller enforces admission, its independent guard and its
