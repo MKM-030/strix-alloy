@@ -1,0 +1,413 @@
+{
+  "schema": 1,
+  "date_utc": "2026-10-13",
+  "decision": "Root accepted KEEP Exact; reviewed desktop/source handoff and healthy public gateway restoration completed separately.",
+  "scope": "Synthetic repeated system-document workload; real ServiceNow/native-call cache benefit remains unmeasured",
+  "benchmark": {
+    "source_sha256": "c014b3bde4392b5f1778f7936d7ffc72deb44023350173465e6823e2f7deee58",
+    "request_sha256": "dd01b6f8d4e29862d74f2f48223ba0a1aeafe5ece1400602cffe5b857aef77f2",
+    "fixture_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+    "fixture_bytes": 42238,
+    "shape": "system-document",
+    "requests_per_mode": 3,
+    "route": "http://127.0.0.1:8731/v1/chat/completions",
+    "max_tokens": 64,
+    "drafter": "mtp",
+    "temperature": 0,
+    "enable_thinking": false,
+    "reasoning_effort": "none",
+    "isolation": "Owned public8841 stopped; nativeSessions0; direct model idle/exact profile/run/lock identity gate before every request; no inference retry"
+  },
+  "profile": {
+    "original_sha256": "cf02e2e695160c3e199a2efbf81920192d77f538616b4a3a00153e33927333c4",
+    "exact_sha256": "f62b654bd0cfd0bcd00b4ced7416b64584ca530e6be8120e5d61dc45b931c323",
+    "only_engine_change": "prompt_cache Off to Exact",
+    "version": "0.18.1",
+    "checkpoint": "v2",
+    "context": 262144,
+    "slots": 1,
+    "draft_tokens": 2,
+    "prefill_chunk": 4096,
+    "max_prefill_tokens": 4096,
+    "runtime_guards_physical_commit_gib": [
+      18,
+      18
+    ],
+    "operator_no_new_turn_floor_gib": 22,
+    "unchanged_service_cold_admission": {
+      "physical_gib": 35,
+      "commit_gib": 131,
+      "v2_stable_seconds": 10
+    },
+    "admission_label_correction": "Initial launch receipts incorrectly called the serving gate 60 frames; actual unchanged service v2 gate is ten consecutive safe seconds. The separate disposable runner uses a sixty-frame path. No guard or source was changed."
+  },
+  "runs": {
+    "off": {
+      "outer": "2ec005e80aea41649368fb267060ad5d",
+      "backend": "07b2cf1d0d054d67807d407d08ac728e",
+      "rows": [
+        {
+          "rep": 0,
+          "wall_seconds": 12.134369899999001,
+          "first_content_seconds": 10.205724499999633,
+          "prompt_tokens": 8227,
+          "output_tokens": 64,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8",
+          "raw_engine_timings": {
+            "prompt_n": 8227,
+            "predicted_n": 64,
+            "prompt_ms": 10181.4,
+            "predicted_ms": 1927.6,
+            "prompt_per_second": 808.042,
+            "predicted_per_second": 33.202,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0,
+            "draft_n": 54,
+            "draft_n_accepted": 35
+          }
+        },
+        {
+          "rep": 1,
+          "wall_seconds": 7.922886500000459,
+          "first_content_seconds": 6.594728899999609,
+          "prompt_tokens": 8227,
+          "output_tokens": 64,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8",
+          "raw_engine_timings": {
+            "prompt_n": 8227,
+            "predicted_n": 64,
+            "prompt_ms": 6825.9,
+            "predicted_ms": 1436.9,
+            "prompt_per_second": 1205.262,
+            "predicted_per_second": 44.54,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0,
+            "draft_n": 54,
+            "draft_n_accepted": 35
+          }
+        },
+        {
+          "rep": 2,
+          "wall_seconds": 7.976710300001287,
+          "first_content_seconds": 6.618694500000856,
+          "prompt_tokens": 8227,
+          "output_tokens": 64,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8",
+          "raw_engine_timings": {
+            "prompt_n": 8227,
+            "predicted_n": 64,
+            "prompt_ms": 7114,
+            "predicted_ms": 1468,
+            "prompt_per_second": 1156.452,
+            "predicted_per_second": 43.597,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0,
+            "draft_n": 54,
+            "draft_n_accepted": 35
+          }
+        }
+      ],
+      "memory_min_physical_gib": 27.090972900390625,
+      "memory_min_commit_gib": 118.30190658569336,
+      "requests_total_delta": 3,
+      "cached_tokens_total_delta": 0
+    },
+    "exact": {
+      "outer": "ac678e51cef84d819a8fd276dcb93271",
+      "backend": "a596d8b7119f4875b07ea1fedbc9768b",
+      "controller_pid": 24916,
+      "rows": [
+        {
+          "rep": 0,
+          "wall_seconds": 11.83840330000021,
+          "first_content_seconds": 10.111558000000514,
+          "prompt_tokens": 8227,
+          "output_tokens": 64,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8",
+          "raw_engine_timings": {
+            "prompt_n": 8227,
+            "predicted_n": 64,
+            "prompt_ms": 10091.2,
+            "predicted_ms": 1726.6,
+            "prompt_per_second": 815.265,
+            "predicted_per_second": 37.067,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0,
+            "prefix_n": 1,
+            "draft_n": 54,
+            "draft_n_accepted": 35
+          }
+        },
+        {
+          "rep": 1,
+          "wall_seconds": 1.5793948999998975,
+          "first_content_seconds": 0.2995325999982015,
+          "prompt_tokens": 8227,
+          "output_tokens": 64,
+          "cached_tokens": 8192,
+          "reasoning_tokens": 0,
+          "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8",
+          "raw_engine_timings": {
+            "prompt_n": 35,
+            "predicted_n": 64,
+            "prompt_ms": 199.3,
+            "predicted_ms": 1277.1,
+            "prompt_per_second": 175.615,
+            "predicted_per_second": 50.114,
+            "cache_n": 8192,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0,
+            "prefix_n": 8227,
+            "draft_n": 54,
+            "draft_n_accepted": 35
+          }
+        },
+        {
+          "rep": 2,
+          "wall_seconds": 1.5969464000008884,
+          "first_content_seconds": 0.3093737000017427,
+          "prompt_tokens": 8227,
+          "output_tokens": 64,
+          "cached_tokens": 8192,
+          "reasoning_tokens": 0,
+          "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8",
+          "raw_engine_timings": {
+            "prompt_n": 35,
+            "predicted_n": 64,
+            "prompt_ms": 205.8,
+            "predicted_ms": 1285.6,
+            "prompt_per_second": 170.068,
+            "predicted_per_second": 49.782,
+            "cache_n": 8192,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0,
+            "prefix_n": 8227,
+            "draft_n": 54,
+            "draft_n_accepted": 35
+          }
+        }
+      ],
+      "memory_min_physical_gib": 30.172252655029297,
+      "memory_min_commit_gib": 121.52685165405273,
+      "memory_frame_count": 91,
+      "metrics_before": {
+        "llamacpp:prompt_tokens_total": 50,
+        "halogen:requests_total": 2,
+        "halogen:prompt_tokens_cached_total": 0
+      },
+      "metrics_after": {
+        "llamacpp:prompt_tokens_total": 8347,
+        "halogen:requests_total": 5,
+        "halogen:prompt_tokens_cached_total": 16384
+      }
+    }
+  },
+  "warm_repeat_comparison": {
+    "off_wall_mean_seconds": 7.949798400000873,
+    "exact_wall_mean_seconds": 1.588170650000393,
+    "wall_reduction_percent": 80.02250409267965,
+    "off_first_content_mean_seconds": 6.606711700000233,
+    "exact_first_content_mean_seconds": 0.3044531499999721,
+    "first_content_reduction_percent": 95.39175971610867,
+    "cached_tokens_each_repeat": 8192,
+    "total_prompt_tokens_each_repeat": 8227
+  },
+  "output_parity": {
+    "all_six_identical": true,
+    "sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8"
+  },
+  "accepted_ready_state": {
+    "utc": "2026-10-13T17:23:34.257998+00:00",
+    "outer_run": "ac678e51cef84d819a8fd276dcb93271",
+    "outer_pid": 24916,
+    "outer_phase": "ready",
+    "profile_sha256": "f62b654bd0cfd0bcd00b4ced7416b64584ca530e6be8120e5d61dc45b931c323",
+    "backend_run": "a596d8b7119f4875b07ea1fedbc9768b",
+    "backend_phase": "ready",
+    "manifest_cache_env": "1",
+    "backend_source_count": 31,
+    "backend_source_hashes_match": true,
+    "controller_sha256": "a76f5078391f42a8203692c5c12c3d27d849e606fec345f25642c33124897d4b",
+    "health": {
+      "status": "ok",
+      "version": {
+        "api": "0.18.1",
+        "engine": "0.18.1",
+        "match": true
+      },
+      "model": "halogen-qwen3.8-flash-next",
+      "context": 262144,
+      "slots": 1,
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0,
+      "prompt_cache": {
+        "enabled": true,
+        "cap_mb": 110,
+        "mode": 1,
+        "snapshot_align": 4096,
+        "bitwise_identical_to_cold": true
+      }
+    },
+    "memory": {
+      "available_bytes": 33530417152,
+      "committed_bytes": 108033806336,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 132105633792
+    },
+    "admission_correction": {
+      "actual_unchanged_service_v2_stable_seconds": 10,
+      "physical_floor_gib": 35,
+      "commit_floor_gib": 131,
+      "runtime_guard_gib": 18,
+      "earlier_launch_receipt_60frame_label_incorrect": true,
+      "no_thresholds_or_sources_changed": true
+    }
+  },
+  "post_benchmark": {
+    "utc": "2026-10-13T17:25:53.340350+00:00",
+    "mode": "Exact",
+    "run_id": "a596d8b7119f4875b07ea1fedbc9768b",
+    "benchmark_sha256": "c014b3bde4392b5f1778f7936d7ffc72deb44023350173465e6823e2f7deee58",
+    "rows": [
+      {
+        "rep": 0,
+        "wall": 11.83840330000021,
+        "first_content": 10.111558000000514,
+        "prompt_tokens": 8227,
+        "output_tokens": 64,
+        "cache_n": 0,
+        "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8"
+      },
+      {
+        "rep": 1,
+        "wall": 1.5793948999998975,
+        "first_content": 0.2995325999982015,
+        "prompt_tokens": 8227,
+        "output_tokens": 64,
+        "cache_n": 8192,
+        "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8"
+      },
+      {
+        "rep": 2,
+        "wall": 1.5969464000008884,
+        "first_content": 0.3093737000017427,
+        "prompt_tokens": 8227,
+        "output_tokens": 64,
+        "cache_n": 8192,
+        "output_sha256": "4da3811fb70ddcd47446155f51015bd350546dbd35b41ed0c611837891156bd8"
+      }
+    ],
+    "identical": true,
+    "physical_min_gib": 30.172252655029297,
+    "commit_min_gib": 121.52685165405273,
+    "memory_frame_count": 91,
+    "metrics_before": {
+      "llamacpp:prompt_tokens_total": 50,
+      "halogen:requests_total": 2,
+      "halogen:prompt_tokens_cached_total": 0
+    },
+    "metrics_after": {
+      "llamacpp:prompt_tokens_total": 8347,
+      "halogen:requests_total": 5,
+      "halogen:prompt_tokens_cached_total": 16384
+    },
+    "post_model": {
+      "http_status": 200,
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0,
+      "slots": 1,
+      "context": 262144,
+      "slot_ctx": 262144,
+      "kv_pool_positions": 262144,
+      "status": "ok",
+      "expected_model": true,
+      "version_matches": true
+    },
+    "post_native": {
+      "http_status": 200,
+      "nativeSessions": 0,
+      "status": "ok",
+      "auth_mode": "servicenow"
+    },
+    "post_memory": {
+      "free_gib": 30.63,
+      "commit_headroom_gib": 122.57,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "public8841_absent": true
+  },
+  "limitations": [
+    "Three requests per mode, one synthetic prompt shape; this is not a general latency distribution or SCC acceptance test.",
+    "Cold-first results retained; only repeated-request means support the warm comparison.",
+    "Engine raw phase clock sometimes disagrees with Windows request wall; reported latency reductions use Windows perf_counter wall/first-content. No calibrated engine throughput claim.",
+    "Authenticated /cache fails in the installed pinned API at int(p[36]) for literal 0.0. Per-request cache_n/usage and /metrics cached-token totals prove reuse; hit/miss/store/eviction counters remain unavailable.",
+    "Different host workload/admission baseline means absolute Off-vs-Exact free-memory minima do not measure incremental cache RAM or establish a universal memory bound."
+  ],
+  "lifecycle": {
+    "owned_public_stop_utc": "2026-10-13T16:45:39Z",
+    "managed_off_stop_requested_once_utc": "2026-10-13T16:52:18.214075Z",
+    "off_cleanup": true,
+    "off_historical_recovery": false,
+    "off_recovery_window_frames": 180,
+    "off_recovery_required_physical_gib": 45.27656173706055,
+    "off_recovery_last_physical_gib": 44.63859176635742,
+    "guard_failure_absent": true,
+    "late_operator_recovery": {
+      "root_reviewed": true,
+      "failed_records_unchanged": true,
+      "dead_runner_lock_archived_once_utc": "2026-10-13T17:04:39Z",
+      "archive_receipt": "reconciliation-07b2cf1d0d054d67807d407d08ac728e-archive-20261013T170439Z-9db6cdb6-complete.json"
+    },
+    "pre_engine_start_failures": {
+      "count": 2,
+      "error": "Windows WinError5 atomically replacing existing current.json",
+      "no_backend_created": true,
+      "no_inference_attempted": true,
+      "core_source_acl_and_readonly_unchanged": true,
+      "observed_restart_manager_target_holder": "DesktopCommander MCP node PID17608; no process killed"
+    },
+    "dead_outer_metadata_archive": {
+      "utc": "2026-10-13T17:18:34Z",
+      "root_reviewed_controller_lease": true,
+      "source_sha256": "9bb4b0e7df922f6422f5439b02c3bc2e9b0ed7c1184a3c2ba50235bc5b5590bd",
+      "same_dir_destination": "current-historical-2ec005e80aea41649368fb267060ad5d-20261013T171834Z-253d281e.json",
+      "no_delete_overwrite_acl_or_core_source_change": true
+    },
+    "exact_managed_start_after_archive_once_utc": "2026-10-13T17:19:35.0658088Z",
+    "exact_ready_confirmed_utc": "2026-10-13T17:22:12.984059Z",
+    "public_gateway_handoff": "Restored after root-reviewed desktop/source handoff; same auth/no-thinking aliases retained; no original-profile restart after accepted result",
+    "tts_asr_and_selected_voice_unchanged_by_this_experiment": true
+  },
+  "evidence_root_windows": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-speech-validation\\runtime",
+  "managed_backend_root_windows": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.1\\.local\\services",
+  "tracked_data_contains_no_prompts_or_credentials": true,
+  "handoff": {
+    "source_commit": "d6d8eaf2ee25801ca076ac1b19b52ad821e3438c",
+    "reported_by": "model_launcher agent after root approval",
+    "model_start_action": "reuse",
+    "controller_pid": 24916,
+    "cache_matches": true,
+    "public_gateway_launcher_pid": 9352,
+    "public_gateway_serving_pid": 23480,
+    "gateway_healthy_idle": true,
+    "model_restart_during_handoff": false,
+    "active_selected_own_voice_registered_once_without_tts_restart": true,
+    "tts_pid": 5572
+  }
+}
