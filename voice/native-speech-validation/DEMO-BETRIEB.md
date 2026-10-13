@@ -6,8 +6,11 @@ Die technische Statusprobe ist keine native End-to-End-Abnahme: echter
 Mikrofonzugriff und realer ServiceNow-OAuth-Aufruf sind noch nicht nachgewiesen;
 eine vollständige Sprachbestellung ist noch offen. Der bisherige isolierte
 First-Turn-Audiotest erreichte die vollständige Frage nach etwa 113 Sekunden.
-Der reversible No-Thinking-Demomodus des Gateways wird separat geprüft;
-die folgende Gateway-Startzeile beschreibt zunächst den bestehenden Modus.
+Seit 10:32:10 UTC ist der reversible No-Thinking-Demomodus auf Gateway 8841
+aktiv. Er setzt für alle Chat-Aufrufe des öffentlichen Alias halogen-v2
+`enable_thinking=false` und `reasoning_effort=none`. Modell, Kontext, Memory
+Guard, Tools und Bestätigungslogik bleiben unverändert. Das betrifft alle
+Caller dieses Alias; neue Latenz- und vollständige Abnahmeergebnisse stehen aus.
 **Legacy `voice/Start-Voice.ps1` nicht verwenden:** Es startet die stillgelegten CPU-Modelle
 auf 8851/8852 und kann die Speicherreserve von HaloGen aufbrauchen.
 
@@ -70,11 +73,11 @@ Das ist lokale Referenzregistrierung, keine Dialog- oder Bestellanfrage:
 
 ~~~powershell
 $voiceDir = "$repo\voice\assets\scc-demo"
-$v = Get-Content "$voiceDir\voice.json" -Raw | ConvertFrom-Json
+$v = Get-Content "$voiceDir\voice.json" -Raw -Encoding UTF8 | ConvertFrom-Json
 $hash = (Get-FileHash "$voiceDir\reference.wav" -Algorithm SHA256).Hash.ToLower()
 if ($v.kind -ne 'designed_synthetic_voice' -or $hash -ne $v.reference_sha256) { throw 'Voice reference mismatch' }
 $body = @{name='scc-demo';ref_text=$v.reference_text;wav_b64=[Convert]::ToBase64String([IO.File]::ReadAllBytes("$voiceDir\reference.wav"))} | ConvertTo-Json
-Invoke-RestMethod 'http://127.0.0.1:8862/v1/audio/voices' -Method Post -ContentType 'application/json' -Body $body
+Invoke-RestMethod 'http://127.0.0.1:8862/v1/audio/voices' -Method Post -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes($body))
 ~~~
 
 **HaloGen**, nur mit dem bestehenden geprüften Profil:
@@ -91,7 +94,7 @@ Startprüfungen aus. Keine zusätzlichen Prompt-Probes parallel senden.
 **Gateway, Bot, nativer Adapter**, jeweils nur wenn der Dienst fehlt:
 
 ~~~powershell
-& $corepy -u "$repo\server\gateway.py" --config "$repo\server\.local\scc-gateway.json" --port 8841 --log "$repo\server\.local\scc-gateway.log"
+& "$repo\voice\Start-QueuedGateway.ps1" -Action Start -DemoNoThinking
 # Eigenes Fenster:
 & $corepy -u "$repo\voice\bridge.py" --config 'E:\SCC-Voice\bridge.json'
 # Eigenes Fenster:
@@ -117,8 +120,15 @@ der echte Browser muss einen Host-ICE-Kandidaten über LAN/Tailnet erreichen.
    muss dem Betreiber bekannt und sauber beendet sein; das Skript beweist das
    für einen fremden Client nicht.
 3. Die **eigenen Vordergrundfenster** in dieser Reihenfolge mit Ctrl+C schließen:
-   nativer Adapter, Bot, Gateway. Keine gespeicherten historischen PID-Nummern
-   und kein taskkill nach Prozessname verwenden.
+   nativer Adapter, Bot. Keine gespeicherten historischen PID-Nummern
+   und kein taskkill nach Prozessname verwenden. Gateway anschließend mit seinem
+   Besitzer-prüfenden Launcher stoppen; dessen Stop ist nicht selbst drainend,
+   daher nur nach dem eben bestätigten Idle-Zustand:
+
+~~~powershell
+& "$repo\voice\Start-QueuedGateway.ps1" -Action Stop
+~~~
+
 4. HaloGen über seinen Controller geordnet stoppen und STOPPED/Recovery abwarten:
 
 ~~~powershell
@@ -144,3 +154,18 @@ Geprüfter Status nach dem isolierten Audiotest um 10:25:20 UTC: alle sieben
 Health-Abfragen HTTP 200, Modell/Gateway/Native idle, 26.954 GiB freier RAM,
 120.072 GiB Commit-Reserve, keine Legacy-CPU-Listener. Das ist eine Statusprobe,
 keine Zusage zur gesamten Dialoglatenz oder zur Erreichbarkeit fremder Browser.
+
+## No-Thinking-Modus zurücknehmen
+
+Nur nach beendetem Anruf und erneut bestätigtem Engine-/Gateway-/Native-Idle:
+
+~~~powershell
+& "$repo\voice\Start-QueuedGateway.ps1" -Action Stop
+& "$repo\voice\Start-QueuedGateway.ps1" -Action Start
+~~~
+
+Ohne Schalter ist der Override aus. Mit `-DemoNoThinking` ist er an. Der Launcher
+verweigert einen abweichenden Modus bei bereits laufendem Gateway; die laufende
+Konfigurationsdatei nicht von Hand umschreiben. Dieser Wechsel startet nur 8841
+neu, weder HaloGen noch Audio/Bot/Native/Funnel. Details und lokale Vertragstests:
+[HALOGEN-DEMO-MODE.md](../HALOGEN-DEMO-MODE.md).
