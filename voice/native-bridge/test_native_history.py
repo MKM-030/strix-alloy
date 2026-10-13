@@ -1,4 +1,6 @@
 import copy
+import json
+from pathlib import Path
 import re
 import unittest
 from unittest.mock import patch
@@ -31,6 +33,23 @@ class CapturingDialog(Dialog):
 
 
 class NativeHistoryTests(unittest.IsolatedAsyncioTestCase):
+    async def test_configured_employee_question_preserves_first_name_as_real_user_text(self):
+        config = Config(**json.loads(Path(__file__).with_name('config.example.json').read_text(
+            encoding='utf-8-sig')))
+        dialog = CapturingDialog()
+        await dialog.open()
+        dialog.record_greeting(config.greeting)
+        await dialog.turn('Philipp Borchert')
+        await dialog.turn('Berlin')
+        first, following = dialog.messages
+        self.assertEqual(first['text'], 'Philipp Borchert')
+        self.assertEqual(len(first['history']), 1)
+        self.assertTrue(first['history'][0]['isBotMessage'])
+        self.assertEqual(first['history'][0]['value'], config.greeting)
+        self.assertIn('Smart Country Convention', config.greeting)
+        self.assertIn('Mitarbeiter', config.greeting)
+        self.assertEqual(following, {'text': 'Berlin'})
+
     async def test_actual_fallback_is_forwarded_once_with_first_real_user_message(self):
         dialog = CapturingDialog()
         with patch('native_bridge.time.time', return_value=1791878400.125):
