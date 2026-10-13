@@ -34,6 +34,7 @@ class Settings:
     callback_port: int = 8853
     callback_username: str = ''
     tts_voice: str = 'ryan'
+    defer_start_until_message: bool = False
     session_seconds: int = 1800
     turn_seconds: int = 180
     max_sessions: int = 8
@@ -229,14 +230,18 @@ class Bridge:
             if session.started:
                 raise web.HTTPConflict(text='Conversation already started')
             session.started = True
-            await self.send(session, '', True, 'START_CONVERSATION')
+            if self.settings.defer_start_until_message:
+                # The documented first text request creates the conversation.
+                session.change.set()
+            else:
+                await self.send(session, '', True, 'START_CONVERSATION')
         return web.json_response({'accepted': True}, status=202)
 
     async def reset(self, request):
         await self.json(request)
         old = request._voice_session
         async with old.lock:
-            if old.started and not old.ended:
+            if old.started and old.requests and not old.ended:
                 # Explicit reset ends the VA session, even if the previous turn timed out.
                 await self.send(old, '', True, 'END_CONVERSATION')
             self.sessions.pop(old.sid, None)

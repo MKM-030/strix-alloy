@@ -95,6 +95,29 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(state['busy'])
         self.assertEqual(len(self.requests), 1)
 
+    async def test_deferred_start_sends_only_real_first_utterance(self):
+        self.bridge.settings.defer_start_until_message = True
+        self.assertEqual((await self.post('/api/start', {})).status, 202)
+        self.assertEqual(self.requests, [])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['started'])
+        self.assertFalse(state['busy'])
+        self.assertEqual((await self.post('/api/message', {'text': 'Laptop bestellen'})).status, 202)
+        self.assertEqual(len(self.requests), 1)
+        self.assertEqual(self.requests[0]['message']['text'], 'Laptop bestellen')
+        self.assertNotIn('action', self.requests[0])
+        await self.callback(body=[{'uiType': 'ActionMsg', 'actionType': 'StartConversation'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['busy'])
+        self.assertEqual((await self.post('/api/reset', {})).status, 200)
+        self.assertEqual(self.requests[-1]['action'], 'END_CONVERSATION')
+
+    async def test_reset_unused_deferred_start_does_not_contact_service(self):
+        self.bridge.settings.defer_start_until_message = True
+        await self.post('/api/start', {})
+        self.assertEqual((await self.post('/api/reset', {})).status, 200)
+        self.assertEqual(self.requests, [])
+
     async def test_callback_output_input_and_duplicate_handling(self):
         await self.post('/api/start', {})
         body = [{'uiType': 'OutputText', 'value': 'Wie kann ich helfen?'},
