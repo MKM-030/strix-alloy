@@ -40,8 +40,13 @@ class Config:
     asr_url: str = 'http://127.0.0.1:8861/inference'
     tts_url: str = 'http://127.0.0.1:8862/v1/audio/speech'
     vad_threshold: int = 450
+    vad_silence_ms: int = 1200
     max_call_seconds: int = 1800
     greeting: str = ''
+
+    def __post_init__(self):
+        if type(self.vad_silence_ms) is not int or not 300 <= self.vad_silence_ms <= 2000:
+            raise ValueError('vad_silence_ms must be an integer between 300 and 2000')
 
     @property
     def instance_url(self):
@@ -268,6 +273,8 @@ class NativeCall:
         self.call_id = uuid.uuid4().hex[:12]
         self.closed = False
         self.turn_number = 0
+        self.synthesis_active = False
+        self.input_started = False
         self.peer.on('datachannel', self.datachannel)
         self.peer.on('track', lambda track: self.spawn(self.microphone(track)) if track.kind == 'audio' else None)
 
@@ -309,7 +316,8 @@ class NativeCall:
 
     async def microphone(self, track):
         converter = AudioResampler(format='s16', layout='mono', rate=16000)
-        gate = EndpointGate(threshold=self.config.vad_threshold)
+        gate = EndpointGate(threshold=self.config.vad_threshold,
+                            silence_ms=self.config.vad_silence_ms)
         try:
             while not self.closed:
                 frame = await track.recv()
@@ -319,11 +327,17 @@ class NativeCall:
                     pcm = mono.to_ndarray().tobytes()
                     began, utterance = gate.feed(pcm)
                     if began:
-                        # Do not cancel a possibly side-effecting ServiceNow request.
-                        # Audio is fenced immediately; the next utterance queues.
-                        self.playback.interrupt()
-                        LOG.info('Voice input call=%s stage=vad_start generation=%d audio_queue=%d text_queue=%d',
-                                 self.call_id, self.playback.generation, self.turns.qsize(), self.recognized_turns.qsize())
+                        self.input_started = True
+                        # Fence real output interruptions, not speech while the
+                        # backend is still thinking and has produced no audio.
+                        # A possibly side-effecting ServiceNow request still settles.
+                        playback_bytes = len(self.playback.data)
+                        interrupted = self.synthesis_active or bool(playback_bytes)
+                        if interrupted:
+                            self.playback.interrupt()
+                        LOG.info('Voice input call=%s stage=vad_start generation=%d interrupted=%s playback_bytes=%d audio_queue=%d text_queue=%d',
+                                 self.call_id, self.playback.generation, interrupted, playback_bytes,
+                                 self.turns.qsize(), self.recognized_turns.qsize())
                     if utterance:
                         try:
                             self.turns.put_nowait((self.playback.generation, utterance))
@@ -409,7 +423,8 @@ class NativeCall:
         try:
             greetings = await self.dialog.open() or []
             fallback_greeting = False
-            if not greetings and self.config.greeting and self.playback.generation == 0:
+            if (not greetings and self.config.greeting and self.playback.generation == 0
+                    and not self.input_started):
                 greetings = [self.config.greeting]
                 fallback_greeting = True
             generation = self.playback.generation
@@ -418,14 +433,18 @@ class NativeCall:
                     'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
                 if fallback_greeting:
                     self.dialog.record_greeting(greeting)
-                if generation:
+                if generation or self.input_started:
                     continue
-                async for chunk in self.speech.synthesize(greeting):
-                    if generation != self.playback.generation:
-                        break
-                    while len(self.playback.data) > 48000 and generation == self.playback.generation:
-                        await asyncio.sleep(.02)
-                    self.playback.put(chunk, generation)
+                self.synthesis_active = True
+                try:
+                    async for chunk in self.speech.synthesize(greeting):
+                        if generation != self.playback.generation:
+                            break
+                        while len(self.playback.data) > 48000 and generation == self.playback.generation:
+                            await asyncio.sleep(.02)
+                        self.playback.put(chunk, generation)
+                finally:
+                    self.synthesis_active = False
             while not self.closed and not self.failed:
                 turn = await self.recognized_turns.get()
                 generation, text, number, _, started = turn
@@ -438,7 +457,11 @@ class NativeCall:
                     nonlocal speech_error
                     transcript('assistant', reply)
                     if generation != self.playback.generation or speech_error:
+                        LOG.info('Voice output call=%s stage=tts_skipped turn=%d generation=%d current_generation=%d speech_error=%s',
+                                 self.call_id, number, generation, self.playback.generation,
+                                 bool(speech_error))
                         return
+                    self.synthesis_active = True
                     try:
                         async for chunk in self.speech.synthesize(reply):
                             if generation != self.playback.generation:
@@ -451,6 +474,8 @@ class NativeCall:
                         # before reporting TTS failure; never retry/cancel an order.
                         speech_error = error
                         self.playback.interrupt()
+                    finally:
+                        self.synthesis_active = False
                 try:
                     await self.dialog.turn(text, on_reply=deliver)
                 finally:

@@ -83,8 +83,11 @@ The earlier announcement still arrived in English, so that language defect
 remains. This test did not repeat generic small talk or the later order steps.
 
 Automatic turns use energy VAD (100 ms onset, 120 ms minimum voiced audio,
-550 ms final silence). Short confirmation utterances are explicitly tested. Barge-in
-clears queued audio and fences late audio immediately. An already submitted
+1200 ms final silence, configurable as `vad_silence_ms` between 300 and 2000).
+Short confirmation utterances and a 700 ms pause within one utterance are tested.
+Barge-in during speech synthesis or queued playback clears audio and fences late
+audio immediately. Speech while a backend request is waiting without output
+queues without suppressing that request's eventual spoken reply. An already submitted
 ServiceNow request is allowed to finish, because cancelling an order request
 could leave uncertain side effects. The next utterance queues behind it.
 Complete ServiceNow response messages are spoken as soon as they arrive;
@@ -113,6 +116,17 @@ extra language-probability calculation; transcription validation and decoding
 settings remain unchanged. No confidence cutoff, name prompt or audio recording
 was added. See `INGESTION-VALIDATION-20261013.json` for the 43 native/56 Bot tests,
 source-derived notice contract, isolated TDD failures, and Native-only activation.
+
+The 20:08 Berlin real-microphone call exposed a separate audio fencing defect:
+speech resumed after the old 550 ms endpoint and incremented playback generation
+before the first backend turn began. Later response text was delivered, but the
+generation check skipped its TTS. Three actual calls show successful ASR in
+0.266–0.516 seconds; this symptom was not failed recognition. The 20:20 update
+interrupts only actual synthesis/playback, keeps shorter pauses within one turn,
+and records content-free suppression diagnostics. All 55 native tests passed on
+Windows, including seven new audio/pause regressions and the two-peer RTP test.
+The native adapter alone was restarted while idle; a fresh human microphone
+call remains the acceptance test. See `AUDIO-PAUSE-VALIDATION-20261013.json`.
 
 This is full-duplex audio transport with interruption, not Omni joint inference.
 The existing SCC bot account remains the fixed demo identity; native browser
