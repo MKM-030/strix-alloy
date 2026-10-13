@@ -275,14 +275,73 @@ class NativeCall:
         self.turn_number = 0
         self.synthesis_active = False
         self.input_started = False
+        self.microphones = set()
+        self.input_loss_task = None
+        self.input_lost = False
+        self.input_ended = asyncio.Event()
+        self.turns_settled = asyncio.Event()
+        self.turns_settled.set()  # No conversation worker has started yet.
+        self.closing = False
+        self.close_task = None
+        self.close_complete = asyncio.Event()
         self.peer.on('datachannel', self.datachannel)
-        self.peer.on('track', lambda track: self.spawn(self.microphone(track)) if track.kind == 'audio' else None)
+        self.peer.on('track', self.receive_track)
 
     def spawn(self, coroutine):
         task = asyncio.create_task(coroutine)
         self.tasks.add(task)
         task.add_done_callback(self.tasks.discard)
         return task
+
+    def register_microphone(self, track):
+        if self.closed or self.closing or self.input_lost:
+            return False
+        self.microphones.add(track)
+        if self.input_loss_task and not self.input_loss_task.done():
+            self.input_loss_task.cancel()
+            self.input_loss_task = None
+        return True
+
+    def receive_track(self, track):
+        # Register before spawning: a replacement must cancel the loss grace
+        # even before its receive coroutine gets its first event-loop turn.
+        if track.kind == 'audio' and track not in self.microphones and self.register_microphone(track):
+            return self.spawn(self.microphone(track))
+
+    @staticmethod
+    def drain_queue(queue):
+        count = 0
+        while not queue.empty():
+            queue.get_nowait()
+            queue.task_done()
+            count += 1
+        return count
+
+    async def finish_input_loss(self):
+        # Track replacement can briefly leave no receiver. Silence and muted
+        # audio never enter this path; only a failed receive worker does.
+        await asyncio.sleep(.25)
+        if self.closed or self.closing or self.microphones or self.input_lost:
+            return
+        self.input_lost = True  # Commit before yielding or accepting more input.
+        # A lost speaker must not leave on_reply stuck on a full PCM buffer
+        # while the submitted ServiceNow request is still being observed.
+        self.playback.interrupt()
+        try:
+            self.notice('INPUT_LOST', 'Die Mikrofonverbindung wurde unterbrochen. Weitere Antworten werden nicht weitergeleitet. '
+                        'Dieser Anruf wird beendet, sobald die laufende Anfrage abgeschlossen ist.')
+        except Exception as error:
+            LOG.warning('Voice input call=%s stage=notice_failed type=%s', self.call_id, type(error).__name__)
+        if self.asr_task:
+            self.asr_task.cancel()
+            await asyncio.gather(self.asr_task, return_exceptions=True)
+        audio_count = self.drain_queue(self.turns)
+        text_count = self.drain_queue(self.recognized_turns)
+        if not self.turns_settled.is_set():
+            self.recognized_turns.put_nowait(None)  # Wake an idle worker only.
+        LOG.info('Voice input call=%s stage=input_lost discarded_audio=%d discarded_text=%d',
+                 self.call_id, audio_count, text_count)
+        self.input_ended.set()
 
     def datachannel(self, channel):
         if channel.label != 'transcripts':
@@ -311,22 +370,34 @@ class NativeCall:
     def notice(self, code, text):
         # Native type=error immediately closes WSS. A local notice must remain
         # visible without ending a possibly side-effecting ServiceNow request.
+        if code == 'INPUT_LOST' and len(self.pending_events) >= 30:
+            # Retain the terminal notice even if an unopened channel has filled
+            # its bounded backlog. Initial greeting history is held separately.
+            self.pending_events.pop(0)
         self.emit('transcript', {'role':'assistant','content':text,'code':code,
             'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
 
     async def microphone(self, track):
-        converter = AudioResampler(format='s16', layout='mono', rate=16000)
-        gate = EndpointGate(threshold=self.config.vad_threshold,
-                            silence_ms=self.config.vad_silence_ms)
+        if not self.register_microphone(track):
+            return
+        started = time.monotonic()
+        frames = samples = vad_starts = queued = 0
+        receive_failed = False
         try:
+            converter = AudioResampler(format='s16', layout='mono', rate=16000)
+            gate = EndpointGate(threshold=self.config.vad_threshold,
+                                silence_ms=self.config.vad_silence_ms)
             while not self.closed:
                 frame = await track.recv()
-                if self.failed:
+                frames += 1
+                if self.failed or self.input_lost or self.closing:
                     continue
                 for mono in converter.resample(frame):
                     pcm = mono.to_ndarray().tobytes()
+                    samples += len(pcm) // 2
                     began, utterance = gate.feed(pcm)
                     if began:
+                        vad_starts += 1
                         self.input_started = True
                         # Fence real output interruptions, not speech while the
                         # backend is still thinking and has produced no audio.
@@ -341,6 +412,7 @@ class NativeCall:
                     if utterance:
                         try:
                             self.turns.put_nowait((self.playback.generation, utterance))
+                            queued += 1
                             LOG.info('Voice input call=%s stage=queued audio_ms=%d audio_queue=%d text_queue=%d',
                                      self.call_id, len(utterance)*1000//32000,
                                      self.turns.qsize(), self.recognized_turns.qsize())
@@ -349,18 +421,30 @@ class NativeCall:
                             self.notice('BUSY', 'Die letzte Aufnahme konnte nicht angenommen werden. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.')
         except asyncio.CancelledError:
             raise
-        except Exception:
+        except Exception as error:
             if not self.closed:
-                LOG.info('Microphone track ended')
+                receive_failed = True
+                connection = self.peer.connectionState
+                ice = self.peer.iceConnectionState
+                connection = connection if connection in ('new', 'connecting', 'connected', 'disconnected', 'failed', 'closed') else 'unknown'
+                ice = ice if ice in ('new', 'checking', 'connected', 'completed', 'disconnected', 'failed', 'closed') else 'unknown'
+                LOG.warning('Voice input call=%s stage=track_failed type=%s seconds=%.3f frames=%d audio_ms=%d vad_starts=%d queued=%d connection_state=%s ice_state=%s',
+                            self.call_id, type(error).__name__, time.monotonic()-started, frames,
+                            samples*1000//16000, vad_starts, queued, connection, ice)
+        finally:
+            self.microphones.discard(track)
+            if receive_failed and not self.closed and not self.closing and not self.microphones and not self.input_lost:
+                if not self.input_loss_task or self.input_loss_task.done():
+                    self.input_loss_task = self.spawn(self.finish_input_loss())
 
     async def recognize_turns(self):
         """Recognize accepted audio independently; never submit backend requests."""
-        while not self.closed and not self.failed:
+        while not self.closed and not self.failed and not self.input_lost and not self.closing:
             generation, pcm = await self.turns.get()
             started = time.monotonic()
             try:
                 text = await self.speech.transcribe(pcm)
-                if self.closed or self.failed:
+                if self.closed or self.failed or self.input_lost or self.closing:
                     return
                 LOG.info('Voice input call=%s stage=asr_complete audio_ms=%d seconds=%.3f empty=%s text_queue=%d',
                          self.call_id, len(pcm)*1000//32000, time.monotonic()-started,
@@ -400,6 +484,10 @@ class NativeCall:
             while not queue.empty():
                 queue.get_nowait()
                 queue.task_done()
+        if self.input_lost:
+            # The input-loss notice already explains closure. A lost speaker
+            # must not be refilled by failure TTS while cleanup waits to settle.
+            return
         notice = ('Der Sprachdialog konnte nicht fortgesetzt werden. Weitere Antworten werden nicht weitergeleitet. '
                   'Bitte beenden Sie diesen Anruf.')
         self.notice('TURN_FAILED', notice)
@@ -419,16 +507,19 @@ class NativeCall:
             LOG.warning('Voice failure notice call=%s type=%s', self.call_id, type(error).__name__)
 
     async def process_turns(self):
+        self.turns_settled.clear()
         self.asr_task = self.spawn(self.recognize_turns())
         try:
             greetings = await self.dialog.open() or []
             fallback_greeting = False
             if (not greetings and self.config.greeting and self.playback.generation == 0
-                    and not self.input_started):
+                    and not self.input_started and not self.input_lost):
                 greetings = [self.config.greeting]
                 fallback_greeting = True
             generation = self.playback.generation
             for greeting in greetings:
+                if self.input_lost:
+                    break
                 self.emit('transcript', {'role':'assistant','content':greeting,
                     'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
                 if fallback_greeting:
@@ -445,8 +536,13 @@ class NativeCall:
                         self.playback.put(chunk, generation)
                 finally:
                     self.synthesis_active = False
-            while not self.closed and not self.failed:
+            while not self.closed and not self.failed and not self.input_lost and not self.closing:
                 turn = await self.recognized_turns.get()
+                # Loss can commit while this get() or ASR cancellation yields.
+                # No queued, unsubmitted turn may cross that commitment.
+                if turn is None or self.input_lost or self.closing:
+                    self.recognized_turns.task_done()
+                    break
                 generation, text, number, _, started = turn
                 LOG.info('Voice backend call=%s stage=begin turn=%d text_queue=%d',
                          self.call_id, number, self.recognized_turns.qsize())
@@ -455,6 +551,10 @@ class NativeCall:
                 speech_error = None
                 async def deliver(reply):
                     nonlocal speech_error
+                    if self.input_lost:
+                        # Output transport may already be gone. Continue
+                        # observing the submitted turn without another send.
+                        return
                     transcript('assistant', reply)
                     if generation != self.playback.generation or speech_error:
                         LOG.info('Voice output call=%s stage=tts_skipped turn=%d generation=%d current_generation=%d speech_error=%s',
@@ -489,17 +589,37 @@ class NativeCall:
             # Deliberately log type only: network exceptions can contain tokens.
             LOG.warning('Voice turn failed type=%s', type(error).__name__)
             await self.report_backend_failure()
+        finally:
+            # Includes failures and cancellation, after submitted-turn observation.
+            self.turns_settled.set()
 
     async def close(self):
-        if self.closed:
-            return
-        self.closed = True
-        self.playback.interrupt()
-        for task in list(self.tasks):
-            task.cancel()
-        await asyncio.gather(*self.tasks, return_exceptions=True)
-        await self.peer.close()
-        await self.dialog.close()
+        if self.close_task is None:
+            self.closing = True
+            # Outside self.tasks: cleanup must never cancel/gather itself.
+            self.close_task = asyncio.create_task(self.finish_close())
+        await asyncio.shield(self.close_task)
+
+    async def finish_close(self):
+        try:
+            if self.input_lost:
+                # Even an independent client disconnect must preserve the
+                # submitted turn after terminal input loss has committed.
+                await self.turns_settled.wait()
+            self.closed = True
+            self.playback.interrupt()
+            tasks = tuple(self.tasks)
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            self.drain_queue(self.turns)
+            self.drain_queue(self.recognized_turns)
+            try:
+                await self.peer.close()
+            finally:
+                await self.dialog.close()
+        finally:
+            self.close_complete.set()
 
 
 async def authorize(request, config, http):
@@ -569,8 +689,10 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
 
     async def connect(request):
         if not await authorize(request, config, app[HTTP_KEY]):
+            LOG.info('Native signaling admission status=401')
             raise web.HTTPUnauthorized(text='Voice authorization rejected')
         if active:
+            LOG.info('Native signaling admission status=503 native_sessions=%d', len(active))
             raise web.HTTPServiceUnavailable(text='Demo voice session is busy')
         ws = web.WebSocketResponse(heartbeat=20, max_msg_size=256*1024)
         speech = speech_factory(app[HTTP_KEY]) if speech_factory else Speech(app[HTTP_KEY], config)
@@ -579,9 +701,18 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         # Reserve without yielding after checking capacity, including WS upgrade.
         active.add(call)
         offered = False
+        input_coordinator = None
+        async def close_after_input_loss():
+            await call.input_ended.wait()
+            await call.turns_settled.wait()
+            if not call.closed:
+                await ws.close()
         try:
             await ws.prepare(request)
+            LOG.info('Native signaling admission status=101 call=%s', call.call_id)
             call.spawn(call.process_turns())
+            # Kept outside call.tasks. Only the handler owns call.close().
+            input_coordinator = asyncio.create_task(close_after_input_loss())
             async with asyncio.timeout(config.max_call_seconds):
                 async for message in ws:
                     if message.type != WSMsgType.TEXT:
@@ -612,9 +743,23 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         except Exception as error:
             LOG.warning('Signaling ended type=%s', type(error).__name__)
         finally:
-            await call.close()
-            active.discard(call)
-            await ws.close()
+            try:
+                if input_coordinator:
+                    input_coordinator.cancel()
+                    await asyncio.gather(input_coordinator, return_exceptions=True)
+            finally:
+                # Start owned cleanup even if another cancellation interrupts
+                # the coordinator await above.
+                try:
+                    await call.close()
+                finally:
+                    if call.close_complete.is_set():
+                        active.discard(call)
+                    elif call.close_task is not None:
+                        # A second handler cancellation may detach its shielded
+                        # close await. Capacity still belongs to owned cleanup.
+                        call.close_task.add_done_callback(lambda task: active.discard(call))
+                    await ws.close()
         return ws
 
     async def health(request):
