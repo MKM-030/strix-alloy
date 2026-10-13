@@ -96,6 +96,9 @@ class Dialog:
         self.csrf = ''
         self.cursor = 0
         self.must_reset = False
+        self.first_message_pending = True
+        self.greeting_history = []
+        self.greeting_history_allowed = False
         self.metadata = {'conversation_id':'', 'interaction_id':''}
 
     async def request(self, method, path, **kwargs):
@@ -114,6 +117,7 @@ class Dialog:
             await self.reset_owned_session()
         info = await self.request('GET', '/api/session')
         self.csrf = info['csrf']
+        self.greeting_history_allowed = info.get('initialBotHistoryAllowed') is True
         if not info.get('serviceNowEnabled'):
             raise RuntimeError('ServiceNow conversation is disabled')
         if not info.get('started'):
@@ -136,8 +140,23 @@ class Dialog:
                 return greetings
         raise RuntimeError('ServiceNow conversation startup timed out')
 
+    def record_greeting(self, text):
+        """Remember only our actually emitted fallback, never a backend greeting."""
+        if (self.greeting_history_allowed and self.first_message_pending and
+                not self.greeting_history and
+                isinstance(text, str) and text.strip() and len(text) <= 4000):
+            self.greeting_history = [{'isBotMessage':True, 'value':text,
+                'displayName':'Bot', 'type':'text',
+                'timestamp':str(int(time.time() * 1000))}]
+
     async def turn(self, text, on_reply=None):
-        await self.request('POST', '/api/message', json={'text':text})
+        payload = {'text':text}
+        if self.first_message_pending and self.greeting_history:
+            payload['history'] = self.greeting_history
+        # Consume before I/O: uncertain delivery must never replay the greeting.
+        self.first_message_pending = False
+        self.greeting_history = []
+        await self.request('POST', '/api/message', json=payload)
         until = time.monotonic() + 185
         result = []
         while time.monotonic() < until:
@@ -172,6 +191,9 @@ class Dialog:
         self.csrf = ''
         self.cursor = 0
         self.must_reset = False
+        self.first_message_pending = True
+        self.greeting_history = []
+        self.greeting_history_allowed = False
 
     async def shutdown(self):
         if self.http:
@@ -273,12 +295,16 @@ class NativeCall:
     async def process_turns(self):
         try:
             greetings = await self.dialog.open() or []
+            fallback_greeting = False
             if not greetings and self.config.greeting and self.playback.generation == 0:
                 greetings = [self.config.greeting]
+                fallback_greeting = True
             generation = self.playback.generation
             for greeting in greetings:
                 self.emit('transcript', {'role':'assistant','content':greeting,
                     'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
+                if fallback_greeting:
+                    self.dialog.record_greeting(greeting)
                 if generation:
                     continue
                 async for chunk in self.speech.synthesize(greeting):

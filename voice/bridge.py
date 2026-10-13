@@ -10,6 +10,7 @@ import io
 import json
 import logging
 from pathlib import Path
+import re
 import secrets
 import time
 from urllib.parse import urlsplit
@@ -37,6 +38,8 @@ class Settings:
     tts_voice: str = 'ryan'
     defer_start_until_message: bool = False
     wait_for_input_control: bool = False
+    session_language: str = ''
+    callback_metadata_log_limit: int = 0
     session_seconds: int = 1800
     turn_seconds: int = 180
     max_sessions: int = 8
@@ -114,11 +117,77 @@ async def read_limited(stream, limit):
     return bytes(data)
 
 
+def initial_bot_history(value):
+    """One actual primary-bot greeting; never accept invented user history."""
+    if not isinstance(value, list) or len(value) != 1 or not isinstance(value[0], dict):
+        raise web.HTTPBadRequest(text='One initial bot greeting is required')
+    item = value[0]
+    if (set(item) != {'isBotMessage', 'value', 'displayName', 'type', 'timestamp'}
+            or item.get('isBotMessage') is not True or item.get('type') != 'text'
+            or item.get('displayName') != 'Bot' or not isinstance(item.get('value'), str)
+            or not 1 <= len(item['value'].strip()) <= 4000
+            or not isinstance(item.get('timestamp'), str)
+            or not re.fullmatch(r'[0-9]{13}', item['timestamp'])):
+        raise web.HTTPBadRequest(text='Invalid initial bot greeting')
+    return [dict(item)]
+
+
+def callback_metadata(data):
+    """Bounded structural diagnostics: no utterances, identities or credentials."""
+    envelope_keys = {'requestId','clientSessionId','userId','body','message','completed',
+        'streamState','streamActive','takeControl','nowSessionId','interactionId',
+        'nowBotId','appInboundId','enterpriseId','score','agentChat','clientVariables','contextVariables'}
+    control_keys = {'uiType','actionType','streaming','streamingStatus','streamId','streamSequence',
+        'messageId','conversationId','interactionId','value','label','promptMsg','maskType',
+        'group','required','nluTextEnabled','options','type','itemType','spinnerType','waitTime',
+        'message','supportQueue','channel','userDetails','chatSessionId','progressMessages',
+        'defaultHeader','parentMessageId','header','shouldUpdateParentMessage','status',
+        'displayMessage','subHeader','isWaitingForResponse'}
+    ui_types = {'OutputText','InputText','ActionMsg','StreamStart','StreamChunk','Picker',
+        'TopicPickerControl','Boolean','Date','DateTime','Time','FileUpload','OutputImage',
+        'OutputLink','OutputCard','AdaptiveCard'}
+    actions = {'CreateConversation','StartConversation','EndConversation','StartTypingIndicator',
+        'EndTypingIndicator','StartSpinner','StopSpinner','SubscribeToSupportQueue',
+        'SubscribeToChatPresence','ChatSubHeader','EndSpinner','StartTypingIndicatorActionMsg',
+        'EndTypingIndicatorActionMsg','SwitchToLiveAgent','SwitchToVirtualAgent',
+        'SwitchConversation','System','DynamicLoader','TopicFinishedActionMsg',
+        'SeparatorActionMsg','SystemActionMsg'}
+    states = {'START','INPROGRESS','END'}
+    def known(value, allowed):
+        return value if isinstance(value, str) and value in allowed else ('other' if value is not None else None)
+    result = {'keys': sorted(set(data) & envelope_keys),
+              'unknown_key_count':len(set(data)-envelope_keys)}
+    for key in ('streamActive', 'takeControl', 'completed'):
+        value = data.get(key)
+        result[key] = value if isinstance(value, bool) else None
+    result['streamState'] = known(data.get('streamState'), states)
+    result['controls'] = []
+    for item in data.get('body', [])[:20]:
+        if isinstance(item, dict):
+            control = {'keys':sorted(set(item) & control_keys),
+                'unknown_key_count':len(set(item)-control_keys),
+                'uiType':known(item.get('uiType'),ui_types),
+                'actionType':known(item.get('actionType'),actions),
+                'streaming':known(item.get('streaming'),states),
+                'streamingStatus':known(item.get('streamingStatus'),states)}
+            if isinstance(item.get('shouldUpdateParentMessage'), bool):
+                control['shouldUpdateParentMessage'] = item['shouldUpdateParentMessage']
+            if isinstance(item.get('progressMessages'), list):
+                control['progressStatuses'] = [known(p.get('status'),
+                    {'COMPLETED','IN_PROGRESS','INPROGRESS','STARTED','PENDING','FAILED'})
+                    for p in item['progressMessages'][:20] if isinstance(p, dict)]
+            result['controls'].append(control)
+    return result
+
+
 class Bridge:
     def __init__(self, settings, sn_token, audio_token, callback_token):
         if not audio_token or (settings.service_now_enabled and (not settings.user_id or not sn_token or not callback_token)):
             raise ValueError('Server identity and all three credentials are required')
         self.settings = settings
+        if settings.session_language and not re.fullmatch(r'[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*', settings.session_language):
+            raise ValueError('Invalid configured session language')
+        self.callback_diagnostics_remaining = max(0, min(100, settings.callback_metadata_log_limit))
         self.sn_token, self.audio_token = sn_token, audio_token
         if settings.callback_username:
             value = base64.b64encode((settings.callback_username + ':' + callback_token).encode()).decode()
@@ -225,6 +294,8 @@ class Bridge:
                 LOG.info('Bot session alias=%s', user_id)
         response = web.json_response({'csrf': session.csrf, 'started': session.started,
             'serviceNowEnabled': self.settings.service_now_enabled,
+            'initialBotHistoryAllowed': bool(self.settings.defer_start_until_message and
+                not session.requests and not session.failed and not session.ended),
             'expiresIn': max(0, int(self.settings.session_seconds - time.monotonic() + session.created))})
         response.set_cookie('scc_voice', session.sid, httponly=True, samesite='Strict',
                             max_age=self.settings.session_seconds, path='/')
@@ -290,15 +361,24 @@ class Bridge:
                 raise web.HTTPBadRequest(text='Input must be 1 to 4000 characters')
             if not typed and value not in [item['value'] for item in session.choices]:
                 raise web.HTTPBadRequest(text='Choice not available')
-            await self.send(session, value.strip() if typed else value, typed)
+            history = None
+            if 'history' in data:
+                if session.requests:
+                    raise web.HTTPBadRequest(text='History is only accepted on the first request')
+                history = initial_bot_history(data['history'])
+            await self.send(session, value.strip() if typed else value, typed, history=history)
         return web.json_response({'accepted': True}, status=202)
 
-    async def send(self, session, text, typed, action=''):
+    async def send(self, session, text, typed, action='', history=None):
         request_id = uuid.uuid4().hex
         payload = {'requestId': request_id, 'appInboundId': self.settings.inbound_id,
             'clientSessionId': session.sid, 'userId': session.user_id,
             'emailId': self.settings.email, 'message': {'text': text, 'typed': typed,
             'clientMessageId': uuid.uuid4().hex}, 'clientVariables': {'voiceSessionId': session.sid}}
+        if self.settings.session_language:
+            payload['contextVariables'] = {'requester_session_language':self.settings.session_language}
+        if history is not None and not session.requests:
+            payload['history'] = history
         if session.now_session:
             payload['nowSessionId'] = session.now_session
         if action:
@@ -369,6 +449,10 @@ class Bridge:
         if session and session.requests and data.get('requestId') == session.requests[-1] and not session.ended:
             if data.get('userId') not in (None, '', session.user_id):
                 raise web.HTTPBadRequest(text='Identity mismatch')
+            if self.callback_diagnostics_remaining:
+                self.callback_diagnostics_remaining -= 1
+                LOG.info('Bot callback metadata request_id=%s utc_ms=%d data=%s',
+                         data.get('requestId'), int(time.time()*1000), json.dumps(callback_metadata(data)))
             fingerprint = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
             if fingerprint not in session.fingerprints:
                 session.fingerprints.append(fingerprint)

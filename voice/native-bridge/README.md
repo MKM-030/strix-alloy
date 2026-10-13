@@ -37,8 +37,42 @@ received speech took 34.531 seconds from call start (22.533 seconds on the
 second warm call). Substantive responses still took about 50–68 seconds after
 recognition. ServiceNow progress announcements were English, while questions,
 summary and result were German. These remain visible demo limitations. The
-actual native UI call was blocked by browser microphone permissions, so
-native OAuth, the physical microphone and remote UDP media remain unverified.
+initial automated native UI check was blocked by browser microphone permissions.
+The user's later real native-browser call passed platform authorization and
+established LAN ICE, with visible microphone transcription and spoken output.
+Production logs show successful ICE at 13:18:14 Berlin on 2026-10-13. A natural
+hello then exposed a separate defect: the generic router replied in English
+and supplied OutputText without the input control required by the bridge,
+leaving the turn busy until its 180-second timeout.
+
+The Bot adapter now sends the dedicated demo's configured `session_language`
+through the documented `contextVariables.requester_session_language` field.
+The actual emitted fallback transcript is passed once as initial Bot history
+with the first real user message. This does not claim the complete audio was
+heard if the caller interrupted playback. A backend capability flag enables
+this only before a deferred first request; ordinary START_CONVERSATION clients
+remain compatible. Ambiguous HTTP delivery never replays that history.
+Bounded, allowlisted callback metadata diagnostics support investigation of
+the generic-turn completion signal. These changes do not treat intermediate
+task announcements as input-ready and do not alter order confirmation rules.
+
+The real RTP hello probe at 11:40 UTC confirmed a German contextual reply
+without a second greeting, with first audible output 6.239 seconds after
+recognition. **Natural follow-up is still blocked:** that reply supplied no
+input-ready control, so the diagnostic stopped after 60 seconds and ended its
+own conversation. It did not send the next laptop intent. A separate laptop
+first-turn probe reached the real employee-name question after 52.400 seconds
+from recognition, but its earlier progress announcement remained English.
+
+Callback comparison proves that `streamState: END` with `streamActive: false`
+is insufficient: the laptop progress message has the same shape as the final
+hello reply, then continues after 1.107 seconds and supplies InputText 36.980
+seconds later. A temporary isolated `botToBot: false` probe also stalled after
+the same generic reply. It was rolled back at 11:52:04 UTC; that experimental
+setting is absent from production. No timer, text heuristic, or stream-END
+shortcut releases the busy state. Finishing natural small-talk continuation
+requires an actual ServiceNow terminal/input-ready contract or routing change.
+The temporary diagnostic budget is configured as zero for future starts.
 
 Automatic turns use energy VAD (100 ms onset, 120 ms minimum voiced audio,
 550 ms final silence). Short confirmation utterances are explicitly tested. Barge-in
@@ -79,8 +113,8 @@ agent `a6337ddf93f787105c8132d47aba1058` is accepted. The downstream existing ch
 agent remains `a4a9438393738354e7f2b9fa6aba101d`.
 The platform validates the voice-service token claim and agent execute rights.
 JWT syntax alone never authorizes a call. Redirects are disabled. Query strings,
-tokens and exception messages are never logged. The instance response envelope
-is source-derived and still needs a real native OAuth call for final validation.
+tokens and exception messages are never logged. The original source-derived
+authorization contract subsequently admitted the user's real native calls.
 
 Default mode denies access. Development credentials, if explicitly configured
 through a file, require at least 32 characters and a loopback peer. Never use
@@ -141,6 +175,11 @@ all supplied choices before the explicit spoken confirmation fixture. A
 failed or ambiguous turn is never retried automatically. `--first-turn-only`
 ends before sending a name or confirmation. These are synthetic audio tests,
 not proof that the actual browser microphone or native OAuth works.
+The additional `--hello-first --first-turn-only` diagnostic waits for the
+actual fallback greeting, replays a natural hello as genuine microphone RTP,
+and waits at most 60 seconds for backend input readiness before the laptop
+intent. It never sends a name or order confirmation, and never bypasses a
+busy backend. This shorter deadline applies only to the diagnostic harness.
 
 The isolated Funnel path was added and independently checked by the coordinating
 agent: `/scc-native/health` returned 200 in production auth mode; connect without

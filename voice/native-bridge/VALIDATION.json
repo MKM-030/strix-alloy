@@ -2,9 +2,9 @@
   "date": "2026-10-13",
   "environment": "Windows DESKTOP-8M583SI isolated native-bridge .venv",
   "unit_and_transport": {
-    "passed": 18,
-    "seconds": 5.344,
-    "existing_bridge_regression_tests_passed": 29,
+    "passed": 33,
+    "seconds": 5.717,
+    "existing_bridge_regression_tests_passed": 56,
     "coverage": [
       "wrong credential denial",
       "strict native agent authorization envelope",
@@ -21,7 +21,8 @@
       "speech failure preserves pending backend observation",
       "greeting once and barge-in fencing",
       "exact summary review hash and run identifier"
-    ]
+    ],
+    "existing_bridge_regression_seconds": 1.551
   },
   "live_speech_transport": {
     "passed": true,
@@ -52,8 +53,8 @@
     "owned_session_reset": true,
     "diagnosis": "HaloGen WSL backend stopped; gateway ClientConnectorError; no retry"
   },
-  "native_oauth_call": "pending real native UI",
-  "native_microphone_demo": "pending",
+  "native_oauth_call": "Validated by production authenticated native-browser sessions on 2026-10-13",
+  "native_microphone_demo": "Real user native browser exchanged microphone ASR and spoken output; complete natural greeting-to-order acceptance remains pending",
   "real_service_request_creation": "Existing REQ0010012/RITM0010011 reused through real spoken confirmation; no new order requested",
   "first_turn_baseline": {
     "started_utc": "2026-10-13T10:22:41.296Z",
@@ -95,7 +96,7 @@
     "known_limitations": [
       "Backend turns still take about 51–68 seconds after recognition to the substantive question/result",
       "ServiceNow progress announcements arrived in English; summary and outcome were German",
-      "Native UI microphone and OAuth remain unverified"
+      "This earlier synthetic run did not prove browser OAuth/microphone; later real-user call proved both, but exposed generic-turn readiness failure"
     ],
     "completed_utc": "2026-10-13T10:40:12.654Z",
     "total_seconds": 322.437,
@@ -109,5 +110,83 @@
       "owned_session_released": true,
       "name_or_confirmation_sent": false
     }
+  },
+  "native_user_call": {
+    "production_ice_completed_windows_local": [
+      "2026-10-13T12:58:21.678+02:00",
+      "2026-10-13T13:05:00.566+02:00",
+      "2026-10-13T13:18:14.620+02:00"
+    ],
+    "media_route": "LAN 192.168.50.19 to 192.168.50.55",
+    "generic_hello_failure": "OutputText without observed input-ready control, then180-second busy timeout",
+    "owned_end_completed": true
+  },
+  "context_patch": {
+    "runtime_activated_utc": "2026-10-13T11:36:54.535Z",
+    "language": "de",
+    "metadata_limit": 80,
+    "native_and_context_tests_passed": 33,
+    "existing_bridge_tests_passed": 56,
+    "live_hello_probe": "German contextual reply without repeat greeting verified; next intent not sent because no input-ready control",
+    "readiness_behavior": "Unchanged: no blanket stream-END readiness or debounce heuristic",
+    "metadata_limit_on_future_starts": 0,
+    "metadata_disabled_in_config_utc": "2026-10-13T11:52:12.209Z"
+  },
+  "hello_context_audio": {
+    "started_utc": "2026-10-13T11:40:35.296Z",
+    "actual_rtp_asr_bot_tts": true,
+    "asr_utc": "2026-10-13T11:40:43.850Z",
+    "reply": "Ich benötige keine weiteren Informationen von Ihnen. Die Laptopdemo kann jederzeit gestartet werden.",
+    "reply_after_asr_seconds": 5.369,
+    "first_audible_after_asr_seconds": 6.239,
+    "ready": false,
+    "diagnostic_timeout_seconds": 60,
+    "next_intent_sent": false,
+    "owned_session_released": true,
+    "closed_utc": "2026-10-13T11:41:40.333Z",
+    "runtime_report": "runtime/hello-context-20261013-1137/report.json"
+  },
+  "laptop_callback_comparison": {
+    "started_utc": "2026-10-13T11:42:55.606Z",
+    "request_id": "9c3e0ff60bb34782b66a1043f634971c",
+    "question": "Wie heißt dein neuer Mitarbeiter?",
+    "question_after_asr_seconds": 52.4,
+    "progress_language": "English",
+    "progress_end_identical_to_generic_end": true,
+    "continuation_after_progress_end_seconds": 1.107,
+    "input_text_after_progress_end_seconds": 36.98,
+    "name_or_confirmation_sent": false,
+    "owned_session_released": true,
+    "closed_utc": "2026-10-13T11:44:00.477Z",
+    "runtime_report": "runtime/laptop-callback-20261013-1142/report.json"
+  },
+  "standalone_bot_experiment": {
+    "setting": "botToBot:false",
+    "isolation": "temporary Bot UI8863/callback8853; production config untouched",
+    "started_utc": "2026-10-13T11:50:58.182Z",
+    "request_id": "30ea9967d4ec402384f4371e60a04841",
+    "generic_action_before_stream": "System",
+    "same_contextual_german_reply": true,
+    "ready": false,
+    "diagnostic_timeout_seconds": 60,
+    "next_intent_sent": false,
+    "owned_end_acknowledged": true,
+    "restored_8850_utc": "2026-10-13T11:52:04.868Z",
+    "production_mode_unchanged": true,
+    "candidate_code_retained": false,
+    "runtime_report": "runtime/standalone-hello-20261013/report.json",
+    "owned_end_completed": true
+  },
+  "final_status": {
+    "utc": "2026-10-13T11:53:34.703Z",
+    "stack_healthy": true,
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "bot_worker_pid": 3348,
+    "native_worker_pid": 15644,
+    "diagnostics_next_start_limit": 0,
+    "diagnostics_current_process_limit_at_start": 80,
+    "source_cleanup": "Unsuccessful standalone-mode setting removed from source; production wire behavior unchanged throughout; no final restart during possible user activity"
   }
 }

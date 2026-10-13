@@ -224,7 +224,7 @@ class ObservedSpeech(production.Speech):
             self.tts_busy = False
 
 
-async def single_call(config, fixtures, trace, output, order, isolation=True):
+async def single_call(config, fixtures, trace, output, order, isolation=True, hello_fixture=None):
     """A private ephemeral local WS listener; never connected to Funnel."""
     app_calls = []
     original_call = production.NativeCall
@@ -283,11 +283,11 @@ async def single_call(config, fixtures, trace, output, order, isolation=True):
             pass
     peer.on('track', lambda track: asyncio.create_task(receive(track)))
 
-    async def speak_fixture(name):
+    async def speak_fixture(name, timeout_seconds=330):
         trace.add('microphone_fixture', file=name)
         old_turns = dialog.turn_count
         microphone.load(fixtures/name)
-        deadline = time.monotonic()+330
+        deadline = time.monotonic()+timeout_seconds
         idle_since = None
         while time.monotonic() < deadline:
             await asyncio.sleep(.1)
@@ -307,7 +307,10 @@ async def single_call(config, fixtures, trace, output, order, isolation=True):
                     return
             else:
                 idle_since = None
-        raise RuntimeError('Audio turn did not finish within 330 seconds; no retry')
+        trace.add('turn_readiness_timeout', timeout_seconds=timeout_seconds,
+                  busy=dialog.state.get('busy'), ended=dialog.state.get('ended'),
+                  input_label=dialog.state.get('inputLabel'), replies=dialog.latest_replies)
+        raise RuntimeError('Audio turn did not finish within its bounded deadline; no retry')
 
     try:
         async with ClientSession() as http:
@@ -330,6 +333,21 @@ async def single_call(config, fixtures, trace, output, order, isolation=True):
                             'candidate':line[2:],'sdpMid':mid,'sdpMLineIndex':index}})
                 signaling_reader = asyncio.create_task(drain_signaling(ws, peer, signaling_closed))
                 await asyncio.wait_for(connected.wait(),15)
+                if hello_fixture:
+                    deadline = time.monotonic()+15
+                    while time.monotonic() < deadline:
+                        greeting = any(x.get('type') == 'transcript' and
+                            x.get('data', {}).get('role') == 'assistant' and
+                            x.get('data', {}).get('turn_num') == 0 for x in messages)
+                        if greeting and speech and not speech.tts_busy and not app_calls[0].playback.data:
+                            break
+                        await asyncio.sleep(.1)
+                    else:
+                        raise RuntimeError('Actual fallback greeting was not received before hello probe')
+                    trace.add('startup_greeting_received_before_user_hello')
+                    await speak_fixture(str(hello_fixture.resolve()), timeout_seconds=60)
+                    trace.add('hello_turn_ready', replies=dialog.latest_replies,
+                              input_label=dialog.state.get('inputLabel'), choices=dialog.state.get('choices'))
                 await speak_fixture('01-intent.wav')
                 prompt = dialog.state.get('inputLabel','') or ' '.join(dialog.latest_replies)
                 if not name_question(prompt):
@@ -384,8 +402,22 @@ async def run(args):
                 raise RuntimeError('Production native listener must be idle in authenticated mode')
     try:
         if args.first_turn_only:
+            hello_fixture = None
+            if args.hello_first:
+                hello_fixture = target/'hello-input.wav'
+                pcm = bytearray()
+                async with ClientSession() as http:
+                    speech = production.Speech(http, config)
+                    async for chunk in speech.synthesize('Hallo, wunderbar, was benötigen Sie von mir?'):
+                        pcm.extend(chunk)
+                with wave.open(str(hello_fixture), 'wb') as wav:
+                    wav.setnchannels(1)
+                    wav.setsampwidth(2)
+                    wav.setframerate(24000)
+                    wav.writeframes(pcm)
+                trace.add('hello_fixture_prepared', file=str(hello_fixture))
             await single_call(config, Path(args.fixtures), trace, target/'first-turn-received.wav',
-                              False, isolation=False)
+                              False, isolation=False, hello_fixture=hello_fixture)
             trace.add('first_turn_probe_completed', name_and_confirmation_not_sent=True)
             return
         await single_call(config, Path(args.fixtures), trace, target/'call1-received.wav', True)
@@ -404,7 +436,11 @@ if __name__ == '__main__':
     parser.add_argument('--output', default='runtime/full-audio-demo')
     parser.add_argument('--first-turn-only', action='store_true',
                         help='Stop after the real employee-name question, without name or confirmation')
+    parser.add_argument('--hello-first', action='store_true',
+                        help='With first-turn-only: actual fallback, natural hello, then laptop intent; never orders')
     args = parser.parse_args()
+    if args.hello_first and not args.first_turn_only:
+        parser.error('--hello-first requires --first-turn-only')
     try:
         asyncio.run(run(args))
     except Exception as error:

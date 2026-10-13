@@ -89,10 +89,13 @@ class ProgressiveAudioTests(unittest.IsolatedAsyncioTestCase):
     async def test_configured_greeting_is_spoken_once_when_backend_has_none(self):
         self.assertIn('greeting', Config.__dataclass_fields__, 'configured native greeting missing')
         spoken = []
+        recorded = []
         class EmptyDialog:
             metadata = {}
             async def open(self):
                 return []
+            def record_greeting(self, text):
+                recorded.append(text)
             async def close(self):
                 pass
         class Speech:
@@ -104,16 +107,20 @@ class ProgressiveAudioTests(unittest.IsolatedAsyncioTestCase):
         try:
             await asyncio.sleep(.03)
             self.assertEqual(spoken, ['Hallo, ich helfe Ihnen bei der Laptopdemo.'])
+            self.assertEqual(recorded, spoken)
         finally:
             await call.close()
 
     async def test_greeting_is_skipped_if_user_already_started_speaking(self):
         self.assertIn('greeting', Config.__dataclass_fields__)
         spoken = []
+        recorded = []
         class EmptyDialog:
             metadata = {}
             async def open(self):
                 return []
+            def record_greeting(self, text):
+                recorded.append(text)
             async def close(self):
                 pass
         class Speech:
@@ -126,6 +133,30 @@ class ProgressiveAudioTests(unittest.IsolatedAsyncioTestCase):
         try:
             await asyncio.sleep(.03)
             self.assertEqual(spoken, [])
+            self.assertEqual(recorded, [])
+        finally:
+            await call.close()
+
+    async def test_genuine_backend_greeting_is_not_added_to_first_message_history(self):
+        spoken, recorded = [], []
+        class BackendDialog:
+            metadata = {}
+            async def open(self):
+                return ['Begrüßung aus ServiceNow']
+            def record_greeting(self, text):
+                recorded.append(text)
+            async def close(self):
+                pass
+        class Speech:
+            async def synthesize(self, text):
+                spoken.append(text)
+                yield bytes(960)
+        call = NativeCall(Config(greeting='Fallback'), Speech(), BackendDialog())
+        call.spawn(call.process_turns())
+        try:
+            await asyncio.sleep(.03)
+            self.assertEqual(spoken, ['Begrüßung aus ServiceNow'])
+            self.assertEqual(recorded, [])
         finally:
             await call.close()
 
