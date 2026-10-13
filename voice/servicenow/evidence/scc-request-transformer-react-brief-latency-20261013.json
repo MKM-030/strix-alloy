@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "status": "applied_source_verified_runtime_measurement_blocked",
+  "change": "SCC-only ReAct Thought sentence length instruction",
+  "tests": {
+    "baseline_hash_matches_live": true,
+    "red_observed": true,
+    "contract_passed": 10,
+    "windows_contract_passed": 10
+  },
+  "before_real_rtp_trial": {
+    "report": "voice/native-speech-validation/runtime/german-final-first-turn-20261013T182325Z-report.json",
+    "asr_seconds": 0.406,
+    "asr_to_first_pcm_seconds": 11.527,
+    "asr_to_question_text_seconds": 29.587,
+    "asr_to_question_audible_seconds": 29.946,
+    "model_calls_time_correlated_only": [
+      {
+        "shape": "classifier",
+        "prompt_tokens": 1864,
+        "cached_tokens": 0,
+        "output_tokens": 22,
+        "windows_gateway_seconds": 1.9004,
+        "reported_engine_prefill_seconds": 1.56,
+        "reported_engine_decode_seconds": 0.5
+      },
+      {
+        "shape": "Unified",
+        "prompt_tokens": 7871,
+        "cached_tokens": 4096,
+        "output_tokens": 172,
+        "windows_gateway_seconds": 8.6775,
+        "reported_engine_prefill_seconds": 3.83,
+        "reported_engine_decode_seconds": 4.19
+      },
+      {
+        "shape": "ReAct",
+        "prompt_tokens": 13366,
+        "cached_tokens": 0,
+        "output_tokens": 187,
+        "windows_gateway_seconds": 15.0865,
+        "reported_engine_prefill_seconds": 11.75,
+        "reported_engine_decode_seconds": 4.09
+      }
+    ]
+  },
+  "human_call_time_correlated_example": {
+    "call": "b01f2c5175ba",
+    "turn_1_backend_seconds": 23.81,
+    "turn_2_backend_seconds": 48.14,
+    "warm_react_examples": [
+      {
+        "prompt_tokens": 13421,
+        "cached_tokens": 12288,
+        "output_tokens": 153,
+        "reported_prefill_seconds": 1.38,
+        "reported_decode_seconds": 3.67
+      },
+      {
+        "prompt_tokens": 13625,
+        "cached_tokens": 12288,
+        "output_tokens": 268,
+        "reported_prefill_seconds": 1.47,
+        "reported_decode_seconds": 6.13
+      }
+    ]
+  },
+  "measurement": {
+    "actual_model_inference_started": false,
+    "after_latency_seconds": null,
+    "speedup_claimed": false,
+    "private_observer_floor_gib": 21,
+    "root_approved_start_floor_gib": 21.5,
+    "runtime_guard_floor_gib_unchanged": 18,
+    "firstturn_only": true,
+    "employee_name_sent": false,
+    "confirmation_sent": false,
+    "blocker": "Owned Halogen guard observed physical17.554GiB<18GiB then cleanly stopped; terminalcleanupTrue, historicalrecoveryFalse; retained runnerlock. Fresh original recovery requires46.706GiB and current~41.6GiB. Rootassigned model_guard_recovery; no start/archive/reconcile by latency agent."
+  },
+  "limits": [
+    "No model-response body inspected to establish Thought word-count obedience; contract tests establish append-only SCC/config scope, not generated output quality.",
+    "Three model request types still serially execute on one slot; no orchestration/tool/confirmation changes.",
+    "A future restart empties Exact cache, so compare actual per-call cached/output tokens and Windows wall times before attributing total latency to the suffix.",
+    "Engine phase clocks are uncalibrated; before-phase values are reported diagnostics. Gateway request intervals may overlap because API wall includes queueing; never sum them as turn wall.",
+    "Model/gateway records carry no Bot request ID; association remains time-correlated.",
+    "Protected config and response-transformer hashes unchanged; no voice/model/context/cache/production guard change by this workstream."
+  ]
+}

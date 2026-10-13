@@ -1,0 +1,75 @@
+{
+  "status": "applied",
+  "target": "bc126377936f8750e7f2b9fa6aba1012",
+  "before": "7462cb47ff804bfd72fb89c2ab08c9d4cb4d68255e47e4a744a8e3aea2997c02",
+  "after": "3ba9fc442bd5cc0d24468e868d0ea302af480df262d5cbd5bed00f157083faf0",
+  "added_chars": 757,
+  "protected_prompt_sha256": "1b7df1c35a5f4db8709b87b7327f581f3300228897c60e19de877d11d4a84b42",
+  "live_before_mod_count": "10",
+  "live_before_updated_on": "2026-10-13 18:15:01",
+  "write_scope": "owned Global request_transformer only",
+  "condition": "aiConfig4780 and rendered prompt contains own agent-name marker SCC Laptop Onboarding",
+  "change": "Append concise Thought decision sentence <=25 words; preserve schema, Action inputs, permission/reference fields, explicit confirmation and no-repeat constraints",
+  "scope_limit": "No route, model, context, cache, tool, response, agent instructions, serial call count, or protected prompt field modified; response contract tests cannot prove model obeys suffix",
+  "attempted": true,
+  "verified": true,
+  "execution_history": "1f51b7d7933f0b54e7f2b9fa6aba1016",
+  "rollback_context": "9f51b7d7933f0b54e7f2b9fa6aba1015",
+  "dry_run_execution_history": "774177d7933f0b54e7f2b9fa6aba10c6",
+  "record_for_rollback": true,
+  "ui_screenshot": "/workspace/scratch/scc-react-brief-applied-20261013.jpg",
+  "tests": {
+    "red_observed": true,
+    "contract_passed": 10
+  },
+  "runtime": "BLOCKED before inference by actual18GiBguard shutdown and retainedfailedrunnerlock; root recoveryowner verifies strict46.706GiB recovery. No measuredspeedup claimed.",
+  "sys_mod_count_after": "11",
+  "updated_utc": "2026-10-13 19:02:32",
+  "independent_read_history": "792273db933f0b54e7f2b9fa6aba100c",
+  "response_sha256_unchanged": "581e8e127c45435aefe541bad277cc8249d1ac809065aa0e4fc2bef57783e2d2",
+  "protected_unified_prompt_sha256_unchanged": "4c91a66ccf7aa580ed8737278fb5b2554cf0070c13b7a82994b562838f32da55",
+  "protected_react_prompt_sha256_unchanged": "1b7df1c35a5f4db8709b87b7327f581f3300228897c60e19de877d11d4a84b42",
+  "fresh_gate_wait": [
+    {
+      "utc": "2026-10-13T19:03:47Z",
+      "free_gib": 19.323,
+      "commit_headroom_gib": 108.244,
+      "healthy_idle": true,
+      "operator_floor_gib": 22,
+      "inference_started": false
+    },
+    {
+      "utc": "2026-10-13T19:05:54Z",
+      "free_gib": 21.742,
+      "commit_headroom_gib": 111.253,
+      "healthy_idle": true,
+      "operator_floor_gib": 22,
+      "inference_started": false
+    },
+    {
+      "utc": "2026-10-13T19:06:59Z",
+      "free_gib": 21.917,
+      "commit_headroom_gib": 111.279,
+      "healthy_idle": true,
+      "operator_floor_gib": 22,
+      "inference_started": false
+    }
+  ],
+  "unexpected_guard_shutdown": {
+    "service_run": "a596d8b7119f4875b07ea1fedbc9768b",
+    "outer_run": "ac678e51cef84d819a8fd276dcb93271",
+    "physical_gib": 17.554,
+    "commit_headroom_gib": 108.173,
+    "runtime_guard_floor_gib": 18,
+    "terminal_container_id": "b9461a83736380ee84f2b3aaee05abf4fed894b7b09400753bdf506ede1e95be",
+    "terminal_pid": 0,
+    "terminal_exit_code": 0,
+    "cleanup": true,
+    "historical_recovery": false,
+    "recovery_frames": 180,
+    "recovery_original_required_gib": 46.706,
+    "lifecycle_changed_by_this_agent": false,
+    "root_assigned_recovery_owner": "model_guard_recovery"
+  },
+  "latency_evidence": "scc-request-transformer-react-brief-latency-20261013.json"
+}
