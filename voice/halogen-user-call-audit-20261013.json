@@ -1,0 +1,284 @@
+{
+  "purpose": "Read-only diagnosis of the real native call reported around 13:17:40 Berlin. No inference, restart, profile change, or credential/content output.",
+  "observedAt": "2026-10-13T11:26:41.8108972Z",
+  "gateway": {
+    "port": 8841,
+    "demo_no_thinking_model": "halogen-v2",
+    "public_alias": "halogen-v2",
+    "upstream_model": "halogen-qwen3.8-flash-next",
+    "launcher_pid": 13412,
+    "worker_pid": 20700,
+    "started_ticks": "639274843298697128",
+    "source_sha256": "25ddfe9565c7d8f393289d22016754d040a269c94561599832e811400c006aed"
+  },
+  "nativeCall": {
+    "source": "Metadata reported by native_bridge agent from existing logs",
+    "ice_completed_host_utc": "2026-10-13T11:18:14.620Z",
+    "request_id": "21d74509d7144e68970abbd6fefb43fb",
+    "timeout_host_utc": "2026-10-13T11:21:34.500Z",
+    "controls_observed": [
+      "ActionMsg",
+      "ActionMsg",
+      "StreamStart",
+      "OutputText"
+    ],
+    "input_ready_observed": false
+  },
+  "modelRun": "403cc6310c864d32b2087734ee80ab4b",
+  "callWindowMetrics": [
+    {
+      "engine_line": 4931,
+      "engine_timestamp": "2026-10-13T11:17:53.943614017Z",
+      "gateway_completion_host_utc": "2026-10-13T11:18:28.981Z",
+      "gateway_seconds": 2.095,
+      "prompt_tokens": 1758,
+      "generated_tokens": 27,
+      "prefill_seconds": 1.42,
+      "decode_seconds": 0.66,
+      "thinking": "off"
+    },
+    {
+      "engine_line": 4953,
+      "engine_timestamp": "2026-10-13T11:18:11.553770777Z",
+      "gateway_completion_host_utc": "2026-10-13T11:18:46.596Z",
+      "gateway_seconds": 19.5764,
+      "prompt_tokens": 7190,
+      "generated_tokens": 431,
+      "prefill_seconds": 6.42,
+      "decode_seconds": 11.12,
+      "thinking": "off"
+    }
+  ],
+  "laterWindowMetric": {
+    "engine_line": 5102,
+    "engine_timestamp": "2026-10-13T11:21:24.446059701Z",
+    "gateway_completion_host_utc": "2026-10-13T11:21:59.189Z",
+    "gateway_seconds": 2.4794,
+    "prompt_tokens": 3168,
+    "generated_tokens": 6,
+    "prefill_seconds": 2.5,
+    "decode_seconds": 0.1,
+    "thinking": "off",
+    "within_initial_native_call": false
+  },
+  "correlation": {
+    "method": "Order and timing of engine and gateway completions in the native call interval; gateway and engine metric lines do not expose a shared request ID.",
+    "clock_caution": "Engine/container timestamps are approximately 35 seconds behind Windows gateway/native logs. Raw clocks must not be compared without this observed offset.",
+    "second_call_queue_inference": "The second gateway interval begins before the first finishes, so approximately 2 seconds of its 19.5764 seconds include admission queueing. This is inference from timestamps, not a separately logged queue timer.",
+    "generic_reply_6_48_seconds": "Not independently attributed by this metric audit; no content was inspected.",
+    "conclusion": "The two model completions temporally associated with the active native call explicitly report think off. Remaining latency and absent input-ready callback cannot be attributed to thinking being left on."
+  },
+  "cache": {
+    "liveObservedAt": "2026-10-13T11:30:30.5984451Z",
+    "live": {
+      "enabled": false,
+      "cap_mb": 0,
+      "mode": 0,
+      "snapshot_align": 0
+    },
+    "runtimeEnableApiFound": false,
+    "installedApi": "Only GET /cache counters and optional GET/DELETE fork handles; prompt_cache_policy supports default/no_store. prompt_cache_key goes to request-record telemetry.",
+    "managedStartupOption": {
+      "field": "engine.prompt_cache",
+      "values": [
+        "Off",
+        "Exact",
+        "Flexible"
+      ],
+      "environmentMapping": {
+        "Off": "HALOGEN_PROMPT_CACHE=0",
+        "Exact": "HALOGEN_PROMPT_CACHE=1",
+        "Flexible": "HALOGEN_PROMPT_CACHE=2"
+      },
+      "requiresModelRestart": true
+    },
+    "semantics": {
+      "prefixCapableOlderMeasuredVersions": true,
+      "fullPromptEqualityOnly": false,
+      "evidence": "Retained 0.16.2 follow-ups reuse 32768 cached tokens from longer prompts; 0.15.1 longer 8203-token prompts reuse 8192 while the exact 8192-token shape could miss.",
+      "currentVersionLimit": "Installed 0.18.1 API marks mode 1 as bitwise identical to cold; reviewed local evidence does not qualify 0.18.1 SCC prefix hits or prove an arbitrary longest-prefix selector.",
+      "memoryEstimate": "Upstream entrypoint estimates approximately 115 MiB per in-place snapshot and a default one-slot topology of 6 entries (approximately 0.67 GiB); this is a startup estimate, not measured extra RAM or a qualified 0.18.1 budget."
+    },
+    "candidateOnly": "A copied candidate now exists, changing only engine.prompt_cache from Off to Exact. The live/original profile is unchanged; no activation before dialog correctness and fresh idle authorization. Exact hashes and staged activation/rollback are recorded in voice/halogen-exact-cache-candidate-20261013.json."
+  },
+  "sources": {
+    "installedApi": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0180-normal-bridge-preparation-20261011/halogen0181-extracted-20261012/api/serve_api.py",
+    "installedService": "backends/halogen-wsl2-0.18.1/scripts/service.py",
+    "cacheShapeEvidence": "docs/benchmarks/halogen-cache-gufo-followup-20260930.md",
+    "prefixFollowupEvidence": "docs/research/halogen-dn-norm-fold-audit-20261004.md",
+    "upstreamCommit": "b540030f8abf"
+  },
+  "changesToServices": 0,
+  "newInferenceRequests": 0,
+  "collectorEmitsPromptOrResponseContent": false,
+  "laterSharedActivity": {
+    "gate_utc": "2026-10-13T11:39:06.343708Z",
+    "engine": {
+      "busy": true,
+      "in_flight": 1,
+      "queued": 0
+    },
+    "gateway": {
+      "active": 1,
+      "queued": 2
+    },
+    "native_sessions": 0,
+    "controller_status": "ok",
+    "completions": [
+      {
+        "host_timestamp": "2026-10-13 13:37:10,258",
+        "status": 200,
+        "duration_seconds": 14.4069,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:37:25,559",
+        "status": 200,
+        "duration_seconds": 29.6045,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:37:39,657",
+        "status": 200,
+        "duration_seconds": 43.1191,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:37:53,399",
+        "status": 200,
+        "duration_seconds": 56.0158,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:38:15,690",
+        "status": 200,
+        "duration_seconds": 63.7266,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:38:38,066",
+        "status": 200,
+        "duration_seconds": 70.7855,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:39:00,866",
+        "status": 200,
+        "duration_seconds": 79.4662,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:39:17,720",
+        "status": 200,
+        "duration_seconds": 82.5491,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:39:26,635",
+        "status": 200,
+        "duration_seconds": 68.8463,
+        "active_at_completion": 1
+      },
+      {
+        "host_timestamp": "2026-10-13 13:39:29,681",
+        "status": 200,
+        "duration_seconds": 42.888,
+        "active_at_completion": 0
+      }
+    ],
+    "engine_metrics": [
+      {
+        "engine_timestamp": "2026-10-13T11:36:35.448973406Z",
+        "generated_tokens": 269,
+        "decode_seconds": 6.11,
+        "prompt_tokens": 11187,
+        "cached_tokens": 0,
+        "prefill_seconds": 9.48,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:36:50.776290635Z",
+        "generated_tokens": 286,
+        "decode_seconds": 6.59,
+        "prompt_tokens": 11187,
+        "cached_tokens": 0,
+        "prefill_seconds": 10.16,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:37:04.780213252Z",
+        "generated_tokens": 243,
+        "decode_seconds": 5.4,
+        "prompt_tokens": 11185,
+        "cached_tokens": 0,
+        "prefill_seconds": 10.03,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:37:18.370400600Z",
+        "generated_tokens": 212,
+        "decode_seconds": 4.9,
+        "prompt_tokens": 11183,
+        "cached_tokens": 0,
+        "prefill_seconds": 9.99,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:37:40.847164418Z",
+        "generated_tokens": 558,
+        "decode_seconds": 13.64,
+        "prompt_tokens": 11866,
+        "cached_tokens": 0,
+        "prefill_seconds": 10.43,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:38:02.998305467Z",
+        "generated_tokens": 549,
+        "decode_seconds": 13.63,
+        "prompt_tokens": 11877,
+        "cached_tokens": 0,
+        "prefill_seconds": 10.53,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:38:26.030837992Z",
+        "generated_tokens": 538,
+        "decode_seconds": 14.18,
+        "prompt_tokens": 11831,
+        "cached_tokens": 0,
+        "prefill_seconds": 10.44,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:38:42.614988345Z",
+        "generated_tokens": 304,
+        "decode_seconds": 7.77,
+        "prompt_tokens": 11792,
+        "cached_tokens": 0,
+        "prefill_seconds": 10.41,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:38:51.923751069Z",
+        "generated_tokens": 183,
+        "decode_seconds": 4.58,
+        "prompt_tokens": 5819,
+        "cached_tokens": 0,
+        "prefill_seconds": 5.07,
+        "thinking": "off"
+      },
+      {
+        "engine_timestamp": "2026-10-13T11:38:54.779779427Z",
+        "generated_tokens": 10,
+        "decode_seconds": 0.16,
+        "prompt_tokens": 3444,
+        "cached_tokens": 0,
+        "prefill_seconds": 3.16,
+        "thinking": "off"
+      }
+    ],
+    "conclusion": "Successful completions show progress through a queued batch; the active work was not one wedged request. Caller identity is not exposed in these logs. A last active=0 completion is not a replacement for a fresh pre-probe idle gate.",
+    "contentInspected": false
+  }
+}
