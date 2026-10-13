@@ -1,68 +1,116 @@
 # Native SCC Demo: Betrieb auf DESKTOP-8M583SI
 
-Stand: 13.10.2026. Diese Anleitung bedient den vorhandenen Stack. Sie ist kein
-neuer externer Voice-Client. Während eines Anrufs oder Tests keine Dienste neu starten.
-Der vollständige Test über echtes RTP-Audio → Whisper → ServiceNow → Qwen3-TTS
-bestand am 13.10.2026 um 10:40:12 UTC. Er nutzte synthetische Mikrofonaufnahmen
-und einen isolierten Testlistener. Nach ausdrücklich gesprochener Bestätigung
-meldete ServiceNow die bereits vorhandenen **REQ0010012 / RITM0010011**; es
-wurde keine neue Bestellung erzeugt. Eine zweite frische Unterhaltung fragte
-unabhängig erneut nach dem Namen. Beide eigenen Sessions wurden mit bestätigtem
-`/end` und beobachtetem Abschluss freigegeben.
+Stand: 13.10.2026. Diese Anleitung bedient den vorhandenen nativen ServiceNow-Stack.
+Während eines Anrufs oder Tests keine Dienste neu starten.
 
-Die erste Namensfrage kam **67,66 s nach ASR**, die zweite nach **49,66 s**.
-Der vollständige erste Anruf dauerte **4 min 20 s**. Die Dialoglatenz bleibt
-für eine flüssige Demo hoch. Nachweise: [VALIDATION.json](../native-bridge/VALIDATION.json)
-und der dort referenzierte Laufbericht; Code-/Nachweisstand `7cf0953`.
+**Wiederanlauf geprüft: 13.10.2026, 15:30:39 Uhr Berlin.** Alle sieben
+Dienste antworteten mit HTTP 200; Modell, Gateway und nativer Adapter waren
+frei. HaloGen läuft mit 262.144 Kontextpositionen und einem Slot. Freier
+RAM: 30,235 GiB; die 18-GiB-Reserve bleibt aktiv. Alle acht Desktop-Verknüpfungen
+wurden um 15:29:03 Uhr unabhängig zurückgelesen und stimmten mit den
+vorgesehenen Befehlen bzw. der Demo-URL überein. Der erfolgreiche Gesamtstart
+über das bereitgestellte Paket wurde durch die Nutzerausgabe um 15:26 Uhr
+belegt. Der anschließende echte Mikrofontest ist jedoch fehlgeschlagen;
+ein gesunder Dienstestatus ist keine Abnahme des Sprachdialogs.
 
-**Native Anmeldung und Medienpfad sind inzwischen nachgewiesen; der natürliche
-Gesprächsablauf ist noch nicht abgenommen.** Der echte ServiceNow-Browser hat
-mit strengem `authMode=servicenow` die OAuth-Prüfung passiert. Produktionslogs
-zeigen erfolgreiche ICE-Verbindungen, zuletzt um 13:18:14 Berliner Zeit über
-LAN `192.168.50.19 → 192.168.50.55`. Der Nutzer-Screenshot belegt echtes Mikrofon,
-ASR, gesprochene Antwort und Transkripte. Der zuvor blockierte Mikrofonzugriff
-ist damit kein aktueller Blocker mehr.
+**Mikrofontest vom 13.10., 15:30–15:35 Uhr Berlin:** Nach dem deutschen
+Anliegen kam eine englische Zwischenansage, danach die deutsche Namensfrage.
+Der gesprochene Vorname „Philipp“ wurde als „Hallo“ erkannt. Auf die erneute
+Namensfrage antwortete der Nutzer „Philipp Borchert“; dafür erschien kein
+Transkript. Belegt sind nur zwei ASR-Aufrufe. Der zweite ServiceNow-Turn
+lieferte `OutputText`, aber keine neue `InputText`-Freigabe. Die bisherige
+Bridge blockierte während dieses Wartens auch weitere ASR-Aufrufe und brach
+später mit Timeout ab. Ob die dritte Aufnahme in der Warteschlange lag,
+ist aus den damaligen Logs nicht feststellbar. Alle sechs untersuchten
+Modellaufrufe liefen ohne Thinking und wurden mit HTTP 200 abgeschlossen.
+Der korrigierte Adapter trennt Spracherkennung und Transkriptanzeige vom
+serialisierten ServiceNow-Dialog. Beide Eingabewarteschlangen bleiben auf
+zwei Einträge begrenzt; eine überfüllte Warteschlange wird angezeigt.
+Bei Backendfehler werden ungesendete Antworten verworfen und eine deutsche
+Abbruchmeldung ausgegeben, ohne eine Bestellung erneut zu senden. Lokale
+Hinweise verwenden kein natives `error`-Ereignis, weil die ServiceNow-Testseite
+dadurch sofort die Verbindung schließen würde. Die Korrektur ist seit
+**16:05:21 Uhr Berlin aktiv**; nur der native Adapter wurde neu gestartet.
+Der unabhängige Statuscheck um 16:06:09 Uhr bestätigte alle sieben Dienste,
+keine aktive Native-Sitzung und denselben unveränderten Bot-Prozess.
+Fehlende ServiceNow-Freigabe und englische Zwischenansage bleiben offen.
 
-Seit **11:36:54 UTC** sind `session_language=de` und die einmalige Übergabe der
-tatsächlich gesprochenen lokalen Begrüßung an den ersten Bot-Turn aktiv. Der
-reale RTP-Test ab 11:40:35 UTC beantwortete ein allgemeines „Hallo“ auf Deutsch
-und passend zum Kontext, ohne zweite Begrüßung: erste Backend-Antwort nach
-**5,369 s**, erstes hörbares Audio nach **6,239 s**, jeweils ab ASR. Trotzdem
-fehlte anschließend das Eingabebereitschaftssignal; der Diagnose-Lauf lief nach
-60 s aus. Produktion wartet dafür 180 s. Es wurde kein Folgeanliegen in diese
-noch belegte Session gesendet. Ein separater frischer Laptop-Turn erreichte
-die deutsche Namensfrage nach **52,40 s ab ASR**, aber eine englische
-Fortschrittsmeldung erschien nach **15,42 s**. Beide Test-Sessions wurden
-sauber beendet.
+**Prüfung der Korrektur:** Der unabhängige Windows-Lauf bestand 43 Tests
+einschließlich weiterlaufender ASR bei blockiertem Backend, Eingabegrenzen,
+Unterbrechungen, Aufräumen und WebRTC-Transport. Der synthetische Vergleich um
+16:01:25 Uhr Berlin erkannte „Philipp“, „Philipp Borchert“ und „Der Mitarbeiter
+heißt Philipp Borchert.“ in beiden ASR-Ausgabeformaten identisch (250–328 ms
+je ASR-Aufruf). Die neue Diagnostik erfasst nur begrenzte numerische
+Segmentwerte und Transportphasen; sie speichert keine Mikrofonaufnahmen und
+verändert keine Namen anhand vorgegebener Werte. Dies ersetzt keinen neuen
+echten Mikrofontest und erklärt die frühere Erkennung als „Hallo“ nicht.
 
-Ein Callback-`END` allein darf die nächste Eingabe nicht freigeben: dieselbe
-Form trat bei unterschiedlichen Dialogzuständen auf. Die natürliche Fortsetzung
-„Hallo → Laptop-Anliegen“ bleibt deshalb offen. Für die weitere Prüfung des
-ServiceNow-Routings und der Eingabebereitschaft wird authentifizierter Zugriff
-auf die Instanz benötigt; die separate SCC-Promptänderung ist weiterhin offen.
+Der echte ServiceNow-Browser hat OAuth, Mikrofon, ASR und hörbare TTS-Antworten
+bereits erfolgreich verwendet. Die einmalige lokale Begrüßung wird an den
+Backend-Dialog übergeben; die Sitzungssprache ist Deutsch. Ein isolierter
+Audio-Test beantwortete „Hallo“ damit auf Deutsch ohne zweite Begrüßung
+(hörbar nach 6,239 s ab ASR). **Nach einem allgemeinen „Hallo“ fehlt weiterhin
+das bestätigte Signal für die nächste Eingabe.** Für die Demo direkt das
+Laptop-Anliegen sprechen, wie unten beschrieben.
 
-Der isolierte Versuch mit `botToBot:false` änderte dieses Verhalten nicht:
-deutsche kontextbezogene Antwort, danach `END`, aber kein `InputText`; ebenfalls
-Timeout nach 60 s. Der vorangehende `ActionMsg` war vom Typ `System` und bewies
-keine Eingabebereitschaft. **Die Produktionskonfiguration wurde nicht auf
-`botToBot:false` umgestellt.** Der ursprüngliche Bot-Dienst auf 8850 war um
-**11:52:04,868 UTC** wiederhergestellt: Bot und nativer Adapter antworteten mit
-HTTP 200, `nativeSessions=0`, `authMode=servicenow`. Dies ist ein zeitlich
-begrenzter Wiederherstellungsnachweis; spätere Aktivität wurde beobachtet.
-Daraus folgt keine aktuelle Idle-Freigabe für Neustarts oder weitere Tests.
-Aktuelle Testdetails stehen in [Native-README](../native-bridge/README.md) und
+Die Anweisungen beider SCC-Agenten (Chat und Voice) wurden in ServiceNow
+gespeichert und unabhängig zurückgelesen: Deutsch verwenden und den
+Mitarbeiternamen vor dem ersten Tool-Aufruf erfragen. Der anschließende echte
+RTP-Audiotest erreichte die Namensfrage nach **33,077 s statt zuvor 52,400 s**
+ab ASR; die echte Eingabebereitschaft wurde bestätigt. Eine englische
+Zwischenansage nach 14,886 s bleibt offen. Alle drei Modellaufrufe dieses
+Tests liefen **ohne Thinking**; allein das Einlesen der Prompts dauerte
+insgesamt 19,31 s. Ein weiterer vollständiger Bestelltest nach der Änderung
+wurde nicht durchgeführt.
+
+Der frühere vollständige Audiotest bestätigte nach ausdrücklich gesprochener
+Freigabe die vorhandenen **REQ0010012 / RITM0010011**; er erzeugte keine neue
+Bestellung. Dieser ältere Nachweis ersetzt keine aktuelle Abnahme des gesamten
+natürlichen Gesprächsablaufs. Details und Messwerte stehen in
 [VALIDATION.json](../native-bridge/VALIDATION.json).
 
-Seit 10:32:10 UTC ist der reversible No-Thinking-Demomodus auf Gateway 8841
-aktiv. Er setzt für alle Chat-Aufrufe des öffentlichen Alias halogen-v2
-`enable_thinking=false` und `reasoning_effort=none`. Modell, Kontext, Memory
-Guard, Tools und Bestätigungslogik bleiben unverändert. Das betrifft alle
-Caller dieses Alias. Die obigen Messwerte stammen aus diesem Modus. Eine
-zusätzliche SCC-Promptoptimierung ist nur ein Entwurf und nicht angewendet.
-Die vorgeschlagene Cache-Optimierung ist ebenfalls nicht aktiviert.
+Vor dem Neustart des PCs hatte sich der Modelldienst wegen Unterschreitung
+der 18-GiB-Speicherreserve beendet. Die vorgeschlagene Cache-Optimierung wurde
+nicht aktiviert. Modell, bestehendes Profil und Speichergrenzen bleiben beim
+Wiederanlauf unverändert. Der No-Thinking-Demomodus des Gateways setzt für
+alle Aufrufe des öffentlichen Alias `halogen-v2` `enable_thinking=false` und
+`reasoning_effort=none`; das betrifft auch andere Nutzer desselben Alias.
 
 **Legacy `voice/Start-Voice.ps1` nicht verwenden:** Es startet die stillgelegten CPU-Modelle
 auf 8851/8852 und kann die Speicherreserve von HaloGen aufbrauchen.
+
+## Start auf der Messe
+
+Auf dem Desktop liegt **SCC - Alles starten**. Nach einem Rechner-Neustart
+per Doppelklick öffnen und das Fenster bis zur abschließenden Statusmeldung
+offen lassen. Zuerst werden STT/TTS geladen, danach HaloGen mit seinem
+bestehenden Speicherwächter und anschließend Gateway sowie Voice-Bridge.
+Der Modell-Kaltstart braucht mehrere Minuten. Ein roter Fehler ist kein
+bereiter Zustand; bei einer verbliebenen Modellsperre nicht wiederholt starten.
+
+Die einzelnen Verknüpfungen sind ebenfalls verfügbar:
+
+| Desktop-Verknüpfung | Zweck |
+|---|---|
+| SCC - HaloGen Modell | Modell starten; benötigte Sprachdienste vorher bereitstellen |
+| SCC - Speech to Text | Whisper-Spracherkennung starten |
+| SCC - Text to Speech | Qwen-Sprachausgabe und synthetische SCC-Stimme bereitstellen |
+| SCC - Gateway | ServiceNow-Modell-Gateway im No-Thinking-Modus starten |
+| SCC - Voice Bridge | Bot/Callback und nativen WebRTC-Adapter starten |
+| SCC - Alles starten | Den gesamten Stack in der richtigen Reihenfolge starten |
+| SCC - Status | Zustand anzeigen, ohne Gespräch oder Bestellung auszulösen |
+| SCC - ServiceNow Voice Demo | Die native ServiceNow-Testseite im Browser öffnen |
+
+Die Starter lassen korrekt laufende Dienste bestehen; sie starten nichts
+vorsorglich neu und räumen keine Modellsperre automatisch weg. Das Schließen
+des fertigen Startfensters ist kein Stop-Befehl für die gestarteten Dienste.
+Startprotokolle liegen unter `voice\native-start\runtime`; Sprache und
+Gateway führen zusätzlich ihre bestehenden Protokolle.
+
+Die Startdateien liegen in `C:\Projects\strix-alloy-scc-voice\voice`:
+`Start-NativeVoice.ps1` und `Install-NativeVoiceShortcuts.ps1`. Die zweite Datei
+legt die Desktop-Verknüpfungen erneut an. Konfiguration und Schlüssel bleiben
+in den vorhandenen lokalen Dateien; die Verknüpfungen enthalten keine Tokens.
 
 ## 1. Status ohne Nebenwirkungen
 
@@ -199,11 +247,6 @@ Listener-PID, vollständigen Projektpfad, Konfiguration und Startzeit prüfen;
 keinen alten einmaligen `runtime/restart_owned.ps1` erneut ausführen.
 Bei unklarer Prozess- oder Session-Zuordnung den betreffenden Dienst laufen
 lassen. Funnel darf unverändert bleiben; es wird hier nicht global abgeschaltet.
-
-Geprüfter Status nach dem isolierten Audiotest um 10:25:20 UTC: alle sieben
-Health-Abfragen HTTP 200, Modell/Gateway/Native idle, 26.954 GiB freier RAM,
-120.072 GiB Commit-Reserve, keine Legacy-CPU-Listener. Das ist eine Statusprobe,
-keine Zusage zur gesamten Dialoglatenz oder zur Erreichbarkeit fremder Browser.
 
 ## No-Thinking-Modus zurücknehmen
 
