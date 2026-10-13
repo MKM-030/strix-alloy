@@ -45,8 +45,8 @@ function run(rows, apply = false, options = {}) {
     GlideDigest: class {getSHA256Hex(s) {return crypto.createHash('sha256').update(s).digest('hex');}},
     gs: {
       hasRole: () => options.admin !== false,
-      getCurrentApplicationId: () => options.application || scope,
-      getCurrentScopeName: () => options.namespace || 'sn_generative_ai',
+      getCurrentApplicationId: () => options.application || 'global',
+      getCurrentScopeName: () => options.namespace || 'global',
       info: text => logs.push(text)
     }
   });
@@ -76,7 +76,7 @@ test('binding drift, reference drift and record scope drift prevent all writes',
   }
 });
 test('admin, current scope, missing fields and write ACLs are preflight gates', () => {
-  for (const options of [{admin:false},{application:'wrong'},{namespace:'wrong'},{denyRecord:voice},{denyField:voice}]) {
+  for (const options of [{admin:false},{namespace:'wrong'},{denyRecord:voice},{denyField:voice}]) {
     const result=run(fixture(),true,options); assert.deepEqual(result.writes,[]); assert.equal(result.receipt.status,'aborted');
   }
   const rows=fixture(); delete rows[binding].values.post_processing_script;
@@ -86,4 +86,17 @@ test('failed second write reports possible partial state, no automatic rollback 
   const rows=fixture(); const first=run(rows,true,{failUpdate:chat});
   assert.equal(first.receipt.status,'partial_or_uncertain'); assert.equal(first.receipt.attempted.length,2); assert.equal(first.writes.length,1);
   const resumed=run(rows,true); assert.equal(resumed.receipt.status,'applied'); assert.deepEqual(resumed.writes.map(w=>w.id),[chat,voice]);
+});
+
+test('Global execution may update the exact scoped records and reports execution scope', () => {
+  const rows=fixture(); const result=run(rows,true,{application:'global',namespace:'global'});
+  assert.equal(result.receipt.status,'applied');
+  assert.equal(result.receipt.execution_scope,'global');
+  assert.equal(result.writes.length,3);
+  for (const id of [tool,chat,voice,binding]) assert.equal(rows[id].values.sys_scope,scope);
+});
+test('non-Global execution is rejected before any update, even in the target application', () => {
+  const result=run(fixture(),true,{application:scope,namespace:'sn_generative_ai'});
+  assert.equal(result.receipt.status,'aborted'); assert.equal(result.receipt.error,'global_scope_required');
+  assert.equal(result.receipt.execution_scope,'sn_generative_ai'); assert.deepEqual(result.writes,[]);
 });
