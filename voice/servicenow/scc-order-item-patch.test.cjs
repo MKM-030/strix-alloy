@@ -89,11 +89,13 @@ test('failed second write reports possible partial state, no automatic rollback 
 });
 
 test('Global execution may update the exact scoped records and reports execution scope', () => {
-  const rows=fixture(); const result=run(rows,true,{application:'global',namespace:'global'});
-  assert.equal(result.receipt.status,'applied');
-  assert.equal(result.receipt.execution_scope,'global');
-  assert.equal(result.writes.length,3);
-  for (const id of [tool,chat,voice,binding]) assert.equal(rows[id].values.sys_scope,scope);
+  for (const namespace of ['global', 'rhino.global']) {
+    const rows=fixture(); const result=run(rows,true,{application:'global',namespace});
+    assert.equal(result.receipt.status,'applied',namespace);
+    assert.equal(result.receipt.execution_scope,namespace);
+    assert.equal(result.writes.length,3);
+    for (const id of [tool,chat,voice,binding]) assert.equal(rows[id].values.sys_scope,scope);
+  }
 });
 test('non-Global execution is rejected before any update, even in the target application', () => {
   const result=run(fixture(),true,{application:scope,namespace:'sn_generative_ai'});

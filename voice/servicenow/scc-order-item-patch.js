@@ -49,7 +49,7 @@
     try {
         receipt.execution_scope = String(gs.getCurrentScopeName());
         need(gs.hasRole('admin'), 'admin_required');
-        need(receipt.execution_scope === 'global', 'global_scope_required');
+        need(receipt.execution_scope === 'global' || receipt.execution_scope === 'rhino.global', 'global_scope_required');
         stage = 'bindings'; binding(0); binding(1);
         stage = 'prepare_all_three';
         var anchor = 'requested_item_id:r.getUniqueValue(),requested_item_number:';
