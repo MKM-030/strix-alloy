@@ -49,6 +49,7 @@
             String(previous.variables.delivery_location) == location) {
             return {ok:true,reused:true,request_number:previous.request.getDisplayValue(),
                 request_id:previous.getValue('request'),requested_item_id:previous.getUniqueValue(),
+                catalog_item_id:previous.getValue('cat_item'),catalog_item_name:previous.getDisplayValue('cat_item'),
                 requested_item_number:previous.getValue('number'),employee_name:String(previous.variables.employee_name),
                 start_date:String(previous.variables.start_date),delivery_location:String(previous.variables.delivery_location),
                 manager_id:String(previous.variables.manager),manager_name:String(previous.variables.manager.getDisplayValue()),demo_only:true};
@@ -75,6 +76,7 @@
             request_id:String(result.request_id),error:'Anforderung vorhanden, Bestellposition fehlt. Vor erneutem Bestellen prüfen.',retry_automatically:false,demo_only:true};
         return {ok:true,reused:false,request_number:ritm.request.getDisplayValue(),
             request_id:ritm.getValue('request'),requested_item_id:ritm.getUniqueValue(),
+            catalog_item_id:ritm.getValue('cat_item'),catalog_item_name:ritm.getDisplayValue('cat_item'),
             requested_item_number:ritm.getValue('number'),employee_name:String(ritm.variables.employee_name),
             start_date:String(ritm.variables.start_date),delivery_location:String(ritm.variables.delivery_location),
             manager_id:String(ritm.variables.manager),manager_name:String(ritm.variables.manager.getDisplayValue()),demo_only:true};
