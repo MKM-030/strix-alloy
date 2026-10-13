@@ -1,0 +1,62 @@
+{
+    "sourceCommit":  "81f2fcd",
+    "activatedAt":  "2026-10-13T10:32:10.405123+00:00",
+    "gateway":  {
+                    "port":  8841,
+                    "publicAlias":  "halogen-v2",
+                    "demoNoThinkingModel":  "halogen-v2",
+                    "appliesTo":  "Every request using this exact public alias on /v1/chat/completions through this gateway",
+                    "requestOverrides":  {
+                                             "enable_thinking":  false,
+                                             "reasoning_effort":  "none"
+                                         },
+                    "oldListenerPid":  1320,
+                    "oldLauncherPid":  6324,
+                    "newListenerPid":  20700,
+                    "newLauncherPid":  13412,
+                    "newLauncherStartTicks":  "639274843298697128",
+                    "freshPreRestartGate":  {
+                                                "stackHealthy":  true,
+                                                "engineIdle":  true,
+                                                "gatewayIdle":  true,
+                                                "nativeIdle":  true
+                                            },
+                    "postRestartVerification":  {
+                                                    "stackHealthy":  true,
+                                                    "engineIdle":  true,
+                                                    "gatewayIdle":  true,
+                                                    "nativeIdle":  true,
+                                                    "expectedProcess":  true
+                                                }
+                },
+    "backend":  {
+                    "restarted":  false,
+                    "run":  "403cc6310c864d32b2087734ee80ab4b",
+                    "version":  "0.18.1",
+                    "context":  262144,
+                    "slots":  1,
+                    "profileUnchangedSha256":  "cf02e2e695160c3e199a2efbf81920192d77f538616b4a3a00153e33927333c4"
+                },
+    "rollback":  {
+                     "requiresFreshIdleGate":  true,
+                     "stop":  "voice/Start-QueuedGateway.ps1 -Action Stop",
+                     "startDefaultOff":  "voice/Start-QueuedGateway.ps1 -Action Start",
+                     "exactConfigBackup":  "server/.local/scc-gateway.before-demo-no-thinking-20261013.json",
+                     "exactConfigSha256":  "e9b49616f226879c4ec04783e0e4ea516982c9311543201423adecbb50357f87"
+                 },
+    "validation":  {
+                       "gatewayTestsPassed":  28,
+                       "redToGreenObserved":  true,
+                       "powershellParsed":  true,
+                       "independentReview":  "No blocker; Stop requires external idle gate and config must not be edited while running.",
+                       "runtimeMetrics":  "15 new completed model calls during the first full audio run all explicitly reported think off; see halogen-demo-metrics-20261013.json",
+                       "fullNativeAcceptance":  "Owned by native_bridge; this evidence alone does not establish complete native UI acceptance."
+                   },
+    "serviceNowDiagnostic":  {
+                                 "restored":  true,
+                                 "proofCommit":  "f2b1271",
+                                 "requestCharacters":  1110,
+                                 "requestSha256":  "96c5ae12a9af9f8eff500beb7791edcdffb75de0fc4e833f343207d97da46210",
+                                 "metadataLogsCollected":  false
+                             }
+}
