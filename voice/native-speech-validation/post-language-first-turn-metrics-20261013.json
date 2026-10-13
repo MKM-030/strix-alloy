@@ -1,0 +1,175 @@
+{
+  "purpose": "Read-only before/after status and bounded allowlisted model/gateway timing evidence for the authorized post-language first-turn audio probe. No inference, service restart or configuration change by this audit.",
+  "observed_date": "2026-10-13",
+  "probe": {
+    "start_host_utc": "2026-10-13T12:21:24.354Z",
+    "end_host_utc": "2026-10-13T12:22:10.578Z",
+    "bot_request_id": "9d8754d9bd0c401b942b9f6b9c096fbc",
+    "owned_end_request_id": "42035ea624e54658b1ad4f1b5f68e838",
+    "output_directory": "voice/native-bridge/runtime/post-language-first-turn-20261013-122124",
+    "scope": "One existing laptop intent only; no employee-name response, confirmation or order.",
+    "native_agent_reported": {
+      "asr_host_utc": "2026-10-13T12:21:33.408912Z",
+      "name_question_host_utc": "2026-10-13T12:22:06.485927Z",
+      "name_question_after_asr_seconds": 33.077,
+      "question_audio_host_utc": "2026-10-13T12:22:07.176658Z",
+      "input_text_callback_host_utc": "2026-10-13T12:22:06.484Z",
+      "input_ready_event_host_utc": "2026-10-13T12:22:07.965935Z",
+      "english_progress_after_asr_seconds": 14.886,
+      "owned_end_ack_200": true,
+      "owned_end_completed": true,
+      "fresh_wrapper_after_gate_utc": "2026-10-13T12:22:10.721Z",
+      "fresh_wrapper_after_gate_all_idle": true
+    },
+    "limit": "These probe outcomes are reported by the owning native_bridge agent; this file independently verifies local status and engine/gateway completion metrics, not browser acceptance or natural hello continuation."
+  },
+  "before": {
+    "utc": "2026-10-13T12:21:07.656865+00:00",
+    "stack_healthy": true,
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "native_sessions": 0,
+    "auth_mode": "servicenow",
+    "memory": {
+      "free_gib": 24.939,
+      "commit_headroom_gib": 117.367,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "http_statuses": {
+      "model": 200,
+      "controller": 200,
+      "gateway": 200,
+      "bot": 200,
+      "native": 200,
+      "asr": 200,
+      "tts": 200
+    },
+    "legacy_cpu_ports": []
+  },
+  "after": {
+    "utc": "2026-10-13T12:22:54.107651+00:00",
+    "stack_healthy": true,
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "native_sessions": 0,
+    "auth_mode": "servicenow",
+    "memory": {
+      "free_gib": 24.937,
+      "commit_headroom_gib": 117.387,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "http_statuses": {
+      "model": 200,
+      "controller": 200,
+      "gateway": 200,
+      "bot": 200,
+      "native": 200,
+      "asr": 200,
+      "tts": 200
+    },
+    "legacy_cpu_ports": []
+  },
+  "baselines": {
+    "metrics_host_utc": "2026-10-13T12:21:05.0802064Z",
+    "engine_log_bytes": 897286,
+    "gateway_log_bytes": 50793,
+    "last_engine_completion_utc": "2026-10-13T12:15:27.765163909Z",
+    "last_gateway_completion_berlin": "2026-10-13 14:16:45,978",
+    "earlier_gateway_502s": "Earlier completions at14:16:31.500 and14:16:45.978 Berlin precede the idle baseline and are excluded from the probe. Their caller/cause is not identified by this audit."
+  },
+  "correlated_model_request_count": 3,
+  "correlated_completions": [
+    {
+      "classification": "temporally_associated_with_owned_probe",
+      "gateway_host_utc": "2026-10-13T12:21:37.176Z",
+      "gateway_seconds": 1.8705,
+      "gateway_status": 200,
+      "gateway_active_remaining": 1,
+      "engine_utc": "2026-10-13T12:21:01.857147711Z",
+      "generated_tokens": 22,
+      "decode_seconds": 0.5,
+      "prompt_tokens": 1800,
+      "cached_tokens": null,
+      "prefill_seconds": 1.53,
+      "thinking": "off"
+    },
+    {
+      "classification": "temporally_associated_with_owned_probe",
+      "gateway_host_utc": "2026-10-13T12:21:47.756Z",
+      "gateway_seconds": 12.2967,
+      "gateway_status": 200,
+      "gateway_active_remaining": 0,
+      "engine_utc": "2026-10-13T12:21:12.492526890Z",
+      "generated_tokens": 242,
+      "decode_seconds": 5.17,
+      "prompt_tokens": 7249,
+      "cached_tokens": null,
+      "prefill_seconds": 6.43,
+      "thinking": "off"
+    },
+    {
+      "classification": "temporally_associated_with_owned_probe",
+      "gateway_host_utc": "2026-10-13T12:22:05.063Z",
+      "gateway_seconds": 15.0799,
+      "gateway_status": 200,
+      "gateway_active_remaining": 0,
+      "engine_utc": "2026-10-13T12:21:29.961720009Z",
+      "generated_tokens": 190,
+      "decode_seconds": 4.78,
+      "prompt_tokens": 12744,
+      "cached_tokens": null,
+      "prefill_seconds": 11.35,
+      "thinking": "off"
+    }
+  ],
+  "later_unassigned_completion": {
+    "classification": "outside_ended_probe_not_attributed",
+    "gateway_host_utc": "2026-10-13T12:22:50.647Z",
+    "gateway_inferred_start_host_utc": "2026-10-13T12:22:32.7165Z",
+    "gateway_seconds": 17.9305,
+    "gateway_status": 200,
+    "engine_utc": "2026-10-13T12:22:15.585227870Z",
+    "generated_tokens": 135,
+    "decode_seconds": 4.23,
+    "prompt_tokens": 17418,
+    "cached_tokens": null,
+    "prefill_seconds": 15.15,
+    "thinking": "off",
+    "reason": "Begins after the owned probe had ended and its wrapper confirmed idle. Caller and causal relationship are unknown; excluded from probe count."
+  },
+  "correlation": {
+    "method": "Pair ordered engine and gateway completions, then compare gateway host-clock request intervals with the owned probe interval and idle gates.",
+    "shared_request_id_in_metric_lines": false,
+    "engine_clock_behind_gateway_seconds": [
+      35.318852289,
+      35.26347311,
+      35.101279991
+    ],
+    "overlap": "The first two gateway request intervals overlap; gateway seconds must not be simply added as end-to-end latency.",
+    "timing_limit": "Engine prefill/decode are engine-reported counters and do not exactly equal gateway wall-clock intervals. Do not sum across clocks or claim precise attribution beyond these counters.",
+    "all_three_thinking": "off",
+    "prompt_tokens": [
+      1800,
+      7249,
+      12744
+    ],
+    "engine_prefill_seconds_sum": 19.31,
+    "engine_decode_seconds_sum": 10.45,
+    "interpretation": "Prefill accounts for most of the three engine-reported prefill+decode counters. Multiple model stages and longer prompts remain despite effective thinking-off. This does not identify which ServiceNow tool/routing stage produced each request."
+  },
+  "collection": {
+    "metrics_after_host_utc": "2026-10-13T12:22:58.1749545Z",
+    "read_tail_limit_lines": 500,
+    "output_fields": "Timestamps, numeric counts/timings, HTTP status, thinking on/off; no request/response content or credentials.",
+    "model_run": "403cc6310c864d32b2087734ee80ab4b",
+    "engine_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.1\\.local\\services\\403cc6310c864d32b2087734ee80ab4b\\engine.log",
+    "gateway_log": "C:\\Projects\\strix-alloy-scc-voice\\server\\.local\\scc-gateway.log",
+    "status_command": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe -B C:\\Projects\\strix-alloy-scc-voice\\voice\\native-speech-validation\\stack_status.py"
+  }
+}
