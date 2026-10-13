@@ -15,17 +15,52 @@ Der vollständige erste Anruf dauerte **4 min 20 s**. Die Dialoglatenz bleibt
 für eine flüssige Demo hoch. Nachweise: [VALIDATION.json](../native-bridge/VALIDATION.json)
 und der dort referenzierte Laufbericht; Code-/Nachweisstand `7cf0953`.
 
-Die tatsächliche native Browser-Abnahme bleibt offen: echter Mikrofonzugriff
-und ServiceNow-OAuth wurden noch nicht erfolgreich zusammen geprüft. Der
-Browser meldete blockierten Mikrofonzugriff; der Produktionsmonitor zeigte
-bis 10:42:58 UTC keine native Sitzung. Der bestandene isolierte Audiotest und
-ein gesunder Stack ersetzen diesen Nachweis nicht.
+**Native Anmeldung und Medienpfad sind inzwischen nachgewiesen; der natürliche
+Gesprächsablauf ist noch nicht abgenommen.** Der echte ServiceNow-Browser hat
+mit strengem `authMode=servicenow` die OAuth-Prüfung passiert. Produktionslogs
+zeigen erfolgreiche ICE-Verbindungen, zuletzt um 13:18:14 Berliner Zeit über
+LAN `192.168.50.19 → 192.168.50.55`. Der Nutzer-Screenshot belegt echtes Mikrofon,
+ASR, gesprochene Antwort und Transkripte. Der zuvor blockierte Mikrofonzugriff
+ist damit kein aktueller Blocker mehr.
+
+Seit **11:36:54 UTC** sind `session_language=de` und die einmalige Übergabe der
+tatsächlich gesprochenen lokalen Begrüßung an den ersten Bot-Turn aktiv. Der
+reale RTP-Test ab 11:40:35 UTC beantwortete ein allgemeines „Hallo“ auf Deutsch
+und passend zum Kontext, ohne zweite Begrüßung: erste Backend-Antwort nach
+**5,369 s**, erstes hörbares Audio nach **6,239 s**, jeweils ab ASR. Trotzdem
+fehlte anschließend das Eingabebereitschaftssignal; der Diagnose-Lauf lief nach
+60 s aus. Produktion wartet dafür 180 s. Es wurde kein Folgeanliegen in diese
+noch belegte Session gesendet. Ein separater frischer Laptop-Turn erreichte
+die deutsche Namensfrage nach **52,40 s ab ASR**, aber eine englische
+Fortschrittsmeldung erschien nach **15,42 s**. Beide Test-Sessions wurden
+sauber beendet.
+
+Ein Callback-`END` allein darf die nächste Eingabe nicht freigeben: dieselbe
+Form trat bei unterschiedlichen Dialogzuständen auf. Die natürliche Fortsetzung
+„Hallo → Laptop-Anliegen“ bleibt deshalb offen. Für die weitere Prüfung des
+ServiceNow-Routings und der Eingabebereitschaft wird authentifizierter Zugriff
+auf die Instanz benötigt; die separate SCC-Promptänderung ist weiterhin offen.
+
+Der isolierte Versuch mit `botToBot:false` änderte dieses Verhalten nicht:
+deutsche kontextbezogene Antwort, danach `END`, aber kein `InputText`; ebenfalls
+Timeout nach 60 s. Der vorangehende `ActionMsg` war vom Typ `System` und bewies
+keine Eingabebereitschaft. **Die Produktionskonfiguration wurde nicht auf
+`botToBot:false` umgestellt.** Der ursprüngliche Bot-Dienst auf 8850 war um
+**11:52:04,868 UTC** wiederhergestellt: Bot und nativer Adapter antworteten mit
+HTTP 200, `nativeSessions=0`, `authMode=servicenow`. Dies ist ein zeitlich
+begrenzter Wiederherstellungsnachweis; spätere Aktivität wurde beobachtet.
+Daraus folgt keine aktuelle Idle-Freigabe für Neustarts oder weitere Tests.
+Aktuelle Testdetails stehen in [Native-README](../native-bridge/README.md) und
+[VALIDATION.json](../native-bridge/VALIDATION.json).
+
 Seit 10:32:10 UTC ist der reversible No-Thinking-Demomodus auf Gateway 8841
 aktiv. Er setzt für alle Chat-Aufrufe des öffentlichen Alias halogen-v2
 `enable_thinking=false` und `reasoning_effort=none`. Modell, Kontext, Memory
 Guard, Tools und Bestätigungslogik bleiben unverändert. Das betrifft alle
 Caller dieses Alias. Die obigen Messwerte stammen aus diesem Modus. Eine
 zusätzliche SCC-Promptoptimierung ist nur ein Entwurf und nicht angewendet.
+Die vorgeschlagene Cache-Optimierung ist ebenfalls nicht aktiviert.
+
 **Legacy `voice/Start-Voice.ps1` nicht verwenden:** Es startet die stillgelegten CPU-Modelle
 auf 8851/8852 und kann die Speicherreserve von HaloGen aufbrauchen.
 
@@ -199,8 +234,12 @@ Das öffentliche HTTPS-Funnel allein stellt keinen UDP-Medienpfad bereit;
 STUN/TURN ist nicht konfiguriert. Bei blockiertem Mikrofon keine erfolgreiche
 native Verbindung behaupten und nicht blind weitere Anrufe starten.
 
-Mit dem bereits geprüften Beispiel sprechen und jeweils die vollständige
-Rückfrage abwarten:
+Für das bereits geprüfte Laptop-Szenario direkt das Anliegen sprechen und
+jeweils die vollständige Rückfrage abwarten. Eine allgemeine Begrüßung kann
+aktuell zwar beantwortet werden, lässt den Bot aber ohne bestätigte Bereitschaft
+für das Folgeanliegen zurück. In diesem Zustand nicht weiterreden oder parallel
+einen neuen Anruf starten; den eigenen Anruf geordnet beenden. Dieser gezielte
+Testablauf bedeutet keine Freigabe des noch fehlerhaften natürlichen Dialogs:
 
 1. **Anliegen:** „Mein neuer Mitarbeiter startet am 1. November, sein Laptop
    soll zum Onboarding nach Hamburg in unsere Niederlassung geliefert werden.“
