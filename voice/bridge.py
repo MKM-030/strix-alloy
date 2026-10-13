@@ -35,6 +35,7 @@ class Settings:
     callback_username: str = ''
     tts_voice: str = 'ryan'
     defer_start_until_message: bool = False
+    wait_for_input_control: bool = False
     session_seconds: int = 1800
     turn_seconds: int = 180
     max_sessions: int = 8
@@ -55,6 +56,7 @@ class Conversation:
     requests: deque = field(default_factory=lambda: deque(maxlen=128))
     fingerprints: deque = field(default_factory=lambda: deque(maxlen=256))
     events: deque = field(default_factory=lambda: deque(maxlen=200))
+    turn_texts: deque = field(default_factory=lambda: deque(maxlen=200))
     sequence: int = 0
     choices: list = field(default_factory=list)
     input_label: str = ''
@@ -65,6 +67,11 @@ class Conversation:
         self.sequence += 1
         self.events.append({'id': self.sequence, 'kind': kind, 'text': text[:8000]})
         self.change.set()
+
+    def emit_bot_once(self, text):
+        if text and text not in self.turn_texts:
+            self.turn_texts.append(text)
+            self.emit(text)
 
 
 class PlainText(HTMLParser):
@@ -273,6 +280,8 @@ class Bridge:
             payload['nowSessionId'] = session.now_session
         if action:
             payload['action'] = action
+        # Reset before the HTTP await: callbacks may arrive before its ACK.
+        session.turn_texts.clear()
         session.requests.append(request_id)
         LOG.info('Bot request id=%s action=%s', request_id, action or 'MESSAGE')
         session.busy = True
@@ -363,15 +372,15 @@ class Bridge:
                 continue
             kind = control.get('uiType')
             if kind == 'OutputText':
-                # Streaming is disabled for this deployment. Never speak partial chunks.
+                # Publish only complete text; never speak partial stream chunks.
                 streaming = control.get('streaming') or control.get('streamingStatus')
                 if streaming and streaming != 'END':
                     continue
                 text = text_only(control.get('value') or control.get('label'))
-                if text:
-                    session.emit(text)
+                session.emit_bot_once(text)
             elif kind in ('InputText', 'Picker', 'TopicPickerControl', 'Boolean', 'Date', 'DateTime', 'Time'):
                 session.input_label = text_only(control.get('label') or control.get('promptMsg'))
+                session.emit_bot_once(session.input_label)
                 choices = control.get('options', [])
                 session.choices = [{'label': text_only(option.get('label'))[:200], 'value': option['value']}
                     for option in choices[:50] if isinstance(option, dict) and
@@ -388,7 +397,7 @@ class Bridge:
                 session.busy = False
             elif kind not in ('ActionMsg', 'StreamStart', 'StreamChunk', None):
                 session.emit('Dieser Schritt enthält ein nicht unterstütztes Bedienelement: ' + str(kind)[:80], 'notice')
-        if data.get('streamState') == 'END':
+        if data.get('streamState') == 'END' and not self.settings.wait_for_input_control:
             session.busy = False
         if data.get('completed') is True:
             session.ended = True

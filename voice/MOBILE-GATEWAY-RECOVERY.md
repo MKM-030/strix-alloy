@@ -1,6 +1,6 @@
 # Mobile voice gateway: deployment and recovery
 
-Status at 2026-10-12 22:45 UTC: **gateway deployed and public authentication verified; complete voice demo still under integration test.** The Windows gateway listens on loopback 8854. Existing Funnel root and callback routes are preserved. The added `/scc-demo` HTTPS route serves the gateway. Actual public page/assets returned 200, unauthenticated API access returned 401, protected-file password login/logout returned 200, and secure cookie attributes were verified without recording credentials. The 13 gateway integration tests passed on Windows.
+Status at 2026-10-13: **gateway and own speech deployed; the first real authenticated ServiceNow order is verified. Final mobile prompt/readiness acceptance is in progress.** The Windows gateway listens on loopback 8854. Existing Funnel root and callback routes are preserved. The added `/scc-demo` HTTPS route serves the gateway. Actual public page/assets returned 200, unauthenticated API access returned 401, protected-file password login/logout returned 200, and secure cookie attributes were verified without recording credentials. The 13 gateway integration tests passed on Windows.
 
 This is a mobile browser interface to the existing SCC voice bridge. It does not add custom speech directly inside the native Now Mobile application. ServiceNow dialog correctness, catalog behavior, and existing callback routing remain separate integration checks. The ITSM laptop example in the interface is display text; it does not submit an order or create an incident.
 
@@ -72,11 +72,29 @@ Do not use a broad process stop or the general voice launcher Stop action to rec
 
 The bridge reads the configured speech name from settings.tts_voice in its protected configuration JSON. Existing installations default to Ryan; this demo sets the value to scc-demo and keeps model alias qwen3-tts-0.6b. The TTS worker must have the corresponding synthetic profile loaded. On 2026-10-13 the coordinated restart applied this setting; 38 voice tests passed, including the configured-voice request and existing default-voice behavior.
 
-The SCC deployment does not send a greeting topic. Its first authenticated, request-matched ActionMsg with actionType StartConversation marks only the pending START_CONVERSATION as ready for the user's first utterance. Other ActionMsg controls and normal message turns do not unlock input. This is covered by matching-start, unrelated-request, and mid-turn regression cases. The complete voice test suite has 44 passing tests.
+The SCC deployment does not send a greeting topic. Its first authenticated, request-matched ActionMsg with actionType StartConversation marks only the pending START_CONVERSATION as ready for the user's first utterance. Other ActionMsg controls and normal message turns do not unlock input. This is covered by matching-start, unrelated-request, and mid-turn regression cases. The prior explicit/deferred-start phase passed 44 voice tests; the current suite is listed below.
 
 Bridge logs retain request IDs, HTTP ACK status/key names, callback match status and control types for support. They do not contain credentials, session cookies, prompt contents or spoken text.
 
 The SCC configuration sets settings.defer_start_until_message to true. Starting the local UI does not send an empty START_CONVERSATION request. The first real typed/transcribed utterance creates the ServiceNow conversation through the documented Bot API text path. Reset before the first utterance makes no ServiceNow call. The setting defaults to false for existing integrations that require an explicit START action; their matched initial StartConversation control behavior remains available.
+
+## SCC identity and spoken input prompts
+
+The stable external Bot API identity is `scc-demo-marcel-20261013`, with the existing verified Marcel email, existing `scc-local-voice` application and existing credentials. This is an opaque channel identity, not a new ServiceNow user. Do not generate a different identity for each conversation. ServiceNow verified that this identity links to the same active user through the canonical active consumer. The old email-as-external-ID binding had resolved to an inactive obsolete consumer and stalled before agent execution.
+
+The final SCC configuration requires both `settings.defer_start_until_message=true` and `settings.wait_for_input_control=true`. A completed output stream can contain only an interim routing sentence. In this mode the client waits for an actual input control or conversation completion before enabling another utterance. Other installations retain the legacy readiness default.
+
+InputText and other supported input-control labels are stored as normal bot events, so the same authenticated `/api/speak` path speaks the actual ServiceNow question. Identical normalized OutputText and input labels are spoken once per user turn; the same question may be spoken again in a later turn. Secure controls, partial streams and callbacks for another request remain excluded. Speech requests use only a stored event ID and never substitute caller-provided text.
+
+While speech is being synthesized, microphone, send, choice and replay actions remain disabled and the interface shows preparation status. Cancelling playback, resetting or logging out invalidates the pending audio but does not abort its HTTP synthesis request. This prevents a new ASR request racing the still-busy speech worker. Once synthesis finishes, playback remains interruptible. Synthesis failure releases the UI lock and displays the error.
+
+On 2026-10-13 the first authenticated diagnostic dialog used actual WAV-to-ASR input for the intent, Alex Sommer and explicit confirmation. ServiceNow created **REQ0010012 / RITM0010011** for Alex Sommer, 2026-11-01, Hamburg and the existing manager. The real result event was synthesized through `/api/speak`; the original long result took 73.532 seconds to generate 35.28 seconds of audio. Name and summary labels initially needed diagnostic speech calls, which is why stored prompt events and the final acceptance test are required. This diagnostic success alone does not certify actual phone microphone or Safari playback.
+
+The full offline suite now contains 53 tests, including delayed input readiness, prompt deduplication, stored-event speech, stale callback rejection and pending-synthesis UI races. Run it with:
+
+```powershell
+& 'C:\Projects\strix-alloy-clean\server\.local\venv\Scripts\python.exe' -m unittest discover -s voice/tests -p 'test_*.py' -q
+```
 
 ## Exact gateway command
 
@@ -138,7 +156,7 @@ Use one browser/device at a time. Log in through the HTTPS page using the existi
 5. Use “Neu starten” after the bridge is no longer busy; verify a second conversation works without occupying an extra backend slot. Log out and back in; verify the single retained backend session still works. A second unauthenticated browser cannot use the APIs.
 6. Record any uncertain submission outcome before retrying. Do not automatically resend an order/message after a timeout. Diagnose using the existing ServiceNow and bridge tools.
 
-Only report the demo ready once routing, authentication, speech, actual dialog progression, reset/reconnect, and the required ServiceNow outcome have all been verified. Gateway deployment and authentication are verified. Phone microphone/playback and the full ServiceNow order remain separate acceptance checks.
+Only report the demo ready once routing, authentication, speech, actual dialog progression, reset/reconnect, and the required ServiceNow outcome have all been verified. Gateway authentication and the diagnostic ServiceNow order are verified. Actual phone microphone/playback and final spoken-prompt acceptance remain separate checks.
 
 ## Rollback and common recovery cases
 

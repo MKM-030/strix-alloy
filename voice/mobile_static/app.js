@@ -47,7 +47,7 @@ function initialize() {
     seen: new Set(), choices: [], recorder: null, stream: null, recording: false,
     recordingDiscarded: false, recordingTimer: null, recordingStarted: 0, audioContext: null,
     audioUrl: '', speechController: null, speechGeneration: 0, audioPrimed: false,
-    speechQueue: [], speechRunning: false,
+    speechQueue: [], speechRunning: false, speechPreparing: false,
   };
   const supportsRecording = !!(window.isSecureContext && navigator.mediaDevices?.getUserMedia && window.MediaRecorder && (window.AudioContext || window.webkitAudioContext));
 
@@ -72,7 +72,7 @@ function initialize() {
   }
 
   function canSend() {
-    return state.authenticated && state.started && state.connected && !state.operation && !state.busy && !state.recording && !state.ended && !state.failed;
+    return state.authenticated && state.started && state.connected && !state.operation && !state.busy && !state.recording && !state.speechPreparing && !state.ended && !state.failed;
   }
 
   function renderControls() {
@@ -89,7 +89,7 @@ function initialize() {
     ui.resetButton.disabled = !!state.operation || state.recording || state.busy;
     ui.logoutButton.disabled = !!state.operation;
     ui.choices.querySelectorAll('button').forEach(button => { button.disabled = !ready; });
-    ui.messages.querySelectorAll('.replay').forEach(button => { button.disabled = !state.authenticated || !!state.operation || state.recording; });
+    ui.messages.querySelectorAll('.replay').forEach(button => { button.disabled = !state.authenticated || !!state.operation || state.recording || state.speechPreparing; });
     ui.status.classList.toggle('recording', state.recording);
     ui.connectionStatus.classList.toggle('connected', state.authenticated && state.connected);
     ui.connectionStatus.textContent = !state.authenticated ? 'Geschützte Demo' : state.connected ? 'Verbunden' : 'Verbindung prüfen …';
@@ -98,6 +98,8 @@ function initialize() {
       ui.status.textContent = `Aufnahme läuft · ${elapsed} / 30 Sek. · Zum Beenden auf „Aufnahme stoppen“ tippen.`;
     } else if (state.operation) {
       ui.status.textContent = ({ session: 'Sitzung wird geladen …', start: 'Gespräch wird gestartet …', send: 'Nachricht wird gesendet …', reset: 'Gespräch wird neu gestartet …', transcribe: 'Ihre Aufnahme wird in Text umgewandelt …', microphone: 'Mikrofon wird vorbereitet …', logout: 'Sie werden abgemeldet …' })[state.operation] || 'Einen Moment …';
+    } else if (state.speechPreparing) {
+      ui.status.textContent = 'Sprachausgabe wird vorbereitet …';
     } else if (!state.connected && state.authenticated) {
       ui.status.textContent = 'Verbindung unterbrochen. Es wird erneut versucht …';
     } else if (state.failed) {
@@ -139,8 +141,12 @@ function initialize() {
   function stopSpeech() {
     state.speechGeneration++;
     state.speechQueue = [];
-    state.speechController?.abort();
-    state.speechController = null;
+    // A cancelled fetch does not cancel server synthesis or release its audio lock.
+    // Invalidate its result now, but wait for it to settle before allowing new input.
+    if (!state.speechPreparing) {
+      state.speechController?.abort();
+      state.speechController = null;
+    }
     ui.speechPlayer.pause();
     ui.speechPlayer.onended = null;
     ui.speechPlayer.onerror = null;
@@ -164,12 +170,20 @@ function initialize() {
   }
 
   async function playSpeech(eventId, manual = false) {
-    if (!state.authenticated || state.recording || (!manual && !ui.speechEnabled.checked)) return;
+    if (!state.authenticated || state.recording || state.speechPreparing || (!manual && !ui.speechEnabled.checked)) return;
     const generation = state.speechGeneration;
     const controller = new AbortController();
     state.speechController = controller;
+    state.speechPreparing = true;
+    renderControls();
     try {
-      const blob = await request('/api/speak', { method: 'POST', body: { eventId }, signal: controller.signal, asBlob: true });
+      let blob;
+      try {
+        blob = await request('/api/speak', { method: 'POST', body: { eventId }, signal: controller.signal, asBlob: true });
+      } finally {
+        state.speechPreparing = false;
+        renderControls();
+      }
       if (generation !== state.speechGeneration || state.recording) return;
       if (state.audioUrl) URL.revokeObjectURL(state.audioUrl);
       state.audioUrl = URL.createObjectURL(blob);
@@ -258,6 +272,7 @@ function initialize() {
       replay.className = 'replay';
       replay.textContent = '▷ Erneut anhören';
       replay.addEventListener('click', () => {
+        if (!state.authenticated || state.operation || state.recording || state.speechPreparing) return;
         stopSpeech();
         primeAudio();
         state.speechQueue.push({ eventId: event.id, manual: true });

@@ -125,10 +125,83 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await self.callback(body=body)).status, 200)
         self.assertEqual((await self.callback(body=body)).status, 200)
         state = await (await self.ui.get('/api/events?wait=0')).json()
-        self.assertEqual(len(state['events']), 1)
-        self.assertEqual(state['events'][0]['text'], 'Wie kann ich helfen?')
+        self.assertEqual([e['text'] for e in state['events']],
+                         ['Wie kann ich helfen?', 'Ihre Antwort'])
         self.assertFalse(state['busy'])
         self.assertFalse(state['ended'])
+
+    async def test_input_prompt_is_stored_and_spoken_from_server_event(self):
+        await self.post('/api/start', {})
+        await self.callback(body=[{'uiType': 'InputText',
+                                  'label': '<b>Wie heißt dein neuer Mitarbeiter?</b>'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertEqual(state['inputLabel'], 'Wie heißt dein neuer Mitarbeiter?')
+        self.assertEqual([e['text'] for e in state['events']],
+                         ['Wie heißt dein neuer Mitarbeiter?'])
+        self.assertEqual(state['events'][0]['kind'], 'bot')
+        received = []
+        async def tts(request):
+            received.append(await request.json())
+            return web.Response(body=b'RIFF'+b'0'*40, content_type='audio/wav')
+        app = web.Application()
+        app.router.add_post('/speech', tts)
+        server = TestServer(app)
+        await server.start_server()
+        try:
+            self.bridge.tts_url = str(server.make_url('/speech'))
+            self.bridge.settings.tts_voice = 'scc-demo'
+            response = await self.post('/api/speak', {
+                'eventId': state['events'][0]['id'], 'text': 'INJECTED CLIENT TEXT'})
+            self.assertEqual(response.status, 200)
+            self.assertEqual(received[0]['input'], 'Wie heißt dein neuer Mitarbeiter?')
+            self.assertEqual(received[0]['voice'], 'scc-demo')
+            self.assertEqual((await self.post('/api/speak', {'eventId': 999})).status, 400)
+            self.assertEqual(len(received), 1)
+        finally:
+            await server.close()
+
+    async def test_prompt_output_deduplication_is_limited_to_current_turn(self):
+        await self.post('/api/start', {})
+        question = 'Bitte bestätigen.'
+        await self.callback(body=[{'uiType': 'OutputText', 'value': question}])
+        await self.callback(body=[{'uiType': 'Picker', 'label': question,
+                                  'options': [{'label': 'Ja', 'value': 'yes'}]}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertEqual([e['text'] for e in state['events']], [question])
+        await self.post('/api/message', {'text': 'Noch einmal bitte'})
+        await self.callback(body=[{'uiType': 'InputText', 'promptMsg': question}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertEqual([e['text'] for e in state['events']], [question, question])
+        await self.callback(body=[{'uiType': 'OutputText', 'value': question}])
+        await self.callback(body=[{'uiType': 'InputText', 'label': ''}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertEqual([e['text'] for e in state['events']], [question, question])
+
+    async def test_input_control_mode_waits_past_interim_stream_end(self):
+        self.bridge.settings.wait_for_input_control = True
+        await self.post('/api/start', {})
+        await self.callback(streamActive=False, streamState='END', body=[
+            {'uiType': 'OutputText', 'value': 'Ich leite die Bestellung ein.'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['busy'])
+        self.assertEqual((await self.post('/api/message', {'text': 'Zu frueh'})).status, 409)
+        old_request = self.requests[-1]['requestId']
+        await self.callback(body=[{'uiType': 'InputText', 'label': 'Wie heißt der Mitarbeiter?'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertFalse(state['busy'])
+        self.assertEqual([e['text'] for e in state['events']],
+                         ['Ich leite die Bestellung ein.', 'Wie heißt der Mitarbeiter?'])
+        await self.post('/api/message', {'text': 'Alex Sommer'})
+        await self.callback(requestId=old_request, body=[
+            {'uiType': 'InputText', 'label': 'VERALTETE FRAGE'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['busy'])
+        self.assertNotIn('VERALTETE FRAGE', [e['text'] for e in state['events']])
+        await self.callback(completed=True, body=[
+            {'uiType': 'OutputText', 'value': 'Erledigt.'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertFalse(state['busy'])
+        self.assertTrue(state['ended'])
 
     async def test_choice_is_validated_and_uses_typed_false(self):
         await self.post('/api/start', {})
