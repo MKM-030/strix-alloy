@@ -4,7 +4,7 @@ import urllib.error, urllib.request
 
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 CLEAN=pathlib.Path(r"C:\Projects\strix-alloy-clean")
-PROFILE=CLEAN/"server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0181-version-bracket-20261012/serving0181-full262-exact-cache-candidate-20261013.json"
+PROFILE=CLEAN/"server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0181-version-bracket-20261012/serving0181-full262-exact-text-voice-candidate-20261013.json"
 MODEL=CLEAN/"backends/halogen-wsl2-0.18.1/.local/api-token.txt"
 GATEWAY=ROOT/"server/.local/scc-gateway.json"
 PORTS=(8731,8840,8841,8850,8851,8852,8853,8860,8861,8862)

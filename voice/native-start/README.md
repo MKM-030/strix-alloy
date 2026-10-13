@@ -7,9 +7,9 @@ window open so loading progress and errors remain visible.
 
 | Shortcut | Action |
 | --- | --- |
-| SCC - HaloGen Modell | Start/verify STT and TTS, register the synthetic voice, then start the original guarded model |
+| SCC - HaloGen Modell | Start/verify STT and TTS, register the selected German voice, then start the guarded Voice text-only model |
 | SCC - Speech to Text | Start/verify only Whisper on 8861 |
-| SCC - Text to Speech | Start/verify only Qwen3-TTS on 8862 and register its existing synthetic voice |
+| SCC - Text to Speech | Start/verify only Qwen3-TTS on 8862 and register the selected German voice |
 | SCC - Voice Bridge | Start/verify Bot on 8850/8853 and native authenticated adapter on 8860 |
 | SCC - Gateway | Start/verify the existing 8841 gateway with the approved no-thinking mode |
 | SCC - Alles starten | Speech, model, gateway, voice bridge, then check health and existing Funnel routes |
@@ -18,9 +18,21 @@ window open so loading progress and errors remain visible.
 
 The command-line equivalent is `voice/Start-NativeVoice.ps1 -Action All`.
 Other actions are `STT`, `TTS`, `Model`, `Gateway`, `Voice`, and `Status`.
-Model startup may take several minutes. Its original memory guard, profile
-and retained-lock behavior remain active. A retained model lock requires
-inspection using the existing runbook; these shortcuts never remove it.
+Model startup may take several minutes. The Voice shortcut selects
+`serving0181-full262-exact-text-voice-candidate-20261013.json`: Halogen 0.18.1,
+v2, context 262144, one slot, Exact cache, and an explicit text-only setting.
+Other HaloGen profiles keep their existing vision default.
+
+A new Model start requires 36 GiB available physical RAM and 131 GiB commit
+headroom, as configured in `model-start-policy.json`. The runtime physical
+and commit reserve stays at 18 GiB. Healthy running models are reused.
+
+The documented terminal incident `a596d8b7119f4875b07ea1fedbc9768b` was
+archived only after exact owned-container cleanup, absent process/port/WSL
+owners, the controller lease, pinned evidence and fresh 36/131 GiB restart
+checks passed. Its historical baseline-recovery failure remains recorded.
+A different retained ownership lock blocks startup and requires operator
+review; no active or unknown owner is stopped.
 
 An OS file lock prevents overlapping SCC starts from simultaneous clicks.
 Healthy intended services are reused after command-line, executable,
@@ -38,7 +50,6 @@ Do not use the legacy `Start-Voice.ps1`: its CPU workers on8851/8852 conflict
 with the native demo memory budget. These launchers refuse that situation.
 They make no changes to Tailscale/Funnel routes, firewall or browser permissions.
 
-Healthy services do not prove the complete natural voice dialog: generic
-hello continuation and English upstream progress remain documented limitations
-in `../native-bridge/README.md`. Startup does not submit a ServiceNow utterance
-or order.
+Startup checks service readiness without creating a conversation or
+submitting a ServiceNow utterance or order. Open the native Voice action to
+verify the German dialog and the selected voice on the device.

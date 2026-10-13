@@ -99,3 +99,9 @@ scripts/research/dflash_native_bridge/**/*.bin -diff
 # These copied originals include a terminal blank line covered by their hashes.
 scripts/research/dflash_native_bridge/controller/passive_elf_review.py whitespace=cr-at-eol,-blank-at-eof
 scripts/research/dflash_native_bridge/controller/relay-frames.txt whitespace=cr-at-eol,-blank-at-eof
+
+# Preserve reviewed Voice text-mode source/profile snapshot byte hashes.
+voice/model-launcher-review/text-mode-candidate/*.py -text whitespace=cr-at-eol
+voice/model-launcher-review/text-mode-candidate/*.json -text whitespace=cr-at-eol
+voice/model-launcher-review/text-mode-candidate/*.ps1 -text whitespace=cr-at-eol
+voice/model-launcher-review/text-mode-candidate/*.diff -text whitespace=cr-at-eol

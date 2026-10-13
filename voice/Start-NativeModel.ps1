@@ -4,15 +4,16 @@ param(
     [string]$Action = 'Status'
 )
 
-# Starts only the existing managed HaloGen profile. The single reviewed failed
+# Starts only the Voice text-only Exact HaloGen profile. The single reviewed failed
 # incident may be archived after the requested restart gate and proven cleanup; existing processes are never stopped.
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $Clean = 'C:\Projects\strix-alloy-clean'
 $Python = "$Clean\server\.local\venv\Scripts\python.exe"
 $Controller = "$Clean\server\controller.py"
-$Profile = "$Clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-exact-cache-candidate-20261013.json"
-$ProfileHash = 'f62b654bd0cfd0bcd00b4ced7416b64584ca530e6be8120e5d61dc45b931c323'
+$Profile = "$Clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-exact-text-voice-candidate-20261013.json"
+$ProfileHash = 'f1076479e51c4c8597ee8b90924748cce053e1dba85aa5e5169c650720e426cb'
+$HistoricalProfileHash = 'f62b654bd0cfd0bcd00b4ced7416b64584ca530e6be8120e5d61dc45b931c323'
 $StatePath = "$Clean\server\.local\current.json"
 $RunnerLock = "$Clean\backends\halogen-wsl2-0.18.1\.local\runner.lock"
 $StatusScript = Join-Path $PSScriptRoot 'native-speech-validation\stack_status.py'
@@ -23,6 +24,12 @@ $AdmissionHash = 'a14f0ec5894464ce46daf9f7adaf3b725111dddc4981a27e9dd3b6450c7e48
 $StartPolicyHash = '1a9e2392f765f800bb6e23f596d41db8fbe0b02d798c1050d328b5d975408e25'
 $mutex = $null
 $acquired = $false
+
+function Test-KnownHistoricalController($State) {
+    return $null -ne $State -and $State.phase -eq 'failed' -and
+        $State.run_id -eq 'ac678e51cef84d819a8fd276dcb93271' -and
+        $State.profile_sha256 -eq $HistoricalProfileHash
+}
 
 function Read-ControllerState {
     if (-not (Test-Path -LiteralPath $StatePath -PathType Leaf)) { return $null }
@@ -121,7 +128,7 @@ try {
         if (-not (Test-Path -LiteralPath $file -PathType Leaf)) { throw "HaloGen: Datei fehlt: $file" }
     }
     if ((Get-FileHash -LiteralPath $Profile -Algorithm SHA256).Hash.ToLowerInvariant() -ne $ProfileHash) {
-        throw 'HaloGen: Das freigegebene Exact-Cache-Profil wurde veraendert; kein Start.'
+        throw 'HaloGen: Das freigegebene Text-only-Exact-Profil wurde veraendert; kein Start.'
     }
     if ((Get-FileHash -LiteralPath $AdmissionScript -Algorithm SHA256).Hash.ToLowerInvariant() -ne $AdmissionHash -or
         (Get-FileHash -LiteralPath $StartPolicy -Algorithm SHA256).Hash.ToLowerInvariant() -ne $StartPolicyHash) {
@@ -191,9 +198,7 @@ try {
         # One root-reviewed historical incident only. Every other retained lock fails closed.
         $recovery = Join-Path $PSScriptRoot 'native-start\model_restart_a596d8.py'
         $recoveryHash = '21b38ac5b0e20ad1d7b93eb1164442ae56d338651c5d06419f5ff4475eea54ab'
-        if ($null -eq $state -or $state.phase -ne 'failed' -or
-            $state.run_id -ne 'ac678e51cef84d819a8fd276dcb93271' -or
-            $state.profile_sha256 -ne $ProfileHash -or
+        if (-not (Test-KnownHistoricalController $state) -or
             -not (Test-Path -LiteralPath $recovery -PathType Leaf) -or
             (Get-FileHash -LiteralPath $recovery -Algorithm SHA256).Hash.ToLowerInvariant() -ne $recoveryHash) {
             throw 'HaloGen: Schutzsperre nicht dem geprueften terminalen Vorfall zugeordnet; keine automatische Recovery.'
