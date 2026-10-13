@@ -60,14 +60,41 @@ def startup_lock():
             handle.seek(0); msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
 
 
+def retention_catchup():
+    # A stopped/offline exhibition PC catches up on its next Studio start.
+    # Before the fixed deadline the helper makes no recording/service changes.
+    path = HERE / 'retention_cleanup.py'
+    if not path.is_file():
+        return {'status': 'deferred', 'reason': 'retention_helper_missing'}
+    spec = importlib.util.spec_from_file_location('scc_studio_retention', path)
+    helper = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = helper
+    spec.loader.exec_module(helper)
+    if not helper.due():
+        return {'status': 'not_due'}
+    try:
+        completed = subprocess.run([str(PYTHON), '-u', str(path), '--apply'],
+            cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            timeout=180)
+        if len(completed.stdout) > 8192:
+            return {'status': 'deferred', 'reason': 'retention_report_oversized'}
+        value = json.loads(completed.stdout.decode('utf-8-sig'))
+        if value.get('status') not in ('not_due', 'purged', 'deferred'):
+            return {'status': 'deferred', 'reason': 'retention_report_invalid'}
+        return value
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return {'status': 'deferred', 'reason': 'retention_catchup_failed'}
+
+
 def start(access_file):
     owner = owner_tools()
     args = arguments()
+    retention = retention_catchup()
     with startup_lock():
         pid = owner.owned_listener(PORT, args)
         if pid:
             return {'ok': True, 'reused': True, 'pid': pid, 'url': ORIGIN + BASE_PATH + '/',
-                    'health': health()}
+                    'health': health(), 'retention': retention}
         for path in (PYTHON, HERE / 'studio_server.py', HERE / 'web/index.html'):
             if not path.is_file():
                 raise FileNotFoundError(path)
@@ -95,7 +122,7 @@ def start(access_file):
                            'exe': process.exe(), 'cmdline': process.cmdline()}
                 (RUNTIME / 'studio-owner.json').write_text(json.dumps(receipt), encoding='utf-8')
                 return {'ok': True, 'reused': False, 'pid': pid,
-                        'url': ORIGIN + BASE_PATH + '/', 'health': info}
+                        'url': ORIGIN + BASE_PATH + '/', 'health': info, 'retention': retention}
             time.sleep(.2)
         raise RuntimeError('Voice Studio was not ready in 20 seconds; inspect its logs')
 

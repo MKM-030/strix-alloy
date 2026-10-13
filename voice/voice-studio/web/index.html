@@ -7,17 +7,18 @@
   <meta name="color-scheme" content="light">
   <meta name="referrer" content="same-origin">
   <title>Voice Studio · ServiceNow</title>
-  <link rel="stylesheet" href="/voice-studio/styles.css">
-  <script type="module" src="/voice-studio/app.js"></script>
+  <link rel="stylesheet" href="/voice-studio/styles.css?v=20261014-qr">
+  <script src="/voice-studio/vendor/qr-code.js?v=20261014-qr"></script>
+  <script type="module" src="/voice-studio/app.js?v=20261014-qr"></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Zum Inhalt</a>
   <header class="site-header">
     <div class="brand">
-      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11v1a6 6 0 0 0 12 0v-1M12 18v3M9 21h6"/></svg></span>
-      <div><span class="brand-name">Voice Studio</span><span class="brand-context">ServiceNow · Sprachdemo</span></div>
+      <img class="brand-logo" src="/voice-studio/sopra-steria-logo.png" width="197" height="26" alt="Sopra Steria">
+      <div class="brand-caption"><span class="brand-name">Voice Studio · Smart Country Convention</span><span class="brand-context">mit ServiceNow</span></div>
     </div>
-    <button type="button" id="logout-button" class="button button-quiet" hidden>Abmelden</button>
+    <div class="header-actions"><span id="session-label" class="session-label" hidden></span><button type="button" id="logout-button" class="button button-quiet" hidden>Abmelden</button></div>
   </header>
 
   <main id="main-content" class="page-shell">
@@ -37,8 +38,35 @@
 
     <div id="studio-view" hidden>
       <section class="intro" aria-labelledby="studio-title">
-        <div><p class="eyebrow">Eine Stimme, die zu Ihnen gehört</p><h1 id="studio-title">Ihre Stimme.<br><span>Ihr Assistent.</span></h1><p class="intro-copy">Aufnehmen, anhören, auswählen. Ihr Stimmprofil begleitet die nächste ServiceNow-Anfrage.</p></div>
+        <div><p class="eyebrow">Eine Stimme, die zu Ihnen gehört</p><h1 id="studio-title">Ihre Stimme.<br> <span>Ihr Assistent.</span></h1><p class="intro-copy">Aufnehmen, anhören, auswählen. Ihr Stimmprofil begleitet die nächste ServiceNow-Anfrage.</p></div>
         <div class="intro-note"><span class="small-dot" aria-hidden="true"></span>Eigene Stimme · kurze Aufnahme</div>
+      </section>
+
+      <section id="admin-panel" class="card admin-panel" aria-labelledby="admin-title" hidden>
+        <div class="admin-heading"><div><p class="eyebrow">Administrator · Persönlicher Zugang</p><h2 id="admin-title">Zugang für eine Person erstellen</h2><p class="section-description">Name eingeben, QR-Code zeigen oder den Anmeldelink weitergeben. Jede Person erhält einen eigenen Zugang für ihre Stimme.</p></div><span class="duration-tag">QR-Code · Link · Token</span></div>
+        <form id="create-code-form" class="admin-form">
+          <div><label for="personal-code-label">Name der Person</label><input id="personal-code-label" type="text" maxlength="80" autocomplete="off" required placeholder="Zum Beispiel: Vorname Nachname"></div>
+          <button id="create-code-button" class="button button-primary" type="submit">Zugang mit QR-Code erstellen</button>
+        </form>
+        <p class="field-help">Persönliche Zugänge bleiben gültig; eine Anmeldung gilt acht Stunden. Die Aufnahmen der Messe-Demo werden ab dem 16. Oktober gelöscht.</p>
+        <p id="admin-message" class="inline-message" role="status" aria-live="polite" hidden></p>
+        <div id="generated-code-panel" class="generated-code-panel" hidden>
+          <p class="eyebrow">Neu erstellter Zugang · nur jetzt sichtbar</p>
+          <h3 id="generated-code-label"></h3>
+          <div class="generated-access-grid">
+            <figure class="generated-qr-figure"><img id="generated-qr" class="generated-qr" width="200" height="200" alt="" hidden><figcaption>Mit dem Smartphone scannen und direkt anmelden.</figcaption></figure>
+            <div class="generated-access-fields">
+              <label for="generated-login-link">Persönlicher Anmeldelink</label>
+              <input id="generated-login-link" class="generated-code-value" type="text" readonly autocomplete="off" spellcheck="false" aria-describedby="generated-code-help">
+              <label for="generated-access-code">Zugangscode / Token</label>
+              <input id="generated-access-code" class="generated-code-value" type="text" readonly autocomplete="off" spellcheck="false" aria-describedby="generated-code-help">
+              <p id="generated-code-help" class="field-help">QR-Code, Link und Token erlauben die Anmeldung als diese Person. Nur an sie weitergeben und sicher aufbewahren. Nach dem Ausblenden oder Abmelden werden sie nicht erneut angezeigt.</p>
+              <div class="generated-code-actions"><button id="copy-link-button" class="button button-primary" type="button">Link kopieren</button><button id="copy-code-button" class="button button-secondary" type="button">Token kopieren</button><button id="dismiss-code-button" class="button button-quiet" type="button">Ausblenden</button></div>
+              <p id="code-copy-message" class="inline-message" role="status" aria-live="polite" hidden></p>
+            </div>
+          </div>
+        </div>
+        <details id="existing-access-codes" class="existing-access-codes"><summary id="existing-access-summary">Bereits angelegte Zugänge</summary><ul id="personal-access-list" class="personal-access-list"></ul><p class="field-help">Die Namen bleiben gespeichert. Bestehende Tokens, Links und QR-Codes können nicht erneut angezeigt werden.</p></details>
       </section>
 
       <section class="active-card" aria-labelledby="active-title">
@@ -54,7 +82,9 @@
           <p class="section-description">Sprechen Sie in einem ruhigen Raum mit Ihrer normalen Stimme. Halten Sie etwas Abstand zum Mikrofon.</p>
           <div class="field"><label for="profile-name">Name des Stimmprofils</label><input id="profile-name" type="text" autocomplete="off" maxlength="80" placeholder="Zum Beispiel: Meine Stimme" aria-describedby="profile-name-help"><p id="profile-name-help" class="field-help">Damit Sie Ihre Aufnahme später wiederfinden.</p></div>
           <div class="reading-box"><div class="reading-heading"><span aria-hidden="true">“</span><h3>Diesen Text bitte vollständig vorlesen</h3></div><p id="reference-text">Der Aufnahmetext wird geladen.</p></div>
-          <label class="consent-label" for="voice-consent"><input id="voice-consent" type="checkbox"><span>Dies ist meine eigene Stimme. Ich stimme zu, dass diese Aufnahme gespeichert und für die synthetische Stimme des lokalen Assistenten sowie der ServiceNow-Sprachdemo verwendet wird.</span></label>
+          <aside class="privacy-box" aria-label="Datenschutz zur Messe-Demo"><strong>Datenschutz für Ihre Stimme</strong><p>Nur für diese Messe-Demo. Sie können Ihre Stimme jederzeit löschen oder das Standteam darum bitten. Die Demo-Aufnahmen werden nach der Messe ab dem 16. Oktober automatisch gelöscht; ist der Rechner ausgeschaltet, beim nächsten Start.</p></aside>
+          <p id="retention-message" class="inline-message" role="status" aria-live="polite" hidden></p>
+          <label class="consent-label" for="voice-consent"><input id="voice-consent" type="checkbox"><span>Dies ist meine eigene Stimme. Ich stimme zu, dass meine Aufnahme für diese Messe-Demo gespeichert und daraus eine synthetische Assistentenstimme erzeugt wird.</span></label>
           <div class="recorder-panel">
             <div class="recorder-status"><span id="record-indicator" class="record-indicator" aria-hidden="true"></span><span id="record-state">Bereit zur Aufnahme</span><span id="record-time" class="record-time" aria-label="Aufnahmedauer">00:00 / 00:25</span></div>
             <div id="input-meter" class="input-meter" role="meter" aria-label="Mikrofonpegel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="input-meter-fill"></span></div>
@@ -67,12 +97,23 @@
         <section class="card profiles-card" aria-labelledby="profiles-title">
           <div class="section-heading"><div><p class="eyebrow">02 · Gespeicherte Stimmen</p><h2 id="profiles-title">Ihre Stimmprofile</h2></div><button id="refresh-button" class="icon-button" type="button" aria-label="Stimmprofile aktualisieren" title="Aktualisieren"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6.1 7a7 7 0 0 1 11.5-2L20 8M4 16l2.4 3A7 7 0 0 0 18 17"/></svg></button></div>
           <p class="section-description">Hören Sie die Originalaufnahme an und wählen Sie die Stimme für Ihre nächste Anfrage.</p>
-          <div id="profile-list" class="profile-list" aria-live="polite"><div class="empty-state"><span class="empty-mark" aria-hidden="true">≋</span><h3>Stimmprofile werden geladen.</h3></div></div>
+          <div id="profile-list" class="profile-list" role="region" aria-label="Gespeicherte Stimmprofile" tabindex="0" aria-live="polite"><div class="empty-state"><span class="empty-mark" aria-hidden="true">≋</span><h3>Stimmprofile werden geladen.</h3></div></div>
           <div class="profile-footer"><span aria-hidden="true">↗</span><p>Beenden Sie ein laufendes Gespräch, bevor Sie die Stimme wechseln. Die Auswahl gilt für den nächsten Anruf.</p></div>
         </section>
       </div>
       <footer class="page-footer"><span>Voice Studio</span><span>Ihre persönliche Stimme für die ServiceNow-Sprachdemo.</span></footer>
     </div>
   </main>
+  <dialog id="delete-dialog" class="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description">
+    <form id="delete-form">
+      <p class="eyebrow">Stimmprofil entfernen</p>
+      <h2 id="delete-title">Diese Stimme dauerhaft löschen?</h2>
+      <p id="delete-profile-name" class="delete-profile-name"></p>
+      <p id="delete-description" class="dialog-description">Die gespeicherte Aufnahme und dieses Stimmprofil werden dauerhaft entfernt. Dieser Schritt lässt sich nicht rückgängig machen.</p>
+      <div class="field"><label for="delete-access-code">Zugangscode zur Bestätigung</label><input id="delete-access-code" type="password" name="password" autocomplete="current-password" required aria-describedby="delete-code-help"><p id="delete-code-help" class="field-help">Verwenden Sie Ihren persönlichen Zugangscode oder den Administratorcode.</p></div>
+      <p id="delete-message" class="inline-message" role="alert" hidden></p>
+      <div class="dialog-actions"><button id="delete-cancel-button" class="button button-quiet" type="button">Abbrechen</button><button id="delete-confirm-button" class="button button-danger" type="submit">Dauerhaft löschen</button></div>
+    </form>
+  </dialog>
 </body>
 </html>

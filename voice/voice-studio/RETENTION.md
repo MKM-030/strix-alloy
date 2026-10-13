@@ -1,0 +1,17 @@
+# Messeaufnahmen nach der Smart Country Convention entfernen
+
+Die Smart Country Convention 2026 findet vom 13. bis 15. Oktober statt. Die Aufbewahrung endet am **16. Oktober 2026 um 08:00 Uhr Europe/Berlin (06:00 UTC)**. Die feste Policy steht in `retention-policy.json`; Webseite und Bereinigung verwenden denselben Zeitpunkt.
+
+`retention_cleanup.py --apply` entfernt Aufnahmekopien erst ab diesem Zeitpunkt. Ohne `--apply` prüft das Programm ab Fälligkeit nur den Plan. Es gibt weder eine CLI-Zeitüberschreibung noch eine allgemeine Pfadangabe. Vor der Fälligkeit verändert es keine Aufnahmen oder Dienste.
+
+Der Löschbereich umfasst die autorisierten eigenen SCC-Stimmrevisionen unter `voice/voice-profile/runtime/profiles/revisions`, genau zugehörige private Löschquarantäne mit Journal, vom Studio erzeugte `upload-`-Restverzeichnisse mit der bekannten Verzeichnisstruktur und die exakt bekannte eigene Studio-Prüflauf-Datei `controlled-own-preview-20261013T191841Z.wav`. Symlinks, Windows-Junctions, fremde Dateinamen und Unterverzeichnisse werden zurückgewiesen. Ursprüngliche Referenzen in `C:\AI\assets\revn-voice\references\founder-test`, sonstige Audiodateien, die paketierte synthetische Standardstimme, Modelle, ServiceNow-Bestellungen, Zugangsverifikatoren und Administratorcode bleiben erhalten.
+
+Vor einer Entfernung wird die bestehende TTS-Auswahl über den unveränderten Profilmanager auf die paketierte synthetische Standardstimme zurückgesetzt. Das setzt einen identitätsgeprüften TTS-Worker voraus. Ein reiner Metadaten-Fallback ist nur möglich, wenn Native Bridge und TTS weder laufen noch laden. Danach prüft der Helfer unter der bestehenden Profilsperre nochmals Auswahl, Gesprächsstatus und sämtliche Löschpfade. Die Native-Health-Prüfung ist keine atomare Reservierung gegen einen neuen Anruf; ein laufender Anruf wird niemals erzwungen beendet.
+
+Neue Revisionen werden vor physischer Entfernung mit privatem Journal in die eigene Löschquarantäne verschoben. Ein gesperrtes Dateihandle führt zu einem Fehlerbericht und einem späteren Aufholversuch. Erst wenn die validierten Dateien tatsächlich entfernt sind, meldet das Programm `purged`. `runtime/retention-last-result.json` enthält nur Zeitpunkt, Mengen und Status, keine Zugangscodes, Namen oder Audiodaten.
+
+`Install-VoiceStudioRetention.ps1` richtet im aktuellen Benutzerkonto einen Task ein: täglich ab 16. Oktober um 08:00 Berlin, außerdem bei Anmeldung und mit `StartWhenAvailable`. Der Task benutzt weder Administratorrechte noch gespeicherte Kennwörter und stoppt keine Anwendung. Ein vorhandener fremder Task mit demselben Namen wird abgelehnt. `-InspectOnly` zeigt den vorgesehenen Task, ohne ihn anzulegen. Zusätzlich soll der Studio-Start den due-only Helfer aufrufen, damit ein zwischenzeitlich ausgeschalteter Rechner beim nächsten Start aufholt. Aktive Gespräche, unbekannte Listener, unklare Prozessidentität oder unsichere Dateien schieben die Bereinigung auf; der Benutzer kann den letzten Status lokal prüfen.
+
+Nach dem Ablauf blockiert der Studio-Server neue Aufnahmen und die Auswahl einer eigenen Stimmrevision. Anmeldung, Lesen, Löschen und Auswahl der paketierten Standardstimme bleiben möglich. So werden bei einem eingeschalteten Studio nach Ablauf keine neuen Messeaufnahmen angelegt.
+
+Installation und automatische Ausführung erst nach Prüfung der Änderung. Eine heutige Ausführung ergibt `not_due`; ein vorgezogener destruktiver Test auf echten Aufnahmen ist nicht vorgesehen.

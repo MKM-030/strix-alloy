@@ -24,6 +24,8 @@ import os
 from pathlib import Path
 import re
 import secrets
+import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -40,9 +42,15 @@ MAX_BODY_BYTES = 8 * 1024 * 1024 + 16 * 1024
 SESSION_SECONDS = 8 * 3600
 PBKDF_ITERATIONS = 250_000
 ID_RE = re.compile(r'\d{8}T\d{6}Z-[a-f0-9]{12}\Z')
-REFERENCE_TEXT = ('Guten Tag. Ich spreche heute meine eigene Stimme '
-    'für den lokalen Sprachassistenten ein. Bitte helfen Sie mir, einen neuen Laptop '
-    'zu bestellen. Vielen Dank für Ihre Unterstützung.')
+PERSONAL_ID_RE = re.compile(r'personal-[a-f0-9]{16}\Z')
+PERSONAL_CODE_RE = re.compile(r'VSP-([a-f0-9]{16})-[A-Za-z0-9_-]{24}\Z')
+ADMIN_PRINCIPAL = 'administrator'
+MAX_PERSONAL_CODES = 64
+MAX_FAILED_PURGES = 8
+MAX_QUARANTINE_BYTES = 64 * 1024 * 1024
+REFERENCE_TEXT = ('Willkommen zur Smart Country Convention. Mit Sopra Steria und ServiceNow '
+    'erlebe ich, wie einfach digitale Services werden. Bitte helfen Sie mir, '
+    'einen neuen Laptop für meinen Mitarbeiter zu bestellen.')
 PREVIEW_TEXT = 'Guten Tag. Wie kann ich Ihnen helfen?'
 LOG = logging.getLogger('scc.voice_studio')
 
@@ -54,10 +62,15 @@ class Config:
     profile_root: Path = HERE.parent / 'voice-profile' / 'runtime' / 'profiles'
     web_root: Path = HERE / 'web'
     base_path: str = '/voice-studio'
+    retention_policy: Path = HERE / 'retention-policy.json'
 
     @property
     def auth_file(self):
         return self.runtime / 'auth.json'
+
+    @property
+    def personal_codes_file(self):
+        return self.runtime / 'access-codes.json'
 
 
 class APIError(Exception):
@@ -89,9 +102,7 @@ def initialize_auth(path, password=None):
     password = password or secrets.token_urlsafe(18)
     if not isinstance(password, str) or not 12 <= len(password) <= 128:
         raise ValueError('Access code must contain 12–128 characters')
-    salt = secrets.token_bytes(32)
-    value = {'schema_version': 1, 'salt': salt.hex(), 'iterations': PBKDF_ITERATIONS,
-        'digest': hashlib.pbkdf2_hmac('sha256', password.encode(), salt, PBKDF_ITERATIONS).hex()}
+    value = make_verifier(password)
     path.parent.mkdir(parents=True, exist_ok=True)
     descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     try:
@@ -146,11 +157,125 @@ def read_auth(path):
     if path.stat().st_size > 4096:
         raise ValueError('Invalid authentication configuration')
     value = json.loads(path.read_text(encoding='utf-8-sig'))
-    if (value.get('schema_version') != 1 or value.get('iterations') != PBKDF_ITERATIONS
+    validate_verifier(value)
+    return value
+
+
+def make_verifier(password):
+    salt = secrets.token_bytes(32)
+    return {'schema_version': 1, 'salt': salt.hex(), 'iterations': PBKDF_ITERATIONS,
+        'digest': hashlib.pbkdf2_hmac('sha256', password.encode(), salt, PBKDF_ITERATIONS).hex()}
+
+
+def validate_verifier(value):
+    if (not isinstance(value, dict) or value.get('schema_version') != 1
+            or value.get('iterations') != PBKDF_ITERATIONS
             or not re.fullmatch('[a-f0-9]{64}', value.get('salt', ''))
             or not re.fullmatch('[a-f0-9]{64}', value.get('digest', ''))):
         raise ValueError('Invalid authentication configuration')
-    return value
+
+
+def atomic_private_json(path, value):
+    """Publish complete metadata with a private DACL before the atomic replace."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(path.name + '.' + secrets.token_hex(16) + '.tmp')
+    descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    try:
+        restrict_private_path(temporary)
+        handle = os.fdopen(descriptor, 'w', encoding='utf-8')
+        descriptor = None  # The handle owns it; never close a reused FD twice.
+        with handle:
+            json.dump(value, handle, ensure_ascii=False); handle.write('\n')
+            handle.flush(); os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        temporary.unlink(missing_ok=True)
+
+
+def read_personal_codes(path):
+    path = Path(path)
+    if not path.exists():
+        return {}
+    if path.stat().st_size > 128 * 1024:
+        raise ValueError('Invalid personal access-code configuration')
+    value = json.loads(path.read_text(encoding='utf-8-sig'))
+    entries = value.get('codes')
+    if value.get('schema_version') != 1 or not isinstance(entries, list) or len(entries) > MAX_PERSONAL_CODES:
+        raise ValueError('Invalid personal access-code configuration')
+    result = {}
+    for entry in entries:
+        identifier = entry.get('id', '')
+        if (not PERSONAL_ID_RE.fullmatch(identifier) or identifier in result
+                or not isinstance(entry.get('label'), str) or not 1 <= len(entry['label']) <= 80
+                or not isinstance(entry.get('created_at_utc'), str)):
+            raise ValueError('Invalid personal access-code identity')
+        validate_verifier(entry.get('verifier'))
+        result[identifier] = entry
+    return result
+
+
+def public_access_code(entry):
+    return {key: entry[key] for key in ('id', 'label', 'created_at_utc')}
+
+
+def read_retention_policy(path):
+    path = Path(path)
+    if path.stat().st_size > 4096:
+        raise ValueError('Invalid fair retention policy')
+    value = json.loads(path.read_text(encoding='utf-8-sig'))
+    if (value.get('schema_version') != 1 or value.get('scope') != 'authorized_own_voice_demo_recordings'
+            or value.get('keep_access_codes') is not True or value.get('keep_packaged_synthetic_voice') is not True):
+        raise ValueError('Invalid fair retention policy')
+    deadline = datetime.fromisoformat(value['due_at_utc'].replace('Z', '+00:00'))
+    if deadline.utcoffset() is None or deadline.utcoffset().total_seconds() != 0:
+        raise ValueError('Fair retention deadline must be timezone-aware UTC')
+    return value, deadline
+
+
+def is_reparse_path(path):
+    info = Path(path).lstat()
+    return stat.S_ISLNK(info.st_mode) or bool(getattr(info, 'st_file_attributes', 0) &
+        getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0x400))
+
+
+def revision_owner(folder):
+    path = Path(folder) / 'owner.json'
+    if not path.exists():
+        return ADMIN_PRINCIPAL
+    if is_reparse_path(path) or path.stat().st_size > 4096:
+        raise ValueError('Invalid voice ownership metadata')
+    value = json.loads(path.read_text(encoding='utf-8-sig'))
+    owner = value.get('principal_id', '')
+    if value.get('schema_version') != 1 or (owner != ADMIN_PRINCIPAL and not PERSONAL_ID_RE.fullmatch(owner)):
+        raise ValueError('Invalid voice ownership metadata')
+    return owner
+
+
+def plain_revision_size(folder):
+    """Staged revisions are flat files. Reject symlinks, junctions and directories."""
+    folder = Path(folder)
+    if is_reparse_path(folder) or not folder.is_dir():
+        raise APIError(403, 'profile_unsafe_path', 'Dieses Profil kann nicht sicher gelöscht werden.')
+    size = 0
+    for child in folder.iterdir():
+        info = child.lstat()
+        if is_reparse_path(child) or not stat.S_ISREG(info.st_mode):
+            raise APIError(403, 'profile_unsafe_path', 'Dieses Profil kann nicht sicher gelöscht werden.')
+        size += info.st_size
+    return size
+
+
+def purge_quarantined_revision(folder, quarantine_root):
+    folder, quarantine_root = Path(folder), Path(quarantine_root)
+    if is_reparse_path(quarantine_root) or folder.resolve().parent != quarantine_root.resolve():
+        raise APIError(403, 'profile_unsafe_path', 'Die Löschung wurde aus Sicherheitsgründen angehalten.')
+    plain_revision_size(folder)
+    shutil.rmtree(folder)
+    if folder.exists():
+        raise OSError('Quarantined profile remains after purge')
 
 
 def password_matches(auth, password):
@@ -209,7 +334,7 @@ async def owned_thread(function, *args):
             raise
 
 
-def create_app(config, *, manager=None, register=None, idle_check=None, synthesize=None):
+def create_app(config, *, manager=None, register=None, idle_check=None, synthesize=None, now=None):
     parsed = urlparse(config.origin)
     if (parsed.scheme != 'https' or not parsed.netloc or parsed.path not in ('', '/')
             or parsed.params or parsed.query or parsed.fragment or parsed.username):
@@ -218,11 +343,27 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         raise ValueError('Configure one simple URL base path')
     manager = manager or load_manager()
     auth = read_auth(config.auth_file)
+    personal_codes = read_personal_codes(config.personal_codes_file)
+    retention, deadline = read_retention_policy(config.retention_policy)
+    utc_clock = now or (lambda: datetime.now(timezone.utc))
     sessions = {}
     failed_logins = deque()
     operation_lock = asyncio.Lock()
     upload_lock = asyncio.Lock()
+    code_lock = asyncio.Lock()
     started = datetime.now(timezone.utc).isoformat()
+
+    def fair_expired_error():
+        return APIError(409, 'fair_retention_expired',
+            'Die Messe ist beendet. Neue Demo-Aufnahmen und eigene Stimmwahlen sind nicht mehr möglich. '
+            'Die Demo-Aufnahmen werden automatisch gelöscht.')
+
+    def require_fair_open():
+        if utc_clock() >= deadline:
+            raise fair_expired_error()
+
+    class ExpiredRegistration(manager.RegistrationRejected):
+        """A due-time gate rejects before native HTTP, without a rollback call."""
 
     def session(request):
         now = time.monotonic()
@@ -247,6 +388,34 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         token = request.headers.get('X-CSRF-Token', '')
         if not token or not token.isascii() or not hmac.compare_digest(token, found['csrf']):
             raise APIError(403, 'csrf_rejected', 'Bitte die Seite neu laden und erneut versuchen.')
+        return found
+
+    def public_session(found):
+        return {key: found[key] for key in ('principal_id', 'is_admin', 'label')}
+
+    def identity_for_password(password):
+        if password_matches(auth, password):
+            return {'principal_id': ADMIN_PRINCIPAL, 'is_admin': True,
+                'label': 'Administrator', 'verifier': auth}
+        matched = PERSONAL_CODE_RE.fullmatch(password) if isinstance(password, str) else None
+        entry = personal_codes.get('personal-' + matched[1]) if matched else None
+        if entry and password_matches(entry['verifier'], password):
+            return {'principal_id': entry['id'], 'is_admin': False,
+                'label': entry['label'], 'verifier': entry['verifier']}
+        return None
+
+    def visible_profile(profile, active, found):
+        value = safe_profile(profile, active)
+        own = revision_owner(profile['profile_dir']) == found['principal_id']
+        value.update(owner_is_self=own, can_delete=bool((own or found['is_admin']) and
+            profile['profile_id'] != 'synthetic-scc-demo'))
+        return value
+
+    def administrator(request):
+        found = authorized(request)
+        if not found['is_admin']:
+            raise APIError(403, 'admin_required', 'Nur der Administrator kann persönliche Zugangscodes verwalten.')
+        return found
 
     def selected_id():
         selected = manager.selected_profile(config.profile_root)
@@ -257,7 +426,8 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
             folder = manager.DEFAULT_PROFILE
         elif ID_RE.fullmatch(profile_id):
             folder = config.profile_root / 'revisions' / profile_id
-            if folder.resolve().parent != (config.profile_root / 'revisions').resolve():
+            if (folder.is_symlink() or (folder.exists() and is_reparse_path(folder))
+                    or folder.resolve().parent != (config.profile_root / 'revisions').resolve()):
                 raise APIError(404, 'profile_not_found', 'Stimmprofil nicht gefunden.')
         else:
             raise APIError(404, 'profile_not_found', 'Stimmprofil nicht gefunden.')
@@ -334,9 +504,11 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
     async def get_session(request):
         found = session(request)
         value = {'authenticated': bool(found), 'reference_text': REFERENCE_TEXT,
-            'max_recording_seconds': 25}
+            'max_recording_seconds': 25, 'recording_allowed': utc_clock() < deadline,
+            'retention_due_at_utc': retention['due_at_utc']}
         if found:
             value['csrf'] = found['csrf']
+            value.update(public_session(found))
         return web.json_response(value)
 
     async def login(request):
@@ -347,7 +519,8 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         if len(failed_logins) >= 5:
             raise APIError(429, 'login_throttled', 'Zu viele Anmeldeversuche. Bitte in zehn Minuten erneut versuchen.')
         data = await bounded_json(request, 2048)
-        if not await owned_thread(password_matches, auth, data.get('password')):
+        identity = await owned_thread(identity_for_password, data.get('password'))
+        if not identity:
             failed_logins.append(now)
             raise APIError(401, 'invalid_access_code', 'Der Zugangscode ist nicht korrekt.')
         session(request)  # Prune expired entries.
@@ -356,9 +529,9 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         old = request.cookies.get(COOKIE_NAME, '')
         sessions.pop(old, None)
         identifier = secrets.token_urlsafe(32)
-        value = {'csrf': secrets.token_urlsafe(32), 'expires': now + SESSION_SECONDS}
+        value = dict(identity, csrf=secrets.token_urlsafe(32), expires=now + SESSION_SECONDS)
         sessions[identifier] = value
-        response = web.json_response({'authenticated': True, 'csrf': value['csrf']})
+        response = web.json_response(dict(public_session(value), authenticated=True, csrf=value['csrf']))
         response.set_cookie(COOKIE_NAME, identifier, max_age=SESSION_SECONDS, secure=True,
             httponly=True, samesite='Strict', path='/')
         return response
@@ -371,25 +544,26 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         return response
 
     async def profiles(request):
-        authorized(request)
+        found = authorized(request)
         def listing():
             active = selected_id()
             results = []
             if manager.DEFAULT_PROFILE.is_dir():
-                results.append(safe_profile(manager.read_profile(manager.DEFAULT_PROFILE), active))
+                results.append(visible_profile(manager.read_profile(manager.DEFAULT_PROFILE), active, found))
             revisions = config.profile_root / 'revisions'
             if revisions.is_dir():
                 for folder in sorted(revisions.iterdir(), reverse=True):
                     if ID_RE.fullmatch(folder.name) and folder.is_dir() and not folder.is_symlink():
                         try:
-                            results.append(safe_profile(profile_by_id(folder.name), active))
+                            results.append(visible_profile(profile_by_id(folder.name), active, found))
                         except (ValueError, FileNotFoundError, APIError):
                             LOG.warning('Skipping invalid immutable voice revision')
             return {'profiles': results, 'selected_profile_id': active, 'active_voice': manager.VOICE_ALIAS}
         return web.json_response(await owned_thread(listing))
 
     async def upload(request):
-        mutation_check(request)
+        found = mutation_check(request)
+        require_fair_open()
         if upload_lock.locked():
             raise APIError(409, 'upload_in_progress', 'Eine Aufnahme wird bereits gespeichert. Bitte kurz warten.')
         async with upload_lock:
@@ -407,12 +581,27 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
                 ('name', 'reference_text', 'language', 'source', 'consent')}
             manager.validate_consent(metadata)
             def persist():
+                require_fair_open()
                 config.runtime.mkdir(parents=True, exist_ok=True)
                 with tempfile.TemporaryDirectory(prefix='upload-', dir=config.runtime) as temporary:
                     wav_path = Path(temporary) / 'recording.wav'
                     wav_path.write_bytes(audio)
-                    profile = manager.stage(dict(metadata, wav_path=str(wav_path)), config.profile_root)
-                return safe_profile(profile, selected_id())
+                    # Ownership is complete before this immutable revision is
+                    # atomically made visible to profile readers or activation.
+                    profile = manager.stage(dict(metadata, wav_path=str(wav_path)), Path(temporary) / 'profiles')
+                    staged = Path(profile['profile_dir'])
+                    atomic_private_json(staged / 'owner.json', {'schema_version': 1,
+                        'principal_id': found['principal_id']})
+                    revisions = config.profile_root / 'revisions'
+                    revisions.mkdir(parents=True, exist_ok=True)
+                    target = revisions / profile['profile_id']
+                    # Cleanup owns the same lock. A request which started before
+                    # the deadline cannot publish a late normalized recording.
+                    with manager.activation_lock(config.profile_root):
+                        require_fair_open()
+                        staged.rename(target)
+                    profile['profile_dir'] = str(target)
+                return visible_profile(profile, selected_id(), found)
             profile = await owned_thread(persist)
             return web.json_response({'profile': profile, 'active': False}, status=201)
 
@@ -424,8 +613,10 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         return web.Response(body=await owned_thread(read_audio), content_type='audio/wav')
 
     async def activate(request):
-        mutation_check(request)
+        found = mutation_check(request)
         await bounded_json(request, 2048)
+        if request.match_info['profile_id'] != 'synthetic-scc-demo':
+            require_fair_open()
         if operation_lock.locked():
             raise APIError(409, 'voice_operation_in_progress', 'Eine Stimmaktion läuft bereits. Bitte kurz warten.')
         async with operation_lock:
@@ -435,10 +626,129 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
                 if profile['profile_id'] == 'synthetic-scc-demo':
                     result = manager.restore_synthetic(config.profile_root, register=register)
                 else:
-                    result = manager.activate(profile['profile_dir'], config.profile_root, register=register)
-                return {'profile': safe_profile(profile, result['profile_id']),
+                    first_registration = True
+                    def fair_register(value):
+                        nonlocal first_registration
+                        if first_registration:
+                            # manager.activate already owns its OS lock here.
+                            if utc_clock() >= deadline:
+                                raise ExpiredRegistration('Fair retention deadline passed before registration')
+                            first_registration = False
+                        # Rollback of a genuine ambiguous native failure must
+                        # still restore the prior voice even across the deadline.
+                        return (register or manager.native_register)(value)
+                    try:
+                        result = manager.activate(profile['profile_dir'], config.profile_root, register=fair_register)
+                    except ExpiredRegistration:
+                        raise fair_expired_error() from None
+                return {'profile': visible_profile(profile, result['profile_id'], found),
                     'selected_profile_id': result['profile_id'], 'active_voice': manager.VOICE_ALIAS}
             return web.json_response(await owned_thread(select))
+
+    async def get_access_codes(request):
+        administrator(request)
+        return web.json_response({'access_codes': [public_access_code(entry) for entry in personal_codes.values()]})
+
+    async def create_access_code(request):
+        mutation_check(request); administrator(request)
+        data = await bounded_json(request, 2048)
+        label = data.get('label')
+        if not isinstance(label, str) or not 1 <= len(label.strip()) <= 80:
+            raise APIError(400, 'invalid_access_label', 'Bitte einen Namen mit 1–80 Zeichen für den Zugang eingeben.')
+        if code_lock.locked():
+            raise APIError(409, 'access_code_operation_in_progress', 'Ein Zugangscode wird bereits angelegt. Bitte kurz warten.')
+        async with code_lock:
+            if len(personal_codes) >= MAX_PERSONAL_CODES:
+                raise APIError(409, 'access_code_limit', 'Die maximale Anzahl persönlicher Zugänge ist erreicht.')
+            identifier = 'personal-' + secrets.token_hex(8)
+            code = 'VSP-' + identifier.removeprefix('personal-') + '-' + secrets.token_urlsafe(18)
+            def persist_code():
+                entry = {'id': identifier, 'label': label.strip(),
+                    'created_at_utc': manager.utc_now(), 'verifier': make_verifier(code)}
+                atomic_private_json(config.personal_codes_file, {'schema_version': 1,
+                    'codes': list(personal_codes.values()) + [entry]})
+                return entry
+            entry = await owned_thread(persist_code)
+            personal_codes[identifier] = entry
+            return web.json_response({'access_code': public_access_code(entry), 'code': code}, status=201)
+
+    async def delete_profile(request):
+        found = mutation_check(request)
+        data = await bounded_json(request, 2048)
+        password = data.get('password')
+        def verify_confirmation():
+            if password_matches(auth, password):
+                return True, True
+            return password_matches(found['verifier'], password), found['is_admin']
+        confirmed, admin_override = await owned_thread(verify_confirmation)
+        if not confirmed:
+            raise APIError(403, 'delete_confirmation_rejected', 'Bitte den eigenen Zugangscode oder den Administratorcode bestätigen.')
+        if operation_lock.locked():
+            raise APIError(409, 'voice_operation_in_progress', 'Eine Stimmaktion läuft bereits. Bitte kurz warten.')
+        async with operation_lock:
+            await require_idle()
+            def remove():
+                profile_id = request.match_info['profile_id']
+                if profile_id == 'synthetic-scc-demo':
+                    raise APIError(403, 'profile_protected', 'Die mitgelieferte Standardstimme kann nicht gelöscht werden.')
+                try:
+                    with manager.activation_lock(config.profile_root):
+                        profile = profile_by_id(profile_id)
+                        folder = Path(profile['profile_dir'])
+                        revisions = config.profile_root / 'revisions'
+                        if is_reparse_path(revisions) or folder.parent != revisions.resolve():
+                            raise APIError(403, 'profile_unsafe_path', 'Dieses Profil kann nicht sicher gelöscht werden.')
+                        if not admin_override and revision_owner(folder) != found['principal_id']:
+                            raise APIError(403, 'profile_delete_forbidden', 'Mit diesem Zugang können nur eigene Stimmprofile gelöscht werden.')
+                        if selected_id() == profile_id:
+                            raise APIError(409, 'selected_voice_protected', 'Diese Stimme ist ausgewählt. Bitte zuerst eine andere Stimme wählen.')
+                        size = plain_revision_size(folder)
+                        quarantine = config.runtime / 'delete-quarantine'
+                        quarantine.mkdir(parents=True, exist_ok=True)
+                        if is_reparse_path(quarantine):
+                            raise APIError(403, 'profile_unsafe_path', 'Die Löschung wurde aus Sicherheitsgründen angehalten.')
+                        restrict_private_path(quarantine, directory=True)
+                        journal_root = config.runtime / 'delete-journal'
+                        journal_root.mkdir(parents=True, exist_ok=True)
+                        if is_reparse_path(journal_root):
+                            raise APIError(403, 'profile_unsafe_path', 'Die Löschung wurde aus Sicherheitsgründen angehalten.')
+                        restrict_private_path(journal_root, directory=True)
+                        retained = list(quarantine.iterdir())
+                        if (len(retained) >= MAX_FAILED_PURGES or len(list(journal_root.iterdir())) >= MAX_FAILED_PURGES or
+                                sum(plain_revision_size(item) for item in retained) + size > MAX_QUARANTINE_BYTES):
+                            raise APIError(503, 'delete_quarantine_full', 'Eine frühere Löschung muss zuerst vom Administrator geprüft werden.')
+                        operation_id = secrets.token_hex(16)
+                        target = quarantine / (profile_id + '-' + operation_id)
+                        journal = journal_root / (operation_id + '.json')
+                        record = {'schema_version': 1, 'profile_id': profile_id,
+                            'requested_by': found['principal_id'], 'quarantine_name': target.name,
+                            'created_at_utc': manager.utc_now(), 'status': 'pending_purge'}
+                        atomic_private_json(journal, record)
+                        try:
+                            folder.rename(target)
+                        except Exception:
+                            journal.unlink(missing_ok=True)
+                            raise
+                        try:
+                            purge_quarantined_revision(target, quarantine)
+                        except Exception:
+                            atomic_private_json(journal, dict(record, status='purge_failed'))
+                            raise APIError(503, 'delete_purge_failed',
+                                'Die endgültige Löschung ist fehlgeschlagen. Das Profil wurde aus der Liste genommen; '
+                                'verbliebene Daten sind privat gesperrt. Bitte den Administrator informieren.') from None
+                        try:
+                            journal.unlink()
+                        except OSError:
+                            atomic_private_json(journal, dict(record, status='purged', completed_at_utc=manager.utc_now()))
+                            raise APIError(503, 'delete_finalize_failed',
+                                'Die Audiodaten wurden gelöscht, aber die Abschlussbestätigung ist fehlgeschlagen. '
+                                'Bitte den Administrator informieren.') from None
+                        return {'id': profile_id, 'deleted': True}
+                except RuntimeError as error:
+                    if str(error) == 'Another voice activation is in progress':
+                        raise APIError(409, 'voice_operation_in_progress', 'Eine Stimmaktion läuft bereits. Bitte kurz warten.') from None
+                    raise
+            return web.json_response(await owned_thread(remove))
 
     async def preview(request):
         mutation_check(request)
@@ -486,9 +796,12 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         app.router.add_post(prefix + '/api/logout', logout)
         app.router.add_get(prefix + '/api/profiles', profiles)
         app.router.add_post(prefix + '/api/profiles', upload)
+        app.router.add_delete(prefix + '/api/profiles/{profile_id}', delete_profile)
         app.router.add_get(prefix + '/api/profiles/{profile_id}/audio', audio)
         app.router.add_post(prefix + '/api/profiles/{profile_id}/activate', activate)
         app.router.add_post(prefix + '/api/preview', preview)
+        app.router.add_get(prefix + '/api/access-codes', get_access_codes)
+        app.router.add_post(prefix + '/api/access-codes', create_access_code)
     app.router.add_get(config.base_path, base_redirect)
     app.router.add_get(config.base_path + '/{tail:.*}', static)
     app.router.add_get('/{tail:.*}', static)

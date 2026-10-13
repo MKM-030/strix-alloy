@@ -48,13 +48,44 @@ export function inspectSignal(samples) {
   return { rms, peak, clipped: samples.length > 0 && clippedSamples / samples.length > 0.001, hasInput: rms > 0.001 && peak > 0.005 };
 }
 
+export function deletionAvailability(profile, selectedProfileId) {
+  if (!profile || profile.can_delete !== true || profile.id === 'synthetic-scc-demo') return 'hidden';
+  return profile.id === selectedProfileId ? 'selected' : 'allowed';
+}
+
+const PERSONAL_CODE_PATTERN = /^VSP-[a-f0-9]{16}-[A-Za-z0-9_-]{24}$/;
+
+export function personalLoginUrl(baseUrl, code) {
+  if (typeof code !== 'string' || !PERSONAL_CODE_PATTERN.test(code)) throw new TypeError('Bitte einen persönlichen Zugangscode verwenden.');
+  const url = new URL(baseUrl);
+  url.search = '';
+  url.hash = `access=${encodeURIComponent(code)}`;
+  return url.href;
+}
+
+function takePersonalLoginFragment() {
+  if (!window.location?.href || !/^#access(?:=|$)/.test(window.location.hash)) return '';
+  const url = new URL(window.location.href);
+  const fragment = url.hash;
+  url.hash = '';
+  // Remove the bearer token before parsing it or making the first API request.
+  window.history.replaceState(window.history.state, '', url.pathname + url.search);
+  const match = /^#access=([^&]*)$/.exec(fragment);
+  if (!match) return '';
+  try {
+    const code = decodeURIComponent(match[1]);
+    return PERSONAL_CODE_PATTERN.test(code) ? code : '';
+  } catch { return ''; }
+}
+
 if (typeof document !== 'undefined') initializeStudio();
 
 function initializeStudio() {
+  let initialPersonalCode = takePersonalLoginFragment();
   const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map(element => [element.id, element]));
   const get = id => elements[id];
   const apiBase = new URL('./api/', import.meta.url);
-  const state = {csrf:'', authenticated:false, profiles:[], selectedProfileId:null, maxSeconds:25, referenceText:'', recorder:null, starting:false, recording:null, operation:false, requestToken:0, previewUrl:null};
+  const state = {csrf:'', authenticated:false, isAdmin:false, principalId:'', recordingAllowed:true, profiles:[], selectedProfileId:null, maxSeconds:25, referenceText:'', recorder:null, starting:false, recording:null, operation:false, requestToken:0, previewUrl:null, pendingDeletion:null, deletionReturnFocus:null};
   const formatSeconds = seconds => `00:${String(Math.floor(seconds)).padStart(2, '0')}`;
   const apiUrl = path => new URL(path, apiBase).href;
 
@@ -88,18 +119,26 @@ function initializeStudio() {
   function updateControls() {
     const capturing = Boolean(state.recorder || state.starting);
     const ready = get('profile-name').value.trim().length > 0 && get('voice-consent').checked;
-    get('record-button').disabled = !state.authenticated || !state.referenceText || !ready || capturing || state.operation;
+    get('record-button').disabled = !state.authenticated || !state.recordingAllowed || !state.referenceText || !ready || capturing || state.operation;
     get('record-button').hidden = capturing;
     get('stop-button').hidden = !state.recorder || state.starting || state.recorder.stopping;
     get('stop-button').disabled = Boolean(state.recorder?.stopping);
     get('profile-name').disabled = capturing || state.operation;
     get('voice-consent').disabled = capturing || state.operation;
-    get('save-button').disabled = !state.recording?.valid || !ready || capturing || state.operation;
+    get('save-button').disabled = !state.recordingAllowed || !state.recording?.valid || !ready || capturing || state.operation;
     get('discard-button').disabled = capturing || state.operation;
     get('refresh-button').disabled = state.operation;
     get('logout-button').disabled = state.operation;
     get('active-preview-button').disabled = !state.selectedProfileId || state.operation || capturing;
-    for (const button of document.querySelectorAll('[data-profile-action]')) button.disabled = state.operation || capturing || button.dataset.selected === 'true';
+    get('create-code-button').disabled = !state.isAdmin || state.operation || capturing;
+    get('personal-code-label').disabled = state.operation || capturing;
+    get('copy-code-button').disabled = state.operation || capturing;
+    get('copy-link-button').disabled = state.operation || capturing;
+    get('dismiss-code-button').disabled = state.operation || capturing;
+    get('delete-confirm-button').disabled = state.operation;
+    get('delete-cancel-button').disabled = state.operation;
+    get('delete-access-code').disabled = state.operation;
+    for (const button of document.querySelectorAll('[data-profile-action]')) button.disabled = state.operation || capturing || button.dataset.selected === 'true' || button.dataset.expired === 'true';
     for (const audio of document.querySelectorAll('audio')) {
       if (capturing) {
         if (!audio.hidden) { audio.dataset.restoreAfterCapture = 'true'; audio.hidden = true; }
@@ -109,7 +148,7 @@ function initializeStudio() {
         delete audio.dataset.restoreAfterCapture;
       }
     }
-    get('record-help').textContent = state.starting ? 'Mikrofonzugriff wird angefragt …' : state.recorder ? 'Lesen Sie den Text vollständig vor.' : ready ? `Ihr Browser fragt beim Start nach Mikrofonzugriff. Maximal ${state.maxSeconds} Sekunden.` : 'Name eingeben und Zustimmung bestätigen.';
+    get('record-help').textContent = !state.recordingAllowed ? 'Die Aufnahmezeit der Messe-Demo ist beendet.' : state.starting ? 'Mikrofonzugriff wird angefragt …' : state.recorder ? 'Lesen Sie den Text vollständig vor.' : ready ? `Ihr Browser fragt beim Start nach Mikrofonzugriff. Maximal ${state.maxSeconds} Sekunden.` : 'Name eingeben und Zustimmung bestätigen.';
   }
 
   function resetRecording() {
@@ -140,6 +179,8 @@ function initializeStudio() {
 
   function showLogin() {
     state.authenticated = false;
+    state.isAdmin = false;
+    state.principalId = '';
     state.csrf = '';
     state.requestToken++;
     if (state.recorder) void finishRecording(true);
@@ -150,6 +191,14 @@ function initializeStudio() {
     get('profile-list').replaceChildren();
     state.profiles = [];
     state.selectedProfileId = null;
+    clearCodeDisplay();
+    closeDeletionDialog();
+    get('admin-panel').hidden = true;
+    get('existing-access-codes').open = false;
+    get('personal-access-list').replaceChildren();
+    get('personal-code-label').value = '';
+    message(get('admin-message'));
+    get('session-label').hidden = true;
     get('studio-view').hidden = true;
     get('login-view').hidden = false;
     get('logout-button').hidden = true;
@@ -159,6 +208,14 @@ function initializeStudio() {
 
   function showStudio(session) {
     state.authenticated = true;
+    state.isAdmin = session.is_admin === true;
+    state.principalId = session.principal_id || '';
+    state.recordingAllowed = session.recording_allowed !== false;
+    message(get('retention-message'), state.recordingAllowed ? '' : 'Die Aufnahmezeit für diese Messe-Demo ist beendet. Sie können vorhandene Profile weiterhin anhören und löschen sowie die Standardstimme auswählen.', 'info');
+    get('admin-panel').hidden = !state.isAdmin;
+    if (!state.isAdmin) { clearCodeDisplay(); get('existing-access-codes').open = false; get('personal-access-list').replaceChildren(); }
+    get('session-label').textContent = state.isAdmin ? 'Administrator' : session.label || 'Persönlicher Zugang';
+    get('session-label').hidden = false;
     state.csrf = session.csrf || state.csrf;
     state.referenceText = session.reference_text || state.referenceText;
     state.maxSeconds = Math.min(25, Math.max(3, Number(session.max_recording_seconds) || 25));
@@ -206,7 +263,8 @@ function initializeStudio() {
       const date = new Date(profile.created_at_utc);
       const dateText = Number.isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'}).format(date);
       const duration = Number(profile.duration_seconds);
-      group.append(create('p', 'profile-meta', [Number.isFinite(duration) && duration > 0 ? `${duration.toFixed(1).replace('.', ',')} Sek.` : '', dateText].filter(Boolean).join(' · ')));
+      const ownershipText = profile.id === 'synthetic-scc-demo' ? 'Standardstimme' : profile.owner_is_self === true ? 'Ihr Profil' : profile.owner_is_self === false ? 'Geteiltes Profil' : '';
+      group.append(create('p', 'profile-meta', [Number.isFinite(duration) && duration > 0 ? `${duration.toFixed(1).replace('.', ',')} Sek.` : '', dateText, ownershipText].filter(Boolean).join(' · ')));
       top.append(avatar, group);
       if (selected) top.append(create('span', 'badge badge-active', 'Ausgewählt'));
       const actions = create('div', 'profile-actions');
@@ -231,10 +289,31 @@ function initializeStudio() {
       select.type = 'button';
       select.dataset.profileAction = 'select';
       select.dataset.selected = String(selected);
+      select.dataset.expired = String(!state.recordingAllowed && profile.id !== 'synthetic-scc-demo');
+      if (select.dataset.expired === 'true') select.setAttribute('title', 'Nach der Messe kann nur die Standardstimme ausgewählt werden.');
       select.disabled = selected;
       select.addEventListener('click', () => activateProfile(profile));
       actions.append(listen, select);
       item.append(top, actions, audio);
+      const deletion = deletionAvailability(profile, state.selectedProfileId);
+      if (deletion !== 'hidden') {
+        const remove = create('button', 'icon-button profile-delete');
+        remove.type = 'button';
+        remove.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7M14 10v7"/></svg>';
+        remove.dataset.profileAction = 'delete';
+        remove.dataset.selected = String(deletion === 'selected');
+        remove.setAttribute('aria-label', `Stimmprofil „${profile.name}“ löschen`);
+        remove.setAttribute('title', deletion === 'selected' ? 'Zuerst eine andere Stimme auswählen' : `„${profile.name}“ dauerhaft löschen`);
+        remove.addEventListener('click', () => openDeletionDialog(profile, remove));
+        top.append(remove);
+        if (deletion === 'selected') {
+          const help = create('p', 'deletion-help', 'Zuerst eine andere Stimme auswählen.');
+          const helpId = `delete-help-${list.children.length}`;
+          help.id = helpId;
+          remove.setAttribute('aria-describedby', helpId);
+          item.append(help);
+        }
+      }
       list.append(item);
     }
     updateControls();
@@ -246,6 +325,10 @@ function initializeStudio() {
   }
 
   async function activateProfile(profile) {
+    if (!state.recordingAllowed && profile.id !== 'synthetic-scc-demo') {
+      message(get('page-message'), 'Die Aufnahmezeit dieser Messe-Demo ist beendet. Bitte wählen Sie die Standardstimme aus.', 'error');
+      return;
+    }
     state.operation = true;
     updateControls();
     message(get('page-message'));
@@ -257,6 +340,140 @@ function initializeStudio() {
     } catch (error) {
       message(get('page-message'), error.code === 'call_in_progress' ? 'Es läuft noch ein Gespräch. Warten Sie, bis es beendet ist, und wählen Sie die Stimme dann erneut aus.' : error.message, 'error');
     } finally { state.operation = false; updateControls(); }
+  }
+
+  function clearCodeDisplay() {
+    get('generated-access-code').value = '';
+    get('generated-login-link').value = '';
+    get('generated-code-label').textContent = '';
+    get('generated-qr').removeAttribute('src');
+    get('generated-qr').removeAttribute('alt');
+    get('generated-qr').hidden = true;
+    get('generated-code-panel').hidden = true;
+    message(get('code-copy-message'));
+  }
+
+  async function loadAccessCodes() {
+    if (!state.isAdmin) return;
+    const token = state.requestToken;
+    try {
+      const result = await api('access-codes');
+      if (token !== state.requestToken || !state.authenticated || !state.isAdmin) return;
+      const entries = Array.isArray(result.access_codes) ? result.access_codes : [];
+      const list = get('personal-access-list');
+      list.replaceChildren();
+      get('existing-access-summary').textContent = `Bereits angelegte Zugänge (${entries.length})`;
+      for (const entry of entries) {
+        const date = new Date(entry.created_at_utc);
+        const dateText = Number.isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'}).format(date);
+        list.append(create('li', '', [entry.label || 'Persönlicher Zugang', dateText].filter(Boolean).join(' · ')));
+      }
+      if (!entries.length) list.append(create('li', '', 'Noch keine persönlichen Zugänge angelegt.'));
+    } catch (error) {
+      if (token === state.requestToken && state.isAdmin) message(get('admin-message'), `Die vorhandenen Zugänge konnten nicht geladen werden: ${error.message}`, 'error');
+    }
+  }
+
+  function closeDeletionDialog() {
+    get('delete-access-code').value = '';
+    state.pendingDeletion = null;
+    message(get('delete-message'));
+    if (get('delete-dialog').open) get('delete-dialog').close();
+  }
+
+  function openDeletionDialog(profile, returnFocus) {
+    if (!state.authenticated || state.operation || state.recorder || state.starting || deletionAvailability(profile, state.selectedProfileId) !== 'allowed') return;
+    pauseOtherAudio();
+    state.pendingDeletion = {id:profile.id, name:profile.name};
+    state.deletionReturnFocus = returnFocus;
+    get('delete-profile-name').textContent = profile.name;
+    get('delete-access-code').value = '';
+    get('delete-confirm-button').textContent = 'Dauerhaft löschen';
+    message(get('delete-message'));
+    get('delete-dialog').showModal();
+    get('delete-access-code').focus();
+  }
+
+  async function deleteProfile(event) {
+    event.preventDefault();
+    if (state.operation || !state.pendingDeletion) return;
+    const profile = {...state.pendingDeletion};
+    const input = get('delete-access-code');
+    const password = input.value;
+    input.value = '';
+    if (!password.trim()) {
+      message(get('delete-message'), 'Bitte geben Sie Ihren Zugangscode ein.', 'error');
+      input.focus();
+      return;
+    }
+    state.operation = true;
+    get('delete-confirm-button').textContent = 'Wird gelöscht …';
+    message(get('delete-message'));
+    updateControls();
+    let deleted = false;
+    let returnToList = false;
+    try {
+      await api(`profiles/${encodeURIComponent(profile.id)}`, {method:'DELETE', body:JSON.stringify({password})});
+      deleted = true;
+      closeDeletionDialog();
+      renderProfiles({profiles:state.profiles.filter(candidate => candidate.id !== profile.id), selected_profile_id:state.selectedProfileId});
+      try {
+        await loadProfiles();
+        message(get('page-message'), `„${profile.name}“ wurde dauerhaft gelöscht.`, 'success');
+      } catch (error) {
+        message(get('page-message'), `„${profile.name}“ wurde dauerhaft gelöscht. Die Liste konnte nicht aktualisiert werden: ${error.message}`, 'error');
+      }
+    } catch (error) {
+      if (['delete_purge_failed', 'delete_finalize_failed'].includes(error.code) && state.authenticated) {
+        returnToList = true;
+        closeDeletionDialog();
+        renderProfiles({profiles:state.profiles.filter(candidate => candidate.id !== profile.id), selected_profile_id:state.selectedProfileId});
+        let detail = error.message;
+        try { await loadProfiles(); }
+        catch (refreshError) { detail += ` Die Liste konnte nicht aktualisiert werden: ${refreshError.message}`; }
+        message(get('page-message'), detail, 'error');
+      } else message(state.authenticated ? get('delete-message') : get('page-message'), error.message, 'error');
+    } finally {
+      state.operation = false;
+      get('delete-confirm-button').textContent = 'Dauerhaft löschen';
+      input.value = '';
+      updateControls();
+      if ((deleted || returnToList) && state.authenticated) get('refresh-button').focus();
+      else if (get('delete-dialog').open) input.focus();
+    }
+  }
+
+  async function createPersonalCode(event) {
+    event.preventDefault();
+    if (!state.isAdmin || state.operation || state.recorder || state.starting) return;
+    const label = get('personal-code-label').value.trim();
+    if (!label) { message(get('admin-message'), 'Bitte geben Sie eine Bezeichnung für den persönlichen Zugang ein.', 'error'); get('personal-code-label').focus(); return; }
+    clearCodeDisplay();
+    state.operation = true;
+    const token = state.requestToken;
+    get('create-code-button').textContent = 'Wird erstellt …';
+    message(get('admin-message'));
+    updateControls();
+    try {
+      const result = await api('access-codes', {method:'POST', body:JSON.stringify({label})});
+      if (token !== state.requestToken || !state.authenticated || !state.isAdmin) return;
+      if (typeof result.code !== 'string' || !result.code) throw new Error('Der Zugang wurde erstellt, aber sein Code konnte nicht angezeigt werden. Bitte erstellen Sie einen neuen Zugang.');
+      get('generated-code-label').textContent = result.access_code?.label || label;
+      get('generated-access-code').value = result.code;
+      const link = personalLoginUrl(new URL('../', apiBase).href, result.code);
+      get('generated-login-link').value = link;
+      try {
+        get('generated-qr').src = globalThis.VoiceStudioQr.toSvgDataUrl(link);
+        get('generated-qr').setAttribute('alt', `QR-Code zur Anmeldung für ${result.access_code?.label || label}`);
+        get('generated-qr').hidden = false;
+      } catch { message(get('code-copy-message'), 'Der QR-Code konnte nicht angezeigt werden. Kopieren Sie den Anmeldelink oder Zugangscode.', 'info'); }
+      get('generated-code-panel').hidden = false;
+      get('personal-code-label').value = '';
+      message(get('admin-message'), 'Der persönliche Zugang wurde erstellt.', 'success');
+      await loadAccessCodes();
+      get('generated-access-code').focus();
+    } catch (error) { message(state.authenticated ? get('admin-message') : get('page-message'), error.message, 'error'); }
+    finally { state.operation = false; get('create-code-button').textContent = 'Zugang mit QR-Code erstellen'; updateControls(); }
   }
 
   function pauseOtherAudio(exception) {
@@ -297,7 +514,7 @@ function initializeStudio() {
   }
 
   async function startRecording() {
-    if (state.recorder || state.starting || state.operation) return;
+    if (!state.recordingAllowed || state.recorder || state.starting || state.operation) return;
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
       message(get('record-message'), 'Die Mikrofonaufnahme benötigt eine sichere HTTPS-Verbindung und einen aktuellen Browser.', 'error');
       return;
@@ -422,7 +639,7 @@ function initializeStudio() {
   }
 
   async function saveRecording() {
-    if (!state.recording?.valid || state.operation) return;
+    if (!state.recordingAllowed || !state.recording?.valid || state.operation) return;
     state.operation = true;
     updateControls();
     const button = get('save-button');
@@ -442,23 +659,32 @@ function initializeStudio() {
     finally { state.operation = false; button.innerHTML = 'Stimmprofil speichern <span aria-hidden="true">→</span>'; updateControls(); }
   }
 
-  get('login-form').addEventListener('submit', async event => {
-    event.preventDefault();
+  async function signIn(password) {
     const button = get('login-button');
     button.disabled = true;
     button.textContent = 'Wird geöffnet …';
     message(get('page-message'));
+    get('access-code').value = '';
     try {
-      const result = await api('login', {method:'POST', body:JSON.stringify({password:get('access-code').value})});
+      const result = await api('login', {method:'POST', body:JSON.stringify({password})});
       state.csrf = result.csrf || '';
       get('access-code').value = '';
       const session = await api('session');
       if (!session.authenticated) throw new Error('Die Anmeldung konnte nicht bestätigt werden. Bitte versuchen Sie es erneut.');
       showStudio(session);
       await loadProfiles();
+      await loadAccessCodes();
       get('profile-name').focus();
-    } catch (error) { message(get('page-message'), error.message, 'error'); }
+    } catch (error) {
+      if (!state.authenticated) showLogin();
+      message(get('page-message'), error.message, 'error');
+      (state.authenticated ? get('refresh-button') : get('access-code')).focus();
+    }
     finally { button.disabled = false; button.innerHTML = 'Öffnen <span aria-hidden="true">→</span>'; }
+  }
+  get('login-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    await signIn(get('access-code').value);
   });
   get('logout-button').addEventListener('click', async () => {
     state.operation = true;
@@ -468,6 +694,33 @@ function initializeStudio() {
     finally { state.operation = false; updateControls(); }
   });
   get('profile-name').addEventListener('input', updateControls);
+  get('delete-form').addEventListener('submit', deleteProfile);
+  get('delete-cancel-button').addEventListener('click', closeDeletionDialog);
+  get('delete-dialog').addEventListener('cancel', event => {
+    if (state.operation) event.preventDefault();
+  });
+  get('delete-dialog').addEventListener('close', () => {
+    get('delete-access-code').value = '';
+    state.pendingDeletion = null;
+    message(get('delete-message'));
+    const target = state.deletionReturnFocus;
+    state.deletionReturnFocus = null;
+    if (state.authenticated && !state.operation && target?.isConnected && !target.disabled) target.focus();
+  });
+  get('create-code-form').addEventListener('submit', createPersonalCode);
+  get('dismiss-code-button').addEventListener('click', () => { clearCodeDisplay(); get('personal-code-label').focus(); });
+  get('copy-code-button').addEventListener('click', async () => {
+    const input = get('generated-access-code');
+    if (!input.value || state.operation || state.recorder || state.starting) return;
+    try { await navigator.clipboard.writeText(input.value); message(get('code-copy-message'), 'Code kopiert. Bewahren Sie ihn sicher auf.', 'success'); }
+    catch { input.focus(); input.select(); message(get('code-copy-message'), 'Bitte kopieren Sie den markierten Code.', 'info'); }
+  });
+  get('copy-link-button').addEventListener('click', async () => {
+    const input = get('generated-login-link');
+    if (!input.value || state.operation || state.recorder || state.starting) return;
+    try { await navigator.clipboard.writeText(input.value); message(get('code-copy-message'), 'Anmeldelink kopiert. Nur an die benannte Person weitergeben.', 'success'); }
+    catch { input.focus(); input.select(); message(get('code-copy-message'), 'Bitte kopieren Sie den markierten Anmeldelink.', 'info'); }
+  });
   get('voice-consent').addEventListener('change', updateControls);
   get('record-button').addEventListener('click', startRecording);
   get('stop-button').addEventListener('click', () => void finishRecording());
@@ -504,6 +757,8 @@ function initializeStudio() {
   window.addEventListener('pagehide', () => {
     state.requestToken++;
     state.starting = false;
+    clearCodeDisplay();
+    closeDeletionDialog();
     if (state.recorder) {
       const recorder = state.recorder;
       state.recorder = null;
@@ -514,10 +769,16 @@ function initializeStudio() {
   });
   window.addEventListener('pageshow', event => { if (event.persisted) void bootstrap(); });
   async function bootstrap() {
+    if (initialPersonalCode) {
+      const code = initialPersonalCode;
+      initialPersonalCode = '';
+      await signIn(code);
+      return;
+    }
     message(get('page-message'), 'Verbindung wird hergestellt …', 'info');
     try {
       const session = await api('session');
-      if (session.authenticated) { showStudio(session); await loadProfiles(); }
+      if (session.authenticated) { showStudio(session); await loadProfiles(); await loadAccessCodes(); }
       else showLogin();
       message(get('page-message'));
     } catch (error) { showLogin(); message(get('page-message'), error.message, 'error'); }
