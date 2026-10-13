@@ -1,0 +1,25 @@
+{
+  "source": "User supplied ServiceNow Background Script execution output",
+  "reported_at": "2026-10-13T18:04:51+02:00",
+  "status": "applied",
+  "execution_scope": "rhino.global",
+  "verified": [
+    {"table": "sn_aia_tool", "sys_id": "8b5c4f0393b38354e7f2b9fa6aba10f7", "field": "script", "sha256": "79f7a17ccc0887ade5004cf10bb12df4a78012ba583590474f84f6cb443f7ffe"},
+    {"table": "sn_aia_agent", "sys_id": "a4a9438393738354e7f2b9fa6aba101d", "field": "instructions", "sha256": "1084884fc7c7a70e58d887562053828a443ee7d30974ce3d425990824f5d61c7"},
+    {"table": "sn_aia_agent", "sys_id": "a6337ddf93f787105c8132d47aba1058", "field": "instructions", "sha256": "1084884fc7c7a70e58d887562053828a443ee7d30974ce3d425990824f5d61c7"}
+  ],
+  "verification_method": "Patch completed fresh GlideRecord readbacks of all three fields and matched expected after hashes in the same execution; evidence supplied by user, not an independent assistant connection.",
+  "business_rule_error": {
+    "sys_id": "f7c8f9e6430022101dbab69d4bb8f20c",
+    "line": 2,
+    "expression": "current.operation() == 'delete' || current.active.changesTo(false)",
+    "error": "The undefined value has no properties.",
+    "supporting_evidence": "Upload4 complete sn_aia_agent field metadata has no active field.",
+    "impact": "Target field writes verified; search signal or discovery side effects remain unverified. No business rule modification made."
+  },
+  "voice_session_after_patch_verified": false,
+  "latency_improvement_verified": false,
+  "english_response_issue_resolved": false,
+  "update_set_capture_verified": false,
+  "order_created_by_patch": false
+}
