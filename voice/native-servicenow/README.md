@@ -10,11 +10,16 @@ Inspected and edited through the ServiceNow native UI on 2026-10-13. Instance: `
 
 | Property | Value at save | Record sys_id |
 | --- | --- | --- |
-| sn_nowassist_va.scc_native_voice.enabled | false | 270371df93f787105c8132d47aba10e5 |
+| sn_nowassist_va.scc_native_voice.enabled | true (verified after save) | 270371df93f787105c8132d47aba10e5 |
 | sn_nowassist_va.scc_native_voice.assistant_id | 8aa131d793f787105c8132d47aba1095 | 1e3371df93f787105c8132d47aba10ed |
 | sn_nowassist_va.scc_native_voice.orchestrator_url | https://strix-alloy.tail7f425a.ts.net/scc-native | 40537ddf93f787105c8132d47aba1048 |
 
-The override applies only when enabled is exactly `true`, the caller has admin, the configured valid sys_id equals the requested assistant, and the configured endpoint equals the exact pinned destination. Otherwise the native global AVA service URL remains the result. No global AVA service URL or original HR assistant was edited. Original SCC chat agent `a4a9438393738354e7f2b9fa6aba101d` remains separate; a supported Voice counterpart is being configured by the agent-setup workstream.
+The override applies only when enabled is exactly `true`, the caller has admin, the configured valid sys_id equals the requested assistant, and the configured endpoint equals the exact pinned destination. Otherwise the native global AVA service URL remains the result. No global AVA service URL or original HR assistant was edited. Original SCC chat agent `a4a9438393738354e7f2b9fa6aba101d` remains unchanged and is the adapter's Bot API execution identity. Dedicated native Voice counterpart `SCC Laptop Onboarding Voice`, `a6337ddf93f787105c8132d47aba1058`, is attached to the native assistant and is the adapter's required authorization agent. This is native UI/media with the existing SCC chat backend; native Voice-agent orchestration has not replaced that backend.
+
+The counterpart has active config `fa04fdd3933b87105c8132d47aba104d`, administrator-only execute ACL `6955311f933b87105c8132d47aba10c6`, Dynamic user identity with an ITIL-only role mask, and active Autonomous mappings to the original tools `15ebcb8f93738354e7f2b9fa6aba1072` and `8b5c4f0393b38354e7f2b9fa6aba10f7`. Original tool scripts were not changed. The native picker requires exact type Voice and excludes Omni. See `counterpart-evidence.json` for complete record IDs, settings, original-preservation check, and two unused native-wizard tool copies retained without deletion.
+
+Native association was verified after a full page reload. Exact observed Test Assistant URL:
+https://soprasteriaassvsdemo14.service-now.com/now/now-assist-with-va/voice-test/8aa131d793f787105c8132d47aba1095
 
 ## Native transport and authentication evidence
 
@@ -33,7 +38,11 @@ The override applies only when enabled is exactly `true`, the caller has admin, 
 
 `node routing-draft.test.cjs` passed six local routing isolation checks: default native route, explicitly enabled correct assistant, unrelated assistant isolation, non-admin isolation, unapproved endpoint rejection, and trailing-slash normalization. The original source failed the two adapter-routing assertions before the draft was written. These checks do not execute ServiceNow Glide APIs or prove live voice media.
 
-Keep `enabled=false` until the adapter is running, authenticates the native token through the existing endpoint, and the dedicated Voice counterpart is attached. HTTPS/WSS Funnel reachability alone does not establish a WebRTC media route: the intended demo browser needs the authorized Tailscale/private media path or suitable TURN. No firewall change is part of this customization.
+Enabled was initially false and changed to true only after root authorization following adapter readiness and native association verification. A fresh native test page was opened after this change. One native Start call attempt immediately showed the critical error `Microphone access is blocked by browser permissions.` The UI showed No active call, with no transcript or analysis. The test tab was closed, and the adapter workstream was released to run its independent audio harness. No utterance, tool, or order was initiated by this native browser probe. Because native getUserMedia precedes WebSocket creation, this probe does not prove OAuth/WSS acceptance or end-to-end native audio. No credential values were read.
+
+HTTPS/WSS Funnel reachability alone does not establish a WebRTC media route: the intended demo browser needs the authorized Tailscale/private media path or suitable TURN. No firewall change is part of this customization. The user must complete the native microphone test in a browser with microphone permission and media connectivity.
+
+Final update-set audit verified the enabled-property customer update `d423b5df93f787105c8132d47aba10be` (instance updated 2026-10-13 03:07:11, modcount 1) remains in owned routing set `08d2bd5f93f787105c8132d47aba107e`. The set contains the transform, all three properties, and the new assistant's goodbye_message/retry_prefix attributes. The Voice counterpart's configuration and assistant deployment are captured across the existing Generative AI Controller set `0fc415cb933fcf14e7f2b9fa6aba10fa` as documented in the JSON evidence. The primary deployment customer-update target label still reads `New voice assistant - 1`, although current native UI shows SCC Native Voice. This evidence is not a verified complete portable update-set export.
 
 ## Rollback
 
@@ -41,4 +50,4 @@ Keep `enabled=false` until the adapter is running, authenticates the native toke
 2. For complete code rollback, open Data Broker Server Script `dfb09052b79df21081fee3fdde11a9af` in the correct application scope, replace Script with the exact contents of `Fetch-voice-assistant-details.js`, save, reopen and verify.
 3. Leave the dedicated assistant inactive. The new properties may remain disabled for auditability; deletion is unnecessary. Do not modify the original HR assistant or original SCC chat agent as rollback.
 
-UI proof captured in scratch: `routing-saved.png`, `routing-update-set.png`, `routing-properties-disabled.png`, and `/workspace/scratch/scc-native-voice-saved.jpg`. Native source originals and the saved patch are the durable rollback evidence in this directory.
+UI proof in `screenshots/`: saved routing, initial disabled properties, final enabled property, final owned update set, saved native assistant, saved Voice-agent association, ready native test UI, and the microphone-permission failure. Native source originals and the saved patch are durable rollback evidence. `deployment-evidence.json`, `counterpart-evidence.json`, and `native-probe-evidence.json` record observations; no secrets or native tokens are included.
