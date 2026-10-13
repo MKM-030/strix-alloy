@@ -64,7 +64,7 @@ class Backend:
 class Gateway:
     def __init__(self, backend, secret, backend_secret='', *, concurrency=1,
                  body_bytes=16*1024**2, request_seconds=1800, console_trace=False,
-                 queue_limit=0, queue_seconds=120):
+                 queue_limit=0, queue_seconds=120, demo_no_thinking_model=''):
         if not isinstance(secret,str) or len(secret)<32:
             raise ValueError('At least 32 characters of API key material required')
         if not 1<=concurrency<=16 or not 1024<=body_bytes<=64*1024**2:
@@ -77,6 +77,10 @@ class Gateway:
             raise ValueError('Queue timeout must be finite and greater than 0, up to 3600 seconds')
         if type(console_trace) is not bool:
             raise ValueError('console_trace must be a boolean')
+        if (not isinstance(demo_no_thinking_model,str) or
+                demo_no_thinking_model not in ('',backend.identifier)):
+            raise ValueError('demo_no_thinking_model must be empty or the selected public model alias')
+        self.demo_no_thinking_model=demo_no_thinking_model
         self.backend=backend; self.secret=secret; self.backend_secret=backend_secret
         self.concurrency=concurrency; self.body_bytes=body_bytes
         self.request_seconds=request_seconds; self.active=0; self._draining=False
@@ -235,6 +239,12 @@ class Gateway:
             if trace is not None: trace.payload(body)
             if not isinstance(body,dict) or body.get('model') not in (self.backend.identifier,self.backend.model):
                 raise web.HTTPBadRequest(text='Select a model returned by /v1/models')
+            # Explicit demo mode affects only the configured inbound public alias.
+            # It is intentionally shared by all callers of that alias, never prompt-matched.
+            if (self.demo_no_thinking_model and request.path=='/v1/chat/completions'
+                    and body['model']==self.demo_no_thinking_model):
+                body['enable_thinking']=False
+                body['reasoning_effort']='none'
             body['model']=self.backend.model
             acquired=await self.acquire_slot()
             if not acquired:
@@ -298,7 +308,8 @@ def load_config(path):
                    concurrency=value.get('concurrency',1),body_bytes=value.get('body_bytes',16*1024**2),
                    request_seconds=value.get('request_seconds',1800),
                    queue_limit=value.get('queue_limit',0),queue_seconds=value.get('queue_seconds',120),
-                   console_trace=value.get('console_trace',False))
+                   console_trace=value.get('console_trace',False),
+                   demo_no_thinking_model=value.get('demo_no_thinking_model',''))
 
 
 async def serve(gateway, port, stop_event=None):

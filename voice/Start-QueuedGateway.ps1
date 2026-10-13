@@ -3,7 +3,8 @@ param(
     [ValidateSet('Start','Stop','Status')]
     [string]$Action = 'Start',
     [string]$ProfileConfig = 'C:\Projects\strix-alloy-clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-profile.json',
-    [string]$Python = 'C:\Projects\strix-alloy-clean\server\.local\venv\Scripts\python.exe'
+    [string]$Python = 'C:\Projects\strix-alloy-clean\server\.local\venv\Scripts\python.exe',
+    [switch]$DemoNoThinking
 )
 # This sidecar only listens on 8841 and reuses the existing engine. It never
 # controls the backend, the live gateway on 8840, or Tailscale/Funnel.
@@ -67,6 +68,12 @@ if ($Action -eq 'Stop') {
     return
 }
 if ($null -ne $owned) {
+    $runningConfig = Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
+    $runningDemoAlias = $(if ($runningConfig.PSObject.Properties.Name -contains 'demo_no_thinking_model') { [string]$runningConfig.demo_no_thinking_model } else { '' })
+    $requestedDemoAlias = $(if ($DemoNoThinking) { 'halogen-v2' } else { '' })
+    if ($runningDemoAlias -ne $requestedDemoAlias) {
+        throw 'Requested demo mode differs from running gateway; wait for idle, stop the owned sidecar, then start with the desired mode.'
+    }
     [pscustomobject]@{ running=$true; pid=$serving.Id; launcher_pid=$owned.Id; port=$Port; config=$ConfigPath }
     return
 }
@@ -87,6 +94,11 @@ foreach ($field in @('token_file','backend_token_file')) {
         $config.$field = (Resolve-Path -LiteralPath $tokenPath).Path
     }
 }
+if ($DemoNoThinking -and $config.backend.identifier -ne 'halogen-v2') {
+    throw 'Demo no-thinking mode is restricted to the reviewed ServiceNow public alias halogen-v2.'
+}
+$demoAlias = $(if ($DemoNoThinking) { 'halogen-v2' } else { '' })
+$config | Add-Member -NotePropertyName demo_no_thinking_model -NotePropertyValue $demoAlias -Force
 $config | Add-Member -NotePropertyName queue_limit -NotePropertyValue 8 -Force
 $config | Add-Member -NotePropertyName queue_seconds -NotePropertyValue 120 -Force
 $config | Add-Member -NotePropertyName console_trace -NotePropertyValue $false -Force
