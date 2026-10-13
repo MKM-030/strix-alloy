@@ -1,0 +1,168 @@
+{
+  "timestamp_utc": "2026-10-13T09:38:54Z",
+  "commands": {
+    "asr": [
+      "C:\\AI\\build\\whisper.cpp\\build\\bin\\whisper-server.exe",
+      "--model",
+      "C:\\AI\\models\\stt\\ggml-turbo-german.bin",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8861",
+      "-l",
+      "de",
+      "-t",
+      "6",
+      "-fa",
+      "-nf"
+    ],
+    "tts": [
+      "C:\\AI\\qwentts.cpp\\build\\Release\\tts-server.exe",
+      "--model",
+      "C:\\AI\\models\\qwen3-tts-gguf\\qwen-talker-0.6b-base-Q8_0.gguf",
+      "--codec",
+      "C:\\AI\\models\\qwen3-tts-gguf\\qwen-tokenizer-12hz-Q8_0.gguf",
+      "--alias",
+      "scc-native-qwen3",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8862",
+      "--lang",
+      "German",
+      "--max-batch",
+      "1"
+    ]
+  },
+  "owned_pids": {
+    "asr": 6764,
+    "tts": 23104
+  },
+  "before_health": {
+    "asr": {
+      "port": 8861,
+      "health": {
+        "status": "ok"
+      },
+      "status": 200,
+      "headers_seconds": 0.0206,
+      "first_body_byte_seconds": 0.0206,
+      "complete_seconds": 0.0206,
+      "content_type": "application/json",
+      "bytes": 15
+    },
+    "tts": {
+      "port": 8862,
+      "health": {
+        "object": "list",
+        "data": [
+          {
+            "id": "scc-native-qwen3",
+            "object": "model",
+            "owned_by": "local"
+          }
+        ]
+      },
+      "status": 200,
+      "headers_seconds": 0.0009,
+      "first_body_byte_seconds": 0.0009,
+      "complete_seconds": 0.0009,
+      "content_type": "application/json",
+      "bytes": 88
+    }
+  },
+  "existing_fixture_asr": {
+    "status": 200,
+    "headers_seconds": 1.6707,
+    "first_body_byte_seconds": 1.6707,
+    "complete_seconds": 1.6707,
+    "content_type": "application/json",
+    "bytes": 139,
+    "transcript": "Willkommen beim SCC Service Desk, ich helfe Ihnen mit Ihrem neuen Laptop. Welche Anwendungen benötigen Sie für Ihre Arbeit?",
+    "fixture": "E:\\SCC-Voice\\voices\\scc-demo\\sample.wav"
+  },
+  "voice_registration": {
+    "status": 200,
+    "headers_seconds": 3.2106,
+    "first_body_byte_seconds": 3.2106,
+    "complete_seconds": 3.2107,
+    "content_type": "application/json",
+    "bytes": 41,
+    "voice": "SCC Demo",
+    "reference_sha256": "293fe81f27f3fb904bab2ef7d54013aaef57b2d3d64f1293b6c9bbd5c48da778",
+    "response": {
+      "name": "scc-demo",
+      "status": "registered"
+    }
+  },
+  "tts": {
+    "status": 200,
+    "headers_seconds": 0.0236,
+    "first_body_byte_seconds": 3.6055,
+    "complete_seconds": 4.139,
+    "content_type": "audio/pcm",
+    "bytes": 126720,
+    "text": "Guten Tag. Wie kann ich helfen?",
+    "sample_rate": 24000,
+    "audio_seconds": 2.64,
+    "path": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-speech-validation\\runtime\\scc-native-smoke.wav",
+    "pcm_sha256": "af91086b3d3e6931deae44596467555ea11b7f4d3e0a18fb69d82ec120d5dd78"
+  },
+  "tts_roundtrip_asr": {
+    "status": 200,
+    "headers_seconds": 0.3407,
+    "first_body_byte_seconds": 0.3407,
+    "complete_seconds": 0.3408,
+    "content_type": "application/json",
+    "bytes": 45,
+    "transcript": "Guten Tag, wie kann ich helfen?",
+    "fixture": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-speech-validation\\runtime\\scc-native-smoke.wav"
+  },
+  "after_health": {
+    "asr": {
+      "port": 8861,
+      "health": {
+        "status": "ok"
+      },
+      "status": 200,
+      "headers_seconds": 0.0235,
+      "first_body_byte_seconds": 0.0235,
+      "complete_seconds": 0.0235,
+      "content_type": "application/json",
+      "bytes": 15
+    },
+    "tts": {
+      "port": 8862,
+      "health": {
+        "object": "list",
+        "data": [
+          {
+            "id": "scc-native-qwen3",
+            "object": "model",
+            "owned_by": "local"
+          }
+        ]
+      },
+      "status": 200,
+      "headers_seconds": 0.0009,
+      "first_body_byte_seconds": 0.0009,
+      "complete_seconds": 0.0009,
+      "content_type": "application/json",
+      "bytes": 88
+    }
+  },
+  "free_system_gib": 31.44,
+  "warm_tts": {
+    "status": 200,
+    "headers_seconds": 0.0031,
+    "first_body_byte_seconds": 0.2304,
+    "complete_seconds": 0.7608,
+    "content_type": "audio/pcm",
+    "bytes": 142080,
+    "text": "Guten Tag. Wie kann ich helfen?",
+    "sample_rate": 24000,
+    "audio_seconds": 2.96,
+    "path": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-speech-validation\\runtime\\scc-native-warm.wav",
+    "pcm_sha256": "096b8a0caae7076539467a454dd23cbf83c84a39e5082876e2a4a488141e60a5"
+  }
+}
