@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "status": "FIRST_TURN_PROBE_FAILED_NO_FINAL_ANSWER",
+  "date": "2026-10-13",
+  "scope": "One current original-profile first-turn-only synthetic RTP probe after the item response patch; not an Exact-cache A/B test.",
+  "sources": {
+    "probe_outcome": "Root-owned harness and cleanup observations supplied to this agent; no additional probe run by this agent.",
+    "bot_log": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-bridge\\runtime\\bot-reboot.stderr.log",
+    "bot_read": "Bounded tail of 180 lines; selected only INFO Bot request/ACK/callback lines containing the exact request ID.",
+    "gateway_log": "C:\\Projects\\strix-alloy-scc-voice\\server\\.local\\scc-gateway.log"
+  },
+  "request_id": "76374f346ebf43d0aca8b334e6fe65b2",
+  "timeline_utc": {
+    "probe_started": "2026-10-13T16:08:54Z",
+    "asr_completed": "2026-10-13T16:09:03.536Z",
+    "asr_duration_ms": 405,
+    "servicenow_ack": "2026-10-13T16:09:04.066Z",
+    "probe_finished": "2026-10-13T16:12:06Z",
+    "final_bot_log_read": "2026-10-13T16:14:31.853648Z"
+  },
+  "bot_callbacks": {
+    "ack_http_status": 200,
+    "ack_status": "success",
+    "count": 3,
+    "ui_type_counts": {
+      "ActionMsg": 2,
+      "StreamStart": 1,
+      "OutputText": 0,
+      "InputText": 0
+    },
+    "matched_true": 3,
+    "matched_false": 0,
+    "completed_null": 3,
+    "completed_true": 0,
+    "sequence": [
+      {
+        "matched": true,
+        "completed": null,
+        "controls": [
+          "ActionMsg"
+        ]
+      },
+      {
+        "matched": true,
+        "completed": null,
+        "controls": [
+          "ActionMsg"
+        ]
+      },
+      {
+        "matched": true,
+        "completed": null,
+        "controls": [
+          "StreamStart"
+        ]
+      }
+    ],
+    "later_matching_callbacks_observed": false,
+    "timing_limit": "Callback lines have no timestamps. The same three callbacks were present in the earlier diagnosis and in the final bounded read; individual callback times cannot be reconstructed.",
+    "conversation_id_exposed": false,
+    "interaction_id_exposed": false,
+    "identifier_limit": "Only the Bot request ID is exposed by these matching log lines; no detailed callback metadata line or conversation/interaction identifier was present."
+  },
+  "gateway_completions": [
+    {
+      "completed_utc": "2026-10-13T16:09:08.812Z",
+      "host_local": "2026-10-13 18:09:08,812",
+      "http_status": 200,
+      "duration_s": 3.1063,
+      "active_at_completion": 1
+    },
+    {
+      "completed_utc": "2026-10-13T16:09:24.778Z",
+      "host_local": "2026-10-13 18:09:24,778",
+      "http_status": 200,
+      "duration_s": 18.853,
+      "active_at_completion": 0
+    }
+  ],
+  "gateway_attribution": "These two completions are time-correlated with the owned probe. There is no shared Bot-to-gateway request ID; unique causal attribution and internal request roles are not established.",
+  "outcome": {
+    "exit_code": 1,
+    "error": "No final answer before timeout; TURN_FAILED",
+    "bot_release_ok": true,
+    "post_cleanup_services_healthy": true,
+    "post_cleanup_engine_gateway_native_idle": true,
+    "employee_name_sent": false,
+    "confirmation_sent": false,
+    "order_created_by_probe": false
+  },
+  "conclusions": {
+    "observed": "The Bot request was accepted and three callbacks arrived. The two time-correlated gateway calls completed HTTP200; no final OutputText or input-ready callback was observed for the Bot request.",
+    "cause": "Not established. No inference about business-rule effects, indexing, output mapping, routing or cache causality is made."
+  },
+  "inspection_actions": {
+    "read_only": true,
+    "new_inference": false,
+    "retry": false,
+    "runtime_change": false,
+    "servicenow_write": false,
+    "inspection_process_pid": 24460,
+    "inspection_process_exit_code": 0
+  },
+  "sensitive_data": "No credentials, prompt bodies, response text or raw audio included."
+}
