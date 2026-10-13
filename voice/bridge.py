@@ -33,6 +33,7 @@ class Settings:
     ui_port: int = 8850
     callback_port: int = 8853
     callback_username: str = ''
+    tts_voice: str = 'ryan'
     session_seconds: int = 1800
     turn_seconds: int = 180
     max_sessions: int = 8
@@ -435,7 +436,7 @@ class Bridge:
         async with self.audio_lock:
             try:
                 async with self.http.post(self.tts_url, json={'model': 'qwen3-tts-0.6b',
-                        'input': text, 'voice': 'ryan', 'response_format': 'wav'},
+                        'input': text, 'voice': self.settings.tts_voice, 'response_format': 'wav'},
                         headers={'Authorization': 'Bearer ' + self.audio_token}, allow_redirects=False) as response:
                     audio = await read_limited(response.content, MAX_WAV)
                     if response.status != 200 or len(audio) > MAX_WAV or not audio.startswith(b'RIFF'):

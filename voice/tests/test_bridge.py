@@ -161,6 +161,25 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
         finally:
             await server.close()
 
+    async def test_configured_voice_is_sent_to_tts(self):
+        received = []
+        async def tts(request):
+            received.append(await request.json())
+            return web.Response(body=b'RIFF'+b'0'*40, content_type='audio/wav')
+        app = web.Application()
+        app.router.add_post('/speech', tts)
+        server = TestServer(app)
+        await server.start_server()
+        try:
+            self.bridge.settings.tts_voice = 'scc-demo'
+            self.bridge.tts_url = str(server.make_url('/speech'))
+            response = await self.post('/api/audio-test', {'text': 'Guten Tag'})
+            self.assertEqual(response.status, 200)
+            self.assertEqual(received[0]['voice'], 'scc-demo')
+            self.assertEqual(received[0]['model'], 'qwen3-tts-0.6b')
+        finally:
+            await server.close()
+
     async def test_streamed_wav_is_read_to_completion(self):
         async def tts(request):
             response = web.StreamResponse(headers={'Content-Type': 'audio/wav'})

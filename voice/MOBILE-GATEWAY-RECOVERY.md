@@ -70,6 +70,8 @@ The coordinated launcher is:
 
 Do not use a broad process stop or the general voice launcher Stop action to recover a gateway session. Keep ASR/TTS workers running. The general `Start-Voice.ps1 -Action Start` starts audio workers and bridge but does not start this gateway.
 
+The bridge reads the configured speech name from settings.tts_voice in its protected configuration JSON. Existing installations default to Ryan; this demo sets the value to scc-demo and keeps model alias qwen3-tts-0.6b. The TTS worker must have the corresponding synthetic profile loaded. On 2026-10-13 the coordinated restart applied this setting; 38 voice tests passed, including the configured-voice request and existing default-voice behavior.
+
 ## Exact gateway command
 
 After the existing bridge has a fresh slot, run the gateway in the foreground for its first verification:
