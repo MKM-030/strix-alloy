@@ -217,6 +217,41 @@
     "gateway_idle": true,
     "native_idle": true,
     "runtime_report": "runtime/post-language-first-turn-20261013-122124/report.json",
-    "acceptance": "Task first turn passes and improves; all-German progress and generic hello continuation do not pass"
+    "acceptance": "Task first turn passes and improves; all-German progress and generic hello continuation do not pass",
+    "model_metrics": {
+      "completed_requests": 3,
+      "correlation": "Temporal window and order only; gateway/engine expose no shared request IDs",
+      "all_http_status": 200,
+      "all_thinking": "off",
+      "gateway_seconds": [
+        1.8705,
+        12.2967,
+        15.0799
+      ],
+      "prompt_tokens": [
+        1800,
+        7249,
+        12744
+      ],
+      "generated_tokens": [
+        22,
+        242,
+        190
+      ],
+      "prefill_seconds": [
+        1.53,
+        6.43,
+        11.35
+      ],
+      "decode_seconds": [
+        0.5,
+        5.17,
+        4.78
+      ],
+      "later_unassigned_completion_excluded_utc": "2026-10-13T12:22:50.647Z",
+      "independent_after_gate_utc": "2026-10-13T12:22:54.108Z",
+      "independent_after_gate_all_healthy_idle": true,
+      "matched_prepatch_call_count": null
+    }
   }
 }
