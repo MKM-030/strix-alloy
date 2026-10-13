@@ -305,5 +305,31 @@
         "logout": "complete"
       }
     }
-  ]
+  ],
+  "navigationFix": {
+    "commit": "b8de643",
+    "url": "https://strix-alloy.tail7f425a.ts.net/scc-demo/",
+    "cause": "Public login document was incorrectly rejected for normal cross-site top-level link navigation.",
+    "scope": "Only root GET/HEAD with Sec-Fetch-Mode navigate and Sec-Fetch-Dest document; existing Host/Origin/CSRF and API/frame restrictions preserved.",
+    "before": {
+      "typedURL": 200,
+      "externalLinkNavigation": 403
+    },
+    "after": {
+      "externalLinkNavigation": 200,
+      "crossSiteAPI": 403,
+      "unauthenticatedAPI": 401,
+      "iframe": 403,
+      "sameOriginJavaScript": 200,
+      "authSessionAuthenticated": false
+    },
+    "testsPassed": 56,
+    "independentReview": "No blockers; exact exception and negative-test boundaries reviewed by voice_deploy.",
+    "browserVerification": {
+      "verifiedBy": "root",
+      "method": "Actual ServiceNow sys_sg_button Link URL click",
+      "result": "Opened browser tab16 with login page visible."
+    },
+    "noDialogStarted": true
+  }
 }
