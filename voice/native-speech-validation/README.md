@@ -14,8 +14,10 @@ or establish native Voice Assistant compatibility.
 The PID numbers are historical evidence. Always use the recorded executable,
 command line and process creation time checks in speech_probe.py before stopping.
 Current ownership records, stdout/stderr and the generated WAV are in ignored runtime/.
-No existing SCC/REV:N/HaloGen process was stopped or changed. No dependencies,
-models, firewall settings or permissions were installed or changed.
+The initial speech validation did not stop any existing process. The later,
+authorized HaloGen recovery retired the two redundant CPU audio workers, as
+recorded below. No dependencies, models, firewall settings or permissions were
+installed or changed by this validation/recovery work.
 
 ## Reproduce and stop safely
 
@@ -100,3 +102,69 @@ venv has aiohttp; SCC ASR and REV:N Omni have PyAV; Omni has websockets.
 No wrtc, werift, mediasoup, node-datachannel, @roamhq/wrtc or @koush/wrtc
 package was found in REV:N node_modules/.pnpm. This is a bounded inventory,
 not a whole-disk search. No package installation was attempted.
+
+
+## HaloGen recovery and native startup
+
+At 11:38:12 local time on 13 October, the existing HaloGen runtime guard observed
+17.804 GiB physical reserve, below its unchanged 18 GiB limit, and stopped the
+owned model container. The container exited with code 0 and OOMKilled=false.
+Gateway 8841 then returned ClientConnectorError/502 because its upstream 8731
+was absent. A native greeting could reach ServiceNow's StreamStart while no
+text completion was available. This failure was not a TTS generation delay.
+
+The idle original CPU workers (ASR 8851, PID 9260; TTS 8852, PID 12808) were
+explicitly authorized for retirement. Their project path, executable, complete
+argument arrays, creation times and authenticated idle health were captured
+before identity-checked termination. Rollback evidence is retained in
+runtime/retired-cpu-workers-20261013T095837Z.json. No new GPU speech service was
+stopped. Do not run legacy voice/Start-Voice.ps1 for the native demo: it can
+relaunch these redundant CPU models and consume the HaloGen memory reserve.
+The native launcher must reject duplicate legacy workers with an actionable
+message instead of silently starting both audio stacks.
+
+The failed HaloGen run retained its ownership lock. Recovery followed the
+existing project's documented supplemental-recovery precedent in
+docs/benchmarks/halogen-cache-gufo-followup-20260930.md. The exact old container
+identity and terminal state were checked live; no owners, guards or running
+containers remained. The inspection-created WSL VM was returned to its original
+stopped state. Five fresh samples at 47.20–47.21 GiB exceeded the original
+45.559 GiB recovery floor (original baseline minus 2 GiB). Only that stale lock
+was archived; the old failed guard, recovery and outcome receipts were preserved.
+The separate receipt and lock backup are under ignored runtime/, including
+halogen-reconciliation-20261013T100645Z.json.
+
+Restore uses the exact existing 0.18.1 profile, without changing its model,
+context 262144, one slot, CacheOff, MTP2, PLD3/3, prefill 4096, thinking
+medium/2048, or 18 GiB physical/commit runtime guard. The profile SHA256 remains
+cf02e2e695160c3e199a2efbf81920192d77f538616b4a3a00153e33927333c4.
+
+Use the project controller, not a generic backend default:
+
+~~~powershell
+$repo = 'C:\Projects\strix-alloy-clean'
+$python = "$repo\server\.local\venv\Scripts\python.exe"
+$controller = "$repo\server\controller.py"
+$profile = "$repo\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-profile.json"
+& $python -u -B $controller run --config $profile
+# In a second shell:
+& $python -B $controller status
+# Only when stopping the owned model is intended:
+& $python -B $controller stop
+~~~
+
+The managed start runs its existing admission, independent memory guard,
+version/context checks and two benign startup self-checks. Stop requests the
+current owned run's normal cleanup and memory recovery; do not kill by image
+name or automatically delete a retained runner.lock. Readiness is recorded in
+halogen-recovery-result.json; historical PIDs in reports must never be used as
+an unverified stop target.
+
+Restoration verification at 10:11:13 UTC: both controllers stayed ready, and
+8731 returned authenticated status ok with matching API/engine 0.18.1, full
+262144 context and one slot. The project's arithmetic and German startup checks
+passed. Seven samples across 60 seconds had 27.892–27.964 GiB free physical
+memory and at least 120.877 GiB commit headroom; the 18 GiB guard remained active.
+ASR 8861 and TTS 8862 health remained HTTP 200. No additional inference prompt
+was sent by this recovery validation. Current historical controller PIDs:
+outer 19736, model controller 21040; readiness evidence includes exact run IDs.
