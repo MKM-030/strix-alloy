@@ -54,6 +54,16 @@ def review_approved(data, summary_sha256, review_id):
             and data.get('summary_sha256') == summary_sha256 and data.get('review_id') == review_id)
 
 
+def fatal_probe_event(message):
+    """Production uses assistant transcripts for these recoverable UI errors."""
+    if message.get('type') == 'error':
+        return True
+    data = message.get('data')
+    return (message.get('type') == 'transcript' and isinstance(data, dict)
+            and data.get('role') == 'assistant' and isinstance(data.get('code'), str)
+            and data['code'] in {'TURN_FAILED', 'BUSY', 'ASR_FAILED', 'ASR_EMPTY'})
+
+
 async def review_summary(summary, choices, trace, signaling_closed):
     digest = hashlib.sha256(summary.encode('utf-8')).hexdigest()
     review_id = uuid.uuid4().hex
@@ -75,6 +85,27 @@ async def review_summary(summary, choices, trace, signaling_closed):
             trace.add('actual_summary_review_approved', summary_sha256=digest, review_id=review_id)
             return
     raise RuntimeError('Operator review timed out; confirmation withheld')
+
+
+async def name_then_optional_confirmation(speak_fixture, dialog, trace, signaling_closed,
+                                          *, name_fixture, stop_after_name):
+    """The non-order mode exits before review or confirmation can be reached."""
+    await speak_fixture(str(name_fixture))
+    summary = dialog.state.get('inputLabel', '')
+    if stop_after_name:
+        state = dialog.state
+        if (state.get('busy') is not False or state.get('ended') or state.get('failed')
+                or not (summary or state.get('choices'))):
+            raise RuntimeError('Name turn has no verified next-input readiness; confirmation withheld')
+        trace.add('stopped_after_name_before_confirmation', input_label=summary,
+                  replies=dialog.latest_replies, choices=state.get('choices', []),
+                  confirmation_not_sent=True, operator_review_not_requested=True)
+        return False
+    if not expected_summary(summary):
+        await review_summary(summary, dialog.state.get('choices', []), trace, signaling_closed)
+    trace.add('explicit_confirmation_authorized_for_exact_summary', summary=summary)
+    await speak_fixture('03-confirm.wav')
+    return True
 
 
 async def drain_signaling(ws, peer, closed):
@@ -224,8 +255,11 @@ class ObservedSpeech(production.Speech):
             self.tts_busy = False
 
 
-async def single_call(config, fixtures, trace, output, order, isolation=True, hello_fixture=None):
+async def single_call(config, fixtures, trace, output, order, isolation=True, hello_fixture=None,
+                      *, stop_after_name=False, name_fixture=None):
     """A private ephemeral local WS listener; never connected to Funnel."""
+    if stop_after_name and (order or name_fixture is None):
+        raise ValueError('Stop-after-name requires an explicit fixture and non-order mode')
     app_calls = []
     original_call = production.NativeCall
     class ObservedCall(original_call):
@@ -293,7 +327,7 @@ async def single_call(config, fixtures, trace, output, order, isolation=True, he
             await asyncio.sleep(.1)
             if signaling_closed.is_set():
                 raise RuntimeError('Test signaling connection ended; no automatic retry')
-            errors = [x for x in messages if x.get('type') == 'error']
+            errors = [x for x in messages if fatal_probe_event(x)]
             if errors:
                 raise RuntimeError('Native adapter reported an error; no automatic retry')
             call = app_calls[0]
@@ -352,16 +386,16 @@ async def single_call(config, fixtures, trace, output, order, isolation=True, he
                 prompt = dialog.state.get('inputLabel','') or ' '.join(dialog.latest_replies)
                 if not name_question(prompt):
                     raise RuntimeError('Unexpected first question; review transcript before any more input')
-                if not order:
+                if not order and not stop_after_name:
                     trace.add('second_conversation_isolated' if isolation else 'first_turn_verified',
                               fresh_name_question=prompt)
                     return
-                await speak_fixture('05-name-alex.wav')
-                summary = dialog.state.get('inputLabel','')
-                if not expected_summary(summary):
-                    await review_summary(summary, dialog.state.get('choices', []), trace, signaling_closed)
-                trace.add('explicit_confirmation_authorized_for_exact_summary', summary=summary)
-                await speak_fixture('03-confirm.wav')
+                confirmed = await name_then_optional_confirmation(
+                    speak_fixture, dialog, trace, signaling_closed,
+                    name_fixture=name_fixture if stop_after_name else '05-name-alex.wav',
+                    stop_after_name=stop_after_name)
+                if not confirmed:
+                    return
                 final = ' '.join(dialog.latest_replies)
                 if 'REQ0010012' not in final or 'RITM0010011' not in final:
                     trace.add('result_requires_review', actual_result=final)
@@ -387,13 +421,20 @@ async def single_call(config, fixtures, trace, output, order, isolation=True, he
 
 
 async def run(args):
+    name_fixture = None
+    if args.stop_after_name:
+        name_fixture = Path(args.name_fixture).resolve(strict=True)
+        with wave.open(str(name_fixture), 'rb') as wav:
+            if (wav.getnchannels() != 1 or wav.getsampwidth() != 2
+                    or wav.getframerate() != 16000 or not wav.getnframes()):
+                raise ValueError('Name fixture must be nonempty mono PCM16 WAV at 16 kHz')
     config = production.Config(**json.loads(Path(args.config).read_text(encoding='utf-8-sig')))
     if config.development_token:
         raise RuntimeError('Production config must not contain a development credential')
     target = Path(args.output)
     target.mkdir(parents=True, exist_ok=True)
     trace = Trace(target/'report.json')
-    trace.add('probe_started', first_turn_only=args.first_turn_only,
+    trace.add('probe_started', first_turn_only=args.first_turn_only, stop_after_name=args.stop_after_name,
               heartbeat_reader=True, inference_started=False)
     async with ClientSession() as http:
         async with http.get('http://127.0.0.1:8860/health') as response:
@@ -401,6 +442,11 @@ async def run(args):
             if status.get('nativeSessions') != 0 or status.get('authMode') != 'servicenow':
                 raise RuntimeError('Production native listener must be idle in authenticated mode')
     try:
+        if args.stop_after_name:
+            await single_call(config, Path(args.fixtures), trace, target/'name-turn-received.wav',
+                              False, isolation=False, stop_after_name=True, name_fixture=name_fixture)
+            trace.add('stop_after_name_probe_completed', confirmation_not_sent=True)
+            return
         if args.first_turn_only:
             hello_fixture = None
             if args.hello_first:
@@ -428,19 +474,32 @@ async def run(args):
         raise
 
 
-if __name__ == '__main__':
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-approved-audio-demo', action='store_true', required=True)
     parser.add_argument('--config', default='config.example.json')
     parser.add_argument('--fixtures', default=r'E:\SCC-Voice\voices\scc-demo\test-inputs')
     parser.add_argument('--output', default='runtime/full-audio-demo')
-    parser.add_argument('--first-turn-only', action='store_true',
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--first-turn-only', action='store_true',
                         help='Stop after the real employee-name question, without name or confirmation')
+    mode.add_argument('--stop-after-name', action='store_true',
+                      help='Stop after the name response reaches input readiness; never review or confirm')
+    parser.add_argument('--name-fixture', help='Explicit synthetic mono PCM16 16 kHz WAV for stop-after-name')
     parser.add_argument('--hello-first', action='store_true',
                         help='With first-turn-only: actual fallback, natural hello, then laptop intent; never orders')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.hello_first and not args.first_turn_only:
         parser.error('--hello-first requires --first-turn-only')
+    if args.stop_after_name and not args.name_fixture:
+        parser.error('--stop-after-name requires --name-fixture')
+    if args.name_fixture and not args.stop_after_name:
+        parser.error('--name-fixture requires --stop-after-name')
+    return args
+
+
+if __name__ == '__main__':
+    args = parse_args()
     try:
         asyncio.run(run(args))
     except Exception as error:
