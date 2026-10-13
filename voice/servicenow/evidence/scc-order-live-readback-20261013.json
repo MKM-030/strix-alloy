@@ -1,0 +1,664 @@
+{
+  "source": "upload/Pasted markdown(5).md",
+  "normalization": "Exactly one CommonMark backslash-escape layer removed for ASCII punctuation, then each SCC DETAILS JSON line parsed. No script whitespace or source rewriting.",
+  "records": [
+    {
+      "read_only": true,
+      "table": "sn_aia_tool",
+      "sys_id": "8b5c4f0393b38354e7f2b9fa6aba10f7",
+      "fields": {
+        "sys_scope": {
+          "status": "read",
+          "value": "7cc4ec81533121106b38ddeeff7b12ee",
+          "length": 32
+        },
+        "sys_mod_count": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "sys_updated_on": {
+          "status": "read",
+          "value": "2026-10-12 21:48:44",
+          "length": 19
+        },
+        "name": {
+          "status": "read",
+          "value": "SCC Laptop Bestellung absenden",
+          "length": 30
+        },
+        "active": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "type": {
+          "status": "read",
+          "value": "script",
+          "length": 6
+        },
+        "script": {
+          "status": "read",
+          "value": "(function(inputs) {\n    var itemId = '401b878b93738354e7f2b9fa6aba102f';\n    function clean(name) { return String(inputs[name] || '').replace(/^\\s+|\\s+$/g, ''); }\n    function fail(message) { return {ok:false,error:message,retry_automatically:false}; }\n    if (clean('confirmed').toLowerCase() != 'true') return fail('Bitte zuerst die vollständige Zusammenfassung ausdrücklich bestätigen lassen.');\n    var employee=clean('employee_name'), date=clean('start_date'), location=clean('delivery_location'), managerName=clean('manager_name');\n    if (!employee || employee.length>100 || !location || location.length>100) return fail('Mitarbeitername und Standort sind erforderlich.');\n    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return fail('Eintrittsdatum als YYYY-MM-DD benötigt.');\n    var gd=new GlideDate();gd.setValue(date);if(gd.getValue()!=date)return fail('Ungültiges Eintrittsdatum.');\n    var user=new GlideRecordSecure('sys_user');\n    if(!user.get(gs.getUserID()) || user.getValue('user_name')=='guest')return fail('Angemeldeter Anforderer erforderlich.');\n    var requesterId=user.getUniqueValue(),managerId='';\n    if(!managerName)managerName=String(user.getDisplayValue());\n    if(managerName.toLowerCase()==String(user.getDisplayValue()).toLowerCase())managerId=requesterId;\n    else {var manager=new GlideRecordSecure('sys_user');manager.addQuery('active',true);manager.addQuery('name',managerName);manager.setLimit(2);manager.query();if(!manager.next())return fail('Vorgesetzter nicht eindeutig gefunden. Bitte den vollständigen Namen nennen.');managerId=manager.getUniqueValue();if(manager.next())return fail('Mehrere Vorgesetzte mit diesem Namen gefunden.');}\n    var item=new GlideRecordSecure('sc_cat_item');if(!item.get(itemId)||item.getValue('active')!='1')return fail('Demo-Katalogelement nicht verfügbar.');\n    function resultFor(r,reused){return {ok:true,reused:reused,request_number:r.request.getDisplayValue(),request_id:r.getValue('request'),requested_item_id:r.getUniqueValue(),requested_item_number:r.getValue('number'),employee_name:String(r.variables.employee_name),start_date:String(r.variables.start_date),delivery_location:String(r.variables.delivery_location),manager_id:String(r.variables.manager),manager_name:String(r.variables.manager.getDisplayValue()),demo_only:true};}\n    var previous=new GlideRecordSecure('sc_req_item');previous.addQuery('cat_item',itemId);previous.addQuery('request.requested_for',requesterId);previous.addQuery('sys_created_on','>=',gs.hoursAgoStart(24));previous.orderByDesc('sys_created_on');previous.setLimit(50);previous.query();\n    while(previous.next()){if(String(previous.variables.employee_name)==employee&&String(previous.variables.start_date)==date&&String(previous.variables.manager)==managerId&&String(previous.variables.delivery_location)==location)return resultFor(previous,true);}\n    try {var cart=new sn_sc.CartJS('SCC_Laptop_'+gs.generateGUID());var added=cart.addToCart({sysparm_id:itemId,sysparm_quantity:'1',variables:{employee_name:employee,start_date:date,manager:managerId,delivery_location:location}});\n        var lines=cart.getCartItems();if(!lines.next()||lines.getValue('cat_item')!=itemId||lines.getValue('quantity')!='1')return fail('Warenkorb enthält nicht die erwartete Laptop-Position. Es wurde nichts abgesendet.');if(lines.next())return fail('Warenkorb enthält unerwartete weitere Positionen. Es wurde nichts abgesendet.');var result=cart.submitOrder({requested_for:requesterId});\n        if(!result||!result.request_id)return fail('Kein eindeutiges Bestellergebnis. Vor einem erneuten Versuch die Anforderungen prüfen.');\n        var ritm=new GlideRecordSecure('sc_req_item');ritm.addQuery('request',result.request_id);ritm.addQuery('cat_item',itemId);ritm.setLimit(1);ritm.query();\n        if(!ritm.next())return {ok:false,request_number:String(result.request_number||''),request_id:String(result.request_id),error:'Anforderung vorhanden, Bestellposition fehlt. Vor erneutem Bestellen prüfen.',retry_automatically:false,demo_only:true};\n        return resultFor(ritm,false);\n    }catch(error){gs.error('[SCC Laptop] Bestellergebnis unklar: '+String(error.message||error));return fail('Bestellergebnis unklar. Anforderungen prüfen; nicht automatisch erneut bestellen.');}\n})(inputs);",
+          "length": 4284
+        }
+      },
+      "status": "read"
+    },
+    {
+      "read_only": true,
+      "table": "sn_aia_tool",
+      "sys_id": "15ebcb8f93738354e7f2b9fa6aba1072",
+      "fields": {
+        "sys_scope": {
+          "status": "read",
+          "value": "7cc4ec81533121106b38ddeeff7b12ee",
+          "length": 32
+        },
+        "sys_mod_count": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "sys_updated_on": {
+          "status": "read",
+          "value": "2026-10-12 22:06:42",
+          "length": 19
+        },
+        "name": {
+          "status": "read",
+          "value": "SCC Laptop Bestellkontext",
+          "length": 25
+        },
+        "active": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "type": {
+          "status": "read",
+          "value": "script",
+          "length": 6
+        },
+        "script": {
+          "status": "read",
+          "value": "(function(inputs) {\n var user = new GlideRecordSecure('sys_user');\n if (!user.get(gs.getUserID()) || user.getValue('user_name') == 'guest') return {ok:false,error:'Angemeldeter Benutzer erforderlich.'};\n var item = new GlideRecordSecure('sc_cat_item');\n if (!item.get('401b878b93738354e7f2b9fa6aba102f')) return {ok:false,error:'Demo-Katalogelement nicht lesbar.'};\n return {ok:true,requester_name:String(user.getDisplayValue()),suggested_manager:String(user.getDisplayValue()),catalog_item:item.getValue('name'),required_fields:['employee_name','start_date','manager_name','delivery_location'],demo_start_date:'2026-11-01',demo_location:'Hamburg',requires_confirmation:true};\n})(inputs);",
+          "length": 688
+        }
+      },
+      "status": "read"
+    },
+    {
+      "read_only": true,
+      "table": "sn_aia_agent",
+      "sys_id": "a4a9438393738354e7f2b9fa6aba101d",
+      "fields": {
+        "sys_scope": {
+          "status": "read",
+          "value": "7cc4ec81533121106b38ddeeff7b12ee",
+          "length": 32
+        },
+        "sys_mod_count": {
+          "status": "read",
+          "value": "6",
+          "length": 1
+        },
+        "sys_updated_on": {
+          "status": "read",
+          "value": "2026-10-13 12:15:21",
+          "length": 19
+        },
+        "name": {
+          "status": "read",
+          "value": "SCC Laptop Onboarding",
+          "length": 21
+        },
+        "agent_type": {
+          "status": "read",
+          "value": "internal",
+          "length": 8
+        },
+        "strategy": {
+          "status": "read",
+          "value": "f0bff21f9f13c6108f431597d90a1c74",
+          "length": 32
+        },
+        "processing_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_processing_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "required_translations": {
+          "status": "read",
+          "value": "[]",
+          "length": 2
+        }
+      },
+      "status": "read"
+    },
+    {
+      "read_only": true,
+      "table": "sn_aia_agent",
+      "sys_id": "a6337ddf93f787105c8132d47aba1058",
+      "fields": {
+        "sys_scope": {
+          "status": "read",
+          "value": "7cc4ec81533121106b38ddeeff7b12ee",
+          "length": 32
+        },
+        "sys_mod_count": {
+          "status": "read",
+          "value": "3",
+          "length": 1
+        },
+        "sys_updated_on": {
+          "status": "read",
+          "value": "2026-10-13 12:15:09",
+          "length": 19
+        },
+        "name": {
+          "status": "read",
+          "value": "SCC Laptop Onboarding Voice",
+          "length": 27
+        },
+        "agent_type": {
+          "status": "read",
+          "value": "voice",
+          "length": 5
+        },
+        "strategy": {
+          "status": "read",
+          "value": "33528dffffb46210129628ecf43bf141",
+          "length": 32
+        },
+        "processing_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_processing_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "required_translations": {
+          "status": "read",
+          "value": "[]",
+          "length": 2
+        }
+      },
+      "status": "read"
+    },
+    {
+      "read_only": true,
+      "table": "sn_aia_agent_tool_m2m",
+      "sys_id": "835c4f0393b38354e7f2b9fa6aba10f9",
+      "fields": {
+        "sys_scope": {
+          "status": "read",
+          "value": "7cc4ec81533121106b38ddeeff7b12ee",
+          "length": 32
+        },
+        "sys_mod_count": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "sys_updated_on": {
+          "status": "read",
+          "value": "2026-10-13 05:24:31",
+          "length": 19
+        },
+        "name": {
+          "status": "read",
+          "value": "SCC Laptop Bestellung absenden",
+          "length": 30
+        },
+        "agent": {
+          "status": "read",
+          "value": "a4a9438393738354e7f2b9fa6aba101d",
+          "length": 32
+        },
+        "tool": {
+          "status": "read",
+          "value": "8b5c4f0393b38354e7f2b9fa6aba10f7",
+          "length": 32
+        },
+        "active": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "execution_mode": {
+          "status": "read",
+          "value": "autopilot",
+          "length": 9
+        },
+        "max_auto_executions": {
+          "status": "read",
+          "value": "10",
+          "length": 2
+        },
+        "pre_run": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "timeout": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "pre_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "display_output": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "requires_text_refined_message": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "should_display_refined_message": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "requires_widget_transformation": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "output_transformation_strategy": {
+          "status": "read",
+          "value": "none",
+          "length": 4
+        },
+        "transformation_instructions": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_processing_script": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        }
+      },
+      "status": "read"
+    },
+    {
+      "read_only": true,
+      "table": "sn_aia_agent_tool_m2m",
+      "sys_id": "55ebcb8f93738354e7f2b9fa6aba107b",
+      "fields": {
+        "sys_scope": {
+          "status": "read",
+          "value": "7cc4ec81533121106b38ddeeff7b12ee",
+          "length": 32
+        },
+        "sys_mod_count": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "sys_updated_on": {
+          "status": "read",
+          "value": "2026-10-12 21:40:22",
+          "length": 19
+        },
+        "name": {
+          "status": "read",
+          "value": "SCC Laptop Bestellkontext",
+          "length": 25
+        },
+        "agent": {
+          "status": "read",
+          "value": "a4a9438393738354e7f2b9fa6aba101d",
+          "length": 32
+        },
+        "tool": {
+          "status": "read",
+          "value": "15ebcb8f93738354e7f2b9fa6aba1072",
+          "length": 32
+        },
+        "active": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "execution_mode": {
+          "status": "read",
+          "value": "autopilot",
+          "length": 9
+        },
+        "max_auto_executions": {
+          "status": "read",
+          "value": "10",
+          "length": 2
+        },
+        "pre_run": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "timeout": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "pre_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "display_output": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "requires_text_refined_message": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "should_display_refined_message": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "requires_widget_transformation": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "output_transformation_strategy": {
+          "status": "read",
+          "value": "none",
+          "length": 4
+        },
+        "transformation_instructions": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_processing_script": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        }
+      },
+      "status": "read"
+    },
+    {
+      "read_only": true,
+      "table": "sn_aia_agent_tool_m2m",
+      "sys_id": "0ed4b19b933b87105c8132d47aba1030",
+      "fields": {
+        "sys_scope": {
+          "status": "read",
+          "value": "7cc4ec81533121106b38ddeeff7b12ee",
+          "length": 32
+        },
+        "sys_mod_count": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "sys_updated_on": {
+          "status": "read",
+          "value": "2026-10-13 10:05:57",
+          "length": 19
+        },
+        "name": {
+          "status": "read",
+          "value": "SCC Laptop Bestellung absenden",
+          "length": 30
+        },
+        "agent": {
+          "status": "read",
+          "value": "a6337ddf93f787105c8132d47aba1058",
+          "length": 32
+        },
+        "tool": {
+          "status": "read",
+          "value": "8b5c4f0393b38354e7f2b9fa6aba10f7",
+          "length": 32
+        },
+        "active": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "execution_mode": {
+          "status": "read",
+          "value": "autopilot",
+          "length": 9
+        },
+        "max_auto_executions": {
+          "status": "read",
+          "value": "10",
+          "length": 2
+        },
+        "pre_run": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "timeout": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "pre_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "display_output": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "requires_text_refined_message": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "should_display_refined_message": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "requires_widget_transformation": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "output_transformation_strategy": {
+          "status": "read",
+          "value": "none",
+          "length": 4
+        },
+        "transformation_instructions": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_processing_script": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        }
+      },
+      "status": "read"
+    },
+    {
+      "read_only": true,
+      "table": "sn_aia_agent_tool_m2m",
+      "sys_id": "f1d4319b933b87105c8132d47aba10ff",
+      "fields": {
+        "sys_scope": {
+          "status": "read",
+          "value": "7cc4ec81533121106b38ddeeff7b12ee",
+          "length": 32
+        },
+        "sys_mod_count": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "sys_updated_on": {
+          "status": "read",
+          "value": "2026-10-13 10:05:19",
+          "length": 19
+        },
+        "name": {
+          "status": "read",
+          "value": "SCC Laptop Bestellkontext",
+          "length": 25
+        },
+        "agent": {
+          "status": "read",
+          "value": "a6337ddf93f787105c8132d47aba1058",
+          "length": 32
+        },
+        "tool": {
+          "status": "read",
+          "value": "15ebcb8f93738354e7f2b9fa6aba1072",
+          "length": 32
+        },
+        "active": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "execution_mode": {
+          "status": "read",
+          "value": "autopilot",
+          "length": 9
+        },
+        "max_auto_executions": {
+          "status": "read",
+          "value": "10",
+          "length": 2
+        },
+        "pre_run": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "timeout": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "pre_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_message": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "display_output": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "requires_text_refined_message": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "should_display_refined_message": {
+          "status": "read",
+          "value": "0",
+          "length": 1
+        },
+        "requires_widget_transformation": {
+          "status": "read",
+          "value": "1",
+          "length": 1
+        },
+        "output_transformation_strategy": {
+          "status": "read",
+          "value": "none",
+          "length": 4
+        },
+        "transformation_instructions": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        },
+        "post_processing_script": {
+          "status": "read",
+          "value": "",
+          "length": 0
+        }
+      },
+      "status": "read"
+    }
+  ],
+  "length_validation": {
+    "all_match": true,
+    "record_count": 8,
+    "field_count": 112,
+    "length_units": "UTF-16 code units; matches ServiceNow JavaScript .length"
+  },
+  "order_script": {
+    "file": "scc-laptop-order-live-before-20261013.js",
+    "length": 4284,
+    "sha256": "206b8913a40211d1b8078b2b032bbd8d0d367d8174335c1647e230c44bf82150"
+  },
+  "instance_writes": 0,
+  "agent_instruction_readback": {
+    "source": "upload/Pasted markdown(4).md",
+    "normalization": "Exactly one CommonMark punctuation escape layer, then JSON parse; both 1828-character instructions exactly match the proposed Before baseline.",
+    "records": [
+      {
+        "table": "sn_aia_agent",
+        "sys_id": "a4a9438393738354e7f2b9fa6aba101d",
+        "instructions": "1. Lies die ursprüngliche Anfrage und bisherigen Nachrichten. Übernimm Mitarbeitername, Eintrittsdatum und Lieferstandort, wenn genannt. Für diese Demo bedeutet 1.11. den 1. November 2026. Hamburg ist ein gültiger Lieferstandort.\n2. Wenn der Mitarbeitername fehlt, frage sofort und vor jedem Werkzeugaufruf: \"Wie heißt dein neuer Mitarbeiter?\" Gib davor keine Einleitung oder Fortschrittsmeldung aus. Warte auf den Namen.\n3. Sobald der Mitarbeitername bekannt ist, rufe SCC Laptop Bestellkontext genau einmal auf, sofern dieses Werkzeug in dieser Unterhaltung noch nicht aufgerufen wurde, um den angemeldeten Anforderer und die Katalogangaben zu lesen. Bei \"mein neuer Mitarbeiter\" schlage diesen Anforderer als Vorgesetzten vor. Frage danach nur nach fehlenden Angaben. Frage nicht erneut nach bereits genanntem Datum oder Standort. Wenn der Vorgesetzte unklar ist, frage nach ihm.\n4. Fasse alle vier Angaben in einem kurzen gesprochenen Satz zusammen, ohne Liste oder Markdown: \"Laptop für [Mitarbeiter] zum [Eintrittsdatum] nach [Lieferstandort], Vorgesetzter [Name]. Soll ich das bestellen?\" Setze ausschließlich die bestätigten Gesprächsdaten ein. Warte auf eine ausdrückliche Bestätigung. Änderungen machen eine neue vollständige Zusammenfassung und Bestätigung notwendig.\n5. Rufe erst danach SCC Laptop Bestellung absenden genau einmal mit den bestätigten Angaben auf. Bei einem Fehler oder unklarem Ergebnis niemals automatisch erneut bestellen; erkläre den Status.\n6. Antworte nach dem Tool-Ergebnis in höchstens zwei kurzen deutschen Sätzen, ohne die bereits bestätigten Angaben erneut aufzuzählen. Nenne ausschließlich die tatsächlich zurückgegebenen REQ- und RITM-Nummern. Bei reused=true sage, dass die passende Anforderung bereits vorhanden ist; sonst bestätige die Anlage. Behaupte keine reale Hardware-Lieferung.",
+        "length": 1828,
+        "sha256": "9b8790d369fe48cb52d00d2906d8b338e745b5ad7636b1b6b38e42d951985290",
+        "sys_mod_count": "6"
+      },
+      {
+        "table": "sn_aia_agent",
+        "sys_id": "a6337ddf93f787105c8132d47aba1058",
+        "instructions": "1. Lies die ursprüngliche Anfrage und bisherigen Nachrichten. Übernimm Mitarbeitername, Eintrittsdatum und Lieferstandort, wenn genannt. Für diese Demo bedeutet 1.11. den 1. November 2026. Hamburg ist ein gültiger Lieferstandort.\n2. Wenn der Mitarbeitername fehlt, frage sofort und vor jedem Werkzeugaufruf: \"Wie heißt dein neuer Mitarbeiter?\" Gib davor keine Einleitung oder Fortschrittsmeldung aus. Warte auf den Namen.\n3. Sobald der Mitarbeitername bekannt ist, rufe SCC Laptop Bestellkontext genau einmal auf, sofern dieses Werkzeug in dieser Unterhaltung noch nicht aufgerufen wurde, um den angemeldeten Anforderer und die Katalogangaben zu lesen. Bei \"mein neuer Mitarbeiter\" schlage diesen Anforderer als Vorgesetzten vor. Frage danach nur nach fehlenden Angaben. Frage nicht erneut nach bereits genanntem Datum oder Standort. Wenn der Vorgesetzte unklar ist, frage nach ihm.\n4. Fasse alle vier Angaben in einem kurzen gesprochenen Satz zusammen, ohne Liste oder Markdown: \"Laptop für [Mitarbeiter] zum [Eintrittsdatum] nach [Lieferstandort], Vorgesetzter [Name]. Soll ich das bestellen?\" Setze ausschließlich die bestätigten Gesprächsdaten ein. Warte auf eine ausdrückliche Bestätigung. Änderungen machen eine neue vollständige Zusammenfassung und Bestätigung notwendig.\n5. Rufe erst danach SCC Laptop Bestellung absenden genau einmal mit den bestätigten Angaben auf. Bei einem Fehler oder unklarem Ergebnis niemals automatisch erneut bestellen; erkläre den Status.\n6. Antworte nach dem Tool-Ergebnis in höchstens zwei kurzen deutschen Sätzen, ohne die bereits bestätigten Angaben erneut aufzuzählen. Nenne ausschließlich die tatsächlich zurückgegebenen REQ- und RITM-Nummern. Bei reused=true sage, dass die passende Anforderung bereits vorhanden ist; sonst bestätige die Anlage. Behaupte keine reale Hardware-Lieferung.",
+        "length": 1828,
+        "sha256": "9b8790d369fe48cb52d00d2906d8b338e745b5ad7636b1b6b38e42d951985290",
+        "sys_mod_count": "3"
+      }
+    ]
+  }
+}

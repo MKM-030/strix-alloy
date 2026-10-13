@@ -6,13 +6,17 @@
     "table": "sn_aia_tool",
     "sys_id": "8b5c4f0393b38354e7f2b9fa6aba10f7",
     "source": "voice/servicenow/scc-laptop-order-tool.js",
-    "reviewed_original_sha256": "1928de74b677381c74b701a37c7ad1daab469d4224125dc04aef963c3993555d",
-    "prepared_sha256": "e2ecdd7d62e00302e48c18628762337e53f14f348e9068b276a05927925a5048",
+    "reviewed_original_sha256": "206b8913a40211d1b8078b2b032bbd8d0d367d8174335c1647e230c44bf82150",
+    "prepared_sha256": "79f7a17ccc0887ade5004cf10bb12df4a78012ba583590474f84f6cb443f7ffe",
     "new_output_fields": [
       "catalog_item_id",
       "catalog_item_name"
     ],
-    "identity_source": "The successful sc_req_item record: previous for reuse; ritm for a new order. getValue(cat_item) and getDisplayValue(cat_item). No hardcoded display name."
+    "identity_source": "The successful sc_req_item record: previous for reuse; ritm for a new order. getValue(cat_item) and getDisplayValue(cat_item). No hardcoded display name.",
+    "before_source": "voice/servicenow/evidence/scc-laptop-order-live-before-20261013.js",
+    "before_chars": 4284,
+    "after_chars": 4371,
+    "diff": "Single 87-character insertion in shared resultFor only; no other live-source difference."
   },
   "item_evidence": {
     "fixed_catalog_item_id": "401b878b93738354e7f2b9fa6aba102f",
@@ -35,16 +39,18 @@
     }
   ],
   "changed_agent_field": "instructions",
-  "baseline_source": "voice/servicenow/evidence/scc-german-dialogue-fresh-readback-20261013.json; equals scc-german-dialogue-proposed.json#after",
+  "baseline_source": "User read-only instance output upload/Pasted markdown(4).md (instructions) and upload/Pasted markdown(5).md (tool/bindings), decoded exactly one CommonMark escape layer.",
   "baseline_revision": {
     "chat_mod_count": "6",
     "voice_mod_count": "3"
   },
   "before": {
-    "instructions": "1. Lies die ursprüngliche Anfrage und bisherigen Nachrichten. Übernimm Mitarbeitername, Eintrittsdatum und Lieferstandort, wenn genannt. Für diese Demo bedeutet 1.11. den 1. November 2026. Hamburg ist ein gültiger Lieferstandort.\n2. Wenn der Mitarbeitername fehlt, frage sofort und vor jedem Werkzeugaufruf: \"Wie heißt dein neuer Mitarbeiter?\" Gib davor keine Einleitung oder Fortschrittsmeldung aus. Warte auf den Namen.\n3. Sobald der Mitarbeitername bekannt ist, rufe SCC Laptop Bestellkontext genau einmal auf, sofern dieses Werkzeug in dieser Unterhaltung noch nicht aufgerufen wurde, um den angemeldeten Anforderer und die Katalogangaben zu lesen. Bei \"mein neuer Mitarbeiter\" schlage diesen Anforderer als Vorgesetzten vor. Frage danach nur nach fehlenden Angaben. Frage nicht erneut nach bereits genanntem Datum oder Standort. Wenn der Vorgesetzte unklar ist, frage nach ihm.\n4. Fasse alle vier Angaben in einem kurzen gesprochenen Satz zusammen, ohne Liste oder Markdown: \"Laptop für [Mitarbeiter] zum [Eintrittsdatum] nach [Lieferstandort], Vorgesetzter [Name]. Soll ich das bestellen?\" Setze ausschließlich die bestätigten Gesprächsdaten ein. Warte auf eine ausdrückliche Bestätigung. Änderungen machen eine neue vollständige Zusammenfassung und Bestätigung notwendig.\n5. Rufe erst danach SCC Laptop Bestellung absenden genau einmal mit den bestätigten Angaben auf. Bei einem Fehler oder unklarem Ergebnis niemals automatisch erneut bestellen; erkläre den Status.\n6. Antworte nach dem Tool-Ergebnis in höchstens zwei kurzen deutschen Sätzen, ohne die bereits bestätigten Angaben erneut aufzuzählen. Nenne ausschließlich die tatsächlich zurückgegebenen REQ- und RITM-Nummern. Bei reused=true sage, dass die passende Anforderung bereits vorhanden ist; sonst bestätige die Anlage. Behaupte keine reale Hardware-Lieferung."
+    "instructions": "1. Lies die ursprüngliche Anfrage und bisherigen Nachrichten. Übernimm Mitarbeitername, Eintrittsdatum und Lieferstandort, wenn genannt. Für diese Demo bedeutet 1.11. den 1. November 2026. Hamburg ist ein gültiger Lieferstandort.\n2. Wenn der Mitarbeitername fehlt, frage sofort und vor jedem Werkzeugaufruf: \"Wie heißt dein neuer Mitarbeiter?\" Gib davor keine Einleitung oder Fortschrittsmeldung aus. Warte auf den Namen.\n3. Sobald der Mitarbeitername bekannt ist, rufe SCC Laptop Bestellkontext genau einmal auf, sofern dieses Werkzeug in dieser Unterhaltung noch nicht aufgerufen wurde, um den angemeldeten Anforderer und die Katalogangaben zu lesen. Bei \"mein neuer Mitarbeiter\" schlage diesen Anforderer als Vorgesetzten vor. Frage danach nur nach fehlenden Angaben. Frage nicht erneut nach bereits genanntem Datum oder Standort. Wenn der Vorgesetzte unklar ist, frage nach ihm.\n4. Fasse alle vier Angaben in einem kurzen gesprochenen Satz zusammen, ohne Liste oder Markdown: \"Laptop für [Mitarbeiter] zum [Eintrittsdatum] nach [Lieferstandort], Vorgesetzter [Name]. Soll ich das bestellen?\" Setze ausschließlich die bestätigten Gesprächsdaten ein. Warte auf eine ausdrückliche Bestätigung. Änderungen machen eine neue vollständige Zusammenfassung und Bestätigung notwendig.\n5. Rufe erst danach SCC Laptop Bestellung absenden genau einmal mit den bestätigten Angaben auf. Bei einem Fehler oder unklarem Ergebnis niemals automatisch erneut bestellen; erkläre den Status.\n6. Antworte nach dem Tool-Ergebnis in höchstens zwei kurzen deutschen Sätzen, ohne die bereits bestätigten Angaben erneut aufzuzählen. Nenne ausschließlich die tatsächlich zurückgegebenen REQ- und RITM-Nummern. Bei reused=true sage, dass die passende Anforderung bereits vorhanden ist; sonst bestätige die Anlage. Behaupte keine reale Hardware-Lieferung.",
+    "instructions_sha256": "9b8790d369fe48cb52d00d2906d8b338e745b5ad7636b1b6b38e42d951985290"
   },
   "after": {
-    "instructions": "1. Lies die ursprüngliche Anfrage und bisherigen Nachrichten. Übernimm Mitarbeitername, Eintrittsdatum und Lieferstandort, wenn genannt. Für diese Demo bedeutet 1.11. den 1. November 2026. Hamburg ist ein gültiger Lieferstandort.\n2. Wenn der Mitarbeitername fehlt, frage sofort und vor jedem Werkzeugaufruf: \"Wie heißt dein neuer Mitarbeiter?\" Gib davor keine Einleitung oder Fortschrittsmeldung aus. Warte auf den Namen.\n3. Sobald der Mitarbeitername bekannt ist, rufe SCC Laptop Bestellkontext genau einmal auf, sofern dieses Werkzeug in dieser Unterhaltung noch nicht aufgerufen wurde, um den angemeldeten Anforderer und die Katalogangaben zu lesen. Bei \"mein neuer Mitarbeiter\" schlage diesen Anforderer als Vorgesetzten vor. Frage danach nur nach fehlenden Angaben. Frage nicht erneut nach bereits genanntem Datum oder Standort. Wenn der Vorgesetzte unklar ist, frage nach ihm.\n4. Fasse alle vier Angaben in einem kurzen gesprochenen Satz zusammen, ohne Liste oder Markdown: \"Laptop für [Mitarbeiter] zum [Eintrittsdatum] nach [Lieferstandort], Vorgesetzter [Name]. Soll ich das bestellen?\" Setze ausschließlich die bestätigten Gesprächsdaten ein. Warte auf eine ausdrückliche Bestätigung. Änderungen machen eine neue vollständige Zusammenfassung und Bestätigung notwendig.\n5. Rufe erst danach SCC Laptop Bestellung absenden genau einmal mit den bestätigten Angaben auf. Bei einem Fehler oder unklarem Ergebnis niemals automatisch erneut bestellen; erkläre den Status.\n6. Antworte nach dem Tool-Ergebnis in höchstens zwei kurzen deutschen Sätzen, ohne die bereits bestätigten Mitarbeiterangaben erneut aufzuzählen. Bei ok=true nenne den tatsächlich zurückgegebenen Artikelnamen aus catalog_item_name und die echten Nummern aus request_number und requested_item_number. Bei reused=true sage, dass die passende Anforderung bereits vorhanden ist; sonst bestätige die Anlage. Fehlt catalog_item_name, sage, dass der genaue Artikelname im Ergebnis fehlt; erfinde ihn nicht und bestelle deshalb nicht erneut. Nenne ein Modell nur, wenn es ausdrücklich im Tool-Ergebnis steht. Bei ok=false erkläre nur den zurückgegebenen Fehlerstatus. Behaupte keine reale Hardware-Lieferung oder Lieferzusage."
+    "instructions": "1. Lies die ursprüngliche Anfrage und bisherigen Nachrichten. Übernimm Mitarbeitername, Eintrittsdatum und Lieferstandort, wenn genannt. Für diese Demo bedeutet 1.11. den 1. November 2026. Hamburg ist ein gültiger Lieferstandort.\n2. Wenn der Mitarbeitername fehlt, frage sofort und vor jedem Werkzeugaufruf: \"Wie heißt dein neuer Mitarbeiter?\" Gib davor keine Einleitung oder Fortschrittsmeldung aus. Warte auf den Namen.\n3. Sobald der Mitarbeitername bekannt ist, rufe SCC Laptop Bestellkontext genau einmal auf, sofern dieses Werkzeug in dieser Unterhaltung noch nicht aufgerufen wurde, um den angemeldeten Anforderer und die Katalogangaben zu lesen. Bei \"mein neuer Mitarbeiter\" schlage diesen Anforderer als Vorgesetzten vor. Frage danach nur nach fehlenden Angaben. Frage nicht erneut nach bereits genanntem Datum oder Standort. Wenn der Vorgesetzte unklar ist, frage nach ihm.\n4. Fasse alle vier Angaben in einem kurzen gesprochenen Satz zusammen, ohne Liste oder Markdown: \"Laptop für [Mitarbeiter] zum [Eintrittsdatum] nach [Lieferstandort], Vorgesetzter [Name]. Soll ich das bestellen?\" Setze ausschließlich die bestätigten Gesprächsdaten ein. Warte auf eine ausdrückliche Bestätigung. Änderungen machen eine neue vollständige Zusammenfassung und Bestätigung notwendig.\n5. Rufe erst danach SCC Laptop Bestellung absenden genau einmal mit den bestätigten Angaben auf. Bei einem Fehler oder unklarem Ergebnis niemals automatisch erneut bestellen; erkläre den Status.\n6. Antworte nach dem Tool-Ergebnis in höchstens zwei kurzen deutschen Sätzen, ohne die bereits bestätigten Mitarbeiterangaben erneut aufzuzählen. Bei ok=true nenne den tatsächlich zurückgegebenen Artikelnamen aus catalog_item_name und die echten Nummern aus request_number und requested_item_number. Bei reused=true sage, dass die passende Anforderung bereits vorhanden ist; sonst bestätige die Anlage. Fehlt catalog_item_name, sage, dass der genaue Artikelname im Ergebnis fehlt; erfinde ihn nicht und bestelle deshalb nicht erneut. Nenne ein Modell nur, wenn es ausdrücklich im Tool-Ergebnis steht. Bei ok=false erkläre nur den zurückgegebenen Fehlerstatus. Behaupte keine reale Hardware-Lieferung oder Lieferzusage.",
+    "instructions_sha256": "1084884fc7c7a70e58d887562053828a443ee7d30974ce3d425990824f5d61c7"
   },
   "instruction_6": {
     "before": "6. Antworte nach dem Tool-Ergebnis in höchstens zwei kurzen deutschen Sätzen, ohne die bereits bestätigten Angaben erneut aufzuzählen. Nenne ausschließlich die tatsächlich zurückgegebenen REQ- und RITM-Nummern. Bei reused=true sage, dass die passende Anforderung bereits vorhanden ist; sonst bestätige die Anlage. Behaupte keine reale Hardware-Lieferung.",
@@ -59,17 +65,12 @@
     "reuse matching",
     "no retry on ambiguous order result"
   ],
-  "binding_review_required": {
-    "chat_m2m": "835c4f0393b38354e7f2b9fa6aba10f9",
-    "voice_m2m": "0ed4b19b933b87105c8132d47aba1030",
-    "reason": "The runbook records an earlier binding postprocessor repair. Its current source is not exported here. Verify it preserves the two new fields; no speculative binding change is prepared."
-  },
   "apply_gate": [
-    "Root review before commit.",
-    "Authenticated fresh instance read of the owned tool script and both instructions; compare exact baseline and abort on drift.",
-    "Inspect the current binding postprocessor/output schema and verify catalog_item_id/name reach the agent.",
-    "No instance write while browser login is unavailable.",
-    "Apply only the reviewed owned records; verify fresh persisted fields and capture the change separately from the completed historical update set."
+    "Root review of this rebased candidate; no instance application performed.",
+    "Execute complete scc-order-item-patch.js as admin in Generative AI Controller scope, with intended native update set and Record for rollback selected.",
+    "Patch validates current application/namespace and exact scope for five owned records, both binding references/output settings, all three source hashes and write ACLs before any update.",
+    "Only exact Before or After values are accepted. Unknown drift stops; idempotent reruns skip exact After values.",
+    "Writes only tool script and both instructions; normal workflows remain enabled. Updates are not atomic; partial/uncertain receipt requires inspection."
   ],
   "tests": {
     "command": "node --test voice/servicenow/scc-laptop-order-tool.test.cjs",
@@ -89,10 +90,44 @@
       "missing RITM remains uncertain result without automatic retry"
     ],
     "real_service_calls": false,
-    "orders_created": false
+    "orders_created": false,
+    "source_basis": "Actual live shared-resultFor source, not old expanded repository script.",
+    "patch_command": "node --test voice/servicenow/scc-order-item-patch.test.cjs voice/servicenow/scc-laptop-order-tool.test.cjs",
+    "combined_after_patch": {
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    "patch_guard_coverage": [
+      "dry run zero writes",
+      "exact three fields, persisted values and idempotent rerun",
+      "last-target drift aborts before first write",
+      "binding/reference/scope drift and unknown field fail closed",
+      "admin/application/namespace and record/field canWrite preflight",
+      "partial second-update failure is reported with no automatic retry or rollback; exact remaining Before values can be resumed"
+    ]
   },
   "rollback": "Restore the exact freshly backed-up original tool script and instruction field only on both owned agents. Do not delete or recreate REQ/RITM.",
-  "review": {
+  "supersedes": "Earlier prepared repository baseline had two expanded returns and was not the live source. This candidate is rebased exclusively onto the user-provided current 4284-character script with one shared resultFor; no old full-source overwrite.",
+  "binding_review": {
+    "source": "voice/servicenow/evidence/scc-order-live-readback-20261013.json",
+    "chat_m2m": "835c4f0393b38354e7f2b9fa6aba10f9",
+    "voice_m2m": "0ed4b19b933b87105c8132d47aba1030",
+    "both_post_processing_script": "",
+    "both_output_transformation_strategy": "none",
+    "both_requires_text_refined_message": "0",
+    "both_should_display_refined_message": "0",
+    "both_requires_widget_transformation": "1",
+    "binding_changes": false,
+    "runtime_output_delivery_verified": false
+  },
+  "background_patch": {
+    "path": "voice/servicenow/scc-order-item-patch.js",
+    "default_apply": true,
+    "prepared_not_applied": true,
+    "uses": "Scoped GlideDigest SHA256 guards; gs.info receipt; no tool execution/orders, scope mutation, workflow suppression, or custom update-manager calls."
+  },
+  "historical_review_superseded": {
     "reviewed_by": "root",
     "date": "2026-10-13",
     "source_diff": "Exactly two added successful-return lines; full source, tests and instruction draft reviewed.",
@@ -104,5 +139,20 @@
     },
     "commit_authorized": true,
     "instance_apply_authorized": false
+  },
+  "review": {
+    "status": "reviewed_rebased_source_and_patch",
+    "reviewed_by": "root",
+    "date": "2026-10-13",
+    "source_review": "Complete 87-line patch and rebased source reviewed; exact three intended fields only.",
+    "independent_tests": {
+      "syntax_check": "node --check voice/servicenow/scc-order-item-patch.js",
+      "command": "node --test voice/servicenow/scc-order-item-patch.test.cjs voice/servicenow/scc-laptop-order-tool.test.cjs",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    "instance_apply_authorized": false,
+    "commit_authorized": true
   }
 }
