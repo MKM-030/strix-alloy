@@ -284,7 +284,12 @@ class Bridge:
                 ack = json.loads(raw) if raw else {}
                 if not isinstance(ack, dict) or ack.get('error') or (isinstance(ack.get('result'), dict) and ack['result'].get('error')):
                     raise RuntimeError('Bot request failed')
-                LOG.info('Bot ACK id=%s http=%s keys=%s result_keys=%s', request_id, response.status, sorted(ack.keys()), sorted(ack['result'].keys()) if isinstance(ack.get('result'), dict) else [])
+                ack_status = ack.get('status')
+                if ack_status is None and isinstance(ack.get('result'), dict):
+                    ack_status = ack['result'].get('status')
+                LOG.info('Bot ACK id=%s http=%s status=%s keys=%s', request_id, response.status, str(ack_status)[:80], sorted(ack.keys()))
+                if ack_status != 'success':
+                    raise RuntimeError('Bot did not acknowledge successful enqueue')
                 # This response is only ACK. Actual bot output arrives at /callback.
         except Exception:
             session.busy = False

@@ -15,7 +15,7 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
         async def bot(request):
             self.assertEqual(request.headers.get('token'), 'sn-secret')
             self.requests.append(await request.json())
-            return web.json_response({'result': {'status': 'success'}})
+            return web.json_response(getattr(self, 'bot_ack', {'status': 'success'}))
         app = web.Application()
         app.router.add_post('/api/sn_va_as_service/bot/integration', bot)
         self.bot = TestServer(app)
@@ -85,6 +85,15 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
             {'uiType': 'ActionMsg', 'actionType': 'StartConversation'}])
         state = await (await self.ui.get('/api/events?wait=0')).json()
         self.assertTrue(state['busy'])
+
+    async def test_http_200_failure_ack_does_not_accept_delivery(self):
+        self.bot_ack = {'status': 'failure'}
+        response = await self.post('/api/start', {})
+        self.assertEqual(response.status, 502)
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['failed'])
+        self.assertFalse(state['busy'])
+        self.assertEqual(len(self.requests), 1)
 
     async def test_callback_output_input_and_duplicate_handling(self):
         await self.post('/api/start', {})
