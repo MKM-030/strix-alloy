@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "observed_date_utc": "2026-10-13",
+  "inspection_mode": "Read-only ordinary ServiceNow UI plus official documentation and repository evidence. No ServiceNow data edits or saves.",
+  "assistant": {
+    "name": "SCC Local Voice",
+    "deployment_id": "c623a20f93374354e7f2b9fa6aba10fd",
+    "context_profile_id": "c623e20f93374354e7f2b9fa6aba1081",
+    "deployment_config_id": "9e23e20f93374354e7f2b9fa6aba1087",
+    "ui_url": "https://soprasteriaassvsdemo14.service-now.com/now/conversational-studio/builder%3Ftable%3Dsys_now_assist_deployment%26sysId%3Dc623a20f93374354e7f2b9fa6aba10fd%26"
+  },
+  "context_profile": {
+    "active": true,
+    "model_type": "LLM",
+    "condition": "devicetype is Bot to Bot OR devicetype is mweb",
+    "assistant_applicability_type": "Profile",
+    "preferred_skills_count": 0,
+    "promoted_assets_count": 0,
+    "preferred_skill_form_options": [
+      "Generative AI Skill",
+      "Catalog Item"
+    ],
+    "preferred_skill_form_fields": [
+      "Skill Provider",
+      "Order",
+      "Chat Experience",
+      "Active",
+      "Skill Document"
+    ],
+    "scc_skill_mapping_id": "245dcf4793b38354e7f2b9fa6aba103b",
+    "other_mapped_skills": [
+      "HR case creation",
+      "Actionable notifications"
+    ],
+    "greeting_topic": {
+      "name": "Greeting – requestor",
+      "id": "dfd50745c7203110b65579a988c260d8",
+      "mapping_id": "1623e20f93374354e7f2b9fa6aba108e"
+    }
+  },
+  "deployment_attributes": {
+    "rows_inspected": 71,
+    "no_explicit_default_ai_agent_id_observed": true,
+    "agentic_orchestration_enabled": "true",
+    "core_sub_agents_enabled": "true",
+    "use_agents_in_planner": "true",
+    "route_chat_via_ao_v2": "false",
+    "streaming_enabled": "false",
+    "ai_greeting_type": "default_greeting",
+    "agent_persona": "",
+    "persona_description": "",
+    "persona_name": "",
+    "collapse_processing_message": "true",
+    "ai_fallback_option": "record_producer",
+    "custom_fallback_topic_id": "ad658f05c7203110b65579a988c26001"
+  },
+  "native_ui": {
+    "basic_details": {
+      "name": "SCC Local Voice",
+      "description": "Demo für die Smart Country Convention: vorhandene ServiceNow-Skills mit HaloGen und einem eigenen Sprachadapter nutzen.",
+      "primary_assistant": false
+    },
+    "agentic_support": {
+      "controls": [
+        {
+          "label": "Prioritize AI agents during skills discovery",
+          "checked": true
+        }
+      ],
+      "visible_language_control": false,
+      "visible_processing_progress_toggle": false
+    },
+    "chat_experience": {
+      "tabs": [
+        "Messages",
+        "Fallbacks"
+      ],
+      "message_fields": [
+        "Greeting topic",
+        "Greeting message",
+        "Closing topic",
+        "Closing message",
+        "Error topic",
+        "Error message",
+        "Survey topic"
+      ],
+      "preview_greeting": "Hallo! Ich helfe dir bei deinem IT-Anliegen. Was möchtest du erledigen?",
+      "visible_language_control": false,
+      "visible_processing_progress_toggle": false
+    },
+    "personalization": {
+      "tone": {
+        "selected": "Direct, efficient",
+        "options": [
+          "Direct, efficient",
+          "Empathetic, clear",
+          "Professional, informative"
+        ]
+      },
+      "response_length": {
+        "selected": "Succinct",
+        "options": [
+          "Succinct",
+          "Balanced",
+          "Detailed"
+        ]
+      },
+      "nickname": {
+        "value": "",
+        "characters_left": 160
+      },
+      "subject_matter": {
+        "label": "What subject matter does this assistant specialize in?",
+        "value": "",
+        "characters_left": 1000
+      },
+      "visible_language_control": false,
+      "visible_processing_progress_toggle": false,
+      "documentation_difference": "Official Zurich documentation says subject-matter limit200; current instance UI displays1000."
+    }
+  },
+  "conclusions": {
+    "existing_direct_scc_start_route": "Not proven. Existing profile maps SCC for dynamic discovery. Prioritization applies to all AI agents rather than selecting SCC.",
+    "direct_start_candidate": "A new actual Virtual Agent topic with AI Connector selecting SCC, assigned as custom greeting or invoked via BotAPI SWITCH topic.id. Not created or tested; interactive SCC behavior needs validation.",
+    "topic_id_constraint": "Official Bot API topic.id refers to sys_cs_topic; do not substitute sn_aia_agent ID.",
+    "processing_message": "Official docs permit configuring/disabling processing and completion messages, but do not identify BotAPI control type. No source links sn_aia_agent.processing_message to the observed English initial OutputText.",
+    "dynamic_loader": "Official patch notes explicitly place agent processing steps/status updates in DynamicLoaderRichControl. This does not prove exclusive mapping of processing_message to DynamicLoader.",
+    "persona": "Identity/expertise/tone/length fields exist. No inspected source proves persona_description controls orchestrator preliminary OutputText language. No persona change recommended as a proven fix.",
+    "no_configuration_change_applied": true
+  },
+  "source_documents": [
+    {
+      "url": "https://www.servicenow.com/docs/r/api-reference/rest-apis/bot-api.html",
+      "supports": "SWITCH/topic.id uses actual Virtual Agent sys_cs_topic."
+    },
+    {
+      "url": "https://www.servicenow.com/docs/r/zurich/conversational-interfaces/now-assist-in-virtual-agent/use-agentic-support.html",
+      "supports": "Agent prioritization applies to all AI agents during discovery."
+    },
+    {
+      "url": "https://www.servicenow.com/docs/r/zurich/conversational-interfaces/virtual-agent/ai-agent-custom-skill.html",
+      "supports": "VA topic AI Connector can select an AI agent and Task mapping."
+    },
+    {
+      "url": "https://www.servicenow.com/docs/r/zurich/conversational-interfaces/now-assist-in-virtual-agent/manage-assistant-chat-experience.html",
+      "supports": "Custom greeting topic is supported; promoted assets are separate suggested launches."
+    },
+    {
+      "url": "https://www.servicenow.com/docs/r/zurich/conversational-interfaces/now-assist-in-virtual-agent/brand-assistant.html",
+      "supports": "Persona means nickname/subject matter with tone and response-length choices; no documented orchestrator-prelude language guarantee.",
+      "lines": "954-978"
+    },
+    {
+      "url": "https://www.servicenow.com/docs/r/intelligent-experiences/channels-access-aia.html",
+      "supports": "Agent processing/completion messages can be configured and toggled. No BotAPI wire-control mapping supplied.",
+      "lines": "2059-2076",
+      "release_at_read": "Brazil"
+    },
+    {
+      "url": "https://www.servicenow.com/docs/r/yokohama/release-notes/yokohama-patch-3.html",
+      "supports": "PRB1877432 processing steps within dynamic loading control; PRB1878226 progressMessages in DynamicLoaderRichControl.",
+      "lines": "1153-1163"
+    }
+  ],
+  "repository_findings": [
+    {
+      "path": "voice/bridge.py",
+      "lines": "197;372-385",
+      "finding": "Bot integration payload had no agentId/skillId/topicId at read; optional requester_session_language/history/nowSessionId/action."
+    },
+    {
+      "path": "voice/servicenow/evidence/scc-batch-capture-evidence.json",
+      "lines": "956",
+      "finding": "Preferred skill capture count0; no captured preferred-skill implementation semantics."
+    },
+    {
+      "path": "voice/servicenow/evidence/VABotToBotUtil-observed-20261013.js",
+      "lines": "279;338-339;368",
+      "finding": "DynamicLoader is classified separately from ordinary streaming. No processing_message/persona_description source mapping found."
+    }
+  ],
+  "limitations": [
+    "Read-only inspection cannot establish whether a proposed configuration changes observed runtime prelude.",
+    "One Agentic support click timed out; state read showed no change. Later semantic click succeeded. No input values changed.",
+    "Current native personalization preview is illustrative; it is not an execution test.",
+    "General greeting readiness/provider-contract issue remains unresolved."
+  ]
+}
