@@ -49,6 +49,7 @@ class Conversation:
     busy: bool = False
     failed: bool = False
     pending_since: float = 0
+    pending_action: str = ''
     now_session: str = ''
     requests: deque = field(default_factory=lambda: deque(maxlen=128))
     fingerprints: deque = field(default_factory=lambda: deque(maxlen=256))
@@ -268,7 +269,9 @@ class Bridge:
         if action:
             payload['action'] = action
         session.requests.append(request_id)
+        LOG.info('Bot request id=%s action=%s', request_id, action or 'MESSAGE')
         session.busy = True
+        session.pending_action = action
         session.pending_since = time.monotonic()
         session.choices = []
         session.input_label = ''
@@ -281,6 +284,7 @@ class Bridge:
                 ack = json.loads(raw) if raw else {}
                 if not isinstance(ack, dict) or ack.get('error') or (isinstance(ack.get('result'), dict) and ack['result'].get('error')):
                     raise RuntimeError('Bot request failed')
+                LOG.info('Bot ACK id=%s http=%s keys=%s result_keys=%s', request_id, response.status, sorted(ack.keys()), sorted(ack['result'].keys()) if isinstance(ack.get('result'), dict) else [])
                 # This response is only ACK. Actual bot output arrives at /callback.
         except Exception:
             session.busy = False
@@ -319,6 +323,7 @@ class Bridge:
             raise web.HTTPBadRequest(text='Invalid callback envelope')
         self.expire()
         session = self.sessions.get(data.get('clientSessionId'))
+        LOG.info('Bot callback request_id=%s matched=%s completed=%s controls=%s', data.get('requestId'), bool(session and session.requests and data.get('requestId') == session.requests[-1]), data.get('completed'), [item.get('uiType') for item in data.get('body', []) if isinstance(item, dict)])
         if session and session.requests and data.get('requestId') == session.requests[-1] and not session.ended:
             if data.get('userId') not in (None, '', self.settings.user_id):
                 raise web.HTTPBadRequest(text='Identity mismatch')
@@ -364,6 +369,13 @@ class Bridge:
                     option.get('enabled', True) is not False] if isinstance(choices, list) else []
                 session.busy = False
                 session.change.set()
+            elif (kind == 'ActionMsg' and control.get('actionType') == 'StartConversation'
+                  and session.pending_action == 'START_CONVERSATION'):
+                # This deployment has no greeting topic. Its matched initial
+                # StartConversation callback accepts the first user utterance.
+                # Other actions and normal turns must still await input controls.
+                session.pending_action = ''
+                session.busy = False
             elif kind not in ('ActionMsg', 'StreamStart', 'StreamChunk', None):
                 session.emit('Dieser Schritt enthält ein nicht unterstütztes Bedienelement: ' + str(kind)[:80], 'notice')
         if data.get('streamState') == 'END':

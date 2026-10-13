@@ -61,6 +61,31 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(state['ended'])
         self.assertEqual(state['events'], [])
 
+    async def test_initial_start_control_allows_first_user_message(self):
+        await self.post('/api/start', {})
+        await self.callback(body=[{'uiType': 'ActionMsg', 'actionType': 'StartConversation',
+                                   'conversationId': 'conversation-id', 'messageId': 'message-id'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertFalse(state['busy'])
+        self.assertTrue(state['started'])
+        self.assertEqual(state['events'], [])
+        self.assertEqual((await self.post('/api/message', {'text': 'Laptop bestellen'})).status, 202)
+
+    async def test_start_control_cannot_unlock_a_regular_turn(self):
+        await self.post('/api/start', {})
+        await self.callback(body=[{'uiType': 'InputText'}])
+        await self.post('/api/message', {'text': 'Laptop bestellen'})
+        await self.callback(body=[{'uiType': 'ActionMsg', 'actionType': 'StartConversation'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['busy'])
+
+    async def test_unrelated_start_control_cannot_unlock_start(self):
+        await self.post('/api/start', {})
+        await self.callback(requestId='unrelated', body=[
+            {'uiType': 'ActionMsg', 'actionType': 'StartConversation'}])
+        state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['busy'])
+
     async def test_callback_output_input_and_duplicate_handling(self):
         await self.post('/api/start', {})
         body = [{'uiType': 'OutputText', 'value': 'Wie kann ich helfen?'},

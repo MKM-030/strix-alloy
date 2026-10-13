@@ -72,6 +72,10 @@ Do not use a broad process stop or the general voice launcher Stop action to rec
 
 The bridge reads the configured speech name from settings.tts_voice in its protected configuration JSON. Existing installations default to Ryan; this demo sets the value to scc-demo and keeps model alias qwen3-tts-0.6b. The TTS worker must have the corresponding synthetic profile loaded. On 2026-10-13 the coordinated restart applied this setting; 38 voice tests passed, including the configured-voice request and existing default-voice behavior.
 
+The SCC deployment does not send a greeting topic. Its first authenticated, request-matched ActionMsg with actionType StartConversation marks only the pending START_CONVERSATION as ready for the user's first utterance. Other ActionMsg controls and normal message turns do not unlock input. This is covered by matching-start, unrelated-request, and mid-turn regression cases. The complete voice test suite has 41 passing tests.
+
+Bridge logs retain request IDs, HTTP ACK status/key names, callback match status and control types for support. They do not contain credentials, session cookies, prompt contents or spoken text.
+
 ## Exact gateway command
 
 After the existing bridge has a fresh slot, run the gateway in the foreground for its first verification:
