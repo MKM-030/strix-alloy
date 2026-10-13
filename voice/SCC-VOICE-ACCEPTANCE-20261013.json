@@ -1,0 +1,309 @@
+{
+  "date": "2026-10-13",
+  "scope": "Public authenticated mobile gateway; actual ASR, Bot API dialog and SCC own-voice TTS. Not a native ServiceNow Voice provider replacement.",
+  "commit": "f8025eb",
+  "alias": "voice-a813706d828045be89d8d0a69a0a8e58",
+  "firstRequestId": "5202f92174024dac9f3d7318aaf02a02",
+  "nameRequestId": "cdb444f018784ea7bcb44306a8a33c40",
+  "confirmationRequestId": "95356145bd5049739e09a683e53034e2",
+  "result": {
+    "request": "REQ0010012",
+    "requestedItem": "RITM0010011",
+    "reused": true,
+    "ended": true,
+    "failed": false
+  },
+  "spokenEvents": [
+    {
+      "eventId": 2,
+      "endpoint": "/api/speak",
+      "file": "acceptance-name-question.wav",
+      "audioSeconds": 5.84,
+      "generationSeconds": 12.094
+    },
+    {
+      "eventId": 4,
+      "endpoint": "/api/speak",
+      "file": "acceptance-summary.wav",
+      "audioSeconds": 9.6,
+      "generationSeconds": 19.828
+    },
+    {
+      "eventId": 6,
+      "endpoint": "/api/speak",
+      "file": "acceptance-result.wav",
+      "audioSeconds": 10.96,
+      "generationSeconds": 28.61
+    }
+  ],
+  "validation": {
+    "voiceTestsPassed": 55,
+    "independentBridgeTestsPassed": 29,
+    "actualPhoneMicrophonePlaybackVerified": false,
+    "secondConsecutiveConversationVerified": false
+  },
+  "release": {
+    "reset": "complete",
+    "logout": "complete",
+    "reason": "User requested immediate live testing; no second automated dialog started."
+  },
+  "limits": [
+    "Session-scoped external identity is a bounded single-operator compatibility workaround.",
+    "Real phone microphone permissions and playback remain user acceptance checks.",
+    "Additional runtime identity rows and no cross-dialog external history.",
+    "TTS latency is measured CPU latency, not real time or full duplex."
+  ],
+  "protocol": [
+    "INFO Bot session alias=voice-a813706d828045be89d8d0a69a0a8e58",
+    "INFO Bot request id=5202f92174024dac9f3d7318aaf02a02 action=MESSAGE",
+    "INFO Bot ACK id=5202f92174024dac9f3d7318aaf02a02 http=200 status=success keys=['status']",
+    "INFO Bot request id=cdb444f018784ea7bcb44306a8a33c40 action=MESSAGE",
+    "INFO Bot ACK id=cdb444f018784ea7bcb44306a8a33c40 http=200 status=success keys=['status']",
+    "INFO Bot request id=95356145bd5049739e09a683e53034e2 action=MESSAGE",
+    "INFO Bot ACK id=95356145bd5049739e09a683e53034e2 http=200 status=success keys=['status']",
+    "INFO Bot callback request_id=95356145bd5049739e09a683e53034e2 matched=True completed=True controls=[]",
+    "INFO Bot session alias=voice-aee61f736d2b44f380170f6866e12eec"
+  ],
+  "observations": [
+    {
+      "time": 1791876161.3288257,
+      "data": {
+        "authenticated": true
+      }
+    },
+    {
+      "time": 1791876161.3928514,
+      "data": {
+        "session": {
+          "started": false,
+          "serviceNowEnabled": true,
+          "expiresIn": 1799
+        }
+      }
+    },
+    {
+      "time": 1791876161.4465315,
+      "data": {
+        "start": "accepted"
+      }
+    },
+    {
+      "time": 1791876181.5051265,
+      "data": {
+        "state": {
+          "busy": false,
+          "failed": false,
+          "ended": false,
+          "started": true,
+          "choices": [],
+          "inputLabel": ""
+        }
+      }
+    },
+    {
+      "time": 1791876186.6195717,
+      "data": {
+        "transcription": {
+          "text": "Mein neuer Mitarbeiter startet am 1. November. Sein Laptop soll zum Onboarding nach Hamburg in unsere Niederlassung geliefert werden."
+        }
+      }
+    },
+    {
+      "time": 1791876200.9002776,
+      "data": {
+        "message": "accepted"
+      }
+    },
+    {
+      "time": 1791876226.0838609,
+      "data": {
+        "event": {
+          "id": 1,
+          "kind": "bot",
+          "text": "Ich starte den Laptop-Onboarding-Prozess für Ihren neuen Mitarbeiter mit Lieferung nach Hamburg."
+        }
+      }
+    },
+    {
+      "time": 1791876279.6609976,
+      "data": {
+        "event": {
+          "id": 2,
+          "kind": "bot",
+          "text": "Wie heißt dein neuer Mitarbeiter? Als Vorgesetzten trage ich dich selbst ein, Marcel."
+        }
+      }
+    },
+    {
+      "time": 1791876279.662786,
+      "data": {
+        "state": {
+          "busy": false,
+          "failed": false,
+          "ended": false,
+          "started": true,
+          "choices": [],
+          "inputLabel": "Wie heißt dein neuer Mitarbeiter? Als Vorgesetzten trage ich dich selbst ein, Marcel."
+        }
+      }
+    },
+    {
+      "time": 1791876310.7805212,
+      "data": {
+        "audio": {
+          "path": "E:\\SCC-Voice\\voices\\scc-demo\\test-inputs\\acceptance-name-question.wav",
+          "bytes": 280364,
+          "seconds": 5.84,
+          "elapsed": 12.094
+        }
+      }
+    },
+    {
+      "time": 1791876318.586872,
+      "data": {
+        "transcription": {
+          "text": "Der Mitarbeiter heißt Alex Sommer."
+        }
+      }
+    },
+    {
+      "time": 1791876344.6605568,
+      "data": {
+        "message": "accepted"
+      }
+    },
+    {
+      "time": 1791876386.0064201,
+      "data": {
+        "event": {
+          "id": 3,
+          "kind": "bot",
+          "text": "Danke, Marcel. Ich fahre mit dem Laptop-Onboarding für Alex Sommer fort."
+        }
+      }
+    },
+    {
+      "time": 1791876435.791025,
+      "data": {
+        "event": {
+          "id": 4,
+          "kind": "bot",
+          "text": "Laptop für Alex Sommer zum 1. November 2026 nach Hamburg, Vorgesetzter Marcel KAEFKE. Soll ich das bestellen?"
+        }
+      }
+    },
+    {
+      "time": 1791876435.7938542,
+      "data": {
+        "state": {
+          "busy": false,
+          "failed": false,
+          "ended": false,
+          "started": true,
+          "choices": [
+            {
+              "label": "Ja, bestellen",
+              "value": "ja"
+            },
+            {
+              "label": "Nein, abbrechen",
+              "value": "nein"
+            }
+          ],
+          "inputLabel": "Laptop für Alex Sommer zum 1. November 2026 nach Hamburg, Vorgesetzter Marcel KAEFKE. Soll ich das bestellen?"
+        }
+      }
+    },
+    {
+      "time": 1791876489.0122595,
+      "data": {
+        "audio": {
+          "path": "E:\\SCC-Voice\\voices\\scc-demo\\test-inputs\\acceptance-summary.wav",
+          "bytes": 460844,
+          "seconds": 9.6,
+          "elapsed": 19.828
+        }
+      }
+    },
+    {
+      "time": 1791876490.5101964,
+      "data": {
+        "transcription": {
+          "text": "Ja, bitte bestelle den Laptop."
+        }
+      }
+    },
+    {
+      "time": 1791876514.4822767,
+      "data": {
+        "message": "accepted"
+      }
+    },
+    {
+      "time": 1791876552.3975606,
+      "data": {
+        "event": {
+          "id": 5,
+          "kind": "bot",
+          "text": "Ich bestelle jetzt den Laptop für Alex Sommer mit Lieferung nach Hamburg."
+        }
+      }
+    },
+    {
+      "time": 1791876617.3854337,
+      "data": {
+        "event": {
+          "id": 6,
+          "kind": "bot",
+          "text": "Die passende Anforderung ist bereits vorhanden, sie läuft unter REQ0010012 und RITM0010011. Eine erneute Bestellung war nicht nötig."
+        }
+      }
+    },
+    {
+      "time": 1791876646.4259796,
+      "data": {
+        "event": {
+          "id": 7,
+          "kind": "bot",
+          "text": "Danke für das Gespräch. Bis zum nächsten Mal!"
+        }
+      }
+    },
+    {
+      "time": 1791876646.9808488,
+      "data": {
+        "state": {
+          "busy": false,
+          "failed": false,
+          "ended": true,
+          "started": true,
+          "choices": [],
+          "inputLabel": ""
+        }
+      }
+    },
+    {
+      "time": 1791876675.588872,
+      "data": {
+        "audio": {
+          "path": "E:\\SCC-Voice\\voices\\scc-demo\\test-inputs\\acceptance-result.wav",
+          "bytes": 526124,
+          "seconds": 10.96,
+          "elapsed": 28.61
+        }
+      }
+    },
+    {
+      "time": 1791876736.4427876,
+      "data": {
+        "reset": "complete"
+      }
+    },
+    {
+      "time": 1791876749.2273128,
+      "data": {
+        "logout": "complete"
+      }
+    }
+  ]
+}
