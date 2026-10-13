@@ -142,6 +142,25 @@ class GatewayTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status, 405)
         self.assertEqual(self.calls, [])
 
+    async def test_external_link_can_open_only_public_document(self):
+        navigation = {"Host": HOST, "Sec-Fetch-Site": "cross-site",
+                      "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Dest": "document"}
+        for method in ("GET", "HEAD"):
+            response = await self.client.request(method, "/", headers=navigation)
+            self.assertEqual(response.status, 200)
+            self.assertEqual(response.content_type, "text/html")
+        self.assertEqual(self.calls, [])
+        await self.login()
+        for path in ("/api/session", "/api/events", "/auth/session", "/app.js"):
+            response = await self.request("GET", path, headers=navigation)
+            self.assertEqual(response.status, 403)
+        for changed in ({"Sec-Fetch-Dest": "iframe"}, {"Sec-Fetch-Mode": "cors"}):
+            response = await self.client.get("/", headers=dict(navigation, **changed))
+            self.assertEqual(response.status, 403)
+        response = await self.request("POST", "/api/start", json={}, headers=navigation)
+        self.assertEqual(response.status, 403)
+        self.assertEqual(self.calls, [])
+
     async def test_backend_cookie_csrf_reset_and_logout_reuse(self):
         await self.login()
         for path in ("/api/start", "/api/reset", "/api/message"):

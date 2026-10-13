@@ -141,7 +141,12 @@ class MobileGateway:
         elif (len(origins) > 1 or (origin is not None and origin != self.config.public_origin)
               or (request.method not in ("GET", "HEAD") and origin != self.config.public_origin)):
             response = failure(403, "Unzulässiger Ursprung.")
-        elif request.headers.get("Sec-Fetch-Site") == "cross-site":
+        elif (request.headers.get("Sec-Fetch-Site") == "cross-site"
+              and not (request.method in ("GET", "HEAD") and request.path == "/"
+                       and request.headers.get("Sec-Fetch-Mode") == "navigate"
+                       and request.headers.get("Sec-Fetch-Dest") == "document")):
+            # Links from chat/Now Mobile may open the public login document.
+            # Cross-site APIs, mutations, subresources and frames remain denied.
             response = failure(403, "Unzulässige Anfrage.")
         else:
             try:
