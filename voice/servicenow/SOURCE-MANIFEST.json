@@ -1,0 +1,244 @@
+{
+  "status": "synced_and_hash_verified",
+  "refresh_before_sync": false,
+  "repository_root": "C:\\Projects\\strix-alloy-scc-voice",
+  "source_policy": "Explicit allowlist only; no directory glob copying",
+  "source_files_are_instance_bound": true,
+  "excluded": [
+    "scc-current-context-read.json",
+    "scc-preview-context-read.json",
+    "scc-consumer-account-repair.js (unsuccessful diagnostic attempt, not a deployment fix)",
+    "scc-acceptance-*.txt and raw identity read exports",
+    "credentials, passwords, tokens, connection-secret files",
+    "screenshots, private conversation exports, audio recordings and unrelated experiments",
+    "runtime consumer/account/user exports and Update Set payloads for those identities",
+    "output/, merge-check/, simplify-check/, upload/ and deployment archives from other agents"
+  ],
+  "files": [
+    {
+      "source": "scc-demo-runbook.md",
+      "destination": "voice/SCC-DEMO-RUNBOOK.md",
+      "category": "operating_documentation",
+      "source_sha256": "b21cd04ec26e31eb99df15cf2a5eecde3fb2bed03769b5ac4cf6fdac4c88788f",
+      "staged_sha256": "b752df67832a23f769b20d07fcac9c7343f0f8b882a66516e01d1a7c48bc18a6",
+      "bytes": 20896,
+      "adaptation": "Match native findings reference to the bundled repository filename; original remains unchanged"
+    },
+    {
+      "source": "scc-native-voice-findings.md",
+      "destination": "voice/SCC-NATIVE-VOICE-FINDINGS.md",
+      "category": "native_integration_findings_and_limitations",
+      "source_sha256": "3a8c9f8a0bf87c4ca974489a98e05034b051eaa96621cec9c7d34449a377d879",
+      "staged_sha256": "3a8c9f8a0bf87c4ca974489a98e05034b051eaa96621cec9c7d34449a377d879",
+      "bytes": 7681,
+      "adaptation": null
+    },
+    {
+      "source": "scc-laptop-order-tool.js",
+      "destination": "voice/servicenow/scc-laptop-order-tool.js",
+      "category": "instance_bound_tool_source",
+      "source_sha256": "1928de74b677381c74b701a37c7ad1daab469d4224125dc04aef963c3993555d",
+      "staged_sha256": "1928de74b677381c74b701a37c7ad1daab469d4224125dc04aef963c3993555d",
+      "bytes": 5550,
+      "adaptation": null
+    },
+    {
+      "source": "scc-agent-voice-wording.json",
+      "destination": "voice/servicenow/evidence/scc-agent-voice-wording.json",
+      "category": "owned_agent_instruction_change_no_secrets",
+      "source_sha256": "fc3743f069b05785e8fd9687943abc539fc52182f9a6ff8607d83ba338e7ac18",
+      "staged_sha256": "fc3743f069b05785e8fd9687943abc539fc52182f9a6ff8607d83ba338e7ac18",
+      "bytes": 4049,
+      "adaptation": null
+    },
+    {
+      "source": "scc-mobile-enable.js",
+      "destination": "voice/servicenow/scc-mobile-enable.js",
+      "category": "instance_bound_mobile_activation_prepared",
+      "source_sha256": "71648b7dc0fedcb9a387d77d10d28cbb90dc8c4ba23b22d3d2aca8c9a3fce732",
+      "staged_sha256": "71648b7dc0fedcb9a387d77d10d28cbb90dc8c4ba23b22d3d2aca8c9a3fce732",
+      "bytes": 1862,
+      "adaptation": null
+    },
+    {
+      "source": "scc-voice-acceptance-read.js",
+      "destination": "voice/servicenow/scc-voice-acceptance-read.js",
+      "category": "read_only_acceptance_diagnostic",
+      "source_sha256": "f9e744250bfd38ab94069ac4847cdc05e6c17564e9a2d1ecb8ccd34b3d7fa222",
+      "staged_sha256": "f9e744250bfd38ab94069ac4847cdc05e6c17564e9a2d1ecb8ccd34b3d7fa222",
+      "bytes": 2644,
+      "adaptation": null
+    },
+    {
+      "source": "scc-react-context-fix.js",
+      "destination": "voice/servicenow/scc-react-context-fix.js",
+      "category": "instance_bound_prompt_patch_dry_run",
+      "source_sha256": "b047316e7b6e80a74fbc1c9e703f6ce30ed1825ebbf880effe6b03bcd6c4d89d",
+      "staged_sha256": "b047316e7b6e80a74fbc1c9e703f6ce30ed1825ebbf880effe6b03bcd6c4d89d",
+      "bytes": 3083,
+      "adaptation": null
+    },
+    {
+      "source": "scc-react-context-fix-check.cjs",
+      "destination": "voice/servicenow/scc-react-context-fix-check.cjs",
+      "category": "local_test",
+      "source_sha256": "4a692e1ae11b3a85a14cc48e33c5f9b17db16c7895e1ad0fad91d755d110680e",
+      "staged_sha256": "4a692e1ae11b3a85a14cc48e33c5f9b17db16c7895e1ad0fad91d755d110680e",
+      "bytes": 4429,
+      "adaptation": null
+    },
+    {
+      "source": "scc-halogen-request-transformer.js",
+      "destination": "voice/servicenow/scc-halogen-request-transformer.js",
+      "category": "instance_bound_transformer_source",
+      "source_sha256": "02067723fbc4dd1272558af18ceb2642dcdf23326cf462251271b9535eb1202b",
+      "staged_sha256": "02067723fbc4dd1272558af18ceb2642dcdf23326cf462251271b9535eb1202b",
+      "bytes": 1434,
+      "adaptation": null
+    },
+    {
+      "source": "scc-halogen-request-transformer.rollback.js",
+      "destination": "voice/servicenow/scc-halogen-request-transformer.rollback.js",
+      "category": "reviewed_rollback_source",
+      "source_sha256": "57ba61d8cdc3e0b54d36e80d6fdf0af53647698683bc68ccd3f6de98e1bd0223",
+      "staged_sha256": "57ba61d8cdc3e0b54d36e80d6fdf0af53647698683bc68ccd3f6de98e1bd0223",
+      "bytes": 1178,
+      "adaptation": null
+    },
+    {
+      "source": "scc-halogen-request-transformer.test.cjs",
+      "destination": "voice/servicenow/scc-halogen-request-transformer.test.cjs",
+      "category": "local_test",
+      "source_sha256": "333c9ebce9cf161728c9b02e3b21fe002b1c7da041a389f3abf7e75b92076533",
+      "staged_sha256": "333c9ebce9cf161728c9b02e3b21fe002b1c7da041a389f3abf7e75b92076533",
+      "bytes": 3086,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-capture.js",
+      "destination": "voice/servicenow/scc-batch-capture.js",
+      "category": "capture_tool_default_read_only_plan",
+      "source_sha256": "4937868408e327882377aa63c6204fbe142143279553d0fcb96865de38d7dec5",
+      "staged_sha256": "4937868408e327882377aa63c6204fbe142143279553d0fcb96865de38d7dec5",
+      "bytes": 34197,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-plan-compact.js",
+      "destination": "voice/servicenow/scc-batch-plan-compact.js",
+      "category": "read_only_plan",
+      "source_sha256": "a1d0dc244f88da4ccb11d765c95d0eb29a9e3c339d77a041d5a83c9c6f7a1ee6",
+      "staged_sha256": "a1d0dc244f88da4ccb11d765c95d0eb29a9e3c339d77a041d5a83c9c6f7a1ee6",
+      "bytes": 17619,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-capture-frozen.js",
+      "destination": "voice/servicenow/scc-batch-capture-frozen.js",
+      "category": "capture_requires_fresh_frozen_manifest",
+      "source_sha256": "f6ed7c71a5f8a6aecb3c04da0a4c3d3d5b5b7ea7ce47c4219f79623e1586425e",
+      "staged_sha256": "f6ed7c71a5f8a6aecb3c04da0a4c3d3d5b5b7ea7ce47c4219f79623e1586425e",
+      "bytes": 8214,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-complete.js",
+      "destination": "voice/servicenow/scc-batch-complete.js",
+      "category": "completion_requires_successful_final_capture",
+      "source_sha256": "5d75d23b617d5833311a622a9d7ce870864cf74dbe514fe57a909a6954c6af7a",
+      "staged_sha256": "5d75d23b617d5833311a622a9d7ce870864cf74dbe514fe57a909a6954c6af7a",
+      "bytes": 5285,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-complete-check.cjs",
+      "destination": "voice/servicenow/scc-batch-complete-check.cjs",
+      "category": "local_test",
+      "source_sha256": "a88e1e13ccb44b556f5bd20b6b354e4fc71aef2ac944a0505764bff6a37dbc27",
+      "staged_sha256": "a88e1e13ccb44b556f5bd20b6b354e4fc71aef2ac944a0505764bff6a37dbc27",
+      "bytes": 5108,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-capture-compact.js",
+      "destination": "voice/servicenow/scc-batch-capture-compact.js",
+      "category": "generated_full_capture_requires_frozen_manifest",
+      "source_sha256": "00ec97d54b02ed4ffe29b6c5813571c8a0c87774c505cfeff102233fd804d27a",
+      "staged_sha256": "00ec97d54b02ed4ffe29b6c5813571c8a0c87774c505cfeff102233fd804d27a",
+      "bytes": 27675,
+      "adaptation": null
+    },
+    {
+      "source": "scc-build-compact-capture.cjs",
+      "destination": "voice/servicenow/scc-build-compact-capture.cjs",
+      "category": "local_generator",
+      "source_sha256": "3eee8a93f8afceeda8a3178bf5d5c02347947058eb1e2a610c4ad39d72243172",
+      "staged_sha256": "3eee8a93f8afceeda8a3178bf5d5c02347947058eb1e2a610c4ad39d72243172",
+      "bytes": 1289,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-capture-check.cjs",
+      "destination": "voice/servicenow/scc-batch-capture-check.cjs",
+      "category": "local_test_portable_path_copy",
+      "source_sha256": "1fbca1ce24ac049edc6c1158d92ae9f7cdc31df1b1c9dac946ec6ebefbd84cb3",
+      "staged_sha256": "1845fd4ca232fe219f5f89b879a3be5557e2c67037ea0ea0882b4de47051c31f",
+      "bytes": 15449,
+      "adaptation": "Replace four container-specific file paths with __dirname; original remains unchanged"
+    },
+    {
+      "source": "scc-agent-access-read-compact.js",
+      "destination": "voice/servicenow/scc-agent-access-read-compact.js",
+      "category": "read_only_diagnostic",
+      "source_sha256": "616af7ec12b5cc28f6eaa542804182d4a638b36c52061a63f81f6f757d6f1404",
+      "staged_sha256": "616af7ec12b5cc28f6eaa542804182d4a638b36c52061a63f81f6f757d6f1404",
+      "bytes": 2405,
+      "adaptation": null
+    },
+    {
+      "source": "scc-agent-acl-name-read.js",
+      "destination": "voice/servicenow/scc-agent-acl-name-read.js",
+      "category": "read_only_diagnostic",
+      "source_sha256": "19cf48d8c5f1e6705005f0882f4d1b09d2fc9752ecee34c16dab948d13d155cc",
+      "staged_sha256": "19cf48d8c5f1e6705005f0882f4d1b09d2fc9752ecee34c16dab948d13d155cc",
+      "bytes": 1972,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-capture-evidence.json",
+      "destination": "voice/servicenow/evidence/scc-batch-capture-evidence.json",
+      "category": "verified_final_capture_evidence",
+      "source_sha256": "457f6ac125e55a0549f0b1051d4f824afd45b4f7f558a0863dfc3e57d35e1520",
+      "staged_sha256": "457f6ac125e55a0549f0b1051d4f824afd45b4f7f558a0863dfc3e57d35e1520",
+      "bytes": 39139,
+      "adaptation": null
+    },
+    {
+      "source": "scc-batch-completion-evidence.json",
+      "destination": "voice/servicenow/evidence/scc-batch-completion-evidence.json",
+      "category": "verified_batch_completion_evidence",
+      "source_sha256": "0ea40f934b2f70b2d4c4d6d349eac2a5b76b8010d043c0d3738c46188678e4d8",
+      "staged_sha256": "0ea40f934b2f70b2d4c4d6d349eac2a5b76b8010d043c0d3738c46188678e4d8",
+      "bytes": 127,
+      "adaptation": null
+    },
+    {
+      "source": "scc-final-capture-checkpoint.json",
+      "destination": "voice/servicenow/evidence/scc-final-capture-checkpoint.json",
+      "category": "verified_final_capture_checkpoint",
+      "source_sha256": "df352c8e3cabb03429b3cc52536c13a5f312ab3402611e2d9810828d7294e144",
+      "staged_sha256": "df352c8e3cabb03429b3cc52536c13a5f312ab3402611e2d9810828d7294e144",
+      "bytes": 5300,
+      "adaptation": null
+    },
+    {
+      "source": "generated by scc-repository-sync-prepare.py",
+      "destination": "voice/servicenow/README.md",
+      "category": "source_and_transport_guidance",
+      "staged_sha256": "7a5d25f5b586622c040fac4a9adab8ae999afbbeff4b4d15540fcfca0d1297f4",
+      "bytes": 3505
+    }
+  ],
+  "synced_at_utc": "2026-10-13T07:55:28.480283+00:00",
+  "archive_sha256": "df66db8d976eabf95c017409d3f7f0f2bd267e13754353a2229a245d9b991f4d"
+}

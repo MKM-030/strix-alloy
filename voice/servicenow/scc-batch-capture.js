@@ -1,0 +1,540 @@
+/*
+ * ServiceNow Scripts - Background, Global, ES5.
+ * Captures existing SCC-owned configuration; it does not change its values.
+ * Default MODE='plan' emits a read-only inventory and frozen candidate list.
+ * Copy the reviewed frozen_manifest_candidate into FROZEN_MANIFEST, then capture.
+ * Capture leaves all sets WIP unless completion is explicitly enabled below.
+ * Run only after final tool setup. Add final exact IDs to EXTRA_MANIFEST below.
+ * COMPLETE_AFTER_VERIFICATION requires FINAL_MANIFEST_CONFIRMED and a clean audit.
+ * Product-example-backed capture: GlideUpdateSet.set + zero-arg manager.saveRecord.
+ * No direct sys_update_xml writes, update_synch changes, cache/property writes,
+ * application-scope switching, credential capture, or broad updated-by queries.
+ */
+(function () {
+    var MODE = 'plan'; // 'plan' or 'capture'
+    var FROZEN_MANIFEST = []; // Copy reviewed frozen_manifest_candidate from successful plan output.
+    var FINAL_MANIFEST_CONFIRMED = false;
+    var COMPLETE_AFTER_VERIFICATION = false;
+    var BATCH_NAME = 'SCC 2026 - Local Voice + ITSM Laptop Demo - 2026-10-12';
+    var MARKER = 'SCC_CAPTURE_MANIFEST_V1_2026_10_12';
+    var MAX_RECORDS = 200;
+    var MAX_PER_RELATION = 50;
+
+    var SEEDS = [
+        ['sys_now_assist_deployment', 'c623a20f93374354e7f2b9fa6aba10fd', 'SCC chat assistant'],
+        ['sys_now_assist_deployment_config', '9e23e20f93374354e7f2b9fa6aba1087', 'SCC assistant configuration'],
+        ['sys_cs_context_profile', 'c623e20f93374354e7f2b9fa6aba1081', 'SCC assistant context'],
+        ['sn_aia_agent', 'e850ba4f933b4354e7f2b9fa6aba105d', 'SCC owned HR chat agent'],
+        ['sn_aia_agent_config', '2fa13ec3937b4354e7f2b9fa6aba1068', 'SCC HR configuration'],
+        ['sn_aia_version', '6fa1fac3937b4354e7f2b9fa6aba1035', 'SCC HR version'],
+        ['sn_aia_agent_tool_m2m', '9842fa47937b4354e7f2b9fa6aba10f6', 'SCC HR tool binding'],
+        ['sn_aia_agent_tool_m2m', '14427687937b4354e7f2b9fa6aba10bf', 'SCC HR tool binding'],
+        ['sn_aia_agent_tool_m2m', '98427687937b4354e7f2b9fa6aba10c0', 'SCC HR tool binding'],
+        ['sn_aia_agent_tool_m2m', '10427687937b4354e7f2b9fa6aba10c2', 'SCC HR tool binding'],
+        ['sn_aia_agent_tool_m2m', '18427687937b4354e7f2b9fa6aba10c3', 'SCC HR tool binding'],
+        ['sys_cs_provider_application', '200af60f93fb4354e7f2b9fa6aba107d', 'SCC local voice provider application'],
+        ['sys_alias', '600af60f93fb4354e7f2b9fa6aba107f', 'SCC connection alias'],
+        ['http_connection', '680af60f93fb4354e7f2b9fa6aba1081', 'SCC HTTP connection; credentials excluded'],
+        ['sn_va_as_service_outbound_configuration', 'e40af60f93fb4354e7f2b9fa6aba10ff', 'SCC outbound configuration'],
+        ['sys_now_assist_deployment_channel', 'a40a3a0f93fb4354e7f2b9fa6aba1001', 'SCC deployment channel'],
+        ['sc_cat_item', '401b878b93738354e7f2b9fa6aba102f', 'SCC ITSM laptop catalog item'],
+        ['item_option_new', '981b0f8b93738354e7f2b9fa6aba1018', 'SCC laptop variable'],
+        ['item_option_new', 'd01b0f8b93738354e7f2b9fa6aba103f', 'SCC laptop variable'],
+        ['item_option_new', '181b0f8b93738354e7f2b9fa6aba1059', 'SCC laptop variable'],
+        ['item_option_new', 'dc1b0f8b93738354e7f2b9fa6aba108c', 'SCC laptop variable'],
+        ['sn_aia_agent', 'a4a9438393738354e7f2b9fa6aba101d', 'SCC ITSM laptop agent']
+    ];
+
+    // Root fills final owned tools/relation IDs after setup; shared OOTB tools stay prerequisites.
+    var EXTRA_MANIFEST = [
+        ['sys_sg_button', 'b0e217cf93b78354e7f2b9fa6aba1028', 'SCC mobile external URL action'],
+        ['sys_sg_button_instance', '74e2df0393f78354e7f2b9fa6aba1000', 'SCC mobile button instance; inactive until endpoint verification'],
+        ['sys_sg_alp_quick_action_map', '78e2df0393f78354e7f2b9fa6aba1003', 'SCC mobile Homepage quick action mapping'],
+        ['message_auth', 'a80af60f93fb4354e7f2b9fa6aba107b', 'SCC message authentication; verified references only'],
+        ['sc_cat_item_catalog', '676d438793b38354e7f2b9fa6aba1010', 'SCC laptop catalog membership'],
+        ['sys_script', 'a211df8f93378354e7f2b9fa6aba10da', 'SCC dedicated interaction legacy CSM auto-close exclusion'],
+        ['sys_generative_ai_custom_llm_transformer', 'bc126377936f8750e7f2b9fa6aba1012', 'HaloGen transformer restored after diagnostic logging; verify no temporary logger remains before capture'],
+        ['sys_generative_ai_config', '4780c7e193f747d0e7f2b9fa6aba1030', 'Owned HaloGen ReAct v3 prompt context fix'],
+        ['sys_agent_access_role_configuration', 'a6bc4f8393b38354e7f2b9fa6aba1022', 'SCC laptop dynamic user role mask'],
+        ['sys_agent_access_role_configuration', 'aa39bec793fb4354e7f2b9fa6aba1065', 'SCC owned HR dynamic user role mask'],
+        ['sys_agent_access_role_mapping', '3abc4f8393b38354e7f2b9fa6aba1032', 'SCC laptop approved itil role mapping'],
+        ['sys_agent_access_role_mapping', 'fe39320b93fb4354e7f2b9fa6aba100b', 'SCC owned HR approved admin role mapping'],
+        ['sys_security_acl', '115c870393b38354e7f2b9fa6aba10a6', 'SCC laptop exact owned execution ACL'],
+        ['sys_security_acl', 'c9393ac793fb4354e7f2b9fa6aba108d', 'SCC owned HR exact execution ACL'],
+        ['ais_search_source', '1723a60f93374354e7f2b9fa6aba10b0', 'SCC assistant generated search source'],
+        ['ais_search_source', '4b23a60f93374354e7f2b9fa6aba106f', 'SCC assistant generated search source'],
+        ['sn_aia_agent_config', 'f21ac78793738354e7f2b9fa6aba106e', 'SCC ITSM laptop agent configuration'],
+        ['sn_aia_version', 'f61ac78793738354e7f2b9fa6aba104b', 'SCC ITSM laptop current version'],
+        ['sn_aia_tool', '15ebcb8f93738354e7f2b9fa6aba1072', 'SCC laptop context tool'],
+        ['sn_aia_agent_tool_m2m', '55ebcb8f93738354e7f2b9fa6aba107b', 'SCC laptop context tool binding'],
+        ['sn_aia_tool', '8b5c4f0393b38354e7f2b9fa6aba10f7', 'SCC laptop order tool'],
+        ['sn_aia_agent_tool_m2m', '835c4f0393b38354e7f2b9fa6aba10f9', 'SCC laptop order tool binding']
+    ];
+    var PENDING_RECORDS = [];
+    var EXCLUDED_IDS = {
+        '6882f6c7937b4354e7f2b9fa6aba105e': true,
+        '5782fac7937b4354e7f2b9fa6aba10ea': true,
+        '60b9ea4893c68350e7f2b9fa6aba1090': true,
+        '5287ce9c93d64f145c8132d47aba1060': true
+    };
+    var PREREQUISITES = [
+        {kind: 'existing_homepage', sys_id: 'ad7cc08177a72300454792718a1061ab', action: 'Existing mobile Homepage remains unchanged; target mobile endpoint must be verified before enabling the button instance'},
+        {kind: 'existing_custom_field', table: 'interaction', field: 'u_resolution_required', action: 'Existing field used by the SCC-specific legacy auto-close exclusion; not changed or captured'},
+        {kind: 'context_value', name: 'u_liveagent_devicetype', action: 'Existing device context condition inherited by the SCC assistant; verify the target environment supplies this context value'},
+        {kind: 'existing_model', sys_id: 'ff74fcef93a70350e7f2b9fa6aba10ea', action: 'Existing halogen-v2 model configuration used by the captured transformer; model/provider setup and credentials remain destination prerequisites'},
+        {kind: 'credential', sys_id: '6882f6c7937b4354e7f2b9fa6aba105e', action: 'Provision securely on destination; never captured'},
+        {kind: 'credential', sys_id: '5782fac7937b4354e7f2b9fa6aba10ea', action: 'Provision securely on destination; never captured'},
+        {kind: 'runtime', action: 'Local gateway, network reachability, model/provider configuration, and authentication must be configured on destination'},
+        {kind: 'application', action: 'Matching installed application scopes and required ServiceNow plugin/app versions must exist on destination'}
+    ];
+    // These are configuration ownership edges, discovered only through exact references.
+    // Do not add execution/session/log/runtime tables or shared tool definition tables.
+    var AGENT_CHILD_TABLES = [
+        'sn_aia_agent_config', 'sn_aia_version', 'sn_aia_agent_tool_m2m', 'sn_aia_agent_child'
+    ];
+    var PROFILE_CHILD_TABLES = [
+        'sys_gen_ai_skill_applicability', 'sys_cs_context_profile_promoted_skill',
+        'sys_cs_context_profile_message', 'sys_cs_context_profile_visible_discoverable_skill',
+        'sys_cs_context_profile_preferred_skill', 'sys_cs_context_profile_search',
+        'sys_cs_context_profile_tool_m2m', 'sys_cs_document_context_profile',
+        'sys_cb_document_context_profile', 'sys_cs_context_profile_topic',
+        'sys_cs_context_profile_promotion', 'sys_cs_context_profile_skill', 'sys_cs_context_profile_tool'
+    ];
+    var DEPLOYMENT_CHILD_TABLES = [
+        'sys_now_assist_va_persona_detail', 'sys_now_assist_deployment_menu_item',
+        'sys_now_assist_deployment_config', 'sys_now_assist_deployment_channel'
+    ];
+    var CATALOG_EDGES = [
+        ['item_option_new', 'cat_item', 'sc_cat_item'],
+        ['question_choice', 'question', 'item_option_new'],
+        ['sc_cat_item_category', 'sc_cat_item', 'sc_cat_item'],
+        ['sc_cat_item_catalog', 'sc_cat_item', 'sc_cat_item'],
+        ['catalog_script_client', 'cat_item', 'sc_cat_item'],
+        ['catalog_ui_policy', 'catalog_item', 'sc_cat_item'],
+        ['catalog_ui_policy_action', 'ui_policy', 'catalog_ui_policy']
+    ];
+
+    var records = [], recordMap = {}, scopes = {}, scopeNames = {}, prereqMap = {};
+    var batchId = '', childSets = {}, captures = [], audit = [], discoveryEvidence = [];
+    var originalSet = String(gs.getPreference('sys_update_set') || '');
+    var currentSelectionChanged = false;
+    var result = {ok: false, mode: MODE, batch: '', status: 'not_started'};
+
+    try {
+        if (!gs.hasRole('admin')) fail('Admin role required.');
+        if (MODE !== 'plan' && MODE !== 'capture') fail('Invalid MODE.');
+        if (COMPLETE_AFTER_VERIFICATION && !FINAL_MANIFEST_CONFIRMED)
+            fail('Completion requires FINAL_MANIFEST_CONFIRMED.');
+        var i;
+        for (i = 0; i < SEEDS.length; i++) add(SEEDS[i][0], SEEDS[i][1], SEEDS[i][2]);
+        for (i = 0; i < EXTRA_MANIFEST.length; i++) add(EXTRA_MANIFEST[i][0], EXTRA_MANIFEST[i][1], EXTRA_MANIFEST[i][2]);
+        discoverAgentGraph();
+        discoverAgentSkillMetadata();
+        discoverVerifiedReferences(PROFILE_CHILD_TABLES, ['sys_cs_context_profile']);
+        discoverVerifiedReferences(DEPLOYMENT_CHILD_TABLES, ['sys_now_assist_deployment', 'sys_now_assist_deployment_config']);
+        discoverSearchSourceRelations();
+        discoverOwnedForwardReferences();
+        discoverRelation('sys_security_acl_role', 'sys_security_acl', 'sys_security_acl');
+        discoverOwnedForwardReferences();
+        discoverCatalogChildren();
+        collectSharedToolPrerequisites();
+        records.sort(function (a, b) { return (a.scope + a.table + a.sys_id) < (b.scope + b.table + b.sys_id) ? -1 : 1; });
+        for (i = 0; i < records.length; i++) assertNoSecrets(read(records[i].table, records[i].sys_id));
+        if (FINAL_MANIFEST_CONFIRMED && PENDING_RECORDS.length) fail('Resolve PENDING_RECORDS before confirming the manifest.');
+        if (MODE === 'capture') {
+            verifyFrozenManifest();
+            if (!originalSet) fail('No original current update set to restore; select a current update set first.');
+            batchId = ensureSet(BATCH_NAME, 'global', '');
+            for (var scope in scopes) if (own(scopes, scope))
+                childSets[scope] = ensureSet(BATCH_NAME + ' / ' + scopeNames[scope], scope, batchId);
+            if (COMPLETE_AFTER_VERIFICATION) {
+                if (originalSet === batchId) fail('Cannot complete the original current update set; select a different set first.');
+                for (scope in childSets) if (own(childSets, scope) && childSets[scope] === originalSet)
+                    fail('Cannot complete the original current update set; select a different set first.');
+            }
+            var activeScope = '', manager;
+            for (i = 0; i < records.length; i++) {
+                var entry = records[i];
+                if (entry.scope !== activeScope) {
+                    currentSelectionChanged = true;
+                    new GlideUpdateSet().set(childSets[entry.scope]);
+                    if (String(gs.getPreference('sys_update_set') || '') !== childSets[entry.scope])
+                        fail('Current update set selection did not take effect for scope ' + entry.scope);
+                    manager = new GlideUpdateManager2();
+                    activeScope = entry.scope;
+                }
+                var currentSource = read(entry.table, entry.sys_id);
+                if (String(currentSource.getValue('sys_updated_on') || '') !== entry.updated_on ||
+                    String(currentSource.getValue('sys_mod_count') || '') !== entry.mod_count)
+                    fail('Source changed during capture: ' + entry.table + '/' + entry.sys_id);
+                assertNoSecrets(currentSource);
+                manager.saveRecord(currentSource);
+                captures.push(verifyOne(entry, childSets[entry.scope]));
+            }
+            auditBatch();
+            restoreSelection();
+            if (COMPLETE_AFTER_VERIFICATION) {
+                for (scope in childSets) if (own(childSets, scope)) setComplete(childSets[scope]);
+                setComplete(batchId);
+            }
+        }
+        result.ok = true;
+        result.status = MODE === 'plan' ? 'planned' : (COMPLETE_AFTER_VERIFICATION ? 'complete' : 'in progress');
+    } catch (e) {
+        // No automatic rollback, XML deletion, record retargeting, or secret payload logging.
+        result.error = String(e.message || e);
+        result.status = batchId ? 'requires review; inspect actual update set states' : 'not_started';
+    } finally {
+        if (currentSelectionChanged) {
+            try { restoreSelection(); }
+            catch (restoreError) { result.ok = false; result.status = 'requires review'; result.restore_error = 'Could not restore original current update set ' + originalSet; }
+        }
+        result.batch = batchId;
+        result.children = childSets;
+        result.final_manifest_confirmed = FINAL_MANIFEST_CONFIRMED;
+        result.manifest = records;
+        result.frozen_manifest_candidate = frozenCandidate();
+        result.discovery = discoveryEvidence;
+        result.customer_updates = captures;
+        result.audit = audit;
+        result.pending_records = PENDING_RECORDS;
+        result.prerequisites = PREREQUISITES;
+        gs.info('[SCC Batch Capture] ' + JSON.stringify(result));
+    }
+
+    function own(obj, key) { return Object.prototype.hasOwnProperty.call(obj, key); }
+    function fail(message) { throw new Error(message); }
+    function restoreSelection() {
+        if (!currentSelectionChanged) return;
+        new GlideUpdateSet().set(originalSet);
+        if (String(gs.getPreference('sys_update_set') || '') !== originalSet)
+            fail('Restoring current update set did not take effect.');
+        currentSelectionChanged = false;
+    }
+    function tableAllowed(table) {
+        return !/(credential|oauth|token|password|secret|certificate|private_key)/i.test(table) &&
+            !/(execution|session|conversation|message_log|audit|history|cache|runtime)/i.test(table);
+    }
+    function open(table) {
+        var gr = new GlideRecord(table);
+        if (!gr.isValid()) fail('Table does not exist: ' + table);
+        return gr;
+    }
+    function read(table, id) {
+        var gr = open(table);
+        if (!gr.get(id)) fail('Missing record: ' + table + '/' + id);
+        return gr;
+    }
+    function add(table, id, reason) {
+        id = String(id || '');
+        if (!/^[0-9a-f]{32}$/.test(id)) fail('Invalid manifest sys_id for ' + table);
+        if (!tableAllowed(table) || EXCLUDED_IDS[id]) fail('Excluded record requested: ' + table + '/' + id);
+        var gr = read(table, id);
+        table = String(gr.getRecordClassName());
+        if (!tableAllowed(table)) fail('Excluded record class: ' + table);
+        var key = table + ':' + id;
+        if (recordMap[key]) return;
+        if (records.length >= MAX_RECORDS) fail('Manifest record safety limit reached.');
+        var scope = gr.isValidField('sys_scope') ? String(gr.getValue('sys_scope') || 'global') : 'global';
+        if (scope !== 'global' && !/^[0-9a-f]{32}$/.test(scope)) fail('Invalid actual scope: ' + key);
+        if (!scopeNames[scope]) {
+            var s = read('sys_scope', scope);
+            scopeNames[scope] = String(s.getValue('scope') || s.getValue('name') || scope);
+        }
+        var updateName = gr.isValidField('sys_update_name') ? String(gr.getValue('sys_update_name') || '') : '';
+        var entry = {table: table, sys_id: id, scope: scope, reason: reason,
+            update_name: updateName || table + '_' + id,
+            updated_on: String(gr.getValue('sys_updated_on') || ''), mod_count: String(gr.getValue('sys_mod_count') || ''),
+            scope_source: gr.isValidField('sys_scope') ? 'record.sys_scope' : 'global fallback; verify captured application'};
+        records.push(entry);
+        recordMap[key] = entry;
+        scopes[scope] = true;
+    }
+    function idsFor(table) {
+        var ids = [];
+        for (var i = 0; i < records.length; i++) if (records[i].table === table) ids.push(records[i].sys_id);
+        return ids;
+    }
+    function discoverRelation(table, field, parentTable) {
+        var ids = idsFor(parentTable);
+        if (!ids.length) return;
+        var q = new GlideRecord(table);
+        if (!q.isValid() || !q.isValidField(field)) {
+            discoveryEvidence.push({table: table, field: field, parent_table: parentTable, status: 'schema_not_present'});
+            return;
+        }
+        q.addQuery(field, 'IN', ids.join(','));
+        q.setLimit(MAX_PER_RELATION + 1);
+        q.query();
+        var count = 0;
+        while (q.next()) {
+            if (++count > MAX_PER_RELATION) fail('Relationship safety limit: ' + table + '.' + field);
+            add(table, String(q.getUniqueValue()), 'Owned relation: ' + field + ' references exact ' + parentTable + ' manifest IDs');
+        }
+        discoveryEvidence.push({table: table, field: field, parent_table: parentTable, status: 'queried_exact_parent_ids', count: count});
+    }
+    function frozenCandidate() {
+        var frozen = [];
+        for (var i = 0; i < records.length; i++) frozen.push([records[i].table, records[i].sys_id, records[i].scope, records[i].updated_on, records[i].mod_count]);
+        return frozen;
+    }
+    function verifyFrozenManifest() {
+        if (!FROZEN_MANIFEST.length) fail('Capture requires the exact reviewed frozen_manifest_candidate from a plan run.');
+        var expected = {}, count = 0;
+        for (var i = 0; i < FROZEN_MANIFEST.length; i++) {
+            var row = FROZEN_MANIFEST[i];
+            if (row.length !== 5) fail('Frozen manifest row must include table, ID, scope, updated_on and mod_count.');
+            var key = row[0] + ':' + row[1];
+            if (expected[key]) fail('Duplicate frozen manifest record: ' + key);
+            expected[key] = row;
+            count++;
+        }
+        if (count !== records.length) fail('Discovered manifest differs in size from frozen manifest. Run plan again.');
+        for (i = 0; i < records.length; i++) {
+            var item = records[i], prior = expected[item.table + ':' + item.sys_id];
+            if (!prior || prior[2] !== item.scope || prior[3] !== item.updated_on || prior[4] !== item.mod_count)
+                fail('Record/scope/revision differs from frozen plan: ' + item.table + '/' + item.sys_id);
+        }
+    }
+    function discoverVerifiedReferences(tables, parentTables) {
+        var d = open('sys_dictionary'), found = {};
+        d.addQuery('name', 'IN', tables.join(','));
+        d.addQuery('reference', 'IN', parentTables.join(','));
+        d.addNotNullQuery('element');
+        d.query();
+        while (d.next()) {
+            var name = String(d.getValue('name'));
+            found[name] = true;
+            discoverRelation(name, String(d.getValue('element')), String(d.getValue('reference')));
+        }
+        for (var i = 0; i < tables.length; i++) if (!found[tables[i]])
+            discoveryEvidence.push({table: tables[i], parent_tables: parentTables.join(','), status: 'no_dictionary_reference_found; review exact schema before final confirmation'});
+    }
+    function discoverSearchSourceRelations() {
+        var d = open('sys_dictionary');
+        d.addQuery('name', 'STARTSWITH', 'ais_');
+        d.addQuery('reference', 'ais_search_source');
+        d.addNotNullQuery('element');
+        d.query();
+        while (d.next()) {
+            var table = String(d.getValue('name'));
+            if (tableAllowed(table)) discoverRelation(table, String(d.getValue('element')), 'ais_search_source');
+        }
+    }
+    function discoverAgentChildren() {
+        // Discover dictionary-confirmed agent/config/version foreign keys, never tool definitions.
+        var previousCount = -1;
+        for (var pass = 0; pass < 4 && records.length !== previousCount; pass++) {
+            previousCount = records.length;
+            var d = open('sys_dictionary');
+            d.addQuery('name', 'IN', AGENT_CHILD_TABLES.join(','));
+            d.addQuery('reference', 'IN', 'sn_aia_agent,sn_aia_agent_config,sn_aia_version');
+            d.addNotNullQuery('element');
+            d.query();
+            while (d.next()) discoverRelation(String(d.getValue('name')), String(d.getValue('element')), String(d.getValue('reference')));
+        }
+        if (records.length !== previousCount) fail('Agent relationship discovery did not converge.');
+    }
+    function discoverAgentGraph() {
+        var previousCount = -1;
+        for (var pass = 0; pass < 5 && records.length !== previousCount; pass++) {
+            previousCount = records.length;
+            discoverRelation('sn_aia_version', 'target_id', 'sn_aia_agent');
+            discoverAgentChildren();
+            discoverOwnedForwardReferences();
+        }
+        if (records.length !== previousCount) fail('Agent/version dependency discovery did not converge.');
+    }
+    function discoverCatalogChildren() {
+        for (var i = 0; i < CATALOG_EDGES.length; i++)
+            discoverRelation(CATALOG_EDGES[i][0], CATALOG_EDGES[i][1], CATALOG_EDGES[i][2]);
+    }
+    function discoverAgentSkillMetadata() {
+        // Polymorphic ownership is not a sys_dictionary reference: require both fields.
+        var table = 'sn_aia_skill_metadata', ids = idsFor('sn_aia_agent'), included = [];
+        if (!ids.length) return;
+        var q = new GlideRecord(table);
+        if (!q.isValid() || !q.isValidField('document_table') || !q.isValidField('document_id')) {
+            discoveryEvidence.push({table: table, status: 'polymorphic_metadata_schema_not_present'});
+            return;
+        }
+        q.addQuery('document_table', 'sn_aia_agent');
+        q.addQuery('document_id', 'IN', ids.join(','));
+        q.setLimit(MAX_PER_RELATION + 1);
+        q.query();
+        while (q.next()) {
+            if (included.length >= MAX_PER_RELATION) fail('Relationship safety limit: ' + table);
+            var id = String(q.getUniqueValue()), agentId = String(q.getValue('document_id'));
+            add(table, id, 'Exact owned agent metadata: document_table=sn_aia_agent, document_id=' + agentId);
+            included.push({sys_id: id, agent: agentId});
+        }
+        discoveryEvidence.push({table: table, status: 'queried_exact_polymorphic_agent_ids', count: included.length, included: included});
+    }
+    function discoverOwnedForwardReferences() {
+        // Follow only exact version/ACL refs on owned agent configuration.
+        // User and role records remain prerequisites; this never captures person grants.
+        for (var index = 0; index < records.length; index++) {
+            var entry = records[index];
+            if (!/^sn_aia_(agent|agent_config|version)$/.test(entry.table) && entry.table !== 'sys_security_acl_role' && !/^sys_agent_access_role_(configuration|mapping)$/.test(entry.table)) continue;
+            var source = read(entry.table, entry.sys_id);
+            var names = [entry.table], cursor = entry.table, ancestry = {};
+            for (var depth = 0; depth < 8 && cursor; depth++) {
+                if (ancestry[cursor]) fail('Table inheritance cycle: ' + cursor);
+                ancestry[cursor] = true;
+                var dbo = open('sys_db_object');
+                dbo.addQuery('name', cursor);
+                dbo.setLimit(1);
+                dbo.query();
+                if (!dbo.next() || !dbo.getValue('super_class')) break;
+                var parent = read('sys_db_object', String(dbo.getValue('super_class')));
+                cursor = String(parent.getValue('name'));
+                names.push(cursor);
+            }
+            var d = open('sys_dictionary');
+            d.addQuery('name', 'IN', names.join(','));
+            d.addQuery('reference', 'IN', 'sn_aia_version,sys_security_acl,sys_user,sys_user_role');
+            d.addNotNullQuery('element');
+            d.query();
+            while (d.next()) {
+                var field = String(d.getValue('element')), target = String(d.getValue('reference'));
+                if (!source.isValidField(field)) continue;
+                var ids = String(source.getValue(field) || '').split(',');
+                for (var n = 0; n < ids.length; n++) {
+                    var id = ids[n].replace(/^\s+|\s+$/g, '');
+                    if (!id) continue;
+                    if (!/^[a-f0-9]{32}$/.test(id)) fail('Unexpected reference format: ' + entry.table + '.' + field);
+                    if (target === 'sn_aia_version' || target === 'sys_security_acl') {
+                        add(target, id, 'Exact owned reference from ' + entry.table + '/' + entry.sys_id + '.' + field);
+                    } else if (!prereqMap[target + ':' + id]) {
+                        prereqMap[target + ':' + id] = true;
+                        PREREQUISITES.push({kind: target === 'sys_user' ? 'run_as_or_access_user' : 'existing_role', table: target, sys_id: id,
+                            referenced_by: entry.table + '/' + entry.sys_id + '.' + field, action: 'Existing identity/role prerequisite; not captured and no roles granted'});
+                    }
+                }
+            }
+        }
+    }
+    function collectSharedToolPrerequisites() {
+        var ids = idsFor('sn_aia_agent_tool_m2m');
+        for (var i = 0; i < ids.length; i++) {
+            var gr = read('sn_aia_agent_tool_m2m', ids[i]);
+            if (!gr.isValidField('tool')) fail('Expected tool field missing on agent binding.');
+            var toolId = String(gr.getValue('tool') || '');
+            if (toolId && !recordMap['sn_aia_tool:' + toolId] && !prereqMap[toolId]) {
+                prereqMap[toolId] = true;
+                PREREQUISITES.push({kind: 'shared_tool', table: 'sn_aia_tool', sys_id: toolId, action: 'Must exist on destination; not captured unless explicitly owned in EXTRA_MANIFEST'});
+            }
+        }
+    }
+    function assertNoSecrets(gr) {
+        var elements = gr.getElements();
+        for (var i = 0; i < elements.size(); i++) {
+            var element = elements.get(i), field = String(element.getName());
+            var value = String(gr.getValue(field) || '');
+            if (!value) continue;
+            var type = String(element.getED().getInternalType());
+            var isReference = type === 'reference' || type === 'glide_list';
+            if (/(password|encrypted|secret)/i.test(type) || (!isReference && /(^|_)(password|client_secret|api_key|access_token|refresh_token|auth_token|bearer_token|private_key|shared_secret|shared_key|hmac_key|secret)($|_)/i.test(field)))
+                fail('Secret-bearing field blocks capture: ' + gr.getRecordClassName() + '/' + gr.getUniqueValue() + '.' + field);
+            if (/"(?:password|client_secret|api_key|access_token|refresh_token|auth_token|bearer_token|private_key|shared_secret|shared_key|hmac_key|secret)"\s*:\s*"[^"\s][^"]*"/i.test(value) || /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(value) || /^Bearer\s+\S{12,}/i.test(value))
+                fail('Potential embedded secret blocks capture: ' + gr.getRecordClassName() + '/' + gr.getUniqueValue() + '.' + field);
+        }
+    }
+    function ensureSet(name, scope, parent) {
+        var q = open('sys_update_set');
+        q.addQuery('name', name);
+        q.setLimit(2);
+        q.query();
+        if (q.next()) {
+            var id = String(q.getUniqueValue());
+            if (String(q.getValue('application')) !== scope || String(q.getValue('parent') || '') !== parent || String(q.getValue('description') || '').indexOf(MARKER) < 0)
+                fail('Existing update set does not match this capture manifest: ' + name);
+            if (String(q.getValue('state')) !== 'in progress') fail('Existing update set is not in progress: ' + name);
+            if (q.next()) fail('Duplicate update set name: ' + name);
+            return id;
+        }
+        var set = open('sys_update_set');
+        set.initialize();
+        set.setValue('name', name);
+        set.setValue('application', scope);
+        set.setValue('state', 'in progress');
+        if (parent) set.setValue('parent', parent);
+        set.setValue('description', MARKER + '\nSCC-owned local voice and ITSM laptop demo configuration. Exact manifest and prerequisites are in the capture log. Credential values and shared native tools are excluded.');
+        var inserted = String(set.insert() || '');
+        if (!inserted) fail('Could not create update set: ' + name);
+        return inserted;
+    }
+    function verifyOne(entry, setId) {
+        var q = open('sys_update_xml');
+        q.addQuery('update_set', setId);
+        q.addQuery('name', entry.update_name);
+        q.setLimit(2);
+        q.query();
+        if (!q.next()) fail('Expected captured customer update missing: ' + entry.table + '/' + entry.sys_id);
+        var row = {sys_id: String(q.getUniqueValue()), name: String(q.getValue('name')), update_set: setId, application: String(q.getValue('application') || 'global')};
+        if (row.application !== entry.scope) fail('Captured application does not match actual record scope: ' + entry.table + '/' + entry.sys_id);
+        if (String(q.getValue('action')) === 'DELETE') fail('Unexpected DELETE capture: ' + entry.update_name);
+        // An old row with the same name is insufficient: compare source identity/revision.
+        var document = new XMLDocument2();
+        document.parseXML(String(q.getValue('payload') || ''));
+        if (String(document.getNodeText('//' + entry.table + '/sys_id') || '') !== entry.sys_id)
+            fail('Captured XML source identity mismatch: ' + entry.update_name);
+        var revisionFields = ['sys_updated_on', 'sys_mod_count'], frozenValues = [entry.updated_on, entry.mod_count];
+        for (var r = 0; r < revisionFields.length; r++) {
+            if (String(document.getNodeText('//' + entry.table + '/' + revisionFields[r]) || '') !== frozenValues[r])
+                fail('Captured XML is not the current source revision: ' + entry.update_name + '.' + revisionFields[r]);
+        }
+        if (q.next()) fail('Duplicate captured customer update: ' + entry.update_name);
+        return row;
+    }
+    function auditBatch() {
+        var expected = {}, setIds = [batchId], scope;
+        for (var i = 0; i < captures.length; i++) expected[captures[i].sys_id] = true;
+        for (scope in childSets) if (own(childSets, scope)) {
+            setIds.push(childSets[scope]);
+            var child = read('sys_update_set', childSets[scope]);
+            if (String(child.getValue('parent')) !== batchId || String(child.getValue('application')) !== scope)
+                fail('Child set parent/application mismatch.');
+            if (child.isValidField('batch_base') && String(child.getValue('batch_base')) !== batchId)
+                fail('Platform-derived batch_base mismatch on child ' + childSets[scope]);
+        }
+        // Reject unplanned descendants, including children retained from an earlier run.
+        var hierarchy = open('sys_update_set');
+        hierarchy.addQuery('parent', 'IN', setIds.join(','));
+        hierarchy.query();
+        while (hierarchy.next()) {
+            var descendantId = String(hierarchy.getUniqueValue());
+            var known = false;
+            for (i = 1; i < setIds.length; i++) if (setIds[i] === descendantId) known = true;
+            if (!known || String(hierarchy.getValue('parent')) !== batchId)
+                fail('Unexpected descendant update set attached to batch: ' + descendantId);
+        }
+        var q = open('sys_update_xml');
+        q.addQuery('update_set', 'IN', setIds.join(','));
+        q.query();
+        while (q.next()) {
+            if (!expected[String(q.getUniqueValue())]) {
+                audit.push({kind: 'unexpected_customer_update', sys_id: String(q.getUniqueValue()), name: String(q.getValue('name')), update_set: String(q.getValue('update_set'))});
+            }
+            // Inspect payload only in memory; never log or change it.
+            var payload = String(q.getValue('payload') || '');
+            if (xmlHasSecretValue(payload))
+                fail('Potential secret-bearing XML payload: customer update ' + q.getUniqueValue());
+        }
+        if (audit.length) fail('Unexpected customer updates require review; see audit IDs.');
+    }
+    function xmlHasSecretValue(payload) {
+        var sensitive = /<(password|client_secret|api_key|access_token|refresh_token|auth_token|bearer_token|private_key|shared_secret|shared_key|hmac_key|secret)(?:\s[^>]*)?>([\s\S]*?)<\/\1\s*>/ig;
+        var match;
+        while ((match = sensitive.exec(payload))) {
+            var value = match[2].replace(/^\s*<!\[CDATA\[([\s\S]*)\]\]>\s*$/, '$1');
+            if (value.replace(/\s/g, '')) return true;
+        }
+        return false;
+    }
+    function setComplete(id) {
+        var gr = read('sys_update_set', id);
+        gr.setValue('state', 'complete');
+        if (!gr.update()) fail('Could not complete update set ' + id);
+    }
+})();
