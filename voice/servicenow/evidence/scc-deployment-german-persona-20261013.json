@@ -1,0 +1,153 @@
+{
+  "preflight": {
+    "readOnly": true,
+    "constant": "agent_persona",
+    "deployment": {
+      "id": "c623a20f93374354e7f2b9fa6aba10fd",
+      "canWrite": true,
+      "fields": {
+        "name": "SCC Local Voice",
+        "active": "1",
+        "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee"
+      },
+      "valueCanWrite": null
+    },
+    "config": {
+      "id": "9e23e20f93374354e7f2b9fa6aba1087",
+      "canWrite": true,
+      "fields": {
+        "now_assist_deployment": "c623a20f93374354e7f2b9fa6aba10fd",
+        "context_profile": "c623e20f93374354e7f2b9fa6aba1081",
+        "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee"
+      },
+      "valueCanWrite": null
+    },
+    "persona": {
+      "id": "a723e60f93374354e7f2b9fa6aba10a6",
+      "canWrite": true,
+      "fields": {
+        "name": "agent_persona",
+        "value": "",
+        "deployment_config": "9e23e20f93374354e7f2b9fa6aba1087",
+        "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee",
+        "sys_mod_count": "0",
+        "sys_updated_on": "2026-10-12 18:42:28"
+      },
+      "valueCanWrite": true
+    },
+    "personaIds": [
+      "a723e60f93374354e7f2b9fa6aba10a6"
+    ],
+    "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "correlation": {
+    "conversation": "d79c571b93bb0b105c8132d47aba10a4",
+    "alias": true,
+    "message": false,
+    "end": true,
+    "clientSession": true,
+    "allowlisted": [
+      {
+        "key": "global_requester_session_language",
+        "value": "de"
+      },
+      {
+        "key": "global_language_detection_occurred",
+        "value": "true"
+      },
+      {
+        "key": "global_deployment_id",
+        "value": "c623a20f93374354e7f2b9fa6aba10fd"
+      },
+      {
+        "key": "global_chat_requester_original_session_language",
+        "value": "en"
+      }
+    ]
+  },
+  "proposedValue": "Sie sind der deutschsprachige Sprachassistent für die SCC-Laptopdemo. Formulieren Sie alle an den Nutzer gerichteten Texte ausschließlich auf Deutsch, einschließlich Fortschrittsmeldungen, Übergängen, Rückfragen, Bestätigungen und Fehlern. Verwenden Sie pro Äußerung höchstens einen kurzen Satz mit maximal 40 Wörtern. Wiederholen Sie keine Fortschrittsankündigungen. Fragen Sie fehlende Angaben gezielt ab und beachten Sie die vorhandenen Bestätigungsregeln; behaupten Sie keine erfolgte Bestellung ohne bestätigtes Werkzeugergebnis. Halten Sie auch Begründungen in strukturierten Ausgaben kurz; verwenden Sie dafür höchstens einen Satz. Behalten Sie die vorgesehenen JSON-Feldnamen und Aktionsschemata unverändert bei.",
+  "proposedSha256": "fc2b1daf2c6fe4f8908332c21294b01f80b431ee85772096209c87a232f723a6",
+  "proposedSource": "(function(){var S='7cc4ec81533121106b38ddeeff7b12ee',D='c623a20f93374354e7f2b9fa6aba10fd',C='9e23e20f93374354e7f2b9fa6aba1087',P='c623e20f93374354e7f2b9fa6aba1081',I='a723e60f93374354e7f2b9fa6aba10a6',V=\"Sie sind der deutschsprachige Sprachassistent f\\u00fcr die SCC-Laptopdemo. Formulieren Sie alle an den Nutzer gerichteten Texte ausschlie\\u00dflich auf Deutsch, einschlie\\u00dflich Fortschrittsmeldungen, \\u00dcberg\\u00e4ngen, R\\u00fcckfragen, Best\\u00e4tigungen und Fehlern. Verwenden Sie pro \\u00c4u\\u00dferung h\\u00f6chstens einen kurzen Satz mit maximal 40 W\\u00f6rtern. Wiederholen Sie keine Fortschrittsank\\u00fcndigungen. Fragen Sie fehlende Angaben gezielt ab und beachten Sie die vorhandenen Best\\u00e4tigungsregeln; behaupten Sie keine erfolgte Bestellung ohne best\\u00e4tigtes Werkzeugergebnis. Halten Sie auch Begr\\u00fcndungen in strukturierten Ausgaben kurz; verwenden Sie daf\\u00fcr h\\u00f6chstens einen Satz. Behalten Sie die vorgesehenen JSON-Feldnamen und Aktionsschemata unver\\u00e4ndert bei.\";var r={writes:0,normalWorkflow:true,scope:String(gs.getCurrentScopeName()),before:null,after:null,captures:[]};function requireRecord(t,id){var g=new GlideRecordSecure(t);if(!g.get(id)||!g.canRead())throw new Error(t+' unreadable');return g;}function v(g,f){if(!g.isValidField(f))throw new Error('invalid '+f);var e=g.getElement(f);if(e===null||typeof e==='undefined'||!e.canRead())throw new Error('unreadable '+f);return String(g.getValue(f)||'');}function guard(){var d=requireRecord('sys_now_assist_deployment',D);if(v(d,'name')!=='SCC Local Voice'||v(d,'active')!=='1'||v(d,'sys_scope')!==S)throw new Error('deployment drift');var c=requireRecord('sys_now_assist_deployment_config',C);if(v(c,'now_assist_deployment')!==D||v(c,'context_profile')!==P||v(c,'sys_scope')!==S)throw new Error('config drift');var g=requireRecord('sys_now_assist_deployment_config_attributes',I);if(v(g,'name')!=='agent_persona'||v(g,'deployment_config')!==C||v(g,'sys_scope')!==S||v(g,'value')!==''||v(g,'sys_mod_count')!=='0'||v(g,'sys_updated_on')!=='2026-10-12 18:42:28')throw new Error('persona before drift');if(!g.canWrite()||!g.getElement('value').canWrite())throw new Error('write denied');var q=new GlideRecordSecure('sys_now_assist_deployment_config_attributes');q.addQuery('deployment_config',C);q.addQuery('name','agent_persona');q.setLimit(2);q.query();var ids=[];while(q.next())ids.push(String(q.getUniqueValue()));if(ids.length!==1||ids[0]!==I)throw new Error('persona uniqueness drift');return g;}try{if(r.scope!=='global'&&r.scope!=='rhino.global')throw new Error('unexpected execution scope');if(String(sn_aia.AIAgentConstants.AGENT_PERSONA_KEY)!=='agent_persona')throw new Error('constant drift');guard();var g=guard();r.before={id:I,value:v(g,'value'),mod:v(g,'sys_mod_count'),updated:v(g,'sys_updated_on'),deployment_config:v(g,'deployment_config'),scope:v(g,'sys_scope')};g.setValue('value',V);var saved=g.update();if(String(saved||'')!==I)throw new Error('update did not return own id');r.writes=1;var a=requireRecord('sys_now_assist_deployment_config_attributes',I);r.after={id:I,value:v(a,'value'),mod:v(a,'sys_mod_count'),updated:v(a,'sys_updated_on'),deployment_config:v(a,'deployment_config'),scope:v(a,'sys_scope')};if(r.after.value!==V||r.after.deployment_config!==C||r.after.scope!==S)throw new Error('readback mismatch');var u=new GlideRecordSecure('sys_update_xml');u.addQuery('name','sys_now_assist_deployment_config_attributes_'+I);u.orderByDesc('sys_updated_on');u.setLimit(3);u.query();while(u.next()){if(!u.canRead())continue;r.captures.push({id:String(u.getUniqueValue()),update_set:v(u,'update_set'),updated:v(u,'sys_updated_on'),payloadContainsOwnId:v(u,'payload').indexOf(I)>-1,payloadContainsGerman:v(u,'payload').indexOf(V)>-1});}}catch(e){r.error=String(e.message||e);}gs.print('[SCC_PERSONA_PATCH] '+JSON.stringify(r));})();",
+  "receipt": {
+    "writes": 1,
+    "normalWorkflow": true,
+    "scope": "rhino.global",
+    "before": {
+      "id": "a723e60f93374354e7f2b9fa6aba10a6",
+      "value": "",
+      "mod": "0",
+      "updated": "2026-10-12 18:42:28",
+      "deployment_config": "9e23e20f93374354e7f2b9fa6aba1087",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee"
+    },
+    "after": {
+      "id": "a723e60f93374354e7f2b9fa6aba10a6",
+      "value": "Sie sind der deutschsprachige Sprachassistent für die SCC-Laptopdemo. Formulieren Sie alle an den Nutzer gerichteten Texte ausschließlich auf Deutsch, einschließlich Fortschrittsmeldungen, Übergängen, Rückfragen, Bestätigungen und Fehlern. Verwenden Sie pro Äußerung höchstens einen kurzen Satz mit maximal 40 Wörtern. Wiederholen Sie keine Fortschrittsankündigungen. Fragen Sie fehlende Angaben gezielt ab und beachten Sie die vorhandenen Bestätigungsregeln; behaupten Sie keine erfolgte Bestellung ohne bestätigtes Werkzeugergebnis. Halten Sie auch Begründungen in strukturierten Ausgaben kurz; verwenden Sie dafür höchstens einen Satz. Behalten Sie die vorgesehenen JSON-Feldnamen und Aktionsschemata unverändert bei.",
+      "mod": "1",
+      "updated": "2026-10-13 17:45:42",
+      "deployment_config": "9e23e20f93374354e7f2b9fa6aba1087",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee"
+    },
+    "captures": [
+      {
+        "id": "31cf971393b70b54e7f2b9fa6aba10ad",
+        "update_set": "d83fc97493068b505c8132d47aba104d",
+        "updated": "2026-10-13 17:45:42",
+        "payloadContainsOwnId": true,
+        "payloadContainsGerman": true
+      },
+      {
+        "id": "ab23e60f93374354e7f2b9fa6aba10a9",
+        "update_set": "0fc415cb933fcf14e7f2b9fa6aba10fa",
+        "updated": "2026-10-12 18:42:28",
+        "payloadContainsOwnId": true,
+        "payloadContainsGerman": false
+      }
+    ],
+    "afterSha256": "fc2b1daf2c6fe4f8908332c21294b01f80b431ee85772096209c87a232f723a6"
+  },
+  "nativeFormAfter": [
+    {
+      "id": "sys_readonly.sys_now_assist_deployment_config_attributes.name",
+      "value": "agent_persona"
+    },
+    {
+      "id": "sys_readonly.sys_now_assist_deployment_config_attributes.value",
+      "value": "Sie sind der deutschsprachige Sprachassistent für die SCC-Laptopdemo. Formulieren Sie alle an den Nutzer gerichteten Texte ausschließlich auf Deutsch, einschließlich Fortschrittsmeldungen, Übergängen, Rückfragen, Bestätigungen und Fehlern. Verwenden Sie pro Äußerung höchstens einen kurzen Satz mit maximal 40 Wörtern. Wiederholen Sie keine Fortschrittsankündigungen. Fragen Sie fehlende Angaben gezielt ab und beachten Sie die vorhandenen Bestätigungsregeln; behaupten Sie keine erfolgte Bestellung ohne bestätigtes Werkzeugergebnis. Halten Sie auch Begründungen in strukturierten Ausgaben kurz; verwenden Sie dafür höchstens einen Satz. Behalten Sie die vorgesehenen JSON-Feldnamen und Aktionsschemata unverändert bei."
+    },
+    {
+      "id": "sys_now_assist_deployment_config_attributes.deployment_config_label",
+      "value": "SCC Local Voice"
+    },
+    {
+      "id": "sys_now_assist_deployment_config_attributes.sys_scope_label",
+      "value": "Generative AI Controller"
+    }
+  ],
+  "scriptHistory": "29cf171393b70b54e7f2b9fa6aba1029",
+  "status": "configured; follow-up speech validation pending",
+  "guardedScript": "voice/servicenow/scc-german-deployment-persona.js",
+  "sourceBasis": {
+    "constant": "String(sn_aia.AIAgentConstants.AGENT_PERSONA_KEY) = agent_persona through public runtime API",
+    "planner": "AgentUnifiedPlannerUtil.preparePlannerRequest obtains persona from vaSystem.getNowAssistDeploymentConfigAttribute(AIAgentConstants.AGENT_PERSONA_KEY, vaContext.global_deployment_id)",
+    "scopeContract": "GlideRecordSecure normal ACLs/workflow, Global rhino.global execution, exact target scope GenAI 7cc4ec81533121106b38ddeeff7b12ee"
+  },
+  "governance": {
+    "currentCapture": "31cf971393b70b54e7f2b9fa6aba10ad",
+    "updateSet": "d83fc97493068b505c8132d47aba104d",
+    "targetSetMigration": "pending; no current application/update set setter or prior capture relocation",
+    "prior25StaticMessageCaptures": "unchanged and separately audited in existing evidence"
+  },
+  "screenshot": "scc-persona-german-20261013-174542.jpg",
+  "runtimeServedVerification": {
+    "readOnly": true,
+    "publicApi": "global.NowAssistDeploymentConfig.getByDeploymentSysId(ownDeployment)[0].getAttributeValue(agent_persona)",
+    "source": "voice/native-transport-evidence/VoiceRestUtilsSNC.js getVoiceServiceLanguage",
+    "count": 1,
+    "personaExactMatch": true,
+    "personaLength": 720,
+    "expectedSha256": "fc2b1daf2c6fe4f8908332c21294b01f80b431ee85772096209c87a232f723a6",
+    "scriptHistory": "1370a7d393b70b54e7f2b9fa6aba103b",
+    "cacheAction": "none"
+  }
+}
