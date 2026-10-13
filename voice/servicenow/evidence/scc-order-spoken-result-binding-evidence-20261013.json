@@ -1,0 +1,451 @@
+{
+  "readOnlyDiagnosis": true,
+  "finalAnswerMessage": {
+    "id": "f333239b933f0b105c8132d47aba101b",
+    "name": "SCC Laptop Onboarding",
+    "role": "agent",
+    "type": "",
+    "persona": "",
+    "document_table": "",
+    "document_name": "",
+    "error_type": "",
+    "message_sequence": "1a1366ca5190000001",
+    "sys_created_on": "2026-10-13 18:00:52",
+    "message": "Die Anforderung für den Laptop wurde erfolgreich angelegt. Artikel: SCC Laptop zum Onboarding (Demo). Bestellnummer: REQ0010014, Position: RITM0010013.",
+    "user_message": ""
+  },
+  "deliveredConfirmation": {
+    "id": "38b2e3d7933f0b105c8132d47aba10bd",
+    "name": "SCC Laptop Onboarding",
+    "role": "agent",
+    "type": "",
+    "persona": "",
+    "document_table": "",
+    "document_name": "",
+    "error_type": "",
+    "message_sequence": "1a1366a745e0000001",
+    "sys_created_on": "2026-10-13 17:58:28",
+    "message": "[{\"name\":\"confirmation\",\"prompt\":\"Laptop für Philipp Borchert zum 1. November 2026 nach Hamburg, Vorgesetzter Marcel KAEFKE. Soll ich das bestellen?\",\"dataType\":\"boolean\"}]",
+    "user_message": "[{\"name\":\"confirmation\",\"prompt\":\"Laptop für Philipp Borchert zum 1. November 2026 nach Hamburg, Vorgesetzter Marcel KAEFKE. Soll ich das bestellen?\",\"dataType\":\"boolean\"}]"
+  },
+  "activeAgent": "a4a9438393738354e7f2b9fa6aba101d",
+  "activeConfigs": [
+    {
+      "id": "f21ac78793738354e7f2b9fa6aba106e",
+      "agent": "a4a9438393738354e7f2b9fa6aba101d",
+      "active": "1",
+      "current_version": "f61ac78793738354e7f2b9fa6aba104b",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee"
+    }
+  ],
+  "beforeBindings": [
+    {
+      "id": "835c4f0393b38354e7f2b9fa6aba10f9",
+      "canWrite": true,
+      "agent": "a4a9438393738354e7f2b9fa6aba101d",
+      "tool": "8b5c4f0393b38354e7f2b9fa6aba10f7",
+      "active": "1",
+      "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "sys_mod_count": "1",
+      "sys_updated_on": "2026-10-13 05:24:31",
+      "display_output": "0",
+      "requires_widget_transformation": "1",
+      "requires_text_refined_message": "0",
+      "should_display_refined_message": "0",
+      "output_transformation_strategy": "none",
+      "post_processing_script": ""
+    },
+    {
+      "id": "0ed4b19b933b87105c8132d47aba1030",
+      "canWrite": true,
+      "agent": "a6337ddf93f787105c8132d47aba1058",
+      "tool": "8b5c4f0393b38354e7f2b9fa6aba10f7",
+      "active": "1",
+      "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "sys_mod_count": "1",
+      "sys_updated_on": "2026-10-13 10:05:57",
+      "display_output": "0",
+      "requires_widget_transformation": "1",
+      "requires_text_refined_message": "0",
+      "should_display_refined_message": "0",
+      "output_transformation_strategy": "none",
+      "post_processing_script": ""
+    }
+  ],
+  "publicPostScriptTemplate": "/*\n * Available Variables:\n * - output: The raw output from the tool.\n * - context: Additional context variables (e.g., { portal: 'sp' }).\n *\n * Return an object like: { processed_output: \"Your final result here\" }\n * processed_output may be a primitive data type or JSON\n */\n(function(output, context) {\n    return {\n        processed_output: \"Default processed output.\" // Replace with your actual processed data here\n    };\n})(output, context);",
+  "preflight": {
+    "apply": false,
+    "normalWorkflow": true,
+    "scope": "rhino.global",
+    "planned": [
+      {
+        "id": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "agent": "a4a9438393738354e7f2b9fa6aba101d",
+        "beforeMod": "1",
+        "beforeUpdated": "2026-10-13 05:24:31",
+        "beforePostScriptHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterPostScriptHash": "3fd0f87f40274a70a34a3ad894fadcb21a590518b7a616ddae07d612952048d6",
+        "display_output": "0->1",
+        "requires_widget_transformation": "1->0"
+      },
+      {
+        "id": "0ed4b19b933b87105c8132d47aba1030",
+        "agent": "a6337ddf93f787105c8132d47aba1058",
+        "beforeMod": "1",
+        "beforeUpdated": "2026-10-13 10:05:57",
+        "beforePostScriptHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterPostScriptHash": "3fd0f87f40274a70a34a3ad894fadcb21a590518b7a616ddae07d612952048d6",
+        "display_output": "0->1",
+        "requires_widget_transformation": "1->0"
+      }
+    ],
+    "attempted": [],
+    "verified": [],
+    "captures": [],
+    "status": "preflight_passed_no_writes"
+  },
+  "applied": {
+    "apply": true,
+    "normalWorkflow": true,
+    "scope": "rhino.global",
+    "planned": [
+      {
+        "id": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "agent": "a4a9438393738354e7f2b9fa6aba101d",
+        "beforeMod": "1",
+        "beforeUpdated": "2026-10-13 05:24:31",
+        "beforePostScriptHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterPostScriptHash": "3fd0f87f40274a70a34a3ad894fadcb21a590518b7a616ddae07d612952048d6",
+        "display_output": "0->1",
+        "requires_widget_transformation": "1->0"
+      },
+      {
+        "id": "0ed4b19b933b87105c8132d47aba1030",
+        "agent": "a6337ddf93f787105c8132d47aba1058",
+        "beforeMod": "1",
+        "beforeUpdated": "2026-10-13 10:05:57",
+        "beforePostScriptHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterPostScriptHash": "3fd0f87f40274a70a34a3ad894fadcb21a590518b7a616ddae07d612952048d6",
+        "display_output": "0->1",
+        "requires_widget_transformation": "1->0"
+      }
+    ],
+    "attempted": [
+      "835c4f0393b38354e7f2b9fa6aba10f9",
+      "0ed4b19b933b87105c8132d47aba1030"
+    ],
+    "verified": [
+      {
+        "id": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "postScriptHash": "3fd0f87f40274a70a34a3ad894fadcb21a590518b7a616ddae07d612952048d6",
+        "agent": "a4a9438393738354e7f2b9fa6aba101d",
+        "tool": "8b5c4f0393b38354e7f2b9fa6aba10f7",
+        "active": "1",
+        "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee",
+        "sys_mod_count": "2",
+        "sys_updated_on": "2026-10-13 18:20:16",
+        "display_output": "1",
+        "requires_widget_transformation": "0",
+        "requires_text_refined_message": "0",
+        "should_display_refined_message": "0",
+        "output_transformation_strategy": "none"
+      },
+      {
+        "id": "0ed4b19b933b87105c8132d47aba1030",
+        "postScriptHash": "3fd0f87f40274a70a34a3ad894fadcb21a590518b7a616ddae07d612952048d6",
+        "agent": "a6337ddf93f787105c8132d47aba1058",
+        "tool": "8b5c4f0393b38354e7f2b9fa6aba10f7",
+        "active": "1",
+        "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee",
+        "sys_mod_count": "2",
+        "sys_updated_on": "2026-10-13 18:20:16",
+        "display_output": "1",
+        "requires_widget_transformation": "0",
+        "requires_text_refined_message": "0",
+        "should_display_refined_message": "0",
+        "output_transformation_strategy": "none"
+      }
+    ],
+    "captures": [
+      {
+        "id": "04b72b1f933b0b54e7f2b9fa6aba1008",
+        "target": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "updateSet": "d83fc97493068b505c8132d47aba104d",
+        "containsOwnId": true,
+        "containsFormatter": true
+      },
+      {
+        "id": "ccb72b1f933b0b54e7f2b9fa6aba1024",
+        "target": "0ed4b19b933b87105c8132d47aba1030",
+        "updateSet": "d83fc97493068b505c8132d47aba104d",
+        "containsOwnId": true,
+        "containsFormatter": true
+      }
+    ],
+    "status": "applied_verified"
+  },
+  "appliedHistory": [
+    "sys_script_execution_history.do?sys_id=80b7e31f933b0b54e7f2b9fa6aba10ce"
+  ],
+  "initialPlatformCheck": {
+    "readOnly": true,
+    "writes": 0,
+    "noOrderExecution": true,
+    "noModelCall": true,
+    "results": [
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 0,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": false
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 1,
+        "processed_output": "Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 2,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 3,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 0,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": false
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 1,
+        "processed_output": "Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 2,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 3,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      }
+    ],
+    "status": "platform_pure_results_observed"
+  },
+  "normalizationDryRun": {
+    "readOnly": true,
+    "writes": 0,
+    "noOrderExecution": true,
+    "noModelCall": true,
+    "results": [
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 0,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": false
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 1,
+        "processed_output": "Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 2,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 3,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 0,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": false
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 1,
+        "processed_output": "Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 2,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 3,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      }
+    ],
+    "inMemoryOnly": true,
+    "status": "platform_pure_results_observed"
+  },
+  "inputTransportObservation": {
+    "error": "Global JS object input through GlideScopedEvaluator variable map became null; JSONstring worked; no persistence during diagnosis."
+  },
+  "platformTargetScopeProof": {
+    "readOnly": true,
+    "writes": 0,
+    "noOrderExecution": true,
+    "noModelCall": true,
+    "results": [
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 0,
+        "processed_output": "Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 1,
+        "processed_output": "Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 2,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 3,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 4,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "835c4f0393b38354e7f2b9fa6aba10f9",
+        "variant": 5,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 0,
+        "processed_output": "Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 1,
+        "processed_output": "Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Die Demo-Anforderung für Philipp Borchert mit Artikel SCC Laptop zum Onboarding (Demo) wurde angelegt: REQ0010014, Position RITM0010013.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 2,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 3,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 4,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      },
+      {
+        "binding": "0ed4b19b933b87105c8132d47aba1030",
+        "variant": 5,
+        "processed_output": "Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.",
+        "resultType": "object",
+        "resultJson": "{\"processed_output\":\"Das Bestellergebnis ist unklar; bitte prüfen Sie die Anforderungen und bestellen Sie nicht erneut.\"}",
+        "matched": true
+      }
+    ],
+    "inMemoryOnly": true,
+    "objectTransportNote": "Raw object is materialized in record scope from verified JSON because Global object-map transport yielded null",
+    "status": "target_scope_pure_checks_observed"
+  },
+  "formatterSourceSha256": "3fd0f87f40274a70a34a3ad894fadcb21a590518b7a616ddae07d612952048d6",
+  "orderRetry": "none",
+  "postFixCheckoutReplay": "not performed; same verified existing output only",
+  "governance": "Own captures remain update set d83fc97493068b505c8132d47aba104d; no app/current-set changes."
+}
