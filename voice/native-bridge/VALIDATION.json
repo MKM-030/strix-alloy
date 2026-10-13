@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-13",
+  "environment": "Windows DESKTOP-8M583SI isolated native-bridge .venv",
+  "unit_and_transport": {
+    "passed": 10,
+    "seconds": 2.943,
+    "existing_bridge_regression_tests_passed": 29,
+    "coverage": ["wrong credential denial", "strict native agent authorization envelope", "PCM odd-fragment alignment", "barge-in stale audio fence", "automatic silence endpoint", "short confirmation utterances", "failed conversation reset isolation", "deferred native offer and trickle ICE", "real SRTP audio and native datachannel transcripts"]
+  },
+  "live_speech_transport": {
+    "passed": true,
+    "native_ui": false,
+    "servicenow_dialog": false,
+    "fixture_audio_seconds": 2.64,
+    "first_received_audio_seconds_including_input": 5.703,
+    "recognized_turns": ["Guten Tag.", "Wie kann ich helfen?"],
+    "speech_engines": ["Whisper localhost8861", "Qwen3 TTS localhost8862"],
+    "notes": "The fixture pause produces two valid VAD turns. Initial live test incorrectly expected one pair and failed; expectation corrected to allow genuine multiple turns, then passed. No ServiceNow order was created by this probe."
+  },
+  "ice_host_candidates": ["100.103.94.78", "192.168.50.19", "169.254.82.74", "172.24.160.1"],
+  "backend_greeting_probe": {"ready_seconds":1.015,"complete_reply":false,"timeout_seconds":186.656,"owned_session_reset":true,"diagnosis":"HaloGen WSL backend stopped; gateway ClientConnectorError; no retry"},
+  "native_oauth_call": "pending real native UI",
+  "native_microphone_demo": "pending",
+  "real_service_request_creation": "not tested by these probes"
+}

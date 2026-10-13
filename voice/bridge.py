@@ -189,6 +189,7 @@ class Bridge:
         app.router.add_get('/api/events', self.events)
         app.router.add_post('/api/start', self.start)
         app.router.add_post('/api/reset', self.reset)
+        app.router.add_post('/api/end', self.end)
         app.router.add_post('/api/message', self.message)
         app.router.add_post('/api/transcribe', self.transcribe)
         app.router.add_post('/api/speak', self.speak)
@@ -262,6 +263,20 @@ class Bridge:
             self.sessions.pop(old.sid, None)
         request._voice_session = None
         return await self.session(request)
+
+    async def end(self, request):
+        await self.json(request)
+        session = request._voice_session
+        async with session.lock:
+            if session.started and session.requests and not session.ended:
+                # End only the authenticated cookie's conversation. Keep it if
+                # the backend does not acknowledge ending, so retry is explicit.
+                await self.send(session, '', True, 'END_CONVERSATION')
+            self.sessions.pop(session.sid, None)
+            session.ended = True
+        response = web.json_response({'ended': True})
+        response.del_cookie('scc_voice', path='/')
+        return response
 
     async def message(self, request):
         data = await self.json(request)
