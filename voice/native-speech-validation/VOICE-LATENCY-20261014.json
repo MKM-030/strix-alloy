@@ -1,0 +1,282 @@
+{
+  "date": "2026-10-14",
+  "timezone": "Europe/Berlin",
+  "purpose": "Measured SCC laptop voice demo latency, network and model contribution",
+  "methods": {
+    "voice": "Two first-intent-only tests through unchanged adapter with real ASR, ServiceNow Bot API and TTS via private RTP; no employee name, confirmation or order",
+    "network": "Windows-origin curl HTTP samples and signed-in ServiceNow server RESTMessageV2 GET public Funnel Native health",
+    "changes_to_model_providers_services": false
+  },
+  "trials": [
+    {
+      "utc": "2026-10-14T04:48:55.305147+00:00",
+      "passed": true,
+      "speech_end_to_asr_begin_approx_seconds": 1.268,
+      "speech_end_error_bound_ms": 120,
+      "asr_seconds": 0.453,
+      "first_audio_after_asr_seconds": 13.203,
+      "question_text_after_asr_seconds": 39.859,
+      "question_audio_after_asr_seconds": 40.578,
+      "question_audio_after_speech_end_approx_seconds": 42.299,
+      "tts_time_to_first_pcm_seconds": [
+        0.094,
+        0.125
+      ],
+      "gateway_request_wall_seconds": [
+        2.3156,
+        8.9188,
+        16.4859
+      ],
+      "gateway_wall_union_seconds": 25.54449963569641,
+      "mixed_outside_gateway_to_question_seconds": 14.31450036430359,
+      "input_prompt_tokens": [
+        1864,
+        7871,
+        13523
+      ],
+      "output_tokens": [
+        22,
+        172,
+        167
+      ],
+      "thinking": [
+        "off",
+        "off",
+        "off"
+      ],
+      "cached_tokens": 4096,
+      "processed_prompt_tokens": 19162,
+      "cache_hits": 1,
+      "cache_misses": 2,
+      "minimum_available_ram_gib": 20.338,
+      "healthy_idle_after": true,
+      "config_and_voice_unchanged": true
+    },
+    {
+      "utc": "2026-10-14T04:52:53.854415+00:00",
+      "passed": true,
+      "speech_end_to_asr_begin_approx_seconds": 1.268,
+      "speech_end_error_bound_ms": 120,
+      "asr_seconds": 0.484,
+      "first_audio_after_asr_seconds": 11.688,
+      "question_text_after_asr_seconds": 19.594,
+      "question_audio_after_asr_seconds": 19.859,
+      "question_audio_after_speech_end_approx_seconds": 21.611,
+      "tts_time_to_first_pcm_seconds": [
+        0.078,
+        0.125
+      ],
+      "gateway_request_wall_seconds": [
+        2.3044,
+        9.0751,
+        5.3166
+      ],
+      "gateway_wall_union_seconds": 14.483000040054321,
+      "mixed_outside_gateway_to_question_seconds": 5.11099995994568,
+      "input_prompt_tokens": [
+        1864,
+        7871,
+        13523
+      ],
+      "output_tokens": [
+        22,
+        172,
+        167
+      ],
+      "thinking": [
+        "off",
+        "off",
+        "off"
+      ],
+      "cached_tokens": 16384,
+      "processed_prompt_tokens": 6874,
+      "cache_hits": 2,
+      "cache_misses": 1,
+      "minimum_available_ram_gib": 20.197,
+      "healthy_idle_after": true,
+      "config_and_voice_unchanged": true
+    }
+  ],
+  "servicenow_to_funnel": {
+    "utc": "2026-10-14T04:46:29Z",
+    "method": "ServiceNow Global Background Script RESTMessageV2 GET public /scc-native/health",
+    "timeout_ms": 5000,
+    "n": 5,
+    "samples_ms": [
+      666,
+      142,
+      141,
+      150,
+      141
+    ],
+    "http_status": [
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "median_ms": 142,
+    "mean_ms": 248,
+    "min_ms": 141,
+    "max_ms": 666,
+    "subsequent_calls_range_ms": [
+      141,
+      150
+    ],
+    "native_sessions_each": 0,
+    "auth_mode_each": "servicenow",
+    "execution_history": "e80771ab93f7cb105c8132d47aba1008",
+    "pure_network_rtt": false,
+    "includes": [
+      "network",
+      "possible DNS/TLS/connection setup",
+      "Funnel proxy",
+      "HTTP response service overhead"
+    ],
+    "tls_pool_reuse_observed": false,
+    "tls_reuse_inferred_from_faster_subsequent_calls": true,
+    "hosting_country_independently_verified": false,
+    "discarded_initial_attempt_reason": "Timeout accidentally set to 5 ms instead of 5000; invalid samples excluded and repeated correctly."
+  },
+  "windows_network": {
+    "started_utc": "2026-10-14T04:46:07.6282232Z",
+    "finished_utc": "2026-10-14T04:46:08.9250379Z",
+    "method": "curl.exe TLS verification default; ServiceNow HEAD login.do without credentials/cookies/redirect follow; Native GET health; 6 retained requests; prior20 HTTP requests discarded after parser/final aggregation failure; total26 requests max; no voice allocation; HTTP wall times include server; repeated TLS group first sample establishes connection",
+    "caveats": [
+      "These are Windows-origin HTTP timings, not pure ICMP RTT.",
+      "Own Funnel versus loopback is not ServiceNow-to-Funnel transatlantic route.",
+      "DNS/IP do not establish ServiceNow hosting country.",
+      "HTTP 200-399 only counted successful; no redirects followed.",
+      "HTTPS time_appconnect was reported as zero by this curl/Schannel build, so isolated TLS handshake timing is unavailable, not zero-cost.",
+      "The sample counts are one or two per group; no population p95 is claimed."
+    ],
+    "samples": [
+      {
+        "group": "windows_to_servicenow_fresh_tls",
+        "index": 1,
+        "status": 200,
+        "dns_ms": 7.072,
+        "tcp_after_dns_ms": 118.59,
+        "tls_after_connect_ms": null,
+        "ttfb_ms": 392.95,
+        "total_ms": 393.028,
+        "new_connections": 1,
+        "curl_batch_exit": 0
+      },
+      {
+        "group": "windows_to_servicenow_reused_tls",
+        "index": 2,
+        "status": 200,
+        "dns_ms": 0,
+        "tcp_after_dns_ms": 0,
+        "tls_after_connect_ms": null,
+        "ttfb_ms": 134.994,
+        "total_ms": 135.042,
+        "new_connections": 0,
+        "curl_batch_exit": 0
+      },
+      {
+        "group": "windows_to_servicenow_reused_tls",
+        "index": 3,
+        "status": 200,
+        "dns_ms": 0,
+        "tcp_after_dns_ms": 0,
+        "tls_after_connect_ms": null,
+        "ttfb_ms": 134.863,
+        "total_ms": 134.938,
+        "new_connections": 0,
+        "curl_batch_exit": 0
+      },
+      {
+        "group": "windows_to_native_loopback_fresh_tcp",
+        "index": 1,
+        "status": 200,
+        "dns_ms": 0.029,
+        "tcp_after_dns_ms": 1.173,
+        "tls_after_connect_ms": null,
+        "ttfb_ms": 2.201,
+        "total_ms": 2.245,
+        "new_connections": 1,
+        "curl_exit": 0
+      },
+      {
+        "group": "windows_to_own_public_funnel_fresh_tls",
+        "index": 1,
+        "status": 200,
+        "dns_ms": 10.294,
+        "tcp_after_dns_ms": 47.629,
+        "tls_after_connect_ms": null,
+        "ttfb_ms": 235.44,
+        "total_ms": 235.516,
+        "new_connections": 1,
+        "curl_exit": 0
+      },
+      {
+        "group": "windows_to_own_public_funnel_fresh_tls",
+        "index": 2,
+        "status": 200,
+        "dns_ms": 5.625,
+        "tcp_after_dns_ms": 23.029,
+        "tls_after_connect_ms": null,
+        "ttfb_ms": 204.202,
+        "total_ms": 204.28,
+        "new_connections": 1,
+        "curl_exit": 0
+      }
+    ],
+    "summaries": [
+      {
+        "group": "windows_to_servicenow_fresh_tls",
+        "n": 1,
+        "n_success": 1,
+        "median_ms": 393.028,
+        "min_ms": 393.028,
+        "max_ms": 393.028
+      },
+      {
+        "group": "windows_to_servicenow_reused_tls",
+        "n": 2,
+        "n_success": 2,
+        "median_ms": 134.99,
+        "min_ms": 134.938,
+        "max_ms": 135.042
+      },
+      {
+        "group": "windows_to_native_loopback_fresh_tcp",
+        "n": 1,
+        "n_success": 1,
+        "median_ms": 2.245,
+        "min_ms": 2.245,
+        "max_ms": 2.245
+      },
+      {
+        "group": "windows_to_own_public_funnel_fresh_tls",
+        "n": 2,
+        "n_success": 2,
+        "median_ms": 219.898,
+        "min_ms": 204.28,
+        "max_ms": 235.516
+      }
+    ]
+  },
+  "conclusions": {
+    "dominant_measured_component": "Local model/gateway request intervals plus mixed ServiceNow orchestration/network/callback time",
+    "thinking_off_all_six_requests": true,
+    "model_already_loaded_no_cold_start": true,
+    "cache_use_increased_on_repeat": true,
+    "entire_improvement_not_causally_attributed_to_cache": true,
+    "intercontinental_small_request_latency_ms_approx": 140
+  },
+  "limitations": [
+    "Two voice trials, not population percentiles or a controlled cache A/B.",
+    "Input fixture identical; prompt/output counts equal, but full prompt/response hashes not compared.",
+    "Model-to-Bot attribution by time window, not propagated request ID.",
+    "Native WSL timers not independently calibrated against Windows; wall analysis uses host clocks.",
+    "Gateway interval union includes parsing/queueing/readiness/local model/response write, not pure GPU time.",
+    "Outside-gateway remainder mixes ServiceNow work, network, callback and audio delivery; cannot separately label pure ServiceNow time.",
+    "No physical browser/mobile microphone WAN latency or later employee-answer steps measured.",
+    "Kanada/Canada hosting location not independently verified; actual configured instance network path measured."
+  ],
+  "privacy": "No raw speech, cloned audio, prompts, identities, secrets or credentials included."
+}
