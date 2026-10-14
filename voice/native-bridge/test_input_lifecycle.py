@@ -130,6 +130,7 @@ class Dialog:
 namespace = dict(asyncio=asyncio, time=time, uuid=uuid, json=json,
     LOG=logging.getLogger('native-voice'), AudioResampler=Resampler,
     RTCPeerConnection=Peer, RTCConfiguration=lambda **kwargs:kwargs,
+    RTCIceServer=lambda **kwargs:kwargs, STUN_URL='stun:stun.l.google.com:19302',
     SpeakerTrack=lambda playback:object(), EndpointGate=core.EndpointGate,
     PlaybackBuffer=core.PlaybackBuffer, local_auth=core.local_auth,
     authorized_agents=core.authorized_agents, ClientSession=ClientSession,

@@ -1,0 +1,86 @@
+{
+  "audit": "browser-mobile-source-regression-check",
+  "observed_utc": "2026-10-14T09:53:57Z",
+  "read_only": true,
+  "live_history_ids": [
+    "63ab7aeb93ff0f105c8132d47aba10f4",
+    "e2fc322f93ff0f105c8132d47aba1094",
+    "b94d36a393334f105c8132d47aba1032",
+    "3c6dfaa393334f105c8132d47aba10d3"
+  ],
+  "browser_start_voice": {
+    "table": "sys_ux_client_script",
+    "id": "b75ca5a73b71fe105237c1c643e45a24",
+    "length": 20442,
+    "sha256": "3a2d26bda389b2dc40311f8feff9e81a1ebeacae8c37200adf506146d3336183",
+    "exact_saved_baseline_match": true,
+    "baseline": "voice/native-transport-evidence/Start-voice-session.js"
+  },
+  "browser_native_transform": {
+    "table": "sys_ux_data_broker_transform",
+    "id": "dfb09052b79df21081fee3fdde11a9af",
+    "length": 3889,
+    "sha256": "7b01ae62ad29abe01f02dc7efc6c9c9a81978bd29f1f3400e1f5b85d4156f2cd",
+    "exact_saved_baseline_match_after_lf_to_crlf": true,
+    "baseline": "voice/native-transport-evidence/Fetch-voice-assistant-details.draft.js",
+    "baseline_length_lf": 3810,
+    "baseline_length_crlf": 3889,
+    "additional_characters": 79,
+    "difference": "79 LF line endings represented as CRLF; no other byte difference",
+    "approved_native_endpoint_literal_present": true,
+    "admin_guard_present": true,
+    "historical_version_id": "9f52799b93f787105c8132d47aba107c"
+  },
+  "mobile_wrapper": {
+    "table": "sys_script_include",
+    "id": "5a1a777dff99f614129628ecf43bf19d",
+    "length": 2168,
+    "sha256": "d564931f46eb75ccfa268040703bc42b87fdf1c302a6301cf957a98990bb790b",
+    "exact_authorized_diagnostic_baseline_match": true,
+    "latest_history_version_matches_current": true,
+    "changed_today": "diagnostic-only logging already reviewed; routing and authorization identical to preceding baseline"
+  },
+  "native_mobile_function": {
+    "table": "sys_sg_button",
+    "id": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "type": "voice_launcher",
+    "context": "global",
+    "name": "AI Voice Agent",
+    "all_three_fields_match_historical_version": true,
+    "historical_version_id": "e42caa04930a8350e7f2b9fa6aba1044"
+  },
+  "visible_mobile_quicklink": {
+    "id": "27493ac493ca8350e7f2b9fa6aba1014",
+    "current_name": "SCC Laptop Voice",
+    "native_function_id": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "today_changed_fields": [
+      "name"
+    ],
+    "function_unchanged_from_previous_version": true
+  },
+  "mobile_instance_74e": {
+    "id": "74e2df0393f78354e7f2b9fa6aba1000",
+    "last_changed_utc": "2026-10-13T23:30:46Z",
+    "changed_fields_from_previous": [
+      "button",
+      "label",
+      "description"
+    ],
+    "current_button_label_description_match_latest_historical_version": true,
+    "current_native_function_id": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "change_is_previously_authorized_custom_link_to_native_launcher_conversion": true
+  },
+  "current_routing_properties": {
+    "enabled": true,
+    "assistant_matches_approved": true,
+    "endpoint_matches_approved_native": true,
+    "observed_utc": "2026-10-14T09:08:26Z",
+    "note": "Later live transform source remains exactly pinned; root independently observed current successful WebSocket 101 on approved route."
+  },
+  "conclusion": "No proven ServiceNow browser source/function regression and no justified rollback candidate in audited fields.",
+  "limitations": [
+    "This audit covers the named ServiceNow public scripts/functions and routing fields; separate Windows bridge runtime changes are owned by root.",
+    "Remote audio transport acceptance is still pending."
+  ],
+  "secrets_or_private_account_values_saved": false
+}

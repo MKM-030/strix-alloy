@@ -118,9 +118,15 @@ class TransportTests(unittest.IsolatedAsyncioTestCase):
                 async with http.ws_connect(base, params=params) as ws:
                     offer = await peer.createOffer()
                     self.assertNotIn('a=candidate:', offer.sdp)
+                    offer_started = time.monotonic()
                     await ws.send_json({'type':'offer', 'sdp':{'type':'offer','sdp':offer.sdp}})
                     answer = await ws.receive_json(timeout=10)
+                    answer_seconds = time.monotonic() - offer_started
+                    self.assertLess(answer_seconds, 12, 'answer leaves time within ServiceNow 15s connection timeout')
+                    print(__import__('json').dumps({'native_answer_seconds': round(answer_seconds, 3), 'server_srflx_candidates': answer['sdp'].count(' typ srflx')}))
                     self.assertEqual(answer['type'], 'answer')
+                    self.assertEqual(answer['iceServers'], [{'urls': ['stun:stun.l.google.com:19302']}])
+                    self.assertTrue(all(isinstance(server['urls'], list) for server in answer['iceServers']))
                     self.assertIn('a=msid:', answer['sdp'])
                     await peer.setLocalDescription(offer)
                     await peer.setRemoteDescription(RTCSessionDescription(answer['sdp'], 'answer'))

@@ -19,13 +19,15 @@ import uuid
 import wave
 
 from aiohttp import ClientSession, ClientTimeout, CookieJar, FormData, WSMsgType, web
-from aiortc import AudioStreamTrack, RTCConfiguration, RTCPeerConnection, RTCSessionDescription
+from aiortc import AudioStreamTrack, RTCConfiguration, RTCIceServer, RTCPeerConnection, RTCSessionDescription
 from aiortc.sdp import candidate_from_sdp
 from av import AudioFrame, AudioResampler
 from core import EndpointGate, PlaybackBuffer, local_auth, authorized_agents
 
 LOG = logging.getLogger('native-voice')
 HTTP_KEY = web.AppKey('http', ClientSession)
+# Both peers need a public ICE candidate when they are outside the same LAN.
+STUN_URL = 'stun:stun.l.google.com:19302'
 
 
 @dataclass
@@ -260,7 +262,7 @@ class SpeakerTrack(AudioStreamTrack):
 class NativeCall:
     def __init__(self, config, speech, dialog):
         self.config, self.speech, self.dialog = config, speech, dialog
-        self.peer = RTCPeerConnection(RTCConfiguration(iceServers=[]))
+        self.peer = RTCPeerConnection(RTCConfiguration(iceServers=[RTCIceServer(urls=[STUN_URL])]))
         self.playback = PlaybackBuffer()
         self.peer.addTrack(SpeakerTrack(self.playback))
         self.channel = None
@@ -767,7 +769,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                             raise ValueError('Invalid offer')
                         await call.peer.setRemoteDescription(RTCSessionDescription(sdp['sdp'], 'offer'))
                         await call.peer.setLocalDescription(await call.peer.createAnswer())
-                        await ws.send_json({'type':'answer','sdp':call.peer.localDescription.sdp,'iceServers':[]})
+                        await ws.send_json({'type':'answer','sdp':call.peer.localDescription.sdp,'iceServers':[{'urls':[STUN_URL]}]})
                         offered = True
                     elif kind == 'candidate' and offered:
                         value = data.get('candidate')

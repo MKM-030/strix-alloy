@@ -1,0 +1,495 @@
+{
+  "utc": "2026-10-14T10:07:25.076165+00:00",
+  "local_clock": "2026-10-14T12:07:25.076165+02:00",
+  "after_activation_utc": "2026-10-14T09:57:43Z",
+  "known_controls": [
+    "2026-10-14T09:58:49Z credentialless200/401 healthcontrol"
+  ],
+  "root_cloud_test": "blocked_before_network_due_microphone_permission",
+  "events": [
+    {
+      "local_time": "2026-10-14 11:58:50,770",
+      "category": "request",
+      "fields": {
+        "request": "8412e1cf0c48",
+        "route": "signaling",
+        "method": "GET",
+        "origin": "expected",
+        "credentials": "none",
+        "upgrade": "websocket"
+      }
+    },
+    {
+      "local_time": "2026-10-14 11:58:50,770",
+      "category": "admission",
+      "fields": {
+        "status": "401"
+      }
+    },
+    {
+      "local_time": "2026-10-14 11:58:50,770",
+      "category": "result",
+      "fields": {
+        "request": "8412e1cf0c48",
+        "status": "401"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:03:31,442",
+      "category": "request",
+      "fields": {
+        "request": "564e7ccc8a42",
+        "route": "signaling",
+        "method": "GET",
+        "origin": "expected",
+        "credentials": "query",
+        "upgrade": "websocket"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:03:32,043",
+      "category": "admission",
+      "fields": {
+        "status": "101",
+        "call": "be8a7a362eda"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:03:53,336",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "be8a7a362eda",
+        "stage": "track_failed",
+        "type": "MediaStreamError",
+        "seconds": "20.891",
+        "frames": "755",
+        "audio_ms": "15099",
+        "vad_starts": "0",
+        "queued": "0",
+        "connection_state": "connected",
+        "ice_state": "completed"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:03:53,574",
+      "category": "result",
+      "fields": {
+        "request": "564e7ccc8a42",
+        "status": "101"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:04,921",
+      "category": "request",
+      "fields": {
+        "request": "7ea5d0604364",
+        "route": "signaling",
+        "method": "GET",
+        "origin": "expected",
+        "credentials": "query",
+        "upgrade": "websocket"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:05,415",
+      "category": "admission",
+      "fields": {
+        "status": "101",
+        "call": "2250025a9c2f"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:22,974",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "vad_start",
+        "generation": "0",
+        "interrupted": "False",
+        "playback_bytes": "0",
+        "audio_queue": "0",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:26,938",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "queued",
+        "audio_ms": "4260",
+        "audio_queue": "1",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:27,259",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "asr_complete",
+        "audio_ms": "4260",
+        "seconds": "0.328",
+        "empty": "False",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:27,259",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "begin",
+        "turn": "1",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:52,624",
+      "category": "voice_or_error",
+      "fields": {
+        "seconds": "25.69"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:56,660",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "vad_start",
+        "generation": "0",
+        "interrupted": "False",
+        "playback_bytes": "0",
+        "audio_queue": "0",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:58,980",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "queued",
+        "audio_ms": "2620",
+        "audio_queue": "1",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:59,224",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "asr_complete",
+        "audio_ms": "2620",
+        "seconds": "0.235",
+        "empty": "False",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:04:59,224",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "begin",
+        "turn": "2",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:05:38,283",
+      "category": "voice_or_error",
+      "fields": {
+        "seconds": "39.30"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:05:40,744",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "vad_start",
+        "generation": "0",
+        "interrupted": "False",
+        "playback_bytes": "0",
+        "audio_queue": "0",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:05:44,519",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "queued",
+        "audio_ms": "4060",
+        "audio_queue": "1",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:05:44,836",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "asr_complete",
+        "audio_ms": "4060",
+        "seconds": "0.313",
+        "empty": "False",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:05:44,837",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "begin",
+        "turn": "3",
+        "text_queue": "0"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:05:57,910",
+      "category": "voice_or_error",
+      "fields": {
+        "call": "2250025a9c2f",
+        "stage": "track_failed",
+        "type": "MediaStreamError",
+        "seconds": "112.203",
+        "frames": "5307",
+        "audio_ms": "106139",
+        "vad_starts": "3",
+        "queued": "3",
+        "connection_state": "connected",
+        "ice_state": "completed"
+      }
+    },
+    {
+      "local_time": "2026-10-14 12:05:58,322",
+      "category": "result",
+      "fields": {
+        "request": "7ea5d0604364",
+        "status": "101"
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "connection_id": 0,
+      "first_check_local_time": "2026-10-14 12:03:37,965",
+      "local_class": "tailnet_or_cgnat",
+      "remote_class": "private",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:03:37,965"
+    },
+    {
+      "connection_id": 0,
+      "first_check_local_time": "2026-10-14 12:03:37,994",
+      "local_class": "private",
+      "remote_class": "private",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:03:37,994"
+    },
+    {
+      "connection_id": 0,
+      "first_check_local_time": "2026-10-14 12:03:38,020",
+      "local_class": "private",
+      "remote_class": "private",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:03:38,020"
+    },
+    {
+      "connection_id": 0,
+      "first_check_local_time": "2026-10-14 12:03:38,041",
+      "local_class": "tailnet_or_cgnat",
+      "remote_class": "public",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:03:38,041"
+    },
+    {
+      "connection_id": 0,
+      "first_check_local_time": "2026-10-14 12:03:38,072",
+      "local_class": "private",
+      "remote_class": "public",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS",
+        "SUCCEEDED"
+      ],
+      "latest_state_local_time": "2026-10-14 12:03:38,096"
+    },
+    {
+      "connection_id": 0,
+      "first_check_local_time": "2026-10-14 12:03:38,096",
+      "local_class": "private",
+      "remote_class": "public",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "FAILED"
+      ],
+      "latest_state_local_time": "2026-10-14 12:03:38,096"
+    },
+    {
+      "connection_id": 2,
+      "first_check_local_time": "2026-10-14 12:04:11,144",
+      "local_class": "tailnet_or_cgnat",
+      "remote_class": "private",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:04:11,144"
+    },
+    {
+      "connection_id": 2,
+      "first_check_local_time": "2026-10-14 12:04:11,162",
+      "local_class": "private",
+      "remote_class": "private",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:04:11,162"
+    },
+    {
+      "connection_id": 2,
+      "first_check_local_time": "2026-10-14 12:04:11,196",
+      "local_class": "private",
+      "remote_class": "private",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:04:11,196"
+    },
+    {
+      "connection_id": 2,
+      "first_check_local_time": "2026-10-14 12:04:11,228",
+      "local_class": "tailnet_or_cgnat",
+      "remote_class": "public",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:04:11,228"
+    },
+    {
+      "connection_id": 2,
+      "first_check_local_time": "2026-10-14 12:04:11,259",
+      "local_class": "private",
+      "remote_class": "public",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS",
+        "SUCCEEDED"
+      ],
+      "latest_state_local_time": "2026-10-14 12:04:11,282"
+    },
+    {
+      "connection_id": 2,
+      "first_check_local_time": "2026-10-14 12:04:11,282",
+      "local_class": "private",
+      "remote_class": "public",
+      "local_candidate_type": "host",
+      "remote_candidate_type": "not_logged",
+      "states": [
+        "FROZEN",
+        "IN_PROGRESS"
+      ],
+      "latest_state_local_time": "2026-10-14 12:04:11,282"
+    }
+  ],
+  "ice_states": [
+    {
+      "local_time": "2026-10-14 12:03:38,096",
+      "connection_id": 0,
+      "state": "completed"
+    },
+    {
+      "local_time": "2026-10-14 12:04:11,308",
+      "connection_id": 2,
+      "state": "completed"
+    }
+  ],
+  "attribution": {
+    "identity": "not identified from server logs",
+    "root_cloud_attempt_excluded": true,
+    "reason": "Root confirmed microphone permission blocked cloud attempt before network."
+  },
+  "response_pipeline": {
+    "asr_seconds": [
+      0.328,
+      0.235,
+      0.313
+    ],
+    "completed_turn_pipeline_seconds": [
+      25.69,
+      39.3
+    ],
+    "includes": [
+      "ServiceNow dialog",
+      "TTS synthesis and playback queue delivery"
+    ],
+    "third_turn": {
+      "started_local": "2026-10-14 12:05:44,837",
+      "completion_logged_before_call_end": false
+    },
+    "precise_llm_tts_network_breakdown": "not available from these logs"
+  },
+  "closure": {
+    "first_call_local": "2026-10-14 12:03:53,574",
+    "second_call_local": "2026-10-14 12:05:58,322",
+    "reported_peer_state_at_track_end": "connected",
+    "reported_ice_state_at_track_end": "completed",
+    "initiator_or_websocket_close_code": "not logged",
+    "no_signaling_exception_or_voice_turn_failure_in_window": true,
+    "no_tts_skipped_in_window": true
+  },
+  "greeting_and_output": {
+    "first_audio_time_or_audibility": "not logged; requires user confirmation",
+    "speaker_buffer_bytes_at_next_speech": [
+      0,
+      0,
+      0
+    ],
+    "inference": "Completed turns reached the end of existing TTS synthesis/queue code; no claim about user audibility."
+  },
+  "production_source_sha256": "91d61c8dae3055bad64bde48f7e62a6864449c0cb8246058445bfdaa1107a943",
+  "observation_did_not_allocate_sessions_or_invoke_models": true
+}
