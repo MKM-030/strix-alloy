@@ -8,10 +8,10 @@ const source = fs.readFileSync(path.join(__dirname, '..', 'VoiceServiceConfigura
 const id = '8aa131d793f787105c8132d47aba1095';
 const pin = 'https://strix-alloy.tail7f425a.ts.net/scc-native';
 const prefix = 'sn_nowassist_va.scc_native_voice.';
-function fixture({admin=true, properties={}, fallback='inherited', fail}={}) {
+function fixture({admin=true, properties={}, fallback='inherited', fail, logFail}={}) {
   const props = { [prefix+'enabled']:'true', [prefix+'assistant_id']:id,
     [prefix+'orchestrator_url']:pin, instance_name:'soprasteriaassvsdemo14', ...properties };
-  const calls=[];
+  const calls=[]; const diagnostics=[];
   function Parent() {}
   Parent.prototype = {
     initialize() {},
@@ -19,11 +19,12 @@ function fixture({admin=true, properties={}, fallback='inherited', fail}={}) {
     getMobileVoiceConfigurations() {return [id, '00000000000000000000000000000000'].map(voiceServiceId => ({voiceServiceId,voiceWebhookURL:this._generateUrl(voiceServiceId)}));}
   };
   const sandbox = {Class:{create:()=>function(){}},VoiceServiceConfigurationMobileSNC:Parent,
-    gs:{hasRole:role => admin && role==='admin',getProperty:(key,otherwise)=>Object.hasOwn(props,key)?props[key]:otherwise}};
+    gs:{hasRole:role => admin && role==='admin',getProperty:(key,otherwise)=>Object.hasOwn(props,key)?props[key]:otherwise,
+      info:message=>{if(logFail)throw logFail;diagnostics.push(message);}}};
   vm.createContext(sandbox);
   vm.runInContext('Object.extendsObject = function(parent, values) { return Object.assign(Object.create(parent.prototype), values); };',sandbox);
   vm.runInContext(source,sandbox);
-  return {instance:new sandbox.VoiceServiceConfigurationMobile(),calls};
+  return {instance:new sandbox.VoiceServiceConfigurationMobile(),calls,diagnostics};
 }
 test('mapped SCC admin configuration uses the exact native HTTPS endpoint',()=>{
   const {instance,calls}=fixture();
@@ -65,4 +66,34 @@ test('inherited null, dash, objects and thrown errors remain unchanged',()=>{
   }
   const error=new Error('legacy failure');const {instance}=fixture({admin:false,fail:error});
   assert.throws(()=>instance._generateUrl(id),e=>e===error);
+});
+
+function readDiagnostic(records) {
+  assert.equal(records.length,1);
+  const prefix='[SCC Mobile Voice Route] ';
+  assert.ok(records[0].startsWith(prefix));
+  return JSON.parse(records[0].slice(prefix.length));
+}
+test('route diagnostics identify the local SCC path with only bounded booleans',()=>{
+  const {instance,diagnostics}=fixture();
+  instance._generateUrl(id);
+  assert.deepEqual(readDiagnostic(diagnostics),{route:'local',approved_service:true,admin:true,enabled:true,endpoint_matches:true});
+});
+test('fallback diagnostics disclose no input, instance, URI or credential values',()=>{
+  const secret='Bearer user-token-canary';
+  const {instance,diagnostics}=fixture({admin:false,properties:{
+    instance_name:secret,[prefix+'orchestrator_url']:'https://'+secret+'/private',
+    [prefix+'assistant_id']:secret,[prefix+'enabled']:'false'}});
+  assert.equal(instance._generateUrl(secret),'inherited');
+  assert.deepEqual(readDiagnostic(diagnostics),{route:'snc',approved_service:false,admin:false,enabled:false,endpoint_matches:false});
+  assert.ok(!diagnostics[0].includes(secret));
+  assert.ok(!diagnostics[0].includes('https://'));
+  assert.ok(!diagnostics[0].includes(id));
+});
+test('a logging failure cannot change either local or inherited endpoint behavior',()=>{
+  for(const admin of [true,false]){
+    const {instance}=fixture({admin,logFail:new Error('log unavailable')});
+    const value=instance._generateUrl(id);
+    assert.equal(value,admin?pin+'/webrtc/connect/agent_operator?instance_name=soprasteriaassvsdemo14&voice_service_id='+id:'inherited');
+  }
 });

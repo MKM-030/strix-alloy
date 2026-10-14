@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "checked_utc": "2026-10-14T05:16:02.456665+00:00",
+  "purpose": "Read-only diagnosis of Now Mobile connection failure reported around 07:10 Europe/Berlin",
+  "native_source_sha256": "d09ffe63c28c0cc40662d844e737b03b5ccd16e5ec1c8e60e09265885163f130",
+  "native_pid": 25400,
+  "native_log": "voice/native-start/runtime/native.stderr.log",
+  "before_control_probe": {
+    "checked_utc": "2026-10-14T05:14:37.868785+00:00",
+    "size_bytes": 93504,
+    "modified_utc": "2026-10-13T23:40:02.643353+00:00",
+    "last_event_machine_local": "2026-10-14 01:40:02,643",
+    "last_event": "credentialless signaling admission 401",
+    "admission_events_during_phone_attempt_window": 0,
+    "new_ice_microphone_or_bot_events_during_phone_attempt_window": 0
+  },
+  "controlled_public_route_probe": {
+    "utc": "2026-10-14T05:16:02.456665+00:00",
+    "http_method": "GET",
+    "route": "/scc-native/webrtc/connect/agent_operator",
+    "credentials_sent": false,
+    "session_allocated": false,
+    "http_status": 401,
+    "elapsed_seconds": 0.312,
+    "new_native_log_event_machine_local": "2026-10-14 07:16:02,734",
+    "new_native_log_event_status": 401,
+    "is_phone_attempt": false
+  },
+  "stack_health_utc": "2026-10-14T05:15:21.972201+00:00",
+  "stack_health": {
+    "all_seven_service_http_statuses": 200,
+    "native_sessions": 0,
+    "auth_mode": "servicenow",
+    "expected_halogen_model": true,
+    "expected_model_version": true,
+    "vision_enabled": true,
+    "context": 262144,
+    "slots": 1,
+    "model_idle": true,
+    "gateway_idle": true,
+    "exact_prompt_cache": {
+      "mode": 1,
+      "enabled": true,
+      "cap_mb": 110,
+      "bitwise_identical_to_cold": true
+    },
+    "asr_ready": true,
+    "expected_tts_model": true,
+    "free_memory_gib": 20.476,
+    "commit_headroom_gib": 110.308,
+    "runtime_floor_gib": 18,
+    "above_runtime_floor": true,
+    "funnel_native_gateway_and_callback_routes_match": true,
+    "funnel_https_443_and_allowed": true
+  },
+  "interpretation": {
+    "phone_attempt_observed_by_native_handler": false,
+    "confirmed_native_origin_or_jwt_rejection_of_phone": false,
+    "confirmed_model_failure_causing_phone_toast": false,
+    "primary_next_check": "Mobile configuration and authorization stage before the signaling request, then physical-phone signaling and media acceptance",
+    "public_probe_proves_only": "Current TLS route reaches the handler and its admission logging is active; no valid OAuth or RTP acceptance tested"
+  },
+  "changes_made_by_this_diagnostic": {
+    "service_config_changes": false,
+    "service_restart_or_stop": false,
+    "account_role_reads": false,
+    "credentials_or_private_account_data_logged": false
+  }
+}

@@ -654,7 +654,49 @@ async def authorize(request, config, http):
 
 
 def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=False):
-    app = web.Application(client_max_size=256*1024)
+    @web.middleware
+    async def request_diagnostics(request, handler):
+        # Full access logs would expose OAuth query tokens. Keep request
+        # diagnostics to fixed classes, a random identifier and status only.
+        if request.path == '/health':
+            return await handler(request)
+        signaling_path = '/webrtc/connect/agent_operator'
+        if request.path == signaling_path:
+            route = 'signaling'
+        elif request.path == '/scc-native' + signaling_path:
+            route = 'prefixed_signaling'
+        elif request.path.count(signaling_path) > 1:
+            route = 'duplicated_signaling'
+        else:
+            route = 'other'
+        method = request.method if request.method in {'GET', 'HEAD', 'POST', 'OPTIONS'} else 'OTHER'
+        origin_value = request.headers.get('Origin')
+        origin = 'missing' if origin_value is None else ('expected' if origin_value == config.instance_url else 'other')
+        query_credential = 'auth_token' in request.query
+        header_credential = 'Authorization' in request.headers
+        credentials = ('both' if query_credential and header_credential else
+                       'query' if query_credential else 'header' if header_credential else 'none')
+        upgrade_value = request.headers.get('Upgrade')
+        upgrade = 'missing' if upgrade_value is None else ('websocket' if upgrade_value.lower() == 'websocket' else 'other')
+        request_id = uuid.uuid4().hex[:12]
+        LOG.info('Native HTTP request request=%s route=%s method=%s origin=%s credentials=%s upgrade=%s',
+                 request_id, route, method, origin, credentials, upgrade)
+        status = 0
+        try:
+            response = await handler(request)
+            value = getattr(response, 'status', 0)
+            status = value if type(value) is int and 100 <= value <= 599 else 0
+            return response
+        except web.HTTPException as error:
+            status = error.status
+            raise
+        except Exception:
+            status = 500
+            raise
+        finally:
+            LOG.info('Native HTTP result request=%s status=%d', request_id, status)
+
+    app = web.Application(client_max_size=256*1024, middlewares=[request_diagnostics])
     active = set()
     shared_dialog = Dialog(config) if dialog_factory is None else None
     async def lifecycle(app):
