@@ -1,0 +1,65 @@
+{
+  "scope": "candidate only; no production activation or config/process changes",
+  "baseline_sha256": "91d61c8dae3055bad64bde48f7e62a6864449c0cb8246058445bfdaa1107a943",
+  "source_sha256": "f7cb39ef09da63b5484308be52ca33985bb4005645f668030c8896c37821475d",
+  "test_sha256": "6d8b5935973dd41601eb86c714398238401b1c680a611f330fcc307836a1dcd1",
+  "windows_candidate": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-bridge\\.launch-candidate-20261014\\native_bridge.py",
+  "feature": {
+    "route": "GET /launch",
+    "status": 302,
+    "location": "https://soprasteriaassvsdemo14.service-now.com/now/now-assist-with-va/voice-test/8aa131d793f787105c8132d47aba1095",
+    "required_config": {
+      "instance_name": "soprasteriaassvsdemo14",
+      "voice_service_id": "8aa131d793f787105c8132d47aba1095"
+    },
+    "invalid_query_status": 400,
+    "wrong_config_status": 404,
+    "wrong_method_status": 405,
+    "headers": {
+      "Cache-Control": "no-store",
+      "Referrer-Policy": "no-referrer"
+    },
+    "route_allocates_voice_session": false,
+    "route_calls_speech_or_dialog_factory": false
+  },
+  "baseline_tests": {
+    "count": 6,
+    "expected_failures": 3,
+    "passed": 3,
+    "reason": "GET/POST/query all returned baseline404 before route existed"
+  },
+  "targeted_tests": {
+    "count": 6,
+    "result": "passed",
+    "runtime_seconds": 0.061,
+    "exit_code": 0
+  },
+  "tests": {
+    "count": 99,
+    "result": "passed",
+    "runtime_seconds": 26.827,
+    "exit_code": 0,
+    "command": "PYTHONPATH=C:\\Projects\\strix-alloy-scc-voice ..\\.venv\\Scripts\\python.exe -m unittest discover -q",
+    "test_log": ".launch-candidate-20261014\\LAUNCH-TESTS-20261014.log",
+    "native_answer_seconds": 5.016,
+    "server_srflx_candidates": 2
+  },
+  "independent_review": "bridge_review static GO on exact source SHA",
+  "unchanged": [
+    "signaling authorization",
+    "Origin checks",
+    "assistant/agent identity",
+    "STUN",
+    "speech services",
+    "model/providers",
+    "production service/process/config"
+  ],
+  "limits": [
+    "302 launches ServiceNow's existing authenticated browser UI; actual external browser versus in-app webview behavior depends on Now Mobile and requires phone testing.",
+    "No actual mobile UI launch or microphone test is claimed."
+  ],
+  "test_staging_notes": [
+    "Initial all-suite staging run had missing helper files and package path; helpers copied read-only from existing repository and PYTHONPATH set for final99pass."
+  ],
+  "date": "2026-10-14"
+}

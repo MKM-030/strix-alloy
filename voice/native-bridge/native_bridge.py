@@ -806,9 +806,22 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                     await ws.close()
         return ws
 
+    async def launch(request):
+        # The mobile browser shortcut is fixed to this demo, never an open redirect.
+        headers = {'Cache-Control':'no-store', 'Referrer-Policy':'no-referrer'}
+        if (config.instance_name != 'soprasteriaassvsdemo14' or
+                config.voice_service_id != '8aa131d793f787105c8132d47aba1095'):
+            raise web.HTTPNotFound(headers=headers)
+        if request.query_string:
+            raise web.HTTPBadRequest(text='Launch does not accept query parameters', headers=headers)
+        raise web.HTTPFound(
+            location='https://soprasteriaassvsdemo14.service-now.com/now/now-assist-with-va/voice-test/8aa131d793f787105c8132d47aba1095',
+            headers=headers)
+
     async def health(request):
         return web.json_response({'status':'ok','nativeSessions':len(active),
                                   'authMode':'loopback-development' if config.development_token else config.auth_mode})
+    app.router.add_get('/launch', launch)
     app.router.add_get('/health', health)
     app.router.add_get('/webrtc/connect/agent_operator', connect)
     return app
