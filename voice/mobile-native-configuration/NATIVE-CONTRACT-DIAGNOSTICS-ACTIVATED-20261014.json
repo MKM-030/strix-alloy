@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "activated_utc": "2026-10-14T19:24:22.081248+00:00",
+  "scope": "Gateway-only optional native bootstrap metadata diagnostics",
+  "source_before_sha256": "25ddfe9565c7d8f393289d22016754d040a269c94561599832e811400c006aed",
+  "source_after_sha256": "89953167409540f5caf794f099f3f4465dd3c56494c4f02af2d637db11cf3576",
+  "native_unchanged_sha256": "f7cb39ef09da63b5484308be52ca33985bb4005645f668030c8896c37821475d",
+  "gateway": {
+    "worker": 23504,
+    "launcher": 31132,
+    "diagnostic_flag": true,
+    "authentication_and_routing_unchanged": true,
+    "only_configuration_delta": "voice_contract_diagnostics=true"
+  },
+  "protected_service_identities_unchanged": true,
+  "model_restarted": false,
+  "funnel_configuration_changed": false,
+  "servicenow_authentication_or_permissions_changed": false,
+  "verification": {
+    "candidate_windows_tests": 52,
+    "live_server_windows_tests": 119,
+    "live_server_result": "OK",
+    "live_server_test_seconds": 2.241,
+    "public_phone_entry_controls_passed": true,
+    "deliberately_invalid_bootstrap_control_captured": true,
+    "real_phone_attempt_simulated": false,
+    "stack_healthy": true,
+    "model_expected": true,
+    "model_cache_matches": true,
+    "vision": true
+  },
+  "privacy": {
+    "logs": "Reviewed static path/key names, JSON types, boolean presence, status only",
+    "values_logged": false,
+    "unknown_names_redacted": true,
+    "body_limit_bytes": 32768,
+    "rejected_request_read_budget_seconds": 0.25,
+    "diagnostics_default_off": true
+  },
+  "v2_activation": {
+    "aborted": true,
+    "rollback_completed": true,
+    "reason": "Known venv launcher exited between running check and fresh identity query",
+    "native_services_preserved": true
+  },
+  "v3_activation": {
+    "succeeded": true,
+    "helper_failure_simulations": 9,
+    "absence_accepted_only_if": "Known launcher PID absent and port8841 has no listener"
+  },
+  "native_phone_end_to_end_verified": false,
+  "remaining": "Capture one real native Now Mobile bootstrap; implement the verified contract and retest the phone"
+}

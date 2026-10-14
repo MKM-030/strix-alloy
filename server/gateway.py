@@ -16,6 +16,7 @@ from pathlib import Path
 import re
 import time
 from urllib.parse import urlsplit
+from uuid import uuid4
 import aiohttp
 from aiohttp import web
 from console_trace import ConsoleTrace,RequestTrace
@@ -25,6 +26,43 @@ CONSOLE_TRACE_KEY=web.RequestKey('console_trace',RequestTrace)
 POST_ROUTES={'/v1/chat/completions','/v1/completions','/v1/responses',
              '/v1/messages','/v1/messages/count_tokens','/v1/embeddings',
              '/v1/rerank','/v1/reranking'}
+VOICE_STATIC_SEGMENTS=frozenset({'webrtc','auth','token','auth_token','authenticate','authorize',
+    'connect','agent_operator','agent_operator_mobile','get_jwt_token','offer','answer','create_room',
+    'create','room','rooms','session','sessions','mobile','start','signaling','signalling','api','v1',
+    'scc-native','jwt','jwt_token','get_jwt','get_token','generate_token','create_token',
+    'agent_operator_token','get_auth_token','create_session','start_session','ice_servers',
+    'get_ice_servers','ticket','config','configuration','settings','service','services',
+    'bootstrap','handshake','call','calls','init','initialize','capabilities','status','health'})
+VOICE_STATIC_KEYS=frozenset({'token','auth_token','jwt','jwt_token','access_token','authorization',
+    'api_key','client_id','client_secret','agent_id','agent_operator','agent_operator_mobile',
+    'session_id','room_id','call_id','user_id','conversation_id','channel','client','platform',
+    'version','client_version','clientVersion','device_id','deviceId','metadata','config',
+    'configuration','context','data','type','sdp','offer','answer','candidate','candidates',
+    'ice_servers','iceServers','audio','transcript','message','error','status','success','expires_in',
+    'instance_name','voice_service_id','oauth_client_id','mobileChannelType','mobileChannelId',
+    'voiceServiceId','voiceWebhookURL','client_app','clientApp','ws_ticket'})
+
+
+def voice_contract_shape(value):
+    """Top-level reviewed key names and JSON types only; never traverse values."""
+    def kind(child):
+        return ('null' if child is None else 'boolean' if type(child) is bool else
+                'number' if type(child) in (int,float) else 'string' if type(child) is str else
+                'array' if type(child) is list else 'object' if type(child) is dict else 'other')
+    if not isinstance(value,dict): return kind(value)
+    result={}
+    for index,(key,child) in enumerate(value.items()):
+        if index>=32:
+            result['[truncated]']='other'
+            break
+        result[key if key in VOICE_STATIC_KEYS else '[redacted_%d]' % index]=kind(child)
+    return result
+
+
+def voice_media_type(value):
+    media=value.split(';',1)[0].strip().lower()
+    return media if media in {'application/json','application/sdp','text/plain',
+        'application/octet-stream','multipart/form-data','audio/wav','audio/pcm','audio/opus'} else 'other'
 
 @dataclass(frozen=True)
 class Backend:
@@ -64,7 +102,8 @@ class Backend:
 class Gateway:
     def __init__(self, backend, secret, backend_secret='', *, concurrency=1,
                  body_bytes=16*1024**2, request_seconds=1800, console_trace=False,
-                 queue_limit=0, queue_seconds=120, demo_no_thinking_model=''):
+                 queue_limit=0, queue_seconds=120, demo_no_thinking_model='',
+                 voice_contract_diagnostics=False):
         if not isinstance(secret,str) or len(secret)<32:
             raise ValueError('At least 32 characters of API key material required')
         if not 1<=concurrency<=16 or not 1024<=body_bytes<=64*1024**2:
@@ -77,6 +116,8 @@ class Gateway:
             raise ValueError('Queue timeout must be finite and greater than 0, up to 3600 seconds')
         if type(console_trace) is not bool:
             raise ValueError('console_trace must be a boolean')
+        if type(voice_contract_diagnostics) is not bool:
+            raise ValueError('voice_contract_diagnostics must be a boolean')
         if (not isinstance(demo_no_thinking_model,str) or
                 demo_no_thinking_model not in ('',backend.identifier)):
             raise ValueError('demo_no_thinking_model must be empty or the selected public model alias')
@@ -88,7 +129,10 @@ class Gateway:
         self.completed=0; self.cancelled=0; self.client=None
         self.last_healthy=0.0; self.probe_lock=asyncio.Lock()
         self.console_trace=ConsoleTrace(secrets=(secret,backend_secret)) if console_trace else None
-        self.app=web.Application(client_max_size=body_bytes,middlewares=[self.authenticate])
+        self.voice_contract_diagnostics=voice_contract_diagnostics
+        self.app=web.Application(client_max_size=body_bytes,
+            middlewares=[self.diagnose_voice_contract,self.authenticate] if voice_contract_diagnostics
+            else [self.authenticate])
         self.app.add_routes([web.get('/health',self.health),web.get('/v1/models',self.models)])
         for path in sorted(POST_ROUTES): self.app.router.add_post(path,self.inference)
         self.app.cleanup_ctx.append(self.session_context)
@@ -142,6 +186,57 @@ class Gateway:
                 # Reserve for the oldest waiter before letting new calls in.
                 self.active+=1
                 waiter.set_result(True)
+
+    @web.middleware
+    async def diagnose_voice_contract(self, request, handler):
+        if request.method!='POST' or 'webrtc' not in request.path.lower():
+            return await handler(request)
+        response=None
+        try:
+            response=await handler(request)
+            return response
+        except web.HTTPException as error:
+            response=error
+            raise
+        finally:
+            # Observe only bodies already rejected by the unmodified auth/router.
+            # Read no streams, SDP/audio, encoded, oversized, or unknown-size bodies.
+            if response is not None and response.status in (401,404):
+                try: await self.record_voice_contract(request,response)
+                except Exception: pass  # Observation never replaces the selected response.
+
+    async def record_voice_contract(self, request, response):
+        parts=[part.lower() for part in request.path.split('/') if part]
+        path_shape='/'+'/'.join(part if part in VOICE_STATIC_SEGMENTS else '[redacted]' for part in parts[:12])
+        if len(parts)>12: path_shape+='/[truncated]'
+        raw=request.headers.get('Authorization','')
+        credential_syntax=('missing' if not raw else 'bearer' if raw.startswith('Bearer ') else
+            'bearer_other_case' if raw[:7].lower()=='bearer ' else 'basic' if raw[:6].lower()=='basic ' else 'other')
+        media=voice_media_type(request.headers.get('Content-Type',''))
+        body_shape='not_json'
+        if media=='application/json':
+            length=request.content_length
+            if 'Content-Encoding' in request.headers: body_shape='encoding_skipped'
+            elif length is None or not 0<=length<=32768: body_shape='size_skipped'
+            else:
+                try:
+                    payload=await asyncio.wait_for(request.read(),timeout=.25)
+                    body_shape=voice_contract_shape(json.loads(payload)) if payload else 'empty'
+                    del payload
+                except TimeoutError: body_shape='timeout_skipped'
+                except (ValueError,UnicodeError,RecursionError,web.HTTPRequestEntityTooLarge): body_shape='invalid_json'
+        response_shape='not_json'
+        raw_response=getattr(response,'body',None)
+        if response.content_type=='application/json' and isinstance(raw_response,bytes) and len(raw_response)<=32768:
+            try: response_shape=voice_contract_shape(json.loads(raw_response))
+            except (ValueError,UnicodeError,RecursionError): response_shape='invalid_json'
+        row={'request_id':uuid4().hex[:12], 'method':'POST','path_shape':path_shape,
+             'credential_syntax':credential_syntax,'content_type':media,
+             'header_presence':{name.replace('-','_'):name in request.headers for name in
+                                ('authorization','x-api-key','origin','upgrade','content-encoding')},
+             'query_credential_present':'auth_token' in request.query,
+             'body_shape':body_shape,'status':response.status,'response_shape':response_shape}
+        LOG.info('Gateway voice contract %s',json.dumps(row,separators=(',',':')))
 
     @web.middleware
     async def authenticate(self, request, handler):
@@ -309,7 +404,8 @@ def load_config(path):
                    request_seconds=value.get('request_seconds',1800),
                    queue_limit=value.get('queue_limit',0),queue_seconds=value.get('queue_seconds',120),
                    console_trace=value.get('console_trace',False),
-                   demo_no_thinking_model=value.get('demo_no_thinking_model',''))
+                   demo_no_thinking_model=value.get('demo_no_thinking_model',''),
+                   voice_contract_diagnostics=value.get('voice_contract_diagnostics',False))
 
 
 async def serve(gateway, port, stop_event=None):

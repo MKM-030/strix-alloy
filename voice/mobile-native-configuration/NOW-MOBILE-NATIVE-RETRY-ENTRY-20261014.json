@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "updated_on": "2026-10-14",
+  "purpose": "Separate native Now Mobile retry entry while preserving the confirmed mobile browser fallback",
+  "native_entry": {
+    "table": "sys_sg_navigation_section_destination_button",
+    "sys_id": "ed793cb3933bcf105c8132d47aba1056",
+    "name": "Voice Agent (App)",
+    "scope": "Now Mobile",
+    "button": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "button_name": "AI Voice Agent",
+    "icon_display": "spark-solid",
+    "verification": "Fresh ServiceNow form and list after saving"
+  },
+  "quick_links_mapping": {
+    "table": "sys_sg_navigation_section_m2m_destination",
+    "sys_id": "2a2b70fb933bcf105c8132d47aba105d",
+    "navigation_section": "57f8fce6778101108f64b2487b5a995f",
+    "navigation_section_destination": "ed793cb3933bcf105c8132d47aba1056",
+    "order": 40,
+    "verification": "Fresh list displays exact section and destination IDs"
+  },
+  "preserved_fallback": {
+    "destination": "27493ac493ca8350e7f2b9fa6aba1014",
+    "name": "SCC Sprachdemo",
+    "function": "b0e217cf93b78354e7f2b9fa6aba1028",
+    "function_name": "SCC Laptop Voice",
+    "verified_unchanged": true
+  },
+  "native_assistant": "8aa131d793f787105c8132d47aba1095",
+  "channel_and_function_records_changed": false,
+  "authentication_roles_changed": false,
+  "original_context": {
+    "application": "Recommended Actions for Service",
+    "application_id": "469106e153231010df5dddeeff7b12a9",
+    "update_set": "Default [Recommended Actions for Service]",
+    "update_set_id": "d83fc97493068b505c8132d47aba104d",
+    "restored_and_verified": true
+  },
+  "native_phone_end_to_end_verified": false,
+  "required_next_evidence": "One real native phone call with bounded bootstrap metadata, followed by the compatible adapter implementation and phone retest",
+  "unverified_contracts": [
+    "Native HTTP bootstrap schema",
+    "Native WebSocket credential placement",
+    "Native SDP/control schema"
+  ],
+  "sdk_binary_access": "Official public archive download refused ordinary anonymous reads; no SDK installed or entitlement/agreement operation invoked"
+}

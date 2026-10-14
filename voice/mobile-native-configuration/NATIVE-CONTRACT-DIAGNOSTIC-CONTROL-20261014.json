@@ -1,0 +1,33 @@
+{
+  "utc": "2026-10-14T19:26:31.134990+00:00",
+  "is_real_phone_attempt": false,
+  "control": "deliberately invalid credential and public fixture body",
+  "sessions_allocated": false,
+  "inference_requested": false,
+  "http_status": 401,
+  "response_unchanged": true,
+  "captured_metadata": {
+    "request_id": "e76e5b334e8f",
+    "method": "POST",
+    "path_shape": "/webrtc/create_session",
+    "credential_syntax": "bearer",
+    "content_type": "application/json",
+    "header_presence": {
+      "authorization": true,
+      "x_api_key": false,
+      "origin": false,
+      "upgrade": false,
+      "content_encoding": false
+    },
+    "query_credential_present": false,
+    "body_shape": {
+      "instance_name": "string",
+      "voice_service_id": "string"
+    },
+    "status": 401,
+    "response_shape": {
+      "error": "object"
+    }
+  },
+  "passed": true
+}
