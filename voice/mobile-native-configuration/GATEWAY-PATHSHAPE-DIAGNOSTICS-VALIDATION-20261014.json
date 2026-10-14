@@ -1,0 +1,318 @@
+{
+  "utc": "2026-10-14T07:33:08.211846+00:00",
+  "local_clock": "2026-10-14T09:33:08.211846+02:00",
+  "control_started_utc": "2026-10-14T07:33:07.785132+00:00",
+  "control": {
+    "method": "POST",
+    "route_class": "webrtc_other",
+    "path_shape": "api/webrtc/auth/ticket",
+    "credentialless": true,
+    "body_sent": false,
+    "http_status": 401
+  },
+  "control_must_not_be_correlated_as_phone": true,
+  "gateway_events_since_activation": [
+    {
+      "local_time": "2026-10-14 09:33:08,089",
+      "request": "3936d5c8923e",
+      "route": "webrtc_other",
+      "origin": "missing",
+      "credentials": "none",
+      "upgrade": "missing",
+      "path_shape": "api/webrtc/auth/ticket",
+      "segments": "4",
+      "header_kind": "none",
+      "auth_shape": "missing",
+      "result_local_time": "2026-10-14 09:33:08,090",
+      "status": 401,
+      "method": "POST"
+    }
+  ],
+  "services": {
+    "model": {
+      "http_status": 200,
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0,
+      "slots": 1,
+      "context": 262144,
+      "slot_ctx": 262144,
+      "kv_pool_positions": 262144,
+      "status": "ok",
+      "expected_model": true,
+      "version_matches": true,
+      "vision_enabled": true,
+      "prompt_cache": {
+        "mode": 1,
+        "enabled": true,
+        "cap_mb": 110,
+        "bitwise_identical_to_cold": true
+      }
+    },
+    "controller": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "gateway": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "bot": {
+      "http_status": 200
+    },
+    "native": {
+      "http_status": 200,
+      "nativeSessions": 0,
+      "status": "ok",
+      "auth_mode": "servicenow"
+    },
+    "asr": {
+      "http_status": 200,
+      "status": "ok"
+    },
+    "tts": {
+      "http_status": 200,
+      "expected_model": true
+    }
+  },
+  "memory": {
+    "free_gib": 24.367,
+    "commit_headroom_gib": 111.866,
+    "runtime_guard_floor_gib": 18,
+    "above_runtime_floor": true,
+    "cold_start_floor_met": false
+  },
+  "pids": {
+    "8731": [
+      12368
+    ],
+    "8840": [
+      28968
+    ],
+    "8841": [
+      29316
+    ],
+    "8850": [
+      19372
+    ],
+    "8853": [
+      19372
+    ],
+    "8860": [
+      3704
+    ],
+    "8861": [
+      15436
+    ],
+    "8862": [
+      5572
+    ],
+    "8863": [
+      20168
+    ]
+  },
+  "protected_processes_unchanged": true,
+  "gateway_sha256": "6c77c7c3b36df36d2cec72622e52aa4463f91725712809e0c5fde0cb2c5a4dab",
+  "config_unchanged": true,
+  "native_sha256": "0b7c6705488b81e5e93f192154dbb670d3cfd1d70011282245398f54a9a5647d",
+  "tests": {
+    "utc": "2026-10-14T07:31:04.126211+00:00",
+    "exit_code": 0,
+    "test_count": 67,
+    "tests_passed": true,
+    "candidate_sha256": "6c77c7c3b36df36d2cec72622e52aa4463f91725712809e0c5fde0cb2c5a4dab",
+    "test_sha256": "6bbaeb8f039d10bba2f97852f3a3e5a65da2cacb068089396484823523caa980",
+    "live_baseline_unchanged": true,
+    "failure_names": [],
+    "suite": "All existing server Gateway tests plus ConsoleTrace and new voice diagnostics",
+    "real_inference_or_service_now_calls": false,
+    "service_process_or_config_changes": false
+  },
+  "activation": {
+    "utc": "2026-10-14T07:32:06.814894+00:00",
+    "before_sha256": "bf3a626e6832909fd867430fff50ac76aca7b19ee0fdcf81f6dc296777f180ce",
+    "after_sha256": "6c77c7c3b36df36d2cec72622e52aa4463f91725712809e0c5fde0cb2c5a4dab",
+    "tests_passed": true,
+    "test_count": 67,
+    "old_listener_pid": 10140,
+    "old_launcher_pid": 27280,
+    "preflight": [
+      {
+        "native": {
+          "http_status": 200,
+          "nativeSessions": 0,
+          "status": "ok",
+          "auth_mode": "servicenow"
+        },
+        "model": {
+          "http_status": 200,
+          "busy": false,
+          "in_flight": 0,
+          "queued": 0,
+          "slots": 1,
+          "context": 262144,
+          "slot_ctx": 262144,
+          "kv_pool_positions": 262144,
+          "status": "ok",
+          "expected_model": true,
+          "version_matches": true,
+          "vision_enabled": true,
+          "prompt_cache": {
+            "mode": 1,
+            "enabled": true,
+            "cap_mb": 110,
+            "bitwise_identical_to_cold": true
+          }
+        },
+        "gateway": {
+          "http_status": 200,
+          "draining": false,
+          "active_requests": 0,
+          "queued_requests": 0,
+          "context": 262144,
+          "status": "ok"
+        },
+        "memory": {
+          "free_gib": 24.413,
+          "commit_headroom_gib": 111.895,
+          "runtime_guard_floor_gib": 18,
+          "above_runtime_floor": true,
+          "cold_start_floor_met": false
+        },
+        "bot_latest_end_ack": true
+      },
+      {
+        "native": {
+          "http_status": 200,
+          "nativeSessions": 0,
+          "status": "ok",
+          "auth_mode": "servicenow"
+        },
+        "model": {
+          "http_status": 200,
+          "busy": false,
+          "in_flight": 0,
+          "queued": 0,
+          "slots": 1,
+          "context": 262144,
+          "slot_ctx": 262144,
+          "kv_pool_positions": 262144,
+          "status": "ok",
+          "expected_model": true,
+          "version_matches": true,
+          "vision_enabled": true,
+          "prompt_cache": {
+            "mode": 1,
+            "enabled": true,
+            "cap_mb": 110,
+            "bitwise_identical_to_cold": true
+          }
+        },
+        "gateway": {
+          "http_status": 200,
+          "draining": false,
+          "active_requests": 0,
+          "queued_requests": 0,
+          "context": 262144,
+          "status": "ok"
+        },
+        "memory": {
+          "free_gib": 24.419,
+          "commit_headroom_gib": 111.908,
+          "runtime_guard_floor_gib": 18,
+          "above_runtime_floor": true,
+          "cold_start_floor_met": false
+        },
+        "bot_latest_end_ack": true
+      },
+      {
+        "native": {
+          "http_status": 200,
+          "nativeSessions": 0,
+          "status": "ok",
+          "auth_mode": "servicenow"
+        },
+        "model": {
+          "http_status": 200,
+          "busy": false,
+          "in_flight": 0,
+          "queued": 0,
+          "slots": 1,
+          "context": 262144,
+          "slot_ctx": 262144,
+          "kv_pool_positions": 262144,
+          "status": "ok",
+          "expected_model": true,
+          "version_matches": true,
+          "vision_enabled": true,
+          "prompt_cache": {
+            "mode": 1,
+            "enabled": true,
+            "cap_mb": 110,
+            "bitwise_identical_to_cold": true
+          }
+        },
+        "gateway": {
+          "http_status": 200,
+          "draining": false,
+          "active_requests": 0,
+          "queued_requests": 0,
+          "context": 262144,
+          "status": "ok"
+        },
+        "memory": {
+          "free_gib": 24.418,
+          "commit_headroom_gib": 111.907,
+          "runtime_guard_floor_gib": 18,
+          "above_runtime_floor": true,
+          "cold_start_floor_met": false
+        },
+        "bot_latest_end_ack": true
+      }
+    ],
+    "new_listener_pid": 29316,
+    "new_launcher_pid": 31352,
+    "new_created": 1791963127.4953847,
+    "after_health": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "protected_processes_unchanged": true,
+    "protected_pids": {
+      "8731": 12368,
+      "8840": 28968,
+      "8850": 19372,
+      "8853": 19372,
+      "8860": 3704,
+      "8861": 15436,
+      "8862": 5572,
+      "8863": 20168
+    },
+    "config_unchanged": true,
+    "active_source_sha256": "6c77c7c3b36df36d2cec72622e52aa4463f91725712809e0c5fde0cb2c5a4dab",
+    "completed_utc": "2026-10-14T07:32:08.098568+00:00"
+  },
+  "session_allocated_or_inference_sent": false,
+  "method_source": "All events in this receipt matched the single bodyless POST control request ID.",
+  "local_linux_verification": {
+    "test_count": 67,
+    "passed": true
+  },
+  "independent_review": {
+    "reviewed_source_sha256": "6c77c7c3b36df36d2cec72622e52aa4463f91725712809e0c5fde0cb2c5a4dab",
+    "tests_passed": 67,
+    "result": "GO"
+  },
+  "change_scope": "Logging only for webrtc_other POST; fixed path/header/credential syntax enums. No authentication, body, response, protocol or route changes."
+}

@@ -51,10 +51,10 @@ class GatewayVoiceDiagnosticTests(unittest.IsolatedAsyncioTestCase):
             self.assertIn(key + '=' + value, starts[0])
         self.assertIn('status=' + str(status), ends[0])
         joined = '\n'.join(output)
-        for forbidden in (SECRET, KEY, SIGNAL, EXPECTED_ORIGIN, 'auth_token',
+        for forbidden in (SECRET, KEY, SIGNAL, EXPECTED_ORIGIN, 'auth_token=',
                           'Authorization', 'Bearer', 'x-api-key', '127.0.0.1'):
             self.assertNotIn(forbidden, joined)
-        self.assertLess(len(starts[0]), 270)
+        self.assertLess(len(starts[0]), 500 if 'path_shape=' in starts[0] else 270)
         self.assertLess(len(ends[0]), 140)
 
     async def fetch(self, method, path, **kwargs):
@@ -201,6 +201,108 @@ class GatewayVoiceDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         self.assertIs(raised.exception, failure)
         self.assert_diagnostics(logs.output, route='root_signaling', method='GET', origin='missing',
                                 credentials='none', upgrade='missing', status=0)
+
+    async def test_observed_webrtc_post_emits_only_allowlisted_static_auth_ticket_shape(self):
+        with self.assertLogs('alloy.gateway', level='INFO') as logs:
+            status, _, _ = await self.fetch('POST', '/api/webrtc/auth/ticket',
+                params={'auth_token':SECRET}, headers={'Authorization':'Bearer ' + SECRET}, data=SECRET)
+        self.assertEqual(status, 401)
+        self.assert_diagnostics(logs.output, route='webrtc_other', method='POST', origin='missing',
+                                credentials='both', upgrade='missing', status=401)
+        start = next(line for line in logs.output if 'Gateway voice HTTP request ' in line)
+        self.assertIn('path_shape=api/webrtc/auth/ticket', start)
+        self.assertIn('segments=4', start)
+
+    async def test_private_names_identifiers_and_numbers_are_replaced_by_other(self):
+        private = 'PRIVATE-PERSON-NAME'
+        identifier = '12ab' * 8
+        with self.assertLogs('alloy.gateway', level='INFO') as logs:
+            status, _, _ = await self.fetch('POST', '/webrtc/auth_token/' + private + '/123/' + identifier,
+                params={'private_parameter':SECRET}, data=SECRET)
+        self.assertEqual(status, 401)
+        self.assert_diagnostics(logs.output, route='webrtc_other', method='POST', origin='missing',
+                                credentials='none', upgrade='missing', status=401)
+        start = next(line for line in logs.output if 'Gateway voice HTTP request ' in line)
+        self.assertIn('path_shape=webrtc/auth_token/other/other/other', start)
+        self.assertIn('segments=5', start)
+        self.assertNotIn(private, '\n'.join(logs.output))
+        self.assertNotIn(identifier, '\n'.join(logs.output))
+        self.assertNotIn('/123/', '\n'.join(logs.output))
+
+    async def test_path_shape_has_eight_segment_limit_and_capped_segment_count(self):
+        path = '/webrtc/' + '/'.join(['agent_operator_mobile'] * 110) + '/' + SECRET
+        with self.assertLogs('alloy.gateway', level='INFO') as logs:
+            status, _, _ = await self.fetch('POST', path)
+        self.assertEqual(status, 401)
+        self.assert_diagnostics(logs.output, route='webrtc_other', method='POST', origin='missing',
+                                credentials='none', upgrade='missing', status=401)
+        start = next(line for line in logs.output if 'Gateway voice HTTP request ' in line)
+        shape = re.search(r'\bpath_shape=([a-z0-9_/-]+)\b', start)
+        self.assertIsNotNone(shape)
+        self.assertEqual(shape.group(1).split('/'), ['webrtc'] + ['agent_operator_mobile'] * 7)
+        self.assertIn('segments=99', start)
+
+    async def test_path_shape_is_added_only_to_observed_webrtc_other_post(self):
+        for method, path in [('GET','/webrtc/auth/ticket'), ('OPTIONS','/webrtc/auth/ticket'),
+                             ('POST','/api/voice/ticket'), ('POST',SIGNAL)]:
+            with self.assertLogs('alloy.gateway', level='INFO') as logs:
+                status, _, _ = await self.fetch(method, path)
+            self.assertEqual(status, 401)
+            self.assertNotIn('path_shape=', '\n'.join(logs.output))
+            self.assertNotIn('header_kind=', '\n'.join(logs.output))
+            self.assertNotIn('auth_shape=', '\n'.join(logs.output))
+
+    async def test_header_kind_and_auth_shape_are_fixed_presence_and_syntax_enums(self):
+        jwt = 'PRIVATE_JWT_HEADER.PRIVATE_JWT_PAYLOAD.PRIVATE_JWT_SIGNATURE'
+        cases = [({}, 'none', 'missing'),
+                 ({'Authorization':'Bearer ' + jwt}, 'authorization', 'bearer_jwt'),
+                 ({'Authorization':'Bearer ' + SECRET}, 'authorization', 'bearer_other'),
+                 ({'Authorization':'Basic ' + SECRET}, 'authorization', 'non_bearer'),
+                 ({'x-api-key':SECRET}, 'api_key', 'missing'),
+                 ({'Authorization':'Bearer ' + jwt, 'x-api-key':SECRET}, 'both', 'bearer_jwt')]
+        for headers, kind, shape in cases:
+            with self.assertLogs('alloy.gateway', level='INFO') as logs:
+                status, body, _ = await self.fetch('POST', '/api/webrtc/auth/ticket',
+                    headers=headers, params={'auth_token':SECRET}, data=SECRET)
+            self.assertEqual(status, 401)
+            self.assertEqual(__import__('json').loads(body), {'error':{'message':'Unauthorized'}})
+            start = next(line for line in logs.output if 'Gateway voice HTTP request ' in line)
+            self.assertIn('header_kind=' + kind, start)
+            self.assertIn('auth_shape=' + shape, start)
+            self.assertNotIn(jwt, '\n'.join(logs.output))
+            for value in jwt.split('.'): self.assertNotIn(value, '\n'.join(logs.output))
+            self.assert_diagnostics(logs.output, route='webrtc_other', method='POST', origin='missing',
+                credentials='query' if not headers else 'both', upgrade='missing', status=401)
+
+    async def test_bearer_shape_does_not_decode_claims_or_accept_malformed_jwt_syntax(self):
+        for value in ['a..c', '.b.c', 'a.b.', 'a.b.c.d', 'a.b.c!', 'a.b.c/private', SECRET]:
+            with self.assertLogs('alloy.gateway', level='INFO') as logs:
+                status, _, _ = await self.fetch('POST', '/webrtc/auth/ticket',
+                    headers={'Authorization':'Bearer ' + value})
+            self.assertEqual(status, 401)
+            self.assertTrue(any('auth_shape=bearer_other' in line for line in logs.output))
+            self.assertNotIn('auth_shape=bearer_jwt', '\n'.join(logs.output))
+
+    async def test_valid_gateway_key_still_has_unchanged_unknown_post_404(self):
+        with self.assertLogs('alloy.gateway', level='INFO') as logs:
+            status, body, _ = await self.fetch('POST', '/api/webrtc/auth/ticket',
+                headers={'Authorization':'Bearer ' + KEY})
+        self.assertEqual((status, body), (404, '404: Not Found'))
+        self.assertTrue(any('header_kind=authorization auth_shape=bearer_other' in line for line in logs.output))
+        self.assertEqual(self.inference_seen, [])
+
+    async def test_static_sdk_token_and_ice_names_are_normalized_without_echoing_unknown_segments(self):
+        for operation in ['jwt','jwt_token','get_jwt','get_token','generate_token','create_token',
+                          'agent_operator_token','get_auth_token','create_session','start_session',
+                          'ice_servers','get_ice_servers','get_jwt_token','offer','answer','create_room',
+                          'config','configuration','settings','service','services','bootstrap','handshake',
+                          'call','calls','init','initialize','capabilities','status','health']:
+            with self.assertLogs('alloy.gateway', level='INFO') as logs:
+                status, _, _ = await self.fetch('POST', '/webrtc/' + operation.upper() + '/' + SECRET)
+            self.assertEqual(status, 401)
+            self.assert_diagnostics(logs.output, route='webrtc_other', method='POST', origin='missing',
+                                    credentials='none', upgrade='missing', status=401)
+            self.assertTrue(any('path_shape=webrtc/' + operation + '/other' in line for line in logs.output))
 
 
 if __name__ == '__main__': unittest.main()

@@ -1,0 +1,259 @@
+{
+  "schema": 1,
+  "checked_utc": "2026-10-14T07:12:50.552891+00:00",
+  "host_local_clock": "2026-10-14T09:12:50.552891",
+  "reported_phone_attempt_utc": "2026-10-14T07:10:29Z",
+  "window_utc": {
+    "from": "2026-10-14T07:08:00Z",
+    "through": "2026-10-14T07:13:59Z"
+  },
+  "actually_checked_through_utc": "2026-10-14T07:12:50.552891+00:00",
+  "gateway_observed_requests": [
+    {
+      "timestamp_host_local": "2026-10-14 09:08:29,498",
+      "kind": "http_request",
+      "request": "8aff51c7b54c",
+      "route": "webrtc_other",
+      "method": "POST",
+      "origin": "missing",
+      "credentials": "header",
+      "upgrade": "missing"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:08:29,602",
+      "kind": "http_request",
+      "request": "1f71ea6a6bc7",
+      "route": "webrtc_other",
+      "method": "POST",
+      "origin": "missing",
+      "credentials": "header",
+      "upgrade": "missing"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:08:36,137",
+      "kind": "http_request",
+      "request": "b8173be89adc",
+      "route": "webrtc_other",
+      "method": "POST",
+      "origin": "missing",
+      "credentials": "header",
+      "upgrade": "missing"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:08:36,229",
+      "kind": "http_request",
+      "request": "1afc1cbf2ab5",
+      "route": "webrtc_other",
+      "method": "POST",
+      "origin": "missing",
+      "credentials": "header",
+      "upgrade": "missing"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:09:41,895",
+      "kind": "http_request",
+      "request": "77b2cf793088",
+      "route": "webrtc_other",
+      "method": "POST",
+      "origin": "missing",
+      "credentials": "header",
+      "upgrade": "missing"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:09:42,011",
+      "kind": "http_request",
+      "request": "f54c99bedf85",
+      "route": "webrtc_other",
+      "method": "POST",
+      "origin": "missing",
+      "credentials": "header",
+      "upgrade": "missing"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:10:14,851",
+      "kind": "http_request",
+      "request": "1a3b538a3b4f",
+      "route": "webrtc_other",
+      "method": "POST",
+      "origin": "missing",
+      "credentials": "header",
+      "upgrade": "missing"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:10:14,920",
+      "kind": "http_request",
+      "request": "c28e2e1d9c5c",
+      "route": "webrtc_other",
+      "method": "POST",
+      "origin": "missing",
+      "credentials": "header",
+      "upgrade": "missing"
+    }
+  ],
+  "gateway_statuses": [
+    {
+      "timestamp_host_local": "2026-10-14 09:08:29,498",
+      "kind": "http_result",
+      "request": "8aff51c7b54c",
+      "status": "401"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:08:29,602",
+      "kind": "http_result",
+      "request": "1f71ea6a6bc7",
+      "status": "401"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:08:36,138",
+      "kind": "http_result",
+      "request": "b8173be89adc",
+      "status": "401"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:08:36,229",
+      "kind": "http_result",
+      "request": "1afc1cbf2ab5",
+      "status": "401"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:09:41,895",
+      "kind": "http_result",
+      "request": "77b2cf793088",
+      "status": "401"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:09:42,011",
+      "kind": "http_result",
+      "request": "f54c99bedf85",
+      "status": "401"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:10:14,852",
+      "kind": "http_result",
+      "request": "1a3b538a3b4f",
+      "status": "401"
+    },
+    {
+      "timestamp_host_local": "2026-10-14 09:10:14,920",
+      "kind": "http_result",
+      "request": "c28e2e1d9c5c",
+      "status": "401"
+    }
+  ],
+  "native_observed_events": [],
+  "facts": {
+    "gateway_post_webrtc_other_count": 8,
+    "all_requests_origin_missing": true,
+    "all_requests_have_header_credentials": true,
+    "all_requests_have_no_websocket_upgrade": true,
+    "all_responses_401": true,
+    "native_sessions": 0,
+    "model_or_speech_request_generated": false
+  },
+  "health": {
+    "model": {
+      "http_status": 200,
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0,
+      "slots": 1,
+      "context": 262144,
+      "slot_ctx": 262144,
+      "kv_pool_positions": 262144,
+      "status": "ok",
+      "expected_model": true,
+      "version_matches": true,
+      "vision_enabled": true,
+      "prompt_cache": {
+        "mode": 1,
+        "enabled": true,
+        "cap_mb": 110,
+        "bitwise_identical_to_cold": true
+      }
+    },
+    "controller": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "gateway": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "bot": {
+      "http_status": 200
+    },
+    "native": {
+      "http_status": 200,
+      "nativeSessions": 0,
+      "status": "ok",
+      "auth_mode": "servicenow"
+    },
+    "asr": {
+      "http_status": 200,
+      "status": "ok"
+    },
+    "tts": {
+      "http_status": 200,
+      "expected_model": true
+    }
+  },
+  "memory": {
+    "free_gib": 24.54,
+    "commit_headroom_gib": 111.952,
+    "runtime_guard_floor_gib": 18,
+    "above_runtime_floor": true,
+    "cold_start_floor_met": false
+  },
+  "source_sha256": {
+    "native": "0b7c6705488b81e5e93f192154dbb670d3cfd1d70011282245398f54a9a5647d",
+    "gateway": "bf3a626e6832909fd867430fff50ac76aca7b19ee0fdcf81f6dc296777f180ce"
+  },
+  "listener_pids": [
+    {
+      "port": 8850,
+      "pid": 19372
+    },
+    {
+      "port": 8860,
+      "pid": 3704
+    },
+    {
+      "port": 8840,
+      "pid": 28968
+    },
+    {
+      "port": 8862,
+      "pid": 5572
+    },
+    {
+      "port": 8841,
+      "pid": 10140
+    },
+    {
+      "port": 8731,
+      "pid": 12368
+    },
+    {
+      "port": 8861,
+      "pid": 15436
+    },
+    {
+      "port": 8853,
+      "pid": 19372
+    },
+    {
+      "port": 8863,
+      "pid": 20168
+    }
+  ],
+  "interpretation": "Contemporaneous HTTP POST WebRTC bootstrap requests reached the root Gateway and were rejected by its unchanged API-key authentication. They are not the canonical Native GET/WebSocket route. Exact route and Android body contract remain unknown; Origin and token checks must not be relaxed without that contract.",
+  "service_code_config_process_or_voice_selection_changed": false,
+  "credentials_private_account_data_payloads_or_audio_output": false
+}
