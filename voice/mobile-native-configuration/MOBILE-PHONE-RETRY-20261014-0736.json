@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "checked_utc": "2026-10-14T05:38:15.241262+00:00",
+  "reported_phone_attempt": "Shortly before 2026-10-14 07:36:52 Europe/Berlin",
+  "native_log_window_machine_local": {
+    "from": "2026-10-14 07:34:00",
+    "through": "2026-10-14 07:38:00"
+  },
+  "native_log": {
+    "path": "voice/native-start/runtime/native.stderr.log",
+    "modified_utc": "2026-10-14T05:32:26.234559+00:00",
+    "size_bytes": 94187,
+    "http_request_events": 0,
+    "http_result_events": 0,
+    "admission_or_oauth_events": 0,
+    "ice_or_microphone_events": 0,
+    "last_activity_is_control_test": true
+  },
+  "native_health": {
+    "status": "ok",
+    "nativeSessions": 0,
+    "authMode": "servicenow"
+  },
+  "live_native_sha256": "0b7c6705488b81e5e93f192154dbb670d3cfd1d70011282245398f54a9a5647d",
+  "interpretation": {
+    "phone_attempt_reached_native_http_middleware": false,
+    "native_404_or_405_would_now_be_logged": true,
+    "confirmed_native_origin_jwt_or_capacity_rejection": false,
+    "confirmed_model_failure": false,
+    "not_excluded": [
+      "Mobile configuration or OAuth failure before opening the connection",
+      "Android DNS/TLS/SDK error before HTTP reaches the proxy target",
+      "Different or cached endpoint, including root path routing to the gateway instead of the native bridge"
+    ]
+  },
+  "changes_during_this_read": false,
+  "tokens_headers_private_accounts_or_audio_read": false
+}

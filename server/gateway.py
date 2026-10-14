@@ -15,6 +15,7 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 import re
 import time
+import uuid
 from urllib.parse import urlsplit
 import aiohttp
 from aiohttp import web
@@ -88,7 +89,7 @@ class Gateway:
         self.completed=0; self.cancelled=0; self.client=None
         self.last_healthy=0.0; self.probe_lock=asyncio.Lock()
         self.console_trace=ConsoleTrace(secrets=(secret,backend_secret)) if console_trace else None
-        self.app=web.Application(client_max_size=body_bytes,middlewares=[self.authenticate])
+        self.app=web.Application(client_max_size=body_bytes,middlewares=[self.diagnose_voice_route,self.authenticate])
         self.app.add_routes([web.get('/health',self.health),web.get('/v1/models',self.models)])
         for path in sorted(POST_ROUTES): self.app.router.add_post(path,self.inference)
         self.app.cleanup_ctx.append(self.session_context)
@@ -142,6 +143,47 @@ class Gateway:
                 # Reserve for the oldest waiter before letting new calls in.
                 self.active+=1
                 waiter.set_result(True)
+
+    @web.middleware
+    async def diagnose_voice_route(self, request, handler):
+        # Diagnose misplaced native voice handshakes without exposing OAuth
+        # URLs or changing Gateway authentication. Other traffic stays quiet.
+        if request.method not in {'GET','HEAD'}:
+            return await handler(request)
+        root='/webrtc/connect/agent_operator'
+        prefixed='/scc-native'+root
+        if request.path==root or request.path.startswith(root+'/'):
+            route='root_signaling'
+        elif request.path==prefixed or request.path.startswith(prefixed+'/'):
+            route='prefixed_signaling'
+        else:
+            return await handler(request)
+        origin_value=request.headers.get('Origin')
+        expected_origin='https://soprasteriaassvsdemo14.service-now.com'
+        origin='missing' if origin_value is None else ('expected' if origin_value==expected_origin else 'other')
+        query_credential='auth_token' in request.query
+        header_credential='Authorization' in request.headers or 'x-api-key' in request.headers
+        credentials=('both' if query_credential and header_credential else
+                     'query' if query_credential else 'header' if header_credential else 'none')
+        upgrade_value=request.headers.get('Upgrade')
+        upgrade='missing' if upgrade_value is None else ('websocket' if upgrade_value.lower()=='websocket' else 'other')
+        request_id=uuid.uuid4().hex[:12]
+        LOG.info('Gateway voice HTTP request request=%s route=%s method=%s origin=%s credentials=%s upgrade=%s',
+                 request_id,route,request.method,origin,credentials,upgrade)
+        status=0
+        try:
+            response=await handler(request)
+            value=getattr(response,'status',0)
+            status=value if type(value) is int and 100<=value<=599 else 0
+            return response
+        except web.HTTPException as error:
+            status=error.status
+            raise
+        except Exception:
+            status=500
+            raise
+        finally:
+            LOG.info('Gateway voice HTTP result request=%s status=%d',request_id,status)
 
     @web.middleware
     async def authenticate(self, request, handler):
