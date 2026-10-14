@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "status": "fresh_actual_mobile_route_correct_hr_feed_scope_error_identified_voice_connection_unresolved",
+  "reported_at_berlin": "2026-10-14 08:17:39+02:00",
+  "query_utc_window": ["2026-10-14 06:10:00", "2026-10-14 06:19:00"],
+  "route_transaction_history": "303c0e2393bfcb105c8132d47aba10a0",
+  "error_class_and_mapping_history": "367cce6393bfcb105c8132d47aba10fe",
+  "static_error_history": "7cac8aa393bfcb105c8132d47aba100c",
+  "static_caller_metadata_history": "42ec42e393bfcb105c8132d47aba10bc",
+  "mobile_app_version_extracted_from_ua_only": "22.2.0",
+  "route_log_count": 20,
+  "all_route_values": {"route": "local", "approved_service": true, "admin": true, "enabled": true, "endpoint_matches": true},
+  "route_times_utc": ["06:12:49", "06:12:51", "06:16:46", "06:16:55", "06:16:56", "06:17:02", "06:17:03", "06:17:38", "06:17:55"],
+  "latest_user_client_requests": [
+    {"utc": "06:16:56", "path": "/api/now/v2/sg/user_client", "response_ms": 1015},
+    {"utc": "06:17:03", "path": "/api/now/v2/sg/user_client", "response_ms": 900},
+    {"utc": "06:17:38", "path": "/api/now/v2/sg/user_client", "response_ms": 948}
+  ],
+  "latest_properties_requests": [
+    {"utc": "06:16:46", "path": "/api/now/sg/properties", "response_ms": 676},
+    {"utc": "06:16:55", "path": "/api/now/sg/properties", "response_ms": 260},
+    {"utc": "06:17:02", "path": "/api/now/sg/properties", "response_ms": 277},
+    {"utc": "06:17:55", "path": "/api/now/sg/properties", "response_ms": 242}
+  ],
+  "voice_and_oauth_transactions_observed": 0,
+  "visible_tile": {
+    "id": "27493ac493ca8350e7f2b9fa6aba1014",
+    "name": "SCC Laptop Voice",
+    "mod_count": 1,
+    "function": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "active_function_mapping_count": 1,
+    "active_mapping": "3351561b933f8754e7f2b9fa6aba10c4",
+    "assistant": "8aa131d793f787105c8132d47aba1095",
+    "assistant_active": true,
+    "assistant_type": "voice"
+  },
+  "scope_error": {
+    "class": "com.glide.script.fencing.access.ScopeAccessNotGrantedException",
+    "denied_operation": "read",
+    "target_table": "sn_doc_task",
+    "target_label": "Document Task",
+    "target_scope": "Document Templates",
+    "caller_scope": "Human Resources: Core",
+    "caller_scope_id": "d4ac3fff5b311200a4656ede91f91af2",
+    "origin_mobile_filter": "hr_caseOpenRequestFilterMobile",
+    "origin_mobile_filter_id": "09be2a6c733323005788e1e54cf6a7d4",
+    "core_open_requests_filter": "hr_caseOpenRequestFilterUtil",
+    "core_open_requests_filter_id": "e6da4c92730123004a1f3ae234f6a7bd",
+    "denied_caller": "hr_caseMyRequestFilterUtil",
+    "denied_caller_id": "124f8426738123004a1f3ae234f6a723",
+    "denied_source_line": 72,
+    "denied_source_action": "grTask.query()",
+    "source_constructs_record_at_line": 50,
+    "scope_error_utc_times": ["06:12:51", "06:16:57", "06:17:04", "06:17:40"],
+    "causal_relationship_to_voice_failure_proven": false,
+    "interpretation": "Error occurs while HR My requests feed filters query Document Tasks after Mobile launcher refresh. It is a server metadata/feed defect; no current evidence proves it is the Voice WebSocket failure."
+  },
+  "http_status_acl_bypassed": false,
+  "private_user_or_role_records_read": false,
+  "hr_document_records_read": false,
+  "mutations_or_scope_grants_performed": false
+}

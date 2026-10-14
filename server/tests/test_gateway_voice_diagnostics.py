@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from gateway import Backend, Gateway
 
 KEY = 'fixture-voice-diagnostic-key-at-least-32-characters'
-SECRET = 'DO-NOT-LOG-sensitive-value-voice-XYZ'
+SECRET = 'DO-NOT-LOG-sensitive-value-XYZ'
 EXPECTED_ORIGIN = 'https://soprasteriaassvsdemo14.service-now.com'
 SIGNAL = '/webrtc/connect/agent_operator'
 
@@ -111,17 +111,55 @@ class GatewayVoiceDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         self.assert_diagnostics(logs.output, route='root_signaling', method='GET', origin='missing',
                                 credentials='header', upgrade='missing', status=404)
 
-    async def test_non_voice_and_near_prefix_requests_remain_quiet(self):
+    async def test_known_health_models_and_inference_routes_remain_quiet(self):
         with self.assertNoLogs('alloy.gateway', level='INFO'):
-            for path in ['/health', '/v1/models', '/private-' + SECRET, SIGNAL + '_not-a-child']:
+            for path in ['/health', '/v1/models', '/v1/chat/completions']:
                 status, _, _ = await self.fetch('GET', path, params={'auth_token':SECRET})
                 self.assertEqual(status, 401)
 
-    async def test_non_get_or_head_voice_requests_remain_quiet_and_unauthorized(self):
-        with self.assertNoLogs('alloy.gateway', level='INFO'):
-            for method in ['POST', 'OPTIONS', 'PUT']:
-                status, _, _ = await self.fetch(method, SIGNAL, data=SECRET)
-                self.assertEqual(status, 401)
+    async def test_post_options_and_other_method_voice_requests_are_visible_and_unauthorized(self):
+        for method in ['POST', 'OPTIONS', 'PUT']:
+            with self.assertLogs('alloy.gateway', level='INFO') as logs:
+                status, body, _ = await self.fetch(method, SIGNAL, data=SECRET)
+            self.assertEqual(status, 401)
+            self.assertEqual(__import__('json').loads(body), {'error':{'message':'Unauthorized'}})
+            self.assert_diagnostics(logs.output, route='root_signaling', method=method if method!='PUT' else 'OTHER',
+                                    origin='missing', credentials='none', upgrade='missing', status=401)
+
+    async def test_unknown_get_is_visible_without_echoing_any_bootstrap_path_or_query(self):
+        with self.assertLogs('alloy.gateway', level='INFO') as logs:
+            status, body, _ = await self.fetch('GET', '/unknown-' + SECRET,
+                params={'auth_token':SECRET}, headers={'Origin':EXPECTED_ORIGIN})
+        self.assertEqual(status, 401)
+        self.assertEqual(__import__('json').loads(body), {'error':{'message':'Unauthorized'}})
+        self.assert_diagnostics(logs.output, route='other', method='GET', origin='expected',
+                                credentials='query', upgrade='missing', status=401)
+
+    async def test_unknown_post_is_visible_without_echoing_body_or_bootstrap_path(self):
+        with self.assertLogs('alloy.gateway', level='INFO') as logs:
+            status, body, _ = await self.fetch('POST', '/unknown-' + SECRET, data=SECRET,
+                headers={'Authorization':'Bearer ' + SECRET})
+        self.assertEqual(status, 401)
+        self.assertEqual(__import__('json').loads(body), {'error':{'message':'Unauthorized'}})
+        self.assertEqual(self.inference_seen, [])
+        self.assert_diagnostics(logs.output, route='other', method='POST', origin='missing',
+                                credentials='header', upgrade='missing', status=401)
+
+    async def test_other_webrtc_and_voice_bootstrap_paths_receive_only_fixed_route_classes(self):
+        for path, route in [('/api/WebRTC/' + SECRET, 'webrtc_other'),
+                            ('/api/Voice/' + SECRET, 'voice_other')]:
+            with self.assertLogs('alloy.gateway', level='INFO') as logs:
+                status, _, _ = await self.fetch('POST', path, data=SECRET)
+            self.assertEqual(status, 401)
+            self.assert_diagnostics(logs.output, route=route, method='POST', origin='missing',
+                                    credentials='none', upgrade='missing', status=401)
+
+    async def test_signaling_like_suffix_has_no_raw_path_in_diagnostics(self):
+        with self.assertLogs('alloy.gateway', level='INFO') as logs:
+            status, _, _ = await self.fetch('GET', SIGNAL + '_not-a-child', params={'auth_token':SECRET})
+        self.assertEqual(status, 401)
+        self.assert_diagnostics(logs.output, route='webrtc_other', method='GET', origin='missing',
+                                credentials='query', upgrade='missing', status=401)
 
     async def test_authenticated_health_retains_existing_response_without_diagnostics(self):
         with self.assertNoLogs('alloy.gateway', level='INFO'):

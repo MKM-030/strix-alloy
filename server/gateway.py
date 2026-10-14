@@ -146,9 +146,9 @@ class Gateway:
 
     @web.middleware
     async def diagnose_voice_route(self, request, handler):
-        # Diagnose misplaced native voice handshakes without exposing OAuth
-        # URLs or changing Gateway authentication. Other traffic stays quiet.
-        if request.method not in {'GET','HEAD'}:
+        # Diagnose unexpected handshakes and SDK bootstrap traffic without
+        # exposing URLs or changing auth. Known model/status traffic stays quiet.
+        if request.path in {'/health','/v1/models'} or request.path in POST_ROUTES:
             return await handler(request)
         root='/webrtc/connect/agent_operator'
         prefixed='/scc-native'+root
@@ -156,8 +156,13 @@ class Gateway:
             route='root_signaling'
         elif request.path==prefixed or request.path.startswith(prefixed+'/'):
             route='prefixed_signaling'
+        elif 'webrtc' in request.path.lower():
+            route='webrtc_other'
+        elif 'voice' in request.path.lower():
+            route='voice_other'
         else:
-            return await handler(request)
+            route='other'
+        method=request.method if request.method in {'GET','HEAD','POST','OPTIONS'} else 'OTHER'
         origin_value=request.headers.get('Origin')
         expected_origin='https://soprasteriaassvsdemo14.service-now.com'
         origin='missing' if origin_value is None else ('expected' if origin_value==expected_origin else 'other')
@@ -169,7 +174,7 @@ class Gateway:
         upgrade='missing' if upgrade_value is None else ('websocket' if upgrade_value.lower()=='websocket' else 'other')
         request_id=uuid.uuid4().hex[:12]
         LOG.info('Gateway voice HTTP request request=%s route=%s method=%s origin=%s credentials=%s upgrade=%s',
-                 request_id,route,request.method,origin,credentials,upgrade)
+                 request_id,route,method,origin,credentials,upgrade)
         status=0
         try:
             response=await handler(request)
