@@ -1,0 +1,31 @@
+{
+  "synthetic_tokens": {
+    "opaque": "fixture-oauth-opaque_A1.~+/=",
+    "jwt": "eyJhbGciOiJub25lIn0.eyJzdWIiOiJ1bnRydXN0ZWQtZml4dHVyZSJ9."
+  },
+  "authorized": {"result": ["a6337ddf93f787105c8132d47aba1058"]},
+  "malformed_authorization_responses": [
+    [],
+    ["a6337ddf93f787105c8132d47aba1058"],
+    {"result": []},
+    {"result": [null]},
+    {"result": ["bad"]},
+    {"result": ["00000000000000000000000000000000"]},
+    {"result": ["a6337ddf93f787105c8132d47aba1058"], "error": "fixture-denial"},
+    {"result": {"authorized": true}}
+  ],
+  "invalid_request_bodies": [
+    "{}",
+    "[]",
+    "null",
+    "{\"agent_id\":null}",
+    "{\"agent_id\":1}",
+    "{\"agent_id\":true}",
+    "{\"agent_id\":[]}",
+    "{\"agent_id\":\"\"}",
+    "{\"agent_id\":\"a6337ddf93f787105c8132d47aba1058\",\"clientApp\":\"admin_test\"}",
+    "{\"agent_id\":\"a6337ddf93f787105c8132d47aba1058\",\"agent_id\":\"a6337ddf93f787105c8132d47aba1058\"}",
+    "{\"agent_id\":\"a6337ddf93f787105c8132d47aba1058\"} trailing",
+    "{\"agent_id\":NaN}"
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "status": "inactive_candidate_only",
+  "utc": "2026-10-14T20:03:49.728404+00:00",
+  "windows_stage": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-bridge\\runtime\\sdk-session-admission-20261014",
+  "python": "3.12.10",
+  "aiohttp": "3.14.5",
+  "tests": {
+    "initial_red": {
+      "test_count": 39,
+      "failures": 39,
+      "errors": 0,
+      "seconds": 0.053,
+      "exit_code": 1,
+      "log": "RED-TESTS-WINDOWS.log"
+    },
+    "hardening_red": {
+      "test_count": 39,
+      "failures": 11,
+      "errors": 0,
+      "seconds": 0.112,
+      "exit_code": 1,
+      "log": "RED-HARDENING-TESTS-WINDOWS.log"
+    },
+    "review_red": {
+      "test_count": 39,
+      "failures": 4,
+      "errors": 0,
+      "seconds": 0.114,
+      "exit_code": 1,
+      "log": "RED-REVIEW-TESTS-WINDOWS.log"
+    },
+    "final_green": {
+      "test_count": 39,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 0.098,
+      "exit_code": 0,
+      "log": "GREEN-TESTS-WINDOWS.log"
+    }
+  },
+  "py_compile_exit": 0,
+  "synthetic_tokens_only": true,
+  "real_platform_requests": 0,
+  "route_registered": false,
+  "sdk_success_response_implemented": false,
+  "session_transport_implemented": false,
+  "production_activation": false,
+  "live_native_sha256_before": "f7cb39ef09da63b5484308be52ca33985bb4005645f668030c8896c37821475d",
+  "live_native_sha256_after": "f7cb39ef09da63b5484308be52ca33985bb4005645f668030c8896c37821475d",
+  "live_core_sha256_before": "54bcef0d4de5d8bcc1fc37f2dfe194741fa55f7185a318bffe2fbf7ed48626e8",
+  "live_core_sha256_after": "54bcef0d4de5d8bcc1fc37f2dfe194741fa55f7185a318bffe2fbf7ed48626e8",
+  "source_and_readme_files": 7,
+  "test_logs": 4,
+  "manifested_files_excluding_validation_and_bytecode": 11,
+  "file_manifest": [
+    {
+      "file": "core.py",
+      "bytes": 3411,
+      "sha256": "54bcef0d4de5d8bcc1fc37f2dfe194741fa55f7185a318bffe2fbf7ed48626e8"
+    },
+    {
+      "file": "fixtures.json",
+      "bytes": 1039,
+      "sha256": "d4b0ea00fe32af093d43e6b3114a337a3f9850d41620fd9d09aa4f8fdec1ed39"
+    },
+    {
+      "file": "GREEN-TESTS-WINDOWS.log",
+      "bytes": 12066,
+      "sha256": "de2285269bf7e62d8a4e9b82060af9884f56345caaeef8113492e70b9c409cf6"
+    },
+    {
+      "file": "README.md",
+      "bytes": 3207,
+      "sha256": "1f0b82b790d9e19488d976a6e610d84d1fcbd8f7170797ca209597f4e70577a4"
+    },
+    {
+      "file": "RED-HARDENING-TESTS-WINDOWS.log",
+      "bytes": 39180,
+      "sha256": "3824eb9a14f425470355cb84256a882aa3d455cfbfef24047b342eab0f1fc5bc"
+    },
+    {
+      "file": "RED-REVIEW-TESTS-WINDOWS.log",
+      "bytes": 22368,
+      "sha256": "e6cff4a63b4276dc010004ab49dd58360eba8db4ef0c35ad42cef71688d57910"
+    },
+    {
+      "file": "RED-TESTS-WINDOWS.log",
+      "bytes": 61774,
+      "sha256": "1a5a2294036496fb4e465b1a81d39c8fbdcf878a3b653da9064cea59e01ee9f9"
+    },
+    {
+      "file": "sdk_admission.py",
+      "bytes": 8320,
+      "sha256": "a99d0bac515b26c4a492e0bb073cfb73ed6a2f15172c732359139b364ec09d9a"
+    },
+    {
+      "file": "sdk_admission_policy.py",
+      "bytes": 608,
+      "sha256": "47fdc31b307b7fbc6b4ab02ca878415a4feed3e36056f0a23a7c744f3f9762d1"
+    },
+    {
+      "file": "seal_validation.py",
+      "bytes": 3235,
+      "sha256": "ce9e43a8c6ebee460aeeaea6229bc4d36045cb5545babb6db7c64ab815724e2b"
+    },
+    {
+      "file": "test_sdk_admission.py",
+      "bytes": 16293,
+      "sha256": "0bef656c06d3f01dd03fc1032f783386fe7caa0af36aa3c5be3debf8d0197dbe"
+    }
+  ],
+  "review": {
+    "independent_read_only_review": true,
+    "no_authorization_bypass_found": true,
+    "resolved": [
+      "Request identity encoding instead of aiohttp compression default",
+      "Reject additional recognized competing auth headers"
+    ],
+    "integration_prerequisites": [
+      "Enforce POST /api/webrtc/sessions in future adapter",
+      "Bound complete still-encoded body while reading",
+      "Obtain actual SDK wire success contract before transport implementation"
+    ]
+  }
+}
