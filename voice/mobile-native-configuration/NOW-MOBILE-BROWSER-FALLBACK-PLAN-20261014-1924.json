@@ -1,0 +1,242 @@
+{
+  "schema": 1,
+  "status": "reviewable_plan_not_applied",
+  "observed_utc": "2026-10-14T17:24:02Z",
+  "instance": "soprasteriaassvsdemo14.service-now.com",
+  "read_only_service_now_investigation": true,
+  "approved_route": "https://strix-alloy.tail7f425a.ts.net/scc-native/launch",
+  "preconditions": [
+    "Root must verify approved public launch route is active before updating links.",
+    "Use normal application UI in each record application scope; destination274 belongs to Now Mobile, not Global.",
+    "Compare exact listed baseline values and sys_mod_count immediately before each update.",
+    "Abort on missing fields, changed scopes/packages or failed normal canRead/canWrite checks.",
+    "Do not set nonexistent fields or change scope, package, permissions, native functions or deployment channels."
+  ],
+  "records": [
+    {
+      "table": "sys_sg_button",
+      "id": "b0e217cf93b78354e7f2b9fa6aba1028",
+      "required_application_scope": {
+        "id": "global",
+        "name": "Global"
+      },
+      "sys_package": "global",
+      "expected_before_mod_count": 0,
+      "record_can_write_observed": true,
+      "fields": {
+        "link_url": {
+          "exists": true,
+          "can_read": true,
+          "can_write": true,
+          "before": "https://strix-alloy.tail7f425a.ts.net/scc-demo/",
+          "after": "https://strix-alloy.tail7f425a.ts.net/scc-native/launch"
+        }
+      },
+      "before_rollback_values": {
+        "link_url": "https://strix-alloy.tail7f425a.ts.net/scc-demo/"
+      },
+      "preserve": {
+        "name": "SCC Laptop Voice",
+        "description": "SCC ITSM Laptop-Demo mit eigenem Sprachclient. Separater geschützter HTTPS-Zugang.",
+        "link_label": "",
+        "external_browser": "1",
+        "relative_url": "0",
+        "type": "url",
+        "context": "global"
+      }
+    },
+    {
+      "table": "sys_sg_navigation_section_destination_button",
+      "id": "27493ac493ca8350e7f2b9fa6aba1014",
+      "required_application_scope": {
+        "id": "5cfbdaac77eb2300454792718a106157",
+        "name": "Now Mobile"
+      },
+      "sys_package": "5cfbdaac77eb2300454792718a106157",
+      "expected_before_mod_count": 1,
+      "record_can_write_observed": true,
+      "fields": {
+        "name": {
+          "exists": true,
+          "can_read": true,
+          "can_write": true,
+          "before": "SCC Laptop Voice",
+          "after": "SCC Sprachdemo"
+        },
+        "button": {
+          "exists": true,
+          "can_read": true,
+          "can_write": true,
+          "before": "79e86e8493c68350e7f2b9fa6aba10fe",
+          "after": "b0e217cf93b78354e7f2b9fa6aba1028"
+        }
+      },
+      "before_rollback_values": {
+        "name": "SCC Laptop Voice",
+        "button": "79e86e8493c68350e7f2b9fa6aba10fe"
+      },
+      "preserve": {
+        "icon": "1a2dc3c88cb57110f877a2792c99a032"
+      }
+    },
+    {
+      "table": "sys_sg_button_instance",
+      "id": "74e2df0393f78354e7f2b9fa6aba1000",
+      "required_application_scope": {
+        "id": "global",
+        "name": "Global"
+      },
+      "sys_package": "global",
+      "expected_before_mod_count": 2,
+      "record_can_write_observed": true,
+      "fields": {
+        "button": {
+          "exists": true,
+          "can_read": true,
+          "can_write": true,
+          "before": "79e86e8493c68350e7f2b9fa6aba10fe",
+          "after": "b0e217cf93b78354e7f2b9fa6aba1028"
+        },
+        "label": {
+          "exists": true,
+          "can_read": true,
+          "can_write": true,
+          "before": "Voice Agent",
+          "after": "SCC Sprachdemo"
+        },
+        "description": {
+          "exists": true,
+          "can_read": true,
+          "can_write": true,
+          "before": "Nativer SCC-Sprachassistent: Laptop mit der ausgewählten eigenen Stimme bestellen.",
+          "after": "Öffnet die Sprachdemo im externen Browser."
+        }
+      },
+      "before_rollback_values": {
+        "button": "79e86e8493c68350e7f2b9fa6aba10fe",
+        "label": "Voice Agent",
+        "description": "Nativer SCC-Sprachassistent: Laptop mit der ausgewählten eigenen Stimme bestellen."
+      },
+      "preserve": {
+        "name": "SCC Laptop Voice",
+        "active": "1",
+        "location": "quick_action",
+        "parent_table": "sys_sg_applet_launcher",
+        "parent": "ad7cc08177a72300454792718a1061ab",
+        "order": "20",
+        "icon": "872456f9c3a71010ee318df1a840dd13"
+      }
+    }
+  ],
+  "nonexistent_fields_must_not_be_written": {
+    "sys_sg_button_b0": [
+      "take_from_field",
+      "button",
+      "label",
+      "active"
+    ],
+    "sys_sg_navigation_section_destination_button_274": [
+      "label",
+      "description",
+      "active",
+      "link_url",
+      "link_label",
+      "external_browser"
+    ],
+    "sys_sg_button_instance_74e": [
+      "link_url",
+      "link_label",
+      "external_browser"
+    ]
+  },
+  "exact_visible_quick_links_chain": {
+    "homepage": "ad7cc08177a72300454792718a1061ab",
+    "homepage_section_map": {
+      "table": "sys_sg_applet_launcher_m2m_section",
+      "id": "fb76c5aa770501108f64b2487b5a9967",
+      "applet_launcher": "ad7cc08177a72300454792718a1061ab",
+      "section": "57f8fce6778101108f64b2487b5a995f",
+      "order": "2",
+      "mod_count": 0
+    },
+    "section": {
+      "table": "sys_sg_navigation_section",
+      "id": "57f8fce6778101108f64b2487b5a995f",
+      "title": "Quick links",
+      "active": true
+    },
+    "section_destination_map": {
+      "table": "sys_sg_navigation_section_m2m_destination",
+      "id": "e3493ac493ca8350e7f2b9fa6aba101b",
+      "navigation_section": "57f8fce6778101108f64b2487b5a995f",
+      "navigation_section_destination": "27493ac493ca8350e7f2b9fa6aba1014",
+      "mod_count": 0
+    }
+  },
+  "separate_quick_action_map": {
+    "table": "sys_sg_alp_quick_action_map",
+    "id": "78e2df0393f78354e7f2b9fa6aba1003",
+    "quick_action_button": "74e2df0393f78354e7f2b9fa6aba1000",
+    "applet_launcher": "ad7cc08177a72300454792718a1061ab",
+    "order": "20",
+    "mod_count": 0
+  },
+  "preserve_native": {
+    "function": {
+      "id": "79e86e8493c68350e7f2b9fa6aba10fe",
+      "type": "voice_launcher",
+      "context": "global",
+      "name": "AI Voice Agent"
+    },
+    "assistant": "8aa131d793f787105c8132d47aba1095",
+    "active_channels": [
+      {
+        "id": "3351561b933f8754e7f2b9fa6aba10c4",
+        "document_table": "sys_sg_button",
+        "document_id": "79e86e8493c68350e7f2b9fa6aba10fe",
+        "active": true
+      },
+      {
+        "id": "8d1eaf5393334b105c8132d47aba10e8",
+        "document_table": "sys_sg_navigation_tab",
+        "document_id": "b3728c0187403300e0ef0cf888cb0bee",
+        "active": true
+      }
+    ]
+  },
+  "external_browser_dictionary": {
+    "table": "sys_sg_button",
+    "element": "external_browser",
+    "label": "Open In External Browser",
+    "type": "boolean",
+    "default_value": "false",
+    "current_b0_value": "1",
+    "relative_url_current_b0": "0",
+    "url_ui_policy_action_visibility": "true"
+  },
+  "rollback": {
+    "method": "Use same normal UI and exact scopes; restore only before_rollback_values after checking current fields equal reviewed after values.",
+    "required_post_apply_receipt": [
+      "actual verified changed fields",
+      "actual sys_mod_count after each record save",
+      "unchanged scopes/packages/icons/maps/native channels"
+    ],
+    "no_assumed_post_apply_mod_count": true
+  },
+  "acceptance_pending": [
+    "Real Now Mobile metadata refresh shows SCC Sprachdemo under Quick links.",
+    "Tapping opens device default browser on approved funnel launch URL, redirecting to ServiceNow voice test.",
+    "Normal browser ServiceNow authentication and microphone permission succeed.",
+    "German greeting and continuing laptop conversation work with selected voice."
+  ],
+  "histories": {
+    "external_field": "53a220779373cf105c8132d47aba10cd",
+    "external_constraints": "2c13e8b79373cf105c8132d47aba1002",
+    "visible_destination_schema": "c993283b9373cf105c8132d47aba1020",
+    "quick_action_map": "97d3e87b9373cf105c8132d47aba10ee",
+    "native_preserve_and_map_reference": "7214e4bb9373cf105c8132d47aba1016",
+    "final_guard_snapshot": "8a6420fb9373cf105c8132d47aba10a4"
+  },
+  "credential_private_account_role_or_audio_values_saved": false,
+  "service_now_mutations_by_this_agent": false
+}

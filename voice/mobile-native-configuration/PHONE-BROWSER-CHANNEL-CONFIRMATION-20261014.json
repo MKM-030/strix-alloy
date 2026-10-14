@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "source_latest_log_event_utc": "2026-10-14T17:56:16.543Z",
+  "read_only": true,
+  "source": "Native runtime logs converted from Windows local log time to UTC",
+  "user_reported_phone_browser_voice_channel_works": true,
+  "native_mobile_sdk_success_claimed": false,
+  "latest_call": {
+    "signaling_upgrade_status": 101,
+    "signaling_utc": "2026-10-14T17:54:53.425Z",
+    "ice_state_at_track_end": "completed",
+    "connection_state_at_track_end": "connected",
+    "asr_completed": 5,
+    "asr_empty": 0,
+    "asr_seconds": [
+      0.234,
+      1.75,
+      0.328,
+      0.437,
+      0.281
+    ],
+    "reply_pipeline_completed": 2,
+    "reply_pipeline_seconds": [
+      28.05,
+      28.73
+    ],
+    "text_queue_full_events": 1,
+    "track_end_utc": "2026-10-14T17:56:16.355Z",
+    "track_end_cause_not_proven": "A track ending while ICE and connection are established does not by itself prove a network failure; caller hangup is possible."
+  },
+  "limits": [
+    "No independent identification of the physical caller from these logs.",
+    "No full laptop order acceptance claimed.",
+    "Native Mobile SDK bootstrap was bypassed by URL function.",
+    "Reply pipeline includes backend orchestration and speech generation; this does not isolate model vs ServiceNow vs TTS time."
+  ],
+  "no_credentials_ips_caller_ids_audio_or_transcripts_saved": true
+}
