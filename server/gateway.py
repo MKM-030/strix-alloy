@@ -15,7 +15,6 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 import re
 import time
-import uuid
 from urllib.parse import urlsplit
 import aiohttp
 from aiohttp import web
@@ -26,13 +25,6 @@ CONSOLE_TRACE_KEY=web.RequestKey('console_trace',RequestTrace)
 POST_ROUTES={'/v1/chat/completions','/v1/completions','/v1/responses',
              '/v1/messages','/v1/messages/count_tokens','/v1/embeddings',
              '/v1/rerank','/v1/reranking'}
-VOICE_DIAGNOSTIC_SEGMENTS=frozenset({'webrtc','auth','token','auth_token','authenticate','authorize',
-    'connect','agent_operator','agent_operator_mobile','get_jwt_token','offer','answer','create_room',
-    'create','room','rooms','session','sessions','mobile','start','signaling','signalling','api','v1',
-    'scc-native','jwt','jwt_token','get_jwt','get_token','generate_token','create_token',
-    'agent_operator_token','get_auth_token','create_session','start_session','ice_servers',
-    'get_ice_servers','ticket','config','configuration','settings','service','services',
-    'bootstrap','handshake','call','calls','init','initialize','capabilities','status','health'})
 
 @dataclass(frozen=True)
 class Backend:
@@ -96,7 +88,7 @@ class Gateway:
         self.completed=0; self.cancelled=0; self.client=None
         self.last_healthy=0.0; self.probe_lock=asyncio.Lock()
         self.console_trace=ConsoleTrace(secrets=(secret,backend_secret)) if console_trace else None
-        self.app=web.Application(client_max_size=body_bytes,middlewares=[self.diagnose_voice_route,self.authenticate])
+        self.app=web.Application(client_max_size=body_bytes,middlewares=[self.authenticate])
         self.app.add_routes([web.get('/health',self.health),web.get('/v1/models',self.models)])
         for path in sorted(POST_ROUTES): self.app.router.add_post(path,self.inference)
         self.app.cleanup_ctx.append(self.session_context)
@@ -150,67 +142,6 @@ class Gateway:
                 # Reserve for the oldest waiter before letting new calls in.
                 self.active+=1
                 waiter.set_result(True)
-
-    @web.middleware
-    async def diagnose_voice_route(self, request, handler):
-        # Diagnose unexpected handshakes and SDK bootstrap traffic without
-        # exposing URLs or changing auth. Known model/status traffic stays quiet.
-        if request.path in {'/health','/v1/models'} or request.path in POST_ROUTES:
-            return await handler(request)
-        root='/webrtc/connect/agent_operator'
-        prefixed='/scc-native'+root
-        if request.path==root or request.path.startswith(root+'/'):
-            route='root_signaling'
-        elif request.path==prefixed or request.path.startswith(prefixed+'/'):
-            route='prefixed_signaling'
-        elif 'webrtc' in request.path.lower():
-            route='webrtc_other'
-        elif 'voice' in request.path.lower():
-            route='voice_other'
-        else:
-            route='other'
-        method=request.method if request.method in {'GET','HEAD','POST','OPTIONS'} else 'OTHER'
-        origin_value=request.headers.get('Origin')
-        expected_origin='https://soprasteriaassvsdemo14.service-now.com'
-        origin='missing' if origin_value is None else ('expected' if origin_value==expected_origin else 'other')
-        query_credential='auth_token' in request.query
-        header_credential='Authorization' in request.headers or 'x-api-key' in request.headers
-        credentials=('both' if query_credential and header_credential else
-                     'query' if query_credential else 'header' if header_credential else 'none')
-        upgrade_value=request.headers.get('Upgrade')
-        upgrade='missing' if upgrade_value is None else ('websocket' if upgrade_value.lower()=='websocket' else 'other')
-        request_id=uuid.uuid4().hex[:12]
-        message='Gateway voice HTTP request request=%s route=%s method=%s origin=%s credentials=%s upgrade=%s'
-        fields=[request_id,route,method,origin,credentials,upgrade]
-        if route=='webrtc_other' and method=='POST':
-            parts=[part.lower() for part in request.path.split('/') if part]
-            shape='/'.join(part if part in VOICE_DIAGNOSTIC_SEGMENTS else 'other' for part in parts[:8])
-            message+=' path_shape=%s segments=%d'
-            fields.extend([shape,min(len(parts),99)])
-            authorization=request.headers.get('Authorization')
-            api_key_present='x-api-key' in request.headers
-            header_kind=('both' if authorization is not None and api_key_present else
-                         'authorization' if authorization is not None else 'api_key' if api_key_present else 'none')
-            auth_shape=('missing' if authorization is None else 'non_bearer')
-            if authorization is not None and authorization.startswith('Bearer '):
-                auth_shape=('bearer_jwt' if re.fullmatch(r'[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+',authorization[7:]) else 'bearer_other')
-            message+=' header_kind=%s auth_shape=%s'
-            fields.extend([header_kind,auth_shape])
-        LOG.info(message,*fields)
-        status=0
-        try:
-            response=await handler(request)
-            value=getattr(response,'status',0)
-            status=value if type(value) is int and 100<=value<=599 else 0
-            return response
-        except web.HTTPException as error:
-            status=error.status
-            raise
-        except Exception:
-            status=500
-            raise
-        finally:
-            LOG.info('Gateway voice HTTP result request=%s status=%d',request_id,status)
 
     @web.middleware
     async def authenticate(self, request, handler):

@@ -1,0 +1,200 @@
+{
+  "utc": "2026-10-14T09:08:44.269226+00:00",
+  "local_clock": "2026-10-14T11:08:43.286676+02:00",
+  "window_local_start": "2026-10-14 10:58:43",
+  "services": {
+    "model": {
+      "http_status": 200,
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0,
+      "slots": 1,
+      "context": 262144,
+      "slot_ctx": 262144,
+      "kv_pool_positions": 262144,
+      "status": "ok",
+      "expected_model": true,
+      "version_matches": true,
+      "vision_enabled": true,
+      "prompt_cache": {
+        "mode": 1,
+        "enabled": true,
+        "cap_mb": 110,
+        "bitwise_identical_to_cold": true
+      }
+    },
+    "controller": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "gateway": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "bot": {
+      "http_status": 200
+    },
+    "native": {
+      "http_status": 200,
+      "nativeSessions": 0,
+      "status": "ok",
+      "auth_mode": "servicenow"
+    },
+    "asr": {
+      "http_status": 200,
+      "status": "ok"
+    },
+    "tts": {
+      "http_status": 200,
+      "expected_model": true
+    }
+  },
+  "listeners": {
+    "8731": [
+      12368
+    ],
+    "8840": [
+      28968
+    ],
+    "8841": [
+      29316
+    ],
+    "8850": [
+      19372
+    ],
+    "8853": [
+      19372
+    ],
+    "8860": [
+      3704
+    ],
+    "8861": [
+      15436
+    ],
+    "8862": [
+      5572
+    ],
+    "8863": [
+      20168
+    ]
+  },
+  "gateway_sha256": "6c77c7c3b36df36d2cec72622e52aa4463f91725712809e0c5fde0cb2c5a4dab",
+  "native_sha256": "0b7c6705488b81e5e93f192154dbb670d3cfd1d70011282245398f54a9a5647d",
+  "gateway_state_pid": 31352,
+  "gateway_log": {
+    "size": 109879,
+    "events": []
+  },
+  "native_log": {
+    "size": 102015,
+    "events": [
+      {
+        "local_time": "2026-10-14 11:04:28,335",
+        "event": "Native HTTP request",
+        "fields": {
+          "request": "26e2852be05b",
+          "route": "signaling",
+          "method": "GET",
+          "origin": "expected",
+          "credentials": "query",
+          "upgrade": "websocket"
+        }
+      },
+      {
+        "local_time": "2026-10-14 11:04:28,888",
+        "event": "Native signaling admission",
+        "fields": {
+          "status": "101",
+          "call": "a37585c377ad"
+        }
+      },
+      {
+        "local_time": "2026-10-14 11:04:44,274",
+        "event": "Native HTTP result",
+        "fields": {
+          "request": "26e2852be05b",
+          "status": "101"
+        }
+      },
+      {
+        "local_time": "2026-10-14 11:04:54,769",
+        "event": "Native HTTP request",
+        "fields": {
+          "request": "c70c08e3c527",
+          "route": "signaling",
+          "method": "GET",
+          "origin": "expected",
+          "credentials": "query",
+          "upgrade": "websocket"
+        }
+      },
+      {
+        "local_time": "2026-10-14 11:04:55,268",
+        "event": "Native signaling admission",
+        "fields": {
+          "status": "101",
+          "call": "8230a308bd4f"
+        }
+      },
+      {
+        "local_time": "2026-10-14 11:05:10,527",
+        "event": "Native HTTP result",
+        "fields": {
+          "request": "c70c08e3c527",
+          "status": "101"
+        }
+      }
+    ]
+  },
+  "memory": {
+    "free_gib": 23.517,
+    "commit_headroom_gib": 111.276,
+    "runtime_guard_floor_gib": 18,
+    "above_runtime_floor": true,
+    "cold_start_floor_met": false
+  },
+  "external_control_started_utc": "2026-10-14T09:08:44.298209+00:00",
+  "external": {
+    "health": {
+      "http_status": 200
+    },
+    "websocket": {
+      "http_status": 401,
+      "credentialless": true
+    }
+  },
+  "completed_utc": "2026-10-14T09:08:45.005784+00:00",
+  "media_follow_up": {
+    "observed_utc": "2026-10-14T09:09:59.280803+00:00",
+    "connections": [
+      {
+        "connection_id": 2,
+        "first_checks_local": "2026-10-14 11:04:29,451",
+        "candidate_pairs": 3,
+        "successful_pairs": 0,
+        "failed_local": "2026-10-14 11:05:33,012"
+      },
+      {
+        "connection_id": 4,
+        "first_checks_local": "2026-10-14 11:04:56,215",
+        "candidate_pairs": 3,
+        "successful_pairs": 0,
+        "failed_local": "2026-10-14 11:05:59,814"
+      }
+    ],
+    "source_contract": {
+      "peer_ice_servers_empty": true,
+      "answer_ice_servers_empty": true
+    },
+    "interpretation": "Two browser attempts were authorized and upgraded; all observed ICE candidate pairs failed. No ASR or backend input event in this bounded window. Network/media cause must be verified."
+  },
+  "services_mutated_or_restarted": false,
+  "external_control_has_no_credentials_and_is_not_phone_attempt": true
+}
