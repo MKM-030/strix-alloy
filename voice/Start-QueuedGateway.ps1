@@ -102,6 +102,7 @@ $config | Add-Member -NotePropertyName demo_no_thinking_model -NotePropertyValue
 $config | Add-Member -NotePropertyName queue_limit -NotePropertyValue 8 -Force
 $config | Add-Member -NotePropertyName queue_seconds -NotePropertyValue 120 -Force
 $config | Add-Member -NotePropertyName console_trace -NotePropertyValue $false -Force
+$config | Add-Member -NotePropertyName native_sdk_proxy -NotePropertyValue $true -Force
 New-Item -ItemType Directory -Path $LocalDirectory -Force | Out-Null
 $config | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $ConfigPath -Encoding UTF8
 $arguments = @('-u', ('"{0}"' -f $GatewayPath), '--config', ('"{0}"' -f $ConfigPath),

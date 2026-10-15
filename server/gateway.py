@@ -23,6 +23,9 @@ from console_trace import ConsoleTrace,RequestTrace
 
 LOG=logging.getLogger('alloy.gateway')
 CONSOLE_TRACE_KEY=web.RequestKey('console_trace',RequestTrace)
+NATIVE_SDK_URL='http://127.0.0.1:8860'
+NATIVE_SDK_SESSION='/api/webrtc/sessions'
+NATIVE_SDK_CHILD=re.compile(r'/api/webrtc/sessions/[a-f0-9]{32}(?:/(offer|candidate|candidates))?\Z')
 POST_ROUTES={'/v1/chat/completions','/v1/completions','/v1/responses',
              '/v1/messages','/v1/messages/count_tokens','/v1/embeddings',
              '/v1/rerank','/v1/reranking'}
@@ -103,7 +106,7 @@ class Gateway:
     def __init__(self, backend, secret, backend_secret='', *, concurrency=1,
                  body_bytes=16*1024**2, request_seconds=1800, console_trace=False,
                  queue_limit=0, queue_seconds=120, demo_no_thinking_model='',
-                 voice_contract_diagnostics=False):
+                 voice_contract_diagnostics=False, native_sdk_proxy=False):
         if not isinstance(secret,str) or len(secret)<32:
             raise ValueError('At least 32 characters of API key material required')
         if not 1<=concurrency<=16 or not 1024<=body_bytes<=64*1024**2:
@@ -118,6 +121,8 @@ class Gateway:
             raise ValueError('console_trace must be a boolean')
         if type(voice_contract_diagnostics) is not bool:
             raise ValueError('voice_contract_diagnostics must be a boolean')
+        if type(native_sdk_proxy) is not bool:
+            raise ValueError('native_sdk_proxy must be a boolean')
         if (not isinstance(demo_no_thinking_model,str) or
                 demo_no_thinking_model not in ('',backend.identifier)):
             raise ValueError('demo_no_thinking_model must be empty or the selected public model alias')
@@ -130,12 +135,78 @@ class Gateway:
         self.last_healthy=0.0; self.probe_lock=asyncio.Lock()
         self.console_trace=ConsoleTrace(secrets=(secret,backend_secret)) if console_trace else None
         self.voice_contract_diagnostics=voice_contract_diagnostics
+        self.native_sdk_proxy=native_sdk_proxy
         self.app=web.Application(client_max_size=body_bytes,
-            middlewares=[self.diagnose_voice_contract,self.authenticate] if voice_contract_diagnostics
-            else [self.authenticate])
+            middlewares=[self.sdk_dispatch,self.diagnose_voice_contract,self.authenticate] if voice_contract_diagnostics
+            else [self.sdk_dispatch,self.authenticate])
         self.app.add_routes([web.get('/health',self.health),web.get('/v1/models',self.models)])
         for path in sorted(POST_ROUTES): self.app.router.add_post(path,self.inference)
         self.app.cleanup_ctx.append(self.session_context)
+
+    @web.middleware
+    async def sdk_dispatch(self, request, handler):
+        # Separate platform OAuth admission lives in the fixed loopback native
+        # service. This exception never reaches the inference dispatcher.
+        path=request.path
+        child=NATIVE_SDK_CHILD.fullmatch(path)
+        allowed=(request.method=='POST' and path==NATIVE_SDK_SESSION) or bool(child and (
+            (request.method=='POST' and child.group(1) in ('offer','candidate')) or
+            (request.method=='GET' and child.group(1)=='candidates') or
+            (request.method=='DELETE' and child.group(1) is None)))
+        if (not self.native_sdk_proxy or not allowed or
+                request.raw_path.split('?',1)[0]!=path):
+            return await handler(request)
+        authorization=request.headers.getall('Authorization',[])
+        competing={'cookie','proxy-authorization','x-api-key','x-authorization',
+            'x-access-token','x-auth-token','x-api-token','x-servicenow-token','x-sn-jwt',
+            'sec-websocket-protocol','x-usertoken','x-user-token','x-jwt','x-jwt-token',
+            'x-bearer-token','authentication','x-auth','x-token','x-session-token',
+            'x-forwarded-authorization','x-forwarded-authentication'}
+        if (len(authorization)!=1 or len(authorization[0])>8192 or
+                not re.fullmatch(r'(?i:Bearer) [A-Za-z0-9._~+/-]+=*',authorization[0]) or
+                any(name.lower() in competing for name in request.headers)):
+            return web.json_response({'error':'unauthorized'},status=401)
+        token=authorization[0][7:]
+        if any(value and hmac.compare_digest(token,value) for value in (self.secret,self.backend_secret)):
+            return web.json_response({'error':'unauthorized'},status=401)
+        if (any(len(request.headers.getall(name,[]))>1 for name in ('Origin','Content-Type')) or
+                'Content-Encoding' in request.headers or 'Transfer-Encoding' in request.headers):
+            return web.json_response({'error':'bad_request'},status=400)
+        limit=32768 if path==NATIVE_SDK_SESSION else 65536
+        if request.content_length is not None and request.content_length>limit:
+            return web.json_response({'error':'request_too_large'},status=413)
+        body=bytearray()
+        try:
+            async with asyncio.timeout(3):
+                async for chunk in request.content.iter_chunked(4096):
+                    body.extend(chunk)
+                    if len(body)>limit:
+                        return web.json_response({'error':'request_too_large'},status=413)
+        except TimeoutError:
+            return web.json_response({'error':'request_timeout'},status=408)
+        # No cookies, API keys, user-selected destination or proxy headers.
+        headers=[(name,value) for name,value in request.headers.items()
+                 if name.lower() in {'authorization','origin','content-type','accept'}]
+        headers.append(('Accept-Encoding','identity'))
+        try:
+            async with self.client.request(request.method,NATIVE_SDK_URL+request.raw_path,
+                    data=bytes(body),headers=headers,allow_redirects=False,
+                    timeout=aiohttp.ClientTimeout(total=35,connect=3)) as response:
+                if 300<=response.status<400 or 'Content-Encoding' in response.headers:
+                    return web.json_response({'error':'native_unavailable'},status=502)
+                result=bytearray()
+                async for chunk in response.content.iter_chunked(4096):
+                    result.extend(chunk)
+                    if len(result)>65536:
+                        return web.json_response({'error':'native_unavailable'},status=502)
+                return web.Response(body=bytes(result),status=response.status,
+                    headers={'Content-Type':response.headers.get('Content-Type','application/json'),
+                             'Cache-Control':'no-store'})
+        except asyncio.CancelledError:
+            raise
+        except Exception as error:
+            LOG.warning('Native SDK proxy unavailable type=%s',type(error).__name__)
+            return web.json_response({'error':'native_unavailable'},status=503)
 
     @property
     def draining(self):
@@ -405,7 +476,8 @@ def load_config(path):
                    queue_limit=value.get('queue_limit',0),queue_seconds=value.get('queue_seconds',120),
                    console_trace=value.get('console_trace',False),
                    demo_no_thinking_model=value.get('demo_no_thinking_model',''),
-                   voice_contract_diagnostics=value.get('voice_contract_diagnostics',False))
+                   voice_contract_diagnostics=value.get('voice_contract_diagnostics',False),
+                   native_sdk_proxy=value.get('native_sdk_proxy',False))
 
 
 async def serve(gateway, port, stop_event=None):

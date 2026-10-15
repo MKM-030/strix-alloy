@@ -45,8 +45,11 @@ class Config:
     vad_silence_ms: int = 1200
     max_call_seconds: int = 1800
     greeting: str = ''
+    native_sdk_enabled: bool = False
 
     def __post_init__(self):
+        if type(self.native_sdk_enabled) is not bool:
+            raise ValueError('native_sdk_enabled must be a boolean')
         if type(self.vad_silence_ms) is not int or not 300 <= self.vad_silence_ms <= 2000:
             raise ValueError('vad_silence_ms must be an integer between 300 and 2000')
 
@@ -663,7 +666,9 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         if request.path == '/health':
             return await handler(request)
         signaling_path = '/webrtc/connect/agent_operator'
-        if request.path == signaling_path:
+        if request.path == '/api/webrtc/sessions' or request.path.startswith('/api/webrtc/sessions/'):
+            route = 'native_sdk'
+        elif request.path == signaling_path:
             route = 'signaling'
         elif request.path == '/scc-native' + signaling_path:
             route = 'prefixed_signaling'
@@ -671,7 +676,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             route = 'duplicated_signaling'
         else:
             route = 'other'
-        method = request.method if request.method in {'GET', 'HEAD', 'POST', 'OPTIONS'} else 'OTHER'
+        method = request.method if request.method in {'GET', 'HEAD', 'POST', 'OPTIONS', 'DELETE'} else 'OTHER'
         origin_value = request.headers.get('Origin')
         origin = 'missing' if origin_value is None else ('expected' if origin_value == config.instance_url else 'other')
         query_credential = 'auth_token' in request.query
@@ -819,11 +824,23 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             headers=headers)
 
     async def health(request):
-        return web.json_response({'status':'ok','nativeSessions':len(active),
-                                  'authMode':'loopback-development' if config.development_token else config.auth_mode})
+        result = {'status':'ok','nativeSessions':len(active),
+                  'authMode':'loopback-development' if config.development_token else config.auth_mode}
+        if getattr(config, 'native_sdk_enabled', False):
+            result['nativeSdkEnabled'] = True
+        return web.json_response(result)
     app.router.add_get('/launch', launch)
     app.router.add_get('/health', health)
     app.router.add_get('/webrtc/connect/agent_operator', connect)
+    if getattr(config, 'native_sdk_enabled', False):
+        from sdk_admission import admit_sdk_session
+        from sdk_sessions import register_sdk_routes
+        def make_sdk_call():
+            speech = speech_factory(app[HTTP_KEY]) if speech_factory else Speech(app[HTTP_KEY], config)
+            dialog = dialog_factory() if dialog_factory else shared_dialog
+            return NativeCall(config, speech, dialog)
+        register_sdk_routes(app, config, active, make_sdk_call, admit_sdk_session)
+        LOG.info('Native SDK HTTP session routes enabled; shared browser capacity')
     return app
 
 
