@@ -9,6 +9,7 @@ from html.parser import HTMLParser
 import io
 import json
 import logging
+import os
 from pathlib import Path
 import re
 import secrets
@@ -19,7 +20,6 @@ import wave
 
 from aiohttp import ClientSession, ClientTimeout, FormData, web
 
-INSTANCE = 'https://soprasteriaassvsdemo14.service-now.com'
 STATIC = Path(__file__).parent / 'static'
 MAX_WAV = 20 * 1024 * 1024
 LOG = logging.getLogger('voice-bridge')
@@ -43,6 +43,7 @@ class Settings:
     session_seconds: int = 1800
     turn_seconds: int = 180
     max_sessions: int = 8
+    instance_url: str = ''
 
 
 @dataclass
@@ -180,8 +181,34 @@ def callback_metadata(data):
     return result
 
 
+def validated_instance_url(value, required=True):
+    """Canonical configured HTTPS origin; never infer it from requests or identity."""
+    if value == '' and not required:
+        return ''
+    error = 'Configure a valid HTTPS ServiceNow instance_url origin'
+    if not isinstance(value, str) or len(value) > 2048:
+        raise ValueError(error)
+    match = re.fullmatch(r'https://([A-Za-z0-9.-]+)(?::([1-9][0-9]{0,4}))?/?', value)
+    if not match:
+        raise ValueError(error)
+    host, port = match.groups()
+    labels = host.split('.')
+    if len(host) > 253 or any(not re.fullmatch(
+            r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?', label) for label in labels):
+        raise ValueError(error)
+    if port and int(port) > 65535:
+        raise ValueError(error)
+    # Clients can interpret abbreviated, octal or hexadecimal numeric hosts differently.
+    if re.fullmatch(r'(?:[0-9]+|0x[0-9a-f]*)', labels[-1], re.IGNORECASE):
+        if len(labels) != 4 or any(not re.fullmatch(r'(?:0|[1-9][0-9]{0,2})', label)
+                                  or int(label) > 255 for label in labels):
+            raise ValueError(error)
+    return 'https://' + host.lower() + ((':' + port) if port else '')
+
+
 class Bridge:
     def __init__(self, settings, sn_token, audio_token, callback_token):
+        instance_url = validated_instance_url(settings.instance_url, required=settings.service_now_enabled)
         if not audio_token or (settings.service_now_enabled and (not settings.user_id or not sn_token or not callback_token)):
             raise ValueError('Server identity and all three credentials are required')
         self.settings = settings
@@ -194,7 +221,7 @@ class Bridge:
             self.callback_auth = 'Basic ' + value
         else:
             self.callback_auth = 'Bearer ' + callback_token
-        self.bot_url = INSTANCE + '/api/sn_va_as_service/bot/integration'
+        self.bot_url = (instance_url + '/api/sn_va_as_service/bot/integration') if instance_url else ''
         self.asr_url = 'http://127.0.0.1:8851/v1/audio/transcriptions'
         self.tts_url = 'http://127.0.0.1:8852/v1/audio/speech'
         self.origin = 'http://127.0.0.1:' + str(settings.ui_port)
@@ -587,6 +614,9 @@ class Bridge:
 def load_config(path):
     config = json.loads(Path(path).read_text(encoding='utf-8-sig'))
     settings = Settings(**config['settings'])
+    if 'SCC_VOICE_INSTANCE_URL' in os.environ:
+        settings.instance_url = os.environ['SCC_VOICE_INSTANCE_URL']
+    settings.instance_url = validated_instance_url(settings.instance_url, required=settings.service_now_enabled)
     if not (1 <= settings.max_sessions <= 32 and 60 <= settings.session_seconds <= 3600 and
             10 <= settings.turn_seconds <= 600 and 1024 <= settings.ui_port <= 65535 and
             1024 <= settings.callback_port <= 65535 and settings.ui_port != settings.callback_port):

@@ -18,7 +18,7 @@ class BotContextTests(unittest.IsolatedAsyncioTestCase):
         app.router.add_post('/bot', receive)
         self.bot = TestServer(app)
         await self.bot.start_server()
-        self.bridge = Bridge(Settings(user_id='demo', defer_start_until_message=True),
+        self.bridge = Bridge(Settings(instance_url='https://instance.example.test', user_id='demo', defer_start_until_message=True),
                              'unit-sn', 'unit-audio', 'unit-callback')
         self.bridge.bot_url = str(self.bot.make_url('/bot'))
         self.ui = TestClient(TestServer(self.bridge.ui_app()), cookie_jar=CookieJar(unsafe=True))
