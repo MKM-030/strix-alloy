@@ -12,7 +12,7 @@ build/
 .turbo/
 coverage/
 .vitest/
-# artifact â€” never committed (a committed report would rot silently).
+# artifact — never committed (a committed report would rot silently).
 
 # --- environment & secrets --------------------------------------------------
 .env
@@ -43,7 +43,7 @@ __pycache__/
 .claude/worktrees/
 
 # --- strix-alloy: benchmark byproduct and machine-local artifacts ------------------
-# Local machine state (SDK/model paths, pool/carve notes) â€” not portable, not repo content.
+# Local machine state (SDK/model paths, pool/carve notes) — not portable, not repo content.
 pool
 .env.local
 
@@ -79,3 +79,5 @@ artifacts/**/*.so
 scripts/benchmarks/halogen0162_embedding_cache_gather_image_bound_*.py
 scripts/benchmarks/halogen0162_embedding_cache_gather_owned_bound_*.py
 
+# Private agent task briefs, reports and progress (keep out of release commits).
+.superpowers/

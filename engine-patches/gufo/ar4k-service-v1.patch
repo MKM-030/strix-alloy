@@ -1,0 +1,1838 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 497d7ba36b609db17651a8354affa17e74305f9a..4b2515f0f6c6046b636bd2d6b0a8788c6a41f5f9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -407,6 +407,17 @@ if (BUILD_TESTING)
+   set_tests_properties(openai_chat_test PROPERTIES
+     LABELS "cpu;server;api;openai;streaming;tools")
+ 
++  add_executable(text_request_policy_routes_test
++    tests/cli/text_request_policy_routes_test.cpp
++    src/cli/serve/text_model_runner.cpp
++    src/cli/serve/continuation_cache.cpp
++    src/cli/serve/continuation_disk_store.cpp)
++  target_link_libraries(text_request_policy_routes_test PRIVATE gufo_http)
++  add_test(NAME text_request_policy_routes_test
++    COMMAND text_request_policy_routes_test)
++  set_tests_properties(text_request_policy_routes_test PROPERTIES
++    LABELS "cpu;server;http;policy")
++
+   add_executable(http_server_test tests/cli/http_server_test.cpp)
+   target_link_libraries(http_server_test PRIVATE gufo_http)
+   add_test(NAME http_server_test COMMAND http_server_test)
+diff --git a/docs/CLI.md b/docs/CLI.md
+index ab5dd83ac55023b3c2b6c62892d9b0c9112d575e..2441649822fdb03014860a7c82c83eb559da88ee 100644
+--- a/docs/CLI.md
++++ b/docs/CLI.md
+@@ -228,6 +228,25 @@ gufo serve --help
+ gufo serve llm --help
+ ```
+ 
++For the optional AR4K service request policy, select the profile after `llm`
++and supply its companion limits explicitly:
++
++```sh
++gufo serve llm --model /models/model.gguf \
++  --request-policy ar4k-service-v1 --context 4096 --sessions 1 \
++  --max-pending 1 --max-pending-per-client 1 --max-tokens 256 \
++  --think off --preserve-thinking off
++```
++
++This profile admits framed autoregressive chat/response routes only. It
++refuses raw completions, speculative decoding, prompt lookup, explicit vision
++sidecars and disk cache. The input limit is 2304 tokens, counting rendered
++framing and tool definitions; the output limit is 256 tokens. Capacity is one
++active request plus one queued request; conflicts are refused explicitly. Cache
++bypass does not mean zero retention of in-memory state. The profile is a
++request-policy boundary, not a qualification of model lifetime or memory
++safety. Omitting `--request-policy` keeps the existing server defaults.
++
+ ### Diagnose
+ 
+ Gufo can self detect if everything is correctly configured to be able to run, such as drivers, groups, permissions, etc.
+diff --git a/src/cli/serve/http_server.cpp b/src/cli/serve/http_server.cpp
+index 2963f37eac94eaa80c56e5568fe22dd4cc9aea7c..0612963b21f8d8065d0da1fd8399873cee6d12ab 100644
+--- a/src/cli/serve/http_server.cpp
++++ b/src/cli/serve/http_server.cpp
+@@ -37,6 +37,7 @@
+ #include "src/cli/serve/openai_chat.hpp"
+ #include "src/cli/serve/sampling_request.hpp"
+ #include "src/cli/serve/stop_sequences.hpp"
++#include "src/cli/serve/text_request_policy.hpp"
+ #include "src/cli/serve/tts_service.hpp"
+ #include "src/cli/serve/video_api.hpp"
+ #include "src/cli/serve/video_jobs.hpp"
+@@ -483,6 +484,18 @@ bool ReadTextMessages(const json::Value* input,
+   return true;
+ }
+ 
++bool HasServiceCompatibilityReasoning(const json::Value* input,
++                                      bool responses) {
++  if (input == nullptr || !input->is_array())
++    return false;
++  for (const auto& item : input->items()) {
++    if (item.contains("reasoning_content") ||
++        (responses && item.member_str("type") == "reasoning"))
++      return true;
++  }
++  return false;
++}
++
+ HttpResponse InvalidCompatibilityRequest(std::string_view message) {
+   return Err(400, "Bad Request", std::string(message).c_str(),
+              "invalid_request_error", "invalid_request");
+@@ -497,6 +510,9 @@ std::optional<HttpResponse> ReadCompatibilityOptions(
+     bool allow_stream = false) {
+   if (!body.is_object())
+     return InvalidCompatibilityRequest("request body must be an object");
++  if (const auto error = ValidateServiceHttpFields(backend.request_policy(),
++                                                   body, {token_field}))
++    return InvalidCompatibilityRequest(*error);
+   if (const auto* model = body.find("model"); model != nullptr) {
+     if (!model->is_string())
+       return InvalidCompatibilityRequest("'model' must be a string");
+@@ -641,6 +657,11 @@ HttpResponse ListModels(TextGenerationBackend* backend,
+ 
+ HttpResponse OpenAiCompletions(const HttpRequest& req,
+                                TextGenerationBackend& b) try {
++  if (IsAr4kService(b.request_policy()))
++    return Err(
++        400, "Bad Request",
++        "ar4k-service-v1 requires a framed chat/responses/messages route",
++        "invalid_request_error", "request_policy_violation");
+   json::Value body;
+   try {
+     body = json::parse(req.body);
+@@ -728,6 +749,10 @@ HttpResponse OpenAiResponses(const HttpRequest& req,
+         {tokenization::ChatRole::kSystem, instructions->str(), "", ""});
+   }
+   const auto* input = body.find("input");
++  if (IsAr4kService(b.request_policy()) &&
++      HasServiceCompatibilityReasoning(input, true))
++    return InvalidCompatibilityRequest(
++        "ar4k-service-v1 forbids reasoning history");
+   if (input != nullptr && input->is_string() && !input->str().empty()) {
+     messages.push_back({tokenization::ChatRole::kUser, input->str(), "", ""});
+   } else if (!ReadTextMessages(input, &messages, true)) {
+@@ -740,6 +765,8 @@ HttpResponse OpenAiResponses(const HttpRequest& req,
+   ChatRequest chat{std::move(messages)};
+   chat.client_id = req.client_id;
+   chat.reasoning = b.reasoning_defaults();
++  if (IsAr4kService(b.request_policy()))
++    chat.cache_prompt = false;
+   return CreateOpenAiResponse(
+       req, b, chat, max_tokens, sampling_config,
+       body.find("stream") != nullptr && body.find("stream")->as_bool());
+@@ -778,7 +805,12 @@ HttpResponse AnthropicMessages(const HttpRequest& req,
+     messages.push_back(
+         {tokenization::ChatRole::kSystem, std::move(text), "", ""});
+   }
+-  if (!ReadTextMessages(body.find("messages"), &messages)) {
++  const auto* input = body.find("messages");
++  if (IsAr4kService(b.request_policy()) &&
++      HasServiceCompatibilityReasoning(input, false))
++    return InvalidCompatibilityRequest(
++        "ar4k-service-v1 forbids reasoning history");
++  if (!ReadTextMessages(input, &messages)) {
+     return InvalidCompatibilityRequest(
+         "'messages' must contain text messages; use /v1/chat/completions "
+         "for images and tools");
+@@ -787,6 +819,8 @@ HttpResponse AnthropicMessages(const HttpRequest& req,
+   ChatRequest chat{std::move(messages)};
+   chat.client_id = req.client_id;
+   chat.reasoning = b.reasoning_defaults();
++  if (IsAr4kService(b.request_policy()))
++    chat.cache_prompt = false;
+   if (const auto error = ParseStopSequences(body.find("stop_sequences"),
+                                             StopSequenceFormat::kAnthropic,
+                                             &chat.stop_sequences))
+@@ -832,6 +866,11 @@ HttpResponse AnthropicMessages(const HttpRequest& req,
+ 
+ HttpResponse LlamaCompletion(const HttpRequest& req,
+                              TextGenerationBackend& b) try {
++  if (IsAr4kService(b.request_policy()))
++    return Err(
++        400, "Bad Request",
++        "ar4k-service-v1 requires a framed chat/responses/messages route",
++        "invalid_request_error", "request_policy_violation");
+   json::Value body;
+   try {
+     body = json::parse(req.body);
+@@ -945,6 +984,20 @@ HttpResponse LlamaMetrics(const HttpRequest&, TextGenerationBackend&) {
+ 
+ }  // namespace
+ 
++HttpResponse HandleTextCompatibilityRequest(const HttpRequest& request,
++                                            TextGenerationBackend& backend) {
++  if (request.path == "/v1/completions")
++    return OpenAiCompletions(request, backend);
++  if (request.path == "/v1/responses")
++    return OpenAiResponses(request, backend);
++  if (request.path == "/v1/messages")
++    return AnthropicMessages(request, backend);
++  if (request.path == "/completion")
++    return LlamaCompletion(request, backend);
++  return Err(404, "Not Found", "no route for this path",
++             "invalid_request_error", "not_found");
++}
++
+ // ---------------------------------------------------------------------------
+ // HttpRequest
+ // ---------------------------------------------------------------------------
+@@ -1019,13 +1072,13 @@ void HttpServer::register_routes() {
+     return;
+   }
+   // ---- OpenAI ----
+-  add("POST", "/v1/completions", OpenAiCompletions);
++  add("POST", "/v1/completions", HandleTextCompatibilityRequest);
+   add("POST", "/v1/chat/completions", HandleOpenAiChat);
+-  add("POST", "/v1/responses", OpenAiResponses);
++  add("POST", "/v1/responses", HandleTextCompatibilityRequest);
+   add("POST", "/v1/embeddings", NotImplemented);
+ 
+   // ---- Anthropic ----
+-  add("POST", "/v1/messages", AnthropicMessages);
++  add("POST", "/v1/messages", HandleTextCompatibilityRequest);
+   add("POST", "/v1/messages/count_tokens", NotImplemented);
+ 
+   // ---- llama-server ----
+@@ -1033,7 +1086,7 @@ void HttpServer::register_routes() {
+   add("POST", "/v1/reranking", NotImplemented);
+   add("POST", "/rerank", NotImplemented);
+   add("POST", "/infill", NotImplemented);
+-  add("POST", "/completion", LlamaCompletion);
++  add("POST", "/completion", HandleTextCompatibilityRequest);
+   add("GET", "/props", LlamaProps);
+   add("GET", "/slots", LlamaSlots);
+   add("GET", "/v1/slots", LlamaSlots);
+diff --git a/src/cli/serve/http_server.hpp b/src/cli/serve/http_server.hpp
+index 9db2edd057258a4ea7757eebdb9549c1eeb86af8..6986e23f19b6ac42b4def6c42b6140a078d30255 100644
+--- a/src/cli/serve/http_server.hpp
++++ b/src/cli/serve/http_server.hpp
+@@ -82,6 +82,9 @@ struct HttpResponse {
+ using Handler =
+     std::function<HttpResponse(const HttpRequest&, TextGenerationBackend&)>;
+ 
++HttpResponse HandleTextCompatibilityRequest(const HttpRequest& request,
++                                            TextGenerationBackend& backend);
++
+ struct HttpServerOptions {
+   std::size_t max_request_body_bytes{static_cast<std::size_t>(8) * 1024 * 1024};
+   std::size_t max_connections{16};
+diff --git a/src/cli/serve/inference_backend.cpp b/src/cli/serve/inference_backend.cpp
+index a2a1a86a134858ff10ff4001e3f3c65b3bfc8117..e91d25dfcf8fefacc9cb1be548932fba8a255ff8 100644
+--- a/src/cli/serve/inference_backend.cpp
++++ b/src/cli/serve/inference_backend.cpp
+@@ -23,6 +23,7 @@
+ #include "src/cli/serve/logging.hpp"
+ #include "src/cli/serve/text_generation_scheduler.hpp"
+ #include "src/cli/serve/text_model_runner.hpp"
++#include "src/cli/serve/text_request_policy.hpp"
+ #include "src/core/gguf_identity.hpp"
+ #include "src/core/gguf_reader.hpp"
+ #include "src/core/json.hpp"
+@@ -53,6 +54,42 @@ void SetError(std::string* error, std::string message) {
+   }
+ }
+ 
++bool ValidateLoadPolicy(std::uint32_t max_context, std::size_t session_count,
++                        const TextSchedulerPolicy& scheduler_policy,
++                        const TextSpeculativeConfig& speculative_config,
++                        const TextDiskCacheConfig& disk_cache_config,
++                        std::string_view vision_model_path,
++                        std::string* error) {
++  try {
++    const auto policy = scheduler_policy.request_policy;
++    ValidateServiceGeometry(policy, max_context, session_count,
++                            scheduler_policy.max_pending_requests,
++                            scheduler_policy.max_pending_requests_per_client);
++    if (IsAr4kService(policy)) {
++      if (speculative_config.backend != TextSpeculativeBackend::kDisabled) {
++        throw std::invalid_argument(
++            "ar4k-service-v1 forbids speculative decoding");
++      }
++      if (speculative_config.prompt_lookup) {
++        throw std::invalid_argument("ar4k-service-v1 forbids prompt lookup");
++      }
++      if (!speculative_config.draft_model_path.empty()) {
++        throw std::invalid_argument("ar4k-service-v1 forbids draft model");
++      }
++      if (!vision_model_path.empty()) {
++        throw std::invalid_argument("ar4k-service-v1 forbids --mmproj");
++      }
++      if (!disk_cache_config.directory.empty()) {
++        throw std::invalid_argument("ar4k-service-v1 forbids disk cache");
++      }
++    }
++    return true;
++  } catch (const std::invalid_argument& exception) {
++    SetError(error, exception.what());
++    return false;
++  }
++}
++
+ #if defined(ENGINE_ENABLE_HIP)
+ 
+ struct QwenImageContext final : TextPromptContext {
+@@ -2742,6 +2779,14 @@ struct InferenceBackend::Impl {
+     SamplingDefaults sampling_defaults;
+     std::uint32_t max_context{0};
+     ReasoningOptions reasoning_defaults;
++
++    void InitializeDefaults(TextRequestPolicy policy) {
++      if (IsAr4kService(policy)) {
++        sampling_defaults.max_tokens = 256;
++        reasoning_defaults.enabled = false;
++        reasoning_defaults.preserve_thinking = false;
++      }
++    }
+   };
+ 
+   class ScheduledGenerationRequest final : public GenerationRequest {
+@@ -2837,6 +2882,11 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,
+                             const TextSpeculativeConfig& speculative_config,
+                             const TextDiskCacheConfig& disk_cache_config,
+                             const std::string& vision_model_path) {
++  if (!ValidateLoadPolicy(max_context, session_count, scheduler_policy,
++                          speculative_config, disk_cache_config,
++                          vision_model_path, error)) {
++    return false;
++  }
+ #if defined(ENGINE_ENABLE_HIP)
+   TextDiskCacheConfig resolved_disk_cache_config = disk_cache_config;
+   std::string load_error;
+@@ -3050,6 +3100,10 @@ bool InferenceBackend::load(std::shared_ptr<const hip::QwenGpuModel> model,
+   }
+   if (max_context == 0)
+     max_context = model->GetConfig().context_length;
++  if (!ValidateLoadPolicy(max_context, session_count, scheduler_policy,
++                          speculative_config, disk_cache_config, {}, error)) {
++    return false;
++  }
+   if (max_context < 2 || max_context > model->GetConfig().context_length) {
+     SetError(error, "HTTP context exceeds the loaded Qwen model context");
+     return false;
+@@ -3143,6 +3197,7 @@ bool InferenceBackend::load(std::shared_ptr<const hip::QwenGpuModel> model,
+     }
+ 
+     auto new_state = std::make_shared<Impl::State>();
++    new_state->InitializeDefaults(scheduler_policy.request_policy);
+     auto runner = std::make_shared<QwenTextRunner>(
+         std::move(model), max_context, std::move(dflash_model),
+         speculative_options, disk_cache_config.model_artifact_fingerprint,
+@@ -3186,6 +3241,10 @@ bool InferenceBackend::load(
+   }
+   if (max_context == 0)
+     max_context = model->MaxContext();
++  if (!ValidateLoadPolicy(max_context, session_count, scheduler_policy,
++                          speculative_config, disk_cache_config, {}, error)) {
++    return false;
++  }
+ 
+   const bool use_dspark =
+       speculative_config.backend == TextSpeculativeBackend::kDSpark;
+@@ -3226,6 +3285,7 @@ bool InferenceBackend::load(
+ 
+   try {
+     auto new_state = std::make_shared<Impl::State>();
++    new_state->InitializeDefaults(scheduler_policy.request_policy);
+     auto runner = std::make_shared<DeepSeekTextRunner>(
+         std::move(model), max_context, use_dspark,
+         speculative_config.max_draft_tokens,
+@@ -3268,6 +3328,10 @@ bool InferenceBackend::load(
+   }
+   if (max_context == 0)
+     max_context = model->MaxContext();
++  if (!ValidateLoadPolicy(max_context, session_count, scheduler_policy,
++                          speculative_config, disk_cache_config, {}, error)) {
++    return false;
++  }
+ 
+   if (session_count == 0) {
+     SetError(error, "HTTP session count must be at least one");
+@@ -3306,6 +3370,7 @@ bool InferenceBackend::load(
+   }
+   try {
+     auto new_state = std::make_shared<Impl::State>();
++    new_state->InitializeDefaults(scheduler_policy.request_policy);
+     auto runner = std::make_shared<QwenFlashNextTextRunner>(
+         std::move(model), max_context,
+         speculative_config.backend == TextSpeculativeBackend::kMtp,
+@@ -3355,6 +3420,16 @@ bool InferenceBackend::ready() const {
+ #endif
+ }
+ 
++TextRequestPolicy InferenceBackend::request_policy() const noexcept {
++#if defined(ENGINE_ENABLE_HIP)
++  const auto state = impl_->Snapshot();
++  return state != nullptr ? state->scheduler->request_policy()
++                          : TextRequestPolicy::kDefault;
++#else
++  return TextRequestPolicy::kDefault;
++#endif
++}
++
+ std::uint32_t InferenceBackend::max_context() const {
+ #if defined(ENGINE_ENABLE_HIP)
+   const auto state = impl_->Snapshot();
+@@ -3420,6 +3495,8 @@ void InferenceBackend::set_sampling_defaults(
+   if (impl_->state == nullptr) {
+     return;
+   }
++  ValidateRequestedOutput(impl_->state->scheduler->request_policy(),
++                          max_tokens);
+   auto updated = std::make_shared<Impl::State>(*impl_->state);
+   updated->sampling_defaults = {
+       .max_tokens = max_tokens,
+@@ -3439,6 +3516,13 @@ void InferenceBackend::set_reasoning_defaults(
+   if (impl_->state == nullptr) {
+     return;
+   }
++  if (IsAr4kService(impl_->state->scheduler->request_policy()) &&
++      (reasoning.enabled != false || reasoning.preserve_thinking != false ||
++       reasoning.effort.has_value())) {
++    throw std::invalid_argument(
++        "ar4k-service-v1 requires reasoning off, preservation off and no "
++        "effort");
++  }
+   auto updated = std::make_shared<Impl::State>(*impl_->state);
+   updated->reasoning_defaults = reasoning;
+   impl_->state = std::move(updated);
+@@ -3459,7 +3543,8 @@ InferenceBackend::Result InferenceBackend::complete(
+   if (state == nullptr) {
+     return {};
+   }
+-  auto prompt_tokens = state->scheduler->runner().Tokenize(prompt);
++  auto prompt_tokens = PreparePolicyCompletionPrompt(
++      state->scheduler->request_policy(), state->scheduler->runner(), prompt);
+   return impl_->GenerateScheduled(
+       state, std::move(prompt_tokens), request_start, max_tokens,
+       sampling_config, is_cancelled, on_token, std::string(client_id), {}, true,
+@@ -3486,7 +3571,9 @@ InferenceBackend::Result InferenceBackend::chat(
+   if (state == nullptr) {
+     return {};
+   }
+-  auto prompt = state->scheduler->runner().PreparePrompt(request);
++  auto prompt =
++      PreparePolicyChatPrompt(state->scheduler->request_policy(),
++                              state->scheduler->runner(), request, max_tokens);
+   if (!prompt.has_value() || prompt->tokens.empty()) {
+     return {};
+   }
+@@ -3519,7 +3606,9 @@ InferenceBackend::start_chat(const ChatRequest& request, std::size_t max_tokens,
+         request, max_tokens, sampling_config, is_cancelled, stream_output);
+   }
+ 
+-  auto prompt = state->scheduler->runner().PreparePrompt(request);
++  auto prompt =
++      PreparePolicyChatPrompt(state->scheduler->request_policy(),
++                              state->scheduler->runner(), request, max_tokens);
+   if (!prompt.has_value() || prompt->tokens.empty()) {
+     return TextGenerationBackend::start_chat(
+         request, max_tokens, sampling_config, is_cancelled, stream_output);
+diff --git a/src/cli/serve/inference_backend.hpp b/src/cli/serve/inference_backend.hpp
+index 9f867dec27bac54d4edd8cbfc79e33ec2556d7fe..6afbb44709fd51e29959cc4dbcfbf5c5a05b3c1f 100644
+--- a/src/cli/serve/inference_backend.hpp
++++ b/src/cli/serve/inference_backend.hpp
+@@ -120,6 +120,7 @@ public:
+   /// Stable model identifier used in API responses.
+   [[nodiscard]] std::string model_id() const override;
+   [[nodiscard]] bool ready() const override;
++  [[nodiscard]] TextRequestPolicy request_policy() const noexcept override;
+   [[nodiscard]] SamplingDefaults sampling_defaults() const override;
+   [[nodiscard]] std::uint32_t max_context() const;
+   [[nodiscard]] ReasoningOptions reasoning_defaults() const override;
+diff --git a/src/cli/serve/openai_chat.cpp b/src/cli/serve/openai_chat.cpp
+index 310f34dd958c8beba2b9aef37d72ca8a7043216a..d61661fc31417b23181f2a01060c5d6ab3ed35d2 100644
+--- a/src/cli/serve/openai_chat.cpp
++++ b/src/cli/serve/openai_chat.cpp
+@@ -23,6 +23,7 @@
+ 
+ #include "src/cli/serve/sampling_request.hpp"
+ #include "src/cli/serve/stop_sequences.hpp"
++#include "src/cli/serve/text_request_policy.hpp"
+ #include "src/core/image.hpp"
+ #include "src/core/json.hpp"
+ #include "src/core/utf8.hpp"
+@@ -146,7 +147,8 @@ tokenization::ChatRole ParseRole(std::string_view role) {
+ 
+ bool ParseContent(const json::Value* content,
+                   tokenization::ChatMessage* message,
+-                  core::ImageReadBudget& budget, std::string* error) {
++                  core::ImageReadBudget& budget, bool allow_images,
++                  std::string* error) {
+   auto* output = &message->content;
+   if (content == nullptr || content->is_null()) {
+     return true;
+@@ -167,6 +169,10 @@ bool ParseContent(const json::Value* content,
+     }
+     const std::string type = part.member_str("type", "text");
+     if (type == "image_url") {
++      if (!allow_images) {
++        *error = "ar4k-service-v1 forbids vision";
++        return false;
++      }
+       const auto* image = part.find("image_url");
+       const auto* url =
+           image != nullptr && image->is_object() ? image->find("url") : nullptr;
+@@ -235,7 +241,8 @@ bool ParseArguments(std::string_view arguments,
+ }
+ 
+ bool ParseMessage(const json::Value& value, tokenization::ChatMessage* message,
+-                  core::ImageReadBudget& budget, std::string* error) {
++                  core::ImageReadBudget& budget, bool allow_images,
++                  std::string* error) {
+   if (!value.is_object()) {
+     *error = "each message must be an object";
+     return false;
+@@ -248,7 +255,8 @@ bool ParseMessage(const json::Value& value, tokenization::ChatMessage* message,
+   message->role = ParseRole(role);
+   message->name = value.member_str("name");
+   message->tool_call_id = value.member_str("tool_call_id");
+-  if (!ParseContent(value.find("content"), message, budget, error)) {
++  if (!ParseContent(value.find("content"), message, budget, allow_images,
++                    error)) {
+     return false;
+   }
+   if (const json::Value* reasoning = value.find("reasoning_content");
+@@ -558,7 +566,27 @@ std::optional<HttpResponse> ParseRequest(const HttpRequest& request,
+                  "model_not_found");
+   }
+ 
++  const auto policy = backend.request_policy();
++  if (const auto error = ValidateServiceHttpFields(
++          policy, body, {"max_tokens", "max_completion_tokens"})) {
++    return Error(400, "Bad Request", *error, "request_policy_violation");
++  }
++  if (IsAr4kService(policy)) {
++    const auto* effort = body.find("reasoning_effort");
++    const auto* kwargs = body.find("chat_template_kwargs");
++    const auto* kwargs_effort =
++        kwargs != nullptr ? kwargs->find("reasoning_effort") : nullptr;
++    if ((effort != nullptr && !effort->is_null()) ||
++        (kwargs_effort != nullptr && !kwargs_effort->is_null())) {
++      return Error(400, "Bad Request",
++                   "ar4k-service-v1 forbids explicit reasoning effort",
++                   "request_policy_violation");
++    }
++  }
++
+   output->chat.client_id = request.client_id;
++  if (IsAr4kService(policy))
++    output->chat.cache_prompt = false;
+   if (const auto* cache_prompt = body.find("cache_prompt")) {
+     if (!cache_prompt->is_bool()) {
+       return Error(400, "Bad Request", "'cache_prompt' must be a boolean",
+@@ -581,9 +609,12 @@ std::optional<HttpResponse> ParseRequest(const HttpRequest& request,
+   for (const auto& item : messages->items()) {
+     tokenization::ChatMessage message;
+     std::string parse_error;
+-    if (!ParseMessage(item, &message, image_budget, &parse_error)) {
+-      return Error(400, "Bad Request", std::move(parse_error),
+-                   "invalid_messages");
++    if (!ParseMessage(item, &message, image_budget, !IsAr4kService(policy),
++                      &parse_error)) {
++      const char* error_code = parse_error == "ar4k-service-v1 forbids vision"
++                                   ? "request_policy_violation"
++                                   : "invalid_messages";
++      return Error(400, "Bad Request", std::move(parse_error), error_code);
+     }
+     output->chat.messages.push_back(std::move(message));
+   }
+@@ -623,6 +654,11 @@ std::optional<HttpResponse> ParseRequest(const HttpRequest& request,
+   if (!output->chat.reasoning.preserve_thinking.has_value()) {
+     output->chat.reasoning.preserve_thinking = defaults.preserve_thinking;
+   }
++  try {
++    ValidateChatFeatures(policy, output->chat);
++  } catch (const std::invalid_argument& error) {
++    return Error(400, "Bad Request", error.what(), "request_policy_violation");
++  }
+ 
+   if (const json::Value* stream = body.find("stream");
+       stream != nullptr && !stream->is_null()) {
+diff --git a/src/cli/serve/serve.cpp b/src/cli/serve/serve.cpp
+index 48fd0e49ac0f95e5bbf5285f204d2eeddfc303a9..e8b12ba872861448fb2cadc45d3668567358d950 100644
+--- a/src/cli/serve/serve.cpp
++++ b/src/cli/serve/serve.cpp
+@@ -16,6 +16,7 @@
+ #include <optional>
+ #include <span>
+ #include <sstream>
++#include <stdexcept>
+ #include <string>
+ #include <string_view>
+ #include <system_error>
+@@ -465,6 +466,7 @@ void PrintServeHelp(std::string_view program_name,
+     std::size_t max_pending_requests = 16;
+     std::size_t max_pending_requests_per_client = 4;
+     std::uint64_t request_timeout_ms = 0;
++    std::string request_policy_name;
+     std::size_t max_output_bytes = server::kDefaultMaxOutputBytes;
+     std::size_t max_buffered_output_bytes =
+         server::kDefaultMaxBufferedOutputBytes;
+@@ -570,6 +572,10 @@ void PrintServeHelp(std::string_view program_name,
+         "", "--request-timeout-ms", "MS",
+         "Queue plus generation timeout; 0 disables it (default: 0)",
+         "Scheduling", &request_timeout_ms);
++    parser.AddOption(
++        "", "--request-policy", "PROFILE",
++        "Optional request policy: ar4k-service-v1 (framed AR only)",
++        "Scheduling", &request_policy_name);
+     parser.AddOption("", "--max-output-bytes", "N",
+                      "Maximum generated bytes per request (default: 1048576)",
+                      "Scheduling", &max_output_bytes);
+@@ -935,6 +941,7 @@ int RunServe(std::span<const char* const> args) {
+     std::size_t max_pending_requests = 16;
+     std::size_t max_pending_requests_per_client = 4;
+     std::uint64_t request_timeout_ms = 0;
++    std::string request_policy_name;
+     std::size_t max_output_bytes = server::kDefaultMaxOutputBytes;
+     std::size_t max_buffered_output_bytes =
+         server::kDefaultMaxBufferedOutputBytes;
+@@ -1034,6 +1041,10 @@ int RunServe(std::span<const char* const> args) {
+         "", "--request-timeout-ms", "MS",
+         "Queue plus generation timeout; 0 disables it (default: 0)",
+         "Scheduling", &request_timeout_ms);
++    llm_parser.AddOption(
++        "", "--request-policy", "PROFILE",
++        "Optional request policy: ar4k-service-v1 (framed AR only)",
++        "Scheduling", &request_policy_name);
+     llm_parser.AddOption(
+         "", "--max-output-bytes", "N",
+         "Maximum generated bytes per request (default: 1048576)", "Scheduling",
+@@ -1072,6 +1083,15 @@ int RunServe(std::span<const char* const> args) {
+     if (!valid_server_options()) {
+       return 2;
+     }
++    server::TextRequestPolicy request_policy =
++        server::TextRequestPolicy::kDefault;
++    if (!request_policy_name.empty()) {
++      if (request_policy_name != "ar4k-service-v1") {
++        std::cerr << "Error: unsupported request policy\n";
++        return 2;
++      }
++      request_policy = server::TextRequestPolicy::kAr4kServiceV1;
++    }
+     bool sampling_valid = true;
+     try {
+       sampling_config.Validate();
+@@ -1161,6 +1181,48 @@ int RunServe(std::span<const char* const> args) {
+     speculative_config.mtp_survival = mtp_policy == "survival";
+     speculative_config.mtp_latin_draft_vocabulary = mtp_draft_vocab == "latin";
+     speculative_config.prompt_lookup = prompt_lookup;
++    try {
++      server::ValidateServiceGeometry(request_policy, max_context,
++                                      session_count, max_pending_requests,
++                                      max_pending_requests_per_client);
++      server::ValidateRequestedOutput(
++          request_policy,
++          max_tokens < 0 ? 0 : static_cast<std::size_t>(max_tokens));
++      if (server::IsAr4kService(request_policy)) {
++        if (reasoning_defaults->enabled != false) {
++          throw std::invalid_argument("ar4k-service-v1 requires --think off");
++        }
++        if (reasoning_defaults->preserve_thinking != false) {
++          throw std::invalid_argument(
++              "ar4k-service-v1 requires --preserve-thinking off");
++        }
++        if (reasoning_defaults->effort.has_value()) {
++          throw std::invalid_argument(
++              "ar4k-service-v1 forbids reasoning effort");
++        }
++        if (speculative_config.backend !=
++            server::TextSpeculativeBackend::kDisabled) {
++          throw std::invalid_argument(
++              "ar4k-service-v1 forbids speculative decoding");
++        }
++        if (prompt_lookup) {
++          throw std::invalid_argument("ar4k-service-v1 forbids prompt lookup");
++        }
++        if (!dflash_model_path.empty() || !dspark_model_path.empty() ||
++            !mtp_model_path.empty()) {
++          throw std::invalid_argument("ar4k-service-v1 forbids draft model");
++        }
++        if (!vision_model_path.empty()) {
++          throw std::invalid_argument("ar4k-service-v1 forbids --mmproj");
++        }
++        if (!cache_disk_directory.empty()) {
++          throw std::invalid_argument("ar4k-service-v1 forbids disk cache");
++        }
++      }
++    } catch (const std::invalid_argument& exception) {
++      std::cerr << "Error: " << exception.what() << '\n';
++      return 2;
++    }
+     std::string err;
+     ModelLoadLog load_log("text", model);
+     backend = std::make_shared<server::InferenceBackend>();
+@@ -1181,6 +1243,7 @@ int RunServe(std::span<const char* const> args) {
+                                std::chrono::milliseconds{
+                                    static_cast<std::chrono::milliseconds::rep>(
+                                        request_timeout_ms)},
++                           .request_policy = request_policy,
+                        },
+                        speculative_config,
+                        server::TextDiskCacheConfig{
+diff --git a/src/cli/serve/text_generation_backend.hpp b/src/cli/serve/text_generation_backend.hpp
+index 735cb539b950429ef563d2324a4349b84dba9bef..05158960c018efa991ffc3c082568d3d4d830651 100644
+--- a/src/cli/serve/text_generation_backend.hpp
++++ b/src/cli/serve/text_generation_backend.hpp
+@@ -13,6 +13,7 @@
+ #include <utility>
+ #include <vector>
+ 
++#include "src/cli/serve/text_request_limits.hpp"
+ #include "src/core/reasoning.hpp"
+ #include "src/core/sampling.hpp"
+ #include "src/models/qwen/chat_template.hpp"
+@@ -217,6 +218,9 @@ public:
+   [[nodiscard]] virtual ReasoningOptions reasoning_defaults() const {
+     return {};
+   }
++  [[nodiscard]] virtual TextRequestPolicy request_policy() const noexcept {
++    return TextRequestPolicy::kDefault;
++  }
+   [[nodiscard]] virtual InitialOutputState initial_output_state(
+       const ChatRequest&) const {
+     return InitialOutputState::kAuto;
+diff --git a/src/cli/serve/text_generation_scheduler.cpp b/src/cli/serve/text_generation_scheduler.cpp
+index ecd979da144fafc6bfbb2deb95c826c519366012..6e294d631982d102f356ce0fcb1dd24445f4aa02 100644
+--- a/src/cli/serve/text_generation_scheduler.cpp
++++ b/src/cli/serve/text_generation_scheduler.cpp
+@@ -193,6 +193,11 @@ struct TextGenerationScheduler::Impl {
+       throw std::invalid_argument(
+           "text generation scheduler runner pool must not be null");
+     }
++    ValidateServiceGeometry(scheduler_policy.request_policy,
++                            runner_pool->runner().Descriptor().max_context,
++                            runner_pool->capacity(),
++                            scheduler_policy.max_pending_requests,
++                            scheduler_policy.max_pending_requests_per_client);
+     if (prefill_policy.decode_active_tokens == 0) {
+       throw std::invalid_argument(
+           "active-decode prefill budget must be at least one token");
+@@ -1328,6 +1333,10 @@ std::size_t TextGenerationScheduler::capacity() const noexcept {
+   return impl_->runner_pool->capacity();
+ }
+ 
++TextRequestPolicy TextGenerationScheduler::request_policy() const noexcept {
++  return impl_->scheduler_policy.request_policy;
++}
++
+ std::size_t TextGenerationScheduler::buffered_output_bytes() const noexcept {
+   return impl_->output_budget->buffered_bytes.load(std::memory_order_relaxed);
+ }
+@@ -1351,6 +1360,10 @@ TextGenerationScheduler::Request TextGenerationScheduler::Submit(
+     const sampling::SamplingConfig& sampling,
+     const CancellationCheck& is_cancelled, bool publish_token_pieces,
+     RequestMetadata metadata) {
++  ValidatePreparedRequest(impl_->scheduler_policy.request_policy, prompt.size(),
++                          max_tokens,
++                          impl_->runner_pool->runner().Descriptor().max_context,
++                          metadata.cache_prompt);
+   if (prompt.empty()) {
+     throw std::invalid_argument("text scheduler prompt must not be empty");
+   }
+diff --git a/src/cli/serve/text_generation_scheduler.hpp b/src/cli/serve/text_generation_scheduler.hpp
+index a7ea07176073cd89bf0387c16ec6eb3452d41b1a..bf218301e352b65b499ae94bfe47a8cdad9448d3 100644
+--- a/src/cli/serve/text_generation_scheduler.hpp
++++ b/src/cli/serve/text_generation_scheduler.hpp
+@@ -12,6 +12,7 @@
+ 
+ #include "src/cli/serve/text_generation_backend.hpp"
+ #include "src/cli/serve/text_model_runner.hpp"
++#include "src/cli/serve/text_request_limits.hpp"
+ 
+ namespace gufo::server {
+ 
+@@ -45,6 +46,7 @@ struct TextSchedulerPolicy {
+   std::size_t max_buffered_output_bytes_total{
+       kDefaultMaxBufferedOutputBytesTotal};
+   std::chrono::milliseconds request_timeout{0};
++  TextRequestPolicy request_policy{TextRequestPolicy::kDefault};
+ };
+ 
+ /// Single-owner scheduler for opaque text-model runner states.
+@@ -107,6 +109,7 @@ public:
+ 
+   [[nodiscard]] const TextModelRunner& runner() const noexcept;
+   [[nodiscard]] std::size_t capacity() const noexcept;
++  [[nodiscard]] TextRequestPolicy request_policy() const noexcept;
+   [[nodiscard]] std::size_t buffered_output_bytes() const noexcept;
+   [[nodiscard]] std::size_t max_buffered_output_bytes() const noexcept;
+ 
+diff --git a/src/cli/serve/text_request_limits.hpp b/src/cli/serve/text_request_limits.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..311b07e62e965eae0541dca538a5044b1326a069
+--- /dev/null
++++ b/src/cli/serve/text_request_limits.hpp
+@@ -0,0 +1,55 @@
++#ifndef GUFO_SERVER_TEXT_REQUEST_LIMITS_HPP_
++#define GUFO_SERVER_TEXT_REQUEST_LIMITS_HPP_
++
++#include <cstddef>
++#include <cstdint>
++#include <stdexcept>
++
++namespace gufo::server {
++
++enum class TextRequestPolicy : std::uint8_t { kDefault, kAr4kServiceV1 };
++
++inline bool IsAr4kService(TextRequestPolicy policy) noexcept {
++  return policy == TextRequestPolicy::kAr4kServiceV1;
++}
++
++inline void ValidateServiceGeometry(TextRequestPolicy policy,
++                                    std::size_t context, std::size_t sessions,
++                                    std::size_t pending,
++                                    std::size_t pending_per_client) {
++  if (IsAr4kService(policy) && (context != 4096 || sessions != 1 ||
++                                pending != 1 || pending_per_client != 1)) {
++    throw std::invalid_argument(
++        "ar4k-service-v1 requires context=4096, sessions=1, "
++        "pending=1 and pending-per-client=1");
++  }
++}
++
++inline void ValidateRequestedOutput(TextRequestPolicy policy,
++                                    std::size_t output) {
++  if (IsAr4kService(policy) && (output == 0 || output > 256)) {
++    throw std::invalid_argument(
++        "ar4k-service-v1 requires requested output in [1,256]");
++  }
++}
++
++inline void ValidatePreparedRequest(TextRequestPolicy policy, std::size_t input,
++                                    std::size_t output, std::size_t context,
++                                    bool cache_prompt) {
++  if (!IsAr4kService(policy))
++    return;
++  ValidateRequestedOutput(policy, output);
++  if (context != 4096)
++    throw std::invalid_argument("ar4k-service-v1 requires context=4096");
++  if (cache_prompt)
++    throw std::invalid_argument("ar4k-service-v1 forbids cache lookup");
++  if (input == 0 || input > 2304)
++    throw std::length_error(
++        "ar4k-service-v1 requires rendered input in [1,2304]");
++  if (input >= context || output > context - input)
++    throw std::length_error("requested generation exceeds context");
++}
++
++}  // namespace gufo::server
++
++#endif  // GUFO_SERVER_TEXT_REQUEST_LIMITS_HPP_
+diff --git a/src/cli/serve/text_request_policy.hpp b/src/cli/serve/text_request_policy.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..add027948bd5d535f4b98b4d6242e8a7921fa8fb
+--- /dev/null
++++ b/src/cli/serve/text_request_policy.hpp
+@@ -0,0 +1,89 @@
++#ifndef GUFO_SERVER_TEXT_REQUEST_POLICY_HPP_
++#define GUFO_SERVER_TEXT_REQUEST_POLICY_HPP_
++
++#include <cmath>
++#include <initializer_list>
++#include <optional>
++#include <stdexcept>
++#include <string>
++#include <string_view>
++#include <vector>
++
++#include "src/cli/serve/text_generation_backend.hpp"
++#include "src/cli/serve/text_model_runner.hpp"
++#include "src/cli/serve/text_request_limits.hpp"
++#include "src/core/json.hpp"
++
++namespace gufo::server {
++
++inline void ValidateChatFeatures(TextRequestPolicy policy,
++                                 const ChatRequest& request) {
++  if (!IsAr4kService(policy))
++    return;
++  if (request.cache_prompt)
++    throw std::invalid_argument("ar4k-service-v1 forbids cache lookup");
++  if (request.add_vision_id)
++    throw std::invalid_argument("ar4k-service-v1 forbids vision");
++  if (request.reasoning.enabled != std::optional<bool>{false} ||
++      request.reasoning.preserve_thinking != std::optional<bool>{false} ||
++      request.reasoning.effort.has_value())
++    throw std::invalid_argument("ar4k-service-v1 requires thinking off");
++  for (const auto& message : request.messages) {
++    if (!message.images.empty())
++      throw std::invalid_argument("ar4k-service-v1 forbids vision");
++    if (!message.thought.empty())
++      throw std::invalid_argument("ar4k-service-v1 forbids reasoning history");
++  }
++}
++
++inline std::optional<TextPreparedPrompt> PreparePolicyChatPrompt(
++    TextRequestPolicy policy, const TextModelRunner& runner,
++    const ChatRequest& request, std::size_t output) {
++  ValidateChatFeatures(policy, request);
++  ValidateRequestedOutput(policy, output);
++  auto prepared = runner.PreparePrompt(request);
++  if (IsAr4kService(policy)) {
++    ValidatePreparedRequest(policy, prepared ? prepared->tokens.size() : 0,
++                            output, runner.Descriptor().max_context,
++                            request.cache_prompt);
++  }
++  return prepared;
++}
++
++inline std::vector<TextRunnerToken> PreparePolicyCompletionPrompt(
++    TextRequestPolicy policy, const TextModelRunner& runner,
++    std::string_view prompt) {
++  if (IsAr4kService(policy))
++    throw std::invalid_argument(
++        "ar4k-service-v1 requires a framed chat/responses/messages route");
++  return runner.Tokenize(prompt);
++}
++
++inline std::optional<std::string> ValidateServiceHttpFields(
++    TextRequestPolicy policy, const json::Value& body,
++    std::initializer_list<std::string_view> output_fields) {
++  if (!IsAr4kService(policy))
++    return std::nullopt;
++  std::optional<std::size_t> seen;
++  for (const auto field : output_fields) {
++    const auto* value = body.find(std::string(field));
++    if (value == nullptr || value->is_null())
++      continue;
++    const double number = value->is_number() ? value->as_double() : 0.0;
++    if (!value->is_number() || !std::isfinite(number) ||
++        std::floor(number) != number || number < 1 || number > 256)
++      return "ar4k-service-v1 requires requested output in [1,256]";
++    const auto count = static_cast<std::size_t>(number);
++    if (seen && *seen != count)
++      return "ar4k-service-v1 forbids conflicting output token aliases";
++    seen = count;
++  }
++  if (const auto* cache = body.find("cache_prompt");
++      cache && (!cache->is_bool() || cache->as_bool()))
++    return "ar4k-service-v1 requires cache_prompt=false";
++  return std::nullopt;
++}
++
++}  // namespace gufo::server
++
++#endif  // GUFO_SERVER_TEXT_REQUEST_POLICY_HPP_
+diff --git a/tests/cli/serve_test.py b/tests/cli/serve_test.py
+index 25e6d06095a07942a0dd50188923b39ed6904901..21d1359b0172c58473e3f13a1a4009641825d0e1 100644
+--- a/tests/cli/serve_test.py
++++ b/tests/cli/serve_test.py
+@@ -60,6 +60,44 @@ def main():
+     assert "Path to GGUF model file (required)" in help_text
+     assert "8589934592" in help_text
+     assert "0 = auto, at most 1 GiB and 1/8 available RAM" in help_text
++    assert "--request-policy <PROFILE>" in help_text
++    check(["serve", "llm", "--request-policy", "unknown"], 2,
++          "unsupported request policy")
++    service = ["serve", "llm", "--model", "missing-service.gguf",
++               "--request-policy", "ar4k-service-v1", "--context", "4096",
++               "--sessions", "1", "--max-pending", "1",
++               "--max-pending-per-client", "1", "--max-tokens", "256",
++               "--think", "off", "--preserve-thinking", "off"]
++    for option, value, message in (
++            ("--context", "0", "requires context=4096"),
++            ("--context", "4097", "requires context=4096"),
++            ("--sessions", "2", "requires context=4096"),
++            ("--max-pending", "0", "sampling and scheduling limits are invalid"),
++            ("--max-pending", "2", "requires context=4096"),
++            ("--max-pending-per-client", "2", "sampling and scheduling limits are invalid"),
++            ("--max-tokens", "-1", "requires requested output"),
++            ("--max-tokens", "0", "sampling and scheduling limits are invalid"),
++            ("--max-tokens", "257", "requires requested output"),
++            ("--think", "auto", "requires --think off"),
++            ("--think", "on", "requires --think off"),
++            ("--preserve-thinking", "auto", "requires --preserve-thinking off"),
++            ("--preserve-thinking", "on", "requires --preserve-thinking off"),
++            ("--reasoning-effort", "low", "cannot be set while --think is off"),
++            ("--speculative", "mtp", "forbids speculative decoding"),
++            ("--dflash-model", "missing-dflash.gguf", "forbids draft model"),
++            ("--dspark-model", "missing-dspark.gguf", "forbids speculative decoding"),
++            ("--mtp-model", "missing-mtp.gguf", "forbids draft model"),
++            ("--mmproj", "missing-vision.gguf", "forbids --mmproj"),
++            ("--cache-disk", "missing-cache", "forbids disk cache")):
++        args = service.copy()
++        index = args.index(option) if option in args else -1
++        if index >= 0:
++            args[index + 1] = value
++        else:
++            args.extend((option, value))
++        check(args, 2, message)
++    check([*service, "--prompt-lookup"], 2, "forbids prompt lookup")
++    check(service, 1, "Error loading model 'missing-service.gguf'")
+     check(["bench", "--help"], 0, "Path to GGUF model file (required)")
+     for args in (["serve"], ["serve", "llm"], ["bench"],
+                  ["serve", "llm", "--model", ""], ["bench", "--model", ""]):
+diff --git a/tests/cli/text_generation_scheduler_test.cpp b/tests/cli/text_generation_scheduler_test.cpp
+index fb515bc4d84889807aae187d61a994b0140dd96a..fe7ae3a1f4d17c619b4e491bc5b4a191865a2825 100644
+--- a/tests/cli/text_generation_scheduler_test.cpp
++++ b/tests/cli/text_generation_scheduler_test.cpp
+@@ -22,6 +22,7 @@
+ #include <vector>
+ 
+ #include "src/cli/serve/stop_sequences.hpp"
++#include "src/cli/serve/text_request_policy.hpp"
+ 
+ namespace {
+ 
+@@ -38,6 +39,7 @@ using gufo::server::TextPrefillPolicy;
+ using gufo::server::TextPrefillStep;
+ using gufo::server::TextRequestMetadata;
+ using gufo::server::TextRequestPhase;
++using gufo::server::TextRequestPolicy;
+ using gufo::server::TextRunnerAdvance;
+ using gufo::server::TextRunnerCapabilities;
+ using gufo::server::TextRunnerDescriptor;
+@@ -56,6 +58,19 @@ void Expect(bool condition, std::string_view message) {
+   }
+ }
+ 
++template<typename F>
++void ExpectInvalid(F&& action, std::string_view message) {
++  bool invalid = false;
++  try {
++    action();
++  } catch (const std::invalid_argument&) {
++    invalid = true;
++  } catch (const std::length_error&) {
++    invalid = true;
++  }
++  Expect(invalid, message);
++}
++
+ enum class EventKind : std::uint8_t {
+   kPrefill,
+   kAdvance,
+@@ -201,7 +216,7 @@ const FakeState& RequireFakeState(const TextRunnerState& state) {
+   return *fake;
+ }
+ 
+-class FakeRunner final : public TextModelRunner {
++class FakeRunner : public TextModelRunner {
+ public:
+   explicit FakeRunner(std::shared_ptr<FakeControl> control)
+       : control_(std::move(control)) {}
+@@ -503,6 +518,29 @@ private:
+   std::shared_ptr<FakeControl> control_;
+ };
+ 
++class PreparationRunner final : public FakeRunner {
++public:
++  using FakeRunner::FakeRunner;
++
++  std::vector<TextRunnerToken> Tokenize(std::string_view) const override {
++    ++tokenize_calls;
++    return {1};
++  }
++
++  std::optional<gufo::server::TextPreparedPrompt> PreparePrompt(
++      const ChatRequest& request) const override {
++    ++prepare_calls;
++    captured = request;
++    return gufo::server::TextPreparedPrompt{
++        std::vector<TextRunnerToken>(prepared_tokens, 1), {}};
++  }
++
++  mutable std::size_t tokenize_calls{0};
++  mutable std::size_t prepare_calls{0};
++  mutable ChatRequest captured;
++  std::size_t prepared_tokens{2304};
++};
++
+ std::unique_ptr<TextGenerationScheduler> MakeScheduler(
+     const std::shared_ptr<FakeControl>& control, std::size_t capacity,
+     TextPrefillPolicy prefill_policy = {},
+@@ -545,6 +583,225 @@ TextRequestMetadata ClientMetadata(std::string client_id) {
+   };
+ }
+ 
++TextRequestMetadata ServiceMetadata(std::string client_id = "service-client") {
++  auto metadata = ClientMetadata(std::move(client_id));
++  metadata.cache_prompt = false;
++  return metadata;
++}
++
++TextSchedulerPolicy ServicePolicy() {
++  return {
++      .max_pending_requests = 1,
++      .max_pending_requests_per_client = 1,
++      .request_policy = TextRequestPolicy::kAr4kServiceV1,
++  };
++}
++
++void TestServiceNumericLimits() {
++  for (const std::size_t input : {std::size_t{0}, std::size_t{2305}})
++    ExpectInvalid(
++        [&] {
++          gufo::server::ValidatePreparedRequest(
++              TextRequestPolicy::kAr4kServiceV1, input, 256, 4096, false);
++        },
++        "service rejects input outside [1,2304]");
++  for (const std::size_t output : {std::size_t{0}, std::size_t{257}})
++    ExpectInvalid(
++        [&] {
++          gufo::server::ValidatePreparedRequest(
++              TextRequestPolicy::kAr4kServiceV1, 2304, output, 4096, false);
++        },
++        "service rejects output outside [1,256]");
++  gufo::server::ValidatePreparedRequest(TextRequestPolicy::kAr4kServiceV1, 2304,
++                                        256, 4096, false);
++  gufo::server::ValidatePreparedRequest(TextRequestPolicy::kDefault, 2305, 257,
++                                        4096, true);
++  ExpectInvalid(
++      [] {
++        gufo::server::ValidatePreparedRequest(TextRequestPolicy::kAr4kServiceV1,
++                                              2304, 256, 4096, true);
++      },
++      "service forbids prompt cache lookup");
++  ExpectInvalid(
++      [] {
++        gufo::server::ValidateServiceGeometry(TextRequestPolicy::kAr4kServiceV1,
++                                              4096, 2, 1, 1);
++      },
++      "service requires one runner session");
++}
++
++void TestServicePreparationBoundary() {
++  auto control = std::make_shared<FakeControl>();
++  control->max_context = 4096;
++  PreparationRunner runner(control);
++  const auto policy = TextRequestPolicy::kAr4kServiceV1;
++  ExpectInvalid(
++      [&] {
++        (void)gufo::server::PreparePolicyCompletionPrompt(policy, runner,
++                                                          "raw prompt");
++      },
++      "service raw completion wrapper is refused");
++  Expect(runner.tokenize_calls == 0,
++         "raw completion refused before tokenization");
++
++  ChatRequest request{{gufo::tokenization::ChatMessage{
++                           gufo::tokenization::ChatRole::kSystem, "rules"},
++                       gufo::tokenization::ChatMessage{
++                           gufo::tokenization::ChatRole::kUser, "hi"}}};
++  request.tools.push_back({"lookup", "test tool", "{}", "{}"});
++  request.cache_prompt = false;
++  request.reasoning.enabled = false;
++  request.reasoning.preserve_thinking = false;
++  const auto reject_before_prepare = [&](const ChatRequest& candidate,
++                                         std::string_view message) {
++    const auto before = runner.prepare_calls;
++    ExpectInvalid(
++        [&] {
++          (void)gufo::server::PreparePolicyChatPrompt(policy, runner, candidate,
++                                                      256);
++        },
++        message);
++    Expect(runner.prepare_calls == before,
++           "forbidden feature refused before preparation");
++  };
++  auto forbidden = request;
++  forbidden.cache_prompt = true;
++  reject_before_prepare(forbidden, "cache lookup refused");
++  forbidden = request;
++  forbidden.reasoning.enabled = true;
++  reject_before_prepare(forbidden, "thinking refused");
++  forbidden = request;
++  forbidden.reasoning.preserve_thinking = true;
++  reject_before_prepare(forbidden, "thinking preservation refused");
++  forbidden = request;
++  forbidden.reasoning.effort = gufo::ReasoningEffort::kLow;
++  reject_before_prepare(forbidden, "reasoning effort refused");
++  forbidden = request;
++  forbidden.messages.front().thought = "earlier reasoning";
++  reject_before_prepare(forbidden, "reasoning history refused");
++  forbidden = request;
++  forbidden.messages.back().images.push_back({0, {}});
++  reject_before_prepare(forbidden, "image refused");
++  forbidden = request;
++  forbidden.add_vision_id = true;
++  reject_before_prepare(forbidden, "vision identifier refused");
++
++  const auto prepared =
++      gufo::server::PreparePolicyChatPrompt(policy, runner, request, 256);
++  Expect(prepared && prepared->tokens.size() == 2304,
++         "2304 rendered tokens accepted");
++  Expect(runner.captured.messages.size() == 2 &&
++             runner.captured.tools.size() == 1 &&
++             runner.captured.messages.front().role ==
++                 gufo::tokenization::ChatRole::kSystem,
++         "complete request including system/tools reaches preparation");
++  runner.prepared_tokens = 2305;
++  const auto before = runner.prepare_calls;
++  ExpectInvalid(
++      [&] {
++        (void)gufo::server::PreparePolicyChatPrompt(policy, runner, request,
++                                                    256);
++      },
++      "2305 rendered tokens refused");
++  Expect(runner.prepare_calls == before + 1,
++         "rendered limit checked after exactly one preparation");
++}
++
++void TestServiceSubmitRejectsBeforeAdmission() {
++  auto control = std::make_shared<FakeControl>();
++  control->max_context = 4096;
++  auto scheduler = MakeScheduler(control, 1, {}, ServicePolicy());
++  Expect(scheduler->request_policy() == TextRequestPolicy::kAr4kServiceV1,
++         "scheduler exposes stored request policy");
++  const auto baseline = control->states_created.load(std::memory_order_relaxed);
++  const auto refuse = [&](std::size_t input, std::size_t output,
++                          bool cache_prompt) {
++    auto metadata = ServiceMetadata();
++    metadata.cache_prompt = cache_prompt;
++    ExpectInvalid(
++        [&] {
++          (void)scheduler->Submit(std::vector<TextRunnerToken>(input, 7),
++                                  output, 0.0F, {}, false, metadata);
++        },
++        "invalid service submission is rejected synchronously");
++    Expect(control->states_created.load(std::memory_order_relaxed) == baseline,
++           "refused request creates no state");
++    Expect(control->Events().empty(), "refused request reaches no runner work");
++    Expect(control->decode_calls.load(std::memory_order_relaxed) == 0,
++           "refused request decodes no tokens");
++  };
++  refuse(2305, 256, false);
++  refuse(2304, 257, false);
++  refuse(2304, 0, false);
++  refuse(2304, 256, true);
++
++  auto accepted = scheduler->Submit(std::vector<TextRunnerToken>(2304, 7), 256,
++                                    0.0F, {}, false, ServiceMetadata());
++  const auto result = accepted.Wait();
++  const auto events = control->Events();
++  Expect(!events.empty() && events.front().kind == EventKind::kPrefill &&
++             events.front().count == 2304,
++         "accepted service request prefills all 2304 tokens");
++  Expect(result.prompt_tokens == 2304 && result.tokens.size() == 256,
++         "accepted service request retains its 256-token output limit");
++
++  auto wrong_context = std::make_shared<FakeControl>();
++  wrong_context->max_context = 4095;
++  auto pool = std::make_shared<TextRunnerPool>(
++      std::make_shared<FakeRunner>(wrong_context), 1);
++  const auto wrong_context_baseline =
++      wrong_context->states_created.load(std::memory_order_relaxed);
++  ExpectInvalid(
++      [&] {
++        (void)std::make_unique<TextGenerationScheduler>(
++            pool, TextPrefillPolicy{}, ServicePolicy());
++      },
++      "service scheduler rejects incorrect context at construction");
++  Expect(wrong_context->states_created.load(std::memory_order_relaxed) ==
++                 wrong_context_baseline &&
++             wrong_context->Events().empty() &&
++             wrong_context->decode_calls.load(std::memory_order_relaxed) == 0,
++         "invalid service geometry starts no model work");
++}
++
++void TestServicePendingLimitRejectsBeforeStateAdmission() {
++  auto control = std::make_shared<FakeControl>();
++  control->max_context = 4096;
++  control->block_advance_label = 1;
++  auto scheduler = MakeScheduler(control, 1, {}, ServicePolicy());
++
++  auto active = scheduler->Submit({1}, 4, 0.0F, {}, false,
++                                  ServiceMetadata("active-client"));
++  control->WaitForAdvance(1);
++  auto queued = scheduler->Submit({2}, 1, 0.0F, {}, false,
++                                  ServiceMetadata("queued-client"));
++
++  bool rejected = false;
++  try {
++    (void)scheduler->Submit({3}, 1, 0.0F, {}, false,
++                            ServiceMetadata("third-client"));
++  } catch (const TextGenerationError& error) {
++    rejected = error.code() == TextGenerationErrorCode::kQueueFull;
++  }
++  Expect(rejected, "restricted pending queue rejects third request");
++  Expect(control->states_created.load(std::memory_order_relaxed) == 1,
++         "restricted queue rejection creates no second state");
++
++  control->ReleaseAdvance();
++  const auto active_result = active.Wait();
++  const auto queued_result = queued.Wait();
++  Expect(active_result.tokens == ExpectedTokens(1, 4) &&
++             queued_result.tokens == ExpectedTokens(2, 1),
++         "restricted active and queued work both drain");
++  const auto repeat =
++      scheduler
++          ->Submit({1}, 1, 0.0F, {}, false, ServiceMetadata("active-client"))
++          .Wait();
++  Expect(
++      !active_result.cache_hit && !queued_result.cache_hit && !repeat.cache_hit,
++      "restricted repeated prompt never uses cache");
++}
++
+ void TestIdlePrefillUsesBulkWorkUnit() {
+   auto control = std::make_shared<FakeControl>();
+   auto scheduler = MakeScheduler(control, 1, {.decode_active_tokens = 2});
+@@ -1529,6 +1786,10 @@ void TestShutdownCancelsRunnerAcquisition() {
+ }
+ 
+ int main() {
++  TestServiceNumericLimits();
++  TestServicePreparationBoundary();
++  TestServiceSubmitRejectsBeforeAdmission();
++  TestServicePendingLimitRejectsBeforeStateAdmission();
+   TestStopSequenceChunkBoundaries();
+   TestStopSequencesPreserveExecutedState();
+   TestStopPrefixFlushAndBatchIsolation();
+diff --git a/tests/cli/text_request_policy_routes_test.cpp b/tests/cli/text_request_policy_routes_test.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..683ccc8f744e84fa7022af2c8bfed285a651af2d
+--- /dev/null
++++ b/tests/cli/text_request_policy_routes_test.cpp
+@@ -0,0 +1,547 @@
++#include <cstdlib>
++#include <iostream>
++#include <memory>
++#include <optional>
++#include <span>
++#include <string>
++#include <string_view>
++#include <vector>
++
++#include "src/cli/serve/http_server.hpp"
++#include "src/cli/serve/openai_chat.hpp"
++#include "src/cli/serve/text_request_policy.hpp"
++#include "src/core/json.hpp"
++
++namespace {
++
++using namespace gufo::server;
++
++void Expect(bool condition, std::string_view message) {
++  if (!condition) {
++    std::cerr << "Assertion failed: " << message << '\n';
++    std::exit(1);
++  }
++}
++
++class PreparationRunner final : public TextModelRunner {
++public:
++  TextRunnerDescriptor Descriptor() const override {
++    return {.model_id = "test-model",
++            .state_abi = "policy-test",
++            .max_context = 4096,
++            .capabilities = {},
++            .persistence = std::nullopt};
++  }
++  TextRunnerResourceClaim ResourceClaim() const override { return {}; }
++  std::vector<TextExecutionPlan> SupportedPlans() const override {
++    return {{.kind = TextExecutionPlanKind::kSerial, .physical_width = 1}};
++  }
++  std::vector<TextRunnerToken> Tokenize(std::string_view) const override {
++    ++tokenize_calls;
++    return {1};
++  }
++  std::optional<std::vector<TextRunnerToken>> RenderAndTokenize(
++      const ChatRequest&) const override {
++    return std::vector<TextRunnerToken>{1};
++  }
++  std::optional<TextPreparedPrompt> PreparePrompt(
++      const ChatRequest& request) const override {
++    ++prepare_calls;
++    captured = request;
++    return TextPreparedPrompt{std::vector<TextRunnerToken>(prepared_tokens, 1),
++                              {}};
++  }
++  std::string Decode(std::span<const TextRunnerToken>) const override {
++    return "";
++  }
++  std::unique_ptr<TextRunnerState> CreateState() const override {
++    return nullptr;
++  }
++  TextPrefillStep Prefill(TextRunnerState&, std::span<const TextRunnerToken>,
++                          std::size_t, std::size_t) const override {
++    return {};
++  }
++  TextDecodeSelection SelectNext(TextRunnerState&,
++                                 gufo::sampling::SamplerState&) const override {
++    return {};
++  }
++  void Advance(TextRunnerState&, TextRunnerToken) const override {}
++  std::size_t CheckpointPosition(const TextRunnerState&) const override {
++    return 0;
++  }
++
++  mutable int tokenize_calls{0};
++  mutable int prepare_calls{0};
++  mutable ChatRequest captured;
++  std::size_t prepared_tokens{2304};
++};
++
++class PolicyBackend final : public TextGenerationBackend {
++public:
++  std::string model_id() const override { return "test-model"; }
++  bool ready() const override { return true; }
++  TextRequestPolicy request_policy() const noexcept override { return policy; }
++  SamplingDefaults sampling_defaults() const override {
++    SamplingDefaults defaults;
++    defaults.max_tokens = 256;
++    return defaults;
++  }
++  gufo::ReasoningOptions reasoning_defaults() const override {
++    gufo::ReasoningOptions options;
++    options.enabled = false;
++    options.preserve_thinking = false;
++    return options;
++  }
++  Result complete(std::string_view, std::size_t,
++                  const gufo::sampling::SamplingConfig&,
++                  const CancellationCheck&, const TokenCallback&,
++                  std::string_view, const std::vector<std::string>&) override {
++    ++raw_calls;
++    return {};
++  }
++  Result chat(const ChatRequest& request, std::size_t max_tokens,
++              const gufo::sampling::SamplingConfig&, const CancellationCheck&,
++              const TokenCallback&) override {
++    auto prepared =
++        PreparePolicyChatPrompt(policy, runner, request, max_tokens);
++    ++admitted_calls;
++    last_output = max_tokens;
++    last_cache = request.cache_prompt;
++    Result result;
++    result.prompt_tokens = prepared ? prepared->tokens.size() : 0;
++    return result;
++  }
++  std::shared_ptr<GenerationRequest> start_chat(
++      const ChatRequest& request, std::size_t max_tokens,
++      const gufo::sampling::SamplingConfig& sampling,
++      const CancellationCheck& cancelled, bool stream) override {
++    (void)PreparePolicyChatPrompt(policy, runner, request, max_tokens);
++    return TextGenerationBackend::start_chat(request, max_tokens, sampling,
++                                             cancelled, stream);
++  }
++  std::size_t count_tokens(std::string_view text) const override {
++    return text.size();
++  }
++
++  TextRequestPolicy policy{TextRequestPolicy::kAr4kServiceV1};
++  PreparationRunner runner;
++  int admitted_calls{0};
++  int raw_calls{0};
++  std::size_t last_output{0};
++  bool last_cache{true};
++};
++
++HttpRequest Chat(std::string body) {
++  HttpRequest request;
++  request.method = "POST";
++  request.path = "/v1/chat/completions";
++  request.body = std::move(body);
++  return request;
++}
++
++HttpResponse Route(std::string path, const gufo::json::Value& body,
++                   PolicyBackend& backend) {
++  auto request = Chat(body.dump());
++  request.path = std::move(path);
++  if (request.path == "/v1/chat/completions")
++    return HandleOpenAiChat(request, backend);
++  return HandleTextCompatibilityRequest(request, backend);
++}
++
++void TestChatPolicy() {
++  PolicyBackend backend;
++  const auto make_body = [](std::string_view field) {
++    return std::string{
++               "{\"model\":\"test-model\",\"messages\":[{\"role\":\"user\","
++               "\"content\":\"hello\"}],"} +
++           std::string(field) + "}";
++  };
++  for (const auto output : {"1", "256"}) {
++    const auto response = HandleOpenAiChat(
++        Chat(make_body(std::string{"\"max_tokens\":"} + output)), backend);
++    Expect(response.status == 200, "service chat accepts output 1/256");
++    Expect(!backend.last_cache, "service chat disables cache by default");
++  }
++  for (const auto output : {"257", "0", "-1", "1.5", "\"1\"", "true"}) {
++    const auto before = backend.runner.prepare_calls;
++    const auto response = HandleOpenAiChat(
++        Chat(make_body(std::string{"\"max_tokens\":"} + output)), backend);
++    Expect(response.status == 400, "service chat rejects invalid output");
++    Expect(backend.runner.prepare_calls == before,
++           "invalid output refused before preparation");
++  }
++  for (const auto field :
++       {"\"max_tokens\":4000,\"max_completion_tokens\":1",
++        "\"max_tokens\":1,\"max_completion_tokens\":2", "\"cache_prompt\":true",
++        "\"thinking\":{\"type\":\"enabled\"}", "\"reasoning_effort\":\"low\"",
++        "\"chat_template_kwargs\":{\"preserve_thinking\":true}",
++        "\"chat_template_kwargs\":{\"add_vision_id\":true}"}) {
++    const auto before = backend.runner.prepare_calls;
++    const auto response = HandleOpenAiChat(Chat(make_body(field)), backend);
++    Expect(response.status == 400, "service chat rejects forbidden field");
++    Expect(backend.runner.prepare_calls == before,
++           "forbidden field refused before preparation");
++  }
++  const auto oversized =
++      HandleOpenAiChat(Chat(make_body("\"max_tokens\":256")), backend);
++  Expect(oversized.status == 200, "2304 rendered tokens accepted");
++  backend.runner.prepared_tokens = 2305;
++  const auto before = backend.admitted_calls;
++  const auto response = HandleOpenAiChat(
++      Chat(make_body("\"max_tokens\":256,\"stream\":true")), backend);
++  Expect(response.status == 400 && !response.streaming_body,
++         "oversized stream refused synchronously");
++  Expect(backend.admitted_calls == before, "oversized prompt never admitted");
++
++  const auto pass_alias = HandleOpenAiChat(
++      Chat(make_body("\"max_tokens\":256,\"max_completion_tokens\":256")),
++      backend);
++  Expect(pass_alias.status == 400,
++         "2305 rendered tokens still refused with equal aliases");
++  backend.runner.prepared_tokens = 2304;
++  Expect(
++      HandleOpenAiChat(
++          Chat(make_body("\"max_tokens\":256,\"max_completion_tokens\":256")),
++          backend)
++              .status == 200,
++      "equal aliases accepted");
++  Expect(
++      HandleOpenAiChat(
++          Chat(make_body("\"max_tokens\":null,\"max_completion_tokens\":256")),
++          backend)
++              .status == 200,
++      "null alias ignored");
++  Expect(HandleOpenAiChat(Chat(make_body("\"cache_prompt\":false")), backend)
++                 .status == 200,
++         "explicit cache=false accepted");
++  Expect(
++      HandleOpenAiChat(
++          Chat(
++              R"({"model":"test-model","messages":[{"role":"user","content":"hello"}]})"),
++          backend)
++                  .status == 200 &&
++          backend.last_output == 256,
++      "omitted output uses validated backend default");
++
++  const auto before_features = backend.runner.prepare_calls;
++  const auto history = HandleOpenAiChat(
++      Chat(
++          R"({"model":"test-model","messages":[{"role":"assistant","content":"hello","reasoning_content":"hidden"},{"role":"user","content":"next"}],"max_tokens":1})"),
++      backend);
++  Expect(history.status == 400 &&
++             history.body.find("reasoning history") != std::string::npos,
++         "reasoning history refused");
++  const auto image = HandleOpenAiChat(
++      Chat(
++          R"({"model":"test-model","messages":[{"role":"user","content":[{"type":"image_url","image_url":{"url":"file:///Z:/nonexistent-policy-test.jpg"}}]}],"max_tokens":1})"),
++      backend);
++  Expect(image.status == 400 &&
++             image.body.find("forbids vision") != std::string::npos &&
++             image.body.find("request_policy_violation") != std::string::npos,
++         "image URL refused by policy before file reading");
++  Expect(backend.runner.prepare_calls == before_features,
++         "history and image refused before preparation");
++}
++
++void TestDirectRoutes() {
++  PolicyBackend backend;
++  struct Case {
++    std::string_view path;
++    std::string_view body;
++    std::string_view output_field;
++  };
++  constexpr Case framed[]{
++      {"/v1/chat/completions",
++       R"({"model":"test-model","messages":[{"role":"user","content":"hello"}],"max_tokens":256})",
++       "max_tokens"},
++      {"/v1/responses",
++       R"({"model":"test-model","input":"hello","max_output_tokens":256})",
++       "max_output_tokens"},
++      {"/v1/messages",
++       R"({"model":"test-model","messages":[{"role":"user","content":"hello"}],"max_tokens":256})",
++       "max_tokens"},
++  };
++  for (const auto& route : framed) {
++    auto body = gufo::json::parse(route.body);
++    for (const int output : {1, 256}) {
++      body[std::string(route.output_field)] = output;
++      Expect(Route(std::string(route.path), body, backend).status == 200,
++             "framed route accepts output 1/256");
++      Expect(backend.last_output == static_cast<std::size_t>(output) &&
++                 !backend.last_cache,
++             "framed route passes output and cache=false");
++    }
++    for (const auto& bad : {"257", "0", "-1", "1.5", "\"1\"", "true"}) {
++      body[std::string(route.output_field)] = gufo::json::parse(bad);
++      const auto before = backend.runner.prepare_calls;
++      Expect(Route(std::string(route.path), body, backend).status == 400,
++             "framed route rejects output outside service range");
++      Expect(backend.runner.prepare_calls == before,
++             "invalid output refused before preparation");
++    }
++    body[std::string(route.output_field)] = 256;
++    backend.runner.prepared_tokens = 2305;
++    const auto before = backend.admitted_calls;
++    Expect(Route(std::string(route.path), body, backend).status == 400,
++           "framed route rejects 2305 prepared tokens");
++    Expect(backend.admitted_calls == before,
++           "oversized prepared prompt never admitted");
++    backend.runner.prepared_tokens = 2304;
++    Expect(Route(std::string(route.path), body, backend).status == 200,
++           "framed route accepts 2304 prepared tokens");
++  }
++  for (
++      const auto& omitted :
++      {Case{"/v1/responses", R"({"model":"test-model","input":"hello"})",
++            "max_output_tokens"},
++       Case{
++           "/v1/messages",
++           R"({"model":"test-model","messages":[{"role":"user","content":"hello"}]})",
++           "max_tokens"}}) {
++    const auto response = Route(std::string(omitted.path),
++                                gufo::json::parse(omitted.body), backend);
++    Expect(response.status == 200 && backend.last_output == 256,
++           "compatibility route uses validated default output");
++  }
++  {
++    auto body = gufo::json::parse(framed[1].body);
++    body["max_output_tokens"] = gufo::json::Value();
++    Expect(Route("/v1/responses", body, backend).status == 400,
++           "compatibility token field remains nonnullable");
++  }
++  for (const auto& route : {framed[0], framed[1]}) {
++    auto body = gufo::json::parse(route.body);
++    body["stream"] = true;
++    body[std::string(route.output_field)] = 257;
++    const auto output_error = Route(std::string(route.path), body, backend);
++    Expect(output_error.status == 400 && !output_error.streaming_body,
++           "stream output violation returns immediate 400");
++    body[std::string(route.output_field)] = 256;
++    backend.runner.prepared_tokens = 2305;
++    const auto input_error = Route(std::string(route.path), body, backend);
++    Expect(input_error.status == 400 && !input_error.streaming_body,
++           "stream input violation returns immediate 400");
++    backend.runner.prepared_tokens = 2304;
++  }
++
++  for (const auto& raw :
++       {Case{"/v1/completions",
++             R"({"model":"test-model","prompt":"hello","max_tokens":1})",
++             "max_tokens"},
++        Case{"/completion", R"({"prompt":"hello","n_predict":1})",
++             "n_predict"}}) {
++    const auto response =
++        Route(std::string(raw.path), gufo::json::parse(raw.body), backend);
++    Expect(
++        response.status == 400 &&
++            response.body.find("request_policy_violation") != std::string::npos,
++        "raw route returns explicit policy refusal");
++    Expect(backend.raw_calls == 0,
++           "raw route never reaches backend completion");
++  }
++
++  for (const auto& route : framed) {
++    auto body = gufo::json::parse(route.body);
++    body["cache_prompt"] = true;
++    const auto before = backend.runner.prepare_calls;
++    Expect(Route(std::string(route.path), body, backend).status == 400,
++           "compatibility and chat cache=true refused");
++    Expect(backend.runner.prepare_calls == before,
++           "cache=true refused before preparation");
++    body["cache_prompt"] = false;
++    Expect(Route(std::string(route.path), body, backend).status == 200,
++           "explicit compatibility cache=false accepted");
++  }
++  {
++    auto body = gufo::json::parse(framed[1].body);
++    body["reasoning"] = gufo::json::Value::object();
++    Expect(Route("/v1/responses", body, backend).status == 400,
++           "compatibility reasoning field remains unsupported");
++  }
++  {
++    const auto before = backend.runner.prepare_calls;
++    const auto reasoning = gufo::json::parse(
++        R"({"model":"test-model","input":[{"type":"reasoning","summary":[{"type":"summary_text","text":"hidden"}]},{"role":"assistant","content":"hello"},{"role":"user","content":"next"}],"max_output_tokens":1})");
++    Expect(Route("/v1/responses", reasoning, backend).status == 400,
++           "responses reasoning history refused");
++    Expect(backend.runner.prepare_calls == before,
++           "responses history refused before preparation");
++    const auto image = gufo::json::parse(
++        R"({"model":"test-model","input":[{"role":"user","content":[{"type":"image_url","image_url":"file:///Z:/nonexistent-policy-test.jpg"}]}],"max_output_tokens":1})");
++    Expect(Route("/v1/responses", image, backend).status == 400,
++           "compatibility image form stays rejected");
++    Expect(backend.runner.prepare_calls == before,
++           "compatibility image refused before preparation");
++  }
++  Expect(HandleTextCompatibilityRequest(Chat("{}"), backend).status == 404,
++         "compatibility dispatcher preserves not-found response");
++
++  backend.policy = TextRequestPolicy::kDefault;
++  for (const auto& route : framed) {
++    auto body = gufo::json::parse(route.body);
++    body[std::string(route.output_field)] = 257;
++    Expect(Route(std::string(route.path), body, backend).status == 200,
++           "unrestricted route accepts 257 output");
++    Expect(backend.last_cache, "unrestricted route preserves cache default");
++  }
++}
++
++void TestEmptyResponsesReasoningItems() {
++  PolicyBackend backend;
++  constexpr std::string_view summaries[]{
++      R"({"type":"reasoning","summary":[]})",
++      R"({"type":"reasoning","summary":[{"type":"summary_text","text":""}]})",
++  };
++  const auto make_body = [](std::string_view item, bool stream) {
++    return gufo::json::parse(
++        std::string{"{\"model\":\"test-model\",\"input\":["} +
++        std::string(item) +
++        R"(,{"role":"user","content":"hello"}],"max_output_tokens":1,"stream":)" +
++        (stream ? "true}" : "false}"));
++  };
++
++  backend.policy = TextRequestPolicy::kDefault;
++  for (const auto summary : summaries) {
++    Expect(Route("/v1/responses", make_body(summary, false), backend).status ==
++               200,
++           "unrestricted Responses preserves empty reasoning items");
++  }
++
++  backend.policy = TextRequestPolicy::kAr4kServiceV1;
++  bool all_refused = true;
++  for (const auto summary : summaries) {
++    for (const bool stream : {false, true}) {
++      const auto before_prepare = backend.runner.prepare_calls;
++      const auto before_admitted = backend.admitted_calls;
++      const auto response =
++          Route("/v1/responses", make_body(summary, stream), backend);
++      const bool refused =
++          response.status == 400 && !response.streaming_body &&
++          response.body.find("reasoning history") != std::string::npos &&
++          backend.runner.prepare_calls == before_prepare &&
++          backend.admitted_calls == before_admitted;
++      if (!refused) {
++        std::cerr << "Empty Responses reasoning item admitted: " << summary
++                  << ", stream=" << stream << ", status=" << response.status
++                  << ", prepare_delta="
++                  << backend.runner.prepare_calls - before_prepare
++                  << ", admission_delta="
++                  << backend.admitted_calls - before_admitted << '\n';
++      }
++      all_refused &= refused;
++    }
++  }
++  Expect(all_refused,
++         "service Responses refuses empty reasoning items before preparation");
++}
++
++bool TestExplicitOffEffortFields() {
++  PolicyBackend backend;
++  bool all_refused = true;
++  const auto base = gufo::json::parse(
++      R"({"model":"test-model","messages":[{"role":"user","content":"hello"}],"max_tokens":1})");
++  for (const bool kwargs : {false, true}) {
++    for (const auto effort : {"off", "none"}) {
++      auto body = base;
++      if (kwargs)
++        body["chat_template_kwargs"]["reasoning_effort"] = effort;
++      else
++        body["reasoning_effort"] = effort;
++      backend.policy = TextRequestPolicy::kDefault;
++      Expect(Route("/v1/chat/completions", body, backend).status == 200,
++             "unrestricted chat preserves explicit off/none effort");
++      body["stream"] = true;
++      Expect(Route("/v1/chat/completions", body, backend).status == 200,
++             "unrestricted streamed chat preserves explicit off/none effort");
++      backend.policy = TextRequestPolicy::kAr4kServiceV1;
++      for (const bool stream : {false, true}) {
++        body["stream"] = stream;
++        const auto before_prepare = backend.runner.prepare_calls;
++        const auto before_admitted = backend.admitted_calls;
++        const auto response = Route("/v1/chat/completions", body, backend);
++        const bool refused = response.status == 400 &&
++                             !response.streaming_body &&
++                             backend.runner.prepare_calls == before_prepare &&
++                             backend.admitted_calls == before_admitted;
++        if (!refused)
++          std::cerr << "Explicit effort admitted: kwargs=" << kwargs
++                    << ", effort=" << effort << ", stream=" << stream
++                    << ", status=" << response.status << '\n';
++        all_refused &= refused;
++      }
++    }
++  }
++  auto null_effort = base;
++  null_effort["reasoning_effort"] = gufo::json::Value();
++  Expect(Route("/v1/chat/completions", null_effort, backend).status == 200,
++         "top-level null effort remains an omitted control");
++  null_effort["stream"] = true;
++  Expect(Route("/v1/chat/completions", null_effort, backend).status == 200,
++         "top-level null effort remains omitted for streamed chat");
++  auto nested_null = base;
++  nested_null["chat_template_kwargs"]["reasoning_effort"] = gufo::json::Value();
++  for (const auto policy :
++       {TextRequestPolicy::kDefault, TextRequestPolicy::kAr4kServiceV1}) {
++    backend.policy = policy;
++    const auto response = Route("/v1/chat/completions", nested_null, backend);
++    Expect(response.status == 400 &&
++               response.body.find("invalid_reasoning") != std::string::npos,
++           "nested null effort retains the existing invalid-type response");
++  }
++  return all_refused;
++}
++
++bool TestCompatibilityReasoningContent() {
++  PolicyBackend backend;
++  bool all_refused = true;
++  for (const auto path : {"/v1/responses", "/v1/messages"}) {
++    auto body = gufo::json::parse(
++        R"({"model":"test-model","messages":[{"role":"assistant","content":"earlier answer","reasoning_content":"hidden thought"},{"role":"user","content":"next"}],"max_tokens":1})");
++    if (std::string_view(path) == "/v1/responses") {
++      body = gufo::json::parse(
++          R"({"model":"test-model","input":[{"role":"assistant","content":"earlier answer","reasoning_content":"hidden thought"},{"role":"user","content":"next"}],"max_output_tokens":1})");
++    }
++    backend.policy = TextRequestPolicy::kDefault;
++    Expect(Route(path, body, backend).status == 200,
++           "unrestricted compatibility route preserves reasoning_content "
++           "behavior");
++    if (std::string_view(path) == "/v1/responses") {
++      body["stream"] = true;
++      Expect(Route(path, body, backend).status == 200,
++             "unrestricted streamed Responses preserves reasoning_content "
++             "behavior");
++    }
++    backend.policy = TextRequestPolicy::kAr4kServiceV1;
++    for (const bool stream : {false, true}) {
++      if (stream && std::string_view(path) != "/v1/responses")
++        continue;
++      if (std::string_view(path) == "/v1/responses")
++        body["stream"] = stream;
++      const auto before_prepare = backend.runner.prepare_calls;
++      const auto before_admitted = backend.admitted_calls;
++      const auto response = Route(path, body, backend);
++      const bool refused = response.status == 400 && !response.streaming_body &&
++                           backend.runner.prepare_calls == before_prepare &&
++                           backend.admitted_calls == before_admitted;
++      if (!refused)
++        std::cerr << "Compatibility reasoning_content admitted: path=" << path
++                  << ", stream=" << stream << ", status=" << response.status
++                  << '\n';
++      all_refused &= refused;
++    }
++  }
++  return all_refused;
++}
++
++}  // namespace
++
++int main() {
++  TestChatPolicy();
++  TestDirectRoutes();
++  TestEmptyResponsesReasoningItems();
++  const bool effort_refused = TestExplicitOffEffortFields();
++  const bool history_refused = TestCompatibilityReasoningContent();
++  Expect(effort_refused && history_refused,
++         "service refuses controls and history before conversion");
++  return 0;
++}

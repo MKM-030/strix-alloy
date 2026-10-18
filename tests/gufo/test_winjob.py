@@ -1,0 +1,631 @@
+import ctypes as C
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import threading
+import time
+import unittest
+from unittest.mock import patch
+
+from gufo_control.winjob import OwnedProcess
+
+
+def _await_file(path, seconds=5):
+    deadline = time.monotonic() + seconds
+    while time.monotonic() < deadline:
+        if path.exists():
+            try:
+                return path.read_text()
+            except PermissionError:
+                pass  # Windows can briefly deny a newly replaced file's open.
+        time.sleep(0.02)
+    raise AssertionError(f"child did not write {path}")
+
+
+def _observer(pid):
+    kernel = C.WinDLL("kernel32", use_last_error=True)
+    kernel.OpenProcess.argtypes = [C.c_ulong, C.c_int, C.c_ulong]
+    kernel.OpenProcess.restype = C.c_void_p
+    kernel.WaitForSingleObject.argtypes = [C.c_void_p, C.c_ulong]
+    kernel.WaitForSingleObject.restype = C.c_ulong
+    kernel.CloseHandle.argtypes = [C.c_void_p]
+    kernel.CloseHandle.restype = C.c_int
+    handle = kernel.OpenProcess(0x100000, False, pid)
+    if not handle:
+        raise C.WinError(C.get_last_error())
+    return kernel, handle
+
+
+@unittest.skipUnless(os.name == "nt", "Windows lifecycle qualification")
+class WinJobTests(unittest.TestCase):
+    def launch(self, code, *args, cwd):
+        return OwnedProcess([sys.executable, "-c", code, *map(str, args)],
+                            cwd=cwd, env=dict(os.environ))
+
+    def test_live_identity_suspended_running_exited_and_closed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            child = self.launch('pass', cwd=folder)
+            try:
+                self.assertTrue(hasattr(child, 'verify_live_identity'), 'missing retained-handle verification')
+                self.assertEqual(child.verify_live_identity(), child.identity)
+                child.resume()
+                self.assertTrue(child.wait(5000))
+                with self.assertRaises((ValueError, RuntimeError)):
+                    child.verify_live_identity()
+            finally:
+                child.close(5000)
+            with self.assertRaises((ValueError, RuntimeError)):
+                child.verify_live_identity()
+
+    def test_live_identity_mismatches_and_normalized_path(self):
+        with tempfile.TemporaryDirectory() as folder:
+            with self.launch('import time; time.sleep(60)', cwd=folder) as child:
+                self.assertTrue(hasattr(child, 'verify_live_identity'), 'missing retained-handle verification')
+                child.resume()
+                original = dict(child.identity)
+                for key, value in (('pid', original['pid']+1),
+                                   ('creation_time_100ns', original['creation_time_100ns']+1),
+                                   ('executable', r'C:\wrong\python.exe')):
+                    child.identity = dict(original, **{key: value})
+                    with self.subTest(key=key), self.assertRaises(ValueError):
+                        child.verify_live_identity()
+                child.identity = dict(original, executable=original['executable'].upper())
+                self.assertEqual(child.verify_live_identity()['pid'], original['pid'])
+
+    def test_pending_inspection_has_only_duplicate_process_and_does_not_delay_stop(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            child = self.launch('import time; time.sleep(60)', cwd=folder)
+            entered, release = threading.Event(), threading.Event()
+            observed = []
+            task = None
+            def inspect(api, handle, deadline):
+                observed.append(handle)
+                entered.set()
+                release.wait(5)
+                # Original handle has closed; this independent handle stays valid.
+                self.assertEqual(api.WaitForSingleObject(handle, 0), 0)
+                return {'python.exe': sys.executable}
+            try:
+                child.resume()
+                self.assertTrue(hasattr(child, 'inspect_modules'), 'missing duplicate-handle inspection')
+                original, job = child._process, child._job
+                with patch.object(winjob, '_module_paths', side_effect=inspect):
+                    task = child.inspect_modules(app_local_dir=folder)
+                    self.assertTrue(entered.wait(2))
+                    self.assertNotEqual(observed[0], original)
+                    self.assertNotEqual(observed[0], job)
+                    self.assertFalse(task.done.is_set())
+                    self.assertFalse(task.duplicate_closed.is_set())
+                    started = time.monotonic()
+                    child.close(5000)
+                    self.assertLess(time.monotonic()-started, 2)
+                    self.assertFalse(task.done.is_set())
+                    release.set()
+                    self.assertTrue(task.done.wait(2))
+                    self.assertTrue(task.duplicate_closed.is_set())
+                    self.assertEqual(task.snapshot()['status'], 'unknown')
+            finally:
+                release.set()
+                if task is not None:
+                    task.done.wait(5)
+                child.close(5000)
+
+    def test_module_inspection_real_harmless_process_and_failure(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / 'ready'
+            with self.launch("from pathlib import Path; import sys,time; Path(sys.argv[1]).touch(); time.sleep(60)", marker, cwd=folder) as child:
+                child.resume()
+                _await_file(marker)
+                self.assertTrue(hasattr(child, 'inspect_modules'), 'missing duplicate-handle inspection')
+                task = child.inspect_modules(app_local_dir=folder)
+                self.assertTrue(task.done.wait(3))
+                self.assertTrue(task.duplicate_closed.is_set())
+                self.assertEqual(task.result['status'], 'unknown')  # Python has no HIP module.
+                self.assertIn(Path(sys.executable).name.lower(), task.result['modules'])
+                with patch.object(winjob, '_module_paths', side_effect=OSError('inspection failed')):
+                    failed = child.inspect_modules(app_local_dir=folder)
+                    self.assertTrue(failed.done.wait(3))
+                    self.assertTrue(failed.duplicate_closed.is_set())
+                    self.assertEqual(failed.result['status'], 'unknown')
+
+    def test_module_paths_app_local_external_and_deadline(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            with self.launch('import time; time.sleep(60)', cwd=folder) as child:
+                child.resume()
+                self.assertTrue(hasattr(child, 'inspect_modules'), 'missing duplicate-handle inspection')
+                for path, status in ((str(Path(folder)/'amdhip64_7.dll'), 'verified'),
+                                     (r'C:\external\amdhip64_7.dll', 'failed')):
+                    with patch.object(winjob, '_module_paths', return_value={'amdhip64_7.dll': path}):
+                        task = child.inspect_modules(app_local_dir=folder)
+                        self.assertTrue(task.done.wait(3))
+                        self.assertEqual(task.result['status'], status)
+                        self.assertTrue(task.duplicate_closed.is_set())
+                entered, release = threading.Event(), threading.Event()
+                def stalled(api, handle, deadline):
+                    entered.set()
+                    release.wait(5)
+                    return {'amdhip64_7.dll': str(Path(folder)/'amdhip64_7.dll')}
+                with patch.object(winjob, '_module_paths', side_effect=stalled):
+                    task = child.inspect_modules(app_local_dir=folder)
+                    try:
+                        self.assertTrue(entered.wait(2))
+                        self.assertEqual(task.snapshot(now=task.deadline+0.001)['status'], 'unknown')
+                        self.assertFalse(task.snapshot()['terminal'])
+                        self.assertFalse(task.snapshot()['duplicate_handle_closed'])
+                        with patch.object(winjob.time, 'monotonic', return_value=task.deadline+0.001):
+                            release.set()
+                            self.assertTrue(task.done.wait(3))
+                        self.assertEqual(task.result['status'], 'unknown')
+                        self.assertEqual(task.result['reason'], 'inspection_timeout')
+                    finally:
+                        release.set()
+                        task.done.wait(5)
+
+    def test_inspection_start_failures_close_duplicate_and_never_duplicate_job(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            with self.launch('import time; time.sleep(60)', cwd=folder) as child:
+                child.resume()
+                real_api = child._api
+                copies = []
+                class Api:
+                    def __getattr__(self, name):
+                        return getattr(real_api, name)
+                    def DuplicateHandle(self, current, source, target, result, access, inherit, options):
+                        copies.append((source, access, inherit, options))
+                        return real_api.DuplicateHandle(current, source, target, result, access, inherit, options)
+                child._api = Api()
+                with patch.object(winjob.threading.Thread, 'start', side_effect=RuntimeError('thread unavailable')):
+                    task = child.inspect_modules(app_local_dir=folder)
+                self.assertTrue(task.done.is_set())
+                self.assertTrue(task.duplicate_closed.is_set())
+                self.assertEqual(copies, [(child._process, 0x100410, False, 0)])
+                self.assertNotEqual(copies[0][0], child._job)
+                self.assertEqual(task.result['status'], 'unknown')
+                with patch.object(child._api, 'DuplicateHandle', return_value=0):
+                    task = child.inspect_modules(app_local_dir=folder)
+                self.assertTrue(task.done.is_set())
+                self.assertTrue(task.duplicate_closed.is_set())
+                self.assertEqual(task.result['status'], 'unknown')
+
+    def test_inspection_terminal_does_not_claim_failed_duplicate_close(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            child = self.launch('import time; time.sleep(60)', cwd=folder)
+            real_api, unclosed = child._api, []
+            class Api:
+                def __getattr__(self, name):
+                    return getattr(real_api, name)
+                def CloseHandle(self, handle):
+                    if handle not in (child._process, child._thread, child._job):
+                        unclosed.append(handle)
+                        return 0
+                    return real_api.CloseHandle(handle)
+            try:
+                child.resume()
+                child._api = Api()
+                with patch.object(winjob, '_module_paths', return_value={}):
+                    task = child.inspect_modules(app_local_dir=folder)
+                    self.assertTrue(task.done.wait(3))
+                self.assertFalse(task.duplicate_closed.is_set())
+                self.assertTrue(task.snapshot()['terminal'])
+                self.assertFalse(task.snapshot()['duplicate_handle_closed'])
+                self.assertEqual(task.result['reason'], 'duplicate_close_unconfirmed')
+            finally:
+                child._api = real_api
+                child.close(5000)
+                for handle in unclosed:
+                    self.assertTrue(real_api.CloseHandle(handle))
+
+    def test_observed_external_hip_fails_even_if_remaining_enumeration_fails(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            with self.launch('import time; time.sleep(60)', cwd=folder) as child:
+                child.resume()
+                error = OSError('later module vanished')
+                error.modules = {'amdhip64_7.dll': r'C:\external\amdhip64_7.dll'}
+                with patch.object(winjob, '_module_paths', side_effect=error):
+                    task = child.inspect_modules(app_local_dir=folder)
+                    self.assertTrue(task.done.wait(3))
+                self.assertEqual(task.result['status'], 'failed')
+                self.assertTrue(task.duplicate_closed.is_set())
+
+    def test_module_enumeration_count_path_and_time_bounds(self):
+        from gufo_control import winjob
+        class Api:
+            count = C.sizeof(winjob.W.HMODULE)
+            length = 12
+            def EnumProcessModulesEx(self, process, handles, size, needed, flags):
+                needed._obj.value = self.count
+                return 1
+            def GetModuleFileNameExW(self, process, handle, path, size):
+                path.value = r'C:\local\x.dll'
+                return self.length
+        api = Api()
+        with patch.object(winjob, '_module_api', return_value=api):
+            self.assertEqual(winjob._module_paths(None, 1, time.monotonic()+2), {'x.dll': r'C:\local\x.dll'})
+            for count in (0, 4097*C.sizeof(winjob.W.HMODULE), 1):
+                api.count = count
+                with self.assertRaises(ValueError):
+                    winjob._module_paths(None, 1, time.monotonic()+2)
+            api.count = C.sizeof(winjob.W.HMODULE)
+            api.length = 32768
+            with self.assertRaises(ValueError):
+                winjob._module_paths(None, 1, time.monotonic()+2)
+            with self.assertRaises(TimeoutError):
+                winjob._module_paths(None, 1, time.monotonic()-1)
+
+    def test_duplicate_hip_basenames_keep_both_observations_in_either_order(self):
+        from gufo_control import winjob
+        local = r'C:\app\amdhip64_7.dll'
+        external = r'C:\external\amdhip64_7.dll'
+        class Api:
+            def __init__(self, paths):
+                self.paths = iter(paths)
+            def EnumProcessModulesEx(self, process, handles, size, needed, flags):
+                needed._obj.value = 2*C.sizeof(winjob.W.HMODULE)
+                return 1
+            def GetModuleFileNameExW(self, process, handle, path, size):
+                path.value = next(self.paths)
+                return len(path.value)
+        for paths in ((local, external), (external, local)):
+            with self.subTest(paths=paths), patch.object(winjob, '_module_api', return_value=Api(paths)):
+                with self.assertRaisesRegex(ValueError, 'ambiguous_module_name') as caught:
+                    winjob._module_paths(None, 1, time.monotonic()+2)
+                self.assertEqual(set(caught.exception.modules.values()), set(paths))
+                self.assertTrue(winjob._external_hip(caught.exception.modules, r'c:\app'))
+
+    def test_suspended_until_resume_then_clean_exit(self):
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / "ran.txt"
+            with self.launch("from pathlib import Path; import sys; Path(sys.argv[1]).write_text('ok')",
+                             marker, cwd=folder) as child:
+                self.assertFalse(child.wait(100))
+                self.assertFalse(marker.exists())
+                self.assertGreater(child.identity["pid"], 0)
+                self.assertGreater(child.identity["creation_time_100ns"], 0)
+                self.assertEqual(Path(child.identity["executable"]).resolve(), Path(sys.executable).resolve())
+                json.dumps(child.identity)
+                child.resume()
+                self.assertTrue(child.wait(5000))
+                self.assertEqual(marker.read_text(), "ok")
+
+    def test_close_kills_running_child_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as folder:
+            child = self.launch("import time; time.sleep(60)", cwd=folder)
+            try:
+                child.resume()
+                self.assertFalse(child.wait(50))
+                child.close(5000)
+                child.close()
+                with self.assertRaises(RuntimeError):
+                    child.wait()
+                with self.assertRaises(RuntimeError):
+                    child.resume()
+            finally:
+                child.close(5000)
+
+    def test_unresumed_close(self):
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / "ran.txt"
+            child = self.launch("from pathlib import Path; import sys; Path(sys.argv[1]).touch()",
+                                marker, cwd=folder)
+            try:
+                child.close()
+                self.assertFalse(marker.exists())
+            finally:
+                child.close(5000)
+
+    def test_quoting_and_environment(self):
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / "quoted output.json"
+            code = ("import json,os,sys; from pathlib import Path; "
+                    "Path(sys.argv[1]).write_text(json.dumps([sys.argv[2],os.environ['GUFO_TEST_VALUE']]))")
+            env = dict(os.environ, GUFO_TEST_VALUE='a b "c"')
+            with OwnedProcess([sys.executable, "-c", code, str(marker), 'space "quote" \\ tail'],
+                              cwd=folder, env=env) as child:
+                child.resume()
+                self.assertTrue(child.wait(5000))
+            self.assertEqual(json.loads(marker.read_text()), ['space "quote" \\ tail', 'a b "c"'])
+
+    def test_bad_inputs_and_resume_twice(self):
+        with tempfile.TemporaryDirectory() as folder:
+            for argv in ([], ["bad\0path"], "not a list"):
+                with self.subTest(argv=argv), self.assertRaises(ValueError):
+                    OwnedProcess(argv, cwd=folder, env={})
+            for env in ({"BAD=KEY": "x"}, {"X": "bad\0value"}):
+                with self.subTest(env=env), self.assertRaises(ValueError):
+                    OwnedProcess([sys.executable], cwd=folder, env=env)
+            with self.launch("pass", cwd=folder) as child:
+                for value in (-1, 60001, 1.2, True):
+                    with self.subTest(value=value), self.assertRaises(ValueError):
+                        child.wait(value)
+                    with self.subTest(close_value=value), self.assertRaises(ValueError):
+                        child.close(value)
+                child.resume()
+                with self.assertRaises(RuntimeError):
+                    child.resume()
+
+    def test_job_handle_not_inheritable(self):
+        with tempfile.TemporaryDirectory() as folder:
+            with self.launch("pass", cwd=folder) as child:
+                flags = C.c_ulong()
+                get_info = C.WinDLL("kernel32", use_last_error=True).GetHandleInformation
+                get_info.argtypes = [C.c_void_p, C.POINTER(C.c_ulong)]
+                get_info.restype = C.c_int
+                self.assertTrue(get_info(child._job, C.byref(flags)))
+                self.assertEqual(flags.value & 1, 0)
+
+    def test_assignment_failure_never_executes_child(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / "ran.txt"
+            real_api = winjob._api()
+            observer = []
+            class Api:
+                def __getattr__(self, name):
+                    return getattr(real_api, name)
+                def AssignProcessToJobObject(self, job, process):
+                    get_pid = C.WinDLL("kernel32", use_last_error=True).GetProcessId
+                    get_pid.argtypes = [C.c_void_p]
+                    get_pid.restype = C.c_ulong
+                    observer.append(_observer(get_pid(process)))
+                    C.set_last_error(5)
+                    return 0
+            try:
+                with patch.object(winjob, "_api", return_value=Api()):
+                    with self.assertRaises(OSError):
+                        self.launch("from pathlib import Path; import sys; Path(sys.argv[1]).touch()",
+                                    marker, cwd=folder)
+                self.assertEqual(observer[0][0].WaitForSingleObject(observer[0][1], 5000), 0)
+            finally:
+                if observer:
+                    observer[0][0].CloseHandle(observer[0][1])
+            self.assertFalse(marker.exists())
+
+    def test_failed_exit_confirmation_retains_handle_for_retry(self):
+        with tempfile.TemporaryDirectory() as folder:
+            child = self.launch("import time; time.sleep(60)", cwd=folder)
+            try:
+                child.resume()
+                real_wait = child._api.WaitForSingleObject
+                child._api.WaitForSingleObject = lambda handle, timeout: 258
+                try:
+                    with self.assertRaises(TimeoutError):
+                        child.close(100)
+                    self.assertIsNotNone(child._process)
+                    self.assertFalse(child._closed)
+                finally:
+                    child._api.WaitForSingleObject = real_wait
+            finally:
+                child.close(5000)
+
+    def test_setup_cleanup_uncertainty_chains_error_and_retains_retry_owner(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            real_api = winjob._api()
+            class Api:
+                def __getattr__(self, name):
+                    return getattr(real_api, name)
+                def AssignProcessToJobObject(self, job, process):
+                    C.set_last_error(5)
+                    return 0
+                def WaitForSingleObject(self, process, timeout):
+                    return 258
+            owner = None
+            try:
+                with patch.object(winjob, "_api", return_value=Api()):
+                    with self.assertRaisesRegex(RuntimeError, "cleanup unconfirmed") as caught:
+                        self.launch("import time; time.sleep(60)", cwd=folder)
+                owner = caught.exception.owner
+                self.assertIsInstance(caught.exception.__cause__, OSError)
+                self.assertIsNotNone(owner._process)
+            finally:
+                if owner is not None:
+                    owner._api = real_api
+                    owner.close(5000)
+
+    def test_failed_assignment_and_transient_termination_retries_on_close(self):
+        from gufo_control import winjob
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / "ran.txt"
+            real_api = winjob._api()
+            observer = None
+            class Api:
+                termination_attempts = 0
+                def __getattr__(self, name):
+                    return getattr(real_api, name)
+                def AssignProcessToJobObject(self, job, process):
+                    nonlocal observer
+                    get_pid = C.WinDLL("kernel32", use_last_error=True).GetProcessId
+                    get_pid.argtypes = [C.c_void_p]
+                    get_pid.restype = C.c_ulong
+                    observer = _observer(get_pid(process))
+                    C.set_last_error(5)
+                    return 0
+                def TerminateProcess(self, process, exit_code):
+                    self.termination_attempts += 1
+                    if self.termination_attempts == 1:
+                        C.set_last_error(5)
+                        return 0
+                    return real_api.TerminateProcess(process, exit_code)
+                def WaitForSingleObject(self, process, timeout):
+                    if self.termination_attempts == 1:
+                        return 258
+                    return real_api.WaitForSingleObject(process, timeout)
+            injected = Api()
+            owner = None
+            try:
+                with patch.object(winjob, "_api", return_value=injected):
+                    with self.assertRaisesRegex(RuntimeError, "cleanup unconfirmed") as caught:
+                        self.launch("from pathlib import Path; import sys; Path(sys.argv[1]).touch()",
+                                    marker, cwd=folder)
+                owner = caught.exception.owner
+                with self.assertRaises(RuntimeError):
+                    owner.resume()
+                owner.close(5000)
+                self.assertEqual(injected.termination_attempts, 2)
+                self.assertTrue(owner._closed)
+                self.assertEqual(observer[0].WaitForSingleObject(observer[1], 0), 0)
+                self.assertFalse(marker.exists())
+            finally:
+                try:
+                    if owner is not None and not owner._closed:
+                        real_api.TerminateProcess(owner._process, 1)
+                        owner._api = real_api
+                        owner.close(5000)
+                finally:
+                    if observer:
+                        observer[0].CloseHandle(observer[1])
+
+    def test_guardian_death_kills_its_child(self):
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / "identity.json"
+            code = ("import json,os,sys,time; from pathlib import Path; "
+                    "from gufo_control.winjob import OwnedProcess; "
+                    "p=OwnedProcess([sys.executable,'-c','import time; time.sleep(60)'],"
+                    "cwd=sys.argv[2],env=dict(os.environ)); p.resume(); "
+                    "m=Path(sys.argv[1]); t=m.with_suffix('.tmp'); "
+                    "t.write_text(json.dumps(p.identity)); t.replace(m); time.sleep(60)")
+            guardian = subprocess.Popen([sys.executable, "-c", code, str(marker), folder],
+                                        cwd=folder, env=dict(os.environ),
+                                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            observer = None
+            try:
+                identity = json.loads(_await_file(marker))
+                self.assertGreater(identity["creation_time_100ns"], 0)
+                observer = _observer(identity["pid"])
+                guardian.terminate()
+                guardian.wait(timeout=5)
+                self.assertEqual(observer[0].WaitForSingleObject(observer[1], 5000), 0)
+            finally:
+                try:
+                    if guardian.poll() is None:
+                        guardian.terminate()
+                        guardian.wait(timeout=5)
+                finally:
+                    if observer:
+                        observer[0].CloseHandle(observer[1])
+
+        # Exercise the actual service bootstrap and existing guardian, with only
+        # harmless child / synthetic telemetry injected inside the test module.
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            env = dict(os.environ, PYTHONPATH=os.pathsep.join((
+                str(Path(__file__).resolve().parents[2]/'scripts'), str(Path(__file__).resolve().parent))))
+            launcher = subprocess.Popen([sys.executable, '-m', 'test_service_ipc', '_native_launcher',
+                str(root/'bootstrap.json')], cwd=folder, env=env, close_fds=True,
+                creationflags=subprocess.CREATE_NO_WINDOW, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            guardian_handle = child_observer = None
+            try:
+                guardian_identity = json.loads(_await_file(root/'guardian.json', 15))
+                kernel = C.WinDLL('kernel32', use_last_error=True)
+                kernel.OpenProcess.argtypes = [C.c_ulong, C.c_int, C.c_ulong]
+                kernel.OpenProcess.restype = C.c_void_p
+                kernel.TerminateProcess.argtypes = [C.c_void_p, C.c_uint]
+                kernel.TerminateProcess.restype = C.c_int
+                kernel.WaitForSingleObject.argtypes = [C.c_void_p, C.c_ulong]
+                kernel.CloseHandle.argtypes = [C.c_void_p]
+                candidate = kernel.OpenProcess(0x101001, False, guardian_identity['pid'])
+                self.assertTrue(candidate)
+                # Authenticate this retained handle before it can ever be used
+                # to terminate our helper; PID alone is not ownership proof.
+                from gufo_control import winjob
+                api = winjob._api()
+                try:
+                    times = [winjob.W.FILETIME() for _ in range(4)]
+                    self.assertTrue(api.GetProcessTimes(candidate, *(C.byref(t) for t in times)))
+                    image = C.create_unicode_buffer(32768)
+                    length = winjob.W.DWORD(len(image))
+                    self.assertTrue(api.QueryFullProcessImageNameW(candidate, 0, image, C.byref(length)))
+                    self.assertEqual(api.GetProcessId(candidate), guardian_identity['pid'])
+                    self.assertEqual(times[0].dwHighDateTime << 32 | times[0].dwLowDateTime,
+                                     guardian_identity['creation_time_100ns'])
+                    self.assertEqual(os.path.normcase(image.value), os.path.normcase(guardian_identity['executable']))
+                    guardian_handle, candidate = candidate, None
+                finally:
+                    if candidate:
+                        kernel.CloseHandle(candidate)
+                record = json.loads(_await_file(root/'endpoint.json', 15))
+                child_observer = _observer(record['child']['pid'])
+                try:
+                    result = json.loads(_await_file(root/'launcher-result.json', 15))
+                except AssertionError:
+                    diagnostics = (root/'helper-result.json').read_text() if (root/'helper-result.json').exists() else 'no guardian result'
+                    if launcher.poll() is not None:
+                        diagnostics += launcher.stderr.read().decode(errors='replace')
+                    self.fail(diagnostics)
+                self.assertEqual(result['state'], 'committed')
+                (root/'exit-launcher').touch()
+                _, errors = launcher.communicate(timeout=5)
+                self.assertEqual(launcher.returncode, 0, errors.decode(errors='replace'))
+                key_file = Path(record['credentials'])
+                key = json.loads(key_file.read_text())['api_key']
+                for path in root.rglob('*.json'):
+                    if path != key_file:
+                        self.assertNotIn(key.encode(), path.read_bytes(), str(path))
+                self.assertEqual(kernel.WaitForSingleObject(guardian_handle, 0), 258)
+                self.assertEqual(child_observer[0].WaitForSingleObject(child_observer[1], 0), 258)
+                self.assertTrue(kernel.TerminateProcess(guardian_handle, 1))
+                self.assertEqual(kernel.WaitForSingleObject(guardian_handle, 5000), 0)
+                self.assertEqual(child_observer[0].WaitForSingleObject(child_observer[1], 5000), 0)
+                self.assertTrue((root/'evidence'/'incomplete.json').exists())
+            finally:
+                if launcher.poll() is None:
+                    launcher.terminate()
+                    launcher.wait(timeout=5)
+                launcher.stderr.close()
+                if guardian_handle:
+                    if kernel.WaitForSingleObject(guardian_handle, 0) == 258:
+                        kernel.TerminateProcess(guardian_handle, 1)
+                    self.assertEqual(kernel.WaitForSingleObject(guardian_handle, 5000), 0)
+                    kernel.CloseHandle(guardian_handle)
+                if child_observer:
+                    self.assertEqual(child_observer[0].WaitForSingleObject(child_observer[1], 5000), 0)
+                    child_observer[0].CloseHandle(child_observer[1])
+
+    def test_close_kills_descendant_in_same_job(self):
+        with tempfile.TemporaryDirectory() as folder:
+            marker = Path(folder) / "descendant.txt"
+            code = ("import subprocess,sys,time; from pathlib import Path; "
+                    "p=subprocess.Popen([sys.executable,'-c','import time; time.sleep(60)']); "
+                    "m=Path(sys.argv[1]); t=m.with_suffix('.tmp'); "
+                    "t.write_text(str(p.pid)); t.replace(m); time.sleep(60)")
+            child = self.launch(code, marker, cwd=folder)
+            observer = None
+            try:
+                child.resume()
+                observer = _observer(int(_await_file(marker)))
+                child.close(5000)
+                self.assertEqual(observer[0].WaitForSingleObject(observer[1], 5000), 0)
+            finally:
+                try:
+                    if not child._closed:
+                        child.close(5000)
+                finally:
+                    if observer:
+                        observer[0].CloseHandle(observer[1])
+
+    def test_identity_matches_owned_handle(self):
+        from gufo_control import winjob
+        self.assertEqual(C.sizeof(winjob._BasicLimit), 64)
+        self.assertEqual(C.sizeof(winjob._ExtendedLimit), 144)
+        self.assertEqual(C.sizeof(winjob._Startup), 104)
+        self.assertEqual(C.sizeof(winjob._ProcessInfo), 24)
+        with tempfile.TemporaryDirectory() as folder:
+            with self.launch("pass", cwd=folder) as child:
+                times = [winjob.W.FILETIME() for _ in range(4)]
+                self.assertTrue(child._api.GetProcessTimes(
+                    child._process, *(C.byref(t) for t in times)))
+                created = (times[0].dwHighDateTime << 32) | times[0].dwLowDateTime
+                self.assertEqual(child.identity["creation_time_100ns"], created)
+
+
+if __name__ == "__main__":
+    unittest.main()

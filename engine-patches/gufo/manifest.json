@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "name": "ar4k-service-v1",
+  "status": "built-runtime-unqualified-source-patch",
+  "upstream_url": "https://github.com/pixmaate/gufo.git",
+  "base_commit": "cff564964e8506c0abb3e530cecb55332187ac6c",
+  "base_tree": "dd8f9bc491d0c43976f6cdf9b5ab40f6d727a043",
+  "reviewed_source_head": "139aa9c58dadcb75c1bd0741aad0823fc65a0547",
+  "reviewed_source_tree": "273d84974a604c81023dae15d379a9bfc0b1c29b",
+  "patch": {
+    "file": "ar4k-service-v1.patch",
+    "size_bytes": 80277,
+    "sha256": "517AFE90C696187CC9CF90E0DE2F9FDAAD78395E6280D49FAF5966782225878B"
+  },
+  "source_commits": [
+    "b64eb8a5da258ee89668ea8d486bbc6cbdd54cc2",
+    "b44670319b1623936275bf73fc9a4cfe6a2103a7",
+    "fb438cf4f208d596fbce441cb04cdd0c3e5bf818",
+    "c7be24589a0ce03ed8713bc618adf264f8a163ee",
+    "139aa9c58dadcb75c1bd0741aad0823fc65a0547"
+  ],
+  "review": {
+    "date": "2026-09-27",
+    "independent_task_reviews": "approved",
+    "independent_whole_patch_review": "approved",
+    "remaining_blocking_findings": 0,
+    "nonblocking_note": "Geometry error lists the required tuple rather than the offending field."
+  },
+  "cpu_validation": {
+    "platform": "native Windows x64",
+    "build_type": "RelWithDebInfo",
+    "engine_enable_hip": false,
+    "tests_passed": [
+      "openai_chat_test",
+      "text_request_policy_routes_test",
+      "serve_cli_test",
+      "text_generation_scheduler_test"
+    ],
+    "parent_fresh_test_seconds": 1.86,
+    "gufo_exe_size_bytes": 4018688,
+    "gufo_exe_sha256": "2F667A1997B02EA32E7C863428BD5A8C40A37C35BA8A4B1482B6C9A446F64BD1",
+    "cmake_gufo_version_label": "cff564964e8506c0abb3e530cecb55332187ac6c",
+    "version_note": "The existing CPU build cache kept its base version label. The tested source head/tree above, not that label, identify this patch. A later GPU build must record its actual source identity."
+  },
+  "export_validation": {
+    "date": "2026-09-27",
+    "apply_check_at_pinned_base": true,
+    "alternate_index_reconstructed_tree": "273d84974a604c81023dae15d379a9bfc0b1c29b",
+    "preserved_source_worktree_unchanged": true,
+    "upstream_license_text_matches": true,
+    "measured_gpu_executable_unchanged": true
+  },
+  "gpu_build_verified": true,
+  "gpu_build_validation": {
+    "date": "2026-09-27",
+    "source_head": "139aa9c58dadcb75c1bd0741aad0823fc65a0547",
+    "source_tree": "273d84974a604c81023dae15d379a9bfc0b1c29b",
+    "sdk_version": "10.2.0",
+    "architecture": "gfx1151",
+    "build_type": "RelWithDebInfo",
+    "hip_flags": "-O2 -DNDEBUG -g0",
+    "jobs": 2,
+    "gufo_exe_size_bytes": 42439168,
+    "gufo_exe_sha256": "66798D3BCAD27B7E2BEC16980B225F83CC3F017FAD9088ADA8D64D604BC4F209",
+    "cpu_tests_passed": [
+      "openai_chat_test",
+      "text_generation_scheduler_test",
+      "qwen38_flash_next.mtp_sampling",
+      "qwen38_flash_next.prompt_lookup"
+    ],
+    "cpu_test_seconds": 0.74,
+    "server_executed": false,
+    "gpu_workload_executed": false
+  },
+  "runtime_qualified": false,
+  "persistent_service_qualified": false,
+  "license": "LICENSE.upstream"
+}

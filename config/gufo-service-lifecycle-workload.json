@@ -1,0 +1,1273 @@
+{
+  "schema": 1,
+  "status": "fixed_workload_candidate_pending_review_not_launch_authority",
+  "profile_id": "ar4k-service-lifecycle-v1",
+  "production_source": "e6feed7ca52df4661d10434c72a8ea5b5f054bc2",
+  "helper_source": "b46393cc62fe9855987ee50f40cb397b23fb6cdc",
+  "request_pool": [
+    {
+      "id": "chat_arithmetic_readiness",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"What is 2 + 2? Reply with the number only.\"}],\"max_tokens\":64,\"temperature\":0,\"top_p\":1,\"top_k\":0,\"min_p\":0,\"min_keep\":1,\"seed\":42,\"repeat_penalty\":1,\"repeat_last_n\":0,\"frequency_penalty\":0,\"presence_penalty\":0,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false},\"stream\":true,\"stream_options\":{\"include_usage\":true}}",
+      "native_preparation": {
+        "file": "first-six-output.json",
+        "record_id": "chat_arithmetic_readiness",
+        "request_sha256": "e200194e691d49bfcafe385d88288f46b9db3911cdbec457954bed39d53b2fb9",
+        "framed_tokens": 26,
+        "rendered_utf8_bytes": 111,
+        "rendered_sha256": "a20eaf991ead2aea2cdfce53cd3b208557f82194337724aca5c448cc620b06d3",
+        "token_ids_le_u32_sha256": "82b5f59a2006226ea2109b48e89b8af8bf85a7dc17edb159073e6910357bf3db"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 400,
+      "body_sha256": "E200194E691D49BFCAFE385D88288F46B9DB3911CDBEC457954BED39D53B2FB9",
+      "scheduled": true
+    },
+    {
+      "id": "chat_german",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"Antworte nur mit dem deutschen Wort für die Zahl fünf.\"}],\"max_tokens\":64,\"temperature\":0,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"stream\":false}",
+      "native_preparation": {
+        "file": "first-six-output.json",
+        "record_id": "chat_german",
+        "request_sha256": "ff6ce03903fac7bcc91412433b6461203ed257682e8f50e4fb687ffb837d6107",
+        "framed_tokens": 25,
+        "rendered_utf8_bytes": 125,
+        "rendered_sha256": "0c510df76062d34cc894457c1e04998f90d8353df58ddd00559b9a7dc3e2ba56",
+        "token_ids_le_u32_sha256": "f0e9e0b995ae690fd7c510ce88b4d9d878c58d564d6e4fce8b0d878eb233466d"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 268,
+      "body_sha256": "FF6CE03903FAC7BCC91412433B6461203ED257682E8F50E4FB687FFB837D6107",
+      "scheduled": true
+    },
+    {
+      "id": "responses_arithmetic",
+      "route": "/v1/responses",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"input\":\"What is 2 + 2? Reply with the number only.\",\"max_output_tokens\":64,\"temperature\":0,\"cache_prompt\":false,\"stream\":false}",
+      "native_preparation": {
+        "file": "first-six-output.json",
+        "record_id": "responses_arithmetic",
+        "request_sha256": "2ac5fc35aac1dbeec10829f239af5661920fe3596757986006a435edf1f85e66",
+        "framed_tokens": 26,
+        "rendered_utf8_bytes": 111,
+        "rendered_sha256": "a20eaf991ead2aea2cdfce53cd3b208557f82194337724aca5c448cc620b06d3",
+        "token_ids_le_u32_sha256": "82b5f59a2006226ea2109b48e89b8af8bf85a7dc17edb159073e6910357bf3db"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 155,
+      "body_sha256": "2AC5FC35AAC1DBEEC10829F239AF5661920FE3596757986006A435EDF1F85E66",
+      "scheduled": true
+    },
+    {
+      "id": "responses_german",
+      "route": "/v1/responses",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"input\":\"Antworte nur mit dem deutschen Wort für die Zahl fünf.\",\"max_output_tokens\":64,\"temperature\":0,\"cache_prompt\":false,\"stream\":true}",
+      "native_preparation": {
+        "file": "first-six-output.json",
+        "record_id": "responses_german",
+        "request_sha256": "48495fd64574337db5e462ac88f62680562ef2d89e324acace9e111d3f0b22ed",
+        "framed_tokens": 25,
+        "rendered_utf8_bytes": 125,
+        "rendered_sha256": "0c510df76062d34cc894457c1e04998f90d8353df58ddd00559b9a7dc3e2ba56",
+        "token_ids_le_u32_sha256": "f0e9e0b995ae690fd7c510ce88b4d9d878c58d564d6e4fce8b0d878eb233466d"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 168,
+      "body_sha256": "48495FD64574337DB5E462AC88F62680562EF2D89E324ACACE9E111D3F0B22ED",
+      "scheduled": true
+    },
+    {
+      "id": "messages_arithmetic",
+      "route": "/v1/messages",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"What is 2 + 2? Reply with the number only.\"}],\"max_tokens\":64,\"temperature\":0,\"cache_prompt\":false}",
+      "native_preparation": {
+        "file": "first-six-output.json",
+        "record_id": "messages_arithmetic",
+        "request_sha256": "60806f72fe9a7982b85b20c417457ce263f701d341d738dc4673fb7c906f29dd",
+        "framed_tokens": 26,
+        "rendered_utf8_bytes": 111,
+        "rendered_sha256": "a20eaf991ead2aea2cdfce53cd3b208557f82194337724aca5c448cc620b06d3",
+        "token_ids_le_u32_sha256": "82b5f59a2006226ea2109b48e89b8af8bf85a7dc17edb159073e6910357bf3db"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 164,
+      "body_sha256": "60806F72FE9A7982B85B20C417457CE263F701D341D738DC4673FB7C906F29DD",
+      "scheduled": true
+    },
+    {
+      "id": "messages_german",
+      "route": "/v1/messages",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"Antworte nur mit dem deutschen Wort für die Zahl fünf.\"}],\"max_tokens\":64,\"temperature\":0,\"cache_prompt\":false}",
+      "native_preparation": {
+        "file": "first-six-output.json",
+        "record_id": "messages_german",
+        "request_sha256": "330fabb44f139f3aa069b1b13979d7c1ad5b9bbee42e54beba96750e19cb8634",
+        "framed_tokens": 25,
+        "rendered_utf8_bytes": 125,
+        "rendered_sha256": "0c510df76062d34cc894457c1e04998f90d8353df58ddd00559b9a7dc3e2ba56",
+        "token_ids_le_u32_sha256": "f0e9e0b995ae690fd7c510ce88b4d9d878c58d564d6e4fce8b0d878eb233466d"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 178,
+      "body_sha256": "330FABB44F139F3AA069B1B13979D7C1AD5B9BBEE42E54BEBA96750E19CB8634",
+      "scheduled": true
+    },
+    {
+      "id": "german_chat_128",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Antworte nur mit dem deutschen Wort für die Zahl fünf. Ignoriere den Fülltext zwischen <filler> und </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":16,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"stream\":false}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "german_chat_128",
+        "request_sha256": "47a58a0d6d32a760aaae96b816597da50244defecb2239d1994c809c8402cc45",
+        "framed_tokens": 128,
+        "rendered_utf8_bytes": 354,
+        "rendered_sha256": "ed483d6e4708c0a05cf182d335fe4348ef72c9fda07bbecaf58fbd45b84ccf92",
+        "token_ids_le_u32_sha256": "310aec20c56d0bcce8493afa0b0e253881eefec975f1dc4575a59123225623b1"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 498,
+      "body_sha256": "47A58A0D6D32A760AAAE96B816597DA50244DEFECB2239D1994C809C8402CC45",
+      "scheduled": true
+    },
+    {
+      "id": "german_responses_128",
+      "route": "/v1/responses",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"input\":\"Antworte nur mit dem deutschen Wort für die Zahl fünf. Ignoriere den Fülltext zwischen <filler> und </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\",\"max_output_tokens\":16,\"stream\":false}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "german_responses_128",
+        "request_sha256": "52ccfd1a50e4f0337caed8ddce81574bbefb31088553179c9aa2fba62de64241",
+        "framed_tokens": 128,
+        "rendered_utf8_bytes": 354,
+        "rendered_sha256": "ed483d6e4708c0a05cf182d335fe4348ef72c9fda07bbecaf58fbd45b84ccf92",
+        "token_ids_le_u32_sha256": "310aec20c56d0bcce8493afa0b0e253881eefec975f1dc4575a59123225623b1"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 399,
+      "body_sha256": "52CCFD1A50E4F0337CAED8DDCE81574BBEFB31088553179C9AA2FBA62DE64241",
+      "scheduled": true
+    },
+    {
+      "id": "german_messages_128",
+      "route": "/v1/messages",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Antworte nur mit dem deutschen Wort für die Zahl fünf. Ignoriere den Fülltext zwischen <filler> und </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":16}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "german_messages_128",
+        "request_sha256": "d4172a553c32658d360e303beb7b9ae6e33132bdf726d6665e1c7f6d805eb16c",
+        "framed_tokens": 128,
+        "rendered_utf8_bytes": 354,
+        "rendered_sha256": "ed483d6e4708c0a05cf182d335fe4348ef72c9fda07bbecaf58fbd45b84ccf92",
+        "token_ids_le_u32_sha256": "310aec20c56d0bcce8493afa0b0e253881eefec975f1dc4575a59123225623b1"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 408,
+      "body_sha256": "D4172A553C32658D360E303BEB7B9AE6E33132BDF726D6665E1C7F6D805EB16C",
+      "scheduled": true
+    },
+    {
+      "id": "code_chat_1024",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Return only a Python function named add with parameters a and b that returns their sum. No Markdown fences. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":64,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"stream\":false}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "code_chat_1024",
+        "request_sha256": "56062b5804f1b2caf505043b4264c26cfce3285b28576ca4e358298bf16cae0b",
+        "framed_tokens": 1024,
+        "rendered_utf8_bytes": 2182,
+        "rendered_sha256": "b21bab80456e7903f7fcc2cbf77ddac34de3d6fbc8cd24379e979ce248f39a5d",
+        "token_ids_le_u32_sha256": "2c72b3d9a456596404d415cfcdf59222384e335f6fb76ced24af083d19e3ab58"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 2326,
+      "body_sha256": "56062B5804F1B2CAF505043B4264C26CFCE3285B28576CA4E358298BF16CAE0B",
+      "scheduled": true
+    },
+    {
+      "id": "code_responses_1024",
+      "route": "/v1/responses",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"input\":\"Return only a Python function named add with parameters a and b that returns their sum. No Markdown fences. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\",\"max_output_tokens\":64,\"stream\":false}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "code_responses_1024",
+        "request_sha256": "c8d95d81e618511a03cfe24bdf55b3a104f71d3c9808fa6a5ad40e224a2af82b",
+        "framed_tokens": 1024,
+        "rendered_utf8_bytes": 2182,
+        "rendered_sha256": "b21bab80456e7903f7fcc2cbf77ddac34de3d6fbc8cd24379e979ce248f39a5d",
+        "token_ids_le_u32_sha256": "2c72b3d9a456596404d415cfcdf59222384e335f6fb76ced24af083d19e3ab58"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 2227,
+      "body_sha256": "C8D95D81E618511A03CFE24BDF55B3A104F71D3C9808FA6A5AD40E224A2AF82B",
+      "scheduled": true
+    },
+    {
+      "id": "code_messages_1024",
+      "route": "/v1/messages",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Return only a Python function named add with parameters a and b that returns their sum. No Markdown fences. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":64}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "code_messages_1024",
+        "request_sha256": "5b54bf384588e273ff77cb96a9ed2b7e9f9e3193feaa2e8ff7a85100eb18b173",
+        "framed_tokens": 1024,
+        "rendered_utf8_bytes": 2182,
+        "rendered_sha256": "b21bab80456e7903f7fcc2cbf77ddac34de3d6fbc8cd24379e979ce248f39a5d",
+        "token_ids_le_u32_sha256": "2c72b3d9a456596404d415cfcdf59222384e335f6fb76ced24af083d19e3ab58"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 2236,
+      "body_sha256": "5B54BF384588E273FF77CB96A9ED2B7E9F9E3193FEAA2E8FF7A85100EB18B173",
+      "scheduled": true
+    },
+    {
+      "id": "prose_chat_2304",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Explain in two English sentences why automated tests help maintain software. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":256,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"stream\":false}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "prose_chat_2304",
+        "request_sha256": "9638453b887927c0739fbc8a3ad386575ae9f3ad2e15faae765f4d5a80594577",
+        "framed_tokens": 2304,
+        "rendered_utf8_bytes": 4727,
+        "rendered_sha256": "1362c0837d725c64573cf25a33b92fc71041489b44cf50c07103de67e1ea7229",
+        "token_ids_le_u32_sha256": "3f0eeddb110a9a4509c49f0375e85aed5ae0f6d32c1fdb33ff146b6238c1d721"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 4872,
+      "body_sha256": "9638453B887927C0739FBC8A3AD386575AE9F3AD2E15FAAE765F4D5A80594577",
+      "scheduled": false,
+      "reference_only_reason": "Measured nonstreaming chat equivalent; not authorized for transport by either schedule."
+    },
+    {
+      "id": "prose_responses_2304",
+      "route": "/v1/responses",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"input\":\"Explain in two English sentences why automated tests help maintain software. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\",\"max_output_tokens\":256,\"stream\":false}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "prose_responses_2304",
+        "request_sha256": "d751a0bb8e57ed455b3e007cd895566a5296fd98e48d34a3ff668fb773b38028",
+        "framed_tokens": 2304,
+        "rendered_utf8_bytes": 4727,
+        "rendered_sha256": "1362c0837d725c64573cf25a33b92fc71041489b44cf50c07103de67e1ea7229",
+        "token_ids_le_u32_sha256": "3f0eeddb110a9a4509c49f0375e85aed5ae0f6d32c1fdb33ff146b6238c1d721"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 4773,
+      "body_sha256": "D751A0BB8E57ED455B3E007CD895566A5296FD98E48D34A3FF668FB773B38028",
+      "scheduled": true
+    },
+    {
+      "id": "prose_messages_2304",
+      "route": "/v1/messages",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Explain in two English sentences why automated tests help maintain software. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":256}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "prose_messages_2304",
+        "request_sha256": "309d1f1bf3116b067360d5b1ee616815b6dfdbd6c0edbeee5e31cd42439c2188",
+        "framed_tokens": 2304,
+        "rendered_utf8_bytes": 4727,
+        "rendered_sha256": "1362c0837d725c64573cf25a33b92fc71041489b44cf50c07103de67e1ea7229",
+        "token_ids_le_u32_sha256": "3f0eeddb110a9a4509c49f0375e85aed5ae0f6d32c1fdb33ff146b6238c1d721"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 4782,
+      "body_sha256": "309D1F1BF3116B067360D5B1EE616815B6DFDBD6C0EDBEEE5E31CD42439C2188",
+      "scheduled": true
+    },
+    {
+      "id": "tool_chat_2304",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Call report_sum with sum equal to 2 + 2. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":256,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"stream\":true,\"tools\":[{\"type\":\"function\",\"function\":{\"name\":\"report_sum\",\"description\":\"Report the sum.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"sum\":{\"type\":\"integer\"}},\"required\":[\"sum\"],\"additionalProperties\":false}}}],\"tool_choice\":\"required\"}",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "tool_chat_2304",
+        "request_sha256": "50d8f60673a16db7a9c45b950c95a04e83b9c9b664570d51c74a77673c465170",
+        "framed_tokens": 2304,
+        "rendered_utf8_bytes": 5356,
+        "rendered_sha256": "027f33f0c861e0668823825a01fe3b1164b75dd6368513fbaf0490eadc405e39",
+        "token_ids_le_u32_sha256": "1afe193ec8dce2efab3d322131e8917aa937118136e8ca73c2a6413c2907676b"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 4520,
+      "body_sha256": "50D8F60673A16DB7A9C45B950C95A04E83B9C9B664570D51C74A77673C465170",
+      "scheduled": true
+    },
+    {
+      "id": "reject_unicode_tool_body_16384",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Call report_sum with sum equal to 2 + 2. Ignore filler.\\n<filler> é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀 é 漢字 😀</filler>\"}],\"max_tokens\":256,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"stream\":true,\"tools\":[{\"type\":\"function\",\"function\":{\"name\":\"report_sum\",\"description\":\"Report the sum.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"sum\":{\"type\":\"integer\"}},\"required\":[\"sum\"],\"additionalProperties\":false}}}],\"tool_choice\":\"required\"}   ",
+      "native_preparation": {
+        "file": "prepared-candidates-output.json",
+        "record_id": "reject_unicode_tool_body_16384",
+        "request_sha256": "a86eebc953dff08ab20c22d03ac055377dc0d02ee0ebbe4963c5b89fc1dbb163",
+        "framed_tokens": 5269,
+        "rendered_utf8_bytes": 17217,
+        "rendered_sha256": "b19ed2c651fce34394c34efa91fc1e28d439ba54dd372daccfd1a7476089667c",
+        "token_ids_le_u32_sha256": "55f758842851819c13c38e37f13e64e80c89c3e4b3d44374e0d1b0fe5ac196df"
+      },
+      "expected_http_status": 400,
+      "expected_error_code": "context_length_exceeded",
+      "body_bytes": 16384,
+      "body_sha256": "A86EEBC953DFF08AB20C22D03AC055377DC0D02EE0EBBE4963C5B89FC1DBB163",
+      "scheduled": true
+    },
+    {
+      "id": "reject_chat_2305_corrected",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Explain in two English sentences why automated tests help maintain software. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":256,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"stream\":false}",
+      "native_preparation": {
+        "file": "boundary-correction-output.json",
+        "record_id": "reject_chat_2305_corrected",
+        "request_sha256": "3b354d0f94cf625493cddf1d8ba7ef48a73fad2b0bd1ef0a226212d2b7f2a425",
+        "framed_tokens": 2305,
+        "rendered_utf8_bytes": 4729,
+        "rendered_sha256": "9e337bdcbeb55a52f7eaf80f93b1e82ec9caa7128ed0a3829c79bf1265bcf98a",
+        "token_ids_le_u32_sha256": "c54bd5a138034d35a7bc9264a9a27ddd9454fd63771039ecab95ce81355046e1"
+      },
+      "expected_http_status": 400,
+      "expected_error_code": "context_length_exceeded",
+      "body_bytes": 4874,
+      "body_sha256": "3B354D0F94CF625493CDDF1D8BA7EF48A73FAD2B0BD1EF0A226212D2B7F2A425",
+      "scheduled": true
+    },
+    {
+      "id": "prose_chat_2304_stream",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"messages\":[{\"role\":\"user\",\"content\":\"Explain in two English sentences why automated tests help maintain software. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\"}],\"max_tokens\":256,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"stream\":true,\"stream_options\":{\"include_usage\":true}}",
+      "native_preparation": {
+        "file": "streaming-candidates-output.json",
+        "record_id": "prose_chat_2304_stream",
+        "request_sha256": "a6c014a3b906a9750c7c0f2d3e32abbf654d2aeebd5bc32edb81d029e1ec231f",
+        "framed_tokens": 2304,
+        "rendered_utf8_bytes": 4727,
+        "rendered_sha256": "1362c0837d725c64573cf25a33b92fc71041489b44cf50c07103de67e1ea7229",
+        "token_ids_le_u32_sha256": "3f0eeddb110a9a4509c49f0375e85aed5ae0f6d32c1fdb33ff146b6238c1d721"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 4911,
+      "body_sha256": "A6C014A3B906A9750C7C0F2D3E32ABBF654D2AEEBD5BC32EDB81D029E1EC231F",
+      "scheduled": true
+    },
+    {
+      "id": "prose_responses_2304_stream",
+      "route": "/v1/responses",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"temperature\":0,\"cache_prompt\":false,\"input\":\"Explain in two English sentences why automated tests help maintain software. Ignore the filler between <filler> and </filler>.\\n<filler> a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a</filler>\",\"max_output_tokens\":256,\"stream\":true}",
+      "native_preparation": {
+        "file": "streaming-candidates-output.json",
+        "record_id": "prose_responses_2304_stream",
+        "request_sha256": "0a899d4cab0b390a20e75727bb44b53abf5fc85d02429c98f009fd81053f5385",
+        "framed_tokens": 2304,
+        "rendered_utf8_bytes": 4727,
+        "rendered_sha256": "1362c0837d725c64573cf25a33b92fc71041489b44cf50c07103de67e1ea7229",
+        "token_ids_le_u32_sha256": "3f0eeddb110a9a4509c49f0375e85aed5ae0f6d32c1fdb33ff146b6238c1d721"
+      },
+      "expected_http_status": 200,
+      "expected_error_code": null,
+      "body_bytes": 4772,
+      "body_sha256": "0A899D4CAB0B390A20E75727BB44B53ABF5FC85D02429C98F009FD81053F5385",
+      "scheduled": true
+    },
+    {
+      "id": "reject_output_257",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":257,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 214,
+      "body_sha256": "861DA8CD941B4A2529AD1D0F471BB8426CB06E8B4A7F45AE23E3745FC1D39080",
+      "scheduled": true
+    },
+    {
+      "id": "reject_output_zero",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":0,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 212,
+      "body_sha256": "6673EB489818D3382298810DFD3FC7A846B6382F67E6F11DFBAD5FA7AADCE3A6",
+      "scheduled": true
+    },
+    {
+      "id": "reject_output_fractional",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":1.5,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 214,
+      "body_sha256": "D31320C6BD460BBAA358935A701B29CDFC4E8D291B54EFAC891D7B493C833BC0",
+      "scheduled": true
+    },
+    {
+      "id": "reject_output_aliases",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false,\"max_completion_tokens\":2}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 238,
+      "body_sha256": "1ADAD75CC54F4FAF26AA6AB23B608E2DFFB968E0793FBCF10D209F5103E4EB97",
+      "scheduled": true
+    },
+    {
+      "id": "reject_cache",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":1,\"cache_prompt\":true,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 211,
+      "body_sha256": "21BB7EB6EF3E6A15481CA824C63E7A87041524512A156C99F9FB4C0065B66DC9",
+      "scheduled": true
+    },
+    {
+      "id": "reject_thinking",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":true,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 211,
+      "body_sha256": "559D8D7FF01ADEADA54013E5901E558775779B68EDFA8821D95FC6E300059EB8",
+      "scheduled": true
+    },
+    {
+      "id": "reject_preserve_thinking",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":true},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 211,
+      "body_sha256": "8ABC693BF922AD5E38D57013DCAB6AC39CB6DF4D1073136C8F9BFE8C098B9F1F",
+      "scheduled": true
+    },
+    {
+      "id": "reject_reasoning_history",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"},{\"role\":\"assistant\",\"content\":\"x\",\"reasoning_content\":\"thought\"}],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 277,
+      "body_sha256": "B259E48D3DDD01301553763071A4EA26040549BE5DB1670A6960F63632156FE4",
+      "scheduled": true
+    },
+    {
+      "id": "reject_image",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":[{\"type\":\"image_url\",\"image_url\":{\"url\":\"data:image/png;base64,AA==\"}}]}],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 280,
+      "body_sha256": "27934E5E84FA5DABD33E018373661419820E3F86E6A838F916D767CDD06185C9",
+      "scheduled": true
+    },
+    {
+      "id": "reject_raw_completions",
+      "route": "/v1/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "request_policy_violation",
+      "body_bytes": 212,
+      "body_sha256": "6389753ABF1E6843B34A72CCFE88022979F631248CDD92A00F994FF26C08BACC",
+      "scheduled": true
+    },
+    {
+      "id": "reject_body_16385",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ",
+      "native_preparation": null,
+      "expected_http_status": 413,
+      "expected_error_code": "payload_too_large",
+      "body_bytes": 16385,
+      "body_sha256": "6532CD48DFE6E18846C299615FD490737644859F3AE61DB2373D3E54CDD14F2B",
+      "scheduled": true
+    },
+    {
+      "id": "reject_missing_messages",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "missing_messages",
+      "body_bytes": 169,
+      "body_sha256": "5CFFD7C9AF45230E781A8381B75D9D01B66F28ADA64D2A809FF01B0498EE27C4",
+      "scheduled": true
+    },
+    {
+      "id": "reject_nested_depth_128",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[0]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "invalid_messages",
+      "body_bytes": 436,
+      "body_sha256": "11534B9B4D3E91BE22D335F2AFBA38DB67E3A628649C2A9775045F91C13F256C",
+      "scheduled": true
+    },
+    {
+      "id": "reject_nested_depth_129",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[0]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "parse_error",
+      "body_bytes": 438,
+      "body_sha256": "BFA5C56308EE962726C1BFCEB43C544A4A96D41509E31FC0D188BF336D2FA002",
+      "scheduled": true
+    },
+    {
+      "id": "reject_invalid_utf8",
+      "route": "/v1/chat/completions",
+      "encoding": "hex",
+      "body": "7b226d6f64656c223a226775666f2d666c6173682d6e657874222c226d65737361676573223a5b7b22726f6c65223a2275736572222c22636f6e74656e74223a22c0227d5d2c226d61785f746f6b656e73223a312c2263616368655f70726f6d7074223a66616c73652c22636861745f74656d706c6174655f6b7761726773223a7b22656e61626c655f7468696e6b696e67223a66616c73652c2270726573657276655f7468696e6b696e67223a66616c73657d2c2274656d7065726174757265223a302c2273747265616d223a66616c73657d",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "parse_error",
+      "body_bytes": 212,
+      "body_sha256": "579D7994D73BA4DEF8AF354875F078EA35121EE6EAA64E885BB3911FAE91EB0C",
+      "scheduled": true
+    },
+    {
+      "id": "reject_duplicate_key",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":\"gufo-flash-next\",\"messages\":[{\"role\":\"user\",\"content\":\"x\"}],\"max_tokens\":1,\"cache_prompt\":false,\"chat_template_kwargs\":{\"enable_thinking\":false,\"preserve_thinking\":false},\"temperature\":0,\"stream\":false,\"max_tokens\":1}",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "parse_error",
+      "body_bytes": 227,
+      "body_sha256": "594D6A450C994CD021A99AF20104EF010065A0AE8C666DDE435335FF5CBB3E53",
+      "scheduled": true
+    },
+    {
+      "id": "reject_malformed_json",
+      "route": "/v1/chat/completions",
+      "encoding": "utf8",
+      "body": "{\"model\":",
+      "native_preparation": null,
+      "expected_http_status": 400,
+      "expected_error_code": "parse_error",
+      "body_bytes": 9,
+      "body_sha256": "8ED0928C2BC976AF3FE6CDDDC26A000B7ECAB020B571B0914987E73ECFD725E2",
+      "scheduled": true
+    }
+  ],
+  "lifecycles": [
+    {
+      "index": 1,
+      "maximum_post_attempts": 66,
+      "lifetime_seconds": 3600,
+      "readiness_seconds": 480,
+      "maximum_ready_polls": 240,
+      "maximum_model_queries": 1,
+      "idle_windows": [
+        {
+          "after_attempt": 6,
+          "seconds": 30
+        },
+        {
+          "after_attempt": 18,
+          "seconds": 30
+        },
+        {
+          "after_attempt": 30,
+          "seconds": 30
+        },
+        {
+          "after_attempt": 48,
+          "seconds": 30
+        }
+      ],
+      "steps": [
+        {
+          "attempt": 1,
+          "request": "chat_arithmetic_readiness",
+          "phase": "route_correctness",
+          "check": "exact_arithmetic_4",
+          "readiness": true
+        },
+        {
+          "attempt": 2,
+          "request": "chat_german",
+          "phase": "route_correctness",
+          "check": "exact_german_fuenf",
+          "readiness": false
+        },
+        {
+          "attempt": 3,
+          "request": "responses_arithmetic",
+          "phase": "route_correctness",
+          "check": "exact_arithmetic_4",
+          "readiness": false
+        },
+        {
+          "attempt": 4,
+          "request": "responses_german",
+          "phase": "route_correctness",
+          "check": "exact_german_fuenf",
+          "readiness": false
+        },
+        {
+          "attempt": 5,
+          "request": "messages_arithmetic",
+          "phase": "route_correctness",
+          "check": "exact_arithmetic_4",
+          "readiness": false
+        },
+        {
+          "attempt": 6,
+          "request": "messages_german",
+          "phase": "route_correctness",
+          "check": "exact_german_fuenf",
+          "readiness": false
+        },
+        {
+          "attempt": 7,
+          "request": "german_chat_128",
+          "phase": "replacement_churn",
+          "cycle": 1,
+          "check": "exact_german_fuenf",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 8,
+          "request": "code_responses_1024",
+          "phase": "replacement_churn",
+          "cycle": 1,
+          "check": "python_add_ast",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 9,
+          "request": "prose_messages_2304",
+          "phase": "replacement_churn",
+          "cycle": 1,
+          "check": "english_two_sentence_semantic_review",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 10,
+          "request": "german_responses_128",
+          "phase": "replacement_churn",
+          "cycle": 2,
+          "check": "exact_german_fuenf",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 11,
+          "request": "code_messages_1024",
+          "phase": "replacement_churn",
+          "cycle": 2,
+          "check": "python_add_ast",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 12,
+          "request": "tool_chat_2304",
+          "phase": "replacement_churn",
+          "cycle": 2,
+          "check": "report_sum_integer_4",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 13,
+          "request": "german_messages_128",
+          "phase": "replacement_churn",
+          "cycle": 3,
+          "check": "exact_german_fuenf",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 14,
+          "request": "code_chat_1024",
+          "phase": "replacement_churn",
+          "cycle": 3,
+          "check": "python_add_ast",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 15,
+          "request": "prose_responses_2304",
+          "phase": "replacement_churn",
+          "cycle": 3,
+          "check": "english_two_sentence_semantic_review",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 16,
+          "request": "german_chat_128",
+          "phase": "replacement_churn",
+          "cycle": 4,
+          "check": "exact_german_fuenf",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 17,
+          "request": "code_responses_1024",
+          "phase": "replacement_churn",
+          "cycle": 4,
+          "check": "python_add_ast",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 18,
+          "request": "prose_messages_2304",
+          "phase": "replacement_churn",
+          "cycle": 4,
+          "check": "english_two_sentence_semantic_review",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 19,
+          "request": "german_responses_128",
+          "phase": "replacement_churn",
+          "cycle": 5,
+          "check": "exact_german_fuenf",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 20,
+          "request": "code_messages_1024",
+          "phase": "replacement_churn",
+          "cycle": 5,
+          "check": "python_add_ast",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 21,
+          "request": "tool_chat_2304",
+          "phase": "replacement_churn",
+          "cycle": 5,
+          "check": "report_sum_integer_4",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 22,
+          "request": "german_messages_128",
+          "phase": "replacement_churn",
+          "cycle": 6,
+          "check": "exact_german_fuenf",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 23,
+          "request": "code_chat_1024",
+          "phase": "replacement_churn",
+          "cycle": 6,
+          "check": "python_add_ast",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 24,
+          "request": "prose_responses_2304",
+          "phase": "replacement_churn",
+          "cycle": 6,
+          "check": "english_two_sentence_semantic_review",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 25,
+          "request": "german_chat_128",
+          "phase": "replacement_churn",
+          "cycle": 7,
+          "check": "exact_german_fuenf",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 26,
+          "request": "code_responses_1024",
+          "phase": "replacement_churn",
+          "cycle": 7,
+          "check": "python_add_ast",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 27,
+          "request": "prose_messages_2304",
+          "phase": "replacement_churn",
+          "cycle": 7,
+          "check": "english_two_sentence_semantic_review",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 28,
+          "request": "german_responses_128",
+          "phase": "replacement_churn",
+          "cycle": 8,
+          "check": "exact_german_fuenf",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 29,
+          "request": "code_messages_1024",
+          "phase": "replacement_churn",
+          "cycle": 8,
+          "check": "python_add_ast",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 30,
+          "request": "tool_chat_2304",
+          "phase": "replacement_churn",
+          "cycle": 8,
+          "check": "report_sum_integer_4",
+          "compare_repeated_body": true
+        },
+        {
+          "attempt": 31,
+          "request": "prose_chat_2304_stream",
+          "phase": "cancel",
+          "pair": 1,
+          "disconnect_trigger": "after_successful_headers_before_content",
+          "check": "observe_cancellation_not_token_count"
+        },
+        {
+          "attempt": 32,
+          "request": "chat_arithmetic_readiness",
+          "phase": "reuse_after_cancel",
+          "pair": 1,
+          "check": "exact_arithmetic_4"
+        },
+        {
+          "attempt": 33,
+          "request": "prose_responses_2304_stream",
+          "phase": "cancel",
+          "pair": 2,
+          "disconnect_trigger": "after_successful_headers_before_content",
+          "check": "observe_cancellation_not_token_count"
+        },
+        {
+          "attempt": 34,
+          "request": "responses_arithmetic",
+          "phase": "reuse_after_cancel",
+          "pair": 2,
+          "check": "exact_arithmetic_4"
+        },
+        {
+          "attempt": 35,
+          "request": "prose_chat_2304_stream",
+          "phase": "cancel",
+          "pair": 3,
+          "disconnect_trigger": "after_first_nonempty_content_event",
+          "check": "observe_cancellation_not_token_count"
+        },
+        {
+          "attempt": 36,
+          "request": "chat_arithmetic_readiness",
+          "phase": "reuse_after_cancel",
+          "pair": 3,
+          "check": "exact_arithmetic_4"
+        },
+        {
+          "attempt": 37,
+          "request": "prose_responses_2304_stream",
+          "phase": "cancel",
+          "pair": 4,
+          "disconnect_trigger": "after_first_nonempty_content_event",
+          "check": "observe_cancellation_not_token_count"
+        },
+        {
+          "attempt": 38,
+          "request": "responses_arithmetic",
+          "phase": "reuse_after_cancel",
+          "pair": 4,
+          "check": "exact_arithmetic_4"
+        },
+        {
+          "attempt": 39,
+          "request": "prose_chat_2304_stream",
+          "phase": "cancel",
+          "pair": 5,
+          "disconnect_trigger": "after_eight_nonempty_content_events",
+          "check": "observe_cancellation_not_token_count"
+        },
+        {
+          "attempt": 40,
+          "request": "chat_arithmetic_readiness",
+          "phase": "reuse_after_cancel",
+          "pair": 5,
+          "check": "exact_arithmetic_4"
+        },
+        {
+          "attempt": 41,
+          "request": "prose_responses_2304_stream",
+          "phase": "cancel",
+          "pair": 6,
+          "disconnect_trigger": "after_eight_nonempty_content_events",
+          "check": "observe_cancellation_not_token_count"
+        },
+        {
+          "attempt": 42,
+          "request": "responses_arithmetic",
+          "phase": "reuse_after_cancel",
+          "pair": 6,
+          "check": "exact_arithmetic_4"
+        },
+        {
+          "attempt": 43,
+          "request": "prose_chat_2304_stream",
+          "phase": "overlap",
+          "wave": 1,
+          "role": "active",
+          "check": "english_two_sentence_semantic_review"
+        },
+        {
+          "attempt": 44,
+          "request": "prose_responses_2304_stream",
+          "phase": "overlap",
+          "wave": 1,
+          "role": "pending",
+          "check": "english_two_sentence_semantic_review"
+        },
+        {
+          "attempt": 45,
+          "request": "prose_messages_2304",
+          "phase": "overlap",
+          "wave": 1,
+          "role": "third",
+          "check": "observe_valid_queue_full",
+          "source_expected_stage": "scheduler_queue",
+          "expected_http_status": 429,
+          "allowed_error_codes": [
+            "queue_full"
+          ],
+          "missed_overlap_status": 200
+        },
+        {
+          "attempt": 46,
+          "request": "prose_chat_2304_stream",
+          "phase": "overlap",
+          "wave": 2,
+          "role": "active",
+          "check": "english_two_sentence_semantic_review"
+        },
+        {
+          "attempt": 47,
+          "request": "prose_responses_2304_stream",
+          "phase": "overlap",
+          "wave": 2,
+          "role": "pending",
+          "check": "english_two_sentence_semantic_review"
+        },
+        {
+          "attempt": 48,
+          "request": "reject_unicode_tool_body_16384",
+          "phase": "overlap",
+          "wave": 2,
+          "role": "third",
+          "check": "context_rejection_during_observed_overlap",
+          "source_expected_stage": "real_runner_context4096_before_scheduler"
+        },
+        {
+          "attempt": 49,
+          "request": "reject_chat_2305_corrected",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 50,
+          "request": "reject_output_257",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 51,
+          "request": "reject_output_zero",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 52,
+          "request": "reject_output_fractional",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 53,
+          "request": "reject_output_aliases",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 54,
+          "request": "reject_cache",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 55,
+          "request": "reject_thinking",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 56,
+          "request": "reject_preserve_thinking",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 57,
+          "request": "reject_reasoning_history",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 58,
+          "request": "reject_image",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 59,
+          "request": "reject_raw_completions",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 60,
+          "request": "reject_body_16385",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 61,
+          "request": "reject_missing_messages",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 62,
+          "request": "reject_nested_depth_128",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 63,
+          "request": "reject_nested_depth_129",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 64,
+          "request": "reject_invalid_utf8",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 65,
+          "request": "reject_duplicate_key",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        },
+        {
+          "attempt": 66,
+          "request": "reject_malformed_json",
+          "phase": "boundaries",
+          "check": "exact_http_status_and_error_code"
+        }
+      ],
+      "maximum_response_wire_bytes": 569442304,
+      "maximum_client_evidence_bytes": 805306368
+    },
+    {
+      "index": 2,
+      "maximum_post_attempts": 6,
+      "lifetime_seconds": 900,
+      "readiness_seconds": 480,
+      "maximum_ready_polls": 240,
+      "maximum_model_queries": 1,
+      "idle_windows": [],
+      "steps": [
+        {
+          "attempt": 1,
+          "request": "chat_arithmetic_readiness",
+          "phase": "route_correctness",
+          "check": "exact_arithmetic_4",
+          "readiness": true
+        },
+        {
+          "attempt": 2,
+          "request": "chat_german",
+          "phase": "route_correctness",
+          "check": "exact_german_fuenf",
+          "readiness": false
+        },
+        {
+          "attempt": 3,
+          "request": "responses_arithmetic",
+          "phase": "route_correctness",
+          "check": "exact_arithmetic_4",
+          "readiness": false
+        },
+        {
+          "attempt": 4,
+          "request": "responses_german",
+          "phase": "route_correctness",
+          "check": "exact_german_fuenf",
+          "readiness": false
+        },
+        {
+          "attempt": 5,
+          "request": "messages_arithmetic",
+          "phase": "route_correctness",
+          "check": "exact_arithmetic_4",
+          "readiness": false
+        },
+        {
+          "attempt": 6,
+          "request": "messages_german",
+          "phase": "route_correctness",
+          "check": "exact_german_fuenf",
+          "readiness": false
+        }
+      ],
+      "maximum_response_wire_bytes": 66125824,
+      "maximum_client_evidence_bytes": 134217728
+    }
+  ],
+  "limits": {
+    "maximum_connections": 3,
+    "operation_seconds": 60,
+    "request_header_bytes": 4096,
+    "request_body_bytes": 16384,
+    "body_exception": {
+      "request": "reject_body_16385",
+      "bytes": 16385
+    },
+    "prelaunch_available_gib": 49,
+    "runtime_available_gib": 24,
+    "commit_reserve_gib": 12,
+    "response_header_bytes": 16384,
+    "post_response_wire_bytes": 8388608,
+    "post_response_body_bytes": 7340032,
+    "get_response_wire_bytes": 65536,
+    "get_response_body_bytes": 49152,
+    "sse_pending_event_bytes": 7340032,
+    "generated_text_or_tool_argument_utf8_bytes": 1048576,
+    "post_summary_bytes": 65536,
+    "get_summary_bytes": 4096,
+    "client_free_disk_bytes_before_start": 2147483648
+  },
+  "coverage_rules": {
+    "readiness_is_first_post": true,
+    "automatic_retry": false,
+    "extra_warmup": false,
+    "missed_overlap": "unproven_not_retry",
+    "cancel_events_are_tokens": false,
+    "raw_counter_interval_decode": "unavailable_without_native_boundary_counters",
+    "second_run_requires_fresh_admission_and_confirmed_first_recovery": true,
+    "first_run_incomplete": "failure_no_deadline_extension",
+    "second_run_requires_first_run_structural_success_and_confirmed_recovery": true,
+    "semantic_review_can_remain_pending_during_bounded_run": true,
+    "known_safety_transport_or_exact_correctness_failure": "stop_owned_workload_no_retry",
+    "qualification_requires_all_semantic_and_coverage_checks": true
+  },
+  "remaining_gates": [
+    "independent_revised_fixture_contract_review",
+    "finite_controller_implementation_and_review",
+    "historical_late_recovery",
+    "fresh_memory_admission",
+    "real_lifecycle_outcomes_and_answer_review"
+  ],
+  "predecessor": {
+    "file": "finite-workload-draft.json",
+    "sha256": "DBB2FE36399F81777F87756FF68F683448884029862E6BD23D30FA11EC7A43E0"
+  },
+  "transport_contract": {
+    "bytes": "Decode utf8 with strict UTF-8 or hex to bytes once; check exact body_bytes and SHA256 immediately before durable reservation and send. Never parse and reserialize transmitted bodies. Content-Length is the byte count.",
+    "reservation": "Before socket creation/send, exclusively persist exact lifecycle/attempt/request/route/body hash and operation deadline. A reservation is consumed on success, rejection, disconnect, timeout, ambiguous send or writer failure. No retries or substitution.",
+    "order": "Only scheduled rows may be sent. Sequential phases require completion and validated outcome before the next attempt; the three overlap attempts are the sole concurrent exception. First reserved POST is readiness. No second client or extra POST.",
+    "deadlines": "Each complete operation, including send, receive, parsing and outcome persistence, is bounded by min(operation start+60s, absolute lifecycle deadline); readiness GETs also obey resume+480s. Deadline expiry closes only owned sockets and requests owned shutdown.",
+    "sockets": "One sole client owns a semaphore of three including GETs; readiness worker hands its completed ledger to the authenticated continuation before any further request.",
+    "bounds": "Reserve worst-case evidence budget before each operation. Include every received wire byte, even unparsed buffered bytes and error replies. Count headers and chunk framing in wire totals. Enforce separate dechunked body/event/decoded-output bounds. A bound breach retains only a labelled bounded prefix, fails the workload and requests controlled shutdown; no truncated response may pass.",
+    "evidence": "Keep bounded response captures and extracted answer records in per-attempt files, not a growing in-memory list. Redact the per-run API secret before durable storage, including across read boundaries; record received-wire byte count/hash separately and label sanitized captures. Each POST summary<=65536 and each GET summary<=4096 bytes. The client evidence cap covers all its files, manifests, ledgers, captures, answers and summaries; guardian evidence is separate and retains its reviewed existing bounds.",
+    "cap_rationale": "8MiB POST wire and7MiB body allow up to6x JSON escaping of the1MiB engine output plus wrappers; these are fail-closed client caps, not a guarantee that all server outputs fit. First/second wire maxima are543.0625/63.0625MiB. Client evidence ceilings768/128MiB cover bounded captures, <=1MiB answers and summaries with margin. This is not a process RSS or GPU allocation bound; the4GiB additional-host allowance still needs final controller review."
+  },
+  "cancellation_contract": {
+    "dispatch": "After successful HTTP200 headers and SSE content type, close the owned socket at the selected parser trigger, within the operation/lifecycle deadline; record close start/completion monotonic times and local terminal state.",
+    "headers_trigger": "Do not consume/decode a content event after parsing headers. Record body bytes already buffered by that same read. This proves a client parser-stage disconnect, not that no body had arrived or no token had been generated.",
+    "event_trigger": "Count only nonempty chat choices[0].delta.content strings, or responses events type=response.output_text.delta with a nonempty delta string. Ignore role, reasoning, usage, metadata and tool events. Count events, never tokens. Trigger exactly at1 or8 qualifying events.",
+    "completion": "Record terminal SSE events already parsed and remaining buffered bytes. If terminal completion/EOF/error is observed before the trigger, or closure cannot be confirmed, mark the pair unproven/failed. Local close alone does not prove when the server cancelled; reuse is a distinct observation.",
+    "reuse": "Only after local close and worker termination send the single scheduled arithmetic reuse request. It must fully complete with exact answer4 and valid native usage. Failure or missed trigger never permits a replacement attempt. Mark server-side cancellation unobserved unless existing authenticated server evidence proves it."
+  },
+  "overlap_contract": {
+    "coordination": "Start active stream and wait for its first nonempty content event. Without pausing its drain, dispatch pending; after pending request bytes are fully sent, dispatch third. Record all dispatch/send/header/content/terminal times. Keep both prior workers draining and at most three sockets. No fabricated queue occupancy from unread client buffers.",
+    "wave1": "Only third HTTP429/error.code=queue_full proves the required scheduler-full outcome. Record prior active/pending lifetimes surrounding third submission/reply, plus their eventual valid complete answers. client_queue_full or any other code is not the required global-queue proof. Third HTTP200 is a consumed missed overlap, unproven without retry; drain/validate it within its existing budget before controlled shutdown.",
+    "wave2": "Third must return400/context_length_exceeded with exact raw body hash. Require both preceding request intervals to include third submission and reception and neither to have observed terminal before submission. This proves client-observed concurrent in-flight requests only, not simultaneous GPU work or internal queue occupancy. Preserve the earlier verified wave1 scheduler proof separately.",
+    "missed": "If any required rendezvous is missed before the next attempt opens, do not replay or manufacture it; stop the fixed workload with explicit remaining unsent attempts. If already sent, close/drain only within existing bounds and record outcomes before shutdown.",
+    "internal_stage": "source_expected_stage is source-audit provenance, never a runtime observation inferred only from an error code."
+  },
+  "answer_contract": {
+    "common": "Require expected HTTP status, valid strict UTF-8/JSON/SSE framing, expected model identity where emitted, no API error, and a complete successful terminal response for uncancelled positive cases. Record native input/output/cache counters; do not use text chunks as token counters. A missing native counter is unavailable, not zero; any cold/usage condition relying on it remains unproven. No truncated length-budget answer passes a useful-answer check.",
+    "chat": "Nonstr: exactly one choices item, its message.content text; stream: concatenate ordered choices[0].delta.content, require final finish_reason=stop and [DONE]. Text cases must not emit tool calls or reasoning. Final stream usage must be present for the requested usage-bearing arithmetic/chat prose; absent usage on routes that do not emit it is reported unavailable rather than fabricated.",
+    "responses": "Nonstr: status=completed and concatenate output message content entries of type=output_text in order. Stream: concatenate response.output_text.delta and require response.completed; terminal response text must agree when present. Error/failed/incomplete states fail; preserve route-native usage separately.",
+    "messages": "Nonstr only: type=message, role=assistant, stop_reason=end_turn and text content entries in order. Reject thinking/tool blocks in these text-only cases. Preserve input_tokens/output_tokens without inventing absent prefill/cache counters.",
+    "exact_arithmetic_4": "Strip leading/trailing Unicode whitespace only; require exactly4, no punctuation, reasoning or other text.",
+    "exact_german_fuenf": "Strip leading/trailing Unicode whitespace only; require exactlyfünf with ü, no punctuation, alternate spelling or other text.",
+    "python_add_ast": "Never execute generated code. ast.parse must yield exactly one undecorated synchronous FunctionDef namedadd, positional argumentsa,b, no defaults/varargs/kwargs/keyword-only args, no annotations, exactly one Return whose expression is BinOp(Add) of Namesa,b in either order. No fences, extra statements or other names. This strict fixture-format check is not a general Python equivalence claim.",
+    "report_sum_integer_4": "Chat stream must finish with tool_calls and [DONE], one reconstructed function call namedreport_sum with nonempty stable per-response ID, strict duplicate-free JSON arguments exactly{\"sum\":4}, integer not bool/float, and no non-whitespace text/reasoning. Do not execute the tool.",
+    "english_two_sentence_semantic_review": "Transport records pending_semantic_review after successful completion; parent manually reviews saved exact text for two complete English sentences explaining how automated tests detect bugs/regressions and help maintain software, without filler, unrelated content or truncation. Record reviewer identity, response SHA256, verdict and reason. No automatic pass from200, regex sentence count or offline preparation. Final qualification requires all such reviews to pass.",
+    "exact_http_status_and_error_code": "Require exact per-request status and top-level error.code string from a complete nonstream JSON body; no streaming-success preamble. Preserve unexpected codes/statuses as failures.",
+    "repeats": "Within the same request ID, compare exact extracted UTF-8 text across complete greedy answers, and for tools compare function name plus canonical parsed arguments, excluding random call IDs and API envelopes. Task-level checks must also pass. Record mismatches as consistency failure, not silently equivalent; cross-route comparisons are labelled separately."
+  }
+}

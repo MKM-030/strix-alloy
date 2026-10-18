@@ -63,6 +63,10 @@ The read-only `app/select-backend.ps1` remains discovery, not the managed launch
 The remainder of this page describes the existing native v0.1.1 package, not
 Halogen, GUFO, or a new combined binary download.
 
+The native release below remains v0.1.1. For the retained repository layout
+and historical backend qualification notes, see
+[backends and limitations](docs/user/backends.md).
+
 Windows-native Qwen inference on AMD Strix Halo, built on [pwilkin's `llama.cpp` fork](https://github.com/pwilkin/llama.cpp/tree/strix-halo).
 
 ### What this is
