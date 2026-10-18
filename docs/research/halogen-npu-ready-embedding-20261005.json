@@ -1,0 +1,2129 @@
+{
+  "schema": "halogen0162.ready-embedding-gpu-control.v1",
+  "created_utc": "2026-10-05T16:12:47.987380+00:00",
+  "workload": {
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "context_capacity": 262144,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "prompt_cache": false,
+    "warmups_per_window": 1,
+    "measured_repetitions_per_window": 3,
+    "draft_depth": 2,
+    "PLD": "3,3",
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192
+  },
+  "purpose": "Qualify original GPU prepared consumer before NPU preparation; bookkeeping/parity pass is not acceleration.",
+  "cohorts": [
+    {
+      "policy": "capture-v1",
+      "raw_result_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-engine-80fa32abe12b47ccb0e4a6a43d15734e\\result.json",
+      "raw_result_sha256": "f2f0fc5269b7d0dd4ea19ba1218c3ec42fc7649d70e54b126c7a6c9c1efd5cce",
+      "coordinator": {
+        "input_plan": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-capture-plan-535fe0a34a35400a8219bbceab236eda.json",
+        "input_plan_sha256": "1a633c0e66f9da43a1e734b9321ceb8aba482329bfc1d410fd415cf21b1878ec",
+        "source_sha256": "922a87607c28eabafcf7cd02c698d6221de573a80b639c6508716827f0769ddc",
+        "warmup": 1,
+        "measured": 3,
+        "input_tokens": 8192,
+        "output_tokens": 128,
+        "policy": "capture-v1",
+        "leave_original_open": true
+      },
+      "candidate_source_pins": {
+        "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_mtp_embedding_cache.c": "3d6adee0d06c9d97b534303cae6eb334e9eb2ba76b50331d20522a562af73f5e",
+        "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_mtp_embedding_cache.h": "92f93a50492cbb55218aeb1650359695c699b7c4aad73bbcb0bad840c4e85b77",
+        "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_ready_embedding_launcher.py": "751641eb12d0f31fecddcd09f31d6983586921fc827b82a0e6a0951b7e34a04d",
+        "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_ready_embedding_rows.py": "3c6c3f2866025b1ab8f8c5dc497e2a85bf9a087ba900061aacd6ae553d823fc5",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_rocr_engine_stock8k.py": "1ac0282fc00fe171d2b32fb0aa201b501d0fd0fc39818f4516f0b69dd4a445eb",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_pld_stock8k_bookend.py": "961a2ee8af2f68ab5e92c83db3f98cb2ee832b3c3f1fae9925d9e6a204478755",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\upgrade0162\\run_matrix.py": "12ca2f6a890a83415df398e1b867daf0cf0211e3a6275e67f628e92bf0841d58",
+        "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_rocr_poll_backoff_owned_run.py": "bd2945ae634248e63ce2b008c2cbbdc17ac1af7f47a3a97082c8d36a41955c4f",
+        "C:\\Projects\\strix-alloy-clean\\server\\controller.py": "7d256a4b191fcc7fb86b519edb451387b0038de6ab9ed4a898a42425a23e420f",
+        "C:\\Projects\\strix-alloy-clean\\server\\host_frames.py": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+        "C:\\Projects\\strix-alloy-clean\\server\\owned_child.py": "6f75520f65c76941ec4306915929fd529ec7f46bd0fd20bd6f01f82afb749f10",
+        "C:\\Projects\\strix-alloy-clean\\server\\winjob.py": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+        "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\article_metrics.py": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+        "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\clock_probe.py": "a3f32a4c5c7e423c47ceebdd2f0fe0cd1860d7840c9fd0de10756e887c70a05e",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-engine-47fef3e497e145458d7e6ea2619c2df5\\restore_original\\retained-process.json": "668633dcb36afef4f584b6eb337b46c561ce016580730c3c0fe0d1a7e9b72e7c",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-engine-47fef3e497e145458d7e6ea2619c2df5\\restored-original.json": "23a252ed8a0810ce6eea74c71713dd800408db4b5b13bbb7d0078b8c7429ff71"
+      },
+      "shared_object": {
+        "path": "/home/revn/halogen-re/libhalogen0162-ready-embedding-20261005-1436.so",
+        "sha256": "86b71be48250ee9300fe5fd8b6ad320c9d2d86d41e8ab9238d43eb485babb9db",
+        "bytes": 59128
+      },
+      "ready_artifact": {
+        "policy": "capture-v1",
+        "generation": "3960b2b95b144b61b4cf540042f1eab2",
+        "model_binding": "8a8b5ebdbf2b1feef8192d6b43d702b798efc996d537139d87d8126796b31201",
+        "provenance": "91baaf46b769e7e11e5e3641dd2068b393ef19559badd8164481666f72972a93"
+      },
+      "source_lineage": null,
+      "stock_bookend_mean": {
+        "prefill_tps": 1283.5150766786394,
+        "decode_tps": 41.361054771320866
+      },
+      "candidate_delta_percent": {
+        "prefill": 0.6594941945463173,
+        "decode": -31.17599012398724
+      },
+      "acceleration_qualified": false,
+      "NPU_executed": false,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "windows": [
+          {
+            "name": "stock_before",
+            "variant": "stock",
+            "passed": true,
+            "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+            "controller_run": "914dc31551484441b7cc49541271d94e",
+            "backend_run": "e645453dcbe14f8fbe391928e4686ac9",
+            "cid": "20488113bfeacb395b156a9eb6367d710826278242a21576817b990a308623a8",
+            "mapped_hsa": {
+              "pid": 87,
+              "start_ticks": "138160",
+              "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libhsa-runtime64.so.1",
+              "sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+              "bytes": 4887129,
+              "inode": 640717,
+              "device": 86,
+              "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b"
+            },
+            "warmup_repetitions": 1,
+            "measured_repetitions": 3,
+            "input_tokens": 8192,
+            "output_tokens": 128,
+            "prefill_tps": 1279.9813739754632,
+            "decode_tps": 41.26347150162842,
+            "accepted": 207,
+            "drafted": 345,
+            "acceptance": 0.6,
+            "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+            "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+            "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+            "samples": [
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 10698.5,
+                  "predicted_ms": 3885.5,
+                  "prompt_per_second": 765.715,
+                  "predicted_per_second": 32.943,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 0,
+                "phase": "warmup",
+                "wall_seconds": 14.609093999999459,
+                "prefill_tps": 765.7156264729147,
+                "decode_tps": 32.94302695245258,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 1763.585165519,
+                    "raw": 1738.420863528,
+                    "utc": 1791214043.4304976,
+                    "qpc": 88683.25390410001,
+                    "roundtrip": 0.0005253999988781288
+                  },
+                  "after": {
+                    "mono": 1778.194893534,
+                    "raw": 1753.03057959,
+                    "utc": 1791214058.045235,
+                    "qpc": 88697.86357660001,
+                    "roundtrip": 0.0006089999951655045
+                  },
+                  "monotonic_per_raw": 1.0000008181541626,
+                  "raw_per_qpc": 1.0000029817235636,
+                  "window_seconds": 14.609672499995213,
+                  "handshake_uncertainty_seconds": 0.0005671999970218167
+                },
+                "minimum_memory": {
+                  "available_bytes": 33834967040,
+                  "commit_headroom_bytes": 133257089024
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6539.6,
+                  "predicted_ms": 3028.4,
+                  "prompt_per_second": 1252.676,
+                  "predicted_per_second": 42.267,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 1,
+                "phase": "measured",
+                "wall_seconds": 9.638130199993611,
+                "prefill_tps": 1252.676951854337,
+                "decode_tps": 42.26703211686603,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 1779.026359359,
+                    "raw": 1753.862043969,
+                    "utc": 1791214058.8695774,
+                    "qpc": 88698.6950456,
+                    "roundtrip": 0.0004360000020824373
+                  },
+                  "after": {
+                    "mono": 1788.665025423,
+                    "raw": 1763.500702709,
+                    "utc": 1791214068.5108967,
+                    "qpc": 88708.3336909,
+                    "roundtrip": 0.0005830000009154901
+                  },
+                  "monotonic_per_raw": 1.0000007598567682,
+                  "raw_per_qpc": 1.000001394386679,
+                  "window_seconds": 9.638645300001372,
+                  "handshake_uncertainty_seconds": 0.0005095000014989637
+                },
+                "minimum_memory": {
+                  "available_bytes": 33820065792,
+                  "commit_headroom_bytes": 133225160704
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6407.6,
+                  "predicted_ms": 3165.0,
+                  "prompt_per_second": 1278.482,
+                  "predicted_per_second": 40.442,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 2,
+                "phase": "measured",
+                "wall_seconds": 9.598225699999603,
+                "prefill_tps": 1278.4830824443172,
+                "decode_tps": 40.442034240773886,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 1789.759179192,
+                    "raw": 1764.594856085,
+                    "utc": 1791214069.605051,
+                    "qpc": 88709.42786105,
+                    "roundtrip": 0.00053190000471659
+                  },
+                  "after": {
+                    "mono": 1799.358039703,
+                    "raw": 1774.193708469,
+                    "utc": 1791214079.2008297,
+                    "qpc": 88719.02670325,
+                    "roundtrip": 0.0006925000052433461
+                  },
+                  "monotonic_per_raw": 1.0000008466637131,
+                  "raw_per_qpc": 1.0000010609619607,
+                  "window_seconds": 9.598842199993669,
+                  "handshake_uncertainty_seconds": 0.0006122000049799681
+                },
+                "minimum_memory": {
+                  "available_bytes": 33792262144,
+                  "commit_headroom_bytes": 133176233984
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6295.0,
+                  "predicted_ms": 3133.6,
+                  "prompt_per_second": 1301.35,
+                  "predicted_per_second": 40.848,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 3,
+                "phase": "measured",
+                "wall_seconds": 9.401682199997595,
+                "prefill_tps": 1308.7840876277353,
+                "decode_tps": 41.08134814724535,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 1800.92790673,
+                    "raw": 1775.76357366,
+                    "utc": 1791214080.7706957,
+                    "qpc": 88720.5966245,
+                    "roundtrip": 0.0005360000068321824
+                  },
+                  "after": {
+                    "mono": 1810.384117688,
+                    "raw": 1785.166071938,
+                    "utc": 1791214090.2251234,
+                    "qpc": 88729.9990875,
+                    "roundtrip": 0.0010127999994438142
+                  },
+                  "monotonic_per_raw": 1.0057125966325242,
+                  "raw_per_qpc": 1.0000037519965441,
+                  "window_seconds": 9.402462999991258,
+                  "handshake_uncertainty_seconds": 0.0007744000031379983
+                },
+                "minimum_memory": {
+                  "available_bytes": 33843159040,
+                  "commit_headroom_bytes": 133226594304
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              }
+            ],
+            "npu_integrated": false,
+            "acceptance_scope": "Primary native per-response draft counters; retained matching backend log bounds are supplemental ROOT accounting",
+            "adoption_claim": false
+          },
+          {
+            "name": "candidate",
+            "variant": "stock",
+            "passed": true,
+            "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+            "controller_run": "505608de50894f2994a182dd056f0cd1",
+            "backend_run": "53a295f0c249479ab1904c0b9f019796",
+            "cid": "d43dd3d9e4cd9646b93bd13d172e24050fdffa9872b58a04e8428d37ffdf6fb1",
+            "mapped_hsa": {
+              "pid": 87,
+              "start_ticks": "191160",
+              "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libhsa-runtime64.so.1",
+              "sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+              "bytes": 4887129,
+              "inode": 640717,
+              "device": 86,
+              "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b"
+            },
+            "warmup_repetitions": 1,
+            "measured_repetitions": 3,
+            "input_tokens": 8192,
+            "output_tokens": 128,
+            "prefill_tps": 1291.9797840954618,
+            "decode_tps": 28.466336420636917,
+            "accepted": 207,
+            "drafted": 345,
+            "acceptance": 0.6,
+            "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+            "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+            "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+            "samples": [
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 10653.2,
+                  "predicted_ms": 4764.0,
+                  "prompt_per_second": 768.971,
+                  "predicted_per_second": 26.868,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 0,
+                "phase": "warmup",
+                "wall_seconds": 15.480048400000669,
+                "prefill_tps": 768.9713629148109,
+                "decode_tps": 26.868012680315825,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 2030.169735763,
+                    "raw": 2002.097125782,
+                    "utc": 1791214307.0808156,
+                    "qpc": 88946.9301459,
+                    "roundtrip": 0.0003882000019075349
+                  },
+                  "after": {
+                    "mono": 2045.650241009,
+                    "raw": 2017.577623722,
+                    "utc": 1791214322.563304,
+                    "qpc": 88962.4106216,
+                    "roundtrip": 0.0004582000110531226
+                  },
+                  "monotonic_per_raw": 1.0000004719486313,
+                  "raw_per_qpc": 1.0000014366487049,
+                  "window_seconds": 15.480475699994713,
+                  "handshake_uncertainty_seconds": 0.00042320000648032874
+                },
+                "minimum_memory": {
+                  "available_bytes": 33621786624,
+                  "commit_headroom_bytes": 132983300096
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6306.4,
+                  "predicted_ms": 4413.1,
+                  "prompt_per_second": 1298.998,
+                  "predicted_per_second": 29.005,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 1,
+                "phase": "measured",
+                "wall_seconds": 10.742183399997884,
+                "prefill_tps": 1298.9985247886002,
+                "decode_tps": 29.005011717872815,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 2047.014924406,
+                    "raw": 2018.942305633,
+                    "utc": 1791214323.926206,
+                    "qpc": 88963.77531920001,
+                    "roundtrip": 0.00043820000428240746
+                  },
+                  "after": {
+                    "mono": 2057.757637453,
+                    "raw": 2029.68501434,
+                    "utc": 1791214334.6685631,
+                    "qpc": 88974.51803545,
+                    "roundtrip": 0.0006188999977894127
+                  },
+                  "monotonic_per_raw": 1.0000004039949255,
+                  "raw_per_qpc": 0.9999992978502747,
+                  "window_seconds": 10.742716249995283,
+                  "handshake_uncertainty_seconds": 0.0005285500010359101
+                },
+                "minimum_memory": {
+                  "available_bytes": 33620238336,
+                  "commit_headroom_bytes": 132975296512
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6451.9,
+                  "predicted_ms": 4421.5,
+                  "prompt_per_second": 1269.703,
+                  "predicted_per_second": 28.949,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 2,
+                "phase": "measured",
+                "wall_seconds": 10.895660700000008,
+                "prefill_tps": 1269.7036334430998,
+                "decode_tps": 28.94901444238873,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 2059.545526195,
+                    "raw": 2031.472901987,
+                    "utc": 1791214336.456452,
+                    "qpc": 88976.3059163,
+                    "roundtrip": 0.0004585999995470047
+                  },
+                  "after": {
+                    "mono": 2070.441704106,
+                    "raw": 2042.369074462,
+                    "utc": 1791214347.3506153,
+                    "qpc": 88987.20207745,
+                    "roundtrip": 0.0005337000038707629
+                  },
+                  "monotonic_per_raw": 1.000000498890764,
+                  "raw_per_qpc": 1.000001039357068,
+                  "window_seconds": 10.896161149998079,
+                  "handshake_uncertainty_seconds": 0.0004961500017088838
+                },
+                "minimum_memory": {
+                  "available_bytes": 33681559552,
+                  "commit_headroom_bytes": 133014388736
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6491.1,
+                  "predicted_ms": 4831.0,
+                  "prompt_per_second": 1262.036,
+                  "predicted_per_second": 26.496,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 3,
+                "phase": "measured",
+                "wall_seconds": 10.994510699994862,
+                "prefill_tps": 1307.2371940546855,
+                "decode_tps": 27.444983101649196,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 2071.62150941,
+                    "raw": 2043.54887926,
+                    "utc": 1791214348.5304205,
+                    "qpc": 88988.3818828,
+                    "roundtrip": 0.00043400000140536577
+                  },
+                  "after": {
+                    "mono": 2083.010327392,
+                    "raw": 2054.543898646,
+                    "utc": 1791214359.527234,
+                    "qpc": 88999.37689335,
+                    "roundtrip": 0.0005583000020124018
+                  },
+                  "monotonic_per_raw": 1.0358160892832577,
+                  "raw_per_qpc": 1.0000008036369779,
+                  "window_seconds": 10.995010550002917,
+                  "handshake_uncertainty_seconds": 0.0004961500017088838
+                },
+                "minimum_memory": {
+                  "available_bytes": 33679065088,
+                  "commit_headroom_bytes": 132991410176
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              }
+            ],
+            "npu_integrated": false,
+            "acceptance_scope": "Primary native per-response draft counters; retained matching backend log bounds are supplemental ROOT accounting",
+            "adoption_claim": false,
+            "cache_counter_delta": {
+              "ready_hits": 240,
+              "gather_skips": 240,
+              "rms_skips": 240,
+              "m1_skips": 240,
+              "seed_rewrites": 240,
+              "native_fixed_misses": 0,
+              "retirements": 0
+            }
+          },
+          {
+            "name": "stock_after",
+            "variant": "stock",
+            "passed": true,
+            "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+            "controller_run": "e448d33481dd4f5d8578c86a2cb87097",
+            "backend_run": "fa9b27ae82c648bcb440acd96f2a1475",
+            "cid": "c2d0b2596491b6efc3b1067f2cc292b1fcef20ba7c1fb0f98bf1f21adcfe523e",
+            "mapped_hsa": {
+              "pid": 87,
+              "start_ticks": "219476",
+              "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libhsa-runtime64.so.1",
+              "sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+              "bytes": 4887129,
+              "inode": 640717,
+              "device": 86,
+              "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b"
+            },
+            "warmup_repetitions": 1,
+            "measured_repetitions": 3,
+            "input_tokens": 8192,
+            "output_tokens": 128,
+            "prefill_tps": 1287.0487793818156,
+            "decode_tps": 41.4586380410133,
+            "accepted": 207,
+            "drafted": 345,
+            "acceptance": 0.6,
+            "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+            "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+            "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+            "samples": [
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 10734.0,
+                  "predicted_ms": 3884.6,
+                  "prompt_per_second": 763.182,
+                  "predicted_per_second": 32.951,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 0,
+                "phase": "warmup",
+                "wall_seconds": 14.644343100007973,
+                "prefill_tps": 763.181624686387,
+                "decode_tps": 32.95098379553126,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 2313.677392894,
+                    "raw": 2284.051418754,
+                    "utc": 1791214610.2007227,
+                    "qpc": 89228.8844413,
+                    "roundtrip": 0.00046019999717827886
+                  },
+                  "after": {
+                    "mono": 2328.32230238,
+                    "raw": 2298.696335442,
+                    "utc": 1791214603.6485496,
+                    "qpc": 89243.52933384999,
+                    "roundtrip": 0.0006316999933915213
+                  },
+                  "monotonic_per_raw": 0.9999995082252817,
+                  "raw_per_qpc": 1.0000016482205933,
+                  "window_seconds": 14.644892549986253,
+                  "handshake_uncertainty_seconds": 0.0005459499952849001
+                },
+                "minimum_memory": {
+                  "available_bytes": 33607901184,
+                  "commit_headroom_bytes": 132952662016
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6292.5,
+                  "predicted_ms": 3052.2,
+                  "prompt_per_second": 1301.867,
+                  "predicted_per_second": 41.937,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 1,
+                "phase": "measured",
+                "wall_seconds": 9.368922599998768,
+                "prefill_tps": 1301.8663028997728,
+                "decode_tps": 41.93697754433269,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 2329.537337986,
+                    "raw": 2299.91137138,
+                    "utc": 1791214604.8643157,
+                    "qpc": 89244.7443759,
+                    "roundtrip": 0.0004267999902367592
+                  },
+                  "after": {
+                    "mono": 2338.906812544,
+                    "raw": 2309.280850955,
+                    "utc": 1791214614.2308917,
+                    "qpc": 89254.1138447,
+                    "roundtrip": 0.0006569999968633056
+                  },
+                  "monotonic_per_raw": 0.9999994645380618,
+                  "raw_per_qpc": 1.000001150012243,
+                  "window_seconds": 9.369468799995957,
+                  "handshake_uncertainty_seconds": 0.0005418999935500324
+                },
+                "minimum_memory": {
+                  "available_bytes": 33564622848,
+                  "commit_headroom_bytes": 132908859392
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6551.7,
+                  "predicted_ms": 3116.3,
+                  "prompt_per_second": 1250.363,
+                  "predicted_per_second": 41.074,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 2,
+                "phase": "measured",
+                "wall_seconds": 9.692978499995661,
+                "prefill_tps": 1250.361933399852,
+                "decode_tps": 41.07396496254729,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 2340.002335499,
+                    "raw": 2310.376373902,
+                    "utc": 1791214615.3264139,
+                    "qpc": 89255.2093744,
+                    "roundtrip": 0.00047160001122392714
+                  },
+                  "after": {
+                    "mono": 2349.695979997,
+                    "raw": 2320.070026669,
+                    "utc": 1791214625.0212011,
+                    "qpc": 89264.90311105,
+                    "roundtrip": 0.0010353000106988475
+                  },
+                  "monotonic_per_raw": 0.9999991469676022,
+                  "raw_per_qpc": 0.9999913466814188,
+                  "window_seconds": 9.693736649991479,
+                  "handshake_uncertainty_seconds": 0.0007534500109613873
+                },
+                "minimum_memory": {
+                  "available_bytes": 33583865856,
+                  "commit_headroom_bytes": 132917260288
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6258.6,
+                  "predicted_ms": 3094.4,
+                  "prompt_per_second": 1308.919,
+                  "predicted_per_second": 41.365,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 3,
+                "phase": "measured",
+                "wall_seconds": 9.418189499992877,
+                "prefill_tps": 1308.9181018458223,
+                "decode_tps": 41.364971616159934,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 2351.149162959,
+                    "raw": 2321.523207092,
+                    "utc": 1791214626.4743795,
+                    "qpc": 89266.35622700001,
+                    "roundtrip": 0.0004194000066490844
+                  },
+                  "after": {
+                    "mono": 2360.567966238,
+                    "raw": 2330.942016834,
+                    "utc": 1791214657.0913095,
+                    "qpc": 89275.77510614999,
+                    "roundtrip": 0.0009499000007053837
+                  },
+                  "monotonic_per_raw": 0.9999993138198944,
+                  "raw_per_qpc": 0.999992630972789,
+                  "window_seconds": 9.41887914997642,
+                  "handshake_uncertainty_seconds": 0.000684650003677234
+                },
+                "minimum_memory": {
+                  "available_bytes": 33598689280,
+                  "commit_headroom_bytes": 132927545344
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              }
+            ],
+            "npu_integrated": false,
+            "acceptance_scope": "Primary native per-response draft counters; retained matching backend log bounds are supplemental ROOT accounting",
+            "adoption_claim": false
+          }
+        ],
+        "artifact": {
+          "generation": "3960b2b95b144b61b4cf540042f1eab2",
+          "model_binding": "8a8b5ebdbf2b1feef8192d6b43d702b798efc996d537139d87d8126796b31201",
+          "provenance": "91baaf46b769e7e11e5e3641dd2068b393ef19559badd8164481666f72972a93",
+          "origin": 1,
+          "sha256": "2cd6cc0d3cbb589fb0bae09a71fa49900e7cad0191ad2ffa809e43c7f1eb8867",
+          "bytes": 266784,
+          "tokens": [
+            14367,
+            8337,
+            1145,
+            279,
+            1040,
+            6574,
+            321,
+            87529,
+            24829,
+            1618,
+            1881,
+            13,
+            7963,
+            17739,
+            68507,
+            524,
+            4416,
+            2407,
+            314,
+            424,
+            6092,
+            26357,
+            11,
+            43089,
+            51455,
+            421,
+            2250,
+            82697,
+            645,
+            16413,
+            37257,
+            725,
+            557,
+            1048,
+            17312,
+            8598,
+            3384,
+            1141,
+            79496,
+            15589,
+            3232,
+            1060,
+            69388,
+            290,
+            3903,
+            2235,
+            13759,
+            5888,
+            383,
+            22962,
+            10558,
+            1384
+          ],
+          "row_sha256": [
+            "e474b8c6a93ccc515d7c2e96b1bda4305fd64147d1ed622594953dd260ee9e88",
+            "855a71f19f2b714b465b8d6e5af391c2463126075afbeccad31e2626d136c105",
+            "153a4434b4c92e3eae022897296abb1f3c887fd9638d5ec41671e73e0cedc23e",
+            "528e1f8affac9d5a93ba160a60f5a271ef3b2dee3ce95997734d551312ca8281",
+            "0284412aead5d136870cb8062307baff252edcc26a525ccae7a99e55c0c10d78",
+            "2eada1c92b4cd22e81ec36e57314cd9a1390eaa03ad555cc81e8b2ba407c70a0",
+            "ae376d2374c7de6edd7840fab950d197a9309ff73281a5a78ca2c14d75853ca4",
+            "72c776f3400e545beb5d6d00255b305576c0681bc2ab9ffdc5a5b908f7bdd0c6",
+            "c3e99884a15eafcc45362089984a680ac26161cdb8f7d76430f201ccea6f94d2",
+            "a9434e0c140281cba272e8142aff88fa974625aae31112ab37f3ddec212c15fe",
+            "9369c12e78e0c5c766663a4ea79185f3657413b60d6819d0b0a2c851197c508c",
+            "29594f91a2b028102fd9fc867557a8910b6a4cca4984158bd8939c6a8346bbfa",
+            "b06f67b08603ac584e3cc192f91e2b9f2a33ddf0b93bbb5ee2e00c4f897eb322",
+            "b05dd476caf690e1fbdd341a88642e1479559a6575433a2a910718f7ed2401ea",
+            "019a90965410bb1be18a4873528da1ff4ffe1fb19915858828de4de42cb90189",
+            "ccb183651602ec0ddbf2a26b92b673fab54d9744e793c4a718bf17b61b8c0b7a",
+            "849a622c7b5fedddf688531c4537c0f5789b096b8f53e459e589f45dd67d1544",
+            "5d46b3e754773bd5f156ad75a3f11e643b51e0cb81eb072f84ff3c977283bd24",
+            "d0da0389f8e9afae4df60735509f8e15169463d16ef05799e183cd57d48e12b2",
+            "4e7c3b4d8c1f6276974760b6662d4d490e91c1e751079c9916f1c2691b85945c",
+            "740a8f3a4bacf82c24c86ad9d13e6734bd03574814d1299e1a07e86355a60c92",
+            "664bc1296988c52899f48496cbf2cf47ac751ec71294067ba6c7e3b5b54f952f",
+            "5fe0dc2693dc1ab7fc101b9408aefd2e78e7040cfa470d2141ee7b48f2b37c5e",
+            "f735c566ca58d072673b59309aee0b1a2120cf71d8fec092c93bb7b08f9b9921",
+            "fca2e520677b3ce0d4a391a58c55c69e5613219da07977471b38a412440df575",
+            "79e96b9792be5e5f651b61754505bb8c23c64283a7fc31953048f8a570c899dd",
+            "fa4553f24fb7a278e0af1893dacf21a4964d17cf9a9f7ea2ed795602ad75f64a",
+            "a5b3c105d8ecb546f291bc2cd761b195a4f53be588f6f38a939d87eb4b898889",
+            "0ab75573ee2082ad82e80a9a910d54c00ff8279f454ae6f29a6d5657ad3b1a76",
+            "40e23230e2aa984735da20595ee6ed5165f248b0b2623a4945d008417def3053",
+            "2ee6c4b26dc8d4f9c0e68b14b312da95dcca2d21e0d4246983c41bd94b076688",
+            "71fdeea3b1fd22fa997c162e501bb71e9c1fba5cc3943feb065cb0fdc4ef3fbe",
+            "c5fc846d6ae8b304f4456eb4974d05545a43fdff15e92e7f5c7da2df568e32eb",
+            "5493118e0ffc0625296153ac68cfa3ed79e0917e02839f905132acb0dd587479",
+            "3bbfb6e5517bafe6f5335b16d72a7a7c174d9ecb479fbe3087bd7ec7e05194b4",
+            "3d7174174b7dbdbf9f41cf81659756ffd19531f85c588cdb6449cdc2aa089a6c",
+            "e6fe950f8c350853fa1e4f1d4a6940eabbc5e48150cae18df65bfb2be0a46d7c",
+            "97bf8631e758bfb9d503f1b71626072eb08b296f37348ce9ee46c249486c3d7a",
+            "edc15110aba02dc1e938691bf9d1cc96614afe7c441a7ce3ca75a175013f23bc",
+            "5225517e2fa0bafa478d9eaa046497c90c03d5ac995b7380621168da2e7be23d",
+            "6ea89083cf797b172b3e2a4953a0e3fbb53495609aa1d5423fa6c543bcf428d8",
+            "e04f243ac0e5ba8726160a528c365804794cf0b777c3ab3945ba66a608c9acfd",
+            "c499b0a79db06a4026a34dd57bd74ed9ab71f9a6d27fef676563c54acad713f9",
+            "f4ab82943ea59924e0dd6e499acbda9b00f70d51ec3d22369785367ce8d20654",
+            "57295a400867f010c02e719a1585fdd21f12d64ed52ec35fe6b1f6495da77fd3",
+            "d5621f3426c4f7709f6d3ed2f5699f178e7d1b3db85c75fbdd0b38f839e31686",
+            "acad252c4e0218036039f3f1763f4990a649e65b1657e0df035c24afb4187b19",
+            "a3dd626eae74e82fbd91c1f15c23957df03c710bd05ca909b1d7f166ce42b00f",
+            "7a3c98f679427ca6d6090f227ee8a848cd3229ed9d23c1d402edd3863cb2e52a",
+            "7bf0a27a93677b10bf52a76004ed5a7a8f3f82b5f7e0b09a688476744f5a843e",
+            "17fef2c4b5f3124c63edd4395ccbe5945a5b3ee510b4d0dc8a11a6dbb5cb347b",
+            "96c52ba78963d8230cfe56ea8c57ac248ad21aad29268c2a8a75bda97d9e13f3"
+          ],
+          "arithmetic_qualified_by_codec": false
+        },
+        "restored_original_open": true,
+        "finished_at": 1791214658.6823483,
+        "NPU_executed": false
+      }
+    },
+    {
+      "policy": "fixed-v1",
+      "raw_result_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-engine-cda6bf280e7242fd8b20c1cb5162ee56\\result.json",
+      "raw_result_sha256": "16aef45d35195cfd5b59fc18dca141da6ab00d5babdd0c51241d789b60b14362",
+      "coordinator": {
+        "input_plan": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-fixed-plan-83abe75704d746ed80ad6ca0974c25fd.json",
+        "input_plan_sha256": "08e57c951de3c3397503c93ab700eb1a0aa742ba8ed61d6c8b19f85f0ecd2ee5",
+        "source_sha256": "922a87607c28eabafcf7cd02c698d6221de573a80b639c6508716827f0769ddc",
+        "warmup": 1,
+        "measured": 3,
+        "input_tokens": 8192,
+        "output_tokens": 128,
+        "policy": "fixed-v1",
+        "leave_original_open": true
+      },
+      "candidate_source_pins": {
+        "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_mtp_embedding_cache.c": "c8d120e36e07a4af3d9a30b2fbee4d41ee92d55b6ebca08e55a52dd0973cdc1f",
+        "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_mtp_embedding_cache.h": "92f93a50492cbb55218aeb1650359695c699b7c4aad73bbcb0bad840c4e85b77",
+        "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_ready_embedding_launcher.py": "0e7dd4f81228d835c0587cb3ad96bbe6044d09e662a63d07856aac98f97068cd",
+        "C:\\Users\\Marcel\\.codex\\worktrees\\npu-ready-embedding\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_ready_embedding_rows.py": "3c6c3f2866025b1ab8f8c5dc497e2a85bf9a087ba900061aacd6ae553d823fc5",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_rocr_engine_stock8k.py": "1ac0282fc00fe171d2b32fb0aa201b501d0fd0fc39818f4516f0b69dd4a445eb",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_pld_stock8k_bookend.py": "961a2ee8af2f68ab5e92c83db3f98cb2ee832b3c3f1fae9925d9e6a204478755",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\upgrade0162\\run_matrix.py": "12ca2f6a890a83415df398e1b867daf0cf0211e3a6275e67f628e92bf0841d58",
+        "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_rocr_poll_backoff_owned_run.py": "bd2945ae634248e63ce2b008c2cbbdc17ac1af7f47a3a97082c8d36a41955c4f",
+        "C:\\Projects\\strix-alloy-clean\\server\\controller.py": "7d256a4b191fcc7fb86b519edb451387b0038de6ab9ed4a898a42425a23e420f",
+        "C:\\Projects\\strix-alloy-clean\\server\\host_frames.py": "417e33060ce6bc5b8f336f9e90282012a4a0e12475a13ad1dba20eec2df8bdf8",
+        "C:\\Projects\\strix-alloy-clean\\server\\owned_child.py": "6f75520f65c76941ec4306915929fd529ec7f46bd0fd20bd6f01f82afb749f10",
+        "C:\\Projects\\strix-alloy-clean\\server\\winjob.py": "3d2db1c5c8ea3846152a0073dd4ed324a47ffd36ac63bf8f48cc52e39b0d4d4c",
+        "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\article_metrics.py": "8d3ceb75adc371b1c79caef2de775c9daf92c97d319fc159e564bea1410d7cb5",
+        "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\clock_probe.py": "a3f32a4c5c7e423c47ceebdd2f0fe0cd1860d7840c9fd0de10756e887c70a05e",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-engine-80fa32abe12b47ccb0e4a6a43d15734e\\restore_original\\retained-process.json": "74de0c24212ea486086f17f4d1ac8c7bed9495829b2335a9b49d0b10706b1998",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-engine-80fa32abe12b47ccb0e4a6a43d15734e\\restored-original.json": "5c8e3e916658054e37458220cf74026b2680d281c3623022db0741f8be0c8483"
+      },
+      "shared_object": {
+        "path": "/home/revn/halogen-re/libhalogen0162-ready-batched-83abe75704d746ed80ad6ca0974c25fd.so",
+        "sha256": "a5bd522553f3d0c8ada310781368259163627a8bc9dcb62dc226e82b31b0570d",
+        "bytes": 59208
+      },
+      "ready_artifact": {
+        "policy": "fixed-v1",
+        "generation": "83abe75704d746ed80ad6ca0974c25fd",
+        "model_binding": "8a8b5ebdbf2b1feef8192d6b43d702b798efc996d537139d87d8126796b31201",
+        "provenance": "91baaf46b769e7e11e5e3641dd2068b393ef19559badd8164481666f72972a93",
+        "rows": {
+          "path": "/home/revn/halogen-re/ready-fixed-83abe75704d746ed80ad6ca0974c25fd/gpu-fixed-rows.bin",
+          "sha256": "3cf0bcb2f83db17c6cf7734568ebdd37d7a06f42dd8abcb472cb9f200e3afd48",
+          "bytes": 266784
+        }
+      },
+      "source_lineage": {
+        "original_capture": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-embedding-engine-80fa32abe12b47ccb0e4a6a43d15734e\\candidate\\ready-rows.bin",
+        "original_capture_sha256": "2cd6cc0d3cbb589fb0bae09a71fa49900e7cad0191ad2ffa809e43c7f1eb8867",
+        "only_header_generation_changed": true,
+        "token_ids_frozen_before_run": [
+          14367,
+          8337,
+          1145,
+          279,
+          1040,
+          6574,
+          321,
+          87529,
+          24829,
+          1618,
+          1881,
+          13,
+          7963,
+          17739,
+          68507,
+          524,
+          4416,
+          2407,
+          314,
+          424,
+          6092,
+          26357,
+          11,
+          43089,
+          51455,
+          421,
+          2250,
+          82697,
+          645,
+          16413,
+          37257,
+          725,
+          557,
+          1048,
+          17312,
+          8598,
+          3384,
+          1141,
+          79496,
+          15589,
+          3232,
+          1060,
+          69388,
+          290,
+          3903,
+          2235,
+          13759,
+          5888,
+          383,
+          22962,
+          10558,
+          1384
+        ],
+        "origin": 1,
+        "NPU_executed": false,
+        "maps_validation": "fresh batched span queries; no cached mapping lifetime"
+      },
+      "stock_bookend_mean": {
+        "prefill_tps": 1290.0721075019067,
+        "decode_tps": 41.588987237849466
+      },
+      "candidate_delta_percent": {
+        "prefill": 0.9654089261303067,
+        "decode": -21.760141910439845
+      },
+      "acceleration_qualified": false,
+      "NPU_executed": false,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "windows": [
+          {
+            "name": "stock_before",
+            "variant": "stock",
+            "passed": true,
+            "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+            "controller_run": "e448d33481dd4f5d8578c86a2cb87097",
+            "backend_run": "fa9b27ae82c648bcb440acd96f2a1475",
+            "cid": "c2d0b2596491b6efc3b1067f2cc292b1fcef20ba7c1fb0f98bf1f21adcfe523e",
+            "mapped_hsa": {
+              "pid": 87,
+              "start_ticks": "219476",
+              "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libhsa-runtime64.so.1",
+              "sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+              "bytes": 4887129,
+              "inode": 640717,
+              "device": 86,
+              "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b"
+            },
+            "warmup_repetitions": 1,
+            "measured_repetitions": 3,
+            "input_tokens": 8192,
+            "output_tokens": 128,
+            "prefill_tps": 1301.1208157641058,
+            "decode_tps": 41.643338122801026,
+            "accepted": 207,
+            "drafted": 345,
+            "acceptance": 0.6,
+            "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+            "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+            "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+            "samples": [
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6056.0,
+                  "predicted_ms": 3044.4,
+                  "prompt_per_second": 1352.708,
+                  "predicted_per_second": 42.044,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 0,
+                "phase": "warmup",
+                "wall_seconds": 9.127412400004687,
+                "prefill_tps": 1352.7082148772006,
+                "decode_tps": 42.04400667867494,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3251.556554505,
+                    "raw": 3221.76833832,
+                    "utc": 1791215547.91765,
+                    "qpc": 90166.60137635001,
+                    "roundtrip": 0.00038409999979194254
+                  },
+                  "after": {
+                    "mono": 3260.684684793,
+                    "raw": 3230.896467158,
+                    "utc": 1791215557.0457811,
+                    "qpc": 90175.7293944,
+                    "roundtrip": 0.000815200008219108
+                  },
+                  "monotonic_per_raw": 1.000000158849656,
+                  "raw_per_qpc": 1.000012137137609,
+                  "window_seconds": 9.128018049988896,
+                  "handshake_uncertainty_seconds": 0.0005996500040055253
+                },
+                "minimum_memory": {
+                  "available_bytes": 33673826304,
+                  "commit_headroom_bytes": 132996476928
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6248.5,
+                  "predicted_ms": 3086.3,
+                  "prompt_per_second": 1311.035,
+                  "predicted_per_second": 41.474,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 1,
+                "phase": "measured",
+                "wall_seconds": 9.360932499999763,
+                "prefill_tps": 1311.0351293998774,
+                "decode_tps": 41.47400409350666,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3262.38507406,
+                    "raw": 3232.596855353,
+                    "utc": 1791215558.7461696,
+                    "qpc": 90177.4298655,
+                    "roundtrip": 0.000440800009528175
+                  },
+                  "after": {
+                    "mono": 3271.746727191,
+                    "raw": 3241.95850756,
+                    "utc": 1791215546.8204482,
+                    "qpc": 90186.79150600001,
+                    "roundtrip": 0.0009626000100979581
+                  },
+                  "monotonic_per_raw": 1.0000000987005513,
+                  "raw_per_qpc": 1.0000012505279459,
+                  "window_seconds": 9.361640500006615,
+                  "handshake_uncertainty_seconds": 0.0007017000098130666
+                },
+                "minimum_memory": {
+                  "available_bytes": 33686994944,
+                  "commit_headroom_bytes": 133002080256
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6284.0,
+                  "predicted_ms": 3087.9,
+                  "prompt_per_second": 1303.628,
+                  "predicted_per_second": 41.452,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 2,
+                "phase": "measured",
+                "wall_seconds": 9.397698499989929,
+                "prefill_tps": 1303.6281086051438,
+                "decode_tps": 41.452003453362785,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3273.401914031,
+                    "raw": 3243.613693039,
+                    "utc": 1791215548.475633,
+                    "qpc": 90188.4467143,
+                    "roundtrip": 0.00044499999785330147
+                  },
+                  "after": {
+                    "mono": 3282.800554358,
+                    "raw": 3253.012332583,
+                    "utc": 1791215557.8697624,
+                    "qpc": 90197.84522875,
+                    "roundtrip": 0.0011775000020861626
+                  },
+                  "monotonic_per_raw": 1.0000000833099196,
+                  "raw_per_qpc": 1.0000133099754187,
+                  "window_seconds": 9.398514450003859,
+                  "handshake_uncertainty_seconds": 0.000811249999969732
+                },
+                "minimum_memory": {
+                  "available_bytes": 33671401472,
+                  "commit_headroom_bytes": 132992532480
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6356.8,
+                  "predicted_ms": 3047.3,
+                  "prompt_per_second": 1288.699,
+                  "predicted_per_second": 42.004,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 3,
+                "phase": "measured",
+                "wall_seconds": 9.432856100000208,
+                "prefill_tps": 1288.699209287296,
+                "decode_tps": 42.004006821533636,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3284.41945867,
+                    "raw": 3254.631234724,
+                    "utc": 1791215559.4886642,
+                    "qpc": 90199.46426845,
+                    "roundtrip": 0.0004321000014897436
+                  },
+                  "after": {
+                    "mono": 3293.852842565,
+                    "raw": 3264.064617087,
+                    "utc": 1791215590.2139223,
+                    "qpc": 90208.89763995,
+                    "roundtrip": 0.0005887000006623566
+                  },
+                  "monotonic_per_raw": 1.0000001624020007,
+                  "raw_per_qpc": 1.0000011515505631,
+                  "window_seconds": 9.433371499995701,
+                  "handshake_uncertainty_seconds": 0.0005104000010760501
+                },
+                "minimum_memory": {
+                  "available_bytes": 33651814400,
+                  "commit_headroom_bytes": 132951433216
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              }
+            ],
+            "npu_integrated": false,
+            "acceptance_scope": "Primary native per-response draft counters; retained matching backend log bounds are supplemental ROOT accounting",
+            "adoption_claim": false
+          },
+          {
+            "name": "candidate",
+            "variant": "stock",
+            "passed": true,
+            "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+            "controller_run": "af435f28b2d74b32ad7b58840bf7ad57",
+            "backend_run": "c411427e60084d0bba5fd95e589c1976",
+            "cid": "3492689b0486d9c14b1295502b72a73e9fe83428191bfbb2be9873c3147e6abe",
+            "mapped_hsa": {
+              "pid": 87,
+              "start_ticks": "339764",
+              "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libhsa-runtime64.so.1",
+              "sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+              "bytes": 4887129,
+              "inode": 640717,
+              "device": 86,
+              "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b"
+            },
+            "warmup_repetitions": 1,
+            "measured_repetitions": 3,
+            "input_tokens": 8192,
+            "output_tokens": 128,
+            "prefill_tps": 1302.5265787812475,
+            "decode_tps": 32.53916459577871,
+            "accepted": 207,
+            "drafted": 345,
+            "acceptance": 0.6,
+            "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+            "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+            "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+            "samples": [
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 10643.1,
+                  "predicted_ms": 4459.2,
+                  "prompt_per_second": 769.701,
+                  "predicted_per_second": 28.705,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 0,
+                "phase": "warmup",
+                "wall_seconds": 15.129004400005215,
+                "prefill_tps": 769.7057911194181,
+                "decode_tps": 28.705178678581547,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3519.725088854,
+                    "raw": 3489.779563569,
+                    "utc": 1791215794.6178744,
+                    "qpc": 90434.61259840001,
+                    "roundtrip": 0.00048080000851769
+                  },
+                  "after": {
+                    "mono": 3534.854708097,
+                    "raw": 3504.909088636,
+                    "utc": 1791215809.7468264,
+                    "qpc": 90449.74210035,
+                    "roundtrip": 0.000502099996083416
+                  },
+                  "monotonic_per_raw": 1.000006224650115,
+                  "raw_per_qpc": 1.0000015279421854,
+                  "window_seconds": 15.129501949995756,
+                  "handshake_uncertainty_seconds": 0.000491450002300553
+                },
+                "minimum_memory": {
+                  "available_bytes": 33398571008,
+                  "commit_headroom_bytes": 132689203200
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6318.5,
+                  "predicted_ms": 3844.3,
+                  "prompt_per_second": 1296.51,
+                  "predicted_per_second": 33.296,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 1,
+                "phase": "measured",
+                "wall_seconds": 10.184888500007219,
+                "prefill_tps": 1296.5180347781293,
+                "decode_tps": 33.296206343161714,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3536.64684851,
+                    "raw": 3506.701217581,
+                    "utc": 1791215811.5379333,
+                    "qpc": 90451.5342543,
+                    "roundtrip": 0.0003988000098615885
+                  },
+                  "after": {
+                    "mono": 3546.832904704,
+                    "raw": 3516.88721065,
+                    "utc": 1791215821.722681,
+                    "qpc": 90461.71992255,
+                    "roundtrip": 0.001152700002421625
+                  },
+                  "monotonic_per_raw": 1.0000061972357555,
+                  "raw_per_qpc": 1.000031889808201,
+                  "window_seconds": 10.185668249992887,
+                  "handshake_uncertainty_seconds": 0.0007757500061416067
+                },
+                "minimum_memory": {
+                  "available_bytes": 33459015680,
+                  "commit_headroom_bytes": 132746104832
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6522.0,
+                  "predicted_ms": 4247.7,
+                  "prompt_per_second": 1256.056,
+                  "predicted_per_second": 30.134,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 2,
+                "phase": "measured",
+                "wall_seconds": 10.374933999992209,
+                "prefill_tps": 1312.334247337039,
+                "decode_tps": 31.484169662223923,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3548.095030695,
+                    "raw": 3518.149328848,
+                    "utc": 1791215822.9848065,
+                    "qpc": 90462.98235199999,
+                    "roundtrip": 0.000418399999034591
+                  },
+                  "after": {
+                    "mono": 3558.935427457,
+                    "raw": 3528.524845164,
+                    "utc": 1791215833.5789962,
+                    "qpc": 90473.35790845,
+                    "roundtrip": 0.0008181000011973083
+                  },
+                  "monotonic_per_raw": 1.0448055240666332,
+                  "raw_per_qpc": 0.9999961318698647,
+                  "window_seconds": 10.375556450002478,
+                  "handshake_uncertainty_seconds": 0.0006182500001159497
+                },
+                "minimum_memory": {
+                  "available_bytes": 33458495488,
+                  "commit_headroom_bytes": 132749889536
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6833.4,
+                  "predicted_ms": 4222.9,
+                  "prompt_per_second": 1198.818,
+                  "predicted_per_second": 30.311,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 3,
+                "phase": "measured",
+                "wall_seconds": 10.230120999985957,
+                "prefill_tps": 1298.727454228574,
+                "decode_tps": 32.83711778195048,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3560.803822573,
+                    "raw": 3530.249506185,
+                    "utc": 1791215835.4473898,
+                    "qpc": 90475.08252885,
+                    "roundtrip": 0.0004189000028418377
+                  },
+                  "after": {
+                    "mono": 3571.88711311,
+                    "raw": 3540.480173252,
+                    "utc": 1791215845.6942286,
+                    "qpc": 90485.3131808,
+                    "roundtrip": 0.0006343999993987381
+                  },
+                  "monotonic_per_raw": 1.0833399683926785,
+                  "raw_per_qpc": 1.0000014776186401,
+                  "window_seconds": 10.230651949997991,
+                  "handshake_uncertainty_seconds": 0.0005266500011202879
+                },
+                "minimum_memory": {
+                  "available_bytes": 33505439744,
+                  "commit_headroom_bytes": 132800569344
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              }
+            ],
+            "npu_integrated": false,
+            "acceptance_scope": "Primary native per-response draft counters; retained matching backend log bounds are supplemental ROOT accounting",
+            "adoption_claim": false,
+            "cache_counter_delta": {
+              "gather_skips": 292,
+              "m1_skips": 292,
+              "native_fixed_misses": 0,
+              "ready_hits": 292,
+              "retirements": 0,
+              "rms_skips": 292,
+              "seed_rewrites": 292
+            }
+          },
+          {
+            "name": "stock_after",
+            "variant": "stock",
+            "passed": true,
+            "profile_sha256": "1f97d1a2a59ef75bbc2927adee943f8d0f0ca75f82a1a0012b7c06a71d6e09c6",
+            "controller_run": "2f0364b9a49f4879bb1e3618d6d389cb",
+            "backend_run": "cd194e3a5f784db192cc4075143f89e6",
+            "cid": "d3063e4182c80aa1661330a02e87b63982a81137b1f84a14c5e7f9343fc36731",
+            "mapped_hsa": {
+              "pid": 87,
+              "start_ticks": "367521",
+              "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libhsa-runtime64.so.1",
+              "sha256": "1961df7d395b62d9b7c0086e0a247a02d0e97129eb9d8b28acb0e0a597e819f5",
+              "bytes": 4887129,
+              "inode": 640717,
+              "device": 86,
+              "engine_sha256": "ac123b7ff5134e527368fc0644598379bcd976630691d36e9a469d55bee23f3b"
+            },
+            "warmup_repetitions": 1,
+            "measured_repetitions": 3,
+            "input_tokens": 8192,
+            "output_tokens": 128,
+            "prefill_tps": 1279.0233992397075,
+            "decode_tps": 41.53463635289791,
+            "accepted": 207,
+            "drafted": 345,
+            "acceptance": 0.6,
+            "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+            "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+            "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1",
+            "samples": [
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 10615.7,
+                  "predicted_ms": 3891.5,
+                  "prompt_per_second": 771.687,
+                  "predicted_per_second": 32.892,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 0,
+                "phase": "warmup",
+                "wall_seconds": 14.533423000000766,
+                "prefill_tps": 771.6865242643424,
+                "decode_tps": 32.89197972248172,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3790.255310972,
+                    "raw": 3758.393806165,
+                    "utc": 1791216084.5431192,
+                    "qpc": 90703.22683305,
+                    "roundtrip": 0.00041429999691899866
+                  },
+                  "after": {
+                    "mono": 3804.789245979,
+                    "raw": 3772.927750132,
+                    "utc": 1791216077.7352326,
+                    "qpc": 90717.76077455,
+                    "roundtrip": 0.0006152999994810671
+                  },
+                  "monotonic_per_raw": 0.9999993835121525,
+                  "raw_per_qpc": 1.0000001697402163,
+                  "window_seconds": 14.533941500005312,
+                  "handshake_uncertainty_seconds": 0.0005147999982000329
+                },
+                "minimum_memory": {
+                  "available_bytes": 33339289600,
+                  "commit_headroom_bytes": 132648497152
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6628.3,
+                  "predicted_ms": 3047.8,
+                  "prompt_per_second": 1235.913,
+                  "predicted_per_second": 41.998,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 1,
+                "phase": "measured",
+                "wall_seconds": 9.700208199996268,
+                "prefill_tps": 1235.9120847505944,
+                "decode_tps": 41.99796889858385,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3805.570297208,
+                    "raw": 3773.708800853,
+                    "utc": 1791216078.516282,
+                    "qpc": 90718.54182915,
+                    "roundtrip": 0.00045110000064596534
+                  },
+                  "after": {
+                    "mono": 3815.271251204,
+                    "raw": 3783.409762033,
+                    "utc": 1791216109.5590644,
+                    "qpc": 90728.2427534,
+                    "roundtrip": 0.0009720000089146197
+                  },
+                  "monotonic_per_raw": 0.9999992594548276,
+                  "raw_per_qpc": 1.0000038068531163,
+                  "window_seconds": 9.70092425000621,
+                  "handshake_uncertainty_seconds": 0.0007115500047802925
+                },
+                "minimum_memory": {
+                  "available_bytes": 32797929472,
+                  "commit_headroom_bytes": 131779096576
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6361.9,
+                  "predicted_ms": 3088.9,
+                  "prompt_per_second": 1287.666,
+                  "predicted_per_second": 41.439,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 2,
+                "phase": "measured",
+                "wall_seconds": 9.472703100007493,
+                "prefill_tps": 1287.6651697553855,
+                "decode_tps": 41.438973281498015,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3817.096174286,
+                    "raw": 3785.234684994,
+                    "utc": 1791216111.3839858,
+                    "qpc": 90730.06770355001,
+                    "roundtrip": 0.0004417000018293038
+                  },
+                  "after": {
+                    "mono": 3826.56935688,
+                    "raw": 3794.707873696,
+                    "utc": 1791216120.857169,
+                    "qpc": 90739.540895,
+                    "roundtrip": 0.0005278000026009977
+                  },
+                  "monotonic_per_raw": 0.9999993552329451,
+                  "raw_per_qpc": 0.9999997099197288,
+                  "window_seconds": 9.473191449986189,
+                  "handshake_uncertainty_seconds": 0.00048475000221515074
+                },
+                "minimum_memory": {
+                  "available_bytes": 33013604352,
+                  "commit_headroom_bytes": 131807076352
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              },
+              {
+                "timings": {
+                  "prompt_n": 8192,
+                  "predicted_n": 128,
+                  "prompt_ms": 6236.8,
+                  "predicted_ms": 3109.3,
+                  "prompt_per_second": 1313.494,
+                  "predicted_per_second": 41.167,
+                  "cache_n": 0,
+                  "disk_restore_n": 0,
+                  "disk_restore_ms": 0.0,
+                  "draft_n": 115,
+                  "draft_n_accepted": 69
+                },
+                "usage": {
+                  "prompt_tokens": 8192,
+                  "completion_tokens": 128,
+                  "total_tokens": 8320,
+                  "completion_tokens_details": {
+                    "reasoning_tokens": 0
+                  }
+                },
+                "finish_reason": "length",
+                "output_sha256": "0fbe27247d33d2829aa90b66964ff3bb946679be7ce79b379e2555f60ec74fa6",
+                "drafted": 115,
+                "accepted": 69,
+                "acceptance": 0.6,
+                "index": 3,
+                "phase": "measured",
+                "wall_seconds": 9.370815600006608,
+                "prefill_tps": 1313.4929432131426,
+                "decode_tps": 41.16696687861189,
+                "clock_calibration": {
+                  "before": {
+                    "mono": 3828.356348826,
+                    "raw": 3796.494866258,
+                    "utc": 1791216122.64416,
+                    "qpc": 90741.32790850001,
+                    "roundtrip": 0.00044180000259075314
+                  },
+                  "after": {
+                    "mono": 3837.727904795,
+                    "raw": 3805.866429767,
+                    "utc": 1791216110.6723816,
+                    "qpc": 90750.6994805,
+                    "roundtrip": 0.0010615999926812947
+                  },
+                  "monotonic_per_raw": 0.9999991954383823,
+                  "raw_per_qpc": 0.9999990939632246,
+                  "window_seconds": 9.3715719999891,
+                  "handshake_uncertainty_seconds": 0.0007516999976360239
+                },
+                "minimum_memory": {
+                  "available_bytes": 33333207040,
+                  "commit_headroom_bytes": 132626948096
+                },
+                "request_sha256": "f3da94c411cd865b84c3638b09416e642ca14f3c0777cfbeaef4940bf70a6810",
+                "prompt_sha256": "0fb44189491024eb0c3f1715828303dd6ba6073641d08ce7a8261f9a3a22c3a1"
+              }
+            ],
+            "npu_integrated": false,
+            "acceptance_scope": "Primary native per-response draft counters; retained matching backend log bounds are supplemental ROOT accounting",
+            "adoption_claim": false
+          }
+        ],
+        "artifact": null,
+        "restored_original_open": true,
+        "finished_at": 1791216134.1801949,
+        "NPU_executed": false
+      }
+    }
+  ],
+  "full_engine_NPU_comparison_executed": false,
+  "NPU_tok_per_second_gain_measured": null,
+  "no_conversion_from_component_milliseconds": true,
+  "deployment": "Candidate remains default off; original GPU server restored ready/open after each cohort.",
+  "parser_replay": {
+    "result_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen-maps-parser-replay-20261005.json",
+    "retained_file_pins": {
+      "halogen-maps-parser-replay-20261005.c": "9f4f9237d995db4bd692fa2c39698576ae167d1247ef57b531673b3a17bbf1b2",
+      "halogen-maps-parser-replay-20261005.json": "4b1cb4b41804cad97b74fd53625fba7af870bcfcf27da592e1a375fb84cf01e6"
+    },
+    "result": {
+      "scope": "TEMP-only CPU replay; no pinned source edits or runtime/provider/engine operations",
+      "input": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\ready-engine-maps-13b05cb9c8dd4a41a9ad89f32cfaac13.txt",
+      "input_sha256": "d3c14fbfcdb9df2782d33ade1ee4603ebfbfc24ef0479f0c883780b0bcbcec3d",
+      "verified_prefixes": 349,
+      "input_bytes": 37328,
+      "queries": [
+        {
+          "address": "0x5b116b308010",
+          "bytes": 2832,
+          "wanted": null
+        },
+        {
+          "address": "0x7ffcceef2ff0",
+          "bytes": 8,
+          "wanted": null
+        }
+      ],
+      "compile_command": "gcc -O2 -std=c11 -Wall -Wextra -Werror /mnt/c/Users/Marcel/AppData/Local/Temp/halogen-maps-parser-replay-20261005.c -o /tmp/halogen-maps-parser-replay-20261005",
+      "timed_input": "One immutable copy loaded once; fresh fmemopen/fgets memory stream per scan. Includes memory-stream creation, prefix parse and identical batch query matching; excludes filesystem reopen, DrvFS, live proc generation and driver work.",
+      "target_ms_per_block": 50,
+      "blocks": [
+        {
+          "variant": "sscanf",
+          "repetition": 0,
+          "iterations": 1197,
+          "wall_ns_per_scan": 41791.376,
+          "cpu_ns_per_scan": 41792.496
+        },
+        {
+          "variant": "canonical",
+          "repetition": 0,
+          "iterations": 4594,
+          "wall_ns_per_scan": 10884.838,
+          "cpu_ns_per_scan": 10885.167
+        },
+        {
+          "variant": "sscanf",
+          "repetition": 1,
+          "iterations": 1208,
+          "wall_ns_per_scan": 41423.301,
+          "cpu_ns_per_scan": 41424.147
+        },
+        {
+          "variant": "canonical",
+          "repetition": 1,
+          "iterations": 4663,
+          "wall_ns_per_scan": 10723.203,
+          "cpu_ns_per_scan": 10723.418
+        },
+        {
+          "variant": "sscanf",
+          "repetition": 2,
+          "iterations": 1217,
+          "wall_ns_per_scan": 41096.537,
+          "cpu_ns_per_scan": 41097.18
+        },
+        {
+          "variant": "canonical",
+          "repetition": 2,
+          "iterations": 4633,
+          "wall_ns_per_scan": 10793.949,
+          "cpu_ns_per_scan": 10794.23
+        }
+      ],
+      "earlier_drvfs_replay": {
+        "target_ms_per_block": 100,
+        "note": "Same immutable file and probes, but real fopen/fgets/fclose on /mnt/c each scan; file reopen overhead masks parser differences. Not a model of live /proc cost.",
+        "blocks": [
+          {
+            "variant": "sscanf",
+            "repetition": 0,
+            "iterations": 21,
+            "wall_ns_per_scan": 4960893.143,
+            "cpu_ns_per_scan": 753732.143
+          },
+          {
+            "variant": "canonical",
+            "repetition": 0,
+            "iterations": 22,
+            "wall_ns_per_scan": 4707287.136,
+            "cpu_ns_per_scan": 703105.636
+          },
+          {
+            "variant": "sscanf",
+            "repetition": 1,
+            "iterations": 22,
+            "wall_ns_per_scan": 4724726.909,
+            "cpu_ns_per_scan": 740512.045
+          },
+          {
+            "variant": "canonical",
+            "repetition": 1,
+            "iterations": 21,
+            "wall_ns_per_scan": 5073271.714,
+            "cpu_ns_per_scan": 748319.048
+          },
+          {
+            "variant": "sscanf",
+            "repetition": 2,
+            "iterations": 20,
+            "wall_ns_per_scan": 5236261.25,
+            "cpu_ns_per_scan": 821171.6
+          },
+          {
+            "variant": "canonical",
+            "repetition": 2,
+            "iterations": 20,
+            "wall_ns_per_scan": 5222144.3,
+            "cpu_ns_per_scan": 779837.75
+          }
+        ]
+      },
+      "median_wall_ns": {
+        "sscanf": 41423.301,
+        "canonical": 10793.949,
+        "saving": 30629.352
+      },
+      "counter_window_projection": {
+        "hits": 292,
+        "fresh_scans_per_hit": 18,
+        "scans": 5256,
+        "saving_ms_on_this_snapshot": 160.987874112,
+        "includes": "warmup plus three measured requests"
+      },
+      "limits": "Stock engine snapshot only; candidate mapping count may differ. No inference throughput prediction or live proc attribution.",
+      "decision": "No parser-only live cohort recommended on this evidence. Root owns subsequent decisions."
+    },
+    "measured_scope": "Memory streams from identical copied stock mappings; excludes filesystem reopen and live /proc generation.",
+    "new_live_cohort_admitted": false,
+    "live_parser_acceleration_qualified": false,
+    "reason": "About161ms for292hits includingwarmup is insufficient evidence to recover observed engine regression."
+  }
+}

@@ -1,0 +1,40 @@
+diff --git a/scripts/benchmarks/halogen_npu_native_hidden/host.cpp b/scripts/benchmarks/halogen_npu_native_hidden/host.cpp
+--- a/scripts/benchmarks/halogen_npu_native_hidden/host.cpp
++++ b/scripts/benchmarks/halogen_npu_native_hidden/host.cpp
+@@ -358,8 +358,9 @@ static void write_exact(HANDLE pipe, const void *data, size_t bytes, Clock::time_po
+   }
+   deadline(limit, "framed output completion");
+ }
+-static std::vector<uint8_t> receive(HANDLE pipe, unsigned kind, uint64_t seq, size_t bytes, Clock::time_point limit) {
+-  hgnh_frame frame{}; require(read_exact(pipe, &frame, sizeof(frame), false, limit), "missing frame");
++static std::vector<uint8_t> receive(HANDLE pipe, unsigned kind, uint64_t seq, size_t bytes, Clock::time_point limit, bool empty_eof = false) {
++  hgnh_frame frame{};
++  if (!read_exact(pipe, &frame, sizeof(frame), empty_eof, limit)) return {};
+   require(!std::memcmp(frame.magic, HGNH_FRAME_MAGIC, 8) && frame.kind == kind && frame.sequence == seq && frame.payload_bytes == bytes,
+           "outer frame admission failed");
+   std::vector<uint8_t> payload(bytes); read_exact(pipe, payload.data(), bytes, false, limit);
+@@ -394,9 +395,11 @@ static std::string serve(const Options &o, Backend &backend, Clock::time_point limi
+   require(!std::memcmp(hello.data(), &pinned, sizeof(pinned)), "HELLO differs from CLI pins");
+   std::memcpy(pinned.magic, HGNH_READY_MAGIC, 8); send(output, HGNH_READY, 0, &pinned, sizeof(pinned), limit);
+   uint64_t model = 0; std::vector<Sample> samples; samples.reserve(HGNH_MAX_CALLS);
++  bool owner_closed = false;
+   for (unsigned sequence = 0; sequence < HGNH_MAX_CALLS; ++sequence) {
+     const auto begin = Clock::now();
+-    const auto packet = receive(input, HGNH_REQUEST, sequence, HGNH_REQUEST_BYTES, limit);
++    const auto packet = receive(input, HGNH_REQUEST, sequence, HGNH_REQUEST_BYTES, limit, true);
++    if (packet.empty()) { owner_closed = true; break; }
+     hgnh_request request{}; std::memcpy(&request, packet.data(), sizeof(request));
+     const auto &h = request.header;
+     require(!std::memcmp(h.magic, HGNH_REQUEST_MAGIC, 8) && h.version == HGNH_VERSION && h.body_bytes == HGNH_H_BYTES &&
+@@ -431,7 +434,9 @@ static std::string serve(const Options &o, Backend &backend, Clock::time_point limi
+   }
+   // Root's full head continues after response63. Remain resident until owner
+   // closes stdin; reject every extra byte. The finite device core is exhausted.
+-  uint8_t extra = 0; require(!read_exact(input, &extra, 1, true, limit), "extra request after finite64 cohort");
+-  return "{\"status\":\"native-cohort-complete\",\"mode\":\"serve\",\"calls\":64,\"initialization_us\":" +
++  if (!owner_closed) {
++    uint8_t extra = 0; require(!read_exact(input, &extra, 1, true, limit), "extra request after finite64 cohort");
++  }
++  return "{\"status\":\"native-cohort-complete\",\"mode\":\"serve\",\"calls\":" + std::to_string(samples.size()) + ",\"initialization_us\":" +
+       std::to_string(init_us) + ",\"oracles_checked_in_this_process\":false}";
+ }

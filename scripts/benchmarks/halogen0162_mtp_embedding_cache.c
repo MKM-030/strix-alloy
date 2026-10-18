@@ -102,8 +102,8 @@ static int ecache_ready(struct ecache_state *s,unsigned slot) {
     if (ready!=0 && ready!=1) return ecache_fail(s);
     return ready==0?1:0;
 }
-int ecache_apply(struct ecache_state *s,int32_t token,const uint16_t *input,uint16_t *output,
-    ecache_launch_fn launch,void *opaque) {
+static int ecache_apply_internal(struct ecache_state *s,int32_t token,const uint16_t *input,uint16_t *output,
+    ecache_launch_fn launch,void *opaque,int lookup_hits) {
     if (!ecache_enter(s,0)) return ECACHE_ERROR;
     s->stats.calls++;
     uintptr_t in=(uintptr_t)input,out=(uintptr_t)output;
@@ -118,12 +118,13 @@ int ecache_apply(struct ecache_state *s,int32_t token,const uint16_t *input,uint
             int ready=ecache_ready(s,i);
             if (ready<0) return ecache_leave(s,ECACHE_ERROR);
             if (!ready) {s->stats.pending_fallbacks++;pending_match=1;break;}
+            if (!lookup_hits) {slot=i;break;}
             if (atomic_load_explicit(&s->failed,memory_order_acquire)) return ecache_leave(s,ECACHE_ERROR);
             if (s->ops.copy_async(output,s->entries[i].device,ECACHE_ROW_BYTES,3,NULL))
                 return ecache_leave(s,ecache_fail(s));
             s->stats.copy_enqueues++;s->stats.hits++;return ecache_leave(s,ECACHE_HIT);
         }
-        if (!pending_match) {
+        if (!pending_match && slot==s->capacity) {
             for (unsigned i=0;i<s->capacity;i++) if (!s->entries[i].valid) {slot=i;break;}
             if (slot==s->capacity) {
                 for (unsigned offset=0;offset<s->capacity;offset++) {
@@ -149,6 +150,10 @@ int ecache_apply(struct ecache_state *s,int32_t token,const uint16_t *input,uint
     }
     return ecache_leave(s,ECACHE_MISS);
 }
+int ecache_apply(struct ecache_state *s,int32_t token,const uint16_t *input,uint16_t *output,
+    ecache_launch_fn launch,void *opaque) {return ecache_apply_internal(s,token,input,output,launch,opaque,1);}
+int ecache_capture_original(struct ecache_state *s,int32_t token,const uint16_t *input,uint16_t *output,
+    ecache_launch_fn launch,void *opaque) {return ecache_apply_internal(s,token,input,output,launch,opaque,0);}
 int ecache_reset(struct ecache_state *s,const unsigned char generation[16]) {
     if (!ecache_enter(s,0)) return ECACHE_ERROR;
     if (!generation || !ecache_nonzero(generation,16) || !memcmp(s->generation,generation,16))
@@ -164,9 +169,118 @@ int ecache_close(struct ecache_state *s) {
     return ecache_leave(s,ecache_cleanup(s));
 }
 
+int ecache_lookup_ready(struct ecache_state *s,int32_t token,const uint16_t **row) {
+    if (!row) return ECACHE_ERROR;
+    *row=NULL;if (!ecache_enter(s,0)) return ECACHE_ERROR;
+    if (token>=0 && (uint32_t)token<ECACHE_TOKEN_COUNT) {
+        for (unsigned i=0;i<s->capacity;i++) if (s->entries[i].valid && s->entries[i].token==token) {
+            int ready=ecache_ready(s,i);
+            if (ready<0) return ecache_leave(s,ECACHE_ERROR);
+            if (!ready) {s->stats.pending_fallbacks++;break;}
+            *row=s->entries[i].device;return ecache_leave(s,ECACHE_HIT);
+        }
+    }
+    return ecache_leave(s,ECACHE_MISS);
+}
+static int ecache_artifact_valid(const struct ecache_artifact *a) {
+    if (!a || a->count<1 || a->count>ECACHE_MAX_ENTRIES || (a->origin!=1 && a->origin!=2) ||
+        !ecache_nonzero(a->generation,16) || !ecache_nonzero(a->model_binding,32) || !ecache_nonzero(a->provenance,32)) return 0;
+    for (unsigned i=0;i<a->count;i++) {
+        if (a->tokens[i]<0 || (uint32_t)a->tokens[i]>=ECACHE_TOKEN_COUNT) return 0;
+        for (unsigned j=0;j<i;j++) if (a->tokens[i]==a->tokens[j]) return 0;
+        for (unsigned j=0;j<ECACHE_ROW_BYTES/2;j++) if ((a->rows[i][j]&0x7f80u)==0x7f80u) return 0;
+    }
+    return 1;
+}
+int ecache_import_rows(struct ecache_state *s,const struct ecache_artifact *a) {
+    if (!ecache_enter(s,0)) return ECACHE_ERROR;
+    if (!ecache_artifact_valid(a) || a->count>s->capacity || memcmp(a->generation,s->generation,16))
+        return ecache_leave(s,ecache_fail(s));
+    for (unsigned i=0;i<s->capacity;i++) if (s->entries[i].valid) return ecache_leave(s,ecache_fail(s));
+    for (unsigned i=0;i<a->count;i++) {
+        if (s->ops.copy_async(s->entries[i].device,a->rows[i],ECACHE_ROW_BYTES,1,NULL) ||
+            s->ops.event_record(s->entries[i].event,NULL)) return ecache_leave(s,ecache_fail(s));
+        s->stats.copy_enqueues++;
+    }
+    s->stats.stream_drains++;
+    if (s->ops.stream_synchronize(NULL)) return ecache_leave(s,ecache_fail(s));
+    for (unsigned i=0;i<a->count;i++) {s->entries[i].token=a->tokens[i];s->entries[i].valid=1;}
+    return ecache_leave(s,0);
+}
+int ecache_export_rows(struct ecache_state *s,struct ecache_artifact *a) {
+    if (!ecache_enter(s,0)) return ECACHE_ERROR;
+    if (!a) return ecache_leave(s,ecache_fail(s));
+    a->count=0;s->stats.stream_drains++;
+    if (s->ops.stream_synchronize(NULL)) return ecache_leave(s,ecache_fail(s));
+    for (unsigned i=0;i<s->capacity;i++) if (s->entries[i].valid) {
+        unsigned at=a->count++;
+        a->tokens[at]=s->entries[i].token;
+        if (s->ops.copy_async(a->rows[at],s->entries[i].device,ECACHE_ROW_BYTES,2,NULL))
+            return ecache_leave(s,ecache_fail(s));
+        s->stats.copy_enqueues++;
+    }
+    s->stats.stream_drains++;
+    if (s->ops.stream_synchronize(NULL)) return ecache_leave(s,ecache_fail(s));
+    memcpy(a->generation,s->generation,16);
+    if (a->count && !ecache_artifact_valid(a)) return ecache_leave(s,ecache_fail(s));
+    return ecache_leave(s,0);
+}
+static uint32_t ecache_u32(const unsigned char *p) {
+    return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;
+}
+static void ecache_put32(unsigned char *p,uint32_t n) {
+    for (unsigned i=0;i<4;i++) p[i]=(unsigned char)(n>>(8*i));
+}
+int ecache_artifact_encode(const struct ecache_artifact *a,unsigned char *bytes,size_t capacity_bytes,size_t *extent) {
+    if (!extent) return ECACHE_ERROR;
+    *extent=0;
+    if (!ecache_artifact_valid(a) || !bytes) return ECACHE_ERROR;
+    size_t n=ECACHE_ARTIFACT_HEADER_BYTES+a->count*ECACHE_ARTIFACT_RECORD_BYTES;
+    if (capacity_bytes<n) return ECACHE_ERROR;
+    memset(bytes,0,n);memcpy(bytes,"HGNERC01",8);ecache_put32(bytes+8,1);
+    ecache_put32(bytes+12,128);ecache_put32(bytes+16,5120);ecache_put32(bytes+20,a->count);ecache_put32(bytes+24,a->origin);
+    memcpy(bytes+32,a->generation,16);memcpy(bytes+48,a->model_binding,32);memcpy(bytes+80,a->provenance,32);
+    for (unsigned i=0;i<a->count;i++) {
+        unsigned char *p=bytes+128+i*ECACHE_ARTIFACT_RECORD_BYTES;ecache_put32(p,(uint32_t)a->tokens[i]);
+        for (unsigned j=0;j<2560;j++) {p[8+2*j]=(unsigned char)a->rows[i][j];p[9+2*j]=(unsigned char)(a->rows[i][j]>>8);}
+    }
+    *extent=n;return 0;
+}
+int ecache_artifact_decode(const unsigned char *bytes,size_t extent,const unsigned char generation[16],
+    const unsigned char model[32],const unsigned char provenance[32],struct ecache_artifact *a) {
+    if (!bytes || !generation || !model || !provenance || !a || extent<128 || extent>ECACHE_ARTIFACT_MAX_BYTES ||
+        memcmp(bytes,"HGNERC01",8) || ecache_u32(bytes+8)!=1 || ecache_u32(bytes+12)!=128 ||
+        ecache_u32(bytes+16)!=5120 || ecache_u32(bytes+28) || ecache_nonzero(bytes+112,16) ||
+        memcmp(bytes+32,generation,16) || memcmp(bytes+48,model,32) || memcmp(bytes+80,provenance,32)) return ECACHE_ERROR;
+    unsigned count=ecache_u32(bytes+20);
+    if (count<1 || count>ECACHE_MAX_ENTRIES || extent!=128+count*ECACHE_ARTIFACT_RECORD_BYTES) return ECACHE_ERROR;
+    memset(a,0,sizeof *a);a->count=count;a->origin=ecache_u32(bytes+24);
+    memcpy(a->generation,generation,16);memcpy(a->model_binding,model,32);memcpy(a->provenance,provenance,32);
+    for (unsigned i=0;i<count;i++) {
+        const unsigned char *p=bytes+128+i*ECACHE_ARTIFACT_RECORD_BYTES;
+        if (ecache_u32(p+4) || ecache_u32(p)>=ECACHE_TOKEN_COUNT) return ECACHE_ERROR;
+        a->tokens[i]=(int32_t)ecache_u32(p);
+        for (unsigned j=0;j<2560;j++) a->rows[i][j]=(uint16_t)((unsigned)p[8+2*j]|(unsigned)p[9+2*j]<<8);
+    }
+    return ecache_artifact_valid(a)?0:ECACHE_ERROR;
+}
+int ecache_branch_step(struct ecache_branch *branch,unsigned step) {
+    if (!branch || branch->failed || step>ECACHE_BRANCH_SEED || step!=branch->stage) {
+        if (branch) branch->failed=1;
+        return ECACHE_ERROR;
+    }
+    branch->stage++;return 0;
+}
+
 #ifndef HALOGEN_EMBEDDING_CACHE_CORE_ONLY
 #ifndef HALOGEN_EMBEDDING_CACHE_ENABLE_NATIVE_CANDIDATE
 #define HALOGEN_EMBEDDING_CACHE_ENABLE_NATIVE_CANDIDATE 0
+#endif
+#ifndef HALOGEN_EMBEDDING_CACHE_ENABLE_READY_CANDIDATE
+#define HALOGEN_EMBEDDING_CACHE_ENABLE_READY_CANDIDATE 0
+#endif
+#ifndef HALOGEN_EMBEDDING_CACHE_ENABLE_CHECKED_COPY_CANDIDATE
+#define HALOGEN_EMBEDDING_CACHE_ENABLE_CHECKED_COPY_CANDIDATE 0
 #endif
 #include <dlfcn.h>
 #include <elf.h>
@@ -181,6 +295,8 @@ int ecache_close(struct ecache_state *s) {
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <limits.h>
+#include <sys/uio.h>
 
 #if !defined(__x86_64__) || !defined(__linux__)
 #error Linux x86-64 only for native detours; core-only replay has no platform detours
@@ -198,6 +314,12 @@ int ecache_close(struct ecache_state *s) {
 #define E_RETURN_RVA ((uintptr_t)0x17db548)
 #define H_RETURN_RVA ((uintptr_t)0x17db663)
 #define LAUNCH_RETURN_RVA ((uintptr_t)0x17fdba0)
+#define GATHER_RETURN_RVA ((uintptr_t)0x17db44e)
+#define RMS_RETURN_RVA ((uintptr_t)0x17db51c)
+#define SEED_RETURN_RVA ((uintptr_t)0x17dbb96)
+#define GATHER_KERNEL_RVA ((uintptr_t)0x18d5b40)
+#define RMS_KERNEL_RVA ((uintptr_t)0x18d5160)
+#define SEED_KERNEL_RVA ((uintptr_t)0x18d5b58)
 #define E_KERNEL_RVA ((uintptr_t)0x18d6690)
 #define H_KERNEL_RVA ((uintptr_t)0x18d66f0)
 #define H_INPUT_RVA ((uintptr_t)0x18db210)
@@ -218,6 +340,9 @@ static const unsigned char fc_signature[32]={
 };
 static const unsigned char e_call[5]={0xe8,0x48,0x1a,0xfb,0xff};
 static const unsigned char h_call[5]={0xe8,0x2d,0x19,0xfb,0xff};
+static const unsigned char gather_call[5]={0xe8,0xc2,0x83,0x0f,0x00};
+static const unsigned char rms_call[5]={0xe8,0xf4,0x82,0x0f,0x00};
+static const unsigned char seed_call[5]={0xe8,0x7a,0x7c,0x0f,0x00};
 typedef int32_t (*head_fn)(void *,const int32_t *,int32_t,int32_t);
 typedef void (*fc_fn)(void *,const uint16_t *,uint16_t *,int32_t,int32_t,int64_t);
 typedef struct {unsigned x,y,z;} hip_dim3;
@@ -226,7 +351,7 @@ typedef int (*reset_fn)(void);
 typedef int (*context_fn)(void *);
 typedef int (*device_fn)(int);
 struct binding {
-    uintptr_t model,table,gamma,input,output,seed;
+    uintptr_t model,table,gamma,input,output,seed,device_tokens;
     unsigned char descriptor[DESCRIPTOR_BYTES];
     unsigned wire_guard;
     pthread_t thread;
@@ -235,6 +360,8 @@ struct head_context {
     uintptr_t model,tokens;
     int32_t token,position,outer_position,slot;
     unsigned e_calls,h_calls,phase,launches,launch_ok;
+    const uint16_t *ready_row;
+    struct ecache_branch branch;
     int native_errno;
 };
 static struct ecache_state cache;
@@ -249,6 +376,12 @@ static int (*real_ctx_pop)(void **);
 static device_fn real_set_device;
 static uintptr_t engine_base;
 static unsigned char run_generation[16];
+static unsigned char model_binding[32],provenance_binding[32];
+static struct ecache_artifact staged_rows;
+static unsigned ready_mode,fixed_rows,artifact_exported;
+static unsigned checked_copy_mode,fixed_import_synchronized;
+static char generation_hex[33],model_hex[65],provenance_hex[65],import_sha[65];
+static uint64_t ready_hits,native_fixed_misses,gather_skips,rms_skips,m1_skips,seed_rewrites;
 static unsigned capacity=ECACHE_MAX_ENTRIES,bound_ready,in_flight;
 static uint64_t head_calls,excluded_calls,eligible_calls,native_h_calls,retirements;
 static int directory_fd=-1;
@@ -257,6 +390,7 @@ static pthread_mutex_t state_mutex=PTHREAD_MUTEX_INITIALIZER;
 static pthread_once_t symbols_once=PTHREAD_ONCE_INIT;
 static _Thread_local struct head_context *active;
 static _Thread_local unsigned head_depth,internal_free;
+static void maybe_harvest(void);
 static _Noreturn void fatal(const char *reason) {
     dprintf(STDERR_FILENO,"[mtp-embedding-cache] fatal reason=%s errno=%d\n",reason,errno);_exit(79);
 }
@@ -268,16 +402,84 @@ static uintptr_t pointer_at(const void *object,size_t offset) {
 static int32_t int32_at(const void *object,size_t offset) {
     int32_t value;memcpy(&value,(const unsigned char *)object+offset,sizeof value);return value;
 }
-static int mapped_span(uintptr_t address,size_t bytes,const char *wanted) {
-    if (!ecache_span(address,bytes)) return 0;
+#define MAPPED_SPANS_MAX 8u
+struct mapped_query {uintptr_t address;size_t bytes;const char *wanted;};
+/* Fresh per-call checks retain single-VMA containment; no mapping is cached. */
+static int mapped_spans(const struct mapped_query *queries,unsigned count) {
+    if (!queries || !count || count>MAPPED_SPANS_MAX) return 0;
+    for (unsigned i=0;i<count;i++)
+        if (!ecache_span(queries[i].address,queries[i].bytes)) return 0;
     FILE *file=fopen("/proc/self/maps","re");if (!file) return 0;
-    char line[4096],permissions[5];unsigned long low,high;int found=0;
+    char line[4096],permissions[5];unsigned long low,high;unsigned found=0,all=(1u<<count)-1;
     while (fgets(line,sizeof line,file)) {
         if (sscanf(line,"%lx-%lx %4s",&low,&high,permissions)!=3) continue;
-        if (address>=low && address+bytes<=high &&
-            (wanted?!strcmp(permissions,wanted):permissions[0]=='r')) {found=1;break;}
+        for (unsigned i=0;i<count;i++) {
+            const struct mapped_query *query=&queries[i];
+            if (!(found&(1u<<i)) && query->address>=low && query->address+query->bytes<=high &&
+                (query->wanted?!strcmp(permissions,query->wanted):permissions[0]=='r')) found|=1u<<i;
+        }
+        if (found==all) break;
     }
-    int bad=ferror(file);if (fclose(file)) bad=1;return bad?0:found;
+    int bad=ferror(file);if (fclose(file)) bad=1;return !bad && found==all;
+}
+static int mapped_span(uintptr_t address,size_t bytes,const char *wanted) {
+    const struct mapped_query query={address,bytes,wanted};return mapped_spans(&query,1);
+}
+#define CHECKED_COPY_MAX_QUERIES 8u
+#define CHECKED_COPY_MAX_BYTES (MODEL_BYTES+128u)
+struct checked_copy_query {uintptr_t address;void *destination;size_t bytes;};
+/* Runtime data contract only: current readable bytes may cross VMAs. No remote
+ * pointer is dereferenced by the CPU. A partial/non-atomic read is never used
+ * as a complete snapshot; exclusive immutable host ownership remains required. */
+static int checked_copy(const struct checked_copy_query *queries,unsigned count) {
+    if (!queries || !count || count>CHECKED_COPY_MAX_QUERIES) return 0;
+    struct iovec local[CHECKED_COPY_MAX_QUERIES],remote[CHECKED_COPY_MAX_QUERIES];
+    size_t total=0;
+    for (unsigned i=0;i<count;i++) {
+        if (!ecache_span(queries[i].address,queries[i].bytes) ||
+            !ecache_span((uintptr_t)queries[i].destination,queries[i].bytes) ||
+            queries[i].bytes>CHECKED_COPY_MAX_BYTES-total) return 0;
+        local[i]=(struct iovec){queries[i].destination,queries[i].bytes};
+        remote[i]=(struct iovec){(void *)queries[i].address,queries[i].bytes};
+        total+=queries[i].bytes;
+    }
+    if (total>(size_t)SSIZE_MAX) return 0;
+    int incoming_errno=errno;
+    ssize_t copied=process_vm_readv(getpid(),local,count,remote,count,0);
+    errno=incoming_errno;return copied==(ssize_t)total;
+}
+struct host_snapshot {
+    unsigned char model[MODEL_BYTES];
+    int32_t token;
+    unsigned char wire,wire_guard;
+};
+static int known_head_caller(uintptr_t caller);
+static int read_host_snapshot(uintptr_t model,uintptr_t tokens,struct host_snapshot *snapshot) {
+    if (!snapshot) return 0;
+    struct checked_copy_query queries[4]={
+        {model,snapshot->model,MODEL_BYTES},
+        {engine_base+WIRE_RVA,&snapshot->wire,1},
+        {engine_base+WIRE_GUARD_RVA,&snapshot->wire_guard,1},
+        {tokens,&snapshot->token,sizeof snapshot->token}
+    };
+    snapshot->token=0;return checked_copy(queries,tokens?4:3);
+}
+static int snapshot_bound_values_live(const struct host_snapshot *snapshot) {
+    const unsigned char *model=snapshot->model;
+    return bound_ready && model[0x900]==1 && snapshot->wire=='D' && snapshot->wire_guard!=0 &&
+        snapshot->wire_guard==bound.wire_guard &&
+        pointer_at(model,0x4f0)==bound.table && pointer_at(model,0xae8)==bound.gamma &&
+        pointer_at(model,0x6c8)==bound.input && pointer_at(model,0xb00)==bound.output &&
+        pointer_at(model,0x6d0)==bound.seed && pointer_at(model,0x730)==bound.device_tokens &&
+        !memcmp(model+0x908,bound.descriptor,DESCRIPTOR_BYTES);
+}
+static int checked_head_entry(void *model,const int32_t *tokens,int32_t count,int32_t position,
+        uintptr_t caller,struct host_snapshot *snapshot) {
+    return tokens && count==1 && position>=0 && known_head_caller(caller) &&
+        read_host_snapshot((uintptr_t)model,(uintptr_t)tokens,snapshot) &&
+        snapshot->model[0x900]==1 && snapshot->token>=0 && (uint32_t)snapshot->token<ECACHE_TOKEN_COUNT &&
+        int32_at(snapshot->model,0x220)>=0 && int32_at(snapshot->model,0xa0)>=0 &&
+        snapshot->wire=='D' && snapshot->wire_guard!=0;
 }
 static int normal_descriptor(const unsigned char *descriptor) {
     uintptr_t weight=pointer_at(descriptor,0x10);
@@ -291,30 +493,58 @@ static int known_head_caller(uintptr_t caller) {
     return caller==0x17dcc08 || caller==0x17dcd54 || caller==0x17dcf49 || caller==0x17de236;
 }
 static int valid_head_entry(void *model,const int32_t *tokens,int32_t count,int32_t position,uintptr_t caller) {
-    return count==1 && position>=0 && known_head_caller(caller) && mapped_span((uintptr_t)model,MODEL_BYTES,NULL) &&
-        mapped_span((uintptr_t)tokens,sizeof *tokens,NULL) && ((const unsigned char *)model)[0x900]==1 &&
+    const struct mapped_query queries[2]={{(uintptr_t)model,MODEL_BYTES,NULL},{(uintptr_t)tokens,sizeof *tokens,NULL}};
+    return count==1 && position>=0 && known_head_caller(caller) && mapped_spans(queries,2) &&
+        ((const unsigned char *)model)[0x900]==1 &&
         int32_at(tokens,0)>=0 && (uint32_t)int32_at(tokens,0)<ECACHE_TOKEN_COUNT &&
         int32_at(model,0x220)>=0 && int32_at(model,0xa0)>=0 && wire_D();
 }
-static int bound_live(void) {
-    return bound_ready && mapped_span(bound.model,MODEL_BYTES,NULL) &&
-        ((const unsigned char *)bound.model)[0x900]==1 && wire_D() &&
+static int bound_values_live(void) {
+    return bound_ready && ((const unsigned char *)bound.model)[0x900]==1 && wire_D() &&
         *(const unsigned char *)(engine_base+WIRE_GUARD_RVA)==bound.wire_guard &&
         pointer_at((void *)bound.model,0x4f0)==bound.table && pointer_at((void *)bound.model,0xae8)==bound.gamma &&
         pointer_at((void *)bound.model,0x6c8)==bound.input && pointer_at((void *)bound.model,0xb00)==bound.output &&
         pointer_at((void *)bound.model,0x6d0)==bound.seed &&
+        (!ready_mode || pointer_at((void *)bound.model,0x730)==bound.device_tokens) &&
         !memcmp((void *)(bound.model+0x908),bound.descriptor,DESCRIPTOR_BYTES);
 }
+static int bound_live(void) {
+    if (checked_copy_mode) {
+        struct host_snapshot snapshot;
+        return bound_ready && read_host_snapshot(bound.model,0,&snapshot) && snapshot_bound_values_live(&snapshot);
+    }
+    return bound_ready && mapped_span(bound.model,MODEL_BYTES,NULL) && bound_values_live();
+}
 static int context_live(const struct head_context *s) {
-    return !atomic_load(&retired) && bound_live() && s->model==bound.model && pthread_equal(pthread_self(),bound.thread) &&
-        mapped_span(s->tokens,sizeof(int32_t),NULL) && int32_at((void *)s->tokens,0)==s->token &&
+    if (checked_copy_mode) {
+        struct host_snapshot snapshot;
+        return !atomic_load(&retired) && bound_ready && s->tokens && s->model==bound.model &&
+            pthread_equal(pthread_self(),bound.thread) && read_host_snapshot(s->model,s->tokens,&snapshot) &&
+            snapshot_bound_values_live(&snapshot) && snapshot.token==s->token &&
+            int32_at(snapshot.model,0x220)==s->outer_position && int32_at(snapshot.model,0xa0)==s->slot;
+    }
+    const struct mapped_query queries[2]={{bound.model,MODEL_BYTES,NULL},{s->tokens,sizeof(int32_t),NULL}};
+    return !atomic_load(&retired) && bound_ready && mapped_spans(queries,2) && bound_values_live() &&
+        s->model==bound.model && pthread_equal(pthread_self(),bound.thread) && int32_at((void *)s->tokens,0)==s->token &&
         int32_at((void *)s->model,0x220)==s->outer_position && int32_at((void *)s->model,0xa0)==s->slot;
 }
-static void bind_model(const struct head_context *s) {
-    bound.model=s->model;bound.table=pointer_at((void *)s->model,0x4f0);bound.gamma=pointer_at((void *)s->model,0xae8);
-    bound.input=pointer_at((void *)s->model,0x6c8);bound.output=pointer_at((void *)s->model,0xb00);
-    bound.seed=pointer_at((void *)s->model,0x6d0);bound.wire_guard=*(const unsigned char *)(engine_base+WIRE_GUARD_RVA);
-    bound.thread=pthread_self();memcpy(bound.descriptor,(void *)(s->model+0x908),DESCRIPTOR_BYTES);
+static int head_completion_live(const struct head_context *s) {
+    if (checked_copy_mode) {
+        struct host_snapshot snapshot;
+        return !atomic_load(&retired) && bound_ready && s->model==bound.model &&
+            pthread_equal(pthread_self(),bound.thread) && read_host_snapshot(s->model,0,&snapshot) &&
+            snapshot_bound_values_live(&snapshot) && int32_at(snapshot.model,0xa0)==s->slot;
+    }
+    return bound_live() && int32_at((void *)s->model,0xa0)==s->slot;
+}
+static void bind_model(const struct head_context *s,const struct host_snapshot *snapshot) {
+    const unsigned char *model=checked_copy_mode?snapshot->model:(const unsigned char *)s->model;
+    bound.model=s->model;bound.table=pointer_at(model,0x4f0);bound.gamma=pointer_at(model,0xae8);
+    bound.input=pointer_at(model,0x6c8);bound.output=pointer_at(model,0xb00);
+    bound.seed=pointer_at(model,0x6d0);
+    bound.wire_guard=checked_copy_mode?snapshot->wire_guard:*(const unsigned char *)(engine_base+WIRE_GUARD_RVA);
+    bound.device_tokens=pointer_at(model,0x730);
+    bound.thread=pthread_self();memcpy(bound.descriptor,model+0x908,DESCRIPTOR_BYTES);
     if (!normal_descriptor(bound.descriptor) || !ecache_span(bound.table,TABLE_BYTES) || (bound.table&1u) ||
         !ecache_span(bound.gamma,ECACHE_ROW_BYTES) || (bound.gamma&1u) ||
         !ecache_disjoint(bound.input,ECACHE_ROW_BYTES,bound.output,ECACHE_ROW_BYTES) ||
@@ -326,6 +556,38 @@ static void bind_model(const struct head_context *s) {
     int initialized=ecache_init(&cache,&native_ops,run_generation,capacity);
     internal_free--;
     if (initialized) fatal("cache-initialize");
+    if (ready_mode) {
+        if (!ecache_span(bound.device_tokens,4)) fatal("device-token-binding");
+        for (unsigned i=0;i<capacity;i++) {
+            uintptr_t row=(uintptr_t)cache.entries[i].device;
+            if (!ecache_disjoint(row,ECACHE_ROW_BYTES,bound.table,TABLE_BYTES) ||
+                !ecache_disjoint(row,ECACHE_ROW_BYTES,bound.gamma,ECACHE_ROW_BYTES) ||
+                !ecache_disjoint(row,ECACHE_ROW_BYTES,bound.input,ECACHE_ROW_BYTES) ||
+                !ecache_disjoint(row,ECACHE_ROW_BYTES,bound.output,ECACHE_ROW_BYTES) ||
+                !ecache_disjoint(row,ECACHE_ROW_BYTES,bound.seed,20480u) ||
+                !ecache_disjoint(row,ECACHE_ROW_BYTES,bound.device_tokens,4) ||
+                !ecache_disjoint(row,ECACHE_ROW_BYTES,pointer_at(bound.descriptor,0x10),WEIGHT_BYTES))
+                fatal("ready-row-source-overlap");
+        }
+        if (fixed_rows) {
+            if (ecache_import_rows(&cache,&staged_rows)) fatal("ready-row-import");
+            /* Import drained the default stream before publishing valid rows.
+             * fixed-v1 has no capture/eviction/write route after this point. */
+            if (checked_copy_mode) fixed_import_synchronized=1;
+        }
+    }
+}
+static int lookup_fixed_ready(int32_t token,const uint16_t **row) {
+    if (!row) return ECACHE_ERROR;
+    *row=NULL;
+    if (!checked_copy_mode || !ready_mode || !fixed_rows || !fixed_import_synchronized ||
+        atomic_load(&retired) || !ecache_enter(&cache,0)) return ECACHE_ERROR;
+    if (token>=0 && (uint32_t)token<ECACHE_TOKEN_COUNT) {
+        for (unsigned i=0;i<cache.capacity;i++) if (cache.entries[i].valid && cache.entries[i].token==token) {
+            *row=cache.entries[i].device;return ecache_leave(&cache,ECACHE_HIT);
+        }
+    }
+    return ecache_leave(&cache,ECACHE_MISS);
 }
 static void resolve_symbols(void) {
     native_ops.abi_version=ECACHE_ABI_VERSION;
@@ -352,28 +614,108 @@ static int query_event(void *event) {
 static void require_symbols(void) {
     if (pthread_once(&symbols_once,resolve_symbols)) fatal("symbols-once");
 }
-/* Interposition is observe-only except an impossible enabled generation route.
- * The five argument addresses are host-readable; pointed device values are
- * compared numerically and are never dereferenced on the CPU. */
+static int checked_launch_arguments(void **args,uintptr_t *values,unsigned count,unsigned scalars32) {
+    if (!values || !count || count>CHECKED_COPY_MAX_QUERIES || (scalars32&~((1u<<count)-1u))) return 0;
+    uintptr_t sources[CHECKED_COPY_MAX_QUERIES];
+    struct checked_copy_query vector={(uintptr_t)args,sources,count*sizeof *sources};
+    if (!checked_copy(&vector,1)) return 0;
+    struct checked_copy_query cells[CHECKED_COPY_MAX_QUERIES];
+    memset(values,0,count*sizeof *values);
+    for (unsigned i=0;i<count;i++)
+        cells[i]=(struct checked_copy_query){sources[i],&values[i],(scalars32&(1u<<i))?4:8};
+    return checked_copy(cells,count);
+}
+static int launch_arguments(void **args,uintptr_t *values,unsigned count,unsigned scalars32) {
+    if (checked_copy_mode) return checked_launch_arguments(args,values,count,scalars32);
+    if (!count || count>MAPPED_SPANS_MAX) return 0;
+    if (!mapped_span((uintptr_t)args,count*sizeof(void *),NULL)) return 0;
+    memcpy(values,args,count*sizeof(void *));
+    struct mapped_query queries[MAPPED_SPANS_MAX];
+    for (unsigned i=0;i<count;i++)
+        queries[i]=(struct mapped_query){values[i],(scalars32&(1u<<i))?4:8,NULL};
+    return mapped_spans(queries,count);
+}
+static uintptr_t launch_pointer_value(const uintptr_t *values,unsigned index) {
+    return checked_copy_mode?values[index]:pointer_at((void *)values[index],0);
+}
+static int32_t launch_int32_value(const uintptr_t *values,unsigned index) {
+    if (!checked_copy_mode) return int32_at((void *)values[index],0);
+    int32_t value;memcpy(&value,&values[index],sizeof value);return value;
+}
+static int row_launch_shape(hip_dim3 grid,hip_dim3 block,size_t shared,void *stream) {
+    return grid.x==1 && grid.y==1 && grid.z==1 && block.x==256 && block.y==1 && block.z==1 && !shared && !stream;
+}
+/* Only the armed ready branch skips exact gather/RMS/M1 launches. Device values
+ * are compared numerically; the CPU never dereferences device allocations. */
 int hipLaunchKernel(const void *function,hip_dim3 grid,hip_dim3 block,void **args,size_t shared,void *stream) {
     int incoming_errno=errno;uintptr_t address=(uintptr_t)__builtin_return_address(0);
     uintptr_t caller=address>=engine_base?address-engine_base:UINTPTR_MAX;
     require_symbols();if (!real_launch) fatal("launch-symbol");
     struct head_context *s=active;int valid=0;
+    if (s && s->ready_row && (caller==GATHER_RETURN_RVA || caller==RMS_RETURN_RVA || caller==SEED_RETURN_RVA)) {
+        uintptr_t values[5]={0};unsigned step=caller==GATHER_RETURN_RVA?ECACHE_BRANCH_GATHER:
+            caller==RMS_RETURN_RVA?ECACHE_BRANCH_RMS:ECACHE_BRANCH_SEED;
+        unsigned count=step==ECACHE_BRANCH_RMS?5:3;
+        uintptr_t identity=step==ECACHE_BRANCH_GATHER?GATHER_KERNEL_RVA:
+            step==ECACHE_BRANCH_RMS?RMS_KERNEL_RVA:SEED_KERNEL_RVA;
+        valid=!s->phase && context_live(s) && (uintptr_t)function==engine_base+identity &&
+            row_launch_shape(grid,block,shared,stream) && launch_arguments(args,values,count,step==ECACHE_BRANCH_RMS?24u:0);
+        if (valid && step==ECACHE_BRANCH_GATHER) valid=launch_pointer_value(values,0)==bound.table &&
+            launch_pointer_value(values,1)==bound.device_tokens && launch_pointer_value(values,2)==bound.input;
+        if (valid && step==ECACHE_BRANCH_RMS) valid=launch_pointer_value(values,0)==bound.input &&
+            launch_pointer_value(values,1)==bound.gamma && launch_pointer_value(values,2)==bound.input &&
+            launch_int32_value(values,3)==2560 && launch_int32_value(values,4)==1;
+        if (valid && step==ECACHE_BRANCH_SEED) {
+            uintptr_t hidden=0,row=(uintptr_t)s->ready_row;
+            if (checked_copy_mode) {
+                const struct checked_copy_query query={engine_base+H_OUTPUT_RVA,&hidden,sizeof hidden};
+                valid=checked_copy(&query,1);
+            } else hidden=pointer_at((void *)(engine_base+H_OUTPUT_RVA),0);
+            valid=valid && s->e_calls==1 && s->h_calls==1 && launch_pointer_value(values,0)==bound.output &&
+                launch_pointer_value(values,1)==hidden && launch_pointer_value(values,2)==bound.seed &&
+                ecache_disjoint(row,ECACHE_ROW_BYTES,hidden,ECACHE_ROW_BYTES) &&
+                ecache_disjoint(row,ECACHE_ROW_BYTES,bound.seed,20480u);
+        }
+        if (!valid || ecache_branch_step(&s->branch,step)) fatal("ready-branch-launch-contract");
+        if (step!=ECACHE_BRANCH_SEED) {
+            if (step==ECACHE_BRANCH_GATHER) gather_skips++;else rms_skips++;
+            errno=incoming_errno;return 0;
+        }
+        /* Keep model scratch/output and all native hidden/state pointers. The
+         * launch API consumes this temporary host argument vector synchronously. */
+        uintptr_t owned[3]={(uintptr_t)s->ready_row,values[1],values[2]};
+        const uint16_t *ready=s->ready_row;
+        void *rewritten[3];
+        if (checked_copy_mode) {for (unsigned i=0;i<3;i++) rewritten[i]=&owned[i];}
+        else {rewritten[0]=&ready;rewritten[1]=args[1];rewritten[2]=args[2];}
+        errno=incoming_errno;int result=real_launch(function,grid,block,rewritten,shared,stream);int result_errno=errno;
+        if (result) fatal("ready-seed-launch-result");
+        seed_rewrites++;errno=result_errno;return result;
+    }
     if (s && s->phase==1) {
         s->launches++;valid=s->launches==1 && caller==LAUNCH_RETURN_RVA &&
             (uintptr_t)function==engine_base+E_KERNEL_RVA && grid.x==160 && grid.y==1 && grid.z==1 &&
             block.x==256 && block.y==1 && block.z==1 && !shared && !stream &&
-            mapped_span((uintptr_t)args,5*sizeof(void *),NULL);
+            args;
         uintptr_t values[5]={0};
-        if (valid) {
-            memcpy(values,args,sizeof values);
-            for (unsigned i=0;i<5;i++) if (!mapped_span(values[i],8,NULL)) valid=0;
-        }
-        if (valid) valid=pointer_at((void *)values[0],0)==pointer_at(bound.descriptor,0x10) &&
-            pointer_at((void *)values[1],0)==bound.input && pointer_at((void *)values[2],0)==bound.output &&
-            pointer_at((void *)values[3],0)==2560 && pointer_at((void *)values[4],0)==2560;
+        if (valid) valid=launch_arguments(args,values,5,0);
+        if (valid) valid=launch_pointer_value(values,0)==pointer_at(bound.descriptor,0x10) &&
+            launch_pointer_value(values,1)==bound.input && launch_pointer_value(values,2)==bound.output &&
+            launch_pointer_value(values,3)==2560 && launch_pointer_value(values,4)==2560;
         if (!valid || !context_live(s)) fatal("original-m1-launch-contract");
+        if (s->ready_row) {
+            if (ecache_branch_step(&s->branch,ECACHE_BRANCH_M1)) fatal("ready-m1-sequence");
+            s->launch_ok++;m1_skips++;errno=incoming_errno;return 0;
+        }
+        if (checked_copy_mode) {
+            /* A native fixed miss submits exactly the values just checked,
+             * without rereading its original host argument cells. */
+            void *owned[5];for (unsigned i=0;i<5;i++) owned[i]=&values[i];
+            errno=incoming_errno;int result=real_launch(function,grid,block,owned,shared,stream);
+            int result_errno=errno;
+            if (!result) s->launch_ok++;else fatal("original-m1-launch-result");
+            errno=result_errno;return result;
+        }
     }
     errno=incoming_errno;int result=real_launch(function,grid,block,args,shared,stream);int result_errno=errno;
     if (s && s->phase==1) {if (valid && !result) s->launch_ok++;else fatal("original-m1-launch-result");}
@@ -396,32 +738,55 @@ __attribute__((noinline)) static void cached_fc(void *descriptor,const uint16_t 
         if (s->e_calls!=1 || s->h_calls || descriptor!=(void *)(s->model+0x908) || n!=2560 || m!=1 || k!=2560 ||
             (uintptr_t)input!=bound.input || (uintptr_t)output!=bound.output || !context_live(s)) fatal("embedding-seam-contract");
         s->native_errno=incoming_errno;
-        errno=incoming_errno;int result=ecache_apply(&cache,s->token,input,output,launch_original,s);
+        if (s->ready_row || (ready_mode && fixed_rows)) {
+            if (launch_original(s,input,output) || !context_live(s)) fatal("ready-dispatcher-completion");
+            errno=s->native_errno;return;
+        }
+        errno=incoming_errno;int result=ready_mode?ecache_capture_original(&cache,s->token,input,output,launch_original,s):
+            ecache_apply(&cache,s->token,input,output,launch_original,s);
         if (result==ECACHE_ERROR || !context_live(s)) fatal("cache-apply");
         errno=result==ECACHE_MISS?s->native_errno:incoming_errno;return;
     }
-    if (s && caller==H_RETURN_RVA) {s->h_calls++;native_h_calls++;}
+    if (s && caller==H_RETURN_RVA) {
+        s->h_calls++;native_h_calls++;
+        if (s->ready_row && (s->branch.stage!=3 || s->h_calls!=1)) fatal("ready-hidden-sequence");
+    }
     errno=incoming_errno;original_fc(descriptor,input,output,n,m,k);
 }
 __attribute__((noinline)) static int32_t cached_head(void *model,const int32_t *tokens,int32_t count,int32_t position) {
     int incoming_errno=errno;uintptr_t address=(uintptr_t)__builtin_return_address(0);
     uintptr_t caller=address>=engine_base?address-engine_base:UINTPTR_MAX;
-    lock_state();head_calls++;in_flight++;
-    if (in_flight!=1 || head_depth) fatal("overlapping-or-nested-head");
-    unsigned use=atomic_load(&enabled) && !atomic_load(&retired) && valid_head_entry(model,tokens,count,position,caller);
+    lock_state();
+    if (in_flight || head_depth) fatal("overlapping-or-nested-head");
+    maybe_harvest();head_calls++;in_flight++;
+    struct host_snapshot entry;
+    unsigned use=atomic_load(&enabled) && !atomic_load(&retired) && !(ready_mode && !fixed_rows && artifact_exported) &&
+        (checked_copy_mode?checked_head_entry(model,tokens,count,position,caller,&entry):
+            valid_head_entry(model,tokens,count,position,caller));
     if (use) eligible_calls++;else excluded_calls++;
     unlock_state();head_depth++;
     struct head_context context={0};
     if (use) {
-        context.model=(uintptr_t)model;context.tokens=(uintptr_t)tokens;context.token=int32_at(tokens,0);
-        context.position=position;context.outer_position=int32_at(model,0x220);context.slot=int32_at(model,0xa0);
-        if (!bound_ready) bind_model(&context);
+        const unsigned char *source_model=checked_copy_mode?entry.model:(const unsigned char *)model;
+        context.model=(uintptr_t)model;context.tokens=(uintptr_t)tokens;
+        context.token=checked_copy_mode?entry.token:int32_at(tokens,0);
+        context.position=position;context.outer_position=int32_at(source_model,0x220);context.slot=int32_at(source_model,0xa0);
+        if (!bound_ready) bind_model(&context,checked_copy_mode?&entry:NULL);
         else if (!context_live(&context)) fatal("generation-mutated");
+        if (ready_mode) {
+            int ready=checked_copy_mode?lookup_fixed_ready(context.token,&context.ready_row):
+                ecache_lookup_ready(&cache,context.token,&context.ready_row);
+            if (ready==ECACHE_ERROR) fatal("ready-lookup");
+            if (ready==ECACHE_HIT) {ready_hits++;cache.stats.calls++;cache.stats.hits++;}
+            else if (fixed_rows) {native_fixed_misses++;cache.stats.calls++;cache.stats.misses++;cache.stats.original_calls++;}
+        }
         active=&context;
     }
     errno=incoming_errno;int32_t result=original_head(model,tokens,count,position);int result_errno=errno;
     if (use && (context.e_calls>1 || context.h_calls>1 || (result>=0 && (context.e_calls!=1 || context.h_calls!=1)) ||
-        !bound_live() || int32_at(model,0xa0)!=context.slot)) fatal("head-completion-contract");
+        !head_completion_live(&context))) fatal("head-completion-contract");
+    if (context.ready_row && (context.branch.stage!=4 || context.branch.failed || context.e_calls!=1 || context.h_calls!=1))
+        fatal("ready-head-completion");
     active=NULL;head_depth--;lock_state();in_flight--;unlock_state();errno=result_errno;return result;
 }
 /* Conservatively retire on ANY external GPU free/context switch/reset. This
@@ -435,7 +800,7 @@ static void retire_cache(void) {
     lock_state();
     if (in_flight) fatal("allocation-or-context-retired-in-head");
     if (bound_ready && !atomic_load(&retired)) {
-        atomic_store(&retired,1);retirements++;
+        atomic_store(&retired,1);fixed_import_synchronized=0;retirements++;
         internal_free++;
         if (cache.initialized && ecache_close(&cache)) fatal("retirement-close");
         internal_free--;
@@ -498,6 +863,58 @@ static int buffer_hash(const void *data,size_t bytes,const char *wanted) {
     for (unsigned i=0;i<32;i++) snprintf(hex+2*i,3,"%02x",(unsigned)digest[i]);
     return !strcmp(hex,wanted);
 }
+static void digest_hex(const void *data,size_t bytes,char hex[65]) {
+    EVP_MD_CTX *ctx=EVP_MD_CTX_new();unsigned char digest[32];unsigned length=0;
+    if (!ctx || EVP_DigestInit_ex(ctx,EVP_sha256(),NULL)!=1 || EVP_DigestUpdate(ctx,data,bytes)!=1 ||
+        EVP_DigestFinal_ex(ctx,digest,&length)!=1 || length!=32) fatal("artifact-digest");
+    EVP_MD_CTX_free(ctx);
+    for (unsigned i=0;i<32;i++) snprintf(hex+2*i,3,"%02x",(unsigned)digest[i]);
+}
+static void parse_hex(const char *hex,unsigned char *bytes,size_t count) {
+    if (!hex || strlen(hex)!=count*2) fatal("ready-binding-length");
+    for (size_t i=0;i<count*2;i++) {
+        int v=hex[i]>='0' && hex[i]<='9'?hex[i]-'0':hex[i]>='a' && hex[i]<='f'?hex[i]-'a'+10:-1;
+        if (v<0) fatal("ready-binding-hex");
+        bytes[i/2]=(unsigned char)((i%2?bytes[i/2]:0)|(v<<(i%2?0:4)));
+    }
+    if (!ecache_nonzero(bytes,count)) fatal("ready-zero-binding");
+}
+/* Pin every pathname component without following links. Identity and digest
+ * validation cover both captured bytes and the same open file description. */
+static int open_readonly_artifact(const char *path) {
+    if (!path || path[0]!='/' || strlen(path)>=4096) fatal("ready-artifact-path");
+    char copy[4096];strcpy(copy,path+1);int parent=open("/",O_RDONLY|O_DIRECTORY|O_CLOEXEC|O_NOFOLLOW);
+    if (parent<0) fatal("ready-artifact-root");
+    char *at=copy;
+    for (;;) {
+        char *slash=strchr(at,'/');if (slash) *slash=0;
+        if (!*at || !strcmp(at,".") || !strcmp(at,"..")) fatal("ready-artifact-component");
+        int next=openat(parent,at,O_RDONLY|O_CLOEXEC|O_NOFOLLOW|(slash?O_DIRECTORY:0));
+        if (next<0 || close(parent)) fatal("ready-artifact-open");
+        if (!slash) return next;
+        parent=next;at=slash+1;
+    }
+}
+static void load_artifact(const char *path,const char *sha) {
+    unsigned char expected[32];parse_hex(sha,expected,32);strcpy(import_sha,sha);
+    int fd=open_readonly_artifact(path);struct stat before,after;
+    if (fstat(fd,&before) || !S_ISREG(before.st_mode) || before.st_uid!=geteuid() || before.st_nlink!=1 ||
+        (before.st_mode&0222) || before.st_size<128 || before.st_size>(off_t)ECACHE_ARTIFACT_MAX_BYTES)
+        fatal("ready-artifact-identity");
+    unsigned char bytes[ECACHE_ARTIFACT_MAX_BYTES];size_t extent=(size_t)before.st_size,at=0;
+    while (at<extent) {
+        if (at>=sizeof bytes) fatal("ready-artifact-read-bound");
+        size_t amount=sizeof bytes-at;if (amount>extent-at) amount=extent-at;
+        ssize_t n=pread(fd,bytes+at,amount,(off_t)at);
+        if (n<0 && errno==EINTR) continue;
+        if (n<=0 || (size_t)n>amount) fatal("ready-artifact-read");
+        at+=(size_t)n;
+    }
+    verify_hash(fd,0,extent,sha);
+    if (!buffer_hash(bytes,extent,sha) || fstat(fd,&after) || !same_stat(&before,&after) || close(fd) ||
+        ecache_artifact_decode(bytes,extent,run_generation,model_binding,provenance_binding,&staged_rows) ||
+        staged_rows.count>capacity) fatal("ready-artifact-consistency");
+}
 struct sites {uintptr_t base,head,fc;unsigned heads,fcs,globals,kernels;};
 static int contained(const Elf64_Phdr *p,uintptr_t start,size_t bytes,int file) {
     uint64_t extent=file?p->p_filesz:p->p_memsz;
@@ -514,7 +931,8 @@ static int find_sites(struct dl_phdr_info *info,size_t ignored,void *opaque) {
         if (p->p_flags==(PF_R|PF_X) && contained(p,FC_RVA,FC_BYTES,1) &&
             p->p_offset+FC_RVA-p->p_vaddr==(uint64_t)FC_OFFSET) {sites->fc=sites->base+FC_RVA;sites->fcs++;}
         if (p->p_flags==(PF_R|PF_W) && contained(p,H_INPUT_RVA,WIRE_GUARD_RVA+1-H_INPUT_RVA,0)) sites->globals++;
-        if ((p->p_flags&PF_R) && contained(p,E_KERNEL_RVA,H_KERNEL_RVA+8-E_KERNEL_RVA,0)) sites->kernels++;
+        uintptr_t first_kernel=ready_mode?RMS_KERNEL_RVA:E_KERNEL_RVA;
+        if ((p->p_flags&PF_R) && contained(p,first_kernel,H_KERNEL_RVA+8-first_kernel,0)) sites->kernels++;
     }
     return 1;
 }
@@ -565,6 +983,49 @@ static void publish_file(const char *name,const char *data,size_t bytes) {
     int fd=openat(directory_fd,name,O_WRONLY|O_CREAT|O_EXCL|O_CLOEXEC|O_NOFOLLOW,0600);
     if (fd<0 || !write_all(fd,data,bytes) || fsync(fd) || close(fd) || fsync(directory_fd)) fatal("summary-publication");
 }
+static void export_ready_rows(void) {
+    if (in_flight || head_depth || !ready_mode || fixed_rows || artifact_exported || !bound_ready || !cache.initialized ||
+        atomic_load(&retired) || !bound_live() || !pthread_equal(pthread_self(),bound.thread)) fatal("ready-export-state");
+    memset(&staged_rows,0,sizeof staged_rows);staged_rows.origin=1;
+    memcpy(staged_rows.model_binding,model_binding,32);memcpy(staged_rows.provenance,provenance_binding,32);
+    internal_free++;int result=ecache_export_rows(&cache,&staged_rows);internal_free--;
+    unsigned char bytes[ECACHE_ARTIFACT_MAX_BYTES];size_t extent=0;
+    if (result || !staged_rows.count || ecache_artifact_encode(&staged_rows,bytes,sizeof bytes,&extent)) fatal("ready-export-rows");
+    char sha[65];digest_hex(bytes,extent,sha);
+    publish_file("ready-rows.bin",(const char *)bytes,extent);
+    char metadata[2048];int n=snprintf(metadata,sizeof metadata,
+        "{\"schema\":1,\"artifact\":\"ready-rows.bin\",\"abi\":\"HGNERC01\",\"sha256\":\"%s\",\"bytes\":%zu,"
+        "\"generation\":\"%s\",\"model_binding\":\"%s\",\"provenance\":\"%s\",\"origin\":1,\"count\":%u,\"row_bytes\":5120}\n",
+        sha,extent,generation_hex,model_hex,provenance_hex,staged_rows.count);
+    if (n<=0 || (size_t)n>=sizeof metadata) fatal("ready-export-metadata-size");
+    publish_file("ready-rows.json",metadata,(size_t)n);
+    n=snprintf(metadata,sizeof metadata,
+        "{\"schema\":1,\"mode\":\"ready64-v1\",\"policy\":\"capture-v1\",\"generation\":\"%s\","
+        "\"ready_hits\":%" PRIu64 ",\"gather_skips\":%" PRIu64 ",\"rms_skips\":%" PRIu64 ","
+        "\"m1_skips\":%" PRIu64 ",\"seed_rewrites\":%" PRIu64 ",\"captures\":%" PRIu64 ","
+        "\"misses\":%" PRIu64 ",\"evictions\":%" PRIu64 ",\"rows\":%u,\"artifact_sha256\":\"%s\","
+        "\"arithmetic_qualified\":false,\"acceptance_qualified\":false,\"performance_qualified\":false}\n",
+        generation_hex,ready_hits,gather_skips,rms_skips,m1_skips,seed_rewrites,cache.stats.captures,
+        cache.stats.misses,cache.stats.evictions,staged_rows.count,sha);
+    if (n<=0 || (size_t)n>=sizeof metadata) fatal("ready-export-result-size");
+    publish_file("capture-result.json",metadata,(size_t)n);artifact_exported=1;
+}
+static void maybe_harvest(void) {
+    if (!atomic_load(&enabled) || !ready_mode || fixed_rows) return;
+    struct stat before,after;
+    if (fstatat(directory_fd,"ready-export",&before,AT_SYMLINK_NOFOLLOW)) {
+        if (errno==ENOENT) return;
+        fatal("ready-export-trigger-stat");
+    }
+    if (artifact_exported || in_flight || head_depth || !S_ISREG(before.st_mode) || before.st_uid!=geteuid() ||
+        before.st_nlink!=1 || (before.st_mode&0777)!=0600 || before.st_size!=33) fatal("ready-export-trigger-identity");
+    int fd=openat(directory_fd,"ready-export",O_RDONLY|O_CLOEXEC|O_NOFOLLOW);char content[34]={0};
+    if (fd<0 || fstat(fd,&after) || !same_stat(&before,&after) || pread(fd,content,33,0)!=33 ||
+        memcmp(content,generation_hex,32) || content[32]!='\n' || fstat(fd,&after) || !same_stat(&before,&after) || close(fd))
+        fatal("ready-export-trigger-content");
+    export_ready_rows();
+    if (unlinkat(directory_fd,"ready-export",0) || fsync(directory_fd)) fatal("ready-export-trigger-consume");
+}
 static int serving_process(void) {
     int fd=open("/proc/self/cmdline",O_RDONLY|O_CLOEXEC);char command[4096];ssize_t bytes;
     if (fd<0) fatal("cmdline-open");
@@ -575,12 +1036,14 @@ static int serving_process(void) {
 }
 __attribute__((constructor)) static void install(void) {
     const char *mode=getenv("HALOGEN_MTP_EMBEDDING_CACHE");if (!mode) return;
-    if (strcmp(mode,"gpu64-v1")) fatal("cache-mode");
+    ready_mode=!strcmp(mode,"ready64-v1");
+    if (!ready_mode && strcmp(mode,"gpu64-v1")) fatal("cache-mode");
     char executable[4096];ssize_t length=readlink("/proc/self/exe",executable,sizeof executable-1);
     if (length<0 || length>=(ssize_t)sizeof executable-1) fatal("executable-name");
     executable[length]=0;const char *base=strrchr(executable,'/');base=base?base+1:executable;
     if (strcmp(base,"flash_serve") || !serving_process()) return;
-    if (!HALOGEN_EMBEDDING_CACHE_ENABLE_NATIVE_CANDIDATE) fatal("native-live-admission-unqualified");
+    if (ready_mode?!HALOGEN_EMBEDDING_CACHE_ENABLE_READY_CANDIDATE:!HALOGEN_EMBEDDING_CACHE_ENABLE_NATIVE_CANDIDATE)
+        fatal("native-live-admission-unqualified");
     const char *wire=getenv("HALOGEN_MTP_WIRE"),*wave=getenv("HALOGEN_LQ8_WAVE");
     const char *generation=getenv("HALOGEN_MTP_EMBEDDING_CACHE_GENERATION");
     const char *immutable=getenv("HALOGEN_MTP_EMBEDDING_CACHE_IMMUTABLE");
@@ -598,11 +1061,31 @@ __attribute__((constructor)) static void install(void) {
         run_generation[i/2]|=(unsigned char)(value<<(i%2?0:4));
     }
     if (!ecache_nonzero(run_generation,16)) fatal("zero-generation");
+    strcpy(generation_hex,generation);
     if (requested_capacity) {
         char *end=NULL;errno=0;unsigned long number=strtoul(requested_capacity,&end,10);
         if (errno || !*requested_capacity || !end || *end || number<1 || number>ECACHE_MAX_ENTRIES) fatal("cache-capacity");
         capacity=(unsigned)number;
     }
+    if (ready_mode) {
+        const char *policy=getenv("HALOGEN_MTP_EMBEDDING_CACHE_READY_POLICY");
+        const char *model=getenv("HALOGEN_MTP_EMBEDDING_CACHE_MODEL_BINDING");
+        const char *provenance=getenv("HALOGEN_MTP_EMBEDDING_CACHE_PROVENANCE");
+        const char *rows=getenv("HALOGEN_MTP_EMBEDDING_CACHE_READY_ROWS");
+        const char *sha=getenv("HALOGEN_MTP_EMBEDDING_CACHE_READY_ROWS_SHA256");
+        if (!policy || (strcmp(policy,"fixed-v1") && strcmp(policy,"capture-v1"))) fatal("ready-policy");
+        fixed_rows=!strcmp(policy,"fixed-v1");parse_hex(model,model_binding,32);parse_hex(provenance,provenance_binding,32);
+        strcpy(model_hex,model);strcpy(provenance_hex,provenance);
+        if (fixed_rows) load_artifact(rows,sha);
+        else if (rows || sha) fatal("capture-import-forbidden");
+    }
+    const char *host_validation=getenv("HALOGEN_MTP_EMBEDDING_CACHE_HOST_VALIDATION");
+    if (host_validation && strcmp(host_validation,ECACHE_HOST_VALIDATION_MAPS) &&
+        strcmp(host_validation,ECACHE_HOST_VALIDATION_CHECKED_COPY)) fatal("host-validation-policy");
+    checked_copy_mode=host_validation && !strcmp(host_validation,ECACHE_HOST_VALIDATION_CHECKED_COPY);
+    if (checked_copy_mode && (!ready_mode || !fixed_rows)) fatal("checked-copy-fixed-only");
+    if (checked_copy_mode && !HALOGEN_EMBEDDING_CACHE_ENABLE_CHECKED_COPY_CANDIDATE)
+        fatal("checked-copy-live-admission-unqualified");
     int fd=open("/proc/self/exe",O_RDONLY|O_CLOEXEC);struct stat before,after;Elf64_Ehdr elf;
     if (fd<0 || fstat(fd,&before) || !S_ISREG(before.st_mode) || before.st_size!=ENGINE_BYTES ||
         pread(fd,&elf,sizeof elf,0)!=(ssize_t)sizeof elf || memcmp(elf.e_ident,ELFMAG,SELFMAG) ||
@@ -617,7 +1100,11 @@ __attribute__((constructor)) static void install(void) {
         memcmp((void *)sites.head,head_signature,32) || memcmp((void *)sites.fc,fc_signature,32) ||
         memcmp((void *)(sites.base+E_RETURN_RVA-5),e_call,5) || memcmp((void *)(sites.base+H_RETURN_RVA-5),h_call,5) ||
         !mapped_span(sites.base+H_INPUT_RVA,WIRE_GUARD_RVA+1-H_INPUT_RVA,"rw-p") ||
-        !mapped_span(sites.base+E_KERNEL_RVA,H_KERNEL_RVA+8-E_KERNEL_RVA,NULL) ||
+        !mapped_span(sites.base+(ready_mode?RMS_KERNEL_RVA:E_KERNEL_RVA),
+            H_KERNEL_RVA+8-(ready_mode?RMS_KERNEL_RVA:E_KERNEL_RVA),NULL) ||
+        (ready_mode && (memcmp((void *)(sites.base+GATHER_RETURN_RVA-5),gather_call,5) ||
+            memcmp((void *)(sites.base+RMS_RETURN_RVA-5),rms_call,5) ||
+            memcmp((void *)(sites.base+SEED_RETURN_RVA-5),seed_call,5))) ||
         !buffer_hash((void *)sites.head,HEAD_BYTES,HEAD_SHA) || !buffer_hash((void *)sites.fc,FC_BYTES,FC_SHA)) fatal("native-sites");
     engine_base=sites.base;require_symbols();
     real_event_query=(int (*)(void *))dlsym(RTLD_NEXT,"hipEventQuery");native_ops.event_query=query_event;
@@ -644,6 +1131,19 @@ __attribute__((constructor)) static void install(void) {
         "\"integration_qualified\":false,\"arithmetic_qualified\":false,\"npu_qualified\":false,"
         "\"parity_qualified\":false,\"acceptance_qualified\":false,\"performance_qualified\":false,"
         "\"native_reset_interception_qualified\":false}\n",generation,capacity,capacity*ECACHE_ROW_BYTES);
+    if (ready_mode) bytes=snprintf(activation,sizeof activation,
+        "{\"schema\":1,\"mode\":\"ready64-v1\",\"policy\":\"%s\",\"host_validation\":\"%s\","
+        "\"per_hit_event_query\":%s,\"engine_sha256\":\"" ENGINE_SHA "\","
+        "\"head_sha256\":\"" HEAD_SHA "\",\"fc_dispatcher_sha256\":\"" FC_SHA "\",\"generation\":\"%s\","
+        "\"model_binding\":\"%s\",\"provenance\":\"%s\",\"capacity\":%u,\"row_bytes\":5120,\"device_bytes\":%u,"
+        "\"origin\":%u,\"imported_rows\":%u,\"import_sha256\":\"%s\",\"default_stream\":true,"
+        "\"ready_direct_seed\":true,\"fc_dispatcher_retained\":true,\"hidden_fc_unchanged\":true,"
+        "\"fixed_misses_native\":%s,\"immutable_owner_contract\":true,\"integration_qualified\":false,"
+        "\"arithmetic_qualified\":false,\"npu_qualified\":false,\"parity_qualified\":false,"
+        "\"acceptance_qualified\":false,\"performance_qualified\":false,\"native_reset_interception_qualified\":false}\n",
+        fixed_rows?"fixed-v1":"capture-v1",checked_copy_mode?ECACHE_HOST_VALIDATION_CHECKED_COPY:ECACHE_HOST_VALIDATION_MAPS,
+        checked_copy_mode?"false":"true",generation,model_hex,provenance_hex,capacity,capacity*ECACHE_ROW_BYTES,
+        fixed_rows?staged_rows.origin:1,fixed_rows?staged_rows.count:0,import_sha,fixed_rows?"true":"false");
     if (bytes<=0 || (size_t)bytes>=sizeof activation) fatal("activation-size");
     publish_file("activation.json",activation,(size_t)bytes);
     atomic_store(&enabled,1);
@@ -651,12 +1151,13 @@ __attribute__((constructor)) static void install(void) {
 __attribute__((destructor)) static void finish(void) {
     if (!atomic_load(&enabled)) return;
     lock_state();if (in_flight || head_depth) fatal("exit-head-active");
+    if (ready_mode && !fixed_rows && !artifact_exported && cache.initialized && !atomic_load(&retired)) export_ready_rows();
     internal_free++;
     if (cache.initialized && ecache_close(&cache)) fatal("exit-cache-close");
     internal_free--;
     char result[4096];struct ecache_stats *s=&cache.stats;
     int bytes=snprintf(result,sizeof result,
-        "{\"schema\":1,\"mode\":\"gpu64-v1\",\"head_calls\":%" PRIu64 ",\"eligible_calls\":%" PRIu64 ","
+        "{\"schema\":1,\"mode\":\"%s\",\"head_calls\":%" PRIu64 ",\"eligible_calls\":%" PRIu64 ","
         "\"excluded_calls\":%" PRIu64 ",\"native_h_calls\":%" PRIu64 ",\"retirements\":%" PRIu64 ","
         "\"cache_calls\":%" PRIu64 ",\"hits\":%" PRIu64 ",\"misses\":%" PRIu64 ",\"original_m1_calls\":%" PRIu64 ","
         "\"captures\":%" PRIu64 ",\"pending_fallbacks\":%" PRIu64 ",\"evictions\":%" PRIu64 ",\"failures\":%" PRIu64 ","
@@ -664,11 +1165,22 @@ __attribute__((destructor)) static void finish(void) {
         "\"events_created\":%" PRIu64 ",\"events_destroyed\":%" PRIu64 ",\"stream_drains\":%" PRIu64 ",\"resets\":%" PRIu64 ","
         "\"integration_qualified\":false,\"arithmetic_qualified\":false,\"npu_qualified\":false,"
         "\"parity_qualified\":false,\"acceptance_qualified\":false,\"performance_qualified\":false,"
-        "\"native_reset_interception_qualified\":false}\n",head_calls,eligible_calls,excluded_calls,native_h_calls,retirements,
+        "\"native_reset_interception_qualified\":false}\n",ready_mode?"ready64-v1":"gpu64-v1",head_calls,eligible_calls,excluded_calls,native_h_calls,retirements,
         s->calls,s->hits,s->misses,s->original_calls,s->captures,s->pending_fallbacks,s->evictions,s->failures,
         s->copy_enqueues,s->event_queries,s->allocations,s->frees,s->events_created,s->events_destroyed,s->stream_drains,s->resets);
     if (bytes<=0 || (size_t)bytes>=sizeof result) fatal("result-size");
     publish_file("result.json",result,(size_t)bytes);
+    if (ready_mode) {
+        bytes=snprintf(result,sizeof result,
+            "{\"schema\":1,\"mode\":\"ready64-v1\",\"policy\":\"%s\",\"generation\":\"%s\","
+            "\"ready_hits\":%" PRIu64 ",\"native_fixed_misses\":%" PRIu64 ",\"gather_skips\":%" PRIu64 ","
+            "\"rms_skips\":%" PRIu64 ",\"m1_skips\":%" PRIu64 ",\"seed_rewrites\":%" PRIu64 ","
+            "\"artifact_exported\":%s,\"import_sha256\":\"%s\",\"performance_qualified\":false}\n",
+            fixed_rows?"fixed-v1":"capture-v1",generation_hex,ready_hits,native_fixed_misses,gather_skips,rms_skips,m1_skips,
+            seed_rewrites,artifact_exported?"true":"false",import_sha);
+        if (bytes<=0 || (size_t)bytes>=sizeof result) fatal("ready-result-size");
+        publish_file("ready-result.json",result,(size_t)bytes);
+    }
     atomic_store(&enabled,0);unlock_state();if (close(directory_fd)) fatal("directory-close");directory_fd=-1;
 }
 #endif
