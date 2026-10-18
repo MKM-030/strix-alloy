@@ -213,9 +213,11 @@ def halogen_private_hsa_arguments(engine, directory):
     supported = Path(__file__).resolve().parents[1] / 'backends/halogen-wsl2-0.16.2'
     if directory.resolve() != supported.resolve():
         raise ValueError('Private HSA experiment requires the pinned Halogen 0.16.2 backend')
-    if any(key in engine for key in ('kernel_controls', 'matmul_tuning', 'lookup_tuning',
-                                   'prefill_chunk', 'max_prefill_tokens', 'prefill_keep_trunk', 'admit_ticks')):
-        raise ValueError('Private HSA experiment requires the unchanged Stock8K service controls')
+    prefill = (engine.get('prefill_chunk'), engine.get('max_prefill_tokens'))
+    if (prefill != (None, None) and not all(type(value) is int and value == 8192 for value in prefill)) or any(
+            key in engine for key in ('kernel_controls', 'matmul_tuning', 'lookup_tuning',
+                                      'prefill_keep_trunk', 'admit_ticks')):
+        raise ValueError('Private HSA permits only default or paired 8192 prefill limits with stock service controls')
     source = directory / 'scripts/private_hsa.py'
     if source.is_symlink() or not source.is_file():
         raise ValueError('Selected backend has no managed private-HSA support')

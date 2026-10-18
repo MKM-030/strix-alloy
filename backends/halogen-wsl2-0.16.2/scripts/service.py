@@ -78,10 +78,11 @@ def validate_options(o):
     if hsa_path is not None:
         hsa.validate_configuration({'receipt': hsa_path, 'receipt_sha256': hsa_sha})
         hsa.validate_scope(o.checkpoint, o.context_size, o.prompt_cache, o.draft_tokens, o.speculation_policy_json)
-        if (o.kernel_controls_json or o.matmul_tuning_json is not None or o.lookup_receipt is not None or
-                o.prefill_chunk is not None or getattr(o,'max_prefill_tokens',None) is not None or
+        prefill = (o.prefill_chunk, getattr(o, 'max_prefill_tokens', None))
+        if ((prefill != (None, None) and not all(type(value) is int and value == 8192 for value in prefill)) or
+                o.kernel_controls_json or o.matmul_tuning_json is not None or o.lookup_receipt is not None or
                 o.prefill_keep_trunk or o.admit_ticks is not None):
-            raise ValueError('Private HSA requires unchanged Stock8K service controls')
+            raise ValueError('Private HSA permits only default or paired 8192 prefill limits with stock service controls')
     lookup_path = getattr(o, 'lookup_receipt', None)
     lookup_sha = getattr(o, 'lookup_receipt_sha256', None)
     if (lookup_path is None) != (lookup_sha is None):
