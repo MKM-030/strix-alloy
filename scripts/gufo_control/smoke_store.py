@@ -425,6 +425,14 @@ def _incomplete_latches(pins, *, manifest=None, current_run=None):
         'gufo-ar4k-smoke-runs', 'gufo-ar4k-connect-wait-smoke-runs',
         'gufo-ar4k-benchmark-runs', 'gufo-ar16k-benchmark-runs',
         'gufo-ar16k-benchmark-v2-runs',
+        'gufo-pp-repeat-20260927-v1-runs',
+        'gufo-pp-repeat-20260927-v2-runs',
+        'halogen-ten-mtp-d3-20260927-v1-runs',
+        'complete-answer-mtp-d3-20260927-v1-runs',
+        'small-c2-mtp-d3-20260927-v1-runs',
+        'small-c2-mtp-d3-20260927-v1-admission2-runs',
+        'small-c2-active-desktop-20260927-v1-runs',
+        'small-c2-49-20260928-v1-runs',
         *PROFILE_ROOTS.values()))}
     for root in roots:
         if (root / 'incomplete.json').exists():

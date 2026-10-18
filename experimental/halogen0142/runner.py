@@ -1,0 +1,558 @@
+"""Candidate-only trace/smoke controller. Default is offline seal and command output.
+
+--run requires a stage-specific independent review of the complete seal. Never
+imports consumed benchmark attempts. Failed attempts and containers are retained.
+"""
+import argparse
+from concurrent.futures import ThreadPoolExecutor
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import time
+import urllib.request
+import uuid
+
+GIB = 1 << 30
+HERE = Path(__file__).resolve().parent
+INTEGRATION = HERE.parents[1]
+ROOT = INTEGRATION.parent
+ARTIFACT_ROOT = ROOT / 'artifacts/halogen0142'
+CONTROL = INTEGRATION / 'scripts/gufo_control'
+IMAGE = 'ghcr.io/peonist-ai/halogen-flash-server@sha256:f3f99aa48f3a051f18da9ee24b333ca108fe745773fd036a365fe1875871d0be'
+ENGINE_SHA = 'e8f74704f8148d9512cd33cc6abb46de21daac5385cb686285fc5ecbbf9cf70d'
+WSL = ['wsl.exe', '-d', 'Ubuntu-24.04', '-u', 'revn', '--exec']
+PWSH = r'C:\Users\Marcel\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe'
+DXG = '/home/revn/ciru-runtime/venv/lib/python3.14/site-packages/_rocm_sdk_devel/lib/librocdxg.so'
+FIXED_MOUNTS = {'/models':'/mnt/halogen-wsl-ext4/models',
+                '/usr/lib/libdxcore.so':'/usr/lib/wsl/lib/libdxcore.so',
+                '/usr/lib/librocdxg.so':DXG}
+TRACE_STATUS='/tmp/halogen0142-trace-status.json'
+TRACE_RELEASE='/tmp/halogen0142-trace-release.json'
+# Keep the SAME cgroup alive after the fast diagnostic child exits. Its peak is
+# retained; Windows GPU counters collected here are explicitly post-engine-exit,
+# not an observation of transient engine GPU allocations. timeout owns the group.
+TRACE_WRAPPER = '''import json, os, pathlib, subprocess, sys, time
+status, release = map(pathlib.Path, sys.argv[1:3])
+hold = float(sys.argv[3])
+child = subprocess.Popen(sys.argv[4:])
+code = child.wait()
+record = dict(schema=1, child_exit=code, child_pid=child.pid, child_finished_ns=time.time_ns())
+temporary = status.with_suffix('.tmp')
+with temporary.open('x') as stream:
+    json.dump(record, stream)
+os.rename(temporary, status)
+if code != 1:
+    raise SystemExit(code if code >= 0 else 128-code)
+deadline = time.monotonic()+hold
+while time.monotonic() < deadline:
+    if release.exists():
+        if json.loads(release.read_text()) != record:
+            raise SystemExit(125)
+        raise SystemExit(code)
+    time.sleep(.05)
+raise SystemExit(124)
+'''
+SEALED_SOURCES = [Path(__file__), CONTROL/'reddit_halogen_startup_guard.py',
+                  CONTROL/'reddit_halogen_host_guard.py', CONTROL/'reddit_halogen_sample.ps1',
+                  CONTROL/'reddit_halogen_controller.ps1', CONTROL/'wait-lookup-runtime-guard.ps1',
+                  Path(r'C:\Projects\strix-alloy-wsl2\scripts\package.py'),
+                  Path(r'C:\Projects\strix-alloy-wsl2\scripts\guard-halogen-startup.py')]
+
+
+def file_sha(path):
+    with Path(path).open('rb') as stream:
+        return hashlib.file_digest(stream, 'sha256').hexdigest()
+
+
+def digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'),
+                                     allow_nan=False).encode()).hexdigest()
+
+
+def read_json(path):
+    return json.loads(Path(path).read_text(encoding='utf-8-sig'))
+
+
+def save(path, value):
+    with Path(path).open('x', encoding='utf-8') as stream:
+        json.dump(value, stream, indent=2)
+
+
+def make_seal(manifest):
+    for artifact in manifest['artifacts'].values():
+        if file_sha(artifact['path']) != artifact['sha256']:
+            raise ValueError('artifact hash mismatch: '+artifact['path'])
+    sources=set(SEALED_SOURCES)|set(HERE.glob('*.py'))|set(HERE.glob('*.c'))
+    body = {'manifest':manifest, 'controller_sources':
+            {str(path.resolve()):file_sha(path) for path in sorted(sources)},
+            'launch_environment':environment(manifest) if 'stage' in manifest else None}
+    return {**body, 'seal_sha256':digest(body)}
+
+
+def check_review(review, seal_sha, stage):
+    if (review.get('approved') is not True or review.get('stage') != stage or
+        review.get('seal_sha256') != seal_sha or
+        not str(review.get('reviewer','')).strip() or
+        not str(review.get('allocation_reason','')).strip()):
+        raise ValueError('stage-specific allocation/source review required')
+
+
+def require_trace(m,review):
+    if m['stage']!='smoke': return
+    if not review.get('trace_success_path') or not review.get('trace_success_sha256'):
+        raise ValueError('smoke requires reviewed successful candidate trace')
+    path=Path(review['trace_success_path']).resolve(strict=True)
+    if (path.name!='success.json' or not path.is_relative_to(ARTIFACT_ROOT/'attempts') or
+        file_sha(path)!=review['trace_success_sha256']):
+        raise ValueError('trace success identity invalid')
+    success=read_json(path); old=read_json(path.parent/'seal.json')
+    if (success.get('stage')!='trace' or success.get('cleanup') is not True or
+        success.get('recovery') is not True or old['manifest']['stage']!='trace' or
+        old['manifest']['artifacts']!=m['artifacts'] or
+        make_seal(old['manifest'])!=old or success.get('seal_sha256')!=old['seal_sha256']):
+        raise ValueError('trace success no longer matches candidate sources/artifacts')
+
+
+def check_frame(frame, *, admission=False, age=0):
+    physical, commit = (24,98) if admission else (12,12)
+    if not 0 <= age <= 2 or any(type(frame.get(k)) is not int or frame[k] < floor*GIB
+        for k,floor in [('available_bytes',physical),('commit_headroom_bytes',commit)]):
+        raise ValueError('missing/stale/unsafe direct Windows memory frame')
+
+
+def recovered(frames, before):
+    return len(frames) >= 5 and all(f.get('available_bytes',0) >= max(24*GIB,before-2*GIB)
+           and f.get('commit_headroom_bytes',0) >= 12*GIB for f in frames[-5:])
+
+
+def validate_trace(log, exit_code, vector):
+    active = f'[preflight-bridge] active sha256={ENGINE_SHA} rva=0xdf7db0 trace=1'
+    rows = re.findall(r'\[preflight-bridge\] range\[(\d+)\]=(\d+):(\d+)',log)
+    demand = re.findall(r'\[preflight-bridge\] demand aggregate=(\d+) host=(\d+) mapping=(\d+) count=(\d+) floor=(\d+)',log)
+    plan = re.findall(r'\[preflight\] plan phase=1 ranges=(\d+) aggregate=(\d+) copy=(\d+) host=(\d+)',log)
+    # start_engine converts a pre-readiness child exit to wrapper status 1.
+    # The sealed bridge exits 77 at this site; that child status is not exposed.
+    if (exit_code != 1 or log.count(active) != 1 or len(demand) != 1 or len(plan) != 1 or
+        [int(i) for i,_,_ in rows] != list(range(len(vector))) or
+        [int(end)-int(begin) for _,begin,end in rows] != vector or
+        re.search(r'\[hybrid\] (?:device-copy bytes|copy-cache|host reserve|failed-copy)|'
+                  r'\[private-rw\] (?:register|refuse)|\[preflight\] (?:execute|complete|reject)',log)):
+        raise ValueError('trace did not prove exact vector and pre-registration exit')
+    aggregate,host,mapping,count,floor = map(int,demand[0])
+    n,total,copy,h = map(int,plan[0])
+    if (aggregate != sum(vector) or count != len(vector) or floor != 16*GIB or
+        n != count or total != aggregate or h != host or copy+host != aggregate or
+        copy > 48*GIB or mapping < aggregate):
+        raise ValueError('trace allocation arithmetic mismatch')
+    if len(vector)==252 and (aggregate,copy,host,mapping)!=(70434994368,50433337536,20001656832,124068083904):
+        raise ValueError('trace differs from reviewed exact allocation')
+
+
+def trace_vector(path):
+    if file_sha(path)!='9df3f1c86196c5e6187bebec754d56e67c4b57e660f13ca647a006dd1d42079c':
+        raise ValueError('frozen registration sequences changed')
+    vectors=read_json(path)
+    if len(vectors)!=2 or vectors[0]!=vectors[1] or len(vectors[0])!=253:
+        raise ValueError('unreviewed planner vector shape')
+    return vectors[0][:-1]  # trace exits before the later overlay registration
+
+
+def validate_terminal(state,trace=False):
+    if (state.get('Running') is not False or state.get('Pid')!=0 or
+        state.get('OOMKilled') is not False or state.get('Error')!='' or
+        (trace and state.get('ExitCode')!=1)):
+        raise ValueError('container terminal status unsafe or unexpected')
+
+
+def linux_path(path):
+    value = Path(path).resolve().as_posix()
+    if not re.match(r'^[A-Za-z]:/',value):
+        raise ValueError('candidate requires an absolute Windows path')
+    return '/mnt/'+value[0].lower()+value[2:]
+
+
+def validate_manifest(m):
+    if (m.get('schema') != 1 or m.get('stage') not in ('trace','smoke') or
+        m.get('image') != IMAGE or m.get('engine_sha256') != ENGINE_SHA or
+        type(m.get('timeout_seconds')) is not int or not 30 <= m['timeout_seconds'] <= 600):
+        raise ValueError('candidate identity/stage/deadline invalid')
+    artifacts=m['artifacts']
+    if not {'entrypoint','bridge','private','probe','engine','sequences','sources'} <= artifacts.keys():
+        raise ValueError('missing candidate artifact role')
+    destinations=[]
+    for key,item in artifacts.items():
+        path=Path(item['path']).resolve(strict=True)
+        if not path.is_file() or not re.fullmatch('[0-9a-f]{64}',item['sha256']):
+            raise ValueError('invalid artifact: '+key)
+        destination=item.get('container_path')
+        if destination is not None:
+            if not re.fullmatch(r'/candidate/[A-Za-z0-9_.-]+',destination):
+                raise ValueError('candidate mount outside fixed namespace')
+            if not path.is_relative_to(ARTIFACT_ROOT.resolve()):
+                raise ValueError('mounted artifact outside candidate root')
+            destinations.append(destination)
+    if len(set(destinations)) != len(destinations): raise ValueError('duplicate mount')
+    for key in ('entrypoint','bridge','private','probe'):
+        if not artifacts[key].get('container_path'): raise ValueError('missing runtime artifact mount')
+    if artifacts['probe']['container_path'] != '/candidate/halogen0142_hip_probe':
+        raise ValueError('probe must be at fixed entrypoint path')
+    if artifacts['engine']['sha256'] != ENGINE_SHA: raise ValueError('wrong engine artifact')
+    return trace_vector(artifacts['sequences']['path'])
+
+
+def mounts(m):
+    return {**FIXED_MOUNTS, **{v['container_path']:linux_path(v['path'])
+           for v in m['artifacts'].values() if v.get('container_path')}}
+
+
+def environment(m):
+    a=m['artifacts']
+    return dict(HALOGEN_WSL_PROFILE='halogen0142-dxg', HALOGEN_CTX='4096',
+        HALOGEN_PREFLIGHT_PROFILE='flash0142-copy48-v1', HALOGEN_HYBRID_PROFILE='vgm64-copy48-v1',
+        HALOGEN_KV_POOL_POSITIONS='4096', HALOGEN_KV_SLOTS='1', HALOGEN_PREFILL_CHUNK='2048',
+        HALOGEN_MAX_TOK='2048', HALOGEN_HOST_RESERVE_GIB='12', HALOGEN_HYBRID_COPY_BYTES=str(48*GIB),
+        HALOGEN_HYBRID_RECLAIM_COPY='1', HALOGEN_FLASH_PIN_TRUNK='1', HALOGEN_FLASH_ROUTE_GEMM='0',
+        HALOGEN_PROMPT_CACHE='0', HALOGEN_TOPK_REPLAY='0', HALOGEN_DMALLOC_LOG='1',
+        HALOGEN_VERBOSE='1', HALOGEN_ENGINE_WATCHDOG_S='120', HALOGEN_TOKENIZER='/models/tokenizer',
+        HALOGEN_PREFLIGHT_TRACE_ONLY='1' if m['stage']=='trace' else '0',
+        HSA_ENABLE_SDMA='1', HSA_ENABLE_DXG_DETECTION='1', AMD_SERIALIZE_KERNEL='0',
+        AMD_SERIALIZE_COPY='0', LD_PRELOAD=a['bridge']['container_path']+':'+a['private']['container_path'])
+
+
+def command(m, name):
+    cmd=['create','--name',name,'--memory',str(44*GIB),'--memory-swap',str(44*GIB),
+         '--restart=no','--device=/dev/dxg','--ipc=host','--shm-size=8g',
+         '--cap-add=SYS_PTRACE','--security-opt=seccomp=unconfined','--security-opt=label=disable',
+         '--ulimit=memlock=-1:-1','-p','127.0.0.1:8731:8731',
+         '--label=halogen.performance=hybrid','--label=strix-alloy.owner=strix-alloy-wsl2',
+         '--label=strix-alloy.run='+name]
+    for destination,source in sorted(mounts(m).items()):
+        cmd += ['--mount',f'type=bind,src={source},dst={destination},readonly']
+    for key,value in sorted(environment(m).items()): cmd += ['-e',key+'='+value]
+    # A process-tree deadline survives host controller death. No shell expansion.
+    child=['/bin/bash',m['artifacts']['entrypoint']['container_path'],
+           'engine' if m['stage']=='trace' else 'all']
+    if m['stage']=='trace':
+        child=['python3','-c',TRACE_WRAPPER,TRACE_STATUS,TRACE_RELEASE,'45',*child]
+    return cmd+['--entrypoint','/usr/bin/timeout',IMAGE,'--signal=TERM','--kill-after=5',
+               str(m['timeout_seconds']),*child]
+
+
+def load_module(name,path):
+    spec=importlib.util.spec_from_file_location(name,path)
+    module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    return module
+
+
+def guards(m):
+    startup=load_module('candidate_startup_guard',CONTROL/'reddit_halogen_startup_guard.py')
+    startup.IMAGE=IMAGE; startup.REVIEWED_IMAGES=frozenset([IMAGE])
+    startup.WSL=WSL+['docker']; startup.EXPECTED_MOUNTS=mounts(m)
+    host=load_module('candidate_host_frames',CONTROL/'reddit_halogen_host_guard.py')
+    return startup,host
+
+
+def invoke(argv,timeout=10):
+    return subprocess.run(argv,capture_output=True,text=True,check=True,timeout=timeout,
+                          creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0)).stdout.strip()
+
+
+def docker(*args,timeout=10): return invoke(WSL+['docker',*args],timeout)
+
+
+def inspect(cid): return json.loads(docker('inspect',cid))[0]
+
+
+def owned(info,cid,name,m,running=False):
+    config=info.get('Config',{}); labels=config.get('Labels') or {}
+    if (not re.fullmatch('[0-9a-f]{64}',cid) or info.get('Id') != cid or
+        info.get('Name') != '/'+name or labels.get('strix-alloy.run') != name or
+        labels.get('strix-alloy.owner') != 'strix-alloy-wsl2' or config.get('Image') != IMAGE):
+        raise ValueError('owned candidate identity changed')
+    if running:
+        startup,_=guards(m); startup.validate_target(info,cid)
+
+
+def stop_owned(cid,name,m):
+    current=inspect(cid); owned(current,cid,name,m)
+    if current['State']['Running']: docker('stop','-t','0',cid,timeout=45)
+    current=inspect(cid); owned(current,cid,name,m)
+    if current['State']['Running'] or current['State']['Pid'] != 0:
+        raise ValueError('owned container not terminal')
+    return current
+
+
+def admission(host):
+    if docker('ps','-q'): raise ValueError('another container is running')
+    native=invoke(['powershell.exe','-NoProfile','-NonInteractive','-Command',
+        "@(Get-Process -Name 'llama-server','flash_serve','gufo','gufo-server','nativeengine' -ErrorAction SilentlyContinue).Count"])
+    if native != '0': raise ValueError('native model engine running')
+    began=time.monotonic(); frame=host.frame()
+    check_frame(frame,admission=True,age=time.monotonic()-began)
+    return frame
+
+
+def guard_process(m,cid,name,attempt):
+    startup,host=guards(m); started=time.monotonic()
+    sampler=ThreadPoolExecutor(max_workers=1); pending=None; last_sample=0; sample_started=0; index=0
+    try:
+        owned(inspect(cid),cid,name,m)
+        while time.monotonic()-started <= m['timeout_seconds']+240:
+            began=time.monotonic(); frame=host.frame()
+            check_frame(frame,age=time.monotonic()-began)
+            with (attempt/'host-guard.jsonl').open('a',encoding='utf-8') as stream:
+                stream.write(json.dumps({'monotonic':time.monotonic(),**frame})+'\n'); stream.flush()
+            if not (attempt/'armed.json').exists(): save(attempt/'armed.json',frame)
+            current=inspect(cid); owned(current,cid,name,m)
+            if current['State']['Running']:
+                startup.validate_target(current,cid)
+                if pending is not None:
+                    if pending.done():
+                        validate_sample(pending.result(),cid)
+                        last_sample=time.monotonic(); pending=None
+                    elif time.monotonic()-sample_started>35:
+                        raise TimeoutError('raw guest/GPU telemetry stale')
+                # Trace telemetry is synchronously collected after its child
+                # exits, while its original cgroup is held alive. Direct host
+                # frames above remain continuous throughout both trace phases.
+                if m['stage']=='smoke' and pending is None and time.monotonic()-last_sample>=10:
+                    sample_started=time.monotonic()
+                    pending=sampler.submit(sample,cid,attempt,'inference',index)
+                    index+=1
+            if (attempt/'release.json').exists(): return 0
+            time.sleep(1)
+        raise TimeoutError('independent host guard deadline')
+    except BaseException as error:
+        try: save(attempt/'guard-failure.json',{'error':repr(error)})
+        finally: stop_owned(cid,name,m)
+        return 2
+    finally:
+        sampler.shutdown(wait=False,cancel_futures=True)
+
+
+def guard_alive(process,attempt):
+    path=attempt/'host-guard.jsonl'
+    if process.poll() is not None or not path.exists() or time.time()-path.stat().st_mtime > 12:
+        raise RuntimeError('independent guard missing/stale/dead')
+
+
+def sample(cid,attempt,phase,index):
+    path=attempt/f'telemetry-{index:04d}.json'
+    invoke([PWSH,'-NoProfile','-NonInteractive','-File',str(CONTROL/'reddit_halogen_sample.ps1'),
+            '-ContainerId',cid,'-Output',str(path),'-Phase',phase],timeout=35)
+    return read_json(path)
+
+
+def validate_sample(record,cid):
+    guest=record.get('guest') or {}; gpu=record.get('gpuInstances') or []
+    if (record.get('containerId') != cid or not gpu or
+        any(type(guest.get(key)) is not int or guest[key]<0
+            for key in ('memory.current','memory.peak','memory.swap.current')) or
+        any(not item.get('name') or any(type(item.get(k)) is not int or item[k]<0
+            for k in ('dedicatedBytes','sharedBytes','totalCommittedBytes')) for item in gpu)):
+        raise ValueError('missing raw guest/GPU telemetry')
+
+
+def trace_status(cid):
+    raw=docker('exec',cid,'python3','-c',
+        'import pathlib,sys; p=pathlib.Path(sys.argv[1]); print(p.read_text() if p.exists() else "null")',
+        TRACE_STATUS)
+    return json.loads(raw)
+
+
+def complete_trace_telemetry(cid,attempt,status,check_guard=lambda: None):
+    if (status.get('schema')!=1 or status.get('child_exit')!=1 or
+        type(status.get('child_pid')) is not int or status['child_pid']<=0 or
+        type(status.get('child_finished_ns')) is not int or status['child_finished_ns']<=0):
+        raise ValueError('unexpected trace child status')
+    check_guard()
+    record=sample(cid,attempt,'final',9998)
+    validate_sample(record,cid)
+    save(attempt/'trace-telemetry.json',dict(
+        scope='same-container-cgroup-peak-and-post-engine-exit-gpu-snapshot',
+        cgroup_peak_scope='whole container lifetime including entrypoint, engine, wrapper and telemetry processes',
+        child_status=status, telemetry=record,
+        transient_engine_gpu_peak_observed=False))
+    check_guard()
+    # Acknowledge only after the required genuine measurement is saved. Exact
+    # child identity/status is echoed; empty or stale release files fail closed.
+    docker('exec',cid,'python3','-c',
+        'import pathlib,sys; p=pathlib.Path(sys.argv[1]); t=p.with_suffix(".tmp"); '
+        't.write_text(sys.argv[2]); t.rename(p)',TRACE_RELEASE,json.dumps(status,sort_keys=True))
+
+
+def http(path,body=None):
+    request=urllib.request.Request('http://127.0.0.1:8731'+path,
+        data=None if body is None else json.dumps(body).encode(),
+        headers={'Content-Type':'application/json'})
+    with urllib.request.urlopen(request,timeout=45 if body else 3) as response:
+        raw=response.read(1<<20)
+        if response.read(1): raise ValueError('oversized API response')
+        return json.loads(raw)
+
+
+def run(m,review,manifest_path):
+    if os.name != 'nt': raise ValueError('Windows controller required')
+    vector=validate_manifest(m); seal=make_seal(m)
+    check_review(review,seal['seal_sha256'],m['stage'])
+    require_trace(m,review)
+    attempts=ARTIFACT_ROOT/'attempts'; attempts.mkdir(exist_ok=True)
+    name='halogen-flash-hybrid-0142-'+m['stage']+'-'+uuid.uuid4().hex
+    attempt=attempts/name; attempt.mkdir()
+    save(attempt/'seal.json',seal); save(attempt/'review.json',review); save(attempt/'manifest.json',m)
+    lock=ARTIFACT_ROOT/'runner.lock'; lock_handle=lock.open('x')
+    cid=None; watcher=None; baseline=None; cleanup=False; recovery=False; creation_attempted=False
+    outcome={'passed':False,'stage':m['stage']}; cleanup_errors=[]
+    try:
+        _,host=guards(m)
+        baseline=admission(host); save(attempt/'admission-create.json',baseline)
+        if make_seal(m) != seal: raise ValueError('seal changed before create')
+        creation_attempted=True
+        cid=docker(*command(m,name),timeout=20)
+        owned(inspect(cid),cid,name,m); save(attempt/'container.json',{'id':cid,'name':name})
+        watcher=subprocess.Popen([sys.executable,str(Path(__file__)),'--manifest',str(attempt/'manifest.json'),
+            '--guard',cid,'--name',name,'--attempt',str(attempt)],
+            creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+        armed_deadline=time.monotonic()+15
+        while not (attempt/'armed.json').exists():
+            if watcher.poll() is not None or time.monotonic()>armed_deadline: raise RuntimeError('guard not armed')
+            time.sleep(.1)
+        fresh=admission(host); save(attempt/'admission-start.json',fresh)
+        baseline=fresh
+        if make_seal(m) != seal: raise ValueError('seal changed before start')
+        guard_alive(watcher,attempt); docker('start',cid)
+        deadline=time.monotonic()+m['timeout_seconds']; ready=False; trace_sampled=False
+        last_advice=0
+        while time.monotonic()<deadline:
+            guard_alive(watcher,attempt)
+            current=inspect(cid); owned(current,cid,name,m)
+            if not current['State']['Running']:
+                # Docker puts engine diagnostics on stderr; collect both streams below.
+                result=subprocess.run(WSL+['docker','logs',cid],capture_output=True,text=True,timeout=15,
+                    creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0),check=True)
+                logs=result.stdout+result.stderr
+                save(attempt/'trace-log.json',{'log':logs,'state':current['State']})
+                if m['stage'] != 'trace': raise RuntimeError('engine exited before smoke')
+                if not trace_sampled: raise RuntimeError('trace exited without telemetry handshake')
+                validate_terminal(current['State'],trace=True)
+                validate_trace(logs,current['State']['ExitCode'],vector)
+                break
+            if m['stage']=='trace' and not trace_sampled:
+                status=trace_status(cid)
+                if status is not None:
+                    complete_trace_telemetry(cid,attempt,status,lambda: guard_alive(watcher,attempt))
+                    trace_sampled=True
+            if m['stage']=='smoke':
+                try: health=http('/health')
+                except (OSError,ValueError): health={}
+                if health.get('status')=='ok':
+                    ready=True; save(attempt/'health.json',health)
+                    versions=health.get('version',{})
+                    if versions.get('api')!='0.14.2' or versions.get('engine')!='0.14.2' or versions.get('match') is not True:
+                        raise ValueError('engine/API version mismatch')
+                    for label,prompt,answer in [('arithmetic','Antworte nur mit der Zahl: Was ist 17 + 25?','42'),
+                        ('german','Antworte auf Deutsch mit genau einem Wort: Welche Farbe hat Gras?','grün')]:
+                        guard_alive(watcher,attempt)
+                        body={'model':health.get('model','qwen38-flash-next-w4b'),'messages':[{'role':'user','content':prompt}],
+                              'max_tokens':32,'temperature':0,'stream':False,'drafter':'serial',
+                              'reasoning_effort':'none','enable_thinking':False}
+                        response=http('/v1/chat/completions',body)
+                        save(attempt/(label+'.json'),{'request':body,'response':response})
+                        content=response['choices'][0]['message']['content'].strip().strip('.!').casefold()
+                        if content != answer: raise ValueError('incorrect smoke answer: '+label)
+                    validate_sample(sample(cid,attempt,'final',9999),cid)
+                    break
+                if not ready and time.monotonic()-last_advice>=3:
+                    startup,_=guards(m)
+                    startup.validate_target(inspect(cid),cid)
+                    docker('exec',cid,'python3','-c',startup.CACHE_CODE,timeout=20)
+                    last_advice=time.monotonic()
+            time.sleep(1)
+        else: raise TimeoutError('candidate qualification deadline')
+        observed=list(attempt.glob('telemetry-*.json'))
+        if not observed: raise RuntimeError('no complete raw guest/GPU telemetry frame')
+        for path in observed: validate_sample(read_json(path),cid)
+        save(attempt/'qualification.json',{'stage':m['stage'],'passed':True})
+        outcome['qualification_passed']=True
+    except BaseException as error:
+        outcome['error']=repr(error)
+        raise
+    finally:
+        try:
+            if not cid and creation_attempted:
+                # Recover only this randomly named owned candidate after a lost
+                # create response, never enumerate/terminate unrelated engines.
+                candidate=inspect(name)
+                recovered_id=candidate['Id']; owned(candidate,recovered_id,name,m)
+                cid=recovered_id
+            if cid:
+                terminal=stop_owned(cid,name,m); cleanup=True
+                save(attempt/'terminal.json',terminal)
+                try: validate_terminal(terminal['State'],trace=m['stage']=='trace' and bool(outcome.get('qualification_passed')))
+                except Exception as error: cleanup_errors.append(repr(error))
+                try:
+                    logs=subprocess.run(WSL+['docker','logs',cid],capture_output=True,text=True,timeout=15,
+                        creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0),check=True)
+                    save(attempt/'container-logs.json',{'stdout':logs.stdout,'stderr':logs.stderr})
+                except Exception as error: cleanup_errors.append('logs: '+repr(error))
+            elif not creation_attempted:
+                cleanup=True
+            if baseline:
+                _,host=guards(m); frames=[]; deadline=time.monotonic()+180
+                while time.monotonic()<deadline:
+                    began=time.monotonic(); frame=host.frame(); check_frame(frame,age=time.monotonic()-began)
+                    frames.append(frame)
+                    if recovered(frames,baseline['available_bytes']): recovery=True; break
+                    time.sleep(1)
+                save(attempt/'recovery.json',{'frames':frames,'passed':recovery})
+            if cleanup and recovery:
+                save(attempt/'release.json',{'cleanup':True,'recovery':True})
+                if watcher and watcher.wait(timeout=15) != 0: raise RuntimeError('host guard failed')
+            else: raise RuntimeError('cleanup/recovery not established; retain lock and evidence')
+            if cleanup_errors: raise RuntimeError('; '.join(cleanup_errors))
+        except BaseException as error:
+            outcome['cleanup_error']=repr(error)
+            raise
+        finally:
+            # Once the owned container is terminal, reap our guard process even
+            # when host recovery failed. Its helper subprocesses have deadlines.
+            if watcher and cleanup and watcher.poll() is None:
+                watcher.terminate()
+                try: watcher.wait(timeout=10)
+                except subprocess.TimeoutExpired: watcher.kill(); watcher.wait(timeout=5)
+            outcome.update(cleanup=cleanup,recovery=recovery,
+                           passed=bool(outcome.get('qualification_passed') and cleanup and recovery
+                                       and not outcome.get('error') and not outcome.get('cleanup_error')))
+            save(attempt/'outcome.json',outcome)
+            lock_handle.close()
+            if cleanup and recovery: lock.unlink()
+    save(attempt/'success.json',{'stage':m['stage'],'seal_sha256':seal['seal_sha256'],'cleanup':True,'recovery':True})
+    return attempt
+
+
+def main(argv=None):
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--manifest',required=True,type=Path)
+    parser.add_argument('--review',type=Path)
+    parser.add_argument('--run',action='store_true')
+    parser.add_argument('--guard',help=argparse.SUPPRESS)
+    parser.add_argument('--name',help=argparse.SUPPRESS)
+    parser.add_argument('--attempt',type=Path,help=argparse.SUPPRESS)
+    args=parser.parse_args(argv); manifest=read_json(args.manifest)
+    validate_manifest(manifest)
+    if args.guard: return guard_process(manifest,args.guard,args.name,args.attempt)
+    seal=make_seal(manifest)
+    if not args.run:
+        print(json.dumps({**seal,'docker_argv':command(manifest,'halogen-flash-hybrid-0142-DRYRUN')},indent=2))
+        return 0
+    if not args.review: parser.error('--run requires --review')
+    print(run(manifest,read_json(args.review),args.manifest.resolve()))
+    return 0
+
+
+if __name__=='__main__': raise SystemExit(main())

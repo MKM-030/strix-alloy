@@ -1,0 +1,234 @@
+{
+  "schema": 1,
+  "attempt": "halogen-flash-hybrid-0142-pp-7f75a8cb47964d989179c228d4283556",
+  "source_seal": "658a9017381c5f047169c3056b46ca73094eebcce86759ff6449f73b08267c37",
+  "filler": "The unified memory architecture changes how inference engines schedule work across the accelerator and the host processor. ",
+  "prompt_encoding": "Single user message: literal, or prefix + filler repeated filler_repeats times. Other request parameters unchanged. Original raw responses preserved in base64.",
+  "caveat": "Engine prefill time exceeds enclosing HTTP wall time in all six measurements; unreconciled.",
+  "records": [
+    {
+      "ordinal": 0,
+      "kind": "warmup",
+      "target": null,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "literal": "What is 2 + 2? Reply with only 4."
+      },
+      "request_sha256": "1f8e93dfdbc6eca0602a9da6c1dd29edfe518011975f1581506984209bdb5e60",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLTcyMGE5MDBjOTk2NTRmMjk5ZDE4NDBkYyIsImNyZWF0ZWQiOjE3OTA2MzczOTMsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiI0In19XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6MjYsImNvbXBsZXRpb25fdG9rZW5zIjoxLCJ0b3RhbF90b2tlbnMiOjI3LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjB9fSwidGltaW5ncyI6eyJwcm9tcHRfbiI6MjYsInByZWRpY3RlZF9uIjoxLCJwcm9tcHRfbXMiOjc3My4yLCJwcmVkaWN0ZWRfbXMiOjAuMCwicHJvbXB0X3Blcl9zZWNvbmQiOjMzLjYyNiwicHJlZGljdGVkX3Blcl9zZWNvbmQiOjAuMCwiY2FjaGVfbiI6MCwiZGlza19yZXN0b3JlX24iOjAsImRpc2tfcmVzdG9yZV9tcyI6MC4wLCJkcmFmdF9uIjowLCJkcmFmdF9uX2FjY2VwdGVkIjowfX0=",
+      "response_sha256": "73717569786e8e54e9cbb6d9761b721a9bb49ca65140bef5290bafd0145bef2d",
+      "http_status": 200,
+      "http_started_monotonic": 12499.265,
+      "http_ended_monotonic": 12500.031,
+      "http_wall_seconds": 0.7660000000014406
+    },
+    {
+      "ordinal": 1,
+      "kind": "calibration",
+      "target": null,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "prefix": "x",
+        "filler_repeats": 0
+      },
+      "request_sha256": "e2f282ac8623f03cd13e7340ecf5e218827bca453fe394a1d4d9943e35a411a3",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLTFjMjYwZWZlOWYwMzQ0ZjQ4ZjYzYTlhNCIsImNyZWF0ZWQiOjE3OTA2MzczOTQsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJIZWxsbyJ9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjEzLCJjb21wbGV0aW9uX3Rva2VucyI6MSwidG90YWxfdG9rZW5zIjoxNCwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjowfX0sInRpbWluZ3MiOnsicHJvbXB0X24iOjEzLCJwcmVkaWN0ZWRfbiI6MSwicHJvbXB0X21zIjoyNjMuMSwicHJlZGljdGVkX21zIjowLjAsInByb21wdF9wZXJfc2Vjb25kIjo0OS40MTEsInByZWRpY3RlZF9wZXJfc2Vjb25kIjowLjAsImNhY2hlX24iOjAsImRpc2tfcmVzdG9yZV9uIjowLCJkaXNrX3Jlc3RvcmVfbXMiOjAuMCwiZHJhZnRfbiI6MCwiZHJhZnRfbl9hY2NlcHRlZCI6MH19",
+      "response_sha256": "28ead6814e4ce2bf85dcdcbc644d73519ef67df5229e4a486e6f6377b2fa77ad",
+      "http_status": 200,
+      "http_started_monotonic": 12500.031,
+      "http_ended_monotonic": 12500.296,
+      "http_wall_seconds": 0.2649999999994179
+    },
+    {
+      "ordinal": 2,
+      "kind": "calibration",
+      "target": null,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "prefix": "x",
+        "filler_repeats": 20
+      },
+      "request_sha256": "1e76dd6e2cff3ca280082ffd66009d4f5ca411175f5fbceab932abb341276256",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLWNiYWFlZGQ4MmNmNDQxOThhN2Q2NDIwYyIsImNyZWF0ZWQiOjE3OTA2MzczOTEsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJJdCJ9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjM3MywiY29tcGxldGlvbl90b2tlbnMiOjEsInRvdGFsX3Rva2VucyI6Mzc0LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjB9fSwidGltaW5ncyI6eyJwcm9tcHRfbiI6MzczLCJwcmVkaWN0ZWRfbiI6MSwicHJvbXB0X21zIjoxMTQ0LjUsInByZWRpY3RlZF9tcyI6MC4wLCJwcm9tcHRfcGVyX3NlY29uZCI6MzI1LjkwNywicHJlZGljdGVkX3Blcl9zZWNvbmQiOjAuMCwiY2FjaGVfbiI6MCwiZGlza19yZXN0b3JlX24iOjAsImRpc2tfcmVzdG9yZV9tcyI6MC4wLCJkcmFmdF9uIjowLCJkcmFmdF9uX2FjY2VwdGVkIjowfX0=",
+      "response_sha256": "fb2fbe0eaaba2ec617806cb69997da0b2d2491b8499439bee5859e18ed9d1221",
+      "http_status": 200,
+      "http_started_monotonic": 12500.296,
+      "http_ended_monotonic": 12501.375,
+      "http_wall_seconds": 1.0789999999997235
+    },
+    {
+      "ordinal": 3,
+      "kind": "measurement",
+      "target": 2048,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "prefix": "x",
+        "filler_repeats": 113
+      },
+      "request_sha256": "b67bb25360c7d38c50a134f30e1cd65310fcc36f1bbe61435e26a5a5f8a359b4",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLWM1YTZlOGY4ZDM2MzQyMWU4OTYwNjRlMSIsImNyZWF0ZWQiOjE3OTA2MzczOTMsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJJdCJ9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjIwNDcsImNvbXBsZXRpb25fdG9rZW5zIjoxLCJ0b3RhbF90b2tlbnMiOjIwNDgsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MH19LCJ0aW1pbmdzIjp7InByb21wdF9uIjoyMDQ3LCJwcmVkaWN0ZWRfbiI6MSwicHJvbXB0X21zIjoxNjM3LjAsInByZWRpY3RlZF9tcyI6MC4wLCJwcm9tcHRfcGVyX3NlY29uZCI6MTI1MC40NTgsInByZWRpY3RlZF9wZXJfc2Vjb25kIjowLjAsImNhY2hlX24iOjAsImRpc2tfcmVzdG9yZV9uIjowLCJkaXNrX3Jlc3RvcmVfbXMiOjAuMCwiZHJhZnRfbiI6MCwiZHJhZnRfbl9hY2NlcHRlZCI6MH19",
+      "response_sha256": "c8396981a017efc94227a6dbdcd458bc61e42951ebb8e3fd25df915624313c67",
+      "http_status": 200,
+      "http_started_monotonic": 12501.375,
+      "http_ended_monotonic": 12502.921,
+      "http_wall_seconds": 1.5460000000002765
+    },
+    {
+      "ordinal": 4,
+      "kind": "measurement",
+      "target": 8192,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "prefix": "x",
+        "filler_repeats": 454
+      },
+      "request_sha256": "5c08c5a389be43e6d03343b792424ea3c92e7c96e2d5b3c3445edd9a7e42a33e",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLWNlNTA3MTcyMmQ3NjQxODVhNmNkZjg5MCIsImNyZWF0ZWQiOjE3OTA2MzczOTQsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJJdCJ9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjgxODUsImNvbXBsZXRpb25fdG9rZW5zIjoxLCJ0b3RhbF90b2tlbnMiOjgxODYsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MH19LCJ0aW1pbmdzIjp7InByb21wdF9uIjo4MTg1LCJwcmVkaWN0ZWRfbiI6MSwicHJvbXB0X21zIjo2NzMxLjUsInByZWRpY3RlZF9tcyI6MC4wLCJwcm9tcHRfcGVyX3NlY29uZCI6MTIxNS45MjUsInByZWRpY3RlZF9wZXJfc2Vjb25kIjowLjAsImNhY2hlX24iOjAsImRpc2tfcmVzdG9yZV9uIjowLCJkaXNrX3Jlc3RvcmVfbXMiOjAuMCwiZHJhZnRfbiI6MCwiZHJhZnRfbl9hY2NlcHRlZCI6MH19",
+      "response_sha256": "c4cd1321c7cef3148edb7c9f950c9d1cd79d36b0aac60caf0f15885194e65179",
+      "http_status": 200,
+      "http_started_monotonic": 12502.921,
+      "http_ended_monotonic": 12509.171,
+      "http_wall_seconds": 6.25
+    },
+    {
+      "ordinal": 5,
+      "kind": "measurement",
+      "target": 8192,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "prefix": "x",
+        "filler_repeats": 454
+      },
+      "request_sha256": "5c08c5a389be43e6d03343b792424ea3c92e7c96e2d5b3c3445edd9a7e42a33e",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLTg0YjkwYTFkZmYzYTRjOWNhM2YzZTc4MyIsImNyZWF0ZWQiOjE3OTA2Mzc0MDEsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJJdCJ9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjgxODUsImNvbXBsZXRpb25fdG9rZW5zIjoxLCJ0b3RhbF90b2tlbnMiOjgxODYsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MH19LCJ0aW1pbmdzIjp7InByb21wdF9uIjo4MTg1LCJwcmVkaWN0ZWRfbiI6MSwicHJvbXB0X21zIjo2Njk2LjIsInByZWRpY3RlZF9tcyI6MC4wLCJwcm9tcHRfcGVyX3NlY29uZCI6MTIyMi4zMzUsInByZWRpY3RlZF9wZXJfc2Vjb25kIjowLjAsImNhY2hlX24iOjAsImRpc2tfcmVzdG9yZV9uIjowLCJkaXNrX3Jlc3RvcmVfbXMiOjAuMCwiZHJhZnRfbiI6MCwiZHJhZnRfbl9hY2NlcHRlZCI6MH19",
+      "response_sha256": "9a3fbe399722c7f035d6900db1be5fbf7134376f266fef2be9cbd1df692cd5a6",
+      "http_status": 200,
+      "http_started_monotonic": 12509.171,
+      "http_ended_monotonic": 12515.39,
+      "http_wall_seconds": 6.218999999999141
+    },
+    {
+      "ordinal": 6,
+      "kind": "measurement",
+      "target": 2048,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "prefix": "x",
+        "filler_repeats": 113
+      },
+      "request_sha256": "b67bb25360c7d38c50a134f30e1cd65310fcc36f1bbe61435e26a5a5f8a359b4",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLTM3MzZlODgwZTYwODQ2MmNiZmJhMDNkMyIsImNyZWF0ZWQiOjE3OTA2Mzc0MDgsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJJdCJ9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjIwNDcsImNvbXBsZXRpb25fdG9rZW5zIjoxLCJ0b3RhbF90b2tlbnMiOjIwNDgsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MH19LCJ0aW1pbmdzIjp7InByb21wdF9uIjoyMDQ3LCJwcmVkaWN0ZWRfbiI6MSwicHJvbXB0X21zIjoxNjY5LjQsInByZWRpY3RlZF9tcyI6MC4wLCJwcm9tcHRfcGVyX3NlY29uZCI6MTIyNi4xODksInByZWRpY3RlZF9wZXJfc2Vjb25kIjowLjAsImNhY2hlX24iOjAsImRpc2tfcmVzdG9yZV9uIjowLCJkaXNrX3Jlc3RvcmVfbXMiOjAuMCwiZHJhZnRfbiI6MCwiZHJhZnRfbl9hY2NlcHRlZCI6MH19",
+      "response_sha256": "beedfec5aaa1f7ba736c95a0f79daaa4f4ef8fa8a8066f61f90ddb2fff35418f",
+      "http_status": 200,
+      "http_started_monotonic": 12515.406,
+      "http_ended_monotonic": 12516.984,
+      "http_wall_seconds": 1.5779999999995198
+    },
+    {
+      "ordinal": 7,
+      "kind": "measurement",
+      "target": 2048,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "prefix": "x",
+        "filler_repeats": 113
+      },
+      "request_sha256": "b67bb25360c7d38c50a134f30e1cd65310fcc36f1bbe61435e26a5a5f8a359b4",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLTM5NTFjOTVhNzZiZTRkNGM4ZjczNTZiZCIsImNyZWF0ZWQiOjE3OTA2Mzc0MTAsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJJdCJ9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjIwNDcsImNvbXBsZXRpb25fdG9rZW5zIjoxLCJ0b3RhbF90b2tlbnMiOjIwNDgsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MH19LCJ0aW1pbmdzIjp7InByb21wdF9uIjoyMDQ3LCJwcmVkaWN0ZWRfbiI6MSwicHJvbXB0X21zIjoxNjQ3LjksInByZWRpY3RlZF9tcyI6MC4wLCJwcm9tcHRfcGVyX3NlY29uZCI6MTI0Mi4xODcsInByZWRpY3RlZF9wZXJfc2Vjb25kIjowLjAsImNhY2hlX24iOjAsImRpc2tfcmVzdG9yZV9uIjowLCJkaXNrX3Jlc3RvcmVfbXMiOjAuMCwiZHJhZnRfbiI6MCwiZHJhZnRfbl9hY2NlcHRlZCI6MH19",
+      "response_sha256": "5ee366148a7b8c20418876c5735fcd8dcef38e9eca95aa4392f8e313dcffb1c4",
+      "http_status": 200,
+      "http_started_monotonic": 12516.984,
+      "http_ended_monotonic": 12518.531,
+      "http_wall_seconds": 1.5470000000004802
+    },
+    {
+      "ordinal": 8,
+      "kind": "measurement",
+      "target": 8192,
+      "request_parameters": {
+        "model": "halogen-qwen3.8-flash-next",
+        "max_tokens": 1,
+        "temperature": 0,
+        "stream": false,
+        "drafter": "serial",
+        "reasoning_effort": "none",
+        "enable_thinking": false
+      },
+      "single_user_message": {
+        "prefix": "x",
+        "filler_repeats": 454
+      },
+      "request_sha256": "5c08c5a389be43e6d03343b792424ea3c92e7c96e2d5b3c3445edd9a7e42a33e",
+      "response_base64": "eyJpZCI6ImNoYXRjbXBsLTRiZmRiNTRiMjU3ZTRlNGFiZmI3ZGJjZSIsImNyZWF0ZWQiOjE3OTA2Mzc0MTEsIm1vZGVsIjoiaGFsb2dlbi1xd2VuMy44LWZsYXNoLW5leHQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZmluaXNoX3JlYXNvbiI6Imxlbmd0aCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJJdCJ9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjgxODUsImNvbXBsZXRpb25fdG9rZW5zIjoxLCJ0b3RhbF90b2tlbnMiOjgxODYsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MH19LCJ0aW1pbmdzIjp7InByb21wdF9uIjo4MTg1LCJwcmVkaWN0ZWRfbiI6MSwicHJvbXB0X21zIjo2NzY1LjcsInByZWRpY3RlZF9tcyI6MC4wLCJwcm9tcHRfcGVyX3NlY29uZCI6MTIwOS43NzksInByZWRpY3RlZF9wZXJfc2Vjb25kIjowLjAsImNhY2hlX24iOjAsImRpc2tfcmVzdG9yZV9uIjowLCJkaXNrX3Jlc3RvcmVfbXMiOjAuMCwiZHJhZnRfbiI6MCwiZHJhZnRfbl9hY2NlcHRlZCI6MH19",
+      "response_sha256": "970748f62bb1084f70f516f164332b31418c8793e02ad3307c001624949a401c",
+      "http_status": 200,
+      "http_started_monotonic": 12518.531,
+      "http_ended_monotonic": 12524.796,
+      "http_wall_seconds": 6.264999999999418
+    }
+  ]
+}

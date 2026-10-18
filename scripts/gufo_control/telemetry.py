@@ -255,8 +255,8 @@ def normalize_snapshot(raw: dict, *, captured_monotonic: float, now_monotonic: f
     return result
 
 
-def collect_snapshot(*, owned=None) -> dict:
-    """Run exactly one bounded, hidden, read-only Windows PowerShell probe."""
+def collect_snapshot(*, owned=None, probe_executable=None) -> dict:
+    """Run one bounded hidden probe; alternate binary identity is caller-pinned."""
     if os.name != 'nt' or struct.calcsize('P') != 8:
         raise TelemetryError('Windows x64 required')
     executable = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32/WindowsPowerShell/v1.0/powershell.exe'
@@ -276,8 +276,15 @@ def collect_snapshot(*, owned=None) -> dict:
         script = Path(__file__).with_name('windows_probe.ps1').resolve(strict=True)
         remaining = 5 if owned is None else 5-(time.monotonic()-started)
         if remaining <= 0: raise TelemetryError('sample_deadline_expired')
-        argv = [str(executable), '-NoProfile', '-NonInteractive', '-File', str(script)]
-        if diagnostic['available']: argv += ['-OwnedPid', str(owned['pid'])]
+        if probe_executable is None:
+            argv = [str(executable), '-NoProfile', '-NonInteractive', '-File', str(script)]
+            if diagnostic['available']: argv += ['-OwnedPid', str(owned['pid'])]
+        else:
+            native = Path(probe_executable)
+            if not native.is_absolute() or native.is_symlink() or native.resolve(strict=True) != native:
+                raise TelemetryError('invalid native probe path')
+            argv = [str(native)]
+            if diagnostic['available']: argv += ['--owned-pid', str(owned['pid'])]
         completed = subprocess.run(argv,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=remaining,
                                    creationflags=subprocess.CREATE_NO_WINDOW)

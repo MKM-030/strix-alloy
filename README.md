@@ -1,5 +1,10 @@
 # strix-alloy
 
+> Integration-branch status, 29 September 2026: the published native release
+> below remains v0.1.1. Optional GUFO and the Halogen 0.14.2 WSL2 candidate are
+> under release qualification, not a released four-backend package. See
+> [backends, repository layout and current limitations](docs/user/backends.md).
+
 Windows-native Qwen inference on AMD Strix Halo, built on [pwilkin's `llama.cpp` fork](https://github.com/pwilkin/llama.cpp/tree/strix-halo).
 
 ## What this is
@@ -26,7 +31,7 @@ strix-alloy documents and distributes the tested llama.cpp configuration and Win
 | --- | --- | --- | --- |
 | Qwen3.8-Flash-Next PROJFIX GGUF shards (9 files, ~100 GB) | Yes | [ilintar/qwen3.8-flash-next-gguf-strix-halo](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo) - `Qwen3.8-Flash-Next-IQ4_NL-PROJFIX-00001-of-00009.gguf` … `-00009-of-00009.gguf` | Start shard 1 with the compatible server |
 | Matching shared MTP sidecar (2.6 GiB) | Optional | Same repo: [`mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf`](https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo/resolve/main/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf) | Enables the tested MTP flags. The gain is **workload-dependent** - it is largest on short-context instructed decoding and shrinks as context grows; the measured figures are in [Current numbers](#current-numbers) below |
-| Windows llama.cpp runtime (HIP/ROCm) | Only if your existing runtime lacks the model or shared-MTP support | The [v0.1.1 release](../../releases/tag/v0.1.1) archive (v0.1.0 is superseded), or build from source with [`setup/`](setup/) | The same normal `llama-server` workflow |
+| Windows llama.cpp runtime (HIP/ROCm) | Only if your existing runtime lacks the model or shared-MTP support | The [v0.1.1 release](https://github.com/MKM-030/strix-alloy/releases/tag/v0.1.1) archive (v0.1.0 is superseded), or build from source with [`setup/`](setup/) | The same normal `llama-server` workflow |
 
 Weights stay on your disk and are never bundled or auto-downloaded; the upstream repo is Apache-2.0 and the files are unchanged from the publisher (verified by size and SHA-256, see [`config/model-manifest.example.json`](config/model-manifest.example.json)). No separate tokenizer or PLE file is needed.
 

@@ -1,5 +1,19 @@
 # Native Windows GUFO: measured progress
 
+Latest: [complete-answer qualification](gufo-complete-small-parallel-20260927.md)
+produced complete, inspected code/proof answers at **51.79 / 51.62 tok/s**.
+Update, 28 September: [two small simultaneous sessions](gufo-parallel-20260928.md)
+completed with real native width-2 batching: **32.60 / 39.08 tok/s decode** and
+**57.84 whole-group output tok/s**, versus 49.50 sequentially for the same two
+answers (+16.84%, one pair). Minimum Windows free RAM was 42.726 GiB; sampled
+GPU committed peak 67.895 GiB. Answers matched C1 and cleanup was confirmed.
+This is not a 2x260k test or fixed-window aggregate decode measurement.
+
+The [completed Halogen-prompt MTP run](gufo-halogen-mtp-20260927.md)
+measured **41.93 tok/s** over 30 responses, with protocol and quality caveats.
+The [later AR PP repetition](gufo-pp-20260927.md) measured **877.40 / 928.00
+HTTP tok/s** at PP2048/8192. The tables below preserve the earlier measurements.
+
 27 September 2026, Qwen3.8 Flash Next. MTP draft cap 3 improved sustained decode over cap 1 by
 **6.4% greedy / 10.1% sampled** in our matched local test. This is experimental
 native Windows inference, not a finished installer or general-purpose service.
@@ -93,7 +107,7 @@ The community columns are author-reported, not locally reproduced results.
 | Filler PP2048, HTTP for our runs | 820.95 +/- 32.72 | 849.01 +/- 11.54 | No matched figure | 994 |
 | Filler PP8192, HTTP for our runs | 783.39 +/- 85.23 | 901.41 +/- 19.51 | No matched figure | 1026 |
 | Filler PP32768 | Not measured in this suite | Not yet measured | No matched figure | 1015 |
-| Halogen ten-prompt decode, MTP mean | 41.20 | Not yet measured | 43.0 | 47.6 |
+| Halogen ten-prompt decode, MTP mean | 41.20 | 41.93 (later thinking-off adaptation; see linked report) | 43.0 | 47.6 |
 | Our sustained runbook, AR greedy | Different corpus | 27.89 +/- 0.02 | Not reported | Not reported |
 | Our sustained runbook, MTP cap 3 greedy | Different corpus | 35.99 +/- 0.46 | Not reported | Not reported |
 | Our sustained runbook, MTP cap 3 sampled | Different corpus | 37.71 +/- 0.88 | Not reported | Not reported |
@@ -105,8 +119,8 @@ and had no public repository in the checked post. Neither contributor supplies
 the complete raw repetitions and timing boundaries needed to establish a
 controlled cross-engine comparison here. Our GUFO PP cells are AR at 16k
 capacity; its runbook decode cells are at 4k capacity. They must not be combined
-into an implied single configuration or substituted for its missing Halogen
-ten-prompt result. See the local timing, quantization and configuration caveats
+into an implied single configuration or substituted for the separately measured
+Halogen ten-prompt adaptation. See the local timing, quantization and configuration caveats
 above; these numbers do not establish Windows/Linux parity or a causal gain.
 
 The [Wordweaver discussion](https://www.reddit.com/r/StrixHalo/comments/1wqsv03/yet_another_windows_strix_halo_q38fn_attempt/)

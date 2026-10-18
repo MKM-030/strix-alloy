@@ -296,6 +296,13 @@ class _Guardian:
     def _immutable_terminal(self):
         return isinstance(self.store, service_store.InstalledStore)
 
+    def _collect_initial_baseline(self):
+        return probe.collect_baseline(self.collect,
+            self.run_dir/'telemetry.jsonl', query_factory=self._query)
+
+    def _baseline_trend_reasons(self, frames):
+        return ['rising_residual'] if _rising_residual(frames[-5:]) else []
+
     def _prelaunch(self):
         self.manifest = self.store.verify_static()
         if self.manifest.get('profile') != self.profile_id:
@@ -308,8 +315,7 @@ class _Guardian:
         self.run_dir.mkdir()
         self._phase('baseline')
         try:
-            self.current, last = probe.collect_baseline(self.collect,
-                self.run_dir/'telemetry.jsonl', query_factory=self._query)
+            self.current, last = self._collect_initial_baseline()
         except OSError as error:
             if not isinstance(error, TimeoutError): self.evidence_ok = False
             raise
@@ -324,7 +330,7 @@ class _Guardian:
         reasons = list(dict.fromkeys(reason for frame in frames
             for reason in self.policy.frame_numeric_reasons(self.profile, self.original, frame,
                 now=frame.query_end, now_utc=frame.validated_utc)))
-        if _rising_residual(frames[-5:]): reasons.append('rising_residual')
+        reasons.extend(self._baseline_trend_reasons(frames))
         if reasons: raise ValueError('original_baseline:'+','.join(reasons))
         self._write('baseline.json', dict(original=asdict(self.original), current=asdict(self.current),
             effective=asdict(self.runtime_baseline), current_kind='observed_current_baseline',

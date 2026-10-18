@@ -57,7 +57,10 @@ class TimedSocket:
 def timed_body_parts(receives):
     clock = {"now": 0.0}
     with patch.object(smoke_http.time, "monotonic", side_effect=lambda: clock["now"]):
-        reader = smoke_http._Reader(TimedSocket(receives, clock), 10.0, threading.Event())
+        # _Reader binds its default clock at import time. Pass the simulated
+        # receive clock explicitly so arrival timestamps share one timeline.
+        reader = smoke_http._Reader(TimedSocket(receives, clock), 10.0,
+                                    threading.Event(), clock=lambda: clock["now"])
         head = reader.until(b"\r\n\r\n", 16_384)
         headers = {name.lower(): value.strip() for name, value in
                    (line.split(":", 1) for line in head.decode("ascii").split("\r\n")[1:-2])}
