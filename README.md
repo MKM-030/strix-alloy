@@ -8,6 +8,8 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
+| **Halogen WSL2 0.18.8** | Current voice-capable 32K serving profile; historical performance remains separated by workload | [Install and run](backends/halogen-wsl2-0.18.8/README.md) |
+| **Hipfire native Windows** | Source port with completed 16K MTP cohort; 1,240.2 prefill / 26.53 decode tok/s, 63.64% acceptance | [Build, run and measurement limits](backends/hipfire-windows/README.md) |
 | **Halogen WSL2 0.16.2** | Pinned v2 upgrade and sampled filled-context comparison measured with an 18 GiB reserve | [Install and run](backends/halogen-wsl2-0.16.2/README.md) |
 | **Halogen WSL2 0.15.1** | w4b + overlay and v2 tested at 262144 capacity; authenticated continuous serving | [Install and run](backends/halogen-wsl2-0.15.1/README.md) |
 | **Managed Windows endpoint** | Owns one selected engine and serves one stable streaming API on port 8840 | [server/Start.ps1](server/README.md) |
@@ -28,6 +30,9 @@ backend token is reused. Stop and confirm cleanup before changing engine/checkpo
 Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
+
+[Native Windows Hipfire, 18 October 2026](docs/benchmarks/hipfire-native-windows-20261018.md)
+records the full model cohort, dedicated-memory repair, native phase conventions and retained historical best values.
 
 [Halogen 0.16.2, GUFO and PROJFIX sampled comparison](docs/benchmarks/strix-alloy-article-comparison-20261003.md)
 includes filled-context timing, MTP acceptance, coding results and the retained PROJFIX reserve stop.

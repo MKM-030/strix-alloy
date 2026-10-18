@@ -1,0 +1,62 @@
+Native Windows Hipfire source port, 2026-10-18
+
+Upstream: https://github.com/warpfront/hipfire
+Author/provenance: Hipfire, primarily Kaden Schutt; bundled NOTICE/licenses retained.
+Base: ddee82c7464946c86f946d89af1b5634f212d466 plus retained actual MTP drafted
+counter instrumentation (native-mtp-drafted-counter.patch SHA256
+ a5e36c349ccdbc8d1d5eefe219d74f80a1361d7e4a04c0762f807de4d73faa30).
+The retained snapshot is not pristine upstream and remains immutable:
+E:/strix-alloy/hipfire-mq2-ddee82/src.
+Candidate: E:/strix-alloy/hipfire-native-windows-20261018/src.
+Consolidated Strix main: 1fb4b1541b474b238e47001b2cbd6372eb0eb197.
+
+The eleven-file delta adds native buffered rank-table reads, worker-free loader
+state, exact Windows x64 HIP R0600 identity/architecture ABI, Windows architecture
+error propagation, host physical/commit and dedicated GPU budgeting, existing
+focused CPU fixtures, capability docs, and root's Linux-only loaded-code resolver
+repair. No model/kernel math, quantization, payload or driver change. Existing
+SPDX/copyright headers are retained; bundled licenses/NOTICE are copied unchanged.
+The source copy excludes Git metadata, target/dist and caches.
+
+Dedicated budgeting requires exact nonzero HIP R0600 LUID matching exactly one
+AMD DXGI adapter, node0, plus native PDH GPU Adapter Memory exact-LUID phys_0
+Dedicated Usage with successful API calls, valid CStatus and nonnegative LARGE
+value. It caps GPU free by HIP free/total, DedicatedVideoMemory-globalUsage and
+LOCAL.Budget-LOCAL.CurrentUsage. The global counter already includes process
+usage; it is not subtracted twice. SharedSystemMemory/NON_LOCAL never add credit.
+PDH query handles close on every path. Missing identity/provider proof reports a
+source diagnostic and falls back to the conservative host allowance.
+
+Host allowance is min(availablePhysical.saturating_sub(18GiB),
+availableCommit.saturating_sub(18GiB)),
+using a validated same-process GlobalMemoryStatusEx snapshot. Zero allowance
+admits zero GPU capacity even with dedicated proof. These snapshots are volatile;
+root's continuous18GiB physical reserve guard and >=22GiB model-request guard stay
+required. Existing model/KV/scratch reserves and allocation errors still apply.
+
+Node mask1 identifies node0 normally. Root's typed HIP7.2/gfx1151 property query
+reported mask0. The zero-mask exception is restricted to gfx1151, an actual
+Integrated attribute and exactly one visible HIP device; exact AMD LUID+DXGI
+node0+valid PDHphys0 remain mandatory. Root's real128MiB HIP allocation/memset/sync
+charged that exact adapter's DXGI LOCAL node0 and global PDHphys0, qualifying this
+narrow tuple. This does not establish other zero-mask/multi-node devices.
+
+Root qualified exact R0600 ABI/architecture, typed HIP/DXGI identity and native PDH
+accounting (results/dedicated-budget/pdh-result.jsonl). The final PDH source passed
+a native release build, then one excluded warmup and three natural16K MTP2
+requests. Source pins remained identical before/after the final build. Native
+pipeline means were1240.2 prefill/26.53 decode tok/s, acceptance210/330=63.64%.
+All three measured outputs were byte-identical; this is fixture coherence and
+repeatability, not independent full-model numeric equivalence or a speed record.
+The PS5 launcher separately served an authenticated HTTP response; see the root
+benchmark report for its K7-default smoke versus final K2 configuration scope.
+Only the existing windows0.62.2 Performance feature was added; Cargo.lock has
+identical before/after bytes and no crate/version change. Existing host fixture
+expectations retain the18GiB physical and commit reserve.
+
+Legacy KV, single GPU, HIP dispatch and worker/prewarm/fill budgets0 remain.
+Redline/ROCr, VMM KV, NPU and Unix direct/residency workers remain outside the port.
+A passing component query or build never establishes model correctness/performance.
+Re-run export-source.py after source repair; its explicit eleven-file allowlist
+and full byte manifest bind the exact source patch and build pin. Export proves
+byte inventory only.

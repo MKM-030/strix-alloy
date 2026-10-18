@@ -1,0 +1,1167 @@
+diff --git a/crates/hip-bridge/src/ffi.rs b/crates/hip-bridge/src/ffi.rs
+--- a/crates/hip-bridge/src/ffi.rs
++++ b/crates/hip-bridge/src/ffi.rs
+@@ -12,6 +12,90 @@
+ use std::ptr;
+ use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
+ use std::sync::Arc;
++
++/// Exact HIP 6.0+ property output ABI on Windows x64. Derived from the
++/// installed HIP 7.2 hip_runtime_api.h (SHA256 2467fe5d47134e5cdf5287fcdcbdba805526eb7ca52f120311fbe6be466f1046).
++/// Only identity fields are consumed; opaque bytes avoid interpreting C
++/// bitfields or pointer fields as Rust values. Never use the legacy export.
++#[cfg(any(windows, test))]
++#[repr(C, align(8))]
++struct WindowsDevicePropertiesR0600 {
++    prefix: [u8; 272],
++    luid: [u8; 8],
++    luid_device_node_mask: [u8; 4],
++    middle: [u8; 876],
++    gcn_arch_name: [u8; 256],
++    suffix: [u8; 56],
++}
++
++#[cfg(any(windows, test))]
++const _: () = {
++    assert!(std::mem::size_of::<WindowsDevicePropertiesR0600>() == 1472);
++    assert!(std::mem::align_of::<WindowsDevicePropertiesR0600>() == 8);
++    assert!(std::mem::offset_of!(WindowsDevicePropertiesR0600, luid) == 272);
++    assert!(std::mem::offset_of!(WindowsDevicePropertiesR0600, luid_device_node_mask) == 280);
++    assert!(std::mem::offset_of!(WindowsDevicePropertiesR0600, gcn_arch_name) == 1160);
++};
++
++#[cfg(all(windows, not(target_arch = "x86_64")))]
++compile_error!("the native HIP property ABI is supported only on Windows x86_64");
++
++#[cfg(windows)]
++type DevicePropertiesFn =
++    unsafe extern "C" fn(*mut WindowsDevicePropertiesR0600, c_int) -> u32;
++#[cfg(not(windows))]
++type DevicePropertiesFn = unsafe extern "C" fn(*mut u8, c_int) -> u32;
++
++#[cfg(any(windows, test))]
++fn parse_windows_arch(field: &[u8; 256]) -> HipResult<String> {
++    let invalid = || HipError::new(0, "hipGetDevicePropertiesR0600: invalid bounded gcnArchName");
++    let end = field.iter().position(|&byte| byte == 0).ok_or_else(invalid)?;
++    let name = std::str::from_utf8(&field[..end]).map_err(|_| invalid())?;
++    if !name.is_ascii() || name.bytes().any(|byte| byte.is_ascii_whitespace()) {
++        return Err(invalid());
++    }
++    let arch = name.split(':').next().ok_or_else(invalid)?;
++    let digits = arch.strip_prefix("gfx").ok_or_else(invalid)?;
++    if digits.len() < 3
++        || !digits.bytes().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
++    {
++        return Err(invalid());
++    }
++    Ok(arch.to_string())
++}
++
++#[cfg(test)]
++mod windows_property_tests {
++    use super::*;
++
++    fn field(value: &[u8]) -> [u8; 256] {
++        let mut bytes = [0; 256];
++        bytes[..value.len()].copy_from_slice(value);
++        bytes
++    }
++
++    #[test]
++    fn r0600_storage_matches_the_windows_x64_header_layout() {
++        assert_eq!(std::mem::size_of::<WindowsDevicePropertiesR0600>(), 1472);
++        assert_eq!(std::mem::align_of::<WindowsDevicePropertiesR0600>(), 8);
++        assert_eq!(std::mem::offset_of!(WindowsDevicePropertiesR0600, gcn_arch_name), 1160);
++    }
++
++    #[test]
++    fn reads_only_the_bounded_arch_field_and_preserves_exact_isa() {
++        for value in ["gfx1151", "gfx1151:sramecc-:xnack+", "gfx90a", "gfx906", "gfx1150"] {
++            assert_eq!(parse_windows_arch(&field(value.as_bytes())).unwrap(), value.split(':').next().unwrap());
++        }
++    }
++
++    #[test]
++    fn refuses_absent_terminator_and_malformed_arch_names() {
++        assert!(parse_windows_arch(&[b'x'; 256]).is_err());
++        for value in [b"".as_slice(), b"gfx", b"gfx1151 junk", b"name gfx1151", b"gfx1151junk", b"GFX1151", b"gfx\xff51"] {
++            assert!(parse_windows_arch(&field(value)).is_err(), "{value:?}");
++        }
++    }
++}
+ 
+ /// Per-thread accumulators for time spent inside HIP FFI calls. Used by
+ /// Phase 3a host-vs-GPU diagnostics to attribute the forward pass wall
+@@ -595,7 +679,7 @@
+     fn_stream_wait_value32:
+         Option<unsafe extern "C" fn(HipStream, *mut c_void, u32, c_uint, u32) -> u32>,
+     fn_device_synchronize: unsafe extern "C" fn() -> u32,
+-    fn_get_device_properties: unsafe extern "C" fn(*mut u8, c_int) -> u32,
++    fn_get_device_properties: DevicePropertiesFn,
+     fn_get_device_attribute: unsafe extern "C" fn(*mut c_int, c_int, c_int) -> u32,
+     fn_mem_get_info: unsafe extern "C" fn(*mut usize, *mut usize) -> u32,
+     /// `gridDim.y`/`gridDim.z` ceiling (`u32::MAX` = unguarded, the default).
+@@ -1328,8 +1412,8 @@
+                 // SAFETY: resolve one HIP symbol from the live `Library`; pointer stays valid while `_lib` owns the mapping.
+                 fn_get_device_properties: unsafe { load_fn!(
+                     lib,
+-                    "hipGetDeviceProperties",
+-                    unsafe extern "C" fn(*mut u8, c_int) -> u32
++                    if cfg!(windows) { "hipGetDevicePropertiesR0600" } else { "hipGetDeviceProperties" },
++                    DevicePropertiesFn
+                 ) },
+                 // SAFETY: resolve one HIP symbol from the live `Library`; pointer stays valid while `_lib` owns the mapping.
+                 fn_get_device_attribute: unsafe { load_fn!(
+@@ -3146,8 +3230,40 @@
+         self.check(code, "hipDeviceSynchronize")
+     }
+ 
+-    /// Get GPU architecture string (e.g., "gfx1010", "gfx1030", "gfx1100").
+-    /// Allocates a large buffer for hipDeviceProp_t, reads gcnArchName from offset 0.
++    #[cfg(windows)]
++    fn windows_device_properties(&self, device_id: i32) -> HipResult<WindowsDevicePropertiesR0600> {
++        let mut properties = WindowsDevicePropertiesR0600 {
++            prefix: [0; 272],
++            luid: [0; 8],
++            luid_device_node_mask: [0; 4],
++            middle: [0; 876],
++            gcn_arch_name: [0; 256],
++            suffix: [0; 56],
++        };
++        // SAFETY: this pointer addresses the exact 1472-byte, 8-byte-aligned
++        // Windows x64 R0600 output envelope. The explicitly versioned symbol
++        // remains live through self._lib; all output bytes are initialized.
++        let code = unsafe { (self.fn_get_device_properties)(&mut properties, device_id as c_int) };
++        self.check(code, &format!("hipGetDevicePropertiesR0600(device {device_id})"))?;
++        Ok(properties)
++    }
++
++    /// Exact Windows adapter LUID bytes and physical-node bit mask from the
++    /// same explicit R0600 ABI used for architecture discovery.
++    #[cfg(windows)]
++    pub fn windows_device_luid(&self, device_id: i32) -> HipResult<([u8; 8], u32)> {
++        let properties = self.windows_device_properties(device_id)?;
++        Ok((properties.luid, u32::from_le_bytes(properties.luid_device_node_mask)))
++    }
++
++    /// Get the bounded architecture string using the Windows R0600 ABI.
++    #[cfg(windows)]
++    pub fn get_arch(&self, device_id: i32) -> HipResult<String> {
++        parse_windows_arch(&self.windows_device_properties(device_id)?.gcn_arch_name)
++    }
++
++    /// Legacy non-Windows property ABI, retained by this native Windows port.
++    #[cfg(not(windows))]
+     pub fn get_arch(&self, device_id: i32) -> HipResult<String> {
+         let mut buf = vec![0u8; 1024]; // hipDeviceProp_t varies by ROCm version, 1024 is safe
+         // SAFETY: HIP runtime symbol is live from HipRuntime::load; out-params are
+diff --git a/crates/hipfire-config/Cargo.toml b/crates/hipfire-config/Cargo.toml
+--- a/crates/hipfire-config/Cargo.toml
++++ b/crates/hipfire-config/Cargo.toml
+@@ -16,4 +16,5 @@
+     "Win32_Foundation",
+     "Win32_Graphics_Dxgi",
+     "Win32_Graphics_Dxgi_Common",
++    "Win32_System_Performance",
+ ] }
+diff --git a/crates/hipfire-config/src/host_memory.rs b/crates/hipfire-config/src/host_memory.rs
+--- a/crates/hipfire-config/src/host_memory.rs
++++ b/crates/hipfire-config/src/host_memory.rs
+@@ -2,7 +2,7 @@
+ // Copyright (c) 2026 Kaden Schutt
+ // hipfire — see LICENSE and NOTICE in the project root.
+ 
+-//! Host memory snapshots and per-adapter DXGI video-memory budgets.
++//! Host memory snapshots, DXGI process budgets and PDH global GPU usage.
+ //!
+ //! Everything here is a **report of what the calling process observes**. The
+ //! values are never an admission decision on their own: engine memory
+@@ -12,6 +12,8 @@
+ //! (`GlobalMemoryStatusEx`) and the DXGI budgets (`QueryVideoMemoryInfo`) are
+ //! scoped to the calling process, so a value read from another process is not
+ //! a bound on this one.
++//! The PDH GPU Adapter Memory counter instead reports adapter-global dedicated
++//! usage. It must be joined to an exact device LUID, never to a process sum.
+ //!
+ //! The parsers and mappings are pure functions so they are tested on every
+ //! platform; only the thin OS calls are `cfg`-gated.
+@@ -460,6 +462,110 @@
+     Ok(budgets)
+ }
+ 
++/// Adapter-global dedicated usage, not the calling process's DXGI usage.
++#[cfg(windows)]
++#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
++pub struct DedicatedUsage {
++    pub luid: [u8; 8],
++    pub node_index: u32,
++    pub bytes: u64,
++    pub counter_path: String,
++    pub counter_type: u32,
++    pub counter_status: u32,
++    pub source: &'static str,
++}
++
++/// Read one exact node-0 adapter's live PDH Dedicated Usage gauge. Missing
++/// instances and invalid samples are errors, never zero usage. The query is
++/// local to this call; no spawned process, wildcard or per-process sum is used.
++#[cfg(windows)]
++pub fn dedicated_usage(luid: [u8; 8], node_index: u32) -> Result<DedicatedUsage, String> {
++    use windows::core::PCWSTR;
++    use windows::Win32::System::Performance::{
++        PdhAddEnglishCounterW, PdhCloseQuery, PdhCollectQueryData,
++        PdhGetFormattedCounterValue, PdhOpenQueryW, PDH_CSTATUS_NEW_DATA,
++        PDH_CSTATUS_VALID_DATA, PDH_FMT, PDH_FMT_COUNTERVALUE, PDH_FMT_LARGE,
++        PDH_HCOUNTER, PDH_HQUERY,
++    };
++
++    if luid == [0; 8] || node_index != DXGI_QUERIED_NODE_INDEX {
++        return Err("PDH dedicated usage requires a nonzero LUID and node 0".into());
++    }
++    let low = u32::from_le_bytes(luid[..4].try_into().expect("four LUID bytes"));
++    let high = u32::from_le_bytes(luid[4..].try_into().expect("four LUID bytes"));
++    let counter_path = format!(
++        "\\GPU Adapter Memory(luid_0x{high:08x}_0x{low:08x}_phys_{node_index})\\Dedicated Usage"
++    );
++    let check = |operation: &str, status: u32| -> Result<(), String> {
++        if status == 0 {
++            Ok(())
++        } else {
++            Err(format!("{operation}({counter_path}) failed: PDH status 0x{status:08x}"))
++        }
++    };
++    struct Query(PDH_HQUERY);
++    impl Drop for Query {
++        fn drop(&mut self) {
++            if !self.0.is_invalid() {
++                // SAFETY: this guard owns the successfully opened query.
++                // Closing also removes its counters on every error path.
++                unsafe { PdhCloseQuery(self.0) };
++            }
++        }
++    }
++    let mut handle = PDH_HQUERY::default();
++    // SAFETY: null source selects live local counters; handle is writable.
++    check("PdhOpenQueryW", unsafe { PdhOpenQueryW(PCWSTR::null(), 0, &mut handle) })?;
++    if handle.is_invalid() {
++        return Err(format!("PdhOpenQueryW({counter_path}) returned a null query"));
++    }
++    let mut query = Query(handle);
++    let wide: Vec<u16> = counter_path.encode_utf16().chain(std::iter::once(0)).collect();
++    let mut counter = PDH_HCOUNTER::default();
++    // SAFETY: query is owned here, path is NUL-terminated and counter writable.
++    check("PdhAddEnglishCounterW", unsafe {
++        PdhAddEnglishCounterW(query.0, PCWSTR(wide.as_ptr()), 0, &mut counter)
++    })?;
++    // SAFETY: the query and its exact counter remain live.
++    check("PdhCollectQueryData", unsafe { PdhCollectQueryData(query.0) })?;
++    let mut value = PDH_FMT_COUNTERVALUE::default();
++    let mut counter_type = 0;
++    // PDH_FMT_NOSCALE (pdh.h) is omitted from windows 0.62.2's bindings.
++    // It preserves the Dedicated Usage gauge's native byte unit.
++    const FMT_NOSCALE: u32 = 0x0000_1000;
++    // SAFETY: FMT_LARGE selects the largeValue union member; all output
++    // pointers are live. AddCounter success alone does not validate an instance.
++    let status = unsafe {
++        PdhGetFormattedCounterValue(
++            counter, PDH_FMT(PDH_FMT_LARGE.0 | FMT_NOSCALE),
++            Some(&mut counter_type), &mut value,
++        )
++    };
++    if status != 0 || !matches!(value.CStatus, PDH_CSTATUS_VALID_DATA | PDH_CSTATUS_NEW_DATA) {
++        return Err(format!(
++            "PdhGetFormattedCounterValue({counter_path}) failed: PDH status 0x{status:08x}, CStatus 0x{:08x}, type 0x{counter_type:08x}",
++            value.CStatus,
++        ));
++    }
++    // SAFETY: the successful call used FMT_LARGE and returned valid data.
++    let bytes = unsafe { value.Anonymous.largeValue };
++    if bytes < 0 {
++        return Err(format!("PDH Dedicated Usage({counter_path}) is negative: {bytes}"));
++    }
++    // SAFETY: this guard still owns the query. Check the normal close status;
++    // Drop retains cleanup responsibility if closing reports an error.
++    let close_status = unsafe { PdhCloseQuery(query.0) };
++    if close_status == 0 {
++        query.0 = PDH_HQUERY::default();
++    }
++    check("PdhCloseQuery", close_status)?;
++    Ok(DedicatedUsage {
++        luid, node_index, bytes: bytes as u64, counter_path, counter_type,
++        counter_status: value.CStatus,
++        source: "PDH GPU Adapter Memory Dedicated Usage (adapter global)",
++    })
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+diff --git a/crates/hipfire-loader/src/carriers.rs b/crates/hipfire-loader/src/carriers.rs
+--- a/crates/hipfire-loader/src/carriers.rs
++++ b/crates/hipfire-loader/src/carriers.rs
+@@ -2724,7 +2724,10 @@
+         Some((worker, fill)) => (Some(worker), fill),
+         None => (None, 0),
+     };
+-    #[cfg(not(unix))]
++    #[cfg(windows)]
++    let (ple_table_worker, ple_load_fill) =
++        (None::<hipfire_arch_qwen4::bundle::PleHotWorker>, 0u64);
++    #[cfg(not(any(unix, windows)))]
+     let (ple_table_worker, ple_load_fill) = {
+         if rank_table.is_some() {
+             return Err(
+diff --git a/crates/hipfire-runtime/src/ple_hot_store.rs b/crates/hipfire-runtime/src/ple_hot_store.rs
+--- a/crates/hipfire-runtime/src/ple_hot_store.rs
++++ b/crates/hipfire-runtime/src/ple_hot_store.rs
+@@ -78,10 +78,8 @@
+ //! payload padded_rows bytes, one bucket per global PLE row (0 = hottest)
+ //! ```
+ 
+-// Outside Unix the store cannot be constructed: its pack reads, `posix_fadvise`
+-// advice, `mincore` residency view and `O_DIRECT` model reads have no
+-// implementation here, so the constructors and the worker chain are gated and
+-// what only they use is dead code.
++// Windows rank tables use buffered positional reads without cache workers.
++// Separate hot packs, residency, direct reads and workers remain Unix-only.
+ #![cfg_attr(not(unix), allow(dead_code, unused_imports))]
+ 
+ use std::alloc::{alloc_zeroed, dealloc, Layout};
+@@ -481,14 +479,37 @@
+     rdna_compute::uma_memory::mem_available_bytes()
+ }
+ 
+-#[cfg(unix)]
++#[cfg(any(unix, windows))]
+ /// Read exactly `dst.len()` bytes at `offset`, retrying interrupted and short
+ /// reads; a read that hits end of file is a `ShortRead`.
+ fn read_exact_at(file: &File, offset: u64, dst: &mut [u8]) -> Result<(), SourceError> {
++    read_exact_at_with(offset, dst, |tail, at| {
++        #[cfg(unix)]
++        { file.read_at(tail, at) }
++        #[cfg(windows)]
++        {
++            use std::os::windows::fs::FileExt;
++            // The private pack handle has no sequential cursor consumers.
++            file.seek_read(tail, at)
++        }
++    })
++}
++
++#[cfg(any(unix, windows, test))]
++fn read_exact_at_with(
++    offset: u64,
++    dst: &mut [u8],
++    mut read: impl FnMut(&mut [u8], u64) -> io::Result<usize>,
++) -> Result<(), SourceError> {
++    let length = u64::try_from(dst.len()).map_err(|_| SourceError::Overflow {
++        offset,
++        length: u64::MAX,
++    })?;
++    offset.checked_add(length).ok_or(SourceError::Overflow { offset, length })?;
+     let mut done = 0;
+     while done < dst.len() {
+-        let at = offset + done as u64;
+-        match file.read_at(&mut dst[done..], at) {
++        let at = offset.checked_add(done as u64).ok_or(SourceError::Overflow { offset, length })?;
++        match read(&mut dst[done..], at) {
+             Ok(0) => {
+                 return Err(SourceError::ShortRead {
+                     offset,
+@@ -504,8 +525,8 @@
+     Ok(())
+ }
+ 
+-/// Unsupported outside Unix: errs without reading.
+-#[cfg(not(unix))]
++/// Unsupported without a positional file-read backend.
++#[cfg(not(any(unix, windows)))]
+ fn read_exact_at(_file: &File, offset: u64, _dst: &mut [u8]) -> Result<(), SourceError> {
+     Err(SourceError::Io {
+         offset,
+@@ -985,7 +1006,7 @@
+         ))
+     }
+ 
+-    #[cfg(unix)]
++    #[cfg(any(unix, windows))]
+     /// Open a rank-ordered PLE table (a `ple-table` of `order rank`, the
+     /// `<model>.ple-q4` derived with a rank): every row of the PLE table in
+     /// tier order, with the rank embedded.  Reads the header and the rank
+@@ -1044,6 +1065,7 @@
+             tier_rows,
+         } = index;
+         let tier_base = tier_bases(header.data_offset, &tier_rows, encoded_row_bytes as u64);
++        #[cfg(unix)]
+         fadvise(&pack, libc::POSIX_FADV_RANDOM);
+         let index_bytes =
+             buckets.len() as u64 + prefix.iter().map(|c| c.len() as u64 * 4).sum::<u64>();
+@@ -1088,8 +1110,8 @@
+         }))
+     }
+ 
+-    /// Unsupported outside Unix: errs before opening or reading anything.
+-    #[cfg(not(unix))]
++    /// Unsupported without a positional file-read backend.
++    #[cfg(not(any(unix, windows)))]
+     pub fn open_table(path: &Path) -> Result<std::sync::Arc<HotRowStore>, String> {
+         Err(format!(
+             "ple table {}: {}",
+@@ -1938,6 +1960,10 @@
+     }
+ }
+ 
++#[cfg(all(test, any(unix, windows)))]
++#[path = "ple_table_portable_tests.rs"]
++mod portable_table_tests;
++
+ #[cfg(all(test, unix))]
+ mod tests {
+     use super::test_support::*;
+diff --git a/crates/hipfire-runtime/src/ple_table_portable_tests.rs b/crates/hipfire-runtime/src/ple_table_portable_tests.rs
+--- /dev/null
++++ b/crates/hipfire-runtime/src/ple_table_portable_tests.rs
+@@ -0,0 +1,104 @@
++// Copyright (c) 2026 Kaden Schutt
++// hipfire — see LICENSE and NOTICE in the project root.
++
++use super::*;
++use crate::ple_hot_pack::table_support::write_test_table;
++use crate::ple_hot_store::test_support::{synthetic_buckets, synthetic_shards};
++
++#[test]
++fn exact_loop_retries_interruptions_and_short_reads_at_advancing_offsets() {
++    let mut output = [0; 5];
++    let mut calls = Vec::new();
++    let mut interrupted = false;
++    read_exact_at_with(1u64 << 33, &mut output, |dst, at| {
++        calls.push(at);
++        if !interrupted {
++            interrupted = true;
++            return Err(io::ErrorKind::Interrupted.into());
++        }
++        let n = dst.len().min(2);
++        for (i, value) in dst[..n].iter_mut().enumerate() {
++            *value = (at + i as u64) as u8;
++        }
++        Ok(n)
++    }).unwrap();
++    assert_eq!(calls, [1u64 << 33, 1u64 << 33, (1u64 << 33) + 2, (1u64 << 33) + 4]);
++    assert_eq!(output, [0, 1, 2, 3, 4]);
++}
++
++#[test]
++fn exact_loop_reports_partial_eof_io_offset_and_overflow() {
++    let mut output = [0; 4];
++    let error = read_exact_at_with(17, &mut output, |dst, at| {
++        if at == 17 { dst[..2].fill(7); Ok(2) } else { Ok(0) }
++    }).unwrap_err();
++    assert!(matches!(error, SourceError::ShortRead { offset: 17, expected: 4, actual: 2 }));
++    let error = read_exact_at_with(17, &mut output, |_, at| {
++        if at == 17 { Ok(2) } else { Err(io::ErrorKind::PermissionDenied.into()) }
++    }).unwrap_err();
++    assert!(matches!(error, SourceError::Io { offset: 19, .. }));
++    let error = read_exact_at_with(u64::MAX - 1, &mut output, |_, _| panic!("overflow must not read")).unwrap_err();
++    assert!(matches!(error, SourceError::Overflow { .. }));
++    read_exact_at_with(u64::MAX, &mut [], |_, _| panic!("empty must not read")).unwrap();
++}
++
++#[test]
++fn rank_table_serves_exact_rows_concurrently_without_workers() {
++    const RPS: usize = 64;
++    let shards = std::sync::Arc::new(synthetic_shards(3, RPS));
++    let buckets = synthetic_buckets(3 * RPS, 17);
++    let dir = tempfile::tempdir().unwrap();
++    let path = dir.path().join("rank.ple-q8");
++    write_test_table(&path, PackOrder::Rank, RowEncoding::Q8F16, 160, RPS, &shards, Some(&buckets), DEFAULT_TIER_BUCKETS);
++    let store = HotRowStore::open_table(&path).unwrap();
++    assert!(store.is_serving());
++    assert_eq!(store.load_filled_bytes(), 0);
++    assert_eq!(store.prewarmed_bytes(), 0);
++    let threads: Vec<_> = (0..8).map(|worker| {
++        let store = store.clone();
++        let shards = shards.clone();
++        std::thread::spawn(move || {
++            for index in 0..192 {
++                let row = (index * 31 + worker * 7) % (3 * RPS);
++                let mut got = [0; ENCODED_ROW_BYTES];
++                store.read_pack(store.pack_offset(row as u64).unwrap(), &mut got).unwrap();
++                let start = (row % RPS) * ENCODED_ROW_BYTES;
++                assert_eq!(got.as_slice(), &shards[row / RPS][start..start + ENCODED_ROW_BYTES]);
++            }
++        })
++    }).collect();
++    for thread in threads { thread.join().unwrap(); }
++    let mut byte = [0];
++    assert!(store.read_pack(0, &mut byte).is_err());
++    assert!(store.read_pack(u64::MAX, &mut byte).is_err());
++}
++
++#[test]
++fn rank_table_rejects_row_order_corrupt_rank_and_truncated_data() {
++    let shards = synthetic_shards(2, 64);
++    let buckets = synthetic_buckets(128, 3);
++    let dir = tempfile::tempdir().unwrap();
++    let path = dir.path().join("table.ple-q8");
++    write_test_table(&path, PackOrder::Row, RowEncoding::Q8F16, 160, 64, &shards, None, DEFAULT_TIER_BUCKETS);
++    assert!(HotRowStore::open_table(&path).is_err());
++
++    let header = write_test_table(&path, PackOrder::Rank, RowEncoding::Q8F16, 160, 64, &shards, Some(&buckets), DEFAULT_TIER_BUCKETS);
++    let store = HotRowStore::open_table(&path).unwrap();
++    let row = (0..128).max_by_key(|&row| store.pack_offset(row).unwrap()).unwrap();
++    let at = store.pack_offset(row).unwrap();
++    let file = std::fs::OpenOptions::new().write(true).open(&path).unwrap();
++    file.set_len(at + ENCODED_ROW_BYTES as u64 - 1).unwrap();
++    let mut bytes = [0; ENCODED_ROW_BYTES];
++    assert!(matches!(store.read_pack(at, &mut bytes), Err(SourceError::ShortRead { .. })));
++    drop(file);
++    drop(store);
++
++    write_test_table(&path, PackOrder::Rank, RowEncoding::Q8F16, 160, 64, &shards, Some(&buckets), DEFAULT_TIER_BUCKETS);
++    let mut file = std::fs::OpenOptions::new().write(true).open(&path).unwrap();
++    use std::io::{Seek, SeekFrom};
++    file.seek(SeekFrom::Start(header.rank_offset)).unwrap();
++    file.write_all(&[buckets[0] ^ 1]).unwrap();
++    drop(file);
++    let error = HotRowStore::open_table(&path).err().expect("corrupt rank must refuse");
++    assert!(error.contains("embedded rank sha256"));
++}
+diff --git a/crates/rdna-compute/src/dispatch.rs b/crates/rdna-compute/src/dispatch.rs
+--- a/crates/rdna-compute/src/dispatch.rs
++++ b/crates/rdna-compute/src/dispatch.rs
+@@ -1743,6 +1743,8 @@
+     /// TTM's page pool estimate); see [`crate::uma_memory::device_free_from`].
+     /// Discrete GPUs and carve-out APUs get `hipMemGetInfo` unchanged. Every
+     /// free-memory sizing site uses this, not `hip.get_vram_info` directly.
++    /// Windows UMA uses exact HIP/DXGI/PDH dedicated accounting when proven,
++    /// otherwise its host physical/commit allowance after an 18 GiB reserve.
+     ///
+     /// Under a `HIPFIRE_EMU` profile the UMA-safe figure is then capped by the
+     /// profile ([`crate::uma_memory::emu_capped_mem_info`]): the same
+@@ -1755,27 +1757,37 @@
+             return Ok(self.emu_cap_mem_info(free, total));
+         }
+         use crate::uma_memory;
+-        let carveout_total = self
+-            .hip
+-            .device_pci_bus_id(self.device_id)
+-            .ok()
+-            .and_then(|bdf| uma_memory::carveout_total_bytes(&bdf));
+-        let memory = uma_memory::DeviceMemory {
+-            device_free: free as u64,
+-            device_total: total as u64,
+-            uma: true,
+-            carveout_total,
+-            host_available: uma_memory::gtt_backed(total as u64, carveout_total)
+-                .then(uma_memory::host_available_bytes)
+-                .flatten(),
+-        };
+-        let free = uma_memory::device_free_from(memory).ok_or_else(|| {
+-            HipError::new(
+-                0,
+-                "unified-memory free bytes: /proc/meminfo has no readable MemAvailable",
+-            )
+-        })?;
+-        Ok(self.emu_cap_mem_info(free.min(usize::MAX as u64) as usize, total))
++        #[cfg(windows)]
++        {
++            let free = uma_memory::windows_device_free_bytes(
++                &self.hip, self.device_id, free as u64, total as u64,
++            )?;
++            return Ok(self.emu_cap_mem_info(free.min(usize::MAX as u64) as usize, total));
++        }
++        #[cfg(not(windows))]
++        {
++            let carveout_total = self
++                .hip
++                .device_pci_bus_id(self.device_id)
++                .ok()
++                .and_then(|bdf| uma_memory::carveout_total_bytes(&bdf));
++            let memory = uma_memory::DeviceMemory {
++                device_free: free as u64,
++                device_total: total as u64,
++                uma: true,
++                carveout_total,
++                host_available: uma_memory::gtt_backed(total as u64, carveout_total)
++                    .then(uma_memory::host_available_bytes)
++                    .flatten(),
++            };
++            let free = uma_memory::device_free_from(memory).ok_or_else(|| {
++                HipError::new(
++                    0,
++                    uma_memory::host_available_error(),
++                )
++            })?;
++            Ok(self.emu_cap_mem_info(free.min(usize::MAX as u64) as usize, total))
++        }
+     }
+ 
+     /// Install a real stream if launches are still going to the null stream.
+@@ -2067,6 +2079,9 @@
+         // compilation. Used to test cross-arch family targets like
+         // `gfx10-1-generic` (covers Navi 10/12/14) without per-arch JIT
+         // cache fragmentation. Empty / unset preserves prior behavior.
++        #[cfg(windows)]
++        let detected_arch = hip.get_arch(id)?;
++        #[cfg(not(windows))]
+         let detected_arch = hip.get_arch(id).unwrap_or_else(|_| "gfx1010".to_string());
+         // Record the DETECTED (not compile-target-overridden) arch for
+         // config-time policy that runs without a Gpu handle in hand — the
+diff --git a/crates/rdna-compute/src/emu.rs b/crates/rdna-compute/src/emu.rs
+--- a/crates/rdna-compute/src/emu.rs
++++ b/crates/rdna-compute/src/emu.rs
+@@ -320,27 +320,34 @@
+             if !uma {
+                 return Ok((free, total));
+             }
+-            let carveout_total = self
+-                .hip
+-                .device_pci_bus_id(device_id)
+-                .ok()
+-                .and_then(|bdf| crate::uma_memory::carveout_total_bytes(&bdf));
+-            let memory = crate::uma_memory::DeviceMemory {
+-                device_free: free as u64,
+-                device_total: total as u64,
+-                uma: true,
+-                carveout_total,
+-                host_available: crate::uma_memory::gtt_backed(total as u64, carveout_total)
+-                    .then(crate::uma_memory::host_available_bytes)
+-                    .flatten(),
+-            };
+-            let free = crate::uma_memory::device_free_from(memory).ok_or_else(|| {
+-                HipError::new(
+-                    0,
+-                    "unified-memory free bytes: /proc/meminfo has no readable MemAvailable",
+-                )
+-            })?;
+-            Ok((free.min(usize::MAX as u64) as usize, total))
++            #[cfg(windows)]
++            {
++                let free = crate::uma_memory::windows_device_free_bytes(
++                    &self.hip, device_id, free as u64, total as u64,
++                )?;
++                return Ok((free.min(usize::MAX as u64) as usize, total));
++            }
++            #[cfg(not(windows))]
++            {
++                let carveout_total = self
++                    .hip
++                    .device_pci_bus_id(device_id)
++                    .ok()
++                    .and_then(|bdf| crate::uma_memory::carveout_total_bytes(&bdf));
++                let memory = crate::uma_memory::DeviceMemory {
++                    device_free: free as u64,
++                    device_total: total as u64,
++                    uma: true,
++                    carveout_total,
++                    host_available: crate::uma_memory::gtt_backed(total as u64, carveout_total)
++                        .then(crate::uma_memory::host_available_bytes)
++                        .flatten(),
++                };
++                let free = crate::uma_memory::device_free_from(memory).ok_or_else(|| {
++                    HipError::new(0, crate::uma_memory::host_available_error())
++                })?;
++                Ok((free.min(usize::MAX as u64) as usize, total))
++            }
+         });
+         let restored = self.hip.set_device(previous);
+         match (queried, restored) {
+diff --git a/crates/rdna-compute/src/loaded_code_check.rs b/crates/rdna-compute/src/loaded_code_check.rs
+--- a/crates/rdna-compute/src/loaded_code_check.rs
++++ b/crates/rdna-compute/src/loaded_code_check.rs
+@@ -912,12 +912,15 @@
+ // Real HSA adapter (libhsa-runtime64 already loaded; RTLD_NOLOAD; no init/shutdown)
+ // ---------------------------------------------------------------------------
+ 
++#[cfg(target_os = "linux")]
+ extern "C" {
+     fn dlopen(filename: *const c_char, flags: c_int) -> *mut c_void;
+     fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+     fn dlclose(handle: *mut c_void) -> c_int;
+ }
++#[cfg(target_os = "linux")]
+ const RTLD_NOW: c_int = 0x2;
++#[cfg(target_os = "linux")]
+ const RTLD_NOLOAD: c_int = 0x4;
+ 
+ const HSA_STATUS_SUCCESS: u32 = 0;
+@@ -1017,6 +1020,12 @@
+ }
+ 
+ impl HsaLoader {
++    #[cfg(not(target_os = "linux"))]
++    fn resolve() -> Result<HsaLoader, String> {
++        Err("ROCr loaded-code diagnostics are unavailable on this platform".into())
++    }
++
++    #[cfg(target_os = "linux")]
+     fn resolve() -> Result<HsaLoader, String> {
+         // SAFETY: dlopen/dlsym on a library that must already be loaded; symbol
+         // types are the documented signatures from the installed headers.
+@@ -1045,6 +1054,7 @@
+ 
+     /// # Safety
+     /// `handle` must be a live handle returned by `dlopen`.
++    #[cfg(target_os = "linux")]
+     unsafe fn resolve_from(handle: *mut c_void) -> Result<HsaLoader, String> {
+         unsafe {
+             let sym = |n: &CStr| -> Result<*mut c_void, String> {
+diff --git a/crates/rdna-compute/src/uma_memory.rs b/crates/rdna-compute/src/uma_memory.rs
+--- a/crates/rdna-compute/src/uma_memory.rs
++++ b/crates/rdna-compute/src/uma_memory.rs
+@@ -16,6 +16,12 @@
+ //! takes `min(hipMemGetInfo free, MemAvailable - CMA + TTM pool estimate)`,
+ //! where CMA is the larger of `CmaFree` and the CMA pageblocks (`CmaTotal`
+ //! or `/proc/zoneinfo` `cma`, which includes KHO scratch).
++//!
++//! On Windows exact HIP/DXGI node-0 identity and valid adapter-global PDH
++//! Dedicated Usage allow a separate dedicated-device budget. It is bounded by
++//! HIP free, dedicated capacity minus global usage and LOCAL process headroom.
++//! Without that proof, UMA uses the host physical/commit allowance after an
++//! 18 GiB physical reserve. Neither snapshot guarantees an allocation succeeds.
+ 
+ use std::path::Path;
+ 
+@@ -125,6 +131,119 @@
+     Some(meminfo_field(meminfo, "MemAvailable")?.saturating_sub(cma))
+ }
+ 
++/// Physical and commit headroom retained for other host allocations on Windows.
++pub const WINDOWS_HOST_RESERVE_BYTES: u64 = 18 << 30;
++
++/// Conservative Windows host allocation budget from a calling-process
++/// `GlobalMemoryStatusEx` snapshot. Missing or inconsistent physical/commit
++/// values refuse admission; zero availability is a valid exhausted budget.
++/// Pagefile capacity never adds physical capacity, and Linux CMA/TTM estimates
++/// do not apply. The caller must obtain the snapshot in the allocating process.
++/// Physical or commit availability at/below 18 GiB has zero allowance.
++pub fn windows_host_allocation_budget(memory: hipfire_config::HostMemory) -> Option<u64> {
++    if memory.source != hipfire_config::host_memory::SOURCE_GLOBAL_MEMORY_STATUS_EX
++        || memory.total_physical_bytes == 0
++        || memory.available_physical_bytes > memory.total_physical_bytes
++    {
++        return None;
++    }
++    let commit_limit = memory.commit_limit_bytes?;
++    let commit_available = memory.commit_available_bytes?;
++    if commit_available > commit_limit {
++        return None;
++    }
++    Some(memory.available_physical_bytes
++        .saturating_sub(WINDOWS_HOST_RESERVE_BYTES)
++        .min(commit_available.saturating_sub(WINDOWS_HOST_RESERVE_BYTES)))
++}
++
++/// Windows UMA device allowance, retaining an independent host reserve even
++/// when the firmware-dedicated pool is proven. Identity/counter failure falls
++/// back to the reserved host allowance; it never credits shared GPU memory.
++#[cfg(windows)]
++pub fn windows_device_free_bytes(
++    hip: &hip_bridge::HipRuntime,
++    device_id: i32,
++    hip_free: u64,
++    hip_total: u64,
++) -> hip_bridge::HipResult<u64> {
++    use hipfire_config::host_memory::{amd_adapters, dedicated_usage, dxgi_adapter_budgets};
++
++    let host_allowance = hipfire_config::host_memory()
++        .and_then(windows_host_allocation_budget)
++        .ok_or_else(|| hip_bridge::HipError::new(0, host_available_error()))?;
++    // Includes physical availability at/below the reserve and exhausted commit.
++    // Dedicated capacity cannot cancel this host admission check.
++    if host_allowance == 0 {
++        return Ok(0);
++    }
++    let dedicated = || -> Result<u64, String> {
++        let (luid, node_mask) = hip.windows_device_luid(device_id)
++            .map_err(|error| error.to_string())?;
++        // HIP 7.2 on the qualified gfx1151 integrated single-visible-device
++        // tuple leaves its mask zero. Root observed a real HIP allocation
++        // charged to this exact LUID's DXGI LOCAL node 0 and PDH phys_0.
++        // Preserve this narrow qualified exception; other zero/multi-node
++        // masks cannot authorize dedicated capacity.
++        let qualified_zero_mask = if node_mask == 0 {
++            hip.device_count().map_err(|error| error.to_string())? == 1
++                && hip.get_arch(device_id).map_err(|error| error.to_string())? == "gfx1151"
++                && hip.get_device_attribute(crate::dispatch::HIP_DEVICE_ATTRIBUTE_INTEGRATED, device_id)
++                    .map_err(|error| error.to_string())? != 0
++        } else {
++            false
++        };
++        if luid == [0; 8] || (node_mask != 1 && !qualified_zero_mask) {
++            return Err(format!(
++                "HIP R0600 cannot prove one node-0 adapter: LUID {luid:02x?}, node mask 0x{node_mask:08x}"
++            ));
++        }
++        let adapters = dxgi_adapter_budgets().map_err(|error| error.to_string())?;
++        let mut matching = amd_adapters(&adapters).filter(|adapter| adapter.matches_luid(&luid));
++        let adapter = matching.next().ok_or_else(|| "no exact AMD DXGI LUID match".to_string())?;
++        if matching.next().is_some() || adapter.node_index != 0 {
++            return Err("ambiguous DXGI adapter or unsupported physical node".into());
++        }
++        if adapter.dedicated_video_memory_bytes == 0 {
++            return Err("exact DXGI adapter reports no dedicated video memory".into());
++        }
++        let global = dedicated_usage(luid, adapter.node_index)?;
++        let free = hip_free.min(hip_total)
++            .min(adapter.dedicated_video_memory_bytes.saturating_sub(global.bytes))
++            .min(adapter.local.budget_bytes.saturating_sub(adapter.local.current_usage_bytes));
++        static REPORTED: std::sync::Once = std::sync::Once::new();
++        REPORTED.call_once(|| eprintln!(
++            "[memory] Windows dedicated budget: {} path={} node_mask=0x{node_mask:08x} qualified_zero_mask={qualified_zero_mask} dedicated={} global_usage={} local_budget={} process_usage={} hip_free={} gpu_free={} host_allowance={} host_reserve={}",
++            global.source, global.counter_path, adapter.dedicated_video_memory_bytes,
++            global.bytes, adapter.local.budget_bytes, adapter.local.current_usage_bytes,
++            hip_free, free, host_allowance, WINDOWS_HOST_RESERVE_BYTES,
++        ));
++        Ok(free)
++    };
++    match dedicated() {
++        Ok(free) => Ok(free),
++        Err(error) => {
++            static REPORTED: std::sync::Once = std::sync::Once::new();
++            REPORTED.call_once(|| eprintln!(
++                "[memory] Windows dedicated budget unavailable: {error}; using host physical/commit allowance after 18 GiB reserve"
++            ));
++            Ok(hip_free.min(hip_total).min(host_allowance))
++        }
++    }
++}
++
++/// Platform-specific explanation when the host admission source is unavailable.
++pub fn host_available_error() -> &'static str {
++    #[cfg(windows)]
++    {
++        "unified-memory free bytes: GlobalMemoryStatusEx has no valid physical/commit snapshot for the calling process"
++    }
++    #[cfg(not(windows))]
++    {
++        "unified-memory free bytes: /proc/meminfo has no readable MemAvailable"
++    }
++}
++
+ /// Live `/proc/zoneinfo` text; `None` when unreadable.
+ pub fn read_zoneinfo() -> Option<String> {
+     std::fs::read_to_string("/proc/zoneinfo").ok()
+@@ -149,6 +268,7 @@
+ }
+ 
+ /// Live host RAM available to unmovable allocations, without TTM pool credit.
++#[cfg(not(windows))]
+ pub fn mem_available_bytes() -> Option<u64> {
+     meminfo_available_bytes(
+         &std::fs::read_to_string("/proc/meminfo").ok()?,
+@@ -156,9 +276,25 @@
+     )
+ }
+ 
++/// Live Windows physical/commit admission budget for host allocations.
++#[cfg(windows)]
++pub fn mem_available_bytes() -> Option<u64> {
++    windows_host_allocation_budget(hipfire_config::host_memory()?)
++}
++
+ /// Total host RAM from `/proc/meminfo`, in bytes.
++#[cfg(not(windows))]
+ pub fn host_total_bytes() -> Option<u64> {
+     meminfo_field(&std::fs::read_to_string("/proc/meminfo").ok()?, "MemTotal")
++}
++
++/// OS-visible physical RAM from a validated calling-process Windows snapshot.
++/// Pagefile capacity is excluded.
++#[cfg(windows)]
++pub fn host_total_bytes() -> Option<u64> {
++    let memory = hipfire_config::host_memory()?;
++    windows_host_allocation_budget(memory)?;
++    Some(memory.total_physical_bytes)
+ }
+ 
+ /// A sysfs integer.
+@@ -215,7 +351,8 @@
+ /// Host RAM held in TTM's page pool (freed GTT pages amdgpu parks there, up
+ /// to `page_pool_size`) that the next GTT allocation takes first and TTM's
+ /// shrinker returns under pressure. 0 when sysfs or `/proc/meminfo` is
+-/// unreadable. Ungated: callers decide whether their allocations are GTT.
++/// unreadable. Callers decide whether their allocations are GTT.
++#[cfg(not(windows))]
+ pub fn ttm_pool_bytes() -> u64 {
+     let estimate = || -> Option<u64> {
+         let meminfo = std::fs::read_to_string("/proc/meminfo").ok()?;
+@@ -223,6 +360,12 @@
+         ttm_pool_estimate_from(&meminfo, amdgpu_gtt_used_bytes()?, pool_size_pages)
+     };
+     estimate().unwrap_or(0)
++}
++
++/// Windows has no Linux TTM pool credit.
++#[cfg(windows)]
++pub fn ttm_pool_bytes() -> u64 {
++    0
+ }
+ 
+ /// Host RAM a GTT allocation can still take: `MemAvailable - CMA` (see
+@@ -242,6 +385,7 @@
+ /// Live [`host_available_from`]: `None` when `MemAvailable` is unreadable;
+ /// an unreadable TTM pool counts as empty, unreadable zoneinfo as no extra
+ /// CMA region.
++#[cfg(not(windows))]
+ pub fn host_available_bytes() -> Option<u64> {
+     let meminfo = std::fs::read_to_string("/proc/meminfo").ok()?;
+     let pool_size_pages = read_sysfs_u64(TTM_PAGE_POOL_SIZE.as_ref()).unwrap_or(0);
+@@ -254,8 +398,15 @@
+     )
+ }
+ 
++/// Live Windows host allocation budget from the allocating process itself.
++#[cfg(windows)]
++pub fn host_available_bytes() -> Option<u64> {
++    windows_host_allocation_budget(hipfire_config::host_memory()?)
++}
++
+ /// The amdgpu carve-out (`mem_info_vram_total`) of the PCI device
+ /// `pci_bus_id` (`0000:c0:00.0`), `None` when sysfs does not expose it.
++#[cfg(not(windows))]
+ pub fn carveout_total_bytes(pci_bus_id: &str) -> Option<u64> {
+     let bdf = pci_bus_id.trim().to_ascii_lowercase();
+     read_sysfs_u64(
+@@ -263,6 +414,13 @@
+             .join(bdf)
+             .join("mem_info_vram_total"),
+     )
++}
++
++/// Windows exposes no Linux sysfs carve-out; its dedicated route uses exact
++/// HIP/DXGI/PDH identity separately, without fabricating a Linux carve-out.
++#[cfg(windows)]
++pub fn carveout_total_bytes(_pci_bus_id: &str) -> Option<u64> {
++    None
+ }
+ 
+ /// What one free-memory query sees: `hipMemGetInfo` and, on a unified-memory
+@@ -277,7 +435,9 @@
+     pub uma: bool,
+     /// The carve-out (`mem_info_vram_total`), when sysfs exposes it.
+     pub carveout_total: Option<u64>,
+-    /// `MemAvailable - CMA` plus TTM's pool estimate ([`host_available_from`]).
++    /// Host allocation budget: Linux `MemAvailable - CMA` plus TTM's pool
++    /// estimate, or Windows reserved physical/commit allowance
++    /// ([`host_available_bytes`]).
+     pub host_available: Option<u64>,
+ }
+ 
+@@ -290,8 +450,9 @@
+ 
+ /// Free bytes a device allocation can take. Discrete GPUs and carve-out
+ /// APUs: `hipMemGetInfo`'s free figure. GTT-backed APUs:
+-/// `min(hipMemGetInfo free, MemAvailable - CMA + TTM pool)`; `None` when the host
+-/// side is unreadable there (callers refuse rather than size blind).
++/// `min(hipMemGetInfo free, host allocation budget)`; `None` when the host
++/// side is unreadable there (callers refuse rather than size blind). See
++/// [`host_available_bytes`] for each platform's budget.
+ pub fn device_free_from(memory: DeviceMemory) -> Option<u64> {
+     if !memory.uma || !gtt_backed(memory.device_total, memory.carveout_total) {
+         return Some(memory.device_free);
+@@ -350,6 +511,171 @@
+ 
+     const GIB: u64 = 1 << 30;
+ 
++    fn windows_snapshot() -> hipfire_config::HostMemory {
++        hipfire_config::HostMemory {
++            total_physical_bytes: 128 * GIB,
++            available_physical_bytes: 32 * GIB,
++            swap_total_bytes: Some(128 * GIB),
++            commit_limit_bytes: Some(256 * GIB),
++            commit_available_bytes: Some(64 * GIB),
++            source: hipfire_config::host_memory::SOURCE_GLOBAL_MEMORY_STATUS_EX,
++        }
++    }
++
++    #[test]
++    fn windows_budget_is_limited_by_physical_or_calling_process_commit() {
++        let physical_limited = windows_snapshot();
++        assert_eq!(
++            windows_host_allocation_budget(physical_limited),
++            Some(14 * GIB)
++        );
++        let commit_limited = hipfire_config::HostMemory {
++            commit_available_bytes: Some(24 * GIB),
++            ..physical_limited
++        };
++        assert_eq!(
++            windows_host_allocation_budget(commit_limited),
++            Some(6 * GIB)
++        );
++        // Pagefile capacity never increases either admission budget.
++        assert_eq!(
++            windows_host_allocation_budget(hipfire_config::HostMemory {
++                swap_total_bytes: Some(u64::MAX),
++                ..commit_limited
++            }),
++            Some(6 * GIB)
++        );
++        assert_eq!(
++            windows_host_allocation_budget(hipfire_config::HostMemory {
++                swap_total_bytes: None,
++                ..commit_limited
++            }),
++            Some(6 * GIB)
++        );
++    }
++
++    #[test]
++    fn windows_budget_keeps_zero_availability_as_zero_capacity() {
++        let snapshot = windows_snapshot();
++        for empty in [
++            hipfire_config::HostMemory {
++                available_physical_bytes: 0,
++                ..snapshot
++            },
++            hipfire_config::HostMemory {
++                commit_available_bytes: Some(0),
++                ..snapshot
++            },
++            hipfire_config::HostMemory {
++                commit_limit_bytes: Some(0),
++                commit_available_bytes: Some(0),
++                ..snapshot
++            },
++        ] {
++            assert_eq!(windows_host_allocation_budget(empty), Some(0));
++        }
++    }
++
++    #[test]
++    fn windows_budget_refuses_missing_commit_values() {
++        let snapshot = windows_snapshot();
++        for incomplete in [
++            hipfire_config::HostMemory {
++                commit_limit_bytes: None,
++                ..snapshot
++            },
++            hipfire_config::HostMemory {
++                commit_available_bytes: None,
++                ..snapshot
++            },
++        ] {
++            assert_eq!(windows_host_allocation_budget(incomplete), None);
++        }
++    }
++
++    #[test]
++    fn windows_budget_refuses_invalid_physical_and_commit_ranges() {
++        let snapshot = windows_snapshot();
++        for invalid in [
++            hipfire_config::HostMemory {
++                total_physical_bytes: 0,
++                available_physical_bytes: 0,
++                ..snapshot
++            },
++            hipfire_config::HostMemory {
++                available_physical_bytes: 129 * GIB,
++                ..snapshot
++            },
++            hipfire_config::HostMemory {
++                commit_available_bytes: Some(257 * GIB),
++                ..snapshot
++            },
++        ] {
++            assert_eq!(windows_host_allocation_budget(invalid), None);
++        }
++    }
++
++    #[test]
++    fn windows_budget_refuses_snapshots_from_other_sources() {
++        let snapshot = windows_snapshot();
++        for source in [
++            hipfire_config::host_memory::SOURCE_PROC_MEMINFO,
++            "unsupported",
++        ] {
++            assert_eq!(
++                windows_host_allocation_budget(hipfire_config::HostMemory {
++                    source,
++                    ..snapshot
++                }),
++                None
++            );
++        }
++    }
++
++    #[test]
++    fn windows_budget_handles_full_u64_range_without_adding_capacity() {
++        assert_eq!(
++            windows_host_allocation_budget(hipfire_config::HostMemory {
++                total_physical_bytes: u64::MAX,
++                available_physical_bytes: u64::MAX,
++                swap_total_bytes: Some(u64::MAX),
++                commit_limit_bytes: Some(u64::MAX),
++                commit_available_bytes: Some(u64::MAX - 1),
++                ..windows_snapshot()
++            }),
++            Some(u64::MAX - 1 - WINDOWS_HOST_RESERVE_BYTES)
++        );
++    }
++
++    #[test]
++    fn windows_uma_clamps_hip_free_to_the_same_host_budget() {
++        let memory = DeviceMemory {
++            device_free: 120 * GIB,
++            device_total: 128 * GIB,
++            uma: true,
++            carveout_total: None,
++            host_available: windows_host_allocation_budget(windows_snapshot()),
++        };
++        assert_eq!(device_free_from(memory), Some(14 * GIB));
++        assert_eq!(
++            device_free_from(DeviceMemory {
++                device_free: 8 * GIB,
++                ..memory
++            }),
++            Some(8 * GIB)
++        );
++        assert_eq!(
++            device_free_from(DeviceMemory {
++                host_available: windows_host_allocation_budget(hipfire_config::HostMemory {
++                    commit_available_bytes: None,
++                    ..windows_snapshot()
++                }),
++                ..memory
++            }),
++            None
++        );
++    }
++
+     /// hipx (Strix Halo, Ubuntu 7.0 generic, KHO on): `CmaTotal` 0, the KHO
+     /// scratch (760 + 8,476 + 4,300 MiB) in the per-zone `cma` lines, and
+     /// `CmaFree` down to 0.45 GiB once page cache fills it.
+diff --git a/docs/GETTING_STARTED.md b/docs/GETTING_STARTED.md
+--- a/docs/GETTING_STARTED.md
++++ b/docs/GETTING_STARTED.md
+@@ -337,8 +337,28 @@
+ pending M0. Checksums detect corruption, not publisher authenticity. These
+ artifacts do not change the installation instructions above.
+ 
++Rank-ordered PLE tables use buffered positional reads on Windows. They serve
++without a background table worker; load-fill and prewarm stay disabled. The
++same encoded table bytes, embedded rank digest and row checks are retained.
++Windows host allocation sizing reserves 18 GiB from both available physical RAM
++and the allocating process's available commit, then takes their minimum. Device sizing
++can use firmware-dedicated memory only with exact HIP R0600 LUID/AMD DXGI node-0
++identity and a valid adapter-global PDH `Dedicated Usage` sample. Free bytes
++are capped by HIP free, descriptor dedicated capacity minus global usage, and
++LOCAL process budget minus process usage; shared system memory is never added.
++HIP node mask 1 identifies node 0. A zero mask is accepted only for the
++qualified gfx1151 integrated single-visible-device tuple: HIP 7.2 leaves this
++field empty, and a real allocation was observed in the matching LOCAL node-0
++and PDH phys-0 counters. Other missing or unsupported identity/counter data
++fall back to the reserved host allowance. Zero host allowance admits no device
++capacity. These volatile snapshots do not guarantee residency or allocation
++success; keep a host reserve guard during model loading. The explicit HIP R0600
++x64 architecture query refuses failed or malformed architecture data.
++This source path still needs native GPU/model qualification; a build alone
++does not establish runtime correctness or throughput.
++
+ The Windows build does not imply support for Unix-only PLE conversion,
+-hot-row/direct-read or hot-pack I/O, cache-residency probing, or prewarm paths;
++separate hot-row/direct-read or hot-pack I/O, cache-residency probing, or prewarm;
+ those I/O entry points report unsupported on Windows. POSIX-FD VMM sharing,
+ Redline, and VMM KV are not native Windows capabilities.
+ 

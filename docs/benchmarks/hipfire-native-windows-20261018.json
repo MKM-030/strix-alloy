@@ -1,0 +1,500 @@
+{
+  "schema": "strix-alloy.hipfire-native-windows.cohort.v1",
+  "date": "2026-10-18",
+  "baseline_commit": "ddee82c7464946c86f946d89af1b5634f212d466",
+  "windows_patch": {
+    "path": "native-windows-ddee82.patch",
+    "bytes": 50227,
+    "sha256": "d6beb649176543a76ad146ff2fa8a5143bea8886de87e6cd4215f588ada1f619"
+  },
+  "acceptance_counter_patch": {
+    "bytes": 2436,
+    "sha256": "a5e36c349ccdbc8d1d5eefe219d74f80a1361d7e4a04c0762f807de4d73faa30"
+  },
+  "hardware": {
+    "gpu": "Ryzen AI Max+395 / Radeon8060S gfx1151",
+    "installed_ram_gib": 128,
+    "windows_visible_ram_gib": 63.647,
+    "hip_sdk": "7.2",
+    "gpu_dedicated_bytes": 68535660544,
+    "shared_memory_capacity_credit": false
+  },
+  "model": {
+    "base": "qwen3.8-flash-next-base.mq2-xts-4500",
+    "base_bytes": 44537253400,
+    "ple_format": "rank-q4",
+    "ple_bytes": 29120146432
+  },
+  "workload": {
+    "actual_input_tokens": 16384,
+    "output_tokens": 128,
+    "max_sequence": 32768,
+    "prompt_sha256": "a818a059b4e04fd4f4f949a82b9bf585f396efaddb7d667e0b1f2b9f7b236d5d",
+    "prompt_bytes": 68228,
+    "temperature": 0,
+    "top_p": 1,
+    "repeat_penalty": 1,
+    "thinking": false,
+    "mtp_k": 2,
+    "kv_mode": "q8",
+    "inline_q8": true,
+    "request_cache": false,
+    "file_cache": "warm after excluded warmup",
+    "warmups": 1,
+    "measured_runs": 3,
+    "retries": 0,
+    "npu": false
+  },
+  "aggregate": {
+    "native_prefill_tok_s_mean": 1240.2,
+    "native_decode_tok_s_mean": 26.53333333333333,
+    "accepted": 210,
+    "drafted": 330,
+    "acceptance": 0.6363636363636364,
+    "windows_monotonic_request_s_mean": 18.067666666666668,
+    "pooled_output_per_whole_request_second": 7.0844787188900975
+  },
+  "timing_semantics": {
+    "native": "Host pipeline wall time; prefill includes first-token seed work and mapping; decode numerator includes that first seed.",
+    "collector": "Python3.12.10 time.monotonic_ns: GetTickCount64, nominal15.625ms resolution; not QueryPerformanceCounter.",
+    "qualification": "Native pipeline rates reconcile with coarse receipt boundaries; not pure GPU rates or a matched Halogen speed comparison."
+  },
+  "outputs": {
+    "warmup-00": {
+      "token_events": 128,
+      "utf8_bytes": 561,
+      "sha256": "2de2439992cfe7a9875c85698037a1470fd24e14590662ca81dcabeb1fadf60f"
+    },
+    "measured-01": {
+      "token_events": 128,
+      "utf8_bytes": 541,
+      "sha256": "ae7f60c09c03e0e18d446010460f60b21523c89a195dbb19b0403560698638ec"
+    },
+    "measured-02": {
+      "token_events": 128,
+      "utf8_bytes": 541,
+      "sha256": "ae7f60c09c03e0e18d446010460f60b21523c89a195dbb19b0403560698638ec"
+    },
+    "measured-03": {
+      "token_events": 128,
+      "utf8_bytes": 541,
+      "sha256": "ae7f60c09c03e0e18d446010460f60b21523c89a195dbb19b0403560698638ec"
+    }
+  },
+  "samples": [
+    {
+      "role": "warmup",
+      "index": 0,
+      "included_in_measurements": false,
+      "requested_output_tokens": 128,
+      "actual_output_tokens": 128,
+      "actual_input_tokens": 16384,
+      "prefill_tokens": 16384,
+      "cached_tokens": 0,
+      "native_timings": {
+        "prefill_ms": 90740.3,
+        "prefill_tok_s": 180.6,
+        "decode_tok_s": 3.6,
+        "ttft_ms": 90740.3,
+        "tok_s": 1.0,
+        "latency_ms": null
+      },
+      "client_timings": {
+        "request_sent_monotonic_ns": 81103015000000,
+        "client_gen_start_ms": 16.0,
+        "client_first_text_event_ms": 90750.0,
+        "client_first_visible_text_event_ms": 90750.0,
+        "client_commit_ready_ms": 126156.0,
+        "client_done_ms": 126156.0
+      },
+      "native_speculation": {
+        "mtp": true,
+        "mtp_ngram": null,
+        "tau": 1.19,
+        "cycles": 58,
+        "accepted": 69,
+        "mtp_windows": 58,
+        "floor_ar_windows": 2,
+        "ar_windows": 0,
+        "mtp_retired": false,
+        "ngram_mod_windows": null,
+        "ngram_mod_drafts": null,
+        "ngram_mod_accepted": null
+      },
+      "drafted_tokens": 108,
+      "acceptance_rate": 0.6388888888888888,
+      "acceptance_note": "Native accepted/drafted over successful verifier windows, before later semantic output filtering.",
+      "valid_for_fixed_length_cold_comparison": true,
+      "validation_errors": [],
+      "done": {
+        "type": "done",
+        "id": "warmup-00",
+        "tokens": 128,
+        "tok_s": 1.0,
+        "prefill_tokens": 16384,
+        "prefill_ms": 90740.3,
+        "prefill_tok_s": 180.6,
+        "decode_tok_s": 3.6,
+        "ttft_ms": 90740.3,
+        "attempt_id": 1,
+        "tau": 1.19,
+        "cycles": 58,
+        "cached_tokens": 0,
+        "finish_reason": "length",
+        "mtp": true,
+        "accepted": 69,
+        "mtp_windows": 58,
+        "floor_ar_windows": 2,
+        "ar_windows": 0,
+        "mtp_retired": false,
+        "drafted": 108
+      },
+      "reset": {
+        "type": "reset",
+        "rolled_back": true,
+        "state_epoch": 1,
+        "seq_pos": 0,
+        "conversation_len": 0,
+        "attempt_id": 1,
+        "retry_reset_eligible": false
+      }
+    },
+    {
+      "role": "measured",
+      "index": 1,
+      "included_in_measurements": true,
+      "requested_output_tokens": 128,
+      "actual_output_tokens": 128,
+      "actual_input_tokens": 16384,
+      "prefill_tokens": 16384,
+      "cached_tokens": 0,
+      "native_timings": {
+        "prefill_ms": 13152.6,
+        "prefill_tok_s": 1245.7,
+        "decode_tok_s": 26.0,
+        "ttft_ms": 13152.6,
+        "tok_s": 7.1,
+        "latency_ms": null
+      },
+      "client_timings": {
+        "request_sent_monotonic_ns": 81229187000000,
+        "client_gen_start_ms": 16.0,
+        "client_first_text_event_ms": 13172.0,
+        "client_first_visible_text_event_ms": 13172.0,
+        "client_commit_ready_ms": 18094.0,
+        "client_done_ms": 18094.0
+      },
+      "native_speculation": {
+        "mtp": true,
+        "mtp_ngram": null,
+        "tau": 1.23,
+        "cycles": 57,
+        "accepted": 70,
+        "mtp_windows": 57,
+        "floor_ar_windows": 1,
+        "ar_windows": 0,
+        "mtp_retired": false,
+        "ngram_mod_windows": null,
+        "ngram_mod_drafts": null,
+        "ngram_mod_accepted": null
+      },
+      "drafted_tokens": 110,
+      "acceptance_rate": 0.6363636363636364,
+      "acceptance_note": "Native accepted/drafted over successful verifier windows, before later semantic output filtering.",
+      "valid_for_fixed_length_cold_comparison": true,
+      "validation_errors": [],
+      "done": {
+        "type": "done",
+        "id": "measured-01",
+        "tokens": 128,
+        "tok_s": 7.1,
+        "prefill_tokens": 16384,
+        "prefill_ms": 13152.6,
+        "prefill_tok_s": 1245.7,
+        "decode_tok_s": 26.0,
+        "ttft_ms": 13152.6,
+        "attempt_id": 2,
+        "tau": 1.23,
+        "cycles": 57,
+        "cached_tokens": 0,
+        "finish_reason": "length",
+        "mtp": true,
+        "accepted": 70,
+        "mtp_windows": 57,
+        "floor_ar_windows": 1,
+        "ar_windows": 0,
+        "mtp_retired": false,
+        "drafted": 110
+      },
+      "reset": {
+        "type": "reset",
+        "rolled_back": true,
+        "state_epoch": 2,
+        "seq_pos": 0,
+        "conversation_len": 0,
+        "attempt_id": 2,
+        "retry_reset_eligible": false
+      }
+    },
+    {
+      "role": "measured",
+      "index": 2,
+      "included_in_measurements": true,
+      "requested_output_tokens": 128,
+      "actual_output_tokens": 128,
+      "actual_input_tokens": 16384,
+      "prefill_tokens": 16384,
+      "cached_tokens": 0,
+      "native_timings": {
+        "prefill_ms": 13220.3,
+        "prefill_tok_s": 1239.3,
+        "decode_tok_s": 26.7,
+        "ttft_ms": 13220.3,
+        "tok_s": 7.1,
+        "latency_ms": null
+      },
+      "client_timings": {
+        "request_sent_monotonic_ns": 81247281000000,
+        "client_gen_start_ms": 31.0,
+        "client_first_text_event_ms": 13250.0,
+        "client_first_visible_text_event_ms": 13250.0,
+        "client_commit_ready_ms": 18062.0,
+        "client_done_ms": 18062.0
+      },
+      "native_speculation": {
+        "mtp": true,
+        "mtp_ngram": null,
+        "tau": 1.23,
+        "cycles": 57,
+        "accepted": 70,
+        "mtp_windows": 57,
+        "floor_ar_windows": 1,
+        "ar_windows": 0,
+        "mtp_retired": false,
+        "ngram_mod_windows": null,
+        "ngram_mod_drafts": null,
+        "ngram_mod_accepted": null
+      },
+      "drafted_tokens": 110,
+      "acceptance_rate": 0.6363636363636364,
+      "acceptance_note": "Native accepted/drafted over successful verifier windows, before later semantic output filtering.",
+      "valid_for_fixed_length_cold_comparison": true,
+      "validation_errors": [],
+      "done": {
+        "type": "done",
+        "id": "measured-02",
+        "tokens": 128,
+        "tok_s": 7.1,
+        "prefill_tokens": 16384,
+        "prefill_ms": 13220.3,
+        "prefill_tok_s": 1239.3,
+        "decode_tok_s": 26.7,
+        "ttft_ms": 13220.3,
+        "attempt_id": 3,
+        "tau": 1.23,
+        "cycles": 57,
+        "cached_tokens": 0,
+        "finish_reason": "length",
+        "mtp": true,
+        "accepted": 70,
+        "mtp_windows": 57,
+        "floor_ar_windows": 1,
+        "ar_windows": 0,
+        "mtp_retired": false,
+        "drafted": 110
+      },
+      "reset": {
+        "type": "reset",
+        "rolled_back": true,
+        "state_epoch": 3,
+        "seq_pos": 0,
+        "conversation_len": 0,
+        "attempt_id": 3,
+        "retry_reset_eligible": false
+      }
+    },
+    {
+      "role": "measured",
+      "index": 3,
+      "included_in_measurements": true,
+      "requested_output_tokens": 128,
+      "actual_output_tokens": 128,
+      "actual_input_tokens": 16384,
+      "prefill_tokens": 16384,
+      "cached_tokens": 0,
+      "native_timings": {
+        "prefill_ms": 13260.1,
+        "prefill_tok_s": 1235.6,
+        "decode_tok_s": 26.9,
+        "ttft_ms": 13260.1,
+        "tok_s": 7.1,
+        "latency_ms": null
+      },
+      "client_timings": {
+        "request_sent_monotonic_ns": 81265343000000,
+        "client_gen_start_ms": 32.0,
+        "client_first_text_event_ms": 13282.0,
+        "client_first_visible_text_event_ms": 13282.0,
+        "client_commit_ready_ms": 18047.0,
+        "client_done_ms": 18047.0
+      },
+      "native_speculation": {
+        "mtp": true,
+        "mtp_ngram": null,
+        "tau": 1.23,
+        "cycles": 57,
+        "accepted": 70,
+        "mtp_windows": 57,
+        "floor_ar_windows": 1,
+        "ar_windows": 0,
+        "mtp_retired": false,
+        "ngram_mod_windows": null,
+        "ngram_mod_drafts": null,
+        "ngram_mod_accepted": null
+      },
+      "drafted_tokens": 110,
+      "acceptance_rate": 0.6363636363636364,
+      "acceptance_note": "Native accepted/drafted over successful verifier windows, before later semantic output filtering.",
+      "valid_for_fixed_length_cold_comparison": true,
+      "validation_errors": [],
+      "done": {
+        "type": "done",
+        "id": "measured-03",
+        "tokens": 128,
+        "tok_s": 7.1,
+        "prefill_tokens": 16384,
+        "prefill_ms": 13260.1,
+        "prefill_tok_s": 1235.6,
+        "decode_tok_s": 26.9,
+        "ttft_ms": 13260.1,
+        "attempt_id": 4,
+        "tau": 1.23,
+        "cycles": 57,
+        "cached_tokens": 0,
+        "finish_reason": "length",
+        "mtp": true,
+        "accepted": 70,
+        "mtp_windows": 57,
+        "floor_ar_windows": 1,
+        "ar_windows": 0,
+        "mtp_retired": false,
+        "drafted": 110
+      },
+      "reset": {
+        "type": "reset",
+        "rolled_back": true,
+        "state_epoch": 4,
+        "seq_pos": 0,
+        "conversation_len": 0,
+        "attempt_id": 4,
+        "retry_reset_eligible": false
+      }
+    }
+  ],
+  "daemon_returncode": 0,
+  "daemon_shutdown_method": "stdin_eof",
+  "frozen_changed_source_files": 11,
+  "build_receipt": {
+    "command": [
+      "E:\\strix-alloy\\hipfire-native-windows-20261018\\cargo\\bin\\cargo.exe",
+      "build",
+      "--release",
+      "--locked",
+      "-p",
+      "hipfire-daemon",
+      "-p",
+      "hipfire-cli",
+      "--target",
+      "x86_64-pc-windows-msvc"
+    ],
+    "identity": {
+      "pid": 18904,
+      "creation_time_100ns": 134367848443649436,
+      "executable": "E:\\strix-alloy\\hipfire-native-windows-20261018\\cargo\\bin\\cargo.exe"
+    },
+    "started_utc": "2026-10-18T08:14:04.368337+00:00",
+    "terminal": true,
+    "source": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src",
+    "result": "E:\\strix-alloy\\hipfire-native-windows-20261018\\results\\release-pdh-final-source",
+    "exit_code": 0,
+    "minimum_reserve_gib": 35.01325607299805,
+    "elapsed_s": 282.125
+  },
+  "collector_receipt": {
+    "identity": {
+      "pid": 9528,
+      "creation_time_100ns": 134367851275274768,
+      "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe"
+    },
+    "terminal": true,
+    "exit_code": 0,
+    "elapsed_s": 279.5939999999973,
+    "minimum_reserve_gib": 40.68226623535156
+  },
+  "raw_evidence": {
+    "summary.json": {
+      "bytes": 12328,
+      "sha256": "44c7c11956a75ad28605d6853771dc0b8d25dadf95a5cdb1cbca40ceeaee7854"
+    },
+    "requests.jsonl": {
+      "bytes": 281711,
+      "sha256": "251a392fa73b21abd102c5a6bb4f9f9ebcc08f4297bf94c18a82a87a685bacbe"
+    },
+    "stdout.native.jsonl": {
+      "bytes": 130502,
+      "sha256": "4f05c5f5605983c34aabe21d7c128a36c1fd7cf0691e3d9a93045dcdd61e731d"
+    },
+    "stderr.jsonl": {
+      "bytes": 5652,
+      "sha256": "c9874209a199c3a360187a01088eba3ea647120e82ce14d0473650a34de32459"
+    },
+    "samples.jsonl": {
+      "bytes": 6655,
+      "sha256": "5ad6ba32af5ae934cff34783c538c6fa9541c25800def5d97523de0f00023e16"
+    }
+  },
+  "qualification_limits": [
+    "Fixture output coherence and repeatability verified; no independent full kernel/logit correctness proof.",
+    "Warmup output differs from measured output and is excluded.",
+    "No matched Windows-versus-WSL A/B or best-of-engine speed claim."
+  ],
+  "http_smoke": {
+    "native_api_success": true,
+    "http_status": 200,
+    "unauthenticated_status": 401,
+    "response_text": "Native Windows Hipfire is working.",
+    "usage": {
+      "prompt_tokens": 23,
+      "completion_tokens": 8,
+      "total_tokens": 31,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "minimum_reserve_gib": 37.22080993652344,
+    "tested_launcher_sha256": "434538a116651ac3de635a6113f0e02f104fc47c0f3a59cf580313411ff15306",
+    "tested_mtp_k": 7,
+    "tested_mtp_ngram": true,
+    "final_launcher_sha256": "efcfaa7a65ac7a5fe41e5e42263401d8e26392891fa813072409218d0fa5b8c0",
+    "final_mtp_k": 2,
+    "final_mtp_ngram": false,
+    "final_configuration_cli_validation_exit_code": 0,
+    "limitation": "HTTP smoke preceded final K2/ngram-off config pins; final values accepted by actual CLI, and K2 inference verified in separate JSONL cohort. HTTP cold request is not a performance sample."
+  },
+  "normal_serving_restored": {
+    "version": "0.18.8",
+    "port": 8840,
+    "authenticated_health": true,
+    "visible": true,
+    "controller_identity": {
+      "pid": 40204,
+      "creation_time_100ns": 134367859336609588,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend_identity": {
+      "pid": 35432,
+      "creation_time_100ns": 134367859444179462,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  }
+}

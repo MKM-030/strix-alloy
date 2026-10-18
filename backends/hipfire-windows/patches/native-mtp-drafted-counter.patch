@@ -1,0 +1,55 @@
+--- a/crates/hipfire-generate/src/common.rs
++++ b/crates/hipfire-generate/src/common.rs
+@@ -1666,6 +1666,8 @@
+     pub generated: usize,
+     pub spec_cycles: usize,
+     pub spec_accepted: usize,
++    /// Actual drafts offered by successful steps, before output filtering.
++    pub spec_proposed: usize,
+     /// Full committed stream (from the emitter) for the wrapper's cache store.
+     /// Empty for emitters that don't track it. Deepseek4 and qwen35 both expose
+     /// streamed tokens for asst-turn cache replay on safe terminals.
+--- a/crates/hipfire-generate/src/qwen.rs
++++ b/crates/hipfire-generate/src/qwen.rs
+@@ -3826,6 +3826,7 @@
+                         run.spec_accepted,
+                         m.speculator.as_ref().map(|s| s.request_stats()),
+                     );
++                    pending_done["drafted"] = serde_json::json!(run.spec_proposed);
+                 }
+                 if let Some((reason, alpha)) = pflash {
+                     pending_done["pflash"] = serde_json::json!({
+@@ -3977,6 +3978,7 @@
+                 run.spec_accepted,
+                 m.speculator.as_ref().map(|s| s.request_stats()),
+             );
++            pending_done["drafted"] = serde_json::json!(run.spec_proposed);
+         }
+         if !pflash_done_field.is_empty() {
+             let padded = format!("{{{}}}", pflash_done_field.trim_start_matches(','));
+@@ -4542,6 +4544,7 @@
+     // sees): τ = accepted drafts / cycle.
+     let mut spec_cycles = 0usize;
+     let mut spec_accepted = 0usize;
++    let mut spec_proposed = 0usize;
+     let mut generated = 0usize;
+     // Set when the mid-loop `position + block_size >= ctx_capacity` break
+     // fires: the draft's context-indexed structures cannot host another
+@@ -5062,6 +5065,9 @@
+         };
+         spec_cycles += 1;
+         spec_accepted += step.accepted;
++        // Account at the same boundary as accepted: actual offered drafts,
++        // including rejected/unobserved work; AR-only steps propose zero.
++        spec_proposed += step.proposed;
+         // `emit` is already the committed tail with the seed re-echo stripped.
+         let committed_tail = step.emit;
+         // Absolute host cursor before this window's commit. Spec.step left
+@@ -5762,6 +5768,7 @@
+         generated,
+         spec_cycles,
+         spec_accepted,
++        spec_proposed,
+         streamed_tokens,
+         prefill_tokens_len: prefill_tokens.len(),
+         finish,
