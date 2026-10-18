@@ -20,7 +20,7 @@ $LogPath = Join-Path $LocalDirectory 'scc-gateway.log'
 $StdoutPath = Join-Path $LocalDirectory 'scc-gateway.stdout.log'
 $StderrPath = Join-Path $LocalDirectory 'scc-gateway.stderr.log'
 $DeploymentScript = Join-Path $PSScriptRoot 'native-start\model_deployment.py'
-$DeploymentScriptHash = 'b43e8f65e9c48a441063d98259bda12c3d3755ff3b4ec01d09e633601ff3aa7e'
+$DeploymentScriptHash = 'c6df254d128e5e76382c2707466b9ad5cfe2b5d7e8ef0613bd2febd2c936507e'
 
 function Read-ReviewedModelDeployment($Python, $DeploymentScript, $ExpectedHash) {
     if (-not (Test-Path -LiteralPath $DeploymentScript -PathType Leaf) -or

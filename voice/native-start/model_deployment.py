@@ -12,7 +12,7 @@ import re
 import sys
 
 MANIFEST = Path(__file__).with_name('model-deployment.json')
-MANIFEST_SHA256 = '4ba918f9642de4bc4a9d306616f27e0ae3cc5550f8adf1442eba8e59b93128ed'
+MANIFEST_SHA256 = '5e3134230a0decec060c185f0f5f1a1eb6909677ebc21e4b870c1536306aac87'
 MAX_JSON_BYTES = 65536
 _SHA256 = re.compile(r'[0-9a-f]{64}\Z')
 _FIELD = re.compile(r'[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*){0,7}\Z')

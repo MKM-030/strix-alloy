@@ -1,0 +1,916 @@
+{
+  "schema": "strix-alloy.halogen01810-regression-check.v1",
+  "utc": "2026-10-18T16:44:15.586681+00:00",
+  "problem_26_53": {
+    "engine": "native Windows Hipfire",
+    "checkpoint": "MQ2 plus rank-q4 PLE",
+    "input_tokens": 16384,
+    "output_tokens": 128,
+    "decode_tokens_per_second": 26.53,
+    "source": "docs/benchmarks/hipfire-native-windows-20261018.json",
+    "is_halogen_result": false,
+    "is_same_checkpoint_control": false
+  },
+  "cases": {
+    "0.18.8": {
+      "summary": {
+        "schema": "halogen.update-finite-summary.v1",
+        "complete_batch": true,
+        "version": "0.18.8",
+        "cases": {
+          "historical8k": {
+            "complete_case": true,
+            "excluded_warmups": 1,
+            "planned_measured": 3,
+            "measured_attempts": 3,
+            "whole_http_seconds_all_attempts": [
+              9.7129419,
+              9.9635039,
+              10.2140274
+            ],
+            "whole_http_total_seconds": 29.890473200000002,
+            "whole_http_mean_seconds": 9.963491066666666,
+            "whole_http_stdev_seconds": 0.25054275024650663,
+            "generated_tokens_per_whole_http_second": 12.846902671316691,
+            "api_phase_observations": {
+              "prefill_pooled_tokens_per_second": 1243.1899233629258,
+              "decode_pooled_tokens_per_second": 38.50280248262862,
+              "prefill_arithmetic_mean_tokens_per_second": 1243.946,
+              "decode_arithmetic_mean_tokens_per_second": 38.50933333333333,
+              "independently_clock_qualified": false
+            },
+            "combined_counts": {
+              "actual_input_tokens": 24576,
+              "actual_output_tokens": 384,
+              "drafted": 360,
+              "accepted": 201
+            },
+            "combined_acceptance": 0.5583333333333333,
+            "scoped_counts": {
+              "head": {
+                "rounds": 180,
+                "drafted": 360,
+                "accepted": 201,
+                "acceptance": 0.5583333333333333,
+                "accepted_per_round": 1.1166666666666667
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            },
+            "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+            "outputs": [
+              {
+                "rep": 0,
+                "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 1,
+                "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 2,
+                "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 3,
+                "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              }
+            ],
+            "completion_quality_qualified": false,
+            "global_prompt_cache": "Exact",
+            "request_prompt_cache_policy": "no_store"
+          },
+          "natural16k": {
+            "complete_case": true,
+            "excluded_warmups": 1,
+            "planned_measured": 3,
+            "measured_attempts": 3,
+            "whole_http_seconds_all_attempts": [
+              17.3536548,
+              17.4250133,
+              17.9332799
+            ],
+            "whole_http_total_seconds": 52.711948,
+            "whole_http_mean_seconds": 17.570649333333332,
+            "whole_http_stdev_seconds": 0.3160675636494556,
+            "generated_tokens_per_whole_http_second": 7.284875907071391,
+            "api_phase_observations": {
+              "prefill_pooled_tokens_per_second": 1170.9604105222534,
+              "decode_pooled_tokens_per_second": 36.78618985122668,
+              "prefill_arithmetic_mean_tokens_per_second": 1171.2953333333332,
+              "decode_arithmetic_mean_tokens_per_second": 36.81666666666667,
+              "independently_clock_qualified": false
+            },
+            "combined_counts": {
+              "actual_input_tokens": 49152,
+              "actual_output_tokens": 384,
+              "drafted": 399,
+              "accepted": 180
+            },
+            "combined_acceptance": 0.45112781954887216,
+            "scoped_counts": {
+              "head": {
+                "rounds": 201,
+                "drafted": 399,
+                "accepted": 180,
+                "acceptance": 0.45112781954887216,
+                "accepted_per_round": 0.8955223880597015
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            },
+            "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+            "outputs": [
+              {
+                "rep": 0,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 1,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 2,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 3,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              }
+            ],
+            "completion_quality_qualified": false,
+            "global_prompt_cache": "Exact",
+            "request_prompt_cache_policy": "no_store"
+          }
+        },
+        "attempted_requests": 8,
+        "planned_requests": 8,
+        "continuous_memory_guard_passed": true,
+        "exclusive_completed_request_accounting_passed": true,
+        "api_phase_clock_qualified": false,
+        "phase_scaling_or_overhead_subtraction_applied": false,
+        "whole_http_clock": "Windows perf_counter_ns/QPC; start through complete body",
+        "nonstream_first_body_is_not_ttft": true,
+        "full_goal_qualified": false,
+        "performance_promotion_qualified": false
+      },
+      "source": {
+        "schema": "halogen.update-finite-source.v1",
+        "version": "0.18.8",
+        "cases": [
+          "historical8k",
+          "natural16k"
+        ],
+        "client_sha256": "40e961348b3f5f225c825c1140e8b0444daf7188411f887d5338700bf5c4ce5b",
+        "frozen_manifest_sha256": "24f5089bc43f8df775c8674810fe1d69354222410d57fe31553cf50deb70b1d0",
+        "profile_sha256": "15122431fd43397f6ec6b53386f1652cff0f2600405facca2eab64032d289f63",
+        "release_sha256": "9d827bef37f795ee957dbbe0af4dfbf34dc633161950fa76749e67d5599bf6c1",
+        "policy": "fixed2",
+        "chunk": 8192,
+        "port": 8842,
+        "api_sources": [
+          {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\extracted\\serve_api.py",
+            "sha256": "e06ba4396e123ae846ac95c8f05c813ff5b36ea7fe6c3eb5951292c2f79fb011"
+          }
+        ],
+        "excluded_warmups_per_case": 1,
+        "measured_per_case": 3,
+        "no_retries": true,
+        "startup_admission": {
+          "root_must_check_before_service_start": true,
+          "startup_floors_resolved_by_normal_versioned_lifecycle_for_actual_context_and_vision": true,
+          "collector_performs_no_startup_or_lifecycle_operations": true
+        },
+        "request_admission_gib": {
+          "historical8k": 22,
+          "natural16k": 22
+        },
+        "global_prompt_cache": "Exact",
+        "request_prompt_cache_policy": "no_store",
+        "vision_enabled": true,
+        "independent_clock": {
+          "implementation": "QueryPerformanceCounter()",
+          "resolution": 1e-07,
+          "monotonic": true,
+          "adjustable": false
+        },
+        "continuous_physical_and_commit_reserve_gib": 18,
+        "api_phase_clock_qualified": false
+      },
+      "evidence": {
+        "summary.json": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-0188-fresh\\summary.json",
+          "bytes": 6018,
+          "sha256": "8bc90e4ea61b3f94d38f063b1c76beebba84fded9cb27f2d1b8e6d75e931457d"
+        },
+        "source.json": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-0188-fresh\\source.json",
+          "bytes": 1561,
+          "sha256": "9d6fa6bd4c75ca9cdb5bd78b0587708e25905656cea7c3ad4fc0ff44fe4e1e50"
+        },
+        "identity.json": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-0188-fresh\\identity.json",
+          "bytes": 1397,
+          "sha256": "5ec70cdbd1a7249033fc3f88f4ce4a82ef30540d8411ea6dda978603ed384160"
+        },
+        "memory-series.json": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-0188-fresh\\memory-series.json",
+          "bytes": 97869,
+          "sha256": "40fc224d8e0260b9b2abbab53e179003478fddf11f24e8013aa103f8f300d44c"
+        }
+      },
+      "minimum_memory_bytes": {
+        "available_bytes": 27141001216,
+        "commit_headroom_bytes": 123308638208
+      }
+    },
+    "0.18.10": {
+      "summary": {
+        "schema": "halogen.update-finite-summary.v1",
+        "complete_batch": true,
+        "version": "0.18.10",
+        "cases": {
+          "historical8k": {
+            "complete_case": true,
+            "excluded_warmups": 1,
+            "planned_measured": 3,
+            "measured_attempts": 3,
+            "whole_http_seconds_all_attempts": [
+              9.8085162,
+              10.3527305,
+              9.6629058
+            ],
+            "whole_http_total_seconds": 29.8241525,
+            "whole_http_mean_seconds": 9.941384166666667,
+            "whole_http_stdev_seconds": 0.36359998845863994,
+            "generated_tokens_per_whole_http_second": 12.875470644136493,
+            "api_phase_observations": {
+              "prefill_pooled_tokens_per_second": 1211.7745673290271,
+              "decode_pooled_tokens_per_second": 40.870194559155344,
+              "prefill_arithmetic_mean_tokens_per_second": 1212.636,
+              "decode_arithmetic_mean_tokens_per_second": 41.04833333333333,
+              "independently_clock_qualified": false
+            },
+            "combined_counts": {
+              "actual_input_tokens": 24576,
+              "actual_output_tokens": 384,
+              "drafted": 360,
+              "accepted": 201
+            },
+            "combined_acceptance": 0.5583333333333333,
+            "scoped_counts": {
+              "head": {
+                "rounds": 180,
+                "drafted": 360,
+                "accepted": 201,
+                "acceptance": 0.5583333333333333,
+                "accepted_per_round": 1.1166666666666667
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            },
+            "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+            "outputs": [
+              {
+                "rep": 0,
+                "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 1,
+                "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 2,
+                "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 3,
+                "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              }
+            ],
+            "completion_quality_qualified": false,
+            "global_prompt_cache": "Exact",
+            "request_prompt_cache_policy": "no_store"
+          },
+          "natural16k": {
+            "complete_case": true,
+            "excluded_warmups": 1,
+            "planned_measured": 3,
+            "measured_attempts": 3,
+            "whole_http_seconds_all_attempts": [
+              17.7382373,
+              17.1137896,
+              17.4400821
+            ],
+            "whole_http_total_seconds": 52.292109,
+            "whole_http_mean_seconds": 17.430703,
+            "whole_http_stdev_seconds": 0.3123294865145306,
+            "generated_tokens_per_whole_http_second": 7.343364177566446,
+            "api_phase_observations": {
+              "prefill_pooled_tokens_per_second": 1186.4239042016766,
+              "decode_pooled_tokens_per_second": 36.313086896082154,
+              "prefill_arithmetic_mean_tokens_per_second": 1187.0413333333333,
+              "decode_arithmetic_mean_tokens_per_second": 36.515,
+              "independently_clock_qualified": false
+            },
+            "combined_counts": {
+              "actual_input_tokens": 49152,
+              "actual_output_tokens": 384,
+              "drafted": 399,
+              "accepted": 180
+            },
+            "combined_acceptance": 0.45112781954887216,
+            "scoped_counts": {
+              "head": {
+                "rounds": 201,
+                "drafted": 399,
+                "accepted": 180,
+                "acceptance": 0.45112781954887216,
+                "accepted_per_round": 0.8955223880597015
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            },
+            "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+            "outputs": [
+              {
+                "rep": 0,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 1,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 2,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 3,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              }
+            ],
+            "completion_quality_qualified": false,
+            "global_prompt_cache": "Exact",
+            "request_prompt_cache_policy": "no_store"
+          }
+        },
+        "attempted_requests": 8,
+        "planned_requests": 8,
+        "continuous_memory_guard_passed": true,
+        "exclusive_completed_request_accounting_passed": true,
+        "api_phase_clock_qualified": false,
+        "phase_scaling_or_overhead_subtraction_applied": false,
+        "whole_http_clock": "Windows perf_counter_ns/QPC; start through complete body",
+        "nonstream_first_body_is_not_ttft": true,
+        "full_goal_qualified": false,
+        "performance_promotion_qualified": false
+      },
+      "source": {
+        "schema": "halogen.update-finite-source.v1",
+        "version": "0.18.10",
+        "cases": [
+          "historical8k",
+          "natural16k"
+        ],
+        "client_sha256": "40e961348b3f5f225c825c1140e8b0444daf7188411f887d5338700bf5c4ce5b",
+        "frozen_manifest_sha256": "24f5089bc43f8df775c8674810fe1d69354222410d57fe31553cf50deb70b1d0",
+        "profile_sha256": "4a0789ace369d1d0b562eae415d2f61181a6804db75c16b62275b3aba91a8b3d",
+        "release_sha256": "ade345e17ded98c54a1456bb507ab7b2a3867f010d1fa3e8b8d336b960c88f38",
+        "policy": "fixed2",
+        "chunk": 8192,
+        "port": 8842,
+        "api_sources": [
+          {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\extracted\\serve_api.py",
+            "sha256": "f577b4cd8bb2e075fc656d3ed78ed266ce4f6dfa8b60d9ef58584dc298fe7281"
+          }
+        ],
+        "excluded_warmups_per_case": 1,
+        "measured_per_case": 3,
+        "no_retries": true,
+        "startup_admission": {
+          "root_must_check_before_service_start": true,
+          "startup_floors_resolved_by_normal_versioned_lifecycle_for_actual_context_and_vision": true,
+          "collector_performs_no_startup_or_lifecycle_operations": true
+        },
+        "request_admission_gib": {
+          "historical8k": 22,
+          "natural16k": 22
+        },
+        "global_prompt_cache": "Exact",
+        "request_prompt_cache_policy": "no_store",
+        "vision_enabled": true,
+        "independent_clock": {
+          "implementation": "QueryPerformanceCounter()",
+          "resolution": 1e-07,
+          "monotonic": true,
+          "adjustable": false
+        },
+        "continuous_physical_and_commit_reserve_gib": 18,
+        "api_phase_clock_qualified": false
+      },
+      "evidence": {
+        "summary.json": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-01810-fresh\\summary.json",
+          "bytes": 5993,
+          "sha256": "625d584820395a11fd4bc2b03a397710af8548514065e7a458f3c52b441fbd89"
+        },
+        "source.json": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-01810-fresh\\source.json",
+          "bytes": 1543,
+          "sha256": "7c089c0c8eca142b5dbfc4a00f1efd63f22341b222ab1bebb4b29e4423c17ca8"
+        },
+        "identity.json": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-01810-fresh\\identity.json",
+          "bytes": 1398,
+          "sha256": "f8f386cd1c6ab7c9be90751429e70b485dfa6d7606d1f364e2f7aa258b98b160"
+        },
+        "memory-series.json": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-01810-fresh\\memory-series.json",
+          "bytes": 97407,
+          "sha256": "6399c9d16db30ab8955ee522e34b203e06a4cb36ea80f5b78640d514cc8d0581"
+        }
+      },
+      "minimum_memory_bytes": {
+        "available_bytes": 26698862592,
+        "commit_headroom_bytes": 122754523136
+      }
+    }
+  },
+  "comparison": {
+    "utc": "2026-10-18T16:40:41.727312+00:00",
+    "completed": true,
+    "promote01810": true,
+    "comparison": {
+      "historical8k": {
+        "identical_output_prefixes": true,
+        "before": {
+          "complete_case": true,
+          "excluded_warmups": 1,
+          "planned_measured": 3,
+          "measured_attempts": 3,
+          "whole_http_seconds_all_attempts": [
+            9.7129419,
+            9.9635039,
+            10.2140274
+          ],
+          "whole_http_total_seconds": 29.890473200000002,
+          "whole_http_mean_seconds": 9.963491066666666,
+          "whole_http_stdev_seconds": 0.25054275024650663,
+          "generated_tokens_per_whole_http_second": 12.846902671316691,
+          "api_phase_observations": {
+            "prefill_pooled_tokens_per_second": 1243.1899233629258,
+            "decode_pooled_tokens_per_second": 38.50280248262862,
+            "prefill_arithmetic_mean_tokens_per_second": 1243.946,
+            "decode_arithmetic_mean_tokens_per_second": 38.50933333333333,
+            "independently_clock_qualified": false
+          },
+          "combined_counts": {
+            "actual_input_tokens": 24576,
+            "actual_output_tokens": 384,
+            "drafted": 360,
+            "accepted": 201
+          },
+          "combined_acceptance": 0.5583333333333333,
+          "scoped_counts": {
+            "head": {
+              "rounds": 180,
+              "drafted": 360,
+              "accepted": 201,
+              "acceptance": 0.5583333333333333,
+              "accepted_per_round": 1.1166666666666667
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          },
+          "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+          "outputs": [
+            {
+              "rep": 0,
+              "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 1,
+              "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 2,
+              "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 3,
+              "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            }
+          ],
+          "completion_quality_qualified": false,
+          "global_prompt_cache": "Exact",
+          "request_prompt_cache_policy": "no_store"
+        },
+        "after": {
+          "complete_case": true,
+          "excluded_warmups": 1,
+          "planned_measured": 3,
+          "measured_attempts": 3,
+          "whole_http_seconds_all_attempts": [
+            9.8085162,
+            10.3527305,
+            9.6629058
+          ],
+          "whole_http_total_seconds": 29.8241525,
+          "whole_http_mean_seconds": 9.941384166666667,
+          "whole_http_stdev_seconds": 0.36359998845863994,
+          "generated_tokens_per_whole_http_second": 12.875470644136493,
+          "api_phase_observations": {
+            "prefill_pooled_tokens_per_second": 1211.7745673290271,
+            "decode_pooled_tokens_per_second": 40.870194559155344,
+            "prefill_arithmetic_mean_tokens_per_second": 1212.636,
+            "decode_arithmetic_mean_tokens_per_second": 41.04833333333333,
+            "independently_clock_qualified": false
+          },
+          "combined_counts": {
+            "actual_input_tokens": 24576,
+            "actual_output_tokens": 384,
+            "drafted": 360,
+            "accepted": 201
+          },
+          "combined_acceptance": 0.5583333333333333,
+          "scoped_counts": {
+            "head": {
+              "rounds": 180,
+              "drafted": 360,
+              "accepted": 201,
+              "acceptance": 0.5583333333333333,
+              "accepted_per_round": 1.1166666666666667
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          },
+          "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+          "outputs": [
+            {
+              "rep": 0,
+              "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 1,
+              "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 2,
+              "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 3,
+              "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            }
+          ],
+          "completion_quality_qualified": false,
+          "global_prompt_cache": "Exact",
+          "request_prompt_cache_policy": "no_store"
+        },
+        "whole_request_time_change_percent": -0.22187905676915864,
+        "api_phase_clock_qualified": false
+      },
+      "natural16k": {
+        "identical_output_prefixes": true,
+        "before": {
+          "complete_case": true,
+          "excluded_warmups": 1,
+          "planned_measured": 3,
+          "measured_attempts": 3,
+          "whole_http_seconds_all_attempts": [
+            17.3536548,
+            17.4250133,
+            17.9332799
+          ],
+          "whole_http_total_seconds": 52.711948,
+          "whole_http_mean_seconds": 17.570649333333332,
+          "whole_http_stdev_seconds": 0.3160675636494556,
+          "generated_tokens_per_whole_http_second": 7.284875907071391,
+          "api_phase_observations": {
+            "prefill_pooled_tokens_per_second": 1170.9604105222534,
+            "decode_pooled_tokens_per_second": 36.78618985122668,
+            "prefill_arithmetic_mean_tokens_per_second": 1171.2953333333332,
+            "decode_arithmetic_mean_tokens_per_second": 36.81666666666667,
+            "independently_clock_qualified": false
+          },
+          "combined_counts": {
+            "actual_input_tokens": 49152,
+            "actual_output_tokens": 384,
+            "drafted": 399,
+            "accepted": 180
+          },
+          "combined_acceptance": 0.45112781954887216,
+          "scoped_counts": {
+            "head": {
+              "rounds": 201,
+              "drafted": 399,
+              "accepted": 180,
+              "acceptance": 0.45112781954887216,
+              "accepted_per_round": 0.8955223880597015
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          },
+          "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+          "outputs": [
+            {
+              "rep": 0,
+              "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 1,
+              "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 2,
+              "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 3,
+              "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            }
+          ],
+          "completion_quality_qualified": false,
+          "global_prompt_cache": "Exact",
+          "request_prompt_cache_policy": "no_store"
+        },
+        "after": {
+          "complete_case": true,
+          "excluded_warmups": 1,
+          "planned_measured": 3,
+          "measured_attempts": 3,
+          "whole_http_seconds_all_attempts": [
+            17.7382373,
+            17.1137896,
+            17.4400821
+          ],
+          "whole_http_total_seconds": 52.292109,
+          "whole_http_mean_seconds": 17.430703,
+          "whole_http_stdev_seconds": 0.3123294865145306,
+          "generated_tokens_per_whole_http_second": 7.343364177566446,
+          "api_phase_observations": {
+            "prefill_pooled_tokens_per_second": 1186.4239042016766,
+            "decode_pooled_tokens_per_second": 36.313086896082154,
+            "prefill_arithmetic_mean_tokens_per_second": 1187.0413333333333,
+            "decode_arithmetic_mean_tokens_per_second": 36.515,
+            "independently_clock_qualified": false
+          },
+          "combined_counts": {
+            "actual_input_tokens": 49152,
+            "actual_output_tokens": 384,
+            "drafted": 399,
+            "accepted": 180
+          },
+          "combined_acceptance": 0.45112781954887216,
+          "scoped_counts": {
+            "head": {
+              "rounds": 201,
+              "drafted": 399,
+              "accepted": 180,
+              "acceptance": 0.45112781954887216,
+              "accepted_per_round": 0.8955223880597015
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          },
+          "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+          "outputs": [
+            {
+              "rep": 0,
+              "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 1,
+              "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 2,
+              "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            },
+            {
+              "rep": 3,
+              "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+              "finish_reason": "length",
+              "actual_output_tokens": 128
+            }
+          ],
+          "completion_quality_qualified": false,
+          "global_prompt_cache": "Exact",
+          "request_prompt_cache_policy": "no_store"
+        },
+        "whole_request_time_change_percent": -0.7964778687366891,
+        "api_phase_clock_qualified": false
+      }
+    },
+    "summaries": {
+      "0.18.8": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-0188-fresh\\summary.json",
+        "bytes": 6018,
+        "sha256": "8bc90e4ea61b3f94d38f063b1c76beebba84fded9cb27f2d1b8e6d75e931457d"
+      },
+      "0.18.10": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261018\\primary01810\\bench-results\\cohort-01810-fresh\\summary.json",
+        "bytes": 5993,
+        "sha256": "625d584820395a11fd4bc2b03a397710af8548514065e7a458f3c52b441fbd89"
+      }
+    },
+    "offline_reconstructed": true,
+    "reason": "Coordinator dict(utc=..., **record) duplicates the existing utc key after both successful cohorts; original error retained.",
+    "no_new_requests": true,
+    "original_raw_receipts_unchanged": true,
+    "full_goal_achieved": false
+  },
+  "selected_halogen_version": "0.18.10",
+  "new_global_speed_record": false,
+  "independent_phase_clock_qualified": false,
+  "phase_scaling_applied": false,
+  "historical_48_424_reproduced": false,
+  "historical_1925_160_reproduced": false,
+  "normal_restore_cancelled_externally": true,
+  "other_running_controller": {
+    "schema": 1,
+    "run_id": "baad96fd5c2d4f70b114d67e00bf9305",
+    "pid": 14236,
+    "phase": "ready",
+    "backend": "gemma4-26b-a4b",
+    "checkpoint": "gemma-4-26B-qat-q4_0-it",
+    "context": 32768,
+    "port": 8840,
+    "heartbeat": 1792341855.4628534,
+    "minimum_reserve_gib": 18.0,
+    "profile_sha256": "346e9576d0afe1c52463a73f910daf8296304a70a9eecef0fe60434980fd6b15",
+    "memory": {
+      "available_bytes": 47541342208,
+      "committed_bytes": 51790082048,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 188349358080
+    },
+    "minimum_available_gib": 41.60616683959961,
+    "ready_at": 1792341756.5118904,
+    "active_requests": 0,
+    "available_gib": 44.14695358276367
+  },
+  "credentials_or_private_request_content_included": false,
+  "full_acceleration_goal_achieved": false
+}
