@@ -1,0 +1,655 @@
+{
+  "schema": "halogen01810.historical-regression-evidence.v1",
+  "audit_date": "2026-10-19",
+  "report": "docs/research/halogen01810-historical-regression-20261019.md",
+  "audit_operations": {
+    "existing_files_and_cpu_only": true,
+    "hardware_or_http_calls": false,
+    "lifecycle_changes": false,
+    "model_payload_reads": false,
+    "authentication_reads": false,
+    "runtime_source_edits": false,
+    "committed": false
+  },
+  "workload": {
+    "input_tokens_reported": 8192,
+    "output_tokens": 128,
+    "drafter": "mtp",
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "old_current_messages_equal": true,
+    "actual_new_input_ids_captured": false,
+    "only_nonmessage_request_difference": "current prompt_cache_policy=no_store",
+    "conditioning_schedule_matched": false
+  },
+  "cohorts": {
+    "stock_a_0162": {
+      "measured_n": 3,
+      "excluded_warmups": 1,
+      "selected_rows": [
+        {
+          "rep": 1,
+          "api_prefill_seconds": 4.3789,
+          "api_decode_seconds": 2.6478,
+          "whole_http_seconds": 7.047163900000044,
+          "whole_minus_api_phase_sum_seconds": 0.020463900000043722
+        },
+        {
+          "rep": 2,
+          "api_prefill_seconds": 4.3833,
+          "api_decode_seconds": 2.6493,
+          "whole_http_seconds": 7.0546673000000055,
+          "whole_minus_api_phase_sum_seconds": 0.02206730000000512
+        },
+        {
+          "rep": 3,
+          "api_prefill_seconds": 4.4045,
+          "api_decode_seconds": 2.633,
+          "whole_http_seconds": 7.060488899999996,
+          "whole_minus_api_phase_sum_seconds": 0.022988899999996093
+        }
+      ],
+      "mean_seconds": {
+        "api_prefill_seconds": 4.3889,
+        "api_decode_seconds": 2.6433666666666666,
+        "whole_http_seconds": 7.054106700000015,
+        "whole_minus_api_phase_sum_seconds": 0.021840033333348313,
+        "api_phase_sum_seconds": 7.032266666666667
+      },
+      "whole_http_sample_sd_seconds": 0.0066801654560102565,
+      "raw_api_arithmetic_tps": {
+        "prefill": 1866.539,
+        "decode": 48.42366666666666
+      },
+      "pooled_api_tps": {
+        "prefill": 1866.5269201850124,
+        "decode": 48.42309680836307
+      }
+    },
+    "current_01810": {
+      "measured_n": 3,
+      "excluded_warmups": 1,
+      "selected_rows": [
+        {
+          "rep": 1,
+          "api_prefill_seconds": 6.5459,
+          "api_decode_seconds": 3.2409,
+          "whole_http_seconds": 9.8085162,
+          "whole_minus_api_phase_sum_seconds": 0.021716200000000185
+        },
+        {
+          "rep": 2,
+          "api_prefill_seconds": 6.9873,
+          "api_decode_seconds": 3.3058,
+          "whole_http_seconds": 10.3527305,
+          "whole_minus_api_phase_sum_seconds": 0.059630499999999476
+        },
+        {
+          "rep": 3,
+          "api_prefill_seconds": 6.7478,
+          "api_decode_seconds": 2.8489,
+          "whole_http_seconds": 9.6629058,
+          "whole_minus_api_phase_sum_seconds": 0.06620580000000098
+        }
+      ],
+      "mean_seconds": {
+        "api_prefill_seconds": 6.7603333333333335,
+        "api_decode_seconds": 3.131866666666667,
+        "whole_http_seconds": 9.941384166666667,
+        "whole_minus_api_phase_sum_seconds": 0.04918416666666688,
+        "api_phase_sum_seconds": 9.8922
+      },
+      "whole_http_sample_sd_seconds": 0.36359998845863994,
+      "raw_api_arithmetic_tps": {
+        "prefill": 1212.636,
+        "decode": 41.04833333333333
+      },
+      "pooled_api_tps": {
+        "prefill": 1211.7745673290271,
+        "decode": 40.87019455915535
+      }
+    }
+  },
+  "historical_comparison": {
+    "whole_http_increase_percent": 40.930447886004416,
+    "mean_difference_seconds": {
+      "api_prefill_seconds": 2.371433333333334,
+      "api_decode_seconds": 0.48850000000000016,
+      "whole_http_seconds": 2.887277466666652,
+      "whole_minus_api_phase_sum_seconds": 0.02734413333331857,
+      "api_phase_sum_seconds": 2.859933333333334
+    },
+    "descriptive_delta_shares_percent": {
+      "api_prefill_seconds": 82.13389120759295,
+      "api_decode_seconds": 16.919052832285324,
+      "whole_minus_api_phase_sum_seconds": 0.947055960121742
+    },
+    "pooled_api_rate_change_percent": {
+      "prefill": -35.07864503722698,
+      "decode": -15.597726595427641
+    },
+    "causal_decomposition": false,
+    "current_api_phase_clocks_independently_qualified": false,
+    "whole_minus_phase_sum_is_measured_overhead": false,
+    "old_corrected_published_tps": {
+      "prefill": 1866.537224602995,
+      "decode": 48.42362060395627
+    }
+  },
+  "same_0162_version_controls": {
+    "source": "same_version_audit",
+    "measurements": [
+      {
+        "cohort": "Historical post-reboot Stock A",
+        "prefill_tps": 1866.537224602995,
+        "decode_tps": 48.42362060395627,
+        "wall_seconds": 7.054106700000015,
+        "accepted": 207,
+        "drafted": 345
+      },
+      {
+        "cohort": "Initial keep-open measurement",
+        "prefill_tps": 1239.198391627115,
+        "decode_tps": 42.15041241183947,
+        "wall_seconds": 9.674219699999716,
+        "accepted": 207,
+        "drafted": 345
+      },
+      {
+        "cohort": "Fresh keep-open control",
+        "prefill_tps": 1229.1252650015765,
+        "decode_tps": 41.945033861739496,
+        "wall_seconds": 9.751004366666166,
+        "accepted": 207,
+        "drafted": 345
+      }
+    ],
+    "conditioned_source": "conditioned_control",
+    "conclusion": "A similar slowdown was measured before the 0.18.x upgrades; operating-state cause remains unproven."
+  },
+  "matched_0188_to_01810": {
+    "historical8k": {
+      "before_version": "0.18.8",
+      "after_version": "0.18.10",
+      "before_whole_http_mean_seconds": 9.963491066666666,
+      "after_whole_http_mean_seconds": 9.941384166666667,
+      "whole_time_change_percent": -0.22187905676915864,
+      "before_pooled_api_tps": {
+        "prefill_pooled_tokens_per_second": 1243.1899233629258,
+        "decode_pooled_tokens_per_second": 38.50280248262862,
+        "prefill_arithmetic_mean_tokens_per_second": 1243.946,
+        "decode_arithmetic_mean_tokens_per_second": 38.50933333333333,
+        "independently_clock_qualified": false
+      },
+      "after_pooled_api_tps": {
+        "prefill_pooled_tokens_per_second": 1211.7745673290271,
+        "decode_pooled_tokens_per_second": 40.870194559155344,
+        "prefill_arithmetic_mean_tokens_per_second": 1212.636,
+        "decode_arithmetic_mean_tokens_per_second": 41.04833333333333,
+        "independently_clock_qualified": false
+      },
+      "output_identities_match": true,
+      "returning_bookend": false,
+      "measured_n_each": 3,
+      "excluded_warmups_each": 1
+    },
+    "natural16k": {
+      "before_version": "0.18.8",
+      "after_version": "0.18.10",
+      "before_whole_http_mean_seconds": 17.570649333333332,
+      "after_whole_http_mean_seconds": 17.430703,
+      "whole_time_change_percent": -0.7964778687366891,
+      "before_pooled_api_tps": {
+        "prefill_pooled_tokens_per_second": 1170.9604105222534,
+        "decode_pooled_tokens_per_second": 36.78618985122668,
+        "prefill_arithmetic_mean_tokens_per_second": 1171.2953333333332,
+        "decode_arithmetic_mean_tokens_per_second": 36.81666666666667,
+        "independently_clock_qualified": false
+      },
+      "after_pooled_api_tps": {
+        "prefill_pooled_tokens_per_second": 1186.4239042016766,
+        "decode_pooled_tokens_per_second": 36.313086896082154,
+        "prefill_arithmetic_mean_tokens_per_second": 1187.0413333333333,
+        "decode_arithmetic_mean_tokens_per_second": 36.515,
+        "independently_clock_qualified": false
+      },
+      "output_identities_match": true,
+      "returning_bookend": false,
+      "measured_n_each": 3,
+      "excluded_warmups_each": 1
+    }
+  },
+  "configuration": {
+    "stock_a": {
+      "context": 262144,
+      "kv_pool": 262144,
+      "prefill_chunk_effective": 32768,
+      "max_arena_effective": 32768,
+      "cache": "Off",
+      "vision": false,
+      "mtp_depth": 2,
+      "pld": "3,3",
+      "host_reserve_gib": 18,
+      "actual_total_allocation_gib": 81.6
+    },
+    "current": {
+      "context": 32768,
+      "kv_pool": 32768,
+      "prefill_chunk": 8192,
+      "max_arena": 8192,
+      "cache": "Exact",
+      "request_policy": "no_store",
+      "vision": true,
+      "mtp_depth": 2,
+      "mtp_gate_p": "0",
+      "pld": "3,3",
+      "host_reserve_gib": 18,
+      "actual_total_allocation_gib": 69.3
+    },
+    "matching_historical_shape_proves_compute_equivalence": false
+  },
+  "implementation_identity": {
+    "main_model_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "ngram_sha256": "9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6",
+    "same_saved_model_receipts": true,
+    "old_compat_rocroller_sha256": "9e35bc339b10da3ab2c6f7afbed0d4a1bb5bb2608bf8e3bb43031cfe654c1975",
+    "old_hip_fatbin": {
+      "bytes": 23677600,
+      "sha256": "7d792d1cfcd209f5f0592afd829bd58795635a32fff1e157c40532f27e45aabe"
+    },
+    "new_hip_fatbin": {
+      "bytes": 24965128,
+      "sha256": "e0caac29af1dd2f29f82274df905fe5e22bb103a13c481df8be17e16cae3d5d8"
+    },
+    "stock_a_live_provider_closure_bound": false,
+    "precision_change_explains_gap": false
+  },
+  "baked_plan_narrowing": {
+    "receipt": "baked_plan_receipt",
+    "key_receipt": "baked_plan_keys",
+    "new_bytes": 132980,
+    "new_sha256": "e1c51d93c0ae375bdf1c853641e092a3676d9d7c8da58a51c7712b424206938a",
+    "old_sha256": "a053ca07a4de9642934dcbff91addf5dd457edb06169dc173ae354abe56754d1",
+    "old_records": 478,
+    "new_records": 2077,
+    "old_byte_identical_records_present": 478,
+    "new_records_added": 1599,
+    "old_records_absent": 0,
+    "key_definition": "bucketM,N,K,type selector from retained0162 audit, not re-derived01810 engine selection",
+    "old_duplicate_keys": 0,
+    "new_duplicate_keys": 0,
+    "conflicts": [],
+    "envelope_equal_except_count": true,
+    "engine_or_container_started": false,
+    "kernel_selection_or_performance_equivalence_proven": false
+  },
+  "tokenizer_cpu_reconstruction": {
+    "method": "Exact saved single-user ThinkingOff template branch; no service import; raw backend and reconstructed saved loaded backend encoded with no padding/truncation and add_special_tokens=False. No content or token sequence emitted.",
+    "template_utf8_bytes": 8952,
+    "template_sha256": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041",
+    "raw_tokenizer_sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+    "reconstructed_loaded_backend_canonical_sha256": "537fdfe1168e1c78d55cc922b74633986d27aa8aac96cdbe3529523a0963368e",
+    "rendered_utf8_sha256": "09a684d240ef7bf987271a6ee16fa3403f328875163763e0eeb5a0511271cb68",
+    "input_n": 8192,
+    "ids_serialization": "unsigned 32-bit little-endian, no header",
+    "ids_sha256": "a85f2ac1fe29d97549b5adc38d02233f9fd0cbbde2fbf7a9daea1909a3438c93",
+    "raw_loaded_cpu_sequences_equal": true,
+    "cpu_tokenizers_version": "0.23.2",
+    "saved_serving_reference_versions": {
+      "python": "3.12.15",
+      "transformers": "5.15.0",
+      "tokenizers": "0.22.2"
+    },
+    "actual_old_new_runtime_id_equality_proven": false,
+    "archived_token_map_assets_match_runtime": false
+  },
+  "operating_state_limits": {
+    "exact_stock_a_matched_gpu_sensors": false,
+    "current_01810_frequency_power_temperature_coverage": false,
+    "same_version_sensor_control_is_stock_a": false,
+    "power_rail_accounting_qualified": false,
+    "historical_cpu_rate_affinity_bound": false,
+    "thermal_power_or_affinity_cause_established": false,
+    "warm_01810_exposed_lookup_wait_measured": false
+  },
+  "pending_candidate": {
+    "status": "pending_separate_bounded_measurement",
+    "prefill_chunk_and_arena_candidate": 32768,
+    "results": null,
+    "speedup_established": false,
+    "numerical_output_parity_established": false,
+    "frozen_packet_modified_by_this_audit": false,
+    "official_flags": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/9d11f18aa40d93ba6bc7cb65ee488b1acc834d7d/docs/FLAGS.md",
+    "packet": "server/.local/halogen-regression-20261019/batch32768",
+    "packet_final": true,
+    "sequence": [
+      8192,
+      32768,
+      8192
+    ],
+    "context": 32768,
+    "cases": [
+      "historical8k",
+      "natural16k"
+    ],
+    "total_requests": 24,
+    "measured_requests": 18,
+    "execution_started": false,
+    "coordinated_server_window": "awaiting_specific_human_answer"
+  },
+  "evidence": [
+    {
+      "id": "stock_a_samples",
+      "path": "server/.local/optimization9h-20261004/pld-stock8k-bookend-1742f9e165de45bea641446004e9733e/stocka/cold/samples.jsonl",
+      "bytes": 20099,
+      "sha256": "97d9c3efe6f8719960007c0ad19e0a689d5a250dd4210036c3c239425fe5f5b8"
+    },
+    {
+      "id": "stock_a_manifest",
+      "path": "server/.local/optimization9h-20261004/pld-stock8k-bookend-1742f9e165de45bea641446004e9733e/stocka/backend-manifest.json",
+      "bytes": 6628,
+      "sha256": "7cf7551004c5d2c1c368dd45a0308b1e3fb5750573d026112ff2cf33d2706166"
+    },
+    {
+      "id": "stock_a_input_seal",
+      "path": "server/.local/optimization9h-20261004/pld-stock8k-bookend-1742f9e165de45bea641446004e9733e/stocka/plan.json",
+      "bytes": 8758,
+      "sha256": "d784e6f7e0e2e870287a73e56b899075147fd1289a9b6f2672f6d62263cdb95d"
+    },
+    {
+      "id": "stock_a_engine_log",
+      "path": "backends/halogen-wsl2-0.16.2/.local/services/83ff523e6bae443499adff02a7177b4a/engine.log",
+      "bytes": 140282,
+      "sha256": "2d4333f9d903c4f7164e73f26e28bdbb21fa99a44f99a3829cde0b39c6ca28dc"
+    },
+    {
+      "id": "stock_a_health",
+      "path": "backends/halogen-wsl2-0.16.2/.local/services/83ff523e6bae443499adff02a7177b4a/health.json",
+      "bytes": 6152,
+      "sha256": "e9ecbdf26fafa61253b4a1e578abee4ebd40ffced49b8e6efa41d6d97c460687"
+    },
+    {
+      "id": "published_stock_a",
+      "path": "docs/benchmarks/halogen0162-pld-stock8k-20261004.json",
+      "bytes": 39338,
+      "sha256": "3f33187313d58d036f5cdb58cff3353d57b7ae46d22a0dad3054df765fc97410"
+    },
+    {
+      "id": "new_summary",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/summary.json",
+      "bytes": 5993,
+      "sha256": "625d584820395a11fd4bc2b03a397710af8548514065e7a458f3c52b441fbd89"
+    },
+    {
+      "id": "new_identity",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/identity.json",
+      "bytes": 1398,
+      "sha256": "f8f386cd1c6ab7c9be90751429e70b485dfa6d7606d1f364e2f7aa258b98b160"
+    },
+    {
+      "id": "new_manifest",
+      "path": "backends/halogen-wsl2-0.18.10/.local/services/026bc316418c416980c39b817bf59108/manifest.json",
+      "bytes": 6640,
+      "sha256": "eb661b450341987c94f200aaa252a816646584f428ed080b9d2e3f66159f286b"
+    },
+    {
+      "id": "new_engine_log",
+      "path": "backends/halogen-wsl2-0.18.10/.local/services/026bc316418c416980c39b817bf59108/engine.log",
+      "bytes": 152476,
+      "sha256": "4ebbf50b0552528d195921fc72226cbc7d1fb16a60972751784f3a61ff1b4968"
+    },
+    {
+      "id": "new_health",
+      "path": "backends/halogen-wsl2-0.18.10/.local/services/026bc316418c416980c39b817bf59108/health.json",
+      "bytes": 7599,
+      "sha256": "8e39c8bdf8cfabbb6c6a0126980921101782d2575850c62af2b2a9cb26e1911e"
+    },
+    {
+      "id": "new_profile",
+      "path": "server/.local/halogen-update-20261018/primary01810/serving01810-voice32k-prefill8192.json",
+      "bytes": 1736,
+      "sha256": "4a0789ace369d1d0b562eae415d2f61181a6804db75c16b62275b3aba91a8b3d"
+    },
+    {
+      "id": "same_version_audit",
+      "path": "docs/research/halogen-performance-gap-audit-20261005.json",
+      "bytes": 22137,
+      "sha256": "972351bab45ff987e675f19343132e63f4d14c1aba5046650ba316a07b6573a3"
+    },
+    {
+      "id": "conditioned_control",
+      "path": "docs/research/halogen-conditioned-control-20261005.json",
+      "bytes": 46279,
+      "sha256": "fccbdf3f92239a33bf978a40bcb81776e5e0d1b972accb46214d055e8e1595c6"
+    },
+    {
+      "id": "gpu_counter_audit",
+      "path": "docs/research/halogen-gpu-counter-cohort-20261005.md",
+      "bytes": 8240,
+      "sha256": "935b820bd820c0e5b36b43af6808c326d96b546d181375b1f55956cfe9504748"
+    },
+    {
+      "id": "matched_0188_01810",
+      "path": "server/.local/halogen-update-20261018/primary01810/matched-lifecycle-recovered/comparison.json",
+      "bytes": 13190,
+      "sha256": "43b1eeacddf5958625c9c266152f4855f38c861cf0d248551b810421fee1546a"
+    },
+    {
+      "id": "current_gpu_inspection",
+      "path": "server/.local/halogen-update-20261018/primary01810/initial-inspection/current-gpu.json",
+      "bytes": 101,
+      "sha256": "0a7ac79b7daab6ade3fc6cd1ee53b4f1a9e74568a794118422ce0c7ca25cb683"
+    },
+    {
+      "id": "new_cohort_gpu_snapshot",
+      "path": "server/.local/halogen-update-20261018/primary01810/matched-lifecycle-recovered/cohort-01810-gpu.json",
+      "bytes": 101,
+      "sha256": "7c3a1c316d2dbef76524ca882aefca40998c9706bac690713b71e278330eac8e"
+    },
+    {
+      "id": "frozen_raw_tokenizer",
+      "path": "server/.local/upgrade0162/tokenizer.json",
+      "bytes": 12809320,
+      "sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3"
+    },
+    {
+      "id": "tokenizer_reference",
+      "path": "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/dflash-root-tokenizer-reference-v3-20261009/tokenizer-reference/reference.json",
+      "bytes": 17729,
+      "sha256": "505a61fb2f15f6c13f3a8cb0beb4125c2c7cdfbd32a50cb80bb7c7ec1eb1f89a"
+    },
+    {
+      "id": "cpu_tokenizers_binary",
+      "path": "server/.local/upgrade0162/vendor/tokenizers/tokenizers.pyd",
+      "bytes": 7847936,
+      "sha256": "05848a2a85e1466d19242499ed6b8c016a886db79aca020792aa5598ded77ef9"
+    },
+    {
+      "id": "current_api_source",
+      "path": "server/.local/halogen-update-20261018/primary01810/extracted/serve_api.py",
+      "bytes": 292940,
+      "sha256": "f577b4cd8bb2e075fc656d3ed78ed266ce4f6dfa8b60d9ef58584dc298fe7281"
+    },
+    {
+      "id": "current_message_parser",
+      "path": "server/.local/halogen-update-20261018/primary01810/extracted/tool_parse.py",
+      "bytes": 16335,
+      "sha256": "09f962b39c1985fe45ba9dfba2e04a6854614980fee8de54fac56f40f2ad1c3e"
+    },
+    {
+      "id": "recovered_original_request",
+      "path": "server/.local/halogen-update-20261018/primary01810/historical8k-recovery/request.body.json",
+      "bytes": 42798,
+      "sha256": "fcd4fb7a1ea80aecbbe8b42289019a9b08b5f54458c02ec3e1060c95372b16d0"
+    },
+    {
+      "id": "current_measured_request",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/request-historical8k-1.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "id": "baked_plan_receipt",
+      "path": "server/.local/halogen-regression-20261019/baked-plan-inspection/handle.json",
+      "bytes": 3809,
+      "sha256": "a187a079a7f7bb6a7f32339dc03b969ae2874c727da0f34faab61bc3c6dd4082"
+    },
+    {
+      "id": "baked_plan_keys",
+      "path": "server/.local/halogen-regression-20261019/baked-plan-inspection/key-comparison.json",
+      "bytes": 350,
+      "sha256": "cfa5d55844c17f0dfdc08e48c498b324d642aef822057b5d26a27a3e09e7d354"
+    },
+    {
+      "id": "old_shipped_plan",
+      "path": "server/.local/optimization9h-20261004/shipped-matmul.plan",
+      "bytes": 30644,
+      "sha256": "a053ca07a4de9642934dcbff91addf5dd457edb06169dc173ae354abe56754d1"
+    },
+    {
+      "id": "new_baked_plan",
+      "path": "server/.local/halogen-regression-20261019/baked-plan-inspection/flash-tune.plan",
+      "bytes": 132980,
+      "sha256": "e1c51d93c0ae375bdf1c853641e092a3676d9d7c8da58a51c7712b424206938a"
+    },
+    {
+      "id": "provider_cpu_receipt",
+      "path": "server/.local/halogen-update-20261018/primary01810/extracted/cpu-provider/receipt.json",
+      "bytes": 15888,
+      "sha256": "646d9c968fa56264718a5f45f579910bd1ef47d13a38cda02ba389c0351bed80"
+    },
+    {
+      "id": "new_response_1",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/response-historical8k-1.raw",
+      "bytes": 1341,
+      "sha256": "bd3ae320693a0ee3aac75a9af03b0b43bcb9ff0cd9a5e51700aa4c8d7c209674"
+    },
+    {
+      "id": "new_client_1",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/client-historical8k-1.json",
+      "bytes": 4397,
+      "sha256": "36359a2cba96b54d705fd6f066116ba6175d99acfb3486b875dc905722d53fc1"
+    },
+    {
+      "id": "new_response_2",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/response-historical8k-2.raw",
+      "bytes": 1341,
+      "sha256": "e5bd9ca8e052c69dc8b334bff73b28dc183270a076b0ae6591474cc90a4a8178"
+    },
+    {
+      "id": "new_client_2",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/client-historical8k-2.json",
+      "bytes": 4399,
+      "sha256": "98f0b4605e3ca7feafe3eed2710e1386affa8779f11a1df97f7d7334043193eb"
+    },
+    {
+      "id": "new_response_3",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/response-historical8k-3.raw",
+      "bytes": 1341,
+      "sha256": "90afbba0dabdee2ceca12757a8718dd0e73386fe8fc5ccbe330730ae4752a18a"
+    },
+    {
+      "id": "new_client_3",
+      "path": "server/.local/halogen-update-20261018/primary01810/bench-results/cohort-01810-fresh/client-historical8k-3.json",
+      "bytes": 4397,
+      "sha256": "499dc615a96d3609620567d872ecb2db951be76d7c29ee5b703d2702c8610dd0"
+    },
+    {
+      "id": "natural16k_0185_gather",
+      "path": "docs/benchmarks/halogen0185-natural16k-gather-20261015.json",
+      "bytes": 53787,
+      "sha256": "ad6abdba9e213d4344b84a9c72e21e9c03a132ecdc819e79505a263158fa9e15"
+    },
+    {
+      "id": "natural16k_0185_gather_report",
+      "path": "docs/benchmarks/halogen0185-natural16k-gather-20261015.md",
+      "bytes": 2835,
+      "sha256": "dbf42c844bb0b3d65640c4812cc41ced328200146cf3102df7aba8f76b2a1ca1"
+    },
+    {
+      "id": "natural16k_version_bracket",
+      "path": "server/.local/halogen-update-20261017/goal-next-20261017/version-bracket-4k/analysis/results.json",
+      "bytes": 15074,
+      "sha256": "48a6ac786e1306eab23a86847f7ce67ce41813c5a6b8f26e1d720cbb1eecd761"
+    },
+    {
+      "id": "natural16k_combined_report",
+      "path": "docs/benchmarks/halogen0187-combined-prefill-mtp-20261017.md",
+      "bytes": 3466,
+      "sha256": "cfa7905c18076edb867a77ed156331a83fb65148c9747bc2a7328e4152ca67d4"
+    }
+  ],
+  "rate_headline_scope": {
+    "serial_pld_off": {
+      "input_tokens": 8192,
+      "output_tokens": 1,
+      "prefill_tps_corrected": 1925.159692398435
+    },
+    "mtp_pld_off": {
+      "input_tokens": 8192,
+      "output_tokens": 128,
+      "prefill_tps_corrected": 1884.4102799485581,
+      "decode_tps_rounded": 48.232
+    },
+    "stock_a_mtp": {
+      "prefill_tps_corrected": 1866.537224602995,
+      "decode_tps_corrected": 48.42362060395627
+    },
+    "combining_serial_prefill_and_stock_mtp_decode_is_one_measured_cohort": false
+  },
+  "same_0185_natural16k_drift": {
+    "high_gather64_bookends": {
+      "source": "natural16k_0185_gather",
+      "input_tokens": 16384,
+      "output_tokens": 128,
+      "context": 32768,
+      "prefill_chunk_and_arena": 4096,
+      "whole_http_mean_seconds": 11.760124300000001,
+      "pooled_api_prefill_tps": 1852.8277562283015,
+      "pooled_api_decode_tps": 45.28889360648198
+    },
+    "later_version_bracket": {
+      "source": "natural16k_version_bracket",
+      "arms": [
+        {
+          "label": "0187-before",
+          "version": "0.18.7",
+          "whole_http_mean_seconds": 16.244787966666667,
+          "combined": {
+            "actual_input_tokens": 49152,
+            "actual_output_tokens": 384,
+            "drafted": 408,
+            "accepted": 177
+          }
+        },
+        {
+          "label": "0185-middle",
+          "version": "0.18.5",
+          "whole_http_mean_seconds": 16.1187573,
+          "combined": {
+            "actual_input_tokens": 49152,
+            "actual_output_tokens": 384,
+            "drafted": 408,
+            "accepted": 177
+          }
+        },
+        {
+          "label": "0187-after",
+          "version": "0.18.7",
+          "whole_http_mean_seconds": 16.403995433333332,
+          "combined": {
+            "actual_input_tokens": 49152,
+            "actual_output_tokens": 384,
+            "drafted": 408,
+            "accepted": 177
+          }
+        }
+      ],
+      "outputs_and_work_identical_within_bracket": true
+    },
+    "return_to_0185_restored_historical_high_state": false,
+    "operating_state_cause_established": false,
+    "phase_clocks_qualified": false
+  }
+}
