@@ -20,6 +20,7 @@ from uuid import uuid4
 import aiohttp
 from aiohttp import web
 from console_trace import ConsoleTrace,RequestTrace
+from scc_voice_locale import restore_scc_voice_locale
 
 LOG=logging.getLogger('alloy.gateway')
 CONSOLE_TRACE_KEY=web.RequestKey('console_trace',RequestTrace)
@@ -44,6 +45,143 @@ VOICE_STATIC_KEYS=frozenset({'token','auth_token','jwt','jwt_token','access_toke
     'ice_servers','iceServers','audio','transcript','message','error','status','success','expires_in',
     'instance_name','voice_service_id','oauth_client_id','mobileChannelType','mobileChannelId',
     'voiceServiceId','voiceWebhookURL','client_app','clientApp','ws_ticket'})
+
+UPSTREAM_ERROR_LIMIT=16384
+INFERENCE_PARAMETER_NAMES=frozenset({'messages','prompt','input','max_tokens',
+    'max_completion_tokens','max_output_tokens','temperature','top_p','min_p','top_k',
+    'response_format','tools','tool_choice','logprobs','top_logprobs','reasoning_effort',
+    'reasoning','thinking','enable_thinking','chat_template_kwargs','stream','stop',
+    'presence_penalty','frequency_penalty','repetition_penalty','drafter','logit_bias',
+    'prompt_cache_policy','continue_final_message','add_generation_prompt',
+    'previous_response_id'})
+
+
+def inference_request_metrics(body, context):
+    """Numeric sizes only. Never estimate token counts or copy request values."""
+    def integer(value):
+        return value if type(value) is int and 0<=value<=2147483647 else -1
+    messages=body.get('messages')
+    tools=body.get('tools')
+    chars=0
+    shape={name:0 for name in ('role_system','role_user','role_assistant','role_tool',
+        'role_other','content_string','content_list','content_null','content_other',
+        'image_parts','tool_response_wrappers')}
+    if isinstance(messages,list):
+        for message in messages[:4096]:
+            role=message.get('role') if isinstance(message,dict) else None
+            role_key='role_'+role if role in ('system','user','assistant','tool') else 'role_other'
+            shape[role_key]+=1
+            content=message.get('content') if isinstance(message,dict) else None
+            if isinstance(content,str):
+                shape['content_string']+=1
+                chars+=len(content)
+                text=content.strip()
+                if text.startswith('<tool_response>') and text.endswith('</tool_response>'):
+                    shape['tool_response_wrappers']+=1
+            elif isinstance(content,list):
+                shape['content_list']+=1
+                for part in content[:256]:
+                    if isinstance(part,dict) and isinstance(part.get('text'),str):
+                        chars+=len(part['text'])
+                    if isinstance(part,dict) and ('image_url' in part or 'image' in part
+                            or part.get('type') in ('image','image_url','input_image')):
+                        shape['image_parts']+=1
+            elif content is None: shape['content_null']+=1
+            else: shape['content_other']+=1
+    elif isinstance(body.get('prompt'),str): chars=len(body['prompt'])
+    elif isinstance(body.get('input'),str): chars=len(body['input'])
+    result={'message_count':len(messages) if isinstance(messages,list) else 0,
+            'tool_count':len(tools) if isinstance(tools,list) else 0,
+            'prompt_chars':chars,'configured_context_tokens':integer(context)}
+    result.update(shape)
+    thinking=body.get('enable_thinking')
+    result['thinking_enabled']=int(thinking) if type(thinking) is bool else -1
+    effort=body.get('reasoning_effort')
+    result['reasoning_effort_class']=(effort if effort in
+        ('none','minimal','low','medium','high','xhigh') else 'missing' if effort is None else 'other')
+    for name in ('max_tokens','max_completion_tokens','max_output_tokens'):
+        result[name]=integer(body.get(name))
+    return result
+
+
+def upstream_error_metrics(raw, *, oversized=False, encoded=False):
+    """Classify reviewed engine errors; unrecognized text never leaves memory."""
+    if encoded: return {'error_class':'encoded_body_skipped'}
+    if oversized: return {'error_class':'oversized_body_skipped'}
+    result={'error_class':'unclassified'}
+    try:
+        value=json.loads(raw)
+    except (ValueError,UnicodeError,RecursionError):
+        return result
+    error=value.get('error') if isinstance(value,dict) else None
+    message=error.get('message') if isinstance(error,dict) else None
+    if not isinstance(message,str): return result
+    template_prefix='chat template rejected the request: '
+    if message.startswith(template_prefix):
+        reason=message[len(template_prefix):]
+        known={
+            'No user query found in messages.':'no_user_query',
+            'No messages provided.':'no_messages',
+            'Unexpected message role.':'unexpected_role',
+            'Unexpected content type.':'unexpected_content_type',
+            'Unexpected item type in content.':'unexpected_content_item',
+            'System message must be at the beginning.':'system_message_position',
+            'System message cannot contain images.':'system_image',
+            'System message cannot contain videos.':'system_video',
+            'Already borrowed':'tokenizer_already_borrowed',
+        }
+        code=known.get(reason,'unclassified')
+        if reason.startswith('Unexpected reasoning effort ') and reason.endswith(
+                '. Supported types are xhigh (default), medium, and low.'):
+            code='unsupported_reasoning_effort'
+        return {'error_class':'chat_template_rejected','template_reason':code,
+                'template_error_chars':len(reason)}
+    # Patterns extract bounded decimal token counts only, never arbitrary text.
+    match=re.fullmatch(r'max_tokens ([0-9]{1,9}) does not fit: prompt is ([0-9]{1,9}) '
+        r'tokens and the context is ([0-9]{1,9}), leaving room for ([0-9]{1,9})\.',message)
+    if match:
+        return dict(zip(('requested_max_tokens','prompt_tokens','context_tokens',
+                         'available_output_tokens'),map(int,match.groups())),
+                    error_class='output_budget_exceeds_context')
+    match=re.match(r'the prompt does not fit: it is ([0-9]{1,9}) tokens and '
+        r'the context is ([0-9]{1,9}), [0-9]{1,9} tokens over\. ',message)
+    if match:
+        return {'error_class':'prompt_exceeds_context',
+                'prompt_tokens':int(match[1]),'context_tokens':int(match[2])}
+    match=re.match(r'max_tokens ([0-9]{1,9}) exceeds this server\'s cap of ([0-9]{1,9})\. ',message)
+    if match:
+        return {'error_class':'output_budget_exceeds_policy',
+                'requested_max_tokens':int(match[1]),'output_tokens_cap':int(match[2])}
+    fields=sorted({part.split(':',1)[0] for part in message.split('; ')
+                   if part.split(':',1)[0] in INFERENCE_PARAMETER_NAMES})
+    if fields: return {'error_class':'request_validation','invalid_fields':fields}
+    if message.startswith('body: Value error, conflicting token budgets ('):
+        return {'error_class':'conflicting_token_budgets'}
+    if message.startswith('body:'):
+        return {'error_class':'request_validation','invalid_fields':[]}
+    for prefix,code in (
+            ('chat template rejected the request:','chat_template_rejected'),
+            ('response_format (`text.format` on /v1/responses)', 'structured_output_unavailable'),
+            ('response_format json_schema needs a ', 'invalid_json_schema'),
+            ('this engine build decodes greedy only ', 'sampling_unavailable'),
+            ('logprobs with stream=true ', 'stream_logprobs_unsupported'),
+            ('continue_final_message cannot be combined ', 'invalid_final_message_mode'),
+            ('the engine refused this request:', 'engine_refused'),
+            ('the engine rejected this request.', 'engine_refused'),
+            ('the chat template emitted ', 'chat_template_rejected'),
+            ('this server does not accept images:', 'image_input_invalid'),
+            ('this server does not fetch image URLs;', 'image_input_invalid'),
+            ('this server has no video path;', 'image_input_invalid'),
+            ('only base64 data: URLs are supported', 'image_input_invalid'),
+            ('image_url.url ', 'image_input_invalid'),
+            ('image payload is empty', 'image_input_invalid'),
+            ('cannot decode the image:', 'image_input_invalid'),
+            ('file inputs are not supported ', 'image_input_invalid')):
+        if message.startswith(prefix): return {'error_class':code}
+    field=re.split(r'[ =:\[\.]',message,maxsplit=1)[0]
+    if field in INFERENCE_PARAMETER_NAMES:
+        return {'error_class':'invalid_parameter','invalid_fields':[field]}
+    return result
 
 
 def voice_contract_shape(value):
@@ -145,6 +283,47 @@ class Gateway:
 
     @web.middleware
     async def sdk_dispatch(self, request, handler):
+        if request.path!=NATIVE_SDK_SESSION and not request.path.startswith(NATIVE_SDK_SESSION+'/'):
+            return await self._sdk_dispatch(request,handler)
+        status=None
+        try:
+            response=await self._sdk_dispatch(request,handler)
+            status=response.status
+            return response
+        except web.HTTPException as response:
+            status=response.status
+            raise
+        finally:
+            # Telemetry must neither read the body nor affect dispatch results.
+            try:
+                child=NATIVE_SDK_CHILD.fullmatch(request.path)
+                operation='other'
+                if request.raw_path.split('?',1)[0]==request.path:
+                    if request.method=='POST' and request.path==NATIVE_SDK_SESSION:
+                        operation='create'
+                    elif child:
+                        suffix=child.group(1)
+                        if request.method=='POST' and suffix in ('offer','candidate'):
+                            operation=suffix
+                        elif request.method=='GET' and suffix=='candidates':
+                            operation='poll'
+                        elif request.method=='DELETE' and suffix is None:
+                            operation='delete'
+                user_agent=request.headers.get('User-Agent','')[:256].lower()
+                family=('android' if 'android' in user_agent else
+                        'okhttp' if 'okhttp' in user_agent else
+                        'ios' if any(marker in user_agent for marker in ('cfnetwork','darwin','iphone','ipad')) else
+                        'web' if 'mozilla/' in user_agent else 'unknown')
+                LOG.info('Gateway SDK dispatch %s',json.dumps({
+                    'operation':operation,'status':status,'client_family':family,
+                    'authorization_header_count':min(len(request.headers.getall('Authorization',[])),255),
+                    'cookie_present':'Cookie' in request.headers,
+                    'transfer_encoding_present':'Transfer-Encoding' in request.headers},
+                    separators=(',',':'),sort_keys=True))
+            except Exception:
+                pass
+
+    async def _sdk_dispatch(self, request, handler):
         # Separate platform OAuth admission lives in the fixed loopback native
         # service. This exception never reaches the inference dispatcher.
         path=request.path
@@ -405,13 +584,32 @@ class Gateway:
             if trace is not None: trace.payload(body)
             if not isinstance(body,dict) or body.get('model') not in (self.backend.identifier,self.backend.model):
                 raise web.HTTPBadRequest(text='Select a model returned by /v1/models')
+            prior_body=body
+            body=restore_scc_voice_locale(body,route=request.path,
+                                          demo_model=self.demo_no_thinking_model)
+            if body is not prior_body:
+                LOG.info('Gateway compatibility=scc_voice_locale')
             # Explicit demo mode affects only the configured inbound public alias.
             # It is intentionally shared by all callers of that alias, never prompt-matched.
             if (self.demo_no_thinking_model and request.path=='/v1/chat/completions'
                     and body['model']==self.demo_no_thinking_model):
                 body['enable_thinking']=False
                 body['reasoning_effort']='none'
+                # The flat ServiceNow provider places task/history in one
+                # system string. Qwen requires a user query as well. Retain
+                # the provider's system priority and add only a dispatch.
+                messages=body.get('messages')
+                tools=body.get('tools')
+                if (self.demo_no_thinking_model=='halogen-v2'
+                        and isinstance(messages,list) and len(messages)==1
+                        and isinstance(messages[0],dict) and messages[0].get('role')=='system'
+                        and isinstance(messages[0].get('content'),str) and messages[0]['content'].strip()
+                        and (tools is None or tools==[])):
+                    body['messages']=[messages[0],{'role':'user','content':
+                        'Bitte bearbeite die im Systemtext beschriebene Aufgabe und beachte das dort geforderte Ausgabeformat.'}]
+                    LOG.info('Gateway compatibility=single_system_flat_prompt')
             body['model']=self.backend.model
+            request_metrics=inference_request_metrics(body,self.backend.context)
             acquired=await self.acquire_slot()
             if not acquired:
                 status=429
@@ -434,10 +632,24 @@ class Gateway:
                               if k.lower() in ('content-type','cache-control','x-request-id','content-encoding')}
                 response=web.StreamResponse(status=status,headers=safe_headers)
                 await response.prepare(request)
+                # Retain at most16KiB of rejected JSON for classification. All
+                # bytes still stream unchanged; success/audio/SSE never buffer.
+                rejected=bytearray() if status==400 else None
+                rejected_oversized=False
                 async for chunk in upstream.content.iter_any():
                     await response.write(chunk)  # awaits transport backpressure; no whole-response buffer
                     if trace is not None: trace.feed(chunk)
+                    if rejected is not None and not rejected_oversized:
+                        if len(rejected)+len(chunk)>UPSTREAM_ERROR_LIMIT:
+                            rejected.clear()
+                            rejected_oversized=True
+                        else: rejected.extend(chunk)
                 await response.write_eof()
+                if rejected is not None:
+                    diagnostic=upstream_error_metrics(rejected,oversized=rejected_oversized,
+                        encoded='Content-Encoding' in upstream.headers)
+                    diagnostic.update(request_metrics)
+                    LOG.info('Gateway upstream rejection %s',json.dumps(diagnostic,separators=(',',':')))
                 self.completed+=1
                 return response
         except asyncio.CancelledError:
@@ -454,7 +666,8 @@ class Gateway:
             if response is not None and response.prepared:
                 if request.transport: request.transport.close()
                 return response
-            return web.json_response({'error':{'message':'Selected local backend unavailable; no fallback'}},status=503)
+            status=503
+            return web.json_response({'error':{'message':'Selected local backend unavailable; no fallback'}},status=status)
         finally:
             if acquired: self.release_slot()
             LOG.info('request backend=%s path=%s status=%s seconds=%.4f active=%s',

@@ -2,7 +2,7 @@
   "schema": 1,
   "start_physical_gib": 36,
   "terminal_restart_physical_gib": 36,
-  "start_commit_headroom_gib": 131,
+  "start_commit_headroom_gib": 132,
   "runtime_reserve_gib": 18,
-  "reason": "User requested 36 GiB physical admission for Model start and restart after verified terminal cleanup. Historical failed recovery remains unchanged."
+  "reason": "The existing Halogen V2 model includes the pinned Vision tower. Its complete tower adds 1 GiB commit admission; 36 GiB physical admission and 18 GiB runtime reserve remain. Historical failed recovery remains unchanged."
 }

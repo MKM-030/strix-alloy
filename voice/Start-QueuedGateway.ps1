@@ -2,7 +2,7 @@
 param(
     [ValidateSet('Start','Stop','Status')]
     [string]$Action = 'Start',
-    [string]$ProfileConfig = 'C:\Projects\strix-alloy-clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-exact-cache-candidate-20261013.json',
+    [string]$ProfileConfig = '',
     [string]$Python = 'C:\Projects\strix-alloy-clean\server\.local\venv\Scripts\python.exe',
     [switch]$DemoNoThinking
 )
@@ -19,6 +19,66 @@ $StatePath = Join-Path $LocalDirectory 'scc-gateway-state.json'
 $LogPath = Join-Path $LocalDirectory 'scc-gateway.log'
 $StdoutPath = Join-Path $LocalDirectory 'scc-gateway.stdout.log'
 $StderrPath = Join-Path $LocalDirectory 'scc-gateway.stderr.log'
+$DeploymentScript = Join-Path $PSScriptRoot 'native-start\model_deployment.py'
+$DeploymentScriptHash = 'b43e8f65e9c48a441063d98259bda12c3d3755ff3b4ec01d09e633601ff3aa7e'
+
+function Read-ReviewedModelDeployment($Python, $DeploymentScript, $ExpectedHash) {
+    if (-not (Test-Path -LiteralPath $DeploymentScript -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $DeploymentScript -Algorithm SHA256).Hash.ToLowerInvariant() -ne $ExpectedHash) {
+        throw 'Reviewed model deployment loader changed; refusing startup.'
+    }
+    $text = & $Python -B $DeploymentScript
+    if ($LASTEXITCODE -ne 0) { throw 'Reviewed model deployment/profile validation failed.' }
+    return ($text -join [Environment]::NewLine) | ConvertFrom-Json
+}
+
+function Test-ExactDeploymentValue($Actual, $Expected) {
+    if ($null -eq $Actual -or $null -eq $Expected) { return $null -eq $Actual -and $null -eq $Expected }
+    if ($Actual.GetType() -ne $Expected.GetType()) { return $false }
+    if ($Expected -is [pscustomobject]) {
+        $names = @($Expected.PSObject.Properties.Name)
+        if (@($Actual.PSObject.Properties.Name).Count -ne $names.Count) { return $false }
+        foreach ($name in $names) {
+            if ($name -cnotin @($Actual.PSObject.Properties.Name) -or
+                -not (Test-ExactDeploymentValue $Actual.$name $Expected.$name)) { return $false }
+        }
+        return $true
+    }
+    if ($Expected -is [array]) {
+        if ($Actual.Count -ne $Expected.Count) { return $false }
+        for ($index=0; $index -lt $Expected.Count; $index++) {
+            if (-not (Test-ExactDeploymentValue $Actual[$index] $Expected[$index])) { return $false }
+        }
+        return $true
+    }
+    return $Actual -ceq $Expected
+}
+
+function Test-ReviewedGatewayConfig($Running, $Selected, [string]$DemoAlias = '') {
+    $expected = $Selected | ConvertTo-Json -Depth 30 | ConvertFrom-Json
+    $expected | Add-Member -NotePropertyName demo_no_thinking_model -NotePropertyValue $DemoAlias -Force
+    $expected | Add-Member -NotePropertyName queue_limit -NotePropertyValue 8 -Force
+    $expected | Add-Member -NotePropertyName queue_seconds -NotePropertyValue 120 -Force
+    $expected | Add-Member -NotePropertyName console_trace -NotePropertyValue $false -Force
+    $expected | Add-Member -NotePropertyName native_sdk_proxy -NotePropertyValue $true -Force
+    return Test-ExactDeploymentValue $Running $expected
+}
+
+function Test-SameGatewayCredential($Existing, $Selected, [string]$ExistingDirectory, [string]$SelectedDirectory) {
+    $values = @()
+    foreach ($entry in @(@($Existing,$ExistingDirectory),@($Selected,$SelectedDirectory))) {
+        if ('token_file' -notin @($entry[0].PSObject.Properties.Name)) { throw 'Gateway API credential reference missing; migration refused.' }
+        $path = [string]$entry[0].token_file
+        if (-not [IO.Path]::IsPathRooted($path)) { $path = Join-Path $entry[1] $path }
+        if (-not (Test-Path -LiteralPath $path -PathType Leaf) -or (Get-Item -LiteralPath $path).Length -gt 8192) {
+            throw 'Gateway API credential file missing or malformed; migration refused.'
+        }
+        $value = (Get-Content -LiteralPath $path -Raw).Trim()
+        if (-not $value -or $value.Length -gt 8192) { throw 'Gateway API credential is malformed; migration refused.' }
+        $values += $value
+    }
+    return [string]::Equals($values[0],$values[1],[StringComparison]::Ordinal)
+}
 
 function Get-OwnedGateway {
     if (-not (Test-Path -LiteralPath $StatePath)) { return $null }
@@ -67,8 +127,37 @@ if ($Action -eq 'Stop') {
     [pscustomobject]@{ running=$false; port=$Port }
     return
 }
+$Python = (Resolve-Path -LiteralPath $Python).Path
+$deployment = Read-ReviewedModelDeployment $Python $DeploymentScript $DeploymentScriptHash
+if ($ProfileConfig -and (Resolve-Path -LiteralPath $ProfileConfig).Path -ne $deployment.profile) {
+    throw 'Requested gateway profile differs from the reviewed model deployment.'
+}
+$ProfileConfig = [string]$deployment.profile
+$config = Get-Content -LiteralPath $ProfileConfig -Raw | ConvertFrom-Json
+foreach ($field in @('token_file','backend_token_file')) {
+    if ($config.PSObject.Properties.Name -contains $field -and $config.$field) {
+        $tokenPath = [string]$config.$field
+        if (-not [IO.Path]::IsPathRooted($tokenPath)) { $tokenPath = Join-Path (Split-Path -Parent $ProfileConfig) $tokenPath }
+        $config.$field = (Resolve-Path -LiteralPath $tokenPath).Path
+    }
+}
+if (Test-Path -LiteralPath $ConfigPath -PathType Leaf) {
+    $previousConfig = Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
+    if (-not (Test-SameGatewayCredential $previousConfig $config (Split-Path -Parent $ConfigPath) (Split-Path -Parent $ProfileConfig))) {
+        throw 'Selected profile changes the public gateway credential; explicit credential preservation is required before migration.'
+    }
+}
 if ($null -ne $owned) {
     $runningConfig = Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
+    $runningState = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json
+    $requestedDemoAlias = $(if ($DemoNoThinking) { 'halogen-v2' } else { '' })
+    if ('profile_sha256' -notin @($runningState.PSObject.Properties.Name) -or
+        'profile' -notin @($runningState.PSObject.Properties.Name) -or
+        $runningState.profile_sha256 -ne $deployment.profile_sha256 -or
+        $runningState.profile -ne $ProfileConfig -or
+        -not (Test-ReviewedGatewayConfig $runningConfig $config $requestedDemoAlias)) {
+        throw 'Running gateway profile differs from the reviewed deployment; wait for idle, then replace only the owned sidecar.'
+    }
     $runningDemoAlias = $(if ($runningConfig.PSObject.Properties.Name -contains 'demo_no_thinking_model') { [string]$runningConfig.demo_no_thinking_model } else { '' })
     $requestedDemoAlias = $(if ($DemoNoThinking) { 'halogen-v2' } else { '' })
     if ($runningDemoAlias -ne $requestedDemoAlias) {
@@ -79,20 +168,9 @@ if ($null -ne $owned) {
 }
 $listeners = @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
 if ($listeners.Count -gt 0) { throw 'Port 8841 is occupied by a process not owned by this sidecar.' }
-$Python = (Resolve-Path -LiteralPath $Python).Path
 $ProfileConfig = (Resolve-Path -LiteralPath $ProfileConfig).Path
-$config = Get-Content -LiteralPath $ProfileConfig -Raw | ConvertFrom-Json
 if ($config.backend.upstream -ne 'http://127.0.0.1:8731') {
     throw 'This sidecar is restricted to the existing loopback backend on 8731.'
-}
-foreach ($field in @('token_file','backend_token_file')) {
-    if ($config.PSObject.Properties.Name -contains $field -and $config.$field) {
-        $tokenPath = [string]$config.$field
-        if (-not [IO.Path]::IsPathRooted($tokenPath)) {
-            $tokenPath = Join-Path (Split-Path -Parent $ProfileConfig) $tokenPath
-        }
-        $config.$field = (Resolve-Path -LiteralPath $tokenPath).Path
-    }
 }
 if ($DemoNoThinking -and $config.backend.identifier -ne 'halogen-v2') {
     throw 'Demo no-thinking mode is restricted to the reviewed ServiceNow public alias halogen-v2.'
@@ -111,6 +189,7 @@ $child = Start-Process -FilePath $Python -ArgumentList $arguments -WorkingDirect
 [pscustomobject]@{
     pid=$child.Id; started_ticks=$child.StartTime.ToUniversalTime().Ticks.ToString()
     port=$Port; python=$Python; gateway=$GatewayPath; config=$ConfigPath
+    profile=$ProfileConfig; profile_sha256=$deployment.profile_sha256
 } | ConvertTo-Json | Set-Content -LiteralPath $StatePath -Encoding UTF8
 for ($attempt=0; $attempt -lt 30; $attempt++) {
     $child.Refresh()

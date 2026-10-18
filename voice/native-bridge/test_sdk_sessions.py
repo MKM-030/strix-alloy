@@ -2,6 +2,7 @@
 import asyncio
 from contextlib import suppress
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import importlib.util
 import json
 import re
@@ -11,6 +12,7 @@ from unittest.mock import patch
 
 from aiohttp import web
 from aiohttp.test_utils import TestClient, TestServer
+from sdk_deployment import SDKDeploymentPolicy
 
 try:
     import sdk_sessions as adapter
@@ -126,6 +128,9 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         self.config = SimpleNamespace(instance_name=INSTANCE, instance_url=ORIGIN,
             voice_service_id=ASSISTANT, required_agent_id=AGENT,
             auth_mode='servicenow', development_token='', max_call_seconds=1800)
+        self.config.sdk_policy = SDKDeploymentPolicy(instance_name=INSTANCE,
+            assistant_id=ASSISTANT, voice_agent_id=AGENT,
+            public_origin='https://strix-alloy.tail7f425a.ts.net')
         async def admit(headers, body, *, query_string):
             self.admissions.append((headers, body, query_string))
             self.admission_entered.set()
@@ -168,23 +173,36 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
 
     async def session(self):
         response = await self.create()
-        self.assertEqual(response.status, 201, await response.text())
+        self.assertEqual(response.status, 200, await response.text())
         return (await response.json())['session_id']
 
     async def offer(self, session_id):
         return await self.client.post(BASE + '/' + session_id + '/offer',
             headers=self.headers(), json={'type':'offer','sdp':SDP})
 
+    async def test_ios_create_http_200_gate_allows_first_offer(self):
+        # SpeakNow HTTPSignaling.createSession checks statusCode == 200
+        # before parsing JSON or creating an SDP offer (provided iOS SDK).
+        response = await self.create()
+        self.assertEqual(response.status, 200,
+                         "iOS rejects HTTP 201 before JSON parsing and offer")
+        session_id = (await response.json())["session_id"]
+        answer = await self.offer(session_id)
+        self.assertEqual(answer.status, 200)
+        self.assertEqual(await answer.json(), {"sdp": {"type": "answer", "sdp": SDP}})
+
     async def test_exact_create_wire_and_raw_admission_input(self):
         response = await self.create()
-        self.assertEqual(response.status, 201)
+        self.assertEqual(response.status, 200)
         data = await response.json()
         self.assertEqual(set(data), {'session_id','agent_id','created_at','iceServers','endpoint_url'})
         self.assertRegex(data['session_id'], r'^[0-9a-f]{32}$')
         self.assertEqual(data['agent_id'], 'agent_operator')
         self.assertIsInstance(data['created_at'], str)
         self.assertEqual(data['iceServers'], [{'urls':['stun:stun.l.google.com:19302']}])
-        self.assertIsNone(data['endpoint_url'])
+        # Mobile clients use this origin for subsequent offer/ICE requests.
+        # Keep the deployed bootstrap fix covered instead of expecting null.
+        self.assertEqual(data['endpoint_url'], 'https://strix-alloy.tail7f425a.ts.net')
         self.assertNotIn('Set-Cookie', response.headers)
         self.assertEqual(response.headers['Cache-Control'], 'no-store')
         headers, body, query = self.admissions[0]
@@ -194,6 +212,20 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(query, QUERY[1:])
         self.assertEqual(self.calls[0].process_count, 0)
         self.assertNotIn(TOKEN, repr(self.manager.sessions))
+
+    async def test_created_at_supports_strict_whole_second_rfc3339_clients(self):
+        # Compatibility contract; not an emulation of the private iOS decoder.
+        instant = datetime(2026, 10, 17, 12, 34, 56, 987654, tzinfo=timezone.utc)
+        with patch.object(adapter, 'datetime') as clock:
+            clock.now.return_value = instant
+            response = await self.create()
+        self.assertEqual(response.status, 200)
+        data = await response.json()
+        self.assertEqual(data['created_at'], '2026-10-17T12:34:56Z')
+        self.assertEqual(datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%SZ'),
+                         instant.replace(microsecond=0, tzinfo=None))
+        self.assertEqual(set(data), {'session_id','agent_id','created_at','iceServers','endpoint_url'})
+        self.assertEqual(self.calls[0].process_count, 0)
 
     async def test_denial_precedes_call_allocation(self):
         self.denied = True
@@ -245,7 +277,7 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.active)
         self.admission_release.set()
         results = await asyncio.gather(first, second)
-        self.assertEqual(sorted(x.status for x in results), [201,503])
+        self.assertEqual(sorted(x.status for x in results), [200,503])
         self.assertEqual(len(self.calls), 1)
         self.assertEqual(len(self.active), 1)
 
@@ -387,11 +419,31 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await self.offer(sid)).status,410)
 
     async def test_call_deadline_closes_offered_session(self):
-        self.config.max_call_seconds = .05
-        sid = await self.session()
-        self.assertEqual((await self.offer(sid)).status,200)
-        await asyncio.wait_for(self.calls[0].close_complete.wait(),1)
-        await asyncio.sleep(0)
+        deadline_waiting = asyncio.Event()
+        deadline_reached = asyncio.Event()
+        delays = []
+        async def deadline_sleep(delay):
+            delays.append(delay)
+            deadline_waiting.set()
+            await deadline_reached.wait()
+        # Control only the adapter's clock/timer; HTTP and test scheduling use
+        # real asyncio. Negotiation must not race a 50ms lifetime budget.
+        controlled_asyncio = SimpleNamespace(**{**vars(asyncio), 'sleep':deadline_sleep})
+        with patch.object(adapter, 'asyncio', controlled_asyncio), \
+                patch.object(adapter, 'time', SimpleNamespace(monotonic=lambda:100.0)):
+            sid = await self.session()
+            call = self.calls[0]
+            session = self.manager.sessions[sid]
+            self.assertEqual((await self.offer(sid)).status,200)
+            await asyncio.wait_for(call.worker_started.wait(),1)
+            await asyncio.wait_for(deadline_waiting.wait(),1)
+            self.assertEqual(delays, [self.config.max_call_seconds])
+            self.assertIn(call,self.active)
+            self.assertFalse(call.close_complete.is_set())
+            deadline_reached.set()
+            await asyncio.wait_for(call.close_complete.wait(),1)
+            await session.close_task
+            self.assertEqual(call.close_count,1)
         self.assertFalse(self.active)
 
     async def test_shutdown_awaits_sdk_close(self):
@@ -479,7 +531,7 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         raw = 'instance_name='+INSTANCE+'&receive_data=%74rue'
         response = await self.client.post(URL(BASE+'?'+raw,encoded=True),
             headers=self.headers(),json={'agent_id':'agent_operator'})
-        self.assertEqual(response.status,201)
+        self.assertEqual(response.status, 200)
         self.assertEqual(self.admissions[0][2],raw)
 
     async def test_unready_candidate_poll_is_not_empty_success(self):

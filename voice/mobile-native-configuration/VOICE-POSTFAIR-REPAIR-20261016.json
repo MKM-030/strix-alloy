@@ -1,0 +1,485 @@
+{
+  "schema": "scc.voice.postfair-repair.v1",
+  "utc": "2026-10-16T06:56:04.488574+00:00",
+  "verified": true,
+  "root_causes": [
+    "Studio deliberately disabled all new recording after the fixed fair deadline.",
+    "Halogen131k crossed the unchanged18GiB physical reserve again; the greeting uses TTS independently of the model, so it still played while backend requests failed."
+  ],
+  "studio_resolution": "Completed fair campaign privately sealed against the unchanged cleanup helper and copied purged receipt; fulfilled Windows task disabled; old campaign deadline unchanged. Fresh post-fair recordings require own-voice and separate until-deleted consent; expired old profiles cannot activate or synthesize previews.",
+  "model_resolution": {
+    "same_model": "Halogen V2",
+    "engine": "0.18.1",
+    "vision": true,
+    "context": 32768,
+    "prefill_chunk": 2048,
+    "max_prefill_tokens": 2048,
+    "startup_physical_commit_gib": [
+      36,
+      132
+    ],
+    "runtime_reserve_gib": 18,
+    "measured_allocation_gib_before_after": [
+      70.8,
+      67.5
+    ]
+  },
+  "actual_native_audio_probe": {
+    "utc": "2026-10-16T06:45:13.506845+00:00",
+    "passed": true,
+    "scope": "private_actual_native_media_and_servicenow_dialog",
+    "phone_oauth_public_nat_validated": false,
+    "production_route_created": false,
+    "config_changed": false,
+    "order_finalized": false,
+    "source_sha256": {
+      "native_bridge.py": "0f6526dc7fd537c03dbd5f50737e20da3c084d2e19393d146321893918f01062",
+      "core.py": "54bcef0d4de5d8bcc1fc37f2dfe194741fa55f7185a318bffe2fbf7ed48626e8",
+      "sdk_sessions.py": "40620d29ba8f8a5be4c98aab772d71fd7626980e3e862a1f6c41ef51f83782eb"
+    },
+    "stages": [
+      {
+        "stage": "preflight_ready",
+        "seconds": 0.312
+      },
+      {
+        "stage": "synthetic_inputs_prepared",
+        "seconds": 2.375
+      },
+      {
+        "stage": "transcript",
+        "seconds": 8.453,
+        "role": "assistant",
+        "turn_num": 0,
+        "text": "Guten Tag und herzlich willkommen bei Sopra Steria auf der Smart Country Convention. F\u00fcr welchen Mitarbeiter m\u00f6chten Sie in ServiceNow einen neuen Laptop bestellen?",
+        "code": null
+      },
+      {
+        "stage": "greeting_heard_over_rtp",
+        "seconds": 17.797,
+        "ordered_channel": true,
+        "connection_state": "connected"
+      },
+      {
+        "stage": "microphone_input_started",
+        "seconds": 17.797,
+        "turn": 1,
+        "input_pcm_bytes": 335520
+      },
+      {
+        "stage": "transcript",
+        "seconds": 26.344,
+        "role": "user",
+        "turn_num": 1,
+        "text": "Ich m\u00f6chte einen Laptop bestellen. Bitte fragen Sie zun\u00e4chst nach dem Mitarbeiter, schliessen Sie noch keine Bestellung ab.",
+        "code": null
+      },
+      {
+        "stage": "transcript",
+        "seconds": 43.031,
+        "role": "assistant",
+        "turn_num": 1,
+        "text": "Ich starte den Bestellprozess f\u00fcr den Laptop. Bitte nennen Sie mir zun\u00e4chst den Namen des neuen Mitarbeiters.",
+        "code": null
+      },
+      {
+        "stage": "transcript",
+        "seconds": 60.422,
+        "role": "assistant",
+        "turn_num": 1,
+        "text": "Wie hei\u00dft dein neuer Mitarbeiter?",
+        "code": null
+      },
+      {
+        "stage": "turn_completed_with_received_audio",
+        "seconds": 45.14,
+        "turn": 1,
+        "assistant_replies": [
+          "Ich starte den Bestellprozess f\u00fcr den Laptop. Bitte nennen Sie mir zun\u00e4chst den Namen des neuen Mitarbeiters.",
+          "Wie hei\u00dft dein neuer Mitarbeiter?"
+        ],
+        "received_voiced_frames": 310,
+        "input_track_still_live": true,
+        "native_failed": false,
+        "native_input_lost": false,
+        "accepted_utterance_count": 1
+      },
+      {
+        "stage": "microphone_input_started",
+        "seconds": 63.437,
+        "turn": 2,
+        "input_pcm_bytes": 201120
+      },
+      {
+        "stage": "transcript",
+        "seconds": 68.859,
+        "role": "user",
+        "turn_num": 2,
+        "text": "Philipp Borchert, bitte noch keine Bestellung abschliessen.",
+        "code": null
+      },
+      {
+        "stage": "transcript",
+        "seconds": 89.609,
+        "role": "assistant",
+        "turn_num": 2,
+        "text": "Ich erfasse nun die weiteren Daten f\u00fcr die Bestellung von Philipp Borchert.",
+        "code": null
+      },
+      {
+        "stage": "transcript",
+        "seconds": 112.047,
+        "role": "assistant",
+        "turn_num": 2,
+        "text": "F\u00fcr welchen Standort soll der Laptop geliefert werden?",
+        "code": null
+      },
+      {
+        "stage": "turn_completed_with_received_audio",
+        "seconds": 52.422,
+        "turn": 2,
+        "assistant_replies": [
+          "Ich erfasse nun die weiteren Daten f\u00fcr die Bestellung von Philipp Borchert.",
+          "F\u00fcr welchen Standort soll der Laptop geliefert werden?"
+        ],
+        "received_voiced_frames": 285,
+        "input_track_still_live": true,
+        "native_failed": false,
+        "native_input_lost": false,
+        "accepted_utterance_count": 2
+      },
+      {
+        "stage": "probe_passed",
+        "seconds": 116.375
+      }
+    ],
+    "messages": [
+      {
+        "type": "transcript",
+        "data": {
+          "role": "assistant",
+          "content": "Guten Tag und herzlich willkommen bei Sopra Steria auf der Smart Country Convention. F\u00fcr welchen Mitarbeiter m\u00f6chten Sie in ServiceNow einen neuen Laptop bestellen?",
+          "message_id": "d7f97e6c90c2405a8e94b1cef23dd0fa",
+          "caller_turn_id": "",
+          "turn_num": 0
+        },
+        "probe_seconds": 8.453
+      },
+      {
+        "type": "transcript",
+        "data": {
+          "role": "user",
+          "content": "Ich m\u00f6chte einen Laptop bestellen. Bitte fragen Sie zun\u00e4chst nach dem Mitarbeiter, schliessen Sie noch keine Bestellung ab.",
+          "message_id": "12aaac3c190140de805a942f8c754ccc",
+          "caller_turn_id": "4cbb83db226e448a8010de502c00cf12",
+          "turn_num": 1,
+          "latency_ms": 391
+        },
+        "probe_seconds": 26.344
+      },
+      {
+        "type": "transcript",
+        "data": {
+          "role": "assistant",
+          "content": "Ich starte den Bestellprozess f\u00fcr den Laptop. Bitte nennen Sie mir zun\u00e4chst den Namen des neuen Mitarbeiters.",
+          "message_id": "c5ab606fdcc849878e6d11d2b1ae3b2f",
+          "caller_turn_id": "4cbb83db226e448a8010de502c00cf12",
+          "turn_num": 1,
+          "latency_ms": 17062
+        },
+        "probe_seconds": 43.031
+      },
+      {
+        "type": "transcript",
+        "data": {
+          "role": "assistant",
+          "content": "Wie hei\u00dft dein neuer Mitarbeiter?",
+          "message_id": "2121ba26c9834b52bd9b3688a33fa68f",
+          "caller_turn_id": "4cbb83db226e448a8010de502c00cf12",
+          "turn_num": 1,
+          "latency_ms": 34469
+        },
+        "probe_seconds": 60.422
+      },
+      {
+        "type": "transcript",
+        "data": {
+          "role": "user",
+          "content": "Philipp Borchert, bitte noch keine Bestellung abschliessen.",
+          "message_id": "40c358ed58ec44549dc43f4f75728b80",
+          "caller_turn_id": "73fb974a19394251a716581fb36b7645",
+          "turn_num": 2,
+          "latency_ms": 297
+        },
+        "probe_seconds": 68.859
+      },
+      {
+        "type": "transcript",
+        "data": {
+          "role": "assistant",
+          "content": "Ich erfasse nun die weiteren Daten f\u00fcr die Bestellung von Philipp Borchert.",
+          "message_id": "0c0bc72d1da54235bb741bbc93cb5b79",
+          "caller_turn_id": "73fb974a19394251a716581fb36b7645",
+          "turn_num": 2,
+          "latency_ms": 21047
+        },
+        "probe_seconds": 89.609
+      },
+      {
+        "type": "transcript",
+        "data": {
+          "role": "assistant",
+          "content": "F\u00fcr welchen Standort soll der Laptop geliefert werden?",
+          "message_id": "d6c28d98ec17477eb142e537da4a0f6e",
+          "caller_turn_id": "73fb974a19394251a716581fb36b7645",
+          "turn_num": 2,
+          "latency_ms": 43485
+        },
+        "probe_seconds": 112.047
+      }
+    ],
+    "input_generation": [
+      {
+        "turn": 1,
+        "pcm_bytes": 335520,
+        "seconds": 6.99,
+        "internal_pause_ms": 350
+      },
+      {
+        "turn": 2,
+        "pcm_bytes": 201120,
+        "seconds": 4.19,
+        "internal_pause_ms": 350
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "seconds": 45.14,
+        "assistant_replies": [
+          "Ich starte den Bestellprozess f\u00fcr den Laptop. Bitte nennen Sie mir zun\u00e4chst den Namen des neuen Mitarbeiters.",
+          "Wie hei\u00dft dein neuer Mitarbeiter?"
+        ],
+        "received_voiced_frames": 310,
+        "input_track_still_live": true,
+        "native_failed": false,
+        "native_input_lost": false,
+        "accepted_utterance_count": 1
+      },
+      {
+        "turn": 2,
+        "seconds": 52.422,
+        "assistant_replies": [
+          "Ich erfasse nun die weiteren Daten f\u00fcr die Bestellung von Philipp Borchert.",
+          "F\u00fcr welchen Standort soll der Laptop geliefert werden?"
+        ],
+        "received_voiced_frames": 285,
+        "input_track_still_live": true,
+        "native_failed": false,
+        "native_input_lost": false,
+        "accepted_utterance_count": 2
+      }
+    ],
+    "initial_model": {
+      "status": "ok",
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0
+    },
+    "own_dialog_closed": true,
+    "rtp": {
+      "frames": 5436,
+      "voiced_frames": 960
+    },
+    "ordered_datachannel": true,
+    "model_after_turns": {
+      "status": "ok",
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0
+    },
+    "minimum_available_gib": 24.4777,
+    "elapsed_seconds": 116.906,
+    "source_unchanged": true
+  },
+  "actual_public_studio_probe": {
+    "utc": "2026-10-16T06:51:13.221916+00:00",
+    "passed": true,
+    "created_profile_id": "20261016T065114Z-78d3a874b01c",
+    "created_profile_deleted": true,
+    "source_reference_unchanged": true,
+    "codes_unchanged": true,
+    "selection_changed": false,
+    "clone_preview_wav_bytes": 245804,
+    "selected_profile_preserved": "synthetic-scc-demo",
+    "public_ui_has_new_consent": true,
+    "code_integrity_scope_note": "The original code-integrity hash in this test covered auth.json. Personal access-codes.json is read-only in the exercised login/profile/preview/delete/logout routes; its last-write time also predates the test."
+  },
+  "public_controls": {
+    "utc": "2026-10-16T06:54:32.195875+00:00",
+    "checks": {
+      "browser_launch_preserved": true,
+      "launch_query_rejected": true,
+      "browser_websocket_still_requires_auth": true,
+      "llm_models_still_requires_auth": true,
+      "sdk_anonymous_rejected": true,
+      "public_sdk_reaches_pinned_native_policy": true,
+      "native_sdk_enabled": true,
+      "warm_model_and_stack_healthy": true
+    },
+    "native_phone_end_to_end": "pending user app call",
+    "no_platform_or_model_requests_by_fixtures": true,
+    "no_session_allocation_by_fixtures": true
+  },
+  "fresh_stack": {
+    "utc": "2026-10-16T06:56:02.635246+00:00",
+    "read_only": true,
+    "bot_session_count": "not exposed; no session allocated by this check",
+    "services": {
+      "model": {
+        "http_status": 200,
+        "busy": false,
+        "in_flight": 0,
+        "queued": 0,
+        "slots": 1,
+        "context": 32768,
+        "slot_ctx": 32768,
+        "kv_pool_positions": 32768,
+        "status": "ok",
+        "expected_model": true,
+        "version_matches": true,
+        "vision_enabled": true,
+        "prompt_cache": {
+          "mode": 1,
+          "enabled": true,
+          "cap_mb": 110,
+          "bitwise_identical_to_cold": true
+        }
+      },
+      "controller": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "context": 32768,
+        "status": "ok"
+      },
+      "gateway": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "queued_requests": 0,
+        "context": 32768,
+        "status": "ok"
+      },
+      "bot": {
+        "http_status": 200
+      },
+      "native": {
+        "http_status": 200,
+        "nativeSessions": 0,
+        "status": "ok",
+        "auth_mode": "servicenow"
+      },
+      "asr": {
+        "http_status": 200,
+        "status": "ok"
+      },
+      "tts": {
+        "http_status": 200,
+        "expected_model": true
+      }
+    },
+    "memory": {
+      "free_gib": 24.498,
+      "commit_headroom_gib": 116.429,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "listeners": [
+      {
+        "port": 8731,
+        "address": "127.0.0.1",
+        "pid": 16404,
+        "created_utc": "2026-10-16T06:41:03.5346120Z",
+        "expected_process": null
+      },
+      {
+        "port": 8840,
+        "address": "127.0.0.1",
+        "pid": 9080,
+        "created_utc": "2026-10-16T06:40:51.3193230Z",
+        "expected_process": true
+      },
+      {
+        "port": 8841,
+        "address": "127.0.0.1",
+        "pid": 6868,
+        "created_utc": "2026-10-16T06:41:01.2985090Z",
+        "expected_process": true
+      },
+      {
+        "port": 8850,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8853,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8860,
+        "address": "127.0.0.1",
+        "pid": 2692,
+        "created_utc": "2026-10-15T10:19:58.9067190Z",
+        "expected_process": true
+      },
+      {
+        "port": 8861,
+        "address": "127.0.0.1",
+        "pid": 15436,
+        "created_utc": "2026-10-13T12:42:38.1702700Z",
+        "expected_process": true
+      },
+      {
+        "port": 8862,
+        "address": "127.0.0.1",
+        "pid": 5572,
+        "created_utc": "2026-10-13T12:42:40.7014430Z",
+        "expected_process": true
+      }
+    ],
+    "funnel": {
+      "native_route_matches": true,
+      "gateway_route_matches": true,
+      "callback_route_matches": true,
+      "https_443_configured": true,
+      "funnel_allowed": true,
+      "media_connectivity": "not tested; host ICE requires a reachable LAN/tailnet interface"
+    },
+    "legacy_cpu_ports": [],
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "model_cache_matches": true,
+    "stack_healthy": true
+  },
+  "tests": {
+    "windows_studio_tests_total": 106,
+    "windows_studio_skipped": 5,
+    "windows_studio_failures": 0,
+    "frontend_tests_passed": 58,
+    "model_readiness_and_existing_tests_passed": 14,
+    "terminal_recovery_tests_passed": 13
+  },
+  "limits": [
+    "Phone OAuth admission, physical phone microphone and public media NAT were not driven by this private audio probe.",
+    "Actual assistant acknowledgements took17-21s and next questions35-43s after STT; conversational latency remains high."
+  ],
+  "privacy": "The controlled post-fair test profile was physically deleted through the authenticated portal delete API; the authorized external reference is unchanged, the synthetic voice remains selected. No prior fair recording was restored and no ServiceNow order was completed."
+}

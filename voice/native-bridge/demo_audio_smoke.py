@@ -9,6 +9,7 @@ probe before confirmation. No inference is performed merely by importing it.
 import argparse
 import asyncio
 from array import array
+from dataclasses import replace
 from fractions import Fraction
 from datetime import datetime, timezone
 import json
@@ -174,7 +175,7 @@ class Trace:
         event = {'utc':datetime.now(timezone.utc).isoformat(),
                  'seconds':round(time.monotonic()-self.started, 3),'kind':kind,**data}
         self.events.append(event)
-        print(json.dumps(event, ensure_ascii=False), flush=True)
+        print(json.dumps(event, ensure_ascii=True), flush=True)
         self.save()
 
     def save(self):
@@ -267,7 +268,7 @@ async def single_call(config, fixtures, trace, output, order, isolation=True, he
             super().__init__(*args)
             app_calls.append(self)
     production.NativeCall = ObservedCall
-    local = production.Config(**vars(config))
+    local = replace(config)
     local.development_token = secrets.token_urlsafe(40)
     dialog = ObservedDialog(local, trace)
     speech = None

@@ -1,6 +1,6 @@
 import unittest
 import asyncio
-from aiohttp import ClientSession, web
+from aiohttp import ClientSession, WSMsgType, web
 import demo_audio_smoke
 from demo_audio_smoke import EXPECTED_SUMMARY, expected_summary, name_question
 
@@ -31,9 +31,26 @@ class SignalingHeartbeatTests(unittest.IsolatedAsyncioTestCase):
     async def test_probe_keeps_reading_websocket_during_slow_backend_turn(self):
         drain = getattr(demo_audio_smoke, 'drain_signaling', None)
         self.assertIsNotNone(drain, 'probe must drain WS so aiohttp answers native heartbeat pings')
+        backend_started = asyncio.Event()
+        backend_release = asyncio.Event()
+        heartbeats_received = asyncio.Event()
+        received = []
+        payloads = [b'heartbeat-1', b'heartbeat-2', b'heartbeat-3']
+        async def slow_backend_turn():
+            backend_started.set()
+            await backend_release.wait()
         async def endpoint(request):
-            ws = web.WebSocketResponse(heartbeat=.05)
+            # Observe real heartbeat frames without a 25ms scheduler deadline.
+            ws = web.WebSocketResponse(autoping=False)
             await ws.prepare(request)
+            await backend_started.wait()
+            for payload in payloads:
+                await ws.ping(payload)
+                message = await ws.receive()
+                received.append((message.type, message.data))
+                if message.type != WSMsgType.PONG:
+                    break
+            heartbeats_received.set()
             async for _ in ws:
                 pass
             return ws
@@ -49,11 +66,16 @@ class SignalingHeartbeatTests(unittest.IsolatedAsyncioTestCase):
                 async with http.ws_connect(f'http://127.0.0.1:{port}/') as ws:
                     closed = asyncio.Event()
                     reader = asyncio.create_task(drain(ws, None, closed))
+                    backend = asyncio.create_task(slow_backend_turn())
                     try:
-                        await asyncio.sleep(.35)
+                        await asyncio.wait_for(heartbeats_received.wait(), 2)
+                        self.assertEqual(received, [(WSMsgType.PONG, payload) for payload in payloads])
+                        self.assertFalse(backend.done(), 'backend turn must still be pending during heartbeats')
                         self.assertFalse(closed.is_set(), 'heartbeat timeout incorrectly ended test call')
                         self.assertFalse(ws.closed)
                     finally:
+                        backend_release.set()
+                        await backend
                         await ws.close()
                         await reader
         finally:

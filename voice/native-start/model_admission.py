@@ -12,8 +12,8 @@ def load_policy(path=POLICY):
         n=value.get(key)
         if type(n) not in (int,float) or not math.isfinite(n) or not 18<=n<=64:
             raise ValueError('Invalid physical admission threshold: '+key)
-    if value.get('runtime_reserve_gib')!=18 or value.get('start_commit_headroom_gib')!=131:
-        raise ValueError('Runtime 18 GiB and commit admission 131 GiB must remain unchanged')
+    if value.get('runtime_reserve_gib')!=18 or value.get('start_commit_headroom_gib')!=132:
+        raise ValueError('Runtime reserve must remain 18 GiB; V2 with Vision needs 132 GiB commit admission')
     return value
 def check_start_frame(frame,policy,*,age=0,restart=False):
     physical=policy['terminal_restart_physical_gib' if restart else 'start_physical_gib']

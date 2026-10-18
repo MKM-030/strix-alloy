@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "applied_source_verified_runtime_measurement_blocked",
+  "status": "applied_source_verified_one_real_rtp_attempt_failed_handoff",
   "change": "SCC-only ReAct Thought sentence length instruction",
   "tests": {
     "baseline_hash_matches_live": true,
@@ -66,23 +66,123 @@
     ]
   },
   "measurement": {
-    "actual_model_inference_started": false,
+    "trial": "react-brief-first-turn-20261013T204034Z",
+    "attempt_count": 1,
+    "native_ui_test": false,
+    "human_microphone_test": false,
+    "input": "one reviewed German intent fixture over RTP through real ASR",
+    "asr_seconds": 0.438,
+    "asr_to_turn_failed_seconds": 21.047,
+    "asr_to_failure_notice_first_pcm_seconds": 21.125,
+    "failure_notice_tts_first_pcm_seconds": 0.078,
+    "first_audible_response_seconds": null,
+    "question_audible_seconds": null,
+    "audible_success_verified": false,
+    "question_received": false,
+    "assistant_text_language": "German failure notice only",
+    "actual_owned_model_inference_confirmed": false,
+    "actual_owned_model_token_counts": null,
     "after_latency_seconds": null,
     "speedup_claimed": false,
     "private_observer_floor_gib": 21,
     "root_approved_start_floor_gib": 21.5,
     "runtime_guard_floor_gib_unchanged": 18,
+    "actual_admission_utc": "2026-10-13T20:42:26.822529Z",
+    "actual_admission_free_gib": 23.814,
+    "before_gate_utc": "2026-10-13T20:42:29.206405Z",
+    "before_gate_free_gib": 23.825,
+    "after_gate_utc": "2026-10-13T20:43:02.806195Z",
+    "after_gate_free_gib": 23.929,
+    "post_cleanup_healthy_idle": true,
+    "native_sessions_after": 0,
     "firstturn_only": true,
     "employee_name_sent": false,
     "confirmation_sent": false,
-    "blocker": "Owned Halogen guard observed physical17.554GiB<18GiB then cleanly stopped; terminalcleanupTrue, historicalrecoveryFalse; retained runnerlock. Fresh original recovery requires46.706GiB and current~41.6GiB. Rootassigned model_guard_recovery; no start/archive/reconcile by latency agent."
+    "message_requests": 1,
+    "message_ack_received": false,
+    "end_requests": 1,
+    "end_http_status": 200,
+    "end_status": "success",
+    "bot_release_ok": true,
+    "automatic_retry": false,
+    "profile_id": "20261013T202000Z-03b9254d249b",
+    "voice_name": "Marcel",
+    "reference_sha256": "56ca57efe01905ec7e8b0567de3da9bdbc79c93972e2da39ebca0c55bbaea4ca",
+    "tts_receipt_pid": 5572,
+    "tts_receipt_process_created": 1791895360.7014437,
+    "tts_process_reused": true,
+    "user_selection_reverted": false,
+    "observer_sha256": "9b6e659fc43229ac1e54f8fac25ce999a55cf428891ab21e44215d2770a48c02",
+    "failure": "Owned Bot MESSAGE failed without ACK; native received TURN_FAILED. END succeeded. Existing bridge catches every exception and omits upstream status/exception class. Delivery remains uncertain; no retry.",
+    "configured_upstream_http_timeout_seconds": 30,
+    "timeout_cause_proven": false,
+    "model_run_id": "c55ae4190fa14651acf6ad0fb9a0e6ba",
+    "model_profile_sha256": "f1076479e51c4c8597ee8b90924748cce053e1dba85aa5e5169c650720e426cb",
+    "profile_mode": "voice text-only; context262144, single slot, Exact cache unchanged",
+    "report": "voice/native-speech-validation/runtime/react-brief-first-turn-20261013T204034Z-report.json",
+    "before_gate": "voice/native-speech-validation/runtime/react-brief-first-turn-20261013T204034Z-before.json",
+    "after_gate": "voice/native-speech-validation/runtime/react-brief-first-turn-20261013T204034Z-after.json",
+    "numeric_window": "voice/native-speech-validation/runtime/react-brief-first-turn-20261013T204034Z-window.json"
   },
   "limits": [
     "No model-response body inspected to establish Thought word-count obedience; contract tests establish append-only SCC/config scope, not generated output quality.",
     "Three model request types still serially execute on one slot; no orchestration/tool/confirmation changes.",
-    "A future restart empties Exact cache, so compare actual per-call cached/output tokens and Windows wall times before attributing total latency to the suffix.",
+    "Restart changed model state and active cache contents may also reflect concurrent traffic. Exact cache was already populated before this attempt; no empty-cache or matched A/B claim. Actual owned per-call token/cache counts unavailable after failed handoff.",
     "Engine phase clocks are uncalibrated; before-phase values are reported diagnostics. Gateway request intervals may overlap because API wall includes queueing; never sum them as turn wall.",
     "Model/gateway records carry no Bot request ID; association remains time-correlated.",
-    "Protected config and response-transformer hashes unchanged; no voice/model/context/cache/production guard change by this workstream."
-  ]
+    "Protected config and response-transformer hashes unchanged; no voice/model/context/cache/production guard change by this workstream.",
+    "Applied adapter source was independently verified at19:02:32Z; an optional later browser read was blocked, so this probe does not add a fresh live-source hash verification.",
+    "RTP peer transport ran an isolated temporary instance of the unchanged production adapter using the real Bot/ASR/TTS. This is a synthetic microphone test, not the native browser or a human microphone test."
+  ],
+  "unattributed_model_window": {
+    "read_only": true,
+    "before_utc": "2026-10-13T20:41:08.581829+00:00",
+    "after_utc": "2026-10-13T20:47:48.231855+00:00",
+    "run_id": "c55ae4190fa14651acf6ad0fb9a0e6ba",
+    "attribution": "Time-correlated; no shared Bot request ID",
+    "native_phase_clocks": "Uncalibrated reported diagnostics",
+    "gateway_requests": [
+      {
+        "finish_windows_local": "2026-10-13 22:43:55,953",
+        "backend": "halogen-v2",
+        "path": "/v1/chat/completions",
+        "status": 200,
+        "wall_seconds": 1.6832,
+        "active": 0
+      },
+      {
+        "finish_windows_local": "2026-10-13 22:44:04,317",
+        "backend": "halogen-v2",
+        "path": "/v1/chat/completions",
+        "status": 200,
+        "wall_seconds": 4.5607,
+        "active": 0
+      }
+    ],
+    "model_summaries": [
+      {
+        "finish_guest_utc": "2026-10-13T20:43:55.951900219Z",
+        "output_tokens": 23,
+        "reported_decode_seconds": 0.42,
+        "reported_tokens_per_second": 55.22,
+        "prompt_tokens": 1689,
+        "cached_tokens": 0,
+        "reported_prefill_seconds": 1.39
+      },
+      {
+        "finish_guest_utc": "2026-10-13T20:43:34.506322045Z",
+        "output_tokens": 99,
+        "reported_decode_seconds": 2.93,
+        "reported_tokens_per_second": 33.8,
+        "prompt_tokens": 1089,
+        "cached_tokens": 0,
+        "reported_prefill_seconds": 1.71
+      }
+    ],
+    "log_bytes": {
+      "gateway": 236,
+      "engine": 34750
+    },
+    "interpretation": "Both completed gateway requests finished after owned END; no shared Bot ID. Never attribute these token counts or timings to the failed trial. Engine timestamps and phase clocks are uncalibrated."
+  }
 }

@@ -11,18 +11,14 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import hashlib
 import json
-import math
 import re
 import secrets
 import time
 
 from aiohttp import web
+from sdk_deployment import SDKDeploymentPolicy
+from sdk_admission_policy import SDK_AGENT_ID
 
-INSTANCE_NAME = 'soprasteriaassvsdemo14'
-INSTANCE_URL = 'https://' + INSTANCE_NAME + '.service-now.com'
-ASSISTANT_ID = '8aa131d793f787105c8132d47aba1095'
-VOICE_AGENT_ID = 'a6337ddf93f787105c8132d47aba1058'
-SDK_AGENT_ID = 'agent_operator'
 STUN_URL = 'stun:stun.l.google.com:19302'
 BASE = '/api/webrtc/sessions'
 HANDSHAKE_SECONDS = 30
@@ -152,7 +148,7 @@ def _raw_headers(request):
             for key, value in request.raw_headers]
 
 
-def _validated_headers(request, *, json_body=False):
+def _validated_headers(request, policy, *, json_body=False):
     raw = _raw_headers(request)
     if len(raw) > 64 or sum(len(k)+len(v)+4 for k,v in raw) > 32768:
         raise _Rejected(400)
@@ -170,7 +166,7 @@ def _validated_headers(request, *, json_body=False):
     origins = headers.get('origin', [])
     if len(origins) > 1:
         raise _Rejected(400)
-    if origins and origins[0] != INSTANCE_URL:
+    if origins and origins[0] != policy.instance_url:
         raise _Rejected(403)
     if 'content-encoding' in headers or 'transfer-encoding' in headers:
         raise _Rejected(400)
@@ -245,20 +241,12 @@ class _Session:
 class SDKSessionManager:
     def __init__(self, config, active, make_call, admit):
         self.config, self.active, self.make_call, self.admit = config, active, make_call, admit
+        self.policy = getattr(config,'sdk_policy',None)
         self.sessions = {}
         self.stopping = False
 
     def _enabled(self):
-        c = self.config
-        duration = getattr(c,'max_call_seconds',None)
-        return (getattr(c,'auth_mode',None) == 'servicenow'
-            and not getattr(c,'development_token',None)
-            and getattr(c,'instance_name',None) == INSTANCE_NAME
-            and getattr(c,'instance_url',None) == INSTANCE_URL
-            and getattr(c,'voice_service_id',None) == ASSISTANT_ID
-            and getattr(c,'required_agent_id',None) == VOICE_AGENT_ID
-            and type(duration) in (int,float) and math.isfinite(duration)
-            and 0 < duration <= 3600)
+        return type(self.policy) is SDKDeploymentPolicy and self.policy.matches_config(self.config)
 
     def _prune(self):
         now = time.monotonic()
@@ -272,7 +260,7 @@ class SDKSessionManager:
             raise _Rejected(403)
         if self.stopping:
             raise _Rejected(503)
-        fingerprint = _validated_headers(request, json_body=True)
+        fingerprint = _validated_headers(request, self.policy, json_body=True)
         body = await _body(request,MAX_CREATE_BYTES)
         try:
             async with asyncio.timeout(ADMISSION_SECONDS):
@@ -284,9 +272,9 @@ class SDKSessionManager:
             # AdmissionDenied's bounded public status; never expose arbitrary details.
             status = getattr(error,'status',403)
             raise _Rejected(status if type(status) is int and status in (400,401,403) else 403) from None
-        if not (getattr(context,'instance_url',None)==INSTANCE_URL
-                and getattr(context,'assistant_id',None)==ASSISTANT_ID
-                and getattr(context,'voice_agent_id',None)==VOICE_AGENT_ID
+        if not (getattr(context,'instance_url',None)==self.policy.instance_url
+                and getattr(context,'assistant_id',None)==self.policy.assistant_id
+                and getattr(context,'voice_agent_id',None)==self.policy.voice_agent_id
                 and getattr(context,'sdk_agent_id',None)==SDK_AGENT_ID
                 and getattr(context,'receive_data',None) is True):
             raise _Rejected(403)
@@ -306,9 +294,11 @@ class SDKSessionManager:
             self.sessions[session_id] = session
             self._watch(session,self._deadline(session))
             self._watch(session,self._input_loss(session))
+            # iOS HTTPSignaling requires exactly HTTP 200 before parsing JSON.
+            # Android accepts this success status too; use one shared wire contract.
             return _response({'session_id':session_id,'agent_id':SDK_AGENT_ID,
-                'created_at':datetime.now(timezone.utc).isoformat().replace('+00:00','Z'),
-                'iceServers':[{'urls':[STUN_URL]}], 'endpoint_url':None},status=201)
+                'created_at':datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z'),
+                'iceServers':[{'urls':[STUN_URL]}], 'endpoint_url':self.policy.public_origin},status=200)
         except BaseException:
             if session is not None:
                 self._begin_close(session)
@@ -321,7 +311,7 @@ class SDKSessionManager:
     async def _lookup(self, request, *, json_body=False):
         if not self._enabled():
             raise _Rejected(403)
-        fingerprint = _validated_headers(request,json_body=json_body)
+        fingerprint = _validated_headers(request,self.policy,json_body=json_body)
         if request.rel_url.raw_query_string:
             raise _Rejected(400)
         self._prune()

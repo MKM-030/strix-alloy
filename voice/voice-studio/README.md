@@ -8,14 +8,16 @@ Bedarf und öffnet die Seite. Der Webdienst startet auch bei Windows-Anmeldung.
 Er lädt kein zusätzliches Modell.
 
 1. Mit dem Zugangscode anmelden.
-2. Einen Namen eingeben und bestätigen, dass die Aufnahme die eigene Stimme ist.
+2. Einen Namen eingeben und bestätigen, dass die Aufnahme die eigene Stimme ist. Für neue Aufnahmen nach der Messe zusätzlich der Speicherung bis zur manuellen Löschung zustimmen.
 3. Die Aufnahme starten und den angezeigten Text vollständig vorlesen.
 4. Die Aufnahme anhören und das Stimmprofil speichern.
 5. Im gespeicherten Profil **Für nächste ServiceNow-Anfrage verwenden** wählen.
 6. Einen neuen ServiceNow-Sprachanruf starten.
 
-Gespeicherte Aufnahmen und die aktive Auswahl bleiben auf diesem Rechner
-erhalten. Ein normaler TTS-Start stellt die aktive Auswahl wieder her. Der
+Neue, nach dem abgeschlossenen Messe-Löschlauf ausdrücklich freigegebene
+Aufnahmen und die aktive Auswahl bleiben bis zur manuellen Löschung auf diesem
+Rechner erhalten. Die alten Messeaufnahmen wurden entfernt; ihre feste
+Löschpolicy bleibt unverändert. Siehe `RETENTION.md`. Ein normaler TTS-Start stellt die aktive Auswahl wieder her. Der
 Stimmenwechsel registriert die neue Referenz im vorhandenen TTS-Service;
 ein Neustart des Modells ist nicht erforderlich. Vor dem Wechsel ein
 laufendes Gespräch beenden. Die Webseite verweigert den Wechsel, wenn sie

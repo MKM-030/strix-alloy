@@ -91,6 +91,112 @@ class DemoNoThinkingTests(unittest.IsolatedAsyncioTestCase):
         original, observed = await self.send(client, model='halogen-qwen3.8-flash-next')
         self.assertEqual(observed, original)
 
+    async def test_demo_flat_system_task_keeps_system_and_adds_required_user_dispatch(self):
+        client = await self.client('halogen-v2')
+        content = ('Vollstaendige Aufgabe: Bitte einen Laptop fuer Philipp Borchert bestellen. '
+                   'Vor dem Absenden die Bestaetigung einholen. PRIVATE_FIXTURE_CONTENT') * 400
+        message = {'role': 'system', 'content': content, 'name': 'fixture',
+                   'metadata': {'fixture': 'preserve'}}
+        body = {'model': 'halogen-v2', 'messages': [message], 'max_tokens': 4096,
+                'temperature': 0, 'stream': False, 'response_format': {'type': 'json_object'}}
+        with self.assertLogs('alloy.gateway', level='INFO') as captured:
+            response = await client.post('/v1/chat/completions', headers=HEADERS, json=body)
+            self.assertEqual(response.status, 200)
+            await response.read()
+        dispatch = 'Bitte bearbeite die im Systemtext beschriebene Aufgabe und beachte das dort geforderte Ausgabeformat.'
+        self.assertEqual(self.seen[-1][1], dict(body,
+            messages=[message, {'role': 'user', 'content': dispatch}], model='halogen-qwen3.8-flash-next',
+            enable_thinking=False, reasoning_effort='none'))
+        self.assertTrue(any('compatibility=single_system_flat_prompt' in line
+                            for line in captured.output))
+        self.assertNotIn('PRIVATE_FIXTURE_CONTENT', '\n'.join(captured.output))
+        self.assertNotIn('Philipp Borchert', '\n'.join(captured.output))
+
+    async def test_flat_prompt_compatibility_leaves_other_contracts_unchanged(self):
+        enabled = await self.client('halogen-v2')
+        disabled = await self.client('')
+        shapes = [
+            [{'role': 'user', 'content': 'fixture'}],
+            [{'role': 'system', 'content': 'rules'}, {'role': 'user', 'content': 'task'}],
+            [{'role': 'system', 'content': [{'type': 'text', 'text': 'fixture'},
+                {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,fixture'}}]}],
+            [{'role': 'assistant', 'content': 'fixture'}],
+            [{'role': 'tool', 'content': 'fixture', 'tool_call_id': 'fixture'}],
+            [{'role': 'system', 'content': {'text': 'fixture'}}],
+            [{'role': 'system', 'content': None}], [],
+            [{'role': 'system', 'content': ''}],
+            [{'role': 'system', 'content': '   '}],
+        ]
+        cases = [(enabled, 'halogen-v2', '/v1/chat/completions', messages, True)
+                 for messages in shapes]
+        system = [{'role': 'system', 'content': 'fixture'}]
+        cases.extend([
+            (disabled, 'halogen-v2', '/v1/chat/completions', system, False),
+            (enabled, 'halogen-qwen3.8-flash-next', '/v1/chat/completions', system, False),
+            (enabled, 'halogen-v2', '/v1/responses', system, False),
+        ])
+        for client, model, route, messages, thinking_override in cases:
+            body = {'model': model, 'messages': messages, 'max_tokens': 4096,
+                    'enable_thinking': True, 'reasoning_effort': 'medium'}
+            with self.subTest(route=route, model=model, messages=messages):
+                with self.assertLogs('alloy.gateway', level='INFO') as captured:
+                    response = await client.post(route, headers=HEADERS, json=body)
+                    self.assertEqual(response.status, 200)
+                    await response.read()
+                expected = dict(body, model='halogen-qwen3.8-flash-next')
+                if thinking_override:
+                    expected.update(enable_thinking=False, reasoning_effort='none')
+                self.assertEqual(self.seen[-1][1], expected)
+                self.assertFalse(any('compatibility=single_system_flat_prompt' in line
+                                     for line in captured.output))
+        for tools in ([{'type': 'function', 'function': {'name': 'fixture'}}], {}, False):
+            body = {'model': 'halogen-v2', 'messages': system, 'tools': tools}
+            response = await enabled.post('/v1/chat/completions', headers=HEADERS, json=body)
+            self.assertEqual(response.status, 200)
+            await response.read()
+            self.assertEqual(self.seen[-1][1], dict(body,
+                model='halogen-qwen3.8-flash-next', enable_thinking=False, reasoning_effort='none'))
+
+    async def test_scc_historical_locale_rules_reach_model_before_system_dispatch(self):
+        client = await self.client('halogen-v2')
+        suffix = (Path(__file__).resolve().parents[2] /
+            'voice/servicenow/evidence/scc-request-transformer-locale-suffix-20261013.txt').read_text(encoding='utf-8')
+        content = ('SCC Laptop Onboarding Voice\npersona: Antworte auf Deutsch.\n'
+                   'conversation_history: Fuer den Mitarbeiter Philipp Borchert.\n'
+                   'action_id: FIXED_CONTROL; input_key: employee; require explicit confirmation.')
+        system = {'role': 'system', 'content': content, 'name': 'fixture'}
+        body = {'model': 'halogen-v2', 'messages': [system], 'max_tokens': 4096,
+                'response_format': {'type': 'json_object'}, 'temperature': 0, 'stream': False}
+        response = await client.post('/v1/chat/completions', headers=HEADERS, json=body)
+        self.assertEqual(response.status, 200)
+        await response.read()
+        dispatch = {'role': 'user', 'content': 'Bitte bearbeite die im Systemtext beschriebene Aufgabe und beachte das dort geforderte Ausgabeformat.'}
+        self.assertEqual(self.seen[-1][1], dict(body,
+            messages=[dict(system, content=content + suffix), dispatch],
+            model='halogen-qwen3.8-flash-next', enable_thinking=False, reasoning_effort='none'))
+
+    async def test_locale_http_boundary_preserves_existing_suffix_and_other_use_cases(self):
+        client = await self.client('halogen-v2')
+        marker = '<scc_voice_locale_override_20261013>'
+        cases = (
+            ([{'role': 'user', 'content': 'SCC Laptop Onboarding Voice ' + marker + 'custom'}], {}),
+            ([{'role': 'user', 'content': 'Antragsformular ausfuellen.'}], {}),
+            ([{'role': 'system', 'content': 'SCC Laptop Onboarding Voice'},
+              {'role': 'user', 'content': 'Eine andere Aufgabe.'}], {}),
+            ([{'role': 'user', 'content': [{'type': 'text', 'text': 'SCC Laptop Onboarding Voice'},
+                {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,fixture'}}]}], {}),
+            ([{'role': 'system', 'content': 'SCC Laptop Onboarding Voice'}],
+                {'tools': [{'type': 'function', 'function': {'name': 'fixture'}}]}),
+        )
+        for messages, extras in cases:
+            body = dict(model='halogen-v2', messages=messages,
+                        response_format={'type': 'json_object'}, max_tokens=4096, **extras)
+            response = await client.post('/v1/chat/completions', headers=HEADERS, json=body)
+            self.assertEqual(response.status, 200)
+            await response.read()
+            self.assertEqual(self.seen[-1][1], dict(body,
+                model='halogen-qwen3.8-flash-next', enable_thinking=False, reasoning_effort='none'))
+
     async def test_other_route_does_not_trigger_chat_override(self):
         client = await self.client('halogen-v2')
         original, observed = await self.send(client, route='/v1/responses')

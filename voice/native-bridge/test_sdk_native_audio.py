@@ -42,7 +42,8 @@ class _Speech:
 
 class SDKNativeAudioTests(unittest.IsolatedAsyncioTestCase):
     async def test_native_call_negotiates_sdk_audio_and_delivers_german_transcript(self):
-        config = Config(auth_mode='servicenow',
+        config = Config(instance_name='soprasteriaassvsdemo14', auth_mode='servicenow',
+            sdk_public_origin='https://strix-alloy.tail7f425a.ts.net',
             voice_service_id='8aa131d793f787105c8132d47aba1095',
             required_agent_id='a6337ddf93f787105c8132d47aba1058',
             native_sdk_enabled=True, greeting=GREETING, max_call_seconds=30)
@@ -66,7 +67,7 @@ class SDKNativeAudioTests(unittest.IsolatedAsyncioTestCase):
                 headers = {'Authorization':'Bearer sdk-audio-fixture'}
                 response = await client.post('/api/webrtc/sessions?instance_name=soprasteriaassvsdemo14&receive_data=true&voice_service_id='+config.voice_service_id,
                     headers=headers,json={'agent_id':'agent_operator'})
-                self.assertEqual(response.status,201)
+                self.assertEqual(response.status, 200)
                 session = await response.json()
                 endpoint = '/api/webrtc/sessions/'+session['session_id']
                 await peer.setLocalDescription(await peer.createOffer())

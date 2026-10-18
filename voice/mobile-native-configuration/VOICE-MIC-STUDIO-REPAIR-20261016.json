@@ -1,0 +1,248 @@
+{
+  "utc": "2026-10-16T08:59:13.853426+00:00",
+  "server_side_checks_passed": true,
+  "physical_phone_test_verified": false,
+  "original_phone_stall": "vad_start_without_queued_audio_or_asr; exact transport cause unknown",
+  "fixed_regressions": [
+    "live_input_gap_and_sparse_quiet_frames_do_not_finish_utterance",
+    "postfair_upload_false_rejection_when_client_clock_is_ahead",
+    "frontend_ready_for_audio_rejected_by_backend_quality_floor",
+    "provider_single_system_message_rejected_no_user_query",
+    "missing_historical_conditional_scc_german_locale_rules"
+  ],
+  "studio_public_checks": {
+    "utc": "2026-10-16T07:35:02.200371+00:00",
+    "passed": true,
+    "created_test_profile_deleted": true,
+    "selection_changed": false,
+    "client_clock_ahead_hours": 2,
+    "upload_http_status": 201,
+    "server_receipt_timestamp_verified": true,
+    "preview_http_status": 200,
+    "clone_preview_wav_bytes": 222764,
+    "delete_http_status": 200,
+    "public_current_frontend_verified": true,
+    "existing_profiles_unchanged": true,
+    "original_references_unchanged": true,
+    "original_reference_count": 6,
+    "protected_configuration_unchanged": true,
+    "selected_profile_preserved": true
+  },
+  "native_audio_scope": "private_actual_native_sparse_input_rtp_and_servicenow_dialog",
+  "actual_phone_dtx_validated": false,
+  "two_turn_rtp_passed": true,
+  "own_dialog_closed": true,
+  "known_english_phrases_absent": true,
+  "assistant_replies_for_manual_language_review": [
+    "Guten Tag und herzlich willkommen bei Sopra Steria auf der Smart Country Convention. F\u00fcr welchen Mitarbeiter m\u00f6chten Sie in ServiceNow einen neuen Laptop bestellen?",
+    "Ich starte den Laptop-Onboarding-Prozess und frage Sie nach dem Mitarbeiter.",
+    "Wie hei\u00dft dein neuer Mitarbeiter?",
+    "Ich setze den Onboarding-Prozess f\u00fcr Philipp Borchert fort und frage nach den weiteren Details.",
+    "Welches Eintrittsdatum m\u00f6chtest du f\u00fcr Philipp Borchert angeben?"
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "seconds": 51.375,
+      "assistant_replies": [
+        "Ich starte den Laptop-Onboarding-Prozess und frage Sie nach dem Mitarbeiter.",
+        "Wie hei\u00dft dein neuer Mitarbeiter?"
+      ],
+      "received_voiced_frames": 245,
+      "input_track_still_live": true,
+      "native_failed": false,
+      "native_input_lost": false,
+      "accepted_utterance_count": 1,
+      "suppressed_waits": 1,
+      "sparse_quiet_frames": 0,
+      "input_mode": "no_packets"
+    },
+    {
+      "turn": 2,
+      "seconds": 59.156,
+      "assistant_replies": [
+        "Ich setze den Onboarding-Prozess f\u00fcr Philipp Borchert fort und frage nach den weiteren Details.",
+        "Welches Eintrittsdatum m\u00f6chtest du f\u00fcr Philipp Borchert angeben?"
+      ],
+      "received_voiced_frames": 361,
+      "input_track_still_live": true,
+      "native_failed": false,
+      "native_input_lost": false,
+      "accepted_utterance_count": 2,
+      "suppressed_waits": 1,
+      "sparse_quiet_frames": 139,
+      "input_mode": "sparse_quiet"
+    }
+  ],
+  "minimum_available_gib": 20.6128,
+  "measured_transcript_latency": [
+    {
+      "turn": 1,
+      "first_reply_after_asr_seconds": 19.156,
+      "question_after_asr_seconds": 40.015
+    },
+    {
+      "turn": 2,
+      "first_reply_after_asr_seconds": 22.625,
+      "question_after_asr_seconds": 49.844
+    }
+  ],
+  "current_stack": {
+    "utc": "2026-10-16T08:59:10.860969+00:00",
+    "read_only": true,
+    "bot_session_count": "not exposed; no session allocated by this check",
+    "services": {
+      "model": {
+        "http_status": 200,
+        "busy": false,
+        "in_flight": 0,
+        "queued": 0,
+        "slots": 1,
+        "context": 32768,
+        "slot_ctx": 32768,
+        "kv_pool_positions": 32768,
+        "status": "ok",
+        "expected_model": true,
+        "version_matches": true,
+        "vision_enabled": true,
+        "prompt_cache": {
+          "mode": 1,
+          "enabled": true,
+          "cap_mb": 110,
+          "bitwise_identical_to_cold": true
+        }
+      },
+      "controller": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "context": 32768,
+        "status": "ok"
+      },
+      "gateway": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "queued_requests": 0,
+        "context": 32768,
+        "status": "ok"
+      },
+      "bot": {
+        "http_status": 200
+      },
+      "native": {
+        "http_status": 200,
+        "nativeSessions": 0,
+        "status": "ok",
+        "auth_mode": "servicenow"
+      },
+      "asr": {
+        "http_status": 200,
+        "status": "ok"
+      },
+      "tts": {
+        "http_status": 200,
+        "expected_model": true
+      }
+    },
+    "memory": {
+      "free_gib": 22.966,
+      "commit_headroom_gib": 115.068,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "listeners": [
+      {
+        "port": 8731,
+        "address": "127.0.0.1",
+        "pid": 16404,
+        "created_utc": "2026-10-16T06:41:03.5346120Z",
+        "expected_process": null
+      },
+      {
+        "port": 8840,
+        "address": "127.0.0.1",
+        "pid": 9080,
+        "created_utc": "2026-10-16T06:40:51.3193230Z",
+        "expected_process": true
+      },
+      {
+        "port": 8841,
+        "address": "127.0.0.1",
+        "pid": 35728,
+        "created_utc": "2026-10-16T08:50:21.0103150Z",
+        "expected_process": true
+      },
+      {
+        "port": 8850,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8853,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8860,
+        "address": "127.0.0.1",
+        "pid": 2724,
+        "created_utc": "2026-10-16T07:34:37.1038840Z",
+        "expected_process": true
+      },
+      {
+        "port": 8861,
+        "address": "127.0.0.1",
+        "pid": 15436,
+        "created_utc": "2026-10-13T12:42:38.1702700Z",
+        "expected_process": true
+      },
+      {
+        "port": 8862,
+        "address": "127.0.0.1",
+        "pid": 5572,
+        "created_utc": "2026-10-13T12:42:40.7014430Z",
+        "expected_process": true
+      }
+    ],
+    "funnel": {
+      "native_route_matches": true,
+      "gateway_route_matches": true,
+      "callback_route_matches": true,
+      "https_443_configured": true,
+      "funnel_allowed": true,
+      "media_connectivity": "not tested; host ICE requires a reachable LAN/tailnet interface"
+    },
+    "legacy_cpu_ports": [],
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "model_cache_matches": true,
+    "stack_healthy": true
+  },
+  "source_sha256": {
+    "voice/native-bridge/native_bridge.py": "1cc15c5c25c7db8c3a55629d951342e1a9e125b73ff98e24b0627f3af322da07",
+    "voice/native-bridge/core.py": "5c7042f6e4b4e9c0cb1cb9395da9a0ce7b54fdc652eff7f315878169f1bf71bc",
+    "server/gateway.py": "5b2e2a24c7c90df42576299a7c378d139eca5c96872f5fd5cb4c02f79ee8edaa",
+    "server/scc_voice_locale.py": "158077633dd4e420c8a4439beedb37ae607f1d9b294ae2a2d6420f9c8df48c3e",
+    "voice/voice-studio/studio_server.py": "ea8ce266bbb7d689af561800593df979c3a69fd301a988d868a9478b8cabfe84",
+    "voice/voice-studio/web/app.js": "978335920b2b1cd521a492aa59b4ebd11e4964ef4b81badf0c2dbdbfa845f874",
+    "voice/voice-studio/web/index.html": "64dc1183984e981a07764f96041ccb9ba18be72ac2fa4d0bcd9982d73ca799ed",
+    "voice/voice-studio/retention_cleanup.py": "06a34af5d3cebddb4458bfe91a2f5720f39588e05f848a621a5a09d7592767c1",
+    "voice/native-start/model-start-policy.json": "acde0d7ec7eb3f5211f162419a70992eb78e21e1df08732e45f7d3518e1f09de"
+  },
+  "limitations": [
+    "Public upload uses an authorized existing own-voice reference, not physical phone microphone UI.",
+    "RTP test uses actual native call, ASR, ServiceNow dialog and TTS with controlled input transport.",
+    "Physical Now Mobile app and its microphone require user confirmation."
+  ],
+  "sources": {
+    "studio": "server/.local/studio-save-live-result-20261016.json",
+    "audio": "server/.local/mic-gap-fix-20261016/real-sparse-final-german-v3-result.json"
+  }
+}

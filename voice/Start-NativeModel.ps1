@@ -4,26 +4,45 @@ param(
     [string]$Action = 'Status'
 )
 
-# Starts only the Voice text-only Exact HaloGen profile. The single reviewed failed
+# Starts the selected, hash-pinned Exact HaloGen V2 profile with its Vision tower. The single reviewed failed
 # incident may be archived after the requested restart gate and proven cleanup; existing processes are never stopped.
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+# A hidden WinPS 5.1 launch can inherit PowerShell 7 module paths first.
+# Keep native integrity/CIM/network cmdlets ahead of incompatible module builds.
+# This changes only this process and its children; restore it on every exit.
+$taskPreviousModulePath = $env:PSModulePath
+$taskNativeModuleDirectory = [IO.Path]::Combine([Environment]::GetFolderPath('System'), 'WindowsPowerShell', 'v1.0', 'Modules')
+$env:PSModulePath = $taskNativeModuleDirectory + [IO.Path]::PathSeparator + $taskPreviousModulePath
 $Clean = 'C:\Projects\strix-alloy-clean'
 $Python = "$Clean\server\.local\venv\Scripts\python.exe"
 $Controller = "$Clean\server\controller.py"
-$Profile = "$Clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0181-version-bracket-20261012\serving0181-full262-exact-text-voice-candidate-20261013.json"
-$ProfileHash = 'f1076479e51c4c8597ee8b90924748cce053e1dba85aa5e5169c650720e426cb'
+$DeploymentScript = Join-Path $PSScriptRoot 'native-start\model_deployment.py'
+$DeploymentScriptHash = 'b43e8f65e9c48a441063d98259bda12c3d3755ff3b4ec01d09e633601ff3aa7e'
+$Profile = ''
+$ProfileHash = ''
 $HistoricalProfileHash = 'f62b654bd0cfd0bcd00b4ced7416b64584ca530e6be8120e5d61dc45b931c323'
 $StatePath = "$Clean\server\.local\current.json"
-$RunnerLock = "$Clean\backends\halogen-wsl2-0.18.1\.local\runner.lock"
+$RunnerLock = ''
+$HistoricalRunnerLock = "$Clean\backends\halogen-wsl2-0.18.1\.local\runner.lock"
 $StatusScript = Join-Path $PSScriptRoot 'native-speech-validation\stack_status.py'
 $Runtime = Join-Path $PSScriptRoot 'native-speech-validation\runtime'
 $AdmissionScript = Join-Path $PSScriptRoot 'native-start\model_admission.py'
 $StartPolicy = Join-Path $PSScriptRoot 'native-start\model-start-policy.json'
-$AdmissionHash = 'a14f0ec5894464ce46daf9f7adaf3b725111dddc4981a27e9dd3b6450c7e48a1'
-$StartPolicyHash = '1a9e2392f765f800bb6e23f596d41db8fbe0b02d798c1050d328b5d975408e25'
+$AdmissionHash = '4801857c316a14d1ef3266d8f48878ae5fe4aaa088fbbbc0a37f4197aa17b2ef'
+$StartPolicyHash = 'acde0d7ec7eb3f5211f162419a70992eb78e21e1df08732e45f7d3518e1f09de'
 $mutex = $null
 $acquired = $false
+
+function Read-ReviewedModelDeployment($Python, $DeploymentScript, $ExpectedHash) {
+    if (-not (Test-Path -LiteralPath $DeploymentScript -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $DeploymentScript -Algorithm SHA256).Hash.ToLowerInvariant() -ne $ExpectedHash) {
+        throw 'Reviewed model deployment loader changed; refusing startup.'
+    }
+    $text = & $Python -B $DeploymentScript
+    if ($LASTEXITCODE -ne 0) { throw 'Reviewed model deployment/profile validation failed.' }
+    return ($text -join [Environment]::NewLine) | ConvertFrom-Json
+}
 
 function Test-KnownHistoricalController($State) {
     return $null -ne $State -and $State.phase -eq 'failed' -and
@@ -124,11 +143,16 @@ function Get-ListenerSnapshot {
 }
 
 try {
-    foreach ($file in @($Python, $Controller, $Profile, $StatusScript, $AdmissionScript, $StartPolicy)) {
+    foreach ($file in @($Python, $Controller, $StatusScript, $AdmissionScript, $StartPolicy)) {
         if (-not (Test-Path -LiteralPath $file -PathType Leaf)) { throw "HaloGen: Datei fehlt: $file" }
     }
+    $deployment = Read-ReviewedModelDeployment $Python $DeploymentScript $DeploymentScriptHash
+    if ($deployment.controller_root -ne $Clean) { throw 'HaloGen: Controller root differs from the reviewed deployment.' }
+    $Profile = [string]$deployment.profile
+    $ProfileHash = [string]$deployment.profile_sha256
+    $RunnerLock = [string]$deployment.runner_lock
     if ((Get-FileHash -LiteralPath $Profile -Algorithm SHA256).Hash.ToLowerInvariant() -ne $ProfileHash) {
-        throw 'HaloGen: Das freigegebene Text-only-Exact-Profil wurde veraendert; kein Start.'
+        throw 'HaloGen: Das freigegebene V2-Exact-Profil mit Vision wurde veraendert; kein Start.'
     }
     if ((Get-FileHash -LiteralPath $AdmissionScript -Algorithm SHA256).Hash.ToLowerInvariant() -ne $AdmissionHash -or
         (Get-FileHash -LiteralPath $StartPolicy -Algorithm SHA256).Hash.ToLowerInvariant() -ne $StartPolicyHash) {
@@ -165,7 +189,9 @@ try {
     if ($Action -eq 'Status') {
         [pscustomobject]@{action='status';read_only=$true;phase=$phase;owned_controller=$owned;
             controller_pid=$(if ($owned) {[int]$state.pid} else {$null});runner_lock_exists=(Test-Path -LiteralPath $RunnerLock);
+            historical_runner_lock_exists=(Test-Path -LiteralPath $HistoricalRunnerLock);
             model_ports=@($modelListeners | Select-Object -ExpandProperty LocalPort -Unique);legacy_ports=$legacy;
+            vision_required=$true;vision_enabled=$(if ($null -ne $health) {$health.services.model.vision_enabled} else {$false});
             profile_sha256=$ProfileHash;cache_expected='Exact';cache_mode=$(if ($null -ne $cache -and 'mode' -in @($cache.PSObject.Properties.Name)) {$cache.mode} else {$null});
             prompt_cache=$cache;cache_matches=$cacheMatches;start_physical_gib=$admissionPolicy.start_physical_gib;
             terminal_restart_physical_gib=$admissionPolicy.terminal_restart_physical_gib;
@@ -182,8 +208,9 @@ try {
         }
         if ($state.phase -eq 'ready') {
             if ($health.services.model.http_status -ne 200 -or -not $health.services.model.expected_model -or
-                -not $health.services.model.version_matches -or $health.services.model.context -ne 262144 -or
-                $health.services.model.slots -ne 1 -or $health.services.controller.http_status -ne 200 -or
+                -not $health.services.model.version_matches -or -not $health.services.model.vision_enabled -or
+                -not $health.services.model.profile_matches -or $health.services.model.context -ne $deployment.context -or
+                $health.services.model.slots -ne $deployment.slots -or $health.services.controller.http_status -ne 200 -or
                 -not $cacheMatches) {
                 throw 'HaloGen: Bestehender Controller ist nicht gesund; kein automatischer Neustart.'
             }
@@ -194,7 +221,10 @@ try {
         exit 0
     }
     if ($processes.Count -or $modelListeners.Count) { throw 'HaloGen: Bestehender Prozess oder Port ist nicht eindeutig zugeordnet; kein Start.' }
-    if (Test-Path -LiteralPath $RunnerLock) {
+    if ($RunnerLock -ne $HistoricalRunnerLock -and (Test-Path -LiteralPath $RunnerLock)) {
+        throw 'HaloGen: Retained selected-profile runner lock; no automatic recovery or model start.'
+    }
+    if (Test-Path -LiteralPath $HistoricalRunnerLock) {
         # One root-reviewed historical incident only. Every other retained lock fails closed.
         $recovery = Join-Path $PSScriptRoot 'native-start\model_restart_a596d8.py'
         $recoveryHash = '21b38ac5b0e20ad1d7b93eb1164442ae56d338651c5d06419f5ff4475eea54ab'
@@ -221,7 +251,7 @@ try {
         if ($LASTEXITCODE -ne 0) { throw 'HaloGen: Frische 36-GiB-Neustartpruefung fehlgeschlagen; kein Modellstart.' }
         $archived = ($archiveText -join [Environment]::NewLine) | ConvertFrom-Json
         if ($archived.run -ne 'a596d8b7119f4875b07ea1fedbc9768b' -or $archived.archived -ne $true -or
-            (Test-Path -LiteralPath $RunnerLock)) { throw 'HaloGen: Lock-Archivierung nicht bestaetigt; kein Modellstart.' }
+            (Test-Path -LiteralPath $HistoricalRunnerLock)) { throw 'HaloGen: Lock-Archivierung nicht bestaetigt; kein Modellstart.' }
         $state = Read-ControllerState
         $processes = @(Get-ModelProcesses)
         $listeners = @(Get-ListenerSnapshot)
@@ -240,14 +270,14 @@ try {
     # Every new desktop Model start checks the configured physical/commit admission directly.
     # Existing managed runtime reserve remains 18 GiB; no live model is stopped here.
     $admissionText = & $Python -B $AdmissionScript --check-start
-    if ($LASTEXITCODE -ne 0) { throw 'HaloGen: Start benoetigt 36 GiB freien physischen RAM und 131 GiB Commit-Reserve; kein Start.' }
+    if ($LASTEXITCODE -ne 0) { throw 'HaloGen: Start benoetigt 36 GiB freien physischen RAM und 132 GiB Commit-Reserve; kein Start.' }
     $admission = ($admissionText -join [Environment]::NewLine) | ConvertFrom-Json
     if ($admission.passed -ne $true -or $admission.gate -ne 'model_start') { throw 'HaloGen: Startgrenze nicht bestaetigt; kein Start.' }
     $arguments = @('-u', '-B', $Controller, 'run', '--config', $Profile, '--port', '8840')
     $started = Start-Process -FilePath $Python -ArgumentList $arguments -WorkingDirectory "$Clean\server" -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
     $receipt = [ordered]@{action='start_requested';utc=[datetime]::UtcNow.ToString('o');launcher_pid=$started.Id;
         launcher_start_ticks=$started.StartTime.ToUniversalTime().Ticks.ToString();python=$Python;controller=$Controller;
-        profile=$Profile;profile_sha256=$ProfileHash;stdout=$stdout;stderr=$stderr;cache='Exact';context=262144;slots=1;minimum_reserve_gib=18;
+        profile=$Profile;profile_sha256=$ProfileHash;stdout=$stdout;stderr=$stderr;cache=$deployment.prompt_cache;context=$deployment.context;slots=$deployment.slots;minimum_reserve_gib=18;
         start_policy=$StartPolicy;start_policy_sha256=$StartPolicyHash;admission=$admission}
     $receipt | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $Runtime "model-launch-$stamp.json") -Encoding UTF8
     $receipt | ConvertTo-Json
@@ -262,4 +292,5 @@ catch {
 finally {
     if ($acquired -and $null -ne $mutex) { $mutex.ReleaseMutex() }
     if ($null -ne $mutex) { $mutex.Dispose() }
+    $env:PSModulePath = $taskPreviousModulePath
 }

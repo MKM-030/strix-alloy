@@ -187,8 +187,11 @@ def model_start(status):
             result = status.health(8731, token=status.MODEL.read_text(encoding='utf-8-sig').strip())
             controller = status.health(8840, token=status.credential(status.PROFILE))
             if (result.get('http_status') == 200 and result.get('expected_model') is True
-                    and result.get('version_matches') is True and result.get('context') == 262144
-                    and result.get('slots') == 1 and controller.get('status') in ('ok','ready')):
+                    and result.get('version_matches') is True and result.get('profile_matches') is True
+                    and result.get('context') == status.DEPLOYMENT['context']
+                    and result.get('vision_enabled') is True
+                    and result.get('slots') == status.DEPLOYMENT['slots']
+                    and controller.get('status') in ('ok','ready')):
                 print('HaloGen: original model and controller ready', flush=True)
                 return
         except (OSError, ValueError):

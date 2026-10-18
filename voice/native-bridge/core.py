@@ -93,9 +93,20 @@ class EndpointGate:
             else:
                 self.quiet += n
         if self.quiet >= self.silence or len(self.audio) // 2 >= self.maximum:
-            result = bytes(self.audio) if self.voiced >= self.minimum else None
-            self.active = False
-            self.audio.clear()
-            self.voiced = self.quiet = self.run = 0
-            return began, result
+            return began, self.finish()
         return began, None
+
+    def finish(self):
+        """Finish once using only recorded PCM; no fabricated silence or speech.
+
+        A transport may suppress quiet frames. Its wall-clock endpoint can use
+        this same minimum-speech check without waiting for sample-count silence.
+        """
+        if not self.active:
+            return None
+        result = bytes(self.audio) if self.voiced >= self.minimum else None
+        self.active = False
+        self.audio.clear()
+        self.voiced = self.quiet = self.run = 0
+        self.preroll.clear()
+        return result

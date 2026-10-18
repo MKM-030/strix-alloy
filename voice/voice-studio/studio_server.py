@@ -35,6 +35,7 @@ from urllib.parse import urlparse
 import wave
 
 from aiohttp import ClientSession, ClientTimeout, web
+from postfair import completed_campaign, fresh_consent, fresh_profile, RETENTION_NOTICE
 
 HERE = Path(__file__).resolve().parent
 COOKIE_NAME = '__Host-voice_studio'
@@ -483,8 +484,19 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
             'Die Messe ist beendet. Neue Demo-Aufnahmen und eigene Stimmwahlen sind nicht mehr möglich. '
             'Die Demo-Aufnahmen werden automatisch gelöscht.')
 
+    def postfair_open():
+        return utc_clock() >= deadline and completed_campaign(config.runtime)
+
     def require_fair_open():
-        if utc_clock() >= deadline:
+        if utc_clock() >= deadline and not postfair_open():
+            raise fair_expired_error()
+
+    def profile_allowed(profile):
+        return (profile['profile_id'] == 'synthetic-scc-demo' or utc_clock() < deadline
+            or (postfair_open() and fresh_profile(profile, utc_clock())))
+
+    def require_profile_allowed(profile):
+        if not profile_allowed(profile):
             raise fair_expired_error()
 
     class ExpiredRegistration(manager.RegistrationRejected):
@@ -532,7 +544,7 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
     def visible_profile(profile, active, found):
         value = safe_profile(profile, active)
         own = revision_owner(profile['profile_dir']) == found['principal_id']
-        value.update(owner_is_self=own, can_delete=bool((own or found['is_admin']) and
+        value.update(can_activate=profile_allowed(profile), owner_is_self=own, can_delete=bool((own or found['is_admin']) and
             profile['profile_id'] != 'synthetic-scc-demo'))
         return value
 
@@ -625,24 +637,49 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
 
     @web.middleware
     async def boundary(request, handler):
+        diagnostic_code, diagnostic_reason = 'ok', 'ok'
         try:
             response = await handler(request)
         except APIError as error:
+            # Codes are internal constants; never include request bodies or IDs.
+            diagnostic_code = error.code if error.code in {
+                'sign_in_required', 'origin_rejected', 'csrf_rejected',
+                'fair_retention_expired', 'upload_in_progress', 'audio_too_large',
+                'invalid_audio', 'postfair_consent_required', 'invalid_json',
+                'body_too_large'} else 'request_rejected'
+            diagnostic_reason = diagnostic_code
             response = web.json_response({'error': error.message, 'code': error.code}, status=error.status)
         except web.HTTPRedirection as redirect:
             response = web.Response(status=redirect.status, body=redirect.body, headers=redirect.headers)
         except web.HTTPException as error:
+            diagnostic_code = 'not_found' if error.status == 404 else 'request_rejected'
+            diagnostic_reason = diagnostic_code
             response = web.json_response({'error': 'Anfrage nicht verfügbar.',
                 'code': 'not_found' if error.status == 404 else 'request_rejected'}, status=error.status)
         except ValueError as error:
+            diagnostic_code = 'validation_failed'
+            diagnostic_reason = {
+                'Reference is silent or too quiet; record clear close-microphone speech': 'audio_too_quiet',
+                'Reference is clipped; lower microphone level and record again': 'audio_clipped',
+                'Reference speech must last 3–30 seconds': 'audio_duration',
+                'Voice consent requires a timezone-aware confirmation timestamp': 'consent_timestamp',
+                'Explicit own-voice consent for the local demo is required': 'own_voice_consent',
+                'A voice name is required': 'voice_name',
+                'Voice name exceeds 80 characters': 'voice_name',
+            }.get(str(error), 'validation_other')
             # Manager input errors carry only validation instructions, never paths.
             response = web.json_response({'error': str(error), 'code': 'validation_failed'}, status=400)
         except Exception as error:
+            diagnostic_code = 'speech_service_unavailable'
+            diagnostic_reason = 'service_unavailable'
             LOG.error('Voice Studio operation failed: %s', type(error).__name__)
             response = web.json_response({'error':
                 'Die Aktion konnte nicht abgeschlossen werden. Bitte den lokalen Sprachdienst '
                 'und die aktuelle Stimmwahl prüfen und erneut versuchen.',
                 'code': 'speech_service_unavailable'}, status=503)
+        if request.method == 'POST' and request.path in ('/api/profiles', config.base_path + '/api/profiles'):
+            LOG.info('operation=profile_upload status=%s code=%s reason=%s',
+                response.status, diagnostic_code, diagnostic_reason)
         response.headers.update({'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
             'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY',
             'Permissions-Policy': 'microphone=(self), camera=()',
@@ -658,7 +695,8 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
     async def get_session(request):
         found = session(request)
         value = {'authenticated': bool(found), 'reference_text': REFERENCE_TEXT,
-            'max_recording_seconds': 25, 'recording_allowed': utc_clock() < deadline,
+            'max_recording_seconds': 25, 'recording_allowed': utc_clock() < deadline or postfair_open(),
+            'postfair_mode': postfair_open(), 'retention_notice': RETENTION_NOTICE if postfair_open() else '',
             'retention_due_at_utc': retention['due_at_utc'],
             'preview_text': PREVIEW_TEXT, 'max_preview_characters': MAX_PREVIEW_CHARACTERS}
         if found:
@@ -735,6 +773,16 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
             metadata = {key: data.get(key) for key in
                 ('name', 'reference_text', 'language', 'source', 'consent')}
             manager.validate_consent(metadata)
+            received_at = utc_clock()
+            if received_at >= deadline:
+                # The authenticated new request records explicit acceptance now.
+                # A valid client timestamp is required above, but phone clock
+                # skew must not decide whether a new recording may be saved.
+                consent = dict(metadata['consent'], confirmed_at_utc=received_at.isoformat())
+                if not fresh_consent(consent, received_at):
+                    raise APIError(400, 'postfair_consent_required',
+                        'Bitte bestätigen Sie für diese neue Aufnahme die eigene Stimme und die neue Aufbewahrung bis zur Löschung.')
+                metadata['consent'] = consent
             def persist():
                 require_fair_open()
                 config.runtime.mkdir(parents=True, exist_ok=True)
@@ -754,6 +802,7 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
                     # the deadline cannot publish a late normalized recording.
                     with manager.activation_lock(config.profile_root):
                         require_fair_open()
+                        require_profile_allowed(profile)
                         staged.rename(target)
                     profile['profile_dir'] = str(target)
                 return visible_profile(profile, selected_id(), found)
@@ -771,7 +820,7 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         found = mutation_check(request)
         await bounded_json(request, 2048)
         if request.match_info['profile_id'] != 'synthetic-scc-demo':
-            require_fair_open()
+            require_profile_allowed(profile_by_id(request.match_info['profile_id']))
         if operation_lock.locked():
             raise APIError(409, 'voice_operation_in_progress', 'Eine Stimmaktion läuft bereits. Bitte kurz warten.')
         async with operation_lock:
@@ -786,8 +835,8 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
                         nonlocal first_registration
                         if first_registration:
                             # manager.activate already owns its OS lock here.
-                            if utc_clock() >= deadline:
-                                raise ExpiredRegistration('Fair retention deadline passed before registration')
+                            if not profile_allowed(value):
+                                raise ExpiredRegistration('Recording no longer admitted before registration')
                             first_registration = False
                         # Rollback of a genuine ambiguous native failure must
                         # still restore the prior voice even across the deadline.
@@ -918,7 +967,7 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         text = preview_text(await bounded_json(request, 4096))
         profile_id = request.match_info['profile_id']
         if profile_id != 'synthetic-scc-demo':
-            require_fair_open()
+            require_profile_allowed(preview_profile_by_id(profile_id))
         if operation_lock.locked():
             raise APIError(409, 'voice_operation_in_progress', 'Eine Stimmaktion läuft bereits. Bitte kurz warten.')
         async with operation_lock:
@@ -929,7 +978,7 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
                         profile = preview_profile_by_id(profile_id)
                         def require_allowed():
                             if profile['kind'] == 'authorized_own_voice':
-                                require_fair_open()
+                                require_profile_allowed(profile)
                         require_allowed()
                         return preview_wav(native_profile_preview(manager, profile, text,
                             config.runtime / 'preview-cleanup.json', require_allowed=require_allowed))
@@ -953,7 +1002,7 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
                     if not selected:
                         raise APIError(409, 'no_selected_voice', 'Bitte zuerst ein Stimmprofil auswählen.')
                     if selected['kind'] == 'authorized_own_voice':
-                        require_fair_open()
+                        require_profile_allowed(selected)
                     return preview_wav((synthesize or default_synthesize)(text))
             return web.Response(body=await owned_thread(render), content_type='audio/wav')
 

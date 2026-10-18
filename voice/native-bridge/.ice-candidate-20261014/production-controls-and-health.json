@@ -1,0 +1,128 @@
+{
+  "utc": "2026-10-14T09:58:50.876668+00:00",
+  "controls_started_utc": "2026-10-14T09:58:49.676040+00:00",
+  "controls": {
+    "public_native_health": {
+      "http_status": 200
+    },
+    "public_credentialless_websocket": {
+      "http_status": 401,
+      "credentialless": true
+    }
+  },
+  "controls_are_not_browser_or_phone_tests": true,
+  "services": {
+    "model": {
+      "http_status": 200,
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0,
+      "slots": 1,
+      "context": 262144,
+      "slot_ctx": 262144,
+      "kv_pool_positions": 262144,
+      "status": "ok",
+      "expected_model": true,
+      "version_matches": true,
+      "vision_enabled": true,
+      "prompt_cache": {
+        "mode": 1,
+        "enabled": true,
+        "cap_mb": 110,
+        "bitwise_identical_to_cold": true
+      }
+    },
+    "controller": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "gateway": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "bot": {
+      "http_status": 200
+    },
+    "native": {
+      "http_status": 200,
+      "nativeSessions": 0,
+      "status": "ok",
+      "auth_mode": "servicenow"
+    },
+    "asr": {
+      "http_status": 200,
+      "status": "ok"
+    },
+    "tts": {
+      "http_status": 200,
+      "expected_model": true
+    }
+  },
+  "listeners": {
+    "8731": [
+      12368
+    ],
+    "8840": [
+      28968
+    ],
+    "8841": [
+      14960
+    ],
+    "8850": [
+      19372
+    ],
+    "8853": [
+      19372
+    ],
+    "8860": [
+      7644
+    ],
+    "8861": [
+      15436
+    ],
+    "8862": [
+      5572
+    ],
+    "8863": [
+      20168
+    ]
+  },
+  "native_sha256": "91d61c8dae3055bad64bde48f7e62a6864449c0cb8246058445bfdaa1107a943",
+  "gateway_sha256": "25ddfe9565c7d8f393289d22016754d040a269c94561599832e811400c006aed",
+  "activation": {
+    "utc": "2026-10-14T09:57:42.908438+00:00",
+    "scope": "Native only",
+    "replace_error_winerror": 5,
+    "source_readonly_attribute": false,
+    "completed_utc": "2026-10-14T09:57:43.789417+00:00",
+    "live_sha256": "91d61c8dae3055bad64bde48f7e62a6864449c0cb8246058445bfdaa1107a943",
+    "new_native_pid": 7644,
+    "new_native_created": 1791971863.011714,
+    "native_health": {
+      "http_status": 200,
+      "nativeSessions": 0,
+      "status": "ok",
+      "auth_mode": "servicenow"
+    },
+    "protected_unchanged": true,
+    "config_unchanged": true,
+    "tests_passed": 52,
+    "copy_method": "write_owned_file_bytes_after_backup_CAS_no_permission_changes"
+  },
+  "memory": {
+    "free_gib": 23.053,
+    "commit_headroom_gib": 111.938,
+    "runtime_guard_floor_gib": 18,
+    "above_runtime_floor": true,
+    "cold_start_floor_met": false
+  },
+  "no_model_inference_or_voice_session_allocated_by_controls": true,
+  "remote_media_status": "Awaiting actual browser ICE/RTP verification"
+}

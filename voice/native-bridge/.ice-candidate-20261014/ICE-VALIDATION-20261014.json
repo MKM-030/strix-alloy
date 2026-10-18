@@ -1,0 +1,42 @@
+{
+  "utc": "2026-10-14",
+  "scope": "urgent native browser WebRTC ICE candidate; not activated",
+  "baseline_sha256": "0b7c6705488b81e5e93f192154dbb670d3cfd1d70011282245398f54a9a5647d",
+  "candidate_sha256": "91d61c8dae3055bad64bde48f7e62a6864449c0cb8246058445bfdaa1107a943",
+  "ice_server": {
+    "urls": [
+      "stun:stun.l.google.com:19302"
+    ]
+  },
+  "baseline_tests": {
+    "count": 2,
+    "result": "both failed as expected: no configured server ICE and no answer ICE server"
+  },
+  "candidate_transport": {
+    "count": 2,
+    "result": "passed",
+    "runtime_seconds": 8.994,
+    "answer_seconds": 5.031,
+    "server_srflx_candidates": 2,
+    "authorization_denied_invalid_token": true,
+    "real_rtp_two_way": true
+  },
+  "regression": {
+    "count": 50,
+    "result": "passed",
+    "runtime_seconds": 15.342,
+    "suites": [
+      "test_core",
+      "test_request_diagnostics",
+      "test_input_lifecycle",
+      "test_ingestion"
+    ],
+    "harness_update": "AST namespace adds RTCIceServer test stub and fixed STUN_URL"
+  },
+  "limits": [
+    "Test client is local and uses host candidates; remote browser NAT connectivity still needs actual native ServiceNow browser test.",
+    "STUN supplies public candidates but does not relay media and cannot guarantee passage through restrictive or symmetric NAT.",
+    "No ServiceNow, model, TTS, STT, Gateway, authentication or Origin changes."
+  ],
+  "windows_candidate": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-bridge\\.ice-candidate-20261014\\native_bridge.py"
+}

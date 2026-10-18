@@ -1,0 +1,262 @@
+{
+  "schema": "scc-voice-original-profile-startup-cache-experiment.v1",
+  "as_of_utc": "2026-10-16T18:28:53.463890+00:00",
+  "as_of_berlin": "2026-10-16T20:28:53.463890+02:00",
+  "scope": "Internal evidence of two failed startup attempts and one successful controlled startup; no inference test or permanent configuration change.",
+  "outcome": "The unchanged original model is READY, ASR is restored and TTS/selected voice metadata are unchanged as of the read-only snapshot.",
+  "causal_limit": "The successful sequence combined an ASR pause, one scoped Vision file-cache advice operation and natural memory variation. There was no control run. This does not establish that cache advice alone caused success or resolve the earlier runtime memory spikes.",
+  "failed_attempts": [
+    {
+      "outer_run": "03e5b54613f24452b2335ebbb0e97796",
+      "inner_run": "82c1a86b606a4aa3b5e211d4ee07aa13",
+      "sha256": "5563531aba360ab00e07656c48b91478ee7c7442834a9baf5081c9ebe3635269",
+      "outcome": {
+        "ready": false,
+        "cleanup": true,
+        "recovery": true,
+        "error": "Memory admission did not stabilize within 240 seconds: Context 32768 needs 36 GiB free physical / 125 GiB commit headroom; observed 35.59 / 180.96",
+        "stopped_at": 1792173729.9672947,
+        "context": 32768
+      }
+    },
+    {
+      "outer_run": "7e73f7716e4e49cc8f7b8c159307d980",
+      "inner_run": "965d01a7ac6749bb9efeb78e5db5d004",
+      "sha256": "b98b56cf386296e298988db8aabe276bc38ce3718acfa05f654ed4e45f64aae8",
+      "outcome": {
+        "ready": false,
+        "cleanup": true,
+        "recovery": true,
+        "error": "Context 32768 needs 36 GiB free physical / 125 GiB commit headroom; observed 35.96 / 183.27",
+        "stopped_at": 1792174484.4094858,
+        "context": 32768
+      }
+    }
+  ],
+  "successful_attempt": {
+    "outer": {
+      "run_id": "6928c6d143364e819ad30b9fd50a88b4",
+      "phase": "ready",
+      "pid": 39836,
+      "profile_sha256": "60d3651209bc23a6f0cc63e8a65d125fb59730ea4e6e286e893caab3fb359b12",
+      "minimum_reserve_gib": 18.0,
+      "minimum_available_gib": 22.277435302734375
+    },
+    "inner": {
+      "run_id": "3dc3301d9a4c4adfae6052a0fbc2273b",
+      "phase": "ready",
+      "controller_pid": 40312,
+      "outcome": null
+    },
+    "asr_pause_pid": 9572,
+    "restored_asr_pid": 16732,
+    "asr_restore_health_status": 200,
+    "asr_helper_exit_code": 0,
+    "asr_helper_runtime_seconds": 247.35,
+    "asr_helper_result": {
+      "verified": true,
+      "applied": true,
+      "asr_restored": true,
+      "tts_preserved": true,
+      "voice_metadata_unchanged": true,
+      "original_profile": "60d3651209bc23a6f0cc63e8a65d125fb59730ea4e6e286e893caab3fb359b12",
+      "no_retry": true
+    },
+    "cache_helper_exit_code": 0,
+    "cache_helper_runtime_seconds": 10.72
+  },
+  "scoped_cache_operation": {
+    "explicit_flag": "--advise-vision",
+    "helper_sha256": "b89833af80ed2aae7fe4e9671687938e580d05fc64920bae2e712505c15a5918",
+    "path": "/home/revn/halogen-models-native/qwen38-flash-next-vision.hgn",
+    "size_bytes": 897916416,
+    "file_sha256_verified_by_original_service_before_admission": "d62e0ae553fe88afd3833733d4a4c669f34d20fd8dfce4b9610525bed2134b10",
+    "verification_note": "The cache helper did not reread model data; it used the original service checkpoint verification, read-only descriptor metadata and mincore residency.",
+    "advice": "One POSIX_FADV_DONTNEED on the exact Vision descriptor, after exact owned-run/pre-container checks.",
+    "advice_count": 1,
+    "resident_pages_before": 219218,
+    "resident_pages_after": 0,
+    "total_pages": 219218,
+    "linux_cached_bytes_before": 2393133056,
+    "linux_cached_bytes_after": 1495560192,
+    "windows_available_bytes_before": 38434430976,
+    "windows_available_bytes_immediate_after": 38440513536,
+    "windows_available_bytes_after_approximately10_seconds": 38670213120,
+    "net_windows_available_gain_gib_after10_seconds": 0.219589,
+    "file_data_written": false,
+    "file_contents_read_by_cache_helper": false,
+    "raw_records": [
+      {
+        "event": "vision_cache_inspection",
+        "host_before": {
+          "available_bytes": 38434430976,
+          "monotonic": 280187.781
+        },
+        "host_after": {
+          "available_bytes": 38440513536,
+          "monotonic": 280187.968
+        },
+        "linux": {
+          "read_only": false,
+          "advised_vision": true,
+          "path": "/home/revn/halogen-models-native/qwen38-flash-next-vision.hgn",
+          "size_bytes": 897916416,
+          "device": 2096,
+          "inode": 13450,
+          "before": {
+            "resident_pages": 219218,
+            "total_pages": 219218,
+            "resident_bytes": 897916928
+          },
+          "after": {
+            "resident_pages": 0,
+            "total_pages": 219218,
+            "resident_bytes": 0
+          },
+          "guest_before": {
+            "MemAvailable": 57625772032,
+            "Cached": 2393133056,
+            "Unevictable": 0,
+            "Mlocked": 0,
+            "AnonPages": 251539456
+          },
+          "guest_after": {
+            "MemAvailable": 57629831168,
+            "Cached": 1495560192,
+            "Unevictable": 0,
+            "Mlocked": 0,
+            "AnonPages": 251539456
+          },
+          "file_contents_read": false,
+          "file_data_written": false,
+          "advice_count": 1
+        }
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38441525248,
+        "monotonic": 280187.968
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38442610688,
+        "monotonic": 280188.968
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38684786688,
+        "monotonic": 280189.984
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38651195392,
+        "monotonic": 280190.984
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38664851456,
+        "monotonic": 280191.984
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38673350656,
+        "monotonic": 280192.984
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38679793664,
+        "monotonic": 280193.984
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38685155328,
+        "monotonic": 280194.984
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38601039872,
+        "monotonic": 280195.984
+      },
+      {
+        "event": "host_memory_after_scoped_advice",
+        "available_bytes": 38670213120,
+        "monotonic": 280197
+      }
+    ]
+  },
+  "verified_readiness": {
+    "host_utc": "2026-10-16T18:28:53.463890+00:00",
+    "model_health": {
+      "http_status": 200,
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0,
+      "slots": 1,
+      "context": 32768,
+      "slot_ctx": 32768,
+      "kv_pool_positions": 32768,
+      "status": "ok",
+      "expected_model": true,
+      "version_matches": true,
+      "vision_enabled": true,
+      "prompt_cache": {
+        "mode": 1,
+        "enabled": true,
+        "cap_mb": 110,
+        "bitwise_identical_to_cold": true
+      }
+    },
+    "controller_health": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "context": 32768,
+      "status": "ok"
+    },
+    "asr_health": {
+      "http_status": 200,
+      "status": "ok"
+    },
+    "tts_health": {
+      "http_status": 200,
+      "expected_model": true
+    },
+    "memory": {
+      "free_gib": 24.058,
+      "commit_headroom_gib": 111.084,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "profile_sha256": "60d3651209bc23a6f0cc63e8a65d125fb59730ea4e6e286e893caab3fb359b12"
+  },
+  "unchanged_controls": {
+    "desktop_start_physical_gib": 36,
+    "desktop_start_commit_headroom_gib": 132,
+    "backend_start_physical_gib": 36,
+    "backend_start_commit_headroom_gib": 125,
+    "runtime_physical_commit_reserve_gib": 18,
+    "model_context": 32768,
+    "model_slot_context": 32768,
+    "model_kv_pool_positions": 32768,
+    "vision_enabled": true,
+    "exact_cache_cap_mb": 110,
+    "no_live_coordinator_profile_or_guard_source_changes": true,
+    "no_TTS_stop_or_voice_profile_change": true,
+    "no_global_cache_drop": true
+  },
+  "verified_source_sha256": {
+    "C:\\Projects\\strix-alloy-scc-voice\\voice\\Start-NativeModel.ps1": "d7ea996265571d1543c5cdab2d2381832fc104a102ca5a63d230946bde1c8bcd",
+    "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-start\\model-start-policy.json": "acde0d7ec7eb3f5211f162419a70992eb78e21e1df08732e45f7d3518e1f09de",
+    "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-start\\start_services.py": "92290237cf30668cd42ee7f2f5d61e1043fb9a4b64251edfdb24c321caf90451",
+    "C:\\Projects\\strix-alloy-scc-voice\\server\\.local\\vision-cache-admission-20261016\\vision_cache_admission.py": "b89833af80ed2aae7fe4e9671687938e580d05fc64920bae2e712505c15a5918",
+    "C:\\Projects\\strix-alloy-scc-voice\\server\\.local\\asr-model-order-next-20261016\\asr_model_order.py": "51dc941754d564af78b9761c76ab09ea78031843714db5d17d7c5146df96e1ef"
+  },
+  "historical_failure_evidence_rewritten": false,
+  "evidence_sources": [
+    "Original immutable inner outcome.json files, independently read and SHA256 checked",
+    "Root-owned process6036 cached stdout: exact scoped cache operation and memory measurements",
+    "Root-owned process30736 cached stdout: ASR restore and final unchanged voice confirmation",
+    "Read-only authenticated local model/controller health plus ASR/TTS health and Windows memory snapshot"
+  ]
+}

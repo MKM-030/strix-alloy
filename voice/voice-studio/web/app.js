@@ -36,18 +36,44 @@ export function encodeWav(samples, inputSampleRate) {
   return buffer;
 }
 
-export function inspectSignal(samples) {
+export function inspectSignal(samples, inputSampleRate = TARGET_SAMPLE_RATE) {
   let sum = 0;
   let peak = 0;
   let clippedSamples = 0;
-  for (const value of samples) {
+  let blockSum = 0;
+  let blockLength = 0;
+  let speechBlocks = 0;
+  let blocks = 0;
+  const length = Math.round(samples.length * TARGET_SAMPLE_RATE / inputSampleRate);
+  const finishBlock = () => {
+    if (!blockLength) return;
+    if (Math.sqrt(blockSum / blockLength) >= 0.003) speechBlocks++;
+    blocks++;
+    blockSum = 0;
+    blockLength = 0;
+  };
+  // Inspect the same 24 kHz PCM16 samples that encodeWav sends to the server.
+  for (let index = 0; index < length; index++) {
+    const position = index * inputSampleRate / TARGET_SAMPLE_RATE;
+    const left = Math.floor(position);
+    const fraction = position - left;
+    const sample = (samples[left] || 0) * (1 - fraction) + (samples[Math.min(left + 1, samples.length - 1)] || 0) * fraction;
+    const clamped = Math.max(-1, Math.min(1, sample));
+    const pcm = Math.round(clamped * (clamped < 0 ? 32768 : 32767));
+    const value = pcm / 32768;
     const absolute = Math.abs(value);
     sum += value * value;
+    blockSum += value * value;
+    blockLength++;
     peak = Math.max(peak, absolute);
-    if (absolute >= 0.995) clippedSamples++;
+    if (Math.abs(pcm) >= 32700) clippedSamples++;
+    if (blockLength === TARGET_SAMPLE_RATE / 50) finishBlock();
   }
-  const rms = samples.length ? Math.sqrt(sum / samples.length) : 0;
-  return { rms, peak, clipped: samples.length > 0 && clippedSamples / samples.length > 0.001, hasInput: rms > 0.001 && peak > 0.005 };
+  finishBlock();
+  const rms = length ? Math.sqrt(sum / length) : 0;
+  const speechFraction = blocks ? speechBlocks / blocks : 0;
+  return {rms, peak, speechFraction, clipped:length > 0 && clippedSamples / length > 0.005,
+    hasInput:rms >= 0.004 && peak >= 0.02 && speechFraction >= 0.15};
 }
 
 export function deletionAvailability(profile, selectedProfileId) {
@@ -87,7 +113,7 @@ function initializeStudio() {
   const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map(element => [element.id, element]));
   const get = id => elements[id];
   const apiBase = new URL('./api/', import.meta.url);
-  const state = {csrf:'', authenticated:false, isAdmin:false, principalId:'', recordingAllowed:true, profiles:[], selectedProfileId:null, maxSeconds:25, referenceText:'', recorder:null, starting:false, recording:null, operation:false, requestToken:0, previewUrl:null, previewText:DEFAULT_PREVIEW_TEXT, previewRequest:null, previewToken:0, previewProfile:null, profilePreviewUrl:null, previewReturnFocus:null, pendingDeletion:null, deletionReturnFocus:null};
+  const state = {csrf:'', authenticated:false, isAdmin:false, principalId:'', recordingAllowed:true, postfairMode:false, profiles:[], selectedProfileId:null, maxSeconds:25, referenceText:'', recorder:null, starting:false, recording:null, operation:false, requestToken:0, previewUrl:null, previewText:DEFAULT_PREVIEW_TEXT, previewRequest:null, previewToken:0, previewProfile:null, profilePreviewUrl:null, previewReturnFocus:null, pendingDeletion:null, deletionReturnFocus:null};
   const formatSeconds = seconds => `00:${String(Math.floor(seconds)).padStart(2, '0')}`;
   const apiUrl = path => new URL(path, apiBase).href;
 
@@ -122,13 +148,14 @@ function initializeStudio() {
     const capturing = Boolean(state.recorder || state.starting);
     const previewing = Boolean(state.previewRequest || state.previewProfile);
     const busy = state.operation || previewing;
-    const ready = get('profile-name').value.trim().length > 0 && get('voice-consent').checked;
+    const ready = get('profile-name').value.trim().length > 0 && get('voice-consent').checked && (!state.postfairMode || get('retention-consent').checked);
     get('record-button').disabled = !state.authenticated || !state.recordingAllowed || !state.referenceText || !ready || capturing || busy;
     get('record-button').hidden = capturing;
     get('stop-button').hidden = !state.recorder || state.starting || state.recorder.stopping;
     get('stop-button').disabled = Boolean(state.recorder?.stopping);
     get('profile-name').disabled = capturing || busy;
     get('voice-consent').disabled = capturing || busy;
+    get('retention-consent').disabled = capturing || busy;
     get('save-button').disabled = !state.recordingAllowed || !state.recording?.valid || !ready || capturing || busy;
     get('discard-button').disabled = capturing || busy;
     get('refresh-button').disabled = busy;
@@ -310,6 +337,9 @@ function initializeStudio() {
     get('personal-code-label').value = '';
     message(get('admin-message'));
     get('session-label').hidden = true;
+    get('retention-consent').checked = false;
+    get('voice-consent').checked = false;
+    state.postfairMode = false;
     get('studio-view').hidden = true;
     get('login-view').hidden = false;
     get('logout-button').hidden = true;
@@ -322,6 +352,10 @@ function initializeStudio() {
     state.isAdmin = session.is_admin === true;
     state.principalId = session.principal_id || '';
     state.recordingAllowed = session.recording_allowed !== false;
+    state.postfairMode = session.postfair_mode === true;
+    get('retention-consent-label').hidden = !state.postfairMode;
+    get('retention-consent').checked = false;
+    get('retention-notice').textContent = state.postfairMode ? 'Die Messeaufnahmen wurden gelöscht. Neue Aufnahmen bleiben gespeichert, bis Sie oder ein Administrator sie löschen.' : 'Die Aufnahmen der Messe-Demo werden nach der Messe automatisch gelöscht. Sie können Ihre Stimme jederzeit löschen.';
     message(get('retention-message'), state.recordingAllowed ? '' : 'Die Aufnahmezeit für diese Messe-Demo ist beendet. Sie können vorhandene Profile weiterhin anhören und löschen sowie die Standardstimme auswählen.', 'info');
     closeAdminPanel();
     get('admin-menu-button').hidden = !state.isAdmin;
@@ -407,8 +441,8 @@ function initializeStudio() {
       select.type = 'button';
       select.dataset.profileAction = 'select';
       select.dataset.selected = String(selected);
-      select.dataset.expired = String(!state.recordingAllowed && profile.id !== 'synthetic-scc-demo');
-      if (select.dataset.expired === 'true') select.setAttribute('title', 'Nach der Messe kann nur die Standardstimme ausgewählt werden.');
+      select.dataset.expired = String(profile.can_activate === false || (!state.recordingAllowed && profile.id !== 'synthetic-scc-demo'));
+      if (select.dataset.expired === 'true') select.setAttribute('title', 'Dieses Messeprofil ist abgelaufen. Bitte nehmen Sie Ihre Stimme mit neuer Zustimmung auf.');
       select.disabled = selected;
       select.addEventListener('click', () => activateProfile(profile));
       actions.append(listen, preview, select);
@@ -444,8 +478,8 @@ function initializeStudio() {
 
   async function activateProfile(profile) {
     if (!state.authenticated || state.operation || state.previewRequest || state.previewProfile || state.recorder || state.starting) return;
-    if (!state.recordingAllowed && profile.id !== 'synthetic-scc-demo') {
-      message(get('page-message'), 'Die Aufnahmezeit dieser Messe-Demo ist beendet. Bitte wählen Sie die Standardstimme aus.', 'error');
+    if (profile.can_activate === false || (!state.recordingAllowed && profile.id !== 'synthetic-scc-demo')) {
+      message(get('page-message'), 'Dieses Messeprofil ist abgelaufen. Bitte nehmen Sie Ihre Stimme mit neuer Zustimmung auf.', 'error');
       return;
     }
     state.operation = true;
@@ -650,6 +684,7 @@ function initializeStudio() {
   }
 
   async function startRecording() {
+    if (!get('voice-consent').checked || (state.postfairMode && !get('retention-consent').checked)) return;
     if (!state.recordingAllowed || state.recorder || state.starting || state.operation || state.previewRequest || state.previewProfile) return;
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
       message(get('record-message'), 'Die Mikrofonaufnahme benötigt eine sichere HTTPS-Verbindung und einen aktuellen Browser.', 'error');
@@ -684,7 +719,7 @@ function initializeStudio() {
           const samples = event.data.samples;
           recorder.chunks.push(samples);
           recorder.frames += samples.length;
-          const signal = inspectSignal(samples);
+          const signal = inspectSignal(samples, recorder.context.sampleRate);
           setMeter(Math.sqrt(signal.rms) * 200, signal.clipped);
           if (signal.clipped) message(get('record-message'), 'Das Signal ist sehr laut. Sprechen Sie etwas leiser oder halten Sie mehr Abstand.', 'warning');
           else if (recorder.frames / recorder.context.sampleRate > 2 && !signal.hasInput) message(get('record-message'), 'Der Mikrofonpegel ist sehr niedrig. Sprechen Sie den Text vor und prüfen Sie Ihr Mikrofon.', 'warning');
@@ -755,11 +790,11 @@ function initializeStudio() {
     let position = 0;
     for (const chunk of recorder.chunks) { samples.set(chunk, position); position += chunk.length; }
     const duration = samples.length / recorder.context.sampleRate;
-    const signal = inspectSignal(samples);
+    const signal = inspectSignal(samples, recorder.context.sampleRate);
     get('record-time').textContent = `${formatSeconds(duration)} / ${formatSeconds(state.maxSeconds)}`;
     get('record-state').textContent = 'Aufnahme beendet';
     if (duration < 3) message(get('record-message'), 'Die Aufnahme ist zu kurz. Lesen Sie den Text vollständig vor; mindestens 3 Sekunden sind erforderlich.', 'error');
-    else if (!signal.hasInput) message(get('record-message'), 'Es wurde keine ausreichende Stimme aufgenommen. Prüfen Sie das Mikrofon und nehmen Sie den Text erneut auf.', 'error');
+    else if (!signal.hasInput) message(get('record-message'), 'Die Aufnahme ist zu leise oder enthält zu wenig Sprache. Sprechen Sie näher am Mikrofon und lesen Sie den Text vollständig vor. Nehmen Sie danach erneut auf.', 'error');
     else if (signal.clipped) message(get('record-message'), 'Die Aufnahme übersteuert. Halten Sie mehr Abstand zum Mikrofon und nehmen Sie den Text erneut auf.', 'warning');
     else message(get('record-message'), automatic ? `Die Aufnahme wurde nach ${state.maxSeconds} Sekunden automatisch beendet. Hören Sie sie an und speichern Sie sie anschließend.` : 'Ihre Aufnahme ist bereit. Hören Sie sie an und speichern Sie sie anschließend.', 'success');
     if (samples.length) {
@@ -775,6 +810,7 @@ function initializeStudio() {
   }
 
   async function saveRecording() {
+    if (!get('voice-consent').checked || (state.postfairMode && !get('retention-consent').checked)) return;
     if (!state.recordingAllowed || !state.recording?.valid || state.operation || state.previewRequest || state.previewProfile) return;
     state.operation = true;
     updateControls();
@@ -785,10 +821,11 @@ function initializeStudio() {
       const bytes = new Uint8Array(state.recording.wav);
       let binary = '';
       for (let offset = 0; offset < bytes.length; offset += 32768) binary += String.fromCharCode(...bytes.subarray(offset, offset + 32768));
-      await api('profiles', {method:'POST', body:JSON.stringify({name:get('profile-name').value.trim(), reference_text:state.recording.referenceText, language:'German', source:'desktop_microphone', consent:{own_voice:true, scope:'local_synthetic_voice_and_servicenow_demo', confirmed_at_utc:new Date().toISOString()}, wav_b64:btoa(binary)})});
+      await api('profiles', {method:'POST', body:JSON.stringify({name:get('profile-name').value.trim(), reference_text:state.recording.referenceText, language:'German', source:'desktop_microphone', consent:{own_voice:true, scope:'local_synthetic_voice_and_servicenow_demo', confirmed_at_utc:new Date().toISOString(), ...(state.postfairMode ? {retention:'until_deleted', retention_notice:'Neue Aufnahmen bleiben gespeichert, bis Sie oder ein Administrator sie löschen.'} : {})}, wav_b64:btoa(binary)})});
       resetRecording();
       get('profile-name').value = '';
       get('voice-consent').checked = false;
+      get('retention-consent').checked = false;
       message(get('record-message'), 'Das Stimmprofil wurde gespeichert. Wählen Sie es jetzt für den nächsten ServiceNow-Anruf aus.', 'success');
       try { await loadProfiles(); } catch (error) { message(get('page-message'), `Das Stimmprofil wurde gespeichert. Die Liste konnte nicht aktualisiert werden: ${error.message}`, 'error'); }
     } catch (error) { message(get('record-message'), error.message, 'error'); }
@@ -880,6 +917,7 @@ function initializeStudio() {
     catch { input.focus(); input.select(); message(get('code-copy-message'), 'Bitte kopieren Sie den markierten Anmeldelink.', 'info'); }
   });
   get('voice-consent').addEventListener('change', updateControls);
+  get('retention-consent').addEventListener('change', updateControls);
   get('record-button').addEventListener('click', startRecording);
   get('stop-button').addEventListener('click', () => void finishRecording());
   get('save-button').addEventListener('click', saveRecording);

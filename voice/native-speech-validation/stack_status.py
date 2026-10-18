@@ -1,11 +1,16 @@
 """Read-only status of the installed native SCC voice stack. Never sends inference."""
-import concurrent.futures, ctypes, datetime, json, pathlib, shutil, subprocess, sys
+import concurrent.futures, ctypes, datetime, importlib.util, json, pathlib, shutil, subprocess, sys
 import urllib.error, urllib.request
 
 ROOT=pathlib.Path(__file__).resolve().parents[2]
-CLEAN=pathlib.Path(r"C:\Projects\strix-alloy-clean")
-PROFILE=CLEAN/"server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0181-version-bracket-20261012/serving0181-full262-exact-text-voice-candidate-20261013.json"
-MODEL=CLEAN/"backends/halogen-wsl2-0.18.1/.local/api-token.txt"
+_binding_path=pathlib.Path(__file__).resolve().parents[1]/"native-start/model_deployment.py"
+_binding_spec=importlib.util.spec_from_file_location("scc_model_deployment",_binding_path)
+_binding_module=importlib.util.module_from_spec(_binding_spec)
+_binding_spec.loader.exec_module(_binding_module)
+DEPLOYMENT=_binding_module.load_deployment()
+CLEAN=pathlib.Path(DEPLOYMENT["controller_root"])
+PROFILE=pathlib.Path(DEPLOYMENT["profile"])
+MODEL=pathlib.Path(DEPLOYMENT["model_token_file"])
 GATEWAY=ROOT/"server/.local/scc-gateway.json"
 PORTS=(8731,8840,8841,8850,8851,8852,8853,8860,8861,8862)
 EXPECTED={
@@ -39,8 +44,13 @@ def health(port,path="/health",token=None,json_body=True):
         if value.get("status") in ("ok","ready","unavailable","loading"): result["status"]=value["status"]
         if value.get("authMode") in ("servicenow","deny","loopback-development"): result["auth_mode"]=value["authMode"]
         if port==8731:
-            result["expected_model"]=value.get("model")=="halogen-qwen3.8-flash-next"
-            result["version_matches"]=value.get("version")=={"api":"0.18.1","engine":"0.18.1","match":True}
+            expected=DEPLOYMENT["expected"]
+            result["expected_model"]=value.get("model")==DEPLOYMENT["model"]
+            result["version_matches"]=value.get("version")=={
+                "api":expected["version.api"],"engine":expected["version.engine"],"match":expected["version.match"]}
+            result["profile_matches"]=_binding_module.health_matches(value,DEPLOYMENT)
+            vision=value.get("vision")
+            result["vision_enabled"]=isinstance(vision,dict) and vision.get("enabled") is True
             cache=value.get("prompt_cache")
             if isinstance(cache,dict):
                 result["prompt_cache"]={key:cache[key] for key,kind in
@@ -62,7 +72,7 @@ def memory():
     m,p=Mem(),Perf(); m.length=ctypes.sizeof(m);p.length=ctypes.sizeof(p)
     if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m)) or not ctypes.windll.psapi.GetPerformanceInfo(ctypes.byref(p),p.length): raise OSError("memory telemetry unavailable")
     physical=m.available/(1<<30); commit=(p.commit_limit-p.commit_total)*p.page_size/(1<<30)
-    return {"free_gib":round(physical,3),"commit_headroom_gib":round(commit,3),"runtime_guard_floor_gib":18,"above_runtime_floor":physical>=18 and commit>=18,"cold_start_floor_met":physical>=35 and commit>=131}
+    return {"free_gib":round(physical,3),"commit_headroom_gib":round(commit,3),"runtime_guard_floor_gib":18,"above_runtime_floor":physical>=18 and commit>=18,"cold_start_floor_met":physical>=36 and commit>=132}
 def listeners():
     command="$ports=8731,8840,8841,8850,8851,8852,8853,8860,8861,8862; $rows=@(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $ports -contains $_.LocalPort } | ForEach-Object { $p=Get-CimInstance Win32_Process -Filter ('ProcessId = '+$_.OwningProcess); [pscustomobject]@{port=$_.LocalPort;address=$_.LocalAddress;pid=$p.ProcessId;created=$p.CreationDate.ToUniversalTime().ToString('o');exe=$p.ExecutablePath;command=$p.CommandLine} }); ConvertTo-Json -InputObject $rows -Depth 3 -Compress"
     raw=subprocess.run(["powershell.exe","-NoProfile","-NonInteractive","-Command",command],capture_output=True,text=True,check=True,timeout=20)
@@ -86,7 +96,8 @@ def funnel():
         "media_connectivity":"not tested; host ICE requires a reachable LAN/tailnet interface"}
 def main():
     if sys.platform!="win32": raise SystemExit("Run this read-only script on the Windows demo host.")
-    result={"utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"read_only":True,"bot_session_count":"not exposed; no session allocated by this check"}
+    result={"utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"read_only":True,"bot_session_count":"not exposed; no session allocated by this check",
+        "model_deployment":{"profile":str(PROFILE),"profile_sha256":DEPLOYMENT["profile_sha256"]}}
     tasks=[("model",8731,"/health",None,MODEL,True),("controller",8840,"/health",PROFILE,None,True),
         ("gateway",8841,"/health",GATEWAY,None,True),("bot",8850,"/",None,None,False),
         ("native",8860,"/health",None,None,True),("asr",8861,"/health",None,None,True),
@@ -110,7 +121,9 @@ def main():
     result["stack_healthy"]=(all(value.get("http_status")==200 for value in services.values())
         and result["memory"].get("above_runtime_floor") is True and not legacy and listeners_match
         and model.get("version_matches") is True and model.get("expected_model") is True
-        and model.get("context")==262144 and model.get("slots")==1
+        and model.get("profile_matches") is True
+        and model.get("vision_enabled") is True
+        and model.get("context")==DEPLOYMENT["context"] and model.get("slots")==DEPLOYMENT["slots"]
         and result["model_cache_matches"] is True
         and services["tts"].get("expected_model") is True and native.get("auth_mode")=="servicenow"
         and result["funnel"].get("native_route_matches") is True and result["funnel"].get("funnel_allowed") is True)

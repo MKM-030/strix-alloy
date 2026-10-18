@@ -5,6 +5,7 @@ import importlib
 import json
 from pathlib import Path
 import unittest
+from sdk_deployment import SDKDeploymentPolicy
 
 try:
     candidate = importlib.import_module("sdk_admission")
@@ -81,12 +82,15 @@ class AdmissionTests(unittest.IsolatedAsyncioTestCase):
                         ("Content-Type", "application/json")]
         self.body = FIXTURES["sdk_226_create"]["body"].encode()
         self.query = FIXTURES["sdk_226_create"]["query_string"]
+        self.policy = SDKDeploymentPolicy('soprasteriaassvsdemo14',ASSISTANT,VOICE_AGENT,
+                                         'https://strix-alloy.tail7f425a.ts.net')
 
     async def admit(self, headers=None, body=None, query_string=None, http=None):
         return await candidate.admit_sdk_session(
             self.headers if headers is None else headers,
             self.body if body is None else body,
             query_string=self.query if query_string is None else query_string,
+            policy=self.policy,
             http_factory=(self.http if http is None else http).factory)
 
     async def denied(self, status, headers=None, body=None, query_string=None, http=None):
@@ -263,7 +267,8 @@ class AdmissionTests(unittest.IsolatedAsyncioTestCase):
             with self.subTest(query=query):
                 if query is None:
                     with self.assertRaises(candidate.AdmissionDenied) as caught:
-                        await candidate.admit_sdk_session(self.headers, self.body, query_string=None, http_factory=self.http.factory)
+                        await candidate.admit_sdk_session(self.headers, self.body, query_string=None,
+                            policy=self.policy, http_factory=self.http.factory)
                     self.assertEqual(caught.exception.status, 400)
                 else:
                     await self.denied(400, query_string=query)

@@ -10,6 +10,7 @@ import subprocess
 import sys
 import time
 import urllib.request
+from postfair import completed_campaign
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
@@ -61,6 +62,8 @@ def startup_lock():
 
 
 def retention_catchup():
+    if completed_campaign(RUNTIME):
+        return {'status': 'completed', 'campaign': 'scc-2026'}
     # A stopped/offline exhibition PC catches up on its next Studio start.
     # Before the fixed deadline the helper makes no recording/service changes.
     path = HERE / 'retention_cleanup.py'

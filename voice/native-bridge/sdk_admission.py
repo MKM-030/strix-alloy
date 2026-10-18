@@ -15,11 +15,11 @@ from urllib.parse import parse_qsl
 import aiohttp
 
 from core import authorized_agents
+from sdk_deployment import SDKDeploymentPolicy
 from sdk_admission_policy import (
-    ASSISTANT_ID, AUTHORIZATION_TIMEOUT_SECONDS, AUTHORIZATION_URL, INSTANCE_NAME,
-    INSTANCE_URL, SDK_AGENT_ID, MAX_QUERY_BYTES, MAX_QUERY_FIELDS,
+    AUTHORIZATION_TIMEOUT_SECONDS, SDK_AGENT_ID, MAX_QUERY_BYTES, MAX_QUERY_FIELDS,
     MAX_AUTHORIZATION_BYTES, MAX_BODY_BYTES, MAX_HEADER_BYTES, MAX_HEADER_COUNT,
-    MAX_RESPONSE_BYTES, VOICE_AGENT_ID,
+    MAX_RESPONSE_BYTES,
 )
 
 _HEADER_NAME = re.compile(r"[!#$%&'*+.^_`|~0-9A-Za-z-]+\Z")
@@ -107,7 +107,7 @@ def _strict_json(body):
                       parse_constant=_reject_constant)
 
 
-def _validate_query(query_string):
+def _validate_query(query_string, policy):
     # Raw URL query only. A route adapter must not flatten or normalize it first.
     if (not isinstance(query_string, str) or len(query_string) > MAX_QUERY_BYTES
             or not query_string or any(ord(c) < 33 or ord(c) > 126 for c in query_string)
@@ -129,23 +129,23 @@ def _validate_query(query_string):
         raise AdmissionDenied(400)
     if query["receive_data"] != "true":
         raise AdmissionDenied(400)
-    if query["instance_name"] != INSTANCE_NAME:
+    if query["instance_name"] != policy.instance_name:
         raise AdmissionDenied(403)
-    # This ID is the pinned deployment policy, not a generic SDK identity mapping.
-    if "voice_service_id" in query and query["voice_service_id"] != ASSISTANT_ID:
+    # Only the operator's one allowlisted assistant can be requested.
+    if "voice_service_id" in query and query["voice_service_id"] != policy.assistant_id:
         raise AdmissionDenied(403)
 
 
-def _validate_request(raw_headers, body, query_string):
+def _validate_request(raw_headers, body, query_string, policy):
     headers = _validated_headers(raw_headers)
     authorization = _single_header(headers, "authorization", required=True, status=401)
     if not _BEARER.fullmatch(authorization):
         raise AdmissionDenied(401)
     if any(name in headers for name in _CONFLICTING_AUTH_HEADERS):
         raise AdmissionDenied(401)
-    _validate_query(query_string)
+    _validate_query(query_string, policy)
     origin = _single_header(headers, "origin")
-    if origin is not None and origin != INSTANCE_URL:
+    if origin is not None and origin != policy.instance_url:
         raise AdmissionDenied(403)
     if "content-encoding" in headers or "transfer-encoding" in headers:
         raise AdmissionDenied(400)
@@ -182,18 +182,21 @@ async def _bounded_response(response):
     raise AdmissionDenied(403)
 
 
-async def admit_sdk_session(raw_headers, body, *, query_string="", http_factory=None):
+async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, http_factory=None):
     """Verify a POST /api/webrtc/sessions request without activating that API.
 
     ``http_factory`` is an offline test seam. Integration uses the default new
     ClientSession with an empty cookie jar and environment credentials disabled.
     Body ``agent_id`` must be the SDK 2.26 literal ``agent_operator``. Query
     ``instance_name`` and ``receive_data=true`` are required; optional
-    ``voice_service_id`` must match pinned deployment policy. Every accepted
-    request authorizes the same serviceId and requires the same voice agent.
+    ``voice_service_id`` must match the explicit startup deployment policy.
+    Every accepted request authorizes its serviceId and requires its voice
+    agent. There is no default deployment and no request-selected auth URL.
     No platform test-mode field is sent, so active-service policy is preserved.
     """
-    authorization = _validate_request(raw_headers, body, query_string)
+    if type(policy) is not SDKDeploymentPolicy:
+        raise AdmissionDenied(403)
+    authorization = _validate_request(raw_headers, body, query_string, policy)
     factory = aiohttp.ClientSession if http_factory is None else http_factory
     try:
         async with asyncio.timeout(AUTHORIZATION_TIMEOUT_SECONDS):
@@ -204,7 +207,7 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", http_factory=
                 timeout=aiohttp.ClientTimeout(total=AUTHORIZATION_TIMEOUT_SECONDS),
             ) as http:
                 async with http.post(
-                    AUTHORIZATION_URL, json={"serviceId": ASSISTANT_ID},
+                    policy.authorization_url, json={"serviceId": policy.assistant_id},
                     headers={"Authorization": authorization, "Content-Type": "application/json",
                              "Accept": "application/json",
                              "Accept-Encoding": "identity"},
@@ -213,7 +216,7 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", http_factory=
                     if response.status != 200:
                         raise AdmissionDenied(401 if response.status == 401 else 403)
                     data = await _bounded_response(response)
-                    if not authorized_agents(data, VOICE_AGENT_ID):
+                    if not authorized_agents(data, policy.voice_agent_id):
                         raise AdmissionDenied(403)
     except AdmissionDenied:
         raise
@@ -221,5 +224,5 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", http_factory=
         # Suppress platform/network/parser details; caller cancellation still
         # propagates because CancelledError is a BaseException, not Exception.
         raise AdmissionDenied(403) from None
-    return VerifiedContext(INSTANCE_URL, ASSISTANT_ID, VOICE_AGENT_ID,
+    return VerifiedContext(policy.instance_url, policy.assistant_id, policy.voice_agent_id,
                            SDK_AGENT_ID, True)

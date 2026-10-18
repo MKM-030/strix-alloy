@@ -9,7 +9,7 @@
   <title>Voice Studio · ServiceNow</title>
   <link rel="stylesheet" href="/voice-studio/styles.css?v=20261014-admin-menu">
   <script src="/voice-studio/vendor/qr-code.js?v=20261014-qr"></script>
-  <script type="module" src="/voice-studio/app.js?v=20261014-admin-menu"></script>
+  <script type="module" src="/voice-studio/app.js?v=20261016-save-admission"></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Zum Inhalt</a>
@@ -28,7 +28,7 @@
             <div><label for="personal-code-label">Name der Person</label><input id="personal-code-label" type="text" maxlength="80" autocomplete="off" required placeholder="Zum Beispiel: Vorname Nachname"></div>
             <button id="create-code-button" class="button button-primary" type="submit">Zugang mit QR-Code erstellen</button>
           </form>
-          <p class="field-help">Persönliche Zugänge bleiben gültig; eine Anmeldung gilt acht Stunden. Die Aufnahmen der Messe-Demo werden ab dem 16. Oktober gelöscht.</p>
+          <p class="field-help">Persönliche Zugänge bleiben gültig; eine Anmeldung gilt acht Stunden. Die Messeaufnahmen wurden gelöscht. Neue Aufnahmen benötigen eine neue Zustimmung zur Speicherung.</p>
           <p id="admin-message" class="inline-message" role="status" aria-live="polite" hidden></p>
           <div id="generated-code-panel" class="generated-code-panel" hidden>
             <p class="eyebrow">Neu erstellter Zugang · nur jetzt sichtbar</p>
@@ -87,9 +87,10 @@
           <p class="section-description">Sprechen Sie in einem ruhigen Raum mit Ihrer normalen Stimme. Halten Sie etwas Abstand zum Mikrofon.</p>
           <div class="field"><label for="profile-name">Name des Stimmprofils</label><input id="profile-name" type="text" autocomplete="off" maxlength="80" placeholder="Zum Beispiel: Meine Stimme" aria-describedby="profile-name-help"><p id="profile-name-help" class="field-help">Damit Sie Ihre Aufnahme später wiederfinden.</p></div>
           <div class="reading-box"><div class="reading-heading"><span aria-hidden="true">“</span><h3>Diesen Text bitte vollständig vorlesen</h3></div><p id="reference-text">Der Aufnahmetext wird geladen.</p></div>
-          <aside class="privacy-box" aria-label="Datenschutz zur Messe-Demo"><strong>Datenschutz für Ihre Stimme</strong><p>Nur für diese Messe-Demo. Sie können Ihre Stimme jederzeit löschen oder das Standteam darum bitten. Die Demo-Aufnahmen werden nach der Messe ab dem 16. Oktober automatisch gelöscht; ist der Rechner ausgeschaltet, beim nächsten Start.</p></aside>
+          <aside class="privacy-box" aria-label="Datenschutz für Ihre Stimme"><strong>Datenschutz für Ihre Stimme</strong><p id="retention-notice">Die Aufnahmen der Messe-Demo werden nach der Messe automatisch gelöscht. Für neue Aufnahmen nach der Messe bestätigen Sie die neue Aufbewahrung gesondert.</p></aside>
           <p id="retention-message" class="inline-message" role="status" aria-live="polite" hidden></p>
-          <label class="consent-label" for="voice-consent"><input id="voice-consent" type="checkbox"><span>Dies ist meine eigene Stimme. Ich stimme zu, dass meine Aufnahme für diese Messe-Demo gespeichert und daraus eine synthetische Assistentenstimme erzeugt wird.</span></label>
+          <label class="consent-label" for="voice-consent"><input id="voice-consent" type="checkbox"><span>Dies ist meine eigene Stimme. Ich stimme zu, dass meine Aufnahme für die Sprachdemo gespeichert und daraus eine synthetische Assistentenstimme erzeugt wird.</span></label>
+          <label id="retention-consent-label" class="consent-label" for="retention-consent" hidden><input id="retention-consent" type="checkbox"><span>Neue Aufnahmen bleiben gespeichert, bis Sie oder ein Administrator sie löschen. Ich stimme dieser Aufbewahrung für meine neue Aufnahme zu.</span></label>
           <div class="recorder-panel">
             <div class="recorder-status"><span id="record-indicator" class="record-indicator" aria-hidden="true"></span><span id="record-state">Bereit zur Aufnahme</span><span id="record-time" class="record-time" aria-label="Aufnahmedauer">00:00 / 00:25</span></div>
             <div id="input-meter" class="input-meter" role="meter" aria-label="Mikrofonpegel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="input-meter-fill"></span></div>

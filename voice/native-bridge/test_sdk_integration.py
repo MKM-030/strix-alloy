@@ -5,7 +5,8 @@ from native_bridge import Config, create_app
 
 class SDKIntegrationTests(unittest.IsolatedAsyncioTestCase):
     async def client(self, enabled):
-        config = Config(auth_mode='servicenow',
+        config = Config(instance_name='soprasteriaassvsdemo14', auth_mode='servicenow',
+            sdk_public_origin='https://strix-alloy.tail7f425a.ts.net',
             voice_service_id='8aa131d793f787105c8132d47aba1095',
             required_agent_id='a6337ddf93f787105c8132d47aba1058')
         config.native_sdk_enabled = enabled

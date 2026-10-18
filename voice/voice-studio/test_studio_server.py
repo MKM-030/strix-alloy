@@ -1,4 +1,5 @@
 """HTTP boundary tests: owned speech integration is replaced, not models started."""
+from datetime import datetime, timezone
 import array
 import asyncio
 import base64
@@ -76,7 +77,8 @@ class VoiceStudioHTTPTests(unittest.IsolatedAsyncioTestCase):
             self.preview_texts.append(text)
             return b'\x00\x00' * 24000
         self.app = self.server.create_app(self.config, manager=self.manager,
-            register=register, idle_check=idle_check, synthesize=synthesize)
+            register=register, idle_check=idle_check, synthesize=synthesize,
+            now=lambda: datetime(2026,10,13,20,tzinfo=timezone.utc))
         self.client = TestClient(TestServer(self.app), cookie_jar=CookieJar(unsafe=True))
         await self.client.start_server()
         self.addAsyncCleanup(self.client.close)

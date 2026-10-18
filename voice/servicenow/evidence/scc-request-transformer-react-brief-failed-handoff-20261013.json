@@ -1,0 +1,34 @@
+{
+  "read_only": true,
+  "trial": "react-brief-first-turn-20261013T204034Z",
+  "message_request_id": "83cd3eb558a34fdc863ef6b212feeb8e",
+  "end_request_id": "da64058107ed447f9a970dc0d7e34ea8",
+  "bot_log": "voice/native-bridge/runtime/bot-reboot.stderr.log",
+  "bot_log_sha256_at_capture": "5825c67d0530ddb1c3ecf6897a7bf259cdfea47e130282e5af50e3da39cab4bb",
+  "safe_log_lines": [
+    {
+      "line": 558,
+      "text": "INFO Bot request id=83cd3eb558a34fdc863ef6b212feeb8e action=MESSAGE"
+    },
+    {
+      "line": 559,
+      "text": "WARNING Bot request failed; no credentials or payload logged"
+    },
+    {
+      "line": 560,
+      "text": "INFO Bot request id=da64058107ed447f9a970dc0d7e34ea8 action=END_CONVERSATION"
+    },
+    {
+      "line": 561,
+      "text": "INFO Bot ACK id=da64058107ed447f9a970dc0d7e34ea8 http=200 status=success keys=['status']"
+    }
+  ],
+  "upstream_exception_type": null,
+  "upstream_http_status": null,
+  "native_exception_type": "RuntimeError",
+  "native_code": "TURN_FAILED",
+  "bridge_source_behavior": "send catches every exception, marks session failed, logs generic warning, then raises HTTPBadGateway. Dialog.request rejects non200/202 as RuntimeError. Upstream ACK status/exception details lost.",
+  "delivery_uncertain": true,
+  "retry": false,
+  "future_observability_proposal_only": "Log request_id, elapsed, captured integer upstream HTTP status and exception class; never exception text, endpoint, credentials or payload. No code or lifecycle change made."
+}

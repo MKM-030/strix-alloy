@@ -6,7 +6,8 @@ ServiceNow OAuth authorization are required for a native browser deployment.
 """
 import argparse
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from functools import partial
 from fractions import Fraction
 import io
 import json
@@ -23,6 +24,8 @@ from aiortc import AudioStreamTrack, RTCConfiguration, RTCIceServer, RTCPeerConn
 from aiortc.sdp import candidate_from_sdp
 from av import AudioFrame, AudioResampler
 from core import EndpointGate, PlaybackBuffer, local_auth, authorized_agents
+from sdk_deployment import SDKDeploymentPolicy, valid_call_duration
+from spoken_output import spoken_text
 
 LOG = logging.getLogger('native-voice')
 HTTP_KEY = web.AppKey('http', ClientSession)
@@ -32,7 +35,7 @@ STUN_URL = 'stun:stun.l.google.com:19302'
 
 @dataclass
 class Config:
-    instance_name: str = 'soprasteriaassvsdemo14'
+    instance_name: str = ''
     voice_service_id: str = ''
     port: int = 8860
     auth_mode: str = 'deny'
@@ -46,12 +49,25 @@ class Config:
     max_call_seconds: int = 1800
     greeting: str = ''
     native_sdk_enabled: bool = False
+    sdk_public_origin: str = ''
+    sdk_policy: SDKDeploymentPolicy | None = field(init=False, default=None, repr=False)
 
     def __post_init__(self):
         if type(self.native_sdk_enabled) is not bool:
             raise ValueError('native_sdk_enabled must be a boolean')
         if type(self.vad_silence_ms) is not int or not 300 <= self.vad_silence_ms <= 2000:
             raise ValueError('vad_silence_ms must be an integer between 300 and 2000')
+        if not isinstance(self.sdk_public_origin,str):
+            raise ValueError('sdk_public_origin must be a string')
+        if not self.native_sdk_enabled and not self.sdk_public_origin and self.instance_name == '':
+            # Preserve the legacy browser default; SDK configuration has no fallback.
+            self.instance_name = 'soprasteriaassvsdemo14'
+        if self.native_sdk_enabled or self.sdk_public_origin:
+            self.sdk_policy = SDKDeploymentPolicy(self.instance_name,self.voice_service_id,
+                                                  self.required_agent_id,self.sdk_public_origin)
+            if (self.auth_mode != 'servicenow' or self.development_token
+                    or not valid_call_duration(self.max_call_seconds)):
+                raise ValueError('SDK policy requires ServiceNow OAuth and a bounded call duration')
 
     @property
     def instance_url(self):
@@ -203,9 +219,10 @@ class Dialog:
             self.cursor = state['cursor']
             for event in state.get('events', []):
                 if event.get('kind') == 'bot' and event.get('text'):
-                    result.append(event['text'])
+                    reply = spoken_text(event['text'])
+                    result.append(reply)
                     if on_reply:
-                        await on_reply(event['text'])
+                        await on_reply(reply)
                 elif event.get('kind') in ('error', 'notice'):
                     raise RuntimeError('ServiceNow returned an unsupported or failed turn')
             if state.get('failed'):
@@ -246,6 +263,7 @@ class SpeakerTrack(AudioStreamTrack):
         self.playback = playback
         self.samples = 0
         self.start_time = None
+        self.first_pcm_drained = False
 
     async def recv(self):
         if self.start_time is None:
@@ -254,7 +272,14 @@ class SpeakerTrack(AudioStreamTrack):
         if delay > 0:
             await asyncio.sleep(delay)
         frame = AudioFrame(format='s16', layout='mono', samples=480)
-        frame.planes[0].update(self.playback.read(960))
+        pcm = self.playback.read(960)
+        frame.planes[0].update(pcm)
+        if not self.first_pcm_drained and any(pcm):
+            self.first_pcm_drained = True
+            LOG.info('Voice output call=%s stage=first_non_silent_pcm generation=%d '
+                     'elapsed_ms=%d pcm_bytes=%d sample_offset=%d sample_rate=24000',
+                     getattr(self.playback, 'call_id', ''), self.playback.generation,
+                     int((time.monotonic()-self.start_time)*1000), len(pcm), self.samples)
         frame.sample_rate = 24000
         frame.pts = self.samples
         frame.time_base = Fraction(1, 24000)
@@ -276,6 +301,7 @@ class NativeCall:
         self.asr_task = None
         self.failed = False
         self.call_id = uuid.uuid4().hex[:12]
+        self.playback.call_id = self.call_id
         self.closed = False
         self.turn_number = 0
         self.synthesis_active = False
@@ -353,7 +379,13 @@ class NativeCall:
             channel.close()
             return
         self.channel = channel
+        opened_logged = False
         def opened():
+            nonlocal opened_logged
+            if not opened_logged:
+                opened_logged = True
+                LOG.info('Voice transport call=%s stage=datachannel_open pending_events=%d',
+                         self.call_id, len(self.pending_events))
             if any(self.dialog.metadata.values()):
                 self.emit('metadata', self.dialog.metadata)
             for message in self.pending_events:
@@ -385,45 +417,101 @@ class NativeCall:
     async def microphone(self, track):
         if not self.register_microphone(track):
             return
-        started = time.monotonic()
-        frames = samples = vad_starts = queued = 0
+        started = last_frame = last_report = time.monotonic()
+        last_loud = None
+        frames = samples = vad_starts = queued = energy = loud_frames = 0
+        max_gap = 0.0
+        pending = None
+        gate = None
         receive_failed = False
+
+        def queue_utterance(utterance, endpoint):
+            nonlocal queued
+            if not utterance or self.closed or self.failed or self.input_lost or self.closing:
+                return
+            try:
+                self.turns.put_nowait((self.playback.generation, utterance))
+                queued += 1
+                LOG.info('Voice input call=%s stage=queued audio_ms=%d audio_queue=%d text_queue=%d endpoint=%s',
+                         self.call_id, len(utterance)*1000//32000,
+                         self.turns.qsize(), self.recognized_turns.qsize(), endpoint)
+            except asyncio.QueueFull:
+                LOG.info('Voice input call=%s stage=audio_queue_full', self.call_id)
+                self.notice('BUSY', 'Die letzte Aufnahme konnte nicht angenommen werden. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.')
+
+        def summary(stage):
+            # Numeric counters only: never log audio, transcripts, addresses,
+            # tokens, or arbitrary transport/exception representations.
+            now = time.monotonic()
+            LOG.info('Voice input call=%s stage=input_summary reason=%s seconds=%.3f frames=%d audio_ms=%d vad_starts=%d queued=%d vad_active=%s voiced_ms=%d quiet_ms=%d last_frame_age_ms=%d last_loud_age_ms=%d max_gap_ms=%d rms=%d loud_frames=%d audio_queue=%d text_queue=%d',
+                     self.call_id, stage, now-started, frames, samples*1000//16000,
+                     vad_starts, queued, bool(gate and gate.active),
+                     gate.voiced*1000//16000 if gate else 0,
+                     gate.quiet*1000//16000 if gate else 0,
+                     int((now-last_frame)*1000),
+                     int((now-last_loud)*1000) if last_loud is not None else -1,
+                     int(max(max_gap,now-last_frame)*1000),
+                     int((energy/max(1,samples))**.5), loud_frames,
+                     self.turns.qsize(), self.recognized_turns.qsize())
+
         try:
             converter = AudioResampler(format='s16', layout='mono', rate=16000)
             gate = EndpointGate(threshold=self.config.vad_threshold,
                                 silence_ms=self.config.vad_silence_ms)
+            silence_seconds = self.config.vad_silence_ms / 1000
             while not self.closed:
-                frame = await track.recv()
-                frames += 1
-                if self.failed or self.input_lost or self.closing:
-                    continue
-                for mono in converter.resample(frame):
-                    pcm = mono.to_ndarray().tobytes()
-                    samples += len(pcm) // 2
-                    began, utterance = gate.feed(pcm)
-                    if began:
-                        vad_starts += 1
-                        self.input_started = True
-                        # Fence real output interruptions, not speech while the
-                        # backend is still thinking and has produced no audio.
-                        # A possibly side-effecting ServiceNow request still settles.
-                        playback_bytes = len(self.playback.data)
-                        interrupted = self.synthesis_active or bool(playback_bytes)
-                        if interrupted:
-                            self.playback.interrupt()
-                        LOG.info('Voice input call=%s stage=vad_start generation=%d interrupted=%s playback_bytes=%d audio_queue=%d text_queue=%d',
-                                 self.call_id, self.playback.generation, interrupted, playback_bytes,
-                                 self.turns.qsize(), self.recognized_turns.qsize())
-                    if utterance:
-                        try:
-                            self.turns.put_nowait((self.playback.generation, utterance))
-                            queued += 1
-                            LOG.info('Voice input call=%s stage=queued audio_ms=%d audio_queue=%d text_queue=%d',
-                                     self.call_id, len(utterance)*1000//32000,
+                if pending is None:
+                    # Keep one recv alive across timeouts. Repeated wait_for()
+                    # cancellation can disrupt aiortc's receive queue itself.
+                    pending = asyncio.create_task(track.recv())
+                ready, _ = await asyncio.wait((pending,), timeout=min(.25,silence_seconds))
+                now = time.monotonic()
+                if ready:
+                    frame = pending.result()  # Real EOS/errors keep loss handling.
+                    pending = None
+                    frames += 1
+                    max_gap = max(max_gap, now-last_frame)
+                    last_frame = now
+                    if self.failed or self.input_lost or self.closing:
+                        continue
+                    for mono in converter.resample(frame):
+                        pcm = mono.to_ndarray().tobytes()
+                        values = memoryview(pcm).cast('h')
+                        power = sum(value*value for value in values)
+                        count = len(values)
+                        energy += power
+                        samples += count
+                        loud = bool(count and power >= self.config.vad_threshold**2 * count)
+                        loud_frames += int(loud)
+                        began, utterance = gate.feed(pcm)
+                        if gate.active and loud:
+                            last_loud = now
+                        if began:
+                            vad_starts += 1
+                            self.input_started = True
+                            playback_bytes = len(self.playback.data)
+                            interrupted = self.synthesis_active or bool(playback_bytes)
+                            if interrupted:
+                                self.playback.interrupt()
+                            LOG.info('Voice input call=%s stage=vad_start generation=%d interrupted=%s playback_bytes=%d audio_queue=%d text_queue=%d',
+                                     self.call_id, self.playback.generation, interrupted, playback_bytes,
                                      self.turns.qsize(), self.recognized_turns.qsize())
-                        except asyncio.QueueFull:
-                            LOG.info('Voice input call=%s stage=audio_queue_full', self.call_id)
-                            self.notice('BUSY', 'Die letzte Aufnahme konnte nicht angenommen werden. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.')
+                        queue_utterance(utterance, 'pcm_silence_or_limit')
+                        if not gate.active:
+                            last_loud = None
+                # Silence suppression can send no packets or sparse comfort
+                # noise. Measure elapsed time since actual loud PCM, rather
+                # than requiring a continuous stream of quiet PCM samples.
+                if (not self.failed and not self.input_lost and not self.closing
+                        and gate.active and last_loud is not None
+                        and now-last_loud >= silence_seconds):
+                    utterance = gate.finish()
+                    queue_utterance(utterance, 'wall_silence')
+                    summary('wall_silence')
+                    last_loud = None
+                if now-last_report >= 10:
+                    summary('periodic')
+                    last_report = now
         except asyncio.CancelledError:
             raise
         except Exception as error:
@@ -437,6 +525,10 @@ class NativeCall:
                             self.call_id, type(error).__name__, time.monotonic()-started, frames,
                             samples*1000//16000, vad_starts, queued, connection, ice)
         finally:
+            if pending is not None:
+                pending.cancel()
+                await asyncio.gather(pending, return_exceptions=True)
+            summary('closed')
             self.microphones.discard(track)
             if receive_failed and not self.closed and not self.closing and not self.microphones and not self.input_lost:
                 if not self.input_loss_task or self.input_loss_task.done():
@@ -515,32 +607,76 @@ class NativeCall:
         self.turns_settled.clear()
         self.asr_task = self.spawn(self.recognize_turns())
         try:
+            dialog_started = time.monotonic()
+            LOG.info('Voice greeting call=%s stage=dialog_open_begin input_started=%s generation=%d input_lost=%s',
+                     self.call_id, self.input_started, self.playback.generation, self.input_lost)
             greetings = await self.dialog.open() or []
+            LOG.info('Voice greeting call=%s stage=dialog_open_end elapsed_ms=%d greeting_count=%d input_started=%s generation=%d input_lost=%s',
+                     self.call_id, int((time.monotonic()-dialog_started)*1000), len(greetings),
+                     self.input_started, self.playback.generation, self.input_lost)
             fallback_greeting = False
             if (not greetings and self.config.greeting and self.playback.generation == 0
                     and not self.input_started and not self.input_lost):
                 greetings = [self.config.greeting]
                 fallback_greeting = True
+                LOG.info('Voice greeting call=%s stage=greeting_fallback generation=%d',
+                         self.call_id, self.playback.generation)
+            elif not greetings:
+                reason = ('not_configured' if not self.config.greeting else
+                          'input_lost' if self.input_lost else
+                          'prior_generation' if self.playback.generation else 'prior_input')
+                LOG.info('Voice greeting call=%s stage=greeting_skip reason=%s input_started=%s generation=%d input_lost=%s',
+                         self.call_id, reason, self.input_started, self.playback.generation, self.input_lost)
             generation = self.playback.generation
-            for greeting in greetings:
+            for greeting_index, greeting in enumerate(greetings):
                 if self.input_lost:
+                    LOG.info('Voice greeting call=%s stage=greeting_skip reason=input_lost greeting_index=%d generation=%d',
+                             self.call_id, greeting_index, self.playback.generation)
                     break
                 self.emit('transcript', {'role':'assistant','content':greeting,
                     'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
                 if fallback_greeting:
                     self.dialog.record_greeting(greeting)
                 if generation or self.input_started:
+                    LOG.info('Voice greeting call=%s stage=greeting_skip reason=%s greeting_index=%d input_started=%s generation=%d',
+                             self.call_id, 'prior_generation' if generation else 'prior_input',
+                             greeting_index, self.input_started, generation)
                     continue
                 self.synthesis_active = True
+                tts_started = time.monotonic()
+                tts_bytes = accepted_bytes = chunks = 0
+                outcome = 'complete'
+                LOG.info('Voice greeting call=%s stage=greeting_tts_begin greeting_index=%d generation=%d',
+                         self.call_id, greeting_index, generation)
                 try:
                     async for chunk in self.speech.synthesize(greeting):
+                        tts_bytes += len(chunk)
+                        chunks += 1
+                        if chunks == 1:
+                            LOG.info('Voice greeting call=%s stage=greeting_tts_first_chunk greeting_index=%d elapsed_ms=%d bytes=%d generation=%d current_generation=%d',
+                                     self.call_id, greeting_index, int((time.monotonic()-tts_started)*1000),
+                                     len(chunk), generation, self.playback.generation)
                         if generation != self.playback.generation:
+                            outcome = 'interrupted'
                             break
                         while len(self.playback.data) > 48000 and generation == self.playback.generation:
                             await asyncio.sleep(.02)
-                        self.playback.put(chunk, generation)
+                        if self.playback.put(chunk, generation):
+                            accepted_bytes += len(chunk)
+                except asyncio.CancelledError:
+                    outcome = 'cancelled'
+                    raise
+                except Exception:
+                    outcome = 'error'
+                    raise
                 finally:
                     self.synthesis_active = False
+                    if outcome == 'complete':
+                        outcome = ('interrupted' if generation != self.playback.generation else
+                                   'empty' if tts_bytes == 0 else 'complete')
+                    LOG.info('Voice greeting call=%s stage=greeting_tts_end greeting_index=%d elapsed_ms=%d bytes=%d accepted_bytes=%d chunks=%d outcome=%s generation=%d current_generation=%d',
+                             self.call_id, greeting_index, int((time.monotonic()-tts_started)*1000),
+                             tts_bytes, accepted_bytes, chunks, outcome, generation, self.playback.generation)
             while not self.closed and not self.failed and not self.input_lost and not self.closing:
                 turn = await self.recognized_turns.get()
                 # Loss can commit while this get() or ASR cancellation yields.
@@ -587,12 +723,13 @@ class NativeCall:
                     self.recognized_turns.task_done()
                 if speech_error:
                     raise RuntimeError('Speech output failed after ServiceNow turn settled')
-                LOG.info('Voice turn completed seconds=%.2f', time.monotonic()-started)
+                LOG.info('Voice turn completed call=%s stage=complete turn=%d seconds=%.2f',
+                         self.call_id, number, time.monotonic()-started)
         except asyncio.CancelledError:
             raise
         except Exception as error:
             # Deliberately log type only: network exceptions can contain tokens.
-            LOG.warning('Voice turn failed type=%s', type(error).__name__)
+            LOG.warning('Voice turn failed call=%s type=%s', self.call_id, type(error).__name__)
             await self.report_backend_failure()
         finally:
             # Includes failures and cancellation, after submitted-turn observation.
@@ -839,7 +976,9 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             speech = speech_factory(app[HTTP_KEY]) if speech_factory else Speech(app[HTTP_KEY], config)
             dialog = dialog_factory() if dialog_factory else shared_dialog
             return NativeCall(config, speech, dialog)
-        register_sdk_routes(app, config, active, make_sdk_call, admit_sdk_session)
+        # One immutable startup policy binds admission and all session operations.
+        register_sdk_routes(app, config, active, make_sdk_call,
+                            partial(admit_sdk_session,policy=config.sdk_policy))
         LOG.info('Native SDK HTTP session routes enabled; shared browser capacity')
     return app
 
