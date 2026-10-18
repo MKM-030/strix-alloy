@@ -1,0 +1,9 @@
+# Private Halogen 0.18.0 normal v2 source package
+
+This separate successor is bound to the official 0.18.0 image, revision c31448922f6e, digest de3b47d2e5f24f98a38ba5fb66b0075b0cd8a3219c38917c78fb4bbeb42b88d9. Fresh engine, entrypoint, API, HIP-header and four actual CPU-output pins are recorded in profiles/release.json. The eight-function static bridge map matches the retained implementation after relocation normalization and binds the exact new engine hash, function range, instruction window and RVA. Normal startup and runtime qualification remain pending.
+
+The normal v2 policy remains context/slot/KV pool 262144, one slot, MTP depth 2, PLD 3,3, cache Off, prefill chunk and arena 8192, thinking true/medium/2048, SDMA 1. Startup admission remains 35/131 GiB, request-entry reserve 22/22 GiB, runtime reserve 18/18 GiB, with the established recovery rule. Existing model and lookup complete-file receipts are reused after exact file identity; no model download or rehash is introduced.
+
+The retained ordinary installer uses the absolute Windows WSL executable and the explicit Windows PowerShell 5.1 session override. It extracts from an unstarted container, rebuilds the four products and checks their recorded hashes. The service performs the retained live gfx1151 preflight before model startup. Historical bounded-run sequence data is empty and pinned to its actual bytes; it introduces no normal-v2 prerequisite.
+
+Private preparation, static map, CPU build, provider closure and installation receipts are under server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0180-normal-bridge-preparation-20261011 and its adjacent seam-map directory. Source preparation changes no controller, credentials or STATE. Root owns installation, profile selection and normal server startup.

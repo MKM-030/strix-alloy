@@ -1,0 +1,101 @@
+{
+  "schema": "halogen.native-sect2-diagnostic.v1",
+  "completed_requests": 1,
+  "actual_input_tokens": 16384,
+  "actual_output_tokens": 128,
+  "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+  "accepted": 60,
+  "drafted": 133,
+  "acceptance": 0.45112781954887216,
+  "rows": [
+    {
+      "n": 8192,
+      "hc_read_attn": 461.426,
+      "attn_gdn": 3518.339,
+      "hc_write_attn": 205.473,
+      "hc_read_mlp": 502.07,
+      "moe": 3213.649,
+      "hc_write_mlp": 194.392,
+      "layers": 8095.348,
+      "span": 14623.692,
+      "wall": 14585.202,
+      "raw": "sect-prefill n=8192: hc_read_attn 461.426 attn_gdn 3518.339 hc_write_attn 205.473 hc_read_mlp 502.070 moe 3213.649 hc_write_mlp 194.392 | layers 8095.348 span 14623.692 wall 14585.202 ms",
+      "reported_bucket_fraction": {
+        "hc_read_attn": 0.05699890850893624,
+        "attn_gdn": 0.43461244655572556,
+        "hc_write_attn": 0.025381614230790328,
+        "hc_read_mlp": 0.06201956975784117,
+        "moe": 0.3969747810717958,
+        "hc_write_mlp": 0.02401280340264557
+      }
+    },
+    {
+      "n": 8192,
+      "hc_read_attn": 406.438,
+      "attn_gdn": 2888.433,
+      "hc_write_attn": 200.278,
+      "hc_read_mlp": 444.043,
+      "moe": 2586.163,
+      "hc_write_mlp": 195.127,
+      "layers": 6720.482,
+      "span": 7426.323,
+      "wall": 7415.111,
+      "raw": "sect-prefill n=8192: hc_read_attn 406.438 attn_gdn 2888.433 hc_write_attn 200.278 hc_read_mlp 444.043 moe 2586.163 hc_write_mlp 195.127 | layers 6720.482 span 7426.323 wall 7415.111 ms",
+      "reported_bucket_fraction": {
+        "hc_read_attn": 0.060477507416878726,
+        "attn_gdn": 0.4297955116909769,
+        "hc_write_attn": 0.02980113628754604,
+        "hc_read_mlp": 0.06607308821004208,
+        "moe": 0.3848180829886904,
+        "hc_write_mlp": 0.02903467340586583
+      }
+    }
+  ],
+  "startup_rows_excluded": [
+    {
+      "n": 25,
+      "hc_read_attn": 201.982,
+      "attn_gdn": 40.04,
+      "hc_write_attn": 10.146,
+      "hc_read_mlp": 14.566,
+      "moe": 115.557,
+      "hc_write_mlp": 16.579,
+      "layers": 398.87,
+      "span": 492.768,
+      "wall": 496.58,
+      "raw": "sect-prefill n=25: hc_read_attn 201.982 attn_gdn 40.040 hc_write_attn 10.146 hc_read_mlp 14.566 moe 115.557 hc_write_mlp 16.579 | layers 398.870 span 492.768 wall 496.580 ms"
+    },
+    {
+      "n": 25,
+      "hc_read_attn": 16.082,
+      "attn_gdn": 40.267,
+      "hc_write_attn": 8.966,
+      "hc_read_mlp": 15.296,
+      "moe": 96.365,
+      "hc_write_mlp": 9.432,
+      "layers": 186.409,
+      "span": 246.447,
+      "wall": 249.569,
+      "raw": "sect-prefill n=25: hc_read_attn 16.082 attn_gdn 40.267 hc_write_attn 8.966 hc_read_mlp 15.296 moe 96.365 hc_write_mlp 9.432 | layers 186.409 span 246.447 wall 249.569 ms"
+    }
+  ],
+  "totals_ms": {
+    "hc_read_attn": 867.864,
+    "attn_gdn": 6406.772,
+    "hc_write_attn": 405.751,
+    "hc_read_mlp": 946.113,
+    "moe": 5799.812,
+    "hc_write_mlp": 389.519,
+    "layers": 14815.83,
+    "span": 22050.015,
+    "wall": 22000.313
+  },
+  "errors": [],
+  "dominant_reported_bucket": "attn_gdn",
+  "request_log_sha256": "546a59d7a9e0f485b719e069b8022a0f1ee52bbce5285753f3f790feb238e788",
+  "log_capture_scope": "Full engine log retained; two n25 startup smoke rows excluded from the two n8192 request rows.",
+  "diagnostic_http_wall_seconds": 24.4172558,
+  "interpretation": "Instrumented stream-event section observations include dependency waits and host issue gaps. Native elapsed-query failures are silently omitted; not every query status is observable. No pure kernel-time, phase-speed, removable-overhead or speed-gain inference.",
+  "speed_gain_qualified": false,
+  "full_goal_achieved": false
+}

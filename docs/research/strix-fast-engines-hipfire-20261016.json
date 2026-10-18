@@ -1,0 +1,835 @@
+{
+  "schema_version": 1,
+  "as_of_utc": "2026-10-16T15:47:33Z",
+  "scope": "source_research_only",
+  "local_gain_claim": false,
+  "operational_constraints": {
+    "hardware_access": false,
+    "inference": false,
+    "engine_execution": false,
+    "provider_lifecycle": false,
+    "wsl_docker_driver_model_changes": false,
+    "current_user_selected_backend": "Halogen 0.18.1 voice / 32K (parent-provided context; not re-probed)",
+    "frozen_development_image": "Halogen 0.18.5 remains unloaded",
+    "required_memory_reserve_gib": 18
+  },
+  "source_pins": {
+    "repository": "https://github.com/warpfront/hipfire",
+    "release": "6b363a56a1ae28ed421178d3c7eba9f6f4bacbb5",
+    "release_tree": "c703848ae1f538216d069aa00435c1241f5ebae6",
+    "master": "bfb90b9c822ec58c8f2ff1a0f01c3f4f0202c86d",
+    "beta": "cc2d5d0ff2f6cc7fb502474eaaab90cf9aa245ec",
+    "beta_commit_date": "2026-10-16T15:29:21Z",
+    "compare_limits": {
+      "total_commits": 311,
+      "returned_commit_objects": 250,
+      "max_returned_files": 300,
+      "mitigation": "concrete selected commits and current pinned files fetched directly"
+    }
+  },
+  "decisions": {
+    "released_flash_next_64gb": false,
+    "beta_mq3_new": true,
+    "beta_mq3_gfx1151_kernel_support": true,
+    "beta_mq3_fits_64gib_with_18gib_reserve": false,
+    "practical_released_64gb_alternate_model": "Qwen3.8-27B MQ4-XTS + DFlash; different model",
+    "optional_backend": "dormant separately qualified Hipfire profile; reuse Alloy gateway, implement engine-specific owned lifecycle",
+    "most_concrete_transfers": [
+      "exact QSA sampled-threshold filter and lossless pooled BF16 mirror",
+      "tool-turn emitted-token history replay",
+      "MTP head-position catch-up before committing live continuation",
+      "carry HC fusion ownership over prefill-bank windows"
+    ],
+    "local_execution_authorized": false
+  },
+  "benchmarks": [
+    {
+      "id": "release_matrix_greedy_mtp",
+      "source": "release_matrix",
+      "model": "Qwen3.8-Flash-Next MQ4 XTS",
+      "prefill_synthetic_pp8192_tps": 2156.1,
+      "prefill_cold_32k_file_tps": 2305.9,
+      "greedy_ar_tps": 34.15,
+      "greedy_native_mtp_tps": 60.2,
+      "mtp_min_max": [
+        60.14,
+        60.36
+      ],
+      "repetitions": 3,
+      "processes": "fresh",
+      "warm_sample": "discarded",
+      "prompts": 8,
+      "prompt_depths": null,
+      "output_tokens": null,
+      "missing": "published 60.20 row does not expose complete prompt bytes, uniform context depth or actual output-token count",
+      "defaults": [
+        "q4 PLE",
+        "trunk overlay",
+        "NPU auto with bounded memlock"
+      ],
+      "route": "NPU at 32K prefill only; pp8192 and decode GPU-only",
+      "power": "fast PPT engaged in prefill; exact watts undisclosed",
+      "mtp_acceptance": null
+    },
+    {
+      "id": "natural_english_depth",
+      "source": "author_reddit",
+      "model": "Qwen3.8-Flash-Next MQ4 XTS",
+      "version": "0.4.2.1",
+      "decode_mode": "greedy native MTP",
+      "output_tokens": 128,
+      "context_tokens": [
+        8192,
+        32768,
+        131072,
+        262144
+      ],
+      "decode_tps": [
+        51.3,
+        41.8,
+        42.1,
+        35.6
+      ],
+      "cold_prefill_tps": {
+        "p16k": 2372,
+        "p128k": 1865,
+        "p256k": 1589
+      },
+      "p16k_ttft_ms": 6896,
+      "kernel": "Linux 7.3-rc7 plus IOMMU PerfOpt queued for 7.4",
+      "mtp_acceptance": null,
+      "power_watts": null,
+      "comparability": "not a matched rerun of release matrix or local Halogen"
+    },
+    {
+      "id": "release_sampled_mtp",
+      "source": "release_matrix",
+      "tps": 60.9,
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20,
+      "presence_penalty": 1.5,
+      "seed": 123,
+      "text_identity": false,
+      "warning": "3/8 streams differ across fresh processes due wall-time route chooser"
+    },
+    {
+      "id": "qsa_exact_beta",
+      "source": "commit_7dedec4e5",
+      "mode": "AR",
+      "output_tokens": 128,
+      "context_tokens": [
+        8192,
+        32768,
+        131072,
+        262144
+      ],
+      "base_itl_ms": [
+        29.92,
+        30.73,
+        31.21,
+        33.11
+      ],
+      "candidate_itl_ms": [
+        29.9,
+        29.88,
+        30.48,
+        31.43
+      ],
+      "processes_per_arm": 2,
+      "protocol": "interleaved fresh processes; each runs four depths; trimmed mean ITL",
+      "token_ids_identical": true,
+      "excluded": "one 0.4-0.9s QSA next-granule mapping stall",
+      "prefill_change": "within process variance",
+      "not_additive_with": [
+        "release_matrix_greedy_mtp",
+        "natural_english_depth",
+        "qsa_splitk_beta"
+      ]
+    },
+    {
+      "id": "qsa_splitk_beta",
+      "source": "commit_61d89f411",
+      "mode": "AR",
+      "output_tokens": 128,
+      "context_tokens": [
+        8192,
+        32768,
+        131072,
+        262144
+      ],
+      "base_itl_ms": [
+        30.04,
+        30.03,
+        30.38,
+        31.27
+      ],
+      "candidate_itl_ms": [
+        29.32,
+        29.32,
+        29.9,
+        30.22
+      ],
+      "quality": "KLD-gated; FP32 reassociation",
+      "greedy_same_depths": [
+        8192,
+        32768,
+        131072
+      ],
+      "greedy_different_depths": [
+        262144
+      ],
+      "bit_exact": false,
+      "code24_kld": [
+        0.08313,
+        0.084263
+      ],
+      "wt2_kld": [
+        0.082208,
+        0.083067
+      ]
+    },
+    {
+      "id": "dense27b_dflash",
+      "source": "beta_changelog",
+      "shipped_in": "0.4.2",
+      "model": "Qwen3.8-27B MQ4 XTS",
+      "draft": "paired DFlash",
+      "cli": "hipfire bench --backend noslots --workload stateless --max-tokens 256",
+      "processes_per_arm": 3,
+      "runs_each": 5,
+      "statistic": "median of per-process medians; interleaved",
+      "code": {
+        "prompt": "merge_sort_thinking_off.txt",
+        "tps": [
+          97.9,
+          135.3
+        ],
+        "tau": 13.18
+      },
+      "prose": {
+        "prompt": "prose_river_short.txt",
+        "tps": [
+          19,
+          26.3
+        ],
+        "tau": 1.52
+      },
+      "ar_tps": [
+        15,
+        15
+      ],
+      "different_model": true
+    }
+  ],
+  "memory": {
+    "release_flash_next": {
+      "file": "qwen3.8-flash-next.mq4-xts",
+      "bytes": 125288544792,
+      "sha256": "8b15b6fede7d7c5bfed0db4720a8295bedda51bc93e545fa242bd50d0f200972",
+      "registry_min_vram_gb": 128,
+      "overlay_bytes": 305543168,
+      "legacy_gptq3_is_smaller": false
+    },
+    "beta_flash_next_mq3": {
+      "file": "qwen3.8-flash-next-base.mq3-xts",
+      "bytes": 59253131800,
+      "gib": 55.18377926200628,
+      "sha256": "541cfb55d6d63e2f8c1e1977fc03147615b7ced9b19b79adacccb6bcf7e36554",
+      "registry_min_vram_gb": 64,
+      "ple_q4": {
+        "bytes": 29120146432,
+        "sha256": "fc78d30b9d2376db2b713732e80de2069f1cd1d6e1e40b50c716927dcc18ee1e"
+      },
+      "ple_q8": {
+        "bytes": 54400269312,
+        "sha256": "a655edc25402d0dfbef276cb3c5ca57724fa1074976d8a9029371a3a52eca89c"
+      },
+      "download_q4_bytes": 88373278232,
+      "download_q8_bytes": 113653401112,
+      "minimum_loader": "a6f241ce2067e92e585613c1bcfd9f8a5071529a",
+      "w3_experts": 16839,
+      "total_trunk_experts": 24576,
+      "current_pinned_admission_arches": [
+        "gfx1151",
+        "gfx1201"
+      ],
+      "remaining_on_64gib_after_base_gib": 8.816220737993717,
+      "base_plus_required_reserve_gib": 73.18377926200628,
+      "fit": false,
+      "notes": [
+        "PLE on-disk bytes are streamed/cached, not fully resident by definition",
+        "runtime state/scratch/PLE cache still need memory",
+        "64GB UMA carve-out on 128GB host is not physical 64GB",
+        "no speed borrowed from MQ4 or a different model"
+      ]
+    },
+    "dense27b": {
+      "main_size_gb_approx": 14.99,
+      "dflash_draft_size_gb_approx": 1.21,
+      "mtp_sidecar_bytes": 225716224,
+      "npu_prefill_flashnext_route_applies": false
+    }
+  },
+  "platform": {
+    "wsl2": {
+      "upstream_status": "recommended supported GPU path",
+      "os": "Windows 11; WSL2 Ubuntu 22.04/24.04",
+      "userspace": "ROCm7.2.1 + librocdxg1.2.x",
+      "older_rocm_env": "HSA_ENABLE_DXG_DETECTION=1 for ROCm<7.13",
+      "limitations": [
+        "HIP graph fallback, no Redline PM4",
+        "legacy KV, no VMM",
+        "no multi-GPU",
+        "VM memory bound by .wslconfig"
+      ],
+      "reported_linux_rates_transferable": false
+    },
+    "native_windows": {
+      "upstream_status": "best effort",
+      "dependencies": [
+        "AMD HIP SDK hipcc + amdhip64.dll",
+        "Rust build / daemon.exe / native CLI",
+        "matching gfx1151 kernel pack or hipcc fallback"
+      ],
+      "reported_linux_rates_transferable": false
+    },
+    "npu": {
+      "upstream_platform": "Linux gfx1151 amdxdna /dev/accel/accel0",
+      "wsl2_or_native_windows_support_established": false,
+      "required_userptr_pin_bytes": 1053843456,
+      "bounded_memlock_limit_bytes": 1318060032
+    },
+    "windows_npu_other_source": "Bubo native Windows XRT/HIP source; see sibling alternatives report; not evidence of Hipfire NPU on Windows"
+  },
+  "adapter": {
+    "status": "proposed only; no profile installed or activated",
+    "files": [
+      "backends/hipfire-wsl2/ (new dormant manifest/launcher)",
+      "backends/hipfire-windows/ (new dormant manifest/launcher)",
+      "server/controller.py",
+      "server/gateway.py",
+      "server/README.md",
+      "server/tests/test_controller.py",
+      "server/tests/test_gateway.py"
+    ],
+    "launch_contract_gap": "current native validator requires literal --host 127.0.0.1; Hipfire serve uses positional host:port",
+    "health_and_routes": [
+      "/health",
+      "/v1/models",
+      "/v1/chat/completions",
+      "/v1/responses",
+      "/v1/messages after separate contract tests"
+    ],
+    "refused_capability_claims": [
+      "/v1/completions not provided",
+      "response_format not enforced on standard serve route",
+      "same Linux throughput on Windows/WSL",
+      "same model quality merely from engine compatibility"
+    ],
+    "security": "upstream0.4.2.1 loopback127.0.0.1:11435, no native auth/TLS; Alloy gateway supplies auth",
+    "estimates_engineer_days": {
+      "profile_offline_contracts": [
+        1,
+        2
+      ],
+      "platform_owned_lifecycle_each": [
+        2,
+        4
+      ],
+      "later_model_perf_quality_qualification": [
+        1,
+        3
+      ]
+    },
+    "estimates_are_judgment": true,
+    "remote_host_gap": "gateway only accepts loopback; remote Linux needs explicit owned tunnel/adapter",
+    "halogen_default_preserved": true,
+    "no_live_kv_transfer": true
+  },
+  "sources": [
+    {
+      "id": "release",
+      "url": "https://github.com/warpfront/hipfire/releases/tag/v0.4.2.1",
+      "sha": "6b363a56a1ae28ed421178d3c7eba9f6f4bacbb5",
+      "date": "2026-10-14T13:42:03Z",
+      "claim": "latest inspected published release"
+    },
+    {
+      "id": "release_matrix",
+      "url": "https://hipfire.dev/benchmarks/0.4.2/",
+      "measurement_date": "2026-10-14",
+      "build": "6ea3f5076",
+      "daemon_md5": "e4ccd5c9393642134c307ebf2787d430",
+      "claim": "publisher benchmark, not a local run"
+    },
+    {
+      "id": "author_reddit",
+      "url": "https://www.reddit.com/r/StrixHalo/comments/1x6bvba/hipfire_0421_qwen38flash_125_gb_moe_on_strix_halo/",
+      "claim": "author natural-English depth table and next-release distinction; later beta sources supersede Q3-in-progress wording"
+    },
+    {
+      "id": "commit_fbea29a85",
+      "url": "https://github.com/warpfront/hipfire/commit/fbea29a8541190406760861a760e406f6d775dab",
+      "sha": "fbea29a8541190406760861a760e406f6d775dab",
+      "date": "2026-10-15T00:47:51Z",
+      "subject": "QSA: exact sampled filter select and pooled BF16 mirror (opt-in)",
+      "commit_message": "QSA: exact sampled filter select and pooled BF16 mirror (opt-in)\n\nTwo developer switches, both default off, both byte-exact by contract:\n\nHIPFIRE_QWEN4_QSA_FILTER_SELECT (eager gfx11+ score/select calls with\nmore than 4096 pooled blocks, budget <= 512): the single-workgroup\nselect-from-scores pass is replaced by three kernels in the new\nkernels/src/qsa_filter_select.hip: a deterministic 2048-sample threshold\n(exact j-th largest sample key, target 1024 survivors), tiled candidate\ncompaction (4096 blocks per workgroup, wave-ballot slot reservation,\ncapacity 4096) and an exact finish that ranks the certified candidate set\n(chosen <= count <= cap) by the incumbent 64-bit key (score bits desc,\nblock asc). Underfilled or overflowing rows repair in-kernel with an exact\n64-bit radix select over the whole row; output never depends on atomic\norder. Selected tokens, causal tails, -1 padding and the final-row mirror\nfollow the incumbent contract byte for byte. Lab entries\n(qsa_filter_select_from_scores_lab, qsa_incumbent_select_from_scores_lab,\nindexed_attention_select_batch_filter_arm) expose per-row threshold /\ncount / repair stats.\n\nHIPFIRE_QWEN4_QSA_POOLED_BF16 (exact gfx1151, F32 QSA state): each QSA\nlayer keeps a derived BF16 mirror of its pooled index keys (the high\nhalves of the BF16-rounded F32 keys, lossless), synced past a block\nwatermark after pooling, never snapshotted, clamped/invalidated at every\nexisting F16-arena lifecycle site and charged in admission/state\naccounting. Mirror-covered select calls run the PM BF16 rows16 score\ninstead of the F32 one (half the key bytes); the F32 arena stays\nauthoritative. IndexedAttentionSelectBatch gains `pooled_bf16`.\n\nEvidence: crates/rdna-compute/tests/qsa_filter_select.rs on gfx1201\n(R9700): 3 tests pass, 6048 from-scores and 432 full-route cases equal\nto the hipcc incumbent incl. forced underfill/overflow repair. Mirror:\nqwen4_qsa_arena_check four arms (off/on/pooled/pooled+arena) with\nidentical canonical selection/attention/state/logit hashes through\nprefill, rollback, branch and restore; 14 mirror-consistency checks over\n990,372 blocks; Halo Flash-Next nat-32K AR 128-token ids identical\non vs off.",
+      "files": [
+        {
+          "path": "crates/hipfire-arch-qwen4/examples/qwen4_qsa_arena_check.rs",
+          "additions": 185,
+          "deletions": 8
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/map.md",
+          "additions": 3,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/config.rs",
+          "additions": 5,
+          "deletions": 2
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/expert_residency.rs",
+          "additions": 37,
+          "deletions": 4
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/gpu_forward.rs",
+          "additions": 2,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/gpu_forward_lanes.rs",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/kv_backend.rs",
+          "additions": 31,
+          "deletions": 4
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/mtp_gpu.rs",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/npu_trunk/layers.rs",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/state.rs",
+          "additions": 148,
+          "deletions": 13
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/state_parity.rs",
+          "additions": 2,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-dispatch/src/pipeline/layer_ops.rs",
+          "additions": 31,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-loader/src/carriers.rs",
+          "additions": 4,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-runtime/examples/qwen4_tierc/qsa.rs",
+          "additions": 2,
+          "deletions": 0
+        },
+        {
+          "path": "crates/railgun-cert/src/recording.rs",
+          "additions": 5,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/examples/qsa_select_pm_check.rs",
+          "additions": 2,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/map.md",
+          "additions": 21,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/src/kernel_registry.rs",
+          "additions": 9,
+          "deletions": 1
+        },
+        {
+          "path": "crates/rdna-compute/src/kernels.rs",
+          "additions": 9,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/src/lib.rs",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/src/qsa_pooled_mirror.rs",
+          "additions": 464,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/src/tensor_ops.rs",
+          "additions": 662,
+          "deletions": 38
+        },
+        {
+          "path": "crates/rdna-compute/tests/qsa_filter_select.rs",
+          "additions": 864,
+          "deletions": 0
+        },
+        {
+          "path": "docs/env-vars.md",
+          "additions": 4,
+          "deletions": 0
+        },
+        {
+          "path": "kernels/src/qsa_filter_select.hip",
+          "additions": 315,
+          "deletions": 0
+        },
+        {
+          "path": "kernels/src/qsa_pooled_bf16_mirror.hip",
+          "additions": 68,
+          "deletions": 0
+        }
+      ]
+    },
+    {
+      "id": "commit_35cedf64d",
+      "url": "https://github.com/warpfront/hipfire/commit/35cedf64dd7b2241c112407501158cb129848a0d",
+      "sha": "35cedf64dd7b2241c112407501158cb129848a0d",
+      "date": "2026-10-15T00:47:52Z",
+      "subject": "QSA filter select: admit only past the measured select crossover",
+      "commit_message": "QSA filter select: admit only past the measured select crossover\n\nThe filter trio beats the hipcc select-from-scores from 8192 blocks but\nthe gfx1151 PM select only further out. Halo per-call medians (5 warm,\n50 timed): 1-16 rows PM 18.6 / 50.7 us vs filter 37 / 39 us at 8192 /\n32768 blocks; 256 rows PM 0.26 / 1.15 ms vs filter 0.35 / 0.80 ms at\n32768 / 65536 blocks. Calls running the PM select now take the filter\nabove 24576 blocks (<= 16 rows) or 49152 blocks (more rows); the hipcc\nselect keeps the 4096-block admission. Selection bytes are unchanged on\nevery route.",
+      "files": [
+        {
+          "path": "crates/rdna-compute/src/tensor_ops.rs",
+          "additions": 27,
+          "deletions": 6
+        },
+        {
+          "path": "docs/env-vars.md",
+          "additions": 1,
+          "deletions": 1
+        }
+      ]
+    },
+    {
+      "id": "commit_7dedec4e5",
+      "url": "https://github.com/warpfront/hipfire/commit/7dedec4e5e2c48685edc1e9d764ea0636b9bb6b4",
+      "sha": "7dedec4e5e2c48685edc1e9d764ea0636b9bb6b4",
+      "date": "2026-10-15T00:57:57Z",
+      "subject": "QSA: filter select and pooled BF16 mirror on by default on gfx1151",
+      "commit_message": "QSA: filter select and pooled BF16 mirror on by default on gfx1151\n\nBoth exact levers from fbea29a85/35cedf64d become the gfx1151 default:\nHIPFIRE_QWEN4_QSA_POOLED_BF16 defaults on (admission unchanged: exact\ngfx1151, F32 QSA state, PM BF16 score present) and\nHIPFIRE_QWEN4_QSA_FILTER_SELECT defaults on for exact gfx1151 (unset\nelsewhere keeps it off; =1 forces any gfx11+); =0 stays the kill switch\nfor both. Evidence (Halo, Flash-Next GPTQ3): greedy ids identical on the\n8-prompt lane AR cell and on natural-text 8K/32K/128K/256K in every rep;\npooled-mirror arena hashes identical; decode ITL at 32K/128K/256K lower\nin both candidate reps than in both base reps (8K tie): 30.73/31.21/33.11\n-> 29.88/30.48/31.43 ms. Docs: env-vars rows, CONFIG QSA paragraph,\nCHANGELOG entry and measured table.",
+      "files": [
+        {
+          "path": "CHANGELOG.md",
+          "additions": 11,
+          "deletions": 2
+        },
+        {
+          "path": "crates/rdna-compute/src/qsa_pooled_mirror.rs",
+          "additions": 3,
+          "deletions": 3
+        },
+        {
+          "path": "crates/rdna-compute/src/tensor_ops.rs",
+          "additions": 12,
+          "deletions": 6
+        },
+        {
+          "path": "docs/CONFIG.md",
+          "additions": 8,
+          "deletions": 0
+        },
+        {
+          "path": "docs/env-vars.md",
+          "additions": 2,
+          "deletions": 2
+        }
+      ]
+    },
+    {
+      "id": "commit_77c99229b",
+      "url": "https://github.com/warpfront/hipfire/commit/77c99229bbfd1b8ed2edfecc886a8f5665d86520",
+      "sha": "77c99229bbfd1b8ed2edfecc886a8f5665d86520",
+      "date": "2026-10-15T14:39:58Z",
+      "subject": "perf(qwen4/gfx1151): opt-in split-K QSA decode attention (HIPFIRE_QWEN4_QSA_DECODE_SPLITK, default off)",
+      "commit_message": "perf(qwen4/gfx1151): opt-in split-K QSA decode attention (HIPFIRE_QWEN4_QSA_DECODE_SPLITK, default off)\n\n- New kernels/src/qsa_decode_splitk.hip: qsa_decode_splitk_partial_f32 splits each\n  row's selected list into 32 contiguous slices; one workgroup per (KV head, slice)\n  scores all 12 query heads of its KV group from a single K/V read and writes\n  (max, sum, acc[256]) partials; qsa_decode_splitk_combine_f32 folds the partials\n  in ascending slice order and applies the output gate.\n- Routed only inside indexed_attention_attention_batch_arena for eager gfx1151 F32\n  head_dim-256 launches of 1..8 rows (AR decode and MTP verify); a row's output is\n  bitwise independent of the launch row count. Partials reuse the per-launch QSA\n  scratch. Every other launch keeps the incumbent route.\n- fp32 reorder: KLD-gated, not bit-exact. GPU tests (tests/qsa_decode_splitk.rs):\n  tolerance vs the incumbent, row invariance 1..8, all-invalid rows.",
+      "files": [
+        {
+          "path": "CHANGELOG.md",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "crates/railgun-cert/src/recording.rs",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/map.md",
+          "additions": 5,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/src/feature_flags.rs",
+          "additions": 57,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/src/kernel_registry.rs",
+          "additions": 2,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/src/kernels.rs",
+          "additions": 6,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/src/tensor_ops.rs",
+          "additions": 343,
+          "deletions": 0
+        },
+        {
+          "path": "crates/rdna-compute/tests/qsa_decode_splitk.rs",
+          "additions": 817,
+          "deletions": 0
+        },
+        {
+          "path": "docs/env-vars.md",
+          "additions": 2,
+          "deletions": 0
+        },
+        {
+          "path": "kernels/src/qsa_decode_splitk.hip",
+          "additions": 570,
+          "deletions": 0
+        }
+      ]
+    },
+    {
+      "id": "commit_61d89f411",
+      "url": "https://github.com/warpfront/hipfire/commit/61d89f4114383f055a642e5c39fbf6d07f4fcf8a",
+      "sha": "61d89f4114383f055a642e5c39fbf6d07f4fcf8a",
+      "date": "2026-10-15T14:47:45Z",
+      "subject": "qwen4/gfx1151: split-K QSA decode attention on by default (=0 kill switch)",
+      "commit_message": "qwen4/gfx1151: split-K QSA decode attention on by default (=0 kill switch)",
+      "files": [
+        {
+          "path": "CHANGELOG.md",
+          "additions": 3,
+          "deletions": 1
+        },
+        {
+          "path": "crates/rdna-compute/src/feature_flags.rs",
+          "additions": 22,
+          "deletions": 36
+        },
+        {
+          "path": "crates/rdna-compute/src/kernel_registry.rs",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "crates/rdna-compute/src/kernels.rs",
+          "additions": 3,
+          "deletions": 3
+        },
+        {
+          "path": "crates/rdna-compute/src/tensor_ops.rs",
+          "additions": 4,
+          "deletions": 3
+        },
+        {
+          "path": "crates/rdna-compute/tests/qsa_decode_splitk.rs",
+          "additions": 9,
+          "deletions": 5
+        },
+        {
+          "path": "docs/env-vars.md",
+          "additions": 1,
+          "deletions": 1
+        }
+      ]
+    },
+    {
+      "id": "commit_1eef5a976",
+      "url": "https://github.com/warpfront/hipfire/commit/1eef5a97601d8ef3fd94aa6544c6f220dba3684c",
+      "sha": "1eef5a97601d8ef3fd94aa6544c6f220dba3684c",
+      "date": "2026-10-15T03:40:58Z",
+      "subject": "qwen4: a retired native-MTP turn catches its head up and commits live",
+      "commit_message": "qwen4: a retired native-MTP turn catches its head up and commits live\n\nOnce the AR floor retires a request, its AR tokens advance the target\nalone and the MTP head used to stay at the retirement point. The turn\nthen ended with the head behind the target, session_commit_live dropped\nthe live state (live continuation needs head == target), and the next\nturn of the conversation restored the newest chunk snapshot and\nre-prefilled everything above it (Strix Halo, 32K agent chain: 9,613 rows,\n4.8 s, after a max_tokens stop where 55 rows were new).\n\nA retired AR token now copies its target wide hidden into the next spec\nhidden row and owes the head that row (HeadLag). catch_up_head appends\nthe owed rows teacher-forced (token p, target hidden p), exactly as an\nn-gram takeover appends its kept rows: one batched decode fill where it\nruns, else one Append per row. It runs when the owed rows fill one batched\nfill (1024) and before every teacher-forced advance, so the terminal\npending-seed flush leaves head and target together and the turn commits\nlive. Resets, prefills and new requests drop the record.\n\nTests: HeadLag CPU tests; session_cache_hw\nretired_turn_commits_live_on_flash_next (--features lab, ignored HW).",
+      "files": [
+        {
+          "path": "CHANGELOG.md",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/bundle.rs",
+          "additions": 35,
+          "deletions": 3
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/gpu_forward.rs",
+          "additions": 4,
+          "deletions": 2
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/src/mtp_spec.rs",
+          "additions": 218,
+          "deletions": 10
+        },
+        {
+          "path": "crates/hipfire-arch-qwen4/tests/session_cache_hw.rs",
+          "additions": 158,
+          "deletions": 0
+        },
+        {
+          "path": "docs/env-vars.md",
+          "additions": 1,
+          "deletions": 1
+        }
+      ]
+    },
+    {
+      "id": "commit_6b0428c58",
+      "url": "https://github.com/warpfront/hipfire/commit/6b0428c58b7ef94f54c72cd0d07fafc75ee67346",
+      "sha": "6b0428c58b7ef94f54c72cd0d07fafc75ee67346",
+      "date": "2026-10-15T08:58:14Z",
+      "subject": "registry: add qwen3.8:flash-next-mq3-xts split base; tidy MQ4 XTS descs",
+      "commit_message": "registry: add qwen3.8:flash-next-mq3-xts split base; tidy MQ4 XTS descs\n\nThe MQ3 XTS split base (qwen3.8-flash-next-base.mq3-xts, 59,253,131,800 B,\nsha256 541cfb55) is live on hipfire-models/qwen3.8-flash-next (94aa5264). It\nbinds the shared ple-q4 (fc78d30b) / ple-q8 (a655edc2) rows. The four MQ4 XTS\ndescs get a short first sentence with the same facts. v1.json regenerated\nfrom live HF.",
+      "files": [
+        {
+          "path": "CHANGELOG.md",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "docs/MODELS.md",
+          "additions": 19,
+          "deletions": 15
+        },
+        {
+          "path": "registry/models.json",
+          "additions": 23,
+          "deletions": 4
+        },
+        {
+          "path": "registry/v1.json",
+          "additions": 31,
+          "deletions": 5
+        }
+      ]
+    },
+    {
+      "id": "tool_turn",
+      "url": "https://github.com/warpfront/hipfire/commit/a892e83fb8e84a79c38bd4236e81405ba4d3ab02",
+      "sha": "a892e83fb8e84a79c38bd4236e81405ba4d3ab02",
+      "message": "qwen4: replay tool-call turns as the emitted body, not a template re-render\n\nA Flash-Next follow-up turn whose history held an assistant tool call\nrendered that turn through the chat template: the jinja history splice\ntreated a cached content-only turn on a message with tool_calls as\nstructural doubt and fell back to a plain template render of the whole\nhistory. That render is a strict extension of the committed conversation\nonly while the model's output is exactly the template's canonical\ntokenization; a different BPE split of the emitted text, or spacing the\ntemplate rewrites around <tool_call> (trimmed content, its own \\n\\n before\nthe block), breaks the live continuation and re-prefills the whole\nconversation. On the real Flash-Next tokenizer and template a non-canonical\nsplit diverges at token 354 (thinking off) / 408 (thinking on) of a 2-tool\nconversation; with canonical model output (observed on Strix Halo) the\nre-render already matched.\n\nEvery stored Qwen turn already holds the producer's whole generated body\n(reasoning, prose and the <tool_call> blocks). build_cached_history_jinja_with\ntakes a ToolTurnSplice: Envelopes keeps today's behaviour (Harmony per-tool\nenvelopes; a content-only turn on a tool-call message is a miss), WholeBody\nrenders such a message without its tool calls and replays the stored body\nonce in the content slot (one R..A span when the turn reasoned). Only the\nQwen4 render (render_qwen4_prompt_history, AR and native MTP) passes\nWholeBody; dense Qwen, the VMM batch render and other families keep\nEnvelopes.\n\nIdentity: a tool-call turn is keyed by each call's name and canonical\narguments (asst_turn_fingerprint), so an edited call misses; under WholeBody\nprose the client echoes with the calls must also equal the emitted prose\n(empty content is accepted), so edited prose misses instead of replaying the\noriginal. A miss falls back to the template render of that turn.\n\nSession-exact like every live continuation: the cache-off prompt is the same\nspliced render, only the reuse differs.\n\nTests: prompt_frame (WholeBody extends with and without reasoning, Envelopes\nand a lookup miss equal the plain render, bytes the template would rewrite);\nqwen_history_chain_tests::whole_body_tool_turn_replays_emitted_ids_and_edited_turns_miss\n(edited arguments, name and prose each fall back to the template render with\nnone of the stale emitted ids). GPU-free oracle on the real Flash-Next\ntokenizer and template: template_cache_eval --qwen-tool-turns <metadata.json>\n(--features lab).",
+      "patch": "@@ -1637,10 +1637,48 @@ pub fn template_emits_history_primer(frame: &JinjaChatFrame, primer: &[u32]) ->\n /// those. `CachedAssistantBody.text` must byte-equal the corresponding\n /// `Message` field when that field is non-empty; recipient must equal\n /// `Message.tool_calls[i].name`. Any violation is structural doubt → plain render.\n+///\n+/// Tool-call messages splice per-tool envelopes ([`ToolTurnSplice::Envelopes`]);\n+/// [`build_cached_history_jinja_with`] can instead replay a whole-body content\n+/// slot over them.\n pub fn build_cached_history_jinja(\n     frame: &JinjaChatFrame,\n     messages: &[Message],\n     tools: Option<&[serde_json::Value]>,\n+    cache_lookup: impl FnMut(&Message) -> Option<CachedAssistantTurn>,\n+) -> Result<Vec<u32>, String> {\n+    build_cached_history_jinja_with(\n+        frame,\n+        messages,\n+        tools,\n+        ToolTurnSplice::Envelopes,\n+        cache_lookup,\n+    )\n+}\n+\n+/// How [`build_cached_history_jinja_with`] splices an assistant message that\n+/// carries `tool_calls`.\n+#[derive(Clone, Copy, Debug, PartialEq, Eq)]\n+pub enum ToolTurnSplice {\n+    /// Only per-tool envelope slots (`CachedAssistantTurn::tools`, Harmony):\n+    /// a content-only cached turn on a tool-call message is structural doubt.\n+    Envelopes,\n+    /// The template renders a message's tool calls inside its assistant\n+    /// envelope, after the content (Qwen XML `<tool_call>` blocks), and the\n+    /// cached content slot holds the producer's whole generated body: reasoning,\n+    /// prose and every tool call. The message then renders without its tool\n+    /// calls and that body replays once in the content slot, so the history\n+    /// reproduces the emitted tokens instead of a template re-render of the\n+    /// calls. The cache key must cover the calls' identity.\n+    WholeBody,\n+}\n+\n+/// [`build_cached_history_jinja`] with an explicit [`ToolTurnSplice`].\n+pub fn build_cached_history_jinja_with(\n+    frame: &JinjaChatFrame,\n+    messages: &[Message],\n+    tools: Option<&[serde_json::Value]>,\n+    tool_turns: ToolTurnSplice,\n     mut cache_lookup: impl FnMut(&Message) -> Option<CachedAssistantTurn>,\n ) -> Result<Vec<u32>, String> {\n     let tok = frame.tokenizer;\n@@ -1682,8 +1720,10 @@ pub fn build_cached_history_jinja(\n         }\n         // Validate tool count and recipients, and reasoning provenance.\n         if turn.tools.is_empty() {\n-            // Content turn: must have no tool_calls on the Message.\n-            if !m.tool_calls.is_empty() {\n+            // Content turn: must have no tool_calls on the Message, unless\n+            // its content slot is the whole generated body (tool calls\n+            // included) of a template that renders calls inline.\n+            if !m.tool_calls.is_empty() && tool_turns != ToolTurnSplice::WholeBody {\n                 return Ok(plain_tokens);\n             }\n             if turn.content.is_none() {\n@@ -1779,6 +1819,9 @@ pub fn build_cached_history_jinja(\n             }\n         } else if turn.content.is_some() {\n             m.content = a_text.clone();\n+            // WholeBody: the content slot replays the calls with the body;\n+            // rendering them too would duplicate them.\n+            m.tool_calls.clear();\n         }\n     }\n     // Build the expected sentinel sequence, MOVING each slot body out of the\n@@ -4451,6 +4494,241 @@ SYS:{{ build_system_message(system_message) }}:END\n         assert_eq!(rendered, plain, \"tool turn without tool bodies must miss\");\n     }\n \n+    // ── whole-body tool-turn splice (Qwen XML tool calls) ───────────────\n+    //\n+    // Fixture: `QWEN38_HISTORY_THINK` plus the Flash-Next tool-call and\n+    // tool-role rendering (qwen3.8 FN `chat_template`): content is trimmed,\n+    // calls follow it (`\\n\\n` separator only when content is non-empty), tool\n+    // results share one `user` envelope, and the generation prompt closes the\n+    // think block when `enable_thinking` is false. Newlines inside block-tag\n+    // adjacency are emitted via string expressions because the render env\n+    // uses `trim_blocks`.\n+    const QWEN38_TOOL_HISTORY: &str = \"{% for m in messages %}{% if m.role == 'assistant' %}{% set reasoning_content = '' %}{% if m.reasoning_content is string %}{% set reasoning_content = m.reasoning_content %}{% endif %}{% set reasoning_content = reasoning_content|trim %}<|im_start|>assistant\\n<think>\\n{{ reasoning_content }}\\n</think>\\n\\n{{ m.content|trim }}{% if m.tool_calls %}{% for tc in m.tool_calls %}{% if loop.first %}{% if m.content|trim %}{{ '\\\\n\\\\n' }}{% endif %}{% else %}{{ '\\\\n' }}{% endif %}<tool_call>\\n<function={{ tc.name }}>\\n{% for k, v in tc.arguments|items %}<parameter={{ k }}>\\n{{ v }}\\n</parameter>\\n{% endfor %}</function>\\n</tool_call>{% endfor %}{% endif %}<|im_end|>\\n{% elif m.role == 'tool' %}{% if messages[loop.index0 - 1].role != 'tool' %}<|im_start|>user{% endif %}{{ '\\\\n<tool_response>\\\\n' }}{{ m.content }}{{ '\\\\n</tool_response>' }}{% if loop.last or messages[loop.index0 + 1].role != 'tool' %}<|im_end|>\\n{% endif %}{% else %}<|im_start|>{{ m.role }}\\n{{ m.content }}<|im_end|>\\n{% endif %}{% endfor %}{% if add_generation_prompt %}<|im_start|>assistant\\n{% if enable_thinking is defined and enable_thinking is false %}<think>\\n\\n</think>\\n\\n{% else %}<think>\\n{% endif %}{% endif %}\";\n+\n+    const QWEN_TOOL_CALL_BLOCK: &str =\n+        \"<tool_call>\\n<function=get_weather>\\n<parameter=city>\\nParis\\n</parameter>\\n</function>\\n</tool_call>\";\n+\n+    fn qwen_tool_frame(t: &Tokenizer, enable_thinking: bool) -> JinjaChatFrame<'_> {\n+        JinjaChatFrame {\n+            tokenizer: t,\n+            template: QWEN38_TOOL_HISTORY,\n+            system: None,\n+            user: \"\",\n+            enable_thinking,\n+            bos_token: Some(\"\"),\n+            reasoning_strength: None,\n+            reasoning_effort: None,\n+        }\n+    }\n+\n+    fn qwen_weather_call_message(content: &str, reasoning: Option<&str>) -> Message {\n+        let mut a = qmsg(Role::Assistant, content, reasoning);\n+        a.tool_calls = vec![ToolCall {\n+            id: Some(\"call_0\".to_string()),\n+            name: \"get_weather\".to_string(),\n+            arguments: serde_json::json!({ \"city\": \"Paris\" }),\n+            rendered_body: None,\n+        }];\n+        a\n+    }\n+\n+    fn qwen_tool_history(assistant: Message) -> Vec<Message> {\n+        let mut tool_result = qmsg(Role::Tool, \"sunny\", None);\n+        tool_result.tool_call_id = Some(\"call_0\".to_string());\n+        vec![\n+            qmsg(Role::User, \"weather in Paris?\", None),\n+            assistant,\n+            tool_result,\n+        ]\n+    }\n+\n+    /// Production cache shape (`qwen_cached_turn_entry`): whole generated body in\n+    /// the content slot (empty text), producer reasoning text-only when the turn\n+    /// thought.\n+    fn qwen_whole_body_entry(\n+        t: &Tokenizer,\n+        body: &[u32],\n+        started_in_think: bool,\n+    ) -> CachedAssistantTurn {\n+        CachedAssistantTurn {\n+            reasoning: cached_producer_reasoning_text(t, body, started_in_think).map(|text| {\n+                CachedAssistantBody {\n+                    token_ids: Vec::new(),\n+                    text,\n+                }\n+            }),\n+            tools: Vec::new(),\n+            content: Some(CachedAssistantBody {\n+                token_ids: body.to_vec(),\n+                text: String::new(),\n+            }),\n+        }\n+    }\n+\n+    fn assert_strict_extension(rendered: &[u32], consumed: &[u32], what: &str) {\n+        assert!(\n+            rendered.len() > consumed.len() && rendered[..consumed.len()] == *consumed,\n+            \"{what}: must strictly extend the consumed stream (rendered_len={}, consumed_len={})\",\n+            rendered.len(),\n+            consumed.len()\n+        );\n+    }\n+\n+    fn assistant_lookup(\n+        stored: &CachedAssistantTurn,\n+    ) -> impl FnMut(&Message) -> Option<CachedAssistantTurn> + '_ {\n+        move |m| matches!(m.role, Role::Assistant).then(|| stored.clone())\n+    }\n+\n+    #[test]\n+    fn qwen_whole_body_tool_turn_extends_prior_conversation() {\n+        let t = make_tokenizer();\n+        let frame = qwen_tool_frame(&t, true);\n+        let history = qwen_tool_history(qwen_weather_call_message(\"\", Some(\"plan A\\n\")));\n+        let r1 = t.encode(&frame.render_messages(&history[..1], None, None).unwrap());\n+        let body = t.encode(&format!(\"plan A\\n</think>\\n\\n{QWEN_TOOL_CALL_BLOCK}\"));\n+        let mut consumed = r1.clone();\n+        consumed.extend_from_slice(&body);\n+        consumed.push(1); // <|im_end|>\n+        let stored = qwen_whole_body_entry(&t, &body, true);\n+        assert_eq!(\n+            stored.reasoning.as_ref().map(|r| r.text.as_str()),\n+            Some(\"plan A\\n\"),\n+            \"production-shaped reasoning text\"\n+        );\n+        let rendered = build_cached_history_jinja_with(\n+            &frame,\n+            &history,\n+            None,\n+            ToolTurnSplice::WholeBody,\n+            assistant_lookup(&stored),\n+        )\n+        .expect(\"cached render\");\n+        assert_strict_extension(&rendered, &consumed, \"WholeBody\");\n+        for sid in [9u32, 10, 11, 12, 13] {\n+            assert!(\n+                !rendered.contains(&sid),\n+                \"sentinel {sid} must be fully replaced\"\n+            );\n+        }\n+        let decoded = t.decode(&rendered);\n+        assert_eq!(\n+            decoded.matches(\"<tool_call>\").count(),\n+            1,\n+            \"tool call must replay once, not be re-rendered beside the body: {decoded}\"\n+        );\n+    }\n+\n+    #[test]\n+    fn qwen_whole_body_replays_body_bytes_the_template_would_rewrite() {\n+        // The generated prose has no `\\n\\n` before the call and keeps a trailing\n+        // space; the template trims content and inserts `\\n\\n`, so a plain\n+        // re-render cannot extend the consumed stream. Only the whole-body\n+        // replay can.\n+        let t = make_tokenizer();\n+        let frame = qwen_tool_frame(&t, true);\n+        let history = qwen_tool_history(qwen_weather_call_message(\"checking\", Some(\"plan A\\n\")));\n+        let r1 = t.encode(&frame.render_messages(&history[..1], None, None).unwrap());\n+        let body = t.encode(&format!(\n+            \"plan A\\n</think>\\n\\nchecking {QWEN_TOOL_CALL_BLOCK}\"\n+        ));\n+        let mut consumed = r1.clone();\n+        consumed.extend_from_slice(&body);\n+        consumed.push(1);\n+        let stored = qwen_whole_body_entry(&t, &body, true);\n+        let whole = build_cached_history_jinja_with(\n+            &frame,\n+            &history,\n+            None,\n+            ToolTurnSplice::WholeBody,\n+            assistant_lookup(&stored),\n+        )\n+        .expect(\"cached render\");\n+        assert_strict_extension(&whole, &consumed, \"WholeBody\");\n+        let plain = t.encode(&frame.render_messages(&history, None, None).unwrap());\n+        assert!(\n+            plain.len() < consumed.len() || plain[..consumed.len()] != *consumed,\n+            \"plain render must NOT extend the consumed stream for this body\"\n+        );\n+    }\n+\n+    #[test]\n+    fn qwen_envelopes_splice_on_tool_turn_equals_plain_render() {\n+        let t = make_tokenizer();\n+        let frame = qwen_tool_frame(&t, true);\n+        let history = qwen_tool_history(qwen_weather_call_message(\"\", Some(\"plan A\\n\")));\n+        let body = t.encode(&format!(\"plan A\\n</think>\\n\\n{QWEN_TOOL_CALL_BLOCK}\"));\n+        let stored = qwen_whole_body_entry(&t, &body, true);\n+        let plain = t.encode(&frame.render_messages(&history, None, None).unwrap());\n+        let explicit = build_cached_history_jinja_with(\n+            &frame,\n+            &history,\n+            None,\n+            ToolTurnSplice::Envelopes,\n+            assistant_lookup(&stored),\n+        )\n+        .expect(\"cached render\");\n+        assert_eq!(\n+            explicit, plain,\n+            \"Envelopes: content-only tool turn must miss\"\n+        );\n+        let default = build_cached_history_jinja(&frame, &history, None, assistant_lookup(&stored))\n+            .expect(\"cached render\");\n+        assert_eq!(default, plain, \"default entry point is Envelopes\");\n+    }\n+\n+    #[test]\n+    fn qwen_whole_body_without_reasoning_extends_closed_think_prompt() {\n+        // Thinking off: the generation prompt already closed the think block, so\n+        // the body is bare prose + calls and there is no reasoning slot.\n+        let t = make_tokenizer();\n+        let frame = qwen_tool_frame(&t, false);\n+        let history = qwen_tool_history(qwen_weather_call_message(\"\", None));\n+        let r1 = t.encode(&frame.render_messages(&history[..1], None, None).unwrap());\n+        let body = t.encode(QWEN_TOOL_CALL_BLOCK);\n+        let mut consumed = r1.clone();\n+        consumed.extend_from_slice(&body);\n+        consumed.push(1);\n+        let stored = qwen_whole_body_entry(&t, &body, false);\n+        assert!(\n+            stored.reasoning.is_none(),\n+            \"no reasoning slot when thinking is off\"\n+        );\n+        let rendered = build_cached_history_jinja_with(\n+            &frame,\n+            &history,\n+            None,\n+            ToolTurnSplice::WholeBody,\n+            assistant_lookup(&stored),\n+        )\n+        .expect(\"cached render\");\n+        assert_strict_extension(&rendered, &consumed, \"WholeBody (thinking off)\");\n+        for sid in [9u32, 10, 11, 12, 13] {\n+            assert!(\n+                !rendered.contains(&sid),\n+                \"sentinel {sid} must be fully replaced\"\n+            );\n+        }\n+        assert_eq!(t.decode(&rendered).matches(\"<tool_call>\").count(), 1);\n+    }\n+\n+    #[test]\n+    fn qwen_whole_body_lookup_miss_equals_plain_render() {\n+        let t = make_tokenizer();\n+        let frame = qwen_tool_frame(&t, true);\n+        let history = qwen_tool_history(qwen_weather_call_message(\"\", Some(\"plan A\\n\")));\n+        let plain = t.encode(&frame.render_messages(&history, None, None).unwrap());\n+        let rendered = build_cached_history_jinja_with(\n+            &frame,\n+            &history,\n+            None,\n+            ToolTurnSplice::WholeBody,\n+            |_| None,\n+        )\n+        .expect(\"cached render\");\n+        assert_eq!(rendered, plain, \"lookup miss must be the plain render\");\n+    }\n+\n     #[test]\n     fn producer_reasoning_text_matches_sse_channel() {\n         let t = make_tokenizer();"
+    },
+    {
+      "id": "beta_registry",
+      "url": "https://github.com/warpfront/hipfire/blob/cc2d5d0ff2f6cc7fb502474eaaab90cf9aa245ec/registry/v1.json",
+      "sha": "cc2d5d0ff2f6cc7fb502474eaaab90cf9aa245ec",
+      "generated_at": "2026-10-16T08:39:41Z",
+      "entry": {
+        "repo": "hipfire-models/qwen3.8-flash-next",
+        "file": "qwen3.8-flash-next-base.mq3-xts",
+        "size_gb": 59.3,
+        "min_vram_gb": 64,
+        "desc": "Qwen3.8-Flash-Next MQ3 XTS: 3-bit GPTQ (W3) on 16,839 of the 24,576 trunk routed experts; the other 7,737 experts and every other tensor are the MQ4 XTS bytes (Qwen4 HFQM, arch 16). Split base (59.3 GB) with no PLE rows of its own: it loads them from the shared qwen3.8-flash-next.ple-q4 (29.1 GB) or exact .ple-q8 (54.4 GB), bound by row geometry and the q8 source-rows SHA-256, so the download is about 88.4 GB with the q4 rows or 113.7 GB with the q8 rows. Needs hipfire at or after a6f241ce2 (split-base PLE loader).",
+        "recommended_settings": {
+          "temperature": 1,
+          "top_p": 0.95,
+          "top_k": 20
+        },
+        "ple": {
+          "q4": {
+            "file": "qwen3.8-flash-next.ple-q4",
+            "sha256": "fc78d30b9d2376db2b713732e80de2069f1cd1d6e1e40b50c716927dcc18ee1e",
+            "size_bytes": 29120146432
+          },
+          "q8": {
+            "file": "qwen3.8-flash-next.ple-q8",
+            "sha256": "a655edc25402d0dfbef276cb3c5ca57724fa1074976d8a9029371a3a52eca89c",
+            "size_bytes": 54400269312
+          }
+        },
+        "sha256": "541cfb55d6d63e2f8c1e1977fc03147615b7ced9b19b79adacccb6bcf7e36554",
+        "size_bytes": 59253131800,
+        "arch_id": 16,
+        "quant": "mq3"
+      }
+    },
+    {
+      "id": "beta_gfx1151_admission",
+      "url": "https://github.com/warpfront/hipfire/blob/cc2d5d0ff2f6cc7fb502474eaaab90cf9aa245ec/crates/hipfire-arch-qwen4/src/artifact.rs",
+      "sha": "cc2d5d0ff2f6cc7fb502474eaaab90cf9aa245ec",
+      "line_start": 296,
+      "line_end": 319,
+      "excerpt": "/// gfx1151 twin of [`SLAB_ROUTE_RECEIPTS_LANDED`]. Set because the G1 receipts\n/// of the gfx1151 slab kernels are in `rcpt/` on the Halo card (exact gfx1151,\n/// BDF `0000:c0:00.0`), each passing with 0 mismatches against the CPU twin:\n/// K1 decode `mq_i4_moe_gemv_pm_gfx1151`, synthetic plus certified L0 records\n/// with the old-kernel parity (`r9.g1.k1.gfx1151.json`, sha256 `f5e4e524…b3c6`);\n/// K2 prefill, the W3 NT1 anchor and the NT4 entries with the down row repeats\n/// 1/2/4 (`qwen4_moe_iu4_sym_w3_pm_gfx1151`,\n/// `qwen4_moe_iu4_sym_w3_nt4_pm_gfx1151`), synthetic\n/// (`r9.g1.k2.synthetic.gfx1151.json`, sha256 `eb5c643a…181c`) and real layers\n/// (`r9.g1.k2.real.gfx1151.json`, sha256 `ceabf444…0f73`). The A4 activations\n/// are deterministic synthetic rows through the real weights. gfx1151 only;\n/// every other architecture keeps the `ExpertSlabKernelsUnavailable` refusal.\npub const SLAB_ROUTE_GFX1151_RECEIPTS_LANDED: bool = true;\n\n/// Whether the sealed expert-slab route may load on GPU architecture `arch`.\n/// gfx1201 and gfx1151, each only after its own G1 receipts landed; every\n/// other architecture keeps refusing.\npub fn slab_route_admitted(arch: &str) -> bool {\n    match arch {\n        \"gfx1201\" => SLAB_ROUTE_RECEIPTS_LANDED,\n        \"gfx1151\" => SLAB_ROUTE_GFX1151_RECEIPTS_LANDED,\n        _ => false,\n    }\n}"
+    },
+    {
+      "id": "qsa_kernel",
+      "url": "https://github.com/warpfront/hipfire/blob/7dedec4e5e2c48685edc1e9d764ea0636b9bb6b4/kernels/src/qsa_filter_select.hip",
+      "sha": "7dedec4e5e2c48685edc1e9d764ea0636b9bb6b4",
+      "line_start": 1,
+      "excerpt": "// SPDX-License-Identifier: Apache-2.0\n// Copyright (c) 2026 Kaden Schutt\n// hipfire — see LICENSE and NOTICE in the project root.\n//\n// Exact sampled-threshold filter selector (B1). Three kernels, all launched\n// with blockDim.x == 256:\n//\n//   qsa_filter_threshold   grid (rows)                    one row per WG\n//   qsa_filter_compact     grid (ceil(block_count/4096), rows)\n//   qsa_filter_finish      grid (rows)                    one row per WG\n//\n// Shared conventions\n//   scores       const float*, row r at scores + r * score_stride. Values are\n//                nonnegative non-NaN f32; only the first rbc(r) entries are read.\n//   rbc(r)       = min((position_start + r + 1) / compress, block_count)\n//   key(r, b)    = (u64(raw f32 bits of scores[r][b]) << 32) | (0xffffffff - b)\n//                  Unique per (row, b); u64 DESC order == score DESC, block ASC.\n//   chosen(r)    = min(budget, rbc(r)). The finish kernel requires\n//                  budget <= 512 for every launch (LDS winner capacity); larger\n//                  budgets are clamped to 512 for memory safety only.\n//   ctl          u64[rows * 2]. ctl[2r] = threshold key. ctl[2r+1]: low u32 =\n//                candidate count (keys >= threshold, counted past cap), high\n//                u32 = repaired flag (0/1). The threshold kernel initialises\n//                word 1 to 0; compact atomically adds to its low half; finish\n//                stores (1 << 32) | count on repair.\n//   cand         u64[rows * cap]; slot r*cap+s holds a key >= threshold. Only\n//                the first min(count, cap) slots are valid; order is\n//                nondeterministic (finish re-ranks exactly).\n//\n// Exactness: certified rows (chosen <= count <= cap) are ranked from the\n// complete candidate set, which contains the chosen largest keys because the\n// chosen-th largest key >= threshold. Every other row (count < chosen or\n// count > cap) is recomputed by an exact 64-bit radix select over all rbc\n// keys. No row is ever approximated. Each output slot gets exactly one write.\n#include <hip/hip_runtime.h>\n\n#define QSA_FILTER_THREADS 256\n#define QSA_FILTER_MAX_WIN 512\n#define QSA_FILTER_MAX_SAMPLES 4096"
+    },
+    {
+      "id": "getting_started",
+      "url": "https://github.com/warpfront/hipfire/blob/v0.4.2.1/docs/GETTING_STARTED.md",
+      "sha": "6b363a56a1ae28ed421178d3c7eba9f6f4bacbb5",
+      "read_chars": 27820
+    },
+    {
+      "id": "serve",
+      "url": "https://github.com/warpfront/hipfire/blob/v0.4.2.1/docs/SERVE.md",
+      "sha": "6b363a56a1ae28ed421178d3c7eba9f6f4bacbb5",
+      "read_chars": 52755
+    },
+    {
+      "id": "npu_trunk",
+      "url": "https://github.com/warpfront/hipfire/blob/v0.4.2.1/docs/npu/npu-trunk.md",
+      "sha": "6b363a56a1ae28ed421178d3c7eba9f6f4bacbb5",
+      "read_chars": 83854
+    },
+    {
+      "id": "release_changelog",
+      "url": "https://github.com/warpfront/hipfire/blob/6b363a56a1ae28ed421178d3c7eba9f6f4bacbb5/CHANGELOG.md",
+      "sha": "6b363a56a1ae28ed421178d3c7eba9f6f4bacbb5",
+      "release_top_excerpt": "# Changelog\n\n## v0.4.2.1 — 2026-10-14\n\n- **Strix Halo NPU trunk: the built-in calibration now applies on any Halo kernel and NPU firmware.** `npu_trunk=auto` armed only when the compiled-in Halo calibration matched the host exactly, including the kernel release, NPU firmware and NPU PCI slot of the machine it was measured on, so every stock-kernel Halo logged `npu-trunk: off (calibration key mismatch: kernel.uname_release)` and served GPU-only. For the built-in calibration those three fields are now advisory: when any differs, it is used with its margin raised to 0.05 (the pipe must be predicted at least 5% faster than GPU-only, since the timings were measured on a different kernel/firmware), and the load logs `npu-trunk: built-in calibration measured on <kernel>/<fw>, this host <kernel>/<fw>; using it with margin 0.05`. Arch, build, model-index hash, epilogue and trunk route stay strict, and a user calibration file stays fully strict. Output is exact on either route; the calibration only chooses between them. First-load self-calibration is planned.\n- **The NPU trunk calibration identity is pinned to `hipfire-0.4.2:npu-trunk-bf16-rowmajor-v1`.** It no longer derives from the crate version: it names the NPU serving numerics/transport, which a release bump does not change. Deriving it from the crate version would have orphaned the shipped Halo calibrations and left `npu_trunk=auto` GPU-only on 0.4.2.1.\n- **Flash-Next: tool-call turns in the history replay the tokens the model emitted.** A follow-up turn whose history held an assistant tool call rendered that turn through the chat template. That stays a strict extension of the committed conversation only while the model's output is exactly the template's own canonical tokenization; a different BPE split of the emitted text, or spacing the template rewrites around `<tool_call>`, made the follow-up miss its live continuation and re-prefill the whole conversation. Qwen4 now replays a cached tool-call turn as the whole body the model emitted (reasoning, prose and every `<tool_call>` block), as it already did for plain turns, so the follow-up no longer depends on that. On Strix Halo with canonical model output both builds already continued in place: a 7-request tool chain and a 32K-context tool append reused every committed token before and after, with identical output. The cache key covers each call's name and arguments, and prose the client echoes with the calls must equal the emitted prose (empty content is accepted); an edited turn misses and falls back to the template render. Session-exact like every live continuation. Other model families keep the template render (`ToolTurnSplice::Envelopes`). `HIPFIRE_SESSION_CACHE_BYTES=0` turns reuse off.\n- **Flash-Next session reuse is traceable per request.** With `HIPFIRE_QWEN_CACHE_TRACE=1`, every Qwen4 request (native MTP and AR) prints `[qwen4-session] route=… prompt=… prior=… lcp=… reused=… new=… source=live|snapshot|cold`: the previous turn's committed history, its common prefix with the new canonical prompt, and what the session cache reused. When the prompt diverges from that history, `[qwen4-session ids]` shows the token ids around the first difference. Host-side only; off by default.\n- Changelog correction: the Flash-Next session cache's resident snapshot for deep appends past the pool budget (#847, HIPF-46, @fivetide; +512 tokens on a 256K prefix 4.7 → 197.5 tok/s on Strix Halo) shipped in v0.4.2 but was missing from its notes."
+    },
+    {
+      "id": "beta_changelog",
+      "url": "https://github.com/warpfront/hipfire/blob/cc2d5d0ff2f6cc7fb502474eaaab90cf9aa245ec/CHANGELOG.md",
+      "sha": "cc2d5d0ff2f6cc7fb502474eaaab90cf9aa245ec",
+      "read_chars": 904490
+    },
+    {
+      "id": "models_release_equivalent_master",
+      "url": "https://github.com/warpfront/hipfire/blob/master/docs/MODELS.md",
+      "sha": "bfb90b9c822ec58c8f2ff1a0f01c3f4f0202c86d",
+      "note": "master at audit contains docs/maps/installer changes after release, no QSA compute changes"
+    }
+  ]
+}
+

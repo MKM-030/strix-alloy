@@ -1,0 +1,1378 @@
+{
+  "schema": "halogen.dflash.finite-fullbody-publication.v1",
+  "utc": "2026-10-10T09:35:15.997897+00:00",
+  "actual_tool": {
+    "session_id": 73216,
+    "initial_chunk_id": "9ade1a",
+    "final_chunk_id": "5d87e8",
+    "exit_code": 0
+  },
+  "scope": "Synthetic fixed7query/16640capacity/16416length original learned-bank DraftBackbone through all-row finite readback",
+  "summaries": {
+    "baseline": {
+      "count": 6,
+      "mean_ms": 33.551920833333334,
+      "min_ms": 31.770568,
+      "max_ms": 34.344604,
+      "sample_sd_ms": 0.9246473497219172,
+      "reserved_growth_in_measured_calls": false,
+      "maximum_peak_allocated_bytes": 1378735616
+    },
+    "accumulator": {
+      "count": 6,
+      "mean_ms": 29.625776333333334,
+      "min_ms": 27.431857,
+      "max_ms": 32.200365,
+      "sample_sd_ms": 1.8031168504964574,
+      "reserved_growth_in_measured_calls": false,
+      "maximum_peak_allocated_bytes": 1378807808
+    }
+  },
+  "paired_rows": [
+    {
+      "index": 1,
+      "order": [
+        "baseline",
+        "accumulator"
+      ],
+      "baseline": 33.392266,
+      "accumulator": 28.524962,
+      "saved_ms": 4.867304000000001
+    },
+    {
+      "index": 2,
+      "order": [
+        "accumulator",
+        "baseline"
+      ],
+      "accumulator": 32.200365,
+      "baseline": 33.861375,
+      "saved_ms": 1.6610100000000045
+    },
+    {
+      "index": 3,
+      "order": [
+        "baseline",
+        "accumulator"
+      ],
+      "baseline": 33.981251,
+      "accumulator": 28.859902,
+      "saved_ms": 5.121348999999999
+    },
+    {
+      "index": 4,
+      "order": [
+        "accumulator",
+        "baseline"
+      ],
+      "accumulator": 27.431857,
+      "baseline": 33.961461,
+      "saved_ms": 6.529603999999999
+    },
+    {
+      "index": 5,
+      "order": [
+        "baseline",
+        "accumulator"
+      ],
+      "baseline": 34.344604,
+      "accumulator": 31.346508,
+      "saved_ms": 2.9980959999999968
+    },
+    {
+      "index": 6,
+      "order": [
+        "accumulator",
+        "baseline"
+      ],
+      "accumulator": 29.391064,
+      "baseline": 31.770568,
+      "saved_ms": 2.3795040000000007
+    }
+  ],
+  "order_splits": [
+    {
+      "order": [
+        "baseline",
+        "accumulator"
+      ],
+      "count": 3,
+      "baseline_mean_ms": 33.90604033333333,
+      "accumulator_mean_ms": 29.577124,
+      "mean_saved_ms": 4.328916333333332
+    },
+    {
+      "order": [
+        "accumulator",
+        "baseline"
+      ],
+      "count": 3,
+      "baseline_mean_ms": 33.19780133333333,
+      "accumulator_mean_ms": 29.674428666666667,
+      "mean_saved_ms": 3.5233726666666683
+    }
+  ],
+  "mean_saved_ms": 3.9261444999999995,
+  "cost_reduction_percent": 11.701698151658235,
+  "pairs_cheaper": 6,
+  "all_rows_retained": true,
+  "minimum_observed_runtime_reserve_gib": {
+    "available_bytes": 19.268653869628906,
+    "commit_headroom_bytes": 111.15079879760742
+  },
+  "numerical_parity_qualified_scope": "All7x2560 BF16 hidden values and finite flags on one explicit finite synthetic input fixture, excluded pair+6measured pairs",
+  "fault_injection_model_body_qualified": false,
+  "real_feature_quality_qualified": false,
+  "head_executed": false,
+  "serving_gain_qualified": false,
+  "npu_enabled": false,
+  "native_ready_publication": false,
+  "serving_prefill_tok_s": null,
+  "serving_decode_tok_s": null,
+  "native_mtp_acceptance": null,
+  "decision": "Retain default-off accumulator; no further DFlash microbenchmark without new utility evidence; serving/native/NPU benefit unproved",
+  "raw_component": {
+    "actual_captured_tensors": false,
+    "actual_frozen_learned_bank": true,
+    "all_primitive_checks_preserved": true,
+    "attention_mode": "grouped_batch2",
+    "capacity": 16640,
+    "checkpoint_sha256": "35a23c17c248ff2e3296e6b78882b6d955af3092498fb7b6c48be1af4bfa971a",
+    "context_length": 16416,
+    "context_shape": [
+      5,
+      2,
+      2,
+      16640,
+      256
+    ],
+    "embedding_shard_loaded": false,
+    "engine_requests": 0,
+    "execution_order_counts": {
+      "accumulator_then_baseline": 3,
+      "baseline_then_accumulator": 3
+    },
+    "final_memory_bytes": {
+      "allocated": 1254340096,
+      "reserved": 1646264320
+    },
+    "fixture": "deterministic_arange_modulo_context_anchor_and_repeated_mask;absolute_theta1e7_RoPE",
+    "full_head_cpu_mmap_retained": true,
+    "gpu_head_allocated": false,
+    "head_executed": false,
+    "head_sha256": "50be0ccd11e4da0c92114600aca321d2c18f795e9e923fd587469587ecfd9df4",
+    "initial_memory_bytes": {
+      "allocated": 1174648320,
+      "reserved": 1644167168
+    },
+    "learned_gpu_bytes": 996213760,
+    "measured_calls": 12,
+    "measured_pairs": 6,
+    "native_acceptance_qualified": false,
+    "npu_executed": false,
+    "pairs": [
+      {
+        "calls": [
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 7185194,
+            "backbone_finite_sync_ns": 26207072,
+            "body_through_finite_readback_ns": 33392266,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378735616,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 0,
+            "pair_index": 1,
+            "returned_finite": true,
+            "variant": "baseline"
+          },
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 6816472,
+            "backbone_finite_sync_ns": 21708490,
+            "body_through_finite_readback_ns": 28524962,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378807808,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 1,
+            "pair_index": 1,
+            "returned_finite": true,
+            "variant": "accumulator"
+          }
+        ],
+        "excluded": false,
+        "execution_order": [
+          "baseline",
+          "accumulator"
+        ],
+        "finite_equal": true,
+        "hidden_bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "pair_index": 1,
+        "passed": true
+      },
+      {
+        "calls": [
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 6567167,
+            "backbone_finite_sync_ns": 25633198,
+            "body_through_finite_readback_ns": 32200365,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378807808,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 0,
+            "pair_index": 2,
+            "returned_finite": true,
+            "variant": "accumulator"
+          },
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 7419438,
+            "backbone_finite_sync_ns": 26441937,
+            "body_through_finite_readback_ns": 33861375,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378735616,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 1,
+            "pair_index": 2,
+            "returned_finite": true,
+            "variant": "baseline"
+          }
+        ],
+        "excluded": false,
+        "execution_order": [
+          "accumulator",
+          "baseline"
+        ],
+        "finite_equal": true,
+        "hidden_bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "pair_index": 2,
+        "passed": true
+      },
+      {
+        "calls": [
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 6992672,
+            "backbone_finite_sync_ns": 26988579,
+            "body_through_finite_readback_ns": 33981251,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378735616,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 0,
+            "pair_index": 3,
+            "returned_finite": true,
+            "variant": "baseline"
+          },
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 9306111,
+            "backbone_finite_sync_ns": 19553791,
+            "body_through_finite_readback_ns": 28859902,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378807808,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 1,
+            "pair_index": 3,
+            "returned_finite": true,
+            "variant": "accumulator"
+          }
+        ],
+        "excluded": false,
+        "execution_order": [
+          "baseline",
+          "accumulator"
+        ],
+        "finite_equal": true,
+        "hidden_bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "pair_index": 3,
+        "passed": true
+      },
+      {
+        "calls": [
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 6895827,
+            "backbone_finite_sync_ns": 20536030,
+            "body_through_finite_readback_ns": 27431857,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378807808,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 0,
+            "pair_index": 4,
+            "returned_finite": true,
+            "variant": "accumulator"
+          },
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 7144832,
+            "backbone_finite_sync_ns": 26816629,
+            "body_through_finite_readback_ns": 33961461,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378735616,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 1,
+            "pair_index": 4,
+            "returned_finite": true,
+            "variant": "baseline"
+          }
+        ],
+        "excluded": false,
+        "execution_order": [
+          "accumulator",
+          "baseline"
+        ],
+        "finite_equal": true,
+        "hidden_bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "pair_index": 4,
+        "passed": true
+      },
+      {
+        "calls": [
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 7211106,
+            "backbone_finite_sync_ns": 27133498,
+            "body_through_finite_readback_ns": 34344604,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378735616,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 0,
+            "pair_index": 5,
+            "returned_finite": true,
+            "variant": "baseline"
+          },
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 6577767,
+            "backbone_finite_sync_ns": 24768741,
+            "body_through_finite_readback_ns": 31346508,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378807808,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 1,
+            "pair_index": 5,
+            "returned_finite": true,
+            "variant": "accumulator"
+          }
+        ],
+        "excluded": false,
+        "execution_order": [
+          "baseline",
+          "accumulator"
+        ],
+        "finite_equal": true,
+        "hidden_bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "pair_index": 5,
+        "passed": true
+      },
+      {
+        "calls": [
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 7638151,
+            "backbone_finite_sync_ns": 21752913,
+            "body_through_finite_readback_ns": 29391064,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378807808,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 0,
+            "pair_index": 6,
+            "returned_finite": true,
+            "variant": "accumulator"
+          },
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 7626791,
+            "backbone_finite_sync_ns": 24143777,
+            "body_through_finite_readback_ns": 31770568,
+            "excluded": false,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378735616,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 1,
+            "pair_index": 6,
+            "returned_finite": true,
+            "variant": "baseline"
+          }
+        ],
+        "excluded": false,
+        "execution_order": [
+          "accumulator",
+          "baseline"
+        ],
+        "finite_equal": true,
+        "hidden_bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "pair_index": 6,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "preflight_numerical_parity_passed": true,
+    "primitive_predicates_per_body": 212,
+    "query_shape": [
+      7,
+      2560
+    ],
+    "query_slots": 7,
+    "real_feature_quality_qualified": false,
+    "rope_shape": [
+      7,
+      256
+    ],
+    "schema": "halogen.dflash.synthetic-full-backbone-finite-comparison.v1",
+    "serving_gain_qualified": false,
+    "shared_input_objects": true,
+    "shared_learned_buffers": true,
+    "source_pins": {
+      "abi.py": "13c80194c7a1fd067052d915ac86f76fe03556d595d81f894a3d6d5dfbabcda3",
+      "baseline_tensor_graphs.py": "c2f2c702cb2eac5bf6e72a061cc5d6172ba2e3d8c730cd534619ad9a366d9761",
+      "candidate_tensor_graphs.py": "65101cd3d505d6d0aead42e36de0517dfbacc1cdc68aca217ac228e6bdeff1e6",
+      "contract.py": "307e7eb0064c1078ffb7702bffabba3dce52e5b2e101c2f1ffbd74b34a7d8e33",
+      "fullbody_screen.py": "132843e13a3ed61d5eb15dd33b3dbff340237063a3e97893ef4c8a89791c6e78",
+      "offline_loader.py": "0e55a5c9110da72a43f6c212d5cddb3a32b522a203c0e4c19b6739fd4e30be7e"
+    },
+    "summary": {
+      "accumulator_mean_ns": 29625776.333333332,
+      "baseline_mean_ns": 33551920.833333332
+    },
+    "synthetic_inputs": true,
+    "timing_scope": "host full-backbone call through equal all-row validity .item(); equal pre-call synchronization; parity copies outside timing",
+    "warmup_pairs": 1,
+    "warmups": [
+      {
+        "calls": [
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 624492044,
+            "backbone_finite_sync_ns": 17939638,
+            "body_through_finite_readback_ns": 642431682,
+            "excluded": true,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378735616,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1174648320,
+              "reserved": 1644167168
+            },
+            "order_in_pair": 0,
+            "pair_index": 0,
+            "returned_finite": true,
+            "variant": "baseline"
+          },
+          {
+            "all_hidden_rows_finite": true,
+            "backbone_dispatch_ns": 7245207,
+            "backbone_finite_sync_ns": 23928005,
+            "body_through_finite_readback_ns": 31173212,
+            "excluded": true,
+            "memory_after_bytes": {
+              "allocated": 1254376448,
+              "peak_allocated": 1378807808,
+              "peak_reserved": 1646264320,
+              "reserved": 1646264320
+            },
+            "memory_before_bytes": {
+              "allocated": 1254340096,
+              "reserved": 1646264320
+            },
+            "order_in_pair": 1,
+            "pair_index": 0,
+            "returned_finite": true,
+            "variant": "accumulator"
+          }
+        ],
+        "excluded": true,
+        "execution_order": [
+          "baseline",
+          "accumulator"
+        ],
+        "finite_equal": true,
+        "hidden_bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "pair_index": 0,
+        "passed": true
+      }
+    ]
+  },
+  "raw_window": {
+    "schema": "halogen.dflash.finite-fullbody-window.v1",
+    "utc": "2026-10-10T09:30:21.790530+00:00",
+    "passed": true,
+    "diagnostic_only": false,
+    "retry_permitted": false,
+    "error": null,
+    "cleanup_error": null,
+    "container_id": "7a919d44d254bf8398b64bc47478b19cea96a858bb87944f54a04228a2ca5246",
+    "container_terminal": {
+      "Status": "exited",
+      "Running": false,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 0,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-10-10T09:29:30.256182708Z",
+      "FinishedAt": "2026-10-10T09:29:52.690875224Z"
+    },
+    "owned_worker_closed": true,
+    "engine_requests": 0,
+    "normal_engine_kept_open": true,
+    "health_before": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "health_after": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "completed_delta": 0,
+    "cancelled_delta": 0,
+    "memory_frames": [
+      {
+        "utc": "2026-10-10T09:29:57.048701+00:00",
+        "memory": {
+          "available_bytes": 25370697728,
+          "committed_bytes": 116064505856,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124074934272
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:57.644715+00:00",
+        "memory": {
+          "available_bytes": 25372323840,
+          "committed_bytes": 116065046528,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124074393600
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:57.852481+00:00",
+        "memory": {
+          "available_bytes": 25373085696,
+          "committed_bytes": 116064313344,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124075126784
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:58.056541+00:00",
+        "memory": {
+          "available_bytes": 25375883264,
+          "committed_bytes": 116060086272,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124079353856
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:58.261081+00:00",
+        "memory": {
+          "available_bytes": 25372950528,
+          "committed_bytes": 116075245568,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124064194560
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:58.466755+00:00",
+        "memory": {
+          "available_bytes": 25372798976,
+          "committed_bytes": 116075245568,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124064194560
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:59.034633+00:00",
+        "memory": {
+          "available_bytes": 25365020672,
+          "committed_bytes": 116073988096,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124065452032
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:59.240523+00:00",
+        "memory": {
+          "available_bytes": 25364918272,
+          "committed_bytes": 116069265408,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124070174720
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:59.444400+00:00",
+        "memory": {
+          "available_bytes": 25365966848,
+          "committed_bytes": 116069265408,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124070174720
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:59.650801+00:00",
+        "memory": {
+          "available_bytes": 25361858560,
+          "committed_bytes": 116081315840,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124058124288
+        }
+      },
+      {
+        "utc": "2026-10-10T09:29:59.853248+00:00",
+        "memory": {
+          "available_bytes": 25362100224,
+          "committed_bytes": 116080271360,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124059168768
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:00.952856+00:00",
+        "memory": {
+          "available_bytes": 25367490560,
+          "committed_bytes": 116046811136,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124092628992
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:01.159026+00:00",
+        "memory": {
+          "available_bytes": 25367658496,
+          "committed_bytes": 116059095040,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124080345088
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:01.361958+00:00",
+        "memory": {
+          "available_bytes": 25378729984,
+          "committed_bytes": 116049747968,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124089692160
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:01.566511+00:00",
+        "memory": {
+          "available_bytes": 25377984512,
+          "committed_bytes": 116049747968,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124089692160
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:01.769403+00:00",
+        "memory": {
+          "available_bytes": 25372426240,
+          "committed_bytes": 116046725120,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124092715008
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:02.351303+00:00",
+        "memory": {
+          "available_bytes": 25324580864,
+          "committed_bytes": 116093857792,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124045582336
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:02.553741+00:00",
+        "memory": {
+          "available_bytes": 25208791040,
+          "committed_bytes": 116222861312,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123916578816
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:02.761921+00:00",
+        "memory": {
+          "available_bytes": 25173692416,
+          "committed_bytes": 116244475904,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123894964224
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:02.964150+00:00",
+        "memory": {
+          "available_bytes": 25148678144,
+          "committed_bytes": 116269572096,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123869868032
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:03.170499+00:00",
+        "memory": {
+          "available_bytes": 25116925952,
+          "committed_bytes": 116300943360,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123838496768
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:03.943443+00:00",
+        "memory": {
+          "available_bytes": 25100173312,
+          "committed_bytes": 116327436288,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123812003840
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:04.148625+00:00",
+        "memory": {
+          "available_bytes": 25109999616,
+          "committed_bytes": 116315897856,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123823542272
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:04.352020+00:00",
+        "memory": {
+          "available_bytes": 25115275264,
+          "committed_bytes": 116313137152,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123826302976
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:04.558053+00:00",
+        "memory": {
+          "available_bytes": 25109168128,
+          "committed_bytes": 116327272448,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123812167680
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:04.760491+00:00",
+        "memory": {
+          "available_bytes": 25078886400,
+          "committed_bytes": 116358950912,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123780489216
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:05.327399+00:00",
+        "memory": {
+          "available_bytes": 25083875328,
+          "committed_bytes": 116340604928,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123798835200
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:05.533925+00:00",
+        "memory": {
+          "available_bytes": 25097773056,
+          "committed_bytes": 116331216896,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123808223232
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:05.741256+00:00",
+        "memory": {
+          "available_bytes": 25097547776,
+          "committed_bytes": 116326961152,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123812478976
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:05.945867+00:00",
+        "memory": {
+          "available_bytes": 25098526720,
+          "committed_bytes": 116324233216,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123815206912
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:06.150147+00:00",
+        "memory": {
+          "available_bytes": 25098682368,
+          "committed_bytes": 116325273600,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123814166528
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:06.979283+00:00",
+        "memory": {
+          "available_bytes": 25097478144,
+          "committed_bytes": 116335665152,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123803774976
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:07.185582+00:00",
+        "memory": {
+          "available_bytes": 25097986048,
+          "committed_bytes": 116336586752,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123802853376
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:07.391516+00:00",
+        "memory": {
+          "available_bytes": 25089458176,
+          "committed_bytes": 116343877632,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123795562496
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:07.596303+00:00",
+        "memory": {
+          "available_bytes": 25089593344,
+          "committed_bytes": 116343877632,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123795562496
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:07.799756+00:00",
+        "memory": {
+          "available_bytes": 25095196672,
+          "committed_bytes": 116333760512,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123805679616
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:08.352168+00:00",
+        "memory": {
+          "available_bytes": 25092751360,
+          "committed_bytes": 116342644736,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123796795392
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:08.556402+00:00",
+        "memory": {
+          "available_bytes": 25092292608,
+          "committed_bytes": 116339499008,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123799941120
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:08.760966+00:00",
+        "memory": {
+          "available_bytes": 25093414912,
+          "committed_bytes": 116338769920,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123800670208
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:08.965111+00:00",
+        "memory": {
+          "available_bytes": 25097719808,
+          "committed_bytes": 116333727744,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123805712384
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:09.171677+00:00",
+        "memory": {
+          "available_bytes": 24962215936,
+          "committed_bytes": 116468862976,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123670577152
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:10.747427+00:00",
+        "memory": {
+          "available_bytes": 24319053824,
+          "committed_bytes": 117119344640,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123020095488
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:10.952647+00:00",
+        "memory": {
+          "available_bytes": 24224153600,
+          "committed_bytes": 117219246080,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 122920194048
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:11.157956+00:00",
+        "memory": {
+          "available_bytes": 24137887744,
+          "committed_bytes": 117302620160,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 122836819968
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:11.362228+00:00",
+        "memory": {
+          "available_bytes": 24074997760,
+          "committed_bytes": 117364637696,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 122774802432
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:11.567155+00:00",
+        "memory": {
+          "available_bytes": 23976304640,
+          "committed_bytes": 117465772032,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 122673668096
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:13.148968+00:00",
+        "memory": {
+          "available_bytes": 23281094656,
+          "committed_bytes": 118147641344,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 121991798784
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:13.355499+00:00",
+        "memory": {
+          "available_bytes": 23185956864,
+          "committed_bytes": 118241660928,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 121897779200
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:13.560540+00:00",
+        "memory": {
+          "available_bytes": 23087427584,
+          "committed_bytes": 118345019392,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 121794420736
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:13.767091+00:00",
+        "memory": {
+          "available_bytes": 22978768896,
+          "committed_bytes": 118449004544,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 121690435584
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:13.972126+00:00",
+        "memory": {
+          "available_bytes": 22888230912,
+          "committed_bytes": 118539030528,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 121600409600
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:15.550734+00:00",
+        "memory": {
+          "available_bytes": 22167736320,
+          "committed_bytes": 119280336896,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 120859103232
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:15.753177+00:00",
+        "memory": {
+          "available_bytes": 22060449792,
+          "committed_bytes": 119395708928,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 120743731200
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:15.958201+00:00",
+        "memory": {
+          "available_bytes": 21927497728,
+          "committed_bytes": 119524315136,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 120615124992
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:16.163574+00:00",
+        "memory": {
+          "available_bytes": 21838749696,
+          "committed_bytes": 119617654784,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 120521785344
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:16.369466+00:00",
+        "memory": {
+          "available_bytes": 21688078336,
+          "committed_bytes": 119767629824,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 120371810304
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:17.991581+00:00",
+        "memory": {
+          "available_bytes": 20774645760,
+          "committed_bytes": 120702631936,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 119436808192
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:18.195571+00:00",
+        "memory": {
+          "available_bytes": 20689559552,
+          "committed_bytes": 120792178688,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 119347261440
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:18.401097+00:00",
+        "memory": {
+          "available_bytes": 20754735104,
+          "committed_bytes": 120699461632,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 119439978496
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:18.605689+00:00",
+        "memory": {
+          "available_bytes": 20743761920,
+          "committed_bytes": 120724410368,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 119415029760
+        }
+      },
+      {
+        "utc": "2026-10-10T09:30:18.808210+00:00",
+        "memory": {
+          "available_bytes": 20744622080,
+          "committed_bytes": 120718155776,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 119421284352
+        }
+      }
+    ],
+    "synthetic_full_backbone": true,
+    "actual_captured_tensors": false,
+    "head_executed": false,
+    "checkpoint_loading_attempted": true,
+    "checkpoint_sha256": "35a23c17c248ff2e3296e6b78882b6d955af3092498fb7b6c48be1af4bfa971a",
+    "head_loading_attempted": true,
+    "head_sha256": "50be0ccd11e4da0c92114600aca321d2c18f795e9e923fd587469587ecfd9df4",
+    "full_head_cpu_mmap_retained": true,
+    "gpu_head_allocated": false,
+    "embedding_shard_loaded": false,
+    "serving_gain_qualified": false,
+    "full_backbone_measured": true,
+    "component_result": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\stdout.json"
+  },
+  "evidence": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\assessed-load-admission.json",
+      "bytes": 733,
+      "sha256": "776e12b963270e371cbcc62f811b5636f158b915d62593d430a4e9c40ffedd44"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\checkpoint-verified.json",
+      "bytes": 213,
+      "sha256": "e78ed2bb45aa84c8b9119ec06a1dbb61010c95d397204044bc59d2c512a48577"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\commands.json",
+      "bytes": 5669,
+      "sha256": "0391d9752b1c53fc6ba4fd3549f1e87a4cf5f00f4af25f851bf9defa8e2a285a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\container-created.json",
+      "bytes": 236,
+      "sha256": "ed01701b1f372883203c64aa22a324172fab5ee4eb59e0d601d193291ac2dcdc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\gaming-checks.json",
+      "bytes": 13347,
+      "sha256": "67cb6e6a8d15e5c26529877f40a9e2b0f5b34c865be021a9f82d553effba23b3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\gaming-current.json",
+      "bytes": 358,
+      "sha256": "b3310e22d34281b480ce89dc8604496738604bed29dac92b2270f05ff93e23f4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\handle.json",
+      "bytes": 523,
+      "sha256": "f97d46fa49892bc26b755dae2a3fe181f02c5b57305966c6c3ab0815fce8c088"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\head-verified.json",
+      "bytes": 244,
+      "sha256": "9025b0348700feaaf35c109e6aa772aab21fb9dd3e23e997ca1b09667eea372e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\health-after.json",
+      "bytes": 8467,
+      "sha256": "dcae9ec300657c5d31f59b6b2cd111958cd12dc8107fd4c473f874b33ee39e76"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\health-before.json",
+      "bytes": 8467,
+      "sha256": "fceed5c02ea9068da9a5acd9eeb3e7044fa34b84f5c23e3837cc0d48e52919d2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\health-final.json",
+      "bytes": 8467,
+      "sha256": "fceed5c02ea9068da9a5acd9eeb3e7044fa34b84f5c23e3837cc0d48e52919d2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\intent.json",
+      "bytes": 29764,
+      "sha256": "2fcca3b451d14b9a446e36b135639825fcbf680d98ae0fd2a0a022b70ff3c38a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\load-before.json",
+      "bytes": 429,
+      "sha256": "182bab049cfc9c6eb18297397dae21c0f4d34696514616109ec129e5b5d9eb58"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\memory-after-load.json",
+      "bytes": 155,
+      "sha256": "3ae9c458531003c3cee1363b88b00465e00f5b3c32af8e5fd07b2ed1c4afee85"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\memory-entry.json",
+      "bytes": 155,
+      "sha256": "6206e626b1b765a878029633595dac5bdd81120e7c0bb446caaee8053ce81247"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\memory-immediate.json",
+      "bytes": 155,
+      "sha256": "31338c0a422d74e176bde08dcd00e6df63db513516a10d3aded0de21b342ceda"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\outcome.json",
+      "bytes": 18340,
+      "sha256": "f7f4fa374777eebd74c3ea1a2bbcc9807bb2dc0803ab44e1ae8e1fa2b19a5d84"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\screen\\stdout.json",
+      "bytes": 10083,
+      "sha256": "acb18a6864b49a1188507a84f35b2f81d0edc4f245c1888f6167d95d53b16b7e"
+    }
+  ],
+  "source_evidence": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\abi.py",
+      "bytes": 4324,
+      "sha256": "13c80194c7a1fd067052d915ac86f76fe03556d595d81f894a3d6d5dfbabcda3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\baseline_tensor_graphs.py",
+      "bytes": 19822,
+      "sha256": "c2f2c702cb2eac5bf6e72a061cc5d6172ba2e3d8c730cd534619ad9a366d9761"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\candidate_tensor_graphs.py",
+      "bytes": 20728,
+      "sha256": "65101cd3d505d6d0aead42e36de0517dfbacc1cdc68aca217ac228e6bdeff1e6"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\contract.py",
+      "bytes": 13071,
+      "sha256": "307e7eb0064c1078ffb7702bffabba3dce52e5b2e101c2f1ffbd74b34a7d8e33"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\fullbody_screen.py",
+      "bytes": 16383,
+      "sha256": "132843e13a3ed61d5eb15dd33b3dbff340237063a3e97893ef4c8a89791c6e78"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\implementation-plan.md",
+      "bytes": 2235,
+      "sha256": "393d92b07c1e8c27aec95181e01e70f3186c5ed775c4b24679dd6e244cef4569"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\independent-wrapper-review.md",
+      "bytes": 3768,
+      "sha256": "cde640408f99719e021a77253836264b2028934e236429ca84843aaf90f9d778"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\offline_loader.py",
+      "bytes": 3916,
+      "sha256": "0e55a5c9110da72a43f6c212d5cddb3a32b522a203c0e4c19b6739fd4e30be7e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\ROOT-RUNTIME.md",
+      "bytes": 3384,
+      "sha256": "010de3eb83ee6f7218f7327f01e17c38a1b30eb068c96efb9a2ee778993167a2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\root-source-validation.json",
+      "bytes": 3218,
+      "sha256": "ee21e8a1058af0e9070433f428317ab1bad00badf3398e995b0befb9eb87bf38"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\root_run.py",
+      "bytes": 26258,
+      "sha256": "9a4894d3d91047d30e3e97dac5d9f36431b6ceb097481970b871b885b999d430"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\root_test_contract.py",
+      "bytes": 1646,
+      "sha256": "5ff6118173d3c160f07af50fe5e99bcf9e24f661da8444f5f990779d9ba753bc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-fullbody-component-20261010\\source-handoff.json",
+      "bytes": 5337,
+      "sha256": "03a0c61b5ee920af8e7c7ef4e3cd5faa361715d0037528fbe4504f695fa54029"
+    }
+  ]
+}

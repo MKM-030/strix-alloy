@@ -1,0 +1,1110 @@
+
+C:\Projects\strix-alloy-clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0180-normal-bridge-preparation-20261011\halogen0181-extracted-20261012\flash_serve:	file format elf64-x86-64
+
+Disassembly of section .text:
+
+00000000017fa890 <.text>:
+ 1819950: 55                           	push	rbp
+ 1819951: 41 57                        	push	r15
+ 1819953: 41 56                        	push	r14
+ 1819955: 41 55                        	push	r13
+ 1819957: 41 54                        	push	r12
+ 1819959: 53                           	push	rbx
+ 181995a: 48 81 ec f8 00 00 00         	sub	rsp, 0xf8
+ 1819961: 49 89 d6                     	mov	r14, rdx
+ 1819964: 49 89 f5                     	mov	r13, rsi
+ 1819967: 49 89 fc                     	mov	r12, rdi
+ 181996a: 48 8b 3f                     	mov	rdi, qword ptr [rdi]
+ 181996d: 8b 72 08                     	mov	esi, dword ptr [rdx + 0x8]
+ 1819970: e8 db 36 0c 00               	call	0x18dd050 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x89ec0>
+ 1819975: c7 44 24 04 00 00 00 00      	mov	dword ptr [rsp + 0x4], 0x0
+ 181997d: 41 80 be 38 02 00 00 01      	cmp	byte ptr [r14 + 0x238], 0x1
+ 1819985: 0f 85 ea 06 00 00            	jne	0x181a075 <.text+0x1f7e5>
+ 181998b: 4d 8d be 80 02 00 00         	lea	r15, [r14 + 0x280]
+ 1819992: 49 8b be 80 02 00 00         	mov	rdi, qword ptr [r14 + 0x280]
+ 1819999: 48 85 ff                     	test	rdi, rdi
+ 181999c: 74 17                        	je	0x18199b5 <.text+0x1f125>
+ 181999e: 66 90                        	nop
+ 18199a0: 48 8b 1f                     	mov	rbx, qword ptr [rdi]
+ 18199a3: be 10 00 00 00               	mov	esi, 0x10
+ 18199a8: e8 53 83 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 18199ad: 48 89 df                     	mov	rdi, rbx
+ 18199b0: 48 85 db                     	test	rbx, rbx
+ 18199b3: 75 eb                        	jne	0x18199a0 <.text+0x1f110>
+ 18199b5: 49 8b be 70 02 00 00         	mov	rdi, qword ptr [r14 + 0x270]
+ 18199bc: 49 8b 96 78 02 00 00         	mov	rdx, qword ptr [r14 + 0x278]
+ 18199c3: 48 c1 e2 03                  	shl	rdx, 0x3
+ 18199c7: 31 f6                        	xor	esi, esi
+ 18199c9: e8 22 83 1b 00               	call	0x19d1cf0 <memset@plt>
+ 18199ce: 0f 57 c0                     	xorps	xmm0, xmm0
+ 18199d1: 41 0f 11 07                  	movups	xmmword ptr [r15], xmm0
+ 18199d5: 49 8b 86 a8 02 00 00         	mov	rax, qword ptr [r14 + 0x2a8]
+ 18199dc: 49 39 86 b0 02 00 00         	cmp	qword ptr [r14 + 0x2b0], rax
+ 18199e3: 74 07                        	je	0x18199ec <.text+0x1f15c>
+ 18199e5: 49 89 86 b0 02 00 00         	mov	qword ptr [r14 + 0x2b0], rax
+ 18199ec: 49 8b 86 c0 02 00 00         	mov	rax, qword ptr [r14 + 0x2c0]
+ 18199f3: 49 39 86 c8 02 00 00         	cmp	qword ptr [r14 + 0x2c8], rax
+ 18199fa: 74 07                        	je	0x1819a03 <.text+0x1f173>
+ 18199fc: 49 89 86 c8 02 00 00         	mov	qword ptr [r14 + 0x2c8], rax
+ 1819a03: 49 8b 86 d8 02 00 00         	mov	rax, qword ptr [r14 + 0x2d8]
+ 1819a0a: 49 39 86 e0 02 00 00         	cmp	qword ptr [r14 + 0x2e0], rax
+ 1819a11: 74 07                        	je	0x1819a1a <.text+0x1f18a>
+ 1819a13: 49 89 86 e0 02 00 00         	mov	qword ptr [r14 + 0x2e0], rax
+ 1819a1a: 49 8b 86 f0 02 00 00         	mov	rax, qword ptr [r14 + 0x2f0]
+ 1819a21: 49 39 86 f8 02 00 00         	cmp	qword ptr [r14 + 0x2f8], rax
+ 1819a28: 74 07                        	je	0x1819a31 <.text+0x1f1a1>
+ 1819a2a: 49 89 86 f8 02 00 00         	mov	qword ptr [r14 + 0x2f8], rax
+ 1819a31: 49 8b 86 08 03 00 00         	mov	rax, qword ptr [r14 + 0x308]
+ 1819a38: 49 39 86 10 03 00 00         	cmp	qword ptr [r14 + 0x310], rax
+ 1819a3f: 74 07                        	je	0x1819a48 <.text+0x1f1b8>
+ 1819a41: 49 89 86 10 03 00 00         	mov	qword ptr [r14 + 0x310], rax
+ 1819a48: 4c 89 64 24 30               	mov	qword ptr [rsp + 0x30], r12
+ 1819a4d: 4c 89 6c 24 40               	mov	qword ptr [rsp + 0x40], r13
+ 1819a52: 49 8b 86 20 03 00 00         	mov	rax, qword ptr [r14 + 0x320]
+ 1819a59: 49 39 86 28 03 00 00         	cmp	qword ptr [r14 + 0x328], rax
+ 1819a60: 74 07                        	je	0x1819a69 <.text+0x1f1d9>
+ 1819a62: 49 89 86 28 03 00 00         	mov	qword ptr [r14 + 0x328], rax
+ 1819a69: 49 8b b6 40 02 00 00         	mov	rsi, qword ptr [r14 + 0x240]
+ 1819a70: 49 39 b6 48 02 00 00         	cmp	qword ptr [r14 + 0x248], rsi
+ 1819a77: 0f 84 62 06 00 00            	je	0x181a0df <.text+0x1f84f>
+ 1819a7d: 31 c9                        	xor	ecx, ecx
+ 1819a7f: 48 c7 44 24 08 00 00 00 00   	mov	qword ptr [rsp + 0x8], 0x0
+ 1819a88: eb 45                        	jmp	0x1819acf <.text+0x1f23f>
+ 1819a8a: 66 0f 1f 44 00 00            	nop	word ptr [rax + rax]
+ 1819a90: c6 45 00 00                  	mov	byte ptr [rbp], 0x0
+ 1819a94: 49 ff 86 28 03 00 00         	inc	qword ptr [r14 + 0x328]
+ 1819a9b: 48 8b 7c 24 08               	mov	rdi, qword ptr [rsp + 0x8]
+ 1819aa0: 48 ff c7                     	inc	rdi
+ 1819aa3: 49 8b b6 40 02 00 00         	mov	rsi, qword ptr [r14 + 0x240]
+ 1819aaa: 49 8b 86 48 02 00 00         	mov	rax, qword ptr [r14 + 0x248]
+ 1819ab1: 48 29 f0                     	sub	rax, rsi
+ 1819ab4: 48 c1 f8 02                  	sar	rax, 0x2
+ 1819ab8: 48 8b 4c 24 48               	mov	rcx, qword ptr [rsp + 0x48]
+ 1819abd: 48 83 c1 04                  	add	rcx, 0x4
+ 1819ac1: 48 89 7c 24 08               	mov	qword ptr [rsp + 0x8], rdi
+ 1819ac6: 48 39 c7                     	cmp	rdi, rax
+ 1819ac9: 0f 83 10 06 00 00            	jae	0x181a0df <.text+0x1f84f>
+ 1819acf: 48 89 4c 24 48               	mov	qword ptr [rsp + 0x48], rcx
+ 1819ad4: 48 01 ce                     	add	rsi, rcx
+ 1819ad7: 49 8b 86 b0 02 00 00         	mov	rax, qword ptr [r14 + 0x2b0]
+ 1819ade: 49 2b 86 a8 02 00 00         	sub	rax, qword ptr [r14 + 0x2a8]
+ 1819ae5: 48 c1 e8 02                  	shr	rax, 0x2
+ 1819ae9: 89 44 24 10                  	mov	dword ptr [rsp + 0x10], eax
+ 1819aed: 49 8d be 70 02 00 00         	lea	rdi, [r14 + 0x270]
+ 1819af4: 48 8d 54 24 10               	lea	rdx, [rsp + 0x10]
+ 1819af9: e8 d2 db 02 00               	call	0x18476d0 <_ZNSt6vectorIfSaIfEEaSERKS1_+0x1130>
+ 1819afe: 4d 8b ae 40 02 00 00         	mov	r13, qword ptr [r14 + 0x240]
+ 1819b05: 49 8b ae b0 02 00 00         	mov	rbp, qword ptr [r14 + 0x2b0]
+ 1819b0c: 49 3b ae b8 02 00 00         	cmp	rbp, qword ptr [r14 + 0x2b8]
+ 1819b13: 0f 84 f7 00 00 00            	je	0x1819c10 <.text+0x1f380>
+ 1819b19: 48 8b 44 24 08               	mov	rax, qword ptr [rsp + 0x8]
+ 1819b1e: 41 8b 44 85 00               	mov	eax, dword ptr [r13 + 4*rax]
+ 1819b23: 89 45 00                     	mov	dword ptr [rbp], eax
+ 1819b26: 48 83 c5 04                  	add	rbp, 0x4
+ 1819b2a: 49 89 ae b0 02 00 00         	mov	qword ptr [r14 + 0x2b0], rbp
+ 1819b31: 4d 8b ae 58 02 00 00         	mov	r13, qword ptr [r14 + 0x258]
+ 1819b38: 49 8b ae e0 02 00 00         	mov	rbp, qword ptr [r14 + 0x2e0]
+ 1819b3f: 49 3b ae e8 02 00 00         	cmp	rbp, qword ptr [r14 + 0x2e8]
+ 1819b46: 0f 84 8b 01 00 00            	je	0x1819cd7 <.text+0x1f447>
+ 1819b4c: 48 8b 44 24 08               	mov	rax, qword ptr [rsp + 0x8]
+ 1819b51: f3 41 0f 10 44 85 00         	movss	xmm0, dword ptr [r13 + 4*rax]
+ 1819b58: f3 0f 11 45 00               	movss	dword ptr [rbp], xmm0
+ 1819b5d: 48 83 c5 04                  	add	rbp, 0x4
+ 1819b61: 49 89 ae e0 02 00 00         	mov	qword ptr [r14 + 0x2e0], rbp
+ 1819b68: 49 8b ae f8 02 00 00         	mov	rbp, qword ptr [r14 + 0x2f8]
+ 1819b6f: 49 3b ae 00 03 00 00         	cmp	rbp, qword ptr [r14 + 0x300]
+ 1819b76: 0f 84 1f 02 00 00            	je	0x1819d9b <.text+0x1f50b>
+ 1819b7c: c7 45 00 00 00 00 00         	mov	dword ptr [rbp], 0x0
+ 1819b83: 48 83 c5 04                  	add	rbp, 0x4
+ 1819b87: 49 89 ae f8 02 00 00         	mov	qword ptr [r14 + 0x2f8], rbp
+ 1819b8e: 4d 8b ae 58 02 00 00         	mov	r13, qword ptr [r14 + 0x258]
+ 1819b95: 49 8b ae c8 02 00 00         	mov	rbp, qword ptr [r14 + 0x2c8]
+ 1819b9c: 49 3b ae d0 02 00 00         	cmp	rbp, qword ptr [r14 + 0x2d0]
+ 1819ba3: 0f 84 b2 02 00 00            	je	0x1819e5b <.text+0x1f5cb>
+ 1819ba9: 48 8b 44 24 08               	mov	rax, qword ptr [rsp + 0x8]
+ 1819bae: f3 41 0f 10 44 85 00         	movss	xmm0, dword ptr [r13 + 4*rax]
+ 1819bb5: f3 0f 11 45 00               	movss	dword ptr [rbp], xmm0
+ 1819bba: 48 83 c5 04                  	add	rbp, 0x4
+ 1819bbe: 49 89 ae c8 02 00 00         	mov	qword ptr [r14 + 0x2c8], rbp
+ 1819bc5: 49 8b ae 10 03 00 00         	mov	rbp, qword ptr [r14 + 0x310]
+ 1819bcc: 49 3b ae 18 03 00 00         	cmp	rbp, qword ptr [r14 + 0x318]
+ 1819bd3: 0f 84 46 03 00 00            	je	0x1819f1f <.text+0x1f68f>
+ 1819bd9: c7 45 00 00 00 00 00         	mov	dword ptr [rbp], 0x0
+ 1819be0: 48 83 c5 04                  	add	rbp, 0x4
+ 1819be4: 49 89 ae 10 03 00 00         	mov	qword ptr [r14 + 0x310], rbp
+ 1819beb: 49 8b ae 28 03 00 00         	mov	rbp, qword ptr [r14 + 0x328]
+ 1819bf2: 49 3b ae 30 03 00 00         	cmp	rbp, qword ptr [r14 + 0x330]
+ 1819bf9: 0f 85 91 fe ff ff            	jne	0x1819a90 <.text+0x1f200>
+ 1819bff: e9 d4 03 00 00               	jmp	0x1819fd8 <.text+0x1f748>
+ 1819c04: 66 66 66 2e 0f 1f 84 00 00 00 00 00  	nop	word ptr cs:[rax + rax]
+ 1819c10: 49 8b 9e a8 02 00 00         	mov	rbx, qword ptr [r14 + 0x2a8]
+ 1819c17: 48 29 dd                     	sub	rbp, rbx
+ 1819c1a: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 1819c24: 48 39 c5                     	cmp	rbp, rax
+ 1819c27: 0f 84 de 0f 00 00            	je	0x181ac0b <.text+0x2037b>
+ 1819c2d: 48 89 e8                     	mov	rax, rbp
+ 1819c30: 48 c1 f8 02                  	sar	rax, 0x2
+ 1819c34: 48 83 f8 01                  	cmp	rax, 0x1
+ 1819c38: 48 89 c1                     	mov	rcx, rax
+ 1819c3b: 48 83 d1 00                  	adc	rcx, 0x0
+ 1819c3f: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 1819c43: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 1819c4d: 49 39 d4                     	cmp	r12, rdx
+ 1819c50: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 1819c54: 48 01 c1                     	add	rcx, rax
+ 1819c57: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 1819c5b: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 1819c63: e8 18 81 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 1819c68: 49 89 c7                     	mov	r15, rax
+ 1819c6b: 48 8b 44 24 08               	mov	rax, qword ptr [rsp + 0x8]
+ 1819c70: 41 8b 44 85 00               	mov	eax, dword ptr [r13 + 4*rax]
+ 1819c75: 41 89 04 2f                  	mov	dword ptr [r15 + rbp], eax
+ 1819c79: 48 85 ed                     	test	rbp, rbp
+ 1819c7c: 7e 0e                        	jle	0x1819c8c <.text+0x1f3fc>
+ 1819c7e: 4c 89 ff                     	mov	rdi, r15
+ 1819c81: 48 89 de                     	mov	rsi, rbx
+ 1819c84: 48 89 ea                     	mov	rdx, rbp
+ 1819c87: e8 e4 80 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 1819c8c: 48 85 db                     	test	rbx, rbx
+ 1819c8f: 74 0b                        	je	0x1819c9c <.text+0x1f40c>
+ 1819c91: 48 89 df                     	mov	rdi, rbx
+ 1819c94: 48 89 ee                     	mov	rsi, rbp
+ 1819c97: e8 64 80 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 1819c9c: 4c 01 fd                     	add	rbp, r15
+ 1819c9f: 48 83 c5 04                  	add	rbp, 0x4
+ 1819ca3: 4d 89 be a8 02 00 00         	mov	qword ptr [r14 + 0x2a8], r15
+ 1819caa: 49 89 ae b0 02 00 00         	mov	qword ptr [r14 + 0x2b0], rbp
+ 1819cb1: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 1819cb5: 49 89 86 b8 02 00 00         	mov	qword ptr [r14 + 0x2b8], rax
+ 1819cbc: 4d 8b ae 58 02 00 00         	mov	r13, qword ptr [r14 + 0x258]
+ 1819cc3: 49 8b ae e0 02 00 00         	mov	rbp, qword ptr [r14 + 0x2e0]
+ 1819cca: 49 3b ae e8 02 00 00         	cmp	rbp, qword ptr [r14 + 0x2e8]
+ 1819cd1: 0f 85 75 fe ff ff            	jne	0x1819b4c <.text+0x1f2bc>
+ 1819cd7: 49 8b 9e d8 02 00 00         	mov	rbx, qword ptr [r14 + 0x2d8]
+ 1819cde: 48 29 dd                     	sub	rbp, rbx
+ 1819ce1: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 1819ceb: 48 39 c5                     	cmp	rbp, rax
+ 1819cee: 0f 84 47 0f 00 00            	je	0x181ac3b <.text+0x203ab>
+ 1819cf4: 48 89 e8                     	mov	rax, rbp
+ 1819cf7: 48 c1 f8 02                  	sar	rax, 0x2
+ 1819cfb: 48 83 f8 01                  	cmp	rax, 0x1
+ 1819cff: 48 89 c1                     	mov	rcx, rax
+ 1819d02: 48 83 d1 00                  	adc	rcx, 0x0
+ 1819d06: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 1819d0a: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 1819d14: 49 39 d4                     	cmp	r12, rdx
+ 1819d17: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 1819d1b: 48 01 c1                     	add	rcx, rax
+ 1819d1e: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 1819d22: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 1819d2a: e8 51 80 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 1819d2f: 49 89 c7                     	mov	r15, rax
+ 1819d32: 48 8b 44 24 08               	mov	rax, qword ptr [rsp + 0x8]
+ 1819d37: f3 41 0f 10 44 85 00         	movss	xmm0, dword ptr [r13 + 4*rax]
+ 1819d3e: f3 41 0f 11 04 2f            	movss	dword ptr [r15 + rbp], xmm0
+ 1819d44: 48 85 ed                     	test	rbp, rbp
+ 1819d47: 7e 0e                        	jle	0x1819d57 <.text+0x1f4c7>
+ 1819d49: 4c 89 ff                     	mov	rdi, r15
+ 1819d4c: 48 89 de                     	mov	rsi, rbx
+ 1819d4f: 48 89 ea                     	mov	rdx, rbp
+ 1819d52: e8 19 80 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 1819d57: 48 85 db                     	test	rbx, rbx
+ 1819d5a: 74 0b                        	je	0x1819d67 <.text+0x1f4d7>
+ 1819d5c: 48 89 df                     	mov	rdi, rbx
+ 1819d5f: 48 89 ee                     	mov	rsi, rbp
+ 1819d62: e8 99 7f 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 1819d67: 4c 01 fd                     	add	rbp, r15
+ 1819d6a: 48 83 c5 04                  	add	rbp, 0x4
+ 1819d6e: 4d 89 be d8 02 00 00         	mov	qword ptr [r14 + 0x2d8], r15
+ 1819d75: 49 89 ae e0 02 00 00         	mov	qword ptr [r14 + 0x2e0], rbp
+ 1819d7c: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 1819d80: 49 89 86 e8 02 00 00         	mov	qword ptr [r14 + 0x2e8], rax
+ 1819d87: 49 8b ae f8 02 00 00         	mov	rbp, qword ptr [r14 + 0x2f8]
+ 1819d8e: 49 3b ae 00 03 00 00         	cmp	rbp, qword ptr [r14 + 0x300]
+ 1819d95: 0f 85 e1 fd ff ff            	jne	0x1819b7c <.text+0x1f2ec>
+ 1819d9b: 49 8b 9e f0 02 00 00         	mov	rbx, qword ptr [r14 + 0x2f0]
+ 1819da2: 48 29 dd                     	sub	rbp, rbx
+ 1819da5: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 1819daf: 48 39 c5                     	cmp	rbp, rax
+ 1819db2: 0f 84 6b 0e 00 00            	je	0x181ac23 <.text+0x20393>
+ 1819db8: 48 89 e8                     	mov	rax, rbp
+ 1819dbb: 48 c1 f8 02                  	sar	rax, 0x2
+ 1819dbf: 48 83 f8 01                  	cmp	rax, 0x1
+ 1819dc3: 48 89 c1                     	mov	rcx, rax
+ 1819dc6: 48 83 d1 00                  	adc	rcx, 0x0
+ 1819dca: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 1819dce: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 1819dd8: 49 39 d4                     	cmp	r12, rdx
+ 1819ddb: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 1819ddf: 48 01 c1                     	add	rcx, rax
+ 1819de2: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 1819de6: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 1819dee: e8 8d 7f 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 1819df3: 49 89 c7                     	mov	r15, rax
+ 1819df6: c7 04 28 00 00 00 00         	mov	dword ptr [rax + rbp], 0x0
+ 1819dfd: 48 85 ed                     	test	rbp, rbp
+ 1819e00: 7e 0e                        	jle	0x1819e10 <.text+0x1f580>
+ 1819e02: 4c 89 ff                     	mov	rdi, r15
+ 1819e05: 48 89 de                     	mov	rsi, rbx
+ 1819e08: 48 89 ea                     	mov	rdx, rbp
+ 1819e0b: e8 60 7f 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 1819e10: 48 85 db                     	test	rbx, rbx
+ 1819e13: 74 0b                        	je	0x1819e20 <.text+0x1f590>
+ 1819e15: 48 89 df                     	mov	rdi, rbx
+ 1819e18: 48 89 ee                     	mov	rsi, rbp
+ 1819e1b: e8 e0 7e 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 1819e20: 4c 01 fd                     	add	rbp, r15
+ 1819e23: 48 83 c5 04                  	add	rbp, 0x4
+ 1819e27: 4d 89 be f0 02 00 00         	mov	qword ptr [r14 + 0x2f0], r15
+ 1819e2e: 49 89 ae f8 02 00 00         	mov	qword ptr [r14 + 0x2f8], rbp
+ 1819e35: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 1819e39: 49 89 86 00 03 00 00         	mov	qword ptr [r14 + 0x300], rax
+ 1819e40: 4d 8b ae 58 02 00 00         	mov	r13, qword ptr [r14 + 0x258]
+ 1819e47: 49 8b ae c8 02 00 00         	mov	rbp, qword ptr [r14 + 0x2c8]
+ 1819e4e: 49 3b ae d0 02 00 00         	cmp	rbp, qword ptr [r14 + 0x2d0]
+ 1819e55: 0f 85 4e fd ff ff            	jne	0x1819ba9 <.text+0x1f319>
+ 1819e5b: 49 8b 9e c0 02 00 00         	mov	rbx, qword ptr [r14 + 0x2c0]
+ 1819e62: 48 29 dd                     	sub	rbp, rbx
+ 1819e65: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 1819e6f: 48 39 c5                     	cmp	rbp, rax
+ 1819e72: 0f 84 9f 0d 00 00            	je	0x181ac17 <.text+0x20387>
+ 1819e78: 48 89 e8                     	mov	rax, rbp
+ 1819e7b: 48 c1 f8 02                  	sar	rax, 0x2
+ 1819e7f: 48 83 f8 01                  	cmp	rax, 0x1
+ 1819e83: 48 89 c1                     	mov	rcx, rax
+ 1819e86: 48 83 d1 00                  	adc	rcx, 0x0
+ 1819e8a: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 1819e8e: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 1819e98: 49 39 d4                     	cmp	r12, rdx
+ 1819e9b: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 1819e9f: 48 01 c1                     	add	rcx, rax
+ 1819ea2: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 1819ea6: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 1819eae: e8 cd 7e 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 1819eb3: 49 89 c7                     	mov	r15, rax
+ 1819eb6: 48 8b 44 24 08               	mov	rax, qword ptr [rsp + 0x8]
+ 1819ebb: f3 41 0f 10 44 85 00         	movss	xmm0, dword ptr [r13 + 4*rax]
+ 1819ec2: f3 41 0f 11 04 2f            	movss	dword ptr [r15 + rbp], xmm0
+ 1819ec8: 48 85 ed                     	test	rbp, rbp
+ 1819ecb: 7e 0e                        	jle	0x1819edb <.text+0x1f64b>
+ 1819ecd: 4c 89 ff                     	mov	rdi, r15
+ 1819ed0: 48 89 de                     	mov	rsi, rbx
+ 1819ed3: 48 89 ea                     	mov	rdx, rbp
+ 1819ed6: e8 95 7e 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 1819edb: 48 85 db                     	test	rbx, rbx
+ 1819ede: 74 0b                        	je	0x1819eeb <.text+0x1f65b>
+ 1819ee0: 48 89 df                     	mov	rdi, rbx
+ 1819ee3: 48 89 ee                     	mov	rsi, rbp
+ 1819ee6: e8 15 7e 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 1819eeb: 4c 01 fd                     	add	rbp, r15
+ 1819eee: 48 83 c5 04                  	add	rbp, 0x4
+ 1819ef2: 4d 89 be c0 02 00 00         	mov	qword ptr [r14 + 0x2c0], r15
+ 1819ef9: 49 89 ae c8 02 00 00         	mov	qword ptr [r14 + 0x2c8], rbp
+ 1819f00: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 1819f04: 49 89 86 d0 02 00 00         	mov	qword ptr [r14 + 0x2d0], rax
+ 1819f0b: 49 8b ae 10 03 00 00         	mov	rbp, qword ptr [r14 + 0x310]
+ 1819f12: 49 3b ae 18 03 00 00         	cmp	rbp, qword ptr [r14 + 0x318]
+ 1819f19: 0f 85 ba fc ff ff            	jne	0x1819bd9 <.text+0x1f349>
+ 1819f1f: 49 8b 9e 08 03 00 00         	mov	rbx, qword ptr [r14 + 0x308]
+ 1819f26: 48 29 dd                     	sub	rbp, rbx
+ 1819f29: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 1819f33: 48 39 c5                     	cmp	rbp, rax
+ 1819f36: 0f 84 c3 0c 00 00            	je	0x181abff <.text+0x2036f>
+ 1819f3c: 48 89 e8                     	mov	rax, rbp
+ 1819f3f: 48 c1 f8 02                  	sar	rax, 0x2
+ 1819f43: 48 83 f8 01                  	cmp	rax, 0x1
+ 1819f47: 48 89 c1                     	mov	rcx, rax
+ 1819f4a: 48 83 d1 00                  	adc	rcx, 0x0
+ 1819f4e: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 1819f52: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 1819f5c: 49 39 d4                     	cmp	r12, rdx
+ 1819f5f: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 1819f63: 48 01 c1                     	add	rcx, rax
+ 1819f66: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 1819f6a: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 1819f72: e8 09 7e 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 1819f77: 49 89 c7                     	mov	r15, rax
+ 1819f7a: c7 04 28 00 00 00 00         	mov	dword ptr [rax + rbp], 0x0
+ 1819f81: 48 85 ed                     	test	rbp, rbp
+ 1819f84: 7e 0e                        	jle	0x1819f94 <.text+0x1f704>
+ 1819f86: 4c 89 ff                     	mov	rdi, r15
+ 1819f89: 48 89 de                     	mov	rsi, rbx
+ 1819f8c: 48 89 ea                     	mov	rdx, rbp
+ 1819f8f: e8 dc 7d 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 1819f94: 48 85 db                     	test	rbx, rbx
+ 1819f97: 74 0b                        	je	0x1819fa4 <.text+0x1f714>
+ 1819f99: 48 89 df                     	mov	rdi, rbx
+ 1819f9c: 48 89 ee                     	mov	rsi, rbp
+ 1819f9f: e8 5c 7d 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 1819fa4: 4c 01 fd                     	add	rbp, r15
+ 1819fa7: 48 83 c5 04                  	add	rbp, 0x4
+ 1819fab: 4d 89 be 08 03 00 00         	mov	qword ptr [r14 + 0x308], r15
+ 1819fb2: 49 89 ae 10 03 00 00         	mov	qword ptr [r14 + 0x310], rbp
+ 1819fb9: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 1819fbd: 49 89 86 18 03 00 00         	mov	qword ptr [r14 + 0x318], rax
+ 1819fc4: 49 8b ae 28 03 00 00         	mov	rbp, qword ptr [r14 + 0x328]
+ 1819fcb: 49 3b ae 30 03 00 00         	cmp	rbp, qword ptr [r14 + 0x330]
+ 1819fd2: 0f 85 b8 fa ff ff            	jne	0x1819a90 <.text+0x1f200>
+ 1819fd8: 4d 8b be 20 03 00 00         	mov	r15, qword ptr [r14 + 0x320]
+ 1819fdf: 4c 29 fd                     	sub	rbp, r15
+ 1819fe2: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 1819fec: 48 83 c0 03                  	add	rax, 0x3
+ 1819ff0: 48 39 c5                     	cmp	rbp, rax
+ 1819ff3: 0f 84 36 0c 00 00            	je	0x181ac2f <.text+0x2039f>
+ 1819ff9: 48 83 fd 01                  	cmp	rbp, 0x1
+ 1819ffd: 48 89 e9                     	mov	rcx, rbp
+ 181a000: 48 83 d1 00                  	adc	rcx, 0x0
+ 181a004: 48 8d 1c 29                  	lea	rbx, [rcx + rbp]
+ 181a008: 48 ba ff ff ff ff ff ff ff 7f	movabs	rdx, 0x7fffffffffffffff
+ 181a012: 48 39 d3                     	cmp	rbx, rdx
+ 181a015: 48 0f 43 da                  	cmovae	rbx, rdx
+ 181a019: 48 01 e9                     	add	rcx, rbp
+ 181a01c: 48 0f 42 d8                  	cmovb	rbx, rax
+ 181a020: 48 89 df                     	mov	rdi, rbx
+ 181a023: e8 58 7d 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 181a028: 49 89 c4                     	mov	r12, rax
+ 181a02b: c6 04 28 00                  	mov	byte ptr [rax + rbp], 0x0
+ 181a02f: 48 85 ed                     	test	rbp, rbp
+ 181a032: 7e 0e                        	jle	0x181a042 <.text+0x1f7b2>
+ 181a034: 4c 89 e7                     	mov	rdi, r12
+ 181a037: 4c 89 fe                     	mov	rsi, r15
+ 181a03a: 48 89 ea                     	mov	rdx, rbp
+ 181a03d: e8 2e 7d 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181a042: 4d 85 ff                     	test	r15, r15
+ 181a045: 74 0b                        	je	0x181a052 <.text+0x1f7c2>
+ 181a047: 4c 89 ff                     	mov	rdi, r15
+ 181a04a: 48 89 ee                     	mov	rsi, rbp
+ 181a04d: e8 ae 7c 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181a052: 4c 01 e5                     	add	rbp, r12
+ 181a055: 48 ff c5                     	inc	rbp
+ 181a058: 4d 89 a6 20 03 00 00         	mov	qword ptr [r14 + 0x320], r12
+ 181a05f: 49 89 ae 28 03 00 00         	mov	qword ptr [r14 + 0x328], rbp
+ 181a066: 4c 01 e3                     	add	rbx, r12
+ 181a069: 49 89 9e 30 03 00 00         	mov	qword ptr [r14 + 0x330], rbx
+ 181a070: e9 26 fa ff ff               	jmp	0x1819a9b <.text+0x1f20b>
+ 181a075: 49 8b 3c 24                  	mov	rdi, qword ptr [r12]
+ 181a079: e8 a2 a5 0c 00               	call	0x18e4620 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x91490>
+ 181a07e: 41 89 86 b8 01 00 00         	mov	dword ptr [r14 + 0x1b8], eax
+ 181a085: 41 80 be 34 02 00 00 01      	cmp	byte ptr [r14 + 0x234], 0x1
+ 181a08d: 75 3b                        	jne	0x181a0ca <.text+0x1f83a>
+ 181a08f: 49 8b 3c 24                  	mov	rdi, qword ptr [r12]
+ 181a093: 45 8b 86 3c 01 00 00         	mov	r8d, dword ptr [r14 + 0x13c]
+ 181a09a: 4c 8d 54 24 50               	lea	r10, [rsp + 0x50]
+ 181a09f: 4c 8d 9c 24 a0 00 00 00      	lea	r11, [rsp + 0xa0]
+ 181a0a7: f3 0f 10 05 c1 9b 7f fe      	movss	xmm0, dword ptr [rip - 0x180643f] # 0x13c70
+ 181a0af: 4c 8d 4c 24 04               	lea	r9, [rsp + 0x4]
+ 181a0b4: 31 f6                        	xor	esi, esi
+ 181a0b6: ba ff ff ff ff               	mov	edx, 0xffffffff
+ 181a0bb: 89 c1                        	mov	ecx, eax
+ 181a0bd: 41 52                        	push	r10
+ 181a0bf: 41 53                        	push	r11
+ 181a0c1: e8 6a ef 0c 00               	call	0x18e9030 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x95ea0>
+ 181a0c6: 48 83 c4 10                  	add	rsp, 0x10
+ 181a0ca: 49 8b be b0 01 00 00         	mov	rdi, qword ptr [r14 + 0x1b0]
+ 181a0d1: 48 85 ff                     	test	rdi, rdi
+ 181a0d4: 0f 85 c8 07 00 00            	jne	0x181a8a2 <.text+0x20012>
+ 181a0da: e9 e5 07 00 00               	jmp	0x181a8c4 <.text+0x20034>
+ 181a0df: 41 80 be 38 02 00 00 01      	cmp	byte ptr [r14 + 0x238], 0x1
+ 181a0e7: 0f 85 97 06 00 00            	jne	0x181a784 <.text+0x1fef4>
+ 181a0ed: f3 41 0f 10 86 18 02 00 00   	movss	xmm0, dword ptr [r14 + 0x218]
+ 181a0f6: 0f 2e 05 73 9b 7f fe         	ucomiss	xmm0, dword ptr [rip - 0x180648d] # 0x13c70
+ 181a0fd: 75 06                        	jne	0x181a105 <.text+0x1f875>
+ 181a0ff: 0f 8b 7f 06 00 00            	jnp	0x181a784 <.text+0x1fef4>
+ 181a105: 41 83 7e 54 00               	cmp	dword ptr [r14 + 0x54], 0x0
+ 181a10a: 0f 8e 74 06 00 00            	jle	0x181a784 <.text+0x1fef4>
+ 181a110: 31 ed                        	xor	ebp, ebp
+ 181a112: eb 2b                        	jmp	0x181a13f <.text+0x1f8af>
+ 181a114: 66 66 66 2e 0f 1f 84 00 00 00 00 00  	nop	word ptr cs:[rax + rax]
+ 181a120: 49 63 41 0c                  	movsxd	rax, dword ptr [r9 + 0xc]
+ 181a124: 49 8b 8e 20 03 00 00         	mov	rcx, qword ptr [r14 + 0x320]
+ 181a12b: c6 04 01 01                  	mov	byte ptr [rcx + rax], 0x1
+ 181a12f: 48 ff c5                     	inc	rbp
+ 181a132: 49 63 46 54                  	movsxd	rax, dword ptr [r14 + 0x54]
+ 181a136: 48 39 c5                     	cmp	rbp, rax
+ 181a139: 0f 8d 45 06 00 00            	jge	0x181a784 <.text+0x1fef4>
+ 181a13f: 49 8b 46 38                  	mov	rax, qword ptr [r14 + 0x38]
+ 181a143: 49 8b 4e 40                  	mov	rcx, qword ptr [r14 + 0x40]
+ 181a147: 48 29 c1                     	sub	rcx, rax
+ 181a14a: 48 c1 e9 02                  	shr	rcx, 0x2
+ 181a14e: 48 63 c9                     	movsxd	rcx, ecx
+ 181a151: 48 39 cd                     	cmp	rbp, rcx
+ 181a154: 0f 8d 2a 06 00 00            	jge	0x181a784 <.text+0x1fef4>
+ 181a15a: 8b 0c a8                     	mov	ecx, dword ptr [rax + 4*rbp]
+ 181a15d: 89 4c 24 10                  	mov	dword ptr [rsp + 0x10], ecx
+ 181a161: 48 81 f9 ff c9 03 00         	cmp	rcx, 0x3c9ff
+ 181a168: 77 c5                        	ja	0x181a12f <.text+0x1f89f>
+ 181a16a: 49 83 be 88 02 00 00 00      	cmp	qword ptr [r14 + 0x288], 0x0
+ 181a172: 0f 84 8d 00 00 00            	je	0x181a205 <.text+0x1f975>
+ 181a178: 4d 8b 86 78 02 00 00         	mov	r8, qword ptr [r14 + 0x278]
+ 181a17f: 48 89 ce                     	mov	rsi, rcx
+ 181a182: 4c 39 c1                     	cmp	rcx, r8
+ 181a185: 72 09                        	jb	0x181a190 <.text+0x1f900>
+ 181a187: 89 c8                        	mov	eax, ecx
+ 181a189: 31 d2                        	xor	edx, edx
+ 181a18b: 41 f7 f0                     	div	r8d
+ 181a18e: 89 d6                        	mov	esi, edx
+ 181a190: 49 8d 86 70 02 00 00         	lea	rax, [r14 + 0x270]
+ 181a197: 48 8b 00                     	mov	rax, qword ptr [rax]
+ 181a19a: 48 8b 04 f0                  	mov	rax, qword ptr [rax + 8*rsi]
+ 181a19e: 48 85 c0                     	test	rax, rax
+ 181a1a1: 0f 84 89 00 00 00            	je	0x181a230 <.text+0x1f9a0>
+ 181a1a7: 4c 8b 08                     	mov	r9, qword ptr [rax]
+ 181a1aa: 41 3b 49 08                  	cmp	ecx, dword ptr [r9 + 0x8]
+ 181a1ae: 0f 84 6c ff ff ff            	je	0x181a120 <.text+0x1f890>
+ 181a1b4: 66 66 66 2e 0f 1f 84 00 00 00 00 00  	nop	word ptr cs:[rax + rax]
+ 181a1c0: 4d 8b 09                     	mov	r9, qword ptr [r9]
+ 181a1c3: 4d 85 c9                     	test	r9, r9
+ 181a1c6: 74 68                        	je	0x181a230 <.text+0x1f9a0>
+ 181a1c8: 49 63 79 08                  	movsxd	rdi, dword ptr [r9 + 0x8]
+ 181a1cc: 48 89 f8                     	mov	rax, rdi
+ 181a1cf: 4c 09 c0                     	or	rax, r8
+ 181a1d2: 48 c1 e8 20                  	shr	rax, 0x20
+ 181a1d6: 74 18                        	je	0x181a1f0 <.text+0x1f960>
+ 181a1d8: 48 89 f8                     	mov	rax, rdi
+ 181a1db: 31 d2                        	xor	edx, edx
+ 181a1dd: 49 f7 f0                     	div	r8
+ 181a1e0: 48 39 f2                     	cmp	rdx, rsi
+ 181a1e3: 74 17                        	je	0x181a1fc <.text+0x1f96c>
+ 181a1e5: eb 49                        	jmp	0x181a230 <.text+0x1f9a0>
+ 181a1e7: 66 0f 1f 84 00 00 00 00 00   	nop	word ptr [rax + rax]
+ 181a1f0: 89 f8                        	mov	eax, edi
+ 181a1f2: 31 d2                        	xor	edx, edx
+ 181a1f4: 41 f7 f0                     	div	r8d
+ 181a1f7: 48 39 f2                     	cmp	rdx, rsi
+ 181a1fa: 75 34                        	jne	0x181a230 <.text+0x1f9a0>
+ 181a1fc: 39 f9                        	cmp	ecx, edi
+ 181a1fe: 75 c0                        	jne	0x181a1c0 <.text+0x1f930>
+ 181a200: e9 1b ff ff ff               	jmp	0x181a120 <.text+0x1f890>
+ 181a205: 4d 8d 8e 80 02 00 00         	lea	r9, [r14 + 0x280]
+ 181a20c: 0f 1f 40 00                  	nop	dword ptr [rax]
+ 181a210: 4d 8b 09                     	mov	r9, qword ptr [r9]
+ 181a213: 4d 85 c9                     	test	r9, r9
+ 181a216: 74 18                        	je	0x181a230 <.text+0x1f9a0>
+ 181a218: 41 3b 49 08                  	cmp	ecx, dword ptr [r9 + 0x8]
+ 181a21c: 75 f2                        	jne	0x181a210 <.text+0x1f980>
+ 181a21e: e9 fd fe ff ff               	jmp	0x181a120 <.text+0x1f890>
+ 181a223: 66 66 66 66 2e 0f 1f 84 00 00 00 00 00       	nop	word ptr cs:[rax + rax]
+ 181a230: 49 8b 86 b0 02 00 00         	mov	rax, qword ptr [r14 + 0x2b0]
+ 181a237: 49 2b 86 a8 02 00 00         	sub	rax, qword ptr [r14 + 0x2a8]
+ 181a23e: 48 c1 e8 02                  	shr	rax, 0x2
+ 181a242: 89 44 24 38                  	mov	dword ptr [rsp + 0x38], eax
+ 181a246: 49 8d be 70 02 00 00         	lea	rdi, [r14 + 0x270]
+ 181a24d: 48 8d 74 24 10               	lea	rsi, [rsp + 0x10]
+ 181a252: 48 8d 54 24 38               	lea	rdx, [rsp + 0x38]
+ 181a257: e8 c4 d7 02 00               	call	0x1847a20 <_ZNSt6vectorIfSaIfEEaSERKS1_+0x1480>
+ 181a25c: 4d 8b ae b0 02 00 00         	mov	r13, qword ptr [r14 + 0x2b0]
+ 181a263: 4d 3b ae b8 02 00 00         	cmp	r13, qword ptr [r14 + 0x2b8]
+ 181a26a: 0f 84 d4 00 00 00            	je	0x181a344 <.text+0x1fab4>
+ 181a270: 8b 44 24 10                  	mov	eax, dword ptr [rsp + 0x10]
+ 181a274: 41 89 45 00                  	mov	dword ptr [r13], eax
+ 181a278: 49 83 c5 04                  	add	r13, 0x4
+ 181a27c: 4d 89 ae b0 02 00 00         	mov	qword ptr [r14 + 0x2b0], r13
+ 181a283: 4d 8b ae e0 02 00 00         	mov	r13, qword ptr [r14 + 0x2e0]
+ 181a28a: 4d 3b ae e8 02 00 00         	cmp	r13, qword ptr [r14 + 0x2e8]
+ 181a291: 0f 84 67 01 00 00            	je	0x181a3fe <.text+0x1fb6e>
+ 181a297: 41 c7 45 00 00 00 00 00      	mov	dword ptr [r13], 0x0
+ 181a29f: 49 83 c5 04                  	add	r13, 0x4
+ 181a2a3: 4d 89 ae e0 02 00 00         	mov	qword ptr [r14 + 0x2e0], r13
+ 181a2aa: 4d 8b ae f8 02 00 00         	mov	r13, qword ptr [r14 + 0x2f8]
+ 181a2b1: 4d 3b ae 00 03 00 00         	cmp	r13, qword ptr [r14 + 0x300]
+ 181a2b8: 0f 84 fa 01 00 00            	je	0x181a4b8 <.text+0x1fc28>
+ 181a2be: 41 c7 45 00 00 00 00 00      	mov	dword ptr [r13], 0x0
+ 181a2c6: 49 83 c5 04                  	add	r13, 0x4
+ 181a2ca: 4d 89 ae f8 02 00 00         	mov	qword ptr [r14 + 0x2f8], r13
+ 181a2d1: 4d 8b ae c8 02 00 00         	mov	r13, qword ptr [r14 + 0x2c8]
+ 181a2d8: 4d 3b ae d0 02 00 00         	cmp	r13, qword ptr [r14 + 0x2d0]
+ 181a2df: 0f 84 8d 02 00 00            	je	0x181a572 <.text+0x1fce2>
+ 181a2e5: 41 c7 45 00 00 00 00 00      	mov	dword ptr [r13], 0x0
+ 181a2ed: 49 83 c5 04                  	add	r13, 0x4
+ 181a2f1: 4d 89 ae c8 02 00 00         	mov	qword ptr [r14 + 0x2c8], r13
+ 181a2f8: 4d 8b ae 10 03 00 00         	mov	r13, qword ptr [r14 + 0x310]
+ 181a2ff: 4d 3b ae 18 03 00 00         	cmp	r13, qword ptr [r14 + 0x318]
+ 181a306: 0f 84 20 03 00 00            	je	0x181a62c <.text+0x1fd9c>
+ 181a30c: 41 c7 45 00 00 00 00 00      	mov	dword ptr [r13], 0x0
+ 181a314: 49 83 c5 04                  	add	r13, 0x4
+ 181a318: 4d 89 ae 10 03 00 00         	mov	qword ptr [r14 + 0x310], r13
+ 181a31f: 4d 8b ae 28 03 00 00         	mov	r13, qword ptr [r14 + 0x328]
+ 181a326: 4d 3b ae 30 03 00 00         	cmp	r13, qword ptr [r14 + 0x330]
+ 181a32d: 0f 84 b3 03 00 00            	je	0x181a6e6 <.text+0x1fe56>
+ 181a333: 41 c6 45 00 01               	mov	byte ptr [r13], 0x1
+ 181a338: 49 ff 86 28 03 00 00         	inc	qword ptr [r14 + 0x328]
+ 181a33f: e9 eb fd ff ff               	jmp	0x181a12f <.text+0x1f89f>
+ 181a344: 49 8b 9e a8 02 00 00         	mov	rbx, qword ptr [r14 + 0x2a8]
+ 181a34b: 49 29 dd                     	sub	r13, rbx
+ 181a34e: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 181a358: 49 39 c5                     	cmp	r13, rax
+ 181a35b: 0f 84 52 09 00 00            	je	0x181acb3 <.text+0x20423>
+ 181a361: 4c 89 e8                     	mov	rax, r13
+ 181a364: 48 c1 f8 02                  	sar	rax, 0x2
+ 181a368: 48 83 f8 01                  	cmp	rax, 0x1
+ 181a36c: 48 89 c1                     	mov	rcx, rax
+ 181a36f: 48 83 d1 00                  	adc	rcx, 0x0
+ 181a373: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 181a377: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 181a381: 49 39 d4                     	cmp	r12, rdx
+ 181a384: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 181a388: 48 01 c1                     	add	rcx, rax
+ 181a38b: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 181a38f: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 181a397: e8 e4 79 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 181a39c: 49 89 c7                     	mov	r15, rax
+ 181a39f: 8b 44 24 10                  	mov	eax, dword ptr [rsp + 0x10]
+ 181a3a3: 43 89 04 2f                  	mov	dword ptr [r15 + r13], eax
+ 181a3a7: 4d 85 ed                     	test	r13, r13
+ 181a3aa: 7e 0e                        	jle	0x181a3ba <.text+0x1fb2a>
+ 181a3ac: 4c 89 ff                     	mov	rdi, r15
+ 181a3af: 48 89 de                     	mov	rsi, rbx
+ 181a3b2: 4c 89 ea                     	mov	rdx, r13
+ 181a3b5: e8 b6 79 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181a3ba: 48 85 db                     	test	rbx, rbx
+ 181a3bd: 74 0b                        	je	0x181a3ca <.text+0x1fb3a>
+ 181a3bf: 48 89 df                     	mov	rdi, rbx
+ 181a3c2: 4c 89 ee                     	mov	rsi, r13
+ 181a3c5: e8 36 79 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181a3ca: 4d 01 fd                     	add	r13, r15
+ 181a3cd: 49 83 c5 04                  	add	r13, 0x4
+ 181a3d1: 4d 89 be a8 02 00 00         	mov	qword ptr [r14 + 0x2a8], r15
+ 181a3d8: 4d 89 ae b0 02 00 00         	mov	qword ptr [r14 + 0x2b0], r13
+ 181a3df: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 181a3e3: 49 89 86 b8 02 00 00         	mov	qword ptr [r14 + 0x2b8], rax
+ 181a3ea: 4d 8b ae e0 02 00 00         	mov	r13, qword ptr [r14 + 0x2e0]
+ 181a3f1: 4d 3b ae e8 02 00 00         	cmp	r13, qword ptr [r14 + 0x2e8]
+ 181a3f8: 0f 85 99 fe ff ff            	jne	0x181a297 <.text+0x1fa07>
+ 181a3fe: 49 8b 9e d8 02 00 00         	mov	rbx, qword ptr [r14 + 0x2d8]
+ 181a405: 49 29 dd                     	sub	r13, rbx
+ 181a408: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 181a412: 49 39 c5                     	cmp	r13, rax
+ 181a415: 0f 84 8c 08 00 00            	je	0x181aca7 <.text+0x20417>
+ 181a41b: 4c 89 e8                     	mov	rax, r13
+ 181a41e: 48 c1 f8 02                  	sar	rax, 0x2
+ 181a422: 48 83 f8 01                  	cmp	rax, 0x1
+ 181a426: 48 89 c1                     	mov	rcx, rax
+ 181a429: 48 83 d1 00                  	adc	rcx, 0x0
+ 181a42d: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 181a431: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 181a43b: 49 39 d4                     	cmp	r12, rdx
+ 181a43e: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 181a442: 48 01 c1                     	add	rcx, rax
+ 181a445: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 181a449: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 181a451: e8 2a 79 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 181a456: 49 89 c7                     	mov	r15, rax
+ 181a459: 42 c7 04 28 00 00 00 00      	mov	dword ptr [rax + r13], 0x0
+ 181a461: 4d 85 ed                     	test	r13, r13
+ 181a464: 7e 0e                        	jle	0x181a474 <.text+0x1fbe4>
+ 181a466: 4c 89 ff                     	mov	rdi, r15
+ 181a469: 48 89 de                     	mov	rsi, rbx
+ 181a46c: 4c 89 ea                     	mov	rdx, r13
+ 181a46f: e8 fc 78 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181a474: 48 85 db                     	test	rbx, rbx
+ 181a477: 74 0b                        	je	0x181a484 <.text+0x1fbf4>
+ 181a479: 48 89 df                     	mov	rdi, rbx
+ 181a47c: 4c 89 ee                     	mov	rsi, r13
+ 181a47f: e8 7c 78 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181a484: 4d 01 fd                     	add	r13, r15
+ 181a487: 49 83 c5 04                  	add	r13, 0x4
+ 181a48b: 4d 89 be d8 02 00 00         	mov	qword ptr [r14 + 0x2d8], r15
+ 181a492: 4d 89 ae e0 02 00 00         	mov	qword ptr [r14 + 0x2e0], r13
+ 181a499: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 181a49d: 49 89 86 e8 02 00 00         	mov	qword ptr [r14 + 0x2e8], rax
+ 181a4a4: 4d 8b ae f8 02 00 00         	mov	r13, qword ptr [r14 + 0x2f8]
+ 181a4ab: 4d 3b ae 00 03 00 00         	cmp	r13, qword ptr [r14 + 0x300]
+ 181a4b2: 0f 85 06 fe ff ff            	jne	0x181a2be <.text+0x1fa2e>
+ 181a4b8: 49 8b 9e f0 02 00 00         	mov	rbx, qword ptr [r14 + 0x2f0]
+ 181a4bf: 49 29 dd                     	sub	r13, rbx
+ 181a4c2: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 181a4cc: 49 39 c5                     	cmp	r13, rax
+ 181a4cf: 0f 84 c6 07 00 00            	je	0x181ac9b <.text+0x2040b>
+ 181a4d5: 4c 89 e8                     	mov	rax, r13
+ 181a4d8: 48 c1 f8 02                  	sar	rax, 0x2
+ 181a4dc: 48 83 f8 01                  	cmp	rax, 0x1
+ 181a4e0: 48 89 c1                     	mov	rcx, rax
+ 181a4e3: 48 83 d1 00                  	adc	rcx, 0x0
+ 181a4e7: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 181a4eb: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 181a4f5: 49 39 d4                     	cmp	r12, rdx
+ 181a4f8: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 181a4fc: 48 01 c1                     	add	rcx, rax
+ 181a4ff: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 181a503: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 181a50b: e8 70 78 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 181a510: 49 89 c7                     	mov	r15, rax
+ 181a513: 42 c7 04 28 00 00 00 00      	mov	dword ptr [rax + r13], 0x0
+ 181a51b: 4d 85 ed                     	test	r13, r13
+ 181a51e: 7e 0e                        	jle	0x181a52e <.text+0x1fc9e>
+ 181a520: 4c 89 ff                     	mov	rdi, r15
+ 181a523: 48 89 de                     	mov	rsi, rbx
+ 181a526: 4c 89 ea                     	mov	rdx, r13
+ 181a529: e8 42 78 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181a52e: 48 85 db                     	test	rbx, rbx
+ 181a531: 74 0b                        	je	0x181a53e <.text+0x1fcae>
+ 181a533: 48 89 df                     	mov	rdi, rbx
+ 181a536: 4c 89 ee                     	mov	rsi, r13
+ 181a539: e8 c2 77 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181a53e: 4d 01 fd                     	add	r13, r15
+ 181a541: 49 83 c5 04                  	add	r13, 0x4
+ 181a545: 4d 89 be f0 02 00 00         	mov	qword ptr [r14 + 0x2f0], r15
+ 181a54c: 4d 89 ae f8 02 00 00         	mov	qword ptr [r14 + 0x2f8], r13
+ 181a553: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 181a557: 49 89 86 00 03 00 00         	mov	qword ptr [r14 + 0x300], rax
+ 181a55e: 4d 8b ae c8 02 00 00         	mov	r13, qword ptr [r14 + 0x2c8]
+ 181a565: 4d 3b ae d0 02 00 00         	cmp	r13, qword ptr [r14 + 0x2d0]
+ 181a56c: 0f 85 73 fd ff ff            	jne	0x181a2e5 <.text+0x1fa55>
+ 181a572: 49 8b 9e c0 02 00 00         	mov	rbx, qword ptr [r14 + 0x2c0]
+ 181a579: 49 29 dd                     	sub	r13, rbx
+ 181a57c: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 181a586: 49 39 c5                     	cmp	r13, rax
+ 181a589: 0f 84 00 07 00 00            	je	0x181ac8f <.text+0x203ff>
+ 181a58f: 4c 89 e8                     	mov	rax, r13
+ 181a592: 48 c1 f8 02                  	sar	rax, 0x2
+ 181a596: 48 83 f8 01                  	cmp	rax, 0x1
+ 181a59a: 48 89 c1                     	mov	rcx, rax
+ 181a59d: 48 83 d1 00                  	adc	rcx, 0x0
+ 181a5a1: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 181a5a5: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 181a5af: 49 39 d4                     	cmp	r12, rdx
+ 181a5b2: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 181a5b6: 48 01 c1                     	add	rcx, rax
+ 181a5b9: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 181a5bd: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 181a5c5: e8 b6 77 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 181a5ca: 49 89 c7                     	mov	r15, rax
+ 181a5cd: 42 c7 04 28 00 00 00 00      	mov	dword ptr [rax + r13], 0x0
+ 181a5d5: 4d 85 ed                     	test	r13, r13
+ 181a5d8: 7e 0e                        	jle	0x181a5e8 <.text+0x1fd58>
+ 181a5da: 4c 89 ff                     	mov	rdi, r15
+ 181a5dd: 48 89 de                     	mov	rsi, rbx
+ 181a5e0: 4c 89 ea                     	mov	rdx, r13
+ 181a5e3: e8 88 77 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181a5e8: 48 85 db                     	test	rbx, rbx
+ 181a5eb: 74 0b                        	je	0x181a5f8 <.text+0x1fd68>
+ 181a5ed: 48 89 df                     	mov	rdi, rbx
+ 181a5f0: 4c 89 ee                     	mov	rsi, r13
+ 181a5f3: e8 08 77 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181a5f8: 4d 01 fd                     	add	r13, r15
+ 181a5fb: 49 83 c5 04                  	add	r13, 0x4
+ 181a5ff: 4d 89 be c0 02 00 00         	mov	qword ptr [r14 + 0x2c0], r15
+ 181a606: 4d 89 ae c8 02 00 00         	mov	qword ptr [r14 + 0x2c8], r13
+ 181a60d: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 181a611: 49 89 86 d0 02 00 00         	mov	qword ptr [r14 + 0x2d0], rax
+ 181a618: 4d 8b ae 10 03 00 00         	mov	r13, qword ptr [r14 + 0x310]
+ 181a61f: 4d 3b ae 18 03 00 00         	cmp	r13, qword ptr [r14 + 0x318]
+ 181a626: 0f 85 e0 fc ff ff            	jne	0x181a30c <.text+0x1fa7c>
+ 181a62c: 49 8b 9e 08 03 00 00         	mov	rbx, qword ptr [r14 + 0x308]
+ 181a633: 49 29 dd                     	sub	r13, rbx
+ 181a636: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 181a640: 49 39 c5                     	cmp	r13, rax
+ 181a643: 0f 84 3a 06 00 00            	je	0x181ac83 <.text+0x203f3>
+ 181a649: 4c 89 e8                     	mov	rax, r13
+ 181a64c: 48 c1 f8 02                  	sar	rax, 0x2
+ 181a650: 48 83 f8 01                  	cmp	rax, 0x1
+ 181a654: 48 89 c1                     	mov	rcx, rax
+ 181a657: 48 83 d1 00                  	adc	rcx, 0x0
+ 181a65b: 4c 8d 24 01                  	lea	r12, [rcx + rax]
+ 181a65f: 48 ba ff ff ff ff ff ff ff 1f	movabs	rdx, 0x1fffffffffffffff
+ 181a669: 49 39 d4                     	cmp	r12, rdx
+ 181a66c: 4c 0f 43 e2                  	cmovae	r12, rdx
+ 181a670: 48 01 c1                     	add	rcx, rax
+ 181a673: 4c 0f 42 e2                  	cmovb	r12, rdx
+ 181a677: 4a 8d 3c a5 00 00 00 00      	lea	rdi, [4*r12]
+ 181a67f: e8 fc 76 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 181a684: 49 89 c7                     	mov	r15, rax
+ 181a687: 42 c7 04 28 00 00 00 00      	mov	dword ptr [rax + r13], 0x0
+ 181a68f: 4d 85 ed                     	test	r13, r13
+ 181a692: 7e 0e                        	jle	0x181a6a2 <.text+0x1fe12>
+ 181a694: 4c 89 ff                     	mov	rdi, r15
+ 181a697: 48 89 de                     	mov	rsi, rbx
+ 181a69a: 4c 89 ea                     	mov	rdx, r13
+ 181a69d: e8 ce 76 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181a6a2: 48 85 db                     	test	rbx, rbx
+ 181a6a5: 74 0b                        	je	0x181a6b2 <.text+0x1fe22>
+ 181a6a7: 48 89 df                     	mov	rdi, rbx
+ 181a6aa: 4c 89 ee                     	mov	rsi, r13
+ 181a6ad: e8 4e 76 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181a6b2: 4d 01 fd                     	add	r13, r15
+ 181a6b5: 49 83 c5 04                  	add	r13, 0x4
+ 181a6b9: 4d 89 be 08 03 00 00         	mov	qword ptr [r14 + 0x308], r15
+ 181a6c0: 4d 89 ae 10 03 00 00         	mov	qword ptr [r14 + 0x310], r13
+ 181a6c7: 4b 8d 04 a7                  	lea	rax, [r15 + 4*r12]
+ 181a6cb: 49 89 86 18 03 00 00         	mov	qword ptr [r14 + 0x318], rax
+ 181a6d2: 4d 8b ae 28 03 00 00         	mov	r13, qword ptr [r14 + 0x328]
+ 181a6d9: 4d 3b ae 30 03 00 00         	cmp	r13, qword ptr [r14 + 0x330]
+ 181a6e0: 0f 85 4d fc ff ff            	jne	0x181a333 <.text+0x1faa3>
+ 181a6e6: 4d 8b be 20 03 00 00         	mov	r15, qword ptr [r14 + 0x320]
+ 181a6ed: 4d 29 fd                     	sub	r13, r15
+ 181a6f0: 48 b8 fc ff ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffffc
+ 181a6fa: 48 83 c0 03                  	add	rax, 0x3
+ 181a6fe: 49 39 c5                     	cmp	r13, rax
+ 181a701: 0f 84 70 05 00 00            	je	0x181ac77 <.text+0x203e7>
+ 181a707: 49 83 fd 01                  	cmp	r13, 0x1
+ 181a70b: 4c 89 e9                     	mov	rcx, r13
+ 181a70e: 48 83 d1 00                  	adc	rcx, 0x0
+ 181a712: 4a 8d 1c 29                  	lea	rbx, [rcx + r13]
+ 181a716: 48 ba ff ff ff ff ff ff ff 7f	movabs	rdx, 0x7fffffffffffffff
+ 181a720: 48 39 d3                     	cmp	rbx, rdx
+ 181a723: 48 0f 43 da                  	cmovae	rbx, rdx
+ 181a727: 4c 01 e9                     	add	rcx, r13
+ 181a72a: 48 0f 42 d8                  	cmovb	rbx, rax
+ 181a72e: 48 89 df                     	mov	rdi, rbx
+ 181a731: e8 4a 76 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 181a736: 49 89 c4                     	mov	r12, rax
+ 181a739: 42 c6 04 28 01               	mov	byte ptr [rax + r13], 0x1
+ 181a73e: 4d 85 ed                     	test	r13, r13
+ 181a741: 7e 0e                        	jle	0x181a751 <.text+0x1fec1>
+ 181a743: 4c 89 e7                     	mov	rdi, r12
+ 181a746: 4c 89 fe                     	mov	rsi, r15
+ 181a749: 4c 89 ea                     	mov	rdx, r13
+ 181a74c: e8 1f 76 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181a751: 4d 85 ff                     	test	r15, r15
+ 181a754: 74 0b                        	je	0x181a761 <.text+0x1fed1>
+ 181a756: 4c 89 ff                     	mov	rdi, r15
+ 181a759: 4c 89 ee                     	mov	rsi, r13
+ 181a75c: e8 9f 75 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181a761: 4d 01 e5                     	add	r13, r12
+ 181a764: 49 ff c5                     	inc	r13
+ 181a767: 4d 89 a6 20 03 00 00         	mov	qword ptr [r14 + 0x320], r12
+ 181a76e: 4d 89 ae 28 03 00 00         	mov	qword ptr [r14 + 0x328], r13
+ 181a775: 4c 01 e3                     	add	rbx, r12
+ 181a778: 49 89 9e 30 03 00 00         	mov	qword ptr [r14 + 0x330], rbx
+ 181a77f: e9 ab f9 ff ff               	jmp	0x181a12f <.text+0x1f89f>
+ 181a784: 4c 8b 64 24 30               	mov	r12, qword ptr [rsp + 0x30]
+ 181a789: 49 8b 34 24                  	mov	rsi, qword ptr [r12]
+ 181a78d: 4c 89 f7                     	mov	rdi, r14
+ 181a790: 31 d2                        	xor	edx, edx
+ 181a792: e8 59 19 00 00               	call	0x181c0f0 <.text+0x21860>
+ 181a797: 84 c0                        	test	al, al
+ 181a799: 0f 84 c4 01 00 00            	je	0x181a963 <.text+0x200d3>
+ 181a79f: 49 8b 9e b0 01 00 00         	mov	rbx, qword ptr [r14 + 0x1b0]
+ 181a7a6: 48 85 db                     	test	rbx, rbx
+ 181a7a9: 4c 8b 6c 24 40               	mov	r13, qword ptr [rsp + 0x40]
+ 181a7ae: 74 55                        	je	0x181a805 <.text+0x1ff75>
+ 181a7b0: 45 31 ff                     	xor	r15d, r15d
+ 181a7b3: 48 89 df                     	mov	rdi, rbx
+ 181a7b6: 31 f6                        	xor	esi, esi
+ 181a7b8: 31 d2                        	xor	edx, edx
+ 181a7ba: e8 61 48 00 00               	call	0x181f020 <.text+0x24790>
+ 181a7bf: 48 85 c0                     	test	rax, rax
+ 181a7c2: 78 29                        	js	0x181a7ed <.text+0x1ff5d>
+ 181a7c4: 48 8b 4b 08                  	mov	rcx, qword ptr [rbx + 0x8]
+ 181a7c8: 89 c2                        	mov	edx, eax
+ 181a7ca: 48 69 d2 40 79 00 00         	imul	rdx, rdx, 0x7940
+ 181a7d1: 48 03 51 68                  	add	rdx, qword ptr [rcx + 0x68]
+ 181a7d5: 31 c9                        	xor	ecx, ecx
+ 181a7d7: 85 c0                        	test	eax, eax
+ 181a7d9: 48 0f 49 ca                  	cmovns	rcx, rdx
+ 181a7dd: 49 89 cf                     	mov	r15, rcx
+ 181a7e0: 49 83 cf 01                  	or	r15, 0x1
+ 181a7e4: 48 0f ba e0 28               	bt	rax, 0x28
+ 181a7e9: 4c 0f 43 f9                  	cmovae	r15, rcx
+ 181a7ed: 4c 89 7c 24 10               	mov	qword ptr [rsp + 0x10], r15
+ 181a7f2: 49 8b 3c 24                  	mov	rdi, qword ptr [r12]
+ 181a7f6: 48 8d 74 24 10               	lea	rsi, [rsp + 0x10]
+ 181a7fb: ba 01 00 00 00               	mov	edx, 0x1
+ 181a800: e8 2b a2 0c 00               	call	0x18e4a30 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x918a0>
+ 181a805: 49 8b 3c 24                  	mov	rdi, qword ptr [r12]
+ 181a809: 49 8d 9e f8 01 00 00         	lea	rbx, [r14 + 0x1f8]
+ 181a810: 41 8b 4e 54                  	mov	ecx, dword ptr [r14 + 0x54]
+ 181a814: 31 c0                        	xor	eax, eax
+ 181a816: 41 80 be 34 02 00 00 00      	cmp	byte ptr [r14 + 0x234], 0x0
+ 181a81e: 4d 8d be b8 01 00 00         	lea	r15, [r14 + 0x1b8]
+ 181a825: 4c 8d 54 24 04               	lea	r10, [rsp + 0x4]
+ 181a82a: 4c 0f 44 d0                  	cmove	r10, rax
+ 181a82e: 31 f6                        	xor	esi, esi
+ 181a830: 48 89 da                     	mov	rdx, rbx
+ 181a833: 45 31 c0                     	xor	r8d, r8d
+ 181a836: 45 31 c9                     	xor	r9d, r9d
+ 181a839: 41 52                        	push	r10
+ 181a83b: 41 57                        	push	r15
+ 181a83d: e8 8e bf 0c 00               	call	0x18e67d0 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x93640>
+ 181a842: 48 83 c4 10                  	add	rsp, 0x10
+ 181a846: 45 8b 86 3c 01 00 00         	mov	r8d, dword ptr [r14 + 0x13c]
+ 181a84d: 45 85 c0                     	test	r8d, r8d
+ 181a850: 7e 35                        	jle	0x181a887 <.text+0x1fff7>
+ 181a852: 49 8b 3c 24                  	mov	rdi, qword ptr [r12]
+ 181a856: f3 0f 10 05 12 94 7f fe      	movss	xmm0, dword ptr [rip - 0x1806bee] # 0x13c70
+ 181a85e: f3 0f 5e 03                  	divss	xmm0, dword ptr [rbx]
+ 181a862: 41 8b 0f                     	mov	ecx, dword ptr [r15]
+ 181a865: 48 8d 44 24 50               	lea	rax, [rsp + 0x50]
+ 181a86a: 4c 8d 94 24 a0 00 00 00      	lea	r10, [rsp + 0xa0]
+ 181a872: 4c 8d 4c 24 04               	lea	r9, [rsp + 0x4]
+ 181a877: 31 f6                        	xor	esi, esi
+ 181a879: 31 d2                        	xor	edx, edx
+ 181a87b: 50                           	push	rax
+ 181a87c: 41 52                        	push	r10
+ 181a87e: e8 ad e7 0c 00               	call	0x18e9030 <_ZSt16__do_uninit_copyIPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ET0_T_S8_S7_+0x95ea0>
+ 181a883: 48 83 c4 10                  	add	rsp, 0x10
+ 181a887: 41 8b b6 b8 01 00 00         	mov	esi, dword ptr [r14 + 0x1b8]
+ 181a88e: 4c 89 f7                     	mov	rdi, r14
+ 181a891: e8 3a 1c 00 00               	call	0x181c4d0 <.text+0x21c40>
+ 181a896: 49 8b be b0 01 00 00         	mov	rdi, qword ptr [r14 + 0x1b0]
+ 181a89d: 48 85 ff                     	test	rdi, rdi
+ 181a8a0: 74 22                        	je	0x181a8c4 <.text+0x20034>
+ 181a8a2: 41 8b 8e b8 01 00 00         	mov	ecx, dword ptr [r14 + 0x1b8]
+ 181a8a9: 85 c9                        	test	ecx, ecx
+ 181a8ab: 0f 88 73 02 00 00            	js	0x181ab24 <.text+0x20294>
+ 181a8b1: 48 83 c7 58                  	add	rdi, 0x58
+ 181a8b5: 89 ce                        	mov	esi, ecx
+ 181a8b7: e8 94 31 02 00               	call	0x183da50 <_ZNSt8_Rb_treeIiSt4pairIKiNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESt10_Select1stIS8_ESt4lessIiESaIS8_EE29_M_get_insert_hint_unique_posESt23_Rb_tree_const_iteratorIS8_ERS1_+0x15f0>
+ 181a8bc: 84 c0                        	test	al, al
+ 181a8be: 0f 84 59 02 00 00            	je	0x181ab1d <.text+0x2028d>
+ 181a8c4: 41 8b 46 54                  	mov	eax, dword ptr [r14 + 0x54]
+ 181a8c8: 41 89 86 bc 01 00 00         	mov	dword ptr [r14 + 0x1bc], eax
+ 181a8cf: 41 c7 46 58 01 00 00 00      	mov	dword ptr [r14 + 0x58], 0x1
+ 181a8d7: e8 e4 76 1b 00               	call	0x19d1fc0 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>
+ 181a8dc: 49 89 86 c8 01 00 00         	mov	qword ptr [r14 + 0x1c8], rax
+ 181a8e3: 0f b6 05 ae f6 1b 00         	movzx	eax, byte ptr [rip + 0x1bf6ae] # 0x19d9f98
+ 181a8ea: 84 c0                        	test	al, al
+ 181a8ec: 0f 84 55 03 00 00            	je	0x181ac47 <.text+0x203b7>
+ 181a8f2: 83 3d 97 f6 1b 00 00         	cmp	dword ptr [rip + 0x1bf697], 0x0 # 0x19d9f90
+ 181a8f9: 0f 8f a6 01 00 00            	jg	0x181aaa5 <.text+0x20215>
+ 181a8ff: 41 8b 96 b8 01 00 00         	mov	edx, dword ptr [r14 + 0x1b8]
+ 181a906: f3 0f 10 44 24 04            	movss	xmm0, dword ptr [rsp + 0x4]
+ 181a90c: 48 8d 7c 24 10               	lea	rdi, [rsp + 0x10]
+ 181a911: 4c 8d 84 24 a0 00 00 00      	lea	r8, [rsp + 0xa0]
+ 181a919: 4c 8d 4c 24 50               	lea	r9, [rsp + 0x50]
+ 181a91e: 4c 89 f6                     	mov	rsi, r14
+ 181a921: b9 01 00 00 00               	mov	ecx, 0x1
+ 181a926: e8 e5 22 00 00               	call	0x181cc10 <.text+0x22380>
+ 181a92b: 48 8b 74 24 10               	mov	rsi, qword ptr [rsp + 0x10]
+ 181a930: 48 8b 54 24 18               	mov	rdx, qword ptr [rsp + 0x18]
+ 181a935: 4c 89 ef                     	mov	rdi, r13
+ 181a938: e8 83 b1 ff ff               	call	0x1815ac0 <.text+0x1b230>
+ 181a93d: 0f b6 d8                     	movzx	ebx, al
+ 181a940: 48 8b 7c 24 10               	mov	rdi, qword ptr [rsp + 0x10]
+ 181a945: 48 8d 44 24 20               	lea	rax, [rsp + 0x20]
+ 181a94a: 48 39 c7                     	cmp	rdi, rax
+ 181a94d: 74 0d                        	je	0x181a95c <.text+0x200cc>
+ 181a94f: 48 8b 74 24 20               	mov	rsi, qword ptr [rsp + 0x20]
+ 181a954: 48 ff c6                     	inc	rsi
+ 181a957: e8 a4 73 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181a95c: ff cb                        	dec	ebx
+ 181a95e: e9 2e 01 00 00               	jmp	0x181aa91 <.text+0x20201>
+ 181a963: 41 c7 46 58 00 00 00 00      	mov	dword ptr [r14 + 0x58], 0x0
+ 181a96b: 4c 8d 7c 24 20               	lea	r15, [rsp + 0x20]
+ 181a970: 4c 89 7c 24 10               	mov	qword ptr [rsp + 0x10], r15
+ 181a975: 48 c7 44 24 38 64 00 00 00   	mov	qword ptr [rsp + 0x38], 0x64
+ 181a97e: 4c 8d 64 24 10               	lea	r12, [rsp + 0x10]
+ 181a983: 48 8d 74 24 38               	lea	rsi, [rsp + 0x38]
+ 181a988: 4c 89 e7                     	mov	rdi, r12
+ 181a98b: 31 d2                        	xor	edx, edx
+ 181a98d: e8 7e 73 1b 00               	call	0x19d1d10 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm@plt>
+ 181a992: 48 89 44 24 10               	mov	qword ptr [rsp + 0x10], rax
+ 181a997: 48 8b 4c 24 38               	mov	rcx, qword ptr [rsp + 0x38]
+ 181a99c: 48 89 4c 24 20               	mov	qword ptr [rsp + 0x20], rcx
+ 181a9a1: 0f 10 05 e5 a1 81 fe         	movups	xmm0, xmmword ptr [rip - 0x17e5e1b] # 0x34b8d
+ 181a9a8: 0f 11 40 50                  	movups	xmmword ptr [rax + 0x50], xmm0
+ 181a9ac: 0f 10 05 ca a1 81 fe         	movups	xmm0, xmmword ptr [rip - 0x17e5e36] # 0x34b7d
+ 181a9b3: 0f 11 40 40                  	movups	xmmword ptr [rax + 0x40], xmm0
+ 181a9b7: 0f 10 05 af a1 81 fe         	movups	xmm0, xmmword ptr [rip - 0x17e5e51] # 0x34b6d
+ 181a9be: 0f 11 40 30                  	movups	xmmword ptr [rax + 0x30], xmm0
+ 181a9c2: 0f 10 05 94 a1 81 fe         	movups	xmm0, xmmword ptr [rip - 0x17e5e6c] # 0x34b5d
+ 181a9c9: 0f 11 40 20                  	movups	xmmword ptr [rax + 0x20], xmm0
+ 181a9cd: 0f 10 05 79 a1 81 fe         	movups	xmm0, xmmword ptr [rip - 0x17e5e87] # 0x34b4d
+ 181a9d4: 0f 11 40 10                  	movups	xmmword ptr [rax + 0x10], xmm0
+ 181a9d8: 0f 10 05 5e a1 81 fe         	movups	xmm0, xmmword ptr [rip - 0x17e5ea2] # 0x34b3d
+ 181a9df: 0f 11 00                     	movups	xmmword ptr [rax], xmm0
+ 181a9e2: c7 40 60 74 69 65 73         	mov	dword ptr [rax + 0x60], 0x73656974
+ 181a9e9: 48 89 4c 24 18               	mov	qword ptr [rsp + 0x18], rcx
+ 181a9ee: c6 04 08 00                  	mov	byte ptr [rax + rcx], 0x0
+ 181a9f2: 4d 8b 6e 10                  	mov	r13, qword ptr [r14 + 0x10]
+ 181a9f6: 4d 85 ed                     	test	r13, r13
+ 181a9f9: 74 36                        	je	0x181aa31 <.text+0x201a1>
+ 181a9fb: 4d 8b 55 40                  	mov	r10, qword ptr [r13 + 0x40]
+ 181a9ff: 49 8b 5d 00                  	mov	rbx, qword ptr [r13]
+ 181aa03: 49 8b 45 10                  	mov	rax, qword ptr [r13 + 0x10]
+ 181aa07: 4d 8d 04 1a                  	lea	r8, [r10 + rbx]
+ 181aa0b: 4d 8b 5d 48                  	mov	r11, qword ptr [r13 + 0x48]
+ 181aa0f: 4d 8b 4d 08                  	mov	r9, qword ptr [r13 + 0x8]
+ 181aa13: 4d 01 c1                     	add	r9, r8
+ 181aa16: 49 01 c1                     	add	r9, rax
+ 181aa19: 4d 01 d9                     	add	r9, r11
+ 181aa1c: 4d 03 8d 80 00 00 00         	add	r9, qword ptr [r13 + 0x80]
+ 181aa23: 49 8b 6d 60                  	mov	rbp, qword ptr [r13 + 0x60]
+ 181aa27: 49 2b 5d 68                  	sub	rbx, qword ptr [r13 + 0x68]
+ 181aa2b: 49 03 5d 70                  	add	rbx, qword ptr [r13 + 0x70]
+ 181aa2f: eb 15                        	jmp	0x181aa46 <.text+0x201b6>
+ 181aa31: 45 31 c0                     	xor	r8d, r8d
+ 181aa34: 45 31 c9                     	xor	r9d, r9d
+ 181aa37: 31 c0                        	xor	eax, eax
+ 181aa39: 45 31 d2                     	xor	r10d, r10d
+ 181aa3c: 45 31 db                     	xor	r11d, r11d
+ 181aa3f: 31 ed                        	xor	ebp, ebp
+ 181aa41: 31 db                        	xor	ebx, ebx
+ 181aa43: 45 31 ed                     	xor	r13d, r13d
+ 181aa46: 48 83 ec 08                  	sub	rsp, 0x8
+ 181aa4a: 48 8d 0d 03 8b 81 fe         	lea	rcx, [rip - 0x17e74fd]  # 0x33554
+ 181aa51: 48 8b 7c 24 38               	mov	rdi, qword ptr [rsp + 0x38]
+ 181aa56: 48 8b 74 24 48               	mov	rsi, qword ptr [rsp + 0x48]
+ 181aa5b: 4c 89 f2                     	mov	rdx, r14
+ 181aa5e: 41 55                        	push	r13
+ 181aa60: 41 54                        	push	r12
+ 181aa62: 53                           	push	rbx
+ 181aa63: 55                           	push	rbp
+ 181aa64: 41 53                        	push	r11
+ 181aa66: 41 52                        	push	r10
+ 181aa68: 50                           	push	rax
+ 181aa69: e8 e2 3c 00 00               	call	0x181e750 <.text+0x23ec0>
+ 181aa6e: 48 83 c4 40                  	add	rsp, 0x40
+ 181aa72: 0f b6 d8                     	movzx	ebx, al
+ 181aa75: ff cb                        	dec	ebx
+ 181aa77: 48 8b 7c 24 10               	mov	rdi, qword ptr [rsp + 0x10]
+ 181aa7c: 4c 39 ff                     	cmp	rdi, r15
+ 181aa7f: 74 0d                        	je	0x181aa8e <.text+0x201fe>
+ 181aa81: 48 8b 74 24 20               	mov	rsi, qword ptr [rsp + 0x20]
+ 181aa86: 48 ff c6                     	inc	rsi
+ 181aa89: e8 72 72 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181aa8e: 83 cb 01                     	or	ebx, 0x1
+ 181aa91: 89 d8                        	mov	eax, ebx
+ 181aa93: 48 81 c4 f8 00 00 00         	add	rsp, 0xf8
+ 181aa9a: 5b                           	pop	rbx
+ 181aa9b: 41 5c                        	pop	r12
+ 181aa9d: 41 5d                        	pop	r13
+ 181aa9f: 41 5e                        	pop	r14
+ 181aaa1: 41 5f                        	pop	r15
+ 181aaa3: 5d                           	pop	rbp
+ 181aaa4: c3                           	ret
+ 181aaa5: 4c 8b 3d ec d4 1b 00         	mov	r15, qword ptr [rip + 0x1bd4ec] # 0x19d7f98
+ 181aaac: 49 8b 1f                     	mov	rbx, qword ptr [r15]
+ 181aaaf: 0f b6 05 f2 f4 1b 00         	movzx	eax, byte ptr [rip + 0x1bf4f2] # 0x19d9fa8
+ 181aab6: 84 c0                        	test	al, al
+ 181aab8: 0f 84 01 02 00 00            	je	0x181acbf <.text+0x2042f>
+ 181aabe: 4c 8b 25 db f4 1b 00         	mov	r12, qword ptr [rip + 0x1bf4db] # 0x19d9fa0
+ 181aac5: e8 f6 74 1b 00               	call	0x19d1fc0 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>
+ 181aaca: 4c 29 e0                     	sub	rax, r12
+ 181aacd: 0f 57 c0                     	xorps	xmm0, xmm0
+ 181aad0: f2 48 0f 2a c0               	cvtsi2sd	xmm0, rax
+ 181aad5: f2 0f 5e 05 13 93 7f fe      	divsd	xmm0, qword ptr [rip - 0x1806ced] # 0x13df0
+ 181aadd: 48 8d 35 2d 15 82 fe         	lea	rsi, [rip - 0x17dead3]  # 0x3c011
+ 181aae4: 48 89 df                     	mov	rdi, rbx
+ 181aae7: b0 01                        	mov	al, 0x1
+ 181aae9: e8 b2 72 1b 00               	call	0x19d1da0 <fprintf@plt>
+ 181aaee: 49 8b 3f                     	mov	rdi, qword ptr [r15]
+ 181aaf1: 49 8b 16                     	mov	rdx, qword ptr [r14]
+ 181aaf4: f2 41 0f 10 86 c0 01 00 00   	movsd	xmm0, qword ptr [r14 + 0x1c0]
+ 181aafd: 48 8d 35 7f b9 80 fe         	lea	rsi, [rip - 0x17f4681]  # 0x26483
+ 181ab04: b0 01                        	mov	al, 0x1
+ 181ab06: e8 95 72 1b 00               	call	0x19d1da0 <fprintf@plt>
+ 181ab0b: 49 8b 37                     	mov	rsi, qword ptr [r15]
+ 181ab0e: bf 0a 00 00 00               	mov	edi, 0xa
+ 181ab13: e8 68 75 1b 00               	call	0x19d2080 <fputc@plt>
+ 181ab18: e9 e2 fd ff ff               	jmp	0x181a8ff <.text+0x2006f>
+ 181ab1d: 41 8b 8e b8 01 00 00         	mov	ecx, dword ptr [r14 + 0x1b8]
+ 181ab24: 4c 89 64 24 30               	mov	qword ptr [rsp + 0x30], r12
+ 181ab29: 41 c7 46 58 00 00 00 00      	mov	dword ptr [r14 + 0x58], 0x0
+ 181ab31: 48 8b 05 60 d4 1b 00         	mov	rax, qword ptr [rip + 0x1bd460] # 0x19d7f98
+ 181ab38: 48 8b 38                     	mov	rdi, qword ptr [rax]
+ 181ab3b: 49 8b 16                     	mov	rdx, qword ptr [r14]
+ 181ab3e: 48 8d 35 af 8a 81 fe         	lea	rsi, [rip - 0x17e7551]  # 0x335f4
+ 181ab45: 45 31 e4                     	xor	r12d, r12d
+ 181ab48: 31 c0                        	xor	eax, eax
+ 181ab4a: e8 51 72 1b 00               	call	0x19d1da0 <fprintf@plt>
+ 181ab4f: 41 8b b6 b8 01 00 00         	mov	esi, dword ptr [r14 + 0x1b8]
+ 181ab56: 48 8d 7c 24 10               	lea	rdi, [rsp + 0x10]
+ 181ab5b: e8 90 16 00 00               	call	0x181c1f0 <.text+0x21960>
+ 181ab60: 4d 8b 7e 10                  	mov	r15, qword ptr [r14 + 0x10]
+ 181ab64: 4d 85 ff                     	test	r15, r15
+ 181ab67: 74 35                        	je	0x181ab9e <.text+0x2030e>
+ 181ab69: 4d 8b 57 40                  	mov	r10, qword ptr [r15 + 0x40]
+ 181ab6d: 49 8b 1f                     	mov	rbx, qword ptr [r15]
+ 181ab70: 49 8b 47 10                  	mov	rax, qword ptr [r15 + 0x10]
+ 181ab74: 4d 8d 24 1a                  	lea	r12, [r10 + rbx]
+ 181ab78: 4d 8b 5f 48                  	mov	r11, qword ptr [r15 + 0x48]
+ 181ab7c: 4d 8b 4f 08                  	mov	r9, qword ptr [r15 + 0x8]
+ 181ab80: 4d 01 e1                     	add	r9, r12
+ 181ab83: 49 01 c1                     	add	r9, rax
+ 181ab86: 4d 01 d9                     	add	r9, r11
+ 181ab89: 4d 03 8f 80 00 00 00         	add	r9, qword ptr [r15 + 0x80]
+ 181ab90: 49 8b 6f 60                  	mov	rbp, qword ptr [r15 + 0x60]
+ 181ab94: 49 2b 5f 68                  	sub	rbx, qword ptr [r15 + 0x68]
+ 181ab98: 49 03 5f 70                  	add	rbx, qword ptr [r15 + 0x70]
+ 181ab9c: eb 12                        	jmp	0x181abb0 <.text+0x20320>
+ 181ab9e: 45 31 c9                     	xor	r9d, r9d
+ 181aba1: 31 c0                        	xor	eax, eax
+ 181aba3: 45 31 d2                     	xor	r10d, r10d
+ 181aba6: 45 31 db                     	xor	r11d, r11d
+ 181aba9: 31 ed                        	xor	ebp, ebp
+ 181abab: 31 db                        	xor	ebx, ebx
+ 181abad: 45 31 ff                     	xor	r15d, r15d
+ 181abb0: 48 83 ec 08                  	sub	rsp, 0x8
+ 181abb4: 48 8d 0d 99 89 81 fe         	lea	rcx, [rip - 0x17e7667]  # 0x33554
+ 181abbb: 48 8b 7c 24 38               	mov	rdi, qword ptr [rsp + 0x38]
+ 181abc0: 4c 89 ee                     	mov	rsi, r13
+ 181abc3: 4c 89 f2                     	mov	rdx, r14
+ 181abc6: 4d 89 e0                     	mov	r8, r12
+ 181abc9: 41 57                        	push	r15
+ 181abcb: 4c 8d 74 24 20               	lea	r14, [rsp + 0x20]
+ 181abd0: 41 56                        	push	r14
+ 181abd2: 53                           	push	rbx
+ 181abd3: 55                           	push	rbp
+ 181abd4: 41 53                        	push	r11
+ 181abd6: 41 52                        	push	r10
+ 181abd8: 50                           	push	rax
+ 181abd9: e8 72 3b 00 00               	call	0x181e750 <.text+0x23ec0>
+ 181abde: 48 83 c4 40                  	add	rsp, 0x40
+ 181abe2: 0f b6 d8                     	movzx	ebx, al
+ 181abe5: ff cb                        	dec	ebx
+ 181abe7: 48 8b 7c 24 10               	mov	rdi, qword ptr [rsp + 0x10]
+ 181abec: 48 8d 44 24 20               	lea	rax, [rsp + 0x20]
+ 181abf1: 48 39 c7                     	cmp	rdi, rax
+ 181abf4: 0f 85 87 fe ff ff            	jne	0x181aa81 <.text+0x201f1>
+ 181abfa: e9 8f fe ff ff               	jmp	0x181aa8e <.text+0x201fe>
+ 181abff: 48 8d 3d 2b 55 80 fe         	lea	rdi, [rip - 0x17faad5]  # 0x20131
+ 181ac06: e8 a5 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac0b: 48 8d 3d 1f 55 80 fe         	lea	rdi, [rip - 0x17faae1]  # 0x20131
+ 181ac12: e8 99 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac17: 48 8d 3d 13 55 80 fe         	lea	rdi, [rip - 0x17faaed]  # 0x20131
+ 181ac1e: e8 8d 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac23: 48 8d 3d 07 55 80 fe         	lea	rdi, [rip - 0x17faaf9]  # 0x20131
+ 181ac2a: e8 81 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac2f: 48 8d 3d fb 54 80 fe         	lea	rdi, [rip - 0x17fab05]  # 0x20131
+ 181ac36: e8 75 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac3b: 48 8d 3d ef 54 80 fe         	lea	rdi, [rip - 0x17fab11]  # 0x20131
+ 181ac42: e8 69 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac47: 48 8d 3d 4a f3 1b 00         	lea	rdi, [rip + 0x1bf34a]   # 0x19d9f98
+ 181ac4e: e8 ad 72 1b 00               	call	0x19d1f00 <__cxa_guard_acquire@plt>
+ 181ac53: 85 c0                        	test	eax, eax
+ 181ac55: 0f 84 97 fc ff ff            	je	0x181a8f2 <.text+0x20062>
+ 181ac5b: e8 90 38 00 00               	call	0x181e4f0 <.text+0x23c60>
+ 181ac60: 89 05 2a f3 1b 00            	mov	dword ptr [rip + 0x1bf32a], eax # 0x19d9f90
+ 181ac66: 48 8d 3d 2b f3 1b 00         	lea	rdi, [rip + 0x1bf32b]   # 0x19d9f98
+ 181ac6d: e8 9e 72 1b 00               	call	0x19d1f10 <__cxa_guard_release@plt>
+ 181ac72: e9 7b fc ff ff               	jmp	0x181a8f2 <.text+0x20062>
+ 181ac77: 48 8d 3d b3 54 80 fe         	lea	rdi, [rip - 0x17fab4d]  # 0x20131
+ 181ac7e: e8 2d 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac83: 48 8d 3d a7 54 80 fe         	lea	rdi, [rip - 0x17fab59]  # 0x20131
+ 181ac8a: e8 21 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac8f: 48 8d 3d 9b 54 80 fe         	lea	rdi, [rip - 0x17fab65]  # 0x20131
+ 181ac96: e8 15 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181ac9b: 48 8d 3d 8f 54 80 fe         	lea	rdi, [rip - 0x17fab71]  # 0x20131
+ 181aca2: e8 09 73 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181aca7: 48 8d 3d 83 54 80 fe         	lea	rdi, [rip - 0x17fab7d]  # 0x20131
+ 181acae: e8 fd 72 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181acb3: 48 8d 3d 77 54 80 fe         	lea	rdi, [rip - 0x17fab89]  # 0x20131
+ 181acba: e8 f1 72 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>
+ 181acbf: 48 8d 3d e2 f2 1b 00         	lea	rdi, [rip + 0x1bf2e2]   # 0x19d9fa8
+ 181acc6: e8 35 72 1b 00               	call	0x19d1f00 <__cxa_guard_acquire@plt>
+ 181accb: 85 c0                        	test	eax, eax
+ 181accd: 0f 84 eb fd ff ff            	je	0x181aabe <.text+0x2022e>
+ 181acd3: e8 e8 72 1b 00               	call	0x19d1fc0 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>
+ 181acd8: 48 89 05 c1 f2 1b 00         	mov	qword ptr [rip + 0x1bf2c1], rax # 0x19d9fa0
+ 181acdf: 48 8d 3d c2 f2 1b 00         	lea	rdi, [rip + 0x1bf2c2]   # 0x19d9fa8
+ 181ace6: e8 25 72 1b 00               	call	0x19d1f10 <__cxa_guard_release@plt>
+ 181aceb: e9 ce fd ff ff               	jmp	0x181aabe <.text+0x2022e>
+ 181acf0: eb 17                        	jmp	0x181ad09 <.text+0x20479>
+ 181acf2: 48 89 c3                     	mov	rbx, rax
+ 181acf5: 48 8b 7c 24 10               	mov	rdi, qword ptr [rsp + 0x10]
+ 181acfa: 4c 39 ff                     	cmp	rdi, r15
+ 181acfd: 75 1c                        	jne	0x181ad1b <.text+0x2048b>
+ 181acff: eb 27                        	jmp	0x181ad28 <.text+0x20498>
+ 181ad01: 48 89 c7                     	mov	rdi, rax
+ 181ad04: e8 27 72 1b 00               	call	0x19d1f30 <_Unwind_Resume@plt>
+ 181ad09: 48 89 c3                     	mov	rbx, rax
+ 181ad0c: 48 8b 7c 24 10               	mov	rdi, qword ptr [rsp + 0x10]
+ 181ad11: 48 8d 44 24 20               	lea	rax, [rsp + 0x20]
+ 181ad16: 48 39 c7                     	cmp	rdi, rax
+ 181ad19: 74 0d                        	je	0x181ad28 <.text+0x20498>
+ 181ad1b: 48 8b 74 24 20               	mov	rsi, qword ptr [rsp + 0x20]
+ 181ad20: 48 ff c6                     	inc	rsi
+ 181ad23: e8 d8 6f 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181ad28: 48 89 df                     	mov	rdi, rbx
+ 181ad2b: e8 00 72 1b 00               	call	0x19d1f30 <_Unwind_Resume@plt>

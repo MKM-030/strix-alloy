@@ -1,0 +1,207 @@
+{
+  "utc": "2026-10-17T11:43:22.863343+00:00",
+  "version": "0.18.7",
+  "full_goal_achieved": false,
+  "method": "Natural prose, 16384 input / 128 output tokens; temperature 0, seed 1; Cache Off, Thinking Off, vision off; MTP depth 2, gate 0, PLD 3,3; context 32768, one slot; one excluded warmup and three measurements per arm.",
+  "phase_clocks_independently_qualified": false,
+  "whole_http_clock": "Windows QPC through complete body",
+  "rows": [
+    {
+      "chunk_and_arena": 4096,
+      "policy": "default2",
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "measured_http_seconds": [
+        16.3278851,
+        16.4507808,
+        16.4333204
+      ],
+      "mean_http_seconds": 16.403995433333332,
+      "stdev_http_seconds": 0.0664891233370043,
+      "native_head": {
+        "rounds": 204,
+        "drafted": 408,
+        "accepted": 177,
+        "acceptance": 0.4338235294117647,
+        "accepted_per_round": 0.8676470588235294
+      },
+      "api_phase_observations": {
+        "prefill_pooled_tokens_per_second": 1226.1331603761819,
+        "decode_pooled_tokens_per_second": 39.195672144534036,
+        "prefill_arithmetic_mean_tokens_per_second": 1226.9946666666667,
+        "decode_arithmetic_mean_tokens_per_second": 39.248666666666665,
+        "independently_clock_qualified": false,
+        "label": "unqualified engine-reported observations"
+      },
+      "output_hashes": [
+        "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2"
+      ]
+    },
+    {
+      "chunk_and_arena": 4096,
+      "policy": "mode0",
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "measured_http_seconds": [
+        16.0488553,
+        15.8613841,
+        15.9513245
+      ],
+      "mean_http_seconds": 15.953854633333334,
+      "stdev_http_seconds": 0.0937612067348392,
+      "native_head": {
+        "rounds": 198,
+        "drafted": 396,
+        "accepted": 183,
+        "acceptance": 0.4621212121212121,
+        "accepted_per_round": 0.9242424242424242
+      },
+      "api_phase_observations": {
+        "prefill_pooled_tokens_per_second": 1181.0529806257523,
+        "decode_pooled_tokens_per_second": 38.404992649044374,
+        "prefill_arithmetic_mean_tokens_per_second": 1181.076,
+        "decode_arithmetic_mean_tokens_per_second": 38.405,
+        "independently_clock_qualified": false,
+        "label": "unqualified engine-reported observations"
+      },
+      "output_hashes": [
+        "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2"
+      ]
+    },
+    {
+      "chunk_and_arena": 8192,
+      "policy": "mode0",
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "measured_http_seconds": [
+        15.3554164,
+        15.4553395,
+        15.337634
+      ],
+      "mean_http_seconds": 15.382796633333333,
+      "stdev_http_seconds": 0.06345001233729833,
+      "native_head": {
+        "rounds": 201,
+        "drafted": 399,
+        "accepted": 180,
+        "acceptance": 0.45112781954887216,
+        "accepted_per_round": 0.8955223880597015
+      },
+      "api_phase_observations": {
+        "prefill_pooled_tokens_per_second": 1272.4712119956923,
+        "decode_pooled_tokens_per_second": 38.98160555487879,
+        "prefill_arithmetic_mean_tokens_per_second": 1274.6216666666667,
+        "decode_arithmetic_mean_tokens_per_second": 39.036,
+        "independently_clock_qualified": false,
+        "label": "unqualified engine-reported observations"
+      },
+      "output_hashes": [
+        "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+      ]
+    },
+    {
+      "chunk_and_arena": 8192,
+      "policy": "default2",
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "measured_http_seconds": [
+        15.4709223,
+        15.4168745,
+        15.3830621
+      ],
+      "mean_http_seconds": 15.423619633333333,
+      "stdev_http_seconds": 0.044316772262579296,
+      "native_head": {
+        "rounds": 201,
+        "drafted": 399,
+        "accepted": 180,
+        "acceptance": 0.45112781954887216,
+        "accepted_per_round": 0.8955223880597015
+      },
+      "api_phase_observations": {
+        "prefill_pooled_tokens_per_second": 1263.9569629237233,
+        "decode_pooled_tokens_per_second": 38.809439587649706,
+        "prefill_arithmetic_mean_tokens_per_second": 1265.2163333333333,
+        "decode_arithmetic_mean_tokens_per_second": 38.87166666666667,
+        "independently_clock_qualified": false,
+        "label": "unqualified engine-reported observations"
+      },
+      "output_hashes": [
+        "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+      ]
+    }
+  ],
+  "comparison4k": {
+    "candidateMinusBaselineSeconds": -0.450140799999998,
+    "candidateHTTPMeanChangePercent": -2.7440924488756013,
+    "allAttemptOutputsIdentical": true,
+    "outputSHA256Values": [
+      "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2"
+    ],
+    "allAttemptTokenCountsAndFinishIdentical": true,
+    "tokenCountAndFinishValues": [
+      [
+        16384,
+        128,
+        "length"
+      ]
+    ],
+    "baselineMeasuredHead": {
+      "rounds": 204,
+      "drafted": 408,
+      "accepted": 177,
+      "acceptance": 0.4338235294117647,
+      "accepted_per_round": 0.8676470588235294
+    },
+    "candidateMeasuredHead": {
+      "rounds": 198,
+      "drafted": 396,
+      "accepted": 183,
+      "acceptance": 0.4621212121212121,
+      "accepted_per_round": 0.9242424242424242
+    },
+    "profilePolicyDifference": "engine.kernel_controls.HALOGEN_MTP_PREFILL=0"
+  },
+  "comparison8k": {
+    "candidateMinusBaselineSeconds": -0.04082299999999961,
+    "candidateHTTPMeanChangePercent": -0.26467846699080866,
+    "allAttemptOutputsIdentical": true,
+    "outputSHA256Values": [
+      "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+    ],
+    "allAttemptTokenCountsAndFinishIdentical": true,
+    "tokenCountAndFinishValues": [
+      [
+        16384,
+        128,
+        "length"
+      ]
+    ],
+    "baselineMeasuredHead": {
+      "rounds": 201,
+      "drafted": 399,
+      "accepted": 180,
+      "acceptance": 0.45112781954887216,
+      "accepted_per_round": 0.8955223880597015
+    },
+    "candidateMeasuredHead": {
+      "rounds": 201,
+      "drafted": 399,
+      "accepted": 180,
+      "acceptance": 0.45112781954887216,
+      "accepted_per_round": 0.8955223880597015
+    },
+    "profilePolicyDifference": "engine.kernel_controls.HALOGEN_MTP_PREFILL=0",
+    "identicalCandidateSourcesAcrossBothArms": true,
+    "fullManifestEnvironmentEqualExceptPolicy": true,
+    "chronologicalMode0ThenDefault2": true
+  },
+  "default_mode_restored": true,
+  "npu_integrated": false,
+  "limitations": "Paired descriptive comparisons, no significance or joint-maximum claim; 4K and8K target hashes differ. Historical1925.16 is a different8K/1 serial fixture; about70 API decode is a200/321 sampled-code fixture. No phase-rate correction.",
+  "evidence": [
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\version-bracket-4k\\analysis\\results.json",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\prompt-head-policy\\runtime-prep\\comparison\\results.json",
+    "server\\.local\\halogen-update-20261017\\goal-next-20261017\\prompt-head-policy\\runtime-prep\\combined8k\\comparison\\results.json"
+  ]
+}

@@ -1,0 +1,2270 @@
+{
+  "schema": "halogen0185.full262-domain-mtp-published.v1",
+  "generated_utc": "2026-10-15T15:45:06.117228+00:00",
+  "status": "final_control_complete",
+  "cases": [
+    {
+      "case": "code",
+      "windows": [
+        {
+          "label": "A-before fixed2 gate0",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "code",
+            "policy_label": "fixed2-default64-full262",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "953e9bcac830b5669c21b49d7bdafb6858bf3a7bc5c2e3cf1f80971df698c282",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "d95f2e41d870485b857f8925a7fded9a",
+              "backend_run_id": "8d5df2eba8904d5e8177a6ae0af96638",
+              "container_id": "051f2e37709835a54d7dc0356acf51b4cd492488d1e985cde69f9d3d9e7d08ad",
+              "profile_sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12",
+              "controller_identity": {
+                "pid": 9144,
+                "creation_time_100ns": 134365453840233283,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 26480,
+                "creation_time_100ns": 134365453945830282,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0",
+                "HALOGEN_PLD": "3,3"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 166,
+            "actual_output_tokens_per_measured_request": [
+              512,
+              512,
+              512
+            ],
+            "measured_http_wall_seconds": [
+              8.2052041,
+              8.0623837,
+              8.0994567
+            ],
+            "http_wall_seconds": {
+              "mean": 8.122348166666667,
+              "stdev": 0.0741109377801504,
+              "min": 8.0623837,
+              "max": 8.2052041
+            },
+            "generated_tokens_per_whole_http_second": 63.0359582591151,
+            "output_sha256": "810bf260e9284f5b4b40a137dbbc960fc08f5caea09ccbe118d737ac14940174",
+            "finish_reasons": [
+              "length",
+              "length",
+              "length"
+            ],
+            "quality": {
+              "passed": null,
+              "note": "Manual domain/code review required; token-cap truncation is recorded."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              -0.009904099999999971,
+              -0.011883700000000275,
+              -0.013056699999998145
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 462,
+                "drafted": 924,
+                "accepted": 729,
+                "acceptance": 0.788961038961039,
+                "rejected": 195,
+                "accepted_per_round": 1.577922077922078
+              },
+              "lookup": {
+                "rounds": 99,
+                "drafted": 297,
+                "accepted": 243,
+                "acceptance": 0.8181818181818182,
+                "rejected": 54,
+                "accepted_per_round": 2.4545454545454546
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 693.0141942666295,
+              "arithmetic_mean_tokens_per_second": 693.066,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 65.04726090049802,
+              "arithmetic_mean_tokens_per_second": 65.05133333333333,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 8.1222908,
+              "stdev": 0.07412080971164577,
+              "min": 8.0623427,
+              "max": 8.2051663
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\response-0.raw",
+                "bytes": 2861,
+                "sha256": "3b263b3eb44f034c5176e58f1ece859c58f34c75e8c83f98786220aa96941ddd"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\client-0.json",
+                "bytes": 3688,
+                "sha256": "f15bcaf56a28e43a01f5a7ba9268aadeae197ca703add17b8409f037fb9fcfb2"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\response-1.raw",
+                "bytes": 2861,
+                "sha256": "54cfb5c38df9cec7f09f7e2cd825815856c4fce77d1d15c42b0fb25d415bec6f"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\client-1.json",
+                "bytes": 3676,
+                "sha256": "7e247dfeb9f54d46e53ee25f15713c9068f7a249a300e57abaa171d1ebc59553"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\response-2.raw",
+                "bytes": 2861,
+                "sha256": "5d2c0e6961f248c39e69a955bb729bde008c71e0d0defc76472f92c22fd6b4e7"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\client-2.json",
+                "bytes": 3676,
+                "sha256": "6c5a205aedefc57ed7be4be6e29619633a6ff57c97ab2cd4f5ef6c3b5b40f0e6"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\response-3.raw",
+                "bytes": 2860,
+                "sha256": "d940afae85976f3f8d65fdbe1af7b02b6cc6d1012148f2fd278ec5dcc0158e46"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\client-3.json",
+                "bytes": 3686,
+                "sha256": "daa082474d6f8f9952322e2d90af389bf9aeefafd67102bfc4c48789db5ebaba"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\source.json",
+            "bytes": 981,
+            "sha256": "bc5a782a588f8c1d9a3dadf4e871f86ab6a5cde2801110191abd168a581ad0b1"
+          }
+        },
+        {
+          "label": "B fixed2 gate0.90",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "code",
+            "policy_label": "fixed2-g64-gated90",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "953e9bcac830b5669c21b49d7bdafb6858bf3a7bc5c2e3cf1f80971df698c282",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "2b6d191793e044c990668ad00697d057",
+              "backend_run_id": "9e7b5a732e594ecb8385161673eb89da",
+              "container_id": "2a90d1aabedde75847495451a6c7f55f990b8a601529310d074090d78f4b4813",
+              "profile_sha256": "d79ae12c907c07a9ce64f4fb7733615fed1d9cbfc9d360fe14e35129308b018a",
+              "controller_identity": {
+                "pid": 31708,
+                "creation_time_100ns": 134365518219542790,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 32108,
+                "creation_time_100ns": 134365518324706600,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0.90",
+                "HALOGEN_PLD": "3,3",
+                "HALOGEN_NGRAM_GATHER_THREADS": "64"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 166,
+            "actual_output_tokens_per_measured_request": [
+              512,
+              512,
+              512
+            ],
+            "measured_http_wall_seconds": [
+              8.512897,
+              8.1193834,
+              8.0547986
+            ],
+            "http_wall_seconds": {
+              "mean": 8.229026333333334,
+              "stdev": 0.2479510347691526,
+              "min": 8.0547986,
+              "max": 8.512897
+            },
+            "generated_tokens_per_whole_http_second": 62.218782546124636,
+            "output_sha256": "810bf260e9284f5b4b40a137dbbc960fc08f5caea09ccbe118d737ac14940174",
+            "finish_reasons": [
+              "length",
+              "length",
+              "length"
+            ],
+            "quality": {
+              "passed": null,
+              "note": "Manual domain/code review required; token-cap truncation is recorded."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              0.6189029999999995,
+              0.6646166000000004,
+              0.6594013999999984
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 483,
+                "drafted": 840,
+                "accepted": 705,
+                "acceptance": 0.8392857142857143,
+                "rejected": 135,
+                "accepted_per_round": 1.4596273291925466
+              },
+              "lookup": {
+                "rounds": 99,
+                "drafted": 297,
+                "accepted": 246,
+                "acceptance": 0.8282828282828283,
+                "rejected": 51,
+                "accepted_per_round": 2.484848484848485
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 449.7020046956835,
+              "arithmetic_mean_tokens_per_second": 523.623,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 60.18195638375401,
+              "arithmetic_mean_tokens_per_second": 60.183,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 8.228994166666666,
+              "stdev": 0.2479496233791114,
+              "min": 8.0547661,
+              "max": 8.512863
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\response-0.raw",
+                "bytes": 2858,
+                "sha256": "d3837290e55b98ad906af0e37059cfd89ca71489e9e551bcd9944a269f42e741"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\client-0.json",
+                "bytes": 3722,
+                "sha256": "8bd7dddf6185b6d9402aff8fa4d0dde259dffdf58b24a8719b6ba77410f621d0"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\response-1.raw",
+                "bytes": 2861,
+                "sha256": "a45bd7fea202ae1530a9609254b96bb5fcb220a1f474a0555af9feb51fdfdc1d"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\client-1.json",
+                "bytes": 3722,
+                "sha256": "3dac0ac2a46d917856542a384399e2e4dd23c6c34bdb162ab4867a7e01dbe1f7"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\response-2.raw",
+                "bytes": 2861,
+                "sha256": "0f49dac372decde725e86e934b4deebfe43609a09b25bfd57d31a43fa142b8a2"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\client-2.json",
+                "bytes": 3723,
+                "sha256": "e550b81f7a899af7470f449a4007b60aeb7c711a2bae9da09cc85f02e999a284"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\response-3.raw",
+                "bytes": 2861,
+                "sha256": "804b908007dcd81d4e38ee7af87c414be0fe8813b40b7905e63f4c17e0827164"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\client-3.json",
+                "bytes": 3735,
+                "sha256": "0da4f538b6ab6f60602e6ade47fec27ef9e02ff99e6da2380d5a12310ae55fe9"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\code\\source.json",
+            "bytes": 975,
+            "sha256": "1261aa3229115e5875a8578f3129b4812661e0e2bb78731c9d43ca6cc4364d4d"
+          }
+        },
+        {
+          "label": "A-after fixed2 gate0",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "code",
+            "policy_label": "fixed2-default64-after",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "953e9bcac830b5669c21b49d7bdafb6858bf3a7bc5c2e3cf1f80971df698c282",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "ac724c01813440eeacf65b15aebbdd18",
+              "backend_run_id": "5acb5a42bb3b42e5b66f3676c3e55c6a",
+              "container_id": "fca966bb5902ca0c7340c9dac53c7b7c0812cf6f4210c3fe813cc431c5ddfecd",
+              "profile_sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12",
+              "controller_identity": {
+                "pid": 26708,
+                "creation_time_100ns": 134365521874746445,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 32964,
+                "creation_time_100ns": 134365521980983399,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0",
+                "HALOGEN_PLD": "3,3"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 166,
+            "actual_output_tokens_per_measured_request": [
+              512,
+              512,
+              512
+            ],
+            "measured_http_wall_seconds": [
+              8.1772568,
+              8.089552,
+              8.0332872
+            ],
+            "http_wall_seconds": {
+              "mean": 8.100032,
+              "stdev": 0.07255469820101258,
+              "min": 8.0332872,
+              "max": 8.1772568
+            },
+            "generated_tokens_per_whole_http_second": 63.209626826165625,
+            "output_sha256": "810bf260e9284f5b4b40a137dbbc960fc08f5caea09ccbe118d737ac14940174",
+            "finish_reasons": [
+              "length",
+              "length",
+              "length"
+            ],
+            "quality": {
+              "passed": null,
+              "note": "Manual domain/code review required; token-cap truncation is recorded."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              -0.16175680000000092,
+              -0.009852000000000416,
+              -0.010387200000000263
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 462,
+                "drafted": 924,
+                "accepted": 729,
+                "acceptance": 0.788961038961039,
+                "rejected": 195,
+                "accepted_per_round": 1.577922077922078
+              },
+              "lookup": {
+                "rounds": 99,
+                "drafted": 297,
+                "accepted": 243,
+                "acceptance": 0.8181818181818182,
+                "rejected": 54,
+                "accepted_per_round": 2.4545454545454546
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 689.655172413793,
+              "arithmetic_mean_tokens_per_second": 689.8623333333334,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 65.65224824756369,
+              "arithmetic_mean_tokens_per_second": 65.653,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 8.099995333333334,
+              "stdev": 0.07254926729280853,
+              "min": 8.0332542,
+              "max": 8.1772135
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\response-0.raw",
+                "bytes": 2859,
+                "sha256": "b7b6b06bd23b4e45dddd5b5b5b99f7087478e8a5d96d8587978fc105107eac76"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\client-0.json",
+                "bytes": 3676,
+                "sha256": "9ac6717e1b69f3429b35412e41ace2636ab5334f364385ecf18c0d65150abff1"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\response-1.raw",
+                "bytes": 2860,
+                "sha256": "fd38315b8aa711615d3df96ffecc48c85272357067fd8194a6fc16fb07bba68f"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\client-1.json",
+                "bytes": 3676,
+                "sha256": "ecd72feefd56407473f80ca5bc2e69f1018ddf7ef6e03355f5f13b55b6ec7141"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\response-2.raw",
+                "bytes": 2861,
+                "sha256": "bc054f92e4fa7155dc9f3b842377ad52b9a364c1d84ebee1a60c36dbb9d59ebe"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\client-2.json",
+                "bytes": 3687,
+                "sha256": "43232741e2395c71c75f206e7ab91982862049be4902441dc0eef406c22a6b96"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\response-3.raw",
+                "bytes": 2861,
+                "sha256": "7483398a7fd2cb02689c24e0b9a4005b86432c49fe974c244ff536fb1a68f8cd"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\client-3.json",
+                "bytes": 3677,
+                "sha256": "d8bcc3a49243339ec17eb15081862a29cfb3dff226169dae9078e5946e1cb10e"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\code\\source.json",
+            "bytes": 979,
+            "sha256": "8c61aad066681a26621e4af72b2e3bf31430ce349603d7f592b66fc6b5a45bba"
+          }
+        }
+      ],
+      "comparison": {
+        "candidate_http_change_vs_before_percent": 1.3133907150701063,
+        "candidate_pooled_api_prefill_change_vs_before_percent": -35.10926494491602,
+        "candidate_pooled_api_decode_change_vs_before_percent": -7.479645490663167,
+        "candidate_http_change_vs_after_percent": 1.59251634232227,
+        "candidate_http_change_vs_bookend_mean_percent": 1.4527615404073213,
+        "control_bookend_http_drift_percent": -0.2747501856452006
+      },
+      "mechanism": {
+        "head": {
+          "before": {
+            "rounds": 462,
+            "drafted": 924,
+            "accepted": 729,
+            "acceptance": 0.788961038961039,
+            "rejected": 195,
+            "accepted_per_round": 1.577922077922078
+          },
+          "candidate": {
+            "rounds": 483,
+            "drafted": 840,
+            "accepted": 705,
+            "acceptance": 0.8392857142857143,
+            "rejected": 135,
+            "accepted_per_round": 1.4596273291925466
+          },
+          "acceptance_percentage_point_change": 5.032467532467533,
+          "accepted_per_round_change": -0.11829474872953138
+        },
+        "lookup": {
+          "before": {
+            "rounds": 99,
+            "drafted": 297,
+            "accepted": 243,
+            "acceptance": 0.8181818181818182,
+            "rejected": 54,
+            "accepted_per_round": 2.4545454545454546
+          },
+          "candidate": {
+            "rounds": 99,
+            "drafted": 297,
+            "accepted": 246,
+            "acceptance": 0.8282828282828283,
+            "rejected": 51,
+            "accepted_per_round": 2.484848484848485
+          },
+          "acceptance_percentage_point_change": 1.0101010101010055,
+          "accepted_per_round_change": 0.030303030303030276
+        },
+        "grammar": {
+          "before": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "rejected": 0,
+            "accepted_per_round": null
+          },
+          "candidate": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "rejected": 0,
+            "accepted_per_round": null
+          },
+          "acceptance_percentage_point_change": null,
+          "accepted_per_round_change": null
+        }
+      },
+      "quality_review": {
+        "review": "The 512-token response ends inside summarizeByGroup before the query and function are completed; it is an incomplete code prefix.",
+        "complete_artifact": false,
+        "finish_reason": "length",
+        "tail_excerpt": "\n        // Filter by assignment_group\n        gr.addQuery('assignment_group', groupSysId);\n        \n        // Filter by sys_created_on (greater than or equal to sinceUtc)\n       ",
+        "evidence": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\code\\response-1.raw",
+          "bytes": 2861,
+          "sha256": "54cfb5c38df9cec7f09f7e2cd825815856c4fce77d1d15c42b0fb25d415bec6f"
+        }
+      },
+      "raw_output_hashes_identical": true,
+      "actual_token_counts_identical": true
+    },
+    {
+      "case": "incident",
+      "windows": [
+        {
+          "label": "A-before fixed2 gate0",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "incident",
+            "policy_label": "fixed2-default64-full262",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "2ddd30ddad21ed02dab86536148e76c2e8b2f66af3876697466f4b7b48b813a1",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "d95f2e41d870485b857f8925a7fded9a",
+              "backend_run_id": "8d5df2eba8904d5e8177a6ae0af96638",
+              "container_id": "051f2e37709835a54d7dc0356acf51b4cd492488d1e985cde69f9d3d9e7d08ad",
+              "profile_sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12",
+              "controller_identity": {
+                "pid": 9144,
+                "creation_time_100ns": 134365453840233283,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 26480,
+                "creation_time_100ns": 134365453945830282,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0",
+                "HALOGEN_PLD": "3,3"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 220,
+            "actual_output_tokens_per_measured_request": [
+              512,
+              512,
+              512
+            ],
+            "measured_http_wall_seconds": [
+              9.3065141,
+              9.2813822,
+              9.3158259
+            ],
+            "http_wall_seconds": {
+              "mean": 9.301240733333334,
+              "stdev": 0.017817082096217154,
+              "min": 9.2813822,
+              "max": 9.3158259
+            },
+            "generated_tokens_per_whole_http_second": 55.046419577671976,
+            "output_sha256": "4cc90fbda378e84756a86157ead1951daab8d62122d4031994e5cae0f401394a",
+            "finish_reasons": [
+              "length",
+              "length",
+              "length"
+            ],
+            "quality": {
+              "passed": null,
+              "note": "Manual domain/code review required; token-cap truncation is recorded."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              -0.011914099999998484,
+              -0.011182199999998588,
+              -0.011125900000001465
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 642,
+                "drafted": 1284,
+                "accepted": 861,
+                "acceptance": 0.6705607476635514,
+                "rejected": 423,
+                "accepted_per_round": 1.341121495327103
+              },
+              "lookup": {
+                "rounds": 12,
+                "drafted": 36,
+                "accepted": 18,
+                "acceptance": 0.5,
+                "rejected": 18,
+                "accepted_per_round": 1.5
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 783.9410856396246,
+              "arithmetic_mean_tokens_per_second": 784.295,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 56.83079518714203,
+              "arithmetic_mean_tokens_per_second": 56.831,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 9.301207566666667,
+              "stdev": 0.017816360167085668,
+              "min": 9.2813496,
+              "max": 9.3157915
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\response-0.raw",
+                "bytes": 3045,
+                "sha256": "ce746d5c4ca4829968a27806ede24db0f47a79d4726c7ed67b1584e92ee02a27"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\client-0.json",
+                "bytes": 3683,
+                "sha256": "2dd32bcbac9846c91e0d3ecebe7a1cc0a0e08dc34947990166992ca23054d7b7"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\response-1.raw",
+                "bytes": 3045,
+                "sha256": "d6223a7330a1959095bbd9f239c5ea58a9855472332ef42d147a6f6b0824049b"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\client-1.json",
+                "bytes": 3672,
+                "sha256": "185978489e658b49193814b39c436384aae63ca519f0acf4a20569e8738e4211"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\response-2.raw",
+                "bytes": 3045,
+                "sha256": "c05773b7c4c9097c6732fcf16d7d940a4ced827768c744a1ea071198d7093e60"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\client-2.json",
+                "bytes": 3672,
+                "sha256": "2778e9b1803a4b1a8e130b4461c27250becf3088ce184b25f71c2e167531f19c"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\response-3.raw",
+                "bytes": 3045,
+                "sha256": "64025e6dde47e3e8910374b7974200a27d9eaed4249d2d8e6ddcc4b34e011de3"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\client-3.json",
+                "bytes": 3683,
+                "sha256": "be5d6c8d142168a5f320405c9d7c6f4052b17c11748f145512be26c6e659cb04"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\source.json",
+            "bytes": 985,
+            "sha256": "68c40de8ad9ed609091f21e5eb88f898c4faa4ffefa94fa2bd8136d0edbe2b38"
+          }
+        },
+        {
+          "label": "B fixed2 gate0.90",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "incident",
+            "policy_label": "fixed2-g64-gated90",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "2ddd30ddad21ed02dab86536148e76c2e8b2f66af3876697466f4b7b48b813a1",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "2b6d191793e044c990668ad00697d057",
+              "backend_run_id": "9e7b5a732e594ecb8385161673eb89da",
+              "container_id": "2a90d1aabedde75847495451a6c7f55f990b8a601529310d074090d78f4b4813",
+              "profile_sha256": "d79ae12c907c07a9ce64f4fb7733615fed1d9cbfc9d360fe14e35129308b018a",
+              "controller_identity": {
+                "pid": 31708,
+                "creation_time_100ns": 134365518219542790,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 32108,
+                "creation_time_100ns": 134365518324706600,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0.90",
+                "HALOGEN_PLD": "3,3",
+                "HALOGEN_NGRAM_GATHER_THREADS": "64"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 220,
+            "actual_output_tokens_per_measured_request": [
+              512,
+              512,
+              512
+            ],
+            "measured_http_wall_seconds": [
+              9.4525292,
+              9.4457534,
+              9.3919863
+            ],
+            "http_wall_seconds": {
+              "mean": 9.430089633333333,
+              "stdev": 0.033171913944530944,
+              "min": 9.3919863,
+              "max": 9.4525292
+            },
+            "generated_tokens_per_whole_http_second": 54.294287743585215,
+            "output_sha256": "4cc90fbda378e84756a86157ead1951daab8d62122d4031994e5cae0f401394a",
+            "finish_reasons": [
+              "length",
+              "length",
+              "length"
+            ],
+            "quality": {
+              "passed": null,
+              "note": "Manual domain/code review required; token-cap truncation is recorded."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              -0.010429200000000804,
+              -0.011253399999999303,
+              -0.010486299999998394
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 705,
+                "drafted": 1071,
+                "accepted": 792,
+                "acceptance": 0.7394957983193278,
+                "rejected": 279,
+                "accepted_per_round": 1.123404255319149
+              },
+              "lookup": {
+                "rounds": 15,
+                "drafted": 45,
+                "accepted": 21,
+                "acceptance": 0.4666666666666667,
+                "rejected": 24,
+                "accepted_per_round": 1.4
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 795.9479015918957,
+              "arithmetic_mean_tokens_per_second": 796.066,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 55.99932917470259,
+              "arithmetic_mean_tokens_per_second": 55.99966666666667,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 9.430051899999999,
+              "stdev": 0.03316603982735949,
+              "min": 9.391955,
+              "max": 9.452485
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\response-0.raw",
+                "bytes": 3044,
+                "sha256": "61f38a04e4a41c936b411ef80d0e66c613bfd08c911fca1b898d9d26edbd0801"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\client-0.json",
+                "bytes": 3719,
+                "sha256": "efd2a6dfdfec9faf32bbed73659e2cdd60ac403aa892cd9ac9332c3b77a0c0ca"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\response-1.raw",
+                "bytes": 3044,
+                "sha256": "f70a55d6c6cc48c582c14d7196a16aa6d1a8584fb01710242320398c4419e1b4"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\client-1.json",
+                "bytes": 3718,
+                "sha256": "7c56890fc31be6dba0b3be9cec89e2576a0f5996b9d3f7b278a0dda4830cbe3a"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\response-2.raw",
+                "bytes": 3045,
+                "sha256": "5a827ce5567c4e948436d72b4e8b29d9cf00b8b7e3be660e6dd85c5f723391b8"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\client-2.json",
+                "bytes": 3720,
+                "sha256": "59737e1b833a56a1c53eff1f5eac013d3267801cedeae7b0c8bef0f5405417ad"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\response-3.raw",
+                "bytes": 3045,
+                "sha256": "d443cc74705d10b49ac97046313e1473717c0916b8395798aae871a874b1807f"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\client-3.json",
+                "bytes": 3719,
+                "sha256": "1a0794e6e9d42794e3756194facfd6cdc81ed148b065a383d0bb8f35b4f5dd65"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\incident\\source.json",
+            "bytes": 979,
+            "sha256": "b774e0c392fca26791ed1e7dbe5c1f9484af405e9583aafca3ae539ebc837813"
+          }
+        },
+        {
+          "label": "A-after fixed2 gate0",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "incident",
+            "policy_label": "fixed2-default64-after",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "2ddd30ddad21ed02dab86536148e76c2e8b2f66af3876697466f4b7b48b813a1",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "ac724c01813440eeacf65b15aebbdd18",
+              "backend_run_id": "5acb5a42bb3b42e5b66f3676c3e55c6a",
+              "container_id": "fca966bb5902ca0c7340c9dac53c7b7c0812cf6f4210c3fe813cc431c5ddfecd",
+              "profile_sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12",
+              "controller_identity": {
+                "pid": 26708,
+                "creation_time_100ns": 134365521874746445,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 32964,
+                "creation_time_100ns": 134365521980983399,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0",
+                "HALOGEN_PLD": "3,3"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 220,
+            "actual_output_tokens_per_measured_request": [
+              512,
+              512,
+              512
+            ],
+            "measured_http_wall_seconds": [
+              9.2762531,
+              9.2766955,
+              9.2274346
+            ],
+            "http_wall_seconds": {
+              "mean": 9.260127733333334,
+              "stdev": 0.02831394806104099,
+              "min": 9.2274346,
+              "max": 9.2766955
+            },
+            "generated_tokens_per_whole_http_second": 55.29081398704392,
+            "output_sha256": "4cc90fbda378e84756a86157ead1951daab8d62122d4031994e5cae0f401394a",
+            "finish_reasons": [
+              "length",
+              "length",
+              "length"
+            ],
+            "quality": {
+              "passed": null,
+              "note": "Manual domain/code review required; token-cap truncation is recorded."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              -0.010153100000001913,
+              -0.010795500000000402,
+              -0.010934600000000572
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 642,
+                "drafted": 1284,
+                "accepted": 861,
+                "acceptance": 0.6705607476635514,
+                "rejected": 423,
+                "accepted_per_round": 1.341121495327103
+              },
+              "lookup": {
+                "rounds": 12,
+                "drafted": 36,
+                "accepted": 18,
+                "acceptance": 0.5,
+                "rejected": 18,
+                "accepted_per_round": 1.5
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 800.2910149145142,
+              "arithmetic_mean_tokens_per_second": 800.366,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 57.04989637421166,
+              "arithmetic_mean_tokens_per_second": 57.050333333333334,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 9.260089833333334,
+              "stdev": 0.02830774679576767,
+              "min": 9.2274039,
+              "max": 9.2766583
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\response-0.raw",
+                "bytes": 3044,
+                "sha256": "af2b89e5fb90a3186bc2f2a8a3c12e9373215cea0e7c60b08f71bb4bc259a228"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\client-0.json",
+                "bytes": 3673,
+                "sha256": "a7e20e8f22bbbc80f2786d16e8538f11909e3b8e34d1245614789fc0e9500449"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\response-1.raw",
+                "bytes": 3045,
+                "sha256": "e6c45e291a60662255682a6ff7dc1259d95be8e7d09a55a9712d7d93a3511846"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\client-1.json",
+                "bytes": 3684,
+                "sha256": "c94297b864a92aa6389a54c7811bc39d52fd1a529e9cb79a4e2311dd48bb9b8e"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\response-2.raw",
+                "bytes": 3045,
+                "sha256": "5fdb506fb53eeb1c0469b4380158c7a5a8561d7962c25acc8cfae43cd9e2d8a4"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\client-2.json",
+                "bytes": 3673,
+                "sha256": "f254eabae0612e25a5c86be75bf1ff5a4f73dc8deefc36629271fa0ced8b16e1"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\response-3.raw",
+                "bytes": 3045,
+                "sha256": "119ad69730728b7cd68d6dd5ff05230665727b1070931a1265ca3ed3d606da7d"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\client-3.json",
+                "bytes": 3673,
+                "sha256": "4accaba07221d44f790c167bfcd8ca2db85ba720855496a23a36e37c86833658"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\incident\\source.json",
+            "bytes": 983,
+            "sha256": "5d494671e47dd7d6f8efff25b00bb9909e8eb95dd67f7c2739c1754005c38658"
+          }
+        }
+      ],
+      "comparison": {
+        "candidate_http_change_vs_before_percent": 1.3852872288127926,
+        "candidate_pooled_api_prefill_change_vs_before_percent": 1.5315967197298663,
+        "candidate_pooled_api_decode_change_vs_before_percent": -1.463055390482304,
+        "candidate_http_change_vs_after_percent": 1.835416366754794,
+        "candidate_http_change_vs_bookend_mean_percent": 1.609853284991436,
+        "control_bookend_http_drift_percent": -0.44201629845640467
+      },
+      "mechanism": {
+        "head": {
+          "before": {
+            "rounds": 642,
+            "drafted": 1284,
+            "accepted": 861,
+            "acceptance": 0.6705607476635514,
+            "rejected": 423,
+            "accepted_per_round": 1.341121495327103
+          },
+          "candidate": {
+            "rounds": 705,
+            "drafted": 1071,
+            "accepted": 792,
+            "acceptance": 0.7394957983193278,
+            "rejected": 279,
+            "accepted_per_round": 1.123404255319149
+          },
+          "acceptance_percentage_point_change": 6.8935050655776315,
+          "accepted_per_round_change": -0.2177172400079539
+        },
+        "lookup": {
+          "before": {
+            "rounds": 12,
+            "drafted": 36,
+            "accepted": 18,
+            "acceptance": 0.5,
+            "rejected": 18,
+            "accepted_per_round": 1.5
+          },
+          "candidate": {
+            "rounds": 15,
+            "drafted": 45,
+            "accepted": 21,
+            "acceptance": 0.4666666666666667,
+            "rejected": 24,
+            "accepted_per_round": 1.4
+          },
+          "acceptance_percentage_point_change": -3.3333333333333326,
+          "accepted_per_round_change": -0.10000000000000009
+        },
+        "grammar": {
+          "before": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "rejected": 0,
+            "accepted_per_round": null
+          },
+          "candidate": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "rejected": 0,
+            "accepted_per_round": null
+          },
+          "acceptance_percentage_point_change": null,
+          "accepted_per_round_change": null
+        }
+      },
+      "quality_review": {
+        "review": "The 512-token response ends midsection 4 before the requested containment/status/recovery/closure portions. It also proposes creating a test account in the diagnostic checklist despite the read-only constraint.",
+        "complete_artifact": false,
+        "finish_reason": "length",
+        "proposes_test_account_creation": true,
+        "tail_excerpt": "alysis.\n\n### 4. Evidence to Distinguish Clock Skew vs. Token Configuration\n*   **Clock Skew Evidence:**\n    *   System clock on the identity connector server is significantly ahead",
+        "evidence": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\incident\\response-1.raw",
+          "bytes": 3045,
+          "sha256": "d6223a7330a1959095bbd9f239c5ea58a9855472332ef42d147a6f6b0824049b"
+        }
+      },
+      "raw_output_hashes_identical": true,
+      "actual_token_counts_identical": true
+    },
+    {
+      "case": "json",
+      "windows": [
+        {
+          "label": "A-before fixed2 gate0",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "json",
+            "policy_label": "fixed2-default64-full262",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "02280f7e302605c7b2b22dbf59afd81e3f639aa9087b3591a0b98bccf24c59b0",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "d95f2e41d870485b857f8925a7fded9a",
+              "backend_run_id": "8d5df2eba8904d5e8177a6ae0af96638",
+              "container_id": "051f2e37709835a54d7dc0356acf51b4cd492488d1e985cde69f9d3d9e7d08ad",
+              "profile_sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12",
+              "controller_identity": {
+                "pid": 9144,
+                "creation_time_100ns": 134365453840233283,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 26480,
+                "creation_time_100ns": 134365453945830282,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0",
+                "HALOGEN_PLD": "3,3"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 142,
+            "actual_output_tokens_per_measured_request": [
+              51,
+              51,
+              51
+            ],
+            "measured_http_wall_seconds": [
+              0.9957834,
+              0.9981351,
+              0.9921741
+            ],
+            "http_wall_seconds": {
+              "mean": 0.9953642,
+              "stdev": 0.003002528389541106,
+              "min": 0.9921741,
+              "max": 0.9981351
+            },
+            "generated_tokens_per_whole_http_second": 51.23752692732971,
+            "output_sha256": "9d26914f2236faf3d6a3dd0d6977269fe128ca9f01376c7d534ff54399b589c9",
+            "finish_reasons": [
+              "stop",
+              "stop",
+              "stop"
+            ],
+            "quality": {
+              "passed": true,
+              "note": "Exact fictional extraction fields and types; no tool was executed."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              -0.010483400000000032,
+              -0.011835099999999987,
+              -0.010174099999999964
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 51,
+                "drafted": 102,
+                "accepted": 93,
+                "acceptance": 0.9117647058823529,
+                "rejected": 9,
+                "accepted_per_round": 1.8235294117647058
+              },
+              "lookup": {
+                "rounds": 3,
+                "drafted": 9,
+                "accepted": 9,
+                "acceptance": 1.0,
+                "rejected": 0,
+                "accepted_per_round": 3.0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 612.1569190975715,
+              "arithmetic_mean_tokens_per_second": 612.1973333333333,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 67.76808256189928,
+              "arithmetic_mean_tokens_per_second": 67.768,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 0.9953278,
+              "stdev": 0.0029962994042652307,
+              "min": 0.9921424,
+              "max": 0.99809
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\response-0.raw",
+                "bytes": 957,
+                "sha256": "cb93cef03017b120f4db3164a75238fe41e8c69cd96a3ab8f31274bfc7be14cc"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\client-0.json",
+                "bytes": 3648,
+                "sha256": "93c4961c26f3a21a0bc194b8b00e08ae2a6e9da54d4f6576695484b374d26964"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\response-1.raw",
+                "bytes": 957,
+                "sha256": "8aada7aa89a60ff21d55122e39b2f6d14d1be6aacc59aebaabc533e059232018"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\client-1.json",
+                "bytes": 3649,
+                "sha256": "5e0c06b59c1de3cc922d1479db457affa3d9d1d25f15d1940d4816a25d161d9e"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\response-2.raw",
+                "bytes": 957,
+                "sha256": "719227265a21924e6a0100946de5f239a86ce0acb650284b052920452199e79d"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\client-2.json",
+                "bytes": 3660,
+                "sha256": "fd381bcfc5180ec2bff85623b23b06d4be2a7eb189d34bf5634c92b80748130b"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\response-3.raw",
+                "bytes": 957,
+                "sha256": "43740177357de96790deb10274487c0ebed253e5eb9e09c1d3593ca756ab8557"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\client-3.json",
+                "bytes": 3649,
+                "sha256": "595285c567bacbaecac07f6acbd93bd323c9cc2cb02e8f991ccd076662845d94"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\source.json",
+            "bytes": 981,
+            "sha256": "e49d29e9a612105c99fedb3c0b5853c74792d0c0f139895755645dd8e3f9b50e"
+          }
+        },
+        {
+          "label": "B fixed2 gate0.90",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "json",
+            "policy_label": "fixed2-g64-gated90",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "02280f7e302605c7b2b22dbf59afd81e3f639aa9087b3591a0b98bccf24c59b0",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "2b6d191793e044c990668ad00697d057",
+              "backend_run_id": "9e7b5a732e594ecb8385161673eb89da",
+              "container_id": "2a90d1aabedde75847495451a6c7f55f990b8a601529310d074090d78f4b4813",
+              "profile_sha256": "d79ae12c907c07a9ce64f4fb7733615fed1d9cbfc9d360fe14e35129308b018a",
+              "controller_identity": {
+                "pid": 31708,
+                "creation_time_100ns": 134365518219542790,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 32108,
+                "creation_time_100ns": 134365518324706600,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0.90",
+                "HALOGEN_PLD": "3,3",
+                "HALOGEN_NGRAM_GATHER_THREADS": "64"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 142,
+            "actual_output_tokens_per_measured_request": [
+              51,
+              51,
+              51
+            ],
+            "measured_http_wall_seconds": [
+              0.9964193,
+              0.9992557,
+              1.047756
+            ],
+            "http_wall_seconds": {
+              "mean": 1.0144769999999999,
+              "stdev": 0.028855331777506862,
+              "min": 0.9964193,
+              "max": 1.047756
+            },
+            "generated_tokens_per_whole_http_second": 50.272209227020426,
+            "output_sha256": "9d26914f2236faf3d6a3dd0d6977269fe128ca9f01376c7d534ff54399b589c9",
+            "finish_reasons": [
+              "stop",
+              "stop",
+              "stop"
+            ],
+            "quality": {
+              "passed": true,
+              "note": "Exact fictional extraction fields and types; no tool was executed."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              -0.008519300000000007,
+              -0.0091557000000001,
+              -0.0115559999999999
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 51,
+                "drafted": 102,
+                "accepted": 93,
+                "acceptance": 0.9117647058823529,
+                "rejected": 9,
+                "accepted_per_round": 1.8235294117647058
+              },
+              "lookup": {
+                "rounds": 3,
+                "drafted": 9,
+                "accepted": 9,
+                "acceptance": 1.0,
+                "rejected": 0,
+                "accepted_per_round": 3.0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 606.8376068376069,
+              "arithmetic_mean_tokens_per_second": 606.9123333333333,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 66.17074647521841,
+              "arithmetic_mean_tokens_per_second": 66.238,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 1.0144392666666666,
+              "stdev": 0.02886139846860053,
+              "min": 0.9963887,
+              "max": 1.0477259
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\response-0.raw",
+                "bytes": 955,
+                "sha256": "7d8bc0e028730331e07afdef6468d9d1e48aacd3e6ab71c3fbbe156ab7147391"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\client-0.json",
+                "bytes": 3694,
+                "sha256": "aabb504b5c17c569ed4dc9ed654dc67dfd84be2acd3e6284219860b681f11c6d"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\response-1.raw",
+                "bytes": 957,
+                "sha256": "5dbcfe253b946ad8da8307f52e1b38352465483f1ce68398bc824eadc851692f"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\client-1.json",
+                "bytes": 3698,
+                "sha256": "a9dd40ac038d7e4e290951f80dbe0d824a766a4e8dda5d427daee8592967e45e"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\response-2.raw",
+                "bytes": 957,
+                "sha256": "aed06cd82c6eabcb2a3e6e678bf0300a47d7df0089ed270097035602643fc1ea"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\client-2.json",
+                "bytes": 3710,
+                "sha256": "6e46f2fe004704d3c25cd00aa13abc9ffbf8d62d66b3e7bf57e7475a4e7ac4a8"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\response-3.raw",
+                "bytes": 957,
+                "sha256": "cbd34a4ebfdc9f4980467392ff29ed5c7e72ed6f05b7232091c2d941ab0a8c7f"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\client-3.json",
+                "bytes": 3697,
+                "sha256": "c0aa351e5de17849cf60a81ef15c2dcf0ec63a20fa9c430491b671421d1ce6a0"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-gated90\\json\\source.json",
+            "bytes": 975,
+            "sha256": "c66eaa6a81351aa7a68041de3c62bd3ce9d16e91a4739254d1177dc14f34370f"
+          }
+        },
+        {
+          "label": "A-after fixed2 gate0",
+          "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json",
+          "summary": {
+            "schema": "halogen0185.domain-summary.v1",
+            "case": "json",
+            "policy_label": "fixed2-default64-after",
+            "packet_sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57",
+            "request_sha256": "02280f7e302605c7b2b22dbf59afd81e3f639aa9087b3591a0b98bccf24c59b0",
+            "identity": {
+              "version": "0.18.5",
+              "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+              "context": 262144,
+              "controller_run_id": "ac724c01813440eeacf65b15aebbdd18",
+              "backend_run_id": "5acb5a42bb3b42e5b66f3676c3e55c6a",
+              "container_id": "fca966bb5902ca0c7340c9dac53c7b7c0812cf6f4210c3fe813cc431c5ddfecd",
+              "profile_sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12",
+              "controller_identity": {
+                "pid": 26708,
+                "creation_time_100ns": 134365521874746445,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "backend_identity": {
+                "pid": 32964,
+                "creation_time_100ns": 134365521980983399,
+                "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+              },
+              "frozen_settings": {
+                "checkpoint": "v2",
+                "context": 262144,
+                "prompt_cache": "Exact",
+                "prefill_chunk": 4096,
+                "max_prefill_tokens": 4096,
+                "disable_vision": false
+              },
+              "policy_environment": {
+                "HALOGEN_MTP_DEPTH": "2",
+                "HALOGEN_MTP_GATE_P": "0",
+                "HALOGEN_PLD": "3,3"
+              }
+            },
+            "stream": false,
+            "excluded_warmups": 1,
+            "measured_repetitions": 3,
+            "max_output_tokens": 512,
+            "admission": {
+              "scope": "Only hash-frozen bounded short domain cases; no generic/long request admission",
+              "entry_reserve_gib": 18,
+              "runtime_reserve_gib": 18,
+              "frozen_body_bytes_max": 6144,
+              "message_characters_max": 4096,
+              "actual_prompt_tokens_postcheck_max": 8191,
+              "output_tokens_max": 512
+            },
+            "actual_input_tokens": 142,
+            "actual_output_tokens_per_measured_request": [
+              51,
+              51,
+              51
+            ],
+            "measured_http_wall_seconds": [
+              0.9930661,
+              0.9965575,
+              1.0441226
+            ],
+            "http_wall_seconds": {
+              "mean": 1.0112487333333333,
+              "stdev": 0.02852307488163454,
+              "min": 0.9930661,
+              "max": 1.0441226
+            },
+            "generated_tokens_per_whole_http_second": 50.43269605084301,
+            "output_sha256": "9d26914f2236faf3d6a3dd0d6977269fe128ca9f01376c7d534ff54399b589c9",
+            "finish_reasons": [
+              "stop",
+              "stop",
+              "stop"
+            ],
+            "quality": {
+              "passed": true,
+              "note": "Exact fictional extraction fields and types; no tool was executed."
+            },
+            "api_phase_clock_qualified": false,
+            "api_phase_sum_minus_http_seconds": [
+              -0.00956609999999991,
+              -0.009657499999999875,
+              -0.008522600000000047
+            ],
+            "phase_scaling_or_overhead_subtraction_applied": false,
+            "speculation_pooled": {
+              "head": {
+                "rounds": 51,
+                "drafted": 102,
+                "accepted": 93,
+                "acceptance": 0.9117647058823529,
+                "rejected": 9,
+                "accepted_per_round": 1.8235294117647058
+              },
+              "lookup": {
+                "rounds": 3,
+                "drafted": 9,
+                "accepted": 9,
+                "acceptance": 1.0,
+                "rejected": 0,
+                "accepted_per_round": 3.0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "rejected": 0,
+                "accepted_per_round": null
+              }
+            },
+            "api_prefill": {
+              "pooled_tokens_per_second": 609.8783106657122,
+              "arithmetic_mean_tokens_per_second": 609.8983333333333,
+              "independently_qualified": false
+            },
+            "api_decode": {
+              "pooled_tokens_per_second": 66.30552546045503,
+              "arithmetic_mean_tokens_per_second": 66.36633333333333,
+              "independently_qualified": false
+            },
+            "first_body_seconds": {
+              "mean": 1.0112193999999999,
+              "stdev": 0.028521459059276753,
+              "min": 0.9930391,
+              "max": 1.0440915
+            },
+            "first_text_seconds": null,
+            "first_tool_arguments_seconds": null,
+            "payload_delivery_span_seconds": null
+          },
+          "raw_evidence": [
+            {
+              "rep": 0,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\response-0.raw",
+                "bytes": 955,
+                "sha256": "51007455aa8a17be0020f928720b9fb825b0096154e81f2889e9dd28557ec079"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\client-0.json",
+                "bytes": 3659,
+                "sha256": "bac12292b8a9cbfc0cf6387196b768f36f23489c6120134609d1dd299ec92403"
+              }
+            },
+            {
+              "rep": 1,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\response-1.raw",
+                "bytes": 957,
+                "sha256": "fd1d096cfc89d184eb9ffdf3580c2979a9563d680746b7cec950e44d625584a1"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\client-1.json",
+                "bytes": 3651,
+                "sha256": "9279f161df3c39f18e760b1ff34ff912df61e3bded039d77d7c3c9b7f77a65fe"
+              }
+            },
+            {
+              "rep": 2,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\response-2.raw",
+                "bytes": 957,
+                "sha256": "8d7a88cae0a2abd36525ca4b2740dcfb262348bddd314b4f53a3552acc8d83e5"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\client-2.json",
+                "bytes": 3663,
+                "sha256": "c6d8d37e6b717750cfb6066b52b618b88ffbc3208579fbe5865b6af9822f2a11"
+              }
+            },
+            {
+              "rep": 3,
+              "raw": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\response-3.raw",
+                "bytes": 957,
+                "sha256": "926f236f4158080023fe484a30b0d166a5221012ed2d25c098fe19d53e3a9c74"
+              },
+              "client": {
+                "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\client-3.json",
+                "bytes": 3663,
+                "sha256": "b4c7a1b6c9fe0d8d130f82ffc0d7b3a4ed748ff53d61ded3c1b2f7b174aa3404"
+              }
+            }
+          ],
+          "source": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-after\\json\\source.json",
+            "bytes": 979,
+            "sha256": "f8266975cc30e329002ebaaa1a34d03b76cd698a1051242d67156c121aa12178"
+          }
+        }
+      ],
+      "comparison": {
+        "candidate_http_change_vs_before_percent": 1.920181577758151,
+        "candidate_pooled_api_prefill_change_vs_before_percent": -0.8689458689458585,
+        "candidate_pooled_api_decode_change_vs_before_percent": -2.3570625378427468,
+        "candidate_http_change_vs_after_percent": 0.31923566974718653,
+        "candidate_http_change_vs_bookend_mean_percent": 1.1133720059081753,
+        "control_bookend_http_drift_percent": 1.5958513811661357
+      },
+      "mechanism": {
+        "head": {
+          "before": {
+            "rounds": 51,
+            "drafted": 102,
+            "accepted": 93,
+            "acceptance": 0.9117647058823529,
+            "rejected": 9,
+            "accepted_per_round": 1.8235294117647058
+          },
+          "candidate": {
+            "rounds": 51,
+            "drafted": 102,
+            "accepted": 93,
+            "acceptance": 0.9117647058823529,
+            "rejected": 9,
+            "accepted_per_round": 1.8235294117647058
+          },
+          "acceptance_percentage_point_change": 0.0,
+          "accepted_per_round_change": 0.0
+        },
+        "lookup": {
+          "before": {
+            "rounds": 3,
+            "drafted": 9,
+            "accepted": 9,
+            "acceptance": 1.0,
+            "rejected": 0,
+            "accepted_per_round": 3.0
+          },
+          "candidate": {
+            "rounds": 3,
+            "drafted": 9,
+            "accepted": 9,
+            "acceptance": 1.0,
+            "rejected": 0,
+            "accepted_per_round": 3.0
+          },
+          "acceptance_percentage_point_change": 0.0,
+          "accepted_per_round_change": 0.0
+        },
+        "grammar": {
+          "before": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "rejected": 0,
+            "accepted_per_round": null
+          },
+          "candidate": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "rejected": 0,
+            "accepted_per_round": null
+          },
+          "acceptance_percentage_point_change": null,
+          "accepted_per_round_change": null
+        }
+      },
+      "quality_review": {
+        "review": "Exact JSON fields and types pass the frozen extraction check.",
+        "complete_artifact": true,
+        "finish_reason": "stop",
+        "evidence": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-full262-before\\json\\response-1.raw",
+          "bytes": 957,
+          "sha256": "8aada7aa89a60ff21d55122e39b2f6d14d1be6aacc59aebaabc533e059232018"
+        }
+      },
+      "raw_output_hashes_identical": true,
+      "actual_token_counts_identical": true
+    }
+  ],
+  "fixed_three_case_mix": {
+    "windows": [
+      {
+        "label": "A-before fixed2 gate0",
+        "measured_http_seconds": 55.256859299999995,
+        "measured_output_tokens": 3225,
+        "output_tokens_per_whole_http_second": 58.36379484564734
+      },
+      {
+        "label": "B fixed2 gate0.90",
+        "measured_http_seconds": 56.0207789,
+        "measured_output_tokens": 3225,
+        "output_tokens_per_whole_http_second": 57.56792503290239
+      },
+      {
+        "label": "A-after fixed2 gate0",
+        "measured_http_seconds": 55.1142254,
+        "measured_output_tokens": 3225,
+        "output_tokens_per_whole_http_second": 58.51483853023542
+      }
+    ],
+    "candidate_http_change_vs_before_percent": 1.3824882732703658,
+    "candidate_http_change_vs_after_percent": 1.6448629975664986,
+    "candidate_http_change_vs_bookend_mean_percent": 1.513506100389006
+  },
+  "measured_requests_per_window": 9,
+  "excluded_warmups_per_window": 3,
+  "all_measurements_retained": true,
+  "statistical_significance_claim": false,
+  "api_phase_clock_qualified": false,
+  "native_phase_scaling_or_overhead_subtraction": false,
+  "exact_output_parity_all_cases": true,
+  "strict_tool_variant_measured": false,
+  "policy_scope": "Both arms use explicit depth2. Candidate sets gate0.90 and gather64; baseline has gate0 and no explicit gather override. All use the same engine image and full262K serving settings.",
+  "mechanism_summary": "On code and incident, head acceptance percentage rises but accepted head tokens per round falls and head-round count increases. JSON counters are unchanged. Higher acceptance alone is not a useful throughput gain.",
+  "quality_scope": "Identical capped code/incident prefixes are performance evidence, not complete usable artifacts; JSON extraction passes exactly.",
+  "interpretation": "Retain current Fixed2/gate0 with native default64 readers. The gate0.90 candidate establishes no MTP speed gain in this bounded full262K domain screen.",
+  "no_runtime_or_source_changed": true,
+  "method": {
+    "version": "0.18.5",
+    "context_capacity": 262144,
+    "global_prompt_cache": "Exact",
+    "per_request_cache": "no_store; all cached-token counters zero",
+    "per_request_thinking": "Off; reasoning-token counters zero",
+    "temperature": 0,
+    "seed": 1,
+    "max_output_tokens": 512,
+    "actual_input_tokens_by_case": {
+      "code": 166,
+      "incident": 220,
+      "json": 142
+    },
+    "actual_output_tokens_per_request_by_case": {
+      "code": 512,
+      "incident": 512,
+      "json": 51
+    },
+    "warmups_per_case_per_window": 1,
+    "measured_per_case_per_window": 3,
+    "total_raw_requests": 36,
+    "excluded_warmups": 9,
+    "measured_requests": 27,
+    "all_measurements_retained": true,
+    "native_api_phase_rates_independently_qualified": false,
+    "http_clock": "independent Windows perf_counter_ns whole-request clock",
+    "phase_scaling_or_overhead_subtraction": false,
+    "strict_tools_variant_measured": false,
+    "packet": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-prep\\packet.json",
+      "bytes": 2992,
+      "sha256": "08f9727b5440b1b9f4c440546a35878c7f61837f870ee9e43f6f3756a08f9e57"
+    },
+    "collector": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-prep\\domain_measure.py",
+      "bytes": 25133,
+      "sha256": "48ea282454428dc9d145a45e56c50536e8704b2cc43001db50576cd0729307c1"
+    }
+  },
+  "manifest_policy_proof": [
+    {
+      "window": "A-before fixed2 gate0",
+      "manifest": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\adapter-prep\\gather128-packet\\saved-install\\services\\8d5df2eba8904d5e8177a6ae0af96638\\manifest.json",
+        "bytes": 6621,
+        "sha256": "b538d5164622651d34b3b0d0752b52feccea703ec6c9f4bfbb180ff1054c7f13"
+      },
+      "container": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\adapter-prep\\gather128-packet\\saved-install\\services\\8d5df2eba8904d5e8177a6ae0af96638\\container.json",
+        "bytes": 74,
+        "sha256": "6fb0c39ce17d68c14ff2283ad4d7cf06e1779542b64cdc19cdae99b62cde0465"
+      },
+      "profile": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\benchmark-prep\\serving0185-full262-exact-fixed2-gate0.json",
+        "bytes": 1737,
+        "sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12"
+      },
+      "native_environment": {
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_MTP_GATE_P": "0",
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_NGRAM_GATHER_THREADS": null,
+        "HALOGEN_PROMPT_CACHE": "1",
+        "HALOGEN_PREFILL_CHUNK": "4096",
+        "HALOGEN_MAX_TOK": "4096",
+        "HALOGEN_ENABLE_THINKING": "1"
+      },
+      "effective_gather_threads": 64,
+      "reader_selection": "absent override; exact engine getter defaults to64",
+      "profile_manifest_identity_verified": true
+    },
+    {
+      "window": "B fixed2 gate0.90",
+      "manifest": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\9e7b5a732e594ecb8385161673eb89da\\manifest.json",
+        "bytes": 6665,
+        "sha256": "b3d719fb6e13b39cc8bc97836ea68b78f30a675fbcb9080dfc559afda8542d7f"
+      },
+      "container": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\9e7b5a732e594ecb8385161673eb89da\\container.json",
+        "bytes": 74,
+        "sha256": "56d48439495dfc95669880cb26937100650ade8b00b12ba82a22443ab1eb0f34"
+      },
+      "profile": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\domain-prep\\serving0185-full262-exact-fixed2-g64-gated90.json",
+        "bytes": 1816,
+        "sha256": "d79ae12c907c07a9ce64f4fb7733615fed1d9cbfc9d360fe14e35129308b018a"
+      },
+      "native_environment": {
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_MTP_GATE_P": "0.90",
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_NGRAM_GATHER_THREADS": "64",
+        "HALOGEN_PROMPT_CACHE": "1",
+        "HALOGEN_PREFILL_CHUNK": "4096",
+        "HALOGEN_MAX_TOK": "4096",
+        "HALOGEN_ENABLE_THINKING": "1"
+      },
+      "effective_gather_threads": 64,
+      "reader_selection": "explicit64",
+      "profile_manifest_identity_verified": true
+    },
+    {
+      "window": "A-after fixed2 gate0",
+      "manifest": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\5acb5a42bb3b42e5b66f3676c3e55c6a\\manifest.json",
+        "bytes": 6621,
+        "sha256": "fbcd4d46e86c09044c9b0d2d24b21e61ddd26f43653711e7c5c72eef43b46c74"
+      },
+      "container": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\5acb5a42bb3b42e5b66f3676c3e55c6a\\container.json",
+        "bytes": 74,
+        "sha256": "47189d797b0cdee0b65196c4dd838b6dcc4ebbbed4d6310f24dae74916ff40c9"
+      },
+      "profile": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\benchmark-prep\\serving0185-full262-exact-fixed2-gate0.json",
+        "bytes": 1737,
+        "sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12"
+      },
+      "native_environment": {
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_MTP_GATE_P": "0",
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_NGRAM_GATHER_THREADS": null,
+        "HALOGEN_PROMPT_CACHE": "1",
+        "HALOGEN_PREFILL_CHUNK": "4096",
+        "HALOGEN_MAX_TOK": "4096",
+        "HALOGEN_ENABLE_THINKING": "1"
+      },
+      "effective_gather_threads": 64,
+      "reader_selection": "absent override; exact engine getter defaults to64",
+      "profile_manifest_identity_verified": true
+    }
+  ],
+  "default64_evidence": {
+    "getter_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\adapter-prep\\gather128-packet\\native-getter.json",
+      "bytes": 1709,
+      "sha256": "02756726e487d99d91390e7e2d035246bae322b87ee6e6dca68bc446c5af6479"
+    },
+    "disassembly": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\adapter-prep\\gather128-packet\\native-getter.txt",
+      "bytes": 1472,
+      "sha256": "e5fd81053bbe493da01b7b392942aa62fa4055f8457e6c0a22e3d688ad6212d7"
+    },
+    "engine_sha256": "cfbf55629838dc83e72daf8159745de1d7db9548b034c15b0948618e8fbf1464",
+    "engine_function_bytes_verified": true,
+    "default_when_unset": 64,
+    "explicit_native_clamp": [
+      1,
+      256
+    ],
+    "before_source_preservation": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\adapter-prep\\gather128-packet\\migration.json",
+      "bytes": 704,
+      "sha256": "d109a13bb6204d7ec68512df79c3bb5cb224014c91b76e8694c1019e5c17270b"
+    },
+    "bounded_source_difference": [
+      "profiles\\sources.json",
+      "scripts\\kernel_controls.py"
+    ],
+    "source_difference_scope": "Only allowlist support for128 and its source-manifest pin changed; exact engine image and other runtime source pins are unchanged."
+  },
+  "clock_audit": {
+    "all_api_phase_rates_unqualified": true,
+    "candidate_code_api_phase_sum_minus_independent_http_seconds": [
+      0.6189029999999995,
+      0.6646166000000004,
+      0.6594013999999984
+    ],
+    "native_phase_sum_exceeds_http_in_all_candidate_code_measurements": true,
+    "correction_or_causal_explanation_applied": false
+  },
+  "decision": {
+    "retained_mtp_depth": 2,
+    "retained_confidence_gate": "0",
+    "retained_gather_threads": 64,
+    "candidate_gate0_90_selected": false,
+    "mtp_speed_gain_established": false,
+    "reason": "Candidate whole HTTP time is higher than both controls in every case; higher head acceptance on code/incident accompanies fewer accepted tokens per head round and more rounds.",
+    "candidate_fixed_mix_http_change_vs_bookend_mean_percent": 1.513506100389006,
+    "statistical_significance_claim": false
+  },
+  "scope_limits": [
+    "One frozen prompt per domain case; three measured requests per case/window; descriptive sequential bracket, not a statistical-significance claim.",
+    "Identical code/incident outputs are truncated512-token prefixes, not complete usable artifacts. JSON extraction fields/types pass exactly.",
+    "This compares policies on the same0.18.5 image; comparative version speed and NPU-on/off speed were not measured.",
+    "No outlier or phase-clock mismatch receives a causal attribution. Nonstream body arrival is not TTFT."
+  ],
+  "publication": {
+    "utc": "2026-10-15T15:45:06.120625+00:00",
+    "raw_three_arm_replay_verified": true,
+    "all_manifest_policy_and_reader_proofs_verified": true,
+    "report_api_or_hardware_operations": false,
+    "production_or_collector_source_modified": false,
+    "readiness_seal_owned_by_parent": true,
+    "final_launch_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\serving-final-full262-launch.json",
+      "bytes": 1678,
+      "sha256": "30a7e48e09e6753f62543be9d1c58d5f198758be1456229b51b3c4cb5b3f0c35"
+    }
+  }
+}

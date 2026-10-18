@@ -1,0 +1,87 @@
+{
+  "schema": "halogen.dflash-k3-shadow-results.v1",
+  "utc": "2026-10-10T07:06:02.116077+00:00",
+  "actual_input_tokens": 16384,
+  "output_tokens": 128,
+  "scalar_packets": 127,
+  "excluded_proposal_warmups": 1,
+  "measured_anchors": 32,
+  "prefix_length_counts_0_to_3": [
+    19,
+    8,
+    3,
+    2
+  ],
+  "mean_useful_prefix_tokens": 0.625,
+  "any_useful_prefix_fraction": 0.40625,
+  "full_k3_prefix_fraction": 0.0625,
+  "component_costs": {
+    "backbone_including_finite_sync": {
+      "mean_ms": 47.81559103125,
+      "min_ms": 44.937886,
+      "max_ms": 53.039663
+    },
+    "full_head_and_host_ID_copy": {
+      "mean_ms": 6.376543875,
+      "min_ms": 6.124848,
+      "max_ms": 6.916436
+    },
+    "input_prepare": {
+      "mean_ms": 1.3933781875,
+      "min_ms": 1.143818,
+      "max_ms": 1.956327
+    },
+    "worker_propose_total": {
+      "mean_ms": 55.58551309375,
+      "min_ms": 52.284607,
+      "max_ms": 60.904691
+    }
+  },
+  "attention_mode": "repeat",
+  "head_mode": "full_bf16",
+  "native_ready_publication": false,
+  "native_consumer_acquisition": false,
+  "npu_enabled": false,
+  "native_mtp_acceptance": null,
+  "serving_prefill_tok_s": null,
+  "serving_decode_tok_s": null,
+  "serving_gain_qualified": false,
+  "diagnostic_whole_request_seconds": 46.32495440001367,
+  "minimum_memory_gib": {
+    "available_bytes": 21.95092010498047,
+    "commit_headroom_bytes": 113.61830139160156
+  },
+  "evidence": {
+    "dflash-shadow.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-k3-shadow-receipt-bind-launch-20261010\\trial\\dflash-shadow.json",
+      "bytes": 49843,
+      "sha256": "83ac6d0f553e96cc9371cafbceb62558da3dff86b38884ff6ff9f3f52fb57ba3"
+    },
+    "diagnostic.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-k3-shadow-receipt-bind-launch-20261010\\trial\\diagnostic.json",
+      "bytes": 1706,
+      "sha256": "bd102c0b793af25fb41ded64669487f751b4f8ed6ba6bb6392f5d2e2e98813ac"
+    },
+    "outcome.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-k3-shadow-receipt-bind-launch-20261010\\trial\\outcome.json",
+      "bytes": 575,
+      "sha256": "346f10894f14a57a04d17ccf80e2d55b25b057a436159b95b95d9682c53fa78c"
+    },
+    "memory.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-k3-shadow-receipt-bind-launch-20261010\\trial\\memory.json",
+      "bytes": 56195,
+      "sha256": "6ef5296a5f00e7ecbde0c951b756f7435885606c5338721f5c7c9d2cf52ea788"
+    },
+    "terminal-checkpoint.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-k3-shadow-receipt-bind-launch-20261010\\trial\\terminal-checkpoint.json",
+      "bytes": 2295,
+      "sha256": "dab8f4aa7c7a328858c07609dd0a92f032decb5ae6fd2a36397fed24a10881b3"
+    },
+    "retained-startup-runtime.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-k3-shadow-receipt-bind-launch-20261010\\trial\\retained-startup-runtime.json",
+      "bytes": 8804,
+      "sha256": "94cc47efd6b0763a886df0218bbd6fb2eb5030c5a5509bf553c1df3aeca7449e"
+    }
+  },
+  "decision": "Keep synchronous repeat consumer and NPU attachment off; assess one distinct grouped2d copied-input replay before any new serving trial."
+}

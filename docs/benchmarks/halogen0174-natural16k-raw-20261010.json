@@ -1,0 +1,621 @@
+{
+  "schema": "halogen0174.natural16k.paired-raw-report.v1",
+  "published_utc": "2026-10-10T07:16:37.702223+00:00",
+  "version": "0.17.4",
+  "qualified": true,
+  "actual_input_tokens": 16384,
+  "output_tokens": 128,
+  "excluded_warmups": 1,
+  "measured_repetitions": 3,
+  "workload": {
+    "natural_nonrepeated_input": true,
+    "source_prefix_characters": 66336,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": "Off",
+    "prompt_cache": "Off",
+    "mtp_depth": 2,
+    "pld": "3,3",
+    "context": 262144,
+    "prefill_chunk": 8192,
+    "prefill_arena": 8192,
+    "startup_physical_commit_gib": [
+      35,
+      131
+    ],
+    "request_entry_physical_commit_gib": [
+      22,
+      22
+    ],
+    "runtime_physical_commit_gib": [
+      18,
+      18
+    ]
+  },
+  "measured_prefill_tps": {
+    "mean": 1657.0143803898998,
+    "minimum": 1615.3446847787297,
+    "maximum": 1689.3782459765716,
+    "sample_stdev": 37.88391347580504
+  },
+  "measured_decode_tps": {
+    "mean": 43.5634532483588,
+    "minimum": 43.523578154313924,
+    "maximum": 43.60735566163468,
+    "sample_stdev": 0.04203370264872035
+  },
+  "aggregate_combined_api_acceptance": {
+    "accepted": 180,
+    "drafted": 399,
+    "fraction": 0.45112781954887216,
+    "scope": "combined API MTP+PLD draft-token accounting; native MTP-only acceptance not isolated"
+  },
+  "rows": [
+    {
+      "rep": 0,
+      "phase": "warmup",
+      "excluded_from_rate_statistics": true,
+      "native_signed_request_id": 3,
+      "audited_D_sequence": 1,
+      "response_id": "cmpl-e425d1640bf54a9ab11413b1",
+      "response_id_is_native_request_id": false,
+      "paired_raw_prefill_ms": 14501.442166,
+      "paired_raw_decode_ms": 3544.638456,
+      "paired_raw_prefill_tps": 1129.8186630302077,
+      "paired_raw_decode_tps": 36.11087607068494,
+      "prefill_chunks": 1,
+      "native_D": {
+        "request_id": 3,
+        "prompt_count": 16384,
+        "predicted_count": 128,
+        "prefill_ms": 14501.4,
+        "decode_ms": 3544.6
+      },
+      "api_timings": {
+        "prompt_n": 16384,
+        "predicted_n": 128,
+        "prompt_ms": 14501.4,
+        "predicted_ms": 3544.6,
+        "prompt_per_second": 1129.822,
+        "predicted_per_second": 36.111,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 133,
+        "draft_n_accepted": 60
+      },
+      "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+      "accepted": 60,
+      "drafted": 133,
+      "acceptance": 0.45112781954887216,
+      "runtime_minimum_memory_bytes": {
+        "available_bytes": 23585435648,
+        "commit_headroom_bytes": 121915109376
+      },
+      "whole_bracket_clock": {
+        "before": {
+          "mono": 7078.551417229,
+          "raw": 7067.453342399,
+          "utc": 1791616300.357673,
+          "qpc": 70234.39338344999,
+          "roundtrip": 0.00035770000249613076
+        },
+        "after": {
+          "mono": 7096.646718347,
+          "raw": 7085.548647948,
+          "utc": 1791616318.4507086,
+          "qpc": 70252.4886894,
+          "roundtrip": 0.00040720000106375664
+        },
+        "raw_seconds": 18.09530554899993,
+        "monotonic_seconds": 18.095301117999952,
+        "window_seconds": 18.095305950002512,
+        "monotonic_per_raw": 0.9999997551298613,
+        "raw_per_qpc": 0.9999999778394142,
+        "handshake_uncertainty_seconds": 0.0003824500017799437,
+        "raw_qpc_tolerance": 0.001,
+        "raw_qpc_gate_passed": true,
+        "monotonic_drift_observation_only": true,
+        "phase_rate_scaling_applied": false
+      },
+      "raw_D_binding_qualified": true
+    },
+    {
+      "rep": 1,
+      "phase": "measured",
+      "excluded_from_rate_statistics": false,
+      "native_signed_request_id": 4,
+      "audited_D_sequence": 2,
+      "response_id": "cmpl-a4cfd2ed9ae44866aa42f5a8",
+      "response_id_is_native_request_id": false,
+      "paired_raw_prefill_ms": 9698.242557,
+      "paired_raw_decode_ms": 2935.284611,
+      "paired_raw_prefill_tps": 1689.3782459765716,
+      "paired_raw_decode_tps": 43.60735566163468,
+      "prefill_chunks": 1,
+      "native_D": {
+        "request_id": 4,
+        "prompt_count": 16384,
+        "predicted_count": 128,
+        "prefill_ms": 9698.2,
+        "decode_ms": 2935.3
+      },
+      "api_timings": {
+        "prompt_n": 16384,
+        "predicted_n": 128,
+        "prompt_ms": 9698.2,
+        "predicted_ms": 2935.3,
+        "prompt_per_second": 1689.386,
+        "predicted_per_second": 43.607,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 133,
+        "draft_n_accepted": 60
+      },
+      "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+      "accepted": 60,
+      "drafted": 133,
+      "acceptance": 0.45112781954887216,
+      "runtime_minimum_memory_bytes": {
+        "available_bytes": 23671599104,
+        "commit_headroom_bytes": 122008248320
+      },
+      "whole_bracket_clock": {
+        "before": {
+          "mono": 7097.461268355,
+          "raw": 7086.363198678,
+          "utc": 1791616319.2652595,
+          "qpc": 70253.3032372,
+          "roundtrip": 0.00039679999463260174
+        },
+        "after": {
+          "mono": 7110.183193149,
+          "raw": 7099.085126715,
+          "utc": 1791616358.3407252,
+          "qpc": 70266.02514525,
+          "roundtrip": 0.000411300003179349
+        },
+        "raw_seconds": 12.721928036999998,
+        "monotonic_seconds": 12.721924793999278,
+        "window_seconds": 12.721908049992635,
+        "monotonic_per_raw": 0.999999745085752,
+        "raw_per_qpc": 1.0000015710699437,
+        "handshake_uncertainty_seconds": 0.00040404999890597537,
+        "raw_qpc_tolerance": 0.001,
+        "raw_qpc_gate_passed": true,
+        "monotonic_drift_observation_only": true,
+        "phase_rate_scaling_applied": false
+      },
+      "raw_D_binding_qualified": true
+    },
+    {
+      "rep": 2,
+      "phase": "measured",
+      "excluded_from_rate_statistics": false,
+      "native_signed_request_id": 5,
+      "audited_D_sequence": 3,
+      "response_id": "cmpl-cb780853ab014e28b67c17fb",
+      "response_id_is_native_request_id": false,
+      "paired_raw_prefill_ms": 9832.443907,
+      "paired_raw_decode_ms": 2940.934671,
+      "paired_raw_prefill_tps": 1666.3202104143973,
+      "paired_raw_decode_tps": 43.523578154313924,
+      "prefill_chunks": 1,
+      "native_D": {
+        "request_id": 5,
+        "prompt_count": 16384,
+        "predicted_count": 128,
+        "prefill_ms": 9832.4,
+        "decode_ms": 2940.9
+      },
+      "api_timings": {
+        "prompt_n": 16384,
+        "predicted_n": 128,
+        "prompt_ms": 9832.4,
+        "predicted_ms": 2940.9,
+        "prompt_per_second": 1666.328,
+        "predicted_per_second": 43.524,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 133,
+        "draft_n_accepted": 60
+      },
+      "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+      "accepted": 60,
+      "drafted": 133,
+      "acceptance": 0.45112781954887216,
+      "runtime_minimum_memory_bytes": {
+        "available_bytes": 23645908992,
+        "commit_headroom_bytes": 121977524224
+      },
+      "whole_bracket_clock": {
+        "before": {
+          "mono": 7111.03571704,
+          "raw": 7099.937650817,
+          "utc": 1791616359.193249,
+          "qpc": 70266.8776793,
+          "roundtrip": 0.00037299998803064227
+        },
+        "after": {
+          "mono": 7123.900061835,
+          "raw": 7112.801999433,
+          "utc": 1791616345.701472,
+          "qpc": 70279.74213965,
+          "roundtrip": 0.0007343000033870339
+        },
+        "raw_seconds": 12.864348615999916,
+        "monotonic_seconds": 12.864344794999852,
+        "window_seconds": 12.864460349999717,
+        "monotonic_per_raw": 0.9999997029775718,
+        "raw_per_qpc": 0.9999913145210322,
+        "handshake_uncertainty_seconds": 0.0005536499957088381,
+        "raw_qpc_tolerance": 0.001,
+        "raw_qpc_gate_passed": true,
+        "monotonic_drift_observation_only": true,
+        "phase_rate_scaling_applied": false
+      },
+      "raw_D_binding_qualified": true
+    },
+    {
+      "rep": 3,
+      "phase": "measured",
+      "excluded_from_rate_statistics": false,
+      "native_signed_request_id": 6,
+      "audited_D_sequence": 4,
+      "response_id": "cmpl-54eb8bd0e8094510a71b4b2d",
+      "response_id_is_native_request_id": false,
+      "paired_raw_prefill_ms": 10142.726908,
+      "paired_raw_decode_ms": 2938.514392,
+      "paired_raw_prefill_tps": 1615.3446847787297,
+      "paired_raw_decode_tps": 43.5594259291278,
+      "prefill_chunks": 1,
+      "native_D": {
+        "request_id": 6,
+        "prompt_count": 16384,
+        "predicted_count": 128,
+        "prefill_ms": 10142.7,
+        "decode_ms": 2938.5
+      },
+      "api_timings": {
+        "prompt_n": 16384,
+        "predicted_n": 128,
+        "prompt_ms": 10142.7,
+        "predicted_ms": 2938.5,
+        "prompt_per_second": 1615.349,
+        "predicted_per_second": 43.56,
+        "cache_n": 0,
+        "disk_restore_n": 0,
+        "disk_restore_ms": 0.0,
+        "draft_n": 133,
+        "draft_n_accepted": 60
+      },
+      "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+      "accepted": 60,
+      "drafted": 133,
+      "acceptance": 0.45112781954887216,
+      "runtime_minimum_memory_bytes": {
+        "available_bytes": 23679119360,
+        "commit_headroom_bytes": 121998733312
+      },
+      "whole_bracket_clock": {
+        "before": {
+          "mono": 7124.745791782,
+          "raw": 7113.64772965,
+          "utc": 1791616346.547202,
+          "qpc": 70280.58775715,
+          "roundtrip": 0.0004017000028397888
+        },
+        "after": {
+          "mono": 7137.920059901,
+          "raw": 7126.822001593,
+          "utc": 1791616359.7237694,
+          "qpc": 70293.7620048,
+          "roundtrip": 0.0004398000019136816
+        },
+        "raw_seconds": 13.174271943000349,
+        "monotonic_seconds": 13.174268118999862,
+        "window_seconds": 13.174247649993049,
+        "monotonic_per_raw": 0.9999997097372436,
+        "raw_per_qpc": 1.000001843976821,
+        "handshake_uncertainty_seconds": 0.0004207500023767352,
+        "raw_qpc_tolerance": 0.001,
+        "raw_qpc_gate_passed": true,
+        "monotonic_drift_observation_only": true,
+        "phase_rate_scaling_applied": false
+      },
+      "raw_D_binding_qualified": true
+    }
+  ],
+  "phase_verification": {
+    "schema": "halogen0174.phase-raw-verification.v2",
+    "engine_sha256": "68f6e378ba9edb60d1e6348616f0d61603811fea81935a2c750fa1e0c2a448ca",
+    "provider_sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+    "phase_records": 16,
+    "consumed_pairs": 8,
+    "requests": [
+      {
+        "request_id": 3,
+        "prefill_chunks": 1,
+        "prefill_ms": 14501.442166,
+        "decode_ms": 3544.638456,
+        "prompt_count": 16384,
+        "predicted_count": 128
+      },
+      {
+        "request_id": 4,
+        "prefill_chunks": 1,
+        "prefill_ms": 9698.242557,
+        "decode_ms": 2935.284611,
+        "prompt_count": 16384,
+        "predicted_count": 128
+      },
+      {
+        "request_id": 5,
+        "prefill_chunks": 1,
+        "prefill_ms": 9832.443907,
+        "decode_ms": 2940.934671,
+        "prompt_count": 16384,
+        "predicted_count": 128
+      },
+      {
+        "request_id": 6,
+        "prefill_chunks": 1,
+        "prefill_ms": 10142.726908,
+        "decode_ms": 2938.514392,
+        "prompt_count": 16384,
+        "predicted_count": 128
+      }
+    ],
+    "native_d_matched": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "deferred_arm": true,
+    "arm_file_device": 81,
+    "arm_file_inode": 13643,
+    "decode_pairing_version": 2,
+    "decode_pairing_identity": "unique_active_signed_request_id_and_exact_native_start",
+    "moved_decode_pairs": 4,
+    "paired_raw_phase_verified": true,
+    "whole_bracket_normalization_used": false,
+    "instrumentation_is_acceleration": false
+  },
+  "raw_D_binding_qualified": true,
+  "paired_raw_phase_qualified": true,
+  "deferred_arm": true,
+  "decode_pairing_version": 2,
+  "phase_rate_scaling_applied": false,
+  "whole_bracket_normalization_used": false,
+  "instrumentation_is_acceleration": false,
+  "serving_gain_claim": false,
+  "native_mtp_only_acceptance_qualified": false,
+  "robust_cross_version_speed_gain_qualified": false,
+  "original_restored_ready_open": true,
+  "restored_version": {
+    "api": "0.17.3",
+    "engine": "0.17.3",
+    "match": true
+  },
+  "final_original_binding": {
+    "arm": "A-after",
+    "utc": "2026-10-10T07:16:37.686204+00:00",
+    "controller": {
+      "schema": 1,
+      "run_id": "b6e6dc423cbd4e52b4e60ce263969930",
+      "pid": 30072,
+      "phase": "ready",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "port": 8840,
+      "heartbeat": 1791616597.339732,
+      "minimum_reserve_gib": 18.0,
+      "profile_sha256": "78e1888d9ecc93a2117be679cd27ffeec1f8f9b99165e18647cef04104bfc141",
+      "memory": {
+        "available_bytes": 24408215552,
+        "committed_bytes": 117540937728,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 122598502400
+      },
+      "minimum_available_gib": 22.677936553955078,
+      "ready_at": 1791616580.2913272,
+      "active_requests": 0,
+      "available_gib": 22.75555419921875
+    },
+    "backend": {
+      "schema": 1,
+      "run_id": "1d2b3676dcf8491395a7da9c34f9c8d4",
+      "attempt": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\1d2b3676dcf8491395a7da9c34f9c8d4",
+      "phase": "ready",
+      "endpoint": "http://127.0.0.1:8731/v1",
+      "model": "halogen-qwen3.8-flash-next",
+      "context": 262144,
+      "slots": 1,
+      "checkpoint": "v2",
+      "prompt_cache": "Off",
+      "serve_seconds": 0,
+      "controller_pid": 39420,
+      "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\api-token.txt",
+      "log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\1d2b3676dcf8491395a7da9c34f9c8d4\\engine.log",
+      "controller_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\1d2b3676dcf8491395a7da9c34f9c8d4\\service.log",
+      "ready_at": 1791616587.0628567,
+      "container_id": "90d51debb22e02f92728df513b743a0c13fe974f4011023ab9701990290fbc2e"
+    },
+    "identities": {
+      "controller": {
+        "pid": 30072,
+        "creation_time_100ns": 134360900000680038,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 39420,
+        "creation_time_100ns": 134360900105494556,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "console_identity": {
+      "pid": 37376,
+      "creation_time_100ns": 134360899998079269,
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    },
+    "manifest": {
+      "schema": 1,
+      "version": "0.17.3",
+      "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:3bca0132db3c859c997d52d148e6ea4b7b497b8a695c5ccab97135193fde592a",
+      "run_id": "1d2b3676dcf8491395a7da9c34f9c8d4",
+      "checkpoint": "v2",
+      "context": 262144,
+      "slots": 1,
+      "serve_seconds": 0,
+      "startup_timeout": 900,
+      "mounts": {
+        "/models": "/home/revn/halogen-models-native",
+        "/usr/lib/libdxcore.so": "/usr/lib/wsl/lib/libdxcore.so",
+        "/usr/lib/librocdxg.so": "/home/revn/ciru-runtime/venv/lib/python3.14/site-packages/_rocm_sdk_core/lib/librocdxg.so.1",
+        "/ngram-w4b.hgn": "/mnt/c/AI/models/halogen-flashnext/qwen38-flash-next-w4b.hgn",
+        "/candidate/entrypoint-wsl-candidate.sh": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/.local/services/1d2b3676dcf8491395a7da9c34f9c8d4/entrypoint-service.sh",
+        "/candidate/libhalogen0173-preflight.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/.local/libhalogen0173-preflight.so",
+        "/candidate/hip-register-private-rw.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/.local/hip-register-private-rw.so",
+        "/candidate/halogen0173_hip_probe": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/.local/halogen0173_hip_probe",
+        "/candidate/startup_cache.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/scripts/startup_cache.py",
+        "/candidate/auth_api.py": "/mnt/c/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/phase-clock-real16k-v2-20261009/auth_api_phase.py",
+        "/candidate/lease_supervisor.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/scripts/lease_supervisor.py",
+        "/candidate/api-token.txt": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/.local/api-token.txt",
+        "/service-state": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/.local/services/1d2b3676dcf8491395a7da9c34f9c8d4",
+        "/candidate/libhalogen0173-v2-preflight.so": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/.local/libhalogen0173-v2-preflight.so",
+        "/phase": "/mnt/c/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/native0173-phase-clock-pairing-fix-20261009",
+        "/phase-root/auth_api_stock.py": "/mnt/c/Projects/strix-alloy-clean/backends/halogen-wsl2-0.17.3/scripts/auth_api.py"
+      },
+      "environment": {
+        "HALOGEN_WSL_PROFILE": "halogen0173-dxg",
+        "HALOGEN_CTX": "262144",
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_CK_OVERLAY": "",
+        "HALOGEN_PREFLIGHT_PROFILE": "flash0173-v2-device64-chunk64-v1",
+        "HALOGEN_HYBRID_PROFILE": "vgm64-0173-v2-device64-v1",
+        "HALOGEN_KV_POOL_POSITIONS": "262144",
+        "HALOGEN_KV_SLOTS": "1",
+        "HALOGEN_HOST_RESERVE_GIB": "18",
+        "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+        "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+        "HALOGEN_FLASH_PIN_TRUNK": "1",
+        "HALOGEN_PROMPT_CACHE": "0",
+        "HALOGEN_DMALLOC_LOG": "1",
+        "HALOGEN_VERBOSE": "1",
+        "HALOGEN_ENGINE_WATCHDOG_S": "120",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+        "HSA_ENABLE_SDMA": "1",
+        "HSA_ENABLE_DXG_DETECTION": "1",
+        "AMD_SERIALIZE_KERNEL": "0",
+        "AMD_SERIALIZE_COPY": "0",
+        "LD_PRELOAD": "/candidate/libhalogen0173-v2-preflight.so:/candidate/hip-register-private-rw.so",
+        "HALOGEN_API_PORT": "8731",
+        "HF_HUB_OFFLINE": "1",
+        "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PREFILL_CHUNK": "8192",
+        "HALOGEN_MAX_TOK": "8192",
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_ENABLE_THINKING": "1",
+        "HALOGEN_REASONING_EFFORT": "medium",
+        "HALOGEN_MAX_THINKING_TOKENS": "2048",
+        "ALLOY0173_D_AUDIT_RUN_ID": "1d2b3676dcf8491395a7da9c34f9c8d4"
+      },
+      "sources": {
+        "scripts\\api_defaults.py": "2a885eceb0a0edc08ec60726b918c0f6689b1870f256c8b7b3e84e83b6afdaaf",
+        "scripts\\auth_api.py": "15a4ac2e83ce9dd41d439ff9fb27ca878c35a9d5c3f60fd2b59c3e8da0876586",
+        "scripts\\bounded_hash.py": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2",
+        "scripts\\bridge_adapter.py": "2a8871ec6fb9705ccbc17c0087cbe6d9132428bd82c7951635bb95618e340d1a",
+        "scripts\\checkpoint_integrity.py": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea",
+        "scripts\\entrypoint_adapter.py": "579f6c164a8b7c223e71823d01766aa45c810aab48e6f6ce16aa3cf1314a1d6d",
+        "scripts\\halogen0173_hip_probe.c": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
+        "scripts\\host_frames.py": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+        "scripts\\kernel_controls.py": "5307e0842f0b5310191fed87387782f96d500a29e42c982b9fda6cf16237bf77",
+        "scripts\\lease_supervisor.py": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de",
+        "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "scripts\\memory_budget.py": "93548f9fd7a4eb991402829c6969dc0f311e5f3b256981cf3be4d6a4f39963c8",
+        "scripts\\portable.py": "0d98729aba436805be375a2bca4edf71b60f643a19465dddecc58089ab0a9e1d",
+        "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "scripts\\runner.py": "ce41f518e35367a0f3df6b1a3f21f32cf9a37f70e7504ad6aa39d1b886c751f9",
+        "scripts\\sample.ps1": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d",
+        "scripts\\service.py": "afacdb55d5225f5d89bd9615f01accc34c0d1cfc792776a5bed62f72e72c355f",
+        "scripts\\speculation_policy.py": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+        "scripts\\startup_cache.py": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
+        "scripts\\startup_guard.py": "085c821fc6d4744fbc11017bfd0c04343bce5c8a08313262d6bf3f6b28769670",
+        "scripts\\startup_monitor.py": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0",
+        "scripts\\state_io.py": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
+        "patches\\halogen-preflight-bridge.c": "0be6adf86587f6d334887d6e1d61eb26fbb5a156908eb33881e95c4e685baf61",
+        "patches\\halogen-preflight-trampoline.S": "77f30756961d2e1680af8e162c2634e57b1e638ac2cf963796ad1f5fc409aa99",
+        "patches\\hip-preflight-plan.h": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b",
+        "patches\\hip-register-hybrid.c": "25d04669935eefc6d3d39cf5e9918dbbb36325f88de048d46b1fae807b215342",
+        "patches\\hip-register-private-rw.c": "c998ac7b1a9aee191742a6a7de9944bcd9946c919a1bcf2b2c8cd93dbba61900",
+        "profiles\\release.json": "9d8d25256244e5150654b80c5c70c41a9fbcfaf394f00f028276bcb866ad1f94",
+        "profiles\\sources.json": "7c971631c1bfbe83f42ae265e563c170e80a7ff5712fb60ea4151b67c40e51e4"
+      },
+      "entrypoint_sha256": "39cef36ae5d41b5bee9c2d185f81dc3ec2b04d2f14b0b33f0b64039098a8d669",
+      "speculation_policy": {
+        "HALOGEN_PLD": "3,3"
+      },
+      "api_defaults": {
+        "enable_thinking": true,
+        "reasoning_effort": "medium",
+        "max_thinking_tokens": 2048
+      },
+      "phase_clock_instrument": {
+        "enabled": true,
+        "measurement_only": true,
+        "journal": "/tmp/alloy0173-phase-raw.jsonl",
+        "arm_file": "/tmp/alloy0173-phase.arm",
+        "native_d_audit": "/tmp/alloy0173-native-d.jsonl",
+        "native_start_unchanged": true,
+        "scheduling_clocks_unchanged": true,
+        "normal_lifecycle": true,
+        "default_off": true,
+        "serving_gain_claim": false
+      }
+    },
+    "profile_sha256": "78e1888d9ecc93a2117be679cd27ffeec1f8f9b99165e18647cef04104bfc141",
+    "container_record": {
+      "id": "90d51debb22e02f92728df513b743a0c13fe974f4011023ab9701990290fbc2e"
+    }
+  },
+  "final_authenticated_gateway_health": {
+    "status": "ok",
+    "backend": "halogen-v2",
+    "checkpoint": "v2",
+    "context": 262144,
+    "active_requests": 0,
+    "draining": false,
+    "completed": 0,
+    "cancelled": 0
+  },
+  "qualification": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-v3-0174-preparation-20261010\\root-qualification.json",
+    "bytes": 31235,
+    "sha256": "1575d3d10848cf6df6265f17d6cff5997df20de2aeab5afec71718cc0a23a023"
+  },
+  "restoration": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\phase-clock-real16k-v3-0174-preparation-20261010\\final-ready-open.json",
+    "bytes": 11474,
+    "sha256": "b47720ea50798822e15224f68b57b4cbcbf37b018bae50413025396932655106"
+  },
+  "request_file_sha256": "0b616f5eb0aa779244cdbba4c2c7d42c8ee43ec200fc41f596e8331440f5a28c",
+  "prompt_sha256": "cbaeec7395187803e2e570d3f5554b45d2eb99e5fa80b61c370c7fe87390a663",
+  "profile_sha256": "cc5b6646f318c44b686e148c2f48793705bec5e63e43c320cc86fa476ffa0202",
+  "api_sha256": "c037988bd6a18ebffa8fe22bd3ce85d6ab4c2350aa0814b56087565bea1f5621",
+  "collector_sha256": "7cf0ece57ea67b801e1466b0c63a2d9a210b92beccfc32b44bdb0d39552e2c5a",
+  "verifier_sha256": "eb83227e858ad886d16668feaac69f48869c8f955d54ca72a9b7a62679fc16a2",
+  "publication_helper": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\root-phase0174-publication-20261010\\publish.py",
+    "bytes": 12516,
+    "sha256": "2d9e7f14a633afebc321ecd0f2f2cf450601fa3df372401e521af386e03dbbd4"
+  }
+}

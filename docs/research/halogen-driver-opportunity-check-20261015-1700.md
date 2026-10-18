@@ -1,0 +1,21 @@
+# Halogen and driver source check — 15 October 2026, 17:00 UTC
+
+**No new compatible official driver/runtime update was established. Two new community mechanisms merit focused source review.** This at-due check ended17:06:10UTC. It preserves the existing server and uses root's retained14:56:52UTC inventory: GPU32.0.32015.2008, NPU32.0.20102.3930. Its file hash was reverified; hardware was not queried. Exact identities, URLs and limitations are in the [JSON receipt](halogen-driver-opportunity-check-20261015-1700.json).
+
+| Official channel | Observation against15:00 check |
+| --- | --- |
+| [Halogen changelog](https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/CHANGELOG.md) | Still0.18.5; no newer section observed. |
+| [Max395 downloads](https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html) / [26.9.2 notes](https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html) |26.8.1 recommended /26.9.2 optional; packaged GPU/NPU versions match retained inventory. |
+| [RyzenAI releases](https://github.com/amd/RyzenAI-SW/releases) / [NPU install](https://ryzenai.docs.amd.com/en/latest/inst.html) |1.8.0; production32.0.203.376 remains a different driver branch. |
+| [MLIR-AIE](https://github.com/Xilinx/mlir-aie/releases) |1.4.4 /e5c705c unchanged. |
+| [ROCm Core](https://rocm.docs.amd.com/en/latest/about/release-notes.html) / [matrix](https://rocm.docs.amd.com/en/latest/compatibility/compatibility-matrix.html) |10.1.0 dated5October; HIP7.16.0, hipBLASLt1.4.1 unchanged. |
+| [ROCm driver package](https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-ROCM-10-01.html) / [ROCDXG](https://github.com/ROCm/librocdxg/releases) |Package's discrete-product list still does not resolve Max395 applicability; ROCDXG1.2.2 unchanged. |
+| [WindowsML EP table](https://raw.githubusercontent.com/wiki/microsoft/WindowsML/Windows-ML-Execution-Provider-Releases.md) |Cached5days; MIGraphX1.8.65.0/VitisAI1.8.80.0 remain upcoming, not confirmed released. |
+
+[rdna-boosts release manifest](https://raw.githubusercontent.com/stew675/llama-cpp-rdna-boosts/main/release.json) advanced **r64→r65**, tip `1cee2637c`, tree `5bdbf241fc20f6ef9eb0ac851a8531f0dd14f684`. The [261015.002 worklog](https://raw.githubusercontent.com/stew675/llama-cpp-rdna-boosts/main/WORKLOG.md) adds pinned Meta output and persistent MTP scheduling. Its reported5.3% result uses gfx1201/2×R9700, not this host. Blocks09/10 and named functions are retained in JSON; direct patch fetches failed. A Halogen seam and complete-cost benefit need independent source assessment.
+
+Today's [hipfire Reddit lead](https://www.reddit.com/r/StrixHalo/comments/1x6bvba/hipfire_0421_qwen38flash_125_gb_moe_on_strix_halo/) resolves to [v0.4.2.1](https://github.com/warpfront/hipfire/releases) (14October) and a [tagged two-bank contract](https://raw.githubusercontent.com/warpfront/hipfire/v0.4.2/docs/npu/npu-trunk.md). This is a distinct BF16-direct GDN/QSA input-projection pipeline with directly consumed userptr arenas, rather than the closed PLE experiment. The [benchmark](https://hipfire.dev/benchmarks/0.4.2/) reports16355 tokens/6854ms on gfx1151+XDNA2 with its own MQ4-XTS/q4-PLE/overlay artifact. JSON identifies packing, bank preparation/wait, lifetime and module entry points. Rust-file fetches failed; the handoff is documentation-bound, not an implementation audit. Neither its GPU twin nor Linux mapping proves original Halogen arithmetic or Windows-to-WSL compatibility.
+
+A [trained expert-lookahead lead](https://github.com/skeggsguy/Flash-next-ssd) targets Apple Silicon SSD-streamed routed experts. That consumer differs from resident Halogen weights and PLE lookup; no direct gain transfers. Indexed Reddit search was bounded and returned older posts despite date filters. The latest asf0 branch head and GHCR registry were not revalidated.
+
+Finish the current grammar bracket. Audit the two new mechanisms offline before considering any experiment. No driver, runtime, policy, continuation, current-work or server state changed; no installation, inference or hardware operation ran.

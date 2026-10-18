@@ -1,0 +1,218 @@
+{
+  "schema": "halogen.official-source-recheck.v3",
+  "reviewer": "/root/release0185",
+  "checked_start_utc": "2026-10-16T08:18:26Z",
+  "checked_end_utc": "2026-10-16T08:24:13Z",
+  "due_utc": "2026-10-15T19:06:10Z",
+  "next_check_utc": "2026-10-16T10:24:13Z",
+  "scope": "Read-only official release/package metadata and bounded community discovery since retained17:06UTC review; no repeated implementation audits.",
+  "previous_check": {
+    "file": "docs/research/halogen-driver-opportunity-check-20261015-1700.json",
+    "sha256": "3f702fb9abc1cbda704ab7db32828d7bd24eedbebf8b97d0957a238061ddf313",
+    "checked_end_utc": "2026-10-15T17:06:10Z"
+  },
+  "retained_host_baseline": {
+    "source_review": "docs/research/halogen-driver-update-check-20261012-0826.json",
+    "source_review_end_utc": "2026-10-12T08:31:45Z",
+    "current_host_inventory": "server/.local/halogen0185-update-20261015/host-inventory-late.json",
+    "current_host_inventory_utc": "2026-10-15T14:56:52.8036798Z",
+    "gpu_driver": "32.0.32015.2008",
+    "gpu_driver_date": "2026-09-28",
+    "npu_driver": "32.0.20102.3930",
+    "npu_driver_date": "2026-07-05",
+    "active_power_scheme": "REV:N Performance",
+    "inventory_collected_by": "root; this reviewer read the saved receipt only",
+    "current_host_inventory_sha256": "465452847020ca1ce1b02fa5ea29f6cb4cd77d00912bc4ead07fe04219ffa308",
+    "source_review_sha256": "abd91253693a6431ad37d603d96f16389c093e01dd60087592577721b5e24c2a"
+  },
+  "retained_inventory_hash_reverified": true,
+  "host_inventory_freshly_collected": false,
+  "actual_running_backend_inspected": false,
+  "runtime_ownership_note": "Root reported an external32K/9080controller change and owns actual-runtime verification; this report makes no current0185/full262K assumption.",
+  "official_sources": {
+    "halogen": {
+      "urls": [
+        "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/CHANGELOG.md",
+        "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/README.md",
+        "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/docs/getting-started.md"
+      ],
+      "changelog_heading": "0.18.5",
+      "quickstart_tag": "0.18.5",
+      "newer_version_observed": false,
+      "scope": "Public documentation only; not active-runtime identity."
+    },
+    "halogen_GHCR_metadata": {
+      "url": "https://github.com/peonist-ai/halogen-flash-server/pkgs/container/halogen-flash-server",
+      "public_tags": [
+        "latest",
+        "0.18.5"
+      ],
+      "public_digest": "sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+      "relative_publication_display": "about20hoursago",
+      "direct_authenticated_registry_manifest_revalidated": false,
+      "limitation": "GHCR tags API inaccessible via browsing tool; public package metadata is not an inspected local image."
+    },
+    "amd_max395": {
+      "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+      "recommended": "26.8.1 WHQL",
+      "recommended_date": "2026-08-20",
+      "optional": "26.9.2 WHQL",
+      "optional_date": "2026-09-29",
+      "changed_since_baseline": false
+    },
+    "adrenalin2692": {
+      "url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html",
+      "gpu_store_version": "32.0.32015.2008",
+      "packaged_npu_mcdm": "32.00.20102.3930",
+      "changed_since_baseline": false,
+      "local_match_scope": "Matches retained inventory versions, not a fresh host check."
+    },
+    "ryzenai": {
+      "url": "https://github.com/amd/RyzenAI-SW/releases",
+      "latest_stable": "v1.8.0",
+      "commit_prefix": "73c0457",
+      "changed_since_baseline": false,
+      "publication_display": "23Jul04:37; exactUTCnotreverified"
+    },
+    "npu_install": {
+      "url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+      "alternate_attempt": "https://ryzenai.docs.amd.com/en/1.8/inst.html",
+      "status": "both_inaccessible_this_check",
+      "retained_only": {
+        "minimum_driver": "32.0.203.280",
+        "production_driver": "32.0.203.376"
+      },
+      "fresh_driver_branch_order_established": false
+    },
+    "mlir_aie": {
+      "url": "https://github.com/Xilinx/mlir-aie/releases",
+      "latest_stable": "v1.4.4",
+      "stable_commit_prefix": "e5c705c",
+      "stable_changed": false,
+      "new_prerelease": "v1.4.5-alpha.1",
+      "prerelease_commit_prefix": "cb6f2d1",
+      "publication_display": "15Oct22:09",
+      "exact_publication_UTC_revalidated": false,
+      "release_scope": "IRON model-testing alpha; no detailed new kernel/interop mechanism established."
+    },
+    "rocm_core": {
+      "url": "https://rocm.docs.amd.com/en/latest/about/release-notes.html",
+      "version": "10.1.0",
+      "changed_since_baseline": false,
+      "WSL_status": "TheRock technical preview; profiling/debugging/KFD-dependent tools unsupported at launch."
+    },
+    "rocm_matrix": {
+      "url": "https://rocm.docs.amd.com/en/latest/compatibility/compatibility-matrix.html",
+      "gfx1151_8060S_listed": true,
+      "adrenalin_driver": "26.10.41.05",
+      "windows_CDE_CPR": "26.10.48",
+      "HIP": "7.16.0",
+      "hipBLASLt": "1.4.1",
+      "changed_since_baseline": false
+    },
+    "rocm_driver": {
+      "url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-ROCM-10-01.html",
+      "store_version": "32.0.31041.5005",
+      "npu_mcdm": "32.00.20102.3930",
+      "product_list_scope": "Discrete Radeon families; Max395 package applicability still not established.",
+      "changed_since_baseline": false
+    },
+    "rocdxg": {
+      "url": "https://github.com/ROCm/librocdxg/releases",
+      "latest": "v1.2.2",
+      "commit_prefix": "4955d12",
+      "changed_since_baseline": false
+    },
+    "windows_ml": {
+      "url": "https://raw.githubusercontent.com/wiki/microsoft/WindowsML/Windows-ML-Execution-Provider-Releases.md",
+      "crawl_age_reported": "5days",
+      "MIGraphX_MSIX": "1.8.64.0",
+      "MIGraphX_EP": "7.2.2609.19",
+      "VitisAI_MSIX": "1.8.75.0",
+      "VitisAI_EP": "1605",
+      "upcoming_only": [
+        "MIGraphX1.8.65.0",
+        "VitisAI1.8.80.0"
+      ],
+      "observed_table_change": false,
+      "freshness_limitation": "Cache-busting URL failed; no claim of fresh deployment availability."
+    }
+  },
+  "community_primary_leads": {
+    "rdna_boosts": {
+      "manifest_url": "https://raw.githubusercontent.com/stew675/llama-cpp-rdna-boosts/main/release.json",
+      "worklog_url": "https://raw.githubusercontent.com/stew675/llama-cpp-rdna-boosts/main/WORKLOG.md",
+      "previous_release": "v12-097cf33d9-r65",
+      "release": "v12-097cf33d9-r68",
+      "tip_as_published": "fc6dcad9f",
+      "tree_as_published": "ffe832696698786865f4adf18216a019b61b160e",
+      "all_patch_sha256_as_published": "7af916e6773ab663ffbe7a84d2323fafdc3c6e2074f9d193c0acd9cdaa25a0bd",
+      "newly_observed_since_baseline": true,
+      "publication_scope": "Worklog entries261015.003/.005/.006; exact pushUTCnotreverified.",
+      "mechanisms": [
+        "r68: input transfers use a16MiB pinned queue with completion events; a lazy graph index replaces repeated GDN dependency scans.",
+        "r67: corrects staging activation/pageable-source handling and restores a duplicate-safe specialized MoE helper.",
+        "r66: duplicate-ID correctness and value-owning environment caching."
+      ],
+      "evidence_scope": "Current author manifest/worklog; no fresh patch implementation audit.",
+      "author_hardware_scope": "gfx1201/R9700, including Windows eager-host-path report; not a current Halogen/gfx1151 measurement.",
+      "disposition": "New bounded source-only portability lead; no target seam or local gain established."
+    },
+    "gufo_NPU_fork": {
+      "post_url": "https://www.reddit.com/r/StrixHalo/comments/1x67nso/qwen38_flashnext_prefill_on_strix_halo_gpu_xdna2/",
+      "primary_url": "https://github.com/mikealanni/gufo",
+      "branch": "fork-enhancements",
+      "readme_url": "https://raw.githubusercontent.com/mikealanni/gufo/fork-enhancements/README.md",
+      "newly_resolved_this_check": true,
+      "published_after17UTC_proven": false,
+      "mechanism": "Block-float8 GEMMs move selected attention/shared-expert projections to XDNA2; results are joined in4096-token groups.",
+      "numerical_limit": "Author reports23of30 long greedy completions matching GPU-only; seven first-token flips.",
+      "platform_limit": "Linux XRT/fabric-clock and power-state requirements; no Windows/WSL ownership bridge or frozen Halogen arithmetic equivalence.",
+      "disposition": "Documentation lead only; correctness disclosure prevents treating it as output-preserving optimization."
+    },
+    "hipfire": {
+      "url": "https://github.com/warpfront/hipfire/releases",
+      "latest": "v0.4.2.1",
+      "commit_prefix": "6b363a5",
+      "new_release_since_baseline_observed": false,
+      "old_trunk_source_audit_repeated": false
+    },
+    "wrong_target_excluded": {
+      "post_url": "https://www.reddit.com/r/LocalLLM/comments/1x682nm/going_all_local_for_work_qwen38_next_flash/",
+      "primary_url": "https://github.com/azampatti/Qwen3.8-Flash-Next-Int4-FAST",
+      "reason": "GB10/NVIDIA recipe and a healed5-expert model; different hardware and target arithmetic."
+    },
+    "asf0": {
+      "url": "https://api.github.com/repos/asf0/strix-llama.cpp/branches/rdna35-perf",
+      "status": "inaccessible; no fresh tip or change claim"
+    },
+    "torch_NPU_unresolved": {
+      "url": "https://www.reddit.com/r/AMDLaptops/comments/1x6gzbh/your_amd_laptop_npu_is_no_longer_wasted_silicon/",
+      "status": "Indexed new lead; direct post inaccessible and no primary implementation resolved; not promoted."
+    }
+  },
+  "reddit_method": {
+    "indexed_queries": 8,
+    "filters": "after2026-10-15 and explicitOct16 terms; older/mixed-time results also returned",
+    "exhaustive": false,
+    "primary_resolution_required": true,
+    "new_local_measurement": false
+  },
+  "limitations": [
+    "Browsing reports cached/as-of-today pages; exact publicationUTC is distinguished from checkUTC.",
+    "Direct GHCR API and selected GitHub API/tag URLs failed; no public anonymous token or credentials were obtained.",
+    "RyzenAI install docs unavailable; WindowsML remained a5-day cached table.",
+    "Saved inventory is historical; root owns actual32K/9080 runtime verification.",
+    "New community mechanisms are documentation/source leads, not independently verified ports or benchmark gains."
+  ],
+  "recommendation": "No install, pull, driver/WSL change or unchanged local retest. Preserve actual runtime ownership as found; root may triage only the newly observed r68 mechanism or newly resolved Gufo documentation under separate source-only scope.",
+  "hardware_access": false,
+  "wsl_or_docker_calls": false,
+  "serving_requests": false,
+  "credential_access": false,
+  "installation": false,
+  "lifecycle_changes": false,
+  "loaded_backend_edits": false,
+  "state_writes": false,
+  "continuation_writes": false
+}

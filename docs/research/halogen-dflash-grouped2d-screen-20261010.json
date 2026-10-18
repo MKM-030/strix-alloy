@@ -1,0 +1,347 @@
+{
+  "schema": "halogen.dflash-grouped2d-synthetic-screen.v1",
+  "utc": "2026-10-10T07:31:44.598173+00:00",
+  "tool_session_id": 67750,
+  "tool_exit_code": 0,
+  "tool_terminal_observed": true,
+  "component_result": {
+    "accuracy_scope": "numeric differences reported without a model-quality threshold",
+    "all_finite": true,
+    "allocator_scope": "worker process Torch allocator only; not system peak or five-layer traffic",
+    "arithmetic_extent": {
+      "direct_kv_bytes": 34084864,
+      "ratio": 12,
+      "repeated_extent_removed_bytes": 374933504,
+      "repeated_kv_bytes": 409018368,
+      "scope": "one attention call; tensor extents, not measured memory traffic"
+    },
+    "attention_clock": "CLOCK_MONOTONIC_RAW",
+    "attention_source_sha256": "373af09df180ca2f10be5240ee4a9b2d7be0fc0e922c4ce7d22a561532b80547",
+    "call_count": 8,
+    "capacity": 16640,
+    "device": {
+      "architecture": "gfx1151",
+      "name": "AMD Radeon(TM) 8060S Graphics",
+      "total_memory_bytes": 102706034688
+    },
+    "engine_requests": 0,
+    "exact_natural_tensor_fixture_available": false,
+    "excluded_warmup_calls": 2,
+    "full_backbone_measured": false,
+    "hip_version": "7.15.26333",
+    "input_pins": {
+      "all_valid": {
+        "bytes": 16643,
+        "dtype": "torch.bool",
+        "sha256": "a28f9040bb0728ba12851ebef8441d69ff7b5e676ffaeefe2fc19998b61d2736",
+        "shape": [
+          16643
+        ]
+      },
+      "key": {
+        "bytes": 17042432,
+        "dtype": "torch.bfloat16",
+        "sha256": "6af009d36f04d27d6387018496ceded85884499676a75c2a9351192f9102811e",
+        "shape": [
+          1,
+          2,
+          16643,
+          256
+        ]
+      },
+      "query": {
+        "bytes": 36864,
+        "dtype": "torch.bfloat16",
+        "sha256": "8c21e5fc42b97d96ecad39dde8809b664d5aaf02a9afd7f1f000db15b385252a",
+        "shape": [
+          1,
+          24,
+          3,
+          256
+        ]
+      },
+      "value": {
+        "bytes": 17042432,
+        "dtype": "torch.bfloat16",
+        "sha256": "0ba54ccbe2563d268a1690ef2cd32661c44e5684c37d62d8d195abf0204ff4ef",
+        "shape": [
+          1,
+          2,
+          16643,
+          256
+        ]
+      }
+    },
+    "means_ms": {
+      "grouped2d": 2.587823,
+      "repeat": 7.135407333333333
+    },
+    "measured_pairs": 3,
+    "model_loaded": false,
+    "natural_prefix_equivalence_qualified": false,
+    "npu_executed": false,
+    "observed_component_ratio": 2.757301149782397,
+    "output_error": [
+      {
+        "elements": 18432,
+        "max_absolute": 0.000244140625,
+        "mean_absolute": 3.4548827443359187e-07,
+        "pair": 0,
+        "reference_max_absolute": 0.052490234375,
+        "rmse": 5.562669684877619e-06,
+        "unequal_elements": 255
+      },
+      {
+        "elements": 18432,
+        "max_absolute": 0.000244140625,
+        "mean_absolute": 3.4548827443359187e-07,
+        "pair": 1,
+        "reference_max_absolute": 0.052490234375,
+        "rmse": 5.562669684877619e-06,
+        "unequal_elements": 255
+      },
+      {
+        "elements": 18432,
+        "max_absolute": 0.000244140625,
+        "mean_absolute": 3.4548827443359187e-07,
+        "pair": 2,
+        "reference_max_absolute": 0.052490234375,
+        "rmse": 5.562669684877619e-06,
+        "unequal_elements": 255
+      }
+    ],
+    "query_slots": 3,
+    "rows": [
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 34138624,
+          "baseline_reserved_bytes": 39845888,
+          "extra_peak_allocated_bytes": 502823424,
+          "peak_allocated_bytes": 536962048,
+          "peak_reserved_bytes": 591396864
+        },
+        "attention_and_finite_sync_ms": 605.480321,
+        "finite": true,
+        "mode": "repeat",
+        "output_copy_ms": 0.445547,
+        "pair": null,
+        "phase": "excluded-warmup"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 591396864,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 591396864
+        },
+        "attention_and_finite_sync_ms": 10.689655,
+        "finite": true,
+        "mode": "grouped2d",
+        "output_copy_ms": 0.33157,
+        "pair": null,
+        "phase": "excluded-warmup"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 591396864,
+          "extra_peak_allocated_bytes": 423131648,
+          "peak_allocated_bytes": 536962048,
+          "peak_reserved_bytes": 591396864
+        },
+        "attention_and_finite_sync_ms": 7.176303,
+        "finite": true,
+        "mode": "repeat",
+        "output_copy_ms": 0.426275,
+        "pair": 0,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 591396864,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 591396864
+        },
+        "attention_and_finite_sync_ms": 2.621438,
+        "finite": true,
+        "mode": "grouped2d",
+        "output_copy_ms": 0.32014,
+        "pair": 0,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 591396864,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 591396864
+        },
+        "attention_and_finite_sync_ms": 2.575396,
+        "finite": true,
+        "mode": "grouped2d",
+        "output_copy_ms": 0.358032,
+        "pair": 1,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 591396864,
+          "extra_peak_allocated_bytes": 423131648,
+          "peak_allocated_bytes": 536962048,
+          "peak_reserved_bytes": 591396864
+        },
+        "attention_and_finite_sync_ms": 7.12871,
+        "finite": true,
+        "mode": "repeat",
+        "output_copy_ms": 0.529452,
+        "pair": 1,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 591396864,
+          "extra_peak_allocated_bytes": 423131648,
+          "peak_allocated_bytes": 536962048,
+          "peak_reserved_bytes": 591396864
+        },
+        "attention_and_finite_sync_ms": 7.101209,
+        "finite": true,
+        "mode": "repeat",
+        "output_copy_ms": 0.470349,
+        "pair": 2,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 591396864,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 591396864
+        },
+        "attention_and_finite_sync_ms": 2.566635,
+        "finite": true,
+        "mode": "grouped2d",
+        "output_copy_ms": 0.33074,
+        "pair": 2,
+        "phase": "measured"
+      }
+    ],
+    "schema": "dflash.synthetic-attention-layout-screen.v1",
+    "seed": 1040174,
+    "serving_gain_qualified": false,
+    "setup": {
+      "clock": "perf_counter_ns (CLOCK_MONOTONIC)",
+      "cpu_fixture_creation_ms": 80.071863,
+      "cpu_fixture_hash_ms": 27.165493,
+      "device_copy_sync_ms": 209.295899,
+      "runtime_init_ms": 1.111867,
+      "torch_import_ms": 1029.103113
+    },
+    "synthetic_fixture": true,
+    "timing_scope": "attention expressions plus input/output finite reductions and synchronization; excludes projections, MLP, context where/cat, model/head and setup",
+    "torch_version": "2.13.0+rocm10.0.0",
+    "valid_prefix": 16384
+  },
+  "ranges_ms": {
+    "repeat": [
+      7.101209,
+      7.176303
+    ],
+    "grouped2d": [
+      2.566635,
+      2.621438
+    ]
+  },
+  "extra_peak_allocated_bytes": {
+    "repeat": 423131648,
+    "grouped2d": 42606592
+  },
+  "window_outcome": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\screen\\outcome.json",
+    "bytes": 4839,
+    "sha256": "7198a55b50e99ad374954bc3ff99123333f26bdba49dee288be31f81a889adce"
+  },
+  "minimum_memory_bytes": {
+    "available_bytes": 23386939392,
+    "commit_headroom_bytes": 121641549824
+  },
+  "evidence": {
+    "stdout.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\screen\\stdout.json",
+      "bytes": 5731,
+      "sha256": "e8c0c3b79dd11a950687ff96c3f9aa75706a8f7e2ace6f7e4f97edfbe28f7284"
+    },
+    "intent.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\screen\\intent.json",
+      "bytes": 14151,
+      "sha256": "cfc98300a980d2713d562b0406da0b9acd5605ebbe1a56cdd4ae94b78b233353"
+    },
+    "commands.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\screen\\commands.json",
+      "bytes": 3976,
+      "sha256": "8e14a00e3b32554215488b33e15af57d120f564ad863251b58a2190507bb1810"
+    },
+    "handle.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\screen\\handle.json",
+      "bytes": 523,
+      "sha256": "928202f3ce03a7d4f9fa11f2db4f05a2f2e5f6818bc119b353cc1a8974dd2c20"
+    },
+    "health-before.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\screen\\health-before.json",
+      "bytes": 8467,
+      "sha256": "fceed5c02ea9068da9a5acd9eeb3e7044fa34b84f5c23e3837cc0d48e52919d2"
+    },
+    "health-after.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\screen\\health-after.json",
+      "bytes": 8467,
+      "sha256": "6d2123169673fc78583f17e8e91089cbfc2866a5e4b706d152e37d541e1d9558"
+    },
+    "health-final.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\screen\\health-final.json",
+      "bytes": 8467,
+      "sha256": "b4e30f8498a0a6627e12a6a8996e258ab0330873af2ff595da8ea9465ed95860"
+    }
+  },
+  "source": {
+    "attention_fixture.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\attention_fixture.py",
+      "bytes": 9226,
+      "sha256": "c1901ccb6ac708e8d3fc3465ff0a9adeed5981ea9a19eef89ca5f9fcab33647a"
+    },
+    "root_run.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\root_run.py",
+      "bytes": 11555,
+      "sha256": "82520dfef99be886a1cb088968019ec9bc6157cf2b109ce849ebbdfb75bae0e8"
+    },
+    "root-bridge-source-change.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped2d-attention-replay-source-20261010\\root-bridge-source-change.json",
+      "bytes": 352,
+      "sha256": "008f20eeef9d64705c86a79b9dae4ae3062c9f929ac28554adc78dcbb54b9004"
+    }
+  },
+  "normal_server_ready_open": true,
+  "normal_server_identities": {
+    "controller": {
+      "pid": 30072,
+      "creation_time_100ns": 134360900000680038,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 39420,
+      "creation_time_100ns": 134360900105494556,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "serving_gain_qualified": false,
+  "npu_enabled": false,
+  "full_backbone_measured": false,
+  "native_prefix_quality_qualified": false,
+  "decision": "Retain grouped2d as a default-off GPU candidate; assess a distinct graph/fused implementation before full backbone or serving integration."
+}

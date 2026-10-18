@@ -1,0 +1,395 @@
+{
+  "schema": "halogen0181.inert-source-preparation.v1",
+  "generated_utc": "2026-10-12T06:10:17.322476+00:00",
+  "version": "0.18.1",
+  "source_only": true,
+  "runnable_package_staged": false,
+  "installed": false,
+  "production_integrated": false,
+  "metadata": {
+    "receipt_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0180-normal-bridge-preparation-20261011\\halogen0181-public-metadata-20261012\\metadata.json",
+    "receipt_sha256": "1f6359364724bfd2294ddb7523a51a3069247c2203bc71bb47c5e682606ea9db",
+    "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:f0b39c8908f9897f27ab0a64e964c775e136a7cf7a1bafeb4de0c6d5d1e07e29",
+    "platform": "linux/amd64",
+    "revision": "b540030f8abf",
+    "image_config_created": "2026-10-11T19:01:31.127013509Z",
+    "created_time_is_publication_time": false,
+    "image_config_sha256": "0e25efcf50355f12d19947dd95e1b2555b0bed7f3c56e2b9611a8efd5e08ab9f",
+    "metadata_digest_checks_passed": true,
+    "engine_bytes_verified": true
+  },
+  "source_scout": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-driver-update-check-20261012.json",
+    "sha256": "3307ca6233068818d233d279aa1c3515cf716f65bad78356b8ad2364b01ecffd"
+  },
+  "baseline": {
+    "directory": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.0",
+    "source_manifest_path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.0\\profiles\\sources.json",
+    "source_manifest_sha256": "9654b788bb32b7a6a5a516b2faf07c4945206f4569f684ad1f21ae2f69a7aed0",
+    "membership_files": 40,
+    "all_observed_files_match_baseline_manifest": true,
+    "mismatches": [],
+    "files": {
+      ".gitattributes": {
+        "observed_sha256": "790e26d97d187b57ce20328adc0e43b92045c7e2be226aceac657bbaed1dd687",
+        "baseline_manifest_sha256": "790e26d97d187b57ce20328adc0e43b92045c7e2be226aceac657bbaed1dd687",
+        "baseline_pin_matches": true
+      },
+      ".gitignore": {
+        "observed_sha256": "d8974a1bd0952e55874013d796a654bfe6278147b832cc19879b3c5338ea85a3",
+        "baseline_manifest_sha256": "d8974a1bd0952e55874013d796a654bfe6278147b832cc19879b3c5338ea85a3",
+        "baseline_pin_matches": true
+      },
+      "Install.ps1": {
+        "observed_sha256": "4fa0fb55c5faea48d42ac998b247de35883fdf741666b21e2f41a939aec1fb9d",
+        "baseline_manifest_sha256": "4fa0fb55c5faea48d42ac998b247de35883fdf741666b21e2f41a939aec1fb9d",
+        "baseline_pin_matches": true
+      },
+      "LICENSE": {
+        "observed_sha256": "7d7b3a69be9e85fce6fb2f55053180fad22327acc61b93194d30a601daa4b182",
+        "baseline_manifest_sha256": "7d7b3a69be9e85fce6fb2f55053180fad22327acc61b93194d30a601daa4b182",
+        "baseline_pin_matches": true
+      },
+      "patches/halogen-preflight-bridge.c": {
+        "observed_sha256": "387979fefa9483e96b25c0492767cf7f7e4ef68d9c3fd9628f90e42b7ea81eb1",
+        "baseline_manifest_sha256": "387979fefa9483e96b25c0492767cf7f7e4ef68d9c3fd9628f90e42b7ea81eb1",
+        "baseline_pin_matches": true
+      },
+      "patches/halogen-preflight-trampoline.S": {
+        "observed_sha256": "77f30756961d2e1680af8e162c2634e57b1e638ac2cf963796ad1f5fc409aa99",
+        "baseline_manifest_sha256": "77f30756961d2e1680af8e162c2634e57b1e638ac2cf963796ad1f5fc409aa99",
+        "baseline_pin_matches": true
+      },
+      "patches/hip-preflight-plan.h": {
+        "observed_sha256": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b",
+        "baseline_manifest_sha256": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b",
+        "baseline_pin_matches": true
+      },
+      "patches/hip-register-hybrid.c": {
+        "observed_sha256": "5a550951560abd23a91565a9a544dfe736793448f449afb88a8d3c4825aac35d",
+        "baseline_manifest_sha256": "5a550951560abd23a91565a9a544dfe736793448f449afb88a8d3c4825aac35d",
+        "baseline_pin_matches": true
+      },
+      "patches/hip-register-private-rw.c": {
+        "observed_sha256": "f430e949803683d588b87c1f7ae6b7230535274f923655a4b164577f8fe12749",
+        "baseline_manifest_sha256": "f430e949803683d588b87c1f7ae6b7230535274f923655a4b164577f8fe12749",
+        "baseline_pin_matches": true
+      },
+      "portable-source-notes.md": {
+        "observed_sha256": "264c60e73b6b4fa11fe5cf92adee340358f974527a245e064f3282fe8ea030a6",
+        "baseline_manifest_sha256": "264c60e73b6b4fa11fe5cf92adee340358f974527a245e064f3282fe8ea030a6",
+        "baseline_pin_matches": true
+      },
+      "profiles/preflight-sequences.json": {
+        "observed_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "baseline_manifest_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "baseline_pin_matches": true
+      },
+      "profiles/release.json": {
+        "observed_sha256": "2a0011a4cfb6e205d7c60c9659a6e39907a050af15922ec16101fa973f4cacee",
+        "baseline_manifest_sha256": "2a0011a4cfb6e205d7c60c9659a6e39907a050af15922ec16101fa973f4cacee",
+        "baseline_pin_matches": true
+      },
+      "README.md": {
+        "observed_sha256": "321a8080beed54c811fdb935f5f46716001039b16520181690ee24901f433d8a",
+        "baseline_manifest_sha256": "321a8080beed54c811fdb935f5f46716001039b16520181690ee24901f433d8a",
+        "baseline_pin_matches": true
+      },
+      "scripts/api_defaults.py": {
+        "observed_sha256": "4faa63ba5266a1076bf343a844cd43fae918c6f3028b7696599d663888577941",
+        "baseline_manifest_sha256": "4faa63ba5266a1076bf343a844cd43fae918c6f3028b7696599d663888577941",
+        "baseline_pin_matches": true
+      },
+      "scripts/auth_api.py": {
+        "observed_sha256": "452909b2fc5880efa0633eee2402a39e6d608ebfa3d55ee94477eb9c8b156541",
+        "baseline_manifest_sha256": "452909b2fc5880efa0633eee2402a39e6d608ebfa3d55ee94477eb9c8b156541",
+        "baseline_pin_matches": true
+      },
+      "scripts/bounded_hash.py": {
+        "observed_sha256": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2",
+        "baseline_manifest_sha256": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2",
+        "baseline_pin_matches": true
+      },
+      "scripts/bridge_adapter.py": {
+        "observed_sha256": "08dcc36deab9034ed78a9ad422e140e98c262b39a460fbf43d470b61ce79b5ef",
+        "baseline_manifest_sha256": "08dcc36deab9034ed78a9ad422e140e98c262b39a460fbf43d470b61ce79b5ef",
+        "baseline_pin_matches": true
+      },
+      "scripts/checkpoint_integrity.py": {
+        "observed_sha256": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea",
+        "baseline_manifest_sha256": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea",
+        "baseline_pin_matches": true
+      },
+      "scripts/entrypoint_adapter.py": {
+        "observed_sha256": "5926fd651f703930be9d90f4cdbbb8be1c463962b6720379bbe2f3d1ea03bc09",
+        "baseline_manifest_sha256": "5926fd651f703930be9d90f4cdbbb8be1c463962b6720379bbe2f3d1ea03bc09",
+        "baseline_pin_matches": true
+      },
+      "scripts/halogen0180_hip_probe.c": {
+        "observed_sha256": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
+        "baseline_manifest_sha256": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
+        "baseline_pin_matches": true
+      },
+      "scripts/host_frames.py": {
+        "observed_sha256": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+        "baseline_manifest_sha256": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+        "baseline_pin_matches": true
+      },
+      "scripts/kernel_controls.py": {
+        "observed_sha256": "b5b48b4981669f2800bcbdbbc68bd43e0401514a8710bb566247e3d5c31d5245",
+        "baseline_manifest_sha256": "b5b48b4981669f2800bcbdbbc68bd43e0401514a8710bb566247e3d5c31d5245",
+        "baseline_pin_matches": true
+      },
+      "scripts/lease_supervisor.py": {
+        "observed_sha256": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de",
+        "baseline_manifest_sha256": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de",
+        "baseline_pin_matches": true
+      },
+      "scripts/lookup_source.py": {
+        "observed_sha256": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "baseline_manifest_sha256": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "baseline_pin_matches": true
+      },
+      "scripts/matmul_plan.py": {
+        "observed_sha256": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "baseline_manifest_sha256": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "baseline_pin_matches": true
+      },
+      "scripts/matmul_tuning.py": {
+        "observed_sha256": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "baseline_manifest_sha256": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "baseline_pin_matches": true
+      },
+      "scripts/memory_budget.py": {
+        "observed_sha256": "93548f9fd7a4eb991402829c6969dc0f311e5f3b256981cf3be4d6a4f39963c8",
+        "baseline_manifest_sha256": "93548f9fd7a4eb991402829c6969dc0f311e5f3b256981cf3be4d6a4f39963c8",
+        "baseline_pin_matches": true
+      },
+      "scripts/portable.py": {
+        "observed_sha256": "5f952a5e25806e41af0111c47d373cb19887291baad86baeb58a8ca4b2bb7237",
+        "baseline_manifest_sha256": "5f952a5e25806e41af0111c47d373cb19887291baad86baeb58a8ca4b2bb7237",
+        "baseline_pin_matches": true
+      },
+      "scripts/private_hsa.py": {
+        "observed_sha256": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "baseline_manifest_sha256": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "baseline_pin_matches": true
+      },
+      "scripts/runner.py": {
+        "observed_sha256": "cf59e51671fce2ab47143946558037c3233188d91077ac7aa58f33a7adeea5b0",
+        "baseline_manifest_sha256": "cf59e51671fce2ab47143946558037c3233188d91077ac7aa58f33a7adeea5b0",
+        "baseline_pin_matches": true
+      },
+      "scripts/sample.ps1": {
+        "observed_sha256": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d",
+        "baseline_manifest_sha256": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d",
+        "baseline_pin_matches": true
+      },
+      "scripts/service.py": {
+        "observed_sha256": "d386e49613d887b95f43f1ad45b35d2ca402cd4abb42e544984d3b340cb021be",
+        "baseline_manifest_sha256": "d386e49613d887b95f43f1ad45b35d2ca402cd4abb42e544984d3b340cb021be",
+        "baseline_pin_matches": true
+      },
+      "scripts/speculation_policy.py": {
+        "observed_sha256": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+        "baseline_manifest_sha256": "1ddfefd2bc6431b22c93fc8444afe6ff70a1cb6314413924c91d3533b124202a",
+        "baseline_pin_matches": true
+      },
+      "scripts/startup_cache.py": {
+        "observed_sha256": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
+        "baseline_manifest_sha256": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
+        "baseline_pin_matches": true
+      },
+      "scripts/startup_guard.py": {
+        "observed_sha256": "f5eb87f6d7602e549f2d02bd102ba472c927c715bded433132113b0dfce95e7e",
+        "baseline_manifest_sha256": "f5eb87f6d7602e549f2d02bd102ba472c927c715bded433132113b0dfce95e7e",
+        "baseline_pin_matches": true
+      },
+      "scripts/startup_monitor.py": {
+        "observed_sha256": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0",
+        "baseline_manifest_sha256": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0",
+        "baseline_pin_matches": true
+      },
+      "scripts/state_io.py": {
+        "observed_sha256": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
+        "baseline_manifest_sha256": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
+        "baseline_pin_matches": true
+      },
+      "Start.ps1": {
+        "observed_sha256": "e61a57f3abf6279dbde8a8ede69958d6c8d0b984a96af6a4576275eafcaef062",
+        "baseline_manifest_sha256": "e61a57f3abf6279dbde8a8ede69958d6c8d0b984a96af6a4576275eafcaef062",
+        "baseline_pin_matches": true
+      },
+      "THIRD_PARTY_NOTICES.md": {
+        "observed_sha256": "33f8bffb8df40eb94d09d6fb0f7aeb4d492247d6fc1910f9d3f5a846e2fe5321",
+        "baseline_manifest_sha256": "33f8bffb8df40eb94d09d6fb0f7aeb4d492247d6fc1910f9d3f5a846e2fe5321",
+        "baseline_pin_matches": true
+      },
+      "Uninstall.ps1": {
+        "observed_sha256": "97dce06a0905a1cc5285fd1db0e85d9f3f27d14598210966625fa60409c9ffb4",
+        "baseline_manifest_sha256": "97dce06a0905a1cc5285fd1db0e85d9f3f27d14598210966625fa60409c9ffb4",
+        "baseline_pin_matches": true
+      }
+    }
+  },
+  "preserved_policy": {
+    "checkpoint": "v2",
+    "context": 262144,
+    "slots": 1,
+    "draft_tokens": 2,
+    "pld": "3,3",
+    "prompt_cache": "Off",
+    "prefill_chunk": 4096,
+    "max_prefill_tokens": 4096,
+    "thinking": "On",
+    "reasoning_effort": "medium",
+    "max_thinking_tokens": 2048,
+    "startup_physical_gib": 35,
+    "startup_commit_gib": 131,
+    "runtime_physical_gib": 18,
+    "runtime_commit_gib": 18,
+    "long_measurement_entry_physical_gib": 22,
+    "long_measurement_entry_commit_gib": 22,
+    "v2_startup_stable_seconds": 10,
+    "public_gateway": "http://127.0.0.1:8840/v1",
+    "public_token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+    "separate_backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.1\\.local\\api-token.txt",
+    "windows_powershell": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "absolute_wsl": "C:\\Windows\\System32\\wsl.exe",
+    "model_and_lookup_identity_receipt_reuse": true,
+    "download_or_large_asset_rehash_added": false
+  },
+  "version_only_surfaces_after_requalification": [
+    "portable.py version/image environment expectations, setup labels/names, install and machine manifest versions, generated filenames",
+    "service.py and runner.py version health expectations, profile identifiers, library/probe mount paths and log names",
+    "entrypoint_adapter.py WSL profile and HIP probe names",
+    "bridge/hybrid/private C profile identifier strings and probe source/output filename",
+    "README and source lineage; regenerate new sources.json only after final source bytes are known"
+  ],
+  "current_0180_reference_only": {
+    "engine_sha256": "71d72b283f0937aec024baf6b6ec919e27dacd57cfc043832468ffdd603c8e08",
+    "engine_bytes": 27078280,
+    "site_rva": "0x1971f70",
+    "site_file_offset": "0x1970f70",
+    "function_file_range": [
+      "0x1970930",
+      "0x197192c"
+    ],
+    "function_sha256": "c1b41a1bcf21ae450dda58d89fd35931b3ada05ad846c388792a2126be497bdc",
+    "site_signature_hex": "488b4424584801d04829f04c8b6c24300f87fb070000",
+    "reusable_as_0181_proof": false
+  },
+  "required_fresh_gates": [
+    "Actual extracted engine SHA256/size and ELF geometry; exact new seam mapping and direct-helper instruction/reference/branch/CFI map",
+    "Trampoline frame/register offsets, flags, SysV alignment and no live AVX/YMM/ZMM assumption; indirect callback scope remains explicit",
+    "Complete upstream entrypoint identity and host_preflight transformation, followed by exact service API launch-site transformation",
+    "Complete upstream API and companion-tool pins; bearer/default wrapper compatibility with new retry/scheduler/schema paths",
+    "HIP header, provider/export/dladdr/loader closure and DXG ABI identity for the new image",
+    "Four actual GCC13.3 CPU output hashes: ordinary bridge, v2 bridge, private registration library and live-device probe executable",
+    "New version-local installer/source manifests, huge-asset identity receipt binding and root-owned cleanup/runtime qualification",
+    "Explicit root-only manage/starter version integration; current interfaces do not select 0.18.1"
+  ],
+  "release_artifact_pins": {
+    "engine_sha256": "d946e7b32a46400884ee7309b909da73f4a6586140cd9f9b94fa9ff583b3c3ab",
+    "engine_bytes": 27096728,
+    "entrypoint_sha256": "6391eddbd56cc42f1f769c29875ec0357636c66eeb2c8bb0889ffb28b55dd77e",
+    "adapted_entrypoint_sha256": "26503194fb141530a8932f89db60aa87e769bfc3a954b913f0fa9e986709c2dd",
+    "service_entrypoint_preview_sha256": "1cb87e479117c32c620b58f63233bbf1aaeb8bfa352cf7622a9d9e3829182ba4",
+    "upstream_api_sha256": "07cfe472bebee13e19c129ddc8e7fe0359a1e4d261101b78e5a1ba7b40367cdc",
+    "upstream_tool_sha256": {
+      "serve_api.py": "07cfe472bebee13e19c129ddc8e7fe0359a1e4d261101b78e5a1ba7b40367cdc",
+      "request_records.py": "362abc02a847048333755804dc655ce5209eded9d0adcb0cc2d585ad43d7c672",
+      "halogen_tools.py": "7d08616acbf45c88c9e47de32fc5a2b4ee327d23aa9b0486b654685587e0fd11",
+      "tool_parse.py": "09f962b39c1985fe45ba9dfba2e04a6854614980fee8de54fac56f40f2ad1c3e"
+    },
+    "hip_header_sha256": "a075feec4c32d01b35dfe97e01ef7b55aa62bac7b7590ca7cefc2564668aa6a2",
+    "bridge_sha256": "6d8c0bf96ae52d0b769bca7c27b64cc668ef7cf902d85518b8ef632f62de4164",
+    "v2_bridge_sha256": "182125d5df8ca3de18d27c4def6e319baa3a396e886b4e585fb5136e3fabfdea",
+    "private_sha256": "05e1f083afaa659823149ab5b274cfeee691244f5ffed332fbdc5be84eabe8e1",
+    "probe_sha256": "d24e64b7dc86482917aca2915165691d60a6d3ec02e4b6e28894ea7ae216e13a",
+    "actual_runtime_providers": null
+  },
+  "normal_runtime_qualified": false,
+  "phase_clock_qualified": false,
+  "speed_or_acceptance_gain_claimed": false,
+  "scope": {
+    "old_package_changed": false,
+    "server_manage_or_controller_changed": false,
+    "starter_defaults_changed": false,
+    "source_pins_changed": false,
+    "live_profiles_changed": false,
+    "STATE_changed": false,
+    "hardware_or_wsl_docker_used": false,
+    "credentials_accessed": false,
+    "downloads_or_runtime_api_calls": false,
+    "process_inventory_performed": false,
+    "new_candidate_source_manifest_created": true,
+    "installed_source_pins_changed": false
+  },
+  "source_package_staged": true,
+  "engine_bytes_verified": true,
+  "current_bridge_pins": {
+    "engine_bytes": 27096728,
+    "engine_sha256": "d946e7b32a46400884ee7309b909da73f4a6586140cd9f9b94fa9ff583b3c3ab",
+    "site_rva": "0x1976780",
+    "site_file_offset": "0x1975780",
+    "signature_hex": "488b4424584801d04829f04c8b6c24300f87fb070000",
+    "function_rva": "0x1976140",
+    "function_end_rva": "0x197713c",
+    "function_file_offset": "0x1975140",
+    "function_file_end": "0x197613c",
+    "function_sha256": "4b671ff38ae46413c83fbcbbbb8c1ae84d5e98df98eed4618fa0db45f9122d82",
+    "resume_rva": "0x1976785",
+    "rejection_rva": "0x1976f91",
+    "map_sha256": "c7b303ff85b73b336c9d61b70379f531c48a1e5c21a7c8f13c151a6587d6a342"
+  },
+  "static_map": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0181-seam-map-20261012\\static-map.json",
+    "sha256": "c7b303ff85b73b336c9d61b70379f531c48a1e5c21a7c8f13c151a6587d6a342"
+  },
+  "source_transformations": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0181-seam-map-20261012\\source-transformations.json",
+    "hash_binding_is_external": true
+  },
+  "candidate_release_sha256": "d350e258c5264b0b3464b4dd3c6802fd62d55daeeec23ec60e90968688dd4781",
+  "cpu_build_pending": false,
+  "cpu_image_provider_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0180-normal-bridge-preparation-20261011\\halogen0181-extracted-20261012\\cpu-provider\\receipt.json",
+    "sha256": "9600197ef18d9bfb0fedf45806963affd870613a3f5757cd39d7082d7c20ddf6",
+    "completed": true,
+    "engine_started": false,
+    "actual_engine_provider_binding_qualified": false
+  },
+  "hip_include_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0180-normal-bridge-preparation-20261011\\halogen0181-extracted-20261012\\cpu-provider\\include-manifest.json",
+    "sha256": "8735f7490d30b2e5d4cfc469edfde14986656d2849a91d5345589246182511ac",
+    "files": 148
+  },
+  "actual_engine_provider_binding_qualified": false,
+  "candidate_source_manifest_path": "profiles/sources.json",
+  "candidate_source_manifest_membership_files": 41,
+  "install_artifact_pins_complete": true,
+  "cpu_build_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0181-cpu-build-20261012\\cpu-build.json",
+    "sha256": "e96907592f5a60bf2a56c1efffd0286812f88438f7e3b7ba2495564cf5223b9a",
+    "completed": true,
+    "generated_executables_run": false
+  },
+  "cpu_image_providers": {
+    "libamdhip64.so.7": {
+      "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libamdhip64.so.7",
+      "bytes": 28933697,
+      "sha256": "6f3c9fe6b655a611e04a9a5a157cb46c425717e2873973f11a67bb6bbf6587b5"
+    },
+    "libcrypto.so.3": {
+      "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+      "bytes": 6521408,
+      "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b"
+    },
+    "libstdc++.so.6.0.33": {
+      "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+      "bytes": 2497768,
+      "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00"
+    }
+  }
+}

@@ -1,0 +1,84 @@
+
+C:\Projects\strix-alloy-clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0180-normal-bridge-preparation-20261011\halogen0181-extracted-20261012\flash_serve:	file format elf64-x86-64
+
+Disassembly of section .text:
+
+00000000017fa890 <.text>:
+ 1817730: 55                           	push	rbp
+ 1817731: 41 57                        	push	r15
+ 1817733: 41 56                        	push	r14
+ 1817735: 41 55                        	push	r13
+ 1817737: 41 54                        	push	r12
+ 1817739: 53                           	push	rbx
+ 181773a: 48 83 ec 18                  	sub	rsp, 0x18
+ 181773e: 48 89 fb                     	mov	rbx, rdi
+ 1817741: 4c 8b 7f 08                  	mov	r15, qword ptr [rdi + 0x8]
+ 1817745: 4c 3b 7f 10                  	cmp	r15, qword ptr [rdi + 0x10]
+ 1817749: 74 15                        	je	0x1817760 <.text+0x1ced0>
+ 181774b: 4c 89 ff                     	mov	rdi, r15
+ 181774e: e8 4d fa ff ff               	call	0x18171a0 <.text+0x1c910>
+ 1817753: 48 81 43 08 38 03 00 00      	add	qword ptr [rbx + 0x8], 0x338
+ 181775b: e9 e1 00 00 00               	jmp	0x1817841 <.text+0x1cfb1>
+ 1817760: 48 89 74 24 10               	mov	qword ptr [rsp + 0x10], rsi
+ 1817765: 4c 8b 23                     	mov	r12, qword ptr [rbx]
+ 1817768: 4c 89 fd                     	mov	rbp, r15
+ 181776b: 4c 29 e5                     	sub	rbp, r12
+ 181776e: 48 b8 e0 fc ff ff ff ff ff 7f	movabs	rax, 0x7ffffffffffffce0
+ 1817778: 48 39 c5                     	cmp	rbp, rax
+ 181777b: 0f 84 cf 00 00 00            	je	0x1817850 <.text+0x1cfc0>
+ 1817781: 48 89 e8                     	mov	rax, rbp
+ 1817784: 48 c1 f8 03                  	sar	rax, 0x3
+ 1817788: 48 b9 57 1b 43 d3 1d ec b7 da	movabs	rcx, -0x254813e22cbce4a9
+ 1817792: 48 0f af c8                  	imul	rcx, rax
+ 1817796: 4d 39 e7                     	cmp	r15, r12
+ 1817799: b8 01 00 00 00               	mov	eax, 0x1
+ 181779e: 48 0f 45 c1                  	cmovne	rax, rcx
+ 18177a2: 48 8d 14 08                  	lea	rdx, [rax + rcx]
+ 18177a6: 48 be 04 52 c9 79 59 c4 27 00	movabs	rsi, 0x27c45979c95204
+ 18177b0: 48 39 f2                     	cmp	rdx, rsi
+ 18177b3: 48 0f 43 d6                  	cmovae	rdx, rsi
+ 18177b7: 48 01 c8                     	add	rax, rcx
+ 18177ba: 48 0f 42 d6                  	cmovb	rdx, rsi
+ 18177be: 48 69 fa 38 03 00 00         	imul	rdi, rdx, 0x338
+ 18177c5: 48 89 7c 24 08               	mov	qword ptr [rsp + 0x8], rdi
+ 18177ca: e8 b1 a5 1b 00               	call	0x19d1d80 <_Znwm@plt>
+ 18177cf: 49 89 c5                     	mov	r13, rax
+ 18177d2: 48 01 c5                     	add	rbp, rax
+ 18177d5: 48 89 ef                     	mov	rdi, rbp
+ 18177d8: 48 8b 74 24 10               	mov	rsi, qword ptr [rsp + 0x10]
+ 18177dd: e8 be f9 ff ff               	call	0x18171a0 <.text+0x1c910>
+ 18177e2: 4c 89 ed                     	mov	rbp, r13
+ 18177e5: 4d 39 e7                     	cmp	r15, r12
+ 18177e8: 74 2c                        	je	0x1817816 <.text+0x1cf86>
+ 18177ea: 4c 89 ed                     	mov	rbp, r13
+ 18177ed: 4d 89 e6                     	mov	r14, r12
+ 18177f0: 48 89 ef                     	mov	rdi, rbp
+ 18177f3: 4c 89 f6                     	mov	rsi, r14
+ 18177f6: e8 a5 f9 ff ff               	call	0x18171a0 <.text+0x1c910>
+ 18177fb: 4c 89 f7                     	mov	rdi, r14
+ 18177fe: e8 bd f6 ff ff               	call	0x1816ec0 <.text+0x1c630>
+ 1817803: 49 81 c6 38 03 00 00         	add	r14, 0x338
+ 181780a: 48 81 c5 38 03 00 00         	add	rbp, 0x338
+ 1817811: 4d 39 fe                     	cmp	r14, r15
+ 1817814: 75 da                        	jne	0x18177f0 <.text+0x1cf60>
+ 1817816: 4d 85 e4                     	test	r12, r12
+ 1817819: 74 0f                        	je	0x181782a <.text+0x1cf9a>
+ 181781b: 48 8b 73 10                  	mov	rsi, qword ptr [rbx + 0x10]
+ 181781f: 4c 29 e6                     	sub	rsi, r12
+ 1817822: 4c 89 e7                     	mov	rdi, r12
+ 1817825: e8 d6 a4 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181782a: 48 81 c5 38 03 00 00         	add	rbp, 0x338
+ 1817831: 4c 89 2b                     	mov	qword ptr [rbx], r13
+ 1817834: 48 89 6b 08                  	mov	qword ptr [rbx + 0x8], rbp
+ 1817838: 4c 03 6c 24 08               	add	r13, qword ptr [rsp + 0x8]
+ 181783d: 4c 89 6b 10                  	mov	qword ptr [rbx + 0x10], r13
+ 1817841: 48 83 c4 18                  	add	rsp, 0x18
+ 1817845: 5b                           	pop	rbx
+ 1817846: 41 5c                        	pop	r12
+ 1817848: 41 5d                        	pop	r13
+ 181784a: 41 5e                        	pop	r14
+ 181784c: 41 5f                        	pop	r15
+ 181784e: 5d                           	pop	rbp
+ 181784f: c3                           	ret
+ 1817850: 48 8d 3d da 88 80 fe         	lea	rdi, [rip - 0x17f7726]  # 0x20131
+ 1817857: e8 54 a7 1b 00               	call	0x19d1fb0 <_ZSt20__throw_length_errorPKc@plt>

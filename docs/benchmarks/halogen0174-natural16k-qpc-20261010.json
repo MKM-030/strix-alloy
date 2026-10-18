@@ -1,0 +1,219 @@
+{
+  "schema": "halogen.normal0174-aba-qpc-comparison.v1",
+  "utc": "2026-10-10T06:22:58.337820+00:00",
+  "passed": true,
+  "order": [
+    "A-before",
+    "B",
+    "A-after"
+  ],
+  "measured_repetitions_per_arm": 3,
+  "excluded_warmups_per_arm": 1,
+  "warmed_qpc_medians_seconds": {
+    "A-before": 13.6214526,
+    "B": 12.8247304,
+    "A-after": 12.9611132
+  },
+  "a_before_over_b": 1.0621238946278355,
+  "a_after_over_b": 1.010634360001829,
+  "a_after_over_a_before": 0.9515221012478507,
+  "a_pooled_measured_median_seconds": 13.1556392,
+  "a_pooled_over_b": 1.0258023981541162,
+  "native_timing_fields_unqualified": true,
+  "attributed_prefill_decode_gain_qualified": false,
+  "cross_version_output_observation": {
+    "A_before": {
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+      "drafted": 133,
+      "accepted": 60,
+      "finish_reason": "length"
+    },
+    "B": {
+      "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+      "accepted": 60,
+      "drafted": 133,
+      "finish_reason": "length"
+    },
+    "A_after": {
+      "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+      "accepted": 60,
+      "drafted": 133,
+      "finish_reason": "length"
+    }
+  },
+  "B_serial_text_match": true,
+  "original_restored_ready_open": true,
+  "arms": {
+    "A-before": [
+      {
+        "rep": 0,
+        "phase": "excluded-warmup",
+        "wall_seconds": 18.8621707,
+        "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 22711402496,
+          "commit_headroom_bytes": 120019337216
+        }
+      },
+      {
+        "rep": 1,
+        "phase": "measured",
+        "wall_seconds": 14.3559809,
+        "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24721952768,
+          "commit_headroom_bytes": 123817492480
+        }
+      },
+      {
+        "rep": 2,
+        "phase": "measured",
+        "wall_seconds": 13.299468,
+        "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24652988416,
+          "commit_headroom_bytes": 123740176384
+        }
+      },
+      {
+        "rep": 3,
+        "phase": "measured",
+        "wall_seconds": 13.6214526,
+        "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24670539776,
+          "commit_headroom_bytes": 123785437184
+        }
+      }
+    ],
+    "B": [
+      {
+        "rep": 0,
+        "phase": "excluded-warmup",
+        "wall_seconds": 18.2690239,
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24548151296,
+          "commit_headroom_bytes": 123108339712
+        }
+      },
+      {
+        "rep": 1,
+        "phase": "measured",
+        "wall_seconds": 12.7725664,
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24564793344,
+          "commit_headroom_bytes": 123126267904
+        }
+      },
+      {
+        "rep": 2,
+        "phase": "measured",
+        "wall_seconds": 13.1031053,
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24621776896,
+          "commit_headroom_bytes": 123181953024
+        }
+      },
+      {
+        "rep": 3,
+        "phase": "measured",
+        "wall_seconds": 12.8247304,
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24625168384,
+          "commit_headroom_bytes": 123171024896
+        }
+      }
+    ],
+    "A-after": [
+      {
+        "rep": 0,
+        "phase": "excluded-warmup",
+        "wall_seconds": 18.307612,
+        "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24454438912,
+          "commit_headroom_bytes": 122965868544
+        }
+      },
+      {
+        "rep": 1,
+        "phase": "measured",
+        "wall_seconds": 12.8490897,
+        "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24369184768,
+          "commit_headroom_bytes": 122859884544
+        }
+      },
+      {
+        "rep": 2,
+        "phase": "measured",
+        "wall_seconds": 13.0118104,
+        "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24417423360,
+          "commit_headroom_bytes": 122913087488
+        }
+      },
+      {
+        "rep": 3,
+        "phase": "measured",
+        "wall_seconds": 12.9611132,
+        "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+        "accepted": 60,
+        "drafted": 133,
+        "finish_reason": "length",
+        "observed_minimum_memory_bytes": {
+          "available_bytes": 24480706560,
+          "commit_headroom_bytes": 122971529216
+        }
+      }
+    ]
+  },
+  "robust_engine_speed_gain_qualified": false,
+  "actual_input_tokens": 16384,
+  "output_tokens": 128,
+  "acceptance_scope": "combined API MTP+PLD; MTP-only not isolated",
+  "NPU_executed": false,
+  "raw_evidence": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0174-normal-aba-preparation-20261010\\comparison.json",
+    "sha256": "49bea5ef2b6cc95b1c6bfad5c08d1c0adb237568bfec642479bdc5f071f3f93d"
+  }
+}

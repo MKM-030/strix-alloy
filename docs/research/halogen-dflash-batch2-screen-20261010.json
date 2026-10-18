@@ -1,0 +1,363 @@
+{
+  "schema": "halogen.dflash-batch2-synthetic-screen.v1",
+  "utc": "2026-10-10T07:40:24.444273+00:00",
+  "tool_session_id": 20113,
+  "tool_exit_code": 0,
+  "tool_terminal_observed": true,
+  "component_result": {
+    "accuracy_scope": "numeric differences reported without a model-quality threshold",
+    "all_finite": true,
+    "allocator_scope": "worker process Torch allocator only; not system peak or five-layer traffic",
+    "arithmetic_extent": {
+      "both_modes_repeat_kv": false,
+      "direct_kv_bytes": 34084864,
+      "scope": "direct two-head KV extent in both modes; not measured memory traffic"
+    },
+    "attention_clock": "CLOCK_MONOTONIC_RAW",
+    "attention_source_sha256": "373af09df180ca2f10be5240ee4a9b2d7be0fc0e922c4ce7d22a561532b80547",
+    "bf16_rounding_policy_preserved": true,
+    "call_count": 8,
+    "candidate_mechanism": "two KV groups share one batched GEMM/scale/mask/softmax/finite/output pipeline",
+    "capacity": 16640,
+    "cuda_graph_used": false,
+    "device": {
+      "architecture": "gfx1151",
+      "name": "AMD Radeon(TM) 8060S Graphics",
+      "total_memory_bytes": 102706034688
+    },
+    "engine_requests": 0,
+    "exact_natural_tensor_fixture_available": false,
+    "excluded_warmup_calls": 2,
+    "finite_predicates_preserved": true,
+    "full_backbone_measured": false,
+    "fused_sdpa_used": false,
+    "hip_version": "7.15.26333",
+    "input_pins": {
+      "all_valid": {
+        "bytes": 16643,
+        "dtype": "torch.bool",
+        "sha256": "a28f9040bb0728ba12851ebef8441d69ff7b5e676ffaeefe2fc19998b61d2736",
+        "shape": [
+          16643
+        ]
+      },
+      "key": {
+        "bytes": 17042432,
+        "dtype": "torch.bfloat16",
+        "sha256": "6af009d36f04d27d6387018496ceded85884499676a75c2a9351192f9102811e",
+        "shape": [
+          1,
+          2,
+          16643,
+          256
+        ]
+      },
+      "query": {
+        "bytes": 36864,
+        "dtype": "torch.bfloat16",
+        "sha256": "8c21e5fc42b97d96ecad39dde8809b664d5aaf02a9afd7f1f000db15b385252a",
+        "shape": [
+          1,
+          24,
+          3,
+          256
+        ]
+      },
+      "value": {
+        "bytes": 17042432,
+        "dtype": "torch.bfloat16",
+        "sha256": "0ba54ccbe2563d268a1690ef2cd32661c44e5684c37d62d8d195abf0204ff4ef",
+        "shape": [
+          1,
+          2,
+          16643,
+          256
+        ]
+      }
+    },
+    "means_ms": {
+      "grouped2d": 2.167354,
+      "grouped_batch2": 1.9714523333333334
+    },
+    "measured_pairs": 3,
+    "model_loaded": false,
+    "natural_prefix_equivalence_qualified": false,
+    "npu_executed": false,
+    "observed_component_ratio": 1.0993692129169748,
+    "output_error": [
+      {
+        "elements": 18432,
+        "max_absolute": 0.0001220703125,
+        "mean_absolute": 2.4359147587915686e-08,
+        "pair": 0,
+        "reference_max_absolute": 0.052490234375,
+        "rmse": 1.2131918083468918e-06,
+        "unequal_elements": 34
+      },
+      {
+        "elements": 18432,
+        "max_absolute": 0.0001220703125,
+        "mean_absolute": 2.4359147587915686e-08,
+        "pair": 1,
+        "reference_max_absolute": 0.052490234375,
+        "rmse": 1.2131918083468918e-06,
+        "unequal_elements": 34
+      },
+      {
+        "elements": 18432,
+        "max_absolute": 0.0001220703125,
+        "mean_absolute": 2.4359147587915686e-08,
+        "pair": 2,
+        "reference_max_absolute": 0.052490234375,
+        "rmse": 1.2131918083468918e-06,
+        "unequal_elements": 34
+      }
+    ],
+    "prior_executed_fixture_hashes_match": true,
+    "query_slots": 3,
+    "rows": [
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 34138624,
+          "baseline_reserved_bytes": 39845888,
+          "extra_peak_allocated_bytes": 87534592,
+          "peak_allocated_bytes": 121673216,
+          "peak_reserved_bytes": 180355072
+        },
+        "attention_and_finite_sync_ms": 625.721473,
+        "finite": true,
+        "mode": "grouped2d",
+        "output_copy_ms": 0.67478,
+        "pair": null,
+        "phase": "excluded-warmup"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 180355072,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 180355072
+        },
+        "attention_and_finite_sync_ms": 2.114588,
+        "finite": true,
+        "mode": "grouped_batch2",
+        "output_copy_ms": 0.314329,
+        "pair": null,
+        "phase": "excluded-warmup"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 180355072,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 180355072
+        },
+        "attention_and_finite_sync_ms": 2.298858,
+        "finite": true,
+        "mode": "grouped2d",
+        "output_copy_ms": 0.34123,
+        "pair": 0,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 180355072,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 180355072
+        },
+        "attention_and_finite_sync_ms": 1.98828,
+        "finite": true,
+        "mode": "grouped_batch2",
+        "output_copy_ms": 0.323579,
+        "pair": 0,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 180355072,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 180355072
+        },
+        "attention_and_finite_sync_ms": 1.997471,
+        "finite": true,
+        "mode": "grouped_batch2",
+        "output_copy_ms": 0.318189,
+        "pair": 1,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 180355072,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 180355072
+        },
+        "attention_and_finite_sync_ms": 2.057064,
+        "finite": true,
+        "mode": "grouped2d",
+        "output_copy_ms": 0.323529,
+        "pair": 1,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 180355072,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 180355072
+        },
+        "attention_and_finite_sync_ms": 2.14614,
+        "finite": true,
+        "mode": "grouped2d",
+        "output_copy_ms": 0.323389,
+        "pair": 2,
+        "phase": "measured"
+      },
+      {
+        "allocator": {
+          "baseline_allocated_bytes": 113830400,
+          "baseline_reserved_bytes": 180355072,
+          "extra_peak_allocated_bytes": 42606592,
+          "peak_allocated_bytes": 156436992,
+          "peak_reserved_bytes": 180355072
+        },
+        "attention_and_finite_sync_ms": 1.928606,
+        "finite": true,
+        "mode": "grouped_batch2",
+        "output_copy_ms": 0.342661,
+        "pair": 2,
+        "phase": "measured"
+      }
+    ],
+    "schema": "dflash.synthetic-attention-batch2-screen.v1",
+    "seed": 1040174,
+    "serving_gain_qualified": false,
+    "setup": {
+      "clock": "perf_counter_ns (CLOCK_MONOTONIC)",
+      "cpu_fixture_creation_ms": 105.671972,
+      "cpu_fixture_hash_ms": 29.484622,
+      "device_copy_sync_ms": 222.483669,
+      "runtime_init_ms": 1.160199,
+      "torch_import_ms": 995.396035
+    },
+    "synthetic_fixture": true,
+    "timing_scope": "attention expressions plus input/output finite reductions and synchronization; excludes projections, MLP, context where/cat, model/head and setup",
+    "torch_version": "2.13.0+rocm10.0.0",
+    "valid_prefix": 16384
+  },
+  "ranges_ms": {
+    "grouped2d": [
+      2.057064,
+      2.298858
+    ],
+    "grouped_batch2": [
+      1.928606,
+      1.997471
+    ]
+  },
+  "extra_peak_allocated_bytes": {
+    "grouped2d": 42606592,
+    "grouped_batch2": 42606592
+  },
+  "component_time_reduction_percent": 9.038748015629505,
+  "minimum_memory_bytes": {
+    "available_bytes": 23568818176,
+    "commit_headroom_bytes": 121989599232
+  },
+  "evidence": {
+    "stdout.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\screen\\stdout.json",
+      "bytes": 5997,
+      "sha256": "c0deed7269c5ef1c24994ddb4935231992c05b07fe1350c43cfbd1a89aed9a45"
+    },
+    "outcome.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\screen\\outcome.json",
+      "bytes": 5915,
+      "sha256": "88f1c9f4963b7c76b819111c40823968413688ba6e0f545b658939d35cd1629e"
+    },
+    "intent.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\screen\\intent.json",
+      "bytes": 14160,
+      "sha256": "36e4b18bd73c7a0323f843d0fd145d26add1cc3b93106096d8d3c39cc8c73be8"
+    },
+    "commands.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\screen\\commands.json",
+      "bytes": 3985,
+      "sha256": "c48538d7588c9e041c34988ac65afa13a93f6a03c92feb40aab0e918370350be"
+    },
+    "handle.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\screen\\handle.json",
+      "bytes": 523,
+      "sha256": "c41e4a831e63a5615f3183a6341291b5127b63d1e1dd223efd542b8acbad58d6"
+    },
+    "health-before.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\screen\\health-before.json",
+      "bytes": 8467,
+      "sha256": "fceed5c02ea9068da9a5acd9eeb3e7044fa34b84f5c23e3837cc0d48e52919d2"
+    },
+    "health-after.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\screen\\health-after.json",
+      "bytes": 8467,
+      "sha256": "6d2123169673fc78583f17e8e91089cbfc2866a5e4b706d152e37d541e1d9558"
+    },
+    "health-final.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\screen\\health-final.json",
+      "bytes": 8467,
+      "sha256": "ff54742eee7c9e2e487bb87d7898eda67daf19b264dd98126db122ad6f8f2687"
+    }
+  },
+  "source": {
+    "grouped_batch2_fixture.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\grouped_batch2_fixture.py",
+      "bytes": 10255,
+      "sha256": "4a6fe8d76f6c79f8045d62f379d2e948d577950be9b3c0ffe1af483f91ce63d0"
+    },
+    "root_run.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\root_run.py",
+      "bytes": 12129,
+      "sha256": "3492785963d11b694dcfe9c7cc943872a566fb61096ee43e3aba2f077369413e"
+    },
+    "root-source-preparation.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\root-source-preparation.json",
+      "bytes": 1225,
+      "sha256": "45d5b50a9841319d6ab64bc758d17dacd91ab64e4fce55d618c455e9c6a849d9"
+    },
+    "ASSESSMENT.md": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\ASSESSMENT.md",
+      "bytes": 5552,
+      "sha256": "cea761c82ec07a14fa5a686ef71e823aafb35014b40aa7a9bf23e751d1b20f94"
+    },
+    "worker-torch-cuda-graphs.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-grouped-batch2-attention-preparation-20261010\\worker-torch-cuda-graphs.py",
+      "bytes": 38380,
+      "sha256": "2d803ca9636b8b30c796368d0e5c2de6866b3c056444270ded6e73e912c7eaef"
+    }
+  },
+  "independent_wrapper_review": "phase0174_lifecycle_port source review; no blocker",
+  "normal_server_ready_open": true,
+  "normal_server_identities": {
+    "controller": {
+      "pid": 30072,
+      "creation_time_100ns": 134360900000680038,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 39420,
+      "creation_time_100ns": 134360900105494556,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "serving_gain_qualified": false,
+  "npu_enabled": false,
+  "full_backbone_measured": false,
+  "native_prefix_quality_qualified": false,
+  "decision": "Retain default-off batch2 GPU candidate; component gain alone does not justify serving/NPU integration."
+}

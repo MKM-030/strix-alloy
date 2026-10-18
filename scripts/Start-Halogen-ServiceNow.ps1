@@ -5,17 +5,24 @@ Runs the managed Halogen endpoint in this console for a local API client.
 .DESCRIPTION
 Uses the existing project Python environment and normal controller/backend
 ownership, admission, reserve and cleanup rules. No credentials are printed.
-Current8K defaults to installed Halogen 0.17.3 and explicitly pairs an 8192-token prefill
-chunk with an 8192-token arena. HistoricalStock requires -HalogenVersion 0.16.2
+The default Current4K profile pairs a 4096-token prefill chunk with a 4096-token
+arena; Current8K explicitly pairs 8192 with 8192. Halogen defaults to installed
+0.18.8. HistoricalStock requires -HalogenVersion 0.16.2
 and retains the native prefill defaults used by the retained 2026-10-04 stock
-benchmark. Both select v2, MTP depth 2 and stock PLD 3,3.
-Halogen 0.17.2 and 0.17.3 default to Thinking On, medium effort and a 2048-token thinking
+benchmark. All profiles select v2 and stock PLD 3,3. Fixed2 is the stable
+measured policy. Halogen 0.18.5, 0.18.7 and 0.18.8 also offer -MtpPolicy Confidence90; Auto
+selects the upstream confidence-gated behavior for those versions.
+Halogen 0.17.2, 0.17.3, 0.18.0 and 0.18.1 default to Thinking On, medium effort and a 2048-token thinking
 budget. Use -Thinking Off to select the supported server default explicitly.
 The historical 48.424 tok/s result is workload-specific, not a speed guarantee.
 ConsoleTrace opts into request/response content in the console. This script
 does not create a transcript or redirect request content to a file.
 .EXAMPLE
 .\scripts\Start-Halogen-ServiceNow.ps1 -ConsoleTrace
+.EXAMPLE
+.\scripts\Start-Halogen-ServiceNow.ps1 -Profile Current4K -HalogenVersion 0.18.0 -ConsoleTrace
+.EXAMPLE
+.\scripts\Start-Halogen-ServiceNow.ps1 -Profile Current4K -HalogenVersion 0.18.1 -ConsoleTrace
 .EXAMPLE
 .\scripts\Start-Halogen-ServiceNow.ps1 -Profile HistoricalStock -HalogenVersion 0.16.2 -ConsoleTrace
 .EXAMPLE
@@ -25,8 +32,8 @@ does not create a transcript or redirect request content to a file.
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('Current8K', 'HistoricalStock')]
-    [string]$Profile = 'Current8K',
+    [ValidateSet('Current8K', 'Current4K', 'HistoricalStock')]
+    [string]$Profile = 'Current4K',
     [ValidateRange(1024, 65535)]
     [int]$Port = 8840,
     [switch]$ConsoleTrace,
@@ -35,8 +42,12 @@ param(
     [switch]$Stop,
     [ValidateSet('On', 'Off')]
     [string]$Thinking = 'On',
-    [ValidateSet('0.16.2', '0.17.2', '0.17.3')]
-    [string]$HalogenVersion = '0.17.3'
+    [ValidateSet('0.16.2', '0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8')]
+    [string]$HalogenVersion = '0.18.8',
+    [ValidateSet('Auto', 'Fixed2', 'Confidence90')]
+    [string]$MtpPolicy = 'Fixed2',
+    [ValidateSet('Off', 'Exact', 'Flexible')]
+    [string]$PromptCache = 'Off'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -71,8 +82,11 @@ if ($Stop -or $Status) {
 if ($Profile -eq 'HistoricalStock' -and $HalogenVersion -ne '0.16.2') {
     throw 'HistoricalStock requires explicit -HalogenVersion 0.16.2 for the retained 2026-10-04 stock profile.'
 }
-if ($HalogenVersion -notin @('0.17.2', '0.17.3') -and $PSBoundParameters.ContainsKey('Thinking')) {
-    throw 'Thinking server defaults require Halogen 0.17.2 or 0.17.3.'
+if ($HalogenVersion -notin @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8') -and $PSBoundParameters.ContainsKey('Thinking')) {
+    throw 'Thinking server defaults require a managed Halogen 0.17.2 or newer.'
+}
+if ($MtpPolicy -eq 'Confidence90' -and $HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8')) {
+    throw 'Confidence90 requires managed Halogen 0.18.5, 0.18.7 or 0.18.8.'
 }
 
 # make_profile reads installed metadata and token-file paths, not token values.
@@ -81,9 +95,9 @@ $profileCode = @'
 import json, sys
 sys.path.insert(0, sys.argv[1])
 from manage import make_profile
-print(json.dumps(make_profile('Halogen', 'v2', 262144, 'Off', sys.argv[2])))
+print(json.dumps(make_profile('Halogen', 'v2', 262144, sys.argv[3], sys.argv[2])))
 '@
-$profileJson = & $python -u -B -c $profileCode $server $HalogenVersion
+$profileJson = & $python -u -B -c $profileCode $server $HalogenVersion $PromptCache
 if ($LASTEXITCODE -ne 0) {
     throw 'The installed Halogen profile could not be prepared; no engine was launched.'
 }
@@ -101,14 +115,21 @@ if (-not (Test-Path -LiteralPath $windowsPowerShell -PathType Leaf)) {
 $configuration.engine | Add-Member -NotePropertyName 'launcher' -NotePropertyValue 'python' -Force
 $configuration.engine | Add-Member -NotePropertyName 'python_executable' -NotePropertyValue $python -Force
 $configuration.engine.powershell = $windowsPowerShell
-$configuration.engine | Add-Member -NotePropertyName 'draft_tokens' -NotePropertyValue 2 -Force
 $configuration.engine | Add-Member -NotePropertyName 'speculation_policy' `
     -NotePropertyValue ([pscustomobject]@{ HALOGEN_PLD = '3,3' }) -Force
-if ($Profile -eq 'Current8K') {
-    $configuration.engine | Add-Member -NotePropertyName 'prefill_chunk' -NotePropertyValue 8192 -Force
-    $configuration.engine | Add-Member -NotePropertyName 'max_prefill_tokens' -NotePropertyValue 8192 -Force
+if ($HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8') -or $MtpPolicy -eq 'Fixed2') {
+    $configuration.engine | Add-Member -NotePropertyName 'draft_tokens' -NotePropertyValue 2 -Force
 }
-if ($HalogenVersion -in @('0.17.2', '0.17.3')) {
+if ($HalogenVersion -in @('0.18.5', '0.18.7', '0.18.8')) {
+    $gate = if ($MtpPolicy -eq 'Fixed2') { '0' } else { '0.90' }
+    $configuration.engine.speculation_policy | Add-Member -NotePropertyName 'HALOGEN_MTP_GATE_P' -NotePropertyValue $gate -Force
+}
+if ($Profile -in @('Current8K', 'Current4K')) {
+    $prefillTokens = if ($Profile -eq 'Current8K') { 8192 } else { 4096 }
+    $configuration.engine | Add-Member -NotePropertyName 'prefill_chunk' -NotePropertyValue $prefillTokens -Force
+    $configuration.engine | Add-Member -NotePropertyName 'max_prefill_tokens' -NotePropertyValue $prefillTokens -Force
+}
+if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8')) {
     $configuration.engine | Add-Member -NotePropertyName 'api_defaults' `
         -NotePropertyValue ([pscustomobject]@{
             enable_thinking = ($Thinking -eq 'On')
@@ -119,17 +140,17 @@ if ($HalogenVersion -in @('0.17.2', '0.17.3')) {
 $configuration | Add-Member -NotePropertyName 'console_trace' `
     -NotePropertyValue ([bool]$ConsoleTrace.IsPresent) -Force
 
-Write-Host ('Profile: {0}; Halogen {1} v2; MTP depth 2; PLD 3,3; cache Off; one request.' -f $Profile, $HalogenVersion)
+Write-Host ('Profile: {0}; Halogen {1} v2; MTP policy {2}; PLD 3,3; cache {3}; one request.' -f $Profile, $HalogenVersion, $MtpPolicy, $PromptCache)
 Write-Host 'Context capacity: 262144 positions (input plus output).'
-if ($HalogenVersion -in @('0.17.2', '0.17.3')) {
+if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8')) {
     Write-Host ('Thinking default: {0}; medium effort; thinking budget: 2048 tokens. Requests can override these defaults.' -f $Thinking)
 }
-if ($Profile -eq 'Current8K') {
-    Write-Host 'Prefill chunk / token arena: 8192 / 8192.'
+if ($Profile -in @('Current8K', 'Current4K')) {
+    Write-Host ('Prefill chunk / token arena: {0} / {1}.' -f $configuration.engine.prefill_chunk, $configuration.engine.max_prefill_tokens)
 } else {
     Write-Host 'Prefill chunk / token arena: native stock defaults from the historical profile.'
 }
-Write-Host 'Memory admission: 35 GiB free physical / 131 GiB commit headroom; runtime reserve: 18 / 18 GiB.'
+Write-Host 'Memory admission uses the selected backend profile, including its vision allowance; runtime reserve: 18 / 18 GiB.'
 Write-Host ('Base URL: http://127.0.0.1:{0}/v1' -f $Port)
 Write-Host ('Public model: {0}' -f $configuration.backend.identifier)
 Write-Host ('API token file: {0}' -f $configuration.token_file)

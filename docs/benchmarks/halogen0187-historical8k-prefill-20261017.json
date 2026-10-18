@@ -1,0 +1,83 @@
+{
+  "schema": "halogen.historical8k1-current-endpoint.v1",
+  "utc": "2026-10-17T12:13:38.753790+00:00",
+  "complete": true,
+  "excluded_warmups": 1,
+  "measured": 3,
+  "actual_input_tokens": 8192,
+  "actual_output_tokens": 1,
+  "request": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\prefill-peak-reconcile\\request-current-no-store.json",
+    "bytes": 42807,
+    "sha256": "04fa59506c57e1d5fd0f8d9727a22504fd640fc4207085cfb81f65b636f04b47"
+  },
+  "collector": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\prefill-peak-reconcile\\measure_current.py",
+    "bytes": 11311,
+    "sha256": "374aa4e2b9d9e39ce826419c0bdae7cd71bd03daa5c513400723fe80848a8679"
+  },
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\prefill-peak-reconcile\\cohort-current\\source.json",
+    "bytes": 2227,
+    "sha256": "5345fd5eb96bd04afd3995142d281423dba82e4612ff6fd05d1ee8ba716438bb"
+  },
+  "historical_contract": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\prefill-peak-reconcile\\contract.json",
+    "bytes": 7296,
+    "sha256": "180f43297d9e5a4a8c6997973ac334a7346e7457de4de6057d4bfe87dc275409"
+  },
+  "current": {
+    "complete": true,
+    "measured": 3,
+    "excluded_warmups": 1,
+    "full_goal_achieved": false,
+    "pure_phase_clocks_qualified": false,
+    "server_restarted": false,
+    "no_store": true,
+    "actual_input_tokens": 8192,
+    "actual_output_tokens": 1,
+    "acceptance": null,
+    "body_walls_seconds": [
+      6.2170081,
+      6.1686354,
+      6.1514578
+    ],
+    "historical_shape_walls_seconds": [
+      6.2201672,
+      6.1704937,
+      6.1532215
+    ],
+    "stable_outputs": true,
+    "whole_body_mean_seconds": 6.179033766666667,
+    "whole_body_sample_sd_seconds": 0.03398977757390198,
+    "historical_shape_mean_seconds": 6.181294133333333,
+    "historical_shape_sample_sd_seconds": 0.03475512490645554
+  },
+  "historical": [
+    {
+      "cell": "stocka",
+      "whole_http_and_watcher_mean_seconds": 4.403409666666657,
+      "current_latency_change_percent": 40.37517744771903
+    },
+    {
+      "cell": "off",
+      "whole_http_and_watcher_mean_seconds": 4.281281033333357,
+      "current_latency_change_percent": 44.37954633687402
+    },
+    {
+      "cell": "stockb",
+      "whole_http_and_watcher_mean_seconds": 4.2853257666666495,
+      "current_latency_change_percent": 44.24327273819995
+    }
+  ],
+  "api_prefill_arithmetic_mean_unqualified": 1234.632,
+  "current_api_prompt_ms_exceeds_complete_body_in_all_measurements": true,
+  "current_and_historical_output_hash_match": true,
+  "cache_and_speculative_counts_zero": true,
+  "phase_clock_qualified": false,
+  "decode_qualified": false,
+  "acceptance": null,
+  "causal_attribution": "Endpoint cost is slower on the exact historical text/token count. Version, capacity, arena, vision, cache implementation and operating state remain confounded.",
+  "server_restarted": false,
+  "full_goal_achieved": false
+}

@@ -1,0 +1,189 @@
+{
+  "schema": "halogen.dflash-paired-width-shadow-results.v1",
+  "utc": "2026-10-10T08:27:29.036777+00:00",
+  "actual_input_tokens": 16384,
+  "output_tokens": 128,
+  "scalar_packets": 127,
+  "measured_anchors": 32,
+  "excluded_paired_warmups": 1,
+  "measured_variant_calls": 64,
+  "attention_mode": "grouped_batch2",
+  "head_mode": "full_bf16",
+  "variants": {
+    "3": {
+      "query_slots": 3,
+      "head_query_slots": 3,
+      "useful_prefix_histogram_0_to_3": [
+        19,
+        8,
+        3,
+        2
+      ],
+      "mean_useful_prefix_tokens": 0.625,
+      "any_useful_prefix_count": 13,
+      "complete_k3_prefix_count": 2,
+      "component_host_envelopes": {
+        "backbone_dispatch": {
+          "mean_ms": 11.884858375,
+          "min_ms": 7.515702,
+          "max_ms": 50.697939
+        },
+        "backbone_finite_sync": {
+          "mean_ms": 16.00134678125,
+          "min_ms": 0.412315,
+          "max_ms": 24.531245
+        },
+        "full_head_dispatch": {
+          "mean_ms": 0.28678034375,
+          "min_ms": 0.190441,
+          "max_ms": 0.461548
+        },
+        "head_finite_sync": {
+          "mean_ms": 5.7090585625,
+          "min_ms": 5.618698,
+          "max_ms": 5.854632
+        },
+        "host_ID_copy": {
+          "mean_ms": 0.25586934375,
+          "min_ms": 0.179921,
+          "max_ms": 0.814399
+        },
+        "input_prepare": {
+          "mean_ms": 1.49776403125,
+          "min_ms": 1.278407,
+          "max_ms": 1.756736
+        },
+        "pure_proposal_total": {
+          "mean_ms": 35.6356774375,
+          "min_ms": 30.625202,
+          "max_ms": 59.099683
+        }
+      }
+    },
+    "7": {
+      "query_slots": 7,
+      "head_query_slots": 3,
+      "useful_prefix_histogram_0_to_3": [
+        18,
+        8,
+        4,
+        2
+      ],
+      "mean_useful_prefix_tokens": 0.6875,
+      "any_useful_prefix_count": 14,
+      "complete_k3_prefix_count": 2,
+      "component_host_envelopes": {
+        "backbone_dispatch": {
+          "mean_ms": 11.9782480625,
+          "min_ms": 7.674962,
+          "max_ms": 51.248612
+        },
+        "backbone_finite_sync": {
+          "mean_ms": 17.34222475,
+          "min_ms": 0.373792,
+          "max_ms": 23.820612
+        },
+        "full_head_dispatch": {
+          "mean_ms": 0.322800125,
+          "min_ms": 0.215083,
+          "max_ms": 0.877863
+        },
+        "head_finite_sync": {
+          "mean_ms": 5.70884446875,
+          "min_ms": 5.557414,
+          "max_ms": 5.910955
+        },
+        "host_ID_copy": {
+          "mean_ms": 0.24370571875,
+          "min_ms": 0.17609,
+          "max_ms": 0.296937
+        },
+        "input_prepare": {
+          "mean_ms": 1.529521375,
+          "min_ms": 1.26292,
+          "max_ms": 2.03983
+        },
+        "pure_proposal_total": {
+          "mean_ms": 37.1253445,
+          "min_ms": 32.518288,
+          "max_ms": 59.497658
+        }
+      }
+    }
+  },
+  "paired": {
+    "seven_better_count": 1,
+    "equal_count": 31,
+    "seven_worse_count": 0,
+    "mean_useful_prefix_delta": 0.0625,
+    "raw_proposals_equal_count": 21
+  },
+  "timing_scope": {
+    "backbone_dispatch": "host body-call submission envelope without a GPU fence; not isolated GPU execution time",
+    "backbone_finite_sync": "hidden/validity layout checks and all-row device finite reduction with .item() synchronization; may include preceding asynchronous device work",
+    "full_head_dispatch": "host first-three full-BF16 head-call submission envelope without a GPU fence; not isolated GPU execution time",
+    "head_finite_sync": "head layout checks and device validity .item() synchronization; may include preceding asynchronous device work",
+    "host_ID_copy": "device IDs .tolist() host transfer and integer conversion envelope",
+    "ingestion": "common-clock envelope includes socket waiting and owned ingest",
+    "input_prepare": "host envelope including actual anchor finite synchronization; remaining query/RoPE/length work may still be asynchronous",
+    "matched_normal_baseline_measured": false,
+    "pair_wall": "both pure proposal calls plus peer checks and accepted-frontier/cache identity brackets; no future-label waiting",
+    "proposal": "each variant includes actual anchor lookup/copy, width-specific query/RoPE/length preparation, complete backbone/all-row finite sync, first-three full-head finite sync and host ID copy",
+    "scalar_update": "host envelope; cache copy lacks a separate final GPU fence",
+    "serving_gain_qualified": false,
+    "unavailable_separate_stages": [
+      "native_tap_materialization",
+      "native_fence",
+      "D2H",
+      "IPC_transfer",
+      "GPU_H2D",
+      "native_verification",
+      "commit_output"
+    ]
+  },
+  "native_ready_publication": false,
+  "native_consumer_acquisition": false,
+  "npu_enabled": false,
+  "native_mtp_acceptance": null,
+  "serving_prefill_tok_s": null,
+  "serving_decode_tok_s": null,
+  "serving_gain_qualified": false,
+  "original_server_ready_open": true,
+  "minimum_memory_gib": {
+    "available_bytes": 21.427852630615234,
+    "commit_headroom_bytes": 113.12060928344727
+  },
+  "evidence": {
+    "dflash-shadow.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-paired-width-shadow-preparation-20261010\\trial\\dflash-shadow.json",
+      "bytes": 75727,
+      "sha256": "2580badcfc9bbeef1f5715e0471893573ad7f2cffb9ff52506ef8bafdf2d280c"
+    },
+    "diagnostic.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-paired-width-shadow-preparation-20261010\\trial\\diagnostic.json",
+      "bytes": 2892,
+      "sha256": "5b6902df4be80c1f4ea8c39b90706bda659fd284d55662f3a6114e93d0bd2310"
+    },
+    "outcome.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-paired-width-shadow-preparation-20261010\\trial\\outcome.json",
+      "bytes": 575,
+      "sha256": "03a899e65063afcdc39bc8b24a9922522c0aff6b1b0b897b82aa4f6b094f2371"
+    },
+    "memory.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-paired-width-shadow-preparation-20261010\\trial\\memory.json",
+      "bytes": 56446,
+      "sha256": "974ac512a3f01e01c5f18d1d5c819e660a380cad3406d4ba93c0f8df3d007ff7"
+    },
+    "terminal-checkpoint.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-paired-width-shadow-preparation-20261010\\trial\\terminal-checkpoint.json",
+      "bytes": 2301,
+      "sha256": "f8ef8baf969f7654f476a26f7de989905da56f4c625ce86f7eb41b9e3880fdf7"
+    },
+    "retained-startup-runtime.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-paired-width-shadow-preparation-20261010\\trial\\retained-startup-runtime.json",
+      "bytes": 8851,
+      "sha256": "e6e55f0b8c4e7dbea647099ee4cf82b92c0ee047990c9f1f84f233ce2eeb68fa"
+    }
+  },
+  "decision": "Seven slots improved this panel only; native attachment/serving benefit remains unqualified."
+}

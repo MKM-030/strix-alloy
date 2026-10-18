@@ -1,0 +1,251 @@
+{
+  "schema": "halogen.bounded-browser-source-refresh.v1",
+  "checkedStartUTC": "2026-10-12T05:55:13Z",
+  "checkedEndUTC": "2026-10-12T06:02:44Z",
+  "nextSourceCheckNotBeforeUTC": "2026-10-12T08:02:44Z",
+  "next_due_utc": "2026-10-12T08:02:44Z",
+  "baseline": {
+    "path": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/updates-20261011-2135-source-refresh/official-update-check.json",
+    "checkedEndUTC": "2026-10-11T21:38:26Z",
+    "sha256": "2788390daa96ca940a53eabf9838dd86c11cf0d7da79d703a4408f266f4d3a83",
+    "latestHalogen": "0.18.0",
+    "additionalDriverBaseline": "C:/Projects/strix-alloy-clean/docs/research/halogen-updates-20261007-1042.json",
+    "priorNarrativeRead": "C:/Projects/strix-alloy-clean/docs/research/halogen-official-update-resume-20261011.md"
+  },
+  "installedIdentityProvidedByCoordinator": {
+    "version": "0.18.0",
+    "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:de3b47d2e5f24f98a38ba5fb66b0075b0cd8a3219c38917c78fb4bbeb42b88d9",
+    "engineSHA256": "71d72b283f0937aec024baf6b6ec919e27dacd57cfc043832468ffdd603c8e08",
+    "queriedOrAlteredByScout": false
+  },
+  "disposition": "material-halogen-source-change-and-newly-observed-separate-runtime-channel",
+  "materialChangeObservedSinceBaseline": true,
+  "summary": "Official Halogen sources now name 0.18.1. The usual AMD GPU and NPU listings match the retained versions. A separate ROCm 10.1 driver/runtime channel dated October 5 was newly observed; its publication predates this refresh baseline and its applicability to the current Halogen image is unqualified.",
+  "sources": {
+    "halogen_changelog": {
+      "url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/CHANGELOG.md",
+      "browserCrawlLabel": "today",
+      "latestVersion": "0.18.1",
+      "nextVersionHeading": "0.18.0",
+      "versionChanged": true,
+      "publicationDateUTC": null,
+      "observation": "Short requests can run between long-prefill chunks; queued human requests precede agent turns ending in tool results. Sampled schema output is added. Checkpoints remain unchanged and greedy equivalence is claimed. No new decode-speed claim is made.",
+      "gainStatus": "upstream claim; local result absent"
+    },
+    "halogen_readme": {
+      "url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/README.md",
+      "browserCrawlLabel": "today",
+      "quickstartImageTag": "0.18.1",
+      "benchmarkProseImageVersion": "0.18.0",
+      "observation": "prompt_cache_policy:no_store reads existing cache but stores no new state; idle eviction under pressure remains possible. HALOGEN_FORK=1 plus HALOGEN_FORK_MAP=claude-code maps harness threads to retained state. Quickstarts reference 0.18.1, while benchmark prose still describes 0.18.0.",
+      "imageManifestVerified": false,
+      "newEngineSHA256Verified": false,
+      "registryManifestEndpointForCoordinator": "https://ghcr.io/v2/peonist-ai/halogen-flash-server/manifests/0.18.1",
+      "anonymousMetadataTokenEndpointForCoordinator": "https://ghcr.io/token?service=ghcr.io&scope=repository%3Apeonist-ai%2Fhalogen-flash-server%3Apull",
+      "registryProtocolReference": "C:/Projects/strix-alloy-clean/server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/updates-20261011-resume/fetch_public_metadata.py",
+      "candidateScope": "auxiliary-request cache isolation and shared-server latency; native rate gain unproven"
+    },
+    "halogen_flags": {
+      "url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/docs/FLAGS.md",
+      "browserCrawlLabel": "today",
+      "newRetryGraceDefaultSeconds": 20,
+      "newRetryGraceMaximumSeconds": 120,
+      "newFlag": "HALOGEN_RETRY_GRACE_S",
+      "sameRequestMultiMTPInterfaceObserved": false,
+      "observation": "Retry grace pauses disconnected replies; 0 restores immediate cancellation. Supported MTP remains one linear head with adaptive depth 2/3, serial-or-mtp request selection and greedy prompt lookup. No public competing-head/tree interface was observed. Session mapping is described by README rather than this flag table."
+    },
+    "halogen_releases": {
+      "url": "https://github.com/peonist-ai/halogen-flash-server/releases",
+      "browserCrawlLabel": "today",
+      "observation": "No GitHub Releases are listed."
+    },
+    "halogen_changelog_history": {
+      "url": "https://github.com/peonist-ai/halogen-flash-server/commits/main/CHANGELOG.md",
+      "browserCrawlLabel": "last month",
+      "publicationChronologyEstablished": false,
+      "apiAttemptURL": "https://api.github.com/repos/peonist-ai/halogen-flash-server/commits?path=CHANGELOG.md&per_page=2",
+      "apiAttemptResult": "browser internal error",
+      "dateLimit": "Version heading and quickstart tag are source observations; neither proves exact publication time, tag digest or binary identity."
+    },
+    "amd_gpu_driver": {
+      "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+      "browserCrawlLabel": "today",
+      "recommendedVersion": "26.8.1",
+      "recommendedReleaseDate": "2026-08-20",
+      "optionalVersion": "26.9.2 WHQL",
+      "optionalReleaseDate": "2026-09-29",
+      "versionChanged": false
+    },
+    "ryzen_ai": {
+      "url": "https://github.com/amd/RyzenAI-SW/releases",
+      "browserCrawlLabel": "today",
+      "latestVersion": "v1.8.0",
+      "commitPrefix": "73c0457",
+      "releaseHeaderDateText": "23 Jul 04:37",
+      "versionChanged": false,
+      "dateLimit": "Browser header omits year; the October 7 baseline API receipt separately records published_utc 2026-07-23T04:37:16Z. That prior metadata was not reverified here."
+    },
+    "ryzen_ai_windows_npu": {
+      "url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+      "browserCrawlLabel": "today",
+      "pageLastUpdated": "2026-10-07",
+      "minimumNPUDriver": "32.0.203.280",
+      "productionNPUDriver": "32.0.203.376",
+      "versionChangedFromOctober7Receipt": false,
+      "observation": "Production list includes Strix Halo; this separate branch does not establish supersession of the installed Adrenalin MCDM branch."
+    },
+    "mlir_aie": {
+      "url": "https://github.com/Xilinx/mlir-aie/releases",
+      "browserCrawlLabel": "today",
+      "latestVersion": "v1.4.4",
+      "commitPrefix": "e5c705c",
+      "releaseHeaderDateText": "06 Oct 16:18",
+      "sourceArchiveDateUTC": "2026-10-06T13:27:20Z",
+      "versionChanged": false,
+      "dateLimit": "Archive/asset dates are distinct from release publication metadata."
+    },
+    "windows_ml_versions": {
+      "url": "https://raw.githubusercontent.com/wiki/microsoft/WindowsML/Windows-ML-Execution-Provider-Releases.md",
+      "browserCrawlLabel": "yesterday",
+      "migraphxMSIX": "1.8.64.0",
+      "migraphxGPUEP": "7.2.2609.19",
+      "vitisaiMSIX": "1.8.75.0",
+      "vitisaiEP": "1605",
+      "currentReleaseNotation": "2026 9D",
+      "versionChanged": false,
+      "plannedOnly": {"migraphxMSIX": "1.8.65.0", "vitisaiMSIX": "1.8.80.0", "gaNotation": "2026 10D"}
+    },
+    "windows_ml_support": {
+      "url": "https://learn.microsoft.com/en-us/windows/ai/new-windows-ml/supported-execution-providers",
+      "browserCrawlLabel": "today",
+      "pageLastUpdated": "2026-10-07",
+      "migraphxGenAISupported": false
+    },
+    "rocm_legacy_ryzen_matrix": {
+      "url": "https://rocm.docs.amd.com/projects/radeon-ryzen/en/latest/docs/compatibility/compatibilityryz/windows/windows_compatibility.html",
+      "browserCrawlLabel": "today",
+      "listedROCmVersion": "7.2.1",
+      "listedPyTorchVersion": "2.9.1",
+      "listedPythonVersion": "3.12",
+      "observation": "Retained page explicitly ends at 7.2.1 and redirects readers to unified documentation; Max395/gfx1151 remains in its Windows PyTorch table."
+    },
+    "rocm_unified_matrix": {
+      "url": "https://rocm.docs.amd.com/en/latest/compatibility/compatibility-matrix.html",
+      "browserCrawlLabel": "today",
+      "latestDocumentedROCmVersion": "10.1.0",
+      "pageDate": "2026-08-26",
+      "listedRyzenGraphics": "Radeon 8060S / gfx1151 / Strix Halo",
+      "listedAdrenalinDriver": "26.10.41.05",
+      "observation": "Unified hardware matrix names the target graphics family and driver; this is a newly checked channel, not proof of a release during the refresh interval."
+    },
+    "rocm_core_release_notes": {
+      "url": "https://rocm.docs.amd.com/en/latest/about/release-notes.html",
+      "browserCrawlLabel": "today",
+      "version": "10.1.0",
+      "pageDate": "2026-10-05",
+      "newlyObservedChannel": true,
+      "publishedAfterBaseline": false,
+      "observation": "TheRock bundles librocdxg; ROCr detects /dev/dxg automatically via HSA_ENABLE_DXG_DETECTION, default 1. WSL2 support is technical preview; profiling, debugging and KFD-dependent tools are excluded. This supplies no Halogen-image qualification or NPU bridge.",
+      "disposition": "deferred runtime integration lead; no measured native rate gain"
+    },
+    "rocm_windows_driver_notes": {
+      "url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-ROCM-10-01.html",
+      "browserCrawlLabel": "today",
+      "pageDate": "2026-10-05",
+      "driverVersion": "26.10.41.05",
+      "windowsDriverStoreVersion": "32.0.31041.5005",
+      "packagedNPUMCDMVersion": "32.00.20102.3930",
+      "packagedNPUMCDMDate": "2026-05-07",
+      "observation": "ROCm-specific package is separate from Max395's usual listing. Its product list names discrete Radeon families rather than Max395; the unified matrix supplies the Ryzen link. Applicability remains unqualified here."
+    },
+    "rocm_transition_guide": {
+      "url": "https://rocm.docs.amd.com/en/latest/about/transition-guide-TheRock.html",
+      "browserCrawlLabel": "today",
+      "observation": "Core SDK uses /opt/rocm/core-10.1 and amdrocm package names; no in-place library substitution was qualified."
+    },
+    "xdna_driver_releases": {
+      "url": "https://github.com/amd/xdna-driver/releases",
+      "browserCrawlLabel": "today",
+      "observation": "No GitHub Releases listed; absence of releases does not establish absence of rolling-main changes."
+    },
+    "xrt_releases": {
+      "url": "https://github.com/Xilinx/XRT/releases",
+      "browserCrawlLabel": "today",
+      "topVersion": "2.25.0",
+      "topPrerelease": true,
+      "topReleaseHeaderDateText": "18 Aug 18:05",
+      "latestNonPrereleaseLabel": "202610.2.23.0_Canonical",
+      "latestNonPrereleaseHeaderDateText": "16 Apr 08:30",
+      "baselineComparableVersion": null,
+      "observation": "No timestamp-complete delta or compatible Halogen NPU upgrade was established."
+    },
+    "halogen_npu_requirements": {
+      "url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/docs/NPU.md",
+      "browserCrawlLabel": "today",
+      "quickstartTag": "0.18.1",
+      "newWSLNPUBridgeObserved": false,
+      "observation": "Requirements remain Linux accelerator device, NPU driver, XRT/plugin, firmware, IOMMU and supported fabric-clock handling. Documentation retains shared bus/power competition. These Linux requirements do not qualify Windows or WSL overlap."
+    }
+  },
+  "reddit": {
+    "discoveryMethod": "bounded indexed searches with recency filters, plus primary-source attempts for returned leads",
+    "completeLiveInventoryEstablished": false,
+    "newConfirmedNativeAccelerationMechanism": false,
+    "consideredLeads": [
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1x0wx70/the_npu_in_your_strix_halo_is_finally_doing_real/",
+        "displayedPostDate": "2026-10-08",
+        "observation": "Current body says v1.1 moves search to CPU Semble and keeps separate NPU tools. Already assessed local retrieval ranking remains closed; no matched Flash acceptance/rate evidence.",
+        "claimedV11Source": "https://github.com/aic0d3r/qwen38-strix-halo-harness/blob/v1.1/CHANGELOG.md",
+        "claimedV11SourceResult": "GitHub and raw browser attempts both cache miss",
+        "exactEditOrPublicationTimeEstablished": false
+      },
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1x25x4j/gufo_engine_seems_a_good_open_source_choice_vs/",
+        "displayedPostDate": "2026-10-10",
+        "observation": "Already covered alternative-engine report; no new matched current Halogen result admitted."
+      },
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1x2c1mj/halogengufo_but_for_strix_point_hardware/",
+        "displayedPostDate": "2026-10-10",
+        "newestDisplayedCommentDate": "2026-10-12",
+        "observation": "Different GPU/model port report with promised future benchmarks; supplies no transferable controlled Flash mechanism."
+      }
+    ],
+    "earlierAssessment": "C:/Projects/strix-alloy-clean/docs/research/halogen-npu-reddit-retrieval-assessment-20261009.md"
+  },
+  "actionableMechanisms": [
+    {
+      "candidate": "Halogen 0.18.1 auxiliary cache policy and long-prefill scheduling",
+      "status": "source candidate only; immutable image and engine identity not verified",
+      "reviewableNextStep": "Coordinator may perform a separate metadata-only image/engine seal comparison before deciding whether a bounded shared-server latency/cache experiment is justified.",
+      "nativeDecodeOrAcceptanceGainEstablished": false
+    },
+    {
+      "candidate": "ROCm 10.1 TheRock librocdxg route",
+      "status": "deferred separate-runtime integration lead, published before baseline",
+      "reviewableNextStep": "Establish exact target driver, container ABI and vendor support before any runtime proposal; no direct replacement implied.",
+      "profilingGateResolved": false,
+      "nativeDecodeOrAcceptanceGainEstablished": false
+    }
+  ],
+  "freshnessLimitations": [
+    "This scout used cached browser primary-source observations; raw-byte hashes, registry digests and current upstream commit times were not fetched.",
+    "Most sources say crawled today, while Windows ML versions say yesterday and changelog history says last month. These labels do not prove exact freshness since the previous receipt.",
+    "Halogen 0.18.1 is newly observed in official source; exact publication time and immutable image identity are unverified.",
+    "ROCm 10.1 and its driver notes are dated October 5, before the October 11 baseline. Newly discovering that channel is distinct from a newly published update.",
+    "Reddit recency filters also returned older posts; comment dates are coarse, edits lack exact times and the v1.1 primary source could not be fetched.",
+    "A broad local receipt search encountered access-denied package subdirectories; no permissions or package files were changed. Readable tracked research confirms the NPU driver baseline."
+  ],
+  "delegation": "All four team slots were already occupied; independent online reads were batched and reviewed by this scout.",
+  "hardwareAccess": false,
+  "gpuOrNPUExecution": false,
+  "halogenRequests": false,
+  "wslOrDockerUsed": false,
+  "processInspection": false,
+  "binariesModelsOrDriversDownloaded": false,
+  "installationPerformed": false,
+  "localServingGainMeasured": false,
+  "continuationStateMutated": false,
+  "committedOrPushed": false
+}

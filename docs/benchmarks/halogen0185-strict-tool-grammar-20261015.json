@@ -1,0 +1,3629 @@
+{
+  "schema": "halogen0185.strict-tool-grammar-final.v1",
+  "generated_utc": "2026-10-15T17:13:39.823861+00:00",
+  "status": "all_three_windows_terminal",
+  "windows": [
+    {
+      "window": "on-before",
+      "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before",
+      "summary": {
+        "schema": "halogen0185.grammar-window-summary.v1",
+        "window": "on-before",
+        "packet_sha256": "9da1eefe7a8b4a08c4a3b12eed227436fab85a551c42e7bfea76e502d7121415",
+        "identity": {
+          "version": "0.18.5",
+          "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+          "context": 262144,
+          "controller_run_id": "7a93517f9de04671a9eec5dc9c6f1e39",
+          "backend_run_id": "2a16879a9dc14a27981470e046f5fb9a",
+          "container_id": "6480ce2737d7da207092b215399842d113f106f83a4ec23e734b20f59272d2a2",
+          "profile_sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12",
+          "controller_identity": {
+            "pid": 24564,
+            "creation_time_100ns": 134365542275004463,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "backend_identity": {
+            "pid": 28812,
+            "creation_time_100ns": 134365542380397304,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "native_log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\2a16879a9dc14a27981470e046f5fb9a\\engine.log",
+          "frozen_settings": {
+            "checkpoint": "v2",
+            "context": 262144,
+            "prompt_cache": "Exact",
+            "prefill_chunk": 4096,
+            "max_prefill_tokens": 4096,
+            "disable_vision": false,
+            "draft_tokens": 2
+          },
+          "policy_environment": {
+            "HALOGEN_MTP_DEPTH": "2",
+            "HALOGEN_MTP_GATE_P": "0",
+            "HALOGEN_PLD": "3,3"
+          }
+        },
+        "attempted_requests": 4,
+        "planned_requests": 4,
+        "complete_window": true,
+        "continuous_memory_guard_passed": true,
+        "exclusive_gateway_traffic_passed": true,
+        "excluded_warmups": 1,
+        "measured_attempts": 3,
+        "planned_measured_requests": 3,
+        "all_measured_http_wall_seconds": 6.6309396,
+        "measured_http_walls": [
+          2.216787,
+          2.2059965,
+          2.2081561
+        ],
+        "exact_complete_task_successes": 3,
+        "measured_failures": 0,
+        "http_seconds_per_successful_task": 2.2103132,
+        "generated_tokens_per_whole_http_second": 61.07731700647673,
+        "accepted_drafts_per_whole_http_second": 44.79003247141627,
+        "combined_acceptance": 0.9705882352941176,
+        "speculation_per_measured_request": [
+          {
+            "drafter": "mtp",
+            "rounds": 36,
+            "head": {
+              "rounds": 13,
+              "drafted": 25,
+              "accepted": 25
+            },
+            "lookup": {
+              "rounds": 8,
+              "drafted": 23,
+              "accepted": 22
+            },
+            "grammar": {
+              "rounds": 15,
+              "drafted": 54,
+              "accepted": 52
+            }
+          },
+          {
+            "drafter": "mtp",
+            "rounds": 36,
+            "head": {
+              "rounds": 13,
+              "drafted": 25,
+              "accepted": 25
+            },
+            "lookup": {
+              "rounds": 8,
+              "drafted": 23,
+              "accepted": 22
+            },
+            "grammar": {
+              "rounds": 15,
+              "drafted": 54,
+              "accepted": 52
+            }
+          },
+          {
+            "drafter": "mtp",
+            "rounds": 36,
+            "head": {
+              "rounds": 13,
+              "drafted": 25,
+              "accepted": 25
+            },
+            "lookup": {
+              "rounds": 8,
+              "drafted": 23,
+              "accepted": 22
+            },
+            "grammar": {
+              "rounds": 15,
+              "drafted": 54,
+              "accepted": 52
+            }
+          }
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "exact_payload_parity_within_window": true,
+        "strict_enforcement_all_responses": true,
+        "grammar_path_all_responses": true,
+        "quality_qualified": false,
+        "performance_promotion_qualified": false,
+        "full_goal_qualified": false,
+        "tool_dispatched": false,
+        "api_phase_clock_qualified": false,
+        "phase_scaling_or_overhead_subtraction_applied": false,
+        "interpretation": "Root must compare exact arguments text/payload/count/finish and complete HTTP cost across both ON bookends and OFF. No automatic promotion."
+      },
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\source.json",
+        "bytes": 1271,
+        "sha256": "9b5de9d1bc39b8b15690e534e293704f5c63ff8622aaac6bd4e0b99d76e98c9a"
+      },
+      "measured": {
+        "request_count": 3,
+        "independent_http": {
+          "values": [
+            2.216787,
+            2.2059965,
+            2.2081561
+          ],
+          "count": 3,
+          "sum": 6.6309396,
+          "mean": 2.2103132,
+          "sample_stdev": 0.005709512489696526,
+          "min": 2.2059965,
+          "max": 2.216787
+        },
+        "exact_complete_artifact_successes": 3,
+        "http_seconds_per_successful_task": 2.2103132,
+        "all_measured_wall_in_denominator": true,
+        "accounting_complete": true,
+        "actual_input_tokens": [
+          547,
+          547,
+          547
+        ],
+        "actual_output_tokens": [
+          135,
+          135,
+          135
+        ],
+        "finish_reasons": [
+          "tool_calls",
+          "tool_calls",
+          "tool_calls"
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "at_output_cap": [
+          false,
+          false,
+          false
+        ],
+        "clamp_fields": [
+          {},
+          {},
+          {}
+        ],
+        "strict_enforcement": [
+          true,
+          true,
+          true
+        ],
+        "grammar_path_qualified": [
+          true,
+          true,
+          true
+        ],
+        "actual_output_tokens_total": 405,
+        "generated_tokens_per_whole_http_second": 61.07731700647673,
+        "accepted_drafts_per_whole_http_second": 44.79003247141627,
+        "speculation_pooled": {
+          "head": {
+            "rounds": 39,
+            "drafted": 75,
+            "accepted": 75,
+            "acceptance": 1.0,
+            "accepted_per_round": 1.9230769230769231,
+            "rejected": 0
+          },
+          "lookup": {
+            "rounds": 24,
+            "drafted": 69,
+            "accepted": 66,
+            "acceptance": 0.9565217391304348,
+            "accepted_per_round": 2.75,
+            "rejected": 3
+          },
+          "grammar": {
+            "rounds": 45,
+            "drafted": 162,
+            "accepted": 156,
+            "acceptance": 0.9629629629629629,
+            "accepted_per_round": 3.466666666666667,
+            "rejected": 6
+          }
+        },
+        "drafted": 306,
+        "accepted": 297,
+        "combined_acceptance": 0.9705882352941176,
+        "api_prefill": {
+          "tokens": 1641,
+          "reported_phase_seconds_total": 1.6554,
+          "pooled_tokens_per_second": 991.3011960855382,
+          "arithmetic_mean_tokens_per_second": 991.351,
+          "per_request_rate_observations": [
+            981.694,
+            994.184,
+            998.175
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_decode": {
+          "tokens": 405,
+          "reported_phase_seconds_total": 5.4906999999999995,
+          "pooled_tokens_per_second": 73.7610869288069,
+          "arithmetic_mean_tokens_per_second": 73.761,
+          "per_request_rate_observations": [
+            73.69,
+            73.879,
+            73.714
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_phase_sum_minus_http_seconds": [
+          0.1724129999999997,
+          0.17150350000000003,
+          0.1712438999999999
+        ],
+        "api_phase_rates_independently_qualified": false,
+        "total_speculation_rounds": 108
+      },
+      "excluded_warmup": {
+        "request_count": 1,
+        "independent_http": {
+          "values": [
+            3.2871007
+          ],
+          "count": 1,
+          "sum": 3.2871007,
+          "mean": 3.2871007,
+          "sample_stdev": null,
+          "min": 3.2871007,
+          "max": 3.2871007
+        },
+        "exact_complete_artifact_successes": 1,
+        "http_seconds_per_successful_task": 3.2871007,
+        "all_measured_wall_in_denominator": true,
+        "accounting_complete": true,
+        "actual_input_tokens": [
+          547
+        ],
+        "actual_output_tokens": [
+          135
+        ],
+        "finish_reasons": [
+          "tool_calls"
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "at_output_cap": [
+          false
+        ],
+        "clamp_fields": [
+          {}
+        ],
+        "strict_enforcement": [
+          true
+        ],
+        "grammar_path_qualified": [
+          true
+        ],
+        "actual_output_tokens_total": 135,
+        "generated_tokens_per_whole_http_second": 41.069627103301094,
+        "accepted_drafts_per_whole_http_second": 30.117726542420804,
+        "speculation_pooled": {
+          "head": {
+            "rounds": 13,
+            "drafted": 25,
+            "accepted": 25,
+            "acceptance": 1.0,
+            "accepted_per_round": 1.9230769230769231,
+            "rejected": 0
+          },
+          "lookup": {
+            "rounds": 8,
+            "drafted": 23,
+            "accepted": 22,
+            "acceptance": 0.9565217391304348,
+            "accepted_per_round": 2.75,
+            "rejected": 1
+          },
+          "grammar": {
+            "rounds": 15,
+            "drafted": 54,
+            "accepted": 52,
+            "acceptance": 0.9629629629629629,
+            "accepted_per_round": 3.466666666666667,
+            "rejected": 2
+          }
+        },
+        "drafted": 102,
+        "accepted": 99,
+        "combined_acceptance": 0.9705882352941176,
+        "api_prefill": {
+          "tokens": 547,
+          "reported_phase_seconds_total": 0.8483999999999999,
+          "pooled_tokens_per_second": 644.7430457331448,
+          "arithmetic_mean_tokens_per_second": 644.743,
+          "per_request_rate_observations": [
+            644.743
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_decode": {
+          "tokens": 135,
+          "reported_phase_seconds_total": 2.233,
+          "pooled_tokens_per_second": 60.45678459471563,
+          "arithmetic_mean_tokens_per_second": 60.457,
+          "per_request_rate_observations": [
+            60.457
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_phase_sum_minus_http_seconds": [
+          -0.20570069999999996
+        ],
+        "api_phase_rates_independently_qualified": false,
+        "total_speculation_rounds": 36
+      },
+      "all_attempts": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\response-0.raw",
+            "bytes": 1218,
+            "sha256": "2ce75a2d388d77acbb2ef78a85c9f27b703e469882eec96778fca9abafbd1714"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\client-0.json",
+            "bytes": 14678,
+            "sha256": "6068a6332def80f9a46a904acb2a3495b3b051dcc71b68941f36d5273304fe79"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\request-0.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\strict-0.raw",
+            "bytes": 1082,
+            "sha256": "44d4cafaf59c9120cb6c81b1046d8d787b52aa6bdd2f84e67302d62af98f2476"
+          },
+          "wall_seconds": 3.2871007,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 822,
+                "end": 850
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 413157,
+            "end_offset": 414239,
+            "file_identity": [
+              6940694304499994282,
+              1407374885840113
+            ],
+            "wait_seconds": 9.529999806545675e-05,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 848.4,
+              "predicted_ms": 2233.0,
+              "prompt_per_second": 644.743,
+              "predicted_per_second": 60.457,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 1,
+              "draft_n": 102,
+              "draft_n_accepted": 99,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 36,
+                "head": {
+                  "rounds": 13,
+                  "drafted": 25,
+                  "accepted": 25
+                },
+                "lookup": {
+                  "rounds": 8,
+                  "drafted": 23,
+                  "accepted": 22
+                },
+                "grammar": {
+                  "rounds": 15,
+                  "drafted": 54,
+                  "accepted": 52
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 36,
+              "head": {
+                "rounds": 13,
+                "drafted": 25,
+                "accepted": 25
+              },
+              "lookup": {
+                "rounds": 8,
+                "drafted": 23,
+                "accepted": 22
+              },
+              "grammar": {
+                "rounds": 15,
+                "drafted": 54,
+                "accepted": 52
+              }
+            },
+            "drafted": 102,
+            "accepted": 99,
+            "combined_acceptance": 0.9705882352941176,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "positive actual grammar rounds",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\response-1.raw",
+            "bytes": 1219,
+            "sha256": "7c0343b9617b973ad3cc53c51bcbc9f3821f1a91f99a1841f256fb793bc752b5"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\client-1.json",
+            "bytes": 14680,
+            "sha256": "38c7e7e186cad88f18992c3883b26a0794be7057ef2aa4e702430bd4786fa973"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\request-1.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\strict-1.raw",
+            "bytes": 782,
+            "sha256": "16eff2a8d831b48ef352c6a309bb9e2ab9f6e9cf0dc96b0443debf52a684ea9c"
+          },
+          "wall_seconds": 2.216787,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 522,
+                "end": 550
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 414561,
+            "end_offset": 415343,
+            "file_identity": [
+              6940694304499994282,
+              1407374885840113
+            ],
+            "wait_seconds": 9.459999273531139e-05,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 557.2,
+              "predicted_ms": 1832.0,
+              "prompt_per_second": 981.694,
+              "predicted_per_second": 73.69,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 102,
+              "draft_n_accepted": 99,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 36,
+                "head": {
+                  "rounds": 13,
+                  "drafted": 25,
+                  "accepted": 25
+                },
+                "lookup": {
+                  "rounds": 8,
+                  "drafted": 23,
+                  "accepted": 22
+                },
+                "grammar": {
+                  "rounds": 15,
+                  "drafted": 54,
+                  "accepted": 52
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 36,
+              "head": {
+                "rounds": 13,
+                "drafted": 25,
+                "accepted": 25
+              },
+              "lookup": {
+                "rounds": 8,
+                "drafted": 23,
+                "accepted": 22
+              },
+              "grammar": {
+                "rounds": 15,
+                "drafted": 54,
+                "accepted": 52
+              }
+            },
+            "drafted": 102,
+            "accepted": 99,
+            "combined_acceptance": 0.9705882352941176,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "positive actual grammar rounds",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\response-2.raw",
+            "bytes": 1220,
+            "sha256": "c8666860af6e4c1b1349ed3189de02dc20fb837898eeaf2670a12c01335998e5"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\client-2.json",
+            "bytes": 14682,
+            "sha256": "9e1abd3f5e7db781cdd8caf4ec10af4240e617cd851213b41dfd34c9dddca02c"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\request-2.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\strict-2.raw",
+            "bytes": 889,
+            "sha256": "3621b4526c82e44c9f3eb6f99bc46efb7a2484bb5b1546b9e677a90566c7adc4"
+          },
+          "wall_seconds": 2.2059965,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 521,
+                "end": 549
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 415663,
+            "end_offset": 416552,
+            "file_identity": [
+              6940694304499994282,
+              1407374885840113
+            ],
+            "wait_seconds": 9.449999197386205e-05,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 550.2,
+              "predicted_ms": 1827.3,
+              "prompt_per_second": 994.184,
+              "predicted_per_second": 73.879,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 102,
+              "draft_n_accepted": 99,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 36,
+                "head": {
+                  "rounds": 13,
+                  "drafted": 25,
+                  "accepted": 25
+                },
+                "lookup": {
+                  "rounds": 8,
+                  "drafted": 23,
+                  "accepted": 22
+                },
+                "grammar": {
+                  "rounds": 15,
+                  "drafted": 54,
+                  "accepted": 52
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 36,
+              "head": {
+                "rounds": 13,
+                "drafted": 25,
+                "accepted": 25
+              },
+              "lookup": {
+                "rounds": 8,
+                "drafted": 23,
+                "accepted": 22
+              },
+              "grammar": {
+                "rounds": 15,
+                "drafted": 54,
+                "accepted": 52
+              }
+            },
+            "drafted": 102,
+            "accepted": 99,
+            "combined_acceptance": 0.9705882352941176,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "positive actual grammar rounds",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\response-3.raw",
+            "bytes": 1220,
+            "sha256": "6b2f0eb5e2ebb1f4f4dbf04c3928134870a8f2314abe550870215a57290b9580"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\client-3.json",
+            "bytes": 14682,
+            "sha256": "96d447e40b7787b86152b88d6116df181c017c4a0197f07f1fdd08469d41c6e9"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\request-3.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\strict-3.raw",
+            "bytes": 782,
+            "sha256": "ab3107e811ff8e82c4d50663ffcb7e41a3cc68ba023eb73d9015ef5250957f78"
+          },
+          "wall_seconds": 2.2081561,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 522,
+                "end": 550
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 416874,
+            "end_offset": 417656,
+            "file_identity": [
+              6940694304499994282,
+              1407374885840113
+            ],
+            "wait_seconds": 7.700000423938036e-05,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 548.0,
+              "predicted_ms": 1831.4,
+              "prompt_per_second": 998.175,
+              "predicted_per_second": 73.714,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 102,
+              "draft_n_accepted": 99,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 36,
+                "head": {
+                  "rounds": 13,
+                  "drafted": 25,
+                  "accepted": 25
+                },
+                "lookup": {
+                  "rounds": 8,
+                  "drafted": 23,
+                  "accepted": 22
+                },
+                "grammar": {
+                  "rounds": 15,
+                  "drafted": 54,
+                  "accepted": 52
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 36,
+              "head": {
+                "rounds": 13,
+                "drafted": 25,
+                "accepted": 25
+              },
+              "lookup": {
+                "rounds": 8,
+                "drafted": 23,
+                "accepted": 22
+              },
+              "grammar": {
+                "rounds": 15,
+                "drafted": 54,
+                "accepted": 52
+              }
+            },
+            "drafted": 102,
+            "accepted": 99,
+            "combined_acceptance": 0.9705882352941176,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "positive actual grammar rounds",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        }
+      ],
+      "failure": null,
+      "memory_guard_evidence": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-before\\memory-series.json",
+        "bytes": 7779,
+        "sha256": "654f66cd03154fd53c6739a194d23307936143d9552c4e060c5ddf66de32f790"
+      }
+    },
+    {
+      "window": "off",
+      "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off",
+      "summary": {
+        "schema": "halogen0185.grammar-window-summary.v1",
+        "window": "off",
+        "packet_sha256": "9da1eefe7a8b4a08c4a3b12eed227436fab85a551c42e7bfea76e502d7121415",
+        "identity": {
+          "version": "0.18.5",
+          "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+          "context": 262144,
+          "controller_run_id": "c2a96050cc0c4cccbba8ed41a19c4a22",
+          "backend_run_id": "e1c8811dc4c2411c92012bb9760750d3",
+          "container_id": "dad0f857aa726eab9a20296ded6a3819eab10cf880343e59030cd681c7295af1",
+          "profile_sha256": "c0591e70d28c03a6784f70535b86e110031d63e87f77f70257e1b805eb11b092",
+          "controller_identity": {
+            "pid": 24992,
+            "creation_time_100ns": 134365574138359788,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "backend_identity": {
+            "pid": 32628,
+            "creation_time_100ns": 134365574243326962,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "native_log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\e1c8811dc4c2411c92012bb9760750d3\\engine.log",
+          "frozen_settings": {
+            "checkpoint": "v2",
+            "context": 262144,
+            "prompt_cache": "Exact",
+            "prefill_chunk": 4096,
+            "max_prefill_tokens": 4096,
+            "disable_vision": false,
+            "draft_tokens": 2
+          },
+          "policy_environment": {
+            "HALOGEN_MTP_DEPTH": "2",
+            "HALOGEN_MTP_GATE_P": "0",
+            "HALOGEN_PLD": "3,3",
+            "HALOGEN_GRAMMAR_DRAFT": "0"
+          }
+        },
+        "attempted_requests": 4,
+        "planned_requests": 4,
+        "complete_window": true,
+        "continuous_memory_guard_passed": true,
+        "exclusive_gateway_traffic_passed": true,
+        "excluded_warmups": 1,
+        "measured_attempts": 3,
+        "planned_measured_requests": 3,
+        "all_measured_http_wall_seconds": 7.757683,
+        "measured_http_walls": [
+          2.6597372,
+          2.469705,
+          2.6282408
+        ],
+        "exact_complete_task_successes": 3,
+        "measured_failures": 0,
+        "http_seconds_per_successful_task": 2.5858943333333335,
+        "generated_tokens_per_whole_http_second": 52.20630953855681,
+        "accepted_drafts_per_whole_http_second": 35.19091976302718,
+        "combined_acceptance": 0.9578947368421052,
+        "speculation_per_measured_request": [
+          {
+            "drafter": "mtp",
+            "rounds": 44,
+            "head": {
+              "rounds": 26,
+              "drafted": 51,
+              "accepted": 51
+            },
+            "lookup": {
+              "rounds": 18,
+              "drafted": 44,
+              "accepted": 40
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          {
+            "drafter": "mtp",
+            "rounds": 44,
+            "head": {
+              "rounds": 26,
+              "drafted": 51,
+              "accepted": 51
+            },
+            "lookup": {
+              "rounds": 18,
+              "drafted": 44,
+              "accepted": 40
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          {
+            "drafter": "mtp",
+            "rounds": 44,
+            "head": {
+              "rounds": 26,
+              "drafted": 51,
+              "accepted": 51
+            },
+            "lookup": {
+              "rounds": 18,
+              "drafted": 44,
+              "accepted": 40
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "exact_payload_parity_within_window": true,
+        "strict_enforcement_all_responses": true,
+        "grammar_path_all_responses": true,
+        "quality_qualified": false,
+        "performance_promotion_qualified": false,
+        "full_goal_qualified": false,
+        "tool_dispatched": false,
+        "api_phase_clock_qualified": false,
+        "phase_scaling_or_overhead_subtraction_applied": false,
+        "interpretation": "Root must compare exact arguments text/payload/count/finish and complete HTTP cost across both ON bookends and OFF. No automatic promotion."
+      },
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\source.json",
+        "bytes": 1265,
+        "sha256": "0329385e9936524ed33be7ecadc214227edb71a499dead62c571a7c4525a8d3c"
+      },
+      "measured": {
+        "request_count": 3,
+        "independent_http": {
+          "values": [
+            2.6597372,
+            2.469705,
+            2.6282408
+          ],
+          "count": 3,
+          "sum": 7.757683,
+          "mean": 2.585894333333333,
+          "sample_stdev": 0.10184781140787143,
+          "min": 2.469705,
+          "max": 2.6597372
+        },
+        "exact_complete_artifact_successes": 3,
+        "http_seconds_per_successful_task": 2.5858943333333335,
+        "all_measured_wall_in_denominator": true,
+        "accounting_complete": true,
+        "actual_input_tokens": [
+          547,
+          547,
+          547
+        ],
+        "actual_output_tokens": [
+          135,
+          135,
+          135
+        ],
+        "finish_reasons": [
+          "tool_calls",
+          "tool_calls",
+          "tool_calls"
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "at_output_cap": [
+          false,
+          false,
+          false
+        ],
+        "clamp_fields": [
+          {},
+          {},
+          {}
+        ],
+        "strict_enforcement": [
+          true,
+          true,
+          true
+        ],
+        "grammar_path_qualified": [
+          true,
+          true,
+          true
+        ],
+        "actual_output_tokens_total": 405,
+        "generated_tokens_per_whole_http_second": 52.20630953855681,
+        "accepted_drafts_per_whole_http_second": 35.19091976302718,
+        "speculation_pooled": {
+          "head": {
+            "rounds": 78,
+            "drafted": 153,
+            "accepted": 153,
+            "acceptance": 1.0,
+            "accepted_per_round": 1.9615384615384615,
+            "rejected": 0
+          },
+          "lookup": {
+            "rounds": 54,
+            "drafted": 132,
+            "accepted": 120,
+            "acceptance": 0.9090909090909091,
+            "accepted_per_round": 2.2222222222222223,
+            "rejected": 12
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "accepted_per_round": null,
+            "rejected": 0
+          }
+        },
+        "drafted": 285,
+        "accepted": 273,
+        "combined_acceptance": 0.9578947368421052,
+        "api_prefill": {
+          "tokens": 1641,
+          "reported_phase_seconds_total": 1.5360999999999998,
+          "pooled_tokens_per_second": 1068.2898248811928,
+          "arithmetic_mean_tokens_per_second": 1068.3316666666667,
+          "per_request_rate_observations": [
+            1059.667,
+            1069.404,
+            1075.924
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_decode": {
+          "tokens": 405,
+          "reported_phase_seconds_total": 6.1858,
+          "pooled_tokens_per_second": 65.47253386789097,
+          "arithmetic_mean_tokens_per_second": 65.58166666666666,
+          "per_request_rate_observations": [
+            63.324,
+            69.394,
+            64.027
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_phase_sum_minus_http_seconds": [
+          -0.01163719999999957,
+          -0.012804999999999733,
+          -0.011340799999999707
+        ],
+        "api_phase_rates_independently_qualified": false,
+        "total_speculation_rounds": 132
+      },
+      "excluded_warmup": {
+        "request_count": 1,
+        "independent_http": {
+          "values": [
+            3.3486436
+          ],
+          "count": 1,
+          "sum": 3.3486436,
+          "mean": 3.3486436,
+          "sample_stdev": null,
+          "min": 3.3486436,
+          "max": 3.3486436
+        },
+        "exact_complete_artifact_successes": 1,
+        "http_seconds_per_successful_task": 3.3486436,
+        "all_measured_wall_in_denominator": true,
+        "accounting_complete": true,
+        "actual_input_tokens": [
+          547
+        ],
+        "actual_output_tokens": [
+          135
+        ],
+        "finish_reasons": [
+          "tool_calls"
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "at_output_cap": [
+          false
+        ],
+        "clamp_fields": [
+          {}
+        ],
+        "strict_enforcement": [
+          true
+        ],
+        "grammar_path_qualified": [
+          true
+        ],
+        "actual_output_tokens_total": 135,
+        "generated_tokens_per_whole_http_second": 40.31483075714597,
+        "accepted_drafts_per_whole_http_second": 27.175182214076173,
+        "speculation_pooled": {
+          "head": {
+            "rounds": 26,
+            "drafted": 51,
+            "accepted": 51,
+            "acceptance": 1.0,
+            "accepted_per_round": 1.9615384615384615,
+            "rejected": 0
+          },
+          "lookup": {
+            "rounds": 18,
+            "drafted": 44,
+            "accepted": 40,
+            "acceptance": 0.9090909090909091,
+            "accepted_per_round": 2.2222222222222223,
+            "rejected": 4
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "accepted_per_round": null,
+            "rejected": 0
+          }
+        },
+        "drafted": 95,
+        "accepted": 91,
+        "combined_acceptance": 0.9578947368421052,
+        "api_prefill": {
+          "tokens": 547,
+          "reported_phase_seconds_total": 0.786,
+          "pooled_tokens_per_second": 695.9287531806616,
+          "arithmetic_mean_tokens_per_second": 695.929,
+          "per_request_rate_observations": [
+            695.929
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_decode": {
+          "tokens": 135,
+          "reported_phase_seconds_total": 2.1255,
+          "pooled_tokens_per_second": 63.51446718419195,
+          "arithmetic_mean_tokens_per_second": 63.514,
+          "per_request_rate_observations": [
+            63.514
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_phase_sum_minus_http_seconds": [
+          -0.43714359999999974
+        ],
+        "api_phase_rates_independently_qualified": false,
+        "total_speculation_rounds": 44
+      },
+      "all_attempts": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\response-0.raw",
+            "bytes": 1215,
+            "sha256": "2ac83100c51bad83e05427fa96cc5f9c6eb7bb643411251fa3ca632852ef494a"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\client-0.json",
+            "bytes": 14699,
+            "sha256": "8c6110e232ae68d02484ad1a93c78e2e726e4c6c9d2f066839530122f46e81e7"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\request-0.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\strict-0.raw",
+            "bytes": 1081,
+            "sha256": "020201e9ee68057f681b17d84def390c6f4c226287b697d6efa063bf5cf413af"
+          },
+          "wall_seconds": 3.3486436,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 715,
+                "end": 743
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 133374,
+            "end_offset": 134455,
+            "file_identity": [
+              6940694304499994282,
+              1970324839261844
+            ],
+            "wait_seconds": 0.00025579999783076346,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 786.0,
+              "predicted_ms": 2125.5,
+              "prompt_per_second": 695.929,
+              "predicted_per_second": 63.514,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 1,
+              "draft_n": 95,
+              "draft_n_accepted": 91,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 44,
+                "head": {
+                  "rounds": 26,
+                  "drafted": 51,
+                  "accepted": 51
+                },
+                "lookup": {
+                  "rounds": 18,
+                  "drafted": 44,
+                  "accepted": 40
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 44,
+              "head": {
+                "rounds": 26,
+                "drafted": 51,
+                "accepted": 51
+              },
+              "lookup": {
+                "rounds": 18,
+                "drafted": 44,
+                "accepted": 40
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "drafted": 95,
+            "accepted": 91,
+            "combined_acceptance": 0.9578947368421052,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "zero rounds/drafted/accepted",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\response-1.raw",
+            "bytes": 1218,
+            "sha256": "3186fd4ca2a3051b45f21182af6edbe0050cb4b438646224cdc8e8c9733e6cd1"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\client-1.json",
+            "bytes": 14703,
+            "sha256": "f0231e1a83545ef9f62e3752ec4576d6d575c08220cc1b01e7c2edc606bc384f"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\request-1.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\strict-1.raw",
+            "bytes": 1106,
+            "sha256": "be8e9aaecdfc425637259804397a4e26bcbc825067e6572b89ca5ef2c7311b0d"
+          },
+          "wall_seconds": 2.6597372,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 738,
+                "end": 766
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 134667,
+            "end_offset": 135773,
+            "file_identity": [
+              6940694304499994282,
+              1970324839261844
+            ],
+            "wait_seconds": 8.880000677891076e-05,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 516.2,
+              "predicted_ms": 2131.9,
+              "prompt_per_second": 1059.667,
+              "predicted_per_second": 63.324,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 95,
+              "draft_n_accepted": 91,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 44,
+                "head": {
+                  "rounds": 26,
+                  "drafted": 51,
+                  "accepted": 51
+                },
+                "lookup": {
+                  "rounds": 18,
+                  "drafted": 44,
+                  "accepted": 40
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 44,
+              "head": {
+                "rounds": 26,
+                "drafted": 51,
+                "accepted": 51
+              },
+              "lookup": {
+                "rounds": 18,
+                "drafted": 44,
+                "accepted": 40
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "drafted": 95,
+            "accepted": 91,
+            "combined_acceptance": 0.9578947368421052,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "zero rounds/drafted/accepted",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\response-2.raw",
+            "bytes": 1218,
+            "sha256": "92ddd98ec391118939539b55d635a1560fd2eca923aa1d7e64c720ccf1ed5ffe"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\client-2.json",
+            "bytes": 14702,
+            "sha256": "c7c04c3b48d6e0b321633b7a3397ed91d64ac28e4b6419b4762e1c5f481ca110"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\request-2.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\strict-2.raw",
+            "bytes": 782,
+            "sha256": "e48806f5ad754dd20a350cd10e6f8fb304681f265cdf5564bc8767d10ce6e314"
+          },
+          "wall_seconds": 2.469705,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 522,
+                "end": 550
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 135985,
+            "end_offset": 136767,
+            "file_identity": [
+              6940694304499994282,
+              1970324839261844
+            ],
+            "wait_seconds": 8.279999019578099e-05,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 511.5,
+              "predicted_ms": 1945.4,
+              "prompt_per_second": 1069.404,
+              "predicted_per_second": 69.394,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 95,
+              "draft_n_accepted": 91,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 44,
+                "head": {
+                  "rounds": 26,
+                  "drafted": 51,
+                  "accepted": 51
+                },
+                "lookup": {
+                  "rounds": 18,
+                  "drafted": 44,
+                  "accepted": 40
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 44,
+              "head": {
+                "rounds": 26,
+                "drafted": 51,
+                "accepted": 51
+              },
+              "lookup": {
+                "rounds": 18,
+                "drafted": 44,
+                "accepted": 40
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "drafted": 95,
+            "accepted": 91,
+            "combined_acceptance": 0.9578947368421052,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "zero rounds/drafted/accepted",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\response-3.raw",
+            "bytes": 1218,
+            "sha256": "0fe6e86652afc0ca0233e25c4edba68a5be96fb0976988fa79b9c916ede7e4cb"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\client-3.json",
+            "bytes": 14704,
+            "sha256": "67f2f45117e3b9a6ee83f52a10f60a2b31103debc0bbf8757081226ef82b14b3"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\request-3.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\strict-3.raw",
+            "bytes": 780,
+            "sha256": "82b9dab568cc5037290deaecd04099f6440bdde6b3945b7e0d6278cddce1a8e6"
+          },
+          "wall_seconds": 2.6282408,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 520,
+                "end": 548
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 137085,
+            "end_offset": 137865,
+            "file_identity": [
+              6940694304499994282,
+              1970324839261844
+            ],
+            "wait_seconds": 0.00019489999976940453,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 508.4,
+              "predicted_ms": 2108.5,
+              "prompt_per_second": 1075.924,
+              "predicted_per_second": 64.027,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 95,
+              "draft_n_accepted": 91,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 44,
+                "head": {
+                  "rounds": 26,
+                  "drafted": 51,
+                  "accepted": 51
+                },
+                "lookup": {
+                  "rounds": 18,
+                  "drafted": 44,
+                  "accepted": 40
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 44,
+              "head": {
+                "rounds": 26,
+                "drafted": 51,
+                "accepted": 51
+              },
+              "lookup": {
+                "rounds": 18,
+                "drafted": 44,
+                "accepted": 40
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "drafted": 95,
+            "accepted": 91,
+            "combined_acceptance": 0.9578947368421052,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "zero rounds/drafted/accepted",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        }
+      ],
+      "failure": null,
+      "memory_guard_evidence": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-off\\memory-series.json",
+        "bytes": 9165,
+        "sha256": "9dd82ee188d87288da4ac230a11cccf7ed3940eab2e93f7e2dd15d694917d8b9"
+      }
+    },
+    {
+      "window": "on-after",
+      "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after",
+      "summary": {
+        "schema": "halogen0185.grammar-window-summary.v1",
+        "window": "on-after",
+        "packet_sha256": "9da1eefe7a8b4a08c4a3b12eed227436fab85a551c42e7bfea76e502d7121415",
+        "identity": {
+          "version": "0.18.5",
+          "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+          "context": 262144,
+          "controller_run_id": "6165bc311ea84ae7b53fa8c8f7a5dd3a",
+          "backend_run_id": "4077fd3698154fac836642076a7aaee4",
+          "container_id": "3978afa9a6f4f6dd254a4723cc093bfb544402b39265033e9d8e2658835704eb",
+          "profile_sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12",
+          "controller_identity": {
+            "pid": 17092,
+            "creation_time_100ns": 134365576704556283,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "backend_identity": {
+            "pid": 2204,
+            "creation_time_100ns": 134365576810184489,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "native_log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\4077fd3698154fac836642076a7aaee4\\engine.log",
+          "frozen_settings": {
+            "checkpoint": "v2",
+            "context": 262144,
+            "prompt_cache": "Exact",
+            "prefill_chunk": 4096,
+            "max_prefill_tokens": 4096,
+            "disable_vision": false,
+            "draft_tokens": 2
+          },
+          "policy_environment": {
+            "HALOGEN_MTP_DEPTH": "2",
+            "HALOGEN_MTP_GATE_P": "0",
+            "HALOGEN_PLD": "3,3"
+          }
+        },
+        "attempted_requests": 4,
+        "planned_requests": 4,
+        "complete_window": true,
+        "continuous_memory_guard_passed": true,
+        "exclusive_gateway_traffic_passed": true,
+        "excluded_warmups": 1,
+        "measured_attempts": 3,
+        "planned_measured_requests": 3,
+        "all_measured_http_wall_seconds": 6.8256603,
+        "measured_http_walls": [
+          2.3785731,
+          2.2125109,
+          2.2345763
+        ],
+        "exact_complete_task_successes": 3,
+        "measured_failures": 0,
+        "http_seconds_per_successful_task": 2.2752201,
+        "generated_tokens_per_whole_http_second": 59.33491885026859,
+        "accepted_drafts_per_whole_http_second": 43.5122738235303,
+        "combined_acceptance": 0.9705882352941176,
+        "speculation_per_measured_request": [
+          {
+            "drafter": "mtp",
+            "rounds": 36,
+            "head": {
+              "rounds": 13,
+              "drafted": 25,
+              "accepted": 25
+            },
+            "lookup": {
+              "rounds": 8,
+              "drafted": 23,
+              "accepted": 22
+            },
+            "grammar": {
+              "rounds": 15,
+              "drafted": 54,
+              "accepted": 52
+            }
+          },
+          {
+            "drafter": "mtp",
+            "rounds": 36,
+            "head": {
+              "rounds": 13,
+              "drafted": 25,
+              "accepted": 25
+            },
+            "lookup": {
+              "rounds": 8,
+              "drafted": 23,
+              "accepted": 22
+            },
+            "grammar": {
+              "rounds": 15,
+              "drafted": 54,
+              "accepted": 52
+            }
+          },
+          {
+            "drafter": "mtp",
+            "rounds": 36,
+            "head": {
+              "rounds": 13,
+              "drafted": 25,
+              "accepted": 25
+            },
+            "lookup": {
+              "rounds": 8,
+              "drafted": 23,
+              "accepted": 22
+            },
+            "grammar": {
+              "rounds": 15,
+              "drafted": 54,
+              "accepted": 52
+            }
+          }
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "exact_payload_parity_within_window": true,
+        "strict_enforcement_all_responses": true,
+        "grammar_path_all_responses": true,
+        "quality_qualified": false,
+        "performance_promotion_qualified": false,
+        "full_goal_qualified": false,
+        "tool_dispatched": false,
+        "api_phase_clock_qualified": false,
+        "phase_scaling_or_overhead_subtraction_applied": false,
+        "interpretation": "Root must compare exact arguments text/payload/count/finish and complete HTTP cost across both ON bookends and OFF. No automatic promotion."
+      },
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\source.json",
+        "bytes": 1270,
+        "sha256": "319d7729864b806deccbe7b6a7a28fd673b7e23f8b0d8457aa1177ce951e661d"
+      },
+      "measured": {
+        "request_count": 3,
+        "independent_http": {
+          "values": [
+            2.3785731,
+            2.2125109,
+            2.2345763
+          ],
+          "count": 3,
+          "sum": 6.8256603,
+          "mean": 2.2752201,
+          "sample_stdev": 0.09018371486050028,
+          "min": 2.2125109,
+          "max": 2.3785731
+        },
+        "exact_complete_artifact_successes": 3,
+        "http_seconds_per_successful_task": 2.2752201,
+        "all_measured_wall_in_denominator": true,
+        "accounting_complete": true,
+        "actual_input_tokens": [
+          547,
+          547,
+          547
+        ],
+        "actual_output_tokens": [
+          135,
+          135,
+          135
+        ],
+        "finish_reasons": [
+          "tool_calls",
+          "tool_calls",
+          "tool_calls"
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "at_output_cap": [
+          false,
+          false,
+          false
+        ],
+        "clamp_fields": [
+          {},
+          {},
+          {}
+        ],
+        "strict_enforcement": [
+          true,
+          true,
+          true
+        ],
+        "grammar_path_qualified": [
+          true,
+          true,
+          true
+        ],
+        "actual_output_tokens_total": 405,
+        "generated_tokens_per_whole_http_second": 59.33491885026859,
+        "accepted_drafts_per_whole_http_second": 43.5122738235303,
+        "speculation_pooled": {
+          "head": {
+            "rounds": 39,
+            "drafted": 75,
+            "accepted": 75,
+            "acceptance": 1.0,
+            "accepted_per_round": 1.9230769230769231,
+            "rejected": 0
+          },
+          "lookup": {
+            "rounds": 24,
+            "drafted": 69,
+            "accepted": 66,
+            "acceptance": 0.9565217391304348,
+            "accepted_per_round": 2.75,
+            "rejected": 3
+          },
+          "grammar": {
+            "rounds": 45,
+            "drafted": 162,
+            "accepted": 156,
+            "acceptance": 0.9629629629629629,
+            "accepted_per_round": 3.466666666666667,
+            "rejected": 6
+          }
+        },
+        "drafted": 306,
+        "accepted": 297,
+        "combined_acceptance": 0.9705882352941176,
+        "api_prefill": {
+          "tokens": 1641,
+          "reported_phase_seconds_total": 1.6782,
+          "pooled_tokens_per_second": 977.8333929209869,
+          "arithmetic_mean_tokens_per_second": 978.1773333333333,
+          "per_request_rate_observations": [
+            992.56,
+            989.508,
+            952.464
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_decode": {
+          "tokens": 405,
+          "reported_phase_seconds_total": 5.677,
+          "pooled_tokens_per_second": 71.34049674123658,
+          "arithmetic_mean_tokens_per_second": 71.48266666666666,
+          "per_request_rate_observations": [
+            67.051,
+            73.779,
+            73.618
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_phase_sum_minus_http_seconds": [
+          0.18592689999999967,
+          0.17008910000000022,
+          0.17352370000000006
+        ],
+        "api_phase_rates_independently_qualified": false,
+        "total_speculation_rounds": 108
+      },
+      "excluded_warmup": {
+        "request_count": 1,
+        "independent_http": {
+          "values": [
+            3.1214541
+          ],
+          "count": 1,
+          "sum": 3.1214541,
+          "mean": 3.1214541,
+          "sample_stdev": null,
+          "min": 3.1214541,
+          "max": 3.1214541
+        },
+        "exact_complete_artifact_successes": 1,
+        "http_seconds_per_successful_task": 3.1214541,
+        "all_measured_wall_in_denominator": true,
+        "accounting_complete": true,
+        "actual_input_tokens": [
+          547
+        ],
+        "actual_output_tokens": [
+          135
+        ],
+        "finish_reasons": [
+          "tool_calls"
+        ],
+        "output_hashes": [
+          "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba"
+        ],
+        "at_output_cap": [
+          false
+        ],
+        "clamp_fields": [
+          {}
+        ],
+        "strict_enforcement": [
+          true
+        ],
+        "grammar_path_qualified": [
+          true
+        ],
+        "actual_output_tokens_total": 135,
+        "generated_tokens_per_whole_http_second": 43.24907420551211,
+        "accepted_drafts_per_whole_http_second": 31.71598775070888,
+        "speculation_pooled": {
+          "head": {
+            "rounds": 13,
+            "drafted": 25,
+            "accepted": 25,
+            "acceptance": 1.0,
+            "accepted_per_round": 1.9230769230769231,
+            "rejected": 0
+          },
+          "lookup": {
+            "rounds": 8,
+            "drafted": 23,
+            "accepted": 22,
+            "acceptance": 0.9565217391304348,
+            "accepted_per_round": 2.75,
+            "rejected": 1
+          },
+          "grammar": {
+            "rounds": 15,
+            "drafted": 54,
+            "accepted": 52,
+            "acceptance": 0.9629629629629629,
+            "accepted_per_round": 3.466666666666667,
+            "rejected": 2
+          }
+        },
+        "drafted": 102,
+        "accepted": 99,
+        "combined_acceptance": 0.9705882352941176,
+        "api_prefill": {
+          "tokens": 547,
+          "reported_phase_seconds_total": 0.8737,
+          "pooled_tokens_per_second": 626.0730227766968,
+          "arithmetic_mean_tokens_per_second": 626.073,
+          "per_request_rate_observations": [
+            626.073
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_decode": {
+          "tokens": 135,
+          "reported_phase_seconds_total": 2.0318,
+          "pooled_tokens_per_second": 66.44354759326706,
+          "arithmetic_mean_tokens_per_second": 66.444,
+          "per_request_rate_observations": [
+            66.444
+          ],
+          "independently_qualified": false,
+          "scaled_or_corrected": false
+        },
+        "api_phase_sum_minus_http_seconds": [
+          -0.21595409999999982
+        ],
+        "api_phase_rates_independently_qualified": false,
+        "total_speculation_rounds": 36
+      },
+      "all_attempts": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\response-0.raw",
+            "bytes": 1218,
+            "sha256": "cfcc4493a36f26078d2ca76401ea133d4e8671e746507cadd2d8e17cdac30d97"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\client-0.json",
+            "bytes": 14674,
+            "sha256": "b46fd208a4900de90bd0bd520a2ded880e7e90ca562dfb8020e3e8af0f81d2f7"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\request-0.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\strict-0.raw",
+            "bytes": 974,
+            "sha256": "5cc3d7f435dec88ea4cf2a838149d093625a3b1e9a1132d4e5708f861377ca18"
+          },
+          "wall_seconds": 3.1214541,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 714,
+                "end": 742
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 137884,
+            "end_offset": 138858,
+            "file_identity": [
+              6940694304499994282,
+              1407374885840619
+            ],
+            "wait_seconds": 0.0001689000055193901,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 873.7,
+              "predicted_ms": 2031.8,
+              "prompt_per_second": 626.073,
+              "predicted_per_second": 66.444,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 1,
+              "draft_n": 102,
+              "draft_n_accepted": 99,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 36,
+                "head": {
+                  "rounds": 13,
+                  "drafted": 25,
+                  "accepted": 25
+                },
+                "lookup": {
+                  "rounds": 8,
+                  "drafted": 23,
+                  "accepted": 22
+                },
+                "grammar": {
+                  "rounds": 15,
+                  "drafted": 54,
+                  "accepted": 52
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 36,
+              "head": {
+                "rounds": 13,
+                "drafted": 25,
+                "accepted": 25
+              },
+              "lookup": {
+                "rounds": 8,
+                "drafted": 23,
+                "accepted": 22
+              },
+              "grammar": {
+                "rounds": 15,
+                "drafted": 54,
+                "accepted": 52
+              }
+            },
+            "drafted": 102,
+            "accepted": 99,
+            "combined_acceptance": 0.9705882352941176,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "positive actual grammar rounds",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\response-1.raw",
+            "bytes": 1219,
+            "sha256": "a2bb562843055e263d92d611597473293bef42d0bf4ba8c881b55f8528ecfd8f"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\client-1.json",
+            "bytes": 14677,
+            "sha256": "287989b932bfd255857e545810ce11e7b052a91a2c541558ad1dabfc306469df"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\request-1.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\strict-1.raw",
+            "bytes": 997,
+            "sha256": "983ab4b9ab813c09e2b85600dcc2ea3276530716b47016756fb37daa1fdcf63a"
+          },
+          "wall_seconds": 2.3785731,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 737,
+                "end": 765
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 139178,
+            "end_offset": 140175,
+            "file_identity": [
+              6940694304499994282,
+              1407374885840619
+            ],
+            "wait_seconds": 8.880000677891076e-05,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 551.1,
+              "predicted_ms": 2013.4,
+              "prompt_per_second": 992.56,
+              "predicted_per_second": 67.051,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 102,
+              "draft_n_accepted": 99,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 36,
+                "head": {
+                  "rounds": 13,
+                  "drafted": 25,
+                  "accepted": 25
+                },
+                "lookup": {
+                  "rounds": 8,
+                  "drafted": 23,
+                  "accepted": 22
+                },
+                "grammar": {
+                  "rounds": 15,
+                  "drafted": 54,
+                  "accepted": 52
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 36,
+              "head": {
+                "rounds": 13,
+                "drafted": 25,
+                "accepted": 25
+              },
+              "lookup": {
+                "rounds": 8,
+                "drafted": 23,
+                "accepted": 22
+              },
+              "grammar": {
+                "rounds": 15,
+                "drafted": 54,
+                "accepted": 52
+              }
+            },
+            "drafted": 102,
+            "accepted": 99,
+            "combined_acceptance": 0.9705882352941176,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "positive actual grammar rounds",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\response-2.raw",
+            "bytes": 1220,
+            "sha256": "d4c7944555f64b646ab5d693b61a9284a7bae76f18b6a1f1d6f0fd4144eebb5a"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\client-2.json",
+            "bytes": 14679,
+            "sha256": "1d265bdeedce3a705719fe842f696823d1bbbb5cb6b9ac2d69467e6f0d12840e"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\request-2.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\strict-2.raw",
+            "bytes": 889,
+            "sha256": "a307a2dfea4ef21412ad4ee9bb176f9b67ad20271eec0c7a212a791c692d4f7c"
+          },
+          "wall_seconds": 2.2125109,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 521,
+                "end": 549
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 140497,
+            "end_offset": 141386,
+            "file_identity": [
+              6940694304499994282,
+              1407374885840619
+            ],
+            "wait_seconds": 0.00011829999857582152,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 552.8,
+              "predicted_ms": 1829.8,
+              "prompt_per_second": 989.508,
+              "predicted_per_second": 73.779,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 102,
+              "draft_n_accepted": 99,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 36,
+                "head": {
+                  "rounds": 13,
+                  "drafted": 25,
+                  "accepted": 25
+                },
+                "lookup": {
+                  "rounds": 8,
+                  "drafted": 23,
+                  "accepted": 22
+                },
+                "grammar": {
+                  "rounds": 15,
+                  "drafted": 54,
+                  "accepted": 52
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 36,
+              "head": {
+                "rounds": 13,
+                "drafted": 25,
+                "accepted": 25
+              },
+              "lookup": {
+                "rounds": 8,
+                "drafted": 23,
+                "accepted": 22
+              },
+              "grammar": {
+                "rounds": 15,
+                "drafted": 54,
+                "accepted": 52
+              }
+            },
+            "drafted": 102,
+            "accepted": 99,
+            "combined_acceptance": 0.9705882352941176,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "positive actual grammar rounds",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "raw": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\response-3.raw",
+            "bytes": 1220,
+            "sha256": "945576520452a9b7f70373e997e2931d3b45d8f8fd22168435b0c9ef6a3d630f"
+          },
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\client-3.json",
+            "bytes": 14678,
+            "sha256": "add7485fd5121a18d16a92bd69b06da2191613a453e43a57fb2dfdd448ccfd27"
+          },
+          "request": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\request-3.json",
+            "bytes": 2135,
+            "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+          },
+          "native_strict_log": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\strict-3.raw",
+            "bytes": 781,
+            "sha256": "6c67e5abedf05c15a15882beffdd812832f12afde0c64a71ce994ed6b1ae0306"
+          },
+          "wall_seconds": 2.2345763,
+          "strict_enforcement": {
+            "valid": true,
+            "passed": true,
+            "matches": [
+              {
+                "enforced": 1,
+                "declared": 1,
+                "start": 521,
+                "end": 549
+              }
+            ],
+            "status_count": 1,
+            "exactly_one_of_one_enforced": true,
+            "source": "New native engine-log bytes only; not inferred from HTTP tool count",
+            "start_offset": 141602,
+            "end_offset": 142383,
+            "file_identity": [
+              6940694304499994282,
+              1407374885840619
+            ],
+            "wait_seconds": 0.0002280999906361103,
+            "error": null,
+            "exclusive_gateway_delta_one": true
+          },
+          "transport_error": null,
+          "accounting_error": null,
+          "post_request_error": null,
+          "accounting": {
+            "accounting_valid": true,
+            "accounting_errors": [],
+            "finish_reason": "tool_calls",
+            "at_output_cap": false,
+            "clamp_fields": {},
+            "completion_complete": true,
+            "actual_input_tokens": 547,
+            "actual_output_tokens": 135,
+            "argument_text": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}",
+            "parsed_arguments": {
+              "incident_number": "INC0010427",
+              "priority": "2",
+              "state": "2",
+              "business_service": "Employee onboarding",
+              "assignment_group": "Identity Operations",
+              "affected_users": 27,
+              "contains_pii": false,
+              "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+            },
+            "argument_error": null,
+            "function_name": "emit_incident_summary",
+            "canonical_payload": {
+              "content": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "emit_incident_summary",
+                    "arguments": "{\"incident_number\": \"INC0010427\", \"priority\": \"2\", \"state\": \"2\", \"business_service\": \"Employee onboarding\", \"assignment_group\": \"Identity Operations\", \"affected_users\": 27, \"contains_pii\": false, \"short_description\": \"New starters get HTTP 403 at /api/now/table/incident\"}"
+                  }
+                }
+              ],
+              "finish_reason": "tool_calls"
+            },
+            "canonical_payload_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "output_sha256": "87bce7fd70a384d60e5448e58e1a93ab08639e8da0596174042f8c3d08597cba",
+            "usage": {
+              "prompt_tokens": 547,
+              "completion_tokens": 135,
+              "total_tokens": 682,
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "timings": {
+              "prompt_n": 547,
+              "predicted_n": 135,
+              "prompt_ms": 574.3,
+              "predicted_ms": 1833.8,
+              "prompt_per_second": 952.464,
+              "predicted_per_second": 73.618,
+              "cache_n": 0,
+              "disk_restore_n": 0,
+              "disk_restore_ms": 0.0,
+              "prefix_n": 547,
+              "draft_n": 102,
+              "draft_n_accepted": 99,
+              "speculation": {
+                "drafter": "mtp",
+                "rounds": 36,
+                "head": {
+                  "rounds": 13,
+                  "drafted": 25,
+                  "accepted": 25
+                },
+                "lookup": {
+                  "rounds": 8,
+                  "drafted": 23,
+                  "accepted": 22
+                },
+                "grammar": {
+                  "rounds": 15,
+                  "drafted": 54,
+                  "accepted": 52
+                }
+              }
+            },
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 36,
+              "head": {
+                "rounds": 13,
+                "drafted": 25,
+                "accepted": 25
+              },
+              "lookup": {
+                "rounds": 8,
+                "drafted": 23,
+                "accepted": 22
+              },
+              "grammar": {
+                "rounds": 15,
+                "drafted": 54,
+                "accepted": 52
+              }
+            },
+            "drafted": 102,
+            "accepted": 99,
+            "combined_acceptance": 0.9705882352941176,
+            "grammar_path_qualified": true,
+            "grammar_path_expected": "positive actual grammar rounds",
+            "quality": {
+              "passed": true,
+              "exact_arguments_passed": true,
+              "qualified": false,
+              "tool_dispatched": false,
+              "note": "Exact eight typed fields and complete single function call; native strict proof is separately mandatory"
+            },
+            "api_phase_clock_qualified": false,
+            "phase_scaling_or_overhead_subtraction_applied": false
+          }
+        }
+      ],
+      "failure": null,
+      "memory_guard_evidence": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-on-after\\memory-series.json",
+        "bytes": 8549,
+        "sha256": "0e5d043314dd38043962acf5d4e76070dcd42c5a61dc5e8ccf029f88325032e0"
+      }
+    }
+  ],
+  "manifest_policy_proof": [
+    {
+      "window": "on-before",
+      "manifest": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\2a16879a9dc14a27981470e046f5fb9a\\manifest.json",
+        "bytes": 6621,
+        "sha256": "14c4114f8316fd83ed9ecf6de99217e4cd18f858c99e0c23005676587c0f2a87"
+      },
+      "container": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\2a16879a9dc14a27981470e046f5fb9a\\container.json",
+        "bytes": 74,
+        "sha256": "5950e72c0d46371d8066083378c80faaf4eecf4a90a19491a7e0e1c02d4756f5"
+      },
+      "profile": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\benchmark-prep\\serving0185-full262-exact-fixed2-gate0.json",
+        "bytes": 1737,
+        "sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12"
+      },
+      "native_environment": {
+        "HALOGEN_WSL_PROFILE": "halogen0185-dxg",
+        "HALOGEN_CTX": "262144",
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_CK_OVERLAY": "",
+        "HALOGEN_PREFLIGHT_PROFILE": "flash0185-v2-device64-chunk64-v1",
+        "HALOGEN_HYBRID_PROFILE": "vgm64-0185-v2-device64-v1",
+        "HALOGEN_KV_POOL_POSITIONS": "262144",
+        "HALOGEN_KV_SLOTS": "1",
+        "HALOGEN_HOST_RESERVE_GIB": "18",
+        "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+        "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+        "HALOGEN_FLASH_PIN_TRUNK": "1",
+        "HALOGEN_PROMPT_CACHE": "1",
+        "HALOGEN_DMALLOC_LOG": "1",
+        "HALOGEN_VERBOSE": "1",
+        "HALOGEN_ENGINE_WATCHDOG_S": "120",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+        "HSA_ENABLE_SDMA": "1",
+        "HSA_ENABLE_DXG_DETECTION": "1",
+        "AMD_SERIALIZE_KERNEL": "0",
+        "AMD_SERIALIZE_COPY": "0",
+        "LD_PRELOAD": "/candidate/libhalogen0185-v2-preflight.so:/candidate/hip-register-private-rw.so",
+        "HALOGEN_API_PORT": "8731",
+        "HF_HUB_OFFLINE": "1",
+        "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_VISION_TOWER": "/models/qwen38-flash-next-vision.hgn",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PREFILL_CHUNK": "4096",
+        "HALOGEN_MAX_TOK": "4096",
+        "HALOGEN_MTP_GATE_P": "0",
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_ENABLE_THINKING": "1",
+        "HALOGEN_MAX_THINKING_TOKENS": "2048",
+        "HALOGEN_REASONING_EFFORT": "medium"
+      },
+      "source_pins": {
+        "scripts\\api_defaults.py": "229f5b277b416e46f111227e40a7134b7f4d04287ec3b3d00d1c3e0c86312584",
+        "scripts\\auth_api.py": "848349f1c912f9db2eaa1456cb00ca57563314e60b49f00a2eca290105c6c426",
+        "scripts\\bounded_hash.py": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2",
+        "scripts\\bridge_adapter.py": "1e3475ddc0a81ba43bf436ab93b9d4eb0a23d38280a5b9397fade44879dba720",
+        "scripts\\checkpoint_integrity.py": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea",
+        "scripts\\entrypoint_adapter.py": "5b55489d1552d696e9c994a61b25b4578f3ed2bda2452be5a192a66bdc4dad73",
+        "scripts\\halogen0185_hip_probe.c": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
+        "scripts\\host_frames.py": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+        "scripts\\kernel_controls.py": "4dff28d088a9f4dc06bf030582ccacfd9c66a5ed0464703c47070564212ab853",
+        "scripts\\lease_supervisor.py": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de",
+        "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "scripts\\memory_budget.py": "cb70b00585a5836aef5b8821227b7d1e892d79a372baa329a016f9b8f45780b2",
+        "scripts\\portable.py": "54c1148ced460da25630bd4986aee87e17202cdc2ca5aaf91ab516d34d65f48d",
+        "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "scripts\\runner.py": "ab0b855258a18ed08a9255f94e2482a46fd4d3f0d79cc19daa30c8ddf00d77f2",
+        "scripts\\sample.ps1": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d",
+        "scripts\\service.py": "4ce6c946b2a958627dc76f426b53ba555089a75dda0ef8f047bae0998587b593",
+        "scripts\\speculation_policy.py": "dff473698e3e28d742a1eea510816d2f8a8873745326f3a223bfe65f45a1927f",
+        "scripts\\startup_cache.py": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
+        "scripts\\startup_guard.py": "acfcd5ec0fe01539087428149a3b7028c3349716111a53451a9891b59c4ef011",
+        "scripts\\startup_monitor.py": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0",
+        "scripts\\state_io.py": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
+        "patches\\halogen-preflight-bridge.c": "c958304ee67d78a4b6c9168d9f875998b1d6a562f80693666489deb4790f0217",
+        "patches\\halogen-preflight-trampoline.S": "77f30756961d2e1680af8e162c2634e57b1e638ac2cf963796ad1f5fc409aa99",
+        "patches\\hip-preflight-plan.h": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b",
+        "patches\\hip-register-hybrid.c": "de4be86ca17b730155b490b29584fcd1672bfae663470c07f8e24b946d8c9a69",
+        "patches\\hip-register-private-rw.c": "7fe23337662d79fe9463cfdfed05ea796712e7ccedf5ad0409deac380375afab",
+        "profiles\\release.json": "05b7f38614f0f2ed234a820e91d8291a57662619f29be306d673bc25fc62a7d3",
+        "profiles\\sources.json": "9a0a34eaae5453946a751021b4ca0dfc8192968036dcfde89d18bb207da38104"
+      },
+      "grammar_default_when_omitted": 1,
+      "effective_gather_threads": 64,
+      "exact_runtime_profile_and_container_bound": true
+    },
+    {
+      "window": "off",
+      "manifest": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\e1c8811dc4c2411c92012bb9760750d3\\manifest.json",
+        "bytes": 6681,
+        "sha256": "15469098c97e51a07b9cd5f9e996c7cc4cad8560de7c41fb314879a379fdbeae"
+      },
+      "container": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\e1c8811dc4c2411c92012bb9760750d3\\container.json",
+        "bytes": 74,
+        "sha256": "51275288a88de4fddda131668b0c9763ca19fc37d04da2a7ede52f0faab7b3cc"
+      },
+      "profile": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\next-grammar-prep\\serving0185-full262-grammar-off.json",
+        "bytes": 2964,
+        "sha256": "c0591e70d28c03a6784f70535b86e110031d63e87f77f70257e1b805eb11b092"
+      },
+      "native_environment": {
+        "HALOGEN_WSL_PROFILE": "halogen0185-dxg",
+        "HALOGEN_CTX": "262144",
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_CK_OVERLAY": "",
+        "HALOGEN_PREFLIGHT_PROFILE": "flash0185-v2-device64-chunk64-v1",
+        "HALOGEN_HYBRID_PROFILE": "vgm64-0185-v2-device64-v1",
+        "HALOGEN_KV_POOL_POSITIONS": "262144",
+        "HALOGEN_KV_SLOTS": "1",
+        "HALOGEN_HOST_RESERVE_GIB": "18",
+        "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+        "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+        "HALOGEN_FLASH_PIN_TRUNK": "1",
+        "HALOGEN_PROMPT_CACHE": "1",
+        "HALOGEN_DMALLOC_LOG": "1",
+        "HALOGEN_VERBOSE": "1",
+        "HALOGEN_ENGINE_WATCHDOG_S": "120",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+        "HSA_ENABLE_SDMA": "1",
+        "HSA_ENABLE_DXG_DETECTION": "1",
+        "AMD_SERIALIZE_KERNEL": "0",
+        "AMD_SERIALIZE_COPY": "0",
+        "LD_PRELOAD": "/candidate/libhalogen0185-v2-preflight.so:/candidate/hip-register-private-rw.so",
+        "HALOGEN_API_PORT": "8731",
+        "HF_HUB_OFFLINE": "1",
+        "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_VISION_TOWER": "/models/qwen38-flash-next-vision.hgn",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PREFILL_CHUNK": "4096",
+        "HALOGEN_MAX_TOK": "4096",
+        "HALOGEN_GRAMMAR_DRAFT": "0",
+        "HALOGEN_MTP_GATE_P": "0",
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_ENABLE_THINKING": "1",
+        "HALOGEN_MAX_THINKING_TOKENS": "2048",
+        "HALOGEN_REASONING_EFFORT": "medium"
+      },
+      "source_pins": {
+        "scripts\\api_defaults.py": "229f5b277b416e46f111227e40a7134b7f4d04287ec3b3d00d1c3e0c86312584",
+        "scripts\\auth_api.py": "848349f1c912f9db2eaa1456cb00ca57563314e60b49f00a2eca290105c6c426",
+        "scripts\\bounded_hash.py": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2",
+        "scripts\\bridge_adapter.py": "1e3475ddc0a81ba43bf436ab93b9d4eb0a23d38280a5b9397fade44879dba720",
+        "scripts\\checkpoint_integrity.py": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea",
+        "scripts\\entrypoint_adapter.py": "5b55489d1552d696e9c994a61b25b4578f3ed2bda2452be5a192a66bdc4dad73",
+        "scripts\\halogen0185_hip_probe.c": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
+        "scripts\\host_frames.py": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+        "scripts\\kernel_controls.py": "4dff28d088a9f4dc06bf030582ccacfd9c66a5ed0464703c47070564212ab853",
+        "scripts\\lease_supervisor.py": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de",
+        "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "scripts\\memory_budget.py": "cb70b00585a5836aef5b8821227b7d1e892d79a372baa329a016f9b8f45780b2",
+        "scripts\\portable.py": "54c1148ced460da25630bd4986aee87e17202cdc2ca5aaf91ab516d34d65f48d",
+        "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "scripts\\runner.py": "ab0b855258a18ed08a9255f94e2482a46fd4d3f0d79cc19daa30c8ddf00d77f2",
+        "scripts\\sample.ps1": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d",
+        "scripts\\service.py": "4ce6c946b2a958627dc76f426b53ba555089a75dda0ef8f047bae0998587b593",
+        "scripts\\speculation_policy.py": "dff473698e3e28d742a1eea510816d2f8a8873745326f3a223bfe65f45a1927f",
+        "scripts\\startup_cache.py": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
+        "scripts\\startup_guard.py": "acfcd5ec0fe01539087428149a3b7028c3349716111a53451a9891b59c4ef011",
+        "scripts\\startup_monitor.py": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0",
+        "scripts\\state_io.py": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
+        "patches\\halogen-preflight-bridge.c": "c958304ee67d78a4b6c9168d9f875998b1d6a562f80693666489deb4790f0217",
+        "patches\\halogen-preflight-trampoline.S": "77f30756961d2e1680af8e162c2634e57b1e638ac2cf963796ad1f5fc409aa99",
+        "patches\\hip-preflight-plan.h": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b",
+        "patches\\hip-register-hybrid.c": "de4be86ca17b730155b490b29584fcd1672bfae663470c07f8e24b946d8c9a69",
+        "patches\\hip-register-private-rw.c": "7fe23337662d79fe9463cfdfed05ea796712e7ccedf5ad0409deac380375afab",
+        "profiles\\release.json": "05b7f38614f0f2ed234a820e91d8291a57662619f29be306d673bc25fc62a7d3",
+        "profiles\\sources.json": "9a0a34eaae5453946a751021b4ca0dfc8192968036dcfde89d18bb207da38104"
+      },
+      "grammar_default_when_omitted": 1,
+      "effective_gather_threads": 64,
+      "exact_runtime_profile_and_container_bound": true
+    },
+    {
+      "window": "on-after",
+      "manifest": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\4077fd3698154fac836642076a7aaee4\\manifest.json",
+        "bytes": 6621,
+        "sha256": "10695409631d728c28654b97cb8396b6037f35b1c19cab4530e124ae2a9015fb"
+      },
+      "container": {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.5\\.local\\services\\4077fd3698154fac836642076a7aaee4\\container.json",
+        "bytes": 74,
+        "sha256": "9264f9ea5532015370a2908fb049d482566acef3381f66b0aa583a7a182ca54a"
+      },
+      "profile": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\benchmark-prep\\serving0185-full262-exact-fixed2-gate0.json",
+        "bytes": 1737,
+        "sha256": "abd8ea887a4f90b4ee219e01e0fc1b14ee8f39c60af6330d1f8616d967e19e12"
+      },
+      "native_environment": {
+        "HALOGEN_WSL_PROFILE": "halogen0185-dxg",
+        "HALOGEN_CTX": "262144",
+        "HALOGEN_CHECKPOINT": "/models/qwen38-flash-next-v2.hgn",
+        "HALOGEN_CK_OVERLAY": "",
+        "HALOGEN_PREFLIGHT_PROFILE": "flash0185-v2-device64-chunk64-v1",
+        "HALOGEN_HYBRID_PROFILE": "vgm64-0185-v2-device64-v1",
+        "HALOGEN_KV_POOL_POSITIONS": "262144",
+        "HALOGEN_KV_SLOTS": "1",
+        "HALOGEN_HOST_RESERVE_GIB": "18",
+        "HALOGEN_HYBRID_COPY_BYTES": "68719476736",
+        "HALOGEN_HYBRID_RECLAIM_COPY": "1",
+        "HALOGEN_FLASH_PIN_TRUNK": "1",
+        "HALOGEN_PROMPT_CACHE": "1",
+        "HALOGEN_DMALLOC_LOG": "1",
+        "HALOGEN_VERBOSE": "1",
+        "HALOGEN_ENGINE_WATCHDOG_S": "120",
+        "HALOGEN_TOKENIZER": "/models/tokenizer",
+        "HALOGEN_PREFLIGHT_TRACE_ONLY": "0",
+        "HSA_ENABLE_SDMA": "1",
+        "HSA_ENABLE_DXG_DETECTION": "1",
+        "AMD_SERIALIZE_KERNEL": "0",
+        "AMD_SERIALIZE_COPY": "0",
+        "LD_PRELOAD": "/candidate/libhalogen0185-v2-preflight.so:/candidate/hip-register-private-rw.so",
+        "HALOGEN_API_PORT": "8731",
+        "HF_HUB_OFFLINE": "1",
+        "HALOGEN_NGRAM_TABLE": "/ngram-w4b.hgn",
+        "HALOGEN_CHECKPOINT_VARIANT": "v2",
+        "HALOGEN_VISION_TOWER": "/models/qwen38-flash-next-vision.hgn",
+        "HALOGEN_MTP_DEPTH": "2",
+        "HALOGEN_PREFILL_CHUNK": "4096",
+        "HALOGEN_MAX_TOK": "4096",
+        "HALOGEN_MTP_GATE_P": "0",
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_ENABLE_THINKING": "1",
+        "HALOGEN_MAX_THINKING_TOKENS": "2048",
+        "HALOGEN_REASONING_EFFORT": "medium"
+      },
+      "source_pins": {
+        "scripts\\api_defaults.py": "229f5b277b416e46f111227e40a7134b7f4d04287ec3b3d00d1c3e0c86312584",
+        "scripts\\auth_api.py": "848349f1c912f9db2eaa1456cb00ca57563314e60b49f00a2eca290105c6c426",
+        "scripts\\bounded_hash.py": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2",
+        "scripts\\bridge_adapter.py": "1e3475ddc0a81ba43bf436ab93b9d4eb0a23d38280a5b9397fade44879dba720",
+        "scripts\\checkpoint_integrity.py": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea",
+        "scripts\\entrypoint_adapter.py": "5b55489d1552d696e9c994a61b25b4578f3ed2bda2452be5a192a66bdc4dad73",
+        "scripts\\halogen0185_hip_probe.c": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
+        "scripts\\host_frames.py": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+        "scripts\\kernel_controls.py": "4dff28d088a9f4dc06bf030582ccacfd9c66a5ed0464703c47070564212ab853",
+        "scripts\\lease_supervisor.py": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de",
+        "scripts\\lookup_source.py": "3bb61c4a8b2007e43ba9b61b8b6c79d02a38b6830b7f77ded7292b4678761426",
+        "scripts\\matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+        "scripts\\matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+        "scripts\\memory_budget.py": "cb70b00585a5836aef5b8821227b7d1e892d79a372baa329a016f9b8f45780b2",
+        "scripts\\portable.py": "54c1148ced460da25630bd4986aee87e17202cdc2ca5aaf91ab516d34d65f48d",
+        "scripts\\private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+        "scripts\\runner.py": "ab0b855258a18ed08a9255f94e2482a46fd4d3f0d79cc19daa30c8ddf00d77f2",
+        "scripts\\sample.ps1": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d",
+        "scripts\\service.py": "4ce6c946b2a958627dc76f426b53ba555089a75dda0ef8f047bae0998587b593",
+        "scripts\\speculation_policy.py": "dff473698e3e28d742a1eea510816d2f8a8873745326f3a223bfe65f45a1927f",
+        "scripts\\startup_cache.py": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
+        "scripts\\startup_guard.py": "acfcd5ec0fe01539087428149a3b7028c3349716111a53451a9891b59c4ef011",
+        "scripts\\startup_monitor.py": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0",
+        "scripts\\state_io.py": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
+        "patches\\halogen-preflight-bridge.c": "c958304ee67d78a4b6c9168d9f875998b1d6a562f80693666489deb4790f0217",
+        "patches\\halogen-preflight-trampoline.S": "77f30756961d2e1680af8e162c2634e57b1e638ac2cf963796ad1f5fc409aa99",
+        "patches\\hip-preflight-plan.h": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b",
+        "patches\\hip-register-hybrid.c": "de4be86ca17b730155b490b29584fcd1672bfae663470c07f8e24b946d8c9a69",
+        "patches\\hip-register-private-rw.c": "7fe23337662d79fe9463cfdfed05ea796712e7ccedf5ad0409deac380375afab",
+        "profiles\\release.json": "05b7f38614f0f2ed234a820e91d8291a57662619f29be306d673bc25fc62a7d3",
+        "profiles\\sources.json": "9a0a34eaae5453946a751021b4ca0dfc8192968036dcfde89d18bb207da38104"
+      },
+      "grammar_default_when_omitted": 1,
+      "effective_gather_threads": 64,
+      "exact_runtime_profile_and_container_bound": true
+    }
+  ],
+  "matching_image_context_and_frozen_settings": true,
+  "same_other_native_environment": true,
+  "same_runtime_source_pins": true,
+  "lifecycle_run_identities_expected_to_differ": true,
+  "exact_all_twelve_payload_argument_text_token_finish_parity": true,
+  "complete_bracket": true,
+  "every_complete_artifact_strictly_enforced_and_semantically_correct": true,
+  "all_required_qualifications_passed": true,
+  "decision": {
+    "qualified": true,
+    "recommendation": "retain_on",
+    "reason": "Both ON bookends beat OFF beyond their relative drift",
+    "on_benefit_established": true,
+    "off_benefit_established": false,
+    "on_bookend_relative_drift_percent": 2.936547634968645,
+    "on_http_reductions_vs_off_percent": [
+      14.524225854549611,
+      12.014189030410238
+    ],
+    "off_http_reductions_vs_on_percent": [
+      -16.99221329055689,
+      -13.654689202742777
+    ],
+    "off_http_change_vs_on_before_percent": 16.99221329055689,
+    "off_http_change_vs_on_after_percent": 13.654689202742777,
+    "off_http_change_vs_on_bookend_mean_percent": 15.299303801103559,
+    "on_bookend_signed_drift_percent": 2.936547634968645,
+    "strict_tool_fixture_useful_task_gain_only": true,
+    "automatic_production_promotion": false,
+    "broader_quality_or_population_or_distribution_claim": false
+  },
+  "frozen_request": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\next-grammar-prep\\incident-summary.request.json",
+    "bytes": 2135,
+    "sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea"
+  },
+  "request": {
+    "model": "halogen-v2",
+    "temperature": 0,
+    "seed": 1,
+    "stream": false,
+    "max_tokens": 512,
+    "drafter": "mtp",
+    "presence_penalty": 0,
+    "frequency_penalty": 0,
+    "repetition_penalty": 1,
+    "prompt_cache_policy": "no_store",
+    "enable_thinking": false,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "parallel_tool_calls": false,
+    "tool_choice": {
+      "type": "function",
+      "function": {
+        "name": "emit_incident_summary"
+      }
+    },
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "emit_incident_summary",
+          "strict": true,
+          "description": "Package the supplied fictional incident evidence as a read-only response. The call is inspected as output and is never dispatched or executed.",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "incident_number",
+              "priority",
+              "state",
+              "business_service",
+              "assignment_group",
+              "affected_users",
+              "contains_pii",
+              "short_description"
+            ],
+            "properties": {
+              "incident_number": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "business_service": {
+                "type": "string"
+              },
+              "assignment_group": {
+                "type": "string"
+              },
+              "affected_users": {
+                "type": "integer"
+              },
+              "contains_pii": {
+                "type": "boolean"
+              },
+              "short_description": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Use emit_incident_summary exactly once to return only the stated fields from this fictional incident record. Copy each value exactly; do not infer, query, perform any action, or add narrative. The tool call is only a local output format and will never be dispatched. Incident number: INC0010427. Priority code (string): 2. State code (string): 2. Business service: Employee onboarding. Assignment group: Identity Operations. Affected users (integer): 27. Contains PII (boolean): false. Short description (exact string): \"New starters get HTTP 403 at /api/now/table/incident\". Return one complete call and finish."
+      }
+    ]
+  },
+  "frozen_packet": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\next-grammar-prep\\packet.json",
+    "bytes": 5646,
+    "sha256": "9da1eefe7a8b4a08c4a3b12eed227436fab85a551c42e7bfea76e502d7121415"
+  },
+  "packet_seal": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\next-grammar-prep\\seal-packet.json",
+    "bytes": 802,
+    "sha256": "e8a4ad591559082e37d5c4b1a4d087dcb9f7ea13049e5de0d0ba3925a175c42e"
+  },
+  "frozen_selection": {
+    "metric": "Independent complete HTTP task cost after exact full quality/parity/strict/path qualification",
+    "on_bookend_relative_drift": "d=abs(ONafter/ONbefore-1)",
+    "on_wins": "1-ONi/OFF > d for both ON bookends",
+    "off_wins": "1-OFF/ONi > d for both ON bookends",
+    "inconclusive": "Retain ON",
+    "off_win_serving": "Root may retain OFF through normal verified lifecycle; no extra inference",
+    "predeclared_before_requests": true,
+    "automatic_production_promotion": false
+  },
+  "root_protocol": {
+    "evidence": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\next-grammar-prep\\root-protocol.json",
+      "bytes": 2573,
+      "sha256": "86bce301c035eda9924f51aaf17c23cb5f1f3e0912a6c9515da56b03d2906d9d"
+    },
+    "value": {
+      "schema": "halogen0185.root-strict-tool-grammar-protocol.v1",
+      "selected_by": "root under standing optimization and lifecycle authorization",
+      "request_sha256": "568e8e617b0d34d2b0da15d4f3e97e4fc73b7cc94b22976f6890f2a3e9226eea",
+      "request_bytes": 2135,
+      "same_request_all_windows": true,
+      "windows": [
+        "on-before",
+        "off",
+        "on-after"
+      ],
+      "excluded_warmups_per_window": 1,
+      "measured_requests_per_window": 3,
+      "max_total_requests": 12,
+      "request_retries_permitted": false,
+      "temperature": 0,
+      "seed": 1,
+      "thinking": false,
+      "cache_policy": "no_store",
+      "actual_prompt_tokens_max_exclusive": 8192,
+      "body_bytes_max": 6144,
+      "message_characters_max": 4096,
+      "max_output_tokens": 512,
+      "entry_and_continuous_reserve_gib": 18,
+      "long_and_npu_admission_unchanged": true,
+      "normal_startup_floor_gib": {
+        "physical": 35,
+        "commit": 131
+      },
+      "startup_vision_allowance_unchanged": true,
+      "context_capacity": 262144,
+      "sole_hardware_owner": "root",
+      "baseline_launch_receipt": "../pld4-final-control-launch.json",
+      "temporary_off_profile": "serving0185-full262-grammar-off.json",
+      "final_profile": "C:/Projects/strix-alloy-clean/server/.local/halogen0185-update-20261015/benchmark-prep/serving0185-full262-exact-fixed2-gate0.json",
+      "only_profile_change": "HALOGEN_GRAMMAR_DRAFT omitted default1 versus explicit0",
+      "strict_schema_enforcement_must_remain_enabled": true,
+      "per_request_native_strict_log_status_required": "exactly one strict tools 1 of 1 enforced",
+      "per_request_exclusive_gateway_delta": 1,
+      "new_log_slice_max_bytes": 1048576,
+      "log_read_only_wait_max_seconds": 2,
+      "baseline_positive_grammar_rounds_required_before_restart": true,
+      "off_requires_zero_grammar_counters": true,
+      "all_failures_raw_bytes_and_all_http_time_retained": true,
+      "parity": "function name, exact arguments text, content, reasoning, finish and actual token counts; random call IDs excluded",
+      "semantic_success": "one complete call with exactly the eight supplied values and primitive types",
+      "selection": "Symmetric: ON benefit requires both ON means beating OFF beyond ON bookend drift; OFF benefit requires OFF beating both ON means beyond their relative drift. Every measured result must qualify. Inconclusive retains ON; any promotion is workload-scoped, never a blanket sampler or target change.",
+      "tool_or_generated_code_execution_permitted": false,
+      "native_phase_clock_qualification_claim": false,
+      "profile_and_request_must_pass_final_frozen_packet_verification": true,
+      "leave_final_server_ready_open": true,
+      "full_goal_complete": false
+    }
+  },
+  "expected_arguments": {
+    "incident_number": "INC0010427",
+    "priority": "2",
+    "state": "2",
+    "business_service": "Employee onboarding",
+    "assignment_group": "Identity Operations",
+    "affected_users": 27,
+    "contains_pii": false,
+    "short_description": "New starters get HTTP 403 at /api/now/table/incident"
+  },
+  "api_phase_rates_independently_qualified": false,
+  "phase_scaling_or_overhead_subtraction_applied": false,
+  "no_outlier_discarded_or_explained": true,
+  "statistical_significance_claim": false,
+  "broader_quality_or_population_or_distribution_claim": false,
+  "complete_goal_or_automatic_production_promotion": false,
+  "tool_or_generated_code_executed": false,
+  "source_accounting_limit": "API head accepted derives from native committed/round/shared/lookup/grammar accounting. Grammar maps native D fields when supplied; API defaults omitted grammar fields to0. Positive ON counters prove exercise; OFF API zeros are interpreted with actual off environment and matched engine, not as an independent raw-D instrument.",
+  "publication": {
+    "helper": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\next-grammar-prep\\report_grammar.py",
+      "bytes": 25451,
+      "sha256": "cd39cf5dca37ce076dba767344b1b25402b38c0f9c3f3d2034009db532a57c00"
+    },
+    "collector": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\next-grammar-prep\\grammar_measure.py",
+      "bytes": 31894,
+      "sha256": "4340b756fbe56580ac4fd288b59426799591efa2a2a3458bc8629e64d84296b6"
+    },
+    "raw_replay_verified": true,
+    "all_requests_clients_and_new_native_log_slices_checked": true,
+    "source_profile_manifest_and_strict_evidence_verified": true,
+    "ready_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-goal-continuation-20261015\\grammar-final-ready-open.json",
+      "bytes": 14588,
+      "sha256": "17a9ef0829869304523c5fede80771b3fca05ad59c9d5afcb415e731e5990cad"
+    },
+    "hardware_API_lifecycle_or_production_mutations": false
+  }
+}

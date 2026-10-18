@@ -1,0 +1,947 @@
+{
+  "schema": "halogen0185.natural16k-mtp-bracket.v1",
+  "date": "2026-10-15",
+  "generated_utc": "2026-10-15T13:41:21.920634+00:00",
+  "method": {
+    "actual_input_tokens": 16384,
+    "output_tokens": 128,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": "Off rendered prompt; no reasoning output",
+    "cache": "Off",
+    "context_capacity": 32768,
+    "prefill_chunk": 4096,
+    "max_prefill_tokens": 4096,
+    "transport": "nonstream complete JSON response",
+    "excluded_warmups_per_window": 1,
+    "measured_repetitions_per_window": 3,
+    "bracket_order": "fixed2 gate0 \u2192 omitted depth gate0.90 \u2192 fixed2 gate0",
+    "request": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0180-adaptive-option-20261011\\client\\request-16384.json",
+      "bytes": 69890,
+      "sha256": "0b616f5eb0aa779244cdbba4c2c7d42c8ee43ec200fc41f596e8331440f5a28c"
+    },
+    "collector": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\benchmark-prep\\measure0185.py",
+      "bytes": 21974,
+      "sha256": "090b088943caef0f81fb87cf73e0e6ac7881b89e92f52b00ef40b33361e516bf"
+    },
+    "http_clock": "independent Windows perf_counter_ns whole-request clock",
+    "api_rate_aggregation": "pooled sum of tokens / sum of native API phase milliseconds; arithmetic means retained separately",
+    "api_phase_clock_independently_qualified": false,
+    "phase_rescaling_or_overhead_subtraction": false,
+    "outlier_exclusion": false,
+    "all_nine_measured_requests_retained": true,
+    "nonstream_first_body_is_not_ttft": true,
+    "inference_executed_by_report": false
+  },
+  "windows": [
+    {
+      "label": "A-before fixed2 gate0",
+      "cohort": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before",
+      "identity": {
+        "version": "0.18.5",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+        "controller_run_id": "10f8952b58f449ed8088d5c1b58ff742",
+        "backend_run_id": "c9ce2b09184b4634b0f124931e8dfa4e",
+        "container_id": "9548f9d91a497bbee4d7d908e857cee5769c6cf5b7ebbe7580edd0444c739e26",
+        "profile_sha256": "eebad5172d5e63eddd6726183a13386606b3d9364cb79ad4cd448f541483ca98",
+        "context": 32768,
+        "controller_identity": {
+          "pid": 28884,
+          "creation_time_100ns": 134365441484880404,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend_identity": {
+          "pid": 21276,
+          "creation_time_100ns": 134365441590277049,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "frozen_settings": {
+          "checkpoint": "v2",
+          "context": 32768,
+          "prompt_cache": "Off",
+          "prefill_chunk": 4096,
+          "max_prefill_tokens": 4096
+        },
+        "speculation_environment": {
+          "HALOGEN_MTP_DEPTH": "2",
+          "HALOGEN_MTP_GATE_P": "0",
+          "HALOGEN_PLD": "3,3"
+        }
+      },
+      "summary": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\summary.json",
+        "bytes": 4119,
+        "sha256": "269df5af3b94c690e9da969148c72bf44c1d813a37c0b9efad2844ef975c4dd1"
+      },
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\source.json",
+        "bytes": 483,
+        "sha256": "53ceae6dff678049034768de749e940555dc1e300ff4685ab0e68463e312d76e"
+      },
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "wall_seconds": {
+        "mean": 11.8432734,
+        "stdev": 0.049045587369711,
+        "min": 11.8028866,
+        "max": 11.8978492
+      },
+      "measured_wall_seconds": [
+        11.8978492,
+        11.8290844,
+        11.8028866
+      ],
+      "measured_whole_http_seconds_total": 35.5298202,
+      "generated_tokens_per_whole_http_second": 10.80782277642936,
+      "api_phase_rates": {
+        "prefill": {
+          "tokens": 49152,
+          "api_seconds_total": 26.6945,
+          "pooled_tokens_per_second": 1841.2781659143268,
+          "arithmetic_mean_tokens_per_second": 1841.3103333333333,
+          "per_request_api_tokens_per_second": [
+            1830.492,
+            1847.396,
+            1846.043
+          ],
+          "independently_qualified": false
+        },
+        "decode": {
+          "tokens": 384,
+          "api_seconds_total": 8.5566,
+          "pooled_tokens_per_second": 44.877638314283715,
+          "arithmetic_mean_tokens_per_second": 44.879000000000005,
+          "per_request_api_tokens_per_second": [
+            44.804,
+            44.654,
+            45.179
+          ],
+          "independently_qualified": false
+        }
+      },
+      "head": {
+        "rounds": 204,
+        "drafted": 408,
+        "accepted": 177,
+        "acceptance": 0.4338235294117647,
+        "rejected": 231,
+        "accepted_per_round": 0.8676470588235294
+      },
+      "combined": {
+        "accepted": 177,
+        "drafted": 408,
+        "acceptance": 0.4338235294117647
+      },
+      "speculation_pooled": {
+        "head": {
+          "rounds": 204,
+          "drafted": 408,
+          "accepted": 177,
+          "acceptance": 0.4338235294117647
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        }
+      },
+      "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+      "requests": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "wall_seconds": 17.3612533,
+          "api_prefill_ms": 13075.3,
+          "api_decode_ms": 4189.3,
+          "api_prefill_tokens_per_second": 1253.05,
+          "api_decode_tokens_per_second": 30.554,
+          "api_phase_sum_minus_http_wall_seconds": -0.09665330000000338,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 136,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\client-0.json",
+            "bytes": 3595,
+            "sha256": "7625ec85cec9904cc884ee7c380c5d7ad5e241c4091cb48d25da342251938d80"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\response-0.raw",
+            "bytes": 1277,
+            "sha256": "f438de35b2307a4dd879a4570dd7b4b48c1b5f3c8fc0b62c0ab9513a7d3e9da7"
+          }
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "wall_seconds": 11.8978492,
+          "api_prefill_ms": 8950.6,
+          "api_decode_ms": 2856.9,
+          "api_prefill_tokens_per_second": 1830.492,
+          "api_decode_tokens_per_second": 44.804,
+          "api_phase_sum_minus_http_wall_seconds": -0.09034920000000035,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 136,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\client-1.json",
+            "bytes": 3586,
+            "sha256": "804b796fd173d9e58e3825e0ae1cc2b3005d8787920e3dab0b65ca9da57c6c40"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\response-1.raw",
+            "bytes": 1277,
+            "sha256": "e00cb6e8ddd41838275dff509f2e19359598e47c907a1cb5806b7482670bbdeb"
+          }
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "wall_seconds": 11.8290844,
+          "api_prefill_ms": 8868.7,
+          "api_decode_ms": 2866.5,
+          "api_prefill_tokens_per_second": 1847.396,
+          "api_decode_tokens_per_second": 44.654,
+          "api_phase_sum_minus_http_wall_seconds": -0.09388439999999854,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 136,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\client-2.json",
+            "bytes": 3586,
+            "sha256": "76f6f534a8c659e2a187b30b8411dea87de0c27902302f89d1398ce636738689"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\response-2.raw",
+            "bytes": 1277,
+            "sha256": "76dfe7e57e361ae762502420b020895a1ea53245a3fcc2064a4f3a89bce0d863"
+          }
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "wall_seconds": 11.8028866,
+          "api_prefill_ms": 8875.2,
+          "api_decode_ms": 2833.2,
+          "api_prefill_tokens_per_second": 1846.043,
+          "api_decode_tokens_per_second": 45.179,
+          "api_phase_sum_minus_http_wall_seconds": -0.09448659999999975,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 136,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\client-3.json",
+            "bytes": 3597,
+            "sha256": "209440ec2e5790dd10328c6916dc870a6e86ca7aa2610c61ee3395d89d4fe325"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-before\\response-3.raw",
+            "bytes": 1277,
+            "sha256": "90a19d3387c3aada33d9c914d038b0a877a5765b7231273f82631db93d4375d5"
+          }
+        }
+      ]
+    },
+    {
+      "label": "B confidence0.90 omitted-depth",
+      "cohort": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90",
+      "identity": {
+        "version": "0.18.5",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+        "controller_run_id": "afb7b8a9c2d64be2882bbef40de9a06f",
+        "backend_run_id": "e5b0f705b8e248e5931a0aefd1dd14d5",
+        "container_id": "9ac22eef3e20f416935421c2c7ccc0729542775bebc80b307d422db26451c75a",
+        "profile_sha256": "4302aea6102d23420ed6ec709cb84ac98add49e234b5fb0e1883c96c21372779",
+        "context": 32768,
+        "controller_identity": {
+          "pid": 31700,
+          "creation_time_100ns": 134365445406943321,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend_identity": {
+          "pid": 18240,
+          "creation_time_100ns": 134365445512822420,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "frozen_settings": {
+          "checkpoint": "v2",
+          "context": 32768,
+          "prompt_cache": "Off",
+          "prefill_chunk": 4096,
+          "max_prefill_tokens": 4096
+        },
+        "speculation_environment": {
+          "HALOGEN_MTP_GATE_P": "0.90",
+          "HALOGEN_PLD": "3,3"
+        }
+      },
+      "summary": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\summary.json",
+        "bytes": 4099,
+        "sha256": "963b5559e1eda495a75230108aa7e44f32281929bbf8cf4c0cdcf0da10c1d67c"
+      },
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\source.json",
+        "bytes": 497,
+        "sha256": "4939ce362847a2f298074f8ebf43c08bf3b15a2f2ba701befe5102b961d5a3cc"
+      },
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "wall_seconds": {
+        "mean": 12.213423533333334,
+        "stdev": 0.9476274561244752,
+        "min": 11.6449702,
+        "max": 13.3073683
+      },
+      "measured_wall_seconds": [
+        11.6879321,
+        11.6449702,
+        13.3073683
+      ],
+      "measured_whole_http_seconds_total": 36.6402706,
+      "generated_tokens_per_whole_http_second": 10.4802719442798,
+      "api_phase_rates": {
+        "prefill": {
+          "tokens": 49152,
+          "api_seconds_total": 26.9316,
+          "pooled_tokens_per_second": 1825.067949917569,
+          "arithmetic_mean_tokens_per_second": 1825.2226666666668,
+          "per_request_api_tokens_per_second": [
+            1831.863,
+            1841.623,
+            1802.182
+          ],
+          "independently_qualified": false
+        },
+        "decode": {
+          "tokens": 384,
+          "api_seconds_total": 9.4692,
+          "pooled_tokens_per_second": 40.55252819667976,
+          "arithmetic_mean_tokens_per_second": 42.427,
+          "per_request_api_tokens_per_second": [
+            48.256,
+            48.307,
+            30.718
+          ],
+          "independently_qualified": false
+        }
+      },
+      "head": {
+        "rounds": 204,
+        "drafted": 330,
+        "accepted": 177,
+        "acceptance": 0.5363636363636364,
+        "rejected": 153,
+        "accepted_per_round": 0.8676470588235294
+      },
+      "combined": {
+        "accepted": 177,
+        "drafted": 330,
+        "acceptance": 0.5363636363636364
+      },
+      "speculation_pooled": {
+        "head": {
+          "rounds": 204,
+          "drafted": 330,
+          "accepted": 177,
+          "acceptance": 0.5363636363636364
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        }
+      },
+      "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+      "requests": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "wall_seconds": 15.7991674,
+          "api_prefill_ms": 12050.6,
+          "api_decode_ms": 3647.6,
+          "api_prefill_tokens_per_second": 1359.6,
+          "api_decode_tokens_per_second": 35.092,
+          "api_phase_sum_minus_http_wall_seconds": -0.10096740000000004,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 111,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\client-0.json",
+            "bytes": 3554,
+            "sha256": "9b912af08f765ad40dca16ccc054cad6463ae46d474276659b38e2217ad2426e"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\response-0.raw",
+            "bytes": 1276,
+            "sha256": "8c8d606e51148b6065b991fe7ca0910c59d31947bf23d4abd54504d632efe6c5"
+          }
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "wall_seconds": 11.6879321,
+          "api_prefill_ms": 8943.9,
+          "api_decode_ms": 2652.5,
+          "api_prefill_tokens_per_second": 1831.863,
+          "api_decode_tokens_per_second": 48.256,
+          "api_phase_sum_minus_http_wall_seconds": -0.09153210000000023,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 110,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\client-1.json",
+            "bytes": 3557,
+            "sha256": "e2d915504333c9b425bb908d0aa937e052d11b8bcbad8601c19ea806ebcaf1e6"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\response-1.raw",
+            "bytes": 1277,
+            "sha256": "cfd4bee1b5c21f665612ab9cb1235953e5d881cf8c90c9d0e695357af9a16293"
+          }
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "wall_seconds": 11.6449702,
+          "api_prefill_ms": 8896.5,
+          "api_decode_ms": 2649.7,
+          "api_prefill_tokens_per_second": 1841.623,
+          "api_decode_tokens_per_second": 48.307,
+          "api_phase_sum_minus_http_wall_seconds": -0.09877019999999881,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 110,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\client-2.json",
+            "bytes": 3557,
+            "sha256": "06e197cff8592269ccc1fbf8f666827f1221255ff725ed5282fc25d7f2d674a2"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\response-2.raw",
+            "bytes": 1277,
+            "sha256": "78f22faa507242c679026283cd6c6d5a2d90d6f5993dd1fcae444b6e873df76a"
+          }
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "wall_seconds": 13.3073683,
+          "api_prefill_ms": 9091.2,
+          "api_decode_ms": 4167.0,
+          "api_prefill_tokens_per_second": 1802.182,
+          "api_decode_tokens_per_second": 30.718,
+          "api_phase_sum_minus_http_wall_seconds": -0.04916829999999983,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 110,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\client-3.json",
+            "bytes": 3556,
+            "sha256": "98b0c0c6787dacb847382627a52db082306e8694891a2c48a0b6c9d3b8dfd855"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\gated90\\response-3.raw",
+            "bytes": 1277,
+            "sha256": "428fbcdb9cfc866405a8b14dec2ab4744c77bfa59acd586a75ffb5be5b10cfa6"
+          }
+        }
+      ]
+    },
+    {
+      "label": "A-after fixed2 gate0",
+      "cohort": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after",
+      "identity": {
+        "version": "0.18.5",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:94c9d76b6b938459e00805c61978808957703745fe573ca2d7f01e9157446b3d",
+        "controller_run_id": "0b6a5d538b454d19a99881a65a83a202",
+        "backend_run_id": "8c3b24bd20a34b0e834918c84d8f1098",
+        "container_id": "5673fa784c8c252ec9c4ccb876801d2e0bd0af0a603fb8ce76f29ee956fe317b",
+        "profile_sha256": "eebad5172d5e63eddd6726183a13386606b3d9364cb79ad4cd448f541483ca98",
+        "context": 32768,
+        "controller_identity": {
+          "pid": 5892,
+          "creation_time_100ns": 134365449944985133,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend_identity": {
+          "pid": 944,
+          "creation_time_100ns": 134365450050348233,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "frozen_settings": {
+          "checkpoint": "v2",
+          "context": 32768,
+          "prompt_cache": "Off",
+          "prefill_chunk": 4096,
+          "max_prefill_tokens": 4096
+        },
+        "speculation_environment": {
+          "HALOGEN_MTP_DEPTH": "2",
+          "HALOGEN_MTP_GATE_P": "0",
+          "HALOGEN_PLD": "3,3"
+        }
+      },
+      "summary": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\summary.json",
+        "bytes": 4135,
+        "sha256": "2034528a82e72a9ec1a84fdf86880c5c892beb43cec804d61cdff637b7a1c374"
+      },
+      "source": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\source.json",
+        "bytes": 489,
+        "sha256": "3687533a7d6b4df4abc675b2a5072a8f058c059b105940d9482e9acb8c8e2e5a"
+      },
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "wall_seconds": {
+        "mean": 11.806081933333333,
+        "stdev": 0.04397812157588534,
+        "min": 11.7565651,
+        "max": 11.8405942
+      },
+      "measured_wall_seconds": [
+        11.8405942,
+        11.7565651,
+        11.8210865
+      ],
+      "measured_whole_http_seconds_total": 35.4182458,
+      "generated_tokens_per_whole_http_second": 10.841869531550882,
+      "api_phase_rates": {
+        "prefill": {
+          "tokens": 49152,
+          "api_seconds_total": 26.6169,
+          "pooled_tokens_per_second": 1846.6463036642133,
+          "arithmetic_mean_tokens_per_second": 1846.6513333333332,
+          "per_request_api_tokens_per_second": [
+            1847.5,
+            1849.982,
+            1842.472
+          ],
+          "independently_qualified": false
+        },
+        "decode": {
+          "tokens": 384,
+          "api_seconds_total": 8.524700000000001,
+          "pooled_tokens_per_second": 45.04557345126514,
+          "arithmetic_mean_tokens_per_second": 45.050333333333334,
+          "per_request_api_tokens_per_second": [
+            44.435,
+            45.553,
+            45.163
+          ],
+          "independently_qualified": false
+        }
+      },
+      "head": {
+        "rounds": 204,
+        "drafted": 408,
+        "accepted": 177,
+        "acceptance": 0.4338235294117647,
+        "rejected": 231,
+        "accepted_per_round": 0.8676470588235294
+      },
+      "combined": {
+        "accepted": 177,
+        "drafted": 408,
+        "acceptance": 0.4338235294117647
+      },
+      "speculation_pooled": {
+        "head": {
+          "rounds": 204,
+          "drafted": 408,
+          "accepted": 177,
+          "acceptance": 0.4338235294117647
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        }
+      },
+      "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+      "requests": [
+        {
+          "rep": 0,
+          "phase": "warmup",
+          "wall_seconds": 15.8550205,
+          "api_prefill_ms": 12546.1,
+          "api_decode_ms": 3437.4,
+          "api_prefill_tokens_per_second": 1305.904,
+          "api_decode_tokens_per_second": 37.237,
+          "api_phase_sum_minus_http_wall_seconds": 0.1284794999999992,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 136,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\client-0.json",
+            "bytes": 3582,
+            "sha256": "3cd7a6f8615f993a1afb34747b80133b6609122b5003b416ef9a4b4c78e4fb25"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\response-0.raw",
+            "bytes": 1278,
+            "sha256": "b488245045e1c018c3b627cfdc2577f9bd7035f4a565d043770707ac49881adf"
+          }
+        },
+        {
+          "rep": 1,
+          "phase": "measured",
+          "wall_seconds": 11.8405942,
+          "api_prefill_ms": 8868.2,
+          "api_decode_ms": 2880.6,
+          "api_prefill_tokens_per_second": 1847.5,
+          "api_decode_tokens_per_second": 44.435,
+          "api_phase_sum_minus_http_wall_seconds": -0.09179419999999894,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 136,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\client-1.json",
+            "bytes": 3592,
+            "sha256": "eccb970b3c257789ee4cb2de121ed4c4ebb36cf6f1d7c26e858e7199a49ac7f9"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\response-1.raw",
+            "bytes": 1275,
+            "sha256": "00aff9b23c3bbf2891f358dc9ecedb16b61877f9629e647568057f1a510764f2"
+          }
+        },
+        {
+          "rep": 2,
+          "phase": "measured",
+          "wall_seconds": 11.7565651,
+          "api_prefill_ms": 8856.3,
+          "api_decode_ms": 2809.9,
+          "api_prefill_tokens_per_second": 1849.982,
+          "api_decode_tokens_per_second": 45.553,
+          "api_phase_sum_minus_http_wall_seconds": -0.09036510000000142,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 136,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\client-2.json",
+            "bytes": 3594,
+            "sha256": "5404f2d0254aca2c914f10993b5362899c1e57bdf1df0ba5b1f26751cf292814"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\response-2.raw",
+            "bytes": 1277,
+            "sha256": "1852b5225239daaf884f7e3ff9c06843fb2bf400a11ad0e2a8f99cd2fcdcb06a"
+          }
+        },
+        {
+          "rep": 3,
+          "phase": "measured",
+          "wall_seconds": 11.8210865,
+          "api_prefill_ms": 8892.4,
+          "api_decode_ms": 2834.2,
+          "api_prefill_tokens_per_second": 1842.472,
+          "api_decode_tokens_per_second": 45.163,
+          "api_phase_sum_minus_http_wall_seconds": -0.09448650000000214,
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 136,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "output_sha256": "580c7230fd0952e8a7eb5d2818c3070655bf6ec8f0346f557061fb9e086699e2",
+          "client": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\client-3.json",
+            "bytes": 3594,
+            "sha256": "e4b5402c7b04997d07bc0cf1f87ccabfdf4ca3983d9b031775720b3eef4e3497"
+          },
+          "raw_response": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen0185-update-20261015\\fixed-after\\response-3.raw",
+            "bytes": 1277,
+            "sha256": "2ed6d1f71ba8ff579262231444fd86712e78ef51ec2aa4a7cb77319a8bf7441c"
+          }
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "control_bookend_mean_http_seconds": 11.824677666666666,
+    "candidate_mean_http_seconds": 12.213423533333334,
+    "candidate_http_time_change_vs_before_percent": 3.1254039388580956,
+    "candidate_http_time_change_vs_after_percent": 3.450269126541561,
+    "candidate_http_time_change_vs_bookend_mean_percent": 3.287581087834024,
+    "control_bookend_http_drift_percent": -0.3140302972881259,
+    "candidate_generated_per_http_second_change_vs_before_percent": -3.0306828574568345,
+    "candidate_head_acceptance_change_vs_before_percentage_points": 10.254010695187166,
+    "candidate_head_rejected_draft_change_vs_before": -78,
+    "accepted_head_and_round_counts_identical_across_windows": true,
+    "control_api_phase_rates_pooled": {
+      "prefill": {
+        "tokens": 98304,
+        "api_seconds_total": 53.3114,
+        "pooled_tokens_per_second": 1843.9583278623334,
+        "arithmetic_mean_tokens_per_second": 1843.9808333333333,
+        "per_request_api_tokens_per_second": [
+          1830.492,
+          1847.396,
+          1846.043,
+          1847.5,
+          1849.982,
+          1842.472
+        ],
+        "independently_qualified": false
+      },
+      "decode": {
+        "tokens": 768,
+        "api_seconds_total": 17.0813,
+        "pooled_tokens_per_second": 44.961449070035655,
+        "arithmetic_mean_tokens_per_second": 44.964666666666666,
+        "per_request_api_tokens_per_second": [
+          44.804,
+          44.654,
+          45.179,
+          44.435,
+          45.553,
+          45.163
+        ],
+        "independently_qualified": false
+      }
+    },
+    "candidate_api_pooled_prefill_change_vs_controls_percent": -1.02444711788382,
+    "candidate_api_pooled_decode_change_vs_controls_percent": -9.806002619017452,
+    "candidate_mean_http_faster_than_both_controls": false
+  },
+  "identical_greedy_output": true,
+  "api_phase_clock_qualified": false,
+  "recommendation": "Keep or restore fixed depth2 with gate0: this bracket does not establish a stable whole-request gain from confidence0.90.",
+  "limitations": [
+    "One natural prompt and three sequential repetitions per policy; no statistical-significance claim.",
+    "Whole HTTP wall includes prefill, generation, scheduling and delivery; API phases are unqualified observations.",
+    "This is a same-release policy comparison, not a 0.18.1/0.18.5 version or NPU-on/off comparison.",
+    "Historical 8K synthetic calibration and the historical 48 tok/s figure are different workloads."
+  ],
+  "future_opportunities": [
+    "Explain confidence-gate overhead with independently qualified phase clocks before attributing native kernel gains.",
+    "Evaluate scoped draft savings on a small representative prompt set and longer outputs only when a separate follow-up is warranted.",
+    "Use a separate SSE cohort for client time-to-first-text; nonstream body arrival cannot supply TTFT.",
+    "Prepare a genuine natural 8K prompt with exact offline tokenization before making a future 8K comparison."
+  ]
+}

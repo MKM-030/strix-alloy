@@ -1,0 +1,186 @@
+{
+  "schema": "halogen.dflash-context-window-pre-request-failure.v1",
+  "utc": "2026-10-10T08:49:19.056403+00:00",
+  "status": "failed_before_request",
+  "actual_terminal_tool_session": 99689,
+  "actual_exit_code": 1,
+  "planned_input_tokens": 16384,
+  "planned_output_tokens": 128,
+  "actual_input_tokens": null,
+  "actual_output_tokens": null,
+  "request_submitted": false,
+  "measured_anchors": 0,
+  "measured_variant_calls": 0,
+  "warmup_completed": false,
+  "shadow_agreement": null,
+  "native_mtp_acceptance": null,
+  "serving_api_combined_acceptance": null,
+  "serving_prefill_tok_s": null,
+  "serving_decode_tok_s": null,
+  "npu_enabled": false,
+  "native_ready_publication": false,
+  "serving_gain_qualified": false,
+  "actual_failure": {
+    "actual_retirement_acknowledged": false,
+    "clock_domain": "378a580e75559ea2f942c435991f4487",
+    "monotonic_ns": 12423783778144,
+    "owner88_hex": null,
+    "processes": {
+      "native": {
+        "gid": 0,
+        "net_namespace": {
+          "device": 4,
+          "inode": 4026532233
+        },
+        "pid": 88,
+        "pid_namespace": {
+          "device": 4,
+          "inode": 4026532231
+        },
+        "starttime_ticks": 1235964,
+        "uid": 0
+      },
+      "producer_receiver": {
+        "gid": 0,
+        "net_namespace": {
+          "device": 4,
+          "inode": 4026532233
+        },
+        "pid": 87,
+        "pid_namespace": {
+          "device": 4,
+          "inode": 4026532231
+        },
+        "starttime_ticks": 1235949,
+        "uid": 0
+      },
+      "supervisor": {
+        "gid": 0,
+        "net_namespace": {
+          "device": 4,
+          "inode": 4026532233
+        },
+        "pid": 13,
+        "pid_namespace": {
+          "device": 4,
+          "inode": 4026532231
+        },
+        "starttime_ticks": 1235644,
+        "uid": 0
+      },
+      "worker": {
+        "gid": 0,
+        "net_namespace": {
+          "device": 4,
+          "inode": 4026532233
+        },
+        "pid": 89,
+        "pid_namespace": {
+          "device": 4,
+          "inode": 4026532231
+        },
+        "starttime_ticks": 1235965,
+        "uid": 0
+      }
+    },
+    "reason": "Actual complete resident CUDA BF16 head required",
+    "schema": "halogen0173.dflash.actual-worker-outcome.v1",
+    "session": "3256c7345f127f7e7ae7365134aee038",
+    "state": "Held"
+  },
+  "errors": [
+    "RuntimeError: Actual worker Held before request: Actual complete resident CUDA BF16 head required",
+    "Actual capture retirement unqualified: RuntimeError: No completed root diagnostic; candidate failure cleanup remains unqualified"
+  ],
+  "candidate_resources_cleaned": true,
+  "diagnostic_retirement_qualified": false,
+  "diagnostic_cleanup_receipt": {
+    "qualified_retirement": false,
+    "emergency_cleanup": true,
+    "error": "RuntimeError: No completed root diagnostic; candidate failure cleanup remains unqualified"
+  },
+  "normal_server_ready_open": true,
+  "restored_controller": {
+    "pid": 37368,
+    "creation_time_100ns": 134360953079713013,
+    "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+  },
+  "restored_backend": {
+    "pid": 32280,
+    "creation_time_100ns": 134360953184811869,
+    "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+  },
+  "restored_context": 262144,
+  "restored_console": {
+    "pid": 37592,
+    "creation_time_100ns": 134360953077068231,
+    "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  },
+  "memory_minimum_bytes": null,
+  "terminal_current_memory": {
+    "available_bytes": 23460233216,
+    "committed_bytes": 118454460416,
+    "commit_limit_bytes": 240139440128,
+    "commit_headroom_bytes": 121684979712
+  },
+  "evidence": {
+    "outcome.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-window-shadow-preparation-20261010\\trial\\outcome.json",
+      "bytes": 822,
+      "sha256": "1b0593c73c1b89efca98aa82285f49ce93518f501da00a0d8ad5ed31fe76cd2a"
+    },
+    "failure.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-window-shadow-preparation-20261010\\trial\\failure.json",
+      "bytes": 204,
+      "sha256": "c9cebd2b5dd2bf66c6ade37c46e953e3fba3dc83463334e679e3ebbdd42548e3"
+    },
+    "startup-worker-held-observed.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-window-shadow-preparation-20261010\\trial\\startup-worker-held-observed.json",
+      "bytes": 2077,
+      "sha256": "cc5c346e43a334ff65028387a30a1fa63a12701e0560f6410541967cb5933416"
+    },
+    "terminal-checkpoint.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-window-shadow-preparation-20261010\\trial\\terminal-checkpoint.json",
+      "bytes": 1896,
+      "sha256": "dc9cdec369b42d748d950df6f3c6f48014b575465bd438f3f11ebb8768d3b981"
+    },
+    "root-tool-session.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-window-shadow-preparation-20261010\\trial\\root-tool-session.json",
+      "bytes": 1641,
+      "sha256": "a2a2f5f72c970f0979a016cf3508d429bd7c00d4222c0e4e007b464084f855b7"
+    },
+    "candidate-stop.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-window-shadow-preparation-20261010\\trial\\candidate-stop.json",
+      "bytes": 1986,
+      "sha256": "c3c7c2d4051e075d7baca5d32fd2bbf53e76d6da13d75439e7e386f9df7cdcea"
+    },
+    "restored-ready.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-window-shadow-preparation-20261010\\trial\\restored-ready.json",
+      "bytes": 10907,
+      "sha256": "327c6a57f32095ce704f322cd1bf208198d2a2def8fab1515c7daacf281af32a"
+    },
+    "retained-startup-runtime.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-root-gpu-window-shadow-preparation-20261010\\trial\\retained-startup-runtime.json",
+      "bytes": 5076,
+      "sha256": "5c098ef062f42a9cb4a7d75b6bcc4c848ca8fbfef9328e544436188cbaec84fe"
+    }
+  },
+  "root_normal_ready_binding": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\root-window-v1-final-bind-20261010.json",
+    "bytes": 12472,
+    "sha256": "9c1730d1f9d6025a3935d23570365330d65b20ef0b1c0a17fa8ff33a5f8c8254"
+  },
+  "cleanup_evidence": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.17.3\\.local\\services\\d2ab00cd5b4e41efa143a0dffc3a959f\\capture-cleanup.json",
+    "bytes": 160,
+    "sha256": "914f9e3ca82aee4e7e9e8b9bbb3e7693cc1a11f7e3a1d9cc2c5dbeb1e888296b"
+  },
+  "source_review": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\context-window-relocation-failure-review-20261010.md",
+    "bytes": 3822,
+    "sha256": "e392cbdd66c1d9d1c62988744ba9785b287ca0afa21d39d32b1e875eb6df642e"
+  },
+  "suspected_mechanism": "Lifetime-unsafe id(source) memo plus duplicate traversal of shared modules can rebind full_head to a stale layout-index destination.",
+  "causal_object_id_collision_observed": false,
+  "decision": "Preserve v1 failure; repair relocation source lifetime and unique module traversal before a distinct v2 trial."
+}

@@ -154,7 +154,7 @@ def halogen_speculation_module(directory):
     supported = Path(__file__).resolve().parents[1] / 'backends'
     allowed = tuple((supported / name).resolve() for name in
                     ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1',
-                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3'))
+                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8'))
     if directory.resolve() not in allowed:
         raise ValueError('Speculation policy requires a pinned Halogen 0.16.2 or 0.17.x backend')
     source = directory / 'scripts/speculation_policy.py'
@@ -181,9 +181,9 @@ def halogen_api_defaults_arguments(engine, directory):
         return []
     supported = ROOT.parent / 'backends'
     allowed = tuple((supported / name).resolve() for name in
-                    ('halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3'))
+                    ('halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8'))
     if directory.resolve() not in allowed:
-        raise ValueError('API defaults require a pinned Halogen 0.17.2 or 0.17.3 backend')
+        raise ValueError('API defaults require a pinned Halogen 0.17.2 or newer managed backend')
     source = directory / 'scripts/api_defaults.py'
     if source.is_symlink() or not source.is_file():
         raise ValueError('Selected backend has no managed API-default support')
@@ -258,6 +258,22 @@ def halogen_private_hsa_arguments(engine, directory):
     return ['-PrivateHsaReceipt', value['receipt'], '-PrivateHsaReceiptSha256', value['receipt_sha256']]
 
 
+def halogen_vision_arguments(engine,directory):
+    if 'disable_vision' not in engine: return []
+    if type(engine['disable_vision']) is not bool:
+        raise ValueError('disable_vision must be a boolean')
+    if not engine['disable_vision']: return []
+    supported=tuple((ROOT.parent/'backends'/name).resolve() for name in
+                    ('halogen-wsl2-0.18.1','halogen-wsl2-0.18.5','halogen-wsl2-0.18.7','halogen-wsl2-0.18.8'))
+    if (engine.get('kind')!='halogen' or engine.get('launcher','powershell')!='python' or
+            engine.get('checkpoint')!='v2' or directory.resolve() not in supported):
+        raise ValueError('Text-only vision control requires a pinned 0.18.1, 0.18.5, 0.18.7 or 0.18.8 v2 Python service')
+    service=directory/'scripts/service.py'
+    if service.is_symlink() or not service.is_file() or '--disable-vision' not in service.read_text(encoding='utf-8-sig'):
+        raise ValueError('Selected service has no explicit text-only control')
+    return ['--disable-vision']
+
+
 def validate_engine(engine, repo):
     if engine.get('kind')=='halogen':
         halogen_draft_arguments(engine)
@@ -276,7 +292,10 @@ def validate_engine(engine, repo):
         halogen_matmul_arguments(engine,directory)
         halogen_lookup_arguments(engine,directory)
         halogen_private_hsa_arguments(engine,directory)
+        halogen_vision_arguments(engine,directory)
         return directory
+    if 'disable_vision' in engine:
+        raise ValueError('Managed vision control applies only to Halogen')
     if 'kernel_controls' in engine:
         raise ValueError('Managed kernel controls apply only to Halogen')
     if 'speculation_policy' in engine:
@@ -322,6 +341,7 @@ def halogen_launch_command(engine, directory):
     controls += halogen_matmul_arguments(engine, directory)
     controls += halogen_lookup_arguments(engine, directory)
     controls += halogen_private_hsa_arguments(engine, directory)
+    vision = halogen_vision_arguments(engine,directory)
     launcher = engine.get('launcher', 'powershell')
     if launcher == 'powershell':
         return [engine['powershell'], '-NoProfile', '-File', str(directory / 'Start.ps1'),
@@ -332,7 +352,7 @@ def halogen_launch_command(engine, directory):
     supported = ROOT.parent / 'backends'
     allowed = tuple((supported / name).resolve() for name in
                     ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1',
-                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3'))
+                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8'))
     executable = Path(engine.get('python_executable', ''))
     if (directory.resolve() not in allowed or not executable.is_absolute() or
             not executable.is_file() or executable.resolve() != Path(sys.executable).resolve()):
@@ -360,7 +380,7 @@ def halogen_launch_command(engine, directory):
     return [str(executable), '-u', '-B', str(directory / 'scripts/service.py'),
             '--checkpoint', engine['checkpoint'], '--context-size', str(engine['context']),
             '--prompt-cache', engine.get('prompt_cache', 'Off'),
-            '--serve-seconds', '0', '--startup-timeout', '900'] + translated
+            '--serve-seconds', '0', '--startup-timeout', '900'] + translated + vision
 
 
 class Engine:

@@ -1,0 +1,216 @@
+{
+  "schema": "halogen.driver-opportunity-check.v1",
+  "checked_end_utc": "2026-10-15 15:00:27 UTC",
+  "scope": "Read-only source review; coordinator supplied the current host inventory. No accelerator, serving, lifecycle, driver installation, WSL or Docker call.",
+  "baseline": {
+    "source_review": "docs/research/halogen-driver-update-check-20261012-0826.json",
+    "source_review_end_utc": "2026-10-12T08:31:45Z",
+    "current_host_inventory": "server/.local/halogen0185-update-20261015/host-inventory-late.json",
+    "current_host_inventory_utc": "2026-10-15T14:56:52.8036798Z",
+    "gpu_driver": "32.0.32015.2008",
+    "gpu_driver_date": "2026-09-28",
+    "npu_driver": "32.0.20102.3930",
+    "npu_driver_date": "2026-07-05",
+    "active_power_scheme": "REV:N Performance",
+    "inventory_collected_by": "root; this reviewer read the saved receipt only",
+    "current_host_inventory_sha256": "465452847020ca1ce1b02fa5ea29f6cb4cd77d00912bc4ead07fe04219ffa308",
+    "source_review_sha256": "abd91253693a6431ad37d603d96f16389c093e01dd60087592577721b5e24c2a"
+  },
+  "sources": {
+    "halogen": {
+      "url": "https://raw.githubusercontent.com/peonist-ai/halogen-flash-server/main/CHANGELOG.md",
+      "latest_heading": "0.18.5",
+      "changed_since_this_morning": false,
+      "registry_revalidated_this_late_review": false,
+      "interpretation": "No newer changelog version observed; deployed immutable image was sealed in the earlier release assessment."
+    },
+    "amd_max395": {
+      "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html",
+      "recommended": "26.8.1",
+      "recommended_date": "2026-08-20",
+      "optional": "26.9.2 WHQL",
+      "optional_date": "2026-09-29",
+      "newer_version_observed": false
+    },
+    "adrenalin2692": {
+      "url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-9-2.html",
+      "gpu_store_version": "32.0.32015.2008",
+      "packaged_npu_mcdm": "32.00.20102.3930",
+      "matches_current_host_versions": true
+    },
+    "ryzenai": {
+      "url": "https://github.com/amd/RyzenAI-SW/releases",
+      "latest": "v1.8.0",
+      "commit_prefix": "73c0457",
+      "version_changed": false,
+      "exact_release_utc_not_reverified": true
+    },
+    "npu_install": {
+      "url": "https://ryzenai.docs.amd.com/en/latest/inst.html",
+      "minimum_driver": "32.0.203.280",
+      "production_driver": "32.0.203.376",
+      "lists_strix_halo": true,
+      "version_changed": false,
+      "branch_order_against_adrenalin_mcdm_established": false
+    },
+    "mlir_aie": {
+      "url": "https://github.com/Xilinx/mlir-aie/releases",
+      "latest": "v1.4.4",
+      "commit_prefix": "e5c705c",
+      "asset_publication_utc": "2026-10-06T17:01:55Z",
+      "version_changed": false
+    },
+    "rocm_core": {
+      "url": "https://rocm.docs.amd.com/en/latest/about/release-notes.html",
+      "version": "10.1.0",
+      "page_date": "2026-10-05",
+      "version_changed": false,
+      "wsl_technical_preview": true,
+      "wsl_profiling_debugging_and_kfd_tools_supported": false
+    },
+    "rocm_matrix": {
+      "url": "https://rocm.docs.amd.com/en/latest/compatibility/compatibility-matrix.html",
+      "lists_gfx1151_8060S": true,
+      "adrenalin_driver": "26.10.41.05",
+      "windows_cde_cpr": "26.10.48",
+      "hip_component": "7.16.0",
+      "hipblaslt_component": "1.4.1",
+      "version_changed_from_baseline": false
+    },
+    "rocm_driver": {
+      "url": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-ROCM-10-01.html",
+      "driver_store": "32.0.31041.5005",
+      "npu_mcdm": "32.00.20102.3930",
+      "product_list_names": "discrete Radeon families; Max395 target applicability is not established by this page",
+      "new_release_since_baseline": false
+    },
+    "rocdxg": {
+      "url": "https://github.com/ROCm/librocdxg/releases",
+      "latest": "v1.2.2",
+      "commit_prefix": "4955d12",
+      "version_changed": false,
+      "displayed_month_day": "05 Aug",
+      "exact_year_not_reverified": true
+    },
+    "hip_env": {
+      "url": "https://rocm.docs.amd.com/projects/HIP/en/latest/reference/env_variables.html",
+      "hip_force_dev_kernarg_default": "1",
+      "published_latency_claim": "2\u00e2\u20ac\u201c3 microseconds for some kernels",
+      "current_halogen_image_explicit_value": "1",
+      "new_configuration_opportunity": false
+    },
+    "windows_ml": {
+      "url": "https://raw.githubusercontent.com/wiki/microsoft/WindowsML/Windows-ML-Execution-Provider-Releases.md",
+      "crawl_age": "5 days",
+      "migraphx_msix": "1.8.64.0",
+      "migraphx_ep": "7.2.2609.19",
+      "vitisai_msix": "1.8.75.0",
+      "vitisai_ep": "1605",
+      "upcoming_only": [
+        "MIGraphX MSIX1.8.65.0",
+        "VitisAI MSIX1.8.80.0"
+      ],
+      "current_release_change_observed": false
+    },
+    "rdna_boosts": {
+      "url": "https://raw.githubusercontent.com/stew675/llama-cpp-rdna-boosts/main/release.json",
+      "release": "v12-097cf33d9-r64",
+      "base": "097cf33d9",
+      "canonical_patched_tip": "5eeff4da53a34a8f9f1b7cde40938a5a1df19920",
+      "tree": "ca68f3ed0557d9cb2168f8b4773ab32476f84feb",
+      "all_patch_sha256": "48e008e4649a15f567f623414b08496add2248ddcf49b874eed8aae85b8c52bf",
+      "worklog_url": "https://raw.githubusercontent.com/stew675/llama-cpp-rdna-boosts/main/WORKLOG.md",
+      "dated_entry": "261015.001",
+      "changed_after_oct12_by_author_dated_record": true,
+      "exact_registry_or_publication_utc_not_reverified": true,
+      "readme_stale_release": "r62",
+      "mechanisms": [
+        "Order compact upload on stream owning reused input buffer; r62.",
+        "Bind staging ring lifetime to backend stream/context; r64.",
+        "Correct segmented writes and image-plus-MTP embedding input; r64."
+      ],
+      "applicability": "ggml Meta/HIP loader and recurrent graph contracts; not Halogen environment variables or a qualified native kernel seam."
+    }
+  },
+  "reddit": {
+    "method": "Two bounded batches of indexed searches with 3/7/14-day filters; filters returned older posts too.",
+    "exhaustive": false,
+    "latest_relevant_observed_post": {
+      "url": "https://www.reddit.com/r/StrixHalo/comments/1x3s2t9/strixllama_new_branch_prompt_processing_2154_over/",
+      "date": "2026-10-12",
+      "primary_branch": "https://github.com/asf0/strix-llama.cpp/tree/rdna35-perf",
+      "already_assessed": "docs/research/strix-llama-rdna35-speed-assessment-20261012.md",
+      "latest_branch_head_established": false
+    },
+    "other_leads": [
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1x0o32k/halogen_qwen_flash_next_keeps_getting_better/",
+        "latest_visible_comment": "2026-10-13",
+        "relevance": "Anecdotal quiet-profile rates and socket issue; no new controlled kernel mechanism."
+      },
+      {
+        "url": "https://www.reddit.com/r/StrixHalo/comments/1x0wx70/the_npu_in_your_strix_halo_is_finally_doing_real/",
+        "relevance": "Already-assessed separate routing/retrieval work; no Flash token-rate mechanism."
+      }
+    ],
+    "new_controlled_halogen_speed_evidence": false
+  },
+  "candidate_screen": [
+    {
+      "name": "HIP_FORCE_DEV_KERNARG=1",
+      "disposition": "already enabled",
+      "cost": "none to preserve",
+      "risk": "no gain follows from toggling an enabled setting"
+    },
+    {
+      "name": "HALOGEN_SPEC_ADAPT=0",
+      "disposition": "not justified on frozen natural16K",
+      "evidence": "The measured ledger remains68 head rounds/59 accepted per128 output tokens. It supplies no positive evidence of low-acceptance windows or serial fallback; aggregate API accounting does not independently diagnose the native adaptation windows.",
+      "cost": "restart plus finite cohort if a new workload demonstrates fallback",
+      "risk": "disabling adaptation can waste drafts on low-acceptance prose"
+    },
+    {
+      "name": "retune hipBLASLt plan",
+      "disposition": "keep shipped plan",
+      "evidence": "Prior0.16.2 frozen plan was slower and changed output;0.18.5 wrapper explicitly rejects unqualified old private tuning receipts. No fresh plan/runtime mechanism found.",
+      "local_evidence": "docs/benchmarks/halogen0162-matmul-20261004.md",
+      "cost": "new version-bound training, extraction, static identity and quality qualification",
+      "risk": "numeric reduction-order changes and extra training work"
+    },
+    {
+      "name": "RDNA3.5 flash-attention/GDN fusion",
+      "disposition": "future source audit only",
+      "evidence": "Previously assessed rdna35-perf uses ggml tensor/KV formats and dispatch contracts; current native HGN seam is not established.",
+      "cost": "high: exact current native arguments, lifetime, rollback and numeric equivalence before adapter",
+      "risk": "wrong shapes, layout, precision or stream ordering"
+    },
+    {
+      "name": "rdna-boosts r64 upload correctness",
+      "disposition": "new useful reference; no direct deployment",
+      "cost": "low for bounded source comparison; high for transplant",
+      "risk": "ggml multi-device ownership assumptions do not map to Halogen's memory bridge"
+    },
+    {
+      "name": "strict-tool grammar drafting",
+      "disposition": "supported existing0.18.5 candidate only for actual supported strict-tool clients",
+      "cost": "small matched request cohort after confirming real use",
+      "risk": "artificial strict tools change the task and cannot be reported as ServiceNow application speed"
+    }
+  ],
+  "recommendation": "Keep current pinned0.18.5 Fixed2 and existing driver/runtime/plan. Use the prepared representative application packet for the next useful performance evidence. No compatible new driver update or low-cost new binary compute adapter is established by this source review.",
+  "freshness_limitations": [
+    "Browser cached observations are not byte-level HTTP revalidation.",
+    "No late registry revalidation or exact current asf0 branch commit was obtained.",
+    "rdna-boosts author-dated release64 is a new source delta; its exact publish UTC was not checked.",
+    "WindowsML source is cached five days; planned October entries are not treated as released.",
+    "Separate NPU driver numbering does not prove it supersedes the installed Adrenalin MCDM driver."
+  ],
+  "hardware_access": false,
+  "wsl_or_docker_calls": false,
+  "serving_requests": false,
+  "credential_access": false,
+  "installation": false,
+  "lifecycle_changes": false,
+  "loaded_backend_edits": false,
+  "state_writes": false
+}

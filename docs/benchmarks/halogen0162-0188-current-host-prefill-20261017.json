@@ -1,0 +1,370 @@
+{
+  "schema": "halogen.current-host0162-0188-prefill-cause-bracket-partial.v1",
+  "utc": "2026-10-17T19:30:43.923744+00:00",
+  "complete": false,
+  "reason": "Human-authorized Voice validation hold before final control window",
+  "human_evidence": {
+    "thread": "ServiceNow Voice \u00dcbergabe",
+    "thread_id": "6ad3a279-4d6c-83ed-bae4-b5d83408cafa",
+    "user_reply": "ja los",
+    "scope": "Pause parallel benchmark and restore Halogen for uninterrupted Voice validation"
+  },
+  "lifecycle": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\historical-version-bracket\\lifecycle\\handle.json",
+    "bytes": 16915,
+    "sha256": "ef6c2ef12354f19ada10bccb4f5c051e130731c42467223277168a935efcee1b"
+  },
+  "preparation": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\historical-version-bracket\\preparation.json",
+    "bytes": 2482,
+    "sha256": "cade41c0e5b46f8b139bca985b0a5b22f92ba0417031e4f017baaf562ac2c33b"
+  },
+  "cells": {
+    "0188-before": {
+      "summary": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\historical-version-bracket\\cohort-0188-before\\summary.json",
+        "bytes": 5232,
+        "sha256": "2958acadd022baa47cc326f89a783b19397ac9286bd20aa1ab4c08a25bfae697"
+      },
+      "data": {
+        "schema": "halogen.update-finite-summary.v1",
+        "complete_batch": true,
+        "version": "0.18.8",
+        "cases": {
+          "historical8k1": {
+            "complete_case": true,
+            "excluded_warmups": 1,
+            "planned_measured": 3,
+            "measured_attempts": 3,
+            "whole_http_seconds_all_attempts": [
+              7.2058156,
+              6.7928862,
+              6.7513066
+            ],
+            "whole_http_total_seconds": 20.7500084,
+            "whole_http_mean_seconds": 6.916669466666667,
+            "whole_http_stdev_seconds": 0.25126943825354753,
+            "generated_tokens_per_whole_http_second": 0.14457825472494748,
+            "api_phase_observations": {
+              "prefill_pooled_tokens_per_second": 1192.338294940713,
+              "decode_pooled_tokens_per_second": null,
+              "prefill_arithmetic_mean_tokens_per_second": 1193.5753333333332,
+              "decode_arithmetic_mean_tokens_per_second": null,
+              "independently_clock_qualified": false
+            },
+            "combined_counts": {
+              "actual_input_tokens": 24576,
+              "actual_output_tokens": 3,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "combined_acceptance": null,
+            "scoped_counts": null,
+            "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+            "outputs": [
+              {
+                "rep": 0,
+                "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+                "finish_reason": "length",
+                "actual_output_tokens": 1
+              },
+              {
+                "rep": 1,
+                "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+                "finish_reason": "length",
+                "actual_output_tokens": 1
+              },
+              {
+                "rep": 2,
+                "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+                "finish_reason": "length",
+                "actual_output_tokens": 1
+              },
+              {
+                "rep": 3,
+                "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+                "finish_reason": "length",
+                "actual_output_tokens": 1
+              }
+            ],
+            "sampled_quality_qualified": false
+          },
+          "natural16k": {
+            "complete_case": true,
+            "excluded_warmups": 1,
+            "planned_measured": 3,
+            "measured_attempts": 3,
+            "whole_http_seconds_all_attempts": [
+              17.3247659,
+              17.8032504,
+              17.1760335
+            ],
+            "whole_http_total_seconds": 52.3040498,
+            "whole_http_mean_seconds": 17.434683266666667,
+            "whole_http_stdev_seconds": 0.32773713633429385,
+            "generated_tokens_per_whole_http_second": 7.341687717649734,
+            "api_phase_observations": {
+              "prefill_pooled_tokens_per_second": 1148.1483211787954,
+              "decode_pooled_tokens_per_second": 35.02307509895842,
+              "prefill_arithmetic_mean_tokens_per_second": 1148.585,
+              "decode_arithmetic_mean_tokens_per_second": 35.306666666666665,
+              "independently_clock_qualified": false
+            },
+            "combined_counts": {
+              "actual_input_tokens": 49152,
+              "actual_output_tokens": 384,
+              "drafted": 399,
+              "accepted": 180
+            },
+            "combined_acceptance": 0.45112781954887216,
+            "scoped_counts": {
+              "head": {
+                "rounds": 201,
+                "drafted": 399,
+                "accepted": 180,
+                "acceptance": 0.45112781954887216,
+                "accepted_per_round": 0.8955223880597015
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            },
+            "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+            "outputs": [
+              {
+                "rep": 0,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 1,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 2,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 3,
+                "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              }
+            ],
+            "sampled_quality_qualified": false
+          }
+        },
+        "attempted_requests": 8,
+        "planned_requests": 8,
+        "continuous_memory_guard_passed": true,
+        "exclusive_completed_request_accounting_passed": true,
+        "api_phase_clock_qualified": false,
+        "phase_scaling_or_overhead_subtraction_applied": false,
+        "whole_http_clock": "Windows perf_counter_ns/QPC; start through complete body",
+        "nonstream_first_body_is_not_ttft": true,
+        "full_goal_qualified": false,
+        "performance_promotion_qualified": false
+      }
+    },
+    "0162": {
+      "summary": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\historical-version-bracket\\cohort-0162\\summary.json",
+        "bytes": 4691,
+        "sha256": "4e7f73466b2bc70b12c1835203d704ebad4811da8f63ece878e3f9df5efcab72"
+      },
+      "data": {
+        "schema": "halogen.update-finite-summary.v1",
+        "complete_batch": true,
+        "version": "0.16.2",
+        "cases": {
+          "historical8k1": {
+            "complete_case": true,
+            "excluded_warmups": 1,
+            "planned_measured": 3,
+            "measured_attempts": 3,
+            "whole_http_seconds_all_attempts": [
+              7.0519185,
+              6.895721,
+              7.4407149
+            ],
+            "whole_http_total_seconds": 21.3883544,
+            "whole_http_mean_seconds": 7.129451466666667,
+            "whole_http_stdev_seconds": 0.28064765890597276,
+            "generated_tokens_per_whole_http_second": 0.14026324531072853,
+            "api_phase_observations": {
+              "prefill_pooled_tokens_per_second": 1159.8689861529315,
+              "decode_pooled_tokens_per_second": null,
+              "prefill_arithmetic_mean_tokens_per_second": 1161.0536666666667,
+              "decode_arithmetic_mean_tokens_per_second": null,
+              "independently_clock_qualified": false
+            },
+            "combined_counts": {
+              "actual_input_tokens": 24576,
+              "actual_output_tokens": 3,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "combined_acceptance": null,
+            "scoped_counts": null,
+            "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+            "outputs": [
+              {
+                "rep": 0,
+                "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+                "finish_reason": "length",
+                "actual_output_tokens": 1
+              },
+              {
+                "rep": 1,
+                "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+                "finish_reason": "length",
+                "actual_output_tokens": 1
+              },
+              {
+                "rep": 2,
+                "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+                "finish_reason": "length",
+                "actual_output_tokens": 1
+              },
+              {
+                "rep": 3,
+                "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+                "finish_reason": "length",
+                "actual_output_tokens": 1
+              }
+            ],
+            "sampled_quality_qualified": false
+          },
+          "natural16k": {
+            "complete_case": true,
+            "excluded_warmups": 1,
+            "planned_measured": 3,
+            "measured_attempts": 3,
+            "whole_http_seconds_all_attempts": [
+              18.3455221,
+              18.168249,
+              18.4565101
+            ],
+            "whole_http_total_seconds": 54.9702812,
+            "whole_http_mean_seconds": 18.323427066666667,
+            "whole_http_stdev_seconds": 0.14539517982657924,
+            "generated_tokens_per_whole_http_second": 6.985592789727261,
+            "api_phase_observations": {
+              "prefill_pooled_tokens_per_second": 1112.4691056248132,
+              "decode_pooled_tokens_per_second": 33.27700506954375,
+              "prefill_arithmetic_mean_tokens_per_second": 1113.2986666666666,
+              "decode_arithmetic_mean_tokens_per_second": 33.51533333333334,
+              "independently_clock_qualified": false
+            },
+            "combined_counts": {
+              "actual_input_tokens": 49152,
+              "actual_output_tokens": 384,
+              "drafted": 387,
+              "accepted": 186
+            },
+            "combined_acceptance": 0.4806201550387597,
+            "scoped_counts": null,
+            "scoped_count_note": "Absent native source fields remain unavailable; never synthesized as zero.",
+            "outputs": [
+              {
+                "rep": 0,
+                "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 1,
+                "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 2,
+                "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              },
+              {
+                "rep": 3,
+                "output_sha256": "bc179b2873f085833dbd1ec05e9aba7703957dfafafdab71bba3d3cfb2f32e4d",
+                "finish_reason": "length",
+                "actual_output_tokens": 128
+              }
+            ],
+            "sampled_quality_qualified": false
+          }
+        },
+        "attempted_requests": 8,
+        "planned_requests": 8,
+        "continuous_memory_guard_passed": true,
+        "exclusive_completed_request_accounting_passed": true,
+        "api_phase_clock_qualified": false,
+        "phase_scaling_or_overhead_subtraction_applied": false,
+        "whole_http_clock": "Windows perf_counter_ns/QPC; start through complete body",
+        "nonstream_first_body_is_not_ttft": true,
+        "full_goal_qualified": false,
+        "performance_promotion_qualified": false
+      }
+    }
+  },
+  "completed_requests": 16,
+  "planned_requests": 24,
+  "missing_window": "0188-after",
+  "measured_native_phase_clocks_independently_qualified": false,
+  "performance_gain_or_joint_peak_qualified": false,
+  "candidate_promoted": false,
+  "full_goal_achieved": false,
+  "new_native_Windows_Hipfire_source_design": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\hipfire-windows-native-feasibility.json",
+    "bytes": 27107,
+    "sha256": "717cdc026f950deb0b67dbaea79cadf87de0a614351be274c9f42e3ccdeb21ed"
+  },
+  "new_Hipfire_kernel_review": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\hipfire-joint-next.json",
+    "bytes": 9266,
+    "sha256": "bb2b503e7325cd1fc8008505c829bb742ddf26f3e34d8a39ed4aa4f8f5c95c10"
+  },
+  "own_measurement_processes_closed": [
+    {
+      "closed": true,
+      "identity": {
+        "pid": 24312,
+        "creation_time_100ns": 134367379433163649,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "reason": "Explicit user-authorized Voice hold; no suspended benchmark auto-resume"
+    },
+    {
+      "identity": {
+        "pid": 28668,
+        "creation_time_100ns": 134367379445152706,
+        "executable": "C:\\Windows\\System32\\wsl.exe"
+      },
+      "closed_on_parent_pipe_EOF": true
+    }
+  ],
+  "foreign_voice_controller_preserved": "b39c49eb15bf4dddbec9f4de033f7cd2",
+  "serving_observed_ready": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\historical-version-bracket\\lifecycle\\voice-serving-observed-ready.json",
+    "bytes": 12775,
+    "sha256": "24e89cf74ac41858cb8c829eaf68986e942d368443a379721a7a49374de32005"
+  },
+  "serving_version": "0.18.8",
+  "serving_url": "http://127.0.0.1:8840/v1"
+}

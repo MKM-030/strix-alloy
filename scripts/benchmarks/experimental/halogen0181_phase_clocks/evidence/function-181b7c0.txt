@@ -1,0 +1,454 @@
+
+C:\Projects\strix-alloy-clean\server\.local\optimization9h-20261004\halogen0172-backend-preparation-20261008\halogen0180-normal-bridge-preparation-20261011\halogen0181-extracted-20261012\flash_serve:	file format elf64-x86-64
+
+Disassembly of section .text:
+
+00000000017fa890 <.text>:
+ 181b7c0: 41 57                        	push	r15
+ 181b7c2: 41 56                        	push	r14
+ 181b7c4: 53                           	push	rbx
+ 181b7c5: 49 89 f6                     	mov	r14, rsi
+ 181b7c8: 48 89 fb                     	mov	rbx, rdi
+ 181b7cb: 0f 10 06                     	movups	xmm0, xmmword ptr [rsi]
+ 181b7ce: 0f 11 07                     	movups	xmmword ptr [rdi], xmm0
+ 181b7d1: 48 8b 46 10                  	mov	rax, qword ptr [rsi + 0x10]
+ 181b7d5: 48 c7 46 10 00 00 00 00      	mov	qword ptr [rsi + 0x10], 0x0
+ 181b7dd: 4c 8b 7f 10                  	mov	r15, qword ptr [rdi + 0x10]
+ 181b7e1: 48 89 47 10                  	mov	qword ptr [rdi + 0x10], rax
+ 181b7e5: 4d 85 ff                     	test	r15, r15
+ 181b7e8: 74 15                        	je	0x181b7ff <.text+0x20f6f>
+ 181b7ea: 4c 89 ff                     	mov	rdi, r15
+ 181b7ed: e8 8e c5 02 00               	call	0x1847d80 <_ZNSt6vectorIfSaIfEEaSERKS1_+0x17e0>
+ 181b7f2: be b8 02 00 00               	mov	esi, 0x2b8
+ 181b7f7: 4c 89 ff                     	mov	rdi, r15
+ 181b7fa: e8 01 65 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181b7ff: 41 0f b6 46 18               	movzx	eax, byte ptr [r14 + 0x18]
+ 181b804: 88 43 18                     	mov	byte ptr [rbx + 0x18], al
+ 181b807: 48 8b 7b 20                  	mov	rdi, qword ptr [rbx + 0x20]
+ 181b80b: 48 8b 73 30                  	mov	rsi, qword ptr [rbx + 0x30]
+ 181b80f: 41 0f 10 46 20               	movups	xmm0, xmmword ptr [r14 + 0x20]
+ 181b814: 0f 11 43 20                  	movups	xmmword ptr [rbx + 0x20], xmm0
+ 181b818: 49 8b 46 30                  	mov	rax, qword ptr [r14 + 0x30]
+ 181b81c: 48 89 43 30                  	mov	qword ptr [rbx + 0x30], rax
+ 181b820: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181b823: 41 0f 11 4e 20               	movups	xmmword ptr [r14 + 0x20], xmm1
+ 181b828: 49 c7 46 30 00 00 00 00      	mov	qword ptr [r14 + 0x30], 0x0
+ 181b830: 48 85 ff                     	test	rdi, rdi
+ 181b833: 74 0b                        	je	0x181b840 <.text+0x20fb0>
+ 181b835: 48 29 fe                     	sub	rsi, rdi
+ 181b838: e8 c3 64 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181b83d: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181b840: 48 8b 7b 38                  	mov	rdi, qword ptr [rbx + 0x38]
+ 181b844: 48 8b 73 48                  	mov	rsi, qword ptr [rbx + 0x48]
+ 181b848: 41 0f 10 46 38               	movups	xmm0, xmmword ptr [r14 + 0x38]
+ 181b84d: 0f 11 43 38                  	movups	xmmword ptr [rbx + 0x38], xmm0
+ 181b851: 49 8b 46 48                  	mov	rax, qword ptr [r14 + 0x48]
+ 181b855: 48 89 43 48                  	mov	qword ptr [rbx + 0x48], rax
+ 181b859: 41 0f 11 4e 38               	movups	xmmword ptr [r14 + 0x38], xmm1
+ 181b85e: 49 c7 46 48 00 00 00 00      	mov	qword ptr [r14 + 0x48], 0x0
+ 181b866: 48 85 ff                     	test	rdi, rdi
+ 181b869: 74 08                        	je	0x181b873 <.text+0x20fe3>
+ 181b86b: 48 29 fe                     	sub	rsi, rdi
+ 181b86e: e8 8d 64 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181b873: 41 0f 10 46 50               	movups	xmm0, xmmword ptr [r14 + 0x50]
+ 181b878: 0f 11 43 50                  	movups	xmmword ptr [rbx + 0x50], xmm0
+ 181b87c: 48 8b 7b 60                  	mov	rdi, qword ptr [rbx + 0x60]
+ 181b880: 48 8b 73 70                  	mov	rsi, qword ptr [rbx + 0x70]
+ 181b884: 41 0f 10 46 60               	movups	xmm0, xmmword ptr [r14 + 0x60]
+ 181b889: 0f 11 43 60                  	movups	xmmword ptr [rbx + 0x60], xmm0
+ 181b88d: 49 8b 46 70                  	mov	rax, qword ptr [r14 + 0x70]
+ 181b891: 48 89 43 70                  	mov	qword ptr [rbx + 0x70], rax
+ 181b895: 0f 57 c0                     	xorps	xmm0, xmm0
+ 181b898: 41 0f 11 46 60               	movups	xmmword ptr [r14 + 0x60], xmm0
+ 181b89d: 49 c7 46 70 00 00 00 00      	mov	qword ptr [r14 + 0x70], 0x0
+ 181b8a5: 48 85 ff                     	test	rdi, rdi
+ 181b8a8: 74 08                        	je	0x181b8b2 <.text+0x21022>
+ 181b8aa: 48 29 fe                     	sub	rsi, rdi
+ 181b8ad: e8 4e 64 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181b8b2: 48 8b 7b 78                  	mov	rdi, qword ptr [rbx + 0x78]
+ 181b8b6: 48 8d 8b 88 00 00 00         	lea	rcx, [rbx + 0x88]
+ 181b8bd: 49 8d 86 88 00 00 00         	lea	rax, [r14 + 0x88]
+ 181b8c4: 49 8b 76 78                  	mov	rsi, qword ptr [r14 + 0x78]
+ 181b8c8: 48 39 cf                     	cmp	rdi, rcx
+ 181b8cb: 74 41                        	je	0x181b90e <.text+0x2107e>
+ 181b8cd: 48 39 c6                     	cmp	rsi, rax
+ 181b8d0: 74 67                        	je	0x181b939 <.text+0x210a9>
+ 181b8d2: 48 8b 8b 88 00 00 00         	mov	rcx, qword ptr [rbx + 0x88]
+ 181b8d9: 48 89 73 78                  	mov	qword ptr [rbx + 0x78], rsi
+ 181b8dd: 49 8b 96 80 00 00 00         	mov	rdx, qword ptr [r14 + 0x80]
+ 181b8e4: 48 89 93 80 00 00 00         	mov	qword ptr [rbx + 0x80], rdx
+ 181b8eb: 49 8b 96 88 00 00 00         	mov	rdx, qword ptr [r14 + 0x88]
+ 181b8f2: 48 89 93 88 00 00 00         	mov	qword ptr [rbx + 0x88], rdx
+ 181b8f9: 48 85 ff                     	test	rdi, rdi
+ 181b8fc: 74 35                        	je	0x181b933 <.text+0x210a3>
+ 181b8fe: 49 89 7e 78                  	mov	qword ptr [r14 + 0x78], rdi
+ 181b902: 49 89 8e 88 00 00 00         	mov	qword ptr [r14 + 0x88], rcx
+ 181b909: 48 89 f8                     	mov	rax, rdi
+ 181b90c: eb 6c                        	jmp	0x181b97a <.text+0x210ea>
+ 181b90e: 48 39 c6                     	cmp	rsi, rax
+ 181b911: 74 26                        	je	0x181b939 <.text+0x210a9>
+ 181b913: 48 89 73 78                  	mov	qword ptr [rbx + 0x78], rsi
+ 181b917: 49 8b 8e 80 00 00 00         	mov	rcx, qword ptr [r14 + 0x80]
+ 181b91e: 48 89 8b 80 00 00 00         	mov	qword ptr [rbx + 0x80], rcx
+ 181b925: 49 8b 8e 88 00 00 00         	mov	rcx, qword ptr [r14 + 0x88]
+ 181b92c: 48 89 8b 88 00 00 00         	mov	qword ptr [rbx + 0x88], rcx
+ 181b933: 49 89 46 78                  	mov	qword ptr [r14 + 0x78], rax
+ 181b937: eb 41                        	jmp	0x181b97a <.text+0x210ea>
+ 181b939: 49 39 de                     	cmp	r14, rbx
+ 181b93c: 0f 84 92 07 00 00            	je	0x181c0d4 <.text+0x21844>
+ 181b942: 49 8b 96 80 00 00 00         	mov	rdx, qword ptr [r14 + 0x80]
+ 181b949: 48 85 d2                     	test	rdx, rdx
+ 181b94c: 74 12                        	je	0x181b960 <.text+0x210d0>
+ 181b94e: 48 83 fa 01                  	cmp	rdx, 0x1
+ 181b952: 75 07                        	jne	0x181b95b <.text+0x210cb>
+ 181b954: 0f b6 06                     	movzx	eax, byte ptr [rsi]
+ 181b957: 88 07                        	mov	byte ptr [rdi], al
+ 181b959: eb 05                        	jmp	0x181b960 <.text+0x210d0>
+ 181b95b: e8 10 64 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181b960: 49 8b 86 80 00 00 00         	mov	rax, qword ptr [r14 + 0x80]
+ 181b967: 48 89 83 80 00 00 00         	mov	qword ptr [rbx + 0x80], rax
+ 181b96e: 48 8b 4b 78                  	mov	rcx, qword ptr [rbx + 0x78]
+ 181b972: c6 04 01 00                  	mov	byte ptr [rcx + rax], 0x0
+ 181b976: 49 8b 46 78                  	mov	rax, qword ptr [r14 + 0x78]
+ 181b97a: 49 c7 86 80 00 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x80], 0x0
+ 181b985: c6 00 00                     	mov	byte ptr [rax], 0x0
+ 181b988: 48 8b bb 98 00 00 00         	mov	rdi, qword ptr [rbx + 0x98]
+ 181b98f: 48 8b b3 a8 00 00 00         	mov	rsi, qword ptr [rbx + 0xa8]
+ 181b996: 41 0f 10 86 98 00 00 00      	movups	xmm0, xmmword ptr [r14 + 0x98]
+ 181b99e: 0f 11 83 98 00 00 00         	movups	xmmword ptr [rbx + 0x98], xmm0
+ 181b9a5: 49 8b 86 a8 00 00 00         	mov	rax, qword ptr [r14 + 0xa8]
+ 181b9ac: 48 89 83 a8 00 00 00         	mov	qword ptr [rbx + 0xa8], rax
+ 181b9b3: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181b9b6: 41 0f 11 8e 98 00 00 00      	movups	xmmword ptr [r14 + 0x98], xmm1
+ 181b9be: 49 c7 86 a8 00 00 00 00 00 00 00     	mov	qword ptr [r14 + 0xa8], 0x0
+ 181b9c9: 48 85 ff                     	test	rdi, rdi
+ 181b9cc: 74 0b                        	je	0x181b9d9 <.text+0x21149>
+ 181b9ce: 48 29 fe                     	sub	rsi, rdi
+ 181b9d1: e8 2a 63 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181b9d6: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181b9d9: 49 8b 86 c0 00 00 00         	mov	rax, qword ptr [r14 + 0xc0]
+ 181b9e0: 48 89 83 c0 00 00 00         	mov	qword ptr [rbx + 0xc0], rax
+ 181b9e7: 41 0f 10 86 b0 00 00 00      	movups	xmm0, xmmword ptr [r14 + 0xb0]
+ 181b9ef: 0f 11 83 b0 00 00 00         	movups	xmmword ptr [rbx + 0xb0], xmm0
+ 181b9f6: 48 8b bb c8 00 00 00         	mov	rdi, qword ptr [rbx + 0xc8]
+ 181b9fd: 48 8b b3 d8 00 00 00         	mov	rsi, qword ptr [rbx + 0xd8]
+ 181ba04: 41 0f 10 86 c8 00 00 00      	movups	xmm0, xmmword ptr [r14 + 0xc8]
+ 181ba0c: 0f 11 83 c8 00 00 00         	movups	xmmword ptr [rbx + 0xc8], xmm0
+ 181ba13: 49 8b 86 d8 00 00 00         	mov	rax, qword ptr [r14 + 0xd8]
+ 181ba1a: 48 89 83 d8 00 00 00         	mov	qword ptr [rbx + 0xd8], rax
+ 181ba21: 41 0f 11 8e c8 00 00 00      	movups	xmmword ptr [r14 + 0xc8], xmm1
+ 181ba29: 49 c7 86 d8 00 00 00 00 00 00 00     	mov	qword ptr [r14 + 0xd8], 0x0
+ 181ba34: 48 85 ff                     	test	rdi, rdi
+ 181ba37: 74 08                        	je	0x181ba41 <.text+0x211b1>
+ 181ba39: 48 29 fe                     	sub	rsi, rdi
+ 181ba3c: e8 bf 62 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181ba41: 41 8b 86 e0 00 00 00         	mov	eax, dword ptr [r14 + 0xe0]
+ 181ba48: 89 83 e0 00 00 00            	mov	dword ptr [rbx + 0xe0], eax
+ 181ba4e: 48 8b bb e8 00 00 00         	mov	rdi, qword ptr [rbx + 0xe8]
+ 181ba55: 48 8b b3 f8 00 00 00         	mov	rsi, qword ptr [rbx + 0xf8]
+ 181ba5c: 41 0f 10 86 e8 00 00 00      	movups	xmm0, xmmword ptr [r14 + 0xe8]
+ 181ba64: 0f 11 83 e8 00 00 00         	movups	xmmword ptr [rbx + 0xe8], xmm0
+ 181ba6b: 49 8b 86 f8 00 00 00         	mov	rax, qword ptr [r14 + 0xf8]
+ 181ba72: 48 89 83 f8 00 00 00         	mov	qword ptr [rbx + 0xf8], rax
+ 181ba79: 0f 57 c0                     	xorps	xmm0, xmm0
+ 181ba7c: 41 0f 11 86 e8 00 00 00      	movups	xmmword ptr [r14 + 0xe8], xmm0
+ 181ba84: 49 c7 86 f8 00 00 00 00 00 00 00     	mov	qword ptr [r14 + 0xf8], 0x0
+ 181ba8f: 48 85 ff                     	test	rdi, rdi
+ 181ba92: 74 08                        	je	0x181ba9c <.text+0x2120c>
+ 181ba94: 48 29 fe                     	sub	rsi, rdi
+ 181ba97: e8 64 62 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181ba9c: 49 8b 86 10 01 00 00         	mov	rax, qword ptr [r14 + 0x110]
+ 181baa3: 48 89 83 10 01 00 00         	mov	qword ptr [rbx + 0x110], rax
+ 181baaa: 41 0f 10 86 00 01 00 00      	movups	xmm0, xmmword ptr [r14 + 0x100]
+ 181bab2: 0f 11 83 00 01 00 00         	movups	xmmword ptr [rbx + 0x100], xmm0
+ 181bab9: 48 8b bb 18 01 00 00         	mov	rdi, qword ptr [rbx + 0x118]
+ 181bac0: 48 8d 8b 28 01 00 00         	lea	rcx, [rbx + 0x128]
+ 181bac7: 49 8d 86 28 01 00 00         	lea	rax, [r14 + 0x128]
+ 181bace: 49 8b b6 18 01 00 00         	mov	rsi, qword ptr [r14 + 0x118]
+ 181bad5: 48 39 cf                     	cmp	rdi, rcx
+ 181bad8: 74 47                        	je	0x181bb21 <.text+0x21291>
+ 181bada: 48 39 c6                     	cmp	rsi, rax
+ 181badd: 74 73                        	je	0x181bb52 <.text+0x212c2>
+ 181badf: 48 8b 8b 28 01 00 00         	mov	rcx, qword ptr [rbx + 0x128]
+ 181bae6: 48 89 b3 18 01 00 00         	mov	qword ptr [rbx + 0x118], rsi
+ 181baed: 49 8b 96 20 01 00 00         	mov	rdx, qword ptr [r14 + 0x120]
+ 181baf4: 48 89 93 20 01 00 00         	mov	qword ptr [rbx + 0x120], rdx
+ 181bafb: 49 8b 96 28 01 00 00         	mov	rdx, qword ptr [r14 + 0x128]
+ 181bb02: 48 89 93 28 01 00 00         	mov	qword ptr [rbx + 0x128], rdx
+ 181bb09: 48 85 ff                     	test	rdi, rdi
+ 181bb0c: 74 3b                        	je	0x181bb49 <.text+0x212b9>
+ 181bb0e: 49 89 be 18 01 00 00         	mov	qword ptr [r14 + 0x118], rdi
+ 181bb15: 49 89 8e 28 01 00 00         	mov	qword ptr [r14 + 0x128], rcx
+ 181bb1c: 48 89 f8                     	mov	rax, rdi
+ 181bb1f: eb 78                        	jmp	0x181bb99 <.text+0x21309>
+ 181bb21: 48 39 c6                     	cmp	rsi, rax
+ 181bb24: 74 2c                        	je	0x181bb52 <.text+0x212c2>
+ 181bb26: 48 89 b3 18 01 00 00         	mov	qword ptr [rbx + 0x118], rsi
+ 181bb2d: 49 8b 8e 20 01 00 00         	mov	rcx, qword ptr [r14 + 0x120]
+ 181bb34: 48 89 8b 20 01 00 00         	mov	qword ptr [rbx + 0x120], rcx
+ 181bb3b: 49 8b 8e 28 01 00 00         	mov	rcx, qword ptr [r14 + 0x128]
+ 181bb42: 48 89 8b 28 01 00 00         	mov	qword ptr [rbx + 0x128], rcx
+ 181bb49: 49 89 86 18 01 00 00         	mov	qword ptr [r14 + 0x118], rax
+ 181bb50: eb 47                        	jmp	0x181bb99 <.text+0x21309>
+ 181bb52: 49 39 de                     	cmp	r14, rbx
+ 181bb55: 0f 84 81 05 00 00            	je	0x181c0dc <.text+0x2184c>
+ 181bb5b: 49 8b 96 20 01 00 00         	mov	rdx, qword ptr [r14 + 0x120]
+ 181bb62: 48 85 d2                     	test	rdx, rdx
+ 181bb65: 74 12                        	je	0x181bb79 <.text+0x212e9>
+ 181bb67: 48 83 fa 01                  	cmp	rdx, 0x1
+ 181bb6b: 75 07                        	jne	0x181bb74 <.text+0x212e4>
+ 181bb6d: 0f b6 06                     	movzx	eax, byte ptr [rsi]
+ 181bb70: 88 07                        	mov	byte ptr [rdi], al
+ 181bb72: eb 05                        	jmp	0x181bb79 <.text+0x212e9>
+ 181bb74: e8 f7 61 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181bb79: 49 8b 86 20 01 00 00         	mov	rax, qword ptr [r14 + 0x120]
+ 181bb80: 48 89 83 20 01 00 00         	mov	qword ptr [rbx + 0x120], rax
+ 181bb87: 48 8b 8b 18 01 00 00         	mov	rcx, qword ptr [rbx + 0x118]
+ 181bb8e: c6 04 01 00                  	mov	byte ptr [rcx + rax], 0x0
+ 181bb92: 49 8b 86 18 01 00 00         	mov	rax, qword ptr [r14 + 0x118]
+ 181bb99: 49 c7 86 20 01 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x120], 0x0
+ 181bba4: c6 00 00                     	mov	byte ptr [rax], 0x0
+ 181bba7: 41 8b 86 48 01 00 00         	mov	eax, dword ptr [r14 + 0x148]
+ 181bbae: 89 83 48 01 00 00            	mov	dword ptr [rbx + 0x148], eax
+ 181bbb4: 41 0f 10 86 38 01 00 00      	movups	xmm0, xmmword ptr [r14 + 0x138]
+ 181bbbc: 0f 11 83 38 01 00 00         	movups	xmmword ptr [rbx + 0x138], xmm0
+ 181bbc3: 48 8b bb 50 01 00 00         	mov	rdi, qword ptr [rbx + 0x150]
+ 181bbca: 48 8b b3 60 01 00 00         	mov	rsi, qword ptr [rbx + 0x160]
+ 181bbd1: 41 0f 10 86 50 01 00 00      	movups	xmm0, xmmword ptr [r14 + 0x150]
+ 181bbd9: 0f 11 83 50 01 00 00         	movups	xmmword ptr [rbx + 0x150], xmm0
+ 181bbe0: 49 8b 86 60 01 00 00         	mov	rax, qword ptr [r14 + 0x160]
+ 181bbe7: 48 89 83 60 01 00 00         	mov	qword ptr [rbx + 0x160], rax
+ 181bbee: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181bbf1: 41 0f 11 8e 50 01 00 00      	movups	xmmword ptr [r14 + 0x150], xmm1
+ 181bbf9: 49 c7 86 60 01 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x160], 0x0
+ 181bc04: 48 85 ff                     	test	rdi, rdi
+ 181bc07: 74 0b                        	je	0x181bc14 <.text+0x21384>
+ 181bc09: 48 29 fe                     	sub	rsi, rdi
+ 181bc0c: e8 ef 60 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bc11: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181bc14: 41 8b 86 68 01 00 00         	mov	eax, dword ptr [r14 + 0x168]
+ 181bc1b: 41 8b 8e 6b 01 00 00         	mov	ecx, dword ptr [r14 + 0x16b]
+ 181bc22: 89 8b 6b 01 00 00            	mov	dword ptr [rbx + 0x16b], ecx
+ 181bc28: 89 83 68 01 00 00            	mov	dword ptr [rbx + 0x168], eax
+ 181bc2e: 48 8b bb 70 01 00 00         	mov	rdi, qword ptr [rbx + 0x170]
+ 181bc35: 48 8b b3 80 01 00 00         	mov	rsi, qword ptr [rbx + 0x180]
+ 181bc3c: 41 0f 10 86 70 01 00 00      	movups	xmm0, xmmword ptr [r14 + 0x170]
+ 181bc44: 0f 11 83 70 01 00 00         	movups	xmmword ptr [rbx + 0x170], xmm0
+ 181bc4b: 49 8b 86 80 01 00 00         	mov	rax, qword ptr [r14 + 0x180]
+ 181bc52: 48 89 83 80 01 00 00         	mov	qword ptr [rbx + 0x180], rax
+ 181bc59: 41 0f 11 8e 70 01 00 00      	movups	xmmword ptr [r14 + 0x170], xmm1
+ 181bc61: 49 c7 86 80 01 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x180], 0x0
+ 181bc6c: 48 85 ff                     	test	rdi, rdi
+ 181bc6f: 74 08                        	je	0x181bc79 <.text+0x213e9>
+ 181bc71: 48 29 fe                     	sub	rsi, rdi
+ 181bc74: e8 87 60 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bc79: 41 8b 86 90 01 00 00         	mov	eax, dword ptr [r14 + 0x190]
+ 181bc80: 89 83 90 01 00 00            	mov	dword ptr [rbx + 0x190], eax
+ 181bc86: 49 8b 86 88 01 00 00         	mov	rax, qword ptr [r14 + 0x188]
+ 181bc8d: 48 89 83 88 01 00 00         	mov	qword ptr [rbx + 0x188], rax
+ 181bc94: 48 8b bb 98 01 00 00         	mov	rdi, qword ptr [rbx + 0x198]
+ 181bc9b: 48 8b b3 a8 01 00 00         	mov	rsi, qword ptr [rbx + 0x1a8]
+ 181bca2: 41 0f 10 86 98 01 00 00      	movups	xmm0, xmmword ptr [r14 + 0x198]
+ 181bcaa: 0f 11 83 98 01 00 00         	movups	xmmword ptr [rbx + 0x198], xmm0
+ 181bcb1: 49 8b 86 a8 01 00 00         	mov	rax, qword ptr [r14 + 0x1a8]
+ 181bcb8: 48 89 83 a8 01 00 00         	mov	qword ptr [rbx + 0x1a8], rax
+ 181bcbf: 0f 57 c0                     	xorps	xmm0, xmm0
+ 181bcc2: 41 0f 11 86 98 01 00 00      	movups	xmmword ptr [r14 + 0x198], xmm0
+ 181bcca: 49 c7 86 a8 01 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x1a8], 0x0
+ 181bcd5: 48 85 ff                     	test	rdi, rdi
+ 181bcd8: 74 08                        	je	0x181bce2 <.text+0x21452>
+ 181bcda: 48 29 fe                     	sub	rsi, rdi
+ 181bcdd: e8 1e 60 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bce2: 49 8b 86 b0 01 00 00         	mov	rax, qword ptr [r14 + 0x1b0]
+ 181bce9: 49 c7 86 b0 01 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x1b0], 0x0
+ 181bcf4: 4c 8b bb b0 01 00 00         	mov	r15, qword ptr [rbx + 0x1b0]
+ 181bcfb: 48 89 83 b0 01 00 00         	mov	qword ptr [rbx + 0x1b0], rax
+ 181bd02: 4d 85 ff                     	test	r15, r15
+ 181bd05: 74 37                        	je	0x181bd3e <.text+0x214ae>
+ 181bd07: 49 8b 7f 28                  	mov	rdi, qword ptr [r15 + 0x28]
+ 181bd0b: 48 85 ff                     	test	rdi, rdi
+ 181bd0e: 74 0c                        	je	0x181bd1c <.text+0x2148c>
+ 181bd10: 49 8b 77 38                  	mov	rsi, qword ptr [r15 + 0x38]
+ 181bd14: 48 29 fe                     	sub	rsi, rdi
+ 181bd17: e8 e4 5f 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bd1c: 49 8b 7f 10                  	mov	rdi, qword ptr [r15 + 0x10]
+ 181bd20: 48 85 ff                     	test	rdi, rdi
+ 181bd23: 74 0c                        	je	0x181bd31 <.text+0x214a1>
+ 181bd25: 49 8b 77 20                  	mov	rsi, qword ptr [r15 + 0x20]
+ 181bd29: 48 29 fe                     	sub	rsi, rdi
+ 181bd2c: e8 cf 5f 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bd31: be 60 0d 00 00               	mov	esi, 0xd60
+ 181bd36: 4c 89 ff                     	mov	rdi, r15
+ 181bd39: e8 c2 5f 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bd3e: 48 8d bb b8 01 00 00         	lea	rdi, [rbx + 0x1b8]
+ 181bd45: 49 8d b6 b8 01 00 00         	lea	rsi, [r14 + 0x1b8]
+ 181bd4c: ba 81 00 00 00               	mov	edx, 0x81
+ 181bd51: e8 1a 60 1b 00               	call	0x19d1d70 <memcpy@plt>
+ 181bd56: 48 8b bb 40 02 00 00         	mov	rdi, qword ptr [rbx + 0x240]
+ 181bd5d: 48 8b b3 50 02 00 00         	mov	rsi, qword ptr [rbx + 0x250]
+ 181bd64: 41 0f 10 86 40 02 00 00      	movups	xmm0, xmmword ptr [r14 + 0x240]
+ 181bd6c: 0f 11 83 40 02 00 00         	movups	xmmword ptr [rbx + 0x240], xmm0
+ 181bd73: 49 8b 86 50 02 00 00         	mov	rax, qword ptr [r14 + 0x250]
+ 181bd7a: 48 89 83 50 02 00 00         	mov	qword ptr [rbx + 0x250], rax
+ 181bd81: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181bd84: 41 0f 11 8e 40 02 00 00      	movups	xmmword ptr [r14 + 0x240], xmm1
+ 181bd8c: 49 c7 86 50 02 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x250], 0x0
+ 181bd97: 48 85 ff                     	test	rdi, rdi
+ 181bd9a: 74 0b                        	je	0x181bda7 <.text+0x21517>
+ 181bd9c: 48 29 fe                     	sub	rsi, rdi
+ 181bd9f: e8 5c 5f 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bda4: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181bda7: 48 8b bb 58 02 00 00         	mov	rdi, qword ptr [rbx + 0x258]
+ 181bdae: 48 8b b3 68 02 00 00         	mov	rsi, qword ptr [rbx + 0x268]
+ 181bdb5: 41 0f 10 86 58 02 00 00      	movups	xmm0, xmmword ptr [r14 + 0x258]
+ 181bdbd: 0f 11 83 58 02 00 00         	movups	xmmword ptr [rbx + 0x258], xmm0
+ 181bdc4: 49 8b 86 68 02 00 00         	mov	rax, qword ptr [r14 + 0x268]
+ 181bdcb: 48 89 83 68 02 00 00         	mov	qword ptr [rbx + 0x268], rax
+ 181bdd2: 41 0f 11 8e 58 02 00 00      	movups	xmmword ptr [r14 + 0x258], xmm1
+ 181bdda: 49 c7 86 68 02 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x268], 0x0
+ 181bde5: 48 85 ff                     	test	rdi, rdi
+ 181bde8: 74 08                        	je	0x181bdf2 <.text+0x21562>
+ 181bdea: 48 29 fe                     	sub	rsi, rdi
+ 181bded: e8 0e 5f 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bdf2: 49 39 de                     	cmp	r14, rbx
+ 181bdf5: 0f 84 fc 00 00 00            	je	0x181bef7 <.text+0x21667>
+ 181bdfb: 48 8b bb 80 02 00 00         	mov	rdi, qword ptr [rbx + 0x280]
+ 181be02: 48 85 ff                     	test	rdi, rdi
+ 181be05: 74 1e                        	je	0x181be25 <.text+0x21595>
+ 181be07: 66 0f 1f 84 00 00 00 00 00   	nop	word ptr [rax + rax]
+ 181be10: 4c 8b 3f                     	mov	r15, qword ptr [rdi]
+ 181be13: be 10 00 00 00               	mov	esi, 0x10
+ 181be18: e8 e3 5e 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181be1d: 4c 89 ff                     	mov	rdi, r15
+ 181be20: 4d 85 ff                     	test	r15, r15
+ 181be23: 75 eb                        	jne	0x181be10 <.text+0x21580>
+ 181be25: 48 8b bb 70 02 00 00         	mov	rdi, qword ptr [rbx + 0x270]
+ 181be2c: 4c 8d bb a0 02 00 00         	lea	r15, [rbx + 0x2a0]
+ 181be33: 4c 39 ff                     	cmp	rdi, r15
+ 181be36: 74 10                        	je	0x181be48 <.text+0x215b8>
+ 181be38: 48 8b b3 78 02 00 00         	mov	rsi, qword ptr [rbx + 0x278]
+ 181be3f: 48 c1 e6 03                  	shl	rsi, 0x3
+ 181be43: e8 b8 5e 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181be48: 41 0f 10 86 90 02 00 00      	movups	xmm0, xmmword ptr [r14 + 0x290]
+ 181be50: 0f 11 83 90 02 00 00         	movups	xmmword ptr [rbx + 0x290], xmm0
+ 181be57: 49 8b b6 70 02 00 00         	mov	rsi, qword ptr [r14 + 0x270]
+ 181be5e: 49 8d 8e a0 02 00 00         	lea	rcx, [r14 + 0x2a0]
+ 181be65: 48 39 ce                     	cmp	rsi, rcx
+ 181be68: 75 09                        	jne	0x181be73 <.text+0x215e3>
+ 181be6a: 48 8b 01                     	mov	rax, qword ptr [rcx]
+ 181be6d: 49 89 07                     	mov	qword ptr [r15], rax
+ 181be70: 4c 89 fe                     	mov	rsi, r15
+ 181be73: 48 89 b3 70 02 00 00         	mov	qword ptr [rbx + 0x270], rsi
+ 181be7a: 4d 8b 8e 78 02 00 00         	mov	r9, qword ptr [r14 + 0x278]
+ 181be81: 4c 89 8b 78 02 00 00         	mov	qword ptr [rbx + 0x278], r9
+ 181be88: 49 8d be 80 02 00 00         	lea	rdi, [r14 + 0x280]
+ 181be8f: 49 8b 86 80 02 00 00         	mov	rax, qword ptr [r14 + 0x280]
+ 181be96: 48 89 83 80 02 00 00         	mov	qword ptr [rbx + 0x280], rax
+ 181be9d: 49 8b 96 88 02 00 00         	mov	rdx, qword ptr [r14 + 0x288]
+ 181bea4: 48 89 93 88 02 00 00         	mov	qword ptr [rbx + 0x288], rdx
+ 181beab: 48 85 c0                     	test	rax, rax
+ 181beae: 74 27                        	je	0x181bed7 <.text+0x21647>
+ 181beb0: 4c 8d 83 80 02 00 00         	lea	r8, [rbx + 0x280]
+ 181beb7: 48 63 40 08                  	movsxd	rax, dword ptr [rax + 0x8]
+ 181bebb: 48 89 c2                     	mov	rdx, rax
+ 181bebe: 4c 09 ca                     	or	rdx, r9
+ 181bec1: 48 c1 ea 20                  	shr	rdx, 0x20
+ 181bec5: 74 07                        	je	0x181bece <.text+0x2163e>
+ 181bec7: 31 d2                        	xor	edx, edx
+ 181bec9: 49 f7 f1                     	div	r9
+ 181becc: eb 05                        	jmp	0x181bed3 <.text+0x21643>
+ 181bece: 31 d2                        	xor	edx, edx
+ 181bed0: 41 f7 f1                     	div	r9d
+ 181bed3: 4c 89 04 d6                  	mov	qword ptr [rsi + 8*rdx], r8
+ 181bed7: 0f 57 c0                     	xorps	xmm0, xmm0
+ 181beda: 41 0f 11 86 98 02 00 00      	movups	xmmword ptr [r14 + 0x298], xmm0
+ 181bee2: 49 c7 86 78 02 00 00 01 00 00 00     	mov	qword ptr [r14 + 0x278], 0x1
+ 181beed: 49 89 8e 70 02 00 00         	mov	qword ptr [r14 + 0x270], rcx
+ 181bef4: 0f 11 07                     	movups	xmmword ptr [rdi], xmm0
+ 181bef7: 48 8b bb a8 02 00 00         	mov	rdi, qword ptr [rbx + 0x2a8]
+ 181befe: 48 8b b3 b8 02 00 00         	mov	rsi, qword ptr [rbx + 0x2b8]
+ 181bf05: 41 0f 10 86 a8 02 00 00      	movups	xmm0, xmmword ptr [r14 + 0x2a8]
+ 181bf0d: 0f 11 83 a8 02 00 00         	movups	xmmword ptr [rbx + 0x2a8], xmm0
+ 181bf14: 49 8b 86 b8 02 00 00         	mov	rax, qword ptr [r14 + 0x2b8]
+ 181bf1b: 48 89 83 b8 02 00 00         	mov	qword ptr [rbx + 0x2b8], rax
+ 181bf22: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181bf25: 41 0f 11 8e a8 02 00 00      	movups	xmmword ptr [r14 + 0x2a8], xmm1
+ 181bf2d: 49 c7 86 b8 02 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x2b8], 0x0
+ 181bf38: 48 85 ff                     	test	rdi, rdi
+ 181bf3b: 74 0b                        	je	0x181bf48 <.text+0x216b8>
+ 181bf3d: 48 29 fe                     	sub	rsi, rdi
+ 181bf40: e8 bb 5d 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bf45: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181bf48: 48 8b bb c0 02 00 00         	mov	rdi, qword ptr [rbx + 0x2c0]
+ 181bf4f: 48 8b b3 d0 02 00 00         	mov	rsi, qword ptr [rbx + 0x2d0]
+ 181bf56: 41 0f 10 86 c0 02 00 00      	movups	xmm0, xmmword ptr [r14 + 0x2c0]
+ 181bf5e: 0f 11 83 c0 02 00 00         	movups	xmmword ptr [rbx + 0x2c0], xmm0
+ 181bf65: 49 8b 86 d0 02 00 00         	mov	rax, qword ptr [r14 + 0x2d0]
+ 181bf6c: 48 89 83 d0 02 00 00         	mov	qword ptr [rbx + 0x2d0], rax
+ 181bf73: 41 0f 11 8e c0 02 00 00      	movups	xmmword ptr [r14 + 0x2c0], xmm1
+ 181bf7b: 49 c7 86 d0 02 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x2d0], 0x0
+ 181bf86: 48 85 ff                     	test	rdi, rdi
+ 181bf89: 74 08                        	je	0x181bf93 <.text+0x21703>
+ 181bf8b: 48 29 fe                     	sub	rsi, rdi
+ 181bf8e: e8 6d 5d 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bf93: 48 8b bb d8 02 00 00         	mov	rdi, qword ptr [rbx + 0x2d8]
+ 181bf9a: 48 8b b3 e8 02 00 00         	mov	rsi, qword ptr [rbx + 0x2e8]
+ 181bfa1: 41 0f 10 86 d8 02 00 00      	movups	xmm0, xmmword ptr [r14 + 0x2d8]
+ 181bfa9: 0f 11 83 d8 02 00 00         	movups	xmmword ptr [rbx + 0x2d8], xmm0
+ 181bfb0: 49 8b 86 e8 02 00 00         	mov	rax, qword ptr [r14 + 0x2e8]
+ 181bfb7: 48 89 83 e8 02 00 00         	mov	qword ptr [rbx + 0x2e8], rax
+ 181bfbe: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181bfc1: 41 0f 11 8e d8 02 00 00      	movups	xmmword ptr [r14 + 0x2d8], xmm1
+ 181bfc9: 49 c7 86 e8 02 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x2e8], 0x0
+ 181bfd4: 48 85 ff                     	test	rdi, rdi
+ 181bfd7: 74 0b                        	je	0x181bfe4 <.text+0x21754>
+ 181bfd9: 48 29 fe                     	sub	rsi, rdi
+ 181bfdc: e8 1f 5d 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181bfe1: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181bfe4: 48 8b bb f0 02 00 00         	mov	rdi, qword ptr [rbx + 0x2f0]
+ 181bfeb: 48 8b b3 00 03 00 00         	mov	rsi, qword ptr [rbx + 0x300]
+ 181bff2: 41 0f 10 86 f0 02 00 00      	movups	xmm0, xmmword ptr [r14 + 0x2f0]
+ 181bffa: 0f 11 83 f0 02 00 00         	movups	xmmword ptr [rbx + 0x2f0], xmm0
+ 181c001: 49 8b 86 00 03 00 00         	mov	rax, qword ptr [r14 + 0x300]
+ 181c008: 48 89 83 00 03 00 00         	mov	qword ptr [rbx + 0x300], rax
+ 181c00f: 41 0f 11 8e f0 02 00 00      	movups	xmmword ptr [r14 + 0x2f0], xmm1
+ 181c017: 49 c7 86 00 03 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x300], 0x0
+ 181c022: 48 85 ff                     	test	rdi, rdi
+ 181c025: 74 08                        	je	0x181c02f <.text+0x2179f>
+ 181c027: 48 29 fe                     	sub	rsi, rdi
+ 181c02a: e8 d1 5c 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181c02f: 48 8b bb 08 03 00 00         	mov	rdi, qword ptr [rbx + 0x308]
+ 181c036: 48 8b b3 18 03 00 00         	mov	rsi, qword ptr [rbx + 0x318]
+ 181c03d: 41 0f 10 86 08 03 00 00      	movups	xmm0, xmmword ptr [r14 + 0x308]
+ 181c045: 0f 11 83 08 03 00 00         	movups	xmmword ptr [rbx + 0x308], xmm0
+ 181c04c: 49 8b 86 18 03 00 00         	mov	rax, qword ptr [r14 + 0x318]
+ 181c053: 48 89 83 18 03 00 00         	mov	qword ptr [rbx + 0x318], rax
+ 181c05a: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181c05d: 41 0f 11 8e 08 03 00 00      	movups	xmmword ptr [r14 + 0x308], xmm1
+ 181c065: 49 c7 86 18 03 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x318], 0x0
+ 181c070: 48 85 ff                     	test	rdi, rdi
+ 181c073: 74 0b                        	je	0x181c080 <.text+0x217f0>
+ 181c075: 48 29 fe                     	sub	rsi, rdi
+ 181c078: e8 83 5c 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181c07d: 0f 57 c9                     	xorps	xmm1, xmm1
+ 181c080: 48 8b bb 20 03 00 00         	mov	rdi, qword ptr [rbx + 0x320]
+ 181c087: 48 8b b3 30 03 00 00         	mov	rsi, qword ptr [rbx + 0x330]
+ 181c08e: 41 0f 10 86 20 03 00 00      	movups	xmm0, xmmword ptr [r14 + 0x320]
+ 181c096: 0f 11 83 20 03 00 00         	movups	xmmword ptr [rbx + 0x320], xmm0
+ 181c09d: 49 8b 86 30 03 00 00         	mov	rax, qword ptr [r14 + 0x330]
+ 181c0a4: 48 89 83 30 03 00 00         	mov	qword ptr [rbx + 0x330], rax
+ 181c0ab: 41 0f 11 8e 20 03 00 00      	movups	xmmword ptr [r14 + 0x320], xmm1
+ 181c0b3: 49 c7 86 30 03 00 00 00 00 00 00     	mov	qword ptr [r14 + 0x330], 0x0
+ 181c0be: 48 85 ff                     	test	rdi, rdi
+ 181c0c1: 74 08                        	je	0x181c0cb <.text+0x2183b>
+ 181c0c3: 48 29 fe                     	sub	rsi, rdi
+ 181c0c6: e8 35 5c 1b 00               	call	0x19d1d00 <_ZdlPvm@plt>
+ 181c0cb: 48 89 d8                     	mov	rax, rbx
+ 181c0ce: 5b                           	pop	rbx
+ 181c0cf: 41 5e                        	pop	r14
+ 181c0d1: 41 5f                        	pop	r15
+ 181c0d3: c3                           	ret
+ 181c0d4: 48 89 f0                     	mov	rax, rsi
+ 181c0d7: e9 9e f8 ff ff               	jmp	0x181b97a <.text+0x210ea>
+ 181c0dc: 48 89 f0                     	mov	rax, rsi
+ 181c0df: e9 b5 fa ff ff               	jmp	0x181bb99 <.text+0x21309>

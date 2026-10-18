@@ -1,0 +1,91 @@
+{
+  "utc": "2026-10-17T11:52:54.136976+00:00",
+  "complete": true,
+  "raw_replay_passed": true,
+  "version": "0.18.7",
+  "actual_input_tokens": 16384,
+  "actual_output_tokens": 128,
+  "excluded_warmups": 1,
+  "measured": 3,
+  "client_token_event_delivery_tok_s_pooled": 40.40630630236991,
+  "client_token_event_delivery_tok_s_all": [
+    40.61315762695593,
+    40.341758863203545,
+    40.26565056878719
+  ],
+  "effective_ttft_mean_seconds": 12.525163833333334,
+  "effective_ttft_all_seconds": [
+    12.4240372,
+    12.4301516,
+    12.7213027
+  ],
+  "whole_http_mean_seconds": 15.671759,
+  "whole_http_all_seconds": [
+    15.5537747,
+    15.5809273,
+    15.880575
+  ],
+  "accepted": 180,
+  "drafted": 399,
+  "acceptance": 0.45112781954887216,
+  "output_sha256_values": [
+    "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+  ],
+  "per_attempt_metrics": [
+    {
+      "label": "Client delivery observations; neither pure Prefill nor pure Decode",
+      "token_event_count": 128,
+      "first_token_qpc_ns": 7313699790400,
+      "last_token_qpc_ns": 7316826855800,
+      "first_to_last_token_event_ns": 3127065400,
+      "effective_ttft_seconds": 12.4240372,
+      "first_visible_text_seconds": 12.4240372,
+      "whole_http_seconds": 15.5537747,
+      "client_observed_raw_token_event_delivery_tok_s": 40.61315762695593,
+      "rate_unavailable_reason": null,
+      "native_phase_clocks_qualified": false,
+      "interpolation_or_clock_correction": false
+    },
+    {
+      "label": "Client delivery observations; neither pure Prefill nor pure Decode",
+      "token_event_count": 128,
+      "first_token_qpc_ns": 7329288317100,
+      "last_token_qpc_ns": 7332436419800,
+      "first_to_last_token_event_ns": 3148102700,
+      "effective_ttft_seconds": 12.4301516,
+      "first_visible_text_seconds": 12.4301516,
+      "whole_http_seconds": 15.5809273,
+      "client_observed_raw_token_event_delivery_tok_s": 40.341758863203545,
+      "rate_unavailable_reason": null,
+      "native_phase_clocks_qualified": false,
+      "interpolation_or_clock_correction": false
+    },
+    {
+      "label": "Client delivery observations; neither pure Prefill nor pure Decode",
+      "token_event_count": 128,
+      "first_token_qpc_ns": 7345196743300,
+      "last_token_qpc_ns": 7348350796400,
+      "first_to_last_token_event_ns": 3154053100,
+      "effective_ttft_seconds": 12.7213027,
+      "first_visible_text_seconds": 12.7213027,
+      "whole_http_seconds": 15.880575,
+      "client_observed_raw_token_event_delivery_tok_s": 40.26565056878719,
+      "rate_unavailable_reason": null,
+      "native_phase_clocks_qualified": false,
+      "interpolation_or_clock_correction": false
+    }
+  ],
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\stream-qpc\\cohort-current\\source.json",
+    "bytes": 2635,
+    "sha256": "b05e8ed23d9a1b885cd1578d70ddbdc94ec702b48bed30ba78cf63e3179cdc8d"
+  },
+  "scope": "API client token delivery, effective TTFT and complete HTTP; not pure native decode/prefill",
+  "native_phase_clocks_qualified": false,
+  "cache_policy": "no_store",
+  "cache_counters_zero": true,
+  "server_restarted": false,
+  "live_source_changed": false,
+  "speedup_claim": false,
+  "full_goal_achieved": false
+}

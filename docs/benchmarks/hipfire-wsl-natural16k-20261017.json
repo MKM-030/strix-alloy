@@ -1,0 +1,1749 @@
+{
+  "schema": "hipfire.wsl-natural16k-baseline-evidence.v1",
+  "date": "2026-10-17",
+  "baseline_measurements_completed": true,
+  "optimization_adopted": false,
+  "local_speedup_claim": false,
+  "native_phase_clocks_qualified": false,
+  "exact_ar_mtp_output_equivalence": false,
+  "matched_halogen_quantization_comparison": false,
+  "joint_1925_plus_prefill_fast_decode_achieved": false,
+  "source": {
+    "repository": "https://github.com/warpfront/hipfire",
+    "commit": "ddee82c7464946c86f946d89af1b5634f212d466",
+    "local_patch": "Native MTP drafted counter only; acceptance denominator exposed without a numerical/kernel change",
+    "drafted_counter_patch_sha256": "a5e36c349ccdbc8d1d5eefe219d74f80a1361d7e4a04c0762f807de4d73faa30",
+    "rocm_sdk": "7.14",
+    "sdk_provenance": "Root-reported completed-trial environment; no SDK or hardware query during evidence writing",
+    "platform": "WSL Ubuntu-24.04 / Docker / ROCDXG"
+  },
+  "representation": {
+    "model": "/work/models/qwen3.8-flash-next-base.mq2-xts-4500",
+    "host_model": "E:\\strix-alloy\\hipfire-mq2-ddee82\\models\\qwen3.8-flash-next-base.mq2-xts-4500",
+    "host_ple": "E:\\strix-alloy\\hipfire-mq2-ddee82\\models\\qwen3.8-flash-next-base.mq2-xts-4500.ple-q4",
+    "weights": "MQ2-XTS4500",
+    "ple": "q4 PLE, rank order (root-confirmed load log)",
+    "state": "q8",
+    "kv_backend": "legacy",
+    "different_from_halogen_iq4": true,
+    "no_model_payload_read_for_this_document": true
+  },
+  "workload": {
+    "fixture": "Natural16K natural non-repeated prose",
+    "natural_non_repeated_source": "Root-prepared fixture; no padding or repeated source per preparation context",
+    "actual_rendered_input_tokens": 16384,
+    "actual_output_tokens": 128,
+    "excluded_warmups_per_arm": 1,
+    "measured_repetitions_per_arm": 3,
+    "allocated_context_positions": 32768,
+    "model_context_positions": 262144,
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "repeat_penalty": 1.0,
+    "thinking": false,
+    "max_think_tokens": 1,
+    "assistant_prefix": "closed_think",
+    "reasoning_effort": "none",
+    "retries": 0,
+    "cold_reset_each_generation": true,
+    "reported_cached_tokens_each_generation": 0,
+    "prompt_sha256": "a818a059b4e04fd4f4f949a82b9bf585f396efaddb7d667e0b1f2b9f7b236d5d",
+    "prompt_utf8_bytes": 68228
+  },
+  "process_config": {
+    "schema_version": 1,
+    "values": {
+      "values": {
+        "developer.hipcc": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/bin/hipcc",
+        "developer.rocm_strict": "1",
+        "diagnostic.compiler.no_device_compiler": false,
+        "developer.dpm_warmup_secs": "0",
+        "memory.ple_format": "q4",
+        "memory.session_cache_bytes": 0,
+        "memory.session_cache_disk_bytes": 0,
+        "memory.prompt_cache_capacity": 0,
+        "memory.ple_prewarm_bytes": 0,
+        "memory.ple_load_fill_bytes": 0,
+        "memory.ple_hot_store_bytes": 0,
+        "fusions.npu_trunk": "off",
+        "kernel.npu_spillover": false,
+        "speculation.mtp_ngram": "off",
+        "speculation.mtp_ngram_copy": "off",
+        "prompt.normalize": false,
+        "memory.oom_guard": false
+      }
+    }
+  },
+  "measurement_semantics": {
+    "means": "Arithmetic means of three measured runs; warmup excluded; raw rounded native fields retained",
+    "native_prefill_decode": "Daemon std::time::Instant phase observations; independent from HIP-event scaling arithmetic but not independently qualified against request receipt intervals",
+    "native_ttft_ms": "Alias of native prefill_ms on these routes; not client first-visible receipt time",
+    "qpc": "Windows QueryPerformanceCounter via perf_counter_ns; reliable client request-to-receipt labels retained as observed",
+    "qpc_clock": {
+      "domain": "Windows QPC via time.perf_counter_ns",
+      "implementation": "QueryPerformanceCounter()",
+      "resolution_seconds": 1e-07,
+      "adjustable": false
+    },
+    "qpc_request_to_done": "Request send to final native JSONL done receipt, including generation/emission/commit handshake/transport; excludes model load and preceding reset",
+    "qpc_first_visible": "Request send to first token-event fragment receipt under collector definition, including empty token text; not a pure prefill duration",
+    "text_events": "Routed token/reasoning fragments; native MTP may emit bursts. No 127-interval or client decode-token rate inferred",
+    "acceptance": "Measured sum(accepted)/sum(drafted), actual successful verifier-window accounting before later semantic output filtering; not mean per-run ratio or tau",
+    "output_hashes": "Saved completed analysis concatenates decoded event.text by (id,attempt_id), in stdout order; visible and reasoning channels separate",
+    "source_clock_review": "Selected AR uses request-local t0/prefill/t_decode/t_end; no reused timer or phase-overlap source explanation for observed inversions",
+    "interpolation_or_clock_correction": false
+  },
+  "observed_native_qpc_boundary_inversions": [
+    {
+      "arm": "ar",
+      "id": "measured-03",
+      "attempt_id": 4,
+      "native_prefill_ms": 22128.4,
+      "qpc_request_to_first_visible_text_fragment_receipt_ms": 21165.924,
+      "native_minus_qpc_ms": 962.4760000000024,
+      "explanation_established": false
+    },
+    {
+      "arm": "mtp",
+      "id": "measured-02",
+      "attempt_id": 3,
+      "native_prefill_ms": 20837.4,
+      "qpc_request_to_first_visible_text_fragment_receipt_ms": 20351.4791,
+      "native_minus_qpc_ms": 485.920900000001,
+      "explanation_established": false
+    }
+  ],
+  "arms": [
+    {
+      "name": "ar",
+      "completed": true,
+      "collector_success": true,
+      "sample_contract_passed": true,
+      "spec": "off",
+      "load_params": {
+        "max_seq": 32768,
+        "kv_mode": "q8",
+        "mtp_mode": "off",
+        "mtp_k": 2,
+        "dflash_mode": "off",
+        "ngram_draft": false,
+        "dspark_mode": "off",
+        "prefill_compression": "off",
+        "tp": 1,
+        "pp": 1,
+        "continuous_batch_size": 1,
+        "experimental_multi_slot": false
+      },
+      "loaded": {
+        "type": "loaded",
+        "arch": "qwen4",
+        "dim": 2560,
+        "layers": 48,
+        "vocab": 248320,
+        "vl": false,
+        "pp": 1,
+        "audio": false,
+        "video": false,
+        "reasoning_contract": "qwen_jinja",
+        "reasoning_effort_native": true,
+        "reasoning_efforts": [
+          "low",
+          "medium",
+          "xhigh"
+        ],
+        "reasoning_effort_probe_error": null,
+        "cache_capable": false,
+        "retry_reset_eligible": false,
+        "continuous_batch_capable": false,
+        "kv_backend_request": "automatic",
+        "kv_backend": "legacy",
+        "kv_backend_reason": "VMM KV growth is not certified under WSL/ROCDXG (WDDM may alias earlier KV segments); set HIPFIRE_UNSAFE_WSL_VMM_KV=1 (memory.unsafe_wsl_vmm_kv) to override, unsafe until certified",
+        "kv_backend_legacy": true,
+        "kv_backend_warning": "WARNING HIPFIRE_KV_BACKEND=legacy: automatic VMM selection unavailable (VMM KV growth is not certified under WSL/ROCDXG (WDDM may alias earlier KV segments); set HIPFIRE_UNSAFE_WSL_VMM_KV=1 (memory.unsafe_wsl_vmm_kv) to override, unsafe until certified); using legacy KV storage. Inspect before benchmarking or filing a PR.",
+        "max_seq": 32768,
+        "max_seq_bound": "user",
+        "max_seq_reason": null,
+        "model_ctx": 262144,
+        "card_cap": 32768,
+        "kv_mode": "q8"
+      },
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "actual_input_tokens_per_run": 16384,
+      "actual_output_tokens_per_run": 128,
+      "cached_tokens_per_run": 0,
+      "mean_native_phase_observations": {
+        "prefill_ms": 21077.0,
+        "prefill_tok_s": 778.3000000000001,
+        "decode_tok_s": 21.033333333333335,
+        "ttft_ms": 21077.0
+      },
+      "native_phase_clocks_qualified": false,
+      "native_phase_observation_arrays": {
+        "prefill_ms": [
+          20418.2,
+          20684.4,
+          22128.4
+        ],
+        "prefill_tok_s": [
+          802.4,
+          792.1,
+          740.4
+        ],
+        "decode_tok_s": [
+          21.8,
+          22.1,
+          19.2
+        ],
+        "ttft_ms": [
+          20418.2,
+          20684.4,
+          22128.4
+        ],
+        "tok_s": [
+          4.9,
+          4.8,
+          4.4
+        ]
+      },
+      "mean_qpc_request_to_done_receipt_seconds": 26.729708966666667,
+      "qpc_request_to_done_receipt_seconds": [
+        26.2961462,
+        26.5937941,
+        27.299186600000002
+      ],
+      "mean_qpc_request_to_first_visible_text_fragment_receipt_seconds": 20.805722666666668,
+      "qpc_request_to_first_visible_text_fragment_receipt_seconds": [
+        20.442617600000002,
+        20.8086264,
+        21.165924
+      ],
+      "native_mtp_acceptance": null,
+      "mtp_retired_measured_runs": 0,
+      "measured_visible_output_sha256_values": [
+        "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570"
+      ],
+      "arm_completion": {
+        "utc": "2026-10-17T17:36:11.677884+00:00",
+        "finished_utc": "2026-10-17T17:45:50.722435+00:00",
+        "terminal": true,
+        "removed": true,
+        "container_id": "dc359ee5b496bb6d44c9d1175b34378f6058e6f5fa5c773d53b4eac3f1298a04",
+        "minimum_available_bytes": 45684084736,
+        "minimum_commit_headroom_bytes": 145593356288
+      },
+      "transport_returncode": 0,
+      "transport_shutdown_method": "stdin_eof",
+      "samples": [
+        {
+          "role": "warmup",
+          "index": 0,
+          "included_in_measurements": false,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 108482.7,
+            "prefill_tok_s": 151.0,
+            "decode_tok_s": 4.2,
+            "ttft_ms": 108482.7,
+            "tok_s": 0.9,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 28406591335400,
+            "client_gen_start_ms": 27.1498,
+            "client_first_text_event_ms": 132889.6033,
+            "client_first_text_event_qpc_ns": 28539480938700,
+            "client_last_text_event_ms": 138736.0679,
+            "client_last_text_event_qpc_ns": 28545327403300,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 132889.6033,
+            "client_first_visible_text_event_qpc_ns": 28539480938700,
+            "client_last_visible_text_event_ms": 138736.0679,
+            "client_last_visible_text_event_qpc_ns": 28545327403300,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 138737.3239,
+            "client_done_ms": 138741.4355
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 1,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 1,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "warmup-00",
+            "tokens": 128,
+            "tok_s": 0.9,
+            "prefill_tokens": 16384,
+            "prefill_ms": 108482.7,
+            "prefill_tok_s": 151.0,
+            "decode_tok_s": 4.2,
+            "ttft_ms": 108482.7,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "attempt_id": 1
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "visible_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 138741.4355,
+            "request_to_first_text_fragment_receipt_ms": 132889.6033,
+            "request_to_first_visible_text_fragment_receipt_ms": 132889.6033,
+            "request_to_last_visible_text_fragment_receipt_ms": 138736.0679
+          }
+        },
+        {
+          "role": "measured",
+          "index": 1,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 20418.2,
+            "prefill_tok_s": 802.4,
+            "decode_tok_s": 21.8,
+            "ttft_ms": 20418.2,
+            "tok_s": 4.9,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 28545373530100,
+            "client_gen_start_ms": 12.8961,
+            "client_first_text_event_ms": 20442.6176,
+            "client_first_text_event_qpc_ns": 28565816147700,
+            "client_last_text_event_ms": 26294.1237,
+            "client_last_text_event_qpc_ns": 28571667653800,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 20442.6176,
+            "client_first_visible_text_event_qpc_ns": 28565816147700,
+            "client_last_visible_text_event_ms": 26294.1237,
+            "client_last_visible_text_event_qpc_ns": 28571667653800,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 26294.2979,
+            "client_done_ms": 26296.1462
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 2,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 2,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-01",
+            "tokens": 128,
+            "tok_s": 4.9,
+            "prefill_tokens": 16384,
+            "prefill_ms": 20418.2,
+            "prefill_tok_s": 802.4,
+            "decode_tok_s": 21.8,
+            "ttft_ms": 20418.2,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "attempt_id": 2
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "visible_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 26296.1462,
+            "request_to_first_text_fragment_receipt_ms": 20442.6176,
+            "request_to_first_visible_text_fragment_receipt_ms": 20442.6176,
+            "request_to_last_visible_text_fragment_receipt_ms": 26294.1237
+          }
+        },
+        {
+          "role": "measured",
+          "index": 2,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 20684.4,
+            "prefill_tok_s": 792.1,
+            "decode_tok_s": 22.1,
+            "ttft_ms": 20684.4,
+            "tok_s": 4.8,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 28571709330500,
+            "client_gen_start_ms": 112.3376,
+            "client_first_text_event_ms": 20808.6264,
+            "client_first_text_event_qpc_ns": 28592517956900,
+            "client_last_text_event_ms": 26592.0553,
+            "client_last_text_event_qpc_ns": 28598301385800,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 20808.6264,
+            "client_first_visible_text_event_qpc_ns": 28592517956900,
+            "client_last_visible_text_event_ms": 26592.0553,
+            "client_last_visible_text_event_qpc_ns": 28598301385800,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 26592.164,
+            "client_done_ms": 26593.7941
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 3,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 3,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-02",
+            "tokens": 128,
+            "tok_s": 4.8,
+            "prefill_tokens": 16384,
+            "prefill_ms": 20684.4,
+            "prefill_tok_s": 792.1,
+            "decode_tok_s": 22.1,
+            "ttft_ms": 20684.4,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "attempt_id": 3
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "visible_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 26593.7941,
+            "request_to_first_text_fragment_receipt_ms": 20808.6264,
+            "request_to_first_visible_text_fragment_receipt_ms": 20808.6264,
+            "request_to_last_visible_text_fragment_receipt_ms": 26592.0553
+          }
+        },
+        {
+          "role": "measured",
+          "index": 3,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 22128.4,
+            "prefill_tok_s": 740.4,
+            "decode_tok_s": 19.2,
+            "ttft_ms": 22128.4,
+            "tok_s": 4.4,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 28598344098400,
+            "client_gen_start_ms": 20.6231,
+            "client_first_text_event_ms": 21165.924,
+            "client_first_text_event_qpc_ns": 28619510022400,
+            "client_last_text_event_ms": 27297.5519,
+            "client_last_text_event_qpc_ns": 28625641650300,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 21165.924,
+            "client_first_visible_text_event_qpc_ns": 28619510022400,
+            "client_last_visible_text_event_ms": 27297.5519,
+            "client_last_visible_text_event_qpc_ns": 28625641650300,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 27297.7233,
+            "client_done_ms": 27299.1866
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 4,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 4,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-03",
+            "tokens": 128,
+            "tok_s": 4.4,
+            "prefill_tokens": 16384,
+            "prefill_ms": 22128.4,
+            "prefill_tok_s": 740.4,
+            "decode_tok_s": 19.2,
+            "ttft_ms": 22128.4,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "attempt_id": 4
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "visible_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 27299.1866,
+            "request_to_first_text_fragment_receipt_ms": 21165.924,
+            "request_to_first_visible_text_fragment_receipt_ms": 21165.924,
+            "request_to_last_visible_text_fragment_receipt_ms": 27297.5519
+          }
+        }
+      ]
+    },
+    {
+      "name": "mtp",
+      "completed": true,
+      "collector_success": true,
+      "sample_contract_passed": true,
+      "spec": "mtp",
+      "load_params": {
+        "max_seq": 32768,
+        "kv_mode": "q8",
+        "mtp_mode": "on",
+        "mtp_k": 2,
+        "dflash_mode": "off",
+        "ngram_draft": false,
+        "dspark_mode": "off",
+        "prefill_compression": "off",
+        "tp": 1,
+        "pp": 1,
+        "continuous_batch_size": 1,
+        "experimental_multi_slot": false
+      },
+      "loaded": {
+        "type": "loaded",
+        "arch": "qwen4",
+        "dim": 2560,
+        "layers": 48,
+        "vocab": 248320,
+        "vl": false,
+        "pp": 1,
+        "audio": false,
+        "video": false,
+        "reasoning_contract": "qwen_jinja",
+        "reasoning_effort_native": true,
+        "reasoning_efforts": [
+          "low",
+          "medium",
+          "xhigh"
+        ],
+        "reasoning_effort_probe_error": null,
+        "cache_capable": false,
+        "retry_reset_eligible": false,
+        "continuous_batch_capable": false,
+        "kv_backend_request": "automatic",
+        "kv_backend": "legacy",
+        "kv_backend_reason": "VMM KV growth is not certified under WSL/ROCDXG (WDDM may alias earlier KV segments); set HIPFIRE_UNSAFE_WSL_VMM_KV=1 (memory.unsafe_wsl_vmm_kv) to override, unsafe until certified",
+        "kv_backend_legacy": true,
+        "kv_backend_warning": "WARNING HIPFIRE_KV_BACKEND=legacy: automatic VMM selection unavailable (VMM KV growth is not certified under WSL/ROCDXG (WDDM may alias earlier KV segments); set HIPFIRE_UNSAFE_WSL_VMM_KV=1 (memory.unsafe_wsl_vmm_kv) to override, unsafe until certified); using legacy KV storage. Inspect before benchmarking or filing a PR.",
+        "max_seq": 32768,
+        "max_seq_bound": "user",
+        "max_seq_reason": null,
+        "model_ctx": 262144,
+        "card_cap": 32768,
+        "kv_mode": "q8"
+      },
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "actual_input_tokens_per_run": 16384,
+      "actual_output_tokens_per_run": 128,
+      "cached_tokens_per_run": 0,
+      "mean_native_phase_observations": {
+        "prefill_ms": 20465.5,
+        "prefill_tok_s": 800.6999999999999,
+        "decode_tok_s": 20.8,
+        "ttft_ms": 20465.5
+      },
+      "native_phase_clocks_qualified": false,
+      "native_phase_observation_arrays": {
+        "prefill_ms": [
+          20384.6,
+          20837.4,
+          20174.5
+        ],
+        "prefill_tok_s": [
+          803.7,
+          786.3,
+          812.1
+        ],
+        "decode_tok_s": [
+          23.6,
+          15.1,
+          23.7
+        ],
+        "ttft_ms": [
+          20384.6,
+          20837.4,
+          20174.5
+        ],
+        "tok_s": [
+          5.0,
+          4.4,
+          5.0
+        ]
+      },
+      "mean_qpc_request_to_done_receipt_seconds": 26.748369766666666,
+      "qpc_request_to_done_receipt_seconds": [
+        25.8288352,
+        28.817885699999998,
+        25.5983884
+      ],
+      "mean_qpc_request_to_first_visible_text_fragment_receipt_seconds": 20.311217199999998,
+      "qpc_request_to_first_visible_text_fragment_receipt_seconds": [
+        20.3964085,
+        20.3514791,
+        20.185764
+      ],
+      "native_mtp_acceptance": {
+        "accepted_sum": 124,
+        "drafted_sum": 215,
+        "accepted_over_drafted": 0.5767441860465117
+      },
+      "mtp_retired_measured_runs": 1,
+      "measured_visible_output_sha256_values": [
+        "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116"
+      ],
+      "arm_completion": {
+        "utc": "2026-10-17T17:45:51.038533+00:00",
+        "finished_utc": "2026-10-17T17:53:22.750532+00:00",
+        "terminal": true,
+        "removed": true,
+        "container_id": "80cbd63e7b289018b863295ebb2bc450f9ae0c1d294744a835e110316f967d10",
+        "minimum_available_bytes": 45309689856,
+        "minimum_commit_headroom_bytes": 143245512704
+      },
+      "transport_returncode": 0,
+      "transport_shutdown_method": "stdin_eof",
+      "samples": [
+        {
+          "role": "warmup",
+          "index": 0,
+          "included_in_measurements": false,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 21899.2,
+            "prefill_tok_s": 748.2,
+            "decode_tok_s": 7.5,
+            "ttft_ms": 21899.2,
+            "tok_s": 3.3,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 28958632492900,
+            "client_gen_start_ms": 19.8154,
+            "client_first_text_event_ms": 21943.1337,
+            "client_first_text_event_qpc_ns": 28980575626600,
+            "client_last_text_event_ms": 38928.3962,
+            "client_last_text_event_qpc_ns": 28997560889100,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 21943.1337,
+            "client_first_visible_text_event_qpc_ns": 28980575626600,
+            "client_last_visible_text_event_ms": 38928.3962,
+            "client_last_visible_text_event_qpc_ns": 28997560889100,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 38978.3237,
+            "client_done_ms": 38982.7022
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 1,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 1,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "warmup-00",
+            "tokens": 128,
+            "tok_s": 3.3,
+            "prefill_tokens": 16384,
+            "prefill_ms": 21899.2,
+            "prefill_tok_s": 748.2,
+            "decode_tok_s": 7.5,
+            "ttft_ms": 21899.2,
+            "attempt_id": 1,
+            "tau": 1.23,
+            "cycles": 57,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "mtp": true,
+            "accepted": 70,
+            "mtp_windows": 57,
+            "floor_ar_windows": 2,
+            "ar_windows": 0,
+            "mtp_retired": false,
+            "drafted": 106
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "visible_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 38982.7022,
+            "request_to_first_text_fragment_receipt_ms": 21943.1337,
+            "request_to_first_visible_text_fragment_receipt_ms": 21943.1337,
+            "request_to_last_visible_text_fragment_receipt_ms": 38928.3962
+          }
+        },
+        {
+          "role": "measured",
+          "index": 1,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 20384.6,
+            "prefill_tok_s": 803.7,
+            "decode_tok_s": 23.6,
+            "ttft_ms": 20384.6,
+            "tok_s": 5.0,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 28997627995400,
+            "client_gen_start_ms": 11.1238,
+            "client_first_text_event_ms": 20396.4085,
+            "client_first_text_event_qpc_ns": 29018024403900,
+            "client_last_text_event_ms": 25779.5981,
+            "client_last_text_event_qpc_ns": 29023407593500,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 20396.4085,
+            "client_first_visible_text_event_qpc_ns": 29018024403900,
+            "client_last_visible_text_event_ms": 25779.5981,
+            "client_last_visible_text_event_qpc_ns": 29023407593500,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 25825.6717,
+            "client_done_ms": 25828.8352
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 2,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 2,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-01",
+            "tokens": 128,
+            "tok_s": 5.0,
+            "prefill_tokens": 16384,
+            "prefill_ms": 20384.6,
+            "prefill_tok_s": 803.7,
+            "decode_tok_s": 23.6,
+            "ttft_ms": 20384.6,
+            "attempt_id": 2,
+            "tau": 0.72,
+            "cycles": 74,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "mtp": true,
+            "accepted": 53,
+            "mtp_windows": 74,
+            "floor_ar_windows": 1,
+            "ar_windows": 0,
+            "mtp_retired": false,
+            "drafted": 90
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "visible_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 25828.8352,
+            "request_to_first_text_fragment_receipt_ms": 20396.4085,
+            "request_to_first_visible_text_fragment_receipt_ms": 20396.4085,
+            "request_to_last_visible_text_fragment_receipt_ms": 25779.5981
+          }
+        },
+        {
+          "role": "measured",
+          "index": 2,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 20837.4,
+            "prefill_tok_s": 786.3,
+            "decode_tok_s": 15.1,
+            "ttft_ms": 20837.4,
+            "tok_s": 4.4,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 29023464676600,
+            "client_gen_start_ms": 12.8649,
+            "client_first_text_event_ms": 20351.4791,
+            "client_first_text_event_qpc_ns": 29043816155700,
+            "client_last_text_event_ms": 26132.2212,
+            "client_last_text_event_qpc_ns": 29049596897800,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 20351.4791,
+            "client_first_visible_text_event_qpc_ns": 29043816155700,
+            "client_last_visible_text_event_ms": 26132.2212,
+            "client_last_visible_text_event_qpc_ns": 29049596897800,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 28816.7276,
+            "client_done_ms": 28817.8857
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 3,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 3,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-02",
+            "tokens": 128,
+            "tok_s": 4.4,
+            "prefill_tokens": 16384,
+            "prefill_ms": 20837.4,
+            "prefill_tok_s": 786.3,
+            "decode_tok_s": 15.1,
+            "ttft_ms": 20837.4,
+            "attempt_id": 3,
+            "tau": 0.17,
+            "cycles": 109,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "mtp": true,
+            "accepted": 18,
+            "mtp_windows": 25,
+            "floor_ar_windows": 7,
+            "ar_windows": 84,
+            "mtp_retired": true,
+            "drafted": 35
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "visible_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 28817.8857,
+            "request_to_first_text_fragment_receipt_ms": 20351.4791,
+            "request_to_first_visible_text_fragment_receipt_ms": 20351.4791,
+            "request_to_last_visible_text_fragment_receipt_ms": 26132.2212
+          }
+        },
+        {
+          "role": "measured",
+          "index": 3,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 20174.5,
+            "prefill_tok_s": 812.1,
+            "decode_tok_s": 23.7,
+            "ttft_ms": 20174.5,
+            "tok_s": 5.0,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 29052294739700,
+            "client_gen_start_ms": 10.5455,
+            "client_first_text_event_ms": 20185.764,
+            "client_first_text_event_qpc_ns": 29072480503700,
+            "client_last_text_event_ms": 25548.3748,
+            "client_last_text_event_qpc_ns": 29077843114500,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 20185.764,
+            "client_first_visible_text_event_qpc_ns": 29072480503700,
+            "client_last_visible_text_event_ms": 25548.3748,
+            "client_last_visible_text_event_qpc_ns": 29077843114500,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 25595.5276,
+            "client_done_ms": 25598.3884
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 4,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 4,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-03",
+            "tokens": 128,
+            "tok_s": 5.0,
+            "prefill_tokens": 16384,
+            "prefill_ms": 20174.5,
+            "prefill_tok_s": 812.1,
+            "decode_tok_s": 23.7,
+            "ttft_ms": 20174.5,
+            "attempt_id": 4,
+            "tau": 0.72,
+            "cycles": 74,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "mtp": true,
+            "accepted": 53,
+            "mtp_windows": 74,
+            "floor_ar_windows": 1,
+            "ar_windows": 0,
+            "mtp_retired": false,
+            "drafted": 90
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "visible_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 25598.3884,
+            "request_to_first_text_fragment_receipt_ms": 20185.764,
+            "request_to_first_visible_text_fragment_receipt_ms": 20185.764,
+            "request_to_last_visible_text_fragment_receipt_ms": 25548.3748
+          }
+        }
+      ],
+      "measured_native_counter_totals": {
+        "accepted": 124,
+        "drafted": 215,
+        "cycles": 257,
+        "mtp_windows": 173,
+        "floor_ar_windows": 9,
+        "ar_windows": 84
+      }
+    },
+    {
+      "name": "mtp_inline_q8",
+      "completed": true,
+      "collector_success": true,
+      "sample_contract_passed": true,
+      "spec": "mtp",
+      "process_config": {
+        "schema_version": 1,
+        "values": {
+          "values": {
+            "developer.hipcc": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/bin/hipcc",
+            "developer.rocm_strict": "1",
+            "diagnostic.compiler.no_device_compiler": false,
+            "developer.dpm_warmup_secs": "0",
+            "memory.ple_format": "q4",
+            "memory.session_cache_bytes": 0,
+            "memory.session_cache_disk_bytes": 0,
+            "memory.prompt_cache_capacity": 0,
+            "memory.ple_prewarm_bytes": 0,
+            "memory.ple_load_fill_bytes": 0,
+            "memory.ple_hot_store_bytes": 0,
+            "fusions.npu_trunk": "off",
+            "kernel.npu_spillover": false,
+            "speculation.mtp_ngram": "off",
+            "speculation.mtp_ngram_copy": "off",
+            "prompt.normalize": false,
+            "memory.oom_guard": false,
+            "developer.qwen4_gdn_q8_inline": "1"
+          }
+        }
+      },
+      "process_config_changes_from_baseline_mtp": [
+        {
+          "key": "developer.qwen4_gdn_q8_inline",
+          "baseline_present": false,
+          "baseline": null,
+          "candidate": "1"
+        }
+      ],
+      "load_params": {
+        "max_seq": 32768,
+        "kv_mode": "q8",
+        "mtp_mode": "on",
+        "mtp_k": 2,
+        "dflash_mode": "off",
+        "ngram_draft": false,
+        "dspark_mode": "off",
+        "prefill_compression": "off",
+        "tp": 1,
+        "pp": 1,
+        "continuous_batch_size": 1,
+        "experimental_multi_slot": false
+      },
+      "loaded": {
+        "type": "loaded",
+        "arch": "qwen4",
+        "dim": 2560,
+        "layers": 48,
+        "vocab": 248320,
+        "vl": false,
+        "pp": 1,
+        "audio": false,
+        "video": false,
+        "reasoning_contract": "qwen_jinja",
+        "reasoning_effort_native": true,
+        "reasoning_efforts": [
+          "low",
+          "medium",
+          "xhigh"
+        ],
+        "reasoning_effort_probe_error": null,
+        "cache_capable": false,
+        "retry_reset_eligible": false,
+        "continuous_batch_capable": false,
+        "kv_backend_request": "automatic",
+        "kv_backend": "legacy",
+        "kv_backend_reason": "VMM KV growth is not certified under WSL/ROCDXG (WDDM may alias earlier KV segments); set HIPFIRE_UNSAFE_WSL_VMM_KV=1 (memory.unsafe_wsl_vmm_kv) to override, unsafe until certified",
+        "kv_backend_legacy": true,
+        "kv_backend_warning": "WARNING HIPFIRE_KV_BACKEND=legacy: automatic VMM selection unavailable (VMM KV growth is not certified under WSL/ROCDXG (WDDM may alias earlier KV segments); set HIPFIRE_UNSAFE_WSL_VMM_KV=1 (memory.unsafe_wsl_vmm_kv) to override, unsafe until certified); using legacy KV storage. Inspect before benchmarking or filing a PR.",
+        "max_seq": 32768,
+        "max_seq_bound": "user",
+        "max_seq_reason": null,
+        "model_ctx": 262144,
+        "card_cap": 32768,
+        "kv_mode": "q8"
+      },
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "actual_input_tokens_per_run": 16384,
+      "actual_output_tokens_per_run": 128,
+      "cached_tokens_per_run": 0,
+      "mean_native_phase_observations": {
+        "prefill_ms": 19921.966666666667,
+        "prefill_tok_s": 822.6,
+        "decode_tok_s": 23.7,
+        "ttft_ms": 19921.966666666667
+      },
+      "native_phase_clocks_qualified": false,
+      "native_phase_observation_arrays": {
+        "prefill_ms": [
+          20125.9,
+          20154.0,
+          19486.0
+        ],
+        "prefill_tok_s": [
+          814.1,
+          812.9,
+          840.8
+        ],
+        "decode_tok_s": [
+          23.7,
+          23.7,
+          23.7
+        ],
+        "ttft_ms": [
+          20125.9,
+          20154.0,
+          19486.0
+        ],
+        "tok_s": [
+          5.0,
+          5.0,
+          5.1
+        ]
+      },
+      "mean_qpc_request_to_done_receipt_seconds": 25.341198333333335,
+      "qpc_request_to_done_receipt_seconds": [
+        25.5364619,
+        25.5765942,
+        24.9105389
+      ],
+      "mean_qpc_request_to_first_visible_text_fragment_receipt_seconds": 19.935824566666668,
+      "qpc_request_to_first_visible_text_fragment_receipt_seconds": [
+        20.1378387,
+        20.167975,
+        19.50166
+      ],
+      "native_mtp_acceptance": {
+        "accepted_sum": 159,
+        "drafted_sum": 269,
+        "accepted_over_drafted": 0.5910780669144982
+      },
+      "measured_native_counter_totals": {
+        "accepted": 159,
+        "drafted": 269,
+        "cycles": 222,
+        "mtp_windows": 222,
+        "floor_ar_windows": 3,
+        "ar_windows": 0
+      },
+      "mtp_retired_measured_runs": 0,
+      "measured_visible_output_sha256_values": [
+        "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116"
+      ],
+      "measured_output_hash_matches_baseline_mtp": true,
+      "transport_returncode": 0,
+      "transport_shutdown_method": "stdin_eof",
+      "restoration_status": "In progress per root handoff; no fresh candidate ready receipt read",
+      "samples": [
+        {
+          "role": "warmup",
+          "index": 0,
+          "included_in_measurements": false,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 22357.5,
+            "prefill_tok_s": 732.8,
+            "decode_tok_s": 21.7,
+            "ttft_ms": 22357.5,
+            "tok_s": 4.5,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 29737696553400,
+            "client_gen_start_ms": 35.1998,
+            "client_first_text_event_ms": 22417.4118,
+            "client_first_text_event_qpc_ns": 29760113965200,
+            "client_last_text_event_ms": 28229.9711,
+            "client_last_text_event_qpc_ns": 29765926524500,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 22417.4118,
+            "client_first_visible_text_event_qpc_ns": 29760113965200,
+            "client_last_visible_text_event_ms": 28229.9711,
+            "client_last_visible_text_event_qpc_ns": 29765926524500,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 28283.1075,
+            "client_done_ms": 28288.0287
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 1,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 1,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "warmup-00",
+            "tokens": 128,
+            "tok_s": 4.5,
+            "prefill_tokens": 16384,
+            "prefill_ms": 22357.5,
+            "prefill_tok_s": 732.8,
+            "decode_tok_s": 21.7,
+            "ttft_ms": 22357.5,
+            "attempt_id": 1,
+            "tau": 1.23,
+            "cycles": 57,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "mtp": true,
+            "accepted": 70,
+            "mtp_windows": 57,
+            "floor_ar_windows": 2,
+            "ar_windows": 0,
+            "mtp_retired": false,
+            "drafted": 106
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "visible_text_utf8_sha256": "0e995171d60ba60c8161c84d24ce1fbe14708b5e2e97697aa926ad53f71de570",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 28288.0287,
+            "request_to_first_text_fragment_receipt_ms": 22417.4118,
+            "request_to_first_visible_text_fragment_receipt_ms": 22417.4118,
+            "request_to_last_visible_text_fragment_receipt_ms": 28229.9711
+          }
+        },
+        {
+          "role": "measured",
+          "index": 1,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 20125.9,
+            "prefill_tok_s": 814.1,
+            "decode_tok_s": 23.7,
+            "ttft_ms": 20125.9,
+            "tok_s": 5.0,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 29765996537600,
+            "client_gen_start_ms": 11.1294,
+            "client_first_text_event_ms": 20137.8387,
+            "client_first_text_event_qpc_ns": 29786134376300,
+            "client_last_text_event_ms": 25486.5128,
+            "client_last_text_event_qpc_ns": 29791483050400,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 20137.8387,
+            "client_first_visible_text_event_qpc_ns": 29786134376300,
+            "client_last_visible_text_event_ms": 25486.5128,
+            "client_last_visible_text_event_qpc_ns": 29791483050400,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 25533.2023,
+            "client_done_ms": 25536.4619
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 2,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 2,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-01",
+            "tokens": 128,
+            "tok_s": 5.0,
+            "prefill_tokens": 16384,
+            "prefill_ms": 20125.9,
+            "prefill_tok_s": 814.1,
+            "decode_tok_s": 23.7,
+            "ttft_ms": 20125.9,
+            "attempt_id": 2,
+            "tau": 0.72,
+            "cycles": 74,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "mtp": true,
+            "accepted": 53,
+            "mtp_windows": 74,
+            "floor_ar_windows": 1,
+            "ar_windows": 0,
+            "mtp_retired": false,
+            "drafted": 89
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "visible_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 25536.4619,
+            "request_to_first_text_fragment_receipt_ms": 20137.8387,
+            "request_to_first_visible_text_fragment_receipt_ms": 20137.8387,
+            "request_to_last_visible_text_fragment_receipt_ms": 25486.5128
+          }
+        },
+        {
+          "role": "measured",
+          "index": 2,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 20154.0,
+            "prefill_tok_s": 812.9,
+            "decode_tok_s": 23.7,
+            "ttft_ms": 20154.0,
+            "tok_s": 5.0,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 29791540488500,
+            "client_gen_start_ms": 12.8998,
+            "client_first_text_event_ms": 20167.975,
+            "client_first_text_event_qpc_ns": 29811708463500,
+            "client_last_text_event_ms": 25527.5517,
+            "client_last_text_event_qpc_ns": 29817068040200,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 20167.975,
+            "client_first_visible_text_event_qpc_ns": 29811708463500,
+            "client_last_visible_text_event_ms": 25527.5517,
+            "client_last_visible_text_event_qpc_ns": 29817068040200,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 25573.5118,
+            "client_done_ms": 25576.5942
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 3,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 3,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-02",
+            "tokens": 128,
+            "tok_s": 5.0,
+            "prefill_tokens": 16384,
+            "prefill_ms": 20154.0,
+            "prefill_tok_s": 812.9,
+            "decode_tok_s": 23.7,
+            "ttft_ms": 20154.0,
+            "attempt_id": 3,
+            "tau": 0.72,
+            "cycles": 74,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "mtp": true,
+            "accepted": 53,
+            "mtp_windows": 74,
+            "floor_ar_windows": 1,
+            "ar_windows": 0,
+            "mtp_retired": false,
+            "drafted": 90
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "visible_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 25576.5942,
+            "request_to_first_text_fragment_receipt_ms": 20167.975,
+            "request_to_first_visible_text_fragment_receipt_ms": 20167.975,
+            "request_to_last_visible_text_fragment_receipt_ms": 25527.5517
+          }
+        },
+        {
+          "role": "measured",
+          "index": 3,
+          "included_in_measurements": true,
+          "requested_output_tokens": 128,
+          "actual_output_tokens": 128,
+          "actual_input_tokens": 16384,
+          "prefill_tokens": 16384,
+          "cached_tokens": 0,
+          "native_timings": {
+            "prefill_ms": 19486.0,
+            "prefill_tok_s": 840.8,
+            "decode_tok_s": 23.7,
+            "ttft_ms": 19486.0,
+            "tok_s": 5.1,
+            "latency_ms": null
+          },
+          "client_timings": {
+            "request_sent_qpc_ns": 29817125334000,
+            "client_gen_start_ms": 14.3739,
+            "client_first_text_event_ms": 19501.66,
+            "client_first_text_event_qpc_ns": 29836626994000,
+            "client_last_text_event_ms": 24860.8453,
+            "client_last_text_event_qpc_ns": 29841986179300,
+            "client_text_event_count": 128,
+            "client_first_visible_text_event_ms": 19501.66,
+            "client_first_visible_text_event_qpc_ns": 29836626994000,
+            "client_last_visible_text_event_ms": 24860.8453,
+            "client_last_visible_text_event_qpc_ns": 29841986179300,
+            "client_visible_text_event_count": 128,
+            "client_commit_ready_ms": 24907.2606,
+            "client_done_ms": 24910.5389
+          },
+          "reset": {
+            "type": "reset",
+            "rolled_back": true,
+            "state_epoch": 4,
+            "seq_pos": 0,
+            "conversation_len": 0,
+            "attempt_id": 4,
+            "retry_reset_eligible": false
+          },
+          "valid_for_fixed_length_cold_comparison": true,
+          "validation_errors": [],
+          "done": {
+            "type": "done",
+            "id": "measured-03",
+            "tokens": 128,
+            "tok_s": 5.1,
+            "prefill_tokens": 16384,
+            "prefill_ms": 19486.0,
+            "prefill_tok_s": 840.8,
+            "decode_tok_s": 23.7,
+            "ttft_ms": 19486.0,
+            "attempt_id": 4,
+            "tau": 0.72,
+            "cycles": 74,
+            "cached_tokens": 0,
+            "finish_reason": "length",
+            "mtp": true,
+            "accepted": 53,
+            "mtp_windows": 74,
+            "floor_ar_windows": 1,
+            "ar_windows": 0,
+            "mtp_retired": false,
+            "drafted": 90
+          },
+          "saved_analysis_text_hashes": {
+            "text_fragment_count": 128,
+            "visible_text_fragment_count": 128,
+            "ordered_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "visible_text_utf8_sha256": "3f6a21fccdb79eee79fd5f7c9ca99a7f1c18bd174ccfc954d4f6031a1973d116",
+            "reasoning_text_utf8_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "saved_analysis_qpc_receipts_ms": {
+            "request_to_done_receipt_ms": 24910.5389,
+            "request_to_first_text_fragment_receipt_ms": 19501.66,
+            "request_to_first_visible_text_fragment_receipt_ms": 19501.66,
+            "request_to_last_visible_text_fragment_receipt_ms": 24860.8453
+          }
+        }
+      ]
+    }
+  ],
+  "baseline_restoration": {
+    "ready_open_recorded": true,
+    "recorded_utc": "2026-10-17T17:57:03.700546+00:00",
+    "controller_run": "528d0fa9c9a04badac9723bea4e52ab8",
+    "backend_run": "7d0f360558f6441fa837fa501237d801",
+    "active_requests_at_recorded_check": 0,
+    "reconciled_issue": "Outer ready became visible before inner ready; no new launch or service change",
+    "initial_handle_terminal": false,
+    "initial_restore_error": {
+      "type": "AssertionError",
+      "message": "",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\run_windows_trial_qpc_v5.py\", line 476, in execute_trial\n    result['normal_restore']=observe_restored(out,result['normal_restore'],keepalive)\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\run_windows_trial_qpc_v5.py\", line 364, in observe_restored\n    verified=verify_live_normal(require_idle=False)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\run_windows_trial_qpc_v5.py\", line 57, in verify_live_normal\n    assert outer['phase'] == inner['phase'] == 'ready'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "retained_restore_intent": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\restore-launch.intent.json",
+      "restart_permitted": false
+    },
+    "interpretation": "Original baseline handle recorded an early outer-ready/inner-not-ready assertion. The later saved reconciliation attests normal-ready without another launch; this is a historical receipt, not a current live-state claim."
+  },
+  "candidate": {
+    "name": "inline Q8 GDN conversion",
+    "status": "measurements_completed_normal_serving_ready",
+    "root_session_id": 76497,
+    "root_process_status": "terminal_exit0",
+    "sole_intended_flag": "developer.qwen4_gdn_q8_inline=1",
+    "results_arm": "mtp_inline_q8",
+    "results": {
+      "mean_native_prefill_tok_s": 822.6,
+      "mean_native_decode_tok_s": 23.7,
+      "accepted": 159,
+      "drafted": 269,
+      "accepted_over_drafted": 0.5910780669144982,
+      "mean_qpc_request_to_done_receipt_ms": 25341.198333333334,
+      "mean_qpc_request_to_first_visible_text_fragment_receipt_ms": 19935.824566666666,
+      "mtp_retired_measured_runs": 0,
+      "measured_runs": 3,
+      "measured_output_hash_matches_baseline_mtp": true
+    },
+    "observed_comparison_to_baseline_mtp": {
+      "baseline_arm": "mtp",
+      "candidate_arm": "mtp_inline_q8",
+      "request_to_done_receipt_ms": {
+        "baseline_mean": 26748.369766666667,
+        "candidate_mean": 25341.198333333334,
+        "candidate_minus_baseline_ms": -1407.171433333333,
+        "candidate_relative_change_percent": -5.260774565360338
+      },
+      "request_to_first_visible_text_fragment_receipt_ms": {
+        "baseline_mean": 20311.2172,
+        "candidate_mean": 19935.824566666666,
+        "candidate_minus_baseline_ms": -375.3926333333329,
+        "candidate_relative_change_percent": -1.8482035302804678
+      },
+      "baseline_mtp_retired_measured_runs": 1,
+      "candidate_mtp_retired_measured_runs": 0,
+      "attribution": "Observed three-run window difference only. Baseline MTP retired in one of three measurements; candidate retired in none, with different drafted/cycle totals. This confounds isolated inline-kernel attribution. No repeated stock bookend or causal phase-clock qualification is supplied.",
+      "measured_output_hash_match_scope": "All three candidate measured visible/ordered text hashes equal baseline MTP measured hash on this fixture; no general numerical-equivalence or AR/MTP-equivalence claim",
+      "isolated_kernel_gain_established": false,
+      "native_phase_clock_gain_qualified": false
+    },
+    "restoration": {
+      "utc": "2026-10-17T18:10:53.620538+00:00",
+      "normal_ready_open": true,
+      "health": {
+        "utc": "2026-10-17T18:10:04.160889+00:00",
+        "ready_open": true,
+        "controller_pid": 29880,
+        "controller_run": "443ad2de1db3402d9706a83a582ba6bf",
+        "backend_pid": 30112,
+        "backend_run": "1a7dfea18987417fb32033d5370950fb",
+        "identities": {
+          "controller": {
+            "pid": 29880,
+            "creation_time_100ns": 134367339683388404,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "backend": {
+            "pid": 30112,
+            "creation_time_100ns": 134367339789272653,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          }
+        },
+        "profile": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\combine-prep\\profiles\\serving0187-voice32k-prefill8192.json",
+          "bytes": 1730,
+          "sha256": "c76dcf3ef5f8afcee859641f79ea2432748d450f87d9b5c7571f9c5412b6430e"
+        },
+        "context": 32768,
+        "active_requests": 0,
+        "memory": {
+          "available_bytes": 32973864960,
+          "committed_bytes": 110548963328,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 129590476800
+        },
+        "lifecycle_performed": false,
+        "inference_performed": false,
+        "full_goal_achieved": false
+      },
+      "sole_container_id": "267f68bd79827f74f380eb898e0df1fbff40be439ec2a79befb40bdb2be18887",
+      "trial_coordinator_terminal": true,
+      "owned_wsl_helper_terminal": true,
+      "goal_achieved": false,
+      "primary_halogen_speed_gain_qualified": false,
+      "native_phase_clock_qualified": false,
+      "observed_candidate_qpc_shortening_percent": 5.260774565360338,
+      "isolated_kernel_gain_qualified": false,
+      "experiment_promoted": false
+    },
+    "adopted": false,
+    "production_promoted": false,
+    "note": "Single candidate completed one excluded warmup and three measurements. No joint 1925+ prefill/fast-decode, isolated kernel gain, phase-clock qualification or production promotion is claimed."
+  },
+  "source_tool_pins": {
+    "collector": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\standalone\\native_session_windows_qpc.py",
+      "bytes": 22110,
+      "sha256": "3ac23b147aa546930dce64d258d205ada6e3707969e94467604f50f93b3e1ddb"
+    },
+    "contract": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\standalone\\trial-command-contract.json",
+      "bytes": 23440,
+      "sha256": "ad8132b81ad950f181611e69f42ce44efb4d6371d0357da21637e379b132a36e"
+    },
+    "qpc_contract": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\standalone\\native-session-windows-qpc.contract.json",
+      "bytes": 3305,
+      "sha256": "0da6e13d8d9391341931ed896082fec305746bd27997bed6b51b73d81b6efd96"
+    },
+    "qpc_review": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\standalone\\windows-qpc-clock-fix.review.json",
+      "bytes": 6457,
+      "sha256": "b59a62c9413f0edc47d048015e34fe324771c7fe2df73bec3838d3c6a43da053"
+    },
+    "runner": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\run_windows_trial_qpc_v5.py",
+      "bytes": 26797,
+      "sha256": "7598d34d01daffa7d9d21712b3ddede5fafaca7ff6f7791e05292eaee9627a9c"
+    },
+    "wsl_process_config": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\standalone\\process-config-wsl-hipcc.json",
+      "bytes": 802,
+      "sha256": "9fa08375fbc10a311dc0f2d9fa7d61b94b42c1df55406f5a10ef20038c72b80e"
+    },
+    "wsl_config_contract": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\standalone\\wsl-device-config.contract.json",
+      "bytes": 3088,
+      "sha256": "32c59fe7ed97312b73a4fde24ce822084678c891eef4c8053b08d3927fa47f1f"
+    }
+  },
+  "raw_evidence_pins": [
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\handle.json",
+      "bytes": 42194,
+      "sha256": "27ef3797679067795a5f6d5693118f5e277897e4d5cb65b61576a0ff07a631fb"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\completed-arms-analysis.json",
+      "bytes": 12842,
+      "sha256": "dc6b722269827194c298dd67fca440e823c78ec3c83350f30635a590140f8013"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\ar-handle.json",
+      "bytes": 5136,
+      "sha256": "05b9003f698e6f1893777ceb105da850318c0f3554800f00f5464f761ddad805"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\mtp-handle.json",
+      "bytes": 5140,
+      "sha256": "e406111b42a5281db9c2ea81415e53d8c2e76712aef1639b4e1b6808ac9bb005"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\normal-ready-reconciled.json",
+      "bytes": 2323,
+      "sha256": "e8d762c3272d37c2ee0551de463393c8d68b8658fe89bb251e693692803dd499"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\ar\\summary.json",
+      "bytes": 15241,
+      "sha256": "40226649c8274d763f97445f5563dae46eb77b5259b01c9de8aa2a68a44e8055"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\ar\\samples.jsonl",
+      "bytes": 8507,
+      "sha256": "2bc36f8b853abd20e7682460c60e947525aa349d8ec9309123824f908a3b74ae"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\ar\\requests.jsonl",
+      "bytes": 281548,
+      "sha256": "db66230f0582528ad1427f532e6d7b8bb72ca76cf533063bf90fcd17bf4eb394"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\ar\\stdout.native.jsonl",
+      "bytes": 125296,
+      "sha256": "1d4a094e071de38001b70944bf3a965c3f269fc6a4a263d8ff7e9ae2a9ed7f62"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\ar\\stderr.jsonl",
+      "bytes": 5516,
+      "sha256": "151c07fb25438270f2f5c9e11ad0f951b1944f8a9b118cd451ffb2e8cc385795"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\ar\\prompt.txt",
+      "bytes": 68228,
+      "sha256": "a818a059b4e04fd4f4f949a82b9bf585f396efaddb7d667e0b1f2b9f7b236d5d"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\mtp\\summary.json",
+      "bytes": 16185,
+      "sha256": "20d4d026d72b27d29d7a3a47623048d514e4ff1981d99b9906dad58a167c58ae"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\mtp\\samples.jsonl",
+      "bytes": 9128,
+      "sha256": "fe9d037e863c5161cdafa5975fa8ce2a8a19bd8ced7a298735fc1db4dd1aa5fc"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\mtp\\requests.jsonl",
+      "bytes": 281547,
+      "sha256": "303f674008215631dfe9e3e78caa4afe3f701aeb7895540fb26e28fb413857e0"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\mtp\\stdout.native.jsonl",
+      "bytes": 127842,
+      "sha256": "9dd78881e4ba41a347b7e4855bc0e88253fff8dc954324e5b2b55e76945381ff"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\mtp\\stderr.jsonl",
+      "bytes": 6455,
+      "sha256": "e39b36458928a772e7f84925c69a0820e1a08a43a6d2419b0047efe16648e316"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-qpc-v5\\mtp\\prompt.txt",
+      "bytes": 68228,
+      "sha256": "a818a059b4e04fd4f4f949a82b9bf585f396efaddb7d667e0b1f2b9f7b236d5d"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-inline-q8-v1\\mtp\\summary.json",
+      "bytes": 16228,
+      "sha256": "7d5d42c991dc27773411b859436540f3abbbcd6c5299ea18bd64507e7d219463"
+    },
+    {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-inline-q8-v1\\completed-arm-analysis.json",
+      "bytes": 6243,
+      "sha256": "67b224599d4683e5b25f4006f3989cba1bd3d0ca7aa79903885511eb2397514b"
+    }
+  ],
+  "documentation_scope": {
+    "completed_local_evidence_reads_only": true,
+    "hardware_queries": false,
+    "inference_or_lifecycle_performed": false,
+    "original_raw_files_modified": false,
+    "commit_or_push_performed": false,
+    "candidate_live_output_or_restoration_state_read": false,
+    "completed_candidate_summary_and_analysis_read": true,
+    "root_final_normal_health_and_process_verification": true
+  },
+  "candidate_measurements_completed": true,
+  "observed_qpc_whole_request_shortening": true,
+  "isolated_kernel_speedup_claim": false,
+  "local_speedup_claim_scope": "No isolated causal/kernel speedup or qualified phase-rate gain; observed QPC window differences are reported separately.",
+  "root_final_receipts": {
+    "ready": {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-inline-q8-v1\\normal-ready-final.json",
+      "bytes": 1849,
+      "sha256": "f86ec8e75453c194bcd73cd8080a44180e7bde5f6468d6e02fa943c2799ae73b"
+    },
+    "trial": {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-inline-q8-v1\\handle.json",
+      "bytes": 42146,
+      "sha256": "4c865941aa255486fcbe889039f4c4ce99f357bdd22264fd296431e524a6d54d"
+    },
+    "lease": {
+      "path": "E:\\strix-alloy\\hipfire-mq2-ddee82\\results\\native-windows-trial-inline-q8-v1\\wsl-stdin-lease.json",
+      "bytes": 618,
+      "sha256": "5032048c533a2a043a33068216941881fb7da13a95fb2e1111d1bbdb3eec75de"
+    }
+  }
+}

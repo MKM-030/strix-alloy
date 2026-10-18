@@ -1,0 +1,670 @@
+{
+  "schema": "halogen.dflash.finite-scalar-publication.v1",
+  "utc": "2026-10-10T09:17:15.895660+00:00",
+  "actual_tool": {
+    "chunk_id": "872044",
+    "exit_code": 0,
+    "yielded_session_id": null
+  },
+  "scope": "212 distinct ready GPU boolean scalar conjunctions plus identical terminal item readback",
+  "summaries": {
+    "baseline": {
+      "count": 6,
+      "mean_ms": 2.5215853333333333,
+      "min_ms": 1.81856,
+      "max_ms": 2.893684,
+      "measured_reserved_growth": false
+    },
+    "accumulator": {
+      "count": 6,
+      "mean_ms": 0.26564933333333335,
+      "min_ms": 0.249305,
+      "max_ms": 0.299288,
+      "measured_reserved_growth": false
+    }
+  },
+  "paired_rows": [
+    {
+      "index": 0,
+      "order": [
+        "baseline",
+        "accumulator"
+      ],
+      "baseline": 2.387804,
+      "accumulator": 0.299288,
+      "saved_ms": 2.0885160000000003
+    },
+    {
+      "index": 1,
+      "order": [
+        "accumulator",
+        "baseline"
+      ],
+      "accumulator": 0.249305,
+      "baseline": 1.81856,
+      "saved_ms": 1.569255
+    },
+    {
+      "index": 2,
+      "order": [
+        "baseline",
+        "accumulator"
+      ],
+      "baseline": 2.308539,
+      "accumulator": 0.269556,
+      "saved_ms": 2.038983
+    },
+    {
+      "index": 3,
+      "order": [
+        "accumulator",
+        "baseline"
+      ],
+      "accumulator": 0.262436,
+      "baseline": 2.893684,
+      "saved_ms": 2.631248
+    },
+    {
+      "index": 4,
+      "order": [
+        "baseline",
+        "accumulator"
+      ],
+      "baseline": 2.881684,
+      "accumulator": 0.254015,
+      "saved_ms": 2.627669
+    },
+    {
+      "index": 5,
+      "order": [
+        "accumulator",
+        "baseline"
+      ],
+      "accumulator": 0.259296,
+      "baseline": 2.839241,
+      "saved_ms": 2.579945
+    }
+  ],
+  "mean_saved_ms": 2.255936,
+  "cost_reduction_percent": 89.46498737037916,
+  "minimum_observed_runtime_reserve_gib": {
+    "available_bytes": 23.062259674072266,
+    "commit_headroom_bytes": 115.4035758972168
+  },
+  "all_rows_retained": true,
+  "ready_scalar_component_completed": true,
+  "original_staged_dependency_graph_reproduced": false,
+  "full_backbone_measured": false,
+  "serving_gain_qualified": false,
+  "npu_enabled": false,
+  "native_ready_publication": false,
+  "serving_prefill_tok_s": null,
+  "serving_decode_tok_s": null,
+  "native_mtp_acceptance": null,
+  "decision": "Proceed to same-input paired original versus accumulated actual DraftBackbone; keep native/NPU attachment disabled",
+  "raw_scalar": {
+    "schema": "halogen.dflash.finite-accumulator.scalar-screen.v1",
+    "device": "cuda:0",
+    "predicate_count": 212,
+    "fixture": "212 distinct ready device bool scalars; all true",
+    "excluded_warmup_calls": 2,
+    "measured_calls": 12,
+    "balanced_pair_orders": [
+      [
+        "baseline",
+        "accumulator"
+      ],
+      [
+        "accumulator",
+        "baseline"
+      ],
+      [
+        "baseline",
+        "accumulator"
+      ],
+      [
+        "accumulator",
+        "baseline"
+      ],
+      [
+        "baseline",
+        "accumulator"
+      ],
+      [
+        "accumulator",
+        "baseline"
+      ]
+    ],
+    "warmups": [
+      {
+        "variant": "baseline",
+        "excluded": true,
+        "pair_index": -1,
+        "order_in_pair": 0,
+        "elapsed_ns": 22990828,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "accumulator",
+        "excluded": true,
+        "pair_index": -1,
+        "order_in_pair": 1,
+        "elapsed_ns": 15933572,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      }
+    ],
+    "rows": [
+      {
+        "variant": "baseline",
+        "excluded": false,
+        "pair_index": 0,
+        "order_in_pair": 0,
+        "elapsed_ns": 2387804,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "accumulator",
+        "excluded": false,
+        "pair_index": 0,
+        "order_in_pair": 1,
+        "elapsed_ns": 299288,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "accumulator",
+        "excluded": false,
+        "pair_index": 1,
+        "order_in_pair": 0,
+        "elapsed_ns": 249305,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "baseline",
+        "excluded": false,
+        "pair_index": 1,
+        "order_in_pair": 1,
+        "elapsed_ns": 1818560,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "baseline",
+        "excluded": false,
+        "pair_index": 2,
+        "order_in_pair": 0,
+        "elapsed_ns": 2308539,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "accumulator",
+        "excluded": false,
+        "pair_index": 2,
+        "order_in_pair": 1,
+        "elapsed_ns": 269556,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "accumulator",
+        "excluded": false,
+        "pair_index": 3,
+        "order_in_pair": 0,
+        "elapsed_ns": 262436,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "baseline",
+        "excluded": false,
+        "pair_index": 3,
+        "order_in_pair": 1,
+        "elapsed_ns": 2893684,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "baseline",
+        "excluded": false,
+        "pair_index": 4,
+        "order_in_pair": 0,
+        "elapsed_ns": 2881684,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "accumulator",
+        "excluded": false,
+        "pair_index": 4,
+        "order_in_pair": 1,
+        "elapsed_ns": 254015,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "accumulator",
+        "excluded": false,
+        "pair_index": 5,
+        "order_in_pair": 0,
+        "elapsed_ns": 259296,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      },
+      {
+        "variant": "baseline",
+        "excluded": false,
+        "pair_index": 5,
+        "order_in_pair": 1,
+        "elapsed_ns": 2839241,
+        "returned": true,
+        "expected": true,
+        "passed": true,
+        "memory_before_bytes": {
+          "allocated": 108544,
+          "reserved": 2097152
+        },
+        "memory_after_bytes": {
+          "allocated": 109056,
+          "reserved": 2097152
+        }
+      }
+    ],
+    "summaries": {
+      "baseline": {
+        "count": 6,
+        "mean_ns": 2521585.3333333335,
+        "min_ns": 1818560,
+        "max_ns": 2893684
+      },
+      "accumulator": {
+        "count": 6,
+        "mean_ns": 265649.3333333333,
+        "min_ns": 249305,
+        "max_ns": 299288
+      }
+    },
+    "all_valid": true,
+    "timing_scope": "ready scalar accumulation plus identical terminal .item readback",
+    "primitive_finite_reduction_cost_included": false,
+    "full_backbone_cost_included": false,
+    "allocator_growth_rows_retained": true,
+    "serving_gain_qualified": false,
+    "native_ready_publication": false,
+    "npu_enabled": false,
+    "serving_prefill_tok_s": null,
+    "serving_decode_tok_s": null,
+    "native_mtp_acceptance": null,
+    "runtime": {
+      "torch_version": "2.13.0+rocm10.0.0",
+      "hip_version": "7.15.26333",
+      "device_name": "AMD Radeon(TM) 8060S Graphics",
+      "device_arch": "gfx1151",
+      "import_ms": 1058.871398,
+      "runtime_init_ms": 1.119617
+    },
+    "screen_source_sha256": "13d8f335b700208616b72dd19ea6f4a665a26b09fe9baafab874ae0dd8f5eaa5",
+    "fixture_source_sha256": "f1ef9120b9f0dad5c2f8719050c5af08a78bfd295e0b28376828202fb3bf06c1",
+    "model_loaded": false,
+    "engine_requests": 0
+  },
+  "raw_window": {
+    "schema": "halogen.dflash.finite-scalar-window.v1",
+    "utc": "2026-10-10T09:15:55.742642+00:00",
+    "passed": true,
+    "diagnostic_only": false,
+    "retry_permitted": false,
+    "error": null,
+    "cleanup_error": null,
+    "container_id": "43b204a5f5aa194e93398da6f581fdb185d57a3a2630ad72562f6c5978b91ba9",
+    "container_terminal": {
+      "Status": "exited",
+      "Running": false,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 0,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-10-10T09:15:24.470029498Z",
+      "FinishedAt": "2026-10-10T09:15:26.617368633Z"
+    },
+    "owned_worker_closed": true,
+    "engine_requests": 0,
+    "normal_engine_kept_open": true,
+    "health_before": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "health_after": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "completed_delta": 0,
+    "cancelled_delta": 0,
+    "memory_frames": [
+      {
+        "utc": "2026-10-10T09:15:51.249933+00:00",
+        "memory": {
+          "available_bytes": 24991051776,
+          "committed_bytes": 115992948736,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124146491392
+        }
+      },
+      {
+        "utc": "2026-10-10T09:15:51.801616+00:00",
+        "memory": {
+          "available_bytes": 24980873216,
+          "committed_bytes": 115997229056,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124142211072
+        }
+      },
+      {
+        "utc": "2026-10-10T09:15:52.006299+00:00",
+        "memory": {
+          "available_bytes": 24909799424,
+          "committed_bytes": 116068564992,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 124070875136
+        }
+      },
+      {
+        "utc": "2026-10-10T09:15:52.210801+00:00",
+        "memory": {
+          "available_bytes": 24830177280,
+          "committed_bytes": 116148604928,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123990835200
+        }
+      },
+      {
+        "utc": "2026-10-10T09:15:52.415293+00:00",
+        "memory": {
+          "available_bytes": 24790605824,
+          "committed_bytes": 116187230208,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123952209920
+        }
+      },
+      {
+        "utc": "2026-10-10T09:15:52.617427+00:00",
+        "memory": {
+          "available_bytes": 24762912768,
+          "committed_bytes": 116225794048,
+          "commit_limit_bytes": 240139440128,
+          "commit_headroom_bytes": 123913646080
+        }
+      }
+    ],
+    "ready_scalar_fixture": true,
+    "bank_loaded": false,
+    "serving_gain_qualified": false,
+    "full_backbone_measured": false,
+    "component_result": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\stdout.json"
+  },
+  "evidence": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\assessed-load-admission.json",
+      "bytes": 733,
+      "sha256": "e85a455114b0954a7fdcf9b32d883a2017dc7125e28c9bd8a7d38105100d5f8b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\commands.json",
+      "bytes": 4278,
+      "sha256": "c941b5d603575281d6e3fde44c049b97ff6f652e939642773196dce107582a6d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\container-created.json",
+      "bytes": 234,
+      "sha256": "625aad77afd81f1b7d734a530f8034f1988f9a86547479434334ca01868873b5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\gaming-checks.json",
+      "bytes": 4173,
+      "sha256": "62e8b9bc638c1b7c2e4e57fb33ad552c11b60a8d1146ef6f2c9fc245ddb00cb2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\gaming-current.json",
+      "bytes": 358,
+      "sha256": "43e4201bb21d0be34f8f2c94e6a49189e7246efbcb0d32e977bbb72c141b4716"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\handle.json",
+      "bytes": 521,
+      "sha256": "d28f24c6c30f4dfc8a6a1ce2adb81e0a57661d499a8885673abe996bb65c520a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\health-after.json",
+      "bytes": 8467,
+      "sha256": "306396f8f87676166867301b37f64764e740401246169627c0d17f40a955b3c8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\health-before.json",
+      "bytes": 8467,
+      "sha256": "1d18a7057821951eb1e0ed750d8ae62dcd8b9fe3f98e7c9813f7e2aec205b347"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\health-final.json",
+      "bytes": 8467,
+      "sha256": "69509a0daf14c3b0477d630f7a845385acb9d7da3c527fb028dc862d5391c883"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\intent.json",
+      "bytes": 27149,
+      "sha256": "d00d65778dd5b14e3f6553d19c49e7dd70d04187a6af7486449f1f6210471191"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\load-before.json",
+      "bytes": 429,
+      "sha256": "a403d3ccfe7bc708be507845d52c837fa20917e5fdac6035d1f50e7f85575e9b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\memory-after-load.json",
+      "bytes": 155,
+      "sha256": "3164d99ec62304b818fa7f4764ac9b6580312c7d8a189ac5a0309f13b59ca015"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\memory-entry.json",
+      "bytes": 155,
+      "sha256": "759794cfc6c30f005fd0c01899c2066bdbf04aeb0eace1c58dc0f84b2ca74eca"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\memory-immediate.json",
+      "bytes": 155,
+      "sha256": "fa3acff592d7d97b9fbb625fc60f7a079520b2fd69e79bf54b7c1bce8216fe57"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\outcome.json",
+      "bytes": 3215,
+      "sha256": "ac0a29723a20e73a1114aec6cf241779a8b3fe4b40bd5be31fd611b46ca2b11a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\dflash-finite-cost-review-20261010\\candidate\\screen-assessed-client\\stdout.json",
+      "bytes": 5566,
+      "sha256": "89fbc679ce0867abb7f836bcbdc4ab13cff0d112bad20843c398e872fd30c2b8"
+    }
+  ],
+  "preceding_unmeasured_gate_failure": {
+    "schema": "halogen.dflash.finite-scalar-window.v1",
+    "utc": "2026-10-10T09:07:37.086364+00:00",
+    "passed": false,
+    "diagnostic_only": true,
+    "retry_permitted": false,
+    "error": "AssertionError: League/Riot process observed; root must assess before measuring",
+    "cleanup_error": null,
+    "container_id": null,
+    "container_terminal": null,
+    "owned_worker_closed": false,
+    "engine_requests": 0,
+    "normal_engine_kept_open": true,
+    "health_before": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "health_after": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "completed_delta": 0,
+    "cancelled_delta": 0,
+    "memory_frames": [],
+    "ready_scalar_fixture": true,
+    "bank_loaded": false,
+    "serving_gain_qualified": false,
+    "full_backbone_measured": false,
+    "component_result": null
+  }
+}

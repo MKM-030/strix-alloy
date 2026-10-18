@@ -1,0 +1,466 @@
+{
+  "schema": "halogen0174.causal-pld64.completed-comparison.v1",
+  "utc": "2026-10-10T10:53:10.442593+00:00",
+  "engine_measured": "0.17.4",
+  "workload": {
+    "input_tokens": 16384,
+    "output_tokens": 128,
+    "natural_nonrepeated_text": true,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "prompt_cache": "Off",
+    "mtp_depth": 2,
+    "pld": "3,3",
+    "context_capacity": 262144,
+    "excluded_warmups_per_window": 1,
+    "measured_repetitions_per_window": 3
+  },
+  "comparison": {
+    "schema": "halogen0174.causal-pld64.comparison.v1",
+    "utc": "2026-10-10T10:48:49.992590+00:00",
+    "windows": {
+      "native-before": {
+        "prefill": 1679.6277915905787,
+        "decode": 42.74592311331721,
+        "accepted": 180,
+        "drafted": 399,
+        "acceptance": 0.45112781954887216
+      },
+      "causal": {
+        "prefill": 1661.3901705050903,
+        "decode": 43.45480094764241,
+        "accepted": 180,
+        "drafted": 399,
+        "acceptance": 0.45112781954887216
+      },
+      "native-after": {
+        "prefill": 1657.0211286898418,
+        "decode": 43.215983264519885,
+        "accepted": 180,
+        "drafted": 399,
+        "acceptance": 0.45112781954887216
+      }
+    },
+    "input_tokens": 16384,
+    "output_tokens": 128,
+    "excluded_warmups": 1,
+    "measured_repetitions": 3,
+    "acceptance_scope": "combined API MTP+PLD draft-token accounting; native MTP-only acceptance not isolated",
+    "decode_gain_percent": 1.1024598655155815,
+    "native_drift_percent": 1.0936475725342119,
+    "required_decode_margin_percent": 2.719917773947385,
+    "prefill_change_percent": -0.41564394701358864,
+    "same_output_verified": true,
+    "tail_applied_count": 0,
+    "measured_tail_applied_count": 0,
+    "all_observed_tail_applied_count": 0,
+    "tail_applied_count_scope": "three measured causal requests; warmup excluded",
+    "serving_gain_qualified": false,
+    "candidate_adopted": false,
+    "reason": "Measured benefit must exceed both native windows and observed scatter, with genuine substitutions and no prefill regression",
+    "evidence": [
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\native-before\\root-qualification.json",
+        "sha256": "1fdd32dd5d061a5c3052b2e85db576d2bb3e0f55cd912bfd810b9a7b4fe7155e"
+      },
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\causal\\root-qualification.json",
+        "sha256": "6d10225abe28af66a6f9fcd5eda6ec28c81bf749b52c9985a7bb0c88eb3c2510"
+      },
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\native-after\\root-qualification.json",
+        "sha256": "134ad41b66fd2a12b011c99a157bcd9c9db842b85d4f9bcf134a4ad1c2a78b49"
+      }
+    ]
+  },
+  "controls_pooled": {
+    "prefill": 1668.3244601402102,
+    "decode": 42.98095318891855,
+    "accepted": 360,
+    "drafted": 798,
+    "acceptance": 0.45112781954887216
+  },
+  "causal_journal": {
+    "measured_totals": {
+      "tail_substitutions": 0,
+      "changed_tail_ids": 0,
+      "applied_attempted_rounds": 0,
+      "applied_zero_attempt_rounds": 0,
+      "native_accepted_changed_tail_ids": 0,
+      "pld_drafted": 0,
+      "pld_accepted": 0,
+      "neural_drafted": 396,
+      "neural_accepted": 177,
+      "censored_outcomes": 6,
+      "matched_outcomes": 204
+    },
+    "paired_neural_accepted": 177,
+    "paired_neural_drafted": 396,
+    "paired_neural_acceptance": 0.44696969696969696,
+    "scope": "paired source-specific neural Begin/Outcome deltas; distinct from API aggregate formula",
+    "measured_tail_applied_count": 0,
+    "total_tail_applied_count": 0,
+    "complete_owned_lineage": true,
+    "expected_request_set_verified": true
+  },
+  "retained_cohorts_replayed": false,
+  "requests_replayed": 0,
+  "npu_used": false,
+  "current_normal_server": {
+    "version": "0.17.3",
+    "port": 8840,
+    "ready_open": true,
+    "controller": {
+      "pid": 37520,
+      "creation_time_100ns": 134361029304683277,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 16340,
+      "creation_time_100ns": 134361029409333526,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "console": {
+      "pid": 21832,
+      "creation_time_100ns": 134361029302085887,
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    },
+    "health": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 262144,
+      "active_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "native_health": {
+      "status": "ok",
+      "model": "halogen-qwen3.8-flash-next",
+      "endpoints": [
+        "/v1/chat/completions",
+        "/v1/completions",
+        "/v1/messages",
+        "/v1/messages/count_tokens",
+        "/v1/models",
+        "/v1/responses"
+      ],
+      "cache_counters": "/cache",
+      "metrics": "/metrics",
+      "context": 262144,
+      "capability_probe": "ok",
+      "rope_scaling": null,
+      "indexer_budget": 2048,
+      "vision": {
+        "enabled": false,
+        "endpoints": [
+          "/v1/chat/completions",
+          "/v1/messages",
+          "/v1/responses"
+        ],
+        "input": "data: URL or bare base64 in an image content part; http(s) URLs are refused",
+        "max_pixels": 3686400,
+        "size_multiple": 32,
+        "disabled_because": [
+          "the engine was started without a vision tower (HALOGEN_VISION_TOWER)"
+        ]
+      },
+      "version": {
+        "api": "0.17.3",
+        "engine": "0.17.3",
+        "match": true
+      },
+      "modes": [
+        "all",
+        "engine",
+        "api",
+        "bench",
+        "sweep",
+        "convert",
+        "inspect",
+        "verify",
+        "ppl",
+        "niah"
+      ],
+      "checkpoint_format": "hgn",
+      "chat_template": {
+        "path": "/models/tokenizer/chat_template.jinja",
+        "sha256": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041",
+        "probe": "passed",
+        "thinking_control": true
+      },
+      "engine": {
+        "responds": true,
+        "probe_s": 1.002
+      },
+      "busy": false,
+      "slots": 1,
+      "slot_ctx": 262144,
+      "kv_pool_positions": 262144,
+      "in_flight": 0,
+      "busy_for_s": 0,
+      "queued": 0,
+      "decode": "greedy at temperature 0 (the default); sampled at temperature > 0",
+      "drafters_available": [
+        "serial",
+        "mtp"
+      ],
+      "drafter_default": "mtp",
+      "prompt_lookup": {
+        "ngram": 3,
+        "chain": 3,
+        "applies_to": "greedy requests with the mtp drafter"
+      },
+      "shortlist_draft_head": false,
+      "drafter_weights_loaded": true,
+      "prompt_cache": {
+        "enabled": false,
+        "cap_mb": 0,
+        "mode": 0,
+        "snapshot_align": 0,
+        "bitwise_identical_to_cold": false
+      },
+      "composable_context": {
+        "enabled": false
+      },
+      "tool_calls": {
+        "wire_format": "qwen-xml (<function=>/<parameter=>)",
+        "streaming": true,
+        "tool_choice": [
+          "auto",
+          "none",
+          "required",
+          "{type: function, function: {name}}"
+        ],
+        "forced_call_is_a_prefill": true,
+        "required_is_exact": "named tool_choice, or one tool",
+        "parallel_tool_calls": true,
+        "constrained_decoding": false,
+        "forced_call_disables_thinking": true,
+        "argument_types_need_schema": true
+      },
+      "supported": [
+        "reasoning_effort",
+        "enable_thinking",
+        "preserve_thinking",
+        "max_thinking_tokens",
+        "thinking_budget_tokens",
+        "thinking_budget",
+        "thinking_token_budget",
+        "reasoning",
+        "thinking",
+        "tools",
+        "tool_choice",
+        "parallel_tool_calls",
+        "stop",
+        "max_tokens",
+        "max_completion_tokens",
+        "max_output_tokens",
+        "stream",
+        "stream_options"
+      ],
+      "token_budget_aliases": [
+        "max_tokens",
+        "max_completion_tokens",
+        "max_output_tokens"
+      ],
+      "max_tokens_default": 8192,
+      "reasoning_effort_default": "medium",
+      "reasoning_effort_values": [
+        "high",
+        "low",
+        "max",
+        "medium",
+        "minimal",
+        "none",
+        "xhigh"
+      ],
+      "token_budget_covers_reasoning": true,
+      "max_thinking_tokens_default": 2048,
+      "thinking_answer_room": "max(1024, 15% of max_tokens)",
+      "end_of_turn_guard": true,
+      "thinking_control_aliases": [
+        "thinking_budget_tokens",
+        "thinking_budget",
+        "thinking_token_budget",
+        "reasoning.{enabled,effort,max_tokens}",
+        "thinking.{type,budget_tokens}"
+      ],
+      "server_defaults": {
+        "HALOGEN_REASONING_EFFORT": "medium",
+        "HALOGEN_ENABLE_THINKING": true,
+        "HALOGEN_MAX_THINKING_TOKENS": 2048
+      },
+      "server_defaults_rule": "a field the request sends always wins; a default fills only a field the request omits. A request that sends temperature 0 decodes greedy and takes no sampling default",
+      "chat_template_kwargs": [
+        "reasoning_effort",
+        "enable_thinking",
+        "preserve_thinking"
+      ],
+      "error_format": "openai",
+      "accepted_but_ignored": [
+        "n"
+      ],
+      "not_implemented": [],
+      "structured_output": {
+        "enabled": true,
+        "reason": null,
+        "response_format": [
+          "json_schema",
+          "json_object"
+        ],
+        "text.format": [
+          "json_schema",
+          "json_object"
+        ],
+        "routes": [
+          "/v1/chat/completions",
+          "/v1/completions",
+          "/v1/responses",
+          "/v1/messages"
+        ],
+        "sampling": "greedy only (temperature 0); sampled + schema is a 400",
+        "images": "a schema with images is a 400",
+        "thinking": "the reasoning block is unconstrained; the final text is constrained after </think>",
+        "tools": "a request with tools may open a <tool_call> instead of the JSON (the schema binds the final text, not a call)",
+        "keys": "object keys are emitted in schema order",
+        "enforced": [
+          "type",
+          "properties",
+          "required",
+          "additionalProperties",
+          "items",
+          "minItems",
+          "maxItems",
+          "minLength",
+          "maxLength",
+          "enum",
+          "const",
+          "anyOf",
+          "oneOf (as anyOf)",
+          "type: [..., \"null\"]",
+          "$ref",
+          "$defs"
+        ],
+        "accepted_not_enforced": [
+          "minimum",
+          "maximum",
+          "exclusiveMinimum",
+          "exclusiveMaximum",
+          "multipleOf",
+          "title",
+          "description",
+          "default",
+          "examples"
+        ],
+        "refused": [
+          "pattern",
+          "format",
+          "allOf",
+          "not",
+          "if",
+          "then",
+          "else",
+          "patternProperties",
+          "dependentRequired",
+          "dependentSchemas",
+          "uniqueItems",
+          "contains",
+          "propertyNames",
+          "unevaluatedProperties",
+          "unevaluatedItems",
+          "minProperties",
+          "maxProperties",
+          "prefixItems"
+        ]
+      },
+      "sampling": {
+        "implemented": [
+          "temperature",
+          "top_p",
+          "top_k",
+          "min_p",
+          "seed",
+          "presence_penalty",
+          "frequency_penalty",
+          "repetition_penalty",
+          "logit_bias",
+          "logprobs",
+          "top_logprobs"
+        ],
+        "decode": "temperature 0 (the default) is greedy: a forward pass and an argmax, byte-identical to serial greedy decode. temperature > 0 samples from the filtered target on the same drafter the request would otherwise get; with the MTP drafter the speculative accept/reject rule emits exactly the target distribution",
+        "filters": "top_k, top_p and min_p compose as an intersection (the HF/vLLM convention); top_p >= 1 and top_k = 0 disable a filter. A sampled request that omits top_k or top_p takes the operator's default, else the model's (filter_defaults)",
+        "filter_defaults": {
+          "top_k": 20,
+          "top_p": 0.95,
+          "source": "generation_config.json"
+        },
+        "seed": "reproduces a request on the same drafter; a sampled MTP run and a sampled serial run agree in distribution, not token for token",
+        "penalties": "presence and frequency count GENERATED tokens only; repetition_penalty scales every id in the prompt or the output (vLLM's rule); applied on both drafters",
+        "logprobs": "a sampled request carries the chosen token's logprob on every token; at temperature 0, and with top_logprobs (up to 20) at any temperature, the first generated token only, so those need max_tokens 1",
+        "not_implemented": [
+          "logprobs with stream=true",
+          "logprobs past the first token at temperature 0",
+          "n > 1"
+        ]
+      },
+      "max_tokens_cap": 65536,
+      "max_tokens_over_cap": "400"
+    }
+  },
+  "goal_complete": false,
+  "hardware_measurement_helpers_closed": true,
+  "evidence": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\native-after-recovery-comparison.json",
+      "bytes": 2499,
+      "sha256": "ef82cccf000966e8ae6abcd729b6a79b91d1ac2ebec96f0e22cae84db9098909"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\causal\\pld64-verification.json",
+      "bytes": 229292,
+      "sha256": "f29f8599baab243d0cdb124ec9cc4b60619801c0aa1728d507d11e01f1d8fe05"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\native-after-recovery-final-ready-open.json",
+      "bytes": 11308,
+      "sha256": "0225d65ce91f9288d6b844b99c6ba9bacb36e9eba9177ea99e872901ba286a13"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\root-metadata-check\\receipt.json",
+      "bytes": 12599,
+      "sha256": "95dd79b00294e145d4074b1f739b4083eb65395d84fb0f242f060ddef68173a3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\continuation-failure.json",
+      "bytes": 143,
+      "sha256": "19377181bc59499d8e598d640904ea56c42da47bdd3281caa3ed00a58f8080b0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\causal\\B-admission-helper-failed-retained.json",
+      "bytes": 1542,
+      "sha256": "6ba7f3d642813631a17bd3f9eed6725668335e3117dddd6baf4c78c7a3c27edd"
+    }
+  ],
+  "scope_note": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen0174-pld64-zero-offer-scope-20261010.md",
+    "bytes": 11499,
+    "sha256": "26e13b1e327429f34f09f7675a524e2b4e5c39fbf34c1b1791a8711156727080"
+  },
+  "scope_note_finalization": {
+    "utc": "2026-10-10T10:55:37.572976+00:00",
+    "prior_note": {
+      "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen0174-pld64-zero-offer-scope-20261010.md",
+      "bytes": 11420,
+      "sha256": "a8bdf8af6b5a69791265ff013f02af198c1081d2fe01df5e97f6ab9be671df1b"
+    },
+    "prior_report": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\causal-pld64-native0174-launch-20261010\\root-final-report\\report-before-note-finalization.json",
+      "bytes": 16274,
+      "sha256": "c2efe3dac2bc2ba0f71507557ad0834ee7985a62b73bd407222b7639ba774ec7"
+    },
+    "measurement_evidence_unchanged": true
+  }
+}

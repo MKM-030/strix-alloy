@@ -1,0 +1,4 @@
+# Preserve pinned source bytes; CRLF is intentional in inherited Windows scripts.
+* -text whitespace=cr-at-eol
+# This byte-pinned helper retains the original extra final blank line.
+scripts/host_frames.py whitespace=cr-at-eol,-blank-at-eof
