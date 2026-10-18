@@ -1,0 +1,103 @@
+{
+  "date_utc": "2026-10-13",
+  "scope": "Native terminal microphone lifecycle cleanup",
+  "source_before_sha256": "1d4636e8a8d489735435afc922022bc769eabb98dcfe25a8fb31c528b60eec0c",
+  "source_after_sha256": "d09ffe63c28c0cc40662d844e737b03b5ccd16e5ec1c8e60e09265885163f130",
+  "regression_tests_sha256": "4540c29b8d5c8ddaaef5b4ec971aa6ce7c3a74d12423d130251eb750e185153d",
+  "windows_tests": {
+    "count": 80,
+    "passed": true,
+    "exit_code": 0,
+    "real_aiortc_rtp_transport_included": true,
+    "real_inference_or_servicenow_calls": false,
+    "staging_fixture_missing_then_corrected": true,
+    "existing_50ms_heartbeat_transient_failure": true,
+    "unchanged_baseline_heartbeat_control_passed": true,
+    "candidate_heartbeat_control_passed": true,
+    "final_full_suite_passed": true
+  },
+  "deployment": {
+    "completed_utc": "2026-10-13T23:38:45.097376+00:00",
+    "old_native_pid": 22884,
+    "new_native_pid": 25400,
+    "source_cas_checked": true,
+    "config_cas_checked": true,
+    "startup_lock_held": true,
+    "exact_process_owner_exe_cmdline_creation_checked": true,
+    "backup_verified": true,
+    "protected_processes_unchanged": true,
+    "native_config_unchanged": true
+  },
+  "final_health": {
+    "utc": "2026-10-13T23:46:23.135769+00:00",
+    "native_http_status": 200,
+    "native_sessions": 0,
+    "auth_mode": "servicenow",
+    "native_owner_and_listener_match": true,
+    "engine_idle": true,
+    "gateway_idle": true,
+    "free_gib": 21.962,
+    "commit_headroom_gib": 110.945,
+    "runtime_floor_gib": 18
+  },
+  "public_signaling_probe": {
+    "utc": "2026-10-13T23:40:02.687605+00:00",
+    "tls_websocket_upgrade_request_http_status": 401,
+    "exact_servicenow_origin_used": true,
+    "credential_sent": false,
+    "native_sessions_after": 0,
+    "proves_oauth_or_media": false
+  },
+  "first_turn_probe": {
+    "started_utc": "2026-10-13T23:44:09.986877+00:00",
+    "completed_utc": "2026-10-13T23:44:45.793520+00:00",
+    "passed": true,
+    "exit_code": 0,
+    "harness_unchanged": true,
+    "mode": "first-turn-only",
+    "single_synthetic_intent_fixture": true,
+    "real_asr_servicenow_tts_private_rtp": true,
+    "minimum_memory_before_gib": 22.009,
+    "required_additional_memory_floor_gib": 21.5,
+    "employee_name_sent": false,
+    "confirmation_sent": false,
+    "order_requested": false,
+    "owned_bot_release_ok": true,
+    "voice_selection_or_registration_operations": false
+  },
+  "timing_seconds": {
+    "origin": "probe_started",
+    "input_audio_duration": 8.36,
+    "asr_begin": 8.797,
+    "asr_complete": 9.281,
+    "asr_duration": 0.484,
+    "bot_ack_observed": 9.781,
+    "first_reply_observed": 21.891,
+    "first_reply_pcm": 21.969,
+    "first_reply_audible": 22.375,
+    "question_reply_observed": 31.188,
+    "question_first_pcm": 31.266,
+    "question_first_audible": 31.735,
+    "input_readiness_observed": 33.172,
+    "owned_call_closed": 35.813,
+    "first_audio_after_asr": 13.094,
+    "input_readiness_after_asr": 23.891,
+    "includes_polling_tts_and_playback": true,
+    "provider_only_latency_measurement": false,
+    "speedup_claim": false
+  },
+  "acceptance_limits": {
+    "native_browser_oauth_and_real_microphone_pending": true,
+    "physical_phone_acceptance_pending": true,
+    "wan_media_not_proven": true,
+    "host_ice_requires_reachable_lan_or_tailnet": true
+  },
+  "proof_paths": {
+    "windows_tests": "voice/native-bridge/runtime/input-lifecycle-candidate-d09ffe63/tests-report.json",
+    "activation": "voice/native-bridge/runtime/input-lifecycle-candidate-d09ffe63/activation-complete.json",
+    "first_turn_raw_trace_not_for_unfiltered_output": "voice/native-bridge/runtime/first-turn-after-input-cleanup-d09ffe63/report.json"
+  },
+  "privacy": {
+    "raw_transcripts_audio_names_credentials_urls_not_in_this_report": true
+  }
+}

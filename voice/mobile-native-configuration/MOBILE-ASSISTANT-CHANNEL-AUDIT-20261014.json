@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "status": "assistant_mobile_configuration_corrected_physical_phone_acceptance_pending",
+  "date": "2026-10-14",
+  "verified_utc": "2026-10-14 07:01:53",
+  "instance": "soprasteriaassvsdemo14.service-now.com",
+  "assistant": {
+    "id": "8aa131d793f787105c8132d47aba1095",
+    "name": "SCC Native Voice",
+    "type": "voice",
+    "active": true,
+    "mobile_enabled_in_live_assistant_designer": true,
+    "deployment_config": "8ea175d793f787105c8132d47aba1039"
+  },
+  "defect_and_supported_ui_fix": {
+    "defect": "The Mobile safeguards required a Record Producer, but mobile_fallback_record_producer was empty.",
+    "official_mobile_activation_requires_record_producer": true,
+    "applied_in": "Assistant Designer > Settings > Safeguards > Mobile > Record Producer > Save",
+    "attribute": "mobile_fallback_record_producer",
+    "attribute_id": "fde2759f93f787105c8132d47aba1022",
+    "before": null,
+    "after": "9531047253230010fa75ddeeff7b1262",
+    "record_producer_name": "Create Incident using VA",
+    "record_producer_active": true,
+    "record_producer_table": "incident",
+    "attribute_mod_count": 1,
+    "record_updated_utc": "2026-10-14 06:59:59",
+    "other_six_safeguards_values_and_mod_counts_unchanged": true,
+    "authentication_requirements_unchanged": true,
+    "telephony_fallback_unchanged": true,
+    "language_tts_and_provider_application_unchanged": true,
+    "record_producer_or_order_invoked": false,
+    "record_producer_availability": "on_both",
+    "persisted_value_verified_after_ui_reload": true
+  },
+  "actual_mobile_function": {
+    "id": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "name": "AI Voice Agent",
+    "type": "voice_launcher",
+    "context": "global",
+    "visible_quick_links_destination": "27493ac493ca8350e7f2b9fa6aba1014",
+    "visible_label": "SCC Laptop Voice",
+    "visible_destination_mod_count": 1,
+    "active_assistant_mapping": "3351561b933f8754e7f2b9fa6aba10c4",
+    "active_assistant_mapping_count": 1,
+    "old_assistant_mapping_active": false
+  },
+  "normal_mobile_config_api_routes": [
+    {
+      "voiceServiceId": "8aa131d793f787105c8132d47aba1095",
+      "mobileChannelType": "chat_button",
+      "mobileChannelId": "79e86e8493c68350e7f2b9fa6aba10fe",
+      "pinned_route": true
+    },
+    {
+      "voiceServiceId": "8aa131d793f787105c8132d47aba1095",
+      "mobileChannelType": "prominent_action",
+      "mobileChannelId": "b3728c0187403300e0ef0cf888cb0bee",
+      "pinned_route": true
+    }
+  ],
+  "endpoint_contract": {
+    "approved_endpoint": "https://strix-alloy.tail7f425a.ts.net/scc-native/webrtc/connect/agent_operator",
+    "stock_mobile_snc_url_scheme": "https",
+    "override_url_scheme": "https",
+    "override_scheme_matches_stock": true,
+    "mobile_descriptor_fields": [
+      "voiceServiceId",
+      "voiceWebhookURL",
+      "mobileChannelType",
+      "mobileChannelId"
+    ],
+    "chat_button_is_stock_table_mapping_for_actual_voice_launcher": true,
+    "ui_voiceServiceSysId_means_tts_configuration": true
+  },
+  "assistant_to_voice_skill_chain": {
+    "context_profile": "4ea175d793f787105c8132d47aba1032",
+    "profile_skill_mapping": "2f0639df933b87105c8132d47aba1010",
+    "profile_skill_table": "sys_cs_context_profile_skill",
+    "generative_skill": "7a0675df933b87105c8132d47aba104b",
+    "generative_skill_table": "sys_gen_ai_skill",
+    "skill_name": "SCC Laptop Onboarding Voice",
+    "skill_metadata": "3606b99f933b87105c8132d47aba10f7",
+    "skill_metadata_table": "sn_aia_skill_metadata",
+    "metadata_document_table": "sn_aia_agent",
+    "voice_agent": "a6337ddf93f787105c8132d47aba1058",
+    "voice_agent_type": "voice",
+    "agent_config": "fa04fdd3933b87105c8132d47aba104d",
+    "agent_config_active": true,
+    "current_version": "4a04f9d3933b87105c8132d47aba10b2",
+    "current_version_active": true,
+    "current_version_state": "committed",
+    "current_instructions_require_german": true,
+    "binding_unchanged_after_supported_ui_save": true
+  },
+  "validation_limits": {
+    "physical_phone_acceptance_pending": true,
+    "matched_phone_websocket_admission_observed_by_parent": false,
+    "missing_fallback_defect_causes_pre_websocket_failure_proven": false,
+    "explicit_mobile_voice_disabled_flag_confirmed": false,
+    "no_synthetic_session_or_order_created_by_this_audit": true
+  },
+  "history": {
+    "deployment_config_and_attributes": "5bd25e2f93ffcb105c8132d47aba107b",
+    "current_voice_agent_and_version": "013312af93ffcb105c8132d47aba1097",
+    "profile_to_skill_binding": "48a35eaf93ffcb105c8132d47aba1090",
+    "tts_id_meaning": "27041a6393330f105c8132d47aba107a",
+    "safeguards_update_helper": "30d4de2793330f105c8132d47aba102c",
+    "skill_to_agent_and_mobile_fallback_usage": "472552a793330f105c8132d47aba106a",
+    "before_ui_save_allowlisted_attributes": "ba6516e793330f105c8132d47aba102d",
+    "fresh_post_ui_save_verification": "dc069e6b93330f105c8132d47aba1056",
+    "record_producer_mobile_availability": "3965566393330f105c8132d47aba1064"
+  },
+  "privacy": {
+    "allowlisted_metadata_only": true,
+    "raw_attribute_parameter_or_credential_values_saved": false,
+    "private_account_or_role_records_read": false,
+    "protected_constants_or_http_status_acl_bypassed": false
+  },
+  "official_reference": "https://www.servicenow.com/docs/r/zurich/intelligent-experiences/create-an-ai-voice-service.html",
+  "latest_stack_validation": {
+    "host_reported_utc": "2026-10-14T07:02:50.080934+00:00",
+    "all_seven_services_http_200": true,
+    "expected_halogen_v2_running": true,
+    "vision_enabled": true,
+    "prompt_cache_enabled": true,
+    "native_sessions": 0,
+    "model_and_gateway_idle": true,
+    "free_gib": 24.709
+  }
+}

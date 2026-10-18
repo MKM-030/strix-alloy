@@ -1,0 +1,142 @@
+{
+  "readOnly": true,
+  "writes": 0,
+  "checkedAt": "2026-10-13 18:03:54",
+  "identity": {
+    "conversation": "3c62ab57933f0b105c8132d47aba1071",
+    "clientSession": true,
+    "alias": true,
+    "confirmationMessage": true,
+    "ritm": true,
+    "req": true,
+    "keys": [
+      "global_use_input_collector_agent_instructions",
+      "global_execution_plan",
+      "global_deployment_id",
+      "_reusable_topic_outputs_var",
+      "raw_user_input",
+      "global_first_planner_call",
+      "global_planner_1_answer_type",
+      "global_agent_tools_a4a9438393738354e7f2b9fa6aba101d__1",
+      "global_tool_executor_response",
+      "global_glide_session_id",
+      "_liveagent_handoff_error_msg",
+      "global_usage_execution_plan_map",
+      "global_aia_perf_logging_enabled",
+      "global_execution_plan_id",
+      "raw_user_input",
+      "_setup_error_topic",
+      "global_execution_plan_0d62ab57933f0b105c8132d47aba10fb",
+      "global_session_id"
+    ]
+  },
+  "matchingItems": [
+    {
+      "id": "dd33ab5b933f0b105c8132d47aba1014",
+      "number": "RITM0010013",
+      "created": "2026-10-13 18:00:42",
+      "requestId": "9533ab5b933f0b105c8132d47aba1014",
+      "requestNumber": "REQ0010014",
+      "catalogId": "401b878b93738354e7f2b9fa6aba102f",
+      "catalogName": "SCC Laptop zum Onboarding (Demo)",
+      "variables": {
+        "employee_name": "Philipp Borchert",
+        "start_date": "2026-11-01",
+        "delivery_location": "Hamburg",
+        "managerId": "6a0690b893d00b105c8132d47aba1022",
+        "managerDisplay": "Marcel KAEFKE"
+      }
+    }
+  ],
+  "itemCandidatesRead": 5,
+  "toolResponse": [
+    {
+      "output": {
+        "ok": true,
+        "reused": false,
+        "request_number": "REQ0010014",
+        "request_id": "9533ab5b933f0b105c8132d47aba1014",
+        "requested_item_id": "dd33ab5b933f0b105c8132d47aba1014",
+        "catalog_item_id": "401b878b93738354e7f2b9fa6aba102f",
+        "catalog_item_name": "SCC Laptop zum Onboarding (Demo)",
+        "requested_item_number": "RITM0010013",
+        "employee_name": "Philipp Borchert",
+        "start_date": "2026-11-01",
+        "delivery_location": "Hamburg",
+        "manager_id": "6a0690b893d00b105c8132d47aba1022",
+        "manager_name": "Marcel KAEFKE",
+        "demo_only": true
+      },
+      "is_abort": false,
+      "thought": "Der Benutzer hat die Zusammenfassung bestätigt. Alle erforderlichen Daten sind vorhanden. Der nächste Schritt ist das Absenden der Bestellung mit den bestätigten Angaben.",
+      "inputs": {
+        "manager_name": "Marcel KAEFKE",
+        "employee_name": "Philipp Borchert",
+        "delivery_location": "Hamburg",
+        "confirmed": "true",
+        "start_date": "2026-11-01"
+      },
+      "action": "SCC Laptop Bestellung absenden"
+    }
+  ],
+  "planSnapshot": {
+    "state": "in_progress",
+    "state_reason": "",
+    "status": null,
+    "objective": "Mein neuer Mitarbeiter startet am 1. November, sein Laptop soll zum Onboarding nach Hamburg in unsere Niederlassung geliefert werden.",
+    "usecase": "802d751eff942210d09effffffffff73",
+    "agent": "",
+    "team": "046db51eff942210d09effffffffffdb",
+    "metadata": "{}",
+    "related_task_table": null,
+    "related_task_record": null,
+    "conversation": "3c62ab57933f0b105c8132d47aba1071",
+    "sys_domain": "global",
+    "context": null,
+    "start_time": "2026-10-13 18:00:32",
+    "end_time": "",
+    "gen_ai_usage_log": null,
+    "execution_time_ms": null,
+    "system_execution_time_ms": null,
+    "execution_time_sec": "0",
+    "system_execution_time_sec": "0",
+    "run_type": null,
+    "execution_channel": "default",
+    "execution_mode": "interactive",
+    "test_version": null,
+    "applicability_script": null,
+    "condition": null,
+    "advanced_mode": null,
+    "structured_output": null,
+    "structured_output_request": null,
+    "derived_scope": null,
+    "tool_p95_latency": null,
+    "llm_p95_latency": null,
+    "worker": "",
+    "sys_id": "0d62ab57933f0b105c8132d47aba10fb",
+    "sys_created_by": "marcel.kaefke@soprasteria.com"
+  },
+  "deployment": "c623a20f93374354e7f2b9fa6aba10fd",
+  "scopeContract": "Normal GlideRecordSecure; record/field canRead; variable canRead enforced when API exposes it; no writes, model calls, checkout calls or retries.",
+  "history": [
+    "sys_script_execution_history.do?sys_id=10f3e71793f70b54e7f2b9fa6aba1003"
+  ],
+  "currentPlanRead": {
+    "readOnly": true,
+    "writes": 0,
+    "checkedAt": "2026-10-13 18:05:39",
+    "plan": {
+      "id": "0d62ab57933f0b105c8132d47aba10fb",
+      "state": "completed",
+      "state_reason": "no_activity",
+      "status": "",
+      "conversation": "3c62ab57933f0b105c8132d47aba1071",
+      "start_time": "2026-10-13 18:00:32",
+      "end_time": "2026-10-13 18:00:55"
+    }
+  },
+  "currentPlanHistory": [
+    "sys_script_execution_history.do?sys_id=3154ab9b93f70b54e7f2b9fa6aba10d2"
+  ],
+  "conclusion": "Confirmed owned checkout succeeded once: ok=true, reused=false; exact created RITM/REQ and variables match the approved spoken summary. Completed plan state_reason=no_activity. Runtime speech omitted final catalog/REQ/RITM result; no checkout retry performed."
+}

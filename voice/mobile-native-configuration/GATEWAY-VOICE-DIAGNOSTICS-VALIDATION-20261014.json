@@ -1,0 +1,310 @@
+{
+  "schema": 1,
+  "status": "gateway_diagnostics_live_phone_root_cause_unconfirmed",
+  "windows_tests": {
+    "utc": "2026-10-14T05:53:19.686714+00:00",
+    "exit_code": 0,
+    "test_count": 55,
+    "tests_passed": true,
+    "candidate_sha256": "9b55f7a4e2e7251721a914d173eeaea2592e21e5a589cde74823b33e054c0772",
+    "test_sha256": "0a290057cc17ccd727bc52e64dcc1e4f7fd4da89ded0786d1694336a6555054a",
+    "live_baseline_unchanged": true,
+    "failure_names": [],
+    "suite": "All existing server Gateway tests plus ConsoleTrace and new voice diagnostics",
+    "real_inference_or_service_now_calls": false,
+    "service_process_or_config_changes": false
+  },
+  "deployment": {
+    "utc": "2026-10-14T05:59:15.693414+00:00",
+    "before_sha256": "25ddfe9565c7d8f393289d22016754d040a269c94561599832e811400c006aed",
+    "after_sha256": "9b55f7a4e2e7251721a914d173eeaea2592e21e5a589cde74823b33e054c0772",
+    "tests_passed": true,
+    "test_count": 55,
+    "old_listener_pid": 23480,
+    "old_launcher_pid": 9352,
+    "preflight": [
+      {
+        "native": {
+          "http_status": 200,
+          "nativeSessions": 0,
+          "status": "ok",
+          "auth_mode": "servicenow"
+        },
+        "model": {
+          "http_status": 200,
+          "busy": false,
+          "in_flight": 0,
+          "queued": 0,
+          "slots": 1,
+          "context": 262144,
+          "slot_ctx": 262144,
+          "kv_pool_positions": 262144,
+          "status": "ok",
+          "expected_model": true,
+          "version_matches": true,
+          "vision_enabled": true,
+          "prompt_cache": {
+            "mode": 1,
+            "enabled": true,
+            "cap_mb": 110,
+            "bitwise_identical_to_cold": true
+          }
+        },
+        "gateway": {
+          "http_status": 200,
+          "draining": false,
+          "active_requests": 0,
+          "queued_requests": 0,
+          "context": 262144,
+          "status": "ok"
+        },
+        "memory": {
+          "free_gib": 21.416,
+          "commit_headroom_gib": 109.427,
+          "runtime_guard_floor_gib": 18,
+          "above_runtime_floor": true,
+          "cold_start_floor_met": false
+        },
+        "bot_latest_end_ack": true
+      },
+      {
+        "native": {
+          "http_status": 200,
+          "nativeSessions": 0,
+          "status": "ok",
+          "auth_mode": "servicenow"
+        },
+        "model": {
+          "http_status": 200,
+          "busy": false,
+          "in_flight": 0,
+          "queued": 0,
+          "slots": 1,
+          "context": 262144,
+          "slot_ctx": 262144,
+          "kv_pool_positions": 262144,
+          "status": "ok",
+          "expected_model": true,
+          "version_matches": true,
+          "vision_enabled": true,
+          "prompt_cache": {
+            "mode": 1,
+            "enabled": true,
+            "cap_mb": 110,
+            "bitwise_identical_to_cold": true
+          }
+        },
+        "gateway": {
+          "http_status": 200,
+          "draining": false,
+          "active_requests": 0,
+          "queued_requests": 0,
+          "context": 262144,
+          "status": "ok"
+        },
+        "memory": {
+          "free_gib": 21.412,
+          "commit_headroom_gib": 109.429,
+          "runtime_guard_floor_gib": 18,
+          "above_runtime_floor": true,
+          "cold_start_floor_met": false
+        },
+        "bot_latest_end_ack": true
+      },
+      {
+        "native": {
+          "http_status": 200,
+          "nativeSessions": 0,
+          "status": "ok",
+          "auth_mode": "servicenow"
+        },
+        "model": {
+          "http_status": 200,
+          "busy": false,
+          "in_flight": 0,
+          "queued": 0,
+          "slots": 1,
+          "context": 262144,
+          "slot_ctx": 262144,
+          "kv_pool_positions": 262144,
+          "status": "ok",
+          "expected_model": true,
+          "version_matches": true,
+          "vision_enabled": true,
+          "prompt_cache": {
+            "mode": 1,
+            "enabled": true,
+            "cap_mb": 110,
+            "bitwise_identical_to_cold": true
+          }
+        },
+        "gateway": {
+          "http_status": 200,
+          "draining": false,
+          "active_requests": 0,
+          "queued_requests": 0,
+          "context": 262144,
+          "status": "ok"
+        },
+        "memory": {
+          "free_gib": 21.412,
+          "commit_headroom_gib": 109.43,
+          "runtime_guard_floor_gib": 18,
+          "above_runtime_floor": true,
+          "cold_start_floor_met": false
+        },
+        "bot_latest_end_ack": true
+      }
+    ],
+    "new_listener_pid": 28112,
+    "new_launcher_pid": 23884,
+    "new_created": 1791957557.1701772,
+    "after_health": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "protected_processes_unchanged": true,
+    "protected_pids": {
+      "8731": 12368,
+      "8840": 28968,
+      "8850": 19372,
+      "8853": 19372,
+      "8860": 3704,
+      "8861": 15436,
+      "8862": 5572,
+      "8863": 20168
+    },
+    "config_unchanged": true,
+    "active_source_sha256": "9b55f7a4e2e7251721a914d173eeaea2592e21e5a589cde74823b33e054c0772",
+    "completed_utc": "2026-10-14T05:59:17.779105+00:00"
+  },
+  "public_control": {
+    "utc": "2026-10-14T06:00:08.625376+00:00",
+    "purpose": "credentialless public ROOT signaling control, not phone acceptance",
+    "credentials_sent": false,
+    "session_allocated": false,
+    "http_status": 401,
+    "elapsed_seconds": 1.234,
+    "gateway_diagnostic_events": [
+      {
+        "timestamp_machine_local": "2026-10-14 08:00:09,826",
+        "kind": "request",
+        "request": "14ef33329ed1",
+        "route": "root_signaling",
+        "method": "GET",
+        "origin": "expected",
+        "credentials": "none",
+        "upgrade": "websocket"
+      },
+      {
+        "timestamp_machine_local": "2026-10-14 08:00:09,826",
+        "kind": "result",
+        "request": "14ef33329ed1",
+        "status": "401"
+      }
+    ],
+    "services": {
+      "model": {
+        "http_status": 200,
+        "busy": false,
+        "in_flight": 0,
+        "queued": 0,
+        "slots": 1,
+        "context": 262144,
+        "slot_ctx": 262144,
+        "kv_pool_positions": 262144,
+        "status": "ok",
+        "expected_model": true,
+        "version_matches": true,
+        "vision_enabled": true,
+        "prompt_cache": {
+          "mode": 1,
+          "enabled": true,
+          "cap_mb": 110,
+          "bitwise_identical_to_cold": true
+        }
+      },
+      "controller": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "context": 262144,
+        "status": "ok"
+      },
+      "gateway": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "queued_requests": 0,
+        "context": 262144,
+        "status": "ok"
+      },
+      "bot": {
+        "http_status": 200
+      },
+      "native": {
+        "http_status": 200,
+        "nativeSessions": 0,
+        "status": "ok",
+        "auth_mode": "servicenow"
+      },
+      "asr": {
+        "http_status": 200,
+        "status": "ok"
+      },
+      "tts": {
+        "http_status": 200,
+        "expected_model": true
+      }
+    },
+    "memory": {
+      "free_gib": 21.366,
+      "commit_headroom_gib": 109.412,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "gateway_sha256": "9b55f7a4e2e7251721a914d173eeaea2592e21e5a589cde74823b33e054c0772",
+    "config_sha256": "a2051af50ae3266b1c86349306fcd6e35e431295f00176bcd13cd9b297da0f76",
+    "native_sha256": "0b7c6705488b81e5e93f192154dbb670d3cfd1d70011282245398f54a9a5647d",
+    "new_gateway_listener_pid": 28112,
+    "new_gateway_launcher_pid": 23884,
+    "protected_processes_unchanged_at_activation": true
+  },
+  "linux_tests": {
+    "targeted": {
+      "count": 12,
+      "passed": true,
+      "red_baseline": {
+        "failed": 8,
+        "passed": 4
+      }
+    },
+    "all_existing_server_gateway_plus_console_trace": {
+      "count": 55,
+      "passed": true
+    }
+  },
+  "scope": {
+    "observed_methods": [
+      "GET",
+      "HEAD"
+    ],
+    "observed_route_classes": [
+      "root_signaling",
+      "prefixed_signaling"
+    ],
+    "observed_requests": "Exact known signaling prefix or its child path only",
+    "authorization_changed": false,
+    "response_or_protocol_changed": false,
+    "model_native_bot_asr_tts_studio_or_user_application_restarted": false,
+    "gateway_only_restarted": true,
+    "credentials_or_payload_logged": false,
+    "real_service_now_or_model_turn_executed": false,
+    "physical_phone_acceptance": false
+  }
+}

@@ -1,0 +1,58 @@
+{
+    "status":  "PREPARED_NOT_ACTIVE",
+    "preparedDate":  "2026-10-13",
+    "purpose":  "Controlled candidate only. Requires explicit root activation after current dialog correctness is resolved and every shared model caller is idle.",
+    "original":  {
+                     "path":  "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0181-version-bracket-20261012\\serving0181-full262-profile.json",
+                     "sha256":  "cf02e2e695160c3e199a2efbf81920192d77f538616b4a3a00153e33927333c4"
+                 },
+    "candidate":  {
+                      "path":  "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0181-version-bracket-20261012\\serving0181-full262-exact-cache-candidate-20261013.json",
+                      "sha256":  "f62b654bd0cfd0bcd00b4ced7416b64584ca530e6be8120e5d61dc45b931c323"
+                  },
+    "change":  {
+                   "jsonPath":  "engine.prompt_cache",
+                   "before":  "Off",
+                   "after":  "Exact",
+                   "otherBytesUnchanged":  true,
+                   "verification":  "Exact baseline SHA; exactly one prompt_cache Off field; candidate JSON parses; reversing only Off-to-Exact reproduces original text byte-for-byte. Same directory preserves relative credential-file semantics."
+               },
+    "preserved":  {
+                      "context":  262144,
+                      "minimumReserveGiB":  18,
+                      "modelCheckpoint":  "v2",
+                      "slots":  1,
+                      "thinkingProfileDefaults":  "Unchanged; request-level demo override remains in the separate 8841 gateway.",
+                      "otherSettings":  "All engine, API, gateway, token-path, admission, and guard fields unchanged."
+                  },
+    "semantics":  {
+                      "prefixCapable":  true,
+                      "evidenceLimit":  "Retained 0.15.1/0.16.2 measurements prove reuse of an aligned prefix for longer prompts, not only full-prompt equality. The native 0.18.1 selector is not visible in installed Python source; current SCC hit behavior remains unqualified.",
+                      "exactMode":  "Installed 0.18.1 API reports mode 1 as bitwise_identical_to_cold when cache is enabled.",
+                      "memory":  "Upstream startup estimate: approximately 115 MiB per in-place snapshot, six entries at default one-slot topology, approximately 0.67 GiB. This is neither measured additional RAM nor a validated 0.18.1 budget; existing 18 GiB guard remains authoritative.",
+                      "runtimeControl":  "No runtime enable/resize API found. Engine restart is required. GET /cache is read-only; per-request default/no_store cannot enable a disabled engine cache."
+                  },
+    "activationGates":  [
+                            "Resolve the active native dialog bug; receive root authorization for this experiment.",
+                            "Hold all native voice and other shared HaloGen callers. Fresh stack_status must show native sessions 0, gateway active/queued 0, engine busy false/in_flight 0/queued 0. Abort if activity appears.",
+                            "Verify current controller PID, creation time, executable and command path against server/.local/current.json and fresh CIM; verify original and candidate hashes. Never kill by image name or adopt an unrelated listener.",
+                            "Use the CLEAN controller.py because its LOCAL directory owns the active run; do not use SCC controller.py, generic Start.ps1, or a profile-generating manage.py start.",
+                            "Request managed stop, then poll to terminal stopped with clean engine cleanup/recovery and absence of the owned 8731/8840 listeners. The stop command returns before cleanup finishes. Do not start another backend until cleanup is verified.",
+                            "Use existing memory admission, cleanup and recovery rules. Do not change reserves, context, guards, or unrelated services."
+                        ],
+    "workflow":  {
+                     "shell":  "PowerShell; staged commands below are documentation only and were not executed.",
+                     "status":  "\u0026 \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe\u0027 \u0027C:\\Projects\\strix-alloy-scc-voice\\voice\\native-speech-validation\\stack_status.py\u0027",
+                     "stopOwnedController":  "\u0026 \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe\u0027 \u0027C:\\Projects\\strix-alloy-clean\\server\\controller.py\u0027 stop",
+                     "inspectControllerState":  "$state = Get-Content -Raw \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\current.json\u0027 | ConvertFrom-Json; $state | Select-Object run_id,pid,phase,profile_sha256,minimum_reserve_gib,heartbeat",
+                     "startCandidateAfterVerifiedCleanup":  "$cacheRun = Start-Process -FilePath \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe\u0027 -ArgumentList @(\u0027-u\u0027,\u0027C:\\Projects\\strix-alloy-clean\\server\\controller.py\u0027,\u0027run\u0027,\u0027--config\u0027,\u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0181-version-bracket-20261012\\serving0181-full262-exact-cache-candidate-20261013.json\u0027,\u0027--port\u0027,\u00278840\u0027) -WorkingDirectory \u0027C:\\Projects\\strix-alloy-clean\\server\u0027 -WindowStyle Hidden -RedirectStandardOutput \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\cache-candidate-20261013.stdout.log\u0027 -RedirectStandardError \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\cache-candidate-20261013.stderr.log\u0027 -PassThru; $cacheRun | Select-Object Id,StartTime",
+                     "readyChecks":  "Require controller phase ready with candidate profile SHA, fresh heartbeat and unchanged 18 GiB reserve; engine/gateway health ready; prompt_cache enabled true/mode 1/nonzero cap_mb; record fresh owned process identities and actual cache configuration without printing credentials.",
+                     "probe":  "Only after readiness, run one root-authorized harmless first-turn speech probe. No name/confirmation/order action. Record model cache counters before/after and per-completion cached token counts, prefill/decode and gateway timing; do not print prompt/response contents. One probe can verify hits if orchestration reuses a prefix, but cannot establish general latency improvement.",
+                     "rollback":  "Hold callers and apply the same fresh idle/ownership gates. Run stopOwnedController; wait for verified stopped/cleanup/recovery and owned listener removal. Run startOriginalAfterVerifiedCleanup. The original profile was never edited.",
+                     "startOriginalAfterVerifiedCleanup":  "$cacheRollback = Start-Process -FilePath \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe\u0027 -ArgumentList @(\u0027-u\u0027,\u0027C:\\Projects\\strix-alloy-clean\\server\\controller.py\u0027,\u0027run\u0027,\u0027--config\u0027,\u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0181-version-bracket-20261012\\serving0181-full262-profile.json\u0027,\u0027--port\u0027,\u00278840\u0027) -WorkingDirectory \u0027C:\\Projects\\strix-alloy-clean\\server\u0027 -WindowStyle Hidden -RedirectStandardOutput \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\cache-rollback-20261013.stdout.log\u0027 -RedirectStandardError \u0027C:\\Projects\\strix-alloy-clean\\server\\.local\\cache-rollback-20261013.stderr.log\u0027 -PassThru; $cacheRollback | Select-Object Id,StartTime",
+                     "rollbackChecks":  "Require original profile SHA, engine prompt_cache disabled/mode 0, unchanged guard/context, all health ready. Keep separate 8841 demo no-thinking gateway configuration unchanged throughout."
+                 },
+    "changesToServices":  0,
+    "newInferenceRequests":  0,
+    "relatedEvidence":  "voice/halogen-user-call-audit-20261013.json"
+}

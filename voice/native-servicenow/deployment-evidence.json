@@ -1,0 +1,73 @@
+{
+  "observed_at": "2026-10-13",
+  "deployment_sys_id": "8aa131d793f787105c8132d47aba1095",
+  "table": "sys_now_assist_deployment",
+  "name": "SCC Native Voice",
+  "saved": true,
+  "status": "Inactive",
+  "router_url": "https://soprasteriaassvsdemo14.service-now.com/now/now-assist-in-virtual-agent/nava-router/params/assistantId/8aa131d793f787105c8132d47aba1095",
+  "edit_iframe_url": "https://soprasteriaassvsdemo14.service-now.com/now/now-assist-with-va/edit-voice-assistant/8aa131d793f787105c8132d47aba1095",
+  "setup_url": "https://soprasteriaassvsdemo14.service-now.com/now/now-assist-va-voice/setup/params/assistantid/8aa131d793f787105c8132d47aba1095",
+  "primary_language": "de",
+  "language_display": "Deutsch",
+  "native_voice_profile": "Lena",
+  "opening_message": "Hallo, ich helfe Ihnen bei der Laptopdemo.",
+  "assistant_instructions": "Sie helfen bei der Laptopdemo für die Smart Country Convention. Antworten Sie auf Deutsch, kurz und verständlich, und stellen Sie jeweils nur eine Frage. Nutzen Sie den zugeordneten SCC-Agenten und seine vorhandenen Tools für Laptopauswahl und Bestellung. Bestätigen Sie keine Aktion ohne erfolgreiches Tool-Ergebnis. Fassen Sie eine Bestellung zusammen und holen Sie vor dem Absenden die ausdrückliche Bestätigung des Nutzers ein.",
+  "test_assistant_button_enabled": true,
+  "activate_button_enabled": false,
+  "telephony_provider": null,
+  "mobile_launchers_added": false,
+  "web_launchers_added": false,
+  "provider_application": "AI Voice Agent Provider Application",
+  "saved_ui_payload": {
+    "matchingDomain": true,
+    "voiceServiceSysId": "016064ddff6d0310005affffffffff5c",
+    "language": "de",
+    "mobileEnabled": false,
+    "fallbackOption": "live_agent",
+    "secondsToRepromptAfterInactivity": "30",
+    "maxCallDuration": "10",
+    "showCaptureDetails": "true",
+    "selectedRecordProducer": null,
+    "requireAuthentication": "true",
+    "selectedProvider": "choose a provider"
+  },
+  "native_voice_agent_association": {
+    "status": "saved_and_verified_after_full_page_reload",
+    "original_chat_agent_sys_id": "a4a9438393738354e7f2b9fa6aba101d",
+    "original_chat_agent_modified": false,
+    "observed_picker_count": 18,
+    "scc_search_result_count_before_voice_counterpart": 0,
+    "selected_agents": [
+      {
+        "sys_id": "a6337ddf93f787105c8132d47aba1058",
+        "name": "SCC Laptop Onboarding Voice",
+        "status": "Active",
+        "editor_url": "https://soprasteriaassvsdemo14.service-now.com/now/agent-studio/agent-setup/a6337ddf93f787105c8132d47aba1058/params/modality/voice"
+      }
+    ]
+  },
+  "screenshot_path": "/workspace/scratch/scc-native-voice-saved.jpg",
+  "screenshot_bytes": 73434,
+  "existing_hr_deployment_modified": false,
+  "notes": [
+    "Create assistant > Voice-only > Continue allocated the draft before any details were saved; the same draft was reused after implementation authorization.",
+    "Save and close completed. Saved overview confirms name, Inactive, Deutsch, Lena, greeting, disabled Activate, and enabled Test Assistant.",
+    "No native Test Assistant call started by deployment setup agent.",
+    "Existing HR/Now Mobile Voice Assist deployment 60b9ea4893c68350e7f2b9fa6aba1090 inspected only.",
+    "Native Add voice AI agents modal selected the single SCC Laptop Onboarding Voice agent and Save returned Changes saved! Reopening after full page reload retained one Active agent. Clicking its native link opened the exact dedicated Voice agent sys_id."
+  ],
+  "association_screenshot_path": "/workspace/scratch/scc-native-voice-agent-association.jpg",
+  "association_screenshot_bytes": 47571,
+  "native_test_page": {
+    "url": "https://soprasteriaassvsdemo14.service-now.com/now/now-assist-with-va/voice-test/8aa131d793f787105c8132d47aba1095",
+    "mode": "Voice",
+    "name": "SCC Native Voice",
+    "language_and_persona": "German (Lena)",
+    "state": "No active call",
+    "start_call_button_visible": true,
+    "call_started": false,
+    "screenshot_path": "/workspace/scratch/scc-native-voice-test-ready.jpg",
+    "screenshot_bytes": 30880
+  }
+}

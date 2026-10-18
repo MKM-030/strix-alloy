@@ -1,0 +1,62 @@
+{
+  "scope": "Native Now Mobile test prerequisites and source investigation; no fix claimed",
+  "browser_confirmed_by_user": true,
+  "baseline": {
+    "native_sha256": "91d61c8dae3055bad64bde48f7e62a6864449c0cb8246058445bfdaa1107a943",
+    "gateway_sha256": "25ddfe9565c7d8f393289d22016754d040a269c94561599832e811400c006aed"
+  },
+  "current_app_builder": {
+    "version": "27.11.0",
+    "native_function": {
+      "name": "AI Voice Agent",
+      "stored_type": "Voice Launcher",
+      "context": "Global"
+    },
+    "observed_preview": "An image illustrating footer/swipe function placement; no native session launch control on the inspected function form"
+  },
+  "local_native_test_inventory": {
+    "android_sdk": false,
+    "adb": false,
+    "emulator": false,
+    "avd": false,
+    "appium": false,
+    "browser_streamed_mobile_device": false
+  },
+  "documented_test_path": {
+    "provider": "BrowserStack App Live",
+    "play_store_app": "com.servicenow.requestor",
+    "device_logs": "DevTools Logcat",
+    "audio_injection": "Selected Android devices; private beta Team Pro / Enterprise Pro according to vendor docs",
+    "test_account_available": "not provided or established",
+    "requires_new_external_test_access": true
+  },
+  "sources": {
+    "mobile_snc": "VoiceServiceConfigurationMobileSNC.read-20261014.js",
+    "cookie_auth": "CookieAuth.read-20261014.js",
+    "source_receipt": "MOBILE-CONTRACT-SOURCES-20261014-1849.json"
+  },
+  "proven_existing_failure": "Prior physical app attempts sent WebRTC HTTP POST to root Gateway and received401 before Native admission",
+  "current_mobile_attempt": "No fresh actual native app start available in inspected window; prior failure cannot be assumed a new attempt",
+  "contract_limits": [
+    "The CookieAuth operation's invocation by Android SDK is unproved",
+    "Actual SDK path, token form, request/response envelope and ws_ticket placement remain unobserved",
+    "Browser Origin/JWT policy and working STUN have not been relaxed"
+  ],
+  "references": [
+    "https://www.browserstack.com/docs/app-live/app-source/play-store",
+    "https://www.browserstack.com/docs/app-live/session-debugging/app-device-logs",
+    "https://www.browserstack.com/docs/app-live/media/audio-injection-android",
+    "https://www.servicenow.com/docs/r/mobile/mab-record-example-panel.html",
+    "https://www.servicenow.com/docs/r/mobile/debug-drawer.html"
+  ],
+  "production_mutations": false,
+  "native_app_test_performed": false,
+  "end_to_end_mobile_passed": false,
+  "no_secrets_or_authentication_values_saved": true,
+  "source_and_native_health_verified_berlin": "2026-10-14T19:05:25+02:00",
+  "native_health_at_verification": {
+    "status": "ok",
+    "nativeSessions": 0,
+    "authMode": "servicenow"
+  }
+}

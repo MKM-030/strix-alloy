@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-13",
+  "device": "DESKTOP-8M583SI",
+  "installed_payload_sha256": {
+    "voice/Start-NativeVoice.ps1": "a02baa569a3d65417ca0c94f3a17400e06d8583df09aacb1ec2e6d74146a1245",
+    "voice/Start-NativeModel.ps1": "f6d992223bfb459fca586156488c1e4b46ec4de27b5d35287cbe61fd9185cf9c",
+    "voice/Install-NativeVoiceShortcuts.ps1": "78f79eadfdf25f1fe141228ec39b893d153eb562e7a61147ccdde380469d76dd",
+    "voice/native-start/start_services.py": "54d053d4bdc6d597961d2c85a99a5b529cf223630ab8803f04dc3e1b0d4759d7",
+    "voice/native-start/README.md": "80ee1a60fcc55fffe2cff0e5cff4fdd0169e4512a245b93c46d6534cfb0bec2f"
+  },
+  "installed_payload_matches_manifest": true,
+  "verification_scope": "Five installed source-file SHA256 values read directly from Windows; no services called or changed by this commit verification",
+  "desktop_verification": {
+    "source": "Root direct COM readback at2026-10-13T13:29:03Z",
+    "service_links": 7,
+    "target_arguments_working_directory_match": true,
+    "native_demo_url_matches": true
+  },
+  "startup_verification": {
+    "source": "User-run manual packet All output, observed by root at2026-10-13T13:26Z",
+    "all_seven_services_http": 200,
+    "model_context": 262144,
+    "model_slots": 1,
+    "free_memory_gib": 27.136,
+    "legacy_cpu_ports": [],
+    "all_idle": true
+  },
+  "tests": {
+    "status": "passed_on_windows",
+    "contract_tests": 6,
+    "seconds": 0.014,
+    "powershell_files_parsed": 3,
+    "powershell_parse_errors": 0,
+    "git_diff_check": "passed"
+  },
+  "limits": [
+    "No new ServiceNow audio/order test during startup verification",
+    "Natural generic hello continuation and English upstream progress remain separate known issues"
+  ]
+}

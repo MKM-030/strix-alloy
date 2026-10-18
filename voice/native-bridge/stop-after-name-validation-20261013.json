@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-13",
+  "scope": "Reusable synthetic RTP probe that stops after the name response; no confirmation or summary review in this mode.",
+  "files": {
+    "harness": "voice/native-bridge/demo_audio_smoke.py",
+    "harness_sha256": "86e259512a9990cc32bb5fa424e3d7fbce4d13dd51b1c1b4dadfb79facb3ff98",
+    "tests": "voice/native-bridge/test_demo_stop_after_name.py",
+    "tests_sha256": "10ff7975b69f75f1d37c932cf4b5d65d711cc9b6f503d988141d3092cd22955e"
+  },
+  "interface": {
+    "flags": [
+      "--run-approved-audio-demo",
+      "--stop-after-name",
+      "--name-fixture <explicit synthetic mono PCM16 16kHz WAV>"
+    ],
+    "exclusive_with": [
+      "--first-turn-only",
+      "--hello-first"
+    ],
+    "early_error_transcript_codes": [
+      "TURN_FAILED",
+      "BUSY",
+      "ASR_FAILED",
+      "ASR_EMPTY"
+    ],
+    "fixture_used_for_planned_probe": "voice/native-speech-validation/runtime/asr-format-ab-20261013-140125/phrase-2.wav"
+  },
+  "verification": {
+    "test_first": {
+      "initial_new_tests_failed": 4,
+      "additional_failure_transcript_test_failed": 1,
+      "reason": "Missing feature/guard before implementation"
+    },
+    "candidate_full_suite": {
+      "shell_pid": 26168,
+      "existing_native_tests": 43,
+      "new_guard_tests": 5,
+      "total_tests": 48,
+      "seconds": 5.706,
+      "exit_code": 0
+    },
+    "independent_root_review": {
+      "shell_pid": 22696,
+      "new_guard_tests_passed": 5,
+      "existing_confirmation_guard_tests_passed": 3,
+      "heartbeat_test": "test_probe_keeps_reading_websocket_during_slow_backend_turn",
+      "heartbeat_result": "failed: closed=True with test heartbeat 0.05s and observation 0.35s",
+      "production_heartbeat_seconds": 20,
+      "drain_signaling_changed": false
+    },
+    "isolated_heartbeat_rerun": {
+      "shell_pid": 21996,
+      "tests": 1,
+      "seconds": 0.402,
+      "exit_code": 0,
+      "code_changed_between_runs": false
+    },
+    "limitation": "The short heartbeat test had one observed intermittent failure; the successful rerun does not erase that failure."
+  },
+  "authorized_real_probe": {
+    "status": "aborted before harness/session start",
+    "preflight_utc": "2026-10-13T14:20:53.022195+00:00",
+    "read_only_shell_pid": 25296,
+    "native_sessions": 1,
+    "stack_healthy": true,
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": false,
+    "native_worker_pid": 19940,
+    "hashes_matched": true,
+    "own_session_created": false,
+    "confirmation_sent": false,
+    "retry_performed": false,
+    "details": "voice/native-bridge/runtime/stop-after-name-candidate-20261013/preflight-aborted-142053.json"
+  },
+  "acceptance_rule": "Any future run must show explicit bot_turn_ready for turn 2, recognized name, response/TTS and stopped_after_name_before_confirmation; idle/exit0 alone is insufficient.",
+  "not_claimed": [
+    "No successful real RTP stop-after-name run from this candidate",
+    "No real user microphone acceptance inferred from these synthetic or mocked tests"
+  ],
+  "runtime_changes": "None; no model/service restart, config change, foreign session closure, or order request during this task."
+}

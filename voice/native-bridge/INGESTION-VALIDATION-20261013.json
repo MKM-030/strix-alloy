@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-13",
+  "scope": "Native audio ingestion, local notices and numeric ASR diagnostics",
+  "deployed_utc": "2026-10-13T14:05:21.563085Z",
+  "source_sha256": "4d8523898725692b096e00e9a73c4c4b15d502a6b0990dbc6e43dcab4dbd93ee",
+  "previous_source_sha256": "009d872e346d1b230a09d25c63f2ea13f9425b3a8b3ad0fe2926dc00841646d7",
+  "diagnosis": {
+    "second_bot_request": "5a96526ddaab4fcd9a642de9027777af",
+    "actual_callback_controls": [
+      "StreamStart",
+      "OutputText"
+    ],
+    "input_ready_received": false,
+    "third_bot_request_received": false,
+    "asr_requests_in_call": 2,
+    "original_worker": "ASR and dialog.turn awaited serially in one worker",
+    "short_name_misrecognition_cause": "unproven; original PCM and confidence were not retained"
+  },
+  "contract_evidence": {
+    "source": "voice/native-transport-evidence/VoiceTestingUIUtils.js",
+    "sha256": "5b45be231b4cf50c3c900cb817aa69fe1b26fbca720b36a89761f2b355576459",
+    "function": "handleServerError",
+    "behavior": "Every type=error data-channel message immediately closes signaling WSS.",
+    "implementation": "Local recoverable/fatal feedback is an assistant transcript notice, never protocol error; backend failure also has bounded speech."
+  },
+  "tdd": {
+    "original_source_ingestion_tests": {
+      "tests": 5,
+      "timeouts": 4,
+      "passes": 1
+    },
+    "pre_notice_fix_tests": {
+      "tests": 7,
+      "failures": 3
+    },
+    "diagnostics_before_implementation": "New diagnostic tests failed on absent flags/logs and malformed root schema."
+  },
+  "verification": {
+    "native_tests": 43,
+    "native_seconds": 5.794,
+    "native_exit": 0,
+    "independent_native_tests": 43,
+    "independent_seconds": 5.492,
+    "independent_exit": 0,
+    "existing_bot_tests": 56,
+    "bot_seconds": 1.565,
+    "bot_exit": 0,
+    "real_service_calls_from_tests": false,
+    "orders_from_tests": false,
+    "covered": [
+      "ASR/transcript during blocked backend",
+      "serialized backend submission",
+      "immutable turn identity",
+      "bounded queues and explicit overflow notice",
+      "stale audio fencing",
+      "failure while ASR in flight",
+      "close cancellation",
+      "recoverable ASR failure without disconnect",
+      "diagnostic request flags and unchanged text validation",
+      "malformed/nonfinite/oversized metrics",
+      "existing private aiortc signaling/RTP/auth regression"
+    ]
+  },
+  "asr": {
+    "response_format": "verbose_json",
+    "token_timestamps": false,
+    "no_language_probabilities": true,
+    "max_inspected_segments": 256,
+    "numeric_fields": [
+      "avg_logprob",
+      "no_speech_prob"
+    ],
+    "transcript_or_pcm_logged": false,
+    "confidence_filter": false,
+    "name_prompt": false,
+    "synthetic_format_ab": "voice/native-speech-validation/runtime/asr-format-ab-20261013-140125/report.json",
+    "synthetic_comparison": "Three identical synthetic PCM fixtures returned identical text under json and verbose_json+flags; does not validate human microphone recognition."
+  },
+  "activation": {
+    "report": "voice/native-bridge/runtime/ingestion-activation-20261013-140520.json",
+    "backup": "voice/native-bridge/runtime/ingestion-backup-20261013-140520.py",
+    "fresh_gate_utc": "2026-10-13T14:05:20.677040Z",
+    "model_idle": true,
+    "gateway_idle": true,
+    "native_sessions": 0,
+    "old_native_pid": 19352,
+    "new_native_pid": 19940,
+    "native_created_utc": "2026-10-13T14:05:20.7290256Z",
+    "health_status": 200,
+    "auth_mode": "servicenow",
+    "unauthenticated_connect_status": 401,
+    "bot_pid_before_and_after": 19372,
+    "bot_creation_and_argv_unchanged": true,
+    "other_services_restarted": false,
+    "initial_attempt": "Native venv lacked psutil; failed at import before any mutation. Completed using existing launcher environment E:\\SCC-Voice\\asr-env."
+  },
+  "remaining_limits": [
+    "ServiceNow missing input-ready callbacks unresolved",
+    "Human short-name accuracy unproven",
+    "Real microphone continuation after this patch not yet verified",
+    "English upstream progress remains"
+  ]
+}

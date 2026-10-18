@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "status": "read_only_actual_visible_launcher_verified_connection_failure_unresolved",
+  "date": "2026-10-14",
+  "instance": "soprasteriaassvsdemo14.service-now.com",
+  "changes_performed": false,
+  "visible_quick_link": {
+    "homepage": "ad7cc08177a72300454792718a1061ab",
+    "section": "57f8fce6778101108f64b2487b5a995f",
+    "section_title": "Quick links",
+    "homepage_section_map": "fb76c5aa770501108f64b2487b5a9967",
+    "section_destination_map": "e3493ac493ca8350e7f2b9fa6aba101b",
+    "destination_table": "sys_sg_navigation_section_destination_button",
+    "destination": "27493ac493ca8350e7f2b9fa6aba1014",
+    "destination_name": "Voice Agent",
+    "icon": "1a2dc3c88cb57110f877a2792c99a032",
+    "icon_name": "spark-solid",
+    "function": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "function_name": "AI Voice Agent",
+    "function_type": "voice_launcher",
+    "function_context": "global"
+  },
+  "assistant_mapping": {
+    "active_mapping": "3351561b933f8754e7f2b9fa6aba10c4",
+    "document_table": "sys_sg_button",
+    "document_id": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "assistant": "8aa131d793f787105c8132d47aba1095",
+    "assistant_name": "SCC Native Voice",
+    "active": true,
+    "prior_mapping": "73b34858930a4750e7f2b9fa6aba1008",
+    "prior_assistant": "60b9ea4893c68350e7f2b9fa6aba1090",
+    "prior_assistant_name": "Now Mobile Voice Assist",
+    "prior_mapping_active": false
+  },
+  "mobile_endpoint_generator": {
+    "snc": "234ab331ffd9f614129628ecf43bf169",
+    "wrapper": "5a1a777dff99f614129628ecf43bf19d",
+    "wrapper_local_pinned_route_present": true,
+    "snc_changes_performed": false,
+    "response_keys": [
+      "voiceServiceId",
+      "voiceWebhookURL",
+      "mobileChannelType",
+      "mobileChannelId"
+    ]
+  },
+  "history": {
+    "mobile_generator_and_instances": "9d4db1ab937bcb105c8132d47aba107f",
+    "actual_visible_destination": "1f7d3deb937bcb105c8132d47aba10d5",
+    "exact_visible_mapping_and_function": "e9bdfd2f937bcb105c8132d47aba1014"
+  },
+  "findings": [
+    "The screenshot's sparkle Voice Agent is an icon section function destination, separate from the previously modified Comments Solid Quick Action instance.",
+    "The actual visible icon destination already uses the exact same native function and SCC assistant mapping; no current server-side wrong-function or old-assistant mapping is shown.",
+    "Existing Native bridge authorization requires auth_token query JWT, pinned instance/service IDs and exact ServiceNow Origin. Public NowVoice docs do not specify the Android wire authentication, Origin or SDP JSON contract.",
+    "The first native Android app crash is not explained by launcher metadata alone; contemporaneous Mobile metadata logs contain an unrelated invalid HR task dot-walk query, but its causal relationship is unproven.",
+    "No private colleague account or role records were read. No credentials or tokens were extracted."
+  ],
+  "required_next_evidence": [
+    "Fresh physical-phone attempt correlated with the new bounded Mobile route and Native HTTP request logs; 07:10 had no matched admission and unmatched paths were not logged then.",
+    "If admission is successful, Android offer/answer shape and actual ICE connectivity rather than assuming the web test client contract.",
+    "Current physical device app version and refreshed mobile metadata remain unverified."
+  ],
+  "mobile_consumer_trace": {
+    "script_include_reference_search": "dc9e392f937bcb105c8132d47aba1071",
+    "voice_config_reference_search": "8fbe356393bbcb105c8132d47aba107d",
+    "properties_schema": "ccdeb56393bbcb105c8132d47aba10e9",
+    "properties_and_rest_resources": "f01fb9a393bbcb105c8132d47aba1082",
+    "native_mobile_sources": "d72fb9a393bbcb105c8132d47aba10aa",
+    "mobile_enabled_logic": "9bef31a793bbcb105c8132d47aba1014",
+    "voice_service_flags_and_build": "db000aa793bbcb105c8132d47aba10a5",
+    "instance_build": "glide-australia-02-11-2026__patch6w39-09-18-2026",
+    "no_readable_js_consumer_found": true,
+    "voice_agent_constants_script_acl_readable": false,
+    "protected_constants_bypassed": false,
+    "properties_api_observed_get": "/api/now/sg/properties",
+    "properties_api_browser_result": "net::ERR_BLOCKED_BY_CLIENT",
+    "api_block_workaround_attempted": false,
+    "mobile_enabled_source": "Returns true when any selected chat launcher, voice launcher, prominent override or external app exists; SCC active launcher mapping meets this declared condition.",
+    "disabled_mobile_voice_flag_confirmed": false
+  },
+  "local_diagnostic_candidate": {
+    "deployed": true,
+    "source": "VoiceServiceConfigurationMobile.js",
+    "before_sha256": "254d351155da9f00f79adb735c805a00208bcbfb153d85c4d7b3472478e09613",
+    "candidate_sha256": "d564931f46eb75ccfa268040703bc42b87fdf1c302a6301cf957a98990bb790b",
+    "log_prefix": "[SCC Mobile Voice Route] ",
+    "fields": [
+      "route",
+      "approved_service",
+      "admin",
+      "enabled",
+      "endpoint_matches"
+    ],
+    "route_values": [
+      "local",
+      "snc"
+    ],
+    "other_fields_are_booleans": true,
+    "red_tests": {
+      "pass": 8,
+      "fail": 2
+    },
+    "green_tests": {
+      "pass": 10,
+      "fail": 0
+    },
+    "syntax_check_passed": true,
+    "independent_review": "GO; removing two diagnostic calls and helper reconstructs the exact original baseline SHA256. Logging failures cannot alter routing.",
+    "routing_and_authentication_guards_changed": false,
+    "live_mod_count": 2,
+    "live_apply_history": "2bdf7d6793bbcb105c8132d47aba1009",
+    "live_verification_history": "8fef7d6793bbcb105c8132d47aba101d",
+    "both_scc_mobile_routes_pinned_after_update": true,
+    "root_windows_node_test": {
+      "pass": 10,
+      "fail": 0
+    }
+  },
+  "primary_references": [
+    "https://www.servicenow.com/docs/r/zurich/api-reference/cllent-mobile-api-reference/NowVoiceEndpointAndroidClass.html?contentId=~qxf4KNL~DRsQvwX_yaixA",
+    "https://www.servicenow.com/docs/r/api-reference/cllent-mobile-api-reference/NowVoiceServiceAndroidAPI.html",
+    "https://www.servicenow.com/docs/r/zurich/api-reference/cllent-mobile-api-reference/NowVoiceSDKAndroidAPI.html?contentId=nzjiKJXBmKoTG_MWRHwaAQ",
+    "https://www.servicenow.com/docs/r/mobile/mobile-platform/config-mobile-ai-voice-agent.html?contentId=rAH7uo1sv0q~Da9jzFBWWA"
+  ],
+  "precise_api_transaction_scan": {
+    "history": "699ef92393bbcb105c8132d47aba1099",
+    "window_utc": [
+      "2026-10-14 05:05:00",
+      "2026-10-14 05:13:00"
+    ],
+    "mobile_user_client_utc": "2026-10-14 05:10:25",
+    "mobile_refresh_utc": [
+      "2026-10-14 05:10:26",
+      "2026-10-14 05:10:27"
+    ],
+    "matched_voice_api_transactions": 0,
+    "voice_error_classification_history": "54deb96393bbcb105c8132d47aba10e5",
+    "invalid_hr_dotwalk_utc": "2026-10-14 05:10:25",
+    "http_status_not_exposed_in_transaction_schema": true
+  },
+  "resolution_status": "Physical Now Mobile failure remains unverified and not claimed fixed; backend routing checked and targeted diagnostics installed."
+}

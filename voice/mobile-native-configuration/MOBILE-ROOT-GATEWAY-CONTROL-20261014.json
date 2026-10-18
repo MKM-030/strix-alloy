@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "gateway_log_check_utc": "2026-10-14T05:41:04.514729+00:00",
+  "phone_window_machine_local": {
+    "from": "2026-10-14 07:34:00",
+    "through": "2026-10-14 07:38:59"
+  },
+  "gateway_stored_events_in_window": [],
+  "gateway_last_logged_event_machine_local": "2026-10-14 07:33:16,880",
+  "gateway_logging_coverage": {
+    "full_access_logging_disabled": true,
+    "authentication_covers_all_routes": true,
+    "missing_or_invalid_gateway_key_returns_401_before_router": true,
+    "console_trace_only_covers_known_inference_post_requests": true,
+    "unknown_get_or_websocket_401_is_not_logged": true
+  },
+  "controlled_public_websocket_request": {
+    "utc": "2026-10-14T05:43:41.584446+00:00",
+    "route_class": "root_signaling_without_native_prefix",
+    "credentials_sent": false,
+    "session_allocated": false,
+    "http_status": 401,
+    "elapsed_seconds": 0.266,
+    "gateway_log_size_or_modified_changed": false,
+    "gateway_stderr_size_or_modified_changed": false,
+    "native_log_size_or_modified_changed": false,
+    "is_phone_attempt": false
+  },
+  "interpretation": {
+    "phone_root_route_observed": false,
+    "missing_native_and_gateway_logs_prove_no_http": false,
+    "control_confirms_unlogged_root_route_failure": true,
+    "next_required_evidence": "Observe whether the Android SDK keeps or removes the native path prefix, using narrow request classification without credentials or raw URLs"
+  },
+  "service_code_config_or_process_changed": false,
+  "secrets_private_accounts_or_payloads_output": false
+}

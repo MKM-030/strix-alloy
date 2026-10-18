@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-13",
+  "timezone": "Europe/Berlin",
+  "production_issue": "Assistant transcripts arrived after the audible greeting, but later synthesis was skipped because another microphone onset changed the captured playback generation while the backend was still waiting.",
+  "correlated_native_calls": ["e12a7d54824a", "7e514ce53cd7", "456bacc0fee5"],
+  "asr_seconds_range": [0.266, 0.516],
+  "backend_wait_seconds_observed": [36.72, 33.88],
+  "latest_call_pause_evidence": {
+    "first_utterance_queued_berlin": "20:08:16.389",
+    "resumed_speech_onset_berlin": "20:08:16.550",
+    "first_asr_complete_berlin": "20:08:16.666",
+    "first_backend_begin_berlin": "20:08:16.667",
+    "old_generation": 1,
+    "resumed_generation": 2
+  },
+  "change": {
+    "generation_interrupt": "Only during active synthesis or queued audio playback",
+    "vad_silence_ms": 1200,
+    "vad_silence_configuration_range_ms": [300, 2000],
+    "greeting_guard": "Separate input_started flag preserves suppression when speech precedes backend startup",
+    "backend_side_effects": "Submitted requests still settle; no request cancellation, replay, or automatic order confirmation"
+  },
+  "verification": {
+    "regressions_before_fix": "Three expected assertion failures: continuation muted reply, empty ASR muted pending reply, and 700 ms pause split into two utterances",
+    "new_tests": 7,
+    "all_native_tests": 55,
+    "candidate_suite_windows": {"passed": true, "seconds": 6.447},
+    "production_suite_windows": {"passed": true, "seconds": 6.363, "tests": 55},
+    "real_two_peer_rtp_test": "Passed with substituted speech/dialog services; no live inference or order",
+    "human_microphone_after_change": "Pending"
+  },
+  "activation": {
+    "old_native_pid": 19940,
+    "old_native_created": 1791900320.7290256,
+    "new_native_pid": 5988,
+    "new_native_created": 1791915652.9640007,
+    "before_source_sha256": "4d8523898725692b096e00e9a73c4c4b15d502a6b0990dbc6e43dcab4dbd93ee",
+    "after_source_sha256": "1d4636e8a8d489735435afc922022bc769eabb98dcfe25a8fb31c528b60eec0c",
+    "native_http_status": 200,
+    "native_sessions": 0,
+    "auth_mode": "servicenow",
+    "fresh_idle_preflight_frames": 2,
+    "other_services_restarted": false
+  },
+  "limitations": [
+    "Pauses longer than the configured endpoint still create separate turns.",
+    "The detector remains energy VAD and depends on browser echo cancellation.",
+    "This audio fix does not reduce ServiceNow agent/model processing time or change upstream English response text."
+  ]
+}

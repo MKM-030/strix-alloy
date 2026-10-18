@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "status": "physical_now_mobile_failure_confirmed_not_fixed_bootstrap_path_pending",
+  "reported_failure_berlin": "2026-10-14 09:10:29+02:00",
+  "query_window_utc": ["2026-10-14 07:08:00", "2026-10-14 07:13:00"],
+  "query_executed_utc": "2026-10-14 07:12:40",
+  "instance": "soprasteriaassvsdemo14.service-now.com",
+  "actual_mobile_client": {
+    "version_marker_only": "22.2.0",
+    "fresh_mobile_properties_and_user_client_requests_observed": true,
+    "route_log_count": 16,
+    "all_route_values": {"route": "local", "approved_service": true, "admin": true, "enabled": true, "endpoint_matches": true},
+    "latest_route_log_utc": "2026-10-14 07:09:46",
+    "latest_user_client_response_ms": 897,
+    "latest_launcher_refresh_utc": "2026-10-14 07:09:49",
+    "latest_launcher_refresh_response_ms": 1041,
+    "latest_selected_api_transaction_utc": "2026-10-14 07:09:50",
+    "generic_oauth_authorization_request": {"utc": "2026-10-14 07:08:52", "path": "/oauth_auth.do", "response_ms": 113, "voice_purpose_proven": false},
+    "voice_api_transactions_observed": 0,
+    "oauth_token_transactions_observed": 0,
+    "server_voice_subsystem_failure_messages_observed": 0,
+    "separate_hr_feed_scope_error_target": "sn_doc_task",
+    "separate_hr_feed_scope_error_count": 12
+  },
+  "parent_observed_gateway_bootstrap_failure": {
+    "method": "POST",
+    "route_class": "webrtc_other",
+    "status": 401,
+    "origin_missing": true,
+    "credential_header_present": true,
+    "websocket_upgrade_missing": true,
+    "native_bridge_matched_phone_request_observed": false,
+    "exact_static_path_unknown_pending_whitelist_diagnostic": true,
+    "mobile_bootstrap_protocol_or_token_exchange_shape_proven": false
+  },
+  "readable_servicenow_webrtc_cookie_auth_reference": {
+    "app_name": "WebRTC Voice",
+    "app_scope": "sn_webrtc",
+    "app_vendor_metadata": "ServiceNow",
+    "app_version": "1.0.7",
+    "app_class": "sys_store_app",
+    "operation": "e21fd67bebe683108484f3e4cad0cd83",
+    "operation_name": "Cookie Auth",
+    "operation_mod_count": 0,
+    "incoming_method": "POST",
+    "incoming_route": "/api/sn_webrtc/webrtc_cookie_auth/cookie_auth",
+    "requires_authentication": true,
+    "incoming_static_header_names": ["Cookie"],
+    "outbound_method": "POST",
+    "outbound_route_shape": "https://<validated-orchestrator-host>/api/webrtc/auth/ticket",
+    "outbound_static_header_names": ["Cookie", "Content-Type"],
+    "ticket_payload_key_names_only": ["instance_name", "oauth_client_id", "voice_service_id"],
+    "response_key_names_only": ["ws_ticket"],
+    "trusted_parent_domains": ["sncapps.service-now.com", "sncapps.servicenowlab.com"],
+    "untrusted_host_rejected_before_relay": true,
+    "trust_domains_or_authentication_changed": false,
+    "current_cookie_auth_relay_transactions_observed": 0,
+    "this_relay_caused_current_gateway_post_proven": false
+  },
+  "native_mobile_logging_discovery": {
+    "discovered_table": "sys_sg_request_log",
+    "schema_only_read": true,
+    "raw_request_response_headers_user_fields_read": false,
+    "readable_native_mobile_crash_log_table_or_resource_found": false
+  },
+  "protocol_limits": {
+    "stock_mobile_snc_returns_https_url": true,
+    "public_now_voice_docs_publish_bootstrap_wire_contract": false,
+    "whip_protocol_inferred": false,
+    "opaque_oauth_to_jwt_exchange_inferred": false,
+    "required_mobile_record_producer_fix_resolved_physical_failure": false,
+    "physical_phone_voice_acceptance_passed": false
+  },
+  "history": {
+    "actual_phone_routes_and_transactions": "1a789ae793730f105c8132d47aba1029",
+    "logging_schema_discovery": "d7c8162b93730f105c8132d47aba1022",
+    "static_webrtc_source_search": "dac95a2f93730f105c8132d47aba1079",
+    "cookie_auth_operation_metadata": "f11ade2b93730f105c8132d47aba10da",
+    "app_provenance_host_guards_and_no_relay": "3e6a5eaf93730f105c8132d47aba102a",
+    "static_ticket_schema_and_no_exact_relay_call": "aeaa56ef93730f105c8132d47aba10a2",
+    "voice_subsystem_error_classification": "540b126393b30f105c8132d47aba1064"
+  },
+  "privacy_and_change_scope": {
+    "allowlisted_static_metadata_and_numeric_event_summaries_only": true,
+    "raw_header_body_private_parameter_or_credential_values_saved": false,
+    "private_account_or_role_records_read": false,
+    "http_status_acl_or_trust_domain_bypass_performed": false,
+    "mutations_by_this_agent": false
+  }
+}

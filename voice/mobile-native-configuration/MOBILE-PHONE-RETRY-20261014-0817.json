@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "checked_utc": "2026-10-14T06:18:52.839115+00:00",
+  "reported_phone_attempt": "Shortly before 2026-10-14 08:17:39 Europe/Berlin",
+  "window_machine_local": {
+    "from": "2026-10-14 08:10:00",
+    "through": "2026-10-14 08:20:59",
+    "actually_checked_through": "2026-10-14 08:18:52"
+  },
+  "native_log": {
+    "modified_utc": "2026-10-14T05:32:26.234559+00:00",
+    "size_bytes": 94187,
+    "bounded_http_admission_and_media_events": []
+  },
+  "gateway_log": {
+    "modified_utc": "2026-10-14T06:00:09.826523+00:00",
+    "size_bytes": 98333,
+    "bounded_voice_http_events": []
+  },
+  "health": {
+    "model_http_status": 200,
+    "expected_halogen_model_and_version": true,
+    "vision_enabled": true,
+    "cache_enabled": true,
+    "cache_mode": 1,
+    "cache_cap_mb": 110,
+    "cache_bitwise_identical_to_cold": true,
+    "model_idle": true,
+    "gateway_http_status": 200,
+    "gateway_idle": true,
+    "native_http_status": 200,
+    "native_sessions": 0,
+    "native_auth_mode": "servicenow"
+  },
+  "dns_check": {
+    "utc": "2026-10-14T06:20:34.813887+00:00",
+    "windows_system_dns_address_classes": [
+      "global"
+    ],
+    "independent_public_dns_provider": "Google public DNS over HTTPS",
+    "independent_public_dns_status": 0,
+    "independent_public_dns_address_classes": [
+      "global"
+    ],
+    "independent_public_dns_address_count": 3,
+    "independent_public_dns_cname_count": 0,
+    "tailnet_private_dns_path_observed": false,
+    "ip_addresses_output": false
+  },
+  "interpretation": {
+    "phone_request_observed_at_native_http": false,
+    "phone_known_signaling_get_or_head_observed_at_root_gateway": false,
+    "confirmed_model_origin_jwt_or_capacity_failure": false,
+    "phone_dns_tls_or_sdk_failure_confirmed": false,
+    "remaining_coverage_limit": "Gateway diagnostics intentionally observe only GET/HEAD on the two known signaling prefixes; wholly different SDK paths or methods remain unobserved",
+    "next_check": "Correlate current ServiceNow Mobile configuration/OAuth errors and check the Funnel health URL directly in the phone browser"
+  },
+  "service_code_config_process_or_voice_selection_changed": false,
+  "credentials_private_account_data_payloads_or_audio_output": false,
+  "external_servicenow_control": {
+    "observed_native_request": [
+      {
+        "timestamp_machine_local": "2026-10-14 08:27:30,974",
+        "kind": "http_request",
+        "request": "efaf932205a8",
+        "route": "signaling",
+        "method": "GET",
+        "origin": "expected",
+        "credentials": "none",
+        "upgrade": "websocket"
+      },
+      {
+        "timestamp_machine_local": "2026-10-14 08:27:30,974",
+        "kind": "admission",
+        "status": "401"
+      },
+      {
+        "timestamp_machine_local": "2026-10-14 08:27:30,974",
+        "kind": "http_result",
+        "request": "efaf932205a8",
+        "status": "401"
+      }
+    ],
+    "root_reported_server_request": {
+      "started_utc": "2026-10-14T06:26:56Z",
+      "http_status": 401,
+      "elapsed_ms": 1269,
+      "credentials_sent": false,
+      "physical_phone_attempt": false
+    },
+    "root_reported_external_native_health": {
+      "utc": "2026-10-14T06:20:25Z",
+      "http_status": 200,
+      "elapsed_ms": 1320
+    },
+    "attribution": "The bounded classes match the expected external control; Native arrival was 06:27:30.974Z, later than the parent-reported start stamp. Parent timing confirmation pending.",
+    "excluded_from_phone_correlation": true,
+    "fresh_health": {
+      "checked_utc": "2026-10-14T06:28:08.691842+00:00",
+      "services": {
+        "model": {
+          "http_status": 200,
+          "busy": false,
+          "in_flight": 0,
+          "queued": 0,
+          "slots": 1,
+          "context": 262144,
+          "slot_ctx": 262144,
+          "kv_pool_positions": 262144,
+          "status": "ok",
+          "expected_model": true,
+          "version_matches": true,
+          "vision_enabled": true,
+          "prompt_cache": {
+            "mode": 1,
+            "enabled": true,
+            "cap_mb": 110,
+            "bitwise_identical_to_cold": true
+          }
+        },
+        "controller": {
+          "http_status": 200,
+          "draining": false,
+          "active_requests": 0,
+          "context": 262144,
+          "status": "ok"
+        },
+        "gateway": {
+          "http_status": 200,
+          "draining": false,
+          "active_requests": 0,
+          "queued_requests": 0,
+          "context": 262144,
+          "status": "ok"
+        },
+        "bot": {
+          "http_status": 200
+        },
+        "native": {
+          "http_status": 200,
+          "nativeSessions": 0,
+          "status": "ok",
+          "auth_mode": "servicenow"
+        },
+        "asr": {
+          "http_status": 200,
+          "status": "ok"
+        },
+        "tts": {
+          "http_status": 200,
+          "expected_model": true
+        }
+      },
+      "memory": {
+        "free_gib": 24.707,
+        "commit_headroom_gib": 112.786,
+        "runtime_guard_floor_gib": 18,
+        "above_runtime_floor": true,
+        "cold_start_floor_met": false
+      }
+    }
+  }
+}

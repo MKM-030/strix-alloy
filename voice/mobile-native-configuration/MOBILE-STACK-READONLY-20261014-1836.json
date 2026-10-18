@@ -1,0 +1,131 @@
+{
+  "utc": "2026-10-14T16:36:02.637226+00:00",
+  "local_clock": "2026-10-14T18:36:01.591109+02:00",
+  "services": {
+    "model": {
+      "http_status": 200,
+      "busy": false,
+      "in_flight": 0,
+      "queued": 0,
+      "slots": 1,
+      "context": 262144,
+      "slot_ctx": 262144,
+      "kv_pool_positions": 262144,
+      "status": "ok",
+      "expected_model": true,
+      "version_matches": true,
+      "vision_enabled": true,
+      "prompt_cache": {
+        "mode": 1,
+        "enabled": true,
+        "cap_mb": 110,
+        "bitwise_identical_to_cold": true
+      }
+    },
+    "controller": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "gateway": {
+      "http_status": 200,
+      "draining": false,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "context": 262144,
+      "status": "ok"
+    },
+    "bot": {
+      "http_status": 200
+    },
+    "native": {
+      "http_status": 200,
+      "nativeSessions": 0,
+      "status": "ok",
+      "auth_mode": "servicenow"
+    },
+    "asr": {
+      "http_status": 200,
+      "status": "ok"
+    },
+    "tts": {
+      "http_status": 200,
+      "expected_model": true
+    }
+  },
+  "pids": {
+    "8731": [
+      12368
+    ],
+    "8840": [
+      28968
+    ],
+    "8841": [
+      14960
+    ],
+    "8850": [
+      19372
+    ],
+    "8853": [
+      19372
+    ],
+    "8860": [
+      7644
+    ],
+    "8861": [
+      15436
+    ],
+    "8862": [
+      5572
+    ],
+    "8863": [
+      20168
+    ]
+  },
+  "native_owner_pid": 7644,
+  "native_owner_matches": true,
+  "gateway_launcher_pid": 4768,
+  "native_sha256": "91d61c8dae3055bad64bde48f7e62a6864449c0cb8246058445bfdaa1107a943",
+  "gateway_sha256": "25ddfe9565c7d8f393289d22016754d040a269c94561599832e811400c006aed",
+  "native_since_1810": {
+    "start_local": "2026-10-14 18:10:00",
+    "counts": {
+      "http_requests": 0,
+      "get_requests": 0,
+      "post_requests": 0,
+      "admissions101": 0,
+      "admissions401": 0,
+      "admissions503": 0,
+      "http_status_counts": {}
+    },
+    "events": []
+  },
+  "native_last10min": {
+    "start_local": "2026-10-14 18:26:01",
+    "counts": {
+      "http_requests": 0,
+      "get_requests": 0,
+      "post_requests": 0,
+      "admissions101": 0,
+      "admissions401": 0,
+      "admissions503": 0,
+      "http_status_counts": {}
+    },
+    "events": []
+  },
+  "gateway_voice_diagnostic_records": [],
+  "gateway_observation_limit": "Original25dd source has no added voice HTTP middleware; absence of these records cannot prove absence of Mobile HTTP bootstrap traffic.",
+  "native_log_bytes": 154621,
+  "gateway_log_bytes": 129863,
+  "memory": {
+    "free_gib": 21.018,
+    "commit_headroom_gib": 110.043,
+    "runtime_guard_floor_gib": 18,
+    "above_runtime_floor": true,
+    "cold_start_floor_met": false
+  },
+  "no_sessions_allocated_or_inference_sent": true,
+  "physical_mobile_attempt_time_not_supplied": true
+}

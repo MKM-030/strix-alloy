@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "observed_date_utc": "2026-10-13",
+  "purpose": "Read-only feasibility check: dedicated VA entry topic invoking SCC agent through AI Connector, preserving mid-execution user questions and explicit confirmation.",
+  "outcome": "NOT PROVEN. Available primary documentation and captured source do not establish interactive handoff for AI Connector -> AI Agent. They also do not establish that this connector is noninteractive-only.",
+  "decision": "Do not implement a three-node entry topic based on the current evidence.",
+  "missing_contract": [
+    "Which execution_mode the AI Connector invocation selects",
+    "Whether the caller's VA conversation identity is propagated to the execution plan",
+    "Whether intermediate user-input controls are delivered to the calling conversation",
+    "Whether user responses resume the same AI-agent execution plan while preserving confirmation requirements"
+  ],
+  "sources": [
+    {
+      "url": "https://www.servicenow.com/docs/r/zurich/conversational-interfaces/virtual-agent/ai-agent-custom-skill.html",
+      "finding": "Documents Task input and output mappings returned after task completion. Does not state whether intermediate questions or confirmations are routed back to the calling VA conversation."
+    },
+    {
+      "url": "https://www.servicenow.com/docs/r/zurich/conversational-interfaces/virtual-agent/vad-ai-connector-utility.html",
+      "finding": "Wait for response delays continuation of the topic. This does not prove interactive handoff during the agent invocation."
+    },
+    {
+      "url": "https://www.servicenow.com/docs/r/intelligent-experiences/na-aia-capabilities.html",
+      "finding": "Documents Interactive and Non Interactive execution modes selected by runtime parameter in sn_aia_execution_plan. Does not tie a mode to the AI Connector invocation."
+    },
+    {
+      "url": "https://downloads.docs.servicenow.com/pdf/enus/servicenow-australia-release-notes-enus.pdf",
+      "finding": "PRB1934841 concerns a null conversation field when invoking an AI agent from an AI connector node. This shows a relevant defect area; it does not prove interactive support, current instance applicability, or resolution status."
+    }
+  ],
+  "offline_inspection": {
+    "root": "C:\\Projects\\strix-alloy-scc-voice\\voice",
+    "file_types": [
+      "js",
+      "json",
+      "md"
+    ],
+    "finding": "No captured AI Connector implementation or invocation contract found. Existing AI Connector references were the prior routing evidence summary."
+  },
+  "ui_inspection": {
+    "read_only": true,
+    "script_include_name_contains": "AIConnector",
+    "result_count": 0,
+    "runtime_utility_lookup": "Attempted documented AiAgentRunttimeUtil through ordinary list search; list interpreted unprefixed search as name>= and did not identify the utility. No runtime or connector implementation was established.",
+    "limitation": "One navigation click had a protocol timeout. No record field edits, saves, script execution, API calls, or topic creation occurred. Further UI research stopped on root instruction."
+  },
+  "cautions": [
+    "Do not infer connector interactivity from generic AI-agent Interactive mode support.",
+    "Do not infer connector interactivity from supervised Flow Designer mode.",
+    "Do not infer noninteractive-only behavior from after-completion output mapping documentation.",
+    "Do not replace sys_cs_topic identifiers with sn_aia_agent identifiers."
+  ]
+}

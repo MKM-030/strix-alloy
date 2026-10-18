@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "audit": "native-mobile-readable-source-contract",
+  "observed_utc": "2026-10-14T16:49:20Z",
+  "read_only": true,
+  "authentication": "Fresh normal ServiceNow session confirmed by readable record forms in own HTTPS tab19; no credential entry or ACL bypass.",
+  "sources": [
+    {
+      "file": "VoiceServiceConfigurationMobileSNC.read-20261014.js",
+      "sha256": "69cc560fd8a60e8cc24cd57481c81d33bd612c462d907464090bdf40d6c95a52",
+      "exact_live_source_match": true
+    },
+    {
+      "file": "CookieAuth.read-20261014.js",
+      "sha256": "02d0aa25d75e88ff31cee369519387d24d59370a803316eece3e41c7a16ae624",
+      "exact_live_source_match": true
+    }
+  ],
+  "mobile_snc": {
+    "table": "sys_script_include",
+    "id": "234ab331ffd9f614129628ecf43bf169",
+    "endpoint_scheme": "https",
+    "signaling_path": "/webrtc/connect/agent_operator",
+    "query_key_names": [
+      "instance_name",
+      "voice_service_id"
+    ],
+    "returned_key_names": [
+      "voiceServiceId",
+      "voiceWebhookURL",
+      "mobileChannelType",
+      "mobileChannelId"
+    ],
+    "endpoint_source": "VoiceServiceConfiguration.getServiceEndpointUrl -> sn_one_extend.GenerativeAIUtility.getServiceRecordURL(serviceId); remove scheme only",
+    "contains_ticket_bootstrap_or_sdp_contract": false
+  },
+  "installed_cookie_auth": {
+    "table": "sys_ws_operation",
+    "id": "e21fd67bebe683108484f3e4cad0cd83",
+    "requires_authentication": true,
+    "incoming_method": "POST",
+    "incoming_route": "/api/sn_webrtc/webrtc_cookie_auth/cookie_auth",
+    "incoming_json_key_names": [
+      "instance_name",
+      "voice_service_id",
+      "orchestrator_host"
+    ],
+    "incoming_header_names": [
+      "Cookie"
+    ],
+    "outbound_method": "POST",
+    "outbound_route_shape": "https://<validated-host>/api/webrtc/auth/ticket",
+    "outbound_json_key_names": [
+      "instance_name",
+      "oauth_client_id",
+      "voice_service_id"
+    ],
+    "outbound_header_names": [
+      "Cookie",
+      "Content-Type"
+    ],
+    "outbound_authorization_header_explicitly_omitted": true,
+    "upstream_bearer_rejected_claim": "Comment in installed source only; upstream implementation not inspected.",
+    "upstream_json_required_key": "ws_ticket",
+    "upstream_status_required": 200,
+    "script_response_body_shape": {
+      "ws_ticket": "<runtime-ticket-value>"
+    },
+    "script_response_status": 200,
+    "rest_transport_result_envelope_proven": false,
+    "trusted_parent_domains": [
+      "sncapps.service-now.com",
+      "sncapps.servicenowlab.com"
+    ],
+    "custom_funnel_host_permitted": false,
+    "authentication_or_trust_domain_changes_made": false
+  },
+  "provenance": {
+    "operation_created_utc": "2026-08-16T00:00:00Z",
+    "operation_updated_utc": "2026-08-16T00:00:00Z",
+    "operation_mod_count": 0,
+    "operation_created_by_class": "admin_literal",
+    "operation_updated_by_class": "admin_literal",
+    "operation_versions_found": 0,
+    "operation_customer_updates_found": 0,
+    "app_name": "WebRTC Voice",
+    "app_scope": "sn_webrtc",
+    "app_class": "sys_store_app",
+    "app_vendor_metadata": "ServiceNow",
+    "app_version": "1.0.7",
+    "app_created_utc": "2026-04-15T20:07:03Z",
+    "app_updated_utc": "2026-10-05T14:05:36Z",
+    "referenced_oauth_registration_found": true,
+    "oauth_registration_created_utc": "2026-08-16T00:00:00Z",
+    "oauth_registration_updated_utc": "2026-08-16T00:00:00Z",
+    "oauth_registration_mod_count": 0,
+    "oauth_registration_created_by_class": "admin_literal",
+    "vendor_metadata_proves_unchanged_ootb_script": false
+  },
+  "current_call_evidence": {
+    "window_start_utc": "2026-10-14T16:20:00Z",
+    "window_end_utc": "2026-10-14T16:48:12Z",
+    "selected_request_prefixes": [
+      "/api/sn_webrtc/",
+      "/api/sn_voice_aia/",
+      "/api/now/sg/user_client"
+    ],
+    "matching_selected_transactions": 0,
+    "cookie_auth_calls": 0,
+    "readable_native_ui_or_sdk_static_caller_found": false,
+    "unrelated_acl_auditor_string_hit_not_inspected": true,
+    "physical_native_mobile_attempt_supplied": false,
+    "browser_preview_is_native_android_transport_test": false
+  },
+  "remaining_unknowns": [
+    "Exact current native Mobile bootstrap URL and credential syntax.",
+    "Native Mobile request body shape.",
+    "Native SDK expected HTTP response envelope and WebSocket ticket placement.",
+    "Native SDK SDP and WebSocket message schema."
+  ],
+  "conclusion": "Full readable installed source is captured. Cookie relay behavior is known, but use by native Android SDK and official OOTB provenance remain unproven. No secure compatible adapter can be asserted from this relay alone.",
+  "history": {
+    "live_source_hashes_and_app_resources": "ed3b543393ff8f105c8132d47aba1064",
+    "operation_provenance": "5a9bd47393ff8f105c8132d47aba1092",
+    "service_endpoint_source": "e4db94b393ff8f105c8132d47aba102c",
+    "static_callers_and_transactions": "553cdcf393ff8f105c8132d47aba102a",
+    "oauth_registration_metadata_only": "7d7cd03793ff8f105c8132d47aba1047"
+  },
+  "privacy": {
+    "runtime_tokens_cookies_audio_or_private_user_records_saved": false,
+    "oauth_secret_fields_accessed": false,
+    "protected_acl_bypass": false,
+    "service_now_mutations": false
+  }
+}

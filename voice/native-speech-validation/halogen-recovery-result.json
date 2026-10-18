@@ -1,0 +1,263 @@
+﻿{
+    "verified_utc":  "2026-10-13T10:11:13.603437+00:00",
+    "profile_path":  "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0181-version-bracket-20261012\\serving0181-full262-profile.json",
+    "profile_sha256":  "cf02e2e695160c3e199a2efbf81920192d77f538616b4a3a00153e33927333c4",
+    "runtime_guard_physical_commit_gib":  [
+                                              18,
+                                              18
+                                          ],
+    "backend_run":  "403cc6310c864d32b2087734ee80ab4b",
+    "outer_run":  "cad562bd2be74e13a2c52461c2fad990",
+    "outer_pid":  19736,
+    "backend_controller_pid":  21040,
+    "health":  {
+                   "status":  "ok",
+                   "version":  {
+                                   "api":  "0.18.1",
+                                   "engine":  "0.18.1",
+                                   "match":  true
+                               },
+                   "model":  "halogen-qwen3.8-flash-next",
+                   "context":  262144,
+                   "slot_ctx":  262144,
+                   "kv_pool_positions":  262144,
+                   "slots":  1
+               },
+    "startup_selfchecks":  {
+                               "arithmetic":  {
+                                                  "answer":  "42",
+                                                  "correct":  true
+                                              },
+                               "german":  {
+                                              "answer":  "grün",
+                                              "correct":  true
+                                          }
+                           },
+    "asr_health":  {
+                       "status":  "ok"
+                   },
+    "tts_models":  {
+                       "object":  "list",
+                       "data":  [
+                                    {
+                                        "id":  "scc-native-qwen3",
+                                        "object":  "model",
+                                        "owned_by":  "local"
+                                    }
+                                ]
+                   },
+    "memory_samples":  [
+                           {
+                               "utc":  "2026-10-13T10:10:12.570082+00:00",
+                               "available_bytes":  29948391424,
+                               "committed_bytes":  110339915776,
+                               "commit_limit_bytes":  240139440128,
+                               "commit_headroom_bytes":  129799524352
+                           },
+                           {
+                               "utc":  "2026-10-13T10:10:22.570402+00:00",
+                               "available_bytes":  29955940352,
+                               "committed_bytes":  110343921664,
+                               "commit_limit_bytes":  240139440128,
+                               "commit_headroom_bytes":  129795518464
+                           },
+                           {
+                               "utc":  "2026-10-13T10:10:32.570920+00:00",
+                               "available_bytes":  29964480512,
+                               "committed_bytes":  110348525568,
+                               "commit_limit_bytes":  240139440128,
+                               "commit_headroom_bytes":  129790914560
+                           },
+                           {
+                               "utc":  "2026-10-13T10:10:42.571235+00:00",
+                               "available_bytes":  30025592832,
+                               "committed_bytes":  110244810752,
+                               "commit_limit_bytes":  240139440128,
+                               "commit_headroom_bytes":  129894629376
+                           },
+                           {
+                               "utc":  "2026-10-13T10:10:52.571865+00:00",
+                               "available_bytes":  29991026688,
+                               "committed_bytes":  110315302912,
+                               "commit_limit_bytes":  240139440128,
+                               "commit_headroom_bytes":  129824137216
+                           },
+                           {
+                               "utc":  "2026-10-13T10:11:02.572109+00:00",
+                               "available_bytes":  30008795136,
+                               "committed_bytes":  110315311104,
+                               "commit_limit_bytes":  240139440128,
+                               "commit_headroom_bytes":  129824129024
+                           },
+                           {
+                               "utc":  "2026-10-13T10:11:12.572474+00:00",
+                               "available_bytes":  30019891200,
+                               "committed_bytes":  110259695616,
+                               "commit_limit_bytes":  240139440128,
+                               "commit_headroom_bytes":  129879744512
+                           }
+                       ],
+    "minimum_available_gib":  27.891613006591797,
+    "minimum_commit_headroom_gib":  120.8772087097168,
+    "direct_inference_prompts_added":  0,
+    "retired_cpu_worker_rollback":  "runtime/retired-cpu-workers-20261013T095837Z.json",
+    "stale_lock_reconciliation":  "runtime/halogen-reconciliation-20261013T100645Z.json",
+    "previous_failed_evidence_preserved":  true,
+    "retired_cpu_workers":  {
+                                "reason":  "Authorized replacement by owned Vulkan speech engines 8861/8862; free memory for existing HaloGen guard",
+                                "workers":  [
+                                                {
+                                                    "port":  8851,
+                                                    "mode":  "asr",
+                                                    "pid":  9260,
+                                                    "created":  1791833041.7369113,
+                                                    "exe":  "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                                                    "args":  [
+                                                                 "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                                                                 "-u",
+                                                                 "C:\\Projects\\strix-alloy-scc-voice\\voice\\audio_service.py",
+                                                                 "--mode",
+                                                                 "asr",
+                                                                 "--threads",
+                                                                 "6"
+                                                             ],
+                                                    "health":  {
+                                                                   "status":  "ready",
+                                                                   "mode":  "asr",
+                                                                   "model":  "Qwen/Qwen3-ASR-0.6B",
+                                                                   "device":  "cpu",
+                                                                   "busy":  false,
+                                                                   "max_parallel":  1
+                                                               }
+                                                },
+                                                {
+                                                    "port":  8852,
+                                                    "mode":  "tts",
+                                                    "pid":  12808,
+                                                    "created":  1791868674.5186715,
+                                                    "exe":  "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                                                    "args":  [
+                                                                 "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                                                                 "-u",
+                                                                 "C:\\Projects\\strix-alloy-scc-voice\\voice\\audio_service.py",
+                                                                 "--mode",
+                                                                 "tts",
+                                                                 "--port",
+                                                                 "8852",
+                                                                 "--threads",
+                                                                 "6",
+                                                                 "--dtype",
+                                                                 "bfloat16",
+                                                                 "--voice-profile",
+                                                                 "E:\\SCC-Voice\\voices\\scc-demo"
+                                                             ],
+                                                    "health":  {
+                                                                   "status":  "ready",
+                                                                   "mode":  "tts",
+                                                                   "model":  "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+                                                                   "voice":  "SCC Demo",
+                                                                   "device":  "cpu",
+                                                                   "dtype":  "bfloat16",
+                                                                   "busy":  false,
+                                                                   "max_parallel":  1
+                                                               }
+                                                }
+                                            ]
+                            },
+    "previous_failure":  {
+                             "guard_floor_gib":  18,
+                             "new_guard_or_profile_changes":  false,
+                             "container_exit_code":  0,
+                             "physical_reserve_gib":  17.804,
+                             "oom_killed":  false,
+                             "at_local":  "2026-10-13 11:38:12"
+                         },
+    "reconciliation":  {
+                           "lock_backup":  "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-speech-validation\\runtime\\halogen-1178ae3a866e4dc3ba88127c4817f54b-20261013T100645Z.runner.lock",
+                           "lock_archived":  true,
+                           "recovery_passed":  true,
+                           "lock_sha256":  "bfb88725b17519be2f222c0fbd8526b8dc9e079f213b05c13a471f3654b37327",
+                           "fresh_frames":  [
+                                                {
+                                                    "available_bytes":  48204275712,
+                                                    "committed_bytes":  27160686592,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  212978753536
+                                                },
+                                                {
+                                                    "available_bytes":  48206827520,
+                                                    "committed_bytes":  27153104896,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  212986335232
+                                                },
+                                                {
+                                                    "available_bytes":  48209575936,
+                                                    "committed_bytes":  27159339008,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  212980101120
+                                                },
+                                                {
+                                                    "available_bytes":  48210825216,
+                                                    "committed_bytes":  27153063936,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  212986376192
+                                                },
+                                                {
+                                                    "available_bytes":  48210345984,
+                                                    "committed_bytes":  27152928768,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  212986511360
+                                                },
+                                                {
+                                                    "available_bytes":  48212500480,
+                                                    "committed_bytes":  27153088512,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  212986351616
+                                                },
+                                                {
+                                                    "available_bytes":  48213442560,
+                                                    "committed_bytes":  27154067456,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  212985372672
+                                                },
+                                                {
+                                                    "available_bytes":  48226676736,
+                                                    "committed_bytes":  27136204800,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  213003235328
+                                                },
+                                                {
+                                                    "available_bytes":  50682175488,
+                                                    "committed_bytes":  24679591936,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  215459848192
+                                                },
+                                                {
+                                                    "available_bytes":  50694496256,
+                                                    "committed_bytes":  24667332608,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  215472107520
+                                                },
+                                                {
+                                                    "available_bytes":  50694758400,
+                                                    "committed_bytes":  24666312704,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  215473127424
+                                                },
+                                                {
+                                                    "available_bytes":  50693201920,
+                                                    "committed_bytes":  24667144192,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  215472295936
+                                                },
+                                                {
+                                                    "available_bytes":  50693791744,
+                                                    "committed_bytes":  24667074560,
+                                                    "commit_limit_bytes":  240139440128,
+                                                    "commit_headroom_bytes":  215472365568
+                                                }
+                                            ],
+                           "required_available_bytes":  48918282240,
+                           "run_id":  "1178ae3a866e4dc3ba88127c4817f54b"
+                       }
+}

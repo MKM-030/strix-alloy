@@ -1,0 +1,378 @@
+{
+  "utc": "2026-10-16T17:19:56.360453+00:00",
+  "server_audio_two_turns_verified": true,
+  "physical_phone_after_restart_verified": false,
+  "model_run": "32bb16433c2947ff98bee9f1a6c9d1ee",
+  "profile_sha256": "60d3651209bc23a6f0cc63e8a65d125fb59730ea4e6e286e893caab3fb359b12",
+  "model_restarted_with_existing_guarded_launcher": true,
+  "previous_model_stop": {
+    "run": "9311c714da64495a9e38b5c86419b066",
+    "confirmed_reason": "physical memory below unchanged18GiB reserve",
+    "minimum_physical_gib": 17.8,
+    "spike_source_established": false,
+    "historical_recovery": true,
+    "history_unchanged": true
+  },
+  "previous_sdk_call": {
+    "local_time": "2026-10-16T18:00:43+02:00",
+    "ice": "completed",
+    "asr_results": 3,
+    "first_backend_turn_seconds": 106.05,
+    "upstream_completed": true,
+    "next_native_turn_failed": true,
+    "actual_user_text_unavailable": true,
+    "exact_cause_of_upstream_completion_unproven": true
+  },
+  "latest_user_report_correlation": "No later incoming Native call is retained after18:22:58 local; do not attribute an uncorrelated report to the earlier call.",
+  "production_source_changed": false,
+  "servicenow_configuration_changed": false,
+  "network_configuration_changed": false,
+  "retention_cleanup_run": false,
+  "model_guard_thresholds_changed": false,
+  "fresh_status": {
+    "utc": "2026-10-16T17:19:54.337191+00:00",
+    "read_only": true,
+    "bot_session_count": "not exposed; no session allocated by this check",
+    "services": {
+      "model": {
+        "http_status": 200,
+        "busy": false,
+        "in_flight": 0,
+        "queued": 0,
+        "slots": 1,
+        "context": 32768,
+        "slot_ctx": 32768,
+        "kv_pool_positions": 32768,
+        "status": "ok",
+        "expected_model": true,
+        "version_matches": true,
+        "vision_enabled": true,
+        "prompt_cache": {
+          "mode": 1,
+          "enabled": true,
+          "cap_mb": 110,
+          "bitwise_identical_to_cold": true
+        }
+      },
+      "controller": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "context": 32768,
+        "status": "ok"
+      },
+      "gateway": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "queued_requests": 0,
+        "context": 32768,
+        "status": "ok"
+      },
+      "bot": {
+        "http_status": 200
+      },
+      "native": {
+        "http_status": 200,
+        "nativeSessions": 0,
+        "status": "ok",
+        "auth_mode": "servicenow"
+      },
+      "asr": {
+        "http_status": 200,
+        "status": "ok"
+      },
+      "tts": {
+        "http_status": 200,
+        "expected_model": true
+      }
+    },
+    "memory": {
+      "free_gib": 24.531,
+      "commit_headroom_gib": 111.779,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "listeners": [
+      {
+        "port": 8731,
+        "address": "127.0.0.1",
+        "pid": 27448,
+        "created_utc": "2026-10-16T17:06:41.0253910Z",
+        "expected_process": null
+      },
+      {
+        "port": 8840,
+        "address": "127.0.0.1",
+        "pid": 10576,
+        "created_utc": "2026-10-16T17:06:28.4962670Z",
+        "expected_process": true
+      },
+      {
+        "port": 8841,
+        "address": "127.0.0.1",
+        "pid": 35728,
+        "created_utc": "2026-10-16T08:50:21.0103150Z",
+        "expected_process": true
+      },
+      {
+        "port": 8850,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8853,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8860,
+        "address": "127.0.0.1",
+        "pid": 21164,
+        "created_utc": "2026-10-16T15:32:29.8863910Z",
+        "expected_process": true
+      },
+      {
+        "port": 8861,
+        "address": "127.0.0.1",
+        "pid": 15436,
+        "created_utc": "2026-10-13T12:42:38.1702700Z",
+        "expected_process": true
+      },
+      {
+        "port": 8862,
+        "address": "127.0.0.1",
+        "pid": 5572,
+        "created_utc": "2026-10-13T12:42:40.7014430Z",
+        "expected_process": true
+      }
+    ],
+    "funnel": {
+      "native_route_matches": true,
+      "gateway_route_matches": true,
+      "callback_route_matches": true,
+      "https_443_configured": true,
+      "funnel_allowed": true,
+      "media_connectivity": "not tested; host ICE requires a reachable LAN/tailnet interface"
+    },
+    "legacy_cpu_ports": [],
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "model_cache_matches": true,
+    "stack_healthy": true
+  },
+  "studio_health": {
+    "status": "ok",
+    "service": "scc-voice-studio",
+    "version": 1,
+    "started_at_utc": "2026-10-16T15:33:17.476082+00:00"
+  },
+  "public_controls": {
+    "browser_launch_preserved": true,
+    "launch_query_rejected": true,
+    "browser_websocket_still_requires_auth": true,
+    "llm_models_still_requires_auth": true,
+    "sdk_anonymous_rejected": true,
+    "public_sdk_reaches_pinned_native_policy": true,
+    "native_sdk_enabled": true,
+    "warm_model_and_stack_healthy": true
+  },
+  "routing_cases": [
+    {
+      "case": "name-only",
+      "synthetic_input": "Philipp Borchert",
+      "posts": [
+        {
+          "method": "POST",
+          "path": "/api/start",
+          "status": 202
+        },
+        {
+          "method": "POST",
+          "path": "/api/message",
+          "status": 202,
+          "history_sent": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/end",
+          "status": 200
+        }
+      ],
+      "events": [
+        {
+          "id": 1,
+          "kind": "bot",
+          "text": "Ich starte den Bestellprozess f\u00fcr Philipp Borchert."
+        },
+        {
+          "id": 2,
+          "kind": "bot",
+          "text": "F\u00fcr Philipp Borchert schlage ich Marcel K\u00e4fke als Vorgesetzten vor. Welches Eintrittsdatum m\u00f6chtest du angeben?"
+        }
+      ],
+      "assistant_replies": [
+        "Ich starte den Bestellprozess f\u00fcr Philipp Borchert.",
+        "F\u00fcr Philipp Borchert schlage ich Marcel K\u00e4fke als Vorgesetzten vor. Welches Eintrittsdatum m\u00f6chtest du angeben?"
+      ],
+      "final_state": {
+        "busy": false,
+        "ended": false,
+        "failed": false,
+        "started": true,
+        "cursor": 2
+      },
+      "own_session_closed": true,
+      "model_before": {
+        "status": "ok",
+        "busy": false,
+        "in_flight": 0,
+        "queued": 0
+      },
+      "greetings": [
+        "Guten Tag und herzlich willkommen bei Sopra Steria auf der Smart Country Convention. F\u00fcr welchen Mitarbeiter m\u00f6chten Sie in ServiceNow einen neuen Laptop bestellen?"
+      ],
+      "fallback_greeting_simulated": true,
+      "greeting_history_allowed": true,
+      "first_history_prepared": true,
+      "submitted_input": "Philipp Borchert",
+      "turn_returned": true,
+      "ended_after_first_reply": false,
+      "ready_for_next_input": true,
+      "seconds": 64.0
+    },
+    {
+      "case": "explicit-intent",
+      "synthetic_input": "Ich m\u00f6chte einen Laptop f\u00fcr Philipp Borchert bestellen.",
+      "posts": [
+        {
+          "method": "POST",
+          "path": "/api/start",
+          "status": 202
+        },
+        {
+          "method": "POST",
+          "path": "/api/message",
+          "status": 202,
+          "history_sent": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/end",
+          "status": 200
+        }
+      ],
+      "events": [
+        {
+          "id": 1,
+          "kind": "bot",
+          "text": "Ich starte den Bestellprozess f\u00fcr den Laptop von Philipp Borchert."
+        },
+        {
+          "id": 2,
+          "kind": "bot",
+          "text": "Wann beginnt Philipp Borchert bei uns?"
+        }
+      ],
+      "assistant_replies": [
+        "Ich starte den Bestellprozess f\u00fcr den Laptop von Philipp Borchert.",
+        "Wann beginnt Philipp Borchert bei uns?"
+      ],
+      "final_state": {
+        "busy": false,
+        "ended": false,
+        "failed": false,
+        "started": true,
+        "cursor": 2
+      },
+      "own_session_closed": true,
+      "model_before": {
+        "status": "ok",
+        "busy": false,
+        "in_flight": 0,
+        "queued": 0
+      },
+      "greetings": [
+        "Guten Tag und herzlich willkommen bei Sopra Steria auf der Smart Country Convention. F\u00fcr welchen Mitarbeiter m\u00f6chten Sie in ServiceNow einen neuen Laptop bestellen?"
+      ],
+      "fallback_greeting_simulated": true,
+      "greeting_history_allowed": true,
+      "first_history_prepared": true,
+      "submitted_input": "Ich m\u00f6chte einen Laptop f\u00fcr Philipp Borchert bestellen.",
+      "turn_returned": true,
+      "ended_after_first_reply": false,
+      "ready_for_next_input": true,
+      "seconds": 37.969
+    }
+  ],
+  "speech_turns": [
+    {
+      "turn": 1,
+      "seconds": 44.641,
+      "assistant_replies": [
+        "Ich starte den Onboarding-Prozess f\u00fcr Philipp Borchert.",
+        "F\u00fcr Philipp Borchert schlage ich Marcel K\u00e4fke als Vorgesetzten vor. Welches Eintrittsdatum m\u00f6chtest du angeben?"
+      ],
+      "received_voiced_frames": 386,
+      "dialog_state": {
+        "busy": false,
+        "ended": false,
+        "failed": false,
+        "started": true,
+        "cursor": 2
+      },
+      "dialog_ready_for_next_input": true,
+      "input_track_still_live": true,
+      "native_failed": false,
+      "native_input_lost": false,
+      "accepted_utterance_count": 1,
+      "suppressed_waits": 1,
+      "sparse_quiet_frames": 0,
+      "input_mode": "no_packets"
+    },
+    {
+      "turn": 2,
+      "seconds": 58.5,
+      "assistant_replies": [
+        "Ich aktualisiere die Onboarding-Daten f\u00fcr Philipp Borchert mit dem Startdatum 1. November.",
+        "An welchen Standort soll der Laptop geliefert werden?"
+      ],
+      "received_voiced_frames": 333,
+      "dialog_state": {
+        "busy": false,
+        "ended": false,
+        "failed": false,
+        "started": true,
+        "cursor": 4
+      },
+      "dialog_ready_for_next_input": true,
+      "input_track_still_live": true,
+      "native_failed": false,
+      "native_input_lost": false,
+      "accepted_utterance_count": 2,
+      "suppressed_waits": 1,
+      "sparse_quiet_frames": 137,
+      "input_mode": "sparse_quiet"
+    }
+  ],
+  "latency": [
+    {
+      "turn": 1,
+      "first_reply_after_asr_seconds": 17.657,
+      "last_reply_after_asr_seconds": 34.625
+    },
+    {
+      "turn": 2,
+      "first_reply_after_asr_seconds": 28.594,
+      "last_reply_after_asr_seconds": 49.203
+    }
+  ],
+  "minimum_speech_test_free_gib": 23.6159,
+  "remaining_validation": "Fresh physical phone call after this restart; repeated memory spike source remains unproven."
+}

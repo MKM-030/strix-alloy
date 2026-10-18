@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "status": "applied",
+  "target": "1f147a53933bc754e7f2b9fa6aba10d1",
+  "definition": "8f80c7e193f747d0e7f2b9fa6aba109a",
+  "field": "validator",
+  "before": "41501fe93b43e210cc49e0d024e45ae4",
+  "after": "6a15e304ffd432109694ffffffffff59",
+  "attempted": true,
+  "verified": true,
+  "execution_scope": "rhino.global",
+  "updated_utc": "2026-10-13 17:31:02",
+  "sys_mod_count_after": "1",
+  "execution_history": "b66c17df93370b54e7f2b9fa6aba10bc",
+  "rollback_context": "3a6c17df93370b54e7f2b9fa6aba10ba",
+  "record_for_rollback": true,
+  "normal_cache_flush_observed": true,
+  "normal_metadata_writes": {
+    "sys_update_version_update": 1,
+    "sys_update_version_insert": 1,
+    "sys_update_xml_insert": 1
+  },
+  "fresh_ui_readback": {
+    "definition_display": "OneExtend Capability Definition: AIA Unified Planner (Custom LLM Provider)",
+    "validator_display": "AIA Unified Planner 3P LLM Validator",
+    "active": true,
+    "order": "1",
+    "url": "https://soprasteriaassvsdemo14.service-now.com/sys_generative_ai_response_validator.do?sys_id=1f147a53933bc754e7f2b9fa6aba10d1"
+  },
+  "independent_read_execution_history": "cfbd5f5793770b54e7f2b9fa6aba10a6",
+  "independent_validator_source_hashes_unchanged": [
+    "0a821ad7d95eb186a609814826d1ffd4dcfde6b44d12eee6e6dcabb21228f497",
+    "5c238a01b9bc063f31cd3af88ecf6d4679633b570c450e60d94cb1c01c05e8c7"
+  ],
+  "definition_fields_unchanged": [
+    "name",
+    "capability",
+    "api",
+    "api_type",
+    "filter_properties",
+    "sys_updated_on"
+  ],
+  "current_application_or_update_set_changed_by_this_work": false,
+  "current_update_set_capture": "Default d83fc97493068b505c8132d47aba104d selected by existing session; no set switching performed",
+  "tests": {
+    "command": "node --test voice/servicenow/scc-unified-planner-validator-contract.test.cjs",
+    "passed": 5,
+    "failed": 0
+  },
+  "scope_of_change": "Exactly one custom validator-reference record. No OOTB source, capability, provider definition, or LLM prompt edited.",
+  "regression_limit": "Spoken probe subsequently returned English planner transition and then German employee-name question; overall German/latency task not complete."
+}

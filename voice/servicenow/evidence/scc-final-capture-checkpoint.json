@@ -1,0 +1,111 @@
+{
+  "status": "configuration_capture_complete_native_integration_blocked_user_phone_pending_external_navigation_fixed",
+  "last_verified_capture": {
+    "manifest_count": 120,
+    "captured": 120,
+    "state": "in progress at capture time; parent and three children subsequently completed",
+    "batch": "194a7413933f0754e7f2b9fa6aba1080",
+    "children": {
+      "32808450431302106c3603295bb8f245": "514a7413933f0754e7f2b9fa6aba109c",
+      "7cc4ec81533121106b38ddeeff7b12ee": "d54a7413933f0754e7f2b9fa6aba109e",
+      "global": "114a7413933f0754e7f2b9fa6aba10a0"
+    },
+    "evidence": "scc-batch-capture-evidence.json"
+  },
+  "expected_manifest_count_if_no_other_changes": 120,
+  "must_refresh_revisions": [],
+  "excluded_from_update_sets": [
+    "sys_cs_consumer",
+    "sys_cs_consumer_account",
+    "credential values and credential records",
+    "sys_user and sys_user_has_role identity data",
+    "REQ, RITM, SCTASK, interaction and conversation runtime data"
+  ],
+  "execution_sequence": [
+    "Final metadata changes captured with fresh 120-record source manifest and XML revision/scope audit",
+    "Successful capture evidence verified against exact parent and three owned children",
+    "Guarded completion rechecked source/XML revisions and exact update membership; three children then parent completed with four writes",
+    "Any later metadata change requires a new reviewed capture; historical completion evidence does not cover subsequent edits"
+  ],
+  "captured_hardware_relation": {
+    "table": "sc_cat_item_category",
+    "sys_id": "13ab781b933f0754e7f2b9fa6aba10ba",
+    "ownership": "sc_cat_item=401b878b93738354e7f2b9fa6aba102f",
+    "discovery": "Existing CATALOG_EDGES exact-item relation",
+    "scope": "global",
+    "sys_updated_on": "2026-10-13 05:48:45",
+    "sys_mod_count": "0"
+  },
+  "expected_new_configuration": [],
+  "restored_profile_captured": {
+    "table": "sys_cs_context_profile",
+    "sys_id": "c623e20f93374354e7f2b9fa6aba1081",
+    "sys_updated_on": "2026-10-13 06:00:32",
+    "sys_mod_count": "4"
+  },
+  "runtime_identity_diagnosis": {
+    "direct_consumer_adapter_edits": "Unsuccessful and overwritten by runtime; no lasting fix claimed",
+    "repair_script": "Excluded from repository/deployment bundle",
+    "first_start_diagnostic": "Fresh external user identifier generated a correct binding for the first conversation; second start with the same identifier again selected an inactive consumer, so this is not a durable fix",
+    "proposed_identity_workaround": "Optional per-dialog alias implemented in separately owned bridge runtime; repeated-start acceptance remains open",
+    "voice_order_diagnostic": "REQ0010012 / RITM0010011 remains a valid successful diagnostic order",
+    "full_voice_order_acceptance": "First external configured full-audio conversation passed including automatic TTS; real-phone and repeated-start acceptance remain open, native Voice integration remains blocked",
+    "acceptance_artifact": "Separately owned repository file voice/SCC-VOICE-ACCEPTANCE-20261013.json at commit d5e9362; raw acceptance logs and identity exports excluded from this bundle"
+  },
+  "batch_completion": {
+    "state": "complete",
+    "writes": 4,
+    "manifest_count": 120,
+    "batch": "194a7413933f0754e7f2b9fa6aba1080",
+    "children": {
+      "32808450431302106c3603295bb8f245": "514a7413933f0754e7f2b9fa6aba109c",
+      "7cc4ec81533121106b38ddeeff7b12ee": "d54a7413933f0754e7f2b9fa6aba109e",
+      "global": "114a7413933f0754e7f2b9fa6aba10a0"
+    },
+    "evidence": "scc-batch-completion-evidence.json"
+  },
+  "final_captured_revisions": [
+    {
+      "table": "sn_aia_agent",
+      "sys_id": "a4a9438393738354e7f2b9fa6aba101d",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "sys_updated_on": "2026-10-13 06:54:52",
+      "sys_mod_count": "2"
+    },
+    {
+      "table": "sn_aia_version",
+      "sys_id": "f61ac78793738354e7f2b9fa6aba104b",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "sys_updated_on": "2026-10-13 06:54:52",
+      "sys_mod_count": "6"
+    },
+    {
+      "table": "sys_sg_button_instance",
+      "sys_id": "74e2df0393f78354e7f2b9fa6aba1000",
+      "scope": "global",
+      "sys_updated_on": "2026-10-13 07:32:33",
+      "sys_mod_count": "1"
+    }
+  ],
+  "mobile": {
+    "entry": "74e2df0393f78354e7f2b9fa6aba1000",
+    "active": true,
+    "updated_on": "2026-10-13 07:32:33",
+    "channel": "External HTTPS speech client launched from Now Mobile; Assistant Designer remains chat",
+    "phone_acceptance": "Awaiting user test"
+  },
+  "native_service_now_voice": {
+    "status": "blocked",
+    "implemented": false,
+    "note": "The passing external HTTPS speech-client demonstration does not replace the native Voice provider contract or establish Assistant Designer voice support",
+    "findings": "voice/SCC-NATIVE-VOICE-FINDINGS.md"
+  },
+  "external_navigation": {
+    "status": "fixed",
+    "gateway_commit": "b8de643",
+    "verified": "Root clicked from the existing ServiceNow entry to the public page and verified login",
+    "service_now_metadata_changes": "None for this fix; completed 120-record batch remains unchanged",
+    "acceptance_evidence_commit": "024f5ed",
+    "acceptance_evidence": "Separately maintained voice/SCC-VOICE-ACCEPTANCE-20261013.json in Windows repository"
+  }
+}

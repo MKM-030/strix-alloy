@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "reported_local_time": "2026-10-14T21:38:00+02:00",
+  "reported_timezone": "Europe/Berlin",
+  "correlation": "User screenshot shows new Voice Agent (App) tile and native connection error; Gateway requests occur at the supplied retry time.",
+  "observed_requests": {
+    "count": 16,
+    "first_local_time": "2026-10-14T21:38:02.683+02:00",
+    "last_local_time": "2026-10-14T21:38:49.007+02:00",
+    "method": "POST",
+    "path": "/api/webrtc/sessions",
+    "authorization_syntax": "Bearer",
+    "content_type": "application/json",
+    "body_shape": {
+      "agent_id": "string"
+    },
+    "origin_present": false,
+    "upgrade_present": false,
+    "query_auth_token_present": false,
+    "http_status": 401,
+    "response_shape": {
+      "error": "object"
+    }
+  },
+  "excluded_control": {
+    "local_time": "2026-10-14T21:26:31.349+02:00",
+    "path": "/webrtc/create_session",
+    "reason": "Explicit fixture control, not actual SDK"
+  },
+  "failure_boundary": "Native SDK session bootstrap is sent to the LLM Gateway and rejected by its own API-key authentication before Native speech/session handling.",
+  "native_api_currently_implemented": false,
+  "model_or_speech_failure_proven": false,
+  "no_user_tokens_or_payload_values_retained": true,
+  "still_missing": [
+    "Meaning of SDK agent_id value",
+    "Native session success DTO",
+    "Subsequent SDK WebSocket/SDP/control protocol"
+  ],
+  "planned_authentication": "Separate SDK policy validating original Bearer at the fixed ServiceNow agents_authorized resource with the approved active assistant and agent, without admin_test override; existing browser authorization unchanged",
+  "native_phone_fixed": false
+}

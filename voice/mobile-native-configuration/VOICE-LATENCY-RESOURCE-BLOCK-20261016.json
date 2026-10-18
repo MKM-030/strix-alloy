@@ -1,0 +1,169 @@
+{
+  "utc": "2026-10-16T10:42:01.052969+00:00",
+  "read_only": true,
+  "model_running": false,
+  "model_restart_completed": false,
+  "pool_experiment_applied": false,
+  "production_sources_changed": false,
+  "applications_or_processes_stopped_by_this_run": false,
+  "retained_lock_modified": false,
+  "historical_guard_minimum_available_gib": 17.916946411132812,
+  "historical_cleanup": true,
+  "historical_recovery": false,
+  "protected_sources_sha256": {
+    "server/gateway.py": "5b2e2a24c7c90df42576299a7c378d139eca5c96872f5fd5cb4c02f79ee8edaa",
+    "voice/native-bridge/native_bridge.py": "1cc15c5c25c7db8c3a55629d951342e1a9e125b73ff98e24b0627f3af322da07",
+    "voice/voice-studio/studio_server.py": "ea8ce266bbb7d689af561800593df979c3a69fd301a988d868a9478b8cabfe84",
+    "voice/native-start/model-start-policy.json": "acde0d7ec7eb3f5211f162419a70992eb78e21e1df08732e45f7d3518e1f09de",
+    "voice/voice-studio/retention_cleanup.py": "06a34af5d3cebddb4458bfe91a2f5720f39588e05f848a621a5a09d7592767c1"
+  },
+  "unrelated_parallel_process": {
+    "pid": 36928,
+    "running": true,
+    "name": "pwsh.exe",
+    "parent_pid": 26928,
+    "created_utc": "2026-10-16T10:33:37.118156+00:00",
+    "working_set_gib": 9.789,
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "command_sha256": "3e29da3e07d97057beb1110bd254a8d8bee51769cc88f7732486fec56677c58e",
+    "ownership": "unrelated_parallel_REV_N_Codex_task_identified_read_only; not modified"
+  },
+  "current_status": {
+    "utc": "2026-10-16T10:41:57.305694+00:00",
+    "read_only": true,
+    "bot_session_count": "not exposed; no session allocated by this check",
+    "services": {
+      "model": {
+        "error": "URLError"
+      },
+      "controller": {
+        "error": "URLError"
+      },
+      "gateway": {
+        "error": "HTTPError",
+        "http_status": 503
+      },
+      "bot": {
+        "http_status": 200
+      },
+      "native": {
+        "http_status": 200,
+        "nativeSessions": 0,
+        "status": "ok",
+        "auth_mode": "servicenow"
+      },
+      "asr": {
+        "http_status": 200,
+        "status": "ok"
+      },
+      "tts": {
+        "http_status": 200,
+        "expected_model": true
+      }
+    },
+    "memory": {
+      "free_gib": 28.888,
+      "commit_headroom_gib": 179.053,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "listeners": [
+      {
+        "port": 8841,
+        "address": "127.0.0.1",
+        "pid": 35728,
+        "created_utc": "2026-10-16T08:50:21.0103150Z",
+        "expected_process": true
+      },
+      {
+        "port": 8850,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8853,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8860,
+        "address": "127.0.0.1",
+        "pid": 2724,
+        "created_utc": "2026-10-16T07:34:37.1038840Z",
+        "expected_process": true
+      },
+      {
+        "port": 8861,
+        "address": "127.0.0.1",
+        "pid": 15436,
+        "created_utc": "2026-10-13T12:42:38.1702700Z",
+        "expected_process": true
+      },
+      {
+        "port": 8862,
+        "address": "127.0.0.1",
+        "pid": 5572,
+        "created_utc": "2026-10-13T12:42:40.7014430Z",
+        "expected_process": true
+      }
+    ],
+    "funnel": {
+      "native_route_matches": true,
+      "gateway_route_matches": true,
+      "callback_route_matches": true,
+      "https_443_configured": true,
+      "funnel_allowed": true,
+      "media_connectivity": "not tested; host ICE requires a reachable LAN/tailnet interface"
+    },
+    "legacy_cpu_ports": [],
+    "engine_idle": false,
+    "gateway_idle": false,
+    "native_idle": true,
+    "model_cache_matches": false,
+    "stack_healthy": false
+  },
+  "latency_baseline": {
+    "scope": "existing_20261016_1056_two_turn_test; not a fresh call",
+    "stt_seconds": [
+      0.702,
+      0.342
+    ],
+    "post_asr_question_seconds": [
+      40.015,
+      49.844
+    ],
+    "local_backend_api_seconds": [
+      33.986,
+      41.593
+    ],
+    "prefill_seconds": [
+      25.52,
+      25.98
+    ],
+    "decode_seconds": [
+      8.37,
+      15.36
+    ],
+    "residual_seconds_including_orchestration_and_network": [
+      6.029,
+      8.251
+    ],
+    "thinking": "off_on_all_eight_calls",
+    "cache_evictions_observed": 4,
+    "prefill_cache_hit_example": {
+      "prompt_tokens": 13559,
+      "cached_tokens": 12288,
+      "prefill_seconds": 1.39
+    },
+    "not_measured": [
+      "physical_phone_confirmation",
+      "first_audible_speech_time",
+      "isolated_Canada_Tailscale_RTT_contribution"
+    ]
+  }
+}

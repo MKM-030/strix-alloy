@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "status": "applied_server_metadata_verified_phone_acceptance_pending",
+  "date": "2026-10-14",
+  "instance": "soprasteriaassvsdemo14.service-now.com",
+  "assistant": "8aa131d793f787105c8132d47aba1095",
+  "function": "79e86e8493c68350e7f2b9fa6aba10fe",
+  "mobile_script_include": {
+    "id": "5a1a777dff99f614129628ecf43bf19d",
+    "name": "VoiceServiceConfigurationMobile",
+    "before_mod": "0",
+    "after_mod": "1",
+    "sha256": "254d351155da9f00f79adb735c805a00208bcbfb153d85c4d7b3472478e09613",
+    "protected_snc_changed": false,
+    "auth_changed": false
+  },
+  "before_endpoint": "https://aivoiceservice-prod-main-amer.sncapps.service-now.com/webrtc/connect/agent_operator",
+  "after_endpoint": "https://strix-alloy.tail7f425a.ts.net/scc-native/webrtc/connect/agent_operator",
+  "quick_link": {
+    "id": "74e2df0393f78354e7f2b9fa6aba1000",
+    "scope": "global",
+    "before": {
+      "button": "b0e217cf93b78354e7f2b9fa6aba1028",
+      "label": "SCC Laptop Voice",
+      "description": "Laptop zum Onboarding per eigener Stimme bestellen"
+    },
+    "after": {
+      "button": "79e86e8493c68350e7f2b9fa6aba10fe",
+      "label": "Voice Agent",
+      "description": "Nativer SCC-Sprachassistent: Laptop mit der ausgewählten eigenen Stimme bestellen."
+    },
+    "homepage_map": "78e2df0393f78354e7f2b9fa6aba1003",
+    "homepage_map_changed": false,
+    "order": 20
+  },
+  "execution_history": {
+    "before": "366e24e393f38b105c8132d47aba10b9",
+    "quick_link_applied": "58cea82793f38b105c8132d47aba1074",
+    "mobile_route_applied": "5550f4ab93f38b105c8132d47aba1072",
+    "fresh_verified": "fd60f42f93f38b105c8132d47aba10ed"
+  },
+  "verification": {
+    "baseline_regressions": "4 fail / 3 pass",
+    "final_contract_tests": 7,
+    "independent_review": "GO",
+    "live_sha256_matches": true,
+    "both_scc_mobile_channels_use_native_route": true,
+    "unrelated_assistant_retains_snc_route": true
+  },
+  "limitations": [
+    "No physical phone or human microphone acceptance yet.",
+    "Native JWT validation and exact Origin check remain unchanged.",
+    "Media transport requires reachable LAN or tailnet; Funnel only forwards HTTPS/signaling."
+  ]
+}

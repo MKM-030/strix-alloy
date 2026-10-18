@@ -1,0 +1,72 @@
+{
+  "synthetic_tokens": {
+    "opaque": "fixture-oauth-opaque_A1.~+/=",
+    "jwt": "eyJhbGciOiJub25lIn0.eyJzdWIiOiJ1bnRydXN0ZWQtZml4dHVyZSJ9."
+  },
+  "authorized": {
+    "result": [
+      "a6337ddf93f787105c8132d47aba1058"
+    ]
+  },
+  "malformed_authorization_responses": [
+    [],
+    [
+      "a6337ddf93f787105c8132d47aba1058"
+    ],
+    {
+      "result": []
+    },
+    {
+      "result": [
+        null
+      ]
+    },
+    {
+      "result": [
+        "bad"
+      ]
+    },
+    {
+      "result": [
+        "00000000000000000000000000000000"
+      ]
+    },
+    {
+      "result": [
+        "a6337ddf93f787105c8132d47aba1058"
+      ],
+      "error": "fixture-denial"
+    },
+    {
+      "result": {
+        "authorized": true
+      }
+    }
+  ],
+  "invalid_request_bodies": [
+    "{}",
+    "[]",
+    "null",
+    "{\"agent_id\":null}",
+    "{\"agent_id\":1}",
+    "{\"agent_id\":true}",
+    "{\"agent_id\":[]}",
+    "{\"agent_id\":\"\"}",
+    "{\"agent_id\":\"agent_operator\",\"clientApp\":\"admin_test\"}",
+    "{\"agent_id\":\"agent_operator\",\"agent_id\":\"agent_operator\"}",
+    "{\"agent_id\":\"agent_operator\"} trailing",
+    "{\"agent_id\":NaN}"
+  ],
+  "sdk_226_create": {
+    "body": "{\"agent_id\":\"agent_operator\"}",
+    "query_string": "instance_name=soprasteriaassvsdemo14&receive_data=true",
+    "query_string_with_voice_service": "instance_name=soprasteriaassvsdemo14&receive_data=true&voice_service_id=8aa131d793f787105c8132d47aba1095",
+    "wire_evidence": {
+      "archive_sha256": "ccc5566c6b5dcc704f7b5d809ec165dca2e204ca97757944599e88e0b8844521",
+      "nowsdk_classes_jar_sha256": "c0c1fa376d40e4fd9ecd0eee33258c29b1829c6ccafa0df2665692f11e480961",
+      "create_method": "WebRtcHttpClient$createSession$2.invokeSuspend",
+      "instance_method": "NowVoiceConfigurationsKt.toVoiceConnectionConfiguration",
+      "note": "Wire literal and query keys from actual SDK 2.26 bytecode. Optional voice_service_id value is pinned local deployment policy, not proven by SDK bytecode."
+    }
+  }
+}

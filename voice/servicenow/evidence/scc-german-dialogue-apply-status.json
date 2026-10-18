@@ -1,0 +1,72 @@
+{
+  "status": "applied_and_independently_verified",
+  "apply_owner": "root",
+  "verification_owner": "bridge_review",
+  "proposal_file": "scc-german-dialogue-proposed.json",
+  "proposal_sha256": "34cffbf44afb9e3fd499dc0fbdf4b4cecff090f7a316a32999f4973c3639f6c6",
+  "baseline_reference": "scc-german-dialogue-proposed.json#before",
+  "after_reference": "scc-german-dialogue-proposed.json#after",
+  "baseline_check": "Root reported fresh UI before-field equality before four saves.",
+  "mutations": "Root saved only role and instructions on the two named sn_aia_agent records using ordinary inline table editing and four Save(Enter) actions. No other fields changed.",
+  "no_save_attempts": "Earlier full-record form update was blocked by mandatory Condition; earlier Studio attempt timed out before fills. Actual mutations were inline list fields only.",
+  "verification_method": "Independent fresh record-form navigation, visible DOM field values, exact string equality against proposal.after",
+  "readback_file": "scc-german-dialogue-fresh-readback-20261013.json",
+  "readback_sha256": "03d39b7392ffee6b3bd1d643aacf2bb5c9c966298fec9f14e470ab9c1b59c7ac",
+  "comparisons": {
+    "chat_role_exact": true,
+    "chat_instructions_exact": true,
+    "voice_role_exact": true,
+    "voice_instructions_exact": true
+  },
+  "targets": [
+    {
+      "sys_id": "a4a9438393738354e7f2b9fa6aba101d",
+      "name": "SCC Laptop Onboarding",
+      "type": "Chat",
+      "type_value": "internal",
+      "updated_display": "2026-10-13 05:15:21",
+      "updates": 6,
+      "role_chars": 855,
+      "instructions_chars": 1828
+    },
+    {
+      "sys_id": "a6337ddf93f787105c8132d47aba1058",
+      "name": "SCC Laptop Onboarding Voice",
+      "type": "Voice",
+      "type_value": "voice",
+      "updated_display": "2026-10-13 05:15:09",
+      "updates": 3,
+      "role_chars": 855,
+      "instructions_chars": 1828
+    }
+  ],
+  "screenshot_shared_path": "/workspace/scratch/scc-voice-agent-verified-1791894074574.jpg",
+  "timestamp_note": "sys_updated_on values below are exactly as displayed by the instance; timezone was not independently verified.",
+  "runtime_acceptance": "First-turn actual RTP probe pending at field verification; configuration readback does not establish runtime behavior.",
+  "prior_failed_attempts": {
+    "status": "not_applied",
+    "targets": {
+      "original": "a4a9438393738354e7f2b9fa6aba101d",
+      "native_voice": "a6337ddf93f787105c8132d47aba1058"
+    },
+    "root_idle_gate": "2026-10-13T10:48:52Z",
+    "proposal": "Reviewed and accepted by root",
+    "baseline_check": "Not completed in current apply attempt",
+    "browser_attempt": "Attempted closing owned stale tabs25/26 and creating fresh original SCC editor tab in one browser call",
+    "result": "js execution timed out after 30.49 seconds; kernel reset",
+    "mutations_attempted": [],
+    "partial_save": false,
+    "field_fill_attempted": false,
+    "save_attempted": false,
+    "retry_attempts": 0,
+    "readiness": "Preserved exact before/proposed/diff files; fresh baseline equality required before any future apply",
+    "reported_to_root": true,
+    "final_attempt": {
+      "owner": "servicenow_voice_research",
+      "idle_gate": "2026-10-13T10:51:23Z",
+      "action": "One fresh original form navigation",
+      "result": "Navigation timed out before baseline read; no fields filled or saves attempted",
+      "status": "not_applied"
+    }
+  }
+}

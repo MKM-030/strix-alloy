@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "date": "2026-10-13",
+  "read_only": true,
+  "source": "Signed-in ServiceNow normal UI Background Global, GlideRecordSecure and per-field canRead",
+  "scope": "32808450431302106c3603295bb8f245",
+  "conversation_id": "03894fd393ffc7105c8132d47aba105e",
+  "plan_id": "d7898b1f93370b105c8132d47aba1022",
+  "log": {
+    "id": "14a9cf1f93370b105c8132d47aba1051",
+    "created_utc": "2026-10-13 16:08:56",
+    "source": "sn_aia",
+    "message": "*** Script: sn_aia.Now LLM Large Unified Planner Response Validator: Error in Unified Planner Response validator: ConversionError: The undefined value has no properties.",
+    "correlation": "Time and stage match only; no conversation, request or transaction ID in this log entry. ServiceNow clock approximately27.6s behind Windows."
+  },
+  "definition": {
+    "id": "8f80c7e193f747d0e7f2b9fa6aba109a",
+    "name": "AIA Unified Planner (Custom LLM Provider)",
+    "capability": "1857ce78ff322210022dffffffffffa1",
+    "api": "af9702d0c3110210b0939bc8a840dd2c",
+    "api_type": "sys_hub_flow",
+    "filter_properties": "{\"azure_openai\":\"true\",\"provider\":\"Custom LLMcustom_api\"}",
+    "order": "0",
+    "sys_mod_count": "0",
+    "sys_updated_on": "2026-10-08 05:01:40"
+  },
+  "binding": {
+    "id": "1f147a53933bc754e7f2b9fa6aba10d1",
+    "definition": "8f80c7e193f747d0e7f2b9fa6aba109a",
+    "definition_table": "sys_one_extend_capability_definition",
+    "active": "1",
+    "order": "1",
+    "validator": "41501fe93b43e210cc49e0d024e45ae4",
+    "sys_mod_count": "0",
+    "sys_updated_on": "2026-10-13 14:35:09"
+  },
+  "validators": [
+    {
+      "id": "41501fe93b43e210cc49e0d024e45ae4",
+      "name": "AIA Unified Planner NowLLM Validator",
+      "sha256": "0a821ad7d95eb186a609814826d1ffd4dcfde6b44d12eee6e6dcabb21228f497",
+      "script": "(function (payload) {\n\tconst LOGGER = new sn_aia.AIAgentsLogger(\"Now LLM Large Unified Planner Response Validator\");\n\tconst TICKS = '```';\n\tconst TICKS_JSON = '```json';\n\ttry {\n\t\tvar response = JSON.parse(payload.response[0]).model_output;\n\n\t\t//Very rarely, NowLLM will send out json``` at the beginning of the response\n\t\t//and another ``` at the end of the response. We'll parse it out here\n\t\tvar indexTickJson = response.indexOf(TICKS_JSON);\n\t\tvar indexTickStart = response.indexOf(TICKS);\n\t\tvar indexTickEnd = response.lastIndexOf(TICKS);\n\t\tif (indexTickStart != -1 && indexTickEnd != -1) {\n\t\t\tvar tickStartLength = (indexTickJson != -1) ? TICKS_JSON.length : TICKS.length;\n\t\t\tresponse = response.substring(indexTickStart + tickStartLength, indexTickEnd);\n\t\t}\n\t\tpayload.response[0] = response;\n\t} catch (e) {\n\t\tLOGGER.error(\"Error in Unified Planner Response validator: {0}\", [e.toString()]);\n\t\tpayload.response[0] = JSON.stringify({});\n\t}\n\treturn payload;\n})(payload);"
+    },
+    {
+      "id": "6a15e304ffd432109694ffffffffff59",
+      "name": "AIA Unified Planner 3P LLM Validator",
+      "sha256": "5c238a01b9bc063f31cd3af88ecf6d4679633b570c450e60d94cb1c01c05e8c7",
+      "script": "(function (payload) {\n    const LOGGER = new sn_aia.AIAgentsLogger(\"3P LLM Unified Planner Response Validator\");\n    var outputs = payload;\n    var unified_planner_util = new sn_aia.AgentUnifiedPlannerUtil();\n    \n    try {\n        var response = outputs['response'][0];\n\n        var extractedJson = unified_planner_util.parseAllJsonFormats(response);\n        if (extractedJson) {\n            response = extractedJson;\n        } else {\n            LOGGER.info(\"No valid JSON found in response, keeping original response\");\n        }\n        \n        payload.response[0] = response;\n    } catch (e) {\n        LOGGER.error(\"Error in Unified Planner Response validator: {0}\", [e.toString()]);\n        payload.response[0] = JSON.stringify({});\n    }\n    return payload;\n})(payload);\n"
+    }
+  ],
+  "compatibility": {
+    "same_capability_existing_ootb_binding": "f1c7ebc4ffd432109694ffffffffff71",
+    "same_capability_existing_ootb_definition": "02fb4ef0fff22210022dffffffffff4b",
+    "definition_name": "AIA Unified Planner (Azure OpenAI Chat Completions)",
+    "target_validator": "6a15e304ffd432109694ffffffffff59"
+  },
+  "transformer": {
+    "id": "bc126377936f8750e7f2b9fa6aba1012",
+    "sys_mod_count": "9",
+    "sys_updated_on": "2026-10-13 10:31:52",
+    "contract": "JSON.parse(inputs.response_body); return [response.choices[0].message.content]; no model_output wrapper."
+  },
+  "limits": [
+    "No actual model response or per-log request ID retrieved.",
+    "Single field validator-binding correction remains proposal, not applied.",
+    "Concurrent provider edits require exact before-state and immediate recheck."
+  ]
+}

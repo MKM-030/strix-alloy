@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "status": "actual_phone_mobile_route_confirmed_local_connection_failure_unresolved",
+  "reported_at_berlin": "2026-10-14 07:36:52+02:00",
+  "query_utc_window": ["2026-10-14 05:34:00", "2026-10-14 05:37:30"],
+  "route_log_history": "add2caa393fbcb105c8132d47aba1043",
+  "versioned_mobile_history": "e41342e393fbcb105c8132d47aba107b",
+  "route_log_count": 8,
+  "route_log_times_utc": ["05:35:55", "05:35:57", "05:36:10", "05:36:19"],
+  "rows_per_time": 2,
+  "all_route_values": {"route": "local", "approved_service": true, "admin": true, "enabled": true, "endpoint_matches": true},
+  "correlated_properties_requests": [
+    {"utc": "05:35:55", "path": "/api/now/sg/properties", "response_ms": 268},
+    {"utc": "05:36:19", "path": "/api/now/sg/properties", "response_ms": 233}
+  ],
+  "correlated_user_client_requests": [
+    {"utc": "05:35:57", "path": "/api/now/v2/sg/user_client", "response_ms": 827},
+    {"utc": "05:36:10", "path": "/api/now/v2/sg/user_client", "response_ms": 842}
+  ],
+  "sn_voice_aia_transactions_observed": 0,
+  "oauth_token_transactions_observed": 0,
+  "oauth_auth_transactions_observed": 0,
+  "other_voice_or_oauth_log_messages_observed": 0,
+  "conclusion": "The actual refreshed Mobile SG request calls the public wrapper in admin context and generates the pinned local route. A bypass of the wrapper or non-admin routing context does not explain this phone attempt.",
+  "not_yet_proven": "Phone-side SDK initialization, token acquisition, dial or actual Bridge handshake failure remains unresolved; absent transaction rows alone do not prove no token acquisition was attempted.",
+  "static_auth_trace": {
+    "source_index_history": "f3634e2793fbcb105c8132d47aba1021",
+    "auth_contract_history": "ba93c66793fbcb105c8132d47aba107b",
+    "native_app_fields_history": "b4c30aa793fbcb105c8132d47aba10c8",
+    "jwt_contract": "VoiceRestUtilsSNC validates per-service voice_service_id via sn_auth.VoiceServiceInfoRequestor for three-part JWTs.",
+    "opaque_oauth_contract": "VoiceRestUtilsSNC returns true for opaque OAuth with an explicit bypass warning; current bridge intentionally rejects that token form and this investigation has not relaxed the safeguard.",
+    "mobile_source_supported": "isWebRTCSource recognizes MOBILE_WEBRTC, PLATFORM_WEBRTC and PLATFORM_TEXTCHAT.",
+    "native_app_has_mobile_voice_sdk_oauth_fields": false,
+    "token_issuer_mobile_sdk_static_flow_found": false,
+    "oauth_entity_or_credential_records_read": false
+  },
+  "credentials_or_account_roles_read": false,
+  "mutations_performed": false
+}

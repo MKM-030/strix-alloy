@@ -1,0 +1,126 @@
+{
+  "observed_date": "2026-10-13",
+  "instance": "https://soprasteriaassvsdemo14.service-now.com",
+  "method": "Signed-in native ServiceNow UI only; native Create voice AI agents wizard plus classic Tool reference lookup; no background scripts, direct APIs or private runtime writes",
+  "agent": {
+    "name": "SCC Laptop Onboarding Voice",
+    "sys_id": "a6337ddf93f787105c8132d47aba1058",
+    "table": "sn_aia_agent",
+    "type": "Voice",
+    "strategy": "Voice",
+    "channel": "NAP and VA",
+    "application": "Generative AI Controller",
+    "advanced_mode": false,
+    "internal_name": "global.sn_generative_ai.SCC Laptop Onboarding Voice",
+    "created": "2026-10-13 02:54:58",
+    "studio_url": "https://soprasteriaassvsdemo14.service-now.com/now/agent-studio/agent-setup/a6337ddf93f787105c8132d47aba1058/params/modality/voice",
+    "content": "Original description, role and instructions copied without editing; persisted fields visually verified",
+    "original_field_lengths": {"description":380,"role":594,"instructions":1555}
+  },
+  "config": {
+    "table": "sn_aia_agent_config",
+    "sys_id": "fa04fdd3933b87105c8132d47aba104d",
+    "active": true,
+    "external_discoverable": false,
+    "run_as": "",
+    "specialist_enabled": false,
+    "agent_learning": false,
+    "current_version": "Version 1"
+  },
+  "execute_acl": {
+    "sys_id": "6955311f933b87105c8132d47aba10c6",
+    "type": "gen_ai_agent",
+    "operation": "execute",
+    "active": true,
+    "decision_type": "Allow If",
+    "admin_overrides": true,
+    "advanced": false,
+    "required_roles": ["admin"],
+    "role_sys_id": "2831a114c611228501d4ea6c309d626d",
+    "conditions": "Empty; no extra roles or security attribute",
+    "verified": "Saved classic ACL form showed sole admin Requires role row"
+  },
+  "data_access": {
+    "wizard_user_identity_type": "Dynamic user",
+    "role_masking_config_sys_id": "b795355f933b87105c8132d47aba10e5",
+    "action": "Limit To Roles",
+    "allow_all_session_roles": false,
+    "approved_roles": ["itil"],
+    "role_sys_id": "282bf1fac6112285017366cb5f867469",
+    "verified": "Saved classic configuration showed sole itil Agent access roles row"
+  },
+  "tool_mappings": [
+    {
+      "name": "SCC Laptop Bestellkontext",
+      "m2m_sys_id": "f1d4319b933b87105c8132d47aba10ff",
+      "tool_sys_id": "15ebcb8f93738354e7f2b9fa6aba1072",
+      "original_tool_reused": true,
+      "active": true,
+      "execution_mode": "Autonomous",
+      "maximum_auto_executions": 10,
+      "display_output": false,
+      "output_transformation_strategy": "None",
+      "inputs": [],
+      "description": "Liest den angemeldeten Anforderer und das feste Laptop-Demo-Katalogelement. Bei „mein neuer Mitarbeiter“ den Anforderer als Vorgesetzten vorschlagen und in der abschließenden Zusammenfassung bestätigen lassen. Dieses Werkzeug bestellt nichts."
+    },
+    {
+      "name": "SCC Laptop Bestellung absenden",
+      "m2m_sys_id": "0ed4b19b933b87105c8132d47aba1030",
+      "tool_sys_id": "8b5c4f0393b38354e7f2b9fa6aba10f7",
+      "original_tool_reused": true,
+      "active": true,
+      "execution_mode": "Autonomous",
+      "maximum_auto_executions": 10,
+      "display_output": false,
+      "output_transformation_strategy": "None",
+      "description": "Erstellt erst nach ausdrücklicher Bestätigung eine Laptop-Demo-Anforderung mit Mitarbeitername, Eintrittsdatum, Vorgesetztem und Standort. Nur einmal aufrufen. Bei unklarem Ergebnis niemals automatisch wiederholen. Gibt die echte REQ- und RITM-Nummer zurück.",
+      "inputs": [
+        {"name":"employee_name","description":"Vollständiger Name des neuen Mitarbeiters. Aus dem Gespräch übernehmen.","mandatory":true},
+        {"name":"start_date","description":"Bestätigtes Eintrittsdatum YYYY-MM-DD. 1.11. bedeutet in dieser Demo 2026-11-01.","mandatory":true},
+        {"name":"delivery_location","description":"Bestätigter Lieferstandort, beispielsweise Hamburg.","mandatory":true},
+        {"name":"manager_name","description":"Vollständiger Name des bestätigten Vorgesetzten. Bei mein neuer Mitarbeiter den Anforderer vorschlagen; leer verwendet den angemeldeten Anforderer.","mandatory":false},
+        {"name":"confirmed","description":"String true ausschließlich nach ausdrücklicher Bestätigung der Zusammenfassung durch den Benutzer.","mandatory":true}
+      ]
+    }
+  ],
+  "tool_reference_verification": "After Update, saved Agent Tools related list displayed both exact original sn_aia_tool.do?sys_id links and true/Autonomous/10/false/None for each new mapping",
+  "native_wizard_residuals": {
+    "explanation": "Native Script > An existing one copied tool definitions. Corrected ONLY new m2m Tool references using supported lookup list selecting original exact row IDs. The unused copies remain untouched, as deletion was not authorized.",
+    "unused_tool_sys_ids": ["31d4355b933b87105c8132d47aba10c5","c6d4b19b933b87105c8132d47aba102b"]
+  },
+  "assistant": {
+    "name": "SCC Native Voice",
+    "sys_id": "8aa131d793f787105c8132d47aba1095",
+    "association_owner": "/root/servicenow_voice_research/native_deployment_ui",
+    "association_observation": "Sibling reported native Add voice AI agents Save Changes saved!, resulting Active row and exact a6337ddf93f787105c8132d47aba1058 Studio link",
+    "studio_final_step": "Done succeeded with Allow off because selector only offered the two already active default assistants, excluding inactive SCC Native Voice; attachment completed from dedicated assistant UI"
+  },
+  "original_preservation": {
+    "name": "SCC Laptop Onboarding",
+    "sys_id": "a4a9438393738354e7f2b9fa6aba101d",
+    "type": "Chat (internal)",
+    "strategy": "ReAct",
+    "config_sys_id": "f21ac78793738354e7f2b9fa6aba106e",
+    "execute_acl_sys_id": "115c870393b38354e7f2b9fa6aba10a6",
+    "role_masking_config_sys_id": "a6bc4f8393b38354e7f2b9fa6aba1022",
+    "m2m_sys_ids": ["55ebcb8f93738354e7f2b9fa6aba107b","835c4f0393b38354e7f2b9fa6aba10f9"],
+    "last_updated_reverified": "2026-10-12 23:54:52",
+    "sys_mod_count_reverified": "2",
+    "mutation": "None; original agent, config, ACL, role masking, tool mappings and tool script records were read only"
+  },
+  "eligibility": {
+    "finding": "Omni is not eligible in this native voice picker; both observed transforms require exact agent_type voice",
+    "get_agents_transform_sys_id": "cc64da4d37dd1610aa57955c24924b8b",
+    "get_agents_filter": "if(input.agentType === 'voice') response.agents=response.agents.filter(a=>a.agent_type==='voice')",
+    "get_added_agents_transform_sys_id": "ae324a2bff007210b8d7ffffffffff13",
+    "get_added_filter": "Linked context skill metadata document_table sn_aia_agent then exact agent_type === voice; row status from sn_aia_agent_config.active"
+  },
+  "update_set": {
+    "name": "Custom LLM Zielmodell - 2026-10-12 06:00:00 / 7cc4ec81533121106b38ddeeff7b12ee",
+    "sys_id": "0fc415cb933fcf14e7f2b9fa6aba10fa",
+    "scope": "Generative AI Controller",
+    "verified": "New config and role masking current update versions point to this update set",
+    "scope_released": true
+  },
+  "test_boundary": "No agent conversation, tool execution, order or end-to-end audio test performed by this subagent; parent owns native Test Assistant probe"
+}

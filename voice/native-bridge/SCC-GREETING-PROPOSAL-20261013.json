@@ -1,0 +1,55 @@
+{
+  "status": "applied",
+  "installed": true,
+  "native_restart": true,
+  "before_sha256": "0651480d2de89e24efa69100faff748136c6f4c10f59c56aad0a9fde1401311c",
+  "proposed_sha256": "a23a971641778c2df08a3136ee3c89c00803c0d08722897ab73b6c7219311d89",
+  "changed_keys": [
+    "greeting"
+  ],
+  "greeting": "Guten Tag und herzlich willkommen bei Sopra Steria auf der Smart Country Convention. Für welchen Mitarbeiter möchten Sie in ServiceNow einen neuen Laptop bestellen?",
+  "production_auth_preserved": true,
+  "voice_service_id_preserved": true,
+  "required_agent_id_preserved": true,
+  "tests": {
+    "platform": "Windows",
+    "python": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-bridge\\.venv\\Scripts\\python.exe",
+    "pattern": "test_native_history.py",
+    "count": 8,
+    "passed": 8,
+    "failed": 0,
+    "runtime_seconds": 0.02,
+    "physical_microphone_test": false,
+    "direct_employee_serviceNow_test": false,
+    "installed_live_tests": true
+  },
+  "native_source_sha256": "1d4636e8a8d489735435afc922022bc769eabb98dcfe25a8fb31c528b60eec0c",
+  "old_native": {
+    "pid": 5988,
+    "created": 1791915652.9640007
+  },
+  "new_native": {
+    "pid": 22884,
+    "created": 1791925265.0411289
+  },
+  "after_health": {
+    "http_status": 200,
+    "status": "ok",
+    "nativeSessions": 0,
+    "auth_mode": "servicenow"
+  },
+  "protected_owner_pids": {
+    "model_proxy": 18776,
+    "controller": 20056,
+    "gateway": 23480,
+    "bot": 19372,
+    "asr": 15436,
+    "tts": 5572,
+    "studio": 21584
+  },
+  "protected_owners_preserved": true,
+  "activation_evidence_relative_path": "runtime/scc-greeting-candidate/activation-20261013/activation-complete.json",
+  "voice_profile_modified": false,
+  "provider_modified": false,
+  "physical_next_call_test": false
+}

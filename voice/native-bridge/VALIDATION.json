@@ -1,0 +1,257 @@
+{
+  "date": "2026-10-13",
+  "environment": "Windows DESKTOP-8M583SI isolated native-bridge .venv",
+  "unit_and_transport": {
+    "passed": 33,
+    "seconds": 5.717,
+    "existing_bridge_regression_tests_passed": 56,
+    "coverage": [
+      "wrong credential denial",
+      "strict native agent authorization envelope",
+      "PCM odd-fragment alignment",
+      "barge-in stale audio fence",
+      "automatic silence endpoint",
+      "short confirmation utterances",
+      "failed conversation reset isolation",
+      "deferred native offer and trickle ICE",
+      "real SRTP audio and native datachannel transcripts",
+      "owned session end frees the sole backend slot",
+      "WebSocket heartbeat reader",
+      "progressive speech before backend input-ready",
+      "speech failure preserves pending backend observation",
+      "greeting once and barge-in fencing",
+      "exact summary review hash and run identifier"
+    ],
+    "existing_bridge_regression_seconds": 1.551
+  },
+  "live_speech_transport": {
+    "passed": true,
+    "native_ui": false,
+    "servicenow_dialog": false,
+    "fixture_audio_seconds": 2.64,
+    "first_received_audio_seconds_including_input": 5.703,
+    "recognized_turns": [
+      "Guten Tag.",
+      "Wie kann ich helfen?"
+    ],
+    "speech_engines": [
+      "Whisper localhost8861",
+      "Qwen3 TTS localhost8862"
+    ],
+    "notes": "The fixture pause produces two valid VAD turns. Initial live test incorrectly expected one pair and failed; expectation corrected to allow genuine multiple turns, then passed. No ServiceNow order was created by this probe."
+  },
+  "ice_host_candidates": [
+    "100.103.94.78",
+    "192.168.50.19",
+    "169.254.82.74",
+    "172.24.160.1"
+  ],
+  "backend_greeting_probe": {
+    "ready_seconds": 1.015,
+    "complete_reply": false,
+    "timeout_seconds": 186.656,
+    "owned_session_reset": true,
+    "diagnosis": "HaloGen WSL backend stopped; gateway ClientConnectorError; no retry"
+  },
+  "native_oauth_call": "Validated by production authenticated native-browser sessions on 2026-10-13",
+  "native_microphone_demo": "Real user native browser exchanged microphone ASR and spoken output; complete natural greeting-to-order acceptance remains pending",
+  "real_service_request_creation": "Existing REQ0010012/RITM0010011 reused through real spoken confirmation; no new order requested",
+  "first_turn_baseline": {
+    "started_utc": "2026-10-13T10:22:41.296Z",
+    "real_servicenow": true,
+    "first_received_audio_seconds": 113.515,
+    "asr_complete_seconds": 8.531,
+    "first_backend_announcement_seconds": 35.984,
+    "employee_question_seconds": 113.125,
+    "name_or_confirmation_sent": false,
+    "owned_session_released": true,
+    "avoidable_buffering_seconds": 77.141
+  },
+  "real_order_audio": {
+    "started_utc": "2026-10-13T10:34:50.213Z",
+    "status": "passed",
+    "native_ui": false,
+    "human_microphone": false,
+    "transport": "real RTP synthetic fixture microphone",
+    "services": [
+      "Whisper 8861",
+      "existing ServiceNow SCC agent via bridge 8850",
+      "Qwen3 TTS 8862"
+    ],
+    "mode": "shared local halogen-v2 alias temporary no-thinking; existing 262144 context unchanged",
+    "first_turn_asr_complete_seconds": 8.593,
+    "first_received_audio_seconds": 34.531,
+    "first_employee_question_seconds": 76.25,
+    "name_asr_complete_seconds": 82.781,
+    "summary_seconds": 134.171,
+    "explicit_confirmation_asr_complete_seconds": 146.312,
+    "request_result_seconds": 213.828,
+    "first_call_closed_seconds": 259.968,
+    "existing_request": "REQ0010012",
+    "existing_requested_item": "RITM0010011",
+    "order_result": "Die passende Anforderung ist bereits vorhanden. Die Nummer ist REQ0010012 mit RITM0010011.",
+    "confirmation_transport": "explicit spoken phrase recognized as typed ASR; no choice auto-selection",
+    "owned_session_released": true,
+    "runtime_report": "runtime/full-audio-fast-20261013/report.json",
+    "known_limitations": [
+      "Backend turns still take about 51–68 seconds after recognition to the substantive question/result",
+      "ServiceNow progress announcements arrived in English; summary and outcome were German",
+      "This earlier synthetic run did not prove browser OAuth/microphone; later real-user call proved both, but exposed generic-turn readiness failure"
+    ],
+    "completed_utc": "2026-10-13T10:40:12.654Z",
+    "total_seconds": 322.437,
+    "second_fresh_call": {
+      "passed": true,
+      "started_utc": "2026-10-13T10:39:10.302Z",
+      "asr_complete_utc": "2026-10-13T10:39:18.760Z",
+      "fresh_employee_question_utc": "2026-10-13T10:40:08.423Z",
+      "question_after_recognition_seconds": 49.663,
+      "first_audio_after_call_start_seconds": 22.533,
+      "owned_session_released": true,
+      "name_or_confirmation_sent": false
+    }
+  },
+  "native_user_call": {
+    "production_ice_completed_windows_local": [
+      "2026-10-13T12:58:21.678+02:00",
+      "2026-10-13T13:05:00.566+02:00",
+      "2026-10-13T13:18:14.620+02:00"
+    ],
+    "media_route": "LAN 192.168.50.19 to 192.168.50.55",
+    "generic_hello_failure": "OutputText without observed input-ready control, then180-second busy timeout",
+    "owned_end_completed": true
+  },
+  "context_patch": {
+    "runtime_activated_utc": "2026-10-13T11:36:54.535Z",
+    "language": "de",
+    "metadata_limit": 80,
+    "native_and_context_tests_passed": 33,
+    "existing_bridge_tests_passed": 56,
+    "live_hello_probe": "German contextual reply without repeat greeting verified; next intent not sent because no input-ready control",
+    "readiness_behavior": "Unchanged: no blanket stream-END readiness or debounce heuristic",
+    "metadata_limit_on_future_starts": 0,
+    "metadata_disabled_in_config_utc": "2026-10-13T11:52:12.209Z"
+  },
+  "hello_context_audio": {
+    "started_utc": "2026-10-13T11:40:35.296Z",
+    "actual_rtp_asr_bot_tts": true,
+    "asr_utc": "2026-10-13T11:40:43.850Z",
+    "reply": "Ich benötige keine weiteren Informationen von Ihnen. Die Laptopdemo kann jederzeit gestartet werden.",
+    "reply_after_asr_seconds": 5.369,
+    "first_audible_after_asr_seconds": 6.239,
+    "ready": false,
+    "diagnostic_timeout_seconds": 60,
+    "next_intent_sent": false,
+    "owned_session_released": true,
+    "closed_utc": "2026-10-13T11:41:40.333Z",
+    "runtime_report": "runtime/hello-context-20261013-1137/report.json"
+  },
+  "laptop_callback_comparison": {
+    "started_utc": "2026-10-13T11:42:55.606Z",
+    "request_id": "9c3e0ff60bb34782b66a1043f634971c",
+    "question": "Wie heißt dein neuer Mitarbeiter?",
+    "question_after_asr_seconds": 52.4,
+    "progress_language": "English",
+    "progress_end_identical_to_generic_end": true,
+    "continuation_after_progress_end_seconds": 1.107,
+    "input_text_after_progress_end_seconds": 36.98,
+    "name_or_confirmation_sent": false,
+    "owned_session_released": true,
+    "closed_utc": "2026-10-13T11:44:00.477Z",
+    "runtime_report": "runtime/laptop-callback-20261013-1142/report.json"
+  },
+  "standalone_bot_experiment": {
+    "setting": "botToBot:false",
+    "isolation": "temporary Bot UI8863/callback8853; production config untouched",
+    "started_utc": "2026-10-13T11:50:58.182Z",
+    "request_id": "30ea9967d4ec402384f4371e60a04841",
+    "generic_action_before_stream": "System",
+    "same_contextual_german_reply": true,
+    "ready": false,
+    "diagnostic_timeout_seconds": 60,
+    "next_intent_sent": false,
+    "owned_end_acknowledged": true,
+    "restored_8850_utc": "2026-10-13T11:52:04.868Z",
+    "production_mode_unchanged": true,
+    "candidate_code_retained": false,
+    "runtime_report": "runtime/standalone-hello-20261013/report.json",
+    "owned_end_completed": true
+  },
+  "final_status": {
+    "utc": "2026-10-13T11:53:34.703Z",
+    "stack_healthy": true,
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "bot_worker_pid": 3348,
+    "native_worker_pid": 15644,
+    "diagnostics_next_start_limit": 0,
+    "diagnostics_current_process_limit_at_start": 80,
+    "source_cleanup": "Unsuccessful standalone-mode setting removed from source; production wire behavior unchanged throughout; no final restart during possible user activity"
+  },
+  "post_agent_language_patch_first_turn": {
+    "started_utc": "2026-10-13T12:21:24.797Z",
+    "patch": "Chat and Voice role/instructions fresh server readback verified by independent reviewer; German/name-before-context-tool wording",
+    "native_bridge_runtime_changed": false,
+    "request_id": "9d8754d9bd0c401b942b9f6b9c096fbc",
+    "actual_rtp_asr_bot_tts": true,
+    "asr_utc": "2026-10-13T12:21:33.408912Z",
+    "progress": "I will initiate the laptop ordering process for your new employee.",
+    "progress_language": "English",
+    "progress_after_asr_seconds": 14.886,
+    "first_audible_after_asr_seconds": 15.53,
+    "question": "Wie heißt dein neuer Mitarbeiter?",
+    "question_utc": "2026-10-13T12:22:06.485927Z",
+    "question_after_asr_seconds": 33.077,
+    "question_audible_after_asr_seconds": 33.768,
+    "question_improvement_vs_previous_seconds": 19.323,
+    "ready_utc": "2026-10-13T12:22:07.965935Z",
+    "input_label_verified": true,
+    "name_or_confirmation_sent": false,
+    "owned_session_released": true,
+    "closed_utc": "2026-10-13T12:22:10.577Z",
+    "total_seconds": 45.781,
+    "post_gate_utc": "2026-10-13T12:22:10.721Z",
+    "stack_healthy": true,
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "runtime_report": "runtime/post-language-first-turn-20261013-122124/report.json",
+    "acceptance": "Task first turn passes and improves; all-German progress and generic hello continuation do not pass",
+    "model_metrics": {
+      "completed_requests": 3,
+      "correlation": "Temporal window and order only; gateway/engine expose no shared request IDs",
+      "all_http_status": 200,
+      "all_thinking": "off",
+      "gateway_seconds": [
+        1.8705,
+        12.2967,
+        15.0799
+      ],
+      "prompt_tokens": [
+        1800,
+        7249,
+        12744
+      ],
+      "generated_tokens": [
+        22,
+        242,
+        190
+      ],
+      "prefill_seconds": [
+        1.53,
+        6.43,
+        11.35
+      ],
+      "decode_seconds": [
+        0.5,
+        5.17,
+        4.78
+      ],
+      "later_unassigned_completion_excluded_utc": "2026-10-13T12:22:50.647Z",
+      "independent_after_gate_utc": "2026-10-13T12:22:54.108Z",
+      "independent_after_gate_all_healthy_idle": true,
+      "matched_prepatch_call_count": null
+    }
+  }
+}

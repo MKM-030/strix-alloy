@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "status": "browser_launch_configuration_verified_phone_voice_channel_user_confirmed",
+  "verified_utc": "2026-10-14T17:56:40Z",
+  "servicenow_readback_history": "00eb68f39337cf105c8132d47aba106b",
+  "records": [
+    {
+      "table": "sys_sg_button",
+      "id": "b0e217cf93b78354e7f2b9fa6aba1028",
+      "mod_count": 1,
+      "delta_fields": {
+        "link_url": {
+          "before": "https://strix-alloy.tail7f425a.ts.net/scc-demo/",
+          "after": "https://strix-alloy.tail7f425a.ts.net/scc-native/launch"
+        },
+        "link_label": {
+          "before": "",
+          "after": "SCC Sprachdemo starten"
+        }
+      },
+      "link_label_required_by_normal_ui": true,
+      "normal_ui_normalization": {
+        "condition_type": {
+          "before": "declarative",
+          "after": "script"
+        },
+        "condition_script_chars": 0,
+        "retained_normal_ui_value": true,
+        "no_forced_setter_or_disabled_rule": true,
+        "empty_script_visibility_semantics_not_assumed": true
+      },
+      "preserved": {
+        "external_browser": "1",
+        "relative_url": "0",
+        "type": "url",
+        "context": "global",
+        "scope": "global",
+        "package": "global"
+      }
+    },
+    {
+      "table": "sys_sg_button_instance",
+      "id": "74e2df0393f78354e7f2b9fa6aba1000",
+      "mod_count": 4,
+      "delta_fields": {
+        "button": {
+          "before": "79e86e8493c68350e7f2b9fa6aba10fe",
+          "after": "b0e217cf93b78354e7f2b9fa6aba1028"
+        },
+        "label": {
+          "before": "Voice Agent",
+          "after": "SCC Sprachdemo"
+        },
+        "description": {
+          "before": "Nativer SCC-Sprachassistent: Laptop mit der ausgewählten eigenen Stimme bestellen.",
+          "after": "Öffnet die Sprachdemo im externen Browser."
+        }
+      },
+      "scope_package_icon_parent_order_active_location_preserved": true
+    },
+    {
+      "table": "sys_sg_navigation_section_destination_button",
+      "id": "27493ac493ca8350e7f2b9fa6aba1014",
+      "mod_count": 2,
+      "delta_fields": {
+        "name": {
+          "before": "SCC Laptop Voice",
+          "after": "SCC Sprachdemo"
+        },
+        "button": {
+          "before": "79e86e8493c68350e7f2b9fa6aba10fe",
+          "after": "b0e217cf93b78354e7f2b9fa6aba1028"
+        }
+      },
+      "scope": "5cfbdaac77eb2300454792718a106157",
+      "scope_name": "Now Mobile",
+      "package_scope_and_icon_preserved": true
+    }
+  ],
+  "unchanged_maps": [
+    {
+      "id": "e3493ac493ca8350e7f2b9fa6aba101b",
+      "mod_count": 0
+    },
+    {
+      "id": "fb76c5aa770501108f64b2487b5a9967",
+      "mod_count": 0
+    },
+    {
+      "id": "78e2df0393f78354e7f2b9fa6aba1003",
+      "mod_count": 0
+    }
+  ],
+  "native_preserved": {
+    "function": "79e86e8493c68350e7f2b9fa6aba10fe",
+    "function_type": "voice_launcher",
+    "function_context": "global",
+    "function_updated_utc": "2026-07-08T11:49:56Z",
+    "active_channel_ids": [
+      "3351561b933f8754e7f2b9fa6aba10c4",
+      "8d1eaf5393334b105c8132d47aba10e8"
+    ],
+    "assistant": "8aa131d793f787105c8132d47aba1095",
+    "both_channel_targets_unchanged": true
+  },
+  "original_context_restored": {
+    "method": "normal Unified Navigation Scope selectors UI",
+    "application": "469106e153231010df5dddeeff7b12a9",
+    "application_name": "Recommended Actions for Service",
+    "update_set": "d83fc97493068b505c8132d47aba104d",
+    "update_set_name": "Default [Recommended Actions for Service]",
+    "post_restore_getter_verified": true,
+    "setter_scripts_used": false
+  },
+  "phone_acceptance_pending": false,
+  "phone_acceptance": {
+    "source": "User message on 2026-10-14: tile opens Voice Assistant Test and voice channel works from there",
+    "store_app_to_browser_voice_channel_user_reported_working": true,
+    "native_mobile_sdk_success_verified": false,
+    "full_phone_laptop_order_not_explicitly_confirmed": true,
+    "test_ui_suitable_for_demo_but_not_claimed_for_production": true
+  },
+  "no_installs_payments_permissions_or_provider_changes_by_this_agent": true
+}

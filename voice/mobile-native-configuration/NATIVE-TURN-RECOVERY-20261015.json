@@ -1,0 +1,230 @@
+{
+  "schema": "scc.native-voice.turn-recovery.v2",
+  "utc": "2026-10-15T21:10:09.478496+00:00",
+  "verified": true,
+  "original_problem": "Native phone greeting and ASR worked, but Gateway rejected backend before inference because it expected engine 0.18.1 while engine 0.18.5 was running.",
+  "additional_failure": "Both 0.18.5 and restored 0.18.1 with context 262144 produced German replies/TTS but later crossed the existing 18 GiB physical memory guard. Short post-call tests did not expose the delayed failure.",
+  "resolution": "Engine 0.18.1, same Halogen V2, Vision, Exact cache and one slot; context 131072 consistently in profile, model starter, gateway and status checks. Existing 36/132 GiB start admission and 18/18 GiB runtime guards retained.",
+  "profile_sha256": "6d063f09021d464639bd3b0cb35f921ed4170d589ce21cfb8b0955d716bbdc93",
+  "model_run_id": "be0c018de33144aab302b57cb6abe769",
+  "model_minimum_available_gib": 20.459026336669922,
+  "actual_dialog_and_selected_tts_probe": {
+    "utc": "2026-10-15T21:05:17.617224+00:00",
+    "isolated_own_session": true,
+    "order_requested": false,
+    "replies": [
+      {
+        "turn": 1,
+        "text": "Ich starte den Laptop-Onboarding-Prozess und frage Sie zun\u00e4chst nach dem Mitarbeiter.",
+        "seconds": 20.547
+      },
+      {
+        "turn": 1,
+        "text": "Wie hei\u00dft dein neuer Mitarbeiter?",
+        "seconds": 38.36
+      },
+      {
+        "turn": 2,
+        "text": "Ich frage nun nach dem gew\u00fcnschten Laptop-Typ f\u00fcr Philipp Borchert.",
+        "seconds": 56.891
+      },
+      {
+        "turn": 2,
+        "text": "Welchen Laptop-Typ m\u00f6chtest du f\u00fcr Philipp Borchert bestellen?",
+        "seconds": 65.375
+      }
+    ],
+    "tts_pcm_bytes": 672000,
+    "passed": false,
+    "post_call_observation_seconds": 90,
+    "first_turn_seconds": 38.781,
+    "turn_seconds": 66.094,
+    "model_ready_after_turn": false,
+    "minimum_free_gib": 21.1642,
+    "own_session_closed": true,
+    "memory_samples": 1424,
+    "total_seconds": 156.61
+  },
+  "strict_probe_caveat": "Original probe passed=false is preserved: its final strict idle requirement failed while the identity-valid healthy model was processing further requests. Follow-up stack showed status ok, busy true, in_flight 1 and gateway active_requests 1. Later public controls independently confirmed healthy AND idle. Both actual dialog turns, TTS and 90-second memory observation completed.",
+  "public_controls": {
+    "utc": "2026-10-15T21:09:16.598212+00:00",
+    "checks": {
+      "browser_launch_preserved": true,
+      "launch_query_rejected": true,
+      "browser_websocket_still_requires_auth": true,
+      "llm_models_still_requires_auth": true,
+      "sdk_anonymous_rejected": true,
+      "public_sdk_reaches_pinned_native_policy": true,
+      "native_sdk_enabled": true,
+      "warm_model_and_stack_healthy": true
+    },
+    "native_phone_end_to_end": "pending user app call",
+    "no_platform_or_model_requests_by_fixtures": true,
+    "no_session_allocation_by_fixtures": true
+  },
+  "fresh_stack": {
+    "utc": "2026-10-15T21:10:06.585015+00:00",
+    "read_only": true,
+    "bot_session_count": "not exposed; no session allocated by this check",
+    "services": {
+      "model": {
+        "http_status": 200,
+        "busy": false,
+        "in_flight": 0,
+        "queued": 0,
+        "slots": 1,
+        "context": 131072,
+        "slot_ctx": 131072,
+        "kv_pool_positions": 131072,
+        "status": "ok",
+        "expected_model": true,
+        "version_matches": true,
+        "vision_enabled": true,
+        "prompt_cache": {
+          "mode": 1,
+          "enabled": true,
+          "cap_mb": 110,
+          "bitwise_identical_to_cold": true
+        }
+      },
+      "controller": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "context": 131072,
+        "status": "ok"
+      },
+      "gateway": {
+        "http_status": 200,
+        "draining": false,
+        "active_requests": 0,
+        "queued_requests": 0,
+        "context": 131072,
+        "status": "ok"
+      },
+      "bot": {
+        "http_status": 200
+      },
+      "native": {
+        "http_status": 200,
+        "nativeSessions": 0,
+        "status": "ok",
+        "auth_mode": "servicenow"
+      },
+      "asr": {
+        "http_status": 200,
+        "status": "ok"
+      },
+      "tts": {
+        "http_status": 200,
+        "expected_model": true
+      }
+    },
+    "memory": {
+      "free_gib": 20.722,
+      "commit_headroom_gib": 112.497,
+      "runtime_guard_floor_gib": 18,
+      "above_runtime_floor": true,
+      "cold_start_floor_met": false
+    },
+    "listeners": [
+      {
+        "port": 8731,
+        "address": "127.0.0.1",
+        "pid": 18732,
+        "created_utc": "2026-10-15T21:02:37.2449580Z",
+        "expected_process": null
+      },
+      {
+        "port": 8840,
+        "address": "127.0.0.1",
+        "pid": 20216,
+        "created_utc": "2026-10-15T21:02:25.1266960Z",
+        "expected_process": true
+      },
+      {
+        "port": 8841,
+        "address": "127.0.0.1",
+        "pid": 22712,
+        "created_utc": "2026-10-15T21:02:34.4466060Z",
+        "expected_process": true
+      },
+      {
+        "port": 8850,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8853,
+        "address": "127.0.0.1",
+        "pid": 19372,
+        "created_utc": "2026-10-13T12:43:44.7949320Z",
+        "expected_process": true
+      },
+      {
+        "port": 8860,
+        "address": "127.0.0.1",
+        "pid": 2692,
+        "created_utc": "2026-10-15T10:19:58.9067190Z",
+        "expected_process": true
+      },
+      {
+        "port": 8861,
+        "address": "127.0.0.1",
+        "pid": 15436,
+        "created_utc": "2026-10-13T12:42:38.1702700Z",
+        "expected_process": true
+      },
+      {
+        "port": 8862,
+        "address": "127.0.0.1",
+        "pid": 5572,
+        "created_utc": "2026-10-13T12:42:40.7014430Z",
+        "expected_process": true
+      }
+    ],
+    "funnel": {
+      "native_route_matches": true,
+      "gateway_route_matches": true,
+      "callback_route_matches": true,
+      "https_443_configured": true,
+      "funnel_allowed": true,
+      "media_connectivity": "not tested; host ICE requires a reachable LAN/tailnet interface"
+    },
+    "legacy_cpu_ports": [],
+    "engine_idle": true,
+    "gateway_idle": true,
+    "native_idle": true,
+    "model_cache_matches": true,
+    "stack_healthy": true
+  },
+  "source_changes": [
+    {
+      "path": "C:\\Projects\\strix-alloy-scc-voice\\voice\\Start-NativeModel.ps1",
+      "before_sha256": "d5c6ab6fa57e9cd4b1a5b9f7bb2b5826152bce2114a29da06cb525c9c97daedd",
+      "after_sha256": "75d044d404973b3ad0f74b5cee3b0b1d032f4309bffabceb585ad00fa7e60f61"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-start\\start_services.py",
+      "before_sha256": "d34e93ab41f5a6e0fae86a397a36625fe1b7be606943e64601923262409978d8",
+      "after_sha256": "331a990e1cd2899db206678e33e21be5c5f60260331adbfd22cb0037c898c2fc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-scc-voice\\voice\\native-speech-validation\\stack_status.py",
+      "before_sha256": "eb85b5a69bc20caddbb46c7c84afa814666ef853fb0eff7f58eaa4dc8b4f00ca",
+      "after_sha256": "eefc46d70a3126d1535d51bfb7aaa0ffe9da2aeb491d86637b5eb3594b5de0cf"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-scc-voice\\voice\\Start-QueuedGateway.ps1",
+      "before_sha256": "226e2515896e045f67ffdf88f4e96b5ea98f7391037336e97c6a0e31b235d54b",
+      "after_sha256": "e300d4f4f57757e66c733ca9ab9b7279148f82fff341df4607a99d0b339a1d43"
+    }
+  ],
+  "prior_working_copy_changes": "Preserved; prechange byte snapshots retained privately.",
+  "native_phone_after_repair": "User confirmation still required; no claim of driving the physical phone.",
+  "remaining_latency": "First question 38.360 s from dialog startup; next question 26.594 s after first turn completed. This repair restores availability, not low conversational latency.",
+  "historical_failures": "Original guard/recovery evidence retained; only exact terminal runner locks were quarantined after normal recovery, owner checks and fresh 36/132 admission.",
+  "validation": "Five existing context values changed. PowerShell parse, Python compile, four new readiness tests and ten existing startup/cache tests passed."
+}
