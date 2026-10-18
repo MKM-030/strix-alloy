@@ -1,4 +1,4 @@
-param([string]$Source = 'C:\Projects\strix-alloy-scc-voice\voice\Start-NativeModel.ps1')
+param([string]$Source = (Join-Path (Split-Path -Parent $PSScriptRoot) 'Start-NativeModel.ps1'))
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $tokens = $null

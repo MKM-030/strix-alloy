@@ -18,7 +18,8 @@ HERE = Path(__file__).resolve().parent
 RUNTIME = HERE / 'runtime'
 NATIVE = ROOT / 'voice/native-bridge'
 PYTHON = NATIVE / '.venv/Scripts/python.exe'
-BOT_CONFIG = Path(r'E:\SCC-Voice\bridge.json')
+BOT_CONFIG = ROOT / 'voice/bridge.local.json'
+NATIVE_CONFIG = NATIVE / 'config.local.json'
 
 
 def module(name, path):
@@ -203,27 +204,43 @@ def model_start(status):
     raise RuntimeError('HaloGen did not become ready; inspect its controller logs/retained lock. No lock was removed and no retry attempted.')
 
 
-def voice_start(status):
-    config = json.loads((NATIVE / 'config.example.json').read_text(encoding='utf-8-sig'))
+def selected_config(value, environment_name, default):
+    selected = value if value is not None else os.environ.get(environment_name, default)
+    if not isinstance(selected, (str, os.PathLike)) or not str(selected).strip():
+        raise RuntimeError('Configure ' + environment_name + ' as an existing local config file')
+    selected = Path(selected).expanduser()
+    selected = (ROOT / selected).resolve() if not selected.is_absolute() else selected.resolve()
+    if not selected.is_file():
+        raise RuntimeError('Configure ' + environment_name + ' as an existing local config file')
+    return selected
+
+
+def voice_start(status, bot_config=None, native_config=None):
+    bot_config = selected_config(bot_config, 'SCC_VOICE_BOT_CONFIG', BOT_CONFIG)
+    native_config = selected_config(native_config, 'SCC_VOICE_NATIVE_CONFIG', NATIVE_CONFIG)
+    config = json.loads(native_config.read_text(encoding='utf-8-sig'))
     if (config.get('auth_mode') != 'servicenow' or config.get('development_token')
             or config.get('development_token_file')):
         raise RuntimeError('Native production authentication configuration rejected')
-    start_python('bot', [8850,8853], ROOT / 'voice/bridge.py', BOT_CONFIG,
+    start_python('bot', [8850,8853], ROOT / 'voice/bridge.py', bot_config,
                  lambda:status.health(8850, '/', json_body=False))
     def native_health():
         result = status.health(8860)
         if result.get('auth_mode') != 'servicenow':
             raise RuntimeError('Native listener is not in ServiceNow auth mode')
         return result
-    start_python('native', [8860], NATIVE / 'native_bridge.py', NATIVE / 'config.example.json', native_health)
+    start_python('native', [8860], NATIVE / 'native_bridge.py', native_config, native_health)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=['stt','tts','model','gateway','voice','all','status'])
-    action = parser.parse_args().action
+    parser.add_argument('--bot-config', type=Path)
+    parser.add_argument('--native-config', type=Path)
+    options = parser.parse_args()
+    action = options.action
     if sys.platform != 'win32':
-        raise RuntimeError('Run this launcher on the inspected Windows demo PC')
+        raise RuntimeError('Run this launcher on Windows')
     status = module('scc_readonly_status', ROOT / 'voice/native-speech-validation/stack_status.py')
     if action == 'status':
         return status.main()
@@ -238,7 +255,7 @@ def main():
         if action in ('gateway','all'):
             gateway_start(status)
         if action in ('voice','all'):
-            voice_start(status)
+            voice_start(status, bot_config=options.bot_config, native_config=options.native_config)
         if action == 'all':
             if not all(value for key,value in status.funnel().items() if key.endswith('_matches') or key in ('https_443_configured','funnel_allowed')):
                 raise RuntimeError('Expected Funnel route missing; no routes changed')

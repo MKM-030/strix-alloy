@@ -1,5 +1,5 @@
 param([string]$VoiceRoot = (Split-Path -Parent $PSScriptRoot),
-      [string]$Python = 'C:\Projects\strix-alloy-scc-voice\voice\native-bridge\.venv\Scripts\python.exe')
+      [string]$Python = (Join-Path $VoiceRoot 'native-bridge\.venv\Scripts\python.exe'))
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $helper = Join-Path $PSScriptRoot 'model_deployment.py'

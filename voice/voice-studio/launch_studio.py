@@ -11,12 +11,12 @@ import sys
 import time
 import urllib.request
 from postfair import completed_campaign
+from studio_origin import configured_origin
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 RUNTIME = HERE / 'runtime'
 PYTHON = ROOT / 'voice/native-bridge/.venv/Scripts/python.exe'
-ORIGIN = 'https://strix-alloy.tail7f425a.ts.net'
 BASE_PATH = '/voice-studio'
 PORT = 8863
 
@@ -29,9 +29,10 @@ def owner_tools():
     return module
 
 
-def arguments():
+def arguments(origin=None):
+    origin = configured_origin(origin)
     return [str(PYTHON), '-u', str(HERE / 'studio_server.py'),
-            '--host', '127.0.0.1', '--port', str(PORT), '--origin', ORIGIN,
+            '--host', '127.0.0.1', '--port', str(PORT), '--origin', origin,
             '--runtime', str(RUNTIME), '--base-path', BASE_PATH]
 
 
@@ -89,14 +90,15 @@ def retention_catchup():
         return {'status': 'deferred', 'reason': 'retention_catchup_failed'}
 
 
-def start(access_file):
+def start(access_file, origin=None):
+    origin = configured_origin(origin)
     owner = owner_tools()
-    args = arguments()
+    args = arguments(origin)
     retention = retention_catchup()
     with startup_lock():
         pid = owner.owned_listener(PORT, args)
         if pid:
-            return {'ok': True, 'reused': True, 'pid': pid, 'url': ORIGIN + BASE_PATH + '/',
+            return {'ok': True, 'reused': True, 'pid': pid, 'url': origin + BASE_PATH + '/',
                     'health': health(), 'retention': retention}
         for path in (PYTHON, HERE / 'studio_server.py', HERE / 'web/index.html'):
             if not path.is_file():
@@ -125,7 +127,7 @@ def start(access_file):
                            'exe': process.exe(), 'cmdline': process.cmdline()}
                 (RUNTIME / 'studio-owner.json').write_text(json.dumps(receipt), encoding='utf-8')
                 return {'ok': True, 'reused': False, 'pid': pid,
-                        'url': ORIGIN + BASE_PATH + '/', 'health': info, 'retention': retention}
+                        'url': origin + BASE_PATH + '/', 'health': info, 'retention': retention}
             time.sleep(.2)
         raise RuntimeError('Voice Studio was not ready in 20 seconds; inspect its logs')
 
@@ -133,16 +135,18 @@ def start(access_file):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=('start', 'status'))
+    parser.add_argument('--origin', help='Explicit public HTTPS origin; otherwise SCC_VOICE_STUDIO_ORIGIN')
     parser.add_argument('--access-file', type=Path,
                         default=Path.home() / 'Desktop/Voice-Studio-Zugang.txt')
     args = parser.parse_args()
     try:
+        origin = configured_origin(args.origin)
         if args.action == 'start':
-            result = start(args.access_file)
+            result = start(args.access_file, origin)
         else:
-            pid = owner_tools().owned_listener(PORT, arguments())
+            pid = owner_tools().owned_listener(PORT, arguments(origin))
             result = {'ok': True, 'running': bool(pid), 'pid': pid,
-                      'url': ORIGIN + BASE_PATH + '/', 'health': health() if pid else None}
+                      'url': origin + BASE_PATH + '/', 'health': health() if pid else None}
         print(json.dumps(result, ensure_ascii=True), flush=True)
         return 0
     except Exception as error:
