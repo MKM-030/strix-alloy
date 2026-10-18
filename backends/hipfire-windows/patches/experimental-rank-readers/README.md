@@ -1,6 +1,6 @@
 # Experimental native Windows rank-table readers
 
-This is an additional, default-off performance candidate for the already qualified native Windows Hipfire port. Root completed its CPU fixtures and real product-crate compile check; no enabled full-engine cohort has run. The preparing agents made no hardware or model calls. Gemma's current service is not changed.
+This is an additional, default-off performance candidate for the already qualified native Windows Hipfire port. Root completed its CPU fixtures, real product-crate compile check and full offline native CLI/daemon build; no enabled full-engine cohort has run. The preparing agents made no hardware or model calls. Gemma's current service is not changed.
 
 The deployed baseline is `hipfire 0.4.3 (ddee82c74649; detached)` with the offered-draft counter patch and the existing eleven-file Windows port. Its warm Natural16K cohort averaged 1,240.2 pipeline prefill and 26.53 MTP decode tok/s. The public latest release checked on 2026-10-19 remains [v0.4.2.1](https://github.com/warpfront/hipfire/releases/tag/v0.4.2.1), published October 14; replacing this October 17 beta with that release is not a demonstrated speed update. The existing native rank/ABI/memory port needs no compatibility rewrite.
 
@@ -32,7 +32,7 @@ Reopened access is `GENERIC_READ`; sharing is the existing standard-file-compati
 
 The bounded pool owns all reopened `File` values. Each `read_pack` first performs its original range check, then leases one file for the full existing exact-read loop, including interrupted or partial reads. The pool mutex is held only while checking a file out or returning it; synchronous I/O runs after the lock is released. A condition variable bounds concurrency when existing scoped threads outnumber pool entries. RAII returns the file after success, error or unwinding. Dropping the store closes its idle file objects; the normal borrowed store lifetime prevents it from being dropped while a read lease exists.
 
-All rank/header/hash checks, offsets, 90-byte Q4LM rows, 16 KiB run coalescing, decode arithmetic, cancellation points and existing exact-read EOF/overflow behavior remain in the product. The module supplies ownership only. The non-Linux nowait path still reports `WouldBlock`; Unix source and cache workers are unchanged. The experimental raw environment value is not a new TOML key. The normal launcher clears unrelated HIPFIRE overrides, so a root-owned experiment must explicitly pass it to the candidate daemon; no launcher is changed to enable it.
+All rank/header/hash checks, offsets, 90-byte Q4LM rows, 16 KiB run coalescing, decode arithmetic, cancellation points and existing exact-read EOF/overflow behavior remain in the product. The module supplies ownership only. The non-Linux nowait path still reports `WouldBlock`; Unix source and cache workers are unchanged. The experimental raw environment value is not a new TOML key. The normal launcher clears unrelated HIPFIRE overrides and remains unchanged. The separate candidate wrapper below sets the selected count after that reset so the actual daemon inherits it.
 
 ## Exact apply scope
 
@@ -48,6 +48,31 @@ The normal eleven-file patch, its manifest, `Start.ps1` and `Build.ps1` remain u
 
 Root compiled the fixture with the installed Rust1.99.1 x64/MSVC toolchain using `rustc --edition=2021 --test standalone.rs`, then ran it with `--test-threads=1`. All four tests passed. A separate offline `cargo check --release --locked --offline --target x86_64-pc-windows-msvc -p hipfire-runtime --lib --jobs 2` passed against an isolated copy with the product patch applied. No inference target was executed. [Source pins, commands and observed memory reserve](verification-20261019.json) retain the results and the corrected staging-only failure before Cargo started. The original source and current Gemma run remained unchanged. No prefill, decode or acceptance value follows from these CPU checks.
 
+The full native `cargo build --release --locked --offline --target x86_64-pc-windows-msvc -p hipfire-daemon -p hipfire-cli --jobs 2` then completed with exit 0 in 450.25 seconds, with a minimum observed reserve of 39.36 GiB. The completed [build receipt](../../../../server/.local/halogen-regression-20261019/rank-readers-candidate-build/handle.json) records `product_executed=false`, no model load or accelerator-provider invocation, no replacement of normal binaries, and unchanged original source and current server. Both built artifacts and all three source pins were rechecked on disk. Artifact pins are:
+
+| Artifact | Bytes | SHA256 |
+| --- | ---: | --- |
+| `daemon.exe` | 80,994,304 | `0b7b37f92977cd92ef7a26f067a6de62177cbaa38792d601105fb625412d46ef` |
+| `hipfire.exe` | 45,582,848 | `36c856e55074efc42bf9e34dcccf45050d74305932d22a77c8e1500449cb7258` |
+
+This establishes a successful build; prefill, decode and acceptance remain unmeasured. The verification record preserves the earlier staging failure and the automatic approval review's cleanup rejection; no alternate cleanup was attempted.
+
 On the isolated product copy, retain the existing CPU cases under `ple_hot_store::portable_table_tests`, including partial EOF/error offsets/overflow, concurrent exact rank bytes and invalid rank/truncation, plus `external_rows::tests::rank_ordered_table_store_decodes_like_row_ordered_descriptors`. Later native product checks must exercise count 1 and a selected enabled count in separate processes so the once-at-open environment semantics are respected. No GPU-labelled tests are required to establish this module's file ownership.
 
 Only a later root-owned full-engine A/B on the same frozen workload can establish prefill/decode benefit. Keep model/PLE bytes, MTP K2, n-grams off, inline-q8, sequence capacity, cache/reset semantics and host reserve rules fixed. The existing `HIPFIRE_PLE_HOT_DEBUG=1` can expose large-fetch rows/read counts and elapsed time for diagnosis; those trace times are not pure I/O or exposed `ple_wait` and are not throughput evidence. A CPU concurrency result cannot justify serving promotion or synthetic tok/s conversion.
+
+## Candidate launch for the existing test window
+
+Use `Start-Candidate.ps1` only in root's exclusive test window with the existing memory supervisor. It requires the completed native candidate build's exact receipt and verifies its source pins plus both selected executable sizes/hashes before state changes or CLI calls. The measured baseline settings and environment restoration are retained; creation of this wrapper activates no service.
+
+```powershell
+.\backends\hipfire-windows\patches\experimental-rank-readers\Start-Candidate.ps1 `
+  -BinaryDirectory 'C:\Projects\strix-alloy-clean\server\.local\halogen-regression-20261019\rank-readers-candidate-build\bin' `
+  -BuildReceipt 'C:\Projects\strix-alloy-clean\server\.local\halogen-regression-20261019\rank-readers-candidate-build\handle.json' `
+  -Readers 16 `
+  -ModelPath 'E:\strix-alloy\hipfire-mq2-ddee82\models\qwen3.8-flash-next-base.mq2-xts-4500' `
+  -StatePath 'E:\strix-alloy\hipfire-native-windows-20261018\rank-readers-window-16' `
+  -ApiKeyFile 'E:\private\hipfire-api-key'
+```
+
+Use the actual existing private key-file path and a fresh private state directory. Pass `-Readers 1` for the original read path and the chosen explicit count for the candidate. The wrapper passed PowerShell 5 parsing and independent source review; its SHA256 remains `03af62a9d8e1713dd7c16c76675d2355a16c77ac0d0ea34fad7bff4297f84d5f`. Review confirmed that the actual CLI-to-daemon path retains the inherited environment. The wrapper and engine runtime have not been executed for this experiment; executing configuration or serving remains root-owned.

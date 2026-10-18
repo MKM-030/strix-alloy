@@ -1,7 +1,8 @@
 {
   "schema": "strix-alloy.native-rank-reader-cpu-verification.v1",
   "utc": "2026-10-18T22:42:06.537972+00:00",
-  "status": "CPU fixtures and real product crate check passed; full engine speed unmeasured",
+  "updated_utc": "2026-10-18T23:00:07+00:00",
+  "status": "CPU fixtures, real product crate check and full native CLI/daemon build passed; full engine speed unmeasured",
   "enabled_by_default": false,
   "normal_serving_changed": false,
   "inference_submitted": false,
@@ -118,6 +119,79 @@
     "original_source_unchanged": true,
     "unchanged_current_run": true
   },
+  "native_build": {
+    "receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-candidate-build\\handle.json",
+    "receipt_sha256": "767ef0dffcda49dd77ffe62262d5e4db8dbfd795349cf09dd0c6e0a0106a6d44",
+    "utc": "2026-10-18T22:48:33.090294+00:00",
+    "ended_utc": "2026-10-18T22:56:04.756021+00:00",
+    "command": [
+      "E:\\strix-alloy\\hipfire-native-windows-20261018\\rustup\\toolchains\\1.99.1-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+      "build",
+      "--release",
+      "--locked",
+      "--offline",
+      "--target",
+      "x86_64-pc-windows-msvc",
+      "-p",
+      "hipfire-daemon",
+      "-p",
+      "hipfire-cli",
+      "--jobs",
+      "2"
+    ],
+    "terminal": true,
+    "build_completed": true,
+    "exit_code": 0,
+    "elapsed_s": 450.25,
+    "minimum_reserve_gib": 39.362953186035156,
+    "source": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\source",
+    "target": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\target",
+    "original_source": {
+      "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\hipfire-runtime\\src\\ple_hot_store.rs",
+      "bytes": 106530,
+      "sha256": "0b3598c99890d89041bfb8db37a5cf02b989245c3b95e5fdad098e74f22fdb86"
+    },
+    "modified_source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\source\\crates\\hipfire-runtime\\src\\ple_hot_store.rs",
+      "bytes": 107197,
+      "sha256": "04d19e6d3cbd30ad095dc83f94dab8b3a9c5269c91957724e66cf504cf67a2e3"
+    },
+    "new_module": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\source\\crates\\hipfire-runtime\\src\\windows_rank_readers.rs",
+      "bytes": 5621,
+      "sha256": "eb23561ec2f7d7e26b06facacbfff593bb80fa007d21a27d296e85ecc58c5aed"
+    },
+    "artifacts": [
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-candidate-build\\bin\\daemon.exe",
+        "bytes": 80994304,
+        "sha256": "0b7b37f92977cd92ef7a26f067a6de62177cbaa38792d601105fb625412d46ef"
+      },
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-candidate-build\\bin\\hipfire.exe",
+        "bytes": 45582848,
+        "sha256": "36c856e55074efc42bf9e34dcccf45050d74305932d22a77c8e1500449cb7258"
+      }
+    ],
+    "artifact_and_source_pins_rechecked_on_disk": true,
+    "default_readers": 1,
+    "original_source_unchanged": true,
+    "unchanged_current_run": true,
+    "product_executed": false,
+    "model_loaded": false,
+    "accelerator_provider_invoked": false,
+    "normal_binaries_replaced": false
+  },
+  "candidate_launcher": {
+    "path": "backends\\hipfire-windows\\patches\\experimental-rank-readers\\Start-Candidate.ps1",
+    "bytes": 7945,
+    "sha256": "03af62a9d8e1713dd7c16c76675d2355a16c77ac0d0ea34fad7bff4297f84d5f",
+    "pin_rechecked_on_disk": true,
+    "powershell_5_parse_passed": true,
+    "independent_source_review": "No material issue found; actual CLI-to-daemon path retains inherited environment without env_clear or filtering",
+    "launcher_executed": false,
+    "engine_runtime_tested": false
+  },
   "initial_staging_failure": {
     "receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\failed-before-cargo.json",
     "cause": "Parent Git worktree prefix skipped the isolated patch; corrected with child-scoped Git discovery ceiling before the first Cargo check",
@@ -133,7 +207,8 @@
   "next": "A root-owned same-model natural16K control/candidate/control with current K2/inlineQ8/no-ngrams settings; only promote measured whole-engine gain with byte parity and original reserves",
   "raw_receipts": [
     "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-cpu\\handle.json",
-    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\handle.json"
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\handle.json",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-candidate-build\\handle.json"
   ],
   "scratch_cleanup": {
     "utc": "2026-10-18T22:43:57.158374+00:00",
