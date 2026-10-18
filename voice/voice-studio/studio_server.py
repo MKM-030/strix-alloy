@@ -36,6 +36,7 @@ import wave
 
 from aiohttp import ClientSession, ClientTimeout, web
 from postfair import completed_campaign, fresh_consent, fresh_profile, RETENTION_NOTICE
+from studio_origin import validated_origin
 
 HERE = Path(__file__).resolve().parent
 COOKIE_NAME = '__Host-voice_studio'
@@ -461,10 +462,7 @@ def preview_wav(pcm):
 
 
 def create_app(config, *, manager=None, register=None, idle_check=None, synthesize=None, now=None):
-    parsed = urlparse(config.origin)
-    if (parsed.scheme != 'https' or not parsed.netloc or parsed.path not in ('', '/')
-            or parsed.params or parsed.query or parsed.fragment or parsed.username):
-        raise ValueError('Configure an exact HTTPS origin, without credentials or path')
+    origin = validated_origin(config.origin)
     if not re.fullmatch(r'/[a-z0-9-]+', config.base_path):
         raise ValueError('Configure one simple URL base path')
     manager = manager or load_manager()
@@ -516,7 +514,7 @@ def create_app(config, *, manager=None, register=None, idle_check=None, synthesi
         return result
 
     def origin_check(request):
-        if request.headers.get('Origin') != config.origin.rstrip('/'):
+        if request.headers.get('Origin') != origin:
             raise APIError(403, 'origin_rejected', 'Die Anfrage stammt nicht von Voice Studio.')
 
     def mutation_check(request):
@@ -1051,7 +1049,7 @@ def main():
     parser.add_argument('--init-auth', action='store_true')
     parser.add_argument('--access-file', type=Path)
     args = parser.parse_args()
-    config = Config(origin=args.origin, runtime=args.runtime, base_path=args.base_path)
+    config = Config(origin=validated_origin(args.origin), runtime=args.runtime, base_path=args.base_path)
     if args.init_auth:
         if not args.access_file:
             parser.error('--init-auth requires --access-file')
