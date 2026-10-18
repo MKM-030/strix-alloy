@@ -1,0 +1,148 @@
+{
+  "schema": "strix-alloy.native-rank-reader-cpu-verification.v1",
+  "utc": "2026-10-18T22:42:06.537972+00:00",
+  "status": "CPU fixtures and real product crate check passed; full engine speed unmeasured",
+  "enabled_by_default": false,
+  "normal_serving_changed": false,
+  "inference_submitted": false,
+  "files": [
+    {
+      "path": "backends\\hipfire-windows\\patches\\experimental-rank-readers\\windows_rank_readers.rs",
+      "bytes": 5621,
+      "sha256": "eb23561ec2f7d7e26b06facacbfff593bb80fa007d21a27d296e85ecc58c5aed"
+    },
+    {
+      "path": "backends\\hipfire-windows\\patches\\experimental-rank-readers\\standalone.rs",
+      "bytes": 15241,
+      "sha256": "40d6a3eef7cf549d74102845762ec1670c22698fcdcf67b5ca3c66e4c84c2a0c"
+    },
+    {
+      "path": "backends\\hipfire-windows\\patches\\experimental-rank-readers\\windows-rank-readers-ddee82.patch",
+      "bytes": 8351,
+      "sha256": "222f1ce0174961a42dbef9b05c1ba588321391a63212485136196fb4b57c2487"
+    }
+  ],
+  "fixture": {
+    "compiler": {
+      "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\rustup\\toolchains\\1.99.1-x86_64-pc-windows-msvc\\bin\\rustc.exe",
+      "bytes": 110592,
+      "sha256": "ba03e3ba03a73d9fef19ab3659140f94b43615ec1d587fe9befc9aed3bd5aa72"
+    },
+    "source_members": [
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\hipfire-windows\\patches\\experimental-rank-readers\\standalone.rs",
+        "bytes": 15241,
+        "sha256": "40d6a3eef7cf549d74102845762ec1670c22698fcdcf67b5ca3c66e4c84c2a0c"
+      },
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\backends\\hipfire-windows\\patches\\experimental-rank-readers\\windows_rank_readers.rs",
+        "bytes": 5621,
+        "sha256": "eb23561ec2f7d7e26b06facacbfff593bb80fa007d21a27d296e85ecc58c5aed"
+      }
+    ],
+    "stages": {
+      "build": {
+        "command": [
+          "E:\\strix-alloy\\hipfire-native-windows-20261018\\rustup\\toolchains\\1.99.1-x86_64-pc-windows-msvc\\bin\\rustc.exe",
+          "--edition=2021",
+          "--test",
+          "C:\\Projects\\strix-alloy-clean\\backends\\hipfire-windows\\patches\\experimental-rank-readers\\standalone.rs",
+          "-o",
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-cpu\\rank-readers-cpu.exe"
+        ],
+        "utc": "2026-10-18T22:36:47.197893+00:00",
+        "terminal": true,
+        "identity": {
+          "pid": 33500,
+          "creation_time_100ns": 134368366072013298,
+          "executable": "E:\\strix-alloy\\hipfire-native-windows-20261018\\rustup\\toolchains\\1.99.1-x86_64-pc-windows-msvc\\bin\\rustc.exe"
+        },
+        "exit_code": 0,
+        "minimum_reserve_gib": 41.64037322998047,
+        "elapsed_s": 2.0160000000032596
+      },
+      "fixtures": {
+        "command": [
+          "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-cpu\\rank-readers-cpu.exe",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "utc": "2026-10-18T22:36:49.219427+00:00",
+        "terminal": true,
+        "identity": {
+          "pid": 37772,
+          "creation_time_100ns": 134368366092224194,
+          "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-cpu\\rank-readers-cpu.exe"
+        },
+        "exit_code": 0,
+        "minimum_reserve_gib": 41.754512786865234,
+        "elapsed_s": 0.09399999998277053
+      }
+    },
+    "stdout": "\nrunning 4 tests\ntest tests::concurrent_leased_ranges_remain_byte_exact_with_bounded_handles ... ok\ntest tests::eof_read_error_and_unwind_return_owned_readers_until_pool_drop_closes_them ... ok\ntest tests::parsing_default_borrow_and_explicit_capacity_obey_the_contract ... ok\ntest tests::reopened_objects_have_independent_cursors_and_preserve_renamed_anchor_identity ... ok\n\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s\n\n",
+    "unchanged_current_run": true
+  },
+  "product_check": {
+    "command": [
+      "E:\\strix-alloy\\hipfire-native-windows-20261018\\rustup\\toolchains\\1.99.1-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+      "check",
+      "--release",
+      "--locked",
+      "--offline",
+      "--target",
+      "x86_64-pc-windows-msvc",
+      "-p",
+      "hipfire-runtime",
+      "--lib",
+      "--jobs",
+      "2"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 49.796999999991385,
+    "minimum_reserve_gib": 40.18136215209961,
+    "patched_source": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\source\\crates\\hipfire-runtime\\src\\ple_hot_store.rs",
+      "bytes": 107197,
+      "sha256": "04d19e6d3cbd30ad095dc83f94dab8b3a9c5269c91957724e66cf504cf67a2e3"
+    },
+    "patched_module": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\source\\crates\\hipfire-runtime\\src\\windows_rank_readers.rs",
+      "bytes": 5621,
+      "sha256": "eb23561ec2f7d7e26b06facacbfff593bb80fa007d21a27d296e85ecc58c5aed"
+    },
+    "original_source": {
+      "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\hipfire-runtime\\src\\ple_hot_store.rs",
+      "bytes": 106530,
+      "sha256": "0b3598c99890d89041bfb8db37a5cf02b989245c3b95e5fdad098e74f22fdb86"
+    },
+    "original_source_unchanged": true,
+    "unchanged_current_run": true
+  },
+  "initial_staging_failure": {
+    "receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\failed-before-cargo.json",
+    "cause": "Parent Git worktree prefix skipped the isolated patch; corrected with child-scoped Git discovery ceiling before the first Cargo check",
+    "compiler_started": false,
+    "model_or_serving_changed": false
+  },
+  "performance": {
+    "prefill_tokens_per_second": null,
+    "decode_tokens_per_second": null,
+    "acceptance": null,
+    "engine_speedup_established": false
+  },
+  "next": "A root-owned same-model natural16K control/candidate/control with current K2/inlineQ8/no-ngrams settings; only promote measured whole-engine gain with byte parity and original reserves",
+  "raw_receipts": [
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-cpu\\handle.json",
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\rank-readers-integration\\handle.json"
+  ],
+  "scratch_cleanup": {
+    "utc": "2026-10-18T22:43:57.158374+00:00",
+    "status": "automatic_approval_review_rejected_cleanup",
+    "action": "Recursive removal of only verified temporary integration source and target",
+    "reason": "blocked by policy; no further reason supplied",
+    "source_removed": false,
+    "target_removed": false,
+    "edited_sources_archived": true,
+    "alternate_delete_mechanism_attempted": false
+  }
+}

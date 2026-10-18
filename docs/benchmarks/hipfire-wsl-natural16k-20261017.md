@@ -3,7 +3,7 @@
 **One candidate completed; no isolated kernel gain or production promotion.** Hipfire commit
 `ddee82c7464946c86f946d89af1b5634f212d466` ran through WSL/ROCDXG with ROCm
 SDK 7.14. The model uses **MQ2-XTS4500 weights and q4 PLE**, a different
-quantization from Halogen IQ4; this is not a matched Halogen comparison.
+quantization from Halogen's native HGN-v2 artifact; this is not a matched Halogen comparison.
 
 The natural, non-repeated prompt has exactly **16,384 rendered input tokens and
 128 actual output tokens**. Each arm completed one excluded warmup and three

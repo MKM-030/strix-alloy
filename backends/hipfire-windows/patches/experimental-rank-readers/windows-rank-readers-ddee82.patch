@@ -1,0 +1,208 @@
+diff --git a/crates/hipfire-runtime/src/ple_hot_store.rs b/crates/hipfire-runtime/src/ple_hot_store.rs
+--- a/crates/hipfire-runtime/src/ple_hot_store.rs
++++ b/crates/hipfire-runtime/src/ple_hot_store.rs
+@@ -102,6 +102,10 @@
+ use crate::model_source::SourceError;
+ use crate::ple_hot_pack::{read_ple_hot_pack_header, PackKind, PackOrder};
+ 
++#[cfg(windows)]
++#[path = "windows_rank_readers.rs"]
++mod windows_rank_readers;
++
+ const MAGIC: &[u8; 8] = b"HFPLEHT1";
+ const VERSION: u64 = 1;
+ /// Frequency buckets in a sidecar.
+@@ -814,6 +818,8 @@
+     tier_base: Vec<u64>,
+     /// The pack, opened for random reads (no readahead).
+     pack: File,
++    #[cfg(windows)]
++    rank_readers: windows_rank_readers::RankReaderPool,
+     pack_path: PathBuf,
+     data_offset: u64,
+     data_bytes: u64,
+@@ -1040,6 +1046,9 @@
+         let row_width = to_usize("row_width", header.row_width)?;
+         let encoded_row_bytes = to_usize("encoded_row_bytes", header.encoded_row_bytes)?;
+         let pack = File::open(path).map_err(|e| fail(format!("open: {e}")))?;
++        #[cfg(windows)]
++        let rank_readers = windows_rank_readers::RankReaderPool::from_env(&pack)
++            .map_err(|error| fail(format!("Windows rank readers: {error}")))?;
+         let mut buckets = vec![0u8; to_usize("padded_rows", padded_rows)?];
+         read_exact_at(&pack, header.rank_offset, &mut buckets)
+             .map_err(|e| fail(format!("reading the embedded rank: {e}")))?;
+@@ -1090,6 +1099,8 @@
+             prefix: prefix.into_iter().map(Vec::into_boxed_slice).collect(),
+             tier_base,
+             pack,
++            #[cfg(windows)]
++            rank_readers,
+             pack_path: path.to_path_buf(),
+             data_offset: header.data_offset,
+             data_bytes: header.data_bytes,
+@@ -1267,6 +1278,12 @@
+     /// Read `dst.len()` bytes of the pack at absolute `offset`.
+     pub fn read_pack(&self, offset: u64, dst: &mut [u8]) -> Result<(), SourceError> {
+         self.check_pack_range(offset, dst.len())?;
++        #[cfg(windows)]
++        if self.rank_readers.count() > 1 {
++            let reader = self.rank_readers.acquire(&self.pack)
++                .map_err(|source| SourceError::Io { offset, source })?;
++            return read_exact_at(reader.file(), offset, dst);
++        }
+         read_exact_at(&self.pack, offset, dst)
+     }
+ 
+diff --git a/crates/hipfire-runtime/src/windows_rank_readers.rs b/crates/hipfire-runtime/src/windows_rank_readers.rs
+new file mode 100644
+--- /dev/null
++++ b/crates/hipfire-runtime/src/windows_rank_readers.rs
+@@ -0,0 +1,148 @@
++//! Experimental Windows-only synchronous file objects for rank-table reads.
++//!
++//! One reader preserves the exact borrowed-anchor path. More readers reopen
++//! that anchor eagerly, without resolving its pathname or sharing its cursor.
++#![cfg(windows)]
++
++use std::ffi::{c_void, OsStr};
++use std::fs::File;
++use std::io;
++use std::os::windows::io::{AsRawHandle, FromRawHandle};
++use std::sync::{Condvar, Mutex};
++
++pub const ENV_NAME: &str = "HIPFIRE_WINDOWS_PLE_READERS";
++const MAX_READERS: usize = 64;
++const GENERIC_READ: u32 = 0x8000_0000;
++const SHARE_READ_WRITE_DELETE: u32 = 1 | 2 | 4;
++
++#[link(name = "kernel32")]
++unsafe extern "system" {
++    fn ReOpenFile(original: *mut c_void, access: u32, share: u32, flags: u32) -> *mut c_void;
++}
++
++fn invalid_count() -> io::Error {
++    io::Error::new(io::ErrorKind::InvalidInput, format!("{ENV_NAME} must be ASCII decimal 1..64"))
++}
++
++/// Absent means one; otherwise accept only nonempty ASCII digits in 1..=64.
++/// Leading zeroes are decimal digits, not a sign, whitespace or another radix.
++pub fn parse_reader_count(value: Option<&OsStr>) -> io::Result<usize> {
++    let Some(value) = value else { return Ok(1); };
++    let value = value.to_str().ok_or_else(invalid_count)?;
++    if value.is_empty() { return Err(invalid_count()); }
++    let mut count = 0usize;
++    for byte in value.bytes() {
++        if !byte.is_ascii_digit() { return Err(invalid_count()); }
++        count = count.checked_mul(10).and_then(|n| n.checked_add(usize::from(byte - b'0')))
++            .ok_or_else(invalid_count)?;
++        if count > MAX_READERS { return Err(invalid_count()); }
++    }
++    if count == 0 { return Err(invalid_count()); }
++    Ok(count)
++}
++
++enum Pool {
++    Anchor,
++    Reopened(SharedPool),
++}
++
++struct SharedPool {
++    count: usize,
++    available: Mutex<Vec<File>>,
++    returned: Condvar,
++}
++
++/// A fixed-capacity pool. Construction performs every reopen before publishing
++/// the pool; dropping a partially built Vec closes all successfully opened files.
++pub struct RankReaderPool {
++    pool: Pool,
++}
++
++impl RankReaderPool {
++    pub fn from_env(anchor: &File) -> io::Result<Self> {
++        Self::new(anchor, parse_reader_count(std::env::var_os(ENV_NAME).as_deref())?)
++    }
++
++    pub fn new(anchor: &File, count: usize) -> io::Result<Self> {
++        if !(1..=MAX_READERS).contains(&count) { return Err(invalid_count()); }
++        if count == 1 { return Ok(Self { pool: Pool::Anchor }); }
++
++        let mut files = Vec::with_capacity(count);
++        for _ in 0..count {
++            // SAFETY: anchor is borrowed and valid throughout ReOpenFile. Flags
++            // zero requests synchronous buffered I/O, without OVERLAPPED or hints.
++            let raw = unsafe {
++                ReOpenFile(anchor.as_raw_handle(), GENERIC_READ, SHARE_READ_WRITE_DELETE, 0)
++            };
++            if raw == (-1isize) as *mut c_void || raw.is_null() {
++                return Err(io::Error::last_os_error());
++            }
++            // SAFETY: this successful ReOpenFile result is a new owned handle;
++            // ownership is transferred exactly once, including on later failure.
++            files.push(unsafe { File::from_raw_handle(raw) });
++        }
++        Ok(Self { pool: Pool::Reopened(SharedPool {
++            count,
++            available: Mutex::new(files),
++            returned: Condvar::new(),
++        }) })
++    }
++
++    pub fn count(&self) -> usize {
++        match &self.pool { Pool::Anchor => 1, Pool::Reopened(pool) => pool.count }
++    }
++
++    /// `anchor` is the same store-owned anchor passed at construction. The one
++    /// reader case borrows it directly; no lock or reopen occurs in this branch.
++    /// A multi-reader lease owns one file while performing I/O, with no lock held.
++    pub fn acquire<'a>(&'a self, anchor: &'a File) -> io::Result<ReaderLease<'a>> {
++        let pool = match &self.pool {
++            Pool::Anchor => return Ok(ReaderLease { source: LeaseSource::Anchor(anchor) }),
++            Pool::Reopened(pool) => pool,
++        };
++        let poisoned = || io::Error::new(io::ErrorKind::Other, "rank-reader pool mutex poisoned");
++        let mut available = pool.available.lock().map_err(|_| poisoned())?;
++        loop {
++            if let Some(file) = available.pop() {
++                drop(available);
++                return Ok(ReaderLease { source: LeaseSource::Reopened { pool, file: Some(file) } });
++            }
++            available = pool.returned.wait(available).map_err(|_| poisoned())?;
++        }
++    }
++}
++
++enum LeaseSource<'a> {
++    Anchor(&'a File),
++    Reopened { pool: &'a SharedPool, file: Option<File> },
++}
++
++/// Returns its one owned reader on normal return, I/O error, EOF or unwinding.
++/// Rust's borrow prevents the pool from being dropped while any lease is live.
++pub struct ReaderLease<'a> {
++    source: LeaseSource<'a>,
++}
++
++impl ReaderLease<'_> {
++    pub fn file(&self) -> &File {
++        match &self.source {
++            LeaseSource::Anchor(file) => file,
++            LeaseSource::Reopened { file, .. } => file.as_ref().expect("live reader lease"),
++        }
++    }
++}
++
++impl Drop for ReaderLease<'_> {
++    fn drop(&mut self) {
++        if let LeaseSource::Reopened { pool, file } = &mut self.source {
++            if let Some(file) = file.take() {
++                // Return ownership even if an unrelated panic poisoned the lock;
++                // Drop must not panic and lose capacity during another unwind.
++                let mut available = pool.available.lock().unwrap_or_else(|error| error.into_inner());
++                available.push(file);
++                drop(available);
++                pool.returned.notify_one();
++            }
++        }
++    }
++}

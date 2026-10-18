@@ -1,0 +1,284 @@
+{
+  "schema": "strix-alloy.hipfire-native-npu-trunk-eligibility.v1",
+  "observed_at_utc": "2026-10-18T22:31:08Z",
+  "local_report_date": "2026-10-19",
+  "scope": "Retained source, SDK headers and bounded model header/index inspection only. No quantized payload read by the successful metadata parser; no device/provider opened, build, inference, lifecycle mutation or transport implementation.",
+  "source_provenance": {
+    "root": "E:/strix-alloy/hipfire-native-windows-20261018/src",
+    "archive_base_commit_reported_by_retained_native_result": "ddee82c7464946c86f946d89af1b5634f212d466",
+    "provenance_receipt": "E:/strix-alloy/hipfire-native-windows-20261018/results/native-mtp-natural16k-pdh-final-source/summary.json",
+    "qualification": "Archive is not a Git checkout. Local source contains Unreleased0.4.3 additions; file hashes, not a claim of a pristine0.4.2.1 checkout, bind this inspection.",
+    "pins": [
+      {
+        "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\hipfire-arch-qwen4\\src\\npu_trunk\\forward.rs",
+        "bytes": 145780,
+        "sha256": "55bba2d7d66a15905a3af40ca87b4ede30817aaca480388f2b489bd833714b21"
+      },
+      {
+        "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\hipfire-arch-qwen4\\src\\gpu_forward.rs",
+        "bytes": 502877,
+        "sha256": "617e6f0e5bce079a830f0d64bab04613394df591f34924f4ead610c3cb37cad6"
+      },
+      {
+        "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\hipfire-arch-qwen4\\Cargo.toml",
+        "bytes": 2436,
+        "sha256": "c2076d31165cfb061b662ecc3bafca4e938c6d4fa2dd5a377c6d0a01604bfc27"
+      },
+      {
+        "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\railgun\\src\\npu\\mod.rs",
+        "bytes": 36963,
+        "sha256": "77c68dde533659b7f2840cdebafca30bdfb0b8a83e3f1836a6db105833876b55"
+      },
+      {
+        "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\railgun\\src\\npu\\trunk.rs",
+        "bytes": 71728,
+        "sha256": "2841404cfd18ba8b58d51c3f6b76ed7a3945820e93408e28299c3d679a79d994"
+      },
+      {
+        "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\railgun\\src\\npu\\hip_runtime.rs",
+        "bytes": 58936,
+        "sha256": "62f69d2ffc712a3a521e3988c8d60eaa54d78a589d0d82f2c821e406eb859d5c"
+      },
+      {
+        "path": "E:\\strix-alloy\\hipfire-native-windows-20261018\\src\\crates\\saddle-quant\\src\\format\\mod.rs",
+        "bytes": 9489,
+        "sha256": "4adc6532ac62e7d5bf3ec297056e711172f19e132f0d8c1f9ba5d8a48080f67d"
+      },
+      {
+        "path": "C:\\Xilinx\\XRT\\include\\xrt\\xrt_bo.h",
+        "bytes": 27525,
+        "sha256": "afe2899f6b170594a6ed1c0ba9dc88df7b57d26d4a3d6065049dfc5de7556ac8"
+      },
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_native_dispatch\\host.cpp",
+        "bytes": 17394,
+        "sha256": "b372e2fd4dbbf67e06b2be20ef414c5d7df86be41402e3409ca43f26719ca53d"
+      },
+      {
+        "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_npu_native_hidden_vector\\host.cpp",
+        "bytes": 32971,
+        "sha256": "5459e0d93ab4663874ebfd6c7eb817aefdde30784a4d9ede96f9a8aa2eff242b"
+      }
+    ]
+  },
+  "model_header_index": {
+    "path": "E:/strix-alloy/hipfire-mq2-ddee82/models/qwen3.8-flash-next-base.mq2-xts-4500",
+    "reported_file_bytes": 44537253400,
+    "header_hex": "48-46-51-4D-01-00-00-00-10-00-00-00-4D-C4-00-00-20-00-00-00-00-00-00-00-00-E0-18-01-00-00-00-00",
+    "header_magic": "HFQM",
+    "header_version": 1,
+    "arch_id": 16,
+    "tensors": 50253,
+    "metadata_start": 32,
+    "payload_start": 18407424,
+    "index_end": 18405520,
+    "selected_count": 344,
+    "types": {
+      "3": 4,
+      "16": 148,
+      "44": 108,
+      "47": 84
+    },
+    "sample": [
+      {
+        "name": "model.language_model.layers.0.linear_attn.in_proj_a.weight",
+        "tag": 44,
+        "shape": [
+          48,
+          2560
+        ],
+        "group": 256,
+        "size": 65280
+      },
+      {
+        "name": "model.language_model.layers.0.linear_attn.in_proj_b.weight",
+        "tag": 44,
+        "shape": [
+          48,
+          2560
+        ],
+        "group": 256,
+        "size": 65280
+      },
+      {
+        "name": "model.language_model.layers.0.linear_attn.in_proj_qkv.weight",
+        "tag": 47,
+        "shape": [
+          10240,
+          2560
+        ],
+        "group": 256,
+        "size": 20480000
+      },
+      {
+        "name": "model.language_model.layers.0.linear_attn.in_proj_z.weight",
+        "tag": 44,
+        "shape": [
+          6144,
+          2560
+        ],
+        "group": 256,
+        "size": 8355840
+      },
+      {
+        "name": "model.language_model.layers.0.mlp.gate.weight",
+        "tag": 16,
+        "shape": [
+          512,
+          2560
+        ],
+        "group": 0,
+        "size": 2621440
+      },
+      {
+        "name": "model.language_model.layers.0.mlp.shared_expert.gate_proj.weight",
+        "tag": 16,
+        "shape": [
+          640,
+          2560
+        ],
+        "group": 0,
+        "size": 3276800
+      },
+      {
+        "name": "model.language_model.layers.0.mlp.shared_expert.up_proj.weight",
+        "tag": 16,
+        "shape": [
+          640,
+          2560
+        ],
+        "group": 0,
+        "size": 3276800
+      },
+      {
+        "name": "model.language_model.layers.1.linear_attn.in_proj_a.weight",
+        "tag": 44,
+        "shape": [
+          48,
+          2560
+        ],
+        "group": 256,
+        "size": 65280
+      },
+      {
+        "name": "model.language_model.layers.1.linear_attn.in_proj_b.weight",
+        "tag": 44,
+        "shape": [
+          48,
+          2560
+        ],
+        "group": 256,
+        "size": 65280
+      },
+      {
+        "name": "model.language_model.layers.1.linear_attn.in_proj_qkv.weight",
+        "tag": 47,
+        "shape": [
+          10240,
+          2560
+        ],
+        "group": 256,
+        "size": 20480000
+      }
+    ],
+    "filter_scope": "Selected entries are every 2D tensor whose second dimension is2560 and first dimension is one of10240,6144,48,12288,512,640. This includes non-trunk tensors. Type counts are not asserted to be all trunk tensors.",
+    "read_scope": {
+      "header": [
+        0,
+        32
+      ],
+      "metadata_and_index": [
+        32,
+        18407424
+      ],
+      "payload_read": false,
+      "full_model_sha256_computed": false,
+      "index_sha256_computed": false
+    },
+    "parser_receipt": {
+      "command_chunk": "9072f8",
+      "exit_code": 0,
+      "wall_time_seconds": 0.223929,
+      "source_contract": "saddle-quant/src/format/hfq.rs canonical HFQM header and index schema"
+    }
+  },
+  "eligibility": {
+    "stock_route_usable": false,
+    "reason": "prepare_stock validates every qkv/z/a/b or q/k/v/index tensor as MQ6G256V2 with exact dimensions. Actual layer0 a,b,z are MQ4G256V2 (wire44), while qkv is MQ6G256V2 (wire47). Mixed trunk is rejected before download/NPU allocation.",
+    "source": "hipfire-arch-qwen4/src/npu_trunk/forward.rs:454-475",
+    "not_inferred_from_global_mq2_name": true,
+    "live_model_identity_not_claimed": true
+  },
+  "route": {
+    "architecture": "gfx1151",
+    "model": "Flash-Next familyB,K2560",
+    "scratch": "full8192 rows,singledevice,noEP",
+    "moved": "GDN/QSA input projections",
+    "retained_gpu": "mixer,outputprojections,HC,MoE,decode",
+    "banks": 2,
+    "precision": "MQ6G256V2 decoded and requantized to W8 with grid15_up scales; GPU F16 input packed for G80; direct BF16 C arena output",
+    "quality": "NPU on==GPU emulate is an arithmetic-twin claim; ordinary GPU-off comparison is KLD gated. No universal stock-GPU bit identity, decode or acceptance improvement follows.",
+    "arenas": {
+      "a_bytes_per_bank": 23592960,
+      "gdn_c_bytes_per_bank": 272629760,
+      "qsa_c_bytes_per_bank": 230686720,
+      "full_two_bank_bytes": 1053818880,
+      "pinned_with_three_placeholders_per_bank_bytes": 1053843456,
+      "approx_mib": 1005,
+      "excludes": "bankB private forward scratch,residentBpanels,control/events and runtime; subset families can shrink C"
+    }
+  },
+  "linux_backend": {
+    "compiled_os_gate": "target_os=linux; on nonLinux npu_trunk_pipelined/planned returnfalse",
+    "dependency": "railgun feature npu only in Linux target dependencies",
+    "device": "/dev/accel/accel0",
+    "abi": "amdxdna UAPI annotated kernel7.0 driver0.7.0",
+    "memory": "anonymouspage arenas pinned as amdxdna userptr BO and hipHostRegister; identitySVA",
+    "submission": "retainedPDI/context/TXN/Bpanels and ERT_CMD_CHAIN; DRM syncobj timeline",
+    "ordering": [
+      "bankretirement waits before A overwrite",
+      "GPU packs A then systemrelease ready event",
+      "relay queries ready then submits NPU chain",
+      "NPU C DMAs complete before hostterminalsequencepublication",
+      "GPU hipStreamWaitValue32 then systemacquire event before BF16arena reads",
+      "lastCconsumer records retirement before bankreuse/teardown"
+    ],
+    "no_windows_mcdm_backend_present": true
+  },
+  "windows_reuse": {
+    "existing_components": "Native XRT device/hw_context/kernel/run and host-only BO lifetime, artifact/ABI checks, bounded waits, component verification; current host uses CPU memcpy/sync and staged pipe transport.",
+    "installed_sdk_surface": "xrt_bo.h exposes4K-aligned userptr BO constructors, Windows uint64 export_handle, import/export methods.",
+    "qualification": "Header declarations make a sameprocess nativeWindows adapter plausible; they do not prove installed MCDM32.0.20102.3930 accepts HIP-registered pages, required cache visibility or GPU stream wait/control-word semantics.",
+    "existing_design_not_reusable_as_g80": "Old onecolumn integercontrol/GEMV and Hprojection xclbin/MLIR_AIE arg contracts are not the G80 PDI/TXN/panelBF16 ABI.",
+    "wsl_bridge": "No reviewed WindowsXRT→WSLHIP sharedarena+fence+lifetimes contract. Existing exact staged BF16 handoff is a distinct transport with measured componentcost, not zero-copy."
+  },
+  "first_coherent_change": {
+    "path": "nativeWindows Hipfire rather than WindowsNPU→WSLHalogen",
+    "items": [
+      "typedmixedMQ4/MQ6 trunk preparation preserving correct performat decode and generating new modelindex/qualitycalibration",
+      "WindowsXRT G80 packaging/submission adapter matching PDI/TXN/paneloffset ABI",
+      "sameprocess sharedA/C/controlarena ownership and release/acquire/retirement relay integrated with existing paired executor",
+      "supported installeddriver GPU/NPU coexistence/fabric contract or authoritative exemption",
+      "matched fullrequest auto/off and on/emulate qualification including memory and outputquality"
+    ],
+    "not_done": true,
+    "not_a_flag_upgrade": true,
+    "upstream_tok_s_forecast": null
+  },
+  "retained_context": {
+    "fresh_source_review": "server/.local/halogen-regression-20261019/fresh-sources.json",
+    "review_verified_at": "2026-10-18T21:58:44.919Z",
+    "author_result": "0.4.2.1 roughly10.1%lower16KclientTTFT on nativeLinux7.3rc7+IOMMUPerfOpt; not local proof",
+    "coexistence_audit": "docs/research/halogen-windows-fabric-support-20261005.md",
+    "staged_handoff": "docs/research/halogen-npu-wsl-handoff-20261007.md",
+    "source_probe": "docs/research/halogen-npu-native-route-20261005.md"
+  },
+  "actions": {
+    "hardware": false,
+    "lifecycle": false,
+    "driver_or_firmware_change": false,
+    "model_change": false,
+    "transport_implemented": false,
+    "serving_speedup_measured": false
+  }
+}
