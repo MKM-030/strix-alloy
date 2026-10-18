@@ -18,7 +18,7 @@ class EndSessionTests(unittest.IsolatedAsyncioTestCase):
         bot_app.router.add_post('/bot', bot)
         backend = TestServer(bot_app)
         await backend.start_server()
-        bridge = Bridge(Settings(user_id='test'), 'test-sn', 'test-audio', 'test-callback')
+        bridge = Bridge(Settings(instance_url='https://instance.example.test', user_id='test'), 'test-sn', 'test-audio', 'test-callback')
         bridge.bot_url = str(backend.make_url('/bot'))
         client = TestClient(TestServer(bridge.ui_app()), cookie_jar=CookieJar(unsafe=True))
         await client.start_server()

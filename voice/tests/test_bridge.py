@@ -20,7 +20,7 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
         app.router.add_post('/api/sn_va_as_service/bot/integration', bot)
         self.bot = TestServer(app)
         await self.bot.start_server()
-        self.bridge = Bridge(Settings(user_id='demo', email='demo@example.test'),
+        self.bridge = Bridge(Settings(user_id='demo', email='demo@example.test', instance_url='https://instance.example.test'),
                              'sn-secret', 'audio-secret', 'callback-secret')
         self.bridge.bot_url = str(self.bot.make_url('/api/sn_va_as_service/bot/integration'))
         self.ui = TestClient(TestServer(self.bridge.ui_app()), cookie_jar=CookieJar(unsafe=True))
