@@ -1,0 +1,150 @@
+{
+  "schema": "strix-alloy.halogen01811-preparation.v1",
+  "utc": "2026-10-19T07:17:35.193735+00:00",
+  "status": "Installed separate inactive candidate; no new inference rates",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:a5797467d2bff173e0c661d9700292bd55eac305faff68c86261ae35385ad6ad",
+  "engine_sha256": "648d9ce469b15bdd7bcdd49daee5a84a764760a311a6d4701afe6dba305520d9",
+  "upstream_api_sha256": "8e602c3d69dbc5f911a35864e39d870f3e74197afc6e22dbc231949b8feb00fe",
+  "source_count": 44,
+  "release": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.11\\profiles\\release.json",
+    "bytes": 7389,
+    "sha256": "920d90ed0511e3285e509e19a45e93d2513b28347877e5fabdf625355882e80f"
+  },
+  "source_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.11\\profiles\\sources.json",
+    "bytes": 4738,
+    "sha256": "7b59a8592c52029897d41aae6af9eb3512f5b3e92f46382d420fc3dc91ab4c2f"
+  },
+  "static_map": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261019\\primary01811\\source-prep\\static-map.json",
+    "bytes": 109319,
+    "sha256": "a20f660e8b953023140a8993a211f40886f491521084316206b933ef1d59116f"
+  },
+  "gather_getter_audit": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261019\\primary01811\\source-prep\\gather-defaults.json",
+    "bytes": 11440,
+    "sha256": "9dd2c42f88dc50784b24576f6d595ead178f31dd3583ffb2aeb495b47845c73e"
+  },
+  "cpu_build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261019\\primary01811\\source-prep\\cpu-build\\cpu-build.json",
+    "bytes": 14483,
+    "sha256": "96941625c63af1061cd562328c696af97b03da39460b4e9191e1035550e2b25d"
+  },
+  "cpu_stage_results": [
+    {
+      "name": "prepare-cpu-image",
+      "exit_code": 0,
+      "elapsed_s": 0.42199999999138527,
+      "minimum_reserve_gib": 42.059791564941406
+    },
+    {
+      "name": "build-cpu",
+      "exit_code": 0,
+      "elapsed_s": 9.234000000025844,
+      "minimum_reserve_gib": 38.10498046875
+    },
+    {
+      "name": "finalize-cpu-pins",
+      "exit_code": 0,
+      "elapsed_s": 0.21899999998277053,
+      "minimum_reserve_gib": 38.11919403076172
+    },
+    {
+      "name": "verify-install-plan",
+      "exit_code": 0,
+      "elapsed_s": 0.20300000000861473,
+      "minimum_reserve_gib": 38.12215042114258
+    },
+    {
+      "name": "install-inactive",
+      "exit_code": 0,
+      "elapsed_s": 10.437999999994645,
+      "minimum_reserve_gib": 37.98936462402344
+    }
+  ],
+  "inactive_install": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261019\\primary01811\\source-prep\\root-install.json",
+    "bytes": 2618,
+    "sha256": "cc4e20faf033798b1648a59a711dba42365da83a91c517f49e6a97fadfb68858"
+  },
+  "launcher_fix": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261019\\primary01811\\launcher-fix\\applied.json",
+    "bytes": 1181,
+    "sha256": "5082e919f0c078ed722fbd8071b2f2a58f15abe8813cae1d29b57fd47c9f77aa"
+  },
+  "launcher_default": "0.18.10",
+  "new01811_runtime_promoted": false,
+  "model_rehash_or_download": false,
+  "models_or_drivers_modified": false,
+  "current_service": {
+    "run": "8e7468f50e534b959f16837dfb6a08ca",
+    "identity": {
+      "pid": 21916,
+      "creation_time_100ns": 134368308009612910,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "gateway": {
+      "status": "ok",
+      "backend": "gemma4-26b-a4b",
+      "checkpoint": "gemma-4-26B-qat-q4_0-it",
+      "context": 32768,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "draining": false,
+      "completed": 0,
+      "cancelled": 0
+    },
+    "scc": {
+      "status": "ok",
+      "backend": "gemma4-26b-a4b",
+      "checkpoint": "gemma-4-26B-qat-q4_0-it",
+      "context": 32768,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "draining": false,
+      "completed": 40,
+      "cancelled": 0
+    },
+    "scc_identity": {
+      "pid": 20676,
+      "creation_time_100ns": 134368309504776111,
+      "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe"
+    },
+    "active_profile_modified": false,
+    "restarted": false
+  },
+  "fresh_sources": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-regression-20261019\\fresh-sources-20261019-am.json",
+    "bytes": 8832,
+    "sha256": "ec6a61d57339a579413479a510d36a0b55033642337f0d85cfac9b6f505ffaf9"
+  },
+  "next_source_check_not_before_utc": "2026-10-19T08:50:53+00:00",
+  "benchmark_packet": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261019\\primary01811\\batch32768\\source-freeze.json",
+    "bytes": 7271,
+    "sha256": "110b0ebf2a5e4a85c711289b73ca7ca308316cba575906411cf6ffa48fe14edb"
+  },
+  "coordinator": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261019\\primary01811\\run_chunk_comparison.py",
+    "bytes": 24800,
+    "sha256": "09d1822409761ec771eca4a117a23957c557b2248548fd0389d96bc90dba6f54"
+  },
+  "observer": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\run_adlx_matrix_guard.py",
+    "bytes": 6912,
+    "sha256": "7772e896cb128e81205a4a56c9f5330476341a9653d87e5f1100f30e56604891"
+  },
+  "observer_mode": "Existing logger in a separate root-owned session; explicit saved run-id stop and terminal receipt; no new observer context selected",
+  "hardware_measurements_started": false,
+  "performance": {
+    "prefill_tokens_per_second": null,
+    "decode_tokens_per_second": null,
+    "acceptance": null,
+    "previous_speed_restored": false,
+    "speedup_established": false
+  },
+  "execution_gate": "The already-asked specific Gemma interruption question remains unanswered",
+  "old01810_packet": "Retained unchanged; old controller/manage pins are stale, do not execute without a new seal",
+  "full_goal_achieved": false
+}

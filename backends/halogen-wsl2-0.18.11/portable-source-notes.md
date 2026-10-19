@@ -1,0 +1,3 @@
+# Source lineage
+
+Source membership follows the verified current 0.18.10 manifest. Version identifiers are migrated, and exact image/engine/API/entrypoint identities are fresh. The new demand site was derived by executable-byte search and decoded again; the enclosing function and seven direct helpers passed finite normalized instruction, reference, branch, and CFI comparisons. The native CMA-adjusted availability comparison and the retained bridge frame/register contract remain intact. Indirect callbacks, the full loader/HIP runtime closure, and serving behavior remain outside that static proof.
