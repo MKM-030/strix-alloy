@@ -183,7 +183,15 @@ class ConversationAttachment:
                     # after accept cleared its delivery binding. Journal evidence only;
                     # never restore open_question or infer that audio was heard.
                     if latest['kind'] == 'continue_task' and latest['context_version'] == task['context_version']:
-                        for event in reversed(self.store.events(task['task_id'], self.scope.scope_id)):
+                        events = self.store.events(task['task_id'], self.scope.scope_id)
+                        accepted = next((event for event in events if event['type'] == 'utterance_accepted'
+                            and event['operation_id'] == latest['operation_id']
+                            and event['context_version'] == latest['context_version']), None)
+                        # A previous-version settlement may arrive after this answer.
+                        # Only journal evidence preceding acceptance can identify the
+                        # question that was actually available when it was answered.
+                        prior = [event for event in events if accepted and event['sequence'] < accepted['sequence']]
+                        for event in reversed(prior):
                             if event['context_version'] != latest['context_version'] - 1:
                                 continue
                             payload = event['payload']

@@ -327,6 +327,12 @@ class ConversationRouter:
     @staticmethod
     def _answer_kind(question):
         question = question.casefold()
+        # The requested response form outranks nouns inside the question. A
+        # confirmation of a name/date still asks for yes/no, not a replacement.
+        if re.search(r'ja.{0,12}nein|möchten sie|möchtest du|soll ich|bestätigen sie|bestätigst du|einverstanden|fortfahren|\b(?:do|would|are) you\b', question):
+            if re.search(r'\b(?:wie lautet|wie heißen|welch\w*|wann|wohin|wer)\b', question):
+                return 'ambiguous'
+            return 'yes_no'
         if re.search(r'buchstab|spell', question):
             return 'spelling'
         if re.search(r'liefer(?:ort|adresse|anschrift)|lieferung.*(?:wo|adresse)|delivery.*(?:location|address)|wohin', question):
@@ -337,8 +343,6 @@ class ConversationRouter:
             return 'name'
         if re.search(r'datum|termin|welchem tag|wann|\bdate\b', question):
             return 'date'
-        if re.search(r'ja.{0,12}nein|möchten sie|möchtest du|soll ich|bestätigen sie|bestätigst du|einverstanden|fortfahren|\b(?:do|would|are) you\b', question):
-            return 'yes_no'
         return ''
 
     @staticmethod
@@ -362,6 +366,33 @@ class ConversationRouter:
     @staticmethod
     def _unsafe_control(text):
         return bool(re.search(r'["„“”«»`]|\b(?:nicht|kein\w*|niemals|wenn|falls|würde|würdest|könnte|hypothetisch|zitiert|sagte|bedeutet|heißt|heisst|alle|beide|irgendein\w*)\b|einen der|eine der', text, re.I))
+
+    @classmethod
+    def _affirmative_cancel(cls, context, text):
+        """Validate one whole affirmative clause, not merely a cancellation prefix."""
+        labels = {t['task_id'] for t in context.tasks}
+        labels.update(t.get('objective', '') for t in context.tasks)
+        labels.update(label for a in context.agents for label in (a.alias, a.name, *a.routing_aliases))
+        # Replace complete registered references before checking grammar, preserving
+        # legitimate multiword task names without allowing extra unresolved objects.
+        labels.discard('')
+        if labels:
+            pattern = r'(?<![\w-])(?:' + '|'.join(re.escape(v) for v in sorted(labels, key=len, reverse=True)) + r')(?![\w-])'
+            text = re.sub(pattern, '<target>', text, flags=re.I)
+        text = re.sub(r'\s+', ' ', text.strip()).casefold()
+        article = r'(?:(?:die|den|das|meine[nrs]?|diese[nrs]?) )?'
+        noun = r'(?:aufgabe|auftrag|bestellung|ticket)'
+        target = article + r'(?:' + noun + r' (?:(?:id|nummer|nr\.?) )?)?<target>'
+        target = r'(?:' + target + '|' + article + noun + ')'
+        polite = r'(?:bitte )?'
+        commands = (
+            polite + r'stornier(?:e|en)? ' + polite + target + r'(?: bitte)?',
+            polite + r'brich ' + polite + target + r'(?: bitte)? ab(?: bitte)?',
+            polite + target + ' ' + polite + r'(?:stoppen|abbrechen|stornieren)',
+            r'(?:kannst du|können sie|würdest du) ' + polite + target + ' ' + polite + r'(?:stornieren|abbrechen|stoppen)',
+            r'ich (?:möchte|will) ' + polite + target + r' stornieren',
+        )
+        return any(re.fullmatch(command + r'[.!?]?', text) for command in commands)
 
     @staticmethod
     def _new_intent(text):
@@ -398,7 +429,9 @@ class ConversationRouter:
         if not isinstance(context, RoutingContext) or not isinstance(text, str) or len(text) > 4000 or not text.strip():
             return self._clarify()
         try:
-            context.model_data()
+            # Scope/type/size invariants apply to every route. The optional model's
+            # serialized byte budget must not disable local controls or exact repeats.
+            context.__post_init__()
         except (StoreInvalid, ValueError):
             return self._clarify()
         text = text.strip()  # Matching only: coordinator persists the original utterance.
@@ -415,7 +448,7 @@ class ConversationRouter:
             return self._clarify(context) if unsafe and 'nicht weiter sprechen' not in folded else Route('stop_speaking')
         target = self._target(context, text)
         if cancellation:
-            direct = re.search(r'^(?:bitte\s+)?(?:stornier\w*|brich|abbrechen|(?:die\s+)?(?:aufgabe|auftrag|ticket).*stoppen)|^(?:kannst|können|würdest) (?:du|sie).*(?:stornier|abbrech|stoppen)|^ich (?:möchte|will).*stornier', folded)
+            direct = self._affirmative_cancel(context, text)
             explicit, conflict = self._reference(context, text)
             generic = bool(re.fullmatch(r'(?:bitte )?(?:stornier\w* (?:bitte )?(?:(?:die|den|meine[nr]?|diese[nr]?) )?(?:aufgabe|auftrag|bestellung|ticket)|(?:die |den )?(?:aufgabe|auftrag|ticket) stoppen)[.!?]?', folded))
             if conflict or "'" in text or (not explicit and not generic):
@@ -439,7 +472,9 @@ class ConversationRouter:
                 and (not explicit or explicit == t['task_id'])
                 and self._matches_answer(correction.group(1), self._answer_kind(t['previous_question']))]
             if len(candidates) == 1:
-                if (question and context.last_question != candidates[0]['previous_question']
+                if (question and not explicit
+                        and (question['task_id'], context.question_version) !=
+                            (candidates[0]['task_id'], candidates[0]['previous_question_version'])
                         and self._matches_answer(correction.group(1), self._answer_kind(context.last_question))):
                     return self._clarify(context)
                 return Route('amend_task', candidates[0]['task_id'])
@@ -460,6 +495,7 @@ class ConversationRouter:
         if self.model is None:
             return self._clarify(context)
         try:
+            context.model_data()
             proposal = await asyncio.wait_for(self.model.classify(text, context), timeout=2.0)
             if not isinstance(proposal, dict) or set(proposal) != _ROUTE_KEYS or any(type(v) is not str for v in proposal.values()):
                 return self._clarify(context)

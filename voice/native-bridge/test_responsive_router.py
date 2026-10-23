@@ -36,6 +36,64 @@ class FakeModel:
 
 
 class RouterTest(unittest.IsolatedAsyncioTestCase):
+    async def test_withdrawn_or_compound_cancellation_is_not_executed(self):
+        context = RoutingContext('scope-1', [task('t1', 'running')])
+        for text in ('Storniere t1? Nein, weiter ausführen.', 'Storniere t1 und die Flugreise',
+                     'Storniere t1. Bitte weiter ausführen.', 'Storniere t1, aber führe es weiter aus.'):
+            with self.subTest(text=text):
+                self.assertEqual((await ConversationRouter().route(text, context)).intent, 'clarification')
+        for text in ('Storniere t1', 'Bitte storniere Aufgabe t1.', 'Kannst du t1 stornieren?'):
+            self.assertEqual(await ConversationRouter().route(text, context), Route('cancel_task', 't1'))
+
+    async def test_same_question_text_on_other_task_makes_correction_ambiguous(self):
+        question = 'Wie lautet Ihr Name?'
+        previous = dict(task('t1', 'running'), context_version=2, open_question=None,
+                        previous_question=question, previous_question_version=1)
+        current = dict(task('t2'), context_version=1, open_question=question)
+        context = RoutingContext('scope-1', [previous, current], question_task_id='t2',
+                                 question_version=1, last_question=question)
+        self.assertEqual((await ConversationRouter().route('Korrektur: Nora Berndt', context)).intent, 'clarification')
+        current['open_question'] = None
+        previous['open_question'] = question
+        context.question_task_id, context.question_version = 't1', 2
+        self.assertEqual((await ConversationRouter().route('Korrektur: Nora Berndt', context)).intent, 'clarification')
+        previous['open_question'] = None
+        context.question_task_id = ''
+        context.last_question = ''
+        current['open_question'] = None
+        self.assertEqual(await ConversationRouter().route('Korrektur: Nora Berndt', context), Route('amend_task', 't1'))
+
+    async def test_confirmation_form_overrides_field_nouns(self):
+        for question, wrong in (('Möchten Sie den Namen bestätigen?', 'Nora Berg'),
+                                ('Möchten Sie das Datum bestätigen?', '17.11.2026'),
+                                ('Möchten Sie den Lieferort bestätigen?', 'Büro 42, Berlin'),
+                                ('Möchten Sie den Manager bestätigen?', 'Nora Berg')):
+            current = dict(task(), context_version=1, open_question=question)
+            context = RoutingContext('scope-1', [current], question_task_id='t1', question_version=1,
+                                     last_question=question, workflow_task_id='t1', agents=[AGENT])
+            with self.subTest(question=question):
+                self.assertEqual(await ConversationRouter().route('Ja', context), Route('continue_task', 't1'))
+                self.assertEqual((await ConversationRouter().route(wrong, context)).intent, 'clarification')
+        current['open_question'] = context.last_question = 'Wie lautet der Name, möchten Sie das Datum bestätigen?'
+        for text in ('Ja', 'Nora Berg', '17.11.2026'):
+            self.assertEqual((await ConversationRouter().route(text, context)).intent, 'clarification')
+
+    async def test_model_byte_limit_does_not_disable_local_help_or_audio_stop(self):
+        question = 'Wie lautet Ihr Name?' + 'ä' * (4000 - len('Wie lautet Ihr Name?'))
+        current = dict(task(), context_version=1, open_question=question)
+        context = RoutingContext('scope-1', [current], question_task_id='t1', question_version=1, last_question=question)
+        with self.assertRaises(StoreInvalid):
+            context.model_data()
+        router = ConversationRouter()
+        self.assertEqual((await router.route('Wiederhole die Frage', context)).reply, question)
+        self.assertEqual(await router.route('Hör bitte auf zu sprechen', context), Route('stop_speaking'))
+        self.assertEqual(await router.route('Status', context), Route('status_query', 't1'))
+        model = FakeModel()
+        self.assertEqual((await ConversationRouter(model).route('Unbekanntes Anliegen?', context)).intent, 'clarification')
+        self.assertEqual(model.calls, 0)
+        current['scope_id'] = 'other'
+        self.assertEqual((await router.route('Hör bitte auf zu sprechen', context)).intent, 'clarification')
+
     async def test_guarded_cancel_and_audio_abort(self):
         context = RoutingContext('scope-1', [task('t1'), task('t2')], focus_task_id='t1')
         router = ConversationRouter(FakeModel({'intent': 'cancel_task', 'task_id': 't1', 'agent_alias': '', 'reply': ''}))

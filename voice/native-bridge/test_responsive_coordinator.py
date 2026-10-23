@@ -56,6 +56,33 @@ async def eventually(predicate):
 
 
 class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
+    async def test_late_settlement_cannot_replace_the_question_answered_before_acceptance(self):
+        # Use public store operations so settlement can deliberately arrive after
+        # continuation acceptance without changing the process-owned worker model.
+        task = self.store.create_task(self.scope, self.agent, 'Original task')
+        first = self.store.accept(task['task_id'], 'scope', 'first', 'first request')
+        self.store.dispatch(first['operation_id'])
+        self.store.note_question(task['task_id'], 'scope', 'Wie lautet Ihr Name?', source='backend', context_version=1)
+        answer = self.store.accept(task['task_id'], 'scope', 'answer', '  Nora Berg  ')
+        self.store.settle(first['operation_id'], replies=['An welchem Datum?'])
+        events = self.store.events(task['task_id'], 'scope')
+        noted = next(event for event in events if event['type'] == 'question_noted')
+        accepted = next(event for event in events if event['type'] == 'utterance_accepted' and event['operation_id'] == answer['operation_id'])
+        settled = next(event for event in events if event['type'] == 'operation_settled')
+        self.assertLess(noted['sequence'], accepted['sequence'])
+        self.assertLess(accepted['sequence'], settled['sequence'])
+        self.assertEqual(noted['context_version'], settled['context_version'])
+        self.coordinator.router = ConversationRouter()
+        wrong = await self.attachment.accept('wrong-correction', 'Korrektur: Am 17. November')
+        self.assertEqual(wrong.intent, 'clarification')
+        self.assertEqual(len(self.store.operations('scope')), 2)
+        self.assertEqual(self.store.operations('scope')[1]['text'], '  Nora Berg  ')
+        self.assertIsNone(self.store.question('scope'))
+        correct = await self.attachment.accept('right-correction', 'Korrektur: Nora Berndt')
+        self.assertEqual((correct.intent, correct.task_id), ('amend_task', task['task_id']))
+        self.assertEqual(self.store.operations('scope')[-1]['text'], 'Korrektur: Nora Berndt')
+        self.assertIsNone(self.store.question('scope'))
+
     async def test_grounded_local_help_during_held_execution_preserves_original(self):
         await self.attachment.accept('first', 'new request')
         await self.dialog.started.wait()
