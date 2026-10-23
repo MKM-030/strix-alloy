@@ -106,6 +106,50 @@ async def wait_observations(model, count):
 
 
 class AdmissionTests(unittest.IsolatedAsyncioTestCase):
+    async def test_planner_exact_budget_and_completion_limits_use_shared_transport(self):
+        import conversation_admission as admission
+        self.assertTrue(hasattr(admission, 'run_admitted_chat'), 'shared admitted planner transport is absent')
+        for tokens, attempts in ((3071, 2), (3072, 2), (3073, 1)):
+            async with transaction([framed(count_body(tokens)), framed(choice_body(tokens,
+                    usage={'prompt_tokens': tokens, 'completion_tokens': 128}))]) as (peer, model):
+                request = admission.AdmissionRequest(1, budget=admission.PLANNER_BUDGET)
+                payload = json.dumps({'max_tokens': 128, 'messages': []}).encode()
+                call = admission.run_admitted_chat(request, host=model.host, port=model.port, token_file=None,
+                    prepare=lambda: admission.PreparedChat(payload, b'{}', 'binding'),
+                    decode_content=lambda content, binding: (content, binding), observe=lambda _: None)
+                if attempts == 1:
+                    from routing_policy import ContextBudgetExceeded
+                    with self.assertRaises(ContextBudgetExceeded): await call
+                else:
+                    self.assertEqual((await call)[1], 'binding')
+                self.assertEqual(len(peer.requests), attempts)
+                self.assertEqual(request.snapshot().completion_limit, 128)
+
+    async def test_planner_budget_mismatch_rejected_before_any_send(self):
+        import conversation_admission as admission
+        async with transaction([]) as (peer, model):
+            for maximum in (24, True, '128'):
+                request = admission.AdmissionRequest(1, budget=admission.PLANNER_BUDGET)
+                with self.assertRaises(admission.AdmissionUnavailable):
+                    await admission.run_admitted_chat(request, host=model.host, port=model.port, token_file=None,
+                        prepare=lambda: admission.PreparedChat(json.dumps({'max_tokens': maximum}).encode(), b'{}', None),
+                        decode_content=lambda content, binding: content, observe=lambda _: None)
+                self.assertEqual(request.snapshot().total_attempts, 0)
+            self.assertEqual(peer.requests, [])
+
+    async def test_planner_usage_and_output_fail_closed_on_shared_envelope(self):
+        import conversation_admission as admission
+        for usage in (None, {'prompt_tokens': 99, 'completion_tokens': 128},
+                      {'prompt_tokens': 100, 'completion_tokens': 129},
+                      {'prompt_tokens': 100, 'completion_tokens': True}):
+            async with transaction([framed(count_body(100)), framed(choice_body(100, usage=usage))]) as (peer, model):
+                request = admission.AdmissionRequest(1, budget=admission.PLANNER_BUDGET)
+                with self.assertRaises(admission.AdmissionUnavailable):
+                    await admission.run_admitted_chat(request, host=model.host, port=model.port, token_file=None,
+                        prepare=lambda: admission.PreparedChat(b'{"max_tokens":128}', b'{}', None),
+                        decode_content=lambda *_: self.fail('unadmitted completion decoded'), observe=lambda _: None)
+                self.assertEqual(len(peer.requests), 2)
+
     async def decide(self, model, text=TEXT):
         return await ConversationRouter(model).decide(text, RoutingContext('scope', []))
 
@@ -402,7 +446,7 @@ class FramingAndOwnershipTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_cancel_reports_honest_outstanding_worker_then_cleanup(self):
         from unittest.mock import patch
-        import conversation_router
+        import conversation_admission as conversation_router
         entered, release = threading.Event(), threading.Event()
         original = conversation_router.prepare_frames
         def held(*args):
@@ -436,7 +480,7 @@ class FramingAndOwnershipTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_deadline_during_final_count_validation_prevents_inference(self):
         from unittest.mock import patch
-        import conversation_router
+        import conversation_admission as conversation_router
         original = conversation_router._strict_json
         def slow(raw, cap):
             value = original(raw, cap)
@@ -551,19 +595,20 @@ class PublicOwnershipReviewTests(unittest.IsolatedAsyncioTestCase):
                 request.socket = OwnedSocket()
             request.update(connection_closed=False)
             return request.socket
-        class Model(ObservedModel):
-            def _transaction(self, *args):
-                try: return super()._transaction(*args)
-                finally: worker_done.set()
-            def _exchange(self, request, owned, frame):
-                phase = 'count' if frame.startswith(b'POST ' + (PATH + '/input_tokens').encode()) else 'inference'
-                sends.append((phase, request.cancelled.is_set()))
-                if phase == 'count':
-                    entered.set()
-                    release.wait(1)
-                    return count_body(42), False
-                return choice_body(42), False
-        model = Model(1)
+        import conversation_admission as admission
+        original_transaction = admission._chat_transaction
+        def tracked_transaction(*args):
+            try: return original_transaction(*args)
+            finally: worker_done.set()
+        def exchange(request, owned, frame):
+            phase = 'count' if frame.startswith(b'POST ' + (PATH + '/input_tokens').encode()) else 'inference'
+            sends.append((phase, request.cancelled.is_set()))
+            if phase == 'count':
+                entered.set()
+                release.wait(1)
+                return count_body(42), False
+            return choice_body(42), False
+        model = ObservedModel(1)
         original_wait = asyncio.wait
         route_task = None
         def release_before_child_handler():
@@ -578,7 +623,7 @@ class PublicOwnershipReviewTests(unittest.IsolatedAsyncioTestCase):
                 return set(), set(aws)
             return await original_wait(aws, timeout=timeout, **kwargs)
         try:
-            with patch.object(AdmissionRequest, 'connect', connect), patch('asyncio.wait', outer_timeout if not cancelled else original_wait):
+            with patch.object(AdmissionRequest, 'connect', connect), patch('asyncio.wait', outer_timeout if not cancelled else original_wait), patch.object(admission, '_chat_transaction', tracked_transaction), patch.object(admission, 'exchange', exchange):
                 route_task = asyncio.create_task(ConversationRouter(model).decide(TEXT, RoutingContext('scope', [])))
                 self.assertTrue(await asyncio.to_thread(entered.wait, .5))
                 if cancelled:

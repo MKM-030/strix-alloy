@@ -1,4 +1,7 @@
 """Request-owned bounded HTTP admission transport; no routing authority."""
+import asyncio
+import json
+import math
 import hashlib
 import http.client
 import io
@@ -9,6 +12,7 @@ import uuid
 from dataclasses import dataclass, replace
 
 from routing_policy import ContextBudgetExceeded
+from route_proposal import ProposalError
 
 MAX_REQUEST_BYTES = 16384
 MAX_BODY_BYTES = 8192
@@ -19,6 +23,29 @@ INFERENCE_PATH = '/v1/chat/completions'
 
 class AdmissionUnavailable(OSError):
     """Bounded protocol failure, never model JSON/schema evidence."""
+
+
+@dataclass(frozen=True)
+class AdmissionBudget:
+    input_tokens: int
+    completion_tokens: int
+
+    def __post_init__(self):
+        if (type(self.input_tokens) is not int or type(self.completion_tokens) is not int
+                or min(self.input_tokens, self.completion_tokens) <= 0
+                or self.input_tokens + self.completion_tokens > 4096):
+            raise ValueError('invalid admission budget')
+
+
+ROUTE_BUDGET = AdmissionBudget(3584, 24)
+PLANNER_BUDGET = AdmissionBudget(3072, 128)
+
+
+@dataclass(frozen=True)
+class PreparedChat:
+    payload: bytes
+    catalog: bytes
+    binding: object
 
 
 @dataclass(frozen=True)
@@ -45,10 +72,15 @@ class AdmissionSnapshot:
     elapsed_ms: float = 0
     connection_closed: bool = True
     worker_outstanding: bool = True
+    input_limit: int = 3584
+    completion_limit: int = 24
 
 
 class AdmissionRequest:
-    def __init__(self, timeout):
+    def __init__(self, timeout, *, budget=ROUTE_BUDGET):
+        if budget not in (ROUTE_BUDGET, PLANNER_BUDGET):
+            raise ValueError('unsupported admission budget')
+        self.budget = budget
         self.started = time.monotonic()
         self.deadline = self.started + timeout
         self.cancelled = threading.Event()
@@ -56,7 +88,8 @@ class AdmissionRequest:
         self.socket = None
         self.sealed = False
         self.payload = None
-        self.receipt = AdmissionSnapshot(request_id=uuid.uuid4().hex)
+        self.receipt = AdmissionSnapshot(request_id=uuid.uuid4().hex,
+            input_limit=budget.input_tokens, completion_limit=budget.completion_tokens)
 
     def check(self):
         remaining = self.deadline - time.monotonic()
@@ -106,7 +139,7 @@ class AdmissionRequest:
             if self.sealed or getattr(self.receipt, phase + '_attempts'):
                 raise AdmissionUnavailable('retired dispatch')
             if phase == 'inference' and (self.receipt.count_valid is not True or
-                                        self.receipt.input_tokens > 3584):
+                                        self.receipt.input_tokens > self.budget.input_tokens):
                 raise AdmissionUnavailable('count gate')
             self.receipt = replace(self.receipt, stage=phase,
                 **{phase + '_attempts': 1}, total_attempts=self.receipt.total_attempts + 1,
@@ -231,3 +264,190 @@ def exchange(request, owned, frame):
         raise AdmissionUnavailable('invalid response framing') from error
     finally:
         response.close()  # parser only; the request owns and closes the socket
+
+
+def _reject_duplicates(pairs):
+    output = {}
+    for key, value in pairs:
+        if key in output:
+            raise ValueError("duplicate JSON key")
+        output[key] = value
+    return output
+
+
+def _invalid_constant(value):
+    raise ValueError("nonfinite JSON value")
+
+
+def _strict_json(raw, max_bytes):
+    if isinstance(raw, str):
+        raw = raw.encode("utf-8")
+    if not isinstance(raw, bytes) or len(raw) > max_bytes:
+        raise ValueError("JSON too large")
+    try:
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=_reject_duplicates,
+                           parse_constant=_invalid_constant)
+    except (UnicodeError, json.JSONDecodeError, RecursionError) as error:
+        raise ValueError("invalid JSON") from error
+    if not isinstance(value, dict):
+        raise ValueError("expected JSON object")
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, float) and not math.isfinite(item):
+            raise ValueError("nonfinite JSON value")
+        if isinstance(item, dict):
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+    return value
+
+
+
+
+def _chat_transaction(transaction, host, port, token_file, prepare, decode_content):
+    try:
+        transaction.check()
+        prepared = prepare()
+        payload, catalog = prepared.payload, prepared.catalog
+        if len(payload) > MAX_REQUEST_BYTES:
+            raise ContextBudgetExceeded('conversation request body too large')
+        maximum = _strict_json(payload, MAX_REQUEST_BYTES).get('max_tokens')
+        if type(maximum) is not int or maximum != transaction.budget.completion_tokens:
+            raise AdmissionUnavailable('completion budget mismatch')
+        transaction.bind(payload, catalog)
+        frames = prepare_frames(host, port, payload, token_file)
+        transaction.update(count_request_bytes=len(frames[0]), inference_request_bytes=len(frames[1]),
+            prepare_ms=(time.monotonic() - transaction.started) * 1000)
+        # Dispatch counts an attempted connection/send even if its outcome is unknown.
+        phase_started = time.monotonic()
+        transaction.dispatch('count', len(frames[0]))
+        try:
+            owned = transaction.connect(host, port)
+            raw, closing = exchange(transaction, owned, frames[0])
+            try:
+                counted = _strict_json(raw, MAX_BODY_BYTES)
+                count = counted.get('input_tokens')
+                if counted.get('object') != 'response.input_tokens' or type(count) is not int or count < 1:
+                    raise ValueError('invalid count')
+            except ValueError:
+                transaction.update(count_valid=False)
+                raise AdmissionUnavailable('invalid count') from None
+            transaction.update(input_tokens=count, count_valid=True)
+            transaction.check()
+            if count > transaction.budget.input_tokens or count + transaction.budget.completion_tokens > 4096:
+                raise ContextBudgetExceeded('conversation input token budget')
+            if closing:
+                raise AdmissionUnavailable('count connection retired')
+        finally:
+            transaction.update(count_ms=(time.monotonic() - phase_started) * 1000)
+        phase_started = time.monotonic()
+        transaction.dispatch('inference', len(frames[1]))
+        transaction.update(payload_bound=True)
+        try:
+            raw, _ = exchange(transaction, owned, frames[1])
+            result = _decode_admitted(raw, count, transaction, decode_content, prepared.binding)
+            transaction.check()
+        finally:
+            transaction.update(inference_ms=(time.monotonic() - phase_started) * 1000)
+        transaction.update(stage='validated', reason='validated')
+        return result
+    except TimeoutError:
+        transaction.retire('timeout')
+        raise
+    except ContextBudgetExceeded:
+        transaction.update(reason='context_budget')
+        raise
+    except ProposalError:
+        transaction.update(reason='schema')
+        raise
+    except (OSError, ValueError) as error:
+        transaction.update(reason='unavailable')
+        raise AdmissionUnavailable('admission unavailable') from error
+    finally:
+        transaction.close()
+        transaction.update(worker_outstanding=False)
+
+
+
+def _decode_admitted(raw, count, transaction, decode_content, binding):
+    try:
+        envelope = _strict_json(raw, MAX_BODY_BYTES)
+    except ValueError:
+        raise ProposalError('syntax_rejected', syntax=False) from None
+    choices = envelope.get('choices')
+    choice_shape = isinstance(choices, list) and len(choices) == 1 and isinstance(choices[0], dict)
+    if choice_shape and choices[0].get('finish_reason') == 'length':
+        raise ProposalError('shape_rejected', syntax=True, shape=False)
+    usage = envelope.get('usage')
+    matching = (isinstance(usage, dict) and type(usage.get('prompt_tokens')) is int
+                and usage['prompt_tokens'] == count)
+    transaction.update(usage_count_match=matching)
+    if (not matching or type(usage.get('completion_tokens')) is not int
+            or not 0 <= usage['completion_tokens'] <= transaction.budget.completion_tokens):
+        raise AdmissionUnavailable('admission disagreement')
+    if not choice_shape:
+        raise ProposalError('shape_rejected', syntax=True, shape=False)
+    if choices[0].get('finish_reason') != 'stop':
+        raise AdmissionUnavailable('incomplete admission')
+    message = choices[0].get('message')
+    if not isinstance(message, dict) or not isinstance(message.get('content'), str):
+        raise ProposalError('shape_rejected', syntax=True, shape=False)
+    return decode_content(message['content'], binding)
+
+
+def _consume(future):
+    if not future.cancelled(): future.exception()
+
+
+def notify_terminal(request, observe):
+    receipt = request.snapshot()
+    notification = asyncio.create_task(asyncio.to_thread(observe, receipt))
+    notification.add_done_callback(_consume)
+
+
+async def _observe_with_deadline(request, observe):
+    notification = asyncio.create_task(asyncio.to_thread(observe, request.snapshot()))
+    try:
+        done, _ = await asyncio.wait((notification,), timeout=request.check())
+        if not done:
+            raise TimeoutError('conversation observer deadline')
+        notification.result()
+        request.check()
+    finally:
+        if not notification.done(): notification.add_done_callback(_consume)
+
+
+async def run_admitted_chat(request, *, host, port, token_file, prepare, decode_content, observe):
+    # Preparation/authentication/parser work share this one absolute deadline.
+    worker = asyncio.create_task(asyncio.to_thread(_chat_transaction, request, host, port, token_file, prepare, decode_content))
+    try:
+        done, _ = await asyncio.wait((worker,), timeout=request.check())
+        if not done:
+            raise TimeoutError('conversation deadline')
+        result = worker.result()
+        await _observe_with_deadline(request, observe)
+        return result
+    except asyncio.CancelledError:
+        request.retire('cancelled')
+        notify_terminal(request, observe)
+        raise
+    except TimeoutError:
+        request.retire('timeout')
+        notify_terminal(request, observe)
+        raise
+    except Exception:
+        # Error-path observers are also bounded by the same remaining time.
+        try: await _observe_with_deadline(request, observe)
+        except TimeoutError:
+            request.retire('timeout')
+            notify_terminal(request, observe)
+            raise
+        raise
+    finally:
+        if not worker.done():
+            # Do not cancel the wrapper and pretend its thread was stopped.
+            def cleanup(future):
+                _consume(future)
+                notify_terminal(request, observe)
+            worker.add_done_callback(cleanup)

@@ -8,6 +8,7 @@ does); callbacks are journaled before a separate output worker invokes it.
 import asyncio
 import hashlib
 import inspect
+import time
 from collections import Counter
 from dataclasses import replace
 
@@ -39,12 +40,13 @@ def render_grounded_status(state, latest_reply=''):
 
 
 class TaskCoordinator:
-    def __init__(self, store, router, agents, executor_factory, *, mode='legacy'):
+    def __init__(self, store, router, agents, executor_factory, *, mode='legacy', grounded_answers=None):
         if mode not in ('legacy', 'full'):
             raise ValueError('invalid coordinator mode')
         self.store, self.router = store, router
         self.agents = list(agents)
         self.executor_factory, self.mode = executor_factory, mode
+        self.grounded_answers = grounded_answers
         self._owner = None
         self._shutdown = False
         self.routing_counts = Counter()  # Bounded nontext (disposition, reason, acceptance) keys only.
@@ -57,6 +59,10 @@ class TaskCoordinator:
                 and not self.store.has_unresolved())
 
     async def attach(self, scope: Scope, emit, *, executor=None):
+        if self.grounded_answers is not None and (not callable(getattr(emit, 'publish_guarded', None))
+                or not callable(getattr(emit, 'invalidate_grounded', None))
+                or not hasattr(emit, 'playback_generation')):
+            raise StoreDenied('grounded answers require guarded native output')
         if self.mode == 'full':
             raise StoreDenied('full mode requires a verified owned runtime adapter; unavailable')
         if not isinstance(scope, Scope) or self._shutdown or self._owner is not None:
@@ -113,6 +119,9 @@ class ConversationAttachment:
         self._executing = False
         self._closed = asyncio.Event()
         self.suppressed_count = 0
+        self._grounded = None
+        self._grounded_task = None
+        self.grounded_result = None  # One bounded private diagnostic, no raw text.
 
     @property
     def store(self):
@@ -161,7 +170,112 @@ class ConversationAttachment:
                     task_id = task['task_id']
                     self._context_task = task_id
             self.store.note_question(task_id, self.scope.scope_id, text, source=source)
+            self.note_grounded_evidence_change()
             return task_id
+
+    def invalidate_grounded(self, reason_code):
+        job = self._grounded
+        if job is None:
+            return
+        # The admission is sealed NOW. Child cancellation alone is too late:
+        # a count worker may return before its coroutine sees CancelledError.
+        job.retire('cancelled')
+        self.emit.invalidate_grounded(job.request.job_id)
+        self._grounded = None
+
+    def note_grounded_evidence_change(self):
+        self.invalidate_grounded('evidence')
+
+    def _schedule_grounded(self, route, utterance_id, text, checkpoint, registry, authority, output_validity):
+        from grounded_conversation import GroundedJob, make_request
+        if (self.coordinator.grounded_answers is None or not callable(output_validity)
+                or not callable(getattr(self.emit, 'invalidate_grounded', None))
+                or not callable(getattr(self.emit, 'publish_guarded', None))):
+            raise StoreDenied('grounded answers require native origin and guarded output')
+        if not output_validity() or not authority():
+            return
+        snapshot = self.store.grounded_snapshot(self.scope.scope_id, route.task_id)
+        request = make_request(snapshot, utterance_id=utterance_id, text=text, checkpoint=checkpoint,
+            registry=registry, focus=self._focus, workflow=self._context_task,
+            origin_validity=output_validity, generation=self.emit.playback_generation)
+        if not output_validity() or not authority():
+            return
+        job = GroundedJob(request)
+        self._grounded = job
+        planner = self.coordinator.grounded_answers
+        bind = getattr(planner, 'bind_job', None)
+        if callable(bind): bind(job)
+        def valid():
+            try:
+                from grounded_conversation import CONTRACT_HASH, CONTRACT_VERSION
+                return (job.active and self._grounded is job and authority()
+                    and request.contract_version == CONTRACT_VERSION and request.contract_hash == CONTRACT_HASH
+                    and request.origin_validity() and request.playback_generation == self.emit.playback_generation
+                    # The bounded revision contains every task/scope/question
+                    # member of the captured routing checkpoint, plus progress.
+                    and request.evidence_revision == self.store.grounded_revision(self.scope.scope_id, route.task_id))
+            except Exception:
+                return False
+        job.task = self._grounded_task = asyncio.create_task(self._answer_grounded(job, planner, valid))
+        job.task.add_done_callback(lambda f: f.exception() if not f.cancelled() else None)
+
+    async def _answer_grounded(self, job, planner, valid):
+        from grounded_conversation import GroundedPlan, GroundedResult, FALLBACK, render
+        from routing_policy import ContextBudgetExceeded
+        request = job.request
+        started, plan, child = time.monotonic(), None, None
+        disposition, reply = 'unavailable', FALLBACK
+        try:
+            if not valid(): return
+            child = asyncio.create_task(planner.plan(request))
+            done, _ = await asyncio.wait((child,), timeout=min(2., max(0., request.deadline_monotonic-time.monotonic())))
+            if not done:
+                job.admission.retire('timeout')
+                disposition = 'unavailable'
+            else:
+                candidate = child.result()
+                if type(candidate) is not GroundedPlan:
+                    raise ValueError('invalid planner result')
+                candidate.validate(request)
+                plan = candidate
+                reply = render(plan, request)
+                disposition = 'published' if plan.outcome == 'answer' else plan.outcome
+                if reply == FALLBACK and plan.outcome == 'answer': disposition = 'insufficient'
+        except asyncio.CancelledError:
+            job.admission.retire('cancelled')
+            disposition = 'stale'
+            raise
+        except ContextBudgetExceeded:
+            disposition = 'budget'
+        except (ValueError, TypeError, KeyError, AttributeError):
+            disposition = 'invalid'
+        except Exception:
+            disposition = 'unavailable'
+        finally:
+            if child is not None and not child.done():
+                job.admission.retire('cancelled')
+                child.cancel()
+                child.add_done_callback(lambda f: f.exception() if not f.cancelled() else None)
+            release = getattr(planner, 'release_job', None)
+            if callable(release): release(job)
+            self.grounded_result = GroundedResult(request.request_id, request.job_id,
+                plan.evidence if plan is not None else (), plan.form if plan else 'none',
+                plan.outcome if plan else 'insufficient', plan.gap if plan else 'missing_record',
+                disposition if valid() else 'stale', hashlib.sha256(repr(request.evidence_revision).encode()).hexdigest(),
+                (time.monotonic()-started)*1000)
+            if self._grounded_task is asyncio.current_task(): self._grounded_task = None
+        if not valid() or time.monotonic() > request.deadline_monotonic:
+            return
+        event = dict(kind='local_reply', task_id=request.task_id, operation_id='',
+            utterance_id=request.utterance_id, context_version=request.snapshot.task['context_version'], text=reply, priority=20)
+        # OutputSink inserts synchronously before its first suspension. The same
+        # predicate is retained through synthesis AND physical buffer drain.
+        try:
+            accepted = await self.emit.publish_guarded(event, valid, grounded_id=request.job_id)
+        except Exception:
+            accepted = False
+        if not accepted:
+            self.grounded_result = replace(self.grounded_result, disposition='stale')
 
     def _queue(self, kind, text, *, operation=None, task=None, utterance_id='', decision=None, checkpoint=None, authority=None, acceptance='local', output_validity=None):
         if not self._attached:
@@ -242,6 +356,7 @@ class ConversationAttachment:
         bounded_identifier(utterance_id)
         if not isinstance(text, str) or not text or len(text) > 4000:
             raise StoreInvalid('invalid utterance')
+        self.invalidate_grounded('input')
         async with self._accept_lock:
             if not self._attached:
                 raise StoreDenied('scope detached')
@@ -321,7 +436,8 @@ class ConversationAttachment:
                 question_version=question['context_version'] if question else None,
                 workflow_task_id=self._context_task,
                 question_id=question['question_id'] if question else '',
-                question_source=question['source'] if question else '')
+                question_source=question['source'] if question else '',
+                grounded_answers_enabled=self.coordinator.grounded_answers is not None)
             decide = getattr(self.coordinator.router, 'decide', None)
             if callable(decide):
                 decision = await decide(text, context)
@@ -342,7 +458,11 @@ class ConversationAttachment:
                 binding_valid = bool(agent and agent.capabilities.get(route.intent) and
                     (route.intent == 'new_task' or bound_task and
                      (bound_task['agent_id'], bound_task['registry_revision']) == (agent.agent_id, agent.revision)))
-            status_changed = (route.intent == 'status_query' and
+            if route.intent == 'grounded_answer':
+                bound_task = next((t for t in tasks if t['task_id'] == route.task_id), None)
+                agent = next((a for a in captured_agents if bound_task and a.alias == bound_task['agent_alias']), None)
+                binding_valid = bool(agent and (bound_task['agent_id'], bound_task['registry_revision']) == (agent.agent_id, agent.revision))
+            status_changed = (route.intent in ('status_query', 'grounded_answer') and
                 checkpoint != self.store.routing_checkpoint(self.scope.scope_id))
             if not authority() or status_changed or (decision.help_source is not None and checkpoint != self.store.routing_checkpoint(self.scope.scope_id)):
                 route = Route('clarification', reply='Der Gesprächskontext hat sich geändert. Bitte wiederhole deine Angabe.')
@@ -352,6 +472,8 @@ class ConversationAttachment:
                     self._queue('local_reply', route.reply, utterance_id=utterance_id, output_validity=output_validity, decision=decision, checkpoint=checkpoint, authority=authority)
                 elif route.intent == 'stop_speaking':
                     self._interrupt()
+                elif route.intent == 'grounded_answer':
+                    self._schedule_grounded(route, utterance_id, text, checkpoint, captured_agents, authority, output_validity)
                 elif route.intent == 'status_query':
                     task = self.store.get_task(route.task_id, self.scope.scope_id)
                     observed = {}
@@ -410,6 +532,7 @@ class ConversationAttachment:
     async def detach(self):
         if not self._attached:
             return
+        self.invalidate_grounded('detach')
         self._attached = False
         self.store.detach_scope(self.scope.scope_id)
         self._interrupt()
@@ -461,6 +584,7 @@ class ConversationAttachment:
                     except (StoreConflict, StoreDenied):
                         continue
                     self._context_task = operation['task_id']
+                    self.note_grounded_evidence_change()
                     seen = set()
 
                     async def on_reply(text, operation=operation, seen=seen):
@@ -469,6 +593,7 @@ class ConversationAttachment:
                         digest = hashlib.sha256(text.encode('utf-8')).hexdigest()
                         event_id = operation['operation_id'] + ':' + digest
                         if self.store.observe(operation['operation_id'], event_id, 'backend_observed', {'text': text}):
+                            self.note_grounded_evidence_change()
                             seen.add(text)
                             task = self.store.get_task(operation['task_id'], self.scope.scope_id)
                             if task['context_version'] == operation['context_version']:
@@ -481,15 +606,18 @@ class ConversationAttachment:
                         self._executing = True
                         replies = await self.executor.turn(operation, on_reply)
                         task = self.store.settle(operation['operation_id'], replies=replies)
+                        self.note_grounded_evidence_change()
                         for reply in replies:
                             if reply not in seen and task['context_version'] == operation['context_version']:
                                 seen.add(reply)
                                 self._queue('backend_reply', reply, operation=operation)
                     except asyncio.CancelledError:
                         self.store.mark_unknown(operation['operation_id'], 'worker_interrupted')
+                        self.note_grounded_evidence_change()
                         raise
                     except Exception:
                         self.store.mark_unknown(operation['operation_id'], 'executor_uncertain')
+                        self.note_grounded_evidence_change()
                         self._queue('error', 'Das Ergebnis ist unklar. Die Anfrage wird nicht automatisch wiederholt.', operation=operation)
                         break
                     finally:

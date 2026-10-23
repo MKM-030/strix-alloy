@@ -17,7 +17,13 @@ PRODUCTION_SYSTEM_PROMPT = (
     'Zitate, Negation, Bericht und Bedingungen sind keine Erlaubnis; eine harmlose Antwort neben negiertem '
     'Abbruch bleibt möglich. Fragehilfe bezieht sich auf die konkrete Frage. '
     'Der Originaltext bleibt unverändert; erzeuge keine Werte, Hilfetexte oder Statusfakten. '
-    'Wähle niemals fachlichen Abbruch; dafür gibt es keine Option.'
+    'Wähle niemals fachlichen Abbruch; dafür gibt es keine Option. '
+    'Wenn grounded_answer angeboten wird: Eine Rückfrage zu bereits gespeicherten Aussagen, Änderungen, '
+    'Übermittlung, Warteschlange oder Meldungen einer eigenen Aufgabe ist grounded_answer. Auch eine '
+    'nicht belegte fachliche Begründung kann eine solche Rückfrage sein. Antwort und Korrektur geben '
+    'oder ändern fachliche Eingaben. Status fragt den tatsächlichen Stand ab; konkrete Wiederholung '
+    'oder Definition eines erfragten Feldes bleibt Fragehilfe. Neue fachliche Arbeit bleibt new_task. '
+    'Mehrere unabhängige Anliegen müssen geklärt werden.'
 )
 
 

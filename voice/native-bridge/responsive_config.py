@@ -11,7 +11,7 @@ from conversation_router import LoopbackConversationModel
 
 _PROFILE_KEYS = frozenset({"enabled", "mode", "store_file", "model_url", "model_name",
                            "model_token_file", "model_timeout_seconds", "agents",
-                           "capability_evidence"})
+                           "capability_evidence", "grounded_answers_enabled"})
 _AGENT_KEYS = frozenset({"alias", "agent_id", "revision", "capabilities", "name",
                          "description", "supported_intents", "routing_aliases"})
 
@@ -27,8 +27,13 @@ class ResponsiveConfig:
     model_timeout_seconds: float = 2.0
     agents: tuple[Agent, ...] = ()
     capability_evidence: dict = field(default_factory=dict)
+    grounded_answers_enabled: bool = False
 
     def __post_init__(self):
+        if type(self.grounded_answers_enabled) is not bool:
+            raise ValueError('grounded_answers_enabled must be a boolean')
+        if self.grounded_answers_enabled and (not self.enabled or self.mode != 'assist' or not self.model_url or not self.model_name):
+            raise ValueError('grounded answers require enabled assist mode and conversation model')
         if self.enabled and self.mode == "full":
             raise ValueError("full mode requires trusted live authority proof")
 
@@ -127,4 +132,4 @@ def load_responsive_config(path) -> ResponsiveConfig:
     # Manifest paths are requests for future qualification, never proof of authority.
     # Omni, vision, and full-mode live writes remain disabled by local configuration.
     return ResponsiveConfig(enabled, mode, store_file, model_url, model_name, token_file,
-                            float(model_timeout), tuple(agents), MappingProxyType(evidence))
+                            float(model_timeout), tuple(agents), MappingProxyType(evidence), data.get('grounded_answers_enabled', False))

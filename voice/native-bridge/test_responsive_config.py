@@ -28,6 +28,17 @@ class ConfigTest(unittest.TestCase):
         self.assertFalse(profile.enabled)
         self.assertEqual(profile.mode, "legacy")
 
+    def test_grounded_request_is_strict_optional_and_requires_assist_model(self):
+        self.assertTrue(hasattr(ResponsiveConfig(), 'grounded_answers_enabled'), 'grounded config is absent')
+        self.assertFalse(ResponsiveConfig().grounded_answers_enabled)
+        base = dict(enabled=True, mode='assist', store_file='local.db',
+                    model_url='http://127.0.0.1:8899/v1/chat/completions', model_name='fiction')
+        self.assertTrue(self.save(dict(base, grounded_answers_enabled=True)).grounded_answers_enabled)
+        for flag in ('true', 1, None):
+            with self.assertRaises(ValueError): self.save(dict(base, grounded_answers_enabled=flag))
+        for changes in ({'enabled': False}, {'mode': 'full'}, {'model_url': '', 'model_name': ''}):
+            with self.assertRaises(ValueError): self.save(dict(base, grounded_answers_enabled=True, **changes))
+
     def test_inline_secrets_and_unknown_keys_rejected(self):
         for value in ({"model_token": "secret"}, {"model": {"api_key": "secret"}},
                       {"unexpected": True}, {"model_url": "http://example.com"}):

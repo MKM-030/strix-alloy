@@ -66,7 +66,7 @@ class ProposalObservation:
     def __post_init__(self):
         from route_proposal import MEANINGS, DOMAINS
         if (self.status not in ('decoded', 'schema_rejected', 'syntax_rejected', 'shape_rejected', 'bounds_rejected', 'binding_rejected', 'timeout', 'context_budget', 'unavailable')
-                or self.intent not in ('none', 'clarification', 'status_query', 'stop_speaking', 'continue_task', 'amend_task', 'new_task')
+                or self.intent not in ('none', 'clarification', 'status_query', 'stop_speaking', 'continue_task', 'amend_task', 'new_task', 'grounded_answer')
                 or self.meaning not in MEANINGS | {'none'} or self.domain not in DOMAINS):
             raise ValueError('invalid proposal observation')
 
@@ -132,6 +132,7 @@ class PolicySnapshot:
     question_id: str
     question_source: str
     candidates: tuple[Candidate, ...] = ()
+    grounded_answers_enabled: bool = False
 
     def model_data(self):
         from route_proposal import ProposalContract
@@ -153,13 +154,16 @@ def policy_snapshot(context):
         return value
     snapshot = PolicySnapshot(context.scope_id, tuple(freeze(t) for t in context.tasks),
         tuple(context.agents), context.focus_task_id, context.last_question, context.question_task_id,
-        context.question_version, context.workflow_task_id, context.question_id, context.question_source)
+        context.question_version, context.workflow_task_id, context.question_id, context.question_source,
+        grounded_answers_enabled=context.grounded_answers_enabled)
     candidates = [Candidate('c0', 'clarification', meanings=('unclear',)),
                   Candidate('c1', 'stop_speaking', meanings=('audio',))]
     def add(intent, **kwargs):
         candidates.append(Candidate(f'c{len(candidates)}', intent, **kwargs))
     for task in snapshot.tasks:
         add('status_query', task_id=task['task_id'], meanings=('reference',))
+        if snapshot.grounded_answers_enabled:
+            add('grounded_answer', task_id=task['task_id'], meanings=('explain',))
         if task.get('state') not in _TERMINAL:
             add('cancel_task', task_id=task['task_id'], meanings=('request',), origin='local')
         if (task.get('state') not in _TERMINAL and task.get('previous_question')
@@ -648,9 +652,11 @@ def _evaluate(snapshot, text, proposal, *, local):
         # not manufactured generated evidence and do not prove semantic relevance.
         clauses = tuple(c.strip() for c in re.split(r'(?<!\d)[.!?;]', text) if c.strip())
     explicit, conflict = PolicyRules._reference(snapshot, text)
-    if intent in ('status_query', 'cancel_task'):
-        bound = PolicyRules.status_target(snapshot, text, semantic_task_id=candidate.task_id if not local else '') if intent == 'status_query' else PolicyRules._target(snapshot, text)
+    if intent in ('status_query', 'cancel_task', 'grounded_answer'):
+        bound = PolicyRules.status_target(snapshot, text, semantic_task_id=candidate.task_id if not local else '') if intent in ('status_query', 'grounded_answer') else PolicyRules._target(snapshot, text)
         if conflict or not bound or bound != candidate.task_id: return reject('target_ambiguity')
+        if intent == 'grounded_answer' and PolicyRules.separate_action(text):
+            return reject('competing_request')
     elif intent == 'new_task':
         selected, payload = PolicyRules.selected_agent(snapshot, text)
         if selected != candidate.agent_alias or len(payload.split()) < 2:
@@ -707,21 +713,21 @@ def deterministic(snapshot, text):
     if PolicyRules.cancel_witness(snapshot, text):
         target = PolicyRules._target(snapshot, text)
         return run(_candidate(snapshot, 'cancel_task', target) if target else None, 'request', text)
-    if re.search(r'\b(?:status|stand|wie weit|schon fertig|erledigt|was macht|läuft.*noch)\b', text, re.I):
+    if not snapshot.grounded_answers_enabled and re.search(r'\b(?:status|stand|wie weit|schon fertig|erledigt|was macht|läuft.*noch)\b', text, re.I):
         target = PolicyRules.status_target(snapshot, text)
         if target:
             return run(_candidate(snapshot, 'status_query', target), 'reference', text)
         return None
-    if re.search(r'(?:andere|weitere|noch eine|mehrere|parallel).*frag|was kannst du|was kann ich.*frag', text, re.I):
+    if not snapshot.grounded_answers_enabled and re.search(r'(?:andere|weitere|noch eine|mehrere|parallel).*frag|was kannst du|was kann ich.*frag', text, re.I):
         return RoutingDecision(Route('clarification', reply='Du kannst weitere Fragen stellen. Fachliche Anfragen werden nacheinander übermittelt; zusätzliche Aufgaben bleiben im bestehenden Legacy-Kontext in der Warteschlange. Ich kann die aktuelle Frage erklären und den gespeicherten Stand nennen.'), 'clarification', 'unclear')
-    if re.search(r'was.*(?:verstanden|behalten|gespeichert|gemerkt)|welche.*(?:angaben|daten).*gespeichert', text, re.I):
+    if not snapshot.grounded_answers_enabled and re.search(r'was.*(?:verstanden|behalten|gespeichert|gemerkt)|welche.*(?:angaben|daten).*gespeichert', text, re.I):
         target = PolicyRules._target(snapshot, text, allow_focus=True)
         task = next((t for t in snapshot.tasks if t['task_id'] == target), None)
         if task and task.get('retained_text'):
             reply = 'Zuletzt für diese Aufgabe gespeichert (Originalwortlaut): ' + task['retained_text']
             return RoutingDecision(Route('clarification', reply=reply if len(reply) <= 4000 else task['retained_text']), 'clarification', 'unclear')
         return clarify(snapshot)
-    if re.search(r'(?:wiederhol|noch ?mal|erneut).*(?:frage)|(?:was|welche).*(?:brauchst|benötigst|information|angaben)|(?:was|wie).*(?:bedeutet|heißt|heisst|gemeint|frage.*versteh)|erklär.*(?:frage|name|datum|liefer|manager)', text, re.I):
+    if not snapshot.grounded_answers_enabled and re.search(r'(?:wiederhol|noch ?mal|erneut).*(?:frage)|(?:was|welche).*(?:brauchst|benötigst|information|angaben)|(?:was|wie).*(?:bedeutet|heißt|heisst|gemeint|frage.*versteh)|erklär.*(?:frage|name|datum|liefer|manager)', text, re.I):
         meaning = 'explain' if re.search(r'bedeutet|heißt|heisst|gemeint|erklär|versteh', text, re.I) else 'repeat'
         return run(_candidate(snapshot, 'clarification', meaning=meaning), meaning, text)
     if re.search(r'ignorier|systemprompt|system prompt|regeln.*(?:umgeh|vergiss)|verwende.*(?:alias|agent)', text, re.I):
@@ -737,6 +743,7 @@ def deterministic(snapshot, text):
         # A positive semantic correction can still resolve an unrecognized spoken value.
         return None
     current = _candidate(snapshot, 'continue_task')
-    if current and PolicyRules._matches_answer(text, PolicyRules._answer_kind(current.question)):
+    if (current and (not snapshot.grounded_answers_enabled or PolicyRules._answer_kind(current.question) in ('yes_no', 'date', 'spelling'))
+            and PolicyRules._matches_answer(text, PolicyRules._answer_kind(current.question))):
         return run(current, 'answer', text)
     return None

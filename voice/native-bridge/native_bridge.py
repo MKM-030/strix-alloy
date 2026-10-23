@@ -537,6 +537,11 @@ class NativeCall:
         if self.responsive_output is not None:
             self.responsive_output.notify_input_changed()
 
+    def _invalidate_grounded(self, reason):
+        invalidate = getattr(self.responsive_attachment, 'invalidate_grounded', None)
+        if callable(invalidate):
+            invalidate(reason)
+
     def register_microphone(self, track):
         if self.closed or self.closing or self.input_lost:
             return False
@@ -569,6 +574,7 @@ class NativeCall:
         if self.closed or self.closing or self.microphones or self.input_lost:
             return
         self.input_lost = True  # Commit before yielding or accepting more input.
+        self._invalidate_grounded('input_loss')
         self._notify_input_changed()
         # A lost speaker must not leave on_reply stuck on a full PCM buffer
         # while the submitted ServiceNow request is still being observed.
@@ -737,6 +743,7 @@ class NativeCall:
                             interrupted = self.synthesis_active or bool(playback_bytes)
                             if self.responsive_attachment_factory is not None:
                                 self._input_epoch += 1
+                                self._invalidate_grounded('input')
                                 input_epoch = self._input_epoch
                                 if self.responsive_output is not None:
                                     self.responsive_output.interrupt_for_input()
@@ -1339,6 +1346,7 @@ class NativeCall:
     async def close(self):
         if self.close_task is None:
             self.closing = True
+            self._invalidate_grounded('shutdown')
             self._notify_input_changed()
             if self.responsive_output is not None:
                 self.responsive_output.interrupt()
@@ -1430,10 +1438,28 @@ async def authorize(request, config, http, with_settings=False):
         return False
 
 
+def _grounded_readiness_module():
+    import importlib.util
+    import sys
+    name = 'grounded_readiness'
+    if name not in sys.modules:
+        path = Path(__file__).resolve().parents[1] / 'native-start' / 'grounded_readiness.py'
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        try: spec.loader.exec_module(module)
+        except BaseException:
+            sys.modules.pop(name, None)
+            raise
+    return sys.modules[name]
+
+
 def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=False, *,
-               responsive_factory=None):
+               responsive_factory=None, grounded_readiness_provider=None):
     from assistant_settings import CallSettings
     profile = getattr(config, 'private_responsive', None)
+    if profile and profile.grounded_answers_enabled and not callable(grounded_readiness_provider):
+        raise ValueError('grounded readiness requires the trusted runtime owner provider')
     responsive = None
     availability_notice = ('Der Sprachdienst ist derzeit belegt. Bitte versuchen Sie es später erneut '
                            'oder wenden Sie sich an den Support, falls der Zustand bestehen bleibt.')
@@ -1490,6 +1516,10 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
     probe_dialog = Dialog(config) if dialog_factory is None and probe_backend else None
     async def lifecycle(app):
         nonlocal responsive
+        if profile and profile.grounded_answers_enabled:
+            readiness = _grounded_readiness_module()
+            expected = readiness.expected_grounded(profile.model_url, profile.model_name)
+            readiness.validate_proof(await grounded_readiness_provider(expected), expected)
         app[HTTP_KEY] = ClientSession(trust_env=False, timeout=ClientTimeout(total=180))
         if profile is not None and profile.enabled:
             if responsive_factory is not None:
@@ -1502,7 +1532,9 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                          profile.model_name, profile.model_token_file, profile.model_timeout_seconds)
                          if profile.model_url else None)
                 responsive = TaskCoordinator(TaskStore(profile.store_file), ConversationRouter(model),
-                    profile.agents, lambda scope: None, mode='legacy')
+                    profile.agents, lambda scope: None, mode='legacy',
+                    grounded_answers=__import__('grounded_conversation').GroundedAnswers(model)
+                        if profile.grounded_answers_enabled else None)
             responsive.store.recover()
         if probe_backend and probe_dialog:
             report = {'kind':'safe-greeting-no-order', 'native_ui_test':False}
@@ -1796,7 +1828,12 @@ def main():
             raise ValueError('Speech and bot services must remain loopback-only')
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s %(message)s')
     # Access logs would expose the OAuth query parameter and must remain disabled.
-    web.run_app(create_app(config, probe_backend=args.probe_backend), host='127.0.0.1', port=config.port, access_log=None)
+    async def grounded_readiness(expected):
+        config_path = Path(args.config).resolve()
+        return await _grounded_readiness_module().verify_grounded_readiness(
+            config_path.parent / 'conversation-selection.local.json', config_path, expected=expected)
+    web.run_app(create_app(config, probe_backend=args.probe_backend,
+        grounded_readiness_provider=grounded_readiness), host='127.0.0.1', port=config.port, access_log=None)
 
 
 if __name__ == '__main__':

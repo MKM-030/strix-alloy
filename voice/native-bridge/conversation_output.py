@@ -23,6 +23,8 @@ class _QueuedOutput:
     disposition: str = "transient"
     completion: object = None
     started: bool = False
+    grounded_id: str | None = None
+    invalidated: bool = False
 
 
 class OutputSink:
@@ -42,8 +44,17 @@ class OutputSink:
     async def __call__(self, event):
         return await self.arbiter.publish(event)
 
-    async def publish_guarded(self, event, validity):
-        return await self.arbiter.publish_guarded(event, validity)
+    async def publish_guarded(self, event, validity, *, grounded_id=None):
+        if grounded_id is None:
+            return await self.arbiter.publish_guarded(event, validity)
+        return await self.arbiter.publish_guarded(event, validity, grounded_id=grounded_id)
+
+    @property
+    def playback_generation(self):
+        return self.arbiter.playback.generation
+
+    def invalidate_grounded(self, grounded_id):
+        self.arbiter.invalidate_grounded(grounded_id)
 
 
 def validate_event(event):
@@ -73,6 +84,8 @@ class OutputArbiter:
         self._overflow_reported = False
         self.suppressed_count = self.generated_bytes = self.sent_bytes = 0
         self._active = None
+        self._active_entry = None
+        self._grounded_owner = None
         self._worker = asyncio.create_task(self._run())
 
     @property
@@ -95,6 +108,7 @@ class OutputArbiter:
 
     def _interrupt(self, *, preserve_deferred=False):
         self.playback.interrupt()
+        self._grounded_owner = None
         if self._active is not None and not self._active.done():
             self._active.cancel()
         retained = []
@@ -116,10 +130,30 @@ class OutputArbiter:
     async def publish(self, event):
         return await self._publish(event, None)
 
-    async def publish_guarded(self, event, validity):
+    async def publish_guarded(self, event, validity, *, grounded_id=None):
         if not callable(validity):
             raise ValueError('invalid output validity')
-        return await self._publish(event, validity)
+        if grounded_id is not None and (not isinstance(grounded_id, str) or not grounded_id or len(grounded_id) > 128):
+            raise ValueError('invalid grounded ownership')
+        return await self._publish(event, validity, grounded_id=grounded_id)
+
+    def invalidate_grounded(self, grounded_id):
+        # This entire compare-and-clear executes without an await. An old ID
+        # cannot clear newer/backend PCM, even if a playback generation recurs.
+        for entry in tuple(self._pending):
+            if entry.grounded_id == grounded_id:
+                entry.invalidated = True
+                self._pending.remove(entry)
+                self._complete(entry)
+        active = self._active_entry
+        if active is not None and active.grounded_id == grounded_id:
+            active.invalidated = True
+            if self._grounded_owner == (grounded_id, self.playback.generation):
+                self.playback.interrupt()
+                self._grounded_owner = None
+            if self._active is not None and not self._active.done():
+                self._active.cancel()
+        self._wake.set()
 
     async def publish_deferred(self, event, validity):
         if not callable(validity):
@@ -133,10 +167,11 @@ class OutputArbiter:
             await asyncio.shield(completion)
         return accepted
 
-    async def _publish(self, event, validity, *, disposition='transient', completion=None):
+    async def _publish(self, event, validity, *, disposition='transient', completion=None, grounded_id=None):
         validate_event(event)
         entry = _QueuedOutput(MappingProxyType(dict(event)),
-            None if disposition == 'deferred' else self.playback.generation, validity, disposition, completion)
+            None if disposition == 'deferred' else self.playback.generation, validity, disposition, completion,
+            grounded_id=grounded_id)
         if self._closed or not self.is_live() or not self._valid(validity):
             self._complete(entry)
             return False
@@ -184,7 +219,7 @@ class OutputArbiter:
                 and self._valid(validity))
 
     def _eligible(self, entry):
-        return (not self._closed and self.is_live() and self._valid(entry.validity)
+        return (not entry.invalidated and not self._closed and self.is_live() and self._valid(entry.validity)
                 and (entry.generation is None or entry.generation == self.playback.generation)
                 and entry.event['context_version'] >= self._versions.get(entry.event['task_id'], 0))
 
@@ -203,13 +238,24 @@ class OutputArbiter:
             return
         if not self._ready(entry):
             return
+        if entry.grounded_id is not None:
+            # Existing backend/lifecycle PCM is allowed to finish before this
+            # answer acquires exclusive ownership of the one physical buffer.
+            while self.playback.data and self._eligible(entry) and self._ready(entry):
+                await asyncio.sleep(.01)
+                if any(other is not entry and other.event['priority'] < entry.event['priority']
+                       and self._eligible(other) and self._ready(other) for other in self._pending):
+                    return
+            if entry not in self._pending or not self._eligible(entry) or not self._ready(entry):
+                return
+            self._grounded_owner = (entry.grounded_id, entry.generation)
         self._pending.remove(entry)
         entry.started = True
         if entry.generation is None:
             entry.generation = self.playback.generation
         event, generation, validity = entry.event, entry.generation, entry.validity
         def current():
-            return self._current(event, generation, validity) and self._ready(entry)
+            return not entry.invalidated and self._current(event, generation, validity) and self._ready(entry)
         if not current():
             return
         await self._transcript(event)
@@ -225,6 +271,11 @@ class OutputArbiter:
                     await asyncio.sleep(.01)
                 if current() and self.playback.put(chunk, generation):
                     self.sent_bytes += len(chunk)
+        if entry.grounded_id is not None:
+            while self.playback.data and current():
+                await asyncio.sleep(.01)
+            if not current():
+                self.invalidate_grounded(entry.grounded_id)
 
     async def _run(self):
         while not self._closed:
@@ -240,6 +291,7 @@ class OutputArbiter:
                 if entry is None:
                     break
                 try:
+                    self._active_entry = entry
                     self._active = asyncio.create_task(self._speak(entry))
                     await self._active
                 except asyncio.CancelledError:
@@ -254,9 +306,15 @@ class OutputArbiter:
                         except Exception:
                             pass
                 finally:
+                    if entry.grounded_id is not None and self._grounded_owner == (entry.grounded_id, entry.generation):
+                        # Exceptions/cancellation must not orphan guarded PCM.
+                        if self.playback.data and self.playback.generation == entry.generation:
+                            self.playback.interrupt()
+                        self._grounded_owner = None
                     if entry.started or entry not in self._pending:
                         self._complete(entry)
                     self._active = None
+                    self._active_entry = None
             if self._overflow_reported and self._valid(self.input_ready):
                 self._overflow_reported = False
                 try:

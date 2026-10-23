@@ -9,7 +9,8 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from conversation_admission import AdmissionRequest, AdmissionUnavailable, prepare_frames, exchange
+from conversation_admission import (AdmissionRequest, AdmissionUnavailable, PreparedChat, run_admitted_chat,
+    _strict_json, _reject_duplicates, _invalid_constant, notify_terminal)
 
 from business_tasks import Agent, StoreInvalid, bounded_identifier
 from route_proposal import ProposalContract, RouteProposal, ProposalError, PRODUCTION_SYSTEM_PROMPT
@@ -17,7 +18,7 @@ from routing_policy import RoutingDecision, ProposalObservation, ContextBudgetEx
 
 
 INTENTS = frozenset({"status_query", "clarification", "amend_task", "new_task",
-                     "stop_speaking", "cancel_task", "uncertain", "continue_task"})
+                     "stop_speaking", "cancel_task", "uncertain", "continue_task", "grounded_answer"})
 _MAX_REQUEST_BYTES = 16384
 _MAX_RESPONSE_BYTES = 8192
 _MAX_ROUTE_BYTES = 64
@@ -43,8 +44,11 @@ class RoutingContext:
     workflow_task_id: str = ""
     question_id: str = ""
     question_source: str = ""
+    grounded_answers_enabled: bool = False
 
     def __post_init__(self):
+        if type(self.grounded_answers_enabled) is not bool:
+            raise StoreInvalid('invalid grounded context')
         bounded_identifier(self.scope_id)
         bounded_identifier(self.focus_task_id, optional=True)
         if not isinstance(self.tasks, list) or len(self.tasks) > 8:
@@ -87,43 +91,6 @@ class RoutingContext:
 
     def model_data(self):
         return policy_snapshot(self).model_data()
-
-
-def _reject_duplicates(pairs):
-    output = {}
-    for key, value in pairs:
-        if key in output:
-            raise ValueError("duplicate JSON key")
-        output[key] = value
-    return output
-
-
-def _invalid_constant(value):
-    raise ValueError("nonfinite JSON value")
-
-
-def _strict_json(raw, max_bytes):
-    if isinstance(raw, str):
-        raw = raw.encode("utf-8")
-    if not isinstance(raw, bytes) or len(raw) > max_bytes:
-        raise ValueError("JSON too large")
-    try:
-        value = json.loads(raw.decode("utf-8"), object_pairs_hook=_reject_duplicates,
-                           parse_constant=_invalid_constant)
-    except (UnicodeError, json.JSONDecodeError, RecursionError) as error:
-        raise ValueError("invalid JSON") from error
-    if not isinstance(value, dict):
-        raise ValueError("expected JSON object")
-    stack = [value]
-    while stack:
-        item = stack.pop()
-        if isinstance(item, float) and not math.isfinite(item):
-            raise ValueError("nonfinite JSON value")
-        if isinstance(item, dict):
-            stack.extend(item.values())
-        elif isinstance(item, list):
-            stack.extend(item)
-    return value
 
 
 class LoopbackConversationModel:
@@ -174,9 +141,6 @@ class LoopbackConversationModel:
     def _observe_admission(self, snapshot):
         """Private immutable telemetry hook; no payload, socket, or send authority."""
 
-    def _exchange(self, request, owned, frame):
-        return exchange(request, owned, frame)
-
     async def classify(self, text, context):
         request = AdmissionRequest(self.timeout_seconds)
         return (await self._run_request(request, text, context, prepared=False))[0]
@@ -190,21 +154,7 @@ class LoopbackConversationModel:
         if not future.cancelled(): future.exception()
 
     def _notify_terminal(self, request):
-        # Terminal observation does not delay cancellation or claim cleanup done.
-        receipt = request.snapshot()
-        notification = asyncio.create_task(asyncio.to_thread(self._observe_admission, receipt))
-        notification.add_done_callback(self._consume)
-
-    async def _observe_with_deadline(self, request):
-        notification = asyncio.create_task(asyncio.to_thread(self._observe_admission, request.snapshot()))
-        try:
-            done, _ = await asyncio.wait((notification,), timeout=request.check())
-            if not done:
-                raise TimeoutError('conversation observer deadline')
-            notification.result()
-            request.check()
-        finally:
-            if not notification.done(): notification.add_done_callback(self._consume)
+        notify_terminal(request, self._observe_admission)
 
     def _observe_bypass(self, reason):
         request = AdmissionRequest(self.timeout_seconds)
@@ -216,42 +166,7 @@ class LoopbackConversationModel:
             pass
 
     async def _run_request(self, request, text, context, *, prepared):
-        # Preparation/authentication/parser work share this one absolute deadline.
-        worker = asyncio.create_task(asyncio.to_thread(self._transaction, request, text, context, prepared))
-        try:
-            done, _ = await asyncio.wait((worker,), timeout=request.check())
-            if not done:
-                raise TimeoutError('conversation deadline')
-            result = worker.result()
-            await self._observe_with_deadline(request)
-            return result
-        except asyncio.CancelledError:
-            request.retire('cancelled')
-            self._notify_terminal(request)
-            raise
-        except TimeoutError:
-            request.retire('timeout')
-            self._notify_terminal(request)
-            raise
-        except Exception:
-            # Error-path observers are also bounded by the same remaining time.
-            try: await self._observe_with_deadline(request)
-            except TimeoutError:
-                request.retire('timeout')
-                self._notify_terminal(request)
-                raise
-            raise
-        finally:
-            if not worker.done():
-                # Do not cancel the wrapper and pretend its thread was stopped.
-                def cleanup(future):
-                    self._consume(future)
-                    self._notify_terminal(request)
-                worker.add_done_callback(cleanup)
-
-    def _transaction(self, transaction, text, context, prepared):
-        try:
-            transaction.check()
+        def prepare():
             if not isinstance(text, str) or len(text) > 4000 or not text.strip():
                 raise ProposalError('bounds_rejected', bounds=False)
             contract = context if prepared else ProposalContract(context)
@@ -264,83 +179,11 @@ class LoopbackConversationModel:
                     "name": "route", "strict": True, "schema": contract.schema()}}}
             payload = json.dumps(request, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
             catalog = json.dumps(data, ensure_ascii=False, separators=(",", ":")).encode('utf-8')
-            transaction.bind(payload, catalog)
-            frames = prepare_frames(self.host, self.port, payload, self.token_file)
-            transaction.update(count_request_bytes=len(frames[0]), inference_request_bytes=len(frames[1]),
-                prepare_ms=(time.monotonic() - transaction.started) * 1000)
-            # Dispatch counts an attempted connection/send even if its outcome is unknown.
-            phase_started = time.monotonic()
-            transaction.dispatch('count', len(frames[0]))
-            try:
-                owned = transaction.connect(self.host, self.port)
-                raw, closing = self._exchange(transaction, owned, frames[0])
-                try:
-                    counted = _strict_json(raw, _MAX_RESPONSE_BYTES)
-                    count = counted.get('input_tokens')
-                    if counted.get('object') != 'response.input_tokens' or type(count) is not int or count < 1:
-                        raise ValueError('invalid count')
-                except ValueError:
-                    transaction.update(count_valid=False)
-                    raise AdmissionUnavailable('invalid count') from None
-                transaction.update(input_tokens=count, count_valid=True)
-                transaction.check()
-                if count > 3584 or count + 24 > 4096:
-                    raise ContextBudgetExceeded('conversation input token budget')
-                if closing:
-                    raise AdmissionUnavailable('count connection retired')
-            finally:
-                transaction.update(count_ms=(time.monotonic() - phase_started) * 1000)
-            phase_started = time.monotonic()
-            transaction.dispatch('inference', len(frames[1]))
-            transaction.update(payload_bound=True)
-            try:
-                raw, _ = self._exchange(transaction, owned, frames[1])
-                result = self._decode_admitted(raw, count, transaction)
-                transaction.check()
-            finally:
-                transaction.update(inference_ms=(time.monotonic() - phase_started) * 1000)
-            transaction.update(stage='validated', reason='validated')
-            return result, contract
-        except TimeoutError:
-            transaction.retire('timeout')
-            raise
-        except ContextBudgetExceeded:
-            transaction.update(reason='context_budget')
-            raise
-        except ProposalError:
-            transaction.update(reason='schema')
-            raise
-        except (OSError, ValueError) as error:
-            transaction.update(reason='unavailable')
-            raise AdmissionUnavailable('admission unavailable') from error
-        finally:
-            transaction.close()
-            transaction.update(worker_outstanding=False)
-
-    def _decode_admitted(self, raw, count, transaction):
-        try:
-            envelope = _strict_json(raw, _MAX_RESPONSE_BYTES)
-        except ValueError:
-            raise ProposalError('syntax_rejected', syntax=False) from None
-        choices = envelope.get('choices')
-        choice_shape = isinstance(choices, list) and len(choices) == 1 and isinstance(choices[0], dict)
-        if choice_shape and choices[0].get('finish_reason') == 'length':
-            raise ProposalError('shape_rejected', syntax=True, shape=False)
-        usage = envelope.get('usage')
-        matching = (isinstance(usage, dict) and type(usage.get('prompt_tokens')) is int
-                    and usage['prompt_tokens'] == count)
-        transaction.update(usage_count_match=matching)
-        if (not matching or type(usage.get('completion_tokens')) is not int
-                or not 0 <= usage['completion_tokens'] <= 24):
-            raise AdmissionUnavailable('admission disagreement')
-        if not choice_shape:
-            raise ProposalError('shape_rejected', syntax=True, shape=False)
-        if choices[0].get('finish_reason') != 'stop':
-            raise AdmissionUnavailable('incomplete admission')
-        message = choices[0].get('message')
-        if not isinstance(message, dict) or not isinstance(message.get('content'), str):
-            raise ProposalError('shape_rejected', syntax=True, shape=False)
-        return self.decode_route(message['content'])
+            return PreparedChat(payload, catalog, contract)
+        return await run_admitted_chat(request, host=self.host, port=self.port,
+            token_file=self.token_file, prepare=prepare,
+            decode_content=lambda content, binding: (self.decode_route(content), binding),
+            observe=self._observe_admission)
 
 
 class ConversationRouter:

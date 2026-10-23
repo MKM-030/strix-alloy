@@ -299,6 +299,97 @@ class TaskStore:
         with self._transaction():
             return self.question(scope_id), self.list_tasks(scope_id), self.operations(scope_id), self.routing_checkpoint(scope_id)
 
+    def grounded_snapshot(self, scope_id, task_id):
+        return self._grounded_read(scope_id, task_id, messages=True)
+
+    def grounded_revision(self, scope_id, task_id):
+        return self._grounded_read(scope_id, task_id, messages=False)
+
+    def _grounded_read(self, scope_id, task_id, *, messages):
+        """Bounded projections in one SQLite snapshot; never extract private payloads."""
+        from grounded_conversation import EvidenceRevision, GroundedSnapshot, freeze
+        bounded_identifier(scope_id)
+        bounded_identifier(task_id)
+        with self._transaction():
+            scope = self._db.execute('SELECT scope_id,call_id,call_generation,instance_id,assistant_id,principal_id,attached FROM scopes WHERE scope_id=?', (scope_id,)).fetchone()
+            if not scope or not scope['attached']:
+                raise StoreDenied('scope unavailable')
+            headers = self._db.execute('''SELECT t.task_id,t.scope_id,t.agent_alias,t.agent_id,t.registry_revision,
+                t.capabilities,t.objective,t.context_version,t.state,
+                latest.operation_id latest_id,latest.context_version latest_version,latest.dispatch_state latest_dispatch
+                FROM tasks t LEFT JOIN operations latest ON latest.operation_id=(
+                    SELECT operation_id FROM operations o WHERE o.task_id=t.task_id ORDER BY o.rowid DESC LIMIT 1)
+                WHERE t.scope_id=? ORDER BY t.created_at,t.task_id LIMIT 9''', (scope_id,)).fetchall()
+            if len(headers) > 8:
+                raise StoreCapacity('grounded task capacity')
+            task = next((h for h in headers if h['task_id'] == task_id), None)
+            if task is None:
+                raise StoreDenied('task unavailable')
+            columns = 'operation_id,context_version,dispatch_state,outcome,kind' + (',text' if messages else '')
+            operations = list(reversed(self._db.execute('SELECT ' + columns + ' FROM operations WHERE task_id=? ORDER BY rowid DESC LIMIT 2', (task_id,)).fetchall()))
+            pending = bool(self._db.execute("SELECT 1 FROM operations WHERE task_id=? AND dispatch_state='unsubmitted' LIMIT 1", (task_id,)).fetchone())
+            question = self._db.execute('SELECT task_id,question_id,context_version,text,source FROM scope_questions WHERE scope_id=?', (scope_id,)).fetchone()
+            head = self._db.execute('SELECT sequence FROM events WHERE task_id=? ORDER BY sequence DESC LIMIT 1', (task_id,)).fetchone()
+            revision = EvidenceRevision(tuple(scope), tuple(tuple(h) for h in headers),
+                tuple(question) if question else None, head[0] if head else 0,
+                tuple(tuple(o[k] for k in ('operation_id', 'context_version', 'dispatch_state', 'outcome', 'kind')) for o in operations), pending)
+            if not messages:
+                return revision
+            # Question text belongs only to the selected task; revision reads do
+            # not fetch operation bodies or competitors' substantive history.
+            task = dict(task)
+            task['open_question'] = self._db.execute('SELECT open_question FROM tasks WHERE task_id=? AND scope_id=?', (task_id, scope_id)).fetchone()[0]
+            def event(operation_id, kind):
+                row = self._db.execute('''SELECT event_id,sequence,context_version,fingerprint,payload
+                    FROM events WHERE task_id=? AND operation_id=? AND type=? ORDER BY sequence DESC LIMIT 1''',
+                    (task_id, operation_id, kind)).fetchone()
+                if not row or len(row['payload']) > 16384: return None
+                try: payload = _decode(row['payload'])
+                except (ValueError, RecursionError): return None
+                if not isinstance(payload, dict): return None
+                return dict(row), payload
+            provenance = []
+            for op in operations:
+                accepted = event(op['operation_id'], 'utterance_accepted')
+                source = None
+                if accepted:
+                    row, payload = accepted
+                    if (row['context_version'] == op['context_version'] and payload.get('kind') == op['kind']
+                            and payload.get('text') == op['text']):
+                        source = {k: row[k] for k in ('event_id', 'sequence', 'context_version', 'fingerprint')}
+                        answered = payload.get('answered_question')
+                        if (isinstance(answered, dict) and set(answered) <= {'scope_id','task_id','question_id','context_version','text','source'}
+                                and answered.get('task_id') == task_id and answered.get('context_version') == op['context_version']-1
+                                and isinstance(answered.get('text'), str) and len(answered['text']) <= 4000):
+                            source['answered_question'] = answered
+                provenance.append(freeze(source) if source else None)
+            backend = None
+            if operations:
+                latest = operations[-1]
+                observation = event(latest['operation_id'], 'backend_observed')
+                settlement = event(latest['operation_id'], 'operation_settled')
+                candidates = []
+                if latest['dispatch_state'] == 'settled' and settlement:
+                    row, payload = settlement
+                    replies = payload.get('replies')
+                    if (isinstance(replies, list) and len(replies) <= 32
+                            and all(isinstance(r, str) and len(r) <= 4000 for r in replies)):
+                        candidates.append((row, replies[-1] if replies else ''))
+                if observation:
+                    candidates.append((observation[0], observation[1].get('text')))
+                for row, text in candidates:
+                    if (row['context_version'] == latest['context_version'] and isinstance(text, str)
+                            and 0 < len(text) <= 4000):
+                        backend = freeze({k: row[k] for k in ('event_id','sequence','fingerprint')} | {'text': text})
+                        break
+            eligible_question = (question and question['task_id'] == task_id
+                and question['context_version'] == task['context_version'] and not pending
+                and task['state'] not in ('cancelled','cancel_requested','succeeded','failed','outcome_unknown')
+                and question['text'] == task['open_question'])
+            return GroundedSnapshot(tuple(scope), tuple(freeze(dict(h)) for h in headers), freeze(dict(task)),
+                tuple(freeze(dict(o)) for o in operations), tuple(provenance),
+                freeze(dict(question)) if eligible_question else None, backend, pending, revision)
+
     def accept(self, task_id: str, scope_id: str, utterance_id: str, text: str, *, kind="continue_task", voice_context=None, preconditions=None, authority=None) -> dict:
         bounded_identifier(utterance_id)
         if kind not in _BUSINESS_KINDS or not isinstance(text, str) or not text or len(text) > 4000:

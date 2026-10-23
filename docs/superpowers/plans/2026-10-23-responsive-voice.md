@@ -322,3 +322,17 @@ Task15 final status: complete through `b7b476b`, following main commit `33eea47`
 Ruling before next routing freeze: add an explicit task-bound read-only grounded-answer slice after Task16, preserving the70choice cap and existing business authority. The previous clarification-catchall proposal is insufficient. Details in TASK/grounded-conversation-prefreeze-decision.md; Task17 must receive a separate concrete brief/review before implementation. No free-conversation/Omni/full-mode/live claim follows from this decision.
 
 Task16 implementation evidence before independent review: final admission29/4.623s, affected integration351/48.677s and one final native discovery791/119.774s all GREEN on final substantive source. Exact ownership, hashes, RED/GREEN output, private observation hooks, the corrected legacy-fixture verification deviation and live prerequisites are recorded in `.superpowers/sdd/2026-10-23-responsive-voice/task-16-report.md`. Source review and Task6/7 runtime/consumer adoption remain pending; no activation or live exactness claim follows.
+
+### Task17: Explicit read-only grounded answers before final semantic freeze
+
+Spec: docs/superpowers/specs/2026-10-24-grounded-answers.md, including reviewed Task16 transport handoff. One task history, explicit option, real bounded coherent evidence and separate revision, existing Task15 input guard, extractive plan/attributed renderer, targeted ownership of the existing PCM buffer. Disabled by default; concrete trusted runtime readiness path required. No new business authority/Legacy execution or model/runtime/profile/instance changes.
+
+- [x] RED actual offered routing with/without current question, no swallowed grounded question, honest correction/dispatch/question/queue/backend/gap rendering, no extra business work.
+- [x] Implement bounded read-only Store snapshot/revision, one planner job outside acceptance lock, existing input/evidence guards and targeted stale-PCM invalidation through final drain.
+- [x] Extract Task16's shared admission once for route3584/24 versus planner3072/128; preserve public APIs, full byte/token/count/deadline/cancellation invariants and synchronous outer retirement.
+- [x] Wire strict optional config and a concrete trusted runtime-readiness verification seam; absent actual proof fails closed without an editable qualification bit.
+- [ ] Run covering public fake integration plus one final comprehensive native discovery, commit exact owned paths and close independent source review before one final integrated semantic freeze.
+
+The future single campaign retains120routing/40status unchanged plus24grounded, at most208inference/416count-plus-completionHTTP; no corpus/modelGO here. Sharing requires observed server release within full next-route deadlines;100ms is diagnostic/stretch, not a separate hard gate. Physical iPhone audio and platform full-mode remain separate evidence.
+
+Task17 source implementation and fake verification are complete: final focused93/7.690s and one comprehensive native discovery827/126.074s passed. Exact owned files, RED/GREEN findings, shared transport APIs, readiness finalizer contract, source hashes and live blockers are in .superpowers/sdd/2026-10-23-responsive-voice/task-17-report.md. Independent source review and the existing-owner finalizer/evidence adoption remain pending; grounded production stays disabled and no live qualification or GO is claimed.
