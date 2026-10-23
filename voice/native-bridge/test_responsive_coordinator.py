@@ -102,6 +102,14 @@ class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.store.operations('scope')), 1)
         self.assertEqual(len(self.dialog.calls), 1)
         self.assertEqual(self.store.get_task(task_id, 'scope')['state'], 'running')
+        unrelated = await self.attachment.accept('unrelated', 'Wie ist das Wetter auf dem Mars?')
+        self.assertEqual(unrelated.intent, 'clarification')
+        self.assertEqual(len(self.store.operations('scope')), 1)
+        class SemanticModel:
+            async def classify(self, text, context):
+                return {'intent': 'continue_task', 'task_ref': 't1', 'agent_alias': '',
+                        'relation': 'dialogue', 'evidence': 'Abholung'}
+        self.coordinator.router = ConversationRouter(SemanticModel())
         original = '  Wie funktioniert die Abholung?  '
         route = await self.attachment.accept('substantive', original)
         self.assertEqual((route.intent, route.task_id), ('continue_task', task_id))

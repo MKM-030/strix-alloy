@@ -10,7 +10,7 @@ import hashlib
 import inspect
 
 from business_tasks import Scope, StoreConflict, StoreDenied, StoreInvalid, bounded_identifier
-from conversation_router import RoutingContext
+from conversation_router import RoutingContext, Route
 from servicenow_executor import LegacyVAExecutor
 
 
@@ -170,15 +170,33 @@ class ConversationAttachment:
             if not self._attached:
                 raise StoreDenied('scope detached')
             self._interrupt()
-            question = self.store.question(self.scope.scope_id)
-            tasks = self.store.list_tasks(self.scope.scope_id)
-            operations = self.store.operations(self.scope.scope_id)
+            question, tasks, operations, checkpoint = self.store.routing_snapshot(self.scope.scope_id)
+            # Duplicate accepted input remains idempotent even after its question moved.
+            prior_input = next((op for op in operations if op['utterance_id'] == utterance_id), None)
+            if prior_input:
+                if prior_input['text'] != text or prior_input['voice_context'] != (voice_context or {}):
+                    raise StoreConflict('utterance identity conflict')
+                owner = next(t for t in tasks if t['task_id'] == prior_input['task_id'])
+                return Route(prior_input['kind'], '' if prior_input['kind'] == 'new_task' else owner['task_id'],
+                             owner['agent_alias'] if prior_input['kind'] == 'new_task' else '')
+            captured_agents = tuple(self.coordinator.agents)
+            captured_focus = self._focus
+            captured_workflow = self._context_task
+            binding_valid = True
+            def authority():
+                return (binding_valid and self._attached and self.coordinator._owner is self
+                        and tuple(self.coordinator.agents) == captured_agents
+                        and self._focus == captured_focus and self._context_task == captured_workflow)
+
             pending_tasks = {op['task_id'] for op in self.store.pending(self.scope.scope_id)}
             for task in tasks:
                 own_operations = [op for op in operations if op['task_id'] == task['task_id']]
                 if own_operations:
                     latest = own_operations[-1]
                     task['retained_text'] = latest['text']
+                    task.update(latest_operation_id=latest['operation_id'],
+                                latest_operation_version=latest['context_version'],
+                                latest_operation_state=latest['dispatch_state'])
                     # A correction may refer to the immediately answered question even
                     # after accept cleared its delivery binding. Journal evidence only;
                     # never restore open_question or infer that audio was heard.
@@ -190,7 +208,16 @@ class ConversationAttachment:
                         # A previous-version settlement may arrive after this answer.
                         # Only journal evidence preceding acceptance can identify the
                         # question that was actually available when it was answered.
+                        answered = accepted['payload'].get('answered_question') if accepted else None
+                        if answered:
+                            task.update(previous_question=answered['text'],
+                                previous_question_version=answered['context_version'],
+                                previous_question_id=answered['question_id'], previous_question_source=answered['source'],
+                                previous_operation_id=latest['operation_id'], previous_operation_version=latest['context_version'],
+                                previous_operation_state=latest['dispatch_state'])
                         prior = [event for event in events if accepted and event['sequence'] < accepted['sequence']]
+                        if accepted and 'answered_question' in accepted['payload']:
+                            prior = []
                         for event in reversed(prior):
                             if event['context_version'] != latest['context_version'] - 1:
                                 continue
@@ -201,66 +228,88 @@ class ConversationAttachment:
                             if previous:
                                 task['previous_question'] = previous
                                 task['previous_question_version'] = event['context_version']
+                                task['previous_question_id'] = event['event_id']
+                                task['previous_question_source'] = payload.get('source', event['source'])
+                                task['previous_operation_id'] = latest['operation_id']
+                                task['previous_operation_version'] = latest['context_version']
+                                task['previous_operation_state'] = latest['dispatch_state']
                                 break
                 task['pending_delivery'] = task['task_id'] in pending_tasks
                 if task['pending_delivery']:
                     task['open_question'] = None
             context = RoutingContext(self.scope.scope_id, tasks,
-                focus_task_id=self._focus, agents=self.coordinator.agents,
+                focus_task_id=self._focus, agents=list(captured_agents),
                 question_task_id=question['task_id'] if question else '',
                 last_question=question['text'] if question else '',
                 question_version=question['context_version'] if question else None,
-                workflow_task_id=self._context_task)
+                workflow_task_id=self._context_task,
+                question_id=question['question_id'] if question else '',
+                question_source=question['source'] if question else '')
             route = await self.coordinator.router.route(text, context)
-            if not self._attached:
-                raise StoreDenied('scope detached')
-            if route.intent in ('uncertain', 'clarification'):
-                self._queue('local_reply', route.reply, utterance_id=utterance_id)
-            elif route.intent == 'stop_speaking':
-                pass
-            elif route.intent == 'status_query':
-                task = self.store.get_task(route.task_id, self.scope.scope_id)
-                observed = {}
-                for event in self.store.events(route.task_id, self.scope.scope_id):
-                    if event['type'] == 'backend_observed':
-                        observed[event['operation_id']] = event['payload']['text']
-                latest_reply = ''
-                # Operation order outranks late callbacks from an older operation.
-                # Within an operation, final returned replies outrank streamed progress.
-                for operation in reversed(self.store.operations(self.scope.scope_id)):
-                    if operation['task_id'] != route.task_id:
-                        continue
-                    replies = operation['replies'] or []
-                    latest_reply = replies[-1] if replies else observed.get(operation['operation_id'], '')
-                    if latest_reply:
-                        break
-                suffix = (' Letzte Antwort: ' + latest_reply) if latest_reply else ''
-                self._queue('local_reply', ('Status: ' + task['state'] + '.' + suffix)[:4000], task=task, utterance_id=utterance_id)
-            elif route.intent == 'cancel_task':
-                task = self.store.cancel_pending(route.task_id, self.scope.scope_id, utterance_id, text=text)
-                message = ('Die noch nicht übermittelte Aufgabe wurde lokal abgebrochen.' if task['state'] == 'cancelled' else
-                           'Abbruch vorgemerkt. Eine bereits übermittelte Aktion kann ich nicht sicher stoppen; eine Stornierung ist nicht bestätigt.')
-                self._queue('local_reply', message, task=task, utterance_id=utterance_id)
-                self._wake.set()
-            elif route.intent in ('new_task', 'amend_task', 'continue_task'):
-                if route.intent == 'new_task':
-                    agent = next((a for a in self.coordinator.agents if a.alias == route.agent_alias), None)
-                    if agent is None:
-                        raise StoreDenied('agent unavailable')
-                    operation = self.store.accept_new_task(self.scope, agent, utterance_id, text, voice_context=voice_context)
-                    task = self.store.get_task(operation['task_id'], self.scope.scope_id)
-                else:
+            if route.intent in ('new_task', 'continue_task', 'amend_task', 'cancel_task'):
+                bound_task = next((t for t in tasks if t['task_id'] == route.task_id), None)
+                alias = route.agent_alias if route.intent == 'new_task' else bound_task['agent_alias'] if bound_task else ''
+                agent = next((a for a in captured_agents if a.alias == alias), None)
+                binding_valid = bool(agent and agent.capabilities.get(route.intent) and
+                    (route.intent == 'new_task' or bound_task and
+                     (bound_task['agent_id'], bound_task['registry_revision']) == (agent.agent_id, agent.revision)))
+            if not authority():
+                route = Route('clarification', reply='Der Gesprächskontext hat sich geändert. Bitte wiederhole deine Angabe.')
+            try:
+                if route.intent in ('uncertain', 'clarification'):
+                    self._queue('local_reply', route.reply, utterance_id=utterance_id)
+                elif route.intent == 'stop_speaking':
+                    pass
+                elif route.intent == 'status_query':
                     task = self.store.get_task(route.task_id, self.scope.scope_id)
-                    if route.intent == 'amend_task':
-                        self._queue('local_reply', 'Eine bereits laufende Aktion kann ich nicht sicher ändern. Die Änderung wird zur späteren Übermittlung vorgemerkt.', task=task, utterance_id=utterance_id)
-                    operation = self.store.accept(task['task_id'], self.scope.scope_id, utterance_id, text,
-                                                  kind=route.intent, voice_context=voice_context)
-                self._focus = task['task_id']
-                self._queue('local_reply', 'Angenommen und gespeichert. Neue Aufgaben bleiben im Legacy-Kontext in der Warteschlange, solange eine andere Aufgabe offen ist.' if route.intent == 'new_task' and self._context_task else
-                            'Angenommen und zur Übermittlung vorgemerkt.', operation=operation)
-                self._wake.set()
-            else:
-                raise StoreInvalid('unsupported route')
+                    observed = {}
+                    for event in self.store.events(route.task_id, self.scope.scope_id):
+                        if event['type'] == 'backend_observed':
+                            observed[event['operation_id']] = event['payload']['text']
+                    latest_reply = ''
+                    # Operation order outranks late callbacks from an older operation.
+                    # Within an operation, final returned replies outrank streamed progress.
+                    for operation in reversed(self.store.operations(self.scope.scope_id)):
+                        if operation['task_id'] != route.task_id:
+                            continue
+                        replies = operation['replies'] or []
+                        latest_reply = replies[-1] if replies else observed.get(operation['operation_id'], '')
+                        if latest_reply:
+                            break
+                    suffix = (' Letzte Antwort: ' + latest_reply) if latest_reply else ''
+                    self._queue('local_reply', ('Status: ' + task['state'] + '.' + suffix)[:4000], task=task, utterance_id=utterance_id)
+                elif route.intent == 'cancel_task':
+                    task = self.store.cancel_pending(route.task_id, self.scope.scope_id, utterance_id, text=text,
+                                                     preconditions=checkpoint, authority=authority)
+                    message = ('Die noch nicht übermittelte Aufgabe wurde lokal abgebrochen.' if task['state'] == 'cancelled' else
+                               'Abbruch vorgemerkt. Eine bereits übermittelte Aktion kann ich nicht sicher stoppen; eine Stornierung ist nicht bestätigt.')
+                    self._queue('local_reply', message, task=task, utterance_id=utterance_id)
+                    self._wake.set()
+                elif route.intent in ('new_task', 'amend_task', 'continue_task'):
+                    if route.intent == 'new_task':
+                        agent = next((a for a in self.coordinator.agents if a.alias == route.agent_alias), None)
+                        if agent is None:
+                            raise StoreDenied('agent unavailable')
+                        operation = self.store.accept_new_task(self.scope, agent, utterance_id, text, voice_context=voice_context,
+                                                               preconditions=checkpoint, authority=authority)
+                        task = self.store.get_task(operation['task_id'], self.scope.scope_id)
+                    else:
+                        task = self.store.get_task(route.task_id, self.scope.scope_id)
+                        operation = self.store.accept(task['task_id'], self.scope.scope_id, utterance_id, text,
+                                                      kind=route.intent, voice_context=voice_context,
+                                                      preconditions=checkpoint, authority=authority)
+                    self._focus = task['task_id']
+                    self._queue('local_reply', 'Angenommen und gespeichert. Neue Aufgaben bleiben im Legacy-Kontext in der Warteschlange, solange eine andere Aufgabe offen ist.' if route.intent == 'new_task' and self._context_task else
+                                'Angenommen und zur Übermittlung vorgemerkt.', operation=operation)
+                    self._wake.set()
+                else:
+                    raise StoreInvalid('unsupported route')
+            except StoreConflict:
+                # No stale route has been journaled: the transaction rolled back.
+                if checkpoint == self.store.routing_checkpoint(self.scope.scope_id) and authority():
+                    raise
+                route = Route('clarification', reply='Die aktuelle Frage oder Aufgabe hat sich geändert. Bitte wiederhole deine Angabe.')
+                self._queue('local_reply', route.reply, utterance_id=utterance_id)
             return route
 
     async def detach(self):

@@ -153,6 +153,12 @@ class TaskStore:
                 PRIMARY KEY(operation_id, sequence)
             );
         """)
+        # Additive migration: existing journals and uncertain reservations survive.
+        columns = {row['name'] for row in self._db.execute('PRAGMA table_info(scope_questions)')}
+        if 'question_id' not in columns:
+            self._db.execute("ALTER TABLE scope_questions ADD COLUMN question_id TEXT NOT NULL DEFAULT ''")
+        for row in self._db.execute("SELECT scope_id FROM scope_questions WHERE question_id='' ").fetchall():
+            self._db.execute('UPDATE scope_questions SET question_id=? WHERE scope_id=?', (_new_id(), row['scope_id']))
 
     def close(self):
         with self._lock:
@@ -258,7 +264,42 @@ class TaskStore:
             rows = self._db.execute("SELECT * FROM tasks WHERE scope_id=? ORDER BY created_at,task_id", (scope_id,)).fetchall()
             return [self._task_snapshot(row) for row in rows]
 
-    def accept(self, task_id: str, scope_id: str, utterance_id: str, text: str, *, kind="continue_task", voice_context=None) -> dict:
+    def routing_checkpoint(self, scope_id):
+        """Immutable authority snapshot; unrelated progress events do not fence input.
+
+        Scope-wide task identities/versions and latest accepted operations prevent
+        a changed set of plausible question targets from acquiring stale authority.
+        No callback text, timestamp or result counter is part of this fence.
+        """
+        bounded_identifier(scope_id)
+        with self._lock:
+            scope = self._db.execute('SELECT * FROM scopes WHERE scope_id=?', (scope_id,)).fetchone()
+            tasks = self.list_tasks(scope_id)
+            latest = {}
+            for op in self.operations(scope_id):
+                latest[op['task_id']] = (op['operation_id'], op['context_version'])
+            question = self.question(scope_id)
+            return (scope_id, tuple(scope) if scope else None,
+                tuple((t['task_id'], t['context_version'], t['state'] in
+                       ('succeeded', 'failed', 'cancelled', 'cancel_requested', 'outcome_unknown'),
+                       t['agent_alias'], t['agent_id'], t['registry_revision'],
+                       tuple(sorted(t['capabilities'].items())), t['open_question'], latest.get(t['task_id'])) for t in tasks),
+                tuple(question.items()) if question else None)
+
+    def _check_preconditions(self, scope_id, preconditions, authority):
+        if preconditions is not None and preconditions != self.routing_checkpoint(scope_id):
+            raise StoreConflict('routing checkpoint changed')
+        # Coordinator supplies the current in-process registry/attachment guard.
+        # Invoked only within the same SQLite write transaction as acceptance.
+        if authority is not None and not authority():
+            raise StoreConflict('routing authority changed')
+
+    def routing_snapshot(self, scope_id):
+        """Capture question and operation provenance under one journal read lock."""
+        with self._transaction():
+            return self.question(scope_id), self.list_tasks(scope_id), self.operations(scope_id), self.routing_checkpoint(scope_id)
+
+    def accept(self, task_id: str, scope_id: str, utterance_id: str, text: str, *, kind="continue_task", voice_context=None, preconditions=None, authority=None) -> dict:
         bounded_identifier(utterance_id)
         if kind not in _BUSINESS_KINDS or not isinstance(text, str) or not text or len(text) > 4000:
             raise StoreInvalid("invalid utterance")
@@ -276,13 +317,14 @@ class TaskStore:
                 bound_assistant = self._db.execute("SELECT assistant_id FROM scopes WHERE scope_id=?", (scope_id,)).fetchone()[0]
                 if context["assistant_id"] != bound_assistant:
                     raise StoreInvalid("invalid voice context")
-            if not _decode(task["capabilities"]).get(kind, False):
-                raise StoreDenied("agent capability unavailable")
             existing = self._db.execute("SELECT * FROM operations WHERE utterance_id=?", (utterance_id,)).fetchone()
             if existing:
                 if existing["task_id"] == task_id and existing["kind"] == kind and existing["text"] == text and existing["voice_context"] == encoded_context:
                     return self._operation_snapshot(existing)
                 raise StoreConflict("utterance identity conflict")
+            self._check_preconditions(scope_id, preconditions, authority)
+            if not _decode(task["capabilities"]).get(kind, False):
+                raise StoreDenied("agent capability unavailable")
             attached = self._db.execute("SELECT attached FROM scopes WHERE scope_id=?", (scope_id,)).fetchone()[0]
             if not attached:
                 raise StoreDenied("scope detached")
@@ -299,12 +341,16 @@ class TaskStore:
                 "INSERT INTO operations(operation_id,task_id,utterance_id,context_version,kind,text,voice_context,immutable_payload,dispatch_state,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
                 (operation_id, task_id, utterance_id, version, kind, text, encoded_context, payload, "unsubmitted", now),
             )
-            self._event(task_id, operation_id, "utterance_accepted", version, {"kind": kind, "text": text})
+            answered = self.question(scope_id)
+            if answered and (answered['task_id'] != task_id or answered['context_version'] != version - 1):
+                answered = None
+            self._event(task_id, operation_id, "utterance_accepted", version,
+                        {"kind": kind, "text": text, "answered_question": answered})
             self._db.execute('DELETE FROM scope_questions WHERE scope_id=? AND task_id=?', (scope_id, task_id))
             self._db.execute('UPDATE tasks SET open_question=NULL WHERE task_id=?', (task_id,))
             return self._operation_snapshot(self._db.execute("SELECT * FROM operations WHERE operation_id=?", (operation_id,)).fetchone())
 
-    def accept_new_task(self, scope, agent, utterance_id, text, *, voice_context=None):
+    def accept_new_task(self, scope, agent, utterance_id, text, *, voice_context=None, preconditions=None, authority=None):
         """Create workflow and its first durable utterance in one transaction."""
         with self._transaction():
             prior = self._db.execute('SELECT * FROM operations WHERE utterance_id=?', (utterance_id,)).fetchone()
@@ -313,6 +359,7 @@ class TaskStore:
                 if (task['agent_alias'], task['agent_id'], task['registry_revision']) != (agent.alias, agent.agent_id, agent.revision):
                     raise StoreConflict('agent binding conflict')
             else:
+                self._check_preconditions(scope.scope_id, preconditions, authority)
                 task = self.create_task(scope, agent, text)
             return self.accept(task['task_id'], scope.scope_id, utterance_id, text, kind='new_task', voice_context=voice_context)
 
@@ -327,10 +374,11 @@ class TaskStore:
                 raise StoreConflict('task cannot accept a question')
             if context_version is not None and task['context_version'] != context_version:
                 return False
-            self._db.execute('INSERT OR REPLACE INTO scope_questions VALUES(?,?,?,?,?)',
-                             (scope_id, task_id, text, source, task['context_version']))
+            question_id = _new_id()
+            self._db.execute('INSERT OR REPLACE INTO scope_questions VALUES(?,?,?,?,?,?)',
+                             (scope_id, task_id, text, source, task['context_version'], question_id))
             self._db.execute('UPDATE tasks SET open_question=? WHERE task_id=?', (text, task_id))
-            self._event(task_id, None, 'question_noted', task['context_version'], {'text': text, 'source': source})
+            self._event(task_id, None, 'question_noted', task['context_version'], {'text': text, 'source': source}, event_id=question_id)
             return True
 
     def question(self, scope_id):
@@ -346,7 +394,7 @@ class TaskStore:
             rows = self._db.execute("SELECT o.* FROM operations o JOIN tasks t ON t.task_id=o.task_id WHERE t.scope_id=? ORDER BY o.rowid", (scope_id,)).fetchall()
             return [self._operation_snapshot(row) for row in rows]
 
-    def cancel_pending(self, task_id, scope_id, command_id, *, text):
+    def cancel_pending(self, task_id, scope_id, command_id, *, text, preconditions=None, authority=None):
         bounded_identifier(command_id)
         if not isinstance(text, str) or not text or len(text) > 4000:
             raise StoreInvalid("invalid command")
@@ -357,6 +405,7 @@ class TaskStore:
                 if (prior['task_id'], prior['scope_id'], prior['text']) != (task_id, scope_id, text):
                     raise StoreConflict("command identity conflict")
                 return self._task_snapshot(task)
+            self._check_preconditions(scope_id, preconditions, authority)
             if self._db.execute("SELECT 1 FROM operations WHERE utterance_id=?", (command_id,)).fetchone():
                 raise StoreConflict("command identity conflict")
             if not self._db.execute("SELECT attached FROM scopes WHERE scope_id=?", (scope_id,)).fetchone()[0]:
@@ -451,6 +500,7 @@ class TaskStore:
             self._db.execute("UPDATE operations SET dispatch_state='settled',replies=?,evidence=?,outcome=?,settled_at=? WHERE operation_id=?", (encoded_replies, encoded_evidence, outcome, now, operation_id))
             state = 'cancel_requested' if task['state'] == 'cancel_requested' and outcome == 'awaiting_input' else outcome
             question = replies[-1] if outcome == 'awaiting_input' and replies else None
+            settlement_id = _new_id()
             binding = self._db.execute('SELECT * FROM scope_questions WHERE scope_id=?', (task['scope_id'],)).fetchone()
             if (outcome == 'awaiting_input' and binding is not None
                     and binding['task_id'] == row['task_id']
@@ -467,11 +517,12 @@ class TaskStore:
                     and self._task_snapshot(task)['attached']
                     and (binding is None or binding['task_id'] == row['task_id'])):
                 if question:
-                    self._db.execute('INSERT OR REPLACE INTO scope_questions VALUES(?,?,?,?,?)',
-                        (task['scope_id'], row['task_id'], question, 'backend', row['context_version']))
+                    question_id = binding['question_id'] if binding and question == binding['text'] else settlement_id
+                    self._db.execute('INSERT OR REPLACE INTO scope_questions VALUES(?,?,?,?,?,?)',
+                        (task['scope_id'], row['task_id'], question, 'backend', row['context_version'], question_id))
                 else:
                     self._db.execute('DELETE FROM scope_questions WHERE task_id=?', (row['task_id'],))
-            self._event(row["task_id"], operation_id, "operation_settled", row["context_version"], {"outcome": outcome, "replies": replies, "evidence": _decode(encoded_evidence)})
+            self._event(row["task_id"], operation_id, "operation_settled", row["context_version"], {"outcome": outcome, "replies": replies, "evidence": _decode(encoded_evidence)}, event_id=settlement_id)
             return self._task_snapshot(self._db.execute("SELECT * FROM tasks WHERE task_id=?", (row["task_id"],)).fetchone())
 
     def record_receipt(self, operation_id, *, request_ref='', execution_ref='', receipt=None):

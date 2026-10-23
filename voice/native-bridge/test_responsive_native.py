@@ -271,6 +271,21 @@ class NativeResponsiveTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.dialog.received), 1)
         self.assertEqual(len(self.store.operations(call.call_id)), 1)
         self.assertTrue(any('An welchem Datum?' in t['content'] for t in self.transcripts(call)))
+        await self.say(call, 'Wie ist das Wetter auf dem Mars?')
+        self.assertEqual(len(self.store.operations(call.call_id)), 1)
+        class SemanticModel:
+            async def classify(self, text, context):
+                return {'intent': 'continue_task', 'task_ref': 't1', 'agent_alias': '',
+                        'relation': 'dialogue', 'evidence': 'Abholung'}
+        self.coordinator.router = ConversationRouter(SemanticModel())
+        original = '  Wie funktioniert die Abholung?  '
+        await self.say(call, original)
+        self.assertEqual(len(self.store.pending(call.call_id)), 1)
+        self.assertEqual(self.store.pending(call.call_id)[0]['text'], original)
+        self.assertEqual(len(self.dialog.received), 1)
+        self.dialog.release.set()
+        await until(lambda: len(self.dialog.received) == 2)
+        self.assertEqual(self.dialog.received[1][0], original)
 
     async def test_suppressed_fallback_does_not_fabricate_greeting_history(self):
         from conversation_output import OutputArbiter
