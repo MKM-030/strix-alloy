@@ -24,6 +24,12 @@ class TaskCoordinator:
         self._owner = None
         self._shutdown = False
 
+    @property
+    def available(self):
+        """Synchronous admission hint; attach still performs the authoritative check."""
+        return (self.mode == 'legacy' and not self._shutdown and self._owner is None
+                and not self.store.has_unresolved())
+
     async def attach(self, scope: Scope, emit, *, executor=None):
         if self.mode == 'full':
             raise StoreDenied('full mode requires a verified owned runtime adapter; unavailable')
@@ -78,6 +84,7 @@ class ConversationAttachment:
         self._context_task = ''
         self._focus = ''
         self._cleanup_acknowledged = False
+        self._closed = asyncio.Event()
         self.suppressed_count = 0
 
     @property
@@ -218,6 +225,14 @@ class ConversationAttachment:
             self._output_worker.cancel()
             await asyncio.gather(self._output_worker, return_exceptions=True)
 
+    async def wait_closed(self):
+        """Wait for owned cleanup and reservation release, without owning the worker.
+
+        Unknown business outcomes keep this pending. A timeout/cancel of this wait
+        never propagates to submitted observation or owned cleanup.
+        """
+        await self._closed.wait()
+
     async def _ready(self):
         ready = asyncio.create_task(self.executor.wait_ready())
         detached = asyncio.create_task(self._detached.wait())
@@ -296,3 +311,4 @@ class ConversationAttachment:
                 self._cleanup_acknowledged = False
             if self._cleanup_acknowledged and not self.store.has_unresolved():
                 self.coordinator._owner = None
+                self._closed.set()

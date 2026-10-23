@@ -342,6 +342,37 @@ class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.store.pending('scope')), 1)
         self.assertEqual(self.dialog.calls, [])
 
+    async def test_public_availability_tracks_owned_cleanup_and_unresolved_work(self):
+        self.assertFalse(self.coordinator.available)
+        await self.attachment.detach()
+        await self.attachment.wait_closed()
+        self.assertTrue(self.coordinator.available)
+        task = self.store.create_task(Scope('old','old-call',0,'instance','assistant'), self.agent, 'Old')
+        operation = self.store.accept(task['task_id'], 'old', 'old-u', 'Old', kind='new_task')
+        self.store.dispatch(operation['operation_id'])
+        self.assertFalse(self.coordinator.available)
+        self.store.recover()
+        self.assertFalse(self.coordinator.available)
+
+    async def test_wait_closed_timeout_does_not_cancel_business(self):
+        await self.attachment.accept('first', 'new request')
+        await self.dialog.started.wait()
+        await self.attachment.detach()
+        with self.assertRaises(TimeoutError):
+            await asyncio.wait_for(self.attachment.wait_closed(), .001)
+        self.assertTrue(self.store.has_unresolved())
+        self.dialog.release.set()
+        await asyncio.wait_for(self.attachment.wait_closed(), 1)
+        self.assertTrue(self.dialog.closed)
+        self.assertFalse(self.store.has_unresolved())
+        self.assertTrue(self.coordinator.available)
+
+    async def test_availability_remains_false_after_shutdown_or_for_full_mode(self):
+        await self.coordinator.shutdown(1)
+        self.assertFalse(self.coordinator.available)
+        full = TaskCoordinator(self.store, Router(), [self.agent], lambda _: LegacyVAExecutor(self.dialog), mode='full')
+        self.assertFalse(full.available)
+
 
 if __name__ == '__main__':
     unittest.main()
