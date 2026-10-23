@@ -45,6 +45,8 @@ flowchart LR
 
 **LegacyVAExecutor:** authentisierte aktuelle Cookie/CSRF-Bridge; busy, Callback-Korrelation, Terminal-Drain, owned cleanup und unklare Ergebnisse bleiben erhalten. `Dialog.turn()`-Ende bedeutet awaiting_input mit belegter Botantwort, nicht Bestellung succeeded. Originale Callertexte bleiben exakt; keine erfundenen Tool-/Userhistorien. Adapterfähigkeiten sind explizit, standardmäßig ausgeschaltet bis wire-qualifiziert.
 
+Verbindungsaufbau blockiert die lokale Gesprächsschicht ebenfalls nicht. Eingaben können während `Dialog.open()` dauerhaft angenommen werden, der Worker sendet erst nach tatsächlicher Eingabebereitschaft. Nach1000ms ohne Fachbereitschaft kommt einmal eine ehrliche lokale Verbindungsrückmeldung, generation-geprüft und unterbrechbar. Das ist keine vorgezogene fachliche Begrüßung und wird nicht als Botverlauf erfunden. Backendbegrüßung/Sprachauswahl behalten ihre Reihenfolge; ein gescheiterter Aufbau erzeugt einen belegten Fehler und keine vermeintlich gestartete Aufgabe. Erste-Audio-/ICE-/Admission-/Backendbereit-Zeit getrennt messen.
+
 **QualifiedServiceNowExecutor:** eigener nachgewiesener Task-/Operationsvertrag für unabhängige Agenten und Versionierung. Kein KAA-Bypass, keine geratenen Header oder erfundenen IDs. Full-mode-Aktivierung ohne Identität/Fencing/Lifecycle schlägt fehl. Responsive Legacy bleibt ausdrücklich eingeschränkt und wird nicht als vollständige parallele Fachorchestrierung etikettiert.
 
 ## Persistenz und Lebenszyklus
