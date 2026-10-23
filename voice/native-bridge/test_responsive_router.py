@@ -78,6 +78,51 @@ class RouterTest(unittest.IsolatedAsyncioTestCase):
         for text in ('Ja', 'Nora Berg', '17.11.2026'):
             self.assertEqual((await ConversationRouter().route(text, context)).intent, 'clarification')
 
+    async def test_german_polar_question_forms_do_not_accept_field_values(self):
+        cases = (
+            ('Ist der Name korrekt?', 'Nora Berg'),
+            ('Stimmt das Datum?', '17.11.2026'),
+            ('Passt der Lieferort so?', 'Büro 42, Berlin'),
+            ('Ist diese Führungskraft richtig?', 'Nora Berg'),
+            ('Lautet der Name Nora Berg?', 'Nora Berg'),
+            ('Soll dieses Datum verwendet werden?', '17.11.2026'),
+            ('Kann die Lieferung an diese Lieferadresse erfolgen?', 'Büro 42, Berlin'),
+            ('Der Name ist korrekt, oder?', 'Nora Berg'),
+            ('Haben Sie den Manager bestätigt?', 'Nora Berg'),
+            ('Entspricht der Name Ihren Angaben?', 'Nora Berg'),
+        )
+        for question, wrong in cases:
+            current = dict(task(), context_version=1, open_question=question)
+            context = RoutingContext('scope-1', [current], question_task_id='t1', question_version=1,
+                                     last_question=question, workflow_task_id='t1', agents=[AGENT])
+            with self.subTest(question=question):
+                self.assertEqual(await ConversationRouter().route('Ja', context), Route('continue_task', 't1'))
+                self.assertEqual(await ConversationRouter().route('Nein', context), Route('continue_task', 't1'))
+                self.assertEqual((await ConversationRouter().route(wrong, context)).intent, 'clarification')
+
+    async def test_wh_value_questions_and_mixed_confirmation_remain_distinct(self):
+        current = dict(task(), context_version=1)
+        context = RoutingContext('scope-1', [current], question_task_id='t1', question_version=1,
+                                 last_question=current['open_question'], workflow_task_id='t1', agents=[AGENT])
+        for question, answer in (('Welcher Name ist korrekt?', 'Nora Berg'),
+                                 ('Welches Datum stimmt?', '17.11.2026'),
+                                 ('Wo liegt der Lieferort?', 'Büro 42, Berlin'),
+                                 ('Wer ist Ihr Manager?', 'Nora Berg'),
+                                 ('Bitte nennen Sie Ihren Namen.', 'Nora Berg'),
+                                 ('Your name?', 'Nora Berg')):
+            current['open_question'] = context.last_question = question
+            with self.subTest(question=question):
+                self.assertEqual(await ConversationRouter().route(answer, context), Route('continue_task', 't1'))
+                self.assertEqual((await ConversationRouter().route('Ja', context)).intent, 'clarification')
+        for question in ('Ist der Name korrekt oder wie lautet Ihr Name?',
+                         'Wie lautet Ihr Name? Ist das Datum korrekt?',
+                         'Der Name ist korrekt, oder welches Datum möchten Sie?',
+                         'Können Sie mir Ihren Namen nennen?'):
+            current['open_question'] = context.last_question = question
+            for answer in ('Ja', 'Nora Berg', '17.11.2026'):
+                with self.subTest(question=question, answer=answer):
+                    self.assertEqual((await ConversationRouter().route(answer, context)).intent, 'clarification')
+
     async def test_model_byte_limit_does_not_disable_local_help_or_audio_stop(self):
         question = 'Wie lautet Ihr Name?' + 'ä' * (4000 - len('Wie lautet Ihr Name?'))
         current = dict(task(), context_version=1, open_question=question)

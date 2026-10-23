@@ -326,15 +326,39 @@ class ConversationRouter:
 
     @staticmethod
     def _answer_kind(question):
-        question = question.casefold()
-        # The requested response form outranks nouns inside the question. A
-        # confirmation of a name/date still asks for yes/no, not a replacement.
-        if re.search(r'ja.{0,12}nein|möchten sie|möchtest du|soll ich|bestätigen sie|bestätigst du|einverstanden|fortfahren|\b(?:do|would|are) you\b', question):
-            if re.search(r'\b(?:wie lautet|wie heißen|welch\w*|wann|wohin|wer)\b', question):
-                return 'ambiguous'
-            return 'yes_no'
+        question = question.strip().casefold()
+        # German polar questions put a finite verb before the subject. Detect
+        # that form independently of the field being confirmed, including each
+        # clause in a compound prompt. Wh words request a value instead; mixing
+        # those requests with a polar clause cannot establish one answer type.
+        wh = bool(re.search(r'\b(?:wer|wen|wem|wessen|was|wann|wo|wohin|woher|wie|welch\w*|who|what|which|where|when|how)\b', question))
+        requested = bool(re.search(r'\b(?:nenn\w*|angeb\w*|geben sie|gib|mitteil\w*|teilen sie|sag\w*|schreib\w*|buchstab\w*)\b', question))
+        finite = (r'ist|sind|bin|bist|seid|war|waren|wäre|wären|'
+                  r'kann|kannst|können|könnt|könnte|könnten|'
+                  r'darf|darfst|dürfen|dürft|muss|musst|müssen|müsst|'
+                  r'hat|hast|haben|habt|wird|wirst|werden|werdet|wurde|wurden|'
+                  r'möchte|möchtest|möchten|möchtet|will|willst|wollen|wollt|'
+                  r'soll|sollst|sollen|sollt|stimmt|stimmen|passt|passen|'
+                  r'lautet|lauten|entspricht|entsprechen|gilt|gelten|trifft|treffen')
+        polar = bool(re.search(r'(?:^|[,?.!;]\s*)(?:bitte[, ]+)?(?:' + finite + r')\b', question))
+        confirmation = bool(re.search(r'ja.{0,12}nein|bestätigen sie|bestätigst du|einverstanden|fortfahren|\b(?:do|would|are) you\b', question))
+        tag = bool(re.search(r',\s*(?:oder|richtig|korrekt|stimmt das|nicht wahr)\s*\?$', question))
+        first_clause = re.split(r'[,;?.!]', question, maxsplit=1)[0]
+        clause_wh = bool(re.search(r'\b(?:wer|wen|wem|wessen|was|wann|wo|wohin|woher|wie|welch\w*)\b', first_clause))
+        correctness = not clause_wh and bool(re.search(
+            r'\b(?:stimmt|stimmen|passt|passen|entspricht|entsprechen)\b|'
+            r'\b(?:ist|sind)\b.*\b(?:korrekt|richtig|zutreffend|bestätigt|in ordnung)\b', first_clause))
+        if polar or confirmation or tag or correctness:
+            return 'ambiguous' if wh or requested else 'yes_no'
         if re.search(r'buchstab|spell', question):
             return 'spelling'
+        # A noun alone inside an unfamiliar sentence is insufficient evidence of
+        # a value request. Preserve explicit wh questions, imperative requests and
+        # short field prompts; other noun-bearing forms remain conservative.
+        short_field = bool(re.fullmatch(r'(?:(?:ihr\w*|dein\w*|your|der|die|das)\s+)?(?:vollständige\w*\s+)?(?:namen?|vorname|nachname|datum|termin|lieferort|lieferadresse|manager|führungskraft|address|date)\s*[?.:]?', question))
+        if not (wh or requested or short_field):
+            field = re.search(r'\bnamen?\b|vorname|nachname|datum|termin|liefer(?:ort|adresse|anschrift)|manager|führungskraft|vorgesetzt|\bdate\b', question)
+            return 'ambiguous' if field else ''
         if re.search(r'liefer(?:ort|adresse|anschrift)|lieferung.*(?:wo|adresse)|delivery.*(?:location|address)|wohin', question):
             return 'location'
         if re.search(r'vorgesetzt|manager|führungskraft', question):
