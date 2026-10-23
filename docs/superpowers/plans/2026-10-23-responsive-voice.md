@@ -115,9 +115,9 @@ Extend local store with atomic validated `record_receipt(operation_id,*,request_
 
 If independent full executor contexts are actually qualified, extend store dispatch reservation with explicit authoritative execution_context_id: retain global LegacyVA singleflight and global unknown block, permit healthy submitted operations in distinct verified independent contexts only under configured capacity. A model/config alias is not an execution context proof. Without live qualification preserve serialized scheduling and report it; do not claim parallel agents from multiple local taskrows.
 
-- [ ] RED Node race tests duplicateCommitOnce,sameKeyChangedPayloadConflict,amendWinsInvalidatesConfirmation,commitWinsCorrectionDeferred,wrongOwner/agent/toolDenied,expiredAuthDenied,uncertainNoReclaim; adapter tests lostACKNoRetry,staleCallbackStoredNotReattributed,capabilityEvidenceRequired.
-- [ ] Implement owned package, GREEN harness and Python executor tests; record deploy/qualification status truthfully.
-- [ ] Commit only task files/hunks `feat: add authoritative ServiceNow task revisions and guarded operation contract`.
+- [x] RED Node race tests duplicateCommitOnce,sameKeyChangedPayloadConflict,amendWinsInvalidatesConfirmation,commitWinsCorrectionDeferred,wrongOwner/agent/toolDenied,expiredAuthDenied,uncertainNoReclaim; adapter tests lostACKNoRetry,staleCallbackStoredNotReattributed,capabilityEvidenceRequired.
+- [x] Implement owned package, GREEN harness and Python executor tests; record deploy/qualification status truthfully.
+- [x] Commit only task files/hunks `feat: add authoritative ServiceNow task revisions and guarded operation contract`.
 
 ### Task 6: Qualified models, startup and capability manifests
 
@@ -137,6 +137,8 @@ Create focused test_responsive_acceptance.py and reproducible safe replay/benchm
 - [ ] Repair known baseline fixture defects without removing behavior assertions: AST input-lifecycle namespace must provide actual clear_session_ice dependency; employee-history fixture must construct valid resolved Config rather than splat deployment path keys. Run newly exposed assertions and fix actual regressions if found. Welcome contract ruling: retain actual introduction-first then configured language-selection text for the existing local fallback, with each once; update the contradictory selection-first fixture and assert speech/transcript/history consistently. Backend-supplied greeting order remains untouched. See taskworkspace native-baseline-failure-triage.md. Do not call the full suite green until these are genuinely resolved.
 - [ ] Warm latency p50/p95 stage metrics with synthetic German audio/model corpus; distinguish firstserverchunk from actually audible phone. Ask for physical phone validation asynchronously after runnable activation, continue remaining checks. Do not declare true native duplex/full guard/vision passed without corresponding proof.
 - [ ] Document actual enabled mode/model, tested outcomes, safe rollback and remaining physical/platform gates. Commit only task-owned artifacts `test: qualify responsive voice orchestration and rollout`.
+
+User-facing local status responses must use bounded German descriptions of the actual stored state rather than speaking raw internal state enums. Preserve the distinction between accepted locally, still running, awaiting input, failed and unknown; never imply that an order succeeded from queue acceptance. Keep internal state names and routing/context semantics unchanged, and cover this presentation-only change with focused grounded-state tests. Task8 model qualification covers routing/context; this later localized status rendering needs its own focused evidence.
 
 ### Task 8: Guarded conversation routing and open-question answers
 
