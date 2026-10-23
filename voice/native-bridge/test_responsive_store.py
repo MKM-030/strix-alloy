@@ -316,6 +316,56 @@ class ResponsiveStoreTest(unittest.TestCase):
         self.accepted(task=task)
         self.assertIsNone(self.store.question('scope-1'))
 
+    def test_settlement_refreshes_question_binding_with_last_reply_atomically(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        self.store.note_question(operation['task_id'], 'scope-1', 'Your name?', source='backend',
+                                 context_version=operation['context_version'])
+        result = self.store.settle(operation['operation_id'], replies=['Your name?', 'Soll ich fortfahren?'])
+        self.assertEqual(result['open_question'], 'Soll ich fortfahren?')
+        self.assertEqual(self.store.question('scope-1')['text'], 'Soll ich fortfahren?')
+        self.store.close()
+        self.store = TaskStore(self.path)
+        self.assertEqual(self.store.question('scope-1')['text'], 'Soll ich fortfahren?')
+
+    def test_superseded_settlement_does_not_replace_newer_question_binding(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        task = self.store.get_task(operation['task_id'], 'scope-1')
+        newer = self.accepted(task=task, utterance='newer')
+        self.store.note_question(task['task_id'], 'scope-1', 'Soll ich fortfahren?', source='backend',
+                                 context_version=newer['context_version'])
+        result = self.store.settle(operation['operation_id'], replies=['Your name?'])
+        self.assertEqual(self.store.question('scope-1')['text'], 'Soll ich fortfahren?')
+        self.assertEqual(result['open_question'], 'Soll ich fortfahren?')
+
+    def test_settlement_does_not_rebind_cleared_or_detached_question(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        task = self.store.get_task(operation['task_id'], 'scope-1')
+        self.accepted(task=task, utterance='newer')
+        self.store.settle(operation['operation_id'], replies=['Your name?'])
+        self.assertIsNone(self.store.question('scope-1'))
+        next_operation = self.store.pending('scope-1')[0]
+        self.store.dispatch(next_operation['operation_id'])
+        self.store.detach_scope('scope-1')
+        self.store.settle(next_operation['operation_id'], replies=['Other question?'])
+        self.assertIsNone(self.store.question('scope-1'))
+
+    def test_question_binding_rolls_back_with_failed_settlement_event(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        self.store.note_question(operation['task_id'], 'scope-1', 'Your name?', source='backend')
+        connection = sqlite3.connect(self.path)
+        connection.execute("CREATE TRIGGER abort_settle BEFORE INSERT ON events WHEN NEW.type='operation_settled' BEGIN SELECT RAISE(ABORT,'synthetic disk failure'); END")
+        connection.commit()
+        connection.close()
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.store.settle(operation['operation_id'], replies=['Soll ich fortfahren?'])
+        self.assertEqual(self.store.question('scope-1')['text'], 'Your name?')
+        self.assertEqual(self.store.get_task(operation['task_id'], 'scope-1')['open_question'], 'Your name?')
+        self.assertTrue(self.store.has_unresolved())
+
 
 if __name__ == "__main__":
     unittest.main()

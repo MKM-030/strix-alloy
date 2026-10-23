@@ -179,12 +179,21 @@ class ConversationAttachment:
                 pass
             elif route.intent == 'status_query':
                 task = self.store.get_task(route.task_id, self.scope.scope_id)
-                replies = [r for op in self.store.operations(self.scope.scope_id) if op['task_id'] == route.task_id for r in (op['replies'] or [])]
-                observed = [event['payload']['text'] for event in self.store.events(route.task_id, self.scope.scope_id)
-                            if event['type'] == 'backend_observed']
-                if observed:
-                    replies = observed
-                suffix = (' Letzte Antwort: ' + replies[-1]) if replies else ''
+                observed = {}
+                for event in self.store.events(route.task_id, self.scope.scope_id):
+                    if event['type'] == 'backend_observed':
+                        observed[event['operation_id']] = event['payload']['text']
+                latest_reply = ''
+                # Operation order outranks late callbacks from an older operation.
+                # Within an operation, final returned replies outrank streamed progress.
+                for operation in reversed(self.store.operations(self.scope.scope_id)):
+                    if operation['task_id'] != route.task_id:
+                        continue
+                    replies = operation['replies'] or []
+                    latest_reply = replies[-1] if replies else observed.get(operation['operation_id'], '')
+                    if latest_reply:
+                        break
+                suffix = (' Letzte Antwort: ' + latest_reply) if latest_reply else ''
                 self._queue('local_reply', ('Status: ' + task['state'] + '.' + suffix)[:4000], task=task, utterance_id=utterance_id)
             elif route.intent == 'cancel_task':
                 task = self.store.cancel_pending(route.task_id, self.scope.scope_id, utterance_id, text=text)

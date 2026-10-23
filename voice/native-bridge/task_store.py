@@ -432,9 +432,23 @@ class TaskStore:
             self._db.execute("UPDATE operations SET dispatch_state='settled',replies=?,evidence=?,outcome=?,settled_at=? WHERE operation_id=?", (encoded_replies, encoded_evidence, outcome, now, operation_id))
             state = 'cancel_requested' if task['state'] == 'cancel_requested' and outcome == 'awaiting_input' else outcome
             question = replies[-1] if outcome == 'awaiting_input' and replies else None
+            binding = self._db.execute('SELECT * FROM scope_questions WHERE scope_id=?', (task['scope_id'],)).fetchone()
+            if (outcome == 'awaiting_input' and binding is not None
+                    and binding['task_id'] == row['task_id']
+                    and binding['context_version'] > row['context_version']):
+                # A newer explicit question must remain consistent in both routing views.
+                question = binding['text']
             self._db.execute("UPDATE tasks SET state=?,open_question=?,result_version=result_version+1,updated_at=? WHERE task_id=?", (state, question, now, row["task_id"]))
             if outcome != 'awaiting_input':
                 self._db.execute('DELETE FROM scope_questions WHERE task_id=?', (row['task_id'],))
+            elif (state == 'awaiting_input' and row['context_version'] == task['context_version']
+                    and self._task_snapshot(task)['attached']
+                    and (binding is None or binding['task_id'] == row['task_id'])):
+                if question:
+                    self._db.execute('INSERT OR REPLACE INTO scope_questions VALUES(?,?,?,?,?)',
+                        (task['scope_id'], row['task_id'], question, 'backend', row['context_version']))
+                else:
+                    self._db.execute('DELETE FROM scope_questions WHERE task_id=?', (row['task_id'],))
             self._event(row["task_id"], operation_id, "operation_settled", row["context_version"], {"outcome": outcome, "replies": replies, "evidence": _decode(encoded_evidence)})
             return self._task_snapshot(self._db.execute("SELECT * FROM tasks WHERE task_id=?", (row["task_id"],)).fetchone())
 

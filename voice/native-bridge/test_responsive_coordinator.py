@@ -373,6 +373,64 @@ class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
         full = TaskCoordinator(self.store, Router(), [self.agent], lambda _: LegacyVAExecutor(self.dialog), mode='full')
         self.assertFalse(full.available)
 
+    async def test_settlement_question_supersedes_callback_for_name_routing(self):
+        async def turn(text, on_reply=None, voice_context=None):
+            await on_reply('Your name?')
+            return ['Your name?', 'Soll ich fortfahren?']
+        self.dialog.turn = turn
+        await self.attachment.accept('first', 'new request')
+        await eventually(lambda: self.coordinator.snapshot('scope')[0]['state'] == 'awaiting_input')
+        self.coordinator.router = ConversationRouter()
+        route = await self.attachment.accept('name', 'Marcel Muster')
+        self.assertNotEqual(route.intent, 'continue_task')
+        self.assertEqual(len(self.store.operations('scope')), 1)
+
+    async def test_status_prefers_newer_settlement_over_historical_callbacks(self):
+        turns = 0
+        async def turn(text, on_reply=None, voice_context=None):
+            nonlocal turns
+            turns += 1
+            if turns == 1:
+                await on_reply('First result')
+                return ['First result']
+            return ['Final result']
+        self.dialog.turn = turn
+        await self.attachment.accept('first', 'new request')
+        await eventually(lambda: self.coordinator.snapshot('scope')[0]['result_version'] == 1)
+        first = self.store.operations('scope')[0]
+        await self.attachment.accept('second', 'continue request')
+        await eventually(lambda: self.coordinator.snapshot('scope')[0]['result_version'] == 2)
+        # A delayed older-operation observation must not outrank the newer result.
+        self.store.observe(first['operation_id'], 'late-first', 'backend_observed', {'text': 'Late first result'})
+        await self.attachment.accept('status', 'status')
+        await eventually(lambda: any(e['utterance_id'] == 'status' for e in self.events))
+        status = next(e['text'] for e in self.events if e['utterance_id'] == 'status')
+        self.assertIn('Letzte Antwort: Final result', status)
+        self.assertNotIn('first result', status.lower())
+
+    async def test_status_prefers_current_callback_over_previous_settlement(self):
+        turns = 0
+        callback = asyncio.Event()
+        async def turn(text, on_reply=None, voice_context=None):
+            nonlocal turns
+            turns += 1
+            if turns == 1:
+                return ['Previous result']
+            await on_reply('Current progress')
+            callback.set()
+            await self.dialog.release.wait()
+            return ['Current progress']
+        self.dialog.turn = turn
+        await self.attachment.accept('first', 'new request')
+        await eventually(lambda: self.coordinator.snapshot('scope')[0]['result_version'] == 1)
+        await self.attachment.accept('second', 'continue request')
+        await callback.wait()
+        await self.attachment.accept('status', 'status')
+        await eventually(lambda: any(e['utterance_id'] == 'status' for e in self.events))
+        status = next(e['text'] for e in self.events if e['utterance_id'] == 'status')
+        self.assertIn('Letzte Antwort: Current progress', status)
+        self.assertTrue(self.store.has_unresolved())
+
 
 if __name__ == '__main__':
     unittest.main()
