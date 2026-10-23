@@ -424,8 +424,7 @@ class WireTest(unittest.IsolatedAsyncioTestCase):
             def do_POST(self):
                 raw = self.rfile.read(int(self.headers["Content-Length"]))
                 received.append(json.loads(raw))
-                content = json.dumps({"candidate": "c2", "meaning": "request", "domain": "suitable",
-                                      "evidence": "Ich brauche Hilfe", "value_evidence": ""})
+                content = json.dumps({"choice": "o01"})
                 body = json.dumps({"choices": [{"message": {"content": content}}]}).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")

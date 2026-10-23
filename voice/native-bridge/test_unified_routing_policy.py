@@ -35,6 +35,7 @@ def context(question='Wie lautet Ihr Name?', prior=None):
 
 
 class SemanticModel:
+    # evidence/value are historical synthetic fixture labels only; no proof is sent.
     def __init__(self, intent, meaning, evidence, value='', domain='na', target='', held=False):
         self.intent, self.meaning, self.evidence = intent, meaning, evidence
         self.value, self.domain, self.target = value, domain, target
@@ -49,8 +50,10 @@ class SemanticModel:
             await self.release.wait()
         candidate = next((c for c in snapshot.candidates if c.intent == self.intent
             and self.meaning in c.meanings and (not self.target or c.task_id == self.target)), None)
-        return dict(candidate=candidate.ref if candidate else 'c999', meaning=self.meaning,
-            domain=self.domain, evidence=self.evidence, value_evidence=self.value)
+        from route_proposal import ProposalContract
+        option = next((o for o in ProposalContract(snapshot).options if o.candidate == candidate
+            and o.meaning == self.meaning and o.domain == self.domain), None)
+        return {'choice': option.id if option else 'o99'}
 
 
 class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
@@ -59,21 +62,17 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(callable(getattr(router, 'decide', None)), 'request-bound decision API missing')
         return await router.decide(text, ctx)
 
-    async def test_whole_value_and_duplicate_literal_spans_have_same_binding(self):
+    async def test_model_answer_preserves_whole_and_repeated_values(self):
         for text in ('Sie dürfen Greta Falk eintragen.', 'Greta Falk, ich wiederhole Greta Falk.'):
-            for evidence, value in ((text, ''), ('Greta Falk', ''), (text, 'Greta Falk')):
-                with self.subTest(text=text, evidence=evidence, value=value):
-                    d = await self.decide(SemanticModel('continue_task', 'answer', evidence, value), text, context())
-                    self.assertEqual(d.route, Route('continue_task', 'work-11'))
+            d = await self.decide(SemanticModel('continue_task', 'answer', ''), text, context())
+            self.assertEqual(d.route, Route('continue_task', 'work-11'))
 
-    async def test_type_contradiction_does_not_depend_on_optional_value_span(self):
-        text = 'Sie dürfen Greta Falk eintragen.'
-        outcomes = []
-        for evidence, value in ((text, ''), ('Greta Falk', ''), (text, 'Greta Falk')):
-            decision = await self.decide(SemanticModel('continue_task', 'answer', evidence, value),
-                text, context('An welchem Datum?'))
-            outcomes.append(decision.route.intent)
-        self.assertEqual(len(set(outcomes)), 1)
+    async def test_demonstrated_type_contradiction_rejects_model_answer(self):
+        for question, text in (('Möchten Sie fortfahren?', 'Sie dürfen Greta Falk eintragen.'),
+                               ('Wie lautet Ihr Name?', 'Am 21. Februar.')):
+            d = await self.decide(SemanticModel('continue_task', 'answer', ''), text, context(question))
+            self.assertEqual(d.route.intent, 'clarification')
+            self.assertEqual(d.reason, 'type_contradiction')
 
     async def test_all_competing_targets_survive_model_data_and_large_context_fails_closed(self):
         ctx = context()
@@ -97,18 +96,18 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
         captured = []
         def request(payload):
             captured.append(json.loads(payload))
-            return json.dumps({'choices': [{'message': {'content': json.dumps(dict(candidate='c0', meaning='unclear', domain='na', evidence='', value_evidence=''))}}]}).encode()
+            return json.dumps({'choices': [{'message': {'content': json.dumps({'choice': 'clarify'})}}]}).encode()
         model._request = request
         ctx = context()
         await model.classify('Unklar', ctx)
         self.assertEqual(captured[0]['response_format']['json_schema']['schema'], ProposalContract(policy_snapshot(ctx)).schema())
-        self.assertEqual(captured[0]['max_tokens'], 128)
+        self.assertEqual(captured[0]['max_tokens'], 24)
 
     async def test_full_schema_request_overflow_is_diagnosed_without_discarding_candidates(self):
         ctx = context()
         ctx.agents = [replace(AGENT, alias=f'office-{i}', agent_id=f'agent-{i}', name=f'Service {i}') for i in range(16)]
         for i in range(2, 9):
-            ctx.tasks.append(dict(ctx.tasks[0], task_id=f'work-{i}2', open_question=None, objective='Aufgabenbeschreibung ' * 18))
+            ctx.tasks.append(dict(ctx.tasks[0], task_id=f'work-{i}2', open_question=None, objective='Aufgabenbeschreibung ' * 45))
         model = LoopbackConversationModel(None, 'http://127.0.0.1:9933/v1/chat/completions', 'synthetic', '')
         def request(payload): raise AssertionError('Oversized request must not reach transport')
         model._request = request
@@ -213,7 +212,7 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
         class InvalidModel:
             async def classify(self, *_): return {'private': 'caller content'}
         d = await self.decide(InvalidModel(), 'Unbestimmtes Anliegen?', context())
-        self.assertEqual(d.proposal.status, 'schema_rejected')
+        self.assertEqual(d.proposal.status, 'shape_rejected')
         self.assertNotIn('caller content', repr(d.proposal))
         class TimedOutModel:
             async def classify(self, *_): raise TimeoutError('private data')
@@ -355,15 +354,15 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
         snap = routing_policy.policy_snapshot(context())
         contract = ProposalContract(snap)
         schema = contract.schema()
-        branches = schema['oneOf']
-        for branch in branches:
-            self.assertEqual(set(branch['properties']), {'candidate', 'meaning', 'domain', 'evidence', 'value_evidence'})
-        cancel_refs = {c.ref for c in snap.candidates if c.intent == 'cancel_task'}
-        self.assertFalse(cancel_refs.intersection(b['properties']['candidate']['const'] for b in branches))
-        for value in ({'candidate': 'c0', 'meaning': 'unclear', 'domain': 'na', 'evidence': '', 'value_evidence': '', 'reply': 'done'},
-                      {'candidate': next(iter(cancel_refs)), 'meaning': 'request', 'domain': 'na', 'evidence': 'Bitte', 'value_evidence': ''}):
+        self.assertEqual(set(schema['properties']), {'choice'})
+        self.assertFalse(schema['additionalProperties'])
+        self.assertFalse(any(o.candidate.intent == 'cancel_task' for o in contract.options))
+        for value in ({'choice': 'clarify', 'reply': 'done'},
+                      {'candidate': 'c0', 'meaning': 'unclear', 'domain': 'na', 'evidence': '', 'value_evidence': ''},
+                      {'choice': 'cancel_task'}):
             with self.assertRaises(ValueError): contract.decode(value)
-        self.assertEqual(contract.decode(dict(candidate='c0', meaning='unclear', domain='na', evidence='', value_evidence='')).candidate, 'c0')
+        self.assertEqual(contract.decode({'choice': 'clarify'}).candidate.ref, 'c0')
+
 
 
 class UnifiedCoordinatorTest(unittest.IsolatedAsyncioTestCase):

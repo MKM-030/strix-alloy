@@ -5,20 +5,21 @@ import http.client
 import ipaddress
 import json
 import math
+import time
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from urllib.parse import urlsplit
 
 from business_tasks import Agent, StoreInvalid, bounded_identifier
-from route_proposal import ProposalContract, RouteProposal, PRODUCTION_SYSTEM_PROMPT
-from routing_policy import RoutingDecision, ProposalObservation, ContextBudgetExceeded, policy_snapshot, clarify, deterministic, evaluate
+from route_proposal import ProposalContract, RouteProposal, ProposalError, PRODUCTION_SYSTEM_PROMPT
+from routing_policy import RoutingDecision, ProposalObservation, ContextBudgetExceeded, policy_snapshot, clarify, deterministic, evaluate_choice
 
 
 INTENTS = frozenset({"status_query", "clarification", "amend_task", "new_task",
                      "stop_speaking", "cancel_task", "uncertain", "continue_task"})
 _MAX_REQUEST_BYTES = 16384
 _MAX_RESPONSE_BYTES = 8192
-_MAX_ROUTE_BYTES = 2048
+_MAX_ROUTE_BYTES = 64
 
 
 @dataclass(frozen=True)
@@ -153,7 +154,19 @@ class LoopbackConversationModel:
 
     @staticmethod
     def decode_route(raw):
-        data = _strict_json(raw, _MAX_ROUTE_BYTES)
+        if isinstance(raw, str):
+            try: raw = raw.encode('utf-8')
+            except UnicodeError:
+                raise ProposalError('syntax_rejected', syntax=False, bounds=None) from None
+        if not isinstance(raw, bytes) or len(raw) > _MAX_ROUTE_BYTES:
+            raise ProposalError('bounds_rejected', bounds=False)
+        try:
+            # Parse independently of object/schema validation (valid arrays are
+            # syntactically JSON, though never valid choices).
+            data = json.loads(raw.decode('utf-8'), object_pairs_hook=_reject_duplicates,
+                              parse_constant=_invalid_constant)
+        except (UnicodeError, ValueError, RecursionError):
+            raise ProposalError('syntax_rejected', syntax=False, bounds=True) from None
         RouteProposal.decode(data)
         return data
 
@@ -172,32 +185,49 @@ class LoopbackConversationModel:
                 raise ValueError("conversation endpoint error")
             raw = response.read(_MAX_RESPONSE_BYTES + 1)
             if len(raw) > _MAX_RESPONSE_BYTES:
-                raise ValueError("conversation response too large")
+                raise ProposalError('bounds_rejected', bounds=False)
             return raw
         finally:
             connection.close()
 
     async def classify(self, text, context):
-        snapshot = policy_snapshot(context)
-        data = snapshot.model_data()
+        return await self.classify_prepared(text, ProposalContract(context))
+
+    async def classify_prepared(self, text, contract):
+        # Prepared contract is private to this call, never mutable router state.
+        if not isinstance(text, str) or len(text) > 4000 or not text.strip():
+            raise ProposalError('bounds_rejected', bounds=False)
+        started = time.perf_counter()
+        result = await asyncio.wait_for(self._classify_prepared(text, contract), self.timeout_seconds)
+        if time.perf_counter() - started > self.timeout_seconds:
+            raise TimeoutError('conversation deadline')
+        return result
+
+    async def _classify_prepared(self, text, contract):
+        data = contract.model_data()
         request = {"model": self.model, "messages": [
             {"role": "system", "content": PRODUCTION_SYSTEM_PROMPT},
-            {"role": "user", "content": json.dumps({"utterance": text, "context": data}, ensure_ascii=False)}],
-            "temperature": 0, "max_tokens": 128,
+            {"role": "user", "content": json.dumps({"utterance": text, "context": data}, ensure_ascii=False, separators=(",", ":"))}],
+            "temperature": 0, "max_tokens": 24,
             "response_format": {"type": "json_schema", "json_schema": {
                 "name": "route", "strict": True,
-                "schema": ProposalContract(snapshot).schema()}}}
+                "schema": contract.schema()}}}
         payload = json.dumps(request, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         if len(payload) > _MAX_REQUEST_BYTES:
             raise ContextBudgetExceeded("conversation request too large")
         raw = await asyncio.wait_for(asyncio.to_thread(self._request, payload), self.timeout_seconds)
-        envelope = _strict_json(raw, _MAX_RESPONSE_BYTES)
+        if not isinstance(raw, (str, bytes)) or len(raw.encode('utf-8') if isinstance(raw, str) else raw) > _MAX_RESPONSE_BYTES:
+            raise ProposalError('bounds_rejected', bounds=False)
+        try:
+            envelope = _strict_json(raw, _MAX_RESPONSE_BYTES)
+        except ValueError:
+            raise ProposalError('syntax_rejected', syntax=False) from None
         choices = envelope.get("choices")
         if not isinstance(choices, list) or len(choices) != 1 or not isinstance(choices[0], dict):
-            raise ValueError("invalid conversation envelope")
+            raise ProposalError('shape_rejected', syntax=True, shape=False)
         message = choices[0].get("message")
         if not isinstance(message, dict) or not isinstance(message.get("content"), str):
-            raise ValueError("invalid conversation content")
+            raise ProposalError('shape_rejected', syntax=True, shape=False)
         return self.decode_route(message["content"])
 
 
@@ -206,6 +236,11 @@ class ConversationRouter:
         self.model = model
 
     async def decide(self, text: str, context: RoutingContext) -> RoutingDecision:
+        started = time.perf_counter()
+        decision = await self._decide(text, context)
+        return replace(decision, route_elapsed_ms=(time.perf_counter() - started) * 1000)
+
+    async def _decide(self, text, context):
         if not isinstance(text, str) or len(text) > 4000 or not text.strip():
             return clarify(reason='schema')
         try:
@@ -220,16 +255,47 @@ class ConversationRouter:
         if self.model is None:
             return clarify(snapshot, 'unavailable')
         try:
-            snapshot.model_data()
+            contract = ProposalContract(snapshot)
+            contract.model_data()
         except (StoreInvalid, ValueError, TypeError):
             return clarify(snapshot, 'context_budget')
+        started = time.perf_counter()
+        decision = await self._model_decision(text, contract)
+        return replace(decision, model_elapsed_ms=(time.perf_counter() - started) * 1000)
+
+    async def _model_decision(self, text, contract):
+        snapshot = contract.snapshot
+        started = time.perf_counter()
         try:
-            contract = ProposalContract(snapshot)
-            raw = await asyncio.wait_for(self.model.classify(matching, snapshot), timeout=2.0)
-            proposal = contract.decode(raw)
-            candidate = next(c for c in snapshot.candidates if c.ref == proposal.candidate)
-            observed = ProposalObservation('decoded', candidate.intent, proposal.meaning, proposal.domain)
-            return replace(evaluate(snapshot, matching, proposal), proposal=observed)
+            call = (self.model.classify_prepared(text, contract) if isinstance(self.model, LoopbackConversationModel)
+                    else self.model.classify(text, snapshot))
+            pending = asyncio.create_task(call)
+            try:
+                done, _ = await asyncio.wait((pending,), timeout=2.0)
+                if not done:
+                    raise TimeoutError('conversation deadline')
+                raw = pending.result()
+            finally:
+                if not pending.done():
+                    pending.cancel()
+                    # Cancellation-resistant results are discarded, never rebound.
+                    def consume(future):
+                        if not future.cancelled(): future.exception()
+                    pending.add_done_callback(consume)
+            # Fake/in-process models have the same bounded dict contract.
+            try: encoded = json.dumps(raw, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+            except (TypeError, ValueError, UnicodeError):
+                raise ProposalError('shape_rejected', shape=False) from None
+            if len(encoded) > _MAX_ROUTE_BYTES:
+                raise ProposalError('bounds_rejected', bounds=False)
+            option = contract.decode(raw)
+            if time.perf_counter() - started > 2.0:
+                raise TimeoutError('conversation deadline')
+            observed = ProposalObservation('decoded', option.candidate.intent, option.meaning, option.domain,
+                                           True, True, True, True)
+            return replace(evaluate_choice(snapshot, text, option), proposal=observed)
+        except ProposalError as error:
+            return replace(clarify(snapshot, 'schema'), proposal=ProposalObservation(error.stage, **error.facts))
         except TimeoutError:
             return replace(clarify(snapshot, 'timeout'), proposal=ProposalObservation('timeout'))
         except ContextBudgetExceeded:

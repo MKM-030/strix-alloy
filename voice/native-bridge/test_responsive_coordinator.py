@@ -107,8 +107,10 @@ class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.store.operations('scope')), 1)
         class SemanticModel:
             async def classify(self, text, context):
-                candidate = next(c for c in context.candidates if c.intent == 'continue_task')
-                return dict(candidate=candidate.ref, meaning='dialogue', domain='na', evidence='Abholung', value_evidence='')
+                from route_proposal import ProposalContract
+                option = next(o for o in ProposalContract(context).options
+                              if o.candidate.intent == 'continue_task' and o.meaning == 'dialogue')
+                return {'choice': option.id}
         self.coordinator.router = ConversationRouter(SemanticModel())
         original = '  Wie funktioniert die Abholung?  '
         route = await self.attachment.accept('substantive', original)

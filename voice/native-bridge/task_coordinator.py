@@ -166,7 +166,7 @@ class ConversationAttachment:
             text=text, priority=10 if kind == 'backend_reply' else 0)
         if decision is not None:
             self.coordinator.routing_counts[(decision.disposition, decision.reason, acceptance)] += 1
-            if decision.help_source:
+            if decision.help_source or decision.route.intent == 'status_query':
                 event['_help_checkpoint'] = checkpoint
                 event['_help_authority'] = authority
         try:
@@ -317,7 +317,7 @@ class ConversationAttachment:
                     (route.intent == 'new_task' or bound_task and
                      (bound_task['agent_id'], bound_task['registry_revision']) == (agent.agent_id, agent.revision)))
             status_changed = (route.intent == 'status_query' and
-                tuple(t['task_id'] for t in tasks) != tuple(t['task_id'] for t in self.store.list_tasks(self.scope.scope_id)))
+                checkpoint != self.store.routing_checkpoint(self.scope.scope_id))
             if not authority() or status_changed or (decision.help_source is not None and checkpoint != self.store.routing_checkpoint(self.scope.scope_id)):
                 route = Route('clarification', reply='Der Gesprächskontext hat sich geändert. Bitte wiederhole deine Angabe.')
                 decision = replace(decision, route=route, disposition='clarification', reason='authority_changed', help_source=None)
@@ -342,10 +342,12 @@ class ConversationAttachment:
                         latest_reply = replies[-1] if replies else observed.get(operation['operation_id'], '')
                         if latest_reply:
                             break
-                    self._queue('local_reply', render_grounded_status(task.get('state'), latest_reply), task=task, utterance_id=utterance_id)
+                    self._queue('local_reply', render_grounded_status(task.get('state'), latest_reply), task=task, utterance_id=utterance_id,
+                                decision=decision, checkpoint=checkpoint, authority=authority)
                 elif route.intent == 'cancel_task':
                     task = self.store.cancel_pending(route.task_id, self.scope.scope_id, utterance_id, text=text,
                                                      preconditions=checkpoint, authority=authority)
+                    decision = replace(decision, durable_acceptance=True)
                     message = ('Die noch nicht übermittelte Aufgabe wurde lokal abgebrochen.' if task['state'] == 'cancelled' else
                                'Abbruch vorgemerkt. Eine bereits übermittelte Aktion kann ich nicht sicher stoppen; eine Stornierung ist nicht bestätigt.')
                     self._queue('local_reply', message, task=task, utterance_id=utterance_id, decision=decision, acceptance='durable_accepted')
@@ -363,6 +365,7 @@ class ConversationAttachment:
                         operation = self.store.accept(task['task_id'], self.scope.scope_id, utterance_id, text,
                                                       kind=route.intent, voice_context=voice_context,
                                                       preconditions=checkpoint, authority=authority)
+                    decision = replace(decision, durable_acceptance=True)
                     self._focus = task['task_id']
                     self._queue('local_reply', 'Angenommen und gespeichert. Neue Aufgaben bleiben im Legacy-Kontext in der Warteschlange, solange eine andere Aufgabe offen ist.' if route.intent == 'new_task' and self._context_task else
                                 'Angenommen und zur Übermittlung vorgemerkt.', operation=operation, decision=decision, acceptance='durable_accepted')
@@ -374,7 +377,7 @@ class ConversationAttachment:
                 if checkpoint == self.store.routing_checkpoint(self.scope.scope_id) and authority():
                     raise
                 route = Route('clarification', reply='Die aktuelle Frage oder Aufgabe hat sich geändert. Bitte wiederhole deine Angabe.')
-                decision = replace(decision, route=route, disposition='clarification', reason='authority_changed', help_source=None)
+                decision = replace(decision, route=route, disposition='clarification', reason='authority_changed', help_source=None, durable_acceptance=False)
                 self._queue('local_reply', route.reply, utterance_id=utterance_id, decision=decision, acceptance='durable_rejected')
             return decision
 

@@ -26,7 +26,7 @@ def proposal(intent, ref='', alias='', relation='', evidence=''):
 
 
 def wire_proposal(data, context):
-    """Translate synthetic intent fixtures into the candidate wire contract.
+    """Translate synthetic intent fixtures into the closed-choice wire contract.
 
     This is only test authoring convenience; product rejects the former protocol.
     Malformed fixture bindings deliberately remain malformed for negative tests.
@@ -47,8 +47,10 @@ def wire_proposal(data, context):
         except (ValueError, IndexError): target = 'invalid'
     candidate = next((c for c in snapshot.candidates if c.intent == intent and meaning in c.meanings
         and (not target or c.task_id == target) and (not data['agent_alias'] or c.agent_alias == data['agent_alias'])), None)
-    return dict(candidate=candidate.ref if candidate else 'c999', meaning=meaning,
-        domain='suitable' if intent == 'new_task' else 'na', evidence=data['evidence'], value_evidence='')
+    from route_proposal import ProposalContract
+    option = next((o for o in ProposalContract(snapshot).options if o.candidate == candidate
+        and o.meaning == meaning and o.domain == ('suitable' if intent == 'new_task' else 'na')), None)
+    return {'choice': option.id if option else 'o99'}
 
 
 class Model:
@@ -80,7 +82,7 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
                 previous = context('', previous_question=question, previous_question_version=0)
                 self.assertEqual((await ConversationRouter().route('Korrektur: ' + text, previous)).intent, 'clarification')
 
-    async def test_single_quoted_requests_audio_and_value_evidence_never_authorize(self):
+    async def test_quoted_controls_reject_but_requested_quoted_values_remain_eligible(self):
         quotes = [("'", "'"), ('‘', '’'), ('‚', '‘'), ('‹', '›')]
         for opening, closing in quotes:
             with self.subTest(quotes=(opening, closing)):
@@ -92,7 +94,7 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual((await ConversationRouter(model).route(f'{opening}Bitte schweige jetzt.{closing}', context())).intent, 'clarification')
                 self.assertEqual((await ConversationRouter().route(f'{opening}Hör bitte auf zu sprechen{closing}', context())).intent, 'clarification')
                 model = Model(proposal('continue_task', 't1', relation='answer', evidence='Nora Berg'))
-                self.assertEqual((await ConversationRouter(model).route(f'Sie können {opening}Nora Berg{closing} eintragen.', context())).intent, 'clarification')
+                self.assertEqual((await ConversationRouter(model).route(f'Sie können {opening}Nora Berg{closing} eintragen.', context())).intent, 'continue_task')
         self.assertEqual((await ConversationRouter(Model(proposal('new_task', alias='desk', relation='request', evidence='Mein Bildschirm flackert.'))).route('Service Desk: Mein Bildschirm flackert.', RoutingContext('s', [], agents=[AGENT]))).intent, 'new_task')
         self.assertEqual((await ConversationRouter(Model(proposal('stop_speaking', relation='audio', evidence='schweige'))).route('Bitte schweige jetzt.', context())).intent, 'stop_speaking')
 
@@ -116,12 +118,10 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
         route = await ConversationRouter(model).route('Zeig mir den Fortschritt.', context())
         self.assertEqual(route, Route('status_query', 'actual-workflow-id'))
         schema = captured[0]['response_format']['json_schema']['schema']
-        branches = {b['properties']['candidate']['const']: b for b in schema['oneOf']}
-        self.assertEqual(branches['c2']['properties']['meaning']['enum'], ['reference'])
-        self.assertEqual(branches['c6']['properties']['domain']['enum'], ['suitable', 'unsuitable', 'unclear'])
-        self.assertNotIn('c3', branches)  # deterministic cancellation candidate
-        for branch in branches.values():
-            self.assertEqual(set(branch['properties']), {'candidate', 'meaning', 'domain', 'evidence', 'value_evidence'})
+        self.assertEqual(set(schema['properties']), {'choice'})
+        self.assertEqual(schema['required'], ['choice'])
+        self.assertFalse(schema['additionalProperties'])
+        self.assertNotIn('cancel_task', schema['properties']['choice']['enum'])
 
     async def test_model_status_uses_private_short_ref_and_no_model_prose(self):
         ctx = context()
@@ -172,14 +172,16 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
         route = await ConversationRouter(model).route('Service Desk: Mein Bildschirm flackert.', ctx)
         self.assertEqual(route, Route('new_task', agent_alias='desk'))
 
-    async def test_model_field_answer_validates_exact_evidence_and_type(self):
+    async def test_model_field_answer_validates_type_without_generated_evidence(self):
         ctx = context()
-        for text, evidence, expected in [('Sie können Nora Berg eintragen.', 'Nora Berg', 'continue_task'),
-                                         ('Sie können Nora Berg eintragen.', 'Nora Berndt', 'clarification'),
-                                         ('Ja, bitte.', 'Ja', 'clarification'),
-                                         ('Wenn nötig: Nora Berg.', 'Nora Berg', 'clarification')]:
-            model = Model(proposal('continue_task', 't1', relation='answer', evidence=evidence))
+        for text, expected in [('Sie können Nora Berg eintragen.', 'continue_task'),
+                               ('Ja, bitte.', 'clarification')]:
+            model = Model(proposal('continue_task', 't1', relation='answer'))
             self.assertEqual((await ConversationRouter(model).route(text, ctx)).intent, expected)
+        # A conditional open answer needs semantic abstention, not a generated
+        # evidence string. This stub does not establish model competence.
+        self.assertEqual((await ConversationRouter(Model(proposal('clarification'))).route(
+            'Wenn nötig: Nora Berg.', ctx)).intent, 'clarification')
 
     async def test_scoped_control_language_does_not_veto_harmless_answer(self):
         ctx = context()
@@ -226,11 +228,11 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
         del ctx.tasks[0]['previous_operation_id']
         self.assertEqual((await ConversationRouter(model).route(text, ctx)).intent, 'clarification')
 
-    async def test_conditional_bindings_and_nonliteral_evidence_fail_closed(self):
+    async def test_invalid_bindings_and_extra_properties_fail_closed(self):
         ctx = context()
         base = proposal('status_query', 't1', relation='status', evidence='Fortschritt')
         for change in ({'task_ref': 'actual-workflow-id'}, {'task_ref': 't9'},
-                       {'agent_alias': 'desk'}, {'evidence': 'Erledigt'},
+                       {'agent_alias': 'desk'}, {'choice': 'o99'},
                        {'reply': 'Erfolgreich!'}, {'relation': 'request'}):
             with self.subTest(change=change):
                 route = await ConversationRouter(Model({**base, **change})).route('Zeig mir den Fortschritt.', ctx)
@@ -433,14 +435,15 @@ class HeldClassifierRaceTest(unittest.IsolatedAsyncioTestCase):
                 store.dispatch(operation['operation_id'])
                 pending = asyncio.create_task(attachment.accept('status', 'Zeig mir den Fortschritt.'))
                 await asyncio.wait_for(model.entered.wait(), 1)
-                store.settle(operation['operation_id'], replies=['Fachlich belegte Rückfrage'], outcome='awaiting_input')
+                store.observe(operation['operation_id'], 'progress', 'backend_observed', {'text': 'Fachlich belegter Fortschritt'})
                 model.release.set()
                 self.assertEqual((await pending).intent, 'status_query')
                 await asyncio.sleep(0)
                 self.assertEqual(len(store.operations('s')), 1)
-                self.assertTrue(any('awaiting_input' in e['text'] and 'Fachlich belegte Rückfrage' in e['text'] for e in events))
+                self.assertTrue(any('bearbeitet' in e['text'] and 'Fachlich belegter Fortschritt' in e['text'] for e in events))
             finally:
                 model.release.set()
+                store.settle(operation['operation_id'], replies=['Fixture abgeschlossen'], outcome='succeeded')
                 await attachment.detach()
                 await attachment.wait_closed()
                 store.close()
@@ -467,8 +470,8 @@ class HeldClassifierRaceTest(unittest.IsolatedAsyncioTestCase):
                 route = await attachment.accept('correction', original)
                 self.assertEqual(route, Route('amend_task', task_id))
                 self.assertEqual(store.operations('s')[-1]['text'], original)
-                self.assertEqual(model.data['tasks'][0]['previous_question_id'], question['question_id'])
-                self.assertEqual(model.data['tasks'][0]['previous_operation_id'], first['operation_id'])
+                self.assertNotIn('previous_question_id', model.data['tasks'][0])
+                self.assertNotIn('previous_operation_id', model.data['tasks'][0])
                 self.assertEqual(model.data['tasks'][0]['previous_question'], question['text'])
                 self.assertIsNone(store.question('s'))
                 duplicate = await attachment.accept('correction', original)

@@ -3,7 +3,6 @@
 Candidates are possibilities, never durable authorization. Store preconditions are
 still checked atomically at acceptance. No model prose is rendered as help.
 """
-import json
 import re
 from dataclasses import dataclass
 from types import MappingProxyType
@@ -17,7 +16,7 @@ _TERMINAL = frozenset(('cancel_requested', 'cancelled', 'succeeded', 'failed', '
 REASONS = frozenset(('accepted_local', 'accepted_model', 'unclear', 'schema', 'evidence_role',
     'target_ambiguity', 'type_contradiction', 'operation_ineligible', 'competing_request',
     'authority_changed', 'timeout', 'context_budget', 'grounded_help', 'domain_unsuitable',
-    'domain_unclear', 'selection_required', 'unavailable', 'legacy_route', 'duplicate_accepted', 'semantic_reference'))
+    'domain_unclear', 'selection_required', 'unavailable', 'legacy_route', 'duplicate_accepted', 'semantic_reference', 'audio_context'))
 DEFINITIONS = MappingProxyType({
     'name': 'Mit Name ist der Vor- und Nachname der erfragten Person gemeint.',
     'manager': 'Mit Führungskraft oder Manager ist die zuständige vorgesetzte Person gemeint.',
@@ -47,10 +46,26 @@ class ProposalObservation:
     intent: str = 'none'
     meaning: str = 'none'
     domain: str = 'na'
+    json_syntax_valid: bool | None = None
+    schema_shape_valid: bool | None = None
+    bounds_valid: bool | None = None
+    choice_bound: bool | None = None
+
+    @property
+    def offered_intent(self): return self.intent if self.choice_bound else None
+
+    @property
+    def offered_meaning(self): return self.meaning if self.choice_bound else None
+
+    @property
+    def offered_domain(self): return self.domain if self.choice_bound else None
+
+    @property
+    def domain_judgment(self): return self.offered_domain
 
     def __post_init__(self):
         from route_proposal import MEANINGS, DOMAINS
-        if (self.status not in ('decoded', 'schema_rejected', 'timeout', 'context_budget', 'unavailable')
+        if (self.status not in ('decoded', 'schema_rejected', 'syntax_rejected', 'shape_rejected', 'bounds_rejected', 'binding_rejected', 'timeout', 'context_budget', 'unavailable')
                 or self.intent not in ('none', 'clarification', 'status_query', 'stop_speaking', 'continue_task', 'amend_task', 'new_task')
                 or self.meaning not in MEANINGS | {'none'} or self.domain not in DOMAINS):
             raise ValueError('invalid proposal observation')
@@ -63,6 +78,25 @@ class RoutingDecision:
     reason: str
     help_source: HelpSource | None = None
     proposal: ProposalObservation | None = None
+    model_elapsed_ms: float | None = None
+    route_elapsed_ms: float | None = None
+    durable_acceptance: bool | None = None
+
+    @property
+    def policy_accepted(self):
+        return self.disposition == 'decision' or self.help_source is not None
+
+    @property
+    def policy_reason(self):
+        return self.reason
+
+    @property
+    def stale_rejected(self):
+        return self.reason == 'authority_changed'
+
+    @property
+    def origin(self):
+        return 'model' if self.proposal is not None else 'local'
 
     def __post_init__(self):
         if self.disposition not in ('decision', 'clarification', 'grounded_repeat', 'grounded_explanation'):
@@ -100,40 +134,9 @@ class PolicySnapshot:
     candidates: tuple[Candidate, ...] = ()
 
     def model_data(self):
-        # Dedupe question text and target metadata without removing competitors.
-        refs = {t['task_id']: f't{i+1}' for i, t in enumerate(self.tasks)}
-        arefs = {a.alias: f'a{i+1}' for i, a in enumerate(self.agents)}
-        tasks = []
-        for task in self.tasks:
-            item = {'task_ref': refs[task['task_id']]}
-            for key in ('state', 'objective', 'open_question', 'context_version', 'pending_delivery',
-                        'previous_question', 'previous_question_version', 'previous_question_id',
-                        'previous_question_source', 'previous_operation_id', 'previous_operation_version',
-                        'previous_operation_state', 'latest_operation_id', 'latest_operation_version',
-                        'latest_operation_state'):
-                if key in task:
-                    item[key] = task[key]
-            item['agent_ref'] = arefs.get(task.get('agent_alias'), '')
-            item['question_kind_hint'] = PolicyRules._answer_kind(task.get('open_question') or '')
-            tasks.append(item)
-        candidates = []
-        for c in self.candidates:
-            if c.origin == 'local':
-                continue
-            item = dict(candidate=c.ref, intent=c.intent, meanings=list(c.meanings))
-            if c.task_id: item['task_ref'] = refs[c.task_id]
-            if c.agent_alias: item['agent_ref'] = arefs[c.agent_alias]
-            if c.question:
-                item['question_relation'] = 'previous' if c.intent == 'amend_task' else 'current'
-            candidates.append(item)
-        data = dict(scope='current_call', tasks=tasks, candidates=candidates,
-            question_task_ref=refs.get(self.question_task_id, ''), question_version=self.question_version,
-            question_id=self.question_id, question_source=self.question_source,
-            agents=[dict(agent_ref=arefs[a.alias], alias=a.alias, name=a.name,
-                description=a.description, routing_aliases=list(a.routing_aliases)) for a in self.agents])
-        if len(json.dumps(data, ensure_ascii=False).encode('utf-8')) > 12000:
-            raise ContextBudgetExceeded('routing context too large')
-        return data
+        from route_proposal import ProposalContract
+        return ProposalContract(self).model_data()
+
 
 
 def policy_snapshot(context):
@@ -242,8 +245,9 @@ class PolicyRules:
         return context.tasks[0]['task_id'] if len(context.tasks) == 1 else ''
 
     @classmethod
-    def status_target(cls, context, text, *, semantic_task_id='', evidence=''):
+    def status_target(cls, context, text, *, semantic_task_id=''):
         target, conflict = cls._reference(context, text)
+        if cls.control_context_veto(text): return ''
         if conflict or re.search(r'\bfremd\w* (?:aufgabe|auftrag|ticket|anfrage)|\b(?:eines|einem|einer|der) anderen (?:kunden?|anrufers?|nutzers?)\b|\bnicht mein\w* (?:aufgabe|auftrag|ticket)', text, re.I):
             return ''
         # A named unknown object cannot be substituted with the only own task.
@@ -261,12 +265,16 @@ class PolicyRules:
             'dieser', 'diese', 'dieses', 'diesem', 'diesen', 'von', 'vom', 'für', 'zu', 'zum', 'zur',
             'mit', 'bei', 'beim', 'bitte', 'mir', 'zeig', 'zeige', 'zeigen', 'sag', 'sage', 'sagen',
             'du', 'kannst', 'können', 'auftrag', 'aufgabe', 'ticket', 'bestellung', 'anfrage',
-            'aktuell', 'aktuelle', 'aktuellen', 'aktuellem', 'heute', 'jetzt', 'id', 'nummer', 'nr'}
+            'gibt', 'einen', 'ein', 'einem', 'eine', 'einer', 'aktuell', 'aktuelle', 'aktuellen', 'aktuellem', 'heute', 'jetzt', 'id', 'nummer', 'nr'}
         if any(word.casefold() not in grammar for word in re.findall(r'[\w-]+', remaining)):
             # A semantic reference may match an objective paraphrase. It is a
             # model judgment, not a locally proved match. Generic action words
             # alone cannot select among competing tasks, even with a focus.
-            if semantic_task_id and any(word.casefold() not in grammar for word in re.findall(r'[\w-]+', evidence)):
+            if semantic_task_id:
+                selected = next((t for t in context.tasks if t['task_id'] == semantic_task_id), None)
+                objective = (selected.get('objective') or '').strip().casefold() if selected else ''
+                if not target and objective and sum((t.get('objective') or '').strip().casefold() == objective for t in context.tasks) > 1:
+                    return ''
                 return target or semantic_task_id
             return ''
         return target or (context.tasks[0]['task_id'] if len(context.tasks) == 1 else '')
@@ -406,6 +414,31 @@ class PolicyRules:
             spans.append((opening, len(text)))
         return spans
 
+
+    @classmethod
+    def control_context_veto(cls, text):
+        """Incomplete negative context recognizers for controls, never a positive grammar.
+
+        Polite modal questions alone are allowed; reported/conditional modals are
+        excluded. This is deliberately not applied to ordinary answer values.
+        """
+        return bool(cls._quoted_ranges(text) or re.search(
+            r'\b(?:nicht|nichts|kein\w*|niemals|nie|wenn|falls|hypothetisch|beispiel|zitiert|sagte|sagt|berichtete)\b', text, re.I)
+            or (re.search(r'\b(?:würde|würdest|würden)\b', text, re.I)
+                and not re.match(r'^(?:würdest du|würden sie)\b', text.strip(), re.I)))
+
+    @classmethod
+    def audio_context_veto(cls, text):
+        # v1 abstains on compound controls even when one clause is a real stop.
+        return bool(cls.control_context_veto(text) or re.search(r'[;,:\n]|[.!?]\s*\S|\b(?:und|oder|außerdem|zusätzlich|danach)\b', text, re.I))
+
+    @classmethod
+    def request_context_veto(cls, text):
+        # Quoted/reported requests never authorize a new task; negation is scoped
+        # to recognized actions below, so "kein Papier" can describe a fault.
+        return bool(cls._quoted_ranges(text) or re.search(r'\b(?:wenn|falls|hypothetisch|beispiel|zitiert|sagte)\b', text, re.I)
+            or (re.search(r'\b(?:würde|würdest|würden)\b', text, re.I)
+                and not re.match(r'^(?:würdest du|würden sie)\b', text.strip(), re.I)))
 
     @classmethod
     def evidence_clauses(cls, text, evidence, *, action=False):
@@ -553,9 +586,14 @@ class PolicyRules:
                     and current_kind != 'ambiguous' and prior_kind != 'ambiguous'
                     and current_kind != prior_kind):
                 continue
-            # An exact unique previous question reference can resolve equal field kinds.
-            if candidate.question != current.question and candidate.question in text and current.question not in text:
-                continue
+            # Distinct questions can be resolved by an explicit previous-answer relation;
+            # unknown field heuristics alone do not establish competing values.
+            if candidate.question != current.question:
+                if (candidate.question in text and current.question not in text
+                        or re.search(r'\b(?:vorige|vorherige|frühere|vorige[nrms]?|vorherige[nrms]?|frühere[nrms]?)\s+(?:angabe|antwort|frage)\b', text, re.I)):
+                    continue
+                if not prior_kind or not current_kind or 'ambiguous' in (prior_kind, current_kind):
+                    continue
             return True
         return False
 
@@ -565,40 +603,59 @@ def _candidate(snapshot, intent, task_id='', meaning=''):
         and (not task_id or c.task_id == task_id) and (not meaning or meaning in c.meanings)), None)
 
 
-def evaluate(snapshot, text, proposal, *, local=False):
-    """Shared target, provenance, clause and semantic validation for both origins."""
+@dataclass(frozen=True)
+class LocalWitness:
+    """Private deterministic path; never decoded from model output."""
+    candidate: Candidate
+    meaning: str
+    evidence: str
+    value: str = ''
+    domain: str = 'na'
+
+
+def evaluate_choice(snapshot, text, option):
+    return _evaluate(snapshot, text, option, local=False)
+
+
+def _evaluate(snapshot, text, proposal, *, local):
+    """Shared structural exclusions; model choice carries no literal proof."""
     from conversation_router import Route
-    candidate = next((c for c in snapshot.candidates if c.ref == proposal.candidate), None)
+    candidate = proposal.candidate
     reject = lambda reason: clarify(snapshot, reason)
-    if not candidate or proposal.meaning not in candidate.meanings:
+    if candidate not in snapshot.candidates or proposal.meaning not in candidate.meanings:
         return reject('schema')
     if candidate.origin == 'local' and not local:
         return reject('operation_ineligible')
     if candidate.ref == 'c0': return reject('unclear')
     intent, meaning = candidate.intent, proposal.meaning
     if intent == 'cancel_task':
-        # An internal local invocation alone cannot manufacture the positive witness.
         if not local or not PolicyRules.cancel_witness(snapshot, text):
             return reject('evidence_role')
     elif intent == 'stop_speaking':
-        if not PolicyRules.audio_witness(text): return reject('evidence_role')
-    else:
+        if local:
+            if not PolicyRules.audio_witness(text): return reject('evidence_role')
+        elif PolicyRules.audio_context_veto(text):
+            return reject('audio_context')
+    if local and intent not in ('cancel_task', 'stop_speaking'):
         clauses = PolicyRules.evidence_clauses(text, proposal.evidence)
         if not clauses: return reject('evidence_role')
-        if proposal.value_evidence and not PolicyRules.evidence_clauses(text, proposal.value_evidence):
+        if proposal.value and not PolicyRules.evidence_clauses(text, proposal.value):
             return reject('evidence_role')
+    else:
+        # Real utterance clauses are inspected for contradictions only. They are
+        # not manufactured generated evidence and do not prove semantic relevance.
+        clauses = tuple(c.strip() for c in re.split(r'(?<!\d)[.!?;]', text) if c.strip())
     explicit, conflict = PolicyRules._reference(snapshot, text)
     if intent in ('status_query', 'cancel_task'):
-        bound = PolicyRules.status_target(snapshot, text, semantic_task_id=candidate.task_id if not local else '', evidence=proposal.evidence) if intent == 'status_query' else PolicyRules._target(snapshot, text)
+        bound = PolicyRules.status_target(snapshot, text, semantic_task_id=candidate.task_id if not local else '') if intent == 'status_query' else PolicyRules._target(snapshot, text)
         if conflict or not bound or bound != candidate.task_id: return reject('target_ambiguity')
     elif intent == 'new_task':
         selected, payload = PolicyRules.selected_agent(snapshot, text)
-        if selected != candidate.agent_alias or len(payload.split()) < 2 or proposal.evidence not in payload:
+        if selected != candidate.agent_alias or len(payload.split()) < 2:
             return reject('selection_required')
-        action_clauses = PolicyRules.action_clauses(payload, include_negative=True)
-        related_actions = [clause for clause in action_clauses
-            if proposal.evidence.rstrip('.!?;') in clause or clause in proposal.evidence]
-        if related_actions and all(PolicyRules.action_negated(clause) for clause in related_actions):
+        if PolicyRules.request_context_veto(payload): return reject('evidence_role')
+        actions = PolicyRules.action_clauses(payload, include_negative=True)
+        if actions and all(PolicyRules.action_negated(clause) for clause in actions):
             return reject('evidence_role')
         target, bad = PolicyRules._reference(snapshot, payload)
         if target or bad: return reject('target_ambiguity')
@@ -608,12 +665,12 @@ def evaluate(snapshot, text, proposal, *, local=False):
         if conflict or explicit and explicit != candidate.task_id:
             return reject('target_ambiguity')
         if intent == 'clarification':
+            if PolicyRules.control_context_veto(text): return reject('evidence_role')
             definition_key = PolicyRules._answer_kind(candidate.question) if meaning == 'explain' else ''
             definition = DEFINITIONS.get(definition_key, '')
             reply = (definition + ' ' if definition else '') + 'Die aktuelle Frage lautet: ' + candidate.question
             if len(reply) > 4000:
                 reply, definition = candidate.question, ''
-            # Never label an unbound legacy context as grounded help.
             source = HelpSource(candidate.task_id, candidate.question_id, candidate.question_version,
                 candidate.question_source, candidate.question, definition_key if definition else '') if candidate.question_id else None
             disposition = ('grounded_explanation' if definition else 'grounded_repeat') if source else 'clarification'
@@ -621,22 +678,16 @@ def evaluate(snapshot, text, proposal, *, local=False):
                 'grounded_help' if source else 'unclear', source)
         if PolicyRules.separate_action(text): return reject('competing_request')
         if meaning == 'answer' or intent == 'amend_task':
-            # Value spans are optional. Use the enclosing utterance relation when no
-            # scalar has been isolated; never demand regex-positive semantic evidence.
-            # The enclosing relationship clause is invariant under whole/value
-            # evidence choices. Optional value_evidence never changes type policy.
             for clause in clauses:
                 if PolicyRules.contradiction(clause, candidate.question): return reject('type_contradiction')
-            for clause in clauses:
-                if re.search(r'(?:^|:\s*)(?:nicht|kein\w*|niemals)\b', clause, re.I):
+                # Only local positive witnesses require an affirmative scalar.
+                if local and re.search(r'(?:^|:\s*)(?:nicht|kein\w*|niemals)\b', clause, re.I):
                     return reject('evidence_role')
         elif PolicyRules.ambiguous_question(candidate.question):
             return reject('type_contradiction')
         if intent == 'amend_task':
-            if not re.search(r'\b(?:korrigier\w*|korrektur|ersetzen|statt|berichtigen|meinte|ändern)\b', text, re.I):
-                return reject('evidence_role')
             candidates = [c for c in snapshot.candidates if c.intent == 'amend_task']
-            if not explicit and len(candidates) != 1 or PolicyRules.correction_competes(snapshot, candidate, text, proposal.value_evidence):
+            if not explicit and len(candidates) != 1 or PolicyRules.correction_competes(snapshot, candidate, text, ''):
                 return reject('target_ambiguity')
     return RoutingDecision(Route(intent, candidate.task_id, candidate.agent_alias), 'decision',
                            'accepted_local' if local else 'semantic_reference' if intent == 'status_query' else 'accepted_model')
@@ -645,11 +696,10 @@ def evaluate(snapshot, text, proposal, *, local=False):
 def deterministic(snapshot, text):
     """Produce finite, positive local witnesses; semantic uncertainty goes to model."""
     from conversation_router import Route
-    from route_proposal import RouteProposal
     def run(candidate, meaning, evidence, value=''):
         if not candidate: return clarify(snapshot, 'operation_ineligible')
-        proposal = RouteProposal(candidate.ref, meaning, 'na', evidence, value)
-        return evaluate(snapshot, text, proposal, local=True)
+        proposal = LocalWitness(candidate, meaning, evidence, value)
+        return _evaluate(snapshot, text, proposal, local=True)
     if PolicyRules.audio_witness(text):
         return run(_candidate(snapshot, 'stop_speaking'), 'audio', text)
     if PolicyRules.cancel_witness(snapshot, text):
