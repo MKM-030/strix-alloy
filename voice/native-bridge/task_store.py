@@ -14,7 +14,13 @@ from business_tasks import Agent, Scope, StoreCapacity, StoreConflict, StoreDeni
 
 _BUSINESS_KINDS = frozenset({"continue_task", "amend_task", "new_task", "cancel_task"})
 _VOICE_KEYS = frozenset({"language", "assistant_id", "profile"})
-_FORBIDDEN_KEYS = frozenset({"bearer", "cookie", "cookies", "api_key", "apikey", "secret", "token", "authorization", "csrf", "password"})
+_CREDENTIAL_KEY_PARTS = frozenset({
+    "apikey", "bearer", "cookie", "credential", "csrf", "password", "passwd",
+    "secret", "sessionid", "token", "authorization", "authentication",
+    "privatekey", "accesskey", "authheader", "authkey",
+})
+_MAX_JSON_DEPTH = 32
+_MAX_JSON_NODES = 2048
 _TERMINAL_STATES = frozenset({"awaiting_input", "succeeded", "failed", "cancelled", "outcome_unknown"})
 
 
@@ -27,19 +33,37 @@ def _new_id():
 
 
 def _validate_json(value, *, limit=16384):
-    def scan(item):
-        if isinstance(item, dict):
+    """Accept bounded JSON; reject credential-shaped field names at every level.
+
+    Field names are nonempty printable ASCII. Matching ignores case and all
+    separators, including punctuation and spaces, so prefixed/header variants
+    cannot enter the durable callback, evidence, or event records.
+    """
+    stack = [(value, 0)]
+    nodes = 0
+    while stack:
+        item, depth = stack.pop()
+        nodes += 1
+        if nodes > _MAX_JSON_NODES or depth > _MAX_JSON_DEPTH:
+            raise StoreInvalid("payload too complex")
+        if type(item) is dict:
+            if len(item) > _MAX_JSON_NODES - nodes - len(stack):
+                raise StoreInvalid("payload too complex")
             for key, nested in item.items():
-                if not isinstance(key, str) or key.lower() in _FORBIDDEN_KEYS:
+                if not isinstance(key, str) or not key or len(key) > 128 or not key.isascii() or any(ord(char) < 32 or ord(char) == 127 for char in key):
                     raise StoreInvalid("invalid payload")
-                scan(nested)
-        elif isinstance(item, list):
-            for nested in item:
-                scan(nested)
+                normalized = "".join(char for char in key.casefold() if char.isalnum())
+                if any(part in normalized for part in _CREDENTIAL_KEY_PARTS) or normalized.endswith("auth"):
+                    raise StoreInvalid("invalid payload")
+                stack.append((nested, depth + 1))
+        elif type(item) is list:
+            if len(item) > _MAX_JSON_NODES - nodes - len(stack):
+                raise StoreInvalid("payload too complex")
+            stack.extend((nested, depth + 1) for nested in item)
         elif item is not None and type(item) not in (str, int, float, bool):
             raise StoreInvalid("invalid payload")
-
-    scan(value)
+        elif type(item) is str and len(item) > limit:
+            raise StoreInvalid("payload too large")
     try:
         encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
     except (ValueError, TypeError, RecursionError):

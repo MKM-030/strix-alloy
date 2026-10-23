@@ -68,6 +68,44 @@ class ResponsiveStoreTest(unittest.TestCase):
         task_id = operation["task_id"]
         self.assertEqual([e["type"] for e in self.store.events(task_id, self.scope.scope_id)].count("callback"), 1)
 
+    def test_callback_rejects_nested_case_separator_and_prefixed_credential_fields(self):
+        operation = self.accepted()
+        task_id = operation["task_id"]
+        before = self.store.events(task_id, self.scope.scope_id)
+        forbidden = (
+            {"x-api-key": "placeholder"},
+            {"meta": [{"AUTHORIZATION_Header": "placeholder"}]},
+            {"callback": {"session-token-v2": "placeholder"}},
+            {"headers": {"Set.Cookie": "placeholder"}},
+            {"meta": {"clientSecretValue": "placeholder"}},
+        )
+        for index, payload in enumerate(forbidden):
+            with self.subTest(index=index), self.assertRaises(StoreInvalid):
+                self.store.observe(operation["operation_id"], f"blocked-{index}", "callback", payload)
+        self.assertEqual(self.store.events(task_id, self.scope.scope_id), before)
+        self.assertTrue(self.store.observe(operation["operation_id"], "safe-event", "callback", {"response": [{"status": "accepted"}]}))
+
+    def test_settlement_rejects_credential_fields_without_persisting_result(self):
+        operation = self.accepted()
+        self.store.dispatch(operation["operation_id"])
+        task_id = operation["task_id"]
+        before = self.store.events(task_id, self.scope.scope_id)
+        with self.assertRaises(StoreInvalid):
+            self.store.settle(operation["operation_id"], replies=["Still working"], evidence={"details": [{"X_API.Key_Id": "placeholder"}]})
+        self.assertEqual(self.store.events(task_id, self.scope.scope_id), before)
+        self.assertEqual(self.store.get_task(task_id, self.scope.scope_id)["state"], "running")
+        self.assertEqual(self.store.settle(operation["operation_id"], replies=["Still working"], evidence={"source": "legacy"})["state"], "awaiting_input")
+
+    def test_callback_json_depth_and_node_limits_have_fixed_error(self):
+        operation = self.accepted()
+        nested = []
+        for _ in range(1100):
+            nested = [nested]
+        for payload in (nested, [None] * 2100):
+            with self.assertRaises(StoreInvalid):
+                self.store.observe(operation["operation_id"], "oversized", "callback", payload)
+        self.assertEqual([event["type"] for event in self.store.events(operation["task_id"], self.scope.scope_id)].count("callback"), 0)
+
     def test_event_sequence_is_monotonic_after_reopen(self):
         task = self.task()
         operation = self.accepted(task=task)
