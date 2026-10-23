@@ -10,7 +10,7 @@
 
 **Spec:** docs/superpowers/specs/2026-10-23-responsive-voice-implementation-design.md
 
-**Execution order after measured model gates:** Tasks1,2,3,4,8,5,9,6,7. Task8 qualifies guarded routing after both raw model candidates failed; Task9 isolates the measured long ReAct-output issue. These are sequential product implementation tasks, each independently reviewed.
+**Execution order after measured model gates:** Tasks1,2,3,4,8,5,9,11, then the post-qualification routing correction before Tasks6,7. Task8 qualifies guarded routing after both raw model candidates failed; Task9 isolates the measured long ReAct-output issue. Task11 extracts the independent baseline-fixture repair from Task7 while the failed v2 routing qualification is diagnosed. These are sequential product implementation tasks, each independently reviewed. No failed conversation model may be activated.
 
 ## Global Constraints
 
@@ -167,3 +167,12 @@ Create docs/local-voice/REACT-LATENCY-EVALUATION.md from taskworkspace duplex-im
 - [x] Document checkpoint1 rejection, unchanged checkpoint0/32k/concurrency1 profile, missing effective live scope proof, and precise gates for any materially different future optimization. Synthetic tests do not replace live scope/transaction/audio proof.
 - [x] Verify the document against the retained receipts; no new model inference, helper/adapter/installer/runtime/instance changes or business calls. Independent documentation/evidence review suffices; no new implementation tests for prose.
 - [x] Commit only the evaluation document `docs: record rejected voice latency experiments`.
+
+### Task 11: Repair pre-existing native regression fixtures
+
+Independent subset extracted from Task7 after the v2 model qualification failed. Work may run while read-only routing diagnosis proceeds. Read taskworkspace duplex-implementation-20261023/native-baseline-failure-triage.md. Repair test_input_lifecycle.py AST namespace with the real managed_turn.clear_session_ice dependency; preserve and execute direct-close, teardown and input-loss assertions. Repair test_native_history.py to create a minimal valid resolved Config from the relevant example greeting rather than splatting private deployment-path keys. Keep the established local welcome order introduction-first then configured language-selection text, each once; update the contradictory test_voice_created_lifecycle.py expectation and assert speech/transcript/greeting-history consistently. Backend greeting order and product behavior remain unchanged.
+
+- [ ] Reproduce relevant existing fixture failures, repair the three fixtures, and pass their full tests without removing behavior assertions. Escalate any newly exposed real runtime defect rather than weakening assertions or changing router/runtime scope.
+- [ ] Repair synthetic test-harness output noise: asynchronous HTTP fixture shutdown must not block the event loop; expected client deadline/disconnect handling and intentional synthetic401 log must be captured/asserted. Keep genuine unexpected errors visible. Limit changes to the relevant test files; do not edit runtime, private profiles or model gates.
+- [ ] Run full native regression once after fixture repairs and compare old failure names/multiplicity, reporting newly exposed failures honestly. No inference, live ServiceNow or real order. Preserve baseline dirty changes with baseline-relative staging; if an already dirty test file must change, snapshot before editing and stage only its task delta.
+- [ ] Commit exact test-owned changes `test: repair native lifecycle fixtures and clean synthetic diagnostics`; report commands, counts and source-delta ownership for independent review. Task7 still owns whole-system acceptance, localized status rendering and actual activation after model qualification.
