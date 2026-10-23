@@ -43,6 +43,42 @@ class OutputTest(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.arbiter.close()
 
+    async def test_guard_is_rechecked_after_async_transcript_before_synthesis(self):
+        entered, release = asyncio.Event(), asyncio.Event()
+        valid = True
+        async def held_transcript(payload):
+            entered.set()
+            await release.wait()
+        self.arbiter.emit_transcript = held_transcript
+        await self.arbiter.publish_guarded(event(), lambda: valid)
+        await entered.wait()
+        valid = False
+        release.set()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertFalse(self.speech.entered.is_set())
+        self.assertEqual(self.playback.data, b'')
+
+    async def test_guard_changes_during_synthesis_suppress_chunks(self):
+        valid = True
+        await self.arbiter.publish_guarded(event(), lambda: valid)
+        await self.speech.entered.wait()
+        valid = False
+        self.speech.release.set()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual(self.playback.data, b'')
+        self.assertEqual(self.arbiter.sent_bytes, 0)
+
+    async def test_queued_guard_exception_fails_closed_without_error_prose(self):
+        fail = False
+        def valid():
+            if fail: raise RuntimeError('private validity detail')
+            return True
+        await self.arbiter.publish_guarded(event(), valid)
+        fail = True
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertFalse(self.speech.entered.is_set())
+        self.assertEqual(self.transcripts, [])
+
     async def test_real_playback_generation_drops_stale_chunks(self):
         await self.arbiter.publish(event())
         await self.speech.entered.wait()

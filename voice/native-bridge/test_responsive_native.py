@@ -287,6 +287,33 @@ class NativeResponsiveTests(unittest.IsolatedAsyncioTestCase):
         await until(lambda: len(self.dialog.received) == 2)
         self.assertEqual(self.dialog.received[1][0], original)
 
+    async def test_help_guard_survives_downstream_queue_question_and_registry_changes(self):
+        from dataclasses import replace
+        self.coordinator.router = ConversationRouter()
+        self.dialog.greetings = ['Bitte nennen Sie Ihren Namen.']
+        call = await self.start()
+        await until(lambda: bool(self.speech.spoken))
+        await call.responsive_output.wait_idle()
+        attachment = call.responsive_attachment
+        task_id = self.store.list_tasks(call.call_id)[0]['task_id']
+        for change in ('question', 'registry'):
+            self.speech.hold = 'Held output ' + change
+            self.speech.release.clear()
+            pending = asyncio.create_task(attachment.accept('help-' + change, 'Wiederhole die Frage.'))
+            await pending
+            await call.responsive_output.publish(dict(kind='local_reply', task_id='', operation_id='',
+                utterance_id='block-' + change, context_version=0, text=self.speech.hold, priority=-20))
+            await until(lambda: self.speech.hold in self.speech.spoken and call.responsive_output.pending_count == 1)
+            before = len(self.speech.spoken)
+            if change == 'question':
+                self.store.note_question(task_id, call.call_id, 'An welchem Datum?', source='backend')
+            else:
+                self.coordinator.agents = [replace(self.coordinator.agents[0], revision='changed')]
+            self.speech.release.set()
+            await asyncio.wait_for(call.responsive_output.wait_idle(), 1)
+            self.assertEqual(len(self.speech.spoken), before)
+            self.assertFalse(any(t.get('content', '').startswith('Die aktuelle Frage lautet:') for t in self.transcripts(call)))
+
     async def test_suppressed_fallback_does_not_fabricate_greeting_history(self):
         from conversation_output import OutputArbiter
         publish = OutputArbiter.publish

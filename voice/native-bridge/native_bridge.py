@@ -961,7 +961,7 @@ class NativeCall:
 
     async def process_responsive_turns(self):
         from contextlib import aclosing
-        from conversation_output import OutputArbiter
+        from conversation_output import OutputArbiter, OutputSink
         self.turns_settled.clear()
         call = self
         class ActiveSpeech:
@@ -982,7 +982,7 @@ class NativeCall:
         startup = None
         try:
             self.responsive_attachment = await self.responsive_attachment_factory(
-                self, self.responsive_output.publish, ready)
+                self, OutputSink(self.responsive_output), ready)
             self.asr_task = self.spawn(self.recognize_turns())
             self._responsive_opening = True
             startup = self.spawn(self.responsive_startup(ready, greeted, language_ready))

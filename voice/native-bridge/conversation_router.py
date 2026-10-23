@@ -5,13 +5,13 @@ import http.client
 import ipaddress
 import json
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from urllib.parse import urlsplit
 
 from business_tasks import Agent, StoreInvalid, bounded_identifier
 from route_proposal import ProposalContract, RouteProposal, PRODUCTION_SYSTEM_PROMPT
-from routing_policy import RoutingDecision, ContextBudgetExceeded, policy_snapshot, clarify, deterministic, evaluate
+from routing_policy import RoutingDecision, ProposalObservation, ContextBudgetExceeded, policy_snapshot, clarify, deterministic, evaluate
 
 
 INTENTS = frozenset({"status_query", "clarification", "amend_task", "new_task",
@@ -227,13 +227,17 @@ class ConversationRouter:
             contract = ProposalContract(snapshot)
             raw = await asyncio.wait_for(self.model.classify(matching, snapshot), timeout=2.0)
             proposal = contract.decode(raw)
-            return evaluate(snapshot, matching, proposal)
+            candidate = next(c for c in snapshot.candidates if c.ref == proposal.candidate)
+            observed = ProposalObservation('decoded', candidate.intent, proposal.meaning, proposal.domain)
+            return replace(evaluate(snapshot, matching, proposal), proposal=observed)
         except TimeoutError:
-            return clarify(snapshot, 'timeout')
+            return replace(clarify(snapshot, 'timeout'), proposal=ProposalObservation('timeout'))
         except ContextBudgetExceeded:
-            return clarify(snapshot, 'context_budget')
-        except (ValueError, OSError, StoreInvalid, KeyError, TypeError):
-            return clarify(snapshot, 'schema')
+            return replace(clarify(snapshot, 'context_budget'), proposal=ProposalObservation('context_budget'))
+        except OSError:
+            return replace(clarify(snapshot, 'unavailable'), proposal=ProposalObservation('unavailable'))
+        except (ValueError, StoreInvalid, KeyError, TypeError):
+            return replace(clarify(snapshot, 'schema'), proposal=ProposalObservation('schema_rejected'))
 
     async def route(self, text: str, context: RoutingContext) -> Route:
         return (await self.decide(text, context)).route

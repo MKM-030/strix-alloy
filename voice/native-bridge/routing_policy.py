@@ -41,11 +41,28 @@ class HelpSource:
     definition_key: str = ''
 
 @dataclass(frozen=True)
+class ProposalObservation:
+    """Bounded semantic-stage facts; never caller evidence, model prose or IDs."""
+    status: str
+    intent: str = 'none'
+    meaning: str = 'none'
+    domain: str = 'na'
+
+    def __post_init__(self):
+        from route_proposal import MEANINGS, DOMAINS
+        if (self.status not in ('decoded', 'schema_rejected', 'timeout', 'context_budget', 'unavailable')
+                or self.intent not in ('none', 'clarification', 'status_query', 'stop_speaking', 'continue_task', 'amend_task', 'new_task')
+                or self.meaning not in MEANINGS | {'none'} or self.domain not in DOMAINS):
+            raise ValueError('invalid proposal observation')
+
+
+@dataclass(frozen=True)
 class RoutingDecision:
     route: 'Route'
     disposition: str
     reason: str
     help_source: HelpSource | None = None
+    proposal: ProposalObservation | None = None
 
     def __post_init__(self):
         if self.disposition not in ('decision', 'clarification', 'grounded_repeat', 'grounded_explanation'):
@@ -414,14 +431,35 @@ class PolicyRules:
         return tuple(clauses)
 
     @classmethod
+    def action_clauses(cls, text):
+        """Finite request grammar; a noun or action mention is not an instruction."""
+        imperative = r'(?:stornier(?:e)?|bestell(?:e)?|buch(?:e)?|kauf(?:e)?|reservier(?:e)?|beantrag(?:e)?|beauftrag(?:e)?|beend(?:e)?|brich|stopp(?:e)?)'
+        infinitive = r'(?:stornieren|bestellen|buchen|kaufen|reservieren|beantragen|beauftragen|beenden|abbrechen|stoppen|anlegen|erstellen)'
+        result = []
+        for match in re.finditer(r'[^.!?;]+', text):
+            clause = match.group().strip()
+            if not cls.evidence_clauses(text, clause):
+                continue
+            command = re.sub(r'^[^:]+:\s*', '', clause)
+            command = re.sub(r'^(?:außerdem|zusätzlich)\s+', '', command, flags=re.I)
+            patterns = (
+                r'(?:bitte\s+)?' + imperative + r'\s+.+',
+                infinitive + r'\s+Sie\s+.+',
+                r'(?:kannst du|können sie|würdest du|würden sie)\s+(?:bitte\s+)?.+\s+' + infinitive,
+                r'(?:ich (?:möchte|will)|(?:möchte|will) ich)\s+.+\s+' + infinitive,
+                r'bitte\s+.+\s+' + infinitive,
+            )
+            if any(re.fullmatch(pattern, command, re.I) for pattern in patterns):
+                result.append(clause)
+        return tuple(result)
+
+    @staticmethod
+    def action_negated(clause):
+        return bool(re.search(r'\b(?:nicht|nichts|kein\w*|niemals)\b', clause, re.I))
+
+    @classmethod
     def separate_action(cls, text):
-        for match in re.finditer(r'\b(?:neue[nrs]? (?:aufgabe|auftrag|anliegen|ticket)|außerdem|zusätzlich)\b', text, re.I):
-            if cls.evidence_clauses(text, match.group(), action=True):
-                return True
-        for match in re.finditer(r'\b(?:stornier\w*|abbrech\w*|abbruch|brich|stoppen|beend\w*|bestell\w*|buch\w*|kauf\w*|reservier\w*|beantrag\w*)\b', text, re.I):
-            if cls.evidence_clauses(text, match.group(), action=True):
-                return True
-        return False
+        return any(not cls.action_negated(clause) for clause in cls.action_clauses(text))
 
     @classmethod
     def audio_witness(cls, text):
@@ -482,7 +520,6 @@ class PolicyRules:
         if kind == 'yes_no' and not polar:
             return any(cls._matches_answer(value, k) for k in ('name', 'date', 'spelling'))
         if kind in ('name', 'manager') and cls._matches_answer(value, 'date'): return True
-        if kind == 'date' and cls._matches_answer(value, 'name'): return True
         return False
 
     @classmethod
@@ -542,8 +579,10 @@ def evaluate(snapshot, text, proposal, *, local=False):
         selected, payload = PolicyRules.selected_agent(snapshot, text)
         if selected != candidate.agent_alias or len(payload.split()) < 2 or proposal.evidence not in payload:
             return reject('selection_required')
-        if (re.search(r'\b(?:nicht|nichts|kein\w*|niemals)\b', payload, re.I)
-                and re.search(r'\b(?:bestell\w*|beantrag\w*|beauftrag\w*|kauf\w*|reservier\w*|buch\w*)\b', payload, re.I)):
+        action_clauses = PolicyRules.action_clauses(payload)
+        related_actions = [clause for clause in action_clauses
+            if proposal.evidence.rstrip('.!?;') in clause or clause in proposal.evidence]
+        if related_actions and all(PolicyRules.action_negated(clause) for clause in related_actions):
             return reject('evidence_role')
         target, bad = PolicyRules._reference(snapshot, payload)
         if target or bad: return reject('target_ambiguity')

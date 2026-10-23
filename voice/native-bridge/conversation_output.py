@@ -7,10 +7,34 @@ in the task journal. Counters describe generated/sent audio, never heard audio.
 import asyncio
 import inspect
 from contextlib import aclosing
+from dataclasses import dataclass
+from types import MappingProxyType
 
 
 FIELDS = frozenset({'kind', 'task_id', 'operation_id', 'utterance_id', 'context_version', 'text', 'priority'})
 KINDS = frozenset({'local_reply', 'backend_reply', 'task_state', 'error'})
+
+
+@dataclass(frozen=True)
+class _QueuedOutput:
+    event: object
+    generation: int
+    validity: object = None
+
+
+class OutputSink:
+    """Callable legacy emitter with an additive guarded-publication seam."""
+    def __init__(self, arbiter):
+        self.arbiter = arbiter
+
+    def interrupt(self):
+        self.arbiter.interrupt()
+
+    async def __call__(self, event):
+        return await self.arbiter.publish(event)
+
+    async def publish_guarded(self, event, validity):
+        return await self.arbiter.publish_guarded(event, validity)
 
 
 def validate_event(event):
@@ -58,8 +82,16 @@ class OutputArbiter:
         await self._idle.wait()
 
     async def publish(self, event):
+        return await self._publish(event, None)
+
+    async def publish_guarded(self, event, validity):
+        if not callable(validity):
+            raise ValueError('invalid output validity')
+        return await self._publish(event, validity)
+
+    async def _publish(self, event, validity):
         validate_event(event)
-        if self._closed or not self.is_live():
+        if self._closed or not self.is_live() or not self._valid(validity):
             return False
         task = event['task_id']
         version = event['context_version']
@@ -68,11 +100,11 @@ class OutputArbiter:
             return False
         if task:
             self._versions[task] = version
-        entry = (dict(event), self.playback.generation)
+        entry = _QueuedOutput(MappingProxyType(dict(event)), self.playback.generation, validity)
         if len(self._pending) >= 8:
             self.suppressed_count += 1
-            worst = max(range(len(self._pending)), key=lambda i: self._pending[i][0]['priority'])
-            if event['priority'] < self._pending[worst][0]['priority']:
+            worst = max(range(len(self._pending)), key=lambda i: self._pending[i].event['priority'])
+            if event['priority'] < self._pending[worst].event['priority']:
                 self._pending.pop(worst)
             else:
                 self._overflow_reported = True
@@ -81,7 +113,7 @@ class OutputArbiter:
             self._overflow_reported = True
         self._pending.append(entry)
         self._idle.clear()
-        self._pending.sort(key=lambda item: item[0]['priority'])
+        self._pending.sort(key=lambda item: item.event['priority'])
         self._wake.set()
         return True
 
@@ -91,20 +123,34 @@ class OutputArbiter:
             if inspect.isawaitable(result):
                 await result
 
-    def _current(self, event, generation):
-        return (not self._closed and self.is_live() and generation == self.playback.generation
-                and event['context_version'] >= self._versions.get(event['task_id'], 0))
+    @staticmethod
+    def _valid(validity):
+        try:
+            return validity is None or bool(validity())
+        except Exception:
+            return False
 
-    async def _speak(self, event, generation):
+    def _current(self, event, generation, validity=None):
+        return (not self._closed and self.is_live() and generation == self.playback.generation
+                and event['context_version'] >= self._versions.get(event['task_id'], 0)
+                and self._valid(validity))
+
+    async def _speak(self, event, generation, validity=None):
+        if not self._current(event, generation, validity):
+            self.suppressed_count += 1
+            return
         await self._transcript(event)
+        if not self._current(event, generation, validity):
+            self.suppressed_count += 1
+            return
         async with aclosing(self.speech.synthesize(event['text'])) as chunks:
             async for chunk in chunks:
                 self.generated_bytes += len(chunk)
-                if not self._current(event, generation):
+                if not self._current(event, generation, validity):
                     break
-                while len(self.playback.data) > 48000 and self._current(event, generation):
+                while len(self.playback.data) > 48000 and self._current(event, generation, validity):
                     await asyncio.sleep(.01)
-                if self._current(event, generation) and self.playback.put(chunk, generation):
+                if self._current(event, generation, validity) and self.playback.put(chunk, generation):
                     self.sent_bytes += len(chunk)
 
     async def _run(self):
@@ -112,18 +158,19 @@ class OutputArbiter:
             await self._wake.wait()
             self._wake.clear()
             while self._pending and not self._closed:
-                event, generation = self._pending.pop(0)
-                if not self._current(event, generation):
+                entry = self._pending.pop(0)
+                event, generation, validity = entry.event, entry.generation, entry.validity
+                if not self._current(event, generation, validity):
                     self.suppressed_count += 1
                     continue
                 try:
-                    self._active = asyncio.create_task(self._speak(event, generation))
+                    self._active = asyncio.create_task(self._speak(event, generation, validity))
                     await self._active
                 except asyncio.CancelledError:
                     if self._closed:
                         raise
                 except Exception:
-                    if not self._audio_failed:
+                    if not self._audio_failed and self._current(event, generation, validity):
                         self._audio_failed = True
                         try:
                             await self._transcript(dict(event, kind='error', priority=0,

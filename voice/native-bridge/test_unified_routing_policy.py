@@ -123,6 +123,54 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
         d = await self.decide(SemanticModel('continue_task', 'dialogue', text), text, ctx)
         self.assertEqual(d.route.intent, 'clarification')
 
+    async def test_natural_date_words_are_not_proven_names(self):
+        for answer in ('Morgen', 'Mittwoch', 'Übermorgen', 'Nächsten Donnerstag'):
+            d = await self.decide(SemanticModel('continue_task', 'answer', answer), answer, context('An welchem Datum?'))
+            self.assertEqual(d.route.intent, 'continue_task', answer)
+
+    async def test_order_nouns_are_dialogue_but_independent_imperatives_are_requests(self):
+        for text, expected in (
+            ('Meine Bestellung wurde beschädigt geliefert.', 'continue_task'),
+            ('Der Kauf wurde bereits bezahlt.', 'continue_task'),
+            ('Die Buchung ist in der Übersicht nicht sichtbar.', 'continue_task'),
+            ('Zusätzlich fehlt die Anleitung.', 'continue_task'),
+            ('Bestelle einen Ersatzbildschirm.', 'clarification'),
+            ('Bitte die Flugreise stoppen.', 'clarification'),
+            ('Ich möchte außerdem einen Bildschirm bestellen.', 'clarification')):
+            d = await self.decide(SemanticModel('continue_task', 'dialogue', text), text, context('Beschreiben Sie das Problem.'))
+            self.assertEqual(d.route.intent, expected, text)
+
+    async def test_new_request_negation_is_action_clause_scoped(self):
+        ctx = RoutingContext('scope', [], agents=[AGENT])
+        for payload, expected in (('Bestelle einen Bildschirm. Kein Zubehör.', 'new_task'),
+                                  ('Bestelle einen Bildschirm; kein Zubehör.', 'new_task'),
+                                  ('Bestelle keinen Bildschirm.', 'clarification'),
+                                  ('Wenn möglich: Bestelle einen Bildschirm.', 'clarification')):
+            text = 'Büroservice: ' + payload
+            for evidence in (payload, payload.split('.')[0].split(';')[0]):
+                d = await self.decide(SemanticModel('new_task', 'request', evidence, domain='suitable'), text, ctx)
+                self.assertEqual(d.route.intent, expected, evidence)
+
+    async def test_proposal_stage_is_request_bound_for_accepted_rejected_and_unclear(self):
+        for intent, meaning, text, evidence, domain, expected in (
+            ('new_task', 'request', 'Büroservice: Der Scanner streikt.', 'Der Scanner streikt.', 'suitable', 'new_task'),
+            ('new_task', 'request', 'Büroservice: Der Scanner streikt.', 'Der Scanner streikt.', 'unsuitable', 'clarification'),
+            ('clarification', 'unclear', 'Unbestimmtes Anliegen', '', 'na', 'clarification')):
+            d = await self.decide(SemanticModel(intent, meaning, evidence, domain=domain), text, RoutingContext('scope', [], agents=[AGENT]))
+            self.assertIsNotNone(getattr(d, 'proposal', None))
+            self.assertEqual((d.proposal.status, d.proposal.intent, d.proposal.meaning, d.proposal.domain), ('decoded', intent, meaning, domain))
+            self.assertEqual(d.route.intent, expected)
+            with self.assertRaises(FrozenInstanceError): d.proposal.domain = 'changed'
+        class InvalidModel:
+            async def classify(self, *_): return {'private': 'caller content'}
+        d = await self.decide(InvalidModel(), 'Unbestimmtes Anliegen?', context())
+        self.assertEqual(d.proposal.status, 'schema_rejected')
+        self.assertNotIn('caller content', repr(d.proposal))
+        class TimedOutModel:
+            async def classify(self, *_): raise TimeoutError('private data')
+        d = await self.decide(TimedOutModel(), 'Unbestimmtes Anliegen?', context())
+        self.assertEqual(d.proposal.status, 'timeout')
+
     async def test_no_lexical_echo_and_unknown_question_kind_are_not_semantic_vetoes(self):
         for question, answer, meaning in (
             ('Beschreiben Sie das Problem am Arbeitsplatz.', 'Nach dem Einschalten bleibt alles schwarz.', 'dialogue'),
@@ -344,6 +392,7 @@ class UnifiedCoordinatorTest(unittest.IsolatedAsyncioTestCase):
         model.release.set()
         decision = await pending
         self.assertEqual(decision.reason, 'authority_changed')
+        self.assertEqual((decision.proposal.intent, decision.proposal.meaning), ('continue_task', 'answer'))
         self.assertEqual(self.store.operations('scope'), [])
         self.store.accept(self.identifier, 'scope', 'first-answer', 'Greta Falk')
         text = 'Bitte ersetzen Sie die Angabe durch Greta Fink.'
@@ -362,6 +411,24 @@ class UnifiedCoordinatorTest(unittest.IsolatedAsyncioTestCase):
         self.coordinator.agents = [replace(AGENT, revision='revision-b')]
         await asyncio.sleep(0)
         self.assertFalse(any(e['utterance_id'] == 'queued-help' for e in self.events))
+
+    async def test_proposal_policy_and_durable_stages_are_separate(self):
+        text = 'Büroservice: Bestelle einen Bildschirm. Kein Zubehör.'
+        self.coordinator.router = ConversationRouter(SemanticModel('new_task', 'request', 'Bestelle einen Bildschirm', domain='suitable'))
+        decision = await self.attachment.accept_decision('new-positive', text)
+        self.assertEqual(decision.route.intent, 'new_task')
+        self.assertEqual(self.store.operations('scope')[-1]['text'], text)
+        self.assertEqual(self.coordinator.proposal_counts[('decoded', 'new_task', 'request', 'suitable')], 1)
+        self.assertEqual(self.coordinator.routing_counts[('decision', 'accepted_model', 'policy')], 1)
+        self.assertEqual(self.coordinator.routing_counts[('decision', 'accepted_model', 'durable_accepted')], 1)
+        self.coordinator.router = ConversationRouter(SemanticModel('new_task', 'request', 'Bestelle einen Bildschirm', domain='unsuitable'))
+        rejected = await self.attachment.accept_decision('new-negative', text)
+        self.assertEqual(rejected.proposal.domain, 'unsuitable')
+        self.assertEqual(self.coordinator.proposal_counts[('decoded', 'new_task', 'request', 'unsuitable')], 1)
+        self.assertEqual(len(self.store.operations('scope')), 1)
+        duplicate = await self.attachment.accept_decision('new-positive', text)
+        self.assertEqual(duplicate.reason, 'duplicate_accepted')
+        self.assertIsNone(duplicate.proposal)  # No model was rerun; do not invent old provenance.
 
     async def test_exact_caller_text_persists_and_dispatches_once(self):
         original = '  Sie dürfen Greta Falk eintragen.  '

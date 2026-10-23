@@ -9,6 +9,7 @@ import asyncio
 import hashlib
 import inspect
 from collections import Counter
+from dataclasses import replace
 
 from business_tasks import Scope, StoreConflict, StoreDenied, StoreInvalid, bounded_identifier
 from conversation_router import RoutingContext, Route
@@ -26,6 +27,7 @@ class TaskCoordinator:
         self._owner = None
         self._shutdown = False
         self.routing_counts = Counter()  # Bounded nontext (disposition, reason, acceptance) keys only.
+        self.proposal_counts = Counter()  # Bounded (status, intent, meaning, domain), before policy.
 
     @property
     def available(self):
@@ -106,7 +108,7 @@ class ConversationAttachment:
                    for op in self.store.pending(self.scope.scope_id))
 
     def _interrupt(self):
-        owner = getattr(self.emit, '__self__', None)
+        owner = getattr(self.emit, '__self__', self.emit)
         if owner is not None and callable(getattr(owner, 'interrupt', None)):
             owner.interrupt()
         while not self._output_queue.empty():
@@ -161,7 +163,13 @@ class ConversationAttachment:
                 return
             help_checkpoint = event.pop('_help_checkpoint', None)
             help_authority = event.pop('_help_authority', None)
-            if (help_authority is not None and not help_authority()) or (help_checkpoint is not None and help_checkpoint != self.store.routing_checkpoint(self.scope.scope_id)):
+            def valid_help(checkpoint=help_checkpoint, authority=help_authority):
+                try:
+                    return (self._attached and (authority is None or authority())
+                            and (checkpoint is None or checkpoint == self.store.routing_checkpoint(self.scope.scope_id)))
+                except Exception:
+                    return False
+            if not valid_help():
                 self.suppressed_count += 1
                 continue
             if event['kind'] == 'backend_reply':
@@ -170,7 +178,11 @@ class ConversationAttachment:
                     self.suppressed_count += 1
                     continue
             try:
-                await self.emit(event)
+                guarded = getattr(self.emit, 'publish_guarded', None)
+                if help_checkpoint is not None and callable(guarded):
+                    await guarded(event, valid_help)
+                else:
+                    await self.emit(event)
             except Exception:
                 # Output failure cannot retry/cancel a submitted business operation.
                 self.suppressed_count += 1
@@ -272,6 +284,9 @@ class ConversationAttachment:
             else:
                 route = await self.coordinator.router.route(text, context)
                 decision = RoutingDecision(route, 'clarification' if route.intent in ('uncertain', 'clarification') else 'decision', 'legacy_route')
+            if decision.proposal is not None:
+                p = decision.proposal
+                self.coordinator.proposal_counts[(p.status, p.intent, p.meaning, p.domain)] += 1
             self.coordinator.routing_counts[(decision.disposition, decision.reason, 'policy')] += 1
             if route.intent in ('new_task', 'continue_task', 'amend_task', 'cancel_task'):
                 bound_task = next((t for t in tasks if t['task_id'] == route.task_id), None)
@@ -284,7 +299,7 @@ class ConversationAttachment:
                 tuple(t['task_id'] for t in tasks) != tuple(t['task_id'] for t in self.store.list_tasks(self.scope.scope_id)))
             if not authority() or status_changed or (decision.help_source is not None and checkpoint != self.store.routing_checkpoint(self.scope.scope_id)):
                 route = Route('clarification', reply='Der Gesprächskontext hat sich geändert. Bitte wiederhole deine Angabe.')
-                decision = RoutingDecision(route, 'clarification', 'authority_changed')
+                decision = replace(decision, route=route, disposition='clarification', reason='authority_changed', help_source=None)
             try:
                 if route.intent in ('uncertain', 'clarification'):
                     self._queue('local_reply', route.reply, utterance_id=utterance_id, decision=decision, checkpoint=checkpoint, authority=authority)
@@ -339,7 +354,7 @@ class ConversationAttachment:
                 if checkpoint == self.store.routing_checkpoint(self.scope.scope_id) and authority():
                     raise
                 route = Route('clarification', reply='Die aktuelle Frage oder Aufgabe hat sich geändert. Bitte wiederhole deine Angabe.')
-                decision = RoutingDecision(route, 'clarification', 'authority_changed')
+                decision = replace(decision, route=route, disposition='clarification', reason='authority_changed', help_source=None)
                 self._queue('local_reply', route.reply, utterance_id=utterance_id, decision=decision, acceptance='durable_rejected')
             return decision
 
