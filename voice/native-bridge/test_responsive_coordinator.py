@@ -186,7 +186,7 @@ class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
         await self.dialog.started.wait()
         start = time.monotonic()
         await self.attachment.accept('u2', 'status')
-        await eventually(lambda: any(e['kind'] == 'local_reply' and 'running' in e['text'] for e in self.events))
+        await eventually(lambda: any(e['kind'] == 'local_reply' and 'Die Aufgabe wird bearbeitet.' in e['text'] for e in self.events))
         self.assertLess(time.monotonic() - start, .1)
         self.assertEqual(len(self.dialog.calls), 1)
 

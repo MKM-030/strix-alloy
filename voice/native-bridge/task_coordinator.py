@@ -17,6 +17,27 @@ from routing_policy import RoutingDecision
 from servicenow_executor import LegacyVAExecutor
 
 
+def render_grounded_status(state, latest_reply=''):
+    """Finite presentation only; no state inference or authority from reply text."""
+    descriptions = {
+        'queued': 'Die Aufgabe ist lokal angenommen und wartet auf die Übermittlung.',
+        'running': 'Die Aufgabe wird bearbeitet.',
+        'awaiting_input': 'Die Aufgabe wartet auf weitere Angaben.',
+        'ready_to_commit': 'Die Aufgabe ist zur verbindlichen Ausführung bereit; diese ist noch nicht bestätigt.',
+        'committing': 'Die verbindliche Ausführung läuft; ihr Ergebnis ist noch nicht bestätigt.',
+        'succeeded': 'Die Aufgabe wurde erfolgreich abgeschlossen.',
+        'failed': 'Die Aufgabe ist fehlgeschlagen.',
+        'cancel_requested': 'Der Abbruch ist vorgemerkt. Eine bereits übermittelte Aktion kann ich nicht sicher stoppen; eine Stornierung ist nicht bestätigt.',
+        'cancelled': 'Die Aufgabe wurde abgebrochen.',
+        'outcome_unknown': 'Das Ergebnis der Aufgabe lässt sich nicht feststellen. Die Anfrage wird nicht automatisch wiederholt.',
+    }
+    description = descriptions.get(state) if isinstance(state, str) else None
+    if description is None:
+        return 'Der Status der Aufgabe lässt sich nicht feststellen.'
+    suffix = (' Letzte Antwort: ' + latest_reply) if latest_reply else ''
+    return (description + suffix)[:4000]
+
+
 class TaskCoordinator:
     def __init__(self, store, router, agents, executor_factory, *, mode='legacy'):
         if mode not in ('legacy', 'full'):
@@ -321,8 +342,7 @@ class ConversationAttachment:
                         latest_reply = replies[-1] if replies else observed.get(operation['operation_id'], '')
                         if latest_reply:
                             break
-                    suffix = (' Letzte Antwort: ' + latest_reply) if latest_reply else ''
-                    self._queue('local_reply', ('Status: ' + task['state'] + '.' + suffix)[:4000], task=task, utterance_id=utterance_id)
+                    self._queue('local_reply', render_grounded_status(task.get('state'), latest_reply), task=task, utterance_id=utterance_id)
                 elif route.intent == 'cancel_task':
                     task = self.store.cancel_pending(route.task_id, self.scope.scope_id, utterance_id, text=text,
                                                      preconditions=checkpoint, authority=authority)
