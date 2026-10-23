@@ -8,9 +8,11 @@ does); callbacks are journaled before a separate output worker invokes it.
 import asyncio
 import hashlib
 import inspect
+from collections import Counter
 
 from business_tasks import Scope, StoreConflict, StoreDenied, StoreInvalid, bounded_identifier
 from conversation_router import RoutingContext, Route
+from routing_policy import RoutingDecision
 from servicenow_executor import LegacyVAExecutor
 
 
@@ -23,6 +25,7 @@ class TaskCoordinator:
         self.executor_factory, self.mode = executor_factory, mode
         self._owner = None
         self._shutdown = False
+        self.routing_counts = Counter()  # Bounded nontext (disposition, reason, acceptance) keys only.
 
     @property
     def available(self):
@@ -129,7 +132,7 @@ class ConversationAttachment:
             self.store.note_question(task_id, self.scope.scope_id, text, source=source)
             return task_id
 
-    def _queue(self, kind, text, *, operation=None, task=None, utterance_id=''):
+    def _queue(self, kind, text, *, operation=None, task=None, utterance_id='', decision=None, checkpoint=None, authority=None, acceptance='local'):
         if not self._attached:
             return
         operation, task = operation or {}, task or {}
@@ -138,6 +141,11 @@ class ConversationAttachment:
             utterance_id=utterance_id or operation.get('utterance_id', ''),
             context_version=task.get('context_version', operation.get('context_version', 0)),
             text=text, priority=10 if kind == 'backend_reply' else 0)
+        if decision is not None:
+            self.coordinator.routing_counts[(decision.disposition, decision.reason, acceptance)] += 1
+            if decision.help_source:
+                event['_help_checkpoint'] = checkpoint
+                event['_help_authority'] = authority
         try:
             self._output_queue.put_nowait(event)
         except asyncio.QueueFull:
@@ -151,6 +159,11 @@ class ConversationAttachment:
             event = await self._output_queue.get()
             if not self._attached:
                 return
+            help_checkpoint = event.pop('_help_checkpoint', None)
+            help_authority = event.pop('_help_authority', None)
+            if (help_authority is not None and not help_authority()) or (help_checkpoint is not None and help_checkpoint != self.store.routing_checkpoint(self.scope.scope_id)):
+                self.suppressed_count += 1
+                continue
             if event['kind'] == 'backend_reply':
                 task = self.store.get_task(event['task_id'], self.scope.scope_id)
                 if task['context_version'] != event['context_version']:
@@ -163,6 +176,10 @@ class ConversationAttachment:
                 self.suppressed_count += 1
 
     async def accept(self, utterance_id, text, *, voice_context=None):
+        return (await self.accept_decision(utterance_id, text, voice_context=voice_context)).route
+
+    async def accept_decision(self, utterance_id, text, *, voice_context=None):
+        """Request-bound metadata; the legacy accept API projects its public Route."""
         bounded_identifier(utterance_id)
         if not isinstance(text, str) or not text or len(text) > 4000:
             raise StoreInvalid('invalid utterance')
@@ -177,8 +194,9 @@ class ConversationAttachment:
                 if prior_input['text'] != text or prior_input['voice_context'] != (voice_context or {}):
                     raise StoreConflict('utterance identity conflict')
                 owner = next(t for t in tasks if t['task_id'] == prior_input['task_id'])
-                return Route(prior_input['kind'], '' if prior_input['kind'] == 'new_task' else owner['task_id'],
+                route = Route(prior_input['kind'], '' if prior_input['kind'] == 'new_task' else owner['task_id'],
                              owner['agent_alias'] if prior_input['kind'] == 'new_task' else '')
+                return RoutingDecision(route, 'decision', 'duplicate_accepted')
             captured_agents = tuple(self.coordinator.agents)
             captured_focus = self._focus
             captured_workflow = self._context_task
@@ -245,7 +263,16 @@ class ConversationAttachment:
                 workflow_task_id=self._context_task,
                 question_id=question['question_id'] if question else '',
                 question_source=question['source'] if question else '')
-            route = await self.coordinator.router.route(text, context)
+            decide = getattr(self.coordinator.router, 'decide', None)
+            if callable(decide):
+                decision = await decide(text, context)
+                if not isinstance(decision, RoutingDecision):
+                    raise StoreInvalid('invalid routing decision')
+                route = decision.route
+            else:
+                route = await self.coordinator.router.route(text, context)
+                decision = RoutingDecision(route, 'clarification' if route.intent in ('uncertain', 'clarification') else 'decision', 'legacy_route')
+            self.coordinator.routing_counts[(decision.disposition, decision.reason, 'policy')] += 1
             if route.intent in ('new_task', 'continue_task', 'amend_task', 'cancel_task'):
                 bound_task = next((t for t in tasks if t['task_id'] == route.task_id), None)
                 alias = route.agent_alias if route.intent == 'new_task' else bound_task['agent_alias'] if bound_task else ''
@@ -253,11 +280,14 @@ class ConversationAttachment:
                 binding_valid = bool(agent and agent.capabilities.get(route.intent) and
                     (route.intent == 'new_task' or bound_task and
                      (bound_task['agent_id'], bound_task['registry_revision']) == (agent.agent_id, agent.revision)))
-            if not authority():
+            status_changed = (route.intent == 'status_query' and
+                tuple(t['task_id'] for t in tasks) != tuple(t['task_id'] for t in self.store.list_tasks(self.scope.scope_id)))
+            if not authority() or status_changed or (decision.help_source is not None and checkpoint != self.store.routing_checkpoint(self.scope.scope_id)):
                 route = Route('clarification', reply='Der Gesprächskontext hat sich geändert. Bitte wiederhole deine Angabe.')
+                decision = RoutingDecision(route, 'clarification', 'authority_changed')
             try:
                 if route.intent in ('uncertain', 'clarification'):
-                    self._queue('local_reply', route.reply, utterance_id=utterance_id)
+                    self._queue('local_reply', route.reply, utterance_id=utterance_id, decision=decision, checkpoint=checkpoint, authority=authority)
                 elif route.intent == 'stop_speaking':
                     pass
                 elif route.intent == 'status_query':
@@ -283,7 +313,7 @@ class ConversationAttachment:
                                                      preconditions=checkpoint, authority=authority)
                     message = ('Die noch nicht übermittelte Aufgabe wurde lokal abgebrochen.' if task['state'] == 'cancelled' else
                                'Abbruch vorgemerkt. Eine bereits übermittelte Aktion kann ich nicht sicher stoppen; eine Stornierung ist nicht bestätigt.')
-                    self._queue('local_reply', message, task=task, utterance_id=utterance_id)
+                    self._queue('local_reply', message, task=task, utterance_id=utterance_id, decision=decision, acceptance='durable_accepted')
                     self._wake.set()
                 elif route.intent in ('new_task', 'amend_task', 'continue_task'):
                     if route.intent == 'new_task':
@@ -300,7 +330,7 @@ class ConversationAttachment:
                                                       preconditions=checkpoint, authority=authority)
                     self._focus = task['task_id']
                     self._queue('local_reply', 'Angenommen und gespeichert. Neue Aufgaben bleiben im Legacy-Kontext in der Warteschlange, solange eine andere Aufgabe offen ist.' if route.intent == 'new_task' and self._context_task else
-                                'Angenommen und zur Übermittlung vorgemerkt.', operation=operation)
+                                'Angenommen und zur Übermittlung vorgemerkt.', operation=operation, decision=decision, acceptance='durable_accepted')
                     self._wake.set()
                 else:
                     raise StoreInvalid('unsupported route')
@@ -309,8 +339,9 @@ class ConversationAttachment:
                 if checkpoint == self.store.routing_checkpoint(self.scope.scope_id) and authority():
                     raise
                 route = Route('clarification', reply='Die aktuelle Frage oder Aufgabe hat sich geändert. Bitte wiederhole deine Angabe.')
-                self._queue('local_reply', route.reply, utterance_id=utterance_id)
-            return route
+                decision = RoutingDecision(route, 'clarification', 'authority_changed')
+                self._queue('local_reply', route.reply, utterance_id=utterance_id, decision=decision, acceptance='durable_rejected')
+            return decision
 
     async def detach(self):
         if not self._attached:

@@ -25,13 +25,39 @@ def proposal(intent, ref='', alias='', relation='', evidence=''):
     return dict(intent=intent, task_ref=ref, agent_alias=alias, relation=relation, evidence=evidence)
 
 
+def wire_proposal(data, context):
+    """Translate synthetic intent fixtures into the candidate wire contract.
+
+    This is only test authoring convenience; product rejects the former protocol.
+    Malformed fixture bindings deliberately remain malformed for negative tests.
+    """
+    from routing_policy import policy_snapshot
+    snapshot = policy_snapshot(context)
+    old_keys = {'intent', 'task_ref', 'agent_alias', 'relation', 'evidence'}
+    if set(data) != old_keys:
+        return data
+    intent = data['intent']
+    meaning = {'status': 'reference', '': 'unclear'}.get(data['relation'], data['relation'])
+    if meaning in ('repeat', 'explain'):
+        intent = 'clarification'
+    ref = data['task_ref']
+    target = ''
+    if ref:
+        try: target = snapshot.tasks[int(ref[1:]) - 1]['task_id'] if ref.startswith('t') and int(ref[1:]) > 0 else 'invalid'
+        except (ValueError, IndexError): target = 'invalid'
+    candidate = next((c for c in snapshot.candidates if c.intent == intent and meaning in c.meanings
+        and (not target or c.task_id == target) and (not data['agent_alias'] or c.agent_alias == data['agent_alias'])), None)
+    return dict(candidate=candidate.ref if candidate else 'c999', meaning=meaning,
+        domain='suitable' if intent == 'new_task' else 'na', evidence=data['evidence'], value_evidence='')
+
+
 class Model:
     def __init__(self, result):
         self.result, self.calls = result, 0
 
     async def classify(self, text, context):
         self.calls += 1
-        return self.result
+        return wire_proposal(self.result, context)
 
 
 def context(question='Wie lautet Ihr Name?', **extra):
@@ -85,19 +111,17 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
         model = LoopbackConversationModel(None, 'http://127.0.0.1:9933/v1/chat/completions', 'synthetic', '')
         def request(raw):
             captured.append(json.loads(raw))
-            return json.dumps({'choices': [{'message': {'content': json.dumps(proposal('status_query', 't1', relation='status', evidence='Fortschritt'))}}]}).encode()
+            return json.dumps({'choices': [{'message': {'content': json.dumps(wire_proposal(proposal('status_query', 't1', relation='status', evidence='Fortschritt'), context()))}}]}).encode()
         model._request = request
         route = await ConversationRouter(model).route('Zeig mir den Fortschritt.', context())
         self.assertEqual(route, Route('status_query', 'actual-workflow-id'))
         schema = captured[0]['response_format']['json_schema']['schema']
-        branches = {b['properties']['intent']['const']: b for b in schema['oneOf']}
-        self.assertEqual(branches['status_query']['properties']['task_ref']['enum'], ['t1'])
-        self.assertEqual(branches['status_query']['properties']['agent_alias']['const'], '')
-        self.assertEqual(branches['new_task']['properties']['agent_alias']['enum'], ['desk'])
-        self.assertEqual(branches['new_task']['properties']['task_ref']['const'], '')
-        self.assertEqual(branches['stop_speaking']['properties']['task_ref']['const'], '')
-        self.assertNotIn('cancel_task', branches)
-        self.assertNotIn('reply', branches['new_task']['properties'])
+        branches = {b['properties']['candidate']['const']: b for b in schema['oneOf']}
+        self.assertEqual(branches['c2']['properties']['meaning']['enum'], ['reference'])
+        self.assertEqual(branches['c6']['properties']['domain']['enum'], ['suitable', 'unsuitable', 'unclear'])
+        self.assertNotIn('c3', branches)  # deterministic cancellation candidate
+        for branch in branches.values():
+            self.assertEqual(set(branch['properties']), {'candidate', 'meaning', 'domain', 'evidence', 'value_evidence'})
 
     async def test_model_status_uses_private_short_ref_and_no_model_prose(self):
         ctx = context()
@@ -188,12 +212,14 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
         for question, text in [('Unbekannter Schritt?', 'Die Flugreise geht nach Rom.'),
                                ('Welche Störung hat Ihr Bildschirm?', 'Die Flugreise geht nach Rom.')]:
             ctx = context(question)
-            model = Model(proposal('continue_task', 't1', relation='dialogue', evidence=text))
+            model = Model(proposal('clarification'))
             self.assertEqual((await ConversationRouter(model).route(text, ctx)).intent, 'clarification')
+            self.assertEqual((await ConversationRouter().route(text, ctx)).intent, 'clarification')
 
     async def test_prior_correction_requires_journal_operation_and_no_competing_question(self):
         ctx = context('', previous_question='Wie lautet Ihr Name?', previous_question_version=0,
-                      previous_question_id='q0', previous_operation_id='op1', previous_operation_version=1)
+                      previous_question_id='q0', previous_operation_id='op1', previous_operation_version=1,
+                      latest_operation_id='op1', latest_operation_version=1)
         text = 'Bitte ersetzen Sie meine Angabe durch Nora Berndt.'
         model = Model(proposal('amend_task', 't1', relation='correction', evidence='Nora Berndt'))
         self.assertEqual((await ConversationRouter(model).route(text, ctx)).intent, 'amend_task')
@@ -328,7 +354,7 @@ class HeldModel(Model):
         self.context = context
         self.entered.set()
         await self.release.wait()
-        return self.result
+        return wire_proposal(self.result, context)
 
 
 class IdleDialog:

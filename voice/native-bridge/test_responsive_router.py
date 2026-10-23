@@ -9,6 +9,7 @@ from threading import Thread
 from unittest.mock import patch
 
 from business_tasks import Agent, StoreInvalid
+from test_responsive_semantic import wire_proposal
 from conversation_router import ConversationRouter, LoopbackConversationModel, Route, RoutingContext, _strict_json, PRODUCTION_SYSTEM_PROMPT
 
 
@@ -32,7 +33,7 @@ class FakeModel:
         self.calls += 1
         if self.delay:
             await asyncio.sleep(self.delay)
-        return self.response
+        return wire_proposal(self.response, context)
 
 
 class RouterTest(unittest.IsolatedAsyncioTestCase):
@@ -48,7 +49,9 @@ class RouterTest(unittest.IsolatedAsyncioTestCase):
     async def test_same_question_text_on_other_task_makes_correction_ambiguous(self):
         question = 'Wie lautet Ihr Name?'
         previous = dict(task('t1', 'running'), context_version=2, open_question=None,
-                        previous_question=question, previous_question_version=1)
+                        previous_question=question, previous_question_version=1, previous_question_id='prior-q',
+                        previous_operation_id='prior-op', previous_operation_version=2,
+                        latest_operation_id='prior-op', latest_operation_version=2)
         current = dict(task('t2'), context_version=1, open_question=question)
         context = RoutingContext('scope-1', [previous, current], question_task_id='t2',
                                  question_version=1, last_question=question)
@@ -127,6 +130,7 @@ class RouterTest(unittest.IsolatedAsyncioTestCase):
         question = 'Wie lautet Ihr Name?' + 'ä' * (4000 - len('Wie lautet Ihr Name?'))
         current = dict(task(), context_version=1, open_question=question)
         context = RoutingContext('scope-1', [current], question_task_id='t1', question_version=1, last_question=question)
+        context.tasks[0]['previous_question'] = question
         with self.assertRaises(StoreInvalid):
             context.model_data()
         router = ConversationRouter()
@@ -420,8 +424,8 @@ class WireTest(unittest.IsolatedAsyncioTestCase):
             def do_POST(self):
                 raw = self.rfile.read(int(self.headers["Content-Length"]))
                 received.append(json.loads(raw))
-                content = json.dumps({"intent": "new_task", "task_ref": "", "agent_alias": "helpdesk",
-                                      "relation": "request", "evidence": "Ich brauche Hilfe"})
+                content = json.dumps({"candidate": "c2", "meaning": "request", "domain": "suitable",
+                                      "evidence": "Ich brauche Hilfe", "value_evidence": ""})
                 body = json.dumps({"choices": [{"message": {"content": content}}]}).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")

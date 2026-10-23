@@ -275,8 +275,8 @@ class NativeResponsiveTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.store.operations(call.call_id)), 1)
         class SemanticModel:
             async def classify(self, text, context):
-                return {'intent': 'continue_task', 'task_ref': 't1', 'agent_alias': '',
-                        'relation': 'dialogue', 'evidence': 'Abholung'}
+                candidate = next(c for c in context.candidates if c.intent == 'continue_task')
+                return dict(candidate=candidate.ref, meaning='dialogue', domain='na', evidence='Abholung', value_evidence='')
         self.coordinator.router = ConversationRouter(SemanticModel())
         original = '  Wie funktioniert die Abholung?  '
         await self.say(call, original)
