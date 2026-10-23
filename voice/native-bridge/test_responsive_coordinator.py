@@ -56,6 +56,58 @@ async def eventually(predicate):
 
 
 class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
+    async def test_grounded_local_help_during_held_execution_preserves_original(self):
+        await self.attachment.accept('first', 'new request')
+        await self.dialog.started.wait()
+        task_id = self.store.operations('scope')[0]['task_id']
+        await self.attachment.note_question('An welchen Lieferort soll geliefert werden?', task_id=task_id)
+        self.coordinator.router = ConversationRouter()
+        for index, (text, expected) in enumerate((
+            ('Was bedeutet die aktuelle Frage?', 'Ort beziehungsweise die Adresse'),
+            ('Was brauchst du von mir?', 'An welchen Lieferort soll geliefert werden?'),
+            ('Wiederhole die Frage', 'An welchen Lieferort soll geliefert werden?'),
+            ('Was hast du verstanden?', 'new request'),
+            ('Kann ich noch eine andere Frage stellen?', 'nacheinander'),
+        )):
+            route = await asyncio.wait_for(self.attachment.accept(f'help-{index}', text), .1)
+            self.assertEqual(route.intent, 'clarification')
+            self.assertIn(expected, route.reply)
+        self.assertEqual(len(self.store.operations('scope')), 1)
+        self.assertEqual(len(self.dialog.calls), 1)
+        self.assertEqual(self.store.get_task(task_id, 'scope')['state'], 'running')
+        original = '  Wie funktioniert die Abholung?  '
+        route = await self.attachment.accept('substantive', original)
+        self.assertEqual((route.intent, route.task_id), ('continue_task', task_id))
+        self.assertEqual(self.store.pending('scope')[0]['text'], original)
+        self.dialog.release.set()
+        await eventually(lambda: len(self.dialog.calls) == 2 and not self.store.has_unresolved())
+        self.assertEqual(self.dialog.calls[1][0], original)
+
+    async def test_explicit_post_answer_correction_uses_journal_despite_focus_change(self):
+        self.coordinator.router = ConversationRouter()
+        task_id = await self.attachment.note_question('Wie lautet Ihr Name?')
+        await self.attachment.accept('answer', '  Nora Berg  ')
+        await self.dialog.started.wait()
+        self.coordinator.router = Router()
+        await self.attachment.accept('other', 'new second')
+        self.coordinator.router = ConversationRouter()
+        route = await self.attachment.accept('correction', 'Korrektur: Nora Berndt')
+        self.assertEqual((route.intent, route.task_id), ('amend_task', task_id))
+        self.assertIsNone(self.store.question('scope'))
+        self.assertEqual(self.store.operations('scope')[-1]['text'], 'Korrektur: Nora Berndt')
+        self.assertEqual((await self.attachment.accept('stale', 'Nora Busch')).intent, 'clarification')
+
+    async def test_current_question_help_rejects_stale_and_multiple_bindings(self):
+        task_id = await self.attachment.note_question('Wie lautet Ihr Name?')
+        other = self.store.create_task(self.scope, self.agent, 'Other task')
+        self.store.note_question(other['task_id'], 'scope', 'An welchem Datum?', source='backend')
+        self.coordinator.router = ConversationRouter()
+        route = await self.attachment.accept('ambiguous', 'Was bedeutet die aktuelle Frage?')
+        self.assertEqual(route.intent, 'clarification')
+        self.assertNotIn('Kalendertag', route.reply)
+        self.assertEqual(len(self.store.operations('scope')), 0)
+        self.assertNotEqual(task_id, other['task_id'])
+
     async def test_execution_active_tracks_eligible_work_not_unknown_or_unrelated_queue(self):
         self.assertFalse(self.attachment.execution_active)
         await self.attachment.accept('u-active', 'new first')

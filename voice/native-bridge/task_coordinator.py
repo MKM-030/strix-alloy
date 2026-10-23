@@ -172,15 +172,37 @@ class ConversationAttachment:
             self._interrupt()
             question = self.store.question(self.scope.scope_id)
             tasks = self.store.list_tasks(self.scope.scope_id)
+            operations = self.store.operations(self.scope.scope_id)
             pending_tasks = {op['task_id'] for op in self.store.pending(self.scope.scope_id)}
             for task in tasks:
+                own_operations = [op for op in operations if op['task_id'] == task['task_id']]
+                if own_operations:
+                    latest = own_operations[-1]
+                    task['retained_text'] = latest['text']
+                    # A correction may refer to the immediately answered question even
+                    # after accept cleared its delivery binding. Journal evidence only;
+                    # never restore open_question or infer that audio was heard.
+                    if latest['kind'] == 'continue_task' and latest['context_version'] == task['context_version']:
+                        for event in reversed(self.store.events(task['task_id'], self.scope.scope_id)):
+                            if event['context_version'] != latest['context_version'] - 1:
+                                continue
+                            payload = event['payload']
+                            previous = (payload['text'] if event['type'] == 'question_noted' else
+                                payload['replies'][-1] if event['type'] == 'operation_settled'
+                                and payload.get('outcome') == 'awaiting_input' and payload.get('replies') else '')
+                            if previous:
+                                task['previous_question'] = previous
+                                task['previous_question_version'] = event['context_version']
+                                break
                 task['pending_delivery'] = task['task_id'] in pending_tasks
                 if task['pending_delivery']:
                     task['open_question'] = None
             context = RoutingContext(self.scope.scope_id, tasks,
                 focus_task_id=self._focus, agents=self.coordinator.agents,
                 question_task_id=question['task_id'] if question else '',
-                last_question=question['text'][:400] if question else '')
+                last_question=question['text'] if question else '',
+                question_version=question['context_version'] if question else None,
+                workflow_task_id=self._context_task)
             route = await self.coordinator.router.route(text, context)
             if not self._attached:
                 raise StoreDenied('scope detached')

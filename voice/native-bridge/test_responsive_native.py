@@ -256,6 +256,22 @@ class NativeResponsiveTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.dialog.received[0][0], 'Max Mustermann')
         self.assertEqual(self.dialog.history, [])
 
+    async def test_real_router_explains_bound_question_while_native_business_is_held(self):
+        self.coordinator.router = ConversationRouter()
+        self.dialog.greetings = ['Bitte nennen Sie Ihren Namen.']
+        call = await self.start()
+        await until(lambda: bool(self.speech.spoken))
+        await self.say(call, 'Nora Berg')
+        await asyncio.wait_for(self.dialog.started.wait(), .5)
+        task_id = self.store.operations(call.call_id)[0]['task_id']
+        await call.responsive_attachment.note_question('An welchem Datum?', task_id=task_id)
+        await self.say(call, 'Was bedeutet die aktuelle Frage?')
+        await until(lambda: any('Kalendertag' in text for text in self.speech.spoken))
+        self.assertFalse(self.dialog.release.is_set())
+        self.assertEqual(len(self.dialog.received), 1)
+        self.assertEqual(len(self.store.operations(call.call_id)), 1)
+        self.assertTrue(any('An welchem Datum?' in t['content'] for t in self.transcripts(call)))
+
     async def test_suppressed_fallback_does_not_fabricate_greeting_history(self):
         from conversation_output import OutputArbiter
         publish = OutputArbiter.publish

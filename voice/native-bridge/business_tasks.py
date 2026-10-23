@@ -55,6 +55,7 @@ class Agent:
     name: str = ""
     description: str = ""
     supported_intents: tuple[str, ...] = ()
+    routing_aliases: tuple[str, ...] = ()
 
     def __post_init__(self):
         for name in ("alias", "agent_id", "revision"):
@@ -77,3 +78,8 @@ class Agent:
                for value in self.supported_intents):
             raise StoreInvalid("invalid agent intents")
         object.__setattr__(self, "capabilities", MappingProxyType(capabilities))
+        if (not isinstance(self.routing_aliases, tuple) or len(self.routing_aliases) > 16
+                or any(not isinstance(v, str) or not v.strip() or len(v) > 80
+                       or any(ord(c) < 32 or ord(c) == 127 for c in v) for v in self.routing_aliases)
+                or len({v.casefold() for v in self.routing_aliases}) != len(self.routing_aliases)):
+            raise StoreInvalid('invalid routing aliases')

@@ -79,6 +79,14 @@ class ConfigTest(unittest.TestCase):
         with self.assertRaises(StoreInvalid):
             Agent("a", "id", "r", {"continue_task": True}, name="n" * 81)
 
+    def test_registered_routing_aliases_are_bounded_and_loaded(self):
+        profile = self.save({'agents': [{'alias': 'a', 'agent_id': 'id', 'revision': 'r',
+            'capabilities': {'new_task': True}, 'routing_aliases': ['Beschaffung', 'Laptop']} ]})
+        self.assertEqual(profile.agents[0].routing_aliases, ('Beschaffung', 'Laptop'))
+        for aliases in (('x' * 81,), ('',), ('x', 'X'), ('x\n',), tuple(str(i) for i in range(17)), ['a']):
+            with self.subTest(aliases=aliases), self.assertRaises(StoreInvalid):
+                Agent('a', 'id', 'r', {'continue_task': True}, routing_aliases=aliases)
+
 
 if __name__ == "__main__":
     unittest.main()

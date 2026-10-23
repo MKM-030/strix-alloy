@@ -13,7 +13,7 @@ _PROFILE_KEYS = frozenset({"enabled", "mode", "store_file", "model_url", "model_
                            "model_token_file", "model_timeout_seconds", "agents",
                            "capability_evidence"})
 _AGENT_KEYS = frozenset({"alias", "agent_id", "revision", "capabilities", "name",
-                         "description", "supported_intents"})
+                         "description", "supported_intents", "routing_aliases"})
 
 
 @dataclass(frozen=True)
@@ -110,9 +110,12 @@ def load_responsive_config(path) -> ResponsiveConfig:
         intents = entry.get("supported_intents", [])
         if not isinstance(intents, list):
             raise ValueError("invalid agent intents")
+        aliases = entry.get('routing_aliases', [])
+        if not isinstance(aliases, list):
+            raise ValueError('invalid routing aliases')
         agents.append(Agent(entry["alias"], entry["agent_id"], entry["revision"],
                             entry["capabilities"], entry.get("name", ""),
-                            entry.get("description", ""), tuple(intents)))
+                            entry.get("description", ""), tuple(intents), tuple(aliases)))
     if len({agent.alias for agent in agents}) != len(agents):
         raise ValueError("duplicate agent alias")
     evidence = data.get("capability_evidence", {})
