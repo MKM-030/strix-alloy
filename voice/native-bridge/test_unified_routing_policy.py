@@ -151,6 +151,37 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
                 d = await self.decide(SemanticModel('new_task', 'request', evidence, domain='suitable'), text, ctx)
                 self.assertEqual(d.route.intent, expected, evidence)
 
+    async def test_noun_subjects_do_not_prove_imperative_request_relationship(self):
+        for text, expected in (
+            ('Kauf und Lieferung verliefen problemlos.', 'continue_task'),
+            ('Kauf eines Ersatzmonitors war unnötig.', 'continue_task'),
+            ('Buch und Anleitung fehlen.', 'continue_task'),
+            ('Kauf einen Ersatzmonitor.', 'clarification'),
+            ('Kaufe einen Ersatzmonitor.', 'clarification'),
+            ('Bitte kauf einen Ersatzmonitor.', 'clarification'),
+            ('Buch einen Flug.', 'clarification')):
+            with self.subTest(text=text):
+                d = await self.decide(SemanticModel('continue_task', 'dialogue', text),
+                    text, context('Beschreiben Sie das Problem.'))
+                self.assertEqual(d.route.intent, expected)
+
+    async def test_intake_negative_relationship_is_independent_of_positive_word_order(self):
+        ctx = RoutingContext('scope', [], agents=[AGENT])
+        for payload, expected in (
+            ('Einen Bildschirm bitte nicht bestellen.', 'clarification'),
+            ('Einen Bildschirm nicht bestellen.', 'clarification'),
+            ('Bitte keinen Bildschirm bestellen.', 'clarification'),
+            ('Auf keinen Fall einen Bildschirm bestellen.', 'clarification'),
+            ('Einen Bildschirm bitte bestellen.', 'new_task'),
+            ('Bitte einen Bildschirm bestellen.', 'new_task'),
+            ('Bestelle einen Bildschirm. Kein Zubehör.', 'new_task'),
+            ('Der Scanner zieht kein Papier ein.', 'new_task')):
+            for evidence in (payload, 'Bildschirm' if 'Bildschirm' in payload else payload):
+                with self.subTest(payload=payload, evidence=evidence):
+                    d = await self.decide(SemanticModel('new_task', 'request', evidence, domain='suitable'),
+                        'Büroservice: ' + payload, ctx)
+                    self.assertEqual(d.route.intent, expected)
+
     async def test_proposal_stage_is_request_bound_for_accepted_rejected_and_unclear(self):
         for intent, meaning, text, evidence, domain, expected in (
             ('new_task', 'request', 'Büroservice: Der Scanner streikt.', 'Der Scanner streikt.', 'suitable', 'new_task'),

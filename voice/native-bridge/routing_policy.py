@@ -431,10 +431,13 @@ class PolicyRules:
         return tuple(clauses)
 
     @classmethod
-    def action_clauses(cls, text):
-        """Finite request grammar; a noun or action mention is not an instruction."""
-        imperative = r'(?:stornier(?:e)?|bestell(?:e)?|buch(?:e)?|kauf(?:e)?|reservier(?:e)?|beantrag(?:e)?|beauftrag(?:e)?|beend(?:e)?|brich|stopp(?:e)?)'
+    def action_clauses(cls, text, *, include_negative=False):
+        """Positive request witnesses; intake also examines negative action relations."""
+        imperative = r'(?:stornier(?:e)?|bestell(?:e)?|buche|kaufe|reservier(?:e)?|beantrag(?:e)?|beauftrag(?:e)?|beend(?:e)?|brich|stoppe)'
         infinitive = r'(?:stornieren|bestellen|buchen|kaufen|reservieren|beantragen|beauftragen|beenden|abbrechen|stoppen|anlegen|erstellen)'
+        # Short forms that are also nouns need an accusative object relationship.
+        # A coordinated noun subject or a genitive complement cannot prove it.
+        object_phrase = r'(?:(?:mir|uns)\s+)?(?:ein(?:en|e)?|den|die|das|mein(?:en|e)?|dies(?:en|e|es))\s+\S.*'
         result = []
         for match in re.finditer(r'[^.!?;]+', text):
             clause = match.group().strip()
@@ -444,12 +447,19 @@ class PolicyRules:
             command = re.sub(r'^(?:außerdem|zusätzlich)\s+', '', command, flags=re.I)
             patterns = (
                 r'(?:bitte\s+)?' + imperative + r'\s+.+',
+                r'(?:bitte\s+)?(?:kauf|buch|stopp)\s+(?:bitte\s+)?' + object_phrase,
                 infinitive + r'\s+Sie\s+.+',
                 r'(?:kannst du|können sie|würdest du|würden sie)\s+(?:bitte\s+)?.+\s+' + infinitive,
                 r'(?:ich (?:möchte|will)|(?:möchte|will) ich)\s+.+\s+' + infinitive,
                 r'bitte\s+.+\s+' + infinitive,
+                object_phrase + r'\s+bitte\s+' + infinitive,
             )
-            if any(re.fullmatch(pattern, command, re.I) for pattern in patterns):
+            # A negative action must not become valid intake just because its word
+            # order falls outside the positive grammar. This is clause-local and
+            # requires an action verb, not an arbitrary negated equipment symptom.
+            negative_action = (include_negative and cls.action_negated(command)
+                and re.search(r'\b' + infinitive + r'(?:\s+bitte)?$', command, re.I))
+            if negative_action or any(re.fullmatch(pattern, command, re.I) for pattern in patterns):
                 result.append(clause)
         return tuple(result)
 
@@ -579,7 +589,7 @@ def evaluate(snapshot, text, proposal, *, local=False):
         selected, payload = PolicyRules.selected_agent(snapshot, text)
         if selected != candidate.agent_alias or len(payload.split()) < 2 or proposal.evidence not in payload:
             return reject('selection_required')
-        action_clauses = PolicyRules.action_clauses(payload)
+        action_clauses = PolicyRules.action_clauses(payload, include_negative=True)
         related_actions = [clause for clause in action_clauses
             if proposal.evidence.rstrip('.!?;') in clause or clause in proposal.evidence]
         if related_actions and all(PolicyRules.action_negated(clause) for clause in related_actions):
