@@ -206,13 +206,13 @@ class LoopbackConversationModel:
         finally:
             if not notification.done(): notification.add_done_callback(self._consume)
 
-    async def _observe_bypass(self, reason):
+    def _observe_bypass(self, reason):
         request = AdmissionRequest(self.timeout_seconds)
         request.update(stage='bypass', reason=reason, worker_outstanding=False)
         try:
-            await self._observe_with_deadline(request)
+            self._notify_terminal(request)
         except Exception:
-            # Diagnostics cannot change a deterministic business decision.
+            # Local delivery never waits for telemetry or its worker pool.
             pass
 
     async def _run_request(self, request, text, context, *, prepared):
@@ -354,7 +354,7 @@ class ConversationRouter:
 
     async def _decide(self, text, context):
         if not isinstance(text, str) or len(text) > 4000 or not text.strip():
-            if isinstance(self.model, LoopbackConversationModel): await self.model._observe_bypass('bounds')
+            if isinstance(self.model, LoopbackConversationModel): self.model._observe_bypass('bounds')
             return clarify(reason='schema')
         try:
             snapshot = policy_snapshot(context)
@@ -364,7 +364,7 @@ class ConversationRouter:
         matching = text.strip()
         local = deterministic(snapshot, matching)
         if local is not None:
-            if isinstance(self.model, LoopbackConversationModel): await self.model._observe_bypass('local')
+            if isinstance(self.model, LoopbackConversationModel): self.model._observe_bypass('local')
             return local
         if self.model is None:
             return clarify(snapshot, 'unavailable')
@@ -386,9 +386,10 @@ class ConversationRouter:
         loopback = isinstance(model, LoopbackConversationModel)
         snapshot = prepared if loopback else prepared.snapshot
         contract = None if loopback else prepared
+        request = AdmissionRequest(model.timeout_seconds) if loopback else None
         started = time.perf_counter()
         try:
-            call = (model._run_request(AdmissionRequest(model.timeout_seconds), text, snapshot, prepared=False)
+            call = (model._run_request(request, text, snapshot, prepared=False)
                     if loopback else model.classify(text, snapshot))
             pending = asyncio.create_task(call)
             try:
@@ -398,6 +399,15 @@ class ConversationRouter:
                 raw = pending.result()
                 if loopback:
                     raw, contract = raw
+            except asyncio.CancelledError:
+                # The public owner must seal before its child can handle cancellation.
+                if request is not None:
+                    request.retire('cancelled')
+                    model._notify_terminal(request)
+                raise
+            except TimeoutError:
+                if request is not None: request.retire('timeout')
+                raise
             finally:
                 if not pending.done():
                     pending.cancel()
@@ -420,6 +430,9 @@ class ConversationRouter:
         except ProposalError as error:
             return replace(clarify(snapshot, 'schema'), proposal=ProposalObservation(error.stage, **error.facts))
         except TimeoutError:
+            if request is not None:
+                request.retire('timeout')
+                model._notify_terminal(request)
             return replace(clarify(snapshot, 'timeout'), proposal=ProposalObservation('timeout'))
         except ContextBudgetExceeded:
             return replace(clarify(snapshot, 'context_budget'), proposal=ProposalObservation('context_budget'))

@@ -99,6 +99,12 @@ async def transaction(replies, timeout=1):
     finally: await peer.finish()
 
 
+async def wait_observations(model, count):
+    async with asyncio.timeout(.5):
+        while len(model.observations) < count:
+            await asyncio.sleep(.005)
+
+
 class AdmissionTests(unittest.IsolatedAsyncioTestCase):
     async def decide(self, model, text=TEXT):
         return await ConversationRouter(model).decide(text, RoutingContext('scope', []))
@@ -383,12 +389,14 @@ class FramingAndOwnershipTests(unittest.IsolatedAsyncioTestCase):
     async def test_local_and_byte_rejection_receipts_have_zero_attempts(self):
         async with transaction([framed(count_body())]) as (peer, model):
             await self.decide(model, 'Hör bitte auf zu sprechen')
+            await wait_observations(model, 1)
             self.assertTrue(model.observations)
             receipt = model.observations[-1]
             self.assertEqual((receipt.count_attempts, receipt.inference_attempts, receipt.total_attempts), (0, 0, 0))
             self.assertEqual(receipt.stage, 'bypass')
             self.assertIsNone(receipt.count_valid)
             await self.decide(model, 'x' * 4001)
+            await wait_observations(model, 2)
             self.assertEqual(model.observations[-1].reason, 'bounds')
             self.assertEqual(peer.requests, [])
 
@@ -527,3 +535,130 @@ class FramingAndOwnershipTests(unittest.IsolatedAsyncioTestCase):
             body = choice_body(usage={'prompt_tokens': 3584, 'completion_tokens': value})
             async with transaction([framed(count_body()), framed(body)]) as (_, model):
                 self.assertEqual((await self.decide(model)).reason, 'unclear')
+
+class PublicOwnershipReviewTests(unittest.IsolatedAsyncioTestCase):
+    async def _terminal_router_case(self, cancelled):
+        from unittest.mock import patch
+        from conversation_admission import AdmissionRequest
+        entered, release, worker_done = threading.Event(), threading.Event(), threading.Event()
+        sends, boundary, requests = [], [], []
+        class OwnedSocket:
+            def shutdown(self, *_): pass
+            def close(self): pass
+        def connect(request, *_):
+            requests.append(request)
+            with request.lock:
+                request.socket = OwnedSocket()
+            request.update(connection_closed=False)
+            return request.socket
+        class Model(ObservedModel):
+            def _transaction(self, *args):
+                try: return super()._transaction(*args)
+                finally: worker_done.set()
+            def _exchange(self, request, owned, frame):
+                phase = 'count' if frame.startswith(b'POST ' + (PATH + '/input_tokens').encode()) else 'inference'
+                sends.append((phase, request.cancelled.is_set()))
+                if phase == 'count':
+                    entered.set()
+                    release.wait(1)
+                    return count_body(42), False
+                return choice_body(42), False
+        model = Model(1)
+        original_wait = asyncio.wait
+        route_task = None
+        def release_before_child_handler():
+            boundary.append((route_task.done(), route_task.cancelled(), requests[0].snapshot(),
+                             requests[0].cancelled.is_set()))
+            release.set()
+            worker_done.wait(.08)  # Child coroutine cannot run during this callback.
+        async def outer_timeout(aws, *, timeout=None, **kwargs):
+            if timeout == 2.0:
+                await original_wait(aws, timeout=.03, **kwargs)
+                asyncio.get_running_loop().call_soon(release_before_child_handler)
+                return set(), set(aws)
+            return await original_wait(aws, timeout=timeout, **kwargs)
+        try:
+            with patch.object(AdmissionRequest, 'connect', connect), patch('asyncio.wait', outer_timeout if not cancelled else original_wait):
+                route_task = asyncio.create_task(ConversationRouter(model).decide(TEXT, RoutingContext('scope', [])))
+                self.assertTrue(await asyncio.to_thread(entered.wait, .5))
+                if cancelled:
+                    route_task.cancel()
+                    asyncio.get_running_loop().call_soon(release_before_child_handler)
+                    with self.assertRaises(asyncio.CancelledError): await route_task
+                else:
+                    self.assertEqual((await route_task).reason, 'timeout')
+                await asyncio.sleep(.04)
+            self.assertTrue(boundary[0][0], 'public router must be terminal before releasing count')
+            self.assertEqual(boundary[0][1], cancelled)
+            self.assertEqual(sends, [('count', False)])
+            terminal = boundary[0][2]
+            self.assertTrue(boundary[0][3], 'request must already be sealed at public terminal boundary')
+            self.assertEqual(terminal.reason, 'cancelled' if cancelled else 'timeout')
+            self.assertTrue(terminal.connection_closed)
+            self.assertTrue(terminal.worker_outstanding)
+            self.assertEqual((terminal.count_attempts, terminal.inference_attempts, terminal.total_attempts), (1, 0, 1))
+            self.assertTrue(any(s.worker_outstanding and s.reason == terminal.reason for s in model.observations))
+            self.assertTrue(model.observations[-1].connection_closed)
+            self.assertFalse(model.observations[-1].worker_outstanding)
+            self.assertEqual(model.observations[-1].reason, terminal.reason)
+        finally:
+            release.set()
+            if route_task is not None and not route_task.done():
+                route_task.cancel()
+                try: await route_task
+                except asyncio.CancelledError: pass
+
+    async def test_public_cancel_seals_before_child_cancellation_handler(self):
+        await self._terminal_router_case(cancelled=True)
+
+    async def test_public_outer_timeout_seals_before_child_cancellation_handler(self):
+        await self._terminal_router_case(cancelled=False)
+
+    async def test_local_stop_returns_while_observer_pool_is_occupied(self):
+        from concurrent.futures import ThreadPoolExecutor
+        from unittest.mock import patch
+        from conversation_admission import AdmissionRequest
+        release, occupied, observed = threading.Event(), threading.Event(), threading.Event()
+        loop = asyncio.get_running_loop()
+        executor = ThreadPoolExecutor(max_workers=1)
+        loop.set_default_executor(executor)
+        def held_pool():
+            occupied.set()
+            release.wait(1)
+        blocker = loop.run_in_executor(None, held_pool)
+        while not occupied.is_set(): await asyncio.sleep(0)
+        model = ObservedModel(1)
+        def observe(receipt):
+            model.observations.append(receipt)
+            observed.set()
+            raise RuntimeError('synthetic observer failure')
+        model._observe_admission = observe
+        pending = None
+        try:
+            with patch.object(AdmissionRequest, 'connect', side_effect=AssertionError('local path reached transport')):
+                pending = asyncio.create_task(ConversationRouter(model).decide('Hör bitte auf zu sprechen', RoutingContext('scope', [])))
+                done, _ = await asyncio.wait((pending,), timeout=.08)
+                self.assertIn(pending, done, 'urgent local decision waited for the occupied observer pool')
+                decision = pending.result()
+                self.assertEqual(decision.route.intent, 'stop_speaking')
+                self.assertIsNone(decision.proposal)
+                self.assertFalse(release.is_set())
+                self.assertFalse(observed.is_set())
+                release.set()
+                await blocker
+                self.assertTrue(await asyncio.to_thread(observed.wait, .5))
+                await asyncio.sleep(0)
+                receipt = model.observations[-1]
+                self.assertEqual((receipt.count_attempts, receipt.inference_attempts, receipt.total_attempts), (0, 0, 0))
+                self.assertEqual((receipt.stage, receipt.reason), ('bypass', 'local'))
+                for field in ('count_valid', 'input_tokens', 'payload_bound', 'usage_count_match', 'payload_sha256', 'catalog_sha256'):
+                    self.assertIsNone(getattr(receipt, field))
+                self.assertFalse(receipt.worker_outstanding)
+                self.assertTrue(receipt.connection_closed)
+        finally:
+            release.set()
+            await blocker
+            if pending is not None and not pending.done():
+                pending.cancel()
+                try: await pending
+                except asyncio.CancelledError: pass
