@@ -225,9 +225,15 @@ class ConversationRouter:
         # IDs in speech are explicit references. An unknown or second reference
         # must never silently resolve to the sole task or current focus.
         referenced = set(re.findall(r"(?<![\w-])(?:[a-z][a-z0-9_-]*\d+[a-z0-9_-]*|[0-9a-f]{8}-[0-9a-f-]{27,})(?![\w-])", text, re.IGNORECASE))
-        for candidate in re.findall(r"\b(?:aufgabe|auftrag|task|ticket|id)\s+(?:nr\.?\s*|nummer\s*)?([a-z0-9][a-z0-9_-]{1,127})\b", text, re.IGNORECASE):
-            if candidate.casefold() not in {"der", "die", "das", "den", "bitte", "jetzt", "sofort", "heute", "morgen", "am", "mit", "für", "von", "zu"}:
-                referenced.add(candidate)
+        # Plain words after "Aufgabe" can be verbs ("Aufgabe stoppen").
+        # Treat them as IDs only with an explicit marker; ID-shaped tokens
+        # containing digits are already captured above, with or without one.
+        for pattern in (
+            r"\b(?:aufgabe|auftrag|task|ticket)\s+(?:id|nummer|nr\.?|#|:)\s*([a-z0-9][a-z0-9_-]{1,127})\b",
+            r"\b(?:id|nummer|nr\.?)\s+([a-z0-9][a-z0-9_-]{1,127})\b",
+            r"(?<!\w)#([a-z0-9][a-z0-9_-]{1,127})\b",
+        ):
+            referenced.update(re.findall(pattern, text, re.IGNORECASE))
         if any(candidate.casefold() not in {task_id.casefold() for task_id in known} for candidate in referenced):
             return ""
         if matches:
