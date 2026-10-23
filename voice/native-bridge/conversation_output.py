@@ -30,6 +30,8 @@ class OutputArbiter:
         self.emit_transcript, self.is_live = emit_transcript, is_live
         self._pending = []
         self._wake = asyncio.Event()
+        self._idle = asyncio.Event()
+        self._idle.set()
         self._closed = False
         self._versions = {}
         self._audio_failed = False
@@ -48,6 +50,12 @@ class OutputArbiter:
             self._active.cancel()
         self.suppressed_count += len(self._pending)
         self._pending.clear()
+        if self._active is None:
+            self._idle.set()
+
+    async def wait_idle(self):
+        """Wait for queued/active synthesis to stop; this is not a playback ACK."""
+        await self._idle.wait()
 
     async def publish(self, event):
         validate_event(event)
@@ -72,6 +80,7 @@ class OutputArbiter:
                 return False
             self._overflow_reported = True
         self._pending.append(entry)
+        self._idle.clear()
         self._pending.sort(key=lambda item: item[0]['priority'])
         self._wake.set()
         return True
@@ -130,6 +139,8 @@ class OutputArbiter:
                         context_version=0, priority=0, text='Nicht alle Antworten konnten gesprochen werden. Bitte frage nach dem Status.'))
                 except Exception:
                     pass
+            if not self._pending and self._active is None:
+                self._idle.set()
 
     async def close(self):
         if self._closed:
@@ -138,3 +149,4 @@ class OutputArbiter:
         self.interrupt()
         self._worker.cancel()
         await asyncio.gather(self._worker, return_exceptions=True)
+        self._idle.set()

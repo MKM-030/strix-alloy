@@ -56,6 +56,25 @@ async def eventually(predicate):
 
 
 class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
+    async def test_execution_active_tracks_eligible_work_not_unknown_or_unrelated_queue(self):
+        self.assertFalse(self.attachment.execution_active)
+        await self.attachment.accept('u-active', 'new first')
+        self.assertTrue(self.attachment.execution_active)
+        await self.dialog.started.wait()
+        self.assertTrue(self.attachment.execution_active)
+        await self.attachment.accept('u-other', 'new second')
+        self.dialog.release.set()
+        await eventually(lambda: not self.store.has_unresolved())
+        self.assertFalse(self.attachment.execution_active)
+        self.assertEqual(len(self.store.pending('scope')), 1)
+        # Submitted observation becoming unknown must not masquerade as work forever.
+        async def fail(*args, **kwargs):
+            raise RuntimeError('synthetic uncertain executor')
+        self.dialog.turn = fail
+        await self.attachment.accept('u-uncertain', 'change request')
+        await eventually(lambda: self.store.get_task(self.store.operations('scope')[0]['task_id'], 'scope')['state'] == 'outcome_unknown')
+        self.assertFalse(self.attachment.execution_active)
+
     async def asyncSetUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.store = TaskStore(Path(self.tmp.name) / 'tasks.db')

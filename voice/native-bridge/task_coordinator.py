@@ -84,12 +84,23 @@ class ConversationAttachment:
         self._context_task = ''
         self._focus = ''
         self._cleanup_acknowledged = False
+        self._executing = False
         self._closed = asyncio.Event()
         self.suppressed_count = 0
 
     @property
     def store(self):
         return self.coordinator.store
+
+    @property
+    def execution_active(self):
+        """Native idle gate: actual observation or dispatch-eligible work only."""
+        if self._executing:
+            return True
+        if not self._attached or self.store.has_unresolved():
+            return False
+        return any(not self._context_task or op['task_id'] == self._context_task
+                   for op in self.store.pending(self.scope.scope_id))
 
     def _interrupt(self):
         owner = getattr(self.emit, '__self__', None)
@@ -293,6 +304,7 @@ class ConversationAttachment:
                                 self._queue('backend_reply', text, operation=operation)
 
                     try:
+                        self._executing = True
                         replies = await self.executor.turn(operation, on_reply)
                         task = self.store.settle(operation['operation_id'], replies=replies)
                         for reply in replies:
@@ -306,6 +318,8 @@ class ConversationAttachment:
                         self.store.mark_unknown(operation['operation_id'], 'executor_uncertain')
                         self._queue('error', 'Das Ergebnis ist unklar. Die Anfrage wird nicht automatisch wiederholt.', operation=operation)
                         break
+                    finally:
+                        self._executing = False
         except Exception:
             self._queue('error', 'Die Verbindung ist nicht bereit. Vorgemerkte Anfragen werden nicht automatisch übermittelt.')
             # Keep the slot and queued journal intact until the caller detaches.

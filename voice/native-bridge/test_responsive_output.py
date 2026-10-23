@@ -48,7 +48,7 @@ class OutputTest(unittest.IsolatedAsyncioTestCase):
         await self.speech.entered.wait()
         self.playback.interrupt()
         self.speech.release.set()
-        await asyncio.sleep(.02)
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
         self.assertEqual(self.playback.data, b'')
 
     async def test_status_interrupt_does_not_suppress_future_backend(self):
@@ -58,7 +58,7 @@ class OutputTest(unittest.IsolatedAsyncioTestCase):
         await self.arbiter.publish(event('Status', 'local_reply'))
         await self.arbiter.publish(event('Future'))
         self.speech.release.set()
-        await asyncio.sleep(.03)
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
         self.assertEqual(self.playback.data, b'StatusFuture')
         self.assertEqual(self.speech.maximum, 1)
         self.assertFalse(any('heard' in e for e in self.transcripts))
@@ -71,7 +71,7 @@ class OutputTest(unittest.IsolatedAsyncioTestCase):
         self.assertLessEqual(self.arbiter.pending_count, 8)
         self.assertGreater(self.arbiter.suppressed_count, 0)
         self.speech.release.set()
-        await asyncio.sleep(.03)
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
         self.assertTrue(any(e['kind'] == 'error' for e in self.transcripts))
 
     async def test_audio_failure_reported_once_and_publish_is_bounded(self):
@@ -79,7 +79,7 @@ class OutputTest(unittest.IsolatedAsyncioTestCase):
         self.speech.release.set()
         await self.arbiter.publish(event())
         await self.arbiter.publish(event('Again'))
-        await asyncio.sleep(.03)
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
         self.assertEqual(len([e for e in self.transcripts if e['kind'] == 'error']), 1)
         with self.assertRaises(ValueError):
             await self.arbiter.publish(event('x' * 4001))
@@ -90,9 +90,34 @@ class OutputTest(unittest.IsolatedAsyncioTestCase):
         self.arbiter.interrupt()
         self.speech.release.set()
         await self.arbiter.publish(event('Control', 'local_reply'))
-        await asyncio.sleep(.03)
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
         self.assertEqual(self.playback.data, b'Control')
         self.assertEqual(self.speech.maximum, 1)
+
+    async def test_wait_idle_covers_queued_active_interrupted_and_closed(self):
+        await self.arbiter.wait_idle()
+        await self.arbiter.publish(event('Held'))
+        waiter = asyncio.create_task(self.arbiter.wait_idle())
+        await self.speech.entered.wait()
+        self.assertFalse(waiter.done())
+        self.arbiter.interrupt()
+        await asyncio.wait_for(waiter, 1)
+        self.assertEqual(self.speech.active, 0)
+        await self.arbiter.publish(event('Held again'))
+        waiter = asyncio.create_task(self.arbiter.wait_idle())
+        await self.arbiter.close()
+        await asyncio.wait_for(waiter, 1)
+        self.assertEqual(self.speech.active, 0)
+
+    async def test_wait_idle_completes_after_audio_error_and_suppressed_queue(self):
+        self.speech.fail = True
+        self.speech.release.set()
+        await self.arbiter.publish(event())
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual(self.speech.active, 0)
+        await self.arbiter.publish(event('Suppressed'))
+        self.arbiter.interrupt()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
 
 
 if __name__ == '__main__':
