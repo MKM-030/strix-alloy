@@ -1,0 +1,282 @@
+{
+  "package_revision": "responsive-tasks-v2-candidate-1",
+  "scope": "global",
+  "deployment": "not_applied",
+  "safe_write": false,
+  "tables": {
+    "u_scc_voice_task": {
+      "u_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 128
+      },
+      "u_data": {
+        "mandatory": true,
+        "length": 16000
+      },
+      "u_owner": {
+        "reference": "sys_user"
+      },
+      "u_command_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 260
+      },
+      "u_service": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_agent": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_tool": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_registry_revision": {
+        "mandatory": true,
+        "length": 128
+      }
+    },
+    "u_scc_voice_transition": {
+      "u_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 128
+      },
+      "u_data": {
+        "mandatory": true,
+        "length": 16000
+      },
+      "u_owner": {
+        "reference": "sys_user"
+      },
+      "u_command_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 260
+      },
+      "u_predecessor_slot": {
+        "unique": true,
+        "mandatory": true,
+        "length": 260
+      },
+      "u_task": {
+        "reference": "u_scc_voice_task",
+        "mandatory": true
+      },
+      "u_task_key": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_service": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_agent": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_tool": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_registry_revision": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_payload_hash": {
+        "length": 128
+      },
+      "u_proposal_key": {
+        "length": 128
+      },
+      "u_confirmation_key": {
+        "length": 128
+      }
+    },
+    "u_scc_voice_operation": {
+      "u_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 128
+      },
+      "u_data": {
+        "mandatory": true,
+        "length": 16000
+      },
+      "u_owner": {
+        "reference": "sys_user"
+      },
+      "u_operation_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 260
+      },
+      "u_task": {
+        "reference": "u_scc_voice_task",
+        "mandatory": true
+      },
+      "u_task_key": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_service": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_agent": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_tool": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_registry_revision": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_payload_hash": {
+        "length": 128
+      },
+      "u_proposal_key": {
+        "length": 128
+      },
+      "u_confirmation_key": {
+        "length": 128
+      }
+    },
+    "u_scc_voice_dispatch_claim": {
+      "u_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 128
+      },
+      "u_data": {
+        "mandatory": true,
+        "length": 16000
+      },
+      "u_owner": {
+        "reference": "sys_user"
+      },
+      "u_operation_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 260
+      },
+      "u_task": {
+        "reference": "u_scc_voice_task",
+        "mandatory": true
+      },
+      "u_task_key": {
+        "mandatory": true,
+        "length": 128
+      },
+      "u_operation": {
+        "reference": "u_scc_voice_operation",
+        "mandatory": true
+      }
+    },
+    "u_scc_voice_event": {
+      "u_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 128
+      },
+      "u_data": {
+        "mandatory": true,
+        "length": 16000
+      },
+      "u_owner": {
+        "reference": "sys_user"
+      },
+      "u_source_event_key": {
+        "unique": true,
+        "mandatory": true,
+        "length": 260
+      },
+      "u_task_sequence": {
+        "unique": true,
+        "mandatory": true,
+        "length": 260
+      },
+      "u_task": {
+        "reference": "u_scc_voice_task",
+        "mandatory": true
+      },
+      "u_task_key": {
+        "mandatory": true,
+        "length": 128
+      }
+    }
+  },
+  "scripts": {
+    "LocalLLMVoiceTaskControl": {
+      "sha256": "b81ee1b3b78e6861625bdda7179573f7e7ac4b0c74a36216822b781b006dbfef",
+      "active_on_import": false
+    },
+    "LocalLLMVoiceOrderGuard": {
+      "sha256": "8f32477345750b81141d229678c8fc7481bf9812dbd701b24928682cc19b106d",
+      "active_on_import": false
+    },
+    "LocalLLMVoiceRepository": {
+      "sha256": "deb86eb2686dfee01eebccd54dc97d38bc61a493e253e85e8828724264367624",
+      "active_on_import": false
+    },
+    "LocalLLMVoicePlatform": {
+      "sha256": "fda63f0263ae8c8635f3e4aee59c7901fae4b0954d02d4343c9aa365842bc899",
+      "active_on_import": false
+    },
+    "LocalLLMVoiceResource": {
+      "sha256": "82fe833f22d5881854a051f5b4326d7b9ce65dcd2bd666ca31187258cf545828",
+      "active_on_import": false
+    },
+    "LocalLLMSCCOrderBusiness": {
+      "sha256": "288dd38718641bf1571dfcba83ef0aa630d34ffbf4197bfa85818aba12e46a8d",
+      "active_on_import": false
+    }
+  },
+  "native_projection": {
+    "file": "native-registry-v2.candidate.js",
+    "scope": "sn_voice_aia",
+    "scope_id": "022bd6e9b720a61081fee3fdde11a9df",
+    "imported": false,
+    "missing": "separate REST definition and authentication/accessibility metadata readback"
+  },
+  "legacy_source_sha256": "79f7a17ccc0887ade5004cf10bb12df4a78012ba583590474f84f6cb443f7ffe",
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/global/scc_voice_tasks/v2/registry",
+      "active_on_import": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/global/scc_voice_tasks/v2/tasks",
+      "active_on_import": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/global/scc_voice_tasks/v2/tasks/{id}",
+      "active_on_import": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/global/scc_voice_tasks/v2/tasks/{id}/commands",
+      "active_on_import": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/global/scc_voice_tasks/v2/operations/{id}",
+      "active_on_import": false
+    }
+  ],
+  "prepare_tool": {
+    "file": "prepare-only-tool.js",
+    "imported": false,
+    "reason": "native tool metadata and guarded agent binding require separately reviewed migration"
+  },
+  "record_count": 117
+}

@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import re
 import sqlite3
 import threading
 import uuid
@@ -77,6 +78,14 @@ def _decode(value):
     return json.loads(value) if value is not None else None
 
 
+def _receipt_ref(value, *, optional=False):
+    if optional and value == '':
+        return value
+    if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}', value):
+        raise StoreInvalid('invalid receipt reference')
+    return value
+
+
 class TaskStore:
     """Synchronous journal. Call recover once at process startup, not on open."""
 
@@ -132,6 +141,16 @@ class TaskStore:
                 scope_id TEXT PRIMARY KEY REFERENCES scopes(scope_id),
                 task_id TEXT NOT NULL REFERENCES tasks(task_id), text TEXT NOT NULL,
                 source TEXT NOT NULL, context_version INTEGER NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS owned_dispatches (
+                operation_id TEXT PRIMARY KEY REFERENCES operations(operation_id),
+                task_ref TEXT NOT NULL, command TEXT NOT NULL,
+                event_sequence INTEGER NOT NULL DEFAULT 0
+            );
+            CREATE TABLE IF NOT EXISTS owned_events (
+                operation_id TEXT NOT NULL REFERENCES operations(operation_id),
+                sequence INTEGER NOT NULL, event_id TEXT NOT NULL UNIQUE,
+                PRIMARY KEY(operation_id, sequence)
             );
         """)
 
@@ -387,7 +406,7 @@ class TaskStore:
         bounded_identifier(operation_id)
         bounded_identifier(event_id)
         bounded_identifier(event_type)
-        if event_type in ("task_created", "utterance_accepted", "operation_submitted", "operation_settled", "outcome_unknown"):
+        if event_type in ("task_created", "utterance_accepted", "operation_submitted", "operation_settled", "outcome_unknown", "receipt_recorded", "operation_reconciled"):
             raise StoreInvalid("reserved event type")
         encoded = _validate_json(payload)
         with self._transaction():
@@ -454,6 +473,164 @@ class TaskStore:
                     self._db.execute('DELETE FROM scope_questions WHERE task_id=?', (row['task_id'],))
             self._event(row["task_id"], operation_id, "operation_settled", row["context_version"], {"outcome": outcome, "replies": replies, "evidence": _decode(encoded_evidence)})
             return self._task_snapshot(self._db.execute("SELECT * FROM tasks WHERE task_id=?", (row["task_id"],)).fetchone())
+
+    def record_receipt(self, operation_id, *, request_ref='', execution_ref='', receipt=None):
+        """Private executor/operator seam. An ACK/reference never settles a write.
+
+        Bind once; only missing references/receipt fields may be added. No model
+        or public route may call this method. Credentials and free text are absent
+        from the receipt schema; retain source documents outside this journal.
+        """
+        bounded_identifier(operation_id)
+        _receipt_ref(request_ref, optional=True)
+        _receipt_ref(execution_ref, optional=True)
+        receipt = {} if receipt is None else receipt
+        allowed = {'status', 'task_ref', 'operation_ref', 'request_ref', 'execution_ref'}
+        if type(receipt) is not dict or set(receipt) - allowed:
+            raise StoreInvalid('invalid receipt')
+        for key, value in receipt.items():
+            if key == 'status':
+                if value not in ('accepted', 'queued', 'submitted', 'succeeded', 'failed', 'cancelled', 'outcome_unknown'):
+                    raise StoreInvalid('invalid receipt status')
+            else:
+                _receipt_ref(value)
+        request_ref = request_ref or receipt.get('request_ref', '')
+        execution_ref = execution_ref or receipt.get('execution_ref', '')
+        for key, value in (('request_ref', request_ref), ('execution_ref', execution_ref)):
+            if key in receipt and receipt[key] != value:
+                raise StoreConflict('receipt reference conflict')
+        with self._transaction():
+            row = self._db.execute('SELECT * FROM operations WHERE operation_id=?', (operation_id,)).fetchone()
+            if row is None:
+                raise StoreDenied('operation unavailable')
+            if row['dispatch_state'] not in ('submitted', 'unknown', 'settled'):
+                raise StoreConflict('operation not submitted')
+            for key, value in (('request_ref', request_ref), ('execution_ref', execution_ref)):
+                if row[key] and value and row[key] != value:
+                    raise StoreConflict('receipt reference conflict')
+            previous = _decode(row['receipt']) or {}
+            if any(key in previous and previous[key] != value for key, value in receipt.items()):
+                raise StoreConflict('receipt binding conflict')
+            merged = {**previous, **receipt}
+            request_ref = row['request_ref'] or request_ref
+            execution_ref = row['execution_ref'] or execution_ref
+            encoded = _validate_json(merged, limit=2048)
+            if (row['request_ref'] or '', row['execution_ref'] or '', previous) == (request_ref, execution_ref, merged):
+                return self._operation_snapshot(row)
+            self._db.execute('UPDATE operations SET request_ref=?,execution_ref=?,receipt=? WHERE operation_id=?',
+                             (request_ref, execution_ref, encoded, operation_id))
+            self._event(row['task_id'], operation_id, 'receipt_recorded', row['context_version'],
+                        {'request_ref': request_ref, 'execution_ref': execution_ref, 'receipt': merged})
+            return self._operation_snapshot(self._db.execute('SELECT * FROM operations WHERE operation_id=?', (operation_id,)).fetchone())
+
+    def executor_binding(self, operation_id):
+        """Private executor lookup; never a public task discovery interface."""
+        bounded_identifier(operation_id)
+        with self._lock:
+            row = self._db.execute('SELECT * FROM operations WHERE operation_id=?', (operation_id,)).fetchone()
+            if row is None:
+                raise StoreDenied('operation unavailable')
+            task = self._db.execute('SELECT * FROM tasks WHERE task_id=?', (row['task_id'],)).fetchone()
+            binding = self._db.execute('SELECT * FROM owned_dispatches WHERE operation_id=?', (operation_id,)).fetchone()
+            return {'operation': self._operation_snapshot(row), 'task': self._task_snapshot(task),
+                    'task_ref': binding['task_ref'] if binding else None,
+                    'command': _decode(binding['command']) if binding else None}
+
+    def record_owned_dispatch(self, operation_id, task_ref, command):
+        """Persist exact owned command before transport; it cannot be rebound."""
+        _receipt_ref(task_ref)
+        encoded = _validate_json(command, limit=8192)
+        with self._transaction():
+            row = self.executor_binding(operation_id)
+            prior = self._db.execute('SELECT * FROM owned_dispatches WHERE operation_id=?', (operation_id,)).fetchone()
+            if prior:
+                if (prior['task_ref'], prior['command']) != (task_ref, encoded):
+                    raise StoreConflict('owned dispatch binding conflict')
+                return row
+            if row['operation']['dispatch_state'] != 'unsubmitted':
+                raise StoreConflict('operation already claimed')
+            self._db.execute('INSERT INTO owned_dispatches(operation_id,task_ref,command) VALUES(?,?,?)', (operation_id, task_ref, encoded))
+            return self.executor_binding(operation_id)
+
+    def observe_owned(self, operation_id, event):
+        """Trusted adapter only: persist original correlation and monotone cursor."""
+        allowed = {'event_id', 'sequence', 'task_id', 'operation_id', 'context_version', 'status', 'text'}
+        if (type(event) is not dict or set(event) != allowed or type(event['sequence']) is not int
+                or event['sequence'] < 1 or type(event['context_version']) is not int
+                or event['status'] not in ('queued', 'submitted', 'awaiting_input', 'succeeded', 'failed', 'cancelled', 'outcome_unknown')
+                or type(event['text']) is not str or len(event['text']) > 4000):
+            raise StoreInvalid('invalid owned event')
+        for key in ('event_id', 'task_id', 'operation_id'):
+            _receipt_ref(event[key])
+        with self._transaction():
+            binding = self.executor_binding(operation_id)
+            op, task = binding['operation'], binding['task']
+            if (event['task_id'], event['operation_id'], event['context_version']) != (binding['task_ref'], operation_id, op['context_version']):
+                raise StoreConflict('owned event correlation mismatch')
+            prior = self._db.execute('SELECT * FROM owned_dispatches WHERE operation_id=?', (operation_id,)).fetchone()
+            same_sequence = self._db.execute('SELECT event_id FROM owned_events WHERE operation_id=? AND sequence=?',
+                                             (operation_id, event['sequence'])).fetchone()
+            if same_sequence and same_sequence['event_id'] != event['event_id']:
+                raise StoreConflict('owned event sequence conflict')
+            if not self.observe(operation_id, event['event_id'], 'owned_observation', event):
+                return False
+            self._db.execute('INSERT INTO owned_events VALUES(?,?,?)', (operation_id, event['sequence'], event['event_id']))
+            if event['sequence'] <= prior['event_sequence']:
+                return False  # retain late historical observation without moving the cursor
+            self._db.execute('UPDATE owned_dispatches SET event_sequence=? WHERE operation_id=?', (event['sequence'], operation_id))
+            # Gaps do not imply complete delivery. Historical text never binds a question.
+            return task['attached'] and task['context_version'] == op['context_version']
+
+    def reconcile_unknown(self, operation_id, *, outcome, evidence, replies=None):
+        """Private evidence workflow, never timeout-based retry or model output.
+
+        Trusted caller must verify the actual authoritative record or explicit
+        operator observation, bind its reference via record_receipt, and retain
+        the observation source externally. Correlation/schema checks here cannot
+        authenticate the human or platform on their own.
+        """
+        bounded_identifier(operation_id)
+        required = {'source', 'observer_ref', 'observation_ref', 'task_id', 'operation_id', 'context_version', 'outcome'}
+        if (outcome not in ('succeeded', 'failed', 'cancelled') or type(evidence) is not dict
+                or not required <= set(evidence) or set(evidence) - required - {'request_ref', 'execution_ref'}
+                or evidence['source'] not in ('operator', 'authority') or evidence['outcome'] != outcome
+                or type(evidence['context_version']) is not int):
+            raise StoreInvalid('invalid reconciliation evidence')
+        for key in ('observer_ref', 'observation_ref', 'task_id', 'operation_id'):
+            _receipt_ref(evidence[key])
+        for key in ('request_ref', 'execution_ref'):
+            if key in evidence:
+                _receipt_ref(evidence[key])
+        replies = [] if replies is None else replies
+        if type(replies) is not list or len(replies) > 32 or any(type(v) is not str or len(v) > 4000 for v in replies):
+            raise StoreInvalid('invalid replies')
+        encoded_replies, encoded_evidence = _validate_json(replies), _validate_json(evidence, limit=4096)
+        with self._transaction():
+            row = self._db.execute('SELECT * FROM operations WHERE operation_id=?', (operation_id,)).fetchone()
+            if row is None:
+                raise StoreDenied('operation unavailable')
+            if (evidence['operation_id'], evidence['task_id'], evidence['context_version']) != (operation_id, row['task_id'], row['context_version']):
+                raise StoreConflict('reconciliation correlation mismatch')
+            refs = [key for key in ('request_ref', 'execution_ref') if key in evidence]
+            if not refs or any(not row[key] or row[key] != evidence[key] for key in refs):
+                raise StoreConflict('reconciliation reference mismatch')
+            if row['dispatch_state'] == 'settled':
+                if (row['outcome'], row['evidence'], row['replies']) != (outcome, encoded_evidence, encoded_replies):
+                    raise StoreConflict('reconciliation conflict')
+                return self._operation_snapshot(row)
+            if row['dispatch_state'] != 'unknown':
+                raise StoreConflict('operation is not unknown')
+            now = _now()
+            self._db.execute("UPDATE operations SET dispatch_state='settled',outcome=?,evidence=?,replies=?,settled_at=? WHERE operation_id=?",
+                             (outcome, encoded_evidence, encoded_replies, now, operation_id))
+            self._db.execute('UPDATE tasks SET state=?,open_question=NULL,result_version=result_version+1,updated_at=? WHERE task_id=?',
+                             (outcome, now, row['task_id']))
+            self._db.execute('DELETE FROM scope_questions WHERE task_id=?', (row['task_id'],))
+            # Pending follow-ups are not consent to resubmit a resolved business write.
+            self._db.execute("UPDATE operations SET dispatch_state='suspended' WHERE task_id=? AND dispatch_state='unsubmitted'", (row['task_id'],))
+            self._event(row['task_id'], operation_id, 'operation_reconciled', row['context_version'],
+                        {'outcome': outcome, 'evidence': evidence, 'replies': replies}, source='reconciliation')
+            return self._operation_snapshot(self._db.execute('SELECT * FROM operations WHERE operation_id=?', (operation_id,)).fetchone())
 
     def mark_unknown(self, operation_id: str, reason_code: str) -> None:
         bounded_identifier(operation_id)
