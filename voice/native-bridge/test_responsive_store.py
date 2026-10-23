@@ -328,6 +328,32 @@ class ResponsiveStoreTest(unittest.TestCase):
         self.store = TaskStore(self.path)
         self.assertEqual(self.store.question('scope-1')['text'], 'Soll ich fortfahren?')
 
+    def test_empty_settlement_preserves_current_callback_only_question(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        self.store.observe(operation['operation_id'], 'question-callback', 'backend_observed', {'text': 'Your name?'})
+        self.store.note_question(operation['task_id'], 'scope-1', 'Your name?', source='backend',
+                                 context_version=operation['context_version'])
+        result = self.store.settle(operation['operation_id'], replies=[])
+        self.assertEqual(result['state'], 'awaiting_input')
+        self.assertEqual(result['open_question'], 'Your name?')
+        self.assertEqual(self.store.question('scope-1')['text'], 'Your name?')
+        self.assertEqual(self.store.question('scope-1')['context_version'], operation['context_version'])
+        self.store.close()
+        self.store = TaskStore(self.path)
+        self.assertEqual(self.store.question('scope-1')['text'], 'Your name?')
+        self.assertEqual(self.store.operations('scope-1')[0]['replies'], [])
+
+    def test_empty_settlement_does_not_restore_superseded_callback_question(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        self.store.note_question(operation['task_id'], 'scope-1', 'Your name?', source='backend')
+        task = self.store.get_task(operation['task_id'], 'scope-1')
+        self.accepted(task=task, utterance='newer')
+        result = self.store.settle(operation['operation_id'], replies=[])
+        self.assertIsNone(self.store.question('scope-1'))
+        self.assertIsNone(result['open_question'])
+
     def test_superseded_settlement_does_not_replace_newer_question_binding(self):
         operation = self.accepted()
         self.store.dispatch(operation['operation_id'])

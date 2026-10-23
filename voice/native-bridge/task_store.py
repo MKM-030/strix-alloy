@@ -435,8 +435,11 @@ class TaskStore:
             binding = self._db.execute('SELECT * FROM scope_questions WHERE scope_id=?', (task['scope_id'],)).fetchone()
             if (outcome == 'awaiting_input' and binding is not None
                     and binding['task_id'] == row['task_id']
-                    and binding['context_version'] > row['context_version']):
-                # A newer explicit question must remain consistent in both routing views.
+                    and (binding['context_version'] > row['context_version']
+                         or (not replies and binding['context_version'] == row['context_version']
+                             and row['context_version'] == task['context_version']))):
+                # Empty return lists do not retract a current callback-only question.
+                # A newer explicit question also remains consistent in both views.
                 question = binding['text']
             self._db.execute("UPDATE tasks SET state=?,open_question=?,result_version=result_version+1,updated_at=? WHERE task_id=?", (state, question, now, row["task_id"]))
             if outcome != 'awaiting_input':

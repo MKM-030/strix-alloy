@@ -385,6 +385,23 @@ class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
         self.assertNotEqual(route.intent, 'continue_task')
         self.assertEqual(len(self.store.operations('scope')), 1)
 
+    async def test_callback_only_question_remains_answerable_after_empty_settlement(self):
+        calls = []
+        async def turn(text, on_reply=None, voice_context=None):
+            calls.append(text)
+            if len(calls) == 1:
+                await on_reply('Your name?')
+            return []
+        self.dialog.turn = turn
+        await self.attachment.accept('first', 'new request')
+        await eventually(lambda: self.coordinator.snapshot('scope')[0]['result_version'] == 1)
+        self.coordinator.router = ConversationRouter()
+        route = await self.attachment.accept('name', 'Marcel Muster')
+        self.assertEqual(route.intent, 'continue_task')
+        await eventually(lambda: len(calls) == 2)
+        self.assertEqual(calls, ['new request', 'Marcel Muster'])
+        self.assertIsNone(self.store.question('scope'))
+
     async def test_status_prefers_newer_settlement_over_historical_callbacks(self):
         turns = 0
         async def turn(text, on_reply=None, voice_context=None):
