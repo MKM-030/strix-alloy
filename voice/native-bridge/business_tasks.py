@@ -52,6 +52,9 @@ class Agent:
     agent_id: str
     revision: str
     capabilities: Mapping[str, bool]
+    name: str = ""
+    description: str = ""
+    supported_intents: tuple[str, ...] = ()
 
     def __post_init__(self):
         for name in ("alias", "agent_id", "revision"):
@@ -64,4 +67,13 @@ class Agent:
             if type(enabled) is not bool:
                 raise StoreInvalid("invalid capabilities")
             capabilities[key] = enabled
+        for value, limit in ((self.name, 80), (self.description, 400)):
+            if not isinstance(value, str) or len(value) > limit or any(ord(char) < 32 or ord(char) == 127 for char in value):
+                raise StoreInvalid("invalid agent description")
+        if not isinstance(self.supported_intents, tuple) or len(self.supported_intents) > 16:
+            raise StoreInvalid("invalid agent intents")
+        if any(not isinstance(value, str) or not value or len(value) > 64 or
+               any(ord(char) < 32 or ord(char) == 127 for char in value)
+               for value in self.supported_intents):
+            raise StoreInvalid("invalid agent intents")
         object.__setattr__(self, "capabilities", MappingProxyType(capabilities))
