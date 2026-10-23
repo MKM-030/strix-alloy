@@ -161,7 +161,7 @@ Root adopts this output-only fix under the user's delegated design/implementatio
 The exact implementation baseline is the final independently reviewed Task14 commit supplied in the brief. The inspected382df2d baseline is design provenance only. Three product Python files plus focused tests and these Task15 docs are authorized. No additional source dependency without a concrete Root ruling. Existing service-free native/Silero regression fixtures are allowed; no serving models, real ServiceNow actions, downloads, private config, startup/activation or closed heldout data. Keep all existing queue bounds, noise policy and Main settings. Independent task review and final stopped-source freeze follow implementation; no qualification or deployment follows from this document.
 
 
-## Root follow-up ruling — terminal failure feedback
+## Root follow-up ruling - terminal failure feedback
 
 During implementation review, Root ratified preservation of the explicit CONNECTION_FAILED lifecycle explanation while the transport remains live. The failed flag continues to suppress ordinary speech, obsolete controls and business intake. Only the private native CONNECTION_FAILED publication can use a terminal-control guard requiring failed state, unchanged issuance epoch, and no input loss/closing/closed state. It still waits for physical VAD/ASR/queued audio to settle; no call-wide liveness override is allowed.
 

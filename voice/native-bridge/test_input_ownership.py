@@ -283,8 +283,13 @@ class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
                 if fails: raise RuntimeError('synthetic ASR failure')
                 return ''
             self.speech.transcribe = transcribe
-            await self.endpoint(track)
-            await call.turns.join()
+            capture = self.assertLogs('native-voice', level='WARNING') if fails else self.assertNoLogs('native-voice', level='WARNING')
+            with capture as logs:
+                await self.endpoint(track)
+                await call.turns.join()
+            if fails:
+                self.assertTrue(any('stage=asr_failed type=RuntimeError' in line for line in logs.output))
+                self.assertEqual(len(logs.output), 1)
             await asyncio.wait_for(call.responsive_output.wait_idle(), 2)
             self.assertEqual(self.speech.spoken, ['Real backend reply?'])
             await call.close()
@@ -378,8 +383,11 @@ class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
         call.turns.put_nowait((0, b'old question'))
         await entered.wait()
         _, worker = await self.onset(call)
-        release.set()
-        await call.recognized_turns.join()
+        with self.assertLogs('native-voice', level='WARNING') as logs:
+            release.set()
+            await call.recognized_turns.join()
+        self.assertTrue(any('stage=not_accepted type=RuntimeError' in line for line in logs.output))
+        self.assertEqual(len(logs.output), 1)
         worker.cancel()
         await asyncio.gather(worker, return_exceptions=True)
         await call.responsive_output.wait_idle()
@@ -460,8 +468,11 @@ class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
         waiter = asyncio.create_task(call.responsive_notice('Paused control', wait=True))
         await self.drain_scheduling()
         self.assertFalse(waiter.done())
-        track.frames.put_nowait(RuntimeError('synthetic receiver loss'))
-        await asyncio.wait_for(call.input_ended.wait(), 2)
+        with self.assertLogs('native-voice', level='WARNING') as logs:
+            track.frames.put_nowait(RuntimeError('synthetic receiver loss'))
+            await asyncio.wait_for(call.input_ended.wait(), 2)
+        self.assertTrue(any('stage=track_failed type=RuntimeError' in line for line in logs.output))
+        self.assertEqual(len(logs.output), 1)
         await asyncio.wait_for(waiter, 2)
         await asyncio.wait_for(call.turns_settled.wait(), 2)
         self.assertEqual(self.speech.spoken, [])
@@ -479,7 +490,7 @@ class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(call.responsive_output.pending_count, 0)
         self.assertEqual(len(self.dialog.received), 1)
 
-    async def failed_startup(self, *, physical=False, asr=False):
+    async def failed_startup(self, *, physical=False):
         opened, fail = asyncio.Event(), asyncio.Event()
         async def open_dialog():
             opened.set()
@@ -491,14 +502,6 @@ class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
         track = worker = None
         if physical:
             track, worker = await self.onset(call)
-        if asr:
-            entered = asyncio.Event()
-            async def transcribe(pcm):
-                entered.set()
-                await asyncio.Event().wait()
-            self.speech.transcribe = transcribe
-            await self.endpoint(track)
-            await entered.wait()
         published = asyncio.Event()
         publish = call.responsive_output.publish_control
         async def marked(event, validity=None, **kwargs):
@@ -506,8 +509,11 @@ class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
                 published.set()
             return await publish(event, validity, **kwargs)
         call.responsive_output.publish_control = marked
-        fail.set()
-        await published.wait()
+        with self.assertLogs('native-voice', level='WARNING') as logs:
+            fail.set()
+            await published.wait()
+        self.assertTrue(any('stage=startup_failed type=RuntimeError' in line for line in logs.output))
+        self.assertEqual(len(logs.output), 1)
         return call, track, worker
 
     async def test_startup_failure_explains_failure_once_without_dispatch(self):
@@ -530,12 +536,50 @@ class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.speech.spoken, [notices[0]['content']])
         self.assertEqual(self.dialog.received, [])
 
+    async def retiring_failed_pipeline(self):
+        fail, entered, cancelling = asyncio.Event(), asyncio.Event(), asyncio.Event()
+        async def open_dialog():
+            await fail.wait()
+            raise RuntimeError('synthetic startup failure')
+        async def transcribe(pcm):
+            entered.set()
+            try:
+                await asyncio.Event().wait()
+            except asyncio.CancelledError:
+                cancelling.set()
+                # Model a recognizer whose cancellation cleanup is still active.
+                # The terminal close/loss cancels this boundary again.
+                await asyncio.Event().wait()
+                raise
+        self.dialog.open = open_dialog
+        self.speech.transcribe = transcribe
+        call = await self.start()
+        call.turns.put_nowait((0, b'active PCM'))
+        await entered.wait()
+        call.turns.put_nowait((0, b'queued PCM'))
+        with self.assertLogs('native-voice', level='WARNING') as logs:
+            fail.set()
+            await asyncio.wait_for(cancelling.wait(), 2)
+        self.assertTrue(any('stage=startup_failed type=RuntimeError' in line for line in logs.output))
+        self.assertEqual(len(logs.output), 1)
+        self.assertTrue(call.recognition_active)
+        self.assertFalse(call._control_ready())
+        return call
+
     async def test_startup_failure_control_never_refills_after_input_loss(self):
-        call, track, worker = await self.failed_startup(physical=True, asr=True)
-        self.assertEqual(self.speech.spoken, [])
-        track.frames.put_nowait(RuntimeError('synthetic receiver loss'))
-        await asyncio.wait_for(call.input_ended.wait(), 2)
+        call = await self.retiring_failed_pipeline()
+        await asyncio.wait_for(call.finish_input_loss(), 2)
         await asyncio.wait_for(call.turns_settled.wait(), 2)
+        await asyncio.wait_for(call.turns.join(), 2)
+        self.assertEqual(self.speech.spoken, [])
+        self.assertFalse(any(t.get('code') == 'CONNECTION_FAILED' for t in self.transcripts(call)))
+        self.assertEqual(self.dialog.received, [])
+        self.assertEqual(call.playback.data, b'')
+
+    async def test_startup_failure_retirement_remains_interruptible_by_close(self):
+        call = await self.retiring_failed_pipeline()
+        await asyncio.wait_for(call.close(), 2)
+        await asyncio.wait_for(call.turns.join(), 2)
         self.assertEqual(self.speech.spoken, [])
         self.assertFalse(any(t.get('code') == 'CONNECTION_FAILED' for t in self.transcripts(call)))
         self.assertEqual(self.dialog.received, [])
@@ -550,11 +594,65 @@ class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
             await asyncio.sleep(0)
             raise RuntimeError('synthetic intake failure')
         call.wait_for_user_turn = fail_intake
-        call.spawn(call.process_turns())
-        await entered.wait()
-        await asyncio.wait_for(call.turns_settled.wait(), .5)
+        with self.assertLogs('native-voice', level='WARNING') as logs:
+            call.spawn(call.process_turns())
+            await entered.wait()
+            await asyncio.wait_for(call.turns_settled.wait(), .5)
+        self.assertTrue(any('stage=unavailable type=RuntimeError' in line for line in logs.output))
+        self.assertEqual(len(logs.output), 1)
         self.assertTrue(call.failed)
         self.assertEqual(self.dialog.received, [])
+
+    async def failed_queue_case(self, *, physical=False):
+        fail_open, asr_entered, release_asr = asyncio.Event(), asyncio.Event(), asyncio.Event()
+        async def open_dialog():
+            await fail_open.wait()
+            raise RuntimeError('synthetic startup failure')
+        async def transcribe(pcm):
+            asr_entered.set()
+            await release_asr.wait()
+            return 'unaccepted audio'
+        self.dialog.open = open_dialog
+        self.speech.transcribe = transcribe
+        call = await self.start()
+        track = None
+        if physical:
+            track, _ = await self.onset(call)
+        call.turns.put_nowait((0, b'active PCM'))
+        await asr_entered.wait()
+        call.turns.put_nowait((0, b'queued PCM'))
+        published = asyncio.Event()
+        publish = call.responsive_output.publish_control
+        async def marked(event, validity=None, **kwargs):
+            if event['text'].startswith('Die Verbindung ist nicht bereit.'):
+                published.set()
+            return await publish(event, validity, **kwargs)
+        call.responsive_output.publish_control = marked
+        with self.assertLogs('native-voice', level='WARNING') as logs:
+            fail_open.set()
+            await asyncio.wait_for(published.wait(), 2)
+        self.assertTrue(any('stage=startup_failed type=RuntimeError' in line for line in logs.output))
+        self.assertEqual(len(logs.output), 1)
+        release_asr.set()
+        await asyncio.gather(call.asr_task, return_exceptions=True)
+        self.assertTrue(call.turns.empty(), 'failed recognition left unconsumable queued PCM')
+        await asyncio.wait_for(call.turns.join(), 2)
+        if physical:
+            self.assertFalse(call._control_ready())
+            self.assertEqual(self.speech.spoken, [])
+            await self.endpoint(track)
+        await asyncio.wait_for(call.turns_settled.wait(), 2)
+        notices = [t for t in self.transcripts(call) if t.get('code') == 'CONNECTION_FAILED']
+        self.assertEqual(len(notices), 1)
+        self.assertEqual(self.speech.spoken, [notices[0]['content']])
+        self.assertEqual(self.dialog.received, [])
+        self.assertEqual(self.store.operations(call.call_id), [])
+
+    async def test_startup_failure_retires_active_asr_and_discards_queued_pcm(self):
+        await self.failed_queue_case()
+
+    async def test_failed_queue_retirement_does_not_clear_live_receiver_vad(self):
+        await self.failed_queue_case(physical=True)
 
 
 if __name__ == '__main__': unittest.main()

@@ -1042,6 +1042,14 @@ class NativeCall:
             self._notify_input_changed()
             greeted.set()
             self.responsive_output.interrupt()
+            # Failed intake has no future PCM consumer. Retire recognition
+            # before discarding only its unaccepted raw queue; its finally
+            # balances the active item. Real receiver VAD still gates speech.
+            if self.asr_task:
+                self.asr_task.cancel()
+                await asyncio.gather(self.asr_task, return_exceptions=True)
+            self.drain_queue(self.turns)
+            self._notify_input_changed()
             await self.responsive_notice(
                 'Die Verbindung ist nicht bereit. Vorgemerkte Anfragen wurden nicht übermittelt. '
                 'Bitte beenden Sie den Anruf.', 'CONNECTION_FAILED', wait=True, _terminal_failure=True)
