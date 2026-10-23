@@ -43,6 +43,43 @@ def context(question='Wie lautet Ihr Name?', **extra):
 
 
 class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
+    async def test_local_answers_and_corrections_reject_controls_negation_and_hypothesis(self):
+        cases = [('An welchen Lieferort soll geliefert werden?', 'Storniere die Flugreise'),
+                 ('An welchen Lieferort soll geliefert werden?', 'Bitte die Flugreise stoppen'),
+                 ('Wie lautet Ihr Name?', 'Nicht Nora Berg'),
+                 ('Wie lautet Ihr Name?', 'Wenn Nora Berg')]
+        for question, text in cases:
+            with self.subTest(question=question, text=text):
+                self.assertEqual((await ConversationRouter().route(text, context(question))).intent, 'clarification')
+                previous = context('', previous_question=question, previous_question_version=0)
+                self.assertEqual((await ConversationRouter().route('Korrektur: ' + text, previous)).intent, 'clarification')
+
+    async def test_single_quoted_requests_audio_and_value_evidence_never_authorize(self):
+        quotes = [("'", "'"), ('‘', '’'), ('‚', '‘'), ('‹', '›')]
+        for opening, closing in quotes:
+            with self.subTest(quotes=(opening, closing)):
+                ctx = RoutingContext('s', [], agents=[AGENT])
+                model = Model(proposal('new_task', alias='desk', relation='request', evidence='Mein Bildschirm flackert.'))
+                text = f'Service Desk: {opening}Mein Bildschirm flackert.{closing}'
+                self.assertEqual((await ConversationRouter(model).route(text, ctx)).intent, 'clarification')
+                model = Model(proposal('stop_speaking', relation='audio', evidence='schweige'))
+                self.assertEqual((await ConversationRouter(model).route(f'{opening}Bitte schweige jetzt.{closing}', context())).intent, 'clarification')
+                self.assertEqual((await ConversationRouter().route(f'{opening}Hör bitte auf zu sprechen{closing}', context())).intent, 'clarification')
+                model = Model(proposal('continue_task', 't1', relation='answer', evidence='Nora Berg'))
+                self.assertEqual((await ConversationRouter(model).route(f'Sie können {opening}Nora Berg{closing} eintragen.', context())).intent, 'clarification')
+        self.assertEqual((await ConversationRouter(Model(proposal('new_task', alias='desk', relation='request', evidence='Mein Bildschirm flackert.'))).route('Service Desk: Mein Bildschirm flackert.', RoutingContext('s', [], agents=[AGENT]))).intent, 'new_task')
+        self.assertEqual((await ConversationRouter(Model(proposal('stop_speaking', relation='audio', evidence='schweige'))).route('Bitte schweige jetzt.', context())).intent, 'stop_speaking')
+
+    async def test_name_apostrophes_and_harmless_quoted_controls_keep_valid_answers(self):
+        for name in ("De'Andre Smith", 'De’Andre Smith'):
+            with self.subTest(name=name):
+                self.assertEqual((await ConversationRouter().route(name, context())).intent, 'continue_task')
+                model = Model(proposal('continue_task', 't1', relation='answer', evidence=name))
+                text = f"Er sagte 'stornieren'. Sie können {name} eintragen."
+                self.assertEqual((await ConversationRouter(model).route(text, context())).intent, 'continue_task')
+        model = Model(proposal('continue_task', 't1', relation='answer', evidence='Nora Berg'))
+        self.assertEqual((await ConversationRouter(model).route('Storniere die Reise; storniere die Reise; Nora Berg', context())).intent, 'clarification')
+
     async def test_wire_contract_has_disjoint_bindings_and_decoder_rejects_contradictions(self):
         captured = []
         model = LoopbackConversationModel(None, 'http://127.0.0.1:9933/v1/chat/completions', 'synthetic', '')
@@ -302,6 +339,31 @@ class IdleDialog:
 
 
 class HeldClassifierRaceTest(unittest.IsolatedAsyncioTestCase):
+    async def test_rejected_local_answer_and_correction_write_no_operation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            store = TaskStore(Path(directory) / 'tasks.db')
+            scope = Scope('s', 'call', 1, 'instance', 'assistant')
+            coordinator = TaskCoordinator(store, ConversationRouter(), [AGENT], lambda _: LegacyVAExecutor(IdleDialog(), ready=asyncio.Event()))
+            async def emit(event): pass
+            attachment = await coordinator.attach(scope, emit)
+            try:
+                task_id = await attachment.note_question('An welchen Lieferort soll geliefert werden?')
+                route = await attachment.accept('unbound-cancel', 'Storniere die Flugreise')
+                self.assertEqual(route.intent, 'clarification')
+                self.assertEqual(store.operations('s'), [])
+                store.note_question(task_id, 's', 'Wie lautet Ihr Name?', source='backend')
+                for index, text in enumerate(('Nicht Nora Berg', 'Wenn Nora Berg')):
+                    self.assertEqual((await attachment.accept(f'bad-name-{index}', text)).intent, 'clarification')
+                    self.assertEqual(store.operations('s'), [])
+                accepted = store.accept(task_id, 's', 'valid-name', 'Nora Berg')
+                for index, text in enumerate(('Korrektur: Nicht Nora Berg', 'Korrektur: Wenn Nora Berg')):
+                    self.assertEqual((await attachment.accept(f'bad-correction-{index}', text)).intent, 'clarification')
+                    self.assertEqual([op['operation_id'] for op in store.operations('s')], [accepted['operation_id']])
+            finally:
+                await attachment.detach()
+                await attachment.wait_closed()
+                store.close()
+
     async def test_unbound_direct_acceptance_does_not_invent_a_previous_question(self):
         with tempfile.TemporaryDirectory() as directory:
             store = TaskStore(Path(directory) / 'tasks.db')

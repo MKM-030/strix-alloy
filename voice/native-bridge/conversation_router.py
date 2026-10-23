@@ -373,16 +373,16 @@ class ConversationRouter:
             return bool(re.fullmatch(r'[A-Za-zÄÖÜäöü](?:[ -][A-Za-zÄÖÜäöü]){1,39}', value))
         if kind in ('name', 'manager'):
             value = re.sub(r'^(?:mein name ist|ich heiße|ich heisse|der name ist)\s+', '', value, flags=re.I)
-            return bool(re.fullmatch(r"[A-ZÄÖÜ][a-zäöüß]+(?:[-' ][A-ZÄÖÜ][a-zäöüß]+){0,5}", value)) and value.casefold() not in ('ja', 'nein', 'hallo', 'danke', 'bitte', 'status')
+            return bool(re.fullmatch(r"[A-ZÄÖÜ][a-zäöüß]+(?:[-'’ ][A-ZÄÖÜ][a-zäöüß]+){0,5}", value)) and value.casefold() not in ('ja', 'nein', 'hallo', 'danke', 'bitte', 'status')
         if kind == 'date':
             return bool(re.fullmatch(r'(?:am\s+)?(?:\d{1,2}[./]\d{1,2}(?:[./]\d{2,4})?\.?|\d{4}-\d{2}-\d{2}|\d{1,2}\.?(?:\s+)(?:januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)(?:\s+\d{4})?)', value, re.I))
         if kind == 'location':
             return len(value) <= 300 and bool(re.fullmatch(r'[\wÄÖÜäöüß .,/()\-]+', value)) and len(value.split()) <= 20
         return False
 
-    @staticmethod
-    def _unsafe_control(text):
-        return bool(re.search(r'["„“”«»`]|\b(?:nicht|kein\w*|niemals|wenn|falls|würde|würdest|könnte|hypothetisch|zitiert|sagte|bedeutet|heißt|heisst|alle|beide|irgendein\w*)\b|einen der|eine der', text, re.I))
+    @classmethod
+    def _unsafe_control(cls, text):
+        return bool(cls._quoted_ranges(text) or re.search(r'\b(?:nicht|kein\w*|niemals|wenn|falls|würde|würdest|könnte|hypothetisch|zitiert|sagte|bedeutet|heißt|heisst|alle|beide|irgendein\w*)\b|einen der|eine der', text, re.I))
 
     @classmethod
     def _affirmative_cancel(cls, context, text):
@@ -416,21 +416,46 @@ class ConversationRouter:
         return bool(re.search(r'\b(?:bestell\w*|buch\w*|beantrag\w*|beauftrag\w*|kauf\w*|reservier\w*|neue[nrs]? (?:aufgabe|auftrag|anliegen|ticket)|außerdem|zusätzlich|stattdessen|ich (?:brauche|möchte|will))\b', text, re.I))
 
     @staticmethod
-    def _evidence_clause(text, evidence, *, action=False):
+    def _quoted_ranges(text):
+        """Quote spans, including single quotes; intraword apostrophes are text.
+
+        An unmatched opener remains quoted to end-of-input. A quoted outer span
+        already covers nested quotations, so nested punctuation cannot close it.
+        """
+        pairs = {'"': '"', '„': '“', '“': '”', '«': '»', '`': '`',
+                 "'": "'", '‘': '’', '‚': '‘', '‹': '›'}
+        spans, opening, closing = [], 0, ''
+        for index, char in enumerate(text):
+            if char in "'’" and 0 < index < len(text) - 1 and text[index - 1].isalnum() and text[index + 1].isalnum():
+                continue
+            if closing:
+                if char == closing:
+                    spans.append((opening, index + 1))
+                    closing = ''
+            elif char in pairs:
+                opening, closing = index, pairs[char]
+            elif char in '”»’›':
+                # A standalone closing mark has no reliable unquoted boundary.
+                opening, closing = index, char
+        if closing:
+            spans.append((opening, len(text)))
+        return spans
+
+    @classmethod
+    def _evidence_clause(cls, text, evidence, *, action=False, _start=None):
         """Locate a single literal, unquoted nonhypothetical evidence occurrence.
 
         Negation is prohibited for a control/request, not for describing a problem.
         Sentence boundaries keep a harmless follow-up independent of earlier quotes.
         """
-        if not evidence or text.count(evidence) != 1:
+        if not evidence or (_start is None and text.count(evidence) != 1):
             return ''
-        start = text.index(evidence)
+        start = text.index(evidence) if _start is None else _start
+        end = start + len(evidence)
+        if text[start:end] != evidence:
+            return ''
         # Quotes can span sentence boundaries; never authorize from inside one.
-        quoted = False
-        for char in text[:start]:
-            if char in '"„“”«»`':
-                quoted = not quoted
-        if quoted or any(c in evidence for c in '"„“”«»`'):
+        if any(left < end and start < right for left, right in cls._quoted_ranges(text)):
             return ''
         left = max(text.rfind(mark, 0, start) for mark in '.!?;') + 1
         right = min((pos for mark in '.!?;' if (pos := text.find(mark, start + len(evidence))) >= 0), default=len(text))
@@ -440,6 +465,21 @@ class ConversationRouter:
         if action and re.search(r'\b(?:nicht|nichts|kein\w*|niemals)\b', clause, re.I):
             return ''
         return clause
+
+    @classmethod
+    def _has_separate_action(cls, text):
+        # A rejected control is not a field value. Check each occurrence so a
+        # repeated command cannot evade the unique model-evidence requirement.
+        for match in re.finditer(r'\b(?:stornier\w*|abbrech\w*|abbruch|brich|stoppen|beend\w*|bestell\w*|buch\w*)\b', text, re.I):
+            if cls._evidence_clause(text, match.group(), action=True, _start=match.start()):
+                return True
+        return False
+
+    @classmethod
+    def _valid_answer(cls, text, evidence, kind):
+        """Same scoped authority checks for local and model-backed values."""
+        return (cls._matches_answer(evidence, kind) and not cls._has_separate_action(text)
+                and bool(cls._evidence_clause(text, evidence, action=True)))
 
     @staticmethod
     def _topic_relation(text, question):
@@ -462,10 +502,8 @@ class ConversationRouter:
             return reject()
         # A separate affirmative cancellation/new request may not hitch a ride
         # in the unchanged text delivered as a benign answer.
-        if intent in ('continue_task', 'amend_task'):
-            for match in re.finditer(r'\b(?:stornier\w*|abbrech\w*|abbruch|brich|bestell\w*|buch\w*)\b', text, re.I):
-                if self._evidence_clause(text, match.group(), action=True):
-                    return reject()
+        if intent in ('continue_task', 'amend_task') and self._has_separate_action(text):
+            return reject()
         clause = self._evidence_clause(text, evidence, action=intent in ('new_task', 'stop_speaking'))
         if not clause:
             return reject()
@@ -509,8 +547,7 @@ class ConversationRouter:
                 return reject()
             if relation == 'answer':
                 # Literal values alone do not authorize a separate business request.
-                if (self._matches_answer(evidence, kind) and not self._new_intent(text)
-                        and self._evidence_clause(text, evidence, action=True)):
+                if self._valid_answer(text, evidence, kind) and not self._new_intent(text):
                     return Route(intent, task_id)
             elif relation == 'dialogue':
                 # The model may recognize a service-process question alongside a
@@ -537,8 +574,7 @@ class ConversationRouter:
             if not explicit and len(candidates) != 1:
                 return reject()
             if (re.search(r'\b(?:korrigier\w*|korrektur|ersetzen|statt|berichtigen|meinte|ändern)\b', clause, re.I)
-                    and self._matches_answer(evidence, self._answer_kind(task['previous_question']))
-                    and self._evidence_clause(text, evidence, action=True)):
+                    and self._valid_answer(text, evidence, self._answer_kind(task['previous_question']))):
                 return Route(intent, task_id)
         return reject()
 
@@ -618,7 +654,7 @@ class ConversationRouter:
             candidates = [t for t in context.tasks if t.get('state') not in _TERMINAL
                 and t.get('previous_question') and t.get('previous_question_version') == t.get('context_version', -2) - 1
                 and (not explicit or explicit == t['task_id'])
-                and self._matches_answer(correction.group(1), self._answer_kind(t['previous_question']))]
+                and self._valid_answer(text, correction.group(1), self._answer_kind(t['previous_question']))]
             if len(candidates) == 1:
                 if (question and not explicit
                         and (question['task_id'], context.question_version) !=
@@ -628,7 +664,7 @@ class ConversationRouter:
                 return Route('amend_task', candidates[0]['task_id'])
             return self._clarify(context)
         if question and not conflict and (not explicit or explicit == question['task_id']) and not new_intent:
-            if self._matches_answer(text, self._answer_kind(context.last_question)):
+            if self._valid_answer(text, text, self._answer_kind(context.last_question)):
                 return Route('continue_task', question['task_id'])
         if self.model is None:
             return self._clarify(context)
