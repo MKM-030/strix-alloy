@@ -454,10 +454,16 @@ class PolicyRules:
                 r'bitte\s+.+\s+' + infinitive,
                 object_phrase + r'\s+bitte\s+' + infinitive,
             )
-            # A negative action must not become valid intake just because its word
-            # order falls outside the positive grammar. This is clause-local and
-            # requires an action verb, not an arbitrary negated equipment symptom.
-            negative_action = (include_negative and cls.action_negated(command)
+            # Subject + finite ability verb describes the caller's situation,
+            # including object-fronted statements. It is not an infinitive
+            # directive; its relevance remains the semantic proposal's job.
+            ability_statement = re.fullmatch(
+                r'(?:ich (?:kann|konnte)|wir (?:können|konnten)|'
+                r'.+ (?:kann|konnte) ich|.+ (?:können|konnten) wir)\s+.+\s+' + infinitive,
+                command, re.I)
+            # Check reordered negative directives without turning a reported
+            # inability into a command or applying negation across clauses.
+            negative_action = (include_negative and not ability_statement and cls.action_negated(command)
                 and re.search(r'\b' + infinitive + r'(?:\s+bitte)?$', command, re.I))
             if negative_action or any(re.fullmatch(pattern, command, re.I) for pattern in patterns):
                 result.append(clause)

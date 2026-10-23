@@ -182,6 +182,24 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
                         'Büroservice: ' + payload, ctx)
                     self.assertEqual(d.route.intent, expected)
 
+    async def test_inability_report_is_not_a_negative_directive(self):
+        ctx = RoutingContext('scope', [], agents=[AGENT])
+        for payload, expected in (
+            ('Ich kann keinen Bildschirm bestellen.', 'new_task'),
+            ('Wir können keinen Bildschirm bestellen.', 'new_task'),
+            ('Einen Bildschirm kann ich nicht bestellen.', 'new_task'),
+            ('Einen Bildschirm bitte nicht bestellen.', 'clarification'),
+            ('Bitte keinen Bildschirm bestellen.', 'clarification'),
+            ('Bestelle keinen Bildschirm.', 'clarification'),
+            ('Können Sie bitte keinen Bildschirm bestellen?', 'clarification'),
+            ('Bestelle einen Bildschirm. Kein Zubehör.', 'new_task'),
+            ('Der Scanner zieht kein Papier ein.', 'new_task')):
+            for evidence in (payload, 'Bildschirm' if 'Bildschirm' in payload else 'kein Papier'):
+                with self.subTest(payload=payload, evidence=evidence):
+                    d = await self.decide(SemanticModel('new_task', 'request', evidence, domain='suitable'),
+                        'Büroservice: ' + payload, ctx)
+                    self.assertEqual(d.route.intent, expected)
+
     async def test_proposal_stage_is_request_bound_for_accepted_rejected_and_unclear(self):
         for intent, meaning, text, evidence, domain, expected in (
             ('new_task', 'request', 'Büroservice: Der Scanner streikt.', 'Der Scanner streikt.', 'suitable', 'new_task'),
