@@ -16,6 +16,7 @@ import unittest
 import uuid
 
 from aiohttp import ClientSession, ClientTimeout, WSMsgType, WSServerHandshakeError, web
+from managed_turn import clear_session_ice
 
 ROOT = Path(__file__).parent
 spec = importlib.util.spec_from_file_location('input_lifecycle_core', ROOT / 'core.py')
@@ -135,7 +136,7 @@ namespace = dict(asyncio=asyncio, time=time, uuid=uuid, json=json,
     PlaybackBuffer=core.PlaybackBuffer, local_auth=core.local_auth,
     authorized_agents=core.authorized_agents, ClientSession=ClientSession,
     ClientTimeout=ClientTimeout, WSMsgType=WSMsgType, web=web,
-    HTTP_KEY=web.AppKey('http', ClientSession))
+    HTTP_KEY=web.AppKey('http', ClientSession), clear_session_ice=clear_session_ice)
 source = ast.parse((ROOT / 'native_bridge.py').read_text())
 selected = [node for node in source.body
             if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
@@ -497,12 +498,16 @@ class RouteLifecycleTests(unittest.IsolatedAsyncioTestCase):
         await self.end_receiver()
         await until(lambda:any(message.get('data', {}).get('code') == 'INPUT_LOST'
                                for message in call.pending_events))
-        await asyncio.sleep(.2)
-        self.assertFalse(self.dialog.cancelled)
-        self.assertEqual(self.dialog.close_count, 0)
-        self.assertEqual(await self.sessions(), 1)
-        self.dialog.release_turn.set()
-        await self.released()
+        with self.assertLogs('native-voice', level='WARNING') as logs:
+            await until(lambda:any(record.getMessage() == 'Signaling ended type=TimeoutError'
+                                   for record in logs.records), 'call deadline did not expire')
+            self.assertFalse(self.dialog.cancelled)
+            self.assertEqual(self.dialog.close_count, 0)
+            self.assertEqual(await self.sessions(), 1)
+            self.dialog.release_turn.set()
+            await self.released()
+        self.assertEqual([record.getMessage() for record in logs.records],
+                         ['Signaling ended type=TimeoutError'])
         self.assertTrue(self.dialog.turn_finished.is_set())
 
     async def test_cancelled_handler_retains_slot_until_owned_cleanup_finishes(self):

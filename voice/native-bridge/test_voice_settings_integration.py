@@ -280,8 +280,13 @@ class NativeBrowserSettingsAdmissionTests(unittest.IsolatedAsyncioTestCase):
         config=self.config()
         wrong=authorized_settings(); wrong['result']['assistant_settings']['service_id']='f'*32
         oversized=authorized_settings(); oversized['result']['assistant_settings']['prompt']['systemMessage']='x'*40000
-        for data,status in [({'result':[config.required_agent_id]},200),(wrong,200),(oversized,200),(authorized_settings(),401)]:
+        for data,status in [({'result':[config.required_agent_id]},200),(wrong,200),(oversized,200)]:
             self.assertFalse(await authorize(self.request(config),config,self.http(data,status),with_settings=True))
+        with self.assertLogs('native-voice',level='WARNING') as logs:
+            self.assertFalse(await authorize(self.request(config),config,
+                self.http(authorized_settings(),401),with_settings=True))
+        self.assertEqual([record.getMessage() for record in logs.records],
+                         ['Native OAuth verification denied status=401'])
         for query in [{'auth_token':'invalid'},{'instance_name':'other'},{'voice_service_id':'f'*32}]:
             http=self.http(authorized_settings())
             self.assertFalse(await authorize(self.request(config,**query),config,http,with_settings=True))

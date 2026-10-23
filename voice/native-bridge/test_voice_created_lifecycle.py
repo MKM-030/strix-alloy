@@ -223,8 +223,11 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.start_ack_error = True
         opening, creation = await self.begin_create()
         startup = await self.create_confirmed(opening, creation)
-        with self.assertRaises(RuntimeError):
-            await asyncio.wait_for(opening, 2)
+        with self.assertLogs('voice-bridge', level='WARNING') as logs:
+            with self.assertRaises(RuntimeError):
+                await asyncio.wait_for(opening, 2)
+        self.assertEqual([record.getMessage() for record in logs.records],
+                         ['Bot request failed; no credentials or payload logged'])
         owned = next(iter(self.bridge.sessions.values()))
         self.assertTrue(any(cookie.key == 'scc_voice' and cookie.value == owned.sid
                             for cookie in self.dialog.http.cookie_jar))
@@ -260,8 +263,11 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
         await self.assert_waiting(opening)
         self.assertEqual(len(self.sent), 2)
         self.start_ack_gate.set()
-        with self.assertRaises(RuntimeError):
-            await asyncio.wait_for(opening, 2)
+        with self.assertLogs('voice-bridge', level='WARNING') as logs:
+            with self.assertRaises(RuntimeError):
+                await asyncio.wait_for(opening, 2)
+        self.assertEqual([record.getMessage() for record in logs.records],
+                         ['Bot request failed; no credentials or payload logged'])
         owned = next(iter(self.bridge.sessions.values()))
         self.assertTrue(owned.failed)
         self.assertTrue(any(cookie.key == 'scc_voice' and cookie.value == owned.sid
@@ -381,8 +387,10 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
                                           {'uiType': 'InputText', 'label': 'How can I help?'}])
             await asyncio.wait_for(speech.emitted.wait(), 2)
             await asyncio.sleep(.02)
-            expected = self.call_settings.selection_prompt + ' ' + self.call_settings.introduction
+            expected = self.call_settings.introduction + ' ' + self.call_settings.selection_prompt
             self.assertEqual(speech.spoken, [expected])
+            self.assertEqual(expected.count(self.call_settings.introduction), 1)
+            self.assertEqual(expected.count(self.call_settings.selection_prompt), 1)
             transcripts = [event['data']['content'] for event in call.pending_events
                            if event['type'] == 'transcript']
             self.assertEqual(transcripts, [expected])

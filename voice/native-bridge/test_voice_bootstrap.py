@@ -246,15 +246,21 @@ class VoiceBootstrapTests(unittest.IsolatedAsyncioTestCase):
     async def test_uncertain_create_ack_retains_cookie_and_retries_only_owned_end(self):
         self.create_ack_error = True
         self.end_ack_failures = 1
-        with self.assertRaises(RuntimeError):
-            await asyncio.wait_for(self.dialog.open(), 2)
+        with self.assertLogs('voice-bridge', level='WARNING') as bot_logs:
+            with self.assertRaises(RuntimeError):
+                await asyncio.wait_for(self.dialog.open(), 2)
+        self.assertEqual([record.getMessage() for record in bot_logs.records],
+                         ['Bot request failed; no credentials or payload logged'])
         self.assertEqual([item.get('action') for item in self.sent], ['CREATE_CONVERSATION'])
         owned = next(iter(self.bridge.sessions.values()))
         self.assertIsNotNone(self.dialog.http)
         self.assertTrue(any(cookie.key == 'scc_voice' and cookie.value == owned.sid
                             for cookie in self.dialog.http.cookie_jar))
-        with self.assertLogs('native-voice', level='WARNING'):
-            await self.dialog.close()
+        with self.assertLogs('voice-bridge', level='WARNING') as bot_logs:
+            with self.assertLogs('native-voice', level='WARNING'):
+                await self.dialog.close()
+        self.assertEqual([record.getMessage() for record in bot_logs.records],
+                         ['Bot request failed; no credentials or payload logged'])
         self.assertTrue(self.dialog.must_reset)
         self.assertIsNotNone(self.dialog.http)
         self.assertIn(owned.sid, self.bridge.sessions)

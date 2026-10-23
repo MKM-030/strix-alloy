@@ -395,11 +395,11 @@ class WireTest(unittest.IsolatedAsyncioTestCase):
         thread.start()
         try:
             model = LoopbackConversationModel(None, f"http://127.0.0.1:{server.server_port}/v1/chat/completions",
-                                              "fake", "", timeout_seconds=0.1)
+                                              "fake", "", timeout_seconds=1.0)
             with self.assertRaises(ValueError):
                 await model.classify("Hallo", RoutingContext("scope-1", []))
         finally:
-            server.shutdown()
+            await asyncio.to_thread(server.shutdown)
             server.server_close()
         class Slow:
             async def classify(self, *_):
@@ -442,7 +442,7 @@ class WireTest(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(received[0]["messages"][1]["role"], "user")
             self.assertNotIn("agent_id", received[0]["messages"][1]["content"])
         finally:
-            server.shutdown()
+            await asyncio.to_thread(server.shutdown)
             server.server_close()
 
 

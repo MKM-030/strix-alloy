@@ -34,8 +34,9 @@ class CapturingDialog(Dialog):
 
 class NativeHistoryTests(unittest.IsolatedAsyncioTestCase):
     async def test_configured_employee_question_preserves_first_name_as_real_user_text(self):
-        config = Config(**json.loads(Path(__file__).with_name('config.example.json').read_text(
-            encoding='utf-8-sig')))
+        example = json.loads(Path(__file__).with_name('config.example.json').read_text(
+            encoding='utf-8-sig'))
+        config = Config(greeting=example['greeting'])
         dialog = CapturingDialog()
         await dialog.open()
         dialog.record_greeting(config.greeting)
