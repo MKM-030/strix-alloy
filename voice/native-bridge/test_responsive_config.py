@@ -1,12 +1,13 @@
 """Responsive profile safety gates."""
 
 import json
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
 
 from business_tasks import Agent, StoreInvalid
-from responsive_config import load_responsive_config
+from responsive_config import ResponsiveConfig, load_responsive_config
 
 
 class ConfigTest(unittest.TestCase):
@@ -36,6 +37,31 @@ class ConfigTest(unittest.TestCase):
     def test_full_without_authority_evidence_rejected(self):
         with self.assertRaises(ValueError):
             self.save({"enabled": True, "mode": "full", "store_file": "private/tasks.db"})
+
+    def test_self_declared_hashed_evidence_cannot_enable_full_runtime(self):
+        capabilities = {}
+        for name in ("verified_principal", "agent_tool_binding", "revision_fence",
+                     "durable_operation_claim", "reconciliation"):
+            artifact = self.folder / f"{name}.txt"
+            artifact.write_text("self declared", encoding="utf-8")
+            capabilities[name] = {"artifact": artifact.name,
+                                  "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest(),
+                                  "status": "verified"}
+        manifest = self.folder / "authority.json"
+        manifest.write_text(json.dumps({"capabilities": capabilities}), encoding="utf-8")
+        with self.assertRaises(ValueError):
+            self.save({"enabled": True, "mode": "full", "store_file": "private/tasks.db",
+                       "capability_evidence": {"authority": manifest.name}})
+
+    def test_full_request_remains_unverified_when_disabled(self):
+        profile = self.save({"enabled": False, "mode": "full"})
+        self.assertFalse(profile.enabled)
+        self.assertFalse(profile.authority_verified)
+        self.assertTrue(profile.requires_live_authority)
+        with self.assertRaises(ValueError):
+            ResponsiveConfig(enabled=True, mode="full")
+        with self.assertRaises(TypeError):
+            ResponsiveConfig(authority_verified=True)
 
     def test_unqualified_vision_cannot_be_enabled_by_boolean(self):
         with self.assertRaises(ValueError):

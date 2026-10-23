@@ -4,6 +4,7 @@ import asyncio
 import http.client
 import ipaddress
 import json
+import math
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -110,6 +111,15 @@ def _strict_json(raw, max_bytes):
         raise ValueError("invalid JSON") from error
     if not isinstance(value, dict):
         raise ValueError("expected JSON object")
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, float) and not math.isfinite(item):
+            raise ValueError("nonfinite JSON value")
+        if isinstance(item, dict):
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
     return value
 
 
@@ -117,6 +127,8 @@ class LoopbackConversationModel:
     """OpenAI-compatible classifier on a literal loopback IP, with bounded I/O."""
 
     def __init__(self, http, url, model, token_file, timeout_seconds=2.0):
+        if http is not None:
+            raise ValueError("custom conversation HTTP transports are not supported")
         parsed = urlsplit(url)
         try:
             host = ipaddress.ip_address(parsed.hostname or "")
@@ -130,7 +142,6 @@ class LoopbackConversationModel:
             raise ValueError("invalid conversation model")
         if type(timeout_seconds) not in (float, int) or not 0 < timeout_seconds <= 2.0:
             raise ValueError("invalid conversation timeout")
-        self.http = http
         self.url = url
         self.host = str(host)
         self.port = parsed.port
@@ -192,16 +203,7 @@ class LoopbackConversationModel:
         payload = json.dumps(request, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         if len(payload) > _MAX_REQUEST_BYTES:
             raise ValueError("conversation request too large")
-        if self.http is None:
-            raw = await asyncio.wait_for(asyncio.to_thread(self._request, payload), self.timeout_seconds)
-        else:
-            # An injected fake transport is useful for tests; production uses the pinned direct connection above.
-            response = self.http.post(self.url, content=payload, timeout=self.timeout_seconds, follow_redirects=False)
-            if asyncio.iscoroutine(response):
-                response = await asyncio.wait_for(response, self.timeout_seconds)
-            if response.status_code != 200:
-                raise ValueError("conversation endpoint error")
-            raw = response.content
+        raw = await asyncio.wait_for(asyncio.to_thread(self._request, payload), self.timeout_seconds)
         envelope = _strict_json(raw, _MAX_RESPONSE_BYTES)
         choices = envelope.get("choices")
         if not isinstance(choices, list) or len(choices) != 1 or not isinstance(choices[0], dict):
@@ -218,9 +220,20 @@ class ConversationRouter:
 
     @staticmethod
     def _target(context, text):
-        matches = [task["task_id"] for task in context.tasks if task["task_id"].casefold() in text.casefold()]
+        known = {task["task_id"] for task in context.tasks}
+        matches = [task_id for task_id in known if re.search(r"(?<![\w-])" + re.escape(task_id) + r"(?![\w-])", text, re.IGNORECASE)]
+        # IDs in speech are explicit references. An unknown or second reference
+        # must never silently resolve to the sole task or current focus.
+        referenced = set(re.findall(r"(?<![\w-])(?:[a-z][a-z0-9_-]*\d+[a-z0-9_-]*|[0-9a-f]{8}-[0-9a-f-]{27,})(?![\w-])", text, re.IGNORECASE))
+        for candidate in re.findall(r"\b(?:aufgabe|auftrag|task|ticket|id)\s+(?:nr\.?\s*|nummer\s*)?([a-z0-9][a-z0-9_-]{1,127})\b", text, re.IGNORECASE):
+            if candidate.casefold() not in {"der", "die", "das", "den", "bitte", "jetzt", "sofort", "heute", "morgen", "am", "mit", "für", "von", "zu"}:
+                referenced.add(candidate)
+        if any(candidate.casefold() not in {task_id.casefold() for task_id in known} for candidate in referenced):
+            return ""
         if matches:
             return matches[0] if len(matches) == 1 else ""
+        if referenced:
+            return ""
         if context.focus_task_id:
             return context.focus_task_id
         return context.tasks[0]["task_id"] if len(context.tasks) == 1 else ""

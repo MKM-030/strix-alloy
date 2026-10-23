@@ -1,6 +1,5 @@
 """Opt-in responsive voice configuration with explicit evidence gates."""
 
-import hashlib
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,8 +14,6 @@ _PROFILE_KEYS = frozenset({"enabled", "mode", "store_file", "model_url", "model_
                            "capability_evidence"})
 _AGENT_KEYS = frozenset({"alias", "agent_id", "revision", "capabilities", "name",
                          "description", "supported_intents"})
-_AUTHORITY = frozenset({"verified_principal", "agent_tool_binding", "revision_fence",
-                        "durable_operation_claim", "reconciliation"})
 
 
 @dataclass(frozen=True)
@@ -30,8 +27,26 @@ class ResponsiveConfig:
     model_timeout_seconds: float = 2.0
     agents: tuple[Agent, ...] = ()
     capability_evidence: dict = field(default_factory=dict)
-    omni_qualified: bool = False
-    vision_qualified: bool = False
+
+    def __post_init__(self):
+        if self.enabled and self.mode == "full":
+            raise ValueError("full mode requires trusted live authority proof")
+
+    @property
+    def omni_qualified(self):
+        return False
+
+    @property
+    def vision_qualified(self):
+        return False
+
+    @property
+    def authority_verified(self):
+        return False
+
+    @property
+    def requires_live_authority(self):
+        return self.mode == "full"
 
 
 def _duplicate_pairs(pairs):
@@ -50,32 +65,6 @@ def _private_path(profile, value):
     if not path.is_absolute():
         path = profile.parent / path
     return str(path.resolve())
-
-
-def _qualified_manifest(path, required):
-    """Require content-addressed evidence files, not feature flags."""
-    try:
-        raw = Path(path).read_bytes()
-        if len(raw) > 16384:
-            return False
-        manifest = json.loads(raw, object_pairs_hook=_duplicate_pairs)
-        proofs = manifest["capabilities"]
-        if not isinstance(proofs, dict) or not required.issubset(proofs):
-            return False
-        for capability in required:
-            proof = proofs[capability]
-            if not isinstance(proof, dict) or set(proof) != {"artifact", "sha256", "status"}:
-                return False
-            if proof["status"] != "verified" or not isinstance(proof["sha256"], str) or len(proof["sha256"]) != 64:
-                return False
-            artifact = Path(_private_path(Path(path), proof["artifact"]))
-            if not artifact.is_file() or artifact.stat().st_size > 1024 * 1024:
-                return False
-            if hashlib.sha256(artifact.read_bytes()).hexdigest() != proof["sha256"]:
-                return False
-        return True
-    except (OSError, ValueError, KeyError, TypeError, UnicodeError):
-        return False
 
 
 def load_responsive_config(path) -> ResponsiveConfig:
@@ -130,9 +119,9 @@ def load_responsive_config(path) -> ResponsiveConfig:
     if not isinstance(evidence, dict) or set(evidence) - {"authority", "omni", "vision"}:
         raise ValueError("invalid capability evidence")
     evidence = {key: _private_path(profile, value) for key, value in evidence.items()}
-    if mode == "full" and ("authority" not in evidence or
-                           not _qualified_manifest(evidence["authority"], _AUTHORITY)):
-        raise ValueError("full mode lacks verified authority evidence")
-    # Omni and vision paths are recorded for later qualification; this profile grants no capability from their presence.
+    if mode == "full" and enabled:
+        raise ValueError("full mode requires trusted live authority proof")
+    # Manifest paths are requests for future qualification, never proof of authority.
+    # Omni, vision, and full-mode live writes remain disabled by local configuration.
     return ResponsiveConfig(enabled, mode, store_file, model_url, model_name, token_file,
                             float(model_timeout), tuple(agents), MappingProxyType(evidence))
