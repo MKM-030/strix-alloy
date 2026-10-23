@@ -89,9 +89,16 @@ class OwnedTaskExecutor:
             async with session.request(method, url, headers=headers, data=body, allow_redirects=False) as response:
                 if response.status != 200:
                     raise RuntimeError('owned response unavailable')
-                raw = await response.content.read(65537)
-                if len(raw) > 65536:
-                    raise ValueError('owned response too large')
+                raw = bytearray()
+                while True:
+                    # A positive-size read may return a buffered prefix before
+                    # EOF. Parse only the complete body, including late suffixes.
+                    chunk = await response.content.read(min(8192, 65537 - len(raw)))
+                    if not chunk:
+                        break
+                    raw.extend(chunk)
+                    if len(raw) > 65536:
+                        raise ValueError('owned response too large')
                 def pairs(items):
                     result = {}
                     for key, value in items:

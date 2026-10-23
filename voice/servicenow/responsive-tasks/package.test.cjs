@@ -80,7 +80,11 @@ test('GlideRepositoryWritesMandatorySchemaAndReloadsImmutableReceipt',()=>{
     const command={command_id:'commit',kind:'commit',expected_revision:c.revision,context_version:1,proposal_id:p.revision,confirmation_id:c.revision,operation_key:'op'};
     engine.command(t.task_id,command);engine.command(t.task_id,command);
     assert.equal(calls,1);assert.equal(engine.operation('op').receipt.execution_ref,'ritm');
-    assert.equal(engine.status(t.task_id).events[0].operation_id,'op');
+    const event=engine.status(t.task_id).events[0];
+    assert.equal(event.operation_id,'op');
+    assert.deepEqual(Object.keys(event).sort(),['context_version','event_id','operation_id','sequence','status','task_id','text']);
+    const persisted=repo.get('event','event_id',event.event_id);
+    assert.ok(persisted.id);assert.ok(persisted.task_sequence);
     assert.ok(rows.u_scc_voice_dispatch_claim[0].u_operation);
     assert.throws(()=>repo.get('sys_user','id','arbitrary'),/invalid_table/);
 });

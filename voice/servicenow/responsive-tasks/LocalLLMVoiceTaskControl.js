@@ -82,7 +82,12 @@ LocalLLMVoiceTaskControl.prototype = {
         var task=this._task(id,false), head=this._head(task);
         var event=head.id==='root'?null:this.repo.get('event','event_id','transition:'+head.id);
         return {task_id:task.id,revision:head.id,kind:head.kind,version:head.version,registry_revision:task.registry_revision,
-            operation:head.kind==='commit'?this.repo.get('operation','operation_key',head.operation_key):null,events:event?[event]:[]};
+            operation:head.kind==='commit'?this.repo.get('operation','operation_key',head.operation_key):null,events:event?[this._publicEvent(event)]:[]};
+    },
+    _publicEvent: function(event) {
+        // Internal row/index keys are not part of the owned observation protocol.
+        return {event_id:event.event_id,sequence:event.sequence,task_id:event.task_id,
+            operation_id:event.operation_id,context_version:event.context_version,status:event.status,text:event.text};
     },
     operation: function(key) {
         this._id(key);var op=this.repo.get('operation','operation_key',key);

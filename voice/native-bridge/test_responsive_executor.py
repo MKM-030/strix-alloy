@@ -7,8 +7,9 @@ from business_tasks import Agent, Scope, StoreConflict, StoreInvalid
 from task_store import TaskStore
 import asyncio
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import aiohttp
+from aiohttp.base_protocol import BaseProtocol
 
 
 class ReconciliationTest(unittest.TestCase):
@@ -193,6 +194,74 @@ class OwnedExecutorTest(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(captured['session']['trust_env'])
         self.assertFalse(captured['request']['allow_redirects'])
         self.assertIsNone(captured['request']['data'])
+
+    async def test_actual_server_status_events_reach_observer_current_stale_and_duplicate(self):
+        second = self.store.accept(self.task['task_id'], 'scope', 'u2', 'Correction')
+        fixture = Path(__file__).resolve().parent.parent / 'servicenow/responsive-tasks/status-event.fixture.cjs'
+        process = await asyncio.create_subprocess_exec('node', str(fixture), stdin=asyncio.subprocess.PIPE,
+                                                       stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        output, errors = await process.communicate(json.dumps({'operations': [self.op, second]}).encode())
+        self.assertEqual(process.returncode, 0, errors.decode())
+        statuses = json.loads(output)
+        # First operation is already superseded; the second is current. Both
+        # events come unchanged from actual JS status(), not handcrafted payloads.
+        for operation in (self.op, second):
+            self.store.record_owned_dispatch(operation['operation_id'], statuses[0]['task_id'], {'kind': 'prepare'})
+        first_event, second_event = [status['events'][0] for status in statuses]
+        self.assertFalse(self.executor.observe(self.op['operation_id'], first_event))
+        self.assertFalse(self.executor.observe(self.op['operation_id'], first_event))
+        self.assertTrue(self.executor.observe(second['operation_id'], second_event))
+        self.assertFalse(self.executor.observe(second['operation_id'], second_event))
+        self.assertLess(first_event['sequence'], second_event['sequence'])
+        events = [event for event in self.store.events(self.task['task_id'], 'scope') if event['type'] == 'owned_observation']
+        self.assertEqual([event['payload'] for event in events], [first_event, second_event])
+        self.assertIsNone(self.store.get_task(self.task['task_id'], 'scope')['open_question'])
+        with self.assertRaises(StoreConflict):
+            self.executor.observe(second['operation_id'], {**second_event, 'task_id': 'wrong-task'})
+
+    async def _http_fragments(self, *chunks):
+        loop = asyncio.get_running_loop()
+        protocol = BaseProtocol(loop)
+        protocol.connection_made(Mock(spec=asyncio.Transport))
+        stream = aiohttp.StreamReader(protocol, limit=65536, loop=loop)
+        stream.feed_data(chunks[0])
+        async def later():
+            for chunk in chunks[1:]:
+                await asyncio.sleep(0)
+                stream.feed_data(chunk)
+            stream.feed_eof()
+        producer = asyncio.create_task(later())
+        class Response:
+            status = 200
+            content = stream
+            async def __aenter__(self): return self
+            async def __aexit__(self, *args): pass
+        class Session:
+            def __init__(self, **kwargs): pass
+            async def __aenter__(self): return self
+            async def __aexit__(self, *args): pass
+            def request(self, *args, **kwargs): return Response()
+        try:
+            with patch('aiohttp.ClientSession', Session):
+                return await self.executor._http('GET', self.executor.origin+'/candidate', headers={}, body=None, allow_redirects=False)
+        finally:
+            await producer
+
+    async def test_http_valid_split_json_waits_for_eof(self):
+        self.assertEqual(await self._http_fragments(b'{"value":', b'1', b'}'), {'value': 1})
+
+    async def test_http_buffered_json_prefix_rejects_late_invalid_suffix(self):
+        with self.assertRaises(json.JSONDecodeError):
+            await self._http_fragments(b'{}', b' invalid-late-suffix')
+
+    async def test_http_buffered_json_prefix_rejects_late_oversize(self):
+        with self.assertRaisesRegex(ValueError, 'too large'):
+            await self._http_fragments(b'{}', b' ' * 65535)
+
+    async def test_http_complete_limit_and_duplicate_fields(self):
+        self.assertEqual(await self._http_fragments(b'{}', b' ' * 65534), {})
+        with self.assertRaisesRegex(ValueError, 'duplicate owned field'):
+            await self._http_fragments(b'{"value":1,', b'"value":2}')
 
 
 if __name__ == '__main__':
