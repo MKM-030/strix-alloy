@@ -1,12 +1,18 @@
 """Task14 public C01-C24 synthetic contract cases; not model qualification."""
 import asyncio
 import json
+import tempfile
 import unittest
 from dataclasses import replace
+from pathlib import Path
 
+from business_tasks import Scope
 from conversation_router import ConversationRouter, RoutingContext, LoopbackConversationModel
 from route_proposal import ProposalContract
 from routing_policy import PolicyRules, policy_snapshot
+from servicenow_executor import LegacyVAExecutor
+from task_coordinator import TaskCoordinator
+from task_store import TaskStore
 from test_unified_routing_policy import AGENT, context
 import test_unified_routing_policy as fixtures
 
@@ -230,6 +236,51 @@ class PublicChoiceTests(unittest.IsolatedAsyncioTestCase):
         d = await ConversationRouter(model).decide('Bitte prüfe meine Äußerung.', ctx)
         self.assertEqual(d.reason, 'context_budget')
         self.assertEqual(model.calls, 0)
+
+
+class NewTaskOriginalTextTests(unittest.IsolatedAsyncioTestCase):
+    async def test_padded_direct_address_persists_and_dispatches_original_once(self):
+        original = '  Büroservice: Ich benötige Ersatz für mein defektes Headset.  '
+        model = ChoiceModel('new_task', 'request', 'suitable')
+        ready, dispatched = asyncio.Event(), asyncio.Event()
+        calls = []
+
+        class Dialog:
+            async def turn(self, text, **kwargs):
+                calls.append(text)
+                dispatched.set()
+                return []
+
+            async def close(self): pass
+
+        async def emit(event): pass
+
+        with tempfile.TemporaryDirectory() as directory:
+            store = TaskStore(Path(directory) / 'tasks.db')
+            coordinator = TaskCoordinator(store, ConversationRouter(model), [AGENT],
+                lambda _: LegacyVAExecutor(Dialog(), ready=ready))
+            attachment = await coordinator.attach(Scope('scope', 'call', 1, 'instance', 'assistant'), emit)
+            try:
+                decision = await attachment.accept_decision('padded-new', original)
+                self.assertEqual(decision.route.intent, 'new_task')
+                self.assertEqual(decision.route.agent_alias, AGENT.alias)
+                self.assertTrue(decision.proposal.choice_bound)
+                self.assertTrue(decision.durable_acceptance)
+                self.assertEqual(model.text, original)
+                operation, = store.operations('scope')
+                task = store.get_task(operation['task_id'], 'scope')
+                self.assertEqual((task['agent_alias'], task['agent_id']), (AGENT.alias, AGENT.agent_id))
+                self.assertEqual(operation['text'], original)
+                self.assertEqual(await attachment.accept('padded-new', original), decision.route)
+                self.assertEqual(len(store.operations('scope')), 1)
+                self.assertEqual(len(store.list_tasks('scope')), 1)
+                self.assertEqual(model.calls, 1)
+                ready.set()
+                await asyncio.wait_for(dispatched.wait(), 1)
+                self.assertEqual(calls, [original])
+            finally:
+                await coordinator.shutdown(.5)
+                store.close()
 
 
 class PublicCoordinatorTests(unittest.IsolatedAsyncioTestCase):

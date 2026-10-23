@@ -534,6 +534,8 @@ class PolicyRules:
 
     @classmethod
     def selected_agent(cls, snapshot, text):
+        # Normalize only direct-address matching; caller/model/Store keep the original.
+        text = text.strip()
         agents = cls._agents(snapshot, text)
         if len(agents) != 1:
             return '', ''
