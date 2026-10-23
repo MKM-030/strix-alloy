@@ -453,7 +453,7 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(corrected.route.intent, 'amend_task')
         self.assertEqual([o['text'] for o in self.store.operations('scope')], ['  Ja  ', 'Korrektur: Nein'])
 
-    async def test_same_version_evidence_after_final_chunk_clears_pcm_and_preserves_deferred_backend(self):
+    async def test_same_version_evidence_after_final_chunk_preserves_pending_control_plain_and_deferred(self):
         from types import SimpleNamespace
         from grounded_conversation import GroundedPlan
         from test_responsive_output import event
@@ -463,12 +463,24 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
         await self.attachment.accept_guarded('spoken', 'Was wurde gespeichert?', output_validity=lambda: True)
         await eventually(lambda: bool(self.playback.data))
         self.assertTrue(self.attachment._grounded is not None)
+        generation = self.playback.generation
+        control = asyncio.create_task(self.arbiter.publish_control(
+            dict(event('Lifecycle-Hinweis', 'local_reply'), task_id=task_id, context_version=2),
+            lambda: True, wait=True))
+        await asyncio.sleep(0)
+        await self.arbiter.publish(dict(event('Backend normal'), task_id=task_id, context_version=2))
         await self.arbiter.publish_deferred(dict(event('Backend später'), task_id=task_id, context_version=2), lambda: True)
+        self.assertEqual(self.arbiter.pending_count, 3)
+        self.assertFalse(control.done())
         self.store.observe(old['operation_id'], 'late-head', 'backend_observed', {'text': 'Neuer Hinweis'})
         self.attachment.note_grounded_evidence_change()
         self.assertFalse(self.playback.data)
-        await eventually(lambda: any(t['text']=='Backend später' for t in self.transcripts))
-        self.assertEqual(sum(t['text']=='Backend später' for t in self.transcripts), 1)
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertTrue(await asyncio.wait_for(control, 1))
+        self.assertEqual(self.playback.generation, generation)
+        self.assertEqual([t['text'] for t in self.transcripts[1:]],
+                         ['Lifecycle-Hinweis', 'Backend normal', 'Backend später'])
+        self.assertEqual(self.playback.data, b'fictional-pcm' * 3)
         self.assertEqual(len(self.store.operations('scope')), 2)
 
     async def test_preparation_deadline_does_not_abort_valid_synthesis_or_drain(self):

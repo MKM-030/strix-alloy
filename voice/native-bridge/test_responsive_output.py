@@ -87,6 +87,62 @@ class OutputTest(unittest.IsolatedAsyncioTestCase):
         await asyncio.wait_for(self.arbiter.wait_idle(), 1)
         self.assertEqual(self.playback.data, b'')
 
+    async def test_grounded_exception_clears_owned_pcm_and_preserves_pending_output(self):
+        buffered, fail = asyncio.Event(), asyncio.Event()
+        class FailingGroundedSpeech:
+            async def synthesize(self, text):
+                yield text.encode()
+                if text == 'Grounded':
+                    buffered.set()
+                    await fail.wait()
+                    raise RuntimeError('synthetic failure after buffered chunk')
+        self.arbiter.speech = FailingGroundedSpeech()
+        generation = self.playback.generation
+        await self.arbiter.publish_guarded(event('Grounded'), lambda: True, grounded_id='failed-job')
+        await asyncio.wait_for(buffered.wait(), 1)
+        self.assertEqual(self.playback.data, b'Grounded')
+        control = asyncio.create_task(self.arbiter.publish_control(
+            event('Lifecycle', 'local_reply'), lambda: True, wait=True))
+        await asyncio.sleep(0)
+        await self.arbiter.publish(event('Ordinary'))
+        await self.arbiter.publish_deferred(event('Deferred'), lambda: True)
+        self.assertEqual(self.arbiter.pending_count, 3)
+        self.assertFalse(control.done())
+        fail.set()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertTrue(await asyncio.wait_for(control, 1))
+        self.assertEqual(self.playback.generation, generation)
+        self.assertEqual(self.playback.data, b'LifecycleOrdinaryDeferred')
+        self.assertEqual([t['text'] for t in self.transcripts if t['kind'] != 'error'],
+                         ['Grounded', 'Lifecycle', 'Ordinary', 'Deferred'])
+        self.assertEqual(sum(t['kind'] == 'error' for t in self.transcripts), 1)
+        self.assertEqual(self.arbiter.suppressed_count, 0)
+
+    async def test_targeted_invalidation_prevents_cancellation_resistant_chunk_refill(self):
+        buffered, cancelled = asyncio.Event(), asyncio.Event()
+        class ResistantSpeech:
+            async def synthesize(self, text):
+                yield b'owned-pcm'
+                buffered.set()
+                try:
+                    await asyncio.Event().wait()
+                except asyncio.CancelledError:
+                    cancelled.set()
+                    yield b'late-pcm'
+        self.arbiter.speech = ResistantSpeech()
+        generation = self.playback.generation
+        await self.arbiter.publish_guarded(event(), lambda: True, grounded_id='retired-job')
+        await asyncio.wait_for(buffered.wait(), 1)
+        self.assertEqual(self.playback.data, b'owned-pcm')
+        self.arbiter.invalidate_grounded('retired-job')
+        self.assertEqual(self.playback.data, b'')
+        await asyncio.wait_for(cancelled.wait(), 1)
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual(self.playback.generation, generation)
+        self.assertEqual(self.playback.data, b'')
+        self.assertEqual(self.arbiter.sent_bytes, len(b'owned-pcm'))
+        self.assertEqual(len(self.transcripts), 1)
+
     async def test_status_interrupt_does_not_suppress_future_backend(self):
         await self.arbiter.publish(event('Old'))
         await self.speech.entered.wait()

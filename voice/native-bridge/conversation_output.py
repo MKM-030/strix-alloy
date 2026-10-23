@@ -148,12 +148,19 @@ class OutputArbiter:
         active = self._active_entry
         if active is not None and active.grounded_id == grounded_id:
             active.invalidated = True
-            if self._grounded_owner == (grounded_id, self.playback.generation):
-                self.playback.interrupt()
-                self._grounded_owner = None
+            self._clear_grounded_pcm(active)
             if self._active is not None and not self._active.done():
                 self._active.cancel()
         self._wake.set()
+
+    def _clear_grounded_pcm(self, entry):
+        if entry.grounded_id is not None and self._grounded_owner == (entry.grounded_id, entry.generation):
+            # Exclusive ownership starts only after prior PCM drains. Preserve
+            # the shared generation: unrelated queued output still owns it.
+            # Invalidation/current() fences late chunks without a global bump.
+            if self.playback.generation == entry.generation:
+                self.playback.data.clear()
+            self._grounded_owner = None
 
     async def publish_deferred(self, event, validity):
         if not callable(validity):
@@ -306,11 +313,9 @@ class OutputArbiter:
                         except Exception:
                             pass
                 finally:
-                    if entry.grounded_id is not None and self._grounded_owner == (entry.grounded_id, entry.generation):
-                        # Exceptions/cancellation must not orphan guarded PCM.
-                        if self.playback.data and self.playback.generation == entry.generation:
-                            self.playback.interrupt()
-                        self._grounded_owner = None
+                    # Exceptions/cancellation must not orphan guarded PCM or
+                    # invalidate unrelated queued entries with its generation.
+                    self._clear_grounded_pcm(entry)
                     if entry.started or entry not in self._pending:
                         self._complete(entry)
                     self._active = None
