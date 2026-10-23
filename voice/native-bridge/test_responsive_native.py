@@ -318,15 +318,15 @@ class NativeResponsiveTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_suppressed_fallback_does_not_fabricate_greeting_history(self):
         from conversation_output import OutputArbiter
-        publish = OutputArbiter.publish
-        async def interrupted(arbiter, event):
-            result = await publish(arbiter, event)
+        publish = OutputArbiter._publish
+        async def interrupted(arbiter, event, validity, **kwargs):
+            result = await publish(arbiter, event, validity, **kwargs)
             if event['text'] == 'Configured fallback':
                 arbiter.interrupt()
             return result
         call = self.call()
         call.config.greeting = 'Configured fallback'
-        with patch.object(OutputArbiter, 'publish', interrupted):
+        with patch.object(OutputArbiter, '_publish', interrupted):
             call.spawn(call.process_turns())
             await until(lambda: call.responsive_attachment is not None)
             await asyncio.sleep(.02)

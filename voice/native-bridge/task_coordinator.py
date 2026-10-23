@@ -128,13 +128,21 @@ class ConversationAttachment:
         return any(not self._context_task or op['task_id'] == self._context_task
                    for op in self.store.pending(self.scope.scope_id))
 
-    def _interrupt(self):
+    def _interrupt(self, *, preserve_deferred=False):
         owner = getattr(self.emit, '__self__', self.emit)
-        if owner is not None and callable(getattr(owner, 'interrupt', None)):
-            owner.interrupt()
+        interrupt = getattr(owner, 'interrupt_for_input', None) if preserve_deferred else None
+        interrupt = interrupt if callable(interrupt) else getattr(owner, 'interrupt', None)
+        if callable(interrupt):
+            interrupt()
+        retained = []
         while not self._output_queue.empty():
-            self._output_queue.get_nowait()
-            self.suppressed_count += 1
+            event = self._output_queue.get_nowait()
+            if preserve_deferred and event['kind'] == 'backend_reply':
+                retained.append(event)
+            else:
+                self.suppressed_count += 1
+        for event in retained:
+            self._output_queue.put_nowait(event)
 
     async def note_question(self, text, *, task_id=''):
         """Bind an actual greeting/backend question; no dispatch or heard assertion."""
@@ -155,7 +163,7 @@ class ConversationAttachment:
             self.store.note_question(task_id, self.scope.scope_id, text, source=source)
             return task_id
 
-    def _queue(self, kind, text, *, operation=None, task=None, utterance_id='', decision=None, checkpoint=None, authority=None, acceptance='local'):
+    def _queue(self, kind, text, *, operation=None, task=None, utterance_id='', decision=None, checkpoint=None, authority=None, acceptance='local', output_validity=None):
         if not self._attached:
             return
         operation, task = operation or {}, task or {}
@@ -164,6 +172,8 @@ class ConversationAttachment:
             utterance_id=utterance_id or operation.get('utterance_id', ''),
             context_version=task.get('context_version', operation.get('context_version', 0)),
             text=text, priority=10 if kind == 'backend_reply' else 0)
+        if output_validity is not None:
+            event['_input_validity'] = output_validity
         if decision is not None:
             self.coordinator.routing_counts[(decision.disposition, decision.reason, acceptance)] += 1
             if decision.help_source or decision.route.intent == 'status_query':
@@ -184,23 +194,35 @@ class ConversationAttachment:
                 return
             help_checkpoint = event.pop('_help_checkpoint', None)
             help_authority = event.pop('_help_authority', None)
-            def valid_help(checkpoint=help_checkpoint, authority=help_authority):
+            input_validity = event.pop('_input_validity', None)
+            def valid_help(checkpoint=help_checkpoint, authority=help_authority, input_validity=input_validity):
                 try:
-                    return (self._attached and (authority is None or authority())
+                    return (self._attached and (input_validity is None or input_validity())
+                            and (authority is None or authority())
                             and (checkpoint is None or checkpoint == self.store.routing_checkpoint(self.scope.scope_id)))
                 except Exception:
                     return False
             if not valid_help():
                 self.suppressed_count += 1
                 continue
-            if event['kind'] == 'backend_reply':
-                task = self.store.get_task(event['task_id'], self.scope.scope_id)
-                if task['context_version'] != event['context_version']:
-                    self.suppressed_count += 1
-                    continue
+            def valid_backend(task_id=event['task_id'], version=event['context_version']):
+                try:
+                    return (self._attached and self.coordinator._owner is self
+                            and self.store.get_task(task_id, self.scope.scope_id)['context_version'] == version)
+                except Exception:
+                    return False
             try:
+                deferred = getattr(self.emit, 'publish_deferred', None)
                 guarded = getattr(self.emit, 'publish_guarded', None)
-                if help_checkpoint is not None and callable(guarded):
+                if event['kind'] == 'backend_reply':
+                    if not valid_backend():
+                        self.suppressed_count += 1
+                        continue
+                    if callable(deferred):
+                        await deferred(event, valid_backend)
+                    else:
+                        await self.emit(event)
+                elif callable(guarded) and (help_checkpoint is not None or input_validity is not None):
                     await guarded(event, valid_help)
                 else:
                     await self.emit(event)
@@ -211,7 +233,11 @@ class ConversationAttachment:
     async def accept(self, utterance_id, text, *, voice_context=None):
         return (await self.accept_decision(utterance_id, text, voice_context=voice_context)).route
 
-    async def accept_decision(self, utterance_id, text, *, voice_context=None):
+    async def accept_guarded(self, utterance_id, text, *, output_validity, voice_context=None):
+        return await self.accept_decision(utterance_id, text, voice_context=voice_context,
+                                          output_validity=output_validity)
+
+    async def accept_decision(self, utterance_id, text, *, voice_context=None, output_validity=None):
         """Request-bound metadata; the legacy accept API projects its public Route."""
         bounded_identifier(utterance_id)
         if not isinstance(text, str) or not text or len(text) > 4000:
@@ -219,7 +245,7 @@ class ConversationAttachment:
         async with self._accept_lock:
             if not self._attached:
                 raise StoreDenied('scope detached')
-            self._interrupt()
+            self._interrupt(preserve_deferred=True)
             question, tasks, operations, checkpoint = self.store.routing_snapshot(self.scope.scope_id)
             # Duplicate accepted input remains idempotent even after its question moved.
             prior_input = next((op for op in operations if op['utterance_id'] == utterance_id), None)
@@ -323,9 +349,9 @@ class ConversationAttachment:
                 decision = replace(decision, route=route, disposition='clarification', reason='authority_changed', help_source=None)
             try:
                 if route.intent in ('uncertain', 'clarification'):
-                    self._queue('local_reply', route.reply, utterance_id=utterance_id, decision=decision, checkpoint=checkpoint, authority=authority)
+                    self._queue('local_reply', route.reply, utterance_id=utterance_id, output_validity=output_validity, decision=decision, checkpoint=checkpoint, authority=authority)
                 elif route.intent == 'stop_speaking':
-                    pass
+                    self._interrupt()
                 elif route.intent == 'status_query':
                     task = self.store.get_task(route.task_id, self.scope.scope_id)
                     observed = {}
@@ -343,14 +369,14 @@ class ConversationAttachment:
                         if latest_reply:
                             break
                     self._queue('local_reply', render_grounded_status(task.get('state'), latest_reply), task=task, utterance_id=utterance_id,
-                                decision=decision, checkpoint=checkpoint, authority=authority)
+                                output_validity=output_validity, decision=decision, checkpoint=checkpoint, authority=authority)
                 elif route.intent == 'cancel_task':
                     task = self.store.cancel_pending(route.task_id, self.scope.scope_id, utterance_id, text=text,
                                                      preconditions=checkpoint, authority=authority)
                     decision = replace(decision, durable_acceptance=True)
                     message = ('Die noch nicht übermittelte Aufgabe wurde lokal abgebrochen.' if task['state'] == 'cancelled' else
                                'Abbruch vorgemerkt. Eine bereits übermittelte Aktion kann ich nicht sicher stoppen; eine Stornierung ist nicht bestätigt.')
-                    self._queue('local_reply', message, task=task, utterance_id=utterance_id, decision=decision, acceptance='durable_accepted')
+                    self._queue('local_reply', message, task=task, utterance_id=utterance_id, output_validity=output_validity, decision=decision, acceptance='durable_accepted')
                     self._wake.set()
                 elif route.intent in ('new_task', 'amend_task', 'continue_task'):
                     if route.intent == 'new_task':
@@ -368,7 +394,7 @@ class ConversationAttachment:
                     decision = replace(decision, durable_acceptance=True)
                     self._focus = task['task_id']
                     self._queue('local_reply', 'Angenommen und gespeichert. Neue Aufgaben bleiben im Legacy-Kontext in der Warteschlange, solange eine andere Aufgabe offen ist.' if route.intent == 'new_task' and self._context_task else
-                                'Angenommen und zur Übermittlung vorgemerkt.', operation=operation, decision=decision, acceptance='durable_accepted')
+                                'Angenommen und zur Übermittlung vorgemerkt.', operation=operation, output_validity=output_validity, decision=decision, acceptance='durable_accepted')
                     self._wake.set()
                 else:
                     raise StoreInvalid('unsupported route')
@@ -378,7 +404,7 @@ class ConversationAttachment:
                     raise
                 route = Route('clarification', reply='Die aktuelle Frage oder Aufgabe hat sich geändert. Bitte wiederhole deine Angabe.')
                 decision = replace(decision, route=route, disposition='clarification', reason='authority_changed', help_source=None, durable_acceptance=False)
-                self._queue('local_reply', route.reply, utterance_id=utterance_id, decision=decision, acceptance='durable_rejected')
+                self._queue('local_reply', route.reply, utterance_id=utterance_id, output_validity=output_validity, decision=decision, acceptance='durable_rejected')
             return decision
 
     async def detach(self):

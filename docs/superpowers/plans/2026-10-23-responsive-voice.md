@@ -289,3 +289,21 @@ Ratify one-key JSON plus domain-abstention choices; conservative semantic-audio 
 - Public C19 was corrected under Root ruling to the existing recognized Führungskraft field; no field-kind synonyms were added. The additional obsolete fixture in `test_responsive_native.py` was enumerated and authorized; its German-status assertion now matches Task13's actual presentation.
 - Public synthetic RED/GREEN: 22 tests pass. Focused source/Store/output/native/status regression: 212 tests pass. One final full native discovery: 724 tests in112.861s, OK. Exact evidence and source hashes are recorded in `.superpowers/sdd/2026-10-23-responsive-voice/task-14-report.md`.
 - Independent Task14 source review is pending. This status does not complete earlier unchecked tasks, qualify a model, measure token fit or authorize activation. Source/evaluator/loader/Task6 preparation and any separately identified native input/publication race remain separate follow-ups before a new runtime freeze.
+
+
+### Task 15: Preserve input ownership and defer backend speech
+
+**Spec:** `docs/superpowers/specs/2026-10-24-input-ownership-deferred-speech.md` (Root-ratified under delegated implementation authority).
+**Dependency:** Task14 independent review/fix closure, then one sole product implementer.
+**Files:** `voice/native-bridge/native_bridge.py`, `conversation_output.py`, `task_coordinator.py`; focused native/output/coordinator tests and Task15 spec/plan docs. No routing/model/Store/config/runtime changes.
+**Interfaces:** additive `accept_guarded(..., output_validity=...)`, optional output validity on `accept_decision`, output sink/arbiter selective input interruption and deferred/control publication, immutable native originating-input envelopes. Exact contract and proof cases A–J live in the binding spec.
+
+- [x] Write deterministic RED cases through actual NativeCall/coordinator/arbiter, including silent inference, older queued origin, backend deferral and lifecycle-barrier ordering.
+- [x] Carry VAD-origin input epoch through endpoint/ASR/recognition/acceptance; invalidate output only, preserve every accepted business action and observer.
+- [x] Implement bounded single-queue deferred/control arbitration with per-entry completion; revalidate own backend task/context, no replay after speech start.
+- [x] Propagate per-input guard through local publication, combine existing Task14 help/status guards and separate input interruption from hard stop.
+- [x] Wire physical/ordinary readiness and all lifecycle wakeups without false idle or startup/language deadlock.
+- [ ] Run focused A–J regressions, then one full native discovery after final substantive changes; record exact results and ownership, preserve dirty baseline.
+- [ ] Commit exact owned paths, independent task review/fix closure. Update stopped-source closure/review inventory before any new closed-choice runtime freeze; source tests are not iPhone/acoustic proof.
+
+Task15 status: implementation and self-review complete, independent review pending. Actual NativeCall/coordinator/arbiter RED: two failures reproduced; final dedicated integration23/5.345s and affected focused186/47.145s GREEN (focused run predates the final narrow failure-cleanup flag; final integration and full runs include it). Final native discovery after Root-ratified failure-notice preservation:759/115.534s GREEN; the preceding755/115.442s run is intermediate evidence only. Exact ownership, hashes and proof map: `.superpowers/sdd/2026-10-23-responsive-voice/task-15-report.md`. No runtime GO. Task6/7 and actual iPhone/full-mode delivery remain incomplete.

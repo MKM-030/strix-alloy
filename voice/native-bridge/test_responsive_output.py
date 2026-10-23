@@ -155,6 +155,138 @@ class OutputTest(unittest.IsolatedAsyncioTestCase):
         self.arbiter.interrupt()
         await asyncio.wait_for(self.arbiter.wait_idle(), 1)
 
+    async def test_deferred_pauses_then_survives_input_interrupt_and_speaks_once(self):
+        ready = False
+        self.arbiter.input_ready = lambda: ready
+        await self.arbiter.publish_deferred(event(), lambda: True)
+        self.arbiter.interrupt_for_input()
+        await asyncio.sleep(0)
+        self.assertEqual(self.arbiter.pending_count, 1)
+        self.assertEqual(self.transcripts, [])
+        self.assertFalse(self.arbiter._idle.is_set())
+        ready = True
+        self.speech.release.set()
+        self.arbiter.notify_input_changed()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual([e['text'] for e in self.transcripts], ['Answer'])
+        self.assertEqual(self.playback.data, b'Answer')
+
+    async def test_reserved_unstarted_deferred_survives_input_interrupt(self):
+        reserved, release = asyncio.Event(), asyncio.Event()
+        speak = self.arbiter._speak
+        async def delayed(entry):
+            reserved.set()
+            await release.wait()
+            await speak(entry)
+        self.arbiter._speak = delayed
+        await self.arbiter.publish_deferred(event(), lambda: True)
+        await reserved.wait()
+        self.arbiter.interrupt_for_input()
+        self.assertEqual(self.arbiter.pending_count, 1)
+        release.set()
+        self.speech.release.set()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual([e['text'] for e in self.transcripts], ['Answer'])
+
+    async def test_readiness_changed_in_reservation_pauses_without_discard(self):
+        reserved, release = asyncio.Event(), asyncio.Event()
+        ready = True
+        self.arbiter.input_ready = lambda: ready
+        speak = self.arbiter._speak
+        async def delayed(entry):
+            reserved.set()
+            await release.wait()
+            await speak(entry)
+        self.arbiter._speak = delayed
+        await self.arbiter.publish(event())
+        await reserved.wait()
+        ready = False
+        release.set()
+        for _ in range(4): await asyncio.sleep(0)
+        self.assertEqual(self.arbiter.pending_count, 1)
+        self.assertEqual(self.transcripts, [])
+        ready = True
+        self.speech.release.set()
+        self.arbiter.notify_input_changed()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual(self.playback.data, b'Answer')
+
+    async def test_started_deferred_interrupted_in_async_transcript_never_replays(self):
+        entered = asyncio.Event()
+        async def transcript(payload):
+            self.transcripts.append(payload)
+            entered.set()
+            await asyncio.Event().wait()
+        self.arbiter.emit_transcript = transcript
+        await self.arbiter.publish_deferred(event(), lambda: True)
+        await entered.wait()
+        self.arbiter.interrupt_for_input()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.arbiter.notify_input_changed()
+        await asyncio.sleep(0)
+        self.assertEqual(len(self.transcripts), 1)
+        self.assertFalse(self.speech.entered.is_set())
+        self.assertEqual(self.playback.data, b'')
+
+    async def test_control_bypasses_paused_backend_and_completes_own_waiter(self):
+        self.arbiter.input_ready = lambda: False
+        self.arbiter.control_ready = lambda: True
+        self.speech.release.set()
+        await self.arbiter.publish_deferred(event('Backend'), lambda: True)
+        await asyncio.wait_for(self.arbiter.publish_control(event('Control'), wait=True), 1)
+        self.assertEqual(self.playback.data, b'Control')
+        self.assertEqual(self.arbiter.pending_count, 1)
+        self.assertFalse(self.arbiter._idle.is_set())
+
+    async def test_control_waiter_cancel_does_not_cancel_delivery(self):
+        ready = False
+        self.arbiter.control_ready = lambda: ready
+        waiter = asyncio.create_task(self.arbiter.publish_control(event('Control'), wait=True))
+        await asyncio.sleep(0)
+        waiter.cancel()
+        await asyncio.gather(waiter, return_exceptions=True)
+        self.assertEqual(self.arbiter.pending_count, 1)
+        ready = True
+        self.speech.release.set()
+        self.arbiter.notify_input_changed()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual(self.playback.data, b'Control')
+
+    async def test_control_waiters_finish_on_rejection_eviction_stop_and_close(self):
+        self.arbiter.control_ready = lambda: False
+        await self.arbiter.publish_control(event(), lambda: False, wait=True)
+        waiters = [asyncio.create_task(self.arbiter.publish_control(event(str(i)), wait=True)) for i in range(9)]
+        await asyncio.sleep(0)
+        self.assertEqual(self.arbiter.pending_count, 8)
+        # A higher priority entry evicts the earliest low priority control.
+        await self.arbiter.publish(event('Priority', 'local_reply'))
+        await asyncio.sleep(0)
+        await asyncio.wait_for(waiters[0], 1)
+        self.assertTrue(waiters[-1].done())
+        self.arbiter.interrupt()
+        await asyncio.wait_for(asyncio.gather(*waiters), 1)
+        waiter = asyncio.create_task(self.arbiter.publish_control(event(), wait=True))
+        await asyncio.sleep(0)
+        await self.arbiter.close()
+        await asyncio.wait_for(waiter, 1)
+
+    async def test_invalid_deferred_pruned_even_while_input_paused(self):
+        ready, valid = False, True
+        self.arbiter.input_ready = lambda: ready
+        await self.arbiter.publish_deferred(event(), lambda: valid)
+        valid = False
+        self.arbiter.notify_input_changed()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual(self.transcripts, [])
+
+    async def test_kind_does_not_make_transient_backend_durable(self):
+        self.arbiter.input_ready = lambda: False
+        await self.arbiter.publish(event())
+        self.arbiter.interrupt_for_input()
+        await asyncio.wait_for(self.arbiter.wait_idle(), 1)
+        self.assertEqual(self.arbiter.pending_count, 0)
+        self.assertEqual(self.transcripts, [])
+
 
 if __name__ == '__main__':
     unittest.main()

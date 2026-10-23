@@ -375,6 +375,22 @@ class SpeakerTrack(AudioStreamTrack):
         return frame
 
 
+@dataclass(frozen=True)
+class _InputEnvelope:
+    """Private immutable origin; preserve existing tuple unpacking and indexing."""
+    values: tuple
+    input_epoch: int
+
+    def __iter__(self):
+        return iter(self.values)
+
+    def __len__(self):
+        return len(self.values)
+
+    def __getitem__(self, index):
+        return self.values[index]
+
+
 class NativeCall:
     def __init__(self, config, speech, dialog, call_settings=None, *, ice_servers=None,
                  responsive_attachment_factory=None):
@@ -408,6 +424,11 @@ class NativeCall:
         self._responsive_codes = {}
         self._responsive_fallbacks = set()
         self._responsive_opening = False
+        self._responsive_failure_feedback = False
+        self._input_epoch = 0
+        self._input_receivers = set()
+        self._acceptance_active = 0
+        self._input_turn_active = False
         self.recognized_turns = asyncio.Queue(maxsize=32 if responsive_attachment_factory else 2)
         self.asr_task = None
         self.failed = False
@@ -492,10 +513,35 @@ class NativeCall:
         task.add_done_callback(self.tasks.discard)
         return task
 
+    def _input_live(self):
+        return not (self.closed or self.closing or self.input_lost or self.failed)
+
+    def _input_guard(self, origin):
+        return lambda: self._input_live() and origin == self._input_epoch
+
+    def _terminal_control_guard(self, origin):
+        # Only explicit startup failure feedback may explain a failed call.
+        # Other controls retain _input_guard, which rejects failed intake.
+        return lambda: (self.failed and not (self.closed or self.closing or self.input_lost)
+                        and origin == self._input_epoch)
+
+    def _control_ready(self):
+        return (not (self.closed or self.closing or self.input_lost) and not self._input_receivers
+                and not self.recognition_active and self.turns.empty())
+
+    def _input_ready(self):
+        return (self._input_live() and self._control_ready() and self.recognized_turns.empty()
+                and not self._acceptance_active and not self._input_turn_active)
+
+    def _notify_input_changed(self):
+        if self.responsive_output is not None:
+            self.responsive_output.notify_input_changed()
+
     def register_microphone(self, track):
         if self.closed or self.closing or self.input_lost:
             return False
         self.microphones.add(track)
+        self._notify_input_changed()
         if self.input_loss_task and not self.input_loss_task.done():
             self.input_loss_task.cancel()
             self.input_loss_task = None
@@ -523,6 +569,7 @@ class NativeCall:
         if self.closed or self.closing or self.microphones or self.input_lost:
             return
         self.input_lost = True  # Commit before yielding or accepting more input.
+        self._notify_input_changed()
         # A lost speaker must not leave on_reply stuck on a full PCM buffer
         # while the submitted ServiceNow request is still being observed.
         if self.responsive_output is not None:
@@ -541,6 +588,7 @@ class NativeCall:
         text_count = self.drain_queue(self.recognized_turns)
         if not self.turns_settled.is_set():
             self.recognized_turns.put_nowait(None)  # Wake an idle worker only.
+        self._notify_input_changed()
         LOG.info('Voice input call=%s stage=input_lost discarded_audio=%d discarded_text=%d',
                  self.call_id, audio_count, text_count)
         self.input_ended.set()
@@ -596,13 +644,18 @@ class NativeCall:
         gate = None
         detector = None
         receive_failed = False
+        receiver = object()
+        input_epoch = 0
 
         def queue_utterance(utterance, endpoint):
             nonlocal queued
             if not utterance or self.closed or self.failed or self.input_lost or self.closing:
                 return
             try:
-                self.turns.put_nowait((self.playback.generation, utterance))
+                audio = (self.playback.generation, utterance)
+                if self.responsive_attachment_factory is not None:
+                    audio = _InputEnvelope(audio, input_epoch)
+                self.turns.put_nowait(audio)
                 queued += 1
                 LOG.info('Voice input call=%s stage=queued audio_ms=%d audio_queue=%d text_queue=%d endpoint=%s',
                          self.call_id, len(utterance)*1000//32000,
@@ -652,7 +705,10 @@ class NativeCall:
                     frames += 1
                     max_gap = max(max_gap, now-last_frame)
                     last_frame = now
-                    if self.failed or self.input_lost or self.closing:
+                    # A failed responsive call still measures physical silence
+                    # for its explicit terminal notice; queue_utterance rejects
+                    # all business intake while failed.
+                    if (self.failed and self.responsive_attachment_factory is None) or self.input_lost or self.closing:
                         continue
                     for mono in converter.resample(frame):
                         pcm = mono.to_ndarray().tobytes()
@@ -666,6 +722,12 @@ class NativeCall:
                         voiced = detector.feed(pcm) if detector is not None else loud
                         began, utterance = gate.feed(pcm, voiced=voiced)
                         self.vad_active = gate.active
+                        if gate.active:
+                            self._input_receivers.add(receiver)
+                        else:
+                            self._input_receivers.discard(receiver)
+                        if self.responsive_attachment_factory is not None:
+                            self.vad_active = bool(self._input_receivers)
                         if gate.active and voiced:
                             last_loud = now
                         if began:
@@ -673,26 +735,35 @@ class NativeCall:
                             self.input_started = True
                             playback_bytes = len(self.playback.data)
                             interrupted = self.synthesis_active or bool(playback_bytes)
-                            if interrupted:
+                            if self.responsive_attachment_factory is not None:
+                                self._input_epoch += 1
+                                input_epoch = self._input_epoch
                                 if self.responsive_output is not None:
-                                    self.responsive_output.interrupt()
+                                    self.responsive_output.interrupt_for_input()
                                 else:
                                     self.playback.interrupt()
+                            elif interrupted:
+                                self.playback.interrupt()
                             LOG.info('Voice input call=%s stage=vad_start generation=%d interrupted=%s playback_bytes=%d audio_queue=%d text_queue=%d',
                                      self.call_id, self.playback.generation, interrupted, playback_bytes,
                                      self.turns.qsize(), self.recognized_turns.qsize())
                         queue_utterance(utterance, 'pcm_silence_or_limit')
+                        self._notify_input_changed()
                         if not gate.active:
                             last_loud = None
                 # Silence suppression can send no packets or sparse comfort
                 # noise. Measure elapsed time since actual loud PCM, rather
                 # than requiring a continuous stream of quiet PCM samples.
-                if (not self.failed and not self.input_lost and not self.closing
-                        and gate.active and last_loud is not None
+                if ((not self.failed or self.responsive_attachment_factory is not None)
+                        and not self.input_lost and not self.closing and gate.active and last_loud is not None
                         and now-last_loud >= silence_seconds):
                     utterance = gate.finish()
                     self.vad_active = False
+                    self._input_receivers.discard(receiver)
+                    if self.responsive_attachment_factory is not None:
+                        self.vad_active = bool(self._input_receivers)
                     queue_utterance(utterance, 'wall_silence')
+                    self._notify_input_changed()
                     summary('wall_silence')
                     last_loud = None
                 if now-last_report >= 10:
@@ -711,6 +782,10 @@ class NativeCall:
                             self.call_id, type(error).__name__, time.monotonic()-started, frames,
                             samples*1000//16000, vad_starts, queued, connection, ice)
         finally:
+            self._input_receivers.discard(receiver)
+            if self.responsive_attachment_factory is not None:
+                self.vad_active = bool(self._input_receivers)
+            self._notify_input_changed()
             if pending is not None:
                 pending.cancel()
                 await asyncio.gather(pending, return_exceptions=True)
@@ -718,6 +793,7 @@ class NativeCall:
                 detector.close()
             summary('closed')
             self.microphones.discard(track)
+            self._notify_input_changed()
             if receive_failed and not self.closed and not self.closing and not self.microphones and not self.input_lost:
                 if not self.input_loss_task or self.input_loss_task.done():
                     self.input_loss_task = self.spawn(self.finish_input_loss())
@@ -725,10 +801,13 @@ class NativeCall:
     async def recognize_turns(self):
         """Recognize accepted audio independently; never submit backend requests."""
         while not self.closed and not self.failed and not self.input_lost and not self.closing:
-            generation, pcm = await self.turns.get()
+            audio = await self.turns.get()
+            generation, pcm = audio
+            origin = getattr(audio, "input_epoch", 0)
             started = time.monotonic()
             try:
                 self.recognition_active = True
+                self._notify_input_changed()
                 text = await self.speech.transcribe(pcm)
                 if self.closed or self.failed or self.input_lost or self.closing:
                     return
@@ -753,6 +832,8 @@ class NativeCall:
                 turn = (generation, text, self.turn_number, uuid.uuid4().hex, started)
                 if self.responsive_attachment_factory is None:
                     self.transcript(turn, 'user', text)
+                else:
+                    turn = _InputEnvelope(turn, origin)
                 try:
                     self.recognized_turns.put_nowait(turn)
                     if self.call_settings:
@@ -772,6 +853,7 @@ class NativeCall:
             finally:
                 self.recognition_active = False
                 self.turns.task_done()
+                self._notify_input_changed()
 
     def transcript(self, turn, role, content):
         _, _, number, turn_id, started = turn
@@ -781,7 +863,11 @@ class NativeCall:
 
     async def report_backend_failure(self):
         self.failed = True
-        self.playback.interrupt()
+        self._notify_input_changed()
+        if self.responsive_output is not None:
+            self.responsive_output.interrupt()
+        else:
+            self.playback.interrupt()
         if self.asr_task:
             self.asr_task.cancel()
             await asyncio.gather(self.asr_task, return_exceptions=True)
@@ -896,16 +982,19 @@ class NativeCall:
             self.dialog.record_greeting(event['text'])
             self._responsive_fallbacks.discard(event['utterance_id'])
 
-    async def responsive_notice(self, text, code='', *, kind='local_reply', wait=False, fallback=False):
+    async def responsive_notice(self, text, code='', *, kind='local_reply', wait=False, fallback=False,
+                                output_validity=None, _terminal_failure=False):
         utterance_id = uuid.uuid4().hex
         if code:
             self._responsive_codes[utterance_id] = code
         if fallback:
             self._responsive_fallbacks.add(utterance_id)
-        await self.responsive_output.publish(dict(kind=kind, task_id='', operation_id='',
-            utterance_id=utterance_id, context_version=0, text=text, priority=-10))
-        if wait:
-            await self.responsive_output.wait_idle()
+        if _terminal_failure and code != 'CONNECTION_FAILED':
+            raise ValueError('invalid terminal control')
+        validity = (self._terminal_control_guard(self._input_epoch) if _terminal_failure else
+                    output_validity if output_validity is not None else self._input_guard(self._input_epoch))
+        await self.responsive_output.publish_control(dict(kind=kind, task_id='', operation_id='',
+            utterance_id=utterance_id, context_version=0, text=text, priority=-10), validity, wait=wait)
         # An interrupted queued notice may never reach its transcript callback.
         if wait:
             self._responsive_codes.pop(utterance_id, None)
@@ -933,7 +1022,6 @@ class NativeCall:
                     and (self.config.greeting or selection)):
                 greetings = [' '.join(part for part in (self.config.greeting, selection) if part)]
                 fallback = True
-            await self.responsive_output.wait_idle()
             for greeting in greetings:
                 attachment = self.responsive_attachment
                 tasks = attachment.coordinator.snapshot(attachment.scope.scope_id)
@@ -949,15 +1037,18 @@ class NativeCall:
             raise
         except Exception as error:
             LOG.warning('Voice responsive call=%s stage=startup_failed type=%s', self.call_id, type(error).__name__)
+            self._responsive_failure_feedback = True
             self.failed = True
+            self._notify_input_changed()
             greeted.set()
             self.responsive_output.interrupt()
             await self.responsive_notice(
                 'Die Verbindung ist nicht bereit. Vorgemerkte Anfragen wurden nicht übermittelt. '
-                'Bitte beenden Sie den Anruf.', 'CONNECTION_FAILED')
+                'Bitte beenden Sie den Anruf.', 'CONNECTION_FAILED', wait=True, _terminal_failure=True)
             self.input_ended.set()
             self.drain_queue(self.recognized_turns)
             self.recognized_turns.put_nowait(None)
+            self._notify_input_changed()
 
     async def process_responsive_turns(self):
         from contextlib import aclosing
@@ -975,7 +1066,8 @@ class NativeCall:
                     call.synthesis_active = False
         self.responsive_output = OutputArbiter(ActiveSpeech(), self.playback,
             self.responsive_transcript,
-            lambda: not (self.closed or self.closing or self.input_lost))
+            lambda: not (self.closed or self.closing or self.input_lost),
+            input_ready=self._input_ready, control_ready=self._control_ready)
         ready, greeted, language_ready = asyncio.Event(), asyncio.Event(), asyncio.Event()
         if not self.language_selection_pending:
             language_ready.set()
@@ -988,6 +1080,10 @@ class NativeCall:
             startup = self.spawn(self.responsive_startup(ready, greeted, language_ready))
             while not self.closed and not self.failed and not self.input_lost and not self.closing:
                 turn = await self.wait_for_user_turn()
+                origin = getattr(turn, "input_epoch", 0)
+                output_validity = self._input_guard(origin)
+                self._input_turn_active = True
+                self._notify_input_changed()
                 try:
                     if turn is None or self.input_lost or self.closing or self.failed:
                         break
@@ -1000,9 +1096,10 @@ class NativeCall:
                         if self.failed or self.input_lost or self.closing:
                             break
                         if control[0] != 'selected' or not self.language_welcome_spoken:
-                            self.responsive_output.interrupt()
+                            self.responsive_output.interrupt_for_input()
                             await self.responsive_notice(control[1],
-                                'LANGUAGE_SELECTED' if control[0] == 'selected' else 'LANGUAGE_SELECTION_RETRY', wait=True)
+                                'LANGUAGE_SELECTED' if control[0] == 'selected' else 'LANGUAGE_SELECTION_RETRY', wait=True,
+                                output_validity=output_validity)
                         if control[0] == 'selected':
                             self.language_welcome_spoken = True
                             language_ready.set()
@@ -1012,29 +1109,49 @@ class NativeCall:
                         canonical = ({'language':context['requester_session_language'],
                                       'assistant_id':context['voice_assistant'],
                                       'profile':context['global_context_profile']} if context is not None else None)
-                        await self.responsive_attachment.accept(utterance_id, text, voice_context=canonical)
+                        self._acceptance_active += 1
+                        self._notify_input_changed()
+                        try:
+                            guarded = getattr(self.responsive_attachment, 'accept_guarded', None)
+                            if callable(guarded):
+                                await guarded(utterance_id, text, voice_context=canonical,
+                                              output_validity=output_validity)
+                            else:
+                                await self.responsive_attachment.accept(utterance_id, text, voice_context=canonical)
+                        finally:
+                            self._acceptance_active -= 1
+                            self._notify_input_changed()
                     except Exception as error:
                         self._responsive_turns.pop(utterance_id, None)
                         LOG.warning('Voice responsive call=%s stage=not_accepted type=%s', self.call_id, type(error).__name__)
                         await self.responsive_notice(
                             'Ihre letzte Antwort wurde nicht angenommen oder weitergeleitet. '
-                            'Bitte fragen Sie nach dem Status und wiederholen Sie sie erst danach.', 'NOT_ACCEPTED')
+                            'Bitte fragen Sie nach dem Status und wiederholen Sie sie erst danach.', 'NOT_ACCEPTED',
+                            output_validity=output_validity)
                     else:
                         # Persisted business acceptance must precede its user transcript.
                         self.transcript(turn, 'user', text)
                 finally:
+                    self._input_turn_active = False
                     self.recognized_turns.task_done()
+                    self._notify_input_changed()
         except asyncio.CancelledError:
             raise
         except Exception as error:
             LOG.warning('Voice responsive call=%s stage=unavailable type=%s', self.call_id, type(error).__name__)
             self.failed = True
+            self._notify_input_changed()
+            self.responsive_output.interrupt()
             self.notice('UNAVAILABLE', 'Der Sprachdienst ist derzeit belegt. Bitte versuchen Sie es später erneut '
                         'oder wenden Sie sich an den Support, falls der Zustand bestehen bleibt.')
             self.input_ended.set()
         finally:
             if startup is not None:
-                startup.cancel()
+                # A natural failed-intake exit must not erase the explicit
+                # failure explanation. Terminal loss/close still cancels it.
+                if (not self._responsive_failure_feedback or self.closed or self.closing or self.input_lost
+                        or asyncio.current_task().cancelling()):
+                    startup.cancel()
                 await asyncio.gather(startup, return_exceptions=True)
             if self.responsive_attachment is not None:
                 await self.responsive_attachment.detach()
@@ -1214,6 +1331,9 @@ class NativeCall:
     async def close(self):
         if self.close_task is None:
             self.closing = True
+            self._notify_input_changed()
+            if self.responsive_output is not None:
+                self.responsive_output.interrupt()
             # Outside self.tasks: cleanup must never cancel/gather itself.
             self.close_task = asyncio.create_task(self.finish_close())
         await asyncio.shield(self.close_task)
@@ -1233,6 +1353,7 @@ class NativeCall:
             await asyncio.gather(*tasks, return_exceptions=True)
             self.drain_queue(self.turns)
             self.drain_queue(self.recognized_turns)
+            self._notify_input_changed()
             self.turn_contexts.clear()
             self.turn_controls.clear()
             try:

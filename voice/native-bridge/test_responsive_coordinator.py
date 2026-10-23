@@ -556,6 +556,55 @@ class CoordinatorTest(unittest.IsolatedAsyncioTestCase):
         self.assertIn('Letzte Antwort: Current progress', status)
         self.assertTrue(self.store.has_unresolved())
 
+    async def test_guarded_plain_emitter_suppresses_speech_without_changing_acceptance(self):
+        from conversation_output import FIELDS
+        decision = await self.attachment.accept_guarded('guarded', 'new exact original', output_validity=lambda: False)
+        await self.dialog.started.wait()
+        self.assertTrue(decision.durable_acceptance)
+        self.assertEqual(self.store.operations('scope')[0]['text'], 'new exact original')
+        self.assertEqual(self.events, [])
+        delivered = asyncio.Event()
+        emit = self.attachment.emit
+        async def marked(event):
+            await emit(event)
+            delivered.set()
+        self.attachment.emit = marked
+        await self.attachment.accept_guarded('current', 'status', output_validity=lambda: True)
+        await asyncio.wait_for(delivered.wait(), 1)
+        self.assertEqual(set(self.events[-1]), FIELDS)
+        self.assertEqual(len(self.dialog.calls), 1)
+
+    async def test_input_guard_is_combined_with_help_guard_and_bound_per_entry(self):
+        self.coordinator.router = ConversationRouter()
+        await self.attachment.note_question('An welchem Datum?')
+        guards, events = [], []
+        delivered = asyncio.Event()
+        class Sink:
+            def interrupt(self): pass
+            async def __call__(self, event): events.append(event)
+            async def publish_guarded(self, event, validity):
+                events.append(event)
+                guards.append(validity)
+                delivered.set()
+        self.attachment.emit = Sink()
+        valid = True
+        await self.attachment.accept_guarded('help', 'Wiederhole die Frage', output_validity=lambda: valid)
+        await delivered.wait()
+        self.assertTrue(guards[0]())
+        valid = False
+        self.assertFalse(guards[0]())
+        valid = True
+        task = self.store.list_tasks('scope')[0]
+        self.store.note_question(task['task_id'], 'scope', 'An welchen Ort?', source='backend')
+        self.assertFalse(guards[0]())
+        delivered.clear()
+        await self.attachment.accept_guarded('help2', 'Wiederhole die Frage', output_validity=lambda: True)
+        await delivered.wait()
+        self.assertTrue(guards[1]())
+        self.assertFalse(guards[0]())
+        from conversation_output import FIELDS
+        self.assertTrue(all(set(event) == FIELDS for event in events))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -15,11 +15,14 @@ FIELDS = frozenset({'kind', 'task_id', 'operation_id', 'utterance_id', 'context_
 KINDS = frozenset({'local_reply', 'backend_reply', 'task_state', 'error'})
 
 
-@dataclass(frozen=True)
+@dataclass(eq=False)
 class _QueuedOutput:
     event: object
-    generation: int
+    generation: object
     validity: object = None
+    disposition: str = "transient"
+    completion: object = None
+    started: bool = False
 
 
 class OutputSink:
@@ -29,6 +32,12 @@ class OutputSink:
 
     def interrupt(self):
         self.arbiter.interrupt()
+
+    def interrupt_for_input(self):
+        self.arbiter.interrupt_for_input()
+
+    async def publish_deferred(self, event, validity):
+        return await self.arbiter.publish_deferred(event, validity)
 
     async def __call__(self, event):
         return await self.arbiter.publish(event)
@@ -49,9 +58,11 @@ def validate_event(event):
 
 
 class OutputArbiter:
-    def __init__(self, speech, playback, emit_transcript, is_live):
+    def __init__(self, speech, playback, emit_transcript, is_live, *, input_ready=None, control_ready=None):
         self.speech, self.playback = speech, playback
         self.emit_transcript, self.is_live = emit_transcript, is_live
+        self.input_ready = input_ready or (lambda: True)
+        self.control_ready = control_ready or (lambda: True)
         self._pending = []
         self._wake = asyncio.Event()
         self._idle = asyncio.Event()
@@ -68,13 +79,34 @@ class OutputArbiter:
     def pending_count(self):
         return len(self._pending)
 
+    @staticmethod
+    def _complete(entry):
+        if entry.completion is not None and not entry.completion.done():
+            entry.completion.set_result(None)
+
+    def notify_input_changed(self):
+        self._wake.set()
+
+    def interrupt_for_input(self):
+        self._interrupt(preserve_deferred=True)
+
     def interrupt(self):
+        self._interrupt()
+
+    def _interrupt(self, *, preserve_deferred=False):
         self.playback.interrupt()
         if self._active is not None and not self._active.done():
             self._active.cancel()
-        self.suppressed_count += len(self._pending)
-        self._pending.clear()
-        if self._active is None:
+        retained = []
+        for entry in self._pending:
+            if preserve_deferred and entry.disposition == 'deferred' and not entry.started:
+                retained.append(entry)
+            else:
+                self.suppressed_count += 1
+                self._complete(entry)
+        self._pending[:] = retained
+        self._wake.set()
+        if not self._pending and self._active is None:
             self._idle.set()
 
     async def wait_idle(self):
@@ -89,26 +121,42 @@ class OutputArbiter:
             raise ValueError('invalid output validity')
         return await self._publish(event, validity)
 
-    async def _publish(self, event, validity):
+    async def publish_deferred(self, event, validity):
+        if not callable(validity):
+            raise ValueError('invalid output validity')
+        return await self._publish(event, validity, disposition='deferred')
+
+    async def publish_control(self, event, validity=None, *, wait=False):
+        completion = asyncio.get_running_loop().create_future() if wait else None
+        accepted = await self._publish(event, validity, disposition='control', completion=completion)
+        if accepted and completion is not None:
+            await asyncio.shield(completion)
+        return accepted
+
+    async def _publish(self, event, validity, *, disposition='transient', completion=None):
         validate_event(event)
+        entry = _QueuedOutput(MappingProxyType(dict(event)),
+            None if disposition == 'deferred' else self.playback.generation, validity, disposition, completion)
         if self._closed or not self.is_live() or not self._valid(validity):
+            self._complete(entry)
             return False
         task = event['task_id']
         version = event['context_version']
         if task and version < self._versions.get(task, 0):
             self.suppressed_count += 1
+            self._complete(entry)
             return False
         if task:
             self._versions[task] = version
-        entry = _QueuedOutput(MappingProxyType(dict(event)), self.playback.generation, validity)
         if len(self._pending) >= 8:
             self.suppressed_count += 1
             worst = max(range(len(self._pending)), key=lambda i: self._pending[i].event['priority'])
             if event['priority'] < self._pending[worst].event['priority']:
-                self._pending.pop(worst)
+                self._complete(self._pending.pop(worst))
             else:
                 self._overflow_reported = True
                 self._wake.set()
+                self._complete(entry)
                 return False
             self._overflow_reported = True
         self._pending.append(entry)
@@ -135,22 +183,47 @@ class OutputArbiter:
                 and event['context_version'] >= self._versions.get(event['task_id'], 0)
                 and self._valid(validity))
 
-    async def _speak(self, event, generation, validity=None):
-        if not self._current(event, generation, validity):
+    def _eligible(self, entry):
+        return (not self._closed and self.is_live() and self._valid(entry.validity)
+                and (entry.generation is None or entry.generation == self.playback.generation)
+                and entry.event['context_version'] >= self._versions.get(entry.event['task_id'], 0))
+
+    def _ready(self, entry):
+        return self._valid(self.control_ready if entry.disposition == 'control' else self.input_ready)
+
+    async def _speak(self, entry):
+        # Reservation remains inside the bounded queue until this atomic claim.
+        # Input interruption before this coroutine runs retains deferred work.
+        if entry not in self._pending:
+            return
+        if not self._eligible(entry):
+            self._pending.remove(entry)
             self.suppressed_count += 1
+            self._complete(entry)
+            return
+        if not self._ready(entry):
+            return
+        self._pending.remove(entry)
+        entry.started = True
+        if entry.generation is None:
+            entry.generation = self.playback.generation
+        event, generation, validity = entry.event, entry.generation, entry.validity
+        def current():
+            return self._current(event, generation, validity) and self._ready(entry)
+        if not current():
             return
         await self._transcript(event)
-        if not self._current(event, generation, validity):
+        if not current():
             self.suppressed_count += 1
             return
         async with aclosing(self.speech.synthesize(event['text'])) as chunks:
             async for chunk in chunks:
                 self.generated_bytes += len(chunk)
-                if not self._current(event, generation, validity):
+                if not current():
                     break
-                while len(self.playback.data) > 48000 and self._current(event, generation, validity):
+                while len(self.playback.data) > 48000 and current():
                     await asyncio.sleep(.01)
-                if self._current(event, generation, validity) and self.playback.put(chunk, generation):
+                if current() and self.playback.put(chunk, generation):
                     self.sent_bytes += len(chunk)
 
     async def _run(self):
@@ -158,28 +231,33 @@ class OutputArbiter:
             await self._wake.wait()
             self._wake.clear()
             while self._pending and not self._closed:
-                entry = self._pending.pop(0)
-                event, generation, validity = entry.event, entry.generation, entry.validity
-                if not self._current(event, generation, validity):
-                    self.suppressed_count += 1
-                    continue
+                for entry in tuple(self._pending):
+                    if not self._eligible(entry):
+                        self._pending.remove(entry)
+                        self.suppressed_count += 1
+                        self._complete(entry)
+                entry = next((item for item in self._pending if self._ready(item)), None)
+                if entry is None:
+                    break
                 try:
-                    self._active = asyncio.create_task(self._speak(event, generation, validity))
+                    self._active = asyncio.create_task(self._speak(entry))
                     await self._active
                 except asyncio.CancelledError:
                     if self._closed:
                         raise
                 except Exception:
-                    if not self._audio_failed and self._current(event, generation, validity):
+                    if not self._audio_failed and self._eligible(entry) and self._ready(entry):
                         self._audio_failed = True
                         try:
-                            await self._transcript(dict(event, kind='error', priority=0,
+                            await self._transcript(dict(entry.event, kind='error', priority=0,
                                 text='Die Audioausgabe ist fehlgeschlagen. Der Auftrag wird weiter beobachtet.'))
                         except Exception:
                             pass
                 finally:
+                    if entry.started or entry not in self._pending:
+                        self._complete(entry)
                     self._active = None
-            if self._overflow_reported:
+            if self._overflow_reported and self._valid(self.input_ready):
                 self._overflow_reported = False
                 try:
                     await self._transcript(dict(kind='error', task_id='', operation_id='', utterance_id='',
