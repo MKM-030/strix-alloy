@@ -251,6 +251,71 @@ class ResponsiveStoreTest(unittest.TestCase):
         self.assertEqual(self.store.pending(self.scope.scope_id), [])
         self.assertEqual([event["type"] for event in self.store.events(task["task_id"], self.scope.scope_id)], ["task_created"])
 
+    def test_cancel_pending_is_atomic_idempotent_and_binding_checked(self):
+        operation = self.accepted()
+        task_id = operation['task_id']
+        result = self.store.cancel_pending(task_id, self.scope.scope_id, 'cancel-1', text='Cancel')
+        self.assertEqual(result['state'], 'cancelled')
+        events = self.store.events(task_id, self.scope.scope_id)
+        self.store.cancel_pending(task_id, self.scope.scope_id, 'cancel-1', text='Cancel')
+        self.assertEqual(self.store.events(task_id, self.scope.scope_id), events)
+        with self.assertRaises(StoreConflict):
+            self.store.cancel_pending(task_id, self.scope.scope_id, 'cancel-1', text='Changed')
+        self.assertEqual(self.store.pending(self.scope.scope_id), [])
+        with self.assertRaises(StoreConflict):
+            self.store.dispatch(operation['operation_id'])
+
+    def test_cancel_submitted_preserved_across_legacy_settlement(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        pending = self.accepted(task=self.store.get_task(operation['task_id'], self.scope.scope_id), utterance='second')
+        self.store.cancel_pending(operation['task_id'], self.scope.scope_id, 'cancel', text='Stop')
+        result = self.store.settle(operation['operation_id'], replies=['Your name?'])
+        self.assertEqual(result['state'], 'cancel_requested')
+        self.assertEqual(result['open_question'], 'Your name?')
+        self.assertEqual(self.store.pending(self.scope.scope_id), [])
+        with self.assertRaises(StoreConflict):
+            self.store.dispatch(pending['operation_id'])
+
+    def test_settlement_persists_latest_question_and_clears_on_final(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        result = self.store.settle(operation['operation_id'], replies=['Hello', 'Your name?'])
+        self.assertEqual(result['open_question'], 'Your name?')
+        operation = self.accepted(task=result, utterance='answer')
+        self.store.dispatch(operation['operation_id'])
+        result = self.store.settle(operation['operation_id'], replies=['Done'], outcome='succeeded')
+        self.assertIsNone(result['open_question'])
+
+    def test_legacy_cannot_claim_authoritative_cancellation(self):
+        operation = self.accepted()
+        self.store.dispatch(operation['operation_id'])
+        with self.assertRaises(StoreDenied):
+            self.store.settle(operation['operation_id'], replies=['Cancelled'], outcome='cancelled',
+                              evidence={'authoritative': True})
+        self.assertTrue(self.store.has_unresolved())
+
+    def test_cancel_event_failure_rolls_back_all_changes(self):
+        operation = self.accepted()
+        connection = sqlite3.connect(self.path)
+        connection.execute("CREATE TRIGGER abort_cancel BEFORE INSERT ON events WHEN NEW.type='cancel_pending' BEGIN SELECT RAISE(ABORT,'synthetic disk failure'); END")
+        connection.commit()
+        connection.close()
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.store.cancel_pending(operation['task_id'], 'scope-1', 'cancel', text='Stop')
+        self.assertEqual(self.store.get_task(operation['task_id'], 'scope-1')['state'], 'queued')
+        self.assertEqual(len(self.store.pending('scope-1')), 1)
+
+    def test_question_binding_survives_reopen_and_clears_on_answer(self):
+        task = self.task()
+        self.store.note_question(task['task_id'], 'scope-1', 'Your name?', source='greeting')
+        self.store.close()
+        self.store = TaskStore(self.path)
+        self.assertEqual(self.store.question('scope-1')['source'], 'greeting')
+        self.assertEqual(self.store.question('scope-1')['task_id'], task['task_id'])
+        self.accepted(task=task)
+        self.assertIsNone(self.store.question('scope-1'))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -35,6 +35,25 @@ class FakeModel:
 
 
 class RouterTest(unittest.IsolatedAsyncioTestCase):
+    async def test_explicit_registered_agent_overrides_other_focus(self):
+        laptop = Agent('laptop', 'a', 'r', {'continue_task': True}, name='Laptop')
+        wlan = Agent('wlan', 'b', 'r', {'continue_task': True}, name='WLAN')
+        tasks = [dict(task('t1'), agent_alias='laptop'), dict(task('t2'), agent_alias='wlan')]
+        context = RoutingContext('scope-1', tasks, focus_task_id='t2', agents=[laptop, wlan])
+        for text in ('Wie ist der Stand des Laptop?', 'Storniere Laptop'):
+            self.assertEqual((await ConversationRouter().route(text, context)).task_id, 't1')
+        for text in ('Status Laptop und WLAN', 'Status t10 Laptop'):
+            self.assertEqual((await ConversationRouter().route(text, context)).intent, 'clarification')
+
+    async def test_running_question_binding_survives_different_focus(self):
+        context = RoutingContext('scope-1', [task('t1', 'running'), task('t2')], focus_task_id='t2',
+                                 question_task_id='t1', last_question='Ihr Name?')
+        for text in ('Ja', 'Nein', 'Marcel Muster'):
+            result = await ConversationRouter().route(text, context)
+            self.assertEqual((result.intent, result.task_id), ('continue_task', 't1'))
+        with self.assertRaises(StoreInvalid):
+            RoutingContext('scope-1', [task()], question_task_id='other')
+
     async def test_german_audio_stop_is_distinct_from_business_cancel(self):
         model = FakeModel({"intent": "cancel_task", "task_id": "t1", "agent_alias": "", "reply": ""})
         router = ConversationRouter(model)

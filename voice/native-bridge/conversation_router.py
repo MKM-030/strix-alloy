@@ -39,6 +39,7 @@ class RoutingContext:
     focus_task_id: str = ""
     last_question: str = ""
     agents: list[Agent] = field(default_factory=list)
+    question_task_id: str = ""
 
     def __post_init__(self):
         bounded_identifier(self.scope_id)
@@ -55,6 +56,9 @@ class RoutingContext:
             ids.add(task_id)
         if self.focus_task_id and self.focus_task_id not in ids:
             raise StoreInvalid("invalid focus task")
+        bounded_identifier(self.question_task_id, optional=True)
+        if self.question_task_id and self.question_task_id not in ids:
+            raise StoreInvalid('invalid question task')
         if not isinstance(self.last_question, str) or len(self.last_question) > 400:
             raise StoreInvalid("invalid last question")
         if not isinstance(self.agents, list) or len(self.agents) > 16 or any(not isinstance(a, Agent) for a in self.agents):
@@ -72,12 +76,14 @@ class RoutingContext:
                 value = task.get(key)
                 if isinstance(value, str):
                     item[key] = value[:limit]
+            item['pending_delivery'] = task.get('pending_delivery') is True
             tasks.append(item)
         data = {
             "scope_id": self.scope_id,
             "tasks": tasks,
             "focus_task_id": self.focus_task_id,
             "last_question": self.last_question,
+            "question_task_id": self.question_task_id,
             "agents": [{"alias": a.alias, "name": a.name, "description": a.description,
                         "supported_intents": list(a.supported_intents)} for a in self.agents],
         }
@@ -236,6 +242,14 @@ class ConversationRouter:
             referenced.update(re.findall(pattern, text, re.IGNORECASE))
         if any(candidate.casefold() not in {task_id.casefold() for task_id in known} for candidate in referenced):
             return ""
+        mentioned = [agent for agent in context.agents if any(
+            label and re.search(r'(?<![\w-])' + re.escape(label) + r'(?![\w-])', text, re.IGNORECASE)
+            for label in (agent.alias, agent.name))]
+        if mentioned:
+            targets = {task['task_id'] for task in context.tasks if task.get('agent_alias') in {a.alias for a in mentioned}}
+            if len(mentioned) != 1 or len(targets) != 1 or (matches and set(matches) != targets):
+                return ''
+            return next(iter(targets))
         if matches:
             return matches[0] if len(matches) == 1 else ""
         if referenced:
@@ -268,8 +282,12 @@ class ConversationRouter:
             return Route("cancel_task", target) if target else self._clarify()
         is_answer = bool(re.fullmatch(r"(?:ja|nein|j[aä]|nee)[.!?]?", folded))
         is_name = bool(re.fullmatch(r"[A-ZÄÖÜ][a-zäöüß]+(?: [A-ZÄÖÜ][a-zäöüß]+){1,2}", text))
-        waiting = [task for task in context.tasks if task.get("state") == "awaiting_input"]
+        waiting = [task for task in context.tasks if task.get("state") == "awaiting_input" and not task.get('pending_delivery')]
         name_question = len(waiting) == 1 and "name" in (str(waiting[0].get("open_question") or "") + " " + context.last_question).casefold()
+        bound = next((task for task in context.tasks if task['task_id'] == context.question_task_id), None)
+        if bound and bound.get('state') not in ('cancel_requested', 'cancelled', 'succeeded', 'failed', 'outcome_unknown'):
+            if is_answer or (is_name and 'name' in (context.last_question + ' ' + str(bound.get('open_question') or '')).casefold()):
+                return Route('continue_task', bound['task_id'])
         if is_answer or (is_name and name_question):
             if len(waiting) == 1:
                 return Route("continue_task", waiting[0]["task_id"])

@@ -124,6 +124,15 @@ class TaskStore:
                 payload TEXT NOT NULL, source TEXT NOT NULL, fingerprint TEXT NOT NULL
             );
             CREATE INDEX IF NOT EXISTS events_task_seq ON events(task_id, sequence);
+            CREATE TABLE IF NOT EXISTS commands (
+                command_id TEXT PRIMARY KEY, task_id TEXT NOT NULL REFERENCES tasks(task_id),
+                scope_id TEXT NOT NULL, text TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS scope_questions (
+                scope_id TEXT PRIMARY KEY REFERENCES scopes(scope_id),
+                task_id TEXT NOT NULL REFERENCES tasks(task_id), text TEXT NOT NULL,
+                source TEXT NOT NULL, context_version INTEGER NOT NULL
+            );
         """)
 
     def close(self):
@@ -135,14 +144,18 @@ class TaskStore:
     @contextmanager
     def _transaction(self):
         with self._lock:
-            self._db.execute("BEGIN IMMEDIATE")
+            nested = self._db.in_transaction
+            savepoint = 'nested_' + uuid.uuid4().hex
+            self._db.execute('SAVEPOINT ' + savepoint if nested else "BEGIN IMMEDIATE")
             try:
                 yield
             except BaseException:
-                self._db.execute("ROLLBACK")
+                self._db.execute('ROLLBACK TO ' + savepoint if nested else "ROLLBACK")
+                if nested:
+                    self._db.execute('RELEASE ' + savepoint)
                 raise
             else:
-                self._db.execute("COMMIT")
+                self._db.execute('RELEASE ' + savepoint if nested else "COMMIT")
 
     def _event(self, task_id, operation_id, event_type, context_version, payload, source="store", event_id=None):
         encoded = _validate_json(payload)
@@ -238,6 +251,8 @@ class TaskStore:
         encoded_context = _validate_json(context, limit=512)
         with self._transaction():
             task = self._task_row(task_id, scope_id)
+            if self._db.execute('SELECT 1 FROM commands WHERE command_id=?', (utterance_id,)).fetchone():
+                raise StoreConflict('utterance identity conflict')
             if "assistant_id" in context:
                 bound_assistant = self._db.execute("SELECT assistant_id FROM scopes WHERE scope_id=?", (scope_id,)).fetchone()[0]
                 if context["assistant_id"] != bound_assistant:
@@ -252,9 +267,9 @@ class TaskStore:
             attached = self._db.execute("SELECT attached FROM scopes WHERE scope_id=?", (scope_id,)).fetchone()[0]
             if not attached:
                 raise StoreDenied("scope detached")
-            if task["state"] in ("succeeded", "failed", "cancelled", "outcome_unknown"):
+            if task["state"] in ("succeeded", "failed", "cancelled", "cancel_requested", "outcome_unknown"):
                 raise StoreConflict("task is terminal")
-            if self._db.execute("SELECT COUNT(*) FROM operations o JOIN tasks t ON t.task_id=o.task_id WHERE t.scope_id=? AND o.dispatch_state IN ('unsubmitted','submitted','unknown')", (scope_id,)).fetchone()[0] >= 32:
+            if self._db.execute("SELECT COUNT(*) FROM operations o JOIN tasks t ON t.task_id=o.task_id WHERE t.scope_id=? AND o.dispatch_state IN ('unsubmitted','submitted','suspended','unknown')", (scope_id,)).fetchone()[0] >= 32:
                 raise StoreCapacity("pending capacity reached")
             version = task["context_version"] + 1
             operation_id = _new_id()
@@ -266,7 +281,79 @@ class TaskStore:
                 (operation_id, task_id, utterance_id, version, kind, text, encoded_context, payload, "unsubmitted", now),
             )
             self._event(task_id, operation_id, "utterance_accepted", version, {"kind": kind, "text": text})
+            self._db.execute('DELETE FROM scope_questions WHERE scope_id=? AND task_id=?', (scope_id, task_id))
+            self._db.execute('UPDATE tasks SET open_question=NULL WHERE task_id=?', (task_id,))
             return self._operation_snapshot(self._db.execute("SELECT * FROM operations WHERE operation_id=?", (operation_id,)).fetchone())
+
+    def accept_new_task(self, scope, agent, utterance_id, text, *, voice_context=None):
+        """Create workflow and its first durable utterance in one transaction."""
+        with self._transaction():
+            prior = self._db.execute('SELECT * FROM operations WHERE utterance_id=?', (utterance_id,)).fetchone()
+            if prior:
+                task = self._task_row(prior['task_id'], scope.scope_id)
+                if (task['agent_alias'], task['agent_id'], task['registry_revision']) != (agent.alias, agent.agent_id, agent.revision):
+                    raise StoreConflict('agent binding conflict')
+            else:
+                task = self.create_task(scope, agent, text)
+            return self.accept(task['task_id'], scope.scope_id, utterance_id, text, kind='new_task', voice_context=voice_context)
+
+    def note_question(self, task_id, scope_id, text, *, source, context_version=None):
+        if not isinstance(text, str) or not text or len(text) > 4000 or source not in ('backend', 'greeting'):
+            raise StoreInvalid('invalid question')
+        with self._transaction():
+            task = self._task_row(task_id, scope_id)
+            if not self._task_snapshot(task)['attached']:
+                raise StoreDenied('scope detached')
+            if task['state'] in ('cancel_requested', 'cancelled', 'succeeded', 'failed', 'outcome_unknown'):
+                raise StoreConflict('task cannot accept a question')
+            if context_version is not None and task['context_version'] != context_version:
+                return False
+            self._db.execute('INSERT OR REPLACE INTO scope_questions VALUES(?,?,?,?,?)',
+                             (scope_id, task_id, text, source, task['context_version']))
+            self._db.execute('UPDATE tasks SET open_question=? WHERE task_id=?', (text, task_id))
+            self._event(task_id, None, 'question_noted', task['context_version'], {'text': text, 'source': source})
+            return True
+
+    def question(self, scope_id):
+        bounded_identifier(scope_id)
+        with self._lock:
+            row = self._db.execute('SELECT q.* FROM scope_questions q JOIN scopes s ON s.scope_id=q.scope_id WHERE q.scope_id=? AND s.attached=1', (scope_id,)).fetchone()
+            return dict(row) if row else None
+
+    def operations(self, scope_id: str) -> list[dict]:
+        """Operator/coordinator-private scope-filtered history, including suspended work."""
+        bounded_identifier(scope_id)
+        with self._lock:
+            rows = self._db.execute("SELECT o.* FROM operations o JOIN tasks t ON t.task_id=o.task_id WHERE t.scope_id=? ORDER BY o.rowid", (scope_id,)).fetchall()
+            return [self._operation_snapshot(row) for row in rows]
+
+    def cancel_pending(self, task_id, scope_id, command_id, *, text):
+        bounded_identifier(command_id)
+        if not isinstance(text, str) or not text or len(text) > 4000:
+            raise StoreInvalid("invalid command")
+        with self._transaction():
+            task = self._task_row(task_id, scope_id)
+            prior = self._db.execute("SELECT * FROM commands WHERE command_id=?", (command_id,)).fetchone()
+            if prior:
+                if (prior['task_id'], prior['scope_id'], prior['text']) != (task_id, scope_id, text):
+                    raise StoreConflict("command identity conflict")
+                return self._task_snapshot(task)
+            if self._db.execute("SELECT 1 FROM operations WHERE utterance_id=?", (command_id,)).fetchone():
+                raise StoreConflict("command identity conflict")
+            if not self._db.execute("SELECT attached FROM scopes WHERE scope_id=?", (scope_id,)).fetchone()[0]:
+                raise StoreDenied("scope detached")
+            if task['state'] in ('succeeded', 'failed', 'cancelled', 'outcome_unknown'):
+                raise StoreConflict("task is terminal")
+            dispatched = self._db.execute("SELECT 1 FROM operations WHERE task_id=? AND submitted_at IS NOT NULL", (task_id,)).fetchone()
+            state = 'cancel_requested' if dispatched else 'cancelled'
+            operation_state = 'suspended' if dispatched else 'cancelled'
+            version = task['context_version'] + 1
+            self._db.execute("INSERT INTO commands VALUES(?,?,?,?)", (command_id, task_id, scope_id, text))
+            self._db.execute("UPDATE operations SET dispatch_state=? WHERE task_id=? AND dispatch_state='unsubmitted'", (operation_state, task_id))
+            self._db.execute("UPDATE tasks SET state=?,context_version=?,open_question=NULL,updated_at=? WHERE task_id=?", (state, version, _now(), task_id))
+            self._db.execute('DELETE FROM scope_questions WHERE scope_id=? AND task_id=?', (scope_id, task_id))
+            self._event(task_id, None, 'cancel_pending', version, {'command_id': command_id, 'text': text, 'state': state})
+            return self._task_snapshot(self._task_row(task_id, scope_id))
 
     def pending(self, scope_id: str) -> list[dict]:
         bounded_identifier(scope_id)
@@ -282,11 +369,11 @@ class TaskStore:
             row = self._db.execute("SELECT o.*,t.scope_id,t.state FROM operations o JOIN tasks t ON t.task_id=o.task_id WHERE o.operation_id=?", (operation_id,)).fetchone()
             if row is None:
                 raise StoreDenied("operation unavailable")
-            if row["dispatch_state"] != "unsubmitted":
-                raise StoreConflict("operation already claimed")
             if not self._db.execute("SELECT attached FROM scopes WHERE scope_id=?", (row["scope_id"],)).fetchone()[0]:
                 raise StoreDenied("scope detached")
-            if row["state"] in ("succeeded", "failed", "cancelled", "outcome_unknown"):
+            if row["dispatch_state"] != "unsubmitted":
+                raise StoreConflict("operation already claimed")
+            if row["state"] in ("succeeded", "failed", "cancelled", "cancel_requested", "outcome_unknown"):
                 raise StoreConflict("task is terminal")
             if self._db.execute("SELECT 1 FROM operations WHERE dispatch_state IN ('submitted','unknown') LIMIT 1").fetchone():
                 raise StoreConflict("execution unresolved")
@@ -320,6 +407,10 @@ class TaskStore:
         bounded_identifier(operation_id)
         if outcome not in _TERMINAL_STATES or outcome == "outcome_unknown":
             raise StoreInvalid("invalid outcome")
+        if outcome == 'cancelled':
+            # No owned authoritative cancellation adapter exists in legacy mode.
+            # A payload Boolean must not manufacture that authority.
+            raise StoreDenied('authoritative cancellation unavailable')
         if not isinstance(replies, list) or len(replies) > 32 or any(not isinstance(reply, str) or len(reply) > 4000 for reply in replies):
             raise StoreInvalid("invalid replies")
         encoded_replies = _validate_json(replies)
@@ -339,7 +430,11 @@ class TaskStore:
                 raise StoreConflict("task is terminal")
             now = _now()
             self._db.execute("UPDATE operations SET dispatch_state='settled',replies=?,evidence=?,outcome=?,settled_at=? WHERE operation_id=?", (encoded_replies, encoded_evidence, outcome, now, operation_id))
-            self._db.execute("UPDATE tasks SET state=?,result_version=result_version+1,updated_at=? WHERE task_id=?", (outcome, now, row["task_id"]))
+            state = 'cancel_requested' if task['state'] == 'cancel_requested' and outcome == 'awaiting_input' else outcome
+            question = replies[-1] if outcome == 'awaiting_input' and replies else None
+            self._db.execute("UPDATE tasks SET state=?,open_question=?,result_version=result_version+1,updated_at=? WHERE task_id=?", (state, question, now, row["task_id"]))
+            if outcome != 'awaiting_input':
+                self._db.execute('DELETE FROM scope_questions WHERE task_id=?', (row['task_id'],))
             self._event(row["task_id"], operation_id, "operation_settled", row["context_version"], {"outcome": outcome, "replies": replies, "evidence": _decode(encoded_evidence)})
             return self._task_snapshot(self._db.execute("SELECT * FROM tasks WHERE task_id=?", (row["task_id"],)).fetchone())
 
@@ -356,13 +451,16 @@ class TaskStore:
                 raise StoreConflict("operation not submitted")
             now = _now()
             self._db.execute("UPDATE operations SET dispatch_state='unknown',reason_code=? WHERE operation_id=?", (reason_code, operation_id))
-            self._db.execute("UPDATE tasks SET state='outcome_unknown',updated_at=? WHERE task_id=?", (now, row["task_id"]))
+            self._db.execute("UPDATE tasks SET state='outcome_unknown',open_question=NULL,updated_at=? WHERE task_id=?", (now, row["task_id"]))
+            self._db.execute('DELETE FROM scope_questions WHERE task_id=?', (row['task_id'],))
             self._event(row["task_id"], operation_id, "outcome_unknown", row["context_version"], {"reason_code": reason_code})
 
     def detach_scope(self, scope_id: str) -> None:
         bounded_identifier(scope_id)
         with self._transaction():
             self._db.execute("UPDATE scopes SET attached=0 WHERE scope_id=?", (scope_id,))
+            self._db.execute('DELETE FROM scope_questions WHERE scope_id=?', (scope_id,))
+            self._db.execute("UPDATE operations SET dispatch_state='suspended' WHERE dispatch_state='unsubmitted' AND task_id IN (SELECT task_id FROM tasks WHERE scope_id=?)", (scope_id,))
 
     def recover(self) -> dict:
         with self._transaction():
@@ -370,7 +468,8 @@ class TaskStore:
             for row in rows:
                 now = _now()
                 self._db.execute("UPDATE operations SET dispatch_state='unknown',reason_code='process_restart' WHERE operation_id=?", (row["operation_id"],))
-                self._db.execute("UPDATE tasks SET state='outcome_unknown',updated_at=? WHERE task_id=?", (now, row["task_id"]))
+                self._db.execute("UPDATE tasks SET state='outcome_unknown',open_question=NULL,updated_at=? WHERE task_id=?", (now, row["task_id"]))
+                self._db.execute('DELETE FROM scope_questions WHERE task_id=?', (row['task_id'],))
                 self._event(row["task_id"], row["operation_id"], "outcome_unknown", row["context_version"], {"reason_code": "process_restart"})
             return {"unknown": len(rows)}
 
