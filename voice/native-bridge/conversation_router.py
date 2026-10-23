@@ -1,7 +1,6 @@
 """Scope-bound, bounded dialogue proposals; no business execution authority."""
 
 import asyncio
-import http.client
 import ipaddress
 import json
 import math
@@ -9,6 +8,8 @@ import time
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from urllib.parse import urlsplit
+
+from conversation_admission import AdmissionRequest, AdmissionUnavailable, prepare_frames, exchange
 
 from business_tasks import Agent, StoreInvalid, bounded_identifier
 from route_proposal import ProposalContract, RouteProposal, ProposalError, PRODUCTION_SYSTEM_PROMPT
@@ -170,65 +171,176 @@ class LoopbackConversationModel:
         RouteProposal.decode(data)
         return data
 
-    def _request(self, payload):
-        headers = {"Content-Type": "application/json", "Accept": "application/json"}
-        if self.token_file:
-            token = self.token_file.read_text(encoding="utf-8").strip()
-            if not token or len(token) > 4096 or "\r" in token or "\n" in token:
-                raise ValueError("invalid private conversation token")
-            headers["Authorization"] = "Bearer " + token
-        connection = http.client.HTTPConnection(self.host, self.port, timeout=self.timeout_seconds)
-        try:
-            connection.request("POST", self.path, body=payload, headers=headers)
-            response = connection.getresponse()
-            if response.status != 200:
-                raise ValueError("conversation endpoint error")
-            raw = response.read(_MAX_RESPONSE_BYTES + 1)
-            if len(raw) > _MAX_RESPONSE_BYTES:
-                raise ProposalError('bounds_rejected', bounds=False)
-            return raw
-        finally:
-            connection.close()
+    def _observe_admission(self, snapshot):
+        """Private immutable telemetry hook; no payload, socket, or send authority."""
+
+    def _exchange(self, request, owned, frame):
+        return exchange(request, owned, frame)
 
     async def classify(self, text, context):
-        return await self.classify_prepared(text, ProposalContract(context))
+        request = AdmissionRequest(self.timeout_seconds)
+        return (await self._run_request(request, text, context, prepared=False))[0]
 
     async def classify_prepared(self, text, contract):
-        # Prepared contract is private to this call, never mutable router state.
-        if not isinstance(text, str) or len(text) > 4000 or not text.strip():
-            raise ProposalError('bounds_rejected', bounds=False)
-        started = time.perf_counter()
-        result = await asyncio.wait_for(self._classify_prepared(text, contract), self.timeout_seconds)
-        if time.perf_counter() - started > self.timeout_seconds:
-            raise TimeoutError('conversation deadline')
-        return result
+        request = AdmissionRequest(self.timeout_seconds)
+        return (await self._run_request(request, text, contract, prepared=True))[0]
 
-    async def _classify_prepared(self, text, contract):
-        data = contract.model_data()
-        request = {"model": self.model, "messages": [
-            {"role": "system", "content": PRODUCTION_SYSTEM_PROMPT},
-            {"role": "user", "content": json.dumps({"utterance": text, "context": data}, ensure_ascii=False, separators=(",", ":"))}],
-            "temperature": 0, "max_tokens": 24,
-            "response_format": {"type": "json_schema", "json_schema": {
-                "name": "route", "strict": True,
-                "schema": contract.schema()}}}
-        payload = json.dumps(request, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-        if len(payload) > _MAX_REQUEST_BYTES:
-            raise ContextBudgetExceeded("conversation request too large")
-        raw = await asyncio.wait_for(asyncio.to_thread(self._request, payload), self.timeout_seconds)
-        if not isinstance(raw, (str, bytes)) or len(raw.encode('utf-8') if isinstance(raw, str) else raw) > _MAX_RESPONSE_BYTES:
-            raise ProposalError('bounds_rejected', bounds=False)
+    @staticmethod
+    def _consume(future):
+        if not future.cancelled(): future.exception()
+
+    def _notify_terminal(self, request):
+        # Terminal observation does not delay cancellation or claim cleanup done.
+        receipt = request.snapshot()
+        notification = asyncio.create_task(asyncio.to_thread(self._observe_admission, receipt))
+        notification.add_done_callback(self._consume)
+
+    async def _observe_with_deadline(self, request):
+        notification = asyncio.create_task(asyncio.to_thread(self._observe_admission, request.snapshot()))
+        try:
+            done, _ = await asyncio.wait((notification,), timeout=request.check())
+            if not done:
+                raise TimeoutError('conversation observer deadline')
+            notification.result()
+            request.check()
+        finally:
+            if not notification.done(): notification.add_done_callback(self._consume)
+
+    async def _observe_bypass(self, reason):
+        request = AdmissionRequest(self.timeout_seconds)
+        request.update(stage='bypass', reason=reason, worker_outstanding=False)
+        try:
+            await self._observe_with_deadline(request)
+        except Exception:
+            # Diagnostics cannot change a deterministic business decision.
+            pass
+
+    async def _run_request(self, request, text, context, *, prepared):
+        # Preparation/authentication/parser work share this one absolute deadline.
+        worker = asyncio.create_task(asyncio.to_thread(self._transaction, request, text, context, prepared))
+        try:
+            done, _ = await asyncio.wait((worker,), timeout=request.check())
+            if not done:
+                raise TimeoutError('conversation deadline')
+            result = worker.result()
+            await self._observe_with_deadline(request)
+            return result
+        except asyncio.CancelledError:
+            request.retire('cancelled')
+            self._notify_terminal(request)
+            raise
+        except TimeoutError:
+            request.retire('timeout')
+            self._notify_terminal(request)
+            raise
+        except Exception:
+            # Error-path observers are also bounded by the same remaining time.
+            try: await self._observe_with_deadline(request)
+            except TimeoutError:
+                request.retire('timeout')
+                self._notify_terminal(request)
+                raise
+            raise
+        finally:
+            if not worker.done():
+                # Do not cancel the wrapper and pretend its thread was stopped.
+                def cleanup(future):
+                    self._consume(future)
+                    self._notify_terminal(request)
+                worker.add_done_callback(cleanup)
+
+    def _transaction(self, transaction, text, context, prepared):
+        try:
+            transaction.check()
+            if not isinstance(text, str) or len(text) > 4000 or not text.strip():
+                raise ProposalError('bounds_rejected', bounds=False)
+            contract = context if prepared else ProposalContract(context)
+            data = contract.model_data()
+            request = {"model": self.model, "messages": [
+                {"role": "system", "content": PRODUCTION_SYSTEM_PROMPT},
+                {"role": "user", "content": json.dumps({"utterance": text, "context": data}, ensure_ascii=False, separators=(",", ":"))}],
+                "temperature": 0, "max_tokens": 24, "cache_prompt": False,
+                "response_format": {"type": "json_schema", "json_schema": {
+                    "name": "route", "strict": True, "schema": contract.schema()}}}
+            payload = json.dumps(request, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            catalog = json.dumps(data, ensure_ascii=False, separators=(",", ":")).encode('utf-8')
+            transaction.bind(payload, catalog)
+            frames = prepare_frames(self.host, self.port, payload, self.token_file)
+            transaction.update(count_request_bytes=len(frames[0]), inference_request_bytes=len(frames[1]),
+                prepare_ms=(time.monotonic() - transaction.started) * 1000)
+            # Dispatch counts an attempted connection/send even if its outcome is unknown.
+            phase_started = time.monotonic()
+            transaction.dispatch('count', len(frames[0]))
+            try:
+                owned = transaction.connect(self.host, self.port)
+                raw, closing = self._exchange(transaction, owned, frames[0])
+                try:
+                    counted = _strict_json(raw, _MAX_RESPONSE_BYTES)
+                    count = counted.get('input_tokens')
+                    if counted.get('object') != 'response.input_tokens' or type(count) is not int or count < 1:
+                        raise ValueError('invalid count')
+                except ValueError:
+                    transaction.update(count_valid=False)
+                    raise AdmissionUnavailable('invalid count') from None
+                transaction.update(input_tokens=count, count_valid=True)
+                transaction.check()
+                if count > 3584 or count + 24 > 4096:
+                    raise ContextBudgetExceeded('conversation input token budget')
+                if closing:
+                    raise AdmissionUnavailable('count connection retired')
+            finally:
+                transaction.update(count_ms=(time.monotonic() - phase_started) * 1000)
+            phase_started = time.monotonic()
+            transaction.dispatch('inference', len(frames[1]))
+            transaction.update(payload_bound=True)
+            try:
+                raw, _ = self._exchange(transaction, owned, frames[1])
+                result = self._decode_admitted(raw, count, transaction)
+                transaction.check()
+            finally:
+                transaction.update(inference_ms=(time.monotonic() - phase_started) * 1000)
+            transaction.update(stage='validated', reason='validated')
+            return result, contract
+        except TimeoutError:
+            transaction.retire('timeout')
+            raise
+        except ContextBudgetExceeded:
+            transaction.update(reason='context_budget')
+            raise
+        except ProposalError:
+            transaction.update(reason='schema')
+            raise
+        except (OSError, ValueError) as error:
+            transaction.update(reason='unavailable')
+            raise AdmissionUnavailable('admission unavailable') from error
+        finally:
+            transaction.close()
+            transaction.update(worker_outstanding=False)
+
+    def _decode_admitted(self, raw, count, transaction):
         try:
             envelope = _strict_json(raw, _MAX_RESPONSE_BYTES)
         except ValueError:
             raise ProposalError('syntax_rejected', syntax=False) from None
-        choices = envelope.get("choices")
-        if not isinstance(choices, list) or len(choices) != 1 or not isinstance(choices[0], dict):
+        choices = envelope.get('choices')
+        choice_shape = isinstance(choices, list) and len(choices) == 1 and isinstance(choices[0], dict)
+        if choice_shape and choices[0].get('finish_reason') == 'length':
             raise ProposalError('shape_rejected', syntax=True, shape=False)
-        message = choices[0].get("message")
-        if not isinstance(message, dict) or not isinstance(message.get("content"), str):
+        usage = envelope.get('usage')
+        matching = (isinstance(usage, dict) and type(usage.get('prompt_tokens')) is int
+                    and usage['prompt_tokens'] == count)
+        transaction.update(usage_count_match=matching)
+        if (not matching or type(usage.get('completion_tokens')) is not int
+                or not 0 <= usage['completion_tokens'] <= 24):
+            raise AdmissionUnavailable('admission disagreement')
+        if not choice_shape:
             raise ProposalError('shape_rejected', syntax=True, shape=False)
-        return self.decode_route(message["content"])
+        if choices[0].get('finish_reason') != 'stop':
+            raise AdmissionUnavailable('incomplete admission')
+        message = choices[0].get('message')
+        if not isinstance(message, dict) or not isinstance(message.get('content'), str):
+            raise ProposalError('shape_rejected', syntax=True, shape=False)
+        return self.decode_route(message['content'])
 
 
 class ConversationRouter:
@@ -242,6 +354,7 @@ class ConversationRouter:
 
     async def _decide(self, text, context):
         if not isinstance(text, str) or len(text) > 4000 or not text.strip():
+            if isinstance(self.model, LoopbackConversationModel): await self.model._observe_bypass('bounds')
             return clarify(reason='schema')
         try:
             snapshot = policy_snapshot(context)
@@ -251,30 +364,40 @@ class ConversationRouter:
         matching = text.strip()
         local = deterministic(snapshot, matching)
         if local is not None:
+            if isinstance(self.model, LoopbackConversationModel): await self.model._observe_bypass('local')
             return local
         if self.model is None:
             return clarify(snapshot, 'unavailable')
-        try:
-            contract = ProposalContract(snapshot)
-            contract.model_data()
-        except (StoreInvalid, ValueError, TypeError):
-            return clarify(snapshot, 'context_budget')
+        if isinstance(self.model, LoopbackConversationModel):
+            # Build/serialize the contract in the request worker under its deadline.
+            prepared = snapshot
+        else:
+            try:
+                prepared = ProposalContract(snapshot)
+                prepared.model_data()
+            except (StoreInvalid, ValueError, TypeError):
+                return clarify(snapshot, 'context_budget')
         started = time.perf_counter()
-        decision = await self._model_decision(text, contract)
+        decision = await self._model_decision(text, prepared)
         return replace(decision, model_elapsed_ms=(time.perf_counter() - started) * 1000)
 
-    async def _model_decision(self, text, contract):
-        snapshot = contract.snapshot
+    async def _model_decision(self, text, prepared):
+        model = self.model
+        loopback = isinstance(model, LoopbackConversationModel)
+        snapshot = prepared if loopback else prepared.snapshot
+        contract = None if loopback else prepared
         started = time.perf_counter()
         try:
-            call = (self.model.classify_prepared(text, contract) if isinstance(self.model, LoopbackConversationModel)
-                    else self.model.classify(text, snapshot))
+            call = (model._run_request(AdmissionRequest(model.timeout_seconds), text, snapshot, prepared=False)
+                    if loopback else model.classify(text, snapshot))
             pending = asyncio.create_task(call)
             try:
                 done, _ = await asyncio.wait((pending,), timeout=2.0)
                 if not done:
                     raise TimeoutError('conversation deadline')
                 raw = pending.result()
+                if loopback:
+                    raw, contract = raw
             finally:
                 if not pending.done():
                     pending.cancel()

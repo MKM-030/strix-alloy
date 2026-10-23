@@ -309,3 +309,16 @@ Ratify one-key JSON plus domain-abstention choices; conservative semantic-audio 
 Task15 historical implementation evidence before independent review: actual NativeCall/coordinator/arbiter RED reproduced two failures; dedicated integration23/5.345s and affected focused186/47.145s GREEN (focused run predates the narrow failure-cleanup flag). Native discovery759/115.534s GREEN was before the review fix below; the preceding755/115.442s run is intermediate evidence only. Exact ownership, hashes and proof map: `.superpowers/sdd/2026-10-23-responsive-voice/task-15-report.md`. Task6/7 and actual iPhone/full-mode delivery remain incomplete.
 
 Task15 final status: complete through `b7b476b`, following main commit `33eea47` and one reviewed fix round. The initial review's failed-ASR/queued-PCM stall is fixed without clearing live receiver VAD or business state; UTF-8 and scoped warning findings are closed. Final fix-byte evidence is 26 integration, 146 focused and 762 full-native tests (116.158s), all passing. `task-15-rereview-1.md` records zero remaining findings/new breakage. Earlier counts above are historical. No runtime, acoustic or activation GO follows.
+
+### Task16: Exact pinned token admission before the next freeze
+
+**Spec:** `docs/superpowers/specs/2026-10-24-pinned-token-admission.md`. Router and focused admission transport/tests only; actual runtime/consumer adoption remains Task6. Interfaces preserve public classify/prepared/Route/coordinator APIs, add private request-owned count/inference observations. Use fixed stock b10690 input_tokens then one completion with identical bytes, exact3584 gate, global no-shift deployment prerequisite and shared2s deadline. Complete per-request HTTP bytes<=16384; no truncation, retry, profile change or new runtime.
+
+- [x] RED fresh public count boundary, malformed/unavailable count, immutable payload, full HTTP bytes, shared deadline and late-worker cancellation cases.
+- [x] GREEN minimal transaction/transport implementation and honest split counters/observations, with zero inference after terminal count rejection.
+- [ ] Run covering integration and one final full native discovery; commit exact owned files and finish independent source review.
+- [ ] Hand exact interfaces/version/hash requirements to existing TASK evaluator/consumer/Task7 owners; final runtime proof/qualification remains separate.
+
+Ruling before next routing freeze: add an explicit task-bound read-only grounded-answer slice after Task16, preserving the70choice cap and existing business authority. The previous clarification-catchall proposal is insufficient. Details in TASK/grounded-conversation-prefreeze-decision.md; Task17 must receive a separate concrete brief/review before implementation. No free-conversation/Omni/full-mode/live claim follows from this decision.
+
+Task16 implementation evidence before independent review: final admission29/4.623s, affected integration351/48.677s and one final native discovery791/119.774s all GREEN on final substantive source. Exact ownership, hashes, RED/GREEN output, private observation hooks, the corrected legacy-fixture verification deviation and live prerequisites are recorded in `.superpowers/sdd/2026-10-23-responsive-voice/task-16-report.md`. Source review and Task6/7 runtime/consumer adoption remain pending; no activation or live exactness claim follows.

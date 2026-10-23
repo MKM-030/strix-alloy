@@ -92,14 +92,13 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
     async def test_direct_loopback_classify_uses_same_snapshot_schema(self):
         from route_proposal import ProposalContract
         from routing_policy import policy_snapshot
-        model = LoopbackConversationModel(None, 'http://127.0.0.1:9933/v1/chat/completions', 'synthetic', '')
-        captured = []
-        def request(payload):
-            captured.append(json.loads(payload))
-            return json.dumps({'choices': [{'message': {'content': json.dumps({'choice': 'clarify'})}}]}).encode()
-        model._request = request
-        ctx = context()
-        await model.classify('Unklar', ctx)
+        from test_token_admission import transaction, framed, count_body, choice_body
+        async with transaction([framed(count_body()), framed(choice_body())]) as (peer, model):
+            ctx = context()
+            await model.classify('Unklar', ctx)
+            captured = [json.loads(r[1]) for r in peer.requests]
+        self.assertEqual(len(captured), 2)
+        self.assertEqual(captured[0], captured[1])
         self.assertEqual(captured[0]['response_format']['json_schema']['schema'], ProposalContract(policy_snapshot(ctx)).schema())
         self.assertEqual(captured[0]['max_tokens'], 24)
 
@@ -108,10 +107,10 @@ class UnifiedPolicyTest(unittest.IsolatedAsyncioTestCase):
         ctx.agents = [replace(AGENT, alias=f'office-{i}', agent_id=f'agent-{i}', name=f'Service {i}') for i in range(16)]
         for i in range(2, 9):
             ctx.tasks.append(dict(ctx.tasks[0], task_id=f'work-{i}2', open_question=None, objective='Aufgabenbeschreibung ' * 45))
-        model = LoopbackConversationModel(None, 'http://127.0.0.1:9933/v1/chat/completions', 'synthetic', '')
-        def request(payload): raise AssertionError('Oversized request must not reach transport')
-        model._request = request
-        decision = await self.decide(model, 'Bitte prüfe das Anliegen.', ctx)
+        from test_token_admission import transaction, framed, count_body
+        async with transaction([framed(count_body())]) as (peer, model):
+            decision = await self.decide(model, 'Bitte prüfe das Anliegen.', ctx)
+            self.assertEqual(peer.requests, [])
         self.assertEqual(decision.route.intent, 'clarification')
         self.assertEqual(decision.reason, 'context_budget')
 

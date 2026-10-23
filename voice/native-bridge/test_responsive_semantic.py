@@ -109,13 +109,14 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await ConversationRouter(model).route('Storniere die Reise; storniere die Reise; Nora Berg', context())).intent, 'clarification')
 
     async def test_wire_contract_has_disjoint_bindings_and_decoder_rejects_contradictions(self):
-        captured = []
-        model = LoopbackConversationModel(None, 'http://127.0.0.1:9933/v1/chat/completions', 'synthetic', '')
-        def request(raw):
-            captured.append(json.loads(raw))
-            return json.dumps({'choices': [{'message': {'content': json.dumps(wire_proposal(proposal('status_query', 't1', relation='status', evidence='Fortschritt'), context()))}}]}).encode()
-        model._request = request
-        route = await ConversationRouter(model).route('Zeig mir den Fortschritt.', context())
+        from test_token_admission import transaction, framed, count_body, choice_body
+        content = json.dumps(wire_proposal(proposal('status_query', 't1', relation='status', evidence='Fortschritt'), context()))
+        body = choice_body(choices=[{'finish_reason': 'stop', 'message': {'content': content}}])
+        async with transaction([framed(count_body()), framed(body)]) as (peer, model):
+            route = await ConversationRouter(model).route('Zeig mir den Fortschritt.', context())
+            captured = [json.loads(r[1]) for r in peer.requests]
+        self.assertEqual(len(captured), 2)
+        self.assertEqual(captured[0], captured[1])
         self.assertEqual(route, Route('status_query', 'actual-workflow-id'))
         schema = captured[0]['response_format']['json_schema']['schema']
         self.assertEqual(set(schema['properties']), {'choice'})

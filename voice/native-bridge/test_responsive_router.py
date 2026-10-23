@@ -405,7 +405,7 @@ class WireTest(unittest.IsolatedAsyncioTestCase):
         try:
             model = LoopbackConversationModel(None, f"http://127.0.0.1:{server.server_port}/v1/chat/completions",
                                               "fake", "", timeout_seconds=1.0)
-            with self.assertRaises(ValueError):
+            with self.assertRaises(OSError):
                 await model.classify("Hallo", RoutingContext("scope-1", []))
         finally:
             await asyncio.to_thread(server.shutdown)
@@ -421,11 +421,16 @@ class WireTest(unittest.IsolatedAsyncioTestCase):
     async def test_local_closed_json_model_response(self):
         received = []
         class Handler(BaseHTTPRequestHandler):
+            protocol_version = "HTTP/1.1"
+
             def do_POST(self):
                 raw = self.rfile.read(int(self.headers["Content-Length"]))
                 received.append(json.loads(raw))
                 content = json.dumps({"choice": "o01"})
-                body = json.dumps({"choices": [{"message": {"content": content}}]}).encode()
+                body = json.dumps({"choices": [{"finish_reason": "stop", "message": {"content": content}}],
+                                   "usage": {"prompt_tokens": 123, "completion_tokens": 6}}).encode()
+                if self.path.endswith("/input_tokens"):
+                    body = b'{"object":"response.input_tokens","input_tokens":123}'
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(body)))
@@ -446,6 +451,8 @@ class WireTest(unittest.IsolatedAsyncioTestCase):
                                           'ALL_PROXY': 'http://127.0.0.1:1', 'NO_PROXY': ''}):
                 result = await ConversationRouter(model).route("Service Desk: Ich brauche Hilfe", RoutingContext("scope-1", [], agents=[agent]))
             self.assertEqual(result, Route("new_task", agent_alias="helpdesk"))
+            self.assertEqual(len(received), 2)
+            self.assertEqual(received[0], received[1])
             self.assertEqual(received[0]["response_format"]["type"], "json_schema")
             self.assertEqual(received[0]['messages'][0]['content'], PRODUCTION_SYSTEM_PROMPT)
             self.assertEqual(received[0]["messages"][1]["role"], "user")

@@ -15,6 +15,7 @@ from task_coordinator import TaskCoordinator
 from task_store import TaskStore
 from test_unified_routing_policy import AGENT, context
 import test_unified_routing_policy as fixtures
+from test_token_admission import transaction, framed, count_body, choice_body
 
 
 class ChoiceModel:
@@ -90,20 +91,16 @@ class PublicChoiceTests(unittest.IsolatedAsyncioTestCase):
         for i in range(2, 9):
             ctx.tasks.append(dict(ctx.tasks[0], task_id=f'work-{i}2', open_question=None))
         ctx.agents = [replace(AGENT, alias=f'office-{i}', agent_id=f'agent-{i}') for i in range(16)]
-        seen = []
-        model = LoopbackConversationModel(None, 'http://127.0.0.1:9933/v1/chat/completions', 'synthetic', '')
-        def transport(payload):
-            seen.append(payload)
-            return b'{"choices":[{"message":{"content":"{\\"choice\\":\\"clarify\\"}"}}]}'
-        model._request = transport
-        d = await ConversationRouter(model).decide('  Bitte prüfe meine Äußerung.  ', ctx)
-        self.assertEqual(d.reason, 'unclear')
-        request = json.loads(seen[0])
-        data = json.loads(request['messages'][1]['content'])
-        self.assertEqual(data['utterance'], '  Bitte prüfe meine Äußerung.  ')
-        self.assertEqual(len(data['context']['options']), 70)
-        self.assertLessEqual(len(seen[0]), 16384)
-        self.assertEqual(request['max_tokens'], 24)
+        async with transaction([framed(count_body()), framed(choice_body())]) as (peer, model):
+            d = await ConversationRouter(model).decide('  Bitte prüfe meine Äußerung.  ', ctx)
+            self.assertEqual(d.reason, 'unclear')
+            request = json.loads(peer.requests[0][1])
+            data = json.loads(request['messages'][1]['content'])
+            self.assertEqual(data['utterance'], '  Bitte prüfe meine Äußerung.  ')
+            self.assertEqual(len(data['context']['options']), 70)
+            self.assertEqual(peer.requests[0][1], peer.requests[1][1])
+            self.assertLessEqual(len(peer.requests[0][2]), 16384)
+            self.assertEqual(request['max_tokens'], 24)
 
     async def test_completed_after_deadline_is_discarded(self):
         class LateModel:
@@ -211,9 +208,9 @@ class PublicChoiceTests(unittest.IsolatedAsyncioTestCase):
             ('{"choice":"o00"}\nProsa', (False, None, True, None)),
             ('{"choice":"o00","domain":"na"}', (True, False, True, None)),
             (' ' * 65, (None, None, False, None))):
-            model = LoopbackConversationModel(None, 'http://127.0.0.1:9933/v1/chat/completions', 'synthetic', '')
-            model._request = lambda _, c=content: json.dumps({'choices': [{'message': {'content': c}}]}).encode()
-            d = await ConversationRouter(model).decide('Bitte prüfe meine Äußerung.', RoutingContext('scope', []))
+            envelope = choice_body(choices=[{'finish_reason': 'stop', 'message': {'content': content}}])
+            async with transaction([framed(count_body()), framed(envelope)]) as (_, model):
+                d = await ConversationRouter(model).decide('Bitte prüfe meine Äußerung.', RoutingContext('scope', []))
             self.assertEqual(d.route.intent, 'clarification')
             o = d.proposal
             self.assertEqual((o.json_syntax_valid, o.schema_shape_valid, o.bounds_valid, o.choice_bound), expected)
