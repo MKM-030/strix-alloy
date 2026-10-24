@@ -1029,6 +1029,216 @@ class Task18ConsumerTests(unittest.TestCase):
             else: sys.modules['grounded_readiness'] = previous
 
 
+class PrefillProfileTests(unittest.TestCase):
+    """Real parser/profile/configuration guards with synthetic public inputs."""
+    setUpClass = classmethod(RuntimeTests.setUpClass.__func__)
+    setUp = RuntimeTests.setUp
+    pin = RuntimeTests.pin
+    write_profile = RuntimeTests.write_profile
+    runtime = RuntimeTests.runtime
+
+    def admitted_argv(self, tuned=False):
+        argv = [str(self.exe), '--model', str(self.model), '--alias', 'synthetic-conversation',
+            '--threads', '6', '--threads-batch', '6', '--ctx-size', '8192', '--predict', '128',
+            '--gpu-layers', '99', '--fit', 'off', '--parallel', '2', '--host', '127.0.0.1',
+            '--port', '52744', '--ctx-checkpoints', '0', '--cache-ram', '0', '--reasoning', 'off',
+            '--reasoning-budget', '0', '--no-context-shift', '--api-key-file', '{token_file}']
+        if tuned:
+            argv[argv.index('--api-key-file'):argv.index('--api-key-file')] = ['--ubatch-size', '1024']
+        return argv
+
+    def measured(self, profile):
+        # Actual _executed_choice runs against these synthetic retained sources.
+        pins, paths = {}, {}
+        for name in self.mod._ADMITTED_MODULES:
+            relative = self.mod._application_path(name)
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('# public synthetic execution input')
+            pins[relative], paths[relative] = digest(path.read_bytes()), str(path.resolve())
+        source = {'stage': self.mod._ADMITTED_SOURCE['stage'], 'commit': 'a' * 40,
+            'manifest_sha256': 'b' * 64, 'snapshot_root': str(self.root)}
+        manifest = {'source_sha256': pins, 'execution_identity': {'synthetic': True}}
+        evidence = {'stage': source['stage'], 'protocol_format': 'closed_choice_v2_grounded',
+            'source_commit': source['commit'], 'manifest_sha256': source['manifest_sha256'],
+            'execution_identity': manifest['execution_identity'], 'application_sha256': pins,
+            'application_paths': paths, 'isolated_child': True, 'pid': 77,
+            'session_id': '_v4_pinned_' + '1' * 32}
+        configuration = {'engine_sha256': profile['engine']['sha256'],
+            'model_sha256': profile['model']['sha256'], 'runtime_hashes': profile['engine']['runtime_hashes'],
+            'source_manifest_sha256': source['manifest_sha256'], 'effective_argv': profile['engine']['argv'],
+            'context_parallel': [8192, 2], 'role_slots': {'classifier': 0, 'planner': 1}, 'slot_context': 4096,
+            'template_sha256': 'd28d7df94f0fd7e8d0075a22c473333d6e7dd2bc4c36c83e8b975300a0fb94bc',
+            'protocol': 'pinned_chat_count_v1', 'transport': 'ordinary_nonstream_nonresumable'}
+        return {'status': 'measured', 'source_commit': source['commit'], 'execution_evidence': evidence,
+                'configuration': copy.deepcopy(configuration), 'owner': {'pid': 77, 'created': 1.25}}, source, manifest
+
+    def test_baseline_absent_and_tagged_validate_real_profile_envelope(self):
+        self.assertEqual(self.runtime().run(True), 'prepared')
+        self.profile['performance_profile'] = 'prefill_default_v1'
+        self.write_profile()
+        try:
+            result = self.runtime().run(True)
+        except RuntimeError:
+            self.fail('explicit baseline profile failed actual runtime validation')
+        self.assertEqual(result, 'prepared')
+
+    def test_tuned_measured_configuration_preserves_complete_binding(self):
+        self.profile.update(performance_profile='prefill_ubatch1024_v1')
+        self.profile['engine']['argv'] = self.admitted_argv(True)
+        receipt, source, manifest = self.measured(self.profile)
+        self.assertEqual(len(self.profile['engine']['argv']), 36)
+        try:
+            actual = self.mod._measured_configuration(receipt, self.profile, source, manifest)
+        except ValueError:
+            self.fail('explicit tuned profile failed real measured configuration validation')
+        self.assertEqual(actual, receipt['configuration'])
+        for flag, replacement in (('--ubatch-size', '512'), ('--threads', '8')):
+            bad = copy.deepcopy(receipt)
+            argv = bad['configuration']['effective_argv']
+            argv[argv.index(flag) + 1] = replacement
+            with self.subTest(receipt_drift=flag), self.assertRaises(ValueError):
+                self.mod._measured_configuration(bad, self.profile, source, manifest)
+        bad_profile = copy.deepcopy(self.profile)
+        bad_profile['performance_profile'] = 'prefill_default_v1'
+        with self.assertRaises(ValueError):
+            self.mod._measured_configuration(receipt, bad_profile, source, manifest)
+
+    def test_profile_identity_matrix_rejects_missing_mismatch_and_invalid_types(self):
+        guard = self.mod._validate_performance_profile
+        for profile, tuned in (({}, False), ({'performance_profile': 'prefill_default_v1'}, False),
+                               ({'performance_profile': 'prefill_ubatch1024_v1'}, True)):
+            self.assertEqual(guard(profile, self.admitted_argv(tuned), admitted=True),
+                             self.mod._parse_runtime_argv(self.admitted_argv(tuned)))
+        for profile, tuned in (({}, True), ({'performance_profile': 'prefill_default_v1'}, True),
+                               ({'performance_profile': 'prefill_ubatch1024_v1'}, False)):
+            with self.subTest(profile=profile, tuned=tuned), self.assertRaises(ValueError):
+                guard(profile, self.admitted_argv(tuned), admitted=True)
+        for value in (None, 1024, True, [], {}, '', 'unknown'):
+            with self.subTest(identity=value), self.assertRaises(ValueError):
+                guard({'performance_profile': value}, self.admitted_argv(), admitted=True)
+
+    def test_ubatch_value_duplicate_alias_missing_and_wrong_placement_rejected(self):
+        profile = {'performance_profile': 'prefill_ubatch1024_v1'}
+        argv = self.admitted_argv(True)
+        variants = []
+        for value in ('512', '2048', '01024', '1024.0', ''):
+            bad = argv.copy(); bad[bad.index('--ubatch-size') + 1] = value; variants.append(bad)
+        for tail in (['--ubatch-size', '1024'], ['--flash-attn', 'on'], ['-ub', '1024']):
+            variants.append(argv + tail)
+        bad = argv.copy(); bad.pop(bad.index('--ubatch-size') + 1); variants.append(bad)
+        bad = self.admitted_argv(); bad[1:1] = ['--ubatch-size', '1024']; variants.append(bad)
+        for bad in variants:
+            with self.subTest(argv=bad), self.assertRaises(ValueError):
+                self.mod._validate_performance_profile(profile, bad, admitted=True)
+
+    def test_legacy_stages_cannot_use_tuned_tag_or_flag(self):
+        guard = self.mod._validate_performance_profile
+        for tuned in (False, True):
+            with self.subTest(tuned=tuned), self.assertRaises(ValueError):
+                guard({'performance_profile': 'prefill_ubatch1024_v1'}, self.admitted_argv(tuned), admitted=False)
+        self.profile['performance_profile'] = 'prefill_ubatch1024_v1'
+        self.profile['engine']['argv'] = self.admitted_argv(True)
+        self.write_profile()
+        with self.assertRaises(RuntimeError): self.runtime().run(True)
+        self.assertEqual(self.host.launches, 0)
+
+    def test_unknown_profile_or_unrelated_envelope_key_fails_actual_validation(self):
+        for key, value in (('performance_profile', None), ('performance_profile', 1024),
+                           ('performance_profile', 'unknown'), ('other_profile', 'prefill_default_v1')):
+            self.profile.pop('performance_profile', None); self.profile.pop('other_profile', None)
+            self.profile[key] = value
+            self.write_profile()
+            with self.subTest(key=key, value=value), self.assertRaises(RuntimeError): self.runtime().run(True)
+
+    def test_baseline_512_geometry_threads_and_unrelated_flags_cannot_bypass_validation(self):
+        original = copy.deepcopy(self.profile)
+        for flag, replacement in (('--ctx-size', '8192'), ('--parallel', '2'),
+                                  ('--threads', '8'), ('--threads-batch', '8'),
+                                  ('--ubatch-size', '512'), ('--flash-attn', 'on')):
+            self.profile = copy.deepcopy(original)
+            argv = self.profile['engine']['argv']
+            if flag in argv: argv[argv.index(flag) + 1] = replacement
+            else: argv[1:1] = [flag, replacement]
+            self.write_profile()
+            with self.subTest(flag=flag), self.assertRaises(RuntimeError): self.runtime().run(True)
+
+    def test_tuned_flag_does_not_qualify_old_evidence_or_relax_owner_argv(self):
+        self.profile['performance_profile'] = 'prefill_ubatch1024_v1'
+        self.profile['engine']['argv'] = self.admitted_argv(True)
+        self.write_profile()
+        with self.assertRaises(RuntimeError): self.runtime().run(True)
+        runtime = self.runtime()
+        runtime.argv = self.admitted_argv(True)
+        owner = {'pid': 41, 'created': 1.5}
+        process = {'pid': 41, 'created': 1.5, 'exe': runtime.argv[0], 'argv': runtime.argv.copy()}
+        self.assertTrue(runtime._matches(process, owner))
+        process['argv'][process['argv'].index('--ubatch-size') + 1] = '512'
+        self.assertFalse(runtime._matches(process, owner))
+        process['argv'] = self.admitted_argv(False)
+        self.assertFalse(runtime._matches(process, owner))
+
+    def test_tuned_launch_environment_rejects_present_keys_including_empty(self):
+        guard = getattr(self.mod, '_validate_launch_environment', None)
+        self.assertTrue(callable(guard), 'tuned launch environment guard is missing')
+        profile = {'performance_profile': 'prefill_ubatch1024_v1'}
+        with patch.dict(self.mod.os.environ, {}, clear=True):
+            self.assertIsNone(guard(profile))
+            for key in ('LLAMA_ARG_BATCH', 'LLAMA_ARG_UBATCH', 'LLAMA_ARG_FLASH_ATTN'):
+                for value in ('', 'synthetic-override-value'):
+                    with self.subTest(key=key, empty=value == ''), patch.dict(self.mod.os.environ, {key: value}):
+                        before = dict(self.mod.os.environ)
+                        with self.assertRaisesRegex(ValueError, '^admission rejected$'): guard(profile)
+                        self.assertEqual(dict(self.mod.os.environ), before)
+        self.assertEqual(self.host.launches, 0)
+
+    def test_baseline_launch_environment_remains_compatible(self):
+        overrides = {key: '' for key in ('LLAMA_ARG_BATCH', 'LLAMA_ARG_UBATCH', 'LLAMA_ARG_FLASH_ATTN')}
+        with patch.dict(self.mod.os.environ, overrides):
+            self.assertEqual(self.runtime().run(True), 'prepared')
+            self.profile['performance_profile'] = 'prefill_default_v1'
+            self.write_profile()
+            self.assertEqual(self.runtime().run(True), 'prepared')
+        self.assertEqual(self.host.launches, 0)
+
+    def test_tuned_start_validation_checks_environment_before_qualification_or_launch(self):
+        self.profile['performance_profile'] = 'prefill_ubatch1024_v1'
+        self.profile['engine']['argv'] = self.admitted_argv(True)
+        help_file = self.root / 'help.txt'
+        help_file.write_text('\n'.join(self.mod._parse_runtime_argv(self.profile['engine']['argv'])))
+        self.profile['engine']['help'] = self.pin(help_file)
+        self.write_profile()
+        quality_path = Path(self.profile['quality']['file'])
+        quality = self.mod.read_json(quality_path)
+        source_path = Path(quality['inputs']['source_record']['file'])
+        source = self.mod.read_json(source_path)
+        source['stage'] = self.mod._ADMITTED_SOURCE['stage']
+        source_path.write_bytes(canonical(source))
+        quality['inputs']['source_record'] = self.pin(source_path)
+        quality_path.write_bytes(canonical(quality))
+        self.profile['quality'] = self.pin(quality_path)
+        self.profile_file.write_bytes(canonical(self.profile))
+        self.profile_sha = digest(self.profile_file.read_bytes())
+        # Qualification is deliberately unavailable. This sentinel only marks
+        # that the real startup guard accepted the synthetic launch inputs.
+        with patch.dict(self.mod.os.environ, {}, clear=True), patch.object(self.mod, 'derive_quality',
+                side_effect=AssertionError('synthetic qualification boundary')):
+            with self.assertRaisesRegex(AssertionError, 'synthetic qualification boundary'):
+                self.runtime()._validate()
+            for key in ('LLAMA_ARG_BATCH', 'LLAMA_ARG_UBATCH', 'LLAMA_ARG_FLASH_ATTN'):
+                for value in ('', 'synthetic-override-value'):
+                    with self.subTest(key=key, empty=value == ''), patch.dict(self.mod.os.environ, {key: value}):
+                        try:
+                            self.runtime()._validate()
+                        except ValueError:
+                            pass
+                        except AssertionError:
+                            self.fail('tuned startup accepted a present runtime override')
+                        else:
+                            self.fail('tuned startup unexpectedly qualified')
+        self.assertEqual(self.host.launches, 0)
+
+
 class AdmittedContractTests(unittest.TestCase):
     """Pure FAKE metadata/accounting examples; never final evaluator receipts."""
     @classmethod

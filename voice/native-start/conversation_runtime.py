@@ -26,7 +26,8 @@ MAIN_PROFILE_SHA256 = 'ea335895f0cb8f6ded0698ec940cab808a11162187129822ecd9c010e
 RESERVED_PORTS = {8731, 8795, 8823, 8826, 8836, 8840, 8841, 8850, 8851, 8852, 8853, 8860, 18808}
 SAFE_FLAGS = {'--model', '--alias', '--ctx-size', '--parallel', '--host', '--port',
               '--gpu-layers', '--threads', '--threads-batch', '--predict', '--fit',
-              '--ctx-checkpoints', '--cache-ram', '--reasoning', '--reasoning-budget', '--api-key-file'}
+              '--ctx-checkpoints', '--cache-ram', '--reasoning', '--reasoning-budget', '--api-key-file',
+              '--ubatch-size'}
 VALUELESS_FLAGS = frozenset({'--no-context-shift'})
 POSITIVE = frozenset({'status_unique', 'audio_stop_direct', 'current_answer', 'open_dialogue',
                      'prior_correction', 'new_intake_explicit_agent', 'business_cancel_direct', 'question_help_grounded'})
@@ -138,6 +139,28 @@ def _parse_runtime_argv(argv):
             options[flag] = argv[index + 1]
             index += 2
     return options
+
+
+def _validate_performance_profile(profile, argv, *, admitted):
+    """Bind the optional identity to the sole fixed admitted microbatch pair."""
+    identity = profile.get('performance_profile', 'prefill_default_v1')
+    _require(type(identity) is str and identity in ('prefill_default_v1', 'prefill_ubatch1024_v1'))
+    options = _parse_runtime_argv(argv)
+    if identity == 'prefill_default_v1':
+        _require('--ubatch-size' not in options)
+    else:
+        _require(admitted and options.get('--ubatch-size') == '1024')
+        _require('--api-key-file' in options)
+        index = argv.index('--api-key-file')
+        _require(argv[index - 2:index] == ['--ubatch-size', '1024'])
+    return options
+
+
+def _validate_launch_environment(profile):
+    """A tuned launch must not inherit overrides of its fixed processing geometry."""
+    if profile.get('performance_profile') == 'prefill_ubatch1024_v1':
+        _require(all(name not in os.environ for name in
+            ('LLAMA_ARG_BATCH', 'LLAMA_ARG_UBATCH', 'LLAMA_ARG_FLASH_ATTN')))
 
 
 # Future requirements only. These validators are not called by runtime admission:
@@ -714,7 +737,8 @@ def _measured_configuration(receipt, profile, source, manifest):
         'role_slots': _ROLE_SLOTS, 'slot_context': 4096, 'template_sha256': _ADMITTED_PROFILE['template_sha256'],
         'protocol': 'pinned_chat_count_v1', 'transport': 'ordinary_nonstream_nonresumable'}
     _same(receipt['configuration'], expected)
-    options = _parse_runtime_argv(expected['effective_argv'])
+    options = _validate_performance_profile(profile, expected['effective_argv'],
+        admitted=source.get('stage') == _ADMITTED_SOURCE['stage'])
     _require(options.get('--ctx-size') == '8192' and options.get('--parallel') == '2' and
              options.get('--predict') == '128' and '--no-context-shift' in options)
     _require(type(receipt['owner']['pid']) is int and receipt['owner']['pid'] > 0)
@@ -1480,9 +1504,10 @@ class ConversationRuntime:
     def _validate(self):
         _require(sha256(self.profile_file) == _hash(self.profile_sha256))
         profile = read_json(self.profile_file)
-        _require(set(profile) == {'schema', 'qualified', 'candidate_id', 'engine', 'model',
+        required = {'schema', 'qualified', 'candidate_id', 'engine', 'model',
                                   'source_hashes', 'main_profile_sha256', 'minimum_reserve_gib',
-                                  'resident_budget_gib', 'token_file', 'quality', 'coexistence'})
+                                  'resident_budget_gib', 'token_file', 'quality', 'coexistence'}
+        _require(set(profile) in (required, required | {'performance_profile'}))
         _require(profile['schema'] == 1 and profile['qualified'] is True)
         _require(type(profile['candidate_id']) is str and re.fullmatch(r'[a-zA-Z0-9._-]{1,100}', profile['candidate_id']))
         _require(profile['main_profile_sha256'] == MAIN_PROFILE_SHA256)
@@ -1502,10 +1527,11 @@ class ConversationRuntime:
         help_file = _pin(engine['help'], base)
         help_text = help_file.read_text(encoding='utf-8-sig')
         argv = engine['argv']
-        options = _parse_runtime_argv(argv)
         quality = _pinned_json(profile['quality'], base)
         selected_source = _pinned_json(quality['inputs']['source_record'], base)
         admitted = selected_source.get('stage') == _ADMITTED_SOURCE['stage']
+        options = _validate_performance_profile(profile, argv, admitted=admitted)
+        _validate_launch_environment(profile)
         _require(15 <= len(argv) <= 50)
         _require(argv[0] == str(exe))
         _require(all(re.search(re.escape(flag) + r'(?![\w-])', help_text) for flag in options))
