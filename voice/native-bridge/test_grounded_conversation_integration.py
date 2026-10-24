@@ -1381,6 +1381,119 @@ class TypedGroundedEvidenceTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual((job.admission.snapshot().count_attempts, job.admission.snapshot().inference_attempts), (1, 1))
                 self.assertEqual(owner._pending_count('planner'), 0)
 
+    async def test_backend_operation_identity_survives_actual_observation_and_settlement(self):
+        import json
+        from dataclasses import asdict
+        import grounded_conversation as g
+        task = self.store.create_task(self.scope, AGENT, 'Fiktives Bernsteinarchiv')
+        op = self.store.accept(task['task_id'], 'typed', 'amber-input', '  Bernsteinfach Ω erfassen.  ')
+        self.store.dispatch(op['operation_id'])
+        progress = '  Fiktive Prüfung des Bernsteinfachs: Ω\n  '
+        final = '  Fiktiver Abschlussvermerk: Bernsteinfach Ω wurde betrachtet.  '
+        self.store.observe(op['operation_id'], 'amber-progress', 'backend_observed', {'text': progress})
+        for event_type, expected_text in (('backend_observed', progress), ('operation_settled', final)):
+            if event_type == 'operation_settled':
+                self.store.settle(op['operation_id'], replies=['Zwischenvermerk', final])
+                # A later progress event cannot replace the settlement's own identity.
+                self.store.observe(op['operation_id'], 'amber-late-progress', 'backend_observed', {'text': progress})
+            before = self.store._db.total_changes
+            event = next(e for e in self.store.events(task['task_id'], 'typed') if e['type'] == event_type)
+            request = self.capture(task['task_id'])
+            expected = {key: event[key] for key in ('operation_id', 'event_id', 'sequence', 'fingerprint')}
+            expected['text'] = expected_text
+            self.assertEqual(dict(request.snapshot.backend), expected)
+            self.assertEqual(request.snapshot.backend['operation_id'], op['operation_id'])
+            self.assertEqual(request.evidence_revision, self.store.grounded_revision('typed', task['task_id']))
+            record = next(e for e in request.evidence if e.kind == 'backend_message')
+            self.assertEqual(record.text, expected_text)
+            self.assertEqual(record.operation_ref, 'p1')
+            self.assertNotEqual(record.operation_ref, op['operation_id'])
+            self.assertEqual(dict(request.reference_map[record.ref]), expected)
+            with self.assertRaises(TypeError): request.snapshot.backend['operation_id'] = 'changed'
+            with self.assertRaises(TypeError): request.reference_map[record.ref]['operation_id'] = 'changed'
+            plan = g.GroundedPlan('answer', 'attributed', (record.ref,), 'none')
+            self.assertIs(plan.validate(request), plan)
+            self.assertIn('ServiceNow meldet zur letzten Eingabe: „' + expected_text + '“', g.render(plan, request))
+            self.assertIn(g.dispatch_text(request.snapshot), g.render(plan, request))
+            payload, actual, _ = await self.actual_payload(request, plan=asdict(plan))
+            self.assertEqual(actual, plan)
+            catalog_text = payload['messages'][1]['content']
+            catalog = json.loads(catalog_text)
+            self.assertEqual([dict(zip(catalog['record_fields'], row)) for row in catalog['records']],
+                             [asdict(e) for e in request.evidence])
+            for private_value in (task['task_id'], op['operation_id'], event['event_id'], event['fingerprint']):
+                self.assertNotIn(private_value, catalog_text)
+            for private_field in ('operation_id', 'event_id', 'sequence', 'fingerprint'):
+                self.assertNotIn(private_field, catalog['record_fields'])
+            self.assertEqual(self.store._db.total_changes, before)
+
+    async def test_new_operation_never_inherits_old_or_foreign_identical_backend_text(self):
+        import grounded_conversation as g
+        message = '  Fiktive Kupfernotiz: gleicher Wortlaut, eigener Vorgang.  '
+        task = self.store.create_task(self.scope, AGENT, 'Fiktiver Kupferplan')
+        first = self.store.accept(task['task_id'], 'typed', 'copper-first', 'Kupferplan aufnehmen.')
+        self.store.dispatch(first['operation_id'])
+        self.store.settle(first['operation_id'], replies=[message])
+        old = self.capture(task['task_id'])
+        second = self.store.accept(task['task_id'], 'typed', 'copper-second', 'Kupferplan korrigieren.', kind='amend_task')
+        foreign = self.store.create_task(self.scope, AGENT, 'Fiktiver fremder Kupferplan')
+        other = self.store.accept(foreign['task_id'], 'typed', 'copper-other', 'Anderen Kupferplan aufnehmen.')
+        self.store.dispatch(other['operation_id'])
+        self.store.observe(other['operation_id'], 'copper-foreign', 'backend_observed', {'text': message})
+        self.store.settle(other['operation_id'], replies=[message])
+        self.store.observe(first['operation_id'], 'copper-old-late', 'backend_observed', {'text': message})
+        request = self.capture(task['task_id'])
+        self.assertIsNone(request.snapshot.backend)
+        self.assertFalse(any(e.kind == 'backend_message' for e in request.evidence))
+        self.store.dispatch(second['operation_id'])
+        self.store.observe(second['operation_id'], 'copper-current', 'backend_observed', {'text': message})
+        current = self.capture(task['task_id'])
+        self.assertEqual(dict(current.snapshot.backend), {
+            **{key: next(e for e in self.store.events(task['task_id'], 'typed') if e['event_id'] == 'copper-current')[key]
+               for key in ('operation_id', 'event_id', 'sequence', 'fingerprint')}, 'text': message})
+        self.assertEqual(old.snapshot.backend['operation_id'], first['operation_id'])
+        self.assertEqual(current.snapshot.backend['operation_id'], second['operation_id'])
+        self.assertNotEqual(current.snapshot.backend['operation_id'], other['operation_id'])
+        record = next(e for e in current.evidence if e.kind == 'backend_message')
+        self.assertEqual(record.operation_ref, 'p2')
+        plan = g.GroundedPlan('answer', 'attributed', (record.ref,), 'none')
+        self.assertIs(plan.validate(current), plan)
+        self.assertIn(message, g.render(plan, current))
+
+    async def test_backend_support_rejects_missing_wrong_older_and_foreign_operation_identity(self):
+        import grounded_conversation as g
+        message = '  Fiktive Zinnmeldung ohne fachliche Bestätigung.  '
+        task = self.store.create_task(self.scope, AGENT, 'Fiktiver Zinnkatalog')
+        first = self.store.accept(task['task_id'], 'typed', 'tin-first', 'Zinnkatalog aufnehmen.')
+        self.store.dispatch(first['operation_id'])
+        self.store.settle(first['operation_id'], replies=[message])
+        second = self.store.accept(task['task_id'], 'typed', 'tin-second', 'Zinnkatalog korrigieren.', kind='amend_task')
+        self.store.dispatch(second['operation_id'])
+        self.store.observe(second['operation_id'], 'tin-current', 'backend_observed', {'text': message})
+        self.store.settle(second['operation_id'], replies=[message])
+        foreign = self.store.create_task(self.scope, AGENT, 'Fiktiver weiterer Zinnkatalog')
+        other = self.store.accept(foreign['task_id'], 'typed', 'tin-other', 'Weiteren Zinnkatalog aufnehmen.')
+        self.store.dispatch(other['operation_id'])
+        self.store.observe(other['operation_id'], 'tin-foreign', 'backend_observed', {'text': message})
+        request = self.capture(task['task_id'])
+        record = next(e for e in request.evidence if e.kind == 'backend_message')
+        plan = g.GroundedPlan('answer', 'attributed', (record.ref,), 'none')
+        for operation_id in (None, 'unrelated-operation', first['operation_id'], other['operation_id']):
+            association = {key: value for key, value in request.snapshot.backend.items() if key != 'operation_id'}
+            if operation_id is not None: association['operation_id'] = operation_id
+            altered = replace(request, snapshot=replace(request.snapshot, backend=g.freeze(association)),
+                reference_map=g.freeze({**request.reference_map, record.ref: association}))
+            with self.subTest(operation_id=operation_id):
+                self.assert_unsupported(plan, altered)
+        foreign_backend = self.capture(foreign['task_id']).snapshot.backend
+        borrowed = replace(request, snapshot=replace(request.snapshot, backend=foreign_backend),
+            reference_map=g.freeze({**request.reference_map, record.ref: foreign_backend}))
+        self.assert_unsupported(plan, borrowed)
+        changed_map = replace(request, reference_map=g.freeze({**request.reference_map,
+            record.ref: {**request.reference_map[record.ref], 'operation_id': first['operation_id']}}))
+        self.assert_unsupported(plan, changed_map)
+
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -262,6 +262,8 @@ def _canonical_evidence(e, request):
             association = {'operation_id': op['operation_id'], 'kind': op['kind'], **dict(provenance)}
             break
     elif e.kind == 'backend_message' and snap.backend and snap.operations:
+        if snap.backend.get('operation_id') != snap.operations[-1]['operation_id']:
+            return False
         expected = Evidence(e.ref, 't1', 'backend_message', 'backend', snap.backend['text'],
             operation_ref=f'p{len(snap.operations)}', context_version=snap.operations[-1]['context_version'])
         association = dict(snap.backend)

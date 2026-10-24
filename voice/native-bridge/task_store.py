@@ -340,7 +340,7 @@ class TaskStore:
             task = dict(task)
             task['open_question'] = self._db.execute('SELECT open_question FROM tasks WHERE task_id=? AND scope_id=?', (task_id, scope_id)).fetchone()[0]
             def event(operation_id, kind):
-                row = self._db.execute('''SELECT event_id,sequence,context_version,fingerprint,payload
+                row = self._db.execute('''SELECT operation_id,event_id,sequence,context_version,fingerprint,payload
                     FROM events WHERE task_id=? AND operation_id=? AND type=? ORDER BY sequence DESC LIMIT 1''',
                     (task_id, operation_id, kind)).fetchone()
                 if not row or len(row['payload']) > 16384: return None
@@ -380,7 +380,7 @@ class TaskStore:
                 for row, text in candidates:
                     if (row['context_version'] == latest['context_version'] and isinstance(text, str)
                             and 0 < len(text) <= 4000):
-                        backend = freeze({k: row[k] for k in ('event_id','sequence','fingerprint')} | {'text': text})
+                        backend = freeze({k: row[k] for k in ('operation_id','event_id','sequence','fingerprint')} | {'text': text})
                         break
             eligible_question = (question and question['task_id'] == task_id
                 and question['context_version'] == task['context_version'] and not pending

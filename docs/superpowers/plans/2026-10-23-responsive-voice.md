@@ -416,3 +416,12 @@ Binding spec docs/superpowers/specs/2026-10-24-typed-grounded-evidence.md; SDD/t
 - [ ] Stop source/report/fullpatch/rawpins for one independent review; Root separately commits exact ownedpaths and performs actualraw/source/config/Main/applicability joins before separate prospective77/drain/184/coex/phone authority.
 
 Reviewfocus: malformedorout-of-task sources never acquire support; historicalquestion never becomes current; longuntrustedtext stays complete data; supportedwrongintent is not locally repaired/credited; duplicate/mutated refs and snapshot/origin drift remain rejected. Cover these through actual prepare/decode/render/admission fixtures, not a mirror of implementation or mock semantic model.
+
+### Task28: Backend operation provenance continuity
+
+Binding spec docs/superpowers/specs/2026-10-24-backend-operation-provenance.md, SDD/task-28-brief.md. Actual Task27 d3c3 source review remains historical source-only; pre-output applicability found an earlier missing backend operation_id join. Root accepted the source gap after reading store/request/adapter/scorer boundaries. Preserve frozen data/rubric and source checks.
+
+- [ ] Meaningful public actual-store/request provenance RED; snapshot owned/foreign/index baseline.
+- [ ] Preserve actual selected event operation_id in bounded backend snapshot; require canonical latest-operation identity, no changes to typed wire, prompt, authority or scorer.
+- [ ] Prove progress/final/correction/foreign/older/missing/wrong source continuity, immutability and no extra model metadata; affected grounded/token/reserved suites once final.
+- [ ] STOP for one scoped new-source/actualRAW review, exact Root commit and genuine new source/config/Main/support chain before unchanged measured gates. No Task27 source materialization or model GO while this gap remains.
