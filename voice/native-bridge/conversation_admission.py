@@ -141,6 +141,10 @@ class AdmissionRequest:
             if self.sealed:
                 facts.pop('reason', None)
                 facts.pop('stage', None)
+            # Contradictory task association is irreversible for this lease;
+            # transient observer failure must not restore release authority.
+            if self.receipt.unresolved_reason == 'unexpected_task':
+                facts.pop('unresolved_reason', None)
             self.receipt = replace(self.receipt, **facts)
 
     def snapshot(self):
@@ -428,8 +432,9 @@ class SharedSlotOwner:
         self.probes = deque(maxlen=128)
         self.slot_get_attempts = 0
         self.count_attempts = self.inference_attempts = 0
-        self.cleanup_tasks = set()
+        self.cleanup_tasks = {}
         self.probe_workers = {}
+        self._worker_owners = set()
         self.identity = self._identity()
         self.token, self.token_digest = _read_token(self.token_file)
         if self._identity() != self.identity:
@@ -465,8 +470,25 @@ class SharedSlotOwner:
             raise AdmissionUnavailable('owner binding unavailable') from error
         request.check()  # A late OS read grants no dispatch permission.
 
+    def _start_worker(self, role, action):
+        # Live work is ownership, not bounded diagnostic history. Register
+        # before scheduling, and forget only in the actual thread's finally.
+        marker = (role, object())
+        with self.lock: self._worker_owners.add(marker)
+        def run():
+            try: return action()
+            finally:
+                with self.lock: self._worker_owners.discard(marker)
+        return asyncio.create_task(asyncio.to_thread(run))
+
+    def _pending_count(self, role):
+        with self.lock:
+            return (sum(worker_role == role for worker_role, _ in self._worker_owners)
+                    + sum(task_role == role and not task.done()
+                          for task, task_role in self.cleanup_tasks.items()))
+
     async def _bounded(self, request, action):
-        worker = asyncio.create_task(asyncio.to_thread(action))
+        worker = self._start_worker(request.snapshot().role, action)
         try:
             done, _ = await asyncio.wait((worker,), timeout=request.check())
             if not done: raise TimeoutError('owner deadline')
@@ -680,7 +702,7 @@ class SharedSlotOwner:
                 record['connection_closed'] = True
                 record['worker_outstanding'] = False
                 record['terminal_at'] = time.monotonic()
-        worker = asyncio.create_task(asyncio.to_thread(observe))
+        worker = self._start_worker(role, observe)
         with self.lock:
             self.probe_workers[role] = worker
             self.probes.append(record)
@@ -731,9 +753,9 @@ class SharedSlotOwner:
             request.cleanup_started = True
             request.update(cleanup_outstanding=True)
         task = asyncio.create_task(self._cancel_observe(request))
-        self.cleanup_tasks.add(task)
+        with self.lock: self.cleanup_tasks[task] = receipt.role
         def complete(future):
-            self.cleanup_tasks.discard(future)
+            with self.lock: self.cleanup_tasks.pop(future, None)
             request.update(cleanup_outstanding=False)
             _consume(future)
         task.add_done_callback(complete)
@@ -907,7 +929,11 @@ async def run_admitted_chat(request, *, host, port, token_file, prepare, decode_
         if slot_owner is not None:
             slot_owner.matches(host, port, token_file)
             await slot_owner.acquire(request, role)
-        worker = asyncio.create_task(asyncio.to_thread(_chat_transaction, request, host, port, token_file, prepare, decode_content))
+        if slot_owner is not None:
+            worker = slot_owner._start_worker(role,
+                lambda: _chat_transaction(request, host, port, token_file, prepare, decode_content))
+        else:
+            worker = asyncio.create_task(asyncio.to_thread(_chat_transaction, request, host, port, token_file, prepare, decode_content))
         done, _ = await asyncio.wait((worker,), timeout=request.check())
         if not done:
             raise TimeoutError('conversation deadline')

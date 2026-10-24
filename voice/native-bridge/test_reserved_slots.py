@@ -740,6 +740,97 @@ class ReservedSlots(unittest.IsolatedAsyncioTestCase):
                 await owner.observe_active(classifier, classifier.deadline)
             self.assertEqual(len(server.calls), 1)
 
+    async def test_unexpected_task_survives_normal_timeout_and_capped_hard_cleanup_idle(self):
+        def retained_task(server): server.state[1]['id_task'] = 9
+        async with reserved(configure=retained_task) as (server, model, owner, _):
+            release = asyncio.Event()
+            async def held(request):
+                await release.wait()
+                return web.Response(body=choice_body(100))
+            server.on_infer = held
+            real_connect, real_exchange = admission.AdmissionRequest.connect, admission.exchange
+            class ProbeSocket:
+                def shutdown(self, *_): pass
+                def close(self): pass
+            def connect(request, host, port):
+                if request.snapshot().role: return real_connect(request, host, port)
+                request.check()
+                with request.lock: request.socket = ProbeSocket()
+                return request.socket
+            get_count = 0
+            def exchange(request, owned, frame, **kwargs):
+                nonlocal get_count
+                if kwargs.get('method') != 'GET': return real_exchange(request, owned, frame, **kwargs)
+                get_count += 1
+                state = slots()
+                state[1]['id_task'] = 9
+                if get_count == 1: state[1]['is_processing'] = True
+                if get_count == 2: raise TimeoutError('synthetic normal cleanup timeout')
+                return json.dumps(state).encode(), False
+            with patch.object(admission.AdmissionRequest, 'connect', connect), patch.object(admission, 'exchange', exchange):
+                request = admission.AdmissionRequest(2, budget=admission.PLANNER_BUDGET)
+                pending = asyncio.create_task(admitted(model, request=request))
+                await server.inferred.wait()
+                witness = await owner.observe_active(request, request.deadline)
+                self.assertEqual(witness.unresolved_reason, 'unexpected_task')
+                release.set()
+                with self.assertRaises(TimeoutError): await pending
+                await asyncio.gather(*tuple(owner.cleanup_tasks))
+                receipt = request.snapshot()
+                self.assertEqual((receipt.witness_get_attempts, receipt.cleanup_get_attempts), (1, 2))
+                self.assertEqual(owner.snapshot()['slot_get_attempts'], 4)  # startup included
+                self.assertIsNone(receipt.released_at, 'contradictory task association must remain latched')
+                self.assertEqual(receipt.unresolved_reason, 'unexpected_task')
+                before = owner.snapshot()['all_http_attempts']
+                with self.assertRaises(admission.AdmissionUnavailable): await admitted(model)
+                self.assertEqual(owner.snapshot()['all_http_attempts'], before)
+                await model.classify(TEXT, RoutingContext('scope', []))
+                self.assertFalse(owner.invalid)
+
+    async def test_shutdown_retains_preparation_worker_after_129_released_history_evictions(self):
+        from grounded_conversation import GroundedAnswers, GroundedJob
+        from types import SimpleNamespace
+        async with reserved() as (server, model, owner, _):
+            answers = GroundedAnswers(model)
+            job = GroundedJob(SimpleNamespace(job_id='old-prepare'), timeout=5)
+            entered, release, finished = threading.Event(), threading.Event(), threading.Event()
+            def held_prepare():
+                entered.set()
+                try:
+                    release.wait(5)
+                    raise ValueError('synthetic preparation rejection')
+                finally: finished.set()
+            def reject(): raise ValueError('synthetic preparation rejection')
+            async def run(request, prepare):
+                return await admission.run_admitted_chat(request, host=model.host, port=model.port,
+                    token_file=model.token_file, prepare=prepare, decode_content=lambda value, _: value,
+                    observe=lambda _: None, slot_owner=owner, role='planner')
+            async def owned():
+                try: await run(job.admission, held_prepare)
+                finally: answers.release_job(job)
+            answers.bind_job(job)
+            job.task = asyncio.create_task(owned())
+            self.assertTrue(await asyncio.to_thread(entered.wait, .5))
+            try:
+                job.retire()
+                with self.assertRaises(asyncio.CancelledError): await job.task
+                self.assertEqual(job.admission.snapshot().release_basis, 'sealed_zero_inference')
+                for _ in range(129):
+                    request = admission.AdmissionRequest(1, budget=admission.PLANNER_BUDGET)
+                    with self.assertRaises(admission.AdmissionUnavailable): await run(request, reject)
+                state = owner.snapshot()
+                self.assertEqual(len(state['history']), 128)
+                self.assertNotIn(job.admission.snapshot().request_id, {r['request_id'] for r in state['history']})
+                self.assertEqual(state['total_attempts'], 0)
+                self.assertEqual(len(server.calls), 1)
+                self.assertFalse(finished.is_set())
+                self.assertTrue(job.admission.snapshot().worker_outstanding)
+                self.assertGreater(await answers.shutdown(.03), 0)
+            finally:
+                release.set()
+                self.assertTrue(await asyncio.to_thread(finished.wait, .5))
+            self.assertEqual(await answers.shutdown(.2), 0)
+
     async def test_transport_failure_during_drain_is_a_hard_abort(self):
         async with reserved() as (server, model, owner, _):
             release = asyncio.Event()

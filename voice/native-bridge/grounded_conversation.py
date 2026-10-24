@@ -294,15 +294,10 @@ class GroundedAnswers:
         tasks = {job.task for job in jobs if job.task is not None and not job.task.done()}
         if tasks: await asyncio.wait(tasks, timeout=max(0, deadline-time.monotonic()))
         while True:
-            state = self.model.slot_owner.snapshot()
-            # The common owner retains receipts after outer jobs leave _jobs.
-            # Count each outstanding lease once, plus actual observer workers.
-            receipts = {r['request_id']: r for r in (*state['history'], *state['roles'].values())
-                        if r is not None and r['role'] == 'planner'}
-            outstanding = sum(r['worker_outstanding'] or r['cleanup_outstanding']
-                              for r in receipts.values())
-            outstanding += sum(r['worker_outstanding'] for r in state['probes'] if r['role'] == 'planner')
-            pending = sum(not task.done() for task in tasks) + outstanding
+            # Actual guard/transaction/observer workers survive outer job
+            # completion and diagnostic eviction until their thread terminates.
+            pending = (sum(not task.done() for task in tasks)
+                       + self.model.slot_owner._pending_count('planner'))
             remaining = deadline-time.monotonic()
             if not pending or remaining <= 0: return pending
             await asyncio.sleep(min(.005, remaining))

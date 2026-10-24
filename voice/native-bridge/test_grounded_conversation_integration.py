@@ -461,6 +461,43 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(self.transcripts, [])
             held.set()
 
+    async def test_coordinator_shutdown_without_owner_reports_held_preacquisition_host_guard(self):
+        import threading
+        from unittest.mock import patch
+        from grounded_conversation import GroundedAnswers
+        from test_reserved_slots import reserved
+        async with reserved() as (server, model, owner, host):
+            entered, release, finished = threading.Event(), threading.Event(), threading.Event()
+            process = host.process
+            def held_process(pid):
+                entered.set()
+                try:
+                    release.wait(5)
+                    return process(pid)
+                finally: finished.set()
+            self.store.create_task(self.scope, AGENT, 'Fiktiver Beleg')
+            self.coordinator.grounded_answers = GroundedAnswers(model)
+            with patch.object(host, 'process', held_process):
+                await self.attachment.accept_guarded('held-guard', 'Was wurde gespeichert?', output_validity=lambda: True)
+                job = self.attachment._grounded
+                self.assertTrue(await asyncio.to_thread(entered.wait, .5))
+                try:
+                    await self.attachment.detach()
+                    await self.attachment._worker
+                    self.assertIsNone(self.coordinator._owner)
+                    result = await asyncio.wait_for(self.coordinator.shutdown(.03), .2)
+                    self.assertTrue(job.task.done())
+                    self.assertFalse(finished.is_set())
+                    self.assertEqual(job.admission.snapshot().lease_id, '')
+                    self.assertFalse(job.admission.snapshot().worker_outstanding)
+                    self.assertEqual(owner.snapshot()['roles'], {'classifier': None, 'planner': None})
+                    self.assertEqual(len(server.calls), 1)
+                    self.assertGreater(result['pending'], 0, 'actual host guard still owns work before acquisition')
+                finally:
+                    release.set()
+                    self.assertTrue(await asyncio.to_thread(finished.wait, .5))
+            self.assertEqual((await self.coordinator.shutdown(.2))['pending'], 0)
+
     async def test_old_drain_cannot_overwrite_new_grounded_diagnostic(self):
         from aiohttp import web
         from grounded_conversation import GroundedAnswers
