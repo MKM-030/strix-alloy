@@ -1084,6 +1084,7 @@ class PrefillProfileTests(unittest.TestCase):
         self.assertEqual(result, 'prepared')
 
     def test_tuned_measured_configuration_preserves_complete_binding(self):
+        self.profile['candidate_id'] = 'ministral3-3b-instruct-2512-q4km-vulkan'
         self.profile.update(performance_profile='prefill_ubatch1024_v1')
         self.profile['engine']['argv'] = self.admitted_argv(True)
         receipt, source, manifest = self.measured(self.profile)
@@ -1202,6 +1203,7 @@ class PrefillProfileTests(unittest.TestCase):
         self.assertEqual(self.host.launches, 0)
 
     def test_tuned_start_validation_checks_environment_before_qualification_or_launch(self):
+        self.profile['candidate_id'] = 'ministral3-3b-instruct-2512-q4km-vulkan'
         self.profile['performance_profile'] = 'prefill_ubatch1024_v1'
         self.profile['engine']['argv'] = self.admitted_argv(True)
         help_file = self.root / 'help.txt'
@@ -1237,6 +1239,240 @@ class PrefillProfileTests(unittest.TestCase):
                         else:
                             self.fail('tuned startup unexpectedly qualified')
         self.assertEqual(self.host.launches, 0)
+
+
+class QwenAdoptionTests(unittest.TestCase):
+    """Public synthetic files at real Consumer boundaries; no model execution."""
+    setUpClass = classmethod(RuntimeTests.setUpClass.__func__)
+    setUp = RuntimeTests.setUp
+    pin = RuntimeTests.pin
+    write_profile = RuntimeTests.write_profile
+    runtime = RuntimeTests.runtime
+    admitted_argv = PrefillProfileTests.admitted_argv
+    measured = PrefillProfileTests.measured
+    QWEN = 'qwen3-17b-official-q8-vulkan'
+    LEGACY = 'ministral3-3b-instruct-2512-q4km-vulkan'
+    TEMPLATE = '57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361'
+    LEGACY_TEMPLATE = 'd28d7df94f0fd7e8d0075a22c473333d6e7dd2bc4c36c83e8b975300a0fb94bc'
+
+    def qwen(self):
+        self.profile.update(candidate_id=self.QWEN, performance_profile='prefill_ubatch1024_v1',
+                            resident_budget_gib=6, minimum_reserve_gib=18)
+        self.profile['model']['sha256'] = '061b54daade076b5d3362dac252678d17da8c68f07560be70818cace6590cb1a'
+        self.profile['engine']['sha256'] = '13c6f274ca84b6babbdb6eabf51ac109d76c8ea3d1125f8a5c773c9733512e61'
+        self.profile['engine']['executable'] = 'C:/AI/runtimes/llamacpp-b10690-vulkan/llama-server.exe'
+        self.profile['model']['file'] = 'C:/AI/models/voice-conversation-qwen3-17b-official-q8/Qwen3-1.7B-Q8_0.gguf'
+        argv = self.admitted_argv(True)
+        argv[0] = self.profile['engine']['executable']
+        argv[argv.index('--model') + 1] = self.profile['model']['file']
+        argv[argv.index('--alias') + 1] = 'conversation-qwen3-17b'
+        self.profile['engine']['argv'] = argv
+        receipt, source, manifest = self.measured(self.profile)
+        receipt['configuration']['template_sha256'] = self.TEMPLATE
+        return receipt, source, manifest
+
+    def test_qwen_measured_configuration_accepts_only_its_real_template(self):
+        receipt, source, manifest = self.qwen()
+        self.assertEqual(self.mod._measured_configuration(receipt, self.profile, source, manifest),
+                         receipt['configuration'])
+        for template in (self.LEGACY_TEMPLATE, '0' * 64):
+            bad = copy.deepcopy(receipt)
+            bad['configuration']['template_sha256'] = template
+            with self.subTest(template=template), self.assertRaises(ValueError):
+                self.mod._measured_configuration(bad, self.profile, source, manifest)
+
+    def test_admitted_unknown_identity_and_cross_model_template_are_rejected(self):
+        self.profile['engine']['argv'] = self.admitted_argv()
+        receipt, source, manifest = self.measured(self.profile)
+        for identity in (self.QWEN, 'unknown-admitted-model'):
+            self.profile['candidate_id'] = identity
+            with self.subTest(identity=identity), self.assertRaises(ValueError):
+                self.mod._measured_configuration(receipt, self.profile, source, manifest)
+        self.profile['candidate_id'] = self.LEGACY
+        self.assertEqual(self.mod._measured_configuration(receipt, self.profile, source, manifest),
+                         receipt['configuration'])
+
+    def test_qwen_matching_receipt_cannot_repin_fixed_profile_or_argv(self):
+        receipt, source, manifest = self.qwen()
+        original = copy.deepcopy(self.profile)
+        edits = [('model', lambda p: p['model'].update(sha256='4' * 64)),
+                 ('engine', lambda p: p['engine'].update(sha256='5' * 64)),
+                 ('model-path', lambda p: p['model'].update(file=str(self.model))),
+                 ('engine-path', lambda p: p['engine'].update(executable=str(self.exe))),
+                 ('budget', lambda p: p.update(resident_budget_gib=5)),
+                 ('reserve', lambda p: p.update(minimum_reserve_gib=17)),
+                 ('profile', lambda p: p.pop('performance_profile'))]
+        for flag, value in (('--alias', 'foreign'), ('--port', '52745'), ('--threads', '8'),
+                ('--threads-batch', '8'), ('--ctx-size', '4096'), ('--parallel', '1'),
+                ('--predict', '64'), ('--gpu-layers', '98'), ('--fit', 'on'),
+                ('--cache-ram', '1'), ('--ctx-checkpoints', '1'), ('--reasoning', 'on'),
+                ('--reasoning-budget', '1'), ('--ubatch-size', '512')):
+            edits.append((flag, lambda p, f=flag, v=value:
+                p['engine']['argv'].__setitem__(p['engine']['argv'].index(f) + 1, v)))
+        edits += [('no-shift', lambda p: p['engine']['argv'].remove('--no-context-shift')),
+                  ('extra-flag', lambda p: p['engine']['argv'].extend(['--unknown', 'on']))]
+        for label, edit in edits:
+            profile = copy.deepcopy(original)
+            edit(profile)
+            bad = copy.deepcopy(receipt)
+            bad['configuration'].update(engine_sha256=profile['engine']['sha256'],
+                model_sha256=profile['model']['sha256'], effective_argv=profile['engine']['argv'])
+            with self.subTest(drift=label), self.assertRaises(ValueError):
+                self.mod._measured_configuration(bad, profile, source, manifest)
+
+    def test_qwen_retained_source_and_execution_drift_still_fail(self):
+        receipt, source, manifest = self.qwen()
+        for key, value in (('source_commit', 'c' * 40), ('manifest_sha256', 'd' * 64),
+                           ('isolated_child', False), ('protocol_format', 'closed_choice_v1')):
+            bad = copy.deepcopy(receipt)
+            bad['execution_evidence'][key] = value
+            with self.subTest(drift=key), self.assertRaises(ValueError):
+                self.mod._measured_configuration(bad, self.profile, source, manifest)
+        bad = copy.deepcopy(receipt)
+        name = next(iter(bad['execution_evidence']['application_sha256']))
+        bad['execution_evidence']['application_sha256'][name] = 'e' * 64
+        with self.assertRaises(ValueError):
+            self.mod._measured_configuration(bad, self.profile, source, manifest)
+
+    def test_admission_rejects_pilot_schema_and_wrong_pinned_template_before_trials(self):
+        receipt, source, manifest = self.qwen()
+        template = self.root / 'public-wrong-template.txt'
+        template.write_text('public synthetic template; never actual Qwen assets')
+        receipt.update(schema='role_slot_admission_v2', template=self.pin(template))
+        path = self.root / 'public-admission.json'
+        path.write_bytes(canonical(receipt))
+        with self.assertRaisesRegex(ValueError, '^admission rejected$'):
+            self.mod.derive_admission(self.pin(path), self.profile, self.root, source, manifest)
+        for schema in ('task24_qwen17_public_pilot_v1', 'role_slot_admission_v1'):
+            receipt['schema'] = schema
+            path.write_bytes(canonical(receipt))
+            with self.subTest(schema=schema), self.assertRaises(ValueError):
+                self.mod.derive_admission(self.pin(path), self.profile, self.root, source, manifest)
+
+    def test_qwen_cannot_relabel_historical_160_chain_as_qualified(self):
+        # Full synthetic historical provenance is real, but cannot admit Qwen.
+        self.profile.update(candidate_id=self.QWEN, resident_budget_gib=6)
+        self.write_profile()
+        with self.assertRaises(RuntimeError): self.runtime().run(True)
+        self.assertEqual(self.host.launches, 0)
+
+    def test_actual_owner_start_floor_24_and_reuse_floor_18(self):
+        # The real unchanged owner uses reserve + budget at launch and reserve
+        # on true reuse. Synthetic full historical evidence avoids actual assets.
+        self.profile['resident_budget_gib'] = 6
+        self.write_profile()
+        self.host.free = 23.999
+        with self.assertRaises(RuntimeError): self.runtime().run()
+        self.assertEqual(self.host.launches, 0)
+        self.host.free, self.host.after_launch_free = 24, 18
+        self.assertEqual(self.runtime().run(), 'started')
+        before = self.owner.read_bytes()
+        self.host.free = 17.999
+        with self.assertRaises(RuntimeError): self.runtime().run()
+        self.host.free = 18
+        self.assertEqual(self.runtime().run(True), 'reused')
+        self.assertEqual(self.host.launches, 1)
+        self.assertEqual(self.host.stops, [])
+        self.assertEqual(self.owner.read_bytes(), before)
+
+    def test_qwen_final_metadata_gate_rejects_pilot_and_mixed_campaign_before_go(self):
+        self.qwen()
+        def save(name, value):
+            path = self.root / name
+            path.write_bytes(canonical(value))
+            return self.pin(path)
+        fixed = {'schema': 'task25_qwen17_final_campaign_v1',
+            'campaign': 'task25-qwen17-grounded-final-qualification-20261024',
+            'participant_ids': [self.QWEN], 'status': 'REVIEWED_FROZEN',
+            'production_qualified': False, 'inference_authorized': False}
+        selected = {'id': self.QWEN, 'gguf_bytes': 1834426016, 'asset_file_count': 32,
+            'template_sha256': self.TEMPLATE,
+            'local_asset_hash_manifest_sha256': '7ae05d9e0994bd7080ec0afef45f278f35281ca0647b60934aa661be87f118e9',
+            'performance_profile': 'prefill_ubatch1024_v1', 'protocol_format': 'closed_choice_v2_grounded'}
+        definitions = {**fixed, 'candidates': [selected]}
+        inputs = {key: save(key + '.json', {}) for key in
+            ('summary', 'receipt', 'go', 'asset_manifest', 'source_manifest', 'admission', 'cancellation')}
+        inputs['source_record'] = save('source.json', {'stage': self.mod._ADMITTED_SOURCE['stage']})
+        def invoke(adapter, candidates):
+            inputs['artifact_manifest'] = save('adapter.json', adapter)
+            inputs['candidate_manifest'] = save('definitions.json', candidates)
+            return self.mod._provenance(inputs, {}, self.profile, self.root)
+        # Public incomplete GO is an intentional continuation sentinel: the
+        # real identity gate must pass before the next mandatory field is read.
+        with self.assertRaisesRegex(KeyError, 'status'): invoke(fixed, definitions)
+        changes = [('schema', 'task24_qwen17_public_pilot_v1'),
+            ('campaign', 'v4-closed-choice-preparation-160'),
+            ('participant_ids', [self.LEGACY]), ('participant_ids', [self.QWEN, self.LEGACY]),
+            ('inference_authorized', True), ('production_qualified', True), ('status', 'PILOT_COMPLETE')]
+        for target in ('adapter', 'definitions'):
+            for key, value in changes:
+                adapter, candidates = copy.deepcopy(fixed), copy.deepcopy(definitions)
+                (adapter if target == 'adapter' else candidates)[key] = value
+                with self.subTest(target=target, key=key, value=value), self.assertRaises(ValueError):
+                    invoke(adapter, candidates)
+        for candidates in ([], [{'id': self.LEGACY}], [{'id': self.QWEN}, {'id': self.LEGACY}]):
+            with self.subTest(candidates=candidates), self.assertRaises(ValueError):
+                invoke(fixed, {**definitions, 'candidates': candidates})
+        for key, value in (('gguf_bytes', 1834426015), ('asset_file_count', 31),
+                ('template_sha256', self.LEGACY_TEMPLATE), ('local_asset_hash_manifest_sha256', '1' * 64),
+                ('performance_profile', 'prefill_default_v1'), ('protocol_format', 'closed_choice_v1')):
+            with self.subTest(candidate_drift=key), self.assertRaises(ValueError):
+                invoke(fixed, {**definitions, 'candidates': [{**selected, key: value}]})
+
+    def test_admitted_source_support_and_independent_review_pins_remain_required(self):
+        receipt, source, manifest = self.qwen()
+        sources = dict(manifest['source_sha256'])
+        for name in self.mod._EXPECTED_SOURCES:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('# public synthetic source inventory')
+            sources[name] = digest(path.read_bytes())
+        test = self.root / 'voice/native-bridge/test_public_synthetic.py'
+        test.write_text('# public synthetic captured test')
+        tests = {'voice/native-bridge/test_public_synthetic.py': digest(test.read_bytes())}
+        def save(name, value):
+            path = self.root / name
+            path.write_bytes(canonical(value))
+            return self.pin(path)
+        helpers = ('v4_pinned_loader.py', 'v4_pinned_child.py', 'v4_adapter.py', 'v4_scoring.py',
+                   'v4_runtime_callbacks.py', 'v4_owned_lifecycle.py', 'v4_candidate_runner.py', 'v4_coexistence_runner.py')
+        artifacts = {}
+        for name in helpers:
+            path = self.root / name
+            path.write_text('# public synthetic support closure')
+            artifacts[name] = digest(path.read_bytes())
+        reviews = {}
+        for task in range(12, 18):
+            pin = save(f'review-{task}.json', {'public_synthetic_review': task})
+            reviews[str(task)] = {**pin, 'path': pin['file'], 'status': 'PASS', 'commit': source['commit']}
+        host_root = self.root / 'public-host-dependency'
+        host_root.mkdir()
+        for name in ('__init__.py', 'fake.pyd'): (host_root / name).write_text('public synthetic package')
+        imports = {name: [] for name in self.mod._ADMITTED_MODULES}
+        dependency = save('dependency.json', {'source_sha256': sources, 'test_sha256': tests,
+                                              'application_imports': imports})
+        source.update(self.mod._ADMITTED_SOURCE, status='REVIEWED_FROZEN', inference_authorized=False,
+            dependency_inventory_path=dependency['file'], dependency_inventory_sha256=dependency['sha256'],
+            reviewed_inventory=sorted(set(sources) | set(tests)))
+        identity = {'loader_version': 'v4-retained-bytes-1', 'loader_sha256': artifacts[helpers[0]],
+            'support_sha256': artifacts.copy(), 'application_modules': list(self.mod._ADMITTED_MODULES),
+            'external_imports': [], 'host_dependency': {'name': 'psutil', 'root': str(host_root),
+                'files': {p.name: digest(p.read_bytes()) for p in host_root.iterdir()}},
+            'interpreter': {'executable': str(self.exe), 'sha256': digest(self.exe.read_bytes()),
+                'version': 'public-synthetic', 'implementation': 'cpython', 'stdlib_tree_sha256': 'f' * 64,
+                'stdlib_files': 1, 'runtime_binary_sha256': {str(self.dll): digest(self.dll.read_bytes())}}}
+        manifest.update(self.mod._ADMITTED_SOURCE, commit=source['commit'], source_sha256=sources,
+            test_sha256=tests, dependency_inventory_sha256=dependency['sha256'], task_reviews=reviews,
+            application_imports=imports, execution_identity=identity)
+        self.assertIsNone(self.mod._closed_choice_identity(source, manifest, artifacts))
+        for change in ('support', 'review', 'dependency', 'source'):
+            bad = copy.deepcopy(manifest)
+            if change == 'support': bad['execution_identity']['support_sha256'][helpers[0]] = '1' * 64
+            elif change == 'review': bad['task_reviews']['17']['sha256'] = '2' * 64
+            elif change == 'dependency': bad['dependency_inventory_sha256'] = '3' * 64
+            else: bad['source_sha256'][next(iter(sources))] = '4' * 64
+            with self.subTest(drift=change), self.assertRaises(ValueError):
+                self.mod._closed_choice_identity(source, bad, artifacts)
 
 
 class AdmittedContractTests(unittest.TestCase):

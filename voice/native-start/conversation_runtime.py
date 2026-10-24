@@ -175,6 +175,37 @@ _ADMITTED_PROFILE = {
     'context_tokens': 4096, 'parallel': 1, 'main_context_tokens': 32768, 'main_parallel': 1,
     'minimum_reserve_gib': 18, 'server_predict_ceiling': 128, 'no_context_shift': True,
     'request_budgets': {'route': {'prompt': 3584, 'output': 24}, 'planner': {'prompt': 3072, 'output': 128}}}
+
+
+def _admitted_template(candidate_id: str) -> str:
+    """Two reviewed identities; legacy preparation keeps its original digest."""
+    if candidate_id == 'ministral3-3b-instruct-2512-q4km-vulkan':
+        return _ADMITTED_PROFILE['template_sha256']
+    _require(candidate_id == 'qwen3-17b-official-q8-vulkan')
+    return '57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361'
+
+
+def _admitted_identity(profile):
+    """Bind Qwen to the fixed evaluated configuration before reading receipts."""
+    template = _admitted_template(profile['candidate_id'])
+    if profile['candidate_id'] == 'qwen3-17b-official-q8-vulkan':
+        engine, model = profile['engine'], profile['model']
+        _require(Path(engine['executable']) == Path('C:/AI/runtimes/llamacpp-b10690-vulkan/llama-server.exe') and
+            Path(model['file']) == Path('C:/AI/models/voice-conversation-qwen3-17b-official-q8/Qwen3-1.7B-Q8_0.gguf'))
+        _require(engine['sha256'] == '13c6f274ca84b6babbdb6eabf51ac109d76c8ea3d1125f8a5c773c9733512e61')
+        _require(model['sha256'] == '061b54daade076b5d3362dac252678d17da8c68f07560be70818cace6590cb1a')
+        _require(profile.get('performance_profile') == 'prefill_ubatch1024_v1')
+        _require(_number(profile['resident_budget_gib']) == 6 and
+            _number(profile['minimum_reserve_gib']) == 18)
+        _same(engine['argv'], [engine['executable'], '--model', model['file'],
+            '--alias', 'conversation-qwen3-17b', '--threads', '6', '--threads-batch', '6',
+            '--ctx-size', '8192', '--predict', '128', '--gpu-layers', '99', '--fit', 'off',
+            '--parallel', '2', '--host', '127.0.0.1', '--port', '52744', '--ctx-checkpoints', '0',
+            '--cache-ram', '0', '--reasoning', 'off', '--reasoning-budget', '0', '--no-context-shift',
+            '--ubatch-size', '1024', '--api-key-file', '{token_file}'])
+    return template
+
+
 _ADMITTED_COUNT = {
     'accounting_protocol': 'pinned_chat_count_v1', 'maximum_count_attempts_per_transaction': 1,
     'maximum_inference_attempts_per_transaction': 1, 'maximum_http_per_transaction': 2,
@@ -494,6 +525,27 @@ def _provenance(inputs, summary, profile, base):
     _require(set(inputs) == required)
     records = {key: _pinned_json(inputs[key], base) for key in required - {'summary', 'receipt', 'admission', 'cancellation'}}
     go, artifact, source = (records[key] for key in ('go', 'artifact_manifest', 'source_record'))
+    if admitted:
+        _admitted_identity(profile)
+    if profile['candidate_id'] == 'qwen3-17b-official-q8-vulkan':
+        _require(admitted)
+        for record in (artifact, records['candidate_manifest']):
+            _require(record.get('schema') == 'task25_qwen17_final_campaign_v1' and
+                record.get('campaign') == 'task25-qwen17-grounded-final-qualification-20261024')
+            _same(record.get('participant_ids'), ['qwen3-17b-official-q8-vulkan'])
+            _require(record.get('status') == 'REVIEWED_FROZEN' and
+                record.get('inference_authorized') is False and record.get('production_qualified') is False)
+        _require(type(records['candidate_manifest']['candidates']) is list and
+            len(records['candidate_manifest']['candidates']) == 1 and
+            records['candidate_manifest']['candidates'][0]['id'] == profile['candidate_id'])
+        candidate = records['candidate_manifest']['candidates'][0]
+        _same(candidate['gguf_bytes'], 1834426016)
+        _same(candidate['asset_file_count'], 32)
+        _require(candidate['template_sha256'] == _admitted_template(profile['candidate_id']) and
+            candidate['local_asset_hash_manifest_sha256'] ==
+                '7ae05d9e0994bd7080ec0afef45f278f35281ca0647b60934aa661be87f118e9')
+        _require(candidate['performance_profile'] == profile['performance_profile'] and
+            candidate['protocol_format'] == 'closed_choice_v2_grounded')
     _require(go['status'] == 'GO' and go['authorization'] == ('GO TASK17 184-CASE QUALIFICATION' if admitted else 'GO V4 160-CASE QUALIFICATION'))
     _require(artifact['status'] == source['status'] == records['candidate_manifest']['status'] == 'REVIEWED_FROZEN')
     _require(source['version'] == records['candidate_manifest']['version'] == 'v4')
@@ -731,10 +783,11 @@ def _grounded_rows(rows):
 def _measured_configuration(receipt, profile, source, manifest):
     _require(receipt['status'] == 'measured' and receipt['source_commit'] == source['commit'])
     _executed_choice(receipt['execution_evidence'], source, manifest)
+    template = _admitted_identity(profile)
     expected = {'engine_sha256': profile['engine']['sha256'], 'model_sha256': profile['model']['sha256'],
         'runtime_hashes': profile['engine']['runtime_hashes'], 'source_manifest_sha256': source['manifest_sha256'],
         'effective_argv': profile['engine']['argv'], 'context_parallel': list(_RUNTIME_GEOMETRY),
-        'role_slots': _ROLE_SLOTS, 'slot_context': 4096, 'template_sha256': _ADMITTED_PROFILE['template_sha256'],
+        'role_slots': _ROLE_SLOTS, 'slot_context': 4096, 'template_sha256': template,
         'protocol': 'pinned_chat_count_v1', 'transport': 'ordinary_nonstream_nonresumable'}
     _same(receipt['configuration'], expected)
     options = _validate_performance_profile(profile, expected['effective_argv'],
@@ -950,6 +1003,9 @@ def derive_admission(pin, profile, base, source, manifest):
     receipt = _pinned_json(pin, base, 16 * 1024 * 1024)
     _require(receipt['schema'] == 'role_slot_admission_v2')
     _measured_configuration(receipt, profile, source, manifest)
+    template = _admitted_template(profile['candidate_id'])
+    template_file = _pin(receipt['template'], base)
+    _require(sha256(template_file) == template)
     transactions, count_only = _capability_facts(receipt)
     _session_slots(receipt['slot_owner'], receipt['slot_observations'], transactions, 6)
     _same(receipt['owner'], {'pid': receipt['slot_owner']['owner_pid'], 'created': receipt['slot_owner']['owner_created']})
@@ -964,8 +1020,6 @@ def derive_admission(pin, profile, base, source, manifest):
         _require(release['purpose'] == 'full_terminal' and release['send_started'] >= transaction['attempts'][1]['response_finished'])
         _require(next(s for s in release['slots'] if s['id'] == slot)['is_processing'] is False)
         _require(transaction['started'] >= observations[0]['response_finished'])
-    template_file = _pin(receipt['template'], base)
-    _require(sha256(template_file) == _ADMITTED_PROFILE['template_sha256'])
     transfer = receipt['transfer']
     _require(transfer['model'] == 'reviewed_trusted_launcher_immutable_configuration_v1')
     review = _pinned_json(transfer['review'], base)
@@ -980,7 +1034,7 @@ def derive_admission(pin, profile, base, source, manifest):
     return {'count_only_attempts': count_only, 'count_attempts': count_only + 4, 'inference_attempts': 4,
             'slot_get_attempts': 5, 'all_http_attempts': total,
             'context_parallel': list(_RUNTIME_GEOMETRY), 'role_slots': _ROLE_SLOTS, 'slot_context': 4096,
-            'template_sha256': _ADMITTED_PROFILE['template_sha256'], 'transfer_model': transfer['model']}
+            'template_sha256': template, 'transfer_model': transfer['model']}
 
 
 def _drain_trials(receipt):
@@ -1530,6 +1584,10 @@ class ConversationRuntime:
         quality = _pinned_json(profile['quality'], base)
         selected_source = _pinned_json(quality['inputs']['source_record'], base)
         admitted = selected_source.get('stage') == _ADMITTED_SOURCE['stage']
+        if admitted:
+            _admitted_identity(profile)
+        else:
+            _require(profile['candidate_id'] != 'qwen3-17b-official-q8-vulkan')
         options = _validate_performance_profile(profile, argv, admitted=admitted)
         _validate_launch_environment(profile)
         _require(15 <= len(argv) <= 50)
