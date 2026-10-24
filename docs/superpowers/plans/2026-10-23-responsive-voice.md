@@ -350,3 +350,13 @@ Task17 prefreeze addendum: source implementation required for two reserved Conve
 - [ ] Run focused wire, closed-choice, semantic/router, unified-policy, token-admission, grounded integration and reserved-slot suites; verify unchanged frame/token/deadline/authority checks. No model or broad native rerun.
 - [ ] Commit only owned Product source/tests and task docs, provide exact patch/report, close independent review before support migration or new source freeze.
 - [ ] Only after source/support review: Root determines a genuinely new prospective source-version campaign with prior failure pinned, fresh explicit capability GOs and all unchanged qualification gates. No consumed reservation/evidence replacement.
+
+### Task21: clarify already-selected task and current-question semantics
+
+Spec: docs/superpowers/specs/2026-10-24-selected-task-planner.md. BASE93cc5c1690b7a73e60f38138ec652360b3e20578. Rootratified under delegated user instruction after actual clean Task20 semantic failure; only Product PLANNER_PROMPT changes. No payload/schema/authority/renderer/evaluator/model/limits change.
+
+- [ ] Retain actual Task20 result as behavioral RED; capture exact owned/foreign baseline and index.
+- [ ] Replace only approved PLANNER_PROMPT; verify exact1250byte/systemhash and every other AST node unchanged. No mirror/substring tests.
+- [ ] Run grounded integration, token admission and reserved-slot regressions once; source/fake success is not model semantic GREEN.
+- [ ] Commit only source+Rootspec+this appendix; report actual commands/results/exact diff thenSTOP for independent review and truthful actual RAW applicability join.
+- [ ] Later separate new-source metadata/configuration/lineage/GO and real capability/184/coexistence/phone gates; preserve all three failed predecessor experiments. No retry from this task.
