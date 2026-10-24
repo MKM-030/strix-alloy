@@ -338,3 +338,15 @@ The future single campaign retains120routing/40status unchanged plus24grounded, 
 Task17 source implementation and fake verification are complete: final focused93/7.690s and one comprehensive native discovery827/126.074s passed. Exact owned files, RED/GREEN findings, shared transport APIs, readiness finalizer contract, source hashes and live blockers are in .superpowers/sdd/2026-10-23-responsive-voice/task-17-report.md. Independent source review and the existing-owner finalizer/evidence adoption remain pending; grounded production stays disabled and no live qualification or GO is claimed.
 
 Task17 prefreeze addendum: source implementation required for two reserved Conversation roles; binding spec docs/superpowers/specs/2026-10-24-role-reserved-conversation.md and SDD/task-17-addendum-brief.md. Main32768/1 and allquality/authority/reserve/deadline gates remain. Prospective Convo8192/2 must actually expose4096perslot, roles0/1. Same-role unknown release latches, otherrole staysindependent; real startup proof and currentowner guards required. Source review completion through9368574 remains historical; no finalsourcefreeze until addendumreviewclean. Task18tooladaptionrunsTASK-only separately, no liveGO.
+
+### Task 19: Lossless classifier context tables after measured admission rejection
+
+**Spec:** docs/superpowers/specs/2026-10-24-lossless-choice-tables.md (Root-ratified under delegated authority). **Brief:** .superpowers/sdd/2026-10-23-responsive-voice/task-19-brief.md. **BASE:**49f2a9c. The actual prior admission result remains terminal/inconclusive and consumed; this is a new source implementation, no retry authorization.
+
+**Interfaces:** consumes the canonical facts inside ProposalContract.model_data(); produces the same single returned JSON-compatible context through RoutingContext/PolicySnapshot/_run_request with fixed columnar descriptors. Schema, option identity/order, system prompt, policy, payload/count binding, role0 and2s deadline remain unchanged. Later PREP fake-reader support migration and truthful new source/campaign freeze are separate gates.
+
+- [ ] RED explicit version/columns/rows and independently pinned system-prompt hash, before source edits.
+- [ ] Implement one lossless table encoding; independent roundtrip/presence/type/order/injection-shaped-data/mutation/max8/16/70 tests and direct fixture-reader updates.
+- [ ] Run focused wire, closed-choice, semantic/router, unified-policy, token-admission, grounded integration and reserved-slot suites; verify unchanged frame/token/deadline/authority checks. No model or broad native rerun.
+- [ ] Commit only owned Product source/tests and task docs, provide exact patch/report, close independent review before support migration or new source freeze.
+- [ ] Only after source/support review: Root determines a genuinely new prospective source-version campaign with prior failure pinned, fresh explicit capability GOs and all unchanged qualification gates. No consumed reservation/evidence replacement.

@@ -130,7 +130,8 @@ class SemanticContractTest(unittest.IsolatedAsyncioTestCase):
         route = await ConversationRouter(model).route('Zeig mir den Fortschritt.', ctx)
         self.assertEqual(route, Route('status_query', 'actual-workflow-id'))
         self.assertEqual(model.calls, 1)
-        data = ctx.model_data()
+        from test_route_proposal_wire import decode_context
+        data = decode_context(ctx.model_data())
         self.assertEqual(data['tasks'][0]['task_ref'], 't1')
         self.assertNotIn('actual-workflow-id', json.dumps(data))
 
@@ -456,7 +457,8 @@ class HeldClassifierRaceTest(unittest.IsolatedAsyncioTestCase):
             model = Model(proposal('amend_task', 't1', relation='correction', evidence='Nora Berndt'))
             class RecordingModel(Model):
                 async def classify(self, text, context):
-                    self.data = context.model_data()
+                    from test_route_proposal_wire import decode_context
+                    self.data = decode_context(context.model_data())
                     return await super().classify(text, context)
             model = RecordingModel(model.result)
             coordinator = TaskCoordinator(store, ConversationRouter(model), [AGENT],

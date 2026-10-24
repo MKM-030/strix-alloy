@@ -395,11 +395,26 @@ class FramingAndOwnershipTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(data['context']['options']), 70)
             self.assertEqual(len(data['context']['tasks']), 8)
             self.assertEqual(len(data['context']['agents']), 16)
-            self.assertEqual([a['description'] for a in data['context']['agents']], ['  Grüß dich 東京  '] * 16)
-            for expected, actual in zip(ctx.tasks, data['context']['tasks']):
+            from test_route_proposal_wire import decode_context, maximum_expected
+            decoded = decode_context(data['context'])
+            expected_catalog = maximum_expected(ctx)
+            self.assertEqual(decoded, expected_catalog)
+            self.assertEqual([a['description'] for a in decoded['agents']], ['  Grüß dich 東京  '] * 16)
+            for expected, actual in zip(ctx.tasks, decoded['tasks']):
                 for key in ('objective', 'open_question', 'previous_question'):
                     if key in expected: self.assertEqual(actual[key], expected[key])
             self.assertEqual(peer.requests[0][1], peer.requests[1][1])
+            request = json.loads(peer.requests[0][1])
+            self.assertEqual(request['max_tokens'], 24)
+            self.assertEqual(request['response_format']['json_schema']['schema']['properties']['choice']['enum'],
+                             [row[0] for row in expected_catalog['options']])
+            self.assertTrue(all(len(frame) <= 16384 for _, _, frame in peer.requests))
+            await wait_observations(model, 1)
+            import hashlib
+            observed = model.observations[-1]
+            self.assertEqual(observed.payload_sha256, hashlib.sha256(peer.requests[0][1]).hexdigest())
+            catalog = json.dumps(data['context'], ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+            self.assertEqual(observed.catalog_sha256, hashlib.sha256(catalog).hexdigest())
 
     async def test_byte_fitting_high_token_input_is_not_estimated_or_truncated(self):
         async with transaction([framed(count_body(3585)), framed(choice_body())]) as (peer, model):

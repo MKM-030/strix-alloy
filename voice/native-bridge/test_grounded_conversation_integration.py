@@ -623,7 +623,9 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(len(peer.requests), count)
                 data = json.loads(json.loads(peer.requests[0][1])['messages'][1]['content'])
                 self.assertEqual(len(data['context']['options']), 70)
-                self.assertEqual(sum(c['intent']=='grounded_answer' for c in data['context']['candidates']), 8)
+                from test_route_proposal_wire import decode_context
+                decoded = decode_context(data['context'])
+                self.assertEqual(sum(c['intent']=='grounded_answer' for c in decoded['candidates']), 8)
 
     async def test_exact_yes_no_and_correction_remain_durable_once_when_enabled(self):
         from types import SimpleNamespace

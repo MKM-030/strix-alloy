@@ -27,6 +27,30 @@ PRODUCTION_SYSTEM_PROMPT = (
 )
 
 
+def _columnar_context(data):
+    """Lossless table representation of the canonical request-private facts."""
+    candidate_columns = ['candidate', 'intent', 'task_ref', 'agent_ref', 'question_relation']
+    agent_columns = ['agent_ref', 'alias', 'name', 'description', 'routing_aliases']
+    for candidate in data['candidates']:
+        if (not {'candidate', 'intent'} <= candidate.keys()
+                or candidate.keys() - set(candidate_columns)
+                or any(candidate.get(key) == '' for key in candidate_columns[2:])):
+            raise ValueError('unsupported routing candidate fields')
+    if any(agent.keys() != set(agent_columns) for agent in data['agents']):
+        raise ValueError('unsupported routing agent fields')
+    return dict(data, context_format='route_proposal.columnar.v1',
+        task_columns=['task_ref', 'agent_ref', 'details'],
+        tasks=[[task['task_ref'], task['agent_ref'],
+                {key: value for key, value in task.items() if key not in ('task_ref', 'agent_ref')}]
+               for task in data['tasks']],
+        candidate_columns=candidate_columns,
+        # Only generated optional refs/relation can be absent; present values
+        # are nonempty. Task and agent empty/null/false values are never omitted.
+        candidates=[[candidate.get(key, '') for key in candidate_columns] for candidate in data['candidates']],
+        agent_columns=agent_columns,
+        agents=[[agent[key] for key in agent_columns] for agent in data['agents']])
+
+
 class ProposalError(ValueError):
     """Independent bounded diagnostics, without retaining any response text."""
     def __init__(self, stage, *, syntax=None, shape=None, bounds=None, bound=None):
@@ -115,6 +139,7 @@ class ProposalContract:
             question_task_ref=refs.get(snapshot.question_task_id, ''),
             agents=[dict(agent_ref=arefs[a.alias], alias=a.alias, name=a.name,
                 description=a.description, routing_aliases=list(a.routing_aliases)) for a in snapshot.agents])
+        data = _columnar_context(data)
         if len(json.dumps(data, ensure_ascii=False, separators=(',', ':')).encode('utf-8')) > 12000:
             raise ContextBudgetExceeded('routing context too large')
         return data
