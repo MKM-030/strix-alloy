@@ -313,13 +313,20 @@ class GroundedAnswers:
             from dataclasses import asdict
             data = {'utterance': request.utterance_text, 'task_ref': 't1',
                     'evidence': [asdict(e) for e in request.evidence]}
-            schema = {'type': 'object', 'additionalProperties': False,
-                'required': ['outcome', 'form', 'evidence', 'gap'], 'properties': {
-                    'outcome': {'type': 'string', 'enum': ['answer', 'insufficient', 'needs_business', 'ambiguous']},
-                    'form': {'type': 'string', 'enum': ['state', 'change', 'current_question', 'queue', 'attributed', 'none']},
-                    'evidence': {'type': 'array', 'maxItems': 4, 'uniqueItems': True,
+            schema = {'anyOf': [
+                {'type': 'object', 'additionalProperties': False,
+                 'required': ['outcome', 'form', 'evidence', 'gap'], 'properties': {
+                    'outcome': {'const': 'answer'},
+                    'form': {'type': 'string', 'enum': ['state', 'change', 'current_question', 'queue', 'attributed']},
+                    'evidence': {'type': 'array', 'minItems': 1, 'maxItems': 4, 'uniqueItems': True,
                                  'items': {'type': 'string', 'enum': [e.ref for e in request.evidence]}},
-                    'gap': {'type': 'string', 'enum': ['none', *GAPS]}}}
+                    'gap': {'const': 'none'}}},
+                {'type': 'object', 'additionalProperties': False,
+                 'required': ['outcome', 'form', 'evidence', 'gap'], 'properties': {
+                    'outcome': {'type': 'string', 'enum': ['insufficient', 'needs_business', 'ambiguous']},
+                    'form': {'const': 'none'},
+                    'evidence': {'const': []},
+                    'gap': {'type': 'string', 'enum': [*GAPS]}}}]}
             catalog = json.dumps(data, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
             payload = json.dumps({'model': self.model.model, 'id_slot': 1,
                 'messages': [{'role': 'system', 'content': PLANNER_PROMPT},

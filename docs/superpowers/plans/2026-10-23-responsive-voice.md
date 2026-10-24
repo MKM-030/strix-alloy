@@ -360,3 +360,15 @@ Spec: docs/superpowers/specs/2026-10-24-selected-task-planner.md. BASE93cc5c1690
 - [ ] Run grounded integration, token admission and reserved-slot regressions once; source/fake success is not model semantic GREEN.
 - [ ] Commit only source+Rootspec+this appendix; report actual commands/results/exact diff thenSTOP for independent review and truthful actual RAW applicability join.
 - [ ] Later separate new-source metadata/configuration/lineage/GO and real capability/184/coexistence/phone gates; preserve all three failed predecessor experiments. No retry from this task.
+
+### Task22: align planner schema with existing local combination validation
+
+Spec: docs/superpowers/specs/2026-10-24-planner-schema-consistency.md. Brief: .superpowers/sdd/2026-10-23-responsive-voice/task-22-brief.md. BASE903e06815d54458f8e6fb5ba4b88816176930221. Root chooses complete answer/nonanswer anyOf objects after the independently diagnosed C21 contract mismatch. All four measured failures remain immutable and consumed.
+
+- [x] Capture baseline; isolate explicit jsonschema4.26.0 test dependency outside operational venv; independent-validator behavioral RED before schema edit.
+- [x] Change only planner schema construction; preserve prompt/catalog/local validation/renderer and original authority, budgets and lifecycle.
+- [x] Independent matrix/dynamic-ref/bounds/shape tests and one covering grounded/token/reserved-slot regression run; no model semantic GREEN from fakes.
+- [x] Commit exactly source, existing test file, test requirements, Rootspec and this appendix; provide exact evidence and stop for one combined Product/actual-RAW review.
+- [ ] Separate truthful new-source/configuration chain and finite prospective capability GO, followed by unchanged semantic/drain/184/coexistence/phone gates. No replay or activation authority here.
+
+Task22 source verification: independent JSON Schema RED1 (the emitted schema accepted the locally rejected answer/none combination), then GREEN4 and one covering110-test run passed. Test-only jsonschema==4.26.0 and its resolved dependencies are isolated under ignored SDD/task22-test-deps; runtime requirements and operational venv remain unchanged. Production changes only the schema assignment in GroundedAnswers.plan.prepare. Prompt, catalog, local decode/validate/render, authority, original budgets and lifecycle remain unchanged. Report: .superpowers/sdd/2026-10-23-responsive-voice/task-22-report.md; exact logs and package/file hashes: SDD/task22-evidence/. Pinned converter source supports the selected constructs but does not enforce uniqueItems; local uniqueness remains authoritative. No executed binary-language equivalence, model semantic success or new GO is claimed. Independent combined Product/actual-RAW review remains pending.

@@ -351,6 +351,145 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(self.dialog.calls), 1)
             self.assertEqual(self.transcripts, [])
 
+    async def emitted_planner_schema(self, request, raw=None, *, rejected=False):
+        import json
+        from grounded_conversation import GroundedAnswers, GroundedJob
+        from route_proposal import ProposalError
+        from test_reserved_slots import grounded_transaction as transaction
+        from test_token_admission import framed, count_body, choice_body
+        if raw is None:
+            raw = json.dumps({'outcome': 'answer', 'form': 'state',
+                              'evidence': [request.evidence[0].ref], 'gap': 'none'})
+        body = choice_body(100, choices=[{'finish_reason': 'stop', 'message': {'content': raw}}])
+        before = self.store._db.total_changes
+        async with transaction([framed(count_body(100)), framed(body)]) as (peer, model):
+            answers = GroundedAnswers(model)
+            job = GroundedJob(request)
+            answers.bind_job(job)
+            try:
+                if rejected:
+                    with self.assertRaises(ProposalError) as error:
+                        await answers.plan(request)
+                    self.assertEqual(error.exception.stage, 'shape_rejected')
+                else:
+                    await answers.plan(request)
+            finally:
+                answers.release_job(job)
+            self.assertEqual(len(peer.requests), 2)
+            self.assertEqual(peer.requests[0][1], peer.requests[1][1])
+            payload = json.loads(peer.requests[1][1])
+            self.assertEqual(payload['id_slot'], 1)
+            self.assertEqual(payload['max_tokens'], 128)
+            self.assertEqual([e['ref'] for e in json.loads(payload['messages'][1]['content'])['evidence']],
+                             [e.ref for e in request.evidence])
+            self.assertEqual(self.store._db.total_changes, before)
+            self.assertEqual(self.dialog.calls, [])
+            return payload['response_format']['json_schema']['schema']
+
+    def assert_plan_acceptance(self, validator, request, candidate, expected):
+        import json
+        from grounded_conversation import GroundedPlan
+        try:
+            GroundedPlan.decode(json.dumps(candidate), request)
+            local_valid = True
+        except ValueError:
+            local_valid = False
+        self.assertEqual(local_valid, expected, 'local decode')
+        self.assertEqual(validator.is_valid(candidate), expected,
+                         [error.message for error in validator.iter_errors(candidate)])
+
+    async def test_emitted_schema_rejects_answer_none_while_local_guard_rejects_raw(self):
+        import json
+        from jsonschema import Draft202012Validator
+        from grounded_conversation import GroundedPlan
+        task_id, _, _ = self.seeded_change()
+        request = self.capture(task_id)
+        candidate = {'outcome': 'answer', 'form': 'none',
+                     'evidence': [request.evidence[-1].ref], 'gap': 'none'}
+        raw = json.dumps(candidate)
+        with self.assertRaisesRegex(ValueError, 'invalid answer combination'):
+            GroundedPlan.decode(raw, request)
+        schema = await self.emitted_planner_schema(request, raw, rejected=True)
+        Draft202012Validator.check_schema(schema)
+        self.assertFalse(Draft202012Validator(schema).is_valid(candidate),
+                         'emitted schema must exclude the locally rejected answer/none combination')
+
+    async def test_emitted_schema_matches_independent_combination_and_shape_matrix(self):
+        from itertools import product
+        from jsonschema import Draft202012Validator
+        task_id, _, _ = self.seeded_change()
+        request = self.capture(task_id)
+        schema = await self.emitted_planner_schema(request)
+        Draft202012Validator.check_schema(schema)
+        validator = Draft202012Validator(schema)
+        forms = ('state', 'change', 'current_question', 'queue', 'attributed')
+        gaps = ('rationale', 'missing_record', 'fresh_check', 'scope', 'conflict')
+        nonanswers = ('insufficient', 'needs_business', 'ambiguous')
+        # Literal contract domains, independent of production enums or schema branches.
+        for outcome, form, gap, has_evidence in product(
+                ('answer', *nonanswers), (*forms, 'none'), ('none', *gaps), (False, True)):
+            expected = ((outcome == 'answer' and form in forms and gap == 'none' and has_evidence)
+                        or (outcome in nonanswers and form == 'none' and gap in gaps and not has_evidence))
+            candidate = {'outcome': outcome, 'form': form,
+                         'evidence': [request.evidence[0].ref] if has_evidence else [], 'gap': gap}
+            with self.subTest(candidate=candidate):
+                self.assert_plan_acceptance(validator, request, candidate, expected)
+        valid = {'outcome': 'answer', 'form': 'state',
+                 'evidence': [request.evidence[0].ref], 'gap': 'none'}
+        malformed = [dict(valid, extra=1)]
+        malformed += [{key: value for key, value in valid.items() if key != missing} for missing in valid]
+        malformed += [dict(valid, **{field: value}) for field, values in (
+            ('outcome', ('invented', None, 1, [])), ('form', ('invented', None, 1, [])),
+            ('gap', ('invented', None, 1, [])),
+            ('evidence', (None, 'e1', 1, {}, [None], [1], [True], [[]]))) for value in values]
+        for candidate in malformed:
+            with self.subTest(candidate=candidate):
+                self.assert_plan_acceptance(validator, request, candidate, False)
+
+    async def test_emitted_schema_uses_each_catalog_and_preserves_order_and_four_ref_bound(self):
+        from jsonschema import Draft202012Validator
+        owner = self.store.create_task(self.scope, AGENT, 'Fiktiver belegter Kontext')
+        task_id, _, _ = self.seeded_change()
+        rich = self.capture(task_id, owner['task_id'])
+        other = self.store.create_task(self.scope, AGENT, 'Fiktiver unabhängiger Beleg')
+        sparse = self.capture(other['task_id'])
+        self.assertGreaterEqual(len(rich.evidence), 5)
+        self.assertEqual(len(sparse.evidence), 1)
+        schemas = [await self.emitted_planner_schema(request) for request in (rich, sparse)]
+        for request, schema in zip((rich, sparse), schemas):
+            Draft202012Validator.check_schema(schema)
+            validator = Draft202012Validator(schema)
+            refs = [e.ref for e in request.evidence]
+            cases = [([], False), ([refs[0]], True), ([refs[-1]], True),
+                     ([refs[0], refs[0]], False), (['unoffered-ref'], False)]
+            if len(refs) >= 5:
+                cases += [(refs[:2], True), (refs[1::-1], True),
+                          (refs[-4:], True), (list(reversed(refs[-4:])), True), (refs[:5], False)]
+            else:
+                cases += [([rich.evidence[-1].ref], False)]
+            for selected, expected in cases:
+                candidate = {'outcome': 'answer', 'form': 'attributed', 'evidence': selected, 'gap': 'none'}
+                with self.subTest(catalog=refs, selected=selected):
+                    self.assert_plan_acceptance(validator, request, candidate, expected)
+
+    async def test_raw_invalid_peer_responses_still_reach_local_plan_rejection(self):
+        import json
+        task_id, _, _ = self.seeded_change()
+        request = self.capture(task_id)
+        ref = request.evidence[0].ref
+        valid = {'outcome': 'answer', 'form': 'state', 'evidence': [ref], 'gap': 'none'}
+        raw_valid = json.dumps(valid)
+        invalid = [dict(valid, form='none'), dict(valid, evidence=[ref, ref]),
+                   dict(valid, evidence=['unoffered-ref']), dict(valid, evidence=ref),
+                   dict(valid, extra=True), dict(valid, gap='rationale'),
+                   dict(valid, outcome='insufficient')]
+        raw_cases = [json.dumps(candidate) for candidate in invalid]
+        raw_cases += [raw_valid + ' trailing', raw_valid.replace('"state"', '"state", "form": "change"')]
+        for raw in raw_cases:
+            with self.subTest(raw=raw):
+                await self.emitted_planner_schema(request, raw, rejected=True)
+
+
     async def test_actual_planner_transport_emits_only_selected_attributed_evidence(self):
         import json
         from grounded_conversation import GroundedAnswers
@@ -373,7 +512,10 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
             payload = json.loads(peer.requests[0][1])
             self.assertEqual(payload['max_tokens'], 128)
             self.assertEqual(payload['temperature'], 0)
-            self.assertEqual(payload['response_format']['json_schema']['schema']['properties']['evidence']['maxItems'], 4)
+            from jsonschema import Draft202012Validator
+            schema = payload['response_format']['json_schema']['schema']
+            Draft202012Validator.check_schema(schema)
+            self.assertTrue(Draft202012Validator(schema).is_valid(json.loads(content)))
             self.assertNotIn(task_id, payload['messages'][1]['content'])
             self.assertNotIn('principal_id', payload['messages'][1]['content'])
             self.assertEqual(len(self.store.operations('scope')), 2)
