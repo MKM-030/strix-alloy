@@ -384,3 +384,35 @@ Spec: docs/superpowers/specs/2026-10-24-fixed-prefill-profile.md. Brief: SDD/tas
 - [ ] Later new truthful support/adoption/configuration chain and finite77 admission GO; unchanged drain/184/coexistence/iPhone gates remain. No source-test performance claim or replay.
 
 Task23 source verification: owner RED7/3 failures, Consumer RED8/2 failures plus missing-guard errors, and actual tuned startup RED1/6 present-environment subcase failures preceded their changes. Final owner7, focused Consumer11 and once covering9 (the eight handoff selections plus existing positive canonical proof/drift) passed. Tuned Product startup rejects presence, including empty values, of LLAMA_ARG_BATCH/LLAMA_ARG_UBATCH/LLAMA_ARG_FLASH_ATTN; baseline behavior remains compatible. The new TASK candidate reuses only unchanged R4 v3 owner/runtime callbacks and the public baseline candidate, retains real inherited validation, and has supplementary exact Consumer/test copies. Full commands, corrected synthetic-fixture mistakes, warning, exact diffs and byte hashes are in SDD/task-23-report.md and SDD/task23-evidence/. Independent integrated support/Consumer review and subsequent truthful support/configuration lineage remain pending; no runtime or performance claim follows.
+
+### Task25: Explicit Qwen17 final evaluation and Consumer support
+
+Binding spec: task workspace task25-qwen17-final-adoption-spec.md, execution brief SDD/task-25-brief.md. This is the existing plan's measured-success continuation. Task24 two-public-call pilot passed, but supplies no final qualification. Root self-review confirms source scopes, policy interface, expected values, covering tests and later measured gates align with that spec.
+
+- [ ] 25A: Snapshot Product Consumer/tests/docs exact before state. Write meaningful RED for explicit Qwen candidate-template/profile/provenance/admission and pilot-receipt rejection; implement minimal _admitted_template identity selection with legacy preserved; run covering classes once final; report fulldiff/RED/GREEN/Main19closure/dependency hashes. No commit/activation. Interface Consumer schema1, actual candidate policy and canonical receipts remain existing contracts.
+- [ ] 25B: In fresh task25-qwen17-final-support-candidate derive exactly v4_owned_lifecycle/v4_coexistence_runner/v4_candidate_runner from frozen pilot. Write meaningful RED for genuine final77/drain/184/coex identity and source-before-corpus boundaries; implement explicit final_campaign_policy(candidate_id)->{campaign,participant_ids,template_sha256,asset_filename,schema} and consume it at existing final joins, preserve legacy/pilot/ownership/caps/oracles. Run covering focused module once final; report full diff/RED/GREEN/imports/preservation. No other runtime leaf without Root dependency ruling.
+- [ ] 25C: In parallel prepare new INERT source-only materializer against stopped baseline with late real source/Consumer/adoption/review/evidence pins, exact80/22/application-support scope and actual required-artifact interface; no partial reads or corpus/result/model/private/runtime work.
+- [ ] Integrated independent Spec/Quality review and any bounded fix rounds. Then exact Consumer-only Product commit, separate from C22. Only after actual stopped identity/review may Root authorize new metadata/source chain and actual isolated smoke/config/Main review.
+- [ ] Separate fresh seven-predecessor/environment/live gates and unchanged77 admission, bounded drain, independent184+normalization,6Main24Conversation coexistence, Native/Desktop/iPhone checks. Each actual GO separately recorded; failures retained without automatic replay, changed oracle or inflated budgets.
+
+### Task26: Independent184 quality input completion
+
+Binding taskworkspace/task26-independent-quality-authoring-spec.md. Existing public metadata declares160 only;184/rubric/preoutputreview remains concrete missing dependency. This independently scoped model-free authoring proceeds in parallel with Task25 source rereview.
+
+- [ ] Appoint fresh author without source-implementation/model-output context; verify exact historical160 lineage/current shape compatibility, preserve all160objects/order/oracles unchanged. Stop dependent assembly on mismatch.
+- [ ] Author only24grounded cases (4x4useful+8adversarial) from existing spec, allnewsemanticreviewtrue, assemble184 and validate existing pinned authoring grammar without models; report hashes/provenance/actualcommand/limits.
+- [ ] Different independent reviewer verifies actual source-data/semantic applicability and freezes actual preoutputrubric/reviewer identity before candidate outputs. No fabricated approval or judgments.
+- [ ] After separate actual77/drain/source/config/Main and reviewed immutablequalificationrevision, Root may authorize one184 run and once-only independent scoring. Corpus creation itself grants no model authority.
+
+
+### Task27: Typed grounded evidence and supported answer forms
+
+Binding spec docs/superpowers/specs/2026-10-24-typed-grounded-evidence.md; SDD/task-27-brief.md. BASEc002bc7490f6dbe85d1a9bb7faf0b5be4b91036e. Root self-review confirms exact wire/helper signatures, values, ownership and verification cover the chosen design. This is a materially new application source path; all8prior consumed experiments remain unchanged, no modelGO follows.
+
+- [ ] Capture owned/foreign/index baseline; real prepared-catalog and unsupported-form RED before source edits, using independent public fixtures.
+- [ ] Add _typed_evidence exact11field lossless ordered table/actualroleindex/unchangedutterancelast; brief generic wire explanation, unchanged outputschema/role/frame/count/deadline/authority.
+- [ ] Add shared _supports_form and private ValueError subclass in validate/render; retain all5useful extraction forms/negativegaps and safe fallback, no intent keyword/answer correction/retry.
+- [ ] Verify actual prepared roundtrip/defaults/types/order/longUnicode/instructiondata/unknownhistoricalincomplete records; allform support/unsupportednegatives/mutation/freshness/bytebinding/oneinference; run grounded/token/reserved suites once final.
+- [ ] Stop source/report/fullpatch/rawpins for one independent review; Root separately commits exact ownedpaths and performs actualraw/source/config/Main/applicability joins before separate prospective77/drain/184/coex/phone authority.
+
+Reviewfocus: malformedorout-of-task sources never acquire support; historicalquestion never becomes current; longuntrustedtext stays complete data; supportedwrongintent is not locally repaired/credited; duplicate/mutated refs and snapshot/origin drift remain rejected. Cover these through actual prepare/decode/render/admission fixtures, not a mirror of implementation or mock semantic model.

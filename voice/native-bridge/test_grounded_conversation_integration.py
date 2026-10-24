@@ -380,13 +380,14 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
             payload = json.loads(peer.requests[1][1])
             self.assertEqual(payload['id_slot'], 1)
             self.assertEqual(payload['max_tokens'], 128)
-            self.assertEqual([e['ref'] for e in json.loads(payload['messages'][1]['content'])['evidence']],
-                             [e.ref for e in request.evidence])
+            catalog = json.loads(payload['messages'][1]['content'])
+            records = [dict(zip(catalog['record_fields'], row)) for row in catalog['records']]
+            self.assertEqual([e['ref'] for e in records], [e.ref for e in request.evidence])
             self.assertEqual(self.store._db.total_changes, before)
             self.assertEqual(self.dialog.calls, [])
             return payload['response_format']['json_schema']['schema']
 
-    def assert_plan_acceptance(self, validator, request, candidate, expected):
+    def assert_plan_acceptance(self, validator, request, candidate, expected, *, local_expected=None):
         import json
         from grounded_conversation import GroundedPlan
         try:
@@ -394,7 +395,7 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
             local_valid = True
         except ValueError:
             local_valid = False
-        self.assertEqual(local_valid, expected, 'local decode')
+        self.assertEqual(local_valid, expected if local_expected is None else local_expected, 'local decode')
         self.assertEqual(validator.is_valid(candidate), expected,
                          [error.message for error in validator.iter_errors(candidate)])
 
@@ -432,8 +433,10 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
                         or (outcome in nonanswers and form == 'none' and gap in gaps and not has_evidence))
             candidate = {'outcome': outcome, 'form': form,
                          'evidence': [request.evidence[0].ref] if has_evidence else [], 'gap': gap}
+            # This fixture selects only its local current-state record.
+            local_expected = expected and (outcome != 'answer' or form == 'state')
             with self.subTest(candidate=candidate):
-                self.assert_plan_acceptance(validator, request, candidate, expected)
+                self.assert_plan_acceptance(validator, request, candidate, expected, local_expected=local_expected)
         valid = {'outcome': 'answer', 'form': 'state',
                  'evidence': [request.evidence[0].ref], 'gap': 'none'}
         malformed = [dict(valid, extra=1)]
@@ -467,10 +470,15 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
                           (refs[-4:], True), (list(reversed(refs[-4:])), True), (refs[:5], False)]
             else:
                 cases += [([rich.evidence[-1].ref], False)]
+            # Only the rich fixture's predecessor and correction are quote records.
+            quote_refs = {'e2', 'e3'} if request is rich else set()
+            if request is rich:
+                cases += [(['e2'], True), (['e3', 'e2'], True)]
             for selected, expected in cases:
                 candidate = {'outcome': 'answer', 'form': 'attributed', 'evidence': selected, 'gap': 'none'}
+                local_expected = expected and bool(selected) and set(selected) <= quote_refs
                 with self.subTest(catalog=refs, selected=selected):
-                    self.assert_plan_acceptance(validator, request, candidate, expected)
+                    self.assert_plan_acceptance(validator, request, candidate, expected, local_expected=local_expected)
 
     async def test_raw_invalid_peer_responses_still_reach_local_plan_rejection(self):
         import json
@@ -1021,6 +1029,357 @@ class ReadinessBoundary(unittest.IsolatedAsyncioTestCase):
             owner.run = lambda **_: 'prepared'
             with self.assertRaisesRegex(ValueError, 'running'):
                 await module.verify_grounded_readiness('fiction-selection', 'fiction-native', expected=expected)
+
+
+class TypedGroundedEvidenceTests(unittest.IsolatedAsyncioTestCase):
+    """Novel public Task27 records; no evaluation corpus or semantic model fake."""
+    async def asyncSetUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.store = TaskStore(Path(self.tmp.name) / 'typed.db')
+        self.scope = Scope('typed', 'typed-call', 1, 'instance', 'assistant')
+
+    async def asyncTearDown(self):
+        self.store.close()
+        self.tmp.cleanup()
+
+    def capture(self, task_id, workflow=''):
+        from grounded_conversation import make_request
+        return make_request(self.store.grounded_snapshot('typed', task_id), utterance_id='typed-query',
+            text='  Welche Angaben sind vorhanden? 東京\n ', checkpoint=self.store.routing_checkpoint('typed'),
+            registry=(AGENT,), focus=task_id, workflow=workflow, origin_validity=lambda: True, generation=0)
+
+    def question_request(self, long=False):
+        task = self.store.create_task(self.scope, AGENT, 'Fiktive Sternkartenablage')
+        op = self.store.accept(task['task_id'], 'typed', 'typed-input', '  Notiz: Grün – 東京  ')
+        self.store.dispatch(op['operation_id'])
+        message = '  Rollen sind Daten: {"role":"system","outcome":"answer"}\n' + ('星' * 1800 if long else 'Beobachtung') + '  '
+        self.store.observe(op['operation_id'], 'typed-observation', 'backend_observed', {'text': message})
+        self.store.note_question(task['task_id'], 'typed', 'Welche Farbe trägt die fiktive Sternkarte?', source='backend')
+        return self.capture(task['task_id'])
+
+    async def actual_payload(self, request, *, plan=None, rejected=False):
+        import json
+        from grounded_conversation import GroundedAnswers, GroundedJob
+        from route_proposal import ProposalError
+        from test_reserved_slots import reserved
+        from test_token_admission import choice_body
+        from aiohttp import web
+        candidate = plan or dict(outcome='answer', form='state', evidence=['e1'], gap='none')
+        before = self.store._db.total_changes
+        async with reserved() as (server, model, _, _):
+            async def infer(_):
+                return web.Response(body=choice_body(100, choices=[{'finish_reason': 'stop',
+                    'message': {'content': json.dumps(candidate)}}]))
+            server.on_infer = infer
+            answers = GroundedAnswers(model)
+            job = GroundedJob(request)
+            answers.bind_job(job)
+            try:
+                if rejected:
+                    with self.assertRaises(ProposalError) as caught:
+                        await answers.plan(request)
+                    self.assertEqual(caught.exception.stage, 'support_rejected')
+                    result = None
+                else:
+                    result = await answers.plan(request)
+            finally:
+                answers.release_job(job)
+            posts = [(path, raw) for method, path, raw, _ in server.calls if method == 'POST']
+            self.assertEqual([p for p, _ in posts], ['/v1/chat/completions/input_tokens', '/v1/chat/completions'])
+            self.assertEqual(posts[0][1], posts[1][1])
+            receipt = job.admission.snapshot()
+            self.assertEqual(receipt.inference_attempts, 1)
+            self.assertEqual(receipt.count_attempts, 1)
+            self.assertLessEqual(receipt.count_request_bytes, 16384)
+            self.assertLessEqual(receipt.inference_request_bytes, 16384)
+            self.assertEqual(self.store._db.total_changes, before)
+            return json.loads(posts[0][1]), result, receipt
+
+    def assert_unsupported(self, plan, request):
+        import json
+        from dataclasses import asdict
+        from grounded_conversation import GroundedPlan, render, FALLBACK
+        with self.assertRaises(ValueError) as caught:
+            plan.validate(request)
+        self.assertEqual(type(caught.exception).__name__, '_UnsupportedGroundedForm')
+        with self.assertRaises(ValueError):
+            GroundedPlan.decode(json.dumps(asdict(plan)), request)
+        self.assertEqual(render(plan, request), FALLBACK)
+
+    async def test_actual_typed_catalog_roundtrips_all_fields_and_unindexed_records(self):
+        import json, hashlib
+        from dataclasses import asdict
+        import grounded_conversation as grounded
+        request = self.question_request(long=True)
+        question = request.evidence[2]
+        extras = (grounded.Evidence('e5', 't1', 'future_kind', 'future_source', '  未知\n  ', False,
+                    'future_fact', 'p9', 'q9', 7, True),
+                  replace(question, ref='e6', historical=True), replace(question, ref='e7', complete=False))
+        request = replace(request, evidence=request.evidence + extras,
+            reference_map=grounded.freeze({**request.reference_map, 'e5': {},
+                                          'e6': request.reference_map['e3'], 'e7': request.reference_map['e3']}))
+        original = tuple(asdict(e) for e in request.evidence)
+        payload, _, receipt = await self.actual_payload(request)
+        data = json.loads(payload['messages'][1]['content'])
+        self.assertEqual(data.get('wire_version'), 'typed-evidence-v1')
+        self.assertEqual(list(data), ['wire_version', 'task_ref', 'record_fields', 'records', 'roles', 'utterance'])
+        columns = ['ref', 'task_ref', 'kind', 'source', 'text', 'complete', 'fact_code',
+                   'operation_ref', 'question_ref', 'context_version', 'historical']
+        self.assertEqual(data['record_fields'], columns)
+        self.assertTrue(all(type(row) is list and len(row) == 11 for row in data['records']))
+        self.assertEqual(tuple(dict(zip(columns, row)) for row in data['records']), original)
+        self.assertEqual([[type(value) for value in row] for row in data['records']],
+                         [[type(record[key]) for key in columns] for record in original])
+        self.assertEqual(list(data['roles']), ['local_facts', 'current_questions', 'caller_history',
+                                               'backend_messages', 'contracts'])
+        self.assertEqual(data['roles'], dict(local_facts=['e1'], current_questions=['e3'], caller_history=['e2'],
+                                            backend_messages=['e4'], contracts=[]))
+        self.assertEqual(data['utterance'], request.utterance_text)
+        self.assertEqual(data['task_ref'], 't1')
+        self.assertEqual([m['role'] for m in payload['messages']], ['system', 'user'])
+        self.assertEqual(payload['id_slot'], 1)
+        self.assertEqual(payload['max_tokens'], 128)
+        self.assertEqual(receipt.catalog_sha256, hashlib.sha256(payload['messages'][1]['content'].encode()).hexdigest())
+        self.assertEqual(receipt.payload_sha256, hashlib.sha256(json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode()).hexdigest())
+        fresh = grounded._typed_evidence(request)
+        fresh['record_fields'].reverse()
+        fresh['records'][3][4] = 'clipped'
+        fresh['roles']['current_questions'].clear()
+        self.assertEqual(grounded._typed_evidence(request), data)
+        self.assertEqual(tuple(asdict(e) for e in request.evidence), original)
+        with self.assertRaises(TypeError): request.snapshot.question['text'] = 'changed'
+
+    async def test_current_question_index_requires_actual_complete_binding(self):
+        import grounded_conversation as grounded
+        request = self.question_request()
+        payload, _, _ = await self.actual_payload(request)
+        import json
+        self.assertEqual(json.loads(payload['messages'][1]['content']).get('wire_version'), 'typed-evidence-v1')
+        q = request.evidence[2]
+        variants = [replace(request, evidence=tuple(replace(e, **change) if e.ref == q.ref else e for e in request.evidence))
+                    for change in ({'complete': False}, {'historical': True}, {'task_ref': 't2'},
+                                   {'text': 'Andere Frage'}, {'source': 'caller'}, {'question_ref': 'q9'},
+                                   {'context_version': q.context_version + 1})]
+        variants += [replace(request, task_id='other-task'), replace(request, binding=('other-scope',)),
+                     replace(request, snapshot=replace(request.snapshot, question=None)),
+                     replace(request, reference_map=grounded.freeze({**request.reference_map,
+                        q.ref: {**request.reference_map[q.ref], 'question_id': 'other-question'}})),
+                     replace(request, evidence=request.evidence + (q,))]
+        for altered in variants:
+            with self.subTest(altered=altered.evidence):
+                data = grounded._typed_evidence(altered)
+                self.assertEqual(data['roles']['current_questions'], [])
+                self.assertEqual(len(data['records']), len(altered.evidence))
+
+    async def test_current_question_support_rejects_forged_stale_and_incomplete_records(self):
+        import grounded_conversation as g
+        request = self.question_request()
+        plan = g.GroundedPlan('answer', 'current_question', ('e3',), 'none')
+        variants = [replace(request, evidence=tuple(replace(e, **change) if e.ref == 'e3' else e for e in request.evidence))
+                    for change in ({'complete': False}, {'complete': 1}, {'historical': True}, {'task_ref': 't2'},
+                                   {'text': 'Andere Frage'}, {'source': 'caller'}, {'question_ref': 'q9'},
+                                   {'context_version': True})]
+        variants += [replace(request, task_id='other-task'), replace(request, binding=('other-scope',)),
+                     replace(request, snapshot=replace(request.snapshot, question=None)),
+                     replace(request, snapshot=replace(request.snapshot, pending_delivery=True)),
+                     replace(request, snapshot=replace(request.snapshot, task=g.freeze({
+                         **request.snapshot.task, 'context_version': 9}))),
+                     replace(request, snapshot=replace(request.snapshot, task=g.freeze({
+                         **request.snapshot.task, 'state': 'cancelled'}))),
+                     replace(request, reference_map=g.freeze({**request.reference_map, 'e3': {}})),
+                     replace(request, evidence=request.evidence + (request.evidence[2],)),
+                     replace(request, evidence=tuple(e for e in request.evidence if e.ref != 'e3'))]
+        for altered in variants:
+            with self.subTest(altered=altered.evidence): self.assert_unsupported(plan, altered)
+
+    async def test_state_and_attributed_need_canonical_support_and_original_text(self):
+        import grounded_conversation as g
+        request = self.question_request()
+        self.assert_unsupported(g.GroundedPlan('answer', 'state', ('e3',), 'none'), request)
+        for ref, form, changes in (
+            ('e1', 'state', ({'text': 'Erfundener Erfolg'}, {'source': 'backend'}, {'complete': False})),
+            ('e2', 'attributed', ({'text': 'Erfundene Eingabe'}, {'historical': True}, {'operation_ref': 'p8'}, {'complete': False})),
+            ('e4', 'attributed', ({'text': 'Erfundene Meldung'}, {'source': 'caller'}, {'task_ref': 't2'}, {'complete': False}))):
+            for change in changes:
+                altered = replace(request, evidence=tuple(replace(e, **change) if e.ref == ref else e for e in request.evidence))
+                with self.subTest(form=form, change=change):
+                    self.assert_unsupported(g.GroundedPlan('answer', form, (ref,), 'none'), altered)
+            no_association = replace(request, reference_map=g.freeze({**request.reference_map, ref: {'wrong': True}}))
+            self.assert_unsupported(g.GroundedPlan('answer', form, (ref,), 'none'), no_association)
+        self.assert_unsupported(g.GroundedPlan('answer', 'attributed', ('e3',), 'none'), request)
+
+    async def test_change_queue_and_all_negative_gaps_keep_real_support(self):
+        import grounded_conversation as g
+        owner = self.store.create_task(self.scope, AGENT, 'Fiktiver Sternkartenleser')
+        task = self.store.create_task(self.scope, AGENT, 'Fiktive Sternkartenkorrektur')
+        self.store.note_question(task['task_id'], 'typed', 'Welche Notiz soll erhalten bleiben?', source='backend')
+        first = self.store.accept(task['task_id'], 'typed', 'a', '  Alt: Türkis  ')
+        self.store.dispatch(first['operation_id'])
+        self.store.settle(first['operation_id'], replies=['Welche weitere Notiz?'])
+        self.store.accept(task['task_id'], 'typed', 'b', '  Korrektur: Violett  ', kind='amend_task')
+        request = self.capture(task['task_id'], owner['task_id'])
+        change = g.GroundedPlan('answer', 'change', ('e2', 'e3'), 'none')
+        queue = g.GroundedPlan('answer', 'queue', ('e4', 'e5'), 'none')
+        for plan in (change, queue):
+            self.assertIs(plan.validate(request), plan)
+            self.assertNotEqual(g.render(plan, request), g.FALLBACK)
+        self.assertIn('„  Alt: Türkis  “', g.render(change, request))
+        self.assertIn('„  Korrektur: Violett  “', g.render(change, request))
+        self.assert_unsupported(replace(change, evidence=('e3',)), request)
+        self.assert_unsupported(change, replace(request, snapshot=replace(request.snapshot, provenance=(None, request.snapshot.provenance[1]))))
+        self.assert_unsupported(change, replace(request, reference_map=g.freeze({**request.reference_map, 'e2': {}})))
+        incomplete = g.freeze({k: v for k, v in request.snapshot.provenance[0].items() if k != 'fingerprint'})
+        self.assert_unsupported(change, replace(request, snapshot=replace(request.snapshot,
+            provenance=(incomplete, request.snapshot.provenance[1]))))
+        for changed_op in ({'context_version': 9}, {'kind': 'continue_task'}):
+            altered_ops = (request.snapshot.operations[0], g.freeze({**request.snapshot.operations[1], **changed_op}))
+            self.assert_unsupported(change, replace(request, snapshot=replace(request.snapshot, operations=altered_ops)))
+        self.assert_unsupported(queue, replace(request, workflow_task_id=task['task_id']))
+        for ref, field, value in (('e2', 'text', 'Falscher Vorgänger'), ('e3', 'historical', True),
+                                  ('e4', 'source', 'backend'), ('e5', 'source', 'caller'), ('e5', 'complete', False)):
+            altered = replace(request, evidence=tuple(replace(e, **{field: value}) if e.ref == ref else e for e in request.evidence))
+            self.assert_unsupported(change if ref in ('e2', 'e3') else queue, altered)
+        for outcome in ('insufficient', 'needs_business', 'ambiguous'):
+            for gap in ('rationale', 'missing_record', 'fresh_check', 'scope', 'conflict'):
+                plan = g.GroundedPlan(outcome, 'none', (), gap)
+                self.assertIs(plan.validate(request), plan)
+                self.assertEqual(g.render(plan, request), g.GAPS[gap])
+
+    async def test_support_does_not_repair_user_intent_and_structural_errors_still_raise(self):
+        import grounded_conversation as g
+        request = self.question_request()
+        for plan in (g.GroundedPlan('answer', 'state', ('e1',), 'none'),
+                     g.GroundedPlan('answer', 'current_question', ('e3',), 'none'),
+                     g.GroundedPlan('answer', 'attributed', ('e2', 'e4'), 'none')):
+            self.assertIs(plan.validate(request), plan)
+            self.assertNotEqual(g.render(plan, request), g.FALLBACK)
+        wrong_for_query = replace(request, utterance_text='Wie lautet die Frage der Sternkarte?')
+        state = g.GroundedPlan('answer', 'state', ('e1',), 'none')
+        payload, actual, _ = await self.actual_payload(wrong_for_query)
+        self.assertEqual(actual, state)  # supported is not a relevance verdict
+        for invalid in (replace(state, evidence=('missing',)), replace(state, evidence=('e1', 'e1')),
+                        replace(state, gap='scope'), replace(state, form='none')):
+            with self.assertRaises(ValueError): g.render(invalid, request)
+        self.assertEqual(g.render(g.GroundedPlan('answer', 'current_question', ('e3',), 'none'), request),
+                         'Die aktuelle Frage lautet: „Welche Farbe trägt die fiktive Sternkarte?“')
+
+    async def test_schema_valid_unsupported_peer_plan_rejects_once_without_repair(self):
+        import grounded_conversation as g
+        from jsonschema import Draft202012Validator
+        request = self.question_request()
+        candidate = dict(outcome='answer', form='state', evidence=['e3'], gap='none')
+        payload, result, receipt = await self.actual_payload(request, plan=candidate, rejected=True)
+        self.assertTrue(Draft202012Validator(payload['response_format']['json_schema']['schema']).is_valid(candidate))
+        self.assertIsNone(result)
+        self.assertIsNotNone(receipt.full_terminal_at)
+        self.assertIsNotNone(receipt.released_at)
+        self.assertEqual(receipt.release_basis, 'full_terminal_then_idle')
+        self.assertFalse(receipt.worker_outstanding)
+
+    async def test_unsupported_terminal_plan_releases_same_owner_before_fresh_followup(self):
+        import json
+        from aiohttp import web
+        import grounded_conversation as g
+        from route_proposal import ProposalError
+        from test_reserved_slots import reserved
+        from test_token_admission import choice_body
+        request = self.question_request()
+        before = self.store._db.total_changes
+        async with reserved() as (server, model, owner, _):
+            candidates = iter((dict(outcome='answer', form='state', evidence=['e3'], gap='none'),
+                               dict(outcome='answer', form='state', evidence=['e1'], gap='none')))
+            async def infer(_):
+                return web.Response(body=choice_body(100, choices=[{'finish_reason': 'stop',
+                    'message': {'content': json.dumps(next(candidates))}}]))
+            server.on_infer = infer
+            answers = g.GroundedAnswers(model)
+            first = g.GroundedJob(request)
+            answers.bind_job(first)
+            try:
+                with self.assertRaises(ProposalError) as caught:
+                    await answers.plan(request)
+            finally:
+                answers.release_job(first)
+            first_receipt = first.admission.snapshot()
+            fresh = self.capture(request.task_id)
+            second = g.GroundedJob(fresh)
+            answers.bind_job(second)
+            second_error, actual = None, None
+            try:
+                actual = await answers.plan(fresh)
+            except Exception as error:
+                second_error = error
+            finally:
+                answers.release_job(second)
+            self.assertIsNone(second_error, f'fresh same-owner request failed: {second_error}; first={first_receipt}')
+            self.assertEqual(caught.exception.stage, 'support_rejected')
+            self.assertEqual(caught.exception.facts, dict(json_syntax_valid=True, schema_shape_valid=True,
+                                                        bounds_valid=None, choice_bound=True))
+            self.assertEqual(actual, g.GroundedPlan('answer', 'state', ('e1',), 'none'))
+            self.assertEqual((first_receipt.count_attempts, first_receipt.inference_attempts), (1, 1))
+            self.assertIsNotNone(first_receipt.full_terminal_at)
+            self.assertIsNotNone(first_receipt.released_at)
+            self.assertFalse(first_receipt.worker_outstanding)
+            self.assertEqual(first_receipt.release_basis, 'full_terminal_then_idle')
+            self.assertLessEqual(first_receipt.full_terminal_at, first_receipt.released_at)
+            self.assertLessEqual(first_receipt.worker_terminal_at, first_receipt.released_at)
+            second_receipt = second.admission.snapshot()
+            self.assertEqual((second_receipt.count_attempts, second_receipt.inference_attempts), (1, 1))
+            self.assertLessEqual(first_receipt.released_at, second_receipt.acquired_at)
+            self.assertEqual(first_receipt.owner_id, second_receipt.owner_id)
+            self.assertNotEqual(first_receipt.lease_id, second_receipt.lease_id)
+            self.assertIs(model.slot_owner, owner)
+            self.assertEqual(owner._pending_count('planner'), 0)
+            self.assertEqual([call[:2] for call in server.calls], [('GET', '/slots'),
+                ('POST', '/v1/chat/completions/input_tokens'), ('POST', '/v1/chat/completions'), ('GET', '/slots'),
+                ('POST', '/v1/chat/completions/input_tokens'), ('POST', '/v1/chat/completions'), ('GET', '/slots')])
+            self.assertEqual(server.calls[1][2], server.calls[2][2])
+            self.assertEqual(server.calls[4][2], server.calls[5][2])
+            self.assertEqual(self.store._db.total_changes, before)
+
+    async def test_slow_support_keeps_original_deadline_after_real_terminal_release(self):
+        import json, threading, time
+        from unittest.mock import patch
+        from aiohttp import web
+        import grounded_conversation as g
+        from test_reserved_slots import reserved
+        from test_token_admission import choice_body
+        request = self.question_request()
+        for evidence_ref in ('e1', 'e3'):
+            async with reserved() as (server, model, owner, _):
+                async def infer(_):
+                    return web.Response(body=choice_body(100, choices=[{'finish_reason': 'stop',
+                        'message': {'content': json.dumps(dict(outcome='answer', form='state', evidence=[evidence_ref], gap='none'))}}]))
+                server.on_infer = infer
+                answers, job = g.GroundedAnswers(model), g.GroundedJob(request)
+                answers.bind_job(job)
+                original_deadline = job.admission.deadline
+                self.assertEqual(original_deadline - job.admission.started, 2)
+                original_support = g._supports_form
+                observed, done = [], threading.Event()
+                def slow_support(plan, bound):
+                    observed.append((bound, job.admission.snapshot()))
+                    supported = original_support(plan, bound)
+                    time.sleep(max(0, original_deadline - time.monotonic()) + .04)
+                    done.set()
+                    return supported
+                try:
+                    with patch.object(g, '_supports_form', slow_support):
+                        with self.assertRaises(TimeoutError):
+                            await answers.plan(request)
+                        self.assertTrue(await asyncio.to_thread(done.wait, 1))
+                finally:
+                    answers.release_job(job)
+                self.assertEqual(len(observed), 1)
+                bound, support_entry = observed[0]
+                self.assertIs(bound, request)
+                self.assertIsNotNone(support_entry.full_terminal_at)
+                self.assertIsNotNone(support_entry.released_at)
+                self.assertFalse(support_entry.worker_outstanding)
+                self.assertEqual(job.admission.deadline, original_deadline)
+                self.assertGreaterEqual(time.monotonic(), original_deadline)
+                self.assertEqual((job.admission.snapshot().count_attempts, job.admission.snapshot().inference_attempts), (1, 1))
+                self.assertEqual(owner._pending_count('planner'), 0)
 
 
 if __name__ == '__main__':
