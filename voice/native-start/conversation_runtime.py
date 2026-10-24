@@ -523,7 +523,8 @@ def _provenance(inputs, summary, profile, base):
     admitted = source.get('stage') == _ADMITTED_SOURCE['stage']
     if admitted: required |= {'admission', 'cancellation'}
     _require(set(inputs) == required)
-    records = {key: _pinned_json(inputs[key], base) for key in required - {'summary', 'receipt', 'admission', 'cancellation'}}
+    records = {key: _pinned_json(inputs[key], base, 262144 if key == 'source_manifest' else 131072)
+               for key in required - {'summary', 'receipt', 'admission', 'cancellation'}}
     go, artifact, source = (records[key] for key in ('go', 'artifact_manifest', 'source_record'))
     if admitted:
         _admitted_identity(profile)

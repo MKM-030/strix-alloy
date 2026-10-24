@@ -1475,6 +1475,107 @@ class QwenAdoptionTests(unittest.TestCase):
                 self.mod._closed_choice_identity(source, bad, artifacts)
 
 
+class ProvenanceManifestLimitTests(unittest.TestCase):
+    """Real bounded file/pin/provenance joins using only public synthetic files."""
+    setUpClass = classmethod(RuntimeTests.setUpClass.__func__)
+    pin = RuntimeTests.pin
+    write_profile = RuntimeTests.write_profile
+
+    def setUp(self):
+        self.new_source = True
+        RuntimeTests.setUp(self)
+        path = Path(self.quality_inputs['source_manifest']['file'])
+        manifest = self.mod.read_json(path)
+        # A genuine source-like captured-test map, with actual file/hash pins.
+        # No arbitrary padding field or qualification receipt is manufactured.
+        for index in range(900):
+            relative = f'voice/native-bridge/test_public_manifest_capture_{index:04d}_' + 'x' * 35 + '.py'
+            captured = self.root / relative
+            captured.write_text('# public synthetic captured source test\n')
+            manifest['test_sha256'][relative] = digest(captured.read_bytes())
+        path.write_bytes(canonical(manifest))
+        self.assertGreater(path.stat().st_size, 131072)
+        self.assertLessEqual(path.stat().st_size, 262144)
+        self.refresh_provenance()
+
+    def refresh_provenance(self):
+        """Repin the existing synthetic source/artifact/GO/summary chain."""
+        inputs = self.quality_inputs
+        manifest_path = Path(inputs['source_manifest']['file'])
+        inputs['source_manifest'] = self.pin(manifest_path)
+        manifest = json.loads(manifest_path.read_bytes())
+        source_path = Path(inputs['source_record']['file'])
+        source = self.mod.read_json(source_path)
+        source.update(manifest_sha256=inputs['source_manifest']['sha256'],
+            reviewed_inventory=sorted(set(manifest['source_sha256']) | set(manifest['test_sha256'])))
+        source_path.write_bytes(canonical(source))
+        inputs['source_record'] = self.pin(source_path)
+        inputs['candidate_manifest'] = self.pin(Path(inputs['candidate_manifest']['file']))
+        artifact_path = Path(inputs['artifact_manifest']['file'])
+        artifact = self.mod.read_json(artifact_path)
+        artifact['source_record_sha256'] = inputs['source_record']['sha256']
+        artifact['artifact_sha256']['v4-source-record.json'] = inputs['source_record']['sha256']
+        artifact['artifact_sha256']['v4-owned-candidates.json'] = inputs['candidate_manifest']['sha256']
+        artifact_path.write_bytes(canonical(artifact))
+        inputs['artifact_manifest'] = self.pin(artifact_path)
+        go_path = Path(inputs['go']['file'])
+        go = self.mod.read_json(go_path)
+        go.update(artifact_manifest_sha256=inputs['artifact_manifest']['sha256'],
+                  source_record_sha256=inputs['source_record']['sha256'])
+        go_path.write_bytes(canonical(go))
+        inputs['go'] = self.pin(go_path)
+        self.summary = self.mod.read_json(Path(inputs['summary']['file']))
+        self.summary['provenance'].update(go_record_sha256=inputs['go']['sha256'],
+            artifact_manifest_sha256=inputs['artifact_manifest']['sha256'],
+            source_record_sha256=inputs['source_record']['sha256'],
+            source_manifest_sha256=inputs['source_manifest']['sha256'],
+            artifact_sha256=artifact['artifact_sha256'])
+
+    def provenance(self):
+        return self.mod._provenance(self.quality_inputs, self.summary, self.profile, self.root)
+
+    def test_large_valid_source_manifest_passes_actual_complete_provenance_join(self):
+        facts = self.provenance()
+        self.assertEqual(facts, self.summary['provenance'])
+        self.assertEqual(facts['source_manifest_sha256'], self.quality_inputs['source_manifest']['sha256'])
+        print('Public source-like manifest accepted by actual provenance:',
+              Path(self.quality_inputs['source_manifest']['file']).stat().st_size, 'bytes')
+
+    def test_manifest_hash_missing_source_content_and_review_drift_fail_closed(self):
+        original = copy.deepcopy(self.quality_inputs['source_manifest'])
+        self.quality_inputs['source_manifest']['sha256'] = '0' * 64
+        with self.assertRaises(ValueError): self.provenance()
+        self.quality_inputs['source_manifest'] = original
+        self.quality_inputs.pop('source_manifest')
+        with self.assertRaises((ValueError, KeyError)): self.provenance()
+        self.quality_inputs['source_manifest'] = original
+        manifest = json.loads(Path(original['file']).read_bytes())
+        for target in (self.root / next(iter(manifest['source_sha256'])),
+                       Path(manifest['task_reviews']['15']['path'])):
+            before = target.read_bytes()
+            try:
+                target.write_bytes(before + b'\n# public synthetic drift')
+                with self.subTest(drift=target.name), self.assertRaises(ValueError): self.provenance()
+            finally:
+                target.write_bytes(before)
+        self.assertEqual(self.provenance(), self.summary['provenance'])
+
+    def test_source_manifest_over_262144_rejected_even_with_consistent_repinning(self):
+        path = Path(self.quality_inputs['source_manifest']['file'])
+        raw = path.read_bytes()
+        # Whitespace preserves the exact same supported JSON shape and joins.
+        path.write_bytes(raw + b' ' * (262145 - len(raw)))
+        self.refresh_provenance()
+        with self.assertRaises(ValueError): self.provenance()
+
+    def test_other_metadata_keeps_the_131072_limit(self):
+        path = Path(self.quality_inputs['candidate_manifest']['file'])
+        raw = path.read_bytes()
+        path.write_bytes(raw + b' ' * (131073 - len(raw)))
+        self.refresh_provenance()
+        with self.assertRaises(ValueError): self.provenance()
+
+
 class AdmittedContractTests(unittest.TestCase):
     """Pure FAKE metadata/accounting examples; never final evaluator receipts."""
     @classmethod
