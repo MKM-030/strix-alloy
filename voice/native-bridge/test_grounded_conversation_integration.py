@@ -316,7 +316,8 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
         import conversation_admission as admission
         from unittest.mock import patch
         from grounded_conversation import GroundedAnswers
-        from test_token_admission import transaction, framed, count_body, choice_body
+        from test_reserved_slots import grounded_transaction as transaction
+        from test_token_admission import framed, count_body, choice_body
         task = self.store.create_task(self.scope, AGENT, 'Fiktiver Drucker')
         self.store.accept(task['task_id'], 'scope', 'first', 'Bitte prüfen')
         self.attachment._wake.set()
@@ -353,7 +354,8 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
     async def test_actual_planner_transport_emits_only_selected_attributed_evidence(self):
         import json
         from grounded_conversation import GroundedAnswers
-        from test_token_admission import transaction, framed, count_body, choice_body
+        from test_reserved_slots import grounded_transaction as transaction
+        from test_token_admission import framed, count_body, choice_body
         task_id, _, _ = self.seeded_change()
         content = '{"outcome":"answer","form":"change","evidence":["e2","e3"],"gap":"none"}'
         body = choice_body(3072, choices=[{'finish_reason':'stop','message':{'content':content}}],
@@ -377,9 +379,159 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(self.store.operations('scope')), 2)
             self.assertEqual(self.dialog.calls, [])
 
+    async def test_owned_audio_stops_immediately_while_real_planner_drains_then_role_reuses(self):
+        import json
+        from aiohttp import web
+        from grounded_conversation import GroundedAnswers
+        from test_reserved_slots import reserved
+        from test_token_admission import choice_body, TEXT
+        from test_responsive_output import event
+        task = self.store.create_task(self.scope, AGENT, 'Fiktiver Beleg')
+        async with reserved() as (server, model, owner, _):
+            release = asyncio.Event()
+            async def held(request):
+                payload = json.loads(await request.read())
+                if payload['id_slot'] == 1:
+                    await release.wait()
+                    return web.Response(body=choice_body(100, choices=[{'finish_reason':'stop', 'message':{'content':
+                        '{"outcome":"answer","form":"state","evidence":["e1"],"gap":"none"}'}}]))
+                return web.Response(body=choice_body(100))
+            server.on_infer = held
+            self.coordinator.grounded_answers = GroundedAnswers(model)
+            await self.attachment.accept_guarded('held', 'Was wurde gespeichert?', output_validity=lambda: True)
+            await server.inferred.wait()
+            job = self.attachment._grounded
+            await self.arbiter.publish_guarded(dict(event('Owned synthetic PCM'), task_id=task['task_id'],
+                                               context_version=task['context_version']),
+                                               lambda: True, grounded_id=job.request.job_id)
+            await eventually(lambda: bool(self.playback.data))
+            transcripts = list(self.transcripts)
+            changes = self.store._db.total_changes
+            self.attachment.invalidate_grounded('input')
+            self.assertFalse(self.playback.data)
+            self.assertTrue(job.admission.sealed)
+            self.assertFalse(job.active)
+            self.assertFalse(job.admission.cancelled.is_set())
+            self.assertFalse(job.admission.snapshot().connection_closed)
+            await model.classify(TEXT, RoutingContext('scope', []))
+            release.set()
+            await eventually(lambda: job.admission.snapshot().released_at is not None)
+            await eventually(lambda: job.task.done())
+            self.assertEqual(self.transcripts, transcripts)
+            self.assertFalse(self.playback.data)
+            self.assertEqual(self.store._db.total_changes, changes)
+            self.assertEqual(self.store.operations('scope'), [])
+            self.assertEqual(self.dialog.calls, [])
+            self.assertEqual(job.admission.snapshot().release_basis, 'full_terminal_then_idle')
+            self.assertEqual(job.admission.snapshot().slot_get_attempts, 1)
+            await self.attachment.accept_guarded('next', 'Was wurde gespeichert?', output_validity=lambda: True)
+            await eventually(lambda: len(self.transcripts) > len(transcripts))
+            self.assertEqual(self.store.operations('scope'), [])
+            self.assertEqual(self.dialog.calls, [])
+
+    async def test_shutdown_aborts_draining_grounded_job_after_legacy_owner_is_gone(self):
+        from aiohttp import web
+        from grounded_conversation import GroundedAnswers
+        from test_reserved_slots import reserved
+        from test_token_admission import choice_body
+        async with reserved() as (server, model, owner, _):
+            held = asyncio.Event()
+            async def infer(request):
+                await held.wait()
+                return web.Response(body=choice_body(100))
+            server.on_infer = infer
+            self.store.create_task(self.scope, AGENT, 'Fiktiver Beleg')
+            self.coordinator.grounded_answers = GroundedAnswers(model)
+            await self.attachment.accept_guarded('held-shutdown', 'Was wurde gespeichert?', output_validity=lambda: True)
+            await server.inferred.wait()
+            job = self.attachment._grounded
+            self.attachment.invalidate_grounded('input')
+            self.assertFalse(job.admission.cancelled.is_set())
+            await self.attachment.detach()
+            await self.attachment._worker
+            self.assertIsNone(self.coordinator._owner)
+            self.assertIn(job.request.job_id, self.coordinator.grounded_answers._jobs)
+            result = await asyncio.wait_for(self.coordinator.shutdown(.1), .25)
+            self.assertGreater(result['pending'], 0, 'scheduled hard-abort cleanup is still pending')
+            self.assertTrue(job.admission.cancelled.is_set())
+            self.assertTrue(job.admission.snapshot().connection_closed)
+            self.assertTrue(job.task.done())
+            self.assertEqual(self.coordinator.grounded_answers._jobs, {})
+            self.assertIsNone(job.admission.snapshot().released_at)
+            self.assertEqual(self.transcripts, [])
+            held.set()
+
+    async def test_old_drain_cannot_overwrite_new_grounded_diagnostic(self):
+        from aiohttp import web
+        from grounded_conversation import GroundedAnswers
+        from test_reserved_slots import reserved
+        from test_token_admission import choice_body
+        async with reserved() as (server, model, owner, _):
+            release = asyncio.Event()
+            async def infer(request):
+                await release.wait()
+                return web.Response(body=choice_body(100, choices=[{'finish_reason':'stop', 'message':{'content':
+                    '{"outcome":"answer","form":"state","evidence":["e1"],"gap":"none"}'}}]))
+            server.on_infer = infer
+            self.store.create_task(self.scope, AGENT, 'Fiktiver Beleg')
+            self.coordinator.grounded_answers = GroundedAnswers(model)
+            await self.attachment.accept_guarded('old', 'Was wurde gespeichert?', output_validity=lambda: True)
+            await server.inferred.wait()
+            old = self.attachment._grounded
+            await self.attachment.accept_guarded('new', 'Was wurde gespeichert?', output_validity=lambda: True)
+            new = self.attachment._grounded
+            await eventually(lambda: new.task.done())
+            self.assertEqual(self.attachment.grounded_result.job_id, new.request.job_id)
+            release.set()
+            await eventually(lambda: old.task.done())
+            self.assertEqual(self.attachment.grounded_result.job_id, new.request.job_id)
+
+    async def test_detached_drain_keeps_same_owner_and_new_attachment_reuses_only_after_release(self):
+        from aiohttp import web
+        from grounded_conversation import GroundedAnswers
+        from test_reserved_slots import reserved
+        from test_token_admission import choice_body
+        async with reserved() as (server, model, owner, _):
+            release = asyncio.Event()
+            async def infer(request):
+                await release.wait()
+                return web.Response(body=choice_body(100, choices=[{'finish_reason':'stop', 'message':{'content':
+                    '{"outcome":"answer","form":"state","evidence":["e1"],"gap":"none"}'}}]))
+            server.on_infer = infer
+            self.store.create_task(self.scope, AGENT, 'Fiktiver Beleg')
+            answers = self.coordinator.grounded_answers = GroundedAnswers(model)
+            await self.attachment.accept_guarded('old-call', 'Was wurde gespeichert?', output_validity=lambda: True)
+            await server.inferred.wait()
+            old = self.attachment._grounded
+            await self.attachment.detach()
+            await self.attachment._worker
+            next_scope = Scope('scope-next', 'call-next', 2, 'instance', 'assistant')
+            self.attachment = await self.coordinator.attach(next_scope, OutputSink(self.arbiter),
+                                                           executor=LegacyVAExecutor(self.dialog))
+            self.store.create_task(next_scope, AGENT, 'Anderer fiktiver Beleg')
+            self.assertIn(old.request.job_id, answers._jobs)
+            before = len(server.calls)
+            await self.attachment.accept_guarded('new-call-blocked', 'Was wurde gespeichert?', output_validity=lambda: True)
+            blocked = self.attachment._grounded
+            await eventually(lambda: blocked.task.done())
+            self.assertEqual(len(server.calls), before)
+            self.assertIsNone(old.admission.snapshot().released_at)
+            release.set()
+            await eventually(lambda: old.task.done())
+            self.assertEqual(old.admission.snapshot().release_basis, 'full_terminal_then_idle')
+            await self.attachment.accept_guarded('new-call-reuse', 'Was wurde gespeichert?', output_validity=lambda: True)
+            successor = self.attachment._grounded
+            await eventually(lambda: successor.task.done())
+            self.assertEqual(successor.admission.snapshot().owner_id, old.admission.snapshot().owner_id)
+            self.assertEqual(successor.admission.snapshot().predecessor, old.admission.snapshot().lease_id)
+            self.assertEqual(successor.admission.snapshot().release_basis, 'full_terminal_then_idle')
+            self.assertEqual(self.dialog.calls, [])
+            self.assertEqual(self.store.operations('scope'), [])
+            self.assertEqual(self.store.operations('scope-next'), [])
+
     async def test_planner_oversized_whole_evidence_falls_back_before_send(self):
         from grounded_conversation import GroundedAnswers
-        from test_token_admission import transaction
+        from test_reserved_slots import grounded_transaction as transaction
         task = self.store.create_task(self.scope, AGENT, 'Fiktiver großer Beleg')
         for i in range(2):
             op = self.store.accept(task['task_id'], 'scope', f'large{i}', '界'*3900)
@@ -394,7 +546,8 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
 
     async def test_invalid_actual_plan_has_one_guarded_fallback_and_no_retry(self):
         from grounded_conversation import GroundedAnswers
-        from test_token_admission import transaction, framed, count_body, choice_body
+        from test_reserved_slots import grounded_transaction as transaction
+        from test_token_admission import framed, count_body, choice_body
         self.store.create_task(self.scope, AGENT, 'Fiktiver kurzer Beleg')
         body = choice_body(100, choices=[{'finish_reason':'stop', 'message':{'content':
             '{"outcome":"answer","form":"state","evidence":["foreign"],"gap":"none"}'}}])
@@ -557,6 +710,71 @@ class NativeGroundedOwnership(unittest.IsolatedAsyncioTestCase):
     transcripts = fixtures.NativeResponsiveTests.transcripts
     onset = ownership.onset
     endpoint = ownership.endpoint
+
+    async def test_actual_vad_revokes_live_planner_drains_and_next_question_reuses_role(self):
+        from aiohttp import web
+        from grounded_conversation import GroundedAnswers
+        from test_reserved_slots import reserved
+        from test_token_admission import choice_body
+        from test_responsive_output import event
+        call = await self.start()
+        await self.say(call, 'first request')
+        await self.dialog.started.wait()
+        task = self.store.list_tasks(call.call_id)[0]
+        async with reserved() as (server, model, owner, _):
+            release = asyncio.Event()
+            async def infer(request):
+                await release.wait()
+                return web.Response(body=choice_body(100, choices=[{'finish_reason':'stop', 'message':{'content':
+                    '{"outcome":"answer","form":"state","evidence":["e1"],"gap":"none"}'}}]))
+            server.on_infer = infer
+            self.coordinator.grounded_answers = GroundedAnswers(model)
+            self.coordinator.router = ConversationRouter(ChoiceModel('grounded_answer', 'explain'))
+            await self.say(call, 'Was wurde gespeichert?')
+            await asyncio.wait_for(server.inferred.wait(), 1)
+            job = call.responsive_attachment._grounded
+            await call.responsive_output.publish_guarded(dict(event('Owned synthetic PCM'),
+                task_id=task['task_id'], context_version=task['context_version']),
+                lambda: True, grounded_id=job.request.job_id)
+            await eventually(lambda: bool(call.playback.data))
+            transcripts = list(self.transcripts(call))
+            changes = self.store._db.total_changes
+            async def empty(pcm): return ''
+            transcribe = self.speech.transcribe
+            self.speech.transcribe = empty
+            track, _ = await self.onset(call)
+            self.assertFalse(job.active)
+            self.assertTrue(job.admission.sealed)
+            self.assertFalse(job.admission.cancelled.is_set())
+            self.assertFalse(job.admission.snapshot().connection_closed)
+            self.assertFalse(call.playback.data)
+            await self.endpoint(track)
+            await call.turns.join()
+            await eventually(lambda: any(t.get('code') == 'ASR_EMPTY' for t in self.transcripts(call)))
+            spoken = list(self.speech.spoken)
+            release.set()
+            await eventually(lambda: job.task.done())
+            self.assertEqual(job.admission.snapshot().release_basis, 'full_terminal_then_idle')
+            self.assertEqual(job.admission.snapshot().cleanup_get_attempts, 1)
+            self.assertEqual([t for t in self.transcripts(call) if t.get('code') != 'ASR_EMPTY'], transcripts)
+            self.assertEqual(self.speech.spoken, spoken)
+            self.assertEqual(self.store._db.total_changes, changes)
+            self.assertEqual(len(self.dialog.received), 1)
+            self.assertFalse(self.dialog.cancelled)
+            async def next_question(pcm): return 'Was wurde gespeichert?'
+            self.speech.transcribe = next_question
+            track.feed()
+            await asyncio.wait_for(track.idle.wait(), 2)
+            await self.endpoint(track)
+            await call.turns.join()
+            await call.recognized_turns.join()
+            self.speech.transcribe = transcribe
+            successor = call.responsive_attachment._grounded
+            await eventually(lambda: successor.task.done())
+            self.assertEqual(successor.admission.snapshot().predecessor, job.admission.snapshot().lease_id)
+            self.assertEqual(successor.admission.snapshot().release_basis, 'full_terminal_then_idle')
+            self.assertEqual(len(self.dialog.received), 1)
+            self.assertEqual(len(self.store.operations(call.call_id)), 1)
 
     async def test_actual_silent_onset_seals_planner_before_empty_asr(self):
         from types import SimpleNamespace

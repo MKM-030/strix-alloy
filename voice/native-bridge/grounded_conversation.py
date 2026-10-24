@@ -254,10 +254,14 @@ class GroundedJob:
         self.active = True
         self.task = None
 
-    def retire(self, reason='cancelled'):
+    def retire(self, reason='cancelled', *, abort=False):
         self.active = False
-        self.admission.retire(reason)
-        if self.task is not None and not self.task.done():
+        if abort:
+            self.admission.retire(reason)
+            draining = False
+        else:
+            draining = self.admission.revoke_for_drain(reason)
+        if not draining and self.task is not None and not self.task.done():
             self.task.cancel()
 
 
@@ -266,14 +270,42 @@ class GroundedAnswers:
         from conversation_router import LoopbackConversationModel
         if not isinstance(model, LoopbackConversationModel):
             raise ValueError('grounded answers require the existing admitted model')
+        from conversation_admission import SharedSlotOwner
+        if not isinstance(model.slot_owner, SharedSlotOwner) or not model.slot_owner.initialized:
+            raise ValueError('grounded answers require initialized shared slot owner')
         self.model = model
         self._jobs = {}
+        self._closing = False
 
     def bind_job(self, job):
+        if self._closing:
+            raise ValueError('grounded answers shutting down')
         self._jobs[job.request.job_id] = job
 
     def release_job(self, job):
         self._jobs.pop(job.request.job_id, None)
+
+    async def shutdown(self, timeout_seconds=5):
+        """Abort/join existing jobs, including drains after call ownership ends."""
+        self._closing = True
+        deadline = time.monotonic() + max(0, timeout_seconds)
+        jobs = tuple(self._jobs.values())
+        for job in jobs: job.retire('shutdown', abort=True)
+        tasks = {job.task for job in jobs if job.task is not None and not job.task.done()}
+        if tasks: await asyncio.wait(tasks, timeout=max(0, deadline-time.monotonic()))
+        while True:
+            state = self.model.slot_owner.snapshot()
+            # The common owner retains receipts after outer jobs leave _jobs.
+            # Count each outstanding lease once, plus actual observer workers.
+            receipts = {r['request_id']: r for r in (*state['history'], *state['roles'].values())
+                        if r is not None and r['role'] == 'planner'}
+            outstanding = sum(r['worker_outstanding'] or r['cleanup_outstanding']
+                              for r in receipts.values())
+            outstanding += sum(r['worker_outstanding'] for r in state['probes'] if r['role'] == 'planner')
+            pending = sum(not task.done() for task in tasks) + outstanding
+            remaining = deadline-time.monotonic()
+            if not pending or remaining <= 0: return pending
+            await asyncio.sleep(min(.005, remaining))
 
     async def plan(self, request):
         from conversation_admission import PreparedChat, run_admitted_chat
@@ -294,7 +326,7 @@ class GroundedAnswers:
                                  'items': {'type': 'string', 'enum': [e.ref for e in request.evidence]}},
                     'gap': {'type': 'string', 'enum': ['none', *GAPS]}}}
             catalog = json.dumps(data, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
-            payload = json.dumps({'model': self.model.model,
+            payload = json.dumps({'model': self.model.model, 'id_slot': 1,
                 'messages': [{'role': 'system', 'content': PLANNER_PROMPT},
                              {'role': 'user', 'content': catalog.decode('utf-8')}],
                 'temperature': 0, 'max_tokens': 128, 'cache_prompt': False,
@@ -310,4 +342,5 @@ class GroundedAnswers:
                 raise ProposalError('shape_rejected', shape=False) from None
         return await run_admitted_chat(job.admission, host=self.model.host, port=self.model.port,
             token_file=self.model.token_file, prepare=prepare,
-            decode_content=decode, observe=self.model._observe_admission)
+            decode_content=decode, observe=self.model._observe_admission,
+            slot_owner=self.model.slot_owner, role='planner')

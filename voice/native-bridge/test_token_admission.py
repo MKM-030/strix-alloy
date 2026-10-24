@@ -617,7 +617,10 @@ class PublicOwnershipReviewTests(unittest.IsolatedAsyncioTestCase):
             release.set()
             worker_done.wait(.08)  # Child coroutine cannot run during this callback.
         async def outer_timeout(aws, *, timeout=None, **kwargs):
-            if timeout == 2.0:
+            # The outer wait now uses the original request's remaining time.
+            # Its first invocation precedes the child worker's own wait.
+            if not getattr(outer_timeout, 'seen', False):
+                outer_timeout.seen = True
                 await original_wait(aws, timeout=.03, **kwargs)
                 asyncio.get_running_loop().call_soon(release_before_child_handler)
                 return set(), set(aws)

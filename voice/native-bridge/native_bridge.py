@@ -1516,10 +1516,17 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
     probe_dialog = Dialog(config) if dialog_factory is None and probe_backend else None
     async def lifecycle(app):
         nonlocal responsive
+        slot_owner = None
         if profile and profile.grounded_answers_enabled:
             readiness = _grounded_readiness_module()
             expected = readiness.expected_grounded(profile.model_url, profile.model_name)
-            readiness.validate_proof(await grounded_readiness_provider(expected), expected)
+            proof = readiness.validate_proof(await grounded_readiness_provider(expected), expected)
+            from conversation_admission import SharedSlotOwner
+            deadline = time.monotonic() + profile.model_timeout_seconds
+            async with asyncio.timeout_at(asyncio.get_running_loop().time() + profile.model_timeout_seconds):
+                slot_owner = await asyncio.to_thread(SharedSlotOwner, readiness.current_host_boundary(),
+                    proof.owner_pid, proof.owner_created, profile.model_url, profile.model_name, profile.model_token_file)
+                await slot_owner.initialize(deadline)
         app[HTTP_KEY] = ClientSession(trust_env=False, timeout=ClientTimeout(total=180))
         if profile is not None and profile.enabled:
             if responsive_factory is not None:
@@ -1531,6 +1538,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                 model = (LoopbackConversationModel(None, profile.model_url,
                          profile.model_name, profile.model_token_file, profile.model_timeout_seconds)
                          if profile.model_url else None)
+                if model is not None: model.slot_owner = slot_owner
                 responsive = TaskCoordinator(TaskStore(profile.store_file), ConversationRouter(model),
                     profile.agents, lambda scope: None, mode='legacy',
                     grounded_answers=__import__('grounded_conversation').GroundedAnswers(model)

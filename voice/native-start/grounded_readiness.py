@@ -21,7 +21,7 @@ class GroundedExpected:
     protocol: str = 'pinned_chat_count_v1'
     route_limits: tuple = (3584, 24)
     planner_limits: tuple = (3072, 128)
-    context_parallel: tuple = (4096, 1)
+    context_parallel: tuple = (8192, 2)
     main_context_parallel: tuple = (32768, 1)
     reserve_gib: int = 18
 
@@ -73,6 +73,15 @@ def validate_proof(proof, expected):
             or {p[0] for p in proof.measured_evidence_sha256} != {'admission','grounding','cancellation','coexistence'}):
         raise ValueError('grounded readiness requires verified owner and measured evidence bindings')
     return proof
+
+
+def current_host_boundary():
+    # The genuine provider loaded this exact canonical module. A missing module
+    # cannot be replaced with a second runtime or a permissive bool verifier.
+    module = sys.modules.get('conversation_runtime')
+    if module is None or not callable(getattr(module, 'WindowsHost', None)):
+        raise ValueError('canonical Conversation WindowsHost unavailable')
+    return module.WindowsHost()
 
 
 async def verify_grounded_readiness(selection_file, native_config_file, *, expected):

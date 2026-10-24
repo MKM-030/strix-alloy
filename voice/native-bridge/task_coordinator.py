@@ -94,12 +94,18 @@ class TaskCoordinator:
 
     async def shutdown(self, timeout_seconds=5):
         self._shutdown = True
+        deadline = time.monotonic() + max(0, timeout_seconds)
         owner = self._owner
+        if owner is not None: await owner.detach()
+        # A draining planner can outlive its detached Legacy owner. Its existing
+        # job registry must be aborted/joined before the no-owner early return.
+        close_grounded = getattr(self.grounded_answers, 'shutdown', None)
+        grounded_pending = (await close_grounded(max(0, deadline-time.monotonic()))
+                            if callable(close_grounded) else 0)
         if owner is None:
-            return {'pending': 0, 'unresolved': self.store.has_unresolved()}
-        await owner.detach()
-        done, pending = await asyncio.wait([owner._worker], timeout=max(0, timeout_seconds))
-        return {'pending': len(pending), 'unresolved': self.store.has_unresolved(),
+            return {'pending': grounded_pending, 'unresolved': self.store.has_unresolved()}
+        done, pending = await asyncio.wait([owner._worker], timeout=max(0, deadline-time.monotonic()))
+        return {'pending': len(pending) + grounded_pending, 'unresolved': self.store.has_unresolved(),
                 'cleanup_acknowledged': owner._cleanup_acknowledged}
 
 
@@ -228,7 +234,8 @@ class ConversationAttachment:
         try:
             if not valid(): return
             child = asyncio.create_task(planner.plan(request))
-            done, _ = await asyncio.wait((child,), timeout=min(2., max(0., request.deadline_monotonic-time.monotonic())))
+            done, _ = await asyncio.wait((child,), timeout=max(0.,
+                min(job.admission.deadline, request.deadline_monotonic)-time.monotonic()))
             if not done:
                 job.admission.retire('timeout')
                 disposition = 'unavailable'
@@ -258,12 +265,13 @@ class ConversationAttachment:
                 child.add_done_callback(lambda f: f.exception() if not f.cancelled() else None)
             release = getattr(planner, 'release_job', None)
             if callable(release): release(job)
-            self.grounded_result = GroundedResult(request.request_id, request.job_id,
-                plan.evidence if plan is not None else (), plan.form if plan else 'none',
-                plan.outcome if plan else 'insufficient', plan.gap if plan else 'missing_record',
-                disposition if valid() else 'stale', hashlib.sha256(repr(request.evidence_revision).encode()).hexdigest(),
-                (time.monotonic()-started)*1000)
-            if self._grounded_task is asyncio.current_task(): self._grounded_task = None
+            if self._grounded_task is asyncio.current_task():
+                self.grounded_result = GroundedResult(request.request_id, request.job_id,
+                    plan.evidence if plan is not None else (), plan.form if plan else 'none',
+                    plan.outcome if plan else 'insufficient', plan.gap if plan else 'missing_record',
+                    disposition if valid() else 'stale', hashlib.sha256(repr(request.evidence_revision).encode()).hexdigest(),
+                    (time.monotonic()-started)*1000)
+                self._grounded_task = None
         if not valid() or time.monotonic() > request.deadline_monotonic:
             return
         event = dict(kind='local_reply', task_id=request.task_id, operation_id='',
@@ -274,7 +282,7 @@ class ConversationAttachment:
             accepted = await self.emit.publish_guarded(event, valid, grounded_id=request.job_id)
         except Exception:
             accepted = False
-        if not accepted:
+        if not accepted and self.grounded_result is not None and self.grounded_result.job_id == request.job_id:
             self.grounded_result = replace(self.grounded_result, disposition='stale')
 
     def _queue(self, kind, text, *, operation=None, task=None, utterance_id='', decision=None, checkpoint=None, authority=None, acceptance='local', output_validity=None):

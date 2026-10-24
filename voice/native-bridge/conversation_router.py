@@ -119,6 +119,17 @@ class LoopbackConversationModel:
         self.model = model
         self.token_file = Path(token_file) if token_file else None
         self.timeout_seconds = float(timeout_seconds)
+        self._slot_owner = None
+
+    @property
+    def slot_owner(self):
+        return self._slot_owner
+
+    @slot_owner.setter
+    def slot_owner(self, owner):
+        if self._slot_owner is not None and owner is not self._slot_owner:
+            raise ValueError('shared slot owner cannot be reset')
+        self._slot_owner = owner
 
     @staticmethod
     def decode_route(raw):
@@ -177,13 +188,22 @@ class LoopbackConversationModel:
                 "temperature": 0, "max_tokens": 24, "cache_prompt": False,
                 "response_format": {"type": "json_schema", "json_schema": {
                     "name": "route", "strict": True, "schema": contract.schema()}}}
+            if self.slot_owner is not None:
+                request['id_slot'] = 0
             payload = json.dumps(request, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
             catalog = json.dumps(data, ensure_ascii=False, separators=(",", ":")).encode('utf-8')
             return PreparedChat(payload, catalog, contract)
+        def decode(content, binding):
+            raw = self.decode_route(content)
+            if self.slot_owner is not None:
+                # A full-terminal release witness includes the exact offered
+                # choice contract, not merely syntactically valid model JSON.
+                binding.decode(raw)
+            return raw, binding
         return await run_admitted_chat(request, host=self.host, port=self.port,
             token_file=self.token_file, prepare=prepare,
-            decode_content=lambda content, binding: (self.decode_route(content), binding),
-            observe=self._observe_admission)
+            decode_content=decode,
+            observe=self._observe_admission, slot_owner=self.slot_owner, role='classifier')
 
 
 class ConversationRouter:
@@ -236,7 +256,7 @@ class ConversationRouter:
                     if loopback else model.classify(text, snapshot))
             pending = asyncio.create_task(call)
             try:
-                done, _ = await asyncio.wait((pending,), timeout=2.0)
+                done, _ = await asyncio.wait((pending,), timeout=request.check() if request else 2.0)
                 if not done:
                     raise TimeoutError('conversation deadline')
                 raw = pending.result()

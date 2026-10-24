@@ -177,3 +177,7 @@ Before implementing production readiness wiring, inspect the existing owner/conf
 ## Root ruling for Task17 fix round1 (24 October)
 
 Narrow output ownership and preservation of unrelated pending entries takes precedence over the earlier instruction to call shared `playback.interrupt()`. That method advances the global generation. Targeted grounded invalidation and exceptional/final cleanup must instead clear only exclusively owned PCM for the matching grounded ID and captured generation, without advancing the global generation or restamping unrelated entries. Existing job/chunk guards must prevent late refill. Preserve preceding/new-owner PCM and valid pending lifecycle, ordinary and deferred backend entries exactly once. This resolves the contradiction identified in task-17-review.md; no live permission or broader source scope is added.
+
+## Root selected reserved-role source addendum
+
+For the grounded-enabled branch, the binding successor specification is `2026-10-24-role-reserved-conversation.md`. Its two role-reserved slots, current-owner guard, same-role uncertainty, true release observations and explicit observer accounting supersede earlier single-Conversation4096/1 and cross-role release-before-foreground prescriptions. Main32768/1,18GiB, perrole exacttokens/bytes/deadlines, all task/output/business authority and finalmeasuredreadiness remain. No newfreeformassistant/Omni or actualprofilechange/activation is authorized.
