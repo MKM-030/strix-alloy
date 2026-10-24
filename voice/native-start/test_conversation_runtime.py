@@ -992,6 +992,31 @@ class Task18ConsumerTests(unittest.TestCase):
                     self.assertIs(proof.expected, expected)
                     self.assertEqual(proof.owner_created, created)
                     self.assertEqual([p[0] for p in proof.measured_evidence_sha256], ['admission', 'grounding', 'cancellation', 'coexistence'])
+                    # This real canonical function is not invoked by finalization;
+                    # rejection must come from the live-code identity boundary.
+                    target = module.expected_grounded
+                    original_code = target.__code__
+                    self.assertIn('native-bridge', original_code.co_consts)
+                    changed_constants = tuple('changed-native-bridge' if value == 'native-bridge' else value
+                                              for value in original_code.co_consts)
+                    for mutation, changed_code in (
+                            ('source location', original_code.replace(co_firstlineno=original_code.co_firstlineno + 1)),
+                            ('executable constant', original_code.replace(co_consts=changed_constants))):
+                        with self.subTest(canonical_code_mutation=mutation):
+                            calls_before = host.calls
+                            try:
+                                target.__code__ = changed_code
+                                with self.assertRaises(RuntimeError): runtime.verify_grounded_stage(expected)
+                                self.assertEqual(host.calls, calls_before)
+                            finally:
+                                target.__code__ = original_code
+                            self.assertIs(target.__code__, original_code)
+                            restored_proof = runtime.verify_grounded_stage(expected)
+                            self.assertIs(type(restored_proof), module.GroundedReadinessProof)
+                            self.assertIs(restored_proof.expected, expected)
+                            self.assertEqual(restored_proof.owner_created, created)
+                            self.assertEqual(before, {p.name: digest(p.read_bytes()) for p in root.iterdir()})
+                            print(f'Canonical live-code {mutation}: rejected; code restored; positive proof accepted.')
                     with self.assertRaises(RuntimeError): runtime.verify_grounded_stage(SimpleNamespace(**vars(expected)))
                     host.calls, host.drift = 0, True
                     with self.assertRaises(RuntimeError): runtime.verify_grounded_stage(expected)
