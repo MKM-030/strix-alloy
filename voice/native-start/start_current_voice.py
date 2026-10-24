@@ -261,6 +261,14 @@ def preflight(profile):
     funnel_check()
 
 
+def conversation_stage(check_only):
+    owner = load_module('scc_conversation_runtime', ACTIVE / 'voice/native-start/conversation_runtime.py')
+    runtime = owner.selected_runtime(NATIVE_CONFIG.parent / 'conversation-selection.local.json', NATIVE_CONFIG)
+    if runtime is not None:
+        state = runtime.run(check_only=check_only)
+        print('Gespraechsmodell: ' + state + '.', flush=True)
+
+
 def run(check_only=False):
     global services, speech_services
     if services is None:
@@ -270,15 +278,18 @@ def run(check_only=False):
     profile = validate_profile()
     if check_only:
         preflight(profile)
+        conversation_stage(check_only=True)
         print('Vorpruefung erfolgreich. Es wurden keine Dienste gestartet.', flush=True)
         return 0
     # Same fixed order on every run; never alter either controller ownership lock.
     with services.startup_lock(), speech_services.startup_lock():
         preflight(profile)
+        conversation_stage(check_only=True)
         print('Sprache: vorhandene native Erkennung und ausgewaehlte Stimme pruefen/starten.', flush=True)
         speech_services.speech_start(['asr', 'tts'])
         model_start(profile)
         gateway_start(profile)
+        conversation_stage(check_only=False)
         print('ServiceNow: Bot und native Sprachbruecke pruefen/starten.', flush=True)
         status = type('ReadOnlyHealth', (), {'health': staticmethod(health)})
         services.voice_start(status, bot_config=BOT_CONFIG, native_config=NATIVE_CONFIG)

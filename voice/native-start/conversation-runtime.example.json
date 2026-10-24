@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "qualified": false,
+  "candidate_id": "PENDING-MEASURED-WINNER",
+  "engine": {
+    "executable": "C:/PRIVATE/QUALIFIED/llama-server.exe",
+    "sha256": "REPLACE-WITH-REVIEWED-EXECUTABLE-SHA256",
+    "runtime_hashes": {
+      "C:/PRIVATE/QUALIFIED/runtime.dll": "REPLACE-WITH-ALL-QUALIFIED-RUNTIME-ASSET-HASHES"
+    },
+    "help": {
+      "file": "engine-help.txt",
+      "sha256": "REPLACE-WITH-REVIEWED-HELP-SHA256"
+    },
+    "argv": [
+      "C:/PRIVATE/QUALIFIED/llama-server.exe",
+      "--model", "C:/PRIVATE/QUALIFIED/model.gguf",
+      "--alias", "PENDING-MEASURED-WINNER",
+      "--ctx-size", "8192",
+      "--parallel", "2",
+      "--no-context-shift",
+      "--host", "127.0.0.1",
+      "--port", "52744",
+      "--gpu-layers", "99",
+      "--reasoning", "off",
+      "--reasoning-budget", "0",
+      "--api-key-file", "{token_file}"
+    ]
+  },
+  "model": {
+    "file": "C:/PRIVATE/QUALIFIED/model.gguf",
+    "sha256": "REPLACE-WITH-MEASURED-MODEL-SHA256"
+  },
+  "source_hashes": {
+    "C:/Projects/strix-alloy-scc-voice/voice/native-bridge/conversation_router.py": "REPLACE-WITH-EXACT-QUALIFIED-SOURCE-CLOSURE"
+  },
+  "main_profile_sha256": "ea335895f0cb8f6ded0698ec940cab808a11162187129822ecd9c010efbdb330",
+  "minimum_reserve_gib": 18,
+  "resident_budget_gib": 8,
+  "token_file": "conversation-runtime.token",
+  "quality": {
+    "file": "conversation-quality.json",
+    "sha256": "REPLACE-WITH-REVIEWED-PASS-EVIDENCE-SHA256"
+  },
+  "coexistence": {
+    "file": "conversation-coexistence.json",
+    "sha256": "REPLACE-WITH-REVIEWED-PASS-EVIDENCE-SHA256"
+  }
+}
