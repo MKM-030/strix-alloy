@@ -17,6 +17,7 @@ import shutil
 import re
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 import uuid
@@ -323,7 +324,29 @@ def invoke(argv,timeout=10):
 def docker(*args,timeout=10): return invoke(WSL+['docker',*args],timeout)
 
 
-def inspect(cid): return json.loads(docker('inspect',cid))[0]
+def inspect(cid):
+    # Windows subprocess.run(capture_output=True) drains anonymous pipes without
+    # a timeout after kill. A WSL descendant holding a pipe can strand that path.
+    # Files avoid pipe-reader threads; the launcher wait/reap remain bounded.
+    argv = WSL + ['docker', 'inspect', cid]
+    with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as errors:
+        process = subprocess.Popen(argv, stdout=output, stderr=errors,
+            creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+        try:
+            code = process.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired as exc:
+                raise RuntimeError('Docker inspect WSL launcher could not be reaped within 5s after timeout') from exc
+            raise
+        output.seek(0); errors.seek(0)
+        stdout = output.read().decode('utf-8', errors='replace')
+        stderr = errors.read().decode('utf-8', errors='replace')
+        if code:
+            raise subprocess.CalledProcessError(code, argv, output=stdout, stderr=stderr)
+    return json.loads(stdout)[0]
 
 
 def owned(info,cid,name,m,running=False):

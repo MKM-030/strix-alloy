@@ -1,0 +1,621 @@
+{
+  "schema": "strix-alloy.halogen01815-benchmark.20261025.v1",
+  "utc": "2026-10-25T16:47:37.573768+00:00",
+  "engine": {
+    "version": "0.18.15",
+    "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:cde6ae91ab3497a470c848fd5c509b0f4af659a1dea7e74b8789df82cde0510e",
+    "engine_sha256": "ce1c375eb2d92a4c7b2b0e1d969acd865bb72bb248c52498eedb170cbaea8a89",
+    "checkpoint": "v2",
+    "execution": "WSL2; original GPU kernels"
+  },
+  "hardware": {
+    "installed_ram_gib": 128,
+    "windows_visible_ram_about_gib": 64,
+    "uma_about_gib": 64,
+    "drivers_bios_voltages_and_global_wsl_unchanged": true
+  },
+  "active_profile": {
+    "context_capacity_tokens": 32768,
+    "slots": 1,
+    "kv_pool_positions": 32768,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "vision": true,
+    "mtp": "adaptive",
+    "mtp_gate_p": "0.90",
+    "pld": "3,3",
+    "prompt_cache": "Flexible",
+    "long_request_cache_policy": "no_store",
+    "default_thinking": false,
+    "decode_prefetch": 0,
+    "minimum_continuous_reserve_gib": 18,
+    "minimum_request_entry_reserve_gib": 22
+  },
+  "selected_latest_long_results": {
+    "input8192": {
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "measured_requests": 3,
+      "excluded_warmups": 1,
+      "prefill_tps": 1144.4857358406214,
+      "decode_tps": 45.214770158251696,
+      "accepted": 210,
+      "drafted": 318,
+      "acceptance": 0.660377358490566,
+      "whole_http_mean_seconds": 10.056389133333333,
+      "whole_http_seconds": [
+        10.0344794,
+        9.9564773,
+        10.1782107
+      ],
+      "output_sha256": [
+        "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b"
+      ],
+      "native_scoped_counts": {
+        "head": {
+          "rounds": 171,
+          "drafted": 318,
+          "accepted": 210,
+          "acceptance": 0.660377358490566,
+          "accepted_per_round": 1.2280701754385965
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null,
+          "accepted_per_round": null
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null,
+          "accepted_per_round": null
+        }
+      }
+    },
+    "input16384": {
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "measured_requests": 3,
+      "excluded_warmups": 1,
+      "prefill_tps": 1181.2999298218629,
+      "decode_tps": 39.77255072553833,
+      "accepted": 177,
+      "drafted": 336,
+      "acceptance": 0.5267857142857143,
+      "whole_http_mean_seconds": 17.2036072,
+      "whole_http_seconds": [
+        17.2789381,
+        17.3090248,
+        17.0228587
+      ],
+      "output_sha256": [
+        "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+      ],
+      "native_scoped_counts": {
+        "head": {
+          "rounds": 204,
+          "drafted": 336,
+          "accepted": 177,
+          "acceptance": 0.5267857142857143,
+          "accepted_per_round": 0.8676470588235294
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null,
+          "accepted_per_round": null
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null,
+          "accepted_per_round": null
+        }
+      }
+    }
+  },
+  "cohorts": {
+    "fixed_initial": {
+      "summary": "server\\.local\\halogen-update-20261025\\primary01815\\measurements\\fixed-qualified\\results\\summary.json",
+      "complete_batch": false,
+      "cases": {
+        "historical8k": {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "measured_requests": 3,
+          "excluded_warmups": 1,
+          "prefill_tps": 1013.0756673866803,
+          "decode_tps": 25.443438044565774,
+          "accepted": 201,
+          "drafted": 360,
+          "acceptance": 0.5583333333333333,
+          "whole_http_mean_seconds": 13.1733012,
+          "whole_http_seconds": [
+            12.5706475,
+            14.2784335,
+            12.6708226
+          ],
+          "output_sha256": [
+            "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b"
+          ],
+          "native_scoped_counts": {
+            "head": {
+              "rounds": 180,
+              "drafted": 360,
+              "accepted": 201,
+              "acceptance": 0.5583333333333333,
+              "accepted_per_round": 1.1166666666666667
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          }
+        }
+      }
+    },
+    "fixed16_after_watchdog_fix": {
+      "summary": "server\\.local\\halogen-update-20261025\\primary01815\\measurements\\fixed-lifecycle-fixed\\results\\summary.json",
+      "complete_batch": true,
+      "cases": {
+        "natural16k": {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "measured_requests": 3,
+          "excluded_warmups": 1,
+          "prefill_tps": 1094.131553113863,
+          "decode_tps": 26.269522565109423,
+          "accepted": 180,
+          "drafted": 399,
+          "acceptance": 0.45112781954887216,
+          "whole_http_mean_seconds": 19.071275966666665,
+          "whole_http_seconds": [
+            19.4955475,
+            18.3106406,
+            19.4076398
+          ],
+          "output_sha256": [
+            "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+          ],
+          "native_scoped_counts": {
+            "head": {
+              "rounds": 201,
+              "drafted": 399,
+              "accepted": 180,
+              "acceptance": 0.45112781954887216,
+              "accepted_per_round": 0.8955223880597015
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          }
+        }
+      }
+    },
+    "adaptive_prefetch_auto": {
+      "summary": "server\\.local\\halogen-update-20261025\\primary01815\\measurements\\adaptive-health-fixed\\results\\summary.json",
+      "complete_batch": true,
+      "cases": {
+        "historical8k": {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "measured_requests": 3,
+          "excluded_warmups": 1,
+          "prefill_tps": 1248.9962696807374,
+          "decode_tps": 35.76018327093926,
+          "accepted": 210,
+          "drafted": 318,
+          "acceptance": 0.660377358490566,
+          "whole_http_mean_seconds": 10.189256033333333,
+          "whole_http_seconds": [
+            10.1181751,
+            10.4821402,
+            9.9674528
+          ],
+          "output_sha256": [
+            "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b"
+          ],
+          "native_scoped_counts": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566,
+              "accepted_per_round": 1.2280701754385965
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          }
+        },
+        "natural16k": {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "measured_requests": 3,
+          "excluded_warmups": 1,
+          "prefill_tps": 1125.0815450643777,
+          "decode_tps": 26.59114044138523,
+          "accepted": 177,
+          "drafted": 336,
+          "acceptance": 0.5267857142857143,
+          "whole_http_mean_seconds": 19.503901433333333,
+          "whole_http_seconds": [
+            18.9177227,
+            20.255435,
+            19.3385466
+          ],
+          "output_sha256": [
+            "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+          ],
+          "native_scoped_counts": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance": 0.5267857142857143,
+              "accepted_per_round": 0.8676470588235294
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          }
+        }
+      }
+    },
+    "adaptive_prefetch_off_initial": {
+      "summary": "server\\.local\\halogen-update-20261025\\primary01815\\measurements\\prefetch-off-qualified\\results\\summary.json",
+      "complete_batch": true,
+      "cases": {
+        "historical8k": {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "measured_requests": 3,
+          "excluded_warmups": 1,
+          "prefill_tps": 1039.567523666912,
+          "decode_tps": 45.805897509304316,
+          "accepted": 210,
+          "drafted": 318,
+          "acceptance": 0.660377358490566,
+          "whole_http_mean_seconds": 10.730265133333333,
+          "whole_http_seconds": [
+            11.5425775,
+            10.351239,
+            10.2969789
+          ],
+          "output_sha256": [
+            "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b"
+          ],
+          "native_scoped_counts": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566,
+              "accepted_per_round": 1.2280701754385965
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          }
+        },
+        "natural16k": {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "measured_requests": 3,
+          "excluded_warmups": 1,
+          "prefill_tps": 1181.2999298218629,
+          "decode_tps": 39.77255072553833,
+          "accepted": 177,
+          "drafted": 336,
+          "acceptance": 0.5267857142857143,
+          "whole_http_mean_seconds": 17.2036072,
+          "whole_http_seconds": [
+            17.2789381,
+            17.3090248,
+            17.0228587
+          ],
+          "output_sha256": [
+            "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+          ],
+          "native_scoped_counts": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance": 0.5267857142857143,
+              "accepted_per_round": 0.8676470588235294
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          }
+        }
+      }
+    },
+    "adaptive_prefetch_off_warm8k": {
+      "summary": "server\\.local\\halogen-update-20261025\\primary01815\\measurements\\prefetch-off-warm8k\\results\\summary.json",
+      "complete_batch": true,
+      "cases": {
+        "historical8k": {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "measured_requests": 3,
+          "excluded_warmups": 1,
+          "prefill_tps": 1144.4857358406214,
+          "decode_tps": 45.214770158251696,
+          "accepted": 210,
+          "drafted": 318,
+          "acceptance": 0.660377358490566,
+          "whole_http_mean_seconds": 10.056389133333333,
+          "whole_http_seconds": [
+            10.0344794,
+            9.9564773,
+            10.1782107
+          ],
+          "output_sha256": [
+            "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b"
+          ],
+          "native_scoped_counts": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566,
+              "accepted_per_round": 1.2280701754385965
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "accepted_per_round": null
+            }
+          }
+        }
+      }
+    }
+  },
+  "official_short_after": {
+    "status": "PASS offline analysis",
+    "issues": [],
+    "record_count": 30,
+    "mtp_ledger_rows": 30,
+    "all_repetitions_match_prior_serial_and_mtp": true,
+    "official_style_arithmetic_mean_tps": 46.38666666666667,
+    "native_raw_arithmetic_mean_tps": 46.387033333333335,
+    "pooled_native_decode_tps": 43.880849780081526,
+    "baseline_official_arithmetic_mean_tps": 35.900999999999996,
+    "arithmetic_mean_change_percent": 29.207171573679492,
+    "percase_arithmetic_range_tps": [
+      36.93266666666667,
+      64.096
+    ],
+    "weighted_acceptance": {
+      "combined": {
+        "available_requests": 30,
+        "complete": true,
+        "drafted": 6882,
+        "accepted": 4896,
+        "acceptance": 0.7114210985178727
+      },
+      "head": {
+        "available_requests": 30,
+        "complete": true,
+        "drafted": 6606,
+        "accepted": 4716,
+        "acceptance": 0.7138964577656676,
+        "rounds": 2619,
+        "accepted_per_round": 1.8006872852233677
+      },
+      "lookup": {
+        "available_requests": 30,
+        "complete": true,
+        "drafted": 276,
+        "accepted": 180,
+        "acceptance": 0.6521739130434783,
+        "rounds": 93,
+        "accepted_per_round": 1.935483870967742
+      },
+      "grammar": {
+        "available_requests": 30,
+        "complete": true,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null,
+        "rounds": 0,
+        "accepted_per_round": null
+      }
+    },
+    "cache_counts": {
+      "cached_tokens": 0,
+      "processed_prompt_tokens": 867
+    },
+    "limits": [
+      "Candidate ran30MTP-only requests; baseline ran60alternatingserial/MTP. Priorserial outputs are a reference, not newly measuredserial throughput.",
+      "All3MTP repetitions percase match all3serial+3MTP baseline prefixes. Request ordering/cache history differ; no exactsequence/cacheparity claim.",
+      "Arithmeticmean, pooled tokens/time and percasepeak are different metrics. Use46.39mean as the overall candidate result, not64.10peak.",
+      "Native phase clocks are not independently qualified. The subsequent warm8K followup completed and is retained as a separate cohort.",
+      "Manufacturer reference65.88v2 reflects nativeLinuxpublisheddefaults; customWSL and32Kcontext/slot1/8Karena differ; no singlecause attributed."
+    ],
+    "new_requests_executed_by_analyzer": 0
+  },
+  "official_short_before": {
+    "status": "PASS offline60records,30MTPledgerrows,allrepidentity",
+    "supersedes": "offline-analysis.json has falseprompt_n flags from treating native processedtokens as total; corrected validation accounts cache_n. Rawreceiptsunchanged.",
+    "record_counts": {
+      "requests": 60,
+      "responses": 60,
+      "serial": 30,
+      "mtp": 30,
+      "mtp_ledger": 30,
+      "tokens_per_response": 256
+    },
+    "identity_all_cases": true,
+    "issues": [],
+    "official_log_arithmetic_mean_mtp_tps": 35.900999999999996,
+    "native_raw_arithmetic_mean_mtp_tps": 35.901133333333334,
+    "pooled_native_decode_tps": {
+      "serial": 16.4644448384287,
+      "mtp": 32.610689512266376
+    },
+    "pooled_speedup_mtp_vs_serial": 1.9806734956620988,
+    "weighted_drafts": {
+      "combined": {
+        "available_requests": 30,
+        "complete": true,
+        "drafted": 6804,
+        "accepted": 4830,
+        "acceptance": 0.7098765432098766
+      },
+      "head": {
+        "available_requests": 30,
+        "complete": true,
+        "drafted": 6525,
+        "accepted": 4638,
+        "acceptance": 0.7108045977011495,
+        "rounds": 2688,
+        "accepted_per_round": 1.7254464285714286
+      },
+      "lookup": {
+        "available_requests": 30,
+        "complete": true,
+        "drafted": 279,
+        "accepted": 192,
+        "acceptance": 0.6881720430107527,
+        "rounds": 93,
+        "accepted_per_round": 2.064516129032258
+      },
+      "grammar": {
+        "available_requests": 30,
+        "complete": true,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null,
+        "rounds": 0,
+        "accepted_per_round": null
+      }
+    },
+    "cache": "All30MTP requests fullycachehit867inputtokens total; nativeprompt_n0,cache_n=usageprompttokens. Serialrequests cache_n0. No coldprefill comparison claimed.",
+    "phase_clock": "Native engine rates only; clocks not independently qualified. Officialstdoutwall uses original time.time and rounds samples2decimals; do not call independentWindowsQPC.",
+    "upstream_comparison": "Local35.901 officialarithmeticmean vs published65.88 v2; partialprofile replication only: customWSL,32Kcontext/pool,slot1,8Karena vs nativeLinux262K/524K/slots4/32K.128GiBphysicalRAM split64GiBOSvisible/64GiBUMA. No causal attribution established.",
+    "hardware_or_inference_actions": false
+  },
+  "methodology": {
+    "long_requests_temperature": 0,
+    "long_requests_seed": 1,
+    "long_requests_output_tokens": 128,
+    "phase_rate_method": "Pooled actual token counts divided by native phase seconds; native clocks not independently qualified",
+    "independent_total_request_clock": "Windows QueryPerformanceCounter; complete HTTP response body",
+    "short_rate_method": "Official arithmetic mean across ten per-case means, three MTP repetitions,256outputtokens",
+    "short_candidate_count": 30,
+    "short_baseline_count": 60,
+    "short_drafter_output_reference": "All30candidate outputs equal all prior serial/MTP references",
+    "short_candidate_input_cache_hits": 0,
+    "short_baseline_mtp_cached_tokens": 867,
+    "request_order_and_os_file_cache_history_not_controlled": true,
+    "no_cold_prefill_rate_from_short_suite": true,
+    "historical8k_prompt": "Retained exact historical comparison prompt, not a novel-prefix workload",
+    "natural16k_prompt": "Exact16384token novel prefix",
+    "initial_off8k_and_later_warm8k_reported_separately": true
+  },
+  "outcome": {
+    "measurement_complete": true,
+    "current_server_left_online": true,
+    "decode_rate_improved_on_both_long_sizes": true,
+    "prefill_improved_uniformly": false,
+    "prior1925prefill_not_reproduced": true,
+    "manufacturer66mean_not_confirmed": true,
+    "full_acceleration_goal_achieved": false,
+    "live_npu_acceleration_enabled": false,
+    "production_choice": "Keep tested prefetch-off profile for higher decode; retain prefill and short-request latency tradeoff in report"
+  },
+  "host_fixes": [
+    "Asynchronous bounded-fresh ownership inspection separate from memory sampling",
+    "Consume completed ownership result before freshness test",
+    "File-backed Docker inspection output avoids unbounded inherited pipe drainage"
+  ],
+  "evidence": {
+    "base": "server\\.local\\halogen-update-20261025\\primary01815",
+    "active_profile": "server\\.local\\halogen-update-20261025\\primary01815\\prefetch-off-candidate\\profile01815-32k-adaptive-prefetch-off.json",
+    "active_manifest": "backends\\halogen-wsl2-0.18.15\\.local\\services\\6ae2115fc6194a58a0c1a93e5fc2c7e2\\manifest.json",
+    "idle_shell_cleanup": "server\\.local\\halogen-update-20261025\\primary01815\\measurements\\idle-shell-cleanup.json",
+    "targeted_cpu_tests": "tests/gufo/test_halogen01815_inspection_watchdog.py:6passed"
+  }
+}

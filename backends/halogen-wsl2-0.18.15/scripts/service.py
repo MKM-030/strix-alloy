@@ -491,6 +491,48 @@ def startup_exit_error(attempt):
         'guard cause: '+str(reason) if reason else 'inspect engine.log and startup-cache.jsonl'))
 
 
+class OwnedInspection:
+    """One bounded Docker inspector; management latency never blocks sampling.
+
+    runner.inspect uses file-backed output, a 10s wait and a bounded 5s reap;
+    it never drains inherited anonymous pipes after a timeout. Process creation
+    and filesystem calls are OS operations, not hard real-time guarantees.
+    A timeout never renews the last successful ownership observation.
+    """
+    def __init__(self, inspect_owned):
+        self.inspect_owned = inspect_owned
+        self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='owned-inspect')
+        self.pending = None
+        self.last_success = time.monotonic()  # Caller just verified ownership.
+        self.next_check = self.last_success
+        self.last_error = None
+
+    def _inspect(self):
+        self.inspect_owned()
+        return time.monotonic()
+
+    def poll(self):
+        now = time.monotonic()
+        if self.pending is not None and self.pending.done():
+            try:
+                self.last_success = self.pending.result()
+                self.last_error = None
+            except subprocess.TimeoutExpired as exc:
+                self.last_error = str(exc)
+            # Invalid ownership, failed commands, and malformed inspect data
+            # propagate immediately, rather than being treated as a timeout.
+            self.pending = None
+            self.next_check = now + 5
+        now = time.monotonic()
+        if not 0 <= now - self.last_success < 30:
+            raise RuntimeError('ownership inspection stale (maximum 30s); last error: ' + str(self.last_error))
+        if self.pending is None and now >= self.next_check:
+            self.pending = self.executor.submit(self._inspect)
+
+    def close(self):
+        self.executor.shutdown(wait=True, cancel_futures=True)
+
+
 def guard(attempt):
     r.configure()
     m=read(attempt/'manifest.json'); cid=read(attempt/'container.json')['id']
@@ -498,11 +540,17 @@ def guard(attempt):
     if m['sources']!=source_hashes(): raise ValueError('Service source changed before guard start')
     log=logger(attempt/'host-guard.jsonl',raw=True)
     host=r.load_module('service_host_frames',ROOT/'scripts/host_frames.py')
-    checked=0
     sequence=0
     frame=None; sample_age=None
+    inspector=None
     try:
         owned(r.inspect(cid),cid,m)
+        def inspect_owned():
+            info=r.inspect(cid)
+            current=read(STATE_PATH)
+            require_running=(current.get('run_id')==m['run_id'] and current.get('phase')=='ready')
+            owned(info,cid,m,running=require_running or info['State']['Running'])
+        inspector=OwnedInspection(inspect_owned)
         while True:
             if not fresh(read(attempt/'controller.json'),m['run_id']):
                 raise RuntimeError('Controller heartbeat is stale')
@@ -510,8 +558,7 @@ def guard(attempt):
             sample_age=time.monotonic()-began
             log.info(json.dumps({'time':time.time(),'sample_age':sample_age,**frame}))
             check_runtime_frame(frame,sample_age)
-            if time.monotonic()-checked>=5:
-                info=r.inspect(cid); owned(info,cid,m,running=info['State']['Running']); checked=time.monotonic()
+            inspector.poll()
             sequence += 1
             atomic(attempt/'lease.json',lease_record(m['run_id'],sequence))
             if not (attempt/'armed.json').exists(): atomic(attempt/'armed.json',{'id':cid})
@@ -538,6 +585,9 @@ def guard(attempt):
             # A failed diagnostic write must not skip verified owned shutdown.
             stop_owned(cid,m)
         return 2
+    finally:
+        if inspector is not None:
+            inspector.close()
 
 
 def guard_exit_failed(code):
@@ -729,7 +779,8 @@ def serve(o):
         last_note=0
         while not cancelled() and (end is None or time.monotonic()<end):
             guard_alive(guard_proc,attempt)
-            info=r.inspect(cid); owned(info,cid,m,running=True)
+            # The independent guard checks bounded-fresh ownership while its
+            # memory sampler and lease continue through transient WSL stalls.
             if time.monotonic()-last_note>=30:
                 f=host.frame(); log.info('Serving: free %.2f GiB; commit headroom %.2f GiB; context=%s',
                     f['available_bytes']/r.GIB,f['commit_headroom_bytes']/r.GIB,o.context_size)
