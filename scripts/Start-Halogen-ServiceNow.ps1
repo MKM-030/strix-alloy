@@ -7,10 +7,11 @@ Uses the existing project Python environment and normal controller/backend
 ownership, admission, reserve and cleanup rules. No credentials are printed.
 The default Current4K profile pairs a 4096-token prefill chunk with a 4096-token
 arena; Current8K explicitly pairs 8192 with 8192. Halogen defaults to installed
-0.18.10. HistoricalStock requires -HalogenVersion 0.16.2
+0.18.10. Select -HalogenVersion 0.18.15 explicitly for the prepared candidate.
+HistoricalStock requires -HalogenVersion 0.16.2
 and retains the native prefill defaults used by the retained 2026-10-04 stock
 benchmark. All profiles select v2 and stock PLD 3,3. Fixed2 is the stable
-measured policy. Halogen 0.18.5, 0.18.7, 0.18.8, 0.18.10 and 0.18.11 also offer -MtpPolicy Confidence90; Auto
+measured policy. Halogen 0.18.5, 0.18.7, 0.18.8, 0.18.10, 0.18.11 and 0.18.15 also offer -MtpPolicy Confidence90; Auto
 selects the upstream confidence-gated behavior for those versions.
 Halogen 0.17.2, 0.17.3, 0.18.0 and 0.18.1 default to Thinking On, medium effort and a 2048-token thinking
 budget. Use -Thinking Off to select the supported server default explicitly.
@@ -42,7 +43,7 @@ param(
     [switch]$Stop,
     [ValidateSet('On', 'Off')]
     [string]$Thinking = 'On',
-    [ValidateSet('0.16.2', '0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11')]
+    [ValidateSet('0.16.2', '0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')]
     [string]$HalogenVersion = '0.18.10',
     [ValidateSet('Auto', 'Fixed2', 'Confidence90')]
     [string]$MtpPolicy = 'Fixed2',
@@ -82,10 +83,10 @@ if ($Stop -or $Status) {
 if ($Profile -eq 'HistoricalStock' -and $HalogenVersion -ne '0.16.2') {
     throw 'HistoricalStock requires explicit -HalogenVersion 0.16.2 for the retained 2026-10-04 stock profile.'
 }
-if ($HalogenVersion -notin @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11') -and $PSBoundParameters.ContainsKey('Thinking')) {
+if ($HalogenVersion -notin @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15') -and $PSBoundParameters.ContainsKey('Thinking')) {
     throw 'Thinking server defaults require a managed Halogen 0.17.2 or newer.'
 }
-if ($MtpPolicy -eq 'Confidence90' -and $HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11')) {
+if ($MtpPolicy -eq 'Confidence90' -and $HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')) {
     throw 'Confidence90 requires managed Halogen 0.18.5 or newer supported here.'
 }
 
@@ -117,10 +118,10 @@ $configuration.engine | Add-Member -NotePropertyName 'python_executable' -NotePr
 $configuration.engine.powershell = $windowsPowerShell
 $configuration.engine | Add-Member -NotePropertyName 'speculation_policy' `
     -NotePropertyValue ([pscustomobject]@{ HALOGEN_PLD = '3,3' }) -Force
-if ($HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11') -or $MtpPolicy -eq 'Fixed2') {
+if ($HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15') -or $MtpPolicy -eq 'Fixed2') {
     $configuration.engine | Add-Member -NotePropertyName 'draft_tokens' -NotePropertyValue 2 -Force
 }
-if ($HalogenVersion -in @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11')) {
+if ($HalogenVersion -in @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')) {
     $gate = if ($MtpPolicy -eq 'Fixed2') { '0' } else { '0.90' }
     $configuration.engine.speculation_policy | Add-Member -NotePropertyName 'HALOGEN_MTP_GATE_P' -NotePropertyValue $gate -Force
 }
@@ -129,7 +130,7 @@ if ($Profile -in @('Current8K', 'Current4K')) {
     $configuration.engine | Add-Member -NotePropertyName 'prefill_chunk' -NotePropertyValue $prefillTokens -Force
     $configuration.engine | Add-Member -NotePropertyName 'max_prefill_tokens' -NotePropertyValue $prefillTokens -Force
 }
-if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11')) {
+if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')) {
     $configuration.engine | Add-Member -NotePropertyName 'api_defaults' `
         -NotePropertyValue ([pscustomobject]@{
             enable_thinking = ($Thinking -eq 'On')
@@ -142,7 +143,7 @@ $configuration | Add-Member -NotePropertyName 'console_trace' `
 
 Write-Host ('Profile: {0}; Halogen {1} v2; MTP policy {2}; PLD 3,3; cache {3}; one request.' -f $Profile, $HalogenVersion, $MtpPolicy, $PromptCache)
 Write-Host 'Context capacity: 262144 positions (input plus output).'
-if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11')) {
+if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')) {
     Write-Host ('Thinking default: {0}; medium effort; thinking budget: 2048 tokens. Requests can override these defaults.' -f $Thinking)
 }
 if ($Profile -in @('Current8K', 'Current4K')) {

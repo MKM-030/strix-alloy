@@ -1,0 +1,202 @@
+{
+  "schema": "strix-alloy.halogen01815-preparation.v1",
+  "utc": "2026-10-25T13:09:42.349140+00:00",
+  "version": "0.18.15",
+  "status": "Installed inactive; normal engine start and benchmarks remain pending",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:cde6ae91ab3497a470c848fd5c509b0f4af659a1dea7e74b8789df82cde0510e",
+  "public_commit": "e9a1a713abb26be4e51822d77b5192f0f33fa44e",
+  "engine_sha256": "ce1c375eb2d92a4c7b2b0e1d969acd865bb72bb248c52498eedb170cbaea8a89",
+  "source_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.15\\profiles\\sources.json",
+    "bytes": 4738,
+    "sha256": "fa9d1f2dfdc88b3689e8686e057df8cae354ceb0f0cce41efb7451602ed2acd4"
+  },
+  "release": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.15\\profiles\\release.json",
+    "bytes": 7418,
+    "sha256": "bb3eab7ccad4c4c148b189ef767a6116619165775bd490d976efad057f0844a7"
+  },
+  "evidence": {
+    "extraction": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\extracted\\handle.json",
+      "bytes": 4179,
+      "sha256": "c5883b35e0a5652408f4cdfa5f7e2eebebd328a888b90473d89055c96f0c2a9f"
+    },
+    "static_map": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\source-prep\\static-map.json",
+      "bytes": 37328,
+      "sha256": "f5492a0e77802615fca56a93cb6f8d887c8dfda5dec87a25e053ce62fc09731b"
+    },
+    "cpu_provider": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\extracted\\cpu-provider\\receipt.json",
+      "bytes": 15721,
+      "sha256": "e57d8cd8923907ef080c68887c13f2038c2a0417e6b69d57f6e751ccc5408906"
+    },
+    "cpu_build": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\source-prep\\cpu-build\\cpu-build.json",
+      "bytes": 14483,
+      "sha256": "046d6548fb94a4ba19bc4ab77a14185162773c3e26b4ce1244e0a3560de2cbe2"
+    },
+    "inactive_install": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\source-prep\\root-install.json",
+      "bytes": 2618,
+      "sha256": "bf5421634d262a6ae6493ef8909c90db1a84124bf015bf5c4821dabd3276d46f"
+    },
+    "abi_fixture": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\abi-fixture\\green01815\\receipt.json",
+      "bytes": 5540,
+      "sha256": "92a8be177d441b7273954daf5e0c23fb5c059a5b637599dcc84add23aba42a16"
+    },
+    "red_fixture": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\abi-fixture\\red01811-attempt2\\receipt.json",
+      "bytes": 3158,
+      "sha256": "2c185bed7f3ecdd360178f3ea65d55e14a616aab8e6092656e7550de36056c40"
+    },
+    "benchmark_plan": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\benchmark-plan.json",
+      "bytes": 8039,
+      "sha256": "32ccc31d44920cf85312ecced9e15ed9eaf7ee8069d346ef81202d088841f003"
+    },
+    "benchmark_packet_validation": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\benchmark-packet\\static-validation.json",
+      "bytes": 1509,
+      "sha256": "783557f0f1c48aab90dd500c00a60d4bdaf2a151196290987a0719eaf97d2e84"
+    }
+  },
+  "cpu_stages": [
+    {
+      "name": "prepare-cpu-image",
+      "exit_code": 0,
+      "elapsed_s": 0.40600000001722947,
+      "minimum_reserve_gib": 35.808685302734375
+    },
+    {
+      "name": "build-cpu",
+      "exit_code": 0,
+      "elapsed_s": 12.265999999974156,
+      "minimum_reserve_gib": 31.886547088623047
+    },
+    {
+      "name": "finalize-cpu-pins",
+      "exit_code": 0,
+      "elapsed_s": 0.40600000001722947,
+      "minimum_reserve_gib": 31.894432067871094
+    },
+    {
+      "name": "verify-install-plan",
+      "exit_code": 0,
+      "elapsed_s": 0.2029999999795109,
+      "minimum_reserve_gib": 31.899307250976562
+    },
+    {
+      "name": "install-inactive",
+      "exit_code": 0,
+      "elapsed_s": 12.047000000020489,
+      "minimum_reserve_gib": 31.754840850830078
+    }
+  ],
+  "abi_cases": [
+    {
+      "case": "abi",
+      "exit_code": 0,
+      "output": "ABI GP/flags/x87/MXCSR/XMM/stack/frame verified"
+    },
+    {
+      "case": "admission",
+      "exit_code": 0,
+      "output": "admission and RX verified"
+    },
+    {
+      "case": "low",
+      "exit_code": 0,
+      "output": "admission and RX verified"
+    },
+    {
+      "case": "floor",
+      "exit_code": 79,
+      "output": ""
+    }
+  ],
+  "bridge_contract": {
+    "patch_rva": "0x1ea1222",
+    "overwritten_bytes": 8,
+    "detour": "CALL rel32 plus three NOP bytes",
+    "return_delta": 5,
+    "native_resume_delta": 8,
+    "frame_offsets": {
+      "begin": 8,
+      "object": 40,
+      "end": 88,
+      "aggregate": 168,
+      "floor": 184
+    },
+    "original_reject_rva": "0x1ea2229",
+    "old_function_or_helper_equivalence_claimed": false
+  },
+  "models_downloaded": false,
+  "model_complete_receipts_reused": true,
+  "drivers_or_global_WSL_settings_changed": false,
+  "WSL_stopped_distribution_sharing_violation_recovered": true,
+  "launcher": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\Start-Halogen-ServiceNow.ps1",
+    "explicit_version": "0.18.15",
+    "default_version": "0.18.10",
+    "Windows_PowerShell_5_1_print_only_passed": true
+  },
+  "selected_service": {
+    "run_id": "2f8c5cb5429e428aa82ff080e3810d2b",
+    "identity": {
+      "pid": 2824,
+      "creation_time_100ns": 134374066872743055,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": "gemma4-26b-a4b",
+    "phase": "ready",
+    "health": {
+      "8840": {
+        "status": "ok",
+        "backend": "gemma4-26b-a4b",
+        "checkpoint": "gemma-4-26B-qat-q4_0-it",
+        "context": 32768,
+        "active_requests": 0,
+        "queued_requests": 0,
+        "draining": false,
+        "completed": 0,
+        "cancelled": 0
+      },
+      "8841": {
+        "status": "ok",
+        "backend": "gemma4-26b-a4b",
+        "checkpoint": "gemma-4-26B-qat-q4_0-it",
+        "context": 32768,
+        "active_requests": 0,
+        "queued_requests": 0,
+        "draining": false,
+        "completed": 276,
+        "cancelled": 0
+      }
+    },
+    "interrupted_by_update": false,
+    "switched_to_Halogen": false
+  },
+  "engine_started": false,
+  "benchmark_static_prepared": true,
+  "benchmark_executed": false,
+  "runtime_qualified": false,
+  "new_performance": {
+    "prefill_tps": null,
+    "decode_tps": null,
+    "acceptance": null
+  },
+  "benchmark_plan": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\benchmark-plan.json",
+  "prior01810_local8k": {
+    "actual_input_tokens": 8192,
+    "requested_output_tokens": 128,
+    "api_prefill_tps": 1211.7745673290271,
+    "api_decode_tps": 40.870194559155344,
+    "native_draft_acceptance": 0.5583333333333333,
+    "whole_HTTP_mean_seconds": 9.941384166666667,
+    "api_phase_clocks_independently_qualified": false
+  },
+  "full_acceleration_goal_achieved": false
+}
