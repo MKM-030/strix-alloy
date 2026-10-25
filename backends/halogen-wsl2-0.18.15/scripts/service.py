@@ -24,6 +24,7 @@ import portable
 import kernel_controls as kc
 import speculation_policy as sp
 import api_defaults as ad
+import lookup_source as lookup
 from startup_monitor import StartupMonitor
 import runner as r
 import startup_guard as sg
@@ -142,8 +143,18 @@ def validate_options(o):
     lookup_sha = getattr(o, 'lookup_receipt_sha256', None)
     if (lookup_path is None) != (lookup_sha is None):
         raise ValueError('Lookup receipt and independent receipt SHA-256 must be supplied together')
-    if lookup_path is not None or getattr(o, 'qualified_lookup', None) is not None:
-        raise ValueError('Private lookup receipts are not rebound to 0.18.15; use the stock lookup source')
+    if lookup_path is not None:
+        if getattr(o, 'checkpoint', 'v2') != 'v2':
+            raise ValueError('Canonical native lookup requires the pinned v2 checkpoint')
+        lookup.validate_configuration({'receipt': lookup_path, 'receipt_sha256': lookup_sha})
+    qualified_lookup = getattr(o, 'qualified_lookup', None)
+    if qualified_lookup is not None:
+        if lookup_path is None:
+            raise ValueError('A qualified native lookup must retain its explicit receipt configuration')
+        lookup.validate_seal(qualified_lookup)
+        if qualified_lookup['configuration'] != lookup.validate_configuration(
+                {'receipt': lookup_path, 'receipt_sha256': lookup_sha}):
+            raise ValueError('Native lookup seal and requested configuration differ')
     kc.validate(getattr(o, 'kernel_controls_json', None) or {})
     if getattr(o, 'speculation_policy_json', None) is not None:
         sp.validate(o.speculation_policy_json)
@@ -378,13 +389,16 @@ def build_manifest(o, attempt, run_id):
         result['speculation_policy'] = sp.validate(o.speculation_policy_json)
     if getattr(o, 'api_defaults_json', None) is not None:
         result['api_defaults'] = ad.validate(o.api_defaults_json)
+    if getattr(o, 'qualified_lookup', None) is not None:
+        lookup.bind_manifest(result, o.qualified_lookup)
     return result
 
 
 def reject_unqualified_manifest_overrides(m):
-    for key in ('private_hsa', 'lookup_tuning', 'matmul_tuning'):
+    for key in ('private_hsa', 'matmul_tuning'):
         if m.get(key) is not None:
             raise ValueError('Private runtime override is not rebound to 0.18.15: '+key)
+    lookup.validate_manifest(m)
 
 
 def command(m):
@@ -405,6 +419,7 @@ def command(m):
 
 
 def owned(info,cid,m,running=False):
+    reject_unqualified_manifest_overrides(m)
     name='halogen-flash-hybrid-service-'+m['run_id']
     r.owned(info,cid,name,{},running=False)
     if running:
@@ -643,7 +658,12 @@ def serve(o):
     machine=r.MACHINE
     actual=portable.preflight(machine['distro'],machine['user'],machine['models'],machine['dxg'],checkpoint=getattr(o,'checkpoint','v2'),ngram_source=machine.get('ngram_source'))
     if actual!=machine: raise ValueError('Installed machine configuration drift')
+    # Retain both full stock checkpoint integrity checks even for a lookup-only
+    # storage experiment. Only the extra canonical table mapping changes.
     verify_checkpoint(machine,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False))
+    if getattr(o, 'lookup_receipt', None) is not None:
+        o.qualified_lookup = lookup.qualify(machine, LOCAL,
+            {'receipt': o.lookup_receipt, 'receipt_sha256': o.lookup_receipt_sha256})
     secret=token()
     run_id=uuid.uuid4().hex
     attempt=LOCAL/'services'/run_id; attempt.mkdir(parents=True)
@@ -699,6 +719,7 @@ def serve(o):
         frame=host.frame(); check_admission(frame,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False))
         atomic(attempt/'admission-create.json',frame)
         log.info('Creating Halogen 0.18.15: context=%s, slots=1; no model download',o.context_size)
+        lookup.revalidate(machine, m.get('lookup_tuning'))
         keepalive.check()
         creation_attempted=True
         cid=r.docker(*command(m),timeout=30)
@@ -718,6 +739,7 @@ def serve(o):
         r.exclusive_host(); baseline=host.frame(); check_admission(baseline,o.context_size,getattr(o,"checkpoint","v2"),disable_vision=getattr(o,'disable_vision',False))
         atomic(attempt/'admission-start.json',baseline)
         if cancelled(): raise InterruptedError('Startup cancelled')
+        lookup.revalidate(machine, m.get('lookup_tuning'))
         keepalive.check()
         r.docker('start',cid)
         cache_worker=StartupMonitor(r.WSL,cid,attempt,run_id,o.startup_timeout,atomic,

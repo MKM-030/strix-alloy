@@ -19,6 +19,18 @@ SOURCE_SHA = '9c116bbc01f77b7a15464c1a124eb3325b286089b8a2a6f2856c9b246a235bd6'
 TENSOR_NAME = 'layers.1.ple.ngram_embedding.weight'
 IDENTITY_KEYS = ('size', 'device', 'inode', 'mtime_ns', 'ctime_ns')
 MAX_RECEIPT_BYTES = 128 * 1024
+CANONICAL_RECEIPT_SHA = 'df0dc1e5d2de921b58c4f18f988624687191ec6f80e2336c90c7de454144c7fb'
+CANONICAL_RECEIPT_RELATIVE = 'server/.local/optimization9h-20261004/lookup-native-copy-9447b9641f964497980fcb281b18a5c3/extraction.receipt.json'
+TRUSTED_CACHE_KEY = 'cad72bf989a3e695a74c64e83b5974ebd81dd9ee69483601a57243d67de3b9be'
+TRUSTED_CACHE_SHA = 'f9f4c87a4e01eca7861221f19ccf7c3da87a7b45f602be29d4d0aa5d832d4d3d'
+ENGINE_BINDING = {
+    'version': '0.18.15',
+    'image': 'ghcr.io/peonist-ai/halogen-flash-server@sha256:cde6ae91ab3497a470c848fd5c509b0f4af659a1dea7e74b8789df82cde0510e',
+    'engine_sha256': 'ce1c375eb2d92a4c7b2b0e1d969acd865bb72bb248c52498eedb170cbaea8a89',
+    'hgn_loader_function_sha256': '1c24f6ab85a7036a4a09cfd2ba711ffc9a02787c2bfdbdc8646f1a248be5c871',
+}
+NATIVE_MOUNT = '/candidate/ngram.hgn'
+STOCK_MOUNT = '/ngram-w4b.hgn'
 
 
 def reject_links(path):
@@ -47,6 +59,9 @@ def validate_configuration(value):
     path = path.resolve()
     if not any(path != root.resolve() and path.is_relative_to(root.resolve()) for root in RECEIPT_ROOTS):
         raise ValueError('Lookup receipt must stay under backend .local or server .local')
+    canonical = (ROOT.parents[1] / CANONICAL_RECEIPT_RELATIVE).resolve()
+    if path != canonical or digest != CANONICAL_RECEIPT_SHA:
+        raise ValueError('Only the retained canonical native lookup receipt is admitted for 0.18.15')
     return {'receipt': str(path), 'receipt_sha256': digest}
 
 
@@ -286,6 +301,89 @@ print(json.dumps(namespace['hash_file'](path)))
         stopped.set(); thread.join(timeout=2)
 
 
+def _trusted_payload_seal(configuration, receipt):
+    """Reuse only the exact previously read-back payload; never hash 50 GB here."""
+    expected = dict(schema=1, configuration=configuration, source=receipt['source'], tensor=receipt['tensor'],
+                    output=receipt['output'], read_mode='bounded-cache', reserve_gib=18)
+    cache_key = hashlib.sha256(json.dumps(expected, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    if cache_key != TRUSTED_CACHE_KEY:
+        raise ValueError('Canonical lookup payload identity no longer matches the trusted cache key')
+    cache = ROOT.parent / 'halogen-wsl2-0.16.2/.local/lookup-qualifications' / (TRUSTED_CACHE_KEY + '.json')
+    reject_links(cache)
+    with cache.open('rb') as stream:
+        before = os.fstat(stream.fileno())
+        if not stat.S_ISREG(before.st_mode) or before.st_size > MAX_RECEIPT_BYTES:
+            raise ValueError('Trusted lookup cache must be a bounded regular file')
+        data = stream.read(MAX_RECEIPT_BYTES + 1)
+        after = os.fstat(stream.fileno())
+    fields = lambda item: tuple(getattr(item, key) for key in
+        ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns'))
+    reject_links(cache)
+    with cache.open('rb') as current:
+        current_identity = fields(os.fstat(current.fileno()))
+    if (fields(before) != fields(after) or fields(after) != current_identity or
+            hashlib.sha256(data).hexdigest() != TRUSTED_CACHE_SHA or
+            json.loads(data, object_pairs_hook=unique_object) != expected):
+        raise ValueError('Trusted canonical lookup cache changed; no readback fallback is permitted')
+    return {'cache_key': TRUSTED_CACHE_KEY, 'cache_sha256': TRUSTED_CACHE_SHA}
+
+
+def _engine_binding():
+    import portable
+    if (portable.IMAGE != ENGINE_BINDING['image'] or
+            portable.RELEASE.get('version') != ENGINE_BINDING['version'] or
+            portable.RELEASE.get('engine_sha256') != ENGINE_BINDING['engine_sha256']):
+        raise ValueError('Native lookup loader is bound only to the exact 0.18.15 engine')
+    return dict(ENGINE_BINDING)
+
+
+def _seal(configuration, receipt):
+    return dict(schema=2, configuration=configuration, source=receipt['source'], tensor=receipt['tensor'],
+        output=receipt['output'], read_mode='trusted-canonical-cache', reserve_gib=18,
+        engine_binding=_engine_binding(), payload_qualification=_trusted_payload_seal(configuration, receipt),
+        mount_binding=dict(destination=NATIVE_MOUNT, source=receipt['output']['path'], readonly=True,
+                           stock_destination=STOCK_MOUNT, stock_source=receipt['source']['path']))
+
+
+def validate_seal(seal):
+    if type(seal) is not dict or 'configuration' not in seal:
+        raise ValueError('Native lookup needs an explicit engine-bound qualification seal')
+    configuration = validate_configuration(seal['configuration'])
+    receipt = read_receipt(configuration)
+    if seal != _seal(configuration, receipt):
+        raise ValueError('Native lookup seal differs from the exact canonical engine/payload/mount binding')
+    return receipt
+
+
+def bind_manifest(manifest, seal):
+    receipt = validate_seal(seal)
+    if (manifest.get('version') != ENGINE_BINDING['version'] or
+            manifest.get('image') != ENGINE_BINDING['image'] or manifest.get('checkpoint') != 'v2' or
+            manifest['mounts'].get(STOCK_MOUNT) != receipt['source']['path'] or
+            manifest['environment'].get('HALOGEN_NGRAM_TABLE') != STOCK_MOUNT):
+        raise ValueError('Native lookup requires the unchanged qualified v2 stock source and exact engine')
+    manifest['mounts'][NATIVE_MOUNT] = receipt['output']['path']
+    manifest['environment']['HALOGEN_NGRAM_TABLE'] = NATIVE_MOUNT
+    manifest['lookup_tuning'] = seal
+    validate_manifest(manifest)
+
+
+def validate_manifest(manifest):
+    seal = manifest.get('lookup_tuning')
+    if seal is None:
+        if (NATIVE_MOUNT in manifest.get('mounts', {}) or
+                manifest.get('environment', {}).get('HALOGEN_NGRAM_TABLE') == NATIVE_MOUNT):
+            raise ValueError('Native lookup mount requires its qualification seal')
+        return
+    receipt = validate_seal(seal)
+    if (manifest.get('version') != ENGINE_BINDING['version'] or
+            manifest.get('image') != ENGINE_BINDING['image'] or manifest.get('checkpoint') != 'v2' or
+            manifest.get('mounts', {}).get(STOCK_MOUNT) != receipt['source']['path'] or
+            manifest.get('mounts', {}).get(NATIVE_MOUNT) != receipt['output']['path'] or
+            manifest.get('environment', {}).get('HALOGEN_NGRAM_TABLE') != NATIVE_MOUNT):
+        raise ValueError('Native lookup manifest engine, read-only mount plan or environment changed')
+
+
 def qualify(machine, local, configuration):
     import checkpoint_integrity
     import portable
@@ -304,33 +402,14 @@ def qualify(machine, local, configuration):
             size=SOURCE_BYTES, sha=SOURCE_SHA, source=selected):
         raise ValueError('Lookup original source lacks a matching pinned stock integrity receipt')
     metadata(machine, receipt)
-    seal = dict(schema=1, configuration=configuration, source=receipt['source'], tensor=receipt['tensor'],
-                output=receipt['output'], read_mode='bounded-cache', reserve_gib=18)
-    cache_key = hashlib.sha256(json.dumps(seal, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
-    cache = Path(local) / 'lookup-qualifications' / (cache_key + '.json')
-    portable.reject_links(cache)
-    if cache.exists():
-        with cache.open('rb') as stream: data = stream.read(MAX_RECEIPT_BYTES + 1)
-        if len(data) > MAX_RECEIPT_BYTES or json.loads(data, object_pairs_hook=unique_object) != seal:
-            raise ValueError('Lookup qualification cache does not match its immutable identity seal')
-    else:
-        cache.parent.mkdir(exist_ok=True)
-        result = guarded_hash(machine, local, receipt)
-        if result.get('sha256') != receipt['output']['sha256'] or result.get('identity') != receipt['output']['identity']:
-            raise ValueError('Standalone lookup readback hash or identity differs from the trusted receipt')
-        metadata(machine, receipt)
-        read_receipt(configuration)
-        with cache.open('x', encoding='utf-8') as stream:
-            json.dump(seal, stream, sort_keys=True, indent=2)
-            stream.flush(); os.fsync(stream.fileno())
-        cache.chmod(0o444)
-    revalidate(machine, seal)
-    return seal
+    # Payload correctness is inherited only from the pinned completed readback;
+    # current file identities/header bytes above must still match it exactly.
+    return _seal(configuration, receipt)
 
 
 def revalidate(machine, seal):
     if seal is None: return
-    receipt = read_receipt(seal['configuration'])
-    if any(receipt[key] != seal[key] for key in ('source', 'tensor', 'output')):
-        raise ValueError('Lookup receipt changed after qualification')
+    receipt = validate_seal(seal)
+    if (machine.get('ngram_source') or machine['models'] + '/qwen38-flash-next-w4b.hgn') != receipt['source']['path']:
+        raise ValueError('Installed stock lookup changed after qualification')
     metadata(machine, receipt)

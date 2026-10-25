@@ -215,9 +215,10 @@ def halogen_matmul_arguments(engine, directory):
 
 def halogen_lookup_arguments(engine, directory):
     if 'lookup_tuning' not in engine: return []
-    supported = Path(__file__).resolve().parents[1] / 'backends/halogen-wsl2-0.16.2'
-    if directory.resolve() != supported.resolve() or engine.get('checkpoint') != 'v2':
-        raise ValueError('Lookup source experiment requires Halogen 0.16.2 v2')
+    backend_root = Path(__file__).resolve().parents[1] / 'backends'
+    supported = {backend_root / 'halogen-wsl2-0.16.2', backend_root / 'halogen-wsl2-0.18.15'}
+    if directory.resolve() not in {path.resolve() for path in supported} or engine.get('checkpoint') != 'v2':
+        raise ValueError('Lookup source experiment requires a supported Halogen v2 backend')
     source = directory / 'scripts/lookup_source.py'
     if source.is_symlink() or not source.is_file():
         raise ValueError('Selected backend has no managed lookup-source support')
