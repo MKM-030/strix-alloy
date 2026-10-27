@@ -1,14 +1,16 @@
 """Terminal input lifecycle tests using actual source and aiohttp routes.
 
-RTC/PyAV are deliberately substituted here; these tests do not validate RTP,
+RTC/PyAV and denoising are deliberately substituted here; these tests do not validate RTP,
 browser media, real inference or ServiceNow. Existing transport tests own RTP.
 """
 import ast
 import asyncio
 from array import array
+from dataclasses import dataclass
 import importlib.util
 import json
 import logging
+import math
 from pathlib import Path
 import time
 import types
@@ -17,6 +19,8 @@ import uuid
 
 from aiohttp import ClientSession, ClientTimeout, WSMsgType, WSServerHandshakeError, web
 from managed_turn import clear_session_ice
+from model_health import require_model_ready
+from noise_guard import SpeechNoiseGuard
 
 ROOT = Path(__file__).parent
 spec = importlib.util.spec_from_file_location('input_lifecycle_core', ROOT / 'core.py')
@@ -39,6 +43,16 @@ class Peer:
 class Resampler:
     def __init__(self, **kwargs): pass
     def resample(self, frame): return [frame]
+
+
+class PassThroughDenoiser:
+    """Keep lifecycle PCM deterministic without loading the native DSP library."""
+    active = False
+    fallback_reason = None
+    pending_samples = 0
+    def feed(self, pcm): return [pcm]
+    def finish(self): return []
+    def close(self): pass
 
 
 class Frame:
@@ -128,7 +142,9 @@ class Dialog:
             await self.release_close.wait()
 
 
-namespace = dict(asyncio=asyncio, time=time, uuid=uuid, json=json,
+namespace = dict(asyncio=asyncio, time=time, uuid=uuid, json=json, math=math,
+    dataclass=dataclass, SpeechNoiseGuard=SpeechNoiseGuard,
+    StreamingPCM16Denoiser=PassThroughDenoiser, require_model_ready=require_model_ready,
     LOG=logging.getLogger('native-voice'), AudioResampler=Resampler,
     RTCPeerConnection=Peer, RTCConfiguration=lambda **kwargs:kwargs,
     RTCIceServer=lambda **kwargs:kwargs, STUN_URL='stun:stun.l.google.com:19302',
@@ -139,8 +155,12 @@ namespace = dict(asyncio=asyncio, time=time, uuid=uuid, json=json,
     HTTP_KEY=web.AppKey('http', ClientSession), clear_session_ice=clear_session_ice)
 source = ast.parse((ROOT / 'native_bridge.py').read_text())
 selected = [node for node in source.body
-            if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
-            and node.name in {'NativeCall', 'authorize', 'create_app'}]
+            if (isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+                and node.name in {'NativeCall', '_InputEnvelope', 'authorize', 'create_app',
+                                  'require_asr_ready'})
+            or (isinstance(node, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id.startswith('QWEN_ASR_')
+                        for target in node.targets))]
 exec(compile(ast.Module(body=selected, type_ignores=[]), '<actual-native-source>', 'exec'), namespace)
 NativeCall, create_app = namespace['NativeCall'], namespace['create_app']
 
@@ -150,6 +170,8 @@ def configuration():
         instance_name='unit-test', voice_service_id='unit-test', auth_mode='deny',
         instance_url='https://unit-test.service-now.com',
         development_token='synthetic-loopback-only-credential-for-test',
+        conversation_ws_url='', conversation_http_url='', live_context_updates_enabled=False,
+        model_health_url='', private_model_health_token='', asr_backend='whisper',
         max_call_seconds=30, greeting='')
 
 

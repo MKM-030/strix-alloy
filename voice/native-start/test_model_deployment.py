@@ -16,8 +16,8 @@ m = importlib.util.module_from_spec(spec) if spec else None
 if spec:
     spec.loader.exec_module(m)
 
-PROFILE = Path(r'C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261017\goal-next-20261017\primary0188\serving0188-voice32k-prefill8192.json')
-PROFILE_SHA256 = '15122431fd43397f6ec6b53386f1652cff0f2600405facca2eab64032d289f63'
+PROFILE = Path(r'C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261018\primary01810\serving01810-voice32k-prefill8192.json')
+PROFILE_SHA256 = '4a0789ace369d1d0b562eae415d2f61181a6804db75c16b62275b3aba91a8b3d'
 
 
 def health_from(binding):
@@ -59,8 +59,8 @@ class DeploymentTests(unittest.TestCase):
         binding = m.load_deployment()
         self.assertEqual(binding['profile_sha256'], PROFILE_SHA256)
         self.assertEqual(Path(binding['profile']), PROFILE.resolve())
-        self.assertEqual(binding['model_token_file'], str(Path(r'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.18.8\.local\api-token.txt').resolve()))
-        self.assertEqual(binding['runner_lock'], str(Path(r'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.18.8\.local\runner.lock').resolve()))
+        self.assertEqual(binding['model_token_file'], str(Path(r'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.18.10\.local\api-token.txt').resolve()))
+        self.assertEqual(binding['runner_lock'], str(Path(r'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.18.10\.local\runner.lock').resolve()))
         result = subprocess.run([sys.executable, str(HELPER)], capture_output=True, text=True, check=True)
         self.assertEqual(json.loads(result.stdout), binding)
         self.assertEqual(result.stderr, '')
@@ -72,9 +72,9 @@ class DeploymentTests(unittest.TestCase):
         good = health_from(binding)
         self.assertTrue(m.health_matches(good, binding))
         old = copy.deepcopy(good)
-        old['version'].update(api='0.18.1', engine='0.18.1')
+        old['version'].update(api='0.18.8', engine='0.18.8')
         self.assertFalse(m.health_matches(old, binding))
-        self.assertEqual(binding['expected']['version.api'], '0.18.8')
+        self.assertEqual(binding['expected']['version.api'], '0.18.10')
 
     def test_every_expected_field_and_model_require_exact_type_and_value(self):
         binding = self.load()
@@ -100,7 +100,7 @@ class DeploymentTests(unittest.TestCase):
             del target[parts[-1]]
             self.assertFalse(m.health_matches(value, binding))
         self.assertFalse(m.health_matches(None, binding))
-        self.assertFalse(m.health_matches({'version.api':'0.18.8'}, binding))
+        self.assertFalse(m.health_matches({'version.api':'0.18.10'}, binding))
 
     def test_all_extra_expected_fields_are_checked(self):
         self.profile['backend']['expected']['deployment.revision'] = 'pinned'

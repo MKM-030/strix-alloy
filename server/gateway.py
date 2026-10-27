@@ -20,7 +20,6 @@ from uuid import uuid4
 import aiohttp
 from aiohttp import web
 from console_trace import ConsoleTrace,RequestTrace
-from scc_voice_locale import restore_scc_voice_locale
 
 LOG=logging.getLogger('alloy.gateway')
 CONSOLE_TRACE_KEY=web.RequestKey('console_trace',RequestTrace)
@@ -244,7 +243,8 @@ class Gateway:
     def __init__(self, backend, secret, backend_secret='', *, concurrency=1,
                  body_bytes=16*1024**2, request_seconds=1800, console_trace=False,
                  queue_limit=0, queue_seconds=120, demo_no_thinking_model='',
-                 voice_contract_diagnostics=False, native_sdk_proxy=False):
+                 voice_contract_diagnostics=False, native_sdk_proxy=False,
+                 controller_consumer=False, controller_aliases=()):
         if not isinstance(secret,str) or len(secret)<32:
             raise ValueError('At least 32 characters of API key material required')
         if not 1<=concurrency<=16 or not 1024<=body_bytes<=64*1024**2:
@@ -261,8 +261,16 @@ class Gateway:
             raise ValueError('voice_contract_diagnostics must be a boolean')
         if type(native_sdk_proxy) is not bool:
             raise ValueError('native_sdk_proxy must be a boolean')
+        if (type(controller_consumer) is not bool
+                or not isinstance(controller_aliases,(list,tuple)) or len(controller_aliases)>32
+                or any(type(alias) is not str or not 1<=len(alias)<=200
+                       or any(ord(char)<32 for char in alias) for alias in controller_aliases)
+                or len(set(controller_aliases))!=len(controller_aliases)
+                or controller_aliases and not controller_consumer
+                or controller_consumer and len(backend_secret)<32):
+            raise ValueError('Explicit authenticated controller consumer and unique logical aliases required')
         if (not isinstance(demo_no_thinking_model,str) or
-                demo_no_thinking_model not in ('',backend.identifier)):
+                demo_no_thinking_model not in ('',backend.identifier,*controller_aliases)):
             raise ValueError('demo_no_thinking_model must be empty or the selected public model alias')
         self.demo_no_thinking_model=demo_no_thinking_model
         self.backend=backend; self.secret=secret; self.backend_secret=backend_secret
@@ -274,6 +282,10 @@ class Gateway:
         self.console_trace=ConsoleTrace(secrets=(secret,backend_secret)) if console_trace else None
         self.voice_contract_diagnostics=voice_contract_diagnostics
         self.native_sdk_proxy=native_sdk_proxy
+        self.controller_consumer=controller_consumer
+        self.controller_aliases=tuple(controller_aliases)
+        self.controller_backend=None
+        self.controller_health=None
         self.app=web.Application(client_max_size=body_bytes,
             middlewares=[self.sdk_dispatch,self.diagnose_voice_contract,self.authenticate] if voice_contract_diagnostics
             else [self.sdk_dispatch,self.authenticate])
@@ -539,6 +551,12 @@ class Gateway:
             await asyncio.sleep(2)
 
     async def ensure_ready(self):
+        if self.controller_consumer:
+            # Resolve only metadata, freshly after acquiring the local queue slot.
+            # A central switch must never reuse a cached previous model identity.
+            async with self.probe_lock:
+                await self.probe()
+                return self.controller_backend
         if 0<=time.monotonic()-self.last_healthy<10: return
         async with self.probe_lock:
             if not 0<=time.monotonic()-self.last_healthy<10: await self.probe()
@@ -554,73 +572,138 @@ class Gateway:
                 if len(raw)>1024*1024: raise ValueError('Excessive health payload')
             value=json.loads(raw)
             self.backend.validate_health(value)
+            if self.controller_consumer:
+                if (type(value) is not dict or value.get('status')!='ok'
+                        or type(value.get('backend')) is not str
+                        or type(value.get('draining')) is not bool
+                        or any(type(value.get(key)) is not int or value[key]<0
+                               for key in ('active_requests','queued_requests'))):
+                    raise ValueError('Controller is not ready')
+                self.controller_health={key:value[key] for key in
+                    ('backend','active_requests','queued_requests','draining')}
+                if value['draining']:
+                    raise ValueError('Controller is draining')
+                async with self.client.get(self.backend.upstream+'/v1/models',
+                        headers=self.upstream_headers(),allow_redirects=False,
+                        timeout=aiohttp.ClientTimeout(total=5)) as models_response:
+                    if models_response.status!=200:
+                        raise ValueError('Controller model identity unavailable')
+                    models_raw=bytearray()
+                    async for chunk in models_response.content.iter_chunked(65536):
+                        models_raw.extend(chunk)
+                        if len(models_raw)>1024*1024:
+                            raise ValueError('Excessive controller model payload')
+                    catalog=json.loads(models_raw)
+                models=catalog.get('data') if type(catalog) is dict else None
+                if type(models) is not list or len(models)!=1 or type(models[0]) is not dict:
+                    raise ValueError('Controller must expose exactly one selected model')
+                model=models[0]
+                routes=model.get('routes')
+                if (type(routes) is not list or not routes or any(type(route) is not str for route in routes)
+                        or len(set(routes))!=len(routes) or not set(routes)<=POST_ROUTES
+                        or type(model.get('id')) is not str
+                        or not re.fullmatch(r'[A-Za-z0-9._-]{1,96}',model['id'])
+                        or type(model.get('context_capacity')) is not int
+                        or value.get('backend')!=model.get('id')
+                        or value.get('context')!=model.get('context_capacity')
+                        or value.get('checkpoint')!=model.get('checkpoint')
+                        or type(model.get('checkpoint')) is not str
+                        or not 1<=len(model['checkpoint'])<=200):
+                    raise ValueError('Controller health and selected model identity differ')
+                selected=Backend(model['id'],self.backend.upstream,model['id'],
+                    expected={'status':'ok'},routes=tuple(route for route in routes if route in self.backend.routes),
+                    checkpoint=model['checkpoint'],context=model['context_capacity'])
+                self.controller_backend=selected
             self.last_healthy=time.monotonic()
             return value
 
     async def health(self, request):
-        try: await self.probe(); ready=not self.draining
+        try:
+            async with self.probe_lock: await self.probe()
+            ready=not self.draining
         except (aiohttp.ClientError,TimeoutError,ValueError): ready=False
-        return web.json_response({'status':'ok' if ready else 'unavailable',
-            'backend':self.backend.identifier,'checkpoint':self.backend.checkpoint,
-            'context':self.backend.context,'active_requests':self.active,
+        backend=(self.controller_backend if ready else None) if self.controller_consumer else self.backend
+        value={'status':'ok' if ready else 'unavailable',
+            'backend':backend.identifier if backend else None,'checkpoint':backend.checkpoint if backend else None,
+            'context':backend.context if backend else None,'active_requests':self.active,
             'queued_requests':len(self.waiters),
-            'draining':self.draining,'completed':self.completed,'cancelled':self.cancelled},
-            status=200 if ready else 503)
+            'draining':self.draining or bool(self.controller_health and self.controller_health['draining']),
+            'completed':self.completed,'cancelled':self.cancelled}
+        if self.controller_consumer:
+            value.update(controller_consumer=True,controller=self.controller_health if ready else None)
+        return web.json_response(value,status=200 if ready else 503)
 
     async def models(self, request):
-        return web.json_response({'object':'list','data':[{'id':self.backend.identifier,
-            'object':'model','owned_by':'strix-alloy','context_capacity':self.backend.context,
-            'checkpoint':self.backend.checkpoint,'routes':list(self.backend.routes)}]})
+        backend=self.backend
+        if self.controller_consumer:
+            try: backend=await self.ensure_ready()
+            except (aiohttp.ClientError,TimeoutError,ValueError):
+                return web.json_response({'error':{'message':'Selected controller unavailable'}},status=503)
+        model={'id':backend.identifier,'object':'model','owned_by':'strix-alloy',
+               'context_capacity':backend.context,'checkpoint':backend.checkpoint,'routes':list(backend.routes)}
+        if self.controller_consumer:
+            model['compatibility_aliases']=list(self.controller_aliases)
+        return web.json_response({'object':'list','data':[model]})
 
     async def inference(self, request):
         trace=request.get(CONSOLE_TRACE_KEY)
         if request.path not in self.backend.routes:
             return web.json_response({'error':{'message':'Route unsupported by selected backend'}},status=501)
         acquired=False; began=time.perf_counter(); response=None; status=502
+        backend=self.backend
         try:
             try: body=await request.json()
             except (ValueError,UnicodeError):
                 raise web.HTTPBadRequest(text='Valid UTF-8 JSON required')
             if trace is not None: trace.payload(body)
-            if not isinstance(body,dict) or body.get('model') not in (self.backend.identifier,self.backend.model):
+            if not isinstance(body,dict):
+                raise web.HTTPBadRequest(text='JSON object required')
+            if self.controller_consumer:
+                acquired=await self.acquire_slot()
+                if not acquired:
+                    status=429
+                    return web.json_response({'error':{'message':'Engine busy or draining'}},status=status,
+                                             headers={'Retry-After':'1'})
+                backend=await self.ensure_ready()
+                if request.path not in backend.routes:
+                    status=501
+                    return web.json_response({'error':{'message':'Route unsupported by selected backend'}},status=status)
+            if body.get('model') not in (backend.identifier,backend.model,*self.controller_aliases):
                 raise web.HTTPBadRequest(text='Select a model returned by /v1/models')
-            prior_body=body
-            body=restore_scc_voice_locale(body,route=request.path,
-                                          demo_model=self.demo_no_thinking_model)
-            if body is not prior_body:
-                LOG.info('Gateway compatibility=scc_voice_locale')
             # Explicit demo mode affects only the configured inbound public alias.
             # It is intentionally shared by all callers of that alias, never prompt-matched.
             if (self.demo_no_thinking_model and request.path=='/v1/chat/completions'
                     and body['model']==self.demo_no_thinking_model):
                 body['enable_thinking']=False
                 body['reasoning_effort']='none'
+            if ((self.demo_no_thinking_model and body['model']==self.demo_no_thinking_model
+                    and self.demo_no_thinking_model=='halogen-v2')
+                    or self.controller_consumer and backend.identifier=='halogen-v2') and request.path=='/v1/chat/completions':
                 # The flat ServiceNow provider places task/history in one
                 # system string. Qwen requires a user query as well. Retain
                 # the provider's system priority and add only a dispatch.
                 messages=body.get('messages')
                 tools=body.get('tools')
-                if (self.demo_no_thinking_model=='halogen-v2'
-                        and isinstance(messages,list) and len(messages)==1
+                if (isinstance(messages,list) and len(messages)==1
                         and isinstance(messages[0],dict) and messages[0].get('role')=='system'
                         and isinstance(messages[0].get('content'),str) and messages[0]['content'].strip()
                         and (tools is None or tools==[])):
                     body['messages']=[messages[0],{'role':'user','content':
                         'Bitte bearbeite die im Systemtext beschriebene Aufgabe und beachte das dort geforderte Ausgabeformat.'}]
                     LOG.info('Gateway compatibility=single_system_flat_prompt')
-            body['model']=self.backend.model
-            request_metrics=inference_request_metrics(body,self.backend.context)
-            acquired=await self.acquire_slot()
+            body['model']=backend.model
+            request_metrics=inference_request_metrics(body,backend.context)
+            if not acquired: acquired=await self.acquire_slot()
             if not acquired:
                 status=429
                 return web.json_response({'error':{'message':'Engine busy or draining'}},status=status,
                                          headers={'Retry-After':'1'})
-            await self.ensure_ready()
+            if not self.controller_consumer: await self.ensure_ready()
             headers=self.upstream_headers()
             headers['Content-Type']='application/json'
             if 'anthropic-version' in request.headers:
                 headers['anthropic-version']=request.headers['anthropic-version']
-            async with self.client.post(self.backend.upstream+request.path,json=body,
+            async with self.client.post(backend.upstream+request.path,json=body,
                     headers=headers,allow_redirects=False) as upstream:
                 if 300<=upstream.status<400:
                     raise ValueError('Backend redirect refused')
@@ -629,7 +712,7 @@ class Gateway:
                     trace.response(status,upstream.headers.get('Content-Type',''),
                                    upstream.headers.get('Content-Encoding',''))
                 safe_headers={k:v for k,v in upstream.headers.items()
-                              if k.lower() in ('content-type','cache-control','x-request-id','content-encoding')}
+                              if k.lower() in ('content-type','cache-control','x-request-id','content-encoding','retry-after')}
                 response=web.StreamResponse(status=status,headers=safe_headers)
                 await response.prepare(request)
                 # Retain at most16KiB of rejected JSON for classification. All
@@ -690,7 +773,9 @@ def load_config(path):
                    console_trace=value.get('console_trace',False),
                    demo_no_thinking_model=value.get('demo_no_thinking_model',''),
                    voice_contract_diagnostics=value.get('voice_contract_diagnostics',False),
-                   native_sdk_proxy=value.get('native_sdk_proxy',False))
+                   native_sdk_proxy=value.get('native_sdk_proxy',False),
+                   controller_consumer=value.get('controller_consumer',False),
+                   controller_aliases=value.get('controller_aliases',()))
 
 
 async def serve(gateway, port, stop_event=None):

@@ -429,7 +429,7 @@ async def run(args):
             if (wav.getnchannels() != 1 or wav.getsampwidth() != 2
                     or wav.getframerate() != 16000 or not wav.getnframes()):
                 raise ValueError('Name fixture must be nonempty mono PCM16 WAV at 16 kHz')
-    config = production.Config(**json.loads(Path(args.config).read_text(encoding='utf-8-sig')))
+    config = production.load_config(args.config)
     if config.development_token:
         raise RuntimeError('Production config must not contain a development credential')
     target = Path(args.output)

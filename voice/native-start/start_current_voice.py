@@ -1,4 +1,4 @@
-"""Start the current Gemma/ServiceNow voice stack without stopping services."""
+"""Start voice with the centrally selected local model; never switch models."""
 import argparse
 import contextlib
 import hashlib
@@ -18,8 +18,11 @@ ACTIVE = Path(r'C:\Projects\strix-alloy-scc-voice')
 CLEAN = Path(r'C:\Projects\strix-alloy-clean')
 SERVER = CLEAN / 'server'
 PYTHON = SERVER / '.local/venv/Scripts/python.exe'
-PROFILE = SERVER / '.local/gemma-switch-20261018/serving-gemma4-26b-32k-fast.json'
-PROFILE_SHA256 = 'ea335895f0cb8f6ded0698ec940cab808a11162187129822ecd9c010efbdb330'
+PROFILE = None
+PROFILE_SHA256 = None
+CONTROLLER_SELECTION = SERVER / '.local/voice-deployment/controller-selection.local.json'
+selected_controller = None
+controller_consumer = None
 MANAGED_TURN_SHA256 = '11792b33ecb0cae274d14590aa5bd35aaa430cbb481396d90513054d4b245af9'
 CURRENT = SERVER / '.local/current.json'
 RUNTIME = ACTIVE / 'voice/native-start/runtime'
@@ -30,6 +33,8 @@ GATEWAY_STATE = ACTIVE / 'server/.local/scc-gateway-state.json'
 ENGINE_PORTS = (8823, 8731, 8826, 8836, 18808)
 CREATE_NO_WINDOW = 0x08000000
 DETACHED = 0x00000200 | 0x00000008
+OMNI_PYTHON = Path(r'C:\AI\runtimes\qwen3-omni-native\Scripts\python.exe')
+OMNI_START_HELPER = Path(r'C:\Users\Marcel\Documents\Codex\2026-10-19\fahre-den-chat-servicenow-bergabe-bzw\duplex-implementation-20261023\task30-omni-runtime\ensure_owned_text.py')
 services = None
 speech_services = None
 
@@ -46,18 +51,13 @@ def read_json(path):
 
 
 def validate_profile():
-    reader = ACTIVE / 'voice/native-start/gateway_profile.py'
-    # Suppress validator diagnostics, including malformed configuration values.
-    try:
-        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            validator = load_module('scc_current_profile', reader)
-            validator.load_native_profile(PROFILE, PROFILE_SHA256, SERVER)
-        raw = PROFILE.read_bytes()
-        if hashlib.sha256(raw).hexdigest() != PROFILE_SHA256:
-            raise ValueError('changed')
-        return json.loads(raw.decode('utf-8-sig'))
-    except Exception:
-        raise RuntimeError('Das freigegebene Gemma-Profil oder seine Laufzeitdateien konnten nicht verifiziert werden.') from None
+    global PROFILE, PROFILE_SHA256, selected_controller, controller_consumer
+    controller_consumer = load_module('scc_controller_consumer', ACTIVE / 'voice/native-start/controller_consumer.py')
+    selected_controller = controller_consumer.load_selected(services, SERVER, PYTHON, CURRENT, CONTROLLER_SELECTION)
+    PROFILE = selected_controller['profile_path']
+    PROFILE_SHA256 = selected_controller['profile_sha256']
+    return selected_controller['profile']
+
 
 
 def credential(config, key='token_file'):
@@ -94,80 +94,70 @@ def health(port, path='/health', token=None, json_body=True):
 
 
 def controller_args():
-    return [str(PYTHON), '-u', '-B', str(SERVER / 'controller.py'),
-            'run', '--config', str(PROFILE), '--port', '8840']
+    return selected_controller['args']
+
 
 
 def model_ready(profile):
-    pid = services.owned_listener(8840, controller_args())
-    if not pid:
-        return False
-    state = read_json(CURRENT)
-    if (state.get('pid') != pid or state.get('port') != 8840
-            or state.get('profile_sha256') != PROFILE_SHA256
-            or not 0 <= time.time() - state.get('heartbeat', 0) <= 10
-            or state.get('phase') != 'ready'):
-        raise RuntimeError('Der laufende Controller passt nicht zum Profil oder sein Status ist veraltet. Keine Prozesse geaendert.')
-    # Engine.start appends this private argument. Keep the exact comparison in
-    # memory only; neither the argument vector nor the credential is logged.
-    engine_args = list(profile['engine']['command'])
-    if profile['engine'].get('api_key_from_backend_token'):
-        engine_args += ['--api-key', credential(PROFILE, 'backend_token_file')]
-    if not services.owned_listener(8823, engine_args):
-        raise RuntimeError('Der erwartete Gemma-Prozess fehlt auf Port 8823.')
-    result = health(8840, token=credential(PROFILE))
-    backend = profile['backend']
-    if (result.get('http_status') != 200 or result.get('status') != 'ok'
-            or result.get('draining') is True
-            or any(result.get(key) != backend[key] for key in ('checkpoint', 'context'))
-            or result.get('backend') != backend['identifier']):
-        raise RuntimeError('Der Gemma-Controller ist nicht bereit oder meldet ein anderes Modell.')
-    backend_health = health(8823, token=credential(PROFILE, 'backend_token_file'))
-    if backend_health.get('http_status') != 200 or backend_health.get('status') != 'ok':
-        raise RuntimeError('Die Gemma-Modellpruefung auf Port 8823 ist fehlgeschlagen.')
-    return True
+    return controller_consumer.ready(services, selected_controller, CURRENT)
+
 
 
 def cold_model_check():
-    for port in ENGINE_PORTS:
-        if services.listeners(port):
-            raise RuntimeError(f'Port {port} ist bereits belegt. Der Controller wird nicht gestartet; keine Prozesse geaendert.')
+    if services.listeners(8840):
+        raise RuntimeError('Ein zentraler Controller ist bereits aktiv; auf dessen Bereitschaft warten.')
+    engine = selected_controller['profile'].get('engine', {})
+    if engine.get('kind') == 'halogen':
+        backend_directory = Path(engine['directory'])
+        if not backend_directory.is_absolute():
+            backend_directory = CLEAN / backend_directory
+        if (backend_directory / '.local/runner.lock').exists():
+            raise RuntimeError('Halogen hat einen geschuetzten Abschluss offen. Erst den belegten Lauf bereinigen; kein automatischer Wiederholungsstart.')
+    expected = controller_args()
+    accepted = {os.path.normcase(expected[0]), os.path.normcase(services.python_base(expected[0]))}
+    for process in services.psutil.process_iter(['cmdline', 'exe']):
+        actual = process.info.get('cmdline') or []
+        executable = process.info.get('exe') or ''
+        if (actual and os.path.normcase(executable) in accepted
+                and str(SERVER / 'controller.py') in actual):
+            raise RuntimeError('Ein zentraler Controller startet bereits; kein zweiter Modellstart.')
     if CURRENT.exists():
         state = read_json(CURRENT)
         pid = state.get('pid')
-        # A saved phase is not evidence of a live controller. Verify the process.
-        if (type(pid) is int and services.psutil.pid_exists(pid)
-                and services.process_args(pid) == controller_args()):
-            raise RuntimeError('Ein passender Controller startet bereits ohne bereiten Listener. Auf dessen Ergebnis warten.')
+        if type(pid) is int and services.psutil.pid_exists(pid) and services.process_args(pid) == controller_args():
+            raise RuntimeError('Der ausgewaehlte Controller startet bereits. Bitte auf sein Ergebnis warten.')
+
 
 
 def model_start(profile):
-    if model_ready(profile):
-        print('Gemma: laufender, verifizierter Controller und Modell wiederverwendet.', flush=True)
-        return
-    cold_model_check()
-    RUNTIME.mkdir(parents=True, exist_ok=True)
-    if CURRENT.exists():
-        shutil.copy2(CURRENT, RUNTIME / f'current.before-start-{time.time_ns()}.json')
-    # controller.py alone owns its lock, qualification and memory guards.
-    with (RUNTIME / 'gemma-controller.stdout.log').open('ab') as stdout, \
-            (RUNTIME / 'gemma-controller.stderr.log').open('ab') as stderr:
-        child = subprocess.Popen(controller_args(), cwd=CLEAN, stdin=subprocess.DEVNULL,
-            stdout=stdout, stderr=stderr, creationflags=DETACHED)
-    print('Gemma: Modell wird geladen; Speicherpruefungen des Controllers bleiben aktiv.', flush=True)
-    deadline = time.monotonic() + 1200
-    notice = time.monotonic()
-    while time.monotonic() < deadline:
-        if child.poll() is not None:
-            raise RuntimeError(f'Gemma-Controller wurde beendet. Logs: {RUNTIME}')
-        if model_ready(profile):
-            print('Gemma: Controller und Modell sind bereit.', flush=True)
-            return
-        if time.monotonic() - notice >= 15:
-            print('Gemma laedt weiter. Bitte dieses Startfenster geoeffnet lassen.', flush=True)
-            notice = time.monotonic()
-        time.sleep(1)
-    raise RuntimeError(f'Gemma wurde innerhalb von 20 Minuten nicht bereit. Logs: {RUNTIME}. Kein automatischer Neustart.')
+    if not model_ready(profile):
+        cold_model_check()
+        if hashlib.sha256(PROFILE.read_bytes()).hexdigest() != PROFILE_SHA256:
+            raise RuntimeError('Zentral ausgewaehltes Profil wurde veraendert; kein Modellstart.')
+        RUNTIME.mkdir(parents=True, exist_ok=True)
+        with (RUNTIME / 'selected-controller.stdout.log').open('ab') as stdout, (RUNTIME / 'selected-controller.stderr.log').open('ab') as stderr:
+            child = subprocess.Popen(controller_args(), cwd=CLEAN, stdin=subprocess.DEVNULL,
+                stdout=stdout, stderr=stderr, creationflags=DETACHED)
+        print('Das zentral ausgewaehlte lokale Modell wird gestartet.', flush=True)
+        deadline = time.monotonic() + 1200
+        last_notice = time.monotonic()
+        while time.monotonic() < deadline:
+            if child.poll() is not None:
+                raise RuntimeError('Der ausgewaehlte Controller wurde beendet. Kein automatischer Neustart.')
+            try:
+                if model_ready(profile):
+                    break
+            except RuntimeError:
+                pass
+            if time.monotonic() - last_notice >= 15:
+                print('Modell laedt weiter; die vorhandenen Schutzpruefungen bleiben aktiv.', flush=True)
+                last_notice = time.monotonic()
+            time.sleep(1)
+        else:
+            raise RuntimeError('Das ausgewaehlte Modell wurde nicht rechtzeitig bereit.')
+    controller_consumer.remember(selected_controller, CONTROLLER_SELECTION)
+    print('Zentral ausgewaehltes Modell bereit: ' + profile['backend']['identifier'], flush=True)
+
 
 
 def gateway_args():
@@ -175,35 +165,41 @@ def gateway_args():
             str(GATEWAY_CONFIG), '--port', '8841', '--log', str(ACTIVE / 'server/.local/scc-gateway.log')]
 
 
-def gateway_ready(profile):
+def gateway_ready(profile, require_health=True):
+    config = read_json(GATEWAY_CONFIG)
+    if (config.get('controller_consumer') is not True
+            or config.get('backend', {}).get('upstream') != 'http://127.0.0.1:8840'
+            or credential(GATEWAY_CONFIG, 'backend_token_file') != credential(PROFILE)):
+        raise RuntimeError('Gateway ist noch nicht mit dem zentralen Controller verbunden.')
     if not services.owned_listener(8841, gateway_args()):
         return False
-    state = read_json(GATEWAY_STATE)
-    if state.get('profile') != str(PROFILE) or state.get('profile_sha256') != PROFILE_SHA256:
-        raise RuntimeError('Das laufende Gateway verwendet ein anderes Profil.')
+    if not require_health:
+        return True
     result = health(8841, token=credential(GATEWAY_CONFIG))
     if (result.get('http_status') != 200 or result.get('status') != 'ok'
+            or result.get('draining') is True
             or result.get('backend') != profile['backend']['identifier']
             or result.get('context') != profile['backend']['context']):
-        raise RuntimeError('Das Gateway ist nicht bereit oder meldet ein anderes Modell.')
+        raise RuntimeError('Das Gateway meldet noch nicht das zentral ausgewaehlte Modell.')
     return True
 
 
+
 def gateway_start(profile):
-    RUNTIME.mkdir(parents=True, exist_ok=True)
-    # This reviewed ACTIVE helper preserves the existing public credential.
-    args = ['powershell.exe', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass',
-            '-File', str(ACTIVE / 'voice/Start-QueuedGateway.ps1'), '-Action', 'Start',
-            '-ProfileConfig', str(PROFILE), '-ProfileSha256', PROFILE_SHA256, '-Python', str(PYTHON)]
-    with (RUNTIME / 'current-gateway.stdout.log').open('ab') as stdout, \
-            (RUNTIME / 'current-gateway.stderr.log').open('ab') as stderr:
-        result = subprocess.run(args, cwd=ACTIVE, stdin=subprocess.DEVNULL,
-            stdout=stdout, stderr=stderr, creationflags=CREATE_NO_WINDOW, timeout=120)
-    if result.returncode != 0:
-        raise RuntimeError(f'Gateway-Start fehlgeschlagen. Logs: {RUNTIME}')
     if not gateway_ready(profile):
-        raise RuntimeError('Das erwartete Gateway auf Port 8841 fehlt.')
-    print('Gateway: verifiziert und bereit.', flush=True)
+        RUNTIME.mkdir(parents=True, exist_ok=True)
+        with (RUNTIME / 'current-gateway.stdout.log').open('ab') as stdout, (RUNTIME / 'current-gateway.stderr.log').open('ab') as stderr:
+            subprocess.Popen(gateway_args(), cwd=ACTIVE, stdin=subprocess.DEVNULL,
+                stdout=stdout, stderr=stderr, creationflags=DETACHED)
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline:
+            if gateway_ready(profile):
+                break
+            time.sleep(.25)
+        else:
+            raise RuntimeError('Gateway wurde nicht bereit; kein automatischer Neustart.')
+    print('Gateway: mit zentraler Modellauswahl verbunden.', flush=True)
+
 
 
 def funnel_check():
@@ -224,7 +220,7 @@ def funnel_check():
 
 
 def preflight(profile):
-    for path in (PYTHON, SERVER / 'controller.py', ACTIVE / 'voice/Start-QueuedGateway.ps1',
+    for path in (PYTHON, SERVER / 'controller.py', ACTIVE / 'voice/native-start/controller_consumer.py',
             services.PYTHON, ACTIVE / 'voice/bridge.py', ACTIVE / 'voice/native-bridge/native_bridge.py',
             BOT_CONFIG, NATIVE_CONFIG):
         if not path.is_file():
@@ -246,11 +242,16 @@ def preflight(profile):
             raise ValueError('unreviewed relay bytes')
     except (KeyError, TypeError, ValueError, OSError):
         raise RuntimeError('Die Relay-Konfiguration ist veraltet oder nicht freigegeben. Bitte die genehmigte Konfiguration wiederherstellen; kein Dienst wurde gestartet.') from None
-    if services.listeners(8851) or services.listeners(8852):
-        raise RuntimeError('Alte Sprachdienste auf Port 8851/8852 sind aktiv. Keine Prozesse geaendert.')
-    if not model_ready(profile):
+    backend = native.get('asr_backend')
+    if backend != 'qwen3-asr-0.6b':
+        raise RuntimeError('Dieser Starter benoetigt die freigegebene Qwen-ASR-Auswahl; keine Dienste gestartet.')
+    if services.listeners(8852) or (backend != 'qwen3-asr-0.6b' and services.listeners(8851)):
+        raise RuntimeError('Nicht ausgewaehlte alte Sprachdienste sind aktiv. Keine Prozesse geaendert.')
+    asr_stage(check_only=True)
+    controller_ready = model_ready(profile)
+    if not controller_ready:
         cold_model_check()
-    gateway_ready(profile)
+    gateway_ready(profile, require_health=controller_ready)
     for ports, script, config in (
             ((8850, 8853), ACTIVE / 'voice/bridge.py', BOT_CONFIG),
             ((8860,), ACTIVE / 'voice/native-bridge/native_bridge.py', NATIVE_CONFIG)):
@@ -262,11 +263,34 @@ def preflight(profile):
 
 
 def conversation_stage(check_only):
-    owner = load_module('scc_conversation_runtime', ACTIVE / 'voice/native-start/conversation_runtime.py')
-    runtime = owner.selected_runtime(NATIVE_CONFIG.parent / 'conversation-selection.local.json', NATIVE_CONFIG)
-    if runtime is not None:
-        state = runtime.run(check_only=check_only)
-        print('Gespraechsmodell: ' + state + '.', flush=True)
+    native = read_json(NATIVE_CONFIG)
+    if native.get('conversation_transport') != 'controller-text':
+        raise RuntimeError('Bitte den freigegebenen Controller-Sprachtransport auswaehlen.')
+
+
+
+def omni_stage(check_only):
+    # The controller text transport uses the current model; no Omni process.
+    conversation_stage(check_only)
+
+
+
+def asr_stage(check_only=False):
+    native = read_json(NATIVE_CONFIG)
+    if native.get('asr_backend') != 'qwen3-asr-0.6b':
+        raise RuntimeError('Qwen-Spracherkennung ist nicht ausgewaehlt; kein anderer ASR-Start.')
+    helper = load_module('scc_qwen_asr_start', ACTIVE / 'voice/native-start/qwen_asr_start.py')
+    state = helper.ensure(native, check_only=check_only)
+    print('Qwen-Spracherkennung: ' + state + '.', flush=True)
+
+
+def speech_stage():
+    native = read_json(NATIVE_CONFIG)
+    if native.get('asr_backend') != 'qwen3-asr-0.6b':
+        raise RuntimeError('Qwen-Spracherkennung ist nicht ausgewaehlt; kein anderer ASR-Start.')
+    speech_services.speech_start(['tts'])
+    asr_stage(check_only=False)
+
 
 
 def run(check_only=False):
@@ -279,22 +303,25 @@ def run(check_only=False):
     if check_only:
         preflight(profile)
         conversation_stage(check_only=True)
+        omni_stage(check_only=True)
         print('Vorpruefung erfolgreich. Es wurden keine Dienste gestartet.', flush=True)
         return 0
     # Same fixed order on every run; never alter either controller ownership lock.
     with services.startup_lock(), speech_services.startup_lock():
         preflight(profile)
         conversation_stage(check_only=True)
+        omni_stage(check_only=True)
         print('Sprache: vorhandene native Erkennung und ausgewaehlte Stimme pruefen/starten.', flush=True)
-        speech_services.speech_start(['asr', 'tts'])
+        speech_stage()
         model_start(profile)
         gateway_start(profile)
         conversation_stage(check_only=False)
+        omni_stage(check_only=False)
         print('ServiceNow: Bot und native Sprachbruecke pruefen/starten.', flush=True)
         status = type('ReadOnlyHealth', (), {'health': staticmethod(health)})
         services.voice_start(status, bot_config=BOT_CONFIG, native_config=NATIVE_CONFIG)
         funnel_check()
-    print('BEREIT: Gemma, Spracherkennung, Stimme und ServiceNow-Sprachbruecken.', flush=True)
+    print('BEREIT: zentrales lokales Modell, Qwen-Spracherkennung, eigene Stimme und ServiceNow.', flush=True)
     return 0
 
 

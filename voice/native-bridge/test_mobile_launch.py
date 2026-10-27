@@ -4,9 +4,9 @@ from unittest.mock import Mock
 from aiohttp import ClientSession, web
 from native_bridge import Config, create_app
 
-INSTANCE = 'soprasteriaassvsdemo14'
-ASSISTANT = '8aa131d793f787105c8132d47aba1095'
-TARGET = 'https://soprasteriaassvsdemo14.service-now.com/now/now-assist-with-va/voice-test/8aa131d793f787105c8132d47aba1095'
+INSTANCE = 'voice-fixture'
+ASSISTANT = 'a' * 32
+TARGET = 'https://voice-fixture.service-now.com/now/now-assist-with-va/voice-test/' + ASSISTANT
 
 
 class MobileLaunchTests(unittest.IsolatedAsyncioTestCase):
@@ -30,7 +30,7 @@ class MobileLaunchTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.headers.get('Referrer-Policy'), 'no-referrer')
         self.assertFalse(response.cookies)
 
-    async def test_fixed_redirect_without_query_token_or_session(self):
+    async def test_configured_redirect_without_query_token_or_session(self):
         await self.open_server()
         async with self.http.get(self.base + '/launch', allow_redirects=False) as response:
             self.assertEqual(response.status, 302)
@@ -40,6 +40,26 @@ class MobileLaunchTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual((await response.json())['nativeSessions'], 0)
         self.speech_factory.assert_not_called()
         self.dialog_factory.assert_not_called()
+
+    async def test_other_valid_startup_binding_is_portable(self):
+        await self.open_server(instance_name='different-instance', voice_service_id='b' * 32)
+        async with self.http.get(self.base + '/launch', allow_redirects=False) as response:
+            self.assertEqual(response.status, 302)
+            self.assertEqual(response.headers.get('Location'),
+                'https://different-instance.service-now.com/now/now-assist-with-va/voice-test/' + 'b' * 32)
+            self.assert_privacy_headers(response)
+        self.speech_factory.assert_not_called()
+        self.dialog_factory.assert_not_called()
+
+    async def test_request_headers_cannot_rebind_configured_target(self):
+        await self.open_server()
+        headers = {'Host':'untrusted.invalid', 'Forwarded':'host=untrusted.invalid;proto=http',
+            'X-Forwarded-Host':'untrusted.invalid', 'X-Forwarded-Proto':'http',
+            'Origin':'https://untrusted.invalid'}
+        async with self.http.get(self.base + '/launch', headers=headers, allow_redirects=False) as response:
+            self.assertEqual(response.status, 302)
+            self.assertEqual(response.headers.get('Location'), TARGET)
+            self.assert_privacy_headers(response)
 
     async def test_query_is_rejected_without_reflecting_values(self):
         await self.open_server()
@@ -52,17 +72,23 @@ class MobileLaunchTests(unittest.IsolatedAsyncioTestCase):
         self.speech_factory.assert_not_called()
         self.dialog_factory.assert_not_called()
 
-    async def test_wrong_instance_is_not_exposed(self):
-        await self.open_server(instance_name='other')
-        async with self.http.get(self.base + '/launch', allow_redirects=False) as response:
-            self.assertEqual(response.status, 404)
-            self.assertIsNone(response.headers.get('Location'))
+    async def test_invalid_startup_instance_is_rejected_before_app_construction(self):
+        for instance in ('', 'other.service-now.com', 'voice/escape', 'https://untrusted.invalid',
+                         '-bad', 'bad-', 'UPPERCASE', 'x' * 64, None, 17):
+            with self.subTest(instance=instance):
+                with self.assertRaises(ValueError):
+                    await self.open_server(instance_name=instance)
+                self.speech_factory.assert_not_called()
+                self.dialog_factory.assert_not_called()
 
-    async def test_wrong_assistant_is_not_exposed(self):
-        await self.open_server(voice_service_id='other')
-        async with self.http.get(self.base + '/launch', allow_redirects=False) as response:
-            self.assertEqual(response.status, 404)
-            self.assertIsNone(response.headers.get('Location'))
+    async def test_invalid_startup_assistant_is_not_exposed(self):
+        for assistant in ('other', 'a' * 31, 'a' * 33, 'A' * 32, 'a' * 32 + '?next=escape', None, 17):
+            with self.subTest(assistant=assistant):
+                await self.open_server(voice_service_id=assistant)
+                async with self.http.get(self.base + '/launch', allow_redirects=False) as response:
+                    self.assertEqual(response.status, 404)
+                    self.assertIsNone(response.headers.get('Location'))
+                    self.assert_privacy_headers(response)
 
     async def test_post_is_not_a_launch_or_voice_session(self):
         await self.open_server()
@@ -76,7 +102,9 @@ class MobileLaunchTests(unittest.IsolatedAsyncioTestCase):
         await self.open_server()
         async with self.http.get(self.base + '/health') as response:
             self.assertEqual(response.status, 200)
-            self.assertEqual(await response.json(), {'status':'ok', 'nativeSessions':0, 'authMode':'servicenow'})
+            self.assertEqual(await response.json(), {'status':'ok', 'nativeSessions':0,
+                'authMode':'servicenow', 'conversationLayer':'legacy',
+                'conversationPipeline':'legacy', 'conversationSentenceStreaming':False})
         self.speech_factory.assert_not_called()
         self.dialog_factory.assert_not_called()
 

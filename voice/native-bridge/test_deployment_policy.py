@@ -13,6 +13,7 @@ from native_bridge import Config, create_app
 from sdk_admission import AdmissionDenied, VerifiedContext, admit_sdk_session
 from sdk_sessions import register_sdk_routes
 from test_sdk_admission import FakeHttp, FakeResponse
+from test_assistant_settings import authorized_settings
 
 try:
     deployment = importlib.import_module('sdk_deployment')
@@ -219,11 +220,16 @@ class ConfiguredBridgeTests(unittest.IsolatedAsyncioTestCase):
             sdk_public_origin=SECOND['public_origin'], native_sdk_enabled=True,auth_mode='servicenow')
 
     async def test_application_binds_same_policy_to_admission_and_response(self):
-        http = FakeHttp(FakeResponse(payload={'result':['2'*32]}))
-        async def authorize(headers,body,*,query_string,policy):
+        payload = authorized_settings()
+        payload['result']['authorized_agents'] = [SECOND['voice_agent_id']]
+        payload['result']['assistant_settings']['service_id'] = SECOND['assistant_id']
+        http = FakeHttp(FakeResponse(payload=payload))
+        async def authorize(headers,body,*,query_string,policy,assistant_settings_version):
             self.assertIs(policy,self.config.sdk_policy)
+            self.assertEqual(assistant_settings_version,1)
             return await admit_sdk_session(headers,body,query_string=query_string,
-                policy=policy,http_factory=http.factory)
+                policy=policy,http_factory=http.factory,
+                assistant_settings_version=assistant_settings_version)
         with patch('sdk_admission.admit_sdk_session',side_effect=authorize), \
                 patch('native_bridge.NativeCall',return_value=FakeCall()):
             client = TestClient(TestServer(create_app(self.config,dialog_factory=lambda:None)))
@@ -234,6 +240,29 @@ class ConfiguredBridgeTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(response.status, 200)
                 self.assertEqual((await response.json())['endpoint_url'],SECOND['public_origin'])
                 self.assertEqual(http.calls[0][0],self.config.sdk_policy.authorization_url)
+                self.assertEqual(http.calls[0][1]['json'],
+                    {'serviceId':SECOND['assistant_id'],'assistantSettingsVersion':1})
+            finally:
+                await client.close()
+
+    async def test_sdk_create_requires_settings_projection_before_native_allocation(self):
+        http = FakeHttp(FakeResponse(payload={'result':[SECOND['voice_agent_id']]}))
+        async def authorize(headers,body,*,query_string,policy,assistant_settings_version):
+            return await admit_sdk_session(headers,body,query_string=query_string,
+                policy=policy,http_factory=http.factory,
+                assistant_settings_version=assistant_settings_version)
+        with patch('sdk_admission.admit_sdk_session',side_effect=authorize), \
+                patch('native_bridge.NativeCall') as native_call:
+            client = TestClient(TestServer(create_app(self.config,dialog_factory=lambda:None)))
+            await client.start_server()
+            try:
+                response = await client.post('/api/webrtc/sessions?instance_name=community-demo&receive_data=true',
+                    headers=dict(HEADERS),json={'agent_id':'agent_operator'})
+                self.assertEqual(response.status,403)
+                self.assertEqual(await response.json(),{'error':'forbidden'})
+                self.assertEqual(http.calls[0][1]['json'],
+                    {'serviceId':SECOND['assistant_id'],'assistantSettingsVersion':1})
+                native_call.assert_not_called()
             finally:
                 await client.close()
 

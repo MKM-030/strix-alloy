@@ -24,7 +24,7 @@ class Response:
 class StackDeploymentTests(unittest.TestCase):
     def setUp(self):
         self.good = {'status':'ok','model':'halogen-qwen3.8-flash-next',
-            'version':{'api':'0.18.8','engine':'0.18.8','match':True},
+            'version':{'api':'0.18.10','engine':'0.18.10','match':True},
             'context':32768,'slot_ctx':32768,'kv_pool_positions':32768,'slots':1,
             'vision':{'enabled':True},
             'prompt_cache':{'mode':1,'enabled':True,'cap_mb':4096,'bitwise_identical_to_cold':True}}
@@ -34,7 +34,7 @@ class StackDeploymentTests(unittest.TestCase):
         with patch.object(status.urllib.request,'build_opener',return_value=opener):
             return status.health(8731)
 
-    def test_selected0188_health_is_accepted(self):
+    def test_selected01810_health_is_accepted(self):
         self.assertTrue(self.health(self.good)['version_matches'])
         self.assertTrue(self.health(self.good)['profile_matches'])
 
@@ -51,9 +51,9 @@ class StackDeploymentTests(unittest.TestCase):
                 self.assertFalse(self.health({**self.good,**changes})['profile_matches'])
 
     def test_status_paths_come_from_same_selected_deployment(self):
-        self.assertEqual(status.PROFILE.name,'serving0188-voice32k-prefill8192.json')
+        self.assertEqual(status.PROFILE.name,'serving01810-voice32k-prefill8192.json')
         self.assertEqual(status.MODEL,
-            Path(r'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.18.8\.local\api-token.txt'))
+            Path(r'C:\Projects\strix-alloy-clean\backends\halogen-wsl2-0.18.10\.local\api-token.txt'))
 
 
 if __name__ == '__main__': unittest.main()

@@ -1,0 +1,16 @@
+Task52 optional RNNoise dependency, frozen Windows amd64 wheel
+
+Reproduce with the existing native-bridge virtual environment:
+  python -m pip install --no-deps --require-hashes -r requirements-rnnoise.txt
+
+The hash pins pyrnnoise-0.4.5-py3-none-win_amd64.whl from PyPI.
+Only this wheel is added; no existing package is upgraded/downgraded.
+The helper uses importlib.metadata to locate pyrnnoise/rnnoise.dll and loads
+its C API directly, without importing pyrnnoise or its optional high-level
+Python dependency stack (audiolab/matplotlib/tqdm). Existing NumPy/PyAV are used.
+Installed DLL SHA256:
+  06770aeb8855ef942b5dcdb436f84dfdd5867b716ba4b4c8a2c66ade03197f31
+
+If unavailable or a runtime error occurs, exact uncommitted PCM falls back
+to passthrough. NativeCall logs fixed fallback codes at most once each per call.
+This is continuity protection, not a noise-removal guarantee after failure.
