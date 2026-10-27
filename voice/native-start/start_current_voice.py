@@ -14,7 +14,7 @@ import time
 import urllib.request
 
 
-ACTIVE = Path(r'C:\Projects\strix-alloy-scc-voice')
+ACTIVE = Path(r'C:\Projects\strix-alloy-clean')
 CLEAN = Path(r'C:\Projects\strix-alloy-clean')
 SERVER = CLEAN / 'server'
 PYTHON = SERVER / '.local/venv/Scripts/python.exe'
@@ -298,6 +298,19 @@ def speech_stage():
 
 
 
+@contextlib.contextmanager
+def startup_locks(*modules):
+    # Primary voice and speech share one physical, non-reentrant startup lock.
+    with contextlib.ExitStack() as stack:
+        acquired = set()
+        for module in modules:
+            runtime = Path(module.RUNTIME).resolve()
+            if runtime not in acquired:
+                stack.enter_context(module.startup_lock())
+                acquired.add(runtime)
+        yield
+
+
 def run(check_only=False):
     global services, speech_services
     if services is None:
@@ -312,7 +325,7 @@ def run(check_only=False):
         print('Vorpruefung erfolgreich. Es wurden keine Dienste gestartet.', flush=True)
         return 0
     # Same fixed order on every run; never alter either controller ownership lock.
-    with services.startup_lock(), speech_services.startup_lock():
+    with startup_locks(services, speech_services):
         preflight(profile)
         conversation_stage(check_only=True)
         omni_stage(check_only=True)

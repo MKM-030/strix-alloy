@@ -11,7 +11,7 @@ import urllib.request
 
 import psutil
 
-ROOT = Path(r'C:\Projects\strix-alloy-scc-voice')
+ROOT = Path(r'C:\Projects\strix-alloy-clean')
 RUNTIME = ROOT / 'voice/native-start/runtime'
 PYTHON = Path(r'E:\SCC-Voice\asr-env\Scripts\python.exe')
 BASE = Path(r'C:\Users\Marcel\AppData\Local\Programs\Python\Python312\python.exe')
@@ -26,7 +26,7 @@ BACKEND = 'qwen3-asr-0.6b'
 URL = 'http://127.0.0.1:8851/v1/audio/transcriptions'
 NATIVE_MANIFEST = Path(r'C:\Projects\strix-alloy-clean\server\.local\voice-deployment\native-asr-artifacts.local.json')
 # Root fills this only after final qualified GGUF bytes and manifest review.
-NATIVE_MANIFEST_SHA256 = 'bdd1d99b2d1ccc43fb9b6bd2c45ebe8bc8af398734c1ae34a79e6ad8fc0850f2'
+NATIVE_MANIFEST_SHA256 = '21bb7bf69847fd129533ff836abdd2584b2c6af45143e60dc5bb45a33e740360'
 PINS = {
     SCRIPT: '211db87c455eacfb891d109d040a3beb95feca79a6b16d78b8b1e65e971a993e',
     PYTHON: '0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14',
@@ -168,6 +168,8 @@ def process_identity(pid, native=None):
             or environment.get('TRANSFORMERS_OFFLINE') != '1'
             or environment.get('HF_HOME') != str(CACHE)):
         raise RuntimeError('Qwen-ASR hat nicht die freigegebene Offline-Umgebung.')
+    if runtime(native) == 'crispasr' and environment.get('CRISPASR_QWEN3_ASR_FUSED_QKV') != '1':
+        raise RuntimeError('Native Qwen-ASR hat nicht die qualifizierte QKV-Fusion.')
     return {'pid': pid, 'created': process.create_time()}
 
 
@@ -342,6 +344,15 @@ def startup_lock():
             handle.seek(0); msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
 
 
+def worker_environment(native=None):
+    environment = dict(os.environ, HF_HOME=str(CACHE), HF_HUB_OFFLINE='1',
+        TRANSFORMERS_OFFLINE='1', HF_HUB_DISABLE_TELEMETRY='1',
+        TOKENIZERS_PARALLELISM='false', OMP_NUM_THREADS='6')
+    if runtime(native) == 'crispasr':
+        environment['CRISPASR_QWEN3_ASR_FUSED_QKV'] = '1'
+    return environment
+
+
 def ensure(native, check_only=False):
     if not selected(native):
         return 'not-selected'
@@ -361,9 +372,7 @@ def ensure(native, check_only=False):
         if psutil.virtual_memory().available < 18 * 1024**3:
             raise RuntimeError('ASR-Start benoetigt weiterhin 18GiB freien Speicher.')
         verify_files(native)
-        environment = dict(os.environ, HF_HOME=str(CACHE), HF_HUB_OFFLINE='1',
-            TRANSFORMERS_OFFLINE='1', HF_HUB_DISABLE_TELEMETRY='1',
-            TOKENIZERS_PARALLELISM='false', OMP_NUM_THREADS='6')
+        environment = worker_environment(native)
         with (RUNTIME / 'qwen-asr.stdout.log').open('ab') as stdout, \
                 (RUNTIME / 'qwen-asr.stderr.log').open('ab') as stderr:
             child = subprocess.Popen(arguments(native), cwd=ROOT, env=environment,
