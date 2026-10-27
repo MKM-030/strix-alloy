@@ -8,7 +8,7 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
-| **Halogen WSL2 0.18.16** | Current measured text profile: 32K capacity, adaptive MTP, 8K prefill arena | [Configuration and measured limits](backends/halogen-wsl2-0.18.16/README.md) |
+| **Halogen WSL2 0.18.16** | Current measured text profile: 32K capacity, adaptive MTP, 8K prefill arena | [Configuration and measured limits](docs/integrations/halogen-servicenow.md) |
 | **Hipfire native Windows** | Source port with completed 16K MTP cohort; 1,240.2 prefill / 26.53 decode tok/s, 63.64% acceptance | [Build, run and measurement limits](backends/hipfire-windows/README.md) |
 | **Halogen WSL2 0.16.2** | Pinned v2 upgrade and sampled filled-context comparison measured with an 18 GiB reserve | [Install and run](backends/halogen-wsl2-0.16.2/README.md) |
 | **Halogen WSL2 0.15.1** | w4b + overlay and v2 tested at 262144 capacity; authenticated continuous serving | [Install and run](backends/halogen-wsl2-0.15.1/README.md) |
