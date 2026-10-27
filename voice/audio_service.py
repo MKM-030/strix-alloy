@@ -130,10 +130,13 @@ def create_app(mode, token, backend):
 
     @app.get("/health")
     def health():
-        return {"status": "ready", "mode": mode, "model": getattr(backend, "model_id", MODEL_IDS[mode]),
+        result = {"status": "ready", "mode": mode, "model": getattr(backend, "model_id", MODEL_IDS[mode]),
                 "voice": getattr(backend, "voice_name", None),
                 "device": "cpu", "dtype": getattr(backend, "dtype", "float32"),
                 "busy": lock.locked(), "max_parallel": 1}
+        if getattr(backend, "runtime", None) == "crispasr":
+            result["runtime"] = "crispasr"
+        return result
 
     def check_model(name):
         if name not in (getattr(backend, "model_id", MODEL_IDS[mode]), ALIASES[mode]):
@@ -257,11 +260,34 @@ class QwenBackend:
         return waveforms[0], rate
 
 
+def create_backend(mode, threads, dtype, voice_profile, asr_runtime="torch",
+                   asr_model=None, asr_library=None):
+    if asr_runtime == "torch":
+        if asr_model or asr_library or dtype == "mixed-gguf":
+            raise ValueError("Native ASR assets require the explicit crispasr runtime")
+        return QwenBackend(mode, threads, dtype, voice_profile)
+    if (asr_runtime != "crispasr" or mode != "asr" or voice_profile
+            or dtype != "mixed-gguf" or not asr_model or not asr_library):
+        raise ValueError("CrispASR requires ASR mode, mixed-gguf and explicit qualified local assets")
+    from native_qwen_asr import NativeQwenASR
+    ensure_memory_reserve()
+    backend = NativeQwenASR(asr_model, asr_library, threads)
+    try:
+        ensure_memory_reserve()
+    except BaseException:
+        backend.close()
+        raise
+    return backend
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=["asr", "tts"], required=True)
     parser.add_argument("--port", type=int)
-    parser.add_argument("--dtype", choices=["float32", "bfloat16"], default="float32")
+    parser.add_argument("--dtype", choices=["float32", "bfloat16", "mixed-gguf"], default="float32")
+    parser.add_argument("--asr-runtime", choices=["torch", "crispasr"], default="torch")
+    parser.add_argument("--asr-model", help="Qualified local Qwen0.6 GGUF; crispasr only")
+    parser.add_argument("--asr-library", help="Qualified local CrispASR DLL; crispasr only")
     parser.add_argument("--threads", type=int, default=6, choices=range(1, 9))
     parser.add_argument("--token-file", default=r"C:\Projects\strix-alloy-clean\server\.local\servicenow-api-token.txt")
     parser.add_argument("--cache-dir", default=r"E:\SCC-Voice\models")
@@ -275,13 +301,20 @@ def main():
     os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
     os.environ.setdefault("OMP_NUM_THREADS", str(args.threads))
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    LOG.info("Loading %s worker on CPU with %s threads and %s", args.mode, args.threads, args.dtype)
-    backend = QwenBackend(args.mode, args.threads, args.dtype, args.voice_profile)
+    LOG.info("Loading %s worker on CPU with %s threads and %s (%s)",
+             args.mode, args.threads, args.dtype, args.asr_runtime)
+    backend = create_backend(args.mode, args.threads, args.dtype, args.voice_profile,
+                             args.asr_runtime, args.asr_model, args.asr_library)
     LOG.info("%s worker ready", args.mode)
-    import uvicorn
-    uvicorn.run(create_app(args.mode, token, backend), host="127.0.0.1",
-                port=args.port or (8851 if args.mode == "asr" else 8852),
-                access_log=False, log_level="warning")
+    try:
+        import uvicorn
+        uvicorn.run(create_app(args.mode, token, backend), host="127.0.0.1",
+                    port=args.port or (8851 if args.mode == "asr" else 8852),
+                    access_log=False, log_level="warning")
+    finally:
+        close = getattr(backend, "close", None)
+        if close is not None:
+            close()
 
 
 if __name__ == "__main__":
