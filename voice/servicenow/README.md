@@ -1,5 +1,7 @@
 # ServiceNow SCC source and maintenance files
 
+> **Historical 120-CU checkpoint.** This checkpoint and its capture/completion recipes are superseded; never reapply them over current sources. The 19 October 2.0 export is an immutable baseline. Use the [canonical BYOLLM hub](../../docs/servicenow-byollm/README.md) and [batch status](../../docs/servicenow-byollm/batch-status.md) for the 2.1 working consolidation and later deltas. The [own source copies](../../servicenow/byollm/README.md) represent the 19 October snapshot. The historical body and evidence below are preserved.
+
 These files document this configured demonstration. They are not an automatic installer for a different instance. Record IDs, installed applications, model/provider references and destination credentials must be reviewed for that target.
 
 ## Capture

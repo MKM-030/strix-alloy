@@ -1,5 +1,7 @@
 # ServiceNow Local Voice 2.0 – konsolidierter Importstand
 
+> **Historical baseline documentation.** The 19 October 2.0 export below is immutable. Use the [canonical BYOLLM hub](../servicenow-byollm/README.md) and [batch status](../servicenow-byollm/batch-status.md) for the 2.1 working consolidation and later deltas. The [own source copies](../../servicenow/byollm/README.md) represent the 19 October snapshot. The historical body and evidence below are preserved.
+
 Stand: 19.10.2026. Der konsolidierte native Originalexport einschließlich der eigenen Infrastruktur-/Validierungsbasis ist erstellt und geprüft. Eine Preview beziehungsweise ein Import auf einer frischen Zielinstanz sowie die aktuelle physische Android-/iOS-Audioabnahme stehen noch aus.
 
 ## Konsolidierter Lieferstand

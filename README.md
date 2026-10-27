@@ -17,6 +17,8 @@ with explicit availability, reproducible measurements and no silent fallback.
 | GUFO native Windows | Latest qualified TheRock 10.2.0a20260930 with source-level numeric compatibility; native and managed text serving | [Build, qualify and register](backends/gufo-windows/README.md) |
 | Halogen 0.15.0 / 0.14.2 / 0.13.8 | Retained explicit rollback packages; never run alongside another large model | Version-specific `backends/` directories |
 
+For BYOLLM in ServiceNow, use the [canonical documentation](docs/servicenow-byollm/README.md). It separates the immutable 19 October 2.0 baseline from the 2.1 working consolidation and later deltas; see [batch status](docs/servicenow-byollm/batch-status.md).
+
 For the installed, measured Halogen text configuration, use Windows PowerShell 5.1:
 
 ```powershell

@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "kind": "exact_reviewed_native_own_sources",
+  "sourceSnapshotDate": "2026-10-19",
+  "consolidatedLocallyOn": "2026-10-27",
+  "claim": "Installed-as-of-19-October sources bound to the existing final field ledger; no fresh live-source verification by this consolidation.",
+  "referenceExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+  "sourceLedger": {
+    "path": "SOURCE-FIELD-LEDGER.json",
+    "sha256": "465956a864498cd98503e233b4e88e122f314abefd15ec6a8d0d2876e8e37bc0",
+    "records": 16,
+    "codeFields": 17,
+    "messages": 14
+  },
+  "sourceFiles": 17,
+  "copiedCodeFields": 17,
+  "entries": [
+    {
+      "path": "model-adapter/LocalLLMChatCompletionsAdapter.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/model-adapter/json-boundary/helper-with-json-boundary.js",
+      "sha256": "e6b44221df99e411e486cdde80c959b9242f1f1dfd987a9f0f9d563e73116603",
+      "bytes": 13850,
+      "sourceLastWriteTimeUtc": "2026-10-19T07:45:57.856251+00:00",
+      "recordFields": [
+        {
+          "table": "sys_script_include",
+          "recordId": "c9261ce064e0c19945053fb114c141f3",
+          "recordName": "LocalLLMChatCompletionsAdapter",
+          "scope": "global",
+          "field": "script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "model-adapter/Model-Request-Delegator.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/model-adapter/json-boundary/delegator-with-json-boundary.js",
+      "sha256": "f1e1b222cb9dbd4f08c45b336650cb928912f92b478b8e8b847c0e05d58a0f6b",
+      "bytes": 1043,
+      "sourceLastWriteTimeUtc": "2026-10-19T07:50:24.865422+00:00",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_custom_llm_transformer",
+          "recordId": "8842d69593ff43d05c8132d47aba10f1",
+          "recordName": "",
+          "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+          "field": "request_transformer"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "model-adapter/Model-Response-Transformer.js",
+      "sourceReference": "documentation-workspace-20261014/scripts/model-adapters/response-transformer.js",
+      "sha256": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6",
+      "bytes": 1616,
+      "sourceLastWriteTimeUtc": "2026-10-16T06:43:41.448328+00:00",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_custom_llm_transformer",
+          "recordId": "8842d69593ff43d05c8132d47aba10f1",
+          "recordName": "",
+          "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+          "field": "response_transformer"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "voice-policy/LocalLLMVoiceRuntimePolicy.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/native-policy/LocalLLMVoiceRuntimePolicy.js",
+      "sha256": "dd50d1d5dadc3a59490962ad636f2a9e4ec61650a6c7d660c24c1cd6ee63c2b5",
+      "bytes": 11445,
+      "sourceLastWriteTimeUtc": "2026-10-19T07:46:06.222467+00:00",
+      "recordFields": [
+        {
+          "table": "sys_script_include",
+          "recordId": "3083901993409b905c8132d47aba1033",
+          "recordName": "LocalLLMVoiceRuntimePolicy",
+          "scope": "022bd6e9b720a61081fee3fdde11a9df",
+          "field": "script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "voice-policy/LocalLLMVoicePersonaRouteSync.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/native-policy/LocalLLMVoicePersonaRouteSync.js",
+      "sha256": "8412da670eaf0bef47aabc0a1e5ef577598cfd22d220613f010399e1aed3d188",
+      "bytes": 16484,
+      "sourceLastWriteTimeUtc": "2026-10-19T08:05:56.810244+00:00",
+      "recordFields": [
+        {
+          "table": "sys_script_include",
+          "recordId": "6583d01993409b905c8132d47aba10ab",
+          "recordName": "LocalLLMVoicePersonaRouteSync",
+          "scope": "global",
+          "field": "script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "voice-policy/LocalLLMVoiceAssistantSettings.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/native-policy/LocalLLMVoiceAssistantSettings.js",
+      "sha256": "d611d323bb65310aa9aed52d7963d1904ce825b627993a4ad84e8c587b340891",
+      "bytes": 15844,
+      "sourceLastWriteTimeUtc": "2026-10-19T07:57:23.035690+00:00",
+      "recordFields": [
+        {
+          "table": "sys_script_include",
+          "recordId": "6bf331459344d7905c8132d47aba1008",
+          "recordName": "LocalLLMVoiceAssistantSettings",
+          "scope": "022bd6e9b720a61081fee3fdde11a9df",
+          "field": "script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "voice-policy/Native-Voice-Policy-Reference-Validator.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/native-policy/Native-Voice-Policy-Reference-Validator.js",
+      "sha256": "e82c712a0fe5d2cf47cc4f6a354b9d22d49981078bb8c230187673db131b872b",
+      "bytes": 4737,
+      "sourceLastWriteTimeUtc": "2026-10-19T07:46:21.259602+00:00",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_validator",
+          "recordId": "9898f94d9384d7905c8132d47aba10e9",
+          "recordName": "Local LLM Voice Assistant policy",
+          "scope": "32808450431302106c3603295bb8f245",
+          "field": "validator_script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "voice-policy/Guard-Local-Voice-Execution-Mapping-Business-Rule.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/native-policy/Guard-Local-Voice-Execution-Mapping-Business-Rule.js",
+      "sha256": "38a393674811227d6bf523953952afc715872f9b445579f89e88e050babd4b4d",
+      "bytes": 2487,
+      "sourceLastWriteTimeUtc": "2026-10-19T08:12:43.514924+00:00",
+      "recordFields": [
+        {
+          "table": "sys_script",
+          "recordId": "bd83d01993409b905c8132d47aba10b8",
+          "recordName": "Guard local LLM Voice execution mapping",
+          "scope": "global",
+          "field": "script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "voice-policy/Sync-Local-Voice-Execution-Mapping-Business-Rule.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/native-policy/Sync-Local-Voice-Execution-Mapping-Business-Rule.js",
+      "sha256": "e2e7cf8b30408035179e79bbb9c9b6c91fd74441ab17ca329cd1ea9a6b10c0c6",
+      "bytes": 1828,
+      "sourceLastWriteTimeUtc": "2026-10-19T07:43:17.301396+00:00",
+      "recordFields": [
+        {
+          "table": "sys_script",
+          "recordId": "f983d01993409b905c8132d47aba10c5",
+          "recordName": "Sync local LLM Voice execution mapping",
+          "scope": "global",
+          "field": "script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "voice-auth/Authorized-agents-resource.js",
+      "sourceReference": "voice-implementation-20261017/work/voice-session-implementation-20261019/android-auth/Authorized-agents-resource.fixed-clean.js",
+      "sha256": "aca577692316c71335f9c12089912586e26e1f470a379b67e3d7989f2100dccf",
+      "bytes": 2938,
+      "sourceLastWriteTimeUtc": "2026-10-19T07:32:39.234700+00:00",
+      "recordFields": [
+        {
+          "table": "sys_ws_operation",
+          "recordId": "66b97ca0ff6a6210129628ecf43bf1cf",
+          "recordName": "Authorized Agents",
+          "scope": "022bd6e9b720a61081fee3fdde11a9df",
+          "field": "operation_script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "prompt-mirror/CustomLLMPromptMirror.js",
+      "sourceReference": "documentation-workspace-20261014/scripts/prompt-mirror/CustomLLMPromptMirror.js",
+      "sha256": "adb86cc1463fd0249df3e68a20626c9a001d0a2b024f7ba0f16bb1e4d8de3865",
+      "bytes": 65210,
+      "sourceLastWriteTimeUtc": "2026-10-16T17:28:12.643008+00:00",
+      "recordFields": [
+        {
+          "table": "sys_script_include",
+          "recordId": "2ab7ecdc93441b505c8132d47aba10b1",
+          "recordName": "CustomLLMPromptMirror",
+          "scope": "global",
+          "field": "script"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "prompts/AIA-Unified-Planner-Disambiguation-Now-LLM-large.prompt.txt",
+      "sourceReference": "voice-implementation-20261017/outputs/ServiceNow-Voice-2.0-Konsolidiert-20261019.xml",
+      "sourceKind": "exact_utf8_field_extracted_from_existing_public_native_export",
+      "sourceExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+      "sourceCustomerUpdateNames": [
+        "sys_generative_ai_config_0380c7e193f747d0e7f2b9fa6aba10b7"
+      ],
+      "matchingFieldOccurrencesInExport": 1,
+      "sha256": "60fe9fe7a47887a9b720a7c7e351645ec7a595e7318ca7a8822b43e35f37e7ce",
+      "bytes": 38729,
+      "sourceLastWriteTimeUtc": "2026-10-19T09:48:47.091879+00:00",
+      "sourceTimestampMeaning": "Preserved original export file timestamp; not a claim of a separate authoring-file timestamp",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_config",
+          "recordId": "0380c7e193f747d0e7f2b9fa6aba10b7",
+          "recordName": "AIA Unified Planner Disambiguation Now LLM large",
+          "scope": "32808450431302106c3603295bb8f245",
+          "field": "prompt"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "prompts/AIA-ReAct-V3-Engine-Custom-LLM-Provider-V2.prompt.txt",
+      "sourceReference": "voice-implementation-20261017/outputs/ServiceNow-Voice-2.0-Konsolidiert-20261019.xml",
+      "sourceKind": "exact_utf8_field_extracted_from_existing_public_native_export",
+      "sourceExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+      "sourceCustomerUpdateNames": [
+        "sys_generative_ai_config_4780c7e193f747d0e7f2b9fa6aba1030"
+      ],
+      "matchingFieldOccurrencesInExport": 1,
+      "sha256": "9979d3035e96276f445a915758eb9f479af88fab64157e82c7a6c5e8280e562a",
+      "bytes": 32348,
+      "sourceLastWriteTimeUtc": "2026-10-19T09:48:47.091879+00:00",
+      "sourceTimestampMeaning": "Preserved original export file timestamp; not a claim of a separate authoring-file timestamp",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_config",
+          "recordId": "4780c7e193f747d0e7f2b9fa6aba1030",
+          "recordName": "AIA ReAct-V3 Engine (Custom LLM Provider V2)",
+          "scope": "32808450431302106c3603295bb8f245",
+          "field": "prompt"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "prompts/AIA-Unified-Planner-OG-Disambiguation-Now-LLM-large.prompt.txt",
+      "sourceReference": "voice-implementation-20261017/outputs/ServiceNow-Voice-2.0-Konsolidiert-20261019.xml",
+      "sourceKind": "exact_utf8_field_extracted_from_existing_public_native_export",
+      "sourceExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+      "sourceCustomerUpdateNames": [
+        "sys_generative_ai_config_4b80c7e193f747d0e7f2b9fa6aba10b6"
+      ],
+      "matchingFieldOccurrencesInExport": 1,
+      "sha256": "55959796b6554ce74cacf3829f20596057af6313c3bc883217196323446c3744",
+      "bytes": 33269,
+      "sourceLastWriteTimeUtc": "2026-10-19T09:48:47.091879+00:00",
+      "sourceTimestampMeaning": "Preserved original export file timestamp; not a claim of a separate authoring-file timestamp",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_config",
+          "recordId": "4b80c7e193f747d0e7f2b9fa6aba10b6",
+          "recordName": "AIA Unified Planner OG Disambiguation Now LLM large",
+          "scope": "32808450431302106c3603295bb8f245",
+          "field": "prompt"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "prompts/AIA-Unified-Planner-Custom-LLM-Provider-V2.prompt.txt",
+      "sourceReference": "voice-implementation-20261017/outputs/ServiceNow-Voice-2.0-Konsolidiert-20261019.xml",
+      "sourceKind": "exact_utf8_field_extracted_from_existing_public_native_export",
+      "sourceExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+      "sourceCustomerUpdateNames": [
+        "sys_generative_ai_config_8380c7e193f747d0e7f2b9fa6aba10b6"
+      ],
+      "matchingFieldOccurrencesInExport": 1,
+      "sha256": "8caf298ef0ddf1f2d6f34c759264af552f450fde3981a0deb17ac8b7639028ae",
+      "bytes": 14168,
+      "sourceLastWriteTimeUtc": "2026-10-19T09:48:47.091879+00:00",
+      "sourceTimestampMeaning": "Preserved original export file timestamp; not a claim of a separate authoring-file timestamp",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_config",
+          "recordId": "8380c7e193f747d0e7f2b9fa6aba10b6",
+          "recordName": "AIA Unified Planner (Custom LLM Provider V2)",
+          "scope": "32808450431302106c3603295bb8f245",
+          "field": "prompt"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "prompts/AIA-Unified-Planner-Custom-LLM-Provider.prompt.txt",
+      "sourceReference": "voice-implementation-20261017/outputs/ServiceNow-Voice-2.0-Konsolidiert-20261019.xml",
+      "sourceKind": "exact_utf8_field_extracted_from_existing_public_native_export",
+      "sourceExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+      "sourceCustomerUpdateNames": [
+        "sys_generative_ai_config_8780c7e193f747d0e7f2b9fa6aba109c"
+      ],
+      "matchingFieldOccurrencesInExport": 1,
+      "sha256": "baa48bfc2eb6cdfb0fa60d91774b5d1daa5fb1739a00ce32ac8fd73716bf7218",
+      "bytes": 29650,
+      "sourceLastWriteTimeUtc": "2026-10-19T09:48:47.091879+00:00",
+      "sourceTimestampMeaning": "Preserved original export file timestamp; not a claim of a separate authoring-file timestamp",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_config",
+          "recordId": "8780c7e193f747d0e7f2b9fa6aba109c",
+          "recordName": "AIA Unified Planner (Custom LLM Provider)",
+          "scope": "32808450431302106c3603295bb8f245",
+          "field": "prompt"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    },
+    {
+      "path": "prompts/AIA-Unified-Planner-OG-Now-LLM-large.prompt.txt",
+      "sourceReference": "voice-implementation-20261017/outputs/ServiceNow-Voice-2.0-Konsolidiert-20261019.xml",
+      "sourceKind": "exact_utf8_field_extracted_from_existing_public_native_export",
+      "sourceExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+      "sourceCustomerUpdateNames": [
+        "sys_generative_ai_config_cb80c7e193f747d0e7f2b9fa6aba10b5"
+      ],
+      "matchingFieldOccurrencesInExport": 1,
+      "sha256": "55959796b6554ce74cacf3829f20596057af6313c3bc883217196323446c3744",
+      "bytes": 33269,
+      "sourceLastWriteTimeUtc": "2026-10-19T09:48:47.091879+00:00",
+      "sourceTimestampMeaning": "Preserved original export file timestamp; not a claim of a separate authoring-file timestamp",
+      "recordFields": [
+        {
+          "table": "sys_generative_ai_config",
+          "recordId": "cb80c7e193f747d0e7f2b9fa6aba10b5",
+          "recordName": "AIA Unified Planner OG Now LLM large",
+          "scope": "32808450431302106c3603295bb8f245",
+          "field": "prompt"
+        }
+      ],
+      "finalLedgerHashMatched": true
+    }
+  ],
+  "ledgerOnlyFields": [],
+  "exactStandaloneFileCopies": 11,
+  "exactPublicExportFieldExtractions": 6,
+  "checks": {
+    "byteIdenticalCopies": true,
+    "allCopiedCodeFieldsMatchFinalLedger": true,
+    "privateHostPathCredentialLiteralMatches": 0,
+    "sourceTimestampsPreserved": true,
+    "modelsRun": false,
+    "testsRerun": false,
+    "instanceAccessed": false
+  },
+  "defaultControls": {
+    "automationEnabled": false,
+    "applyEnabled": false,
+    "serializedExecutionVerified": false
+  },
+  "targetPreviewVerified": false,
+  "targetImportVerified": false,
+  "universalApplyProven": false,
+  "excluded": [
+    "Pending CustomLLMManager",
+    "Obsolete JWT-shaped-only resource",
+    "Private bootstrap/installations",
+    "Opaque compatibility XML",
+    "Runtime configuration and credentials"
+  ]
+}

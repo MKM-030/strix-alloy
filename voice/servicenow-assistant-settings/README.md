@@ -1,5 +1,7 @@
 # Native Voice assistant settings projection (staged)
 
+> **Historical staged projection.** The JWT-shaped-only restriction below is superseded by the final 2.0 opaque-OAuth correction; never reapply this staged variant over current sources. The 19 October 2.0 export is an immutable baseline. Use the [canonical BYOLLM hub](../../docs/servicenow-byollm/README.md) and [batch status](../../docs/servicenow-byollm/batch-status.md) for the 2.1 working consolidation and later deltas. The [own source copies](../../servicenow/byollm/README.md) represent the 19 October snapshot. The historical body and evidence below are preserved.
+
 This directory contains a new server-only Script Include and a narrowly scoped opt-in addition to the existing Authorized Agents resource. Nothing here is installed or applied automatically.
 
 Install the Script Include as LocalLLMVoiceAssistantSettings, API name sn_voice_aia.LocalLLMVoiceAssistantSettings, in the existing Voice application scope 022bd6e9b720a61081fee3fdde11a9df. It must not be client callable. Keep the resource in that same scope. Preserve its authentication requirement and ACL metadata.

@@ -249,3 +249,8 @@ voice/model-launcher-review/text-mode-candidate/*.diff -text whitespace=cr-at-eo
 "/voice/native-start/test_model_deployment.py" -text whitespace=cr-at-eol
 "/voice/native-start/test_stack_deployment.py" -text whitespace=cr-at-eol
 "/backends/halogen-wsl2-0.16.2/scripts/service.py" -text whitespace=cr-at-eol
+
+# Native BYOLLM snapshots and manifests retain their recorded exact byte hashes.
+servicenow/byollm/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Existing prompt whitespace belongs to the imported, hashed source contract.
+servicenow/byollm/prompts/*.prompt.txt whitespace=-blank-at-eol,-blank-at-eof,space-before-tab,cr-at-eol
