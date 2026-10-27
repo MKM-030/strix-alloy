@@ -1,0 +1,31 @@
+This component includes/adapts source from SGLang, distributed under the
+Apache License, Version2.0. The unmodified upstream license is retained in
+sources/SGLANG_LICENSE. The unmodified source is sources/sglang_dflash.py.
+
+Upstream repository: https://github.com/sgl-project/sglang
+Revision: 3c560089e1818a5217a73f2168273485a5350341
+Path: python/sglang/srt/models/dflash.py
+
+Changes in this package: isolated convolution/selector reference equations,
+explicit input validation, passive/lazy imports, bounded CPU tests, and an
+AST oracle that removes only compiler decorators and static-shape annotations.
+These are reference components; no learned checkpoint parameters are included.
+
+Additional retained primitive sources at the same SGLang revision:
+python/sglang/srt/layers/layernorm.py
+python/sglang/srt/layers/rotary_embedding/base.py
+python/sglang/srt/layers/rotary_embedding/utils.py
+python/sglang/srt/layers/activation.py
+The package also adapts their native/sequential arithmetic and the DFlash
+decoder body. The attention tests retain attributed original TorchNative SDPA
+excerpts; attention.py documents the separate TRT expanded-decode mask contract.
+The original copyright and license notices remain in each retained source file.
+The original worker source is retained as sources/sglang_dflash_worker_v2.py
+from python/sglang/srt/speculative/dflash_worker_v2.py at the same revision.
+proposal.py isolates its TP1 dense greedy candidate/selector path; no sampling,
+compiled accelerator kernel or native verifier is supplied.
+
+Model configuration/header metadata identifies Inco AI's pretrained model:
+https://huggingface.co/incoai/Qwen3.8-Flash-Next-DFlash2
+Revision: a22a1744e85c17364dcc54a6a420af7135d4c7f6
+The model card declares Apache-2.0. Model tensor payloads are not included.

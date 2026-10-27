@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 POWERSHELL = Path(os.environ.get('SystemRoot', 'C:/Windows')) / 'System32/WindowsPowerShell/v1.0/powershell.exe'
 SCRIPT = ROOT / 'scripts/Start-Halogen-ServiceNow.ps1'
 BASELINE = ROOT / 'server/.local/halogen-update-20261025/primary01815/prefetch-off-candidate/profile01815-32k-adaptive-prefetch-off.json'
+TEXT_BASELINE = ROOT / 'server/.local/halogen-update-20261025/primary01816/prefetch-auto-post-heartbeat/off-packet/profile-baseline.json'
 READY = (os.name == 'nt' and POWERSHELL.is_file() and BASELINE.is_file()
          and (ROOT / 'server/.local/venv/Scripts/python.exe').is_file()
          and (ROOT / 'server/.local/servicenow-api-token.txt').is_file())
@@ -64,6 +65,34 @@ class MeasuredLauncherTest(unittest.TestCase):
         self.assertIn('Context capacity: 262144', result.stdout)
         self.assertIn('Thinking default: On; medium effort', result.stdout)
         self.assertIn('Prefill chunk / token arena: 4096 / 4096', result.stdout)
+
+    @unittest.skipUnless(TEXT_BASELINE.is_file(), 'Frozen 0.18.16 text baseline required')
+    def test_text32k_print_only_matches_tested_profile_and_trace_is_opt_in(self):
+        sessions = ROOT / 'server/.local/servicenow-sessions'
+        before = {path.name for path in sessions.glob('*.json')}
+        expected = json.loads(TEXT_BASELINE.read_text(encoding='utf-8-sig'))
+        for trace in (False, True):
+            with self.subTest(console_trace=trace):
+                result = self.invoke(*(['-ConsoleTrace'] if trace else []), profile='MeasuredText32K')
+                self.assertEqual(result.returncode, 0, result.stderr)
+                start = result.stdout.find('{')
+                self.assertGreaterEqual(start, 0, 'Resolved configuration must be printed')
+                actual, _ = json.JSONDecoder().raw_decode(result.stdout[start:])
+                reference = copy.deepcopy(expected)
+                reference['console_trace'] = trace
+                actual['engine']['powershell'] = os.path.normcase(actual['engine']['powershell'])
+                reference['engine']['powershell'] = os.path.normcase(reference['engine']['powershell'])
+                self.assertEqual(actual, reference)
+                self.assertIn('no session configuration was written and no engine was launched', result.stdout)
+        self.assertEqual({path.name for path in sessions.glob('*.json')}, before)
+
+    def test_text32k_rejects_conflicting_explicit_selectors(self):
+        for arguments in [('-HalogenVersion', '0.18.15'), ('-Thinking', 'On'),
+                          ('-MtpPolicy', 'Fixed2'), ('-PromptCache', 'Flexible')]:
+            with self.subTest(arguments=arguments):
+                result = self.invoke(*arguments, profile='MeasuredText32K')
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('MeasuredText32K requires', result.stdout + result.stderr)
 
 
 if __name__ == '__main__':

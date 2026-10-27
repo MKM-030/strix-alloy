@@ -22,6 +22,7 @@ import uuid
 
 import portable
 import kernel_controls as kc
+import deferred_z_binding as dz
 import speculation_policy as sp
 import api_defaults as ad
 import lookup_source as lookup
@@ -348,7 +349,7 @@ def environment(context, checkpoint="v2", prompt_cache="Off", draft_tokens=None,
     env.update(kc.environment(kernel_controls or {}))
     env.update(sp.environment(speculation_policy))
     env.update(ad.environment(api_defaults))
-    return env
+    return dz.environment(env,checkpoint)
 
 
 def service_entrypoint(source):
@@ -385,6 +386,7 @@ def build_manifest(o, attempt, run_id):
         context=o.context_size,slots=1,serve_seconds=o.serve_seconds,startup_timeout=o.startup_timeout,
         mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None),getattr(o,'speculation_policy_json',None),max_prefill_tokens=getattr(o,'max_prefill_tokens',None),api_defaults=getattr(o,'api_defaults_json',None),disable_vision=getattr(o,'disable_vision',False)),sources=source_hashes(),
         entrypoint_sha256=portable.digest(attempt/'entrypoint-service.sh'))
+    dz.bind_manifest(result,r.linux_path)
     if getattr(o, 'speculation_policy_json', None) is not None:
         result['speculation_policy'] = sp.validate(o.speculation_policy_json)
     if getattr(o, 'api_defaults_json', None) is not None:
@@ -399,6 +401,7 @@ def reject_unqualified_manifest_overrides(m):
         if m.get(key) is not None:
             raise ValueError('Private runtime override is not rebound to 0.18.15: '+key)
     lookup.validate_manifest(m)
+    dz.validate_manifest(m,r.linux_path)
 
 
 def command(m):

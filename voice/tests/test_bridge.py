@@ -244,6 +244,10 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
         await self.callback(completed=True, body=[
             {'uiType': 'OutputText', 'value': 'Erledigt.'}])
         state = await (await self.ui.get('/api/events?wait=0')).json()
+        self.assertTrue(state['busy'])
+        self.assertTrue(state['ended'])
+        state = await (await self.ui.get('/api/events',
+            params={'after': str(state['cursor']), 'wait': '3'})).json()
         self.assertFalse(state['busy'])
         self.assertTrue(state['ended'])
 

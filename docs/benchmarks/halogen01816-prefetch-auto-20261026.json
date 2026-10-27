@@ -1,0 +1,1420 @@
+{
+  "schema": "halogen01816.prefetch-auto.tracked-report.v1",
+  "date": "2026-10-26",
+  "decision": {
+    "recommendation": "Retain explicit decode prefetch Off for the general fixed-task profile. Native auto is not a consistent end-to-end improvement.",
+    "automatic_promotion": false,
+    "root_decision_required": true,
+    "basis": "Auto 8K MTP128 was 4.49-5.23% slower than both Off bookends; auto 16K was slower than late Off while Off drifted 11.96%; PP1 had a lower mean with overlapping samples and did not offset the MTP regression."
+  },
+  "version": "0.18.16",
+  "controller_sha256": "c7b28bd06bcfcfa61e856d24432fa1bacc82bc31e62b32d8d0e43e5fc19a238a",
+  "scope": "Fresh one-session Off/native-auto/Off; Windows QPC whole HTTP seconds only. No native phase rate conversion or rescaling.",
+  "sole_candidate_profile_delta": "Remove HALOGEN_DECODE_PREFETCH:0 from engine.kernel_controls, yielding {}. Native defaultauto selected on; explicit1 was not used.",
+  "actual_native_auto_on_verified": true,
+  "actual_Docker_prefetch_key_absent_verified": true,
+  "schedule": {
+    "requests": 36,
+    "excluded_warmups": 9,
+    "measured_requests": 27,
+    "groups": [
+      "8192 input -> 128 output, MTP",
+      "16384 input -> 128 output, MTP",
+      "8192 input -> 1 output, PP1"
+    ],
+    "per_arm_case": {
+      "warmup": 1,
+      "measured": 3
+    },
+    "retries": 0,
+    "old_failed_A_requests_reused": false
+  },
+  "configuration": "v2, 32K context, one slot, 8192 chunk/arena, TextOnly, ThinkingOff, cache Off/no_store, adaptive gate0.90/PLD3,3",
+  "all_three_cases_all_four_ordinals_exact_request_output_token_finish_draft_scoped_parity": true,
+  "cases": {
+    "MTP128/historical8k": {
+      "arms": {
+        "A_before": {
+          "whole_http_measured_seconds": [
+            9.7538833,
+            9.9220881,
+            9.5653917
+          ],
+          "whole_http_mean_seconds": 9.747121033333332,
+          "whole_http_stdev_seconds": 0.1784443236169014,
+          "measured_drafted": 318,
+          "measured_accepted": 210,
+          "acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a",
+          "summary_sha256": "c527535adb74ac6c89225ace1e938919fc27703ba326665789a1d73809e7db5c"
+        },
+        "B": {
+          "whole_http_measured_seconds": [
+            10.2969407,
+            10.0565653,
+            10.2000659
+          ],
+          "whole_http_mean_seconds": 10.184523966666667,
+          "whole_http_stdev_seconds": 0.12093902182543596,
+          "measured_drafted": 318,
+          "measured_accepted": 210,
+          "acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "517e954d32365dd733b5f72aff4f5a0344f970aed9a870518c397e20c0ab2a63",
+          "summary_sha256": "ade4f8d7d57f973200c494b7b2e0f1ad7070263d1f6533d26e272b58cfe05fbd"
+        },
+        "A_after": {
+          "whole_http_measured_seconds": [
+            9.9141455,
+            9.5675093,
+            9.5527959
+          ],
+          "whole_http_mean_seconds": 9.678150233333334,
+          "whole_http_stdev_seconds": 0.20451025757084526,
+          "measured_drafted": 318,
+          "measured_accepted": 210,
+          "acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a",
+          "summary_sha256": "ba77c28bb4ff80ccdccefca7ffe82aae8c5ca1c37038ec0e42a7e9e0036a2f67"
+        }
+      },
+      "exact_all_four_request_output_count_draft_scoped_parity": true,
+      "differences": [],
+      "B_elapsed_change_vs_A_before_percent": 4.487508997143852,
+      "B_elapsed_change_vs_A_after_percent": 5.232133425551599,
+      "Off_bookend_elapsed_drift_percent": -0.7076017601928997,
+      "B_lower_mean_than_both_Off": false
+    },
+    "MTP128/natural16k": {
+      "arms": {
+        "A_before": {
+          "whole_http_measured_seconds": [
+            17.0644128,
+            20.5826675,
+            23.9014661
+          ],
+          "whole_http_mean_seconds": 20.516182133333334,
+          "whole_http_stdev_seconds": 3.4190115069630616,
+          "measured_drafted": 336,
+          "measured_accepted": 177,
+          "acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance": 0.5267857142857143
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a",
+          "summary_sha256": "c527535adb74ac6c89225ace1e938919fc27703ba326665789a1d73809e7db5c"
+        },
+        "B": {
+          "whole_http_measured_seconds": [
+            19.0169825,
+            18.9165434,
+            18.9361494
+          ],
+          "whole_http_mean_seconds": 18.956558433333335,
+          "whole_http_stdev_seconds": 0.05323908041470505,
+          "measured_drafted": 336,
+          "measured_accepted": 177,
+          "acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance": 0.5267857142857143
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "517e954d32365dd733b5f72aff4f5a0344f970aed9a870518c397e20c0ab2a63",
+          "summary_sha256": "ade4f8d7d57f973200c494b7b2e0f1ad7070263d1f6533d26e272b58cfe05fbd"
+        },
+        "A_after": {
+          "whole_http_measured_seconds": [
+            17.7113803,
+            18.5742047,
+            17.8985102
+          ],
+          "whole_http_mean_seconds": 18.061365066666667,
+          "whole_http_stdev_seconds": 0.4538807850158491,
+          "measured_drafted": 336,
+          "measured_accepted": 177,
+          "acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance": 0.5267857142857143
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a",
+          "summary_sha256": "ba77c28bb4ff80ccdccefca7ffe82aae8c5ca1c37038ec0e42a7e9e0036a2f67"
+        }
+      },
+      "exact_all_four_request_output_count_draft_scoped_parity": true,
+      "differences": [],
+      "B_elapsed_change_vs_A_before_percent": -7.601919742494512,
+      "B_elapsed_change_vs_A_after_percent": 4.956399271939871,
+      "Off_bookend_elapsed_drift_percent": -11.965272343133682,
+      "B_lower_mean_than_both_Off": false
+    },
+    "PP1/pp8k": {
+      "arms": {
+        "A_before": {
+          "whole_http_measured_seconds": [
+            8.8425694,
+            7.3755207,
+            7.7666294
+          ],
+          "whole_http_mean_seconds": 7.9949065,
+          "whole_http_stdev_seconds": 0.7596978332411053,
+          "measured_drafted": 0,
+          "measured_accepted": 0,
+          "acceptance": null,
+          "scoped": {
+            "head": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "cd1c1d78666554871db62d3caa00769945ddbbec2c0c28667a4260ac6150bce8",
+          "summary_sha256": "d4c6e19efae4556dce13040b48a5eb54f5c826a897a9aa5974ebd22a5c858082"
+        },
+        "B": {
+          "whole_http_measured_seconds": [
+            7.5357985,
+            6.9623003,
+            6.6862876
+          ],
+          "whole_http_mean_seconds": 7.061462133333333,
+          "whole_http_stdev_seconds": 0.43334973658377074,
+          "measured_drafted": 0,
+          "measured_accepted": 0,
+          "acceptance": null,
+          "scoped": {
+            "head": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "acaf7684eedee0e29cec9855cf217ac28dbaabcd9f06a38ed453076d1ebdbbc6",
+          "summary_sha256": "97fa2a84d2a5d09947068c0ba6241546cdb4c368d63456ba7e5416335949c92e"
+        },
+        "A_after": {
+          "whole_http_measured_seconds": [
+            7.3024865,
+            8.4578687,
+            6.986527
+          ],
+          "whole_http_mean_seconds": 7.582294066666667,
+          "whole_http_stdev_seconds": 0.7745520029750514,
+          "measured_drafted": 0,
+          "measured_accepted": 0,
+          "acceptance": null,
+          "scoped": {
+            "head": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          },
+          "source_sha256": "cd1c1d78666554871db62d3caa00769945ddbbec2c0c28667a4260ac6150bce8",
+          "summary_sha256": "fd959fda63701927c6e0113d676083e5cbe61bdc22a564ae2db37ce287feaa82"
+        }
+      },
+      "exact_all_four_request_output_count_draft_scoped_parity": true,
+      "differences": [],
+      "B_elapsed_change_vs_A_before_percent": -11.675488220739872,
+      "B_elapsed_change_vs_A_after_percent": -6.869054784132134,
+      "Off_bookend_elapsed_drift_percent": -5.16094132349556,
+      "B_lower_mean_than_both_Off": true
+    }
+  },
+  "PP1_ADLX_whole_request_sensor_samples": {
+    "A_before": {
+      "anchor_offset_spread_ns": 420200,
+      "measured_fully_contained_sample_count": 24,
+      "measured_sensor_sample_aggregate": {
+        "gpu_clock": {
+          "unit": "MHz",
+          "samples": 24,
+          "minimum": 913,
+          "median": 1245.0,
+          "maximum": 1433
+        },
+        "gpu_usage": {
+          "unit": "%",
+          "samples": 24,
+          "minimum": 63,
+          "median": 95.5,
+          "maximum": 99
+        },
+        "gpu_power": {
+          "unit": "reported W (GPU metric; not package power)",
+          "samples": 24,
+          "minimum": 54,
+          "median": 54.0,
+          "maximum": 55
+        },
+        "gpu_temperature": {
+          "unit": "C",
+          "samples": 24,
+          "minimum": 58,
+          "median": 64.0,
+          "maximum": 66
+        },
+        "dedicated_vram": {
+          "unit": "MB",
+          "samples": 24,
+          "minimum": 62861,
+          "median": 62865.0,
+          "maximum": 62868
+        },
+        "shared_gpu_memory": {
+          "unit": "MB",
+          "samples": 24,
+          "minimum": 7318,
+          "median": 9366.0,
+          "maximum": 9366
+        }
+      },
+      "requests": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "whole_http_qpc_seconds": 9.339652,
+          "fully_contained_sample_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 9,
+              "minimum": 771,
+              "median": 983,
+              "maximum": 1147
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 9,
+              "minimum": 40,
+              "median": 86,
+              "maximum": 99
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 9,
+              "minimum": 54,
+              "median": 55,
+              "maximum": 56
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 9,
+              "minimum": 60,
+              "median": 62,
+              "maximum": 64
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 9,
+              "minimum": 62865,
+              "median": 62865,
+              "maximum": 62865
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 9,
+              "minimum": 9366,
+              "median": 9366,
+              "maximum": 9366
+            }
+          }
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 8.8425694,
+          "fully_contained_sample_indices": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 9,
+              "minimum": 913,
+              "median": 1041,
+              "maximum": 1346
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 9,
+              "minimum": 79,
+              "median": 96,
+              "maximum": 99
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 9,
+              "minimum": 54,
+              "median": 54,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 9,
+              "minimum": 59,
+              "median": 63,
+              "maximum": 64
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 9,
+              "minimum": 62861,
+              "median": 62865,
+              "maximum": 62865
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 9,
+              "minimum": 9366,
+              "median": 9366,
+              "maximum": 9366
+            }
+          }
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 7.3755207,
+          "fully_contained_sample_indices": [
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 7,
+              "minimum": 1111,
+              "median": 1242,
+              "maximum": 1389
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 7,
+              "minimum": 63,
+              "median": 88,
+              "maximum": 98
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 7,
+              "minimum": 54,
+              "median": 54,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 7,
+              "minimum": 58,
+              "median": 64,
+              "maximum": 65
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 62861,
+              "median": 62865,
+              "maximum": 62865
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 7318,
+              "median": 9366,
+              "maximum": 9366
+            }
+          }
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 7.7666294,
+          "fully_contained_sample_indices": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 8,
+              "minimum": 1248,
+              "median": 1351.0,
+              "maximum": 1433
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 8,
+              "minimum": 83,
+              "median": 98.0,
+              "maximum": 99
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 8,
+              "minimum": 54,
+              "median": 54.5,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 8,
+              "minimum": 63,
+              "median": 65.0,
+              "maximum": 66
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 8,
+              "minimum": 62865,
+              "median": 62865.0,
+              "maximum": 62868
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 8,
+              "minimum": 9366,
+              "median": 9366.0,
+              "maximum": 9366
+            }
+          }
+        }
+      ]
+    },
+    "B": {
+      "anchor_offset_spread_ns": 778000,
+      "measured_fully_contained_sample_count": 21,
+      "measured_sensor_sample_aggregate": {
+        "gpu_clock": {
+          "unit": "MHz",
+          "samples": 21,
+          "minimum": 862,
+          "median": 1380,
+          "maximum": 1520
+        },
+        "gpu_usage": {
+          "unit": "%",
+          "samples": 21,
+          "minimum": 35,
+          "median": 94,
+          "maximum": 99
+        },
+        "gpu_power": {
+          "unit": "reported W (GPU metric; not package power)",
+          "samples": 21,
+          "minimum": 50,
+          "median": 55,
+          "maximum": 55
+        },
+        "gpu_temperature": {
+          "unit": "C",
+          "samples": 21,
+          "minimum": 60,
+          "median": 66,
+          "maximum": 67
+        },
+        "dedicated_vram": {
+          "unit": "MB",
+          "samples": 21,
+          "minimum": 62897,
+          "median": 62902,
+          "maximum": 62902
+        },
+        "shared_gpu_memory": {
+          "unit": "MB",
+          "samples": 21,
+          "minimum": 7330,
+          "median": 9378,
+          "maximum": 9378
+        }
+      },
+      "requests": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "whole_http_qpc_seconds": 6.9310534,
+          "fully_contained_sample_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 7,
+              "minimum": 835,
+              "median": 1321,
+              "maximum": 1440
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 7,
+              "minimum": 28,
+              "median": 74,
+              "maximum": 96
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 7,
+              "minimum": 55,
+              "median": 55,
+              "maximum": 56
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 7,
+              "minimum": 60,
+              "median": 65,
+              "maximum": 66
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 62901,
+              "median": 62902,
+              "maximum": 62902
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 9378,
+              "median": 9378,
+              "maximum": 9378
+            }
+          }
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 7.5357985,
+          "fully_contained_sample_indices": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 8,
+              "minimum": 1304,
+              "median": 1409.5,
+              "maximum": 1494
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 8,
+              "minimum": 86,
+              "median": 97.5,
+              "maximum": 99
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 8,
+              "minimum": 54,
+              "median": 54.5,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 8,
+              "minimum": 64,
+              "median": 66.0,
+              "maximum": 66
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 8,
+              "minimum": 62897,
+              "median": 62902.0,
+              "maximum": 62902
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 8,
+              "minimum": 9378,
+              "median": 9378.0,
+              "maximum": 9378
+            }
+          }
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 6.9623003,
+          "fully_contained_sample_indices": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 7,
+              "minimum": 862,
+              "median": 1272,
+              "maximum": 1491
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 7,
+              "minimum": 35,
+              "median": 80,
+              "maximum": 96
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 7,
+              "minimum": 50,
+              "median": 55,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 7,
+              "minimum": 60,
+              "median": 66,
+              "maximum": 67
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 62897,
+              "median": 62902,
+              "maximum": 62902
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 7330,
+              "median": 9378,
+              "maximum": 9378
+            }
+          }
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 6.6862876,
+          "fully_contained_sample_indices": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 6,
+              "minimum": 1287,
+              "median": 1422.5,
+              "maximum": 1520
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 6,
+              "minimum": 84,
+              "median": 90.5,
+              "maximum": 98
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 6,
+              "minimum": 53,
+              "median": 54.5,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 6,
+              "minimum": 60,
+              "median": 67.0,
+              "maximum": 67
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 6,
+              "minimum": 62902,
+              "median": 62902.0,
+              "maximum": 62902
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 6,
+              "minimum": 9378,
+              "median": 9378.0,
+              "maximum": 9378
+            }
+          }
+        }
+      ]
+    },
+    "A_after": {
+      "anchor_offset_spread_ns": 302800,
+      "measured_fully_contained_sample_count": 23,
+      "measured_sensor_sample_aggregate": {
+        "gpu_clock": {
+          "unit": "MHz",
+          "samples": 23,
+          "minimum": 887,
+          "median": 1287,
+          "maximum": 1535
+        },
+        "gpu_usage": {
+          "unit": "%",
+          "samples": 23,
+          "minimum": 65,
+          "median": 93,
+          "maximum": 99
+        },
+        "gpu_power": {
+          "unit": "reported W (GPU metric; not package power)",
+          "samples": 23,
+          "minimum": 54,
+          "median": 55,
+          "maximum": 55
+        },
+        "gpu_temperature": {
+          "unit": "C",
+          "samples": 23,
+          "minimum": 60,
+          "median": 66,
+          "maximum": 67
+        },
+        "dedicated_vram": {
+          "unit": "MB",
+          "samples": 23,
+          "minimum": 62897,
+          "median": 62901,
+          "maximum": 62901
+        },
+        "shared_gpu_memory": {
+          "unit": "MB",
+          "samples": 23,
+          "minimum": 7320,
+          "median": 9368,
+          "maximum": 9368
+        }
+      },
+      "requests": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "whole_http_qpc_seconds": 7.4003136,
+          "fully_contained_sample_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 7,
+              "minimum": 666,
+              "median": 1296,
+              "maximum": 1492
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 7,
+              "minimum": 6,
+              "median": 87,
+              "maximum": 99
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 7,
+              "minimum": 54,
+              "median": 55,
+              "maximum": 58
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 7,
+              "minimum": 60,
+              "median": 66,
+              "maximum": 67
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 62899,
+              "median": 62901,
+              "maximum": 62901
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 9368,
+              "median": 9368,
+              "maximum": 9368
+            }
+          }
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 7.3024865,
+          "fully_contained_sample_indices": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 8,
+              "minimum": 1078,
+              "median": 1304.0,
+              "maximum": 1497
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 8,
+              "minimum": 80,
+              "median": 94.0,
+              "maximum": 99
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 8,
+              "minimum": 54,
+              "median": 55.0,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 8,
+              "minimum": 62,
+              "median": 66.0,
+              "maximum": 67
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 8,
+              "minimum": 62901,
+              "median": 62901.0,
+              "maximum": 62901
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 8,
+              "minimum": 9368,
+              "median": 9368.0,
+              "maximum": 9368
+            }
+          }
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 8.4578687,
+          "fully_contained_sample_indices": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 8,
+              "minimum": 887,
+              "median": 1256.5,
+              "maximum": 1506
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 8,
+              "minimum": 73,
+              "median": 97.0,
+              "maximum": 99
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 8,
+              "minimum": 54,
+              "median": 54.5,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 8,
+              "minimum": 60,
+              "median": 65.5,
+              "maximum": 67
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 8,
+              "minimum": 62897,
+              "median": 62901.0,
+              "maximum": 62901
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 8,
+              "minimum": 7320,
+              "median": 9368.0,
+              "maximum": 9368
+            }
+          }
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "whole_http_qpc_seconds": 6.986527,
+          "fully_contained_sample_indices": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ],
+          "boundary_ambiguous_samples_excluded": [],
+          "metrics": {
+            "gpu_clock": {
+              "unit": "MHz",
+              "samples": 7,
+              "minimum": 1037,
+              "median": 1250,
+              "maximum": 1535
+            },
+            "gpu_usage": {
+              "unit": "%",
+              "samples": 7,
+              "minimum": 65,
+              "median": 87,
+              "maximum": 98
+            },
+            "gpu_power": {
+              "unit": "reported W (GPU metric; not package power)",
+              "samples": 7,
+              "minimum": 54,
+              "median": 55,
+              "maximum": 55
+            },
+            "gpu_temperature": {
+              "unit": "C",
+              "samples": 7,
+              "minimum": 60,
+              "median": 67,
+              "maximum": 67
+            },
+            "dedicated_vram": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 62897,
+              "median": 62901,
+              "maximum": 62901
+            },
+            "shared_gpu_memory": {
+              "unit": "MB",
+              "samples": 7,
+              "minimum": 7392,
+              "median": 9368,
+              "maximum": 9368
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sensor_limits": {
+    "sample_interval_ms": 1000,
+    "phase_alignment_qualified": false,
+    "package_power_limit_proven": false,
+    "firmware_profile_confirmed": false,
+    "meaning": "Fully contained instantaneous samples within whole HTTP PP1 windows, including host/transport and one output token. Low clocks and high utilization are observed conditions, not a diagnosed power or thermal cause."
+  },
+  "restoration_receipt": {
+    "observed_utc": "2026-10-26T01:34:34.140746+00:00",
+    "normal_Off_controller_run": "e7739e6e91c24e80aa4ce3ba3513f779",
+    "saved_ready": true,
+    "current_readiness_claimed": false
+  },
+  "validation": {
+    "independent_strict_saved_summary_reproduction": true,
+    "raw_response_accounting_recomputed": true,
+    "request_response_hashes_verified": true,
+    "QPC_nanosecond_intervals_verified": true,
+    "pipeline_comparison_matches": true,
+    "native_phase_clock_qualified": false,
+    "native_rate_conversion_performed": false,
+    "promotion_performed": false,
+    "prior_failure_evidence_unchanged": true
+  },
+  "evidence": [
+    {
+      "path": "server/.local/halogen-update-20261025/continuation-2110/result-review/post-heartbeat-ABA-independent.json",
+      "bytes": 44671,
+      "sha256": "57e15e082067ae351dbb120aac2ea07938670ae9291e8fb7bcf8d236e38f66fd"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/comparison.json",
+      "bytes": 3907,
+      "sha256": "074b1ad5bcba9cd9933ddc2400012de41a8426da457e0091430c9b7123fa5303"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/state.json",
+      "bytes": 14198,
+      "sha256": "ff2f3dfd7c638332a730ef5ef4191f78c9e27a8faa469ecfba5f93b1a8cca935"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/ready-left-online.json",
+      "bytes": 12957,
+      "sha256": "5b805e52a6e81375f0658391700994c98bb9b4ececc80f83064ad0d78ba3288a"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/prefetch-auto-post-heartbeat/packet-pins.json",
+      "bytes": 2548,
+      "sha256": "c0c321f975ed9c75b4f6568c3bc94c1515dc1da663e3d5a8c49aa54696cec1ab"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/prefetch-auto-post-heartbeat/run.py",
+      "bytes": 9282,
+      "sha256": "5e2fdc534f80d256b69095c9377f8174eeb1e5906bfc92e8c70fb5c73b49be03"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/continuation-2110/result-review/compare_post_heartbeat_aba.py",
+      "bytes": 6323,
+      "sha256": "5f257c843dde75952a5a16b52e4e729a30cfe8b4b8c5357dc372facad0257475"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/continuation-2110/result-review/analyze_pp1_adlx.py",
+      "bytes": 5596,
+      "sha256": "7ac6a49f8cff9a115887e632f9b9d4665729aacaba155f0ea9e8e98251601cb8"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/auto-startup-selection.json",
+      "bytes": 261,
+      "sha256": "cb1a2edafbdc15142440f13c522dd94f68608d8ebe66e0de358d592c7c7054d8"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/B-prefetch-native-log.json",
+      "bytes": 783,
+      "sha256": "d10f86798a14fcdea14cffe72516937546f40839716d77d44f245cde3dc0d39d"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/continuation-2110/result-review/pp1-adlx-A_before.json",
+      "bytes": 11455,
+      "sha256": "3df2d8d6c5835ec5f090fc388d3dc900cfeaa009fc9ab6d5e04f07b2ff3397a9"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/post-heartbeat-A_before-PP1-adlx/handle.json",
+      "bytes": 1283,
+      "sha256": "6ec551aca1d778a6ffde29e6d1d42e763137a01323562954a99d6b868c079c33"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/post-heartbeat-A_before-PP1-adlx/samples.ndjson",
+      "bytes": 53381,
+      "sha256": "2e852f679cacc598b1dbfbcd04e0dba4ec1681bf67bda2a523d3e691479ee91c"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/A_before/MTP128/source.json",
+      "bytes": 1632,
+      "sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/A_before/MTP128/summary.json",
+      "bytes": 6010,
+      "sha256": "c527535adb74ac6c89225ace1e938919fc27703ba326665789a1d73809e7db5c"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/A_before/PP1/source.json",
+      "bytes": 1576,
+      "sha256": "cd1c1d78666554871db62d3caa00769945ddbbec2c0c28667a4260ac6150bce8"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/A_before/PP1/summary.json",
+      "bytes": 3187,
+      "sha256": "d4c6e19efae4556dce13040b48a5eb54f5c826a897a9aa5974ebd22a5c858082"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/continuation-2110/result-review/pp1-adlx-B.json",
+      "bytes": 11294,
+      "sha256": "3985f46dc6b4e84511a58c18ae81f1fcc71183081f3c18f5e5682b90e132a3b6"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/post-heartbeat-B-PP1-adlx/handle.json",
+      "bytes": 1276,
+      "sha256": "1d8806c26c419ebb3050e2a1c910479ad79a55e1131826282634136d931000b3"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/post-heartbeat-B-PP1-adlx/samples.ndjson",
+      "bytes": 53372,
+      "sha256": "0f223b83f830432d271f8f2f3da62cbe9013953c05bf4a5c6c6cc41eac3cdc2b"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/B/MTP128/source.json",
+      "bytes": 1632,
+      "sha256": "517e954d32365dd733b5f72aff4f5a0344f970aed9a870518c397e20c0ab2a63"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/B/MTP128/summary.json",
+      "bytes": 6007,
+      "sha256": "ade4f8d7d57f973200c494b7b2e0f1ad7070263d1f6533d26e272b58cfe05fbd"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/B/PP1/source.json",
+      "bytes": 1576,
+      "sha256": "acaf7684eedee0e29cec9855cf217ac28dbaabcd9f06a38ed453076d1ebdbbc6"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/B/PP1/summary.json",
+      "bytes": 3186,
+      "sha256": "97fa2a84d2a5d09947068c0ba6241546cdb4c368d63456ba7e5416335949c92e"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/continuation-2110/result-review/pp1-adlx-A_after.json",
+      "bytes": 11402,
+      "sha256": "6a771ff9e0f6d643066d232e911fe952bfd5078467973dc6bd3fe4aa81e3344d"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/post-heartbeat-A_after-PP1-adlx/handle.json",
+      "bytes": 1282,
+      "sha256": "8ba9669b0bd5f2cb88090173e1df28a9f4232a597da90c15357ca49fb10f1c77"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/post-heartbeat-A_after-PP1-adlx/samples.ndjson",
+      "bytes": 53564,
+      "sha256": "304404795e53504a3bf882347b5fefc77ad018efd569d6a66e0b4070a3c99541"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/A_after/MTP128/source.json",
+      "bytes": 1632,
+      "sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/A_after/MTP128/summary.json",
+      "bytes": 6003,
+      "sha256": "ba77c28bb4ff80ccdccefca7ffe82aae8c5ca1c37038ec0e42a7e9e0036a2f67"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/A_after/PP1/source.json",
+      "bytes": 1576,
+      "sha256": "cd1c1d78666554871db62d3caa00769945ddbbec2c0c28667a4260ac6150bce8"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-prefetch-auto-post-heartbeat-aba/A_after/PP1/summary.json",
+      "bytes": 3193,
+      "sha256": "fd959fda63701927c6e0113d676083e5cbe61bdc22a564ae2db37ce287feaa82"
+    }
+  ]
+}

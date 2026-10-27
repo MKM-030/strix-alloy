@@ -1,0 +1,68 @@
+{
+  "schema": "dflash2.explicit-tensor-graph.v1",
+  "scope": "Passive explicit CPU/GPU-capable TP1 graph; author synthetic CPU only",
+  "upstream_revision": "3c560089e1818a5217a73f2168273485a5350341",
+  "model_revision": "a22a1744e85c17364dcc54a6a420af7135d4c7f6",
+  "pins": [
+    {
+      "path": "graph.py",
+      "bytes": 15304,
+      "sha256": "71bf3d118096de4b12c242236331cdd10991f0b36f731ff7bd22a8873dd5aaa9"
+    },
+    {
+      "path": "partitions.py",
+      "bytes": 6583,
+      "sha256": "2d2eb224cf93983da9a6b386172e230d2bd1994ab386eba361a86b7c7f48e496"
+    },
+    {
+      "path": "producer.py",
+      "bytes": 1922,
+      "sha256": "dbe8f7de729ad1f3214163634de0785bbbf136c8494171133481da613179fdd3"
+    },
+    {
+      "path": "test_graph.py",
+      "bytes": 8455,
+      "sha256": "936bce09399405edab7c10b50aaa7512ac02404739a47e7d39a1268b13901bb3"
+    },
+    {
+      "path": "test_partitions.py",
+      "bytes": 7107,
+      "sha256": "86611981ccb93be5340b201e349c6361de5efb66d1054f2a341a04201ae83e52"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4678,
+      "sha256": "ccadf64c9d3af91f050bafe3678b7aee6495354593de3ebca3874f311c8f8a4c"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 1017,
+      "sha256": "892fcae145391a256b377d9fdcf6a5440fdd6204ec1aa3ccf3893ca563571f78"
+    }
+  ],
+  "cpu_results": {
+    "query_tests": 8,
+    "query_seconds": 18.176,
+    "query_failures": 0,
+    "partition_tests": 5,
+    "partition_seconds": 6.317,
+    "partition_failures": 0,
+    "tolerance": "unchanged source rtol0/atol0",
+    "synthetic_vocab": 32,
+    "actual_width": 2560,
+    "rank": 256,
+    "top_k": 16
+  },
+  "batched_attention": {
+    "default": false,
+    "scope": "Explicit common-block-end noncausal SDPA submission reduction candidate",
+    "controlled_cpu_uniform_attention_parity": true,
+    "GPU_parity_qualified": false,
+    "GPU_latency_qualified": false
+  },
+  "author_gpu_used": false,
+  "author_real_model_tensors_used": false,
+  "native_owner_ready": false,
+  "token_rate_claimed": false,
+  "root_real_query_GPU_difference": "Observed by Root; unqualified pending independent GPU source oracle; CPU tolerance not relaxed"
+}

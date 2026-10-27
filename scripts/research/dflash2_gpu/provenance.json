@@ -1,0 +1,92 @@
+{
+  "schema": "dflash2.explicit-tensor-graph.v2",
+  "scope": "Passive explicit CPU/GPU-capable TP1 graph; author synthetic CPU only",
+  "upstream_revision": "3c560089e1818a5217a73f2168273485a5350341",
+  "model_revision": "a22a1744e85c17364dcc54a6a420af7135d4c7f6",
+  "pins": [
+    {
+      "path": "graph.py",
+      "bytes": 15304,
+      "sha256": "71bf3d118096de4b12c242236331cdd10991f0b36f731ff7bd22a8873dd5aaa9"
+    },
+    {
+      "path": "partitions.py",
+      "bytes": 6583,
+      "sha256": "2d2eb224cf93983da9a6b386172e230d2bd1994ab386eba361a86b7c7f48e496"
+    },
+    {
+      "path": "producer.py",
+      "bytes": 2685,
+      "sha256": "39cd1efb23d8dd55835b6594e41b087fcbc602564a1aad8443f903eeea26d8c7"
+    },
+    {
+      "path": "test_graph.py",
+      "bytes": 8455,
+      "sha256": "936bce09399405edab7c10b50aaa7512ac02404739a47e7d39a1268b13901bb3"
+    },
+    {
+      "path": "test_partitions.py",
+      "bytes": 8875,
+      "sha256": "ccf2819f40970cc57b85c6bd152a4f28cbc7e198cfc7a9e0ae39c49c4aa1ca87"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5370,
+      "sha256": "99c7db16378ce13bd43bc30dba10865d3ad7b493322d7a78b4f115eab784625a"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 1017,
+      "sha256": "892fcae145391a256b377d9fdcf6a5440fdd6204ec1aa3ccf3893ca563571f78"
+    },
+    {
+      "path": "NEXT-NATIVE-CALLBACK.md",
+      "bytes": 2814,
+      "sha256": "8517b4cb06ec41d3d746c7ca799f351acd4451484b1fd5c200ef78d8525ad27c"
+    }
+  ],
+  "cpu_results": {
+    "query_tests": 8,
+    "query_seconds": 18.176,
+    "query_failures": 0,
+    "partition_tests": 6,
+    "partition_seconds": 8.398,
+    "partition_failures": 0,
+    "tolerance": "unchanged source rtol0/atol0",
+    "synthetic_vocab": 32,
+    "actual_width": 2560,
+    "rank": 256,
+    "top_k": 16,
+    "threads": {
+      "intra_op": 1,
+      "inter_op": 1
+    },
+    "test_process_terminal_exit_code": 0
+  },
+  "batched_attention": {
+    "default": false,
+    "scope": "Explicit common-block-end noncausal SDPA submission reduction candidate",
+    "controlled_cpu_uniform_attention_parity": true,
+    "GPU_parity_qualified": false,
+    "GPU_latency_qualified": false
+  },
+  "author_gpu_used": false,
+  "author_real_model_tensors_used": false,
+  "native_owner_ready": false,
+  "token_rate_claimed": false,
+  "root_real_query_GPU_difference": "Observed by Root; unqualified pending independent GPU source oracle; CPU tolerance not relaxed",
+  "previous_provenance": {
+    "path": "provenance.pre-owned-parts-v1.json",
+    "sha256": "8d23abb5fb6f85f018bb71a78eaa1e5f2386262a7dc31185714dfe97cfe73848"
+  },
+  "staged_startup": {
+    "API": "DFlashGraph.from_owned_parts",
+    "type_device_dtype_context_body_identity_checked": true,
+    "tensor_copies_or_transfers": false,
+    "from_cpu_reuses_constructor": true,
+    "source_CPU_release_caller_owned": true,
+    "measured_peak_reduction_claimed": false,
+    "precision_changed": false
+  },
+  "next_native_callback": "NEXT-NATIVE-CALLBACK.md; only proposed helper ABI adaptation, no native installation"
+}

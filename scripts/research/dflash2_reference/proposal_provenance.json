@@ -1,0 +1,51 @@
+{
+  "scope": "CPU-only TP1 dense full-head top16 and learned rank256 greedy selector; whole query blocks4/8; caller-owned weights",
+  "source_revision": "3c560089e1818a5217a73f2168273485a5350341",
+  "license": "sources/SGLANG_LICENSE (Apache-2.0)",
+  "source_sha256": "b7b541368cbbb072a679d08ba5bf0f952f4a43f02b6c078562b2ea7a9ddfd01b",
+  "worker_sha256": "8f82de8d666f81f3c1aa43dc651006f4182ff58593fdfe4eea28c5ee2a14bfc0",
+  "worker_packaging": {
+    "path": "sources/sglang_dflash_worker_v2.py",
+    "upstream_path": "python/sglang/srt/speculative/dflash_worker_v2.py",
+    "upstream_url": "https://raw.githubusercontent.com/sgl-project/sglang/3c560089e1818a5217a73f2168273485a5350341/python/sglang/srt/speculative/dflash_worker_v2.py",
+    "license": "Apache-2.0; bundled sources/SGLANG_LICENSE",
+    "method": "Exact saved primary-source byte copy from server/.local; no download, no payload; packaged path used by proposal.verify_sources and the test AST oracle",
+    "original_receipt": "proposal_provenance.local-worker-original.json",
+    "original_receipt_sha256": "a23c4d0a4930646aaebd2a3d8105493bda929814eb5794c0e658c36ff01c0b5d"
+  },
+  "implementation_sha256": "cf1a23476c7ca51d8a8717a24579ba818d8db6ea433303463c3c4577730fc8b4",
+  "test_sha256": "c69b7373a7e36e6f5af5f9cbb0cdb6968c916f02bd772f2e5919e9947d220813",
+  "equations": {
+    "full_head": "_project_candidate_logits dense hidden-to-head-dtype cast; candidate_topk TP1 org_vocab_size crop; _radix_topk CPU torch.topk fallback",
+    "unary_transform": "DFlash2DraftModel._transform_unary_logits checkpoint defaults: FP32, multiplier1, no softcap",
+    "learned_selector": "CandidateSelector.build_lattice bias-free projection plus existing math_ops.score_edges; predecessor anchor at slot0 and previous candidate table at later slots",
+    "greedy_walk": "argmax initial and predecessor-conditioned successor maps; existing math_ops.follow_maps; gathered token IDs and exact FP32 point-mass q",
+    "worker_geometry": "_SelectorDraftSampler.__call__ drops each block's hidden row0; _selector_lattice flattens only predicted hidden for full-head computation"
+  },
+  "verification": {
+    "red": "Missing proposal module: 2 failures, 7 skips, before implementation",
+    "oracle": "Actual pinned source functions and whole CandidateSelector class plus actual worker sampler body compiled from AST. Only torch.compile decorators removed and mark_static expressions replaced with pass to preserve enclosing loop syntax; no arithmetic/slicing/RNG edits.",
+    "synthetic_geometry": "batch2, vocab32/64, true hidden2560/rank256/top16; blocks4/8; FP32/BF16; exact rtol0/atol0",
+    "cases": [
+      "Full worker/source output equivalence with cropped padded high-logit head rows",
+      "Every block's anchor hidden row discarded",
+      "Analytical learned coherent path differs from independent unary argmax",
+      "Mixed BF16 hidden/FP32 dense head follows source cast",
+      "CPU topk tie behavior agrees with pinned source CPU fallback",
+      "Inputs/weights unchanged, outputs owned, no grad or random state advance",
+      "Invalid geometry/IDs/key sets/dtypes/nonfinite weights/features/head and overflowing lattice rejected",
+      "Passive standalone/package import; explicit stdlib source hashing; no Torch import"
+    ],
+    "cpu_command": "C:/Users/Marcel/AppData/Local/Programs/Python/Python312/python.exe -B scripts/research/dflash2_reference/test_proposal.py --run-cpu",
+    "cpu_result": "Before packaging-only change: 9 tests passed, 3.400 seconds, exit0. Root owns independent numerical rerun after freeze.",
+    "passive_result": "After packaging-only change: 2 tests passed, 0.094 seconds, exit0; includes namespace import with poisoned unrelated top-level math_ops and explicit packaged-source hash verification"
+  },
+  "limitations": [
+    "No tensor payload acquired or read; no hardware/engine/process/provider/device activity",
+    "No actual full-checkpoint vocab allocation; synthetic vocab tests retain actual hidden/rank/top-k dimensions",
+    "CPU topk fallback only; no FlashInfer/GPU tie or fused BF16 numerical claim",
+    "No quality, speed, NPU equivalence, model loader, native allocation or producer attachment claim",
+    "org_vocab_size is an explicit prefix bound, not proof every ID in the prefix is defined; native consumer cap3 and defined-token validation remain separate",
+    "Reference batch is bounded1..8; block8 is trained checkpoint size, block4 is scoped runtime reference"
+  ]
+}

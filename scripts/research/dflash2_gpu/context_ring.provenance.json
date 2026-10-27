@@ -1,0 +1,62 @@
+{
+  "schema": "dflash2.private-committed-context-ring.v1",
+  "scope": "Source-only incremental KV retention; bounded synthetic CPU storage verification",
+  "pins": [
+    {
+      "path": "context_ring.py",
+      "sha256": "32bd9082e0fbeba4f0b0b6f2a4248f5afe9188d810c1e8092b9ba06e1661a388"
+    },
+    {
+      "path": "test_context_ring.py",
+      "sha256": "0e324e5fc5ade45d00eec7519c2a3046ba6837ae9ccc60b301ae47e929aac2c4"
+    },
+    {
+      "path": "CONTEXT-RING.md",
+      "sha256": "04291d508da8f08a96dbb2d9fd92e5839229e75bf2b814e2bcb69846a866cf91"
+    }
+  ],
+  "stable_dependencies": {
+    "graph.py": "71bf3d118096de4b12c242236331cdd10991f0b36f731ff7bd22a8873dd5aaa9",
+    "partitions.py": "2d2eb224cf93983da9a6b386172e230d2bd1994ab386eba361a86b7c7f48e496",
+    "producer.py": "39cd1efb23d8dd55835b6594e41b087fcbc602564a1aad8443f903eeea26d8c7"
+  },
+  "cpu_verification": {
+    "red": "Missing module assertion failed; seven CPU tests skipped before implementation",
+    "green": {"tests": 8, "failures": 0, "seconds": 7.394, "exit_code": 0},
+    "threads": {"intra_op": 1, "inter_op": 1},
+    "dtype": "BF16",
+    "tolerance": "Storage rows rtol0/atol0; no projection/backend parity inferred",
+    "real_model_weights_loaded": false,
+    "process_terminal_tensors_released": true
+  },
+  "mechanism": {
+    "retained_rows": 2048,
+    "mirror_storage_rows": 4096,
+    "bf16_key_plus_value_bytes": 83886080,
+    "fp32_key_plus_value_bytes": 167772160,
+    "append": "First accepted+1 actual Verify INPUT rows only; never emitted bonus/correction",
+    "view": "Exact shared block-end2048 source window,2044/2040 retained rows for block4/8",
+    "old_row_reprojection": false,
+    "old_row_reorder_or_full_tail_copy": false,
+    "returned_context_lifetime": "Aliases ring; expires on next mutation; caller owns real completion and serialization"
+  },
+  "native_contract": {
+    "directory": "server/.local/halogen-update-20261025/primary01816",
+    "sources": [
+      "current-hcmean-prefill-binding/prefill_binding.h",
+      "current-pld-native-commit/native_commit.h",
+      "current-native-prefix-binding-v2/prefix.h",
+      "current-pld-native-attachment-v4/bridge.cpp",
+      "current-native-composition/README.md"
+    ],
+    "owner_identity": "Caller assertions must originate at actual joined Bridge; dataclasses authenticate nothing",
+    "anchor_position": "Bridge Frontier.position, not canonical Frontier.prefix_tokens including anchor",
+    "missing_live_integration": "Installed callbacks, actual generation-bound immutable capture completion, ordered stream/lease and producer publication"
+  },
+  "gpu_used": false,
+  "npu_used": false,
+  "wsl_used": false,
+  "native_engine_used": false,
+  "speed_or_acceptance_improvement_measured": false,
+  "baseline_provenance_modified": false
+}

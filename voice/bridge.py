@@ -22,6 +22,7 @@ from aiohttp import ClientSession, ClientTimeout, FormData, web
 
 STATIC = Path(__file__).parent / 'static'
 MAX_WAV = 20 * 1024 * 1024
+TERMINAL_DRAIN_SECONDS = 2.0
 LOG = logging.getLogger('voice-bridge')
 
 
@@ -57,7 +58,11 @@ class Conversation:
     busy: bool = False
     failed: bool = False
     pending_since: float = 0
+    completion_deadline: float = 0
     pending_action: str = ''
+    bootstrap_stage: str = ''
+    bootstrap_input_ready: bool = False
+    ending: bool = False
     now_session: str = ''
     requests: deque = field(default_factory=lambda: deque(maxlen=128))
     fingerprints: deque = field(default_factory=lambda: deque(maxlen=256))
@@ -66,6 +71,7 @@ class Conversation:
     sequence: int = 0
     choices: list = field(default_factory=list)
     input_label: str = ''
+    voice_context: dict = field(default_factory=dict)
     change: asyncio.Event = field(default_factory=asyncio.Event)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -131,6 +137,29 @@ def initial_bot_history(value):
             or not re.fullmatch(r'[0-9]{13}', item['timestamp'])):
         raise web.HTTPBadRequest(text='Invalid initial bot greeting')
     return [dict(item)]
+
+
+def validated_voice_context(value):
+    """Private cookie/CSRF-owned native context; never arbitrary bot variables."""
+    languages = ('interaction_requester_session_language','interaction_user_language',
+                 'requester_session_language')
+    allowed = set(languages) | {'voice_assistant','interaction_ai_voice'}
+    if (not isinstance(value,dict) or
+            set(value) not in (allowed,allowed | {'global_context_profile'})):
+        raise web.HTTPBadRequest(text='Invalid voice context')
+    language = value.get(languages[0])
+    if (not isinstance(language,str) or len(language) > 64
+            or not re.fullmatch(r'[A-Za-z]{1,8}(?:-[A-Za-z0-9]{1,8}){0,15}',language)
+            or any(value.get(key) != language for key in languages)
+            or not isinstance(value.get('voice_assistant'),str)
+            or not re.fullmatch(r'[0-9a-f]{32}',value['voice_assistant'])
+            or value.get('interaction_ai_voice') != 'true'):
+        raise web.HTTPBadRequest(text='Invalid voice context')
+    if 'global_context_profile' in value:
+        profile = value['global_context_profile']
+        if not isinstance(profile,str) or not re.fullmatch(r'[0-9a-f]{32}',profile):
+            raise web.HTTPBadRequest(text='Invalid voice context')
+    return dict(value)
 
 
 def callback_metadata(data):
@@ -227,18 +256,32 @@ class Bridge:
         self.origin = 'http://127.0.0.1:' + str(settings.ui_port)
         self.sessions = {}
         self.http = None
+        self.stopping = False
+        self.bootstrap_tasks = set()
         self.audio_lock = asyncio.Lock()
 
     async def lifecycle(self, app):
+        self.stopping = False
         self.http = ClientSession(timeout=ClientTimeout(total=180), trust_env=False)
         yield
+        self.stopping = True
+        if self.bootstrap_tasks:
+            LOG.warning('Bridge startup shutdown unresolved=%d', len(self.bootstrap_tasks))
         await self.http.close()
+        if self.bootstrap_tasks:
+            await asyncio.gather(*list(self.bootstrap_tasks), return_exceptions=True)
 
     def expire(self):
         now = time.monotonic()
         for sid, session in list(self.sessions.items()):
             if now - session.created > self.settings.session_seconds:
                 del self.sessions[sid]
+            elif session.completion_deadline:
+                if now >= session.completion_deadline:
+                    session.completion_deadline = 0
+                    session.busy = False
+                    session.sequence += 1
+                    session.change.set()
             elif session.busy and now - session.pending_since > self.settings.turn_seconds:
                 session.busy = False
                 session.failed = True
@@ -338,14 +381,20 @@ class Bridge:
     async def start(self, request):
         if not self.settings.service_now_enabled:
             raise web.HTTPServiceUnavailable(text='ServiceNow is not configured; audio-only mode')
-        await self.json(request)
+        data = await self.json(request)
+        context = validated_voice_context(data['voice_context']) if 'voice_context' in data else {}
         session = request._voice_session
         async with session.lock:
             if session.started:
                 raise web.HTTPConflict(text='Conversation already started')
+            session.voice_context = context
             session.started = True
-            if self.settings.defer_start_until_message:
-                # The documented first text request creates the conversation.
+            if 'global_context_profile' in context:
+                # Native Voice creates, then starts, before the first utterance.
+                session.bootstrap_stage = 'creating'
+                await self.send(session, '', True, 'CREATE_CONVERSATION')
+            elif self.settings.defer_start_until_message:
+                # Preserve the legacy first-text creation contract.
                 session.change.set()
             else:
                 await self.send(session, '', True, 'START_CONVERSATION')
@@ -354,6 +403,7 @@ class Bridge:
     async def reset(self, request):
         await self.json(request)
         old = request._voice_session
+        old.ending = True
         async with old.lock:
             if old.started and old.requests and not old.ended:
                 # Explicit reset ends the VA session, even if the previous turn timed out.
@@ -365,6 +415,7 @@ class Bridge:
     async def end(self, request):
         await self.json(request)
         session = request._voice_session
+        session.ending = True
         async with session.lock:
             if session.started and session.requests and not session.ended:
                 # End only the authenticated cookie's conversation. Keep it if
@@ -380,7 +431,7 @@ class Bridge:
         data = await self.json(request)
         session = request._voice_session
         async with session.lock:
-            if not session.started or session.busy or session.ended or session.failed:
+            if not session.started or session.busy or session.ended or session.failed or session.ending:
                 raise web.HTTPConflict(text='Conversation is not ready for input')
             typed = 'choice' not in data
             value = data.get('text') if typed else data.get('choice')
@@ -393,6 +444,12 @@ class Bridge:
                 if session.requests:
                     raise web.HTTPBadRequest(text='History is only accepted on the first request')
                 history = initial_bot_history(data['history'])
+            if 'voice_context' in data:
+                context = validated_voice_context(data['voice_context'])
+                if (not session.voice_context or context['voice_assistant'] != session.voice_context['voice_assistant']
+                        or context.get('global_context_profile') != session.voice_context.get('global_context_profile')):
+                    raise web.HTTPBadRequest(text='Voice assistant/profile binding cannot change')
+                session.voice_context = context
             await self.send(session, value.strip() if typed else value, typed, history=history)
         return web.json_response({'accepted': True}, status=202)
 
@@ -402,7 +459,9 @@ class Bridge:
             'clientSessionId': session.sid, 'userId': session.user_id,
             'emailId': self.settings.email, 'message': {'text': text, 'typed': typed,
             'clientMessageId': uuid.uuid4().hex}, 'clientVariables': {'voiceSessionId': session.sid}}
-        if self.settings.session_language:
+        if session.voice_context:
+            payload['contextVariables'] = dict(session.voice_context)
+        elif self.settings.session_language:
             payload['contextVariables'] = {'requester_session_language':self.settings.session_language}
         if history is not None and not session.requests:
             payload['history'] = history
@@ -412,6 +471,7 @@ class Bridge:
             payload['action'] = action
         # Reset before the HTTP await: callbacks may arrive before its ACK.
         session.turn_texts.clear()
+        session.completion_deadline = 0
         session.requests.append(request_id)
         LOG.info('Bot request id=%s action=%s', request_id, action or 'MESSAGE')
         session.busy = True
@@ -446,6 +506,10 @@ class Bridge:
         session = request._voice_session
         cursor = max(0, int(request.query.get('after', '0')))
         wait = min(20, max(0, float(request.query.get('wait', '20'))))
+        # A terminal-only callback can precede its final text. Never let the
+        # normal 20-second long poll hide the bounded end of that drain.
+        if session.completion_deadline:
+            wait = min(wait, max(0, session.completion_deadline - time.monotonic()))
         if session.sequence <= cursor and wait:
             session.change.clear()
             try:
@@ -473,70 +537,160 @@ class Bridge:
         self.expire()
         session = self.sessions.get(data.get('clientSessionId'))
         LOG.info('Bot callback request_id=%s matched=%s completed=%s controls=%s', data.get('requestId'), bool(session and session.requests and data.get('requestId') == session.requests[-1]), data.get('completed'), [item.get('uiType') for item in data.get('body', []) if isinstance(item, dict)])
-        if session and session.requests and data.get('requestId') == session.requests[-1] and not session.ended:
+        if (session and session.requests and data.get('requestId') == session.requests[-1]
+                and not session.ending and not session.failed
+                and (not session.ended or session.completion_deadline)):
             if data.get('userId') not in (None, '', session.user_id):
                 raise web.HTTPBadRequest(text='Identity mismatch')
             if self.callback_diagnostics_remaining:
                 self.callback_diagnostics_remaining -= 1
                 LOG.info('Bot callback metadata request_id=%s utc_ms=%d data=%s',
                          data.get('requestId'), int(time.time()*1000), json.dumps(callback_metadata(data)))
+            LOG.info('Bot callback stage=matched elapsed_ms=%d controls=%d',
+                     max(0,int((time.monotonic()-session.pending_since)*1000)),len(data.get('body',[])))
             fingerprint = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
             if fingerprint not in session.fingerprints:
                 session.fingerprints.append(fingerprint)
                 self.consume(session, data)
+                self.queue_start_created(session, data['requestId'])
         # No audio synthesis, downstream HTTP or long-running work in this handler.
         return web.json_response({'ok': True})
 
+    def queue_start_created(self, session, create_request_id):
+        if (self.stopping or session.ending or session.failed or session.ended
+                or session.bootstrap_stage != 'created'):
+            return
+        # Claim this transition before scheduling, fencing duplicate CREATE callbacks.
+        session.bootstrap_stage = 'starting'
+        task = asyncio.create_task(self.start_created(session, create_request_id))
+        self.bootstrap_tasks.add(task)
+        task.add_done_callback(self.finish_bootstrap_task)
+        return task
+
+    def finish_bootstrap_task(self, task):
+        self.bootstrap_tasks.discard(task)
+        if not task.cancelled():
+            error = task.exception()
+            if error is not None:
+                LOG.warning('Voice startup task failed type=%s', type(error).__name__)
+
+    async def start_created(self, session, create_request_id):
+        async with session.lock:
+            if (self.stopping or self.http is None or self.http.closed
+                    or self.sessions.get(session.sid) is not session
+                    or session.ending or session.failed or session.ended
+                    or session.bootstrap_stage != 'starting'
+                    or not session.requests or session.requests[-1] != create_request_id
+                    or session.pending_action != 'CREATE_CONVERSATION'):
+                return
+            try:
+                await self.send(session, '', True, 'START_CREATED_CONVERSATION')
+            except web.HTTPException:
+                # send already marks uncertain delivery failed; never retry startup.
+                return
+            except Exception as error:
+                session.failed = True
+                session.busy = False
+                session.emit('ServiceNow konnte den Dialog nicht starten.', 'error')
+                LOG.warning('Voice startup failed type=%s', type(error).__name__)
+            else:
+                if session.ending or session.failed or session.ended:
+                    return
+                session.bootstrap_stage = 'waiting_input'
+                if session.bootstrap_input_ready:
+                    session.bootstrap_stage = ''
+                    # Retain the startup action until the next send, fencing late welcome text.
+                    session.busy = False
+                    session.sequence += 1
+                    session.change.set()
+
     def consume(self, session, data):
+        active_message = (session.busy and not session.pending_action
+                          and not session.bootstrap_stage)
+        suppress_startup_text = ('global_context_profile' in session.voice_context and
+            (bool(session.bootstrap_stage) or session.pending_action in
+             ('CREATE_CONVERSATION', 'START_CREATED_CONVERSATION')))
+        previous_sequence = session.sequence
+        previous_state = (session.busy, session.ended, session.failed, session.input_label,
+            tuple((item['label'], item['value']) for item in session.choices))
         if any(isinstance(control, dict) and str(control.get('maskType', '')).upper() == 'SECURE'
                for control in data.get('body', [])):
             session.failed = True
             session.busy = False
             session.choices = []
             session.input_label = ''
+            session.completion_deadline = 0
             session.emit('Dieser Dialog benötigt eine geschützte Eingabe oder Ausgabe. Dieser Sprachclient unterstützt diesen Schritt nicht.', 'notice')
             return
         if data.get('streamState') in ('START', 'INPROGRESS') or data.get('streamActive') is True:
             return
         now_id = data.get('nowSessionId')
-        if isinstance(now_id, str) and len(now_id) < 256:
+        if not session.ended and isinstance(now_id, str) and len(now_id) < 256:
             session.now_session = now_id
         for control in data.get('body', [])[:100]:
             if not isinstance(control, dict):
                 continue
             kind = control.get('uiType')
+            if session.ended and kind != 'OutputText':
+                # Drain final output only; controls cannot reopen this session.
+                continue
             if kind == 'OutputText':
                 # Publish only complete text; never speak partial stream chunks.
                 streaming = control.get('streaming') or control.get('streamingStatus')
                 if streaming and streaming != 'END':
                     continue
-                text = text_only(control.get('value') or control.get('label'))
-                session.emit_bot_once(text)
+                if not suppress_startup_text:
+                    text = text_only(control.get('value') or control.get('label'))
+                    session.emit_bot_once(text)
             elif kind in ('InputText', 'Picker', 'TopicPickerControl', 'Boolean', 'Date', 'DateTime', 'Time'):
+                if session.bootstrap_stage:
+                    if session.ending or session.pending_action != 'START_CREATED_CONVERSATION':
+                        continue
+                    session.bootstrap_input_ready = True
+                    if session.bootstrap_stage == 'waiting_input':
+                        session.bootstrap_stage = ''
                 session.input_label = text_only(control.get('label') or control.get('promptMsg'))
-                session.emit_bot_once(session.input_label)
+                if not suppress_startup_text:
+                    session.emit_bot_once(session.input_label)
                 choices = control.get('options', [])
                 session.choices = [{'label': text_only(option.get('label'))[:200], 'value': option['value']}
                     for option in choices[:50] if isinstance(option, dict) and
                     isinstance(option.get('value'), str) and len(option['value']) <= 4000 and
                     option.get('enabled', True) is not False] if isinstance(choices, list) else []
-                session.busy = False
+                session.busy = bool(session.bootstrap_stage)
                 session.change.set()
+            elif (kind == 'ActionMsg' and control.get('actionType') == 'CreateConversation'
+                  and session.pending_action == 'CREATE_CONVERSATION'
+                  and session.bootstrap_stage == 'creating'):
+                session.bootstrap_stage = 'created'
             elif (kind == 'ActionMsg' and control.get('actionType') == 'StartConversation'
-                  and session.pending_action == 'START_CONVERSATION'):
-                # This deployment has no greeting topic. Its matched initial
-                # StartConversation callback accepts the first user utterance.
-                # Other actions and normal turns must still await input controls.
+                  and session.pending_action == 'START_CONVERSATION'
+                  and not session.bootstrap_stage):
+                # Preserve the legacy START confirmation contract.
                 session.pending_action = ''
                 session.busy = False
             elif kind not in ('ActionMsg', 'StreamStart', 'StreamChunk', None):
                 session.emit('Dieser Schritt enthält ein nicht unterstütztes Bedienelement: ' + str(kind)[:80], 'notice')
-        if data.get('streamState') == 'END' and not self.settings.wait_for_input_control:
+        if session.ended:
+            # Duplicate terminal callbacks must never extend the fixed deadline.
+            return
+        if (data.get('streamState') == 'END' and not self.settings.wait_for_input_control
+                and not session.bootstrap_stage):
             session.busy = False
         if data.get('completed') is True:
             session.ended = True
-            session.busy = False
+            # End input immediately, but keep the native reader alive briefly
+            # for reordered final OutputText from this same MESSAGE request.
+            session.completion_deadline = (time.monotonic() + TERMINAL_DRAIN_SECONDS
+                if active_message and not session.ending and not session.failed else 0)
+            session.busy = bool(session.completion_deadline)
             session.choices = []
+        current_state = (session.busy, session.ended, session.failed, session.input_label,
+            tuple((item['label'], item['value']) for item in session.choices))
+        if session.sequence == previous_sequence and current_state != previous_state:
+            # State-only callbacks advance the same high-water cursor as text.
+            # A later poll returns this transition once, then long-polls normally.
+            session.sequence += 1
         session.change.set()
 
     async def transcribe(self, request):

@@ -6,7 +6,7 @@ ServiceNow OAuth authorization are required for a native browser deployment.
 """
 import argparse
 import asyncio
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import partial
 from fractions import Fraction
 import io
@@ -14,6 +14,7 @@ import json
 import logging
 import math
 from pathlib import Path
+import re
 import time
 from urllib.parse import urlsplit
 import uuid
@@ -26,6 +27,10 @@ from av import AudioFrame, AudioResampler
 from core import EndpointGate, PlaybackBuffer, local_auth, authorized_agents
 from sdk_deployment import SDKDeploymentPolicy, valid_call_duration
 from spoken_output import spoken_text
+from assistant_settings import CallSettings
+from host_ice import HostIceConfiguration, load_host_ice_file
+from managed_turn import ManagedTurnConfiguration, load_managed_turn_file, clear_session_ice
+from mobile_relay import MobileRelayConfiguration, load_mobile_relay_file
 
 LOG = logging.getLogger('native-voice')
 HTTP_KEY = web.AppKey('http', ClientSession)
@@ -50,18 +55,36 @@ class Config:
     greeting: str = ''
     native_sdk_enabled: bool = False
     sdk_public_origin: str = ''
+    private_host_ice: HostIceConfiguration = field(default_factory=HostIceConfiguration, repr=False)
+    private_mobile_relay: MobileRelayConfiguration = field(default_factory=MobileRelayConfiguration, repr=False)
+    private_managed_turn: ManagedTurnConfiguration = field(default_factory=ManagedTurnConfiguration, repr=False)
     sdk_policy: SDKDeploymentPolicy | None = field(init=False, default=None, repr=False)
 
     def __post_init__(self):
+        if not isinstance(self.private_managed_turn,ManagedTurnConfiguration):
+            raise ValueError('Managed TURN must be a resolved configuration')
+        if self.private_managed_turn.enabled and (not self.native_sdk_enabled
+                or self.auth_mode!='servicenow' or self.development_token):
+            raise ValueError('Managed TURN requires authenticated native SDK deployment')
+        if not isinstance(self.private_mobile_relay,MobileRelayConfiguration):
+            raise ValueError('Private mobile relay must be a resolved configuration')
+        if self.private_mobile_relay.enabled and (not self.native_sdk_enabled
+                or self.auth_mode!='servicenow' or self.development_token):
+            raise ValueError('Private mobile relay requires authenticated native SDK deployment')
+        if self.private_managed_turn.enabled and self.private_mobile_relay.enabled:
+            raise ValueError('Managed TURN and private mobile relay are mutually exclusive')
+        if not isinstance(self.private_host_ice,HostIceConfiguration):
+            raise ValueError('Private host ICE must be a resolved configuration')
         if type(self.native_sdk_enabled) is not bool:
             raise ValueError('native_sdk_enabled must be a boolean')
-        if type(self.vad_silence_ms) is not int or not 300 <= self.vad_silence_ms <= 2000:
-            raise ValueError('vad_silence_ms must be an integer between 300 and 2000')
+        if type(self.vad_silence_ms) is not int or not 200 <= self.vad_silence_ms <= 2000:
+            raise ValueError('vad_silence_ms must be an integer between 200 and 2000')
         if not isinstance(self.sdk_public_origin,str):
             raise ValueError('sdk_public_origin must be a string')
-        if not self.native_sdk_enabled and not self.sdk_public_origin and self.instance_name == '':
-            # Preserve the legacy browser default; SDK configuration has no fallback.
-            self.instance_name = 'soprasteriaassvsdemo14'
+        if self.auth_mode == 'servicenow' and (
+                not isinstance(self.instance_name, str) or
+                not re.fullmatch(r'[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?', self.instance_name)):
+            raise ValueError('ServiceNow authentication requires an explicit canonical instance_name')
         if self.native_sdk_enabled or self.sdk_public_origin:
             self.sdk_policy = SDKDeploymentPolicy(self.instance_name,self.voice_service_id,
                                                   self.required_agent_id,self.sdk_public_origin)
@@ -71,12 +94,13 @@ class Config:
 
     @property
     def instance_url(self):
-        return 'https://' + self.instance_name + '.service-now.com'
+        return 'https://' + self.instance_name + '.service-now.com' if self.instance_name else ''
 
 
 class Speech:
-    def __init__(self, http, config):
+    def __init__(self, http, config, call_settings=None):
         self.http, self.config = http, config
+        self.call_settings = call_settings
 
     @staticmethod
     def log_asr_diagnostics(data):
@@ -112,7 +136,10 @@ class Speech:
             wav.writeframes(pcm)
         form = FormData()
         form.add_field('file', buf.getvalue(), filename='speech.wav', content_type='audio/wav')
-        form.add_field('language', 'de')
+        context = self.call_settings.asr_context() if self.call_settings else {'language':'de','terms':[]}
+        form.add_field('language', context['language'])
+        if context['terms']:
+            form.add_field('prompt', ', '.join(context['terms']))
         form.add_field('response_format', 'verbose_json')
         form.add_field('token_timestamps', 'false')
         form.add_field('no_language_probabilities', 'true')
@@ -145,8 +172,9 @@ class Speech:
 
 class Dialog:
     """Use the existing loopback bridge; its authenticated callbacks stay intact."""
-    def __init__(self, config):
+    def __init__(self, config, call_settings=None):
         self.config = config
+        self.call_settings = call_settings
         self.http = None
         self.csrf = ''
         self.cursor = 0
@@ -160,6 +188,9 @@ class Dialog:
         headers = {'Origin':self.config.backend_url, 'X-CSRF-Token':self.csrf}
         async with self.http.request(method, self.config.backend_url + path, headers=headers,
                                      allow_redirects=False, **kwargs) as response:
+            if path == '/api/end' and response.status == 401:
+                # Only the trusted loopback owner can declare its cookie expired.
+                return {'ended':True,'expired':True}
             if response.status not in (200, 202):
                 raise RuntimeError('ServiceNow conversation bridge unavailable')
             return await response.json()
@@ -172,13 +203,17 @@ class Dialog:
             await self.reset_owned_session()
         info = await self.request('GET', '/api/session')
         self.csrf = info['csrf']
-        self.greeting_history_allowed = info.get('initialBotHistoryAllowed') is True
+        voice_context = self.call_settings.native_context() if self.call_settings else {}
+        # Profile-bound Voice sends CREATE before user input, consuming the first request.
+        self.greeting_history_allowed = (info.get('initialBotHistoryAllowed') is True
+                                         and 'global_context_profile' not in voice_context)
         if not info.get('serviceNowEnabled'):
             raise RuntimeError('ServiceNow conversation is disabled')
         if not info.get('started'):
-            await self.request('POST', '/api/start', json={})
-        # START is an enqueue ACK; wait for an actual input-ready callback.
-        # Deferred-start deployments are immediately ready here.
+            await self.request('POST', '/api/start', json=(
+                {'voice_context':voice_context} if voice_context else {}))
+        # Startup is an enqueue ACK; wait for an actual creation/input-ready callback.
+        # Legacy deferred-start deployments are immediately ready here.
         greetings = []
         until = time.monotonic() + 185
         while time.monotonic() < until:
@@ -204,14 +239,20 @@ class Dialog:
                 'displayName':'Bot', 'type':'text',
                 'timestamp':str(int(time.time() * 1000))}]
 
-    async def turn(self, text, on_reply=None):
+    async def turn(self, text, on_reply=None, voice_context=None):
         payload = {'text':text}
+        if self.call_settings:
+            payload['voice_context'] = (dict(voice_context) if voice_context is not None
+                                        else self.call_settings.native_context())
         if self.first_message_pending and self.greeting_history:
             payload['history'] = self.greeting_history
         # Consume before I/O: uncertain delivery must never replay the greeting.
         self.first_message_pending = False
         self.greeting_history = []
+        request_started = time.monotonic()
         await self.request('POST', '/api/message', json=payload)
+        LOG.info('Voice dialog stage=request_ack elapsed_ms=%d', int((time.monotonic()-request_started)*1000))
+        first_reply = True
         until = time.monotonic() + 185
         result = []
         while time.monotonic() < until:
@@ -220,6 +261,9 @@ class Dialog:
             for event in state.get('events', []):
                 if event.get('kind') == 'bot' and event.get('text'):
                     reply = spoken_text(event['text'])
+                    LOG.info('Voice dialog stage=callback_content elapsed_ms=%d first=%s',
+                             int((time.monotonic()-request_started)*1000), first_reply)
+                    first_reply = False
                     result.append(reply)
                     if on_reply:
                         await on_reply(reply)
@@ -250,6 +294,22 @@ class Dialog:
         self.first_message_pending = True
         self.greeting_history = []
         self.greeting_history_allowed = False
+
+    async def wait_owned_cleanup(self):
+        """Retry only the owned END, retaining its private cookie until ACK."""
+        attempt, delay = 0, .25
+        while self.must_reset:
+            await asyncio.sleep(delay)
+            attempt += 1
+            try:
+                await self.reset_owned_session()
+            except asyncio.CancelledError:
+                LOG.warning('Owned conversation cleanup unresolved stage=shutdown attempts=%d',attempt)
+                raise
+            except Exception as error:
+                LOG.warning('Owned conversation cleanup pending attempt=%d type=%s',attempt,type(error).__name__)
+                delay = min(delay*2,30)
+        LOG.info('Owned conversation cleanup stage=acknowledged attempts=%d',attempt)
 
     async def shutdown(self):
         if self.http:
@@ -288,9 +348,24 @@ class SpeakerTrack(AudioStreamTrack):
 
 
 class NativeCall:
-    def __init__(self, config, speech, dialog):
+    def __init__(self, config, speech, dialog, call_settings=None, *, ice_servers=None):
+        self.call_settings = call_settings
+        if call_settings:
+            # Clone only call-local timing/limits; never mutate startup routing or local voices.
+            changes = {'greeting':call_settings.introduction}
+            if call_settings.vad_stop_ms is not None:
+                changes['vad_silence_ms'] = call_settings.vad_stop_ms
+            if call_settings.max_call_seconds is not None:
+                changes['max_call_seconds'] = min(config.max_call_seconds,call_settings.max_call_seconds)
+            config = replace(config, **changes)
         self.config, self.speech, self.dialog = config, speech, dialog
-        self.peer = RTCPeerConnection(RTCConfiguration(iceServers=[RTCIceServer(urls=[STUN_URL])]))
+        host_ice = getattr(config,'private_host_ice',None)
+        self._session_ice_servers = list(ice_servers) if ice_servers is not None else []
+        if ice_servers is None:
+            ice_servers = host_ice.servers() if host_ice is not None else [RTCIceServer(urls=[STUN_URL])]
+        else:
+            ice_servers = self._session_ice_servers
+        self.peer = RTCPeerConnection(RTCConfiguration(iceServers=ice_servers))
         self.playback = PlaybackBuffer()
         self.peer.addTrack(SpeakerTrack(self.playback))
         self.channel = None
@@ -304,7 +379,13 @@ class NativeCall:
         self.playback.call_id = self.call_id
         self.closed = False
         self.turn_number = 0
+        self.turn_contexts = {}
+        self.turn_controls = {}
+        self.language_selection_pending = bool(getattr(call_settings,'selection_prompt',''))
+        self.language_welcome_spoken = False
         self.synthesis_active = False
+        self.recognition_active = False
+        self.vad_active = False
         self.input_started = False
         self.microphones = set()
         self.input_loss_task = None
@@ -317,6 +398,57 @@ class NativeCall:
         self.close_complete = asyncio.Event()
         self.peer.on('datachannel', self.datachannel)
         self.peer.on('track', self.receive_track)
+
+    @property
+    def session_parameters(self):
+        """Detached server-only settings; never part of the mobile session DTO."""
+        getter = getattr(self.call_settings, 'session_parameters', None)
+        parameters = getter() if callable(getter) else {}
+        parameters['effective_transport'] = {
+            'max_call_seconds': self.config.max_call_seconds,
+            'vad_silence_ms': self.config.vad_silence_ms,
+            'vad_threshold': self.config.vad_threshold,
+            'vad_onset_ms': getattr(self.call_settings, 'vad_start_ms', None) or 100,
+        }
+        return parameters
+
+    def local_message(self, code, legacy_text=''):
+        getter = getattr(self.call_settings, 'notice_text', None)
+        return getter(code) if callable(getter) else legacy_text
+
+    def local_notice(self, code, legacy_text, message_key=None):
+        text = self.local_message(message_key or code, legacy_text)
+        self.notice(code, text)
+        return text
+
+    def language_selection_active(self):
+        selection = getattr(self.call_settings, 'language_selection', {})
+        return (selection.get('enabled') is True and len(selection.get('languages', [])) > 1
+                and selection.get('mode', '').strip().casefold() != 'dtmf')
+
+    async def speak_language_control(self, text, generation, code):
+        """Serialize local selection feedback with output; never submit a Bot turn."""
+        if not text or self.input_lost or generation != self.playback.generation:
+            return
+        self.notice(code, text)
+        self.synthesis_active = True
+        try:
+            # Speech owns its bounded HTTP timeout; the call owns its lifetime.
+            # Healthy playback backpressure must not consume a ten-second prompt budget.
+            async for chunk in self.speech.synthesize(text):
+                if self.input_lost or generation != self.playback.generation:
+                    return
+                while len(self.playback.data) > 48000 and generation == self.playback.generation:
+                    await asyncio.sleep(.02)
+                self.playback.put(chunk, generation)
+        except asyncio.CancelledError:
+            raise
+        except Exception as error:
+            # Local selection feedback may fail without failing or replaying a native turn.
+            LOG.warning('Voice language control call=%s stage=tts_failed type=%s',
+                        self.call_id, type(error).__name__)
+        finally:
+            self.synthesis_active = False
 
     def spawn(self, coroutine):
         task = asyncio.create_task(coroutine)
@@ -359,7 +491,7 @@ class NativeCall:
         # while the submitted ServiceNow request is still being observed.
         self.playback.interrupt()
         try:
-            self.notice('INPUT_LOST', 'Die Mikrofonverbindung wurde unterbrochen. Weitere Antworten werden nicht weitergeleitet. '
+            self.local_notice('INPUT_LOST', 'Die Mikrofonverbindung wurde unterbrochen. Weitere Antworten werden nicht weitergeleitet. '
                         'Dieser Anruf wird beendet, sobald die laufende Anfrage abgeschlossen ist.')
         except Exception as error:
             LOG.warning('Voice input call=%s stage=notice_failed type=%s', self.call_id, type(error).__name__)
@@ -437,7 +569,7 @@ class NativeCall:
                          self.turns.qsize(), self.recognized_turns.qsize(), endpoint)
             except asyncio.QueueFull:
                 LOG.info('Voice input call=%s stage=audio_queue_full', self.call_id)
-                self.notice('BUSY', 'Die letzte Aufnahme konnte nicht angenommen werden. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.')
+                self.local_notice('BUSY', 'Die letzte Aufnahme konnte nicht angenommen werden. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.', 'BUSY_AUDIO')
 
         def summary(stage):
             # Numeric counters only: never log audio, transcripts, addresses,
@@ -457,6 +589,8 @@ class NativeCall:
         try:
             converter = AudioResampler(format='s16', layout='mono', rate=16000)
             gate = EndpointGate(threshold=self.config.vad_threshold,
+                                onset_ms=(self.call_settings.vad_start_ms if self.call_settings and
+                                          self.call_settings.vad_start_ms is not None else 100),
                                 silence_ms=self.config.vad_silence_ms)
             silence_seconds = self.config.vad_silence_ms / 1000
             while not self.closed:
@@ -484,6 +618,7 @@ class NativeCall:
                         loud = bool(count and power >= self.config.vad_threshold**2 * count)
                         loud_frames += int(loud)
                         began, utterance = gate.feed(pcm)
+                        self.vad_active = gate.active
                         if gate.active and loud:
                             last_loud = now
                         if began:
@@ -506,6 +641,7 @@ class NativeCall:
                         and gate.active and last_loud is not None
                         and now-last_loud >= silence_seconds):
                     utterance = gate.finish()
+                    self.vad_active = False
                     queue_utterance(utterance, 'wall_silence')
                     summary('wall_silence')
                     last_loud = None
@@ -540,6 +676,7 @@ class NativeCall:
             generation, pcm = await self.turns.get()
             started = time.monotonic()
             try:
+                self.recognition_active = True
                 text = await self.speech.transcribe(pcm)
                 if self.closed or self.failed or self.input_lost or self.closing:
                     return
@@ -547,22 +684,40 @@ class NativeCall:
                          self.call_id, len(pcm)*1000//32000, time.monotonic()-started,
                          not bool(text), self.recognized_turns.qsize())
                 if not text:
-                    self.notice('ASR_EMPTY', 'Ich konnte keine Sprache erkennen. Bitte wiederholen Sie Ihre Antwort.')
+                    self.local_notice('ASR_EMPTY', 'Ich konnte keine Sprache erkennen. Bitte wiederholen Sie Ihre Antwort.')
                     continue
+                control = None
+                selected = self.call_settings and self.call_settings.select_language(text)
+                if selected:
+                    LOG.info('Voice input call=%s stage=language_selected configured=True', self.call_id)
+                    if self.language_selection_active():
+                        control = ('selected', getattr(self.call_settings, 'selected_language_welcome', ''))
+                elif self.language_selection_pending and self.language_selection_active():
+                    prefix = (getattr(self.call_settings, 'configured_retry_prefix', '')
+                              or self.local_message('LANGUAGE_RETRY'))
+                    prompt = getattr(self.call_settings, 'selection_prompt', '')
+                    control = ('retry', ' '.join(part for part in (prefix, prompt) if part))
                 self.turn_number += 1
                 turn = (generation, text, self.turn_number, uuid.uuid4().hex, started)
                 self.transcript(turn, 'user', text)
                 try:
                     self.recognized_turns.put_nowait(turn)
+                    if self.call_settings:
+                        self.turn_contexts[self.turn_number] = self.call_settings.native_context()
+                    if control is not None:
+                        self.turn_controls[self.turn_number] = control
+                        if control[0] == 'selected':
+                            self.language_selection_pending = False
                 except asyncio.QueueFull:
                     LOG.info('Voice input call=%s stage=text_queue_full turn=%d', self.call_id, self.turn_number)
-                    self.notice('BUSY', 'Ihre letzte Antwort wurde erkannt, aber nicht weitergeleitet. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.')
+                    self.local_notice('BUSY', 'Ihre letzte Antwort wurde erkannt, aber nicht weitergeleitet. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.', 'BUSY_TEXT')
             except asyncio.CancelledError:
                 raise
             except Exception as error:
                 LOG.warning('Voice input call=%s stage=asr_failed type=%s', self.call_id, type(error).__name__)
-                self.notice('ASR_FAILED', 'Die Spracherkennung ist fehlgeschlagen. Bitte wiederholen Sie Ihre Antwort.')
+                self.local_notice('ASR_FAILED', 'Die Spracherkennung ist fehlgeschlagen. Bitte wiederholen Sie Ihre Antwort.')
             finally:
+                self.recognition_active = False
                 self.turns.task_done()
 
     def transcript(self, turn, role, content):
@@ -587,7 +742,9 @@ class NativeCall:
             return
         notice = ('Der Sprachdialog konnte nicht fortgesetzt werden. Weitere Antworten werden nicht weitergeleitet. '
                   'Bitte beenden Sie diesen Anruf.')
-        self.notice('TURN_FAILED', notice)
+        notice = self.local_notice('TURN_FAILED', notice)
+        if not notice:
+            return
         # Local failure feedback only. Never cancel, retry or close a submitted Bot request here.
         try:
             async with asyncio.timeout(10):
@@ -603,6 +760,59 @@ class NativeCall:
         except Exception as error:
             LOG.warning('Voice failure notice call=%s type=%s', self.call_id, type(error).__name__)
 
+    async def inactivity_goodbye(self):
+        text = self.local_message('USER_INACTIVITY',
+                                  getattr(self.call_settings,'configured_goodbye',''))
+        if not text:
+            return True
+        generation = self.playback.generation
+        self.synthesis_active = True
+        try:
+            self.notice('USER_INACTIVITY',text)
+            async with asyncio.timeout(10):
+                async for chunk in self.speech.synthesize(text):
+                    if generation != self.playback.generation or self.input_lost:
+                        return False
+                    while len(self.playback.data) > 48000 and generation == self.playback.generation:
+                        await asyncio.sleep(.02)
+                    self.playback.put(chunk,generation)
+                while self.playback.data and generation == self.playback.generation and not self.input_lost:
+                    await asyncio.sleep(.02)
+            return generation == self.playback.generation and self.recognized_turns.empty()
+        except Exception as error:
+            LOG.warning('Voice lifecycle call=%s stage=goodbye_failed type=%s',self.call_id,type(error).__name__)
+            return True
+        finally:
+            self.synthesis_active = False
+
+    async def wait_for_user_turn(self):
+        """Idle expiry only between native turns and after local audio drains."""
+        seconds = getattr(self.call_settings,'inactivity_seconds',None)
+        if seconds is None:
+            return await self.recognized_turns.get()
+        idle_since = time.monotonic()
+        while not self.closed and not self.input_lost and not self.closing:
+            if (self.playback.data or self.synthesis_active or self.recognition_active
+                    or self.vad_active or not self.turns.empty()):
+                idle_since = time.monotonic()
+            try:
+                return await asyncio.wait_for(self.recognized_turns.get(), min(.1,seconds))
+            except asyncio.TimeoutError:
+                active = (self.playback.data or self.synthesis_active or self.recognition_active
+                          or self.vad_active or not self.turns.empty())
+                if not active and time.monotonic()-idle_since >= seconds:
+                    if not await self.inactivity_goodbye():
+                        idle_since = time.monotonic()
+                        continue
+                    LOG.info('Voice lifecycle call=%s stage=user_inactivity elapsed_ms=%d',
+                             self.call_id,int((time.monotonic()-idle_since)*1000))
+                    self.closing = True
+                    self.input_ended.set()
+                    # A sentinel uses the same queue accounting as input loss.
+                    self.recognized_turns.put_nowait(None)
+                    return self.recognized_turns.get_nowait()
+        return await self.recognized_turns.get()
+
     async def process_turns(self):
         self.turns_settled.clear()
         self.asr_task = self.spawn(self.recognize_turns())
@@ -615,6 +825,12 @@ class NativeCall:
                      self.call_id, int((time.monotonic()-dialog_started)*1000), len(greetings),
                      self.input_started, self.playback.generation, self.input_lost)
             fallback_greeting = False
+            selection_prompt = getattr(self.call_settings,'selection_prompt','')
+            if (selection_prompt and not greetings and self.playback.generation == 0
+                    and not self.input_started and not self.input_lost):
+                # This is the native configured phrase, only when multiple languages exist.
+                greetings = [('' + self.config.greeting + ' ' if self.config.greeting else '') + selection_prompt]
+                fallback_greeting = True
             if (not greetings and self.config.greeting and self.playback.generation == 0
                     and not self.input_started and not self.input_lost):
                 greetings = [self.config.greeting]
@@ -678,24 +894,40 @@ class NativeCall:
                              self.call_id, greeting_index, int((time.monotonic()-tts_started)*1000),
                              tts_bytes, accepted_bytes, chunks, outcome, generation, self.playback.generation)
             while not self.closed and not self.failed and not self.input_lost and not self.closing:
-                turn = await self.recognized_turns.get()
+                turn = await self.wait_for_user_turn()
                 # Loss can commit while this get() or ASR cancellation yields.
                 # No queued, unsubmitted turn may cross that commitment.
                 if turn is None or self.input_lost or self.closing:
                     self.recognized_turns.task_done()
                     break
                 generation, text, number, _, started = turn
+                voice_context = self.turn_contexts.pop(number,None)
+                control = self.turn_controls.pop(number, None)
+                if control is not None:
+                    try:
+                        if control[0] == 'selected':
+                            if not self.language_welcome_spoken:
+                                self.language_welcome_spoken = True
+                                await self.speak_language_control(control[1], generation, 'LANGUAGE_SELECTED')
+                        else:
+                            await self.speak_language_control(control[1], generation, 'LANGUAGE_SELECTION_RETRY')
+                    finally:
+                        self.recognized_turns.task_done()
+                    continue
                 LOG.info('Voice backend call=%s stage=begin turn=%d text_queue=%d',
                          self.call_id, number, self.recognized_turns.qsize())
                 def transcript(role, content):
                     self.transcript(turn, role, content)
                 speech_error = None
+                backend_started = time.monotonic()
                 async def deliver(reply):
                     nonlocal speech_error
                     if self.input_lost:
                         # Output transport may already be gone. Continue
                         # observing the submitted turn without another send.
                         return
+                    LOG.info('Voice output call=%s stage=callback_content turn=%d backend_elapsed_ms=%d',
+                             self.call_id, number, int((time.monotonic()-backend_started)*1000))
                     transcript('assistant', reply)
                     if generation != self.playback.generation or speech_error:
                         LOG.info('Voice output call=%s stage=tts_skipped turn=%d generation=%d current_generation=%d speech_error=%s',
@@ -703,8 +935,18 @@ class NativeCall:
                                  bool(speech_error))
                         return
                     self.synthesis_active = True
+                    tts_started = time.monotonic()
+                    tts_chunks = tts_bytes = 0
+                    LOG.info('Voice output call=%s stage=content_tts_begin turn=%d backend_elapsed_ms=%d',
+                             self.call_id, number, int((tts_started-backend_started)*1000))
                     try:
                         async for chunk in self.speech.synthesize(reply):
+                            tts_chunks += 1
+                            tts_bytes += len(chunk)
+                            if tts_chunks == 1:
+                                LOG.info('Voice output call=%s stage=content_tts_first_chunk turn=%d elapsed_ms=%d backend_elapsed_ms=%d bytes=%d',
+                                         self.call_id, number, int((time.monotonic()-tts_started)*1000),
+                                         int((time.monotonic()-backend_started)*1000), len(chunk))
                             if generation != self.playback.generation:
                                 break
                             while len(self.playback.data) > 48000 and generation == self.playback.generation:
@@ -717,8 +959,13 @@ class NativeCall:
                         self.playback.interrupt()
                     finally:
                         self.synthesis_active = False
+                        LOG.info('Voice output call=%s stage=content_tts_end turn=%d elapsed_ms=%d chunks=%d bytes=%d',
+                                 self.call_id, number, int((time.monotonic()-tts_started)*1000), tts_chunks, tts_bytes)
                 try:
-                    await self.dialog.turn(text, on_reply=deliver)
+                    if voice_context is not None and isinstance(self.dialog,Dialog):
+                        await self.dialog.turn(text, on_reply=deliver, voice_context=voice_context)
+                    else:
+                        await self.dialog.turn(text, on_reply=deliver)
                 finally:
                     self.recognized_turns.task_done()
                 if speech_error:
@@ -743,6 +990,7 @@ class NativeCall:
         await asyncio.shield(self.close_task)
 
     async def finish_close(self):
+        cleanup_acknowledged = not getattr(self.dialog,'_call_owned',False)
         try:
             if self.input_lost:
                 # Even an independent client disconnect must preserve the
@@ -756,15 +1004,26 @@ class NativeCall:
             await asyncio.gather(*tasks, return_exceptions=True)
             self.drain_queue(self.turns)
             self.drain_queue(self.recognized_turns)
+            self.turn_contexts.clear()
+            self.turn_controls.clear()
             try:
                 await self.peer.close()
+                clear_session_ice(self._session_ice_servers,self.peer)
             finally:
                 await self.dialog.close()
+                if getattr(self.dialog,'_call_owned',False):
+                    if self.dialog.must_reset:
+                        await self.dialog.wait_owned_cleanup()
+                    await self.dialog.shutdown()
+                cleanup_acknowledged = True
         finally:
-            self.close_complete.set()
+            if cleanup_acknowledged:
+                self.close_complete.set()
+            else:
+                LOG.warning('Voice cleanup call=%s stage=unresolved capacity_reserved=True',self.call_id)
 
 
-async def authorize(request, config, http):
+async def authorize(request, config, http, with_settings=False):
     if request.query.get('instance_name') != config.instance_name or request.query.get('voice_service_id') != config.voice_service_id:
         return False
     token = request.query.get('auth_token', '')
@@ -779,12 +1038,19 @@ async def authorize(request, config, http):
         return False
     url = config.instance_url + '/api/sn_voice_aia/ai_voice_agent/agents_authorized'
     try:
-        async with http.post(url, json={'serviceId':config.voice_service_id,'clientApp':'admin_test'},
-                             headers={'Authorization':'Bearer '+token,'Accept':'application/json'},
+        async with http.post(url, json={'serviceId':config.voice_service_id,'clientApp':'admin_test',
+                                   **({'assistantSettingsVersion':1} if with_settings else {})},
+                             headers={'Authorization':'Bearer '+token,'Accept':'application/json',
+                                      **({'Accept-Encoding':'identity'} if with_settings else {})},
+                             **({'auto_decompress':False} if with_settings else {}),
                              allow_redirects=False, timeout=ClientTimeout(total=10)) as response:
             if response.status != 200:
                 LOG.warning('Native OAuth verification denied status=%s', response.status)
                 return False
+            if with_settings:
+                from sdk_admission import _bounded_response
+                data = await _bounded_response(response)
+                return CallSettings.from_authorized_response(data,config.voice_service_id,config.required_agent_id)
             data = await response.json()
             accepted = authorized_agents(data, config.required_agent_id)
             if not accepted:
@@ -796,6 +1062,7 @@ async def authorize(request, config, http):
 
 
 def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=False):
+    from assistant_settings import CallSettings
     @web.middleware
     async def request_diagnostics(request, handler):
         # Full access logs would expose OAuth query tokens. Keep request
@@ -842,16 +1109,16 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
 
     app = web.Application(client_max_size=256*1024, middlewares=[request_diagnostics])
     active = set()
-    shared_dialog = Dialog(config) if dialog_factory is None else None
+    probe_dialog = Dialog(config) if dialog_factory is None and probe_backend else None
     async def lifecycle(app):
         app[HTTP_KEY] = ClientSession(trust_env=False, timeout=ClientTimeout(total=180))
-        if probe_backend and shared_dialog:
+        if probe_backend and probe_dialog:
             report = {'kind':'safe-greeting-no-order', 'native_ui_test':False}
             started = time.monotonic()
             try:
-                await shared_dialog.open()
+                await probe_dialog.open()
                 report['ready_seconds'] = round(time.monotonic()-started, 3)
-                replies = await shared_dialog.turn('Guten Tag. Bitte noch keine Bestellung auslösen.')
+                replies = await probe_dialog.turn('Guten Tag. Bitte noch keine Bestellung auslösen.')
                 report['response_seconds'] = round(time.monotonic()-started, 3)
                 report['responses'] = replies
                 report['ok'] = True
@@ -860,30 +1127,49 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                 report['error_type'] = type(error).__name__
                 report['elapsed_seconds'] = round(time.monotonic()-started, 3)
             finally:
-                await shared_dialog.close()
-                report['reset_ok'] = not shared_dialog.must_reset
+                await probe_dialog.close()
+                if probe_dialog.must_reset:
+                    await probe_dialog.wait_owned_cleanup()
+                report['reset_ok'] = not probe_dialog.must_reset
             target = Path(__file__).parent / 'runtime' / 'backend-probe.json'
             target.parent.mkdir(exist_ok=True)
             target.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
             LOG.info('Safe backend probe ok=%s elapsed=%.2f', report['ok'], time.monotonic()-started)
         yield
-        await asyncio.gather(*(call.close() for call in list(active)), return_exceptions=True)
-        if shared_dialog:
-            await shared_dialog.shutdown()
+        closing = {asyncio.create_task(call.close()) for call in list(active)}
+        if closing:
+            done, pending = await asyncio.wait(closing,timeout=5)
+            await asyncio.gather(*done,return_exceptions=True)
+            if pending:
+                LOG.warning('Native shutdown stage=unresolved_owned_cleanup count=%d',len(pending))
+        # Unresolved owners keep their cookies/reservations until process exit.
+        if probe_dialog:
+            await probe_dialog.shutdown()
         await app[HTTP_KEY].close()
     app.cleanup_ctx.append(lifecycle)
 
+    def make_call(settings=None, *, ice_servers=None):
+        speech = speech_factory(app[HTTP_KEY]) if speech_factory else Speech(app[HTTP_KEY],config,settings)
+        dialog = dialog_factory() if dialog_factory else Dialog(config,settings)
+        if dialog_factory is None:
+            dialog._call_owned = True
+        if ice_servers is not None:
+            return NativeCall(config,speech,dialog,call_settings=settings,ice_servers=ice_servers)
+        return NativeCall(config,speech,dialog,call_settings=settings)
+
     async def connect(request):
-        if not await authorize(request, config, app[HTTP_KEY]):
+        admission = await authorize(request, config, app[HTTP_KEY], with_settings=True)
+        if not admission:
             LOG.info('Native signaling admission status=401')
             raise web.HTTPUnauthorized(text='Voice authorization rejected')
+        if isinstance(admission,CallSettings) and admission.unsupported_language_selection:
+            raise web.HTTPNotImplemented(text='Configured language selection input is unsupported by this transport')
         if active:
             LOG.info('Native signaling admission status=503 native_sessions=%d', len(active))
             raise web.HTTPServiceUnavailable(text='Demo voice session is busy')
         ws = web.WebSocketResponse(heartbeat=20, max_msg_size=256*1024)
-        speech = speech_factory(app[HTTP_KEY]) if speech_factory else Speech(app[HTTP_KEY], config)
-        dialog = dialog_factory() if dialog_factory else shared_dialog
-        call = NativeCall(config, speech, dialog)
+        settings = admission if isinstance(admission,CallSettings) else None
+        call = make_call(settings)
         # Reserve without yielding after checking capacity, including WS upgrade.
         active.add(call)
         offered = False
@@ -899,7 +1185,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             call.spawn(call.process_turns())
             # Kept outside call.tasks. Only the handler owns call.close().
             input_coordinator = asyncio.create_task(close_after_input_loss())
-            async with asyncio.timeout(config.max_call_seconds):
+            async with asyncio.timeout(call.config.max_call_seconds):
                 async for message in ws:
                     if message.type != WSMsgType.TEXT:
                         break
@@ -944,25 +1230,34 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                     elif call.close_task is not None:
                         # A second handler cancellation may detach its shielded
                         # close await. Capacity still belongs to owned cleanup.
-                        call.close_task.add_done_callback(lambda task: active.discard(call))
+                        call.close_task.add_done_callback(lambda task: active.discard(call) if call.close_complete.is_set() else None)
                     await ws.close()
         return ws
 
     async def launch(request):
-        # The mobile browser shortcut is fixed to this demo, never an open redirect.
+        import re
+        # Only validated operator startup bindings can choose the launch target.
         headers = {'Cache-Control':'no-store', 'Referrer-Policy':'no-referrer'}
-        if (config.instance_name != 'soprasteriaassvsdemo14' or
-                config.voice_service_id != '8aa131d793f787105c8132d47aba1095'):
+        if (not isinstance(config.instance_name,str)
+                or not re.fullmatch(r'[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?',config.instance_name)
+                or not isinstance(config.voice_service_id,str)
+                or not re.fullmatch(r'[0-9a-f]{32}',config.voice_service_id)):
             raise web.HTTPNotFound(headers=headers)
         if request.query_string:
             raise web.HTTPBadRequest(text='Launch does not accept query parameters', headers=headers)
         raise web.HTTPFound(
-            location='https://soprasteriaassvsdemo14.service-now.com/now/now-assist-with-va/voice-test/8aa131d793f787105c8132d47aba1095',
+            location=(config.instance_url + '/now/now-assist-with-va/voice-test/'
+                      + config.voice_service_id),
             headers=headers)
 
     async def health(request):
         result = {'status':'ok','nativeSessions':len(active),
                   'authMode':'loopback-development' if config.development_token else config.auth_mode}
+        if request.query.get('assistant_settings') == '1':
+            result['assistantSettingsSupport'] = {'version':1,'perCallLanguage':True,
+                    'nativeCloudVoiceSelection':False,'nativeVadConfidenceAndVolume':False,
+                    'nativeDtmfLanguageMapping':False,'nativeFillerMessageDelay':False,
+                    'assistantDescriptionConsumptionVerified':False}
         if getattr(config, 'native_sdk_enabled', False):
             result['nativeSdkEnabled'] = True
         return web.json_response(result)
@@ -972,15 +1267,62 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
     if getattr(config, 'native_sdk_enabled', False):
         from sdk_admission import admit_sdk_session
         from sdk_sessions import register_sdk_routes
-        def make_sdk_call():
-            speech = speech_factory(app[HTTP_KEY]) if speech_factory else Speech(app[HTTP_KEY], config)
-            dialog = dialog_factory() if dialog_factory else shared_dialog
-            return NativeCall(config, speech, dialog)
+        def make_sdk_call(context, *, ice_servers=None):
+            if not isinstance(context.call_settings,CallSettings):
+                raise ValueError('Trusted assistant settings required')
+            return make_call(context.call_settings,ice_servers=ice_servers)
         # One immutable startup policy binds admission and all session operations.
-        register_sdk_routes(app, config, active, make_sdk_call,
-                            partial(admit_sdk_session,policy=config.sdk_policy))
+        register_sdk_routes(app, config, active, lambda: make_call(),
+                            partial(admit_sdk_session,policy=config.sdk_policy,assistant_settings_version=1),
+                            context_call_factory=make_sdk_call)
         LOG.info('Native SDK HTTP session routes enabled; shared browser capacity')
     return app
+
+
+def load_config(filename):
+    """Resolve private host ICE once; per-call dataclass replacement keeps the snapshot."""
+    config_path = Path(filename)
+    raw = json.loads(config_path.read_text(encoding='utf-8-sig'))
+    if not isinstance(raw,dict):
+        raise ValueError('Bridge configuration must be an object')
+    if 'private_managed_turn' in raw:
+        raise ValueError('Inline managed TURN configuration is forbidden')
+    managed_turn_file = raw.pop('managed_turn_config_file','')
+    if not isinstance(managed_turn_file,str):
+        raise ValueError('Managed TURN configuration path must be a string')
+    if managed_turn_file:
+        private_path = Path(managed_turn_file)
+        if not private_path.is_absolute():
+            private_path = config_path.parent / private_path
+        raw['private_managed_turn'] = load_managed_turn_file(private_path)
+    if 'private_mobile_relay' in raw:
+        raise ValueError('Inline private mobile relay configuration is forbidden')
+    mobile_relay_file = raw.pop('mobile_relay_config_file','')
+    if not isinstance(mobile_relay_file,str):
+        raise ValueError('Private mobile relay configuration path must be a string')
+    if mobile_relay_file:
+        private_path = Path(mobile_relay_file)
+        if not private_path.is_absolute():
+            private_path = config_path.parent / private_path
+        raw['private_mobile_relay'] = load_mobile_relay_file(private_path)
+        if Path(raw['private_mobile_relay'].registry_file).resolve()==config_path.resolve():
+            raise ValueError('Private mobile relay registry must not overwrite bridge configuration')
+    if 'private_host_ice' in raw:
+        raise ValueError('Inline private host ICE configuration is forbidden')
+    host_ice_file = raw.pop('host_ice_config_file','')
+    if not isinstance(host_ice_file,str):
+        raise ValueError('Private host ICE configuration path must be a string')
+    if host_ice_file:
+        private_path = Path(host_ice_file)
+        if not private_path.is_absolute():
+            private_path = config_path.parent / private_path
+        raw['private_host_ice'] = load_host_ice_file(private_path)
+    token_file = raw.pop('development_token_file','')
+    if 'development_token' in raw:
+        raise ValueError('Inline development credentials are forbidden')
+    if token_file:
+        raw['development_token'] = Path(token_file).read_text().strip()
+    return Config(**raw)
 
 
 def main():
@@ -989,13 +1331,7 @@ def main():
     parser.add_argument('--probe-backend', action='store_true',
                         help='One safe greeting before serving, retaining the owned bot cookie')
     args = parser.parse_args()
-    raw = json.loads(Path(args.config).read_text(encoding='utf-8-sig'))
-    token_file = raw.pop('development_token_file', '')
-    if 'development_token' in raw:
-        raise ValueError('Inline development credentials are forbidden')
-    if token_file:
-        raw['development_token'] = Path(token_file).read_text().strip()
-    config = Config(**raw)
+    config = load_config(args.config)
     if not config.instance_name.replace('-', '').isalnum() or not config.voice_service_id:
         raise ValueError('Explicit instance and voice assistant allowlist required')
     for url in (config.backend_url, config.asr_url, config.tts_url):

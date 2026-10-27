@@ -1,0 +1,79 @@
+{
+  "scope": "Faithful convolution/selector only; CPU numerical qualification; no model tensor payloads or learned quality claims",
+  "upstream": {
+    "repository": "https://github.com/sgl-project/sglang",
+    "revision": "3c560089e1818a5217a73f2168273485a5350341",
+    "path": "python/sglang/srt/models/dflash.py",
+    "url": "https://raw.githubusercontent.com/sgl-project/sglang/3c560089e1818a5217a73f2168273485a5350341/python/sglang/srt/models/dflash.py",
+    "license": "Apache-2.0"
+  },
+  "source_definition_AST_sha256": {
+    "_grouped_conv": "1f327e4c8fd7d671d826787205f3acff78e25ab4f6fc31166d301866a9953a97",
+    "DFlashGroupedConv": "2aceb20fe862992cd5604b79a8b670d33561f2ded271cf904b2ff5771e4adb8f",
+    "_score_edges": "22dc0f8072e6fb5c7a2742f43673b840492503a0b5874423948407f4399a599f",
+    "_follow_maps": "1e2ac5aefeece13f193df642739d9f9536d1b347d755f86656dab47c65ed9c4b"
+  },
+  "oracle_allowed_transformations": [
+    "Remove only torch.compile decorators",
+    "Remove only expression statements calling torch._dynamo.mark_static"
+  ],
+  "model": {
+    "repository": "incoai/Qwen3.8-Flash-Next-DFlash2",
+    "revision": "a22a1744e85c17364dcc54a6a420af7135d4c7f6",
+    "tensor_payload_downloaded": false,
+    "metadata_only": true
+  },
+  "files": [
+    {
+      "path": "contract.py",
+      "bytes": 3888,
+      "sha256": "28636d00c1b1fe6f197c6e0ddf18a2d822948a8189f9dd6888b4753dc6da1bbe"
+    },
+    {
+      "path": "source_oracle.py",
+      "bytes": 2278,
+      "sha256": "e75aaec9b0d866382497ca0c4243f4f76caf9f21a9f56e628f8ad12cd942393c"
+    },
+    {
+      "path": "math_ops.py",
+      "bytes": 7426,
+      "sha256": "dbc8df479d585424734fa774f54b4f21004f24a118afd1cdd10f5749562b6b97"
+    },
+    {
+      "path": "test_math_ops.py",
+      "bytes": 12403,
+      "sha256": "fcae89be1184a444bee7e91469977e4a4d62cf5a933ba652c40763f45d17ecf6"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4116,
+      "sha256": "8905f4e2306a59aa1f21e0b806468fe38132b62fd4e47149fe31083590842d9c"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 945,
+      "sha256": "6bdfce9592978ad9fd339623d23270636259f7a1b90202dfbf7162d3c17da046"
+    },
+    {
+      "path": "sources\\sglang_dflash.py",
+      "bytes": 51434,
+      "sha256": "b7b541368cbbb072a679d08ba5bf0f952f4a43f02b6c078562b2ea7a9ddfd01b"
+    },
+    {
+      "path": "sources\\SGLANG_LICENSE",
+      "bytes": 11346,
+      "sha256": "1495e1e757ef4d0925a2350563cf5754bb23c51701a8ec4fb3c5cdcbedae6747"
+    },
+    {
+      "path": "sources\\config.json",
+      "bytes": 1236,
+      "sha256": "2409575986f9ea24d455343eb469c0e6940def5edab1d1be503bb8eb4cc3b1b9"
+    },
+    {
+      "path": "sources\\safetensors-header.json",
+      "bytes": 8800,
+      "sha256": "5ef4772f77b6a3ea349c6515aceffdb999868946aafb04578416494c64ef0513"
+    }
+  ],
+  "package_imports": "PEP420 namespace + relative internalimports whenpackaged; explicitstandalonetestimports whenrunasfile; foreigntop-levelcontract/source_oracle regressiontest"
+}

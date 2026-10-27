@@ -1,0 +1,682 @@
+{
+  "schema": "halogen01816.saved-timing-audit.v1",
+  "saved_files_only": true,
+  "cohorts": [
+    {
+      "scope": "raw8",
+      "case": "historical8k",
+      "prompt": 8192,
+      "output_tokens": 128,
+      "valid": true,
+      "complete_batch": true,
+      "warmup_ordinal": 0,
+      "measured_ordinals": [
+        1,
+        2,
+        3
+      ],
+      "arithmetic_means": {
+        "prefill_native_tps": 1876.9702554048251,
+        "decode_native_tps": 52.46692862631929,
+        "prefill_raw_tps_mid": 2033.1205181988942,
+        "decode_raw_tps_mid": 56.9255080619273
+      },
+      "measured_acceptance": {
+        "drafted": 318,
+        "accepted": 210
+      },
+      "measured_acceptance_fraction": 0.660377358490566,
+      "one_output_hash_across_all_four": true,
+      "stopped_and_rolled_back": true,
+      "identity": {
+        "comparison_arm": {
+          "arm": "baseline",
+          "inspection_sha256": "b64adac7b523ce6adbe880d03e5f7ff7106862ae77fdb2039f14bab769029f6f",
+          "dso_sha256": "7396c532e855550989ed0b8132902d631391143747720ac5ba83a4e5019a8ada"
+        },
+        "version": "0.18.16",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:fee7d5bb7ff02c78c60224da931e3c70a160dc48779bf5f7ba1030c97c8ac2d1",
+        "context": 32768,
+        "controller_run_id": "e0fe7b4fea654dd593658da2f37f4cdf",
+        "backend_run_id": "12d70789a0a0460c81d8b719bdabbae4",
+        "container_id": "fa2297b1212263feac11d5af6b55b17104ce5c704c52ee5893358c0c3f36c742",
+        "profile_sha256": "55e5ad916d3b91aa86264241c937d84620002f11b2fa261de2b7c271c642f6a6",
+        "manifest_sha256": "b47f404920997d8dd4c56bd92e086ac753bfc9a73f749a1c097726a9a8c63f2e",
+        "controller_identity": {
+          "pid": 24768,
+          "creation_time_100ns": 134375158303681158,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend_identity": {
+          "pid": 25504,
+          "creation_time_100ns": 134375158408364455,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "environment": {
+          "HALOGEN_DECODE_PREFETCH": "0",
+          "HALOGEN_MTP_GATE_P": "0.90",
+          "HALOGEN_PLD": "3,3",
+          "HALOGEN_PREFILL_CHUNK": "8192",
+          "HALOGEN_MAX_TOK": "8192",
+          "HALOGEN_PROMPT_CACHE": "0",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HSA_ENABLE_SDMA": "1",
+          "HALOGEN_ENABLE_THINKING": "0",
+          "HALOGEN_REASONING_EFFORT": "low",
+          "HALOGEN_MAX_THINKING_TOKENS": "2048"
+        }
+      },
+      "samples": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "native_request_id": 3,
+          "records": 4,
+          "prefill_pairs": 1,
+          "prompt": 8192,
+          "generated_begin": 1,
+          "generated_end": 128,
+          "generated_delta": 127,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 107,
+          "accepted": 70,
+          "http_qpc_seconds": 12.1721936,
+          "raw_phase_sum_lower_seconds": 12.135224671,
+          "raw_phase_sum_upper_seconds": 12.135227971,
+          "http_minus_raw_upper_seconds": 0.03696562899999911,
+          "native_phase_sum_seconds": 13.144788263,
+          "prefill_raw_mid_seconds": 8.359104948,
+          "decode_raw_mid_seconds": 3.776121373,
+          "prefill_native_tps": 904.7413972534197,
+          "decode_native_tps": 31.293798773258736,
+          "prefill_raw_tps_mid": 980.0092295718836,
+          "decode_raw_tps_mid": 33.89721551728311,
+          "prefill_native_over_raw_mid": 1.0831926476968547,
+          "decode_native_over_raw_mid": 1.083192736135603
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "native_request_id": 4,
+          "records": 4,
+          "prefill_pairs": 1,
+          "prompt": 8192,
+          "generated_begin": 1,
+          "generated_end": 128,
+          "generated_delta": 127,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "http_qpc_seconds": 6.3390394,
+          "raw_phase_sum_lower_seconds": 6.32322303,
+          "raw_phase_sum_upper_seconds": 6.32322546,
+          "http_minus_raw_upper_seconds": 0.015813940000000137,
+          "native_phase_sum_seconds": 6.849270419,
+          "prefill_raw_mid_seconds": 4.119040956,
+          "decode_raw_mid_seconds": 2.204183289,
+          "prefill_native_tps": 1836.0652218070413,
+          "decode_native_tps": 53.611324177265814,
+          "prefill_raw_tps_mid": 1988.812465694745,
+          "decode_raw_tps_mid": 58.07139571322646,
+          "prefill_native_over_raw_mid": 1.083192711279271,
+          "decode_native_over_raw_mid": 1.0831927135620345
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "native_request_id": 5,
+          "records": 4,
+          "prefill_pairs": 1,
+          "prompt": 8192,
+          "generated_begin": 1,
+          "generated_end": 128,
+          "generated_delta": 127,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "http_qpc_seconds": 6.2153114,
+          "raw_phase_sum_lower_seconds": 6.160599016,
+          "raw_phase_sum_upper_seconds": 6.160603206,
+          "http_minus_raw_upper_seconds": 0.05470819399999982,
+          "native_phase_sum_seconds": 6.673117957,
+          "prefill_raw_mid_seconds": 3.94829574,
+          "decode_raw_mid_seconds": 2.212305371,
+          "prefill_native_tps": 1915.466402886242,
+          "decode_native_tps": 53.41450591132391,
+          "prefill_raw_tps_mid": 2074.8192484689607,
+          "decode_raw_tps_mid": 57.85819700927716,
+          "prefill_native_over_raw_mid": 1.0831927124081135,
+          "decode_native_over_raw_mid": 1.0831925901426562
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "native_request_id": 6,
+          "records": 4,
+          "prefill_pairs": 1,
+          "prompt": 8192,
+          "generated_begin": 1,
+          "generated_end": 128,
+          "generated_delta": 127,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "http_qpc_seconds": 6.4154622,
+          "raw_phase_sum_lower_seconds": 6.357875131,
+          "raw_phase_sum_upper_seconds": 6.357879581,
+          "http_minus_raw_upper_seconds": 0.05758261900000061,
+          "native_phase_sum_seconds": 6.899831462,
+          "prefill_raw_mid_seconds": 4.024109603,
+          "decode_raw_mid_seconds": 2.333767753,
+          "prefill_native_tps": 1879.3791415211917,
+          "decode_native_tps": 50.37495579036815,
+          "prefill_raw_tps_mid": 2035.729840432977,
+          "decode_raw_tps_mid": 54.8469314632783,
+          "prefill_native_over_raw_mid": 1.083192739270924,
+          "decode_native_over_raw_mid": 1.0887737885373034
+        }
+      ],
+      "input_pins": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\phase-raw-observer\\validate_capture.py",
+          "bytes": 6133,
+          "sha256": "c745f839b77ef5a55cfa5f38e410ca3f7bdee696690d2ade930ee68c67b7df22"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\phase-raw-observer\\binding.json",
+          "bytes": 33815,
+          "sha256": "0ac7964ed63113fe334e9f3cf42bf5b826b0cee2e069934079a9090555fa3b72"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\summary.json",
+          "bytes": 3277,
+          "sha256": "35db4d85cf796feb1e6852fed1cbc931c5ceba0e8df49139a17e3beceb2f8ee4"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\validated-raw-cohort.json",
+          "bytes": 6064,
+          "sha256": "ec13faae0ac9ab3a4b4c9ff58ae4b3d5aff733764145bae897dbbdbe261e8117"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\native-phases.json",
+          "bytes": 389,
+          "sha256": "ed7b3f1c8ea3cee97a02143d874df907270b984db5bc13a8bde314a967c77030"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\retained-journals.json",
+          "bytes": 1079,
+          "sha256": "eaac8e102bcd54f52d0e5958bb8cc14fa8435e77a8bfd4c570bee5382098da48"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\identity.json",
+          "bytes": 1564,
+          "sha256": "caa198838621a2ed34bee3f5cf40e446c38a08de908f51844719068ba1589340"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\health-before.json",
+          "bytes": 992,
+          "sha256": "3ad6ade9c21da85c9b7e5aa03e384fec0df49f24ad1a09d415cc28ffda6bee87"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\health-after.json",
+          "bytes": 992,
+          "sha256": "72d069a4d802f280ad6b2429a3ad480d2030e012e8524fe025f3d868d0cf351c"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\capture-0.bin",
+          "bytes": 8248,
+          "sha256": "2499eb8cb66044c36497df9eded758011aa7b8c63b9d5b9c9a5541b7271a754b"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\client-historical8k-0.json",
+          "bytes": 4537,
+          "sha256": "84458cec9e1adc9ae6b825c5c6ef21487415178e2d029c2c3b4becf189cc3f34"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\response-historical8k-0.raw",
+          "bytes": 1325,
+          "sha256": "cdb95673609784ef87c673df333213857c7d73bab3127fc57539f0134881977b"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\request-historical8k-0.json",
+          "bytes": 42833,
+          "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\submitted-historical8k-0.json",
+          "bytes": 202,
+          "sha256": "4f8a922ac7c1bc8318411ba07d81c7db038455cc3a24c41ec0320be383bada3c"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\capture-1.bin",
+          "bytes": 8248,
+          "sha256": "316beb104552e83d5e6514ba16fb9e45cc013f257a249dc845e00e8647ec64a6"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\client-historical8k-1.json",
+          "bytes": 4548,
+          "sha256": "fa557df35162e3219f02fbba37105a334e3c0d66df9dd3447bdeae24b6cef786"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\response-historical8k-1.raw",
+          "bytes": 1325,
+          "sha256": "df53b8802234d5b71dfa4d88999a581696cdf5276639ea8f5ff1227dbfbd071e"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\request-historical8k-1.json",
+          "bytes": 42833,
+          "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\submitted-historical8k-1.json",
+          "bytes": 202,
+          "sha256": "d0d9845d4d39a9bda356c4e5a7499e1717961ccd1500fb803e7ab98d1f618a96"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\capture-2.bin",
+          "bytes": 8248,
+          "sha256": "7cf8cbfb14309a68d7b51cd9bf18191be2e259a415cdb463d49d770c2a6fd5b1"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\client-historical8k-2.json",
+          "bytes": 4549,
+          "sha256": "7425a0434d3a30d5cf46772d0e9f70740ed964e93c00b70b353e4dfd26f8c6b3"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\response-historical8k-2.raw",
+          "bytes": 1326,
+          "sha256": "1472acf704f19b41c7b3f0da461daed272cc8c5c2ffd993fe7a2100baa8d248c"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\request-historical8k-2.json",
+          "bytes": 42833,
+          "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\submitted-historical8k-2.json",
+          "bytes": 202,
+          "sha256": "fe6b97f7331a2cf21b58a3cbb466bf638dcc16ae93888e946e75994b2afd8a28"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\capture-3.bin",
+          "bytes": 8248,
+          "sha256": "3bd1c3253db958aa8cee4581e7b49729576e5a695e0a3ce10609453454854ae5"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\client-historical8k-3.json",
+          "bytes": 4548,
+          "sha256": "10499f5fa49394a4a2321a9530b269dbaa724e50fd7e8e9f5de5f10f8834abf2"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\response-historical8k-3.raw",
+          "bytes": 1326,
+          "sha256": "99417960143ebae52c679c36ddcd44368ec57a1f7804787eb164cb6bde2ad586"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\request-historical8k-3.json",
+          "bytes": 42833,
+          "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw8-run\\cohort\\submitted-historical8k-3.json",
+          "bytes": 202,
+          "sha256": "0eefd8eb8e38a91eb00d6986dc479d9a316c4bd29b56252fde8f8b616bfc4c7b"
+        }
+      ]
+    },
+    {
+      "scope": "raw16",
+      "case": "natural16k",
+      "prompt": 16384,
+      "output_tokens": 128,
+      "valid": true,
+      "complete_batch": true,
+      "warmup_ordinal": 0,
+      "measured_ordinals": [
+        1,
+        2,
+        3
+      ],
+      "arithmetic_means": {
+        "prefill_native_tps": 2002.075810733156,
+        "decode_native_tps": 49.63411389343284,
+        "prefill_raw_tps_mid": 2002.075854511484,
+        "decode_raw_tps_mid": 49.63411484918981
+      },
+      "measured_acceptance": {
+        "drafted": 336,
+        "accepted": 177
+      },
+      "measured_acceptance_fraction": 0.5267857142857143,
+      "one_output_hash_across_all_four": true,
+      "stopped_and_rolled_back": true,
+      "identity": {
+        "comparison_arm": {
+          "arm": "baseline",
+          "inspection_sha256": "d375a2f0ff52422ac0105178e5f6c932905ebf4b058d7988deb8d9e0becfdb8f",
+          "dso_sha256": "1f6c892bd2df4c45cdda645fa15bb2212d39008d1f0540c66e6425c887f0fbc1"
+        },
+        "version": "0.18.16",
+        "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:fee7d5bb7ff02c78c60224da931e3c70a160dc48779bf5f7ba1030c97c8ac2d1",
+        "context": 32768,
+        "controller_run_id": "5769ffa365504ac0a8b3282aed3e2236",
+        "backend_run_id": "6361e635f61b492486c24af550b0a74e",
+        "container_id": "5fc6f10aca84c463edc635e5ccf2a3b1a51876aa80bb4e1371ae65e55886eab3",
+        "profile_sha256": "55e5ad916d3b91aa86264241c937d84620002f11b2fa261de2b7c271c642f6a6",
+        "manifest_sha256": "bfcb7e1d3d35c7db4d4cb5ec1f0ae33eb31a9549e9dbdc932d0ab46177089ea8",
+        "controller_identity": {
+          "pid": 25664,
+          "creation_time_100ns": 134375166574717318,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend_identity": {
+          "pid": 8132,
+          "creation_time_100ns": 134375166679591269,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "environment": {
+          "HALOGEN_DECODE_PREFETCH": "0",
+          "HALOGEN_MTP_GATE_P": "0.90",
+          "HALOGEN_PLD": "3,3",
+          "HALOGEN_PREFILL_CHUNK": "8192",
+          "HALOGEN_MAX_TOK": "8192",
+          "HALOGEN_PROMPT_CACHE": "0",
+          "HALOGEN_HOST_RESERVE_GIB": "18",
+          "HSA_ENABLE_SDMA": "1",
+          "HALOGEN_ENABLE_THINKING": "0",
+          "HALOGEN_REASONING_EFFORT": "low",
+          "HALOGEN_MAX_THINKING_TOKENS": "2048"
+        }
+      },
+      "samples": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "native_request_id": 3,
+          "records": 4,
+          "prefill_pairs": 1,
+          "prompt": 16384,
+          "generated_begin": 1,
+          "generated_end": 128,
+          "generated_delta": 127,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 113,
+          "accepted": 59,
+          "http_qpc_seconds": 17.3893469,
+          "raw_phase_sum_lower_seconds": 17.323043069,
+          "raw_phase_sum_upper_seconds": 17.323047569,
+          "http_minus_raw_upper_seconds": 0.06629933099999974,
+          "native_phase_sum_seconds": 17.323045299,
+          "prefill_raw_mid_seconds": 13.528306669,
+          "decode_raw_mid_seconds": 3.79473865,
+          "prefill_native_tps": 1211.0902327642536,
+          "decode_native_tps": 33.73091283921845,
+          "prefill_raw_tps_mid": 1211.090227392893,
+          "decode_raw_tps_mid": 33.73091319477298,
+          "prefill_native_over_raw_mid": 0.9999999955648551,
+          "decode_native_over_raw_mid": 1.0000000105409104
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "native_request_id": 4,
+          "records": 4,
+          "prefill_pairs": 1,
+          "prompt": 16384,
+          "generated_begin": 1,
+          "generated_end": 128,
+          "generated_delta": 127,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "http_qpc_seconds": 11.0965899,
+          "raw_phase_sum_lower_seconds": 11.002554068,
+          "raw_phase_sum_upper_seconds": 11.002559228,
+          "http_minus_raw_upper_seconds": 0.09403067199999882,
+          "native_phase_sum_seconds": 11.002557017,
+          "prefill_raw_mid_seconds": 8.436909566,
+          "decode_raw_mid_seconds": 2.565647082,
+          "prefill_native_tps": 1941.9432444673384,
+          "decode_native_tps": 49.88994566412742,
+          "prefill_raw_tps_mid": 1941.9432994785286,
+          "decode_raw_tps_mid": 49.88994819202495,
+          "prefill_native_over_raw_mid": 1.0000000283279082,
+          "decode_native_over_raw_mid": 1.0000000506694786
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "native_request_id": 5,
+          "records": 4,
+          "prefill_pairs": 1,
+          "prompt": 16384,
+          "generated_begin": 1,
+          "generated_end": 128,
+          "generated_delta": 127,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "http_qpc_seconds": 10.7690053,
+          "raw_phase_sum_lower_seconds": 10.675216957,
+          "raw_phase_sum_upper_seconds": 10.675221087,
+          "http_minus_raw_upper_seconds": 0.09378421299999928,
+          "native_phase_sum_seconds": 10.675219197,
+          "prefill_raw_mid_seconds": 8.047835313,
+          "decode_raw_mid_seconds": 2.627383709,
+          "prefill_native_tps": 2035.8268985181435,
+          "decode_native_tps": 48.717665595313186,
+          "prefill_raw_tps_mid": 2035.8269475935037,
+          "decode_raw_tps_mid": 48.71766524301,
+          "prefill_native_over_raw_mid": 1.000000024105861,
+          "decode_native_over_raw_mid": 0.9999999927684715
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "native_request_id": 6,
+          "records": 4,
+          "prefill_pairs": 1,
+          "prompt": 16384,
+          "generated_begin": 1,
+          "generated_end": 128,
+          "generated_delta": 127,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "http_qpc_seconds": 10.7251618,
+          "raw_phase_sum_lower_seconds": 10.622070065,
+          "raw_phase_sum_upper_seconds": 10.622074476,
+          "http_minus_raw_upper_seconds": 0.10308732400000054,
+          "native_phase_sum_seconds": 10.622072414,
+          "prefill_raw_mid_seconds": 8.0770740735,
+          "decode_raw_mid_seconds": 2.544998197,
+          "prefill_native_tps": 2028.4572892139868,
+          "decode_native_tps": 50.29473042085791,
+          "prefill_raw_tps_mid": 2028.4573164624203,
+          "decode_raw_tps_mid": 50.29473111253446,
+          "prefill_native_over_raw_mid": 1.0000000134330822,
+          "decode_native_over_raw_mid": 1.0000000137524656
+        }
+      ],
+      "input_pins": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\observer16k\\validate_capture.py",
+          "bytes": 6135,
+          "sha256": "16cea78369ddbfefc0f69b240dda2ba30071bca021958c65112f4f92002c8f7d"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\observer16k\\binding.json",
+          "bytes": 33815,
+          "sha256": "0ac7964ed63113fe334e9f3cf42bf5b826b0cee2e069934079a9090555fa3b72"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\summary.json",
+          "bytes": 3300,
+          "sha256": "7a76f9dcedbe2c06019e8a6cfb99a4b95dcadc724c296a08d462a2836c220181"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\validated-raw-cohort.json",
+          "bytes": 6080,
+          "sha256": "42cba5a66e6c061d51d1e621c231d4aed4abfe821d2ff754a9552c409f1f22d4"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\native-phases.json",
+          "bytes": 390,
+          "sha256": "4514daa1e03d85d6e44bcd6e04b4544ddaf52b7a69131df1e0bba73746a02f10"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\retained-journals.json",
+          "bytes": 1083,
+          "sha256": "db89294963299daa4d2d8c213bb6151b70a68f4e339919f023f47924594d4d5a"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\identity.json",
+          "bytes": 1563,
+          "sha256": "487dd9560fc04d35e9811bf046454c8594ad3900da6ff11f4cab40ced7367efc"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\health-before.json",
+          "bytes": 992,
+          "sha256": "3ad6ade9c21da85c9b7e5aa03e384fec0df49f24ad1a09d415cc28ffda6bee87"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\health-after.json",
+          "bytes": 992,
+          "sha256": "72d069a4d802f280ad6b2429a3ad480d2030e012e8524fe025f3d868d0cf351c"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\capture-0.bin",
+          "bytes": 8248,
+          "sha256": "f9ef05c95b7676cb8e7ff67827188f2fdf8a95b7a470587f21bffb0a8d052408"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\client-natural16k-0.json",
+          "bytes": 4539,
+          "sha256": "51a5470034f81cdc6cb6b4db9a5a92e10be54de01e2234c4ba4fc1672690e25a"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\response-natural16k-0.raw",
+          "bytes": 1275,
+          "sha256": "6863c7e5dbb33e5a6bdcf275b2f049e32512fa3acf32323a823a8e0ac9b69bed"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\request-natural16k-0.json",
+          "bytes": 72848,
+          "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\submitted-natural16k-0.json",
+          "bytes": 200,
+          "sha256": "a73df7ab9e2d9126cc27af491b1e0d90268cb4f0bf4914577b7a847a04c9efbb"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\capture-1.bin",
+          "bytes": 8248,
+          "sha256": "44ab485b952299b8f3118a46e7ba4043453a107bbff3e270c06acfd4b5c0cab3"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\client-natural16k-1.json",
+          "bytes": 4541,
+          "sha256": "64fe95be700fca36743cf00c01b1b81e2df58343087716f9ab8c2a88cbd54016"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\response-natural16k-1.raw",
+          "bytes": 1274,
+          "sha256": "9bc77b54f6f00cc276f60f72c433039848228099bdb2e9d9a01688eaef79bbad"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\request-natural16k-1.json",
+          "bytes": 72848,
+          "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\submitted-natural16k-1.json",
+          "bytes": 200,
+          "sha256": "4ea8ae6e82ba63fd00d9f6c8e2adc5a73385bc46d6023ef2c8e84c748c0458b0"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\capture-2.bin",
+          "bytes": 8248,
+          "sha256": "8594be869c8f60a8206f1bb766c2147d32959009ea1a9a6a1ee42570bfcd5540"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\client-natural16k-2.json",
+          "bytes": 4541,
+          "sha256": "061587e1fe7178523f2ae24012a799f4d0a40ae49d7101f3ea9469cffe77d67e"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\response-natural16k-2.raw",
+          "bytes": 1274,
+          "sha256": "6d6e0b053c14487c323b19e37ce4447051615c52ec10b18ddea70f45e037d10a"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\request-natural16k-2.json",
+          "bytes": 72848,
+          "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\submitted-natural16k-2.json",
+          "bytes": 200,
+          "sha256": "ba9b24bbb6871815811667096fc6a6217ee623e8c851bbc2515045cdb521bb57"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\capture-3.bin",
+          "bytes": 8248,
+          "sha256": "993f7242d05a8408234618e7640ded2b38766dd380720298082c55cbf5c16093"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\client-natural16k-3.json",
+          "bytes": 4541,
+          "sha256": "39c989611533e51cb7c16bbcc646becb56100a8aea348ed165e06e433ca769ae"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\response-natural16k-3.raw",
+          "bytes": 1274,
+          "sha256": "ccc6aaea6482ff0093e2238b15212683d8c8ca714a6743f323dd992f6b11998f"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\request-natural16k-3.json",
+          "bytes": 72848,
+          "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\raw16-run\\cohort\\submitted-natural16k-3.json",
+          "bytes": 200,
+          "sha256": "c7342868b293b946f6712a0f3497f614699f4699af69e42a7043012e2afa7e47"
+        }
+      ]
+    }
+  ],
+  "absolute_clock_alignment_claimed": false,
+  "phase_scaling_or_overhead_subtraction_applied": false,
+  "causal_improvement_claimed": false,
+  "NPU_gain_claimed": false,
+  "OEM_mode_verified": false,
+  "OEM_mode_changed": false,
+  "OEM_readonly_attempt": {
+    "evidence": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\power-mode-admin-result.json",
+      "bytes": 504,
+      "sha256": "ef38fd4ec923009207e6a99519a01df31ad7ed16e50a56960a336bc18310c3e0"
+    },
+    "result": {
+      "utc": "2026-10-26T19:20:13.2004152Z",
+      "pid": 25920,
+      "process_start_utc": "2026-10-26T19:20:12.9962177Z",
+      "elevated_admin": false,
+      "read_only": true,
+      "method": "GetPowerMode",
+      "provider_methods_invoked": 0,
+      "mode_setters_invoked": 0,
+      "passed": false,
+      "error_type": "System.Management.Automation.RuntimeException",
+      "error": "This OEM read-only provider requires an elevated token.",
+      "ended_utc": "2026-10-26T19:20:13.2249332Z"
+    }
+  },
+  "normal_restored_receipt": {
+    "path": "normal-restoration\\ready-left-online.json",
+    "bytes": 13527,
+    "sha256": "c9db2107bc2ce8578be8dbc139ca2a1f5fc1bc7d360c2b9f6578241c126b827c"
+  }
+}

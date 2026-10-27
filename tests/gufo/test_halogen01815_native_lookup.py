@@ -128,6 +128,7 @@ class NativeLookupPortTest(unittest.TestCase):
                 lookup=lookup, portable=portable, r=runner, sg=guard, ROOT=BACKEND,
                 LOCAL=BACKEND / '.local', TOKEN_PATH=Path('/unit-token-path'),
                 kc=module('kernel_controls'), sp=module('speculation_policy'), ad=module('api_defaults'),
+                dz=module('deferred_z_binding'),
                 source_hashes=lambda: {}))
             options = types.SimpleNamespace(checkpoint='v2', context_size=32768, serve_seconds=0,
                 startup_timeout=900, prompt_cache='Flexible', prefill_chunk=8192, max_prefill_tokens=8192,

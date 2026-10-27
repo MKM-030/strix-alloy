@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "version": "0.18.16",
+  "upstream_commit": "2db6e7fe5f35",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:fee7d5bb7ff02c78c60224da931e3c70a160dc48779bf5f7ba1030c97c8ac2d1",
+  "engine_sha256": "8c184edfcb5d249d4ce525db5afe8afb32186126c7b01f1e2f007510a6c54132",
+  "entrypoint_sha256": "d522a80e481cae2dda55f8291bd71139b057388144c43d2bcbecccfb51b5abf5",
+  "adapted_entrypoint_sha256": "3f2f37782618859265bcf0e24f8170f97da0672fd7e552c10f31d9dcacddf8b3",
+  "bridge_sha256": "0c7e3fdd4c7a17260ffbd7eca36b42875b6351822e867230df7cb04d808d9b05",
+  "private_sha256": "967a201f2bf3d074e88cddd87feeb403993ee7e8ecdc0b78c76aff8a595aa60b",
+  "probe_sha256": "12f19da0e1e0048038a13b962c6d019e08750d5cd9d16487e6979d2fff2b5016",
+  "hip_header_sha256": "a075feec4c32d01b35dfe97e01ef7b55aa62bac7b7590ca7cefc2564668aa6a2",
+  "profiles": [
+    "Trace4k",
+    "Single4k",
+    "Serve4k"
+  ],
+  "context": 4096,
+  "slots": 1,
+  "windows_admission_physical_gib": 45,
+  "windows_admission_commit_gib": 117,
+  "windows_runtime_physical_gib": 18,
+  "windows_runtime_commit_gib": 18,
+  "serve_seconds_range": [
+    30,
+    300
+  ],
+  "status": "Fresh exact image/API/seam/CPU pins bound; normal engine-provider/runtime qualification pending",
+  "service": {
+    "default_context": 262144,
+    "context_range": [
+      4096,
+      262144
+    ],
+    "slots": 1,
+    "default_serve_seconds": 0,
+    "checkpoint": "qwen38-flash-next-v2.hgn",
+    "v2_checkpoint_qualified": false,
+    "checkpoint_options": [
+      "w4b",
+      "v2"
+    ],
+    "v2_expected_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "default_checkpoint": "v2",
+    "runtime_qualified": false,
+    "windows_admission_physical_gib": 30,
+    "windows_admission_commit_gib": 131,
+    "windows_runtime_physical_gib": 18,
+    "windows_runtime_commit_gib": 18
+  },
+  "v2_bridge_sha256": "8b108fac273d990f5703224a997119f23fd85f46d77d5468a330228e49491118",
+  "upstream_api_sha256": "4de61615e067ec6a4883e1d1f70c5c0937373162d1c5167352383dd9c4aa90f1",
+  "runtime_qualified": false,
+  "production_bound": false,
+  "stock_rocroller_sha256": null,
+  "public_release_commit": "f4c474d8b1d679fabda8685a629ea9681ffaa967",
+  "full_transitive_helper_equivalence_proven": false,
+  "unqualified_artifact_pins": [
+    "actual_engine_provider_binding",
+    "normal_startup"
+  ],
+  "entrypoint_runtime_qualified": false,
+  "runtime_pin_receipt": null,
+  "preflight_mapping_ready": true,
+  "preflight_mapping_scope": "Fresh exact 0.18.16 semantic demand seam; supported frame independently reverified; native comparison and floor retained",
+  "preflight_audit_sha256": "f7fc939c882417ac1e85bc2522e17a47be2e39b57cbd47a186b00fff50d051c9",
+  "source_migration_ready": true,
+  "cpu_build_pending": false,
+  "image_config_sha256": "bea4f7a6f49e0c913f8705fb2dc61737f508715bb2aa1ebe6aca59ff72acfa9c",
+  "engine_bytes": 32526416,
+  "service_entrypoint_preview_sha256": null,
+  "upstream_tool_sha256": {
+    "serve_api.py": "4de61615e067ec6a4883e1d1f70c5c0937373162d1c5167352383dd9c4aa90f1",
+    "request_records.py": "362abc02a847048333755804dc655ce5209eded9d0adcb0cc2d585ad43d7c672",
+    "halogen_tools.py": "7d08616acbf45c88c9e47de32fc5a2b4ee327d23aa9b0486b654685587e0fd11",
+    "tool_parse.py": "aa0e69a35e9c7432b7fb544505bb333f02d6a88830624ec11f60859524328468"
+  },
+  "actual_runtime_providers": null,
+  "normal_candidate_policy": {
+    "ngram_source_bytes": 124068083904,
+    "runtime_commit_gib": 18,
+    "experimental_hooks": [],
+    "checkpoint": "v2",
+    "reasoning_effort": "medium",
+    "pld": "3,3",
+    "slots": 1,
+    "startup_physical_gib": 30,
+    "runtime_physical_gib": 18,
+    "slot_ctx": 262144,
+    "huge_asset_identity_policy": "Reuse established complete-file receipts after exact file identity gate; no rehash or download",
+    "prompt_cache": "Off",
+    "prefill_chunk": 4096,
+    "max_prefill_tokens": 4096,
+    "context": 262144,
+    "mtp_depth": 2,
+    "startup_commit_gib": 131,
+    "sdma": 1,
+    "request_entry_physical_gib": 22,
+    "max_thinking_tokens": 2048,
+    "kv_pool_positions": 262144,
+    "thinking_enabled": true,
+    "checkpoint_bytes": 66687678432,
+    "recovery_frames": 5,
+    "request_entry_commit_gib": 22,
+    "recovery_physical_rule": "max(24 GiB, before_available - 2 GiB)",
+    "recovery_commit_gib": 18,
+    "startup_stable_seconds": 10
+  },
+  "cpu_image_provider_binding_qualified": true,
+  "actual_engine_provider_binding_qualified": false,
+  "vision_preflight": {
+    "status": "retained_source_live_qualification_pending",
+    "tower_path": "/models/qwen38-flash-next-vision.hgn",
+    "tower_bytes": 897916416,
+    "tower_sha256": "d62e0ae553fe88afd3833733d4a4c669f34d20fd8dfce4b9610525bed2134b10",
+    "tower_range": [
+      53248,
+      897916416
+    ],
+    "tower_registered_bytes": 897863168,
+    "main_registered_bytes": 66687358944,
+    "total_device_copy_bytes": 67585222112,
+    "device_copy_cap_bytes": 68719476736,
+    "windows_vision_admission_increment_gib": 1,
+    "windows_runtime_reserve_gib": 18,
+    "guest_copy_reserve_gib": 12,
+    "transfer_chunk_bytes": 67108864
+  },
+  "bridge_evidence": {
+    "package": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\source-prep",
+    "static_map_sha256": "f7fc939c882417ac1e85bc2522e17a47be2e39b57cbd47a186b00fff50d051c9",
+    "frame_contract": {
+      "range_begin_offset": 8,
+      "object_offset": 40,
+      "range_end_offset": 88,
+      "aggregate_offset": 168,
+      "floor_offset": 184,
+      "frame_bytes": 536,
+      "range_end_register": "rbx",
+      "available_register": "r15",
+      "result_register": "rax",
+      "no_live_AVX_YMM_ZMM_opmask": true
+    },
+    "old_function_equivalence_claimed": false,
+    "normal_runtime_proven": false
+  },
+  "cpu_build_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\source-prep\\cpu-build\\cpu-build.json",
+  "cpu_build_receipt_sha256": "f6c50248bb13e1e1741097e1fc7fb835abf645a77f0b3ff5964a7db85f5fd3bc",
+  "cpu_image_provider_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\extracted\\cpu-provider\\receipt.json",
+    "bytes": 15721,
+    "sha256": "fc7f4dce769c6103e94caf08690cb6b41d68ae1c0eb83477ea3c2288e7c84ce2",
+    "completed": true,
+    "engine_started": false,
+    "actual_engine_provider_binding_qualified": false
+  },
+  "hip_include_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\extracted\\cpu-provider\\include-manifest.json",
+    "bytes": 14841,
+    "sha256": "8735f7490d30b2e5d4cfc469edfde14986656d2849a91d5345589246182511ac",
+    "files": 148
+  },
+  "cpu_image_providers": {
+    "libamdhip64.so.7": {
+      "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libamdhip64.so.7",
+      "bytes": 28933697,
+      "sha256": "6f3c9fe6b655a611e04a9a5a157cb46c425717e2873973f11a67bb6bbf6587b5"
+    },
+    "libcrypto.so.3": {
+      "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+      "bytes": 6521408,
+      "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b"
+    },
+    "libstdc++.so.6.0.33": {
+      "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+      "bytes": 2497768,
+      "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00"
+    }
+  }
+}

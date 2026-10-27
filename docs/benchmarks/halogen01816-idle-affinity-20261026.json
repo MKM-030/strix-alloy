@@ -1,0 +1,2830 @@
+{
+  "schema": "halogen01816.idle-affinity.independent-saved-audit.v1",
+  "passed": true,
+  "total_requests": 36,
+  "excluded_warmups": 9,
+  "measured_requests": 27,
+  "cases": {
+    "historical8k": {
+      "arms": {
+        "A_before": {
+          "whole_http_qpc_seconds": [
+            11.4763439,
+            11.0341852,
+            11.0334612
+          ],
+          "mean_seconds": 11.1813301,
+          "stdev_seconds": 0.2554897017236312,
+          "combined_counts": {
+            "actual_input_tokens": 24576,
+            "actual_output_tokens": 384,
+            "drafted": 318,
+            "accepted": 210
+          },
+          "combined_acceptance": 0.660377358490566,
+          "scoped_counts": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        },
+        "B": {
+          "whole_http_qpc_seconds": [
+            10.105242,
+            10.2532909,
+            9.6023587
+          ],
+          "mean_seconds": 9.986963866666667,
+          "stdev_seconds": 0.34120443998843764,
+          "combined_counts": {
+            "actual_input_tokens": 24576,
+            "actual_output_tokens": 384,
+            "drafted": 318,
+            "accepted": 210
+          },
+          "combined_acceptance": 0.660377358490566,
+          "scoped_counts": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        },
+        "A_after": {
+          "whole_http_qpc_seconds": [
+            10.3232818,
+            9.6197024,
+            9.7034538
+          ],
+          "mean_seconds": 9.882146,
+          "stdev_seconds": 0.384323001889973,
+          "combined_counts": {
+            "actual_input_tokens": 24576,
+            "actual_output_tokens": 384,
+            "drafted": 318,
+            "accepted": 210
+          },
+          "combined_acceptance": 0.660377358490566,
+          "scoped_counts": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance": 0.660377358490566
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        }
+      },
+      "B_vs_before_duration_percent": -10.681790293744509,
+      "B_vs_after_duration_percent": 1.0606791952544103,
+      "candidate_faster_than_both_bookends": false,
+      "exact_all_four_ordinal_accounting_parity": true
+    },
+    "natural16k": {
+      "arms": {
+        "A_before": {
+          "whole_http_qpc_seconds": [
+            18.5112454,
+            17.8992711,
+            17.6109987
+          ],
+          "mean_seconds": 18.007171733333333,
+          "stdev_seconds": 0.45972050228429384,
+          "combined_counts": {
+            "actual_input_tokens": 49152,
+            "actual_output_tokens": 384,
+            "drafted": 336,
+            "accepted": 177
+          },
+          "combined_acceptance": 0.5267857142857143,
+          "scoped_counts": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance": 0.5267857142857143
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        },
+        "B": {
+          "whole_http_qpc_seconds": [
+            17.5099996,
+            16.4119541,
+            16.2480844
+          ],
+          "mean_seconds": 16.723346033333332,
+          "stdev_seconds": 0.6861714035913797,
+          "combined_counts": {
+            "actual_input_tokens": 49152,
+            "actual_output_tokens": 384,
+            "drafted": 336,
+            "accepted": 177
+          },
+          "combined_acceptance": 0.5267857142857143,
+          "scoped_counts": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance": 0.5267857142857143
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        },
+        "A_after": {
+          "whole_http_qpc_seconds": [
+            17.406441,
+            17.5658496,
+            16.9454441
+          ],
+          "mean_seconds": 17.305911566666666,
+          "stdev_seconds": 0.32218840968027324,
+          "combined_counts": {
+            "actual_input_tokens": 49152,
+            "actual_output_tokens": 384,
+            "drafted": 336,
+            "accepted": 177
+          },
+          "combined_acceptance": 0.5267857142857143,
+          "scoped_counts": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance": 0.5267857142857143
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        }
+      },
+      "B_vs_before_duration_percent": -7.1295243862393605,
+      "B_vs_after_duration_percent": -3.366280539971256,
+      "candidate_faster_than_both_bookends": true,
+      "exact_all_four_ordinal_accounting_parity": true
+    },
+    "pp8k": {
+      "arms": {
+        "A_before": {
+          "whole_http_qpc_seconds": [
+            7.317939,
+            8.1142061,
+            7.3436696
+          ],
+          "mean_seconds": 7.591938233333334,
+          "stdev_seconds": 0.4524801756524849,
+          "combined_counts": {
+            "actual_input_tokens": 24576,
+            "actual_output_tokens": 3,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "combined_acceptance": null,
+          "scoped_counts": {
+            "head": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        },
+        "B": {
+          "whole_http_qpc_seconds": [
+            6.4507462,
+            6.7852763,
+            6.4531691
+          ],
+          "mean_seconds": 6.563063866666667,
+          "stdev_seconds": 0.19244542539910683,
+          "combined_counts": {
+            "actual_input_tokens": 24576,
+            "actual_output_tokens": 3,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "combined_acceptance": null,
+          "scoped_counts": {
+            "head": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        },
+        "A_after": {
+          "whole_http_qpc_seconds": [
+            6.5412837,
+            6.7563155,
+            6.7389573
+          ],
+          "mean_seconds": 6.678852166666667,
+          "stdev_seconds": 0.11945350159193051,
+          "combined_counts": {
+            "actual_input_tokens": 24576,
+            "actual_output_tokens": 3,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "combined_acceptance": null,
+          "scoped_counts": {
+            "head": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance": null
+            }
+          }
+        }
+      },
+      "B_vs_before_duration_percent": -13.552196225059731,
+      "B_vs_after_duration_percent": -1.733655680805235,
+      "candidate_faster_than_both_bookends": true,
+      "exact_all_four_ordinal_accounting_parity": true
+    }
+  },
+  "idle_cpu": {
+    "A_before": {
+      "elapsed_raw_seconds": 1.00041125,
+      "total_observed_idle_cpu_cores": 1.9991778381140757,
+      "threads": [
+        {
+          "tid": 104,
+          "cpu_seconds": 1.0,
+          "average_cores": 0.9995889190570378,
+          "affinity": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "tid": 105,
+          "cpu_seconds": 1.0,
+          "average_cores": 0.9995889190570378,
+          "affinity": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        }
+      ]
+    },
+    "B": {
+      "elapsed_raw_seconds": 1.000417535,
+      "total_observed_idle_cpu_cores": 0.9895868128700883,
+      "threads": [
+        {
+          "tid": 104,
+          "cpu_seconds": 0.5,
+          "average_cores": 0.49979131963135776,
+          "affinity": [
+            23
+          ]
+        },
+        {
+          "tid": 105,
+          "cpu_seconds": 0.49,
+          "average_cores": 0.48979549323873056,
+          "affinity": [
+            23
+          ]
+        }
+      ]
+    },
+    "A_after": {
+      "elapsed_raw_seconds": 0.994304937,
+      "total_observed_idle_cpu_cores": 1.991340811375253,
+      "threads": [
+        {
+          "tid": 104,
+          "cpu_seconds": 0.99,
+          "average_cores": 0.9956704056876265,
+          "affinity": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "tid": 105,
+          "cpu_seconds": 0.99,
+          "average_cores": 0.9956704056876265,
+          "affinity": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        }
+      ]
+    }
+  },
+  "original_masks_restored": true,
+  "server_identity_retained": true,
+  "continuous_reserve_minimum_gib": {
+    "available_bytes": 22.013416290283203,
+    "commit_headroom_bytes": 113.1436996459961
+  },
+  "whole_http_clock": "Windows QueryPerformanceCounter start through complete body",
+  "phase_rates_qualified": false,
+  "phase_rate_scaling_applied": false,
+  "gpu_package_power_cause_established": false,
+  "function_attribution_of_hot_threads": false,
+  "promotion": false,
+  "ordinals": [
+    {
+      "ordinal": 0,
+      "arm": "A_before",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 12.2139805,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "11f82c585db96fd55e8a4180a57f77ea3e8a917e4635415957d4c1bdb08a6870",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 1,
+      "arm": "A_before",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 11.4763439,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "3420f9e7ea47f7d68afd332cd5fb99cc54ddcd9aef3afdd30f3fc7c885867f33",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 2,
+      "arm": "A_before",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 11.0341852,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "a915b58d6249c325d51afa5395868ba44ca63c4d5626e7efaa7896a138a9ff17",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 3,
+      "arm": "A_before",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 11.0334612,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "5a57af3913534863b887c0479b0e68813f4a88e3c7e810c3e879e80687ae04eb",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 4,
+      "arm": "A_before",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 19.2783515,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "760a9c1f8f186639de980281877dc189ae9b6b2cb1f048f460a2cd9b59fdf650",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 5,
+      "arm": "A_before",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 18.5112454,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "50855c70eb940945d125dfd6e1ce70385b4ed1c2cc4dab6329c9ca38bbed3c98",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 6,
+      "arm": "A_before",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 17.8992711,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "84c2d1f0bd49b3cb62db67bd6883294e902eb16d03ad3ba4d5c32c6445fda4d2",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 7,
+      "arm": "A_before",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 17.6109987,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "4b13e5a7b6095582e0097097617203f90660f923d92a394f10f2205ea6949c1d",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 8,
+      "arm": "A_before",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 8.0488155,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "61ade1db8e37594486dd51f418276c2acc9dd01166443b4b48eddf7fd4f64f35",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 9,
+      "arm": "A_before",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 7.317939,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "894ac77912bcecf1c9eef8a8418b35d8f26daa9eb09f8877963580eb19198077",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 10,
+      "arm": "A_before",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 8.1142061,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "92e83529dec818530909380d6d635575a12a4d44285e4877f5b86f0be17241a4",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 11,
+      "arm": "A_before",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 7.3436696,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "6b4c45c869c3def933f7a01852030a3fbc33311cbcbb8fc68727d9d995c895a0",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 12,
+      "arm": "B",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 10.1778899,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "fba32ac6db44eaaf399af71c74b93b6ff686570a8197d73de4091e5f57c4ef0d",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 13,
+      "arm": "B",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 10.105242,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "e7dbb77778db03241cdd555cd8951d2c0ebfef3a8aa4b92544df89bb4ca3bcce",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 14,
+      "arm": "B",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 10.2532909,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "5cfc20e52b909cd921a4c757cd145db094a76511b4e482d2f3bad7513547b67e",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 15,
+      "arm": "B",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 9.6023587,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "04c8cf02671e6af7f5a4ad4172d1d9bc77b12e418da2a3fcdc12cb0ac868a732",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 16,
+      "arm": "B",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 16.8086007,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "11e66cc8f6107e10a5c114c94a3aaaba0a5c7f3394e74ec61d2edc4f0f6aeb3b",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 17,
+      "arm": "B",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 17.5099996,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "9287b9c96c9893349e2d3dd6d4173ecbed48ae219efdc5597d29a92e788084d0",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 18,
+      "arm": "B",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 16.4119541,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "dc6e1e0483a1e42463290abee22c8b60ffac435d491a593399184bfb60ec9985",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 19,
+      "arm": "B",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 16.2480844,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "3a69dba010d478efb07b66f6075f05f5b0bb7640d4d2f4fe40809a9f63fba9fa",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 20,
+      "arm": "B",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 6.6439529,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "5878190f86612cc8f83c6659d6ad691327ae15505dc5137f4fc3c3898fe8ecc0",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 21,
+      "arm": "B",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 6.4507462,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "eff2fb9a6a4348a6653d0ee3062623ad9cfe8be3a299860b94c61bc8a48c82fe",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 22,
+      "arm": "B",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 6.7852763,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "91cd4689fd5c9f18f38f19c31b2c486e41c8bb2aa8b3f10581405ecc0ec51fcf",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 23,
+      "arm": "B",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 6.4531691,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "08b2e7e3d3ea6985add293cb22a54151f5d68f34f6b3b3d03e429ecada0f09f1",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 24,
+      "arm": "A_after",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 10.277397,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "af21730398e9b689b37c2cfe1b8f12ce17c96386043c6baa56311087c997bca3",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 25,
+      "arm": "A_after",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 10.3232818,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "b13212e58434eb125f6a306bcc0366100d640a4f80f733e3343823ba5f346e6b",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 26,
+      "arm": "A_after",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 9.6197024,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "5e5a62805045cdaa25f4b12866458fa84202f8e092b94cf117dd37b75a2545b9",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 27,
+      "arm": "A_after",
+      "suite": "MTP128",
+      "case": "historical8k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 9.7034538,
+      "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "raw_response_sha256": "9dd4ae0ad5e499a75bccc2622acd6f67fbe042ef62c512d22aec29d1be848c89",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "drafted": 106,
+        "accepted": 70,
+        "scoped": {
+          "head": {
+            "rounds": 57,
+            "drafted": 106,
+            "accepted": 70
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.660377358490566
+      }
+    },
+    {
+      "ordinal": 28,
+      "arm": "A_after",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 17.3971044,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "f7648909faadaa92b74c221010d9c6cad8711e1bd9d2bccfd221a3751a9390db",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 29,
+      "arm": "A_after",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 17.406441,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "e6b5d5675a2f611afbde74fc858de2686a083f830899cb36c13e5cc1bcb43f8d",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 30,
+      "arm": "A_after",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 17.5658496,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "7742fd40b868f10af3229b735d22ac3692c0d1b1e844e5900e2ec5a221fbf95d",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 31,
+      "arm": "A_after",
+      "suite": "MTP128",
+      "case": "natural16k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 16.9454441,
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "raw_response_sha256": "e5edf3181d1d19cfb3d21f91c6355a87d316577187b69030b9ebbf4b821d379a",
+      "accounting": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "finish_reason": "length",
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "drafted": 112,
+        "accepted": 59,
+        "scoped": {
+          "head": {
+            "rounds": 68,
+            "drafted": 112,
+            "accepted": 59
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": 0.5267857142857143
+      }
+    },
+    {
+      "ordinal": 32,
+      "arm": "A_after",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 0,
+      "phase": "warmup",
+      "whole_http_qpc_seconds": 7.051227,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "39c94c57deae45004518de03909cf7a883d7ee14cb38843732d22b36fb3ef75a",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 33,
+      "arm": "A_after",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 1,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 6.5412837,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "74d49a83f073feb34ce7cdb046dc5d3fb512fbc943297c4d8408f1ecd6d803c6",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 34,
+      "arm": "A_after",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 2,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 6.7563155,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "b40abe23735960b9fe8f7e61417316e6d8adecfb8edc7f09020b1feda5c43b58",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    },
+    {
+      "ordinal": 35,
+      "arm": "A_after",
+      "suite": "PP1",
+      "case": "pp8k",
+      "rep": 3,
+      "phase": "measured",
+      "whole_http_qpc_seconds": 6.7389573,
+      "request_sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5",
+      "raw_response_sha256": "c404a0fa5b47364946777f752859ad38c66311b6e6daa4fb376bba550ea923bc",
+      "accounting": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 1,
+        "finish_reason": "length",
+        "output_sha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+        "drafted": 0,
+        "accepted": 0,
+        "scoped": {
+          "head": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "combined_acceptance": null
+      }
+    }
+  ],
+  "input_pins": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\state.json",
+      "bytes": 2541,
+      "sha256": "d340f832fd6741960e57688a3dd4a9009aac020c83ba9862744922c4bdecfe89"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\initial-ready.json",
+      "bytes": 12977,
+      "sha256": "d64568b794d4636e84585645b286ca38a4491634d110dd641f60638ea162eee4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\ready-left-online.json",
+      "bytes": 12976,
+      "sha256": "d1fea4b518dbeb29997aa7558042636ff34cdbeaa6f62b05eb33ae5c02a54e8b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\guest-binding.json",
+      "bytes": 340,
+      "sha256": "ff8e8db95119245daa116ceb292a82cdaad5d5c8ebb2237b9c6350521bc94c38"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\lease-events.ndjson",
+      "bytes": 2225,
+      "sha256": "a11824de7fce8d53f568033908d7419e5114b2ca4923244b7e21eedd1895b515"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\lease-final-restored.json",
+      "bytes": 1888,
+      "sha256": "e27486be8638ae46561b810c13db43a7d2f62c794022eae4007b4bf8b1138508"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before-idle-cpu.json",
+      "bytes": 1194,
+      "sha256": "3767cdb40c4712a26d428457decd59c07e7c7ea02c85c98854aaf6487bead917"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B-idle-cpu.json",
+      "bytes": 528,
+      "sha256": "d4cc981321278aaffd2f8763c9931c9fe867bac383f47a7e0299fc20823eb004"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after-idle-cpu.json",
+      "bytes": 1197,
+      "sha256": "07abae313ff6d7c6d4ea72635bf17585f41f0e14c12943ce4e6e690e8b496a2c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\prefetch-auto-post-heartbeat\\off-packet\\frozen.json",
+      "bytes": 27303,
+      "sha256": "43f084c24bd8ac1001ad987f832d91277ed1f29e039e9965a42020d5154f8d41"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\source.json",
+      "bytes": 1632,
+      "sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\summary.json",
+      "bytes": 6017,
+      "sha256": "275ef03cc4a20f76ee816f2b0aeb7fadce9cc3132bab99e7d31842572c822957"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\identity.json",
+      "bytes": 1502,
+      "sha256": "3c37f07c61bd85fc4be3df01078df5bd52315ce60f174d9ff2d4447dee97fba9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\prefetch-auto-post-heartbeat\\off-packet\\measure.py",
+      "bytes": 31965,
+      "sha256": "2afee69b353c832b0f93cf91f0ef79d2586b1ceb5620a5f9309d5f1da07bc226"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\memory-series.json",
+      "bytes": 92941,
+      "sha256": "2d311652d50cc74b0d1c6fcb9cd8ba279c7b392defeeeb23ec704706c0d32cfd"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\health-before.json",
+      "bytes": 993,
+      "sha256": "6783e79ea092ae590033f5eb473910ff843df6dee421f8213f237131edf2e4f4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\health-after.json",
+      "bytes": 993,
+      "sha256": "47039aeba999cc316efc31882bca1404979b7a1e7297bc6b57517f31d768f8eb"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\client-historical8k-0.json",
+      "bytes": 4493,
+      "sha256": "b4f817b0e36726186f1f9b85d814d9fb051d524aae77606a21cddf83574e11d0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\request-historical8k-0.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\response-historical8k-0.raw",
+      "bytes": 1325,
+      "sha256": "11f82c585db96fd55e8a4180a57f77ea3e8a917e4635415957d4c1bdb08a6870"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\submitted-historical8k-0.json",
+      "bytes": 202,
+      "sha256": "2fee2962a0cbf76007fccba054f82b622c5de01dfcaa5489c52cfc101a6456c2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\client-historical8k-1.json",
+      "bytes": 4484,
+      "sha256": "3c31ab62017e6e2e3f6b63e6be718841238c53d2fa514b49e246311cac0acf59"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\request-historical8k-1.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\response-historical8k-1.raw",
+      "bytes": 1326,
+      "sha256": "3420f9e7ea47f7d68afd332cd5fb99cc54ddcd9aef3afdd30f3fc7c885867f33"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\submitted-historical8k-1.json",
+      "bytes": 202,
+      "sha256": "84b354ffea2ae730cf4cc725b137ccac68017b5f7ef27c4de457556ae739186e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\client-historical8k-2.json",
+      "bytes": 4484,
+      "sha256": "2c1feabd9434c36ecaab16748a523112d8ba96577fbdfd5f8f216ea3e855268f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\request-historical8k-2.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\response-historical8k-2.raw",
+      "bytes": 1325,
+      "sha256": "a915b58d6249c325d51afa5395868ba44ca63c4d5626e7efaa7896a138a9ff17"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\submitted-historical8k-2.json",
+      "bytes": 202,
+      "sha256": "4e12d628f8b2194e4e724ffe843cc8f4501212a2a2ae76dfa5fd7254deed9120"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\client-historical8k-3.json",
+      "bytes": 4485,
+      "sha256": "156b6f2b6eaffd74da5b5549a2b605cfb6e1272b68dcf41d4f6403f0ee97cc55"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\request-historical8k-3.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\response-historical8k-3.raw",
+      "bytes": 1326,
+      "sha256": "5a57af3913534863b887c0479b0e68813f4a88e3c7e810c3e879e80687ae04eb"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\submitted-historical8k-3.json",
+      "bytes": 202,
+      "sha256": "0b7c7420c5671460f827fa253309e83687fa12fa438a6348d81c861e0d018d8d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\client-natural16k-0.json",
+      "bytes": 4487,
+      "sha256": "ce9c6727ca4c56e2129e225f2731ded134875d78c2d858443034ecfb35fdc7c1"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\request-natural16k-0.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\response-natural16k-0.raw",
+      "bytes": 1275,
+      "sha256": "760a9c1f8f186639de980281877dc189ae9b6b2cb1f048f460a2cd9b59fdf650"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\submitted-natural16k-0.json",
+      "bytes": 200,
+      "sha256": "9dbe4eb01de47e78d90acd4780430a300aae783d6f99e726175c90fdc49f1ae3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\client-natural16k-1.json",
+      "bytes": 4489,
+      "sha256": "f42bf0ff818fc71ada68b0c987e309a00c4633533322aa40403e4f7ffd6f6357"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\request-natural16k-1.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\response-natural16k-1.raw",
+      "bytes": 1275,
+      "sha256": "50855c70eb940945d125dfd6e1ce70385b4ed1c2cc4dab6329c9ca38bbed3c98"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\submitted-natural16k-1.json",
+      "bytes": 200,
+      "sha256": "c66678f882f3bdb2b8e52cfc3780f8a520bead6d6b3bd035795295be05eb9297"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\client-natural16k-2.json",
+      "bytes": 4489,
+      "sha256": "c89b5cb357e9fb99440b974e709fa0f970a2a1be9e497e926aec19800eae4288"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\request-natural16k-2.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\response-natural16k-2.raw",
+      "bytes": 1275,
+      "sha256": "84c2d1f0bd49b3cb62db67bd6883294e902eb16d03ad3ba4d5c32c6445fda4d2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\submitted-natural16k-2.json",
+      "bytes": 200,
+      "sha256": "f630ecb5e26f611589c3ac7532da42f2aca42e6d2920a93857a353fe55c2643e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\client-natural16k-3.json",
+      "bytes": 4489,
+      "sha256": "fd5259501437bafd305b706d44814570d0aa17d7808c23282c10e981984d0cca"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\request-natural16k-3.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\response-natural16k-3.raw",
+      "bytes": 1275,
+      "sha256": "4b13e5a7b6095582e0097097617203f90660f923d92a394f10f2205ea6949c1d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\MTP128\\submitted-natural16k-3.json",
+      "bytes": 200,
+      "sha256": "91c178c850b8c66e1a73b8d7347a2efb2f07e58a6ade3b2b572d947e5502604a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\prefetch-auto-post-heartbeat\\off-packet\\pp-only\\frozen.json",
+      "bytes": 26390,
+      "sha256": "f0eaf82771716f9605cb703afc209b5b0b2b533b68d1df310c8aa649cc726730"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\source.json",
+      "bytes": 1576,
+      "sha256": "cd1c1d78666554871db62d3caa00769945ddbbec2c0c28667a4260ac6150bce8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\summary.json",
+      "bytes": 3182,
+      "sha256": "dab2f67128b9733cc53e1d58f1fc16f8e77c3081d4d62411b70d6f5964aa4ff3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\identity.json",
+      "bytes": 1502,
+      "sha256": "3c37f07c61bd85fc4be3df01078df5bd52315ce60f174d9ff2d4447dee97fba9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\prefetch-auto-post-heartbeat\\off-packet\\pp-only\\measure.py",
+      "bytes": 31830,
+      "sha256": "ab5cd2ae6d17cae433c8d3d251cb703fd94f37a4466d912a5b500e7900e52dd3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\memory-series.json",
+      "bytes": 24719,
+      "sha256": "28e6bd2b3935ce66da6425ad5c4e077d74d0d1ad5004360ac3158d92cf6bb363"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\health-before.json",
+      "bytes": 993,
+      "sha256": "47039aeba999cc316efc31882bca1404979b7a1e7297bc6b57517f31d768f8eb"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\health-after.json",
+      "bytes": 993,
+      "sha256": "d86b6435bc631227a48cdf221a77b8a2db6987e59ab36d98c3b9a7bf6152cebb"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\client-pp8k-0.json",
+      "bytes": 4428,
+      "sha256": "beb23f2b4994d5bb58388c74b5c2ad65a31f71770393fef986cea3a0cce7bf69"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\request-pp8k-0.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\response-pp8k-0.raw",
+      "bytes": 755,
+      "sha256": "61ade1db8e37594486dd51f418276c2acc9dd01166443b4b48eddf7fd4f64f35"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\submitted-pp8k-0.json",
+      "bytes": 194,
+      "sha256": "471172e1c474fd52db09c682fefb5b879a1bd9fbd540bc18d24d6e047d7daf65"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\client-pp8k-1.json",
+      "bytes": 4441,
+      "sha256": "44f9ddf10bb5cc70035568fa556cf0f1e431f9cbd6cf3d5029da61ee42e3440f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\request-pp8k-1.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\response-pp8k-1.raw",
+      "bytes": 755,
+      "sha256": "894ac77912bcecf1c9eef8a8418b35d8f26daa9eb09f8877963580eb19198077"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\submitted-pp8k-1.json",
+      "bytes": 194,
+      "sha256": "4453640070a4f285c9c22374ba01ba19841230c611707c686f09abe4d6bd591b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\client-pp8k-2.json",
+      "bytes": 4430,
+      "sha256": "686de74b6b0b0c51bc224b56127e289550d8817c976560b1ff145131db999a26"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\request-pp8k-2.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\response-pp8k-2.raw",
+      "bytes": 755,
+      "sha256": "92e83529dec818530909380d6d635575a12a4d44285e4877f5b86f0be17241a4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\submitted-pp8k-2.json",
+      "bytes": 194,
+      "sha256": "4ac2b1c76acad9af8879440cdd7143a9f179acbb562ecc3465b9be7e7111db63"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\client-pp8k-3.json",
+      "bytes": 4431,
+      "sha256": "c8bae4d69e9ef9b4c15632eb6e196be13bd530ae5dbb8cea5958a5b5a544d655"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\request-pp8k-3.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\response-pp8k-3.raw",
+      "bytes": 755,
+      "sha256": "6b4c45c869c3def933f7a01852030a3fbc33311cbcbb8fc68727d9d995c895a0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_before\\PP1\\submitted-pp8k-3.json",
+      "bytes": 194,
+      "sha256": "442be01172a525521cbddd1324170b1fef6989c2e231fcbfe938d2d3345a033a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\source.json",
+      "bytes": 1632,
+      "sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\summary.json",
+      "bytes": 6015,
+      "sha256": "220dc7178c00e26bdf61e5a7bc7e43907fe25fbf00e249c85c1e4d8e30dd2537"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\identity.json",
+      "bytes": 1502,
+      "sha256": "093ec0df7dabe5bf9bf88e3bca6aa129ae09c36b8c36962c178b9545320115aa"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\memory-series.json",
+      "bytes": 82469,
+      "sha256": "5e673b7925e43a1d79b853330033a7ff2d967c87efebc4de2f8aab32c0738d71"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\health-before.json",
+      "bytes": 993,
+      "sha256": "d86b6435bc631227a48cdf221a77b8a2db6987e59ab36d98c3b9a7bf6152cebb"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\health-after.json",
+      "bytes": 993,
+      "sha256": "e22e1e588140248bf98d4d0cdd175560d796bece8f0a493e68f7e7e11750975c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\client-historical8k-0.json",
+      "bytes": 4481,
+      "sha256": "7be536c83c704c768d2e10fd45fc413c48e73144bfdf41dc785bea2fecf52cc3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\request-historical8k-0.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\response-historical8k-0.raw",
+      "bytes": 1324,
+      "sha256": "fba32ac6db44eaaf399af71c74b93b6ff686570a8197d73de4091e5f57c4ef0d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\submitted-historical8k-0.json",
+      "bytes": 202,
+      "sha256": "bb9947a72b85905e195594a22c35a14efca3e8b611a110560cd4e445f95faf1c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\client-historical8k-1.json",
+      "bytes": 4484,
+      "sha256": "55275d21ff9d91aa8dc74bd8ad6ed7cc07a8c3a3be095f43438159e20f557cfc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\request-historical8k-1.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\response-historical8k-1.raw",
+      "bytes": 1326,
+      "sha256": "e7dbb77778db03241cdd555cd8951d2c0ebfef3a8aa4b92544df89bb4ca3bcce"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\submitted-historical8k-1.json",
+      "bytes": 202,
+      "sha256": "f81e5aab3fa8a809c1c3a1538205faa511b782e3ee81ac699c77f4399aeb6652"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\client-historical8k-2.json",
+      "bytes": 4485,
+      "sha256": "84867a86dfb982c389b3abffd133ceab59764cb71ca15f86669850105cf2008d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\request-historical8k-2.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\response-historical8k-2.raw",
+      "bytes": 1326,
+      "sha256": "5cfc20e52b909cd921a4c757cd145db094a76511b4e482d2f3bad7513547b67e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\submitted-historical8k-2.json",
+      "bytes": 202,
+      "sha256": "8345af56757477e7d989ac7659470466f9b3b273d77f68dc468db0a43a631d5b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\client-historical8k-3.json",
+      "bytes": 4482,
+      "sha256": "cac0f3a402592ff15d1bbaf5d1dfc9edf9fad8441369ac959fd6b7d7e5a3327a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\request-historical8k-3.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\response-historical8k-3.raw",
+      "bytes": 1326,
+      "sha256": "04c8cf02671e6af7f5a4ad4172d1d9bc77b12e418da2a3fcdc12cb0ac868a732"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\submitted-historical8k-3.json",
+      "bytes": 202,
+      "sha256": "29d0aac15dbb8fd5aeb488a6b46ff6c7cc0c6f8e7a05fc4b4a8c47e09a0efe60"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\client-natural16k-0.json",
+      "bytes": 4498,
+      "sha256": "e21735ec4375e297e65f66eb749cf939099e86e9086534e2a98b758f6e9e2964"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\request-natural16k-0.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\response-natural16k-0.raw",
+      "bytes": 1275,
+      "sha256": "11e66cc8f6107e10a5c114c94a3aaaba0a5c7f3394e74ec61d2edc4f0f6aeb3b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\submitted-natural16k-0.json",
+      "bytes": 200,
+      "sha256": "19d70ef62d503f1b69d3bc49e5c56fddf7c9a9d9c4b1d24822d943a761b53f51"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\client-natural16k-1.json",
+      "bytes": 4500,
+      "sha256": "bfe8cc78e5dd9cd80f5db2b078a1359d2d5ee33f0ad880b804d7012ab4e6c2fc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\request-natural16k-1.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\response-natural16k-1.raw",
+      "bytes": 1275,
+      "sha256": "9287b9c96c9893349e2d3dd6d4173ecbed48ae219efdc5597d29a92e788084d0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\submitted-natural16k-1.json",
+      "bytes": 200,
+      "sha256": "4a71baec7a596ed5496dba31a38db06238a312886e28e7ae4328919d91b37434"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\client-natural16k-2.json",
+      "bytes": 4489,
+      "sha256": "3b96f227f6c69ef52d7309e63627d1510c2d6a280db5fc0309e8783d3ed20882"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\request-natural16k-2.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\response-natural16k-2.raw",
+      "bytes": 1275,
+      "sha256": "dc6e1e0483a1e42463290abee22c8b60ffac435d491a593399184bfb60ec9985"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\submitted-natural16k-2.json",
+      "bytes": 200,
+      "sha256": "1540ee57e30136a1d90a46454245e26ff02862b638d196a78eed109009d40e52"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\client-natural16k-3.json",
+      "bytes": 4489,
+      "sha256": "68c787990fc67aa6cbfbfd401e5eafd75c29d900d8daff34bb4260680e76cc24"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\request-natural16k-3.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\response-natural16k-3.raw",
+      "bytes": 1275,
+      "sha256": "3a69dba010d478efb07b66f6075f05f5b0bb7640d4d2f4fe40809a9f63fba9fa"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\MTP128\\submitted-natural16k-3.json",
+      "bytes": 200,
+      "sha256": "4a336216934cfd01a85d10b16ab447db896367abea0d9643463e7abaad9707dd"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\source.json",
+      "bytes": 1576,
+      "sha256": "cd1c1d78666554871db62d3caa00769945ddbbec2c0c28667a4260ac6150bce8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\summary.json",
+      "bytes": 3196,
+      "sha256": "e7db526fa13d6a4c7ee1e79fab83a990c09d88b4ea4f666f7624f2605bbf6934"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\identity.json",
+      "bytes": 1502,
+      "sha256": "093ec0df7dabe5bf9bf88e3bca6aa129ae09c36b8c36962c178b9545320115aa"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\memory-series.json",
+      "bytes": 20715,
+      "sha256": "8882a3314df5b0ff7b48fd18576cc20ccf52e20428ca1be3662f5245da1c0a37"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\health-before.json",
+      "bytes": 993,
+      "sha256": "e22e1e588140248bf98d4d0cdd175560d796bece8f0a493e68f7e7e11750975c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\health-after.json",
+      "bytes": 993,
+      "sha256": "9e5bfb4f7259d8e7508fa9b1abf3a3cda17f4fcadab84371f2bf458940fc81c4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\client-pp8k-0.json",
+      "bytes": 4429,
+      "sha256": "d5584ba4418093b60d1c9e6b57e5fccdcd15270095b1879ed00301b2343f6cdb"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\request-pp8k-0.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\response-pp8k-0.raw",
+      "bytes": 755,
+      "sha256": "5878190f86612cc8f83c6659d6ad691327ae15505dc5137f4fc3c3898fe8ecc0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\submitted-pp8k-0.json",
+      "bytes": 194,
+      "sha256": "998cb4ec30d7c2377019d0f47283455c338f82335ec2fc9fe0a40cdfe57a62b4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\client-pp8k-1.json",
+      "bytes": 4431,
+      "sha256": "ae41cb88b834c4d09f7b37476aa7761a424aaa02f1b6d8d840acb37e5c890579"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\request-pp8k-1.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\response-pp8k-1.raw",
+      "bytes": 755,
+      "sha256": "eff2fb9a6a4348a6653d0ee3062623ad9cfe8be3a299860b94c61bc8a48c82fe"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\submitted-pp8k-1.json",
+      "bytes": 194,
+      "sha256": "18f0e02eb98b5e4c7f28be9d3a2aad6e85f74b4868d74ce6d5859113f6289e1c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\client-pp8k-2.json",
+      "bytes": 4431,
+      "sha256": "a5a2aef2d4a245b0e4b463e25dc29e0e5cbbbdc3f4e2783254568611acb8f906"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\request-pp8k-2.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\response-pp8k-2.raw",
+      "bytes": 755,
+      "sha256": "91cd4689fd5c9f18f38f19c31b2c486e41c8bb2aa8b3f10581405ecc0ec51fcf"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\submitted-pp8k-2.json",
+      "bytes": 194,
+      "sha256": "5345ab538d09993a9a31e2c0bf6c260c07a6d1af5a5516ae7c21a1bf6979e871"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\client-pp8k-3.json",
+      "bytes": 4431,
+      "sha256": "1f82f1a8764b34a39687df1752c0143a990d5b7b56429aa4255ba18543eb5e1b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\request-pp8k-3.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\response-pp8k-3.raw",
+      "bytes": 755,
+      "sha256": "08b2e7e3d3ea6985add293cb22a54151f5d68f34f6b3b3d03e429ecada0f09f1"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\B\\PP1\\submitted-pp8k-3.json",
+      "bytes": 194,
+      "sha256": "43e46958766f69cf7c026c54dbbaf63d83eba6995d84358997af3a153e710de6"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\source.json",
+      "bytes": 1632,
+      "sha256": "179f05c62e49dce80eafa5e0cf6104776cf303f414de8f936005d6379936196a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\summary.json",
+      "bytes": 5993,
+      "sha256": "41681bc3d5503b2da81b2599b9868ac97237709896c4de46706363a5ae7a963c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\identity.json",
+      "bytes": 1502,
+      "sha256": "5dbd12f5b5f45ed2cebebb9feec00edb3a94e50a7807da5078790a33cc0d2416"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\memory-series.json",
+      "bytes": 83701,
+      "sha256": "e11e48a3ee11989e757dec235e89aeac0ef3cb4d1b66bf2f6eadcdd7a95e1ded"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\health-before.json",
+      "bytes": 993,
+      "sha256": "9e5bfb4f7259d8e7508fa9b1abf3a3cda17f4fcadab84371f2bf458940fc81c4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\health-after.json",
+      "bytes": 993,
+      "sha256": "7986763aad666b42670b928d52c86998388cdc765d72e78f6bbc15846a88ccea"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\client-historical8k-0.json",
+      "bytes": 4481,
+      "sha256": "23bfdf5404c2175750595297ba540aae3db2232e3c749ada1a3b64e627c6ddb7"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\request-historical8k-0.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\response-historical8k-0.raw",
+      "bytes": 1326,
+      "sha256": "af21730398e9b689b37c2cfe1b8f12ce17c96386043c6baa56311087c997bca3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\submitted-historical8k-0.json",
+      "bytes": 202,
+      "sha256": "bc4e33d42cf8b1db8dec95ba93765bb8864ee698e86728ac562633120f9f4cff"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\client-historical8k-1.json",
+      "bytes": 4485,
+      "sha256": "2e5d11a3e6d0b0a7c4fddc266efc467d4d910572e9013c6fe7f98c3078e4904c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\request-historical8k-1.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\response-historical8k-1.raw",
+      "bytes": 1326,
+      "sha256": "b13212e58434eb125f6a306bcc0366100d640a4f80f733e3343823ba5f346e6b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\submitted-historical8k-1.json",
+      "bytes": 202,
+      "sha256": "5e6d29734bc3e4278e842204b6b16ed5223c1d265f9767fe15e2ffa5b95ff62e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\client-historical8k-2.json",
+      "bytes": 4483,
+      "sha256": "39052ab2f931ddd258fcd2c6b7714e22940422b695826488c7e31ff9054d1324"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\request-historical8k-2.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\response-historical8k-2.raw",
+      "bytes": 1326,
+      "sha256": "5e5a62805045cdaa25f4b12866458fa84202f8e092b94cf117dd37b75a2545b9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\submitted-historical8k-2.json",
+      "bytes": 202,
+      "sha256": "d7c7a7e1bd5c6079e7e4756da55fcf41e244aa782ea49052af340b42c34c55f8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\client-historical8k-3.json",
+      "bytes": 4494,
+      "sha256": "2362ee1cd7f86a21c7d974b778c6f1a8f8ecedffe10cdc1006cf83f906530d3c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\request-historical8k-3.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\response-historical8k-3.raw",
+      "bytes": 1326,
+      "sha256": "9dd4ae0ad5e499a75bccc2622acd6f67fbe042ef62c512d22aec29d1be848c89"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\submitted-historical8k-3.json",
+      "bytes": 202,
+      "sha256": "780b990b001a4cb318693d283132defb4bb45277b7c3a130a1ac10ef7cc2a05e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\client-natural16k-0.json",
+      "bytes": 4498,
+      "sha256": "fde5d0089c7a9fdfef57fb236a3566d2e791793b508e00d7945bfa2f181461b8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\request-natural16k-0.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\response-natural16k-0.raw",
+      "bytes": 1275,
+      "sha256": "f7648909faadaa92b74c221010d9c6cad8711e1bd9d2bccfd221a3751a9390db"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\submitted-natural16k-0.json",
+      "bytes": 200,
+      "sha256": "5d37a26388775349287d1feceeafa0d1adfd9fe27894a6d6fb2d2fb9933b8be6"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\client-natural16k-1.json",
+      "bytes": 4488,
+      "sha256": "4922bfee8e4d288aa137f10efbe2a84190f42e31daf2d46aabb78efada6ef723"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\request-natural16k-1.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\response-natural16k-1.raw",
+      "bytes": 1275,
+      "sha256": "e6b5d5675a2f611afbde74fc858de2686a083f830899cb36c13e5cc1bcb43f8d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\submitted-natural16k-1.json",
+      "bytes": 200,
+      "sha256": "81a8d001e98f57550617d3aa88a38b85c76a0d706d6c09f7d79cca749f55cf0b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\client-natural16k-2.json",
+      "bytes": 4489,
+      "sha256": "3e7c14ac539f6278341fe9af8d4de41ca7898ee28bad70f525e6dd7b874a9d6e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\request-natural16k-2.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\response-natural16k-2.raw",
+      "bytes": 1275,
+      "sha256": "7742fd40b868f10af3229b735d22ac3692c0d1b1e844e5900e2ec5a221fbf95d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\submitted-natural16k-2.json",
+      "bytes": 200,
+      "sha256": "046f0ef79e43c96a61b4c4abdf501eade17097b7f97caedc95080e54604c6cbc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\client-natural16k-3.json",
+      "bytes": 4489,
+      "sha256": "970e86b9f10eaa15e373c166623c2910bb5bdb7124dc5e277422ac5f735860b5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\request-natural16k-3.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\response-natural16k-3.raw",
+      "bytes": 1275,
+      "sha256": "e5edf3181d1d19cfb3d21f91c6355a87d316577187b69030b9ebbf4b821d379a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\MTP128\\submitted-natural16k-3.json",
+      "bytes": 200,
+      "sha256": "92f34dbd72ecd4983b59971b86699bf9bfd57f76c467783afd7f3c479133c3c8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\source.json",
+      "bytes": 1576,
+      "sha256": "cd1c1d78666554871db62d3caa00769945ddbbec2c0c28667a4260ac6150bce8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\summary.json",
+      "bytes": 3195,
+      "sha256": "d8b0380dee6c1e42ea9ff129575f54ff9384a5beddc6042144d87ed68cde9e82"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\identity.json",
+      "bytes": 1502,
+      "sha256": "5dbd12f5b5f45ed2cebebb9feec00edb3a94e50a7807da5078790a33cc0d2416"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\memory-series.json",
+      "bytes": 20715,
+      "sha256": "4ad147bfee11c9a0edb6751597f3d427c900c9ffd30b705c723d71b3b3e86690"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\health-before.json",
+      "bytes": 993,
+      "sha256": "7986763aad666b42670b928d52c86998388cdc765d72e78f6bbc15846a88ccea"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\health-after.json",
+      "bytes": 993,
+      "sha256": "cef82ae74ae93188c84b40fed91b9bb035af6354f61e3cb8f4ffb98b567ad1bc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\client-pp8k-0.json",
+      "bytes": 4428,
+      "sha256": "1a6980403c2cbfa5787c6bde156aa469806a6c6a5cbc9960b4ae9e349bb23c21"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\request-pp8k-0.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\response-pp8k-0.raw",
+      "bytes": 755,
+      "sha256": "39c94c57deae45004518de03909cf7a883d7ee14cb38843732d22b36fb3ef75a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\submitted-pp8k-0.json",
+      "bytes": 194,
+      "sha256": "2dd6bd0d867daf04db9b66314b1bcd3fbe70cf009b4112210468deaaf43f230d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\client-pp8k-1.json",
+      "bytes": 4431,
+      "sha256": "13efd380d83aadf048ee44f33c23556f51ada0b592fd4f70e74c83568121dc83"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\request-pp8k-1.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\response-pp8k-1.raw",
+      "bytes": 755,
+      "sha256": "74d49a83f073feb34ce7cdb046dc5d3fb512fbc943297c4d8408f1ecd6d803c6"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\submitted-pp8k-1.json",
+      "bytes": 194,
+      "sha256": "c8f0ca5e42e6cab9133a9c139ea000c08f7d9d1311b4a1820d9a8b6445ffc08d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\client-pp8k-2.json",
+      "bytes": 4430,
+      "sha256": "62e57b86c05d8af4c9f1227069a9529af303eb5cd868bf1987b31e70784ed331"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\request-pp8k-2.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\response-pp8k-2.raw",
+      "bytes": 755,
+      "sha256": "b40abe23735960b9fe8f7e61417316e6d8adecfb8edc7f09020b1feda5c43b58"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\submitted-pp8k-2.json",
+      "bytes": 194,
+      "sha256": "a69d32aa1b0a8afbdbb4f912a052e8020bcd236282db9df68ba7be830efac11f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\client-pp8k-3.json",
+      "bytes": 4443,
+      "sha256": "b718bd17c64a17ebbe0007ff75e6bf33a17f198a4a08d86fbc170f8739be5ade"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\request-pp8k-3.json",
+      "bytes": 42916,
+      "sha256": "a104361bfb66d537013685775ee887232b5c0b5d7b2098e8ca78829803a72fb5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\response-pp8k-3.raw",
+      "bytes": 755,
+      "sha256": "c404a0fa5b47364946777f752859ad38c66311b6e6daa4fb376bba550ea923bc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-idle-thread-affinity-aba\\A_after\\PP1\\submitted-pp8k-3.json",
+      "bytes": 194,
+      "sha256": "b21392f15bc616ce85644e48ad849fe8f1660b4272e4e9a1037665903eaa0bd6"
+    }
+  ]
+}

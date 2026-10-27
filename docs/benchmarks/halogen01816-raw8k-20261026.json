@@ -1,0 +1,408 @@
+{
+  "schema": "halogen01816.raw8k.tracked-report.v1",
+  "date": "2026-10-26",
+  "scope": "Timing qualification of one fixed MTP128 task; no acceleration or causal clock/power claim",
+  "version": "0.18.16",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:fee7d5bb7ff02c78c60224da931e3c70a160dc48779bf5f7ba1030c97c8ac2d1",
+  "engine_sha256": "8c184edfcb5d249d4ce525db5afe8afb32186126c7b01f1e2f007510a6c54132",
+  "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+  "configuration": {
+    "checkpoint": "v2",
+    "context": 32768,
+    "slots": 1,
+    "global_prompt_cache": "Off",
+    "request_cache": "no_store",
+    "vision": "Off",
+    "thinking": "Off",
+    "prefill_chunk": 8192,
+    "prefill_arena": 8192,
+    "native_decode_prefetch": 0,
+    "drafting": "adaptive gate0.90,PLD3,3"
+  },
+  "cohort": {
+    "journals": 4,
+    "distinct_request_ids": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "endpoint_records_per_journal": [
+      4,
+      4,
+      4,
+      4
+    ],
+    "warmup_ordinal_excluded": 0,
+    "measured_ordinals": [
+      1,
+      2,
+      3
+    ],
+    "actual_input_tokens_per_request": 8192,
+    "actual_output_tokens_per_request": 128,
+    "all_four_plain_parity": true,
+    "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b"
+  },
+  "measured_raw_arithmetic_mean_tokens_per_second": {
+    "prefill": {
+      "lower": 1186.7874418867189,
+      "upper": 1186.7879104023427,
+      "midpoint": 1186.7876761444836
+    },
+    "decode": {
+      "lower": 48.57598721569224,
+      "upper": 48.57603372725615,
+      "midpoint": 48.57601047146301
+    }
+  },
+  "native_clock_arithmetic_mean_tokens_per_second": {
+    "prefill": 1095.201418868927,
+    "decode": 44.79267717018754
+  },
+  "measured_counts": {
+    "actual_input_tokens": 24576,
+    "actual_output_tokens": 384,
+    "drafted": 318,
+    "accepted": 210
+  },
+  "accepted_percent": 66.0377358490566,
+  "decode_count_convention": {
+    "rate_numerator": 128,
+    "generated_begin": 1,
+    "generated_end": 128,
+    "observed_delta": 127,
+    "note": "128 is the native reporting convention on the same captured interval. No claim of128 newly generated tokens within that interval."
+  },
+  "whole_http_qpc": {
+    "instrumented_measured_seconds": [
+      11.7162604,
+      9.6216939,
+      9.4989789
+    ],
+    "instrumented_mean_seconds": 10.278977733333333,
+    "prior_normal_measured_seconds": [
+      9.4400599,
+      9.9847156,
+      9.8527041
+    ],
+    "prior_normal_mean_seconds": 9.759159866666666,
+    "mean_elapsed_difference_percent": 5.326461229948221,
+    "interpretation": "Descriptive separate cohorts; observer overhead, startup and chronology differ. No causal slowdown/speedup attribution or overhead subtraction."
+  },
+  "samples": [
+    {
+      "schema": "halogen01816.raw-side.report.v2",
+      "valid": true,
+      "request_id": 3,
+      "records": 4,
+      "prefill_pairs": 1,
+      "prompt": 8192,
+      "generated_begin": 1,
+      "generated_end": 128,
+      "generated_delta": 127,
+      "prefill_native_ns": 13320556422,
+      "prefill_raw_lower_ns": 12228538801,
+      "prefill_raw_upper_ns": 12228541691,
+      "decode_native_ns": 3616650651,
+      "decode_raw_lower_ns": 3337546760,
+      "decode_raw_upper_ns": 3337549270,
+      "published_prefill_ms": 13320.556422,
+      "prefill_native_over_raw_mid": 1.0893006159387832,
+      "decode_native_over_raw_mid": 1.0836250549042663,
+      "prefill_raw_tokens_per_second_lower": 669.9081711459653,
+      "prefill_raw_tokens_per_second_upper": 669.9083294669754,
+      "prefill_raw_tokens_per_second_midpoint": 669.908250306461,
+      "decode_raw_tokens_per_second_lower": 38.35149375937153,
+      "decode_raw_tokens_per_second_upper": 38.35152260158896,
+      "decode_raw_tokens_per_second_midpoint": 38.35150818047482,
+      "ordinal": 0,
+      "warmup_excluded": true,
+      "journal": {
+        "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/capture-0.bin",
+        "bytes": 8248,
+        "sha256": "d5c782c64db629d375da634fc08574c38c32c2a00c12c2460dbb4d80fc507d3e"
+      },
+      "whole_http_qpc_seconds": 15.6022814,
+      "native_response_prefill_ms": 13320.6,
+      "native_response_decode_ms": 3616.7,
+      "plain_request_output_count_draft_scoped_parity": true
+    },
+    {
+      "schema": "halogen01816.raw-side.report.v2",
+      "valid": true,
+      "request_id": 4,
+      "records": 4,
+      "prefill_pairs": 1,
+      "prompt": 8192,
+      "generated_begin": 1,
+      "generated_end": 128,
+      "generated_delta": 127,
+      "prefill_native_ns": 7405382139,
+      "prefill_raw_lower_ns": 6833896269,
+      "prefill_raw_upper_ns": 6833898579,
+      "decode_native_ns": 2942461350,
+      "decode_raw_lower_ns": 2715385737,
+      "decode_raw_upper_ns": 2715388087,
+      "published_prefill_ms": 7405.382139,
+      "prefill_native_over_raw_mid": 1.0836250062801644,
+      "decode_native_over_raw_mid": 1.0836250764104736,
+      "prefill_raw_tokens_per_second_lower": 1198.730110682844,
+      "prefill_raw_tokens_per_second_upper": 1198.7305158787156,
+      "prefill_raw_tokens_per_second_midpoint": 1198.7303132807456,
+      "decode_raw_tokens_per_second_lower": 47.13874993147527,
+      "decode_raw_tokens_per_second_upper": 47.138790727175426,
+      "decode_raw_tokens_per_second_midpoint": 47.138770329316515,
+      "ordinal": 1,
+      "warmup_excluded": false,
+      "journal": {
+        "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/capture-1.bin",
+        "bytes": 8248,
+        "sha256": "9172c69d0e898de228b9f6c657ba74ffbe647a9fe44dfd1b2fc0a1e34a260bd4"
+      },
+      "whole_http_qpc_seconds": 11.7162604,
+      "native_response_prefill_ms": 7405.4,
+      "native_response_decode_ms": 2942.5,
+      "plain_request_output_count_draft_scoped_parity": true
+    },
+    {
+      "schema": "halogen01816.raw-side.report.v2",
+      "valid": true,
+      "request_id": 5,
+      "records": 4,
+      "prefill_pairs": 1,
+      "prompt": 8192,
+      "generated_begin": 1,
+      "generated_end": 128,
+      "generated_delta": 127,
+      "prefill_native_ns": 7533298103,
+      "prefill_raw_lower_ns": 6951939943,
+      "prefill_raw_upper_ns": 6951943213,
+      "decode_native_ns": 2863681352,
+      "decode_raw_lower_ns": 2642685092,
+      "decode_raw_upper_ns": 2642687713,
+      "published_prefill_ms": 7533.298103,
+      "prefill_native_over_raw_mid": 1.08362505905397,
+      "decode_native_over_raw_mid": 1.0836251131768557,
+      "prefill_raw_tokens_per_second_lower": 1178.3755633505632,
+      "prefill_raw_tokens_per_second_upper": 1178.3761176257906,
+      "prefill_raw_tokens_per_second_midpoint": 1178.3758404881119,
+      "decode_raw_tokens_per_second_lower": 48.43553756667426,
+      "decode_raw_tokens_per_second_upper": 48.43558560476414,
+      "decode_raw_tokens_per_second_midpoint": 48.43556158570729,
+      "ordinal": 2,
+      "warmup_excluded": false,
+      "journal": {
+        "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/capture-2.bin",
+        "bytes": 8248,
+        "sha256": "a2d0c376d464cd66af75321de91a08f9438cc27951f53c2447a2927775e8829e"
+      },
+      "whole_http_qpc_seconds": 9.6216939,
+      "native_response_prefill_ms": 7533.3,
+      "native_response_decode_ms": 2863.7,
+      "plain_request_output_count_draft_scoped_parity": true
+    },
+    {
+      "schema": "halogen01816.raw-side.report.v2",
+      "valid": true,
+      "request_id": 6,
+      "records": 4,
+      "prefill_pairs": 1,
+      "prompt": 8192,
+      "generated_begin": 1,
+      "generated_end": 128,
+      "generated_delta": 127,
+      "prefill_native_ns": 7502222489,
+      "prefill_raw_lower_ns": 6923262929,
+      "prefill_raw_upper_ns": 6923265539,
+      "decode_native_ns": 2771803193,
+      "decode_raw_lower_ns": 2552153412,
+      "decode_raw_upper_ns": 2552155992,
+      "published_prefill_ms": 7502.222489,
+      "prefill_native_over_raw_mid": 1.083625040939034,
+      "decode_native_over_raw_mid": 1.0860639407273673,
+      "prefill_raw_tokens_per_second_lower": 1183.256651626749,
+      "prefill_raw_tokens_per_second_upper": 1183.2570977025218,
+      "prefill_raw_tokens_per_second_midpoint": 1183.2568746645934,
+      "decode_raw_tokens_per_second_lower": 50.15367414892718,
+      "decode_raw_tokens_per_second_upper": 50.1537248498289,
+      "decode_raw_tokens_per_second_midpoint": 50.153699499365224,
+      "ordinal": 3,
+      "warmup_excluded": false,
+      "journal": {
+        "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/capture-3.bin",
+        "bytes": 8248,
+        "sha256": "5d1c9f6d509cbb7cfc706399c13820ed3f7572b1831fa78fa8b27f01cee03bba"
+      },
+      "whole_http_qpc_seconds": 9.4989789,
+      "native_response_prefill_ms": 7502.2,
+      "native_response_decode_ms": 2771.8,
+      "plain_request_output_count_draft_scoped_parity": true
+    }
+  ],
+  "adlx_whole_http_clock_samples": {
+    "anchor_offset_spread_ns": 795000,
+    "requests": [
+      {
+        "ordinal": 0,
+        "warmup_excluded": true,
+        "fully_within_whole_http_samples": 16,
+        "gpu_clock_mhz_min": 601,
+        "gpu_clock_mhz_max": 1753,
+        "gpu_clock_mhz_median": 1064.5
+      },
+      {
+        "ordinal": 1,
+        "warmup_excluded": false,
+        "fully_within_whole_http_samples": 11,
+        "gpu_clock_mhz_min": 1228,
+        "gpu_clock_mhz_max": 1866,
+        "gpu_clock_mhz_median": 1535
+      },
+      {
+        "ordinal": 2,
+        "warmup_excluded": false,
+        "fully_within_whole_http_samples": 10,
+        "gpu_clock_mhz_min": 895,
+        "gpu_clock_mhz_max": 1835,
+        "gpu_clock_mhz_median": 1388.0
+      },
+      {
+        "ordinal": 3,
+        "warmup_excluded": false,
+        "fully_within_whole_http_samples": 9,
+        "gpu_clock_mhz_min": 1353,
+        "gpu_clock_mhz_max": 1906,
+        "gpu_clock_mhz_median": 1534
+      }
+    ],
+    "phase_alignment_qualified": false,
+    "package_power_cause_claimed": false,
+    "firmware_power_profile_confirmed": false
+  },
+  "restoration_receipt": {
+    "observed_utc": "2026-10-26T00:42:49.817163+00:00",
+    "controller_run_id": "304ad0fe66f0472ab77756001050b7c9",
+    "backend_run_id": "cf15df0186b141998ba069879503eba5",
+    "saved_ready": true,
+    "current_readiness_claimed": false
+  },
+  "validation": {
+    "fresh_four_capture_validator_matches_saved_report": true,
+    "raw_response_accounting_recomputed": true,
+    "qpc_intervals_recomputed": true,
+    "all_four_plain_output_and_scoped_parity": true,
+    "native_response_agreement_tolerance_ms": 0.050001,
+    "native_clock_rescaling": false,
+    "observer_overhead_subtracted": false,
+    "PP1_combined": false,
+    "v1_v2_failure_evidence_preserved": true
+  },
+  "evidence": [
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/phase-raw-observer/binding.json",
+      "bytes": 33815,
+      "sha256": "0ac7964ed63113fe334e9f3cf42bf5b826b0cee2e069934079a9090555fa3b72"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/raw-cohort-packet-v3/frozen.json",
+      "bytes": 25540,
+      "sha256": "0685e32f605183eaa8061d48a64679f3f835f821cd85dcc0fd685d973c48cfd5"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/raw-cohort-packet-v3/profile-baseline.json",
+      "bytes": 1812,
+      "sha256": "55e5ad916d3b91aa86264241c937d84620002f11b2fa261de2b7c271c642f6a6"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/raw-cohort-packet-v3/request-historical8k.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/summary.json",
+      "bytes": 3287,
+      "sha256": "e5d00d5baef03b58738e16684d222a54c2db0ac0d8fd041efae794e202ee5548"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-baseline-cacheoff-measured/MTP128/summary.json",
+      "bytes": 6010,
+      "sha256": "9a9c2427bd8e8c625b2b9d27e91da112c4eead1a211bc38639c3f1869512672a"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/continuation-2110/result-review/raw-v3-clock-review/validated-raw-cohort.json",
+      "bytes": 6074,
+      "sha256": "58ee1c24b39a5ebbee0ca36bdb9c1b0e7d17847e8ea9890d20e5516da4bf9cb7"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/continuation-2110/result-review/raw-v3-clock-review/review.json",
+      "bytes": 45750,
+      "sha256": "e732684a678badae3663618d89dd8206d97812aee4ba3850aeb62cf30ef3ffda"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/retained-journals.json",
+      "bytes": 1643,
+      "sha256": "fcacc5ebc84064bf534fd9f22c9a7b070f3b5d98a183f40db8178bbbb02f51df"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/state.json",
+      "bytes": 14036,
+      "sha256": "b4291934867bcd5d32a100af899da17e742b621f5847ca4bea6a795598d8b258"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/restored-ready.json",
+      "bytes": 13526,
+      "sha256": "0bcdb5550be2c0ed20e1eae8abee2fb50d921eb91d237d85069bdcb3541441c4"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/raw-v3-passive-adlx/handle.json",
+      "bytes": 1263,
+      "sha256": "6b186ee26f454134058634f523ab2f9e89aa725ea873686c2690f5c68b06bcd7"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/raw-v3-passive-adlx/samples.ndjson",
+      "bytes": 53489,
+      "sha256": "6521da5a40daa1131ebc7b97475f0d9588b552bf44e09188472620966c5e5257"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/client-historical8k-0.json",
+      "bytes": 4546,
+      "sha256": "75deec338cd65f8164193829e6949f96d3bd8149290f316d2aaaf5d3fe326259"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/response-historical8k-0.raw",
+      "bytes": 1326,
+      "sha256": "fbda32eb685232f3028045f7752da3339aed16ac20f6d1ff834aec602b73be19"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/client-historical8k-1.json",
+      "bytes": 4544,
+      "sha256": "ecb9a57dbaa93c8f7d842640354c12b07aae62318a5f7b8b929a27ceede23ab2"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/response-historical8k-1.raw",
+      "bytes": 1323,
+      "sha256": "a230bca6da68eeb80f9bf4b491425e89980cc74d5954403db57839c9471fc629"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/client-historical8k-2.json",
+      "bytes": 4545,
+      "sha256": "e9330b445a692361e1c040b5cfa296e3b1c1c374c05cee2043ee2f758d5ce4da"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/response-historical8k-2.raw",
+      "bytes": 1326,
+      "sha256": "c3ee41d9617371c1d113344c8b6dc39c23d5007313ae220b5f9d3f001887b559"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/client-historical8k-3.json",
+      "bytes": 4545,
+      "sha256": "824ea391497b1a6c482a6cf60fbeb0e66ad2bb02b6fbdb4d6130a62a628a6684"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-raw-clock-v3/RAW8K/response-historical8k-3.raw",
+      "bytes": 1326,
+      "sha256": "8c7ca3b7987a1d3d475065b4e10989845c55e9286e319e277a25765afc285af6"
+    }
+  ]
+}

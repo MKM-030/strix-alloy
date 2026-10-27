@@ -1,0 +1,752 @@
+{
+  "schema": "halogen01816.mtp-fixed2.tracked.v1",
+  "date": "2026-10-26",
+  "decision": "Retain adaptive gate0.90; fixed2/gate0 not promoted.",
+  "configuration": {
+    "engine": "0.18.16",
+    "checkpoint": "v2",
+    "OEM_mode": "Performance1",
+    "context": 32768,
+    "chunk_arena": 8192,
+    "cache": "Off/no_store",
+    "thinking": "Off",
+    "vision": "Off",
+    "PLD": "3,3",
+    "decode_prefetch": 0
+  },
+  "candidate_only_changes": {
+    "draft_tokens": 2,
+    "HALOGEN_MTP_GATE_P": "0"
+  },
+  "comparison": {
+    "complete": true,
+    "whole_HTTP_QPC_only": true,
+    "phase_rates_qualified": false,
+    "cases": {
+      "historical8k": {
+        "mean_http_seconds": {
+          "A_before": 6.892821033333333,
+          "B": 7.0456105,
+          "A_after": 6.8539369
+        },
+        "improvements_percent": {
+          "A_before": -2.216646361885588,
+          "A_after": -2.796547484993628
+        },
+        "faster_than_both_by_three_percent": false,
+        "exact_all_ordinal_output_and_request_parity": true,
+        "counters_by_arm": {
+          "A_before": {
+            "counts": {
+              "actual_input_tokens": 24576,
+              "actual_output_tokens": 384,
+              "drafted": 318,
+              "accepted": 210
+            },
+            "acceptance": 0.660377358490566,
+            "scoped": {
+              "head": {
+                "rounds": 171,
+                "drafted": 318,
+                "accepted": 210,
+                "acceptance": 0.660377358490566,
+                "accepted_per_round": 1.2280701754385965
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            }
+          },
+          "B": {
+            "counts": {
+              "actual_input_tokens": 24576,
+              "actual_output_tokens": 384,
+              "drafted": 360,
+              "accepted": 201
+            },
+            "acceptance": 0.5583333333333333,
+            "scoped": {
+              "head": {
+                "rounds": 180,
+                "drafted": 360,
+                "accepted": 201,
+                "acceptance": 0.5583333333333333,
+                "accepted_per_round": 1.1166666666666667
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            }
+          },
+          "A_after": {
+            "counts": {
+              "actual_input_tokens": 24576,
+              "actual_output_tokens": 384,
+              "drafted": 318,
+              "accepted": 210
+            },
+            "acceptance": 0.660377358490566,
+            "scoped": {
+              "head": {
+                "rounds": 171,
+                "drafted": 318,
+                "accepted": 210,
+                "acceptance": 0.660377358490566,
+                "accepted_per_round": 1.2280701754385965
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            }
+          }
+        },
+        "native_phase_observations": {
+          "A_before": {
+            "prefill_pooled_tokens_per_second": 1813.2318112397352,
+            "decode_pooled_tokens_per_second": 54.275618374558306,
+            "prefill_arithmetic_mean_tokens_per_second": 1814.0226666666665,
+            "decode_arithmetic_mean_tokens_per_second": 54.537333333333336,
+            "independently_clock_qualified": false
+          },
+          "B": {
+            "prefill_pooled_tokens_per_second": 1819.5414127803238,
+            "decode_pooled_tokens_per_second": 50.64359569529437,
+            "prefill_arithmetic_mean_tokens_per_second": 1819.6586666666667,
+            "decode_arithmetic_mean_tokens_per_second": 50.851333333333336,
+            "independently_clock_qualified": false
+          },
+          "A_after": {
+            "prefill_pooled_tokens_per_second": 1873.7562805449872,
+            "decode_pooled_tokens_per_second": 51.90311418685121,
+            "prefill_arithmetic_mean_tokens_per_second": 1876.71,
+            "decode_arithmetic_mean_tokens_per_second": 52.154333333333334,
+            "independently_clock_qualified": false
+          }
+        }
+      },
+      "natural16k": {
+        "mean_http_seconds": {
+          "A_before": 11.863635033333333,
+          "B": 11.895952166666667,
+          "A_after": 11.745638
+        },
+        "improvements_percent": {
+          "A_before": -0.27240498584568673,
+          "A_after": -1.2797445883030667
+        },
+        "faster_than_both_by_three_percent": false,
+        "exact_all_ordinal_output_and_request_parity": true,
+        "counters_by_arm": {
+          "A_before": {
+            "counts": {
+              "actual_input_tokens": 49152,
+              "actual_output_tokens": 384,
+              "drafted": 336,
+              "accepted": 177
+            },
+            "acceptance": 0.5267857142857143,
+            "scoped": {
+              "head": {
+                "rounds": 204,
+                "drafted": 336,
+                "accepted": 177,
+                "acceptance": 0.5267857142857143,
+                "accepted_per_round": 0.8676470588235294
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            }
+          },
+          "B": {
+            "counts": {
+              "actual_input_tokens": 49152,
+              "actual_output_tokens": 384,
+              "drafted": 399,
+              "accepted": 180
+            },
+            "acceptance": 0.45112781954887216,
+            "scoped": {
+              "head": {
+                "rounds": 201,
+                "drafted": 399,
+                "accepted": 180,
+                "acceptance": 0.45112781954887216,
+                "accepted_per_round": 0.8955223880597015
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            }
+          },
+          "A_after": {
+            "counts": {
+              "actual_input_tokens": 49152,
+              "actual_output_tokens": 384,
+              "drafted": 336,
+              "accepted": 177
+            },
+            "acceptance": 0.5267857142857143,
+            "scoped": {
+              "head": {
+                "rounds": 204,
+                "drafted": 336,
+                "accepted": 177,
+                "acceptance": 0.5267857142857143,
+                "accepted_per_round": 0.8676470588235294
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance": null,
+                "accepted_per_round": null
+              }
+            }
+          }
+        },
+        "native_phase_observations": {
+          "A_before": {
+            "prefill_pooled_tokens_per_second": 1835.9205749204405,
+            "decode_pooled_tokens_per_second": 45.15415912137532,
+            "prefill_arithmetic_mean_tokens_per_second": 1837.2723333333333,
+            "decode_arithmetic_mean_tokens_per_second": 45.352666666666664,
+            "independently_clock_qualified": false
+          },
+          "B": {
+            "prefill_pooled_tokens_per_second": 1850.9508567124835,
+            "decode_pooled_tokens_per_second": 43.76517249632441,
+            "prefill_arithmetic_mean_tokens_per_second": 1851.6606666666667,
+            "decode_arithmetic_mean_tokens_per_second": 43.91833333333333,
+            "independently_clock_qualified": false
+          },
+          "A_after": {
+            "prefill_pooled_tokens_per_second": 1812.0820214860312,
+            "decode_pooled_tokens_per_second": 44.239121669105195,
+            "prefill_arithmetic_mean_tokens_per_second": 1813.6813333333334,
+            "decode_arithmetic_mean_tokens_per_second": 44.269666666666666,
+            "independently_clock_qualified": false
+          }
+        }
+      }
+    },
+    "total_requests": 24,
+    "excluded_warmups": 6,
+    "measured_requests": 18,
+    "counters_allowed_to_differ_by_policy": true,
+    "qualified": false,
+    "statistical_significance_claimed": false,
+    "A_after_recovered_after_terminal_start_failure": true,
+    "original_failed_state_preserved": true
+  },
+  "independent_saved_review": {
+    "passed": true,
+    "requests": 24,
+    "excluded_warmups": 6,
+    "measured_requests": 18,
+    "all_ordinal_request_output_token_finish_parity": true,
+    "raw_responses_reparsed": true,
+    "QPC_intervals_and_means_recomputed": true,
+    "genuine_policy_draft_accepted_scope_counts_retained": true
+  },
+  "recovery": {
+    "A_after_only_recovered": true,
+    "original_startup_failure_retained": true,
+    "failed_start_received_no_requests": true,
+    "normal_restored_after_recovery": true
+  },
+  "phase_rates_qualified": false,
+  "promotion_qualified": false,
+  "full_umbrella_goal_achieved": false,
+  "latest_independent_8K_unchanged": {
+    "prefill_RAW_tps": 1858.898097191238,
+    "decode_RAW_tps": 54.36898782824776,
+    "accepted": 210,
+    "drafted": 318
+  },
+  "limitations": [
+    "Windows QPC whole HTTP comparison only; native phase observations unqualified.",
+    "Startup interruption lengthens returning bookend gap; no statistical significance claim.",
+    "OriginalA_before/B retained and only missingA_after collected; failedstartnotameasurement.",
+    "Separate Root PF cohort outside scope; no hardware changes from this report."
+  ],
+  "sources": [
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\summary.json",
+      "bytes": 6025,
+      "sha256": "478d66eeb0d975f25aa2e40bc65b5aa05a6a56c9f7ce36b116b5d47bdb3fe956"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\request-historical8k-0.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\response-historical8k-0.raw",
+      "bytes": 1325,
+      "sha256": "7abd9bb5be5045d2c452229a0b78e37750a0afb36141030fc288d635c68c36e6"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\client-historical8k-0.json",
+      "bytes": 4480,
+      "sha256": "7ff699fd76c2da6ad113c03bbc03304678e50b5f80a94157bca02125c07ba2e0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\request-historical8k-1.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\response-historical8k-1.raw",
+      "bytes": 1326,
+      "sha256": "9fd0df1a0a9a97a3ff6327fa08918f2869634658ed6395da359efeb785343caf"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\client-historical8k-1.json",
+      "bytes": 4493,
+      "sha256": "9ca89fdf82be4f2d5e60a2b55fd8476bdfbdd728b298b32a47a2cc3ab169307a"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\request-historical8k-2.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\response-historical8k-2.raw",
+      "bytes": 1326,
+      "sha256": "ba96fac41e5fdad83806b8d3e4ff7b6ab79d3f6a3441d050623a4c7d78a14fb6"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\client-historical8k-2.json",
+      "bytes": 4481,
+      "sha256": "a58e053d20b7dd02bea79a954739a1b1128cb4c6c3c7311737be436d1a3c986f"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\request-historical8k-3.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\response-historical8k-3.raw",
+      "bytes": 1326,
+      "sha256": "93dc0bba3c12e952d48128729d0f840191a469a6b3a98edb0b2b8eb452baa101"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\client-historical8k-3.json",
+      "bytes": 4481,
+      "sha256": "917c6209cd10cfe9e72b98c1859ede7259df1bfcd2518415a4e35af01b90d85c"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\request-natural16k-0.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\response-natural16k-0.raw",
+      "bytes": 1275,
+      "sha256": "a55ea7553829068bdcaaf042abd108982a4eb1679e76cb9d3454c1d46e064c02"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\client-natural16k-0.json",
+      "bytes": 4485,
+      "sha256": "85f4176ef5bb0b23a19e63a20e4e26c5ef8747fa34ccfdc3bd2669b96fa0e76a"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\request-natural16k-1.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\response-natural16k-1.raw",
+      "bytes": 1274,
+      "sha256": "6fdf976b6de1b3ee2fd1438e0ac6c8f3f63d25a3f425b8cd0edc86ccfcc38754"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\client-natural16k-1.json",
+      "bytes": 4498,
+      "sha256": "09214ef78c3f0c891a60f621e78c8cbcd2ad28e9131234da6946e71fd4ed190c"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\request-natural16k-2.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\response-natural16k-2.raw",
+      "bytes": 1274,
+      "sha256": "38638f607ede4f27db3135a3cd951f16f8cde42cef6fb99528300df47ab5c0e0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\client-natural16k-2.json",
+      "bytes": 4487,
+      "sha256": "2268ddb4da09dc126c5d30c130ce15ce938573a7b625c08b7e155ca65cee9221"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\request-natural16k-3.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\response-natural16k-3.raw",
+      "bytes": 1273,
+      "sha256": "c415d8224ba90d2679d6257eed4266f4a239d258050aa56a2f98386e02b0759c"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_before\\MTP128\\client-natural16k-3.json",
+      "bytes": 4496,
+      "sha256": "3df45c6fe19cff2ce2399dc980aae8a94b1edd7cfe3aa83e5ee2abf7e3f6ed7f"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\summary.json",
+      "bytes": 6008,
+      "sha256": "e47d7d996e5e3769346ec457254655c9f07d5b4b86b8503ffa2d03076f2952d6"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\request-historical8k-0.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\response-historical8k-0.raw",
+      "bytes": 1325,
+      "sha256": "b7032aa9c794ef44131a8236b6b4fea0aab538e9368d94bebc8344ae54d04c11"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\client-historical8k-0.json",
+      "bytes": 4512,
+      "sha256": "150ab63f2236e6bf362bee58c9d728b1245d09c7540af4c544608d86d5e79c48"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\request-historical8k-1.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\response-historical8k-1.raw",
+      "bytes": 1325,
+      "sha256": "b52d15aef99ddc215fbd4ea510cb5a653733b821ee4c755de2ced5012851ee33"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\client-historical8k-1.json",
+      "bytes": 4523,
+      "sha256": "44d981de5828dee99eec74371219a8269acb52f4929b28363eea19aed31b8b7b"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\request-historical8k-2.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\response-historical8k-2.raw",
+      "bytes": 1326,
+      "sha256": "9ad5d65b30a1bef9d863719cafe956609578f5319c05bff39a17561bb1310b80"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\client-historical8k-2.json",
+      "bytes": 4513,
+      "sha256": "40c4e28349c194be5e69223d6ddf65afbfbba06e018bf2ce8bfddd4e2f5716f5"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\request-historical8k-3.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\response-historical8k-3.raw",
+      "bytes": 1326,
+      "sha256": "f7c677615de9feb14ac99356c83bdd1a0400317ce68251615013b62507c9febb"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\client-historical8k-3.json",
+      "bytes": 4513,
+      "sha256": "960ceacd9abce7ecf2f62522212f71c84ea5c0ce7b173f557bcd0e2311c7df4e"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\request-natural16k-0.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\response-natural16k-0.raw",
+      "bytes": 1274,
+      "sha256": "49dc00d38cf6e5e6d5467228bf13266fef3a48e4edd5735a99ec928840f0c3b7"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\client-natural16k-0.json",
+      "bytes": 4516,
+      "sha256": "c4fa0c83d6c011840c472f417b2b7a8b633628472fec4a42e0022030c04369eb"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\request-natural16k-1.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\response-natural16k-1.raw",
+      "bytes": 1274,
+      "sha256": "a177f485e4d76f07acda656ee85acae5fc3cbcf712aed4b25a80e91a9837f18a"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\client-natural16k-1.json",
+      "bytes": 4529,
+      "sha256": "e0c64119a9d4f73bd39df42fa37c3147b4a4b9cfb65125855eb9594627503930"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\request-natural16k-2.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\response-natural16k-2.raw",
+      "bytes": 1274,
+      "sha256": "ebb96fd329f844e2e4676339cd48bf960aeca127276289464d8c87ef8836dda9"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\client-natural16k-2.json",
+      "bytes": 4518,
+      "sha256": "9d7565557251ebad6b706b176a3e8530c1fb8e97f390c190f48d875f7fe95555"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\request-natural16k-3.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\response-natural16k-3.raw",
+      "bytes": 1273,
+      "sha256": "b37208437666cd2f93bd8cf95d8eeaa24fe5deb234ce88c007ab3f6e6d162692"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\B\\MTP128\\client-natural16k-3.json",
+      "bytes": 4517,
+      "sha256": "384272cc844ebf191ee700d730a23a28e535d0d370e9bb71ea32285c745ec9c4"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\summary.json",
+      "bytes": 5989,
+      "sha256": "8e21581cff51f1c997163dd83dc613497d0a946c1ef51fc2e5b4d4bf63570819"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\request-historical8k-0.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\response-historical8k-0.raw",
+      "bytes": 1325,
+      "sha256": "271508dfaed1c6ea1df4af33e99022e05f4640e870da3d9cd272004a94dbf0e0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\client-historical8k-0.json",
+      "bytes": 4483,
+      "sha256": "63eea643d859ba5ce976a57f12f52da539707e027c4009ac60a3421db3ff6cbc"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\request-historical8k-1.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\response-historical8k-1.raw",
+      "bytes": 1326,
+      "sha256": "2d238bd37cc96e05a1306f3dc413ebcc0aae7531307841d0f63bb79dc72ae09b"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\client-historical8k-1.json",
+      "bytes": 4481,
+      "sha256": "7b3fa3b70b78e1506b18e684e21f8f883522584b4fc47072123ed4d131ba4efc"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\request-historical8k-2.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\response-historical8k-2.raw",
+      "bytes": 1326,
+      "sha256": "81b5856b94e2e12eb497682317f8e9783c6eeef415ed423146ec62819bbfe3b0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\client-historical8k-2.json",
+      "bytes": 4494,
+      "sha256": "d74ffd9ad9ab67c23d4de86cd3b3e3397c07463b112bb77e7f62795e4dd1afd3"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\request-historical8k-3.json",
+      "bytes": 42833,
+      "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\response-historical8k-3.raw",
+      "bytes": 1326,
+      "sha256": "777b394482eaa7071b79477c63acf1d695b645e603aefc242c485a58baf1955e"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\client-historical8k-3.json",
+      "bytes": 4483,
+      "sha256": "788645ece52caf79b38f0d26b52593e1938d0278a5ffeb9712c780743c5e494a"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\request-natural16k-0.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\response-natural16k-0.raw",
+      "bytes": 1275,
+      "sha256": "20ffa187c31f6c0fd8617925e1a132446c7c0aefb77ff278cddb413a802cf981"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\client-natural16k-0.json",
+      "bytes": 4498,
+      "sha256": "be9f4b92d68bdf11f41cb671f006175509a9e69e8ba330eb8d8aa9985458e14e"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\request-natural16k-1.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\response-natural16k-1.raw",
+      "bytes": 1274,
+      "sha256": "1270b9f2cc33b6183e9ab0a81a164e0530c7b5fa037432ffa0236a1f57cda3e0"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\client-natural16k-1.json",
+      "bytes": 4487,
+      "sha256": "abf84b97b1a77ca52e6f19c9ff787e032d9c12fade2a1c6d99b63cd6541e09d7"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\request-natural16k-2.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\response-natural16k-2.raw",
+      "bytes": 1274,
+      "sha256": "435e80782cdc8d8b7b3430ddafd882490b96695bc668356d4e4cfa5cecc57a4a"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\client-natural16k-2.json",
+      "bytes": 4488,
+      "sha256": "db167cacfdc2e818715c5d57ec7d2635d1ad2b11d36347f7722051245f6ef2bc"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\request-natural16k-3.json",
+      "bytes": 72848,
+      "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\response-natural16k-3.raw",
+      "bytes": 1274,
+      "sha256": "4f4bf6a008f33f6a736e2ee306565997b51b02f43cc4b5fd2011e7a3eab7a9df"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\A_after\\MTP128\\client-natural16k-3.json",
+      "bytes": 4499,
+      "sha256": "e9554ab5cbe04e3c69fdbf57d68d232829d678204abd5501395ac707afe619d5"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-recovery\\recovered-comparison.json",
+      "bytes": 9209,
+      "sha256": "e3dc6e22d97b53766033a557edb47f7c6643a11edd6adcdd92c8d91f000c8c90"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-recovery\\state.json",
+      "bytes": 552,
+      "sha256": "d02611c7b2e949061ee176615771dd902435ad575930f6e6fee2820d6b7e11fe"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-aba\\state.json",
+      "bytes": 14655,
+      "sha256": "142cf2558fbb540e9496db83f8cb96fe744a2c2323c04322856863559da01e71"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\mtp-fixed2-recovery-audit\\startup-failure-audit.json",
+      "bytes": 3349,
+      "sha256": "a47b42be426819d051a1b128c8c50f97c068037edfee9effba522dcbcf74fab6"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-fixed2-recovery\\ready-left-online.json",
+      "bytes": 12975,
+      "sha256": "8726f0671fefe9d2f8106a856cb05586f405becf8640ae281cbd241764cdab2a"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\mtp-fixed2-aba\\packet-pins.json",
+      "bytes": 1541,
+      "sha256": "2833b8025c17980687f82064bcf93347a45bffdc326be802e52f69480c32e3f9"
+    },
+    {
+      "path": "server\\.local\\halogen-update-20261025\\primary01816\\mtp-fixed2-aba\\run.py",
+      "bytes": 8616,
+      "sha256": "cf963647900e78e815ea0b69b75de2a762c19f62daf24f95d1d29edff4d44bea"
+    },
+    {
+      "path": "docs\\benchmarks\\halogen01816-oem-performance-20261026.json",
+      "bytes": 9658,
+      "sha256": "223e01332c0ba0be68ad29b6a7914f063ea81fc7ff0ff71143b2912f0b01b8c3"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+Equations in this component are adapted from SGLang, Apache License2.0.
+Repository: https://github.com/sgl-project/sglang
+Revision: 3c560089e1818a5217a73f2168273485a5350341
+Original model: python/sglang/srt/models/dflash.py
+Original worker: python/sglang/srt/speculative/dflash_worker_v2.py
+Original primitive layers: layernorm.py, activation.py,
+rotary_embedding/base.py and rotary_embedding/utils.py.
+The unmodified source files, their notices and Apache2.0 license are retained
+in ../dflash2_reference/sources/. Exact source hashes are recorded in that
+package and in this package's provenance.
+
+Changes: explicit passive-import tensor graph, persistent owned packed weights,
+startup-only CPU validation, metadata-only runtime guards, private context and
+proposal composition, and an explicit batched-SDPA experiment. These changes
+do not include any trained model payload or a native engine installer.
+
+Trained model metadata: incoai/Qwen3.8-Flash-Next-DFlash2,
+revision a22a1744e85c17364dcc54a6a420af7135d4c7f6.

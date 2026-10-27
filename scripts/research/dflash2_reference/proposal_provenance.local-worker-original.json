@@ -1,0 +1,42 @@
+{
+  "scope": "CPU-only TP1 dense full-head top16 and learned rank256 greedy selector; whole query blocks4/8; caller-owned weights",
+  "source_revision": "3c560089e1818a5217a73f2168273485a5350341",
+  "license": "sources/SGLANG_LICENSE (Apache-2.0)",
+  "source_sha256": "b7b541368cbbb072a679d08ba5bf0f952f4a43f02b6c078562b2ea7a9ddfd01b",
+  "worker_sha256": "8f82de8d666f81f3c1aa43dc651006f4182ff58593fdfe4eea28c5ee2a14bfc0",
+  "implementation_sha256": "df86a71956ca13242e00ac867b59b542303f79534a8096d87ed29d8f1fd42516",
+  "test_sha256": "c69b7373a7e36e6f5af5f9cbb0cdb6968c916f02bd772f2e5919e9947d220813",
+  "equations": {
+    "full_head": "_project_candidate_logits dense hidden-to-head-dtype cast; candidate_topk TP1 org_vocab_size crop; _radix_topk CPU torch.topk fallback",
+    "unary_transform": "DFlash2DraftModel._transform_unary_logits checkpoint defaults: FP32, multiplier1, no softcap",
+    "learned_selector": "CandidateSelector.build_lattice bias-free projection plus existing math_ops.score_edges; predecessor anchor at slot0 and previous candidate table at later slots",
+    "greedy_walk": "argmax initial and predecessor-conditioned successor maps; existing math_ops.follow_maps; gathered token IDs and exact FP32 point-mass q",
+    "worker_geometry": "_SelectorDraftSampler.__call__ drops each block's hidden row0; _selector_lattice flattens only predicted hidden for full-head computation"
+  },
+  "verification": {
+    "red": "Missing proposal module: 2 failures, 7 skips, before implementation",
+    "oracle": "Actual pinned source functions and whole CandidateSelector class plus actual worker sampler body compiled from AST. Only torch.compile decorators removed and mark_static expressions replaced with pass to preserve enclosing loop syntax; no arithmetic/slicing/RNG edits.",
+    "synthetic_geometry": "batch2, vocab32/64, true hidden2560/rank256/top16; blocks4/8; FP32/BF16; exact rtol0/atol0",
+    "cases": [
+      "Full worker/source output equivalence with cropped padded high-logit head rows",
+      "Every block's anchor hidden row discarded",
+      "Analytical learned coherent path differs from independent unary argmax",
+      "Mixed BF16 hidden/FP32 dense head follows source cast",
+      "CPU topk tie behavior agrees with pinned source CPU fallback",
+      "Inputs/weights unchanged, outputs owned, no grad or random state advance",
+      "Invalid geometry/IDs/key sets/dtypes/nonfinite weights/features/head and overflowing lattice rejected",
+      "Passive standalone/package import; explicit stdlib source hashing; no Torch import"
+    ],
+    "cpu_command": "C:/Users/Marcel/AppData/Local/Programs/Python/Python312/python.exe -B scripts/research/dflash2_reference/test_proposal.py --run-cpu",
+    "cpu_result": "9 tests passed, 3.400 seconds, exit0",
+    "passive_result": "2 tests passed, 0.092 seconds, exit0"
+  },
+  "limitations": [
+    "No tensor payload acquired or read; no hardware/engine/process/provider/device activity",
+    "No actual full-checkpoint vocab allocation; synthetic vocab tests retain actual hidden/rank/top-k dimensions",
+    "CPU topk fallback only; no FlashInfer/GPU tie or fused BF16 numerical claim",
+    "No quality, speed, NPU equivalence, model loader, native allocation or producer attachment claim",
+    "org_vocab_size is an explicit prefix bound, not proof every ID in the prefix is defined; native consumer cap3 and defined-token validation remain separate",
+    "Reference batch is bounded1..8; block8 is trained checkpoint size, block4 is scoped runtime reference"
+  ]
+}

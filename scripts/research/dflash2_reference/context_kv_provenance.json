@@ -1,0 +1,43 @@
+{
+  "schema": "dflash2.context-kv-source-provenance.v1",
+  "upstream_revision": "3c560089e1818a5217a73f2168273485a5350341",
+  "license": "Apache-2.0",
+  "license_file": "sources/SGLANG_LICENSE",
+  "model_revision": "incoai/Qwen3.8-Flash-Next-DFlash2@a22a1744e85c17364dcc54a6a420af7135d4c7f6",
+  "sources": [
+    {
+      "path": "sources/sglang_dflash.py",
+      "url": "https://github.com/sgl-project/sglang/blob/3c560089e1818a5217a73f2168273485a5350341/python/sglang/srt/models/dflash.py",
+      "sha256": "b7b541368cbbb072a679d08ba5bf0f952f4a43f02b6c078562b2ea7a9ddfd01b",
+      "oracle_methods": ["DFlashDraftModel.project_target_hidden", "DFlashAttention.kv_proj_only"]
+    },
+    {
+      "path": "sources/sglang_layernorm.py",
+      "url": "https://github.com/sgl-project/sglang/blob/3c560089e1818a5217a73f2168273485a5350341/python/sglang/srt/layers/layernorm.py",
+      "sha256": "ba362ab14822415e251f46b369d13aa427d9d4958ac82d6fc2df719af732b758",
+      "oracle_methods": ["RMSNorm.forward_native"],
+      "configuration": "Constructor default cast_x_before_out_mul=False; FP32 normalization and weight multiply then one output cast. No residual."
+    },
+    {
+      "path": "sources/sglang_rotary_base.py",
+      "url": "https://github.com/sgl-project/sglang/blob/3c560089e1818a5217a73f2168273485a5350341/python/sglang/srt/layers/rotary_embedding/base.py",
+      "sha256": "bbe1dbf6a7b2a62496c0490fa2ede237010381b8bbffdcbf9e9ef8e270dbf177",
+      "oracle_methods": ["RotaryEmbedding._compute_inv_freq", "RotaryEmbedding._compute_cos_sin_cache", "RotaryEmbedding.forward_native"],
+      "configuration": "NeoX width128 theta10000, FP32 inverse frequencies/position outer product/trig; CPU cache cast to activation dtype. _force_native=False avoids upstream CUDA migration branch."
+    },
+    {
+      "path": "sources/sglang_rotary_utils.py",
+      "url": "https://github.com/sgl-project/sglang/blob/3c560089e1818a5217a73f2168273485a5350341/python/sglang/srt/layers/rotary_embedding/utils.py",
+      "sha256": "828a50285218e40c3429d2f4e75b1d051e3a89d831a7ab005e8c2609278aeddc",
+      "oracle_methods": ["apply_rotary_emb"],
+      "configuration": "cos/sin cast to activation dtype; separate products and add/sub materializations, including BF16 rounds."
+    }
+  ],
+  "scope": "Source-native/sequential CPU numerical contract only. Five output-tiled CPU MMs implement the same stacked five-layer K/V projection without a full duplicate stacked weight allocation.",
+  "validation": "Exact rtol=0/atol=0 FP32/BF16 stage-oracle tests execute only hash-verified arithmetic method ASTs. FP64 comparisons are descriptive error reports only. Deliberately missing normalization and missing rotation must fail the exact source oracle.",
+  "limits": [
+    "Fused GPU/Triton context-KV keeps K normalization FP32 through rotation before final store; that is a different BF16 materialization path and is not claimed equal.",
+    "No CUDA/NPU equivalence, native lifecycle/authentication, cross-publication replay ledger, native cache scatter, useful overlap, trained proposal quality or performance claim.",
+    "Private publication one-shot selection is single-request and serialized by its caller. Model weights are supplied as caller-owned CPU tensors; no loader or model-data download exists."
+  ]
+}

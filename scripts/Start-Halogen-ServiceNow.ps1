@@ -7,15 +7,18 @@ Uses the existing project Python environment and normal controller/backend
 ownership, admission, reserve and cleanup rules. No credentials are printed.
 The default Current4K profile pairs a 4096-token prefill chunk with a 4096-token
 arena; Current8K explicitly pairs 8192 with 8192. Halogen defaults to installed
-0.18.10. Select -HalogenVersion 0.18.15 explicitly for the prepared candidate.
+0.18.10. Select -HalogenVersion 0.18.16 explicitly for the installed update.
 Measured32K is an opt-in preset for the tested 0.18.15 stock configuration:
 32K context/pool, 8K chunk/arena, adaptive gate 0.90, Flexible cache,
 prefetch off, Vision On and Thinking Off/low. It requires the existing stable
 ServiceNow token file and rejects conflicting explicit selector settings.
+MeasuredText32K selects the tested 0.18.16 text configuration with the same
+32K context/pool, 8K chunk/arena and adaptive gate, but Cache Off and Vision Off.
+Thinking remains Off/low and prefetch remains off. ConsoleTrace is opt-in.
 HistoricalStock requires -HalogenVersion 0.16.2
 and retains the native prefill defaults used by the retained 2026-10-04 stock
 benchmark. All profiles select v2 and stock PLD 3,3. Fixed2 is the stable
-measured policy. Halogen 0.18.5, 0.18.7, 0.18.8, 0.18.10, 0.18.11 and 0.18.15 also offer -MtpPolicy Confidence90; Auto
+measured policy. Halogen 0.18.5, 0.18.7, 0.18.8, 0.18.10, 0.18.11, 0.18.15 and 0.18.16 also offer -MtpPolicy Confidence90; Auto
 selects the upstream confidence-gated behavior for those versions.
 Halogen 0.17.2, 0.17.3, 0.18.0 and 0.18.1 default to Thinking On, medium effort and a 2048-token thinking
 budget. Use -Thinking Off to select the supported server default explicitly.
@@ -37,11 +40,15 @@ does not create a transcript or redirect request content to a file.
 .EXAMPLE
 .\scripts\Start-Halogen-ServiceNow.ps1 -Profile Measured32K -PrintOnly
 .EXAMPLE
+.\scripts\Start-Halogen-ServiceNow.ps1 -Profile MeasuredText32K -ConsoleTrace
+.EXAMPLE
+.\scripts\Start-Halogen-ServiceNow.ps1 -Profile MeasuredText32K -PrintOnly
+.EXAMPLE
 .\scripts\Start-Halogen-ServiceNow.ps1 -Stop
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('Current8K', 'Current4K', 'HistoricalStock', 'Measured32K')]
+    [ValidateSet('Current8K', 'Current4K', 'HistoricalStock', 'Measured32K', 'MeasuredText32K')]
     [string]$Profile = 'Current4K',
     [ValidateRange(1024, 65535)]
     [int]$Port = 8840,
@@ -51,7 +58,7 @@ param(
     [switch]$Stop,
     [ValidateSet('On', 'Off')]
     [string]$Thinking = 'On',
-    [ValidateSet('0.16.2', '0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')]
+    [ValidateSet('0.16.2', '0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16')]
     [string]$HalogenVersion = '0.18.10',
     [ValidateSet('Auto', 'Fixed2', 'Confidence90')]
     [string]$MtpPolicy = 'Fixed2',
@@ -90,18 +97,21 @@ if ($Stop -or $Status) {
 
 $contextCapacity = 262144
 $thinkingEffort = 'medium'
-$isMeasuredProfile = ($Profile -eq 'Measured32K')
+$isMeasuredProfile = ($Profile -in @('Measured32K', 'MeasuredText32K'))
+$isMeasuredTextProfile = ($Profile -eq 'MeasuredText32K')
 if ($isMeasuredProfile) {
-    if (($PSBoundParameters.ContainsKey('HalogenVersion') -and $HalogenVersion -ne '0.18.15') -or
+    $measuredVersion = if ($isMeasuredTextProfile) { '0.18.16' } else { '0.18.15' }
+    $measuredCache = if ($isMeasuredTextProfile) { 'Off' } else { 'Flexible' }
+    if (($PSBoundParameters.ContainsKey('HalogenVersion') -and $HalogenVersion -ne $measuredVersion) -or
         ($PSBoundParameters.ContainsKey('Thinking') -and $Thinking -ne 'Off') -or
         ($PSBoundParameters.ContainsKey('MtpPolicy') -and $MtpPolicy -notin @('Auto', 'Confidence90')) -or
-        ($PSBoundParameters.ContainsKey('PromptCache') -and $PromptCache -ne 'Flexible')) {
-        throw 'Measured32K requires Halogen 0.18.15, Thinking Off, adaptive MTP (Auto or Confidence90), and Flexible cache.'
+        ($PSBoundParameters.ContainsKey('PromptCache') -and $PromptCache -ne $measuredCache)) {
+        throw ('{0} requires Halogen {1}, Thinking Off, adaptive MTP (Auto or Confidence90), and {2} cache.' -f $Profile, $measuredVersion, $measuredCache)
     }
-    $HalogenVersion = '0.18.15'
+    $HalogenVersion = $measuredVersion
     $Thinking = 'Off'
     $MtpPolicy = 'Confidence90'
-    $PromptCache = 'Flexible'
+    $PromptCache = $measuredCache
     $contextCapacity = 32768
     $thinkingEffort = 'low'
 }
@@ -109,10 +119,10 @@ if ($isMeasuredProfile) {
 if ($Profile -eq 'HistoricalStock' -and $HalogenVersion -ne '0.16.2') {
     throw 'HistoricalStock requires explicit -HalogenVersion 0.16.2 for the retained 2026-10-04 stock profile.'
 }
-if ($HalogenVersion -notin @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15') -and $PSBoundParameters.ContainsKey('Thinking')) {
+if ($HalogenVersion -notin @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16') -and $PSBoundParameters.ContainsKey('Thinking')) {
     throw 'Thinking server defaults require a managed Halogen 0.17.2 or newer.'
 }
-if ($MtpPolicy -eq 'Confidence90' -and $HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')) {
+if ($MtpPolicy -eq 'Confidence90' -and $HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16')) {
     throw 'Confidence90 requires managed Halogen 0.18.5 or newer supported here.'
 }
 
@@ -135,7 +145,7 @@ $stableApiToken = Join-Path $server '.local\servicenow-api-token.txt'
 if (Test-Path -LiteralPath $stableApiToken -PathType Leaf) {
     $configuration.token_file = $stableApiToken
 } elseif ($isMeasuredProfile) {
-    throw 'Measured32K requires the existing server/.local/servicenow-api-token.txt; no replacement credential was created.'
+    throw ($Profile + ' requires the existing server/.local/servicenow-api-token.txt; no replacement credential was created.')
 }
 $windowsPowerShell = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
 if (-not (Test-Path -LiteralPath $windowsPowerShell -PathType Leaf)) {
@@ -146,19 +156,19 @@ $configuration.engine | Add-Member -NotePropertyName 'python_executable' -NotePr
 $configuration.engine.powershell = $windowsPowerShell
 $configuration.engine | Add-Member -NotePropertyName 'speculation_policy' `
     -NotePropertyValue ([pscustomobject]@{ HALOGEN_PLD = '3,3' }) -Force
-if ($HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15') -or $MtpPolicy -eq 'Fixed2') {
+if ($HalogenVersion -notin @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16') -or $MtpPolicy -eq 'Fixed2') {
     $configuration.engine | Add-Member -NotePropertyName 'draft_tokens' -NotePropertyValue 2 -Force
 }
-if ($HalogenVersion -in @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')) {
+if ($HalogenVersion -in @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16')) {
     $gate = if ($MtpPolicy -eq 'Fixed2') { '0' } else { '0.90' }
     $configuration.engine.speculation_policy | Add-Member -NotePropertyName 'HALOGEN_MTP_GATE_P' -NotePropertyValue $gate -Force
 }
-if ($Profile -in @('Current8K', 'Current4K', 'Measured32K')) {
+if ($Profile -in @('Current8K', 'Current4K', 'Measured32K', 'MeasuredText32K')) {
     $prefillTokens = if ($Profile -eq 'Current4K') { 4096 } else { 8192 }
     $configuration.engine | Add-Member -NotePropertyName 'prefill_chunk' -NotePropertyValue $prefillTokens -Force
     $configuration.engine | Add-Member -NotePropertyName 'max_prefill_tokens' -NotePropertyValue $prefillTokens -Force
 }
-if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')) {
+if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16')) {
     $configuration.engine | Add-Member -NotePropertyName 'api_defaults' `
         -NotePropertyValue ([pscustomobject]@{
             enable_thinking = ($Thinking -eq 'On')
@@ -167,8 +177,8 @@ if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.1
         }) -Force
 }
 if ($isMeasuredProfile) {
-    $configuration.backend.expected | Add-Member -NotePropertyName 'vision.enabled' -NotePropertyValue $true -Force
-    $configuration.engine | Add-Member -NotePropertyName 'disable_vision' -NotePropertyValue $false -Force
+    $configuration.backend.expected | Add-Member -NotePropertyName 'vision.enabled' -NotePropertyValue (-not $isMeasuredTextProfile) -Force
+    $configuration.engine | Add-Member -NotePropertyName 'disable_vision' -NotePropertyValue $isMeasuredTextProfile -Force
     $configuration.engine | Add-Member -NotePropertyName 'kernel_controls' `
         -NotePropertyValue ([pscustomobject]@{ HALOGEN_DECODE_PREFETCH = 0 }) -Force
 }
@@ -177,10 +187,10 @@ $configuration | Add-Member -NotePropertyName 'console_trace' `
 
 Write-Host ('Profile: {0}; Halogen {1} v2; MTP policy {2}; PLD 3,3; cache {3}; one request.' -f $Profile, $HalogenVersion, $MtpPolicy, $PromptCache)
 Write-Host ('Context capacity: {0} positions (input plus output).' -f $contextCapacity)
-if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15')) {
+if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16')) {
     Write-Host ('Thinking default: {0}; {1} effort; thinking budget: 2048 tokens. Requests can override these defaults.' -f $Thinking, $thinkingEffort)
 }
-if ($Profile -in @('Current8K', 'Current4K', 'Measured32K')) {
+if ($Profile -in @('Current8K', 'Current4K', 'Measured32K', 'MeasuredText32K')) {
     Write-Host ('Prefill chunk / token arena: {0} / {1}.' -f $configuration.engine.prefill_chunk, $configuration.engine.max_prefill_tokens)
 } else {
     Write-Host 'Prefill chunk / token arena: native stock defaults from the historical profile.'

@@ -1,8 +1,26 @@
 # Halogen foreground console and ServiceNow REST integration
 
-The foreground launcher defaults to **installed Halogen 0.17.3**, fixed MTP
-depth 2 and the `Current8K` profile. The measurements
-below describe historical 0.16.2 workloads. The separate
+The current measured text preset is **installed Halogen 0.18.16**. Select it
+explicitly with `-Profile MeasuredText32K`; the bare launcher retains 0.18.10,
+fixed MTP depth 2 and `Current4K`. The measured text preset uses 32K capacity,
+8K prefill chunk/arena, adaptive MTP gate 0.90, PLD `3,3`, Cache Off,
+Thinking Off/low, Vision Off and prefetch off. NPU helpers remain disabled.
+
+The [26 October natural-text report](../benchmarks/halogen01816-natural-8k16k-20261026-evening.md)
+records three measured runs after an excluded warmup, with 128 output tokens,
+temperature 0 and seed 1:
+
+| Actual input tokens | RAW prefill tok/s | RAW decode tok/s | Native head acceptance |
+| ---: | ---: | ---: | ---: |
+| 8,192 | 2033.12 | 56.93 | 210 / 318 = 66.04% |
+| 16,384 | 2002.08 | 49.63 | 177 / 336 = 52.68% |
+
+At 8K, native API timing reported 1876.97 / 52.47 tok/s; the report retains
+both clocks without a universal correction. Actual ServiceNow requests have
+their own workload and may override Thinking and sampling in the JSON body.
+The later gate/PLD campaign qualified no replacement for this normal policy.
+
+The measurements below describe historical 0.16.2 workloads. The separate
 [historical 0.17.2 fixed-depth-2 comparison](../benchmarks/halogen0172-fixed-depth2-20261008.md)
 and [historical 0.17.2 adaptive-depth comparison](../benchmarks/halogen0172-stock-adaptive-20261008.md)
 retain earlier engine measurements; they do not measure the current 0.17.3 runtime.
@@ -40,11 +58,12 @@ Run from `C:\Projects\strix-alloy-clean` in the console that should display the
 server and API trace:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile MeasuredText32K -ConsoleTrace
 ```
 
-For Halogen 0.17.3 and an explicit 0.17.2 selection, this launcher defaults to
-Thinking On, medium effort and a maximum of 2048 thinking tokens. It forwards the
+For the older general-purpose profiles, this launcher defaults to
+Thinking On, medium effort and a maximum of 2048 thinking tokens. The explicit
+measured text preset instead selects Thinking Off. The older profiles forward the
 supported upstream
 `HALOGEN_ENABLE_THINKING=1`, `HALOGEN_REASONING_EFFORT=medium` and
 `HALOGEN_MAX_THINKING_TOKENS=2048` through the managed container configuration.
@@ -69,10 +88,9 @@ own budget adjustment. Return the final `message.content` to the text connector;
 keep `reasoning_content` separate. The retained speed measurements used Thinking
 Off and do not qualify Thinking On throughput.
 
-The default `Current8K` profile selects installed Halogen 0.17.3 and pairs an
-8,192-token prefill chunk with an 8,192-token prefill arena.
-Use `-HalogenVersion 0.17.3` to pin the current version or
-`-HalogenVersion 0.17.2` to select the earlier installed backend explicitly.
+`Current4K` pairs a 4,096-token prefill chunk with a 4,096-token arena;
+`Current8K` explicitly pairs 8,192 with 8,192. Their default installed version
+is 0.18.10. Use `-HalogenVersion` to select another supported installed backend.
 The historical Stock A profile requires an explicit 0.16.2 selection; it rejects
 0.17.2 and 0.17.3:
 

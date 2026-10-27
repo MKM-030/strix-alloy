@@ -2,6 +2,7 @@
 import argparse
 import asyncio
 import contextlib
+import copy
 import ctypes
 import hashlib
 import importlib.util
@@ -45,6 +46,17 @@ def atomic(path, value):
                 time.sleep(.025)
     finally:
         temporary.unlink(missing_ok=True)
+
+async def publish_heartbeat(path, state):
+    snapshot=copy.deepcopy(state)
+    try:
+        await asyncio.to_thread(atomic,path,snapshot)
+    except OSError as exc:
+        if os.name!='nt' or getattr(exc,'winerror',None) not in (5,32,33): raise
+        LOG.warning('Heartbeat publication skipped while status file is locked: %s',exc)
+        return False
+    return True
+
 
 @contextlib.contextmanager
 def lease(path):
@@ -154,7 +166,7 @@ def halogen_speculation_module(directory):
     supported = Path(__file__).resolve().parents[1] / 'backends'
     allowed = tuple((supported / name).resolve() for name in
                     ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1',
-                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15'))
+                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16'))
     if directory.resolve() not in allowed:
         raise ValueError('Speculation policy requires a pinned Halogen 0.16.2 or 0.17.x backend')
     source = directory / 'scripts/speculation_policy.py'
@@ -181,7 +193,7 @@ def halogen_api_defaults_arguments(engine, directory):
         return []
     supported = ROOT.parent / 'backends'
     allowed = tuple((supported / name).resolve() for name in
-                    ('halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15'))
+                    ('halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16'))
     if directory.resolve() not in allowed:
         raise ValueError('API defaults require a pinned Halogen 0.17.2 or newer managed backend')
     source = directory / 'scripts/api_defaults.py'
@@ -265,7 +277,7 @@ def halogen_vision_arguments(engine,directory):
         raise ValueError('disable_vision must be a boolean')
     if not engine['disable_vision']: return []
     supported=tuple((ROOT.parent/'backends'/name).resolve() for name in
-                    ('halogen-wsl2-0.18.1','halogen-wsl2-0.18.5','halogen-wsl2-0.18.7','halogen-wsl2-0.18.8','halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15'))
+                    ('halogen-wsl2-0.18.1','halogen-wsl2-0.18.5','halogen-wsl2-0.18.7','halogen-wsl2-0.18.8','halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16'))
     if (engine.get('kind')!='halogen' or engine.get('launcher','powershell')!='python' or
             engine.get('checkpoint')!='v2' or directory.resolve() not in supported):
         raise ValueError('Text-only vision control requires a pinned 0.18.1 or newer managed v2 Python service')
@@ -353,7 +365,7 @@ def halogen_launch_command(engine, directory):
     supported = ROOT.parent / 'backends'
     allowed = tuple((supported / name).resolve() for name in
                     ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1',
-                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15'))
+                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16'))
     executable = Path(engine.get('python_executable', ''))
     if (directory.resolve() not in allowed or not executable.is_absolute() or
             not executable.is_file() or executable.resolve() != Path(sys.executable).resolve()):
@@ -390,6 +402,24 @@ class Engine:
         self.directory=validate_engine(config,repo)
         self.process=None; self.output=None; self.halogen_run=None
         self.previous_run=None; self.tail_stop=threading.Event()
+        self.native_device_lost=threading.Event()
+
+    def observe_output(self, line):
+        # Match the owned native engine's actual diagnostic, not arbitrary 500s
+        # or mentions of an error inside caller/model text.
+        if (self.config['kind']=='native' and re.fullmatch(
+                r'\d+\.\d{2}\.\d{3}\.\d{3} E srv\s+update_slots: '
+                r'decode\(\) failed: vk::Queue::submit: ErrorDeviceLost', line.rstrip())):
+            self.native_device_lost.set()
+
+    def publish_unavailability(self, state):
+        # Run on the asyncio owner thread: draining resolves queued futures.
+        # Latch for this generation; a successful /health cannot repair its GPU.
+        if self.native_device_lost.is_set():
+            self.gateway.draining=True
+            if state.get('backend_failure')!='device_lost':
+                LOG.error('backend_unavailable reason=device_lost business_outcome=unknown')
+            state.update(phase='unavailable',backend_failure='device_lost')
 
     def start(self):
         env=os.environ.copy()
@@ -425,6 +455,7 @@ class Engine:
                 while not self.tail_stop.is_set():
                     for stream in streams:
                         for line in stream:
+                            self.observe_output(line)
                             for key in (self.gateway.secret,self.gateway.backend_secret):
                                 if key: line=line.replace(key,'[REDACTED]')
                             LOG.info('engine %s',line.rstrip())
@@ -548,7 +579,7 @@ async def run(config_path, port):
                 if guard_task.done(): await guard_task
                 if cancelled(): raise InterruptedError('Startup stopped by operator')
                 if engine.stopped_unexpectedly(): raise RuntimeError('Engine exited before readiness')
-                state['heartbeat']=time.time(); atomic(LOCAL/'current.json',state)
+                state['heartbeat']=time.time(); await publish_heartbeat(LOCAL/'current.json',state)
                 if time.monotonic()>deadline: raise TimeoutError('Engine readiness timeout')
                 model_state=engine.state()
                 if engine.config['kind']=='halogen' and not model_state:
@@ -558,13 +589,14 @@ async def run(config_path, port):
         state['phase']='ready'; state['ready_at']=time.time()
         server_task=asyncio.create_task(serve(gateway,port,stop))
         while not cancelled():
+            engine.publish_unavailability(state)
             if guard_task.done(): await guard_task
             if server_task.done(): await server_task; raise RuntimeError('Gateway unexpectedly stopped')
             if engine.stopped_unexpectedly(): raise RuntimeError('Engine process exited')
             free=available_gib()
             if free is not None and free<reserve: raise RuntimeError(f'Windows physical reserve crossed {reserve:g} GiB')
             state.update(heartbeat=time.time(),active_requests=gateway.active,available_gib=free)
-            atomic(LOCAL/'current.json',state)
+            await publish_heartbeat(LOCAL/'current.json',state)
             await asyncio.sleep(1)
     except InterruptedError:
         LOG.info('startup_cancelled')

@@ -8,7 +8,7 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
-| **Halogen WSL2 0.18.8** | Current voice-capable 32K serving profile; historical performance remains separated by workload | [Install and run](backends/halogen-wsl2-0.18.8/README.md) |
+| **Halogen WSL2 0.18.16** | Current measured text profile: 32K capacity, adaptive MTP, 8K prefill arena | [Configuration and measured limits](backends/halogen-wsl2-0.18.16/README.md) |
 | **Hipfire native Windows** | Source port with completed 16K MTP cohort; 1,240.2 prefill / 26.53 decode tok/s, 63.64% acceptance | [Build, run and measurement limits](backends/hipfire-windows/README.md) |
 | **Halogen WSL2 0.16.2** | Pinned v2 upgrade and sampled filled-context comparison measured with an 18 GiB reserve | [Install and run](backends/halogen-wsl2-0.16.2/README.md) |
 | **Halogen WSL2 0.15.1** | w4b + overlay and v2 tested at 262144 capacity; authenticated continuous serving | [Install and run](backends/halogen-wsl2-0.15.1/README.md) |
@@ -17,7 +17,19 @@ with explicit availability, reproducible measurements and no silent fallback.
 | GUFO native Windows | Latest qualified TheRock 10.2.0a20260930 with source-level numeric compatibility; native and managed text serving | [Build, qualify and register](backends/gufo-windows/README.md) |
 | Halogen 0.15.0 / 0.14.2 / 0.13.8 | Retained explicit rollback packages; never run alongside another large model | Version-specific `backends/` directories |
 
-After installing the selected backend, use PowerShell 7:
+For the installed, measured Halogen text configuration, use Windows PowerShell 5.1:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile MeasuredText32K -ConsoleTrace
+```
+
+This explicit preset selects 0.18.16, v2, 32768 context positions, 8192 prefill
+chunk/arena, adaptive MTP gate 0.90, PLD `3,3`, Cache Off, Thinking Off and
+Vision Off. It keeps the existing ServiceNow token and endpoint on port 8840.
+Stop an existing managed session through its normal controls before changing
+profiles. See the [ServiceNow guide](docs/integrations/halogen-servicenow.md).
+
+The separate generic launcher uses PowerShell 7:
 
 ```powershell
 .\server\Setup.ps1
@@ -30,6 +42,18 @@ backend token is reused. Stop and confirm cleanup before changing engine/checkpo
 Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
+
+[Halogen 0.18.16, natural 8K/16K inputs](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md)
+records **2033.12 / 56.93 tok/s** prefill/decode at 8192 actual input tokens
+and **2002.08 / 49.63 tok/s** at 16384. Native head acceptance was **66.04%**
+and **52.68%**. These are directly observed RAW phase rates; the 8K native API
+reported 1876.97 / 52.47 tok/s. The report preserves both clocks and the exact
+workloads. The subsequent [native policy campaign](docs/benchmarks/halogen01816-native-policy-campaign-20261026.json)
+did not qualify gate 0.95, gate 0.85 or PLD `3,7` for promotion.
+
+The [27 October worktree consolidation](docs/integration/worktree-consolidation-20261027.md)
+records the integrated histories, E: checkout comparison, validation and retained
+private runtime assets. Integrating experimental source does not enable it.
 
 [Native Windows Hipfire, 18 October 2026](docs/benchmarks/hipfire-native-windows-20261018.md)
 records the full model cohort, dedicated-memory repair, native phase conventions and retained historical best values.
@@ -172,4 +196,6 @@ Most of the kernel work is theirs. My contribution is the Windows integration, l
 - **Benchmark evidence and kernel experiments:** [`docs/benchmarks/`](docs/benchmarks/) - including negative results and retractions.
 - **Reproduce the runtime archive:** [`packaging/build-release.ps1`](packaging/build-release.ps1).
 
-**Maintenance status:** release and packaging complete. New performance research is paused — this is a stabilisation release, not an ongoing optimisation programme.
+**Maintenance status:** the published native package remains v0.1.1. Local backend
+integration and controlled performance research continue separately; experimental
+source and unsuccessful candidates are retained with their qualification limits.

@@ -7,22 +7,26 @@ model execution, transfer a live KV cache between engines, or silently switch mo
 
 ## Current availability
 
-The original Windows PowerShell 5.1 integration launcher selects installed
-**Halogen 0.17.3** by default. It retains Current8K (8192-token prefill/arena),
-v2, MTP depth 2, PLD `3,3`, Thinking On/medium/2048, the stable public API token
-and optional visible request/response trace. Follow the
+The Windows PowerShell 5.1 integration launcher offers the explicitly selected
+**Halogen 0.18.16 `MeasuredText32K`** preset: v2, 32768 context positions,
+8192-token prefill chunk/arena, adaptive MTP gate 0.90, PLD `3,3`, Cache Off,
+Thinking Off/low, Vision Off and prefetch off. It preserves the stable public
+API token and supports visible request/response trace. Follow the
 [foreground integration guide](../docs/integrations/halogen-servicenow.md):
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile MeasuredText32K -ConsoleTrace
 ```
 
-Explicit `-HalogenVersion 0.17.2` remains available. `HistoricalStock` requires
+Without an explicit preset the script retains `Current4K`, installed 0.18.10,
+fixed MTP depth 2 and Thinking On/medium/2048. `Measured32K` separately selects
+the 0.18.15 vision-capable configuration with Flexible cache. These presets
+must not be combined into one performance claim. `HistoricalStock` requires
 explicit `-HalogenVersion 0.16.2`. Historical rates belong to their recorded
-runtime and workload; they are not throughput promises for 0.17.3.
+runtime and workload; they are not throughput promises for a new request.
 The generic PowerShell 7 launcher and `manage.py` default below retain the
 [0.16.2 WSL package](../backends/halogen-wsl2-0.16.2/README.md), while the profile
-generator also supports an explicitly selected installed 0.17.3 package.
+generator also supports explicitly selected installed versions through 0.18.16.
 Historical upgrade evidence is retained in the
 [0.16.2 report](../docs/benchmarks/halogen0162-upgrade-20261003.md).
 A locally qualified GUFO Windows profile is also implemented.

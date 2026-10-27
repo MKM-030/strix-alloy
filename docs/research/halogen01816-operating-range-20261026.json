@@ -1,0 +1,259 @@
+{
+  "schema": "halogen01816.operating-range.saved-audit.v1",
+  "audit_passed": true,
+  "decision": "Diagnostic completed; operating limit and Halogen slowdown cause remain unresolved.",
+  "compute": {
+    "launches": 432,
+    "measured_raw_seconds": 3.0033397550005247,
+    "gpu_event_sum_ms": 2330.643176317215,
+    "gpu_event_ms": {
+      "min": 3.4818739891052246,
+      "median": 5.516463994979858,
+      "max": 10.953123092651367
+    },
+    "host_launch_sum_ms": 2487.472108993643,
+    "loader_whole_raw_seconds": 3.1233689989994673,
+    "supervisor_whole_raw_seconds": 3.306278906999978,
+    "windows_process_qpc_seconds": 3.7012762,
+    "explicit_device_bytes": 327680,
+    "output_validated_by_loader": true,
+    "output_sha256": "6675cc6736e4c0056f99ae0a7ebe53ae9407e39bf3a7c08bb5a91c4215775ea2",
+    "raw_output_retained": false,
+    "cleanup": [
+      {
+        "api": "hipDeviceSynchronize",
+        "status": 0
+      },
+      {
+        "api": "hipEventDestroy",
+        "status": 0
+      },
+      {
+        "api": "hipEventDestroy",
+        "status": 0
+      },
+      {
+        "api": "hipFree",
+        "status": 0
+      },
+      {
+        "api": "hipModuleUnload",
+        "status": 0
+      }
+    ]
+  },
+  "sensors": {
+    "total_reads": 70,
+    "requested_interval_ms": 100,
+    "fully_contained_windows_process_reads": 34,
+    "usage_at_least90_reads": 0,
+    "high_usage_clock_MHz": null,
+    "metrics": {
+      "gpu_usage": {
+        "min": 1,
+        "median": 37.0,
+        "max": 73,
+        "distinct": [
+          1,
+          37,
+          64,
+          73
+        ]
+      },
+      "gpu_clock": {
+        "min": 660,
+        "median": 1355.0,
+        "max": 1401,
+        "distinct": [
+          660,
+          680,
+          1355,
+          1372,
+          1401
+        ]
+      },
+      "gpu_power": {
+        "min": 44,
+        "median": 68.0,
+        "max": 73,
+        "distinct": [
+          44,
+          61,
+          68,
+          73
+        ]
+      },
+      "gpu_temperature": {
+        "min": 52,
+        "median": 58.0,
+        "max": 61,
+        "distinct": [
+          52,
+          53,
+          58,
+          59,
+          61
+        ]
+      }
+    },
+    "metric_runs": [
+      {
+        "samples": 2,
+        "start_relative_process_seconds": 0.025458984375,
+        "end_relative_process_seconds": 0.137458984375,
+        "usage_percent": 1,
+        "clock_MHz": 660,
+        "gpu_power_metric_W": 44
+      },
+      {
+        "samples": 10,
+        "start_relative_process_seconds": 0.247458984375,
+        "end_relative_process_seconds": 1.237458984375,
+        "usage_percent": 1,
+        "clock_MHz": 680,
+        "gpu_power_metric_W": 44
+      },
+      {
+        "samples": 9,
+        "start_relative_process_seconds": 1.346458984375,
+        "end_relative_process_seconds": 2.230458984375,
+        "usage_percent": 37,
+        "clock_MHz": 1355,
+        "gpu_power_metric_W": 73
+      },
+      {
+        "samples": 10,
+        "start_relative_process_seconds": 2.340458984375,
+        "end_relative_process_seconds": 3.330458984375,
+        "usage_percent": 64,
+        "clock_MHz": 1401,
+        "gpu_power_metric_W": 68
+      },
+      {
+        "samples": 3,
+        "start_relative_process_seconds": 3.438458984375,
+        "end_relative_process_seconds": 3.657458984375,
+        "usage_percent": 73,
+        "clock_MHz": 1372,
+        "gpu_power_metric_W": 61
+      }
+    ],
+    "distinct_adlx_timestamps": 34,
+    "actual_poll_gap_ms": {
+      "min": 108,
+      "max": 113
+    },
+    "phase_alignment_qualified": false,
+    "driver_refresh_independence_proven": false
+  },
+  "memory": {
+    "frames": 155,
+    "entry_gib": {
+      "available_bytes": 23.02520751953125,
+      "commit_headroom_bytes": 114.26972579956055
+    },
+    "minimum_gib": {
+      "available_bytes": 22.953723907470703,
+      "commit_headroom_bytes": 114.15421295166016
+    },
+    "max_observed_poll_gap_seconds": 0.1026961,
+    "covers_probe_process": true,
+    "entry22GiB_pass": true,
+    "continuous18GiB_samples_pass": true
+  },
+  "preservation": {
+    "model_requests": 0,
+    "completed_before_after": 48,
+    "cancelled_before_after": 0,
+    "same_controller_backend_and_run_ids": true,
+    "outer_run_id": "e7739e6e91c24e80aa4ce3ba3513f779",
+    "inner_run_id": "0d663ea71c4448fca5e59b9af1755ff8",
+    "saved_final_ready_utc": "2026-10-26T02:24:03.758533+00:00",
+    "historical_receipt_only": true
+  },
+  "limitations": [
+    "Guest UTC02:22:45..48 and Windows process UTC02:23:56..24:00 differ; no guest UTC to Windows epoch mapping is assumed.",
+    "All sensor statistics concern the broader Windows-owned process window, not the exact three-second measured kernel interval.",
+    "Advancing ADLX timestamps with repeated metrics do not establish independent100ms driver refreshes; readings held for9-10 polls.",
+    "HIP event sum divided by host time is not hardware utilization or a frequency measurement.",
+    "gpu_power is the ADLX GPU power metric, not a demonstrated package-power limit; total_board_power unsupported.",
+    "No global clock cap, firmware cause, token rate, optimization gain, or resolved slowdown claim."
+  ],
+  "pins": [
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/probe.ndjson",
+      "bytes": 58706,
+      "sha256": "f2d714db2b4db50fcebf13f4ebe264a977b153c91a46c98b50316fac668cfeaa"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/samples.ndjson",
+      "bytes": 42538,
+      "sha256": "086d3479e0f733042f2edfcd90ff192d89484515070c909e9be72aa398aa6524"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/state.json",
+      "bytes": 1502,
+      "sha256": "6498411b33fae3752b3e223a8960e98db63dc913fcaa6023a7558ebb0539791e"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/summary.json",
+      "bytes": 543,
+      "sha256": "56f1de8c6bf4b08cddbe885be8841c2bf9eb99180d1d2ed7e92d467c5b21bf97"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/memory-series.json",
+      "bytes": 45305,
+      "sha256": "522ef7f0699d70fe477b5b4c44f47f1981662aa2ec6ff193906b11cd60f87e8d"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/ready-before.json",
+      "bytes": 12977,
+      "sha256": "a7500254acaf3fc88cf9737556d779106dde2cc413eed9b5612d4bc2db29482e"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/request-entry-ready.json",
+      "bytes": 12977,
+      "sha256": "354ddd111f76f55a7eec3fba204c1e298d9837bacdbceb38f759a148d233a5ef"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/ready-left-online.json",
+      "bytes": 12977,
+      "sha256": "588e3da30caf7b311c3ce9f611d98d1e86c42d47def2ac38688edca65caf4ab6"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/before-probe-gpu.json",
+      "bytes": 101,
+      "sha256": "f28d097a50fc9ce105ceea772937fe0a85e9751e821ff93d4aa69a4996df70a1"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/probe-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/live-independent-compute/sensor-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/independent-compute-probe/loader.py",
+      "bytes": 9890,
+      "sha256": "09f366ba8c71fa125aa378f858995434cfcceee67682027742b7fd9e169eda1a"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/independent-compute-probe/compute.hip",
+      "bytes": 1268,
+      "sha256": "865d199c872170daadcb80a9b82dbde0422f7914c4f7623da761d6fb90461173"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/independent-compute-probe/compute.hsaco",
+      "bytes": 5208,
+      "sha256": "f86951305eeb34b28875c9137b40f7fde183b8f5aa0e61db052d477089fa82ff"
+    },
+    {
+      "path": "server/.local/halogen-update-20261025/primary01816/independent-compute-probe/port-cpu-review.json",
+      "bytes": 4289,
+      "sha256": "1a2dcd8de9bcf88911ee9ae75c760539dfceedbddb2073084c64cf4e8170d756"
+    }
+  ]
+}

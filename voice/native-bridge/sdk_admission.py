@@ -7,7 +7,7 @@ successful result is internal authorization context only. Bearer credentials
 are never parsed as JWTs, logged, retained in context, or accepted locally.
 """
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 import re
 from urllib.parse import parse_qsl
@@ -56,6 +56,16 @@ class VerifiedContext:
     voice_agent_id: str
     sdk_agent_id: str
     receive_data: bool
+
+    @property
+    def call_settings(self):
+        return None
+
+
+@dataclass(frozen=True)
+class _VerifiedSettingsContext(VerifiedContext):
+    # Keep the legacy dataclass field contract unchanged for legacy admission.
+    call_settings: object = field(default=None, repr=False)
 
 
 def _validated_headers(raw_headers):
@@ -182,7 +192,8 @@ async def _bounded_response(response):
     raise AdmissionDenied(403)
 
 
-async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, http_factory=None):
+async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, http_factory=None,
+                            assistant_settings_version=None):
     """Verify a POST /api/webrtc/sessions request without activating that API.
 
     ``http_factory`` is an offline test seam. Integration uses the default new
@@ -193,10 +204,19 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
     Every accepted request authorizes its serviceId and requires its voice
     agent. There is no default deployment and no request-selected auth URL.
     No platform test-mode field is sent, so active-service policy is preserved.
+    Version 1 explicitly requires the bounded, service-bound settings projection;
+    omitting the version preserves the legacy authorization response contract.
     """
     if type(policy) is not SDKDeploymentPolicy:
         raise AdmissionDenied(403)
+    if assistant_settings_version is not None and (
+            type(assistant_settings_version) is not int or assistant_settings_version != 1):
+        raise AdmissionDenied(403)
     authorization = _validate_request(raw_headers, body, query_string, policy)
+    payload = {"serviceId": policy.assistant_id}
+    if assistant_settings_version == 1:
+        payload["assistantSettingsVersion"] = 1
+    call_settings = None
     factory = aiohttp.ClientSession if http_factory is None else http_factory
     try:
         async with asyncio.timeout(AUTHORIZATION_TIMEOUT_SECONDS):
@@ -207,7 +227,7 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
                 timeout=aiohttp.ClientTimeout(total=AUTHORIZATION_TIMEOUT_SECONDS),
             ) as http:
                 async with http.post(
-                    policy.authorization_url, json={"serviceId": policy.assistant_id},
+                    policy.authorization_url, json=payload,
                     headers={"Authorization": authorization, "Content-Type": "application/json",
                              "Accept": "application/json",
                              "Accept-Encoding": "identity"},
@@ -216,7 +236,11 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
                     if response.status != 200:
                         raise AdmissionDenied(401 if response.status == 401 else 403)
                     data = await _bounded_response(response)
-                    if not authorized_agents(data, policy.voice_agent_id):
+                    if assistant_settings_version == 1:
+                        from assistant_settings import CallSettings
+                        call_settings = CallSettings.from_authorized_response(
+                            data, service_id=policy.assistant_id, agent_id=policy.voice_agent_id)
+                    elif not authorized_agents(data, policy.voice_agent_id):
                         raise AdmissionDenied(403)
     except AdmissionDenied:
         raise
@@ -224,5 +248,8 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
         # Suppress platform/network/parser details; caller cancellation still
         # propagates because CancelledError is a BaseException, not Exception.
         raise AdmissionDenied(403) from None
+    if assistant_settings_version == 1:
+        return _VerifiedSettingsContext(policy.instance_url, policy.assistant_id,
+            policy.voice_agent_id, SDK_AGENT_ID, True, call_settings)
     return VerifiedContext(policy.instance_url, policy.assistant_id, policy.voice_agent_id,
                            SDK_AGENT_ID, True)

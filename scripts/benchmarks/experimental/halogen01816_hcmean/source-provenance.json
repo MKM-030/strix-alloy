@@ -1,0 +1,52 @@
+{
+  "scope": "Source-only gfx1151 HIP HC mean preparation; caller-owned BF16 output; no native attachment",
+  "raw_contract": "BF16[rows,4,2560], completed layers5,15,25,35,45; decode1..4, prefill1..8192; explicit source/destination row offsets and element strides",
+  "arithmetic": "Four zero-initialized FP32 accumulators combined in stream order, FP32 postscale0.25, software RN-even BF16; canonical NaN0x7fc0; IEEE FP32 subnormals required",
+  "source_qualification": "Local primary Torch headers support this order for four non-fastest-stride inputs; CPU bit parity does not establish actual source-runtime GPU parity. Separate Root GPU comparison is required.",
+  "primary_sources": {
+    "current-hcmean-feature-binding/findings.json": "10b1e052242a38ec97d1739f1a4530a2aeccba2f644040677bef721b7054329a",
+    "current-hcmean-feature-binding/mean_reference.py": "2145a07c4140d0a7e1ac0c5ad1441367506c029a436abce34c77e2daf65ace89",
+    "qwen38-dflash2-capture.patch": "91708e18c67f1c0e8f6c19cfbe7cc9f59ff257c05d61bb30b407ae4c36354169",
+    "Torch ATen/native/cuda/Reduce.cuh": "0d2e2500868fabb9a0fede3d695c019cddde1ed08ea9ba3643cd566654cd66bf",
+    "Torch ATen/native/SharedReduceOps.h": "406b549aca7d69e80d69882ce23e0c4d820e2210b4257d59764136629a3c6c98"
+  },
+  "torch_source_git": "6596a0dea537c1c78520c73cc6678214781a9d06",
+  "torch_primary_urls": [
+    "https://github.com/pytorch/pytorch/blob/6596a0dea537c1c78520c73cc6678214781a9d06/aten/src/ATen/native/cuda/Reduce.cuh",
+    "https://github.com/pytorch/pytorch/blob/6596a0dea537c1c78520c73cc6678214781a9d06/aten/src/ATen/native/SharedReduceOps.h"
+  ],
+  "red": "Before implementation: missing reference,1failure4skips",
+  "cpu": {
+    "host_plan": "MSVC /W4 /WX CPU-only23checks0failures",
+    "bit_oracle": "5tests1.862s exit0, stdlib oracle plus explicit CPU Torch,4096 random four-word patterns and adversarial cases",
+    "passive": "4passed1CPU-Torch-test-skipped,0.065s",
+    "row_bound": "8192-row raw source with tail offsets tested in CPU fixture"
+  },
+  "gpu_compiled": false,
+  "gpu_executed": false,
+  "engine_executed": false,
+  "model_payload_read": false,
+  "native_capture_installed": false,
+  "source_gpu_numerical_parity": false,
+  "speed_or_quality_claim": false,
+  "review_limits": [
+    "HIP source and Root-only fixture not compiled by author",
+    "Optional padded raw strides/separate2560 output require Root-owned additional device fixture; included HIP executable covers contiguous raw and strided concat",
+    "No all-five-tap ownership/generation/completion mechanism provided; caller stages/fences under reviewed native capture mechanism",
+    "No native borrowed-pointer asynchronous lease inferred",
+    "For2048 rows five raw taps200MiB vs means50MiB is byte arithmetic only; no observedDMA or tokens/s claim"
+  ],
+  "files": {
+    "compare_source.py": "8646d8d7ad51bc5b89c724021931497d05d5b22f2155b6ecbc38a01341e096ce",
+    "fixture.hip": "88baa838fac8b545bce7a9ecfccfe0a748823ddffc296f3eb4a2ebf6e4886c0a",
+    "hcmean_plan.h": "f8788a38674157ecdb7c8af1e5206ba75355f78821d58b44acbe7c67947e891f",
+    "hcmean.h": "ce2a6ec4c271b1a02316289a27cb2d542b784472e309ef614358150408708d4e",
+    "hcmean.hip": "0a845b6b4771f0d766c552a68c287ded2d4ac615932f30c7da37966634f4de2d",
+    "qualify_source_gpu.py": "a90f23214d9c72585688643ba5da8701651fe692f416303ce52cc30396353f59",
+    "README.md": "a5e9462ab2586ded22987eceb073efabc5ad91e4b6b65013d9e5831061a972e3",
+    "reference.py": "df7e810d8ca4f84e8987b9bd85d17858428504330a7fcd9e9071ef22d74e5965",
+    "run_cpu.cmd": "170e80d4ead5c7357eb33777ac78781eb7489318df4253b85eab83b5b53b30b8",
+    "test_plan.cpp": "622b44e7af8a53a888b466254c96e08599691531c320c343f8a256b5f2437976",
+    "test_reference.py": "8fdc22fca87dff5d45fa99e3d2f9116875df5e7f9df70289d1cc53c773361388"
+  }
+}

@@ -60,7 +60,7 @@ class LookupForwardingTests(unittest.TestCase):
             self.assertEqual(commands[1][-4:], ['-LookupReceipt', str(receipt.resolve()),
                                               '-LookupReceiptSha256', config['receipt_sha256']])
             wrong = {**candidate['engine'], 'checkpoint': 'w4b'}
-            with self.assertRaisesRegex(ValueError, '0.16.2 v2'):
+            with self.assertRaisesRegex(ValueError, 'supported Halogen v2 backend'):
                 controller.validate_engine(wrong, repo)
             self.assertEqual(len(commands), 2)
 

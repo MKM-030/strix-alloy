@@ -1,0 +1,9 @@
+# Halogen 0.18.16: vendor comparison scope
+
+The earlier Performance cohort reached **1,858.90 Prefill / 54.37 Decode tok/s**, independently captured on the frozen 8,192-input/128-output request. Prefill was **0.91% below** the manufacturer's cache-off 8K figure of 1,876 tok/s. This is close numerical agreement across different workloads and environments, not a matched reproduction. The later [evening 8K/16K report](halogen01816-natural-8k16k-20261026-evening.md) records the latest phase rates and their separate RAW/API clock observations.
+
+The published **66.80 Decode tok/s** is a mean over ten short prompt shapes with a 256-token output cap, greedy decoding and Thinking Off. It is not a guaranteed rate for this long-input request. Image defaults, cache behavior, host environment and text predictability also differ. The manufacturer's synthetic sweep and its real-text observations are explicitly separate. [Pinned official performance document](https://github.com/peonist-ai/halogen-flash-server/blob/f4c474d8b1d679fabda8685a629ea9681ffaa967/docs/performance.md).
+
+The historical standalone PP1 result of 1,925.16 is a separate workload. Its later independently qualified current counterpart is **1,906.29 Prefill tok/s** on the serial8,192-input/1-output request, with one excluded warmup and three measured runs; see [PP1 qualification](halogen01816-pf-pp1-20261026.md). Raising the arena from 8K to 32K does not enlarge the inspected128MiB matrix workspace or the8K-capped transform staging. With an explicit8K chunk, the frozen8K call remains8K. No direct faster-kernel route was established.
+
+No new policy or kernel trial is justified by these saved sources. Previously negative controls remain closed; arbitrary confidence-threshold changes would be a knob sweep. The source-pinned audit is in `server/.local/halogen-update-20261025/primary01816/vendor-parity-saved-audit/report.json`. No network, hardware or production changes were made.

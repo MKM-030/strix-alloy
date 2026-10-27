@@ -1,0 +1,190 @@
+{
+  "schema": "dflash2.private-steady-proposer.v1",
+  "scope": "Default-off owned long-window inputs and parameterized private eager/capture/replay orchestration",
+  "plan": "docs/superpowers/plans/2026-10-26-halogen-steady-proposer.md",
+  "upstream_revision": "3c560089e1818a5217a73f2168273485a5350341",
+  "model_revision": "a22a1744e85c17364dcc54a6a420af7135d4c7f6",
+  "license": "../dflash2_reference/sources/SGLANG_LICENSE; existing NOTICE applies to reused frozen equations",
+  "frozen_dependencies": [
+    {
+      "path": "graph.py",
+      "sha256": "71bf3d118096de4b12c242236331cdd10991f0b36f731ff7bd22a8873dd5aaa9",
+      "bytes": 15304
+    },
+    {
+      "path": "partitions.py",
+      "sha256": "2d2eb224cf93983da9a6b386172e230d2bd1994ab386eba361a86b7c7f48e496",
+      "bytes": 6583
+    },
+    {
+      "path": "producer.py",
+      "sha256": "39cd1efb23d8dd55835b6594e41b087fcbc602564a1aad8443f903eeea26d8c7",
+      "bytes": 2685
+    },
+    {
+      "path": "context_ring.py",
+      "sha256": "32bd9082e0fbeba4f0b0b6f2a4248f5afe9188d810c1e8092b9ba06e1661a388",
+      "bytes": 11008
+    }
+  ],
+  "pins": [
+    {
+      "path": "steady_proposer.py",
+      "bytes": 11117,
+      "sha256": "93c6d1369fc31ff5987448672d0629130aae671cae450eb9c917621a53b0f329"
+    },
+    {
+      "path": "test_steady_proposer.py",
+      "bytes": 17298,
+      "sha256": "4e9c53addebed9b66a45391839404574c151e76ee05b7cc17a22580cc1a83999"
+    },
+    {
+      "path": "STEADY-PROPOSER.md",
+      "bytes": 9384,
+      "sha256": "99c607c03798640d585edba2809a42d7fb4e2cd192f1ee0bd3221c07c8d8bc21"
+    }
+  ],
+  "test_first": {
+    "red_command": "python -B scripts/research/dflash2_gpu/test_steady_proposer.py",
+    "red_result": "1 expected absent-module assertion failure; 6 explicit CPU fixture skips",
+    "intermediate_fixture_correction": "CPU no-CUDA fixture needed fresh prepare before capture after eager consumed readiness; production readiness behavior retained",
+    "green_command": "C:/Users/Marcel/AppData/Local/Programs/Python/Python312/python.exe -B scripts/research/dflash2_gpu/test_steady_proposer.py --run-cpu",
+    "green_tests": 10,
+    "green_failures": 0,
+    "green_seconds": 2.711163,
+    "green_exit_code": 0,
+    "threads": {
+      "intra_op": 1,
+      "inter_op": 1
+    },
+    "process_terminal": true,
+    "process_peak_working_set_bytes": 541732864,
+    "memory_measurement_status": "Measured in one Root-authorized bounded CPU suite after targeted stride RED; process terminal exit0",
+    "earlier_green_seconds": 3.009,
+    "green_pid": 34284,
+    "green_errors": 0,
+    "green_skipped": 0,
+    "process_working_set_at_exit_bytes": 541732864,
+    "process_peak_pagefile_usage_bytes": 1316515840,
+    "process_pagefile_usage_at_exit_bytes": 1316515840,
+    "memory_measurement_method": "Windows GetProcessMemoryInfo in the bounded CPU test process; working set is physical residency, pagefile/private-commit is process commit",
+    "previous_measured_run": {
+      "green_tests": 9,
+      "green_seconds": 2.771079,
+      "green_pid": 30856,
+      "process_peak_working_set_bytes": 541519872,
+      "process_peak_pagefile_usage_bytes": 1316098048
+    }
+  },
+  "exact_layout": {
+    "oracle": "Original frozen QueryLayer.layout on a weight-free metadata fixture",
+    "dtypes": [
+      "float32",
+      "bfloat16"
+    ],
+    "blocks": [
+      4,
+      8
+    ],
+    "prefixes": [
+      "2048-block",
+      2044,
+      8192,
+      8193,
+      260000,
+      "262144-block"
+    ],
+    "compared_fields": [
+      "positions",
+      "cos",
+      "sin",
+      "allow_mask",
+      "previous_allowed"
+    ],
+    "tolerance": {
+      "rtol": 0,
+      "atol": 0
+    },
+    "advancing_prefix_must_change_rope": true,
+    "large_layer_weights_allocated": false
+  },
+  "substituted_fixtures": {
+    "body": "Five QueryLayer.forward callables replaced; real final residual _norm retained",
+    "selector": "ProposalGraph.propose replaced with shape-compatible private result routing fixture; no selector arithmetic parity claimed",
+    "capture": "GPU stream/graph orchestration replaced with CPU doubles; no CUDA implementation invoked",
+    "establishes": [
+      "routing and order",
+      "fixed owned storage reuse",
+      "source independence",
+      "one-shot prepare",
+      "invalid update revokes readiness",
+      "exact context interval",
+      "host ID validation",
+      "failure retirement",
+      "drain-before-release control flow"
+    ],
+    "does_not_establish": [
+      "full model arithmetic parity",
+      "complete selector arithmetic parity",
+      "GPU capture correctness",
+      "GPU backend cleanup safety",
+      "latency",
+      "learned acceptance",
+      "engine performance"
+    ]
+  },
+  "bounded_memory": {
+    "largest_owned_payload": "BF16 private key+value inputs, no full layer/model weights",
+    "key_value_bytes_block4_bf16": 41861120,
+    "key_value_bytes_block8_bf16": 41779200,
+    "source_kv": "Tiny [5,1,1,1] backing tensors expanded to real metadata",
+    "excluded_from_capacity_count": [
+      "Torch runtime",
+      "model tensors",
+      "captured intermediates",
+      "outputs",
+      "backend workspaces",
+      "allocator overhead"
+    ]
+  },
+  "source_audit": {
+    "independent_child_review": "No concrete source correctness blockers in scoped dynamic-prefix/capture/state/stream/import analysis",
+    "reviewer_torch_or_hardware_calls": false,
+    "not_gpu_qualification": true
+  },
+  "rulings": [
+    "Execute Task1 in existing checkout with no commits/new worktree under Root explicit instructions; leave foreign changes untouched",
+    "Use direct CUDAGraph.capture_begin/end after provided-stream warmup drain rather than torch.cuda.graph context, avoiding that context's broader synchronization/cache cleanup",
+    "Legacy Layout.prefix_tokens carries the device scalar privately because frozen forwards do not consume that field; captured arithmetic uses the scalar through positions"
+  ],
+  "author_gpu_used": false,
+  "author_real_model_tensors_used": false,
+  "import_time_torch_or_device_access": false,
+  "cpu_path_cuda_calls": false,
+  "native_authority": false,
+  "completion_proof": false,
+  "immutable_publication": false,
+  "gpu_capture_qualified": false,
+  "speed_claimed": false,
+  "remaining": "Root independent review, actual full trained GPU original-head eager/replay parity at advancing positions and changed inputs with source-matched mask stride, latency/memory, native owner/completion/publication join and full-engine frozen cohort",
+  "mask_stride_fidelity": {
+    "oracle": "Original frozen QueryLayer.layout.allow_mask",
+    "blocks": [
+      4,
+      8
+    ],
+    "original_and_current_stride": [
+      0,
+      1
+    ],
+    "old_contiguous_stride": [
+      2048,
+      1
+    ],
+    "red_command": "C:/Users/Marcel/AppData/Local/Programs/Python/Python312/python.exe -B scripts/research/dflash2_gpu/test_steady_proposer.py --run-cpu SteadyCPU.test_static_mask_stride_matches_original_expanded_row_layout",
+    "red_result": "Both B4/B8 subtests failed because (2048,1) != (0,1); exit1",
+    "implementation": "Owned Boolean ones[1,2048].expand(block_size,-1)",
+    "green_result": "Wrapper mask stride and values match original; full bounded suite10/10, exit0",
+    "scope": "CPU layout fidelity only; no GPU execution, backend parity or speed claim"
+  }
+}

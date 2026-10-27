@@ -1,0 +1,928 @@
+{
+  "schema": "halogen01816.native-policy-campaign.v1",
+  "utc": "2026-10-26T23:24:22.599440+00:00",
+  "engine_version": "0.18.16",
+  "complete_measurement_window": true,
+  "total_benchmark_requests": 72,
+  "excluded_warmups": 18,
+  "measured_requests": 54,
+  "headline_phase_rates_updated": false,
+  "full_goal_achieved": false,
+  "qualified_changes": [],
+  "experiments": [
+    {
+      "name": "greedy_gate095",
+      "completed": true,
+      "total_requests": 24,
+      "excluded_warmups": 6,
+      "measured_requests": 18,
+      "comparison": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-gate095-20261026\\comparison.json",
+        "bytes": 9286,
+        "sha256": "b208657afc112609ad4d3f90d5798d827e9165068a66ff8ff7a7bdf857c945f8"
+      },
+      "independent_saved_audit": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-gate095-20261026\\independent-final-saved-audit.json",
+        "bytes": 104624,
+        "sha256": "e6b1fe3198972d6697b71775cfd9b6211406b7caa0a3a8f6b305cf820cbac267"
+      },
+      "state": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-gate095-20261026\\state.json",
+        "bytes": 14742,
+        "sha256": "cd9f4adeda5c57fd299bd2e6fa8f69a935593dd7cafef4b71c4f98aeac1eca82"
+      },
+      "cases": {
+        "historical8k": {
+          "mean_http_seconds": {
+            "A_before": 7.1221081,
+            "B": 6.8953015,
+            "A_after": 6.6633314
+          },
+          "improvements_percent": {
+            "A_before": 3.184543070892165,
+            "A_after": -3.481293156153109
+          },
+          "faster_than_both_by_three_percent": false,
+          "exact_all_ordinal_output_and_request_parity": true,
+          "counters_by_arm": {
+            "A_before": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 318,
+                "accepted": 210
+              },
+              "acceptance": 0.660377358490566,
+              "scoped": {
+                "head": {
+                  "rounds": 171,
+                  "drafted": 318,
+                  "accepted": 210,
+                  "acceptance": 0.660377358490566,
+                  "accepted_per_round": 1.2280701754385965
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "B": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 294,
+                "accepted": 198
+              },
+              "acceptance": 0.673469387755102,
+              "scoped": {
+                "head": {
+                  "rounds": 183,
+                  "drafted": 294,
+                  "accepted": 198,
+                  "acceptance": 0.673469387755102,
+                  "accepted_per_round": 1.0819672131147542
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "A_after": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 318,
+                "accepted": 210
+              },
+              "acceptance": 0.660377358490566,
+              "scoped": {
+                "head": {
+                  "rounds": 171,
+                  "drafted": 318,
+                  "accepted": 210,
+                  "acceptance": 0.660377358490566,
+                  "accepted_per_round": 1.2280701754385965
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            }
+          },
+          "native_phase_observations": {
+            "A_before": {
+              "prefill_pooled_tokens_per_second": 1751.5002066793052,
+              "decode_pooled_tokens_per_second": 53.80336551260315,
+              "prefill_arithmetic_mean_tokens_per_second": 1752.2323333333334,
+              "decode_arithmetic_mean_tokens_per_second": 54.01166666666666,
+              "independently_clock_qualified": false
+            },
+            "B": {
+              "prefill_pooled_tokens_per_second": 1852.6671290293398,
+              "decode_pooled_tokens_per_second": 52.70670912484902,
+              "prefill_arithmetic_mean_tokens_per_second": 1852.7583333333332,
+              "decode_arithmetic_mean_tokens_per_second": 52.970666666666666,
+              "independently_clock_qualified": false
+            },
+            "A_after": {
+              "prefill_pooled_tokens_per_second": 1930.5425723285757,
+              "decode_pooled_tokens_per_second": 53.87280966343524,
+              "prefill_arithmetic_mean_tokens_per_second": 1933.0613333333333,
+              "decode_arithmetic_mean_tokens_per_second": 54.105333333333334,
+              "independently_clock_qualified": false
+            }
+          }
+        },
+        "natural16k": {
+          "mean_http_seconds": {
+            "A_before": 12.368439766666667,
+            "B": 11.935543066666666,
+            "A_after": 11.866251833333333
+          },
+          "improvements_percent": {
+            "A_before": 3.5000105766506695,
+            "A_after": -0.583935300771965
+          },
+          "faster_than_both_by_three_percent": false,
+          "exact_all_ordinal_output_and_request_parity": true,
+          "counters_by_arm": {
+            "A_before": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 384,
+                "drafted": 336,
+                "accepted": 177
+              },
+              "acceptance": 0.5267857142857143,
+              "scoped": {
+                "head": {
+                  "rounds": 204,
+                  "drafted": 336,
+                  "accepted": 177,
+                  "acceptance": 0.5267857142857143,
+                  "accepted_per_round": 0.8676470588235294
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "B": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 384,
+                "drafted": 327,
+                "accepted": 171
+              },
+              "acceptance": 0.5229357798165137,
+              "scoped": {
+                "head": {
+                  "rounds": 210,
+                  "drafted": 327,
+                  "accepted": 171,
+                  "acceptance": 0.5229357798165137,
+                  "accepted_per_round": 0.8142857142857143
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "A_after": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 384,
+                "drafted": 336,
+                "accepted": 177
+              },
+              "acceptance": 0.5267857142857143,
+              "scoped": {
+                "head": {
+                  "rounds": 204,
+                  "drafted": 336,
+                  "accepted": 177,
+                  "acceptance": 0.5267857142857143,
+                  "accepted_per_round": 0.8676470588235294
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            }
+          },
+          "native_phase_observations": {
+            "A_before": {
+              "prefill_pooled_tokens_per_second": 1737.5688459335827,
+              "decode_pooled_tokens_per_second": 45.19295272393462,
+              "prefill_arithmetic_mean_tokens_per_second": 1739.6423333333332,
+              "decode_arithmetic_mean_tokens_per_second": 45.361000000000004,
+              "independently_clock_qualified": false
+            },
+            "B": {
+              "prefill_pooled_tokens_per_second": 1830.8941030101428,
+              "decode_pooled_tokens_per_second": 45.81409499266258,
+              "prefill_arithmetic_mean_tokens_per_second": 1830.975,
+              "decode_arithmetic_mean_tokens_per_second": 46.09666666666667,
+              "independently_clock_qualified": false
+            },
+            "A_after": {
+              "prefill_pooled_tokens_per_second": 1817.8859383090464,
+              "decode_pooled_tokens_per_second": 46.47335043810815,
+              "prefill_arithmetic_mean_tokens_per_second": 1818.1923333333332,
+              "decode_arithmetic_mean_tokens_per_second": 46.69233333333333,
+              "independently_clock_qualified": false
+            }
+          }
+        }
+      },
+      "whole_HTTP_QPC_only": true,
+      "phase_rates_qualified": false,
+      "adopted": false,
+      "decision": "Retaingreedy_gate0.90; both-workloads/both-controls3percent threshold failed."
+    },
+    {
+      "name": "PLD_chain7",
+      "completed": true,
+      "total_requests": 24,
+      "excluded_warmups": 6,
+      "measured_requests": 18,
+      "comparison": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-pld-code-log-aba-20261026\\comparison.json",
+        "bytes": 43825,
+        "sha256": "3a54270bc711065e9406c181ea9402255e7ca2747cb55bb0fa4315e654ce2921"
+      },
+      "independent_saved_audit": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-pld-code-log-aba-20261026\\independent-final-saved-audit.json",
+        "bytes": 223923,
+        "sha256": "f9528a6e46bf43a24e3f2a77badf99377f0b7c5b7ca9af68e55f920c3d4a0be0"
+      },
+      "state": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-pld-code-log-aba-20261026\\state.json",
+        "bytes": 14743,
+        "sha256": "6ba0bb1bf5cbcfec1ef0f009393d776a0cad0a92ce13763ca057112f3297a5f5"
+      },
+      "cases": {
+        "codeedit8k": {
+          "mean_http_seconds": {
+            "A_before": 6.290486566666667,
+            "B": 6.3543373,
+            "A_after": 6.3923368
+          },
+          "improvements_percent": {
+            "A_before": -1.0150364786037258,
+            "A_after": 0.5944539718245045
+          },
+          "faster_than_both_by_three_percent": false,
+          "exact_all_ordinal_output_and_request_parity": true,
+          "counters_by_arm": {
+            "A_before": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 333,
+                "accepted": 270
+              },
+              "acceptance": 0.8108108108108109,
+              "scoped": {
+                "head": {
+                  "rounds": 105,
+                  "drafted": 315,
+                  "accepted": 255,
+                  "acceptance": 0.8095238095238095,
+                  "accepted_per_round": 2.4285714285714284
+                },
+                "lookup": {
+                  "rounds": 6,
+                  "drafted": 18,
+                  "accepted": 15,
+                  "acceptance": 0.8333333333333334,
+                  "accepted_per_round": 2.5
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "B": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 354,
+                "accepted": 270
+              },
+              "acceptance": 0.7627118644067796,
+              "scoped": {
+                "head": {
+                  "rounds": 102,
+                  "drafted": 294,
+                  "accepted": 237,
+                  "acceptance": 0.8061224489795918,
+                  "accepted_per_round": 2.323529411764706
+                },
+                "lookup": {
+                  "rounds": 9,
+                  "drafted": 60,
+                  "accepted": 33,
+                  "acceptance": 0.55,
+                  "accepted_per_round": 3.6666666666666665
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "A_after": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 333,
+                "accepted": 270
+              },
+              "acceptance": 0.8108108108108109,
+              "scoped": {
+                "head": {
+                  "rounds": 105,
+                  "drafted": 315,
+                  "accepted": 255,
+                  "acceptance": 0.8095238095238095,
+                  "accepted_per_round": 2.4285714285714284
+                },
+                "lookup": {
+                  "rounds": 6,
+                  "drafted": 18,
+                  "accepted": 15,
+                  "acceptance": 0.8333333333333334,
+                  "accepted_per_round": 2.5
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            }
+          },
+          "native_phase_observations": {
+            "A_before": {
+              "prefill_pooled_tokens_per_second": 1887.4996159872198,
+              "decode_pooled_tokens_per_second": 69.02750314578465,
+              "prefill_arithmetic_mean_tokens_per_second": 1890.6,
+              "decode_arithmetic_mean_tokens_per_second": 69.545,
+              "independently_clock_qualified": false
+            },
+            "B": {
+              "prefill_pooled_tokens_per_second": 1856.1232581851139,
+              "decode_pooled_tokens_per_second": 67.95738505645419,
+              "prefill_arithmetic_mean_tokens_per_second": 1858.5016666666668,
+              "decode_arithmetic_mean_tokens_per_second": 68.58833333333334,
+              "independently_clock_qualified": false
+            },
+            "A_after": {
+              "prefill_pooled_tokens_per_second": 1870.9746182072872,
+              "decode_pooled_tokens_per_second": 65.44301855923104,
+              "prefill_arithmetic_mean_tokens_per_second": 1873.8846666666666,
+              "decode_arithmetic_mean_tokens_per_second": 65.88633333333334,
+              "independently_clock_qualified": false
+            }
+          }
+        },
+        "logquote16k": {
+          "mean_http_seconds": {
+            "A_before": 10.643567066666666,
+            "B": 10.9052714,
+            "A_after": 10.813340366666667
+          },
+          "improvements_percent": {
+            "A_before": -2.4588028777770887,
+            "A_after": -0.8501631338334814
+          },
+          "faster_than_both_by_three_percent": false,
+          "exact_all_ordinal_output_and_request_parity": true,
+          "counters_by_arm": {
+            "A_before": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 345,
+                "drafted": 270,
+                "accepted": 234
+              },
+              "acceptance": 0.8666666666666667,
+              "scoped": {
+                "head": {
+                  "rounds": 96,
+                  "drafted": 225,
+                  "accepted": 192,
+                  "acceptance": 0.8533333333333334,
+                  "accepted_per_round": 2.0
+                },
+                "lookup": {
+                  "rounds": 15,
+                  "drafted": 45,
+                  "accepted": 42,
+                  "acceptance": 0.9333333333333333,
+                  "accepted_per_round": 2.8
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "B": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 345,
+                "drafted": 288,
+                "accepted": 240
+              },
+              "acceptance": 0.8333333333333334,
+              "scoped": {
+                "head": {
+                  "rounds": 96,
+                  "drafted": 225,
+                  "accepted": 192,
+                  "acceptance": 0.8533333333333334,
+                  "accepted_per_round": 2.0
+                },
+                "lookup": {
+                  "rounds": 9,
+                  "drafted": 63,
+                  "accepted": 48,
+                  "acceptance": 0.7619047619047619,
+                  "accepted_per_round": 5.333333333333333
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "A_after": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 345,
+                "drafted": 270,
+                "accepted": 234
+              },
+              "acceptance": 0.8666666666666667,
+              "scoped": {
+                "head": {
+                  "rounds": 96,
+                  "drafted": 225,
+                  "accepted": 192,
+                  "acceptance": 0.8533333333333334,
+                  "accepted_per_round": 2.0
+                },
+                "lookup": {
+                  "rounds": 15,
+                  "drafted": 45,
+                  "accepted": 42,
+                  "acceptance": 0.9333333333333333,
+                  "accepted_per_round": 2.8
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            }
+          },
+          "native_phase_observations": {
+            "A_before": {
+              "prefill_pooled_tokens_per_second": 1882.4178223054564,
+              "decode_pooled_tokens_per_second": 61.55548022195657,
+              "prefill_arithmetic_mean_tokens_per_second": 1883.9376666666667,
+              "decode_arithmetic_mean_tokens_per_second": 62.125,
+              "independently_clock_qualified": false
+            },
+            "B": {
+              "prefill_pooled_tokens_per_second": 1850.8811568007231,
+              "decode_pooled_tokens_per_second": 62.130816885175044,
+              "prefill_arithmetic_mean_tokens_per_second": 1851.5836666666667,
+              "decode_arithmetic_mean_tokens_per_second": 62.763666666666666,
+              "independently_clock_qualified": false
+            },
+            "A_after": {
+              "prefill_pooled_tokens_per_second": 1804.5046533399416,
+              "decode_pooled_tokens_per_second": 69.86068362222584,
+              "prefill_arithmetic_mean_tokens_per_second": 1804.5266666666666,
+              "decode_arithmetic_mean_tokens_per_second": 69.875,
+              "independently_clock_qualified": false
+            }
+          }
+        }
+      },
+      "whole_HTTP_QPC_only": true,
+      "phase_rates_qualified": false,
+      "adopted": false,
+      "root_semantic_review": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-pld-code-log-aba-20261026\\root-final-static-quality.json",
+        "bytes": 6256,
+        "sha256": "2b47c469792a017133408c707c9042f430f19009f188b57694ddbd875285d13b"
+      },
+      "code_functional_core_correct": true,
+      "code_explanation_truncated": true,
+      "code_completion_quality_qualified": false,
+      "log_completion_quality_qualified": true,
+      "decision": "RetainPLD3,3; no complete both-controls speed result, and code explanation hitcap128."
+    },
+    {
+      "name": "greedy_gate085_adaptive",
+      "completed": true,
+      "total_requests": 24,
+      "excluded_warmups": 6,
+      "measured_requests": 18,
+      "comparison": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-gate085-20261026\\comparison.json",
+        "bytes": 9227,
+        "sha256": "23cb6ea952a12a4112fe36c6b2345270ab33f2ed457ee2c31765c832ea38da29"
+      },
+      "independent_saved_audit": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-gate085-20261026\\independent-final-saved-audit.json",
+        "bytes": 157638,
+        "sha256": "30d879faa6fa8ac3e5d36c050dd58794ac98c620b90feab8aeb76fbf7a129eb0"
+      },
+      "state": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-gate085-20261026\\state.json",
+        "bytes": 14730,
+        "sha256": "13781c5855e781722c78145c197d5cd024b4d65e2ec4ceaa696f3c0761b584de"
+      },
+      "cases": {
+        "historical8k": {
+          "mean_http_seconds": {
+            "A_before": 6.874094633333334,
+            "B": 6.9699427,
+            "A_after": 6.993742566666667
+          },
+          "improvements_percent": {
+            "A_before": -1.394337316828409,
+            "A_after": 0.34030229794417277
+          },
+          "faster_than_both_by_three_percent": false,
+          "exact_all_ordinal_output_and_request_parity": true,
+          "counters_by_arm": {
+            "A_before": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 318,
+                "accepted": 210
+              },
+              "acceptance": 0.660377358490566,
+              "scoped": {
+                "head": {
+                  "rounds": 171,
+                  "drafted": 318,
+                  "accepted": 210,
+                  "acceptance": 0.660377358490566,
+                  "accepted_per_round": 1.2280701754385965
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "B": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 333,
+                "accepted": 210
+              },
+              "acceptance": 0.6306306306306306,
+              "scoped": {
+                "head": {
+                  "rounds": 171,
+                  "drafted": 333,
+                  "accepted": 210,
+                  "acceptance": 0.6306306306306306,
+                  "accepted_per_round": 1.2280701754385965
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "A_after": {
+              "counts": {
+                "actual_input_tokens": 24576,
+                "actual_output_tokens": 384,
+                "drafted": 318,
+                "accepted": 210
+              },
+              "acceptance": 0.660377358490566,
+              "scoped": {
+                "head": {
+                  "rounds": 171,
+                  "drafted": 318,
+                  "accepted": 210,
+                  "acceptance": 0.660377358490566,
+                  "accepted_per_round": 1.2280701754385965
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            }
+          },
+          "native_phase_observations": {
+            "A_before": {
+              "prefill_pooled_tokens_per_second": 1837.251896983516,
+              "decode_pooled_tokens_per_second": 54.288663000296886,
+              "prefill_arithmetic_mean_tokens_per_second": 1837.6313333333333,
+              "decode_arithmetic_mean_tokens_per_second": 54.487,
+              "independently_clock_qualified": false
+            },
+            "B": {
+              "prefill_pooled_tokens_per_second": 1810.8669702462532,
+              "decode_pooled_tokens_per_second": 53.351117039013005,
+              "prefill_arithmetic_mean_tokens_per_second": 1810.9006666666667,
+              "decode_arithmetic_mean_tokens_per_second": 53.597,
+              "independently_clock_qualified": false
+            },
+            "A_after": {
+              "prefill_pooled_tokens_per_second": 1805.638211113315,
+              "decode_pooled_tokens_per_second": 53.082665192148184,
+              "prefill_arithmetic_mean_tokens_per_second": 1809.983,
+              "decode_arithmetic_mean_tokens_per_second": 53.353,
+              "independently_clock_qualified": false
+            }
+          }
+        },
+        "natural16k": {
+          "mean_http_seconds": {
+            "A_before": 11.9533322,
+            "B": 11.8425377,
+            "A_after": 11.9912835
+          },
+          "improvements_percent": {
+            "A_before": 0.9268921681939046,
+            "A_after": 1.2404493647406478
+          },
+          "faster_than_both_by_three_percent": false,
+          "exact_all_ordinal_output_and_request_parity": true,
+          "counters_by_arm": {
+            "A_before": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 384,
+                "drafted": 336,
+                "accepted": 177
+              },
+              "acceptance": 0.5267857142857143,
+              "scoped": {
+                "head": {
+                  "rounds": 204,
+                  "drafted": 336,
+                  "accepted": 177,
+                  "acceptance": 0.5267857142857143,
+                  "accepted_per_round": 0.8676470588235294
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "B": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 384,
+                "drafted": 363,
+                "accepted": 180
+              },
+              "acceptance": 0.49586776859504134,
+              "scoped": {
+                "head": {
+                  "rounds": 201,
+                  "drafted": 363,
+                  "accepted": 180,
+                  "acceptance": 0.49586776859504134,
+                  "accepted_per_round": 0.8955223880597015
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            },
+            "A_after": {
+              "counts": {
+                "actual_input_tokens": 49152,
+                "actual_output_tokens": 384,
+                "drafted": 336,
+                "accepted": 177
+              },
+              "acceptance": 0.5267857142857143,
+              "scoped": {
+                "head": {
+                  "rounds": 204,
+                  "drafted": 336,
+                  "accepted": 177,
+                  "acceptance": 0.5267857142857143,
+                  "accepted_per_round": 0.8676470588235294
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0,
+                  "acceptance": null,
+                  "accepted_per_round": null
+                }
+              }
+            }
+          },
+          "native_phase_observations": {
+            "A_before": {
+              "prefill_pooled_tokens_per_second": 1803.6305991919771,
+              "decode_pooled_tokens_per_second": 47.0098549305258,
+              "prefill_arithmetic_mean_tokens_per_second": 1803.7103333333332,
+              "decode_arithmetic_mean_tokens_per_second": 47.217666666666666,
+              "independently_clock_qualified": false
+            },
+            "B": {
+              "prefill_pooled_tokens_per_second": 1821.179661418869,
+              "decode_pooled_tokens_per_second": 46.45254944656142,
+              "prefill_arithmetic_mean_tokens_per_second": 1821.8903333333333,
+              "decode_arithmetic_mean_tokens_per_second": 46.661,
+              "independently_clock_qualified": false
+            },
+            "A_after": {
+              "prefill_pooled_tokens_per_second": 1811.4275605872988,
+              "decode_pooled_tokens_per_second": 44.91595803165171,
+              "prefill_arithmetic_mean_tokens_per_second": 1812.227,
+              "decode_arithmetic_mean_tokens_per_second": 45.11666666666667,
+              "independently_clock_qualified": false
+            }
+          }
+        }
+      },
+      "whole_HTTP_QPC_only": true,
+      "phase_rates_qualified": false,
+      "adopted": false,
+      "decision": "Retaingreedy_gate0.90; both-workloads/both-controls3percent threshold failed."
+    }
+  ],
+  "qualification_rule": "Atleast3percent lower completeHTTPQPC onBOTHcases versusBOTHcontrols, with exactrequest/output/token/finishparity; no significanceclaim.",
+  "normal_online_proof": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01816\\live-mtp-gate085-20261026\\root-final-normal-online.json",
+    "bytes": 14710,
+    "sha256": "309c9faa76a612edd01efed7734f8c33310ec3123869853d32b830413cf9c6bf"
+  },
+  "last_qualified_headline": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\benchmarks\\halogen01816-natural-8k16k-20261026-evening.json",
+    "bytes": 34104,
+    "sha256": "417881cc5b8fd324f17cdf175170bb44f57950927029cdded6d9f2037fbe1125"
+  },
+  "NPU_gain_measured_in_this_campaign": false,
+  "NPU_enabled": false,
+  "new_models_or_drivers_installed": false,
+  "confidence_family_closed_after_one_lower_point": true,
+  "next_official_refresh_not_before": "2026-10-27T00:24:47.4034445Z",
+  "no_further_hardware_measurement_queued": true
+}
