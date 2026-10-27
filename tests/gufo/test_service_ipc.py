@@ -69,7 +69,10 @@ def _native_launcher_helper(descriptor_path):
     real_popen = subprocess.Popen
     def private_test_entry(argv, **kwargs):
         assert argv[1:3] == ['-m', 'gufo_control.service']
-        argv = [argv[0], '-m', 'test_service_ipc', '_native_guardian', str(descriptor_path)]
+        # A Windows venv redirector has a different PID from the interpreter
+        # serving the pipe. This fixture must launch the actual guardian image.
+        argv = [getattr(sys, '_base_executable', argv[0]), '-m',
+                'test_service_ipc', '_native_guardian', str(descriptor_path)]
         # Only the test entry needs this private helper module; production fixes
         # its module path to scripts without inheriting arbitrary PYTHONPATH.
         kwargs['env'] = dict(kwargs['env'], PYTHONPATH=kwargs['env']['PYTHONPATH']+

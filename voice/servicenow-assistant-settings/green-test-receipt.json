@@ -1,0 +1,8 @@
+{
+  "stage": "GREEN",
+  "at": "2026-10-18T20:18:01.222Z",
+  "command": "node test_assistant_settings.cjs",
+  "stdout": "PASS default array response remains unchanged\nPASS version 1 returns fresh assistant configuration with ordered secondary language\nPASS native prompt, voice, key terms, VAD and behavior survive projection\nPASS projection excludes unreviewed provider, routing and credential fields\nPASS fresh calls observe changed primary and secondary assistant settings\nPASS native runtime defaults are used instead of invented timeout values\nPASS native primary TTS is retained when ordered language rows are absent\nPASS opaque OAuth cannot request assistant settings\nPASS malformed JWT cannot request assistant settings\nPASS guest cannot request assistant settings\nPASS wrong service audience cannot request assistant settings\nPASS empty or malformed authorized agents cannot request assistant settings\nPASS original native authentication failures still stop before projection\nPASS unknown versions preserve existing native array contract\nPASS explicit false and zero settings survive native defaults\nPASS unresolved mandatory language selection fails closed\nPASS unresolved mandatory primary language fails closed\nPASS missing authenticated user or malformed native service binding is rejected\nPASS DTMF settings are projected without pretending to implement telephony\nPASS native null secondary prompt remains null in the projection\nPASS configured and native-default behavior retain distinct provenance\nPASS language provenance records native TTS and runtime-default fallbacks\nPASS missing deployment fails with bounded response and no exception detail\n{\"tests\":23,\"passed\":23,\"failed\":0}\n",
+  "stderr": "",
+  "code": 0
+}

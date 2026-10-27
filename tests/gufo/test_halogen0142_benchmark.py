@@ -133,6 +133,13 @@ class BenchmarkTests(unittest.TestCase):
 
     def test_seal_exposes_only_emitted_benchmark_environment(self):
         b=self.b
+        research = Path(__file__).resolve().parents[2].parent / 'strix-alloy-research'
+        inputs = {table: (research/path.relative_to(b.ROOT), sha)
+                  for table, (path, sha) in b.INPUTS.items()}
+        if not (research/'artifacts/halogen0142').is_dir() or any(not path.is_file() for path, _ in inputs.values()):
+            self.skipTest('Historical 0.14.2 sibling artifacts and benchmark reports required')
+        self.enterContext(patch.object(b.base, 'ARTIFACT_ROOT', research/'artifacts/halogen0142'))
+        self.enterContext(patch.object(b, 'INPUTS', inputs))
         config=b.base.read_json(b.HERE/'manifest.json')
         seal=b.offline(config)
         self.assertEqual(seal['launch_environment']['HALOGEN_CTX'],'133888')

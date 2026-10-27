@@ -1,0 +1,139 @@
+{
+  "kind": "public_target_prerequisite_catalog_from_native_metadata",
+  "nativeApplicationsObserved": [
+    {
+      "name": "Global",
+      "scope": "global",
+      "observedSourceVersions": [
+        ""
+      ]
+    },
+    {
+      "name": "ServiceNow Otto AI Agents",
+      "scope": "sn_aia",
+      "observedSourceVersions": [
+        "9.0.11"
+      ]
+    },
+    {
+      "name": "ServiceNow Otto for AI Search",
+      "scope": "sn_ais_assist",
+      "observedSourceVersions": [
+        "18.0.5"
+      ]
+    },
+    {
+      "name": "Service Catalog AI Core",
+      "scope": "sn_catalog_ai_core",
+      "observedSourceVersions": [
+        "1.1.3"
+      ]
+    },
+    {
+      "name": "Recommended Actions for Service",
+      "scope": "sn_cs_nb_action",
+      "observedSourceVersions": [
+        "30.0.1"
+      ]
+    },
+    {
+      "name": "Generative AI Controller",
+      "scope": "sn_generative_ai",
+      "observedSourceVersions": [
+        "15.0.3"
+      ]
+    },
+    {
+      "name": "AI Agents for HR Service Delivery",
+      "scope": "sn_hr_ai_agents",
+      "observedSourceVersions": [
+        "7.3.1"
+      ]
+    },
+    {
+      "name": "Now Mobile",
+      "scope": "sn_me",
+      "observedSourceVersions": [
+        "30.1.2"
+      ]
+    },
+    {
+      "name": "ServiceNow Otto for Virtual Agent",
+      "scope": "sn_nowassist_va",
+      "observedSourceVersions": [
+        "22.0.18"
+      ]
+    },
+    {
+      "name": "ServiceNow Otto Conversational Data Collection",
+      "scope": "sn_vad_genai",
+      "observedSourceVersions": [
+        "10.2.22"
+      ]
+    },
+    {
+      "name": "ServiceNow Otto for Voice Agents",
+      "scope": "sn_voice_aia",
+      "observedSourceVersions": [
+        "6.0.5"
+      ]
+    }
+  ],
+  "versionMeaning": "Observed source metadata only; these are not certified minimum target versions. Compatible installed applications/scopes, schema and licensing must be verified by target Native Preview.",
+  "nativeReferencedRecordTablesNotComprehensivelyExported": [
+    "sys_generative_ai_validator",
+    "sys_hub_flow",
+    "sys_gen_ai_provider",
+    "sys_generative_ai_provider_mapping",
+    "sys_one_extend_capability",
+    "sys_one_extend_definition_category",
+    "sys_one_extend_truncate_strategy"
+  ],
+  "nativeReferenceQualification": "Foundation capture plan deliberately did not clone native prerequisite records wholesale. The consolidated batch may contain owned records in one of these tables, such as its custom validator, without supplying all referenced native records.",
+  "externalParentAIConfigurations": [
+    {
+      "table": "sys_generative_ai_config",
+      "expectedReferencedId": "7c66020c431062101dbab69d4bb8f2a1",
+      "providedByConsolidatedExport": false,
+      "nameAvailableFromExport": false
+    },
+    {
+      "table": "sys_generative_ai_config",
+      "expectedReferencedId": "4273be5343c712101dbab69d4bb8f2b5",
+      "providedByConsolidatedExport": false,
+      "nameAvailableFromExport": false
+    }
+  ],
+  "privateCompatibilityUpdatesExcluded": 17,
+  "privateCompatibilityRead": false,
+  "instanceSetupNotTransported": [
+    "Connection endpoints and credentials",
+    "Instance-specific Voice to NAVA and execution-profile mappings",
+    "Local host runtime, model weights and local STT/TTS/custom voices",
+    "Network signaling and WebRTC route; relay configuration if the network requires it"
+  ],
+  "configurationAuthorities": {
+    "modelProviderSkillPrompt": "AI Control Tower and Skill Kit",
+    "voiceInstructionsLanguagesSpeechDelivery": "Native Voice Assistant configuration",
+    "privateConnectionsAndBindings": "Private target-instance configuration"
+  },
+  "targetPreviewVerified": false,
+  "targetImportVerified": false,
+  "physicalAndroidIosAudioAccepted": false,
+  "publicFamiliesIncluded": [
+    "Infrastructure 1.0",
+    "Validation 1.0.1",
+    "Core 1.1",
+    "Gemma 1.2",
+    "Foundation 1.0",
+    "Voice 1.3"
+  ],
+  "referenceExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+  "ownMirrorControls": {
+    "tableAccess": "Admin ACLs on the own Mirror-State table; native Voice/Skill ACLs unchanged and no additional mobile user roles",
+    "automationEnabled": false,
+    "applyEnabled": false,
+    "serializedExecutionVerified": false,
+    "activatingPropertiesTransported": false
+  }
+}

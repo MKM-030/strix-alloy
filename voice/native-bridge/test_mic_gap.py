@@ -5,6 +5,7 @@ RTC/PyAV boundaries are substituted; no platform, model or speech services.
 import ast
 import asyncio
 from array import array
+from dataclasses import dataclass
 import importlib.util
 import json
 import logging
@@ -15,6 +16,9 @@ import time
 import types
 import unittest
 import uuid
+from managed_turn import clear_session_ice
+from noise_guard import SpeechNoiseGuard
+from test_input_lifecycle import PassThroughDenoiser, configuration
 
 HERE = Path(__file__).resolve().parent
 SOURCE = Path(os.environ.get('NATIVE_GAP_SOURCE', str(HERE / 'native_bridge.py')))
@@ -61,11 +65,14 @@ class Resampler:
     def resample(self, frame): return [frame]
 
 scope = dict(asyncio=asyncio, time=time, uuid=uuid, json=json, math=math, LOG=logging.getLogger('native-voice'),
+    dataclass=dataclass, SpeechNoiseGuard=SpeechNoiseGuard,
+    StreamingPCM16Denoiser=PassThroughDenoiser, clear_session_ice=clear_session_ice,
     AudioResampler=Resampler, RTCPeerConnection=Peer, RTCConfiguration=lambda **kw:kw,
     SpeakerTrack=lambda playback:object(), EndpointGate=core.EndpointGate, PlaybackBuffer=core.PlaybackBuffer,
     RTCIceServer=lambda **kw:kw, STUN_URL='unit-test')
-node = next(n for n in ast.parse(SOURCE.read_text()).body if isinstance(n, ast.ClassDef) and n.name == 'NativeCall')
-exec(compile(ast.Module(body=[node], type_ignores=[]), str(SOURCE), 'exec'), scope)
+nodes = [n for n in ast.parse(SOURCE.read_text()).body
+         if isinstance(n, ast.ClassDef) and n.name in {'NativeCall', '_InputEnvelope'}]
+exec(compile(ast.Module(body=nodes, type_ignores=[]), str(SOURCE), 'exec'), scope)
 NativeCall = scope['NativeCall']
 
 async def until(test, timeout=1):
@@ -74,7 +81,7 @@ async def until(test, timeout=1):
 
 class GapTests(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
-        config = types.SimpleNamespace(vad_threshold=450, vad_silence_ms=1200)
+        config = configuration()
         self.call = NativeCall(config, None, types.SimpleNamespace(metadata={}))
         self.track = Track()
         self.worker = asyncio.create_task(self.call.microphone(self.track))

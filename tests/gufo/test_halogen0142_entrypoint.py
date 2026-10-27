@@ -7,13 +7,16 @@ import unittest
 from experimental.halogen0142 import entrypoint_adapter as adapter
 
 
-ROOT = pathlib.Path(__file__).resolve().parents[3]
+REPO = pathlib.Path(__file__).resolve().parents[2]
+ROOT = REPO.parent / 'strix-alloy-research'
 UPSTREAM = ROOT / "artifacts" / "halogen0142" / "entrypoint.sh"
 
 
 class EntrypointAdapterTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        if not UPSTREAM.is_file():
+            raise unittest.SkipTest('Historical 0.14.2 sibling research entrypoint required')
         cls.original = UPSTREAM.read_bytes()
 
     def test_exact_upstream_identity_and_only_function_replaced(self):
@@ -102,7 +105,7 @@ check 0 host_preflight
         self.assertIn("native_host_preflight", output[output.index("host_preflight() {", output.index("native_host_preflight() {")) :])
 
     def test_probe_loads_versioned_hip_runtime_in_exact_image(self):
-        source = (ROOT / "integration" / "experimental" / "halogen0142" /
+        source = (REPO / "experimental" / "halogen0142" /
                   "halogen0142_hip_probe.c").read_text()
         self.assertIn('dlopen("libamdhip64.so.7", RTLD_NOW | RTLD_LOCAL)', source)
 

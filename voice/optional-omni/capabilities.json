@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "enabled": false,
+  "omni_qualified": false,
+  "vision_qualified": false,
+  "authority_verified": false,
+  "full_mode_available": false,
+  "protocol_reference": "REV-N/services/omni-duplex, source audit 2026-10-23",
+  "implementation": "transport-neutral TextSession, not connected to Native or startup",
+  "wire": {
+    "transport": "WebSocket",
+    "reference_endpoint": "ws://127.0.0.1:8795/",
+    "http_chat_or_health": false,
+    "authentication_in_reference": false,
+    "durable_resume": false,
+    "text": ["session.start", "session.ready", "input.text", "input.committed", "response.created", "response.text.delta", "response.text.done", "metrics"],
+    "control": ["session.update", "response.cancel", "response.cancelled", "playback.state", "session.close"],
+    "audio_input_reference": {"format": "PCM16 little-endian", "channels": 1, "sample_rate": 16000, "commit_event": "input.commit", "implemented_live_path": false},
+    "audio_output_reference": {"format": "PCM16 little-endian", "channels": 1, "sample_rate": 24000, "header": "OMNI + uint32LE generation + uint32LE sequence + uint32LE byte_length", "implemented_live_path": false},
+    "playback_state_proves_heard_text": false,
+    "cancel_cancels_business_operation": false
+  },
+  "missing_evidence": ["ServiceNow integration", "authenticated owned process", "current Gemma coexistence", "routing quality", "live German audio", "vision attachment pipeline"]
+}

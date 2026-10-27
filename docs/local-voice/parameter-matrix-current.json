@@ -1,0 +1,604 @@
+{
+  "schema": 1,
+  "kind": "integrated_current_session_and_model_parameter_matrix",
+  "observedAt": "2026-10-19T09:11:27.373Z",
+  "status": "native_adapter_and_voice_policy_activated_native_export_verified_mobile_audio_pending",
+  "configurationOwnership": {
+    "modelProviderAndModel": "AI Control Tower",
+    "skillPromptAndInferenceConfiguration": "Skill Kit / native AI configuration",
+    "voiceInstructionsLanguagesAndBehavior": "native Voice Assistant",
+    "providerLanguageOverride": false,
+    "speechEnginesReplaced": false
+  },
+  "rows": [
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "prompt / Platzhalter / Reihenfolge",
+      "status": "bewahrt; native Rollen nachgewiesen",
+      "mapping": "Native Rendering erfolgt vor dem Adapter. Finaler Text und unterstützte Nachrichten werden unverändert übertragen; user/user/system für Quick/Unified/ReAct nativ geprüft.",
+      "limits": "Sämtliche Skillvariablen und alle187 Bindungen sind nicht durch die drei synthetischen Fixtures nachgewiesen."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "prompt_template_role",
+      "status": "nativ geprüft",
+      "mapping": "AIConfig.prompt_template_role → x_request.promptRole → body.messages[].role; Quick/Unified user, ReAct system.",
+      "limits": "developer/tool und separate Tool-Messagekeys bleiben ausdrücklich nicht unterstützt."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "systemPromptArray",
+      "status": "ausdrücklich nicht unterstützt",
+      "mapping": "Nichtleeres systemPromptArray erzeugt einen klaren Fehler; keine stille Zusammenführung.",
+      "limits": "Für dieses zusätzliche native Nachrichtenformat ist ein eigener qualifizierter Adapter nötig."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "temperature",
+      "status": "nativ geprüft",
+      "mapping": "Top-Level- und zusätzliche temperature werden numerisch0..2 validiert;0 bleibt0; widersprüchliche Werte erzeugen einen Fehler.",
+      "limits": "Native Probe prüft den aktuellen Wert0; Engine-Inferenz ist ein separater Nachweis."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "max_tokens",
+      "status": "nativ geprüft mit deklariertem Limit",
+      "mapping": "max_tokens/max_completion_tokens werden typisiert übertragen. Aktuell4096;0 wird bewusst ausgelassen; Werte oberhalb deklarierter32768 Kontext-/Ausgabekapazität erzeugen einen Fehler.",
+      "limits": "Kein Nachweis eines tokenisierten Gesamtbudgets aus Prompt plus Ausgabe; request_tokens bleibt nativ."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "request_tokens",
+      "status": "native Budgetierung nachgewiesen",
+      "mapping": "AIConfig.request_tokens → native _truncateAttributes/_createPrompt; kein direktes Enginefeld.",
+      "limits": "Die heutigen synthetischen Transportproben beweisen keine Trunkierung aller realen Skillpfade."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "min_word_count",
+      "status": "native Eingabeprüfung nachgewiesen",
+      "mapping": "AIConfig.min_word_count wird durch die native Mindestlängenprüfung der Eingabe berücksichtigt.",
+      "limits": "Keine Mindestlänge der Modellantwort; nicht als min_tokens übertragen."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "thinking_tokens",
+      "status": "modellabhängig ausdrücklich validiert",
+      "mapping": "thinking_tokens0 ist zulässig. Positive Budgets brauchen einen qualifizierten Transportparameter; im aktuellen Gemma-Profil werden sie mit klarer Fehlermeldung abgewiesen.",
+      "limits": "Native thinking_enabled bezeichnet eine Modellfähigkeit und aktiviert allein kein Thinking."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "top_p / top_k / min_p / seed",
+      "status": "implementiert; top_p nativ geprüft",
+      "mapping": "top_p/top_k/min_p/seed werden aus NameValue-Konfiguration typisiert und anhand des deklarierten Modellprofils validiert und übertragen. Native Probe top_p0.4 korrekt.",
+      "limits": "top_k/min_p/seed sind offline geprüft; konkrete Engine-Wirkung ist modellabhängig und braucht Inferenznachweis."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "stop",
+      "status": "implementiert und nativ geprüft",
+      "mapping": "stop als String oder einmal dekodierte JSON-Stringliste übertragen; gewöhnlicher Klammertext bleibt Literal. Native Probe überträgt einen Stopp.",
+      "limits": "Die Wirkung eines Stopps bei der echten Generierung wird durch eine Transportprobe nicht bewiesen."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "presence_penalty / frequency_penalty / repetition_penalty / logit_bias",
+      "status": "implementiert; offline geprüft",
+      "mapping": "Penalties und logit_bias werden typisiert; repetition_penalty wird für den aktuellen Transport in repeat_penalty übersetzt.",
+      "limits": "Engineunterstützung und Semantik bleiben profilabhängig; kein universeller Kompatibilitätsnachweis."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "reasoning_effort / chat_template_kwargs.enable_thinking / reasoning_format",
+      "status": "ausdrückliche Fähigkeitsprüfung",
+      "mapping": "Aktueller Gemma-NoThink-Default bleibt bestehen. Explizite nicht unterstützte Effort-/Thinking-/Formatwerte scheitern sichtbar; sie werden nicht still überschrieben. Native effort-Alias berücksichtigt.",
+      "limits": "Das aktuelle Backend deklariert supports_reasoning_effort=false. Andere Modelle brauchen ein qualifiziertes Profil."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "response_format",
+      "status": "implementiert und nativ geprüft",
+      "mapping": "response_format wird aus nativer NameValue-JSONdarstellung einmal dekodiert. ReAct-Schema exakt SHA8576ce9d8bb1a45e258e17ce2a99a2f0bbe00ccf09593eddf7857cedb1bec5b5 übertragen.",
+      "limits": "Schemaerfüllung der realen Modellantwort ist separat zu prüfen."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "structured_output_enabled / structured_output_schema",
+      "status": "direkte UI-Feldwirkung nicht bestätigt",
+      "mapping": "Nativer structured_output_request-Weg greift bei json_format_supported=true; aktuelle ReAct-Konfiguration nutzt zusätzlichen response_format-JSONstring.",
+      "limits": "Die Wirkung der direkten Felder structured_output_enabled/schema ist im lesbaren nativen Präprozessor nicht nachgewiesen."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "json_format_supported / skill_config_id",
+      "status": "native Metadaten ausgeschlossen",
+      "mapping": "Bekannte Bindungs-/Steuermetadaten einschließlich *_template/config_filters_* gehen nicht als Engineparameter upstream.",
+      "limits": "Unbekannte zusätzliche Inferenzoptionen werden ausdrücklich abgewiesen."
+    },
+    {
+      "group": "Skill Kit / Prompt",
+      "parameter": "functionCallRequest / Tools",
+      "status": "ausdrücklich nicht unterstützt",
+      "mapping": "Nichtleeres functionCallRequest erzeugt einen Fehler. ReAct benutzt den eigenen JSON-Aktionsvertrag.",
+      "limits": "Keine generische OpenAI-Toolcalling-Unterstützung; Modellfähigkeit allein implementiert keinen nativen Adapter."
+    },
+    {
+      "group": "Gateway / Engine",
+      "parameter": "model",
+      "status": "kontrolliert übertragen",
+      "mapping": "Explizites natives p.model erforderlich; kein model-Override über zusätzliche Konfiguration.",
+      "limits": "Neue Modelle benötigen ein geprüftes Fähigkeits-/Transportprofil; kein Download oder beliebiger automatischer Wechsel."
+    },
+    {
+      "group": "Gateway / Engine",
+      "parameter": "context capacity / Engine flags",
+      "status": "Host-/Profilkonfiguration",
+      "mapping": "Kontext32768 und Ausgabegrenze32768 deklariert; aktueller Ausgabewert4096 bleibt erhalten. Skill request_tokens verändert keinen Serverkontext.",
+      "limits": "Hostkapazität und input+output Gesamtlänge müssen separat qualifiziert werden."
+    },
+    {
+      "group": "Gateway / Engine",
+      "parameter": "Restliche übertragene Bodyparameter",
+      "status": "keine neue Gateway-Änderung",
+      "mapping": "Der Adapter erzeugt einen validierten Chat-Completions-Body; Gateway-/Engine-Pass-through bleiben bestehender Laufzeitpfad.",
+      "limits": "Native Transportprobe ruft Gateway/Engine nicht auf. Historische Halogen-Regeln sind kein generischer Nachweis."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "primary / secondary language + trigger phrases",
+      "status": "aktiviert; Deutsch nativ im tatsächlichen Prompt geprüft",
+      "mapping": "Frischer nativer CallSettings-Snapshot; erste Sprache und konfigurierte weitere Sprachen begrenzen die lokale Auswahl. Bei deaktivierter Auswahl gilt die erste Sprache. Exakte Triggerphrasen steuern die Auswahl. Gewählte Sprache geht an STT, bestehende native Konversationsfelder und serverseitige Skill-Policy.",
+      "limits": "Aktuell ist nur Deutsch konfiguriert. Weitere Sprache und heutige physische Android-/iOS-Audiofunktion sind nicht durch den tatsächlichen deutschen Modellturn bewiesen."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "systemMessage / persona",
+      "status": "aktiviert und im tatsächlichen ReAct-Prompt nachgewiesen",
+      "mapping": "Eine kompakte Referenz in der dedizierten nativen NAVA-Persona löst je Quick-/Unified-/ReAct-Skill-Aufruf die vollständige aktuelle native Voice-Beschreibung über öffentliche Server-APIs auf. Originalpersona bleibt erhalten. Cross-Scope-Grenzen nutzen JSON-Text. Unaufgelöste Referenzen werden vor dem Modellrequest abgewiesen.",
+      "limits": "Ein deutscher echter gemappter Dialog ist nachgewiesen; nicht sämtliche Skills oder Modelle sind dadurch zertifiziert. Die derzeitige Antwortbereitschaft dauerte 45,172 Sekunden."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "introduction / language-selection prompt / configuredgoodbye",
+      "status": "lokale Session-Verbraucher aktiviert; Offline-Ablauf geprüft",
+      "mapping": "Eröffnungsnachricht vor Sprachauswahl. Bei mindestens zwei Sprachen wird secondary_language_prompt als einmalige Begrüßung nach Auswahl gesprochen; dieser Text wird nicht zur Modellanweisung umgedeutet. Ungültige Auswahl nutzt konfigurierten Präfix oder lokalisierten LANGUAGE_RETRY. Konfigurierter Abschlusstext gilt im Inaktivitätsablauf.",
+      "limits": "Kein aktueller physischer Audio-Nachweis. Sprachbezogene Zusatzbegrüßung ist bei der aktuellen einzelnen Sprache nicht live geprüft."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "STT language / key_terms",
+      "status": "pro Call und gewählter Sprache übertragen",
+      "mapping": "Die gewählte native Sprache wird als Basissprachcode mit den zugehörigen key_terms an den bestehenden lokalen STT-Kontext übergeben. Die STT-Engine wird nicht ersetzt.",
+      "limits": "Die tatsächliche Erkennungswirkung der Terms hängt von der bestehenden lokalen Engine ab; kein Effektbeweis für alle Sprachen."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "VAD start_secs / stop_secs",
+      "status": "lokale Zeitparameter begrenzt angewendet",
+      "mapping": "Native _getVADConfig liefert die Quellattribute start_time_in_ms/stop_time_in_ms als start_secs/stop_secs. Der lokale Verbraucher folgt dieser nativen Sekunden-Schnittstelle und rechnet gültige Start0,02..2s/Stop0,2..2s in Millisekunden um; keine zweite Umrechnung anhand des Feldnamens.",
+      "limits": "Neurale confidence/min_volume sind weiterhin Metadaten; keine erfundene Umrechnung auf lokale RMS-Schwellen."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "inactivity / max_call_duration",
+      "status": "lokale Session-Verbraucher aktiviert",
+      "mapping": "Positive Inaktivitätswerte bis3600s werden genutzt;0 setzt keinen lokalen Inaktivitätstimer. Native Maximaldauer bis eine Stunde mit zusätzlich engerer Operator-Hostgrenze. Die private Session-Ansicht führt native und effektive Werte.",
+      "limits": "Keine Modell-Samplingparameter. Physische lange Mobilgespräche sind nicht zertifiziert."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "TTS cloud voice ID / gender / profile / phonemes",
+      "status": "vollere Metadatenprojektion; lokales Stimm-/Phonem-Mapping unqualifiziert",
+      "mapping": "Voice-ID/Gender/Profile und nun phonemesByLanguage werden durch den nativen Helper begrenzt projiziert und privat validiert erhalten. Optionale Phoneme waren im nativen SDK-Settings-JSON vorhanden. Bestehende lokale Custom-Stimme und TTS-Engine bleiben unverändert.",
+      "limits": "Keine automatische Zuordnung von Cloud-IDs, Gender oder Profilen auf lokale Stimmen. Kein qualifizierter IPA-/Phonem-Verbrauch durch die bestehende TTS-Engine; Projektion ist kein Aussprachebeweis."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "DTMF / digit mapping",
+      "status": "lokal ausdrücklich nicht unterstützt",
+      "mapping": "Mehrsprachige DTMF-only-Auswahl wird vor Session-Zuteilung abgewiesen; es wird kein Ziffern-Mapping aus Sprachreihenfolge oder Freitext erfunden.",
+      "limits": "Für native DTMF-/Telefonie-Funktionen ist ein gesonderter qualifizierter Transport nötig."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "filler delay / noise suppression / pacing number_delivery & identifier_delivery",
+      "status": "Sprechpräferenzen im tatsächlichen Modellprompt; Filler/Noise weiterhin Metadaten",
+      "mapping": "number_delivery und identifier_delivery werden aus der aktuellen nativen Quelle in die Skill-Anweisung übernommen; aktuelle Werte normal/normal sind im echten ReAct-Prompt nachgewiesen. Tool-Eingaben behalten exakte Zahlen und Kennungen. Filler-Verzögerung und Noise-Level bleiben ausdrücklich nicht als lokal wirksam behauptete Metadaten.",
+      "limits": "Die LLM-Anweisung ist keine SSML-/TTS-Funktion und kein Beweis der Wirkung sämtlicher möglicher Modi. Andere native Enum-Modi sind nicht qualifiziert; lokaler Filler und DSP-Noise-Mapping sind nicht implementiert."
+    },
+    {
+      "group": "Voice Assistant",
+      "parameter": "persist_context_data / orchestration_mode / gateway_mode / retry limits / telephony / transfer / MFA / auth / fallbacks",
+      "status": "39 erlaubte Behavior-Felder privat erhalten; keine pauschale lokale Funktionsparität",
+      "mapping": "Definierte nicht geheime Native-Werte werden bei Vorhandensein im privaten Session-Snapshot bewahrt. voice_max_retries ist ausschließlich native Authentifizierungsmetadaten und löst weder ASR-, Modell- noch Business-Action-Retries aus. Native Plattformauthentifizierung und Agent-Ausführungsrechte bleiben maßgeblich.",
+      "limits": "Metadaten zu Persistenz, Orchestrierung, Gateway, Telephony, Transfer, MFA, Identifikation, Locking und Fallbacks schaffen keinen eigenen lokalen Verbraucher. transfer_target/method fehlen weiterhin in der Helper-Allowlist. Keine ACL- oder Rollenänderung."
+    }
+  ],
+  "voiceBehaviorAllowlist": {
+    "count": 39,
+    "projection": "private server session snapshot, when a native configured/default value exists; no public SDK DTO or user-text blob",
+    "fullLocalFeatureParity": false,
+    "parameters": [
+      {
+        "parameter": "language",
+        "projectedWhenDefined": true,
+        "status": "implemented",
+        "consumerOrLimit": "Ausgewählte native Sprache steuert STT, Konversationskontext und Modellanweisung."
+      },
+      {
+        "parameter": "voice_profile",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Keine automatische Zuordnung auf lokale Custom-Stimme."
+      },
+      {
+        "parameter": "tts_config_sys_id",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Referenz zur nativen TTS-Konfiguration; keine lokale Cloud-ID-Zuordnung."
+      },
+      {
+        "parameter": "enable_language_selection",
+        "projectedWhenDefined": true,
+        "status": "implemented",
+        "consumerOrLimit": "Begrenzt lokale Sprachwahl; ausgeschaltet erzwingt die native erste Sprache."
+      },
+      {
+        "parameter": "enable_dtmf",
+        "projectedWhenDefined": true,
+        "status": "unsupported_local_transport",
+        "consumerOrLimit": "Kein qualifizierter lokaler DTMF-Transport."
+      },
+      {
+        "parameter": "language_input_selection",
+        "projectedWhenDefined": true,
+        "status": "partial",
+        "consumerOrLimit": "Sprachwahl unterstützt; DTMF-only bei Mehrsprachigkeit vor Zuteilung abgewiesen."
+      },
+      {
+        "parameter": "max_call_duration_in_minutes",
+        "projectedWhenDefined": true,
+        "status": "implemented_bounded",
+        "consumerOrLimit": "Bis1h und engere Operator-Hostgrenze."
+      },
+      {
+        "parameter": "user_inactivity_threshold_in_seconds",
+        "projectedWhenDefined": true,
+        "status": "implemented_bounded",
+        "consumerOrLimit": "Positive Werte bis3600s werden lokal genutzt;0 setzt keinen lokalen Inaktivitätstimer."
+      },
+      {
+        "parameter": "filler_message_delay_in_seconds",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Kein lokaler Filler-Verbraucher."
+      },
+      {
+        "parameter": "noise_suppression_level",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Keine neue lokale DSP-Zuordnung."
+      },
+      {
+        "parameter": "persist_context_data",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Kein neuer lokaler Persistenzvertrag."
+      },
+      {
+        "parameter": "orchestration_mode",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Keine neue lokale Modus-Implementierung; native Orchestrierung bleibt nativ."
+      },
+      {
+        "parameter": "gateway_mode",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Kein allgemeines lokales Modus-Mapping."
+      },
+      {
+        "parameter": "number_delivery",
+        "projectedWhenDefined": true,
+        "status": "prompt_guidance",
+        "consumerOrLimit": "Aktueller Wert normal in echtem ReAct-Prompt; andere Modi und akustische Wirkung unqualifiziert."
+      },
+      {
+        "parameter": "identifier_delivery",
+        "projectedWhenDefined": true,
+        "status": "prompt_guidance",
+        "consumerOrLimit": "Aktueller Wert normal in echtem ReAct-Prompt; Tool-IDs bleiben exakt."
+      },
+      {
+        "parameter": "retry_prefix",
+        "projectedWhenDefined": true,
+        "status": "implemented_call_control",
+        "consumerOrLimit": "Konfigurierter Präfix; NativeDefault wird durch lokalisiertes LANGUAGE_RETRY ersetzt."
+      },
+      {
+        "parameter": "goodbye_message",
+        "projectedWhenDefined": true,
+        "status": "implemented_call_control",
+        "consumerOrLimit": "Konfigurierter Text im Inaktivitätsablauf; NativeDefault wird nicht blind gesprochen."
+      },
+      {
+        "parameter": "voice_max_retries",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Kein ASR-/Modell-/Business-Action-Retry."
+      },
+      {
+        "parameter": "start_time_in_ms",
+        "projectedWhenDefined": true,
+        "status": "implemented_via_native_vad",
+        "consumerOrLimit": "Native _getVADConfig liest diesen Wert als start_secs; lokaler Verbraucher folgt der nativen Einheit und rechnet gültige0,02..2s in ms um."
+      },
+      {
+        "parameter": "stop_time_in_ms",
+        "projectedWhenDefined": true,
+        "status": "implemented_via_native_vad",
+        "consumerOrLimit": "Native _getVADConfig liest diesen Wert als stop_secs; lokaler Verbraucher folgt der nativen Einheit und rechnet gültige0,2..2s in ms um."
+      },
+      {
+        "parameter": "communication_channel",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Kein automatischer Telefonie-/SIP-Wechsel."
+      },
+      {
+        "parameter": "caller_identification_fields",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Keine eigene lokale Caller-Identifikation."
+      },
+      {
+        "parameter": "capture_pre_transfer_details",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Kein eigener lokaler Transfer-Verbraucher."
+      },
+      {
+        "parameter": "enable_phone_number_based_identification",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Keine neue lokale Rufnummernidentifikation."
+      },
+      {
+        "parameter": "enable_multifactor_authentication",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Keine eigene lokale MFA-Implementierung."
+      },
+      {
+        "parameter": "auto_authenticate",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Kein lokaler Authentifizierungs-Bypass."
+      },
+      {
+        "parameter": "disable_auth_v2",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Kein lokaler Authentifizierungs-Bypass."
+      },
+      {
+        "parameter": "primary_authentication_type",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Native Semantik wird nicht in LLM-Text übersetzt."
+      },
+      {
+        "parameter": "secondary_authentication_type",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Native Semantik wird nicht in LLM-Text übersetzt."
+      },
+      {
+        "parameter": "step_up_authentication_type",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Kein eigener lokaler Step-up-Verbraucher."
+      },
+      {
+        "parameter": "primary_identification_type",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Kein eigener lokaler Identifikationsflow."
+      },
+      {
+        "parameter": "secondary_identification_type",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Kein eigener lokaler Identifikationsflow."
+      },
+      {
+        "parameter": "require_auth_for_fallback_record_creation",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Native Autorisierung bleibt maßgeblich."
+      },
+      {
+        "parameter": "fallback_option",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Kein neuer lokaler Fallback-Verbraucher."
+      },
+      {
+        "parameter": "create_ticket_fallback_record_producer_sys_id",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Private Referenz; keine lokale automatische Record-Producer-Ausführung."
+      },
+      {
+        "parameter": "mobile_fallback_record_producer",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Private Referenz; keine lokale automatische Record-Producer-Ausführung."
+      },
+      {
+        "parameter": "push_notification_max_polling_retries",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Kein eigener lokaler Push-Polling-Verbraucher."
+      },
+      {
+        "parameter": "voice_minutes_account_is_locked",
+        "projectedWhenDefined": true,
+        "status": "native_authentication_metadata",
+        "consumerOrLimit": "Keine eigene lokale Lockout-Implementierung."
+      },
+      {
+        "parameter": "sip_context_header",
+        "projectedWhenDefined": true,
+        "status": "metadata_only",
+        "consumerOrLimit": "Kein qualifizierter lokaler SIP-Headertransport."
+      }
+    ]
+  },
+  "voiceNativeEvidence": {
+    "nativeBindingsVerified": 3,
+    "currentLanguage": "de",
+    "secondaryLanguageLiveTest": false,
+    "settingsJSON": {
+      "version": 1,
+      "phonemesProjected": true,
+      "ownedNoticesAvailable": true
+    },
+    "renderedPrompt": {
+      "characters": 51053,
+      "sha256": "a6bb76ffb79e1e6ff424d7622871d67b26833ab3148a7b77b92933691e221d46",
+      "voiceInstructionCharacters": 416,
+      "originalPersonaCharacters": 720,
+      "unresolvedReference": false
+    },
+    "nativePersona": {
+      "characters": 1543,
+      "sha256": "b3d0e5d974b41ce91b107c9475245f672d370ff756683f71c5461767b7f7c390"
+    },
+    "proofOwner": "root; this documentation agent made no live requests"
+  },
+  "voiceActiveSources": [
+    {
+      "name": "LocalLLMVoiceRuntimePolicy",
+      "revision": 0,
+      "sha256": "dd50d1d5dadc3a59490962ad636f2a9e4ec61650a6c7d660c24c1cd6ee63c2b5"
+    },
+    {
+      "name": "LocalLLMVoiceAssistantSettings",
+      "revision": 3,
+      "sha256": "d611d323bb65310aa9aed52d7963d1904ce825b627993a4ad84e8c587b340891"
+    },
+    {
+      "name": "LocalLLMVoicePersonaRouteSync",
+      "revision": 1,
+      "sha256": "8412da670eaf0bef47aabc0a1e5ef577598cfd22d220613f010399e1aed3d188"
+    },
+    {
+      "name": "Guard local LLM Voice execution mapping",
+      "revision": 1,
+      "sha256": "38a393674811227d6bf523953952afc715872f9b445579f89e88e050babd4b4d"
+    },
+    {
+      "name": "Sync local LLM Voice execution mapping",
+      "revision": 0,
+      "sha256": "e2e7cf8b30408035179e79bbb9c9b6c91fd74441ab17ca329cd1ea9a6b10c0c6"
+    },
+    {
+      "name": "Local LLM Voice Assistant policy",
+      "revision": 6,
+      "sha256": "e82c712a0fe5d2cf47cc4f6a354b9d22d49981078bb8c230187673db131b872b"
+    },
+    {
+      "name": "Authorized Voice agents endpoint",
+      "revision": 15,
+      "sha256": "aca577692316c71335f9c12089912586e26e1f470a379b67e3d7989f2100dccf"
+    }
+  ],
+  "modelActiveSources": {
+    "helperRevision": 1,
+    "helperSHA256": "e6b44221df99e411e486cdde80c959b9242f1f1dfd987a9f0f9d563e73116603",
+    "transformerRevision": 7,
+    "transformerSHA256": "f1e1b222cb9dbd4f08c45b336650cb928912f92b478b8e8b847c0e05d58a0f6b",
+    "nativeApplyReportedBy": "root",
+    "actualNativeScopedProof": "PASS V4 reported by root; execution id pending root capture",
+    "helperChars": 13850,
+    "transformerChars": 1043
+  },
+  "nativeModelScopedProof": {
+    "status": "PASS_REPORTED_BY_ROOT",
+    "proof": "json-boundary/Read-Native-Model-Adapter-Proof-V4.js",
+    "proofSHA256": "855cb18a18f0cb5974e6bcaf1ed61bded790d045fd94f61626fa35b580aedec1",
+    "promptRoles": [
+      "user",
+      "user",
+      "system"
+    ],
+    "maxTokens": 4096,
+    "temperature": 0,
+    "topP": 0.4,
+    "stopCount": 1,
+    "reactSchemaSHA256": "8576ce9d8bb1a45e258e17ce2a99a2f0bbe00ccf09593eddf7857cedb1bec5b5",
+    "rejectedInvalidFixtures": 3,
+    "productWrites": 0,
+    "backendRequests": 0
+  },
+  "voicePolicyOfflineVerification": {
+    "testFiles": 9,
+    "tests": 119,
+    "passed": 119,
+    "failed": 0,
+    "nativeCalls": 0
+  },
+  "voiceDeltaBatchEvidence": {
+    "nativePublicBatchComplete": true,
+    "publicSetCount": 4,
+    "publicCustomerUpdateCount": 36,
+    "ownedNoticeCount": 14,
+    "sourceNativeProductSHA256": "b69e0cf9cb8ceb1d45d41872b9e47d7ad34b9c213e4887010e1ed6f6543c0d10",
+    "exportSHA256": "fe796f7e1e68c74416894f71d7d136d2f9f55e522cc3a0a5aa0f11cb976fc678",
+    "offlineExportVerified": true,
+    "freshTargetImportVerified": false,
+    "physicalMobileAudioVerified": false,
+    "universalModelCompatibilityCertified": false,
+    "batchScope": "Voice1.3 delta only; the consolidated release may additionally contain earlier component roots."
+  },
+  "notices": {
+    "namespace": "local_llm.voice.notice.",
+    "codes": [
+      "INPUT_LOST",
+      "BUSY_AUDIO",
+      "BUSY_TEXT",
+      "ASR_EMPTY",
+      "ASR_FAILED",
+      "TURN_FAILED",
+      "LANGUAGE_RETRY"
+    ],
+    "catalogLanguages": [
+      "de",
+      "en"
+    ],
+    "nativeCatalogPreferred": true,
+    "unknownLocaleWrongLanguageFallback": false
+  },
+  "limitations": {
+    "physicalAndroidIOSAudioVerified": false,
+    "latestSDKObservation": "Successful HTTP session/signaling, failed ICE, zero server audioframes; fresh physical test requested by root.",
+    "configuredSecondaryLanguageLiveVerified": false,
+    "freshTargetInstanceImportVerified": false,
+    "allModelsCertified": false,
+    "allSkillBindingsCertified": false,
+    "cloudVoiceToLocalCustomVoiceMapping": false,
+    "phonemeConsumptionByLocalTTS": false,
+    "localDTMF": false,
+    "newLocalTelephonyTransferMFAFlows": false,
+    "pacingModesBeyondCurrentNormalQualified": false,
+    "allInferenceParameterEngineEffectsIsolated": false,
+    "observedDialogReadySeconds": 45.172,
+    "latencyImprovementClaimed": false
+  },
+  "references": {
+    "sourceHashes": "final-source-hashes.json",
+    "readme": "README-DE.md"
+  }
+}

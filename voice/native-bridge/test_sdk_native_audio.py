@@ -11,7 +11,9 @@ from unittest.mock import patch
 from aiohttp.test_utils import TestClient, TestServer
 from aiortc import AudioStreamTrack, RTCConfiguration, RTCPeerConnection, RTCSessionDescription
 from native_bridge import Config, create_app
-from sdk_admission import VerifiedContext
+from sdk_admission import _VerifiedSettingsContext
+from assistant_settings import CallSettings
+from test_assistant_settings import authorized_settings
 from sdk_sessions import _sdk_answer_compatible
 
 GREETING = 'Guten Tag. Dies ist die Sprachprobe.'
@@ -47,9 +49,18 @@ class SDKNativeAudioTests(unittest.IsolatedAsyncioTestCase):
             voice_service_id='8aa131d793f787105c8132d47aba1095',
             required_agent_id='a6337ddf93f787105c8132d47aba1058',
             native_sdk_enabled=True, greeting=GREETING, max_call_seconds=30)
+        payload = authorized_settings()
+        payload['result']['authorized_agents'] = [config.required_agent_id]
+        projection = payload['result']['assistant_settings']
+        projection['service_id'] = config.voice_service_id
+        projection['prompt']['introduction'] = GREETING
+        projection['language_selection']['enabled'] = False
+        settings = CallSettings.from_authorized_response(payload,config.voice_service_id,
+                                                          config.required_agent_id)
         async def granted(*args, **kwargs):
-            return VerifiedContext(config.instance_url,config.voice_service_id,
-                                   config.required_agent_id,'agent_operator',True)
+            self.assertEqual(kwargs['assistant_settings_version'],1)
+            return _VerifiedSettingsContext(config.instance_url,config.voice_service_id,
+                config.required_agent_id,'agent_operator',True,settings)
         peer = RTCPeerConnection(RTCConfiguration(iceServers=[]))
         messages = asyncio.Queue()
         tracks = asyncio.Queue()

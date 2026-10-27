@@ -1,6 +1,6 @@
 """Native ServiceNow WebRTC transport, local speech, existing VA conversation.
 
-No own LLM, order logic, HTML client, or replacement chat UI is included.
+ServiceNow owns business execution; optional local conversation has no tools.
 The HTTP listener remains loopback-only. A trusted TLS proxy and verified
 ServiceNow OAuth authorization are required for a native browser deployment.
 """
@@ -31,11 +31,59 @@ from assistant_settings import CallSettings
 from host_ice import HostIceConfiguration, load_host_ice_file
 from managed_turn import ManagedTurnConfiguration, load_managed_turn_file, clear_session_ice
 from mobile_relay import MobileRelayConfiguration, load_mobile_relay_file
+from speech_activity import (SpeechActivityConfiguration, StreamingSpeechActivity,
+                             load_speech_activity_file)
+from responsive_config import ResponsiveConfig, load_responsive_config
+from noise_guard import SpeechNoiseGuard, accepted_transcript
+from pcm_denoise import StreamingPCM16Denoiser
+from native_duplex import (NativeDuplex, BackendTurnUnavailable,
+                           BackendConversationEnded, validate_conversation_url)
+from model_health import require_model_ready, validate_model_health
+from local_llm_socket import validate_local_conversation
 
 LOG = logging.getLogger('native-voice')
 HTTP_KEY = web.AppKey('http', ClientSession)
 # Both peers need a public ICE candidate when they are outside the same LAN.
 STUN_URL = 'stun:stun.l.google.com:19302'
+QWEN_ASR_BACKEND = 'qwen3-asr-0.6b'
+QWEN_ASR_URL = 'http://127.0.0.1:8851/v1/audio/transcriptions'
+QWEN_ASR_HEALTH = 'http://127.0.0.1:8851/health'
+QWEN_ASR_MODEL = 'Qwen/Qwen3-ASR-0.6B'
+
+
+def validate_asr_config(backend, url, token):
+    if backend not in ('whisper', QWEN_ASR_BACKEND):
+        raise ValueError('Unsupported ASR backend')
+    if backend == 'whisper':
+        if token:
+            raise ValueError('ASR credentials require the selected Qwen backend')
+        return
+    if (url != QWEN_ASR_URL or type(token) is not str or not 16 <= len(token) <= 8192
+            or any(ord(char) < 33 or ord(char) > 126 for char in token)):
+        raise ValueError('Qwen ASR requires its exact authenticated loopback endpoint')
+
+
+async def require_asr_ready(http, config):
+    if config.asr_backend != QWEN_ASR_BACKEND:
+        return
+    try:
+        async with http.get(QWEN_ASR_HEALTH,
+                headers={'Authorization':'Bearer ' + config.private_asr_token},
+                allow_redirects=False, timeout=ClientTimeout(total=6)) as response:
+            raw = bytearray()
+            async for chunk in response.content.iter_chunked(8192):
+                raw.extend(chunk)
+                if len(raw) > 65536:
+                    raise ValueError()
+            value = json.loads(raw)
+            if (response.status != 200 or type(value) is not dict
+                    or value.get('status') != 'ready' or value.get('mode') != 'asr'
+                    or value.get('model') != QWEN_ASR_MODEL or value.get('busy') is not False
+                    or value.get('device') != 'cpu' or value.get('dtype') != 'float32'
+                    or type(value.get('max_parallel')) is not int or value['max_parallel'] != 1):
+                raise ValueError()
+    except Exception:
+        raise RuntimeError('Selected ASR service is unavailable') from None
 
 
 @dataclass
@@ -48,19 +96,51 @@ class Config:
     development_token: str = ''
     backend_url: str = 'http://127.0.0.1:8850'
     asr_url: str = 'http://127.0.0.1:8861/inference'
+    asr_backend: str = 'whisper'
+    private_asr_token: str = field(default='', repr=False)
     tts_url: str = 'http://127.0.0.1:8862/v1/audio/speech'
+    conversation_ws_url: str = ''
+    conversation_transport: str = ''
+    conversation_http_url: str = ''
+    conversation_token_file: str = field(default='', repr=False)
+    model_health_url: str = ''
+    private_model_health_token: str = field(default='', repr=False)
+    live_context_updates_enabled: bool = False
     vad_threshold: int = 450
     vad_silence_ms: int = 1200
     max_call_seconds: int = 1800
     greeting: str = ''
+    initial_topic_id: str = ''
     native_sdk_enabled: bool = False
     sdk_public_origin: str = ''
     private_host_ice: HostIceConfiguration = field(default_factory=HostIceConfiguration, repr=False)
     private_mobile_relay: MobileRelayConfiguration = field(default_factory=MobileRelayConfiguration, repr=False)
     private_managed_turn: ManagedTurnConfiguration = field(default_factory=ManagedTurnConfiguration, repr=False)
+    private_speech_activity: SpeechActivityConfiguration = field(default_factory=SpeechActivityConfiguration, repr=False)
+    private_responsive: ResponsiveConfig = field(default_factory=ResponsiveConfig, repr=False)
     sdk_policy: SDKDeploymentPolicy | None = field(init=False, default=None, repr=False)
 
     def __post_init__(self):
+        if (type(self.initial_topic_id) is not str or self.initial_topic_id and
+                not re.fullmatch(r'[0-9a-f]{32}', self.initial_topic_id)):
+            raise ValueError('Initial topic must be an exact ServiceNow topic identifier')
+        validate_conversation_url(self.conversation_ws_url)
+        validate_local_conversation(self.conversation_http_url, self.conversation_token_file)
+        if (self.conversation_transport not in ('', 'controller-text')
+                or bool(self.conversation_http_url) != (self.conversation_transport == 'controller-text')):
+            raise ValueError('Controller conversation requires explicit controller-text selection')
+        validate_model_health(self.model_health_url, self.private_model_health_token)
+        validate_asr_config(self.asr_backend, self.asr_url, self.private_asr_token)
+        if type(self.live_context_updates_enabled) is not bool:
+            raise ValueError('Live context updates require a boolean setting')
+        if not isinstance(self.private_responsive, ResponsiveConfig):
+            raise ValueError('Responsive mode must be a resolved configuration')
+        if (self.conversation_ws_url or self.conversation_http_url) and self.private_responsive.enabled:
+            raise ValueError('Independent conversation and legacy responsive mode are mutually exclusive')
+        if self.private_responsive.enabled and (not self.instance_name or not self.voice_service_id):
+            raise ValueError('Responsive mode requires configured instance and assistant bindings')
+        if not isinstance(self.private_speech_activity, SpeechActivityConfiguration):
+            raise ValueError('Speech activity must be a resolved configuration')
         if not isinstance(self.private_managed_turn,ManagedTurnConfiguration):
             raise ValueError('Managed TURN must be a resolved configuration')
         if self.private_managed_turn.enabled and (not self.native_sdk_enabled
@@ -137,15 +217,24 @@ class Speech:
         form = FormData()
         form.add_field('file', buf.getvalue(), filename='speech.wav', content_type='audio/wav')
         context = self.call_settings.asr_context() if self.call_settings else {'language':'de','terms':[]}
-        form.add_field('language', context['language'])
-        if context['terms']:
-            form.add_field('prompt', ', '.join(context['terms']))
-        form.add_field('response_format', 'verbose_json')
-        form.add_field('token_timestamps', 'false')
-        form.add_field('no_language_probabilities', 'true')
-        form.add_field('temperature', '0')
+        options = {}
+        if self.config.asr_backend == QWEN_ASR_BACKEND:
+            if context['language'] not in ('de', 'en', 'auto'):
+                raise RuntimeError('Configured ASR language is unsupported')
+            form.add_field('model', QWEN_ASR_BACKEND)
+            form.add_field('language', context['language'])
+            form.add_field('response_format', 'json')
+            options['headers'] = {'Authorization':'Bearer ' + self.config.private_asr_token}
+        else:
+            form.add_field('language', context['language'])
+            if context['terms']:
+                form.add_field('prompt', ', '.join(context['terms']))
+            form.add_field('response_format', 'verbose_json')
+            form.add_field('token_timestamps', 'false')
+            form.add_field('no_language_probabilities', 'true')
+            form.add_field('temperature', '0')
         async with self.http.post(self.config.asr_url, data=form, allow_redirects=False,
-                                  timeout=ClientTimeout(total=30)) as response:
+                                  timeout=ClientTimeout(total=30), **options) as response:
             if response.status != 200:
                 raise RuntimeError('ASR unavailable')
             data = await response.json()
@@ -153,7 +242,7 @@ class Speech:
             if not isinstance(text, str) or len(text) > 4000:
                 raise RuntimeError('Invalid transcription')
             self.log_asr_diagnostics(data)
-            return text.strip()
+            return accepted_transcript(data)
 
     async def synthesize(self, text):
         payload = {'model':'scc-native-qwen3', 'voice':'scc-demo', 'input':text,
@@ -166,6 +255,8 @@ class Speech:
             async for chunk in response.content.iter_chunked(4800):
                 count += len(chunk)
                 yield chunk
+            if count == 0:
+                raise RuntimeError('TTS returned empty PCM')
             if count % 2:
                 raise RuntimeError('TTS returned incomplete PCM sample')
 
@@ -182,7 +273,79 @@ class Dialog:
         self.first_message_pending = True
         self.greeting_history = []
         self.greeting_history_allowed = False
-        self.metadata = {'conversation_id':'', 'interaction_id':''}
+        self.metadata = {'conversation_id':'', 'interaction_id':'',
+                         'creation_message_id':'', 'create_request_id':''}
+        self.public_replies = []
+        self.current_question = ''
+        self.processing = None
+        self.observation_revision = 0
+        self.input_boundary = None
+        self._context_receipt = None
+        self.conversation_ended = False
+        self._initial_topic_attempted = False
+
+    def observe_state(self, state, *, sampled_at=None):
+        """Retain scoped presentation and private CREATE IDs, never thoughts."""
+        if state.get('ended') is True and not self.conversation_ended:
+            self.conversation_ended = True
+            self.current_question = ''
+            self.observation_revision += 1
+        binding = state.get('conversationBinding')
+        if (type(binding) is dict and binding.get('source') == 'servicenow_create_conversation'
+                and set(binding) in ({'source', 'conversationId', 'creationMessageId', 'createRequestId'},
+                    {'source', 'conversationId', 'creationMessageId', 'createRequestId', 'interactionId'})
+                and all(type(binding.get(key)) is str and re.fullmatch(r'[0-9a-f]{32}', binding[key])
+                    for key in ('conversationId', 'creationMessageId', 'createRequestId'))
+                and ('interactionId' not in binding or type(binding['interactionId']) is str
+                    and re.fullmatch(r'[0-9a-f]{32}', binding['interactionId']))):
+            metadata = {'conversation_id': binding['conversationId'],
+                'interaction_id': binding.get('interactionId', ''),
+                'creation_message_id': binding['creationMessageId'],
+                'create_request_id': binding['createRequestId']}
+            if any(self.metadata.values()) and self.metadata != metadata:
+                raise RuntimeError('ServiceNow conversation binding changed')
+            # Private corroboration metadata only; never model context or prose.
+            self.metadata = metadata
+        self.input_boundary = None
+        boundary = state.get('inputBoundary')
+        if (state.get('busy') is False and not self.conversation_ended and not state.get('failed')
+                and type(boundary) is dict and boundary.get('source') == 'servicenow_input_control'
+                and set(boundary) == {'source', 'businessRequestId', 'controlType'}
+                and type(boundary.get('businessRequestId')) is str
+                and re.fullmatch(r'[0-9a-f]{32}', boundary['businessRequestId'])
+                and boundary.get('controlType') in
+                    ('InputText', 'Picker', 'TopicPickerControl', 'Boolean', 'Date', 'DateTime', 'Time')):
+            self.input_boundary = dict(boundary, label=spoken_text(state.get('inputLabel', '')))
+        value = state.get('processing')
+        processing = None
+        if (not self.conversation_ended and type(value) is dict
+                and value.get('source') == 'servicenow_processing'
+                and value.get('agentCompletionKnown') is False
+                and type(value.get('revision')) is int and value['revision'] >= 0
+                and type(value.get('messages')) is list and len(value['messages']) <= 8
+                and all(type(item) is str and 0 < len(item) <= 500 for item in value['messages'])
+                and type(value.get('ageSeconds')) in (int, float)
+                and math.isfinite(value['ageSeconds']) and value['ageSeconds'] >= 0):
+            processing = {'revision': value['revision'],
+                'messages': [spoken_text(item) for item in value['messages']],
+                'ageSeconds': value['ageSeconds'], 'source': 'servicenow_processing',
+                'agentCompletionKnown': False}
+        old = self.processing
+        if ((old is None) != (processing is None) or old is not None and processing is not None
+                and (old['revision'], old['messages']) != (processing['revision'], processing['messages'])):
+            self.observation_revision += 1
+        self.processing = processing
+        # Poll start is conservative: a long poll cannot make an old label younger.
+        self.processing_observed_at = ((time.monotonic() if sampled_at is None else sampled_at)
+                                       - processing['ageSeconds']) if processing is not None else None
+
+    def record_public_reply(self, reply):
+        reply = spoken_text(reply)
+        if reply:
+            self.public_replies.append(reply)
+            self.public_replies = self.public_replies[-8:]
+            self.current_question = reply if '?' in reply and not self.conversation_ended else ''
+            self.observation_revision += 1
 
     async def request(self, method, path, **kwargs):
         headers = {'Origin':self.config.backend_url, 'X-CSRF-Token':self.csrf}
@@ -217,17 +380,37 @@ class Dialog:
         greetings = []
         until = time.monotonic() + 185
         while time.monotonic() < until:
+            sampled_at = time.monotonic()
             state = await self.request('GET', '/api/events', params={'after':str(self.cursor),'wait':'1'})
             self.cursor = state['cursor']
+            self.observe_state(state, sampled_at=sampled_at)
             for event in state.get('events', []):
                 if event.get('kind') == 'bot' and event.get('text'):
                     greetings.append(event['text'])
+                    self.record_public_reply(event['text'])
                 elif event.get('kind') in ('error', 'notice'):
                     raise RuntimeError('ServiceNow greeting failed')
             if state.get('failed') or state.get('ended'):
                 raise RuntimeError('ServiceNow conversation is not ready')
             if not state.get('busy'):
+                topic = self.config.initial_topic_id
+                boundary = self.input_boundary
+                if (topic and type(boundary) is dict
+                        and boundary.get('controlType') == 'TopicPickerControl'):
+                    if self._initial_topic_attempted:
+                        raise RuntimeError('Configured initial topic did not reach its input control')
+                    choices = state.get('choices')
+                    if (not isinstance(choices, list) or not any(
+                            isinstance(item, dict) and item.get('value') == topic for item in choices)):
+                        raise RuntimeError('Configured initial topic is not offered by ServiceNow')
+                    # Claim before I/O. An uncertain enqueue is never replayed.
+                    self._initial_topic_attempted = True
+                    await self.request('POST', '/api/message', json={'choice': topic})
+                    greetings.clear()
+                    continue
                 return greetings
+            await require_model_ready(self.http, self.config.model_health_url,
+                                      self.config.private_model_health_token)
         raise RuntimeError('ServiceNow conversation startup timed out')
 
     def record_greeting(self, text):
@@ -239,8 +422,84 @@ class Dialog:
                 'displayName':'Bot', 'type':'text',
                 'timestamp':str(int(time.time() * 1000))}]
 
+    async def publish_context_update(self, revision, caller_updates):
+        """Send supplemental context without replacing the active VA turn.
+
+        The platform action ACK is transport evidence only. The caller's raw
+        input stays queued for the next ordinary input boundary.
+        """
+        if (type(revision) is not int or not 0 < revision <= 1000000
+                or type(caller_updates) is not str or not caller_updates
+                or len(caller_updates) > 8000
+                or len(caller_updates.encode('utf-8')) > 12000):
+            raise ValueError('Invalid caller context snapshot')
+        if not self.http or not self.csrf or self.must_reset:
+            raise RuntimeError('Conversation is not open for context updates')
+        payload = {'revision': revision, 'caller_updates': caller_updates}
+        if self.call_settings:
+            payload['voice_context'] = self.call_settings.native_context()
+        self._context_receipt = None
+        result = await self.request('POST', '/api/context-update', json=payload,
+                                    timeout=ClientTimeout(total=12))
+        if (type(result) is not dict or result.get('state') != 'context_action_acknowledged'
+                or type(result.get('revision')) is not int or result['revision'] != revision
+                or result.get('ingested') is not False):
+            raise RuntimeError('Context update was not acknowledged')
+        if result.get('contextStored') is True:
+            if (result.get('promptIncluded') is not False
+                    or result.get('conversationId') != self.metadata['conversation_id']
+                    or any(type(result.get(key)) is not str or not re.fullmatch(r'[0-9a-f]{32}', result[key])
+                           for key in ('contextRequestId', 'businessRequestId', 'executionPlanId'))):
+                raise RuntimeError('Stored context binding was not corroborated')
+            self._context_receipt = dict(result)
+        return result
+
+    async def context_status(self, revision):
+        """Read exact prompt inclusion; this is neither task success nor user approval."""
+        saved, boundary = self._context_receipt, self.input_boundary
+        if (type(saved) is not dict or type(boundary) is not dict
+                or saved.get('revision') != revision
+                or saved.get('businessRequestId') != boundary.get('businessRequestId')
+                or saved.get('conversationId') != self.metadata['conversation_id']):
+            raise RuntimeError('Exact context input boundary is unavailable')
+        result = await self.request('GET', '/api/context-status', params={'revision': str(revision)},
+                                    timeout=ClientTimeout(total=12))
+        if (type(result) is not dict or result.get('state') != 'context_prompt_status'
+                or type(result.get('revision')) is not int or result['revision'] != revision
+                or result.get('contextStored') is not True
+                or result.get('inputBoundaryConfirmed') is not True
+                or any(result.get(key) != saved[key] for key in
+                       ('contextRequestId', 'businessRequestId', 'conversationId', 'executionPlanId'))
+                or type(result.get('promptIncluded')) is not bool
+                or result.get('ingested') is not result['promptIncluded']
+                or self._context_receipt is not saved or self.input_boundary is not boundary):
+            raise RuntimeError('Exact context prompt receipt was not corroborated')
+        return result
+
     async def turn(self, text, on_reply=None, voice_context=None):
+        if self.conversation_ended:
+            raise BackendConversationEnded('ServiceNow ended this conversation')
+        self.input_boundary = None
+        await require_model_ready(self.http, self.config.model_health_url,
+                                  self.config.private_model_health_token)
         payload = {'text':text}
+        if isinstance(voice_context, dict) and set(voice_context) == {'language', 'assistant_id', 'profile'}:
+            settings = self.call_settings
+            languages = getattr(settings, 'language_selection', {}).get('languages', [])
+            if (settings is None or voice_context['assistant_id'] != self.config.voice_service_id
+                    or voice_context['assistant_id'] != settings.service_id
+                    or voice_context['profile'] != settings.context_profile
+                    or voice_context['language'] not in {item['code'] for item in languages}):
+                raise ValueError('Responsive voice context does not match configured assistant')
+            # Lossless reconstruction of the established six native fields. Keep
+            # the accepted language snapshot even after a later local selection.
+            voice_context = {
+                'interaction_requester_session_language':voice_context['language'],
+                'interaction_user_language':voice_context['language'],
+                'requester_session_language':voice_context['language'],
+                'voice_assistant':voice_context['assistant_id'], 'interaction_ai_voice':'true',
+                'global_context_profile':voice_context['profile'],
+            }
         if self.call_settings:
             payload['voice_context'] = (dict(voice_context) if voice_context is not None
                                         else self.call_settings.native_context())
@@ -250,14 +509,18 @@ class Dialog:
         self.first_message_pending = False
         self.greeting_history = []
         request_started = time.monotonic()
+        self.processing = None
+        self.observation_revision += 1
         await self.request('POST', '/api/message', json=payload)
         LOG.info('Voice dialog stage=request_ack elapsed_ms=%d', int((time.monotonic()-request_started)*1000))
         first_reply = True
         until = time.monotonic() + 185
         result = []
         while time.monotonic() < until:
+            sampled_at = time.monotonic()
             state = await self.request('GET', '/api/events', params={'after':str(self.cursor),'wait':'20'})
             self.cursor = state['cursor']
+            self.observe_state(state, sampled_at=sampled_at)
             for event in state.get('events', []):
                 if event.get('kind') == 'bot' and event.get('text'):
                     reply = spoken_text(event['text'])
@@ -265,15 +528,20 @@ class Dialog:
                              int((time.monotonic()-request_started)*1000), first_reply)
                     first_reply = False
                     result.append(reply)
+                    self.record_public_reply(reply)
                     if on_reply:
                         await on_reply(reply)
                 elif event.get('kind') in ('error', 'notice'):
+                    if event.get('kind') == 'error' and state.get('failed'):
+                        raise BackendTurnUnavailable('ServiceNow did not complete the submitted turn')
                     raise RuntimeError('ServiceNow returned an unsupported or failed turn')
             if state.get('failed'):
-                raise RuntimeError('ServiceNow conversation failed')
+                raise BackendTurnUnavailable('ServiceNow did not complete the submitted turn')
             if not state.get('busy'):
                 return result
-        raise RuntimeError('ServiceNow conversation timed out')
+            await require_model_ready(self.http, self.config.model_health_url,
+                                      self.config.private_model_health_token)
+        raise BackendTurnUnavailable('ServiceNow conversation timed out')
 
     async def close(self):
         if self.http and self.csrf:
@@ -294,6 +562,15 @@ class Dialog:
         self.first_message_pending = True
         self.greeting_history = []
         self.greeting_history_allowed = False
+        self._initial_topic_attempted = False
+
+        self.metadata = {key: '' for key in self.metadata}
+        self.public_replies = []
+        self.current_question = ''
+        self.processing = None
+        self.input_boundary = None
+        self._context_receipt = None
+        self.observation_revision += 1
 
     async def wait_owned_cleanup(self):
         """Retry only the owned END, retaining its private cookie until ACK."""
@@ -347,8 +624,26 @@ class SpeakerTrack(AudioStreamTrack):
         return frame
 
 
+@dataclass(frozen=True)
+class _InputEnvelope:
+    """Private immutable origin; preserve existing tuple unpacking and indexing."""
+    values: tuple
+    input_epoch: int
+    duplex_onset: tuple | None = None
+
+    def __iter__(self):
+        return iter(self.values)
+
+    def __len__(self):
+        return len(self.values)
+
+    def __getitem__(self, index):
+        return self.values[index]
+
+
 class NativeCall:
-    def __init__(self, config, speech, dialog, call_settings=None, *, ice_servers=None):
+    def __init__(self, config, speech, dialog, call_settings=None, *, ice_servers=None,
+                 responsive_attachment_factory=None):
         self.call_settings = call_settings
         if call_settings:
             # Clone only call-local timing/limits; never mutate startup routing or local voices.
@@ -372,7 +667,19 @@ class NativeCall:
         self.pending_events = []
         self.tasks = set()
         self.turns = asyncio.Queue(maxsize=2)
-        self.recognized_turns = asyncio.Queue(maxsize=2)
+        self.responsive_attachment_factory = responsive_attachment_factory
+        self.responsive_attachment = None
+        self.responsive_output = None
+        self._responsive_turns = {}
+        self._responsive_codes = {}
+        self._responsive_fallbacks = set()
+        self._responsive_opening = False
+        self._responsive_failure_feedback = False
+        self._input_epoch = 0
+        self._input_receivers = set()
+        self._acceptance_active = 0
+        self._input_turn_active = False
+        self.recognized_turns = asyncio.Queue(maxsize=32 if responsive_attachment_factory or config.conversation_ws_url or config.conversation_http_url else 2)
         self.asr_task = None
         self.failed = False
         self.call_id = uuid.uuid4().hex[:12]
@@ -396,6 +703,12 @@ class NativeCall:
         self.closing = False
         self.close_task = None
         self.close_complete = asyncio.Event()
+        publisher = (getattr(self.dialog, 'publish_context_update', None)
+                     if config.live_context_updates_enabled else None)
+        reconciler = (getattr(self.dialog, 'context_status', None)
+                      if config.live_context_updates_enabled else None)
+        self.duplex = NativeDuplex(self, context_publisher=publisher,
+            context_reconciler=reconciler) if config.conversation_ws_url or config.conversation_http_url else None
         self.peer.on('datachannel', self.datachannel)
         self.peer.on('track', self.receive_track)
 
@@ -456,10 +769,40 @@ class NativeCall:
         task.add_done_callback(self.tasks.discard)
         return task
 
+    def _input_live(self):
+        return not (self.closed or self.closing or self.input_lost or self.failed)
+
+    def _input_guard(self, origin):
+        return lambda: self._input_live() and origin == self._input_epoch
+
+    def _terminal_control_guard(self, origin):
+        # Only explicit startup failure feedback may explain a failed call.
+        # Other controls retain _input_guard, which rejects failed intake.
+        return lambda: (self.failed and not (self.closed or self.closing or self.input_lost)
+                        and origin == self._input_epoch)
+
+    def _control_ready(self):
+        return (not (self.closed or self.closing or self.input_lost) and not self._input_receivers
+                and not self.recognition_active and self.turns.empty())
+
+    def _input_ready(self):
+        return (self._input_live() and self._control_ready() and self.recognized_turns.empty()
+                and not self._acceptance_active and not self._input_turn_active)
+
+    def _notify_input_changed(self):
+        if self.responsive_output is not None:
+            self.responsive_output.notify_input_changed()
+
+    def _invalidate_grounded(self, reason):
+        invalidate = getattr(self.responsive_attachment, 'invalidate_grounded', None)
+        if callable(invalidate):
+            invalidate(reason)
+
     def register_microphone(self, track):
         if self.closed or self.closing or self.input_lost:
             return False
         self.microphones.add(track)
+        self._notify_input_changed()
         if self.input_loss_task and not self.input_loss_task.done():
             self.input_loss_task.cancel()
             self.input_loss_task = None
@@ -487,9 +830,14 @@ class NativeCall:
         if self.closed or self.closing or self.microphones or self.input_lost:
             return
         self.input_lost = True  # Commit before yielding or accepting more input.
+        self._invalidate_grounded('input_loss')
+        self._notify_input_changed()
         # A lost speaker must not leave on_reply stuck on a full PCM buffer
         # while the submitted ServiceNow request is still being observed.
-        self.playback.interrupt()
+        if self.responsive_output is not None:
+            self.responsive_output.interrupt()
+        else:
+            self.playback.interrupt()
         try:
             self.local_notice('INPUT_LOST', 'Die Mikrofonverbindung wurde unterbrochen. Weitere Antworten werden nicht weitergeleitet. '
                         'Dieser Anruf wird beendet, sobald die laufende Anfrage abgeschlossen ist.')
@@ -502,6 +850,7 @@ class NativeCall:
         text_count = self.drain_queue(self.recognized_turns)
         if not self.turns_settled.is_set():
             self.recognized_turns.put_nowait(None)  # Wake an idle worker only.
+        self._notify_input_changed()
         LOG.info('Voice input call=%s stage=input_lost discarded_audio=%d discarded_text=%d',
                  self.call_id, audio_count, text_count)
         self.input_ended.set()
@@ -552,17 +901,37 @@ class NativeCall:
         started = last_frame = last_report = time.monotonic()
         last_loud = None
         frames = samples = vad_starts = queued = energy = loud_frames = 0
+        # Fixed-size numeric aggregates only; no additional PCM/text retention.
+        input_stats = dict(raw_energy=0, probability_sum=0.0, probability_samples=0,
+                           qualified_chunks=0, tts_chunks=0, tts_qualified_chunks=0,
+                           tts_probability_sum=0.0, tts_probability_samples=0,
+                           tts_raw_energy=0, tts_energy=0, tts_samples=0)
         max_gap = 0.0
         pending = None
         gate = None
+        detector = None
+        denoiser = None
+        raw_pending = bytearray()
+        denoise_fallbacks = set()
+        noise_guard = SpeechNoiseGuard()
         receive_failed = False
+        receiver = object()
+        input_epoch = 0
+        input_onset = None
 
         def queue_utterance(utterance, endpoint):
-            nonlocal queued
+            nonlocal queued, input_onset
             if not utterance or self.closed or self.failed or self.input_lost or self.closing:
                 return
             try:
-                self.turns.put_nowait((self.playback.generation, utterance))
+                audio = (self.playback.generation, utterance)
+                if self.duplex is not None:
+                    # Bind this PCM to its own immutable onset question/overlap,
+                    # independent of a playback generation shared by later input.
+                    audio = _InputEnvelope(audio, input_epoch, input_onset)
+                elif self.responsive_attachment_factory is not None:
+                    audio = _InputEnvelope(audio, input_epoch)
+                self.turns.put_nowait(audio)
                 queued += 1
                 LOG.info('Voice input call=%s stage=queued audio_ms=%d audio_queue=%d text_queue=%d endpoint=%s',
                          self.call_id, len(utterance)*1000//32000,
@@ -570,12 +939,14 @@ class NativeCall:
             except asyncio.QueueFull:
                 LOG.info('Voice input call=%s stage=audio_queue_full', self.call_id)
                 self.local_notice('BUSY', 'Die letzte Aufnahme konnte nicht angenommen werden. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.', 'BUSY_AUDIO')
+            finally:
+                input_onset = None
 
         def summary(stage):
             # Numeric counters only: never log audio, transcripts, addresses,
             # tokens, or arbitrary transport/exception representations.
             now = time.monotonic()
-            LOG.info('Voice input call=%s stage=input_summary reason=%s seconds=%.3f frames=%d audio_ms=%d vad_starts=%d queued=%d vad_active=%s voiced_ms=%d quiet_ms=%d last_frame_age_ms=%d last_loud_age_ms=%d max_gap_ms=%d rms=%d loud_frames=%d audio_queue=%d text_queue=%d',
+            LOG.info('Voice input call=%s stage=input_summary reason=%s seconds=%.3f frames=%d audio_ms=%d vad_starts=%d queued=%d vad_active=%s voiced_ms=%d quiet_ms=%d last_frame_age_ms=%d last_loud_age_ms=%d max_gap_ms=%d rms=%d loud_frames=%d audio_queue=%d text_queue=%d raw_rms=%d speech_probability_mean=%.4f qualified_chunks=%d tts_chunks=%d tts_qualified_chunks=%d tts_speech_probability_mean=%.4f tts_raw_rms=%d tts_rms=%d',
                      self.call_id, stage, now-started, frames, samples*1000//16000,
                      vad_starts, queued, bool(gate and gate.active),
                      gate.voiced*1000//16000 if gate else 0,
@@ -584,67 +955,207 @@ class NativeCall:
                      int((now-last_loud)*1000) if last_loud is not None else -1,
                      int(max(max_gap,now-last_frame)*1000),
                      int((energy/max(1,samples))**.5), loud_frames,
-                     self.turns.qsize(), self.recognized_turns.qsize())
+                     self.turns.qsize(), self.recognized_turns.qsize(),
+                     int((input_stats['raw_energy']/max(1,samples))**.5),
+                     (input_stats['probability_sum']/input_stats['probability_samples']
+                      if input_stats['probability_samples'] else -1.0),
+                     input_stats['qualified_chunks'], input_stats['tts_chunks'],
+                     input_stats['tts_qualified_chunks'],
+                     (input_stats['tts_probability_sum']/input_stats['tts_probability_samples']
+                      if input_stats['tts_probability_samples'] else -1.0),
+                     int((input_stats['tts_raw_energy']/max(1,input_stats['tts_samples']))**.5),
+                     int((input_stats['tts_energy']/max(1,input_stats['tts_samples']))**.5))
+
+        def consume_pcm(pcm, observed_at):
+            nonlocal energy, samples, loud_frames, vad_starts, input_epoch, input_onset, last_loud
+            if (self.closed or (self.failed and self.responsive_attachment_factory is None)
+                    or self.input_lost or self.closing):
+                return
+            # RNNoise owns speech/noise decisions. ASR receives the exact
+            # corresponding received 16k samples, including preroll and tail.
+            if len(pcm) % 2 or len(pcm) > len(raw_pending):
+                raise ValueError('Denoised PCM exceeds aligned received input')
+            received = bytes(raw_pending[:len(pcm)])
+            del raw_pending[:len(pcm)]
+            values = memoryview(pcm).cast('h')
+            power = sum(value*value for value in values)
+            count = len(values)
+            energy += power
+            samples += count
+            raw_power = sum(value*value for value in memoryview(received).cast('h'))
+            input_stats['raw_energy'] += raw_power
+            loud = bool(count and power >= self.config.vad_threshold**2 * count)
+            loud_frames += int(loud)
+            voiced = detector.feed(pcm) if detector is not None else loud
+            if detector is not None and count:
+                voiced = noise_guard.qualify(detector.probability, (power / count) ** .5,
+                    count * 1000 / 16000,
+                    # Duplex takeover is decided after ASR. Keep recognition
+                    # equally sensitive during output so short letters/onsets
+                    # are not removed by the legacy interruption-only guard.
+                    speaking=self.duplex is None and (self.synthesis_active or bool(self.playback.data)),
+                    utterance_active=gate.active)
+            if count:
+                output_active = bool(self.synthesis_active or self.playback.data)
+                input_stats['qualified_chunks'] += int(voiced)
+                input_stats['tts_chunks'] += int(output_active)
+                input_stats['tts_qualified_chunks'] += int(output_active and voiced)
+                if output_active:
+                    input_stats['tts_raw_energy'] += raw_power
+                    input_stats['tts_energy'] += power
+                    input_stats['tts_samples'] += count
+                probability = detector.probability if detector is not None else None
+                if (type(probability) in (int, float) and math.isfinite(probability)
+                        and 0 <= probability <= 1):
+                    input_stats['probability_sum'] += probability * count
+                    input_stats['probability_samples'] += count
+                    if output_active:
+                        input_stats['tts_probability_sum'] += probability * count
+                        input_stats['tts_probability_samples'] += count
+            began, utterance = gate.feed(received, voiced=voiced)
+            self.vad_active = gate.active
+            if gate.active:
+                self._input_receivers.add(receiver)
+            else:
+                self._input_receivers.discard(receiver)
+            if self.responsive_attachment_factory is not None:
+                self.vad_active = bool(self._input_receivers)
+            if gate.active and voiced:
+                last_loud = observed_at
+            if began:
+                vad_starts += 1
+                self.input_started = True
+                playback_bytes = len(self.playback.data)
+                interrupted = self.synthesis_active or bool(playback_bytes)
+                if self.duplex is not None:
+                    # Noise qualification establishes speech, not a lexical
+                    # takeover. Keep output until final ASR reaches acceptance.
+                    input_onset = self.duplex.speech_onset()
+                    interrupted = False
+                elif self.responsive_attachment_factory is not None:
+                    self._input_epoch += 1
+                    self._invalidate_grounded('input')
+                    input_epoch = self._input_epoch
+                    if self.responsive_output is not None:
+                        self.responsive_output.interrupt_for_input()
+                    else:
+                        self.playback.interrupt()
+                elif interrupted:
+                    self.playback.interrupt()
+                LOG.info('Voice input call=%s stage=vad_start generation=%d interrupted=%s playback_bytes=%d audio_queue=%d text_queue=%d',
+                         self.call_id, self.playback.generation, interrupted, playback_bytes,
+                         self.turns.qsize(), self.recognized_turns.qsize())
+            queue_utterance(utterance, 'pcm_silence_or_limit')
+            self._notify_input_changed()
+            if not gate.active:
+                last_loud = None
+
+        def report_denoiser():
+            reason = denoiser.fallback_reason
+            # At most four fixed-code diagnostics per call; never payload data.
+            if (reason in ('unavailable', 'runtime_error', 'buffer_limit', 'short_output')
+                    and reason not in denoise_fallbacks):
+                denoise_fallbacks.add(reason)
+                LOG.warning('Voice input call=%s stage=pcm_denoise_fallback reason=%s',
+                            self.call_id, reason)
+
+        def flush_denoiser():
+            nonlocal denoiser
+            if denoiser is not None:
+                # A buffered phoneme retains its actual packet arrival time.
+                tail = denoiser.finish()
+                report_denoiser()
+                for pcm in tail:
+                    consume_pcm(pcm, last_frame)
+                if raw_pending:
+                    raise ValueError('Denoiser left unmatched received input')
+                denoiser = None
+
+        def finish_wall_silence(now):
+            nonlocal last_loud
+            if ((not self.failed or self.responsive_attachment_factory is not None)
+                    and not self.input_lost and not self.closing and gate.active and last_loud is not None
+                    and now-last_loud >= silence_seconds):
+                utterance = gate.finish()
+                self.vad_active = False
+                self._input_receivers.discard(receiver)
+                if self.responsive_attachment_factory is not None:
+                    self.vad_active = bool(self._input_receivers)
+                queue_utterance(utterance, 'wall_silence')
+                self._notify_input_changed()
+                summary('wall_silence')
+                last_loud = None
 
         try:
+            activity = getattr(self.config, 'private_speech_activity', None)
+            if activity is not None and activity.enabled:
+                detector = StreamingSpeechActivity(activity)
             converter = AudioResampler(format='s16', layout='mono', rate=16000)
             gate = EndpointGate(threshold=self.config.vad_threshold,
                                 onset_ms=(self.call_settings.vad_start_ms if self.call_settings and
                                           self.call_settings.vad_start_ms is not None else 100),
                                 silence_ms=self.config.vad_silence_ms)
             silence_seconds = self.config.vad_silence_ms / 1000
+            denoiser = StreamingPCM16Denoiser()
+            LOG.info('Voice input call=%s stage=pcm_denoise engine=rnnoise-0.4.5 active=%s '
+                     'vad_pcm=denoised asr_pcm=received_raw',
+                     self.call_id, denoiser.active)
             while not self.closed:
                 if pending is None:
                     # Keep one recv alive across timeouts. Repeated wait_for()
                     # cancellation can disrupt aiortc's receive queue itself.
                     pending = asyncio.create_task(track.recv())
-                ready, _ = await asyncio.wait((pending,), timeout=min(.25,silence_seconds))
+                unconfirmed_tail = (not gate.active and gate.run and denoiser is not None
+                                    and denoiser.pending_samples > 0)
+                wait_seconds = min(.25, silence_seconds / 2 if unconfirmed_tail else silence_seconds)
+                ready, _ = await asyncio.wait((pending,), timeout=wait_seconds)
                 now = time.monotonic()
                 if ready:
-                    frame = pending.result()  # Real EOS/errors keep loss handling.
+                    frame = pending.result()  # EOS/errors keep terminal loss semantics.
                     pending = None
+                elif (unconfirmed_tail and gate.pending_deadline is not None
+                      and now < gate.pending_deadline):
+                    # Finish only the already received tail before its candidate
+                    # onset expires. A later burst keeps the original deadline.
+                    deadline = gate.pending_deadline
+                    flush_denoiser()
+                    if not gate.active:
+                        gate.pending_deadline = deadline
+                if (now-last_frame >= silence_seconds
+                        and (not self.failed or self.responsive_attachment_factory is not None)
+                        and not self.input_lost and not self.closing):
+                    flush_denoiser()
+                    finish_wall_silence(now)
+                if ready:
+                    if detector is not None and now-last_frame >= silence_seconds:
+                        # DTX/replacement gaps must not carry an old speech decision.
+                        detector.reset()
+                        noise_guard.reset()
                     frames += 1
                     max_gap = max(max_gap, now-last_frame)
                     last_frame = now
-                    if self.failed or self.input_lost or self.closing:
+                    # A failed responsive call still measures physical silence
+                    # for its explicit terminal notice; queue_utterance rejects
+                    # all business intake while failed.
+                    if (self.failed and self.responsive_attachment_factory is None) or self.input_lost or self.closing:
                         continue
                     for mono in converter.resample(frame):
                         pcm = mono.to_ndarray().tobytes()
-                        values = memoryview(pcm).cast('h')
-                        power = sum(value*value for value in values)
-                        count = len(values)
-                        energy += power
-                        samples += count
-                        loud = bool(count and power >= self.config.vad_threshold**2 * count)
-                        loud_frames += int(loud)
-                        began, utterance = gate.feed(pcm)
-                        self.vad_active = gate.active
-                        if gate.active and loud:
-                            last_loud = now
-                        if began:
-                            vad_starts += 1
-                            self.input_started = True
-                            playback_bytes = len(self.playback.data)
-                            interrupted = self.synthesis_active or bool(playback_bytes)
-                            if interrupted:
-                                self.playback.interrupt()
-                            LOG.info('Voice input call=%s stage=vad_start generation=%d interrupted=%s playback_bytes=%d audio_queue=%d text_queue=%d',
-                                     self.call_id, self.playback.generation, interrupted, playback_bytes,
-                                     self.turns.qsize(), self.recognized_turns.qsize())
-                        queue_utterance(utterance, 'pcm_silence_or_limit')
-                        if not gate.active:
-                            last_loud = None
+                        if denoiser is None:
+                            denoiser = StreamingPCM16Denoiser()
+                        raw_pending.extend(pcm)
+                        cleaned_parts = denoiser.feed(pcm)
+                        report_denoiser()
+                        for cleaned in cleaned_parts:
+                            consume_pcm(cleaned, now)
                 # Silence suppression can send no packets or sparse comfort
                 # noise. Measure elapsed time since actual loud PCM, rather
                 # than requiring a continuous stream of quiet PCM samples.
-                if (not self.failed and not self.input_lost and not self.closing
-                        and gate.active and last_loud is not None
-                        and now-last_loud >= silence_seconds):
-                    utterance = gate.finish()
-                    self.vad_active = False
-                    queue_utterance(utterance, 'wall_silence')
-                    summary('wall_silence')
-                    last_loud = None
+                if ((not self.failed or self.responsive_attachment_factory is not None)
+                        and not self.input_lost and not self.closing and gate.active
+                        and last_loud is not None and now-last_loud >= silence_seconds):
+                    flush_denoiser()
+                finish_wall_silence(now)
                 if now-last_report >= 10:
                     summary('periodic')
                     last_report = now
@@ -661,11 +1172,20 @@ class NativeCall:
                             self.call_id, type(error).__name__, time.monotonic()-started, frames,
                             samples*1000//16000, vad_starts, queued, connection, ice)
         finally:
+            self._input_receivers.discard(receiver)
+            if self.responsive_attachment_factory is not None:
+                self.vad_active = bool(self._input_receivers)
+            self._notify_input_changed()
             if pending is not None:
                 pending.cancel()
                 await asyncio.gather(pending, return_exceptions=True)
+            if detector is not None:
+                detector.close()
+            if denoiser is not None:
+                denoiser.close()
             summary('closed')
             self.microphones.discard(track)
+            self._notify_input_changed()
             if receive_failed and not self.closed and not self.closing and not self.microphones and not self.input_lost:
                 if not self.input_loss_task or self.input_loss_task.done():
                     self.input_loss_task = self.spawn(self.finish_input_loss())
@@ -673,10 +1193,14 @@ class NativeCall:
     async def recognize_turns(self):
         """Recognize accepted audio independently; never submit backend requests."""
         while not self.closed and not self.failed and not self.input_lost and not self.closing:
-            generation, pcm = await self.turns.get()
+            audio = await self.turns.get()
+            generation, pcm = audio
+            origin = getattr(audio, "input_epoch", 0)
+            onset = getattr(audio, "duplex_onset", None)
             started = time.monotonic()
             try:
                 self.recognition_active = True
+                self._notify_input_changed()
                 text = await self.speech.transcribe(pcm)
                 if self.closed or self.failed or self.input_lost or self.closing:
                     return
@@ -699,7 +1223,14 @@ class NativeCall:
                     control = ('retry', ' '.join(part for part in (prefix, prompt) if part))
                 self.turn_number += 1
                 turn = (generation, text, self.turn_number, uuid.uuid4().hex, started)
-                self.transcript(turn, 'user', text)
+                if self.responsive_attachment_factory is None:
+                    self.transcript(turn, 'user', text)
+                    if self.duplex is not None:
+                        # Empty/failed/dropped ASR discards only its own binding;
+                        # another onset cannot replace this turn's question.
+                        turn = _InputEnvelope(turn, origin, onset)
+                else:
+                    turn = _InputEnvelope(turn, origin)
                 try:
                     self.recognized_turns.put_nowait(turn)
                     if self.call_settings:
@@ -719,6 +1250,7 @@ class NativeCall:
             finally:
                 self.recognition_active = False
                 self.turns.task_done()
+                self._notify_input_changed()
 
     def transcript(self, turn, role, content):
         _, _, number, turn_id, started = turn
@@ -728,7 +1260,11 @@ class NativeCall:
 
     async def report_backend_failure(self):
         self.failed = True
-        self.playback.interrupt()
+        self._notify_input_changed()
+        if self.responsive_output is not None:
+            self.responsive_output.interrupt()
+        else:
+            self.playback.interrupt()
         if self.asr_task:
             self.asr_task.cancel()
             await asyncio.gather(self.asr_task, return_exceptions=True)
@@ -766,6 +1302,16 @@ class NativeCall:
         if not text:
             return True
         generation = self.playback.generation
+        if self.responsive_output is not None:
+            try:
+                async with asyncio.timeout(10):
+                    await self.responsive_notice(text, 'USER_INACTIVITY', wait=True)
+                    while self.playback.data and generation == self.playback.generation and not self.input_lost:
+                        await asyncio.sleep(.02)
+            except Exception as error:
+                LOG.warning('Voice lifecycle call=%s stage=goodbye_failed type=%s', self.call_id, type(error).__name__)
+            return (generation == self.playback.generation and self.recognized_turns.empty()
+                    and self.turns.empty() and not self.recognition_active and not self.vad_active)
         self.synthesis_active = True
         try:
             self.notice('USER_INACTIVITY',text)
@@ -785,6 +1331,12 @@ class NativeCall:
         finally:
             self.synthesis_active = False
 
+    def responsive_waiting_on_work(self):
+        return (self.duplex is not None and (self.duplex.busy or self.duplex.output_pending)
+                or self._responsive_opening
+                or self.responsive_attachment is not None and self.responsive_attachment.execution_active
+                or self.responsive_output is not None and self.responsive_output.pending_count > 0)
+
     async def wait_for_user_turn(self):
         """Idle expiry only between native turns and after local audio drains."""
         seconds = getattr(self.call_settings,'inactivity_seconds',None)
@@ -793,13 +1345,13 @@ class NativeCall:
         idle_since = time.monotonic()
         while not self.closed and not self.input_lost and not self.closing:
             if (self.playback.data or self.synthesis_active or self.recognition_active
-                    or self.vad_active or not self.turns.empty()):
+                    or self.vad_active or not self.turns.empty() or self.responsive_waiting_on_work()):
                 idle_since = time.monotonic()
             try:
                 return await asyncio.wait_for(self.recognized_turns.get(), min(.1,seconds))
             except asyncio.TimeoutError:
                 active = (self.playback.data or self.synthesis_active or self.recognition_active
-                          or self.vad_active or not self.turns.empty())
+                          or self.vad_active or not self.turns.empty() or self.responsive_waiting_on_work())
                 if not active and time.monotonic()-idle_since >= seconds:
                     if not await self.inactivity_goodbye():
                         idle_since = time.monotonic()
@@ -813,7 +1365,207 @@ class NativeCall:
                     return self.recognized_turns.get_nowait()
         return await self.recognized_turns.get()
 
+    def responsive_transcript(self, event):
+        """Translate private output into the existing native SDK transcript shape."""
+        code = self._responsive_codes.pop(event['utterance_id'], '')
+        turn = self._responsive_turns.get(event['utterance_id'])
+        if code:
+            self.notice(code, event['text'])
+        elif turn is not None:
+            self.transcript(turn, 'assistant', event['text'])
+        else:
+            self.emit('transcript', {'role':'assistant', 'content':event['text'],
+                'message_id':uuid.uuid4().hex, 'caller_turn_id':'', 'turn_num':0})
+        if event['utterance_id'] in self._responsive_fallbacks:
+            self.dialog.record_greeting(event['text'])
+            self._responsive_fallbacks.discard(event['utterance_id'])
+
+    async def responsive_notice(self, text, code='', *, kind='local_reply', wait=False, fallback=False,
+                                output_validity=None, _terminal_failure=False):
+        utterance_id = uuid.uuid4().hex
+        if code:
+            self._responsive_codes[utterance_id] = code
+        if fallback:
+            self._responsive_fallbacks.add(utterance_id)
+        if _terminal_failure and code != 'CONNECTION_FAILED':
+            raise ValueError('invalid terminal control')
+        validity = (self._terminal_control_guard(self._input_epoch) if _terminal_failure else
+                    output_validity if output_validity is not None else self._input_guard(self._input_epoch))
+        await self.responsive_output.publish_control(dict(kind=kind, task_id='', operation_id='',
+            utterance_id=utterance_id, context_version=0, text=text, priority=-10), validity, wait=wait)
+        # An interrupted queued notice may never reach its transcript callback.
+        if wait:
+            self._responsive_codes.pop(utterance_id, None)
+            self._responsive_fallbacks.discard(utterance_id)
+
+    async def responsive_startup(self, ready, greeted, language_ready):
+        async def pending_notice():
+            await asyncio.sleep(1)
+            await self.responsive_notice(
+                'Die Verbindung wird noch hergestellt. Sie können Ihr Anliegen bereits nennen; '
+                'es wird erst übermittelt, wenn der Dialog bereit ist.', 'CONNECTION_PENDING')
+        notice_task = self.spawn(pending_notice())
+        try:
+            try:
+                greetings = await self.dialog.open() or []
+            finally:
+                self._responsive_opening = False
+                notice_task.cancel()
+                await asyncio.gather(notice_task, return_exceptions=True)
+            if self.closed or self.closing or self.input_lost:
+                return
+            fallback = False
+            selection = getattr(self.call_settings, 'selection_prompt', '')
+            if (not greetings and not self.input_started and not self.playback.generation
+                    and (self.config.greeting or selection)):
+                greetings = [' '.join(part for part in (self.config.greeting, selection) if part)]
+                fallback = True
+            for greeting in greetings:
+                attachment = self.responsive_attachment
+                tasks = attachment.coordinator.snapshot(attachment.scope.scope_id)
+                if len(tasks) == 1 or not tasks and len(attachment.coordinator.agents) == 1:
+                    await attachment.note_question(greeting, task_id=tasks[0]['task_id'] if tasks else '')
+                await self.responsive_notice(greeting, kind='backend_reply', wait=True, fallback=fallback)
+            greeted.set()
+            # Selection feedback stays local; business cannot overtake its welcome.
+            await language_ready.wait()
+            if not self.closed and not self.closing and not self.input_lost:
+                ready.set()
+        except asyncio.CancelledError:
+            raise
+        except Exception as error:
+            LOG.warning('Voice responsive call=%s stage=startup_failed type=%s', self.call_id, type(error).__name__)
+            self._responsive_failure_feedback = True
+            self.failed = True
+            self._notify_input_changed()
+            greeted.set()
+            self.responsive_output.interrupt()
+            # Failed intake has no future PCM consumer. Retire recognition
+            # before discarding only its unaccepted raw queue; its finally
+            # balances the active item. Real receiver VAD still gates speech.
+            if self.asr_task:
+                self.asr_task.cancel()
+                await asyncio.gather(self.asr_task, return_exceptions=True)
+            self.drain_queue(self.turns)
+            self._notify_input_changed()
+            await self.responsive_notice(
+                'Die Verbindung ist nicht bereit. Vorgemerkte Anfragen wurden nicht übermittelt. '
+                'Bitte beenden Sie den Anruf.', 'CONNECTION_FAILED', wait=True, _terminal_failure=True)
+            self.input_ended.set()
+            self.drain_queue(self.recognized_turns)
+            self.recognized_turns.put_nowait(None)
+            self._notify_input_changed()
+
+    async def process_responsive_turns(self):
+        from contextlib import aclosing
+        from conversation_output import OutputArbiter, OutputSink
+        self.turns_settled.clear()
+        call = self
+        class ActiveSpeech:
+            async def synthesize(self, text):
+                call.synthesis_active = True
+                try:
+                    async with aclosing(call.speech.synthesize(text)) as chunks:
+                        async for chunk in chunks:
+                            yield chunk
+                finally:
+                    call.synthesis_active = False
+        self.responsive_output = OutputArbiter(ActiveSpeech(), self.playback,
+            self.responsive_transcript,
+            lambda: not (self.closed or self.closing or self.input_lost),
+            input_ready=self._input_ready, control_ready=self._control_ready)
+        ready, greeted, language_ready = asyncio.Event(), asyncio.Event(), asyncio.Event()
+        if not self.language_selection_pending:
+            language_ready.set()
+        startup = None
+        try:
+            self.responsive_attachment = await self.responsive_attachment_factory(
+                self, OutputSink(self.responsive_output), ready)
+            self.asr_task = self.spawn(self.recognize_turns())
+            self._responsive_opening = True
+            startup = self.spawn(self.responsive_startup(ready, greeted, language_ready))
+            while not self.closed and not self.failed and not self.input_lost and not self.closing:
+                turn = await self.wait_for_user_turn()
+                origin = getattr(turn, "input_epoch", 0)
+                output_validity = self._input_guard(origin)
+                self._input_turn_active = True
+                self._notify_input_changed()
+                try:
+                    if turn is None or self.input_lost or self.closing or self.failed:
+                        break
+                    _, text, number, utterance_id, _ = turn
+                    context = self.turn_contexts.pop(number, None)
+                    control = self.turn_controls.pop(number, None)
+                    if control is not None:
+                        self.transcript(turn, 'user', text)
+                        await greeted.wait()
+                        if self.failed or self.input_lost or self.closing:
+                            break
+                        if control[0] != 'selected' or not self.language_welcome_spoken:
+                            self.responsive_output.interrupt_for_input()
+                            await self.responsive_notice(control[1],
+                                'LANGUAGE_SELECTED' if control[0] == 'selected' else 'LANGUAGE_SELECTION_RETRY', wait=True,
+                                output_validity=output_validity)
+                        if control[0] == 'selected':
+                            self.language_welcome_spoken = True
+                            language_ready.set()
+                        continue
+                    self._responsive_turns[utterance_id] = turn
+                    try:
+                        canonical = ({'language':context['requester_session_language'],
+                                      'assistant_id':context['voice_assistant'],
+                                      'profile':context['global_context_profile']} if context is not None else None)
+                        self._acceptance_active += 1
+                        self._notify_input_changed()
+                        try:
+                            guarded = getattr(self.responsive_attachment, 'accept_guarded', None)
+                            if callable(guarded):
+                                await guarded(utterance_id, text, voice_context=canonical,
+                                              output_validity=output_validity)
+                            else:
+                                await self.responsive_attachment.accept(utterance_id, text, voice_context=canonical)
+                        finally:
+                            self._acceptance_active -= 1
+                            self._notify_input_changed()
+                    except Exception as error:
+                        self._responsive_turns.pop(utterance_id, None)
+                        LOG.warning('Voice responsive call=%s stage=not_accepted type=%s', self.call_id, type(error).__name__)
+                        await self.responsive_notice(
+                            'Ihre letzte Antwort wurde nicht angenommen oder weitergeleitet. '
+                            'Bitte fragen Sie nach dem Status und wiederholen Sie sie erst danach.', 'NOT_ACCEPTED',
+                            output_validity=output_validity)
+                    else:
+                        # Persisted business acceptance must precede its user transcript.
+                        self.transcript(turn, 'user', text)
+                finally:
+                    self._input_turn_active = False
+                    self.recognized_turns.task_done()
+                    self._notify_input_changed()
+        except asyncio.CancelledError:
+            raise
+        except Exception as error:
+            LOG.warning('Voice responsive call=%s stage=unavailable type=%s', self.call_id, type(error).__name__)
+            self.failed = True
+            self._notify_input_changed()
+            self.responsive_output.interrupt()
+            self.notice('UNAVAILABLE', 'Der Sprachdienst ist derzeit belegt. Bitte versuchen Sie es später erneut '
+                        'oder wenden Sie sich an den Support, falls der Zustand bestehen bleibt.')
+            self.input_ended.set()
+        finally:
+            if startup is not None:
+                # A natural failed-intake exit must not erase the explicit
+                # failure explanation. Terminal loss/close still cancels it.
+                if (not self._responsive_failure_feedback or self.closed or self.closing or self.input_lost
+                        or asyncio.current_task().cancelling()):
+                    startup.cancel()
+                await asyncio.gather(startup, return_exceptions=True)
+            if self.responsive_attachment is not None:
+                await self.responsive_attachment.detach()
+            self.turns_settled.set()
+
     async def process_turns(self):
+        if self.responsive_attachment_factory is not None:
+            return await self.process_responsive_turns()
         self.turns_settled.clear()
         self.asr_task = self.spawn(self.recognize_turns())
         try:
@@ -862,6 +1614,7 @@ class NativeCall:
                 tts_started = time.monotonic()
                 tts_bytes = accepted_bytes = chunks = 0
                 outcome = 'complete'
+                greeting_speech = self.duplex.begin_greeting(greeting) if self.duplex is not None else None
                 LOG.info('Voice greeting call=%s stage=greeting_tts_begin greeting_index=%d generation=%d',
                          self.call_id, greeting_index, generation)
                 try:
@@ -890,9 +1643,13 @@ class NativeCall:
                     if outcome == 'complete':
                         outcome = ('interrupted' if generation != self.playback.generation else
                                    'empty' if tts_bytes == 0 else 'complete')
+                    if greeting_speech is not None:
+                        self.duplex.finish_greeting(greeting_speech, complete=outcome == 'complete')
                     LOG.info('Voice greeting call=%s stage=greeting_tts_end greeting_index=%d elapsed_ms=%d bytes=%d accepted_bytes=%d chunks=%d outcome=%s generation=%d current_generation=%d',
                              self.call_id, greeting_index, int((time.monotonic()-tts_started)*1000),
                              tts_bytes, accepted_bytes, chunks, outcome, generation, self.playback.generation)
+            if self.duplex is not None:
+                return await self.duplex.run()
             while not self.closed and not self.failed and not self.input_lost and not self.closing:
                 turn = await self.wait_for_user_turn()
                 # Loss can commit while this get() or ASR cancellation yields.
@@ -985,6 +1742,12 @@ class NativeCall:
     async def close(self):
         if self.close_task is None:
             self.closing = True
+            self._invalidate_grounded('shutdown')
+            if self.duplex is not None:
+                self.duplex.interrupt()
+            self._notify_input_changed()
+            if self.responsive_output is not None:
+                self.responsive_output.interrupt()
             # Outside self.tasks: cleanup must never cancel/gather itself.
             self.close_task = asyncio.create_task(self.finish_close())
         await asyncio.shield(self.close_task)
@@ -992,7 +1755,7 @@ class NativeCall:
     async def finish_close(self):
         cleanup_acknowledged = not getattr(self.dialog,'_call_owned',False)
         try:
-            if self.input_lost:
+            if self.input_lost and self.responsive_attachment_factory is None:
                 # Even an independent client disconnect must preserve the
                 # submitted turn after terminal input loss has committed.
                 await self.turns_settled.wait()
@@ -1004,17 +1767,29 @@ class NativeCall:
             await asyncio.gather(*tasks, return_exceptions=True)
             self.drain_queue(self.turns)
             self.drain_queue(self.recognized_turns)
+            self._notify_input_changed()
             self.turn_contexts.clear()
             self.turn_controls.clear()
             try:
                 await self.peer.close()
                 clear_session_ice(self._session_ice_servers,self.peer)
             finally:
-                await self.dialog.close()
-                if getattr(self.dialog,'_call_owned',False):
-                    if self.dialog.must_reset:
-                        await self.dialog.wait_owned_cleanup()
-                    await self.dialog.shutdown()
+                if self.responsive_attachment is not None:
+                    await self.responsive_attachment.detach()
+                    await self.responsive_output.close()
+                    # The process worker owns observation and END. This waiter
+                    # cannot cancel it, and capacity remains reserved until ACK.
+                    await self.responsive_attachment.wait_closed()
+                    if getattr(self.dialog, '_call_owned', False):
+                        await self.dialog.shutdown()
+                else:
+                    if self.responsive_output is not None:
+                        await self.responsive_output.close()
+                    await self.dialog.close()
+                    if getattr(self.dialog,'_call_owned',False):
+                        if self.dialog.must_reset:
+                            await self.dialog.wait_owned_cleanup()
+                        await self.dialog.shutdown()
                 cleanup_acknowledged = True
         finally:
             if cleanup_acknowledged:
@@ -1061,8 +1836,31 @@ async def authorize(request, config, http, with_settings=False):
         return False
 
 
-def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=False):
+def _grounded_readiness_module():
+    import importlib.util
+    import sys
+    name = 'grounded_readiness'
+    if name not in sys.modules:
+        path = Path(__file__).resolve().parents[1] / 'native-start' / 'grounded_readiness.py'
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        try: spec.loader.exec_module(module)
+        except BaseException:
+            sys.modules.pop(name, None)
+            raise
+    return sys.modules[name]
+
+
+def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=False, *,
+               responsive_factory=None, grounded_readiness_provider=None):
     from assistant_settings import CallSettings
+    profile = getattr(config, 'private_responsive', None)
+    if profile and profile.grounded_answers_enabled and not callable(grounded_readiness_provider):
+        raise ValueError('grounded readiness requires the trusted runtime owner provider')
+    responsive = None
+    availability_notice = ('Der Sprachdienst ist derzeit belegt. Bitte versuchen Sie es später erneut '
+                           'oder wenden Sie sich an den Support, falls der Zustand bestehen bleibt.')
     @web.middleware
     async def request_diagnostics(request, handler):
         # Full access logs would expose OAuth query tokens. Keep request
@@ -1095,6 +1893,10 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         status = 0
         try:
             response = await handler(request)
+            if (responsive is not None and not responsive.available
+                    and route == 'native_sdk' and response.status == 503):
+                response = web.json_response({'error':'unavailable', 'message':availability_notice},
+                                             status=503, headers={'Cache-Control':'no-store'})
             value = getattr(response, 'status', 0)
             status = value if type(value) is int and 100 <= value <= 599 else 0
             return response
@@ -1109,9 +1911,46 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
 
     app = web.Application(client_max_size=256*1024, middlewares=[request_diagnostics])
     active = set()
+    async def before_create():
+        await require_model_ready(app[HTTP_KEY], config.model_health_url,
+                                  config.private_model_health_token)
+        await require_asr_ready(app[HTTP_KEY], config)
     probe_dialog = Dialog(config) if dialog_factory is None and probe_backend else None
     async def lifecycle(app):
+        nonlocal responsive
+        slot_owner = None
+        if profile and profile.grounded_answers_enabled:
+            readiness = _grounded_readiness_module()
+            expected = readiness.expected_grounded(profile.model_url, profile.model_name)
+            proof = readiness.validate_proof(await grounded_readiness_provider(expected), expected)
+            from conversation_admission import SharedSlotOwner
+            deadline = time.monotonic() + profile.model_timeout_seconds
+            async with asyncio.timeout_at(asyncio.get_running_loop().time() + profile.model_timeout_seconds):
+                slot_owner = await asyncio.to_thread(SharedSlotOwner, readiness.current_host_boundary(),
+                    proof.owner_pid, proof.owner_created, profile.model_url, profile.model_name, profile.model_token_file)
+                await slot_owner.initialize(deadline)
         app[HTTP_KEY] = ClientSession(trust_env=False, timeout=ClientTimeout(total=180))
+        try:
+            await require_asr_ready(app[HTTP_KEY], config)
+        except BaseException:
+            await app[HTTP_KEY].close()
+            raise
+        if profile is not None and profile.enabled:
+            if responsive_factory is not None:
+                responsive = responsive_factory(profile, app[HTTP_KEY])
+            else:
+                from task_store import TaskStore
+                from task_coordinator import TaskCoordinator
+                from conversation_router import ConversationRouter, LoopbackConversationModel
+                model = (LoopbackConversationModel(None, profile.model_url,
+                         profile.model_name, profile.model_token_file, profile.model_timeout_seconds)
+                         if profile.model_url else None)
+                if model is not None: model.slot_owner = slot_owner
+                responsive = TaskCoordinator(TaskStore(profile.store_file), ConversationRouter(model),
+                    profile.agents, lambda scope: None, mode='legacy',
+                    grounded_answers=__import__('grounded_conversation').GroundedAnswers(model)
+                        if profile.grounded_answers_enabled else None)
+            responsive.store.recover()
         if probe_backend and probe_dialog:
             report = {'kind':'safe-greeting-no-order', 'native_ui_test':False}
             started = time.monotonic()
@@ -1137,25 +1976,53 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             LOG.info('Safe backend probe ok=%s elapsed=%.2f', report['ok'], time.monotonic()-started)
         yield
         closing = {asyncio.create_task(call.close()) for call in list(active)}
+        observation = asyncio.create_task(responsive.shutdown(5)) if responsive is not None else None
+        if observation is not None:
+            closing.add(observation)
         if closing:
             done, pending = await asyncio.wait(closing,timeout=5)
             await asyncio.gather(*done,return_exceptions=True)
             if pending:
                 LOG.warning('Native shutdown stage=unresolved_owned_cleanup count=%d',len(pending))
+        if responsive is not None:
+            async def finish_store():
+                # Bounded app teardown does not revoke a live observer's DB.
+                await asyncio.gather(*closing, return_exceptions=True)
+                report = await responsive.shutdown(0)
+                if not report['pending']:
+                    responsive.store.close()
+            if any(not task.done() for task in closing):
+                # Keep a strong reference for delayed ownership cleanup.
+                finalizer = asyncio.create_task(finish_store())
+                app[responsive_cleanup_key].add(finalizer)
+                finalizer.add_done_callback(app[responsive_cleanup_key].discard)
+            else:
+                await finish_store()
         # Unresolved owners keep their cookies/reservations until process exit.
         if probe_dialog:
             await probe_dialog.shutdown()
         await app[HTTP_KEY].close()
     app.cleanup_ctx.append(lifecycle)
+    responsive_cleanup_key = web.AppKey('responsive_cleanup', set)
+    app[responsive_cleanup_key] = set()
+
+    async def attach_responsive(call, emit, ready):
+        from business_tasks import Scope
+        from servicenow_executor import LegacyVAExecutor
+        scope = Scope(call.call_id, call.call_id, 1, config.instance_name, config.voice_service_id)
+        return await responsive.attach(scope, emit, executor=LegacyVAExecutor(call.dialog, ready=ready))
 
     def make_call(settings=None, *, ice_servers=None):
+        if responsive is not None and not responsive.available:
+            raise web.HTTPServiceUnavailable(text=availability_notice)
         speech = speech_factory(app[HTTP_KEY]) if speech_factory else Speech(app[HTTP_KEY],config,settings)
         dialog = dialog_factory() if dialog_factory else Dialog(config,settings)
         if dialog_factory is None:
             dialog._call_owned = True
+        options = {'responsive_attachment_factory':attach_responsive} if responsive is not None else {}
         if ice_servers is not None:
-            return NativeCall(config,speech,dialog,call_settings=settings,ice_servers=ice_servers)
-        return NativeCall(config,speech,dialog,call_settings=settings)
+            options['ice_servers'] = ice_servers
+        return NativeCall(config,speech,dialog,call_settings=settings,**options)
 
     async def connect(request):
         admission = await authorize(request, config, app[HTTP_KEY], with_settings=True)
@@ -1164,9 +2031,13 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             raise web.HTTPUnauthorized(text='Voice authorization rejected')
         if isinstance(admission,CallSettings) and admission.unsupported_language_selection:
             raise web.HTTPNotImplemented(text='Configured language selection input is unsupported by this transport')
-        if active:
+        try:
+            await before_create()
+        except RuntimeError:
+            raise web.HTTPServiceUnavailable(text=availability_notice) from None
+        if active or responsive is not None and not responsive.available:
             LOG.info('Native signaling admission status=503 native_sessions=%d', len(active))
-            raise web.HTTPServiceUnavailable(text='Demo voice session is busy')
+            raise web.HTTPServiceUnavailable(text=availability_notice if responsive is not None else 'Demo voice session is busy')
         ws = web.WebSocketResponse(heartbeat=20, max_msg_size=256*1024)
         settings = admission if isinstance(admission,CallSettings) else None
         call = make_call(settings)
@@ -1252,7 +2123,20 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
 
     async def health(request):
         result = {'status':'ok','nativeSessions':len(active),
-                  'authMode':'loopback-development' if config.development_token else config.auth_mode}
+                  'authMode':'loopback-development' if config.development_token else config.auth_mode,
+                  'conversationLayer':'independent' if config.conversation_ws_url or config.conversation_http_url else 'legacy'}
+        result['conversationPipeline'] = 'pipecat' if config.conversation_ws_url or config.conversation_http_url else 'legacy'
+        result['conversationSentenceStreaming'] = bool(config.conversation_ws_url or config.conversation_http_url)
+        if config.conversation_http_url:
+            result['conversationTransport'] = 'controller-text'
+        if config.asr_backend == QWEN_ASR_BACKEND:
+            result['asrBackend'] = config.asr_backend
+            try:
+                await require_asr_ready(app[HTTP_KEY], config)
+            except RuntimeError:
+                result.update(status='unavailable', asrReady=False)
+                return web.json_response(result, status=503)
+            result.update(asrReady=True, asrModel=QWEN_ASR_MODEL)
         if request.query.get('assistant_settings') == '1':
             result['assistantSettingsSupport'] = {'version':1,'perCallLanguage':True,
                     'nativeCloudVoiceSelection':False,'nativeVadConfidenceAndVolume':False,
@@ -1260,6 +2144,16 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                     'assistantDescriptionConsumptionVerified':False}
         if getattr(config, 'native_sdk_enabled', False):
             result['nativeSdkEnabled'] = True
+        activity = getattr(config, 'private_speech_activity', None)
+        if activity is not None and activity.enabled:
+            result['speechActivity'] = 'silero-cpu'
+        if responsive is not None:
+            from dataclasses import asdict
+            from servicenow_executor import ExecutorCapabilities
+            result['responsive'] = {'mode':profile.mode, 'model':profile.model_name,
+                'capabilities':asdict(ExecutorCapabilities()),
+                'reservedContexts':int(not responsive.available),
+                'unresolvedContexts':int(responsive.store.has_unresolved())}
         return web.json_response(result)
     app.router.add_get('/launch', launch)
     app.router.add_get('/health', health)
@@ -1274,7 +2168,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         # One immutable startup policy binds admission and all session operations.
         register_sdk_routes(app, config, active, lambda: make_call(),
                             partial(admit_sdk_session,policy=config.sdk_policy,assistant_settings_version=1),
-                            context_call_factory=make_sdk_call)
+                            context_call_factory=make_sdk_call, before_create=before_create)
         LOG.info('Native SDK HTTP session routes enabled; shared browser capacity')
     return app
 
@@ -1285,6 +2179,32 @@ def load_config(filename):
     raw = json.loads(config_path.read_text(encoding='utf-8-sig'))
     if not isinstance(raw,dict):
         raise ValueError('Bridge configuration must be an object')
+    if 'private_responsive' in raw:
+        raise ValueError('Inline responsive configuration is forbidden')
+    responsive_file = raw.pop('responsive_config_file', '')
+    if not isinstance(responsive_file, str):
+        raise ValueError('Responsive configuration path must be a string')
+    if responsive_file:
+        private_path = Path(responsive_file)
+        if not private_path.is_absolute():
+            private_path = config_path.parent / private_path
+        raw['private_responsive'] = load_responsive_config(private_path)
+    if 'private_speech_activity' in raw:
+        raise ValueError('Inline speech activity configuration is forbidden')
+    speech_activity_file = raw.pop('speech_activity_config_file','')
+    if not isinstance(speech_activity_file,str):
+        raise ValueError('Speech activity configuration path must be a string')
+    if speech_activity_file:
+        private_path = Path(speech_activity_file)
+        if not private_path.is_absolute():
+            private_path = config_path.parent / private_path
+        raw['private_speech_activity'] = load_speech_activity_file(private_path)
+        # Verify the exact local runtime before accepting any phone connection.
+        detector = StreamingSpeechActivity(raw['private_speech_activity'])
+        try:
+            detector.feed(bytes(1024))
+        finally:
+            detector.close()
     if 'private_managed_turn' in raw:
         raise ValueError('Inline managed TURN configuration is forbidden')
     managed_turn_file = raw.pop('managed_turn_config_file','')
@@ -1322,6 +2242,45 @@ def load_config(filename):
         raise ValueError('Inline development credentials are forbidden')
     if token_file:
         raw['development_token'] = Path(token_file).read_text().strip()
+    if 'private_model_health_token' in raw:
+        raise ValueError('Inline model health credentials are forbidden')
+    health_token_file = raw.pop('model_health_token_file', '')
+    if type(health_token_file) is not str:
+        raise ValueError('Model health credential path must be a string')
+    if health_token_file:
+        private_path = Path(health_token_file)
+        if not private_path.is_absolute():
+            private_path = config_path.parent / private_path
+        with private_path.open('rb') as source:
+            token_bytes = source.read(8196)
+        if len(token_bytes) > 8195:
+            raise ValueError('Model health credential file is oversized')
+        raw['private_model_health_token'] = token_bytes.decode('utf-8-sig').strip()
+    if 'private_asr_token' in raw:
+        raise ValueError('Inline ASR credentials are forbidden')
+    asr_token_file = raw.pop('asr_token_file', '')
+    if type(asr_token_file) is not str:
+        raise ValueError('ASR credential path must be a string')
+    if asr_token_file:
+        private_path = Path(asr_token_file)
+        if not private_path.is_absolute():
+            private_path = config_path.parent / private_path
+        try:
+            with private_path.open('rb') as source:
+                token_bytes = source.read(8196)
+            if len(token_bytes) > 8195:
+                raise ValueError()
+            raw['private_asr_token'] = token_bytes.decode('utf-8-sig').strip()
+        except (OSError, UnicodeError, ValueError):
+            raise ValueError('ASR credential file is unavailable or invalid') from None
+    conversation_token_file = raw.get('conversation_token_file', '')
+    if type(conversation_token_file) is not str:
+        raise ValueError('Conversation credential path must be a string')
+    if conversation_token_file:
+        private_path = Path(conversation_token_file)
+        if not private_path.is_absolute():
+            private_path = config_path.parent / private_path
+        raw['conversation_token_file'] = str(private_path.resolve())
     return Config(**raw)
 
 
@@ -1340,7 +2299,12 @@ def main():
             raise ValueError('Speech and bot services must remain loopback-only')
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s %(message)s')
     # Access logs would expose the OAuth query parameter and must remain disabled.
-    web.run_app(create_app(config, probe_backend=args.probe_backend), host='127.0.0.1', port=config.port, access_log=None)
+    async def grounded_readiness(expected):
+        config_path = Path(args.config).resolve()
+        return await _grounded_readiness_module().verify_grounded_readiness(
+            config_path.parent / 'conversation-selection.local.json', config_path, expected=expected)
+    web.run_app(create_app(config, probe_backend=args.probe_backend,
+        grounded_readiness_provider=grounded_readiness), host='127.0.0.1', port=config.port, access_log=None)
 
 
 if __name__ == '__main__':

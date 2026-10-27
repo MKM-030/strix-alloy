@@ -102,6 +102,10 @@ class ColdPPTests(unittest.TestCase):
 
     def test_real_manifest_emits_one_exact_16k_environment_and_600s_deadline(self):
         r=self.r
+        research = Path(__file__).resolve().parents[2].parent / 'strix-alloy-research'
+        if not (research/'artifacts/halogen0142/smoke-manifest.json').is_file():
+            self.skipTest('Historical 0.14.2 sibling smoke manifest required')
+        self.enterContext(patch.object(r.base, 'ARTIFACT_ROOT', research/'artifacts/halogen0142'))
         m=r.base.read_json(r.base.ARTIFACT_ROOT/'smoke-manifest.json')
         sealed=r.offline(m)
         argv=sealed['docker_argv']
@@ -122,6 +126,10 @@ class ColdPPTests(unittest.TestCase):
 
     def test_created_container_effective_environment_requires_reviewed_16k(self):
         r=self.r
+        research = Path(__file__).resolve().parents[2].parent / 'strix-alloy-research'
+        if not (research/'artifacts/halogen0142/smoke-manifest.json').is_file():
+            self.skipTest('Historical 0.14.2 sibling smoke manifest required')
+        self.enterContext(patch.object(r.base, 'ARTIFACT_ROOT', research/'artifacts/halogen0142'))
         m=r.base.read_json(r.base.ARTIFACT_ROOT/'smoke-manifest.json')
         expected=[key+'='+value for key,value in r.environment(m).items()]
         r.check_effective_environment({'Config':{'Env':expected}},m)

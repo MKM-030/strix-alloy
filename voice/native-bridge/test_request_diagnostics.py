@@ -20,8 +20,11 @@ from aiohttp.test_utils import make_mocked_request
 ROOT = Path(__file__).parent
 source = ast.parse((ROOT / 'native_bridge.py').read_text())
 selected = [node for node in source.body
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-            and node.name in {'authorize', 'create_app'}]
+            if (isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and node.name in {'authorize', 'create_app', 'require_asr_ready'})
+            or (isinstance(node, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id.startswith('QWEN_ASR_')
+                        for target in node.targets))]
 namespace = dict(asyncio=asyncio, uuid=uuid, json=json, Path=Path,
     LOG=logging.getLogger('native-voice'), ClientSession=ClientSession,
     ClientTimeout=ClientTimeout, web=web, HTTP_KEY=web.AppKey('http', ClientSession))
@@ -34,7 +37,9 @@ SECRET = 'DO-NOT-LOG-this-sensitive-value-XYZ'
 def configuration():
     return types.SimpleNamespace(instance_name='unit-test', voice_service_id='unit-service',
         instance_url='https://unit-test.service-now.com', development_token='',
-        auth_mode='deny', max_call_seconds=30)
+        auth_mode='deny', max_call_seconds=30, asr_backend='whisper',
+        model_health_url='', private_model_health_token='', conversation_ws_url='',
+        conversation_http_url='', live_context_updates_enabled=False)
 
 
 class RequestDiagnosticsTests(unittest.IsolatedAsyncioTestCase):

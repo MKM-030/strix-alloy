@@ -175,7 +175,7 @@ class AudioPauseTests(unittest.IsolatedAsyncioTestCase):
 
 class EndpointConfigurationTests(unittest.TestCase):
     def test_endpoint_silence_rejects_unbounded_or_noninteger_configuration(self):
-        for invalid in (True, 1.2, '1200', 299, 2001):
+        for invalid in (True, 1.2, '1200', 199, 2001):
             with self.subTest(value=invalid), self.assertRaises(ValueError):
                 Config(vad_silence_ms=invalid)
 

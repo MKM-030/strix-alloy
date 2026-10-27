@@ -159,7 +159,7 @@ class RetentionTests(unittest.TestCase):
     def test_startup_does_not_run_cleanup_before_deadline(self):
         from unittest.mock import patch
         launcher = retention.module('scc_retention_launcher_test', HERE / 'launch_studio.py')
-        with patch.object(launcher.subprocess, 'run', side_effect=AssertionError('must not launch')):
+        with patch.object(launcher, 'RUNTIME', self.studio), patch.object(launcher.subprocess, 'run', side_effect=AssertionError('must not launch')):
             with patch.object(retention, 'due', return_value=False):
                 # Inject one loaded helper through the import hook.
                 with patch.object(launcher.importlib.util, 'module_from_spec', return_value=retention):
@@ -174,7 +174,7 @@ class RetentionTests(unittest.TestCase):
         def run(args, **kwargs):
             calls.append(args)
             return SimpleNamespace(stdout=b'{"status":"deferred","reason":"call_active_or_status_invalid"}')
-        with patch.object(retention, 'due', return_value=True), patch.object(launcher.subprocess, 'run', side_effect=run):
+        with patch.object(launcher, 'RUNTIME', self.studio), patch.object(retention, 'due', return_value=True), patch.object(launcher.subprocess, 'run', side_effect=run):
             with patch.object(launcher.importlib.util, 'module_from_spec', return_value=retention):
                 with patch.object(launcher.importlib.util, 'spec_from_file_location') as factory:
                     factory.return_value.name = 'test-helper'; factory.return_value.loader.exec_module = lambda mod: None

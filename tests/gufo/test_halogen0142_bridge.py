@@ -8,12 +8,14 @@ import tempfile
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-RESEARCH = ROOT.parent
-PUBLIC = RESEARCH.parent / 'strix-alloy-wsl2'
+RESEARCH = ROOT.parent / 'strix-alloy-research'
+PUBLIC = ROOT.parent / 'strix-alloy-wsl2'
 ENGINE = RESEARCH / 'artifacts/halogen0142/flash_serve'
 GENERATOR = ROOT / 'experimental/halogen0142/bridge_adapter.py'
 
 
+@unittest.skipUnless(ENGINE.is_file() and (PUBLIC/'patches').is_dir(),
+                     'Historical 0.14.2 sibling research artifacts and public source required')
 class BindingTests(unittest.TestCase):
     def adapter(self):
         self.assertTrue(GENERATOR.is_file(), 'candidate version-binding generator is required')
@@ -69,6 +71,8 @@ class BindingTests(unittest.TestCase):
 
 
 @unittest.skipUnless(os.name == 'posix', 'CPU compiler fixtures require WSL/Linux')
+@unittest.skipUnless(ENGINE.is_file() and (PUBLIC/'tests').is_dir(),
+                     'Historical 0.14.2 sibling research artifacts and public fixtures required')
 class CandidateCPUFixtures(unittest.TestCase):
     def test_candidate_uses_complete_original_cpu_suites(self):
         module = BindingTests().adapter()

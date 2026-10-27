@@ -30,22 +30,28 @@ class PlaybackBuffer:
     def __init__(self):
         self.generation = 0
         self.data = bytearray()
+        # Transport cursors count real PCM, never read padding or device hearing.
+        self.accepted_samples = self.emitted_samples = self.discarded_samples = 0
 
     def interrupt(self):
         self.generation += 1
+        self.discarded_samples += len(self.data) // 2
         self.data.clear()
         return self.generation
 
     def put(self, pcm, generation):
         if generation != self.generation:
             return False
+        pending_byte = len(self.data) % 2
         self.data.extend(pcm)
+        self.accepted_samples += (pending_byte + len(pcm)) // 2
         return True
 
     def read(self, size):
         count = min(size, len(self.data)) // 2 * 2
         result = bytes(self.data[:count])
         del self.data[:count]
+        self.emitted_samples += count // 2
         return result + bytes(size - len(result))
 
 
@@ -60,9 +66,10 @@ class EndpointGate:
                  silence_ms=550, minimum_ms=120, maximum_ms=20000):
         self.sample_rate = sample_rate
         self.threshold = threshold
-        self.onset = sample_rate * onset_ms // 1000
         self.silence = sample_rate * silence_ms // 1000
         self.minimum = sample_rate * minimum_ms // 1000
+        # Do not interrupt playback for an onset that finish() must discard.
+        self.onset = max(sample_rate * onset_ms // 1000, self.minimum)
         self.maximum = sample_rate * maximum_ms // 1000
         self.preroll = deque()
         self.preroll_samples = 0
@@ -80,7 +87,9 @@ class EndpointGate:
         self.preroll_samples = 0
         self.pending_deadline = None
 
-    def feed(self, pcm):
+    def feed(self, pcm, *, voiced=None):
+        if voiced is not None and type(voiced) is not bool:
+            raise ValueError('Speech activity must be a boolean')
         values = array('h', pcm)
         n = len(values)
         if not n:
@@ -90,8 +99,10 @@ class EndpointGate:
         if (not self.active and self.run and self.pending_deadline is not None
                 and now >= self.pending_deadline):
             self._reset()
-        rms = math.sqrt(sum(x*x for x in values) / max(1, n))
-        loud = rms >= self.threshold
+        # A configured speech model owns the decision, including quiet speech.
+        # Legacy offline/demo callers can still use the existing energy floor.
+        loud = (math.sqrt(sum(x*x for x in values) / n) >= self.threshold
+                if voiced is None else voiced)
         began = False
         if not self.active:
             if not self.run:

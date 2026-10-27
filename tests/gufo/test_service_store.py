@@ -5,6 +5,7 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import tempfile
 import threading
 import unittest
@@ -106,7 +107,18 @@ class InstalledStoreTests(unittest.TestCase):
     def test_on_disk_profile_and_empty_anchor_bind_header_candidate(self):
         profile = operator_store.read_json(service_store.PROFILE_PATH)
         anchor = operator_store.read_json(service_store.ANCHOR_PATH)
-        self.assertEqual(profile, service_store.expected_profile(service_store.PINS))
+        executable = Path(profile['controller']['python_executable'])
+        self.assertTrue(executable.is_absolute())
+        if not executable.is_file():
+            self.skipTest('Pinned installed service Python interpreter required')
+        result = subprocess.run([str(executable), '-B', '-c',
+            'import json,platform,sys; print(json.dumps(dict('
+            'python_implementation=platform.python_implementation(),'
+            'python_version=platform.python_version(),python_executable=sys.executable)))'],
+            capture_output=True, text=True, check=True, timeout=10)
+        expected = service_store.expected_profile(service_store.PINS)
+        expected['controller'] = dict(id=service_store.CONTROLLER_ID, **json.loads(result.stdout))
+        self.assertEqual(profile, expected)
         self.assertEqual(anchor, service_store.expected_anchor(profile))
         self.assertIsNone(anchor['acceptance_sha256'])
         self.assertIsNone(anchor['installed_workload'])

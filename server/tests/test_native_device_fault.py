@@ -22,6 +22,9 @@ class NativeDeviceFaultTest(unittest.IsolatedAsyncioTestCase):
         gateway.active = 1
         gateway.completed = 0
         gateway.cancelled = 0
+        gateway.probe_lock = asyncio.Lock()
+        gateway.controller_consumer = False
+        gateway.controller_health = None
         gateway.backend = type('Backend', (), {'identifier': 'fixture', 'checkpoint': 'fixture', 'context': 32768})()
         gateway.probe = AsyncMock(return_value={'status': 'ok'})
         engine.gateway = gateway

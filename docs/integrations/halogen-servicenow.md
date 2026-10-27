@@ -23,7 +23,7 @@ The later gate/PLD campaign qualified no replacement for this normal policy.
 The measurements below describe historical 0.16.2 workloads. The separate
 [historical 0.17.2 fixed-depth-2 comparison](../benchmarks/halogen0172-fixed-depth2-20261008.md)
 and [historical 0.17.2 adaptive-depth comparison](../benchmarks/halogen0172-stock-adaptive-20261008.md)
-retain earlier engine measurements; they do not measure the current 0.17.3 runtime.
+retain earlier engine measurements; they do not measure the current 0.18.16 runtime.
 
 The retained **48.423621 tok/s** result is an 8,192-input-token, 128-output-token
 greedy prose measurement from Halogen 0.16.2 on 4 October 2026. The engine had
@@ -126,40 +126,44 @@ ServiceNow's Authorization header. Credential values are never printed.
 
 ## What the profiles actually select
 
-`Current8K` defaults to installed Halogen **0.17.3**;
-`HistoricalStock` uses the explicitly selected **0.16.2** backend.
-Both select native `qwen38-flash-next-v2.hgn`, one
-slot, a 262,144-position pool and context capacity,
-MTP depth 2, stock PLD `3,3`, prompt cache Off, one active API request, and an
-18 GiB physical/commit runtime reserve. They retain the stock compute path and
-the normal WSL2 adaptation. The current 0.17.3 image is pinned as:
+`Current4K` and `Current8K` default to installed Halogen **0.18.10**;
+`HistoricalStock` requires explicitly selected **0.16.2**. All three retain
+262,144-position capacity and fixed MTP depth 2. `MeasuredText32K` explicitly
+selects **0.18.16**, 32,768-position capacity, adaptive gate 0.90 and Cache Off.
+`Measured32K` separately selects **0.18.15**, 32,768-position capacity, adaptive
+gate 0.90 and Flexible cache with Vision On. All select v2, one slot, PLD `3,3`,
+one active API request and an 18 GiB physical/commit runtime reserve.
+
+The retained historical **0.17.3** image was pinned as:
 
 ```text
 ghcr.io/peonist-ai/halogen-flash-server@sha256:3bca0132db3c859c997d52d148e6ea4b7b497b8a695c5ccab97135193fde592a
 ```
 
 The historical backend retains its separate [0.16.2 release pin](../../backends/halogen-wsl2-0.16.2/profiles/release.json).
-The [current 0.17.3 release pin](../../backends/halogen-wsl2-0.17.3/profiles/release.json)
+The [historical 0.17.3 release pin](../../backends/halogen-wsl2-0.17.3/profiles/release.json)
 and [0.17.3 migration notes](../../backends/halogen-wsl2-0.17.3/portable-source-notes.md)
-record the installed engine's identities and source compatibility. The
+record that older engine's identities and source compatibility. The
 [historical 0.17.2 source and installation notes](../../backends/halogen-wsl2-0.17.2/portable-source-notes.md)
 remain available for an explicit 0.17.2 selection.
 
-| Startup control | HistoricalStock | Current8K |
-| --- | --- | --- |
-| `HALOGEN_CTX` / `HALOGEN_KV_POOL_POSITIONS` | `262144` / `262144` | `262144` / `262144` |
-| `HALOGEN_KV_SLOTS` | `1` | `1` |
-| `HALOGEN_MTP_DEPTH` / `HALOGEN_PLD` | `2` / `3,3` | `2` / `3,3` |
-| `HALOGEN_PROMPT_CACHE` | `0` | `0` |
-| `HALOGEN_PREFILL_CHUNK` | Native default `32768` | Explicit `8192` |
-| `HALOGEN_MAX_TOK` | Native default `32768` | Explicit `8192` |
+| Startup control | HistoricalStock | Current4K | Current8K | MeasuredText32K |
+| --- | --- | --- | --- | --- |
+| Halogen version | `0.16.2` | `0.18.10` | `0.18.10` | `0.18.16` |
+| `HALOGEN_CTX` / `HALOGEN_KV_POOL_POSITIONS` | `262144` / `262144` | `262144` / `262144` | `262144` / `262144` | `32768` / `32768` |
+| `HALOGEN_KV_SLOTS` | `1` | `1` | `1` | `1` |
+| `HALOGEN_MTP_DEPTH` / `HALOGEN_PLD` | `2` / `3,3` | `2` / `3,3` | `2` / `3,3` | Depth unset / `3,3` |
+| `HALOGEN_MTP_GATE_P` | Unset | `0` | `0` | `0.90` |
+| `HALOGEN_PROMPT_CACHE` | `0` | `0` | `0` | `0` |
+| `HALOGEN_PREFILL_CHUNK` | Native default `32768` | Explicit `4096` | Explicit `8192` | Explicit `8192` |
+| `HALOGEN_MAX_TOK` | Native default `32768` | Explicit `4096` | Explicit `8192` | Explicit `8192` |
 
 Stock A's retained profile did not set either prefill control. Its actual startup
 log records `max_tok 32768` and 12.3 GiB working memory. The later natural long
 profile explicitly used `8192` for both, with 5.6 GiB working memory. These arena
 settings size work buffers and prefill calls; they are separate from the JSON
 answer budget `max_tokens`.
-[Current version pin](../../backends/halogen-wsl2-0.17.3/profiles/release.json),
+[0.18.16 source package pin and portable qualification flags](../../backends/halogen-wsl2-0.18.16/profiles/release.json),
 [historical upstream 0.16.2 flags](https://github.com/peonist-ai/halogen-flash-server/blob/v0.16.2/docs/FLAGS.md).
 
 The v2 checkpoint uses mixed precision: 4-bit experts and other weights, 6-bit

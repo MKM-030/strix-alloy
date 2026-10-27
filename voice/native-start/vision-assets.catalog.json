@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "observed_date": "2026-10-23",
+  "method": "Prior local filesystem inventory; nonzero bytes and shard presence only, no model load or hash qualification",
+  "enabled": false,
+  "vision_qualified": false,
+  "attachment_pipeline_available": false,
+  "assets": [
+    {"model": "Qwen3.8-27B", "projector": "C:/AI/models/lmstudio/revn/Qwen3.8-27B-GGUF/mmproj-BF16.gguf", "bytes_observed": 931146432, "local_asset_ready": true, "qualified": false, "requires": "matching text GGUF plus compatible multimodal runtime and verified projector hash"},
+    {"model": "Qwen3.8-27B BF16", "projector": "C:/AI/models/lmstudio/Qwen3.8-27B-BF16/BF16/mmproj-BF16.gguf", "bytes_observed": 931146432, "local_asset_ready": true, "qualified": false, "requires": "both BF16 GGUF shards, compatible runtime, measured memory reserve"},
+    {"model": "Ornith-1.5-35B", "projector": "C:/AI/models/Ornith-1.5-35B/mmproj-Ornith-1.5-35B-BF16.gguf", "bytes_observed": 902822016, "local_asset_ready": true, "qualified": false, "requires": "matching Ornith base weights and compatible qualified runtime"},
+    {"model": "Halogen Flash Next", "projector": "C:/AI/models/halogen-flashnext/qwen38-flash-next-vision.hgn", "bytes_observed": 897916416, "local_asset_ready": true, "qualified": false, "requires": "full compatible Halogen bundle, memory admission and runtime qualification"},
+    {"model": "Qwen3-Omni-30B-A3B-Instruct-AWQ-4bit", "directory": "C:/AI/models/omni/cyankiwi/Qwen3-Omni-30B-A3B-Instruct-AWQ-4bit", "expected_shards": 6, "present_nonzero_shards_observed": 6, "bytes_observed": 27551508922, "local_asset_ready": true, "qualified": false, "requires": "full checkpoint even in text mode; current Gemma coexistence and ServiceNow policy unproven"}
+  ],
+  "required_attachment_path": [
+    "authenticated current-call attachment selection with verified principal and explicit scope",
+    "bounded MIME, byte and image-dimension validation plus private retention policy",
+    "authorized private attachment retrieval without logging credentials or customer bytes",
+    "qualified model plus projector with measured preprocessing and inference",
+    "grounded result bound to attachment digest and current task revision",
+    "ServiceNow remains the only business executor; no vision result grants write authority"
+  ],
+  "video_dialogue_qualified": false
+}

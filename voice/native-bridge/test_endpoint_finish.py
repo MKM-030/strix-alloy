@@ -23,7 +23,7 @@ class EndpointFinishTests(unittest.TestCase):
     def test_finish_rejects_onset_below_minimum_speech(self):
         gate = core.EndpointGate(silence_ms=1200)
         self.feed(gate,5)
-        self.assertTrue(gate.active)
+        self.assertFalse(gate.active, 'Speech shorter than the minimum cannot interrupt playback')
         self.assertIsNone(gate.finish())
         self.assertFalse(gate.active)
     def test_finish_no_voice_returns_none(self):

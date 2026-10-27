@@ -24,6 +24,46 @@ class SafetyTests(unittest.TestCase):
         output.put(b'\x04', 0)
         self.assertEqual(output.read(4), b'\x03\x04\x00\x00')
 
+    def test_split_pcm_sample_is_counted_once_after_completing_next_chunk(self):
+        output = PlaybackBuffer()
+        output.put(b'\x01\x02\x03', 0)
+        self.assertEqual(output.accepted_samples, 1)
+        self.assertEqual(output.read(2), b'\x01\x02')
+        output.put(b'\x04', 0)
+        self.assertEqual(output.accepted_samples, 2)
+        self.assertEqual(output.emitted_samples, 1)
+        self.assertEqual(output.read(2), b'\x03\x04')
+        self.assertEqual(output.emitted_samples, 2)
+
+    def test_odd_chunks_cannot_mark_question_complete_before_last_sample_drains(self):
+        from types import SimpleNamespace
+        from native_duplex import NativeDuplex
+
+        output = PlaybackBuffer()
+        call = SimpleNamespace(playback=output, call_settings=None, closed=False,
+            closing=False, input_lost=False, failed=False)
+        lane = NativeDuplex(call)
+        state = lane.begin_greeting('Continue?')
+        output.put(b'\x01\x02\x03', 0)
+        output.put(b'\x04', 0)
+        lane.finish_greeting(state, complete=True)
+        output.read(2)
+        self.assertEqual(lane.question_context(), ('Continue?', 'greeting', False))
+        output.read(2)
+        self.assertEqual(lane.question_context(), ('Continue?', 'greeting', True))
+
+    def test_interruption_discards_partial_sample_before_counting_new_generation(self):
+        output = PlaybackBuffer()
+        output.put(b'\x01', 0)
+        generation = output.interrupt()
+        self.assertFalse(output.put(b'\x02', 0))
+        output.put(b'\x03', generation)
+        self.assertEqual(output.accepted_samples, 0)
+        output.put(b'\x04', generation)
+        self.assertEqual(output.accepted_samples, 1)
+        self.assertEqual(output.read(2), b'\x03\x04')
+        self.assertEqual(output.emitted_samples, 1)
+
     def test_native_authorization_requires_expected_agent_in_valid_envelope(self):
         self.assertIsNotNone(authorized_agents, 'native authorization response validator missing')
         agent = 'a4a9438393738354e7f2b9fa6aba101d'

@@ -3,6 +3,8 @@ param(
     [ValidateSet('Start','Stop','Status')]
     [string]$Action = 'Start',
     [string]$ProfileConfig = '',
+    # Required only for explicit native profiles; the default uses its reviewed manifest.
+    [string]$ProfileSha256 = '',
     [string]$Python = 'C:\Projects\strix-alloy-clean\server\.local\venv\Scripts\python.exe',
     [switch]$DemoNoThinking
 )
@@ -21,6 +23,8 @@ $StdoutPath = Join-Path $LocalDirectory 'scc-gateway.stdout.log'
 $StderrPath = Join-Path $LocalDirectory 'scc-gateway.stderr.log'
 $DeploymentScript = Join-Path $PSScriptRoot 'native-start\model_deployment.py'
 $DeploymentScriptHash = 'c6df254d128e5e76382c2707466b9ad5cfe2b5d7e8ef0613bd2febd2c936507e'
+$NativeProfileScript = Join-Path $PSScriptRoot 'native-start\gateway_profile.py'
+$NativeProfileScriptHash = '078825636f57fc82e35c4206036e0d0f087f50e5be0f4e4183d709b8d277467c'
 
 function Read-ReviewedModelDeployment($Python, $DeploymentScript, $ExpectedHash) {
     if (-not (Test-Path -LiteralPath $DeploymentScript -PathType Leaf) -or
@@ -30,6 +34,35 @@ function Read-ReviewedModelDeployment($Python, $DeploymentScript, $ExpectedHash)
     $text = & $Python -B $DeploymentScript
     if ($LASTEXITCODE -ne 0) { throw 'Reviewed model deployment/profile validation failed.' }
     return ($text -join [Environment]::NewLine) | ConvertFrom-Json
+}
+
+function Read-ExplicitNativeGatewayDeployment($Python, $Reader, $ExpectedReaderHash, $Profile, $ExpectedProfileHash, $ServerDirectory) {
+    if ($ExpectedProfileHash -cnotmatch '^[a-f0-9]{64}$') {
+        throw 'Explicit native gateway profile requires its reviewed lowercase SHA-256.'
+    }
+    if (-not (Test-Path -LiteralPath $Reader -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $Reader -Algorithm SHA256).Hash.ToLowerInvariant() -ne $ExpectedReaderHash) {
+        throw 'Native profile reader changed; refusing startup.'
+    }
+    # The helper only validates existing profile/runtime bytes and credentials.
+    # Capture all diagnostics; only the bounded profile path/hash response leaves it.
+    $text = & $Python -B $Reader --profile $Profile --sha256 $ExpectedProfileHash --server $ServerDirectory 2>&1
+    if ($LASTEXITCODE -ne 0) { throw 'Explicit native gateway profile validation failed.' }
+    try { return ($text -join [Environment]::NewLine) | ConvertFrom-Json }
+    catch { throw 'Explicit native gateway profile validation response is invalid.' }
+}
+
+function Read-PinnedGatewayConfig($Profile, $ExpectedHash) {
+    try {
+        $raw = [IO.File]::ReadAllBytes($Profile)
+        if ($raw.Length -gt 65536) { throw 'oversized' }
+        $hasher = [Security.Cryptography.SHA256]::Create()
+        try { $actual = [BitConverter]::ToString($hasher.ComputeHash($raw)).Replace('-','').ToLowerInvariant() }
+        finally { $hasher.Dispose() }
+        if ($actual -cne $ExpectedHash) { throw 'changed' }
+        $text = [Text.UTF8Encoding]::new($false,$true).GetString($raw).TrimStart([char]0xFEFF)
+        return $text | ConvertFrom-Json
+    } catch { throw 'Selected gateway profile bytes changed or are invalid; startup refused.' }
 }
 
 function Test-ExactDeploymentValue($Actual, $Expected) {
@@ -128,12 +161,14 @@ if ($Action -eq 'Stop') {
     return
 }
 $Python = (Resolve-Path -LiteralPath $Python).Path
-$deployment = Read-ReviewedModelDeployment $Python $DeploymentScript $DeploymentScriptHash
-if ($ProfileConfig -and (Resolve-Path -LiteralPath $ProfileConfig).Path -ne $deployment.profile) {
-    throw 'Requested gateway profile differs from the reviewed model deployment.'
+if ($ProfileConfig) {
+    $deployment = Read-ExplicitNativeGatewayDeployment $Python $NativeProfileScript $NativeProfileScriptHash $ProfileConfig $ProfileSha256 (Join-Path $RepoRoot 'server')
+} else {
+    if ($ProfileSha256) { throw 'ProfileSha256 requires an explicit native ProfileConfig.' }
+    $deployment = Read-ReviewedModelDeployment $Python $DeploymentScript $DeploymentScriptHash
 }
 $ProfileConfig = [string]$deployment.profile
-$config = Get-Content -LiteralPath $ProfileConfig -Raw | ConvertFrom-Json
+$config = Read-PinnedGatewayConfig $ProfileConfig ([string]$deployment.profile_sha256)
 foreach ($field in @('token_file','backend_token_file')) {
     if ($config.PSObject.Properties.Name -contains $field -and $config.$field) {
         $tokenPath = [string]$config.$field
@@ -169,9 +204,6 @@ if ($null -ne $owned) {
 $listeners = @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
 if ($listeners.Count -gt 0) { throw 'Port 8841 is occupied by a process not owned by this sidecar.' }
 $ProfileConfig = (Resolve-Path -LiteralPath $ProfileConfig).Path
-if ($config.backend.upstream -ne 'http://127.0.0.1:8731') {
-    throw 'This sidecar is restricted to the existing loopback backend on 8731.'
-}
 if ($DemoNoThinking -and $config.backend.identifier -ne 'halogen-v2') {
     throw 'Demo no-thinking mode is restricted to the reviewed ServiceNow public alias halogen-v2.'
 }
@@ -181,6 +213,10 @@ $config | Add-Member -NotePropertyName queue_limit -NotePropertyValue 8 -Force
 $config | Add-Member -NotePropertyName queue_seconds -NotePropertyValue 120 -Force
 $config | Add-Member -NotePropertyName console_trace -NotePropertyValue $false -Force
 $config | Add-Member -NotePropertyName native_sdk_proxy -NotePropertyValue $true -Force
+# Recheck source identity immediately before persisting the selected configuration.
+if ((Get-FileHash -LiteralPath $ProfileConfig -Algorithm SHA256).Hash.ToLowerInvariant() -cne $deployment.profile_sha256) {
+    throw 'Selected gateway profile changed before startup; no process started.'
+}
 New-Item -ItemType Directory -Path $LocalDirectory -Force | Out-Null
 $config | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $ConfigPath -Encoding UTF8
 $arguments = @('-u', ('"{0}"' -f $GatewayPath), '--config', ('"{0}"' -f $ConfigPath),

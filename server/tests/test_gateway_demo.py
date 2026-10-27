@@ -157,10 +157,8 @@ class DemoNoThinkingTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(self.seen[-1][1], dict(body,
                 model='halogen-qwen3.8-flash-next', enable_thinking=False, reasoning_effort='none'))
 
-    async def test_scc_historical_locale_rules_reach_model_before_system_dispatch(self):
+    async def test_scc_persona_history_and_action_reach_model_unchanged_before_system_dispatch(self):
         client = await self.client('halogen-v2')
-        suffix = (Path(__file__).resolve().parents[2] /
-            'voice/servicenow/evidence/scc-request-transformer-locale-suffix-20261013.txt').read_text(encoding='utf-8')
         content = ('SCC Laptop Onboarding Voice\npersona: Antworte auf Deutsch.\n'
                    'conversation_history: Fuer den Mitarbeiter Philipp Borchert.\n'
                    'action_id: FIXED_CONTROL; input_key: employee; require explicit confirmation.')
@@ -171,8 +169,10 @@ class DemoNoThinkingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status, 200)
         await response.read()
         dispatch = {'role': 'user', 'content': 'Bitte bearbeite die im Systemtext beschriebene Aufgabe und beachte das dort geforderte Ausgabeformat.'}
+        # The generic adapter preserves the caller's language policy; the
+        # historical gateway-level German override is intentionally retired.
         self.assertEqual(self.seen[-1][1], dict(body,
-            messages=[dict(system, content=content + suffix), dispatch],
+            messages=[system, dispatch],
             model='halogen-qwen3.8-flash-next', enable_thinking=False, reasoning_effort='none'))
 
     async def test_locale_http_boundary_preserves_existing_suffix_and_other_use_cases(self):
