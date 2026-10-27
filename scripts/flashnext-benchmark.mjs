@@ -10,7 +10,7 @@ function flag(name, fallback) {
 }
 
 const endpoint = String(flag('--endpoint', 'http://127.0.0.1:8826/v1')).replace(/\/+$/u, '');
-const model = String(flag('--model', 'qwen3.8-flash-next'));
+const model = String(flag('--model', 'Qwen3.8-Flash-Next'));
 const outputDir = String(flag('--output-dir', 'C:/AI/local-ai/flashnext/benchmarks'));
 const includeLongPrompts = argv.includes('--long-prompts');
 const parsedEndpoint = new URL(endpoint);

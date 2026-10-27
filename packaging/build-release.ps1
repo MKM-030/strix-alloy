@@ -126,7 +126,7 @@ Write-Host ("    rocBLAS: {0} gfx1151 kernel files present" -f $archKernels.Coun
 # ---------------------------------------------------------------------------
 $appStage = Join-Path $StageRoot 'app'
 New-Item -ItemType Directory -Path $appStage -Force | Out-Null
-foreach ($f in 'launch-flash-next.ps1', 'Launch Flash Next.cmd') {
+foreach ($f in 'launch-flash-next.ps1', 'Launch Flash Next.cmd', 'flash-next-clients.jinja', 'use-flash-next-in-codex.ps1', 'Use Flash Next in Codex.cmd') {
     Copy-Item -LiteralPath (Join-Path $RepoRoot "app\$f") -Destination $appStage -Force
 }
 Write-Host '  app: llama-server launcher'
@@ -138,6 +138,7 @@ Write-Host '  app: llama-server launcher'
 $cfgStage = Join-Path $StageRoot 'config'
 New-Item -ItemType Directory -Path $cfgStage -Force | Out-Null
 Copy-Item -Path (Join-Path $RepoRoot 'config\model-manifest.example.json') -Destination $cfgStage -Force
+Copy-Item -LiteralPath (Join-Path $RepoRoot 'config\flash-next-model-catalog.json') -Destination $cfgStage -Force
 Write-Host '  config: model manifest example'
 
 # ---------------------------------------------------------------------------
@@ -248,4 +249,3 @@ Write-Host ("ZIP      : {0}" -f $zip)
 Write-Host ("bytes    : {0:N0}" -f (Get-Item $zip).Length)
 Write-Host ("checksums: {0}" -f (Join-Path $OutDir "strix-alloy-$Version-SHA256SUMS.txt"))
 Write-Host ("stage    : {0}  (kept for inspection)" -f $StageRoot)
-

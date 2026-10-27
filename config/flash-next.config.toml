@@ -1,0 +1,35 @@
+# Optional profile example for this workstation; not installed automatically.
+# The working app/Use Flash Next in Codex.cmd launcher needs no profile installation.
+# Codex 0.155 supports this as ~/.codex/flash-next.config.toml via --profile flash-next.
+# If moving the repository, update model_catalog_json below.
+model = "Qwen3.8-Flash-Next"
+review_model = "Qwen3.8-Flash-Next"
+model_provider = "strix_alloy"
+model_catalog_json = "C:/Projects/strix-alloy-clean/config/flash-next-model-catalog.json"
+model_context_window = 32768
+model_auto_compact_token_limit = 24576
+model_reasoning_effort = "low"
+model_reasoning_summary = "none"
+web_search = "disabled"
+
+[model_providers.strix_alloy]
+name = "Strix Alloy Flash Next"
+base_url = "http://127.0.0.1:8826/v1"
+wire_api = "responses"
+requires_openai_auth = false
+supports_websockets = false
+request_max_retries = 1
+stream_max_retries = 1
+stream_idle_timeout_ms = 300000
+
+[features]
+apps = false
+plugins = false
+hooks = false
+goals = false
+multi_agent = false
+code_mode = false
+code_mode_only = false
+
+[mcp_servers.node_repl]
+enabled = false

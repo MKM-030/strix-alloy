@@ -2,7 +2,7 @@
 rem Thin entry point so the launcher can be double-clicked or pinned to the taskbar.
 rem It adds no behaviour of its own - every option passes straight through.
 rem
-rem   "Launch Flash Next.cmd"                                    serial, default port 8899
+rem   "Launch Flash Next.cmd"                                    serial, default port 8826
 rem   "Launch Flash Next.cmd" -DraftPath "D:\mtp-sidecar.gguf"   MTP profile
 rem   "Launch Flash Next.cmd" -Stop                              stop it again
 rem
