@@ -167,6 +167,11 @@ def gateway_args():
 
 def gateway_ready(profile, require_health=True):
     config = read_json(GATEWAY_CONFIG)
+    # Fixed model identities cannot be dynamic compatibility aliases.
+    if (config.get('controller_consumer') is True
+            and any(alias in ('gemma4-26b-a4b', 'Gemma 4 26B-A4B')
+                    for alias in config.get('controller_aliases', ()))):
+        raise RuntimeError('Die feste Gemma-Auswahl muss zuerst mit Control Tower abgestimmt werden.')
     if (config.get('controller_consumer') is not True
             or config.get('backend', {}).get('upstream') != 'http://127.0.0.1:8840'
             or credential(GATEWAY_CONFIG, 'backend_token_file') != credential(PROFILE)):
@@ -281,7 +286,7 @@ def asr_stage(check_only=False):
         raise RuntimeError('Qwen-Spracherkennung ist nicht ausgewaehlt; kein anderer ASR-Start.')
     helper = load_module('scc_qwen_asr_start', ACTIVE / 'voice/native-start/qwen_asr_start.py')
     state = helper.ensure(native, check_only=check_only)
-    print('Qwen-Spracherkennung: ' + state + '.', flush=True)
+    print('Qwen-Spracherkennung (' + helper.runtime(native) + '): ' + state + '.', flush=True)
 
 
 def speech_stage():

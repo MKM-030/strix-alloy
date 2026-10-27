@@ -51,11 +51,13 @@ QWEN_ASR_HEALTH = 'http://127.0.0.1:8851/health'
 QWEN_ASR_MODEL = 'Qwen/Qwen3-ASR-0.6B'
 
 
-def validate_asr_config(backend, url, token):
+def validate_asr_config(backend, url, token, runtime='torch'):
     if backend not in ('whisper', QWEN_ASR_BACKEND):
         raise ValueError('Unsupported ASR backend')
+    if runtime not in ('torch', 'crispasr'):
+        raise ValueError('Unsupported ASR runtime')
     if backend == 'whisper':
-        if token:
+        if token or runtime != 'torch':
             raise ValueError('ASR credentials require the selected Qwen backend')
         return
     if (url != QWEN_ASR_URL or type(token) is not str or not 16 <= len(token) <= 8192
@@ -67,6 +69,8 @@ async def require_asr_ready(http, config):
     if config.asr_backend != QWEN_ASR_BACKEND:
         return
     try:
+        runtime = getattr(config, 'asr_runtime', 'torch')
+        dtype = 'mixed-gguf' if runtime == 'crispasr' else 'float32'
         async with http.get(QWEN_ASR_HEALTH,
                 headers={'Authorization':'Bearer ' + config.private_asr_token},
                 allow_redirects=False, timeout=ClientTimeout(total=6)) as response:
@@ -79,7 +83,9 @@ async def require_asr_ready(http, config):
             if (response.status != 200 or type(value) is not dict
                     or value.get('status') != 'ready' or value.get('mode') != 'asr'
                     or value.get('model') != QWEN_ASR_MODEL or value.get('busy') is not False
-                    or value.get('device') != 'cpu' or value.get('dtype') != 'float32'
+                    or runtime not in ('torch', 'crispasr')
+                    or value.get('runtime', 'torch') != runtime
+                    or value.get('device') != 'cpu' or value.get('dtype') != dtype
                     or type(value.get('max_parallel')) is not int or value['max_parallel'] != 1):
                 raise ValueError()
     except Exception:
@@ -97,6 +103,7 @@ class Config:
     backend_url: str = 'http://127.0.0.1:8850'
     asr_url: str = 'http://127.0.0.1:8861/inference'
     asr_backend: str = 'whisper'
+    asr_runtime: str = 'torch'
     private_asr_token: str = field(default='', repr=False)
     tts_url: str = 'http://127.0.0.1:8862/v1/audio/speech'
     conversation_ws_url: str = ''
@@ -130,7 +137,7 @@ class Config:
                 or bool(self.conversation_http_url) != (self.conversation_transport == 'controller-text')):
             raise ValueError('Controller conversation requires explicit controller-text selection')
         validate_model_health(self.model_health_url, self.private_model_health_token)
-        validate_asr_config(self.asr_backend, self.asr_url, self.private_asr_token)
+        validate_asr_config(self.asr_backend, self.asr_url, self.private_asr_token, self.asr_runtime)
         if type(self.live_context_updates_enabled) is not bool:
             raise ValueError('Live context updates require a boolean setting')
         if not isinstance(self.private_responsive, ResponsiveConfig):
@@ -2131,6 +2138,8 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             result['conversationTransport'] = 'controller-text'
         if config.asr_backend == QWEN_ASR_BACKEND:
             result['asrBackend'] = config.asr_backend
+            result['asrRuntime'] = config.asr_runtime
+            result['asrDtype'] = 'mixed-gguf' if config.asr_runtime == 'crispasr' else 'float32'
             try:
                 await require_asr_ready(app[HTTP_KEY], config)
             except RuntimeError:
