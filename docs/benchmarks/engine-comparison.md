@@ -1,5 +1,9 @@
 # Engine comparison without mixing benchmark modes
 
+This is a historical comparison. For the current measured Halogen configuration,
+see the [26 October 8K/16K report](halogen01816-natural-8k16k-20261026-evening.md)
+and its clock caveat; the publisher observations below retain their original scope.
+
 **Source review: 2026-09-17.** strix-alloy snapshot: `199b8ec`. Every third-party figure below was
 re-fetched from the pinned revision and checked before being written down; where a source did not render, that
 is stated rather than filled in from memory.

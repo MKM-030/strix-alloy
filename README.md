@@ -51,9 +51,17 @@ reported 1876.97 / 52.47 tok/s. The report preserves both clocks and the exact
 workloads. The subsequent [native policy campaign](docs/benchmarks/halogen01816-native-policy-campaign-20261026.json)
 did not qualify gate 0.95, gate 0.85 or PLD `3,7` for promotion.
 
+[Native CPU ASR, 27 October](docs/local-voice/native-asr-component-20261027.md)
+records one synthetic C-ABI qualification and a separate synthetic TTS-to-ASR
+HTTP check. These component timings do not establish phone-call quality or
+change the Halogen serving results above.
+
 The [27 October worktree consolidation](docs/integration/worktree-consolidation-20261027.md)
 records the integrated histories, E: checkout comparison, validation and retained
 private runtime assets. Integrating experimental source does not enable it.
+
+The [physical cleanup follow-up](docs/integration/worktree-cleanup-20261027.md)
+records actual directory removal, preserved assets and measured disk space.
 
 [Native Windows Hipfire, 18 October 2026](docs/benchmarks/hipfire-native-windows-20261018.md)
 records the full model cohort, dedicated-memory repair, native phase conventions and retained historical best values.

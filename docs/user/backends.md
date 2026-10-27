@@ -3,6 +3,10 @@
 29 September 2026. This page describes the integration branch, not a newly
 released all-in-one runtime.
 
+This page preserves that historical release snapshot. Current measured profiles
+and entry points are listed in the [main README](../../README.md); the latest
+Halogen phase results are in the [26 October 8K/16K report](../benchmarks/halogen01816-natural-8k16k-20261026-evening.md).
+
 ## One project, distinct engines
 
 The consolidation decision is **one Strix Alloy repository** with independently

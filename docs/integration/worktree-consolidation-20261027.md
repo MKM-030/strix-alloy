@@ -5,6 +5,10 @@ The primary integration directory is `C:\Projects\strix-alloy-clean`, branch
 development history from the primary directory, SCC Voice and the older E:
 checkout. It does not promote experimental kernels or NPU paths.
 
+This report describes the initial source merge. The subsequent
+[physical cleanup](worktree-cleanup-20261027.md) records removed directories,
+preservation archives and the active Voice runtime migration.
+
 ## Inventory and preservation
 
 | Location | Initial state | Integration |
@@ -87,9 +91,12 @@ The NPU and trained-proposal prototypes remain separate, unqualified source.
 ## Validation and final disposition
 
 The source merge is `b7794e94854578137c887586f5391a065b1439fe`. No local branch
-tip remains outside its history. Both secondary source checkouts were advanced
-without rewriting history to this integrated source. Their local dependencies
-and runtime payloads remain in place; no disk-space saving is claimed.
+tip remained outside its history at the initial merge. Both secondary source
+checkouts were advanced without rewriting history to that integrated source.
+Their local dependencies and runtime payloads were initially retained; the
+later [physical cleanup](worktree-cleanup-20261027.md) records their migration,
+preservation and actual removal, rather than attributing disk savings to this
+source merge alone.
 
 | Final validation | Result |
 | --- | --- |

@@ -11,6 +11,29 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
+### Current Halogen 0.18.16 serving observations
+
+The [26 October evening cohort](halogen01816-natural-8k16k-20261026-evening.md)
+retains the latest qualified engine phase measurements. Each row excludes one
+warmup and averages three runs with 128 output tokens. Both use v2, 32768-position
+capacity, 8192-token prefill chunk/arena, Cache Off/no_store, Thinking Off,
+adaptive gate 0.90, PLD `3,3` and prefetch Off; their frozen input texts differ.
+
+| Actual input tokens | RAW prefill tok/s | RAW decode tok/s | Native head acceptance |
+| ---: | ---: | ---: | ---: |
+| 8192 | 2033.12 | 56.93 | 210 / 318 = 66.04% |
+| 16384 | 2002.08 | 49.63 | 177 / 336 = 52.68% |
+
+At 8K, native API timing instead reports 1876.97 / 52.47 tok/s. Both clocks
+remain recorded without a universal conversion or overhead subtraction;
+absolute clock alignment and a causal speedup are not established. The
+[JSON evidence](halogen01816-natural-8k16k-20261026-evening.json) pins the saved
+cohorts. The later [72-request policy campaign](halogen01816-native-policy-campaign-20261026.json)
+excluded 18 warmups and retained 54 measurements; gate 0.95, gate 0.85 and PLD
+`3,7` qualified no replacement, and its phase rates were not independently qualified.
+
+### Historical native Windows measurements
+
 | Claim | Value | Evidence | Conditions / limits |
 | --- | --- | --- | --- |
 | `llama-bench` prefill, default shape | **pp512 761.30 ± 38.24 t/s** | `canonical-llama-bench-20260916.md` | Synthetic prompt (pseudorandom IDs). `±` is a sample SD, not a CI. UCRT `rand()` reaches 13.2% of vocab — see §4 |

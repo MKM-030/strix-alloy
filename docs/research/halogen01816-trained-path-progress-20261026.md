@@ -1,6 +1,16 @@
 # Halogen0.18.16: recovered serving rates and trained proposal path
 
-The latest fully qualified8K MTP cohort remains **1858.90 Prefill /54.37 Decode
+> **Supersession note, 27 October 2026:** the later
+> [26 October evening cohort](../benchmarks/halogen01816-natural-8k16k-20261026-evening.md)
+> records 2033.12 Prefill / 56.93 Decode tok/s and 66.04% head acceptance at
+> 8192 input tokens, and 2002.08 / 49.63 tok/s with 52.68% at 16384. These are
+> RAW phase means; the 8K native API reports 1876.97 / 52.47 tok/s. The
+> [subsequent policy campaign](../benchmarks/halogen01816-native-policy-campaign-20261026.json)
+> promoted no replacement. Entries below preserve their chronological numbers,
+> identities and startup states; references to "latest" within those entries
+> apply to their original checkpoints. No trained-proposal or NPU speedup is qualified.
+
+At the opening checkpoint, the qualified8K MTP cohort was **1858.90 Prefill /54.37 Decode
 tok/s**, with **210/318=66.04% native-head draft acceptance**. A separate
 8192-input/one-output serial cohort reaches **1906.29 Prefill tok/s**. Those
 are different requests and must not be combined into one measured row.

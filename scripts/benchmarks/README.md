@@ -1,5 +1,12 @@
 # Reproduce the Halogen capacity benchmarks
 
+The latest completed engine phase measurements are the
+[Halogen 0.18.16 natural 8K/16K cohort](../../docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md),
+with its separate RAW/API clock observations. The later
+[72-request native policy campaign](../../docs/benchmarks/halogen01816-native-policy-campaign-20261026.json)
+qualified no policy replacement. The reproduction examples below retain their
+historical backend and workload scope.
+
 The original capacity examples below target the authenticated local Halogen 0.15.1
 backend. The later managed-client sections also cover the pinned 0.16.2 backend.
 They preserve raw engine timings and independently measured Windows/WSL

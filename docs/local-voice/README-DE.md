@@ -70,6 +70,11 @@ Der bisherige Overlay bleibt als geprüfte Basis unverändert. Die separate Erwe
 
 ## Mobile Audiofunktion und Latenz
 
+Der separate [CPU-ASR-Komponentenbefund vom 27. Oktober](native-asr-component-20261027.md)
+enthält eine synthetische C-ABI-Prüfung und einen einzelnen synthetischen
+TTS-/ASR-HTTP-Durchlauf. Die Ergebnisse belegen weder die physische
+iPhone-Audiofunktion noch eine Verbesserung der mobilen Gesamtlatenz.
+
 Der OAuth-Zugangsfehler ist behoben: native Plattformvalidierung, aktiver Service und Agent-Ausführungsrecht bleiben maßgeblich; opaque OAuth-Token werden nicht durch eine zusätzliche unpassende JWT-Annahme abgewiesen. Die frühere temporäre Authentisierungsdiagnose wurde entfernt.
 
 Ein nachfolgend beobachteter SDK-Aufruf erhielt erfolgreiche HTTP-Antworten für Session und Signalisierung. Danach scheiterte ICE; am Server kamen keine Audioframes an. Die Client-Plattform ist aus diesen Logs nicht sicher bestimmbar. Der Audiotransport ist deshalb weiterhin **nicht als behoben nachgewiesen**.

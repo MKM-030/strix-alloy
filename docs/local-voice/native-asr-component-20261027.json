@@ -1,0 +1,151 @@
+{
+  "schema": "strix-alloy.native-asr-component.v1",
+  "date": "2026-10-27",
+  "saved_evidence_only": true,
+  "source_receipts_private": true,
+  "source_pins": {
+    "worker": {
+      "private_task_relative_path": "task78-native-qualification/run/worker.json",
+      "bytes": 2920,
+      "sha256": "333c6f3ebc3be7b12d0319cbd13be3f51d4bb566b93fef9a20f625fffaaad6e1"
+    },
+    "supervisor": {
+      "private_task_relative_path": "task78-native-qualification/run/receipt.json",
+      "bytes": 13358,
+      "sha256": "331643f0862936f2eb4c371b272c7066c7f781e52c4b160b62fda7697e9ecca4"
+    },
+    "http_roundtrip": {
+      "private_task_relative_path": "task78-native-activation/roundtrip.json",
+      "bytes": 939,
+      "sha256": "ce1d69da4f9479faacdf6fa77a8c506c8041e8283412db43f7d9c0494321229e"
+    }
+  },
+  "cabi_qualification": {
+    "status": "native_qualification_completed",
+    "model": {
+      "model_id": "Qwen/Qwen3-ASR-0.6B",
+      "filename": "qwen3-asr-0.6b-q4_k.gguf",
+      "bytes": 631026336,
+      "sha256": "75356367b7001514112bae6edf1bec64007ac42f961cc1597f0dcee7184bec26",
+      "runtime": "crispasr",
+      "dtype": "mixed-gguf",
+      "model_payload_read_for_this_report": false
+    },
+    "input": {
+      "kind": "synthetic German name and spelling fixture",
+      "seconds": 8.72,
+      "complete_samples": 139520,
+      "channels": 1,
+      "sample_width_bytes": 2,
+      "sample_rate_hz": 16000
+    },
+    "configuration": {
+      "requested_parameters": {
+        "abi_version": 2,
+        "n_threads": 6,
+        "use_gpu": 0,
+        "flash_attn": 0,
+        "n_gpu_layers": 0
+      },
+      "requested_language": "de",
+      "requested_output_token_budget": 256,
+      "actual_dynamic_ucrt_environment": {
+        "CRISPASR_SESSION_CHUNK_SECONDS": "60",
+        "CRISPASR_SESSION_AUTOCHUNK": "1",
+        "CRISPASR_QWEN3_ASR_FUSED_QKV": "1"
+      }
+    },
+    "attempts": {
+      "model_load": 1,
+      "decode": 1,
+      "model_call_budget": 1
+    },
+    "seconds": {
+      "model_load_seconds": 0.15749529999993683,
+      "decode_seconds": 0.8275933999993867,
+      "close_seconds": 0.11625439999988885,
+      "elapsed_worker_seconds": 1.1983014000006733
+    },
+    "real_time_factor": 0.09490749999992966,
+    "rss_bytes": {
+      "rss_before_load_bytes": 36372480,
+      "rss_after_load_bytes": 223727616,
+      "rss_after_decode_bytes": 975646720,
+      "rss_after_close_bytes": 41639936
+    },
+    "supervisor": {
+      "terminal": true,
+      "exit_code": 0,
+      "owned_job_active_pids_final": [],
+      "model_process_unload_proven": true,
+      "elapsed_seconds": 1.9070000000001528,
+      "peak_build_tree_rss_bytes": 998858752,
+      "peak_job_commit_bytes": 2728620032,
+      "min_host_free_bytes": 32440131584,
+      "min_host_commit_headroom_bytes": 132706299904
+    },
+    "activity_counts": {
+      "microphone_recordings": 0,
+      "business_requests": 0,
+      "network_requests": 0,
+      "service_changes": 0
+    },
+    "forbidden_python_model_imports": {
+      "torch": false,
+      "transformers": false
+    },
+    "saved_observation_flags": {
+      "first_name_exact": true,
+      "surname_exact": false,
+      "spelling_sequence_present": true,
+      "does_not_establish_phone_or_general_quality": true
+    },
+    "phone_quality_proven": false,
+    "accuracy_score": null,
+    "integrity": {
+      "standalone_and_embedded_worker_fields_match": true,
+      "differing_fields": [],
+      "text_decoding": "UTF-8",
+      "transcript_published": false,
+      "personal_names_published": false,
+      "model_binding_matches_supervisor": true
+    }
+  },
+  "synthetic_http_roundtrip": {
+    "status": "passed_one_local_synthetic_roundtrip",
+    "attempts": {
+      "synthesis_attempts": 1,
+      "asr_http_attempts": 1
+    },
+    "audio_seconds": 2.88,
+    "seconds": {
+      "tts_first_chunk_seconds": 0.24999819999993633,
+      "tts_complete_seconds": 0.7914161999997305,
+      "asr_http_seconds": 0.4621836999995139
+    },
+    "synthetic_phrase_exact": true,
+    "activity_counts": {
+      "microphone_recordings": 0,
+      "business_requests": 0,
+      "service_restarts": 0
+    },
+    "minimum_host_bytes": {
+      "min_available_physical_bytes": 35738804224,
+      "min_available_commit_bytes": 135060840448
+    },
+    "audio_or_transcript_published": false
+  },
+  "claims": {
+    "matched_speedup_established": false,
+    "llm_token_throughput_measured": false,
+    "phone_call_quality_established": false,
+    "general_asr_accuracy_established": false,
+    "new_measurements_for_this_report": false
+  },
+  "limitations": [
+    "One C-ABI fixture and one separate synthetic HTTP roundtrip; no statistical confidence or matched baseline.",
+    "One synthetic name/spelling fixture records a surname error; no general accuracy score is derived.",
+    "Component intervals are separate; no end-to-end phone latency or engine tok/s is derived.",
+    "Private raw receipts, audio, models, credentials, personal names and host paths are not included."
+  ]
+}
