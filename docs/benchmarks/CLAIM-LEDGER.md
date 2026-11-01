@@ -25,6 +25,12 @@ counterexamples remain, with no general correction factor applied. No new
 historical maximum, controlled version gain, NPU gain or full-goal completion
 is established. The normal source package was restored and server left online.
 
+The subsequent [paired 16384 workspace experiment](halogen01822-arena16384-20261101.md)
+is rejected: all 24 requests completed, but the 16K candidate changes the frozen
+reply and reduces native acceptance 177/336→168/342 (52.68%→49.12%). Its phase
+figures are not a same-output speedup or a replacement post value. Controls
+recover the original output and counters; paired 8192 remains selected.
+
 ### Earlier Halogen 0.18.22: complete HTTP observations
 
 The [1 November update report](halogen01822-natural-8k16k-20261101.md) records

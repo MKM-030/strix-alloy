@@ -55,6 +55,11 @@ Native timing agrees within these cohorts; the earlier API-only clock
 counterexamples remain historical evidence. No new maximum or causal
 engine-version speedup is claimed. The normal server is restored and online.
 
+The later [paired 16K workspace comparison](docs/benchmarks/halogen01822-arena16384-20261101.md)
+completed before/candidate/after controls and rejected the larger workspace:
+the 16K answer changed and acceptance fell to 49.12%. Paired 8192 remains selected;
+the report retains all six rows rather than selecting a new maximum.
+
 [Halogen 0.18.22, 1 November](docs/benchmarks/halogen01822-natural-8k16k-20261101.md)
 records complete 8K/16K cohorts before and after restoring the separately
 verified OEM Performance mode. Complete HTTP means fell from 9.2516 to 6.8961

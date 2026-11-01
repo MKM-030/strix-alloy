@@ -9,6 +9,10 @@ retains the separate OEM correction and its clock counterexamples; they are
 not rescaled using the newer cohort.
 The current endpoint and public credential are unchanged. The server stays online.
 
+The [larger-workspace trial](../benchmarks/halogen01822-arena16384-20261101.md)
+was rejected after a 16K output change and lower draft acceptance. Keep the
+current paired 8192 prefill settings; no new client header is required.
+
 The retained measured text preset is **Halogen 0.18.16**. Select it
 explicitly with `-Profile MeasuredText32K`; the bare launcher retains 0.18.10,
 fixed MTP depth 2 and `Current4K`. The measured text preset uses 32K capacity,
