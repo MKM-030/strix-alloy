@@ -1,0 +1,2135 @@
+{
+  "schema": "halogen01822.update-native-cohorts.v1",
+  "utc": "2026-11-01T15:53:10.790017+00:00",
+  "version": "0.18.22",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:273714ccb64dabb7fac0418ee1b6dd83eb57d2fd44cf286eb68a7c694a27c203",
+  "engine_sha256": "c69d064b528e21e5b722ab4a0618b67c29a9d84dd09ba3aa70c6a928b5741aca",
+  "profile": {
+    "schema": 1,
+    "minimum_reserve_gib": 18,
+    "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+    "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.22\\.local\\api-token.txt",
+    "concurrency": 1,
+    "body_bytes": 16777216,
+    "request_seconds": 1800,
+    "backend": {
+      "identifier": "halogen-v2",
+      "upstream": "http://127.0.0.1:8731",
+      "model": "halogen-qwen3.8-flash-next",
+      "checkpoint": "v2",
+      "context": 32768,
+      "expected": {
+        "status": "ok",
+        "version.api": "0.18.22",
+        "version.engine": "0.18.22",
+        "version.match": true,
+        "context": 32768,
+        "slot_ctx": 32768,
+        "kv_pool_positions": 32768,
+        "slots": 1,
+        "vision.enabled": false
+      },
+      "routes": [
+        "/v1/chat/completions",
+        "/v1/completions",
+        "/v1/responses",
+        "/v1/messages",
+        "/v1/messages/count_tokens"
+      ]
+    },
+    "engine": {
+      "kind": "halogen",
+      "directory": "backends/halogen-wsl2-0.18.22",
+      "checkpoint": "v2",
+      "context": 32768,
+      "prompt_cache": "Off",
+      "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "launcher": "python",
+      "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+      "speculation_policy": {
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_MTP_GATE_P": "0.90"
+      },
+      "prefill_chunk": 8192,
+      "max_prefill_tokens": 8192,
+      "api_defaults": {
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "max_thinking_tokens": 2048
+      },
+      "disable_vision": true,
+      "kernel_controls": {
+        "HALOGEN_DECODE_PREFETCH": 0
+      }
+    },
+    "console_trace": false
+  },
+  "api_phase_clock_qualified": false,
+  "RAW_observer_used": false,
+  "source_checks": "Fresh ELF/FDE/instruction/frame/direct-transfer proof; freshly rebuilt four CPU products; original v2 assets unchanged",
+  "qualification_scope": "Complete frozen cohorts and native counters/output parity; API phase clock not independently qualified",
+  "cohorts": {
+    "quiet": {
+      "summary": {
+        "complete_cohorts": true,
+        "native_reported_observations_only": true,
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false,
+        "cases": {
+          "historical8k": {
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "warmup_excluded": 1,
+            "measured_repetitions": 3,
+            "prefill_native_reported_mean_tps": 1266.3716666666667,
+            "decode_native_reported_mean_tps": 46.96966666666667,
+            "prefill_native_pooled_tps": 1266.1123303761863,
+            "decode_native_pooled_tps": 46.810429948922994,
+            "http_qpc_mean_seconds": 9.2516401,
+            "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+            "native_scoped_acceptance": {
+              "head": {
+                "rounds": 171,
+                "drafted": 318,
+                "accepted": 210,
+                "acceptance_fraction": 0.660377358490566
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance_fraction": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance_fraction": null
+              }
+            },
+            "api_phase_clock_qualified": false,
+            "RAW_observer_used": false
+          },
+          "natural16k": {
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "warmup_excluded": 1,
+            "measured_repetitions": 3,
+            "prefill_native_reported_mean_tps": 1217.1546666666668,
+            "decode_native_reported_mean_tps": 39.992666666666665,
+            "prefill_native_pooled_tps": 1217.0885652805873,
+            "decode_native_pooled_tps": 39.9396744500494,
+            "http_qpc_mean_seconds": 16.740909733333332,
+            "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+            "native_scoped_acceptance": {
+              "head": {
+                "rounds": 204,
+                "drafted": 336,
+                "accepted": 177,
+                "acceptance_fraction": 0.5267857142857143
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance_fraction": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance_fraction": null
+              }
+            },
+            "api_phase_clock_qualified": false,
+            "RAW_observer_used": false
+          }
+        }
+      },
+      "samples": [
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 107,
+          "accepted": 70,
+          "combined_acceptance": 0.6542056074766355,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 107,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 107,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 12003.1,
+            "predicted_ms": 4564.0,
+            "prompt_per_second": 682.49,
+            "predicted_per_second": 28.046,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 107,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 107,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 16.5671,
+          "case": "historical8k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "http_qpc_seconds": 16.9296629,
+          "minimum_reserve_gib": 35.77925109863281,
+          "completed_utc": "2026-11-01T15:46:32.575004+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6595.4,
+            "predicted_ms": 2824.8,
+            "prompt_per_second": 1242.078,
+            "predicted_per_second": 45.313,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 9.420200000000001,
+          "case": "historical8k",
+          "ordinal": 1,
+          "phase": "measured",
+          "http_qpc_seconds": 9.4807311,
+          "minimum_reserve_gib": 35.82704162597656,
+          "completed_utc": "2026-11-01T15:46:43.094840+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6373.3,
+            "predicted_ms": 2863.5,
+            "prompt_per_second": 1285.362,
+            "predicted_per_second": 44.701,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 9.236799999999999,
+          "case": "historical8k",
+          "ordinal": 2,
+          "phase": "measured",
+          "http_qpc_seconds": 9.2983696,
+          "minimum_reserve_gib": 35.79914855957031,
+          "completed_utc": "2026-11-01T15:46:53.482335+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6441.9,
+            "predicted_ms": 2515.0,
+            "prompt_per_second": 1271.675,
+            "predicted_per_second": 50.895,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 8.9569,
+          "case": "historical8k",
+          "ordinal": 3,
+          "phase": "measured",
+          "http_qpc_seconds": 8.9758196,
+          "minimum_reserve_gib": 35.80088806152344,
+          "completed_utc": "2026-11-01T15:47:02.514244+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 21549.7,
+            "predicted_ms": 4750.9,
+            "prompt_per_second": 760.289,
+            "predicted_per_second": 26.942,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 26.3006,
+          "case": "natural16k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "http_qpc_seconds": 26.4008401,
+          "minimum_reserve_gib": 34.99950408935547,
+          "completed_utc": "2026-11-01T15:47:28.980809+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 13475.5,
+            "predicted_ms": 3042.9,
+            "prompt_per_second": 1215.836,
+            "predicted_per_second": 42.065,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 16.5184,
+          "case": "natural16k",
+          "ordinal": 1,
+          "phase": "measured",
+          "http_qpc_seconds": 16.6036444,
+          "minimum_reserve_gib": 34.973628997802734,
+          "completed_utc": "2026-11-01T15:47:45.626459+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 13575.6,
+            "predicted_ms": 3303.0,
+            "prompt_per_second": 1206.871,
+            "predicted_per_second": 38.753,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 16.8786,
+          "case": "natural16k",
+          "ordinal": 2,
+          "phase": "measured",
+          "http_qpc_seconds": 16.9247766,
+          "minimum_reserve_gib": 34.95443344116211,
+          "completed_utc": "2026-11-01T15:48:02.903080+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 13333.8,
+            "predicted_ms": 3268.6,
+            "prompt_per_second": 1228.757,
+            "predicted_per_second": 39.16,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 16.6024,
+          "case": "natural16k",
+          "ordinal": 3,
+          "phase": "measured",
+          "http_qpc_seconds": 16.6943082,
+          "minimum_reserve_gib": 35.02264404296875,
+          "completed_utc": "2026-11-01T15:48:19.682822+00:00"
+        }
+      ],
+      "handle": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\handle.json",
+        "bytes": 2651,
+        "sha256": "c92fd7d28c1ea4c43b4c4ddd94541042a00a709993387d5822541ea5aa576813"
+      },
+      "raw_responses": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\historical8k-0.response.json",
+          "bytes": 1325,
+          "sha256": "805cbd6571c2edbb6cb513a593cc85fb4ab5cda2ca4453992e578561f3603c74"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\historical8k-1.response.json",
+          "bytes": 1326,
+          "sha256": "037bc398492f798f00ae21c539a73dff81a05de7f59ecee64669bce749f76178"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\historical8k-2.response.json",
+          "bytes": 1326,
+          "sha256": "a6b0198169f9b9a42fdfe7a4d6f2fdf6a674034c44cc99a1ea91fa81f15d3e97"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\historical8k-3.response.json",
+          "bytes": 1326,
+          "sha256": "2d1a3abf0a4f60bcc0cd147c31c88df74b4bb9f9c7c0a44aa2c61ff0c5e63b44"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\natural16k-0.response.json",
+          "bytes": 1274,
+          "sha256": "c2bf1744aa018146a98fea2a229faedb39f65a87b471bcf163ffe55b87c98ddf"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\natural16k-1.response.json",
+          "bytes": 1275,
+          "sha256": "3dd5ba2ce22c530cf5dd5f45916ff7219b8729ab9ee5cdff5df748822770dce4"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\natural16k-2.response.json",
+          "bytes": 1275,
+          "sha256": "7fb311e5f1e794f71c6839c1217eb891fa7932c932269bdb3905c6567af098af"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k\\natural16k-3.response.json",
+          "bytes": 1274,
+          "sha256": "2bd22facec65b2d16651244bb3d7dced57bacdec8712942981d305f92f41150f"
+        }
+      ],
+      "native_phase_sum_exceeds_full_http": []
+    },
+    "performance": {
+      "summary": {
+        "complete_cohorts": true,
+        "native_reported_observations_only": true,
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false,
+        "cases": {
+          "historical8k": {
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "warmup_excluded": 1,
+            "measured_repetitions": 3,
+            "prefill_native_reported_mean_tps": 1669.0966666666666,
+            "decode_native_reported_mean_tps": 51.044333333333334,
+            "prefill_native_pooled_tps": 1668.70365843722,
+            "decode_native_pooled_tps": 50.803730898987894,
+            "http_qpc_mean_seconds": 6.896056166666667,
+            "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+            "native_scoped_acceptance": {
+              "head": {
+                "rounds": 171,
+                "drafted": 318,
+                "accepted": 210,
+                "acceptance_fraction": 0.660377358490566
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance_fraction": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance_fraction": null
+              }
+            },
+            "api_phase_clock_qualified": false,
+            "RAW_observer_used": false
+          },
+          "natural16k": {
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "warmup_excluded": 1,
+            "measured_repetitions": 3,
+            "prefill_native_reported_mean_tps": 1664.99,
+            "decode_native_reported_mean_tps": 43.68266666666666,
+            "prefill_native_pooled_tps": 1664.48243983217,
+            "decode_native_pooled_tps": 43.61356563614474,
+            "http_qpc_mean_seconds": 11.906005366666667,
+            "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+            "native_scoped_acceptance": {
+              "head": {
+                "rounds": 204,
+                "drafted": 336,
+                "accepted": 177,
+                "acceptance_fraction": 0.5267857142857143
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance_fraction": null
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0,
+                "acceptance_fraction": null
+              }
+            },
+            "api_phase_clock_qualified": false,
+            "RAW_observer_used": false
+          }
+        }
+      },
+      "samples": [
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 5043.0,
+            "predicted_ms": 2722.5,
+            "prompt_per_second": 1624.43,
+            "predicted_per_second": 47.016,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 7.7655,
+          "case": "historical8k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "http_qpc_seconds": 7.2193554,
+          "minimum_reserve_gib": 35.081756591796875,
+          "completed_utc": "2026-11-01T15:50:47.727681+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 4855.1,
+            "predicted_ms": 2389.5,
+            "prompt_per_second": 1687.298,
+            "predicted_per_second": 53.568,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 7.2446,
+          "case": "historical8k",
+          "ordinal": 1,
+          "phase": "measured",
+          "http_qpc_seconds": 6.7011018,
+          "minimum_reserve_gib": 35.08951187133789,
+          "completed_utc": "2026-11-01T15:50:55.459848+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 4856.2,
+            "predicted_ms": 2770.0,
+            "prompt_per_second": 1686.916,
+            "predicted_per_second": 46.209,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 7.6262,
+          "case": "historical8k",
+          "ordinal": 2,
+          "phase": "measured",
+          "http_qpc_seconds": 7.0898748,
+          "minimum_reserve_gib": 35.068321228027344,
+          "completed_utc": "2026-11-01T15:51:02.649610+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 5016.3,
+            "predicted_ms": 2399.0,
+            "prompt_per_second": 1633.076,
+            "predicted_per_second": 53.356,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 7.4153,
+          "case": "historical8k",
+          "ordinal": 3,
+          "phase": "measured",
+          "http_qpc_seconds": 6.8971919,
+          "minimum_reserve_gib": 35.0370979309082,
+          "completed_utc": "2026-11-01T15:51:10.635028+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 9762.3,
+            "predicted_ms": 2775.7,
+            "prompt_per_second": 1678.293,
+            "predicted_per_second": 46.114,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 12.538,
+          "case": "natural16k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "http_qpc_seconds": 11.6521915,
+          "minimum_reserve_gib": 35.08082580566406,
+          "completed_utc": "2026-11-01T15:51:22.353768+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 9621.8,
+            "predicted_ms": 2991.7,
+            "prompt_per_second": 1702.8,
+            "predicted_per_second": 42.785,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 12.6135,
+          "case": "natural16k",
+          "ordinal": 1,
+          "phase": "measured",
+          "http_qpc_seconds": 11.7235717,
+          "minimum_reserve_gib": 35.065940856933594,
+          "completed_utc": "2026-11-01T15:51:35.075647+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 10039.7,
+            "predicted_ms": 2774.1,
+            "prompt_per_second": 1631.921,
+            "predicted_per_second": 46.141,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 12.8138,
+          "case": "natural16k",
+          "ordinal": 2,
+          "phase": "measured",
+          "http_qpc_seconds": 11.9129107,
+          "minimum_reserve_gib": 35.048824310302734,
+          "completed_utc": "2026-11-01T15:51:47.983635+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 9868.4,
+            "predicted_ms": 3038.8,
+            "prompt_per_second": 1660.249,
+            "predicted_per_second": 42.122,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 12.907200000000001,
+          "case": "natural16k",
+          "ordinal": 3,
+          "phase": "measured",
+          "http_qpc_seconds": 12.0815337,
+          "minimum_reserve_gib": 35.09162902832031,
+          "completed_utc": "2026-11-01T15:52:01.052198+00:00"
+        }
+      ],
+      "handle": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\handle.json",
+        "bytes": 2652,
+        "sha256": "f3ab6469c49ca8eee98fd1bb81698a0a8f003c20df8d166c4e0cabbdf541fdf3"
+      },
+      "raw_responses": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\historical8k-0.response.json",
+          "bytes": 1325,
+          "sha256": "94f26c35d0593795b9853ce7897669261b2149b33369cf5f5fd3fdfc419dd57f"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\historical8k-1.response.json",
+          "bytes": 1326,
+          "sha256": "36349c44eea055f4a89aaf49c311b68637984db9eb110682cae75cfc2c16e13c"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\historical8k-2.response.json",
+          "bytes": 1326,
+          "sha256": "ba49e26265bd85ef188a82e2fb0d815a82ec5c96d982db440eec529091cdc299"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\historical8k-3.response.json",
+          "bytes": 1326,
+          "sha256": "45b63d0955fae94c989260897ce4cf03d599dae6e517679c456731ba79015430"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\natural16k-0.response.json",
+          "bytes": 1274,
+          "sha256": "6f3fec2ec326a743d211a14aed6957f72135f9b833b1983cdc660d7c52d0c58b"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\natural16k-1.response.json",
+          "bytes": 1272,
+          "sha256": "96e55c71f33a3d2f5785f6233152f9554988fbae1098404e4b190b66b9d38c0b"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\natural16k-2.response.json",
+          "bytes": 1275,
+          "sha256": "aa624ae8e9d7cdc751413e97eb5d4ede0f3a36ab1cc28bd6c9e2501867ff8290"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serial-8k16k-performance\\natural16k-3.response.json",
+          "bytes": 1274,
+          "sha256": "bcfec01067a9e886d47b8669ba9c6db327fab92daeeade8430e94d98cad2e140"
+        }
+      ],
+      "native_phase_sum_exceeds_full_http": [
+        {
+          "case": "historical8k",
+          "ordinal": 0,
+          "native_phase_sum_seconds": 7.7655,
+          "http_qpc_seconds": 7.2193554
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 1,
+          "native_phase_sum_seconds": 7.2446,
+          "http_qpc_seconds": 6.7011018
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 2,
+          "native_phase_sum_seconds": 7.6262,
+          "http_qpc_seconds": 7.0898748
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 3,
+          "native_phase_sum_seconds": 7.4153,
+          "http_qpc_seconds": 6.8971919
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 0,
+          "native_phase_sum_seconds": 12.538,
+          "http_qpc_seconds": 11.6521915
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 1,
+          "native_phase_sum_seconds": 12.6135,
+          "http_qpc_seconds": 11.7235717
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 2,
+          "native_phase_sum_seconds": 12.8138,
+          "http_qpc_seconds": 11.9129107
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 3,
+          "native_phase_sum_seconds": 12.907200000000001,
+          "http_qpc_seconds": 12.0815337
+        }
+      ]
+    }
+  },
+  "same_engine_operating_mode_comparison": {
+    "historical8k": {
+      "quiet_http_seconds": 9.2516401,
+      "performance_http_seconds": 6.896056166666667,
+      "shorter_http_percent": 25.46125776480791,
+      "phase_speedup_claimed": false,
+      "engine_version_speedup_claimed": false,
+      "bracketed_ABA": false
+    },
+    "natural16k": {
+      "quiet_http_seconds": 16.740909733333332,
+      "performance_http_seconds": 11.906005366666667,
+      "shorter_http_percent": 28.8807743646078,
+      "phase_speedup_claimed": false,
+      "engine_version_speedup_claimed": false,
+      "bracketed_ABA": false
+    }
+  },
+  "final_runtime": {
+    "identities": {
+      "controller": {
+        "pid": 24852,
+        "creation_time_100ns": 134380213405671451,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 24972,
+        "creation_time_100ns": 134380213522497830,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "controller_run": "800122b7803c4911a654a7694b2b9c65",
+    "backend_run": "9795b9a098fd4210ab44b5729f9a5422",
+    "gateway_status": "ok",
+    "native_version": {
+      "api": "0.18.22",
+      "engine": "0.18.22",
+      "match": true
+    },
+    "memory": {
+      "available_bytes": 37682561024,
+      "committed_bytes": 100774703104,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 139364737024
+    },
+    "authentication": {
+      "unauthorized_models_status": 401,
+      "authorized_models_status": 200,
+      "credential_values_logged": false,
+      "models": {
+        "object": "list",
+        "data": [
+          {
+            "id": "halogen-v2",
+            "object": "model",
+            "owned_by": "strix-alloy",
+            "context_capacity": 32768,
+            "checkpoint": "v2",
+            "routes": [
+              "/v1/chat/completions",
+              "/v1/completions",
+              "/v1/responses",
+              "/v1/messages",
+              "/v1/messages/count_tokens"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "evidence": {
+    "installation": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\source-prep\\root-install.json",
+      "bytes": 2618,
+      "sha256": "369659ae36bb2722ee150dff1e86b4049851b8ddeb752473c50fac6e3448595c"
+    },
+    "static_map": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\source-prep\\static-map.json",
+      "bytes": 37498,
+      "sha256": "df158c80480b92a1d70cfa72274cb495b6d982b2193203dceaeb0e175ff17533"
+    },
+    "provider": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\extracted\\cpu-provider\\receipt.json",
+      "bytes": 15721,
+      "sha256": "902dfea54772f0e5d1b7d9bb5c59c036618e130481d0ff9ca279792cc4c0ab06"
+    },
+    "build": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\source-prep\\cpu-build\\cpu-build.json",
+      "bytes": 14483,
+      "sha256": "852f3fbeee90b5d74e916b078865733d5515ba28b60f57fec444bee237480c24"
+    },
+    "mode_before": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\oem-readback-elevated\\power-mode-admin-result.json",
+      "bytes": 603,
+      "sha256": "1f2b38a4708f85bd2b2bbb4e20014bc323a6e371acf69421d9d1545cdb3c5d72"
+    },
+    "mode_transition": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\oem-performance\\transition.json",
+      "bytes": 2423,
+      "sha256": "9eaaf9452b89cf78c56377f7e779be735f5c709098d3ea8bd8aa00962c288d71"
+    },
+    "online": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\publication-ready-online.json",
+      "bytes": 12958,
+      "sha256": "78889dbe8564d19885a8bca271b2501671cd880cc0c634c48bff787d8aedcccb"
+    }
+  },
+  "OEM_transition": {
+    "schema": "halogen01816.oem-mode-transition.v1",
+    "utc": "2026-11-01T15:50:26.6080954Z",
+    "pid": 16648,
+    "process_start_utc": "2026-11-01T15:50:26.4442488Z",
+    "interface_guid": "{99d89064-8d50-42bb-bea9-155b2e5d0fcd}",
+    "expected_mode": 2,
+    "target_mode": 1,
+    "firmware_contract_sha256": "af240effe3d803620288c2e2138eb64e125f2053a670b7892ef875838a68b306",
+    "elevated_admin": true,
+    "getter_calls_attempted": 2,
+    "getter_calls_returned": 2,
+    "setter_calls_attempted": 1,
+    "setter_calls_returned": 1,
+    "setter_attempt_journal_written": true,
+    "getter_observations": [
+      {
+        "phase": "before",
+        "started_utc": "2026-11-01T15:50:26.8216918Z",
+        "ended_utc": "2026-11-01T15:50:26.8332053Z",
+        "raw_current_power_mode": 2,
+        "raw_return_value": true
+      },
+      {
+        "phase": "after",
+        "started_utc": "2026-11-01T15:50:26.8966145Z",
+        "ended_utc": "2026-11-01T15:50:26.9041273Z",
+        "raw_current_power_mode": 1,
+        "raw_return_value": true
+      }
+    ],
+    "raw_setter_return_value": true,
+    "raw_setter_result_status": 0,
+    "target_mode_observed": true,
+    "passed": true,
+    "automatic_alternate_or_rollback": false,
+    "direct_ec_or_bios_or_voltage_or_driver_calls": false,
+    "return_value_meaning_inferred": false,
+    "note": "Raw provider values retained. Getter target observation is not proof of package wattage, clock, or EC application beyond this reported mode.",
+    "instance_name": "ACPI\\PNP0C14\\IP3POWERSWITCH_0",
+    "setter_attempt_journal_path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\oem-performance\\transition.json.attempt.json",
+    "setter_attempt_utc": "2026-11-01T15:50:26.8800948Z",
+    "poll_elapsed_seconds": 0.0113826,
+    "poll_budget_seconds": 5,
+    "poll_budget_met": true,
+    "ended_utc": "2026-11-01T15:50:26.9061267Z"
+  },
+  "NPU_acceleration_proven": false,
+  "full_goal_achieved": false,
+  "OEM_final_mode_readback": {
+    "utc": "2026-11-01T15:54:21.5082189Z",
+    "pid": 24868,
+    "process_start_utc": "2026-11-01T15:54:21.3050145Z",
+    "elevated_admin": true,
+    "read_only": true,
+    "method": "GetPowerMode",
+    "provider_methods_invoked": 1,
+    "mode_setters_invoked": 0,
+    "passed": true,
+    "instance_name": "ACPI\\PNP0C14\\IP3POWERSWITCH_0",
+    "raw_current_power_mode": 1,
+    "raw_return_value": true,
+    "mode_label": null,
+    "note": "Raw result only; firmware-specific numeric-to-label mapping is not assumed.",
+    "ended_utc": "2026-11-01T15:54:21.6263957Z"
+  }
+}

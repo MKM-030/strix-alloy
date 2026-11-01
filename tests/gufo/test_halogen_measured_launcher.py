@@ -87,12 +87,66 @@ class MeasuredLauncherTest(unittest.TestCase):
         self.assertEqual({path.name for path in sessions.glob('*.json')}, before)
 
     def test_text32k_rejects_conflicting_explicit_selectors(self):
-        for arguments in [('-HalogenVersion', '0.18.15'), ('-Thinking', 'On'),
+        for arguments in [('-HalogenVersion', '0.18.15'), ('-HalogenVersion', '0.18.22'), ('-Thinking', 'On'),
                           ('-MtpPolicy', 'Fixed2'), ('-PromptCache', 'Flexible')]:
             with self.subTest(arguments=arguments):
                 result = self.invoke(*arguments, profile='MeasuredText32K')
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn('MeasuredText32K requires', result.stdout + result.stderr)
+
+    @unittest.skipUnless((ROOT / 'backends/halogen-wsl2-0.18.22/.local/machine.json').is_file(),
+                         'Explicit 0.18.22 package must be installed; no lifecycle operation is performed')
+    def test_explicit_01822_current8k_print_only_preserves_existing_defaults(self):
+        sessions = ROOT / 'server/.local/servicenow-sessions'
+        before = {path.name for path in sessions.glob('*.json')}
+        result = self.invoke('-HalogenVersion', '0.18.22', '-Thinking', 'Off',
+                             '-MtpPolicy', 'Confidence90', profile='Current8K')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('Halogen 0.18.22 v2; MTP policy Confidence90; PLD 3,3; cache Off', result.stdout)
+        self.assertIn('Context capacity: 262144', result.stdout)
+        self.assertIn('Thinking default: Off; medium effort', result.stdout)
+        self.assertIn('Prefill chunk / token arena: 8192 / 8192', result.stdout)
+        self.assertIn('no session configuration was written and no engine was launched', result.stdout)
+        self.assertEqual({path.name for path in sessions.glob('*.json')}, before)
+
+    @unittest.skipUnless(TEXT_BASELINE.is_file() and
+                         (ROOT / 'backends/halogen-wsl2-0.18.22/.local/machine.json').is_file(),
+                         'Installed 0.18.22 and frozen 0.18.16 text configuration required')
+    def test_current_text32k_print_only_reproduces_exact_configuration_without_session_write(self):
+        sessions = ROOT / 'server/.local/servicenow-sessions'
+        before = {path.name for path in sessions.glob('*.json')}
+        reference = json.loads(TEXT_BASELINE.read_text(encoding='utf-8-sig'))
+        reference['backend_token_file'] = str(ROOT / 'backends/halogen-wsl2-0.18.22/.local/api-token.txt')
+        reference['backend']['expected']['version.api'] = '0.18.22'
+        reference['backend']['expected']['version.engine'] = '0.18.22'
+        reference['engine']['directory'] = 'backends/halogen-wsl2-0.18.22'
+        for arguments, trace in (((), False),
+                                 (('-HalogenVersion', '0.18.22', '-Thinking', 'Off',
+                                   '-MtpPolicy', 'Auto', '-PromptCache', 'Off', '-ConsoleTrace'), True)):
+            with self.subTest(arguments=arguments):
+                result = self.invoke(*arguments, profile='CurrentText32K')
+                self.assertEqual(result.returncode, 0, result.stderr)
+                start = result.stdout.find('{')
+                self.assertGreaterEqual(start, 0, 'Configured preset must print its resolved configuration')
+                actual, _ = json.JSONDecoder().raw_decode(result.stdout[start:])
+                expected = copy.deepcopy(reference)
+                expected['console_trace'] = trace
+                actual['engine']['powershell'] = os.path.normcase(actual['engine']['powershell'])
+                expected['engine']['powershell'] = os.path.normcase(expected['engine']['powershell'])
+                self.assertEqual(actual, expected)
+                self.assertIn('no session configuration was written and no engine was launched', result.stdout)
+        self.assertEqual({path.name for path in sessions.glob('*.json')}, before)
+
+    def test_current_text32k_rejects_conflicting_explicit_selectors(self):
+        sessions = ROOT / 'server/.local/servicenow-sessions'
+        before = {path.name for path in sessions.glob('*.json')}
+        for arguments in (('-HalogenVersion', '0.18.16'), ('-Thinking', 'On'),
+                          ('-MtpPolicy', 'Fixed2'), ('-PromptCache', 'Flexible')):
+            with self.subTest(arguments=arguments):
+                result = self.invoke(*arguments, profile='CurrentText32K')
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('CurrentText32K requires Halogen 0.18.22', result.stdout + result.stderr)
+        self.assertEqual({path.name for path in sessions.glob('*.json')}, before)
 
 
 if __name__ == '__main__':

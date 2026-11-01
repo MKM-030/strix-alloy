@@ -1,6 +1,12 @@
 # Halogen foreground console and ServiceNow REST integration
 
-The current measured text preset is **installed Halogen 0.18.16**. Select it
+Current serving uses **installed Halogen 0.18.22**, selected with
+`-Profile CurrentText32K`. The [1 November report](../benchmarks/halogen01822-natural-8k16k-20261101.md)
+records full 8K/16K cohorts and the separate OEM mode correction. Its native API
+phase clocks are not independently qualified; acceptance remains 66.04% / 52.68%.
+The current endpoint and public credential are unchanged. The server stays online.
+
+The retained measured text preset is **Halogen 0.18.16**. Select it
 explicitly with `-Profile MeasuredText32K`; the bare launcher retains 0.18.10,
 fixed MTP depth 2 and `Current4K`. The measured text preset uses 32K capacity,
 8K prefill chunk/arena, adaptive MTP gate 0.90, PLD `3,3`, Cache Off,
@@ -58,7 +64,7 @@ Run from `C:\Projects\strix-alloy-clean` in the console that should display the
 server and API trace:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile MeasuredText32K -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
 ```
 
 For the older general-purpose profiles, this launcher defaults to

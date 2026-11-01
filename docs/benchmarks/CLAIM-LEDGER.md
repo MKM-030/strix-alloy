@@ -11,7 +11,21 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
-### Current Halogen 0.18.16 serving observations
+### Current Halogen 0.18.22: complete HTTP observations
+
+The [1 November update report](halogen01822-natural-8k16k-20261101.md) records
+same-engine Quiet-to-Performance full HTTP means of 9.251640→6.896056 seconds at
+8192 inputs and 16.740910→11.906005 at 16384 inputs, 128 outputs each. One warmup
+is excluded from each three-run cohort. This is a sequential operating-mode
+comparison, not an engine-version speedup or an ABA attribution. Native head
+acceptance is unchanged at 210/318=66.04% and 177/336=52.68%; outputs match.
+
+Native API phase-rate observations are **conditional and not qualified as
+actual phase throughput**: all eight Performance requests report phase sums
+longer than the whole QPC HTTP duration. No correction factor, new RAW best,
+NPU gain or 100% acceptance is claimed. The normal 0.18.22 server remains online.
+
+### Retained independently captured Halogen 0.18.16 phase measurements
 
 The [26 October evening cohort](halogen01816-natural-8k16k-20261026-evening.md)
 retains the latest qualified engine phase measurements. Each row excludes one
