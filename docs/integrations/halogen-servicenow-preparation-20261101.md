@@ -61,3 +61,8 @@ Der alte Freeze und alle bisherigen Ausführungsbelege bleiben unverändert.
 Private lokale Belege: `readiness-handoff.json`, `trace-profile-check.json` und
 `prepared-console-trace-profile.json` unter
 `server/.local/halogen-update-20261101/primary01822/servicenow-preparation/`.
+
+Die [Prefix-Cache-Vorbereitung](halogen-servicenow-prefix-cache-20261101.md)
+ergänzt einen netzwerkfreien Anfragegenerator und eine geprüfte Offline-Auswertung
+für spätere Folgefragen. Sie sendet keine Anfragen und verändert weder den
+laufenden Server noch die eingefrorene ServiceNow-Fortsetzung.
