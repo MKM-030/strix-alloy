@@ -1,4 +1,45 @@
-# Halogen Agent delta: partial-run audit
+# Halogen Agent delta — completed source and capture audit
+
+The approved reuse-only continuation completed once. **All 68 intended source records are exact, and all 69 Customer Updates are verified with no deletes or duplicate names.** This is configuration/capture completion; the full iPhone Voice goal and target-import acceptance remain open. The native batch remains WIP, separate from the sealed 2.2 Fresh Instance delivery.
+
+## Final native execution
+
+- Script SHA-256: `9bfd4ef356c5bf3fc88153a235ef4c01e9a4a08dac3d5adb0d38b9a94d1ef3c4`.
+- Execution history: `363239a593581fd45c8132d47aba103d`.
+- Rollback context: `b63239a593581fd45c8132d47aba103c`.
+- SDK envelope and inner `[HALOGEN_AGENT_EXISTING_STAGE_COMPLETION]`: `ok:true`, `completed`, `final_audit`.
+- Explicit writes: one Ledger source assignment/capture, three header changes and 136 existing-capture wrapper moves. No new or renamed holding set and no parent write.
+- Original current Update Set `83c415cb933fcf14e7f2b9fa6aba10de` restored.
+
+## Final batch and exact invariants
+
+**Custom LLM Platform 2.3 - Halogen Agent Delta - NO DELETE 20261101**
+
+| Container | ID | Application | Customer Updates |
+| --- | --- | --- | ---: |
+| Parent | `4de124e993101714e7f2b9fa6aba1079` | Global | 0 |
+| Global child | `09e124e993101714e7f2b9fa6aba107c` | Global | 3 |
+| AI Agents child | `89e124e993101714e7f2b9fa6aba1097` | `sn_aia` | 66 |
+
+All 66 active prompts select `halogen-v2`. The Halogen request transformer and Ledger match exact approved source hashes `99cb5d8733faca9955ec274f21dc4b5f46f0b2c4159cbb63b9c5954bf85c4e58` and `8d1a900054b03a504cd9cdbf2144037e4c34d1d1eaa6fd1c62f9ab5faa014f4d`. The 67 already-correct source rows and corrected parent remain fully unchanged, including revisions. Ledger changed only its script and normal revision metadata, revision 1 to 2. All 21 guards, both ES companions, five inactive prompts, definitions/defaults, model registrations and three false Mirror gates remain unchanged.
+
+All 68 earlier Customer Updates retain exact identities, payloads, actions and non-wrapper fields; their `update_set` wrappers moved to the correct children, with exactly two revision increments each. The only new capture is Ledger `89423da593581fd45c8132d47aba10ff`. The one native signal capture is preserved exactly; its volatile live source value was never assigned. All 69 outer and embedded transport actions are nondestructive; no DELETE/delete_multiple or duplicate update names remain. Native version-association maintenance ran through normal Business Rules; no ACL, role or security-property change occurred.
+
+Holding set `0a94f0219318dbd45c8132d47aba1018` retains its exact 80-character native name and ownership description, is empty and `ignore`, and is outside both the parent tree and native base batch. Fresh topology reads establish exactly three batch members and zero holding-set descendants/base members.
+
+Root and independent offline audits passed against complete fresh native queries, with 68 desired sources, 68 valid intended captures plus the exact native signal, zero guard/policy/XML/scope errors and zero unverified transport fields. The only code-text transport exceptions are the two frozen, hash/AST-qualified native CR-removal cases; stored source comparisons remain exact. Private evidence includes `SDK-EXISTING-STAGE-EXECUTION-RESULT.json`, `root-audit.after-existing-stage.json`, `independent-audit.after-existing-stage.json`, `verification.full-final.root.json`, their reproducible audit scripts/commands, and the complete `*.after-existing-stage.json` readbacks. All preceding approved scripts, plans, attempts and rollback IDs are preserved unchanged. Never rerun any submitted migration script.
+
+## Remaining runtime and transport boundaries
+
+The sealed 2.2 package and its source preview are unchanged and do not contain this later delta. This verified WIP delta is not a replacement full installer or proof of fresh-target import. Keep TTS, STT, local conversation and Agent configurations separate. ServiceNow remains the business executor. No model/service lifecycle, inference, microphone/audio or business operation was performed by this maintenance.
+
+The full Voice goal was explicitly resumed. Engineering owns the current Halogen 0.18.22 engine and finite hardware windows; the latest notice reserves a single-engine Cache-Off/Flexible/Off window on private port 18840 with normal 8840 restore afterward. Await its handback before Voice inference or lifecycle actions. The old 0.18.16 lock/memory observations below are historical. Passive listener inventory found no Voice gateway/speech/bridge listeners in the checked ports; normal read-only `Start-SCCVoice.ps1 -CheckOnly` is the next readiness step after handback. Physical iPhone own voice, name/spelling, noise, interruption, repeat-call and genuine source-bound ServiceNow context/progress acceptance remain required.
+
+---
+
+# Historical partial-run and recovery evidence (not execution instructions)
+
+# Earlier partial-run audit
 
 The approved maintenance run is terminal and partially applied. **67 of 68 intended source changes are correct; the Ledger remains unchanged. The WIP delta is not ready for transfer.** Runtime and iPhone acceptance remain separate and open.
 

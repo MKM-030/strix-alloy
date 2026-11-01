@@ -1,8 +1,10 @@
 # ServiceNow BYOLLM master manual
 
-Revision: 28 October 2026. This manual brings together the platform configuration, existing-skill prompt mirroring, model contracts, and transport work. It is an operating guide and evidence map, not an automatic installer or a report that every route has passed.
+Revision: 1 November 2026 (later source-delta status); sealed fresh-instance delivery remains dated 28 October. This manual brings together the platform configuration, existing-skill prompt mirroring, model contracts, and transport work. It is an operating guide and evidence map, not an automatic installer or a report that every route has passed.
 
 Start with the [quickstart](quickstart.md) and the [final executed capability-copy guide](capability-prompt-copy.md). The fresh-instance delivery is **Custom LLM Platform 2.2 - Fresh Instance - NO DELETE 20261028**. Use [batch status](batch-status.md) for its artifact and qualification state, [configuration boundaries](configuration-boundaries.md) for field-level limits, and [sources](sources.md) for product references and historical reconciliation. The [reviewed source snapshot](../../servicenow/byollm/README.md) and [source manifest](../../servicenow/byollm/SOURCE-MANIFEST.json) identify native records and exact preserved code without duplicating instance identifiers here.
+
+The later **Platform 2.3 Halogen Agent Delta** is now applied and independently capture-verified: 66 active prompt selections plus the Halogen transformer and Ledger, with 69 unique no-delete captures including a native metadata signal. It remains a separate WIP delta; it has not been folded into the sealed 2.2 delivery or accepted on a new target. See the [dated execution audit](../../servicenow/byollm/halogen-agents-20261101/POSTRUN.md). Separate TTS, STT, local conversation and Agent configurations remain; full phone/context/progress acceptance is still open.
 
 ## 1. Read the evidence by date
 

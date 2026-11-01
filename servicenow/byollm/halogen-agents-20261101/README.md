@@ -1,6 +1,6 @@
 # Halogen Agent model selection — 1 November 2026
 
-The approved administrator-maintenance run partially applied the change: **all 66 active prompts now select `halogen-v2`, and the Halogen request transformer matches the approved source exactly**. The Ledger is still unchanged. The later approved compact completion corrected the empty parent's application and created the correct AI Agents holding set, then stopped because native insertion shortened its 117-character name to the field's 80-character limit. No Customer Updates or further sources were changed. A reuse-only continuation is frozen with 27 passing offline tests and independent review; its separate execution approval is pending. The WIP delta is **not ready for transfer**. See [the post-run audit](POSTRUN.md). No model, speech service, microphone, or business process was started.
+**The approved Halogen Agent configuration and capture reconciliation are complete.** All 66 active prompts select `halogen-v2`; both the Halogen request transformer and Ledger match their approved source exactly. Full native readbacks and independent offline audits verify 68 intended sources and 69 unique no-delete Customer Updates, including one preserved native metadata signal. The batch remains a WIP delta, separate from the sealed 2.2 Fresh Instance package. See [the execution and capture audit](POSTRUN.md). No model, speech service, microphone, inference or business operation was started by this maintenance.
 
 Marcel selected **Halogen for the business Agent steps as well as the local conversation**, retaining separate configuration for each role. The technical model identifier is `halogen-v2`. ServiceNow remains the sole business executor.
 
@@ -11,7 +11,7 @@ Marcel selected **Halogen for the business Agent steps as well as the local conv
 | Speech synthesis | Existing own-voice TTS selection; unchanged by this change. |
 | Speech recognition | Existing Qwen3-ASR 0.6B / CrispASR selection; unchanged. |
 | Local conversation | Saved central Halogen selection, consumed through controller 8840. |
-| Agent reasoning and input/output processing | Existing Custom LLM capability graphs; the prepared change selects Halogen on 66 active, published prompt configurations. |
+| Agent reasoning and input/output processing | Existing Custom LLM capability graphs; 66 active, published prompt configurations now select Halogen. |
 
 The four capability graphs are ReAct Engine, Agent Execution, Data Extractor, and the Output Refiner reachable conditionally through the native Communicator. Five inactive prompt configurations remain untouched. Definitions, provider defaults, usage conditions, prompt text, validators, published state, and the Prompt Mirror's three disabled execution gates remain unchanged.
 
@@ -19,7 +19,7 @@ The actual selected ReAct topic establishes ReAct and Data Extractor calls. Nati
 
 ## Required adapter changes
 
-Changing the model selector alone would bypass existing SCC name-confirmation, caller-context and execution-ledger handling embedded in the Gemma transformer. The Halogen candidate carries those same rules through an explicit Halogen/SCC configuration gate. The existing Gemma transformer remains intact.
+Changing the model selector alone would bypass existing SCC name-confirmation, caller-context and execution-ledger handling embedded in the Gemma transformer. The applied Halogen transformer carries those same rules through an explicit Halogen/SCC configuration gate. The existing Gemma transformer remains intact.
 
 The Halogen transformer also accepts the observed JSON-string form of `response_format`, preserving its complete schema as an object. Existing legacy Vision dispatch and unrelated transport behavior remain intact. The Ledger adds only the explicit Halogen opt-in and retains its request-model, configuration, persona and structured-observation gates.
 
@@ -35,9 +35,9 @@ The migration checks require the private prechange snapshots under `server/.loca
 
 ## Instance application and capture
 
-The frozen application script is prepared separately from the product sources. Its intended changes are 66 prompt model fields, the existing Halogen request-transformer field, and the existing Ledger script field: **68 source records**. It checks the whole preimage before writing, retains normal Business Rules, verifies the resulting records, and captures them through native Update Set APIs.
+The completed change comprises 66 prompt model fields, the existing Halogen request-transformer field and the existing Ledger script field: **68 source records**. Frozen per-run preimages, normal Business Rules, exact native readback and native Update Set capture were retained throughout. The earlier partial attempts and their rollback records remain immutable; do not rerun any submitted script.
 
-The new capture is **Custom LLM Platform 2.3 - Halogen Agent Delta - NO DELETE 20261101**, with Global and AI Agents scope children. It remains work in progress and contains no deletion actions. Completed historical sets and the sealed 2.2 Fresh Instance delivery remain intact. This delta is not itself a full replacement platform delivery.
+The verified capture is **Custom LLM Platform 2.3 - Halogen Agent Delta - NO DELETE 20261101**, with 66 updates in the AI Agents child, three in the Global child and none in the parent. All 69 actions are `INSERT_OR_UPDATE`; no outer/embedded deletes, duplicate update names or insert/delete conflicts were found. The holding set is empty, ignored and outside both the parent tree and native base batch. Completed historical sets and the sealed 2.2 Fresh Instance delivery remain intact. This WIP delta is not itself a full replacement platform delivery or proof of target import.
 
 The SDK run must retain its reason and native rollback context. Exact private preimages and the script hash identify the reviewed operation. If execution times out, inspect its actual execution-history record before deciding any next action; do not start a second copy.
 
@@ -45,10 +45,10 @@ The first frozen executable is `server/.local/voice-goal-halogen-agents-20261101
 
 Marcel explicitly approved the additional administrator-maintenance variant, SHA-256 `6fbeab7c5b99bf02c53e886c5c432d1e1806c09645dcd96a11c54a76c6bb2dd9`. It ran once: native history `30e120a993dcd314e7f2b9fa6aba10fd`, rollback context `b0e120a993dcd314e7f2b9fa6aba10fc`. ACL-enforced reads/guards/readback/capture and empty protection-policy checks remained; only the frozen assignments used the approved native administrator database authority. Twelve additional tests covered that boundary and native boolean representation; the pre-run suite had 41 passing offline checks. Roles, ACLs, security properties and business permissions were unchanged.
 
-The outer SDK result was successful transport, but the inner result was `partial_or_uncertain`: 67 exact desired source writes were verified before native capture verification failed on the request transformer's carriage returns. The Ledger was not attempted. The current Update Set was restored. Do not rerun either frozen application script or roll back the 67 desired changes to force a uniform preimage. Complete current-state readbacks, native serialization proof, and the bounded completion plan are documented in [POSTRUN.md](POSTRUN.md).
+The first admin run stopped after 67 correct changes at native carriage-return serialization verification. Its later compact completion corrected the parent and created a holding set, then stopped on the native name field's 80-character limit. The separately approved reuse-only continuation completed once: history `363239a593581fd45c8132d47aba103d`, rollback `b63239a593581fd45c8132d47aba103c`. It made one Ledger assignment/capture, three header updates and 136 capture-wrapper moves. All 67 previously correct source rows and the corrected parent remain exactly unchanged, including revisions. All 21 guards, both ES companions and all 68 previous capture payloads are unchanged. The original current Update Set was restored. Root and independent full-column/XML audits exited successfully; [POSTRUN.md](POSTRUN.md) distinguishes current proof from the earlier attempts.
 
 ## Runtime acceptance remains open
 
-The original retained Halogen run still requires its exact ownership reconciliation and five-frame memory recovery before startup. The saved model profile and safety thresholds remain unchanged. Current preparation does not release an iPhone test.
+Engineering owns the current normal Halogen 0.18.22 runtime and its finite measurement windows. Consult `TASK80_FOLLOWUP.md` for the latest handback and ownership; older 0.18.16 lock/memory observations are historical and must not be replayed as startup instructions. Wait for the current hardware-window handback before Voice inference or lifecycle actions. Configuration/capture completion does not release an iPhone test or establish end-to-end Voice readiness.
 
 After actual runtime readiness, verify one harmless structured-output request, then a short phone check for own voice, name/spelling, background noise, interruption and a second call. One genuine ServiceNow sequence must separately establish context consumption, timely progress and the business outcome. Preserve the complete Voice objective recorded in `TASK80_FOLLOWUP.md`.

@@ -2,7 +2,7 @@
 
 The target delivery is **Custom LLM Platform 2.2 - Fresh Instance - NO DELETE 20261028**. Use this delivery for a compatible new instance. The earlier [2.1 aggregate](historical-batch-2.1.md) is retained as source history and is not the import package.
 
-**Later source maintenance, 1 November:** the separate **Custom LLM Platform 2.3 - Halogen Agent Delta - NO DELETE 20261101** is partially applied and not transfer-ready. All 66 reviewed active Agent prompts and the Halogen transformer are updated; the Ledger and WIP application/capture corrections remain. See [the post-run audit](../../servicenow/byollm/halogen-agents-20261101/POSTRUN.md). The sealed 2.2 package, its hashes and preview findings below remain unchanged; it does not contain these later changes.
+**Later source maintenance, 1 November:** the separate **Custom LLM Platform 2.3 - Halogen Agent Delta - NO DELETE 20261101** is applied and capture-verified: 68 intended sources and 69 unique `INSERT_OR_UPDATE` captures, with zero outer/embedded deletes or duplicate names. All 66 active Agent prompts, the Halogen transformer and the Ledger match the reviewed source. The WIP parent/children have correct applications; the holding set is empty/ignored outside the batch. See [the execution audit](../../servicenow/byollm/halogen-agents-20261101/POSTRUN.md). The sealed 2.2 package, hashes and preview findings below remain unchanged; it does not contain this later delta. The 2.3 WIP capture is not a replacement full installer or target-import acceptance.
 
 ## Delivery contract
 

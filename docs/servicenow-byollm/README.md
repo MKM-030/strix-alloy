@@ -12,7 +12,7 @@ This is the canonical entry point for the BYOLLM platform configuration, Communi
 - [Configuration boundaries](configuration-boundaries.md): supported product controls, observed technical tables and release-dependent limitations.
 - [Consolidated batch status](batch-status.md): baseline, current deltas, transport boundaries and target acceptance.
 - [Final release verification](release-verification.md): exact delivery hash, complete native readback and the five unresolved source-preview findings.
-- [Later Halogen Agent delta audit](../../servicenow/byollm/halogen-agents-20261101/POSTRUN.md): 1 November's approved partial maintenance, remaining Ledger change and WIP scope/capture corrections. This delta is not transfer-ready and does not replace the sealed 2.2 delivery.
+- [Later Halogen Agent delta audit](../../servicenow/byollm/halogen-agents-20261101/POSTRUN.md): 1 November's completed source maintenance and verified no-delete 69-CU WIP capture. All 68 intended sources match; the holding set is empty/ignored. This delta remains separate from the sealed 2.2 fresh-instance delivery; phone/runtime and target-import acceptance remain distinct.
 - [Transport coverage](transport-coverage.md) and [target installation runbook](transport-runbook.md): platform-wide coverage, preview decisions and target-local prerequisites.
 - [Sources and prior documentation](sources.md): official references and the reconciliation of earlier documentation approaches.
 - [AI Agents article](ai-agents-follow-up.md) and [AI Voice article](ai-voice-follow-up.md): two full English companion drafts. Together with the general overview, these form exactly three articles; publication URLs and author screenshots remain pending.
