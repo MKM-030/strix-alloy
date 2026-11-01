@@ -8,7 +8,7 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
-| **Halogen WSL2 0.18.22** | Current text serving: 32K capacity, adaptive MTP, 8K prefill arena; complete-request comparison measured, phase clocks pending | [Update and measurements](docs/benchmarks/halogen01822-natural-8k16k-20261101.md) |
+| **Halogen WSL2 0.18.22** | Current text serving: 32K capacity, adaptive MTP, 8K prefill arena; natural 8K/16K phases independently captured | [Current measurements](docs/benchmarks/halogen01822-raw-8k16k-20261101.md) |
 | **Halogen WSL2 0.18.16** | Retained independently captured 8K/16K phase measurements | [Earlier phase measurements](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md) |
 | **Hipfire native Windows** | Source port with completed 16K MTP cohort; 1,240.2 prefill / 26.53 decode tok/s, 63.64% acceptance | [Build, run and measurement limits](backends/hipfire-windows/README.md) |
 | **Halogen WSL2 0.16.2** | Pinned v2 upgrade and sampled filled-context comparison measured with an 18 GiB reserve | [Install and run](backends/halogen-wsl2-0.16.2/README.md) |
@@ -46,12 +46,21 @@ Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
 
+[Halogen 0.18.22, independently captured natural 8K/16K inputs](docs/benchmarks/halogen01822-raw-8k16k-20261101.md)
+records **1917.24 / 55.17 tok/s** prefill/decode at 8192 actual input tokens
+and **1913.00 / 46.86 tok/s** at 16384, with native head acceptance
+**66.04% / 52.68%**. Each row excludes a warmup and averages three runs.
+All direct RAW phase brackets fit the paired Windows QPC whole-request times.
+Native timing agrees within these cohorts; the earlier API-only clock
+counterexamples remain historical evidence. No new maximum or causal
+engine-version speedup is claimed. The normal server is restored and online.
+
 [Halogen 0.18.22, 1 November](docs/benchmarks/halogen01822-natural-8k16k-20261101.md)
 records complete 8K/16K cohorts before and after restoring the separately
 verified OEM Performance mode. Complete HTTP means fell from 9.2516 to 6.8961
 seconds and from 16.7409 to 11.9060 seconds. Native head acceptance remains
 66.04% / 52.68%. API phase durations exceed whole HTTP time in the Performance
-window, so their reported token rates are provisional; no new RAW best result
+window, so those reported token rates are provisional; no new RAW best result
 or engine-version speedup is claimed. The server is left online. The historical
 `MeasuredText32K` preset still selects 0.18.16.
 

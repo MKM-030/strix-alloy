@@ -1,9 +1,12 @@
 # Halogen foreground console and ServiceNow REST integration
 
 Current serving uses **installed Halogen 0.18.22**, selected with
-`-Profile CurrentText32K`. The [1 November report](../benchmarks/halogen01822-natural-8k16k-20261101.md)
-records full 8K/16K cohorts and the separate OEM mode correction. Its native API
-phase clocks are not independently qualified; acceptance remains 66.04% / 52.68%.
+`-Profile CurrentText32K`. The [independent 1 November capture](../benchmarks/halogen01822-raw-8k16k-20261101.md)
+measures 1917.24/55.17 prefill/decode tok/s at 8192 actual input tokens and
+1913.00/ 46.86 at 16384; acceptance remains 66.04% / 52.68%. Each excludes one warmup
+and averages three runs. The earlier [API-only report](../benchmarks/halogen01822-natural-8k16k-20261101.md)
+retains the separate OEM correction and its clock counterexamples; they are
+not rescaled using the newer cohort.
 The current endpoint and public credential are unchanged. The server stays online.
 
 The retained measured text preset is **Halogen 0.18.16**. Select it

@@ -11,7 +11,21 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
-### Current Halogen 0.18.22: complete HTTP observations
+### Current Halogen 0.18.22: independently captured phase measurements
+
+The [RAW8K/16K report](halogen01822-raw-8k16k-20261101.md) qualifies
+**1917.24 prefill / 55.17 decode tok/s** at 8192 actual input tokens and
+**1913.00 / 46.86** at 16384, with native head acceptance 210/318=66.04% and
+177/336=52.68%. Output 128, one excluded warmup and three measurements per row;
+current 32K text profile, OEM Performance, original v2 files. All eight direct
+RAW upper phase-sum brackets fit matching QPC HTTP durations; native phase
+agreement holds within these cohorts. Original clock returns and GPU kernels
+are retained; no instrumentation overhead is subtracted. The earlier API-only
+counterexamples remain, with no general correction factor applied. No new
+historical maximum, controlled version gain, NPU gain or full-goal completion
+is established. The normal source package was restored and server left online.
+
+### Earlier Halogen 0.18.22: complete HTTP observations
 
 The [1 November update report](halogen01822-natural-8k16k-20261101.md) records
 same-engine Quiet-to-Performance full HTTP means of 9.251640→6.896056 seconds at

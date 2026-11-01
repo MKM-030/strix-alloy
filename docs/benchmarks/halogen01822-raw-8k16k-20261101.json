@@ -1,0 +1,1732 @@
+{
+  "schema": "halogen01822.qualified-RAW-natural-8k16k.v1",
+  "utc": "2026-11-01T16:32:05.833072+00:00",
+  "version": "0.18.22",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:273714ccb64dabb7fac0418ee1b6dd83eb57d2fd44cf286eb68a7c694a27c203",
+  "engine_sha256": "c69d064b528e21e5b722ab4a0618b67c29a9d84dd09ba3aa70c6a928b5741aca",
+  "profile": {
+    "schema": 1,
+    "minimum_reserve_gib": 18,
+    "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+    "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.22\\.local\\api-token.txt",
+    "concurrency": 1,
+    "body_bytes": 16777216,
+    "request_seconds": 1800,
+    "backend": {
+      "identifier": "halogen-v2",
+      "upstream": "http://127.0.0.1:8731",
+      "model": "halogen-qwen3.8-flash-next",
+      "checkpoint": "v2",
+      "context": 32768,
+      "expected": {
+        "status": "ok",
+        "version.api": "0.18.22",
+        "version.engine": "0.18.22",
+        "version.match": true,
+        "context": 32768,
+        "slot_ctx": 32768,
+        "kv_pool_positions": 32768,
+        "slots": 1,
+        "vision.enabled": false
+      },
+      "routes": [
+        "/v1/chat/completions",
+        "/v1/completions",
+        "/v1/responses",
+        "/v1/messages",
+        "/v1/messages/count_tokens"
+      ]
+    },
+    "engine": {
+      "kind": "halogen",
+      "directory": "backends/halogen-wsl2-0.18.22",
+      "checkpoint": "v2",
+      "context": 32768,
+      "prompt_cache": "Off",
+      "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "launcher": "python",
+      "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+      "speculation_policy": {
+        "HALOGEN_PLD": "3,3",
+        "HALOGEN_MTP_GATE_P": "0.90"
+      },
+      "prefill_chunk": 8192,
+      "max_prefill_tokens": 8192,
+      "api_defaults": {
+        "enable_thinking": false,
+        "reasoning_effort": "low",
+        "max_thinking_tokens": 2048
+      },
+      "disable_vision": true,
+      "kernel_controls": {
+        "HALOGEN_DECODE_PREFETCH": 0
+      }
+    },
+    "console_trace": false
+  },
+  "RAW_phase_measurements_qualified": true,
+  "native_phase_agreement_verified_for_these_cohorts_only": true,
+  "general_API_clock_correction_claimed": false,
+  "earlier_API_clock_counterexamples_preserved": "halogen01822-natural-8k16k-20261101.json",
+  "NPU_acceleration_proven": false,
+  "full_goal_achieved": false,
+  "cohorts": {
+    "8k": {
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "prefill_RAW_mean_tps": 1917.2395349020237,
+      "decode_RAW_mean_tps": 55.16521201876762,
+      "head_acceptance": {
+        "rounds": 171,
+        "drafted": 318,
+        "accepted": 210,
+        "acceptance_fraction": 0.660377358490566
+      },
+      "native_lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_fraction": null
+      },
+      "native_grammar": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_fraction": null
+      },
+      "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+      "http_QPC_mean_seconds": 6.648198933333333,
+      "native_summary": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "warmup_excluded": 1,
+        "measured_repetitions": 3,
+        "prefill_native_reported_mean_tps": 1917.2493333333334,
+        "decode_native_reported_mean_tps": 55.165,
+        "prefill_native_pooled_tps": 1916.197545495657,
+        "decode_native_pooled_tps": 54.9073438572409,
+        "http_qpc_mean_seconds": 6.648198933333333,
+        "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 171,
+            "drafted": 318,
+            "accepted": 210,
+            "acceptance_fraction": 0.660377358490566
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "RAW_report": {
+        "schema": "halogen01822.raw-side.cohort.v2",
+        "valid": true,
+        "warmup_excluded": true,
+        "measured_repetitions": 3,
+        "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+        "binding_sha256": "dbd35186e014d7c16ce1ca5e88521b6bfd52e4567e11d4a9b59c1477d5032c2a",
+        "engine_sha256": "c69d064b528e21e5b722ab4a0618b67c29a9d84dd09ba3aa70c6a928b5741aca",
+        "native_decode_numerator": 128,
+        "observed_decode_generated_delta": 127,
+        "phase_convention": "Native total128 numerator on same begin/end interval; delta127 separately retained. RAW includes observer overhead.",
+        "samples": [
+          {
+            "schema": "halogen01822.raw-side.report.v2",
+            "valid": true,
+            "request_id": 3,
+            "records": 4,
+            "prefill_pairs": 1,
+            "prompt": 8192,
+            "generated_begin": 1,
+            "generated_end": 128,
+            "generated_delta": 127,
+            "prefill_native_ns": 8363356809,
+            "prefill_raw_lower_ns": 8363359630,
+            "prefill_raw_upper_ns": 8363362170,
+            "decode_native_ns": 2716275814,
+            "decode_raw_lower_ns": 2716276032,
+            "decode_raw_upper_ns": 2716277542,
+            "published_prefill_ms": 8363.356809,
+            "prefill_native_over_raw_mid": 0.9999995108425849,
+            "decode_native_over_raw_mid": 0.9999996417890825,
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "api_phase_agreement": true,
+            "journal_sha256": "43ae29e8f26750127d078f48c833f58a270f99045dc9419db127bc26b4af17cf",
+            "prefill_native_tps": 979.5110010354217,
+            "prefill_raw_tps_lower": 979.5103731589326,
+            "prefill_raw_tps_upper": 979.5106706418172,
+            "prefill_raw_tps_mid": 979.5105219003523,
+            "decode_native_tps": 47.12334415388643,
+            "decode_raw_tps_lower": 47.123314175676384,
+            "decode_raw_tps_upper": 47.12334037191107,
+            "decode_raw_tps_mid": 47.12332727379008
+          },
+          {
+            "schema": "halogen01822.raw-side.report.v2",
+            "valid": true,
+            "request_id": 4,
+            "records": 4,
+            "prefill_pairs": 1,
+            "prompt": 8192,
+            "generated_begin": 1,
+            "generated_end": 128,
+            "generated_delta": 127,
+            "prefill_native_ns": 4366546123,
+            "prefill_raw_lower_ns": 4366546654,
+            "prefill_raw_upper_ns": 4366549224,
+            "decode_native_ns": 2217789911,
+            "decode_raw_lower_ns": 2217789714,
+            "decode_raw_upper_ns": 2217792184,
+            "published_prefill_ms": 4366.546123,
+            "prefill_native_over_raw_mid": 0.9999995841108296,
+            "decode_native_over_raw_mid": 0.9999995319667074,
+            "ordinal": 1,
+            "phase": "measured",
+            "api_phase_agreement": true,
+            "journal_sha256": "846c6efbc7d968b805b6d667366b4d6624251e6dbfe23881b28e1f85f534eb2f",
+            "prefill_native_tps": 1876.082324391378,
+            "prefill_raw_tps_lower": 1876.0809920506692,
+            "prefill_raw_tps_upper": 1876.0820962477685,
+            "prefill_raw_tps_mid": 1876.0815441490565,
+            "decode_native_tps": 57.71511510857441,
+            "decode_raw_tps_lower": 57.71505595674874,
+            "decode_raw_tps_upper": 57.71512023524517,
+            "decode_raw_tps_mid": 57.715088095979056
+          },
+          {
+            "schema": "halogen01822.raw-side.report.v2",
+            "valid": true,
+            "request_id": 5,
+            "records": 4,
+            "prefill_pairs": 1,
+            "prompt": 8192,
+            "generated_begin": 1,
+            "generated_end": 128,
+            "generated_delta": 127,
+            "prefill_native_ns": 4136925191,
+            "prefill_raw_lower_ns": 4136924220,
+            "prefill_raw_upper_ns": 4136928500,
+            "decode_native_ns": 2561958789,
+            "decode_raw_lower_ns": 2561958881,
+            "decode_raw_upper_ns": 2561961141,
+            "published_prefill_ms": 4136.925191,
+            "prefill_native_over_raw_mid": 0.999999717423058,
+            "decode_native_over_raw_mid": 0.9999995230214388,
+            "ordinal": 2,
+            "phase": "measured",
+            "api_phase_agreement": true,
+            "journal_sha256": "f7799ab932811729653660f408945959495866d1e9b38e8d9c471491acc41e5c",
+            "prefill_native_tps": 1980.214681624394,
+            "prefill_raw_tps_lower": 1980.2130977124696,
+            "prefill_raw_tps_upper": 1980.2151464113597,
+            "prefill_raw_tps_mid": 1980.2141220613846,
+            "decode_native_tps": 49.961771652838245,
+            "decode_raw_tps_lower": 49.96172578559809,
+            "decode_raw_tps_upper": 49.96176985870992,
+            "decode_raw_tps_mid": 49.96174782214428
+          },
+          {
+            "schema": "halogen01822.raw-side.report.v2",
+            "valid": true,
+            "request_id": 6,
+            "records": 4,
+            "prefill_pairs": 1,
+            "prompt": 8192,
+            "generated_begin": 1,
+            "generated_end": 128,
+            "generated_delta": 127,
+            "prefill_native_ns": 4321988375,
+            "prefill_raw_lower_ns": 4321989595,
+            "prefill_raw_upper_ns": 4321991475,
+            "decode_native_ns": 2213811977,
+            "decode_raw_lower_ns": 2213812128,
+            "decode_raw_upper_ns": 2213813478,
+            "published_prefill_ms": 4321.988375,
+            "prefill_native_over_raw_mid": 0.9999995002302798,
+            "decode_native_over_raw_mid": 0.9999996268880553,
+            "ordinal": 3,
+            "phase": "measured",
+            "api_phase_agreement": true,
+            "journal_sha256": "72748ea0f21ee27d5e0742dfc954b8e1b142e16329c1b1182d00c1a907f63cce",
+            "prefill_native_tps": 1895.4238857710948,
+            "prefill_raw_tps_lower": 1895.422526255677,
+            "prefill_raw_tps_upper": 1895.4233507357621,
+            "prefill_raw_tps_mid": 1895.42293849563,
+            "decode_native_tps": 57.81882171107253,
+            "decode_raw_tps_lower": 57.818782509011356,
+            "decode_raw_tps_upper": 57.81881776735844,
+            "decode_raw_tps_mid": 57.818800138179526
+          }
+        ],
+        "arithmetic_means": {
+          "prefill_native_tps": 1917.2402972622888,
+          "prefill_raw_tps_lower": 1917.2388720062718,
+          "prefill_raw_tps_upper": 1917.2401977982965,
+          "prefill_raw_tps_mid": 1917.2395349020237,
+          "decode_native_tps": 55.16523615749506,
+          "decode_raw_tps_lower": 55.16518808378606,
+          "decode_raw_tps_upper": 55.16523595377117,
+          "decode_raw_tps_mid": 55.16521201876762
+        }
+      },
+      "QPC_audit": {
+        "schema": "halogen01822.raw-phase.qpc-audit.v1",
+        "valid": true,
+        "all_lower_bounds_fit": true,
+        "all_full_upper_brackets_fit": true,
+        "impossible_phase_duration": false,
+        "measured_repetitions": 3,
+        "warmup_excluded": true,
+        "pairing": "Serial four-request ordinal, frozen request SHA, actual token counts and native phase agreement. API and native request IDs are distinct identity domains.",
+        "adjustment": "None: no scaling, overhead subtraction, correction factor or tolerance added.",
+        "whole_http_convention": "QPC starts before posting and ends immediately after response.read; includes post-decode journal flush, excludes collector disk persistence.",
+        "api_phase_clock_qualified": false,
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "case": "historical8k",
+            "native_request_id": 3,
+            "API_response_id": "chatcmpl-f203f734835e437687449d31",
+            "response_sha256": "9ca2ba1bdcaa92aad848c47008677bfaf0f1f1e0ecc6b3416c266b7d0134083a",
+            "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+            "actual_input_tokens": 8192,
+            "output_tokens": 128,
+            "whole_http_qpc_seconds": 11.1132536,
+            "raw_phase_sum_lower_ns": 11079635662,
+            "raw_phase_sum_mid_ns": 11079637687.0,
+            "raw_phase_sum_upper_ns": 11079639712,
+            "raw_phase_sum_lower_seconds": 11.079635662,
+            "raw_phase_sum_mid_seconds": 11.079637687,
+            "raw_phase_sum_upper_seconds": 11.079639712,
+            "http_residual_after_raw_lower_seconds": 0.03361793800000079,
+            "http_residual_after_raw_mid_seconds": 0.03361591300000022,
+            "http_residual_after_raw_upper_seconds": 0.03361388799999965,
+            "raw_lower_fits_whole_http": true,
+            "full_raw_upper_bracket_fits_whole_http": true,
+            "native_phase_sum_seconds": 11.079632623,
+            "http_residual_after_native_seconds": 0.033620976999999996
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "case": "historical8k",
+            "native_request_id": 4,
+            "API_response_id": "chatcmpl-fbde801778c44373a41036e5",
+            "response_sha256": "181fdf830bd4870d2f627f180f829c4f4d3eb6d8e57dcc5d4a33648d0bd84109",
+            "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+            "actual_input_tokens": 8192,
+            "output_tokens": 128,
+            "whole_http_qpc_seconds": 6.5983753,
+            "raw_phase_sum_lower_ns": 6584336368,
+            "raw_phase_sum_mid_ns": 6584338888.0,
+            "raw_phase_sum_upper_ns": 6584341408,
+            "raw_phase_sum_lower_seconds": 6.584336368,
+            "raw_phase_sum_mid_seconds": 6.584338888,
+            "raw_phase_sum_upper_seconds": 6.584341408,
+            "http_residual_after_raw_lower_seconds": 0.01403893200000006,
+            "http_residual_after_raw_mid_seconds": 0.014036412000000276,
+            "http_residual_after_raw_upper_seconds": 0.014033891999999604,
+            "raw_lower_fits_whole_http": true,
+            "full_raw_upper_bracket_fits_whole_http": true,
+            "native_phase_sum_seconds": 6.584336034,
+            "http_residual_after_native_seconds": 0.014039266000000161
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "case": "historical8k",
+            "native_request_id": 5,
+            "API_response_id": "chatcmpl-c3aae4be73c94410a4b379f1",
+            "response_sha256": "941b15d8be81ac1b46c7e4ebc4eca61ac7b2ce23a57ded794ed18e908f49d8b9",
+            "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+            "actual_input_tokens": 8192,
+            "output_tokens": 128,
+            "whole_http_qpc_seconds": 6.7546599,
+            "raw_phase_sum_lower_ns": 6698883101,
+            "raw_phase_sum_mid_ns": 6698886371.0,
+            "raw_phase_sum_upper_ns": 6698889641,
+            "raw_phase_sum_lower_seconds": 6.698883101,
+            "raw_phase_sum_mid_seconds": 6.698886371,
+            "raw_phase_sum_upper_seconds": 6.698889641,
+            "http_residual_after_raw_lower_seconds": 0.05577679900000021,
+            "http_residual_after_raw_mid_seconds": 0.055773528999999655,
+            "http_residual_after_raw_upper_seconds": 0.05577025899999999,
+            "raw_lower_fits_whole_http": true,
+            "full_raw_upper_bracket_fits_whole_http": true,
+            "native_phase_sum_seconds": 6.69888398,
+            "http_residual_after_native_seconds": 0.05577592000000031
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "case": "historical8k",
+            "native_request_id": 6,
+            "API_response_id": "chatcmpl-f397efcdc1294f6c9355d1ea",
+            "response_sha256": "de3eca776f68f774bca81c142111c431722f34e4c2144b248ea8f0854b026a56",
+            "request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+            "actual_input_tokens": 8192,
+            "output_tokens": 128,
+            "whole_http_qpc_seconds": 6.5915616,
+            "raw_phase_sum_lower_ns": 6535801723,
+            "raw_phase_sum_mid_ns": 6535803338.0,
+            "raw_phase_sum_upper_ns": 6535804953,
+            "raw_phase_sum_lower_seconds": 6.535801723,
+            "raw_phase_sum_mid_seconds": 6.535803338,
+            "raw_phase_sum_upper_seconds": 6.535804953,
+            "http_residual_after_raw_lower_seconds": 0.055759877000000735,
+            "http_residual_after_raw_mid_seconds": 0.055758262000000336,
+            "http_residual_after_raw_upper_seconds": 0.05575664699999994,
+            "raw_lower_fits_whole_http": true,
+            "full_raw_upper_bracket_fits_whole_http": true,
+            "native_phase_sum_seconds": 6.535800352,
+            "http_residual_after_native_seconds": 0.055761248000000485
+          }
+        ]
+      },
+      "individual_native_samples": [
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 107,
+          "accepted": 70,
+          "combined_acceptance": 0.6542056074766355,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 107,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 107,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 8363.4,
+            "predicted_ms": 2716.3,
+            "prompt_per_second": 979.506,
+            "predicted_per_second": 47.123,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 107,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 107,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 11.0797,
+          "case": "historical8k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "http_qpc_seconds": 11.1132536,
+          "minimum_reserve_gib": 35.4228401184082,
+          "completed_utc": "2026-11-01T16:17:32.473946+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 4366.5,
+            "predicted_ms": 2217.8,
+            "prompt_per_second": 1876.102,
+            "predicted_per_second": 57.715,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 6.5843,
+          "case": "historical8k",
+          "ordinal": 1,
+          "phase": "measured",
+          "http_qpc_seconds": 6.5983753,
+          "minimum_reserve_gib": 35.50701141357422,
+          "completed_utc": "2026-11-01T16:17:39.151862+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 4136.9,
+            "predicted_ms": 2562.0,
+            "prompt_per_second": 1980.227,
+            "predicted_per_second": 49.961,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 6.6989,
+          "case": "historical8k",
+          "ordinal": 2,
+          "phase": "measured",
+          "http_qpc_seconds": 6.7546599,
+          "minimum_reserve_gib": 35.47824478149414,
+          "completed_utc": "2026-11-01T16:17:45.983125+00:00"
+        },
+        {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "drafted": 106,
+          "accepted": 70,
+          "combined_acceptance": 0.660377358490566,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 57,
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 8192,
+            "completion_tokens": 128,
+            "total_tokens": 8320,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 4322.0,
+            "predicted_ms": 2213.8,
+            "prompt_per_second": 1895.419,
+            "predicted_per_second": 57.819,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 106,
+            "draft_n_accepted": 70,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 57,
+              "head": {
+                "rounds": 57,
+                "drafted": 106,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 6.5358,
+          "case": "historical8k",
+          "ordinal": 3,
+          "phase": "measured",
+          "http_qpc_seconds": 6.5915616,
+          "minimum_reserve_gib": 35.40952682495117,
+          "completed_utc": "2026-11-01T16:17:52.660389+00:00"
+        }
+      ],
+      "raw_capture_pins": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run8k\\capture-0.bin",
+          "bytes": 8248,
+          "sha256": "43ae29e8f26750127d078f48c833f58a270f99045dc9419db127bc26b4af17cf"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run8k\\capture-1.bin",
+          "bytes": 8248,
+          "sha256": "846c6efbc7d968b805b6d667366b4d6624251e6dbfe23881b28e1f85f534eb2f"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run8k\\capture-2.bin",
+          "bytes": 8248,
+          "sha256": "f7799ab932811729653660f408945959495866d1e9b38e8d9c471491acc41e5c"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run8k\\capture-3.bin",
+          "bytes": 8248,
+          "sha256": "72748ea0f21ee27d5e0742dfc954b8e1b142e16329c1b1182d00c1a907f63cce"
+        }
+      ],
+      "raw_response_pins": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run8k\\historical8k-0.response.json",
+          "bytes": 1325,
+          "sha256": "9ca2ba1bdcaa92aad848c47008677bfaf0f1f1e0ecc6b3416c266b7d0134083a"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run8k\\historical8k-1.response.json",
+          "bytes": 1326,
+          "sha256": "181fdf830bd4870d2f627f180f829c4f4d3eb6d8e57dcc5d4a33648d0bd84109"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run8k\\historical8k-2.response.json",
+          "bytes": 1326,
+          "sha256": "941b15d8be81ac1b46c7e4ebc4eca61ac7b2ce23a57ded794ed18e908f49d8b9"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run8k\\historical8k-3.response.json",
+          "bytes": 1326,
+          "sha256": "de3eca776f68f774bca81c142111c431722f34e4c2144b248ea8f0854b026a56"
+        }
+      ],
+      "runtime": {
+        "controller_run": "061e5ab2aa5d4d0db47c1f69e6b75aeb",
+        "backend_run": "d15ffd5d35c74472b798b592885e4436",
+        "identities": {
+          "controller": {
+            "pid": 24772,
+            "creation_time_100ns": 134380232637000113,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "backend": {
+            "pid": 12140,
+            "creation_time_100ns": 134380232744119346,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          }
+        }
+      },
+      "frozen_request_sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0",
+      "output_and_counter_parity_to_prior_normal_cohort": true,
+      "output_parity_to_retained01816": true
+    },
+    "16k": {
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "excluded_warmups": 1,
+      "measured_repetitions": 3,
+      "prefill_RAW_mean_tps": 1913.0046050034823,
+      "decode_RAW_mean_tps": 46.862163923932115,
+      "head_acceptance": {
+        "rounds": 204,
+        "drafted": 336,
+        "accepted": 177,
+        "acceptance_fraction": 0.5267857142857143
+      },
+      "native_lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_fraction": null
+      },
+      "native_grammar": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_fraction": null
+      },
+      "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+      "http_QPC_mean_seconds": 11.392420466666668,
+      "native_summary": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "warmup_excluded": 1,
+        "measured_repetitions": 3,
+        "prefill_native_reported_mean_tps": 1913.008,
+        "decode_native_reported_mean_tps": 46.862,
+        "prefill_native_pooled_tps": 1912.3729189443666,
+        "decode_native_pooled_tps": 46.77279869425937,
+        "http_qpc_mean_seconds": 11.392420466666668,
+        "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 204,
+            "drafted": 336,
+            "accepted": 177,
+            "acceptance_fraction": 0.5267857142857143
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "RAW_report": {
+        "schema": "halogen01822.raw-side.cohort.v2",
+        "valid": true,
+        "warmup_excluded": true,
+        "measured_repetitions": 3,
+        "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+        "binding_sha256": "dbd35186e014d7c16ce1ca5e88521b6bfd52e4567e11d4a9b59c1477d5032c2a",
+        "engine_sha256": "c69d064b528e21e5b722ab4a0618b67c29a9d84dd09ba3aa70c6a928b5741aca",
+        "native_decode_numerator": 128,
+        "observed_decode_generated_delta": 127,
+        "phase_convention": "Native total128 numerator on same begin/end interval; delta127 separately retained. RAW includes observer overhead.",
+        "samples": [
+          {
+            "schema": "halogen01822.raw-side.report.v2",
+            "valid": true,
+            "request_id": 3,
+            "records": 4,
+            "prefill_pairs": 1,
+            "prompt": 16384,
+            "generated_begin": 1,
+            "generated_end": 128,
+            "generated_delta": 127,
+            "prefill_native_ns": 13184596294,
+            "prefill_raw_lower_ns": 13184601591,
+            "prefill_raw_upper_ns": 13184604321,
+            "decode_native_ns": 3519653915,
+            "decode_raw_lower_ns": 3519654899,
+            "decode_raw_upper_ns": 3519656199,
+            "published_prefill_ms": 13184.596294,
+            "prefill_native_over_raw_mid": 0.9999994947136427,
+            "decode_native_over_raw_mid": 0.9999995357500252,
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "api_phase_agreement": true,
+            "journal_sha256": "d58ba003b7edc086f9e8eb14d529239628f2f47f398ec793e36674929b532547",
+            "prefill_native_tps": 1242.6622427154614,
+            "prefill_raw_tps_lower": 1242.6614861626229,
+            "prefill_raw_tps_upper": 1242.6617434677705,
+            "prefill_raw_tps_mid": 1242.6616148151834,
+            "decode_native_tps": 36.36721197345336,
+            "decode_raw_tps_lower": 36.36718837378696,
+            "decode_raw_tps_upper": 36.367201806167756,
+            "decode_raw_tps_mid": 36.36719508997612
+          },
+          {
+            "schema": "halogen01822.raw-side.report.v2",
+            "valid": true,
+            "request_id": 4,
+            "records": 4,
+            "prefill_pairs": 1,
+            "prompt": 16384,
+            "generated_begin": 1,
+            "generated_end": 128,
+            "generated_delta": 127,
+            "prefill_native_ns": 8667014569,
+            "prefill_raw_lower_ns": 8667017560,
+            "prefill_raw_upper_ns": 8667019850,
+            "decode_native_ns": 2583475246,
+            "decode_raw_lower_ns": 2583475518,
+            "decode_raw_upper_ns": 2583477818,
+            "published_prefill_ms": 8667.014569,
+            "prefill_native_over_raw_mid": 0.999999522788615,
+            "decode_native_over_raw_mid": 0.9999994495789268,
+            "ordinal": 1,
+            "phase": "measured",
+            "api_phase_agreement": true,
+            "journal_sha256": "999d09d3dbac536ae7afa8d1504a81da986b53b0002602356f4b11adba3a54b9",
+            "prefill_native_tps": 1890.385653510028,
+            "prefill_raw_tps_lower": 1890.384501657741,
+            "prefill_raw_tps_upper": 1890.3850011352695,
+            "prefill_raw_tps_mid": 1890.3847513964722,
+            "decode_native_tps": 49.54566535838989,
+            "decode_raw_tps_lower": 49.54561603284492,
+            "decode_raw_tps_upper": 49.54566014199791,
+            "decode_raw_tps_mid": 49.5456380874116
+          },
+          {
+            "schema": "halogen01822.raw-side.report.v2",
+            "valid": true,
+            "request_id": 5,
+            "records": 4,
+            "prefill_pairs": 1,
+            "prompt": 16384,
+            "generated_begin": 1,
+            "generated_end": 128,
+            "generated_delta": 127,
+            "prefill_native_ns": 8686777479,
+            "prefill_raw_lower_ns": 8686780649,
+            "prefill_raw_upper_ns": 8686782749,
+            "decode_native_ns": 2753189976,
+            "decode_raw_lower_ns": 2753190195,
+            "decode_raw_upper_ns": 2753192125,
+            "published_prefill_ms": 8686.777479,
+            "prefill_native_over_raw_mid": 0.9999995142044377,
+            "decode_native_over_raw_mid": 0.9999995699535807,
+            "ordinal": 2,
+            "phase": "measured",
+            "api_phase_agreement": true,
+            "journal_sha256": "3c1f575d6a1b290b85c56b9f7b074bb763970932700539d98745cb40397322f8",
+            "prefill_native_tps": 1886.0849192474175,
+            "prefill_raw_tps_lower": 1886.0837750185572,
+            "prefill_raw_tps_upper": 1886.084230972965,
+            "prefill_raw_tps_mid": 1886.0840029957337,
+            "decode_native_tps": 46.491524782451116,
+            "decode_raw_tps_lower": 46.49148849356091,
+            "decode_raw_tps_upper": 46.491521084325235,
+            "decode_raw_tps_mid": 46.491504788937355
+          },
+          {
+            "schema": "halogen01822.raw-side.report.v2",
+            "valid": true,
+            "request_id": 6,
+            "records": 4,
+            "prefill_pairs": 1,
+            "prompt": 16384,
+            "generated_begin": 1,
+            "generated_end": 128,
+            "generated_delta": 127,
+            "prefill_native_ns": 8348339319,
+            "prefill_raw_lower_ns": 8348342202,
+            "prefill_raw_upper_ns": 8348344492,
+            "decode_native_ns": 2873216673,
+            "decode_raw_lower_ns": 2873217219,
+            "decode_raw_upper_ns": 2873219179,
+            "published_prefill_ms": 8348.339319,
+            "prefill_native_over_raw_mid": 0.9999995175090635,
+            "decode_native_over_raw_mid": 0.9999994688882311,
+            "ordinal": 3,
+            "phase": "measured",
+            "api_phase_agreement": true,
+            "journal_sha256": "bee77ad32fbee871cd3e16f38eff8421815ba7f2d54da7b68361fa0cfbe5831b",
+            "prefill_native_tps": 1962.5460075289018,
+            "prefill_raw_tps_lower": 1962.5447914494134,
+            "prefill_raw_tps_upper": 1962.5453297871413,
+            "prefill_raw_tps_mid": 1962.5450606182405,
+            "decode_native_tps": 44.54937255614345,
+            "decode_raw_tps_lower": 44.549333700518225,
+            "decode_raw_tps_upper": 44.54936409038693,
+            "decode_raw_tps_mid": 44.549348895447395
+          }
+        ],
+        "arithmetic_means": {
+          "prefill_native_tps": 1913.0055267621158,
+          "prefill_raw_tps_lower": 1913.0043560419037,
+          "prefill_raw_tps_upper": 1913.0048539651252,
+          "prefill_raw_tps_mid": 1913.0046050034823,
+          "decode_native_tps": 46.862187565661486,
+          "decode_raw_tps_lower": 46.862146075641355,
+          "decode_raw_tps_upper": 46.86218177223669,
+          "decode_raw_tps_mid": 46.862163923932115
+        }
+      },
+      "QPC_audit": {
+        "schema": "halogen01822.raw-phase.qpc-audit.v1",
+        "valid": true,
+        "all_lower_bounds_fit": true,
+        "all_full_upper_brackets_fit": true,
+        "impossible_phase_duration": false,
+        "measured_repetitions": 3,
+        "warmup_excluded": true,
+        "pairing": "Serial four-request ordinal, frozen request SHA, actual token counts and native phase agreement. API and native request IDs are distinct identity domains.",
+        "adjustment": "None: no scaling, overhead subtraction, correction factor or tolerance added.",
+        "whole_http_convention": "QPC starts before posting and ends immediately after response.read; includes post-decode journal flush, excludes collector disk persistence.",
+        "api_phase_clock_qualified": false,
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "case": "natural16k",
+            "native_request_id": 3,
+            "API_response_id": "cmpl-17d6054a1f884dbfb0388065",
+            "response_sha256": "653d3b7a78c0697ae528b000cb5e09d65bfeb074f751909fc1f879523e0bc227",
+            "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+            "actual_input_tokens": 16384,
+            "output_tokens": 128,
+            "whole_http_qpc_seconds": 16.7925114,
+            "raw_phase_sum_lower_ns": 16704256490,
+            "raw_phase_sum_mid_ns": 16704258505.0,
+            "raw_phase_sum_upper_ns": 16704260520,
+            "raw_phase_sum_lower_seconds": 16.70425649,
+            "raw_phase_sum_mid_seconds": 16.704258505,
+            "raw_phase_sum_upper_seconds": 16.70426052,
+            "http_residual_after_raw_lower_seconds": 0.08825490999999985,
+            "http_residual_after_raw_mid_seconds": 0.08825289500000011,
+            "http_residual_after_raw_upper_seconds": 0.08825088000000036,
+            "raw_lower_fits_whole_http": true,
+            "full_raw_upper_bracket_fits_whole_http": true,
+            "native_phase_sum_seconds": 16.704250209,
+            "http_residual_after_native_seconds": 0.0882611909999973
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "case": "natural16k",
+            "native_request_id": 4,
+            "API_response_id": "cmpl-8b0473218cde43edabf6cd7c",
+            "response_sha256": "fd575843814beb5cb9300c669b40a93af1cbda51eb19605bf91533966323bb10",
+            "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+            "actual_input_tokens": 16384,
+            "output_tokens": 128,
+            "whole_http_qpc_seconds": 11.3488203,
+            "raw_phase_sum_lower_ns": 11250493078,
+            "raw_phase_sum_mid_ns": 11250495373.0,
+            "raw_phase_sum_upper_ns": 11250497668,
+            "raw_phase_sum_lower_seconds": 11.250493078,
+            "raw_phase_sum_mid_seconds": 11.250495373,
+            "raw_phase_sum_upper_seconds": 11.250497668,
+            "http_residual_after_raw_lower_seconds": 0.09832722199999999,
+            "http_residual_after_raw_mid_seconds": 0.09832492700000017,
+            "http_residual_after_raw_upper_seconds": 0.09832263200000035,
+            "raw_lower_fits_whole_http": true,
+            "full_raw_upper_bracket_fits_whole_http": true,
+            "native_phase_sum_seconds": 11.250489815,
+            "http_residual_after_native_seconds": 0.09833048499999997
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "case": "natural16k",
+            "native_request_id": 5,
+            "API_response_id": "cmpl-a90f7c9baf844eda8936b84d",
+            "response_sha256": "10754a73824162c50675b00726f3d5dded624e5ae09c2bc9944c2da8e1d7d551",
+            "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+            "actual_input_tokens": 16384,
+            "output_tokens": 128,
+            "whole_http_qpc_seconds": 11.5253606,
+            "raw_phase_sum_lower_ns": 11439970844,
+            "raw_phase_sum_mid_ns": 11439972859.0,
+            "raw_phase_sum_upper_ns": 11439974874,
+            "raw_phase_sum_lower_seconds": 11.439970844,
+            "raw_phase_sum_mid_seconds": 11.439972859,
+            "raw_phase_sum_upper_seconds": 11.439974874,
+            "http_residual_after_raw_lower_seconds": 0.08538975600000143,
+            "http_residual_after_raw_mid_seconds": 0.08538774100000168,
+            "http_residual_after_raw_upper_seconds": 0.08538572600000016,
+            "raw_lower_fits_whole_http": true,
+            "full_raw_upper_bracket_fits_whole_http": true,
+            "native_phase_sum_seconds": 11.439967455,
+            "http_residual_after_native_seconds": 0.08539314500000117
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "case": "natural16k",
+            "native_request_id": 6,
+            "API_response_id": "cmpl-83e8ad9e92ac471da80f7858",
+            "response_sha256": "5de0ae2cdfda18f551d622d60620d573ae6bb4d5a17df1aa1aa809dc03eb778c",
+            "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+            "actual_input_tokens": 16384,
+            "output_tokens": 128,
+            "whole_http_qpc_seconds": 11.3030805,
+            "raw_phase_sum_lower_ns": 11221559421,
+            "raw_phase_sum_mid_ns": 11221561546.0,
+            "raw_phase_sum_upper_ns": 11221563671,
+            "raw_phase_sum_lower_seconds": 11.221559421,
+            "raw_phase_sum_mid_seconds": 11.221561546,
+            "raw_phase_sum_upper_seconds": 11.221563671,
+            "http_residual_after_raw_lower_seconds": 0.08152107899999983,
+            "http_residual_after_raw_mid_seconds": 0.08151895399999987,
+            "http_residual_after_raw_upper_seconds": 0.0815168289999999,
+            "raw_lower_fits_whole_http": true,
+            "full_raw_upper_bracket_fits_whole_http": true,
+            "native_phase_sum_seconds": 11.221555992,
+            "http_residual_after_native_seconds": 0.08152450799999933
+          }
+        ]
+      },
+      "individual_native_samples": [
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 113,
+          "accepted": 59,
+          "combined_acceptance": 0.5221238938053098,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 113,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 113,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 13184.6,
+            "predicted_ms": 3519.7,
+            "prompt_per_second": 1242.662,
+            "predicted_per_second": 36.367,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 113,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 113,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 16.7043,
+          "case": "natural16k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "http_qpc_seconds": 16.7925114,
+          "minimum_reserve_gib": 34.75901794433594,
+          "completed_utc": "2026-11-01T16:21:25.779727+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 8667.0,
+            "predicted_ms": 2583.5,
+            "prompt_per_second": 1890.389,
+            "predicted_per_second": 49.545,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 11.2505,
+          "case": "natural16k",
+          "ordinal": 1,
+          "phase": "measured",
+          "http_qpc_seconds": 11.3488203,
+          "minimum_reserve_gib": 34.71650314331055,
+          "completed_utc": "2026-11-01T16:21:38.204744+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 8686.8,
+            "predicted_ms": 2753.2,
+            "prompt_per_second": 1886.08,
+            "predicted_per_second": 46.491,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 11.44,
+          "case": "natural16k",
+          "ordinal": 2,
+          "phase": "measured",
+          "http_qpc_seconds": 11.5253606,
+          "minimum_reserve_gib": 34.819149017333984,
+          "completed_utc": "2026-11-01T16:21:49.795933+00:00"
+        },
+        {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "finish_reason": "length",
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "drafted": 112,
+          "accepted": 59,
+          "combined_acceptance": 0.5267857142857143,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "speculation": {
+            "drafter": "mtp",
+            "rounds": 68,
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "scoped_available": true,
+          "usage": {
+            "prompt_tokens": 16384,
+            "completion_tokens": 128,
+            "total_tokens": 16512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "timings": {
+            "prompt_n": 16384,
+            "predicted_n": 128,
+            "prompt_ms": 8348.3,
+            "predicted_ms": 2873.2,
+            "prompt_per_second": 1962.555,
+            "predicted_per_second": 44.55,
+            "cache_n": 0,
+            "disk_restore_n": 0,
+            "disk_restore_ms": 0.0,
+            "draft_n": 112,
+            "draft_n_accepted": 59,
+            "speculation": {
+              "drafter": "mtp",
+              "rounds": 68,
+              "head": {
+                "rounds": 68,
+                "drafted": 112,
+                "accepted": 59
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            }
+          },
+          "global_prompt_cache": "Off",
+          "request_prompt_cache_policy": "no_store",
+          "actual_no_cache_reuse": true,
+          "thinking_policy": "explicit frozen request; no returned reasoning",
+          "generated_code_executed": false,
+          "api_phase_clock_qualified": false,
+          "api_phase_sum_seconds": 11.2215,
+          "case": "natural16k",
+          "ordinal": 3,
+          "phase": "measured",
+          "http_qpc_seconds": 11.3030805,
+          "minimum_reserve_gib": 34.8051643371582,
+          "completed_utc": "2026-11-01T16:22:01.173392+00:00"
+        }
+      ],
+      "raw_capture_pins": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run16k\\capture-0.bin",
+          "bytes": 8248,
+          "sha256": "d58ba003b7edc086f9e8eb14d529239628f2f47f398ec793e36674929b532547"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run16k\\capture-1.bin",
+          "bytes": 8248,
+          "sha256": "999d09d3dbac536ae7afa8d1504a81da986b53b0002602356f4b11adba3a54b9"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run16k\\capture-2.bin",
+          "bytes": 8248,
+          "sha256": "3c1f575d6a1b290b85c56b9f7b074bb763970932700539d98745cb40397322f8"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run16k\\capture-3.bin",
+          "bytes": 8248,
+          "sha256": "bee77ad32fbee871cd3e16f38eff8421815ba7f2d54da7b68361fa0cfbe5831b"
+        }
+      ],
+      "raw_response_pins": [
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run16k\\natural16k-0.response.json",
+          "bytes": 1275,
+          "sha256": "653d3b7a78c0697ae528b000cb5e09d65bfeb074f751909fc1f879523e0bc227"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run16k\\natural16k-1.response.json",
+          "bytes": 1274,
+          "sha256": "fd575843814beb5cb9300c669b40a93af1cbda51eb19605bf91533966323bb10"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run16k\\natural16k-2.response.json",
+          "bytes": 1273,
+          "sha256": "10754a73824162c50675b00726f3d5dded624e5ae09c2bc9944c2da8e1d7d551"
+        },
+        {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\run16k\\natural16k-3.response.json",
+          "bytes": 1273,
+          "sha256": "5de0ae2cdfda18f551d622d60620d573ae6bb4d5a17df1aa1aa809dc03eb778c"
+        }
+      ],
+      "runtime": {
+        "controller_run": "18837836884f4cf999779cd6fd697f3b",
+        "backend_run": "a0a7702bb22b450fb32e4c6a93428148",
+        "identities": {
+          "controller": {
+            "pid": 26172,
+            "creation_time_100ns": 134380234876436120,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          },
+          "backend": {
+            "pid": 17044,
+            "creation_time_100ns": 134380234984204868,
+            "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+          }
+        }
+      },
+      "frozen_request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+      "output_and_counter_parity_to_prior_normal_cohort": true,
+      "output_parity_to_retained01816": true
+    }
+  },
+  "evidence": {
+    "finite_coordinator": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\run_raw_finite.py",
+      "bytes": 13764,
+      "sha256": "daab7a7217518251966f2723aa4f0f9200c0d97f8766c7d4e733fba6c9494c00"
+    },
+    "finite_completion": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-finite-qualification\\handle.json",
+      "bytes": 17854,
+      "sha256": "7a382e7ed6d5734800b5e736f8e961adecce29c9aaf95e861b4c122315f7e1ef"
+    },
+    "normal_ready": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-finite-qualification\\post-cycle-ready.json",
+      "bytes": 12955,
+      "sha256": "0e4543e6600c147f330fd7aee01170eb819cc45aa30ec78390c0678aa3beac7d"
+    },
+    "owned_console_cleanup": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-finite-qualification\\ended-own-console-cleanup.json",
+      "bytes": 1161,
+      "sha256": "68f5980b2fe81770ca032aaff4b4297e62105ad25f8bbd179cb3e53cab46fcf8"
+    },
+    "fresh_ABI": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-phase-prep\\binding.json",
+      "bytes": 33864,
+      "sha256": "dbd35186e014d7c16ce1ca5e88521b6bfd52e4567e11d4a9b59c1477d5032c2a"
+    },
+    "OEM_final_readback": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\raw-finite-qualification\\oem-final-readback\\power-mode-admin-result.json",
+      "bytes": 603,
+      "sha256": "56bc5e651dbd42efac34b3a4b08140c670a0fd4f604351b175c69902ee3fbd46"
+    }
+  },
+  "OEM_final_mode": {
+    "utc": "2026-11-01T16:30:02.5069876Z",
+    "pid": 17344,
+    "process_start_utc": "2026-11-01T16:30:02.2731228Z",
+    "elevated_admin": true,
+    "read_only": true,
+    "method": "GetPowerMode",
+    "provider_methods_invoked": 1,
+    "mode_setters_invoked": 0,
+    "passed": true,
+    "instance_name": "ACPI\\PNP0C14\\IP3POWERSWITCH_0",
+    "raw_current_power_mode": 1,
+    "raw_return_value": true,
+    "mode_label": null,
+    "note": "Raw result only; firmware-specific numeric-to-label mapping is not assumed.",
+    "ended_utc": "2026-11-01T16:30:02.6428598Z"
+  },
+  "final_normal_runtime": {
+    "identities": {
+      "controller": {
+        "pid": 18832,
+        "creation_time_100ns": 134380237382210974,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 5584,
+        "creation_time_100ns": 134380237489375186,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "controller_run": "c4e3c90acdf9452fb72003457744516e",
+    "profile": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\serving01822-text32k.json",
+    "normal_sources_restored": true,
+    "RAW_observer_loaded": false
+  },
+  "methodology": {
+    "phase_clock": "CLOCK_MONOTONIC_RAW endpoints bracketing original native chrono call; original return retained",
+    "native_decode_numerator": 128,
+    "observed_decode_generated_delta": 127,
+    "observer_overhead_subtracted": false,
+    "clock_rescaling": false,
+    "paired_engine_version_speedup_claimed": false,
+    "rows_are_different_frozen_texts": true
+  },
+  "generic_HTTP_summary_metadata_note": "Native summaries are preserved from the generic client, whose conservative qualification/RAW-observer flags are not aware of the external side observer. Actual RAW presence and per-cohort qualification are established by the separate bound capture reader and matching QPC audit, not those generic flags."
+}
