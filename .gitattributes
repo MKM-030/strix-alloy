@@ -254,3 +254,8 @@ voice/model-launcher-review/text-mode-candidate/*.diff -text whitespace=cr-at-eo
 servicenow/byollm/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Existing prompt whitespace belongs to the imported, hashed source contract.
 servicenow/byollm/prompts/*.prompt.txt whitespace=-blank-at-eol,-blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve the qualified cache follow-up report and reviewed launcher byte pins.
+docs/benchmarks/halogen01822-cache-followups-20261101.json -text whitespace=cr-at-eol
+scripts/Start-Halogen-ServiceNow.ps1 -text whitespace=cr-at-eol
+tests/gufo/test_halogen_followup_launcher_portable.py -text whitespace=cr-at-eol

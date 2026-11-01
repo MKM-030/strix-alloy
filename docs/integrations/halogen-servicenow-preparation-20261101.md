@@ -1,9 +1,11 @@
 # ServiceNow-Vorbereitung mit Halogen 0.18.22
 
-Stand: 1. November 2026. Die Messreihen sind beendet. Auf Marcels Wunsch laufen
-keine weiteren Modellmessungen während seiner League-Sitzung; eine spätere
-Messung benötigt eine erneute ausdrückliche Freigabe. Die weitere Vorbereitung
-erfolgt ohne Inferenz und ohne Neustart des laufenden Servers.
+Stand: 1. November 2026, nach erneut freigegebener Messung. Der
+[Prefix-Cache-Vergleich](../benchmarks/halogen01822-cache-followups-20261101.md)
+ist mit 28 Anfragen abgeschlossen. Halogen läuft wieder auf Port 8840 mit dem
+bisherigen Cache-Off-Profil. Das neue ausdrücklich wählbare `FollowupText32K`
+stellt die geprüfte Flexible-Cache-Variante bereit. Die ServiceNow-Instanz wurde
+bei dieser Messung nicht geändert.
 
 ## Lokaler Anschluss
 
@@ -64,5 +66,6 @@ Private lokale Belege: `readiness-handoff.json`, `trace-profile-check.json` und
 
 Die [Prefix-Cache-Vorbereitung](halogen-servicenow-prefix-cache-20261101.md)
 ergänzt einen netzwerkfreien Anfragegenerator und eine geprüfte Offline-Auswertung
-für spätere Folgefragen. Sie sendet keine Anfragen und verändert weder den
-laufenden Server noch die eingefrorene ServiceNow-Fortsetzung.
+für Folgefragen. Dieser Helfer selbst sendet keine Anfragen; ein separater
+freigegebener Root-Collector hat die Vergleichsmessung durchgeführt. Die
+eingefrorene ServiceNow-Fortsetzung bleibt unverändert.

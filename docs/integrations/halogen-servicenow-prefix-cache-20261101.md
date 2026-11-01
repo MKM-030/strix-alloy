@@ -1,8 +1,21 @@
-# ServiceNow-Folgefragen: Prefix-Cache offline vorbereitet
+# ServiceNow-Folgefragen: Prefix-Cache geprüft
 
-Auf Marcels Wunsch bleiben Modellmessungen gestoppt. Diese Vorbereitung besteht
-aus lokalen Quellprüfungen, eingefrorenen Anfragebytes und CPU-Tests. Der
-laufende Halogen-Server und die ServiceNow-Instanz wurden nicht geändert.
+Nach Marcels erneuter Freigabe wurde der vorbereitete Vergleich mit
+Cache Off → Flexible → Off durchgeführt. Alle 28 Anfragen sowie Antwortgleichheit
+und die A/B-Gesprächsprüfung sind belegt. Der normale Server ist wieder mit
+Cache Off online; die ServiceNow-Instanz wurde nicht geändert.
+
+Bei der Folgefrage mit 8.121 tatsächlichen Eingabetokens wurden 8.064 Tokens
+wiederverwendet und 57 neu verarbeitet. Der erste Text kam im Mittel nach
+0,324 statt 4,21–4,34 Sekunden; die vollständige Antwort nach 0,558 statt
+4,45–4,57 Sekunden. Die MTP-Head-Akzeptanz blieb bei 42/48 = 87,50 %.
+Kalte erste Anfragen waren mit Flexible langsamer. Siehe den
+[vollständigen Messbericht](../benchmarks/halogen01822-cache-followups-20261101.md).
+
+Die lokale PowerShell-5.1-Option `-Profile FollowupText32K` stellt genau diese
+Flexible-Konfiguration bereit. `CurrentText32K` und der laufende Server bleiben
+unverändert bei Off. Für die tatsächliche ServiceNow-Promptform ist weiterhin
+eine eigene Integrationsevaluation erforderlich.
 
 ## Ziel und Vergleich
 
@@ -23,8 +36,9 @@ Warmup; drei Paare wären Messwerte. Vier separate, verschachtelt angeordnete
 Gesprächsanfragen prüfen bekannte, voneinander abweichende Kennungen.
 
 Das private Dokument ist ein eingefrorener Romanpräfix mit 32.693 Unicode-Zeichen
-und 33.397 UTF-8-Bytes. Seine tatsächliche Tokenzahl ist noch nicht bestimmt;
-die Anfragen sind keine neuen 8K-/16K-Benchmarkwerte. Keine Anfrage wurde gesendet.
+und 33.397 UTF-8-Bytes. Vollständige Antworten belegen 8.126 Tokens für die erste
+und 8.121 für die Folgefrage. Diese Anfragen sind ein eigener Workload und
+ersetzen nicht die früheren genau 8K-/16K-Referenzen.
 
 ## Was bereits geprüft ist
 
@@ -45,10 +59,10 @@ zwischen regulärem Ende und einer nativen Stornierung. Die Laufzeitprüfung mus
 deshalb zusätzlich eigene Stornierung, Ergebnisvollständigkeit und die bekannten
 Sentinel-Antworten belegen.
 
-Die Testzeiten und künstlichen Cache-Treffer belegen die Auswertung, keine
-Beschleunigung. Aus vollständigen oder gecachten Eingabetokens wird keine
-vermeintliche Prefill-Rate berechnet. Noch fehlen tatsächliche Treffer,
-Allokation/Reserven, Antwortgleichheit und Laufzeit-/Gesprächsnachweise.
+Die Testzeiten und künstlichen Cache-Treffer belegen nur die Offline-Auswertung.
+Der getrennte Root-Vergleich ergänzt die tatsächlichen Treffer,
+Reserve-/Laufzeitdaten, Antwortgleichheit und Gesprächsprüfung. Aus vollständigen
+oder gecachten Eingabetokens wird keine vermeintliche Prefill-Rate berechnet.
 
 ## Grenze der bestehenden ServiceNow-Implementierung
 
@@ -67,5 +81,5 @@ wurden nicht angefasst; dessen konkrete SDK-Freigabe bleibt separat offen.
 
 Private Quellbelege und eingefrorene Anfragen liegen unter
 `server/.local/halogen-update-20261101/primary01822/cache-followup-prep/`.
-Einen tatsächlichen Modelllauf gibt es erst nach erneuter ausdrücklicher
-Messfreigabe. Das vollständige Optimierungsziel bleibt offen.
+Weitere Messungen behalten die normalen Zulassungs- und Ownership-Regeln.
+Das vollständige Optimierungsziel bleibt offen.

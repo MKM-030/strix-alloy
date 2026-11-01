@@ -19,6 +19,9 @@ CurrentText32K selects the configured 0.18.22 text preset: 32K context/pool,
 8K chunk/arena, adaptive gate 0.90, Cache Off, Vision Off, Thinking Off/low
 and prefetch off. It uses the existing stable ServiceNow token and rejects
 conflicting explicit settings. Performance qualification is documented separately.
+FollowupText32K explicitly selects the same 0.18.22 text policy with Flexible
+prefix cache for follow-up latency on repeated stable context. This opt-in
+reduces repeated input work; it does not promise faster GPU kernel throughput.
 HistoricalStock requires -HalogenVersion 0.16.2
 and retains the native prefill defaults used by the retained 2026-10-04 stock
 benchmark. All profiles select v2 and stock PLD 3,3. Fixed2 is the stable
@@ -52,11 +55,15 @@ does not create a transcript or redirect request content to a file.
 .EXAMPLE
 .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -PrintOnly
 .EXAMPLE
+.\scripts\Start-Halogen-ServiceNow.ps1 -Profile FollowupText32K -PrintOnly
+.EXAMPLE
+.\scripts\Start-Halogen-ServiceNow.ps1 -Profile FollowupText32K -ConsoleTrace
+.EXAMPLE
 .\scripts\Start-Halogen-ServiceNow.ps1 -Stop
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('Current8K', 'Current4K', 'HistoricalStock', 'Measured32K', 'MeasuredText32K', 'CurrentText32K')]
+    [ValidateSet('Current8K', 'Current4K', 'HistoricalStock', 'Measured32K', 'MeasuredText32K', 'CurrentText32K', 'FollowupText32K')]
     [string]$Profile = 'Current4K',
     [ValidateRange(1024, 65535)]
     [int]$Port = 8840,
@@ -105,11 +112,11 @@ if ($Stop -or $Status) {
 
 $contextCapacity = 262144
 $thinkingEffort = 'medium'
-$isPinned32KProfile = ($Profile -in @('Measured32K', 'MeasuredText32K', 'CurrentText32K'))
-$isText32KProfile = ($Profile -in @('MeasuredText32K', 'CurrentText32K'))
+$isPinned32KProfile = ($Profile -in @('Measured32K', 'MeasuredText32K', 'CurrentText32K', 'FollowupText32K'))
+$isText32KProfile = ($Profile -in @('MeasuredText32K', 'CurrentText32K', 'FollowupText32K'))
 if ($isPinned32KProfile) {
-    $presetVersion = if ($Profile -eq 'CurrentText32K') { '0.18.22' } elseif ($isText32KProfile) { '0.18.16' } else { '0.18.15' }
-    $presetCache = if ($isText32KProfile) { 'Off' } else { 'Flexible' }
+    $presetVersion = if ($Profile -in @('CurrentText32K', 'FollowupText32K')) { '0.18.22' } elseif ($isText32KProfile) { '0.18.16' } else { '0.18.15' }
+    $presetCache = if ($Profile -eq 'FollowupText32K' -or -not $isText32KProfile) { 'Flexible' } else { 'Off' }
     if (($PSBoundParameters.ContainsKey('HalogenVersion') -and $HalogenVersion -ne $presetVersion) -or
         ($PSBoundParameters.ContainsKey('Thinking') -and $Thinking -ne 'Off') -or
         ($PSBoundParameters.ContainsKey('MtpPolicy') -and $MtpPolicy -notin @('Auto', 'Confidence90')) -or
@@ -171,7 +178,7 @@ if ($HalogenVersion -in @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0
     $gate = if ($MtpPolicy -eq 'Fixed2') { '0' } else { '0.90' }
     $configuration.engine.speculation_policy | Add-Member -NotePropertyName 'HALOGEN_MTP_GATE_P' -NotePropertyValue $gate -Force
 }
-if ($Profile -in @('Current8K', 'Current4K', 'Measured32K', 'MeasuredText32K', 'CurrentText32K')) {
+if ($Profile -in @('Current8K', 'Current4K', 'Measured32K', 'MeasuredText32K', 'CurrentText32K', 'FollowupText32K')) {
     $prefillTokens = if ($Profile -eq 'Current4K') { 4096 } else { 8192 }
     $configuration.engine | Add-Member -NotePropertyName 'prefill_chunk' -NotePropertyValue $prefillTokens -Force
     $configuration.engine | Add-Member -NotePropertyName 'max_prefill_tokens' -NotePropertyValue $prefillTokens -Force
@@ -194,11 +201,14 @@ $configuration | Add-Member -NotePropertyName 'console_trace' `
     -NotePropertyValue ([bool]$ConsoleTrace.IsPresent) -Force
 
 Write-Host ('Profile: {0}; Halogen {1} v2; MTP policy {2}; PLD 3,3; cache {3}; one request.' -f $Profile, $HalogenVersion, $MtpPolicy, $PromptCache)
+if ($Profile -eq 'FollowupText32K') {
+    Write-Host 'Opt-in follow-up latency profile: Flexible prefix reuse requires stable repeated context; any benefit must be qualified for that request shape.'
+}
 Write-Host ('Context capacity: {0} positions (input plus output).' -f $contextCapacity)
 if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16', '0.18.22')) {
     Write-Host ('Thinking default: {0}; {1} effort; thinking budget: 2048 tokens. Requests can override these defaults.' -f $Thinking, $thinkingEffort)
 }
-if ($Profile -in @('Current8K', 'Current4K', 'Measured32K', 'MeasuredText32K', 'CurrentText32K')) {
+if ($Profile -in @('Current8K', 'Current4K', 'Measured32K', 'MeasuredText32K', 'CurrentText32K', 'FollowupText32K')) {
     Write-Host ('Prefill chunk / token arena: {0} / {1}.' -f $configuration.engine.prefill_chunk, $configuration.engine.max_prefill_tokens)
 } else {
     Write-Host 'Prefill chunk / token arena: native stock defaults from the historical profile.'

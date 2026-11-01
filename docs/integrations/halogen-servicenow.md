@@ -11,8 +11,11 @@ The current endpoint and public credential are unchanged. The server stays onlin
 
 The [current ServiceNow preparation](halogen-servicenow-preparation-20261101.md)
 records the verified PowerShell 5.1 console-trace configuration and existing
-Agent maintenance package. Model measurements are stopped at Marcel's request;
-preparation continues without inference or a server restart. The separate
+Agent maintenance package. After renewed measurement authorization, the
+[prefix-cache comparison](../benchmarks/halogen01822-cache-followups-20261101.md)
+qualified faster repeated-context follow-ups. `FollowupText32K` explicitly selects
+that Flexible-cache option; `CurrentText32K` and the running server retain Off.
+The separate
 [two-request comparison](../benchmarks/halogen01822-concurrency2-20261101.md)
 improves aggregate throughput but increases individual latency, so normal
 ServiceNow serving retains one slot.
@@ -81,6 +84,22 @@ server and API trace:
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
 ```
+
+For repeated stable context and new follow-up questions, the optional measured
+cache configuration is:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile FollowupText32K -ConsoleTrace
+```
+
+Select it at a normal controlled restart. Both text presets use Halogen 0.18.22
+with the same authentication, 32K capacity and generation policy. Only
+`FollowupText32K` enables Flexible cache. In the frozen two-question trial,
+first-content latency fell from 4.21–4.34s to 0.324s and complete response latency
+from 4.45–4.57s to 0.558s when 8064 of 8121 input tokens were reused. Initial
+cold requests were slower. These are workload-specific API latencies, separate
+from the Cache-Off phase rates. Console content tracing may add its own latency;
+the comparison used tracing Off.
 
 For the older general-purpose profiles, this launcher defaults to
 Thinking On, medium effort and a maximum of 2048 thinking tokens. The explicit
@@ -152,6 +171,8 @@ ServiceNow's Authorization header. Credential values are never printed.
 262,144-position capacity and fixed MTP depth 2. `MeasuredText32K` explicitly
 selects **0.18.16**, 32,768-position capacity, adaptive gate 0.90 and Cache Off.
 `CurrentText32K` selects **0.18.22** with the same text capacity and policy.
+`FollowupText32K` selects that same **0.18.22** text configuration with Flexible
+cache. All other text-preset controls remain identical.
 `Measured32K` separately selects **0.18.15**, 32,768-position capacity, adaptive
 gate 0.90 and Flexible cache with Vision On. All select v2, one slot, PLD `3,3`,
 one active API request and an 18 GiB physical/commit runtime reserve.
@@ -250,6 +271,7 @@ client headers to Halogen.
 | `reasoning_effort: "none"` | The supported equivalent off control |
 | `max_tokens: 128` | Maximum generated budget, including reasoning when enabled |
 | `stream: false` | One JSON response for simple ServiceNow parsing |
+| `prompt_cache_policy: "default"` | Allow the configured cache mode on current 0.18.22; `"no_store"` prevents the tested reuse |
 
 Thinking controls also support `chat_template_kwargs`; agreeing duplicate controls
 are accepted. Send explicit controls so that server defaults cannot unexpectedly
@@ -261,8 +283,8 @@ thinking and token-budget behavior.
 included `cache_prompt: false`, the retained 0.16.2 `ChatReq` schema does not
 declare or read `cache_prompt`; its unknown fields are ignored. This field is
 therefore not a supported per-request cache switch for that historical pin.
-The effective cache-off control is `HALOGEN_PROMPT_CACHE=0` in both launch
-profiles. Do not infer support for a parameter merely because a request returns HTTP 200.
+The effective cache-off control is `HALOGEN_PROMPT_CACHE=0` in those historical
+cache-off profiles. Do not infer support for a parameter merely because a request returns HTTP 200.
 
 This historical 0.16.2 schema check used the retained official-image API extract at
 `server/.local/optimization9h-20261004/upstream-api-source-9b538f902be94004b711bf878a78219e/source-stdout.txt`,

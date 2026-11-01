@@ -52,3 +52,7 @@ isolation require separate evidence.
 See the [ServiceNow preparation note](../../../docs/integrations/halogen-servicenow-prefix-cache-20261101.md)
 for the source findings and remaining runtime work. No profile or instance
 change is deployed by these modules.
+
+A separate authorized Root collector has since completed the
+[actual cache comparison](../../../docs/benchmarks/halogen01822-cache-followups-20261101.md).
+Its live evidence and quality checks are external to these offline modules.
