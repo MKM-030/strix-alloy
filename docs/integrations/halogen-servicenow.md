@@ -9,6 +9,14 @@ retains the separate OEM correction and its clock counterexamples; they are
 not rescaled using the newer cohort.
 The current endpoint and public credential are unchanged. The server stays online.
 
+The [current ServiceNow preparation](halogen-servicenow-preparation-20261101.md)
+records the verified PowerShell 5.1 console-trace configuration and existing
+Agent maintenance package. Model measurements are stopped at Marcel's request;
+preparation continues without inference or a server restart. The separate
+[two-request comparison](../benchmarks/halogen01822-concurrency2-20261101.md)
+improves aggregate throughput but increases individual latency, so normal
+ServiceNow serving retains one slot.
+
 The [larger-workspace trial](../benchmarks/halogen01822-arena16384-20261101.md)
 was rejected after a 16K output change and lower draft acceptance. Keep the
 current paired 8192 prefill settings; no new client header is required.
@@ -143,6 +151,7 @@ ServiceNow's Authorization header. Credential values are never printed.
 `HistoricalStock` requires explicitly selected **0.16.2**. All three retain
 262,144-position capacity and fixed MTP depth 2. `MeasuredText32K` explicitly
 selects **0.18.16**, 32,768-position capacity, adaptive gate 0.90 and Cache Off.
+`CurrentText32K` selects **0.18.22** with the same text capacity and policy.
 `Measured32K` separately selects **0.18.15**, 32,768-position capacity, adaptive
 gate 0.90 and Flexible cache with Vision On. All select v2, one slot, PLD `3,3`,
 one active API request and an 18 GiB physical/commit runtime reserve.

@@ -70,3 +70,14 @@ these release notes.
 The firmware lead warrants checking the machine's actual version and OEM
 availability before proposing a separately authorized update. Local policy,
 runtime reserve and stable online service remain in force.
+
+## Follow-up source check, 18:10 UTC
+
+The official package listing still identifies 0.18.22 with the same digest.
+The newly noticed [HEAD commit d64a233](https://github.com/peonist-ai/halogen-flash-server/commit/d64a2330f3f48ff0a447f3b03bddbe389fded982),
+dated 31 October 17:02:44 UTC, updates separate NPU timing documentation and website
+files; it contains no new Flash engine change. The AMD, Ryzen AI, XRT and
+firmware sources above remain unchanged. Bounded Reddit searches yielded older
+posts without a fresh concrete mechanism; this is not an exhaustive freshness
+claim. No update was installed. Private source metadata is retained under
+`server/.local/halogen-update-20261101/primary01822/source-refresh-1805/`.

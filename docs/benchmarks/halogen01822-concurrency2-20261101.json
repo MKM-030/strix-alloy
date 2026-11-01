@@ -1,0 +1,1830 @@
+{
+  "schema": "halogen01822.distinct-pair.publication.v1",
+  "utc": "2026-11-01T18:11:13.177676+00:00",
+  "version": "0.18.22",
+  "complete_comparison": true,
+  "measured_requests": 18,
+  "total_requests_including_warmups": 24,
+  "metric": "Completed output tokens per whole pair QPC makespan, including prefill, queue and transport.",
+  "metric_is_phase_prefill_or_decode": false,
+  "NPU_acceleration_proven": false,
+  "full_goal_achieved": false,
+  "frozen_policy": {
+    "input_pair": [
+      8192,
+      16384
+    ],
+    "output_tokens_each": 128,
+    "temperature": 0,
+    "seed": 1,
+    "thinking": "Off",
+    "cache": "Off/no_store",
+    "drafter": "mtp",
+    "PLD": "3,3",
+    "gate_p": "0.90",
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "slots": [
+      1,
+      2,
+      1
+    ],
+    "gateway_concurrency": 2,
+    "context": 32768,
+    "pool_positions": 32768,
+    "excluded_warmup_pairs_per_arm": 1,
+    "measured_pairs_per_arm": 3
+  },
+  "restoration": {
+    "normal_port": 8840,
+    "profile_sha256": "53a943ec4c61d0f3c057d13da561d5551720fe65d29b9a5a2bff39b7cc5566a1",
+    "controller_run": "dee70d2f9fb74ea2a932246aa0e433c5",
+    "backend_run": "947aacf7a3454ec4a3fd7cafbfe4f5d3",
+    "readiness_snapshot": true,
+    "transition_paths": 14,
+    "originals_restored": 8,
+    "additions_removed": 6,
+    "normal_backend_members": 44,
+    "exact_current_source_seal_verified": true
+  },
+  "arms": {
+    "before": {
+      "arm": "before",
+      "complete_cohort": true,
+      "warmup_pair_excluded": 1,
+      "measured_pairs": 3,
+      "measured_output_tokens": 768,
+      "group_qpc_mean_seconds": 17.849556233333335,
+      "completed_output_tps_mean": 14.34298229382764,
+      "completed_output_tps_pooled": 14.34209325170394,
+      "api_phase_clock_qualified": false,
+      "RAW_observer_used": false,
+      "cases": {
+        "historical8k": {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "measured_repetitions": 3,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "request_qpc_mean_seconds": 14.007646833333334,
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance_fraction": 0.660377358490566
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          }
+        },
+        "natural16k": {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "measured_repetitions": 3,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "request_qpc_mean_seconds": 13.531538433333333,
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance_fraction": 0.5267857142857143
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          }
+        }
+      },
+      "pairs": [
+        {
+          "barrier_release_ns": 31470407027900,
+          "first_submitted_ns": 31470407165300,
+          "last_completed_ns": 31498222875200,
+          "group_qpc_seconds": 27.8157099,
+          "submit_order": [
+            "historical8k",
+            "natural16k"
+          ],
+          "minimum_reserve_gib": 33.11037063598633,
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "output_tokens": 256,
+          "completed_output_tps": 9.203432194265154,
+          "gateway_completed_after": 2,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 31499320827700,
+          "first_submitted_ns": 31499320938900,
+          "last_completed_ns": 31517152395900,
+          "group_qpc_seconds": 17.831457,
+          "submit_order": [
+            "natural16k",
+            "historical8k"
+          ],
+          "minimum_reserve_gib": 33.09962844848633,
+          "ordinal": 1,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 14.356650721250652,
+          "gateway_completed_after": 4,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 31517238720200,
+          "first_submitted_ns": 31517238864000,
+          "last_completed_ns": 31535268995400,
+          "group_qpc_seconds": 18.0301314,
+          "submit_order": [
+            "historical8k",
+            "natural16k"
+          ],
+          "minimum_reserve_gib": 33.157772064208984,
+          "ordinal": 2,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 14.198454482699999,
+          "gateway_completed_after": 6,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 31535340882800,
+          "first_submitted_ns": 31535341253500,
+          "last_completed_ns": 31553028333800,
+          "group_qpc_seconds": 17.6870803,
+          "submit_order": [
+            "natural16k",
+            "historical8k"
+          ],
+          "minimum_reserve_gib": 33.173370361328125,
+          "ordinal": 3,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 14.47384167753227,
+          "gateway_completed_after": 8,
+          "gateway_cancelled_after": 0
+        }
+      ],
+      "engine_slots": 1,
+      "gateway_concurrency": 2,
+      "context": 32768,
+      "pool_positions": 32768,
+      "private_port": 18840,
+      "evidence": {
+        "handle.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/handle.json",
+          "bytes": 2873,
+          "sha256": "5fad503a0cdcdf121ede0eb46505f8718e02d3de63e8a6e30d472d72b92a9c85"
+        },
+        "summary.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/summary.json",
+          "bytes": 4146,
+          "sha256": "d498361e251858a087d684d8abbb4ce421905ad51b13df0395054489370198ef"
+        },
+        "profile.snapshot.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/profile.snapshot.json",
+          "bytes": 1863,
+          "sha256": "c4034432f88d55eb75a88357960c8a246ca1f61cb7ca3106eb4ed39e55b997d3"
+        },
+        "runtime-manifest.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/runtime-manifest.json",
+          "bytes": 7216,
+          "sha256": "0eb99a479d3725da2383bd5af58579820884dcf7f37cde9f191bb5b1fff981a8"
+        },
+        "ready-before.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/ready-before.json",
+          "bytes": 13008,
+          "sha256": "fafd9c990b0b38c8d2ef22908579afe3a4c3f08e6ef03faae99f2b24e5b14f42"
+        },
+        "ready-after.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/ready-after.json",
+          "bytes": 13008,
+          "sha256": "ddec77422046e68c347ab2e16a651da8026f999bf6fbee03f9cafc1b57d9d07b"
+        },
+        "pair_and_sample_pins": [
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/0-historical8k.response.json",
+            "bytes": 1325,
+            "sha256": "2860902dcfc66ba063d39f9dbede972eca681f1c56a319b51f26c61f6c3f8665"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/0-historical8k.sample.json",
+            "bytes": 2221,
+            "sha256": "8d83c6ccea99bdb162a92169f04e44b35d8c84836d1cf43b65caf57b765b3b53"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/0-natural16k.response.json",
+            "bytes": 1275,
+            "sha256": "87ac099776cad9187c5260eb9af8d97764a7547246ee1279dbb79289a3cf5518"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/0-natural16k.sample.json",
+            "bytes": 2225,
+            "sha256": "a3142951e26e1fd5a29d85aa90592cf4a9f27d2fe3b076fd3be5f1de98efd389"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/1-historical8k.response.json",
+            "bytes": 1326,
+            "sha256": "ba789cccc33ecfff09a25d6c35e79e25eb703a72e0df517a70c203bd83c1e47b"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/1-historical8k.sample.json",
+            "bytes": 2213,
+            "sha256": "79dfeddfc14b6441f2e7ed3613b1f097663ec4a1f3f4ed2bb7bee886292ca601"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/1-natural16k.response.json",
+            "bytes": 1273,
+            "sha256": "6658ebd59581b1f3a20910c966f820f3d114bc3133995122c200fde852e8f66b"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/1-natural16k.sample.json",
+            "bytes": 2216,
+            "sha256": "6a2e18be7f24706d7bb6d29fee1a1220671a048c7c119f9a7c6a3051b4649777"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/2-historical8k.response.json",
+            "bytes": 1326,
+            "sha256": "be7762105f728e3c3b4a135a8c569d705017c87d6c6a92fb8363687a897d739f"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/2-historical8k.sample.json",
+            "bytes": 2212,
+            "sha256": "caf2d1f76a88b45c90efc83b796f37807b5540b9db42d36439f42bb7e1791f62"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/2-natural16k.response.json",
+            "bytes": 1274,
+            "sha256": "243f9fbd947a94212937a987ab124cf85f11fe1e28c58efb4dd0843a3ac6326d"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/2-natural16k.sample.json",
+            "bytes": 2217,
+            "sha256": "feb6f1d604522a1c135c332e4419f1a1ef41175eec8d2cbfa89a855c6ca25540"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/3-historical8k.response.json",
+            "bytes": 1326,
+            "sha256": "0666d2a48addee90e4038435bdd1f2cdbca22ad3edd1d3faeb74051e724e6e8f"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/3-historical8k.sample.json",
+            "bytes": 2224,
+            "sha256": "e62aee1751e501c45ff6dd2ab5da3b31d1d48c0f7696c2e6d1846038b09569a6"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/3-natural16k.response.json",
+            "bytes": 1274,
+            "sha256": "c68c663aeb6fd10f187c8b8c6a8a7e65787606538acd3f42fd724ca7622c6b2b"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/3-natural16k.sample.json",
+            "bytes": 2228,
+            "sha256": "a68879843904de2ba580ce80c019bb99648ce5962d4c9cd74d2acb428b1e954e"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/pair-0.json",
+            "bytes": 442,
+            "sha256": "219a79bcacd2f9587885aecf50c33491581d630c3eabd331b3256c51b42519c6"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/pair-1.json",
+            "bytes": 435,
+            "sha256": "b3c28f0a8b9bc9de302f4283354d68472df26c992958934174be26dd85cea230"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/pair-2.json",
+            "bytes": 437,
+            "sha256": "a71914f5c8faf7466533f20d13521caea9943ddbd0ffce475a593ac4995be7b5"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/pair-3.json",
+            "bytes": 436,
+            "sha256": "fdb6c5955ed4d846a4ce7b0865376dba9ce0a8439a0b4e80d58ad3a922b2ebd7"
+          }
+        ],
+        "request_pins": [
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/historical8k.request.json",
+            "bytes": 42833,
+            "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-before/natural16k.request.json",
+            "bytes": 72848,
+            "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+          }
+        ]
+      },
+      "per_request_metrics": [
+        {
+          "case": "historical8k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 31470407165300,
+          "completed_qpc_ns": 31481429872500,
+          "http_qpc_seconds": 11.0227072,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 107,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 31470407802300,
+          "completed_qpc_ns": 31498222875200,
+          "http_qpc_seconds": 27.8150729,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 31499321461700,
+          "completed_qpc_ns": 31517152395900,
+          "http_qpc_seconds": 17.8309342,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 31499320938900,
+          "completed_qpc_ns": 31510580470600,
+          "http_qpc_seconds": 11.2595317,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 31517238864000,
+          "completed_qpc_ns": 31523744393900,
+          "http_qpc_seconds": 6.5055299,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 31517239434200,
+          "completed_qpc_ns": 31535268995400,
+          "http_qpc_seconds": 18.0295612,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 31535341857400,
+          "completed_qpc_ns": 31553028333800,
+          "http_qpc_seconds": 17.6864764,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 31535341253500,
+          "completed_qpc_ns": 31546646775900,
+          "http_qpc_seconds": 11.3055224,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        }
+      ],
+      "measured_pair_scoped_acceptance": {
+        "head": {
+          "rounds": 375,
+          "drafted": 654,
+          "accepted": 387,
+          "acceptance_fraction": 0.591743119266055
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_fraction": null
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_fraction": null
+        }
+      }
+    },
+    "candidate": {
+      "arm": "candidate",
+      "complete_cohort": true,
+      "warmup_pair_excluded": 1,
+      "measured_pairs": 3,
+      "measured_output_tokens": 768,
+      "group_qpc_mean_seconds": 16.886262966666667,
+      "completed_output_tps_mean": 15.162401380259025,
+      "completed_output_tps_pooled": 15.160251886716543,
+      "api_phase_clock_qualified": false,
+      "RAW_observer_used": false,
+      "cases": {
+        "historical8k": {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "measured_repetitions": 3,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "request_qpc_mean_seconds": 16.419005333333335,
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 180,
+              "drafted": 253,
+              "accepted": 201,
+              "acceptance_fraction": 0.7944664031620553
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          }
+        },
+        "natural16k": {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "measured_repetitions": 3,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "request_qpc_mean_seconds": 16.886066,
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 216,
+              "drafted": 294,
+              "accepted": 165,
+              "acceptance_fraction": 0.5612244897959183
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          }
+        }
+      },
+      "pairs": [
+        {
+          "barrier_release_ns": 31750756605300,
+          "first_submitted_ns": 31750756745400,
+          "last_completed_ns": 31774511316900,
+          "group_qpc_seconds": 23.7545715,
+          "submit_order": [
+            "historical8k",
+            "natural16k"
+          ],
+          "minimum_reserve_gib": 32.95335388183594,
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "output_tokens": 256,
+          "completed_output_tps": 10.776872990531528,
+          "gateway_completed_after": 2,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 31774595945700,
+          "first_submitted_ns": 31774596185200,
+          "last_completed_ns": 31791430397900,
+          "group_qpc_seconds": 16.8342127,
+          "submit_order": [
+            "natural16k",
+            "historical8k"
+          ],
+          "minimum_reserve_gib": 32.914676666259766,
+          "ordinal": 1,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 15.207126377819856,
+          "gateway_completed_after": 4,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 31791528268700,
+          "first_submitted_ns": 31791528451100,
+          "last_completed_ns": 31808683367000,
+          "group_qpc_seconds": 17.1549159,
+          "submit_order": [
+            "historical8k",
+            "natural16k"
+          ],
+          "minimum_reserve_gib": 32.88485336303711,
+          "ordinal": 2,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 14.922836199972279,
+          "gateway_completed_after": 6,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 31808774977000,
+          "first_submitted_ns": 31808775103300,
+          "last_completed_ns": 31825444763600,
+          "group_qpc_seconds": 16.6696603,
+          "submit_order": [
+            "natural16k",
+            "historical8k"
+          ],
+          "minimum_reserve_gib": 32.950496673583984,
+          "ordinal": 3,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 15.357241562984939,
+          "gateway_completed_after": 8,
+          "gateway_cancelled_after": 0
+        }
+      ],
+      "engine_slots": 2,
+      "gateway_concurrency": 2,
+      "context": 32768,
+      "pool_positions": 32768,
+      "private_port": 18840,
+      "evidence": {
+        "handle.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/handle.json",
+          "bytes": 8067,
+          "sha256": "f42c4a673295b5d64791e5f11e0b151e3477cf278524863401e7279d2b557229"
+        },
+        "summary.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/summary.json",
+          "bytes": 4146,
+          "sha256": "b983ee92753c6ffde0038a9f21a7266fc2342d54bef4962c9859e5d0a225609e"
+        },
+        "profile.snapshot.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/profile.snapshot.json",
+          "bytes": 1863,
+          "sha256": "a04fda4a241437e8f2f209ab0e1e630dbfeef0d9764c7d7963f6680c29376934"
+        },
+        "runtime-manifest.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/runtime-manifest.json",
+          "bytes": 7216,
+          "sha256": "032e5c6539d174497f2001c3abe9615a51238dabf213426629f4c7324fdb51b1"
+        },
+        "ready-before.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/ready-before.json",
+          "bytes": 13012,
+          "sha256": "47d0323a285916baa45f795371d8c43065c26d881af1ffa2cfa3ad1c4648a04e"
+        },
+        "ready-after.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/ready-after.json",
+          "bytes": 13011,
+          "sha256": "bc189a6f945dbdab8041a3fba33f542fa38b24eaf7845175fee484b13c97d7df"
+        },
+        "pair_and_sample_pins": [
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/0-historical8k.response.json",
+            "bytes": 1322,
+            "sha256": "21d0fe668cc249c8d975a3466a1b44c02200fdf84f785db572995d465c59f6e5"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/0-historical8k.sample.json",
+            "bytes": 2214,
+            "sha256": "7ce8059cc0a7713aac39ed4a4b3ad5d222260b1251c445ca23155ea338752d42"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/0-natural16k.response.json",
+            "bytes": 1275,
+            "sha256": "a60709a1bd2896a3a618ef381f7ebd53eb9664d7e728638e7d5a8875cd89b872"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/0-natural16k.sample.json",
+            "bytes": 2211,
+            "sha256": "653618859168be6026a674a46b5d4d594be133c257a7e9bad30b982f058e7bfb"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/1-historical8k.response.json",
+            "bytes": 1324,
+            "sha256": "e6edf7692c5f42d05463b4cbc75711a5ea890dff3dc8a305d0c3c682d3a4b1f7"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/1-historical8k.sample.json",
+            "bytes": 2208,
+            "sha256": "305dcd90503d49eaef0f13645d3d719c667c404e898cfda2ecd628a1546bf53d"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/1-natural16k.response.json",
+            "bytes": 1271,
+            "sha256": "2de77cb45a7017c735778244053b697a38e7a7e4ff2f13d4d4e1e0b9fd30f5bb"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/1-natural16k.sample.json",
+            "bytes": 2211,
+            "sha256": "358fb2abb8c66944b9437436338ca957227f48a23be375af4139b256fc856de7"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/2-historical8k.response.json",
+            "bytes": 1325,
+            "sha256": "5da22d0696f27be1a3789913ee6b86243ed23035eb8c26a8622b3c1f25c27234"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/2-historical8k.sample.json",
+            "bytes": 2211,
+            "sha256": "f1914d0d7f05f87e748898d00013c4742c71d86ea6997e9f34a884d3656d47fb"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/2-natural16k.response.json",
+            "bytes": 1274,
+            "sha256": "8c31416bd84dc2e29d22c2a2096d61d9171131178e27fa75db91ef1a736b89d7"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/2-natural16k.sample.json",
+            "bytes": 2202,
+            "sha256": "ae85b3ebf9e1b90b68134046a6cfa144514572ba807b2ac08c601e96a2f5c959"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/3-historical8k.response.json",
+            "bytes": 1324,
+            "sha256": "a15c130c9ce537714e0d51d480f39bdc3c0986e9ea6356d76e1de8e02192006e"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/3-historical8k.sample.json",
+            "bytes": 2220,
+            "sha256": "ca9338f28f409fabc728d5a356b9631c5507fe1b58a44e389d9aae72f0a8a0e4"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/3-natural16k.response.json",
+            "bytes": 1272,
+            "sha256": "6b9fd568ba04fb58f1b82ddc9bf1c8285fe8da9a0fe5dc00cd5de9165f18336e"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/3-natural16k.sample.json",
+            "bytes": 2212,
+            "sha256": "720fc22022667e89da874c7423163bd128ba55a380bb9fe2fcb25baf5e47a9a3"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/pair-0.json",
+            "bytes": 443,
+            "sha256": "f612f382ad5f9c4e4491a94dcf70de1b65d9a116ff8cfb0d63702ce4f08b1172"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/pair-1.json",
+            "bytes": 437,
+            "sha256": "5506603093b3fc299cad7de5e7e0ec60eab57e1cea4d8c2bc3db9980b1fa1238"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/pair-2.json",
+            "bytes": 436,
+            "sha256": "d414c4a7683661d267ded657f9088a511560b65236b18a25a17af87e0afebcef"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/pair-3.json",
+            "bytes": 437,
+            "sha256": "1bcb1c46a8fa45e81dd36064beb79152d0c079961656464d5553ee0a1ad6ef76"
+          }
+        ],
+        "request_pins": [
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/historical8k.request.json",
+            "bytes": 42833,
+            "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-candidate/natural16k.request.json",
+            "bytes": 72848,
+            "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+          }
+        ]
+      },
+      "per_request_metrics": [
+        {
+          "case": "historical8k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 31750756745400,
+          "completed_qpc_ns": 31772966017400,
+          "http_qpc_seconds": 22.209272,
+          "scoped": {
+            "head": {
+              "rounds": 60,
+              "drafted": 89,
+              "accepted": 67
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 31750757379400,
+          "completed_qpc_ns": 31774511316900,
+          "http_qpc_seconds": 23.7539375,
+          "scoped": {
+            "head": {
+              "rounds": 70,
+              "drafted": 100,
+              "accepted": 57
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 31774596659000,
+          "completed_qpc_ns": 31791208454000,
+          "http_qpc_seconds": 16.611795,
+          "scoped": {
+            "head": {
+              "rounds": 60,
+              "drafted": 82,
+              "accepted": 67
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 31774596185200,
+          "completed_qpc_ns": 31791430397900,
+          "http_qpc_seconds": 16.8342127,
+          "scoped": {
+            "head": {
+              "rounds": 73,
+              "drafted": 97,
+              "accepted": 54
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 31791528451100,
+          "completed_qpc_ns": 31807682604200,
+          "http_qpc_seconds": 16.1541531,
+          "scoped": {
+            "head": {
+              "rounds": 60,
+              "drafted": 89,
+              "accepted": 67
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 31791529042000,
+          "completed_qpc_ns": 31808683367000,
+          "http_qpc_seconds": 17.154325,
+          "scoped": {
+            "head": {
+              "rounds": 70,
+              "drafted": 100,
+              "accepted": 57
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 31808775615600,
+          "completed_qpc_ns": 31825266683500,
+          "http_qpc_seconds": 16.4910679,
+          "scoped": {
+            "head": {
+              "rounds": 60,
+              "drafted": 82,
+              "accepted": 67
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 31808775103300,
+          "completed_qpc_ns": 31825444763600,
+          "http_qpc_seconds": 16.6696603,
+          "scoped": {
+            "head": {
+              "rounds": 73,
+              "drafted": 97,
+              "accepted": 54
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        }
+      ],
+      "measured_pair_scoped_acceptance": {
+        "head": {
+          "rounds": 396,
+          "drafted": 547,
+          "accepted": 366,
+          "acceptance_fraction": 0.6691042047531993
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_fraction": null
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_fraction": null
+        }
+      }
+    },
+    "after": {
+      "arm": "after",
+      "complete_cohort": true,
+      "warmup_pair_excluded": 1,
+      "measured_pairs": 3,
+      "measured_output_tokens": 768,
+      "group_qpc_mean_seconds": 17.860248033333335,
+      "completed_output_tps_mean": 14.333964669311387,
+      "completed_output_tps_pooled": 14.333507548283562,
+      "api_phase_clock_qualified": false,
+      "RAW_observer_used": false,
+      "cases": {
+        "historical8k": {
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "measured_repetitions": 3,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "request_qpc_mean_seconds": 14.026146266666666,
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 171,
+              "drafted": 318,
+              "accepted": 210,
+              "acceptance_fraction": 0.660377358490566
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          }
+        },
+        "natural16k": {
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "measured_repetitions": 3,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "request_qpc_mean_seconds": 13.547994233333334,
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 204,
+              "drafted": 336,
+              "accepted": 177,
+              "acceptance_fraction": 0.5267857142857143
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          }
+        }
+      },
+      "pairs": [
+        {
+          "barrier_release_ns": 32200438127000,
+          "first_submitted_ns": 32200438261000,
+          "last_completed_ns": 32228623092600,
+          "group_qpc_seconds": 28.1848316,
+          "submit_order": [
+            "historical8k",
+            "natural16k"
+          ],
+          "minimum_reserve_gib": 32.86670684814453,
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "output_tokens": 256,
+          "completed_output_tps": 9.082899753781037,
+          "gateway_completed_after": 2,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 32228702820900,
+          "first_submitted_ns": 32228702959200,
+          "last_completed_ns": 32246459580100,
+          "group_qpc_seconds": 17.7566209,
+          "submit_order": [
+            "natural16k",
+            "historical8k"
+          ],
+          "minimum_reserve_gib": 32.81447982788086,
+          "ordinal": 1,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 14.417157489688817,
+          "gateway_completed_after": 4,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 32246506460900,
+          "first_submitted_ns": 32246506791200,
+          "last_completed_ns": 32264503968500,
+          "group_qpc_seconds": 17.9971773,
+          "submit_order": [
+            "historical8k",
+            "natural16k"
+          ],
+          "minimum_reserve_gib": 32.8546142578125,
+          "ordinal": 2,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 14.224452853503866,
+          "gateway_completed_after": 6,
+          "gateway_cancelled_after": 0
+        },
+        {
+          "barrier_release_ns": 32265487711100,
+          "first_submitted_ns": 32265487814700,
+          "last_completed_ns": 32283314760600,
+          "group_qpc_seconds": 17.8269459,
+          "submit_order": [
+            "natural16k",
+            "historical8k"
+          ],
+          "minimum_reserve_gib": 32.8056755065918,
+          "ordinal": 3,
+          "phase": "measured",
+          "output_tokens": 256,
+          "completed_output_tps": 14.360283664741475,
+          "gateway_completed_after": 8,
+          "gateway_cancelled_after": 0
+        }
+      ],
+      "engine_slots": 1,
+      "gateway_concurrency": 2,
+      "context": 32768,
+      "pool_positions": 32768,
+      "private_port": 18840,
+      "evidence": {
+        "handle.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/handle.json",
+          "bytes": 8059,
+          "sha256": "7a90f5fddee802cfb9a5954846bba2a83c1a39962d1bf8f1921aa126fe061d67"
+        },
+        "summary.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/summary.json",
+          "bytes": 4145,
+          "sha256": "eabc7d11ba94bfa3e0ace3e6386ee2a6f007be24b5910a865e9feb1e16727533"
+        },
+        "profile.snapshot.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/profile.snapshot.json",
+          "bytes": 1863,
+          "sha256": "c4034432f88d55eb75a88357960c8a246ca1f61cb7ca3106eb4ed39e55b997d3"
+        },
+        "runtime-manifest.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/runtime-manifest.json",
+          "bytes": 7216,
+          "sha256": "95ef3baa48669a661458891ec56cf06e2f6af14a63cd4cdcaedd747a35feaac7"
+        },
+        "ready-before.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/ready-before.json",
+          "bytes": 13006,
+          "sha256": "6416489f55e1fa4ea6f355e63773b4ac98e1be1e0abdcc48949e14ce9a278612"
+        },
+        "ready-after.json": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/ready-after.json",
+          "bytes": 13006,
+          "sha256": "c398a7431e066b5cdb0913ce787a1c6957b20a0f92207970e97874d705d62c78"
+        },
+        "pair_and_sample_pins": [
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/0-historical8k.response.json",
+            "bytes": 1325,
+            "sha256": "2cf25e24238da1f8c0491bc5861254a64e15974971d3f45bf77f6fc29b15a7da"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/0-historical8k.sample.json",
+            "bytes": 2221,
+            "sha256": "ae98f0900cf7f550e4ff63c150b58adb98f7321bc19790d48b873db3e2ea0f4c"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/0-natural16k.response.json",
+            "bytes": 1275,
+            "sha256": "ef0e43ba28cb21a8b21022cf8426a32faeae11403f98fe1e51d04defba6a56d2"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/0-natural16k.sample.json",
+            "bytes": 2224,
+            "sha256": "b31bc7e5a14dff2ffa2c4baca965832079f98f6f1dbba3838cd313986082f725"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/1-historical8k.response.json",
+            "bytes": 1326,
+            "sha256": "e9d2d1fad00e6689fba1aa02a46aa55e5a6fa621be49cdb1bc4d1176df76fd62"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/1-historical8k.sample.json",
+            "bytes": 2213,
+            "sha256": "fea1d0741b6d7551766a1030d7ce4efd083be276b5b87a5f805a05cc1ed8ab7b"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/1-natural16k.response.json",
+            "bytes": 1274,
+            "sha256": "16ec0e46f2e364ad57789fef7eee0b50bbf947ebbba8e626e972bd35fb924456"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/1-natural16k.sample.json",
+            "bytes": 2228,
+            "sha256": "d9db5b22b0c12414a01226058294771e1885f85d7cb8f7cde33a2f7a45cfac8e"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/2-historical8k.response.json",
+            "bytes": 1326,
+            "sha256": "cebc9f0c22831f62dc09f07e48f819e5759780db6ee468a2e7fbece07f174e7b"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/2-historical8k.sample.json",
+            "bytes": 2212,
+            "sha256": "059646ab6ece1e1744aacb913207bd8395051a8099838753a5a96877a6160ebe"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/2-natural16k.response.json",
+            "bytes": 1273,
+            "sha256": "0b913f6e5b90e01e21eed584ea7513b2f55f070075ccf220a41128b5b16d497b"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/2-natural16k.sample.json",
+            "bytes": 2216,
+            "sha256": "5fb4fffbe0dc2b24f3a235f89be84935ca4d1344b293f73765cc1ff7291693eb"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/3-historical8k.response.json",
+            "bytes": 1326,
+            "sha256": "d6f335c4a0e9e6d40848651080d1c52f607327aed16b35ae24ca53e90ff15349"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/3-historical8k.sample.json",
+            "bytes": 2224,
+            "sha256": "d1c99ab50faa73be79537a7a5f95516ccac73342a72d087fe34830a7313c631d"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/3-natural16k.response.json",
+            "bytes": 1274,
+            "sha256": "56f8d2998f5646b5262a9d75c003a58f382760d32c0515316a916a0df5002b88"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/3-natural16k.sample.json",
+            "bytes": 2228,
+            "sha256": "f7d75e3a9cbd53673d4d334111ffc9059c9568277ace0e7bd0356e9c36022580"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/pair-0.json",
+            "bytes": 442,
+            "sha256": "440c3a1eb16f6858da5dbc2f45521696652c5dc2f32173b0a9582f82a1eb9a70"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/pair-1.json",
+            "bytes": 436,
+            "sha256": "a4b41fb4f866d88c120fe7b32d378d6c7d0bf4db8b8fd2087a861ff5c4bf7d44"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/pair-2.json",
+            "bytes": 435,
+            "sha256": "9e971bc9a42a7576eb6bb8c46893f08032b09bbb295aeba47550f022bdce2c17"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/pair-3.json",
+            "bytes": 435,
+            "sha256": "30c3d0b81f6d65f612141c57f2d71a52cebd36563e61689dd129e24eac5cc0d8"
+          }
+        ],
+        "request_pins": [
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/historical8k.request.json",
+            "bytes": 42833,
+            "sha256": "8a61749eed819c8d472c2705468369630f5dac9f6d606c897922d06e5bf4dba0"
+          },
+          {
+            "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/run-after/natural16k.request.json",
+            "bytes": 72848,
+            "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+          }
+        ]
+      },
+      "per_request_metrics": [
+        {
+          "case": "historical8k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 32200438261000,
+          "completed_qpc_ns": 32211920761900,
+          "http_qpc_seconds": 11.4825009,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 107,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 32200439094300,
+          "completed_qpc_ns": 32228623092600,
+          "http_qpc_seconds": 28.1839983,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 32228703466700,
+          "completed_qpc_ns": 32246459580100,
+          "http_qpc_seconds": 17.7561134,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 32228702959200,
+          "completed_qpc_ns": 32239917699400,
+          "http_qpc_seconds": 11.2147402,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 32246506791200,
+          "completed_qpc_ns": 32253002607100,
+          "http_qpc_seconds": 6.4958159,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 32246507307700,
+          "completed_qpc_ns": 32264503968500,
+          "http_qpc_seconds": 17.9966608,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "historical8k",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_sha256": "7a75932a0a22967f4f93083f03bcc263b514c49ce8fe01edf609af7b786f507b",
+          "submitted_qpc_ns": 32265488251100,
+          "completed_qpc_ns": 32283314760600,
+          "http_qpc_seconds": 17.8265095,
+          "scoped": {
+            "head": {
+              "rounds": 57,
+              "drafted": 106,
+              "accepted": 70
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+          "submitted_qpc_ns": 32265487814700,
+          "completed_qpc_ns": 32276920396400,
+          "http_qpc_seconds": 11.4325817,
+          "scoped": {
+            "head": {
+              "rounds": 68,
+              "drafted": 112,
+              "accepted": 59
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          }
+        }
+      ],
+      "measured_pair_scoped_acceptance": {
+        "head": {
+          "rounds": 375,
+          "drafted": 654,
+          "accepted": 387,
+          "acceptance_fraction": 0.591743119266055
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_fraction": null
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_fraction": null
+        }
+      }
+    }
+  },
+  "rejected_arms": {},
+  "interruption_recovery": {
+    "kind": "transient_observer_PermissionError",
+    "same_after_launch_resumed": true,
+    "original_handle_preserved": true,
+    "repeated_measurement_or_restart": false,
+    "explanation": "A transient status-file read PermissionError interrupted observation of AFTER startup. Root resumed the same confirmed AFTER controller/run, completed that cohort once, and restored normal serving.",
+    "original_handle": {
+      "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/handle.json",
+      "bytes": 32232,
+      "sha256": "a189fa3959be2b568a5a650be5c9f3289028867f4f972f0821e1022779ef48b7"
+    },
+    "recovery_handle": {
+      "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-recovery/handle.json",
+      "bytes": 33400,
+      "sha256": "86abb9f8c9362baf5e226591e781a97d3c475e6e37ba2e3d3898c7c62563eeed"
+    },
+    "after_launch_receipt": {
+      "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/after-launch.json",
+      "bytes": 1657,
+      "sha256": "85d2cb10e1d75f6f3aac66e66020be1acc043cd1fe71e3ec63bd1a238205f341"
+    },
+    "resumed_after_runtime": {
+      "controller_run": "31dbe1993c1548d69e08f2b70de9e7b4",
+      "backend_run": "90868ff806104e79b4db68918b5b9474"
+    },
+    "recovery_coordinator_source": {
+      "path": "server/.local/halogen-update-20261101/primary01822/resume_concurrency2_finite.py",
+      "bytes": 5606,
+      "sha256": "373919c4a7d1d651df70e9eb968ac117fd33f76411229835aa366bad2be8e50c"
+    }
+  },
+  "comparison": {
+    "before": {
+      "candidate_throughput_change_percent": 5.704597095095587,
+      "request_latency_change_percent": {
+        "historical8k": 17.214586637505768,
+        "natural16k": 24.790437415476617
+      }
+    },
+    "after": {
+      "candidate_throughput_change_percent": 5.7679136502215345,
+      "request_latency_change_percent": {
+        "historical8k": 17.05998940245854,
+        "natural16k": 24.638863208649077
+      }
+    },
+    "candidate_faster_than_both_controls": true
+  },
+  "tests": {
+    "installed_portable_tests": 15,
+    "installed_forwarding_tests": 5,
+    "saved_logs": [
+      {
+        "tests_passed": 11,
+        "log": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/test_halogen01822_capacity_portable.py.stderr.log",
+          "bytes": 2065,
+          "sha256": "8b6eddf1e9b0e07aa24bf50071fd64ee230143b8848b954c4e9d4a86a537d46d"
+        },
+        "handle": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/test_halogen01822_capacity_portable.py-handle.json",
+          "bytes": 327,
+          "sha256": "74b2fab5526c6a14c8d40fced9839ba64698631149be55b30c3e594a002db0e0"
+        },
+        "evidence_scope": "saved command/log"
+      },
+      {
+        "tests_passed": 4,
+        "log": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/test_halogen01822_capacity_launcher_portable.py.stderr.log",
+          "bytes": 909,
+          "sha256": "9df4e3a55446831121047329eac50916d9916b112f771074b8a1078ab3f64559"
+        },
+        "handle": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/test_halogen01822_capacity_launcher_portable.py-handle.json",
+          "bytes": 327,
+          "sha256": "f06a47ba0ade8ac1b99fe7c6d593218d019124439456a803126f162040975a29"
+        },
+        "evidence_scope": "saved command/log"
+      },
+      {
+        "tests_passed": 5,
+        "log": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/test_halogen01822_forwarding.py.stderr.log",
+          "bytes": 961,
+          "sha256": "404857d06a2459df807cb0712b25c9a682327516ae12409f633a835197188243"
+        },
+        "handle": {
+          "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/test_halogen01822_forwarding.py-handle.json",
+          "bytes": 327,
+          "sha256": "3ead9f242124566f8dc6762f0d3dfd5862eb0e826dcfdf8f3abc44c0e96f480a"
+        },
+        "evidence_scope": "saved command/log"
+      }
+    ],
+    "collector_tests": 14,
+    "coordinator_tests": 5,
+    "preparation_evidence_scope": "Previously observed root tool commands: collector chunk ed2abd exit0; coordinator chunk 1d2dab exit0. Not rerun for publication.",
+    "collector_readiness": {
+      "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/cpu-readiness.json",
+      "bytes": 1322,
+      "sha256": "54ca41019d072a0eb022be7b6f67a046ca963011087c7259cc07ebac1551f275"
+    },
+    "recovery_observer_retry_tests": 3,
+    "recovery_observer_evidence_scope": "Root observed three CPU retry tests, tool chunk eacf31 exit0; not rerun for publication."
+  },
+  "evidence": {
+    "coordinator_handle": {
+      "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-comparison/handle.json",
+      "bytes": 32232,
+      "sha256": "a189fa3959be2b568a5a650be5c9f3289028867f4f972f0821e1022779ef48b7"
+    },
+    "normal_left_ready": {
+      "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-finite-recovery/normal-left-ready.json",
+      "bytes": 12957,
+      "sha256": "0dc50b13f7c3815a43544ab1e4db0ecbac9d38f5fc05b47633405741e5048269"
+    },
+    "source_transition": {
+      "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/transition.json",
+      "bytes": 7613,
+      "sha256": "a3adeb48b7b323bd10e5eaea4301d1a02b7e69b9a10f5ed3cf4002983363c0ba"
+    },
+    "normal_profile": {
+      "path": "server/.local/halogen-update-20261101/primary01822/serving01822-text32k.json",
+      "bytes": 1780,
+      "sha256": "53a943ec4c61d0f3c057d13da561d5551720fe65d29b9a5a2bff39b7cc5566a1"
+    },
+    "qualified_serial_output_anchor": {
+      "path": "docs/benchmarks/halogen01822-raw-8k16k-20261101.json",
+      "bytes": 68233,
+      "sha256": "0c9937acb786aecd17c0a241eddc58a63e60427a340634ec66d16a84a9da6286"
+    },
+    "root_pins": {
+      "transition": {
+        "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/transition.json",
+        "bytes": 7613,
+        "sha256": "a3adeb48b7b323bd10e5eaea4301d1a02b7e69b9a10f5ed3cf4002983363c0ba"
+      },
+      "coordinator": {
+        "path": "server/.local/halogen-update-20261101/primary01822/run_concurrency2_finite.py",
+        "bytes": 13439,
+        "sha256": "9e6d92d1c103c25aba18c00a0caab7f425eaddcc56278b37eb141ca86bde7aa9"
+      },
+      "collector": {
+        "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/collect_pairs.py",
+        "bytes": 16095,
+        "sha256": "7a8fcbcef2490da2e3418609dec19c712b19d055a520c8ef41136f110f7b671c"
+      },
+      "OEM_before": {
+        "path": "server/.local/halogen-update-20261101/primary01822/concurrency2-run-prep/oem-before/power-mode-admin-result.json",
+        "bytes": 603,
+        "sha256": "5c21d31922ffcf0e6210b98cfba2cdc00154fe37d85c7a9163562fb50187cf6e"
+      }
+    }
+  },
+  "limitations": [
+    "No singleton RAW observer was used on interleaved requests.",
+    "No qualified phase Prefill/Decode rates are inferred from completed-output throughput.",
+    "Native scoped counters are pooled within each case; legitimate proposal counts may differ between arms.",
+    "Normal readiness is the saved post-campaign snapshot, not a fresh API request by the publisher.",
+    "Candidate source is restored, not promoted, whatever the comparison outcome."
+  ],
+  "decision": {
+    "normal_engine_slots": 1,
+    "normal_gateway_concurrency": 1,
+    "candidate_source_promoted": false,
+    "reason": "The complete mixed-pair experiment improves aggregate completed-output throughput but increases each request latency. Normal ServiceNow serving retains the original profile.",
+    "single_request_prefill_or_decode_improvement": "not established by this experiment",
+    "head_acceptance_denominator_changed": true,
+    "candidate_accepted_tokens_lower_in_both_cases": true,
+    "next_candidate": "Existing supported prefix-cache reuse on stable document prefixes and distinct follow-up questions, measured separately from CacheOff phase-rate headlines."
+  }
+}
