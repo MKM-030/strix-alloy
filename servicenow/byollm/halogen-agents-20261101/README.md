@@ -1,6 +1,6 @@
 # Halogen Agent model selection — 1 November 2026
 
-The approved administrator-maintenance run partially applied the change: **all 66 active prompts now select `halogen-v2`, and the Halogen request transformer matches the approved source exactly**. The Ledger is still unchanged. The new WIP delta has capture and application-scope issues and is **not ready for transfer**. See [the post-run audit](POSTRUN.md). No model, speech service, microphone, or business process was started.
+The approved administrator-maintenance run partially applied the change: **all 66 active prompts now select `halogen-v2`, and the Halogen request transformer matches the approved source exactly**. The Ledger is still unchanged. The later approved completion request received no execution response; fresh source/header/capture and guard reads remain exact against its pre-run state. A lossless compact transport variant is frozen, with 32 passing offline tests and independent review; its separate per-run approval is pending. The WIP delta is **not ready for transfer**. See [the post-run audit](POSTRUN.md). No model, speech service, microphone, or business process was started.
 
 Marcel selected **Halogen for the business Agent steps as well as the local conversation**, retaining separate configuration for each role. The technical model identifier is `halogen-v2`. ServiceNow remains the sole business executor.
 
