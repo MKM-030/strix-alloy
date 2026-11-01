@@ -1,0 +1,128 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const crypto=require('node:crypto');
+const builder=require('./build-existing-stage-completion.cjs');
+const directory=path.resolve(__dirname,'../../../server/.local/voice-goal-halogen-agents-20261101');
+const clone=x=>JSON.parse(JSON.stringify(x));
+const prepared=builder.prepare(directory);
+const template=fs.readFileSync(path.join(__dirname,'complete-halogen-agent-existing-stage.template.js'),'utf8');
+const {createRequire}=require('node:module');
+const enc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\r','&#13;');
+function decode(s){return s.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,(_,x)=>x).replace(/&#(x[0-9a-f]+|\d+);/gi,(_,n)=>String.fromCodePoint(n[0].toLowerCase()==='x'?parseInt(n.slice(1),16):Number(n))).replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&quot;','"').replaceAll('&apos;',"'").replaceAll('&amp;','&');}
+function xmlRow(xml,table){const m=xml.match(new RegExp('<'+table+'(?:\\s[^>]*?)?>([\\s\\S]*?)</'+table+'>'));assert.ok(m,'missing XML row '+table);const row={};for(const f of m[1].matchAll(/<([A-Za-z_][\w.:_-]*)(?:\s[^>]*?)?(?:\s*\/>|>([\s\S]*?)<\/\1>)/g))row[f[1]]=decode(f[2]||'');return row;}
+// Native boundary double: normal before-rules reject changing application on a
+// nonempty set and reject moving a CU across scope. Version associations follow
+// native CU moves; no direct version write is exposed to the script.
+function platform(plan=clone(prepared.plan),options={}){
+  const db={sys_update_set:clone(plan.headers),sys_update_xml:clone(plan.cus),sys_es_latest_script:[]},writes=[],ordinaryLoads=[],captures=[],reads=new Set(),versions=plan.cus.map(c=>({name:c.name,source:c.update_set,source_table:'sys_update_set'}));
+  let selected='83c415cb933fcf14e7f2b9fa6aba10de',receipt,seq=9000,attempts=0,moveAttempts=0,preflights=0;
+  const sources=new Map(plan.targets.map(t=>[t.table+':'+t.id,t]));
+  for(const t of plan.targets){db[t.table]??=[];const cu=plan.cus.find(c=>c.sys_id===t.capture);const row=cu?xmlRow(cu.payload,t.table):clone(t.before);db[t.table].push({...row,...clone(t.current),sys_policy:''});}
+  for(const g of plan.guards){db[g.table]??=[];if(!db[g.table].some(r=>r.sys_id===g.id))db[g.table].push(clone(g.before));}
+  for(const c of plan.companions)if(!db[c.table].some(r=>r.sys_id===c.id))db[c.table].push(clone(c.before));
+  const booleanField=(table,f)=>['active','default','is_default','use_es_latest','replace_on_upgrade','ai_suggested'].includes(f);
+  const revision=row=>{row.sys_mod_count=String(Number(row.sys_mod_count||0)+1);row.sys_updated_on='2026-11-01 20:00:00';row.sys_updated_by='approved-admin';};
+  const initialReadKeys=[...plan.targets.map(t=>t.table+':'+t.id),...plan.guards.map(g=>g.table+':'+g.id),...plan.companions.map(c=>c.table+':'+c.id),...plan.headers.map(h=>'sys_update_set:'+h.sys_id),...plan.cus.map(c=>'sys_update_xml:'+c.sys_id)];
+  function firstMutation(){attempts++;if(attempts===1){assert.ok(initialReadKeys.every(k=>reads.has(k)),'all Secure source/guard/companion/header/CU reads must precede mutation');preflights++;}}
+  class Record{
+    constructor(table,secure=false){this.table=table;this.secure=secure;this.filters=[];this.limit=Infinity;if(!secure)assert.ok(['sys_update_set','sys_update_xml','sys_script_include'].includes(table),'ordinary table outside assignment allowlist');}
+    isValid(){return !!db[this.table];}
+    get(id){const row=db[this.table]?.find(r=>r.sys_id===id);this.row=row?clone(row):null;this.loaded=id;this.changes={};if(this.secure)reads.add(this.table+':'+id);else{ordinaryLoads.push({table:this.table,id});if(this.table==='sys_update_set')assert.notEqual(id,plan.ids.parent,'confirmed parent header is read-only');if(this.table==='sys_script_include')assert.equal(id,plan.ids.ledger,'only ledger can use ordinary source writer');}return !!row;}
+    getUniqueValue(){return this.row.sys_id;} getRecordClassName(){return this.table;}
+    canRead(){assert.ok(this.secure);return this.row.sys_id!==options.denyRead;}
+    isValidField(f){assert.ok(this.secure);return Object.hasOwn(this.row,f);}
+    getValue(f){assert.ok(this.secure,'ordinary values cannot supply snapshots');const v=this.row[f]??'';return options.nativeBooleans&&booleanField(this.table,f)?v==='true'?'1':v==='false'?'0':v:v;}
+    getElement(f){assert.ok(this.secure);return {getName:()=>f,canRead:()=>!(options.denyField&&this.row.sys_id===options.denyField.id&&f===options.denyField.field),getED:()=>({getInternalType:()=>booleanField(this.table,f)?'boolean':'string'})};}
+    getElements(){assert.ok(this.secure);const elements=Object.keys(this.row).map(f=>this.getElement(f));return {size:()=>elements.length,get:i=>elements[i]};}
+    addQuery(f,op,v){assert.ok(this.secure,'ordinary queries prohibited');this.filters.push([f,v===undefined?'=':op,v===undefined?op:v]);}
+    setLimit(n){this.limit=n;}
+    query(){assert.ok(this.secure);this.results=(db[this.table]||[]).filter(r=>this.filters.every(([f,op,v])=>op==='IN'?String(v).split(',').includes(r[f]??''):op==='STARTSWITH'?String(r[f]??'').startsWith(String(v)):(r[f]??'')===String(v))).slice(0,this.limit);this.cursor=0;}
+    next(){const row=this.results[this.cursor++];this.row=row?clone(row):null;return !!row;}
+    initialize(){assert.fail('continuation must never initialize a new header');}
+    setValue(f,v){assert.equal(this.secure,false,'no Secure mutations');if(this.table==='sys_script_include'){assert.equal(this.loaded,plan.ids.ledger);assert.equal(f,'script');assert.equal(v,plan.targets.find(t=>t.id===plan.ids.ledger).desired);}else if(this.table==='sys_update_xml'){assert.ok(plan.cus.some(c=>c.sys_id===this.loaded),'only existing CU identities can move');assert.equal(f,'update_set');}else if(this.loaded){assert.ok((Object.hasOwn(plan.headerScopes,this.loaded)&&f==='application'&&v===plan.headerScopes[this.loaded])||(this.loaded===plan.existingStageId&&f==='state'&&v==='ignore'),'bounded header fields');}else assert.ok(['name','description','application','parent','state','is_default'].includes(f));this.changes[f]=typeof v==='boolean'?String(v):String(v);this.row[f]=this.changes[f];}
+    insert(){assert.fail('continuation must never insert');}
+    update(){assert.equal(this.secure,false);firstMutation();const before=db[this.table].find(r=>r.sys_id===this.loaded),after={...before,...this.changes};
+      if(this.table==='sys_update_set'&&Object.hasOwn(this.changes,'application')){assert.equal(db.sys_update_xml.filter(c=>c.update_set===this.loaded).length,0,'native application inconsistency rule must see empty set');if(options.rejectHeader)throw Error('native_header_rejected');}
+      if(this.table==='sys_update_xml'){moveAttempts++;const destination=db.sys_update_set.find(r=>r.sys_id===after.update_set);assert.equal(destination.application,before.application,'native move BR forbids cross-scope move');if(options.rejectMove===moveAttempts)throw Error('native_move_rejected');for(const version of versions)if(version.name===after.name&&version.source===before.update_set)version.source=after.update_set;if(options.changePayloadDuringMove)after.payload+='\n';if(options.concurrentHeaderDrift&&moveAttempts===2){destination.description+='concurrent';revision(destination);}}
+      if(this.table==='sys_script_include'){if(options.rejectLedger)throw Error('native_ledger_policy_rejected');if(options.refreshFlag){const flag=db.sys_update_xml.find(c=>c.sys_id===plan.ids.flag);flag.payload=flag.payload.replace('<value>true</value>','<value>false</value>');revision(flag);}}
+      revision(after);db[this.table][db[this.table].indexOf(before)]=after;writes.push({kind:'update',table:this.table,id:this.loaded,fields:clone(this.changes)});return after.sys_id;
+    }
+  }
+  class Secure extends Record{constructor(table){super(table,true);}}
+  class Manager{saveRecord(r){assert.ok(r.secure);assert.equal(r.row.sys_id,plan.ids.ledger,'67 applied sources must never be re-captured');captures.push(r.row.sys_id);const serialize=(table,row)=>'<'+table+' action="INSERT_OR_UPDATE">'+Object.entries(row).map(([k,v])=>'<'+k+'>'+enc(k==='script'?v.replace(/\r/g,''):v)+'</'+k+'>').join('')+'</'+table+'>';let payload=serialize(r.table,r.row);for(const c of plan.companions)if(c.owner===r.row.sys_id)payload+=serialize(c.table,db[c.table].find(x=>x.sys_id===c.id));if(options.badLedgerCapture)payload=payload.replace('<script>','<script>arbitrary-change');db.sys_update_xml.push({sys_id:(++seq).toString(16).padStart(32,'0'),name:r.table+'_'+r.row.sys_id,action:'INSERT_OR_UPDATE',application:'global',update_set:selected,payload:'<record_update table="'+r.table+'">'+payload+'</record_update>',sys_mod_count:'0',sys_updated_on:'2026-11-01 20:00:00',sys_updated_by:'approved-admin'});}}
+  class XML{parseXML(xml){this.xml=xml;return true;}getDocumentElement(){const m=this.xml.match(/<record_update\b([^>]+)>/);return m?{getAttribute:key=>{const a=m[1].match(new RegExp('\\b'+key+'="([^"]*)"'));return a?.[1]||'';}}:null;}getNodeText(xpath){const [table,field]=xpath.split('/').filter(Boolean);return xmlRow(this.xml,table)[field]||'';}}
+  const context={GlideRecordSecure:Secure,GlideRecord:Record,GlideUpdateSet:class{set(id){selected=id;}},GlideUpdateManager2:Manager,XMLDocument2:XML,gs:{hasRole:role=>role==='admin'&&options.admin!==false,getPreference:()=>selected,info:line=>{receipt=JSON.parse(line.slice(line.indexOf('{')));}}};
+  function run(){receipt=null;vm.runInNewContext(builder.renderPlan(plan,template),context);return receipt;}
+  return {plan,db,writes,versions,ordinaryLoads,captures,run,get selected(){return selected;},get attempts(){return attempts;},get moveAttempts(){return moveAttempts;},get preflights(){return preflights;}};
+}
+function abortsBeforeWrites(change,pattern,options={}){const p=platform(undefined,options);change?.(p);const r=p.run();assert.equal(r.ok,false);assert.equal(r.status,'aborted',r.error);assert.match(r.error,pattern);assert.equal(p.writes.length,0);assert.equal(p.attempts,0);assert.equal(p.captures.length,0);return p;}
+test('offline builder binds full revisions and only two hash/AST-qualified code allowances without editing inputs',()=>{
+  const inputs=['frozen-plan.admin-maintenance.private.json','apply-halogen-agent-configuration.admin-maintenance.js','SDK-ADMIN-EXECUTION-RESULT.json'];const hashes=()=>inputs.map(f=>crypto.createHash('sha256').update(fs.readFileSync(path.join(directory,f))).digest('hex'));const before=hashes(),p=builder.prepare(directory);assert.deepEqual(hashes(),before);assert.equal(p.review.requires_separate_user_approval,true);assert.equal(p.review.instance_executed,false);assert.equal(p.plan.cus.length,68);assert.equal(p.plan.codeFields.length,2);assert.equal(p.plan.targets.filter(t=>t.id!==p.plan.ids.ledger).length,67);new Function(p.script);
+});
+test('native sequence reuses exact existing stage with readonly parent and only remaining bounded writes',()=>{
+  const p=platform(),before=clone(p.db),r=p.run();assert.equal(r.ok,true,r.error);assert.equal(r.status,'completed');assert.equal(r.cu_moves,136);assert.equal(r.header_writes,3);assert.equal(r.source_writes,1);assert.equal(r.captures,1);assert.equal(r.verified_customer_updates,69);assert.equal(p.preflights,1);assert.equal(p.selected,'83c415cb933fcf14e7f2b9fa6aba10de');assert.deepEqual(p.captures,[p.plan.ids.ledger]);
+  for(const t of p.plan.targets)if(t.id!==p.plan.ids.ledger)assert.deepEqual(p.db[t.table].find(x=>x.sys_id===t.id),before[t.table].find(x=>x.sys_id===t.id),'read-only67 source changed');
+  for(const g of p.plan.guards)assert.deepEqual(p.db[g.table].find(x=>x.sys_id===g.id),before[g.table].find(x=>x.sys_id===g.id));
+  for(const cu of p.plan.cus){const row=p.db.sys_update_xml.find(x=>x.sys_id===cu.sys_id);assert.equal(row.payload,cu.payload);assert.equal(row.action,cu.action);assert.equal(row.application,cu.application);assert.equal(row.update_set,cu.application==='global'?p.plan.ids.global:p.plan.ids.aia);assert.equal(row.sys_mod_count,String(Number(cu.sys_mod_count)+2));assert.equal(p.versions.find(v=>v.name===row.name).source,row.update_set);}
+  for(const h of p.plan.headers){const row=p.db.sys_update_set.find(x=>x.sys_id===h.sys_id);if(h.sys_id===p.plan.ids.parent){assert.deepEqual(row,h);continue;}for(const k of Object.keys(h))if(!['application','state','sys_updated_on','sys_updated_by','sys_mod_count'].includes(k))assert.equal(row[k],h[k]);assert.equal(row.application,h.sys_id===p.plan.existingStageId?p.plan.aiaScope:p.plan.headerScopes[h.sys_id]);assert.equal(row.state,h.sys_id===p.plan.existingStageId?'ignore':h.state);}
+  const stage=p.db.sys_update_set.find(x=>x.sys_id===r.staging_header);assert.equal(stage.application,p.plan.aiaScope);assert.equal(stage.state,'ignore');assert.equal(stage.parent,'');assert.equal(p.db.sys_update_xml.filter(c=>c.update_set===stage.sys_id).length,0);assert.equal(p.db.sys_update_xml.length,69);assert.equal(stage.sys_id,p.plan.existingStageId);assert.equal(stage.name,p.plan.stagingName);assert.equal(stage.description,p.plan.stagingDescription);assert.equal(p.db.sys_update_set.length,4);assert.ok(!p.writes.some(w=>w.kind==='insert'||w.id===p.plan.ids.parent));
+  assert.deepEqual(p.ordinaryLoads.filter(x=>x.table==='sys_script_include'),[{table:'sys_script_include',id:p.plan.ids.ledger}]);
+  const count=p.writes.length,again=p.run();assert.equal(again.ok,false);assert.equal(again.status,'aborted');assert.equal(p.writes.length,count,'successful completion cannot be re-run');
+});
+test('dictionary-based native boolean1/0 works and string revision zero stays a string',()=>{const p=platform(undefined,{nativeBooleans:true}),r=p.run();assert.equal(r.ok,true,r.error);for(const c of p.db.sys_es_latest_script)assert.equal(c.sys_mod_count,'0');for(const row of p.db.sys_properties)assert.equal(row.value,'false');});
+test('admin and distinct completion authority required before writes',()=>{abortsBeforeWrites(null,/admin_required/,{admin:false});abortsBeforeWrites(p=>{p.plan.authorityMode='approved_admin_maintenance';},/separate_completion_authority/);});
+test('last applied source revision drift aborts before every mutation',()=>{abortsBeforeWrites(p=>{const t=p.plan.targets.find(t=>t.id===p.plan.ids.transformer);p.db[t.table].find(r=>r.sys_id===t.id).sys_mod_count='999';},/source_preimage_drift/);});
+test('ledger must still have the exact original script and revision',()=>{abortsBeforeWrites(p=>{p.db.sys_script_include.find(r=>r.sys_id===p.plan.ids.ledger).script+=' ';},/source_preimage_drift/);});
+test('unreadable source and policy protection cannot be bypassed by ordinary writer',()=>{abortsBeforeWrites(null,/record_unavailable/,{denyRead:prepared.plan.targets[0].id});abortsBeforeWrites(null,/field_unavailable:sys_policy/,{denyField:{id:prepared.plan.ids.ledger,field:'sys_policy'}});abortsBeforeWrites(p=>{p.db.sys_script_include.find(r=>r.sys_id===p.plan.ids.ledger).sys_policy='read';},/source_policy_protected/);});
+test('guard, ES companion and unexpected companion inventory each abort before writes',()=>{abortsBeforeWrites(p=>{const g=p.plan.guards.find(g=>g.table==='sys_properties');p.db[g.table].find(r=>r.sys_id===g.id).value='true';},/guard_drift/);abortsBeforeWrites(p=>{p.db.sys_es_latest_script[0].sys_mod_count='99';},/companion_preimage_drift/);abortsBeforeWrites(p=>{p.db.sys_es_latest_script.push({...p.db.sys_es_latest_script[0],sys_id:'a'.repeat(32)});},/unexpected_companion/);});
+test('full header revision, CU revision and CU payload drift each abort before writes',()=>{abortsBeforeWrites(p=>{p.db.sys_update_set[0].sys_mod_count='99';},/header_preimage_drift/);abortsBeforeWrites(p=>{p.db.sys_update_xml.at(-1).sys_mod_count='99';},/cu_preimage_drift/);abortsBeforeWrites(p=>{p.db.sys_update_xml.at(-1).payload+=' ';},/cu_preimage_drift/);});
+test('source fields outside earlier subset queries are frozen by the FULL current snapshot',()=>{assert.equal(Object.keys(prepared.plan.targets[0].current).length,37);abortsBeforeWrites(p=>{p.db[p.plan.targets[0].table][0].documentation='concurrent full-field drift';},/source_preimage_drift/);abortsBeforeWrites(p=>{p.db[p.plan.targets[0].table][0].unexpected_nonempty_field='drift';},/source_preimage_drift/);});
+test('unexpected child, CU membership and exact temporary name prevent any write',()=>{abortsBeforeWrites(p=>{p.db.sys_update_set.push({...p.db.sys_update_set[0],name:'extra',sys_id:'a'.repeat(32)});},/unexpected_batch_descendant/);abortsBeforeWrites(p=>{p.db.sys_update_xml.push({...p.db.sys_update_xml[0],sys_id:'b'.repeat(32)});},/unexpected_cu_membership/);abortsBeforeWrites(p=>{p.db.sys_update_set.push({...p.db.sys_update_set[0],sys_id:'c'.repeat(32),base_update_set:'c'.repeat(32),parent:'',name:p.plan.stagingName});},/duplicate_or_missing_batch_name|existing_stage_name_not_unique/);});
+test('orphaned base_update_set member aborts before every write even without a parent link',()=>{abortsBeforeWrites(p=>{p.db.sys_update_set.push({...p.db.sys_update_set[0],sys_id:'d'.repeat(32),parent:'',base_update_set:p.plan.ids.parent,name:'orphaned native base member'});},/unexpected_base_batch_member/);});
+test('existing stage scope and base linkage drift abort before every mutation',()=>{abortsBeforeWrites(p=>{p.db.sys_update_set.find(h=>h.sys_id===p.plan.existingStageId).application='global';},/header_preimage_drift/);abortsBeforeWrites(p=>{p.db.sys_update_set.find(h=>h.sys_id===p.plan.existingStageId).base_update_set=p.plan.ids.parent;},/header_preimage_drift/);});
+test('native header and move rejections stop once without retry',()=>{const h=platform(undefined,{rejectHeader:true}),rh=h.run();assert.equal(rh.status,'partial_or_uncertain');assert.match(rh.error,/native_header_rejected/);assert.equal(h.attempts,69);assert.equal(h.writes.length,68);assert.equal(rh.cu_moves,68);assert.equal(rh.header_writes,0);assert.equal(rh.source_writes,0);const p=platform(undefined,{rejectMove:3}),r=p.run();assert.equal(r.status,'partial_or_uncertain');assert.match(r.error,/native_move_rejected/);assert.equal(p.moveAttempts,3);assert.equal(r.cu_moves,2);assert.equal(r.source_writes,0);assert.equal(p.captures.length,0);});
+test('native wrapper side effects cannot silently change frozen CU payloads',()=>{const p=platform(undefined,{changePayloadDuringMove:true}),r=p.run();assert.equal(r.status,'partial_or_uncertain');assert.match(r.error,/cu_nonwrapper_contract_changed/);assert.equal(r.cu_moves,1);assert.equal(r.source_writes,0);});
+test('concurrent source/destination header changes stop before the next native CU move',()=>{const p=platform(undefined,{concurrentHeaderDrift:true}),r=p.run();assert.equal(r.status,'partial_or_uncertain');assert.match(r.error,/move_header_contract_or_revision_drift/);assert.equal(r.cu_moves,2);assert.equal(p.moveAttempts,2);assert.equal(r.source_writes,0);});
+test('ledger native rejection occurs only after wrappers repair and restores user preference',()=>{const p=platform(undefined,{rejectLedger:true}),r=p.run();assert.equal(r.status,'partial_or_uncertain');assert.match(r.error,/native_ledger_policy_rejected/);assert.equal(r.cu_moves,136);assert.equal(r.source_writes,0);assert.equal(p.captures.length,0);assert.equal(p.selected,'83c415cb933fcf14e7f2b9fa6aba10de');});
+test('unexpected native flag CU refresh fails final audit instead of broad normalization',()=>{const p=platform(undefined,{refreshFlag:true}),r=p.run();assert.equal(r.status,'partial_or_uncertain');assert.match(r.error,/cu_contract_or_revision_drift/);assert.equal(r.source_writes,1);assert.equal(r.captures,1);assert.equal(p.selected,'83c415cb933fcf14e7f2b9fa6aba10de');});
+test('arbitrary ledger capture code edits cannot use CR-removal allowance',()=>{const p=platform(undefined,{badLedgerCapture:true}),r=p.run();assert.equal(r.status,'partial_or_uncertain');assert.match(r.error,/captured_contract_mismatch.*script/);assert.equal(p.captures.length,1);});
+test('prompt CR loss is rejected even if the changed wrapper were supplied as frozen input',()=>{const plan=clone(prepared.plan),cu=plan.cus.find(c=>c.name.startsWith('sys_generative_ai_config_'));cu.payload=cu.payload.replaceAll('&#13;','');const p=platform(plan),r=p.run();assert.equal(r.ok,false);assert.equal(r.status,'aborted');assert.match(r.error,/captured_contract_mismatch.*prompt/);assert.equal(p.writes.length,0);});
+test('invalid native dictionary boolean fails instead of changing string conventions',()=>{abortsBeforeWrites(p=>{p.db[p.plan.targets[0].table][0].active='maybe';},/invalid_boolean/,{nativeBooleans:true});});
+
+test('native117-character name truncation reproduces prior partial failure and exact80-character stage reuse succeeds',()=>{
+  const originalTestPath=path.join(__dirname,'completion.test.cjs'),original=fs.readFileSync(originalTestPath,'utf8');
+  let setup=original.slice(0,original.indexOf("test('offline builder"));
+  const nativeInsert='row.base_update_set=options.wrongStagingBaseUpdateSet?';assert.equal(setup.split(nativeInsert).length,2);
+  setup=setup.replace(nativeInsert,'row.name=row.name.slice(0,80);'+nativeInsert);
+  const context={require:createRequire(originalTestPath),__dirname,Buffer,process};
+  vm.runInNewContext(setup+'\nthis.legacyPlatform = platform;',context,{filename:originalTestPath+'.native80-regression'});
+  const legacy=context.legacyPlatform(),failed=legacy.run();assert.equal(legacy.plan.stagingName.length,117);assert.equal(failed.ok,false);assert.equal(failed.error,'staging_scope_or_header_contract');assert.equal(failed.header_writes,2);assert.equal(failed.cu_moves,0);assert.equal(failed.source_writes,0);assert.equal(legacy.captures.length,0);
+  const truncated=legacy.db.sys_update_set.find(h=>h.name===legacy.plan.stagingName.slice(0,80));assert.ok(truncated);assert.equal(truncated.name.length,80);
+  const p=platform(),r=p.run();assert.equal(r.ok,true,r.error);assert.equal(r.staging_header,p.plan.existingStageId);assert.equal(p.db.sys_update_set.length,4);assert.equal(p.writes.filter(w=>w.kind==='insert').length,0);
+});
+test('missing stage, exact stage revision, trailing-space name and ownership drift abort without any write',()=>{
+  abortsBeforeWrites(p=>{p.db.sys_update_set=p.db.sys_update_set.filter(h=>h.sys_id!==p.plan.existingStageId);},/record_unavailable/);
+  for(const [field,value]of [['sys_mod_count','1'],['name',prepared.plan.stagingName.trimEnd()],['description',prepared.plan.stagingDescription+' '],['sys_created_by','someone-else']])abortsBeforeWrites(p=>{p.db.sys_update_set.find(h=>h.sys_id===p.plan.existingStageId)[field]=value;},/header_preimage_drift/);
+});
+test('duplicate exact name or ownership marker cannot substitute a different stage',()=>{
+  abortsBeforeWrites(p=>{p.db.sys_update_set.push({...p.db.sys_update_set.find(h=>h.sys_id===p.plan.existingStageId),sys_id:'e'.repeat(32)});},/duplicate_or_missing_batch_name|existing_stage_name_not_unique/);
+  abortsBeforeWrites(p=>{p.db.sys_update_set.push({...p.db.sys_update_set.find(h=>h.sys_id===p.plan.existingStageId),sys_id:'f'.repeat(32),name:'different name with the same owned marker'});},/existing_stage_owner_marker_not_unique/);
+});
+test('occupied stage, parent descendants and orphaned stage-base members each prevent the first write',()=>{
+  abortsBeforeWrites(p=>{p.db.sys_update_xml.push({...p.db.sys_update_xml[0],sys_id:'c'.repeat(32),update_set:p.plan.existingStageId});},/set_must_be_empty/);
+  abortsBeforeWrites(p=>{p.db.sys_update_set.push({...p.db.sys_update_set.find(h=>h.sys_id===p.plan.existingStageId),sys_id:'d'.repeat(32),name:'stage child',description:'unrelated',parent:p.plan.existingStageId});},/unexpected_staging_descendant/);
+  abortsBeforeWrites(p=>{p.db.sys_update_set.push({...p.db.sys_update_set.find(h=>h.sys_id===p.plan.existingStageId),sys_id:'d'.repeat(32),name:'orphaned stage base member',description:'unrelated',base_update_set:p.plan.existingStageId});},/unexpected_staging_base_member/);
+});
+test('confirmed parent must remain exactGlobal/mod2 and is never repaired or rewritten',()=>{
+  for(const [field,value]of [['application','6d99fe72474f211082179725126d4308'],['sys_mod_count','3']])abortsBeforeWrites(p=>{p.db.sys_update_set.find(h=>h.sys_id===p.plan.ids.parent)[field]=value;},/header_preimage_drift/);
+  const p=platform(),before=clone(p.db.sys_update_set.find(h=>h.sys_id===p.plan.ids.parent)),r=p.run();assert.equal(r.ok,true,r.error);assert.deepEqual(p.db.sys_update_set.find(h=>h.sys_id===p.plan.ids.parent),before);assert.equal(p.ordinaryLoads.filter(x=>x.table==='sys_update_set'&&x.id===p.plan.ids.parent).length,0);
+});
+test('compact expanded plan preserves exact stage80name/old description and declares only remaining authority',()=>{
+  const context={};vm.runInNewContext('decoded='+prepared.expression,context);assert.equal(JSON.stringify(context.decoded),prepared.text);assert.equal(context.decoded.stagingName.length,80);assert.ok(context.decoded.stagingName.endsWith(' '));assert.equal(context.decoded.priorIntendedStagingName.length,117);assert.equal(context.decoded.stagingDescription,prepared.plan.stagingDescription);
+  assert.equal(prepared.review.parent_writes,0);assert.equal(prepared.review.new_headers,0);assert.equal(prepared.review.renames,0);assert.equal(prepared.review.expected_header_writes,3);assert.ok(prepared.review.script_form_encoded_bytes+1024<900000);
+  assert.doesNotMatch(template,/\.insert\s*\(|function createStage|setWorkflow|deleteRecord|updateMultiple|\.trim\s*\(|\.slice\(0,80\)/);
+});
